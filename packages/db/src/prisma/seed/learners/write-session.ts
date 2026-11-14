@@ -113,7 +113,12 @@ function placeBlocks(
     const isStarted = status !== "pending";
 
     return {
-      block,
+      // Core counts an active block that has no focus clock from when it started, hours ago by the
+      // time anyone opens a seeded day. The learner left this one, so its clock is stopped.
+      block:
+        status === "active"
+          ? { ...block, payload: { ...block.payload, timing: { activeAt: null, elapsedMs: 0 } } }
+          : block,
       completedAt:
         status === "completed" ? studyMoment(scope, 0, minutesBefore(position + 1)) : null,
       id: todayBlockId(scope.learner, position),

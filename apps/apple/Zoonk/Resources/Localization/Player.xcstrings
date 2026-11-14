@@ -2155,7 +2155,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pergunte para seu Parceiro"
+            "value" : "Pergunte para seu parceiro"
           }
         },
         "tr" : {
@@ -11886,7 +11886,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu prends ton temps ? Ton Compagnon peut te l’expliquer autrement."
+            "value" : "Tu prends ton temps ? Ton compagnon peut te l’expliquer autrement."
           }
         },
         "it" : {
@@ -12830,7 +12830,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "C’est un peu difficile. Ton Compagnon peut te l’expliquer autrement."
+            "value" : "C’est un peu difficile. Ton compagnon peut te l’expliquer autrement."
           }
         },
         "it" : {
@@ -12860,7 +12860,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essa é difícil. Seu Parceiro pode explicar de outra forma."
+            "value" : "Essa é difícil. Seu parceiro pode explicar de outra forma."
           }
         },
         "tr" : {

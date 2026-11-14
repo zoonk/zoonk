@@ -84,7 +84,8 @@ function useWaitingCheck({
   });
 }
 
-function useLooksStuck(lesson: NextStopLesson) {
+/** Nothing is on its way: the lesson failed, or its writing never started or went quiet. */
+export function useWritingFailed(lesson: NextStopLesson): boolean {
   const [stuckWhile, setStuckWhile] = useState<NextStopLesson | null>(null);
 
   useEffect(() => {
@@ -96,7 +97,7 @@ function useLooksStuck(lesson: NextStopLesson) {
     return () => clearTimeout(timer);
   }, [lesson]);
 
-  return stuckWhile === lesson;
+  return lesson === "failed" || stuckWhile === lesson;
 }
 
 /** A written lesson's page no longer names its run, so its held wait keeps the one it followed. */
@@ -138,24 +139,25 @@ function WritingProgress({
 export function Waiting({
   actions,
   block,
+  failed,
   generationId,
   kind,
   lesson,
 }: {
   actions: NextStopActions;
   block: DayStep;
+  failed: boolean;
   generationId: string | null;
   kind: LessonKind;
   lesson: NextStopLesson;
 }) {
   const held = lesson === "ready";
-  const stuck = useLooksStuck(lesson);
   const runId = useHeldRunId({ generationId, held });
   const since = useMountTime().getTime();
 
   const poll = useWaitingCheck({ actions, block, generationId, lesson });
 
-  if (lesson === "failed" || stuck) {
+  if (failed) {
     const failure = (
       <GenerationFailureNotice
         failure={lesson === "notStarted" ? "notStarted" : "generation"}

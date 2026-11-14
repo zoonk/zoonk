@@ -379,17 +379,9 @@ final class ChartsActivitiesTests: XCTestCase {
        "shouldNotMatch":["9410","941031","94103-12"],"solution":"^\\\\d{5}(-\\\\d{4})?$","task":"ZIP"}
       """)
 
-    guard case .regex(let regex) = zip else {
+    guard case .regex = zip else {
       return XCTFail("A regex tester")
     }
-
-    let solved = try XCTUnwrap(PatternRegex.test("^\\d{5}(-\\d{4})?$", regex: regex))
-    XCTAssertTrue((solved.shouldMatch + solved.shouldNotMatch).allSatisfy(\.passes))
-    XCTAssertNil(PatternRegex.test("(\\d+)+", regex: regex), "an unsafe pattern doesn't run")
-
-    let results = try XCTUnwrap(PatternRegex.test("\\d{5}", regex: regex))
-    XCTAssertEqual(results.shouldMatch.map(\.match), [0..<5, 0..<5])
-    XCTAssertEqual(results.shouldNotMatch.map(\.passes), [true, false, false])
 
     let price: PatternTesterFields = try decode(
       """

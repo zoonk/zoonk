@@ -191,7 +191,7 @@ struct ProfileDraft: Equatable {
       return [
         "declined": declined,
         "job": asksJob && !declined && !text.isEmpty ? text : NSNull(),
-        "status": declined ? NSNull() : picks.first ?? NSNull(),
+        "status": declined || picks.isEmpty ? NSNull() : picks[0],
       ]
     case .studies:
       return [

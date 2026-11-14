@@ -1519,7 +1519,7 @@ msgstr "Um monóculo!"
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "vwv1rM"
 msgid "They come with your buddy."
-msgstr "Eles vêm com seu Parceiro."
+msgstr "Eles vêm com seu parceiro."
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "DIrp2X"
@@ -2108,7 +2108,7 @@ msgstr "{correct, plural, =0 {# de {total} objetivos} other {# de {total} objeti
 #: src/challenge/challenge-footer.tsx
 msgctxt "O274f-"
 msgid "{count, plural, one {Opens tomorrow} other {Opens in <mono>#</mono> days}}"
-msgstr "{count, plural, one {Abre amanhã} other {Abre em <mono>#</mono> dias}}"
+msgstr "{count, plural, =1 {Abre amanhã} other {Abre em <mono>#</mono> dias}}"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "upiB5E"
@@ -2201,7 +2201,7 @@ msgstr "Perguntas sobre gravações desta fase, reproduzidas como na prova, sem 
 #: src/challenge/challenge-intro.tsx
 msgctxt "1UgcTo"
 msgid "{count, plural, one {Questions on a recording from this phase, played as in the exam, with no hints.} other {Questions on # recordings from this phase, each played as in the exam, with no hints.}}"
-msgstr "{count, plural, one {Perguntas sobre uma gravação desta fase, reproduzida como na prova, sem dicas.} other {Perguntas sobre # gravações desta fase, cada uma reproduzida como na prova, sem dicas.}}"
+msgstr "{count, plural, =1 {Perguntas sobre uma gravação desta fase, reproduzida como na prova, sem dicas.} other {Perguntas sobre # gravações desta fase, cada uma reproduzida como na prova, sem dicas.}}"
 
 #: src/challenge/challenge-intro.tsx
 msgctxt "oYZPXs"
@@ -5599,7 +5599,7 @@ msgstr "Pontuação estimada"
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "DJCbLV"
 msgid "{count, plural, one {Based on your last mock exam} other {Based on your last # mock exams}}"
-msgstr "{count, plural, one {Com base no seu último simulado} other {Com base nos seus últimos # simulados}}"
+msgstr "{count, plural, =1 {Com base no seu último simulado} other {Com base nos seus últimos # simulados}}"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "HpIglx"
@@ -8144,7 +8144,7 @@ msgstr "Praticar redação"
 #: src/missions/mission-copy.tsx
 msgctxt "missions.wCMhp6"
 msgid "{count, plural, one {Fix a mistake} other {Fix # mistakes}}"
-msgstr "{count, plural, one {Corrigir um erro} other {Corrigir # erros}}"
+msgstr "{count, plural, =1 {Corrigir um erro} other {Corrigir # erros}}"
 
 #: src/missions/mission-copy.tsx
 msgctxt "missions.vuwclE"
@@ -8264,7 +8264,7 @@ msgstr "Qualquer coisa sobre as aulas de hoje"
 #: src/missions/mission-copy.tsx
 msgctxt "8zl1aR"
 msgid "{count, plural, one {The last lesson is in today's plan} other {The last # lessons are in today's plan}}"
-msgstr "{count, plural, one {A última aula está no plano de hoje} other {As últimas # aulas estão no plano de hoje}}"
+msgstr "{count, plural, =1 {A última aula está no plano de hoje} other {As últimas # aulas estão no plano de hoje}}"
 
 #: src/missions/mission-copy.tsx
 msgctxt "76vDAi"
@@ -8290,7 +8290,7 @@ msgstr "{complete} de {total}"
 #: src/missions/mission-moment.tsx
 msgctxt "mMozLU"
 msgid "Ask your buddy something"
-msgstr "Perguntar algo ao seu Parceiro"
+msgstr "Perguntar algo ao seu parceiro"
 
 #: src/missions/mission-moment.tsx
 msgctxt "BQGCP4"
@@ -8300,7 +8300,7 @@ msgstr "Missões de hoje concluídas!"
 #: src/missions/mission-moment.tsx
 msgctxt "5Bpyg-"
 msgid "{count, plural, one {Mission done!} other {# missions done!}}"
-msgstr "{count, plural, one {Missão concluída!} other {# missões concluídas!}}"
+msgstr "{count, plural, =1 {Missão concluída!} other {# missões concluídas!}}"
 
 #: src/missions/mission-moment.tsx
 msgctxt "oKqRoi"
@@ -8869,7 +8869,7 @@ msgstr "{count, plural, one {# pergunta está marcada.} other {# perguntas estã
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
 msgid "{count, plural, one {The essay is blank.} other {# essays are blank.}}"
-msgstr "{count, plural, one {A redação está em branco.} other {# redações estão em branco.}}"
+msgstr "{count, plural, =1 {A redação está em branco.} other {# redações estão em branco.}}"
 
 #: src/mock/mock-hand-in.tsx
 #: src/mock/mock-speaking.tsx
@@ -9103,7 +9103,7 @@ msgstr "Ver meu plano"
 #: src/mock/mock-result-actions.tsx
 msgctxt "sECNRM"
 msgid "{count, plural, one {Review the mistake} other {Review the # mistakes}}"
-msgstr "{count, plural, one {Revisar o erro} other {Revisar os # erros}}"
+msgstr "{count, plural, =1 {Revisar o erro} other {Revisar os # erros}}"
 
 #: src/mock/mock-result-actions.tsx
 msgctxt "u82Vi2"
@@ -9523,7 +9523,7 @@ msgstr "Questões para revisar"
 #: src/mock/mock-review.tsx
 msgctxt "XW6EuR"
 msgid "{count, plural, one {See the question} other {See the # questions}}"
-msgstr "{count, plural, one {Ver a questão} other {Ver as # questões}}"
+msgstr "{count, plural, =1 {Ver a questão} other {Ver as # questões}}"
 
 #: src/mock/mock-runner-view.tsx
 msgctxt "rD-WPb"
@@ -10342,7 +10342,7 @@ msgstr "{count, plural, one {Escolha pelo menos {time} por dia para seu # objeti
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."
-msgstr "Seu Parceiro cresce enquanto você aprende."
+msgstr "Seu parceiro cresce enquanto você aprende."
 
 #. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
 #: src/onboarding/steps/country-step.tsx
@@ -12029,7 +12029,7 @@ msgstr "Calculando o que cabe no seu tempo…"
 #: src/plan/plan-status-label.tsx
 msgctxt "FvyQR4"
 msgid "{days, plural, one {One day ahead} other {# days ahead}}"
-msgstr "{days, plural, one {Um dia à frente} other {# dias à frente}}"
+msgstr "{days, plural, =1 {Um dia à frente} other {# dias à frente}}"
 
 #: src/plan/plan-status-label.tsx
 #: src/session/moment-today.tsx
@@ -12040,7 +12040,7 @@ msgstr "{lessons, plural, one {# aula para colocar em dia} other {# aulas para c
 #: src/plan/plan-status-label.tsx
 msgctxt "6-04cL"
 msgid "{days, plural, one {One day behind} other {# days behind}}"
-msgstr "{days, plural, one {Um dia de atraso} other {# dias de atraso}}"
+msgstr "{days, plural, =1 {Um dia de atraso} other {# dias de atraso}}"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "UwUvgY"
@@ -14306,7 +14306,7 @@ msgstr "{buddy}, com alegria pelo que você estudou hoje"
 #: src/session/summary/summary-rewards.tsx
 msgctxt "ajfhRp"
 msgid "{count, plural, one {Done} other {All # done}}"
-msgstr "{count, plural, one {Concluída} other {Todas as # concluídas}}"
+msgstr "{count, plural, =1 {Concluída} other {Todas as # concluídas}}"
 
 #: src/session/summary/summary-rewards.tsx
 msgctxt "4VMsuw"

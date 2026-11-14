@@ -4,29 +4,21 @@ import {
   compileSafeRegex,
   formulaPassesExamples,
 } from "@zoonk/core/library/activities/pattern-checks";
+import { type SampleMatch, runInSandbox } from "../_sandbox/sandbox-host";
 
 type Tolerance = Parameters<typeof formulaPassesExamples>[1]["tolerance"];
 
-export type SampleResult = {
-  match: { end: number; start: number } | null;
-  passes: boolean;
-  sample: string;
-};
+export type SampleResult = { match: SampleMatch; passes: boolean; sample: string };
 
-type RegexResults =
-  | { status: "empty" | "invalid" }
+export type RegexResults =
+  | { status: "empty" | "invalid" | "unavailable" }
   | { shouldMatch: SampleResult[]; shouldNotMatch: SampleResult[]; status: "tested" };
 
-function testSample(regex: RegExp, sample: string, shouldMatch: boolean): SampleResult {
-  const found = regex.exec(sample);
-  const match = found ? { end: found.index + found[0].length, start: found.index } : null;
-  return { match, passes: shouldMatch ? found !== null : found === null, sample };
-}
-
-export function testRegex(
+/** A pattern still running at the sandbox's time limit reads as invalid, as it fails grading. */
+export async function testRegex(
   pattern: string,
   samples: { shouldMatch: readonly string[]; shouldNotMatch: readonly string[] },
-): RegexResults {
+): Promise<RegexResults> {
   if (pattern.length === 0) {
     return { status: "empty" };
   }
@@ -37,9 +29,31 @@ export function testRegex(
     return { status: "invalid" };
   }
 
+  const all = [...samples.shouldMatch, ...samples.shouldNotMatch];
+
+  const outcome = await runInSandbox({
+    kind: "regex",
+    onMessage: () => true,
+    payload: { flags: regex.flags, samples: all, source: regex.source },
+  });
+
+  if (outcome.status === "unavailable") {
+    return outcome;
+  }
+
+  if (outcome.status !== "done") {
+    return { status: "invalid" };
+  }
+
+  const results = all.map((sample, index) => {
+    const match = outcome.matches?.[index] ?? null;
+    const shouldMatch = index < samples.shouldMatch.length;
+    return { match, passes: shouldMatch ? match !== null : match === null, sample };
+  });
+
   return {
-    shouldMatch: samples.shouldMatch.map((sample) => testSample(regex, sample, true)),
-    shouldNotMatch: samples.shouldNotMatch.map((sample) => testSample(regex, sample, false)),
+    shouldMatch: results.slice(0, samples.shouldMatch.length),
+    shouldNotMatch: results.slice(samples.shouldMatch.length),
     status: "tested",
   };
 }

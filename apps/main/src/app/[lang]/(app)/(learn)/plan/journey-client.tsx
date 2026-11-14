@@ -15,6 +15,7 @@ import { readGoalGenerationId } from "@/lib/goals/read-goal-generation-id";
 import { readGoalRebuild } from "@/lib/goals/read-goal-rebuild";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
+import { answerHere, openingHere, stayingHere } from "@/lib/session/tap-answer";
 import { useTopicOutlineActions } from "@/lib/topic-outlines/use-topic-outline-actions";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type OwnedCertificateFacts } from "@zoonk/core/certificates/contract";
@@ -50,7 +51,14 @@ function useGoalStatus({
   return {
     onRename: (displayName) => renameGoalAction(goalId, displayName),
     onSetStatus: async (next) => {
-      const outcome = await setGoalStatusAction(goalId, next);
+      const here = next === "archived" ? openingHere() : stayingHere();
+      const answered = await answerHere(setGoalStatusAction(goalId, next), here);
+
+      if (typeof answered === "string") {
+        return answered === "left" ? null : "failed";
+      }
+
+      const outcome = answered.answer;
 
       if (outcome === "saved" && next === "archived") {
         router.push("/today");

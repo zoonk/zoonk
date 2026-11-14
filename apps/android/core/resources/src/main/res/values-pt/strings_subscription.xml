@@ -8,7 +8,7 @@
   "subscription_already_plus_website": "8c56425ae6f28301db85ec1327ddf49104c62d0307a8d0044e4f0ef0ccfb6c1a",
   "subscription_answer_cancel": "6c6c9cefc8f6b590fb9d8a7c4436ed18905e0c4ef51c410f1d4dc3592c8b5fa0",
   "subscription_answer_fair_use": "32fff06623b9c38bdd6d5f02ff7590c2e8bc3ab95ebd9d34a5f5e07e29e93a45",
-  "subscription_answer_free_buddy": "a8695882ed47e4edf6116fe8b6bbb4108298c99e9eb13f85a18df0a5e45253fe",
+  "subscription_answer_free_buddy": "7fedd6aa1edf6bc1f6bc165f0cb403fd14085ab33a00e03c96bdc2b7f8461b40",
   "subscription_answer_free_buddy_uploads": "46f1c3324ca09c08f785ff53d1850a813f1289486675c69c888ab4ae27a67de2",
   "subscription_answer_free_calls": "31a253a712dac9d6b0dc0f4bbf78bd23545d665c5445972152fc3e0def5b561e",
   "subscription_answer_free_exam": "8d4850f834c0c66332560e896226fb8d7a2c79c804ce7e7e0e5d79b15adb496c",
@@ -20,7 +20,7 @@
   "subscription_answer_free_lessons": "1449a02fc5935d4dd1c89c7408ce384a52394ba270b3e9fee8b8288fddf3d04a",
   "subscription_answer_free_uploads": "e79297f76b5c8708d34fdb0f9a2915724333a8afb87c98ad17495ad2a300f413",
   "subscription_answer_refund": "ce715ae36c20f5b14cbc1a1a80a270f16c7ca2490523d0b977ce29bd4dc562a2",
-  "subscription_answer_unlimited": "cb2419c304e69930055903c8f17c005f3f6f9715912835eeeb5dc5ff87c68807",
+  "subscription_answer_unlimited": "4ae3e97186675739a41789628262e63dfd4d92b9b2b6dbf10622b2990da13fb5",
   "subscription_available_with_plus": "57dc0e240c048ca8c5a1f0772e69782ac072a0be960092ff9430a6e86857bb1c",
   "subscription_benefit_buddy": "6fc097e2b5a3817f345c84df99faf9d135903b61e3cf298100bcece5a1db2e8c",
   "subscription_benefit_calls": "6651b762ff1f16ece0408f4639efd528c476e5265d23221b9d2b88e2177cc7a9",
@@ -238,9 +238,9 @@
     <!-- %1$s is the buddy messages ("10 messages to your buddy"), %2$s the uploads ("3 uploads"). -->
     <string name="subscription_answer_free_buddy_uploads">%1$s e %2$s por dia</string>
     <plurals name="subscription_answer_free_buddy">
-        <item quantity="one">%d mensagem para seu Parceiro</item>
-        <item quantity="many">%d mensagens para seu Parceiro</item>
-        <item quantity="other">%d mensagens para seu Parceiro</item>
+        <item quantity="one">%d mensagem para seu parceiro</item>
+        <item quantity="many">%d mensagens para seu parceiro</item>
+        <item quantity="other">%d mensagens para seu parceiro</item>
     </plurals>
     <plurals name="subscription_answer_free_uploads">
         <item quantity="one">%d envio</item>
@@ -249,7 +249,7 @@
     </plurals>
     <string name="subscription_answer_free_calls">Conversas de prática com limites menores que no Plus (tarefas de conversação para provas estão incluídas no Plus)</string>
     <string name="subscription_question_unlimited">O Plus é mesmo ilimitado?</string>
-    <string name="subscription_answer_unlimited">Quase. As aulas, os objetivos e as conversas com seu Parceiro têm limites só para impedir robôs e ferramentas automatizadas, não quem está aprendendo. As conversas de prática têm limites diários e mensais, maiores que no plano Grátis.</string>
+    <string name="subscription_answer_unlimited">Quase. As aulas, os objetivos e as conversas com seu parceiro têm limites só para impedir robôs e ferramentas automatizadas, não quem está aprendendo. As conversas de prática têm limites diários e mensais, maiores que no plano Grátis.</string>
     <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">Leia nossa política de uso justo</string>
     <string name="subscription_question_cancel">O que acontece se eu cancelar?</string>

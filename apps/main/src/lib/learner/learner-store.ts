@@ -109,6 +109,7 @@ export function getLearnerId(): LearnerId {
   return held ? held.userId : held;
 }
 
+/** Until a check of who holds the session answers, even one that failed, the browser doesn't know. */
 async function getSettledLearnerId(): Promise<LearnerId> {
   const read = store.inFlight;
   const unsettled = store.verifying !== null || getHeldIdentity() === undefined;
@@ -118,7 +119,13 @@ async function getSettledLearnerId(): Promise<LearnerId> {
     return getSettledLearnerId();
   }
 
-  return getLearnerId();
+  return store.verifying === null ? getLearnerId() : undefined;
+}
+
+/** A sign-in in this tab changed who holds the session, so the learner held before it is checked again. */
+export function noteSignIn(): void {
+  install();
+  void readLearnerSummary({ verify: true });
 }
 
 /**

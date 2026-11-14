@@ -3,10 +3,10 @@
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useQuestionTutor } from "@/components/learn/use-question-tutor";
+import { useRouter } from "@/i18n/navigation";
 import { postToApp } from "@/lib/http/post-to-app";
 import { useLessonPlayerHref } from "@/lib/lessons/use-lesson-player-href";
 import { requestSpokenGrade } from "@/lib/speech/spoken-answer-request";
-import { useResetWhenDone } from "@/lib/use-reset-when-done";
 import { type MistakePracticeFeedback, MistakePracticeRun } from "@zoonk/learn/mistakes/practice";
 import { LessonPracticeStep } from "@zoonk/player/lesson/practice";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
@@ -15,6 +15,7 @@ import { finishMistakePracticeAction } from "./practice-actions";
 
 type RunProps = ComponentProps<typeof MistakePracticeRun>;
 
+/** A link opens practice with the mistakes ready now; Back and forward keep the screen as it was. */
 export function MistakePracticeClient({
   goalId,
   practice,
@@ -28,7 +29,7 @@ export function MistakePracticeClient({
 }) {
   const lessonHref = useLessonPlayerHref();
   const questionTutor = useQuestionTutor(tutor);
-  const reset = useResetWhenDone();
+  const { bfcacheId } = useRouter();
 
   return (
     <MistakePracticeRun
@@ -42,16 +43,13 @@ export function MistakePracticeClient({
             },
             path: `/api/me/mistakes/${encodeURIComponent(mistakeId)}/answers`,
           }),
-        finish: (run) => {
-          reset.done();
-
-          return finishMistakePracticeAction({
+        finish: (run) =>
+          finishMistakePracticeAction({
             ...run,
             ended: true,
             goalId,
             timeZone: getLocalTimeZone(),
-          });
-        },
+          }),
         record: async ({
           audio,
           durationMs,
@@ -80,7 +78,7 @@ export function MistakePracticeClient({
       }}
       backHref="/mistakes"
       buddy={tutor.buddy}
-      key={reset.key}
+      key={bfcacheId}
       lessonHref={lessonHref}
       practice={practice}
       renderCeremony={(moments, onClose) => (

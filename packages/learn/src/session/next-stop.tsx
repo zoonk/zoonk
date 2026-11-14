@@ -25,6 +25,7 @@ import {
   NotWritten,
   Waiting,
   useKeptDeck,
+  useWritingFailed,
   useWrittenWhileWaiting,
 } from "./next-stop-wait";
 import { ReviewIntro, noteReviewStart } from "./review-intro";
@@ -130,6 +131,7 @@ function useStartState({
 function NextStopActionBar({
   actions,
   alternative,
+  alternativeReason,
   block,
   isReady,
   notWritten,
@@ -139,6 +141,7 @@ function NextStopActionBar({
 }: {
   actions: NextStopActions;
   alternative: DayStep | null;
+  alternativeReason: "instead" | "whileWaiting";
   block: DayStep;
   isReady: boolean;
   notWritten: LessonNotWritten | null;
@@ -208,7 +211,7 @@ function NextStopActionBar({
           <AlternativeButton
             actions={actions}
             alternative={alternative}
-            reason={notWritten ? "instead" : "whileWaiting"}
+            reason={alternativeReason}
           />
         )}
       </TaskActions>
@@ -259,6 +262,7 @@ export function NextStop({
   const aside = useSessionQueueAside({ left: minutesLeft, rows });
 
   const written = useWrittenWhileWaiting({ block, lesson });
+  const failed = useWritingFailed(lesson);
   const deck = useKeptDeck(warmUp);
   const hold = useReadyHold(isReady);
   const { track } = useLearnAnalytics();
@@ -305,6 +309,7 @@ export function NextStop({
             <Waiting
               actions={actions}
               block={block}
+              failed={failed}
               generationId={generationId}
               kind={lessonKind}
               lesson={lesson}
@@ -321,6 +326,7 @@ export function NextStop({
             },
           }}
           alternative={alternative}
+          alternativeReason={notWritten || failed ? "instead" : "whileWaiting"}
           block={block}
           isReady={isReady}
           notWritten={notWritten}

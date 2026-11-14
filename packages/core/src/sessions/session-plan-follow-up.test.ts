@@ -4,11 +4,12 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { endFollowUp, listFollowUps } from "../follow-ups/follow-up-rows";
 import { PLAN_SHOWN, shortPlanExamGoalFixture } from "../learner/_test-utils/exam-test-goal";
 import { readFocusTestRecord } from "../learner/placement/focus-test-state";
+import { keepPaceOwn } from "../plans/_test-utils/keep-pace-own";
 import { unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import * as rebalance from "../preparation/rebalance-plan";
 import { settleSessionDay } from "./_utils/settle-session-day";
@@ -19,6 +20,7 @@ import { startStudyBlock } from "./start-study-block";
 import { stopStudySession } from "./stop-study-session";
 
 describe("the plan work a session end owes", () => {
+  beforeEach(() => keepPaceOwn());
   afterEach(() => vi.restoreAllMocks());
 
   it.each([

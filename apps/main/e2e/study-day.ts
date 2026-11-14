@@ -247,6 +247,18 @@ async function checkWithEnter(page: Page) {
   await page.keyboard.press("Enter");
 }
 
+/**
+ * A lesson's completion save goes out only once its start has returned, so a one-screen lesson
+ * finished right after it opens waits for both. A learner reading the screen never does.
+ */
+export function waitForLessonStart(page: Page, lessonId: string) {
+  return page.waitForResponse(
+    (response) =>
+      response.request().method() === "POST" &&
+      new URL(response.url()).pathname === `/api/library/lessons/${lessonId}/starts`,
+  );
+}
+
 const ARRIVED_TIMEOUT_MS = 2000;
 
 /**

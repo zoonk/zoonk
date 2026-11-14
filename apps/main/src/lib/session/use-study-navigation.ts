@@ -133,8 +133,8 @@ function useOpenUnwrittenLesson() {
     ): Promise<boolean> => {
       const asked = await answerHere(askToWriteLesson(destination.lessonId), here);
 
-      if (typeof asked === "boolean") {
-        return asked;
+      if (typeof asked === "string") {
+        return asked === "left";
       }
 
       const { answer } = asked;
@@ -154,8 +154,8 @@ function useOpenUnwrittenLesson() {
           here,
         );
 
-        if (typeof written === "boolean") {
-          return written;
+        if (typeof written === "string") {
+          return written === "left";
         }
 
         if (written.answer?.kind === "lesson") {
@@ -253,7 +253,7 @@ export function useOpenDestination() {
     async (action: () => Promise<StudyBlockOpening | null>): Promise<boolean> => {
       const here = openingHere();
       const opened = await answerHere(action(), here);
-      return typeof opened === "boolean" ? opened : go(opened.answer, { here });
+      return typeof opened === "string" ? opened === "left" : go(opened.answer, { here });
     },
     [go],
   );
@@ -275,8 +275,8 @@ export function useStudyNavigation(sessionId: string) {
       const here = openingHere();
       const stopped = await answerHere(stopStudySessionAction(input()), here);
 
-      if (typeof stopped === "boolean") {
-        return stopped;
+      if (typeof stopped === "string") {
+        return stopped === "left";
       }
 
       if (stopped.answer) {

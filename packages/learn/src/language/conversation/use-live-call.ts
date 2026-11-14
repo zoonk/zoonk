@@ -5,6 +5,7 @@ import {
   type LanguageConversationObjectiveCheckInput,
   type LanguageConversationView,
 } from "@zoonk/core/language/conversations/contract";
+import { type MicrophoneProblem } from "@zoonk/ui/hooks/voice-recorder";
 import { type RefObject, useCallback, useState } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
 import { type CallLength } from "./live-call-clock";
@@ -24,11 +25,7 @@ import { type CallConnectionActions, useCallConnection } from "./use-call-connec
 import { useCallFinish, useCallMute, useCallPhase, useTypedReplies } from "./use-call-controls";
 import { useCallEnding } from "./use-call-ending";
 import { useCallEvents } from "./use-call-events";
-import {
-  type MicrophoneProblem,
-  type TappedCallAudio,
-  useCallMicrophone,
-} from "./use-call-microphone";
+import { type TappedCallAudio, useCallMicrophone } from "./use-call-microphone";
 import { type CallEndReason, type CallReport, useCallReport } from "./use-call-report";
 import { useCallSoFar } from "./use-call-so-far";
 import { useConnectCall } from "./use-connect-call";

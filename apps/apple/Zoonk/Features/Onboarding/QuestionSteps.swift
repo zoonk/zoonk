@@ -70,10 +70,10 @@ private struct OnboardingDetail: Decodable {
   }
 }
 
-/// A question's list, with its buttons pinned under it so they stay in reach however long the list
-/// is. While an answer saves (`sendsAnswer`), its fields lock (`locksWhileSaving`) and only the
-/// button that sent it spins; the list itself stays enabled, so that button keeps its focus. A failed
-/// save says so over the buttons.
+/// A question's list, with its buttons pinned under it in the list's column, so they stay in reach
+/// above the keyboard however long the list is. While an answer saves (`sendsAnswer`), its fields
+/// lock (`locksWhileSaving`) and only the button that sent it spins; the list itself stays enabled,
+/// so that button keeps its focus. A failed save says so over the buttons.
 struct QuestionForm<Content: View, Buttons: View>: View {
   @ViewBuilder let content: Content
   @ViewBuilder let buttons: Buttons
@@ -103,6 +103,7 @@ struct QuestionForm<Content: View, Buttons: View>: View {
         .keepsOffFold()
         .scenePadding(.horizontal)
         .padding(.vertical, 10)
+        .listColumnWidth()
       }
     }
     // Skip's outline is see-through, so what scrolls under the bar stops at its edge.

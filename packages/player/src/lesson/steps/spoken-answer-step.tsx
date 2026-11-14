@@ -4,7 +4,11 @@ import { toListeningStep } from "@zoonk/core/lesson-player/grade";
 import { useNoSpeechMessage } from "@zoonk/learn/language/no-speech";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { Button } from "@zoonk/ui/components/button";
-import { useCanRecord, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
+import {
+  type MicrophoneProblem,
+  useCanRecord,
+  useVoiceRecorder,
+} from "@zoonk/ui/hooks/voice-recorder";
 import { cn } from "@zoonk/ui/lib/utils";
 import { HeadphonesIcon, KeyboardIcon, MicIcon, SquareIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -47,7 +51,13 @@ function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
   );
 }
 
-function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: string }) {
+function RecordButton({
+  onProblem,
+  stepId,
+}: {
+  onProblem: (problem: MicrophoneProblem) => void;
+  stepId: string;
+}) {
   const t = useExtracted();
   const { actions, state } = useLessonPlayer();
 
@@ -64,8 +74,10 @@ function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: st
   const startRecording = async () => {
     actions.startRecording();
 
-    if ((await recorder.start()) === false) {
-      onBlocked();
+    const started = await recorder.start();
+
+    if (started === "blocked" || started === "unavailable") {
+      onProblem(started);
     }
   };
 
@@ -123,18 +135,18 @@ function getAnswerMode({
   canListen,
   canSpeak,
   cantTalk,
-  micBlocked,
+  micProblem,
 }: {
   canListen: boolean;
   canSpeak: boolean;
   cantTalk: boolean;
-  micBlocked: boolean;
+  micProblem: MicrophoneProblem | null;
 }): AnswerMode {
   if ((cantTalk || !canSpeak) && canListen) {
     return "listen";
   }
 
-  return cantTalk || micBlocked || !canSpeak ? "type" : "speak";
+  return cantTalk || micProblem || !canSpeak ? "type" : "speak";
 }
 
 /** An answer shows the way it was given, whatever this device would offer now. */
@@ -171,27 +183,19 @@ function useAnswerMode({
 
   const canListen = step.listening !== null;
   const [cantTalk, setCantTalk] = useTodayChoice(CANT_TALK_TODAY);
-  const [micBlocked, setMicBlocked] = useState(false);
+  const [micProblem, setMicProblem] = useState<MicrophoneProblem | null>(null);
 
   const mode =
     getGivenMode({ answer, result, step }) ??
-    getAnswerMode({ canListen, canSpeak, cantTalk, micBlocked });
+    getAnswerMode({ canListen, canSpeak, cantTalk, micProblem });
 
   const switchTo = (next: { cantTalk: boolean }) => {
     onAnswer(null);
     setCantTalk(next.cantTalk);
-    setMicBlocked(false);
+    setMicProblem(null);
   };
 
-  return {
-    canListen,
-    canSpeak,
-    cantTalk,
-    micBlocked,
-    mode,
-    onBlocked: () => setMicBlocked(true),
-    switchTo,
-  };
+  return { canListen, canSpeak, cantTalk, micProblem, mode, onProblem: setMicProblem, switchTo };
 }
 
 function ListeningInstead({
@@ -273,14 +277,16 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
 
       {answerMode.mode === "type" ? (
         <>
-          {answerMode.micBlocked && !isLocked && (
+          {answerMode.micProblem && !isLocked && (
             <p className="text-muted-foreground text-sm" role="status">
-              {t("The microphone is blocked. Type your answer instead.")}
+              {answerMode.micProblem === "blocked"
+                ? t("The microphone is blocked. Type your answer instead.")
+                : t("We can't use your microphone. Type your answer instead.")}
             </p>
           )}
 
           <LessonAnswerField
-            autoFocusOnPointer={answerMode.micBlocked}
+            autoFocusOnPointer={answerMode.micProblem !== null}
             isLocked={isLocked}
             label={spoken.blocks(splitQuestionData(step.content.prompt).question)}
             onChange={(value) => onAnswer(value ? { kind: "spokenAnswer", text: value } : null)}
@@ -288,7 +294,7 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
           />
         </>
       ) : (
-        !isLocked && <RecordButton onBlocked={answerMode.onBlocked} stepId={step.id} />
+        !isLocked && <RecordButton onProblem={answerMode.onProblem} stepId={step.id} />
       )}
 
       <ModeSwitch answerMode={answerMode} isLocked={isLocked} />

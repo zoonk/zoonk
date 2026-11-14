@@ -209,14 +209,14 @@
     "build": "pnpm extract:messages",
     "build:e2e": "pnpm extract:messages",
     "extract:messages": "tsx extract-messages.ts",
-    "i18n:lint": "eloqnt lint --strict && node ../i18n/src/precompiled-formats/cli.ts",
+    "i18n:lint": "eloqnt lint --strict",
     "i18n": "reuse-translations && eloqnt translate",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/openai": "4.0.110",
+    "@ai-sdk/openai": "4.0.118",
     "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",

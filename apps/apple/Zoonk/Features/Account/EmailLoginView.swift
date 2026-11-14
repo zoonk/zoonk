@@ -6,9 +6,10 @@ struct EmailLoginView: View {
   @State private var code = ""
   @State private var email = ""
   @State private var hasSentCode = false
+  @FocusState private var isCodeFocused: Bool
 
   var body: some View {
-    ZoonkList {
+    QuestionForm {
       Section {
         TextField(
           text: $email,
@@ -46,6 +47,7 @@ struct EmailLoginView: View {
           }
           .keyboardType(.numberPad)
           .textContentType(.oneTimeCode)
+          .focused($isCodeFocused)
           .onSubmit(signIn)
           .accessibilityLabel(
             Text(
@@ -65,15 +67,18 @@ struct EmailLoginView: View {
           }
         }
       }
+    } buttons: {
+      AccountFailureMessage(failure: session.failure)
 
-      Section {
+      Group {
         if hasSentCode {
-          BusyButton(isBusy: session.isWorking, isRow: true, action: signIn) {
+          BusyButton(isBusy: session.isWorking, icon: .forward, action: signIn) {
             Text(
               "Sign in",
               tableName: "Account",
               comment: "Button that verifies an email code")
           }
+          .buttonStyle(.mainAction)
           .disabled(!isCodeValid && !session.isWorking)
 
           Button {
@@ -86,23 +91,21 @@ struct EmailLoginView: View {
               tableName: "Account",
               comment: "Button that returns to the email entry step")
           }
+          .buttonStyle(.ghost)
           .disabled(session.isWorking)
         } else {
-          BusyButton(isBusy: session.isWorking, isRow: true, action: sendEmailCode) {
+          BusyButton(isBusy: session.isWorking, icon: .send, action: sendEmailCode) {
             Text(
               "Send code",
               tableName: "Account",
               comment: "Button that sends an email sign-in code")
           }
+          .buttonStyle(.mainAction)
           .disabled(!isEmailValid && !session.isWorking)
         }
       }
-
-      if session.failure != nil {
-        Section {
-          AccountFailureMessage(failure: session.failure)
-        }
-      }
+      .buttonSizing(.flexible)
+      .controlSize(.large)
     }
     .navigationTitle(
       Text("Email sign-in", tableName: "Account", comment: "Email login navigation title")
@@ -111,6 +114,11 @@ struct EmailLoginView: View {
     .onChange(of: session.state) { _, state in
       dismissAfterSignIn(state)
     }
+    .onChange(of: hasSentCode) {
+      isCodeFocused = hasSentCode
+    }
+    // The number pad has no Return key, so a complete code signs in on its own, as on main.
+    .onChange(of: normalizedCode, signIn)
   }
 
   private var normalizedEmail: String {

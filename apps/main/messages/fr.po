@@ -893,7 +893,7 @@ msgstr "Ton compagnon"
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "6YPtag"
 msgid "Your buddy answers your questions and adjusts your plan."
-msgstr "Ton Compagnon répond à tes questions et ajuste ton plan."
+msgstr "Ton compagnon répond à tes questions et ajuste ton plan."
 
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "BV0cQk"
@@ -1481,7 +1481,7 @@ msgstr "Confidentialité"
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "BbrYZc"
 msgid "Your buddy, lessons and language, the way you like them."
-msgstr "Ton Compagnon, tes leçons et ta langue, comme tu les aimes."
+msgstr "Ton compagnon, tes leçons et ta langue, comme tu les aimes."
 
 #: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
 msgctxt "LCU3Qs"
@@ -1585,7 +1585,7 @@ msgstr "Ce qui est inclus"
 #: src/app/[lang]/(app)/(settings)/subscription/free-plan-usage.tsx
 msgctxt "kkHvAa"
 msgid "<mono>{used, number}/{limit, number}</mono> buddy messages used today"
-msgstr "<mono>{used, number}/{limit, number}</mono> messages envoyés à ton Compagnon aujourd’hui"
+msgstr "<mono>{used, number}/{limit, number}</mono> messages envoyés à ton compagnon aujourd’hui"
 
 #: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
 msgctxt "lRRr8l"
@@ -2349,7 +2349,7 @@ msgstr "Parle-nous de ton objectif avec tes mots et réponds à quelques questio
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "60PJVp"
 msgid "You start free, no account needed. With a free account, you follow {goals, plural, one {one goal} other {# goals}} at a time, with a limit on lessons and on messages to Zu. For an exam, the diagnostic, the plan and {days, plural, =7 {the first week} one {the first day} other {the first # days}} of study are free. No card needed."
-msgstr "Tu peux commencer gratuitement, sans compte. Avec un compte gratuit, tu suis {goals, plural, one {un objectif} other {# objectifs}} à la fois, avec un nombre limité de leçons et de messages à Zu. Pour un examen, le diagnostic, le plan et {days, plural, =7 {la première semaine} one {le premier jour} other {les # premiers jours}} d’étude sont gratuits. Pas besoin de carte bancaire."
+msgstr "Tu peux commencer gratuitement, sans compte. Avec un compte gratuit, tu suis {goals, plural, =1 {un objectif} other {# objectifs}} à la fois, avec un nombre limité de leçons et de messages à Zu. Pour un examen, le diagnostic, le plan et {days, plural, =7 {la première semaine} =1 {le premier jour} other {les # premiers jours}} d’étude sont gratuits. Pas besoin de carte bancaire."
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "NNtrw6"
@@ -3339,12 +3339,12 @@ msgstr "Un plan adapté à ton objectif et à ta date"
 #: src/components/pricing/free-plan.tsx
 msgctxt "Bj_ci-"
 msgid "For an exam: the diagnostic, your plan and {days, plural, =7 {its first week} one {its first day} other {its first # days}}"
-msgstr "Pour un examen : le diagnostic, ton plan et {days, plural, =7 {sa première semaine} one {son premier jour} other {ses # premiers jours}}"
+msgstr "Pour un examen : le diagnostic, ton plan et {days, plural, =7 {sa première semaine} =1 {son premier jour} other {ses # premiers jours}}"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "5ZDN6U"
 msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
-msgstr "Un Compagnon d’étude avec IA : {count, plural, one {# message} other {# messages}} par jour"
+msgstr "Un compagnon d’étude avec IA : {count, plural, one {# message} other {# messages}} par jour"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "JfcsFI"
@@ -3369,7 +3369,7 @@ msgstr "Des examens blancs chronométrés comme le vrai"
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "qYv-RO"
 msgid "An AI study buddy whenever you're stuck"
-msgstr "Un Compagnon d’étude avec IA quand tu bloques"
+msgstr "Un compagnon d’étude avec IA quand tu bloques"
 
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "GEER8U"
@@ -3450,7 +3450,7 @@ msgstr "Résiliable à tout moment."
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "jPlE1k"
 msgid "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and your AI study buddy. Start free."
-msgstr "Prépare ton examen, ton nouveau travail ou ton déménagement avec Zoonk Plus : leçons et objectifs illimités, préparation complète à l’examen avec des examens blancs et ton Compagnon d’étude avec IA. Commence gratuitement."
+msgstr "Prépare ton examen, ton nouveau travail ou ton déménagement avec Zoonk Plus : leçons et objectifs illimités, préparation complète à l’examen avec des examens blancs et ton compagnon d’étude avec IA. Commence gratuitement."
 
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "DfjjXa"
@@ -3466,7 +3466,7 @@ msgstr "Commence gratuitement. <rest>Plus quand tu veux tout.</rest>"
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "brY8f_"
 msgid "Free covers {goals, plural, one {one goal} other {up to # goals}} at a time. Plus covers every goal, all the way to the big day."
-msgstr "La formule gratuite te permet de suivre {goals, plural, one {un objectif} other {jusqu’à # objectifs}} à la fois. Plus t’accompagne pour tous tes objectifs jusqu’au grand jour."
+msgstr "La formule gratuite te permet de suivre {goals, plural, =1 {un objectif} other {jusqu’à # objectifs}} à la fois. Plus t’accompagne pour tous tes objectifs jusqu’au grand jour."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"
@@ -3492,12 +3492,12 @@ msgstr "{month, plural, one {# leçon} other {# leçons}} par mois, jusqu’à {
 #: src/components/pricing/plus-questions.tsx
 msgctxt "PVvHeY"
 msgid "{days, plural, =7 {The first week} one {The first day} other {The first # days}} of exam prep"
-msgstr "{days, plural, =7 {La première semaine} one {Le premier jour} other {Les # premiers jours}} de préparation à un examen"
+msgstr "{days, plural, =7 {La première semaine} =1 {Le premier jour} other {Les # premiers jours}} de préparation à un examen"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "FZOFIX"
 msgid "{tutor, plural, one {# message to your buddy} other {# messages to your buddy}} and {uploads, plural, one {# upload} other {# uploads}} a day"
-msgstr "{tutor, plural, one {# message à ton Compagnon} other {# messages à ton Compagnon}} et {uploads, plural, one {# fichier envoyé} other {# fichiers envoyés}} par jour"
+msgstr "{tutor, plural, one {# message à ton compagnon} other {# messages à ton compagnon}} et {uploads, plural, one {# fichier envoyé} other {# fichiers envoyés}} par jour"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "QKrdr3"
@@ -3527,7 +3527,7 @@ msgstr "Plus est-il vraiment illimité ?"
 #: src/components/pricing/plus-questions.tsx
 msgctxt "flRDel"
 msgid "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>."
-msgstr "Presque. Les leçons, les objectifs et ton Compagnon ont des limites uniquement pour arrêter les robots et les outils automatisés, pas les personnes qui apprennent. Les appels d’expression orale ont des limites quotidiennes et mensuelles, plus élevées qu’avec la formule gratuite. <link>Consulte notre politique d’utilisation équitable</link>."
+msgstr "Presque. Les leçons, les objectifs et ton compagnon ont des limites uniquement pour arrêter les robots et les outils automatisés, pas les personnes qui apprennent. Les appels d’expression orale ont des limites quotidiennes et mensuelles, plus élevées qu’avec la formule gratuite. <link>Consulte notre politique d’utilisation équitable</link>."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "jNjtlE"
@@ -3552,7 +3552,7 @@ msgstr "Écris-nous à {email} et nous examinerons ta demande. Les achats sur l�
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "4YTeTA"
 msgid "{days, plural, =7 {Diagnostic and week 1} one {Diagnostic and day 1} other {Diagnostic and the first # days}}"
-msgstr "{days, plural, =7 {Diagnostic et semaine 1} one {Diagnostic et jour 1} other {Diagnostic et # premiers jours}}"
+msgstr "{days, plural, =7 {Diagnostic et semaine 1} =1 {Diagnostic et jour 1} other {Diagnostic et # premiers jours}}"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "NsXWWN"
@@ -3592,7 +3592,7 @@ msgstr "Tout autre objectif"
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "KshPEJ"
 msgid "{count, plural, one {About one short lesson each weekday.} other {About # short lessons each weekday.}}"
-msgstr "{count, plural, one {Environ une courte leçon chaque jour de semaine.} other {Environ # courtes leçons chaque jour de semaine.}}"
+msgstr "{count, plural, =1 {Environ une courte leçon chaque jour de semaine.} other {Environ # courtes leçons chaque jour de semaine.}}"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "en1DQp"

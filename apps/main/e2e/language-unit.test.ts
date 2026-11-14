@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { holdScripts } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
+import { holdActionAnswer } from "./held-action";
 import { createLanguageLearner } from "./language-learner";
 import { asPersona } from "./learn-personas";
 import { answerLiveCalls } from "./live-peer";
@@ -56,6 +57,35 @@ test.describe("Language unit page", () => {
 
     const call = page.getByRole("dialog", { name: "Practice a conversation" });
     await expect(call.getByRole("button", { name: "Continue" })).toBeVisible();
+
+    await context.close();
+  });
+
+  test("leaving while its call starts keeps the learner where they went", async ({ browser }) => {
+    const learner = await createLanguageLearner({ withSubscription: true });
+    const context = await browser.newContext({ storageState: learner.user.storageState });
+    const page = await context.newPage();
+    await page.goto(`/content/units/${learner.renting.id}`);
+    await page.getByRole("button", { name: "Practice a conversation" }).click();
+    const call = page.getByRole("dialog", { name: "Practice a conversation" });
+    await call.getByText("1 min", { exact: true }).click();
+    await expect(call.getByRole("radio", { exact: true, name: "1 min" })).toBeChecked();
+    const start = await holdActionAnswer(page, `/content/units/${learner.renting.id}`);
+
+    await call.getByRole("button", { name: "Continue" }).click();
+    await start.held;
+    await page.keyboard.press("Escape");
+    await expect(call).toBeHidden();
+
+    await page
+      .getByRole("navigation", { name: "Learning tabs" })
+      .getByRole("link", { name: /^Today\b/u })
+      .click();
+
+    await expect(page).toHaveURL(/\/today$/u);
+
+    expect(await start.release(/\/conversation\//u)).toBe(false);
+    await expect(page).toHaveURL(/\/today$/u);
 
     await context.close();
   });
