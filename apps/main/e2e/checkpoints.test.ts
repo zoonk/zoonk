@@ -1,6 +1,13 @@
-import { CHECKPOINT_QUESTIONS, createCheckpointLearner, playDuel } from "./checkpoint-fixtures";
+import {
+  CHECKPOINT_QUESTIONS,
+  answerDuelQuestion,
+  createCheckpointLearner,
+  playDuel,
+} from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
 import { openAs, pressUntil } from "./study-day";
+
+const question = (number: number) => `Question ${number} of ${CHECKPOINT_QUESTIONS}`;
 
 test.describe("A checkpoint from today's session", () => {
   test("continues back to the session by keyboard, to the day's summary", async ({ browser }) => {
@@ -66,18 +73,39 @@ test.describe("A checkpoint from today's session", () => {
     const { block, boss, user } = await createCheckpointLearner();
     const page = await openAs(browser, user);
     const checkpointUrl = new RegExp(`/checkpoint/${block.id}$`, "u");
-    const firstQuestion = `Question 1 of ${CHECKPOINT_QUESTIONS}`;
 
     await page.goto(`/challenge/${boss.id}`);
     await page.getByRole("button", { name: "Start" }).click();
     await expect(page).toHaveURL(checkpointUrl);
-    await expect(page.getByRole("progressbar", { name: firstQuestion })).toBeAttached();
+    await expect(page.getByRole("progressbar", { name: question(1) })).toBeAttached();
 
     await page.goBack();
     await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}$`, "u"));
     await page.getByRole("button", { name: "Start" }).click();
     await expect(page).toHaveURL(checkpointUrl);
-    await expect(page.getByRole("progressbar", { name: firstQuestion })).toBeAttached();
+    await expect(page.getByRole("progressbar", { name: question(1) })).toBeAttached();
+
+    await page.context().close();
+  });
+
+  test("opened again, it asks after the questions answered in another tab", async ({ browser }) => {
+    const { block, boss, user } = await createCheckpointLearner();
+    const page = await openAs(browser, user);
+    const checkpointUrl = new RegExp(`/checkpoint/${block.id}$`, "u");
+
+    await page.goto(`/challenge/${boss.id}`);
+    await page.getByRole("button", { name: "Start" }).click();
+    await expect(page.getByRole("progressbar", { name: question(1) })).toBeAttached();
+    await page.goBack();
+
+    const other = await page.context().newPage();
+    await other.goto(`/checkpoint/${block.id}`);
+    await answerDuelQuestion(other, 1);
+    await expect(other.getByRole("progressbar", { name: question(2) })).toBeAttached();
+
+    await page.getByRole("button", { name: "Start" }).click();
+    await expect(page).toHaveURL(checkpointUrl);
+    await expect(page.getByRole("progressbar", { name: question(2) })).toBeAttached();
 
     await page.context().close();
   });
