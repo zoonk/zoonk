@@ -9,6 +9,7 @@ import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
+  SuggestionChoices,
   SuggestionContent,
   SuggestionDescription,
   SuggestionHeader,
@@ -87,8 +88,7 @@ function ChoiceQuestion({
             pending={isPending}
           />
         ) : (
-          // Equal options, so one under the other in their order, never one as the main answer.
-          <SuggestionActions className="flex-col items-stretch">
+          <SuggestionChoices>
             {choice.options.map((option) => (
               <SuggestionAction
                 action={() => onPick({ group: choice.group, subjects: [option.name] })}
@@ -99,7 +99,7 @@ function ChoiceQuestion({
                 {option.shortName ?? option.name}
               </SuggestionAction>
             ))}
-          </SuggestionActions>
+          </SuggestionChoices>
         )}
 
         {failed && <SuggestionSaveError />}
