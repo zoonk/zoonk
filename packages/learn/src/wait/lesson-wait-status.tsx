@@ -32,7 +32,8 @@ export function LessonWaitStatus({
   const gettingReady =
     kind === "challenge" ? t("Getting your challenge ready") : t("Getting your lesson ready");
 
-  const sentence = holding ? t("Your lesson is ready") : gettingReady;
+  const ready = kind === "challenge" ? t("Your challenge is ready") : t("Your lesson is ready");
+  const sentence = holding ? ready : gettingReady;
 
   return (
     <WaitStatus done={holding} value={value}>
