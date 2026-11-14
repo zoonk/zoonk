@@ -5,12 +5,7 @@ const ROOT_FONT_PX = 16;
 const TENTH = 10;
 
 /** The shared pieces, which may set a size for themselves, and the type roles (craft T1). */
-const SOURCES = [
-  "apps/playground/src/design-system/type.ts",
-  "packages/learn/src/**/*.{ts,tsx}",
-  "packages/player/src/**/*.{ts,tsx}",
-  "packages/ui/src/**/*.{ts,tsx}",
-];
+const SOURCES = ["apps/playground/src/design-system/type.ts", "packages/ui/src/**/*.{ts,tsx}"];
 
 const GLOBALS = "packages/ui/src/styles/globals.css";
 

@@ -4,30 +4,47 @@ import { type FocusTestFocus } from "@zoonk/core/learner/placement/focus-test-co
 import { useExtracted } from "next-intl";
 import { type Decision } from "./focus-test-proposal";
 
-/** The one line under the result's headline: what the plan does with what the test found. */
-export function useResultLine() {
+/** The plan gives a focus more time only when it follows it: these it doesn't. */
+function isOnlySuggested(state: FocusTestFocus["state"]): boolean {
+  return state === "handPicked" || state === "declined";
+}
+
+/** The result's headline is the result; a line under it only says what the plan did with it. */
+export function useResultWords() {
   const t = useExtracted();
 
-  const startingPoint = (lessonsSkipped: number): string =>
-    lessonsSkipped > 0
+  const title = ({
+    focus,
+    lessonsSkipped,
+  }: {
+    focus: Pick<FocusTestFocus, "rows" | "state"> | null;
+    lessonsSkipped: number;
+  }): string => {
+    if (focus) {
+      const count = focus.rows.length;
+
+      return isOnlySuggested(focus.state)
+        ? t(
+            "{count, plural, one {The test suggests this subject} other {The test suggests these # subjects}}",
+            { count },
+          )
+        : t("{count, plural, one {Focus on this subject} other {Focus on these # subjects}}", {
+            count,
+          });
+    }
+
+    return lessonsSkipped > 0
       ? t(
-          "{count, plural, one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}",
+          "{count, plural, one {Your plan skips # lesson you already know} other {Your plan skips # lessons you already know}}",
           { count: lessonsSkipped },
         )
-      : t({
-          description:
-            "The Focus test's result when no answer showed something the learner already knows: every exam subject starts at its first lessons.",
-          message: "Your plan starts each subject from the basics.",
-        });
+      : t("Your plan starts from the basics");
+  };
 
   const answered = (decision: Decision): string => {
     switch (decision) {
       case "applied":
-        return t({
-          description:
-            "After the learner agreed to give the listed exam subjects more time: the study plan changed.",
-          message: "Your plan now gives these subjects more time.",
-        });
+        return t("Your plan now gives these subjects more time.");
       case "declined":
         return t("Your plan stays as it was.");
       case "undone":
@@ -37,39 +54,22 @@ export function useResultLine() {
     }
   };
 
-  const suggested = (state: FocusTestFocus["state"]): string => {
+  const line = (state: FocusTestFocus["state"]): string | null => {
     switch (state) {
       case "current":
-        return t({
-          description:
-            "Under “Here's where to focus”, above a list of exam subjects: the learner's study plan already gives them more time.",
-          message: "Your plan gives these subjects more time.",
-        });
+        return t("Your plan gives these subjects more time.");
       case "handPicked":
-        return t({
-          description:
-            "Above the exam subjects the Focus test suggests: the learner picked other subjects to focus on, and the study plan keeps their pick. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.",
-          message: "Your plan keeps the focus you chose. This is what the test suggests.",
-        });
+        return t("Your plan keeps the focus you chose.");
       case "declined":
-        return t({
-          description:
-            "Above the exam subjects the Focus test suggests: the learner answered “Not now” to giving them more time, so the study plan was left unchanged.",
-          message: "You kept your plan as it is. This is what the test suggests.",
-        });
+        return t("Your plan stays as it is.");
       case "ifTimeShort":
       case "proposed":
       case "suggested":
-        return t({
-          description:
-            "Under “Here's where to focus”, above a list of exam subjects: why the Focus test suggests these subjects, then the fact that focusing on them is never what removes a subject from the study plan. Do not say that every subject stays in the plan or that no subject is left out: with very little study time a subject can still end up with no lessons. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.",
-          message:
-            "Based on your answers and what counts most in your exam. Focusing never removes a subject.",
-        });
+        return null;
       default:
         return state satisfies never;
     }
   };
 
-  return { answered, startingPoint, suggested };
+  return { answered, line, title };
 }

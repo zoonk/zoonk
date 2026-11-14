@@ -46,7 +46,22 @@ export const PENDING_LINK_SCRIPT = `(${markPendingLinks.toString()})(${JSON.stri
  * keeps this page as it was until that one answers. With `PENDING_LINK_SCRIPT` in the page, the link
  * is busy from the tap, even before the page hydrates. It still takes another tap, which retries a
  * navigation the browser stopped (Esc, its stop button), since no `pageshow` clears the mark then.
+ * Its content shows the busy state when drawn with `BusyContent`, as `PendingLink` and `EnterLink` do.
  */
+export function DocumentLink({ children, className, ...props }: ComponentProps<"a">) {
+  return (
+    <a
+      {...props}
+      {...{ [PENDING_LINK_ATTRIBUTE]: "" }}
+      className={cn("group/busy relative aria-busy:cursor-progress", className)}
+      // The script marks a link tapped before the page hydrates.
+      suppressHydrationWarning
+    >
+      {children}
+    </a>
+  );
+}
+
 export function PendingLink({
   children,
   className,
@@ -55,19 +70,10 @@ export function PendingLink({
   ...props
 }: ComponentProps<"a"> & Pick<ComponentProps<typeof BusyContent>, "icon" | "iconPosition">) {
   return (
-    <a
-      {...props}
-      {...{ [PENDING_LINK_ATTRIBUTE]: "" }}
-      className={cn(
-        "group/busy relative aria-busy:cursor-progress [&_svg:not([class*='size-'])]:size-4",
-        className,
-      )}
-      // The script marks a link tapped before the page hydrates.
-      suppressHydrationWarning
-    >
+    <DocumentLink {...props} className={cn("[&_svg:not([class*='size-'])]:size-4", className)}>
       <BusyContent icon={icon} iconPosition={iconPosition}>
         {children}
       </BusyContent>
-    </a>
+    </DocumentLink>
   );
 }

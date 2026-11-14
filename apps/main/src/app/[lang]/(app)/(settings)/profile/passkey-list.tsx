@@ -111,18 +111,26 @@ export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
   const [dialog, setDialog] = useState<OpenDialog | null>(null);
   const failureMessage = useFailureMessage();
 
+  /** Resolves to whether it changed; a failure has been said by then. */
+  const settle = async (run: () => Promise<PasskeyChangeFailure | null>) => {
+    const { data, error } = await safeAsync(run);
+    await safeAsync(refreshPasskeysAction);
+    const failure = error ? "failed" : data;
+
+    if (failure === "signInAgain") {
+      setDialog(null);
+      setAsksLogin(true);
+    } else if (failure && failure !== "cancelled") {
+      showErrorToast(failureMessage(failure));
+    }
+
+    return failure === null;
+  };
+
   const change = (run: () => Promise<PasskeyChangeFailure | null>) => {
     startTransition(async () => {
-      const { data, error } = await safeAsync(run);
-      await safeAsync(refreshPasskeysAction);
-      const failure = error ? "failed" : data;
+      await settle(run);
       setDialog(null);
-
-      if (failure === "signInAgain") {
-        setAsksLogin(true);
-      } else if (failure && failure !== "cancelled") {
-        showErrorToast(failureMessage(failure));
-      }
     });
   };
 
@@ -138,8 +146,9 @@ export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
       return deleted === "deleted" ? null : deleted;
     });
 
+  /** In the rename sheet's own save, which keeps the name typed if it didn't go through. */
   const rename = (id: string, name: string) =>
-    change(async () => {
+    settle(async () => {
       const renamed = await renamePasskey({ id, name });
       return renamed === "renamed" ? null : renamed;
     });
@@ -187,7 +196,6 @@ export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
 
       {dialog?.kind === "rename" && (
         <RenameDialog
-          isPending={isPending}
           onClose={() => setDialog(null)}
           onSave={(name) => rename(dialog.passkey.id, name)}
           passkey={dialog.passkey}

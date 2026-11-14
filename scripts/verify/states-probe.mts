@@ -19,7 +19,7 @@ export type Moved = {
 /** A search field is a field whose list below it changes as a person types. */
 type ActionKind = "control" | "field" | "fold" | "overlay" | "pick" | "search";
 
-export type Action = { id: string; kind: ActionKind; label: string };
+export type Action = { id: string; kind: ActionKind; label: string; returnTo?: string };
 
 declare global {
   // oxlint-disable-next-line no-var -- A page global is declared with `var`.
@@ -61,19 +61,7 @@ export function markActions(scope: string): Action[] {
   }
 
   function label(element: Element) {
-    const labelledById = element.getAttribute("aria-labelledby")?.split(" ")[0];
-    const labelledBy = labelledById ? document.querySelector(`#${CSS.escape(labelledById)}`) : null;
-
-    const named =
-      element.getAttribute("aria-label") ??
-      // oxlint-disable-next-line unicorn/prefer-dom-node-text-content -- Only `innerText` leaves out hidden text.
-      (labelledBy instanceof HTMLElement ? labelledBy.innerText : null) ??
-      // oxlint-disable-next-line unicorn/prefer-dom-node-text-content -- Only `innerText` leaves out hidden text.
-      (element instanceof HTMLElement ? element.innerText : "");
-
-    const text = (named.trim() || element.getAttribute("placeholder") || element.id)
-      .replaceAll(/\s+/gu, " ")
-      .slice(0, LABEL_LENGTH);
+    const text = (globalThis.zoonkPage.label(element) || element.id).slice(0, LABEL_LENGTH);
 
     return `${element.tagName.toLowerCase()}${text ? ` "${text}"` : ""}`;
   }
@@ -110,7 +98,20 @@ export function markActions(scope: string): Action[] {
           element.dataset.zoonkAct = id;
         }
 
-        actions.push({ id, kind: kindOf(found), label: label(element) });
+        const menu = element.closest("[role=menu]");
+
+        const trigger = menu?.id
+          ? [...document.querySelectorAll("[aria-haspopup=menu]")].find((node) =>
+              node.getAttribute("aria-controls")?.split(/\s+/u).includes(menu.id),
+            )
+          : null;
+
+        actions.push({
+          id,
+          kind: kindOf(found),
+          label: label(element),
+          returnTo: trigger instanceof HTMLElement ? trigger.dataset.zoonkAct : undefined,
+        });
       }
     }
   }
@@ -125,21 +126,7 @@ export function markActions(scope: string): Action[] {
  * scroll, which acting on the page changes, so it and what's in it are left out.
  */
 export function snapshotLayout() {
-  function place(element: HTMLElement) {
-    let left = 0;
-    let top = 0;
-
-    for (
-      let current: HTMLElement | null = element;
-      current;
-      current = current.offsetParent instanceof HTMLElement ? current.offsetParent : null
-    ) {
-      left += current.offsetLeft;
-      top += current.offsetTop;
-    }
-
-    return { height: element.offsetHeight, left, top, width: element.offsetWidth };
-  }
+  const { place } = globalThis.zoonkPage;
 
   const sticky = [...document.body.querySelectorAll("*")].filter(
     (element) => getComputedStyle(element).position === "sticky",
@@ -164,34 +151,10 @@ export function compareLayout(targetId: string): Comparison {
   const before = globalThis.zoonkLayout ?? [];
   const target = document.querySelector(`[data-zoonk-act="${targetId}"]`);
 
-  function place(element: HTMLElement) {
-    let left = 0;
-    let top = 0;
-
-    for (
-      let current: HTMLElement | null = element;
-      current;
-      current = current.offsetParent instanceof HTMLElement ? current.offsetParent : null
-    ) {
-      left += current.offsetLeft;
-      top += current.offsetTop;
-    }
-
-    return { height: element.offsetHeight, left, top, width: element.offsetWidth };
-  }
+  const { place } = globalThis.zoonkPage;
 
   function label(element: HTMLElement) {
-    const labelledById = element.getAttribute("aria-labelledby")?.split(" ")[0];
-    const labelledBy = labelledById ? document.querySelector(`#${CSS.escape(labelledById)}`) : null;
-
-    const named =
-      element.getAttribute("aria-label") ??
-      // oxlint-disable-next-line unicorn/prefer-dom-node-text-content -- Only `innerText` leaves out hidden text.
-      (labelledBy instanceof HTMLElement ? labelledBy.innerText : null) ??
-      // oxlint-disable-next-line unicorn/prefer-dom-node-text-content -- Only `innerText` leaves out hidden text.
-      element.innerText;
-
-    const text = named.replaceAll(/\s+/gu, " ").trim().slice(0, LABEL_LENGTH);
+    const text = globalThis.zoonkPage.label(element).slice(0, LABEL_LENGTH);
     const slot = element.dataset.slot ? `[data-slot=${element.dataset.slot}]` : "";
     return `${element.tagName.toLowerCase()}${slot}${text ? ` "${text}"` : ""}`;
   }

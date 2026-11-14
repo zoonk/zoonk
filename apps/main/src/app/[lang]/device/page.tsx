@@ -63,7 +63,9 @@ async function CliLoginBody({ searchParams }: Pick<Props, "searchParams">) {
         </p>
         <BottomBar>
           <BottomBarActions>
-            <AuthGateAction href={`/login?next=${encodeURIComponent(back)}`}>
+            <AuthGateAction
+              href={`${getPathname({ href: "/login", locale })}?next=${encodeURIComponent(back)}`}
+            >
               {t("Log in")}
             </AuthGateAction>
           </BottomBarActions>

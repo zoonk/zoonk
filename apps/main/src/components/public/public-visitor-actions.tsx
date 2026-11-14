@@ -1,8 +1,7 @@
 import { LoginBarLink } from "@/components/login-bar-link";
-import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { getExtracted } from "next-intl/server";
-import { ShownWhenStartAway } from "./page-start";
+import { FloatingStartLink, ShownWhenStartAway } from "./page-start";
 
 /**
  * "Log in" ends the bar on every public page. The start button sits before it and, on a page with
@@ -13,9 +12,9 @@ export async function PublicVisitorActions({ ownStart = false }: { ownStart?: bo
   const t = await getExtracted();
 
   const startLink = (
-    <Link className={buttonVariants({ size: "bar" })} href="/start">
+    <FloatingStartLink className={buttonVariants({ size: "bar" })}>
       {t("Build my plan")}
-    </Link>
+    </FloatingStartLink>
   );
 
   return (

@@ -60,7 +60,15 @@ struct CallIntro {
 
 struct ConversationIntro<Footer: View>: View {
   let intro: CallIntro
+  /// The call needs a subscription: the gate's words take the sound note's place.
+  var isLocked = false
+  /// Whom the learner would call with the microphone blocked: how to go on takes the note's place.
+  var microphoneOff: String?
+  /// What the bar's last tap couldn't do, over its buttons.
+  var barNote: BarNote?
   @ViewBuilder let footer: Footer
+
+  @AccessibilityFocusState private var isStopFocused: Bool
 
   var body: some View {
     PaneSplit {
@@ -70,14 +78,16 @@ struct ConversationIntro<Footer: View>: View {
     } secondary: {
       ZoonkList {
         task
+        gate
       }
-      .safeAreaBar(edge: .bottom) { startBar }
+      .bottomBar(note: barNote) { footer }
     } single: {
       ZoonkList {
         about
         task
+        gate
       }
-      .safeAreaBar(edge: .bottom) { startBar.keepsOffFold() }
+      .bottomBar(note: barNote) { footer }
     }
   }
 
@@ -89,46 +99,27 @@ struct ConversationIntro<Footer: View>: View {
   private var about: some View {
     Section {
       VStack(alignment: .leading, spacing: 8) {
-        eyebrow
-          .typeStyle(.data)
-          .foregroundStyle(.faint)
+        Chip(eyebrow)
+          .padding(.bottom, 4)
 
         Text(intro.speakingTask?.task.name ?? intro.title)
           .typeStyle(.section)
 
         Text(intro.speakingTask?.card.summary ?? intro.situation)
           .foregroundStyle(.mutedForeground)
-
-        if !intro.callsCharacter {
-          Text(howTheCallRuns)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-        }
       }
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)
     }
 
-    if let examTask = intro.speakingTask {
-      Section {
-        CharacterRow(intro: intro, isTalking: false)
-      } footer: {
-        SectionFooter {
-          StandInNote(name: intro.character.name, role: examTask.task.role)
-        }
-      }
-    } else {
-      Section {
-        CharacterRow(intro: intro, isTalking: false)
-      }
+    Section {
+      CharacterRow(intro: intro, isTalking: false)
     }
 
-    if let examTask = intro.speakingTask {
-      if examTask.task.prepMinutes > 0, let conversationId = intro.conversationId {
-        ExamPrepTimer(cardId: conversationId, task: examTask.task)
-      }
-    } else if intro.callsCharacter {
-      HowTheCallWorks(intro: intro)
+    if let examTask = intro.speakingTask, examTask.task.prepMinutes > 0,
+      let conversationId = intro.conversationId
+    {
+      ExamPrepTimer(cardId: conversationId, task: examTask.task)
     }
   }
 
@@ -137,28 +128,9 @@ struct ConversationIntro<Footer: View>: View {
       Text(speakingTaskMinutes(min: examTask.task.minutes.min, max: examTask.task.minutes.max))
     } else {
       Text(
-        "About \(length)\u{00A0}· Level \(intro.level)", tableName: "Voice",
+        "\(length)\u{00A0}· Level \(intro.level)", tableName: "Voice",
         comment: "A call's length and level, over its title")
     }
-  }
-
-  private var howTheCallRuns: String {
-    let ends = String(
-      localized: "It ends on its own after about \(length).", table: "Voice",
-      comment: "An exam task's call stops by itself at about its length")
-
-    guard let examTask = intro.speakingTask else {
-      return ends
-    }
-
-    return [
-      String(
-        localized: "\(intro.character.name) opens the call, and your card stays on screen.",
-        table: "Voice", comment: "An exam task's call: the AI speaks first, the card stays visible"),
-      ends,
-      speakingRatedOn(
-        examTask.criteria.map { speakingCriterionName($0.key, officialName: $0.name) }),
-    ].joinedSentences()
   }
 
   @ViewBuilder
@@ -173,15 +145,7 @@ struct ConversationIntro<Footer: View>: View {
             "Task \(examTask.number) of \(examTask.taskCount)", tableName: "Voice",
             comment: "Which task of the exam's speaking paper this is"))
       } footer: {
-        SectionFooter {
-          MicNote(
-            text: Text(
-              "Speak your answers: typed ones aren't rated on how you sound. The microphone is used only during the call.",
-              tableName: "Voice",
-              comment:
-                "Before an exam task's call: why to speak rather than type, and the microphone"
-            ))
-        }
+        note
       }
     } else {
       Section {
@@ -200,45 +164,73 @@ struct ConversationIntro<Footer: View>: View {
             "What to get across", tableName: "Voice", comment: "The call's goals, before it starts")
         )
       } footer: {
-        SectionFooter {
-          MicNote(
-            text: Text(
-              "Turn your sound on. The microphone is on only during the call.", tableName: "Voice",
-              comment: "Before a call: what it needs from the learner's device"))
-        }
+        note
       }
     }
   }
 
-  private var startBar: some View {
-    VStack(spacing: 12) {
-      footer
+  /// A call that can't start needs no sound.
+  @ViewBuilder
+  private var note: some View {
+    if !isLocked, microphoneOff == nil {
+      SectionFooter {
+        SoundNote()
+      }
     }
-    .scenePadding()
+  }
+
+  /// What stopped, under the call it stopped, as a heading of its own so it never reads as a goal.
+  @ViewBuilder
+  private var gate: some View {
+    if isLocked {
+      stop(title: CallStartFooter.lockedTitle, line: CallStartFooter.lockedLine)
+    } else if let microphoneOff {
+      stop(title: CallMicrophoneOff.title, line: CallMicrophoneOff.text(name: microphoneOff))
+        // It replaces the Call button VoiceOver was on.
+        .accessibilityFocused($isStopFocused)
+        .onAppear { isStopFocused = true }
+    }
+  }
+
+  private func stop(title: Text, line: Text) -> some View {
+    Section {
+      VStack(alignment: .leading, spacing: 4) {
+        title
+          .typeStyle(.section)
+
+        line
+          .foregroundStyle(.mutedForeground)
+      }
+      .accessibilityElement(children: .combine)
+      .listRowBackground(Color.clear)
+      .listRowSeparator(.hidden)
+    }
   }
 }
 
-/// A call the learner's plan leaves to Plus shows the same intro, locked.
+/// A call that needs a subscription shows the same intro with the gate in the call button's place.
 struct CallStartFooter: View {
   let isLocked: Bool
   /// Whom the learner calls; nil for an examiner, whose call just starts.
   let callee: String?
   let onStart: () -> Void
 
-  static var plusRequired: Text {
+  static var lockedTitle: Text {
     Text(
-      "Challenge calls come with Plus. Your plan keeps going without them.",
-      tableName: "Voice", comment: "A checkpoint call or exam speaking task needs Plus")
+      "This call needs a subscription", tableName: "Voice",
+      comment: "A free learner tried a language plan's challenge call")
+  }
+
+  static var lockedLine: Text {
+    Text(
+      "Your plan goes on without it.", tableName: "Voice",
+      comment: "Under a challenge call that needs a subscription")
   }
 
   var body: some View {
     if isLocked {
-      PlusNotice(description: Self.plusRequired, showsSeePlus: false)
-
-      SeePlusButton()
-        .frame(maxWidth: .infinity)
+      SubscribeButton()
         .buttonStyle(.mainAction)
-        .controlSize(.large)
     } else {
       Button(action: onStart) {
         Label {
@@ -246,10 +238,8 @@ struct CallStartFooter: View {
         } icon: {
           Image(systemName: "phone.fill")
         }
-        .frame(maxWidth: .infinity)
       }
       .buttonStyle(.mainAction)
-      .controlSize(.large)
       .keyboardShortcut(.defaultAction)
     }
   }
@@ -269,11 +259,10 @@ struct CallButtonTitle: View {
 
 /// The learner said no to the microphone: nothing is reserved until they choose to type or allow
 /// it in Settings.
+/// A call whose microphone is blocked goes on by typing; its words show in the intro.
 struct CallMicrophoneOff: View {
   @Environment(\.openURL) private var openURL
-  @AccessibilityFocusState private var isMessageFocused: Bool
 
-  let name: String
   let onType: () -> Void
 
   static var title: Text {
@@ -288,21 +277,14 @@ struct CallMicrophoneOff: View {
   }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 4) {
-      Self.title
-        .typeStyle(.body.weight(.semibold))
-
-      Self.text(name: name)
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
+    Button {
+      if let url = URL(string: UIApplication.openSettingsURLString) {
+        openURL(url)
+      }
+    } label: {
+      Text("Open Settings", tableName: "Voice", comment: "Button that opens the app's settings")
     }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .accessibilityElement(children: .combine)
-    // It replaces the Call button VoiceOver was on.
-    .accessibilityFocused($isMessageFocused)
-    .onAppear {
-      isMessageFocused = true
-    }
+    .buttonStyle(.outline)
 
     Button(action: onType) {
       Label {
@@ -310,103 +292,20 @@ struct CallMicrophoneOff: View {
       } icon: {
         Image(systemName: "keyboard")
       }
-      .frame(maxWidth: .infinity)
     }
     .buttonStyle(.mainAction)
-    .controlSize(.large)
-
-    Button {
-      if let url = URL(string: UIApplication.openSettingsURLString) {
-        openURL(url)
-      }
-    } label: {
-      Text("Open Settings", tableName: "Voice", comment: "Button that opens the app's settings")
-        .frame(maxWidth: .infinity)
-    }
-    .buttonStyle(.outline)
-    .controlSize(.large)
   }
 }
 
-/// What happens once the learner calls, so the character speaking first is no surprise.
-private struct HowTheCallWorks: View {
-  let intro: CallIntro
-
+/// The system asks for the microphone when the call starts, so the note is only the sound.
+private struct SoundNote: View {
   var body: some View {
-    let name = intro.character.name
-    let length = Duration.seconds(intro.minutes * 60).formatted(
-      .units(allowed: [.minutes], width: .abbreviated))
-
-    Section {
-      step(1) {
-        Text(
-          "\(name) answers and speaks first.", tableName: "Voice",
-          comment: "How a call works: step 1")
-      }
-      step(2) {
-        Text(
-          "Then it's your turn: answer out loud, or type if you can't talk.", tableName: "Voice",
-          comment: "How a call works: step 2")
-      }
-      step(3) {
-        Text(
-          "When you've done everything, or after about \(length), \(name) says goodbye and the call ends.",
-          tableName: "Voice", comment: "How a call works: step 3")
-      }
-    } header: {
-      SectionTitle(
-        Text("How the call works", tableName: "Voice", comment: "Before a call: what will happen"))
-    }
-  }
-
-  private func step(_ number: Int, @ViewBuilder _ text: () -> Text) -> some View {
-    Label {
-      text()
-    } icon: {
-      Image(systemName: "\(number).circle")
-    }
-  }
-}
-
-private struct StandInNote: View {
-  let name: String
-  let role: Components.Schemas.SpeakingTask.RolePayload
-
-  var body: some View {
-    let standIn =
-      switch role {
-      case .examiner:
-        String(
-          localized: "\(name) is an AI standing in for a human examiner.", table: "Voice",
-          comment: "Before an exam task: who the AI plays")
-      case .partner:
-        String(
-          localized: "\(name) is an AI playing the other candidate, in place of a real one.",
-          table: "Voice", comment: "Before an exam task: who the AI plays")
-      }
-
     Label {
       Text(
-        [
-          standIn,
-          String(
-            localized: "It's practice: the estimate after it isn't an official score.",
-            table: "Voice", comment: "Before an exam task: its estimate isn't an official score"),
-        ].joinedSentences())
+        "Turn your sound on.", tableName: "Voice",
+        comment: "Before a call: what it needs from the learner's device")
     } icon: {
-      Image(systemName: "info.circle")
-    }
-  }
-}
-
-private struct MicNote: View {
-  let text: Text
-
-  var body: some View {
-    Label {
-      text
-    } icon: {
-      Image(systemName: "mic")
+      Image(systemName: "speaker.wave.2")
     }
   }
 }
@@ -437,10 +336,13 @@ struct CharacterRow: View {
           if let role = intro.speakingTask?.task.role {
             switch role {
             case .examiner:
-              Text("Examiner", tableName: "Voice", comment: "Whom the AI plays in an exam task")
+              Text(
+                "Examiner (AI)", tableName: "Voice",
+                comment: "Whom the AI plays in an exam task, in place of a human examiner")
             case .partner:
               Text(
-                "Other candidate", tableName: "Voice", comment: "Whom the AI plays in an exam task")
+                "Other candidate (AI)", tableName: "Voice",
+                comment: "Whom the AI plays in an exam task, in place of a real candidate")
             }
           } else {
             Text("\(character.role)\u{00A0}· \(character.place)")

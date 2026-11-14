@@ -9,6 +9,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { CircleHelpIcon, GraduationCapIcon, RotateCwIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState, useTransition } from "react";
+import { Eyebrow } from "../_components/eyebrow";
 import {
   ListGroup,
   ListRowContent,
@@ -18,14 +19,13 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
-import { PageEyebrow } from "../_components/page";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useRefreshUntilShown } from "../generation/use-refresh-until-shown";
 import { LearnLink } from "../learn-link";
 import {
+  OnboardingActions,
   OnboardingColumn,
-  OnboardingFooter,
   OnboardingFrame,
   OnboardingHeading,
   OnboardingPrimaryButton,
@@ -190,9 +190,19 @@ export function ExplainWaiting({
         ),
       }}
     >
-      <OnboardingColumn>
+      <OnboardingColumn
+        bar={
+          ready && (
+            <OnboardingActions>
+              <OnboardingPrimaryButton autoFocus onClick={onStart}>
+                {t("Start")}
+              </OnboardingPrimaryButton>
+            </OnboardingActions>
+          )
+        }
+      >
         <OnboardingHeading>
-          <PageEyebrow>{quickExplanation}</PageEyebrow>
+          <Eyebrow>{quickExplanation}</Eyebrow>
           <OnboardingTitle>{explanation.title}</OnboardingTitle>
         </OnboardingHeading>
 
@@ -206,14 +216,6 @@ export function ExplainWaiting({
         {deeper}
 
         {!ready && !failed && <SlowWait onRetry={onRetry} />}
-
-        {ready && (
-          <OnboardingFooter>
-            <OnboardingPrimaryButton autoFocus onClick={onStart}>
-              {t("Start")}
-            </OnboardingPrimaryButton>
-          </OnboardingFooter>
-        )}
       </OnboardingColumn>
     </OnboardingFrame>
   );

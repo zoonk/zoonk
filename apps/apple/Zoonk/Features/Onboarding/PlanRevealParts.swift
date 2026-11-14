@@ -149,7 +149,7 @@ private struct MonthYear: View {
 
   var body: some View {
     let parts = date.formatted(
-      Date.FormatStyle(timeZone: .gmt).month(.abbreviated).year().attributed)
+      Date.FormatStyle(timeZone: .gmt).month(.abbreviated).year().attributedStyle)
 
     HStack(alignment: .firstTextBaseline, spacing: 0) {
       ForEach(Array(parts.runs.enumerated()), id: \.offset) { _, run in
@@ -165,7 +165,8 @@ private struct MonthYear: View {
         }
       }
     }
-    .accessibilityElement(children: .combine)
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(String(parts.characters))
   }
 }
 
@@ -327,13 +328,13 @@ struct RevealWeek: View {
   }
 }
 
-/// "Fri 13", in the locale's order: the week is the next six days, so the month says nothing.
 private func revealDay(_ isoDate: String) -> String {
   guard let date = PlanDate.date(isoDate) else {
     return isoDate
   }
 
-  return date.formatted(Date.FormatStyle(timeZone: .gmt).weekday(.abbreviated).day())
+  return date.formatted(
+    Date.FormatStyle(timeZone: .gmt).weekday(.abbreviated).month(.abbreviated).day())
 }
 
 extension RevealDay.Item {

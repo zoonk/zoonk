@@ -333,7 +333,7 @@ private struct MindMapCreateSection: View {
           "We couldn't reach the server. Check your connection.", table: "MindMaps",
           comment: "Asking for a map didn't reach the server"))
     case .stopped(let limit):
-      HelpLimitNotice(limit: limit.limit, message: limit.message)
+      LimitNotice(limit: limit.limit, words: limit.words)
     case .onTheWay, .unfinished, .fewer, .needLessons:
       Text(verbatim: note(line) ?? "")
         .typeStyle(.note)

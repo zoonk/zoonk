@@ -2,7 +2,7 @@
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import { DrawerContent } from "@zoonk/ui/components/drawer";
+import { DrawerContent, DrawerFooter } from "@zoonk/ui/components/drawer";
 import { type LucideIcon, Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
@@ -66,10 +66,7 @@ export function PlanChangeApplied({
         <PlanChangeSummary change={change} icon={icon} />
       </DrawerContent>
 
-      <div className="flex flex-col gap-2 border-t px-6 pt-4 pb-6">
-        <Button onClick={onDone} size="lg">
-          {t("Done")}
-        </Button>
+      <DrawerFooter>
         {change.canUndo && (
           <Button
             busy={isPending}
@@ -81,7 +78,10 @@ export function PlanChangeApplied({
             {t("Undo")}
           </Button>
         )}
-      </div>
+        <Button onClick={onDone} size="lg">
+          {t("Done")}
+        </Button>
+      </DrawerFooter>
     </>
   );
 }

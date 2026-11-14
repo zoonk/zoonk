@@ -38,6 +38,16 @@ msgid "Home"
 msgstr "Accueil"
 
 #: src/app/[lang]/(app)/(catalog)/_components/catalog-bar-content.tsx
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+#: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
+#: src/components/catalog/catalog-not-found.tsx
+msgctxt "s-Ncqj"
+msgid "Explore courses"
+msgstr "Explorer les cours"
+
+#: src/app/[lang]/(app)/(catalog)/_components/catalog-bar-content.tsx
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-tab-navigation.tsx
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
@@ -60,15 +70,6 @@ msgstr "Se déconnecter"
 msgctxt "U3l-Q9"
 msgid "Home page"
 msgstr "Page d’accueil"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
-#: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
-#: src/components/catalog/catalog-not-found.tsx
-msgctxt "s-Ncqj"
-msgid "Explore courses"
-msgstr "Explorer les cours"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
@@ -1098,32 +1099,27 @@ msgid "How much do you already know?"
 msgstr "Que sais-tu déjà ?"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-msgctxt "eePhP0"
-msgid "It only changes where your plan starts."
-msgstr "Cela change seulement le point de départ de ton plan."
-
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "C1D9a4"
 msgid "Your plan follows this course, in the time you have each day."
 msgstr "Ton plan suit ce cours en fonction du temps dont tu disposes chaque jour."
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-msgctxt "6CVLNb"
-msgid "{minutes, plural, one {# minute} other {# minutes}} a day for now. You can change it in the next steps."
-msgstr "Pour l’instant, {minutes, plural, one {# minute} other {# minutes}} par jour. Tu pourras modifier cette durée aux prochaines étapes."
-
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-#: src/app/[lang]/(home)/page.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-pricing.tsx
 #: src/components/public/goal-form.tsx
+#: src/components/public/public-start-bar.tsx
 #: src/components/public/public-visitor-actions.tsx
 #: src/components/public/start-plan-link.tsx
 #: src/components/public/visitor-start.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "Préparer mon plan"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "54WyfN"
+msgid "{minutes, plural, one {# minute} other {# minutes}} a day. You can change it later."
+msgstr "{minutes, plural, one {# minute} other {# minutes}} par jour. Tu peux modifier cette durée plus tard."
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx

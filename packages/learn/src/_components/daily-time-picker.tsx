@@ -3,6 +3,7 @@
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
@@ -112,24 +113,12 @@ type DailyTimeProps = {
   suggested?: number | null;
 };
 
-function TimeOptionLabel({
-  full,
-  minutes,
-  suggested,
-}: {
-  full: number | null;
-  minutes: number;
-  suggested: number | null;
-}) {
+function TimeOptionLabel({ minutes, suggested }: { minutes: number; suggested: number | null }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const time = formatDuration(minutes);
 
-  if (minutes === suggested) {
-    return t("{time} (suggested)", { time });
-  }
-
-  return minutes === full ? t("{time} (covers everything)", { time }) : time;
+  return minutes === suggested ? t("{time} (suggested)", { time }) : time;
 }
 
 function DailyTimeReadout({
@@ -145,6 +134,7 @@ function DailyTimeReadout({
   const formatDuration = useFormatDuration();
   const times = getDailyTimes(minutes, suggested, full);
   const { waiting, ...choice } = useTimeChoice({ disabled, minutes, onChange, saves });
+  const kept = useKeptTyping({ value: choice.value });
 
   return (
     <div
@@ -157,7 +147,7 @@ function DailyTimeReadout({
     >
       <span aria-hidden="true" className="flex items-baseline gap-2">
         <BigQuantity className="text-5xl">{formatDuration(choice.value)}</BigQuantity>
-        <ChevronDownIcon className="text-muted-foreground size-5 shrink-0 translate-y-1" />
+        <ChevronDownIcon className="text-muted-foreground -ms-1.5 size-5 shrink-0 translate-y-1" />
         {waiting && <ShortcutKbd shortcut="main" />}
       </span>
 
@@ -167,10 +157,11 @@ function DailyTimeReadout({
         aria-label={label}
         className="absolute inset-0 size-full cursor-pointer appearance-none text-base opacity-0 aria-disabled:pointer-events-none"
         {...choice}
+        {...kept}
       >
         {times.map((time) => (
           <option key={time} value={time}>
-            <TimeOptionLabel full={full} minutes={time} suggested={suggested} />
+            <TimeOptionLabel minutes={time} suggested={suggested} />
           </option>
         ))}
       </select>
@@ -195,7 +186,7 @@ export function DailyTimePicker({
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-0.5">
       {/* The picker carries the name for screen readers (`label`); this is its visible title. */}
       <span aria-hidden="true" className="text-sm font-medium">
         {props.label}

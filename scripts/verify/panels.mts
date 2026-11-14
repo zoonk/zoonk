@@ -72,9 +72,12 @@ export function panelFindings(panel: PanelFacts): Finding[] {
   ];
 }
 
-export async function inspectPanel(page: Page, phone: boolean) {
+async function finishAnimations(page: Page) {
   await page.evaluate(async (overlays) => {
-    const selector = overlays.map(({ backdrop }) => `[data-slot=${backdrop}]`).join(", ");
+    const selector = overlays
+      .flatMap(({ panel, backdrop }) => [panel, backdrop])
+      .map((slot) => `[data-slot=${slot}]`)
+      .join(", ");
 
     await Promise.all(
       [...document.querySelectorAll(selector)]
@@ -82,10 +85,14 @@ export async function inspectPanel(page: Page, phone: boolean) {
         .map((animation) => animation.finished.catch(() => null)),
     );
   }, OVERLAYS);
+}
 
+export async function inspectPanel(page: Page, phone: boolean) {
+  await finishAnimations(page);
   return page.evaluate(readPanel, { overlays: OVERLAYS, phone });
 }
 
-export async function focusCameBack(page: Page, opener: string) {
-  return page.evaluate(focusReturned, { opener, overlays: OVERLAYS });
+export async function focusCameBack(page: Page, opener: string, returnTo?: string) {
+  await finishAnimations(page);
+  return page.evaluate(focusReturned, { opener, overlays: OVERLAYS, returnTo });
 }

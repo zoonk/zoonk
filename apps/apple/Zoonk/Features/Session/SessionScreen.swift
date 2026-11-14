@@ -738,8 +738,7 @@ private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
   private var progress: some View {
     WaitHeading(
       title: title,
-      description: isWritten
-        ? Text(LessonWaitingView.lessonReady) : Text(kind.writingNote))
+      description: isWritten ? nil : Text(kind.writingNote))
 
     upNext()
   }

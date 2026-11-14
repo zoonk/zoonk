@@ -47,7 +47,13 @@ const welcomeBack = (overrides: Partial<Today["session"]> = {}): Today["session"
 
 const insightChange = (status: "applied" | "proposed"): Today["insight"] => ({
   kind: "planChange",
-  planChange: { canApply: status === "proposed", effect: null, id: "insight-change", status },
+  planChange: {
+    canApply: status === "proposed",
+    effect: null,
+    id: "insight-change",
+    quote: "quote",
+    status,
+  },
 });
 
 const planChange = (status: "applied" | "proposed", id = "change"): Today["planChange"] => ({

@@ -1,5 +1,4 @@
 import { type Finding } from "./checks.mts";
-import { type PageTopClasses } from "./page-top.mts";
 
 /** Zoonk-design's Words budget, as leads for a designer: none of them fails a run. */
 export const WORD_BUDGET = {
@@ -16,8 +15,8 @@ export const WORD_BUDGET = {
 type PagePlace = {
   /** Whether the one main action is pinned (fixed or sticky) in the screen's lower half; null without exactly one. */
   actionPinned: boolean | null;
-  /** Null outside the app shell and inside task or onboarding frames. */
-  titleTop: { actual: number; expected: number } | null;
+  /** Null without a page header, or inside task and onboarding frames. */
+  titleTop: { actual: number; expected: number | null } | null;
 };
 
 export type PageText = PagePlace & {
@@ -41,26 +40,10 @@ export type PageWords = PagePlace & {
  * The title is the main region's first `h1`, or the region's start without one; a main action
  * carries `data-enter`. A text element has its own text and isn't inside another one counted.
  */
-export function readWords(pageTop: PageTopClasses | null): PageText {
+export function readWords(): PageText {
+  const { shown, pixels } = globalThis.zoonkPage;
   const main = document.querySelector("main") ?? document.body;
   const all = [...document.body.querySelectorAll("*")];
-
-  // oxlint-disable-next-line unicorn/consistent-function-scoping -- The probe is sent as one function.
-  function shown(element: Element) {
-    const box = element.getBoundingClientRect();
-
-    return (
-      element.checkVisibility({ opacityProperty: true, visibilityProperty: true }) &&
-      box.width > 1 &&
-      box.height > 1
-    );
-  }
-
-  // oxlint-disable-next-line unicorn/consistent-function-scoping -- The probe is sent as one function.
-  function label(element: HTMLElement) {
-    // oxlint-disable-next-line unicorn/prefer-dom-node-text-content -- Only `innerText` leaves out text the button hides.
-    return element.innerText.replaceAll(/\s+/gu, " ").trim();
-  }
 
   const buttons = [...document.querySelectorAll<HTMLElement>(String.raw`.group\/button`)].filter(
     (button) => shown(button) && !getComputedStyle(button).textDecorationLine.includes("underline"),
@@ -76,36 +59,36 @@ export function readWords(pageTop: PageTopClasses | null): PageText {
   );
 
   const action = actions.find((button) => all.indexOf(button) > start) ?? null;
-  const titleBox = title?.getBoundingClientRect();
 
-  const frame = title?.closest("[data-slot=learn-shell-content]");
-  const inTask = title?.closest("[data-slot=task-frame], [data-slot=onboarding-frame]");
-
-  // oxlint-disable-next-line unicorn/consistent-function-scoping -- The probe is sent as one function.
-  function expectedTop(classes: PageTopClasses) {
-    const sample = document.createElement("div");
-    sample.style.cssText = "position:fixed;visibility:hidden;pointer-events:none;top:0;left:0";
-    const bar = document.createElement("div");
-    bar.className = classes.bar;
-    const row = document.createElement("div");
-    row.className = classes.row;
-    bar.append(row);
-    const header = document.createElement("div");
-    header.className = classes.header;
-    sample.append(bar, header);
-    document.body.append(sample);
-
-    try {
-      const style = getComputedStyle(header);
-
-      return (
-        bar.getBoundingClientRect().height +
-        Number(style.paddingTop.replace(/px$/u, "")) +
-        Number(style.borderTopWidth.replace(/px$/u, ""))
-      );
-    } finally {
-      sample.remove();
+  function titlePlace(): PagePlace["titleTop"] {
+    if (!title || title.closest("[data-slot=task-frame], [data-slot=onboarding-frame]")) {
+      return null;
     }
+
+    const header = title.closest(
+      "[data-slot=page-header-content], [data-slot=page-header], [data-slot=detail-hero], header",
+    );
+
+    if (!header) {
+      return null;
+    }
+
+    const frame = title.closest("[data-slot=learn-shell-content]") ?? main;
+
+    const bar = [...frame.querySelectorAll("[data-slot=page-top-bar]")].find((element) =>
+      shown(element),
+    );
+
+    const style = getComputedStyle(header);
+
+    return {
+      actual: title.getBoundingClientRect().top - frame.getBoundingClientRect().top,
+      expected: bar
+        ? bar.getBoundingClientRect().height +
+          pixels(style.paddingTop) +
+          pixels(style.borderTopWidth)
+        : null,
+    };
   }
 
   // oxlint-disable-next-line unicorn/consistent-function-scoping -- The probe is sent as one function.
@@ -160,18 +143,12 @@ export function readWords(pageTop: PageTopClasses | null): PageText {
           (element, index) => !between.slice(0, index).some((outer) => outer.contains(element)),
         ).length
       : null,
-    action: action ? label(action) : null,
+    action: action ? globalThis.zoonkPage.label(action, true) : null,
     actionPinned: actions.length === 1 && only ? Boolean(bar && pinned(bar) && pinned(only)) : null,
-    buttons: buttons.map((button) => label(button)).filter(Boolean),
+    buttons: buttons.map((button) => globalThis.zoonkPage.label(button, true)).filter(Boolean),
     // oxlint-disable-next-line unicorn/prefer-dom-node-text-content -- Only `innerText` skips hidden text (`display: none`), which `textContent` would count.
     text: main.innerText,
-    titleTop:
-      frame && titleBox && pageTop && !inTask
-        ? {
-            actual: titleBox.top - frame.getBoundingClientRect().top,
-            expected: expectedTop(pageTop),
-          }
-        : null,
+    titleTop: titlePlace(),
   };
 }
 
@@ -194,7 +171,7 @@ export function pageKind(app: string, path: string): PageKind {
     return "long-form";
   }
 
-  return app === "blog" || MARKETING_PATH.test(path) ? "marketing" : "app";
+  return app === "blog" || (app === "main" && MARKETING_PATH.test(path)) ? "marketing" : "app";
 }
 
 /** A word has a letter or a digit, so a dot, a dash or an arrow between words isn't one. */
@@ -220,12 +197,9 @@ export function summarizeWords(page: PageText, kind: PageKind): PageWords {
   };
 }
 
-/**
- * R2 on one load: a screen's one main action is pinned in the bottom bar. A
- * screen that keeps it elsewhere says why in its decisions, so this is a lead.
- */
+/** A screen's one main action is pinned in its bottom bar. */
 export function placeFindings(page: PageWords): Finding[] {
-  return page.kind === "app" && page.actionPinned === false
+  return page.kind !== "marketing" && page.actionPinned === false
     ? [
         {
           check: "R2 main action pinned",
@@ -236,13 +210,24 @@ export function placeFindings(page: PageWords): Finding[] {
     : [];
 }
 
-/** E8 applies only to app-shell titles; other surfaces have their own tops. */
+/** Shared page headers use the drawn bar; task and centered form tops have their own placement. */
 export function titleTopFindings(page: PageWords): Finding[] {
   if (page.kind !== "app" || !page.titleTop) {
     return [];
   }
 
   const { actual, expected } = page.titleTop;
+
+  if (expected === null) {
+    return [
+      {
+        check: "E8 page top",
+        level: "warn",
+        message: "the page title has no visible shared page-top-bar",
+      },
+    ];
+  }
+
   const rounding = 1;
 
   return Math.abs(actual - expected) > rounding
@@ -250,7 +235,7 @@ export function titleTopFindings(page: PageWords): Finding[] {
         {
           check: "E8 page top",
           level: "warn",
-          message: `the title starts ${actual} px below the app frame's top; PageTop expects ${expected} px`,
+          message: `the title starts ${actual} px below the page frame's top; its page-top-bar expects ${expected} px`,
           unit: "px",
           value: actual - expected,
         },
@@ -318,4 +303,36 @@ export function wordGrowth(was: PageWords | undefined, now: PageWords): Finding[
       value: Math.round((now.words / was.words - 1) * PERCENT),
     },
   ];
+}
+
+export function pageTopComparisons(loads: { path: string; viewport: string; words: PageWords }[]) {
+  const pages = loads.filter(({ words }) => words.kind !== "marketing" && words.titleTop !== null);
+
+  return [...Map.groupBy(pages, ({ viewport }) => viewport)].flatMap(([, group]) => {
+    const offsets = group.map(({ words }) => words.titleTop?.actual ?? 0);
+
+    const common = [...Map.groupBy(offsets, (offset) => Math.round(offset))].toSorted(
+      (a, b) => b[1].length - a[1].length,
+    )[0]?.[0];
+
+    return group.flatMap(({ path, viewport, words }) => {
+      const actual = words.titleTop?.actual;
+
+      return actual !== undefined && common !== undefined && Math.abs(actual - common) > 1
+        ? [
+            {
+              finding: {
+                check: "E8 page tops across pages",
+                level: "warn" as const,
+                message: `the title starts ${actual} px below its frame; the most common start across this screen's pages is ${common} px`,
+                unit: "px",
+                value: actual - common,
+              },
+              path,
+              viewport,
+            },
+          ]
+        : [];
+    });
+  });
 }

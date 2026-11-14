@@ -8,6 +8,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { analytics } from "../_test-utils/test-boundaries";
 import { trackServerEvent } from "../analytics/server";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { seenQuote } from "./_test-utils/seen-quote";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
@@ -102,6 +103,26 @@ describe("plan changes", () => {
     const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     expect(stored.settings).not.toMatchObject({ focusAreas: ["Math"] });
     await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
+  });
+
+  it("removes a focus that moves no lesson", async () => {
+    const { goal, plan } = await setup();
+    const { settings } = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    await prisma.plan.update({
+      data: { settings: { ...(settings as object), focusAreas: ["Math"] } },
+      where: { id: plan.id },
+    });
+
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: { operations: [{ areas: [], kind: "focusAreas" }] },
+      }),
+    ).resolves.toStrictEqual({ change: null, status: "applied" });
+
+    const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(stored.settings).toMatchObject({ focusAreas: [] });
   });
 
   it.each(["today", "tutor"] as const)(
@@ -259,7 +280,7 @@ describe("plan changes", () => {
     const accepted = await decidePlanChange({
       changeId: "changeId" in big ? big.changeId : "",
       goalId: goal.id,
-      input: { status: "applied" },
+      input: { quote: await seenQuote("changeId" in big ? big.changeId : ""), status: "applied" },
     });
 
     expect(accepted).toMatchObject({
@@ -326,7 +347,7 @@ describe("plan changes", () => {
         ? await decidePlanChange({
             changeId: proposed.changeId,
             goalId: goal.id,
-            input: { status: "applied" },
+            input: { quote: await seenQuote(proposed.changeId), status: "applied" },
           })
         : proposed;
 

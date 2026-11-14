@@ -9,7 +9,7 @@ import { TimeAnswer } from "../_components/time-answer";
 import { WEEKDAY_GRID_CLASS, WeekdayToggle } from "../_components/weekday-toggle";
 import { WeekendTime } from "../_components/weekend-time";
 import { useGoalDateValues } from "../_utils/iso-date";
-import { getFullTimeNote, getMarkedTimes, getOffer, getTimeLine } from "../_utils/time-answer";
+import { getMarkedTimes, getOffer, getTimeLine } from "../_utils/time-answer";
 import { usePlanScreen } from "./plan-context";
 import { type FindStatus, MoveDateSwitch, useCanMoveDate } from "./plan-coverage";
 import { getEditorSectionId } from "./plan-editor-sections";
@@ -18,16 +18,12 @@ import { ChooseFocus, useCanChooseFocus } from "./plan-focus";
 import { FullCourseSwitch } from "./plan-full-course";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
-import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
+import { useTimeToCover } from "./use-time-to-cover";
 
 const DAYS_PER_WEEK = 7;
 
-function toNoteStatus(status: FindStatus): "failed" | "finding" | null {
-  if (status === "answered") {
-    return null;
-  }
-
-  return status === "failed" || status === "building" ? "failed" : "finding";
+function hasFindFailed(status: FindStatus): boolean {
+  return status === "failed" || status === "building";
 }
 
 /** Asked when the editor opens, never on loading the page: it plans the goal at many times. */
@@ -41,7 +37,7 @@ function useTimeAnswer(dated: boolean) {
     }
   }, [dated, state.status]);
 
-  return { answered, noteStatus: toNoteStatus(state.status), retry: () => void find() };
+  return { answered, failed: hasFindFailed(state.status), retry: () => void find() };
 }
 
 /**
@@ -63,7 +59,6 @@ function DailyCoverage({
 }) {
   const t = useExtracted();
   const goalDate = useGoalDateValues();
-  const texts = useTimeToCoverTexts();
   const { goal, plan } = usePlanScreen();
   const pending = planChange.isPending;
   const canChooseFocus = useCanChooseFocus();
@@ -86,12 +81,6 @@ function DailyCoverage({
     hasDays: true,
     minutes,
   });
-
-  const studiesEveryDay =
-    schedule.weekdayMinutes.filter((daily) => daily > 0).length === DAYS_PER_WEEK;
-
-  const fittingDate =
-    goal.kind !== "exam" && line.kind !== "everything" ? found?.fittingDate : null;
 
   return (
     <div aria-busy={pending} className="grid text-sm">
@@ -118,21 +107,13 @@ function DailyCoverage({
           <TimeAnswer
             date={date}
             exam={goal.kind === "exam"}
+            findFailed={answer.failed}
             line={line}
             minutes={minutes}
-            note={getFullTimeNote({ found, line, studiesEveryDay })}
-            noteStatus={answer.noteStatus}
             offer={getOffer({ found, line, minutes })}
-            offerAs="button"
             onRetry={answer.retry}
             onUseOffer={onUseTime}
           />
-        )}
-
-        {fittingDate && (
-          <p className="text-muted-foreground">
-            {texts.fittingDate({ dailyMinutes: schedule.dailyMinutes, fittingDate })}
-          </p>
         )}
 
         <div className="flex flex-wrap items-center gap-2 empty:hidden">
@@ -274,10 +255,6 @@ function WeekendMinutes({
   const current = shape.weekend ?? shape.weekdays;
   const weekend = useTappedChoice(current);
 
-  if (!shape.canDiffer) {
-    return null;
-  }
-
   const setWeekend = (minutes: number) =>
     change(
       [{ kind: "setWeekdayMinutes", minutes, weekdays: shape.weekendDays }],
@@ -288,6 +265,7 @@ function WeekendMinutes({
     <WeekendTime
       checked={checked}
       className="text-sm font-medium"
+      disabled={!shape.canDiffer}
       // Switched off, the weekend takes the weekdays' time: wait for a change still saving, so it
       // takes the time that change sets rather than the one before it.
       readOnly={isPending}

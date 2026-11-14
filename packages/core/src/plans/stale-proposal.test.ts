@@ -6,11 +6,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { respondToMemoryInsight } from "../memory/insights/respond-to-memory-insight";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { seenInsightQuote, seenQuote } from "./_test-utils/seen-quote";
 import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
 import { loadTodayPlanChange } from "./_utils/today-plan-change";
+import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { PHASE_DATES_SOURCE } from "./plan-change-contract";
+import { type PlanChangeQuote } from "./plan-decision-contract";
+import { type PlanEffect } from "./planner/plan-effect";
 import { proposePlanChange } from "./propose-plan-change";
 
 /** A Monday in 2020, before the learning events other tests write, which estimates read. */
@@ -83,8 +87,31 @@ async function ageProposal(changeId: string, effect?: { lessonsAdded: number }) 
   return payload.effect;
 }
 
-function accept(goalId: string, changeId: string) {
-  return decidePlanChange({ changeId, goalId, input: { status: "applied" } });
+/** As a write that keeps the plan's version and study day: new numbers under the same basis. */
+async function setEffect(changeId: string, effect: Partial<PlanEffect> | null) {
+  const change = await prisma.planChange.findUniqueOrThrow({ where: { id: changeId } });
+  const payload = parsePlanChangePayload(change.payload);
+
+  await prisma.planChange.update({
+    data: {
+      payload: toPlanChangePayload({
+        ...payload,
+        effect: payload.effect && effect && { ...payload.effect, ...effect },
+      }),
+    },
+    where: { id: changeId },
+  });
+
+  return payload.effect;
+}
+
+/** Accepts as an app showing `quote`, by default the one it holds right now. */
+async function accept(goalId: string, changeId: string, quote?: PlanChangeQuote | null) {
+  return decidePlanChange({
+    changeId,
+    goalId,
+    input: { quote: quote === undefined ? await seenQuote(changeId) : quote, status: "applied" },
+  });
 }
 
 async function readDailyMinutes(goalId: string) {
@@ -140,6 +167,98 @@ describe("a suggestion answered on a later day than it was priced", () => {
     await expect(readDailyMinutes(goal.id)).resolves.toBe(30);
   });
 
+  it("applies only the numbers the accepting app showed, after another app or a retry got today's", async () => {
+    const { goal } = await setup({ library: LONG, targetDate: null });
+    const changeId = await proposeLongerDays(goal.id);
+    await ageProposal(changeId, { lessonsAdded: 999 });
+    const shown = await seenQuote(changeId);
+
+    const first = await accept(goal.id, changeId, shown);
+    const today = first.status === "updated" ? first.change.quote : null;
+
+    expect(today).not.toBeNull();
+    expect(today).not.toStrictEqual(shown);
+
+    await expect(accept(goal.id, changeId, shown)).resolves.toMatchObject({
+      change: { quote: today, status: "proposed" },
+      status: "updated",
+    });
+
+    await expect(accept(goal.id, changeId, shown)).resolves.toMatchObject({
+      change: { quote: today, status: "proposed" },
+      status: "updated",
+    });
+
+    await expect(readDailyMinutes(goal.id)).resolves.toBe(12);
+
+    await expect(accept(goal.id, changeId, today)).resolves.toMatchObject({
+      change: { status: "applied" },
+      status: "updated",
+    });
+
+    await expect(readDailyMinutes(goal.id)).resolves.toBe(30);
+  });
+
+  it("applies nothing for a quote other than the change's, even when its numbers are today's", async () => {
+    const { goal } = await setup({ library: LONG, targetDate: null });
+    const changeId = await proposeLongerDays(goal.id);
+    const quote = await seenQuote(changeId);
+
+    await expect(accept(goal.id, changeId, "another-quote")).resolves.toMatchObject({
+      change: { quote, status: "proposed" },
+      status: "updated",
+    });
+
+    await expect(accept(goal.id, changeId, null)).resolves.toMatchObject({
+      change: { status: "proposed" },
+    });
+
+    await expect(readDailyMinutes(goal.id)).resolves.toBe(12);
+  });
+
+  it("applies nothing when a plan write gave it new numbers after the app showed it", async () => {
+    const { goal } = await setup({ library: LONG, targetDate: null });
+    const changeId = await proposeLongerDays(goal.id);
+    const shown = await seenQuote(changeId);
+
+    await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ kind: "setTargetDate", targetDate: "2020-12-31" }], timeZone: "UTC" },
+    });
+
+    const today = await seenQuote(changeId);
+    expect(today).not.toBe(shown);
+
+    await expect(accept(goal.id, changeId, shown)).resolves.toMatchObject({
+      change: { quote: today, status: "proposed" },
+      status: "updated",
+    });
+
+    await expect(readDailyMinutes(goal.id)).resolves.toBe(12);
+
+    await expect(accept(goal.id, changeId, today)).resolves.toMatchObject({
+      change: { status: "applied" },
+    });
+
+    await expect(readDailyMinutes(goal.id)).resolves.toBe(30);
+  });
+
+  it("applies nothing when a refresh that keeps the plan's version gave it new numbers", async () => {
+    const { goal } = await setup({ library: LONG, targetDate: null });
+    const changeId = await proposeLongerDays(goal.id);
+    const real = await setEffect(changeId, { lessonsAdded: 999 });
+    const shown = await seenQuote(changeId);
+
+    await setEffect(changeId, real);
+
+    await expect(accept(goal.id, changeId, shown)).resolves.toMatchObject({
+      change: { status: "proposed" },
+      status: "updated",
+    });
+
+    await expect(readDailyMinutes(goal.id)).resolves.toBe(12);
+  });
+
   it("keeps a noticed pattern waiting when its change's numbers differ, and accepts it on the next answer", async () => {
     const { goal } = await setup({ library: LONG, targetDate: null });
     const changeId = await proposeLongerDays(goal.id);
@@ -152,8 +271,11 @@ describe("a suggestion answered on a later day than it was priced", () => {
       userId: goal.userId,
     });
 
-    const answer = () =>
-      respondToMemoryInsight({ input: { status: "accepted" }, insightId: insight.id });
+    const answer = async () =>
+      respondToMemoryInsight({
+        input: { quote: await seenInsightQuote(insight.id), status: "accepted" },
+        insightId: insight.id,
+      });
 
     await expect(answer()).resolves.toMatchObject({
       insight: {

@@ -2,6 +2,7 @@ import { CatalogAsideBlock } from "@/components/catalog/catalog-aside";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { HERO_CLASS, HERO_LEAD_CLASS } from "@/components/public/landing-styles";
 import { NumberedRows } from "@/components/public/numbered-rows";
+import { PageStartDestination } from "@/components/public/page-start";
 import { PublicNotFound } from "@/components/public/public-not-found";
 import { PublicPage, PublicPageSkeleton } from "@/components/public/public-page";
 import { StartBlock, getStartControlClassName } from "@/components/public/public-start";
@@ -69,6 +70,8 @@ async function PlanLinkBody({ params }: Props) {
     "You get your own plan for the same subject. It starts from what you already know.",
   );
 
+  const startHref = getPlanLinkStartHref({ goal: outline.subject?.title ?? "", planId });
+
   return (
     <PublicPage ownStart>
       <section aria-labelledby="plan-link-title" className={cn(HERO_CLASS, "pb-24 sm:pb-32")}>
@@ -98,10 +101,8 @@ async function PlanLinkBody({ params }: Props) {
                 "Zoonk builds you your own study plan for the same subject, for the time you have each day. Start free, no account needed.",
               )}
             >
-              <Link
-                className={getStartControlClassName()}
-                href={getPlanLinkStartHref({ goal: outline.subject?.title ?? "", planId })}
-              >
+              <PageStartDestination href={startHref} />
+              <Link className={getStartControlClassName()} href={startHref}>
                 {t({
                   description:
                     "Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.",

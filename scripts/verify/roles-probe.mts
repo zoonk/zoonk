@@ -24,16 +24,7 @@ export function readRoles(overlays: { panel: string }[]): RoleSample[] {
     tabs: '[data-slot="tabs-list"]',
   };
 
-  // oxlint-disable-next-line unicorn/consistent-function-scoping -- Serialized with the probe.
-  function shown(node: Element) {
-    const box = node.getBoundingClientRect();
-
-    return (
-      node.checkVisibility({ opacityProperty: true, visibilityProperty: true }) &&
-      box.width > 0 &&
-      box.height > 0
-    );
-  }
+  const { shown } = globalThis.zoonkPage;
 
   return Object.entries(selectors).flatMap(([role, selector]) =>
     [...document.querySelectorAll<HTMLElement>(selector)]

@@ -121,7 +121,14 @@ struct BuddyDayView: View {
   }
 
   var subtitle: Text {
-    Text("\(status.stage.name)\u{00A0}· \(status.growthLine)")
+    status.growthLine
+  }
+
+  /// The day is where Energy is taught, so it's named as the buddy's.
+  private var energyTitle: Text {
+    Text(
+      "\(name)'s Energy", tableName: "Buddy",
+      comment: "The buddy's Energy; the argument is its name")
   }
 
   /// A block mission opens as Today's rows do, so the row says when it didn't. A tap whose screen
@@ -170,7 +177,7 @@ struct BuddyDayView: View {
               Text((current / 100).formatted(.percent.precision(.fractionLength(0))))
                 .monospacedDigit()
             } title: {
-              Text("Energy", tableName: "Buddy", comment: "The buddy's Energy")
+              energyTitle
             } icon: {
               Image(systemName: "bolt.fill")
                 .foregroundStyle(.energy)
@@ -179,24 +186,26 @@ struct BuddyDayView: View {
             Meter(value: min(max(current / 100, 0), 1), fill: .energy)
               .accessibilityHidden(true)
 
-            status.energyLine(name: name)
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
+            if let line = status.energyLine(name: name) {
+              line
+                .typeStyle(.note)
+                .foregroundStyle(.mutedForeground)
+            }
           }
         }
         .foregroundStyle(.primary)
       } else {
         VStack(alignment: .leading, spacing: 4) {
           Label {
-            Text("Energy", tableName: "Buddy", comment: "The buddy's Energy")
+            energyTitle
           } icon: {
             Image(systemName: "bolt.fill")
               .foregroundStyle(.energy)
           }
 
           Text(
-            "Energy starts with your first lesson and grows as you learn.", tableName: "Buddy",
-            comment: "Energy before the first lesson"
+            "It starts with your first lesson.", tableName: "Buddy",
+            comment: "The buddy's Energy before the first lesson"
           )
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)

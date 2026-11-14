@@ -276,6 +276,7 @@ export function MindMapsScreen({
         )
       }
       data-slot="mind-maps"
+      measure="list"
     >
       <DetailAside>
         <DetailHero>

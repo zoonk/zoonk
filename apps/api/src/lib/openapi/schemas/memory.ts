@@ -1,4 +1,5 @@
 import { memoryCategorySchema, memorySourceSchema } from "@zoonk/core/memory/contract";
+import { planChangeQuoteSchema } from "@zoonk/core/plans/decision-contract";
 import { planEffectSchema } from "@zoonk/core/plans/effect-contract";
 import { MemoryFactStatus, MemoryInsightKind, MemoryInsightStatus, MemoryOrigin } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -116,6 +117,7 @@ export const memoryInsightSchema = z
           .nullable()
           .meta({ description: "Lessons the change adds and how it moves the plan's end date" }),
         id: uuidSchema(),
+        quote: planChangeQuoteSchema,
         status: z
           .enum(["applied", "proposed"])
           .meta({

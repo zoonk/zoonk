@@ -10,12 +10,10 @@ import noPlusBadge from "./rules/no-plus-badge.js";
 import noTFunctionAsArgument from "./rules/no-t-function-as-argument.js";
 import noUncaughtTransitionAwait from "./rules/no-uncaught-transition-await.js";
 import oneAnswerOption from "./rules/one-answer-option.js";
-import oneBackLink from "./rules/one-back-link.js";
-import oneEyebrow from "./rules/one-eyebrow.js";
 import oneGlyphButton from "./rules/one-glyph-button.js";
 import oneQuestionActionBar from "./rules/one-question-action-bar.js";
-import oneQuestionTitle from "./rules/one-question-title.js";
 import paddingAroundMultilineStatements from "./rules/padding-around-multiline-statements.js";
+import shortcutKeys from "./rules/shortcut-keys.js";
 import tailwindCanonicalClasses from "./rules/tailwind-canonical-classes.js";
 
 /** @public */
@@ -29,15 +27,13 @@ export default eslintCompatPlugin({
     "no-hardcoded-aria-label": noHardcodedAriaLabel,
     "no-page-top-spacing": noPageTopSpacing,
     "no-plus-badge": noPlusBadge,
-    "one-eyebrow": oneEyebrow,
     "no-object-params-in-cache": noObjectParamsInCache,
     "no-t-function-as-argument": noTFunctionAsArgument,
     "no-uncaught-transition-await": noUncaughtTransitionAwait,
     "one-answer-option": oneAnswerOption,
-    "one-back-link": oneBackLink,
     "one-glyph-button": oneGlyphButton,
     "one-question-action-bar": oneQuestionActionBar,
-    "one-question-title": oneQuestionTitle,
+    "shortcut-keys": shortcutKeys,
     "padding-around-multiline-statements": paddingAroundMultilineStatements,
     "tailwind-canonical-classes": tailwindCanonicalClasses,
   },

@@ -1,7 +1,10 @@
 // @vitest-environment jsdom
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, test, vi } from "vitest";
+import { focusReturned } from "./keys-probe.mts";
 import { type Target } from "./measure.mts";
+import { OVERLAYS } from "./overlays.mts";
+import { installPageHelpers } from "./page-helpers.mts";
 import { walkStates } from "./states.mts";
 
 vi.mock("./states-wait.mts", () => ({
@@ -13,6 +16,7 @@ const CONTROL_HEIGHT = 44;
 const GROWN_WIDTH = 200;
 
 beforeEach(() => {
+  installPageHelpers();
   const box = new DOMRect(0, 0, 100, CONTROL_HEIGHT);
   vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue(box);
 
@@ -23,6 +27,11 @@ beforeEach(() => {
   Object.defineProperty(Element.prototype, "checkVisibility", {
     configurable: true,
     value: () => true,
+  });
+
+  Object.defineProperty(Element.prototype, "getAnimations", {
+    configurable: true,
+    value: () => [],
   });
 
   Object.defineProperty(HTMLElement.prototype, "innerText", {
@@ -113,6 +122,7 @@ function fixture(html: string) {
     baseUrl: origin,
     browser: {
       newContext: async () => ({
+        addInitScript: async (run: () => unknown) => run(),
         close: async () => {
           state.closed = true;
         },
@@ -223,4 +233,57 @@ test("turns an observed field resize into a lead instead of silently returning n
       (finding) => finding.check.startsWith("X3") && finding.message.includes("typing"),
     ),
   );
+});
+
+function menuClick(event: Event) {
+  const node = event.target;
+
+  if (!(node instanceof Element)) {
+    return;
+  }
+
+  if (node.id === "menu-trigger") {
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      '<div role="menu" id="options"><button id="edit" role="menuitem" aria-haspopup="dialog">Edit</button></div>',
+    );
+  }
+
+  if (node.id === "edit") {
+    document.querySelector("[role=menu]")?.remove();
+
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      '<div role="dialog" data-slot="dialog-content" tabindex="-1"><h2>Edit</h2><button data-slot="dialog-close">Close</button></div>',
+    );
+
+    document.querySelector<HTMLElement>("[role=dialog]")?.focus();
+  }
+}
+
+test("opens a menu item's panel and accepts focus on the surviving menu trigger", async () => {
+  const { page, target } = fixture(
+    '<button id="menu-trigger" aria-haspopup="menu" aria-controls="options">Options</button><button id="unrelated">Other</button>',
+  );
+
+  document.addEventListener("click", menuClick);
+
+  page.keyboard.press = async () => {
+    document.querySelector("[role=dialog]")?.remove();
+    document.querySelector<HTMLElement>("#menu-trigger")?.focus();
+  };
+
+  vi.stubGlobal("matchMedia", () => ({ matches: false }));
+
+  try {
+    const report = await walkStates(target, { path: "/", viewport: "phone" });
+    assert.equal(report.panelsOpened, 1);
+    assert.ok(!report.findings.some(({ message }) => message.includes("focus")));
+    assert.equal(document.querySelector("[role=menu]"), null);
+    document.querySelector<HTMLElement>("#unrelated")?.focus();
+    assert.equal(focusReturned({ opener: "2", overlays: OVERLAYS, returnTo: "0" }), false);
+  } finally {
+    document.removeEventListener("click", menuClick);
+    vi.unstubAllGlobals();
+  }
 });

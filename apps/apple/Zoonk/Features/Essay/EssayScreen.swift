@@ -325,7 +325,7 @@ private struct EssayContent: View {
             table: "Essay", comment: "Grading failed"),
           onReport: { showsSaveReport = true })
       } else if writer.isWriting, writer.status == .signUpRequired {
-        HelpLimitNotice(limit: .signUpRequired)
+        LimitNotice(limit: .signUpRequired)
       } else if let statusNote {
         VStack(alignment: .leading, spacing: 2) {
           Text(statusNote)
@@ -344,7 +344,7 @@ private struct EssayContent: View {
     }
 
     if writer.isWriting, writer.status == .signUpRequired {
-      return HelpLimit.signUpRequired.message
+      return HelpLimit.signUpRequired.helpWords().said
     }
 
     if writer.isWriting, writer.status == .limitReached || essay.gradesLeft == 0 {

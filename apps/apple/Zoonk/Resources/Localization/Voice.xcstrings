@@ -1,6 +1,130 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "“%@”" : {
+      "comment" : "A phrase the learner said well, quoted",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@“"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@”"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "« %@ »"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@”"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%@」"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@”"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@”"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@”"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@”"
+          }
+        }
+      }
+    },
+    "%@ · Level %@" : {
+      "comment" : "A call's length and level, over its title",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Level %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · Level %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Nivel %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Niveau %2$@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Livello %2$@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@・レベル%2$@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · 레벨 %2$@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Poziom %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Nível %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · Seviye %2$@"
+          }
+        }
+      }
+    },
     "%@ · Task %lld of %lld" : {
       "comment" : "An exam task's place in its speaking paper",
       "localizations" : {
@@ -66,65 +190,6 @@
         }
       }
     },
-    "%@ answers and speaks first." : {
-      "comment" : "How a call works: step 1",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ nimmt ab und spricht zuerst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ contesta la llamada y habla primero."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ décroche et commence la conversation."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ risponde e comincia a parlare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@さんが応答して、先に話し始めます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@(이)가 응답하고 먼저 말을 걸어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ odbiera i zaczyna rozmowę."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ atende e fala primeiro."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ sohbete katılır ve önce konuşur."
-          }
-        }
-      }
-    },
     "%@ answers first." : {
       "comment" : "While calling: the character speaks first",
       "localizations" : {
@@ -180,183 +245,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Önce %@ konuşur."
-          }
-        }
-      }
-    },
-    "%@ is an AI playing the other candidate, in place of a real one." : {
-      "comment" : "Before an exam task: who the AI plays",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ ist eine KI und übernimmt die Rolle einer weiteren teilnehmenden Person."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ es una IA que hace el papel del otro candidato en lugar de una persona real."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ est une IA qui joue le rôle de l’autre candidat à la place d’une vraie personne."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ è un’IA che fa la parte dell’altro candidato al posto di una persona reale."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@さんは、人間に代わってほかの受験者役を務めるAIです。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@은(는) 실제 사람 대신 다른 응시자 역할을 맡은 AI예요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ to sztuczna inteligencja, która zastępuje prawdziwą osobę w roli drugiego zdającego."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ é uma IA que faz o papel do outro candidato no lugar de uma pessoa real."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, gerçek bir adayın yerine diğer aday rolünü üstlenen bir yapay zekâ."
-          }
-        }
-      }
-    },
-    "%@ is an AI standing in for a human examiner." : {
-      "comment" : "Before an exam task: who the AI plays",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ ist eine KI und übernimmt die Rolle einer menschlichen Prüfperson."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ es una IA que sustituye a un examinador humano."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ est une IA qui remplace un examinateur humain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ è un’IA che sostituisce un esaminatore umano."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@さんは、人間に代わって試験官を務めるAIです。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@은(는) 실제 면접관을 대신하는 AI예요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ to sztuczna inteligencja, która zastępuje prawdziwego egzaminatora."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ é uma IA que faz o papel de um examinador humano."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, gerçek bir değerlendiricinin yerini alan bir yapay zekâ."
-          }
-        }
-      }
-    },
-    "%@ is an official exam. Practice its speaking tasks whether or not you plan to take it." : {
-      "comment" : "The exam is official; practicing doesn't mean taking it",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ ist eine offizielle Prüfung. Übe die Sprechaufgaben, auch wenn du die Prüfung nicht ablegen möchtest."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ es un examen oficial. Practica sus tareas de expresión oral, tengas o no pensado presentarlo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ est un examen officiel. Entraîne-toi aux épreuves orales, que tu comptes le passer ou non."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ è un esame ufficiale. Esercitati con i compiti della prova orale anche se non pensi di sostenerlo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@は正式な試験です。受験予定がなくても、スピーキングのタスクを練習できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@은(는) 공식 시험이에요. 응시 계획이 없어도 말하기 과제를 연습해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ to oficjalny egzamin. Ćwicz zadania z części ustnej, nawet jeśli nie planujesz do niego podchodzić."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ é uma prova oficial. Pratique as tarefas de conversação mesmo que você não pretenda fazer a prova."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ resmî bir sınav. Sınava girmeyi düşünmesen bile konuşma bölümlerini çalışabilirsin."
           }
         }
       }
@@ -609,65 +497,6 @@
         }
       }
     },
-    "%@ opens the call, and your card stays on screen." : {
-      "comment" : "An exam task's call: the AI speaks first, the card stays visible",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ eröffnet das Gespräch und deine Karte bleibt auf dem Bildschirm."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ inicia la llamada y tu tarjeta permanece en pantalla."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ commence l’appel et ta fiche reste affichée à l’écran."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ inizia la conversazione e la tua scheda resta sullo schermo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@さんが会話を始めます。カードは会話中も画面に表示されます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@(이)가 대화를 시작하고, 카드는 화면에 계속 표시돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ rozpoczyna rozmowę, a twoja karta pozostaje na ekranie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ começa a conversa e seu cartão fica na tela."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ sohbeti başlatır, kartın ekranda kalır."
-          }
-        }
-      }
-    },
     "%@ to prepare" : {
       "comment" : "How long the exam gives to prepare",
       "localizations" : {
@@ -723,6 +552,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hazırlanmak için %@"
+          }
+        }
+      }
+    },
+    "%@, as in the exam" : {
+      "comment" : "How long the exam gives to prepare this task, such as \"1 minute, as in the exam\"",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, wie in der Prüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, como en el examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, comme à l’examen"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, come all’esame"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（本番と同じ）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "실제 시험처럼 %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, tak jak na egzaminie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, como na prova"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, sınavdaki gibi"
           }
         }
       }
@@ -1148,6 +1036,65 @@
         }
       }
     },
+    "A short voice call with an AI character, about this unit." : {
+      "comment" : "A language checkpoint's call that isn't written yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein kurzes Gespräch mit einer KI-Figur über diese Einheit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una breve llamada de voz con un personaje de IA sobre esta unidad."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un court appel vocal avec un personnage animé par l’IA sur cette unité."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una breve conversazione a voce su questa unità con un personaggio IA."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このユニットの内容について、AIキャラクターと短い会話をします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 단원에 관해 AI 캐릭터와 나누는 짧은 음성 대화예요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Krótka rozmowa głosowa z postacią AI o tym dziale."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma conversa curta por voz com um personagem de IA sobre esta unidade."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ünite hakkında bir yapay zekâ karakteriyle kısa bir sesli sohbet."
+          }
+        }
+      }
+    },
     "A star for finishing, one for getting everything across and one without Help." : {
       "comment" : "How a call's stars are earned",
       "localizations" : {
@@ -1203,71 +1150,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bitirdiğin için bir yıldız, her şeyi anlatabildiğin için bir yıldız, Yardım kullanmadığın için bir yıldız."
-          }
-        }
-      }
-    },
-    "About %@ · Level %@" : {
-      "comment" : "A call's length and level, over its title",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Etwa %1$@ · Level %2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "About %1$@ · Level %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aproximadamente %1$@ · Nivel %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Environ %1$@ · Niveau %2$@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Circa %1$@ · Livello %2$@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "約%1$@・レベル%2$@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "약 %1$@ · 레벨 %2$@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Około %1$@ · Poziom %2$@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cerca de %1$@ · Nível %2$@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yaklaşık %1$@ · Seviye %2$@"
           }
         }
       }
@@ -1508,301 +1390,6 @@
         }
       }
     },
-    "An accent never blocks you." : {
-      "comment" : "What a pronunciation round's grade means",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ein Akzent steht dir nie im Weg."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu acento nunca te impide avanzar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton accent n’est jamais un obstacle."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’accento non ti ferma mai."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "なまりがあっても、先に進めます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "억양은 걸림돌이 되지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Akcent nigdy nie jest przeszkodą."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu sotaque nunca é uma barreira."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aksanın sana asla engel olmaz."
-          }
-        }
-      }
-    },
-    "An AI stands in for the human examiner or the other candidate. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score." : {
-      "comment" : "What a practice exam task with a partner is",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eine KI übernimmt die Rolle der prüfenden Person oder der anderen Prüfungsteilnehmerin bzw. des anderen Prüfungsteilnehmers. Bei jedem Versuch bekommst du eine neue Aufgabenkarte und danach eine Einschätzung anhand der offiziellen Prüfungskriterien, keinen offiziellen Score."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una IA hace el papel del examinador humano o del otro candidato. En cada intento tienes una tarjeta nueva y, al terminar, recibes una estimación basada en los criterios oficiales del examen, no un puntaje oficial."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Une IA prend la place de l’examinateur ou de l’autre candidat. À chaque essai, tu reçois une nouvelle fiche, puis une estimation selon les critères officiels de l’examen, mais pas de Score officiel."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un’IA prende il posto dell’esaminatore umano o dell’altra persona che sostiene l’esame. A ogni tentativo hai una nuova scheda e, alla fine, ricevi una stima basata sui criteri ufficiali dell’esame, non un punteggio ufficiale."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AIが試験官やほかの受験者の役を務めます。毎回新しいカードで練習し、終了後に試験の公式評価基準に基づく推定スコアを確認できます。公式スコアではありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AI가 실제 면접관이나 다른 응시자 역할을 맡아요. 연습할 때마다 새 카드를 받고, 끝나면 시험의 공식 평가 기준에 따른 예상 점수를 받아요. 공식 점수는 아니에요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AI zastępuje człowieka w roli egzaminatora lub drugiego zdającego. Za każdym razem dostajesz nową kartę, a po wykonaniu zadania szacunkowy wynik oparty na oficjalnych kryteriach egzaminu, a nie oficjalny wynik."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uma IA faz o papel do examinador ou do outro candidato. A cada tentativa, você recebe um novo cartão e, depois, uma estimativa baseada nos critérios oficiais da prova, não uma pontuação oficial."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "İnsan değerlendiricinin veya diğer adayın rolünü yapay zekâ üstlenir. Her denemede yeni bir kartla çalışırsın ve ardından sınavın resmî ölçütlerine göre tahmini bir puan alırsın; bu puan resmî değildir."
-          }
-        }
-      }
-    },
-    "An AI stands in for the human examiner. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score." : {
-      "comment" : "What a practice exam task is",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eine KI übernimmt die Rolle der prüfenden Person. Bei jedem Versuch bekommst du eine neue Aufgabenkarte und danach eine Einschätzung anhand der offiziellen Prüfungskriterien, keinen offiziellen Score."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una IA hace el papel del examinador humano. En cada intento tienes una tarjeta nueva y, al terminar, recibes una estimación basada en los criterios oficiales del examen, no un puntaje oficial."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Une IA prend la place de l’examinateur. À chaque essai, tu reçois une nouvelle fiche, puis une estimation selon les critères officiels de l’examen, mais pas de Score officiel."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un’IA prende il posto dell’esaminatore umano. A ogni tentativo hai una nuova scheda e, alla fine, ricevi una stima basata sui criteri ufficiali dell’esame, non un punteggio ufficiale."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AIが試験官の役を務めます。毎回新しいカードで練習し、終了後に試験の公式評価基準に基づく推定スコアを確認できます。公式スコアではありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AI가 실제 면접관 역할을 맡아요. 연습할 때마다 새 카드를 받고, 끝나면 시험의 공식 평가 기준에 따른 예상 점수를 받아요. 공식 점수는 아니에요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AI zastępuje człowieka w roli egzaminatora. Za każdym razem dostajesz nową kartę, a po wykonaniu zadania szacunkowy wynik oparty na oficjalnych kryteriach egzaminu, a nie oficjalny wynik."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uma IA faz o papel do examinador. A cada tentativa, você recebe um novo cartão e, depois, uma estimativa baseada nos critérios oficiais da prova, não uma pontuação oficial."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "İnsan değerlendiricinin rolünü yapay zekâ üstlenir. Her denemede yeni bir kartla çalışırsın ve ardından sınavın resmî ölçütlerine göre tahmini bir puan alırsın; bu puan resmî değildir."
-          }
-        }
-      }
-    },
-    "An estimate from one practice task, not an official score." : {
-      "comment" : "An exam task's estimate isn't official",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eine Schätzung anhand einer einzelnen Übungsaufgabe, kein offizieller Score."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una estimación basada en una sola tarea de práctica, no un puntaje oficial."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Une estimation basée sur une seule tâche d’entraînement, pas un score officiel."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una stima basata su un solo compito di esercitazione, non un punteggio ufficiale."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1つの練習タスクに基づく推定スコアです。公式スコアではありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "과제 하나를 연습한 뒤 받은 예상 점수예요. 공식 점수는 아니에요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Szacunkowy wynik z jednego zadania próbnego, a nie oficjalny wynik."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uma estimativa com base em uma tarefa de prática, não uma pontuação oficial."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tek bir bölümde yaptığın pratiğe dayanan bir tahmin, resmî bir puan değil."
-          }
-        }
-      }
-    },
-    "An estimate from one practice task, not an official score. How you sound is rated by how easy you are to understand, never by your accent." : {
-      "comment" : "An exam task's estimate isn't official; sound is rated for intelligibility",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eine Schätzung anhand einer einzelnen Übungsaufgabe, kein offizieller Score. Bei der Bewertung deiner Sprechweise zählt, wie gut man dich versteht, nie dein Akzent."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una estimación basada en una sola tarea de práctica, no un puntaje oficial. Tu forma de hablar se evalúa por lo fácil que es entenderte, nunca por tu acento."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Une estimation basée sur une seule tâche d’entraînement, pas un score officiel. Ta façon de parler est évaluée selon la facilité avec laquelle on te comprend, jamais selon ton accent."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una stima basata su un solo compito di esercitazione, non un punteggio ufficiale. Valutiamo la pronuncia in base a quanto è facile capirti, mai in base al tuo accento."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1つの練習タスクに基づく推定スコアです。公式スコアではありません。発音は伝わりやすさで評価され、なまりは評価に影響しません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "과제 하나를 연습한 뒤 받은 예상 점수예요. 공식 점수는 아니에요. 발음은 억양이 아니라 얼마나 알아듣기 쉬운지를 기준으로 평가해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Szacunkowy wynik z jednego zadania próbnego, a nie oficjalny wynik. Przy ocenie wymowy liczy się to, jak łatwo cię zrozumieć, nigdy twój akcent."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uma estimativa com base em uma tarefa de prática, não uma pontuação oficial. A avaliação da sua fala considera o quanto é fácil entender você, nunca o seu sotaque."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tek bir bölümde yaptığın pratiğe dayanan bir tahmin, resmî bir puan değil. Konuşman aksanına göre değil, ne kadar kolay anlaşıldığına göre değerlendirilir."
-          }
-        }
-      }
-    },
     "An estimate from one short mock, not an official score." : {
       "comment" : "A speaking mock's band isn't official",
       "localizations" : {
@@ -1858,6 +1445,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tek bir kısa deneme sınavına dayanan bir tahmin, resmî bir puan değil."
+          }
+        }
+      }
+    },
+    "An estimate, not an official score." : {
+      "comment" : "An exam task's estimate isn't official",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Schätzung, kein offizieller Score."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una estimación, no un puntaje oficial."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une estimation, pas un Score officiel."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una stima, non un punteggio ufficiale."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推定スコアです。公式のスコアではありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공식 점수가 아닌 예상 점수예요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To wynik szacunkowy, a nie oficjalny."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma estimativa, não uma pontuação oficial."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resmî bir puan değil, bir tahmin."
           }
         }
       }
@@ -3402,65 +3048,6 @@
         }
       }
     },
-    "Create your free account to continue." : {
-      "comment" : "A guest must create an account to keep getting help",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erstelle dein kostenloses Konto, um weiterzumachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crea tu cuenta gratis para continuar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crée ton compte gratuit pour continuer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crea il tuo account gratuito per continuare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "続けるには、無料アカウントを作成してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계속하려면 무료 계정을 만들어 주세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Utwórz bezpłatne konto, aby kontynuować."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crie sua conta grátis para continuar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Devam etmek için ücretsiz hesabını oluştur."
-          }
-        }
-      }
-    },
     "Doing the task" : {
       "comment" : "A speaking criterion",
       "localizations" : {
@@ -3634,65 +3221,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bitir"
-          }
-        }
-      }
-    },
-    "End that call and start this one" : {
-      "comment" : "Takes over a call",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das andere Gespräch beenden und dieses starten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finalizar esa llamada e iniciar esta"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminer cet appel et commencer celui-ci"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termina l’altra conversazione e inizia questa"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "進行中の会話を終了して、この会話を始める"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "기존 대화를 끝내고 이 대화 시작하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zakończ tamtą rozmowę i rozpocznij tę"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Encerrar aquela conversa e começar esta"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O sohbeti bitir ve bunu başlat"
           }
         }
       }
@@ -3992,6 +3520,65 @@
         }
       }
     },
+    "Examiner (AI)" : {
+      "comment" : "Whom the AI plays in an exam task, in place of a human examiner",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfende Person (KI)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examinador (IA)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examinateur (IA)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esaminatore (IA)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試験官（AI）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "면접관(AI)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Egzaminator (AI)"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examinador (IA)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Değerlendirici (yapay zekâ)"
+          }
+        }
+      }
+    },
     "Fluency" : {
       "comment" : "A speaking criterion",
       "localizations" : {
@@ -4169,65 +3756,6 @@
         }
       }
     },
-    "Get the call ready" : {
-      "comment" : "Writes a checkpoint's call, then opens it",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gespräch vorbereiten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparar la llamada"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Préparer l’appel"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prepara la conversazione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "会話練習を準備する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "대화 준비하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przygotuj rozmowę"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparar a conversa"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sohbeti hazırla"
-          }
-        }
-      }
-    },
     "Getting your call ready" : {
       "comment" : "A checkpoint's call is being written",
       "localizations" : {
@@ -4283,65 +3811,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sohbetini hazırlıyoruz"
-          }
-        }
-      }
-    },
-    "Go to task %lld" : {
-      "comment" : "Opens the speaking paper's next task",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zu Aufgabe %lld"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ir a la tarea %lld"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aller à la tâche %lld"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vai al compito %lld"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "タスク%lldに進む"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld번 과제로 이동하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przejdź do zadania %lld"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ir para a tarefa %lld"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld. bölüme geç"
           }
         }
       }
@@ -4641,65 +4110,6 @@
         }
       }
     },
-    "How the call works" : {
-      "comment" : "Before a call: what will happen",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "So läuft das Gespräch ab"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cómo funciona la llamada"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comment se déroule l’appel"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Come funziona la conversazione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "会話の流れ"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "대화 진행 방식"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jak przebiega rozmowa"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Como funciona a conversa"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sohbet nasıl ilerler"
-          }
-        }
-      }
-    },
     "IELTS speaking mock" : {
       "comment" : "A speaking mock's name",
       "localizations" : {
@@ -4877,238 +4287,61 @@
         }
       }
     },
-    "It ends on its own after about %@." : {
-      "comment" : "An exam task's call stops by itself at about its length",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nach etwa %@ endet es von selbst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termina sola después de aproximadamente %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’appel se termine automatiquement après environ %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termina automaticamente dopo circa %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "約%@で自動的に終了します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "약 %@ 후에 자동으로 끝나요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Po około %@ rozmowa kończy się sama."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ela termina sozinha em cerca de %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yaklaşık %@ sonra kendiliğinden biter."
-          }
-        }
-      }
-    },
-    "It opens here as soon as it's ready." : {
-      "comment" : "A checkpoint's call opens by itself once it's written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Es öffnet sich hier, sobald es fertig ist."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se abrirá aquí en cuanto esté lista."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il s’ouvre ici dès qu’il est prêt."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Si aprirà qui appena sarà pronta."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "準備ができ次第、ここで自動的に開きます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "대화가 준비되면 여기서 바로 열려요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rozmowa otworzy się tutaj, gdy tylko będzie gotowa."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ela abre aqui assim que estiver pronta."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hazır olur olmaz burada açılır."
-          }
-        }
-      }
-    },
-    "It's open in another tab or on another device. Ending it from here skips its feedback." : {
+    "It's open in another tab or on another device. Starting this one ends it, without its feedback." : {
       "comment" : "Another call of the learner's is open",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es ist in einem anderen Tab oder auf einem anderen Gerät geöffnet. Wenn du es hier beendest, erhältst du kein Feedback dazu."
+            "value" : "Es ist in einem anderen Tab oder auf einem anderen Gerät geöffnet. Wenn du dieses Gespräch startest, endet das andere ohne Feedback."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Está abierta en otra pestaña o en otro dispositivo. Si la terminas desde aquí, no recibirás comentarios."
+            "value" : "Está abierta en otra pestaña o en otro dispositivo. Al iniciar esta llamada, la otra termina sin darte comentarios."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il est ouvert dans un autre onglet ou sur un autre appareil. Si tu y mets fin ici, tu ne recevras pas de retour."
+            "value" : "Un autre appel est ouvert dans un autre onglet ou sur un autre appareil. Démarrer cet appel met fin à l’autre, sans bilan."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "È aperta in un’altra scheda o su un altro dispositivo. Se la termini da qui, non riceverai i commenti."
+            "value" : "È aperta in un’altra scheda o su un altro dispositivo. Se inizi questa, l’altra termina senza commenti."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "別のタブかデバイスで会話中です。ここから終了すると、その会話のフィードバックは受け取れません。"
+            "value" : "別のタブか端末で会話を開いています。この会話を始めると、そちらの会話はフィードバックなしで終了します。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "다른 탭이나 기기에서 대화가 열려 있어요. 여기서 끝내면 그 대화의 피드백을 받을 수 없어요."
+            "value" : "다른 탭이나 기기에서 대화가 진행 중이에요. 이 대화를 시작하면 기존 대화는 피드백 없이 끝나요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jest otwarta w innej karcie lub na innym urządzeniu. Jeśli zakończysz ją tutaj, nie dostaniesz informacji zwrotnej."
+            "value" : "Trwa w innej karcie lub na innym urządzeniu. Gdy zaczniesz tę rozmowę, tamta zakończy się bez informacji zwrotnej."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ela está aberta em outra aba ou em outro dispositivo. Se você encerrar por aqui, não vai receber o retorno sobre ela."
+            "value" : "Ela está aberta em outra aba ou em outro dispositivo. Começar esta encerra a outra sem feedback."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Başka bir sekmede veya cihazda açık. Buradan bitirirsen geri bildirim alamazsın."
-          }
-        }
-      }
-    },
-    "It's practice: the estimate after it isn't an official score." : {
-      "comment" : "Before an exam task: its estimate isn't an official score",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das ist eine Übung: Die anschließende Schätzung ist kein offizieller Score."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Es una práctica: la estimación final no es un puntaje oficial."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "C’est un entraînement : l’estimation obtenue ensuite n’est pas un score officiel."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "È un’esercitazione: la stima finale non è un punteggio ufficiale."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "これは練習です。終了後の推定スコアは、公式のスコアではありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "연습이므로, 마친 뒤 나오는 예상 결과는 공식 점수가 아니에요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To ćwiczenie: podany po nim wynik jest orientacyjny, a nie oficjalny."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "É uma prática: a estimativa que você recebe depois não é uma pontuação oficial."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu bir alıştırma: sonunda verilen tahmini sonuç resmî puan yerine geçmez."
+            "value" : "Başka bir sekmede veya cihazda açık. Bu sohbeti başlatırsan diğeri biter ve o sohbet için geri bildirim alamazsın."
           }
         }
       }
@@ -5227,6 +4460,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dil kullanımı"
+          }
+        }
+      }
+    },
+    "Last result" : {
+      "comment" : "Opens a task's last result",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letztes Ergebnis"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Último resultado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dernier résultat"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vedi l’ultimo risultato"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前回の結果"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최근 결과"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zobacz ostatni wynik"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Último resultado"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son sonucu gör"
           }
         }
       }
@@ -5361,6 +4653,71 @@
         }
       }
     },
+    "Last try: at %@ on %lld of %lld criteria" : {
+      "comment" : "Criteria rated at the exam's level on the last try",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letzter Versuch: auf %1$@ bei %2$lld von %3$lld Kriterien"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Last try: at %1$@ on %2$lld of %3$lld criteria"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Último intento: al nivel %1$@ en %2$lld de %3$lld criterios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dernier essai : au niveau %1$@ pour %2$lld critères sur %3$lld"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultimo tentativo: al livello %1$@ in %2$lld criteri su %3$lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前回：%1$@相当と評価されたのは%2$lld項目（全%3$lld項目）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지난 시도: %1$@ 수준에 도달한 평가 항목 %2$lld/%3$lld개"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ostatnia próba: na poziomie %1$@ w %2$lld z %3$lld kryteriów"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Última tentativa: no nível %1$@ em %2$lld de %3$lld critérios"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son deneme: %1$@ düzeyinde %2$lld / %3$lld ölçüt"
+          }
+        }
+      }
+    },
     "Last try: below %@" : {
       "comment" : "Every criterion below the exam's level on the last try",
       "localizations" : {
@@ -5416,6 +4773,71 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Son deneme: %@ düzeyinin altında"
+          }
+        }
+      }
+    },
+    "Last try: near %@ on %lld of %lld criteria" : {
+      "comment" : "Criteria rated near the exam's level on the last try",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letzter Versuch: nahe an %1$@ bei %2$lld von %3$lld Kriterien"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Last try: near %1$@ on %2$lld of %3$lld criteria"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Último intento: cerca del nivel %1$@ en %2$lld de %3$lld criterios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dernier essai : proche du niveau %1$@ pour %2$lld critères sur %3$lld"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultimo tentativo: vicino al livello %1$@ in %2$lld criteri su %3$lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前回：%1$@に近いと評価されたのは%2$lld項目（全%3$lld項目）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지난 시도: %1$@ 수준에 가까운 평가 항목 %2$lld/%3$lld개"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ostatnia próba: blisko poziomu %1$@ w %2$lld z %3$lld kryteriów"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Última tentativa: perto do nível %1$@ em %2$lld de %3$lld critérios"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son deneme: %1$@ düzeyine yakın %2$lld / %3$lld ölçüt"
           }
         }
       }
@@ -6069,6 +5491,65 @@
         }
       }
     },
+    "Next task" : {
+      "comment" : "Opens the speaking paper's next task",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nächste Aufgabe"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siguiente tarea"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tâche suivante"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passa al prossimo compito"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次のタスク"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음 과제"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przejdź do następnego zadania"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próxima tarefa"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonraki bölüme geç"
+          }
+        }
+      }
+    },
     "No more calls this month" : {
       "comment" : "The plan's call time is used",
       "localizations" : {
@@ -6659,65 +6140,6 @@
         }
       }
     },
-    "Nothing is lost: the call comes back so you can try again." : {
-      "comment" : "A checkpoint call that didn't pass",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nichts ist verloren: Das Gespräch kommt wieder, damit du es noch einmal versuchen kannst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No perdiste nada: la llamada volverá para que puedas intentarlo de nuevo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rien n’est perdu : l’appel reviendra pour que tu puisses réessayer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non hai perso nulla: la conversazione tornerà e potrai riprovare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "これまでの学習はそのまま残ります。この会話はまた出てくるので、もう一度挑戦できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "불이익은 없어요. 대화가 다시 나오니 다시 도전할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nic nie tracisz: rozmowa wróci, więc będzie można spróbować ponownie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nada foi perdido: a conversa vai voltar para você tentar de novo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir şey kaybetmedin: tekrar deneyebilmen için sohbet yeniden karşına çıkacak."
-          }
-        }
-      }
-    },
     "Nothing said this time" : {
       "comment" : "A round with no answers",
       "localizations" : {
@@ -7196,6 +6618,65 @@
         }
       }
     },
+    "Other candidate (AI)" : {
+      "comment" : "Whom the AI plays in an exam task, in place of a real candidate",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Andere teilnehmende Person (KI)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otro candidato (IA)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autre candidat (IA)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altro candidato (IA)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかの受験者（AI）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다른 응시자(AI)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drugi zdający (AI)"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outro candidato (IA)"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diğer aday (yapay zekâ)"
+          }
+        }
+      }
+    },
     "Overall impression" : {
       "comment" : "A speaking criterion",
       "localizations" : {
@@ -7369,6 +6850,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kullanabileceğin ifadeler"
+          }
+        }
+      }
+    },
+    "Phrases you said well" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gelungene Formulierungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frases que dijiste bien"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phrases que tu as bien dites"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frasi che hai detto bene"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "うまく言えたフレーズ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "잘 사용한 표현"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dobrze wypowiedziane zwroty"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frases que você falou bem"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İyi kullandığın ifadeler"
           }
         }
       }
@@ -7550,61 +7089,61 @@
         }
       }
     },
-    "Preparation time is over. Start the call when you're ready." : {
+    "Preparation time is over." : {
       "comment" : "The preparation clock ran out",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Vorbereitungszeit ist vorbei. Starte das Gespräch, wenn du bereit bist."
+            "value" : "Die Vorbereitungszeit ist vorbei."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El tiempo de preparación terminó. Inicia la llamada cuando tengas todo listo."
+            "value" : "Se acabó el tiempo de preparación."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le temps de préparation est écoulé. Lance l’appel quand tu veux."
+            "value" : "Le temps de préparation est écoulé."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tempo di preparazione è finito. Inizia la conversazione quando vuoi."
+            "value" : "Il tempo di preparazione è terminato."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "準備時間が終わりました。用意ができたら会話を始めてください。"
+            "value" : "準備時間が終わりました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "준비 시간이 끝났어요. 준비되면 대화를 시작하세요."
+            "value" : "준비 시간이 끝났어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Czas na przygotowanie minął. Rozpocznij rozmowę, gdy zechcesz."
+            "value" : "Czas na przygotowanie minął."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O tempo de preparo acabou. Comece a conversa quando quiser."
+            "value" : "O tempo de preparo acabou."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hazırlık süresi doldu. Hazır olduğunda sohbeti başlat."
+            "value" : "Hazırlık süresi doldu."
           }
         }
       }
@@ -8494,65 +8033,6 @@
         }
       }
     },
-    "See your last result" : {
-      "comment" : "Opens a task's last result",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein letztes Ergebnis ansehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver tu último resultado"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voir ton dernier résultat"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vedi il tuo ultimo risultato"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "前回の結果を見る"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "최근 결과 보기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zobacz ostatni wynik"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver seu último resultado"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Son sonucunu gör"
-          }
-        }
-      }
-    },
     "Send" : {
       "comment" : "Sends a typed reply",
       "localizations" : {
@@ -8730,124 +8210,6 @@
         }
       }
     },
-    "Speak your answers: typed ones aren't rated on how you sound. The microphone is used only during the call." : {
-      "comment" : "Before an exam task's call: why to speak rather than type, and the microphone",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sprich deine Antworten: Bei getippten Antworten kann nicht bewertet werden, wie du klingst. Das Mikrofon wird nur während des Gesprächs verwendet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Responde en voz alta: si escribes tus respuestas, no se evalúa cómo suenas. El micrófono solo se usa durante la llamada."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réponds à l’oral : les réponses écrites ne permettent pas d’évaluer ta façon de parler. Le micro est utilisé uniquement pendant l’appel."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rispondi a voce: con le risposte scritte non possiamo valutare come parli. Usiamo il microfono solo durante la conversazione."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "声に出して答えてください。文字で入力した回答では、発音や話し方は評価されません。マイクは会話中だけ使用します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "말로 답변해 주세요. 글로 입력한 답변은 음성 평가에 반영되지 않아요. 마이크는 대화 중에만 사용해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Odpowiadaj na głos: przy wpisanych odpowiedziach nie oceniamy tego, jak mówisz. Mikrofon jest używany tylko podczas rozmowy."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fale suas respostas: respostas digitadas não são avaliadas pela forma como você fala. O microfone é usado apenas durante a conversa."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cevaplarını sesli söyle: yazılı cevaplarda konuşma becerin değerlendirilmez. Mikrofon yalnızca sohbet sırasında kullanılır."
-          }
-        }
-      }
-    },
-    "Speaking calls come with a free account. Create one to practice out loud." : {
-      "comment" : "A guest's plan has no calls",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit einem kostenlosen Konto kannst du Gespräche zum Sprechen führen. Erstelle ein Konto, um laut zu üben."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las llamadas de práctica oral están incluidas con una cuenta gratis. Crea una para practicar en voz alta."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les appels pour pratiquer l’oral sont inclus avec un compte gratuit. Crée un compte pour t’entraîner à voix haute."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le conversazioni di allenamento sono incluse nell’account gratuito. Creane uno per esercitarti ad alta voce."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料のアカウントで会話練習ができます。アカウントを作成して、声に出して練習しましょう。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 계정으로 대화 연습을 할 수 있어요. 계정을 만들고 소리 내어 말하는 연습을 해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Z bezpłatnym kontem możesz prowadzić rozmowy. Załóż je, by ćwiczyć mówienie na głos."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As conversas de prática estão disponíveis com uma conta grátis. Crie uma para praticar em voz alta."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz bir hesapla sohbet edebilirsin. Sesli pratik yapmak için bir hesap oluştur."
-          }
-        }
-      }
-    },
     "Speaking practice" : {
       "comment" : "Speaking practice page title",
       "localizations" : {
@@ -8907,65 +8269,6 @@
         }
       }
     },
-    "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one." : {
-      "comment" : "Speaking practice needs Plus",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Plus kannst du jede Aufgabe der mündlichen Prüfung in einem Gespräch üben. Nach jeder Aufgabe erhältst du eine Einschätzung anhand der offiziellen Kriterien."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus incluye práctica de expresión oral: cada tarea del examen en una llamada y una evaluación orientativa según los criterios oficiales al terminar cada una."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’entraînement à l’expression orale est inclus avec Plus : chaque exercice de l’épreuve se fait en appel, avec une estimation selon les critères officiels après chacun."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’esercitazione orale è inclusa in Plus: svolgi ogni compito della prova in una conversazione e, dopo ognuno, ricevi una stima del punteggio basata sui criteri ufficiali."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusでは、試験の全タスクを会話形式で練習できます。各タスクの終了後に、公式の評価基準に基づく推定スコアを確認できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus에서는 말하기 시험의 모든 과제를 대화로 연습하고, 과제마다 공식 평가 기준에 따른 예상 점수를 받을 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W pakiecie Plus przećwiczysz każde zadanie z arkusza w rozmowie, a po każdym otrzymasz orientacyjny wynik według oficjalnych kryteriów."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Plus inclui a prática de conversação: você faz cada tarefa da prova em uma conversa e recebe uma estimativa com base nos critérios oficiais depois de cada uma."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Konuşma pratiği Plus’a dahil: sınavın her bölümünü sohbetle çalışabilir ve her bölümden sonra resmî ölçütlere göre tahmini puanını görebilirsin."
-          }
-        }
-      }
-    },
     "Speaking practice didn't load" : {
       "comment" : "Loading failed",
       "localizations" : {
@@ -9021,6 +8324,124 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konuşma pratiği yüklenemedi"
+          }
+        }
+      }
+    },
+    "Speaking practice needs a subscription" : {
+      "comment" : "A free learner tried to start an exam speaking task",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für Sprechübungen brauchst du ein Abo"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Necesitas una suscripción para practicar expresión oral"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’entraînement à l’oral nécessite un abonnement"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per l’esercitazione orale serve un abbonamento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スピーキング練習にはサブスクリプションが必要です"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "말하기 연습을 하려면 구독이 필요해요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ćwiczenie mówienia wymaga subskrypcji"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Praticar conversação exige uma assinatura"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konuşma pratiği için abonelik gerekiyor"
+          }
+        }
+      }
+    },
+    "Start" : {
+      "comment" : "Gets a checkpoint's call ready, then opens it\nStarts an exam speaking task",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inizia"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始める"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시작하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozpocznij"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başla"
           }
         }
       }
@@ -9261,61 +8682,61 @@
         }
       }
     },
-    "Start this task" : {
-      "comment" : "Starts an exam speaking task",
+    "Start this call" : {
+      "comment" : "Ends the learner's other call and starts this one",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Aufgabe starten"
+            "value" : "Dieses Gespräch starten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Iniciar esta tarea"
+            "value" : "Iniciar esta llamada"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commencer cet exercice"
+            "value" : "Démarrer cet appel"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inizia questo compito"
+            "value" : "Inizia questa conversazione"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このタスクを始める"
+            "value" : "この会話を始める"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 과제 시작하기"
+            "value" : "이 대화 시작하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rozpocznij to zadanie"
+            "value" : "Rozpocznij tę rozmowę"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar esta tarefa"
+            "value" : "Começar esta conversa"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu bölüme başla"
+            "value" : "Bu sohbeti başlat"
           }
         }
       }
@@ -9674,61 +9095,61 @@
         }
       }
     },
-    "Tap and say it out loud" : {
+    "Tap Record and say it out loud" : {
       "comment" : "Asks the learner to record their answer",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippe und sag es laut"
+            "value" : "Tippe auf „Aufnehmen“ und sprich deine Antwort laut aus"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca y dilo en voz alta"
+            "value" : "Toca Grabar y dilo en voz alta"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Appuie et dis-le à voix haute"
+            "value" : "Appuie sur Enregistrer et dis-le à voix haute"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tocca e dillo ad alta voce"
+            "value" : "Tocca Registra e dillo ad alta voce"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "タップして、声に出して言ってください"
+            "value" : "「録音」をタップして、答えを声に出して言ってください"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "누르고 소리 내어 말하세요"
+            "value" : "녹음 버튼을 누르고 소리 내어 말해 보세요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stuknij i powiedz to na głos"
+            "value" : "Stuknij „Nagraj” i powiedz to na głos"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque e fale em voz alta"
+            "value" : "Toque em Gravar e fale em voz alta"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dokun ve sesli söyle"
+            "value" : "Kaydet düğmesine dokun ve sesli söyle"
           }
         }
       }
@@ -9971,6 +9392,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Doğru söyledin"
+          }
+        }
+      }
+    },
+    "The call comes back so you can try again." : {
+      "comment" : "A checkpoint call that didn't pass",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Gespräch wird wieder angeboten, damit du es noch einmal versuchen kannst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La llamada vuelve a aparecer para que puedas intentarlo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’appel te sera proposé à nouveau pour que tu puisses réessayer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ti riproporremo la conversazione, così potrai riprovare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この会話はまた出てくるので、もう一度挑戦できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시 시도할 수 있게 이 대화가 다시 나와요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta rozmowa wróci, więc możesz spróbować jeszcze raz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A conversa volta para você tentar de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tekrar deneyebilmen için sohbet yeniden karşına çıkar."
           }
         }
       }
@@ -10266,130 +9746,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sohbeti hâlâ kapatıyoruz. Birazdan tekrar dene."
-          }
-        }
-      }
-    },
-    "The exam gives %@ to prepare tasks %@ together, about %@ for this one." : {
-      "comment" : "Preparation time several exam tasks share, and this task's part",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In der Prüfung hast du insgesamt %1$@ zur Vorbereitung auf die Aufgaben %2$@, etwa %3$@ für diese Aufgabe."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "The exam gives %1$@ to prepare tasks %2$@ together, about %3$@ for this one."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El examen te da %1$@ para preparar las tareas %2$@ en conjunto, aproximadamente %3$@ para esta."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’examen prévoit %1$@ au total pour préparer les tâches %2$@, soit environ %3$@ pour celle-ci."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’esame prevede %1$@ in totale per preparare i compiti %2$@, di cui circa %3$@ per questo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本番では%1$@でタスク%2$@をまとめて準備します。このタスクの準備時間の目安は%3$@です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시험에서는 %1$@ 동안 과제 %2$@을(를) 함께 준비해요. 이 과제에 쓸 시간은 %3$@ 정도예요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Na egzaminie masz %1$@ łącznie na przygotowanie się do zadań %2$@, w tym około %3$@ na to zadanie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A prova dá %1$@ de preparo para as tarefas %2$@ juntas, cerca de %3$@ para esta."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sınavda hazırlık için %1$@ verilir. Bu süre %2$@ bölümleri arasında paylaşılır; bu bölüme yaklaşık %3$@ düşer."
-          }
-        }
-      }
-    },
-    "The exam gives %@ to prepare with the card." : {
-      "comment" : "How long the exam gives to prepare this task",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In der Prüfung hast du %@, um dich mit der Karte vorzubereiten."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El examen te da %@ para prepararte con la tarjeta."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’examen prévoit %@ pour te préparer avec la fiche."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’esame prevede %@ per prepararti con la scheda."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本番では、カードを見て準備する時間が%@あります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시험에서는 %@ 동안 카드를 보고 준비할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Na egzaminie masz %@ na przygotowanie odpowiedzi na podstawie karty."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A prova dá %@ para você se preparar com o cartão."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sınavda kartla hazırlanman için %@ verilir."
           }
         }
       }
@@ -10748,65 +10104,6 @@
         }
       }
     },
-    "Then it's your turn: answer out loud, or type if you can't talk." : {
-      "comment" : "How a call works: step 2",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dann bist du dran: Antworte laut oder schreib, wenn du nicht sprechen kannst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Después es tu turno: responde en voz alta o escribe si no puedes hablar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ensuite, c’est à toi : réponds à voix haute, ou écris si tu ne peux pas parler."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poi tocca a te: rispondi ad alta voce o scrivi se non puoi parlare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次は答える番です。声で答えるか、話せないときは文字で答えてください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "그다음엔 대답할 차례예요. 소리 내어 말하거나, 말하기 어려우면 글로 입력하세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Potem twoja kolej: odpowiedz na głos lub napisz, jeśli nie możesz mówić."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Depois é sua vez: responda em voz alta ou digite se não puder falar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sonra sıra sende: sesli cevap ver ya da konuşamıyorsan yaz."
-          }
-        }
-      }
-    },
     "This call has ended" : {
       "comment" : "A call that can't go on",
       "localizations" : {
@@ -10866,61 +10163,61 @@
         }
       }
     },
-    "This challenge is a short call about the unit. It's written for your speaking level first, which takes up to half a minute." : {
-      "comment" : "A language checkpoint's call that isn't written yet",
+    "This call needs a subscription" : {
+      "comment" : "A free learner tried a language plan's challenge call",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Herausforderung ist ein kurzes Gespräch über die Einheit. Wir erstellen es zuerst passend zu deinem Sprechniveau. Das dauert bis zu einer halben Minute."
+            "value" : "Für dieses Gespräch brauchst du ein Abo"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este desafío es una llamada breve sobre la unidad. Primero se prepara según tu nivel de expresión oral, lo que puede tardar hasta medio minuto."
+            "value" : "Necesitas una suscripción para esta llamada"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce défi est un court appel sur l’unité. Il est d’abord préparé selon ton niveau à l’oral, ce qui prend jusqu’à une trentaine de secondes."
+            "value" : "Cet appel nécessite un abonnement"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questa sfida è una breve conversazione sull’unità. Prima la prepariamo in base al tuo livello di parlato: ci vuole fino a mezzo minuto."
+            "value" : "Per questa conversazione serve un abbonamento"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このチャレンジは、ユニットの内容についての短い会話です。まず、スピーキングのレベルに合わせて会話を作成します。作成には最大30秒かかります。"
+            "value" : "この会話にはサブスクリプションが必要です"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 챌린지는 단원 내용을 다루는 짧은 대화예요. 말하기 수준에 맞춰 대화를 먼저 만드는 데 최대 30초가 걸려요."
+            "value" : "이 대화를 하려면 구독이 필요해요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "To wyzwanie to krótka rozmowa o dziale. Najpierw przygotujemy ją i dopasujemy do twojego poziomu mówienia, co zajmie do pół minuty."
+            "value" : "Ta rozmowa wymaga subskrypcji"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este desafio é uma conversa rápida sobre a unidade. Primeiro, a gente cria a conversa para o seu nível de conversação, o que leva até meio minuto."
+            "value" : "Esta conversa exige uma assinatura"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu meydan okuma, üniteyle ilgili kısa bir sohbet. Önce konuşma seviyene uygun bir sohbet hazırlıyoruz; bu, yarım dakikaya kadar sürebilir."
+            "value" : "Bu sohbet için abonelik gerekiyor"
           }
         }
       }
@@ -11039,6 +10336,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu deneme sınavının puanı yok"
+          }
+        }
+      }
+    },
+    "This takes about half a minute." : {
+      "comment" : "How long getting a checkpoint's call ready takes; it opens by itself",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das dauert etwa eine halbe Minute."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto tarda aproximadamente medio minuto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ça prend environ trente secondes."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ci mettiamo circa mezzo minuto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "準備には30秒ほどかかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "준비하는 데 약 30초가 걸려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zajmie nam to około pół minuty."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isso leva cerca de meio minuto."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yaklaşık yarım dakika sürer."
           }
         }
       }
@@ -11456,124 +10812,6 @@
         }
       }
     },
-    "Try the task again when you're ready." : {
-      "comment" : "Under an ungraded exam task",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Versuch die Aufgabe noch einmal, wenn du bereit bist."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vuelve a intentar la tarea cuando quieras."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réessaie cette tâche quand tu veux."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Riprova il compito quando te la senti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "準備ができたら、もう一度このタスクに挑戦してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "준비되면 이 과제를 다시 해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spróbuj wykonać to zadanie ponownie, gdy poczujesz, że to dobry moment."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tente fazer a tarefa de novo quando quiser."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hazır olduğunda bölümü tekrar dene."
-          }
-        }
-      }
-    },
-    "Try this task with a new card" : {
-      "comment" : "Starts the same exam task again with a new card",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Versuch diese Aufgabe mit einer neuen Karte"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intentar esta tarea con una tarjeta nueva"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réessayer cette tâche avec une nouvelle fiche"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prova questo compito con una nuova scheda"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しいカードでこのタスクに挑戦する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "새 카드로 이 과제 다시 하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spróbuj wykonać to zadanie z nową kartą"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tentar esta tarefa com um novo cartão"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu bölümü yeni bir kartla dene"
-          }
-        }
-      }
-    },
     "Turn on the microphone for Zoonk in Settings to answer out loud." : {
       "comment" : "How to turn the microphone back on to record a spoken answer",
       "localizations" : {
@@ -11692,61 +10930,61 @@
         }
       }
     },
-    "Turn your sound on. The microphone is on only during the call." : {
+    "Turn your sound on." : {
       "comment" : "Before a call: what it needs from the learner's device",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schalt den Ton ein. Das Mikrofon ist nur während des Gesprächs an."
+            "value" : "Schalt den Ton ein."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activa el sonido. El micrófono solo está activado durante la llamada."
+            "value" : "Activa el sonido."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Active le son. Le micro n’est actif que pendant l’appel."
+            "value" : "Active le son."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Attiva l’audio. Il microfono è attivo solo durante la conversazione."
+            "value" : "Attiva l’audio."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "端末の音をオンにしてください。マイクは会話中だけオンになります。"
+            "value" : "音声をオンにしてください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "소리를 켜세요. 마이크는 대화 중에만 켜져요."
+            "value" : "소리를 켜세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Włącz dźwięk. Mikrofon jest włączony tylko podczas rozmowy."
+            "value" : "Włącz dźwięk."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ative o som. O microfone só fica ligado durante a conversa."
+            "value" : "Ative o som."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cihazının sesini aç. Mikrofon yalnızca sohbet sırasında açık olur."
+            "value" : "Cihazının sesini aç."
           }
         }
       }
@@ -12636,71 +11874,6 @@
         }
       }
     },
-    "When you've done everything, or after about %@, %@ says goodbye and the call ends." : {
-      "comment" : "How a call works: step 3",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wenn du alles erledigt hast, spätestens aber nach etwa %1$@, verabschiedet sich %2$@ und das Gespräch endet."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "When you've done everything, or after about %1$@, %2$@ says goodbye and the call ends."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cuando completes todo o después de aproximadamente %1$@, %2$@ se despide y la llamada termina."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quand tu as tout terminé, ou après environ %1$@, %2$@ dit au revoir et l’appel se termine."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quando hai completato tutto o dopo circa %1$@, %2$@ ti saluta e la conversazione termina."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "やることがすべて終わるか、約%1$@が経つと、%2$@さんが最後のあいさつをして会話が終わります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "목표를 모두 달성하거나 %1$@쯤 지나면 %2$@(이)가 작별 인사를 하고 대화가 끝나요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Po osiągnięciu wszystkich celów lub po około %1$@ %2$@ żegna się i rozmowa się kończy."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quando você terminar tudo ou depois de cerca de %1$@, %2$@ se despede e a conversa termina."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Her şeyi tamamladığında ya da yaklaşık %1$@ sonra %2$@ vedalaşır ve sohbet biter."
-          }
-        }
-      }
-    },
     "With an examiner (AI)" : {
       "comment" : "Whom the learner talks to",
       "localizations" : {
@@ -13002,65 +12175,6 @@
         }
       }
     },
-    "Writing your mock" : {
-      "comment" : "A speaking mock is being written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir erstellen deine Probeprüfung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparando tu simulacro"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Préparation de ton examen blanc"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo preparando la tua simulazione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "模試を作成しています"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모의고사를 만들고 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przygotowujemy twój egzamin próbny"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criando seu simulado"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deneme sınavını hazırlıyoruz"
-          }
-        }
-      }
-    },
     "Writing your task" : {
       "comment" : "An exam task's card is being written",
       "localizations" : {
@@ -13179,61 +12293,61 @@
         }
       }
     },
-    "You said little in this task, so there wasn't much to judge. A longer try gives a closer estimate." : {
+    "You said little, so this estimate is rough." : {
       "comment" : "A speaking estimate from a short answer",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast bei dieser Aufgabe wenig gesagt, deshalb gab es wenig zu bewerten. Wenn du länger sprichst, wird die Schätzung genauer."
+            "value" : "Du hast wenig gesagt, daher ist das nur eine grobe Schätzung."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hablaste poco en esta tarea, así que hubo poco que evaluar. Una respuesta más larga permite una estimación más precisa."
+            "value" : "Tu respuesta fue breve, así que esta estimación es poco precisa."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as peu parlé pendant cette tâche, donc il y avait peu d’éléments à évaluer. Une réponse plus longue permet une estimation plus précise."
+            "value" : "Comme tu as peu parlé, cette estimation est approximative."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In questo compito hai parlato poco, quindi c’era poco da valutare. Una risposta più lunga permette una stima più precisa."
+            "value" : "Hai parlato poco, quindi questa stima è approssimativa."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このタスクでは話した内容が少なかったため、評価できることが限られていました。もう少し長く話すと、より正確な推定スコアを出せます。"
+            "value" : "話した内容が少ないため、スコアは大まかな推定です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 과제에서는 답변이 짧아 평가할 내용이 적었어요. 더 길게 말해 보면 예상 점수가 더 정확해져요."
+            "value" : "답변이 짧아서 정확하게 추정하기 어려워요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twoja wypowiedź w tym zadaniu była krótka, więc niewiele dało się ocenić. Dłuższa wypowiedź pozwoli dokładniej oszacować wynik."
+            "value" : "Wypowiedź jest krótka, więc to tylko przybliżony wynik."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você falou pouco nesta tarefa, então não deu para avaliar muita coisa. Uma resposta mais longa permite uma estimativa mais precisa."
+            "value" : "Como você falou pouco, esta estimativa é menos precisa."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu bölümde az konuştuğun için değerlendirme sınırlı kaldı. Daha uzun konuşursan puanını daha doğru tahmin edebiliriz."
+            "value" : "Cevabın kısa olduğu için bu tahmin pek kesin değil."
           }
         }
       }
@@ -13356,592 +12470,61 @@
         }
       }
     },
-    "You're already in a call" : {
+    "You're in another call" : {
       "comment" : "Another call is open",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du bist bereits in einem Gespräch"
+            "value" : "Du bist in einem anderen Gespräch"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya estás en una llamada"
+            "value" : "Estás en otra llamada"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu es déjà en appel"
+            "value" : "Tu as déjà un appel en cours"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sei già in una conversazione"
+            "value" : "Sei in un’altra conversazione"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すでに会話中です"
+            "value" : "別の会話を開いています"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이미 대화 중이에요"
+            "value" : "다른 대화가 진행 중이에요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jesteś już w trakcie rozmowy"
+            "value" : "Trwa już inna rozmowa"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já está em uma conversa"
+            "value" : "Você está em outra conversa"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaten bir sohbettesin"
-          }
-        }
-      }
-    },
-    "You've used the free help you can get without an account. Create a free account to keep going." : {
-      "comment" : "A guest used all the help available without an account",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast die kostenlose Hilfe ohne Konto aufgebraucht. Erstelle ein kostenloses Konto, um weiterzumachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya usaste toda la ayuda gratuita disponible sin una cuenta. Crea una cuenta gratis para seguir."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as utilisé toute l’aide gratuite disponible sans compte. Crée un compte gratuit pour continuer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai esaurito l’aiuto gratuito disponibile senza un account. Crea un account gratuito per continuare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "アカウントなしで利用できる無料サポートを使い切りました。続けるには無料アカウントを作成してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계정 없이 받을 수 있는 무료 도움을 다 받았어요. 계속하려면 무료 계정을 만드세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limit bezpłatnej pomocy bez konta jest już wykorzystany. Utwórz bezpłatne konto, aby kontynuować."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você usou toda a ajuda gratuita disponível sem uma conta. Crie uma conta grátis para continuar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hesap açmadan alabileceğin ücretsiz yardım hakkını kullandın. Devam etmek için ücretsiz bir hesap oluştur."
-          }
-        }
-      }
-    },
-    "You've used this month's help. It comes back next month, or get Plus to keep going now." : {
-      "comment" : "A free learner used this month's help",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast deine Hilfe für diesen Monat aufgebraucht. Nächsten Monat ist sie wieder verfügbar. Mit Plus kannst du sofort weitermachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya usaste toda la ayuda de este mes. Tendrás más el próximo mes o puedes obtener Plus para seguir ahora."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as utilisé toute ton aide pour ce mois. Elle sera de nouveau disponible le mois prochain. Passe à Plus pour continuer dès maintenant."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai esaurito l’aiuto di questo mese. Sarà di nuovo disponibile il mese prossimo. Per continuare subito, passa a Plus."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今月分のサポートを使い切りました。来月また利用できます。Plusに登録すると今すぐ続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이번 달에 받을 수 있는 도움을 다 받았어요. 다음 달에 다시 받을 수 있어요. 지금 계속하려면 Plus를 구독하세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limit pomocy na ten miesiąc jest już wykorzystany. Pomoc będzie znów dostępna w przyszłym miesiącu. Aby kontynuować teraz, przejdź na Plus."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você usou toda a ajuda deste mês. Ela volta no mês que vem, ou você pode assinar o Plus para continuar agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu ayki yardım hakkını kullandın. Gelecek ay yenilenecek; hemen devam etmek için Plus’a geç."
-          }
-        }
-      }
-    },
-    "You've used today's free help. Create a free account to keep going." : {
-      "comment" : "A guest used today's free help",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast deine kostenlose Hilfe für heute aufgebraucht. Erstelle ein kostenloses Konto, um weiterzumachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya usaste toda la ayuda gratuita de hoy. Crea una cuenta gratis para seguir."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as utilisé toute ton aide gratuite pour aujourd’hui. Crée un compte gratuit pour continuer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai esaurito l’aiuto gratuito di oggi. Crea un account gratuito per continuare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の無料サポートを使い切りました。続けるには無料アカウントを作成してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘 받을 수 있는 무료 도움을 다 받았어요. 계속하려면 무료 계정을 만드세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limit bezpłatnej pomocy na dziś jest już wykorzystany. Utwórz bezpłatne konto, aby kontynuować."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você usou toda a ajuda gratuita de hoje. Crie uma conta grátis para continuar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü ücretsiz yardım hakkını kullandın. Devam etmek için ücretsiz bir hesap oluştur."
-          }
-        }
-      }
-    },
-    "You've used today's help. It comes back tomorrow, or get Plus to keep going now." : {
-      "comment" : "A free learner used today's help",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast deine Hilfe für heute aufgebraucht. Morgen ist sie wieder verfügbar. Mit Plus kannst du sofort weitermachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya usaste toda la ayuda de hoy. Tendrás más mañana o puedes obtener Plus para seguir ahora."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as utilisé toute ton aide pour aujourd’hui. Elle sera de nouveau disponible demain. Passe à Plus pour continuer dès maintenant."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai esaurito gli aiuti di oggi. Saranno di nuovo disponibili domani, oppure passa a Plus per continuare subito."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日のヘルプの上限に達しました。明日また使えます。Plusに登録すると、今すぐ続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘 받을 수 있는 도움을 다 썼어요. 내일 다시 이용할 수 있고, Plus를 구독하면 지금 계속 이용할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limit pomocy na dziś się wyczerpał. Odnowi się jutro. Możesz też przejść na Plus, by korzystać z pomocy dalej już teraz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você usou toda a ajuda de hoje. Ela volta amanhã, ou você pode assinar o Plus para continuar agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü yardım hakkını kullandın. Yarın tekrar yardım alabilir ya da hemen devam etmek için Plus’a geçebilirsin."
-          }
-        }
-      }
-    },
-    "You've used today's help. It comes back tomorrow." : {
-      "comment" : "A Plus learner used today's help",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast deine Hilfe für heute aufgebraucht. Morgen ist sie wieder verfügbar."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya usaste toda la ayuda de hoy. Tendrás más mañana."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as utilisé toute ton aide pour aujourd’hui. Elle sera de nouveau disponible demain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai esaurito gli aiuti di oggi. Saranno di nuovo disponibili domani."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日のヘルプの上限に達しました。明日また使えます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘 받을 수 있는 도움을 다 썼어요. 내일 다시 이용할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limit pomocy na dziś się wyczerpał. Odnowi się jutro."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você usou toda a ajuda de hoje. Ela volta amanhã."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü yardım hakkını kullandın. Yarın tekrar yardım alabilirsin."
-          }
-        }
-      }
-    },
-    "Your calls come back next month, or get Plus for higher call limits." : {
-      "comment" : "A free learner used this month's call time",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nächsten Monat kannst du wieder Gespräche führen. Mit Plus hast du mehr Gesprächszeit."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podrás volver a llamar el próximo mes, o puedes obtener Plus para tener más tiempo de llamada."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu pourras de nouveau passer des appels le mois prochain. Passe à Plus pour avoir plus de temps d’appel."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Potrai riprendere le conversazioni il mese prossimo, oppure passa a Plus per avere più tempo a disposizione."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "来月また会話練習ができます。Plusに登録すると、会話時間の上限が増えます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다음 달에 다시 대화할 수 있어요. Plus를 구독하면 더 오래 대화할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Z rozmów znów skorzystasz w przyszłym miesiącu. Możesz też przejść na Plus, by mieć więcej czasu na rozmowy."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suas conversas voltam no mês que vem, ou você pode assinar o Plus para ter limites maiores."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gelecek ay tekrar sohbet edebilir ya da daha fazla sohbet süresi için Plus’a geçebilirsin."
-          }
-        }
-      }
-    },
-    "Your calls come back next month." : {
-      "comment" : "A Plus learner used this month's call time",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nächsten Monat kannst du wieder Gespräche führen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podrás volver a llamar el próximo mes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu pourras de nouveau passer des appels le mois prochain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Potrai riprendere le conversazioni il mese prossimo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "来月また会話練習ができます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다음 달에 다시 대화할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Z rozmów znów skorzystasz w przyszłym miesiącu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suas conversas voltam no mês que vem."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gelecek ay tekrar sohbet edebilirsin."
-          }
-        }
-      }
-    },
-    "Your calls come back tomorrow, or get Plus for higher call limits." : {
-      "comment" : "A free learner used today's call time",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Morgen kannst du wieder Gespräche führen. Mit Plus hast du mehr Gesprächszeit."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podrás volver a llamar mañana, o puedes obtener Plus para tener más tiempo de llamada."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu pourras de nouveau passer des appels demain. Passe à Plus pour avoir plus de temps d’appel."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Potrai riprendere le conversazioni domani, oppure passa a Plus per avere più tempo a disposizione."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "明日また会話練習ができます。Plusに登録すると、会話時間の上限が増えます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내일 다시 대화할 수 있어요. Plus를 구독하면 더 오래 대화할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jutro znów skorzystasz z rozmów. Możesz też przejść na Plus, by mieć więcej czasu na rozmowy."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suas conversas voltam amanhã, ou você pode assinar o Plus para ter limites maiores."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yarın tekrar sohbet edebilir ya da daha fazla sohbet süresi için Plus’a geçebilirsin."
-          }
-        }
-      }
-    },
-    "Your calls come back tomorrow." : {
-      "comment" : "A Plus learner used today's call time",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Morgen kannst du wieder Gespräche führen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podrás volver a llamar mañana."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu pourras de nouveau passer des appels demain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Potrai riprendere le conversazioni domani."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "明日また会話練習ができます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내일 다시 대화할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jutro znów skorzystasz z rozmów."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suas conversas voltam amanhã."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yarın tekrar sohbet edebilirsin."
+            "value" : "Başka bir sohbettesin"
           }
         }
       }
@@ -14060,6 +12643,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deneme sınavın hazır olur olmaz açılır."
+          }
+        }
+      }
+    },
+    "Your plan goes on without it." : {
+      "comment" : "Under a challenge call that needs a subscription",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan geht ohne dieses Gespräch weiter."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan sigue adelante sin esta llamada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan continue sans cet appel."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano prosegue senza questa conversazione."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この会話をしなくても、学習計画は進みます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 대화를 하지 않아도 계획은 계속 진행돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Możesz dalej uczyć się według planu bez tej rozmowy."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano continua sem ela."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planın bu sohbet olmadan da devam eder."
           }
         }
       }

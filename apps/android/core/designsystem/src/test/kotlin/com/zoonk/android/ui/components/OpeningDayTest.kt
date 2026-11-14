@@ -18,8 +18,10 @@ class OpeningDayTest {
     }
 
     @Test
-    fun anInstantAlreadyPastOpensToday() {
-        assertEquals(OpeningDay.Today, openingDay(Instant.parse("2026-11-10T08:00:00Z"), now, ZoneId.of("UTC")))
+    fun anInstantAlreadyPastIsOpenNotToday() {
+        assertEquals(OpeningDay.Open, openingDay(Instant.parse("2026-11-10T08:00:00Z"), now, ZoneId.of("UTC")))
+        assertEquals(OpeningDay.Open, openingDay(now, now, ZoneId.of("UTC")))
+        assertEquals(OpeningDay.Today, openingDay(now.plusSeconds(60), now, ZoneId.of("UTC")))
     }
 
     @Test

@@ -6,6 +6,7 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
+  DrawerFooter,
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
@@ -15,7 +16,6 @@ import { PenLineIcon, PencilRulerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
-import { BAR_PADDING_CLASS } from "../_components/task-layout";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { SectionClock } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
@@ -259,14 +259,14 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
           />
         </DrawerContent>
 
-        <div className={cn("border-border border-t px-6", BAR_PADDING_CLASS)}>
+        <DrawerFooter>
           <SheetHandIn
             onHandIn={() => {
               setOpen(false);
               onHandIn();
             }}
           />
-        </div>
+        </DrawerFooter>
       </DrawerPopup>
     </Drawer>
   );

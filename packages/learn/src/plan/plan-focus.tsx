@@ -7,6 +7,7 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
+  DrawerFooter,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
@@ -25,9 +26,12 @@ import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
 import { usePlanChange } from "./use-plan-change";
 
+const CARD_ROW_CLASS =
+  "border-border bg-card hover:bg-muted/60 flex min-h-14 items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors motion-reduce:transition-none";
+
 const AREA_ROW_CLASS = cn(
-  "border-border bg-card flex min-h-14 cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors motion-reduce:transition-none",
-  "hover:bg-muted/60 has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px] has-data-disabled:pointer-events-none",
+  CARD_ROW_CLASS,
+  "has-focus-visible:ring-ring/50 cursor-pointer has-focus-visible:ring-[3px] has-data-disabled:pointer-events-none",
   CHOICE_CARD_PICKED_CLASS,
 );
 
@@ -60,13 +64,16 @@ function FocusTestLink({ focusTest, href }: { focusTest: FocusTestSummary; href:
 
   return (
     <LearnLink
-      className="ring-input hover:bg-muted/70 focus-visible:ring-ring/50 flex min-h-14 items-center gap-3 rounded-xl px-3.5 py-2.5 ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]"
+      className={cn(
+        CARD_ROW_CLASS,
+        "focus-visible:ring-ring/50 shrink-0 outline-none focus-visible:ring-[3px]",
+      )}
       href={href}
     >
       <CrosshairIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="text-sm font-medium">{t("Focus test")}</span>
-        <span className="text-muted-foreground text-xs">
+        <span className="text-base font-medium">{t("Focus test")}</span>
+        <span className="text-muted-foreground text-sm">
           <FactSegments facts={rowFacts(focusTest)} />
         </span>
       </span>
@@ -149,16 +156,13 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
   return (
     <>
       <DrawerContent className="flex flex-col gap-5 pt-2">
-        {unchanged && (
+        {unchanged && chosen.length > 0 && (
           <p className="bg-muted/60 rounded-xl p-4 text-sm text-pretty" role="status">
             {unchanged === "alreadyIn"
-              ? t("Nothing changed: {areas} already have every lesson in your plan.", {
+              ? t("Nothing changed. {areas} already have every lesson in your plan.", {
                   areas: names,
                 })
-              : t(
-                  "Nothing changed: {areas} already start as early as what they build on allows, and your time has no room for more of them. More time a day brings more in.",
-                  { areas: names },
-                )}
+              : t("Nothing changed. To fit more of {areas}, add time a day.", { areas: names })}
           </p>
         )}
         {plan.focusTest && testHref && <FocusTestLink focusTest={plan.focusTest} href={testHref} />}
@@ -197,7 +201,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
         <PlanBases />
       </DrawerContent>
 
-      <div className="flex flex-col gap-2 border-t px-6 pt-4 pb-6">
+      <DrawerFooter>
         <Button
           busy={isPending}
           disabled={sameAreas(chosen, current) || unchanged !== null}
@@ -207,9 +211,9 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
           size="lg"
           type="submit"
         >
-          {chosen.length === 0 && current.length > 0 ? t("Remove focus") : t("Focus on these")}
+          {chosen.length === 0 && current.length > 0 ? t("Remove focus") : t("Save")}
         </Button>
-      </div>
+      </DrawerFooter>
     </>
   );
 }
@@ -236,7 +240,7 @@ export function ChooseFocusHost({ children }: { children: React.ReactNode }) {
             <div className="flex flex-col gap-1">
               <DrawerTitle>{t("Where to focus")}</DrawerTitle>
               <DrawerDescription>
-                {t("The subjects you pick come first and get more depth.")}
+                {t("The subjects you pick get more of your time.")}
               </DrawerDescription>
             </div>
           </SheetHeader>

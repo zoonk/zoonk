@@ -14,7 +14,7 @@ import { getLongerTime } from "../_utils/time-answer";
 import { usePlanScreen } from "./plan-context";
 import { type FindStatus, useCoveredText, usePlanCoverage } from "./plan-coverage";
 import { useFocusTestOfferHref, useTakeFocusTestLabel } from "./plan-focus-test";
-import { useFullCourse } from "./plan-full-course";
+import { useFullCourse, useKeepStudyingLabel } from "./plan-full-course";
 import {
   CheckingChange,
   type CoverageOffer,
@@ -110,10 +110,11 @@ function useCardLines({
 
   const noDate = flags.noDate ? texts.noDate : null;
   const retry = flags.retry ? retryText : null;
+  const finding = flags.pending && intent === "time" ? texts.finding : null;
 
   return {
     description: offer?.description.filter((line) => line !== title) ?? [],
-    status: retry ?? noDate ?? none ?? "",
+    status: finding ?? retry ?? noDate ?? none ?? "",
   };
 }
 
@@ -136,8 +137,8 @@ function CoverageBody({
   onStop: () => void;
   preview: SlotPreview;
 }) {
-  const t = useExtracted();
   const texts = useTimeToCoverTexts();
+  const keepStudying = useKeepStudyingLabel();
   const coverage = usePlanCoverage();
   const { plan } = usePlanScreen();
   const { requestPreview } = usePlanSuggestionSlot();
@@ -168,22 +169,22 @@ function CoverageBody({
 
   return (
     <SuggestionActions>
+      {/* One key for the main action in every state, so the button pressed keeps the keyboard. */}
       {offer && (
-        <SuggestionAction action={() => void requestPreview(offer.operations)} key="preview">
-          {t("Preview")}
+        <SuggestionAction action={() => void requestPreview(offer.operations)} key="find">
+          {texts.seeChanges}
         </SuggestionAction>
       )}
 
       {findsTime && (
         <SuggestionAction action={() => ask(retry ? intent : "time")} busy={pending} key="find">
-          {retry ? texts.tryAgain : texts.find}
+          {retry ? texts.tryAgain : texts.seeChanges}
         </SuggestionAction>
       )}
 
-      {/* Keyed as Find, so the button Find was pressed on becomes it and keeps the keyboard. */}
       {flags.studiesEverything && fullCourse && (
         <SuggestionAction action={() => studyEverything(fullCourse)} key="find">
-          {t("Study everything, even after the exam")}
+          {keepStudying}
         </SuggestionAction>
       )}
 
@@ -204,7 +205,6 @@ function CoverageBody({
 }
 
 export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) {
-  const texts = useTimeToCoverTexts();
   const coveredText = useCoveredText();
   const courseOffer = useCourseOffer();
   const answerOffer = useAnswerOffer();
@@ -257,7 +257,14 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
   };
 
   return (
-    <PlanChangeSuggestion item={item} title={title}>
+    // On a phone the tap on "View" asks for the time, so the sheet names it. A computer shows the
+    // panel with no tap, and finding the time plans the goal many times: there the button asks.
+    <PlanChangeSuggestion
+      item={item}
+      onOpen={() => void finder.find()}
+      summary={covered}
+      title={title}
+    >
       {lines.description.map((line) => (
         <SuggestionDescription key={line}>{line}</SuggestionDescription>
       ))}
@@ -269,7 +276,7 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
 
       {/* Always there, so that the search runs, and what it couldn't find, is announced. */}
       <p aria-live="polite" className="sr-only">
-        {flags.pending ? texts.finding : lines.status}
+        {lines.status}
       </p>
 
       <CoverageBody

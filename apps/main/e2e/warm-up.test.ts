@@ -306,7 +306,7 @@ test("a learner who guessed while the exam's notice is read stays once it's read
   });
 
   await expect(page.getByRole("button", { name: "Next guess" })).toBeHidden();
-  await page.getByRole("button", { name: "See your plan" }).click();
+  await page.getByRole("button", { exact: true, name: "See your plan" }).click();
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 });
 

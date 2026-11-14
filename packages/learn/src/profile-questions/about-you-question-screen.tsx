@@ -4,17 +4,15 @@ import {
   type ProfileAnswerInput,
   type ProfileQuestionView,
 } from "@zoonk/core/profile/questions/contract";
-import { Button } from "@zoonk/ui/components/button";
-import { showErrorToast } from "@zoonk/ui/components/toast";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useId, useState, useTransition } from "react";
+import { EnterButton } from "../_components/enter-button";
 import { PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "../_components/page";
-import { CLEAR_OF_PINNED_ACTIONS_CLASS, PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
-import { useChangeSaveErrorMessage } from "../_components/save-error";
-import { ABOVE_BOTTOM_TABS_CLASS } from "../shell/learn-navigation";
+import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { canSendProfileDraft, toProfileAnswer, toProfileDraft } from "./profile-draft";
 import { ProfileQuestionBody } from "./profile-question-body";
 import { useProfileQuestionDescription, useProfileQuestionTitle } from "./profile-question-copy";
@@ -33,37 +31,39 @@ export function AboutYouQuestionScreen({
   const title = useProfileQuestionTitle(question.id);
   const description = useProfileQuestionDescription(question.id);
   const [draft, setDraft] = useState(() => toProfileDraft(question));
-  const saveError = useChangeSaveErrorMessage();
+  const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
+  const formId = useId();
 
   const input = canSendProfileDraft({ draft, from: "settings", question: question.id })
     ? toProfileAnswer({ draft, memoryEnabled, question: question.id })
     : null;
 
   return (
-    <form
-      className="flex flex-col gap-6"
-      onSubmit={(event) => {
-        event.preventDefault();
+    <>
+      <form
+        className={cn("flex flex-col gap-6", CLEAR_OF_PINNED_ACTIONS_CLASS)}
+        id={formId}
+        onSubmit={(event) => {
+          event.preventDefault();
 
-        if (!input || isPending) {
-          return;
-        }
-
-        startTransition(async () => {
-          const { data: saved } = await safeAsync(() => onSave(input));
-
-          if (!saved) {
-            showErrorToast(saveError);
+          if (!input || isPending) {
+            return;
           }
-        });
-      }}
-    >
-      <div className={cn("contents", CLEAR_OF_PINNED_ACTIONS_CLASS)}>
+
+          startTransition(async () => {
+            const { data: saved } = await safeAsync(() => onSave(input));
+
+            if (!saved) {
+              saveFailed();
+            }
+          });
+        }}
+      >
         <PageHeader>
           <PageHeaderContent>
             <PageTitle>{title}</PageTitle>
-            <PageSubtitle>{description}</PageSubtitle>
+            {description && <PageSubtitle>{description}</PageSubtitle>}
           </PageHeaderContent>
         </PageHeader>
 
@@ -74,25 +74,15 @@ export function AboutYouQuestionScreen({
           onChange={setDraft}
           question={question}
         />
-      </div>
+      </form>
 
-      <div
-        className={cn(
-          PINNED_ACTIONS_CLASS,
-          ABOVE_BOTTOM_TABS_CLASS,
-          "-mb-4 flex flex-col gap-3 pb-4 lg:bottom-0",
-        )}
-      >
-        <Button
-          busy={isPending}
-          className="self-start"
-          disabled={!input}
-          icon={<CheckIcon aria-hidden="true" />}
-          type="submit"
-        >
-          {t("Save")}
-        </Button>
-      </div>
-    </form>
+      <BottomBar>
+        <BottomBarActions>
+          <EnterButton busy={isPending} disabled={!input} form={formId} type="submit">
+            {t("Save")}
+          </EnterButton>
+        </BottomBarActions>
+      </BottomBar>
+    </>
   );
 }

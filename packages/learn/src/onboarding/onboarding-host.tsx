@@ -51,9 +51,13 @@ export type OnboardingBar = { end?: ReactNode; middle?: ReactNode; onBack?: () =
 
 export const NO_BAR: OnboardingBar = {};
 
-type OnboardingScreen = { bar: OnboardingBar; notice: ReactNode };
+type OnboardingScreen = { bar: OnboardingBar; failure: ReactNode; notice: ReactNode };
 
-const OnboardingScreenContext = createContext<OnboardingScreen>({ bar: NO_BAR, notice: null });
+const OnboardingScreenContext = createContext<OnboardingScreen>({
+  bar: NO_BAR,
+  failure: null,
+  notice: null,
+});
 
 export function OnboardingScreenProvider({
   children,

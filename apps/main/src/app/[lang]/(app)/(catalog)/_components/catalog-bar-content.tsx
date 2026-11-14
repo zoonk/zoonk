@@ -23,6 +23,7 @@ export function CatalogBarContent({ visitor }: { visitor: React.ReactNode }) {
         back={{ href: "/", label: t("Home") }}
         end={<PhoneEnd>{visitor}</PhoneEnd>}
         root
+        title={t("Explore courses")}
       />
     );
   }
@@ -45,6 +46,7 @@ export function CatalogBarContent({ visitor }: { visitor: React.ReactNode }) {
         </PhoneEnd>
       }
       root
+      title={t("Explore courses")}
     />
   );
 }

@@ -7,12 +7,13 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
+  DrawerFooter,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { Toggle } from "@zoonk/ui/components/toggle";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { SheetHeader } from "../_components/sheet-header";
 import { WritingWait } from "../generation/writing-wait";
@@ -77,6 +78,7 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
   const { choose, isPending, writing } = useToolChoice();
   const needsSystem = choice === "setup" && system === null;
   const canSave = Boolean(choice) && !needsSystem;
+  const formId = useId();
 
   const save = () => {
     if (choice && !needsSystem) {
@@ -97,33 +99,36 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
   }
 
   return (
-    <DrawerContent>
-      <form
-        className="flex flex-col gap-5"
-        onSubmit={(event) => {
-          event.preventDefault();
-          save();
-        }}
-      >
-        <ChoiceList
-          choices={choices}
-          label={t("How will you use it?")}
-          onChange={setChoice}
-          value={choice}
-        />
+    <>
+      <DrawerContent>
+        <form
+          className="flex flex-col gap-5"
+          id={formId}
+          onSubmit={(event) => {
+            event.preventDefault();
+            save();
+          }}
+        >
+          <ChoiceList
+            choices={choices}
+            label={t("How will you use it?")}
+            onChange={setChoice}
+            value={choice}
+          />
 
-        {choice === "setup" && <SystemPicker onChange={setSystem} value={system} />}
+          {choice === "setup" && <SystemPicker onChange={setSystem} value={system} />}
+        </form>
+      </DrawerContent>
 
-        <div className="grid grid-cols-2 gap-2">
-          <Button onClick={onClose} size="lg" type="button" variant="outline">
-            {t("Cancel")}
-          </Button>
-          <EnterButton busy={isPending} disabled={!canSave} size="lg" type="submit">
-            {t("Save")}
-          </EnterButton>
-        </div>
-      </form>
-    </DrawerContent>
+      <DrawerFooter>
+        <Button onClick={onClose} size="lg" type="button" variant="outline">
+          {t("Cancel")}
+        </Button>
+        <EnterButton busy={isPending} disabled={!canSave} form={formId} size="lg" type="submit">
+          {t("Save")}
+        </EnterButton>
+      </DrawerFooter>
+    </>
   );
 }
 

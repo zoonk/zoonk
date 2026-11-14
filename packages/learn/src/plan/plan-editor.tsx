@@ -83,7 +83,7 @@ function EditorPanel({ initialFocus, onOpenChange, open }: EditorFrameProps) {
             <SidePanelTitle>{t("Adjust your plan")}</SidePanelTitle>
           </SidePanelHeader>
 
-          <PlanEditorChange className="border-t-0 border-b pt-0 pb-4" />
+          <PlanEditorChange placement="top" />
 
           <div className="flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-6 pt-4 pb-8">
             <EditorSections />
@@ -109,7 +109,7 @@ function EditorSheet({ initialFocus, onOpenChange, open }: EditorFrameProps) {
             <EditorSections />
           </DrawerContent>
 
-          <PlanEditorChange />
+          <PlanEditorChange placement="foot" />
         </PlanEditorChangeProvider>
       </DrawerPopup>
     </Drawer>

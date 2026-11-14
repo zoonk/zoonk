@@ -62,7 +62,7 @@ type Keycap = {
   expected: string;
   label: string;
   name: string;
-  pressed: Pressed;
+  pressed: Pressed | undefined;
 };
 
 export type KeyFacts = {
@@ -109,7 +109,9 @@ function enterFindings({ bound, pressed }: KeyFacts["enter"]): Finding[] {
 
 function keycapFindings(keycap: Keycap): Finding[] {
   return [
-    ...(keycap.pressed?.id === keycap.id || (keycap.wasChecked && !keycap.pressed)
+    ...(keycap.pressed === undefined ||
+    keycap.pressed?.id === keycap.id ||
+    (keycap.wasChecked && !keycap.pressed)
       ? []
       : [
           behavior(
@@ -254,6 +256,19 @@ export async function pressKeys(page: Page, url: string, shortcuts: Shortcuts): 
     await back();
   }
 
+  async function pressHint(keycap: (typeof hooks.keycaps)[number]) {
+    if (!keycap.canPress) {
+      return;
+    }
+
+    if (keycap.name === "main") {
+      return enter;
+    }
+
+    const digit = /^\d$/u.test(keycap.keycap);
+    return press(page, digit ? keycap.keycap : keyOf(shortcuts, keycap.name));
+  }
+
   const keycaps: Keycap[] = [];
 
   for (const keycap of hooks.keycaps) {
@@ -277,10 +292,7 @@ export async function pressKeys(page: Page, url: string, shortcuts: Shortcuts): 
         id: keycap.id,
         label: keycap.control,
         name: keycap.name,
-        pressed:
-          keycap.name === "main"
-            ? enter
-            : await press(page, digit ? keycap.keycap : keyOf(shortcuts, keycap.name)),
+        pressed: await pressHint(keycap),
         wasChecked,
       });
 

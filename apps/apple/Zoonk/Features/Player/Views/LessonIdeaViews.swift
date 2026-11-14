@@ -16,14 +16,13 @@ struct LessonIdeaStrip: View {
         LessonIdeaMiniMap(count: summary.ideas.count, current: index)
       }
 
-      VStack(alignment: .leading, spacing: 2) {
-        Text(
-          "Idea \(index + 1) of \(summary.ideas.count)", tableName: "Player",
-          comment:
-            "Above a lesson screen: which of the lesson map's ideas (its main points) it teaches. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"Tap an idea to see what it covers\"."
-        )
-        .typeStyle(.data)
-        .foregroundStyle(.mutedForeground)
+      VStack(alignment: .leading, spacing: 8) {
+        Chip(
+          Text(
+            "Idea \(index + 1) of \(summary.ideas.count)", tableName: "Player",
+            comment:
+              "Above a lesson screen: which of the lesson map's ideas (its main points) it teaches. Use one word for \"idea\" in all of these: \"Idea %lld of %lld\", \"Idea %lld\" and \"Tap an idea to see what it covers\"."
+          ))
 
         if let label = idea.label {
           Text(label)
