@@ -56,7 +56,6 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.DisclosureRow
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -290,37 +289,26 @@ private fun ChapterHero(
     val done = lessons.count { it.state == ChapterLesson.State.DONE }
     val next = lessons.firstOrNull { it.state == ChapterLesson.State.NEXT }
     val number = formatNumber(chapter.chapter.position.toDouble(), locale)
-    val subject = chapter.chapter.subject
     val minutes = lessons.sumOf { it.minutes }.toInt()
-    val facts =
+    val counts =
         if (lessons.isEmpty()) {
-            null
+            emptyList()
         } else {
             listOfNotNull(
                 pluralStringResource(R.plurals.goalcontent_lesson_count, lessons.size, lessons.size),
                 minutes.takeIf { it > 0 }?.let { formatMinutes(it, locale) },
                 percentDone(done.toDouble() / lessons.size),
-            ).factsLine()
+            )
         }
+    val facts = (listOf(stringResource(R.string.goalcontent_chapter_number, number)) + counts).factsLine()
 
-    val action: (@Composable (Modifier) -> Unit)? =
-        next?.let { { modifier -> ContinueButton(started = done > 0, onClick = { actions.openLesson(it.lessonId) }, modifier) } }
-
-    DetailHero(action, menu) {
-        Eyebrow(
-            text =
-                if (subject == null) {
-                    stringResource(R.string.goalcontent_chapter_number, number)
-                } else {
-                    stringResource(R.string.goalcontent_subject_chapter, subject.name, number)
-                },
-        )
+    DetailHero(menu) {
         Text(
             text = chapter.chapter.title,
             modifier = Modifier.pageTitle(),
             style = MaterialTheme.typography.headlineMedium,
         )
-        if (facts != null) Text(text = facts, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle())
+        Text(text = facts, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle())
     }
 }
 

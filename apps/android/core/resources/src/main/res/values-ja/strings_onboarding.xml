@@ -313,7 +313,6 @@
   "onboarding_reveal_notice_subjects": "10f2bce87213289014dca217d456e7b4790023a60b9070b56bd5b36acffb6424",
   "onboarding_reveal_pace_covers": "24f8e014bc65bc2cada7d0656bb79fc9342795e14cc52be129f38bbf100c31aa",
   "onboarding_reveal_pace_time": "291073076db1257c30528b8695f6eb9e57e487cd5b146acccb5d468b17aa91e2",
-  "onboarding_reveal_phase_day": "13fe8082e713f150f391f56d8bb4d570183ab8ba18267634592e06d94480d1cd",
   "onboarding_reveal_phase_final_stretch": "57cfd584eb0c0cdf6a05d43d523dcfed10a347cd667499192d3e4ca12572d0d2",
   "onboarding_reveal_phase_foundations": "69cec947866ee08798d3535a8d41f983a7fc7978d30293cf2c0aaf93bb22b373",
   "onboarding_reveal_phase_full_review": "df31d036a33db890344a71402f7a51a4901970a97f78148c48cb43644e08746c",
@@ -438,7 +437,8 @@
   "onboarding_understood_description": "c95ed50831f3f2f786221223932d5ec46773d70b6cf6eb300cb2ee29fa273501",
   "onboarding_understood_description_shared": "8add3c711bf1633097f5869d819be71bf2d3e5002166f63d3d7f268cccee2706",
   "onboarding_understood_free_account_title": "039109c33c249acbdd671dbcd240be39c340251d771c1c446e16ed7ba3ed5f1f",
-  "onboarding_understood_locked_line": "18fba746c24ee0301dc4d001229065a325a54cf465f4fa924820e63596982de6",
+  "onboarding_understood_locked_line_more": "495fa861014e528e16768866a58ca982d01cc9dc7407823bc57ef623ad37be7a",
+  "onboarding_understood_locked_line_one": "f3637ad5d0c4cce5332cc9fee8cf6964249ffe37be5291b732c7d00f299adff1",
   "onboarding_understood_locked_title": "c842f40dbc74ca1559cccc885c4222fb4e209462ec9c9ffe390481d78e9c091d",
   "onboarding_understood_title": "07b1c7fb082b21601ab13365ca26e1bfb57a21edb914f48a9dcbd54231ee1de0",
   "onboarding_upload_file": "ec871e3e59cc4c60d2d753d707a804d2ff9a29de750db90e6e20b0c21f3ddc7c",
@@ -527,9 +527,9 @@
     <string name="onboarding_understood_free_account_title">無料アカウントを作ると、同時に学習できる目標が増えます</string>
     <!-- Under the goals typed past the ones the learner can study at once. -->
     <string name="onboarding_understood_locked_title">同時に学習する目標を増やすにはサブスクリプションへの登録が必要です</string>
-    <plurals name="onboarding_understood_locked_line">
-        <item quantity="other">ほかの目標を一時停止すると始められます。</item>
-    </plurals>
+    <string name="onboarding_understood_locked_line_one">この目標を始めるには、ほかの目標を一時停止してください。</string>
+    <!-- More than one goal is locked. -->
+    <string name="onboarding_understood_locked_line_more">これらの目標を始めるには、ほかの目標を一時停止してください。</string>
     <string name="onboarding_looks_right">この内容で進める</string>
     <string name="onboarding_fix_something">内容を修正する</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -782,8 +782,6 @@
     <string name="onboarding_reveal_phase_light_review">軽めの復習</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">今日</string>
-    <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->
-    <string name="onboarding_reveal_phase_day">%1$d日目（全%2$d日）</string>
     <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
     <string name="onboarding_reveal_phase_position">%1$d / %2$d</string>
     <string name="onboarding_reveal_phase_place">フェーズ%1$d（全%2$dフェーズ）</string>

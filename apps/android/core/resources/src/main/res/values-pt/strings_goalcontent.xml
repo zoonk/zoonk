@@ -43,7 +43,6 @@
   "goalcontent_mastery_right": "884bfb963b4891fc7baf556817561dbe31dd9d74be0a4c0da09108505ee275b2",
   "goalcontent_material_topic_count": "50f5a370a95bbae5f505b26701a1bfa517db47fac018c52485bb8fb440f5db89",
   "goalcontent_matrix_title": "46bcaa0e747857251f532bcf886bb2296bee27486689465d630d9208136c56dd",
-  "goalcontent_module": "e2a3ae0d7cf3248df8c1af7a906c68774117227963d5f5a4041f297fa6a5a5fa",
   "goalcontent_module_count": "6113870db1e5a86795b38ebeef7e15f038d027932e2c6f84dce280975f25f248",
   "goalcontent_modules": "6aef8881d3a9d9196ac7da255b66bb596c41bdf909c84ea82d5016e259d661ff",
   "goalcontent_more_chapters": "41446dd81b01c6bb14cf6cbf9ff15e27241db040f7dfa8a9a773a86ef2640646",
@@ -75,8 +74,6 @@
   "goalcontent_skipped_known": "b07e16cb11c8cffda540cb790728e6a1f6b05209b3c77c25e673af66bce58aca",
   "goalcontent_start": "a83f67753ed1c32971bc608c090cb57a52df47ab51f38ea0c3a3cb5a3c995a9c",
   "goalcontent_studied": "74527812f61c4e113cb1addf5cab6e556c60bb7e019beb14b91b6caffb52ad9c",
-  "goalcontent_subject": "f788cb56f7b39933c9475c1373174c26a4eb1a922ef9259cc6eecdeb6006a3a4",
-  "goalcontent_subject_chapter": "078a0cd2bd0b990aa8c85f6ca45bf91713ffc59556e6207a7e4611b3f7c6bfc8",
   "goalcontent_subject_count": "23d12da8f631bedbad1022dc4d5ec5a06580c71cfbf82872e2cabd6742d61609",
   "goalcontent_subject_missing": "b7b8967e4682e81ab3b2fdb07336d75f5a54cf17cbf7738c0f78e9fd66883fba",
   "goalcontent_subject_skipped": "203c04e7d2e47a3c6ba7ce6715b2faac912f59438a78bf02e8b2a297ef6d6d68",
@@ -209,10 +206,6 @@
         <item quantity="many">Também em %d provas</item>
         <item quantity="other">Também em %d provas</item>
     </plurals>
-    <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
-    <string name="goalcontent_subject">Matéria</string>
-    <!-- Eyebrow of a subject's page for a module of the learner's plan. -->
-    <string name="goalcontent_module">Módulo</string>
     <string name="goalcontent_from_material">Do seu material</string>
     <!-- How much of the exam a subject is: "20% of the exam". -->
     <string name="goalcontent_share_of_exam">%1$s da prova</string>
@@ -306,8 +299,6 @@
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
     <string name="goalcontent_matrix_title">O que as questões cobram</string>
     <string name="goalcontent_see_all">Ver tudo em %1$s</string>
-    <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
-    <string name="goalcontent_subject_chapter">%1$s · Capítulo %2$s</string>
     <string name="goalcontent_chapter_number">Capítulo %1$s</string>
     <string name="goalcontent_progress">Progresso</string>
     <string name="goalcontent_practice">Prática</string>

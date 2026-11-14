@@ -43,7 +43,6 @@
   "goalcontent_mastery_right": "9d542b836d2021b07efd0a351746255b1f35e1b6b2eb45b1c26dac4a95b5fae1",
   "goalcontent_material_topic_count": "0ad21583ee32085e5f25d78ee12630490df7b32cdb29800d4ef71ab658ec6021",
   "goalcontent_matrix_title": "f1440df2f277db3990723fb8dc1368e91c16c4bed6e629eaf28272ef75ab6f56",
-  "goalcontent_module": "3f1edaed6e90ea6367b01bcbc2dcea3c27319702892295740488c2f0322c0c1f",
   "goalcontent_module_count": "7506eee2df9cc8bf155fc341267dea929e4e8a8178ffab73e866119a166a2221",
   "goalcontent_modules": "27676010b67443d416c99b13db8a6c1f7b743410c6e095c30227331f20de77b3",
   "goalcontent_more_chapters": "f27ee266241ecf73e2f9d07068532b0bba7fc2f3351b18ac22033a8185497375",
@@ -75,8 +74,6 @@
   "goalcontent_skipped_known": "2100418bac513b5a8441a93ec4a97a8a0709fefb26b0ff14fd697527c5342f35",
   "goalcontent_start": "280d92de38178fb79458f7aec9e27c7df54331fc3d456a66d480fc89f7b10e2b",
   "goalcontent_studied": "f4d586871a37e08db030a7051933ed0ff212f52d3c963334850671993c225dd0",
-  "goalcontent_subject": "009ac406544539df8d4f56103ab15f0d989df448ec6abc7fd498ea84348c4287",
-  "goalcontent_subject_chapter": "b4f793e801b69f03cbd3543a593e6a2ea42d5f8c6c0264221bbb525ba9ccb4f8",
   "goalcontent_subject_count": "a455a75aef6cc629b91a950f73e6e8108c0a7d1a62487ad0048cda6284b6f5f0",
   "goalcontent_subject_missing": "fd0d649f99bf62477699ffed0cd5fca522dacf1f6fd7453cea3d8fe6b7f385da",
   "goalcontent_subject_skipped": "dc1073f8b376d167469ee392e992cb76d83063474a8c4af1329485012b7b0fa8",
@@ -183,10 +180,6 @@
     <plurals name="goalcontent_also_in_exam_count">
         <item quantity="other">ほかの%d試験でも出題</item>
     </plurals>
-    <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
-    <string name="goalcontent_subject">科目</string>
-    <!-- Eyebrow of a subject's page for a module of the learner's plan. -->
-    <string name="goalcontent_module">モジュール</string>
     <string name="goalcontent_from_material">資料から</string>
     <!-- How much of the exam a subject is: "20% of the exam". -->
     <string name="goalcontent_share_of_exam">試験全体の%1$s</string>
@@ -266,8 +259,6 @@
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
     <string name="goalcontent_matrix_title">問題で求められる力</string>
     <string name="goalcontent_see_all">すべて見る（%1$s）</string>
-    <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
-    <string name="goalcontent_subject_chapter">%1$s · 第%2$s章</string>
     <string name="goalcontent_chapter_number">第%1$s章</string>
     <string name="goalcontent_progress">進み具合</string>
     <string name="goalcontent_practice">演習</string>

@@ -223,14 +223,13 @@ internal fun PlanEditor(
     page: PlanPageState,
     edits: PlanEdits,
     section: PlanSection?,
-    onTellBuddy: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     val wide = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val drafts = rememberSaveable(saver = EditorDrafts.Saver) { EditorDrafts() }
 
     if (wide) {
-        SidePanel(onDismiss) { PlanEditorBody(page, edits, section, onTellBuddy, onClose = onDismiss, drafts = drafts) }
+        SidePanel(onDismiss) { PlanEditorBody(page, edits, section, onClose = onDismiss, drafts = drafts) }
     } else {
         val title = stringResource(R.string.plan_editor_title)
         ModalBottomSheet(
@@ -238,7 +237,7 @@ internal fun PlanEditor(
             modifier = Modifier.semantics { paneTitle = title },
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         ) {
-            PlanEditorBody(page, edits, section, onTellBuddy, drafts = drafts)
+            PlanEditorBody(page, edits, section, drafts = drafts)
         }
     }
     if (drafts.datePicking) PlanDateDialog(page, edits, layer = wide, onClose = { drafts.datePicking = false })
@@ -250,7 +249,6 @@ internal fun ColumnScope.PlanEditorBody(
     page: PlanPageState,
     edits: PlanEdits,
     section: PlanSection? = null,
-    onTellBuddy: () -> Unit = {},
     onClose: (() -> Unit)? = null,
     drafts: EditorDrafts = remember { EditorDrafts() },
 ) {
@@ -368,9 +366,7 @@ internal fun ColumnScope.PlanEditorBody(
         CountryFacts(page.goal, Modifier.bleed(LIST_ITEM_INSET))
         PlanActivities(page, edits, Modifier.section(PlanSection.Practice))
         PlanWrittenPractice(page, edits)
-        PlanSteering(page, edits)
         PlanTools(page, edits, drafts)
-        PlanEditRequest(page, onTellBuddy)
     }
     if (onClose == null) {
         edits.latest?.let {
@@ -473,25 +469,6 @@ private fun LatestChange(
 }
 
 @Composable
-private fun PlanEditRequest(
-    page: PlanPageState,
-    onTellBuddy: () -> Unit,
-) {
-    val buddy = page.summary.buddy
-    val hasModules = page.goal.kind == LearnerSummaryGoal.Kind.LEARN && page.plan.areas.size > 1
-
-    ListRow(
-        headline = { Text(stringResource(R.string.plan_tell_buddy, buddyName(BuddyKind.of(buddy.kind.value), buddy.name))) },
-        modifier = Modifier.bleed(LIST_ITEM_INSET),
-        onClick = onTellBuddy,
-        leading = { Icon(painterResource(R.drawable.ic_chat_bubble), contentDescription = null) },
-        supporting = {
-            Text(stringResource(if (hasModules) R.string.plan_tell_buddy_description_modules else R.string.plan_tell_buddy_description))
-        },
-    )
-}
-
-@Composable
 internal fun SaveFailedText(modifier: Modifier = Modifier) {
     Text(
         text = stringResource(R.string.plan_save_failed),
@@ -512,7 +489,7 @@ internal fun SectionLabel(
 @Composable
 internal fun ChoiceRow(
     label: String,
-    description: String,
+    description: String?,
     selected: Boolean,
     onSelect: () -> Unit,
     enabled: Boolean = true,
@@ -535,7 +512,7 @@ internal fun ChoiceRow(
                 Text(label, style = MaterialTheme.typography.bodyLarge)
                 mark?.invoke()
             }
-            Text(description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            description?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         }
         trailing?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
     }

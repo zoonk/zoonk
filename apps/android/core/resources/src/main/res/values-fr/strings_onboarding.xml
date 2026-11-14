@@ -313,7 +313,6 @@
   "onboarding_reveal_notice_subjects": "ad5eb759f8ed99230d197b19d95f99ed6c75c3d409083c356db35f3422ab9d96",
   "onboarding_reveal_pace_covers": "b9233d6b5e86f816a4a857a8f90369bbe709eb21fad057eb553d18b9263a2ade",
   "onboarding_reveal_pace_time": "bf82b0681ad22ff56b7ca10694d9ff24df8d754096f8063454259d4a408987f6",
-  "onboarding_reveal_phase_day": "31b8f87764513ae63d0fbab3e05c682991cc8de5bdb7b9795c2580e17713f856",
   "onboarding_reveal_phase_final_stretch": "e1dc480f531a8f298241aab5c95281cf7b362f256eac94af59a4e512d7730731",
   "onboarding_reveal_phase_foundations": "7e1ca443594db09c0189f533f0270362edc167c78493942b5717d510675141cc",
   "onboarding_reveal_phase_full_review": "aec8962316c817c1ebd0805403c2bad44f86141603c8bb278d548a19c8c573bf",
@@ -438,7 +437,8 @@
   "onboarding_understood_description": "51089130665494cfcc1cb3025163514914fe3cad088e99ffde0f13bdb1eb1d11",
   "onboarding_understood_description_shared": "0df1fc1a90cc8f776b17d331056240ddfa67c6fde311d6654833fb39d5abf092",
   "onboarding_understood_free_account_title": "a8667bb4b269c274bbd50a6f4c867cd285fc4bbcd8efff31a40a6a3dbabf354c",
-  "onboarding_understood_locked_line": "a38e3914d8c02de5f54a5a39d27d98432f70aa4cfac30e9d76da1f91b20beb5c",
+  "onboarding_understood_locked_line_more": "f26e8fc75537c49d5e2193eaa79d5f386b5f85ded4f12aff93b742778e8288a6",
+  "onboarding_understood_locked_line_one": "9289d0d7ed147819617719ff97c9f89b936e5f216adf603c6909ce1afb36561a",
   "onboarding_understood_locked_title": "da7217ad40efc170a1b90eeeef34bc4faf0e59e3ff16a4ef74ad756e1a74e8a4",
   "onboarding_understood_title": "93e2d7c143748642272b202aef59238adb3449b6a30dc18defa3deaa7dd02077",
   "onboarding_upload_file": "d01541b890e3c3db306109368d4de283145a716cdbae09068ef1c63876f0ed88",
@@ -529,11 +529,9 @@
     <string name="onboarding_understood_free_account_title">Un compte gratuit te permet d’étudier plus d’objectifs en même temps</string>
     <!-- Under the goals typed past the ones the learner can study at once. -->
     <string name="onboarding_understood_locked_title">Il faut un abonnement pour étudier plus d’objectifs en même temps</string>
-    <plurals name="onboarding_understood_locked_line">
-        <item quantity="one">Mets un autre objectif en pause pour commencer celui-ci.</item>
-        <item quantity="many">Mets un autre objectif en pause pour commencer ceux-ci.</item>
-        <item quantity="other">Mets un autre objectif en pause pour commencer ceux-ci.</item>
-    </plurals>
+    <string name="onboarding_understood_locked_line_one">Mets un autre objectif en pause pour commencer celui-ci.</string>
+    <!-- More than one goal is locked. -->
+    <string name="onboarding_understood_locked_line_more">Mets un autre objectif en pause pour commencer ceux-ci.</string>
     <string name="onboarding_looks_right">C’est correct</string>
     <string name="onboarding_fix_something">Modifier un élément</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -796,8 +794,6 @@
     <string name="onboarding_reveal_phase_light_review">Révision légère</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">Aujourd’hui</string>
-    <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->
-    <string name="onboarding_reveal_phase_day">jour %1$d sur %2$d</string>
     <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
     <string name="onboarding_reveal_phase_position">%1$d sur %2$d</string>
     <string name="onboarding_reveal_phase_place">phase %1$d sur %2$d</string>

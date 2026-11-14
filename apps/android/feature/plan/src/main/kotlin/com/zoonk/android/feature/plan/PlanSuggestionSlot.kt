@@ -96,18 +96,14 @@ internal sealed interface SlotItem {
         override val key = "finished"
     }
 
-    data class Pace(
-        val tooTight: Boolean,
-        val text: String,
-    ) : SlotItem {
-        override val key get() = if (tooTight) "tooTight" else "behind"
+    data object NotEnoughTime : SlotItem {
+        override val key = "tooTight"
     }
 }
 
-/** [finished] once what to study next is known, [courseComplete] while a finished unit's certificate isn't written; [fix] is the pace's sentence. */
+/** [finished] once what to study next is known, [courseComplete] while a finished unit's certificate isn't written. */
 internal fun slotItems(
     page: PlanPageState,
-    fix: PaceFix?,
     finished: Boolean,
     courseComplete: Boolean,
 ): List<SlotItem> {
@@ -132,8 +128,7 @@ internal fun slotItems(
             addAll(time)
             add(SlotItem.Finished)
         }
-        if (pace is Pace.NeedsAdjusting && fix != null) add(SlotItem.Pace(tooTight = true, fix.text))
-        if (pace is Pace.Behind && fix != null) add(SlotItem.Pace(tooTight = false, fix.text))
+        if (pace is Pace.NeedsAdjusting) add(SlotItem.NotEnoughTime)
         if (!finished) addAll(time)
     }
 }
@@ -279,16 +274,12 @@ private fun slotItemsLeft(
     host: SlotHost,
     state: SlotState,
 ): List<SlotItem> {
-    val fix =
-        page.plan.status
-            ?.pace
-            ?.let { paceFix(it, page.isExam) }
     val courseComplete =
         host.certificates
             ?.unclaimed
             .orEmpty()
             .isNotEmpty()
-    return slotItems(page, fix, finished = host.next != null, courseComplete).filter { it.key !in state.dismissed }
+    return slotItems(page, finished = host.next != null, courseComplete).filter { it.key !in state.dismissed }
 }
 
 /** Whether the slot shows anything, so a page leaves no room for it when it doesn't. */
@@ -426,8 +417,8 @@ private fun SlotSuggestion(
             slot.host.next?.let { StudyNextSuggestion(it, slot) }
         }
 
-        is SlotItem.Pace -> {
-            PaceSuggestion(item, layout, links, onAdjust)
+        SlotItem.NotEnoughTime -> {
+            NotEnoughTimeSuggestion(layout, onAdjust)
         }
     }
 }
@@ -579,42 +570,26 @@ private fun PausedSuggestion(
 }
 
 @Composable
-private fun PaceSuggestion(
-    item: SlotItem.Pace,
+private fun NotEnoughTimeSuggestion(
     layout: SuggestionLayout,
-    links: PlanLinks,
     onAdjust: (PlanSection?) -> Unit,
 ) {
-    val title = stringResource(if (item.tooTight) R.string.plan_no_longer_fits else R.string.plan_catch_up)
+    val title = stringResource(R.string.plan_no_longer_fits)
 
     Suggestion(
         label = title,
-        summary = item.text,
+        summary = title,
         layout = layout,
         mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
-        lineAction =
-            if (item.tooTight) {
-                { SuggestionAction(stringResource(R.string.plan_adjust), onClick = { onAdjust(null) }) }
-            } else {
-                { SuggestionOpen() }
-            },
+        lineAction = { SuggestionAction(stringResource(R.string.plan_adjust), onClick = { onAdjust(null) }) },
     ) {
         SuggestionHeader(title)
-        if (item.tooTight) {
-            SuggestionActions {
-                SuggestionAction(stringResource(R.string.plan_adjust_plan), onClick = {
-                    close()
-                    onAdjust(null)
-                })
-            }
-        } else {
-            SuggestionDescription(item.text)
-            SuggestionActions {
-                SuggestionAction(stringResource(R.string.plan_go_to_today), onClick = {
-                    close()
-                    links.today()
-                })
-            }
+        SuggestionDescription(stringResource(R.string.plan_add_time_or_later_date))
+        SuggestionActions {
+            SuggestionAction(stringResource(R.string.plan_adjust_plan), onClick = {
+                close()
+                onAdjust(null)
+            })
         }
     }
 }
