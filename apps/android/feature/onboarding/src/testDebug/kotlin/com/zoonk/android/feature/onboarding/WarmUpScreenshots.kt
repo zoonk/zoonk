@@ -247,7 +247,7 @@ class WarmUpScreenshots {
 
         scene = 4
         compose.waitForIdle()
-        compose.onNodeWithText("Start").performScrollTo().performClick()
+        compose.onNodeWithText("Start").performClick()
         compose.waitForIdle()
         write("placement-wait-$name")
         compose.onNodeWithText("A summer worker").performScrollTo().performClick()

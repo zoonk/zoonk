@@ -3,24 +3,15 @@ package com.zoonk.android.feature.onboarding.start
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -62,6 +53,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.goalStartLimit
+import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -77,7 +69,6 @@ import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
-import com.zoonk.android.ui.scaffold.pageMargin
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.GoalUnderstanding
@@ -157,35 +148,25 @@ fun StartGoalScreen(
 
     BackHandler(enabled = backInFlow != null) { backInFlow?.invoke() }
 
-    val guestGate = upFront == GoalLimitReason.Guest && screen == StartScreen.Entry
-    val goalLimit = upFront == GoalLimitReason.ActiveGoals && screen == StartScreen.Entry
-
     PageScaffold(
         onBack = { backInFlow?.invoke() ?: navigator.back() },
         actions = {
             if (!hasSession) TextButton(onClick = { navigator.open(AppRoute.Login) }) { Text(stringResource(R.string.gate_log_in)) }
         },
-        bottomBar =
-            when {
-                guestGate -> ({ GuestGoalBar(actions.createAccount, onBackToToday = { navigator.showRoot(AppTab.Today) }) })
-                goalLimit -> ({ GoalLimitBar(onSubscribe = actions.subscribe, onOpenPlan = actions.openPlan) })
-                else -> null
-            },
-        barWidth = 640.dp,
     ) { padding ->
         PageWithSupportingPane(
             // At the goals-at-once limit the page is only the gate, as main drops its rail there.
             supportingPane = if (upFront == GoalLimitReason.ActiveGoals) null else ({ HowItWorks(hasAccount = canAttach) }),
             modifier = Modifier.padding(padding).consumeWindowInsets(padding),
         ) { _ ->
-            StartColumn {
+            SetupColumn {
                 when {
-                    guestGate -> {
-                        GuestGoalGate()
+                    upFront == GoalLimitReason.Guest && screen == StartScreen.Entry -> {
+                        GuestGoalGate(actions.createAccount, onBackToToday = { navigator.showRoot(AppTab.Today) })
                     }
 
-                    goalLimit -> {
-                        GoalLimitScreen()
+                    upFront == GoalLimitReason.ActiveGoals && screen == StartScreen.Entry -> {
+                        GoalLimitScreen(onSubscribe = actions.subscribe, onOpenPlan = actions.openPlan)
                     }
 
                     screen == StartScreen.Entry -> {
@@ -223,26 +204,6 @@ private class StartActions(
     val toSetup: (String) -> Unit,
     val toExplanation: (String) -> Unit,
 )
-
-/** At least the window's height, so a screen's actions can sit at its bottom. */
-@Composable
-private fun StartColumn(content: @Composable ColumnScope.() -> Unit) {
-    BoxWithConstraints(Modifier.fillMaxSize().imePadding()) {
-        val windowHeight = maxHeight
-        Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-            Column(
-                modifier =
-                    Modifier
-                        .widthIn(max = 640.dp)
-                        .fillMaxWidth()
-                        .heightIn(min = windowHeight)
-                        .padding(horizontal = pageMargin(), vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-                content = content,
-            )
-        }
-    }
-}
 
 @Composable
 private fun ColumnScope.Entry(
@@ -570,7 +531,6 @@ private fun ColumnScope.MaterialQuestions(
         }
     }
 
-    if (isCompactWidth()) Spacer(Modifier.weight(1f))
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
             value = question,

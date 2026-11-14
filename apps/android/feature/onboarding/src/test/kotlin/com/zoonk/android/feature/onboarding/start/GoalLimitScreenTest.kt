@@ -3,6 +3,10 @@ package com.zoonk.android.feature.onboarding.start
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -56,9 +60,9 @@ class GoalLimitScreenTest {
     }
 
     private fun assertOnlyTheGate() {
-        rule.onNodeWithText("That's all the goals you can study at once").assertExists()
-        rule.onNodeWithText("Subscribe").assertExists()
-        rule.onNodeWithText("Go to your Plan").assertExists()
+        rule.onNode(hasText("That's all the goals you can study at once") and hasAnyAncestor(hasScrollAction())).assertExists()
+        rule.onNode(hasText("Subscribe") and !hasAnyAncestor(hasScrollAction())).assertIsDisplayed()
+        rule.onNode(hasText("Go to your Plan") and !hasAnyAncestor(hasScrollAction())).assertIsDisplayed()
         rule.onNodeWithText("What do you want to achieve?").assertDoesNotExist()
         rule.onNodeWithText("How it works").assertDoesNotExist()
     }

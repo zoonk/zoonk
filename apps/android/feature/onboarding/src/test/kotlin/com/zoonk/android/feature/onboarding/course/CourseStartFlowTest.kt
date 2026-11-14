@@ -76,7 +76,7 @@ class CourseStartFlowTest {
     }
 
     private fun build() {
-        rule.onNodeWithText("Build my plan").performScrollTo().performClick()
+        rule.onNodeWithText("Build my plan").performClick()
         rule.waitForIdle()
     }
 
