@@ -362,8 +362,13 @@ private struct SpeakingPaperView: View {
         startFailure = .limit(limit)
       case .plusRequired:
         gatedTask = task
-        // The paper read as open, so its access is out of date: read again, and the gate shows
-        // once it's locked.
+        // The server's answer is the access now, even if the read after it fails; a later read
+        // (a subscription bought) replaces it.
+        paper.update { paper in
+          var locked = paper
+          locked.access = .plusRequired
+          return locked
+        }
         await paper.refresh()
       default:
         startFailure = .failed
