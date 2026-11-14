@@ -63,11 +63,13 @@ function SuggestedGoalCard({
         <SuggestionHeader>{question}</SuggestionHeader>
         <SuggestionDescription>{t("Build a plan in 1 minute.")}</SuggestionDescription>
 
-        <SuggestionActions>
-          <SuggestionAction action={() => answer("accepted")} disabled={isPending}>
-            {t("Start")}
-          </SuggestionAction>
-
+        <SuggestionActions
+          main={
+            <SuggestionAction action={() => answer("accepted")} disabled={isPending}>
+              {t("Start")}
+            </SuggestionAction>
+          }
+        >
           <SuggestionAction
             action={() => answer("dismissed")}
             disabled={isPending}

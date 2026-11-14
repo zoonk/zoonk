@@ -1,6 +1,7 @@
 "use client";
 
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
+import { OVERLAY_ACTIONS_CLASS } from "@zoonk/ui/lib/overlay-actions";
 import { OVERLAY_DIM_CLASS } from "@zoonk/ui/lib/overlay-dim";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
@@ -138,21 +139,6 @@ function DrawerHeader({
 }
 
 /**
- * A sheet's answers, the main one last in the source. On a phone they stack full width with it on
- * top; from `sm` they sit in a row at the end, in order, unless there are three, which a sheet's
- * width can't hold in a row, so they stay stacked.
- */
-const DRAWER_ACTIONS_CLASS =
-  "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:has-[>:nth-child(3)]:flex-col-reverse";
-
-/**
- * The same answers drawn the same way from a source that lists the main one first, as a page's own
- * row does: for answers that sit on the page at one size and in a sheet at another.
- */
-const DRAWER_MAIN_FIRST_ACTIONS_CLASS =
-  "flex flex-col gap-2 sm:flex-row-reverse sm:justify-start sm:has-[>:nth-child(3)]:flex-col";
-
-/**
  * A sheet's foot, held under its content while that scrolls: one line that says what the actions
  * will do (`note`), then the actions. Its edge is the content's, drawn only while something scrolls
  * under it.
@@ -170,7 +156,7 @@ function DrawerFooter({
       {...props}
     >
       {note}
-      {children && <div className={DRAWER_ACTIONS_CLASS}>{children}</div>}
+      {children && <div className={OVERLAY_ACTIONS_CLASS}>{children}</div>}
     </div>
   );
 }
@@ -196,7 +182,6 @@ function DrawerDescription({ className, ...props }: DrawerPrimitive.Description.
 }
 
 export {
-  DRAWER_MAIN_FIRST_ACTIONS_CLASS,
   Drawer,
   DrawerClose,
   DrawerCloseButton,
