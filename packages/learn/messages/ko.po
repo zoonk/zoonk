@@ -622,7 +622,6 @@ msgstr "가장 최근 시험의 과목별 문제 수로, <link>{publisher}</link
 #: src/_components/save-error.tsx
 #: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
-#: src/journey/journey-menu.tsx
 msgctxt "feedback.Hf_X9X"
 msgid "Report a problem"
 msgstr "문제 신고하기"

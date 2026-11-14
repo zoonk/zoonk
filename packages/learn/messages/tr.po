@@ -622,7 +622,6 @@ msgstr "Son sınavdaki branş başına soru sayısı, <link>{publisher}</link> s
 #: src/_components/save-error.tsx
 #: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
-#: src/journey/journey-menu.tsx
 msgctxt "feedback.Hf_X9X"
 msgid "Report a problem"
 msgstr "Sorun bildir"
