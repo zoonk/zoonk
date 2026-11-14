@@ -11,8 +11,14 @@ function getMenuTrigger(element: Element | null): HTMLElement | null {
   return triggerId ? document.querySelector<HTMLElement>(`#${CSS.escape(triggerId)}`) : null;
 }
 
-function isOutsideMenus(element: Element | null): boolean {
-  return Boolean(element && element !== document.body && !element.closest("[role=menu]"));
+/** Focus on a menu's trigger hasn't left: a menu closed before its popup took focus leaves it there. */
+function hasLeftMenus(element: Element | null): boolean {
+  return Boolean(
+    element &&
+    element !== document.body &&
+    !element.closest("[role=menu]") &&
+    !element.matches("[aria-haspopup=menu]"),
+  );
 }
 
 /**
@@ -25,7 +31,7 @@ export function yieldMenuFocus(finalFocus: FinalFocus): FinalFocus {
   }
 
   return (closeType) => {
-    if (isOutsideMenus(document.activeElement)) {
+    if (hasLeftMenus(document.activeElement)) {
       return false;
     }
 
