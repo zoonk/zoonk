@@ -1,6 +1,5 @@
 "use client";
 
-import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { useExtracted } from "next-intl";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { StepCard, StepHeader, StepTitle } from "../_components/step-card";
@@ -12,7 +11,7 @@ import { getCeremonyMoment } from "../session/moment-ceremony";
 import { TaskMainLink } from "../shell/task-frame";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { NoVerdictStep } from "./checkpoint-empty";
-import { useCheckpointEyebrow } from "./checkpoint-labels";
+import { useChallengeName } from "./checkpoint-labels";
 import { type ResultRows, hasResultRows } from "./checkpoint-result";
 import { CheckpointResultDetails } from "./checkpoint-result-details";
 import {
@@ -20,6 +19,7 @@ import {
   CheckpointReviewSection,
   useReviewedAnswers,
 } from "./checkpoint-review";
+import { getShieldCracks } from "./duel-ending";
 import { TricksterArt } from "./trickster-art";
 import {
   useCheckpointOutcome,
@@ -58,28 +58,34 @@ function ScoreLine() {
       facts={[
         !won &&
           duel.state.completion?.checkpoint &&
-          t("{count, plural, one {# of {total} right to win} other {# of {total} right to win}}", {
+          t("{count, plural, one {# right to win} other {# right to win}}", {
             count: duel.state.completion.checkpoint.passMark,
-            total: String(checkpoint.questions.length),
           }),
       ]}
-      score={{ answered: outcome.total, correct: outcome.correct }}
+      score={{
+        answered: outcome.total,
+        correct: outcome.correct,
+        countOnly: checkpoint.kind !== "weekly",
+      }}
     />
   );
 }
 
+/** Still: the deciding answer already played how the duel ended. */
 function ResultArt() {
-  const { checkpoint, duel } = useCheckpointScreen();
+  const { checkpoint } = useCheckpointScreen();
+  const outcome = useCheckpointOutcome();
   const won = useIsWon();
 
-  if (checkpoint.kind === "weekly") {
+  if (checkpoint.kind === "weekly" || !outcome) {
     return null;
   }
 
   return (
-    <CelebrationScope play={duel.state.completion !== null}>
-      <TricksterArt beaten={won} reacts />
-    </CelebrationScope>
+    <TricksterArt
+      cracks={getShieldCracks({ broken: outcome.correct, segments: checkpoint.passMark })}
+      outcome={won ? "won" : "lost"}
+    />
   );
 }
 
@@ -107,6 +113,8 @@ function DuelDayMoment() {
 
 function OutcomeStep({ rows, showsReview }: { rows: ResultRows; showsReview: boolean }) {
   const headline = useHeadline();
+  // A loss says one thing: not this time, and when the rematch is.
+  const won = useIsWon();
 
   return (
     <StepCard className="gap-6">
@@ -117,11 +125,11 @@ function OutcomeStep({ rows, showsReview }: { rows: ResultRows; showsReview: boo
         <ScoreLine />
       </StepHeader>
 
-      <DuelDayMoment />
+      {won && <DuelDayMoment />}
 
       {hasResultRows(rows) && (
         <div className="with-aside:hidden flex w-full flex-col gap-6">
-          <CheckpointResultDetails rows={rows} />
+          <CheckpointResultDetails />
         </div>
       )}
 
@@ -133,7 +141,7 @@ function OutcomeStep({ rows, showsReview }: { rows: ResultRows; showsReview: boo
 export function CheckpointResultView() {
   const t = useExtracted();
   const { checkpoint, duel, hrefs, renderCeremony } = useCheckpointScreen();
-  const name = useCheckpointEyebrow(checkpoint);
+  const name = useChallengeName(checkpoint);
   const outcome = useCheckpointOutcome();
   const rows = useResultRows();
   const hasDetails = outcome !== null && hasResultRows(rows);
@@ -146,9 +154,7 @@ export function CheckpointResultView() {
   return (
     <Steps
       aside={
-        hasDetails
-          ? { children: <CheckpointResultDetails rows={rows} />, label: name, title: name }
-          : null
+        hasDetails ? { children: <CheckpointResultDetails />, label: name, title: name } : null
       }
       exitHref={hrefs.exit}
       finalAction={

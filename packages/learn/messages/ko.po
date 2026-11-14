@@ -112,7 +112,9 @@ msgstr "학습함"
 #: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/onboarding/steps/reveal-days.tsx
+#: src/session/session-header.tsx
 #: src/session/session-queue.tsx
+#: src/session/summary/summary-steps.tsx
 #: src/shell/learn-bar.tsx
 #: src/shell/learn-navigation.tsx
 #: src/today/today-heading.tsx
@@ -153,7 +155,7 @@ msgstr "하루 학습 시간"
 #: src/_components/question-actions.tsx
 #: src/_components/steps.tsx
 #: src/ceremonies/use-ceremony-copy.ts
-#: src/certificates/certificate-moment-parts.tsx
+#: src/certificates/certificate-moment.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
 #: src/focus-test/focus-test-flow.tsx
@@ -177,7 +179,7 @@ msgstr "하루 학습 시간"
 #: src/session/next-stop.tsx
 #: src/session/question-block/block-body.tsx
 #: src/session/study-moment.tsx
-#: src/session/summary/summary-steps.tsx
+#: src/session/summary/summary-actions.tsx
 #: src/today/today-action.tsx
 msgctxt "acrOoz"
 msgid "Continue"
@@ -226,7 +228,6 @@ msgstr "다운로드"
 #: src/certificates/certificate-name.tsx
 #: src/country/country-picker.tsx
 #: src/journey/goal-actions.tsx
-#: src/journey/rename-goal-dialog.tsx
 #: src/language/conversation/call-control.tsx
 #: src/onboarding/start-over-menu.tsx
 #: src/onboarding/understood/understood-row.tsx
@@ -242,7 +243,6 @@ msgstr "취소"
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
 #: src/conversation/tutor-country-offer.tsx
-#: src/journey/rename-goal-dialog.tsx
 #: src/mind-maps/mind-map-save-button.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
@@ -473,6 +473,12 @@ msgctxt "XjzZDx"
 msgid "<number>+{points}</number> <words>Brain Power</words>"
 msgstr "<number>+{points}</number> <words>두뇌력</words>"
 
+#. How many answers the learner got right in a challenge.
+#: src/_components/moment-readouts.tsx
+msgctxt "42ufnf"
+msgid "{correct, plural, =0 {<number>#</number> right} one {<number>#</number> right} other {<number>#</number> right}}"
+msgstr "{correct, plural, =0 {정답 <number>#</number>개} other {정답 <number>#</number>개}}"
+
 #. Counts words the learner said aloud in pronunciation practice.
 #: src/_components/moment-readouts.tsx
 msgctxt "b73TgX"
@@ -483,6 +489,11 @@ msgstr "{correct, plural, =0 {정확하게 발음한 단어는 <number>#</number
 msgctxt "mA2Wor"
 msgid "{correct, plural, =0 {<number>#</number> of {answered} right} one {<number>#</number> of {answered} right} other {<number>#</number> of {answered} right}}"
 msgstr "{correct, plural, =0 {맞힌 문제는 <number>#</number>개예요 (전체 {answered}개)} other {문제 <number>#</number>개를 맞혔어요 (전체 {answered}개)}}"
+
+#: src/_components/moment-readouts.tsx
+msgctxt "cYiR5r"
+msgid "Points for what you learn."
+msgstr "배울 때마다 포인트를 받아요."
 
 #: src/_components/name-hint.tsx
 msgctxt "zW5SM4"
@@ -612,7 +623,6 @@ msgid "Close"
 msgstr "닫기"
 
 #: src/_components/skill-list.tsx
-#: src/session/summary/summary-parts.tsx
 msgctxt "IIe6nO"
 msgid "To review"
 msgstr "복습 필요"
@@ -655,7 +665,6 @@ msgstr "이 단계를 열지 못했어요. 다시 시도해 보세요."
 #: src/language/conversation/call-problem.tsx
 #: src/mistakes/practice-done.tsx
 #: src/onboarding/onboarding-bar.tsx
-#: src/session/summary/summary-steps.tsx
 #: src/shell/learn-bar.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
@@ -701,7 +710,6 @@ msgstr "이미 아는 내용인가요?"
 
 #: src/_components/test-out-start-link.tsx
 #: src/conversation/tutor-tool-offer.tsx
-#: src/session/test-out-offer.tsx
 msgctxt "May4OJ"
 msgid "Take the test"
 msgstr "테스트 보기"
@@ -1019,6 +1027,11 @@ msgstr "검은띠"
 msgctxt "belts.E1okmE"
 msgid "White belt"
 msgstr "흰띠"
+
+#: src/_utils/use-belt-name.ts
+msgctxt "vj_mVz"
+msgid "{belt}, level {level}"
+msgstr "{belt}, 레벨 {level}"
 
 #. Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options.
 #: src/_utils/use-choice-left-out.ts
@@ -1438,7 +1451,7 @@ msgctxt "buddyNames.vPjK_E"
 msgid "Zu"
 msgstr "Zu"
 
-#: src/ceremonies/milestone-ceremony.tsx
+#: src/ceremonies/ceremony-frame.tsx
 #: src/conversation/tutor-plan-change.tsx
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-proposal.tsx
@@ -1458,9 +1471,9 @@ msgid "Not now"
 msgstr "나중에"
 
 #: src/ceremonies/use-ceremony-copy.ts
-msgctxt "Lxi2Lv"
-msgid "For winning your first phase challenge."
-msgstr "첫 단계 챌린지에서 이겨서 받았어요."
+msgctxt "I8-K2k"
+msgid "For winning your first challenge."
+msgstr "첫 챌린지에서 이겨서 받았어요."
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "XV5HMz"
@@ -1498,9 +1511,9 @@ msgid "Retro glasses!"
 msgstr "복고풍 안경!"
 
 #: src/ceremonies/use-ceremony-copy.ts
-msgctxt "BaBoNG"
-msgid "For winning the final challenge."
-msgstr "마지막 챌린지에서 이겨서 받았어요."
+msgctxt "OJcuuM"
+msgid "For winning your plan's last challenge."
+msgstr "계획의 마지막 챌린지에서 이겨서 받았어요."
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "9I_V3n"
@@ -1518,14 +1531,14 @@ msgid "New glasses!"
 msgstr "새 안경!"
 
 #: src/ceremonies/use-ceremony-copy.ts
-msgctxt "qvLefN"
-msgid "{buddy} is an Adult now, fully grown with your Brain Power."
-msgstr "{buddy}(이)가 두뇌력 덕분에 다 자라 이제 어른이 됐어요."
+msgctxt "y5rTVZ"
+msgid "{buddy} is fully grown, thanks to your Brain Power."
+msgstr "{buddy}(이)가 두뇌력 덕분에 다 자랐어요."
 
 #: src/ceremonies/use-ceremony-copy.ts
-msgctxt "AJ-zuW"
-msgid "{buddy} is Young now, and keeps growing with your Brain Power."
-msgstr "{buddy}(이)가 이제 어린이가 되어 두뇌력과 함께 계속 자라고 있어요."
+msgctxt "PHnc9p"
+msgid "Your Brain Power helped {buddy} grow."
+msgstr "두뇌력 덕분에 {buddy}(이)가 자랐어요."
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "bCJ2Za"
@@ -2048,9 +2061,9 @@ msgid "{count, plural, one {Opens tomorrow} other {Opens in <mono>#</mono> days}
 msgstr "{count, plural, other {<mono>#</mono>일 후에 열려요}}"
 
 #: src/challenge/challenge-footer.tsx
-msgctxt "upiB5E"
-msgid "Opens after this phase's lessons"
-msgstr "이 단계의 레슨을 마치면 열려요"
+msgctxt "rnxGr1"
+msgid "Opens when you finish the lessons before it"
+msgstr "앞에 있는 레슨을 마치면 열려요"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "aAHI1T"
@@ -2058,15 +2071,15 @@ msgid "This challenge isn't ready yet."
 msgstr "아직 챌린지가 준비되지 않았어요."
 
 #: src/challenge/challenge-footer.tsx
-#: src/journey/journey-phase-events.tsx
-msgctxt "f0UFlY"
-msgid "In your next session"
+msgctxt "a-rJRp"
+msgid "Next time you study"
 msgstr "다음 학습 때"
 
 #: src/challenge/challenge-footer.tsx
 #: src/essay/essay-feedback.tsx
 #: src/mock/mock-frame.tsx
 #: src/mock/mock-result-essays.tsx
+#: src/session/question-block/pause-suggestion.tsx
 msgctxt "fEu6ab"
 msgid "That didn't go through. Try again in a moment."
 msgstr "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
@@ -2075,11 +2088,6 @@ msgstr "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
 msgctxt "Tfnp_R"
 msgid "Still starting. This is taking longer than usual."
 msgstr "아직 시작을 준비하고 있어요. 평소보다 오래 걸리고 있어요."
-
-#: src/challenge/challenge-footer.tsx
-msgctxt "-HglUD"
-msgid "Start the mock exam"
-msgstr "모의고사 시작하기"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "gCqLBd"
@@ -2094,10 +2102,16 @@ msgid "Mock exams need a subscription"
 msgstr "모의고사를 보려면 구독이 필요해요"
 
 #: src/challenge/challenge-footer.tsx
-#: src/checkpoints/checkpoint-duel-verdict.tsx
-msgctxt "a2N2Lk"
-msgid "{lessons, plural, =0 {New try tomorrow. Nothing is lost.} one {New try tomorrow, after # short lesson. Nothing is lost.} other {New try tomorrow, after # short lessons. Nothing is lost.}}"
-msgstr "{lessons, plural, =0 {내일 다시 도전할 수 있어요. 지금까지 쌓은 건 그대로예요.} other {내일 짧은 레슨 #개를 마친 뒤 다시 도전할 수 있어요. 지금까지 쌓은 건 그대로예요.}}"
+#: src/missions/mission-copy.tsx
+#: src/today/use-row-label.ts
+msgctxt "L_nv1C"
+msgid "After today's lessons"
+msgstr "오늘 레슨을 마친 뒤"
+
+#: src/challenge/challenge-footer.tsx
+msgctxt "X_k-eo"
+msgid "{lessons, plural, =0 {Rematch tomorrow.} one {Rematch tomorrow, after # short lesson.} other {Rematch tomorrow, after # short lessons.}}"
+msgstr "{lessons, plural, =0 {내일 재대결해요.} other {내일 짧은 레슨 #개를 마친 뒤 재대결해요.}}"
 
 #: src/challenge/challenge-intro-parts.tsx
 #: src/exam/exam-format-section.tsx
@@ -2118,44 +2132,37 @@ msgctxt "moNgIg"
 msgid "+{points} Brain Power"
 msgstr "두뇌력 +{points}"
 
+#. The name of a study step: a second go at the Trickster's questions.
 #: src/challenge/challenge-intro-parts.tsx
-msgctxt "rpg2CM"
-msgid "New try · {name}"
-msgstr "재도전 · {name}"
+#: src/session/use-block-copy.ts
+msgctxt "_3c7uy"
+msgid "Rematch"
+msgstr "재대결"
 
 #: src/challenge/challenge-intro.tsx
-msgctxt "Nu8F54"
-msgid "Questions on recordings from this phase, played as in the exam, with no hints."
-msgstr "이 단계의 녹음 자료를 실제 시험처럼 듣고, 힌트 없이 문제를 풀어요."
+msgctxt "P6kyg-"
+msgid "{count, plural, one {# question on a recording, played as in the exam. Get {passMark} right to win.} other {# questions on recordings, played as in the exam. Get {passMark} right to win.}}"
+msgstr "{count, plural, other {시험처럼 녹음을 듣고 푸는 문제 #개예요. {passMark}개를 맞히면 이겨요.}}"
 
 #: src/challenge/challenge-intro.tsx
-msgctxt "1UgcTo"
-msgid "{count, plural, one {Questions on a recording from this phase, played as in the exam, with no hints.} other {Questions on # recordings from this phase, each played as in the exam, with no hints.}}"
-msgstr "{count, plural, other {이 단계의 녹음 #개를 각각 실제 시험과 같은 방식으로 듣고, 힌트 없이 문제를 풀어요.}}"
+msgctxt "TUD24l"
+msgid "Questions on recordings, played as in the exam."
+msgstr "시험처럼 녹음을 듣고 푸는 문제예요."
 
 #: src/challenge/challenge-intro.tsx
-msgctxt "oYZPXs"
-msgid "Mixed questions from this phase, with no hints."
-msgstr "이 단계에서 배운 내용을 골고루 섞은 문제를 힌트 없이 풀어요."
+msgctxt "DXIz48"
+msgid "{count, plural, one {# question on what you just learned. Get {passMark} right to win.} other {# questions on what you just learned. Get {passMark} right to win.}}"
+msgstr "{count, plural, other {방금 배운 내용에 대한 문제 #개예요. {passMark}개를 맞히면 이겨요.}}"
 
 #: src/challenge/challenge-intro.tsx
-#: src/checkpoints/checkpoint-duel-view.tsx
-#: src/journey/journey-phase-events.tsx
-#: src/journey/roadmap-full.tsx
-msgctxt "2yz8Wb"
-msgid "The Trickster"
-msgstr "트릭스터"
+msgctxt "aOzWzB"
+msgid "Questions on what you just learned."
+msgstr "방금 배운 내용에 대한 문제예요."
 
 #: src/challenge/challenge-intro.tsx
-#: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "qqqXC2"
-msgid "{count, plural, one {# right to win} other {# right to win}}"
-msgstr "{count, plural, other {#문제를 맞히면 승리}}"
-
-#: src/challenge/challenge-intro.tsx
-msgctxt "KSWWEF"
-msgid "You'll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day."
-msgstr "답할 때마다 정답 여부가 표시되고, 마지막에 해설과 트릭스터가 파 놓은 함정을 볼 수 있어요. 트릭스터가 이기면 다음 날 다시 대결할 수 있어요."
+msgctxt "_N9GlC"
+msgid "Beat the Trickster"
+msgstr "트릭스터 이기기"
 
 #: src/challenge/challenge-intro.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
@@ -2170,12 +2177,11 @@ msgid "{correct, plural, =0 {# of {total} right} one {# of {total} right} other 
 msgstr "{correct, plural, =0 {#문제 정답(전체 {total}문제)} other {#문제 정답(전체 {total}문제)}}"
 
 #: src/challenge/challenge-intro.tsx
-msgctxt "kU0Yw9"
-msgid "Questions from what you studied this week, with no hints."
-msgstr "이번 주에 공부한 내용으로 만든 문제예요. 힌트는 없어요."
+msgctxt "jQav7N"
+msgid "Questions on what you studied this week."
+msgstr "이번 주에 공부한 내용에 대한 문제예요."
 
 #: src/challenge/challenge-intro.tsx
-#: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/checkpoint-labels.tsx
 #: src/plan-diff/use-change-rows.ts
 #: src/session/use-block-copy.ts
@@ -2183,11 +2189,6 @@ msgstr "이번 주에 공부한 내용으로 만든 문제예요. 힌트는 없�
 msgctxt "7Y-wMz"
 msgid "Weekly challenge"
 msgstr "주간 챌린지"
-
-#: src/challenge/challenge-intro.tsx
-msgctxt "YrQkK2"
-msgid "You'll see right or wrong after each answer, and why at the end."
-msgstr "답할 때마다 맞았는지 확인할 수 있고, 마지막에 해설을 볼 수 있어요."
 
 #: src/challenge/challenge-intro.tsx
 #: src/mock/mock-answer-sheet.tsx
@@ -2260,15 +2261,6 @@ msgid "Your plan can't make room for this {duration} mock exam on {date}. It sta
 msgstr "이 {duration} 모의고사를 {date} 계획에 넣을 시간이 없어요. 원래 일정대로 진행해요."
 
 #: src/challenge/challenge-moved-screen.tsx
-#: src/essay/essay-closed.tsx
-#: src/essay/essay-feedback.tsx
-#: src/onboarding/entry/guest-goal-gate.tsx
-#: src/session/open-next-step.tsx
-msgctxt "OC7hHG"
-msgid "Back to Today"
-msgstr "오늘로 돌아가기"
-
-#: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
 #: src/focus-test/focus-test-result.tsx
 #: src/memory/memory-screen.tsx
@@ -2283,6 +2275,15 @@ msgstr "오늘로 돌아가기"
 msgctxt "JkS37H"
 msgid "Undo"
 msgstr "실행 취소"
+
+#: src/challenge/challenge-moved-screen.tsx
+#: src/essay/essay-closed.tsx
+#: src/essay/essay-feedback.tsx
+#: src/onboarding/entry/guest-goal-gate.tsx
+#: src/session/open-next-step.tsx
+msgctxt "OC7hHG"
+msgid "Back to Today"
+msgstr "오늘로 돌아가기"
 
 #: src/challenge/challenge-moved-screen.tsx
 msgctxt "smtXcI"
@@ -2301,9 +2302,9 @@ msgid "Getting your challenge ready"
 msgstr "챌린지를 준비하고 있어요"
 
 #: src/challenge/challenge-screen.tsx
-msgctxt "jsBtK5"
-msgid "We're writing its questions. It starts here when they're ready."
-msgstr "문제를 만들고 있어요. 준비가 끝나면 여기서 챌린지가 시작돼요."
+msgctxt "V7vxze"
+msgid "It starts here when it's ready."
+msgstr "준비가 끝나면 여기서 시작돼요."
 
 #: src/challenge/challenge-topics.tsx
 msgctxt "uhq6kw"
@@ -2415,9 +2416,9 @@ msgid "His shield is broken. You won!"
 msgstr "트릭스터의 방패가 깨졌어요. 이겼어요!"
 
 #: src/checkpoints/checkpoint-duel-verdict.tsx
-msgctxt "NrKNlR"
-msgid "His shield held this time."
-msgstr "이번에는 트릭스터의 방패가 버텼어요."
+msgctxt "FhXNnE"
+msgid "The Trickster won this time."
+msgstr "이번에는 트릭스터가 이겼어요."
 
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "5qf9VW"
@@ -2429,17 +2430,6 @@ msgstr "이유는 마지막에 확인할 수 있어요."
 msgctxt "e-k3Hd"
 msgid "Every question is answered."
 msgstr "모든 문제에 답했어요."
-
-#: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "v5U-vD"
-msgid "<reward>+{points}</reward> · phase {phase} done"
-msgstr "<reward>+{points}</reward> · {phase}단계 완료"
-
-#: src/checkpoints/checkpoint-duel-view.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "HiOz-P"
-msgid "+{points}"
-msgstr "+{points}"
 
 #. Heading of a reward row: the Brain Power that finishing this weekly challenge earns. Not something still to finish.
 #: src/checkpoints/checkpoint-duel-view.tsx
@@ -2454,21 +2444,23 @@ msgid "Winning"
 msgstr "승리 보상"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "HiOz-P"
+msgid "+{points}"
+msgstr "+{points}"
+
+#: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/trickster-shield.tsx
 msgctxt "ooL306"
 msgid "The Trickster's shield"
 msgstr "트릭스터의 방패"
 
-#: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "q3Cq0Z"
-msgid "{count, plural, =0 {# broken} one {# broken} other {# broken}}"
-msgstr "{count, plural, =0 {깨짐 #개} other {깨짐 #개}}"
-
+#. Right answers the learner still needs to beat the Trickster.
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/trickster-shield.tsx
-msgctxt "Dd8TiX"
-msgid "{count, plural, one {# to go} other {# to go}}"
-msgstr "{count, plural, other {#개 남았어요}}"
+msgctxt "yjvTwW"
+msgid "{count, plural, one {# more to win} other {# more to win}}"
+msgstr "{count, plural, other {승리까지 정답 #개}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "SFplX2"
@@ -2476,14 +2468,10 @@ msgid "{count, plural, =0 {No questions left} one {# question left} other {# que
 msgstr "{count, plural, =0 {남은 문제 없음} other {남은 문제 #개}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "nJFH0r"
-msgid "No hints. You'll see right or wrong after each answer, and why at the end, with the traps he set."
-msgstr "힌트는 없어요. 답할 때마다 맞았는지 틀렸는지 알 수 있고, 마지막에 해설과 트릭스터가 놓은 함정을 확인할 수 있어요."
-
-#: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "x3He4J"
-msgid "No hints. You'll see right or wrong after each answer, and why at the end."
-msgstr "힌트는 없어요. 답할 때마다 맞았는지 틀렸는지 알 수 있고, 마지막에 해설을 확인할 수 있어요."
+#: src/checkpoints/checkpoint-result-view.tsx
+msgctxt "qqqXC2"
+msgid "{count, plural, one {# right to win} other {# right to win}}"
+msgstr "{count, plural, other {#문제를 맞히면 승리}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/language/pattern/language-pattern-screen.tsx
@@ -2504,42 +2492,17 @@ msgid "You hadn't answered any yet, so this challenge isn't scored. Nothing is l
 msgstr "아직 답한 문제가 없어서 이번 챌린지는 채점하지 않아요. 불이익은 없어요."
 
 #: src/checkpoints/checkpoint-labels.tsx
-msgctxt "0LvMLZ"
-msgid "Phase {number, number}"
-msgstr "{number, number}단계"
-
-#: src/checkpoints/checkpoint-labels.tsx
+#: src/journey/journey-phase-events.tsx
+#: src/journey/roadmap-full.tsx
 #: src/session/use-block-copy.ts
-msgctxt "g7r7Sf"
-msgid "Final challenge"
-msgstr "최종 챌린지"
-
-#: src/checkpoints/checkpoint-labels.tsx
-msgctxt "eFq39b"
-msgid "Phase {phase} challenge"
-msgstr "{phase}단계 챌린지"
-
-#: src/checkpoints/checkpoint-labels.tsx
-#: src/session/use-block-copy.ts
-msgctxt "H1a9B8"
-msgid "Phase challenge"
-msgstr "단계 챌린지"
+msgctxt "2yz8Wb"
+msgid "The Trickster"
+msgstr "트릭스터"
 
 #: src/checkpoints/checkpoint-result-details.tsx
-#: src/session/summary/summary-rewards.tsx
 msgctxt "y0EYpw"
 msgid "Rewards"
 msgstr "보상"
-
-#: src/checkpoints/checkpoint-result-details.tsx
-msgctxt "tI8LbS"
-msgid "Phase {phase} complete"
-msgstr "{phase}단계 완료"
-
-#: src/checkpoints/checkpoint-result-details.tsx
-msgctxt "laEYjM"
-msgid "Phase complete"
-msgstr "단계 완료"
 
 #. A badge for catching the Trickster's traps.
 #: src/checkpoints/checkpoint-result-details.tsx
@@ -2548,19 +2511,9 @@ msgid "Trap hunter badge"
 msgstr "함정 사냥꾼 배지"
 
 #: src/checkpoints/checkpoint-result-details.tsx
-msgctxt "n27vLl"
-msgid "Next phase"
-msgstr "다음 단계"
-
-#: src/checkpoints/checkpoint-result-details.tsx
 msgctxt "U_fdgH"
 msgid "What's next"
 msgstr "다음 할 일"
-
-#: src/checkpoints/checkpoint-result-details.tsx
-msgctxt "WhT_G3"
-msgid "The next phase, {phase}, is already open."
-msgstr "다음 단계인 {phase}도 이미 열려 있어요."
 
 #: src/checkpoints/checkpoint-result-view.tsx
 msgctxt "5oy0X2"
@@ -2572,11 +2525,6 @@ msgstr "주간 챌린지 완료"
 msgctxt "1VpodI"
 msgid "Not this time"
 msgstr "이번엔 아쉬워요"
-
-#: src/checkpoints/checkpoint-result-view.tsx
-msgctxt "4YXH09"
-msgid "{count, plural, one {# of {total} right to win} other {# of {total} right to win}}"
-msgstr "{count, plural, other {승리하려면 #문제를 맞혀야 해요 (총 {total}문제)}}"
 
 #: src/checkpoints/checkpoint-review.tsx
 msgctxt "hmBFza"
@@ -2608,39 +2556,34 @@ msgid "{cracked, plural, =0 {# of {segments} broken} one {# of {segments} broken
 msgstr "{cracked, plural, =0 {#개 깨짐(전체 {segments}개)} other {#개 깨짐(전체 {segments}개)}}"
 
 #: src/checkpoints/trickster-shield.tsx
-msgctxt "LQxPj3"
-msgid "Broken"
-msgstr "깨짐"
+msgctxt "N6ZXzw"
+msgid "You won"
+msgstr "이겼어요"
 
 #: src/checkpoints/trickster-shield.tsx
-msgctxt "MTDDcS"
-msgid "Held"
-msgstr "버팀"
+msgctxt "Cu4K5p"
+msgid "He won"
+msgstr "트릭스터가 이겼어요"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
-msgctxt "iKFV_O"
-msgid "This phase is complete."
-msgstr "이 단계를 완료했어요."
+msgctxt "KLUSrr"
+msgid "You won the rematch"
+msgstr "재대결에서 이겼어요"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
-msgctxt "dqk2PK"
-msgid "Passed on a later try"
-msgstr "다시 도전해 통과했어요"
+msgctxt "s4X2yE"
+msgid "{lessons, plural, =0 {} one {After # short lesson on what tripped you up.} other {After # short lessons on what tripped you up.}}"
+msgstr "{lessons, plural, =0 {} other {어려웠던 내용을 짧은 레슨 #개로 복습한 후예요.}}"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
-msgctxt "3EE-ok"
-msgid "{lessons, plural, =0 {Nothing is lost.} one {After # short lesson on what tripped you up. Nothing is lost.} other {After # short lessons on what tripped you up. Nothing is lost.}}"
-msgstr "{lessons, plural, =0 {지금까지 쌓은 건 그대로예요.} other {어려웠던 부분을 다루는 짧은 레슨 #개를 마친 뒤예요. 지금까지 쌓은 건 그대로예요.}}"
+msgctxt "eqfxQN"
+msgid "Rematch tomorrow"
+msgstr "내일 재대결"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
-msgctxt "3tVzDw"
-msgid "New try tomorrow"
-msgstr "내일 다시 도전"
-
-#: src/checkpoints/use-checkpoint-outcome.ts
-msgctxt "ohcs3n"
-msgid "New try in your next session"
-msgstr "다음 학습에서 다시 도전"
+msgctxt "3ekog5"
+msgid "Rematch next time you study"
+msgstr "다음 학습 때 재대결"
 
 #: src/completed-lessons/completed-lessons-row.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
@@ -5054,9 +4997,11 @@ msgctxt "L_oGIZ"
 msgid "Not in your plan"
 msgstr "계획에 없어요"
 
+#. The name of a study step: a live voice call in the language being learned.
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
 #: src/language/conversation/conversation-live.tsx
+#: src/session/use-block-copy.ts
 msgctxt "f-GKc4"
 msgid "Call"
 msgstr "대화"
@@ -5066,6 +5011,11 @@ msgstr "대화"
 msgctxt "J15Qzq"
 msgid "Won"
 msgstr "승리"
+
+#: src/journey/journey-phase-events.tsx
+msgctxt "f0UFlY"
+msgid "In your next session"
+msgstr "다음 학습 때"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
@@ -7654,21 +7604,10 @@ msgctxt "J8WnXZ"
 msgid ", after today's lessons"
 msgstr ", 오늘 레슨을 마친 뒤"
 
-#: src/missions/mission-copy.tsx
-#: src/today/use-row-label.ts
-msgctxt "L_nv1C"
-msgid "After today's lessons"
-msgstr "오늘 레슨을 마친 뒤"
-
 #: src/missions/mission-list.tsx
 msgctxt "l8GXmx"
 msgid "{complete} of {total}"
 msgstr "{complete} / {total}"
-
-#: src/missions/mission-moment.tsx
-msgctxt "mMozLU"
-msgid "Ask your buddy something"
-msgstr "짝꿍에게 질문하기"
 
 #: src/missions/mission-moment.tsx
 msgctxt "BQGCP4"
@@ -7689,11 +7628,6 @@ msgstr "{count, plural, other {미션 #개 더 끝내면 두뇌력 +{points}}}"
 msgctxt "aGylUw"
 msgid "You earned +{points} Brain Power."
 msgstr "두뇌력 +{points} 보상을 받았어요."
-
-#: src/missions/mission-moment.tsx
-msgctxt "DeTHLe"
-msgid "Just done"
-msgstr "방금 완료"
 
 #: src/missions/missions-card.tsx
 msgctxt "deISVW"
@@ -8885,7 +8819,6 @@ msgid "Every task is done. After this, you can't do them again in this mock exam
 msgstr "모든 과제를 마쳤어요. 제출하면 이번 모의고사에서 과제를 다시 할 수 없어요."
 
 #: src/mock/mock-speaking.tsx
-#: src/session/summary/summary-actions.tsx
 msgctxt "JiaScE"
 msgid "Keep going"
 msgstr "계속하기"
@@ -10198,6 +10131,7 @@ msgid "Done. Your plan now covers your whole goal."
 msgstr "완료했어요. 이제 목표에 필요한 모든 내용이 계획에 담겨 있어요."
 
 #: src/onboarding/steps/reveal-days.tsx
+#: src/session/use-review-title.ts
 #: src/today/today-week-challenge.tsx
 msgctxt "R-J5ox"
 msgid "Review"
@@ -11921,7 +11855,6 @@ msgid "Mock and practice"
 msgstr "모의고사와 연습"
 
 #: src/plan/use-short-plan.ts
-#: src/session/use-block-copy.ts
 msgctxt "ZBDAJ7"
 msgid "Full review"
 msgstr "총복습"
@@ -12818,6 +12751,18 @@ msgctxt "WIPDp7"
 msgid "vector {base}"
 msgstr "벡터 {base}"
 
+#: src/session/action-failed.tsx
+#: src/session/open-next-step.tsx
+#: src/today/today-action.tsx
+msgctxt "yQ15dh"
+msgid "We couldn't open the next step. Try again."
+msgstr "다음 단계를 열지 못했어요. 다시 시도해 보세요."
+
+#: src/session/action-failed.tsx
+msgctxt "8i8j-M"
+msgid "We couldn't stop for today. Try again."
+msgstr "오늘 학습을 종료하지 못했어요. 다시 시도해 보세요."
+
 #: src/session/extra-time-button.tsx
 msgctxt "dWsizD"
 msgid "Practice {minutes} more min"
@@ -12828,25 +12773,10 @@ msgctxt "kapQxt"
 msgid "Your lesson isn't saved yet"
 msgstr "레슨이 아직 저장되지 않았어요"
 
-#: src/session/lesson-moment.tsx
-#: src/session/open-next-step.tsx
-#: src/session/study-moment.tsx
-#: src/session/summary/summary-actions.tsx
-#: src/today/today-action.tsx
-msgctxt "yQ15dh"
-msgid "We couldn't open the next step. Try again."
-msgstr "다음 단계를 열지 못했어요. 다시 시도해 보세요."
-
 #: src/session/moment-header.tsx
 msgctxt "uPG65F"
 msgid "Saving your progress…"
 msgstr "진도를 저장하고 있어요…"
-
-#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
-#: src/session/moment-today.tsx
-msgctxt "mtboPF"
-msgid "{left, plural, =0 {<number>#</number> left today} one {<number>#</number> left today} other {<number>#</number> left today}}"
-msgstr "{left, plural, =0 {오늘 <number>#</number>개 남음} other {오늘 <number>#</number>개 남음}}"
 
 #. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
 #: src/session/moment-today.tsx
@@ -12861,20 +12791,9 @@ msgid "{completed, plural, =0 {<number>#</number> of {total} done today} one {<n
 msgstr "{completed, plural, =0 {오늘 <number>#</number>/{total}개 완료} other {오늘 <number>#</number>/{total}개 완료}}"
 
 #: src/session/moment-today.tsx
-#: src/session/session-header.tsx
-msgctxt "Qv3p-N"
-msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
-msgstr "{completed, plural, =0 {#/{total} 완료} other {#/{total} 완료}}"
-
-#: src/session/moment-today.tsx
 msgctxt "Q9kz2-"
 msgid "More as you go"
 msgstr "학습을 이어 가면 더 추가돼요"
-
-#: src/session/moment-today.tsx
-msgctxt "SJ1ksk"
-msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
-msgstr "{count, plural, other {레슨 #개를}} 다른 날로 옮겨 오늘 학습 시간을 {time}에 맞췄어요."
 
 #: src/session/moment-today.tsx
 msgctxt "OnqzIj"
@@ -12892,26 +12811,29 @@ msgid "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught
 msgstr "{done, plural, other {<gain>오늘 밀린 레슨 #개 완료</gain>}} · {left, plural, other {#개 남음}}"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "Icwcge"
-msgid "This lesson is being written for you. It's usually ready in a few minutes."
-msgstr "맞춤 레슨을 만들고 있어요. 보통 몇 분이면 준비돼요."
+msgctxt "v8WYcE"
+msgid "It takes a few minutes."
+msgstr "몇 분 정도 걸려요."
 
 #: src/session/next-stop-wait.tsx
-msgctxt "J05b6v"
-msgid "Instead: {title}"
-msgstr "대신 학습하기: {title}"
+msgctxt "RBw4AC"
+msgid "Start {title}"
+msgstr "{title} 시작하기"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "ZqQr3A"
-msgid "While you wait: {title}"
-msgstr "기다리는 동안: {title}"
+msgctxt "L22d5f"
+msgid "Review now"
+msgstr "지금 복습하기"
 
-#: src/session/next-stop.tsx
-#: src/session/question-block/pause-suggestion.tsx
-#: src/session/study-moment.tsx
-msgctxt "HLd8qn"
-msgid "We couldn't stop the session. Try again."
-msgstr "학습을 중단하지 못했어요. 다시 시도해 보세요."
+#: src/session/next-stop-wait.tsx
+msgctxt "UI79fv"
+msgid "Next lesson"
+msgstr "다음 레슨"
+
+#: src/session/next-stop-wait.tsx
+msgctxt "kY8Exq"
+msgid "Practice now"
+msgstr "지금 연습하기"
 
 #: src/session/next-stop.tsx
 #: src/session/question-block/pause-suggestion.tsx
@@ -12991,14 +12913,9 @@ msgid "A few misses in a row. A short break often helps, and everything you did 
 msgstr "몇 문제 연속으로 틀렸어요. 잠깐 쉬어 가면 도움이 될 때가 많아요. 오늘 한 공부는 모두 의미가 있어요."
 
 #: src/session/question-block/placement-note.tsx
-msgctxt "l8gWNH"
-msgid "Fine-tuning your plan"
-msgstr "계획을 다듬고 있어요"
-
-#: src/session/question-block/placement-note.tsx
-msgctxt "yHidq9"
-msgid "A miss here is never saved as a mistake."
-msgstr "여기서 틀린 문제는 오답 노트에 저장되지 않아요."
+msgctxt "LlY4Wv"
+msgid "Checking what you already know"
+msgstr "이미 아는 내용을 확인하고 있어요"
 
 #: src/session/question-block/placement-note.tsx
 msgctxt "0z8Wa1"
@@ -13078,47 +12995,21 @@ msgctxt "ICrWm9"
 msgid "A wrong answer cancels a right one. Not sure? Leave it blank."
 msgstr "하나 틀리면 정답 하나가 차감돼요. 확신이 없나요? 답을 비워 두세요."
 
+#. Under a level and its belt, such as "White belt, level 4": which belt comes next. {next} is a belt's name, such as "Yellow belt"; {count} is a belt's last level, 10.
 #: src/session/reached-moment.tsx
-#: src/session/summary/summary-parts.tsx
-#: src/session/summary/summary-rewards.tsx
-msgctxt "vj_mVz"
-msgid "{belt}, level {level}"
-msgstr "{belt}, 레벨 {level}"
+msgctxt "9a-zrf"
+msgid "{next} comes after level {count}"
+msgstr "{next}은(는) 레벨 {count} 다음이에요"
 
-#: src/session/reached-moment.tsx
-msgctxt "ri96Ur"
-msgid "Level up!"
-msgstr "레벨이 올랐어요!"
+#: src/session/review-intro.tsx
+msgctxt "6UUFQv"
+msgid "A short test, so your plan skips what you know."
+msgstr "이미 아는 내용을 계획에서 건너뛰기 위한 짧은 테스트예요."
 
-#: src/session/reached-moment.tsx
-msgctxt "K1evK3"
-msgid "As high as Energy goes."
-msgstr "에너지가 가득 찼어요."
-
-#: src/session/reached-moment.tsx
-msgctxt "ejGTo0"
-msgid "{buddy} is glowing as bright as it gets."
-msgstr "{buddy}의 빛이 최고로 밝아졌어요."
-
-#: src/session/reached-moment.tsx
-msgctxt "n6B3nB"
-msgid "{buddy} is glowing now."
-msgstr "이제 {buddy}에게서 빛이 나요."
-
-#: src/session/reached-moment.tsx
-msgctxt "T5ld7Y"
-msgid "Right answers raise it. A day away lowers it a little."
-msgstr "문제를 맞히면 올라가요. 하루 쉬면 조금 내려가요."
-
-#: src/session/reached-moment.tsx
-msgctxt "NnY-Hf"
-msgid "Max Energy: {energy}"
-msgstr "최대 에너지: {energy}"
-
-#: src/session/reached-moment.tsx
-msgctxt "-wkcC0"
-msgid "Energy at {energy}"
-msgstr "에너지 {energy}"
+#: src/session/review-intro.tsx
+msgctxt "iAdLZt"
+msgid "Questions on what you studied before, so it stays with you."
+msgstr "전에 배운 내용을 오래 기억할 수 있도록 문제로 복습해요."
 
 #: src/session/review-intro.tsx
 msgctxt "ZbeKq5"
@@ -13139,11 +13030,6 @@ msgstr "공부한 내용은 잊기 직전에 다시 나와요."
 msgctxt "pdLdyk"
 msgid "Just before you forget"
 msgstr "잊기 바로 전에"
-
-#: src/session/review-intro.tsx
-msgctxt "39jG7T"
-msgid "A few quick questions to check what you already know."
-msgstr "짧은 문제 몇 개로 이미 아는 내용을 확인해요."
 
 #: src/session/review-intro.tsx
 msgctxt "-syvZ6"
@@ -13176,23 +13062,9 @@ msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other 
 msgstr "{completed, plural, =0 {#/{total} 완료} other {#/{total} 완료}} · 학습하면서 더 추가돼요"
 
 #: src/session/session-header.tsx
-#: src/session/session-queue.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "hnntJl"
-msgid "Today's session"
-msgstr "오늘의 학습"
-
-#: src/session/study-moment.tsx
-msgctxt "s53FnF"
-msgid "Net score {net}"
-msgstr "순점수 {net}"
-
-#: src/session/study-moment.tsx
-#: src/today/today-action.tsx
-#: src/today/today-day-status.tsx
-msgctxt "sCfpTF"
-msgid "See today's summary"
-msgstr "오늘의 요약 보기"
+msgctxt "Qv3p-N"
+msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
+msgstr "{completed, plural, =0 {#/{total} 완료} other {#/{total} 완료}}"
 
 #: src/session/summary/summary-actions.tsx
 msgctxt "0gmQJH"
@@ -13216,24 +13088,14 @@ msgid "Done in {time}"
 msgstr "{time} 만에 끝냈어요"
 
 #: src/session/summary/summary-parts.tsx
-msgctxt "LaOLXl"
-msgid "Skills that rose"
-msgstr "숙련도가 오른 스킬"
-
-#: src/session/summary/summary-parts.tsx
-msgctxt "SN04sb"
-msgid "{from} → <strong>{to}</strong>"
-msgstr "{from} → <strong>{to}</strong>"
-
-#: src/session/summary/summary-parts.tsx
 msgctxt "YwxEGP"
 msgid "Done for now"
 msgstr "일단 여기까지"
 
 #: src/session/summary/summary-parts.tsx
-msgctxt "kMpuxF"
-msgid "{time} so far"
-msgstr "지금까지 {time}"
+msgctxt "axcSXX"
+msgid "{time} today"
+msgstr "오늘의 {time}"
 
 #. Image description: the buddy is happy with what the learner studied today.
 #: src/session/summary/summary-rewards.tsx
@@ -13265,21 +13127,6 @@ msgstr "준비하고 있어요…"
 msgctxt "vrNWq4"
 msgid "Earned today"
 msgstr "오늘 얻은 보상"
-
-#: src/session/test-out-offer.tsx
-msgctxt "aImXvD"
-msgid "Is this easy for you?"
-msgstr "쉽게 느껴지나요?"
-
-#: src/session/test-out-offer.tsx
-msgctxt "aExtTy"
-msgid "{count, plural, one {Take this chapter's test and skip # lesson.} other {Take this chapter's test and skip up to # lessons.}}"
-msgstr "{count, plural, other {이 챕터의 테스트를 보고 레슨을 최대 #개 건너뛰세요.}}"
-
-#: src/session/use-block-copy.ts
-msgctxt "_uh-IX"
-msgid "Challenge, second try"
-msgstr "챌린지, 두 번째 도전"
 
 #: src/session/use-block-copy.ts
 msgctxt "z0XIiH"
@@ -13314,14 +13161,9 @@ msgid "Mixed practice"
 msgstr "섞어서 연습하기"
 
 #: src/session/use-block-copy.ts
-msgctxt "babT7b"
-msgid "No reviews due today · {count, plural, one {# question} other {# questions}} on your weakest topics"
-msgstr "오늘 예정된 복습은 없어요 · {count, plural, other {#문제}}로 가장 어려워하는 주제를 연습해요"
-
-#: src/session/use-block-copy.ts
-msgctxt "kNBGpx"
-msgid "{count, plural, one {# question} other {# questions}} · {titles}, plus what you already know"
-msgstr "{count, plural, other {#문제}} · {titles}, 이미 아는 내용도 함께"
+msgctxt "87izcS"
+msgid "{count, plural, one {# question on what's been hardest for you} other {# questions on what's been hardest for you}}"
+msgstr "{count, plural, other {가장 어려웠던 내용을 다루는 문제 #개}}"
 
 #: src/session/use-block-copy.ts
 msgctxt "JIVhM1"
@@ -13334,29 +13176,9 @@ msgid "Short lesson before the rematch"
 msgstr "재도전 전 짧은 레슨"
 
 #: src/session/use-block-copy.ts
-msgctxt "yl8kH0"
-msgid "{phase} · a live call"
-msgstr "{phase} · 실시간 대화"
-
-#: src/session/use-block-copy.ts
-msgctxt "HS4tNy"
-msgid "A live call"
-msgstr "실시간 대화"
-
-#: src/session/use-block-copy.ts
-msgctxt "NARnnE"
-msgid "{phase} · {count, plural, one {# question} other {# questions}}, no hints"
-msgstr "{phase} · {count, plural, other {#문제}}, 힌트 없음"
-
-#: src/session/use-block-copy.ts
-msgctxt "tMlMG9"
-msgid "{count, plural, one {# question} other {# questions}}, no hints"
-msgstr "{count, plural, other {#문제}}, 힌트 없음"
-
-#: src/session/use-block-copy.ts
-msgctxt "AUtFzE"
-msgid "{count, plural, one {# question} other {# questions}} on every topic, your weakest first"
-msgstr "{count, plural, other {#문제}} · 모든 주제 복습, 가장 어려워하는 주제부터"
+msgctxt "RosIKi"
+msgid "{count, plural, one {# question on every topic} other {# questions on every topic}}"
+msgstr "{count, plural, other {모든 주제를 다루는 문제 #개}}"
 
 #: src/session/use-moment-title.ts
 msgctxt "XHHt5U"
@@ -13372,16 +13194,6 @@ msgstr "레슨 완료"
 msgctxt "ql88uE"
 msgid "Review done"
 msgstr "복습 완료"
-
-#: src/session/use-review-title.ts
-msgctxt "dUxyza"
-msgid "Reviews"
-msgstr "복습"
-
-#: src/session/use-review-title.ts
-msgctxt "fqtVVy"
-msgid "Quick review"
-msgstr "간단 복습"
 
 #. Read by screen readers right after a goal's name. {variety} is the language and country the learner chose, such as “Spanish (Argentina)”.
 #: src/shell/goal-mark.tsx
@@ -13832,6 +13644,12 @@ msgstr "{count, plural, other {이미 아는 레슨 #개}}"
 msgctxt "jrDQIZ"
 msgid "{total, plural, one {{done, number} of # lesson} other {{done, number} of # lessons}}"
 msgstr "{total, plural, other {레슨 {done, number}/#개 완료}}"
+
+#: src/today/today-action.tsx
+#: src/today/today-day-status.tsx
+msgctxt "sCfpTF"
+msgid "See today's summary"
+msgstr "오늘의 요약 보기"
 
 #: src/today/today-action.tsx
 #: src/today/today-more.tsx

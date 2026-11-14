@@ -1,13 +1,16 @@
 "use client";
 
 import { type ChallengeTopic } from "@zoonk/core/checkpoints/challenge-contract";
+import { ListChecksIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { Disclosure } from "../_components/disclosure";
 import {
   ListGroup,
   ListRow,
   ListRowBody,
   ListRowContent,
   ListRowDescription,
+  ListRowIcon,
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
@@ -44,62 +47,77 @@ export function useTopicsTitle(): string | null {
   return challenge.status === "done" ? t("What he asked") : t("What he'll ask");
 }
 
-export function ChallengeTopics() {
+function TopicRows() {
   const t = useExtracted();
   const format = useFormatter();
   const { challenge } = useChallengeScreen();
-  const title = useTopicsTitle();
-  const rows = getTopicRows(challenge.topics);
 
-  if (!title || rows.length === 0) {
+  return (
+    <ListGroup>
+      {getTopicRows(challenge.topics).map((row) => (
+        <ListRow key={`${row.subject ?? ""}:${row.topics.join(",")}`}>
+          <ListRowBody>
+            <ListRowContent>
+              <ListRowTitle>{row.subject ?? row.topics[0]}</ListRowTitle>
+              {row.subject !== null && (
+                <ListRowDescription className="line-clamp-2">
+                  {format.list(row.topics, { style: "short", type: "unit" })}
+                </ListRowDescription>
+              )}
+            </ListRowContent>
+            {row.subject !== null && (
+              <ListRowTrailing>
+                {t("{count, plural, one {# topic} other {# topics}}", { count: row.topics.length })}
+              </ListRowTrailing>
+            )}
+          </ListRowBody>
+        </ListRow>
+      ))}
+    </ListGroup>
+  );
+}
+
+export function ChallengeTopics() {
+  const title = useTopicsTitle();
+
+  if (!title) {
     return null;
   }
 
   return (
     <section className="flex flex-col gap-2">
       <PageSectionTitle className="with-aside:sr-only">{title}</PageSectionTitle>
-      <ListGroup>
-        {rows.map((row) => (
-          <ListRow key={`${row.subject ?? ""}:${row.topics.join(",")}`}>
-            <ListRowBody>
-              <ListRowContent>
-                <ListRowTitle>{row.subject ?? row.topics[0]}</ListRowTitle>
-                {row.subject !== null && (
-                  <ListRowDescription className="line-clamp-2">
-                    {format.list(row.topics, { style: "short", type: "unit" })}
-                  </ListRowDescription>
-                )}
-              </ListRowContent>
-              {row.subject !== null && (
-                <ListRowTrailing>
-                  {t("{count, plural, one {# topic} other {# topics}}", {
-                    count: row.topics.length,
-                  })}
-                </ListRowTrailing>
-              )}
-            </ListRowBody>
-          </ListRow>
-        ))}
-      </ListGroup>
+      <TopicRows />
     </section>
   );
 }
 
-export function DuelBriefing({ rule }: { rule: string }) {
-  const hasTopics = useTopicsTitle() !== null;
+/** Before a duel the topics wait behind one row on a phone, and sit open in the aside when there is one. */
+export function DuelTopics() {
+  const title = useTopicsTitle();
 
-  const ruleLine = (
-    <p className="text-muted-foreground text-compact leading-5 text-pretty">{rule}</p>
-  );
-
-  if (!hasTopics) {
-    return ruleLine;
+  if (!title) {
+    return null;
   }
 
   return (
-    <TaskAsideContent className="with-aside:gap-8 flex w-full flex-col gap-6">
-      <ChallengeTopics />
-      {ruleLine}
-    </TaskAsideContent>
+    <>
+      <ListGroup className="with-aside:group-data-aside/task:hidden w-full">
+        <Disclosure
+          icon={
+            <ListRowIcon>
+              <ListChecksIcon />
+            </ListRowIcon>
+          }
+          title={title}
+        >
+          <TopicRows />
+        </Disclosure>
+      </ListGroup>
+
+      <TaskAsideContent className="with-aside:group-data-aside/task:block hidden w-full">
+        <ChallengeTopics />
+      </TaskAsideContent>
+    </>
   );
 }

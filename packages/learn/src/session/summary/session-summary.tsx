@@ -1,6 +1,7 @@
 "use client";
 
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
+import { type ReminderOfferActions } from "../../reminders/reminder-offer";
 import { type MomentCeremony } from "../moment-ceremony";
 import { type StudySessionSummary } from "../session-types";
 import {
@@ -18,6 +19,7 @@ export function SessionSummary({
   exitHref,
   goalKind,
   mistakesHref = null,
+  reminderActions,
   renderCeremony,
   signUpHref = null,
   stopped = false,
@@ -29,6 +31,7 @@ export function SessionSummary({
   exitHref: string;
   goalKind: SummaryGoalKind;
   mistakesHref?: string | null;
+  reminderActions?: ReminderOfferActions;
   renderCeremony?: MomentCeremony;
   signUpHref?: string | null;
   stopped?: boolean;
@@ -43,6 +46,7 @@ export function SessionSummary({
         exitHref,
         goalKind,
         mistakesHref,
+        reminderActions,
         signUpHref,
         stopped,
         summary,

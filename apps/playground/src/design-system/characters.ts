@@ -82,21 +82,26 @@ export const CHARACTER_MOMENTS: readonly CharacterMoment[] = [
   {
     act: "Smug",
     beat: "A beat in",
-    character: "The Trickster, holding his sign",
+    character: "The Trickster behind his shield",
     moment: "A challenge's intro",
   },
   {
     act: "Smug, or Back to sly",
     beat: "As each verdict comes in",
     character: "The Trickster beside the question, on wide screens",
-    moment: "A duel: a miss, or one the learner got past him",
+    moment: "A duel: a miss bounces off his shield, or a right answer cracks it",
   },
-  { act: "Defeated", beat: "A beat in", character: "The Trickster", moment: "A challenge won" },
   {
-    act: "Smug",
-    beat: "A beat in",
-    character: "The Trickster, holding his sign",
-    moment: "A challenge lost",
+    act: "Defeated",
+    beat: "As the deciding answer's verdict comes in",
+    character: "The Trickster, in the verdict on a phone and beside the question on wide screens",
+    moment: "A challenge won: his shield breaks in two",
+  },
+  {
+    act: "Triumph",
+    beat: "As the deciding answer's verdict comes in",
+    character: "The Trickster, in the verdict on a phone and beside the question on wide screens",
+    moment: "A challenge lost: his shield holds",
   },
 ];
 
@@ -123,8 +128,13 @@ export const CHARACTER_PARTS: readonly CharacterPart[] = [
   },
   {
     moves:
-      "Swing from the shoulder (Otto's arms are his outer tentacles); the Trickster's `sign` turns with the arm holding it.",
-    parts: "`arm-left`, `arm-right`, `sign`",
+      "Swing from the shoulder (Otto's arms are his outer tentacles); the Trickster's `shield` turns with the arm holding it.",
+    parts: "`arm-left`, `arm-right`, `shield`",
+  },
+  {
+    moves:
+      "The Trickster's shield: it gives when an answer lands, its halves fall apart along `shield-fracture` when he is beaten, and `shield-glint` runs across it when it holds.",
+    parts: "`shield`, `shield-left`, `shield-right`, `shield-fracture`, `shield-glint`",
   },
   {
     moves: "Loose parts: they lag behind what drives them and follow through on `ease-follow`.",

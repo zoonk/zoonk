@@ -6,7 +6,6 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { isJsonObject } from "@zoonk/utils/json";
 import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
-import { continueToLastStep } from "./result-steps";
 import {
   answerRight,
   createStudyDay,
@@ -131,7 +130,7 @@ async function playPractice(page: Page) {
   await answerRight(page, /^Practice one/u);
   await answerRight(page, /^Practice two/u);
   await expectMoment(page, "Practice done");
-  await expect(page.getByRole("button", { name: /^See today's summary/u })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^Continue/u })).toBeVisible();
 
   await pressUntil(
     () => page.keyboard.press("Enter"),
@@ -218,7 +217,6 @@ test.describe("Today's session", () => {
     await playLesson(page);
     await playPractice(page);
 
-    await continueToLastStep(page, { keyboard: true });
     await expect(page.getByRole("link", { name: "Finish" })).toBeVisible();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/today$/u);
