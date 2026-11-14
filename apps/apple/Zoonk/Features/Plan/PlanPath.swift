@@ -53,11 +53,7 @@ struct PlanPathRows: View {
         context: context, phase: phase, isOpen: phase.index == open, brief: brief)
     }
 
-    IconLabeledContent {
-      planFinish(context)
-    } title: {
-      Text(context.goal.displayName)
-    } icon: {
+    PlanMarkedRow(title: Text(context.goal.displayName), when: planFinish(context)) {
       Image(systemName: "flag")
     }
     .chevronSlot()
@@ -685,7 +681,9 @@ struct PlanPathRow<Title: View, Value: View>: View {
   @ViewBuilder let value: Value
 
   var body: some View {
-    AccessibilityStack(alignment: .firstTextBaseline, spacing: 12, stackedSpacing: 4) {
+    // The value sits on the row's center with the chevron: on one line its capitals meet the
+    // title's, and under a wrapped title or a note it stays level with the chevron.
+    AccessibilityStack(alignment: .center, spacing: 12, stackedSpacing: 4) {
       title
         .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -737,6 +735,30 @@ func planChapterWindow(states: [PlanChapter.State]) -> Range<Int> {
   return start..<min(states.count, start + shown)
 }
 
+/// A path row with a mark and its date: the goal's finish, a mock exam, a review.
+struct PlanMarkedRow<Mark: View>: View {
+  let title: Text
+  let when: PlanWhen?
+  @ViewBuilder let mark: Mark
+
+  var body: some View {
+    PlanPathRow {
+      Label {
+        title
+          .foregroundStyle(.primary)
+          .layoutPart(.label, text: title)
+      } icon: {
+        mark
+          .markColumn()
+          .layoutPart(.mark)
+      }
+    } value: {
+      when
+    }
+    .accessibilityElement(children: .combine)
+  }
+}
+
 /// Says what a challenge is under its row, since a learner meets one before they've ever taken one.
 struct PlanChallengeLabel: View {
   let when: PlanWhen?
@@ -744,9 +766,9 @@ struct PlanChallengeLabel: View {
   let isLanguage: Bool
 
   var body: some View {
-    Label {
-      VStack(alignment: .leading, spacing: 2) {
-        AccessibilityStack(alignment: .firstTextBaseline) {
+    PlanPathRow {
+      Label {
+        VStack(alignment: .leading, spacing: 2) {
           Group {
             if isLanguage {
               Text("Call", tableName: "Plan", comment: "The live call that closes a language phase")
@@ -759,35 +781,37 @@ struct PlanChallengeLabel: View {
           }
           .foregroundStyle(.primary)
           .layoutPart(.label)
-          .frame(maxWidth: .infinity, alignment: .leading)
 
-          when?
-            .layoutPart(.value)
-            .foregroundStyle(.mutedForeground)
+          explanation
         }
+      } icon: {
+        KindMark(kind: .challenge)
+          .markColumn()
+          .layoutPart(.mark)
+      }
+    } value: {
+      when
+    }
+    // In a list row's button it otherwise gets one line's height and truncates its title.
+    .fixedSize(horizontal: false, vertical: true)
+  }
 
-        if explains {
-          Group {
-            if isLanguage {
-              Text(
-                "A live call where you get your point across", tableName: "Plan",
-                comment: "What a language unit's challenge is, under its row")
-            } else {
-              Text(
-                "Questions on this phase, with no hints", tableName: "Plan",
-                comment: "What the Trickster is, under its row")
-            }
-          }
-          .layoutPart(.note)
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
+  @ViewBuilder private var explanation: some View {
+    if explains {
+      Group {
+        if isLanguage {
+          Text(
+            "A live call where you get your point across", tableName: "Plan",
+            comment: "What a language unit's challenge is, under its row")
+        } else {
+          Text(
+            "Questions on this phase, with no hints", tableName: "Plan",
+            comment: "What the Trickster is, under its row")
         }
       }
-      // In a list row's button it otherwise gets one line's height and truncates its title.
-      .fixedSize(horizontal: false, vertical: true)
-    } icon: {
-      KindMark(kind: .challenge)
-        .layoutPart(.mark)
+      .layoutPart(.note)
+      .typeStyle(.meta)
+      .foregroundStyle(.mutedForeground)
     }
   }
 }

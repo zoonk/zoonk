@@ -569,11 +569,7 @@ struct NextOnPathSection: View {
   }
 
   private func row(title: Text, detail: PlanWhen?, kind: LearnKind) -> some View {
-    IconLabeledContent {
-      detail
-    } title: {
-      title.foregroundStyle(.primary)
-    } icon: {
+    PlanMarkedRow(title: title, when: detail) {
       KindMark(kind: kind)
     }
     .disclosureChevron()
@@ -581,11 +577,7 @@ struct NextOnPathSection: View {
 
   @ViewBuilder
   private var finishRow: some View {
-    let finish = IconLabeledContent {
-      planFinish(context)
-    } title: {
-      Text(context.goal.displayName).foregroundStyle(.primary)
-    } icon: {
+    let finish = PlanMarkedRow(title: Text(context.goal.displayName), when: planFinish(context)) {
       Image(systemName: "flag")
     }
 

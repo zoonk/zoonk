@@ -11,7 +11,13 @@ struct DisclosureChevron: View {
   /// the edge where the other rows' end.
   var body: some View {
     Image(systemName: "chevron.forward")
-      .rotationEffect(.degrees(pointsDown ? (layoutDirection == .rightToLeft ? -90 : 90) : 0))
+      // `chevron.forward` draws its ink right of its frame's center, so a turn about the center
+      // leaves it 1.1pt low and 0.7pt past the row's end; about this point it sits where a forward
+      // one does.
+      .rotationEffect(
+        .degrees(pointsDown ? (layoutDirection == .rightToLeft ? -90 : 90) : 0),
+        anchor: UnitPoint(x: 0.5, y: 0.41)
+      )
       .typeStyle(.note.weight(.semibold))
       .foregroundStyle(Color.mutedForeground.opacity(0.6))
       .accessibilityHidden(true)

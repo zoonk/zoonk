@@ -10,11 +10,9 @@ struct StatusMark: View {
 
   let status: Status
 
-  @ScaledMetric(relativeTo: .body) private var width = 20.0
-
   var body: some View {
     mark
-      .frame(width: width)
+      .markColumn()
       .accessibilityHidden(true)
   }
 
@@ -41,5 +39,21 @@ struct StatusMark: View {
         .typeStyle(.small)
         .foregroundStyle(Color(.foreground).opacity(0.2))
     }
+  }
+}
+
+extension View {
+  /// One width for every mark in a column of rows, so their titles start on one edge at every
+  /// text size, whichever glyph each row has.
+  func markColumn() -> some View {
+    modifier(MarkColumn())
+  }
+}
+
+private struct MarkColumn: ViewModifier {
+  @ScaledMetric(relativeTo: .body) private var width = 20.0
+
+  func body(content: Content) -> some View {
+    content.frame(width: width)
   }
 }

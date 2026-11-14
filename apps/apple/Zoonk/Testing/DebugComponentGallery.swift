@@ -610,11 +610,7 @@
         }
 
         ForEach(Array(Self.finishDays.enumerated()), id: \.offset) { _, when in
-          IconLabeledContent {
-            when
-          } title: {
-            Text(verbatim: "ENEM 2027")
-          } icon: {
+          PlanMarkedRow(title: Text(verbatim: "ENEM 2027"), when: when) {
             Image(systemName: "flag")
           }
         }
