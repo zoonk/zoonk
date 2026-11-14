@@ -129,7 +129,8 @@ private fun Project.buildIdentity(): CommandLineArgumentProvider {
             }.standardOutput.asBytes
     val commit = git("rev-parse", "HEAD")
     val changes = git("diff", "HEAD", "--binary")
-    val untracked = git("ls-files", "--others", "--exclude-standard", "--full-name", "-z")
+    // `:/` is the repository's top: run from apps/android, `ls-files` would list only the files under it.
+    val untracked = git("ls-files", "--others", "--exclude-standard", "--full-name", "-z", "--", ":/")
     val top = git("rev-parse", "--show-toplevel")
     return CommandLineArgumentProvider {
         val digest = MessageDigest.getInstance("SHA-256")
