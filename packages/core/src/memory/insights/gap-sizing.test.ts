@@ -13,6 +13,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
+import { seenInsightQuote } from "../../plans/_test-utils/seen-quote";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { runSessionFollowUps } from "../_test-utils/session-follow-ups";
@@ -196,7 +197,10 @@ describe("gap sizing for plan-change insights", () => {
       },
     });
 
-    await respondToMemoryInsight({ input: { status: "accepted" }, insightId: insight.id });
+    await respondToMemoryInsight({
+      input: { quote: await seenInsightQuote(insight.id), status: "accepted" },
+      insightId: insight.id,
+    });
 
     const skillIds = await loadPlanSkillIds(goal.id);
     const added = [basics?.id, equivalent?.id, asPercentages?.id, weak.id];
@@ -220,7 +224,10 @@ describe("gap sizing for plan-change insights", () => {
     mockSession(user.id);
 
     await expect(
-      respondToMemoryInsight({ input: { status: "dismissed" }, insightId: insight.id }),
+      respondToMemoryInsight({
+        input: { quote: null, status: "dismissed" },
+        insightId: insight.id,
+      }),
     ).resolves.toMatchObject({ insight: { status: "dismissed" }, status: "updated" });
 
     const changeId = readInsightPayload(insight.payload).planChangeId ?? "";
@@ -390,7 +397,11 @@ describe("gap sizing for plan-change insights", () => {
     });
 
     mockSession(user.id);
-    await respondToMemoryInsight({ input: { status: "accepted" }, insightId: insight.id });
+
+    await respondToMemoryInsight({
+      input: { quote: await seenInsightQuote(insight.id), status: "accepted" },
+      insightId: insight.id,
+    });
 
     const [skillIds, lessonIds] = await Promise.all([
       loadPlanSkillIds(goal.id),

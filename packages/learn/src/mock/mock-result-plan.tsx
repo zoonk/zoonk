@@ -11,7 +11,9 @@ import { Meter, MeterFill } from "../_components/meter";
 import { useChangeSaveErrorMessage } from "../_components/save-error";
 import { StepCard, StepHeader, StepTitle } from "../_components/step-card";
 import { useFormatShare } from "../_utils/percent";
+import { TaskMainButton } from "../shell/task-frame";
 import { type MockPlanOffer, type MockPlanOfferOutcome, useMockScreen } from "./mock-context";
+import { BAR_SECOND_ACTION_CLASS } from "./mock-result-actions";
 
 type Answer = { outcome: MockPlanOfferOutcome } | { declined: true } | { failed: true };
 
@@ -83,15 +85,32 @@ function useAnswerLine(adapt: MockAdaptView) {
   };
 }
 
-function PlanChangeStatus({ change }: { change: PlanChange & { adapt: MockAdaptView } }) {
+function useStatusLines(change: PlanChange & { adapt: MockAdaptView }) {
+  const t = useExtracted();
   const answerLine = useAnswerLine(change.adapt);
 
-  const told = change.offers.flatMap((offer) => {
+  const declinedAll =
+    change.offers.length > 0 &&
+    change.offers.every((offer) => {
+      const answer = change.answers[offer];
+      return answer !== undefined && "declined" in answer;
+    });
+
+  // Declining writes nothing, so the step would still read as an open question.
+  if (declinedAll) {
+    return [{ applied: false, line: t("Your plan stays as it is.") }];
+  }
+
+  return change.offers.flatMap((offer) => {
     const answer = change.answers[offer];
     const line = answer ? answerLine({ answer, offer }) : null;
     const applied = answer && "outcome" in answer && answer.outcome.status === "applied";
     return line ? [{ applied, line }] : [];
   });
+}
+
+function PlanChangeStatus({ change }: { change: PlanChange & { adapt: MockAdaptView } }) {
+  const told = useStatusLines(change);
 
   if (told.length === 0) {
     return null;
@@ -160,10 +179,16 @@ function useOfferCopy(adapt: MockAdaptView | null) {
   };
 }
 
+/**
+ * `answers={false}` leaves the open question's answers to the result's bar (`MockPlanAnswers`),
+ * where the step that asks it is the last one.
+ */
 export function MockPlanChange({
+  answers = true,
   change,
   showTitle = true,
 }: {
+  answers?: boolean;
   change: PlanChange & { adapt: MockAdaptView };
   showTitle?: boolean;
 }) {
@@ -190,25 +215,59 @@ export function MockPlanChange({
             <p className="text-muted-foreground text-sm text-pretty">{copy.line}</p>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            <form action={() => change.accept()} className="contents">
-              <Button busy={change.isPending} size="sm" type="submit" variant="outline">
-                {copy.accept}
+          {answers && (
+            <div className="flex flex-wrap gap-2">
+              <form action={() => change.accept()} className="contents">
+                <Button busy={change.isPending} size="sm" type="submit" variant="outline">
+                  {copy.accept}
+                </Button>
+              </form>
+              <Button
+                disabled={change.isPending}
+                focusableWhenDisabled
+                onClick={change.decline}
+                size="sm"
+                variant="ghost"
+              >
+                {copy.decline}
               </Button>
-            </form>
-            <Button
-              disabled={change.isPending}
-              focusableWhenDisabled
-              onClick={change.decline}
-              size="sm"
-              variant="ghost"
-            >
-              {copy.decline}
-            </Button>
-          </div>
+            </div>
+          )}
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * The open question's answers in the result's bar, in place of its way on: "Continue" there would
+ * leave the question unanswered as if it were an answer. The way on comes back once it's answered.
+ */
+export function MockPlanAnswers({ change }: { change: PlanChange & { adapt: MockAdaptView } }) {
+  const offerCopy = useOfferCopy(change.adapt);
+
+  if (!change.open) {
+    return null;
+  }
+
+  const copy = offerCopy(change.open);
+
+  return (
+    <>
+      <Button
+        className={BAR_SECOND_ACTION_CLASS}
+        disabled={change.isPending}
+        focusableWhenDisabled
+        onClick={change.decline}
+        size="xl"
+        variant="outline"
+      >
+        {copy.decline}
+      </Button>
+      <TaskMainButton busy={change.isPending} onClick={change.accept}>
+        {copy.accept}
+      </TaskMainButton>
+    </>
   );
 }
 
@@ -269,7 +328,9 @@ export function MockPlanStep({
       </StepHeader>
 
       {preparation && <PreparationMeter change={preparation} />}
-      {hasPlanChange(change) && <MockPlanChange change={change} showTitle={Boolean(preparation)} />}
+      {hasPlanChange(change) && (
+        <MockPlanChange answers={false} change={change} showTitle={Boolean(preparation)} />
+      )}
     </StepCard>
   );
 }

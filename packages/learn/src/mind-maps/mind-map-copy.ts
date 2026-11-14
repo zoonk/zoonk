@@ -11,30 +11,33 @@ import { type MindMapShown } from "./use-mind-map-request";
  */
 export type MindMapRowPlace = "chapter" | "finish" | "library";
 
-/** The Mind maps page says once, above its rows, what writing the lessons costs (`NotMadeYet`). */
+/**
+ * Wherever its button writes lessons for a learner with a limit on them, the row says what that
+ * spends. On the Mind maps page the list says once what writing lessons spends (`NotMadeYet`), so a
+ * row gives only its count.
+ */
 function useAvailableLine({ place, plus, view }: MindMapCopyInput): string | null {
   const t = useExtracted();
-  const writesLessons = view.lessonsToWrite > 0;
-
   const count = view.lessonsToWrite;
 
-  const offerLine =
-    place === "finish" ? t("A mind map of its main ideas") : t("Its main ideas in one picture");
+  if (count > 0 && !plus && place === "library") {
+    return t("{count, plural, one {# lesson to write} other {# lessons to write}}", { count });
+  }
 
-  if (writesLessons && place === "library") {
+  if (count > 0 && !plus) {
+    return t(
+      "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}",
+      { count },
+    );
+  }
+
+  if (place === "library") {
     return null;
   }
 
-  if (writesLessons) {
-    return plus
-      ? offerLine
-      : t(
-          "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}",
-          { count },
-        );
-  }
-
-  return place === "library" ? null : offerLine;
+  return place === "finish"
+    ? t("A mind map of its main ideas")
+    : t("Its main ideas in one picture");
 }
 
 export type MindMapCopyInput = {

@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { getCourseStartHref } from "@/lib/public/public-hrefs";
 import { getExtracted } from "next-intl/server";
+import { PageStartDestination } from "./page-start";
 import { getSecondaryStartControlClassName, getStartControlClassName } from "./public-start";
 
 /**
@@ -19,15 +20,20 @@ export async function StartPlanLink({
   secondary?: boolean;
 }) {
   const t = await getExtracted();
+  const href = getCourseStartHref({ chapterId, courseId, minutes });
 
   return (
-    <Link
-      className={secondary ? getSecondaryStartControlClassName() : getStartControlClassName()}
-      href={getCourseStartHref({ chapterId, courseId, minutes })}
-      prefetch
-      rel="nofollow"
-    >
-      {t("Build my plan")}
-    </Link>
+    <>
+      <PageStartDestination href={href} />
+
+      <Link
+        className={secondary ? getSecondaryStartControlClassName() : getStartControlClassName()}
+        href={href}
+        prefetch
+        rel="nofollow"
+      >
+        {t("Build my plan")}
+      </Link>
+    </>
   );
 }

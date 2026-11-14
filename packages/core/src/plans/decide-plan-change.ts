@@ -18,13 +18,17 @@ import {
 } from "./_utils/plan-change-payload";
 import { canUndoChange } from "./_utils/plan-change-view";
 import { type PlanContext } from "./_utils/plan-context";
-import { getPlanPreviewBasis, isCurrentPlanPreview } from "./_utils/plan-preview-basis";
+import {
+  getPlanPreviewBasis,
+  isCurrentPlanPreview,
+  isSameQuote,
+} from "./_utils/plan-preview-basis";
 import { replaceWaitingProposals } from "./_utils/replace-waiting-proposals";
 import { revalidatePlanTags } from "./_utils/replan";
 import { getChangePlanning } from "./_utils/steered-areas";
 import { undoChange } from "./_utils/undo-change";
 import { PlanConflictError, withPlanRetry } from "./plan-conflict";
-import { type PlanChangeDecisionInput } from "./plan-contract";
+import { type PlanChangeDecision, type PlanChangeQuote } from "./plan-decision-contract";
 import { type PlanChangeView } from "./plan-view-contract";
 import { type PlanOperationError } from "./planner/plan-operations";
 
@@ -78,7 +82,15 @@ async function repriceProposal({
   return REPRICED;
 }
 
-async function acceptProposal({ change, context }: Decision) {
+/**
+ * Applies only the numbers the learner saw: `quote` must be the proposal's current one, so another
+ * tab still showing the earlier numbers, or a retried request, gets today's numbers to answer.
+ */
+async function acceptProposal({
+  change,
+  context,
+  quote,
+}: Decision & { quote: PlanChangeQuote | null }) {
   const payload = parsePlanChangePayload(change.payload);
 
   const result = await applyChangeOperations({
@@ -106,6 +118,10 @@ async function acceptProposal({ change, context }: Decision) {
 
   if (repriced) {
     return repriced;
+  }
+
+  if (!isSameQuote(quote, payload.previewBasis)) {
+    return REPRICED;
   }
 
   await commitPlan({
@@ -229,7 +245,7 @@ async function markSeen({ change, context }: Decision) {
   return null;
 }
 
-async function decide({ decision, input }: { decision: Decision; input: PlanChangeDecisionInput }) {
+async function decide({ decision, input }: { decision: Decision; input: PlanChangeDecision }) {
   const { change } = decision;
 
   if (input.status === "seen") {
@@ -241,7 +257,9 @@ async function decide({ decision, input }: { decision: Decision; input: PlanChan
       return { status: "conflict" as const };
     }
 
-    return input.status === "applied" ? acceptProposal(decision) : decline(decision);
+    return input.status === "applied"
+      ? acceptProposal({ ...decision, quote: input.quote })
+      : decline(decision);
   }
 
   if (!canUndoChange({ change, planVersion: decision.context.plan.version })) {
@@ -259,7 +277,7 @@ export async function decidePlanChange({
 }: {
   changeId: string;
   goalId: string;
-  input: PlanChangeDecisionInput;
+  input: PlanChangeDecision;
   trackAnalytics?: boolean;
 }): Promise<PlanChangeDecisionResult> {
   return withPlanRetry(async () => {

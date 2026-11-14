@@ -130,7 +130,7 @@ describe("plan-change insights", () => {
     const flush = runDeferredWork();
 
     const answer = await respondToMemoryInsight({
-      input: { status: "dismissed" },
+      input: { quote: null, status: "dismissed" },
       insightId: insight.id,
     });
 

@@ -5,6 +5,7 @@ import {
   type FocusTestFocus,
   type FocusTestSummary,
 } from "@zoonk/core/learner/placement/focus-test-contract";
+import { type PlanChangeAnswer } from "@zoonk/core/plans/decision-contract";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import {
@@ -28,7 +29,7 @@ export type ProposalAnswer = { change: Proposal; decision: Decision };
 export type FocusTestPlanActions = {
   changeFocusHref: string;
   /** The change as it stands after the answer; null when it wasn't saved. */
-  decide: (input: { changeId: string; status: Decision }) => Promise<Proposal | null>;
+  decide: (answer: PlanChangeAnswer) => Promise<Proposal | null>;
   /** The test as it stands after the switch; null when it wasn't saved. */
   setSessionQuestions: (sessionQuestions: "on" | "paused") => Promise<FocusTestSummary | null>;
 };
@@ -40,18 +41,22 @@ export function useProposalAnswer(plan: FocusTestPlanActions | null) {
   const [pressed, setPressed] = useState<Decision | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const decide = (changeId: string, status: Decision) => {
+  const decide = (change: Proposal, status: Decision) => {
     setPressed(status);
 
     startTransition(async () => {
-      const change = (await plan?.decide({ changeId, status }).catch(() => null)) ?? null;
-      setFailed(!change);
+      const answered =
+        (await plan
+          ?.decide({ changeId: change.id, quote: change.quote, status })
+          .catch(() => null)) ?? null;
+
+      setFailed(!answered);
 
       // Accepted, and still waiting: its numbers moved, so it asks again with today's.
-      if (change && status === "applied" && change.status === "proposed") {
-        setRepriced(change);
-      } else if (change) {
-        setAnswer({ change, decision: status });
+      if (answered && status === "applied" && answered.status === "proposed") {
+        setRepriced(answered);
+      } else if (answered) {
+        setAnswer({ change: answered, decision: status });
       }
     });
   };

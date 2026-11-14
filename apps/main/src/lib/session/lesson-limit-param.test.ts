@@ -5,16 +5,12 @@ import { readLessonLimitParam, toLessonLimitParam } from "./lesson-limit-param";
 describe(toLessonLimitParam, () => {
   it.each<[LessonLimit, LessonLimit]>([
     [
-      { period: "total", status: "limitReached", tier: "guest" },
-      { period: "total", status: "limitReached", tier: "guest" },
+      { status: "limitReached", tier: "guest" },
+      { status: "limitReached", tier: "guest" },
     ],
     [
-      { period: "day", status: "limitReached", tier: "free" },
-      { period: "day", status: "limitReached", tier: "free" },
-    ],
-    [
-      { period: "month", status: "limitReached", tier: "free" },
-      { period: "month", status: "limitReached", tier: "free" },
+      { status: "limitReached", tier: "free" },
+      { status: "limitReached", tier: "free" },
     ],
     [
       {
@@ -31,18 +27,14 @@ describe(toLessonLimitParam, () => {
       },
     ],
     [
-      { period: "day", status: "limitReached", tier: "plus" },
-      { period: "day", status: "limitReached", tier: "plus" },
+      { status: "limitReached", tier: "plus" },
+      { status: "limitReached", tier: "plus" },
     ],
     [
       { retryAfterSeconds: 300, status: "slowDown" },
       { retryAfterSeconds: 300, status: "slowDown" },
     ],
     [{ status: "signUpRequired" }, { status: "signUpRequired" }],
-    [
-      { period: "day", status: "limitReached", tier: "guest" },
-      { period: "total", status: "limitReached", tier: "guest" },
-    ],
   ])("keeps what the notice needs to say through the URL: %o", (limit, read) => {
     expect(readLessonLimitParam(toLessonLimitParam(limit))).toStrictEqual(read);
   });
@@ -53,6 +45,7 @@ describe(readLessonLimitParam, () => {
     undefined,
     "",
     "free",
+    "free-month",
     "slow-down-",
     "slow-down-soon",
     "slow-down--5",

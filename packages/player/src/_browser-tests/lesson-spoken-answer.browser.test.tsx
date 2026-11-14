@@ -2,7 +2,7 @@ import { type PlayableSpokenAnswerStep } from "@zoonk/core/lesson-player/playabl
 import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
 import {
   buildAdapters,
   renderLessonPlayer,
@@ -61,6 +61,25 @@ async function sayIt() {
 describe("spoken answers", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  it("keeps focus on the main action while a recording is checked, and on Record if the check fails", async () => {
+    allowMicrophone();
+    const pending = Promise.withResolvers<SpokenAnswerOutcome>();
+    const gradeSpokenAnswer = vi.fn<GradeSpokenAnswer>(() => pending.promise);
+    openSpokenLesson({ gradeSpokenAnswer });
+
+    await page.getByRole("button", { name: "Record" }).click();
+    const stop = page.getByRole("button", { name: /^Stop/u });
+    await expect.element(stop).toBeVisible();
+    (stop.element() as HTMLButtonElement).focus();
+    await userEvent.keyboard("{Enter}");
+    await expect.poll(() => gradeSpokenAnswer.mock.calls.length).toBe(1);
+
+    await expect.element(page.getByRole("button", { name: /^Check/u })).toHaveFocus();
+
+    pending.resolve({ status: "failed" });
+    await expect.element(page.getByRole("button", { name: /^Record/u })).toHaveFocus();
   });
 
   it("never sends a spoken grade when the pending start is refused", async () => {

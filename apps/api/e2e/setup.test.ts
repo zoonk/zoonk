@@ -1,9 +1,8 @@
-import { randomBytes } from "node:crypto";
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
-import { lettersOnly, translatePage } from "@zoonk/e2e/page-translation";
+import { translatePage } from "@zoonk/e2e/page-translation";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
 import { clickWithConnectionDown } from "./helpers/server-actions";
 import { E2E_MAIN_APP_URL } from "./main-app-url";
@@ -40,12 +39,9 @@ test.describe("Profile Setup Flow", () => {
     await disconnectDb();
   });
 
-  test("a new account gives its name; the username starts from the email and is checked as it changes", async ({
-    page,
-  }) => {
+  test("a new account gives its name and gets the username from its email", async ({ page }) => {
     const prefix = `e2esetup${Date.now()}`;
     const email = `${prefix}@zoonk.test`;
-    const chosen = `${prefix}_x`;
     const redirectTo = `${REDIRECT_URL}/`;
 
     await signInToSetup({ email, page, redirectTo });
@@ -62,23 +58,7 @@ test.describe("Profile Setup Flow", () => {
     await expect(page.getByText("We couldn't save your profile. Try again.")).toBeVisible();
     await expect(page).toHaveURL(/\/auth\/en\/setup/u);
 
-    await expect(page.getByText(`Your username: @${prefix}`)).toBeVisible();
-    await page.getByRole("button", { name: "Change username" }).click();
-
-    const username = page.getByRole("textbox", { exact: true, name: "Username" });
-    await expect(username).toHaveValue(prefix);
-
-    await username.fill("admin");
-    await expect(page.getByText("admin is already taken")).toBeVisible();
-    await expect(submit).toBeDisabled();
-
-    await username.fill("ab");
-
-    await expect(submit).toBeDisabled();
-
     await name.fill("Test User");
-    await username.fill(chosen);
-    await expect(page.getByText(`${chosen} is available`)).toBeVisible();
 
     const redirectPromise = page.waitForRequest((req) => {
       const url = req.url();
@@ -95,13 +75,13 @@ test.describe("Profile Setup Flow", () => {
 
     await expect(prisma.user.findUniqueOrThrow({ where: { email } })).resolves.toMatchObject({
       name: "Test User",
-      username: chosen,
+      username: prefix,
     });
 
     await cleanupVerifications(email);
   });
 
-  test("a name typed and sent before the page loaded stays when another learner took the username meanwhile", async ({
+  test("a name typed and sent before the page loaded is saved with a free username when another learner took the email's one meanwhile", async ({
     page,
   }) => {
     const prefix = `e2eearly${Date.now()}`;
@@ -111,20 +91,24 @@ test.describe("Profile Setup Flow", () => {
 
     const loadScripts = await holdScripts(page);
     await page.reload({ waitUntil: "domcontentloaded" });
-    await expect(page.getByText(`Your username: @${prefix}`)).toBeVisible();
 
     await prisma.user.create({
       data: { email: `other-${email}`, emailVerified: true, name: "Other", username: prefix },
     });
 
-    const name = page.getByRole("textbox", { exact: true, name: "Name" });
-    await name.fill("Early Learner");
+    const handoff = page.waitForRequest((req) => {
+      const url = req.url();
+      return url.startsWith(REDIRECT_URL) && new URL(url).searchParams.has("token");
+    });
+
+    await page.getByRole("textbox", { exact: true, name: "Name" }).fill("Early Learner");
     await page.getByRole("button", { name: /^continue$/iu }).click();
     await loadScripts();
+    await handoff;
 
-    await expect(page.getByText(`${prefix} is already taken`)).toBeVisible();
-    await expect(name).toHaveValue("Early Learner");
-    await expect(page.getByRole("textbox", { exact: true, name: "Username" })).toHaveValue(prefix);
+    const saved = await prisma.user.findUniqueOrThrow({ where: { email } });
+    expect(saved.name).toBe("Early Learner");
+    expect(saved.username).toMatch(new RegExp(`^${prefix}_\\d+$`, "u"));
 
     await cleanupVerifications(email);
   });
@@ -187,17 +171,28 @@ test.describe("Profile Setup Flow", () => {
     page,
   }) => {
     const email = `e2etranslated${Date.now()}@zoonk.test`;
-    const username = `translated_${lettersOnly(randomBytes(8))}`;
 
     await signInToSetup({ email, page });
-    const change = page.getByRole("button", { name: "Change username" });
-    await expectHydrated(change);
+    const name = page.getByRole("textbox", { exact: true, name: "Name" });
+    await expectHydrated(name);
     await translatePage(page);
-    await change.click();
 
-    // "Checking..." sits beside a spinner, so React removes its own text node when the check ends.
-    await page.getByRole("textbox", { exact: true, name: "[Username]" }).fill(username);
-    await expect(page.getByText(`[${username} is available]`)).toBeVisible();
+    // The translator splits numbers off, as Chrome's does: "[Use ][150][ characters or fewer.]".
+    const tooLong = "[ characters or fewer.]";
+    await page.getByRole("textbox", { exact: true, name: "[Name]" }).fill("a".repeat(151));
+    await expect(page.getByText(tooLong)).toBeVisible();
+
+    // React removes its own text node, which the translator already swapped for its wrappers.
+    await page.getByRole("textbox", { exact: true, name: "[Name]" }).fill("Translated Learner");
+    await expect(page.getByText(tooLong)).toBeHidden();
+
+    const handoff = page.waitForRequest((req) => {
+      const url = req.url();
+      return url.startsWith(REDIRECT_URL) && new URL(url).searchParams.has("token");
+    });
+
+    await page.getByRole("button", { name: /^\[continue\]/iu }).click();
+    await handoff;
 
     await cleanupVerifications(email);
   });

@@ -16,15 +16,11 @@ export function toLessonLimitParam(limit: LessonLimit): string {
     return SIGN_UP_REQUIRED;
   }
 
-  if (limit.period === "rolling30Days") {
+  if ("availableAt" in limit) {
     return `${FREE_LESSONS_USED_PREFIX}${Date.parse(limit.availableAt) || 0}`;
   }
 
-  if (limit.tier === "free") {
-    return limit.period === "month" ? "free-month" : "free-day";
-  }
-
-  return limit.tier;
+  return limit.tier === "free" ? "free-day" : limit.tier;
 }
 
 const SLOW_DOWN_PATTERN = /^slow-down-(?<seconds>\d+)$/u;
@@ -59,14 +55,11 @@ export function readLessonLimitParam(value: unknown): LessonLimit | null {
   }
 
   switch (value) {
-    case "guest":
-      return { period: "total", status: "limitReached", tier: "guest" };
     case "free-day":
-      return { period: "day", status: "limitReached", tier: "free" };
-    case "free-month":
-      return { period: "month", status: "limitReached", tier: "free" };
+      return { status: "limitReached", tier: "free" };
+    case "guest":
     case "plus":
-      return { period: "day", status: "limitReached", tier: "plus" };
+      return { status: "limitReached", tier: value };
     case SIGN_UP_REQUIRED:
       return { status: "signUpRequired" };
     default:

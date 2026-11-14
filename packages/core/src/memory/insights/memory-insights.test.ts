@@ -7,6 +7,7 @@ import { revalidateTag } from "next/cache";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getGoalsCacheTag, getMemoryCacheTag } from "../../cache/tags";
+import { seenInsightQuote } from "../../plans/_test-utils/seen-quote";
 import { getCurrentMemoryInsight } from "./get-current-memory-insight";
 import { respondToMemoryInsight } from "./respond-to-memory-insight";
 
@@ -63,7 +64,10 @@ describe(getCurrentMemoryInsight, () => {
       status: "ready",
     });
 
-    await respondToMemoryInsight({ input: { status: "dismissed" }, insightId: insight.id });
+    await respondToMemoryInsight({
+      input: { quote: null, status: "dismissed" },
+      insightId: insight.id,
+    });
 
     await expect(getCurrentMemoryInsight({ goalId: goal.id })).resolves.toStrictEqual({
       insight: null,
@@ -136,7 +140,7 @@ describe(respondToMemoryInsight, () => {
     });
 
     const result = await respondToMemoryInsight({
-      input: { status: "accepted" },
+      input: { quote: await seenInsightQuote(insight.id), status: "accepted" },
       insightId: insight.id,
     });
 
@@ -164,11 +168,17 @@ describe(respondToMemoryInsight, () => {
     });
 
     await expect(
-      respondToMemoryInsight({ input: { status: "dismissed" }, insightId: insight.id }),
+      respondToMemoryInsight({
+        input: { quote: null, status: "dismissed" },
+        insightId: insight.id,
+      }),
     ).resolves.toMatchObject({ insight: { status: "dismissed" }, status: "updated" });
 
     await expect(
-      respondToMemoryInsight({ input: { status: "accepted" }, insightId: insight.id }),
+      respondToMemoryInsight({
+        input: { quote: await seenInsightQuote(insight.id), status: "accepted" },
+        insightId: insight.id,
+      }),
     ).resolves.toStrictEqual({ status: "alreadyAnswered" });
 
     const unchanged = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
@@ -184,15 +194,18 @@ describe(respondToMemoryInsight, () => {
     ]);
 
     await expect(
-      respondToMemoryInsight({ input: { status: "accepted" }, insightId: theirs.id }),
+      respondToMemoryInsight({ input: { quote: null, status: "accepted" }, insightId: theirs.id }),
     ).resolves.toStrictEqual({ status: "notFound" });
 
     await expect(
-      respondToMemoryInsight({ input: { status: "accepted" }, insightId: empty.id }),
+      respondToMemoryInsight({ input: { quote: null, status: "accepted" }, insightId: empty.id }),
     ).resolves.toStrictEqual({ status: "notFound" });
 
     await expect(
-      respondToMemoryInsight({ input: { status: "accepted" }, insightId: "not-a-uuid" }),
+      respondToMemoryInsight({
+        input: { quote: null, status: "accepted" },
+        insightId: "not-a-uuid",
+      }),
     ).resolves.toStrictEqual({ status: "notFound" });
   });
 });

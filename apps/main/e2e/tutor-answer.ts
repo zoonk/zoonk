@@ -55,6 +55,7 @@ export function toProposal(change: {
     lessonsSkipped: 0,
     officialDate: null,
     operations,
+    quote: null,
     // A change read from the learner's words is said from what it does, never the model's words.
     reason: null,
     seen: false,

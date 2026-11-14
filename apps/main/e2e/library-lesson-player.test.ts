@@ -25,7 +25,9 @@ async function expectVerdict(page: Page, verdict: string) {
 
 async function answerHook(page: Page) {
   await expect(page.getByText("Just a guess, it doesn't count")).toBeVisible();
-  await page.getByRole("radio", { name: "No" }).click();
+  const no = page.getByRole("radio", { name: "No" });
+  await expectHydrated(no);
+  await no.click();
   await primary(page, /^See the answer/u).click();
   await expectVerdict(page, "Good guess!");
   await primary(page, /^Continue/u).click();

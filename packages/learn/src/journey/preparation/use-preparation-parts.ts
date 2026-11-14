@@ -70,8 +70,20 @@ export function usePreparationParts({
       : [
           {
             key: "mocks" as const,
-            label: mocks.kind === "weeklyChallenges" ? t("Weekly challenges") : t("Mock exams"),
-            value: t("{count, plural, one {# taken} other {# taken}}", { count: mocks.taken }),
+            label: {
+              fullReviews: t("Reviews of every topic"),
+              mockExams: t("Mock exams"),
+              weeklyChallenges: t("Weekly challenges"),
+            }[mocks.kind],
+            value:
+              mocks.kind === "fullReviews"
+                ? t({
+                    description:
+                      'How many reviews of every topic the learner has done, beside the label "Reviews of every topic". The count is of reviews.',
+                    message: "{reviews, plural, one {# done} other {# done}}",
+                    values: { reviews: mocks.taken },
+                  })
+                : t("{count, plural, one {# taken} other {# taken}}", { count: mocks.taken }),
           },
         ]),
   ];

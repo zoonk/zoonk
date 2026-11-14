@@ -7,6 +7,7 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
+  DrawerFooter,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
@@ -200,7 +201,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
         <PlanBases />
       </DrawerContent>
 
-      <div className="flex flex-col gap-2 border-t px-6 pt-4 pb-6">
+      <DrawerFooter>
         <Button
           busy={isPending}
           disabled={sameAreas(chosen, current) || unchanged !== null}
@@ -212,7 +213,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
         >
           {chosen.length === 0 && current.length > 0 ? t("Remove focus") : t("Save")}
         </Button>
-      </div>
+      </DrawerFooter>
     </>
   );
 }

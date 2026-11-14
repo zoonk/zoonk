@@ -87,10 +87,16 @@ function useInsightAnswer(insight: MemoryInsightView) {
   const [state, setState] = useState<InsightState>(null);
   const [isPending, startTransition] = useTransition();
 
+  const shown = state !== null && "repriced" in state ? state.repriced : insight;
+
   const answer = (status: InsightAnswer) => {
     startTransition(async () => {
       const { data: saved } = await safeAsync(() =>
-        actions.answerInsight({ insightId: insight.id, status }),
+        actions.answerInsight({
+          insightId: shown.id,
+          quote: shown.planChange?.quote ?? null,
+          status,
+        }),
       );
 
       if (!saved) {
