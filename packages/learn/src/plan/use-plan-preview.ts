@@ -3,7 +3,7 @@
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { settleWithin } from "@zoonk/utils/timeout";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePlanScreen } from "./plan-context";
 import { type PlanPreviewState, isSamePreviewPlan, resolvePlanPreview } from "./plan-preview-state";
 import { createPreviewRequests } from "./preview-requests";
@@ -26,11 +26,19 @@ export function usePreviewBase(): object {
   return changed ? plan : base;
 }
 
-/** `requestPreview` resolves to `null` once the request is cancelled or replaced. */
+/**
+ * `requestPreview` resolves to `null` once the request is cancelled or replaced, or its screen goes
+ * away.
+ */
 export function usePlanPreview() {
   const { actions, plan } = usePlanScreen();
   const [preview, setPreview] = useState<PlanPreviewState>({ status: "idle" });
   const requests = useRef(createPreviewRequests());
+
+  useEffect(() => {
+    const current = requests.current;
+    return () => current.cancel();
+  }, []);
 
   if (preview.status !== "idle" && !isSamePreviewPlan({ current: plan, previous: preview.plan })) {
     setPreview({ status: "idle" });

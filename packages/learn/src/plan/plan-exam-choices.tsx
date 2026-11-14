@@ -3,6 +3,7 @@
 import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
+import { useStillMounted } from "@zoonk/ui/hooks/still-here";
 import { safeAsync } from "@zoonk/utils/error";
 import { SignpostIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -37,6 +38,7 @@ function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => vo
   const editor = useReportEditorChange();
   const [isPending, startTransition] = useTransition();
   const saveFailed = useChangeSaveFailed();
+  const isMounted = useStillMounted();
 
   const choose = (input: { group: string; subjects: string[] }, answer?: () => void) => {
     keepFocus();
@@ -50,11 +52,16 @@ function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => vo
           saveFailed();
         }
 
-        answer?.();
-
         if (outcome?.change) {
           editor.report(outcome.change);
-          onChange?.(outcome.change);
+        }
+
+        if (isMounted()) {
+          answer?.();
+
+          if (outcome?.change) {
+            onChange?.(outcome.change);
+          }
         }
       });
     });

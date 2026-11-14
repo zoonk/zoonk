@@ -3,6 +3,7 @@
 import { Link, useRouter } from "@/i18n/navigation";
 import { getLessonWritingHref } from "@/lib/lessons/lesson-writing-href";
 import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
+import { useStillOnPage } from "@zoonk/ui/hooks/still-here";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useLinkStatus } from "next/link";
 import { type ComponentProps, useEffect, useRef, useState, useTransition } from "react";
@@ -43,21 +44,18 @@ export function LearningLink({
 }: ComponentProps<typeof Link> & { lessonWritten?: boolean }) {
   const router = useRouter();
   const opening = useRef(false);
-  const mounted = useRef(true);
+  const stillOnPage = useStillOnPage();
   const [requesting, setRequesting] = useState(false);
   const [navigating, startTransition] = useTransition();
   const pending = requesting || navigating;
 
   async function openLesson(lessonId: string) {
-    const openedFrom = globalThis.location.pathname + globalThis.location.search;
+    const isStillHere = stillOnPage();
 
     try {
       const answer = await askToWriteLesson(lessonId);
 
-      if (
-        mounted.current &&
-        openedFrom === globalThis.location.pathname + globalThis.location.search
-      ) {
+      if (isStillHere()) {
         startTransition(() => router.push(getLessonWritingHref({ answer, lessonId })));
       }
     } finally {
@@ -65,14 +63,6 @@ export function LearningLink({
       setRequesting(false);
     }
   }
-
-  useEffect(() => {
-    mounted.current = true;
-
-    return () => {
-      mounted.current = false;
-    };
-  }, []);
 
   return (
     <Link

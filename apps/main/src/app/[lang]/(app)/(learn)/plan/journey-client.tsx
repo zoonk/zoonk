@@ -33,6 +33,7 @@ import {
 import { JourneyBuilding, JourneySetup } from "@zoonk/learn/journey/planless";
 import { usePoll } from "@zoonk/learn/poll";
 import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
+import { useStillOnPage } from "@zoonk/ui/hooks/still-here";
 import { getCertificatePath } from "@zoonk/utils/certificate-links";
 import { useState, useSyncExternalStore } from "react";
 
@@ -46,14 +47,18 @@ function useGoalStatus({
   status: GoalStatusControl["status"];
 }): GoalStatusControl {
   const router = useRouter();
+  const stillOnPage = useStillOnPage();
 
   return {
     onRename: (displayName) => renameGoalAction(goalId, displayName),
     onSetStatus: async (next) => {
+      const isStillHere = stillOnPage();
       const outcome = await setGoalStatusAction(goalId, next);
 
       if (outcome === "saved" && next === "archived") {
-        router.push("/today");
+        if (isStillHere()) {
+          router.push("/today");
+        }
       } else if (outcome === "saved") {
         router.refresh();
       }

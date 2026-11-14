@@ -10,6 +10,7 @@ import {
   type MockChooserStatus,
   getMockOptionKey,
 } from "@zoonk/learn/mock/chooser";
+import { useStillMounted } from "@zoonk/ui/hooks/still-here";
 import { safeAsync } from "@zoonk/utils/error";
 import { useState, useTransition } from "react";
 import { type MockStartOutcome, startAnytimeMockAction } from "./mock-start-actions";
@@ -30,9 +31,11 @@ function wait(ms: number): Promise<void> {
 
 async function requestMockWriting({
   goalId,
+  isWanted,
   option,
 }: {
   goalId: string;
+  isWanted: () => boolean;
   option: MockOptionView;
 }): Promise<QuestionWriting> {
   const path: `/${string}` = `/goals/${encodeURIComponent(goalId)}/mocks/generations`;
@@ -49,7 +52,7 @@ async function requestMockWriting({
     }
 
     await wait(PREPARING_RETRY_MS);
-    return ask(tries - 1);
+    return isWanted() ? ask(tries - 1) : writing;
   };
 
   return ask(PREPARING_TRIES);
@@ -106,6 +109,7 @@ export function MockChooserClient({
   view: MockOptionsView;
 }) {
   const router = useRouter();
+  const isMounted = useStillMounted();
   const [busy, startTransition] = useTransition();
   const [status, setStatus] = useState<MockChooserStatus>({ kind: "choosing" });
   const [writing, setWriting] = useState<Writing | null>(null);
@@ -127,6 +131,10 @@ export function MockChooserClient({
   };
 
   const open = ({ option, outcome }: { option: MockOptionView; outcome: MockStartOutcome }) => {
+    if (!isMounted()) {
+      return;
+    }
+
     if ("id" in outcome) {
       router.push(`/mock/${outcome.id}`);
       return;
@@ -141,7 +149,11 @@ export function MockChooserClient({
     open({ option, outcome: await startMock({ afterWriting: true, option }) });
 
   const write = async (option: MockOptionView) => {
-    const result = await requestMockWriting({ goalId, option });
+    const result = await requestMockWriting({ goalId, isWanted: isMounted, option });
+
+    if (!isMounted()) {
+      return;
+    }
 
     if (result.status === "writing") {
       setWriting({ generationId: result.generationId, option });
@@ -199,7 +211,12 @@ export function MockChooserClient({
       generationId={writing.generationId}
       onReady={() => startTransition(() => startAfterWriting(writing.option))}
       restart={async () => {
-        const again = await requestMockWriting({ goalId, option: writing.option });
+        const again = await requestMockWriting({
+          goalId,
+          isWanted: isMounted,
+          option: writing.option,
+        });
+
         return again.status === "writing" ? again.generationId : null;
       }}
       screen={screen}

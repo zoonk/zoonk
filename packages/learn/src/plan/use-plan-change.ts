@@ -1,6 +1,7 @@
 "use client";
 
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
+import { useStillMounted } from "@zoonk/ui/hooks/still-here";
 import { safeAsync } from "@zoonk/utils/error";
 import { useTransition } from "react";
 import { useChangeSaveFailed } from "../_components/save-error";
@@ -14,10 +15,12 @@ export function usePlanChange() {
   const editor = useReportEditorChange();
   const [isPending, startTransition] = useTransition();
   const saveFailed = useChangeSaveFailed();
+  const isMounted = useStillMounted();
 
   /**
    * `answer` runs in the change's transition, so what it shows arrives with the re-planned page,
-   * never over the old plan.
+   * never over the old plan, and only while the screen that asked is still there: a sheet the
+   * learner closed doesn't close the one they opened since.
    */
   const change = (
     operations: LearnerPlanOperation[],
@@ -35,7 +38,9 @@ export function usePlanChange() {
           saveFailed();
         }
 
-        answer?.(outcome ?? null);
+        if (isMounted()) {
+          answer?.(outcome ?? null);
+        }
 
         if (outcome?.status === "applied" && outcome.change) {
           editor.report(outcome.change);
