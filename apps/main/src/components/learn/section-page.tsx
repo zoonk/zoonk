@@ -1,3 +1,4 @@
+import { AppEntryName } from "@zoonk/learn/bar";
 import {
   PAGE_COLUMN_CLASS,
   PageHeader,
@@ -61,6 +62,7 @@ export function SectionPageHeader({
   return (
     <PageHeader className="md:contents">
       <PageHeaderContent className="md:contents">
+        <AppEntryName name={title} />
         <PageTitle className="md:sr-only">{title}</PageTitle>
         {description && <PageSubtitle className="md:hidden">{description}</PageSubtitle>}
       </PageHeaderContent>

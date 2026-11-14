@@ -61,6 +61,12 @@ function useNameAppEntry(name?: string) {
   }, [name]);
 }
 
+/** For a page whose bar doesn't know its name, such as a section's page under the section's bar. */
+export function AppEntryName({ name }: { name: string }) {
+  useNameAppEntry(name);
+  return null;
+}
+
 /** A tab's name when `href` is the tab's page. */
 function useTabName(href: string): string | undefined {
   const t = useExtracted();
@@ -104,7 +110,8 @@ function LearnBackLink({
   const ref = useEscapeClick<HTMLAnchorElement>();
   const appName = useAppBackName();
   const tabName = useTabName(href);
-  const name = (toApp && appName) || label || tabName || t("Back");
+  const ownName = label || tabName || t("Back");
+  const name = toApp && appName !== null ? appName || t("Back") : ownName;
 
   const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     const isPlainClick =
