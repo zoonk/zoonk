@@ -34,3 +34,35 @@ export function toOpeningDay({
 
   return daysAway === 1 ? "tomorrow" : day.toISOString().slice(0, "YYYY-MM-DD".length);
 }
+
+function nextLocalMidnight(now: number): number {
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+  return midnight.getTime();
+}
+
+/**
+ * Calls `notify` whenever the day's name can change: at each local midnight before the instant
+ * ("tomorrow" becomes "today") and when it passes. One timer, set again after each wake.
+ */
+export function watchOpeningClock(availableAt: string | null, notify: () => void): () => void {
+  const opens = availableAt ? Date.parse(availableAt) : Number.NaN;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  const wait = () => {
+    const now = Date.now();
+
+    if (opens > now) {
+      timer = setTimeout(
+        () => {
+          notify();
+          wait();
+        },
+        Math.min(opens, nextLocalMidnight(now)) - now,
+      );
+    }
+  };
+
+  wait();
+  return () => clearTimeout(timer);
+}

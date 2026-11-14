@@ -3406,19 +3406,16 @@ msgid "From now on, review and mock exams."
 msgstr "Daqui em diante, revisão e simulados."
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "VYBPRQ"
 msgid "The final stretch"
 msgstr "A reta final"
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "Qr0X96"
 msgid "{exam} is tomorrow"
 msgstr "{exam} é amanhã"
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "7OX7b1"
 msgid "{exam} is today"
 msgstr "{exam} é hoje"
@@ -3430,20 +3427,9 @@ msgstr "Adicione seu resultado oficial quando sair."
 
 #: src/exam/exam-moment-card.tsx
 #: src/exam/exam-result-section.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "yMXlRJ"
 msgid "How did it go?"
 msgstr "Como foi?"
-
-#: src/exam/exam-moment-card.tsx
-msgctxt "GDT0eI"
-msgid "Add your result"
-msgstr "Adicionar resultado"
-
-#: src/exam/exam-moment-card.tsx
-msgctxt "0LZY2s"
-msgid "See your exam"
-msgstr "Ver sua prova"
 
 #: src/exam/exam-next-mock.tsx
 #: src/plan-diff/use-change-rows.ts
@@ -13255,6 +13241,16 @@ msgstr "Adicionar para hoje"
 msgctxt "SVKPfj"
 msgid "Exam choice"
 msgstr "Escolha da prova"
+
+#: src/today/today-exam-moment.tsx
+msgctxt "GDT0eI"
+msgid "Add your result"
+msgstr "Adicionar resultado"
+
+#: src/today/today-exam-moment.tsx
+msgctxt "0LZY2s"
+msgid "See your exam"
+msgstr "Ver sua prova"
 
 #: src/today/today-exam-moment.tsx
 msgctxt "9HjIgh"

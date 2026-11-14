@@ -199,8 +199,7 @@ function CommandGroup({ className, ...props }: AutocompleteGroupProps) {
   );
 }
 
-const COMMAND_GROUP_LABEL_CLASS =
-  "text-faint pt-3.5 pb-1.5 text-2xs font-medium tracking-[0.04em] uppercase sm:px-2.5 sm:pt-2 sm:pb-1 sm:tracking-normal sm:normal-case";
+const COMMAND_GROUP_LABEL_CLASS = "text-label pt-3.5 pb-1.5 sm:px-2.5 sm:pt-2 sm:pb-1";
 
 function CommandGroupLabel({ className, ...props }: AutocompleteGroupLabelProps) {
   return (
@@ -220,7 +219,7 @@ function CommandItem({ className, ...props }: AutocompleteItemProps) {
   return (
     <Autocomplete.Item
       className={cn(
-        "group/command-item border-border relative flex min-h-11 w-full max-w-full min-w-0 cursor-default items-center gap-3 overflow-hidden border-t py-2 text-sm outline-hidden select-none sm:rounded-lg sm:border-t-0 sm:px-2.5",
+        "group/command-item relative flex min-h-11 w-full max-w-full min-w-0 cursor-default items-center gap-3 overflow-hidden py-2 text-sm outline-hidden select-none sm:rounded-lg sm:px-2.5",
         "sm:data-highlighted:bg-muted data-highlighted:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
         "pointer-fine:data-highlighted:after:ring-input pointer-fine:data-highlighted:after:text-muted-foreground pointer-fine:data-highlighted:after:text-2xs max-sm:after:hidden pointer-fine:data-highlighted:after:ml-auto pointer-fine:data-highlighted:after:rounded-sm pointer-fine:data-highlighted:after:px-1 pointer-fine:data-highlighted:after:font-mono pointer-fine:data-highlighted:after:ring-1 pointer-fine:data-highlighted:after:content-['⏎']",
         "[&>svg]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",

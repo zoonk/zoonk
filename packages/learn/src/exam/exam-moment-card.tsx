@@ -1,12 +1,9 @@
 "use client";
 
 import { type ExamMomentView } from "@zoonk/core/exams/view/contract";
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { CalendarHeartIcon, FlagIcon, MessageCircleQuestionIcon, MoonIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PAGE_SECTION_TITLE_CLASS } from "../_components/page";
-import { LearnLink } from "../learn-link";
 import { ExamChecklist } from "./exam-checklist";
 import { useExamDayText } from "./exam-labels";
 
@@ -23,7 +20,7 @@ type Moment = Pick<
   | "tools"
 >;
 
-const ICONS = {
+export const EXAM_MOMENT_ICONS = {
   afterExam: MessageCircleQuestionIcon,
   dayBefore: MoonIcon,
   examDay: CalendarHeartIcon,
@@ -45,7 +42,7 @@ function useWorkLine(moment: Moment): string {
 
 type MomentCopy = { body: string; lead: string | null; title: string };
 
-function useMomentCopy(moment: Moment): MomentCopy | null {
+export function useExamMomentCopy(moment: Moment): MomentCopy | null {
   const t = useExtracted();
   const work = useWorkLine(moment);
   const lead = moment.prepared ? t("You've prepared for this.") : null;
@@ -74,17 +71,31 @@ function useMomentCopy(moment: Moment): MomentCopy | null {
   }
 }
 
-export function ExamMomentCard({ href, moment }: { href: string | null; moment: Moment }) {
-  const t = useExtracted();
+export function ExamMomentDay({ moment }: { moment: Moment }) {
   const dayText = useExamDayText();
-  const copy = useMomentCopy(moment);
+  const day = moment.stage === "afterExam" ? null : moment.day;
+
+  return day && <p className="text-compact font-mono font-medium tabular-nums">{dayText(day)}</p>;
+}
+
+/** What the learner has done, for the paragraph under the moment's title. */
+export function ExamMomentBody({ copy }: { copy: MomentCopy }) {
+  return (
+    <>
+      {copy.lead && <span className="text-foreground">{copy.lead} </span>}
+      {copy.body}
+    </>
+  );
+}
+
+export function ExamMomentCard({ moment }: { moment: Moment }) {
+  const copy = useExamMomentCopy(moment);
 
   if (!copy) {
     return null;
   }
 
-  const Icon = ICONS[moment.stage];
-  const showDay = moment.day && moment.stage !== "afterExam";
+  const Icon = EXAM_MOMENT_ICONS[moment.stage];
 
   return (
     <section aria-label={copy.title} className="flex flex-col gap-6" data-slot="exam-moment">
@@ -94,26 +105,14 @@ export function ExamMomentCard({ href, moment }: { href: string | null; moment: 
         </span>
         <div className="flex min-w-0 flex-col gap-1">
           <h2 className={PAGE_SECTION_TITLE_CLASS}>{copy.title}</h2>
-          {showDay && moment.day && (
-            <p className="text-compact font-mono font-medium tabular-nums">{dayText(moment.day)}</p>
-          )}
+          <ExamMomentDay moment={moment} />
           <p className="text-muted-foreground text-compact leading-snug">
-            {copy.lead && <span className="text-foreground">{copy.lead} </span>}
-            {copy.body}
+            <ExamMomentBody copy={copy} />
           </p>
         </div>
       </div>
 
       <ExamChecklist items={moment.checklist} tools={moment.tools} />
-
-      {href && (
-        <LearnLink
-          className={cn(buttonVariants({ size: "sm", variant: "outline" }), "self-start")}
-          href={href}
-        >
-          {moment.stage === "afterExam" ? t("Add your result") : t("See your exam")}
-        </LearnLink>
-      )}
     </section>
   );
 }
