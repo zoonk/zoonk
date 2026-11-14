@@ -353,7 +353,7 @@ actor PlanAPIStub: PlanAPIClient {
     throw APIError.notFound
   }
   func createOutline(token: String, goalId: String, skillId: String) async throws -> OutlineRequest
-  { .limit }
+  { .unavailable }
 }
 
 extension AppliedPlanChange {

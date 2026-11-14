@@ -30675,6 +30675,65 @@
         }
       }
     },
+    "This topic has no more lessons to get ready." : {
+      "comment" : "A far topic the plan has nothing left to write for",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu diesem Thema gibt es keine weiteren Lektionen, die wir vorbereiten können."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este tema no tiene más lecciones por preparar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il n’y a plus de leçons à préparer pour ce sujet."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non ci sono altre lezioni da preparare per questo argomento."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このトピックには、準備できるレッスンがもうありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 주제에는 더 이상 준비할 레슨이 없어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W tym temacie nie ma już lekcji do przygotowania."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não há mais aulas para preparar neste tópico."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu konuda hazırlanacak başka ders yok."
+          }
+        }
+      }
+    },
     "This unit isn't in your plan" : {
       "comment" : "Shown for a unit that isn't in the learner's plan",
       "localizations" : {
@@ -38638,65 +38697,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planın, ara verdiğin günler için planlanan derslerden başlayarak bugünden itibaren devam eder."
-          }
-        }
-      }
-    },
-    "Your plan prepared all it can for now." : {
-      "comment" : "Says the learner's plan reached its outlines",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Plan hat vorerst alles vorbereitet, was möglich ist."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu plan ya tiene todo lo que podemos preparar por ahora."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton plan a préparé tout ce qu’il pouvait pour le moment."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per ora abbiamo preparato tutto il possibile per il tuo piano."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習計画で今用意できる内容は、すべてそろいました。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지금 준비할 수 있는 학습 내용은 모두 준비했어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój plan zawiera już wszystko, co na razie możemy przygotować."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu plano preparou tudo o que podia por enquanto."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planında şimdilik hazırlanabilecek her şey hazır."
           }
         }
       }
