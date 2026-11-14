@@ -35,7 +35,7 @@ struct MemoryInsightCard: View {
           if let change = insight.planChange, change.status == .proposed {
             PlanEffectDiff(
               effect: try? StudyJSON.recode(change.effect, as: PlanEffect.self),
-              today: PlanDate.isoDate(.now), repriced: repriced != nil)
+              today: PlanDate.today(), repriced: repriced != nil)
           }
 
           actions

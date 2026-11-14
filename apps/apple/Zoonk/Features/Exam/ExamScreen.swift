@@ -199,7 +199,7 @@ private struct ExamHero: View {
     if let noticeDay = exam.noticeDay, studyDate(noticeDay.date) != nil {
       Section {
         VStack(alignment: .leading, spacing: 8) {
-          let day = PlanDate.longDay(noticeDay.date, today: isoDay(.now))
+          let day = PlanDate.longDay(noticeDay.date, today: PlanDate.today())
           if noticeDay.estimated {
             Text("The exam's likely date is now \(day).", tableName: "Exam")
           } else if exam.examDocument == .notice {
@@ -233,12 +233,12 @@ private struct ExamHero: View {
 
   @ViewBuilder
   private var noSittingSection: some View {
-    if exam.noticeDay == nil, let noSitting = exam.noSitting, let month = studyDate(noSitting.month)
-    {
+    if exam.noticeDay == nil, let noSitting = exam.noSitting {
+      let month = PlanDate.monthText(noSitting.month, today: PlanDate.today(), wide: true)
       Section {
         VStack(alignment: .leading, spacing: 4) {
           Text(
-            "No exam date in \(month.formatted(.studyDay.month(.wide)))", tableName: "Exam",
+            "No exam date in \(month)", tableName: "Exam",
             comment:
               "An exam with no sitting in the learner's month; the argument is a month like 'May'"
           )
@@ -302,7 +302,7 @@ private struct ExamHero: View {
 
     let times = Set(exam.days.map(\.startTime))
     let shared = times.count == 1 ? exam.days.first?.startTime : nil
-    let today = isoDay(.now)
+    let today = PlanDate.today()
     let days = dates.map { day, _ in
       let text = PlanDate.text(day.date, today: today, weekday: dates.count == 1)
       let time = shared == nil ? day.startTime.flatMap(examTimeOfDay) : nil
@@ -599,7 +599,7 @@ private struct ExamMocksSection: View {
               StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
             } trailing: {
               if let date = next.date {
-                Text(PlanDate.text(date, today: isoDay(.now), weekday: true))
+                Text(PlanDate.text(date, today: PlanDate.today(), weekday: true))
               }
             }
             .disclosureChevron()
@@ -815,7 +815,7 @@ private struct ExamFormatSection: View {
       }
 
       if let date = day.date {
-        Text(PlanDate.text(date, today: isoDay(.now), weekday: true))
+        Text(PlanDate.text(date, today: PlanDate.today(), weekday: true))
       } else {
         Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
       }

@@ -255,15 +255,7 @@ private struct WeeklySummary: View {
   }
 
   private var weekRange: String {
-    let range = [recap.weekStart, recap.weekEnd].compactMap(studyDate)
-    let style = Date.IntervalFormatStyle(timeZone: .gmt).month(.abbreviated).day()
-    let thisYear = PlanDate.today().prefix(4)
-    let text =
-      range.count == 2
-      ? (range[0]..<range[1]).formatted(
-        recap.weekStart.hasPrefix(thisYear) && recap.weekEnd.hasPrefix(thisYear)
-          ? style : style.year())
-      : recap.weekStart
+    let text = PlanDate.range(from: recap.weekStart, to: recap.weekEnd, today: PlanDate.today())
 
     return String(
       localized: "Weekly summary\u{00A0}· \(text)", table: "Session", comment: "The recap's week")

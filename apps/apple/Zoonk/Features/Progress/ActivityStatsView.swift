@@ -53,7 +53,7 @@ struct ActivityCalendar: View {
 
   var body: some View {
     let maximum = days.map(\.activitiesCompleted).max() ?? 0
-    let formatDay = calendarDayFormatter(newest: days.last?.date)
+    let today = PlanDate.today()
     let studied = days.count(where: { $0.activitiesCompleted > 0 })
 
     StatsCalendar(
@@ -82,7 +82,8 @@ struct ActivityCalendar: View {
           date: day.date,
           step: CalendarSteps.activity(day.activitiesCompleted, maximum: maximum),
           detail: ChartPointDetail(
-            label: formatDay(day.date), value: activityCount(day.activitiesCompleted)),
+            label: PlanDate.text(day.date.id, today: today),
+            value: activityCount(day.activitiesCompleted)),
           value: Double(day.activitiesCompleted))
       },
       chartTitle: String(
