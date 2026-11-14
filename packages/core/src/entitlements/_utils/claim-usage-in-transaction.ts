@@ -106,7 +106,6 @@ export async function claimUsageInTransaction({
         kind,
         now,
         preparing,
-        seconds,
         tier: viewer.tier,
       });
 

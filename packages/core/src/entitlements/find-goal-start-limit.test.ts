@@ -65,7 +65,7 @@ describe(findGoalStartLimit, () => {
     ]);
 
     await expect(findGoalStartLimit()).resolves.toStrictEqual({
-      availableAt: new Date(createdAt.getTime() + 30 * 86_400_000),
+      availableAt: null,
       limit: 10,
       period: "rolling30Days",
       resource: "goal",

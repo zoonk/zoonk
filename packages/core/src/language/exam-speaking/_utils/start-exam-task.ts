@@ -89,7 +89,7 @@ export async function startExamTask({
     return { status: "callsPaused" };
   }
 
-  const usedUp = await findCallStartLimit(taskFormat.minutes.max * 60);
+  const usedUp = await findCallStartLimit();
 
   if (usedUp) {
     return { limit: usedUp, status: "limitReached" };

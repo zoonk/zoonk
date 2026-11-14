@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  USAGE_WINDOW_MS,
   getDailySpendBudgetMicros,
   getEstimatedCostMicros,
   getLiveCallCostMicros,
@@ -11,6 +12,8 @@ import { type UsageCounts } from "./usage-counts";
 const NOW = new Date("2026-09-15T12:00:00Z");
 
 function counts(overrides: Partial<UsageCounts>): UsageCounts {
+  const seconds = overrides.secondsLast30Days ?? 0;
+
   return {
     activeGoals: 0,
     callSpend: [],
@@ -18,7 +21,7 @@ function counts(overrides: Partial<UsageCounts>): UsageCounts {
     generatedTotal: 0,
     lastUsedAt: null,
     lessonStarts: { count: 0, latest: [], latestPrepared: [], prepared: 0 },
-    rollingClaims: [],
+    rollingClaims: seconds > 0 ? [{ amount: seconds, at: NOW }] : [],
     secondsLast30Days: 0,
     secondsToday: 0,
     spentTodayMicros: 0,
@@ -200,7 +203,7 @@ describe("the plan's call time", () => {
       { status: "allowed" },
       {
         limit: {
-          availableAt: null,
+          availableAt: new Date(NOW.getTime() + USAGE_WINDOW_MS),
           limit: 300,
           period: "rolling30Days",
           resource: "callSeconds",
@@ -211,7 +214,7 @@ describe("the plan's call time", () => {
       { status: "allowed" },
       {
         limit: {
-          availableAt: null,
+          availableAt: new Date(NOW.getTime() + USAGE_WINDOW_MS),
           limit: 5220,
           period: "rolling30Days",
           resource: "callSeconds",
@@ -253,7 +256,7 @@ describe("the plan's call time", () => {
     ).toStrictEqual([
       {
         limit: {
-          availableAt: null,
+          availableAt: new Date(NOW.getTime() + USAGE_WINDOW_MS),
           limit: 300,
           period: "rolling30Days",
           resource: "callSeconds",
@@ -263,7 +266,7 @@ describe("the plan's call time", () => {
       },
       {
         limit: {
-          availableAt: null,
+          availableAt: new Date(NOW.getTime() + USAGE_WINDOW_MS),
           limit: 300,
           period: "rolling30Days",
           resource: "callSeconds",

@@ -16,7 +16,6 @@ type UsageClaim = {
   costMicros: number;
   counts: UsageCounts;
   generated: boolean;
-  seconds?: number;
   preparing?: boolean;
   kind: UsageKind;
   now: Date;
@@ -101,7 +100,6 @@ function findCallTimeLimit({
   counts,
   kind,
   tier,
-  seconds,
   costMicros,
   now,
 }: UsageClaim): AllowanceLimit | null {
@@ -118,7 +116,7 @@ function findCallTimeLimit({
 
   return {
     ...(left.period === "rolling30Days" && {
-      availableAt: getUsageAvailableAt({ costMicros, counts, kind, now, seconds, tier }),
+      availableAt: getUsageAvailableAt({ costMicros, counts, kind, now, tier }),
     }),
     limit: left.limit,
     period: left.period,
