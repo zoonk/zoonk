@@ -265,7 +265,7 @@ class MistakePracticeScreenshots {
 
     private fun finish() {
         check()
-        rule.onNodeWithContentDescription("End practice. What you answered counts.").performClick()
+        rule.onNodeWithContentDescription("Leave. What you answered counts.").performClick()
     }
 
     @Test

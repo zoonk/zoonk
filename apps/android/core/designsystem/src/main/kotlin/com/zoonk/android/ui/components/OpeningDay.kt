@@ -43,10 +43,26 @@ fun openingDay(
     }
 }
 
+/** When the open gate reads its day again (main's `watchOpeningClock`): the next local midnight, where "tomorrow" becomes "today", or [at], whichever comes first. */
+fun nextLook(
+    at: Instant,
+    now: Instant,
+    zone: ZoneId = ZoneId.systemDefault(),
+): Instant =
+    minOf(
+        at,
+        now
+            .atZone(zone)
+            .toLocalDate()
+            .plusDays(1)
+            .atStartOfDay(zone)
+            .toInstant(),
+    )
+
 /**
  * Main's `useOpeningDay`: the day follows the clock while the screen is open, so a passed instant stops
- * being promised. It looks again at the instant and whenever the app comes back to the front (a phone
- * that slept).
+ * being promised. It looks again at each local midnight and the instant, and whenever the app comes back
+ * to the front (a phone that slept).
  */
 @Composable
 fun rememberOpeningDay(at: Instant?): OpeningDay? {
@@ -54,7 +70,8 @@ fun rememberOpeningDay(at: Instant?): OpeningDay? {
     LifecycleEventEffect(Lifecycle.Event.ON_START) { looks++ }
     LaunchedEffect(at) {
         while (at != null && at.isAfter(Instant.now())) {
-            delay(Duration.between(Instant.now(), at).toMillis().coerceAtLeast(1))
+            val now = Instant.now()
+            delay(Duration.between(now, nextLook(at, now)).toMillis().coerceAtLeast(1))
             looks++
         }
     }

@@ -25,7 +25,6 @@ import com.zoonk.android.feature.plan.PlanEffectDiff
 import com.zoonk.android.feature.plan.PlanOp
 import com.zoonk.android.feature.plan.op
 import com.zoonk.android.feature.plan.planChangeAppliedLine
-import com.zoonk.android.feature.plan.planChangeFootnote
 import com.zoonk.android.feature.plan.planChangeKeepOfficialDateLabel
 import com.zoonk.android.feature.plan.planChangeOfficialDateLine
 import com.zoonk.android.feature.plan.planChangeSentence
@@ -70,9 +69,6 @@ internal fun TutorPlanChange(
 
             if (proposed) {
                 PlanEffectDiff(change.effect)
-                planChangeFootnote(change)?.let {
-                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-                }
             }
             planChangeOfficialDateLine(
                 change,

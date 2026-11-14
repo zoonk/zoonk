@@ -94,7 +94,7 @@ function usePlacementCopy(): KindCopy<"placement"> {
   const goal = useGoalPhaseCopy();
 
   return {
-    name: t("Getting your questions ready"),
+    name: t("Getting your test ready"),
     phases: {
       ...goal,
       questions: {

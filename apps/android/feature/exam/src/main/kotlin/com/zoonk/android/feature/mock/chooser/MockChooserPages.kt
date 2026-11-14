@@ -39,11 +39,9 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -52,29 +50,30 @@ import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.mock.MockSummaryRow
-import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.feature.subscription.GateWords
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
+import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.DetailPage
-import com.zoonk.android.ui.scaffold.mainActionWidth
 import com.zoonk.android.ui.scaffold.pagePadding
-import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.AnytimeMock
 import com.zoonk.api.models.MockOption
@@ -91,43 +90,58 @@ internal fun PracticeChooser(
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
     val busy by viewModel.busy.collectAsStateWithLifecycle()
-    var picked by rememberSaveable { mutableStateOf(view.options.firstOrNull()?.key) }
+    // Nothing is picked as the page opens, so a first tap on Start can't begin an hours-long exam.
+    var picked by rememberSaveable { mutableStateOf<String?>(null) }
     val option = view.options.firstOrNull { it.key == picked }
     val severalDays = view.options.count { it.kind == MockOption.Kind.FULL } > 1
     val open = view.access == MockOptions.Access.OPEN
-    val shown = status.takeUnless { it is ChooserStatus.Short && it.key != picked } ?: ChooserStatus.Choosing
+    val short = status as? ChooserStatus.Short
+    val shown = status.takeUnless { it is ChooserStatus.Short } ?: ChooserStatus.Choosing
     val examChoices = practiceChoices(view.options.filter { it.kind != MockOption.Kind.AREA }, severalDays)
     val subjectChoices = practiceChoices(view.options.filter { it.kind == MockOption.Kind.AREA }, severalDays)
-    val notes: @Composable () -> Unit = {
-        option?.let { MockNotes(view.examDocument, view.sizeSource, it.questions, it.minutes, it.leftOut) }
-    }
 
+    // A free learner meets the subscription when they press Start: the bar's button becomes Subscribe.
+    var gated by rememberSaveable { mutableStateOf(false) }
     val start = {
         option?.let {
             onStart()
-            viewModel.start(it.shape, it.key)
+            if (open) viewModel.start(it.shape, it.key) else gated = true
         }
     }
     val action: @Composable (Modifier) -> Unit = { modifier ->
-        if (open) {
+        if (gated) {
+            Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = modifier.focus(replacementFocus)) {
+                Text(stringResource(R.string.subscription_subscribe))
+            }
+        } else {
             Button(
                 busy = busy,
                 onClick = { start() },
                 modifier = modifier.focus(replacementFocus),
                 enabled = option != null,
-            ) {
-                Text(if (shown is ChooserStatus.Short) startWith(shown.outcome) else stringResource(R.string.mock_chooser_start))
-            }
-        } else {
-            SeePlusButton(navigator, modifier.focus(replacementFocus))
+            ) { Text(stringResource(R.string.mock_chooser_start)) }
         }
     }
 
     ChooserPage(
         listState = listState,
-        onEnter = { if (open) start() else navigator.open(AppRoute.Subscription) },
-        bar = { StartBar(shown, navigator, action) },
+        onEnter = { start() },
+        note =
+            when {
+                gated -> ({ MockGate() })
+                shown is ChooserStatus.Refused -> ({ Refusal(shown, navigator) })
+                shown is ChooserStatus.Failed -> ({ StartFailed(shown) })
+                else -> null
+            },
+        bar = { action(Modifier.fillMaxWidth()) },
         aside = {
+            // What a pick shows comes last, so picking moves nothing above it.
+            view.lastMock?.let { last ->
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    SectionHeader(stringResource(R.string.mock_chooser_last_mock))
+                    MockSummaryRow(last, onOpen = last.blockId?.let { { navigator.open(AppRoute.Mock(it.toString())) } }, stacked = true)
+                }
+            }
             option?.let {
                 PickedMock(
                     title = mockOptionName(it, severalDays),
@@ -137,44 +151,62 @@ internal fun PracticeChooser(
                     written = it.written,
                 )
             }
-            notes()
-            view.lastMock?.let { last ->
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    SectionHeader(stringResource(R.string.mock_chooser_last_mock))
-                    MockSummaryRow(last, onOpen = last.blockId?.let { { navigator.open(AppRoute.Mock(it.toString())) } }, stacked = true)
-                }
-            }
         },
     ) { asideBeside ->
         item(key = "hero", contentType = "hero") {
-            ChooserHero(
-                eyebrow = view.examName,
-                title = stringResource(R.string.mock_chooser_title),
-                line = stringResource(if (open) R.string.mock_chooser_rule else R.string.mock_chooser_pick_free),
-                status = if (asideBeside) ChooserStatus.Choosing else shown,
-                action = action.takeUnless { asideBeside },
-            )
+            PageHeader(stringResource(R.string.mock_chooser_title), supporting = stringResource(R.string.mock_chooser_line))
         }
-        if (!asideBeside) refusal(shown, navigator)
-        // One pick across both lists, as on main: the subjects are a labeled group of the same choice.
+        // One pick across both lists, as on main: the subjects are a titled group of the same choice.
         item(key = "choices", contentType = "choices") {
             Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-                ChoiceRows(examChoices, picked) { picked = it }
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    if (subjectChoices.isNotEmpty()) SectionHeader(stringResource(R.string.mock_chooser_the_exam))
+                    ChoiceRows(examChoices, picked) { picked = it }
+                }
                 if (subjectChoices.isNotEmpty()) {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        SectionLabel(stringResource(R.string.mock_chooser_one_subject))
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        SectionHeader(stringResource(R.string.mock_chooser_one_subject))
                         ChoiceRows(subjectChoices, picked) { picked = it }
                     }
                 }
             }
         }
-        if (!open) {
-            item(key = "plus", contentType = "plus") {
-                PlusNotice(onSeePlus = null, description = stringResource(R.string.mock_chooser_plus))
-            }
-        }
-        if (!asideBeside) item(key = "notes", contentType = "notes") { notes() }
     }
+
+    short?.let { ShortDialog(it.outcome, onStart = viewModel::startShort, onPickAnother = viewModel::stayChoosing) }
+}
+
+/** A mock exam shorter than the one picked never starts unannounced: the learner agrees first. */
+@Composable
+private fun ShortDialog(
+    short: MockStartOutcome.Short,
+    onStart: () -> Unit,
+    onPickAnother: () -> Unit,
+) {
+    val locale = currentLocale()
+    val count = formatNumber(short.questions.toDouble(), locale)
+    val total = formatNumber(short.examQuestions.toDouble(), locale)
+    val time = minutesText(short.minutes)
+    AlertDialog(
+        onDismissRequest = onPickAnother,
+        title = { Text(stringResource(R.string.mock_chooser_short_title)) },
+        text = {
+            Text(
+                stringResource(
+                    when (short.limit) {
+                        AnytimeMock.Limit.DAY -> R.string.mock_chooser_short_day
+                        AnytimeMock.Limit.MONTH -> R.string.mock_chooser_short_month
+                        AnytimeMock.Limit.TOTAL, null -> R.string.mock_chooser_short_line
+                    },
+                    count,
+                    total,
+                    time,
+                ),
+            )
+        },
+        confirmButton = { TextButton(onClick = onStart) { Text(stringResource(R.string.mock_chooser_start)) } },
+        dismissButton = { TextButton(onClick = onPickAnother) { Text(stringResource(R.string.mock_chooser_pick_another)) } },
+    )
 }
 
 /** Main's `MockWriting`: the questions being written, after which the mock opens by itself. */
@@ -208,138 +240,55 @@ internal fun MockWriting(
 }
 
 /**
- * The page's column, with the picked mock beside it where there's room, as main's aside, and [bar]
- * pinned under the picked mock there, as on every open book: the start bar sits under what Start
- * starts.
+ * The page's column, with the picked mock beside it where there's room, as main's aside, over the
+ * bottom bar that holds Start at every width, with what the last Start found as its [note].
  */
 @Composable
 private fun ChooserPage(
     listState: LazyListState,
     onEnter: () -> Unit,
-    bar: @Composable () -> Unit,
+    note: (@Composable () -> Unit)?,
+    bar: @Composable ColumnScope.() -> Unit,
     aside: @Composable ColumnScope.() -> Unit,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
-    DetailPage(
-        aside = aside,
-        asideBar = bar,
-        asideLabel = stringResource(R.string.mock_chooser_picked),
+    Column(
         // Enter takes the page's main action, as main's Start does; the arrows move the pick.
-        modifier =
-            Modifier.onPreviewKeyEvent { event ->
-                val enter = event.key == Key.Enter || event.key == Key.NumPadEnter
-                if (enter && event.type == KeyEventType.KeyDown) onEnter()
-                enter
-            },
-        listState = listState,
-        content = content,
-    )
-}
-
-@Composable
-private fun ChooserHero(
-    eyebrow: String,
-    title: String,
-    line: String,
-    status: ChooserStatus,
-    action: (@Composable (Modifier) -> Unit)?,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Eyebrow(eyebrow)
-        Text(title, Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium.copy(lineBreak = LineBreak.Heading))
-        StatusLine(status, line)
-        action?.let { Box(Modifier.padding(top = 12.dp).mainActionWidth()) { it(Modifier.mainActionWidth()) } }
+        Modifier.onPreviewKeyEvent { event ->
+            val enter = event.key == Key.Enter || event.key == Key.NumPadEnter
+            if (enter && event.type == KeyEventType.KeyDown) onEnter()
+            enter
+        },
+    ) {
+        DetailPage(
+            aside = aside,
+            asideLabel = stringResource(R.string.mock_chooser_picked),
+            modifier = Modifier.weight(1f),
+            listState = listState,
+            content = content,
+        )
+        BottomBar(note = note, content = bar)
     }
 }
 
+/** The gate a free learner meets on Start, over the bar that now says Subscribe. */
 @Composable
-private fun StartBar(
-    status: ChooserStatus,
-    navigator: AppNavigator,
-    action: @Composable (Modifier) -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (status is ChooserStatus.Refused) Refusal(status, navigator) else StatusLine(status, line = null)
-        action(Modifier.fillMaxWidth())
-    }
+private fun MockGate() {
+    TrackShown(AnalyticsEvent.SubscriptionGateShown)
+    GateWords(title = stringResource(R.string.challenge_mock_gate), line = null)
 }
 
-/** What the last Start found, in place of the page's one line, as main's `role="status"` line. */
+/** Why the last Start failed, over the bar where Start was pressed (the bar's note reads it out). */
 @Composable
-private fun StatusLine(
-    status: ChooserStatus,
-    line: String?,
-) {
-    val failed = status as? ChooserStatus.Failed
-    val text =
-        when {
-            status is ChooserStatus.Short -> {
-                shortText(status.outcome)
-            }
-
-            failed != null -> {
-                stringResource(
-                    if (failed.notEnoughQuestions) R.string.mock_chooser_not_enough else R.string.mock_chooser_failed,
-                )
-            }
-
-            else -> {
-                line
-            }
-        } ?: return
-
+private fun StartFailed(failed: ChooserStatus.Failed) {
     Text(
-        text,
-        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        color = if (failed != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+        stringResource(if (failed.notEnoughQuestions) R.string.mock_chooser_not_enough else R.string.mock_chooser_failed),
+        color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,
     )
 }
 
-@Composable
-private fun shortText(short: MockStartOutcome.Short): String {
-    val ready =
-        pluralStringResource(
-            R.plurals.mock_chooser_short,
-            short.questions.toInt(),
-            short.questions.toInt(),
-            formatNumber(short.examQuestions.toDouble(), currentLocale()),
-            minutesText(short.minutes),
-        )
-    val more =
-        stringResource(
-            when (short.limit) {
-                AnytimeMock.Limit.DAY -> R.string.mock_chooser_short_day
-                AnytimeMock.Limit.MONTH -> R.string.mock_chooser_short_month
-                AnytimeMock.Limit.TOTAL, null -> R.string.mock_chooser_short_none
-            },
-        )
-    return joinSentences(ready, more)
-}
-
-@Composable
-private fun startWith(short: MockStartOutcome.Short): String =
-    pluralStringResource(R.plurals.mock_chooser_start_with, short.questions.toInt(), short.questions.toInt())
-
 private fun Modifier.focus(requester: FocusRequester?): Modifier = requester?.let { focusRequester(it) } ?: this
-
-@Composable
-private fun SeePlusButton(
-    navigator: AppNavigator,
-    modifier: Modifier,
-) {
-    Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = modifier) {
-        Text(stringResource(R.string.mock_chooser_see_plus))
-    }
-}
-
-private fun LazyListScope.refusal(
-    status: ChooserStatus,
-    navigator: AppNavigator,
-) {
-    if (status !is ChooserStatus.Refused) return
-    item(key = "refusal", contentType = "refusal") { Refusal(status, navigator) }
-}
 
 /** Fair use for new questions ran out: main's help limit notice with its way on. */
 @Composable
@@ -361,7 +310,6 @@ internal data class RowChoice(
     val label: String,
     val description: String?,
     val trailing: String,
-    val spokenTrailing: String,
 )
 
 @Composable
@@ -370,19 +318,11 @@ private fun practiceChoices(
     severalDays: Boolean,
 ): List<RowChoice> =
     options.map {
-        val time = minutesText(it.estimatedMinutes)
         RowChoice(
             key = it.key,
             label = mockOptionName(it, severalDays),
             description = mockOptionDetail(it, severalDays),
-            trailing = stringResource(R.string.mock_chooser_option_size, it.questions.toInt(), time),
-            spokenTrailing =
-                pluralStringResource(
-                    R.plurals.mock_chooser_option_size_spoken,
-                    it.questions.toInt(),
-                    it.questions.toInt(),
-                    time,
-                ),
+            trailing = mockOptionSize(it),
         )
     }
 
@@ -448,7 +388,6 @@ private fun ChoiceSize(
 ) {
     Text(
         choice.trailing,
-        Modifier.semantics { contentDescription = choice.spokenTrailing },
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = style.withTabularFigures(),
     )

@@ -1,36 +1,24 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
-import { ArchiveIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
-import { EnterButton } from "../_components/enter-button";
-import { ChangeSaveError } from "../_components/save-error";
-import { TASK_WRAPPING_ACTION_CLASS } from "../_components/task-layout";
-import { ArchiveGoal } from "../journey/archive-goal";
+import { useTransition } from "react";
+import { useChangeSaveFailed } from "../_components/save-error";
+import { ExamOverActions } from "../plan/exam-over-actions";
 import { STUDY_AFTER_EXAM } from "../plan/plan-full-course";
 import { TodayBar } from "./today-bar";
 import { useTodayScreen } from "./today-context";
 
-/**
- * An exam whose date passed with lessons left: the learner studies them or archives the goal.
- * Either answer ends this state, so nothing remembers that it was asked.
- */
 export function TodayExamOver() {
-  const t = useExtracted();
   const { actions, today } = useTodayScreen();
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
 
   const keepStudying = () => {
-    setFailed(false);
-
     startTransition(async () => {
       const { data: change } = await safeAsync(() => actions.changePlan(STUDY_AFTER_EXAM));
 
       if (!change) {
-        setFailed(true);
+        saveFailed();
         return;
       }
 
@@ -39,31 +27,13 @@ export function TodayExamOver() {
   };
 
   return (
-    <TodayBar note={failed && <ChangeSaveError />}>
-      <ArchiveGoal
+    <TodayBar>
+      <ExamOverActions
         goalTitle={today.goal.displayName}
-        onSetStatus={async () => ((await actions.archiveGoal()) ? "saved" : "failed")}
-      >
-        {(archive) => (
-          <Button
-            busy={archive.pending}
-            className={TASK_WRAPPING_ACTION_CLASS}
-            disabled={isPending}
-            icon={<ArchiveIcon aria-hidden="true" />}
-            onClick={archive.ask}
-            size="xl"
-            variant="outline"
-          >
-            {t("Archive goal")}
-          </Button>
-        )}
-      </ArchiveGoal>
-
-      <form action={keepStudying} className="contents">
-        <EnterButton busy={isPending} type="submit">
-          {t("Keep studying")}
-        </EnterButton>
-      </form>
+        keeping={isPending}
+        onArchive={async () => ((await actions.archiveGoal()) ? "saved" : "failed")}
+        onKeepStudying={keepStudying}
+      />
     </TodayBar>
   );
 }

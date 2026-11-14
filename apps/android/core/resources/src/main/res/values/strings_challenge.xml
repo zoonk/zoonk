@@ -43,20 +43,16 @@
     <string name="challenge_day_time">%1$s · %2$s</string>
 
     <string name="challenge_mock_start">Start the mock exam</string>
-    <string name="challenge_objective_only">Objective part only</string>
     <string name="challenge_section_questions">Questions</string>
     <!-- A section's questions (%1$d) and its time (%2$s), like "45 questions · 1 h 30 min". -->
     <plurals name="challenge_section_size">
         <item quantity="one">%1$d question · %2$s</item>
         <item quantity="other">%1$d questions · %2$s</item>
     </plurals>
-    <string name="challenge_written_asked">Written in the mock, graded by the exam\'s criteria after you hand it in.</string>
-    <string name="challenge_written_practiced">Written: you practice it in your essay sessions, graded by the exam\'s criteria.</string>
     <string name="challenge_penalty_cancels">A wrong answer cancels a right one, so leave a statement blank when you\'re not sure.</string>
     <!-- %1$s is the share of a right answer a wrong one costs, like 25%; %2$s is the confidence below which leaving it blank pays off, like 20%. -->
     <string name="challenge_penalty_costs">A wrong answer costs %1$s of a right one, so leave a question blank when you\'re less than %2$s sure.</string>
-    <string name="challenge_result_at_end">Your result only shows at the end, like on exam day.</string>
-    <string name="challenge_mock_plus">Mock exams come with Plus: whenever you want, and every week in your plan.</string>
+    <string name="challenge_result_at_end">You see your result at the end.</string>
 
     <string name="challenge_call_title">The unit\'s call</string>
     <string name="challenge_call_detail">A live call where you get your point across. Speak or type.</string>
@@ -75,14 +71,15 @@
         <item quantity="one">%1$d of %2$d goals</item>
         <item quantity="other">%1$d of %2$d goals</item>
     </plurals>
-    <string name="challenge_call_plus">Challenge calls come with Plus. Your plan keeps going without them.</string>
 
     <string name="challenge_start">Start</string>
+    <string name="challenge_mock_gate">Mock exams need a subscription</string>
+    <string name="challenge_call_gate">This call needs a subscription</string>
+    <string name="challenge_call_gate_line">Your plan goes on without it.</string>
     <string name="challenge_start_failed">That didn\'t go through. Try again in a moment.</string>
     <string name="challenge_start_slow">Still starting. This is taking longer than usual.</string>
     <string name="challenge_continue">Continue</string>
     <string name="challenge_see_result">See how it went</string>
-    <string name="challenge_see_plus">See Plus</string>
     <string name="challenge_opens_tomorrow">Opens tomorrow</string>
     <plurals name="challenge_opens_in">
         <item quantity="one">Opens in %d day</item>

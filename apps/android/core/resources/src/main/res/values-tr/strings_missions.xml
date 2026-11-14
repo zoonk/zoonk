@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "missions_after_lessons": "216725e0704cf61e49ae0cb1b8540fe60a3927c258e4fcb78f2ced8cabe252ec",
-  "missions_ask_buddy": "5a16edbe40dab7b957fb033352dba7411c9f50a83c20b32907fba37a5ec580cf",
+  "missions_ask_buddy": "7fdd7d5d956f56c8878691677b0a5b6d93bbafc26b59a4c93b8bfba8337ddf7a",
   "missions_brain_power": "004a8dc5df946b0d4c6e1091c4e8a845e801b06a41204b5c3829580c8f5368e8",
   "missions_brain_power_about": "68bd7b273f3b3bea9ff30db67679fc47d6e7271bbfa6c4a237a8c89bc2f9baf0",
   "missions_brain_power_total": "1a6bc3ce7bbc88cfecedba01faac0fcea17e083805ead07068b496f7a9a166f6",
@@ -38,7 +38,7 @@
   "missions_points": "91d0bc23f458e824bc743432b18bf33b70a2bac231b70111f844ac73635b9a8b",
   "missions_practice": "c3f994e17529a6746379ccd736ece799662c7391b3bbd78364e509a166b91639",
   "missions_practice_area": "72c0b822f0611607474091edb198504a102dbae7a285e4f32667cbc5239cf207",
-  "missions_progress": "cc0731d5a7bd9f6ea019e6615d586f541b7a8dbc71ba43b4cefd03b41e10575a",
+  "missions_progress": "316b2a2487a6c7b01ea73437f19665eacc7b4cfdbdbe90a330f00c2b445604f5",
   "missions_pronunciation": "cc7251d11c12a45742cffddc539bdf84bce8a3c473e3ac435d9ade2293b55b57",
   "missions_rematch": "91fbcf0b365d7a06e22b7af92e55ce3f41b16891a3aabaec453eb562fe31ac23",
   "missions_review": "8727dde1bd608bc01e615005fbef9c8fea7f678d57f9fdb8add29feec69831e3",
@@ -65,7 +65,7 @@
     </plurals>
     <string name="missions_just_done">Az önce tamamlandı</string>
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
-    <string name="missions_progress">%1$s görev tamamlandı, toplam %2$s görev var</string>
+    <string name="missions_progress">%1$s / %2$s tamamlandı</string>
     <string name="missions_brain_power">Beyin Gücü</string>
     <!-- %1$s is a formatted number of Brain Power points: "+50". -->
     <string name="missions_points">+%1$s</string>
@@ -93,7 +93,7 @@
     <string name="missions_pronunciation">Telaffuz alıştırması yap</string>
     <string name="missions_call">Sohbet et</string>
     <!-- %1$s is the learner's buddy's name. -->
-    <string name="missions_ask_buddy">%1$s adlı arkadaşına bir şey sor</string>
+    <string name="missions_ask_buddy">%1$s ile konuş</string>
     <!-- %1$s is a skill area's title. -->
     <string name="missions_practice_area">%1$s alanında alıştırma yap</string>
     <string name="missions_after_lessons">Bugünkü derslerden sonra</string>

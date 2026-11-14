@@ -31,6 +31,7 @@ class AppLinkTest {
             "/settings" to AppRoute.Settings,
             "/settings/appearance" to AppRoute.Preferences,
             "/settings/memory" to AppRoute.Memory,
+            "/settings/privacy" to AppRoute.PrivacySettings,
             "/settings/reminders" to AppRoute.Reminders,
             "/settings/about-you" to AppRoute.AboutYou,
             "/settings/about-you/watch" to AppRoute.ProfileQuestionEdit("watch"),

@@ -401,20 +401,45 @@ struct LessonCompletionView: View {
 /// close button leaves). `isNotice` is main's `LessonNotWrittenNotice`: a lesson whose writing was
 /// refused says so under its description, start-aligned with a small button.
 struct LessonUnavailableView: View {
-  @Environment(\.dismiss) private var dismiss
-
   let refusal: LessonRunRefusal
   var isNotice = false
   let retry: () -> Void
+
+  var body: some View {
+    OpeningClock(opensAt: refusal.limit?.opensAt) { now in
+      LessonUnavailableBody(refusal: refusal, isNotice: isNotice, now: now, retry: retry)
+    }
+  }
+
+  var said: String {
+    LessonUnavailableBody(refusal: refusal, isNotice: isNotice, now: .now, retry: retry).said
+  }
+}
+
+/// Once a free learner's next lesson has opened, "Start the lesson" asks again beside "Subscribe".
+private struct LessonUnavailableBody: View {
+  @Environment(\.dismiss) private var dismiss
+
+  let refusal: LessonRunRefusal
+  let isNotice: Bool
+  let now: Date
+  let retry: () -> Void
+
+  private var isReady: Bool {
+    refusal.limit?.freeLessonOpened(at: now) == true
+  }
 
   var body: some View {
     if isNotice {
       VStack(alignment: .leading, spacing: 8) {
         GateWords(title: Text(title), line: noticeLine.map(Text.init))
 
-        action
-          .buttonStyle(.outline)
-          .controlSize(.small)
+        HStack(spacing: 8) {
+          secondAction
+          action
+        }
+        .buttonStyle(.outline)
+        .controlSize(.small)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
     } else {
@@ -430,6 +455,8 @@ struct LessonUnavailableView: View {
         }
       }
       .bottomBar {
+        secondAction
+          .buttonStyle(.outline)
         action
           .buttonStyle(.mainAction)
       }
@@ -450,8 +477,19 @@ struct LessonUnavailableView: View {
   }
 
   @ViewBuilder
+  private var secondAction: some View {
+    if isReady {
+      SubscribeButton()
+    }
+  }
+
+  @ViewBuilder
   private var action: some View {
     switch refusal {
+    case .limitReached where isReady:
+      Button(action: retry) {
+        Text("Start the lesson", tableName: "Player")
+      }
     case .failed:
       Button(action: retry) {
         Text("Try again", tableName: "Player", comment: "Tries opening the lesson again")
@@ -489,7 +527,7 @@ struct LessonUnavailableView: View {
       LocalizedStringResource(
         "This lesson isn't available", table: "Player", comment: "The lesson doesn't exist anymore")
     case .limitReached:
-      refusal.limit?.lessonWords.title
+      refusal.limit?.lessonWords(now: now).title
         ?? LocalizedStringResource(
           "We couldn't open this lesson", table: "Player", comment: "A lesson failed to open")
     }
@@ -497,7 +535,7 @@ struct LessonUnavailableView: View {
 
   /// In place, a limit's line says only when lessons come back.
   private var noticeLine: LocalizedStringResource? {
-    refusal.limit?.lessonWords.line
+    refusal.limit?.lessonWords(now: now).line
   }
 
   private var screenLine: String? {
@@ -510,6 +548,8 @@ struct LessonUnavailableView: View {
           "You opened a lot of lessons quickly. This one opens on its own in \(Duration.seconds(seconds).formatted(.units(allowed: [.minutes, .seconds], width: .wide))).",
         table: "Player", comment: "How long until the next lesson opens; the argument is a duration"
       )
+    case .limitReached where isReady:
+      return nil
     case .limitReached(.guest, _):
       return String(
         localized: "Everything you learned comes with you.", table: "Player",
@@ -645,8 +685,7 @@ extension LessonRunRefusal.Period {
   /// `last30Days` is read as `freeLessonsUsed` before it gets here.
   fileprivate var helpPeriod: HelpLimit.Period {
     switch self {
-    case .day: .day
-    case .month, .last30Days: .month
+    case .day, .last30Days: .day
     case .total: .total
     }
   }

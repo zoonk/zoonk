@@ -97,6 +97,7 @@ internal fun ColumnScope.PlanChangeApplied(
                         ?.toJavaLocalDate(),
                 fullCourse = page.plan.schedule.fullCourse,
                 icon = icon,
+                dateKind = page.dateKind,
             )
         },
         actions = {

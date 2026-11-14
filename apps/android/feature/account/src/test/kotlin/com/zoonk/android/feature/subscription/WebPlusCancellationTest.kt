@@ -105,7 +105,7 @@ class WebPlusCancellationTest {
                         }
                     WebPlusCancellationDialog(cancellation)
                     if (profile) {
-                        webPlusDeletionNotice(website)?.let { Text(it) }
+                        deletionPlusNotices(website, provider = null).forEach { Text(it) }
                     } else {
                         val state by website.collectShown()
                         Column(Modifier.verticalScroll(rememberScrollState())) {
@@ -140,7 +140,7 @@ class WebPlusCancellationTest {
         rule.onNodeWithText("Free offer").assertDoesNotExist()
         rule.onNodeWithText("Active").assertDoesNotExist()
         rule.onNodeWithText("Cancel Plus").performScrollTo().performClick()
-        inDialog("Plus ends right away, and we stop retrying your renewal payment.").assertExists()
+        inDialog("Plus ends right away, and you won't be charged again.").assertExists()
         inDialog("Cancel Plus").performClick()
         rule.onNode(isDialog()).assertDoesNotExist()
         assertEquals(1, sent)
@@ -279,7 +279,7 @@ class WebPlusCancellationTest {
         rule.onNodeWithText("Cancel Plus").performScrollTo()
         capture(folder, "$prefix-store-and-website")
         rule.onNodeWithText("Cancel Plus").performClick()
-        inDialog("Plus ends right away, and we stop retrying your renewal payment.").assertExists()
+        inDialog("Plus ends right away, and you won't be charged again.").assertExists()
         inDialog("Go back").performClick()
         profile = true
         rule.onNodeWithText("Deleting your account ends Plus right away.").assertExists()

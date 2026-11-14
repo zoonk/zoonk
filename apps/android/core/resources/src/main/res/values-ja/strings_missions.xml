@@ -38,7 +38,7 @@
   "missions_points": "f918a0510982795cac966fcc68c9eaa122fe05e07c589f1dd24010b0e8741fe9",
   "missions_practice": "06c902decc555480c6764192e349219e7e4c97c01aeb499cda5157d034e85368",
   "missions_practice_area": "abc283186e5d1bac93b5950bbceefede30d7ca1d067ff2bf495e8a89e29bfbbf",
-  "missions_progress": "95b1abeac5c8ca9dd43e18f1ad5b823ee7561716c607824277f86c8495435d7f",
+  "missions_progress": "c090479909d4f48f3a86db1ed788beaa5b1ede4fe46cc463864b9b9ca45e0e9d",
   "missions_pronunciation": "31f0c9d6f2746010bde665e1f8c004763078129752481ce499fa7571aabbaace",
   "missions_rematch": "81deba1de3e3e4a5580ee8d926f4c21b51761a5a70720fb21ed4adfa4adc5f83",
   "missions_review": "ee2626e6975f5cce59efe4912d33d10068fabce9fe0e17225e11f6140943280b",
@@ -63,7 +63,7 @@
     </plurals>
     <string name="missions_just_done">たった今達成</string>
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
-    <string name="missions_progress">%1$s個達成、全部で%2$s個</string>
+    <string name="missions_progress">完了：%1$s/%2$s</string>
     <string name="missions_brain_power">脳力</string>
     <!-- %1$s is a formatted number of Brain Power points: "+50". -->
     <string name="missions_points">+%1$s</string>

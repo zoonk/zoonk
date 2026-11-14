@@ -5,15 +5,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.FOCUS_TEST_SOURCE
+import com.zoonk.android.feature.plan.GoalDateKind
 import com.zoonk.android.feature.plan.PlanEffectDiff
 import com.zoonk.android.feature.plan.countsByDate
-import com.zoonk.android.feature.plan.focusedAreas
 import com.zoonk.android.feature.plan.planChangeAppliedLine
 import com.zoonk.android.feature.plan.planChangeKeepOfficialDateLabel
 import com.zoonk.android.feature.plan.planChangeOfficialDateLine
-import com.zoonk.android.feature.plan.planChangeProposalEffect
 import com.zoonk.android.feature.plan.planChangeSentence
-import com.zoonk.android.feature.plan.topicsMoved
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonIcon
@@ -77,13 +75,6 @@ private fun ChangeNotice(
     val title = if (change.source == NOTICE_SOURCE) null else stringResource(R.string.today_plan_suggestion)
     val result = answer?.let { answeredText(it) }
     val byDate = change.status == PlanChange.Status.PROPOSED || countsByDate(change.effect, dateAhead)
-    // The Focus test's proposal lets its diff say what it changes, as the test's own screen does.
-    val effect =
-        if (change.source == FOCUS_TEST_SOURCE) {
-            null
-        } else {
-            planChangeProposalEffect(change.effect, planEnd(state), besideDiff = true, byDate = byDate, focused = change.focusedAreas)
-        }
     val officialDate = planChangeOfficialDateLine(change)
     val saving = viewModel.isSavingPlanChange
     val next = today.planChange?.takeIf { answer != null && it.status == PlanChange.Status.PROPOSED && it.id != change.id }
@@ -125,8 +116,7 @@ private fun ChangeNotice(
     ) {
         SuggestionHeader(title ?: sentence)
         if (title != null) SuggestionDescription(sentence)
-        effect?.let { SuggestionDescription(it) }
-        PlanEffectDiff(change.effect, byDate = byDate)
+        PlanEffectDiff(change.effect, byDate = byDate, dateKind = today.goal.dateKind)
         officialDate?.let { SuggestionDescription(it) }
 
         if (result != null) {
@@ -226,7 +216,7 @@ private fun FallingBehindNotice(
         lineAction = if (kept) null else ({ SuggestionOpen() }),
     ) {
         SuggestionHeader(sentence)
-        topicsMoved(change.effect, named = NAMED_TOPICS)?.let { SuggestionDescription(it) }
+        PlanEffectDiff(change.effect, dateKind = today.goal.dateKind, summary = false)
 
         if (result != null) {
             SuggestionResult(result)
@@ -324,3 +314,5 @@ private const val MISSED_DAYS = "missedDays"
 private const val NOTICE_SOURCE = "notice"
 private const val PHASE_DATES_SOURCE = "phaseDates"
 private const val NAMED_TOPICS = 2
+
+internal val TodayGoal.dateKind: GoalDateKind get() = if (kind == TodayGoal.Kind.EXAM) GoalDateKind.Exam else GoalDateKind.Goal

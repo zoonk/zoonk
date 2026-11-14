@@ -5,7 +5,7 @@ import { asPersona } from "./learn-personas";
 import { countSetAside, passTheDate } from "./past-date";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 
-test.describe("Today after an exam's date, with lessons left", () => {
+test.describe("After an exam's date, with lessons left", () => {
   test("Keep studying puts the lessons back on the plan", async ({ browser }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       const { setAside } = await passTheDate(user.goalId);
@@ -41,6 +41,26 @@ test.describe("Today after an exam's date, with lessons left", () => {
           return goal.status;
         })
         .toBe("archived");
+    });
+  });
+
+  test("the Plan asks the same in its bottom bar, and Keep studying there puts the lessons back", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      const { setAside } = await passTheDate(user.goalId);
+      expect(setAside).toBeGreaterThan(0);
+
+      await page.goto("/plan");
+      const bar = page.locator('[data-slot="bottom-bar"]');
+      await expect(bar.getByRole("button", { exact: true, name: "Archive goal" })).toBeVisible();
+
+      const keepStudying = bar.getByRole("button", { exact: true, name: "Keep studying" });
+      await expectHydrated(keepStudying);
+      await keepStudying.click();
+
+      await expect(keepStudying).toBeHidden({ timeout: REPLAN_TIMEOUT_MS });
+      expect(await countSetAside(user.goalId)).toBe(0);
     });
   });
 });

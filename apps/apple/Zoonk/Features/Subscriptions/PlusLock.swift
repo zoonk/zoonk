@@ -26,10 +26,10 @@ struct PlusMark: View {
 /// - `title` replaces "Available with Plus" where something the free plan had ends (a free exam
 ///   plan's first week).
 /// - `showsSeePlus: false` drops the button where the screen's main action already is
-///   `SeePlusButton`, or where `action` is the only way forward (a guest's free account).
+///   `SubscribeButton`, or where `action` is the only way forward (a guest's free account).
 /// - `isInset` drops the panel inside a card that already has one (a tutor's offer).
 /// - `seePlus` replaces opening Plus where the screen must close first (a full-screen moment).
-/// - `action` is the free way, after "See Plus" (a goal past the free plan's active goals: their Plan).
+/// - `action` is the free way, after "Subscribe" (a goal past the free plan's active goals: their Plan).
 struct PlusNotice<Action: View>: View {
   var title: Text?
   var description: Text?
@@ -121,26 +121,8 @@ struct FreeWeekOverNotice: View {
   }
 }
 
-struct SeePlusButton: View {
-  @Environment(AppRouter.self) private var router
-
-  /// Replaces opening Plus here.
-  var action: (() -> Void)?
-
-  var body: some View {
-    Button {
-      if let action {
-        action()
-      } else {
-        router.present(.subscription)
-      }
-    } label: {
-      Text(
-        "See Plus", tableName: "Subscriptions",
-        comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"")
-    }
-  }
-}
+/// Every action that leads to paying reads "Subscribe"; this name goes with `PlusNotice`.
+typealias SeePlusButton = SubscribeButton
 
 #Preview {
   ZoonkList {

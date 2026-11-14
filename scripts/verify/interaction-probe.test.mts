@@ -6,7 +6,7 @@ import { readHooks, recordNextClick, takeRecordedClick } from "./keys-probe.mts"
 import { type Shortcuts, pressKeys } from "./keys.mts";
 import { installPageHelpers } from "./page-helpers.mts";
 import { markActions } from "./states-probe.mts";
-import { readWords } from "./words.mts";
+import { readWords, summarizeWords, wordFindings } from "./words.mts";
 
 const FIXTURE_URL = "https://fixture.test/";
 
@@ -86,8 +86,24 @@ function textAboveAction({ position, top }: { position: string; top: number }) {
 }
 
 describe("text before an available main action", () => {
-  it("does not count the day list before a pinned bar already on screen", () => {
-    assert.equal(textAboveAction({ position: "sticky", top: innerHeight - CONTROL_HEIGHT }), 0);
+  it("counts text in the first block even with an on-screen pinned action", () => {
+    assert.equal(
+      textAboveAction({ position: "sticky", top: innerHeight - CONTROL_HEIGHT }),
+      PARAGRAPHS,
+    );
+  });
+
+  it("stops at the first block instead of consuming the rest of the page", () => {
+    const top = innerHeight - CONTROL_HEIGHT;
+    document.body.innerHTML = `<main><section><h1>Today</h1>${"<p>First block</p>".repeat(PARAGRAPHS)}</section><section><p>Later content</p></section><footer data-slot="bottom-bar" data-top="${top}" style="position:sticky;bottom:0"><button data-enter="bound" data-top="${top}">Start</button></footer></main>`;
+    const words = readWords();
+    assert.equal(words.aboveAction, PARAGRAPHS);
+
+    assert.ok(
+      wordFindings(summarizeWords(words, "app")).some(
+        ({ check }) => check === "text before the action",
+      ),
+    );
   });
 
   it("still counts text before an off-screen sticky bar and an unpinned bar", () => {
