@@ -48,18 +48,61 @@ struct DayResult: Decodable, Hashable, Sendable {
   }
 
   var isEmpty: Bool {
-    missionMoment == nil && reached?.level == nil && reached?.energy == nil
+    moment(hasChapter: false) == nil
   }
 }
 
-/// Main's `DayMoment`: the missions this work completed, then the level and Energy it reached, a
-/// beat after them. A new belt's level isn't said twice: its ceremony shows before the result.
+/// Main's `DayMoment` (B2's R2): at most one extra moment at a block's end, the first that applies:
+/// a chapter finished, a new level, today's missions all done, then one mission done. Energy never
+/// shows here. A new belt's level isn't said twice: its ceremony shows before.
 struct DayMomentSections: View {
   let result: DayResult
+  var chapter: Components.Schemas.FinishedChapter?
 
   var body: some View {
-    DayMomentContent(result: result)
+    DayMomentContent(result: result, chapter: chapter)
       .celebratesOnce(id: result)
+  }
+}
+
+extension DayResult {
+  enum Moment {
+    case chapter
+    case level(ProgressBelt, level: Int)
+    case missionsDone(MissionMoment)
+    case missionDone(MissionMoment)
+  }
+
+  func moment(hasChapter: Bool) -> Moment? {
+    if hasChapter {
+      return .chapter
+    }
+
+    if ceremony?.kind != "belt", let level = reached?.level,
+      let belt = ProgressBelt(rawValue: level.color)
+    {
+      return .level(belt, level: level.level)
+    }
+
+    if let missions = missionMoment, missions.isPayoff {
+      return .missionsDone(missions)
+    }
+
+    if let missions = missionMoment, !missions.justDone.isEmpty {
+      return .missionDone(missions)
+    }
+
+    return nil
+  }
+
+  /// The day's bonus is said by the missions' moment; where another moment shows instead, the bonus
+  /// is part of what the block earned.
+  func shownBrainPower(_ brainPower: Int, bonus: Int, hasChapter: Bool) -> Int {
+    guard case .missionsDone = moment(hasChapter: hasChapter) else {
+      return brainPower
+    }
+
+    return brainPower - bonus
   }
 }
 
@@ -68,93 +111,29 @@ private struct DayMomentContent: View {
   @Environment(\.celebrates) private var celebrates
 
   let result: DayResult
-
-  private var buddy: String {
-    learner.buddyDisplayName
-  }
-
-  private var level: DayResult.Reached.Level? {
-    result.ceremony?.kind == "belt" ? nil : result.reached?.level
-  }
-
-  private var afterMissions: TimeInterval {
-    guard let moment = result.missionMoment, moment.isShown else { return .beat }
-    return moment.isPayoff ? 3 * .beat : 2 * .beat
-  }
+  let chapter: Components.Schemas.FinishedChapter?
 
   var body: some View {
-    if let moment = result.missionMoment, moment.isShown {
-      missions(moment)
-    }
-
-    if let level, let belt = ProgressBelt(rawValue: level.color) {
+    switch result.moment(hasChapter: chapter != nil) {
+    case .level(let belt, let level):
       Section {
-        VStack(alignment: .leading, spacing: 8) {
-          HStack(spacing: 12) {
-            LevelBadge(belt: belt, level: level.level)
-              .settles(delay: afterMissions)
-
-            VStack(alignment: .leading, spacing: 2) {
-              Text("Level up!", tableName: "Session", comment: "A new belt level")
-                .typeStyle(.body.weight(.semibold))
-              Text(
-                "\(beltName(level.color) ?? level.color), level \(level.level)",
-                tableName: "Session", comment: "The belt and level reached"
-              )
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
-            }
-          }
-
-          BeltTicks(
-            belt: belt, level: level.level, fillsNewLevel: true, delay: afterMissions)
-        }
-        .accessibilityElement(children: .combine)
+        LevelRow(belt: belt, level: level)
       }
-    }
-
-    if let energy = result.reached?.energy {
-      Section {
-        VStack(alignment: .leading, spacing: 8) {
-          HStack(spacing: 12) {
-            EnergyMark(delay: level == nil ? afterMissions : afterMissions + .beat)
-
-            VStack(alignment: .leading, spacing: 2) {
-              Group {
-                if energy >= 100 {
-                  Text("Max Energy: \(energy)%", tableName: "Session", comment: "Energy at its top")
-                } else {
-                  Text(
-                    "Energy at \(energy)%", tableName: "Session", comment: "A new tenth of Energy")
-                }
-              }
-              .typeStyle(.body.weight(.semibold))
-
-              energyLine(energy)
-                .typeStyle(.note)
-                .foregroundStyle(.mutedForeground)
-            }
-          }
-
-          // Where Energy is now: the moment doesn't know where it came from.
-          Meter(value: Double(min(energy, 100)), total: 100, fill: .energy)
-        }
-        .accessibilityElement(children: .combine)
+    case .missionsDone(let moment):
+      missions(moment, payoff: true)
+    case .chapter:
+      if let chapter {
+        FinishedChapterSection(chapter: chapter)
       }
+    case .missionDone(let moment):
+      missions(moment, payoff: false)
+    case nil:
+      EmptyView()
     }
   }
 
-  private func missions(_ moment: DayResult.MissionMoment) -> some View {
-    let justDone = moment.justDone
-    let payoff = moment.isPayoff
-
-    return Section {
-      ForEach(Array(moment.missions.enumerated()), id: \.offset) { _, mission in
-        MissionRow(
-          mission: mission, buddyName: buddy,
-          justDone: justDone.firstIndex(of: mission))
-      }
-    } header: {
+  private func missions(_ moment: DayResult.MissionMoment, payoff: Bool) -> some View {
+    Section {
       VStack(alignment: .leading, spacing: 12) {
         HStack(spacing: payoff ? 16 : 12) {
           MissionsBuddy(look: learner.summary.value?.buddy ?? BuddyLook(), isPayoff: payoff)
@@ -162,16 +141,19 @@ private struct DayMomentContent: View {
             .id(moment.completed)
 
           VStack(alignment: .leading, spacing: payoff ? 8 : 2) {
-            missionsTitle(moment, justDone: justDone.count)
-              .typeStyle(payoff ? .section : .body.weight(.semibold))
-              .foregroundStyle(Color.primary)
+            missionsTitle(moment)
+              .typeStyle(payoff ? .section : .lead.weight(.semibold))
 
             if payoff {
               bonus(moment.fullMeal.bonus)
             } else {
-              missionsStatus(moment)
-                .typeStyle(.note)
-                .foregroundStyle(.mutedForeground)
+              Text(
+                "\(moment.left) more for +\(moment.fullMeal.bonus) Brain Power",
+                tableName: "Session",
+                comment: "Missions still to do today, then the bonus finishing them earns"
+              )
+              .typeStyle(.meta)
+              .foregroundStyle(.mutedForeground)
             }
           }
           .accessibilityElement(children: .combine)
@@ -180,42 +162,29 @@ private struct DayMomentContent: View {
         MissionTrack(
           missions: moment.missions, from: celebrates ? moment.before : nil, delay: .beat)
       }
-      .textCase(nil)
-      .padding(.bottom, 4)
     }
   }
 
-  private func missionsTitle(_ moment: DayResult.MissionMoment, justDone: Int) -> Text {
+  private func missionsTitle(_ moment: DayResult.MissionMoment) -> Text {
     if moment.left == 0 {
       return Text("Today's missions done!", tableName: "Session", comment: "Every mission is done")
     }
 
-    return Text(
-      "\(justDone) missions done!", tableName: "Session", comment: "Missions this result completed")
-  }
-
-  private func missionsStatus(_ moment: DayResult.MissionMoment) -> Text {
-    let bonus = moment.fullMeal.bonus
-
-    if moment.left > 0 {
-      return Text(
-        "\(moment.left) more for +\(bonus) Brain Power", tableName: "Session",
-        comment: "Missions still to do today, then the bonus finishing them earns")
-    }
-
-    return Text(
-      "You earned +\(bonus) Brain Power.", tableName: "Session",
-      comment: "The bonus for every mission done")
+    return moment.justDone.count == 1
+      ? Text("Mission done!", tableName: "Session", comment: "One mission this work completed")
+      : Text(
+        "\(moment.justDone.count) missions done!", tableName: "Session",
+        comment: "Missions this work completed, when it completed more than one")
   }
 
   private func bonus(_ points: Int) -> some View {
     HStack(alignment: .firstTextBaseline, spacing: 6) {
       EarnedNumber(value: points, delay: 2 * .beat)
-        .typeStyle(.heroTitle)
+        .typeStyle(.momentReadout)
         .foregroundStyle(.brainText)
 
       Text("Brain Power", tableName: "Session", comment: "Under the missions' bonus")
-        .typeStyle(.note.weight(.medium))
+        .typeStyle(.body.weight(.medium))
         .foregroundStyle(.mutedForeground)
     }
     .settles(delay: 2 * .beat, from: 0.9)
@@ -231,23 +200,55 @@ private struct DayMomentContent: View {
         "You earned +\(points) Brain Power.", tableName: "Session",
         comment: "The bonus for every mission done"))
   }
+}
 
-  private func energyLine(_ energy: Int) -> Text {
-    if energy >= 100 {
-      return Text(
-        "\(buddy) is glowing as bright as it gets.", tableName: "Session",
-        comment: "Energy at its top")
+/// The level, taught by the row itself: the badge, "White belt, level 3", which belt comes after
+/// this one's tenth level, and the ten ticks.
+struct LevelRow: View {
+  let belt: ProgressBelt
+  let level: Int
+  var delay: TimeInterval = 0
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      HStack(spacing: 12) {
+        LevelBadge(belt: belt, level: level)
+          .settles(delay: delay)
+
+        VStack(alignment: .leading, spacing: 2) {
+          Text(levelName(belt, level))
+            .typeStyle(.body.weight(.semibold))
+
+          if let next = belt.next {
+            Text(
+              "\(beltName(next.rawValue) ?? next.rawValue) comes after level \(10)",
+              tableName: "Session",
+              comment:
+                "Under a new level: the next belt and the level it comes after, such as \"Yellow belt comes after level 10\""
+            )
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+          }
+        }
+      }
+
+      BeltTicks(belt: belt, level: level, fillsNewLevel: true, delay: delay)
     }
+    .accessibilityElement(children: .combine)
+  }
+}
 
-    // Main's `GLOWING_ENERGY`: the buddy starts glowing at 80.
-    if energy == 80 {
-      return Text(
-        "\(buddy) is glowing now.", tableName: "Session", comment: "Energy at 80% or more")
-    }
+/// "White belt, level 3": a level said with the belt it shows as (B2's R4).
+func levelName(_ belt: ProgressBelt, _ level: Int) -> String {
+  String(
+    localized: "\(beltName(belt.rawValue) ?? belt.rawValue), level \(level)", table: "Session",
+    comment: "The belt and level reached")
+}
 
-    return Text(
-      "Right answers raise it. A day away lowers it a little.", tableName: "Session",
-      comment: "What moves Energy")
+extension ProgressBelt {
+  var next: ProgressBelt? {
+    let all = Self.allCases
+    return all.firstIndex(of: self).flatMap { $0 + 1 < all.count ? all[$0 + 1] : nil }
   }
 }
 
@@ -258,10 +259,6 @@ extension DayResult.MissionMoment {
 
   var left: Int {
     missions.filter { !$0.isDone }.count
-  }
-
-  var isShown: Bool {
-    !justDone.isEmpty || fullMeal.paid
   }
 
   var isPayoff: Bool {
@@ -281,29 +278,6 @@ extension DayResult.MissionMoment {
   }
 }
 
-private struct EnergyMark: View {
-  let delay: TimeInterval
-
-  @Environment(\.celebrates) private var celebrates
-  @Environment(\.accessibilityReduceMotion) private var reduceMotion
-  @State private var pops = false
-  @ScaledMetric(relativeTo: .body) private var size = 40.0
-
-  var body: some View {
-    Image(systemName: "bolt.fill")
-      .typeStyle(.section.weight(.regular))
-      .foregroundStyle(.energy)
-      .symbolEffect(.bounce, value: pops)
-      .frame(width: size, height: size)
-      .accessibilityHidden(true)
-      .task {
-        guard celebrates, !reduceMotion else { return }
-        try? await Task.sleep(for: .seconds(delay))
-        pops = true
-      }
-  }
-}
-
 private struct MissionsBuddy: View {
   @Environment(\.celebrates) private var celebrates
 
@@ -320,7 +294,7 @@ private struct MissionsBuddy: View {
           look: studied, expression: .happy,
           reaction: celebrates ? ActReaction(act: .cheer, delay: 2 * .beat) : nil
         )
-        .frame(width: 96, height: 96)
+        .frame(width: 112, height: 112)
       } else {
         BuddyCharacter(
           look: studied, expression: .neutral, crop: .face,

@@ -65,8 +65,8 @@ export function LevelChoiceList({
     },
     { description: t("Only what's new or hard"), label: labels.advanced, value: "advanced" },
     {
-      description: t("Adapts to your answers, about {time}", { time: formatDuration(testMinutes) }),
-      label: t("Not sure, give me a quick test"),
+      description: t("About {time}", { time: formatDuration(testMinutes) }),
+      label: t("Not sure, give me a short test"),
       value: QUICK_TEST,
     },
   ];

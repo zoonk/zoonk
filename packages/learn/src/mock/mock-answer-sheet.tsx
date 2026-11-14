@@ -183,6 +183,7 @@ function SheetHandIn({ onHandIn }: { onHandIn: () => void }) {
 
   return (
     <Button
+      aria-haspopup="dialog"
       className="w-full"
       disabled={runner.pending}
       focusableWhenDisabled

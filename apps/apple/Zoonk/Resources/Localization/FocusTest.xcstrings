@@ -60,6 +60,65 @@
         }
       }
     },
+    "%@ left" : {
+      "comment" : "How long the rest of an open Focus test takes, such as \"9 min left\"",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ para terminar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il reste %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ancora %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "残り%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 남음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pozostało %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ para terminar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ kaldı"
+          }
+        }
+      }
+    },
     "%lld of %lld right" : {
       "comment" : "How many of a subject's chosen Focus test answers were right; \"I don't know yet\" isn't counted",
       "localizations" : {
@@ -121,6 +180,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld / %2$lld doğru"
+          }
+        }
+      }
+    },
+    "A %@ test shows what you already know, so more of your time goes to what you need most. It never removes a subject." : {
+      "comment" : "What the Focus test is and why; the argument is how long it takes, such as \"15 min\"",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Test dauert %@ und zeigt, was du schon weißt. So bleibt mehr Zeit für das, was du am meisten brauchst. Dabei wird kein Fach entfernt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una prueba de %@ muestra lo que ya sabes para que dediques más tiempo a lo que más necesitas. No elimina ninguna materia."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un test de %@ montre ce que tu sais déjà pour que tu consacres plus de temps à ce dont tu as le plus besoin. Il ne retire jamais de matière."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un test di %@ mostra cosa sai già, così dedichi più tempo a ciò che ti serve di più. Non elimina mai nessuna materia."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@のテストですでに知っていることがわかるので、特に必要な内容にもっと時間をかけられます。科目を学習計画から外すことはありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 테스트로 이미 아는 내용을 확인해, 더 배워야 할 내용에 시간을 더 쓸 수 있어요. 어떤 과목도 제외하지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test trwa %@ i pokazuje, co już umiesz, więc więcej czasu poświęcasz na to, czego najbardziej potrzebujesz. Nigdy nie usuwa z planu żadnego przedmiotu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um teste de %@ mostra o que você já sabe, para você dedicar mais tempo ao que mais precisa estudar. Ele nunca tira uma matéria do plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ süren bir test zaten bildiklerini gösterir. Böylece en çok ihtiyacın olan konulara daha fazla zaman ayrılır. Hiçbir branşı planından çıkarmaz."
           }
         }
       }
@@ -416,6 +534,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cevaplar kaydedildi"
+          }
+        }
+      }
+    },
+    "Ask a few more as I study" : {
+      "comment" : "Switch on the Focus test's result: \"a few more\" are test questions, asked while the learner studies their lessons",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beim Lernen ein paar weitere Testfragen stellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hazme unas preguntas más mientras estudio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Me poser quelques questions de plus pendant mes leçons"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fammi qualche altra domanda mentre studio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習中にも何問か問題を出す"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습하면서 문제를 몇 개 더 풀래요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podczas nauki dostaję kilka dodatkowych pytań"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fazer mais algumas perguntas enquanto estudo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalışırken bana birkaç soru daha sor"
           }
         }
       }
@@ -1010,6 +1187,124 @@
         }
       }
     },
+    "Find what to study most" : {
+      "comment" : "What the Focus test does, for an exam with a date and more than one subject",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herausfinden, wofür du am meisten Lernzeit brauchst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descubre qué necesitas estudiar más"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Savoir quoi étudier en priorité"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scopri cosa studiare di più"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重点的に学ぶ内容を見つける"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "집중해서 공부할 과목 찾기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprawdź, na co poświęcić najwięcej czasu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descobrir o que estudar mais"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En çok çalışman gerekenleri bul"
+          }
+        }
+      }
+    },
+    "Focus on these %lld subjects" : {
+      "comment" : "Title of the Focus test's result: the subjects to give more time",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konzentrier dich auf diese %lld Fächer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enfócate en estas %lld materias"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Priorité à ces %lld matières"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concentrati su queste %lld materie"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この%lld科目を重点的に学びます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "집중할 %lld개 과목"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skup się na tych %lld przedmiotach"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foque nestas %lld matérias"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu %lld branşa odaklan"
+          }
+        }
+      }
+    },
     "Focus test" : {
       "comment" : "Title of an exam goal's Focus test",
       "localizations" : {
@@ -1482,6 +1777,65 @@
         }
       }
     },
+    "Listening: not in this test" : {
+      "comment" : "A listening part of the exam that the Focus test can't ask about",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hören: nicht in diesem Test"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escucha: no se incluye en esta prueba"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écoute : non évaluée dans ce test"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ascolto: non incluso in questo test"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リスニング：このテストの対象外"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "듣기: 이 테스트에 포함되지 않음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Słuchanie: test go nie obejmuje"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escuta: não está neste teste"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dinleme: bu testte yok"
+          }
+        }
+      }
+    },
     "Not asked yet" : {
       "comment" : "A subject the Focus test hasn't asked a question about yet",
       "localizations" : {
@@ -1832,6 +2186,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Uygulama kısmı: burada değerlendirilmiyor"
+          }
+        }
+      }
+    },
+    "Practical part: not in this test" : {
+      "comment" : "A practical part of the exam that the Focus test can't ask about",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Praktischer Teil: nicht in diesem Test"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parte práctica: no se incluye en esta prueba"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partie pratique : non évaluée dans ce test"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parte pratica: non inclusa in questo test"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "実技：このテストの対象外"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "실기: 이 테스트에 포함되지 않음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Część praktyczna: test jej nie obejmuje"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parte prática: não está neste teste"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uygulama bölümü: bu testte yok"
           }
         }
       }
@@ -2190,6 +2603,65 @@
         }
       }
     },
+    "Skip what you already know" : {
+      "comment" : "What the Focus test does, for an exam without a date or with one subject",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Überspringen, was du schon weißt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sáltate lo que ya sabes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sauter ce que tu sais déjà"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salta ciò che sai già"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すでに知っている内容をスキップする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미 아는 내용 건너뛰기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomiń to, co już umiesz"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pular o que você já sabe"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaten bildiklerini atla"
+          }
+        }
+      }
+    },
     "Speaking: not checked here" : {
       "comment" : "A speaking part of the exam that the Focus test can't check",
       "localizations" : {
@@ -2245,6 +2717,124 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konuşma: burada ölçülmüyor"
+          }
+        }
+      }
+    },
+    "Speaking: not in this test" : {
+      "comment" : "A speaking part of the exam that the Focus test can't ask about",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprechen: nicht in diesem Test"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expresión oral: no se incluye en esta prueba"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expression orale : non évaluée dans ce test"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parlato: non incluso in questo test"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スピーキング：このテストの対象外"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "말하기: 이 테스트에 포함되지 않음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mówienie: test go nie obejmuje"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversação: não está neste teste"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konuşma: bu testte yok"
+          }
+        }
+      }
+    },
+    "Start" : {
+      "comment" : "Starts the Focus test",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inizia"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始める"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시작하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zacznij"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başla"
           }
         }
       }
@@ -2721,6 +3311,65 @@
         }
       }
     },
+    "The test suggests these %lld subjects" : {
+      "comment" : "Title of the Focus test's result when the plan doesn't follow it: the learner chose their own focus or said Not now",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Test empfiehlt diese %lld Fächer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La prueba sugiere estas %lld materias"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le test recommande ces %lld matières"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il test suggerisce queste %lld materie"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テストがおすすめする%lld科目"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "테스트에서 추천하는 %lld개 과목"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test sugeruje skupienie się na tych %lld przedmiotach"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O teste sugere estas %lld matérias"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test bu %lld branşı öneriyor"
+          }
+        }
+      }
+    },
     "There's no grade" : {
       "comment" : "A row of the Focus test's How it works sheet",
       "localizations" : {
@@ -2776,6 +3425,124 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Not verilmiyor"
+          }
+        }
+      }
+    },
+    "This test shows what you already know, so more of your time goes to what you need most. It never removes a subject." : {
+      "comment" : "What the Focus test is and why, for an exam with a date and more than one subject",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Test zeigt, was du schon weißt. So bleibt mehr Zeit für das, was du am meisten brauchst. Dabei wird kein Fach entfernt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta prueba muestra lo que ya sabes para que dediques más tiempo a lo que más necesitas. No elimina ninguna materia."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce test montre ce que tu sais déjà pour que tu consacres plus de temps à ce dont tu as le plus besoin. Il ne retire jamais de matière."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo test mostra cosa sai già, così dedichi più tempo a ciò che ti serve di più. Non elimina mai nessuna materia."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このテストですでに知っていることがわかるので、特に必要な内容にもっと時間をかけられます。科目を学習計画から外すことはありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 테스트로 이미 아는 내용을 확인해, 더 배워야 할 내용에 시간을 더 쓸 수 있어요. 어떤 과목도 제외하지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten test pokazuje, co już umiesz, więc więcej czasu poświęcasz na to, czego najbardziej potrzebujesz. Nigdy nie usuwa z planu żadnego przedmiotu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este teste mostra o que você já sabe, para você dedicar mais tempo ao que mais precisa estudar. Ele nunca tira uma matéria do plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu test zaten bildiklerini gösterir. Böylece en çok ihtiyacın olan konulara daha fazla zaman ayrılır. Hiçbir branşı planından çıkarmaz."
+          }
+        }
+      }
+    },
+    "This test shows what you already know, so your plan can skip it." : {
+      "comment" : "What the Focus test is and why, for an exam without a date or with one subject",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Test zeigt, was du schon weißt, damit dein Plan es überspringen kann."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta prueba muestra lo que ya sabes para que tu plan pueda saltárselo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce test repère les leçons que tu connais déjà pour que ton plan puisse les sauter."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo test mostra ciò che sai già, così il tuo piano può saltarlo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このテストですでに知っている内容がわかり、学習計画でスキップできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 테스트로 이미 아는 내용을 확인하면, 계획에서 그 내용을 건너뛸 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten test pokazuje, co już umiesz, dzięki czemu plan może to pominąć."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este teste mostra o que você já sabe, para seu plano poder pular essa parte."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu test zaten bildiklerini gösterir. Böylece planın bunları atlayabilir."
           }
         }
       }
@@ -3075,6 +3842,65 @@
         }
       }
     },
+    "Writing: not in this test" : {
+      "comment" : "A written part of the exam, such as the essay, that the Focus test can't ask about",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schreiben: nicht in diesem Test"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expresión escrita: no se incluye en esta prueba"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expression écrite : non évaluée dans ce test"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrittura: non inclusa in questo test"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ライティング：このテストの対象外"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "서술형: 이 테스트에 포함되지 않음"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pisanie: test go nie obejmuje"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escrita: não está neste teste"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yazma: bu testte yok"
+          }
+        }
+      }
+    },
     "You can take the test later, from your plan." : {
       "comment" : "Under Skip for now while the Focus test's questions are written",
       "localizations" : {
@@ -3313,16 +4139,16 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Masz %lld zapisaną odpowiedź."
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Masz %lld zapisane odpowiedzi."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Masz %lld zapisaną odpowiedź."
                 }
               },
               "other" : {
@@ -3545,16 +4371,16 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Twój plan pomija też %lld lekcję o tym, co już znasz."
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Twój plan pomija też %lld lekcje o tym, co już znasz."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Twój plan pomija też %lld lekcję o tym, co już znasz."
                 }
               },
               "other" : {
@@ -3653,6 +4479,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planın bu branşlara daha fazla zaman ayırıyor."
+          }
+        }
+      }
+    },
+    "Your plan keeps the focus you chose." : {
+      "comment" : "Under the Focus test's result beside a focus the learner chose",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan behält deinen gewählten Schwerpunkt bei."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan mantiene el enfoque que elegiste."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan garde les priorités que tu as choisies."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano mantiene le priorità che hai scelto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画では、選んだ内容を引き続き重点的に学びます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택한 과목에 계속 집중하는 계획이에요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan zachowuje wybrane przez ciebie priorytety."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano mantém o foco que você escolheu."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planın seçtiğin branşlara odaklanmaya devam eder."
           }
         }
       }
@@ -3771,6 +4656,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planın artık bu branşlara daha fazla zaman ayırıyor."
+          }
+        }
+      }
+    },
+    "Your plan skips %lld lessons you already know" : {
+      "comment" : "Title of the Focus test's result with no subjects to focus on",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan überspringt %lld Lektionen, die du schon kennst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan se salta %lld lecciones sobre temas que ya conoces"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan saute %lld leçons que tu connais déjà"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano salta %lld lezioni su ciò che sai già"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画では、すでに知っている内容の%lldレッスンをスキップします"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획에서 이미 아는 레슨 %lld개를 건너뛰어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan pomija znany ci materiał z %lld lekcji"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano pula %lld aulas sobre o que você já sabe"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planın zaten bildiğin %lld dersi atlar"
           }
         }
       }
@@ -3895,16 +4839,16 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Twój plan pomija %lld lekcję, którą już znasz."
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Twój plan pomija %lld lekcje, które już znasz."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Twój plan pomija %lld lekcję, którą już znasz."
                 }
               },
               "other" : {
@@ -4003,6 +4947,124 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planında her branş temelden başlar."
+          }
+        }
+      }
+    },
+    "Your plan starts from the basics" : {
+      "comment" : "Title of the Focus test's result with no subjects to focus on and nothing to skip",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan beginnt mit den Grundlagen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan empieza por lo básico"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan commence par les bases"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano parte dalle basi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画は基礎から始まります"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기초부터 시작하는 계획이에요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan zaczyna się od podstaw"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano começa pelo básico"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planın temelden başlar"
+          }
+        }
+      }
+    },
+    "Your plan stays as it is." : {
+      "comment" : "Under the Focus test's result after the learner said Not now to it, or undid it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan bleibt, wie er ist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan sigue igual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan reste tel quel."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano resta com’è."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画は今のままです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획은 그대로 유지돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan pozostaje bez zmian."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano continua como está."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planın olduğu gibi kalır."
           }
         }
       }

@@ -1,9 +1,10 @@
 "use client";
 
 import { type SyllabusChapter } from "@zoonk/core/view-models/syllabus/contract";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BookOpenIcon } from "lucide-react";
-import { ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
+import { ListRowChevronSpace } from "../_components/list-group";
 import { LearnLink } from "../learn-link";
 import { FarTopicSheet } from "../topic-outline/far-topic-sheet";
 import { useTopicOutlineActions } from "../topic-outline/topic-outline-actions";
@@ -78,7 +79,7 @@ function TopicChapterLink({
   return (
     <LearnLink className={TOPIC_CHAPTER_CLASS} href={chapterHref(chapter.chapterId)}>
       {content}
-      <ListRowChevron />
+      <RowChevron />
     </LearnLink>
   );
 }

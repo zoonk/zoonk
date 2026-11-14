@@ -78,7 +78,7 @@ function RuleMenu({ pattern }: { pattern: MistakePatternView }) {
   return (
     <div className="with-aside:hidden">
       <TaskHeaderMenu>
-        <DropdownMenuItem onClick={() => setOpen(true)}>
+        <DropdownMenuItem aria-haspopup="dialog" onClick={() => setOpen(true)}>
           <BookOpenIcon aria-hidden="true" />
           {t("See the rule")}
         </DropdownMenuItem>

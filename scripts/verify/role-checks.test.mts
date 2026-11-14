@@ -2,12 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { type RoleFacts, roleFindings } from "./role-checks.mts";
 
-const EMPTY: RoleFacts = {
-  backLinksWithoutText: 0,
-  gates: 0,
-  mainActionsOutsideBar: [],
-  unmarkedEyebrows: [],
-};
+const EMPTY: RoleFacts = { backLinksWithoutText: 0, gates: 0, unmarkedEyebrows: [] };
 
 describe("named role checks", () => {
   it("makes no claims about a page without hooks", () => {
@@ -20,16 +15,12 @@ describe("named role checks", () => {
 
   it("reports every measurable role mismatch as a lead", () => {
     assert.deepEqual(
-      roleFindings({
-        backLinksWithoutText: 1,
-        gates: 2,
-        mainActionsOutsideBar: ["Continue"],
-        unmarkedEyebrows: ["Your plan"],
-      }).map(({ check, level }) => [check, level]),
+      roleFindings({ backLinksWithoutText: 1, gates: 2, unmarkedEyebrows: ["Your plan"] }).map(
+        ({ check, level }) => [check, level],
+      ),
       [
         ["R4 one subscription gate", "warn"],
-        ["I5 named back link", "warn"],
-        ["R2 main action in bottom bar", "warn"],
+        ["E8 named back link", "warn"],
         ["R3 eyebrow piece", "warn"],
       ],
     );

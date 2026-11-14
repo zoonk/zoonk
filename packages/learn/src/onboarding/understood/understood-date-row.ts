@@ -90,13 +90,7 @@ function useKeptMonthRow() {
       editable: { key: "targetDate", kind: "date" },
       id: "targetDate",
       label: t("Exam date"),
-      note: noticeDay
-        ? noticeDayText({
-            date: noticeDay.date,
-            document: getExamDocument(draft),
-            estimated: false,
-          })
-        : undefined,
+      note: noticeDay ? noticeDayText({ date: noticeDay.date, estimated: false }) : undefined,
       source: noticeDay?.source ?? null,
       suggestedDate: noticeDay?.date,
       value: toLabelCase(formatDate(keptMonth, "month")),
@@ -253,13 +247,12 @@ function useOwnDateRow() {
       ? t("{days, plural, one {# day left} other {# days left}}", {
           days: daysUntilIsoDate({ isoDate: official.date, today: new Date() }),
         })
-      : suggested &&
-        noticeDayText({ date: suggested.date, document: getExamDocument(draft), estimated: false });
+      : suggested && noticeDayText({ date: suggested.date, estimated: false });
 
     return {
       editable: { key: "targetDate", kind: "date" },
       id: "targetDate",
-      label: draft.kind === "exam" ? t("Exam date") : t("Deadline"),
+      label: draft.kind === "exam" ? t("Exam date") : t("End date"),
       note: note ?? undefined,
       source: official?.source ?? suggested?.source ?? null,
       suggestedDate: suggested?.date,

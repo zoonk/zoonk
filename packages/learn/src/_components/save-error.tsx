@@ -18,6 +18,7 @@ function ReportSaveProblem() {
 
   return (
     <Button
+      aria-haspopup="dialog"
       className="inline-flex"
       icon={<FlagIcon aria-hidden="true" />}
       onClick={() =>

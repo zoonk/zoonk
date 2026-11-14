@@ -26,7 +26,7 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { INBOX_PAGE_CLASS, PageSubtitle } from "../_components/page";
+import { PageSubtitle } from "../_components/page";
 import { PageTab, PageTabs, PageTabsGroup } from "../_components/page-tabs";
 import { DoneMark } from "../_components/status-mark";
 import { PatternRow } from "../language/today/language-today-section";
@@ -266,7 +266,7 @@ export function MistakesNotebook({
     <DetailLayout
       bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mistakes notebook")} />}
       bottomBar={<PracticeBar hrefs={hrefs} notebook={notebook} />}
-      className={INBOX_PAGE_CLASS}
+      measure="list"
       data-slot="mistakes-notebook"
     >
       <DetailAside>

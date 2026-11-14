@@ -8,17 +8,9 @@ import { DocumentLink } from "@zoonk/ui/patterns/links/pending";
  * it loads a document, and it needs nothing from the learning frame, which a signed-out page lacks.
  * `href` is the login page's localized path.
  */
-export function AuthGateAction({
-  children,
-  href,
-  ...props
-}: {
-  children: React.ReactNode;
-  "data-account-offer"?: boolean;
-  href: string;
-}) {
+export function AuthGateAction({ children, href }: { children: React.ReactNode; href: string }) {
   return (
-    <EnterLink href={href} link={DocumentLink} {...props}>
+    <EnterLink href={href} link={DocumentLink}>
       {children}
     </EnterLink>
   );

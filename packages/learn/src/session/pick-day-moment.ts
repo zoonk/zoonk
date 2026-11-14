@@ -41,8 +41,9 @@ export function getMissionMomentKind(facts: MissionMomentFacts): "all" | "one" |
 }
 
 /**
- * A task's end shows one extra moment at most, the rarest that applies. Energy moving gets none:
- * the buddy's page shows it.
+ * A task's end shows one extra moment at most, the rarest that applies. A finished chapter comes
+ * first: only this screen says which chapter ended and offers its map, while the day's summary
+ * repeats the level and Today the missions. Energy moving gets none: the buddy's page shows it.
  */
 export function pickDayMoment({
   ceremony,
@@ -52,16 +53,16 @@ export function pickDayMoment({
 }: DayMomentFacts): "belt" | "chapter" | "mission" | "missions" | null {
   const missions = missionMoment ? getMissionMomentKind(missionMoment) : null;
 
+  if (finishedChapter) {
+    return "chapter";
+  }
+
   if (reached.level && ceremony?.kind !== "belt") {
     return "belt";
   }
 
   if (missions === "all") {
     return "missions";
-  }
-
-  if (finishedChapter) {
-    return "chapter";
   }
 
   return missions === "one" ? "mission" : null;

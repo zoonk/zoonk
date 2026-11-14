@@ -66,7 +66,7 @@ export function ExamTotals({ exam }: { exam: AdminExam }) {
                 month: "short",
                 timeZone: "UTC",
               })
-            : "None"
+            : "—"
         }
       />
     </div>
@@ -116,7 +116,9 @@ export function ExamChecking({ exam }: { exam: AdminExam }) {
             <Link className={LINK_CLASS} href={`/sources/${exam.source.id}`} prefetch>
               {exam.source.title ?? "Private upload"}
             </Link>
-          ) : null}
+          ) : (
+            "—"
+          )}
         </DetailField>
         <DetailField label="Next check" mono={false}>
           {exam.nextCheckAt ? (

@@ -24,8 +24,8 @@ import { GenerationWait } from "../generation/generation-wait";
 import { useRefreshUntilShown } from "../generation/use-refresh-until-shown";
 import { LearnLink } from "../learn-link";
 import {
+  OnboardingActions,
   OnboardingColumn,
-  OnboardingFooter,
   OnboardingFrame,
   OnboardingHeading,
   OnboardingPrimaryButton,
@@ -190,7 +190,17 @@ export function ExplainWaiting({
         ),
       }}
     >
-      <OnboardingColumn>
+      <OnboardingColumn
+        bar={
+          ready && (
+            <OnboardingActions>
+              <OnboardingPrimaryButton autoFocus onClick={onStart}>
+                {t("See explanation")}
+              </OnboardingPrimaryButton>
+            </OnboardingActions>
+          )
+        }
+      >
         <OnboardingHeading>
           <PageEyebrow>{quickExplanation}</PageEyebrow>
           <OnboardingTitle>{explanation.title}</OnboardingTitle>
@@ -206,14 +216,6 @@ export function ExplainWaiting({
         {deeper}
 
         {!ready && !failed && <SlowWait onRetry={onRetry} />}
-
-        {ready && (
-          <OnboardingFooter>
-            <OnboardingPrimaryButton autoFocus onClick={onStart}>
-              {t("Start")}
-            </OnboardingPrimaryButton>
-          </OnboardingFooter>
-        )}
       </OnboardingColumn>
     </OnboardingFrame>
   );

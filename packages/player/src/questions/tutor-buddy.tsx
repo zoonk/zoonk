@@ -29,6 +29,8 @@ export type TutorBuddy = {
   open: (suggestion?: LessonScreenSuggestion) => void;
   /** Sends the suggestion at once, so the buddy starts answering as it opens; while an earlier question is unanswered, fills the composer instead. */
   openAndAsk: (suggestion: LessonScreenSuggestion) => void;
+  /** For a button that opens it: a sheet is a dialog; docked beside the lesson, it is none. */
+  popup: "dialog" | undefined;
   /** What the screen's own button asks ("I didn't get this" asks the simpler take), so the aside's suggestions leave it out. */
   screenSuggestion?: LessonScreenSuggestion;
   suggests: boolean;
@@ -130,6 +132,7 @@ export function TutorBuddyProvider({
 
         void askAbout({ context, question: offered.label, suggestion: offered.id });
       },
+      popup: asideShown ? undefined : "dialog",
       screenSuggestion,
       suggests: suggests && state.questions.length === 0,
     };

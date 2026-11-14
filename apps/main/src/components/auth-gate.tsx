@@ -4,6 +4,7 @@ import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
 import { getSession } from "@zoonk/core/users/session";
+import { AccountAskMark } from "@zoonk/learn/account-ask";
 import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { buttonVariants } from "@zoonk/ui/components/button";
@@ -69,6 +70,7 @@ async function GateMessage({
 
   return (
     <Empty className={className} data-account-ask>
+      <AccountAskMark />
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <LockIcon aria-hidden="true" />
@@ -117,7 +119,6 @@ export async function AuthGate({
       {gate.kind === "account" ? (
         <PendingLink
           className={buttonVariants()}
-          data-account-offer
           href={gate.login}
           icon={<UserPlusIcon aria-hidden="true" />}
         >
@@ -185,7 +186,7 @@ async function GateBar({ gate }: { gate: Gate }) {
           </Link>
         )}
 
-        <AuthGateAction data-account-offer={gate.kind === "account" || undefined} href={gate.login}>
+        <AuthGateAction href={gate.login}>
           {gate.kind === "account" ? t("Create an account") : t("Log in")}
         </AuthGateAction>
       </BottomBarActions>

@@ -32,7 +32,7 @@ type RunBlock = NonNullable<Awaited<ReturnType<typeof lockRunBlock>>>;
 /** A finished block refits the session's lessons left, unless it was an extra or a reinforcement. */
 async function refitAfterMainBlock(
   tx: TransactionClient,
-  { block, timeZone }: { block: RunBlock; timeZone: string },
+  { block }: { block: RunBlock },
 ): Promise<void> {
   const payload = readBlockPayload(block);
 
@@ -40,11 +40,7 @@ async function refitAfterMainBlock(
     return;
   }
 
-  await refitSessionLessons(tx, {
-    completedBlockId: block.id,
-    sessionId: block.sessionId,
-    timeZone,
-  });
+  await refitSessionLessons(tx, { completedBlockId: block.id, sessionId: block.sessionId });
 }
 
 /** Replays are reviews in the ledger and must not increment lessons completed. */
@@ -187,7 +183,7 @@ export async function finishLessonRun({
     });
 
     if (blockDone && block) {
-      await refitAfterMainBlock(tx, { block, timeZone });
+      await refitAfterMainBlock(tx, { block });
     }
 
     const explanationsFinished = await finishExplanations(tx, { lessonId, userId });

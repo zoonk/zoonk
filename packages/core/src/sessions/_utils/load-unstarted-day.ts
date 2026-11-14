@@ -36,7 +36,7 @@ export async function loadUnstartedDayView({
 
   const missionDay = { blocks, goalId: goal.id, localDate, userId };
   const { dayMinutes, examPrep } = day.plan;
-  const examAccess = getExamPrepAccess({ examPrep, goal, timeZone, today: localDate });
+  const examAccess = getExamPrepAccess({ examPrep, goal });
 
   const [week, subjects, oftenTestedSkillIds, blockedTestOutChapters, missionViews] =
     await Promise.all([
@@ -113,7 +113,7 @@ export async function loadUnstartedDayView({
     }),
     withExtraStudyCheck({
       extraTime: fields.extraTime,
-      session: { blocks, goal, goalId: goal.id, localDate },
+      session: { blocks, goal, goalId: goal.id },
       userId,
     }),
   ]);

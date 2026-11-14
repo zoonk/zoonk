@@ -212,7 +212,7 @@ export function GenerationFailureNotice({
   }[failure];
 
   return (
-    <NoticeCard role="alert">
+    <NoticeCard className="max-w-column" role="alert">
       <NoticeCardLeading className="text-muted-foreground">
         <FailureIcon failure={failure} />
       </NoticeCardLeading>
@@ -290,17 +290,13 @@ export function GenerationWait({
     >
       <GenerationTimelineHeader>
         {children}
-        {failure ? (
-          <GenerationFailureNotice failure={failure} retry={run.retry} />
-        ) : (
-          <WaitProgress
-            kind={kind}
-            label={copy.name}
-            run={run}
-            since={since}
-            weights={progress.phases.map((phase) => phase.seconds)}
-          />
-        )}
+        <WaitProgress
+          kind={kind}
+          label={copy.name}
+          run={run}
+          since={since}
+          weights={progress.phases.map((phase) => phase.seconds)}
+        />
       </GenerationTimelineHeader>
 
       <GenerationTimelineStatus>{announcement}</GenerationTimelineStatus>
@@ -335,6 +331,9 @@ export function GenerationWait({
           );
         })}
       </GenerationTimelineSteps>
+
+      {/* Under the steps, where a failure moves none of them: the bar stops where it got to. */}
+      {failure && <GenerationFailureNotice failure={failure} retry={run.retry} />}
     </GenerationTimeline>
   );
 }

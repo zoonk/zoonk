@@ -5,7 +5,15 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PageWithAside } from "../shell/learn-shell";
 import { EnterLink } from "./enter-button";
-import { PAGE_COLUMN_CLASS, PageSection, PageSectionHeader, PageSectionTitle } from "./page";
+import {
+  MEASURED_CLASS,
+  PAGE_COLUMN_CLASS,
+  type PageMeasure,
+  PageSection,
+  PageSectionHeader,
+  PageSectionTitle,
+  pageMeasureClass,
+} from "./page";
 
 /** `bottomBar` is the page's `BottomBar`: with an aside it pins over the main column only. */
 export function DetailLayout({
@@ -15,18 +23,25 @@ export function DetailLayout({
   bottomBar,
   children,
   className,
+  measure,
   ...props
 }: React.ComponentProps<"article"> & {
   aside?: React.ReactNode;
   asideLabel?: string;
   bar?: React.ReactNode;
   bottomBar?: React.ReactNode;
+  measure?: PageMeasure;
 }) {
   const page = (
     <article className="flex min-w-0 flex-1 flex-col" {...props}>
       {bar}
       <div
-        className={cn(PAGE_COLUMN_CLASS, "flex flex-col gap-8", className)}
+        className={cn(
+          PAGE_COLUMN_CLASS,
+          "flex flex-col gap-8",
+          measure && MEASURED_CLASS,
+          className,
+        )}
         data-slot="detail-layout"
       >
         {children}
@@ -34,19 +49,21 @@ export function DetailLayout({
     </article>
   );
 
-  if (!aside) {
-    return (
-      <>
-        {page}
-        {bottomBar}
-      </>
-    );
-  }
-
-  return (
+  const layout = aside ? (
     <PageWithAside aside={aside} asideLabel={asideLabel} bottomBar={bottomBar}>
       {page}
     </PageWithAside>
+  ) : (
+    <>
+      {page}
+      {bottomBar}
+    </>
+  );
+
+  return measure ? (
+    <div className={cn("contents", pageMeasureClass(measure))}>{layout}</div>
+  ) : (
+    layout
   );
 }
 

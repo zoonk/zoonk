@@ -95,7 +95,13 @@ export function AddToLinkedInButton({ className }: { className?: string }) {
   const { openLinkedIn } = useSharing();
 
   return (
-    <Button className={className} onClick={openLinkedIn} size="lg" variant="outline">
+    <Button
+      aria-haspopup="dialog"
+      className={className}
+      onClick={openLinkedIn}
+      size="lg"
+      variant="outline"
+    >
       <LinkedinBrandIcon aria-hidden="true" data-icon="inline-start" />
       {t("Add to LinkedIn")}
     </Button>

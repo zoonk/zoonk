@@ -1,13 +1,15 @@
-/* oxlint-disable no-await-in-loop, max-lines-per-function -- The walk acts on one page, one step at a time, and its steps share that page and its counters. */
 import { type Locator, type Page } from "@playwright/test";
 import { type Finding } from "./checks.mts";
-import { lead } from "./craft-rules.mts";
-import { type PanelFacts, focusCameBack, inspectPanel, panelFindings, pressKeys } from "./keys.mts";
+import { pressKeys } from "./keys.mts";
 import { type Target } from "./measure.mts";
+import { OVERLAY_SELECTOR } from "./overlays.mts";
+/* oxlint-disable no-await-in-loop, max-lines-per-function -- The walk acts on one page, one step at a time, and its steps share that page and its counters. */
+import { installPageHelpers } from "./page-helpers.mts";
+import { focusCameBack, inspectPanel, panelFindings } from "./panels.mts";
+import { stateLeads } from "./states-checks.mts";
 import {
   type Action,
   type Comparison,
-  type Moved,
   compareLayout,
   markActions,
   pickedIds,
@@ -23,96 +25,22 @@ import { VIEWPORTS, type ViewportName } from "./viewports.mts";
  */
 export type Step = { action: Action; blocked: boolean; comparison: Comparison; doing: string };
 
-/** Layout offsets are whole pixels, so a 1 px change can be sub-pixel layout rounding. */
-const MIN_PX = 2;
-const LISTED = 3;
+export type WalkCoverage = { actionsTried: number; actionsSkipped: number; panelsOpened: number };
+export type WalkReport = WalkCoverage & { findings: Finding[] };
+
 /** A field's checks can wait for a pause in typing. */
 const FIELD_SETTLE_MS = 700;
 const STEP_SETTLE_MS = 300;
 const ACT_TIMEOUT_MS = 2000;
 
 const OVERLAY =
-  "[role=dialog]:visible, [role=alertdialog]:visible, [role=menu]:visible, [role=listbox]:visible";
+  `${OVERLAY_SELECTOR}, [role=dialog], [role=alertdialog], [role=menu], [role=listbox]`
+    .split(", ")
+    .map((selector) => `${selector}:visible`)
+    .join(", ");
 
 /** Only what reads: a write is aborted, so walking a page changes no data and starts no AI. */
 const READS = new Set(["GET", "HEAD", "OPTIONS"]);
-
-function moved(change: Moved) {
-  return {
-    across: change.after.left - change.before.left,
-    down: change.after.top - change.before.top,
-    taller: change.after.height - change.before.height,
-    wider: change.after.width - change.before.width,
-  };
-}
-
-function describe(change: Moved) {
-  const { across, down } = moved(change);
-
-  const ways = [
-    Math.abs(across) >= MIN_PX ? `${Math.abs(across)} px ${across > 0 ? "right" : "left"}` : "",
-    Math.abs(down) >= MIN_PX ? `${Math.abs(down)} px ${down > 0 ? "down" : "up"}` : "",
-  ].filter(Boolean);
-
-  if (ways.length > 0) {
-    return `${change.label} moved ${ways.join(" and ")}`;
-  }
-
-  const { after, before } = change;
-  return `${change.label} went from ${before.width}×${before.height} to ${after.width}×${after.height} px`;
-}
-
-function size({ across, down, taller, wider }: ReturnType<typeof moved>) {
-  return Math.max(Math.abs(across), Math.abs(down), Math.abs(taller), Math.abs(wider));
-}
-
-/**
- * The changes a person would see as the screen jumping: something that moved on its own (not
- * carried by a parent that moved), and a control, panel or picture that changed size. A fold or a
- * tab may push what's under it down, and a search field may change the list under it: that's what
- * they're for. The boxes holding the field or choice grow with what appeared in them, which their
- * moved neighbors already show.
- */
-function jumps({ action, comparison }: Step): Moved[] {
-  const { target } = comparison;
-  const pushesDown = (action.kind === "fold" || action.kind === "search") && target !== null;
-
-  return comparison.moved.filter((change) => {
-    const { across, down, taller, wider } = moved(change);
-    const shifted = Math.max(Math.abs(across), Math.abs(down)) >= MIN_PX;
-    const resized = Math.max(Math.abs(taller), Math.abs(wider)) >= MIN_PX;
-
-    const below =
-      pushesDown &&
-      !change.isTarget &&
-      across === 0 &&
-      change.before.top >= target.top + target.height - 1;
-
-    return !below && ((shifted && !change.carried) || (resized && change.drawn && !change.holds));
-  });
-}
-
-export function stateLeads(steps: Step[]): Finding[] {
-  return steps.flatMap((step) => {
-    const seen = jumps(step);
-
-    if (seen.length === 0) {
-      return [];
-    }
-
-    const listed = seen.slice(0, LISTED).map((change) => describe(change));
-    const more = seen.length > LISTED ? ` and ${seen.length - LISTED} more` : "";
-    const failed = step.blocked ? " (the walk blocked its save, so this is a failed save)" : "";
-
-    return [
-      lead(
-        "X3",
-        `${step.doing} ${step.action.label}: ${listed.join("; ")}${more}${failed}`,
-        Math.max(...seen.map((change) => size(moved(change)))),
-      ),
-    ];
-  });
-}
 
 async function walk(
   page: Page,
@@ -127,9 +55,10 @@ async function walk(
     url: string;
     capture?: (page: Page, state: string) => Promise<void>;
   },
-): Promise<{ panels: PanelFacts[]; steps: Step[] }> {
+): Promise<WalkReport> {
   const steps: Step[] = [];
-  const panels: PanelFacts[] = [];
+  const findings: Finding[] = [];
+  const coverage: WalkCoverage = { actionsSkipped: 0, actionsTried: 0, panelsOpened: 0 };
 
   async function step(action: Action, doing: string, perform: () => Promise<unknown>, ms: number) {
     await page.evaluate(snapshotLayout);
@@ -147,6 +76,7 @@ async function walk(
     if (page.url() !== url) {
       await page.goto(url, { timeout: LOAD_TIMEOUT_MS });
       await page.waitForLoadState("networkidle").catch(() => null);
+      await page.evaluate(markActions, "body");
     }
 
     return performed;
@@ -225,15 +155,20 @@ async function walk(
     );
 
     const panel = await inspectPanel(page, phone);
+    coverage.panelsOpened += panel ? 1 : 0;
     await capture?.(page, `opening ${action.id}`);
 
     // One level in: the choices and fields in what just opened, such as a dialog's options.
     if ((await page.locator(OVERLAY).count()) > 0) {
       const inside = await page.evaluate(markActions, OVERLAY.replaceAll(":visible", ""));
 
-      for (const nested of inside.filter(
+      const choices = inside.filter(
         (each) => each.kind !== "control" && each.kind !== "fold" && each.kind !== "overlay",
-      )) {
+      );
+
+      coverage.actionsSkipped += inside.length - choices.length;
+
+      for (const nested of choices) {
         await act(nested);
       }
     }
@@ -254,10 +189,12 @@ async function walk(
     );
 
     if (panel) {
-      panels.push({
-        ...panel,
-        focusBack: closedByWalk ? await focusCameBack(page, action.id) : null,
-      });
+      findings.push(
+        ...panelFindings({
+          ...panel,
+          focusBack: closedByWalk ? await focusCameBack(page, action.id) : null,
+        }),
+      );
     }
   }
 
@@ -308,18 +245,27 @@ async function walk(
     await settle(page, STEP_SETTLE_MS);
 
     if (!(await element.isVisible().catch(() => false))) {
+      coverage.actionsSkipped += 1;
       return;
     }
 
+    coverage.actionsTried += 1;
     const run = { control, field, fold: open, overlay: open, pick, search: field }[action.kind];
-    await run(action, element).catch(() => null);
+
+    await run(action, element).catch((error: unknown) => {
+      findings.push({
+        check: "Walk: action incomplete",
+        level: "warn",
+        message: `${action.label}: ${error instanceof Error ? error.message : String(error)}`,
+      });
+    });
   }
 
   for (const action of await page.evaluate(markActions, "body")) {
     await act(action);
   }
 
-  return { panels, steps };
+  return { ...coverage, findings: [...findings, ...stateLeads(steps)] };
 }
 
 /**
@@ -338,12 +284,13 @@ export async function walkStates(
     viewport: ViewportName;
     capture?: (page: Page, state: string) => Promise<void>;
   },
-): Promise<Finding[]> {
+): Promise<WalkReport> {
   const context = await target.browser.newContext({
     ...VIEWPORTS[viewport],
     storageState: target.storageState,
   });
 
+  await context.addInitScript(installPageHelpers);
   const page = await context.newPage();
   page.on("dialog", (dialog) => void dialog.dismiss());
 
@@ -369,14 +316,9 @@ export async function walkStates(
     const keys = viewport === "laptop" && shortcuts ? await pressKeys(page, url, shortcuts) : [];
     const phone = viewport === "phone";
 
-    const { panels, steps } = await walk(page, {
-      blocked: () => blocked,
-      capture,
-      phone,
-      url: page.url(),
-    });
+    const walked = await walk(page, { blocked: () => blocked, capture, phone, url: page.url() });
 
-    return [...keys, ...panels.flatMap((panel) => panelFindings(panel)), ...stateLeads(steps)];
+    return { ...walked, findings: [...keys, ...walked.findings] };
   } finally {
     await context.close();
   }

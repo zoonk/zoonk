@@ -152,14 +152,12 @@ private struct BlobPresignRequest: Encodable {
 struct ScheduleWeek: Hashable, Sendable {
   var studyDays: [Int]
   var weekendMinutes: Int?
-  var fullCourse = false
 }
 
 private struct ScheduleWeekInput: Encodable {
   let studyDays: [Int]
   let weekendMinutes: Int?
   let dailyMinutes: Int?
-  let fullCourse: Bool?
   /// A language goal's other aim, answered as picking it would lay the plan out.
   let aim: String?
 
@@ -167,7 +165,6 @@ private struct ScheduleWeekInput: Encodable {
     studyDays = week.studyDays
     weekendMinutes = week.weekendMinutes
     self.dailyMinutes = dailyMinutes
-    fullCourse = week.fullCourse ? true : nil
     self.aim = aim
   }
 }

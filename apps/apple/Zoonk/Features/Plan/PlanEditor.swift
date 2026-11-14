@@ -17,15 +17,23 @@ final class PlanEditor {
 
   private let goalId: String
   private let store: PlanStore
+  /// Whose date a statement names: the exam's or the goal's end date.
+  let dateKind: GoalDateKind
 
-  init(goalId: String, store: PlanStore) {
+  init(goalId: String, store: PlanStore, dateKind: GoalDateKind = .unknown) {
     self.goalId = goalId
     self.store = store
+    self.dateKind = dateKind
   }
 
+  /// What the plan says once the change is saved: each edit's statement, unless the caller has
+  /// its own.
   @discardableResult
-  func change(_ edits: [PlanEdit], sentence: String) async -> Bool {
+  func change(_ edits: [PlanEdit], sentence: String? = nil) async -> Bool {
     let goalId = goalId
+    let operations = edits.compactMap { try? PracticeJSON.recode($0, as: PlanChangeOperation.self) }
+    let sentence = sentence ?? PlanChangeWords.statements(operations, dateKind: dateKind)
+
     return await apply(sentence: sentence) { api, token in
       try await api.change(token: token, goalId: goalId, edits: edits)
     }
@@ -83,15 +91,10 @@ final class PlanEditor {
   @discardableResult
   func chooseExamOptions(_ subjects: [String], in group: String) async -> Bool {
     let goalId = goalId
-    let names = subjects.formatted(.list(type: .and))
+    let choice = PlanChangeOperation(kind: "setExamChoice", group: group, subjects: subjects)
 
-    return await apply(
-      sentence: String(
-        localized: "Your plan studies \(names) for \(group).", table: "Plan",
-        comment:
-          "Says which options the plan studies for an exam's choice: the first argument lists them, the second is the choice, like its foreign language"
-      )
-    ) { api, token in
+    return await apply(sentence: PlanChangeWords.statement(choice, dateKind: dateKind)) {
+      api, token in
       try await api.chooseExamOption(token: token, goalId: goalId, group: group, subjects: subjects)
     }
   }

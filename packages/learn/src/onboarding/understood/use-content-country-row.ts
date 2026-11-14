@@ -36,7 +36,7 @@ export function useContentCountryRow() {
         editable: { key: "contentCountry", kind: "contentCountry" },
       }),
       id: "contentCountry",
-      label: contentCountry.kind === "exam" ? t("Exam country") : t("Content country"),
+      label: contentCountry.kind === "exam" ? t("Exam country") : t("Country"),
       note: lessonLanguage(contentCountry.lessonVariety) ?? undefined,
       value: contentCountry.name,
     };
