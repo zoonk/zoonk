@@ -52,3 +52,39 @@ test.describe("Learning tabs frame", () => {
     await page.context().close();
   });
 });
+
+test.describe("The way back on a computer", () => {
+  test("a page the learner's sidebar lists has none, and one it doesn't list keeps it", async ({
+    browser,
+  }) => {
+    const [withGoal, withoutGoal] = await Promise.all([
+      createTwoGoalLearner(),
+      createE2EUser(getBaseURL()),
+    ]);
+
+    const listed = await openAs(browser, withGoal.user);
+    await listed.setViewportSize({ height: 900, width: 1440 });
+    await listed.goto("/mistakes");
+
+    const sidebar = listed.getByRole("complementary", { name: "Sidebar" });
+
+    await expect(sidebar.getByRole("link", { name: "Mistakes notebook" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+
+    const listedBack = listed.getByRole("link", { includeHidden: true, name: "Back to Today" });
+    await expect(listedBack).toHaveCount(1);
+    await expect(listedBack).toBeHidden();
+
+    const unlisted = await openAs(browser, withoutGoal);
+    await unlisted.setViewportSize({ height: 900, width: 1440 });
+    await unlisted.goto("/completed-lessons");
+
+    await expect(
+      unlisted.getByRole("complementary", { name: "Sidebar" }).getByText("Completed lessons"),
+    ).toHaveCount(0);
+
+    await expect(unlisted.getByRole("link", { name: "Back to Today" })).toBeVisible();
+  });
+});
