@@ -298,7 +298,7 @@ No rail, aside or panel is drawn with nothing in it.
 
 ### D4. One strongest thing
 
-A screen has one filled button, its main action. What covers the page (a dialog, a sheet) asks its own question and fills its own answer. A suggestion follows from that: its answer is filled in its sheet, which covers the page, and in its panel on a page with no main action of its own; in the panel beside a page that has one (Today's "Start session") it is outline, so the page keeps one filled button (`useMainActionVariant`). A notice's buttons are outline wherever the page has a main action. Around them, buttons step down: outline, then ghost.
+A screen has one filled button, its main action. What covers the page (a dialog, a sheet) asks its own question and fills its own answer. A suggestion follows from that: its answer is filled in its sheet, which covers the page, and in its panel on a page with no main action of its own; in the panel beside a page that has one (Today's "Start") it is outline, so the page keeps one filled button (`useMainActionVariant`). A notice's buttons are outline wherever the page has a main action. Around them, buttons step down: outline, then ghost.
 
 - **Check.** Count the filled buttons on the screen, leaving out what covers it: one. In what covers it: one at most.
 
