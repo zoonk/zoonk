@@ -83,11 +83,14 @@ export async function recordReads({
           return item;
         }
 
-        const findings = entries.flatMap(({ files, finding }) =>
-          files.includes(id) ? [finding] : [],
+        // A finding leaves a record only through resolve, so a read replacing one keeps it.
+        const kept = "read" in item ? (item.read?.findings ?? []) : [];
+
+        const added = entries.flatMap(({ files, finding }) =>
+          files.includes(id) && !kept.some((earlier) => earlier.id === finding.id) ? [finding] : [],
         );
 
-        const read: Read = { at, by, findings };
+        const read: Read = { at, by, findings: [...kept, ...added] };
         return { ...item, read };
       });
 

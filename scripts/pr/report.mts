@@ -5,10 +5,16 @@ import { isRemote } from "./locate.mts";
 const KINDS = [
   {
     kind: "unsupported",
-    label: "Media the check can't read: write each picture as ![description](path)",
+    label:
+      "Media or a reference-style definition the check can't read: write each picture as ![description](path) and each link inline as [text](url)",
     summary: "in a form the check can't read",
   },
-  { kind: "missing", label: "Not found", summary: "not found" },
+  {
+    kind: "missing",
+    label:
+      "Not found: fix the path, or, for picture syntax shown as an example in code, leave out the !",
+    summary: "not found",
+  },
   {
     kind: "remote",
     label: "Not a local file: check the body before uploading",

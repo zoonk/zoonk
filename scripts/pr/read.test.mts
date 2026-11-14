@@ -92,6 +92,35 @@ describe("recording a read", () => {
     );
   });
 
+  it("keeps the findings already on a picture when a read replaces one with no name", async () => {
+    const { folder, root } = twoEqualPictures();
+    const [first, second] = (await readManifest(folder)) ?? [];
+    const open = { id: "kept-1", state: "open" as const, text: "Known unresolved fault" };
+    const unnamed = { at: "2026-11-14T12:00:00.000Z", by: "", findings: [open] };
+
+    writeFileSync(
+      join(folder, "capture.json"),
+      JSON.stringify([{ ...first, read: unnamed }, second]),
+    );
+
+    await recordReads({ by: "reader", entries: [], root });
+
+    const [reread] = (await readManifest(folder)) ?? [];
+
+    const result = await checkPictures({
+      manifests: [folder],
+      pictures: [join(folder, "first.png")],
+      repository: root,
+    });
+
+    assert.deepEqual(reread && readOf(reread)?.findings, [open]);
+
+    assert.deepEqual(
+      result.problems.map(({ kind }) => kind),
+      ["finding"],
+    );
+  });
+
   it("refuses a read with no reader's name", async () => {
     const { root } = twoEqualPictures();
 
