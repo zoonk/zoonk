@@ -49,6 +49,16 @@ export function toFirstRenderDay(availableAt: string | null): OpeningDay | null 
   return opens.toISOString().slice(0, "YYYY-MM-DD".length);
 }
 
+/**
+ * A cap's day is never more than 30 days away, so it's said by its day and month alone: no year,
+ * and so no clock to read, which a server and a browser could read on different days.
+ */
+export const OPENING_DATE_OPTIONS = {
+  day: "numeric",
+  month: "long",
+  timeZone: "UTC",
+} as const satisfies Intl.DateTimeFormatOptions;
+
 function nextLocalMidnight(now: number): number {
   const midnight = new Date(now);
   midnight.setHours(24, 0, 0, 0);

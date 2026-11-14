@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import {
   BellIcon,
@@ -11,6 +12,7 @@ import {
 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLimitText } from "../../_components/comes-back-words";
+import { useLiveLimit } from "../../_components/help-limit-notice";
 import { ChangeSaveError } from "../../_components/save-error";
 import { useSentenceSpace } from "../../_utils/locale";
 import { type GoalError } from "../goal-errors";
@@ -49,8 +51,9 @@ export function SignUpLink({ href }: { href: string }) {
 /** What starting a goal couldn't do. The way on (an account to create) is `GoalActions`' or the alert's. */
 export function GoalErrorMessage({ error }: { error: GoalError | null }) {
   const message = useLimitText(error?.message);
+  const limit = useLiveLimit(error?.limit ?? null);
 
-  if (!error) {
+  if (!error || (error.limit && !limit)) {
     return null;
   }
 
@@ -63,11 +66,11 @@ export function GoalErrorMessage({ error }: { error: GoalError | null }) {
   }
 
   return error.needsAccount ? (
-    <p className="text-base text-pretty" role="alert">
-      {message}
+    <p className={cn("text-base text-pretty", message.hidden && "invisible")} role="alert">
+      {message.text}
     </p>
   ) : (
-    <ChangeSaveError>{message}</ChangeSaveError>
+    <ChangeSaveError className={cn(message.hidden && "invisible")}>{message.text}</ChangeSaveError>
   );
 }
 

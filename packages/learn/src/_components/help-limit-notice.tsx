@@ -7,12 +7,21 @@ import { type ReactNode } from "react";
 import {
   isRollingCap,
   useComesBackLine,
-  useEnoughLine,
   useMapLessonsWords,
   useOpeningDay,
 } from "./comes-back-words";
 import { CreateAccountLink } from "./create-account-link";
 import { GateWords, SubscribeAction } from "./subscribe-gate";
+
+/** A refusal lasts until its instant: then the action it took the place of is back, and the server decides again. */
+export function useLiveLimit<Limit extends object>(limit: Limit | null): Limit | null {
+  const availableAt =
+    limit && "availableAt" in limit && typeof limit.availableAt === "string"
+      ? limit.availableAt
+      : null;
+
+  return useOpeningDay(availableAt) === "open" ? null : limit;
+}
 
 type SignUpRequired = { status: "signUpRequired" };
 
@@ -63,7 +72,7 @@ type LimitNoticeProps = {
   routes: { signUp: string; upgrade: string };
 };
 
-export type LimitWords = { line?: string; title?: string };
+export type LimitWords = { line?: string; provisional?: boolean; title?: string };
 
 /** What the learner asked for when the help ran out; without it the notice names no kind. */
 export type HelpKind = "explanations" | "messages" | "mockExams";
@@ -125,7 +134,7 @@ type CapTitles = { day: string; guest: string; rolling: string };
  */
 function useCapWords(limit: HelpLimit, titles: CapTitles): LimitWords {
   const t = useExtracted();
-  const line = useComesBackLine(limit);
+  const comesBack = useComesBackLine(limit);
 
   if (limit.status === "slowDown") {
     return { line: t("Take a short break, then try again.") };
@@ -139,7 +148,7 @@ function useCapWords(limit: HelpLimit, titles: CapTitles): LimitWords {
     return { title: titles.guest };
   }
 
-  return { line, title: isRollingCap(limit) ? titles.rolling : titles.day };
+  return { ...comesBack, title: isRollingCap(limit) ? titles.rolling : titles.day };
 }
 
 function useHelpTitles(kind: HelpKind | undefined): CapTitles {
@@ -254,27 +263,12 @@ export function OutlineLimitNotice({
 }
 
 /** When a used-up call cap comes back, for a screen or gate that draws its own way on. */
-export function useCallLimitLine(limit: CallLimit): string | undefined {
+export function useCallLimitLine(limit: CallLimit): LimitWords {
   return useComesBackLine(toCapLimit(limit));
 }
 
-export type CallNeed = "any" | "mock" | "task";
-
 /** Its screen's title says what ran out, so this is only the line and the way on. */
-export function CallLimitNotice({
-  limit,
-  need = "any",
-  ...props
-}: LimitNoticeProps & { limit: CallLimit; need?: CallNeed }) {
+export function CallLimitNotice({ limit, ...props }: LimitNoticeProps & { limit: CallLimit }) {
   const reached = toCapLimit(limit);
-  const comesBack = useComesBackLine(reached);
-  const enough = useEnoughLine(reached);
-
-  return (
-    <LimitNoticeBody
-      {...props}
-      limit={reached}
-      words={{ line: need === "any" ? comesBack : enough }}
-    />
-  );
+  return <LimitNoticeBody {...props} limit={reached} words={useComesBackLine(reached)} />;
 }

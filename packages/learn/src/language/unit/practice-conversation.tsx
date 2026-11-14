@@ -12,6 +12,7 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { useLiveLimit } from "../../_components/help-limit-notice";
 import { KindDot } from "../../_components/kind-tile";
 import {
   ListRowButton,
@@ -94,6 +95,7 @@ function CallSetup({
   const t = useExtracted();
   const [minutes, setMinutes] = useState(conversation.defaultMinutes);
   const call = useCallStart({ onStart: () => onStart(minutes) });
+  const limit = useLiveLimit(call.limit ?? conversation.limit);
 
   if (conversation.paused) {
     return <CallsPausedMessage className="pt-4" />;
@@ -108,8 +110,6 @@ function CallSetup({
       />
     );
   }
-
-  const limit = call.limit ?? conversation.limit;
 
   if (limit) {
     return (

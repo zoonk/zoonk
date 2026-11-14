@@ -15,9 +15,11 @@ export function isPlusGoalLimit(reason: GoalLimitReason): boolean {
 }
 
 /** What the gate says when the learner's plan has no room for another goal. */
-function usePlusLimitWords(limit: GoalLimit): { line?: string; title: string } | null {
-  const { line, title } = useLiveWords(useGoalLimitWords()(limit));
-  return isPlusGoalLimit(limit.reason) && title ? { line, title } : null;
+function usePlusLimitWords(
+  limit: GoalLimit,
+): { line?: string; provisional?: boolean; title: string } | null {
+  const { line, provisional, title } = useLiveWords(useGoalLimitWords()(limit));
+  return isPlusGoalLimit(limit.reason) && title ? { line, provisional, title } : null;
 }
 
 function PlanLink({ className }: { className: string }) {
@@ -46,6 +48,7 @@ export function GoalLimitNotice({ limit }: { limit: GoalLimit }) {
           <PlanLink className={buttonVariants({ size: "sm", variant: "outline" })} />
         )
       }
+      provisional={words.provisional}
       title={words.title}
     >
       {words.line}
@@ -66,7 +69,11 @@ export function GoalLimitBar({ limit, words }: { limit: GoalLimit; words?: boole
   }
 
   return (
-    <OnboardingBottomBar note={words && <GateWords line={said.line} title={said.title} />}>
+    <OnboardingBottomBar
+      note={
+        words && <GateWords line={said.line} provisional={said.provisional} title={said.title} />
+      }
+    >
       <SubscribeMainAction
         action={
           limit.reason === "activeGoals" && (

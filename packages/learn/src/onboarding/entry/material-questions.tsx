@@ -34,7 +34,7 @@ import { TypedGoal } from "./goal-outcomes";
 
 type Turn = { id: string; outcome: MaterialQuestionOutcome; question: string };
 
-function useQuestionLimitText(outcome: MaterialQuestionOutcome): string {
+function useQuestionLimitText(outcome: MaterialQuestionOutcome) {
   const t = useExtracted();
 
   return useLimitText(
@@ -56,19 +56,21 @@ function TurnAnswer({
 }) {
   const t = useExtracted();
   const toLabel = useCitationLabel();
-  const limitReached = useQuestionLimitText(outcome);
+  const limit = useQuestionLimitText(outcome);
 
   if (outcome.status !== "answered") {
     const messages: Record<Exclude<MaterialQuestionOutcome["status"], "answered">, string> = {
       failed: t("We couldn't answer that. Try again in a moment."),
-      limitReached,
+      limitReached: limit.text,
       signInRequired: t("Create an account to ask about your material."),
       slowDown: t("You're asking quickly. Try again in a few minutes."),
     };
 
     return (
       <TutorMessage identity={identity}>
-        <p className="text-destructive-text text-sm">{messages[outcome.status]}</p>
+        <p className={cn("text-destructive-text text-sm", limit.hidden && "invisible")}>
+          {messages[outcome.status]}
+        </p>
       </TutorMessage>
     );
   }

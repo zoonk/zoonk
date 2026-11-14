@@ -2,6 +2,7 @@
 
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { EnterLink } from "../../_components/enter-button";
@@ -68,7 +69,7 @@ function CallLimitScreen({
 }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
-  const line = useCallLimitLine(limit);
+  const { line, provisional } = useCallLimitLine(limit);
 
   return (
     <TaskFrame
@@ -93,7 +94,16 @@ function CallLimitScreen({
       headerTitle={title}
     >
       <CallOffMessage title={useCallLimitTitle(limit)}>
-        {line && <p className="text-muted-foreground text-base leading-relaxed">{line}</p>}
+        {line && (
+          <p
+            className={cn(
+              "text-muted-foreground text-base leading-relaxed",
+              provisional && "invisible",
+            )}
+          >
+            {line}
+          </p>
+        )}
       </CallOffMessage>
     </TaskFrame>
   );

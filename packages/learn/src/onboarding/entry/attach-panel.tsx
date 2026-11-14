@@ -217,9 +217,12 @@ export function AttachControls({ attach, autoFocus, language, onAttached }: Atta
         </p>
       )}
 
-      {errorText && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {errorText}
+      {errorText.text && (
+        <p
+          className={cn("text-destructive-text text-sm", errorText.hidden && "invisible")}
+          role="alert"
+        >
+          {errorText.text}
         </p>
       )}
     </>

@@ -3,7 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { type CallLimit } from "../../_components/help-limit-notice";
+import { type CallLimit, useLiveLimit } from "../../_components/help-limit-notice";
 import { TaskActions } from "../../_components/task-layout";
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
 import { MicrophoneOff } from "./call-intro-footer";
@@ -124,11 +124,13 @@ export function DroppedCallScreen({
   title: string;
 }) {
   const t = useExtracted();
+  const liveLimit = useLiveLimit(limit);
+  const retry = dropped.reason === "limit" && limit && !liveLimit ? "callAgain" : dropped.retry;
 
   return (
     <TaskFrame
       exitHref={null}
-      footer={<DroppedCallActions {...actions} retry={dropped.retry} />}
+      footer={<DroppedCallActions {...actions} retry={retry} />}
       headerTitle={title}
     >
       <CallOffMessage title={t("The call dropped")}>

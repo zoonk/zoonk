@@ -6,7 +6,7 @@ import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Disclosure } from "../_components/disclosure";
-import { MindMapLimitNotice } from "../_components/help-limit-notice";
+import { MindMapLimitNotice, useLiveLimit } from "../_components/help-limit-notice";
 import { LIST_GROUP_CLASS, ListGroup } from "../_components/list-group";
 import { PageSection } from "../_components/page";
 import { StatusRegion } from "../_components/status-region";
@@ -42,7 +42,7 @@ function NotMadeLine({
   const mountedAt = useMountTime();
   const { bulk, follower, page } = library;
   const { eligible, startable, stop } = page.createOffer;
-  const shownStop = bulk.stop ?? (startsNoMap(page.createOffer) ? stop : null);
+  const shownStop = useLiveLimit(bulk.stop ?? (startsNoMap(page.createOffer) ? stop : null));
   const { failed, onTheWay } = countChapterMaps(chapters);
 
   if (follower.isStuck) {

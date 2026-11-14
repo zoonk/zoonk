@@ -12,11 +12,23 @@ import { TaskActions } from "./task-layout";
 type GateLink = (props: { children: ReactNode; className?: string; href: string }) => ReactNode;
 
 /** What stopped, and at most one line under it. */
-export function GateWords({ line, title }: { line?: ReactNode; title?: string }) {
+export function GateWords({
+  line,
+  provisional,
+  title,
+}: {
+  line?: ReactNode;
+  provisional?: boolean;
+  title?: string;
+}) {
   return (
     <div className="flex min-w-0 flex-col gap-0.5" data-slot="gate-words">
       {title && <p className="text-sm font-medium text-pretty">{title}</p>}
-      {line && <p className="text-muted-foreground text-sm text-pretty">{line}</p>}
+      {line && (
+        <p className={cn("text-muted-foreground text-sm text-pretty", provisional && "invisible")}>
+          {line}
+        </p>
+      )}
     </div>
   );
 }
@@ -40,12 +52,14 @@ export function SubscribeGate({
   action,
   children,
   className,
+  provisional,
   title,
 }: {
   /** A second way on that isn't paying, such as "Go to your Plan". */
   action?: ReactNode;
   children?: ReactNode;
   className?: string;
+  provisional?: boolean;
   title: string;
 }) {
   const routes = useLearnRoutes();
@@ -56,7 +70,7 @@ export function SubscribeGate({
       data-slot="subscribe-gate"
       role="status"
     >
-      <GateWords line={children} title={title} />
+      <GateWords line={children} provisional={provisional} title={title} />
 
       <div className="flex flex-wrap gap-2">
         <SubscribeAction href={routes.upgrade} link={LearnLink} />

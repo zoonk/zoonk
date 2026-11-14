@@ -1,5 +1,6 @@
 "use client";
 
+import { useLiveLimit } from "../../_components/help-limit-notice";
 import { isPlusGoalLimit } from "../entry/goal-limit-notice";
 import { type GoalError, useGoalLimitWords } from "../goal-errors";
 import { type GoalLimit } from "../onboarding-actions";
@@ -53,6 +54,6 @@ export function useCardLimit({
 
   return {
     cardError,
-    plusLimit: findPlusLimit({ draft, error: cardError, goalLimit, hasAccount }),
+    plusLimit: useLiveLimit(findPlusLimit({ draft, error: cardError, goalLimit, hasAccount })),
   };
 }

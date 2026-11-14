@@ -91,8 +91,10 @@ export function CourseStartFailureNote({
       data-slot={START_FAILURE_SLOT}
       role="alert"
     >
-      <p className="text-muted-foreground text-sm text-pretty">
-        {failure.status === "limitReached" ? limitText : t("We couldn't start this course.")}
+      <p
+        className={cn("text-muted-foreground text-sm text-pretty", limitText.hidden && "invisible")}
+      >
+        {failure.status === "limitReached" ? limitText.text : t("We couldn't start this course.")}
       </p>
 
       <FailureAction

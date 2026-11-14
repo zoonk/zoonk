@@ -22,7 +22,7 @@ import { MindMapOutline } from "./mind-map-outline";
 import { type MindMapSave } from "./mind-map-save-button";
 import { MindMapThumbnail } from "./mind-map-thumbnail";
 import { MindMapDownloadLink, MindMapViewer } from "./mind-map-viewer";
-import { type MindMapRequest } from "./use-mind-map-request";
+import { type MindMapRequest, useLiveRefusal } from "./use-mind-map-request";
 
 const STATE_TEXT_CLASS = "text-muted-foreground text-sm text-pretty";
 
@@ -114,7 +114,8 @@ function MapRequest({
 }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
-  const { create, isPending, limit, retry, shown } = request;
+  const { create, isPending, retry } = request;
+  const { limit, shown } = useLiveRefusal(request, view.status);
   const { hint, line } = useStateLines({ place: "chapter", plus, shown, view });
   const working = shown === "drawing" || shown === "writingLessons";
   const failure = shown === "failed" || shown === "unreachable";

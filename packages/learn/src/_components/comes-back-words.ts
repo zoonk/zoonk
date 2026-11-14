@@ -1,11 +1,13 @@
 "use client";
 
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
+import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { useCallback, useSyncExternalStore } from "react";
-import { useFormatIsoDate } from "../_utils/iso-date";
+import { isoDateToUtc } from "../_utils/iso-date";
 import {
+  OPENING_DATE_OPTIONS,
   type OpeningDay,
   toFirstRenderDay,
   toOpeningDay,
@@ -57,7 +59,7 @@ type DayLines = {
 
 /** The sentence for the day something opens, with no sentence once it's open or unreadable. */
 function useDayLine() {
-  const formatDate = useFormatIsoDate();
+  const format = useFormatter();
 
   return (opensOn: OpeningDay | null, lines: DayLines): string | undefined => {
     if (!opensOn || opensOn === "open") {
@@ -72,7 +74,7 @@ function useDayLine() {
       return lines.tomorrow();
     }
 
-    return lines.onDate(formatDate(opensOn, "long"));
+    return lines.onDate(format.dateTime(isoDateToUtc(opensOn), OPENING_DATE_OPTIONS));
   };
 }
 
@@ -161,9 +163,13 @@ function useLineFor() {
  * the day its oldest use turns 30 days old, from the server's `availableAt`; a day's cap comes back
  * tomorrow. A free learner can also subscribe; a guest's way on is the button, so theirs has no line.
  */
-export function useComesBackLine(limit: HelpLimit): string | undefined {
+export function useComesBackLine(limit: HelpLimit): LimitWords {
   const lineFor = useLineFor();
-  return lineFor(limit, useOpeningDay(isRollingCap(limit) ? limit.availableAt : null));
+  const known = useIsMounted();
+  const opensOn = useOpeningDay(isRollingCap(limit) ? limit.availableAt : null);
+  const line = lineFor(limit, opensOn);
+
+  return { line, provisional: !known && opensOn !== null && line !== undefined };
 }
 
 function useLimitSentence() {
@@ -192,6 +198,7 @@ function useLimitSentence() {
 export function useMapLessonsWords(limit: MindMapLimit): LimitWords | null {
   const t = useExtracted();
   const dayLine = useDayLine();
+  const known = useIsMounted();
   const opensOn = useOpeningDay(isRollingCap(limit) ? limit.availableAt : null);
 
   if (limit.status !== "limitReached") {
@@ -235,6 +242,7 @@ export function useMapLessonsWords(limit: MindMapLimit): LimitWords | null {
           message: "You'll have enough tomorrow, or subscribe to make it now.",
         }),
     }),
+    provisional: !known,
     title: t("Not enough free lessons for this map yet"),
   };
 }
@@ -263,6 +271,7 @@ export function toCapWords(cap: RefusedCap, titles: { day: string; rolling: stri
 
 export function useLiveWords(words: CapWords | null): LimitWords {
   const lineFor = useLineFor();
+  const known = useIsMounted();
   const limit = words?.cap ? toHelpLimit(words.cap) : null;
   const opensOn = useOpeningDay(limit && isRollingCap(limit) ? limit.availableAt : null);
 
@@ -270,83 +279,26 @@ export function useLiveWords(words: CapWords | null): LimitWords {
     return {};
   }
 
-  return { line: limit ? lineFor(limit, opensOn) : words.line, title: words.title };
+  return {
+    line: limit ? lineFor(limit, opensOn) : words.line,
+    provisional: !known && opensOn !== null,
+    title: words.title,
+  };
 }
 
-export function useLimitText(text: LimitText | null | undefined): string {
+/** `hidden` while its day can't be named yet: the text keeps its place without showing. */
+export function useLimitText(text: LimitText | null | undefined): {
+  hidden: boolean;
+  text: string;
+} {
   const sentence = useLimitSentence();
   const words = useLiveWords(text && typeof text === "object" ? text : null);
 
   if (!text) {
-    return "";
+    return { hidden: false, text: "" };
   }
 
-  return typeof text === "string" ? text : sentence(words);
-}
-
-/**
- * When a start that needs more than is left (a speaking task of a set length) fits whole: the day
- * the server's `availableAt` gives, or tomorrow for a day's cap. The learner may have some left, so
- * these words never say they used it.
- */
-export function useEnoughLine(limit: HelpLimit): string | undefined {
-  const t = useExtracted();
-  const dayLine = useDayLine();
-  const { ready } = useLines();
-  const opensOn = useOpeningDay(isRollingCap(limit) ? limit.availableAt : null);
-
-  if (limit.status !== "limitReached" || limit.tier === "guest" || limit.period === "total") {
-    return undefined;
-  }
-
-  const lines: DayLines =
-    limit.tier === "plus"
-      ? {
-          onDate: (date) =>
-            t({
-              description:
-                "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
-              message: "You'll have enough on {date}.",
-              values: { date },
-            }),
-          today: () =>
-            t({
-              description:
-                "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
-              message: "You'll have enough later today.",
-            }),
-          tomorrow: () =>
-            t({
-              description:
-                "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
-              message: "You'll have enough tomorrow.",
-            }),
-        }
-      : {
-          onDate: (date) =>
-            t({
-              description:
-                "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
-              message: "You'll have enough on {date}, or subscribe to keep going.",
-              values: { date },
-            }),
-          today: () =>
-            t({
-              description:
-                "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
-              message: "You'll have enough later today, or subscribe to keep going.",
-            }),
-          tomorrow: () =>
-            t({
-              description:
-                "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
-              message: "You'll have enough tomorrow, or subscribe to keep going.",
-            }),
-        };
-
-  if (!isRollingCap(limit)) {
-    return lines.tomorrow();
-  }
-
-  return opensOn === "open" ? ready() : dayLine(opensOn, lines);
+  return typeof text === "string"
+    ? { hidden: false, text }
+    : { hidden: words.provisional === true, text: sentence(words) };
 }
