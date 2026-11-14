@@ -94,7 +94,7 @@ class PlanEditorResizeTest {
                     override val containerSize get() = with(density) { IntSize(width.roundToPx(), 900.dp.roundToPx()) }
                 }
             CompositionLocalProvider(LocalWindowInfo provides sized) {
-                ZoonkTheme { PlanEditor(page, edits(), section = null, onTellBuddy = {}, onDismiss = {}) }
+                ZoonkTheme { PlanEditor(page, edits(), section = null, onDismiss = {}) }
             }
         }
     }

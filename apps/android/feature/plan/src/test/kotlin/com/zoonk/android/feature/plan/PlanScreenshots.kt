@@ -688,7 +688,7 @@ class PlanScreenshots {
         write("$prefix-bases", compose.onRoot().captureRender().asAndroidBitmap())
 
         compose.onNodeWithText("Get a recommendation").performClick()
-        compose.onNodeWithText("Quick lesson").performClick()
+        compose.onNodeWithText("One short lesson each").performClick()
         compose.mainClock.advanceTimeBy(1_000)
         compose.waitForIdle()
         write("$prefix-bases-changed", compose.onRoot().captureRender().asAndroidBitmap())

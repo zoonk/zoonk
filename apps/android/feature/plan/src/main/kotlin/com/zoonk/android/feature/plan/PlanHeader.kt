@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,7 +38,6 @@ import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OptionsButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -61,7 +61,6 @@ internal fun PlanHeader(
     onAdjust: (() -> Unit)? = null,
 ) {
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        PlanEyebrow(page)
         PageTitleRow(stringResource(R.string.plan_title), verticalAlignment = Alignment.CenterVertically) {
             onAdjust?.let {
                 OutlinedButton(
@@ -72,11 +71,13 @@ internal fun PlanHeader(
             }
             PlanMenu(page, links, resume, isSaving, onSetStatus, rename, report)
         }
+        PlanSubtitle(page)
     }
 }
 
+/** The goal and its days left, the page's one line under its title. */
 @Composable
-private fun PlanEyebrow(page: PlanPageState) {
+private fun PlanSubtitle(page: PlanPageState) {
     val target = page.plan.schedule.targetDate
     val days = target?.let { ChronoUnit.DAYS.between(page.today, it.toJavaLocalDate()).toInt() }
     val left =
@@ -103,7 +104,12 @@ private fun PlanEyebrow(page: PlanPageState) {
     val text = left?.let { stringResource(R.string.plan_eyebrow, page.goal.displayName, it.text) } ?: page.goal.displayName
     val spoken = left?.let { stringResource(R.string.plan_eyebrow, page.goal.displayName, it.spoken) } ?: page.goal.displayName
 
-    Eyebrow(text, Modifier.semantics { contentDescription = spoken })
+    Text(
+        text,
+        Modifier.semantics { contentDescription = spoken },
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyMedium,
+    )
 }
 
 @Composable

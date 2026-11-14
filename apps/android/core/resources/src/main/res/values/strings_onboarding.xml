@@ -69,10 +69,9 @@
     <string name="onboarding_understood_free_account_title">More goals at once come with a free account</string>
     <!-- Under the goals typed past the ones the learner can study at once. -->
     <string name="onboarding_understood_locked_title">More goals at once need a subscription</string>
-    <plurals name="onboarding_understood_locked_line">
-        <item quantity="one">Pause another goal to start this one.</item>
-        <item quantity="other">Pause another goal to start these.</item>
-    </plurals>
+    <string name="onboarding_understood_locked_line_one">Pause another goal to start this one.</string>
+    <!-- More than one goal is locked. -->
+    <string name="onboarding_understood_locked_line_more">Pause another goal to start these.</string>
     <string name="onboarding_looks_right">Looks right</string>
     <string name="onboarding_fix_something">Fix something</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -337,8 +336,6 @@
     <string name="onboarding_reveal_phase_light_review">Light review</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">Today</string>
-    <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->
-    <string name="onboarding_reveal_phase_day">day %1$d of %2$d</string>
     <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
     <string name="onboarding_reveal_phase_position">%1$d of %2$d</string>
     <string name="onboarding_reveal_phase_place">phase %1$d of %2$d</string>

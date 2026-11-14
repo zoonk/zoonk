@@ -5,14 +5,8 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.feature.session.DayMission
-import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.MissionOpens
-import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.ui.components.LearnKind
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
-import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.StudyMission.Kind
 
 @Composable
@@ -157,102 +151,16 @@ fun missionOpenLabel(
     }
 }
 
-/** Kinds whose minutes are an estimate of work outside the session. */
-private val ESTIMATED = setOf(Kind.ASK_BUDDY, Kind.CALL, Kind.FIX_MISTAKE, Kind.PATTERN, Kind.PRONUNCIATION)
-
-/** The mission's line under its name: its count, its step, and its minutes. */
+/** A mission's one line under its name: only a mission that waits has one. */
 @Composable
-fun missionStepLine(
-    mission: DayMission,
-    block: DayStep?,
-): String? {
-    val locale = currentLocale()
-    val count =
-        if (mission.total >
-            1
-        ) {
-            "${formatNumber(mission.progress.toDouble(), locale)}/${formatNumber(mission.total.toDouble(), locale)}"
-        } else {
-            null
-        }
-    val step = missionStep(mission, block)
-    val minutes = mission.minutes?.takeIf { it > 0 }?.let { formatMinutes(it.toInt().coerceAtLeast(1), locale) }
-    val time = minutes?.let { if (mission.kind in ESTIMATED) stringResource(R.string.missions_estimate, it) else it }
-
-    return listOfNotNull(count, step, time).factsLine().ifEmpty { null }
-}
-
-@Composable
-private fun missionStep(
-    mission: DayMission,
-    block: DayStep?,
-): String? {
-    val detail = mission.detail
-    val wait = mission.waitReason
-
-    return when {
-        wait != null -> {
-            stringResource(R.string.missions_after_lessons)
-        }
-
-        mission.kind == Kind.FIX_MISTAKE -> {
-            stringResource(R.string.missions_from_notebook)
-        }
-
-        mission.kind == Kind.PATTERN -> {
-            detail?.patternTitle
-        }
-
-        mission.kind == Kind.PRONUNCIATION -> {
-            stringResource(R.string.missions_due_today)
-        }
-
-        mission.kind == Kind.CALL -> {
-            detail?.chapterTitle?.let { stringResource(R.string.missions_quick_call_unit, it) }
-                ?: stringResource(R.string.missions_quick_call)
-        }
-
-        mission.kind == Kind.ASK_BUDDY -> {
-            stringResource(R.string.missions_ask_anything)
-        }
-
-        mission.kind == Kind.FINISH_CHAPTER -> {
-            val title = detail?.title
-            val left = (mission.total - mission.progress).toInt()
-            val more = left - 1
-            when {
-                title == null && left == 1 -> stringResource(R.string.missions_last_lesson)
-                title == null -> pluralStringResource(R.plurals.missions_last_lessons, left, left)
-                more > 0 -> pluralStringResource(R.plurals.missions_lesson_and_more, more, title, more)
-                else -> title
-            }
-        }
-
-        detail?.title != null -> {
-            detail.title
-        }
-
-        block != null && mission.kind != Kind.WEEKLY_CHALLENGE && mission.kind != Kind.MOCK -> {
-            blockTitle(block)
-        }
-
-        mission.kind == Kind.REVIEW -> {
-            stringResource(R.string.session_block_review)
-        }
-
-        mission.kind == Kind.SOMETHING_NEW -> {
-            stringResource(R.string.missions_finish_new_lesson)
-        }
-
-        mission.kind == Kind.WEAK_SPOT -> {
-            stringResource(R.string.missions_most_room)
-        }
-
-        else -> {
-            null
-        }
+fun missionStepLine(mission: DayMission): String? =
+    if (mission.waitReason !=
+        null
+    ) {
+        stringResource(R.string.missions_after_lessons)
+    } else {
+        null
     }
-}
 
 /** The kind a mission's row wears when no block of the day stands for it; the buddy's face and the Trickster come with the characters. */
 val DayMission.learnKind: LearnKind get() = kind.learnKind

@@ -40,7 +40,6 @@ import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PageLoading
@@ -213,6 +212,10 @@ internal fun SubjectPage(
         aside = { SubjectAside(syllabus, subject, today, ask) },
         ask = ask,
         askInAside = true,
+        action =
+            subject.nextChapterId?.let { next ->
+                { modifier -> ContinueButton(started = subject.lessonsDone > 0, onClick = { actions.openChapter(next) }, modifier) }
+            },
     ) { asideBeside ->
         if (!asideBeside && (subject.notPlannedReason == null || subject.preparation != null)) {
             item(key = "coverage", contentType = "coverage") {
@@ -238,19 +241,17 @@ private fun SubjectHero(
     actions: SubjectActions,
     menu: @Composable () -> Unit,
 ) {
-    val next = subject.nextChapterId
-    val action: (@Composable (Modifier) -> Unit)? =
-        next?.let { { modifier -> ContinueButton(started = subject.lessonsDone > 0, onClick = { actions.openChapter(it) }, modifier) } }
-
-    DetailHero(action, menu) {
-        Eyebrow(subjectEyebrow(syllabus, subject))
+    DetailHero(menu) {
         Text(
             text = subject.name,
             modifier = Modifier.pageTitle(),
             style = MaterialTheme.typography.headlineMedium,
         )
 
-        subjectFacts(subject)?.let { Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle()) }
+        listOfNotNull(subjectLead(syllabus, subject), subjectFacts(subject))
+            .factsLine()
+            .ifEmpty { null }
+            ?.let { Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle()) }
         listOfNotNull(knownLine(subject), alsoInLine(syllabus.sharedExams, subject.sharedWith)).forEach {
             Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         }
@@ -260,17 +261,17 @@ private fun SubjectHero(
 @Composable
 internal fun factsStyle() = MaterialTheme.zoonkType.data
 
+/** What used to sit over the name leads its facts: its area, where it comes from when that's news, and its weight. */
 @Composable
-private fun subjectEyebrow(
+private fun subjectLead(
     syllabus: Syllabus,
     subject: SyllabusSubject,
-): String {
+): String? {
     val kind =
         when {
             subject.group != null -> subject.group
             subject.source == SyllabusSubject.Source.NOTICE && syllabus.fromMaterial -> stringResource(R.string.goalcontent_from_material)
-            subject.source == SyllabusSubject.Source.NOTICE -> stringResource(R.string.goalcontent_subject)
-            syllabus.kind != Syllabus.Kind.NOTICE -> stringResource(R.string.goalcontent_module)
+            subject.source == SyllabusSubject.Source.NOTICE || syllabus.kind != Syllabus.Kind.NOTICE -> null
             else -> beyondGroupName(syllabus)
         }
     val questions = subject.questions
@@ -289,7 +290,7 @@ private fun subjectEyebrow(
                 null
             }
         }
-    return listOfNotNull(kind, weight).factsLine()
+    return listOfNotNull(kind, weight).factsLine().ifEmpty { null }
 }
 
 /** The group a plan adds outside the learner's material or the exam's own documents. */

@@ -54,8 +54,6 @@
         <item quantity="one">%1$d of %2$d phase done</item>
         <item quantity="other">%1$d of %2$d phases done</item>
     </plurals>
-    <string name="plan_roadmap_day_of">day %1$d of %2$d</string>
-    <string name="plan_roadmap_number_of">%1$d of %2$d</string>
     <string name="plan_roadmap_phase_of">phase %1$d of %2$d</string>
     <string name="plan_roadmap_from">From %1$s</string>
     <!-- %1$s is the day the plan ends, such as "Nov 3". -->
@@ -68,7 +66,6 @@
     <string name="plan_roadmap_until_about_month">Until about %1$s</string>
     <string name="plan_today">Today</string>
     <string name="plan_mock_exam">Mock exam</string>
-    <string name="plan_phase_challenge">Phase challenge</string>
     <string name="plan_exam_day">Exam day</string>
     <string name="plan_goal_date">Goal date</string>
     <string name="plan_exam_date_label">%1$s · exam</string>
@@ -107,19 +104,19 @@
     <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
     <string name="plan_until_estimate_month_spoken">until about %1$s</string>
     <string name="plan_not_in_your_plan">Not in your plan</string>
-    <plurals name="plan_lessons_left_out">
-        <item quantity="one">%d lesson was left out</item>
-        <item quantity="other">%d lessons were left out</item>
+    <plurals name="plan_lessons_not_studied">
+        <item quantity="one">%d lesson not studied</item>
+        <item quantity="other">%d lessons not studied</item>
     </plurals>
-    <string name="plan_challenge_left_out">Challenge left out</string>
-    <!-- On a phase of the learner's plan: the plan has no room for its challenge before their goal's date. -->
-    <string name="plan_challenge_no_time">No time for this phase\'s challenge before your date</string>
+    <!-- A phase whose challenge, a duel with the Trickster, has no day before the plan's date. -->
+    <string name="plan_trickster_not_in_plan">The Trickster isn\'t in your plan</string>
+    <!-- A language phase whose challenge, a live call, has no day before the plan's date. -->
+    <string name="plan_call_not_in_plan">The call isn\'t in your plan</string>
+    <!-- The phase the learner is in, out of the plan's phases. -->
+    <string name="plan_roadmap_phase_number">Phase %1$d of %2$d</string>
     <string name="plan_continues_today">Continues today</string>
     <!-- %1$s is the day the plan resumes, such as "Nov 3". -->
     <string name="plan_continues_on">Continues %1$s</string>
-    <string name="plan_more_lessons_challenge_on">More lessons on the way · challenge %1$s</string>
-    <string name="plan_more_lessons_on_the_way">More lessons on the way</string>
-    <string name="plan_lessons_done_challenge_on">Lessons done · challenge %1$s</string>
     <string name="plan_up_next">Up next</string>
     <string name="plan_skipped">Skipped</string>
     <string name="plan_done">Done</string>
@@ -129,8 +126,8 @@
     </plurals>
     <string name="plan_more_lessons">More lessons</string>
     <string name="plan_lessons_on_the_way">Lessons on the way</string>
-    <string name="plan_skipped_known">Skipped because you already know it</string>
-    <string name="plan_going_deeper">Going deeper into an earlier topic</string>
+    <string name="plan_skipped_known">Skipped · you already know it</string>
+    <string name="plan_going_deeper">More on an earlier topic</string>
     <!-- %1$s is a day this month, such as "Nov 3". -->
     <string name="plan_far_from">From %1$s</string>
     <!-- %1$s is a month, such as "April" or "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "Dès %1$s"). -->
@@ -160,28 +157,20 @@
         <item quantity="other">%d more chapters</item>
     </plurals>
     <string name="plan_show_fewer_chapters">Show fewer chapters</string>
-    <!-- %1$s is one or more subject or area names, separated by commas. -->
-    <string name="plan_lessons_being_written_from">Lessons from %1$s are being written.</string>
-    <string name="plan_unit_lessons_being_written">More lessons for this unit are being written.</string>
-    <string name="plan_phase_lessons_being_written">More lessons for this phase are being written.</string>
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">Won</string>
     <string name="plan_challenge_next_session">In your next session</string>
     <string name="plan_challenge_opens_after_lessons">Opens after this phase\'s lessons</string>
     <string name="plan_challenge_questions">Questions on this phase, with no hints</string>
     <string name="plan_challenge_live_call">A live call where you get your point across</string>
-    <string name="plan_mock_next_sitting">Mock exam for the next sitting</string>
     <plurals name="plan_mock_exams_count">
         <item quantity="one">%d mock exam</item>
         <item quantity="other">%d mock exams</item>
     </plurals>
-    <plurals name="plan_mocks_next_sitting">
-        <item quantity="one">%d mock exam for the next sitting</item>
-        <item quantity="other">%d mock exams for the next sitting</item>
-    </plurals>
-    <plurals name="plan_mocks_next_sitting_on">
-        <item quantity="one">%1$d mock exam for the next sitting, on %2$s</item>
-        <item quantity="other">%1$d mock exams for the next sitting, on %2$s</item>
+    <!-- %2$s is a date, such as "Nov 8". -->
+    <plurals name="plan_mocks_before_next_exam">
+        <item quantity="one">%1$d mock exam before your next exam date, %2$s</item>
+        <item quantity="other">%1$d mock exams before your next exam date, %2$s</item>
     </plurals>
     <plurals name="plan_lessons_of">
         <item quantity="one">%1$d of %2$d lesson</item>
@@ -227,60 +216,48 @@
     <string name="plan_activity_writing">Writing</string>
     <string name="plan_activity_speaking">Speaking</string>
 
-    <string name="plan_pace">Pace</string>
-    <string name="plan_your_pace">Your pace</string>
-    <string name="plan_pace_value_finished">Finished</string>
-    <string name="plan_pace_value_past_date">Past date</string>
-    <string name="plan_pace_value_challenges">Challenges</string>
+    <string name="plan_pace">Schedule</string>
+    <string name="plan_your_pace">Your schedule</string>
     <string name="plan_pace_value_paused">Paused</string>
-    <string name="plan_pace_value_ahead">Ahead</string>
-    <string name="plan_pace_value_behind">Behind</string>
-    <string name="plan_pace_value_too_tight">Too tight</string>
-    <string name="plan_pace_value_on_pace">On pace</string>
     <string name="plan_time_a_day">%1$s a day</string>
-    <string name="plan_nothing_planned">Nothing is planned</string>
     <!-- "It" is the learner's paused goal. -->
     <string name="plan_nothing_planned_until_resume">Nothing is planned until you resume it.</string>
     <plurals name="plan_lessons_left">
         <item quantity="one">%d lesson left</item>
         <item quantity="other">%d lessons left</item>
     </plurals>
-    <string name="plan_pace_one_day_ahead">One day ahead</string>
     <plurals name="plan_pace_days_ahead">
         <item quantity="one">%d day ahead</item>
         <item quantity="other">%d days ahead</item>
     </plurals>
-    <string name="plan_pace_one_day_behind">One day behind</string>
     <plurals name="plan_pace_days_behind">
         <item quantity="one">%d day behind</item>
         <item quantity="other">%d days behind</item>
     </plurals>
-    <plurals name="plan_pace_lessons_to_catch_up">
-        <item quantity="one">%d lesson to catch up</item>
-        <item quantity="other">%d lessons to catch up</item>
+    <plurals name="plan_pace_lessons_behind">
+        <item quantity="one">%d lesson behind</item>
+        <item quantity="other">%d lessons behind</item>
     </plurals>
-    <plurals name="plan_pace_challenges_left">
-        <item quantity="one">%d challenge left</item>
-        <item quantity="other">%d challenges left</item>
+    <plurals name="plan_pace_challenges_to_go">
+        <item quantity="one">%d challenge to go</item>
+        <item quantity="other">%d challenges to go</item>
     </plurals>
-    <string name="plan_pace_finished">Plan finished</string>
-    <string name="plan_pace_needs_adjusting">Needs adjusting</string>
-    <string name="plan_pace_keeping_pace">Keeping pace</string>
-    <string name="plan_pace_past_your_date">Past your date</string>
-    <string name="plan_pace_win_challenge">Every lesson is done: win the challenge to finish your plan.</string>
-    <string name="plan_pace_win_challenges">Every lesson is done: win the challenges to finish your plan.</string>
-    <string name="plan_pace_no_longer_fits">Your plan no longer fits in the time left.</string>
-    <plurals name="plan_pace_earlier_lessons_first">
-        <item quantity="one">%d lesson from earlier days comes first: once you\'ve done it, you\'re keeping pace again.</item>
-        <item quantity="other">%d lessons from earlier days come first: once you\'ve done them, you\'re keeping pace again.</item>
-    </plurals>
+    <string name="plan_pace_finished">Finished</string>
+    <string name="plan_pace_up_to_date">Up to date</string>
+    <!-- More lessons in the plan than days left before its date. -->
+    <string name="plan_pace_not_enough_time">Not enough time</string>
+    <string name="plan_pace_date_passed">Date passed</string>
+    <!-- "They" are the lessons from earlier days the learner is behind on. -->
+    <string name="plan_pace_lessons_first_today">They come first on Today.</string>
+    <!-- %1$s is a number of minutes; %2$s is a number of days, such as "3 days". -->
+    <string name="plan_pace_more_minutes_a_day">Study %1$s more min a day for %2$s to be up to date.</string>
+    <string name="plan_add_time_or_later_date">Add time a day or pick a later date.</string>
+    <string name="plan_pace_win_challenge">Every lesson is done. Win the challenge to finish your plan.</string>
+    <string name="plan_pace_win_challenges">Every lesson is done. Win the challenges to finish your plan.</string>
+    <string name="plan_pace_no_longer_fits">You have more lessons than days left. Add time a day or pick a later date.</string>
     <plurals name="plan_pace_days">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
-    </plurals>
-    <plurals name="plan_pace_more_minutes">
-        <item quantity="one">%1$d more minute a day for %2$s and you\'re keeping pace again.</item>
-        <item quantity="other">%1$d more minutes a day for %2$s and you\'re keeping pace again.</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
         <item quantity="one">Your exam date has passed with %d lesson left.</item>
@@ -314,7 +291,6 @@
         <item quantity="one">%1$s lesson studied</item>
         <item quantity="other">%1$s lessons studied</item>
     </plurals>
-    <string name="plan_no_change_this_week">No change this week</string>
     <plurals name="plan_gain_this_week">
         <item quantity="one">+%d this week</item>
         <item quantity="other">+%d this week</item>
@@ -449,21 +425,23 @@
     <string name="plan_change_no_deadline">No deadline: you study everything at your own pace.</string>
     <string name="plan_change_full_course">You study everything: what doesn\'t fit before the exam comes after it.</string>
     <string name="plan_change_ends_at_exam">Your plan ends at the exam again.</string>
+    <!-- %1$s lists how each prerequisite is studied, such as "8 with every lesson, 3 with the first lessons only and 2 skipped". -->
+    <string name="plan_change_bases">Prerequisites: %1$s.</string>
     <plurals name="plan_change_bases_deep">
-        <item quantity="one">%d prerequisite is studied in depth.</item>
-        <item quantity="other">%d prerequisites are studied in depth.</item>
+        <item quantity="one">%d with every lesson</item>
+        <item quantity="other">%d with every lesson</item>
     </plurals>
     <plurals name="plan_change_bases_essential">
-        <item quantity="one">%d prerequisite keeps its essentials.</item>
-        <item quantity="other">%d prerequisites keep their essentials.</item>
+        <item quantity="one">%d with the first lessons only</item>
+        <item quantity="other">%d with the first lessons only</item>
     </plurals>
     <plurals name="plan_change_bases_quick">
-        <item quantity="one">%d prerequisite gets a quick lesson.</item>
-        <item quantity="other">%d prerequisites get a quick lesson each.</item>
+        <item quantity="one">%d with one short lesson</item>
+        <item quantity="other">%d with one short lesson</item>
     </plurals>
     <plurals name="plan_change_bases_skip">
-        <item quantity="one">%d prerequisite is skipped.</item>
-        <item quantity="other">%d prerequisites are skipped.</item>
+        <item quantity="one">%d skipped</item>
+        <item quantity="other">%d skipped</item>
     </plurals>
     <string name="plan_change_more_time_for">More time for %1$s.</string>
     <!-- A change that removed the plan's focus: no subject gets more time now. -->
@@ -685,86 +663,53 @@
     <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. -->
     <string name="plan_exam_choice_left_out">Until you pick, your plan and mocks leave out %1$s.</string>
     <string name="plan_prerequisites">Prerequisites</string>
-    <string name="plan_choose_prerequisites">Choose prerequisites</string>
-    <string name="plan_prerequisites_exam">Topics that come up a lot build on these.</string>
-    <string name="plan_prerequisites_goal">Your goal\'s final work builds on these.</string>
     <plurals name="plan_bases_mixed">
-        <item quantity="one">%1$d prerequisite, %2$s with your choice.</item>
-        <item quantity="other">%1$d prerequisites, %2$s with your choices.</item>
+        <item quantity="one">%1$d prerequisite · your choices · %2$s</item>
+        <item quantity="other">%1$d prerequisites · your choices · %2$s</item>
     </plurals>
     <!-- %1$d is how many prerequisites; %2$s is the time all of them take together, such as "2 h". -->
     <plurals name="plan_bases_deep">
-        <item quantity="one">%1$d prerequisite, %2$s in depth.</item>
-        <item quantity="other">%1$d prerequisites, %2$s in depth.</item>
+        <item quantity="one">%1$d prerequisite · every lesson · %2$s</item>
+        <item quantity="other">%1$d prerequisites · every lesson · %2$s</item>
     </plurals>
     <!-- %1$d is how many prerequisites; %2$s is the time all of them take together, such as "2 h". -->
     <plurals name="plan_bases_quick">
-        <item quantity="one">%1$d prerequisite, %2$s for its quick lesson.</item>
-        <item quantity="other">%1$d prerequisites, %2$s for a quick lesson each.</item>
+        <item quantity="one">%1$d prerequisite · one short lesson each · %2$s</item>
+        <item quantity="other">%1$d prerequisites · one short lesson each · %2$s</item>
     </plurals>
     <plurals name="plan_bases_skip">
-        <item quantity="one">%1$d prerequisite, skipped.</item>
-        <item quantity="other">%1$d prerequisites, all skipped.</item>
+        <item quantity="one">%1$d prerequisite · skipped</item>
+        <item quantity="other">%1$d prerequisites · skipped</item>
     </plurals>
     <!-- %1$d is how many prerequisites; %2$s is the time all of them take together, such as "2 h". -->
     <plurals name="plan_bases_essential">
-        <item quantity="one">%1$d prerequisite, %2$s for its essentials.</item>
-        <item quantity="other">%1$d prerequisites, %2$s for their essentials.</item>
+        <item quantity="one">%1$d prerequisite · first lessons only · %2$s</item>
+        <item quantity="other">%1$d prerequisites · first lessons only · %2$s</item>
     </plurals>
-    <plurals name="plan_bases_known">
-        <item quantity="one">%d prerequisite you showed you know is already out of your plan.</item>
-        <item quantity="other">%d prerequisites you showed you know are already out of your plan.</item>
-    </plurals>
-    <string name="plan_bases_show_known">Already know some? Show it in a test and they leave your plan on their own.</string>
-    <string name="plan_base_deep">In depth</string>
-    <string name="plan_base_essential">Essentials</string>
-    <string name="plan_base_quick">Quick lesson</string>
+    <!-- Choice to study a prerequisite with all its lessons. -->
+    <string name="plan_base_deep">Every lesson</string>
+    <!-- Choice to study only the first, most important lessons of a prerequisite. -->
+    <string name="plan_base_essential">First lessons only</string>
+    <!-- Choice to study a prerequisite as one short lesson. -->
+    <string name="plan_base_quick">One short lesson each</string>
     <string name="plan_base_skip">Skip</string>
-    <string name="plan_base_deep_description">Every lesson</string>
-    <string name="plan_base_essential_description">The first third of the lessons</string>
-    <string name="plan_base_quick_description">One short lesson each</string>
-    <string name="plan_base_skip_description">Leave them out of your plan</string>
     <string name="plan_all_prerequisites">All prerequisites</string>
     <string name="plan_recommended">Recommended</string>
-    <string name="plan_bases_differ">Your prerequisites have different choices. Picking one above applies it to all.</string>
-    <string name="plan_bases_studied_stay">Prerequisites you\'ve studied stay studied.</string>
     <string name="plan_choose_by_subject">Choose by subject</string>
     <string name="plan_base_studied_name">%1$s (studied)</string>
     <string name="plan_base_names_time">%1$s · %2$s</string>
-    <string name="plan_different_choices">Different choices</string>
+    <string name="plan_different_choices">Mixed</string>
     <string name="plan_base_studied">Studied</string>
     <string name="plan_get_recommendation">Get a recommendation</string>
     <string name="plan_recommendation_failed">We couldn\'t get a recommendation.</string>
     <string name="plan_still_building">Your plan is still being built. Try again in a moment.</string>
-    <string name="plan_recommend_deep">Your time covers everything, so we recommend each prerequisite in depth.</string>
-    <plurals name="plan_recommend_quick_exam">
-        <item quantity="one">%d day left: we recommend a quick lesson for each prerequisite, so there\'s time for what comes up most.</item>
-        <item quantity="other">%d days left: we recommend a quick lesson for each prerequisite, so there\'s time for what comes up most.</item>
-    </plurals>
-    <plurals name="plan_recommend_quick_goal">
-        <item quantity="one">%d day left: we recommend a quick lesson for each prerequisite, so there\'s time for what matters most to your goal.</item>
-        <item quantity="other">%d days left: we recommend a quick lesson for each prerequisite, so there\'s time for what matters most to your goal.</item>
-    </plurals>
-    <string name="plan_recommend_essential_exam">We recommend the essentials, so the topics that build on them make sense.</string>
-    <string name="plan_recommend_essential_goal">We recommend the essentials, so what builds on them makes sense.</string>
+    <string name="plan_recommend_deep">We recommend every lesson. Your time covers them.</string>
+    <string name="plan_recommend_essential">We recommend the first lessons only.</string>
+    <string name="plan_recommend_quick">We recommend one short lesson each, so there\'s time for the rest.</string>
     <string name="plan_recommendation_followed">Your plan already follows it.</string>
     <string name="plan_checking_changes">Checking what changes…</string>
     <string name="plan_check_failed">We couldn\'t check what changes.</string>
     <string name="plan_stays_as_it_is">Your plan stays as it is.</string>
-    <string name="plan_save_choices">Save choices</string>
-    <plurals name="plan_bases_topics_come_in">
-        <item quantity="one">%1$d topic comes in: %2$s.</item>
-        <item quantity="other">%1$d topics come in: %2$s.</item>
-    </plurals>
-    <plurals name="plan_bases_topics_leave">
-        <item quantity="one">%1$d topic leaves: %2$s.</item>
-        <item quantity="other">%1$d topics leave: %2$s.</item>
-    </plurals>
-    <string name="plan_bases_everything_fits">Everything then fits by your date.</string>
-    <string name="plan_bases_exam_share_same">By your date: %1$s of the exam, as now.</string>
-    <string name="plan_bases_goal_share_same">By your date: %1$s of your goal, as now.</string>
-    <string name="plan_bases_exam_share">By your date: %1$s of the exam, against %2$s now.</string>
-    <string name="plan_bases_goal_share">By your date: %1$s of your goal, against %2$s now.</string>
     <string name="plan_tools_title">You\'ll use</string>
     <string name="plan_tool_have_it">You have it</string>
     <string name="plan_tool_setup_for">Setup lesson for %1$s</string>
@@ -800,14 +745,6 @@
     <string name="plan_cadence_weekly_effect">Recommended: a little every week, which improves writing the most.</string>
     <string name="plan_cadence_biweekly_effect">The same practice in alternate weeks: less spread out, more at a time.</string>
     <string name="plan_cadence_final_weeks_effect">Less spaced practice, concentrated in the final weeks before the exam.</string>
-    <string name="plan_how_is_it_going">How is it going?</string>
-    <string name="plan_too_easy">Too easy</string>
-    <string name="plan_too_hard">Too hard</string>
-    <string name="plan_more_practice">More practice</string>
-    <string name="plan_more_explanation">More explanation</string>
-    <string name="plan_tell_buddy">Something else? Tell %1$s</string>
-    <string name="plan_tell_buddy_description">In your own words, like “less on weekends”. You\'ll see the change before it applies.</string>
-    <string name="plan_tell_buddy_description_modules">In your own words, like “skip a module” or “less on weekends”. You\'ll see the change before it applies.</string>
 
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_none">Not even a whole day covers everything in depth by %1$s.</string>
@@ -890,7 +827,7 @@
     <string name="plan_time_covers_everything_by_month">Your time covers everything by %1$s</string>
     <string name="plan_covered_not_enough">%1$s a day isn\'t enough time to cover your goal.</string>
     <!-- A button that works out the daily time that covers the whole goal. Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything". -->
-    <string name="plan_find">Find the time that covers everything</string>
+    <string name="plan_find">Find the time</string>
     <string name="plan_finding">Finding the time…</string>
     <string name="plan_try_again">Try again</string>
     <string name="plan_find_building">Your plan is still being built. Try again in a moment.</string>
@@ -942,8 +879,7 @@
     <string name="plan_suggestion_next">Next</string>
     <string name="plan_suggestion_position">%1$s of %2$s</string>
     <string name="plan_goal_paused">Your %1$s goal is paused</string>
-    <string name="plan_no_longer_fits">Your plan no longer fits</string>
-    <string name="plan_catch_up">A little to catch up</string>
+    <string name="plan_no_longer_fits">More lessons than days left</string>
     <string name="plan_adjust">Adjust</string>
     <string name="plan_go_to_today">Go to Today</string>
     <string name="plan_suggestion">Plan suggestion</string>

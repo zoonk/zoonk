@@ -563,14 +563,11 @@ private fun PlanPhases(
             },
         )
         if (current != null) {
-            val day = current.dayOf(today)
             val name = phaseName(current, mocksRequirePlus)
             val place = stringResource(R.string.onboarding_reveal_phase_place, currentIndex + 1, phases.size)
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
-                    text =
-                        listOfNotNull(name, day?.let { stringResource(R.string.onboarding_reveal_phase_day, it.day, it.days) })
-                            .factsLine(),
+                    text = name,
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.labelMedium,
                 )

@@ -130,14 +130,14 @@ private fun AfterExamRow(
     ListRow(
         headline = { Text(phaseName(phase, page.mocksRequirePlus)) },
         leading = { StatusMark(MarkStatus.Todo) },
-        supporting = if (count > 0) ({ Text(mocksForNextSitting(page, count)) }) else null,
+        supporting = if (count > 0) ({ Text(mocksBeforeNextExam(page, count)) }) else null,
         meta =
             end?.let { { TrailingText(it) } },
     )
 }
 
 @Composable
-private fun mocksForNextSitting(
+private fun mocksBeforeNextExam(
     page: PlanPageState,
     count: Int,
 ): String {
@@ -145,9 +145,9 @@ private fun mocksForNextSitting(
         page.plan.schedule.nextSitting
             ?.toJavaLocalDate()
     return if (sitting != null) {
-        pluralStringResource(R.plurals.plan_mocks_next_sitting_on, count, count, formatPlanDate(sitting, page.today, currentLocale()))
+        pluralStringResource(R.plurals.plan_mocks_before_next_exam, count, count, formatPlanDate(sitting, page.today, currentLocale()))
     } else {
-        pluralStringResource(R.plurals.plan_mocks_next_sitting, count, count)
+        pluralStringResource(R.plurals.plan_mock_exams_count, count, count)
     }
 }
 
