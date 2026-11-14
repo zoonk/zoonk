@@ -24,6 +24,7 @@
   "mindmaps_empty_title": "3d591b056201e967af93799457100c74bbfe28d99f960cfe0f25f6b5a8c1a207",
   "mindmaps_failed": "3956a173932b8307993c01a0ab1eea017898402fed89af58cd5c2dba4639a5be",
   "mindmaps_fit": "65265aa963046da1dd81f6e13717b0c9f7aca1cfca730591600d94a3b1c848b0",
+  "mindmaps_free_lessons_note": "89263801dec00e0f74513d2e1e8ebfa0179526c428b81bc997f499c40ee618a0",
   "mindmaps_in_short": "1c3594134a5b9a5195a20630a9172feb3e0320955c80bc8cee0d2f313955f3e7",
   "mindmaps_keep_studying": "549730140204158ec1d51c1ab3dc52b1ebf993d8fde03ecda3c7d60b6fa91e2b",
   "mindmaps_lesson_map": "e5b698006c98ad721a804cea35ee9b3a49f82fcf1f37bcdb9f5bccdda01858b7",
@@ -31,6 +32,7 @@
   "mindmaps_lessons_empty_description": "fb6520ff49b91a0bae0897272acb54dd325f95a3ea28a3966aa908d87cc0d3d1",
   "mindmaps_lessons_empty_title": "cb8751b3261c3e3be9258cb443e4e64a7de43e089af703321b8c6e0e918432eb",
   "mindmaps_lessons_first_free": "76ca6da61329afead036bc9db3fe559f1a69bd875571f9505ef2bd5b9262458e",
+  "mindmaps_lessons_to_write": "0ac5fcfa54559be7f2b38ef3012e5692abbc30f65c3e09a2f4ee0fb6e104618c",
   "mindmaps_map_gone": "1b56bc26c227a731e76e56df3633e310a5cc6ca312de82dcc054732aac299390",
   "mindmaps_next": "f54709fe6b8f8e6a351147d63d73299b7ba7c690e0117e53391a53404fc6c3e0",
   "mindmaps_no_longer_available": "62cfe62b5cb5f0ad2185a696d580c19941c072fd06e05cb252b591102853de3d",
@@ -142,6 +144,11 @@
     <string name="mindmaps_create_all">Alle erstellen</string>
     <!-- A folded list of the chapters whose mind maps can't be made right now. -->
     <string name="mindmaps_other_chapters">Weitere Kapitel</string>
+    <string name="mindmaps_free_lessons_note">Für eine dieser Mindmaps erstellen wir zuerst ihre Lektionen, und sie werden auf deine kostenlosen Lektionen angerechnet.</string>
+    <plurals name="mindmaps_lessons_to_write">
+        <item quantity="one">%1$s Lektion zu erstellen</item>
+        <item quantity="other">%1$s Lektionen zu erstellen</item>
+    </plurals>
     <!-- The Mind maps page's tabs: chapters' maps, lessons' maps, and the maps the learner saved. -->
     <string name="mindmaps_tab_chapters">Kapitel</string>
     <string name="mindmaps_tab_lessons">Lektionen</string>

@@ -67,6 +67,11 @@
     <string name="mindmaps_create_all">Create all</string>
     <!-- A folded list of the chapters whose mind maps can't be made right now. -->
     <string name="mindmaps_other_chapters">Other chapters</string>
+    <string name="mindmaps_free_lessons_note">Making one of these maps writes its lessons first, and they count toward your free lessons.</string>
+    <plurals name="mindmaps_lessons_to_write">
+        <item quantity="one">%1$s lesson to write</item>
+        <item quantity="other">%1$s lessons to write</item>
+    </plurals>
     <!-- The Mind maps page's tabs: chapters' maps, lessons' maps, and the maps the learner saved. -->
     <string name="mindmaps_tab_chapters">Chapters</string>
     <string name="mindmaps_tab_lessons">Lessons</string>

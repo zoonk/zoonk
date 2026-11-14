@@ -261,7 +261,8 @@ private fun MapFacts.rowTitle(
 
 /**
  * What the row says about its map; the chapter's page spells out the wait under a title that names
- * it. The Mind maps page says once, above its rows, what writing a chapter's lessons first means.
+ * it. Where Create writes lessons for a free learner the row says what that spends; on the Mind maps
+ * page the fold says it once, so a row gives only its count.
  */
 @Composable
 private fun MapFacts.statusLine(
@@ -286,6 +287,10 @@ private fun MapFacts.statusLine(
         MindMapShown.Available, MindMapShown.Refused -> {
             val count = lessonsToWrite.toInt()
             when {
+                count > 0 && !plus && library -> {
+                    pluralStringResource(R.plurals.mindmaps_lessons_to_write, count, formatNumber(count.toDouble(), currentLocale()))
+                }
+
                 library -> {
                     null
                 }

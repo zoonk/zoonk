@@ -24,6 +24,7 @@
   "mindmaps_empty_title": "e80079062de59c1c83d55735d07e04d361f9cca0a655d836ddbc29c92fc1015b",
   "mindmaps_failed": "94875ba14adb7ae81978bbb1469601d0340c3348f6aec29c68213ae6a9859cfe",
   "mindmaps_fit": "25bb327d7426d900d38a8f3e341ea10e2843f67ceab5143fe12313a9419eaf7b",
+  "mindmaps_free_lessons_note": "6f8cc897b53b8ba1e24a8f5c85b607b44d468fae139344773ed782a71b9c1aef",
   "mindmaps_in_short": "f0d66cba29693fc07d5eaa4b72204893e7db8d2905cdbdf1e417ef90a15f3ad7",
   "mindmaps_keep_studying": "fbef05effc8eda9e1183c733635447826cef97c8230d082ca501299363761216",
   "mindmaps_lesson_map": "f56b79f9b7da17b37772870b15fff5673baf2c4d93af86e6407c145fd294cabf",
@@ -31,6 +32,7 @@
   "mindmaps_lessons_empty_description": "fbc4dfbc6fd1bc3a7861ad9231daad1ea8883efe9a38a8616e40cd0f50b1e279",
   "mindmaps_lessons_empty_title": "86897c63a43776c4e551c5fa27e1e4f267ea2c3bb5109666f66a5c900566d4a8",
   "mindmaps_lessons_first_free": "96768a9e8994e39fc18f80190029a833e8230c41f4c12553241cd1692e2cc36a",
+  "mindmaps_lessons_to_write": "4097cf88f14a524efe3bae340e62a54702752cc0d9c000ab9856a7b9d310e4f4",
   "mindmaps_map_gone": "65d68242aa2ed68e3e09dfd31fe25fbe1ff948ac58dea67967ceceb43b8e539b",
   "mindmaps_next": "ace667eec871f6a29376e55b539d5524b8ad1266dd7e2b7536e91545f0e65141",
   "mindmaps_no_longer_available": "ec5fd467fcecc8a54e73d7250d99883fc1ecf9be4d7cfd7adf1fb44e090ff147",
@@ -140,6 +142,10 @@
     <string name="mindmaps_create_all">すべて作成する</string>
     <!-- A folded list of the chapters whose mind maps can't be made right now. -->
     <string name="mindmaps_other_chapters">ほかの章</string>
+    <string name="mindmaps_free_lessons_note">これらのマインドマップを作ると、先にそのレッスンが作成され、無料レッスンの利用数に含まれます。</string>
+    <plurals name="mindmaps_lessons_to_write">
+        <item quantity="other">%1$sレッスンを作成予定</item>
+    </plurals>
     <!-- The Mind maps page's tabs: chapters' maps, lessons' maps, and the maps the learner saved. -->
     <string name="mindmaps_tab_chapters">章</string>
     <string name="mindmaps_tab_lessons">レッスン</string>

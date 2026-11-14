@@ -24,6 +24,7 @@
   "mindmaps_empty_title": "fcdf4bdf86605ae58e090a83e7c6f86a5574fb343a31118d443ac12f74b87666",
   "mindmaps_failed": "e4e62367b44859ec28dbb8a5421b1af5df5f6bd71ebef78244365bc178e8b8e2",
   "mindmaps_fit": "5b0cbb0433980cf81aa01c5f3a46bab5e334ed604db7154eaf6eab0e17518ad6",
+  "mindmaps_free_lessons_note": "02670ec7b5cb0fe48dece477b54b6787965c5075fae889695db50928f71edba2",
   "mindmaps_in_short": "f4ec32fee0f215d1d091d939873ba11c4d5c343440cfdcb6ed6fbee8fe7ee184",
   "mindmaps_keep_studying": "70ffcca5db70373084f4c2a3d5c1ce330a9b7a9217ff95ec4f24914005f373aa",
   "mindmaps_lesson_map": "753240e94f4b610f1b961667775a9c73f49b5e8ecccf789e636eafa62cdd6712",
@@ -31,6 +32,7 @@
   "mindmaps_lessons_empty_description": "a9e0eff8e156caa2bdb2fe274dec15d53bba14ad2845b665ba7ea39bd1dc4d48",
   "mindmaps_lessons_empty_title": "98889c28ffc1fec284ee7b99eb5e9f10c20bae5e42328d7f79d640e527e6ec5d",
   "mindmaps_lessons_first_free": "d4f4f4f00b1e80e5d049c551c0433454307fccdd9fd72e04a513d8b3cc863aaa",
+  "mindmaps_lessons_to_write": "b9f4568ff3ee15eeba4876e70870d3d7fc2630a2a7440650642e551e2df1466c",
   "mindmaps_map_gone": "df3f61ef1d34ea410f369c8c856e816d16b51aed6468b6c1e9c2c89e245d1c35",
   "mindmaps_next": "444685710f8eb154a784f0d2eed20f1601ec5c04a2eeb2b41e543a747615ce84",
   "mindmaps_no_longer_available": "4eee6b62d142fc8e59344bfddfbe422b02903288f194006c82994f9efb0ac609",
@@ -140,6 +142,10 @@
     <string name="mindmaps_create_all">모두 만들기</string>
     <!-- A folded list of the chapters whose mind maps can't be made right now. -->
     <string name="mindmaps_other_chapters">다른 챕터</string>
+    <string name="mindmaps_free_lessons_note">이 마인드맵을 만들면 레슨을 먼저 만들어요. 만든 레슨은 무료 레슨 수에 포함돼요.</string>
+    <plurals name="mindmaps_lessons_to_write">
+        <item quantity="other">만들 레슨 %1$s개</item>
+    </plurals>
     <!-- The Mind maps page's tabs: chapters' maps, lessons' maps, and the maps the learner saved. -->
     <string name="mindmaps_tab_chapters">챕터</string>
     <string name="mindmaps_tab_lessons">레슨</string>

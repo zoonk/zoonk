@@ -24,6 +24,7 @@
   "mindmaps_empty_title": "806324dc3119b3095114e5e4c3989edbe945937560db0fc723e2c8a943e2f8a3",
   "mindmaps_failed": "f07c06a153090b6ea847c197813e4d0e0ff99b24d06ecd8b77be441aab8d0d28",
   "mindmaps_fit": "3f91b91c817f76ae407b94fc49afcc196ad499e9cf544af3a271f1ef5e0fc18b",
+  "mindmaps_free_lessons_note": "815a708f74afbc8934870280a5694c5fdf380fdb2319e90944df4db1a9555788",
   "mindmaps_in_short": "e2d3882f2bac2ce645ffcb2c96f779d79ca2d2f6c8fbf1e207187dd96c007c18",
   "mindmaps_keep_studying": "267911c89379b5fd5553b5a56f276e34497960d06bdf1cec89284ab48f84f28f",
   "mindmaps_lesson_map": "730e16bdacfb718e3edcefa69f5950b9d6008aacc139c446c895080e88da42e3",
@@ -31,6 +32,7 @@
   "mindmaps_lessons_empty_description": "4ca7aa64d865286db68b2f33ec69fa62cc2fa1d33c5dfb2e876bef36e0cf42eb",
   "mindmaps_lessons_empty_title": "215282957758e4cdf2c51533c8a5b8e2e22f9857d9519cc214332997ba924b8b",
   "mindmaps_lessons_first_free": "236ca94ca533059b99b8867482f402eb30230dd419b2c64ccc616b829db23182",
+  "mindmaps_lessons_to_write": "ac1a522ba744bea4f0cdad520b5ecab91db9ebceb22ca7f78d939cdaced24c65",
   "mindmaps_map_gone": "bde2c4165f25174db9a5c333c207a0f8a969b033458008ce788e9d42ace3d298",
   "mindmaps_next": "ed04ada3de3e40253b256eb6858e45f79cc83d90b352e064b9acfab713d1aa39",
   "mindmaps_no_longer_available": "9b7cf79d282a578610102033bd69c7064d74ac2a2ebcebba61f722c9c1bb12fc",
@@ -144,6 +146,12 @@
     <string name="mindmaps_create_all">Tout créer</string>
     <!-- A folded list of the chapters whose mind maps can't be made right now. -->
     <string name="mindmaps_other_chapters">Autres chapitres</string>
+    <string name="mindmaps_free_lessons_note">Pour créer une de ces cartes, on prépare d’abord ses leçons, qui sont décomptées de tes leçons gratuites.</string>
+    <plurals name="mindmaps_lessons_to_write">
+        <item quantity="one">%1$s leçon à préparer</item>
+        <item quantity="many">%1$s leçons à préparer</item>
+        <item quantity="other">%1$s leçons à préparer</item>
+    </plurals>
     <!-- The Mind maps page's tabs: chapters' maps, lessons' maps, and the maps the learner saved. -->
     <string name="mindmaps_tab_chapters">Chapitres</string>
     <string name="mindmaps_tab_lessons">Leçons</string>

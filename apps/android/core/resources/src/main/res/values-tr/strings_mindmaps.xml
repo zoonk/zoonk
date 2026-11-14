@@ -24,6 +24,7 @@
   "mindmaps_empty_title": "94f08c0c5fb01c9d9103f44830ac09f4e2bea91641a3844e4ce2cd349a23df71",
   "mindmaps_failed": "292f458295f824ff1bf48df0f01e304a7ec450d6b281e84feda205e843980f40",
   "mindmaps_fit": "13ce7ea637bbd0381a39ca82b622679f58a53abfb0c3e68542dd559d79e512ca",
+  "mindmaps_free_lessons_note": "47423a3a0ef6e187288811dea67479abe4a6adb787f3978ec4abe5ca9f4662e2",
   "mindmaps_in_short": "510935e0b38e3a3470604c09f491aaa500aa08dad6b824f8660861ff1b97a43a",
   "mindmaps_keep_studying": "603b9bd298bee4325ae51f245b74e9d497c695d0e0f4b5f5657cfb3c32c66d0e",
   "mindmaps_lesson_map": "5bb30d0f45ecfde2b8e0f03f070e7671246641fbaf58a83675ef2e4e0b52df30",
@@ -31,6 +32,7 @@
   "mindmaps_lessons_empty_description": "38d595518d5a20e85e7ffd1c6bb482d3d14cd509e56bb427c26c3734b9a83a97",
   "mindmaps_lessons_empty_title": "bda7f9ea6d0385439a92e98791a76f3bf96112c51fc729ff55d205a495d714c6",
   "mindmaps_lessons_first_free": "f8acb4b7c9cfc88677fdc0f592652df92ec8273a5c5a1b57cef1b616502381c3",
+  "mindmaps_lessons_to_write": "7faee3711fb245b146e9ad6aa4a118e7374b2467c82147cdf977ec33cf7ff818",
   "mindmaps_map_gone": "c82ece4765be89a798eac8121630990a9c39669386139a510bdfb2e278279a9b",
   "mindmaps_next": "0e5c421137a192f89eeb8f88728cfb2a2ad68139913e09bf5e14579fafd57e04",
   "mindmaps_no_longer_available": "dcfa4384b77018cb710abbab311c9f945f7d378032403f8c9e22df1229276248",
@@ -142,6 +144,11 @@
     <string name="mindmaps_create_all">Tümünü oluştur</string>
     <!-- A folded list of the chapters whose mind maps can't be made right now. -->
     <string name="mindmaps_other_chapters">Diğer üniteler</string>
+    <string name="mindmaps_free_lessons_note">Bu haritalardan birini yapmak için önce derslerini hazırlıyoruz ve bunlar ücretsiz ders hakkından düşüyor.</string>
+    <plurals name="mindmaps_lessons_to_write">
+        <item quantity="one">Hazırlanacak %1$s ders</item>
+        <item quantity="other">Hazırlanacak %1$s ders</item>
+    </plurals>
     <!-- The Mind maps page's tabs: chapters' maps, lessons' maps, and the maps the learner saved. -->
     <string name="mindmaps_tab_chapters">Üniteler</string>
     <string name="mindmaps_tab_lessons">Dersler</string>

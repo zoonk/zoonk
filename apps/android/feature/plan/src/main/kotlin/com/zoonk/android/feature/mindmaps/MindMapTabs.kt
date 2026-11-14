@@ -185,6 +185,16 @@ private fun LazyListScope.notMadeBlock(
         )
     }
     if (open) {
+        if (!actions.state.plus && later.any { it.lessonsToWrite > 0 }) {
+            item(key = "not-made-spends", contentType = "line") {
+                Text(
+                    stringResource(R.string.mindmaps_free_lessons_note),
+                    Modifier.padding(vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
         items(later, key = { "not-made-${it.chapterId}" }, contentType = { "map" }) { map ->
             Divided(true) { ChapterRow(map, actions, stop = stop, numbered = false) }
         }
