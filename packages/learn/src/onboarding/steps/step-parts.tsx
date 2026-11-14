@@ -1,33 +1,20 @@
 "use client";
 
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useTransition } from "react";
 import {
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingTitle,
 } from "../onboarding-frame";
 
-export function StepIcon({
-  children,
-  success = false,
-}: {
-  children: React.ReactNode;
-  success?: boolean;
-}) {
+export function StepIcon({ children }: { children: React.ReactNode }) {
   return (
-    <span
-      aria-hidden="true"
-      className={cn(
-        "text-muted-foreground flex shrink-0 [&_svg]:size-6",
-        success && "text-success-text",
-      )}
-    >
+    <span aria-hidden="true" className="text-muted-foreground flex shrink-0 [&_svg]:size-6">
       {children}
     </span>
   );
@@ -48,7 +35,15 @@ export function StepLoadFailed({ onRetry }: { onRetry: () => Promise<void> }) {
   const [retrying, startRetrying] = useTransition();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <OnboardingActions>
+          <OnboardingPrimaryButton busy={retrying} onClick={() => startRetrying(onRetry)}>
+            {t("Try again")}
+          </OnboardingPrimaryButton>
+        </OnboardingActions>
+      }
+    >
       <OnboardingHeading>
         <OnboardingTitle>
           {t({
@@ -61,12 +56,6 @@ export function StepLoadFailed({ onRetry }: { onRetry: () => Promise<void> }) {
           {t("Something went wrong on our side.")}
         </OnboardingDescription>
       </OnboardingHeading>
-
-      <OnboardingFooter>
-        <OnboardingPrimaryButton busy={retrying} onClick={() => startRetrying(onRetry)}>
-          {t("Try again")}
-        </OnboardingPrimaryButton>
-      </OnboardingFooter>
     </OnboardingColumn>
   );
 }

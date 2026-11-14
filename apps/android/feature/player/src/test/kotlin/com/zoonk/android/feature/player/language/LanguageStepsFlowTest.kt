@@ -179,8 +179,6 @@ class LanguageStepsFlowTest {
 
                 override fun dontKnow(stepId: String) = Unit
 
-                override fun skipWriting() = Unit
-
                 override fun explainFirst() = Unit
 
                 override val cantTalk = false

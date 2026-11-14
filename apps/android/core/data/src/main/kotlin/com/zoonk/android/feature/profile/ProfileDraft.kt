@@ -163,14 +163,6 @@ fun suggestedSupports(conditions: List<String>): List<String> =
             }
         }.distinct()
 
-fun profileSkip(question: ProfileQuestion): OnboardingAnswerInput =
-    ApiJson.decodeFromJsonElement(
-        buildJsonObject {
-            put("question", question.value)
-            put("answer", kotlinx.serialization.json.JsonNull)
-        },
-    )
-
 fun profileSkipAll(forever: Boolean): OnboardingAnswerInput =
     ApiJson.decodeFromJsonElement(
         buildJsonObject {

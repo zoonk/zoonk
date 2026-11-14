@@ -14,7 +14,7 @@
   "audio_open_settings": "2455c82d9d0ca9677bc1ca41098608b541a8879899e9fc342c18624603680dbc",
   "audio_record": "0549bac6ef4a692f6a1fc52e2da296642de0781a85de07073bb93fbbcc505e5b",
   "audio_record_stop": "07337096018e9f5d206ed1221fe7ef8937003c09558c558793d3ecf810e3acdc",
-  "audio_say_it": "c1a6dfc73712049023a17daaefeba1d92f6ac0c987c039e6c1933b04e85fce7c",
+  "audio_say_it": "9f5f769759f1d992baf25c18052deff6a3d29cef2b37a12ac093ac154c9e267e",
   "audio_stop": "22284f62dee2722b23680d45a15b6062cee7f832483e4172a6b30243fb52afed",
   "audio_try_again": "48117bede2a6ff6f0e24834f5e3775ac17ea38e969cd769a512df77bf6d77f4a",
   "audio_try_again_label": "678b9ed050de05dd19b0eb1f8d2e35f73d9e4066ee7ab59917baa89422fb228d"
@@ -37,7 +37,7 @@
     <string name="audio_checking_slow">Stiamo ancora controllando. Ci stiamo mettendo più del solito.</string>
     <string name="audio_no_speech">Non abbiamo sentito nessuna parola. Riprova.</string>
     <string name="audio_check_failed">Questa volta non abbiamo potuto controllare la tua risposta. Riprova.</string>
-    <string name="audio_say_it">Tocca e dillo ad alta voce</string>
+    <string name="audio_say_it">Tocca Registra e dillo ad alta voce</string>
     <string name="audio_microphone_off_title">Il microfono è disattivato</string>
     <string name="audio_microphone_off_answer">Attiva il microfono per Zoonk da Impostazioni per rispondere a voce.</string>
     <string name="audio_open_settings">Apri Impostazioni</string>

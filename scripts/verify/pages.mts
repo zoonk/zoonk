@@ -147,17 +147,18 @@ try {
 
       // Craft's X3 on the two sizes the craft read uses: what a person's taps and typing move.
       if (navigationViewports.includes(viewport)) {
-        load.findings.push(
-          ...(await walkStates(target, {
-            capture: values.roles
-              ? async (page, state) => {
-                  roles.push(...(await captureRoles(page, { out, path, state, viewport })));
-                }
-              : undefined,
-            path,
-            viewport,
-          })),
-        );
+        const { findings, ...coverage } = await walkStates(target, {
+          capture: values.roles
+            ? async (page, state) => {
+                roles.push(...(await captureRoles(page, { out, path, state, viewport })));
+              }
+            : undefined,
+          path,
+          viewport,
+        });
+
+        load.walk = coverage;
+        load.findings.push(...findings);
       }
 
       const failing = load.findings.filter((finding) => finding.level === "fail").length;

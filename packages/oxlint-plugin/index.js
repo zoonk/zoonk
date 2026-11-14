@@ -13,7 +13,6 @@ import oneAnswerOption from "./rules/one-answer-option.js";
 import oneBackLink from "./rules/one-back-link.js";
 import oneEyebrow from "./rules/one-eyebrow.js";
 import oneGlyphButton from "./rules/one-glyph-button.js";
-import oneOverlayPiece from "./rules/one-overlay-piece.js";
 import oneQuestionActionBar from "./rules/one-question-action-bar.js";
 import oneQuestionTitle from "./rules/one-question-title.js";
 import paddingAroundMultilineStatements from "./rules/padding-around-multiline-statements.js";
@@ -31,7 +30,6 @@ export default eslintCompatPlugin({
     "no-page-top-spacing": noPageTopSpacing,
     "no-plus-badge": noPlusBadge,
     "one-eyebrow": oneEyebrow,
-    "one-overlay-piece": oneOverlayPiece,
     "no-object-params-in-cache": noObjectParamsInCache,
     "no-t-function-as-argument": noTFunctionAsArgument,
     "no-uncaught-transition-await": noUncaughtTransitionAwait,

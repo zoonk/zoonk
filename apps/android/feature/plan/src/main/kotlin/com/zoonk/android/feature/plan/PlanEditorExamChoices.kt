@@ -129,7 +129,6 @@ fun ExamChoicePicks(
             busy = saving,
             onClick = { onSave(draft) },
             enabled = enabled && choice.canSave(draft),
-            leadingIcon = { ButtonIcon(R.drawable.ic_check) },
         ) { Text(stringResource(R.string.plan_save)) }
     }
 }

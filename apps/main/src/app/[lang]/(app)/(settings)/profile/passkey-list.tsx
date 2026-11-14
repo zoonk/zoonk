@@ -1,6 +1,5 @@
 "use client";
 
-import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import {
   type PasskeyChangeFailure,
   addPasskey,
@@ -16,52 +15,34 @@ import {
   ListRowTitle,
 } from "@zoonk/learn/list";
 import { SettingRow } from "@zoonk/learn/setting-rows";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { safeAsync } from "@zoonk/utils/error";
-import { EllipsisIcon, LogInIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { EllipsisIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState, useTransition } from "react";
+import { SignInAgainDialog } from "../_components/sign-in-again-dialog";
 import { DeleteDialog, RenameDialog, usePasskeyName } from "./passkey-dialogs";
 import { refreshPasskeysAction } from "./refresh-passkeys-action";
 
-function ChangeFailure({ failure }: { failure: PasskeyChangeFailure | null }) {
+type PlainFailure = Exclude<PasskeyChangeFailure, "cancelled" | "signInAgain">;
+
+function useFailureMessage(): (failure: PlainFailure) => string {
   const t = useExtracted();
 
-  if (!failure || failure === "cancelled") {
-    return null;
-  }
-
-  if (failure === "signInAgain") {
-    return (
-      <div className="flex flex-col items-start gap-2" role="alert">
-        <p className="text-sm">{t("For your safety, sign in again, then add your passkey.")}</p>
-        <CurrentPageLoginLink
-          className={buttonVariants({ size: "sm", variant: "outline" })}
-          icon={<LogInIcon aria-hidden="true" />}
-        >
-          {t("Sign in again")}
-        </CurrentPageLoginLink>
-      </div>
-    );
-  }
-
-  const messages: Record<Exclude<PasskeyChangeFailure, "cancelled" | "signInAgain">, string> = {
+  const messages: Record<PlainFailure, string> = {
     alreadyAdded: t("This device already has a passkey for your account."),
     failed: t("That didn't work. Try again in a moment."),
     notConfirmed: t("That wasn't confirmed with one of your passkeys. Try again."),
   };
 
-  return (
-    <p className="text-destructive-text text-sm" role="alert">
-      {messages[failure]}
-    </p>
-  );
+  return (failure) => messages[failure];
 }
 
 function PasskeyRow({
@@ -106,11 +87,11 @@ function PasskeyRow({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end" className="w-44">
-          <DropdownMenuItem onClick={onRename}>
+          <DropdownMenuItem aria-haspopup="dialog" onClick={onRename}>
             <PencilIcon aria-hidden="true" />
             {t("Rename")}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={onDelete} variant="destructive">
+          <DropdownMenuItem aria-haspopup="dialog" onClick={onDelete} variant="destructive">
             <Trash2Icon aria-hidden="true" />
             {t("Delete")}
           </DropdownMenuItem>
@@ -126,15 +107,22 @@ type OpenDialog = { kind: "delete" | "rename"; passkey: PasskeyView };
 export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
   const t = useExtracted();
   const [isPending, startTransition] = useTransition();
-  const [failure, setFailure] = useState<PasskeyChangeFailure | null>(null);
+  const [asksLogin, setAsksLogin] = useState(false);
   const [dialog, setDialog] = useState<OpenDialog | null>(null);
+  const failureMessage = useFailureMessage();
 
   const change = (run: () => Promise<PasskeyChangeFailure | null>) => {
     startTransition(async () => {
       const { data, error } = await safeAsync(run);
       await safeAsync(refreshPasskeysAction);
-      setFailure(error ? "failed" : data);
+      const failure = error ? "failed" : data;
       setDialog(null);
+
+      if (failure === "signInAgain") {
+        setAsksLogin(true);
+      } else if (failure && failure !== "cancelled") {
+        showErrorToast(failureMessage(failure));
+      }
     });
   };
 
@@ -191,7 +179,11 @@ export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
         </SettingRow>
       </ListGroup>
 
-      <ChangeFailure failure={failure} />
+      {asksLogin && (
+        <SignInAgainDialog onClose={() => setAsksLogin(false)}>
+          {t("For your safety, log in again, then add your passkey.")}
+        </SignInAgainDialog>
+      )}
 
       {dialog?.kind === "rename" && (
         <RenameDialog

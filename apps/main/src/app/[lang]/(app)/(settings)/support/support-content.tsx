@@ -10,20 +10,22 @@ import { Suspense } from "react";
 
 const FOLLOW_US_ID = "follow-us";
 
-const MAIN_NETWORKS = new Set(["x", "instagram", "linkedin", "youtube", "bluesky"]);
-
-async function ContactSupport() {
+async function ContactSupport({ children }: { children: React.ReactNode }) {
   const session = await getSession();
 
   const email = session && !session.user.isAnonymous ? session.user.email : null;
 
-  return <FeedbackForm context={{ screen: "support" }} defaultEmail={email} />;
+  return (
+    <FeedbackForm context={{ screen: "support" }} defaultEmail={email}>
+      {children}
+    </FeedbackForm>
+  );
 }
 
 async function FollowUs() {
   const t = await getExtracted();
   const locale = await getAppLocale();
-  const socials = getSocialProfiles(locale).filter((social) => MAIN_NETWORKS.has(social.name));
+  const socials = getSocialProfiles(locale);
 
   return (
     <PageSection aria-labelledby={FOLLOW_US_ID}>
@@ -31,7 +33,7 @@ async function FollowUs() {
         <PageSectionTitle id={FOLLOW_US_ID}>{t("Follow us")}</PageSectionTitle>
       </PageSectionHeader>
 
-      <ul className="-ml-1.5 flex flex-wrap gap-x-3 gap-y-2">
+      <ul className="-ml-1.5 grid grid-cols-5 gap-y-2 sm:flex sm:gap-x-3">
         {socials.map((social) => (
           <li key={social.name}>
             {/* oxlint-disable-next-line next/no-html-link-for-pages -- external links */}
@@ -60,18 +62,24 @@ export async function SupportContent() {
   const t = await getExtracted();
 
   return (
-    <Page className="max-w-form">
+    <Page measure="form">
       <SectionPageHeader title={t("Help")} />
 
       <p className="text-muted-foreground -mt-4 text-sm text-pretty md:mt-0">
         {t("Ask a question, report a problem or share an idea. We answer by email.")}
       </p>
 
-      <Suspense fallback={<FeedbackFormSkeleton />}>
-        <ContactSupport />
+      <Suspense
+        fallback={
+          <FeedbackFormSkeleton>
+            <FollowUs />
+          </FeedbackFormSkeleton>
+        }
+      >
+        <ContactSupport>
+          <FollowUs />
+        </ContactSupport>
       </Suspense>
-
-      <FollowUs />
     </Page>
   );
 }

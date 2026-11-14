@@ -96,29 +96,21 @@ internal sealed interface SlotItem {
         override val key = "finished"
     }
 
-    data class Pace(
-        val tooTight: Boolean,
-        val text: String,
-    ) : SlotItem {
-        override val key get() = if (tooTight) "tooTight" else "behind"
-    }
-
-    data object FreeWeekOver : SlotItem {
-        override val key = "freeWeekOver"
+    data object NotEnoughTime : SlotItem {
+        override val key = "tooTight"
     }
 }
 
-/** [finished] once what to study next is known, [courseComplete] while a finished unit's certificate isn't written; [fix] is the pace's sentence. */
+/** [finished] once what to study next is known, [courseComplete] while a finished unit's certificate isn't written. */
 internal fun slotItems(
     page: PlanPageState,
-    fix: PaceFix?,
     finished: Boolean,
     courseComplete: Boolean,
 ): List<SlotItem> {
     val plan = page.plan
     val pace = plan.status?.pace
     val pastDate = pace as? Pace.PastDate
-    val open = !plan.access.freeWeekOver && pastDate == null
+    val open = pastDate == null
     val time =
         listOfNotNull(
             SlotItem.FitLessons.takeIf { open && plan.fitOffer != null },
@@ -136,10 +128,8 @@ internal fun slotItems(
             addAll(time)
             add(SlotItem.Finished)
         }
-        if (pace is Pace.NeedsAdjusting && fix != null) add(SlotItem.Pace(tooTight = true, fix.text))
-        if (pace is Pace.Behind && fix != null) add(SlotItem.Pace(tooTight = false, fix.text))
+        if (pace is Pace.NeedsAdjusting) add(SlotItem.NotEnoughTime)
         if (!finished) addAll(time)
-        if (plan.access.freeWeekOver) add(SlotItem.FreeWeekOver)
     }
 }
 
@@ -284,16 +274,12 @@ private fun slotItemsLeft(
     host: SlotHost,
     state: SlotState,
 ): List<SlotItem> {
-    val fix =
-        page.plan.status
-            ?.pace
-            ?.let { paceFix(it, page.isExam) }
     val courseComplete =
         host.certificates
             ?.unclaimed
             .orEmpty()
             .isNotEmpty()
-    return slotItems(page, fix, finished = host.next != null, courseComplete).filter { it.key !in state.dismissed }
+    return slotItems(page, finished = host.next != null, courseComplete).filter { it.key !in state.dismissed }
 }
 
 /** Whether the slot shows anything, so a page leaves no room for it when it doesn't. */
@@ -431,12 +417,8 @@ private fun SlotSuggestion(
             slot.host.next?.let { StudyNextSuggestion(it, slot) }
         }
 
-        is SlotItem.Pace -> {
-            PaceSuggestion(item, layout, links, onAdjust)
-        }
-
-        SlotItem.FreeWeekOver -> {
-            FreeWeekSuggestion(layout, links)
+        SlotItem.NotEnoughTime -> {
+            NotEnoughTimeSuggestion(layout, onAdjust)
         }
     }
 }
@@ -588,66 +570,25 @@ private fun PausedSuggestion(
 }
 
 @Composable
-private fun PaceSuggestion(
-    item: SlotItem.Pace,
+private fun NotEnoughTimeSuggestion(
     layout: SuggestionLayout,
-    links: PlanLinks,
     onAdjust: (PlanSection?) -> Unit,
 ) {
-    val title = stringResource(if (item.tooTight) R.string.plan_no_longer_fits else R.string.plan_catch_up)
-
-    Suggestion(
-        label = title,
-        summary = item.text,
-        layout = layout,
-        mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
-        lineAction =
-            if (item.tooTight) {
-                { SuggestionAction(stringResource(R.string.plan_adjust), onClick = { onAdjust(null) }) }
-            } else {
-                { SuggestionOpen() }
-            },
-    ) {
-        SuggestionHeader(title)
-        if (item.tooTight) {
-            SuggestionActions {
-                SuggestionAction(stringResource(R.string.plan_adjust_plan), onClick = {
-                    close()
-                    onAdjust(null)
-                })
-            }
-        } else {
-            SuggestionDescription(item.text)
-            SuggestionActions {
-                SuggestionAction(stringResource(R.string.plan_go_to_today), onClick = {
-                    close()
-                    links.today()
-                })
-            }
-        }
-    }
-}
-
-@Composable
-private fun FreeWeekSuggestion(
-    layout: SuggestionLayout,
-    links: PlanLinks,
-) {
-    val title = stringResource(R.string.subscription_free_week_over_title)
+    val title = stringResource(R.string.plan_no_longer_fits)
 
     Suggestion(
         label = title,
         summary = title,
         layout = layout,
-        mark = SuggestionMark.Symbol(R.drawable.ic_auto_awesome),
-        lineAction = { SuggestionAction(stringResource(R.string.subscription_see_plus), onClick = links::plus) },
+        mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
+        lineAction = { SuggestionAction(stringResource(R.string.plan_adjust), onClick = { onAdjust(null) }) },
     ) {
         SuggestionHeader(title)
-        SuggestionDescription(stringResource(R.string.subscription_free_week_over_description))
+        SuggestionDescription(stringResource(R.string.plan_add_time_or_later_date))
         SuggestionActions {
-            SuggestionAction(stringResource(R.string.subscription_see_plus), onClick = {
+            SuggestionAction(stringResource(R.string.plan_adjust_plan), onClick = {
                 close()
-                links.plus()
+                onAdjust(null)
             })
         }
     }

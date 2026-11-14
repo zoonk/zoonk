@@ -56,7 +56,7 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
-import com.zoonk.android.ui.scaffold.detailPagePadding
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonkType
@@ -153,7 +153,7 @@ private fun NotFound(padding: PaddingValues) {
             icon = R.drawable.ic_link,
             title = stringResource(R.string.planlink_not_found),
             description = stringResource(R.string.planlink_not_found_description),
-            modifier = beforeFold.padding(detailPagePadding()),
+            modifier = beforeFold.padding(pagePadding()),
         )
     }
 }
@@ -190,7 +190,6 @@ private fun StartForm(
             busy = vm.isStarting,
             onClick = onStart,
             modifier = Modifier.fillMaxWidth(),
-            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
         ) {
             Text(stringResource(R.string.planlink_start))
         }

@@ -56,7 +56,6 @@ import com.zoonk.android.feature.language.LevelValue
 import com.zoonk.android.feature.language.SkillLevelsCard
 import com.zoonk.android.feature.speaking.SpeakingMockCard
 import com.zoonk.android.feature.speaking.SpeakingPracticeRow
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -70,10 +69,10 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatGoalProgress
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.format.formatProgressShare
 import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -86,7 +85,6 @@ import com.zoonk.api.models.LanguagePlanLevel
 import com.zoonk.api.models.PlanDay
 import com.zoonk.api.models.PlanItem
 import com.zoonk.api.models.PreparationComponentsMocks
-import com.zoonk.api.models.SpeakingPaper
 import kotlinx.datetime.toJavaLocalDate
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -191,7 +189,7 @@ private fun standingNumber(standing: Standing): PlanNumber {
             val share = if (standing.total > 0) min(1f, standing.done.toFloat() / standing.total) else 0f
             PlanNumber(
                 label = stringResource(R.string.plan_progress),
-                value = formatGoalProgress(share.toDouble(), locale),
+                value = formatProgressShare(share.toDouble(), locale),
                 detail = studiedLessonsLine(standing.done, standing.known),
                 share = share,
             )
@@ -230,10 +228,10 @@ fun lessonsStudied(
 ): Long = (done - known).coerceAtLeast(0)
 
 @Composable
-private fun weekGain(gain: Double): String {
+private fun weekGain(gain: Double): String? {
     val points = (gain * PERCENT).roundToInt()
     return when {
-        points == 0 -> stringResource(R.string.plan_no_change_this_week)
+        points == 0 -> null
         points > 0 -> pluralStringResource(R.plurals.plan_gain_this_week, points, points)
         else -> pluralStringResource(R.plurals.plan_loss_this_week, -points, points)
     }
@@ -241,52 +239,40 @@ private fun weekGain(gain: Double): String {
 
 private const val PERCENT = 100
 
+/** The tile: the plan's state as its value, and its time a day or the lessons left as its one line. */
 @Composable
 private fun paceNumber(
     page: PlanPageState,
     pace: Pace,
 ): PlanNumber {
-    val (value, detail) =
+    val resting = page.isPaused && pace !is Pace.Finished && pace !is Pace.PastDate && pace !is Pace.ChallengesLeft
+    val value = if (resting) stringResource(R.string.plan_pace_value_paused) else paceText(pace)
+    val detail =
         when {
-            pace is Pace.Finished -> {
-                R.string.plan_pace_value_finished to null
-            }
-
             pace is Pace.PastDate -> {
-                R.string.plan_pace_value_past_date to pluralStringResource(R.plurals.plan_lessons_left, pace.lessons, pace.lessons)
+                pluralStringResource(R.plurals.plan_lessons_left, pace.lessons, pace.lessons)
             }
 
-            pace is Pace.ChallengesLeft -> {
-                R.string.plan_pace_value_challenges to paceText(pace)
+            resting -> {
+                null
             }
 
-            page.isPaused -> {
-                R.string.plan_pace_value_paused to stringResource(R.string.plan_nothing_planned)
-            }
-
-            pace is Pace.Ahead -> {
-                R.string.plan_pace_value_ahead to paceText(pace)
-            }
-
-            pace is Pace.Behind -> {
-                R.string.plan_pace_value_behind to paceText(pace)
-            }
-
-            pace is Pace.NeedsAdjusting -> {
-                R.string.plan_pace_value_too_tight to paceText(pace)
-            }
-
-            else -> {
-                val time =
+            pace is Pace.OnTrack || pace is Pace.Ahead || pace is Pace.Behind -> {
+                stringResource(
+                    R.string.plan_time_a_day,
                     formatMinutes(
                         page.plan.schedule.dailyMinutes
                             .toInt(),
                         currentLocale(),
-                    )
-                R.string.plan_pace_value_on_pace to stringResource(R.string.plan_time_a_day, time)
+                    ),
+                )
+            }
+
+            else -> {
+                null
             }
         }
-    return PlanNumber(stringResource(R.string.plan_pace), stringResource(value), detail, numeric = false)
+    return PlanNumber(stringResource(R.string.plan_pace), value, detail, numeric = false)
 }
 
 @Composable
@@ -382,6 +368,11 @@ internal fun PaceDetails(
                 onClick = onAdjust,
                 modifier = Modifier.padding(top = 4.dp),
             ) { Text(stringResource(R.string.plan_adjust_plan)) }
+        }
+        if (fix?.today == true) {
+            OutlinedButton(onClick = links::today, modifier = Modifier.padding(top = 4.dp), forward = true) {
+                Text(stringResource(R.string.plan_go_to_today))
+            }
         }
     }
 
@@ -518,7 +509,6 @@ internal fun LanguageDetails(
     language.speaking?.let { paper ->
         SpeakingPracticeRow(
             paper.title,
-            paper.access == SpeakingPaper.Access.PLUS_REQUIRED,
             onOpen = links::speaking,
             modifier = Modifier.bleed(LIST_ITEM_INSET),
         )
@@ -779,7 +769,6 @@ private data class StillNeededItem(
     val kind: LearnKind,
     val label: String,
     val detail: String?,
-    val plusRequired: Boolean,
     val opensExam: Boolean,
 )
 
@@ -815,7 +804,6 @@ private fun StillToDo(
                             } else {
                                 null
                             },
-                        plusRequired = false,
                         opensExam = false,
                     ),
                 )
@@ -827,8 +815,7 @@ private fun StillToDo(
                         LearnKind.Review,
                         stringResource(R.string.plan_still_keep_fresh),
                         pluralStringResource(R.plurals.plan_still_fading, fading, fading),
-                        false,
-                        false,
+                        opensExam = false,
                     ),
                 )
             }
@@ -848,7 +835,7 @@ private fun StillToDo(
                             LearnKind.Challenge to stringResource(R.string.plan_still_first_challenge)
                         }
                     }
-                add(StillNeededItem(kind, label, null, mocks.plusRequired, opensExam = kind == LearnKind.Mock))
+                add(StillNeededItem(kind, label, null, opensExam = kind == LearnKind.Mock))
             }
         }.take(MAX_STILL_SHOWN)
     if (items.isEmpty()) return
@@ -862,7 +849,6 @@ private fun StillToDo(
                     onClick = if (item.opensExam && links.hasExam) links::exam else null,
                     leading = { KindMark(item.kind) },
                     supporting = item.detail?.let { { Text(it) } },
-                    meta = if (item.plusRequired) ({ PlusMark() }) else null,
                 )
             }
         }

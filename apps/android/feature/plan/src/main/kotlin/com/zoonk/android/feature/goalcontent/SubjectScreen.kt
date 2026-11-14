@@ -40,7 +40,6 @@ import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PageLoading
@@ -49,6 +48,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.ResourceScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.ExamDocument
@@ -103,57 +103,42 @@ internal fun SubjectContent(
     val state by syllabus.collectShown()
     val scope = rememberCoroutineScope()
 
-    when (val shown = state) {
-        is LoadState.Loaded -> {
-            val subject = shown.value.subjects.firstOrNull { it.key == subjectKey }
-            if (subject == null) {
-                PageScaffold(onBack = back) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
-            } else {
-                val writes = viewModel(key = "subject-$goalId") { SubjectViewModel(plans, syllabus, goalId) }
-                val farTopics = viewModel(key = "far-topics-$goalId") { FarTopicViewModel(plans, goalId) }
-                SubjectPage(
-                    syllabus = shown.value,
-                    subject = subject,
-                    writes = writes.state.collectAsStateWithLifecycle().value,
-                    menu = menu,
-                    ask = ask,
-                    actions =
-                        SubjectActions(
-                            back = back,
-                            openChapter = { navigator.open(AppRoute.Chapter(it.toString())) },
-                            adjustPlan = { navigator.open(AppRoute.Plan()) },
-                            restore = writes::restore,
-                            setCadence = writes::setCadence,
-                            openFarTopic = { chapter ->
-                                chapter.skillId?.let {
-                                    farTopics.open(
-                                        FarTopic(it, chapter.title, chapter.plannedLessons, chapter.nextDate),
-                                    )
-                                }
-                            },
-                            openMindMaps = { navigator.open(AppRoute.MindMaps(subject = subject.key)) }.takeIf { mindMaps },
-                        ),
-                )
-                FarTopicSheet(farTopics, navigator) { navigator.open(AppRoute.Chapter(it.toString())) }
-            }
-        }
-
-        is LoadState.Failed -> {
-            PageScaffold(onBack = back) { padding ->
-                if (shown.error == ApiError.NotFound) {
-                    NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(padding))
-                } else {
-                    LoadFailedMessage(onRetry = { scope.launch { syllabus.refresh() } }, modifier = Modifier.padding(padding))
-                }
-            }
-        }
-
-        LoadState.Empty -> {
+    ResourceScaffold(
+        state,
+        onBack = back,
+        onRetry = { scope.launch { syllabus.refresh() } },
+        onGoHome = { navigator.showRoot(AppTab.Today) },
+    ) { value ->
+        val subject = value.subjects.firstOrNull { it.key == subjectKey }
+        if (subject == null) {
             PageScaffold(onBack = back) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
-        }
-
-        LoadState.Idle, LoadState.Loading -> {
-            PageScaffold(onBack = back) { PageLoading(Modifier.padding(it), MaterialTheme.colorScheme.tertiary) }
+        } else {
+            val writes = viewModel(key = "subject-$goalId") { SubjectViewModel(plans, syllabus, goalId) }
+            val farTopics = viewModel(key = "far-topics-$goalId") { FarTopicViewModel(plans, goalId) }
+            SubjectPage(
+                syllabus = value,
+                subject = subject,
+                writes = writes.state.collectAsStateWithLifecycle().value,
+                menu = menu,
+                ask = ask,
+                actions =
+                    SubjectActions(
+                        back = back,
+                        openChapter = { navigator.open(AppRoute.Chapter(it.toString())) },
+                        adjustPlan = { navigator.open(AppRoute.Plan()) },
+                        restore = writes::restore,
+                        setCadence = writes::setCadence,
+                        openFarTopic = { chapter ->
+                            chapter.skillId?.let {
+                                farTopics.open(
+                                    FarTopic(it, chapter.title, chapter.plannedLessons, chapter.nextDate),
+                                )
+                            }
+                        },
+                        openMindMaps = { navigator.open(AppRoute.MindMaps(subject = subject.key)) }.takeIf { mindMaps },
+                    ),
+            )
+            FarTopicSheet(farTopics, navigator) { navigator.open(AppRoute.Chapter(it.toString())) }
         }
     }
 }
@@ -227,6 +212,10 @@ internal fun SubjectPage(
         aside = { SubjectAside(syllabus, subject, today, ask) },
         ask = ask,
         askInAside = true,
+        action =
+            subject.nextChapterId?.let { next ->
+                { modifier -> ContinueButton(started = subject.lessonsDone > 0, onClick = { actions.openChapter(next) }, modifier) }
+            },
     ) { asideBeside ->
         if (!asideBeside && (subject.notPlannedReason == null || subject.preparation != null)) {
             item(key = "coverage", contentType = "coverage") {
@@ -252,19 +241,17 @@ private fun SubjectHero(
     actions: SubjectActions,
     menu: @Composable () -> Unit,
 ) {
-    val next = subject.nextChapterId
-    val action: (@Composable (Modifier) -> Unit)? =
-        next?.let { { modifier -> ContinueButton(started = subject.lessonsDone > 0, onClick = { actions.openChapter(it) }, modifier) } }
-
-    DetailHero(action, menu) {
-        Eyebrow(subjectEyebrow(syllabus, subject))
+    DetailHero(menu) {
         Text(
             text = subject.name,
             modifier = Modifier.pageTitle(),
             style = MaterialTheme.typography.headlineMedium,
         )
 
-        subjectFacts(subject)?.let { Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle()) }
+        listOfNotNull(subjectLead(syllabus, subject), subjectFacts(subject))
+            .factsLine()
+            .ifEmpty { null }
+            ?.let { Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle()) }
         listOfNotNull(knownLine(subject), alsoInLine(syllabus.sharedExams, subject.sharedWith)).forEach {
             Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         }
@@ -274,17 +261,17 @@ private fun SubjectHero(
 @Composable
 internal fun factsStyle() = MaterialTheme.zoonkType.data
 
+/** What used to sit over the name leads its facts: its area, where it comes from when that's news, and its weight. */
 @Composable
-private fun subjectEyebrow(
+private fun subjectLead(
     syllabus: Syllabus,
     subject: SyllabusSubject,
-): String {
+): String? {
     val kind =
         when {
             subject.group != null -> subject.group
             subject.source == SyllabusSubject.Source.NOTICE && syllabus.fromMaterial -> stringResource(R.string.goalcontent_from_material)
-            subject.source == SyllabusSubject.Source.NOTICE -> stringResource(R.string.goalcontent_subject)
-            syllabus.kind != Syllabus.Kind.NOTICE -> stringResource(R.string.goalcontent_module)
+            subject.source == SyllabusSubject.Source.NOTICE || syllabus.kind != Syllabus.Kind.NOTICE -> null
             else -> beyondGroupName(syllabus)
         }
     val questions = subject.questions
@@ -303,7 +290,7 @@ private fun subjectEyebrow(
                 null
             }
         }
-    return listOfNotNull(kind, weight).factsLine()
+    return listOfNotNull(kind, weight).factsLine().ifEmpty { null }
 }
 
 /** The group a plan adds outside the learner's material or the exam's own documents. */

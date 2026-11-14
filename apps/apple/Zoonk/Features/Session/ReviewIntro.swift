@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Main's `ReviewIntro`: what a review is and how it picks its questions, for a learner who never
-/// asked.
+/// Main's `ReviewIntro`: what a review is and how it picks its questions, one closed row a learner
+/// can open.
 struct ReviewIntro: View {
   let block: StudyBlock
   @Binding var isOpen: Bool
@@ -11,10 +11,14 @@ struct ReviewIntro: View {
     "review-intro-starts:\(goalID ?? "")"
   }
 
-  /// A daily learner reads it open a few times, then it folds to one row they can reopen.
-  static func opensAtFirst(goalID: String?) -> Bool {
+  /// A goal's first three reviews on a device say what a review is in their row's line.
+  static func isEarly(goalID: String?) -> Bool {
     UserDefaults.standard.integer(forKey: startsKey(goalID: goalID)) < 3
   }
+
+  static let earlyLine = String(
+    localized: "Questions on what you studied before, so it stays with you.", table: "Session",
+    comment: "Under a goal's first reviews on the session's next step: what a review is")
 
   static func noteStart(of block: StudyBlock, goalID: String?) {
     let key = startsKey(goalID: goalID)
@@ -28,7 +32,7 @@ struct ReviewIntro: View {
     if block.capsules.isEmpty {
       // The first week's warm-up is only placement's questions: it checks, it doesn't review.
       Text(
-        "A few quick questions to check what you already know.", tableName: "Session",
+        "A short test, so your plan skips what you know.", tableName: "Session",
         comment: "Under the first week's warm-up, which checks what the learner knows"
       )
       .foregroundStyle(.mutedForeground)

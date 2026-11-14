@@ -110,15 +110,7 @@ fun LoadFailedMessage(
         description = stringResource(R.string.load_failed_description),
         modifier = modifier,
     ) {
-        Button(onClick = onRetry, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
-            Icon(
-                painter = painterResource(R.drawable.ic_refresh),
-                contentDescription = null,
-                modifier = Modifier.size(ButtonDefaults.IconSize),
-            )
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text(stringResource(R.string.load_failed_try_again))
-        }
+        Button(onClick = onRetry) { Text(stringResource(R.string.load_failed_try_again)) }
         actions()
     }
 }

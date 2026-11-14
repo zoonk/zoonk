@@ -5,25 +5,18 @@
     <string name="conversation_unit_challenge">Unit challenge</string>
     <string name="conversation_ielts_mock">IELTS speaking mock</string>
     <string name="conversation_toefl_mock">TOEFL speaking mock</string>
-    <!-- About how long the call lasts and its language level, such as "About 5 min · Level A2". -->
-    <string name="conversation_intro_meta">About %1$s · Level %2$s</string>
+    <!-- How long the call lasts and its language level, such as "5 min · Level A2". -->
+    <string name="conversation_intro_meta">%1$s · Level %2$s</string>
     <!-- The character's role and where the call takes place, such as "Waiter · Café in Madrid". -->
     <string name="conversation_character_detail">%1$s · %2$s</string>
     <string name="conversation_get_across">What to get across</string>
-    <string name="conversation_how_it_works">How the call works</string>
-    <!-- The first step of how the call works; the character's name. -->
-    <string name="conversation_how_answers_first">%1$s answers and speaks first.</string>
-    <string name="conversation_how_your_turn">Then it\'s your turn: answer out loud, or type if you can\'t talk.</string>
-    <!-- The last step of how the call works: about how long it lasts (such as "2 min"), then the character's name. -->
-    <string name="conversation_how_it_ends">When you\'ve done everything, or after about %1$s, %2$s says goodbye and the call ends.</string>
-    <string name="conversation_sound_note">Turn your sound on. The microphone is on only during the call.</string>
-    <!-- About how long an exam's call lasts before it ends by itself, such as "2 min". -->
-    <string name="conversation_ends_after">It ends on its own after about %1$s.</string>
+    <string name="conversation_sound_note">Turn your sound on.</string>
     <!-- Starts a phone call with the character, whose name follows. -->
     <string name="conversation_call">Call %1$s</string>
     <string name="conversation_start">Start the call</string>
     <string name="conversation_start_failed">The call didn\'t start. Try again in a moment.</string>
-    <string name="conversation_challenge_plus">Challenge calls come with Plus. Your plan keeps going without them.</string>
+    <string name="conversation_challenge_gate_title">This call needs a subscription</string>
+    <string name="conversation_challenge_gate_line">Your plan goes on without it.</string>
     <!-- The microphone permission was denied; the character's name. -->
     <string name="conversation_mic_off">Allow the microphone in Settings to talk with %1$s, or do this call by typing.</string>
     <!-- Starts the call without the microphone, answering by typing. -->
@@ -86,9 +79,9 @@
     <string name="conversation_ended">Start a new call to keep practicing.</string>
     <string name="conversation_paused_title">Calls are paused</string>
     <string name="conversation_paused">It\'s the same for everyone right now. Try again later.</string>
-    <string name="conversation_in_progress_title">You\'re already in a call</string>
-    <string name="conversation_in_progress">It\'s open on another device or in your browser. Ending it from here skips its feedback.</string>
-    <string name="conversation_take_over">End that call and start this one</string>
+    <string name="conversation_in_progress_title">You\'re in another call</string>
+    <string name="conversation_in_progress">It\'s open on another device or in your browser. Starting this one ends it, without its feedback.</string>
+    <string name="conversation_take_over">Start this call</string>
     <string name="conversation_dropped_title">The call dropped</string>
     <string name="conversation_dropped">Call again, or end the call to get feedback on what you said.</string>
     <string name="conversation_end_call">End the call</string>
@@ -111,7 +104,7 @@
     <string name="conversation_not_this_time">Not this time</string>
     <string name="conversation_goals_tile">Goals</string>
     <string name="conversation_brain_power">Brain Power</string>
-    <string name="conversation_try_again_later">Nothing is lost: the call comes back so you can try again.</string>
+    <string name="conversation_try_again_later">The call comes back so you can try again.</string>
     <string name="conversation_stars_rule">A star for finishing, one for getting everything across and one without Help.</string>
     <string name="conversation_went_well">What went well</string>
     <string name="conversation_said_well">Phrases you said well</string>
@@ -128,12 +121,12 @@
     <!-- Who the practice call is with, such as "with Lucía · Waiter". -->
     <string name="conversation_practice_with">with %1$s · %2$s</string>
     <string name="conversation_call_length">Call length</string>
-    <string name="conversation_longer_calls_plus">Longer calls come with Plus.</string>
+    <string name="conversation_longer_calls_gate">Longer calls need a subscription</string>
     <string name="conversation_opens_when_ready">Your call opens as soon as it\'s ready.</string>
-    <string name="conversation_get_ready">Get the call ready</string>
-    <string name="conversation_get_ready_description">This challenge is a short call about the unit. It\'s written for your speaking level first, which takes up to half a minute.</string>
+    <string name="conversation_get_ready">Start</string>
+    <string name="conversation_get_ready_description">A short voice call with an AI character, about this unit.</string>
     <string name="conversation_getting_ready">Getting your call ready</string>
-    <string name="conversation_opens_here">It opens here as soon as it\'s ready.</string>
+    <string name="conversation_opens_here">This takes about half a minute.</string>
     <string name="conversation_writing_call">Writing your call</string>
     <string name="conversation_writing_call_phase">Writing the call for your level</string>
     <string name="conversation_writing_call_line_1">Choosing who you\'ll talk to…</string>
@@ -143,28 +136,20 @@
     <!-- Exam speaking tasks: an official exam's speaking task practiced on a call, with an AI in the examiner's place. -->
     <!-- The exam and the task's place in its paper, such as "DELE B2 · Task 2 of 4". -->
     <string name="conversation_exam_task_title">%1$s · Task %2$s of %3$s</string>
-    <string name="conversation_opens_and_card">%1$s opens the call, and your card stays on screen.</string>
-    <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
-    <string name="conversation_rated_on">Rated on %1$s.</string>
-    <string name="conversation_stand_in_partner">%1$s is an AI playing the other candidate, in place of a real one.</string>
-    <string name="conversation_stand_in_examiner">%1$s is an AI standing in for a human examiner.</string>
-    <string name="conversation_practice_estimate">It\'s practice: the estimate after it isn\'t an official score.</string>
-    <string name="conversation_speak_answers">Speak your answers: typed ones aren\'t rated on how you sound. The microphone is used only during the call.</string>
     <string name="conversation_your_card">Your card</string>
     <string name="conversation_preparation">Preparation</string>
-    <!-- The exam's shared preparation time, the tasks it covers, then this task's share. -->
-    <string name="conversation_prep_shared">The exam gives %1$s to prepare tasks %2$s together, about %3$s for this one.</string>
-    <string name="conversation_prep">The exam gives %1$s to prepare with the card.</string>
+    <!-- How long the exam gives to prepare, such as "1 min". -->
+    <string name="conversation_prep">%1$s, as in the exam</string>
     <string name="conversation_start_preparing">Start preparing</string>
-    <string name="conversation_prep_over">Preparation time is over. Start the call when you\'re ready.</string>
+    <string name="conversation_prep_over">Preparation time is over.</string>
     <string name="conversation_prep_again">Start again</string>
     <!-- A task's length when the exam gives a range, such as "3–4 min". -->
     <string name="conversation_minutes_range">%1$s–%2$s min</string>
     <string name="conversation_role_partner_label">With another candidate (AI)</string>
     <string name="conversation_role_examiner_label">With an examiner (AI)</string>
-    <!-- Who the AI plays in a task, after its name: "Ana · other candidate". -->
-    <string name="conversation_role_partner">other candidate</string>
-    <string name="conversation_role_examiner">examiner</string>
+    <!-- Who the AI plays in a task, after its name: "Ana · other candidate (AI)". -->
+    <string name="conversation_role_partner">other candidate (AI)</string>
+    <string name="conversation_role_examiner">examiner (AI)</string>
     <string name="conversation_criterion_accuracy">Accuracy</string>
     <string name="conversation_criterion_coherence">Coherence</string>
     <string name="conversation_criterion_discourse">Organizing what you say</string>
@@ -192,16 +177,13 @@
     <string name="conversation_below_level">Below %1$s</string>
     <string name="conversation_level_line">On these scales, %1$s is the %2$s level.</string>
     <string name="conversation_typed_note">You typed your replies, so this estimate leaves out how you sound.</string>
-    <string name="conversation_brief_note">You said little in this task, so there wasn\'t much to judge. A longer try gives a closer estimate.</string>
+    <string name="conversation_brief_note">You said little, so this estimate is rough.</string>
     <string name="conversation_focus">Focus</string>
     <string name="conversation_not_rated">Not rated</string>
-    <string name="conversation_estimate_sound">An estimate from one practice task, not an official score. How you sound is rated by how easy you are to understand, never by your accent.</string>
-    <string name="conversation_estimate">An estimate from one practice task, not an official score.</string>
+    <string name="conversation_estimate">An estimate, not an official score.</string>
     <string name="conversation_work_on_first">Work on this first</string>
     <string name="conversation_no_estimate_title">This task has no estimate</string>
-    <string name="conversation_no_estimate">Try the task again when you\'re ready.</string>
-    <string name="conversation_try_new_card">Try this task with a new card</string>
-    <string name="conversation_go_to_task">Go to task %1$s</string>
+    <string name="conversation_next_task">Next task</string>
     <string name="conversation_every_criterion">See every criterion</string>
     <string name="conversation_by_criterion">By criterion</string>
     <!-- A criterion, its estimate and how it stands, such as "Fluency · 3–4 of 5 · At B2". -->

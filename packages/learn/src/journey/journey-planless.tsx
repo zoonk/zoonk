@@ -1,20 +1,17 @@
 "use client";
 
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
-import { EnterButton, EnterLink } from "../_components/enter-button";
+import { EnterLink } from "../_components/enter-button";
 import { Page, PageSection } from "../_components/page";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useRefreshUntilShown } from "../generation/use-refresh-until-shown";
-import {
-  GoalMenuDialogs,
-  type GoalStatusControl,
-  useGoalMenu,
-  useSetGoalStatus,
-} from "./goal-actions";
+import { GoalMenuDialogs, type GoalStatusControl, useGoalMenu } from "./goal-actions";
 import { GoalOnlyMenu } from "./journey-menu";
 import { PlanHeader } from "./plan-header";
+import { ResumeGoalBar } from "./resume-goal-bar";
 
 function PlanlessHeader({
   goalStatus,
@@ -40,55 +37,6 @@ function PlanlessHeader({
 
 const SETUP_TITLE_ID = "journey-setup-title";
 const SETUP_TITLE_CLASS = "text-reading font-medium";
-const SETUP_ACTION_CLASS = "mt-2 w-full md:w-auto";
-
-function SetupPaused({
-  goalStatus,
-  goalTitle,
-}: {
-  goalStatus: GoalStatusControl;
-  goalTitle: string;
-}) {
-  const t = useExtracted();
-  const { isPending, setStatus } = useSetGoalStatus(goalStatus.onSetStatus);
-
-  return (
-    <>
-      <h2 className={SETUP_TITLE_CLASS} id={SETUP_TITLE_ID}>
-        {t("Your {goal} goal is paused", { goal: goalTitle })}
-      </h2>
-      <p className="text-muted-foreground text-sm">
-        {t("Nothing is planned until you resume it.")}
-      </p>
-      <EnterButton
-        busy={isPending}
-        className={SETUP_ACTION_CLASS}
-        onClick={() => setStatus("active")}
-        size="lg"
-      >
-        {t("Resume")}
-      </EnterButton>
-    </>
-  );
-}
-
-function SetupLeft({ continueHref }: { continueHref: string }) {
-  const t = useExtracted();
-
-  return (
-    <>
-      <h2 className={SETUP_TITLE_CLASS} id={SETUP_TITLE_ID}>
-        {t("Your plan comes after a few questions")}
-      </h2>
-      <p className="text-muted-foreground text-sm">
-        {t("Answer them and we'll plan every day until you reach your goal.")}
-      </p>
-      <EnterLink className={SETUP_ACTION_CLASS} href={continueHref} size="lg">
-        {t("Continue")}
-      </EnterLink>
-    </>
-  );
-}
 
 export function JourneySetup({
   continueHref,
@@ -99,17 +47,35 @@ export function JourneySetup({
   goalStatus: GoalStatusControl;
   goalTitle: string;
 }) {
+  const t = useExtracted();
+  const paused = goalStatus.status === "paused";
+
   return (
     <Page data-slot="journey-setup">
       <PlanlessHeader goalStatus={goalStatus} goalTitle={goalTitle} subtitle={goalTitle} />
 
       <PageSection aria-labelledby={SETUP_TITLE_ID} className="max-w-xl items-start gap-2">
-        {goalStatus.status === "paused" ? (
-          <SetupPaused goalStatus={goalStatus} goalTitle={goalTitle} />
-        ) : (
-          <SetupLeft continueHref={continueHref} />
-        )}
+        <h2 className={SETUP_TITLE_CLASS} id={SETUP_TITLE_ID}>
+          {paused
+            ? t("Your {goal} goal is paused", { goal: goalTitle })
+            : t("Your plan comes after a few questions")}
+        </h2>
+        <p className="text-muted-foreground text-sm">
+          {paused
+            ? t("Nothing is planned until you resume it.")
+            : t("Answer them and we'll plan every day until you reach your goal.")}
+        </p>
       </PageSection>
+
+      {paused ? (
+        <ResumeGoalBar onResume={() => goalStatus.onSetStatus("active")} />
+      ) : (
+        <BottomBar>
+          <BottomBarActions>
+            <EnterLink href={continueHref}>{t("Continue")}</EnterLink>
+          </BottomBarActions>
+        </BottomBar>
+      )}
     </Page>
   );
 }

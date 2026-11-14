@@ -129,7 +129,11 @@ export function TaskClose({
     }
   };
 
-  const shared = { "aria-keyshortcuts": shortcutKeys("leave"), "data-slot": "task-close" } as const;
+  const shared = {
+    "aria-haspopup": confirm ? "dialog" : undefined,
+    "aria-keyshortcuts": shortcutKeys("leave"),
+    "data-slot": "task-close",
+  } as const;
 
   const content = (
     <>

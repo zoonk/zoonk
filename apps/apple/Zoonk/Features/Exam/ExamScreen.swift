@@ -167,7 +167,7 @@ private struct ExamHero: View {
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: 0) {
-        PageHeader(Text(exam.examName), eyebrow: eyebrow)
+        PageHeader(Text(exam.examName))
 
         // Main's `DetailFacts`: mono data under the title, which a header's supporting line isn't.
         if !facts.isEmpty {
@@ -298,17 +298,6 @@ private struct ExamHero: View {
         }
       }
     }
-  }
-
-  private var eyebrow: Text {
-    guard let days = exam.daysLeft, days > 0 else {
-      return Text("Exam", tableName: "Exam", comment: "Eyebrow over the exam's name")
-    }
-
-    return exam.daysEstimated
-      ? Text(
-        "Exam\u{00A0}· About \(days) days left", tableName: "Exam", comment: "Estimated days left")
-      : Text("Exam\u{00A0}· \(days) days left", tableName: "Exam", comment: "Days left to the exam")
   }
 
   private var facts: [String] {

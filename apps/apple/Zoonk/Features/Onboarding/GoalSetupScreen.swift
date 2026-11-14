@@ -113,16 +113,6 @@ extension SetupProgress {
     }
   }
 
-  /// "About you · 4 of 10": where an About you screen is among this run's.
-  static func aboutYou(
-    current: Components.Schemas.OnboardingStep, history: [Components.Schemas.OnboardingStep],
-    steps: [Components.Schemas.OnboardingStep]
-  ) -> SetupProgress? {
-    SetupProgress(current: current, history: history, steps: steps) {
-      $0.profileQuestion == nil ? nil : $0
-    }
-  }
-
   private init?(
     current: Components.Schemas.OnboardingStep, history: [Components.Schemas.OnboardingStep],
     steps: [Components.Schemas.OnboardingStep],
@@ -387,12 +377,10 @@ private struct GoalSteps: View {
     let memoryEnabled = view.profile.memoryEnabled
     var draft = ProfileDraft(saved, memoryEnabled: memoryEnabled)
     var context = ProfileScreenContext(
-      eyebrow: SetupProgress.aboutYou(current: step, history: history, steps: view.steps).map {
-        String(
-          localized: "About you · \($0.step) of \($0.total)", table: "AboutYou",
-          comment: "Over an About you question in onboarding: which one it is of how many")
-      },
-      memoryEnabled: memoryEnabled)
+      eyebrow: String(
+        localized: "About you", table: "AboutYou",
+        comment: "Over an About you question in onboarding"),
+      skipDeclines: true, memoryEnabled: memoryEnabled)
 
     // Only a question met for the first time takes these: one the learner answered keeps their answer.
     switch question {
@@ -401,8 +389,6 @@ private struct GoalSteps: View {
         draft.text = role
         context.jobFromEarlierAnswer = true
       }
-    case .addressForm:
-      context.skipDeclines = true
     case .learningSupport where revisiting == nil && history.last == .conditions:
       context.prechecked = draft.precheck(for: conditionPicks)
     default:

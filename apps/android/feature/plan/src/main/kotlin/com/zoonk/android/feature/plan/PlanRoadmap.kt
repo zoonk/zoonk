@@ -108,7 +108,7 @@ private val FULL_ROADMAP_WIDTH = 560.dp
 
 private data class RoadmapPosition(
     val name: String,
-    val day: String?,
+    val until: PlanDateWords?,
     val number: Int,
     val total: Int,
 )
@@ -120,8 +120,12 @@ private fun roadmapPosition(
 ): RoadmapPosition? {
     val index = phases.indexOfFirst { it.state == PlanPhase.State.CURRENT }
     val current = phases.getOrNull(index) ?: return null
-    val day = current.dayOf(page.today)?.let { stringResource(R.string.plan_roadmap_day_of, it.day, it.days) }
-    return RoadmapPosition(phaseName(current, page.mocksRequirePlus), day, index + 1, phases.size)
+    return RoadmapPosition(
+        phaseName(current, page.mocksRequirePlus),
+        phaseUntil(page, current, isLast = index == phases.lastIndex),
+        index + 1,
+        phases.size,
+    )
 }
 
 @Composable
@@ -150,19 +154,17 @@ private fun RoadmapCompact(
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             if (position != null) {
                 Text(
-                    text = positionWords(position.name, listOfNotNull(position.day)),
+                    text =
+                        positionWords(
+                            stringResource(R.string.plan_roadmap_phase_number, position.number, position.total),
+                            listOf(position.name),
+                        ),
                     modifier = Modifier.weight(1f),
                     style = small,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
-                val spoken = stringResource(R.string.plan_roadmap_phase_of, position.number, position.total)
-                Text(
-                    text = stringResource(R.string.plan_roadmap_number_of, position.number, position.total),
-                    modifier = Modifier.semantics { contentDescription = spoken },
-                    style = small.withTabularFigures(),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                position.until?.let { TrailingText(it) }
             } else {
                 Text(
                     text = pluralStringResource(R.plurals.plan_phases_done, phases.size, done, phases.size),
@@ -249,7 +251,7 @@ private fun RoadmapFull(
                     text =
                         positionWords(
                             it.name,
-                            listOfNotNull(it.day, stringResource(R.string.plan_roadmap_phase_of, it.number, it.total)),
+                            listOf(stringResource(R.string.plan_roadmap_phase_of, it.number, it.total)),
                         ),
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.labelMedium,
@@ -303,7 +305,7 @@ private fun RoadmapLegend(
         }
         if (hasChallenges) {
             Trickster(Modifier.size(14.dp))
-            Text(stringResource(R.string.plan_phase_challenge), style = style, color = color)
+            Text(challengeName(page), style = style, color = color)
         }
         if (page.finish != null) {
             Icon(painterResource(R.drawable.ic_flag), contentDescription = null, modifier = Modifier.size(14.dp), tint = color)

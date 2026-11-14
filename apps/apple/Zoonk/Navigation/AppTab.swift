@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum AppTab: Hashable, CaseIterable {
+enum AppTab: Hashable {
   case today
   case plan
   case buddy
@@ -9,13 +9,25 @@ enum AppTab: Hashable, CaseIterable {
   case completedLessons
   case certificates
   case exam
+  case mockExam
   case speaking
   case mindMaps
   case statistics
+  /// A statistics page of its own, from the sidebar's Stats group.
+  case stats(StatsSection)
 
+  /// The sidebar's Study group, in its order. Certificates and the statistics overview aren't in
+  /// the sidebar: the account menu, the belt mark and search open them.
   static let study: [AppTab] = [
-    .mistakes, .completedLessons, .certificates, .exam, .speaking, .mindMaps, .statistics,
+    .mistakes, .mindMaps, .mockExam, .exam, .speaking, .completedLessons,
   ]
+
+  /// The sidebar's Stats group, in its order.
+  static let stats: [AppTab] = [
+    .stats(.level), .stats(.energy), .stats(.patterns), .stats(.score), .stats(.activity),
+  ]
+
+  static let sidebarPlaces = study + stats
 
   var studyRoute: AppRoute? {
     switch self {
@@ -23,9 +35,11 @@ enum AppTab: Hashable, CaseIterable {
     case .completedLessons: .completedLessons
     case .certificates: .certificates
     case .exam: .exam
+    case .mockExam: .mockChooser
     case .speaking: .speaking
     case .mindMaps: .mindMaps()
-    case .statistics: .statistics
+    case .statistics: .statistics()
+    case .stats(let section): .statistics(section: section)
     case .today, .plan, .buddy, .search: nil
     }
   }
@@ -67,9 +81,15 @@ enum AppTab: Hashable, CaseIterable {
     case .mindMaps:
       LocalizedStringResource(
         "Mind maps", table: "Navigation", comment: "Study place with a mind map for each chapter")
+    case .mockExam:
+      LocalizedStringResource(
+        "Mock exam", table: "Navigation",
+        comment: "Study place that opens the choice of a mock exam to take")
     case .statistics:
       LocalizedStringResource(
         "Statistics", table: "Navigation", comment: "Study place with the learner's statistics")
+    case .stats(let section):
+      section.title
     }
   }
 
@@ -85,7 +105,13 @@ enum AppTab: Hashable, CaseIterable {
     case .exam: "graduationcap"
     case .speaking: "mic"
     case .mindMaps: "point.3.connected.trianglepath.dotted"
+    case .mockExam: "doc.text.magnifyingglass"
     case .statistics: "chart.bar"
+    case .stats(.level): "medal"
+    case .stats(.energy): "bolt"
+    case .stats(.patterns): "calendar"
+    case .stats(.score): "target"
+    case .stats(.activity): "chart.bar"
     }
   }
 }

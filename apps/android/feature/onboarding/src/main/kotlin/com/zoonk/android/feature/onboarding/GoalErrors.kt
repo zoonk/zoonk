@@ -3,8 +3,9 @@ package com.zoonk.android.feature.onboarding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
-import com.zoonk.api.models.AllowanceItem
+import com.zoonk.android.feature.mindmaps.monthly
 import com.zoonk.api.models.AllowanceResponse
+import com.zoonk.api.models.MonthlyAllowanceItem
 
 enum class GoalLimitReason {
     ActiveGoals,
@@ -104,7 +105,7 @@ fun WriteOutcome<*>.startError(): GoalError =
 
 /** The first cap a new goal would hit, checked in core's order. */
 fun AllowanceResponse.goalStartLimit(): GoalLimitReason? {
-    val goal = items.find { it.kind == AllowanceItem.Kind.GOAL }
+    val goal = monthly(MonthlyAllowanceItem.Kind.GOAL)
     val period =
         when {
             goal == null -> null

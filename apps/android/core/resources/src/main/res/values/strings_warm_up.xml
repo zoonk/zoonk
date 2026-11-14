@@ -17,8 +17,6 @@
     <string name="warm_up_questions_ready">Your questions are ready</string>
     <!-- Under "Your questions are ready", above the button that starts the short level test. -->
     <string name="warm_up_questions_ready_description">Start them whenever you\'re ready.</string>
-    <!-- Replaces the note under a lesson's writing progress once it's written and the learner is still guessing. -->
-    <string name="warm_up_lesson_ready">Your lesson is ready. Start it whenever you like.</string>
     <string name="warm_up_back_to_quiz">Back to the quiz</string>
     <string name="warm_up_play_quiz">Play a quiz while you wait</string>
     <string name="warm_up_first_lesson_writing">Writing your first lesson: %1$s</string>

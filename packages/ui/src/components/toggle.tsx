@@ -17,7 +17,7 @@ const toggleVariants = cva(
       variant: {
         default: "bg-transparent",
         outline:
-          "border-input hover:bg-muted aria-pressed:border-selected aria-pressed:bg-selected-tint aria-pressed:hover:bg-selected-tint border bg-transparent aria-pressed:shadow-[inset_0_0_0_1px_var(--color-selected)]",
+          "border-input hover:bg-muted aria-pressed:bg-selected-tint aria-pressed:hover:bg-selected-tint aria-pressed:outline-selected border bg-transparent aria-pressed:border-transparent aria-pressed:outline-2 aria-pressed:-outline-offset-2 aria-pressed:outline-solid",
       },
     },
   },

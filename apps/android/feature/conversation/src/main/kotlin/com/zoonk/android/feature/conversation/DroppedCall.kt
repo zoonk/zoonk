@@ -18,15 +18,13 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.audio.MicrophoneOff
 import com.zoonk.android.feature.livecall.LiveCallFailure
 import com.zoonk.android.feature.livecall.LiveCallPhase
-import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitActions
 import com.zoonk.android.ui.components.LimitPeriod
-import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.limitMessage
+import com.zoonk.android.ui.components.comesBackLine
 
 internal enum class DroppedReason { CallInProgress, CallsPaused, Ended, Limit, Microphone, PlusRequired }
 
@@ -66,7 +64,7 @@ internal class DroppedCallActions(
     val onTakeover: () -> Unit,
     val onTypeInstead: () -> Unit,
     val onCreateAccount: () -> Unit,
-    val onSeePlus: () -> Unit,
+    val onSubscribe: () -> Unit,
 )
 
 /** A call that dropped can always be ended and saved, and called again when that can work. */
@@ -121,13 +119,13 @@ private fun DroppedReasonText(
         DroppedReason.Limit -> {
             val reached = limit ?: Limit.Reached(LimitTier.Plus, LimitPeriod.Day)
             Reason(callLimitTitle(reached)) {
-                Muted(limitMessage(reached, LimitSubject.Calls))
-                LimitActions(reached, actions.onCreateAccount, actions.onSeePlus)
+                comesBackLine(reached)?.let { Muted(it) }
+                LimitActions(reached, actions.onCreateAccount, actions.onSubscribe)
             }
         }
 
         DroppedReason.PlusRequired -> {
-            PlusNotice(onSeePlus = actions.onSeePlus, description = stringResource(R.string.conversation_challenge_plus))
+            ChallengeCallGate(actions.onSubscribe)
         }
 
         DroppedReason.Microphone -> {

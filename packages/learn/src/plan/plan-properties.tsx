@@ -63,7 +63,7 @@ function PropertyRow({
 }) {
   return (
     <li>
-      <button className={PROPERTY_ROW_CLASS} onClick={onOpen} type="button">
+      <button aria-haspopup="dialog" className={PROPERTY_ROW_CLASS} onClick={onOpen} type="button">
         <PropertyRowParts label={label}>{children}</PropertyRowParts>
       </button>
     </li>
@@ -226,7 +226,7 @@ export function PlanProperties({
 
       <ul className="flex flex-col">
         <PropertyRow
-          label={goal.kind === "exam" ? t("Exam date") : t("Goal date")}
+          label={goal.kind === "exam" ? t("Exam date") : t("End date")}
           onOpen={() => onOpen("date")}
         >
           <GoalDateValue />

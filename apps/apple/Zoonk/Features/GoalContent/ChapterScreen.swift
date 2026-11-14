@@ -44,8 +44,7 @@ struct ChapterScreen: View {
           ProgressView()
         }
       }
-      .navigationTitle(chapter.value.map { Text($0.chapter.title) } ?? untitledChapter)
-      .barTitleAfterHero(chapter.value?.chapter.title ?? "")
+      .barTitleAfterHero(chapter.value?.chapter.title ?? String(localized: untitledChapterTitle))
       .toolbar {
         TutorAskToolbarItem(scope: .chapter(chapterId: chapterId))
 
@@ -85,10 +84,14 @@ struct ChapterScreen: View {
     }
   }
 
-  private var untitledChapter: Text {
-    Text(
-      "Chapter", tableName: "Navigation",
+  private var untitledChapterTitle: LocalizedStringResource {
+    LocalizedStringResource(
+      "Chapter", table: "Navigation",
       comment: "Title shown instead of a chapter of the plan until it can open")
+  }
+
+  private var untitledChapter: Text {
+    Text(untitledChapterTitle)
   }
 
   private var notInPlan: some View {
@@ -138,6 +141,21 @@ private struct ChapterContent: View {
         referenceSection(withMap: false)
       }
     }
+    .bottomBar {
+      if let next = lessons.first(where: { $0.state == .next }) {
+        Button {
+          router.open(.lesson(lessonId: next.lessonId))
+        } label: {
+          if done > 0 {
+            Text("Continue", tableName: "Plan", comment: "Opens the chapter's next lesson")
+          } else {
+            Text("Start", tableName: "Plan", comment: "Opens the chapter's first lesson")
+          }
+        }
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+      }
+    }
     .onDisappear {
       practiceTask?.cancel()
     }
@@ -149,41 +167,10 @@ private struct ChapterContent: View {
 
   private var header: some View {
     Section {
-      VStack(alignment: .leading, spacing: 6) {
-        eyebrow
-          .typeStyle(.eyebrow)
-          .foregroundStyle(.faint)
-
-        Text(chapter.chapter.title)
-          .typeStyle(.pageTitle)
-          .accessibilityAddTraits(.isHeader)
-          .heroTitle()
-
-        if !lessons.isEmpty {
-          facts(done: done)
-            .typeStyle(.data)
-            .foregroundStyle(.mutedForeground)
-        }
-
-        if let next = lessons.first(where: { $0.state == .next }) {
-          Button {
-            router.open(.lesson(lessonId: next.lessonId))
-          } label: {
-            Group {
-              if done > 0 {
-                Text("Continue", tableName: "Plan", comment: "Opens the chapter's next lesson")
-              } else {
-                Text("Start", tableName: "Plan", comment: "Opens the chapter's first lesson")
-              }
-            }
-            .frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.mainAction)
-          .controlSize(.large)
-          .padding(.top, 8)
-        }
-      }
-      .padding(.vertical, 4)
+      PageHeader(
+        Text(chapter.chapter.title),
+        supporting: Text(verbatim: facts.joinedFacts()).monospacedDigit()
+      )
     }
   }
 
@@ -229,17 +216,11 @@ private struct ChapterContent: View {
             router.open(.testOut(chapterId: chapter.chapter.chapterId))
           } label: {
             VStack(alignment: .leading, spacing: 2) {
-              HStack {
-                Text(
-                  "Already know this?", tableName: "Plan",
-                  comment: "Offers the chapter's test-out"
-                )
-                .foregroundStyle(.primary)
-
-                if chapter.testOut.plusRequired {
-                  PlusMark()
-                }
-              }
+              Text(
+                "Already know this?", tableName: "Plan",
+                comment: "Offers the chapter's test-out"
+              )
+              .foregroundStyle(.primary)
 
               Text(
                 "Take the test and skip the chapter", tableName: "Plan",
@@ -292,23 +273,26 @@ private struct ChapterContent: View {
     }
   }
 
-  private var eyebrow: Text {
-    if let subject = chapter.chapter.subject {
-      return Text(
-        "\(subject.name)\u{00A0}· Chapter \(chapter.chapter.position)", tableName: "Plan",
-        comment: "A chapter's subject and its number there")
-    }
-
-    return Text(
-      "Chapter \(chapter.chapter.position)", tableName: "Plan", comment: "A chapter's number")
-  }
-
-  private func facts(done: Int) -> Text {
-    let lessons = chapter.lessons
+  /// Where the chapter sits, then its lessons, their time and how much is done.
+  private var facts: [String] {
     let minutes = lessons.reduce(0) { $0 + $1.minutes }
     let share = Double(done) / Double(max(lessons.count, 1))
+    let place =
+      chapter.chapter.subject.map { subject in
+        String(
+          localized: "\(subject.name)\u{00A0}· Chapter \(chapter.chapter.position)", table: "Plan",
+          comment: "A chapter's subject and its number there")
+      }
+      ?? String(
+        localized: "Chapter \(chapter.chapter.position)", table: "Plan",
+        comment: "A chapter's number")
 
-    let facts = [
+    guard !lessons.isEmpty else {
+      return [place]
+    }
+
+    return [
+      place,
       String(
         localized: "\(lessons.count) lessons", table: "Plan",
         comment: "How many lessons a chapter has"),
@@ -317,8 +301,6 @@ private struct ChapterContent: View {
         localized: "\(share.formatted(.percent.precision(.fractionLength(0)))) done", table: "Plan",
         comment: "The share of a chapter's lessons done"),
     ]
-
-    return Text(facts.joinedFacts())
   }
 
   private func practice() {
@@ -360,14 +342,8 @@ struct LessonRow: View {
     ) {
       StatusMark(status: status)
     } trailing: {
-      HStack(spacing: 8) {
-        if lesson.plusRequired {
-          PlusMark()
-        }
-
-        if lesson.minutes > 0 {
-          Text(planDurationText(minutes: Double(lesson.minutes)))
-        }
+      if lesson.minutes > 0 {
+        Text(planDurationText(minutes: Double(lesson.minutes)))
       }
     }
     .accessibilityElement(children: .combine)
@@ -433,7 +409,7 @@ private struct ChapterReferenceSection: View {
       Label {
         Text(
           "Chapter summary", tableName: "Plan",
-          comment: "Folds a chapter's skills and summaries")
+          comment: "Folds a chapter's topics and summaries")
       } icon: {
         Image(systemName: "list.bullet.clipboard")
       }

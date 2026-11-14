@@ -47,15 +47,14 @@
     <string name="tutor_load_earlier">Load earlier questions</string>
     <string name="tutor_load_earlier_failed">Couldn\'t load earlier questions. Try again.</string>
 
-    <string name="tutor_error_session">Your session expired. Sign in again.</string>
-    <string name="tutor_error_subscription">Subscribe to ask questions</string>
+    <string name="tutor_error_session">You\'ve been logged out.</string>
+    <string name="tutor_error_subscription">Asking questions needs a subscription</string>
     <string name="tutor_error_gone">This lesson is no longer available.</string>
     <string name="tutor_error_invalid">We couldn\'t send this question. Try again.</string>
     <string name="tutor_error_slow_down">Take a short break, then ask again.</string>
     <string name="tutor_error_failed">Something went wrong. Try again.</string>
     <string name="tutor_error_last_question">We couldn\'t send your last question. Try again.</string>
-    <string name="tutor_sign_in">Sign in</string>
-    <string name="tutor_view_plans">View plans</string>
+    <string name="tutor_sign_in">Log in</string>
     <string name="tutor_try_again">Try again</string>
 
     <string name="tutor_placeholder_chapter">Ask about this chapter…</string>
@@ -97,7 +96,7 @@
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>
     <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="tutor_offer_goal_limit">Starting another goal right now comes with Plus. Until then, keep going with your current goals.</string>
+    <string name="tutor_offer_goal_gate">Another goal now needs a subscription</string>
     <string name="tutor_offer_catalog_course">A ready course in the catalog</string>
     <string name="tutor_offer_chapter_test">Test: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">
@@ -114,14 +113,14 @@
     <string name="tutor_offer_mock_description">Whenever you want: a full exam day or half a day</string>
     <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
     <string name="tutor_offer_mock_by_subject">Whenever you want: a full exam day, half a day or one subject</string>
-    <string name="tutor_offer_mock_plus">Mock exams come with Plus: whenever you want, and every week in your plan.</string>
+    <string name="tutor_offer_mock_gate">Mock exams need a subscription</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_weekly">Practiced every week in your plan, each draft graded.</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_biweekly">Practiced every other week in your plan, each draft graded.</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_final_weeks">Practiced in the final weeks before the exam, each draft graded.</string>
-    <string name="tutor_offer_essay_plus">Essay practice with grading comes with Plus.</string>
+    <string name="tutor_offer_essay_gate">Essay practice needs a subscription</string>
     <string name="tutor_offer_mistakes">Mistakes notebook</string>
     <plurals name="tutor_offer_mistakes_open">
         <item quantity="one">%d mistake to fix, with practice that brings it back.</item>
@@ -137,16 +136,15 @@
     <string name="tutor_offer_memory">Memory</string>
     <string name="tutor_offer_memory_description">See, correct or delete what your buddy remembers about you.</string>
     <string name="tutor_offer_stats">Statistics</string>
-    <string name="tutor_offer_stats_description">Energy, level, right answers and when you study best.</string>
+    <string name="tutor_offer_stats_description">Energy, belt, right answers and when you study best.</string>
     <!-- A card offering a language as one country speaks it; %1$s is that variety, such as "Spanish (Argentina)". -->
     <string name="tutor_offer_variety_description">Your buddy and practice calls use %1$s.</string>
     <!-- Replaces the card's Apply button once the variety is saved; the learner can change it again from their plan. -->
     <string name="tutor_offer_variety_applied">Saved. You can change it in your plan.</string>
-    <string name="tutor_offer_plus">Plus</string>
-    <string name="tutor_offer_plus_description">What Plus includes and its price.</string>
+    <string name="tutor_offer_plus">Subscription</string>
+    <string name="tutor_offer_plus_description">What it includes and its price.</string>
     <string name="tutor_offer_plus_subscribed">Your plan and its billing.</string>
     <!-- Button that opens the Zoonk Plus page, with what Plus includes and its price. Not "see more". -->
-    <string name="tutor_offer_see_plus">See Plus</string>
     <string name="tutor_offer_manage">Manage</string>
 
     <!-- A card's title naming the change the buddy suggests: a noun phrase, not an action. -->
@@ -171,7 +169,7 @@
     <!-- A buddy's card offering a new content country for the plan, under its title "Content country: …". -->
     <string name="tutor_offer_country_description">Applying it rebuilds your plan for this country. The lessons you\'ve finished stay done.</string>
     <!-- Replaces that card's Apply button once the country is saved. -->
-    <string name="tutor_offer_country_applied">Saved. Your new plan is being prepared, and you can keep studying meanwhile.</string>
+    <string name="tutor_offer_country_applied">Saved. Your new plan is getting ready, and you can keep studying.</string>
     <!-- Replaces the where-you-live card's Save button once it's saved. -->
     <string name="tutor_offer_home_country_saved">Saved. You can change it in Preferences.</string>
 </resources>

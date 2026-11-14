@@ -7,7 +7,6 @@
   "warm_up_first_lesson_screens": "9ba0149fa3a2c80398909316ab28b45d07a24768b5137c9b80a345b3ab5cbfc9",
   "warm_up_first_lesson_writing": "f931fb2c9ca296f00e76c58ca124ca22eac26f7deb4f5f835c5c26f1d1f19804",
   "warm_up_guess_hint": "74ea0b6203bc14531e9ad82a286e93eed6cf962975d7db2c6d26a77cddf53789",
-  "warm_up_lesson_ready": "02c629a763050a84279e07b12999cda9cc56a1041860803694df0b1889a03e51",
   "warm_up_next": "8035b4031aed63ddb042195ffbf9612d2ee2f81677354f871ded3fda369dc16b",
   "warm_up_plan_ready": "0087789b7978eb2ae8560aae375b754f65fe949e7059dde32abb8a996e1abff4",
   "warm_up_plan_ready_one_question": "34fd26b6c23697b5fd845a37056214382cd0fa961cfadbf53688bd9da18b0445",
@@ -39,8 +38,6 @@
     <string name="warm_up_questions_ready">問題の準備ができました</string>
     <!-- Under "Your questions are ready", above the button that starts the short level test. -->
     <string name="warm_up_questions_ready_description">準備ができたら、いつでも始められます。</string>
-    <!-- Replaces the note under a lesson's writing progress once it's written and the learner is still guessing. -->
-    <string name="warm_up_lesson_ready">レッスンができました。好きなときに始められます。</string>
     <string name="warm_up_back_to_quiz">クイズに戻る</string>
     <string name="warm_up_play_quiz">待ち時間にクイズをする</string>
     <string name="warm_up_first_lesson_writing">最初のレッスンを作成しています：%1$s</string>

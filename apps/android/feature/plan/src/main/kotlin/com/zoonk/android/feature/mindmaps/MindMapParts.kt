@@ -51,10 +51,10 @@ import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
-import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.MindMapImage
 import com.zoonk.api.models.MindMapOutline
+import com.zoonk.api.models.MonthlyAllowanceItem
 import java.util.UUID
 
 /** A map's picture through the session the screen shows; [original] decodes it whole, for zooming. */
@@ -274,7 +274,7 @@ internal fun MindMapLimit(
         limit = limit,
         subject = subject,
         onCreateAccount = { navigate(AppRoute.Login) },
-        onSeePlus = { navigate(AppRoute.Subscription) },
+        onSubscribe = { navigate(AppRoute.Subscription) },
         modifier = modifier,
     )
 }
@@ -325,7 +325,7 @@ internal fun mindMapsHost(app: AppContainer): MindMapsHost? {
         pictures = PrivatePictures(app.images, session),
         cap = {
             val allowance by app.subscriptions.allowance.collectShown()
-            allowance.value?.reachedCap(AllowanceItem.Kind.MIND_MAP)
+            allowance.value?.reachedCap(MonthlyAllowanceItem.Kind.MIND_MAP)
         },
         tier = {
             val summary by app.learnerSummary.summary.collectShown()

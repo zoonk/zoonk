@@ -3,6 +3,7 @@ import { StatusBadge } from "@/components/model-status-badge";
 import { type ModelConfig, getModelDisplayName } from "@/lib/models";
 import { type ModelStatus } from "@/lib/utils";
 import { type ModelPricing } from "@zoonk/ai/pricing/gateway-prices";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import Link from "next/link";
 
 const TOKENS_PER_MILLION = 1_000_000;
@@ -39,10 +40,10 @@ export function ModelList({
         {models.map(({ model, pricing, status }) => (
           <li key={model.id}>
             <Link
-              className="hover:bg-muted -mx-2.5 flex min-h-11 items-center justify-between gap-3 rounded-lg px-2.5 text-sm"
+              className="hover:bg-muted -mx-2.5 flex min-h-11 items-center gap-3 rounded-lg px-2.5 text-sm"
               href={`/tasks/${taskId}/${encodeURIComponent(model.id)}`}
             >
-              <span className="flex min-w-0 items-center gap-2">
+              <span className="flex min-w-0 flex-1 items-center gap-2">
                 <span className="truncate">{getModelDisplayName(model)}</span>
                 {status !== "notStarted" && <StatusBadge status={status} />}
               </span>
@@ -54,6 +55,8 @@ export function ModelList({
                   <span className={PRICE_CLASS}>{formatPrice(pricing.output)}</span>
                 </span>
               )}
+
+              <RowChevron />
             </Link>
           </li>
         ))}

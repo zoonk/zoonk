@@ -50,10 +50,10 @@ export const MOMENTS: readonly Moment[] = [
   {
     id: "mock",
     summary:
-      "A mock done: a graded result, so its score leads, the words naming it small above the number, with the answers it comes from as tiles; then the day's moment as every block's end has it (missions, a level or Energy reached), how each area went and what's next. A milestone it crowned opens first, full screen.",
+      "A mock done: a graded result, so its score leads, the chip naming it above the number, with the answers it comes from as tiles; then the day's moment as every block's end has it (missions, a level or Energy reached), how each area went and what's next. A milestone it crowned opens first, full screen.",
     title: "A mock's end",
     where:
-      "`MockResultView`'s score step (`StepTitleLabel`, `StepTitleNumber`, `MockResultAnswers`), then `DayMoment`; `MilestoneCeremony` before it.",
+      "`MockResultView`'s score step (`LabeledStepTitle`, `StepTitleNumber`, `MockResultAnswers`), then `DayMoment`; `MilestoneCeremony` before it.",
   },
   {
     id: "summary",

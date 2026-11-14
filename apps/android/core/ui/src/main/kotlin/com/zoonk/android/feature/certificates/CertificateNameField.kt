@@ -175,7 +175,6 @@ fun CertificateNameField(
                 busy = model.isSaving,
                 onClick = save,
                 enabled = name.isNotBlank() && !isTooLong,
-                leadingIcon = { ButtonIcon(R.drawable.ic_check) },
             ) {
                 Text(stringResource(R.string.certificates_save))
             }

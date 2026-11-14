@@ -2,13 +2,12 @@
 <!-- eloqnt-fingerprints-v1
 {
   "explain_coming": "cced7d85e61a343d9032e39b683eda0217b609c18faa2a62105e23b5e5037dca",
-  "explain_deeper": "57109c55d6f410bcf2c4f5a3e08d9fbe799512ee145fb4595b385c8493995730",
+  "explain_deeper": "299008db9a1c190b4c991c699694cda479f1ad2e1a2f305a6b38c694d2c6d9cb",
   "explain_deeper_course": "2fc5a1a95e36c09076ebc5eab3249f9cbb7bb135f788b05333e0237ff7187ec4",
   "explain_deeper_goal": "a48002c1957b8aab9c2c70fb05e91ff066bc48fe44f2dc01685a82c7bb9eeab4",
   "explain_deeper_subject": "378a19aedadbe94f16dc29949c8142d8bac213d20e57789ab1a3db212914e045",
   "explain_go_further": "3608166279ccf31558b687739b991ba8d518780b4e0a1a72f6d2810cf6109749",
   "explain_load_failed": "196b66dad4eef98f889ef2acc66f7d2bdc8a743b7c274b2f395c8085a5045de5",
-  "explain_no_plan": "24964992bb03ea738f08042475ee0191139d8ac92d79a587625629cfd9cc9c75",
   "explain_now_you_know": "1ba029fda70c0260999ab6e0fda132db52879c63bb48467e043bdd42b0515fd2",
   "explain_one_question": "6600cdabb190f5369a51d65ab1457a9cacacc425d3600e7e7b9e0a496dc747ee",
   "explain_phase_find": "6b862d5692f24f2d5a79f54b89104bd91dbcbbf37a7ef68bab5367c8486a1897",
@@ -20,9 +19,9 @@
   "explain_phase_write_review": "45b68b312ea08000c09b8d86c23fe70607f649fa0354a62a05f32b3a15b3655a",
   "explain_quick": "6b25698601c4ed4c0526a48fc0fd2e99d7289c5c123b8c2b46fc70190a2ea3f6",
   "explain_recap": "2ab07f540c8b17732e7d9c6816ba9a4a8a2401eff3abd94ba824da45beb2bbef",
-  "explain_see": "98a68e04e3870879ba5026d22554a3c617af49109c52ab2b3bb4f1ad32f86c14",
+  "explain_see": "f5e25d68da11add7737a0c290f74fc295610ed692ce500f23ec96ec209941cf7",
   "explain_slow": "8f1a66fe3be8769c812800c6bf73f0b0e0d3087edbefdb8134c0e1183648e325",
-  "explain_still_writing": "c050ff00d145cda53cf2e16d8d4f9aa7386c3dc63d80601e01c535fc1363cb6a",
+  "explain_still_writing": "957ffc92f03628f40cb737d9c940cd8c0b25f0a8e925a182120ad50b358a3f28",
   "explain_try_again": "f532be373feffb3202726a3c50e748ea2a6e5dc51fa2600c2ac7697b564f4239",
   "explain_writing": "6fd8e9fd2537d1649308fe3817dd6ae4cb23137ce07c3daac5403bd841e4f4ca"
 }
@@ -38,19 +37,18 @@
     <string name="explain_phase_write_review">事実関係を確認しています…</string>
     <!-- Eyebrow over a quick explanation's title: %1$s is how long it takes, such as "5 min". -->
     <string name="explain_quick">短い解説 · %1$s</string>
-    <string name="explain_no_plan">学習計画を立てる必要はありません。</string>
     <string name="explain_coming">これから学ぶこと</string>
     <string name="explain_one_question">最後に短い問題を1問</string>
-    <string name="explain_deeper">もっと深く学ぶ</string>
+    <string name="explain_deeper">この内容をもっと学ぶ</string>
     <!-- %1$s is a course's title. -->
     <string name="explain_deeper_course">%1$sの学習計画を作る</string>
     <string name="explain_deeper_subject">科目全体の学習計画を作る</string>
     <!-- A goal typed for the learner from the explanation's topic, which %1$s is, mid-sentence. -->
     <string name="explain_deeper_goal">%1$sを深く理解したいです</string>
     <string name="explain_slow">いつもより時間がかかっています。</string>
-    <string name="explain_still_writing">引き続き解説を作成しています。でき次第、ここに表示されます。</string>
+    <string name="explain_still_writing">まだ解説を準備しています。</string>
     <string name="explain_try_again">もう一度試す</string>
-    <string name="explain_see">解説を見る</string>
+    <string name="explain_see">始める</string>
     <string name="explain_load_failed">この解説を読み込めませんでした</string>
     <string name="explain_now_you_know">理解できました</string>
     <plurals name="explain_recap">

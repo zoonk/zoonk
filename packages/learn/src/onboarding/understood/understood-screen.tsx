@@ -7,13 +7,12 @@ import { useRef, useState } from "react";
 import { CreateAccountLink } from "../../_components/create-account-link";
 import { GateWords, SubscribeGate } from "../../_components/subscribe-gate";
 import { GoalLimitWall } from "../entry/goal-limit-notice";
-import { GoalFooter } from "../entry/goal-outcomes";
+import { GoalActions, GoalErrorMessage } from "../entry/goal-outcomes";
 import { type GoalError } from "../goal-errors";
 import { type GoalLimitReason } from "../onboarding-actions";
 import {
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,
@@ -193,7 +192,26 @@ export function UnderstoodScreen({
   };
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        !plusLimit && (
+          <GoalActions error={cardError} signUpHref={signUpHref}>
+            <OnboardingSecondaryButton
+              disabled={isCreating || rewriting}
+              onClick={() => setRewriting(true)}
+              ref={fixButtonRef}
+            >
+              {t("Fix something")}
+            </OnboardingSecondaryButton>
+            <form action={() => onConfirm()} className="contents">
+              <OnboardingPrimaryButton busy={isCreating} disabled={rewriting} type="submit">
+                {t("Looks right")}
+              </OnboardingPrimaryButton>
+            </form>
+          </GoalActions>
+        )
+      }
+    >
       <UnderstoodWords
         disabled={isCreating}
         onCancel={() => {
@@ -246,26 +264,7 @@ export function UnderstoodScreen({
         </div>
       )}
 
-      {plusLimit ? (
-        <OnboardingFooter className="gap-3">
-          <GoalLimitWall reason={plusLimit} />
-        </OnboardingFooter>
-      ) : (
-        <GoalFooter error={cardError} signUpHref={signUpHref}>
-          <form action={() => onConfirm()} className="contents">
-            <OnboardingPrimaryButton busy={isCreating} disabled={rewriting} type="submit">
-              {t("Looks right")}
-            </OnboardingPrimaryButton>
-          </form>
-          <OnboardingSecondaryButton
-            disabled={isCreating || rewriting}
-            onClick={() => setRewriting(true)}
-            ref={fixButtonRef}
-          >
-            {t("Fix something")}
-          </OnboardingSecondaryButton>
-        </GoalFooter>
-      )}
+      {plusLimit ? <GoalLimitWall reason={plusLimit} /> : <GoalErrorMessage error={cardError} />}
     </OnboardingColumn>
   );
 }

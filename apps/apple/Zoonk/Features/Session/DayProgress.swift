@@ -28,7 +28,7 @@ struct SessionBar: Decodable, Hashable, Sendable {
   let total: Int
 }
 
-/// Main's catch-up line under a block's facts: small, never a readout.
+/// Main's catch-up line, the one caption under a block end's meter: small, never a readout.
 struct CatchUpLine: View {
   let catchUp: DayProgress.CatchUp
 
@@ -53,7 +53,7 @@ struct CatchUpLine: View {
         Text(caughtUpAndToGo)
       }
     }
-    .typeStyle(.body.monospacedDigit())
+    .typeStyle(.meta.monospacedDigit())
   }
 
   /// The gain in ink, what's left muted.
@@ -91,8 +91,7 @@ struct DayProgressBlock: View {
     VStack(alignment: .leading, spacing: 8) {
       VStack(alignment: .leading, spacing: 2) {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
-          lead
-            .typeStyle(.body.monospacedDigit())
+          DayProgressLead(bar: bar, isOpen: progress.lead == .open)
             .frame(maxWidth: .infinity, alignment: .leading)
 
           if let percent = progress.percent {
@@ -102,11 +101,6 @@ struct DayProgressBlock: View {
           }
         }
 
-        if let caption {
-          caption
-            .typeStyle(.meta.monospacedDigit())
-            .foregroundStyle(.mutedForeground)
-        }
       }
       .accessibilityElement(children: .combine)
 
@@ -114,40 +108,36 @@ struct DayProgressBlock: View {
         DaySegments(segments: segments, finished: celebrates ? moment.finishedSegment : nil)
       }
 
-      if moment.deferredLessonsCount > 0 {
+      // At most one caption under the meter: catching up, else lessons still joining the day.
+      if let catchUp = progress.catchUp {
+        CatchUpLine(catchUp: catchUp)
+      } else if progress.lead == .open, progress.lessonsComing {
         Text(
-          "\(moment.deferredLessonsCount) lessons moved to another day to fit your \(studyDuration(minutes: moment.minutes.dailyGoal)) today.",
-          tableName: "Player",
-          comment:
-            "After a lesson is saved: lessons moved to another day so today's work fits the learner's daily time. The second argument is a duration like '4 hr'."
+          "More as you go", tableName: "Session",
+          comment: "At a block's end: today's next lessons are being written and join on their own"
         )
-        .typeStyle(.note)
+        .typeStyle(.meta)
         .foregroundStyle(.mutedForeground)
       }
     }
   }
+}
+
+/// What's done today, the number in bold: "2 of 3 done today", or "2 done today" while today's list
+/// still grows.
+struct DayProgressLead: View {
+  let bar: SessionBar
+  let isOpen: Bool
+
+  var body: some View {
+    lead
+      .typeStyle(.body.monospacedDigit())
+  }
 
   /// `AttributedString` parses the bold after the plural variant resolves; `Text`'s key doesn't.
   private var lead: Text {
-    switch progress.lead {
-    case .done, .complete:
-      Text(
-        AttributedString(
-          localized:
-            "**\(bar.completed)** of \(bar.total) done today", table: "Session",
-          comment:
-            "At a block's end: blocks of today's session done out of all of them. Keep the ** around the first number: it shows in bold."
-        ))
-    case .left:
-      Text(
-        AttributedString(
-          localized:
-            "**\(bar.total - bar.completed)** left today", table: "Session",
-          comment:
-            "At a block's end past the session's midpoint: blocks of today's session still to do. Keep the ** around the number: it shows in bold."
-        ))
-    case .open:
-      Text(
+    if isOpen {
+      return Text(
         AttributedString(
           localized:
             "**\(bar.completed)** done today", table: "Session",
@@ -155,21 +145,14 @@ struct DayProgressBlock: View {
             "At a block's end on a day still holding time for lessons not listed yet: blocks done today. Keep the ** around the number: it shows in bold."
         ))
     }
-  }
 
-  private var caption: Text? {
-    switch progress.lead {
-    case .left:
-      Text(
-        "\(bar.completed) of \(bar.total) done", tableName: "Session",
-        comment: "How far the day's session is")
-    case .open where progress.lessonsComing:
-      Text(
-        "More as you go", tableName: "Session",
-        comment: "At a block's end: today's next lessons are being written and join on their own")
-    case .done, .open, .complete:
-      nil
-    }
+    return Text(
+      AttributedString(
+        localized:
+          "**\(bar.completed)** of \(bar.total) done today", table: "Session",
+        comment:
+          "At a block's end: blocks of today's session done out of all of them. Keep the ** around the first number: it shows in bold."
+      ))
   }
 }
 

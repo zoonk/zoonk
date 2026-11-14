@@ -86,7 +86,6 @@ fun day(
         catchUp = null,
         lessonsComing = false,
         lessonsToPrepare = false,
-        plusLessons = emptyList(),
         week = StudySessionWeek(days = emptyList(), nextStudyDate = null),
         dayEndsAt = 0,
     )

@@ -3,27 +3,19 @@
 {
   "session_block_bonus_practice": "d74a2870569347398af4de57f43de9381f3d7b8679bc3bfda6bac8d17326c357",
   "session_block_bonus_practice_areas": "1fea59f323d3c1689d61cbe78f8c297620df8bcbc2fcf123b6aef5187a968296",
-  "session_block_challenge_questions": "feb096e3cf8ef6e2031db5d72663d76fffe732ce843859b15a777b56bcf5213c",
-  "session_block_challenge_rematch": "03266af1f2ea54c0d7ae4d5730ef62116632332d89230c045928ac2d54dc3e9b",
-  "session_block_final_challenge": "c9c3b779d669b1f92aef6254fa6210e9f073c8cb14d6d828a7844ff66b3cbbc8",
-  "session_block_full_review": "a9bd417d56dea00f14c5a9ae0571b5fde08c2842707e8f7c5e6a42baca768523",
-  "session_block_full_review_questions": "0cc0281a29828c40192bd78e8d12f31255d893be2f67386447b50acd440d634c",
-  "session_block_live_call": "98509e6edb4a28158f56829fadff2969207e75c33b7cfa1c71d9c3f412a0219a",
+  "session_block_call": "c27a7502f63e1c5c94d4d2242b32a50d5e4920c006ce0d8db230de5004715859",
+  "session_block_full_review_questions": "eb38f39317b6ddfd4ead693b66cdd34d5f93491f3a7e24b35b3f0fd66a791490",
   "session_block_mixed_practice": "8b86f637357f21d5ab199a9c9715d009cb58aea6ddb13f481d55007cf1361023",
   "session_block_mock_exam": "4962bab0134f3d6ca2cae0f40a407e57a1de0a020b29551f217ee1558be4ed51",
   "session_block_new_lesson": "26aa493c6b88e1fecf6dc4627cedcd8d4dbb6d15f541e97d430728f29c6ede06",
-  "session_block_phase_challenge": "cf5c6f21c36fe2a7093fb7693d66c41afd868856fe017eb888bf8f68eab9d815",
-  "session_block_phase_live_call": "bc0288a7eb25c874700441ce03c13b86265a335b43d05a85c05469680b1c16a1",
-  "session_block_phase_questions": "8cd1f3266687d8b55e7719c96b8ebe6db81548419d9c5cb7dd6b639d7116bbc9",
   "session_block_practice_areas": "20cedfd6560b32093de0825c862cf7c3adb858a9e7f9e26b16c599fbf48d6c8b",
   "session_block_practice_mistakes": "d96a73a126c6512b46d469f650d8369bc7fdd5e98901fc0bff9f916bf4cd346b",
   "session_block_questions": "fc51249ac76a3ab09ec7680f68facf9f50fc68117d61e8189912ea3638079bba",
-  "session_block_quick_review": "63659ea572b6d793d72f5e197b1e69315c0faa0dbce454aeb0bb83b750442085",
+  "session_block_rematch": "e48e26bc4c21ee12252e182e66a478f031c088f21453891f6360f7f60c5ddf11",
   "session_block_rematch_lesson": "ed0a37160472a8f7ae6b610c03f46be99a2970090ff76f955bb8c25837562c52",
+  "session_block_review": "45e1ada82aa3f44adac69ac34845ea6037f9402bf4a9ca53211d1c8aed341e70",
   "session_block_review_topics": "394447d9d1fee650a7d60e07ea921ce280b30b124f50ce757112867111ec3e09",
-  "session_block_review_topics_and_known": "8d31c3a3b45a59dde7dc5863be71c6ddb1c12bb8f0e82b947cd661c86798a89c",
-  "session_block_reviews": "f996dac22bc8fbce7e3d14eba622b391fdd3e70279b7cb7b01f368fed8c6e1e7",
-  "session_block_weakest": "cb7d61cea4f4e638fe686605140c491e8dd91f0aa1738569afb38ea60069eb4f",
+  "session_block_weakest": "4118e3f8e72191cd18a13ff9559c540daafe1ed3612e88f76a1904c42eaf643a",
   "session_block_weekly_challenge": "a71f3801eec48936670e3cce9f0fd9a6ae3e70a38097a9dd5d33eddf6af4975b",
   "session_block_what_you_know": "29d769ef1d128879ac05973a5a2fbe6fbd656be928a1040aa77421b7776b19cc",
   "session_block_writing_practice": "3bd2dd51defbf7d2da778c54a775eb5fb1bdc5dac45c64826ec0569034c7bae5",
@@ -94,18 +86,17 @@
 }
 -->
 <resources>
+    <string name="session_block_review">Réviser</string>
+    <!-- A second go at the Trickster after losing. -->
+    <string name="session_block_rematch">Revanche</string>
+    <!-- A language plan's live call with the Trickster. -->
+    <string name="session_block_call">Appel</string>
     <string name="session_block_mock_exam">Examen blanc</string>
     <string name="session_block_weekly_challenge">Défi hebdomadaire</string>
-    <string name="session_block_final_challenge">Défi final</string>
-    <string name="session_block_challenge_rematch">Défi, deuxième essai</string>
-    <string name="session_block_phase_challenge">Défi de la phase</string>
     <!-- The first week's warm-up: only placement's questions, which check rather than review. -->
     <string name="session_block_what_you_know">Ce que tu sais déjà</string>
-    <string name="session_block_reviews">Révisions</string>
-    <string name="session_block_quick_review">Révision rapide</string>
     <string name="session_block_new_lesson">Nouvelle leçon</string>
     <string name="session_block_writing_practice">Entraînement à l’écriture</string>
-    <string name="session_block_full_review">Révision complète</string>
     <string name="session_block_practice_mistakes">Réviser tes erreurs</string>
     <string name="session_block_bonus_practice">Entraînement bonus</string>
     <string name="session_block_mixed_practice">Entraînement varié</string>
@@ -120,9 +111,9 @@
         <item quantity="other">%d questions</item>
     </plurals>
     <plurals name="session_block_weakest">
-        <item quantity="one">Aucune révision prévue aujourd’hui · %d question sur les sujets que tu maîtrises le moins</item>
-        <item quantity="many">Aucune révision prévue aujourd’hui · %d questions sur les sujets que tu maîtrises le moins</item>
-        <item quantity="other">Aucune révision prévue aujourd’hui · %d questions sur les sujets que tu maîtrises le moins</item>
+        <item quantity="one">%d question sur ce qui t’a posé le plus de difficultés</item>
+        <item quantity="many">%d questions sur ce qui t’a posé le plus de difficultés</item>
+        <item quantity="other">%d questions sur ce qui t’a posé le plus de difficultés</item>
     </plurals>
     <!-- %2$s lists the topics reviewed, such as "Fractions, Ratios and 2 more topics". -->
     <plurals name="session_block_review_topics">
@@ -130,30 +121,11 @@
         <item quantity="many">%1$d questions · %2$s</item>
         <item quantity="other">%1$d questions · %2$s</item>
     </plurals>
-    <plurals name="session_block_review_topics_and_known">
-        <item quantity="one">%1$d question · %2$s, ainsi que ce que tu sais déjà</item>
-        <item quantity="many">%1$d questions · %2$s, ainsi que ce que tu sais déjà</item>
-        <item quantity="other">%1$d questions · %2$s, ainsi que ce que tu sais déjà</item>
-    </plurals>
-    <!-- %2$s is the phase's name. -->
-    <plurals name="session_block_phase_questions">
-        <item quantity="one">%2$s · %1$d question, sans indice</item>
-        <item quantity="many">%2$s · %1$d questions, sans indice</item>
-        <item quantity="other">%2$s · %1$d questions, sans indice</item>
-    </plurals>
-    <!-- %1$s is the phase's name; a language unit's challenge is a live call with the Trickster. -->
-    <string name="session_block_phase_live_call">%1$s · un appel en direct</string>
-    <string name="session_block_live_call">Un appel en direct</string>
-    <plurals name="session_block_challenge_questions">
-        <item quantity="one">%d question, sans indice</item>
-        <item quantity="many">%d questions, sans indice</item>
-        <item quantity="other">%d questions, sans indice</item>
-    </plurals>
-    <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic, weakest first. -->
+    <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic. -->
     <plurals name="session_block_full_review_questions">
-        <item quantity="one">%d question pour réviser tous les sujets, les moins maîtrisés d’abord</item>
-        <item quantity="many">%d questions pour réviser tous les sujets, les moins maîtrisés d’abord</item>
-        <item quantity="other">%d questions pour réviser tous les sujets, les moins maîtrisés d’abord</item>
+        <item quantity="one">%d question pour réviser tous les sujets</item>
+        <item quantity="many">%d questions pour réviser tous les sujets</item>
+        <item quantity="other">%d questions pour réviser tous les sujets</item>
     </plurals>
     <!-- %1$s names the first topics; %2$d counts the rest. -->
     <plurals name="session_topics_and_more">

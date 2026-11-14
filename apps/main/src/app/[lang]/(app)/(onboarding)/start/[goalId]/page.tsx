@@ -13,7 +13,6 @@ import { getWarmUp } from "@zoonk/core/library/warm-ups/get";
 import { getGoalPlan } from "@zoonk/core/plans/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
-import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import { getPlanRevealToday } from "@zoonk/core/view-models/today/plan-reveal";
 import {
   OnboardingColumn,
@@ -104,10 +103,10 @@ async function StepsContent({ params }: Props) {
 
   // A planner failure must not block the earlier answers, and a deck that can't be read leaves the
   // wait without its card until the run names it.
-  const [plan, syllabus, today, deck] = await Promise.all([
+  const [plan, today, deck] = await Promise.all([
     ...((result.onboarding.steps[0] ?? "plan") === "plan"
-      ? ([getGoalPlan(goalId), getSyllabusView({ goalId }), getPlanRevealToday(goalId)] as const)
-      : ([null, null, null] as const)),
+      ? ([getGoalPlan(goalId), getPlanRevealToday(goalId)] as const)
+      : ([null, null] as const)),
     warmUp?.status === "ready" ? safeAsync(() => getWarmUp(warmUp.id)) : null,
   ]);
 
@@ -116,11 +115,7 @@ async function StepsContent({ params }: Props) {
       <StepsClient
         initialPlan={
           plan?.status === "ready"
-            ? {
-                plan: plan.plan,
-                reveal: today?.status === "ready" ? today.reveal : null,
-                syllabus: syllabus?.status === "ready" ? syllabus.syllabus : null,
-              }
+            ? { plan: plan.plan, reveal: today?.status === "ready" ? today.reveal : null }
             : null
         }
         deck={deck?.data?.status === "ready" ? deck.data.deck : null}

@@ -4,11 +4,12 @@ import { AdminActionSubmitButton } from "@/components/admin-action-submit-button
 import { useAdminActionState } from "@/lib/use-admin-action-state";
 import { signWithPasskey } from "@zoonk/auth/passkey-browser";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
+import { EnterButton, EnterLink, type EnterLinkHostProps } from "@zoonk/ui/components/enter-button";
 import { Input } from "@zoonk/ui/components/input";
 import { safeAsync } from "@zoonk/utils/error";
-import { FingerprintIcon, Undo2Icon } from "lucide-react";
-import { useActionState, useId } from "react";
+import { Undo2Icon } from "lucide-react";
+import { useActionState, useId, useState } from "react";
 import { useFormStatus } from "react-dom";
 import {
   approveContentFixAction,
@@ -63,6 +64,11 @@ async function approve(fixId: string): Promise<ApprovalNotice | null> {
 }
 
 const INITIAL_STATE = { error: null, submissionId: 0 };
+
+/** Passkeys are added in Main's settings, another app, so a plain link. */
+function SettingsLink({ children, ...props }: EnterLinkHostProps) {
+  return <a {...props}>{children}</a>;
+}
 
 function RejectForm({ fixId }: { fixId: string }) {
   const [, formAction] = useAdminActionState({
@@ -122,19 +128,14 @@ export function ReviewBar({
         <RejectForm fixId={fixId} />
 
         {needsPasskey ? (
-          <a className={buttonVariants({ size: "xl" })} href={settingsUrl}>
+          <EnterLink href={settingsUrl} link={SettingsLink} size="xl">
             Add a passkey to approve
-          </a>
+          </EnterLink>
         ) : (
           <form action={approveAction} className="contents">
-            <Button
-              busy={isApproving}
-              icon={<FingerprintIcon aria-hidden="true" />}
-              size="xl"
-              type="submit"
-            >
+            <EnterButton busy={isApproving} size="xl" type="submit">
               Approve with passkey
-            </Button>
+            </EnterButton>
           </form>
         )}
       </BottomBarActions>
@@ -144,6 +145,10 @@ export function ReviewBar({
 
 export function RevertForm({ fixId }: { fixId: string }) {
   const reasonId = useId();
+
+  // React resets uncontrolled fields after a form action, and a refused undo keeps what was typed.
+  // An accepted one opens the new fix's page.
+  const [reason, setReason] = useState("");
 
   const [, formAction] = useAdminActionState({
     action: revertContentFixAction,
@@ -158,7 +163,14 @@ export function RevertForm({ fixId }: { fixId: string }) {
           <label className="text-sm font-medium" htmlFor={reasonId}>
             Why undo it?
           </label>
-          <Input id={reasonId} maxLength={2000} name="reason" required />
+          <Input
+            id={reasonId}
+            maxLength={2000}
+            name="reason"
+            onChange={(event) => setReason(event.target.value)}
+            required
+            value={reason}
+          />
         </div>
         <AdminActionSubmitButton icon={<Undo2Icon />} size="lg">
           Propose undoing it

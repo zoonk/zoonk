@@ -29,35 +29,6 @@ import { updateCourseAction } from "./_actions/update-course";
 
 type EditedCourse = Pick<Course, "id" | "slug" | "title">;
 
-function CourseFields({ course }: { course: EditedCourse }) {
-  return (
-    <FieldGroup>
-      <Field>
-        <FieldContent>
-          <FieldLabel htmlFor="title">Title</FieldLabel>
-          <Input defaultValue={course.title} id="title" name="title" required />
-        </FieldContent>
-      </Field>
-
-      <Field>
-        <FieldContent>
-          <FieldLabel htmlFor="slug">Slug</FieldLabel>
-          <Input
-            autoCapitalize="none"
-            autoCorrect="off"
-            defaultValue={course.slug}
-            id="slug"
-            name="slug"
-            required
-            spellCheck={false}
-          />
-          <FieldDescription>Changing it breaks existing links to this course.</FieldDescription>
-        </FieldContent>
-      </Field>
-    </FieldGroup>
-  );
-}
-
 function SaveButton() {
   const status = useFormStatus();
 
@@ -69,18 +40,20 @@ function SaveButton() {
 }
 
 /**
- * A course's name and address, edited in the shared sheet: a bottom sheet on a phone, a centered
- * dialog on a computer. Why it couldn't save shows in the sheet, in a line that is always there.
+ * The sheet's form. It mounts when the sheet opens, so closing the sheet drops the draft. While it
+ * is open the draft is in state: React resets uncontrolled fields after a form action, and a save
+ * the server refuses keeps what was typed.
  */
-export function CourseEditButton({ course }: { course: EditedCourse }) {
-  const [open, setOpen] = useState(false);
+function CourseEditForm({ course, onSaved }: { course: EditedCourse; onSaved: () => void }) {
+  const [title, setTitle] = useState(course.title);
+  const [slug, setSlug] = useState(course.slug);
 
   const [state, formAction] = useAdminActionState<AdminActionState>({
     action: async (previous, formData) => {
       const { error } = await updateCourseAction(formData);
 
       if (!error) {
-        setOpen(false);
+        onSaved();
       }
 
       return { error, submissionId: previous.submissionId + 1 };
@@ -88,6 +61,74 @@ export function CourseEditButton({ course }: { course: EditedCourse }) {
     initialState: { error: null, submissionId: 0 },
     report: "inline",
   });
+
+  return (
+    <form action={formAction} className="contents">
+      <DrawerContent className="flex flex-col gap-3 pt-2">
+        <input name="id" type="hidden" value={course.id} />
+
+        <FieldGroup>
+          <Field>
+            <FieldContent>
+              <FieldLabel htmlFor="title">Title</FieldLabel>
+              <Input
+                id="title"
+                name="title"
+                onChange={(event) => setTitle(event.target.value)}
+                required
+                value={title}
+              />
+            </FieldContent>
+          </Field>
+
+          <Field>
+            <FieldContent>
+              <FieldLabel htmlFor="slug">Slug</FieldLabel>
+              <Input
+                autoCapitalize="none"
+                autoCorrect="off"
+                id="slug"
+                name="slug"
+                onChange={(event) => setSlug(event.target.value)}
+                required
+                spellCheck={false}
+                value={slug}
+              />
+              <FieldDescription>Changing it breaks existing links to this course.</FieldDescription>
+            </FieldContent>
+          </Field>
+        </FieldGroup>
+
+        {/* Always a line tall, so the sheet doesn't grow when the save fails. */}
+        <p
+          aria-live="polite"
+          className="text-destructive-text min-h-4 text-xs"
+          key={state.submissionId}
+        >
+          {state.error}
+        </p>
+      </DrawerContent>
+
+      <DrawerFooter>
+        <DrawerClose
+          render={
+            <Button size="lg" variant="outline">
+              Cancel
+            </Button>
+          }
+        />
+        <SaveButton />
+      </DrawerFooter>
+    </form>
+  );
+}
+
+/**
+ * A course's name and address, edited in the shared sheet: a bottom sheet on a phone, a centered
+ * dialog on a computer. Why it couldn't save shows in the sheet, in a line that is always there.
+ */
+export function CourseEditButton({ course }: { course: EditedCourse }) {
+  const [open, setOpen] = useState(false);
 
   return (
     <Drawer onOpenChange={setOpen} open={open}>
@@ -105,33 +146,7 @@ export function CourseEditButton({ course }: { course: EditedCourse }) {
           <DrawerTitle>Edit this course</DrawerTitle>
         </DrawerHeader>
 
-        <form action={formAction} className="contents">
-          <DrawerContent className="flex flex-col gap-3 pt-2">
-            <input name="id" type="hidden" value={course.id} />
-
-            <CourseFields course={course} />
-
-            {/* Always a line tall, so the sheet doesn't grow when the save fails. */}
-            <p
-              aria-live="polite"
-              className="text-destructive-text min-h-4 text-xs"
-              key={state.submissionId}
-            >
-              {state.error}
-            </p>
-          </DrawerContent>
-
-          <DrawerFooter>
-            <DrawerClose
-              render={
-                <Button size="lg" variant="outline">
-                  Cancel
-                </Button>
-              }
-            />
-            <SaveButton />
-          </DrawerFooter>
-        </form>
+        <CourseEditForm course={course} onSaved={() => setOpen(false)} />
       </DrawerPopup>
     </Drawer>
   );

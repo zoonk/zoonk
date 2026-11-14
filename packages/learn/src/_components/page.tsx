@@ -11,12 +11,25 @@ export const PAGE_COLUMN_CLASS = "w-full min-w-0";
  */
 export const INBOX_PAGE_CLASS = "lg:max-w-[calc(24rem+1px+var(--container-column))]";
 
-export function Page({ className, ...props }: React.ComponentProps<"div">) {
+/**
+ * A narrower measure for the page's content. Its bottom bar still spans the page's room, so every
+ * bar is as wide as the frame lets it be, and the bar's buttons end where the content does.
+ */
+const MEASURE_CLASS = {
+  form: "[&>*:not([data-slot=bottom-bar],.contents)]:max-w-form **:data-[slot=bottom-bar-row]:max-w-[calc(var(--container-form)+2*var(--page-gutter))]",
+} as const;
+
+export function Page({
+  className,
+  measure,
+  ...props
+}: React.ComponentProps<"div"> & { measure?: keyof typeof MEASURE_CLASS }) {
   return (
     <div
       className={cn(
         PAGE_COLUMN_CLASS,
         "flex flex-col gap-7 has-[>[data-slot=bottom-bar]]:flex-1 *:data-[slot=bottom-bar]:mt-auto",
+        measure && MEASURE_CLASS[measure],
         className,
       )}
       data-slot="page"

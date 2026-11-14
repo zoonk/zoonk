@@ -174,7 +174,6 @@ internal fun ChoiceQuestionsRun(
                             modifier = width,
                             enabled = next != null,
                             focusableWhenDisabled = pending,
-                            trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                         ) {
                             Text(
                                 stringResource(

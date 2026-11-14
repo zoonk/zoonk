@@ -18,3 +18,13 @@ internal fun SemanticsNodeInteractionsProvider.assertOnlySpinnerBeside(button: S
     val words = onNodeWithText(button, useUnmergedTree = true).getUnclippedBoundsInRoot()
     assertTrue(spinner.right <= words.left || spinner.left >= words.right)
 }
+
+/** The one spinner on screen is [button]'s, over its words: a main action has no glyph for it to take the place of. */
+internal fun SemanticsNodeInteractionsProvider.assertOnlySpinnerOver(button: String) {
+    val spinning = hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate)
+    onAllNodes(spinning, useUnmergedTree = true).assertCountEquals(1)
+    val spinner = onNode(spinning and hasAnySibling(hasText(button)), useUnmergedTree = true).getUnclippedBoundsInRoot()
+    val words = onNodeWithText(button, useUnmergedTree = true).getUnclippedBoundsInRoot()
+    val center = (spinner.left + spinner.right) / 2
+    assertTrue(center > words.left && center < words.right)
+}

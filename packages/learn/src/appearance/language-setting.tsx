@@ -9,7 +9,7 @@ import {
 } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
-import { SelectSettingRow } from "../_components/setting-rows";
+import { SettingRow } from "../_components/setting-rows";
 import { useAppLocale } from "../_utils/locale";
 
 /** Each language is named in itself, so anyone can find theirs. */
@@ -17,17 +17,10 @@ export function LanguageSetting({ onChange }: { onChange: (locale: SupportedLoca
   const t = useExtracted();
   const locale = useAppLocale();
   const selectId = useId();
-  const descriptionId = useId();
 
   return (
-    <SelectSettingRow
-      description={t("On this device")}
-      descriptionId={descriptionId}
-      label={t("App language")}
-      selectId={selectId}
-    >
+    <SettingRow label={<label htmlFor={selectId}>{t("App language")}</label>}>
       <NativeSelect
-        aria-describedby={descriptionId}
         defaultValue={locale}
         id={selectId}
         onChange={(event) => {
@@ -43,6 +36,6 @@ export function LanguageSetting({ onChange }: { onChange: (locale: SupportedLoca
           </NativeSelectOption>
         ))}
       </NativeSelect>
-    </SelectSettingRow>
+    </SettingRow>
   );
 }

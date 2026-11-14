@@ -33,12 +33,9 @@ import { type PhaseProgress, type PhaseStatus, getPhaseProgress } from "./_utils
 import { type PhaseTime, getPhaseTimes } from "./_utils/phase-times";
 import { type PhaseCopy } from "./generation-copy-types";
 import { type GenerationKind, getGenerationKind } from "./generation-kinds";
-import { type GenerationFailure, type GenerationRun } from "./generation-run";
+import { type GenerationFailure, type GenerationRun, isFollowing } from "./generation-run";
+import { getActiveStepLabel } from "./generation-step-label";
 import { useGenerationCopy } from "./use-generation-copy";
-
-function isFollowing(run: GenerationRun): boolean {
-  return run.status === "waiting" || run.status === "following";
-}
 
 /**
  * The run's progress from 0 to 100, drifting through the running phase. Bars given the same `since`
@@ -215,7 +212,7 @@ export function GenerationFailureNotice({
   }[failure];
 
   return (
-    <NoticeCard role="alert">
+    <NoticeCard className="max-w-column" role="alert">
       <NoticeCardLeading className="text-muted-foreground">
         <FailureIcon failure={failure} />
       </NoticeCardLeading>
@@ -248,13 +245,12 @@ function useAnnouncement({
   run: GenerationRun;
 }): string {
   const t = useExtracted();
-  const active = progress.phases.find((phase) => phase.status === "active");
 
   if (progress.progress === 100) {
     return doneLabel ?? t("Done");
   }
 
-  return isFollowing(run) && active ? (copy[active.id]?.label ?? "") : "";
+  return getActiveStepLabel({ copy, progress, run }) ?? "";
 }
 
 export function GenerationWait({
@@ -294,17 +290,13 @@ export function GenerationWait({
     >
       <GenerationTimelineHeader>
         {children}
-        {failure ? (
-          <GenerationFailureNotice failure={failure} retry={run.retry} />
-        ) : (
-          <WaitProgress
-            kind={kind}
-            label={copy.name}
-            run={run}
-            since={since}
-            weights={progress.phases.map((phase) => phase.seconds)}
-          />
-        )}
+        <WaitProgress
+          kind={kind}
+          label={copy.name}
+          run={run}
+          since={since}
+          weights={progress.phases.map((phase) => phase.seconds)}
+        />
       </GenerationTimelineHeader>
 
       <GenerationTimelineStatus>{announcement}</GenerationTimelineStatus>
@@ -339,6 +331,9 @@ export function GenerationWait({
           );
         })}
       </GenerationTimelineSteps>
+
+      {/* Under the steps, where a failure moves none of them: the bar stops where it got to. */}
+      {failure && <GenerationFailureNotice failure={failure} retry={run.retry} />}
     </GenerationTimeline>
   );
 }

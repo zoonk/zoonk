@@ -121,7 +121,7 @@ fun StartGoalScreen(
     val actions =
         StartActions(
             createAccount = { navigator.open(AppRoute.Login) },
-            seePlus = { navigator.open(AppRoute.Subscription) },
+            subscribe = { navigator.open(AppRoute.Subscription) },
             openPlan = { navigator.open(AppRoute.Plan()) },
             toSetup = { goalId ->
                 navigator.closeSection()
@@ -202,7 +202,7 @@ fun StartGoalScreen(
 
 private class StartActions(
     val createAccount: () -> Unit,
-    val seePlus: () -> Unit,
+    val subscribe: () -> Unit,
     val openPlan: () -> Unit,
     val toSetup: (String) -> Unit,
     val toExplanation: (String) -> Unit,
@@ -246,7 +246,11 @@ private fun ColumnScope.Entry(
         stringResource(if (route.planId != null) R.string.onboarding_start_description_shared else R.string.onboarding_start_description),
     )
 
-    upFront?.let { GoalLimitNotice(it, upFront = true, onOpenPlan = actions.openPlan, onSeePlus = actions.seePlus) }
+    // At the goals-at-once limit the page is only the gate; a month's cap waits for the learner to try (A-057).
+    if (upFront == GoalLimitReason.ActiveGoals) {
+        GoalLimitNotice(upFront, onOpenPlan = actions.openPlan, onSubscribe = actions.subscribe)
+        return
+    }
 
     GoalBox(
         value = flow.words,
@@ -273,7 +277,7 @@ private fun ColumnScope.Entry(
         )
     }
 
-    GoalErrorAlert(vm.entryError, actions.createAccount, actions.openPlan, actions.seePlus)
+    GoalErrorAlert(vm.entryError, actions.createAccount, actions.openPlan, actions.subscribe)
 
     GoalExamples(examples = rememberGoalExamples(), onPick = submit)
 }
@@ -384,7 +388,7 @@ private fun ColumnScope.DraftContent(
                 limit != null -> {
                     TypedGoal(draft.prompt)
                     OnboardingHeading(stringResource(R.string.onboarding_understanding_title))
-                    GoalErrorAlert(limit, actions.createAccount, actions.openPlan, actions.seePlus)
+                    GoalErrorAlert(limit, actions.createAccount, actions.openPlan, actions.subscribe)
                 }
 
                 vm.readFailed -> {
@@ -473,7 +477,7 @@ private fun ColumnScope.DraftContent(
                 edits = FactEdits(vm.editing, vm.savingEdit, vm.failedEdit, vm::edit, vm::revise),
                 onRewrite = { vm.rewrite(it, language) },
                 onCreateAccount = actions.createAccount,
-                onSeePlus = actions.seePlus,
+                onSubscribe = actions.subscribe,
                 onOpenPlan = actions.openPlan,
             )
         }
@@ -487,7 +491,7 @@ private fun ColumnScope.DraftContent(
                 onStart = { vm.create(explanationInput(draft, understanding.value.question, language), actions.toExplanation) },
                 onCreateAccount = actions.createAccount,
                 onOpenPlan = actions.openPlan,
-                onSeePlus = actions.seePlus,
+                onSubscribe = actions.subscribe,
             )
         }
 
@@ -506,7 +510,7 @@ private fun ColumnScope.DraftContent(
                 onJoinWaitlist = { vm.joinWaitlist(instrument, language) },
                 onCreateAccount = actions.createAccount,
                 onOpenPlan = actions.openPlan,
-                onSeePlus = actions.seePlus,
+                onSubscribe = actions.subscribe,
             )
         }
 

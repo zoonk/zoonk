@@ -19,7 +19,6 @@ import {
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
 import { type OnboardingDraftEdit } from "@zoonk/core/view-models/onboarding/draft-edit-contract";
-import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { type FocusTestActions } from "../focus-test/focus-test-actions";
 import { type LanguageLevelTestActions } from "../language/level-test/level-test-step";
@@ -134,7 +133,6 @@ export type RevealedPlan = {
   plan: PlanView;
   /** The reveal's Today and first week; null while Today can't be read. */
   reveal: PlanRevealDays | null;
-  syllabus: SyllabusView | null;
 };
 
 export type PlanOutcome = (RevealedPlan & { status: "ready" }) | { status: "failed" };

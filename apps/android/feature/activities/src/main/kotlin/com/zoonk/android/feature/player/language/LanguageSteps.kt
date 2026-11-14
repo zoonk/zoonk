@@ -59,7 +59,7 @@ import com.zoonk.android.feature.player.steps.QuestionText
 import com.zoonk.android.feature.player.steps.ReadScene
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepPart
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.theme.ZoonkRadius
 
@@ -184,7 +184,7 @@ fun LanguageStepView(
                     val url = sentence.audioUrl
                     if (url != null && prompt != null) {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            LabelChip(stringResource(R.string.player_language_what_do_you_hear))
+                            Eyebrow(stringResource(R.string.player_language_what_do_you_hear))
                             PromptAudioButton(url, prompt)
                             // Without its sound the screen still works: it shows the sentence to translate.
                             if (prompt.state is SpeechState.Failed) {
@@ -199,7 +199,7 @@ fun LanguageStepView(
                         }
                     } else {
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            LabelChip(stringResource(R.string.player_language_translate))
+                            Eyebrow(stringResource(R.string.player_language_translate))
                             QuestionText(stripWrappingQuotes(sentence.sentence))
                         }
                     }
@@ -482,7 +482,7 @@ private fun TranslationView(
     QuestionScene {
         if (part.showsScreen) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                LabelChip(
+                Eyebrow(
                     stringResource(
                         if (languages.definesWords) R.string.player_language_which_means_this else R.string.player_language_translate,
                     ),

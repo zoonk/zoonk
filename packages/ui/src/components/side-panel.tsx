@@ -1,6 +1,7 @@
 "use client";
 
 import { Dialog as SidePanelPrimitive } from "@base-ui/react/dialog";
+import { OVERLAY_DIM_CLASS } from "@zoonk/ui/lib/overlay-dim";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
 import { PanelCloseButton } from "./_utils/panel-close";
@@ -24,7 +25,8 @@ function SidePanelOverlay({ className, ...props }: SidePanelPrimitive.Backdrop.P
     <SidePanelPrimitive.Backdrop
       forceRender
       className={cn(
-        "data-closed:fade-out-0 data-open:fade-in-0 data-closed:animate-out data-open:animate-in fixed inset-0 z-50 bg-black/80 duration-100 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs",
+        "data-closed:fade-out-0 data-open:fade-in-0 data-closed:animate-out data-open:animate-in fixed inset-0 z-50 duration-100 data-ending-style:opacity-0 data-starting-style:opacity-0",
+        OVERLAY_DIM_CLASS,
         className,
       )}
       data-slot="side-panel-overlay"
@@ -36,13 +38,12 @@ function SidePanelOverlay({ className, ...props }: SidePanelPrimitive.Backdrop.P
 function SidePanelContent({
   className,
   children,
-  overlayClassName,
   side = "right",
   ...props
-}: SidePanelPrimitive.Popup.Props & { overlayClassName?: string; side?: "left" | "right" }) {
+}: SidePanelPrimitive.Popup.Props & { side?: "left" | "right" }) {
   return (
     <SidePanelPortal>
-      <SidePanelOverlay className={overlayClassName} />
+      <SidePanelOverlay />
       <SidePanelPrimitive.Popup
         className={cn(
           "data-[side=right]:data-closed:slide-out-to-right-10 data-[side=right]:data-open:slide-in-from-right-10 data-[side=left]:data-closed:slide-out-to-left-10 data-[side=left]:data-open:slide-in-from-left-10 data-closed:fade-out-0 data-open:fade-in-0 bg-background data-closed:animate-out data-open:animate-in fixed inset-y-0 z-50 flex h-full w-3/4 flex-col bg-clip-padding text-sm shadow-lg transition duration-200 ease-in-out data-[side=left]:left-0 data-[side=left]:border-r data-[side=right]:right-0 data-[side=right]:border-l sm:max-w-sm",

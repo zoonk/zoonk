@@ -68,7 +68,7 @@ import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.steps.WordBankScene
 import com.zoonk.android.feature.player.steps.questionColor
 import com.zoonk.android.ui.components.AnswerResult
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import kotlinx.coroutines.launch
 
 internal enum class ArrangeKind { Reading, Listening }
@@ -350,7 +350,7 @@ internal fun ReadingPrompt(
     val style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold, color = questionColor())
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        LabelChip(stringResource(R.string.player_language_translate))
+        Eyebrow(stringResource(R.string.player_language_translate))
         FlowRow(
             // One stop reads the whole sentence; each word or phrase with a translation is its own stop after it.
             Modifier.semantics(mergeDescendants = true) {

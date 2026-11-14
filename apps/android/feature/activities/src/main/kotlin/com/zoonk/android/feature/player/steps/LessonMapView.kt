@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.player.model.StepContent
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -47,7 +47,7 @@ import com.zoonk.api.models.LessonMapIdeasInner
 @Composable
 internal fun LessonMapStepView(content: StepContent.Map) {
     ReadScene {
-        LabelChip(
+        Eyebrow(
             stringResource(R.string.player_lesson_map),
             Modifier.semantics(mergeDescendants = true) { heading() },
             icon = R.drawable.ic_lan,

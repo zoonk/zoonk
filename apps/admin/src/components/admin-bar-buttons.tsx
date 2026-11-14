@@ -7,8 +7,9 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
+import { BarSearch } from "@zoonk/ui/components/sidebar-toggle";
 import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
-import { EllipsisIcon, MenuIcon, SearchIcon } from "lucide-react";
+import { EllipsisIcon, MenuIcon } from "lucide-react";
 
 /** A record's "…" in the page's bar: what staff do to it less often, after its buttons. */
 export function AdminBarMenu({ children, label }: { children: React.ReactNode; label: string }) {
@@ -30,6 +31,7 @@ export function AdminBarMenu({ children, label }: { children: React.ReactNode; l
 export function AdminBarMenuButton() {
   return (
     <Button
+      aria-haspopup="dialog"
       className="lg:hidden"
       edge="start"
       onClick={openAdminMenu}
@@ -44,16 +46,5 @@ export function AdminBarMenuButton() {
 
 /** And search from its end, in place of the sidebar's search field. */
 export function AdminBarSearchButton() {
-  return (
-    <Button
-      className="lg:hidden"
-      edge="end"
-      onClick={openCommandPalette}
-      size="icon-bar"
-      variant="ghost"
-    >
-      <SearchIcon aria-hidden="true" />
-      <span className="sr-only">Search</span>
-    </Button>
-  );
+  return <BarSearch className="lg:hidden" edge="end" label="Search" onClick={openCommandPalette} />;
 }

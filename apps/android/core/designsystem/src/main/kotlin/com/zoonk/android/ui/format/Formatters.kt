@@ -123,12 +123,6 @@ fun formatPercent(
     return withSign(format.format(abs(share)), share, locale)
 }
 
-/** Main's goal progress: up to two decimals, so a small step still moves it. */
-fun formatGoalProgress(
-    share: Double,
-    locale: Locale,
-): String = formatPercent(share, locale, maximumFractionDigits = 2)
-
 /** Begun never reads "0%" beside a bar that shows it begun, nor nearly done "100%". */
 fun formatProgressShare(
     share: Double,

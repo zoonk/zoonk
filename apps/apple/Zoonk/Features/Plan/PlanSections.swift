@@ -137,6 +137,8 @@ private struct RoadmapPhaseRow: View {
 
 }
 
+/// Main's line under the roadmap: "Phase 1 of 4 · Foundations", then the day the phase is behind
+/// you.
 private struct RoadmapCompact: View {
   @Environment(\.legibilityWeight) private var legibilityWeight
 
@@ -158,28 +160,25 @@ private struct RoadmapCompact: View {
 
       HStack(alignment: .firstTextBaseline) {
         if let currentIndex {
+          let phase = phases[currentIndex]
+
           PlanPathRow {
-            position(phase: phases[currentIndex])
+            position(phase: phase, number: currentIndex + 1, count: phases.count)
           } value: {
-            Text(
-              "\(currentIndex + 1) of \(phases.count)", tableName: "Plan",
-              comment: "The learner's phase number of the plan's phases, under the roadmap"
-            )
-            .typeStyle(.data)
+            if let until = phase.untilDate {
+              Text(
+                "until \(PlanDate.text(until, today: context.plan.today))", tableName: "Plan",
+                comment: "When a phase ends; the argument is a date like 'May 5'"
+              )
+              .typeStyle(.data)
+            }
           }
         } else {
-          Text(
-            "\(phases.filter { $0.state == .done }.count) of \(phases.count) phases done",
-            tableName: "Plan", comment: "Phases done of the plan's phases, once none is current"
-          )
-          .foregroundStyle(.mutedForeground)
           Spacer()
         }
 
         if opens {
-          Image(systemName: "chevron.right")
-            .foregroundStyle(.faint)
-            .imageScale(.small)
+          DisclosureChevron()
         }
       }
       .typeStyle(.meta)
@@ -187,24 +186,46 @@ private struct RoadmapCompact: View {
     .accessibilityElement(children: .combine)
   }
 
-  private func position(phase: PlanPhase) -> Text {
-    let today = context.plan.today
+  private func position(phase: PlanPhase, number: Int, count: Int) -> Text {
+    let place = Text(
+      "Phase \(number) of \(count)", tableName: "Plan",
+      comment: "The learner's phase of the plan's phases, under the roadmap")
+
+    guard phase.hasOwnName else {
+      return place.foregroundStyle(Color(.foreground))
+    }
+
     let title = Text(phase.title)
       .typeWeight(.medium, legibility: legibilityWeight)
       .foregroundStyle(Color(.foreground))
 
-    guard let start = phase.startDate, let end = phase.endDate, start <= today else {
-      return title
-    }
-
-    let day = PlanDate.days(from: start, to: today) + 1
-    let days = PlanDate.days(from: start, to: end) + 1
-
     return Text(
-      "\(title)\u{00A0}· day \(day) of \(days)", tableName: "Plan",
-      comment: "Where the learner is: the phase's name, then its day of the phase's days"
+      "\(place)\u{00A0}· \(title)", tableName: "Plan",
+      comment: "The learner's phase under the roadmap: its number of the phases, then its name"
     )
     .foregroundStyle(.mutedForeground)
+  }
+}
+
+extension PlanPhase {
+  /// A phase named "Phase 2" has no name of its own to say beside its number.
+  var hasOwnName: Bool {
+    kind != .learn || !(name ?? "").isEmpty
+  }
+
+  /// The day the phase is behind you: it ends with its challenge, which can come the day after its
+  /// last lesson.
+  var untilDate: String? {
+    guard let endDate else {
+      return nil
+    }
+
+    guard let challenge = checkpoint?.date, checkpoint?.state == .upcoming, challenge > endDate
+    else {
+      return endDate
+    }
+
+    return challenge
   }
 }
 
@@ -225,8 +246,8 @@ struct PlanNumbersSection: View {
           tile(standing) { context.show(.standing) }
         }
 
-        if let pace = paceNumber {
-          tile(pace) { context.show(.pace) }
+        if let schedule = scheduleNumber {
+          tile(schedule) { context.show(.schedule) }
         }
       }
       .buttonStyle(.plain)
@@ -265,9 +286,7 @@ struct PlanNumbersSection: View {
           localized: "Preparation", table: "Plan", comment: "Label of the exam preparation number"),
         value: preparation.value.formatted(.percent.precision(.fractionLength(0))),
         detail: points == 0
-          ? String(
-            localized: "No change this week", table: "Plan",
-            comment: "Preparation didn't move this week")
+          ? nil
           : points > 0
             ? String(
               localized: "+\(points) this week", table: "Plan",
@@ -314,73 +333,34 @@ struct PlanNumbersSection: View {
         comment: "Under the plan's progress percent, in a small tile: the lessons studied")
   }
 
-  /// A plan without a pace (a free exam plan past its first week) shows none.
-  private var paceNumber: PlanNumber? {
+  /// The plan's state, and one quiet line: the time a day while it keeps a pace, the lessons left
+  /// once its date passed.
+  private var scheduleNumber: PlanNumber? {
     guard let status = context.plan.status else {
       return nil
     }
 
-    let label = String(localized: "Pace", table: "Plan", comment: "Label of the plan's pace number")
-
-    switch status.kind {
-    case .finished:
-      return PlanNumber(
-        label: label,
-        value: String(localized: "Finished", table: "Plan", comment: "Pace of a finished plan"))
-    case .pastDate:
-      return PlanNumber(
-        label: label,
-        value: String(
-          localized: "Past date", table: "Plan", comment: "Pace of a plan whose date came"),
-        detail: String(
-          localized: "\(status.lessons ?? 0) lessons left", table: "Plan",
-          comment: "Lessons left in a plan whose date came"))
-    case .challengesLeft:
-      return PlanNumber(
-        label: label,
-        value: String(
-          localized: "Challenges", table: "Plan",
-          comment: "Pace of a plan with only challenges left"),
-        detail: planStatusText(status))
-    default:
-      break
-    }
-
-    if context.isPaused {
-      return PlanNumber(
-        label: label,
-        value: String(localized: "Paused", table: "Plan", comment: "Pace of a paused goal"),
-        detail: String(
-          localized: "Nothing is planned", table: "Plan", comment: "A paused goal plans nothing"))
-    }
-
-    switch status.kind {
-    case .ahead:
-      return PlanNumber(
-        label: label,
-        value: String(localized: "Ahead", table: "Plan", comment: "Pace ahead of the plan"),
-        detail: planStatusText(status))
-    case .behind:
-      return PlanNumber(
-        label: label,
-        value: String(localized: "Behind", table: "Plan", comment: "Pace behind the plan"),
-        detail: planStatusText(status))
-    case .needsAdjusting:
-      return PlanNumber(
-        label: label,
-        value: String(
-          localized: "Too tight", table: "Plan", comment: "Pace of a plan that no longer fits"),
-        detail: planStatusText(status))
-    default:
-      return PlanNumber(
-        label: label,
-        value: String(
-          localized: "On pace", table: "Plan", comment: "Pace keeping up with the plan"),
-        detail: String(
+    let paused = planIsResting(status, isPaused: context.isPaused)
+    let detail: String? =
+      switch status.kind {
+      case .onTrack, .ahead, .behind:
+        String(
           localized:
             "\(planDurationText(minutes: Double(context.plan.schedule.dailyMinutes))) a day",
-          table: "Plan", comment: "The plan's time a day, under the pace"))
-    }
+          table: "Plan", comment: "The plan's time a day, under its state")
+      case .pastDate:
+        String(
+          localized: "\(status.lessons ?? 0) lessons left", table: "Plan",
+          comment: "Lessons left in a plan whose date passed")
+      default:
+        nil
+      }
+
+    return PlanNumber(
+      label: String(
+        localized: "Schedule", table: "Plan",
+        comment: "Label of the tile with the plan's state, such as \"Up to date\""),
+      value: planStatusText(status, isPaused: context.isPaused), detail: paused ? nil : detail)
   }
 }
 
@@ -393,85 +373,48 @@ private struct PlanNumber {
   var share: Double?
 }
 
-func planStatusText(_ status: GoalPlan.Status) -> String {
-  switch status.kind {
-  case .ahead:
-    String(
-      localized: "\(status.days ?? 0) days ahead", table: "Plan",
-      comment: "How many days ahead of the plan the learner is")
-  case .behind:
-    if let lessons = status.lessons, lessons > 0 {
-      String(
-        localized: "\(lessons) lessons to catch up", table: "Plan",
-        comment: "Lessons from earlier days still to do")
-    } else {
-      String(
-        localized: "\(status.days ?? 0) days behind", table: "Plan",
-        comment: "How many days behind the plan the learner is")
-    }
-  case .challengesLeft:
-    String(
-      localized: "\(status.challenges ?? 0) challenges left", table: "Plan",
-      comment: "Challenges left once every lesson is done")
-  case .finished:
-    String(localized: "Plan finished", table: "Plan", comment: "Pace of a finished plan, in words")
-  case .needsAdjusting:
-    String(
-      localized: "Needs adjusting", table: "Plan", comment: "A plan that no longer fits, in words")
-  case .onTrack:
-    String(localized: "Keeping pace", table: "Plan", comment: "Keeping up with the plan, in words")
-  case .pastDate:
-    String(localized: "Past your date", table: "Plan", comment: "A plan whose date came, in words")
-  }
+/// A paused goal rests unless its plan is already over or its date passed.
+func planIsResting(_ status: GoalPlan.Status, isPaused: Bool) -> Bool {
+  isPaused && ![.finished, .pastDate, .challengesLeft].contains(status.kind)
 }
 
-func planPaceFix(_ plan: GoalPlan, isExam: Bool) -> (text: String, adjust: Bool)? {
-  guard let status = plan.status else {
-    return nil
+/// The plan's state, one wording everywhere it shows.
+func planStatusText(_ status: GoalPlan.Status, isPaused: Bool) -> String {
+  if planIsResting(status, isPaused: isPaused) {
+    return String(localized: "Paused", table: "Plan", comment: "State of a paused goal's plan")
   }
 
   switch status.kind {
-  case .pastDate:
-    let lessons = status.lessons ?? 0
-    let text =
-      isExam
-      ? String(
-        localized: "\(lessons) lessons were left before your exam.", table: "Plan",
-        comment: "Lessons left when an exam's date came")
-      : String(
-        localized: "Your date came with \(lessons) lessons left.", table: "Plan",
-        comment: "Lessons left when the goal's date came")
-    return (text, false)
-  case .challengesLeft:
-    return (
-      String(
-        localized: "Every lesson is done: win the challenges to finish your plan.", table: "Plan",
-        comment: "What's left once every lesson is done"),
-      false
-    )
-  case .needsAdjusting:
-    return (
-      String(
-        localized: "Your plan no longer fits in the time left.", table: "Plan",
-        comment: "A plan that no longer fits before its date"),
-      true
-    )
+  case .ahead:
+    return String(
+      localized: "\(status.days ?? 0) days ahead", table: "Plan",
+      comment: "State of a plan the learner is ahead of, in days")
   case .behind:
     if let lessons = status.lessons, lessons > 0 {
-      let text = String(
-        localized:
-          "\(lessons) lessons from earlier days come first: once you've done them, you're keeping pace again.",
-        table: "Plan", comment: "How a learner behind by some lessons catches up")
-      return (text, false)
+      return String(
+        localized: "\(lessons) lessons behind", table: "Plan",
+        comment: "State of a plan the learner is behind, in lessons from earlier days")
     }
 
-    let text = String(
-      localized:
-        "\(status.extraMinutesPerDay ?? 0) more minutes a day for \(status.days ?? 0) days and you're keeping pace again.",
-      table: "Plan", comment: "How much more time a day catches up")
-    return (text, false)
-  default:
-    return nil
+    return String(
+      localized: "\(status.days ?? 0) days behind", table: "Plan",
+      comment: "State of a plan the learner is behind, in days")
+  case .challengesLeft:
+    return String(
+      localized: "\(status.challenges ?? 0) challenges to go", table: "Plan",
+      comment: "State of a plan with every lesson done and challenges left")
+  case .finished:
+    return String(localized: "Finished", table: "Plan", comment: "State of a finished plan")
+  case .needsAdjusting:
+    return String(
+      localized: "Not enough time", table: "Plan",
+      comment: "State of a plan with more lessons than days left")
+  case .onTrack:
+    return String(
+      localized: "Up to date", table: "Plan", comment: "State of a plan the learner keeps up with")
+  case .pastDate:
+    return String(
+      localized: "Date passed", table: "Plan", comment: "State of a plan whose date passed")
   }
 }
 
@@ -614,19 +557,29 @@ func planFinishText(_ context: PlanContext) -> Text? {
   return plan.estimate.endDate.map { PlanDate.estimateText($0, today: plan.today) }
 }
 
+/// The places a phone lists nowhere else: the lessons done, the mind maps and the exam's page.
 struct PlanMoreSection: View {
+  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(\.tabBarPlacement) private var tabBarPlacement
 
   let goal: LearnerGoal
 
   var body: some View {
-    if tabBarPlacement?.listsStudyPlaces != true, goal.kind == .exam {
+    let places = learner.summary.value?.places
+    let hasPlaces =
+      places?.completedLessons == true || places?.mindMaps == true || goal.kind == .exam
+
+    if tabBarPlacement?.listsStudyPlaces != true, hasPlaces {
       PageSection {
-        PageLink(route: .exam) {
-          Label {
-            Text("About the exam", tableName: "Plan", comment: "Opens the exam's page")
-          } icon: {
-            Image(systemName: "graduationcap")
+        PlanStudyPlaceRows()
+
+        if goal.kind == .exam {
+          PageLink(route: .exam) {
+            Label {
+              Text("About the exam", tableName: "Plan", comment: "Opens the exam's page")
+            } icon: {
+              Image(systemName: "graduationcap")
+            }
           }
         }
       } header: {
@@ -647,7 +600,7 @@ struct PlanSettingsSection: View {
       setting(
         label: context.goal.kind == .exam
           ? Text("Exam date", tableName: "Plan", comment: "Setting: the exam's date")
-          : Text("Goal date", tableName: "Plan", comment: "Setting: the goal's date"),
+          : Text("End date", tableName: "Plan", comment: "Setting: the goal's end date"),
         value: dateValue, section: .date)
 
       setting(
@@ -688,9 +641,7 @@ struct PlanSettingsSection: View {
     if let country = context.goal.contentCountry {
       if country.kind == .content, country.editable {
         setting(
-          label: Text(
-            "Content country", tableName: "Plan",
-            comment: "Setting: the country a goal's lessons are about, such as Portugal"),
+          label: countryLabel,
           value: Text(country.name)
         ) {
           context.show(.country)
@@ -711,29 +662,30 @@ struct PlanSettingsSection: View {
             ? Text(
               "Exam country", tableName: "Plan",
               comment: "Row with the country an exam belongs to, such as Argentina")
-            : Text(
-              "Content country", tableName: "Plan",
-              comment: "Setting: the country a goal's lessons are about, such as Portugal"),
+            : countryLabel,
           value: Text(country.name))
       }
     } else if let examples = context.goal.examplesCountry {
-      fact(
-        label: Text(
-          "Lesson examples", tableName: "Plan",
-          comment:
-            "Row with the country a general course's examples come from, when the learner lives elsewhere"
-        ),
-        value: Text(examples.name))
+      fact(label: countryLabel, value: Text(examples.name))
     }
   }
 
-  /// Read-only: no chevron and not a button, read as one label.
+  private var countryLabel: Text {
+    Text(
+      "Country", tableName: "Plan",
+      comment:
+        "Setting: the country a goal's lessons and examples are about, such as Portugal")
+  }
+
+  /// Read-only: not a button, read as one label. It keeps the chevron's slot, so its value ends
+  /// where the settings' values do.
   private func fact(label: Text, value: Text) -> some View {
     LabeledContent {
       value
     } label: {
       label.foregroundStyle(.primary)
     }
+    .chevronSlot()
     .accessibilityElement(children: .combine)
   }
 
@@ -776,15 +728,16 @@ struct PlanSettingsSection: View {
 }
 
 func studyDaysText(_ weekdayMinutes: [Int]) -> String {
-  let mondayFirst = [1, 2, 3, 4, 5, 6, 0]
-  let days = mondayFirst.filter { weekdayMinutes.indices.contains($0) && weekdayMinutes[$0] > 0 }
+  let days = ScheduleTime.mondayFirst.filter {
+    weekdayMinutes.indices.contains($0) && weekdayMinutes[$0] > 0
+  }
   let symbols = Calendar.current.shortWeekdaySymbols
 
   if days.count == 7 {
     return String(localized: "Every day", table: "Plan", comment: "Study days: all seven")
   }
 
-  let positions = days.compactMap { mondayFirst.firstIndex(of: $0) }
+  let positions = days.compactMap { ScheduleTime.mondayFirst.firstIndex(of: $0) }
   let isOneRun = positions.enumerated().allSatisfy { index, position in
     index == 0 || position == positions[index - 1] + 1
   }

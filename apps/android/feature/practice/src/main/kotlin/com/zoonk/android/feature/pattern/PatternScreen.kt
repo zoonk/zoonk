@@ -278,7 +278,6 @@ private fun PatternQuestion(
                         busy = drill.saving,
                         onClick = viewModel::next,
                         modifier = width,
-                        trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                     ) {
                         Text(stringResource(if (last) R.string.pattern_see_how_you_did else R.string.practice_continue))
                     }
@@ -287,7 +286,6 @@ private fun PatternQuestion(
                         onClick = viewModel::check,
                         enabled = drill.picked != null,
                         modifier = width,
-                        leadingIcon = { ButtonIcon(R.drawable.ic_check) },
                     ) {
                         Text(stringResource(R.string.practice_check))
                     }
@@ -453,7 +451,6 @@ private fun PatternResult(
             title = stringResource(R.string.practice_done_title),
             action = stringResource(R.string.pattern_done),
             saving = false,
-            actionLeadingIcon = { ButtonIcon(R.drawable.ic_check) },
             onClose = onClose,
             headerTitle = title,
             detail = stringResource(if (result.correct == result.total) R.string.pattern_got_it else R.string.pattern_keep_going),

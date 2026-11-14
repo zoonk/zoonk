@@ -298,7 +298,7 @@ internal fun TutorSheet(
         TutorRoutes(
             createAccount = { open(AppRoute.Login) },
             signIn = { open(AppRoute.Login) },
-            seePlus = { open(AppRoute.Subscription) },
+            subscribe = { open(AppRoute.Subscription) },
             open = open,
             startCall = app.conversations,
         )
