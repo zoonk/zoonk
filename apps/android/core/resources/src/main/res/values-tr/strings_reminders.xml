@@ -8,6 +8,7 @@
   "reminders_email_instead": "b72031fe6916709f11a07b043dcf95005fbbc541484d48e94e2e82123ba5c38b",
   "reminders_email_needs_account": "fcc99fe0add9f8a76ac2a6ce2919c9f3c3693d8d1a6679ec38ec1246190f55f4",
   "reminders_email_on": "2e01f58c40b779f03492964539598aa422bbae9ccb54cce0a486c92d38d7cbac",
+  "reminders_line": "692859c5704793da8d3fa53742bea82ac509419e097725b13c6e17beb64ee1d3",
   "reminders_no_thanks": "43299ab3fcafea42a5f4b61da42c487e49efe5e66618a90ef796ec44638e21eb",
   "reminders_not_now": "97db0e11bbb687b9ef12256f6e5e199690d47440eed7abbf4af24eb6804d377a",
   "reminders_notifications_off": "e8bba6c0ad80bb494c0e4c7069b083c107e257b27a73a56709926f8bf493e055",
@@ -23,6 +24,7 @@
   "reminders_remind_me": "0afa86587f02b93d695daee48985484dcf4a57197a636f0ec400cf47d9526242",
   "reminders_save": "9e604950a370a4c0faef4fe6b10ec17869b682d45306de18547127525a398ddf",
   "reminders_save_failed": "3f258696356444290a1b403aea58187994fa318a43d633ca38884866702e13ad",
+  "reminders_study_days": "f9dbacaf6b1ad2f098bbecb2e3471ab5691fa228fc8ca8a4ea0712108f4365fc",
   "reminders_this_device": "d87fff155b56ba9d059aa0e4f32e2f401989ddccef1ab44a38458fea7e596f00",
   "reminders_time": "11972025c5144c6104076ec4845cc60dd849ce2f29f719122be2470ad7d33650",
   "reminders_time_title": "2aad43010734d81afe0f962d63f10802a9e5dd1a0db5e855ad271b640a4a6301",
@@ -35,6 +37,8 @@
     <string name="reminders_channel_name">Çalışma hatırlatmaları</string>
     <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
     <string name="reminders_channel_description">Günlük çalışmanı bitirmediysen çalışma günlerinde bir kez hatırlatırız.</string>
+    <string name="reminders_line">Günlük çalışmanı bitirmediysen %1$s bir kez hatırlatırız.</string>
+    <string name="reminders_study_days">çalışma günlerinde</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Çalışma hatırlatması ister misin?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->

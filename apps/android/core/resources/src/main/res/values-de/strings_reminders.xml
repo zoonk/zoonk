@@ -8,6 +8,7 @@
   "reminders_email_instead": "ac5df0ad3f573fa522fc291df708e6490155a77e9f82d0c08f19577c55196ad7",
   "reminders_email_needs_account": "186691bb58b65f10e33e64df4e83f0a8fdabd9b9b14604ca8dca930aef5f09d7",
   "reminders_email_on": "be2c94ed92f7f8b29b4b9ce2f13fd086e2b0bb05224201cc9752fb3711725a98",
+  "reminders_line": "7c39e44005995446abfad6132e0a9aadb1088c747367abdc5e58a3c63f208881",
   "reminders_no_thanks": "8124672f6c708a2d92a507796a56e8dc585d6650c821d2853d59891d4b097594",
   "reminders_not_now": "7b72b93670c30ecacd5be7ec7f99f4a5bf6b819cbce062f6eba5bbd5ca3b251c",
   "reminders_notifications_off": "e091d5dde5f351d152cb3784d8362005a03c9ebabf1d30a64ad414c9ed0776d6",
@@ -23,6 +24,7 @@
   "reminders_remind_me": "80eed86aad52145aefc609f369592f1bb38edc2e3e616ab52f9bd2b80774baa5",
   "reminders_save": "037f893322600786ef0b87f08a4ca2f69da6b71b2228fa482b23f6757f7f7eb6",
   "reminders_save_failed": "f7d78cd51e472948c9a8dace4686d75ffa87160ac7005c91f6ec42c50b4130a5",
+  "reminders_study_days": "d6450e938e40f6d294df8d63478cd96b744af29d637e4c7515b6f2a6c700311a",
   "reminders_this_device": "311658f314c1dc368fbe8daf17e135b500d909aa8a4bba864ef7cf9912b93e72",
   "reminders_time": "159ac45b15ca3b495d7bc65c1c73b0eb650e73c3ec5596227e0fed29b8aeb747",
   "reminders_time_title": "bc37c431c9f756da5b57a3bcac15185ad0e883ae20e5830d72c6a96d4d4bd326",
@@ -35,6 +37,8 @@
     <string name="reminders_channel_name">Lernerinnerungen</string>
     <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
     <string name="reminders_channel_description">Eine Erinnerung an deinen Lerntagen, wenn du für den Tag noch nicht fertig bist.</string>
+    <string name="reminders_line">Eine Erinnerung an deinen %1$s, wenn du für den Tag noch nicht fertig bist.</string>
+    <string name="reminders_study_days">Lerntagen</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Sollen wir dich ans Lernen erinnern?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
