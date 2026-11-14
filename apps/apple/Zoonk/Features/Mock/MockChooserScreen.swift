@@ -121,7 +121,7 @@ private struct MockChooser: View {
         lastMockSection
       }
     }
-    .bottomBar(note: failure.map { FailureLine(message: $0) }) {
+    .bottomBar(note: failure.map { BarNote($0) }) {
       startAction
     }
     .alert(
