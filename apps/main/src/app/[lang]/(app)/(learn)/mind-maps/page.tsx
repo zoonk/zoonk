@@ -28,7 +28,7 @@ async function MindMapsBody() {
 
     return (
       <LearnNoGoal
-        bar={<JourneyPageBar root />}
+        bar={<JourneyPageBar root title={t("Mind maps")} />}
         description={t("Each chapter's ideas on one map, to review how they connect.")}
         next="/mind-maps"
         title={t("Mind maps")}
