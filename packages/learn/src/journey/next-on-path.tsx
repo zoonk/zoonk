@@ -89,19 +89,18 @@ function FinishRow({ examHref }: { examHref: string | null }) {
         <FlagIcon aria-hidden="true" className="size-4" />
       </span>
       <span className={PATH_ROW_BODY_CLASS}>
-        <span className="flex min-w-0 flex-col">
-          <span className="truncate font-medium">{goal.displayName}</span>
-          {!finish && goal.kind === "exam" && (
-            <span className="text-muted-foreground text-xs">{t("Date to be confirmed")}</span>
-          )}
-        </span>
-        {finish && (
+        <span className="truncate font-medium">{goal.displayName}</span>
+        {finish ? (
           <PlanDateText
             className="text-muted-foreground text-xs"
             estimate={finish.estimate}
             isoDate={finish.isoDate}
             month={finish.month}
           />
+        ) : (
+          goal.kind === "exam" && (
+            <span className="text-muted-foreground text-xs">{t("Date to be confirmed")}</span>
+          )
         )}
       </span>
     </>

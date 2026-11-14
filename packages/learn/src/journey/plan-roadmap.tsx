@@ -182,7 +182,7 @@ function RoadmapRevealList() {
                   {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
                 </span>
                 {when && phase.startDate && (
-                  <span className="text-muted-foreground font-mono text-xs tabular-nums">
+                  <span className="text-muted-foreground text-xs">
                     {when === "today" ? t("Today") : <PlanDateText isoDate={phase.startDate} />}
                   </span>
                 )}
