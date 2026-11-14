@@ -192,7 +192,8 @@ struct TodaySessionAction: View {
     switch view.session.state {
     case .underway: return view.session.nextBlock != nil
     case .done, .prepare: return true
-    case .ahead, .rest, .waiting: return false
+    case .ahead, .rest: return view.session.extraTime.available
+    case .waiting: return false
     }
   }
 
@@ -270,7 +271,17 @@ struct TodaySessionAction: View {
       return TodayMainAction(
         kind: .prepareLessons, isBusy: busy == .prepare, failed: failed == .prepare,
         action: prepare)
-    case .ahead, .rest, .waiting:
+    // With nothing new on the list, practice is the day's one action; once the day is done it's
+    // only an extra, so it stays in the page.
+    case .ahead, .rest:
+      guard session.extraTime.available else {
+        return nil
+      }
+
+      return TodayMainAction(
+        kind: .practice(minutes: session.extraTime.minutes), isBusy: busy == .keepLearning,
+        failed: failed == .keepLearning, action: keepLearning)
+    case .waiting:
       return nil
     }
   }

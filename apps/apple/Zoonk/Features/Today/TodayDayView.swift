@@ -29,6 +29,7 @@ struct TodayDayView: View {
   @State private var answeredInsight: MemoryInsight?
   @State private var insightAnswers: [String: Bool] = [:]
   @State private var uploadDraft = MaterialDraft()
+  @State private var suggestedGoalAnswer = SuggestedGoalAnswer()
 
   enum Tap: Equatable {
     case archive
@@ -343,7 +344,7 @@ struct TodayDayView: View {
         onAnswer: holdShownNotice)
     case .suggestedGoal:
       if let suggestion = view.suggestedGoal {
-        SuggestedGoalSection(suggestion: suggestion)
+        SuggestedGoalSection(suggestion: suggestion, answer: suggestedGoalAnswer)
       }
     case .uploadRequest:
       if let request = answeredUpload ?? view.uploadRequest {
