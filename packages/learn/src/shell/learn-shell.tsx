@@ -16,6 +16,10 @@ export function LearnShell({ children, className, ...props }: React.ComponentPro
   );
 }
 
+/** The frame's side padding at each size: the app's shell, and a full page drawn without it. */
+export const FRAME_GUTTER_CLASS =
+  "[--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(8)] lg:[--page-gutter:--spacing(10)]";
+
 /**
  * The frame's gutter and bottom room (`--page-gutter`, `--page-bottom`) are set here so the bar over
  * a tab and the page under it share one column. Where the phone's tab bar shows, a bottom bar
@@ -25,7 +29,8 @@ export function LearnShellContent({ className, ...props }: React.ComponentProps<
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-1 flex-col [--page-bottom:--spacing(12)] [--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(8)] lg:[--page-bottom:--spacing(16)] lg:[--page-gutter:--spacing(10)]",
+        "flex min-w-0 flex-1 flex-col [--page-bottom:--spacing(12)] lg:[--page-bottom:--spacing(16)]",
+        FRAME_GUTTER_CLASS,
         "max-lg:has-data-[slot=learn-bottom-navigation]:[--page-dock:calc(4rem+1px+env(safe-area-inset-bottom))] max-lg:has-data-[slot=learn-bottom-navigation]:[--page-safe-bottom:0px]",
         className,
       )}

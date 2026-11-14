@@ -19,30 +19,8 @@ import kotlin.time.toJavaInstant
 @Composable
 fun mockTitle(number: Long): String = stringResource(R.string.mock_title, number)
 
-@Composable
-fun mockDaySize(
-    fullLength: Boolean,
-    day: Long? = null,
-): String =
-    when {
-        day != null && fullLength -> stringResource(R.string.mock_full_day_number, day)
-        day != null -> stringResource(R.string.mock_half_day_number, day)
-        fullLength -> stringResource(R.string.mock_full_day)
-        else -> stringResource(R.string.mock_half_day)
-    }
-
-/** What a mock covered: "Starting point" for a placement mock, else its day or subject; empty without a shape. */
-@Composable
-fun mockShapeLabel(
-    placement: Boolean,
-    shape: MockShape?,
-): String =
-    when {
-        placement -> stringResource(R.string.mock_starting_point)
-        shape == null -> ""
-        shape.kind == MockShape.Kind.AREA -> shape.area.orEmpty()
-        else -> mockDaySize(fullLength = shape.kind == MockShape.Kind.FULL)
-    }
+/** A one-subject mock exam is told apart by its subject; a full or half one needs no label. */
+fun mockSubject(shape: MockShape?): String = if (shape?.kind == MockShape.Kind.AREA) shape.area.orEmpty() else ""
 
 /** "Oct 28", in the device's time zone as main writes it in the browser's. */
 @Composable
@@ -56,10 +34,7 @@ fun mockDate(finishedAt: Instant): String =
         DateStyle.Day,
     )
 
-/**
- * What a finished mock certainly was: its net score where wrong answers cancel right ones, else its
- * right answers (an IRT score is only ever an estimate, shown as a range on the Plan).
- */
+/** What a finished mock exam certainly was: its score where wrong answers cost points, else its right answers. */
 @Composable
 fun mockMeasure(mock: ExamMockSummary): String {
     val locale = currentLocale()
@@ -69,18 +44,6 @@ fun mockMeasure(mock: ExamMockSummary): String {
     // Partial credit reads to the hundredth.
     val correct = (mock.correct * HUNDREDTHS).roundToLong() / HUNDREDTHS
     return pluralStringResource(R.plurals.mock_right_answers, floor(correct).toInt(), formatNumber(correct, locale), mock.total)
-}
-
-/** "Mock exam 2" with how it went in words, for a row. */
-@Composable
-fun mockSummaryLabel(mock: ExamMockSummary): String {
-    val shape = mockShapeLabel(mock.purpose == ExamMockSummary.Purpose.PLACEMENT, mock.shape)
-    val examQuestions = mock.examQuestions
-    return if (examQuestions != null && examQuestions > mock.total) {
-        pluralStringResource(R.plurals.mock_shape_of_questions, mock.total.toInt(), shape, mock.total, examQuestions)
-    } else {
-        shape
-    }
 }
 
 private const val HUNDREDTHS = 100.0

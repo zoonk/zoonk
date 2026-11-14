@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { expectHydrated, holdScripts } from "@zoonk/e2e/hydration";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { expect, test } from "./fixtures";
+import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
 
 test.describe("Text typed before the page hydrates", () => {
   test("a guest's help message sent before the page hydrates goes out with the email typed", async ({
@@ -90,5 +91,31 @@ test.describe("Text typed before the page hydrates", () => {
     await expectHydrated(box);
 
     await expect(box).toHaveValue("learn to cook for my family");
+  });
+
+  test("a time a day picked before the step hydrates is the one saved", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const goal = await createMappedGoal(noProgressUser.id);
+    const answered = [...ANSWERED.filter((step) => step !== "schedule"), "placement"];
+
+    await prisma.goal.update({
+      data: { details: { answered, subject: "algebra" } },
+      where: { id: goal.id },
+    });
+
+    const release = await holdScripts(page);
+    await page.goto(`/start/${goal.id}`, { waitUntil: "domcontentloaded" });
+
+    const time = page.getByLabel("Time a day", { exact: true });
+    await time.selectOption("45");
+    await release();
+    await expectHydrated(time);
+
+    await expect(time).toHaveValue("45");
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
+    await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+    await expect(page.getByText("45 min", { exact: true })).toBeVisible();
   });
 });

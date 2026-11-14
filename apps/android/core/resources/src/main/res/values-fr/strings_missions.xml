@@ -38,9 +38,9 @@
   "missions_points": "b1a7bdf731c4ef84dcc795f9d36033a15dae5c0f9835fa9eaa8273b8afc04d5a",
   "missions_practice": "ad5e97e9252b0db0d8b33ad69cd6b2ee14671e3bdcbe2e36fcb2dc6cfb5223d7",
   "missions_practice_area": "ddfc270ceae25cbf3fd0ef5296859c73ef4e05ab4973428cd462fe9ef4cfa543",
-  "missions_progress": "3d12b9eae0562d46bbb19ff40230c4bf297b59eb1ef60a9771511a6e81e7ea50",
+  "missions_progress": "57544b5002c5345edbf27a27df8753b855c9f6544dcf57e1a2f0f4dac19ed4ed",
   "missions_pronunciation": "66ecac6e5a41f6f2d8e8aaa19ee54df7372ab7cdcff9745d328517c1f0bf4045",
-  "missions_rematch": "cae064cf45794ab9844a20939d263463029dfd5f0bcf447f328310541016c333",
+  "missions_rematch": "d0a87b8d2d85bc91e0fe40345fb703242fc1370267e446077ea36140bd76ec58",
   "missions_review": "113494f5b85244e74ef15581cece6a82ccbb65b750fb8ebab56bd53bb36a13cb",
   "missions_something_new": "a20ba832507bd9c5a2ebeb7bcbbfcb11ca38181b98ae305913ec4934734f02db",
   "missions_title": "cfce00b7a1e70e164d896eedefd5c8bdf26e2fb94f02a7345c0aa965a941d170",
@@ -67,7 +67,7 @@
     </plurals>
     <string name="missions_just_done">Tout juste terminé</string>
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
-    <string name="missions_progress">%1$s sur %2$s terminées</string>
+    <string name="missions_progress">%1$s sur %2$s terminés</string>
     <string name="missions_brain_power">Puissance Mentale</string>
     <!-- %1$s is a formatted number of Brain Power points: "+50". -->
     <string name="missions_points">+%1$s</string>
@@ -78,7 +78,7 @@
     <!-- %1$s is a chapter's title. -->
     <string name="missions_finish_chapter_named">Terminer « %1$s »</string>
     <string name="missions_finish_chapter">Terminer le chapitre</string>
-    <string name="missions_rematch">Prendre ta revanche sur le Farceur</string>
+    <string name="missions_rematch">Reprendre le défi contre le Farceur</string>
     <string name="missions_challenge">Battre le Farceur</string>
     <string name="missions_weekly_challenge">Défi hebdomadaire</string>
     <string name="missions_mock">Passer l’examen blanc</string>

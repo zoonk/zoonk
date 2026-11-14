@@ -1,5 +1,6 @@
-import { describe, expect, it } from "vitest";
-import { toOpeningDay } from "./opening-day";
+import { getLocalTimeZone } from "@zoonk/utils/time-zone";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { toOpeningDay, watchOpeningClock } from "./opening-day";
 
 describe(toOpeningDay, () => {
   const now = new Date("2026-11-13T23:30:00.000Z");
@@ -30,5 +31,35 @@ describe(toOpeningDay, () => {
 
     expect(toOpeningDay({ availableAt: "soon", now, timeZone: "UTC" })).toBeNull();
     expect(toOpeningDay({ availableAt: null, now, timeZone: "UTC" })).toBeNull();
+  });
+});
+
+describe(watchOpeningClock, () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("wakes at local midnight before the opening, when tomorrow becomes today", () => {
+    vi.useFakeTimers({ now: new Date(2026, 10, 13, 23, 59) });
+
+    const availableAt = new Date(2026, 10, 14, 12, 0).toISOString();
+    const timeZone = getLocalTimeZone();
+    const day = () => toOpeningDay({ availableAt, now: new Date(), timeZone });
+    const notify = vi.fn<() => void>();
+    const stop = watchOpeningClock(availableAt, notify);
+
+    expect(day()).toBe("tomorrow");
+
+    vi.advanceTimersByTime(2 * 60 * 1000);
+
+    expect(notify).toHaveBeenCalledOnce();
+    expect(day()).toBe("today");
+
+    vi.advanceTimersByTime(12 * 60 * 60 * 1000);
+
+    expect(notify).toHaveBeenCalledTimes(2);
+    expect(day()).toBe("open");
+
+    stop();
   });
 });

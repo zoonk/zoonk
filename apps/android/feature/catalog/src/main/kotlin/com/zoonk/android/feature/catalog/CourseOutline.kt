@@ -36,25 +36,19 @@ import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
-import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.CourseChapter
 import com.zoonk.api.models.CoursePlanEstimateAnyOf1
-import com.zoonk.api.models.CoursePlanEstimateAnyOf1AreasInner
-import com.zoonk.api.models.CoursePlanEstimateAnyOf1ChaptersInner
 import com.zoonk.api.models.CoursePlanExample
 import com.zoonk.api.models.CourseResourceLevelsInner
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
-import kotlinx.datetime.toJavaLocalDate
-import kotlin.math.roundToLong
 
 @Composable
 internal fun CourseChapter.Level.label(): String = courseLevelName(value)
 
-/** Main's `LibraryCourseOutline`: every chapter by level (or by exam area, for a dated plan), with the plan's weeks. */
+/** Main's `LibraryCourseOutline`: every chapter by level, or by exam area for a dated plan, as names and counts. */
 @Composable
 internal fun CourseOutline(
     navigator: AppNavigator,
@@ -65,18 +59,13 @@ internal fun CourseOutline(
     openLevel: CourseChapter.Level?,
     levels: List<CourseResourceLevelsInner>,
     goal: LearnerSummaryGoal?,
-    examples: Boolean,
     disclosures: Disclosures,
     modifier: Modifier = Modifier,
 ) {
-    val locale = currentLocale()
     val lessonCount = chapters.sumOf { it.lessons.size }
-    val pace = plan?.pace?.takeIf { chapters.isNotEmpty() }
     val hereChapter = goal?.courseChapterId?.toString()
     val hereLevel = goal?.takeIf { it.courseChapterId == null }?.courseLevel?.value
-    val dated = pace?.estimate?.dated
-    val undated = pace?.estimate?.undated
-    val examDate = plan?.exam?.days?.firstOrNull()
+    val dated = plan?.pace?.estimate?.dated
 
     val facts =
         if (chapters.isEmpty()) {
@@ -84,27 +73,13 @@ internal fun CourseOutline(
         } else {
             listOfNotNull(
                 pluralStringResource(R.plurals.catalog_chapters, chapters.size, chapters.size),
-                pluralStringResource(R.plurals.catalog_lessons_written, lessonCount, lessonCount).takeIf { lessonCount > 0 },
+                pluralStringResource(R.plurals.catalog_short_lessons, lessonCount, lessonCount).takeIf { lessonCount > 0 },
             ).factsLine()
         }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(24.dp)) {
         Column(Modifier.widthIn(max = COLUMN_WIDTH), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             SectionTitle(stringResource(R.string.catalog_outline), facts = facts)
-
-            if (pace != null && examples) {
-                val text =
-                    if (dated != null && examDate != null) {
-                        stringResource(
-                            R.string.catalog_outline_plan_dated,
-                            formatDate(examDate.toJavaLocalDate(), locale),
-                            formatMinutes(pace.minutes.toInt(), locale),
-                        )
-                    } else {
-                        pluralStringResource(R.plurals.catalog_outline_plan_undated, pace.minutes.toInt(), pace.minutes.toInt())
-                    }
-                Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-            }
 
             lead?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
 
@@ -124,12 +99,10 @@ internal fun CourseOutline(
             chapters.isEmpty() -> {}
 
             dated != null -> {
-                AreaOutline(navigator, courseId, chapters, numbers, dated, examples, hereChapter, disclosures)
+                AreaOutline(navigator, courseId, chapters, numbers, dated, hereChapter, disclosures)
             }
 
             else -> {
-                val weeks = undated?.chapters.orEmpty().associate { it.chapterId.toString() to (it.week to it.endWeek) }
-
                 val written = chapters.groupBy { it.level }
                 val covered = levels.map { it.level.value }.toSet()
 
@@ -142,48 +115,14 @@ internal fun CourseOutline(
                         return@forEach
                     }
 
-                    val chapterWeeks = levelChapters.mapNotNull { weeks[it.id.toString()] }.filter { it.first != null }
-                    val first = chapterWeeks.minOfOrNull { it.first!! }
-                    val last = chapterWeeks.maxOfOrNull { it.second ?: it.first!! }
-                    val span =
-                        when {
-                            !examples || first == null || last == null -> {
-                                null
-                            }
-
-                            first == last -> {
-                                stringResource(R.string.catalog_level_week, formatNumber(first.toDouble(), locale))
-                            }
-
-                            else -> {
-                                stringResource(
-                                    R.string.catalog_level_weeks,
-                                    formatNumber(first.toDouble(), locale),
-                                    formatNumber(last.toDouble(), locale),
-                                )
-                            }
-                        }
-
-                    OutlineZone(
+                    ChapterGroup(
                         title = level.label(),
                         titleMark = here,
-                        aside =
-                            listOfNotNull(
-                                pluralStringResource(R.plurals.catalog_chapters, levelChapters.size, levelChapters.size),
-                                span,
-                            ).factsLine(),
-                        closedSummary = levelChapters.take(CHAPTERS_NAMED).map { it.title }.factsLine(),
+                        chapters = levelChapters,
                         openByDefault = level == openLevel,
                         disclosures = disclosures,
                     ) {
-                        ChapterRows(navigator, courseId, levelChapters, numbers, hereChapter, disclosures) { chapter ->
-                            weeks[chapter.id.toString()]?.first?.takeIf { examples }?.let {
-                                stringResource(
-                                    R.string.catalog_chapter_week,
-                                    formatNumber(it.toDouble(), locale),
-                                )
-                            }
-                        }
+                        ChapterRows(navigator, courseId, levelChapters, numbers, hereChapter, disclosures)
                     }
                 }
             }
@@ -199,163 +138,50 @@ private fun AreaOutline(
     chapters: List<CourseChapter>,
     numbers: Map<String, Int>,
     estimate: CoursePlanEstimateAnyOf1,
-    examples: Boolean,
     hereChapter: String?,
     disclosures: Disclosures,
 ) {
-    val rows = estimate.chapters.associateBy { it.chapterId.toString() }
-    val groups = chapters.groupBy { rows[it.id.toString()]?.area }
+    val areas = estimate.chapters.associate { it.chapterId.toString() to it.area }
+    val groups = chapters.groupBy { areas[it.id.toString()] }
     val order =
         estimate.areas
             .mapNotNull { it.area }
             .distinct()
             .filter { it in groups }
-    val ordered = { list: List<CourseChapter> -> list.sortedBy { rows[it.id.toString()]?.studyOrder ?: Long.MAX_VALUE } }
-    val mark: @Composable (CourseChapter) -> String? = { chapter ->
-        if (examples) areaChapterMark(chapter, rows[chapter.id.toString()]) else null
-    }
 
     if (order.size <= 1) {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (examples) {
-                Text(
-                    areaFitText(estimate.areas.firstOrNull { it.area == order.firstOrNull() }, chapters, rows),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-            ChapterRows(navigator, courseId, ordered(chapters), numbers, hereChapter, disclosures, mark)
-        }
+        ChapterRows(navigator, courseId, chapters, numbers, hereChapter, disclosures)
         return
     }
 
-    order.forEach { area ->
+    order.forEachIndexed { index, area ->
         val areaChapters = groups[area].orEmpty()
 
-        OutlineZone(
-            title = area,
-            aside = pluralStringResource(R.plurals.catalog_chapters, areaChapters.size, areaChapters.size),
-            closedSummary = if (examples) areaFitText(estimate.areas.firstOrNull { it.area == area }, areaChapters, rows) else null,
-            openSummary = true,
-            openByDefault = false,
-            disclosures = disclosures,
-        ) {
-            ChapterRows(navigator, courseId, ordered(areaChapters), numbers, hereChapter, disclosures, mark)
+        ChapterGroup(title = area, chapters = areaChapters, openByDefault = index == 0, disclosures = disclosures) {
+            ChapterRows(navigator, courseId, areaChapters, numbers, hereChapter, disclosures)
         }
     }
 }
 
-/** No bar: a share of time would read as coverage. */
+/** A level or exam area: its name and chapter count, with its first chapters' names while closed. */
 @Composable
-private fun areaFitText(
-    area: CoursePlanEstimateAnyOf1AreasInner?,
+private fun ChapterGroup(
+    title: String,
     chapters: List<CourseChapter>,
-    rows: Map<String, CoursePlanEstimateAnyOf1ChaptersInner>,
-): String {
-    val locale = currentLocale()
-    val leftOut = chapters.count { rows[it.id.toString()]?.week == null }
-    val parts = mutableListOf<String>()
-
-    if (area != null) {
-        val studied = area.plannedMinutes.roundToLong() > 0
-        parts +=
-            if (studied) {
-                stringResource(
-                    R.string.catalog_plan_study,
-                    formatTotalDuration(area.plannedMinutes, locale),
-                )
-            } else {
-                stringResource(R.string.catalog_left_out)
-            }
-        parts +=
-            if (studied && area.fitting == 0L) {
-                val quick = area.quickLessons > 0
-                val unwritten = area.unwrittenMinutes.roundToLong() > 0
-                when {
-                    quick && unwritten -> {
-                        stringResource(R.string.catalog_quick_and_written_later)
-                    }
-
-                    quick -> {
-                        pluralStringResource(
-                            R.plurals.catalog_quick_lesson_count,
-                            area.quickLessons.toInt(),
-                            area.quickLessons.toInt(),
-                        )
-                    }
-
-                    else -> {
-                        stringResource(R.string.catalog_written_later)
-                    }
-                }
-            } else {
-                listOfNotNull(
-                    stringResource(
-                        R.string.catalog_lessons_fit,
-                        formatNumber(area.fitting.toDouble(), locale),
-                        formatNumber(area.total.toDouble(), locale),
-                    ),
-                    pluralStringResource(
-                        R.plurals.catalog_plus_quick_lessons,
-                        area.quickLessons.toInt(),
-                        area.quickLessons.toInt(),
-                    ).takeIf {
-                        area.quickLessons >
-                            0
-                    },
-                ).factsLine()
-            }
-    }
-
-    if (leftOut > 0 && leftOut < chapters.size) {
-        parts += pluralStringResource(R.plurals.catalog_chapters_left_out, leftOut, leftOut)
-    }
-
-    return parts.factsLine()
-}
-
-/** "Left out" only when the plan holds no work of it. */
-@Composable
-private fun areaChapterMark(
-    chapter: CourseChapter,
-    row: CoursePlanEstimateAnyOf1ChaptersInner?,
-): String {
-    val locale = currentLocale()
-    val week = row?.week ?: return stringResource(R.string.catalog_left_out)
-    val span = stringResource(R.string.catalog_chapter_week, formatNumber(week.toDouble(), locale))
-    val kinds = row.workKinds.map { it.value }
-    val detail =
-        when {
-            row.lessonsInPlan == 0L && "quick" in kinds && "unwritten" in kinds -> {
-                stringResource(R.string.catalog_quick_and_written_later)
-            }
-
-            row.lessonsInPlan == 0L && "quick" in kinds -> {
-                stringResource(R.string.catalog_quick_lessons)
-            }
-
-            row.lessonsInPlan == 0L && "unwritten" in kinds -> {
-                stringResource(R.string.catalog_written_later)
-            }
-
-            row.lessonsInPlan == 0L -> {
-                null
-            }
-
-            row.lessonsInPlan < chapter.lessons.size -> {
-                stringResource(
-                    R.string.catalog_lessons_in_plan,
-                    formatNumber(row.lessonsInPlan.toDouble(), locale),
-                    formatNumber(chapter.lessons.size.toDouble(), locale),
-                )
-            }
-
-            else -> {
-                null
-            }
-        }
-
-    return listOfNotNull(span, detail).factsLine()
+    openByDefault: Boolean,
+    disclosures: Disclosures,
+    titleMark: (@Composable () -> Unit)? = null,
+    content: @Composable () -> Unit,
+) {
+    OutlineZone(
+        title = title,
+        titleMark = titleMark,
+        aside = pluralStringResource(R.plurals.catalog_chapters, chapters.size, chapters.size),
+        closedSummary = chapters.take(CHAPTERS_NAMED).map { it.title }.factsLine(),
+        openByDefault = openByDefault,
+        disclosures = disclosures,
+        content = content,
+    )
 }
 
 /** Main's `RouteZone`: a disclosure whose closed state names what's inside; it follows [openByDefault] until tapped. */
@@ -366,7 +192,6 @@ internal fun OutlineZone(
     closedSummary: String?,
     openByDefault: Boolean,
     disclosures: Disclosures,
-    openSummary: Boolean = false,
     titleMark: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
@@ -409,7 +234,7 @@ internal fun OutlineZone(
                         style = MaterialTheme.typography.labelMedium.withTabularFigures(),
                     )
                 }
-                if (closedSummary != null && (!open || openSummary)) {
+                if (closedSummary != null && !open) {
                     Text(closedSummary, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
                 }
             }
@@ -434,7 +259,6 @@ private fun ChapterRows(
     numbers: Map<String, Int>,
     hereChapter: String?,
     disclosures: Disclosures,
-    mark: @Composable (CourseChapter) -> String?,
 ) {
     val key = "chapters:${chapters.firstOrNull()?.id}"
     val folds = chapters.size >= CHAPTERS_SHOWN + 3
@@ -449,7 +273,6 @@ private fun ChapterRows(
                 courseId,
                 chapter,
                 numbers[chapter.id.toString()] ?: 0,
-                mark(chapter),
                 isHere = chapter.id.toString() == hereChapter,
             )
         }
@@ -478,7 +301,6 @@ private fun OutlineChapterRow(
     courseId: String,
     chapter: CourseChapter,
     number: Int,
-    mark: String?,
     isHere: Boolean,
 ) {
     val locale = currentLocale()
@@ -507,21 +329,7 @@ private fun OutlineChapterRow(
                 fontWeight = FontWeight.SemiBold,
             )
 
-            if (isHere || mark != null) {
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    itemVerticalAlignment = Alignment.CenterVertically,
-                ) {
-                    if (isHere) HereMark()
-                    mark?.let {
-                        Text(
-                            it,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                        )
-                    }
-                }
-            }
+            if (isHere) HereMark()
 
             if (chapter.lessons.isNotEmpty()) {
                 Text(
@@ -571,13 +379,6 @@ private fun UnwrittenLevel(
 
 private const val CHAPTERS_NAMED = 3
 private const val CHAPTERS_SHOWN = 6
-
-/** Main's `CourseExampleNumbers`: the example plan's numbers are for someone deciding, so they wait for a session's summary. */
-internal fun showsExamples(
-    courseId: String,
-    hasSession: Boolean,
-    summary: LoadState<LearnerSummary>,
-): Boolean = !isSummaryOnItsWay(hasSession, summary) && summary.value?.goalOnCourse(courseId) == null
 
 /**
  * The level a course's outline opens at: the learner's plan's level in the course, the first for

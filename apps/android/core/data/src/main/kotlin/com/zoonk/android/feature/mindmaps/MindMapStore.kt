@@ -381,7 +381,7 @@ class MindMapStore(
         }
 
     private companion object {
-        // Buying Plus unlocks the chapters past the free week.
+        // Subscribing lifts the monthly lesson limit that writing a map's lessons counts against.
         val DOMAINS = setOf(DataDomain.Goals, DataDomain.UserProgress, DataDomain.UserSubscription, DataDomain.SavedMindMaps)
         const val UNPROCESSABLE = 422
         const val PLUS_REQUIRED = "PLUS_REQUIRED"

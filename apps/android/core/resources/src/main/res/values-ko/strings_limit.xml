@@ -10,10 +10,10 @@
   "limit_lesson_opens_on": "f2fb7f1698d4d2fb8be14bb97a33f3cda07c3883f70f661a95214e6d3cf0c939",
   "limit_lesson_opens_today": "db01836515267f4f94d07ef93ce11f8a697ff59e270f9f67697a7105481db0b9",
   "limit_lesson_opens_tomorrow": "63a65f013e44d24f1fa0132ecd08fdddcfae770b1e2d8c05c77308c6907abcb5",
+  "limit_lesson_ready": "52105243d9c35dc00a81da2ce5b5d2ea1565cd33d9c30c5516628fa95ca80fa1",
   "limit_lessons_day": "c07bea03c7c678bd1abca5479484a19aca1f6e757e871179bc013e0bdd2c0347",
   "limit_lessons_free": "820394a976a12d38d74a7538b20d7aa2646c79e43cb4329da83c8b660dd2a8d8",
   "limit_lessons_guest": "4f8e3607d1637ab18f3a0b5e216b0dee309ef7a318da002ab21a6fc2fbe7d950",
-  "limit_lessons_month": "c14d94a2c94eabbc2bdfbd0a364baf472fd8f274d47e1736c074c5c9b1034078",
   "limit_messages_day": "8082d5b36cab73c46a02f81cfd8d7b565dbdfdf6e356c08e76194fec373cd2e9",
   "limit_messages_month": "f641183aede8579d4dc96657dd990a4018e1b6e9aa357117d19091bc7b77e9f2",
   "limit_mind_maps_day": "1bd4cf9bc9354df189e0ab31bdbebe14ea17dcbce35e38bdf739635a037005eb",
@@ -54,7 +54,7 @@
     <string name="limit_lessons_guest">레슨을 더 보려면 계정이 필요해요</string>
     <string name="limit_lessons_free">무료 레슨을 모두 이용했어요</string>
     <string name="limit_lessons_day">오늘은 새 레슨을 더 볼 수 없어요</string>
-    <string name="limit_lessons_month">이번 달에는 새 레슨을 더 볼 수 없어요</string>
+    <string name="limit_lesson_ready">다음 무료 레슨이 준비됐어요</string>
     <string name="limit_mind_maps_guest">마인드맵을 더 만들려면 계정이 필요해요</string>
     <string name="limit_mind_maps_day">오늘은 새 마인드맵을 더 만들 수 없어요</string>
     <string name="limit_mind_maps_month">이번 달에는 새 마인드맵을 더 만들 수 없어요</string>

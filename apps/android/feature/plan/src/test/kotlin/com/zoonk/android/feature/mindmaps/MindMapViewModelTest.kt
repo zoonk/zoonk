@@ -265,47 +265,6 @@ class MindMapViewModelTest {
         }
 
     @Test
-    fun aPlusOnlyChapterShowsItsLockUntilBuyingPlusReadsItAgain() =
-        runTest(dispatcher) {
-            val (maps, store, cache) = setUp()
-            val shown = launch { store.chapter[key].shown.collect {} }
-            advanceUntilIdle()
-            api.create = { throw ApiException(ApiError.Unavailable, "PLUS_REQUIRED", 402) }
-            api.chapter = { chapterMindMap("plusRequired") }
-
-            maps.create(chapterId)
-            advanceUntilIdle()
-
-            assertEquals(MindMapShown.PlusRequired, shownMindMap(store.chapterShown(), maps.requests.value[chapterId]))
-
-            api.chapter = { chapterMindMap("available") }
-            cache.invalidate(setOf(DataDomain.UserSubscription))
-            advanceUntilIdle()
-
-            assertEquals(MindMapShown.Available, shownMindMap(store.chapterShown(), maps.requests.value[chapterId]))
-            shown.cancel()
-        }
-
-    @Test
-    fun aPollThatEndsLockedLeavesTheRowToTheReads() =
-        runTest(dispatcher) {
-            val (maps, store, cache) = setUp()
-            val shown = launch { store.chapter[key].shown.collect {} }
-            advanceUntilIdle()
-            api.chapter = { chapterMindMap("plusRequired") }
-            api.statuses.add(ChapterMindMapStatus.Status.PLUS_REQUIRED)
-
-            maps.follow(chapterId, MindMapShown.Drawing)
-            advanceUntilIdle()
-            api.chapter = { chapterMindMap("available") }
-            cache.invalidate(setOf(DataDomain.UserSubscription))
-            advanceUntilIdle()
-
-            assertEquals(MindMapShown.Available, shownMindMap(store.chapterShown(), maps.requests.value[chapterId]))
-            shown.cancel()
-        }
-
-    @Test
     fun aChapterWithoutAMapHasNoneToMake() =
         runTest(dispatcher) {
             val (maps, store) = setUp()

@@ -66,13 +66,17 @@ export function SubscribeGate({
   );
 }
 
-/** The gate as a screen: its words are the screen's, and this is the bar's main action. */
-export function SubscribeMainAction() {
+/**
+ * The gate as a screen: its words are the screen's, and this is the bar's main action, after
+ * `action`, one way on that isn't paying.
+ */
+export function SubscribeMainAction({ action }: { action?: ReactNode }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
 
   return (
     <TaskActions>
+      {action}
       <EnterLink href={routes.upgrade}>{t("Subscribe")}</EnterLink>
     </TaskActions>
   );

@@ -182,6 +182,7 @@ msgstr "Weiter"
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/explain/explain-waiting.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
 #: src/language/exam-speaking/speaking-task-row.tsx
@@ -662,7 +663,6 @@ msgstr "Zurück"
 
 #: src/_components/subscribe-gate.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "Abonnieren"
@@ -3406,19 +3406,16 @@ msgid "From now on, review and mock exams."
 msgstr "Ab jetzt stehen Wiederholungen und Probeprüfungen an."
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "VYBPRQ"
 msgid "The final stretch"
 msgstr "Der Endspurt"
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "Qr0X96"
 msgid "{exam} is tomorrow"
 msgstr "{exam} ist morgen"
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "7OX7b1"
 msgid "{exam} is today"
 msgstr "{exam} ist heute"
@@ -3430,20 +3427,9 @@ msgstr "Trag dein offizielles Ergebnis ein, sobald du es hast."
 
 #: src/exam/exam-moment-card.tsx
 #: src/exam/exam-result-section.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "yMXlRJ"
 msgid "How did it go?"
 msgstr "Wie ist es gelaufen?"
-
-#: src/exam/exam-moment-card.tsx
-msgctxt "GDT0eI"
-msgid "Add your result"
-msgstr "Ergebnis eintragen"
-
-#: src/exam/exam-moment-card.tsx
-msgctxt "0LZY2s"
-msgid "See your exam"
-msgstr "Prüfung ansehen"
 
 #: src/exam/exam-next-mock.tsx
 #: src/plan-diff/use-change-rows.ts
@@ -3730,11 +3716,6 @@ msgstr "Wir arbeiten noch an deiner Erklärung."
 msgctxt "fL_sD1"
 msgid "This is taking longer than usual."
 msgstr "Das dauert länger als üblich."
-
-#: src/explain/explain-waiting.tsx
-msgctxt "SHh7sC"
-msgid "See explanation"
-msgstr "Erklärung ansehen"
 
 #: src/explain/quick-explanation-label.ts
 msgctxt "fjrJL6"
@@ -8888,6 +8869,16 @@ msgid "How does inflation work?"
 msgstr "Wie funktioniert Inflation?"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "1oUkSm"
+msgid "Pause one in your Plan, or subscribe to study more at once."
+msgstr "Pausier ein Ziel in deinem Plan oder schließ ein Abo ab, um mehr Ziele gleichzeitig zu verfolgen."
+
+#: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "EreSqP"
+msgid "That's all the goals you can study at once"
+msgstr "Mehr Ziele kannst du nicht gleichzeitig verfolgen"
+
+#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "4RwuVD"
 msgid "No more new goals this month"
 msgstr "Diesen Monat kannst du keine neuen Ziele mehr starten"
@@ -8896,16 +8887,6 @@ msgstr "Diesen Monat kannst du keine neuen Ziele mehr starten"
 msgctxt "MO6156"
 msgid "Go to your Plan"
 msgstr "Zu deinem Plan"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "EreSqP"
-msgid "That's all the goals you can study at once"
-msgstr "Mehr Ziele kannst du nicht gleichzeitig verfolgen"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "1oUkSm"
-msgid "Pause one in your Plan, or subscribe to study more at once."
-msgstr "Pausier ein Ziel in deinem Plan oder schließ ein Abo ab, um mehr Ziele gleichzeitig zu verfolgen."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "n-6wcY"
@@ -13260,6 +13241,16 @@ msgstr "Für heute hinzufügen"
 msgctxt "SVKPfj"
 msgid "Exam choice"
 msgstr "Prüfungsauswahl"
+
+#: src/today/today-exam-moment.tsx
+msgctxt "GDT0eI"
+msgid "Add your result"
+msgstr "Ergebnis eintragen"
+
+#: src/today/today-exam-moment.tsx
+msgctxt "0LZY2s"
+msgid "See your exam"
+msgstr "Prüfung ansehen"
 
 #: src/today/today-exam-moment.tsx
 msgctxt "9HjIgh"

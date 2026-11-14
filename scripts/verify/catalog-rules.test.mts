@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { catalogOffenders, treeCatalogs } from "./catalog-rules.mts";
-import { SWITCHED_ON } from "./rules/catalog.mts";
+import { catalogFailures, catalogOffenders, treeCatalogs } from "./catalog-rules.mts";
 import { auditStrings } from "./strings.mts";
 
 const WEB = "apps/main/messages/en.po";
@@ -104,13 +103,32 @@ describe("catalog wording checks", () => {
     );
   });
 
-  it("holds every switched-on rule on the whole tree", { timeout: TREE_TIMEOUT_MS }, () => {
-    const broken =
-      SWITCHED_ON.length > 0
-        ? catalogOffenders(treeCatalogs()).filter((offender) =>
-            SWITCHED_ON.some((rule) => rule === offender.rule),
-          )
-        : [];
+  it.each([
+    ["subscribe", "Upgrade"],
+    ["planName", "Plus"],
+    ["noneOption", "None of these"],
+  ])("fails the web %s gate while native matches remain listing only", (rule, text) => {
+    const content = po([[`msgid "${text}"`]]);
+    const web = catalogOffenders([{ content, path: WEB }]);
+
+    const native = catalogOffenders([
+      android("strings_today.xml", [text]),
+      {
+        content: JSON.stringify({ strings: { [text]: {} } }),
+        path: "apps/apple/Zoonk/Today.xcstrings",
+      },
+    ]);
+
+    assert.equal(native.length, 2);
+
+    assert.deepEqual(
+      catalogFailures([...web, ...native]).map((match) => match.rule),
+      [rule],
+    );
+  });
+
+  it("holds every enabled platform gate on the whole tree", { timeout: TREE_TIMEOUT_MS }, () => {
+    const broken = catalogFailures(catalogOffenders(treeCatalogs()));
 
     assert.deepEqual(broken, []);
   });

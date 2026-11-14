@@ -22,6 +22,23 @@ const TextArea = {
   [Symbol.hasInstance]: (field: unknown) => field instanceof TextField && field.type === "textarea",
 };
 
+const selects = new WeakSet<object>();
+
+const Select = {
+  [Symbol.hasInstance]: (field: unknown) =>
+    typeof field === "object" && field !== null && selects.has(field),
+};
+
+function select(value: string, key: string) {
+  const field = {
+    getAttribute: (name: string) => (name === KEEP_TYPING_ATTRIBUTE ? key : null),
+    value,
+  };
+
+  selects.add(field);
+  return field;
+}
+
 type Listener = (event: { target: unknown }) => void;
 
 function openPage() {
@@ -29,6 +46,7 @@ function openPage() {
 
   vi.stubGlobal("HTMLInputElement", TextField);
   vi.stubGlobal("HTMLTextAreaElement", TextArea);
+  vi.stubGlobal("HTMLSelectElement", Select);
 
   vi.stubGlobal("document", {
     addEventListener: (type: string, listener: Listener, options: unknown) => {
@@ -67,6 +85,16 @@ describe("the keeper of words typed before a field's code arrives", () => {
         ["date", "2027-06-01"],
       ]),
     );
+  });
+
+  it("keeps the option picked in a select that opted in", () => {
+    const { type } = openPage();
+    const time = select("30", "time");
+
+    time.value = "45";
+    type(time);
+
+    expect(globalThis.zoonkKeptTyping?.typed).toStrictEqual(new Map([["time", "45"]]));
   });
 
   it("ignores a field that didn't opt in and anything that isn't a text field", () => {

@@ -47,14 +47,6 @@ class MindMapRulesTest {
     }
 
     @Test
-    fun aDrawnMapOrAPlusLockLeavesNothingForAFailureToBeAbout() {
-        val refused = MindMapLocal(limit = Limit.Reached(LimitTier.Free, LimitPeriod.Day))
-
-        assertEquals(MindMapShown.Ready, shownMindMap(MindMapShown.Ready, MindMapLocal(unreachable = true)))
-        assertEquals(MindMapShown.PlusRequired, shownMindMap(MindMapShown.PlusRequired, refused))
-    }
-
-    @Test
     fun otherwiseTheReadsSayWhereTheMapStands() {
         assertEquals(MindMapShown.Failed, shownMindMap(MindMapShown.Failed, null))
         assertEquals(MindMapShown.Available, shownMindMap(MindMapShown.Available, MindMapLocal(pending = true)))

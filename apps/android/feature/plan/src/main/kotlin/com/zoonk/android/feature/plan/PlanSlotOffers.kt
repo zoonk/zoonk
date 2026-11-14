@@ -216,6 +216,7 @@ internal fun CoverageSuggestion(slot: Slot) {
         when {
             preview != PlanPreviewState.Idle && offer != null -> {
                 PlanPreviewResult(
+                    dateKind = page.dateKind,
                     state = preview,
                     onApply = { slot.applyPreview(SlotItem.Coverage, preview) },
                     onRetry = { slot.host.requestPreview(offer.operations) },
@@ -314,8 +315,7 @@ internal fun FitLessonsSuggestion(slot: Slot) {
         }
 
     PlanChangeSuggestion(SlotItem.FitLessons, title, slot) {
-        offer?.let { topicsMoved(it.effect, named = NAMED_TOPICS) }?.let { SuggestionDescription(it) }
-        offer?.let { PlanEffectDiff(it.effect) }
+        offer?.let { PlanEffectDiff(it.effect, dateKind = page.dateKind, said = EffectSaid.LessonsAdded) }
         SuggestionActions {
             if (offer != null && offer.canApply) {
                 SuggestionAction(
@@ -393,6 +393,7 @@ internal fun PastDateSuggestion(
         when {
             preview != null -> {
                 PlanPreviewResult(
+                    dateKind = page.dateKind,
                     state = preview,
                     onApply = { slot.applyPreview(item, preview) },
                     onRetry = { slot.host.requestPreview(preview.operations) },

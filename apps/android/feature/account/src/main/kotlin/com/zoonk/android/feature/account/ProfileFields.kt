@@ -117,9 +117,15 @@ private fun UsernameField(form: ProfileFormViewModel) {
                 text =
                     when (status) {
                         UsernameStatus.Checking -> stringResource(R.string.account_username_checking)
+
                         UsernameStatus.Available -> stringResource(R.string.account_username_available, form.username)
+
                         UsernameStatus.Taken -> stringResource(R.string.account_username_taken, form.username)
-                        UsernameStatus.Idle, UsernameStatus.Invalid -> stringResource(R.string.account_username_rules)
+
+                        UsernameStatus.Invalid -> stringResource(R.string.account_username_rules)
+
+                        // The line stays empty until it has something to say, so nothing under it moves.
+                        UsernameStatus.Idle -> ""
                     },
                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
             )

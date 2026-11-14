@@ -5,8 +5,8 @@
     <string name="account_welcome_note">Start free, no account needed.</string>
     <string name="account_terms">Terms of Service</string>
     <string name="account_privacy">Privacy Policy</string>
-    <string name="account_sign_in_title">Sign in or create an account</string>
-    <string name="account_sign_in_expired">That sign-in expired. Try again.</string>
+    <string name="account_sign_in_title">Log in or create an account</string>
+    <string name="account_sign_in_expired">That link expired. Log in again.</string>
     <string name="account_continue_with_google">Continue with Google</string>
     <string name="account_continue_with_apple">Continue with Apple</string>
     <string name="account_or">Or</string>
@@ -28,17 +28,16 @@
     <string name="account_new_code_wait">Wait a minute before asking for another code.</string>
     <string name="account_new_code_failed">We couldn\'t send a new code. Try again.</string>
     <string name="account_failure_invalid_email">Enter a valid email address</string>
-    <string name="account_failure_disposable_email">Temporary email addresses aren\'t supported. Use another email or a privacy alias.</string>
+    <string name="account_failure_disposable_email">Temporary email addresses don\'t work here. Use another email.</string>
     <string name="account_failure_network">Zoonk couldn\'t connect. Check your connection and try again.</string>
     <string name="account_failure_rate_limited">Too many tries. Wait a minute, then try again.</string>
     <string name="account_failure_wrong_code">That code isn\'t right. Check the email and try again.</string>
     <string name="account_failure_code_expired">This code expired. Get a new one.</string>
     <string name="account_failure_code_locked">Too many wrong tries with this code. Get a new one.</string>
-    <string name="account_failure_sign_in">There was an error signing you in. Please try again or contact hello@zoonk.com</string>
+    <string name="account_failure_sign_in">We couldn\'t log you in. Try again or email hello@zoonk.com.</string>
     <string name="account_setup_title">What should we call you?</string>
-    <string name="account_setup_description">You can change it later in your profile.</string>
     <string name="account_name">Name</string>
-    <string name="account_name_description">How Zoonk and your buddy call you, and the name on your certificates.</string>
+    <string name="account_name_description">Your buddy and all your certificates use this name.</string>
     <string name="account_name_too_long">Use 150 characters or fewer.</string>
     <string name="account_username">Username</string>
     <!-- %1$s is a username. -->

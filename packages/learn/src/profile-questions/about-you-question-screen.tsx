@@ -12,7 +12,7 @@ import { useId, useState, useTransition } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "../_components/page";
 import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
-import { ChangeSaveError } from "../_components/save-error";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { canSendProfileDraft, toProfileAnswer, toProfileDraft } from "./profile-draft";
 import { ProfileQuestionBody } from "./profile-question-body";
 import { useProfileQuestionDescription, useProfileQuestionTitle } from "./profile-question-copy";
@@ -31,7 +31,7 @@ export function AboutYouQuestionScreen({
   const title = useProfileQuestionTitle(question.id);
   const description = useProfileQuestionDescription(question.id);
   const [draft, setDraft] = useState(() => toProfileDraft(question));
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
   const formId = useId();
 
@@ -51,11 +51,12 @@ export function AboutYouQuestionScreen({
             return;
           }
 
-          setFailed(false);
-
           startTransition(async () => {
             const { data: saved } = await safeAsync(() => onSave(input));
-            setFailed(!saved);
+
+            if (!saved) {
+              saveFailed();
+            }
           });
         }}
       >
@@ -75,7 +76,7 @@ export function AboutYouQuestionScreen({
         />
       </form>
 
-      <BottomBar note={failed && <ChangeSaveError />}>
+      <BottomBar>
         <BottomBarActions>
           <EnterButton busy={isPending} disabled={!input} form={formId} type="submit">
             {t("Save")}

@@ -12,10 +12,15 @@ import {
   type GoalAttachActions,
   type OnboardingRoutes,
 } from "../onboarding-actions";
-import { OnboardingColumn } from "../onboarding-frame";
+import {
+  OnboardingColumn,
+  OnboardingDescription,
+  OnboardingHeading,
+  OnboardingTitle,
+} from "../onboarding-frame";
 import { AttachPanel, SignUpPrompt } from "./attach-panel";
 import { GoalEntry } from "./goal-entry";
-import { GoalLimitNotice } from "./goal-limit-notice";
+import { GoalLimitBar, useGoalLimitWords } from "./goal-limit-notice";
 import { type MaterialIntent, MaterialIntentChoice } from "./material-intent";
 
 function AttachedChips({
@@ -191,11 +196,18 @@ export function GoalStartEntry({
   atGoalLimit,
   ...entry
 }: React.ComponentProps<typeof AttachableGoalEntry> & { atGoalLimit: boolean }) {
-  return atGoalLimit ? (
-    <OnboardingColumn>
-      <GoalLimitNotice reason="activeGoals" />
+  return atGoalLimit ? <GoalLimitScreen /> : <AttachableGoalEntry {...entry} />;
+}
+
+function GoalLimitScreen() {
+  const words = useGoalLimitWords("activeGoals");
+
+  return (
+    <OnboardingColumn bar={<GoalLimitBar reason="activeGoals" />}>
+      <OnboardingHeading>
+        <OnboardingTitle>{words?.title}</OnboardingTitle>
+        {words?.line && <OnboardingDescription>{words.line}</OnboardingDescription>}
+      </OnboardingHeading>
     </OnboardingColumn>
-  ) : (
-    <AttachableGoalEntry {...entry} />
   );
 }

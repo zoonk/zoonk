@@ -83,16 +83,9 @@ class MockResultScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneNext() {
-        show(enem())
-        capture("result-phone-3-next", continues = 2)
-    }
-
-    @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneReview() {
         show(enem())
-        compose.onNodeWithText("See the 2 questions").performClick()
+        compose.onNodeWithText("See answers").performClick()
         compose.waitForIdle()
         write("result-phone-review-sheet", compose.onNode(isDialog()).captureRender().asAndroidBitmap())
     }
@@ -145,7 +138,7 @@ class MockResultScreenshots {
     fun phoneLastStepAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
         show(enem())
-        capture("result-phone-font200-last", continues = 2)
+        capture("result-phone-font200-last", continues = 1)
     }
 
     @Test
@@ -190,7 +183,7 @@ class MockResultScreenshots {
                 afterFinish = essaysOnly(pendingEssay()),
             )
         api.gradeGate = CompletableDeferred()
-        compose.onNodeWithText("See how it went").performClick()
+        compose.onNodeWithText("See result").performClick()
         capture("result-essay-grading")
     }
 
@@ -199,7 +192,7 @@ class MockResultScreenshots {
     fun essayLimitReached() {
         val api = show(runningMock(current = "null"), afterFinish = essaysOnly(pendingEssay()))
         api.gradeOutcome = EssayGradeOutcome.LimitReached
-        compose.onNodeWithText("See how it went").performClick()
+        compose.onNodeWithText("See result").performClick()
         capture("result-essay-limit")
     }
 

@@ -14,6 +14,7 @@ import {
 import { EnterButton } from "@zoonk/ui/components/enter-button";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
+import { Toggle } from "@zoonk/ui/components/toggle";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { CalendarIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -173,14 +174,14 @@ function PeriodPresets({
   return (
     <div aria-label="Period presets" className="grid grid-cols-3 gap-1" role="group">
       {PERIODS.map((period) => (
-        <Button
+        <Toggle
           key={period.value}
-          onClick={() => onSelect(period.value)}
-          type="button"
-          variant={current === period.value ? "default" : "ghost"}
+          onPressedChange={() => onSelect(period.value)}
+          pressed={current === period.value}
+          size="lg"
         >
           {period.label}
-        </Button>
+        </Toggle>
       ))}
     </div>
   );

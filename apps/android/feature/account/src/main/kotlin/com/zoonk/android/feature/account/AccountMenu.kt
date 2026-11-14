@@ -37,7 +37,6 @@ import com.zoonk.android.data.SignOutResult
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.rememberSendFeedback
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.PlaceIcon
@@ -100,7 +99,12 @@ fun AccountMenu(
                 MenuItem(
                     text = stringResource(R.string.account_menu_subscription),
                     icon = R.drawable.ic_diamond,
-                    trailing = if (isPlus) ({ PlusMark(label = stringResource(R.string.subscription_plus)) }) else null,
+                    trailing =
+                        if (isPlus) {
+                            { Text(stringResource(R.string.subscription_plus), color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                        } else {
+                            null
+                        },
                 ) { go(AppRoute.Subscription) }
             } else {
                 MenuItem(stringResource(R.string.account_menu_pricing), R.drawable.ic_sell) { go(AppRoute.Subscription) }

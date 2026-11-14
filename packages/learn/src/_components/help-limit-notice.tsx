@@ -6,7 +6,7 @@ import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useCallback, useSyncExternalStore } from "react";
 import { useFormatIsoDate } from "../_utils/iso-date";
-import { type OpeningDay, toOpeningDay } from "../_utils/opening-day";
+import { type OpeningDay, toOpeningDay, watchOpeningClock } from "../_utils/opening-day";
 import { CreateAccountLink } from "./create-account-link";
 import { GateWords, SubscribeAction } from "./subscribe-gate";
 
@@ -200,33 +200,13 @@ function isFreeLessonsUsed(limit: LessonLimit): limit is FreeLessonsUsed {
   return "period" in limit && limit.period === "rolling30Days";
 }
 
-/** The longest wait `setTimeout` holds; a later instant is waited for in steps. */
-const MAX_TIMER_MS = 2_147_483_647;
-
-/** Tells the screen when the instant passes, and when the tab is seen again (a computer that slept). */
+/** Also tells the screen when the tab is seen again (a computer that slept). */
 function watchOpening(availableAt: string | null, notify: () => void) {
-  const opens = availableAt ? Date.parse(availableAt) : Number.NaN;
-  let timer: ReturnType<typeof setTimeout> | undefined;
-
-  const wait = () => {
-    const left = opens - Date.now();
-
-    if (left > 0) {
-      timer = setTimeout(
-        () => {
-          notify();
-          wait();
-        },
-        Math.min(left, MAX_TIMER_MS),
-      );
-    }
-  };
-
-  wait();
+  const stop = watchOpeningClock(availableAt, notify);
   document.addEventListener("visibilitychange", notify);
 
   return () => {
-    clearTimeout(timer);
+    stop();
     document.removeEventListener("visibilitychange", notify);
   };
 }

@@ -53,12 +53,19 @@ sealed interface QuestionWriting {
     data object PlusRequired : QuestionWriting
 }
 
+/**
+ * Which start this is: the learner's first tap, the start after a question-writing run (the server
+ * then answers with the mock or its short numbers, never asks for questions again), or the start the
+ * learner confirmed after seeing those numbers.
+ */
+enum class MockStartAsk { First, AfterWriting, AcceptFewer }
+
 interface MockStartApi {
     suspend fun start(
         session: AuthenticatedSession,
         goalId: UUID,
         shape: MockShape,
-        acceptFewer: Boolean,
+        ask: MockStartAsk,
     ): AnytimeMock
 
     suspend fun writeQuestions(
@@ -75,9 +82,16 @@ class LiveMockStartApi(
         session: AuthenticatedSession,
         goalId: UUID,
         shape: MockShape,
-        acceptFewer: Boolean,
+        ask: MockStartAsk,
     ) = perform {
-        api.clients(session).exams.startAnytimeMock(goalId, AnytimeMockInput(shape = shape, acceptFewer = acceptFewer))
+        api.clients(session).exams.startAnytimeMock(
+            goalId,
+            AnytimeMockInput(
+                shape = shape,
+                acceptFewer = ask == MockStartAsk.AcceptFewer,
+                afterWriting = ask == MockStartAsk.AfterWriting,
+            ),
+        )
     }
 
     override suspend fun writeQuestions(
@@ -103,12 +117,12 @@ class MockStarter(
     suspend fun start(
         goalId: UUID,
         shape: MockShape,
-        acceptFewer: Boolean,
+        ask: MockStartAsk,
     ): MutationResult<MockStartOutcome> {
         val result =
             cache.mutate { session ->
                 try {
-                    outcome(api.start(session, goalId, shape, acceptFewer))
+                    outcome(api.start(session, goalId, shape, ask))
                 } catch (e: ApiException) {
                     when (e.code) {
                         PLUS_REQUIRED -> MockStartOutcome.PlusRequired
