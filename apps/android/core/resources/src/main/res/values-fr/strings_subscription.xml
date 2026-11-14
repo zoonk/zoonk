@@ -8,7 +8,7 @@
   "subscription_already_plus_website": "ebdcef7c593ef793f4bdc56424f3de335d0a4ca7565a5ca0e441f8033097b21a",
   "subscription_answer_cancel": "d3132813b894ffe378a842b5ce29953128c4f2753be236c43de0689bf3eff1b0",
   "subscription_answer_fair_use": "6523e9ef70c2e1f4586d637f2a43cb3f112ab7ee92bcfa97b952c9e5b1fbbf9f",
-  "subscription_answer_free_buddy": "63c190dd1186e249b909a371b44b0dc35260aa84bfc3e5b572141ca6581c5a1b",
+  "subscription_answer_free_buddy": "2e76156792a08e2b26ba0217af6ebc2247e543b463c684f46d50a55c7b9e7075",
   "subscription_answer_free_buddy_uploads": "67cb73256a734250f59ab207b8a620208938367534b6019f8e130459077a1855",
   "subscription_answer_free_calls": "455c642cb1322e891bdbe97512bc3f22b03951234d47d02a1d7876f47b21eabc",
   "subscription_answer_free_exam": "ea901c20807d560bffeca8a157887669b77d23c6697cf9163f8264a90db4ec63",
@@ -20,9 +20,9 @@
   "subscription_answer_free_lessons": "1acb9eecff8a89bd88b17e74909dc49f1a13da36eda463e7431c2cffa1e9e27a",
   "subscription_answer_free_uploads": "cdca4c8d6b2358c6df87cc960ee248cbedca341d70eb51b7060855e6fc491116",
   "subscription_answer_refund": "53d1fd17dce950279a32c5cbaf8f1c27ace794d84c4799431eeb35682d2d2cac",
-  "subscription_answer_unlimited": "ddaa7ade6d12c40364ee1a549f78d688292b5faaac8e128dd38403eb999db2a3",
+  "subscription_answer_unlimited": "2aa53a3ae425e46a75248c7bd31f705d280c77fe3f307f7c758f41b01d1018b8",
   "subscription_available_with_plus": "7cd7b0aaee2632e2489afa3f3f925647a7c42923529005cf98f9bd78c9820013",
-  "subscription_benefit_buddy": "e3d3d539c397a67a6435cf8f5930eb73dc6c6b049178a63cc1c67c601f671e6a",
+  "subscription_benefit_buddy": "9472eeea1cf1687e9388a73ed8f569445fedd65cd6126a266c1f2da8d831d294",
   "subscription_benefit_calls": "15a914da8b40b4dfee62bd57ef57d4adf44fbf746a12c299613dc93c8d79f1d4",
   "subscription_benefit_certificates": "7073f2f3f067117b74bdb8db105f604ec38cb18bd307798c3c63ef744070e489",
   "subscription_benefit_exam": "6467e1f1bfe0f4d0e4aa57c51634a222ff48b80810abf28162db3241ba7cf8f1",
@@ -43,7 +43,7 @@
   "subscription_ending": "15fb2387151e922c521d96f22f8c555b3a3eb5d7c8c3b2b42dc267c4bf15d28d",
   "subscription_ends_on": "c1976f512b793fa39f1e912853ca3e4f31f04fb1647faa9be7ead93ec37e45f5",
   "subscription_free": "f2e5f3c52c974703ca35778dedfad4bd1f1598f485fb50b2fc812214d3de77a2",
-  "subscription_free_buddy": "041f7a911ca84630851255f5dddd04c91688c90d3b5004bbef47c27b46d6363b",
+  "subscription_free_buddy": "f968578b440c352c36353528756a76d3163d2cc5840508db870ccb66c79a879b",
   "subscription_free_calls": "f188828ce1b318dd26098b976f0b4f5e1897e3fac8aed8dba168953bddf864db",
   "subscription_free_exam": "a15edac89e66bb7bf4bcaf6dc23e1e4cb0b1c3e70c7ba18538b5302e1f489fec",
   "subscription_free_exam_day": "61ae2056d6e6472a22cf1c74d2f01c181b6477b82084d4cd12a9bb431a45bc52",
@@ -63,7 +63,7 @@
   "subscription_managed_apple": "37cb74852b77b6d0b970e8266c55190aee70f4739f65b9907d336600dc9702db",
   "subscription_managed_google": "468762302db1685c90fd98df2df77649d344cd858020e39435ab135bcb1b9e25",
   "subscription_managed_zoonk": "ad1c3469392e91336bc5cbe767532b83bb5ce9d1440f5062145ff820f4c0f831",
-  "subscription_messages_used": "35cac036f04122a5110eb34474360270577b4b1fb002d43fcf4db639f36ebd7b",
+  "subscription_messages_used": "a29170cb04e53b23f395ab3132a4b4778619fa11f69c2635f893c385274c78ef",
   "subscription_monthly": "25946e99cd564afbfc0bb1dd0ced429ccae990375391347807f55b7b8466ee52",
   "subscription_no_card_needed": "0e25a412b4bf074b3b70f2184bc98c88ea80dce1a36db380e0878252de5a3d91",
   "subscription_offer_title": "78b3b54b466d3dbce7821782ada26b4ee3940bc71dc048bbbabf0b945ca8a60d",
@@ -134,9 +134,9 @@
     <string name="subscription_free">Gratuite</string>
     <!-- %1$d is how many buddy messages were used today and %2$d the day's limit, which picks the plural. -->
     <plurals name="subscription_messages_used">
-        <item quantity="one">%1$d/%2$d message utilisé aujourd’hui avec ton Compagnon</item>
-        <item quantity="many">%1$d/%2$d messages utilisés aujourd’hui avec ton Compagnon</item>
-        <item quantity="other">%1$d/%2$d messages utilisés aujourd’hui avec ton Compagnon</item>
+        <item quantity="one">%1$d/%2$d message utilisé aujourd’hui avec ton compagnon</item>
+        <item quantity="many">%1$d/%2$d messages utilisés aujourd’hui avec ton compagnon</item>
+        <item quantity="other">%1$d/%2$d messages utilisés aujourd’hui avec ton compagnon</item>
     </plurals>
     <string name="subscription_monthly">Mensuel</string>
     <string name="subscription_yearly">Annuel</string>
@@ -166,7 +166,7 @@
     <string name="subscription_benefits_summary">Tous les objectifs · toutes les leçons</string>
     <string name="subscription_benefit_exam">Tout ton plan d’examen, chaque jour jusqu’à l’examen</string>
     <string name="subscription_benefit_mocks">Des examens blancs chronométrés comme le vrai</string>
-    <string name="subscription_benefit_buddy">Un Compagnon d’étude IA dès que tu bloques</string>
+    <string name="subscription_benefit_buddy">Un compagnon d’étude IA dès que tu bloques</string>
     <string name="subscription_benefit_calls">Plus d’appels pour pratiquer l’expression orale</string>
     <string name="subscription_benefit_certificates">Un certificat pour chaque niveau que tu termines</string>
     <string name="subscription_start_free">Commencer gratuitement</string>
@@ -196,9 +196,9 @@
         <item quantity="other">Pour un examen : le diagnostic, ton plan et ses %d premiers jours</item>
     </plurals>
     <plurals name="subscription_free_buddy">
-        <item quantity="one">Un Compagnon d’étude IA : %d message par jour</item>
-        <item quantity="many">Un Compagnon d’étude IA : %d messages par jour</item>
-        <item quantity="other">Un Compagnon d’étude IA : %d messages par jour</item>
+        <item quantity="one">Un compagnon d’étude IA : %d message par jour</item>
+        <item quantity="many">Un compagnon d’étude IA : %d messages par jour</item>
+        <item quantity="other">Un compagnon d’étude IA : %d messages par jour</item>
     </plurals>
     <!-- Calls are spoken practice conversations with an AI partner. -->
     <string name="subscription_free_calls">Des appels pour pratiquer l’expression orale, avec des limites plus basses que Plus</string>
@@ -238,9 +238,9 @@
     <!-- %1$s is the buddy messages ("10 messages to your buddy"), %2$s the uploads ("3 uploads"). -->
     <string name="subscription_answer_free_buddy_uploads">%1$s et %2$s par jour</string>
     <plurals name="subscription_answer_free_buddy">
-        <item quantity="one">%d message à ton Compagnon</item>
-        <item quantity="many">%d messages à ton Compagnon</item>
-        <item quantity="other">%d messages à ton Compagnon</item>
+        <item quantity="one">%d message à ton compagnon</item>
+        <item quantity="many">%d messages à ton compagnon</item>
+        <item quantity="other">%d messages à ton compagnon</item>
     </plurals>
     <plurals name="subscription_answer_free_uploads">
         <item quantity="one">%d ajout de document</item>
@@ -249,7 +249,7 @@
     </plurals>
     <string name="subscription_answer_free_calls">Appels d’entraînement avec des limites plus basses que Plus (les tâches d’expression orale pour les examens sont incluses dans Plus)</string>
     <string name="subscription_question_unlimited">Plus est-il vraiment illimité ?</string>
-    <string name="subscription_answer_unlimited">Presque. Les leçons, les objectifs et ton Compagnon ont des limites qui visent uniquement à bloquer les robots et les outils automatisés, pas les personnes qui apprennent. Les appels d’expression orale ont des limites quotidiennes et mensuelles, plus élevées qu’avec la formule gratuite.</string>
+    <string name="subscription_answer_unlimited">Presque. Les leçons, les objectifs et ton compagnon ont des limites qui visent uniquement à bloquer les robots et les outils automatisés, pas les personnes qui apprennent. Les appels d’expression orale ont des limites quotidiennes et mensuelles, plus élevées qu’avec la formule gratuite.</string>
     <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">Lire notre politique d’utilisation raisonnable</string>
     <string name="subscription_question_cancel">Que se passe-t-il si je résilie ?</string>

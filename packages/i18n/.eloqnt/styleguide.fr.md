@@ -38,7 +38,7 @@
 
 ## Feature names and states
 
-- “Buddy”: “Compagnon”
+- “Buddy”: “Compagnon”; “your buddy”: “ton compagnon”
 - “study buddy”: “compagnon d’étude”
 - Mission names (missions list, first steps): infinitive: “Terminer ta première leçon”; “Practice” / “Review”: “S’entraîner” / “Réviser”
 - “essay”: “rédaction”, not “dissertation”

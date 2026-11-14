@@ -893,7 +893,7 @@ msgstr "Seu parceiro"
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "6YPtag"
 msgid "Your buddy answers your questions and adjusts your plan."
-msgstr "Seu Parceiro responde às suas perguntas e ajusta seu plano."
+msgstr "Seu parceiro responde às suas perguntas e ajusta seu plano."
 
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "BV0cQk"
@@ -1585,7 +1585,7 @@ msgstr "O que está incluído"
 #: src/app/[lang]/(app)/(settings)/subscription/free-plan-usage.tsx
 msgctxt "kkHvAa"
 msgid "<mono>{used, number}/{limit, number}</mono> buddy messages used today"
-msgstr "<mono>{used, number}/{limit, number}</mono> mensagens para o Parceiro usadas hoje"
+msgstr "<mono>{used, number}/{limit, number}</mono> mensagens para o parceiro usadas hoje"
 
 #: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
 msgctxt "lRRr8l"
@@ -3497,7 +3497,7 @@ msgstr "{days, plural, =7 {A primeira semana} =1 {O primeiro dia} other {Os prim
 #: src/components/pricing/plus-questions.tsx
 msgctxt "FZOFIX"
 msgid "{tutor, plural, one {# message to your buddy} other {# messages to your buddy}} and {uploads, plural, one {# upload} other {# uploads}} a day"
-msgstr "{tutor, plural, one {# mensagem para seu Parceiro} other {# mensagens para seu Parceiro}} e {uploads, plural, one {# arquivo enviado} other {# arquivos enviados}} por dia"
+msgstr "{tutor, plural, one {# mensagem para seu parceiro} other {# mensagens para seu parceiro}} e {uploads, plural, one {# arquivo enviado} other {# arquivos enviados}} por dia"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "QKrdr3"
@@ -3527,7 +3527,7 @@ msgstr "O Plus é mesmo ilimitado?"
 #: src/components/pricing/plus-questions.tsx
 msgctxt "flRDel"
 msgid "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>."
-msgstr "Quase. As aulas, os objetivos e seu Parceiro têm limites apenas para impedir bots e ferramentas automatizadas, não quem está aprendendo. As conversas de prática têm limites diários e mensais, maiores que no plano Grátis. <link>Leia nossa política de uso justo</link>."
+msgstr "Quase. As aulas, os objetivos e seu parceiro têm limites apenas para impedir bots e ferramentas automatizadas, não quem está aprendendo. As conversas de prática têm limites diários e mensais, maiores que no plano Grátis. <link>Leia nossa política de uso justo</link>."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "jNjtlE"

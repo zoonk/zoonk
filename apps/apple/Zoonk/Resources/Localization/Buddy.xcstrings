@@ -981,7 +981,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Incluses avec ton Compagnon"
+            "value" : "Incluses avec ton compagnon"
           }
         },
         "it" : {
@@ -1011,7 +1011,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vem com seu Parceiro"
+            "value" : "Vem com seu parceiro"
           }
         },
         "tr" : {
@@ -2374,7 +2374,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oi! Sou %@, seu Parceiro de estudos com IA. Me pergunte o que quiser sobre o que você está estudando ou me conte o que gostaria de mudar no seu plano."
+            "value" : "Oi! Sou %@, seu parceiro de estudos com IA. Me pergunte o que quiser sobre o que você está estudando ou me conte o que gostaria de mudar no seu plano."
           }
         },
         "tr" : {
@@ -2433,7 +2433,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oi! Sou %@, seu Parceiro de estudos com IA. O que você quer aprender e até quando? Vou criar um plano para cada dia até lá."
+            "value" : "Oi! Sou %@, seu parceiro de estudos com IA. O que você quer aprender e até quando? Vou criar um plano para cada dia até lá."
           }
         },
         "tr" : {
@@ -4527,7 +4527,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’enregistrer ton Compagnon. Réessaie."
+            "value" : "Impossible d’enregistrer ton compagnon. Réessaie."
           }
         },
         "it" : {
@@ -4557,7 +4557,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos salvar seu Parceiro. Tente de novo."
+            "value" : "Não conseguimos salvar seu parceiro. Tente de novo."
           }
         },
         "tr" : {

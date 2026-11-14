@@ -35,7 +35,7 @@
   "settings_preferences_buddy_line": "2ee727f79b0792f73340137908425486db2ffaccb546148aec77b7803ff7e3fa",
   "settings_preferences_change": "1dbe883a6135e4678ea92ed25e9d8a0fedc4d84fad3d56f148fabe9ed7a6fbba",
   "settings_preferences_choose_buddy": "94d4e1dbab7da3f910304ed87614fc43f8d1ff6d59bceb6ecc7d914807d1feb8",
-  "settings_preferences_description": "39cf9482936c982717fcef609d24ad6cf95374cd1f19f2ed8d0981b652fa34b0",
+  "settings_preferences_description": "ff869ad2d0cbf76915f26b62e5dbc95914cacd638adc7938a884654dfa4e0212",
   "settings_preferences_language": "c71e71eb25b9bef06ecf7273eb953a90661963ee49e8dd442c769fcb9245f97f",
   "settings_preferences_lessons": "dcdcd9429f9761c7311c1a845bf51d46e121cee4021090f7ef4409d13b6e8912",
   "settings_preferences_on_this_device": "48433e73b7a6be59bdc8807419d47f12622bfbb7bc9ac7f3a795a770cdb359c3",
@@ -104,7 +104,7 @@
     <string name="settings_licenses_website">Site web</string>
     <string name="settings_licenses_read">Lire la licence</string>
     <string name="settings_profile_description">Ton nom, ton nom d’utilisateur et ton compte.</string>
-    <string name="settings_preferences_description">Ton Compagnon, tes leçons et ta langue, comme tu les aimes.</string>
+    <string name="settings_preferences_description">Ton compagnon, tes leçons et ta langue, comme tu les aimes.</string>
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
     <string name="settings_preferences_share_usage_data">Partager les données d’utilisation</string>
     <string name="settings_preferences_share_usage_data_description">Nous montre comment tu utilises Zoonk et nous aide à l’améliorer</string>

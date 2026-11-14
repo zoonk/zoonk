@@ -1093,7 +1093,7 @@ msgstr "Modifier"
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "DWD-Vm"
 msgid "Choose your buddy"
-msgstr "Choisis ton Compagnon"
+msgstr "Choisis ton compagnon"
 
 #: src/appearance/home-country-setting.tsx
 #: src/country/country-picker.tsx
@@ -1519,7 +1519,7 @@ msgstr "Un monocle !"
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "vwv1rM"
 msgid "They come with your buddy."
-msgstr "Elles accompagnent ton Compagnon."
+msgstr "Elles accompagnent ton compagnon."
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "DIrp2X"
@@ -2934,7 +2934,7 @@ msgstr "Journal de bord"
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "Kvxbfx"
 msgid "See, correct or delete what your buddy remembers about you."
-msgstr "Consulte, corrige ou supprime ce que ton Compagnon retient sur toi."
+msgstr "Consulte, corrige ou supprime ce que ton compagnon retient sur toi."
 
 #: src/conversation/tutor-feature-offers.tsx
 #: src/profile-questions/about-you-screen.tsx
@@ -7965,7 +7965,7 @@ msgstr "Impossible de retirer cette carte mentale. Réessaie."
 #: src/missions/brain-power-reward.tsx
 msgctxt "b3Jpo7"
 msgid "What you've learned, in points: it raises your belt and grows your buddy. Answers, lessons and challenges add to it, and finishing today's missions adds +{points}."
-msgstr "Ce que tu as appris, en points : ils te font progresser dans les ceintures et grandir ton Compagnon. Tes réponses, tes leçons et tes défis t’en rapportent, et terminer les missions du jour t’en rapporte +{points}."
+msgstr "Ce que tu as appris, en points : ils te font progresser dans les ceintures et grandir ton compagnon. Tes réponses, tes leçons et tes défis t’en rapportent, et terminer les missions du jour t’en rapporte +{points}."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "JGTjfj"
@@ -8290,7 +8290,7 @@ msgstr "{complete} sur {total}"
 #: src/missions/mission-moment.tsx
 msgctxt "mMozLU"
 msgid "Ask your buddy something"
-msgstr "Poser une question à ton Compagnon"
+msgstr "Poser une question à ton compagnon"
 
 #: src/missions/mission-moment.tsx
 msgctxt "BQGCP4"

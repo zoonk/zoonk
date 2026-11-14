@@ -893,7 +893,7 @@ msgstr "Ton compagnon"
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "6YPtag"
 msgid "Your buddy answers your questions and adjusts your plan."
-msgstr "Ton Compagnon répond à tes questions et ajuste ton plan."
+msgstr "Ton compagnon répond à tes questions et ajuste ton plan."
 
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "BV0cQk"
@@ -1481,7 +1481,7 @@ msgstr "Confidentialité"
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "BbrYZc"
 msgid "Your buddy, lessons and language, the way you like them."
-msgstr "Ton Compagnon, tes leçons et ta langue, comme tu les aimes."
+msgstr "Ton compagnon, tes leçons et ta langue, comme tu les aimes."
 
 #: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
 msgctxt "LCU3Qs"
@@ -1585,7 +1585,7 @@ msgstr "Ce qui est inclus"
 #: src/app/[lang]/(app)/(settings)/subscription/free-plan-usage.tsx
 msgctxt "kkHvAa"
 msgid "<mono>{used, number}/{limit, number}</mono> buddy messages used today"
-msgstr "<mono>{used, number}/{limit, number}</mono> messages envoyés à ton Compagnon aujourd’hui"
+msgstr "<mono>{used, number}/{limit, number}</mono> messages envoyés à ton compagnon aujourd’hui"
 
 #: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
 msgctxt "lRRr8l"
@@ -3344,7 +3344,7 @@ msgstr "Pour un examen : le diagnostic, ton plan et {days, plural, =7 {sa premi
 #: src/components/pricing/free-plan.tsx
 msgctxt "5ZDN6U"
 msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
-msgstr "Un Compagnon d’étude avec IA : {count, plural, one {# message} other {# messages}} par jour"
+msgstr "Un compagnon d’étude avec IA : {count, plural, one {# message} other {# messages}} par jour"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "JfcsFI"
@@ -3369,7 +3369,7 @@ msgstr "Des examens blancs chronométrés comme le vrai"
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "qYv-RO"
 msgid "An AI study buddy whenever you're stuck"
-msgstr "Un Compagnon d’étude avec IA quand tu bloques"
+msgstr "Un compagnon d’étude avec IA quand tu bloques"
 
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "GEER8U"
@@ -3450,7 +3450,7 @@ msgstr "Résiliable à tout moment."
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "jPlE1k"
 msgid "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and your AI study buddy. Start free."
-msgstr "Prépare ton examen, ton nouveau travail ou ton déménagement avec Zoonk Plus : leçons et objectifs illimités, préparation complète à l’examen avec des examens blancs et ton Compagnon d’étude avec IA. Commence gratuitement."
+msgstr "Prépare ton examen, ton nouveau travail ou ton déménagement avec Zoonk Plus : leçons et objectifs illimités, préparation complète à l’examen avec des examens blancs et ton compagnon d’étude avec IA. Commence gratuitement."
 
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "DfjjXa"
@@ -3497,7 +3497,7 @@ msgstr "{days, plural, =7 {La première semaine} =1 {Le premier jour} other {Les
 #: src/components/pricing/plus-questions.tsx
 msgctxt "FZOFIX"
 msgid "{tutor, plural, one {# message to your buddy} other {# messages to your buddy}} and {uploads, plural, one {# upload} other {# uploads}} a day"
-msgstr "{tutor, plural, one {# message à ton Compagnon} other {# messages à ton Compagnon}} et {uploads, plural, one {# fichier envoyé} other {# fichiers envoyés}} par jour"
+msgstr "{tutor, plural, one {# message à ton compagnon} other {# messages à ton compagnon}} et {uploads, plural, one {# fichier envoyé} other {# fichiers envoyés}} par jour"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "QKrdr3"
@@ -3527,7 +3527,7 @@ msgstr "Plus est-il vraiment illimité ?"
 #: src/components/pricing/plus-questions.tsx
 msgctxt "flRDel"
 msgid "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>."
-msgstr "Presque. Les leçons, les objectifs et ton Compagnon ont des limites uniquement pour arrêter les robots et les outils automatisés, pas les personnes qui apprennent. Les appels d’expression orale ont des limites quotidiennes et mensuelles, plus élevées qu’avec la formule gratuite. <link>Consulte notre politique d’utilisation équitable</link>."
+msgstr "Presque. Les leçons, les objectifs et ton compagnon ont des limites uniquement pour arrêter les robots et les outils automatisés, pas les personnes qui apprennent. Les appels d’expression orale ont des limites quotidiennes et mensuelles, plus élevées qu’avec la formule gratuite. <link>Consulte notre politique d’utilisation équitable</link>."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "jNjtlE"

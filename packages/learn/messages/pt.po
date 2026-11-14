@@ -1519,7 +1519,7 @@ msgstr "Um monóculo!"
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "vwv1rM"
 msgid "They come with your buddy."
-msgstr "Eles vêm com seu Parceiro."
+msgstr "Eles vêm com seu parceiro."
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "DIrp2X"
@@ -8290,7 +8290,7 @@ msgstr "{complete} de {total}"
 #: src/missions/mission-moment.tsx
 msgctxt "mMozLU"
 msgid "Ask your buddy something"
-msgstr "Perguntar algo ao seu Parceiro"
+msgstr "Perguntar algo ao seu parceiro"
 
 #: src/missions/mission-moment.tsx
 msgctxt "BQGCP4"
@@ -10342,7 +10342,7 @@ msgstr "{count, plural, one {Escolha pelo menos {time} por dia para seu # objeti
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."
-msgstr "Seu Parceiro cresce enquanto você aprende."
+msgstr "Seu parceiro cresce enquanto você aprende."
 
 #. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
 #: src/onboarding/steps/country-step.tsx

@@ -5643,7 +5643,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Consulte, corrige ou supprime ce que ton Compagnon retient de toi."
+            "value" : "Consulte, corrige ou supprime ce que ton compagnon retient de toi."
           }
         },
         "it" : {
@@ -5673,7 +5673,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Veja, corrija ou apague o que seu Parceiro lembra sobre você."
+            "value" : "Veja, corrija ou apague o que seu parceiro lembra sobre você."
           }
         },
         "tr" : {

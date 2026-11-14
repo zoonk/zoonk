@@ -53,7 +53,7 @@
 
 ## Feature names and states
 
-- “Buddy”: “Parceiro”
+- “Buddy”: “Parceiro”; “your buddy”: “seu parceiro”
 - Mission names (missions list, first steps): infinitive: “Concluir sua primeira aula”
 - “call” (speaking practice): “conversa”, not “chamada” or “ligação”
 - “Mistakes notebook”: “Caderno de erros”

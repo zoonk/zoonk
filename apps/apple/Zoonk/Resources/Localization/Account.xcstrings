@@ -143,7 +143,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@/%2$@ messages avec ton Compagnon utilisés aujourd’hui"
+            "value" : "%1$@/%2$@ messages avec ton compagnon utilisés aujourd’hui"
           }
         },
         "it" : {
@@ -173,7 +173,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@/%2$@ mensagens para o Parceiro usadas hoje"
+            "value" : "%1$@/%2$@ mensagens para o parceiro usadas hoje"
           }
         },
         "tr" : {
@@ -1817,7 +1817,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um Parceiro de estudos com IA para quando você precisar de ajuda"
+            "value" : "Um parceiro de estudos com IA para quando você precisar de ajuda"
           }
         },
         "tr" : {

@@ -18792,7 +18792,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce que tu as appris, en points : cela te fait progresser dans les ceintures et grandir ton Compagnon. Tes réponses, tes leçons et tes défis t’en rapportent, et terminer les missions du jour t’en donne +%lld."
+            "value" : "Ce que tu as appris, en points : cela te fait progresser dans les ceintures et grandir ton compagnon. Tes réponses, tes leçons et tes défis t’en rapportent, et terminer les missions du jour t’en donne +%lld."
           }
         },
         "it" : {
@@ -18822,7 +18822,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que você aprendeu, em pontos: ajuda você a subir de faixa e seu Parceiro a crescer. Respostas, aulas e desafios somam pontos, e concluir as missões de hoje rende mais +%lld."
+            "value" : "O que você aprendeu, em pontos: ajuda você a subir de faixa e seu parceiro a crescer. Respostas, aulas e desafios somam pontos, e concluir as missões de hoje rende mais +%lld."
           }
         },
         "tr" : {
