@@ -11,7 +11,7 @@ import Foundation
 /// Pyodide loads from jsDelivr only when a Python activity appears, at the version core checks
 /// programs with on the server (`scripts/verify/code-runtimes.test.mts` fails when they differ).
 enum CodeWorkerSources {
-  private static let pyodideIndexURL = "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/"
+  private static let pyodideIndexURL = "https://cdn.jsdelivr.net/pyodide/v314.0.8/full/"
 
   /// The page that hosts the language's worker. `warmUp()` loads the runtime; `run(code)`
   /// resolves with how the run ended and what it printed.
