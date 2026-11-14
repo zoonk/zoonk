@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { TaskActions } from "../../_components/task-layout";
 import { WritingWait } from "../../generation/writing-wait";
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
+import { CallStartNote } from "./call-limit-message";
 import { useConversationTitle } from "./conversation-labels";
 import { type CallStartOutcome, useCallStart } from "./use-call-start";
 
@@ -54,11 +55,7 @@ export function CheckpointCallPreparing({
         <p className="text-muted-foreground text-pretty">
           {t("A short voice call with an AI character, about this unit.")}
         </p>
-        {call.failed && (
-          <p className="text-destructive-text text-sm" role="alert">
-            {t("The call didn't start. Try again in a moment.")}
-          </p>
-        )}
+        <CallStartNote call={call} failed={t("The call didn't start. Try again in a moment.")} />
       </header>
     </TaskFrame>
   );

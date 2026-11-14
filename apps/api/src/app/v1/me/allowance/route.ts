@@ -10,13 +10,7 @@ async function getCurrentUserAllowance() {
     return errors.unauthorized();
   }
 
-  return NextResponse.json({
-    ...allowance,
-    resets: {
-      day: allowance.resets.day.toISOString(),
-      month: allowance.resets.month.toISOString(),
-    },
-  });
+  return NextResponse.json({ ...allowance, resets: { day: allowance.resets.day.toISOString() } });
 }
 
 export const GET = withApiErrorBoundary(getCurrentUserAllowance);

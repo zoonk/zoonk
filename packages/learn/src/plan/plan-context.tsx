@@ -8,8 +8,8 @@ import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { type ToolChoice, type ToolSystem } from "@zoonk/core/plans/tools-contract";
 import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
 import { type RegionChoice } from "@zoonk/utils/language-regions";
-import { createContext, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { isFocusLost } from "../_utils/is-focus-lost";
+import { createContext, use, useEffect, useMemo, useRef, useState } from "react";
+import { type FocusTarget, useKeepFocus } from "../_utils/use-keep-focus";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type CountryName, type SuggestedCountry } from "../country/country-choice";
 import { type LessonVariety } from "../country/use-country-lines";
@@ -113,8 +113,6 @@ type TimeToCoverStore = {
 
 export const PLAN_TITLE_ID = "plan-title";
 
-type FocusTarget = () => HTMLElement | null;
-
 /** Read it in handlers, never while rendering. */
 type PlanChanges = { isSaving: () => boolean };
 
@@ -130,38 +128,10 @@ type PlanScreenContextValue = PlanScreenValue & {
   keepFocus: (target?: FocusTarget) => void;
 };
 
-type Saving = { control: Element | null; plan: PlanView; target?: FocusTarget };
-
 export const PlanScreenContext = createContext<PlanScreenContextValue | null>(null);
 
-function findFallback(target?: FocusTarget): HTMLElement | null {
-  return target?.() ?? document.querySelector<HTMLElement>(`#${PLAN_TITLE_ID}`);
-}
-
-function useKeepFocus(plan: PlanView) {
-  const saving = useRef<Saving | null>(null);
-
-  // The saved plan arrives as a new view model, in the same render that removes the control.
-  useEffect(() => {
-    const saved = saving.current;
-
-    if (!saved || saved.plan === plan) {
-      return;
-    }
-
-    saving.current = null;
-
-    if (saved.control && !saved.control.isConnected && isFocusLost(document.activeElement)) {
-      findFallback(saved.target)?.focus();
-    }
-  }, [plan]);
-
-  return useCallback(
-    (target?: FocusTarget) => {
-      saving.current = { control: document.activeElement, plan, target };
-    },
-    [plan],
-  );
+function findPlanTitle() {
+  return document.querySelector<HTMLElement>(`#${PLAN_TITLE_ID}`);
 }
 
 const IDLE: TimeToCoverState = { status: "idle" };
@@ -261,7 +231,7 @@ export function PlanScreenProvider({
   const today =
     value.plan.week.days.find((day) => day.state === "today")?.date ?? value.plan.week.startDate;
 
-  const keepFocus = useKeepFocus(value.plan);
+  const keepFocus = useKeepFocus(value.plan, findPlanTitle);
   const timeToCover = useTimeToCoverStore(value.plan);
   const { actions, changes } = useCountedChanges(value.actions);
 

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "limit_call_time_used": "5ed24440c0b8e09945890413defa31512b4f26f2026c5532ce91dc75258076d0",
   "limit_create_account": "ed409ce630796d67a3ee883b1aae6b3d6d864979d1710f9ae9b5df69ffb7a042",
   "limit_explanations_day": "670d0d4bac2390871df5b4f2ed1e2017f60681b8ae1d86f5381d56cd1fc6e4d7",
-  "limit_explanations_month": "df9685e5aba897cbae46024af785197f332a19d46ad85a3e678cf916d65ec60c",
+  "limit_explanations_used": "4a86739da4b530c193348038ef2c1142f8e608875519ca197ccd18a1194c4611",
+  "limit_goals_used": "856c81b63184f57df50439eeda139968cf5ae627e9dc4cf0867fafac239faaf1",
   "limit_help_day": "3c6a7cfe78309056dcf9c13940e0c35b2a03209cd968688157f2bf6c2ec48f66",
   "limit_help_guest": "db4bd93dcbcbcbb54f407f120682fb8b5b10ebd6b05cf1231564116d9ea51c99",
-  "limit_help_month": "a96facb93ce2aeda766f79f3154fd30c97603cd70790134006c022c2aa9b2930",
-  "limit_lesson_opens_on": "88462b8ba8a904b4addd21a87e61c0de43648f59be480986e8281e910b607aec",
-  "limit_lesson_opens_today": "f87ff5f604abfb17bef827633d9f6edde2080133e736514e43f98b0bacd581c1",
-  "limit_lesson_opens_tomorrow": "176e601144eb86500e1753357ab38b0ee3491961d96ca7404273df98504ada65",
+  "limit_help_used": "ef4aec0c88cd069072ea953da18a8dd742ffb8745d5713fd338ff463ba1d5f59",
   "limit_lesson_ready": "4d2c1de49def5744182288f9450c5dfdb0220d863975c1fdff95304364d8bd76",
   "limit_lessons_day": "4781f3ca2661e8d7e96ea8163b0bfaa0b3fce0a3b3696fba1a71facff215e47b",
   "limit_lessons_free": "4bfe8e0e4777a8c69b98771755da72d108d493aad42079763303809ffd5b867d",
@@ -22,42 +21,62 @@
   "limit_map_not_enough": "b834ccba04e3d461e25198ade0e7bfbbf24d25679efba7652d157346d30791dc",
   "limit_map_ready": "407ab7eec1e31411ce01bafa760d478e7d6145ed4a37bed28907e177372389eb",
   "limit_messages_day": "2711d00e144674e7b7726c5ce4b76c208e909eed6906754adb51cfde17e21a99",
-  "limit_messages_month": "2f15fb6dd81d862761139c08c9c92dc0ef20a1c1dc718756dc3f98a5c1f66360",
+  "limit_messages_used": "d63ddba0f78426761f49ba0ccdaddc57378bfd78e8f3f0f340f55aaf5a527e5a",
   "limit_mind_maps_day": "5998bc7d953896148da18a7f8b97b1a13d65cd655356b00ee57d90ea07a845c2",
   "limit_mind_maps_guest": "617db76d9b297dca1bd3ba0cb48eed4fce00535a8396904070fd1c185a63f239",
-  "limit_mind_maps_month": "b608ecec261404ac462eaaeb4a3bdfc1f7360dec20e771cdfda0aabd71dc6720",
-  "limit_more_next_month": "f256bf66d084f69dda52f371e5c37de0b5e621e158d9aa64f12b86579f640e37",
-  "limit_more_next_month_or_subscribe": "aaee48e1a62792bc66dc06880c30ef32aa43a64859af1f04a74ff9fa376ab596",
-  "limit_more_tomorrow": "849efdc71ddebfcf84367af48391c787c824c3884999ca203078fd561bc08916",
-  "limit_more_tomorrow_or_subscribe": "48f4f7fa5a3226b0cee3f1da05f981b4373a18d134d95d4db29a85062f495480",
+  "limit_mind_maps_used": "6fe6787df6a3841673327bff30cfe2122781a826789da67d881e337a8749026e",
+  "limit_mock_exams_used": "b87c98ea8ebf71e4bef2259563ffa5e2dd246768c5838bb68eb48092e2cfe40f",
+  "limit_more_later_today": "e8a2e25e5bff63cdc286135eb4f95becbe495dffe1f2248acd9fff32e28fefd6",
+  "limit_more_later_today_or_subscribe": "0720f1ea998d65eecba486b250b783846972ff412db9b1bf62bf705c534f53d1",
+  "limit_more_on": "a7edcf1b33225d4336a29d3bec8c34add79cb9f1249928d76e91dda5733385c6",
+  "limit_more_on_or_subscribe": "145aa32042192b6b14e49bd414da91b13703dc844c3560358ca96c7e57391cb6",
+  "limit_more_tomorrow": "f2e0a80d87ed853405e9dff16a4452e1c8508f4bb4db6c841c4ff24f303fe5de",
+  "limit_more_tomorrow_or_subscribe": "ce477427290d19bb1361f6260b37cf8ec4ee4406f28e8ab2e04ed77a4bb33dce",
   "limit_outlines_day": "13e521e25cd34cb956d62ddd552180c9b18ecaf7041f26b733c9c228346b17b1",
   "limit_outlines_guest": "c1b98404d4286a6d3af01b849f323fa5dd9f95ef864e44762c6f7df7071cc40d",
-  "limit_outlines_month": "bc265cd778fac12f328c4bec9cfb84cf2ca11795ebaa57f887adae5679097fba",
+  "limit_outlines_used": "22cb4f428e46b42c31baeb9b855c01d6d94b3867657f5c8bde26800dd8f7adbb",
+  "limit_questions_used": "a468838a67fbbc19b547e509bcd37dfdabb1e3a92eedb9f973a49713408e5f52",
+  "limit_quick_explanations_used": "5e5a02996572f52502f7d2a00f98b624b7df2e12e97d7dba4c6e125d7f68ab0f",
+  "limit_sentence": "31450e9c865b50909733b4e60d7e55ad8130c525b3c7e810f934d89258fd50bc",
   "limit_sign_up_required": "bb8215bd3c0258c03e058d4d5f714237dca38c3a536d96ac0ca0e4e435017f6a",
   "limit_slow_down": "64eb1e237c09e650b2424933396efc2af5eaa6eac593f2a5c0f9996c8127f3d4",
-  "limit_still_review": "8a15068d85ae65b306b579216d787cff47bd93bf18834cc1e801454a9bc0698e"
+  "limit_still_review": "8a15068d85ae65b306b579216d787cff47bd93bf18834cc1e801454a9bc0698e",
+  "limit_try_again_now": "a51a4117859e8db69ccae447087345fbe2cdf55347066325e29881ee0aedbf11",
+  "limit_uploads_used": "aad7506749ad81765ca2f6f0b5d386fcc1378f33860fbbd5662856bba720dcff"
 }
 -->
 <resources>
     <string name="limit_create_account">Créer un compte gratuit</string>
     <string name="limit_slow_down">Fais une courte pause, puis réessaie.</string>
     <string name="limit_sign_up_required">Il te faut un compte gratuit</string>
-    <string name="limit_more_tomorrow">Tu pourras continuer demain.</string>
-    <string name="limit_more_next_month">Tu pourras continuer le mois prochain.</string>
-    <string name="limit_more_tomorrow_or_subscribe">Tu pourras continuer demain, ou dès maintenant en t’abonnant.</string>
-    <string name="limit_more_next_month_or_subscribe">Tu pourras continuer le mois prochain, ou dès maintenant en t’abonnant.</string>
+    <string name="limit_more_tomorrow">La suite demain.</string>
+    <string name="limit_more_tomorrow_or_subscribe">Tu pourras reprendre demain ou continuer en t’abonnant.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
+    <string name="limit_more_later_today">Tu pourras reprendre plus tard dans la journée.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
+    <string name="limit_more_later_today_or_subscribe">Tu pourras reprendre plus tard dans la journée ou continuer en t’abonnant.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_more_on">Tu pourras reprendre le %1$s.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_more_on_or_subscribe">Tu pourras reprendre le %1$s ou continuer en t’abonnant.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
+    <string name="limit_try_again_now">Tu peux réessayer maintenant.</string>
+    <!-- A notice that something the learner uses ran out, as one line: {title} says what ran out, such as "You've used your uploads", and {line} when more comes back, such as "More on November 22, or subscribe to keep going." -->
+    <string name="limit_sentence">%1$s. %2$s</string>
     <string name="limit_still_review">Tu peux toujours réviser tes leçons et tes erreurs.</string>
-    <string name="limit_lesson_opens_today">Ta prochaine leçon gratuite sera disponible plus tard dans la journée. Tu peux aussi t’abonner pour continuer.</string>
-    <string name="limit_lesson_opens_tomorrow">Ta prochaine leçon gratuite sera disponible demain. Tu peux aussi t’abonner pour continuer.</string>
-    <!-- On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="limit_lesson_opens_on">Ta prochaine leçon gratuite sera disponible le %1$s. Tu peux aussi t’abonner pour continuer.</string>
     <string name="limit_help_guest">Tu as atteint la limite d’essai sans compte</string>
     <string name="limit_help_day">Tu as atteint la limite d’aujourd’hui</string>
-    <string name="limit_help_month">Tu as atteint la limite de ce mois-ci</string>
+    <string name="limit_help_used">Tu as atteint ta limite</string>
     <string name="limit_messages_day">Tu n’as plus de messages pour aujourd’hui</string>
-    <string name="limit_messages_month">Tu n’as plus de messages pour ce mois-ci</string>
+    <string name="limit_messages_used">Tu as utilisé tous tes messages</string>
     <string name="limit_explanations_day">Tu n’as plus d’explications pour aujourd’hui</string>
-    <string name="limit_explanations_month">Tu n’as plus d’explications pour ce mois-ci</string>
+    <string name="limit_explanations_used">Tu as atteint ta limite d’explications</string>
+    <string name="limit_quick_explanations_used">Tu as atteint ta limite d’explications rapides</string>
+    <string name="limit_goals_used">Tu as atteint ta limite de nouveaux objectifs</string>
+    <string name="limit_uploads_used">Tu as atteint ta limite d’envois de documents</string>
+    <string name="limit_questions_used">Tu as atteint ta limite de questions</string>
+    <string name="limit_call_time_used">Tu as utilisé tout ton temps d’appel</string>
+    <string name="limit_mock_exams_used">Tu as atteint ta limite d’examens blancs</string>
     <string name="limit_lessons_guest">Il te faut un compte pour d’autres leçons</string>
     <string name="limit_lessons_free">Tu as utilisé toutes tes leçons gratuites</string>
     <string name="limit_lessons_day">Tu n’as plus de nouvelles leçons pour aujourd’hui</string>
@@ -75,8 +94,8 @@
     <string name="limit_map_needs_subscription_line">Elle prépare plus de leçons que la formule gratuite n’en inclut.</string>
     <string name="limit_mind_maps_guest">Il te faut un compte pour d’autres cartes mentales</string>
     <string name="limit_mind_maps_day">Tu n’as plus de nouvelles cartes mentales pour aujourd’hui</string>
-    <string name="limit_mind_maps_month">Tu n’as plus de nouvelles cartes mentales pour ce mois-ci</string>
+    <string name="limit_mind_maps_used">Tu as atteint ta limite de cartes mentales</string>
     <string name="limit_outlines_guest">Il te faut un compte pour d’autres aperçus</string>
     <string name="limit_outlines_day">Tu n’as plus d’aperçus pour aujourd’hui</string>
-    <string name="limit_outlines_month">Tu n’as plus d’aperçus pour ce mois-ci</string>
+    <string name="limit_outlines_used">Tu as atteint ta limite d’aperçus</string>
 </resources>

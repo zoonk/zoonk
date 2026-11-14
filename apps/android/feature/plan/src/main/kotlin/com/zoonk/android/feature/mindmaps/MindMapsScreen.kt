@@ -55,11 +55,13 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
+import com.zoonk.android.ui.components.OpeningDay
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.rememberOpeningDay
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -69,11 +71,13 @@ import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMaps
+import com.zoonk.api.models.MindMapAllowanceStop
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaInstant
 
 @Composable
 fun MindMapsScreen(
@@ -113,6 +117,7 @@ internal fun MindMapsContent(
             val createAll by maps.createAll.collectAsStateWithLifecycle()
 
             FollowListWhileOnItsWay(resource, shown.value.chapters, requests)
+            RereadWhenOfferOpens(resource, shown.value.createOffer.stop)
 
             CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
                 MindMapsPage(
@@ -172,6 +177,17 @@ private fun FollowListWhileOnItsWay(
             }
         }
     }
+}
+
+/** The day the offer's stop gave comes, even before the page opened: the page reads its offer again, so its counts and Create all are today's. */
+@Composable
+private fun RereadWhenOfferOpens(
+    resource: Resource<GoalMindMaps>,
+    stop: MindMapAllowanceStop?,
+) {
+    val at = stop?.availableAt?.toJavaInstant()
+    if (rememberOpeningDay(at) != OpeningDay.Open) return
+    LaunchedEffect(resource, at) { resource.refresh() }
 }
 
 /** How often the list asks again: drawing takes half a minute, writing lessons minutes; null when nothing is on its way. */

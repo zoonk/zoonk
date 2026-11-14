@@ -8,6 +8,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, FileTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { toCapWords, useLimitText } from "../../_components/comes-back-words";
 import { SURFACE_CLASS } from "../../_components/surface";
 import { useAppLocale } from "../../_utils/locale";
 import { useCitationLabel } from "../../_utils/use-citation-label";
@@ -33,18 +34,17 @@ import { TypedGoal } from "./goal-outcomes";
 
 type Turn = { id: string; outcome: MaterialQuestionOutcome; question: string };
 
-function useQuestionLimitMessage() {
+function useQuestionLimitText(outcome: MaterialQuestionOutcome) {
   const t = useExtracted();
 
-  return (outcome: MaterialQuestionOutcome): string => {
-    if (outcome.status !== "limitReached" || outcome.tier === "plus") {
-      return t("No more questions today. More tomorrow.");
-    }
-
-    return outcome.period === "month"
-      ? t("No more questions this month. More next month, or subscribe to keep going.")
-      : t("No more questions today. More tomorrow, or subscribe to keep going.");
-  };
+  return useLimitText(
+    outcome.status === "limitReached"
+      ? toCapWords(outcome, {
+          day: t("No more questions today"),
+          rolling: t("You've used your questions"),
+        })
+      : null,
+  );
 }
 
 function TurnAnswer({
@@ -56,21 +56,21 @@ function TurnAnswer({
 }) {
   const t = useExtracted();
   const toLabel = useCitationLabel();
-  const toLimitMessage = useQuestionLimitMessage();
+  const limit = useQuestionLimitText(outcome);
 
   if (outcome.status !== "answered") {
-    const limitReached = toLimitMessage(outcome);
-
     const messages: Record<Exclude<MaterialQuestionOutcome["status"], "answered">, string> = {
       failed: t("We couldn't answer that. Try again in a moment."),
-      limitReached,
+      limitReached: limit.text,
       signInRequired: t("Create an account to ask about your material."),
       slowDown: t("You're asking quickly. Try again in a few minutes."),
     };
 
     return (
       <TutorMessage identity={identity}>
-        <p className="text-destructive-text text-sm">{messages[outcome.status]}</p>
+        <p className={cn("text-destructive-text text-sm", limit.hidden && "invisible")}>
+          {messages[outcome.status]}
+        </p>
       </TutorMessage>
     );
   }

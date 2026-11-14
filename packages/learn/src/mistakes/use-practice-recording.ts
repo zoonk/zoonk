@@ -2,6 +2,7 @@
 
 import { type SpokenAnswerGrade } from "@zoonk/core/library/language/spoken-answer-contract";
 import { type Dispatch, useRef, useState } from "react";
+import { type HelpLimit } from "../_components/help-limit-notice";
 import {
   type MistakePracticeFeedback,
   type PracticeAction,
@@ -12,7 +13,7 @@ type RecordingInput = { audio: Blob; durationMs: number };
 
 type RecordingIssue =
   | { status: "noSpeech" }
-  | { status: "limitReached"; tier: "free" | "guest" | "plus"; period?: "day" | "month" | "total" }
+  | Extract<HelpLimit, { status: "limitReached" }>
   | { status: "signUpRequired" }
   | { status: "slowDown"; retryAfterSeconds: number };
 

@@ -120,14 +120,17 @@ export function PageStartMark() {
 
 /**
  * Shows its start button once the page's own has scrolled away, so the action is never on screen
- * twice. It keeps its room while hidden, so nothing beside it moves when it shows.
+ * twice. It keeps its room while hidden, so nothing beside it moves when it shows, unless the place
+ * it sits grows into empty space (`keepRoom={false}`).
  */
 export function ShownWhenStartAway({
   children,
   className,
+  keepRoom = true,
 }: {
   children: ReactNode;
   className?: string;
+  keepRoom?: boolean;
 }) {
   const isShown = useSyncExternalStore(
     subscribe,
@@ -141,6 +144,7 @@ export function ShownWhenStartAway({
       className={cn(
         "transition-opacity duration-150 ease-out motion-reduce:transition-none",
         isShown ? "opacity-100" : "pointer-events-none opacity-0",
+        !keepRoom && (isShown ? "starting:opacity-0" : "hidden"),
         className,
       )}
       inert={!isShown}

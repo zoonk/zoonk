@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.data.GenerationKind
+import com.zoonk.android.feature.conversation.CallLimitMessage
 import com.zoonk.android.feature.conversation.CallRequest
 import com.zoonk.android.feature.conversation.CallStartModel
 import com.zoonk.android.feature.conversation.CallStarter
@@ -28,6 +29,7 @@ import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.MarkedLine
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.WritingWait
+import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.api.models.SpeakingMockExam
 import java.util.UUID
 
@@ -90,7 +92,14 @@ fun SpeakingMockCard(
                     onClick = startMock,
                     leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                 ) { Text(stringResource(R.string.speaking_mock_start)) }
-                if (model.state == CallStartModel.State.Failed) {
+                val limit = model.limit
+                if (model.state == CallStartModel.State.Failed && limit != null) {
+                    CallLimitMessage(
+                        limit,
+                        onCreateAccount = { open(AppRoute.Login) },
+                        onSubscribe = { open(AppRoute.Subscription) },
+                    )
+                } else if (model.state == CallStartModel.State.Failed) {
                     Text(
                         stringResource(R.string.speaking_mock_failed),
                         Modifier.semantics { liveRegion = LiveRegionMode.Polite },

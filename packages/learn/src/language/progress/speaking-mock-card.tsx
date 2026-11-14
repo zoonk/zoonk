@@ -12,6 +12,7 @@ import {
   NoticeCardTitle,
 } from "../../_components/notice-card";
 import { WritingWait } from "../../generation/writing-wait";
+import { CallStartNote } from "../conversation/call-limit-message";
 import { useSpeakingMockTitle } from "../conversation/conversation-labels";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
 
@@ -31,10 +32,12 @@ function useSpeakingMockDescription() {
 }
 
 export function SpeakingMockCard({
+  barHasMainAction,
   exam,
   onStart,
   paused,
 }: {
+  barHasMainAction?: boolean;
   exam: SpeakingMockExam;
   onStart: () => Promise<CallStartOutcome>;
   paused: boolean;
@@ -75,6 +78,7 @@ export function SpeakingMockCard({
       {!paused &&
         (call.writing ? (
           <WritingWait
+            barHasMainAction={barHasMainAction}
             className="pt-2"
             hint={t("Your mock opens as soon as it's ready.")}
             kind="speakingMock"
@@ -93,11 +97,10 @@ export function SpeakingMockCard({
               {t("Start")}
             </Button>
 
-            {call.failed && (
-              <p className="text-destructive-text text-sm" role="alert">
-                {t("The mock didn't start. Try again in a moment.")}
-              </p>
-            )}
+            <CallStartNote
+              call={call}
+              failed={t("The mock didn't start. Try again in a moment.")}
+            />
           </>
         ))}
     </section>

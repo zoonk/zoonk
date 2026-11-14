@@ -169,6 +169,7 @@ export function PlanChangeSuggestion({
   title: string;
 }) {
   const t = useExtracted();
+  const { setPreview } = usePlanSuggestionSlot();
   const answer = useSlotAnswer(item);
   const undo = answer && <SlotUndo item={item} />;
 
@@ -177,6 +178,7 @@ export function PlanChangeSuggestion({
       answered={answer !== null}
       label={t("Plan suggestion")}
       mark={answer ? <DoneMark /> : mark}
+      onClose={setPreview}
       onOpen={onOpen}
     >
       <SuggestionLine>

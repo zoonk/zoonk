@@ -40,7 +40,8 @@ export function GuestLessonPlayer({
   ...props
 }: Omit<ComponentProps<typeof LessonPlayerClient>, "endingSlots"> & { fit: LessonFit | null }) {
   const goal = fit?.course?.title ?? props.lesson.title;
-  const signUpHref = useSignUpHref();
+  // Back on this page the finished lesson would start over, as if nothing had been saved.
+  const signUpHref = useSignUpHref("/today");
 
   const endingSlots = useMemo(
     () => createGuestEnding({ fit, goal, signUpHref }),

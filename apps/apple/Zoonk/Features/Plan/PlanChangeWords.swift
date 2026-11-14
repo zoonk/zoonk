@@ -200,7 +200,7 @@ enum PlanChangeWords {
 
   private static func timeQuestion(_ operation: PlanChangeOperation) -> String? {
     let time = planDurationText(minutes: Double(operation.minutes ?? 0))
-    let today = PlanDate.isoDate(.now)
+    let today = PlanDate.today()
 
     switch operation.kind {
     case "setDailyMinutes":
@@ -243,7 +243,7 @@ enum PlanChangeWords {
   private static func dateQuestion(_ operation: PlanChangeOperation, _ dateKind: GoalDateKind)
     -> String?
   {
-    let today = PlanDate.isoDate(.now)
+    let today = PlanDate.today()
 
     switch operation.kind {
     case "setTargetDate", "setNoticeDate":
@@ -394,7 +394,7 @@ enum PlanChangeWords {
     let subjects = subjects(operation)
     let count = (operation.areas ?? []).count
     let time = planDurationText(minutes: Double(operation.minutes ?? 0))
-    let today = PlanDate.isoDate(.now)
+    let today = PlanDate.today()
 
     switch operation.kind {
     case "addSkills":
@@ -539,7 +539,7 @@ enum PlanChangeWords {
         comment: "Says the goal no longer has a date")
     }
 
-    let date = PlanDate.longDay(target, today: PlanDate.isoDate(.now))
+    let date = PlanDate.longDay(target, today: PlanDate.today())
 
     switch dateKind {
     case .exam:

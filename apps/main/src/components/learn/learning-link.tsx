@@ -1,8 +1,10 @@
 "use client";
 
 import { Link, useRouter } from "@/i18n/navigation";
+import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
 import { getLessonWritingHref } from "@/lib/lessons/lesson-writing-href";
 import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
+import { answerHere, openingAsGuest } from "@/lib/session/tap-answer";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useLinkStatus } from "next/link";
 import { type ComponentProps, useEffect, useRef, useState, useTransition } from "react";
@@ -43,36 +45,26 @@ export function LearningLink({
 }: ComponentProps<typeof Link> & { lessonWritten?: boolean }) {
   const router = useRouter();
   const opening = useRef(false);
-  const mounted = useRef(true);
   const [requesting, setRequesting] = useState(false);
   const [navigating, startTransition] = useTransition();
   const pending = requesting || navigating;
 
   async function openLesson(lessonId: string) {
-    const openedFrom = globalThis.location.pathname + globalThis.location.search;
+    const signIn = ensureGuestSession();
 
     try {
-      const answer = await askToWriteLesson(lessonId);
+      const asked = await answerHere(askToWriteLesson(lessonId), openingAsGuest(signIn));
 
-      if (
-        mounted.current &&
-        openedFrom === globalThis.location.pathname + globalThis.location.search
-      ) {
-        startTransition(() => router.push(getLessonWritingHref({ answer, lessonId })));
+      if (typeof asked === "object") {
+        startTransition(() =>
+          router.push(getLessonWritingHref({ answer: asked.answer, lessonId })),
+        );
       }
     } finally {
       opening.current = false;
       setRequesting(false);
     }
   }
-
-  useEffect(() => {
-    mounted.current = true;
-
-    return () => {
-      mounted.current = false;
-    };
-  }, []);
 
   return (
     <Link

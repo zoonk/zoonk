@@ -17,16 +17,10 @@ extension LanguageConversation {
 typealias ObjectiveCheck = Components.Schemas.LanguageConversationObjectiveCheck
 typealias LiveCallScript = Components.Schemas.LiveCallScript
 
-/// `total`: a guest's plan has no call time.
-struct CallLimit: Equatable, Sendable {
-  let period: HelpLimit.Period
-  let tier: LearnerTier
-}
-
 /// Mirrors main's `readConnectionRefusal`.
 enum CallReservation: Equatable, Sendable {
   case ready(Components.Schemas.LanguageConversationSetup)
-  case limit(CallLimit)
+  case limit(HelpLimit)
   case callInProgress
   case callsPaused
   case ended
@@ -50,17 +44,24 @@ enum CallReservation: Equatable, Sendable {
     case "CONVERSATION_ENDED":
       self = .ended
     case "CONVERSATION_LIMIT_REACHED":
-      let tier = ((details?["tier"] ?? nil) as? String).flatMap(LearnerTier.init)
+      let limit = (details?["limit"] ?? nil) as? [String: (any Sendable)?] ?? details
+      let tier = ((limit?["tier"] ?? nil) as? String).flatMap(LearnerTier.init)
 
-      if let period = period.flatMap(HelpLimit.Period.init), let tier {
-        self = .limit(CallLimit(period: period, tier: tier))
+      if let tier {
+        self = .limit(
+          .reached(
+            period: (limit?["period"] ?? nil) as? String, tier: tier,
+            availableAt: ((limit?["availableAt"] ?? nil) as? String).flatMap(
+              Date.init(serverInstant:))))
       } else {
         self = .failed
       }
     case "CONNECTION_LIMIT_REACHED":
-      self = period == "conversation" ? .ended : .limit(CallLimit(period: .day, tier: .plus))
+      self =
+        period == "conversation"
+        ? .ended : .limit(HelpLimit.limitReached(period: .day, tier: .plus))
     case "SIGN_UP_REQUIRED":
-      self = .limit(CallLimit(period: .total, tier: .guest))
+      self = .limit(HelpLimit.limitReached(period: .total, tier: .guest))
     default:
       self = .failed
     }

@@ -107,9 +107,7 @@ describe("spoken answers", () => {
       .toBeVisible();
 
     await expect
-      .element(
-        page.getByText(/Your next free lesson opens tomorrow, or subscribe to keep going\.$/u),
-      )
+      .element(page.getByText(/More tomorrow, or subscribe to keep going\.$/u))
       .toBeVisible();
 
     await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();

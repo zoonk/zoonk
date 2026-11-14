@@ -5,35 +5,51 @@ import {
 import {
   JAVASCRIPT_WORKER_SOURCE,
   PYTHON_WORKER_SOURCE,
+  REGEX_WORKER_SOURCE,
   SQL_WORKER_SOURCE,
 } from "./sandbox-sources";
+
+type SandboxKind = ProgramKind | "regex";
+
+export type SampleMatch = { end: number; start: number } | null;
+
+type DoneResult = { matches?: SampleMatch[]; table?: { columns: string[]; rows: unknown[][] } };
 
 export type SandboxMessage =
   | { type: "ready" }
   | { type: "loadError"; message: string }
   | { type: "output"; id: number; stream: "stderr" | "stdout"; text: string }
   | { type: "log"; id: number; stream: "stderr" | "stdout"; args: unknown[] }
-  | { type: "done"; id: number; table?: { columns: string[]; rows: unknown[][] } }
+  | ({ type: "done"; id: number } & DoneResult)
   | { type: "error"; id: number; line?: number | null; message: string };
 
 type SandboxOutcome =
-  | { status: "done"; table?: { columns: string[]; rows: unknown[][] } }
+  | ({ status: "done" } & DoneResult)
   | { status: "error"; line: number | null; message: string }
   | { status: "timeout" }
   | { status: "unavailable" };
 
 type Host = { ready: Promise<boolean>; worker: Worker };
 
-const SOURCES: Record<ProgramKind, { module: boolean; source: string }> = {
-  javascript: { module: false, source: JAVASCRIPT_WORKER_SOURCE },
-  python: { module: true, source: PYTHON_WORKER_SOURCE },
-  sql: { module: false, source: SQL_WORKER_SOURCE },
+/** Grading stops a regex after 50 ms on the server, so one still running after a second on a phone fails there too. @internal */
+export const REGEX_TIME_LIMIT_MS = 1000;
+
+const TIME_LIMIT_MS: Record<SandboxKind, number> = {
+  ...PROGRAM_TIME_LIMIT_MS,
+  regex: REGEX_TIME_LIMIT_MS,
 };
 
-const hosts = new Map<ProgramKind, Host>();
+const SOURCES: Record<SandboxKind, { module: boolean; reused: boolean; source: string }> = {
+  javascript: { module: false, reused: false, source: JAVASCRIPT_WORKER_SOURCE },
+  python: { module: true, reused: true, source: PYTHON_WORKER_SOURCE },
+  regex: { module: false, reused: false, source: REGEX_WORKER_SOURCE },
+  sql: { module: false, reused: true, source: SQL_WORKER_SOURCE },
+};
+
+const hosts = new Map<SandboxKind, Host>();
 const runIds = { next: 1 };
 
-function createHost(kind: ProgramKind): Host {
+function createHost(kind: SandboxKind): Host {
   const { module, source } = SOURCES[kind];
   // A data URL gives the worker no origin, so learner code can't send the learner's cookies or
   // read the page's data; a Blob URL would share the page's origin.
@@ -57,7 +73,7 @@ function createHost(kind: ProgramKind): Host {
   return { ready, worker };
 }
 
-function getHost(kind: ProgramKind): Host {
+function getHost(kind: SandboxKind): Host {
   const existing = hosts.get(kind);
 
   if (existing) {
@@ -66,14 +82,14 @@ function getHost(kind: ProgramKind): Host {
 
   const host = createHost(kind);
 
-  if (kind !== "javascript") {
+  if (SOURCES[kind].reused) {
     hosts.set(kind, host);
   }
 
   return host;
 }
 
-function discardHost(kind: ProgramKind, host: Host) {
+function discardHost(kind: SandboxKind, host: Host) {
   host.worker.terminate();
 
   if (hosts.get(kind) === host) {
@@ -82,7 +98,7 @@ function discardHost(kind: ProgramKind, host: Host) {
 }
 
 export async function warmUpSandbox(kind: ProgramKind): Promise<boolean> {
-  if (kind === "javascript") {
+  if (!SOURCES[kind].reused) {
     return true;
   }
 
@@ -97,7 +113,7 @@ export async function warmUpSandbox(kind: ProgramKind): Promise<boolean> {
 }
 
 type RunRequest = {
-  kind: ProgramKind;
+  kind: SandboxKind;
   payload: Record<string, unknown>;
   /** Called with every `output`/`log` message; return false to stop the run (too much output). */
   onMessage: (message: SandboxMessage) => boolean;
@@ -123,7 +139,7 @@ export async function runInSandbox({
       clearTimeout(timer);
       host.worker.removeEventListener("message", handleMessage);
 
-      if (!keepWorker || kind === "javascript") {
+      if (!keepWorker || !SOURCES[kind].reused) {
         discardHost(kind, host);
       }
 
@@ -138,7 +154,7 @@ export async function runInSandbox({
       }
 
       if (message.type === "done") {
-        finish({ status: "done", table: message.table }, true);
+        finish({ matches: message.matches, status: "done", table: message.table }, true);
         return;
       }
 
@@ -152,10 +168,7 @@ export async function runInSandbox({
       }
     }
 
-    const timer = setTimeout(
-      () => finish({ status: "timeout" }, false),
-      PROGRAM_TIME_LIMIT_MS[kind],
-    );
+    const timer = setTimeout(() => finish({ status: "timeout" }, false), TIME_LIMIT_MS[kind]);
 
     host.worker.addEventListener("message", handleMessage);
     // oxlint-disable-next-line unicorn/require-post-message-target-origin -- A Worker's postMessage has no target origin; the rule is for windows.

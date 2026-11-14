@@ -55,7 +55,7 @@ const mockQuestionSchema = z.object({
     .nullable()
     .meta({
       description:
-        "The text, case or chart it shares with its set's other questions, asked together in the set's order: show it with each of them",
+        "The text, case or chart it shares with its set's other questions, asked together in the set's order",
     }),
   skillId: uuidSchema(),
   unit: questionUnitSchema,
@@ -124,7 +124,7 @@ export const mockViewResponseSchema = z
       .nullable()
       .meta({
         description:
-          "Once it's over, the one milestone the learner hasn't been shown yet (a belt it crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null before it's over and once it's been shown",
+          "Once it's over, the one milestone the learner hasn't been shown yet (a belt it crossed, new glasses), until POST /me/milestones/{milestoneId}/views marks it shown; null before it's over and once it's been shown",
       }),
     certificates: unshownCertificatesSchema,
     checklist: z.array(z.enum(EXAM_DAY_CHECKLIST)),
@@ -218,7 +218,7 @@ export const mockViewResponseSchema = z
       .nullable()
       .meta({
         description:
-          "What it takes to pass, in the notice's own words, for a mock of the whole exam: show it beside the score, saying its language when it isn't the learner's; null otherwise",
+          "What it takes to pass, in the notice's own words, in their language (`language`), for a mock of the whole exam; null otherwise",
       }),
     planItemId: uuidSchema()
       .nullable()
@@ -236,7 +236,7 @@ export const mockViewResponseSchema = z
       .min(0)
       .meta({
         description:
-          "Questions it asks that the learner answered before, because the bank had no new ones left for them (the missed ones first, then the ones answered longest ago): say so on the mock's screen when above 0",
+          "Questions it asks that the learner answered before, because the bank had no new ones left for them (the missed ones first, then the ones answered longest ago); 0 when every question is new",
       }),
     review: z.array(
       z.object({

@@ -1,8 +1,9 @@
 import { type TransactionClient, type UsageKind } from "@zoonk/db";
-import { type UsageDecision } from "../contract";
-import { FREE_LESSON_LIMIT, FREE_LESSON_WINDOW_MS, getEstimatedCostMicros } from "../limits";
+import { type AllowanceLimit, type UsageDecision } from "../contract";
+import { FREE_LESSON_LIMIT, getEstimatedCostMicros } from "../limits";
 import { type EntitlementViewer } from "./entitlement-viewer";
 import { evaluateUsage } from "./evaluate-usage";
+import { getUsageOpening } from "./rolling-usage";
 import { type UsageTotals, addUsage, getUsageCounts, promotePreparedUsage } from "./usage-counts";
 
 export type BundleClaim = { generated: boolean; kind: UsageKind; targetId: string };
@@ -161,23 +162,8 @@ export function decideBundle({
     lessons > 0 &&
     ledger.totals.lessonStarts.count + lessons > FREE_LESSON_LIMIT
   ) {
-    const claim = ledger.totals.lessonStarts.latest[FREE_LESSON_LIMIT - lessons];
-
-    if (!claim) {
-      throw new Error("Rolling lesson usage is missing the claim that admits this bundle.");
-    }
-
     return {
-      decision: {
-        limit: {
-          availableAt: new Date(claim.getTime() + FREE_LESSON_WINDOW_MS),
-          limit: FREE_LESSON_LIMIT,
-          period: "rolling30Days",
-          resource: "chapterLessons",
-          tier: "free",
-        },
-        status: "limitReached",
-      },
+      decision: { limit: getBundleLimit({ fresh, ledger }), status: "limitReached" },
       ledger,
       recorded: [],
     };
@@ -189,7 +175,14 @@ export function decideBundle({
   );
 
   if (decided.decision.status !== "allowed") {
-    return { decision: decided.decision, ledger, recorded: [] };
+    const decision =
+      decided.decision.status === "limitReached" &&
+      (decided.decision.limit.period === "rolling30Days" ||
+        decided.decision.limit.availableAt !== undefined)
+        ? { ...decided.decision, limit: getBundleLimit({ fresh, ledger }) }
+        : decided.decision;
+
+    return { decision, ledger, recorded: [] };
   }
 
   return {
@@ -201,4 +194,68 @@ export function decideBundle({
     },
     recorded: decided.recorded,
   };
+}
+
+function getBundleLimit({
+  fresh,
+  ledger,
+}: {
+  fresh: readonly BundleClaim[];
+  ledger: UsageLedger;
+}): AllowanceLimit {
+  const costMicros = fresh.reduce(
+    (sum, claim) =>
+      sum + (ledger.prepared.has(toClaimKey(claim)) ? 0 : getEstimatedCostMicros(claim)),
+    0,
+  );
+
+  const checked = [...Map.groupBy(fresh, (claim) => claim.kind)].flatMap(([kind, claims]) => {
+    const unprepared = claims.filter((claim) => !ledger.prepared.has(toClaimKey(claim)));
+
+    const required =
+      kind === "lessonStart" && ledger.viewer.tier === "free" ? claims.length : unprepared.length;
+
+    if (required === 0) {
+      return [];
+    }
+
+    const input = {
+      costMicros,
+      counts: getUsageCounts(ledger.totals, kind),
+      generated: unprepared.some((claim) => claim.generated),
+      generatedCount: unprepared.filter((claim) => claim.generated).length,
+      kind,
+      now: ledger.now,
+      required,
+      tier: ledger.viewer.tier,
+    };
+
+    const decision = evaluateUsage(input);
+    return [{ decision, opening: getUsageOpening(input) }];
+  });
+
+  const limits = checked.flatMap(({ decision, opening }) =>
+    decision.status === "limitReached" ? [{ limit: decision.limit, opening }] : [],
+  );
+
+  const selected = limits.reduce((latest, next) =>
+    (next.opening?.getTime() ?? Number.POSITIVE_INFINITY) >
+    (latest.opening?.getTime() ?? Number.POSITIVE_INFINITY)
+      ? next
+      : latest,
+  );
+
+  const availableAt = checked.some(({ opening }) => opening === null)
+    ? null
+    : checked.reduce<Date>(
+        (latest, { opening }) => (opening && opening > latest ? opening : latest),
+        ledger.now,
+      );
+
+  const limit: AllowanceLimit =
+    selected.limit.resource === "lessonStart"
+      ? { ...selected.limit, resource: "chapterLessons" }
+      : selected.limit;
+
+  return limit.period === "total" ? limit : { ...limit, availableAt };
 }

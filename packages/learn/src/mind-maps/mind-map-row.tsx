@@ -17,13 +17,19 @@ import {
   ListRowTitle,
 } from "../_components/list-group";
 import { StatusRegion } from "../_components/status-region";
+import { useHeldSlot } from "../_utils/use-held-slot";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { type MindMapActions } from "./mind-map-actions";
 import { type MindMapCopyInput, type MindMapRowPlace, useStateLines } from "./mind-map-copy";
 import { MindMapSlot } from "./mind-map-slot";
 import { MindMapViewer } from "./mind-map-viewer";
-import { type MindMapRequest, type MindMapShown, useMindMapRequest } from "./use-mind-map-request";
+import {
+  type MindMapRequest,
+  type MindMapShown,
+  useLiveRefusal,
+  useMindMapRequest,
+} from "./use-mind-map-request";
 
 const ACTION_CLASS = buttonVariants({ size: "sm", variant: "outline" });
 
@@ -132,7 +138,9 @@ export function MindMapRowView({
   const routes = useLearnRoutes();
   const titleId = useId();
   const [open, setOpen] = useState(false);
-  const { create, isPending, limit, retry, save, shown } = request;
+  const { create, isPending, retry, save } = request;
+  const { limit, shown } = useLiveRefusal(request, view.status);
+  const slot = useHeldSlot<HTMLDivElement>(limit !== null && !isPending);
   const input: MindMapCopyInput = { place, plus, shown, view };
   const ready = shown === "ready" && view.outline !== null && save !== undefined;
 
@@ -163,7 +171,7 @@ export function MindMapRowView({
   );
 
   return (
-    <div className={cn("flex flex-col gap-1", className)} data-slot="mind-map-row">
+    <div className={cn("flex flex-col gap-1", className)} data-slot="mind-map-row" ref={slot}>
       {ready && (
         <button
           aria-haspopup="dialog"

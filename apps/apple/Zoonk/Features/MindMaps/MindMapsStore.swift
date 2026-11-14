@@ -40,6 +40,16 @@ final class MindMapsStore {
     self.writingPoll = writingPoll
   }
 
+  /// A read only: once the page's stop is over, its offer is read again, so its counts and Create
+  /// all are today's answer.
+  func readOfferAgain(goalId: String, now: Date) async {
+    let list = list(goalId: goalId)
+
+    if list.value?.createOffer.stop?.isOver(at: now) == true {
+      await list.refresh()
+    }
+  }
+
   func list(goalId: String) -> Resource<GoalMindMaps> {
     if let list = lists[goalId] {
       return list

@@ -67,7 +67,7 @@ function DayKinds({ items }: { items: readonly PlanItemView[] }) {
   const rest = items.length - ICONS_SHOWN;
 
   return (
-    <ListRowTrailing aria-hidden="true" className="gap-1 self-start pt-3.5 max-sm:hidden">
+    <ListRowTrailing aria-hidden="true" className="row-first-line gap-1 max-sm:hidden">
       {items.slice(0, ICONS_SHOWN).map((item, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- the icons are fixed for this day
         <KindMark className="size-3" key={index} kind={ITEM_KINDS[item.kind]} />
@@ -77,7 +77,11 @@ function DayKinds({ items }: { items: readonly PlanItemView[] }) {
   );
 }
 
-/** The dates never wrap, and each row's column is as wide as the longest, so the names line up. */
+/**
+ * The dates never wrap, and each row's column is as wide as the longest, so the names line up. The
+ * date and the kinds sit on the first name's line, so the names start under the row's top room even
+ * when a day has one line, rather than centered in it.
+ */
 function WeekDayRow({
   date,
   day,
@@ -95,15 +99,16 @@ function WeekDayRow({
   return (
     <ListRow>
       <ListRowLeading
-        className="text-muted-foreground self-start pt-3 font-mono text-xs whitespace-nowrap tabular-nums"
+        className="text-muted-foreground font-mono text-xs whitespace-nowrap tabular-nums"
+        firstLine
         style={{ minWidth: `${dateWidth}ch` }}
       >
         {date}
       </ListRowLeading>
 
-      <ListRowContent>
+      <ListRowContent className="justify-start">
         {day.items.length === 0 ? (
-          <span className="text-muted-foreground text-sm">{t("Rest day")}</span>
+          <span className="text-muted-foreground text-sm leading-snug">{t("Rest day")}</span>
         ) : (
           names.map((name, index) => (
             // oxlint-disable-next-line react/no-array-index-key -- two lessons can share a title

@@ -1360,7 +1360,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Incluses avec ton Compagnon"
+            "value" : "Incluses avec ton compagnon"
           }
         },
         "it" : {
@@ -1390,7 +1390,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vem com seu Parceiro"
+            "value" : "Vem com seu parceiro"
           }
         },
         "tr" : {
@@ -3314,65 +3314,6 @@
         }
       }
     },
-    "Move my study time to %@" : {
-      "comment" : "Accepts a schedule idea: moves the time of day the learner studies; the argument is a clock time like 20:00",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meine Lernzeit auf %@ verschieben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Establecer %@ como mi hora de estudio"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Déplacer mon heure d’étude à %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sposta l’orario di studio alle %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習する時刻を%@に変える"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "학습 시간대를 %@(으)로 바꾸기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zmień moją godzinę nauki na %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mudar meu horário de estudo para %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Çalışma saatimi %@ olarak değiştir"
-          }
-        }
-      }
-    },
     "Name" : {
       "comment" : "The buddy's custom name",
       "localizations" : {
@@ -5161,7 +5102,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’enregistrer ton Compagnon. Réessaie."
+            "value" : "Impossible d’enregistrer ton compagnon. Réessaie."
           }
         },
         "it" : {
@@ -5191,7 +5132,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos salvar seu Parceiro. Tente de novo."
+            "value" : "Não conseguimos salvar seu parceiro. Tente de novo."
           }
         },
         "tr" : {

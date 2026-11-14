@@ -382,10 +382,7 @@ private struct MistakeEntryView: View {
 
   private var entryDate: String {
     let date = mistake.status == .fixed ? (mistake.fixedAt ?? mistake.createdAt) : mistake.createdAt
-    let sameYear = Calendar.current.isDate(date, equalTo: .now, toGranularity: .year)
-    return sameYear
-      ? date.formatted(.dateTime.month(.abbreviated).day())
-      : date.formatted(.dateTime.month(.abbreviated).day().year())
+    return PlanDate.momentDay(date)
   }
 
   private var causeIcon: String {

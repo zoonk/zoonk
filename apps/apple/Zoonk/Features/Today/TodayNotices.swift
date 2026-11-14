@@ -65,6 +65,7 @@ struct SuggestedGoalSection: View {
 struct SuggestedGoalButtons: View {
   @Environment(AppRouter.self) private var router
   @Environment(TodayStore.self) private var store
+  @State private var answering: Task<Void, Never>?
 
   let suggestion: SuggestedGoal
   let answer: SuggestedGoalAnswer
@@ -86,10 +87,13 @@ struct SuggestedGoalButtons: View {
     .buttonStyle(.mainAction)
     .keyboardShortcut(.defaultAction)
     .disabled(answer.answering == false)
+    .onDisappear { answering?.cancel() }
   }
 
   private func respond(accepted: Bool) {
-    Task { await answer.respond(to: suggestion, accepted: accepted, store: store, router: router) }
+    answering = Task {
+      await answer.respond(to: suggestion, accepted: accepted, store: store, router: router)
+    }
   }
 }
 
@@ -145,7 +149,7 @@ struct TodayExamChoiceSection: View {
 
         if change.canUndo {
           BusyButton(isBusy: editor.isSaving, icon: .undo) {
-            Task { await editor.undo() }
+            editor.run { await editor.undo() }
           } label: {
             Text("Undo", tableName: "Today", comment: "Undoes a plan change the learner applied")
           }
@@ -226,7 +230,7 @@ struct TodayExamChoiceSection: View {
     let editor = editor ?? PlanEditor(goalId: goalID, store: plans)
     self.editor = editor
 
-    Task {
+    editor.run {
       if await editor.chooseExamOptions(subjects, in: group),
         case .applied(_, let sentence) = editor.latest
       {
@@ -475,8 +479,27 @@ struct TodayFocusTestSection: View {
               "The Focus test shows what to study most.", tableName: "Today",
               comment: "Today's suggestion of the Focus test, in one line")
           } action: {
-            SuggestionOpen(isOpen: $isOpen) {
+            SuggestionOpen(
+              isOpen: $isOpen, note: failed ? BarNote(SuggestionSaveError.message) : nil
+            ) {
               details(shown)
+            } actions: {
+              BusyButton(isBusy: isDismissing) {
+                dismiss()
+              } label: {
+                Text(FocusTestCopy.notNow)
+              }
+              .buttonStyle(.outline)
+              .disabled(isDismissing)
+
+              Button {
+                isOpen = false
+                router.open(.focusTest(goalId: goalID, startsTest: true))
+              } label: {
+                Text("Start", tableName: "Today", comment: "Starts the Focus test")
+              }
+              .buttonStyle(.mainAction)
+              .disabled(isDismissing)
             }
           }
           .listRowSeparator(.hidden)
@@ -505,30 +528,6 @@ struct TodayFocusTestSection: View {
         "What the Focus test is and why, on Today; the argument is how long it takes, such as \"15 min\""
     )
     .foregroundStyle(.mutedForeground)
-
-    ButtonRow {
-      Button {
-        isOpen = false
-        router.open(.focusTest(goalId: goalID, startsTest: true))
-      } label: {
-        Text("Start", tableName: "Today", comment: "Starts the Focus test")
-          .frame(maxWidth: .infinity)
-      }
-      .buttonStyle(.mainAction)
-
-      BusyButton(isBusy: isDismissing) {
-        dismiss()
-      } label: {
-        Text(FocusTestCopy.notNow)
-          .frame(maxWidth: .infinity)
-      }
-      .buttonStyle(.outline)
-    }
-    .disabled(isDismissing)
-
-    if failed {
-      SuggestionSaveError()
-    }
   }
 
   private func dismiss() {
@@ -577,6 +576,20 @@ struct TodayExamMomentSection: View {
         } action: {
           SuggestionOpen(isOpen: $isOpen) {
             details(words)
+          } actions: {
+            Button {
+              isOpen = false
+              router.open(.exam)
+            } label: {
+              if moment.stage == .afterExam {
+                Text(
+                  "Add your result", tableName: "Today",
+                  comment: "Opens the exam to add the official result")
+              } else {
+                Text("See your exam", tableName: "Today", comment: "Opens the exam")
+              }
+            }
+            .buttonStyle(.mainAction)
           }
         }
         .listRowSeparator(.hidden)
@@ -605,22 +618,5 @@ struct TodayExamMomentSection: View {
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
     }
-
-    Button {
-      isOpen = false
-      router.open(.exam)
-    } label: {
-      Group {
-        if moment.stage == .afterExam {
-          Text(
-            "Add your result", tableName: "Today",
-            comment: "Opens the exam to add the official result")
-        } else {
-          Text("See your exam", tableName: "Today", comment: "Opens the exam")
-        }
-      }
-      .frame(maxWidth: .infinity)
-    }
-    .buttonStyle(.mainAction)
   }
 }

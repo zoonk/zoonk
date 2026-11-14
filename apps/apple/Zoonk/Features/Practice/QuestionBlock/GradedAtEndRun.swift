@@ -11,7 +11,6 @@ struct GradedAtEndRun: View {
   var upcomingTotal: Int?
   /// The writing stopped short: the learner can finish with the answers given.
   var upcomingEnded = false
-  var upcomingLimit: HelpLimit?
   var isPending: Bool
   var failures: Int
   let onReport: () -> Void
@@ -132,11 +131,6 @@ struct GradedAtEndRun: View {
           icon: .forward, isBusy: isPending
         ) { onFinish(answers) }
       } else if upcomingEnded, failures == 0 || isPending {
-        if let upcomingLimit {
-          LimitNotice(limit: upcomingLimit)
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-
         PracticeMainButton(
           title: LocalizedStringResource(
             "Finish with these answers", table: "Practice",
@@ -302,21 +296,24 @@ struct PracticeQuestionsPreparingView: View {
         }
       }
     } actions: {
-      if let limit {
-        LimitNotice(limit: limit)
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .accessibilityElement(children: .combine)
-          .accessibilityFocused($focus, equals: .notice)
-      }
+      // The gate takes Start's place until its day has come, then Start takes it back.
+      OpeningClock(availableAt: limit?.availableAt) { now in
+        if let limit, !limit.isOpen(at: now) {
+          LimitNotice(limit: limit)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityElement(children: .combine)
+            .accessibilityFocused($focus, equals: .notice)
+        }
 
-      if !isWriting, limit?.isShortBreak ?? true {
-        PracticeMainButton(
-          title: LocalizedStringResource(
-            "Start the test", table: "Practice",
-            comment: "Asks for a test's questions and starts it."),
-          icon: .play, isBusy: isStarting, action: start
-        )
-        .accessibilityFocused($focus, equals: .start)
+        if !isWriting, limit?.letsTry(at: now) ?? true {
+          PracticeMainButton(
+            title: LocalizedStringResource(
+              "Start the test", table: "Practice",
+              comment: "Asks for a test's questions and starts it."),
+            icon: .play, isBusy: isStarting, action: start
+          )
+          .accessibilityFocused($focus, equals: .start)
+        }
       }
     }
     // Only the learner's tap starts the wait or sets a failure, so focus never moves on opening.
@@ -331,7 +328,7 @@ struct PracticeQuestionsPreparingView: View {
       // A failure line reads itself out beside the Start that comes back. A notice doesn't: beside
       // Start (a short break) it's read out; in Start's place (a limit) it takes focus.
       if let limit, limit.isShortBreak {
-        announcePolitely(limit.helpWords().said)
+        announcePolitely(limit.words().said)
       } else if limit != nil {
         focus = .notice
       }

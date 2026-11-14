@@ -1,6 +1,11 @@
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { toOpeningDay, watchOpeningClock } from "./opening-day";
+import {
+  OPENING_DATE_OPTIONS,
+  toFirstRenderDay,
+  toOpeningDay,
+  watchOpeningClock,
+} from "./opening-day";
 
 describe(toOpeningDay, () => {
   const now = new Date("2026-11-13T23:30:00.000Z");
@@ -31,6 +36,48 @@ describe(toOpeningDay, () => {
 
     expect(toOpeningDay({ availableAt: "soon", now, timeZone: "UTC" })).toBeNull();
     expect(toOpeningDay({ availableAt: null, now, timeZone: "UTC" })).toBeNull();
+  });
+});
+
+describe(toFirstRenderDay, () => {
+  it("names one day for a server and a browser in different zones, read from the instant alone", () => {
+    const availableAt = "2026-11-14T01:00:00.000Z";
+    const now = new Date("2026-11-13T23:30:00.000Z");
+
+    expect(toOpeningDay({ availableAt, now, timeZone: "UTC" })).not.toBe(
+      toOpeningDay({ availableAt, now, timeZone: "America/Sao_Paulo" }),
+    );
+
+    expect(toFirstRenderDay(availableAt)).toBe("2026-11-14");
+
+    expect(
+      toOpeningDay({
+        availableAt: "2026-11-22T01:00:00.000Z",
+        now: new Date("2026-11-14T12:00:00.000Z"),
+        timeZone: "America/Sao_Paulo",
+      }),
+    ).not.toBe(toFirstRenderDay("2026-11-22T01:00:00.000Z"));
+
+    expect(toFirstRenderDay("soon")).toBeNull();
+    expect(toFirstRenderDay(null)).toBeNull();
+  });
+});
+
+describe("the day a cap comes back", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("names a cap's day the same on either side of New Year, with no year and no clock", () => {
+    const opensOn = new Date("2027-01-10T00:00:00.000Z");
+    const format = () => new Intl.DateTimeFormat("en-US", OPENING_DATE_OPTIONS).format(opensOn);
+
+    vi.useFakeTimers({ now: new Date("2026-12-31T23:59:00.000Z") });
+    const beforeNewYear = format();
+    vi.setSystemTime(new Date("2027-01-01T00:01:00.000Z"));
+
+    expect(beforeNewYear).toBe("January 10");
+    expect(format()).toBe("January 10");
   });
 });
 

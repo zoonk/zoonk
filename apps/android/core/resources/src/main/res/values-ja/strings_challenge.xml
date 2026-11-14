@@ -56,7 +56,7 @@
   "challenge_weekly_detail": "11217f9e028b38f92a17b65d432426c6ff032fc8bf5eb6e9c53ec9da994daf2a",
   "challenge_weekly_rule": "1775ff14942ba5120bce9339e742d3f9445a1fab20a0c3af3c5279a0a1e0b850",
   "challenge_writing": "4a502696f6c0c8146867e662795b7964ae34bc7b169c8e220c67abc46ae34f46",
-  "challenge_writing_detail": "44ccc266119ee731161a9e1600f763d9d8d2a758ecdd765499b7a124d4a04a6b",
+  "challenge_writing_detail": "7cdfc43379836e6540092a93db0ed8e0458f4224134be9ac78fe430af9a0caae",
   "challenge_writing_line": "b2f7d29ae5c5984837e994d328dcc1ab6bcf6405f98d25d658494eac62c495ae",
   "challenge_writing_questions": "60696047270cb46b9dd013ec5714d24fed474a37ee7e4435e1cfb51c915a2989",
   "challenge_writing_title": "172f905563852747b96e6be269c980bec98be1e636dd5c57ee459ee63eb52ff8"
@@ -67,7 +67,7 @@
     <string name="challenge_writing_questions">学んだ内容の問題を作成しています</string>
     <string name="challenge_writing_line">問題にするスキルを選んでいます…</string>
     <string name="challenge_writing_title">チャレンジを準備しています</string>
-    <string name="challenge_writing_detail">問題を作成しています。準備ができると、ここでチャレンジが始まります。</string>
+    <string name="challenge_writing_detail">準備ができたら、ここで始まります。</string>
     <!-- %1$s is the challenge's name, like "Phase 2 challenge". -->
     <string name="challenge_rematch">再挑戦 · %1$s</string>
     <string name="challenge_trickster_recordings">このフェーズの音声を試験本番と同じように再生し、ヒントなしで出題します。</string>

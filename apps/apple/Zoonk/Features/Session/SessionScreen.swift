@@ -299,8 +299,7 @@ private struct NextStopView: View {
 
   /// Only for the lesson being written, never one that failed or can't be written.
   private var warmUpDeckID: String? {
-    guard let warmUp, warmUp.lessonID == next?.lessonId, !isLessonUnavailable,
-      writing != .failed, lessonStatus != "failed"
+    guard let warmUp, warmUp.lessonID == next?.lessonId, !isLessonUnavailable, !isLessonFailed
     else {
       return nil
     }
@@ -370,6 +369,13 @@ private struct NextStopView: View {
             Text(Self.setAsideReason)
           }
         }
+      } else if isLessonFailed {
+        Section {
+          GenerationFailureNotice(failure: .generation, isActing: isOpening) {
+            open(next)
+          }
+          .environment(\.barHoldsMainAction, alternative != nil)
+        }
       }
     }
   }
@@ -399,9 +405,9 @@ private struct NextStopView: View {
         .disabled(isOpening)
       }
 
-      if let alternative, isLessonWorkRunning || isLessonUnavailable {
+      if let alternative, isLessonWorkRunning || isLessonUnavailable || isLessonFailed {
         mainButton(alternativeTitle(alternative), block: alternative)
-      } else if let next, !isLessonUnavailable, !isHeld {
+      } else if let next, !isLessonUnavailable, !isLessonFailed, !isHeld {
         mainButton(continueTitle, block: next)
           .disabled(isLessonWorkRunning)
           .accessibilityFocused($isStartFocused)
@@ -465,32 +471,29 @@ private struct NextStopView: View {
     }
   }
 
-  private var continueTitle: Text {
-    if writing == .failed || lessonStatus == "failed" {
-      return Text(
-        "Try again", tableName: "Session", comment: "Asks again for a lesson that failed")
-    }
+  /// Its failure notice asks for it again, so the main button offers other work instead.
+  private var isLessonFailed: Bool {
+    next?.kind == .learn && (writing == .failed || lessonStatus == "failed")
+  }
 
-    return next?.status == .active
+  private var continueTitle: Text {
+    next?.status == .active
       ? Text("Continue", tableName: "Session", comment: "Opens the session's next block")
       : Text(
         "Start", tableName: "Session", comment: "Opens the session's next block, not begun yet")
   }
 
-  /// Named by what it starts, the same while a lesson is written and when it can't be.
+  /// A verb for what the learner can do meanwhile; only a challenge needs its name.
   private func alternativeTitle(_ block: StudyBlock) -> Text {
-    switch block.kind {
-    case .review:
-      Text("Review now", tableName: "Session", comment: "Starts the day's review instead")
-    case .practice:
-      Text("Practice now", tableName: "Session", comment: "Starts the day's practice instead")
-    case .learn:
-      Text("Next lesson", tableName: "Session", comment: "Starts the day's next lesson instead")
-    default:
-      Text(
+    if block.checkpoint != nil {
+      return Text(
         "Start \(block.displayTitle)", tableName: "Session",
         comment: "Starts another of the day's steps instead; the argument is its name")
     }
+
+    return block.kind == .review
+      ? Text("Review now", tableName: "Session", comment: "Starts the day's review instead")
+      : Text("Practice now", tableName: "Session", comment: "Starts the day's practice instead")
   }
 
   private var lessonLine: AnyView? {
@@ -503,14 +506,6 @@ private struct NextStopView: View {
         Text(
           "Your lesson is ready.", tableName: "Session",
           comment: "A lesson written while the learner waited, offered with Start"))
-    }
-
-    if writing == .failed || lessonStatus == "failed" {
-      return AnyView(
-        FailureLine(
-          message: LocalizedStringResource(
-            "We couldn't write this lesson.", table: "Session",
-            comment: "Writing a lesson failed")))
     }
 
     guard isLessonWorkRunning else {

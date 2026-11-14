@@ -76,6 +76,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -809,7 +810,7 @@ private fun StartActions(
     onStart: () -> Unit = actions.viewModel::start,
 ) {
     val vm = actions.viewModel
-    val refused = ui.refused
+    val refused = ui.refused?.takeUnless { limitLifted(it) }
     if (refused != null) {
         LimitNotice(
             refused,

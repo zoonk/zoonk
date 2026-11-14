@@ -348,7 +348,7 @@ private struct SubjectChapterRow: View {
       StatusMark(status: status)
     } trailing: {
       if chapter.state != .done, let nextDate = chapter.nextDate {
-        Text(PlanDate.text(nextDate, today: isoDay(.now)))
+        Text(PlanDate.text(nextDate, today: PlanDate.today()))
       }
     }
     .currentRow(chapter.state == .current)

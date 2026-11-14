@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,20 +26,22 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.goalErrorMessage
 import com.zoonk.android.feature.onboarding.goalLimitMessage
+import com.zoonk.android.feature.onboarding.setup.PageActions
 import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.comesBackLine
+import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.scaffold.pageTitle
-import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.ZoonkRadius
 
 @Composable
@@ -85,15 +86,13 @@ internal fun OutcomeIcon(
     Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
+/** Main's `OnboardingActions`: a screen's actions in the page's bottom bar, with [note] over it. */
 @Composable
-internal fun isCompactWidth(): Boolean =
-    !windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-
-@Composable
-internal fun ColumnScope.OnboardingActions(content: @Composable ColumnScope.() -> Unit) {
-    // Main pins them to the bottom on phones, within thumb reach; wider windows keep them under the content.
-    if (isCompactWidth()) Spacer(Modifier.weight(1f))
-    Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp), content = content)
+internal fun OnboardingActions(
+    note: (@Composable () -> Unit)? = null,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    PageActions(note = note) { Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp), content = content) }
 }
 
 @Composable
@@ -149,8 +148,7 @@ internal fun ColumnScope.GoalFooter(
         OnboardingActions { GoalErrorAlert(error, onCreateAccount, onOpenPlan, onSubscribe) }
         return
     }
-    GoalErrorAlert(error, onCreateAccount, onOpenPlan, onSubscribe)
-    OnboardingActions(actions)
+    OnboardingActions(note = error?.let { { GoalErrorAlert(it, onCreateAccount, onOpenPlan, onSubscribe) } }, content = actions)
 }
 
 /** The gate a learner meets on trying to start a goal that only subscribing makes room for. */
@@ -163,12 +161,12 @@ internal fun GoalLimitNotice(
 ) {
     if (!reason.isPlusLimit) return
 
-    if (reason != GoalLimitReason.ActiveGoals) {
+    if (reason is GoalLimitReason.MonthlyGoals) {
         SubscribeGate(
-            title = stringResource(R.string.onboarding_month_goals_title),
+            title = stringResource(R.string.limit_goals_used),
             onSubscribe = onSubscribe,
             modifier = modifier,
-            line = stringResource(R.string.onboarding_month_goals_line),
+            line = comesBackLine(reason.limit),
         )
         return
     }
@@ -190,21 +188,55 @@ internal fun ColumnScope.GoalLimitWall(
     onSubscribe: () -> Unit,
     onOpenPlan: () -> Unit,
 ) {
-    OnboardingActions {
-        Text(
-            text = goalLimitMessage(reason),
-            modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        if (reason == GoalLimitReason.ActiveGoals) {
-            OutlinedButton(
-                onClick = onOpenPlan,
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text(stringResource(R.string.onboarding_go_to_plan)) }
-        }
-        Button(onClick = onSubscribe, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.subscription_subscribe)) }
+    OnboardingActions(
+        note = {
+            Text(
+                text = goalLimitMessage(reason),
+                modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        },
+    ) { GoalLimitButtons(reason, onSubscribe, onOpenPlan) }
+}
+
+/** Main's `GoalLimitScreen`: at the goals-at-once limit, starting a goal is only the gate, its words as the heading and [GoalLimitBar] pinned under it. */
+@Composable
+internal fun GoalLimitScreen(
+    onSubscribe: () -> Unit,
+    onOpenPlan: () -> Unit,
+) {
+    OnboardingHeading(stringResource(R.string.onboarding_goals_at_once_title), stringResource(R.string.onboarding_goals_at_once_line))
+    OnboardingActions { GoalLimitBar(onSubscribe, onOpenPlan) }
+}
+
+/** Main's `GoalLimitBar`: the Plan, where a goal can be paused, before Subscribe, the main action. */
+@Composable
+private fun GoalLimitBar(
+    onSubscribe: () -> Unit,
+    onOpenPlan: () -> Unit,
+) {
+    TaskActions(back = {
+        OutlinedButton(onClick = onOpenPlan, modifier = Modifier.taskOption()) { Text(stringResource(R.string.onboarding_go_to_plan)) }
+    }) { main ->
+        Button(onClick = onSubscribe, modifier = main) { Text(stringResource(R.string.subscription_subscribe)) }
     }
+}
+
+/** Main's `GoalLimitBar`: the Plan, where a goal can be paused, before Subscribe, the main action. */
+@Composable
+private fun GoalLimitButtons(
+    reason: GoalLimitReason,
+    onSubscribe: () -> Unit,
+    onOpenPlan: () -> Unit,
+) {
+    if (reason == GoalLimitReason.ActiveGoals) {
+        OutlinedButton(
+            onClick = onOpenPlan,
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(stringResource(R.string.onboarding_go_to_plan)) }
+    }
+    Button(onClick = onSubscribe, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.subscription_subscribe)) }
 }
 
 /** Right after sending, it opens by itself; coming back later it waits for a tap, since writing it is new work. */
@@ -335,14 +367,24 @@ internal fun ColumnScope.InstrumentGoal(
 }
 
 @Composable
-internal fun ColumnScope.GuestGoalGate(
+internal fun GuestGoalGate(
     onCreateAccount: () -> Unit,
     onBackToToday: () -> Unit,
 ) {
     OutcomeIcon(R.drawable.ic_person_add)
     OnboardingHeading(stringResource(R.string.onboarding_guest_gate_title), stringResource(R.string.onboarding_guest_gate_description))
-    OnboardingActions {
-        CreateAccountButton(onCreateAccount)
-        TextButton(onClick = onBackToToday, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.onboarding_back_to_today)) }
+    OnboardingActions { GuestGoalBar(onCreateAccount, onBackToToday) }
+}
+
+/** As main's: back to Today before the free account, the main action. */
+@Composable
+private fun GuestGoalBar(
+    onCreateAccount: () -> Unit,
+    onBackToToday: () -> Unit,
+) {
+    TaskActions(back = {
+        TextButton(onClick = onBackToToday, modifier = Modifier.taskOption()) { Text(stringResource(R.string.onboarding_back_to_today)) }
+    }) { main ->
+        Button(onClick = onCreateAccount, modifier = main) { Text(stringResource(R.string.onboarding_create_account)) }
     }
 }

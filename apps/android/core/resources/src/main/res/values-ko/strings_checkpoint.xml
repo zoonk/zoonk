@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "checkpoint_after_lessons": "e50abd7f465fe41cf10a994dddeaf3cd5c3dd85c935f87f063f32037b7482965",
-  "checkpoint_answer": "456b66a8b3277267df0d48f89345ebb5cb0bbab111bc1c127e43cfffded3ffc0",
   "checkpoint_answers": "5c8371c54adb1d31cacc3e605b7f757c26a651e7171caea11e6c01b54fabf6db",
   "checkpoint_badge": "34ff79ec4e735376f307cc305555e3d44ed22a66c760e03f67b2c358166ba22b",
   "checkpoint_beat": "213303c9ecebc2aa46091ad4d2beedd7e46f2c2d124c8d1f1f8eeb5bbb49775c",
@@ -134,6 +133,4 @@
     <string name="checkpoint_next_phase_open">다음 단계인 %1$s도 이미 열려 있어요.</string>
     <string name="checkpoint_answers">정답</string>
     <string name="checkpoint_review">정답 확인하기</string>
-    <!-- %1$s is the right answer. -->
-    <string name="checkpoint_answer">정답: %1$s</string>
 </resources>

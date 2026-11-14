@@ -47,10 +47,6 @@ msgid "Up next"
 msgstr "Sıradaki"
 
 #: src/_components/chapter-mark.tsx
-#: src/journey/journey-chapters.tsx
-#: src/journey/journey-path.tsx
-#: src/journey/next-on-path.tsx
-#: src/journey/path-phase-row.tsx
 msgctxt "npC_pq"
 msgid "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}"
 msgstr "{total, plural, other {{done, number} ders tamamlandı (toplam # ders)}}"
@@ -84,6 +80,93 @@ msgstr "Tamamlandı"
 msgctxt "hd07WZ"
 msgid "{done} of {total}"
 msgstr "{done} / {total}"
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.i7_WBD"
+msgid "More on {date}, or subscribe to keep going."
+msgstr "Hakların {date} tarihinde yenilenecek. Devam etmek için abone olabilirsin."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.ecXEHc"
+msgid "More later today, or subscribe to keep going."
+msgstr "Hakların bugün ilerleyen saatlerde yenilenecek. Devam etmek için abone olabilirsin."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.wwdPGH"
+msgid "More tomorrow, or subscribe to keep going."
+msgstr "Hakların yarın yenilenecek. Devam etmek için abone olabilirsin."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.LiccOr"
+msgid "More on {date}."
+msgstr "Hakların {date} tarihinde yenilenecek."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.zQZjeQ"
+msgid "More later today."
+msgstr "Hakların bugün ilerleyen saatlerde yenilenecek."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.i1JCVp"
+msgid "More tomorrow."
+msgstr "Hakların yarın yenilenecek."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.d8xWY_"
+msgid "You can try again now."
+msgstr "Şimdi tekrar deneyebilirsin."
+
+#. A notice that something the learner uses ran out, as one line: {title} says what ran out, such as "You've used your uploads", and {line} when more comes back, such as "More on November 22, or subscribe to keep going."
+#: src/_components/comes-back-words.ts
+msgctxt "limits.mEm9UA"
+msgid "{title}. {line}"
+msgstr "{title}. {line}"
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.
+#: src/_components/comes-back-words.ts
+msgctxt "BQZuQD"
+msgid "It writes more lessons than you get for free."
+msgstr "Bu harita için ücretsiz ders hakkından daha fazla ders hazırlamamız gerekiyor."
+
+#: src/_components/comes-back-words.ts
+msgctxt "PzQ0ot"
+msgid "This map needs a subscription"
+msgstr "Bu harita için abonelik gerekiyor"
+
+#: src/_components/comes-back-words.ts
+msgctxt "Ekv-QL"
+msgid "You can make this map now"
+msgstr "Bu haritayı şimdi oluşturabilirsin"
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/comes-back-words.ts
+msgctxt "MU7Wx6"
+msgid "You'll have enough on {date}, or subscribe to make it now."
+msgstr "{date} tarihinde yeterli ücretsiz ders hakkın olacak. İstersen abone olup haritayı hemen oluşturabilirsin."
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
+#: src/_components/comes-back-words.ts
+msgctxt "HwBdEe"
+msgid "You'll have enough later today, or subscribe to make it now."
+msgstr "Bugün ilerleyen saatlerde yeterli ücretsiz ders hakkın olacak. İstersen abone olup haritayı hemen oluşturabilirsin."
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
+#: src/_components/comes-back-words.ts
+msgctxt "CE0pGe"
+msgid "You'll have enough tomorrow, or subscribe to make it now."
+msgstr "Yarın yeterli ücretsiz ders hakkın olacak. İstersen abone olup haritayı hemen oluşturabilirsin."
+
+#: src/_components/comes-back-words.ts
+msgctxt "eFx_I9"
+msgid "Not enough free lessons for this map yet"
+msgstr "Bu harita için henüz yeterli ücretsiz ders hakkın yok"
 
 #: src/_components/coverage-bar.tsx
 #: src/syllabus/subject-aside.tsx
@@ -126,7 +209,7 @@ msgid "Today"
 msgstr "Bugün"
 
 #: src/_components/create-account-link.tsx
-#: src/language/conversation/call-problem.tsx
+#: src/_components/subscribe-gate.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -257,81 +340,6 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "Sonucunu görmek için bitir."
 
-#. On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English.
-#: src/_components/free-lessons-words.ts
-msgctxt "wsvV5i"
-msgid "Your next free lesson opens on {date}, or subscribe to keep going."
-msgstr "Bir sonraki ücretsiz dersin {date} tarihinde açılacak. Abone olup hemen devam edebilirsin."
-
-#: src/_components/free-lessons-words.ts
-msgctxt "sq9fni"
-msgid "Your next free lesson opens later today, or subscribe to keep going."
-msgstr "Bir sonraki ücretsiz dersin bugün ilerleyen saatlerde açılacak. Abone olup hemen devam edebilirsin."
-
-#: src/_components/free-lessons-words.ts
-msgctxt "q6VpbS"
-msgid "Your next free lesson opens tomorrow, or subscribe to keep going."
-msgstr "Bir sonraki ücretsiz dersin yarın açılacak. Abone olup hemen devam edebilirsin."
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.
-#: src/_components/free-lessons-words.ts
-msgctxt "BQZuQD"
-msgid "It writes more lessons than you get for free."
-msgstr "Bu harita için ücretsiz ders hakkından daha fazla ders hazırlamamız gerekiyor."
-
-#: src/_components/free-lessons-words.ts
-msgctxt "PzQ0ot"
-msgid "This map needs a subscription"
-msgstr "Bu harita için abonelik gerekiyor"
-
-#: src/_components/free-lessons-words.ts
-msgctxt "Ekv-QL"
-msgid "You can make this map now"
-msgstr "Bu haritayı şimdi oluşturabilirsin"
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English.
-#: src/_components/free-lessons-words.ts
-msgctxt "MU7Wx6"
-msgid "You'll have enough on {date}, or subscribe to make it now."
-msgstr "{date} tarihinde yeterli ücretsiz ders hakkın olacak. İstersen abone olup haritayı hemen oluşturabilirsin."
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
-#: src/_components/free-lessons-words.ts
-msgctxt "HwBdEe"
-msgid "You'll have enough later today, or subscribe to make it now."
-msgstr "Bugün ilerleyen saatlerde yeterli ücretsiz ders hakkın olacak. İstersen abone olup haritayı hemen oluşturabilirsin."
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
-#: src/_components/free-lessons-words.ts
-msgctxt "CE0pGe"
-msgid "You'll have enough tomorrow, or subscribe to make it now."
-msgstr "Yarın yeterli ücretsiz ders hakkın olacak. İstersen abone olup haritayı hemen oluşturabilirsin."
-
-#: src/_components/free-lessons-words.ts
-msgctxt "eFx_I9"
-msgid "Not enough free lessons for this map yet"
-msgstr "Bu harita için henüz yeterli ücretsiz ders hakkın yok"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "C84LQr"
-msgid "More next month."
-msgstr "Hakların gelecek ay yenilenir."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "i1JCVp"
-msgid "More tomorrow."
-msgstr "Hakların yarın yenilenir."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "64dPfY"
-msgid "More next month, or subscribe to keep going."
-msgstr "Hakların gelecek ay yenilenir; devam etmek için abone ol."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "wwdPGH"
-msgid "More tomorrow, or subscribe to keep going."
-msgstr "Hakların yarın yenilenir; devam etmek için abone ol."
-
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
 msgid "Take a short break, then try again."
@@ -348,19 +356,14 @@ msgid "That's all you can try without an account"
 msgstr "Hesap olmadan deneyebileceklerin bu kadar"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "Jqv4S8"
-msgid "No more messages this month"
-msgstr "Bu ay mesaj hakkın kalmadı"
-
-#: src/_components/help-limit-notice.tsx
 msgctxt "x0gg1d"
 msgid "No more messages today"
 msgstr "Bugün mesaj hakkın kalmadı"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "z4UYJE"
-msgid "No more explanations this month"
-msgstr "Bu ay açıklama hakkın kalmadı"
+msgctxt "BRz34t"
+msgid "You've used your messages"
+msgstr "Mesaj hakkın bitti"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "cPoE5U"
@@ -368,9 +371,19 @@ msgid "No more explanations today"
 msgstr "Bugün açıklama hakkın kalmadı"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "6Tamx-"
-msgid "You've reached this month's limit"
-msgstr "Bu ayki kullanım sınırına ulaştın"
+msgctxt "uycXLZ"
+msgid "You've used your explanations"
+msgstr "Açıklama hakkın bitti"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "uFNRuq"
+msgid "No more mock exams today"
+msgstr "Bugünkü deneme sınavı hakkın bitti"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "oTW-15"
+msgid "You've used your mock exams"
+msgstr "Deneme sınavı hakkın bitti"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
@@ -378,14 +391,14 @@ msgid "You've reached today's limit"
 msgstr "Bugünkü kullanım sınırına ulaştın"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "5SLMld"
-msgid "Your next free lesson is ready"
-msgstr "Sıradaki ücretsiz dersin hazır"
+msgctxt "YaZomb"
+msgid "You've reached your limit"
+msgstr "Kullanım sınırına ulaştın"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "y0Yu1A"
-msgid "You've used your free lessons"
-msgstr "Ücretsiz derslerini kullandın"
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "Bugün yeni ders hakkın kalmadı"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
@@ -393,9 +406,14 @@ msgid "No more lessons without an account"
 msgstr "Daha fazla ders için bir hesap gerekiyor"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "Bugün yeni ders hakkın kalmadı"
+msgctxt "y0Yu1A"
+msgid "You've used your free lessons"
+msgstr "Ücretsiz derslerini kullandın"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "5SLMld"
+msgid "Your next free lesson is ready"
+msgstr "Sıradaki ücretsiz dersin hazır"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
@@ -408,9 +426,9 @@ msgid "No more mind maps without an account"
 msgstr "Daha fazla zihin haritası için bir hesap gerekiyor"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "6ootiC"
-msgid "No more new mind maps this month"
-msgstr "Bu ay yeni zihin haritası hakkın kalmadı"
+msgctxt "OztxNT"
+msgid "You've used your mind maps"
+msgstr "Zihin haritası hakkın bitti"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "o0NLBw"
@@ -423,9 +441,9 @@ msgid "No more previews without an account"
 msgstr "Daha fazla ön izleme için bir hesap gerekiyor"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "-sI9v1"
-msgid "No more previews this month"
-msgstr "Bu ay ön izleme hakkın kalmadı"
+msgctxt "-jMPMN"
+msgid "You've used your previews"
+msgstr "Ön izleme hakkın bitti"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"
@@ -462,7 +480,7 @@ msgstr "Derse başla"
 #: src/_components/time-answer.tsx
 #: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
-#: src/generation/generation-wait.tsx
+#: src/generation/generation-failure-notice.tsx
 #: src/language/conversation/call-intro-footer.tsx
 #: src/language/conversation/call-problem.tsx
 #: src/language/conversation/dropped-call-screen.tsx
@@ -700,6 +718,7 @@ msgstr "Geri dön"
 
 #: src/_components/subscribe-gate.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/language/unit/practice-conversation.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "Abone ol"
@@ -4135,6 +4154,44 @@ msgctxt "vNw6Rg"
 msgid "Writing each card's instructions…"
 msgstr "Her kartın yönergelerini hazırlıyoruz…"
 
+#: src/generation/generation-failure-notice.tsx
+msgctxt "Eg11ZY"
+msgid "Reconnect"
+msgstr "Yeniden bağlan"
+
+#: src/generation/generation-failure-notice.tsx
+msgctxt "53pCO9"
+msgid "We stopped getting updates. It may still be working."
+msgstr "Güncellemeleri alamıyoruz. İşlem hâlâ sürüyor olabilir."
+
+#: src/generation/generation-failure-notice.tsx
+msgctxt "CN_B_k"
+msgid "Connection lost"
+msgstr "Bağlantı kesildi"
+
+#: src/generation/generation-failure-notice.tsx
+#: src/onboarding/steps/step-parts.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "YXnM-X"
+msgid "Something went wrong on our side."
+msgstr "Bizim tarafımızda bir sorun oluştu."
+
+#. Preparing this content failed. It is not still running.
+#: src/generation/generation-failure-notice.tsx
+msgctxt "0fLHBg"
+msgid "This didn't finish"
+msgstr "Tamamlanamadı"
+
+#: src/generation/generation-failure-notice.tsx
+msgctxt "iKz0K6"
+msgid "We couldn't get this started."
+msgstr "İşlemi başlatamadık."
+
+#: src/generation/generation-failure-notice.tsx
+msgctxt "q8l1Sf"
+msgid "This didn't start"
+msgstr "Başlatılamadı"
+
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
 msgid "in progress"
@@ -4156,44 +4213,6 @@ msgstr "burada kesildi"
 msgctxt "wSt267"
 msgid "not started yet"
 msgstr "henüz başlamadı"
-
-#: src/generation/generation-wait.tsx
-msgctxt "Eg11ZY"
-msgid "Reconnect"
-msgstr "Yeniden bağlan"
-
-#: src/generation/generation-wait.tsx
-msgctxt "53pCO9"
-msgid "We stopped getting updates. It may still be working."
-msgstr "Güncellemeleri alamıyoruz. İşlem hâlâ sürüyor olabilir."
-
-#: src/generation/generation-wait.tsx
-msgctxt "CN_B_k"
-msgid "Connection lost"
-msgstr "Bağlantı kesildi"
-
-#: src/generation/generation-wait.tsx
-#: src/onboarding/steps/step-parts.tsx
-#: src/wait/first-lesson-row.tsx
-msgctxt "YXnM-X"
-msgid "Something went wrong on our side."
-msgstr "Bizim tarafımızda bir sorun oluştu."
-
-#. Preparing this content failed. It is not still running.
-#: src/generation/generation-wait.tsx
-msgctxt "0fLHBg"
-msgid "This didn't finish"
-msgstr "Tamamlanamadı"
-
-#: src/generation/generation-wait.tsx
-msgctxt "iKz0K6"
-msgid "We couldn't get this started."
-msgstr "İşlemi başlatamadık."
-
-#: src/generation/generation-wait.tsx
-msgctxt "q8l1Sf"
-msgid "This didn't start"
-msgstr "Başlatılamadı"
 
 #: src/generation/lesson-generation-copy.ts
 msgctxt "57Hm5c"
@@ -4705,13 +4724,6 @@ msgid "More lessons"
 msgstr "Daha fazla ders"
 
 #: src/journey/journey-chapters.tsx
-#: src/journey/next-on-path.tsx
-#: src/journey/path-phase-row.tsx
-msgctxt "KcgJH7"
-msgid "{done, number} / {total, number}"
-msgstr "{done, number} / {total, number}"
-
-#: src/journey/journey-chapters.tsx
 #: src/syllabus/syllabus-chapter-row.tsx
 #: src/syllabus/topic-note.tsx
 msgctxt "VPnXIm"
@@ -4851,6 +4863,18 @@ msgctxt "L_oGIZ"
 msgid "Not in your plan"
 msgstr "Planında yok"
 
+#: src/journey/journey-path.tsx
+#: src/journey/path-phase-row.tsx
+msgctxt "oIX23Q"
+msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
+msgstr "{count, plural, other {Çalışılmamış # ders}}"
+
+#: src/journey/journey-path.tsx
+#: src/journey/next-on-path.tsx
+msgctxt "8sxDix"
+msgid "Date to be confirmed"
+msgstr "Tarih henüz kesinleşmedi"
+
 #. The name of a study step: a live voice call in the language being learned.
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
@@ -4932,44 +4956,9 @@ msgid "Your plan at a glance"
 msgstr "Bir bakışta planın"
 
 #: src/journey/next-on-path.tsx
-#: src/journey/use-phase-when.ts
-msgctxt "8sxDix"
-msgid "Date to be confirmed"
-msgstr "Tarih henüz kesinleşmedi"
-
-#: src/journey/next-on-path.tsx
 msgctxt "F1DaXB"
 msgid "Next on your path"
 msgstr "Yolculuğunda sıradaki adım"
-
-#. {date} is a month, like "Jan" or "Jan 2028", never a day.
-#: src/journey/path-phase-row.tsx
-msgctxt "0r6xAZ"
-msgid "until ~{date}"
-msgstr "~{date} ayına kadar"
-
-#. {date} is a month, like "Jan" or "Jan 2028", never a day.
-#: src/journey/path-phase-row.tsx
-msgctxt "JzTTux"
-msgid "until about {date}"
-msgstr "{date} civarına kadar"
-
-#. {date} is a day, like "Nov 10".
-#: src/journey/path-phase-row.tsx
-msgctxt "phaseUntilAboutDay"
-msgid "until ~{date}"
-msgstr "~{date} tarihine kadar"
-
-#. {date} is a day, like "Nov 10".
-#: src/journey/path-phase-row.tsx
-msgctxt "phaseUntilAboutDaySpoken"
-msgid "until about {date}"
-msgstr "yaklaşık {date} tarihine kadar"
-
-#: src/journey/path-phase-row.tsx
-msgctxt "oPz0RK"
-msgid "until {date}"
-msgstr "{date} tarihine kadar"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "M6MlNv"
@@ -4981,11 +4970,6 @@ msgstr "Bugün devam edecek"
 msgctxt "-DKe0Q"
 msgid "Continues {date}"
 msgstr "{date} tarihinde devam edecek"
-
-#: src/journey/path-phase-row.tsx
-msgctxt "oIX23Q"
-msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
-msgstr "{count, plural, other {Çalışılmamış # ders}}"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "sk-jVa"
@@ -5011,6 +4995,24 @@ msgstr "{start} – {end}"
 msgctxt "yYQBka"
 msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of # lesson} other {{done, number} of # lessons}}"
 msgstr "{total, plural, =0 {{done, number} / # ders} other {{done, number} / # ders}}"
+
+#: src/journey/phase-when.tsx
+#: src/plan/plan-date-text.tsx
+msgctxt "7KwTGn"
+msgid "~{date}"
+msgstr "~{date}"
+
+#. In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".
+#: src/journey/phase-when.tsx
+msgctxt "55jrFz"
+msgid "{dateKind, select, month {Ends about {date}} other {Ends about {date}}}"
+msgstr "{dateKind, select, month {{date} ayı civarında biter} other {{date} civarında biter}}"
+
+#. When a phase of the plan ends. {date} is a day, like "Dec 12".
+#: src/journey/phase-when.tsx
+msgctxt "JQlKi_"
+msgid "Ends {date}"
+msgstr "{date} tarihinde biter"
 
 #: src/journey/plan-header.tsx
 msgctxt "8PP61v"
@@ -5320,25 +5322,6 @@ msgctxt "uNzqcn"
 msgid "You finished your plan"
 msgstr "Planını tamamladın"
 
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/journey/use-phase-when.ts
-msgctxt "bs_tuX"
-msgid "{dateKind, select, month {Until about {date}} other {Until about {date}}}"
-msgstr "{dateKind, select, month {{date} civarına kadar} other {{date} civarına kadar}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/journey/use-phase-when.ts
-msgctxt "w5zaIw"
-msgid "{dateKind, select, month {Until {date}} other {Until {date}}}"
-msgstr "{dateKind, select, month {{date} ayına kadar} other {{date} tarihine kadar}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/journey/use-phase-when.ts
-#: src/plan/plan-date-text.tsx
-msgctxt "IGvm5x"
-msgid "{dateKind, select, month {About {date}} other {About {date}}}"
-msgstr "{dateKind, select, month {{date} civarı} other {{date} civarı}}"
-
 #: src/journey/use-roadmap.ts
 msgctxt "nO5Gb7"
 msgid "Phase {number, number} of {total, number}"
@@ -5642,9 +5625,9 @@ msgid "No more calls today"
 msgstr "Bugünkü sohbet hakkın doldu"
 
 #: src/language/conversation/call-limit-message.tsx
-msgctxt "mFsER8"
-msgid "No more calls this month"
-msgstr "Bu ayki sohbet hakkın doldu"
+msgctxt "fA3IHK"
+msgid "You've used your call time"
+msgstr "Sohbet süren doldu"
 
 #: src/language/conversation/call-limit-message.tsx
 msgctxt "fZ-NXt"
@@ -8656,10 +8639,17 @@ msgctxt "HwbZRQ"
 msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one tomorrow."
 msgstr "Bugün bu deneme sınavında {count, number} soru var (tamamı {total, number} soru) ve yaklaşık {time} sürüyor. Yarın tamamına girebilirsin."
 
+#. In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now.
 #: src/mock/mock-short-dialog.tsx
-msgctxt "YIvNSi"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one next month."
-msgstr "Bugün bu deneme sınavında {count, number} soru var (tamamı {total, number} soru) ve yaklaşık {time} sürüyor. Gelecek ay tamamına girebilirsin."
+msgctxt "3-UMw5"
+msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one later today."
+msgstr "Bugün bu deneme sınavında {count, number} soru var (normalde {total, number}) ve yaklaşık {time} sürüyor. Tamamını bugün daha sonra çözebilirsin."
+
+#. In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English.
+#: src/mock/mock-short-dialog.tsx
+msgctxt "mZQ7Qe"
+msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one on {date}."
+msgstr "Bugün bu deneme sınavında {count, number} soru var (normalde {total, number}) ve yaklaşık {time} sürüyor. Tamamını {date} tarihinde çözebilirsin."
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "Rr2HWA"
@@ -8727,19 +8717,14 @@ msgid "You picked {answer}"
 msgstr "Seçimin: {answer}"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "lBAN40"
-msgid "No more material today. More tomorrow."
-msgstr "Bugünkü materyal sınırına ulaştın. Yarın devam edebilirsin."
+msgctxt "aw2Ukw"
+msgid "No more material today"
+msgstr "Bugünkü materyal yükleme hakkın bitti"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "OZTZJj"
-msgid "No more material this month. More next month, or subscribe to keep going."
-msgstr "Bu ayki materyal sınırına ulaştın. Daha fazlası için gelecek ayı bekleyebilir ya da abone olabilirsin."
-
-#: src/onboarding/entry/attach-panel.tsx
-msgctxt "fKoONz"
-msgid "No more material today. More tomorrow, or subscribe to keep going."
-msgstr "Bugünkü materyal sınırına ulaştın. Daha fazlası için yarını bekleyebilir ya da abone olabilirsin."
+msgctxt "g0Nshd"
+msgid "You've used your uploads"
+msgstr "Yükleme hakkın bitti"
 
 #: src/onboarding/entry/attach-panel.tsx
 msgctxt "yeNv9c"
@@ -8909,21 +8894,6 @@ msgid "How does inflation work?"
 msgstr "Enflasyon nasıl işler?"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "1oUkSm"
-msgid "Pause one in your Plan, or subscribe to study more at once."
-msgstr "Plan bölümünde bir hedefi duraklat veya aynı anda daha fazla hedef üzerinde çalışmak için abone ol."
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "EreSqP"
-msgid "That's all the goals you can study at once"
-msgstr "Aynı anda çalışabileceğin hedef sınırına ulaştın"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "4RwuVD"
-msgid "No more new goals this month"
-msgstr "Bu ayki yeni hedef sınırına ulaştın"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "MO6156"
 msgid "Go to your Plan"
 msgstr "Planına git"
@@ -9069,19 +9039,14 @@ msgid "What you want to do with your material"
 msgstr "Materyalinle ne yapmak istediğin"
 
 #: src/onboarding/entry/material-questions.tsx
-msgctxt "maqtwk"
-msgid "No more questions today. More tomorrow."
-msgstr "Bugünkü soru sınırına ulaştın. Yarın devam edebilirsin."
+msgctxt "TPgNQb"
+msgid "No more questions today"
+msgstr "Bugünkü soru hakkın bitti"
 
 #: src/onboarding/entry/material-questions.tsx
-msgctxt "Iadu3J"
-msgid "No more questions this month. More next month, or subscribe to keep going."
-msgstr "Bu ayki soru sınırına ulaştın. Daha fazlası için gelecek ayı bekleyebilir ya da abone olabilirsin."
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "Z_xQgo"
-msgid "No more questions today. More tomorrow, or subscribe to keep going."
-msgstr "Bugünkü soru sınırına ulaştın. Daha fazlası için yarını bekleyebilir ya da abone olabilirsin."
+msgctxt "GYGZpe"
+msgid "You've used your questions"
+msgstr "Soru hakkın bitti"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "KIdIMi"
@@ -9166,19 +9131,29 @@ msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the
 msgstr "{exam, select, abitur {Abitur’u geçmek} bac {bac’ı geçmek} enem {ENEM’i geçmek} exani {EXANI-II’yi geçmek} kyotsu {Common Test’te başarılı olmak} matura {matura’yı geçmek} maturita {maturità’yı geçmek} suneung {CSAT sınavında başarılı olmak} yks {YKS’de başarılı olmak} other {SAT’ı geçmek}}"
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.a9a9_d"
-msgid "That's all the goals you can study at once. Pause one, or subscribe to study more."
-msgstr "Aynı anda çalışabileceğin hedef sınırına ulaştın. Birini duraklat veya daha fazla hedef üzerinde çalışmak için abone ol."
+msgctxt "goalErrors.ngFchc"
+msgid "No more new goals today"
+msgstr "Bugünkü yeni hedef başlatma hakkın bitti"
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.GZnNXl"
-msgid "No more quick explanations today. More tomorrow, or subscribe to keep going."
-msgstr "Bugünkü hızlı açıklama sınırına ulaştın. Yarın tekrar kullanabilir veya abone olup devam edebilirsin."
+msgctxt "goalErrors.ldHskD"
+msgid "You've started all the new goals you can"
+msgstr "Yeni hedef başlatma hakkın bitti"
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.JsRkia"
-msgid "No more new goals today. More tomorrow."
-msgstr "Bugünkü yeni hedef sınırına ulaştın. Yarın yenilerini ekleyebilirsin."
+msgctxt "goalErrors.1oUkSm"
+msgid "Pause one in your Plan, or subscribe to study more at once."
+msgstr "Planında bir hedefi duraklat ya da aynı anda daha fazla hedef için abone ol."
+
+#: src/onboarding/goal-errors.ts
+msgctxt "goalErrors.EreSqP"
+msgid "That's all the goals you can study at once"
+msgstr "Aynı anda bu kadar hedef üzerinde çalışabilirsin"
+
+#: src/onboarding/goal-errors.ts
+msgctxt "goalErrors._8pCzX"
+msgid "No more quick explanations today"
+msgstr "Bugünkü hızlı açıklama hakkın bitti"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.2aNqX-"
@@ -9186,14 +9161,9 @@ msgid "Without an account, you study one goal. Create a free account to start an
 msgstr "Hesap açmadan tek bir hedef üzerinde çalışabilirsin. Başka bir hedefe başlamak için ücretsiz hesap aç."
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.B_qpn8"
-msgid "No more quick explanations this month. More next month, or subscribe to keep going."
-msgstr "Bu ayki hızlı açıklama sınırına ulaştın. Gelecek ay tekrar kullanabilir veya abone olup devam edebilirsin."
-
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.wjsNnL"
-msgid "No more new goals this month. More next month, or subscribe to keep going."
-msgstr "Bu ayki yeni hedef sınırına ulaştın. Gelecek ay yenilerini ekleyebilir veya abone olup devam edebilirsin."
+msgctxt "goalErrors.PrgRDF"
+msgid "You've used your quick explanations"
+msgstr "Hızlı açıklama hakkın bitti"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.MKCnRs"
@@ -9209,11 +9179,6 @@ msgstr "Peş peşe hedefler başlatıyorsun. Birkaç dakika sonra tekrar dene."
 msgctxt "goalErrors.ib5oUK"
 msgid "No more new goals today without an account."
 msgstr "Hesap açmadan bugün başka bir hedefe başlayamazsın."
-
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.NIiMiz"
-msgid "No more new goals today. More tomorrow, or subscribe to keep going."
-msgstr "Bugünkü yeni hedef sınırına ulaştın. Yarın yenilerini ekleyebilir veya abone olup devam edebilirsin."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YYmbyX"
@@ -10301,6 +10266,16 @@ msgctxt "LcFFqV"
 msgid "New lessons start"
 msgstr "Yeni derslerin başlangıcı"
 
+#: src/plan/exam-choice-question.tsx
+msgctxt "FXC8l3"
+msgid "{group}: which ones will you take?"
+msgstr "{group}: Hangilerini seçeceksin?"
+
+#: src/plan/exam-choice-question.tsx
+msgctxt "gDpw0U"
+msgid "{group}: which one will you take?"
+msgstr "{group}: hangisine gireceksin?"
+
 #: src/plan/exam-over-actions.tsx
 msgctxt "rBTgSX"
 msgid "Archive goal"
@@ -10469,10 +10444,11 @@ msgctxt "hzzrUH"
 msgid "Move your date to cover everything"
 msgstr "Her şeye yetişmek için tarihini değiştir"
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "~{date}"
+msgctxt "IGvm5x"
+msgid "{dateKind, select, month {About {date}} other {About {date}}}"
+msgstr "{dateKind, select, month {{date} civarı} other {{date} civarı}}"
 
 #: src/plan/plan-date.tsx
 msgctxt "3VeTk-"
@@ -10484,18 +10460,6 @@ msgstr "Şimdilik {month}. Gün belli olunca seç."
 msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "Planını ayarla"
-
-#: src/plan/plan-exam-choices.tsx
-#: src/today/today-exam-choice.tsx
-msgctxt "FXC8l3"
-msgid "{group}: which ones will you take?"
-msgstr "{group}: Hangilerini seçeceksin?"
-
-#: src/plan/plan-exam-choices.tsx
-#: src/today/today-exam-choice.tsx
-msgctxt "gDpw0U"
-msgid "{group}: which one will you take?"
-msgstr "{group}: hangisine gireceksin?"
 
 #: src/plan/plan-finish.tsx
 msgctxt "6Due7K"
@@ -12335,10 +12299,11 @@ msgctxt "v8WYcE"
 msgid "It takes a few minutes."
 msgstr "Birkaç dakika sürer."
 
+#. {title} is the name of one of the day's challenges, such as "Weekly challenge", never a course.
 #: src/session/next-stop-wait.tsx
 msgctxt "RBw4AC"
 msgid "Start {title}"
-msgstr "{title} kursuna başla"
+msgstr "{title} ile başla"
 
 #: src/session/next-stop-wait.tsx
 msgctxt "L22d5f"
@@ -12808,6 +12773,12 @@ msgstr "{done, plural, =0 {Bugün # / {total} görev} other {Bugün # / {total} 
 msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "Öğrenme sekmeleri"
+
+#. The search button at the end of the phone's tab bar, after the tabs.
+#: src/shell/learn-navigation.tsx
+msgctxt "xmcVZ0"
+msgid "Search"
+msgstr "Ara"
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.tFFMkF"

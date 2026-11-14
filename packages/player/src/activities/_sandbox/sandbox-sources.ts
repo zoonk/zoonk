@@ -1,7 +1,7 @@
 import { CONSOLE_VALUE_SOURCE } from "@zoonk/core/library/activities/console-values";
 
-const PYODIDE_INDEX_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/";
-const SQL_JS_BASE_URL = "https://cdn.jsdelivr.net/npm/sql.js@1.15.2/dist/";
+const PYODIDE_INDEX_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.8/full/";
+const SQL_JS_BASE_URL = "https://cdn.jsdelivr.net/npm/sql.js@1.16.0/dist/";
 
 const LOCKED_GLOBALS = [
   "BroadcastChannel",
@@ -178,6 +178,24 @@ self.onmessage = async (event) => {
     globals.destroy();
   }
 };
+`;
+
+export const REGEX_WORKER_SOURCE = `"use strict";
+self.onmessage = (event) => {
+  const { flags, id, samples, source } = event.data;
+  try {
+    const regex = new RegExp(source, flags);
+    const matches = samples.map((sample) => {
+      const found = regex.exec(sample);
+      return found ? { end: found.index + found[0].length, start: found.index } : null;
+    });
+    self.postMessage({ id, matches, type: "done" });
+  } catch (error) {
+    self.postMessage({ id, message: String(error), type: "error" });
+  }
+};
+
+self.postMessage({ type: "ready" });
 `;
 
 export const SQL_WORKER_SOURCE = `"use strict";

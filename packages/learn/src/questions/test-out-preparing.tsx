@@ -5,15 +5,18 @@ import {
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
-import { type HelpLimit, HelpLimitNotice } from "../_components/help-limit-notice";
+import {
+  type HelpLimit,
+  HelpLimitWords,
+  LimitMainAction,
+  useLiveLimit,
+} from "../_components/help-limit-notice";
 import { StatusRegion } from "../_components/status-region";
 import { StepCard, StepDetail, StepHeader } from "../_components/step-card";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TaskActions } from "../_components/task-layout";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
-import { useLearnRoutes } from "../learn-context";
-import { LearnLink } from "../learn-link";
 import { TaskFrame, TaskMainButton } from "../shell/task-frame";
 
 function TestOutCard() {
@@ -34,7 +37,7 @@ function TestOutCard() {
 }
 
 function TestOutStart({
-  limit,
+  limit: refusal,
   onStart,
   starting,
 }: {
@@ -43,15 +46,15 @@ function TestOutStart({
   starting: boolean;
 }) {
   const t = useExtracted();
-  const routes = useLearnRoutes();
+  const limit = useLiveLimit(refusal);
 
   return (
     <>
-      <StatusRegion>
-        {limit && <HelpLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />}
-      </StatusRegion>
+      <StatusRegion>{limit && <HelpLimitWords limit={limit} />}</StatusRegion>
 
-      {!limit && (
+      {limit ? (
+        <LimitMainAction limit={limit} />
+      ) : (
         <TaskActions>
           <TaskMainButton busy={starting} onClick={onStart}>
             {t("Start the test")}

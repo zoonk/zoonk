@@ -4,16 +4,17 @@ import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/con
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { type GoalError, needsAccountFor, useGoalLimitMessage } from "../goal-errors";
-import { type CreateGoalsOutcome } from "../onboarding-actions";
+import { type LimitText } from "../../_components/comes-back-words";
+import { type GoalError, useGoalLimitWords } from "../goal-errors";
+import { type CreateGoalsOutcome, needsAccountFor } from "../onboarding-actions";
 
 function useCreateError() {
   const t = useExtracted();
-  const limitMessage = useGoalLimitMessage();
+  const limitWords = useGoalLimitWords();
 
-  return (outcome: Exclude<CreateGoalsOutcome, { status: "created" }>) =>
+  return (outcome: Exclude<CreateGoalsOutcome, { status: "created" }>): LimitText =>
     outcome.status === "limitReached"
-      ? limitMessage(outcome.reason)
+      ? limitWords(outcome)
       : t("We couldn't save your goal. Try again in a moment.");
 }
 
@@ -63,7 +64,10 @@ export function useGoalCreation() {
       }
 
       setError({
-        limit: outcome.status === "limitReached" ? outcome.reason : undefined,
+        limit:
+          outcome.status === "limitReached"
+            ? { availableAt: outcome.availableAt, reason: outcome.reason }
+            : undefined,
         message: createError(outcome),
         needsAccount: outcome.status === "limitReached" && needsAccountFor(outcome.reason),
       });
@@ -75,7 +79,7 @@ export function useGoalCreation() {
 
   const clearActiveGoalsError = (draft: OnboardingDraftView) => {
     if (draft.activeGoalsLeft !== 0) {
-      setError((current) => (current?.limit === "activeGoals" ? null : current));
+      setError((current) => (current?.limit?.reason === "activeGoals" ? null : current));
     }
   };
 

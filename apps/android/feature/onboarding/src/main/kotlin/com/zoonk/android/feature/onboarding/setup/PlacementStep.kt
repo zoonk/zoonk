@@ -258,9 +258,9 @@ internal fun ColumnScope.PlacementWaiting(
         hold,
         stringResource(R.string.onboarding_continue),
         onRetry,
-        afterWait = {
-            if (!hold.holding && (patient || run.status == GenerationRun.Status.Failed)) {
-                OnboardingActions {
+        skip =
+            if (patient || run.status == GenerationRun.Status.Failed) {
+                {
                     FinishFailed(failed)
                     TextButton(
                         busy = pending,
@@ -280,8 +280,9 @@ internal fun ColumnScope.PlacementWaiting(
                         )
                     }
                 }
-            }
-        },
+            } else {
+                null
+            },
     ) { share ->
         GenerationWait(GenerationKind.Placement, shown, onRetry, share = share) {
             OnboardingHeading(

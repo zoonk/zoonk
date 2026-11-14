@@ -147,7 +147,9 @@ describe("language challenges are Plus only", () => {
       ).resolves.toMatchObject({ status: "todo" });
 
       await expect(getAllowance()).resolves.toMatchObject({
-        callTime: { usedSeconds: 0, usedSecondsThisMonth: 0 },
+        items: expect.arrayContaining([
+          expect.objectContaining({ kind: "conversation", usedLast30Days: 0, usedToday: 0 }),
+        ]),
       });
 
       await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(
@@ -258,7 +260,11 @@ describe("language challenges are Plus only", () => {
         today: { next: expect.objectContaining({ sessionId: expect.any(String) }) },
       });
 
-      await expect(getAllowance()).resolves.toMatchObject({ callTime: { usedSeconds: 0 } });
+      await expect(getAllowance()).resolves.toMatchObject({
+        items: expect.arrayContaining([
+          expect.objectContaining({ kind: "conversation", usedToday: 0 }),
+        ]),
+      });
     },
   );
 });

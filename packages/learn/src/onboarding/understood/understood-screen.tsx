@@ -9,7 +9,7 @@ import { GateWords, SubscribeGate } from "../../_components/subscribe-gate";
 import { GoalLimitBar } from "../entry/goal-limit-notice";
 import { GoalActions, GoalErrorMessage } from "../entry/goal-outcomes";
 import { type GoalError } from "../goal-errors";
-import { type GoalLimitReason } from "../onboarding-actions";
+import { type GoalLimit } from "../onboarding-actions";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -57,7 +57,7 @@ function GoalCard({
   onSave: (input: { field: EditableField; value: string }) => Promise<boolean>;
   timeZone: string;
 }) {
-  const rowsFor = useUnderstoodRows();
+  const rowsFor = useUnderstoodRows(timeZone);
   // oxlint-disable-next-line react/hook-use-state -- What the card opened with never changes, so there is no setter.
   const [countryAsked] = useState(Boolean(goal.draft.targetRegion));
 
@@ -93,8 +93,8 @@ function GoalCard({
   );
 }
 
-function LockedGoalCard({ goal }: { goal: UnderstoodGoalView }) {
-  const rowsFor = useUnderstoodRows();
+function LockedGoalCard({ goal, timeZone }: { goal: UnderstoodGoalView; timeZone: string }) {
+  const rowsFor = useUnderstoodRows(timeZone);
 
   const rows = rowsFor({
     contentCountry: goal.contentCountry,
@@ -166,7 +166,7 @@ export function UnderstoodScreen({
   draft: UnderstandingDraft;
   error: GoalError | null;
   goal: string;
-  goalLimit?: GoalLimitReason | null;
+  goalLimit?: GoalLimit | null;
   hasAccount: boolean;
   isCreating: boolean;
   material: readonly { title: string }[];
@@ -195,7 +195,7 @@ export function UnderstoodScreen({
     <OnboardingColumn
       bar={
         plusLimit ? (
-          <GoalLimitBar reason={plusLimit} words />
+          <GoalLimitBar limit={plusLimit} words />
         ) : (
           <GoalActions error={cardError} signUpHref={signUpHref}>
             <OnboardingSecondaryButton
@@ -253,7 +253,7 @@ export function UnderstoodScreen({
         <div className="flex flex-col gap-3">
           {draft.lockedGoals.map((understood, index) => (
             // oxlint-disable-next-line react/no-array-index-key -- Locked goals can't be edited; their place is their identity.
-            <LockedGoalCard goal={understood} key={index} />
+            <LockedGoalCard goal={understood} key={index} timeZone={draft.timeZone} />
           ))}
 
           {draft.goals.length > 0 && (

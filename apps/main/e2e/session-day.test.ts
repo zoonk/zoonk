@@ -12,6 +12,7 @@ import {
   openAs,
   pressUntil,
   saveMissions,
+  waitForLessonStart,
   writeStudyLesson,
 } from "./study-day";
 
@@ -78,7 +79,7 @@ async function playCapsules(page: Page) {
   await answerRight(page, /^Capsule two/u);
 }
 
-async function playLesson(page: Page) {
+async function playLesson(page: Page, started: Promise<unknown>) {
   await expect(page).toHaveURL(/\/learn\/[\w-]+\?session=[\w-]+$/u);
   await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
   await page.keyboard.press("2");
@@ -89,6 +90,7 @@ async function playLesson(page: Page) {
 
   await page.keyboard.press("Enter");
   await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+  await started;
   await page.keyboard.press("Enter");
 
   await expectMoment(page, "Lesson complete");
@@ -105,12 +107,14 @@ async function playLesson(page: Page) {
 
 async function replayFromToday(page: Page, lesson: { id: string; title: string }) {
   await page.getByRole("button", { name: /^\d+ done/u }).click();
+  const started = waitForLessonStart(page, lesson.id);
   await page.getByRole("link", { name: `${lesson.title}, done` }).click();
   await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?from=%2Ftoday$`, "u"));
   await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
   await page.keyboard.press("2");
   await page.keyboard.press("Enter");
   await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+  await started;
   await page.keyboard.press("Enter");
   await expectMoment(page, "Lesson complete");
   await page.getByRole("link", { name: /^Continue/u }).click();
@@ -208,13 +212,14 @@ test.describe("Today's session", () => {
 
     await playCapsules(page);
     await expectMoment(page, "Review done");
+    const started = waitForLessonStart(page, lesson.id);
 
     await pressUntil(
       () => page.keyboard.press("Enter"),
       page.getByText('What does the electron "cloud" show?'),
     );
 
-    await playLesson(page);
+    await playLesson(page, started);
     await playPractice(page);
 
     await expect(page.getByRole("link", { name: "Finish" })).toBeVisible();

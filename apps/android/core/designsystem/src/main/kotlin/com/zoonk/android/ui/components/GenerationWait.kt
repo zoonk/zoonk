@@ -16,6 +16,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
@@ -158,6 +159,12 @@ fun WritingWait(
     }
 }
 
+/**
+ * True where the screen's bar holds its main action, so a failure notice's Try again there takes
+ * the secondary look: a screen has one filled button. Elsewhere Try again is the screen's main action.
+ */
+val LocalMainActionInBar = compositionLocalOf { false }
+
 @Composable
 fun GenerationFailureNotice(
     failure: GenerationFailure,
@@ -165,6 +172,7 @@ fun GenerationFailureNotice(
     modifier: Modifier = Modifier,
     title: String? = null,
     description: String? = null,
+    mainActionInBar: Boolean = LocalMainActionInBar.current,
 ) {
     val (icon, titleRes, descriptionRes) =
         when (failure) {
@@ -192,18 +200,20 @@ fun GenerationFailureNotice(
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 if (onRetry != null) {
-                    Button(onClick = onRetry, modifier = Modifier.padding(top = 8.dp)) {
-                        Text(
-                            stringResource(
-                                if (failure ==
-                                    GenerationFailure.Connection
-                                ) {
-                                    R.string.generation_reconnect
-                                } else {
-                                    R.string.generation_try_again
-                                },
-                            ),
+                    val label =
+                        stringResource(
+                            if (failure ==
+                                GenerationFailure.Connection
+                            ) {
+                                R.string.generation_reconnect
+                            } else {
+                                R.string.generation_try_again
+                            },
                         )
+                    if (mainActionInBar) {
+                        OutlinedButton(onClick = onRetry, modifier = Modifier.padding(top = 8.dp)) { Text(label) }
+                    } else {
+                        Button(onClick = onRetry, modifier = Modifier.padding(top = 8.dp)) { Text(label) }
                     }
                 }
             }

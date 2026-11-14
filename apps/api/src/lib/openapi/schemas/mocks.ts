@@ -1,3 +1,4 @@
+import { USAGE_PERIODS } from "@zoonk/core/entitlements/contract";
 import { examDocumentSchema } from "@zoonk/core/exams/document";
 import {
   type MockOptionView,
@@ -89,6 +90,14 @@ export const mockOptionsResponseSchema = z
 
 export const anytimeMockResponseSchema = z
   .object({
+    availableAt: z.iso
+      .datetime()
+      .nullable()
+      .optional()
+      .meta({
+        description:
+          "For `short` when the rolling question-writing cap stopped it: when the full mock's questions can be written; absent otherwise",
+      }),
     examQuestions: z
       .number()
       .int()
@@ -101,12 +110,12 @@ export const anytimeMockResponseSchema = z
         description: "The mock's id (GET /v1/mocks/{id}); null for needsQuestions and short",
       }),
     limit: z
-      .enum(["day", "month", "total"])
+      .enum(USAGE_PERIODS)
       .nullable()
       .optional()
       .meta({
         description:
-          "For `short`: the plan's fair use for new mock questions is used for the day or the month, so new ones can be written once it renews; null when there's nothing more to write now",
+          "For `short`: the fair use for new mock questions that is used up, so new ones can be written once it renews; null when there's nothing more to write now",
       }),
     minutes: z
       .number()
@@ -124,7 +133,7 @@ export const anytimeMockResponseSchema = z
       .enum(["started", "running", "needsQuestions", "short"])
       .meta({
         description:
-          "`started`: the mock runs, its first section's clock going. `running`: one was running already; continue it. `needsQuestions`: the shared bank is short of questions the learner never answered and their plan can have new ones written: POST /goals/{goalId}/mocks/generations, follow the run, then start again with `afterWriting`. `short`: the bank holds well under the questions picked and none can be written now (or the run just wrote what it could): ask the learner first, saying how many it asks of the exam's and in how long, and start it with `acceptFewer` only if they agree",
+          "`started`: the mock runs, its first section's clock going. `running`: one was running already; continue it. `needsQuestions`: the shared bank is short of questions the learner never answered and their plan can have new ones written: POST /goals/{goalId}/mocks/generations, follow the run, then start again with `afterWriting`. `short`: the bank holds well under the questions picked and none can be written now (or the run just wrote what it could): it can ask `questions` of `examQuestions`, in `minutes`, and `acceptFewer` starts it with those once the learner agreed",
       }),
   })
   .meta({ id: "AnytimeMock" });

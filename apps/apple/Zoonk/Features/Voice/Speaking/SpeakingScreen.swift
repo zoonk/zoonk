@@ -42,7 +42,7 @@ private struct SpeakingPaperView: View {
   let paper: Resource<Components.Schemas.SpeakingPaper>
 
   private enum StartFailure: Equatable {
-    case limit(CallLimit)
+    case limit(HelpLimit)
     case failed
   }
 
@@ -201,6 +201,9 @@ private struct SpeakingPaperView: View {
     _ task: Components.Schemas.SpeakingPaperTask, paper: Components.Schemas.SpeakingPaper
   ) -> some View {
     let locked = paper.access == .plusRequired
+    // Tried while locked: a subscription that opens the paper takes the gate away.
+    let isGated = gatedTask == task.key && locked
+    let showsStart = paper.access != .callsPaused && writingTask != task.key && !isGated
 
     return VStack(alignment: .leading, spacing: 8) {
       if !task.criteria.isEmpty {
@@ -228,16 +231,19 @@ private struct SpeakingPaperView: View {
             comment: "An exam task opens by itself once its card is written"))
       }
 
-      if gatedTask == task.key {
+      if isGated {
         SubscribeGate(
           title: Text(
             "Speaking practice needs a subscription", tableName: "Voice",
             comment: "A free learner tried to start an exam speaking task")
         )
         .padding(.top, 4)
-      } else {
+      }
+
+      // The gate takes Start's place only; the last result stays one tap away.
+      if showsStart || task.lastTry != nil {
         ButtonRow(spacing: 12) {
-          if paper.access != .callsPaused && writingTask != task.key {
+          if showsStart {
             BusyButton(isBusy: startingTask == task.key, icon: .play) {
               if locked {
                 gatedTask = task.key
@@ -264,29 +270,22 @@ private struct SpeakingPaperView: View {
       }
 
       // Only the open task starts, so a failure is said right under its button.
-      if let startFailure {
-        FailureLine(message: startFailureMessage(startFailure))
-          .typeStyle(.body)
+      switch startFailure {
+      case .limit(let limit):
+        LimitNotice(limit: limit, kind: .callTime)
+          .announcesAlert(limit.words(.callTime).said)
+      case .failed:
+        FailureLine(
+          message: LocalizedStringResource(
+            "The task didn't start. Try again in a moment.", table: "Voice",
+            comment: "Starting an exam task failed")
+        )
+        .typeStyle(.body)
+      case nil:
+        EmptyView()
       }
     }
     .padding(.vertical, 4)
-  }
-
-  private func startFailureMessage(_ failure: StartFailure) -> String {
-    switch failure {
-    case .limit(let limit) where limit.period == .month:
-      String(
-        localized: "Not enough call time this month for this task", table: "Voice",
-        comment: "The call time left this month can't fit this speaking exam task")
-    case .limit:
-      String(
-        localized: "Not enough call time today for this task", table: "Voice",
-        comment: "The call time left today can't fit this speaking exam task")
-    case .failed:
-      String(
-        localized: "The task didn't start. Try again in a moment.", table: "Voice",
-        comment: "Starting an exam task failed")
-    }
   }
 
   private func facts(_ task: Components.Schemas.SpeakingPaperTask) -> String {
@@ -351,9 +350,20 @@ private struct SpeakingPaperView: View {
     case .done(.done(let id)):
       router.open(.conversation(conversationId: id))
     case .done(.refused(let refusal)):
-      if case .limit(let limit) = CallReservation(refusal: refusal) {
+      switch CallReservation(refusal: refusal) {
+      case .limit(let limit):
         startFailure = .limit(limit)
-      } else {
+      case .plusRequired:
+        gatedTask = task
+        // The server's answer is the access now, even if the read after it fails; a later read
+        // (a subscription bought) replaces it.
+        paper.update { paper in
+          var locked = paper
+          locked.access = .plusRequired
+          return locked
+        }
+        await paper.refresh()
+      default:
         startFailure = .failed
       }
     case .failed:

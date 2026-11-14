@@ -446,7 +446,7 @@ private func daysLeft(until targetDate: String?) -> Int? {
     return nil
   }
 
-  let days = PlanDate.days(from: isoDay(.now), to: targetDate)
+  let days = PlanDate.days(from: PlanDate.today(), to: targetDate)
   return days >= 0 ? days : nil
 }
 

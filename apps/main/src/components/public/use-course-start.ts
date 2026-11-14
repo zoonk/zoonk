@@ -8,7 +8,9 @@ import { useOnboardingNavigation } from "@/app/[lang]/(app)/(onboarding)/start/u
 import { useRouter } from "@/i18n/navigation";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
 import { getCourseStartHref } from "@/lib/public/public-hrefs";
+import { answerHere, openingAsGuest } from "@/lib/session/tap-answer";
 import { type OnboardingOwnLevel } from "@zoonk/core/view-models/onboarding/contract";
+import { useLiveLimit } from "@zoonk/learn/help-limit";
 import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useState, useTransition } from "react";
@@ -44,8 +46,10 @@ export function useCourseStart({
         return;
       }
 
-      const { data } = await safeAsync(async () => {
-        const guest = await ensureGuestSession();
+      const signIn = ensureGuestSession();
+
+      const start = async () => {
+        const guest = await signIn;
 
         return guest.status === "ready"
           ? startCourseAction({
@@ -56,9 +60,18 @@ export function useCourseStart({
               timeZone: getLocalTimeZone(),
             })
           : null;
-      });
+      };
 
-      const outcome: CourseStartOutcome = data ?? { status: "failed" };
+      const { data } = await safeAsync(() => answerHere(start(), openingAsGuest(signIn)));
+      const started = data ?? "failed";
+
+      if (started === "left") {
+        return;
+      }
+
+      const outcome: CourseStartOutcome = (started === "failed" ? null : started.answer) ?? {
+        status: "failed",
+      };
 
       if (outcome.status !== "started") {
         setFailure(outcome);
@@ -74,7 +87,7 @@ export function useCourseStart({
     });
 
   return {
-    failure,
+    failure: useLiveLimit(failure),
     pending,
     start: () => run(),
     startWithLevel: (level: OnboardingOwnLevel | null) => run(level),

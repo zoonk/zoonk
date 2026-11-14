@@ -52,6 +52,7 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineChapter
 import com.zoonk.api.models.SkillOutlineGeneration
@@ -379,7 +380,7 @@ private fun FarTopicRequest(
     }
 
     if (action != null) {
-        val enabled = limit == null || limit is Limit.SlowDown
+        val enabled = limit == null || limit is Limit.SlowDown || limitLifted(limit)
         val label: @Composable RowScope.() -> Unit = { Text(stringResource(action)) }
         if (failed) {
             OutlinedButton(

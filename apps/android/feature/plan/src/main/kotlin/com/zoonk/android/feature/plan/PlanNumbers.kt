@@ -403,7 +403,7 @@ private fun PlanWeek(page: PlanPageState) {
                             formatMinutes(time.studiedMinutes.toInt(), locale),
                             formatMinutes(time.targetMinutes.roundToInt(), locale),
                         ),
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                    style = MaterialTheme.zoonkType.data,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }

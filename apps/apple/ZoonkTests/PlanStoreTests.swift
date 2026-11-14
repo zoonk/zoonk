@@ -198,6 +198,104 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertNil(session.authenticatedSession)
   }
 
+  func testAChangeMadeAsItsSheetClosesStillSaves() async {
+    let api = PlanAPIStub()
+    await api.hold(.change)
+    let store = makeStore(api: api)
+    let plan = store.plan(goalId: "goal")
+    await plan.load()
+    let editor = PlanEditor(goalId: "goal", store: store)
+
+    editor.run { await editor.change([.dailyMinutes(20)], sentence: "") }
+    await api.waitForHeldCall()
+    editor.cancel()
+    await api.releaseHeldCall()
+    // The next change waits for it to save.
+    _ = await store.change(goalId: "goal", edits: [.dailyMinutes(30)])
+    await api.setChanged(true)
+    await plan.load()
+
+    let calls = await api.calls
+    XCTAssertEqual(calls.changes, [[.dailyMinutes(20)], [.dailyMinutes(30)]])
+    XCTAssertEqual(plan.value?.plan.planId, "plan-2", "the plan reads what the change made")
+    XCTAssertNil(editor.latest, "a closed sheet shows nothing of it")
+  }
+
+  func testAChangeMadeWhileAnotherSavesGoesOutAfterIt() async {
+    let api = PlanAPIStub()
+    await api.hold(.change)
+    let store = makeStore(api: api)
+
+    let first = Task { await store.change(goalId: "goal", edits: [.dailyMinutes(20)]) }
+    await api.waitForHeldCall()
+    // Released once the second change is made and waiting.
+    Task { await api.releaseHeldCall() }
+    let second = await store.change(goalId: "goal", edits: [.dailyMinutes(30)])
+    let firstSaved = await first.value
+
+    let calls = await api.calls
+    XCTAssertEqual(calls.changes, [[.dailyMinutes(20)], [.dailyMinutes(30)]])
+    guard case .done = firstSaved, case .done = second else {
+      return XCTFail("both changes save")
+    }
+  }
+
+  func testAFitOfferWhoseNumbersHoldIsAppliedOnceChecked() async throws {
+    let api = PlanAPIStub()
+    let offer = try fitOffer()
+    await api.setPreview(preview(effect: offer.effect))
+    var applied: [[PlanEdit]] = []
+
+    let check = await makeStore(api: api).addFitOffer(offer, goalId: "goal") { applied.append($0) }
+
+    XCTAssertEqual(check, .applied)
+    XCTAssertEqual(applied.count, 1)
+  }
+
+  func testAFitOfferPutOffWhileItsCheckWaitsChangesNothing() async throws {
+    let api = PlanAPIStub()
+    let offer = try fitOffer()
+    await api.setPreview(preview(effect: offer.effect))
+    await api.hold(.preview)
+    let store = makeStore(api: api)
+    var applied: [[PlanEdit]] = []
+
+    let check = Task { await store.addFitOffer(offer, goalId: "goal") { applied.append($0) } }
+    await api.waitForHeldCall()
+    check.cancel()
+    await api.releaseHeldCall()
+
+    let answer = await check.value
+    XCTAssertNil(answer)
+    XCTAssertEqual(applied, [], "the learner put the offer off")
+  }
+
+  func testAnArchivedExamLeavesThePlanOnceSaved() async {
+    var left = false
+
+    let saved = await makeStore(api: PlanAPIStub()).archive(goalId: "goal") { left = true }
+
+    XCTAssertTrue(saved)
+    XCTAssertTrue(left)
+  }
+
+  func testAnArchiveTheLearnerLeftWhileItSavedSavesAndLeavesNothing() async {
+    let api = PlanAPIStub()
+    await api.hold(.setStatus)
+    let store = makeStore(api: api)
+    var left = false
+
+    let archive = Task { await store.archive(goalId: "goal") { left = true } }
+    await api.waitForHeldCall()
+    archive.cancel()
+    await api.releaseHeldCall()
+    _ = await archive.value
+
+    let calls = await api.calls
+    XCTAssertEqual(calls.statuses, [.archived], "the learner archived it on purpose")
+    XCTAssertFalse(left, "what the learner opened since stays open")
+  }
+
   func testSuggestionStateBelongsToTheSessionThatMadeIt() {
     let store = makeStore(api: PlanAPIStub())
     let earlier = PlanStore.SuggestionKey(
@@ -212,6 +310,21 @@ final class PlanStoreTests: XCTestCase {
   }
 
   /// A fixed clock and zone: a real one in the minute after midnight puts a plan's read on the day before.
+  private func fitOffer() throws -> GoalPlan.FitOffer {
+    try JSONDecoder().decode(
+      GoalPlan.FitOffer.self,
+      from: Data(
+        #"""
+        {"canApply":true,"effect":{"lessonsAdded":6,"lessonsRemoved":0},"fits":true,
+         "operations":[{"kind":"addLessons","count":6}]}
+        """#.utf8))
+  }
+
+  private func preview(effect: PlanEffect) -> PlanChangePreview {
+    PlanChangePreview(
+      effect: effect, feasibility: nil, finishDate: nil, ready: true, unchanged: false)
+  }
+
   private func makeStore(
     api: PlanAPIStub, clock: TestClock = TestClock(now: Date(timeIntervalSince1970: 1_800_000_000))
   ) -> PlanStore {
@@ -235,11 +348,13 @@ private final class TestClock {
   }
 }
 
-private actor PlanAPIStub: PlanAPIClient {
+/// Also Today's tests', for plan changes saved from the Plan's screens.
+actor PlanAPIStub: PlanAPIClient {
   struct Calls {
     var changed = 0
     var changes: [[PlanEdit]] = []
     var plan = 0
+    var statuses: [GoalStatusChange] = []
     var undone: [String] = []
   }
 
@@ -250,12 +365,53 @@ private actor PlanAPIStub: PlanAPIClient {
   private var changeOutcome = PlanChangeOutcome.applied(.stub)
   private var undoes = true
   private var savedFocusTest: FocusTestSummary?
+  private var previewed: PlanChangePreview?
+  private var holds: HeldCall?
+  private var heldCall: CheckedContinuation<Void, Never>?
+  private var heldCallWaiter: CheckedContinuation<Void, Never>?
+
+  enum HeldCall {
+    case change
+    case preview
+    case setStatus
+  }
 
   func setChanged(_ changed: Bool) { self.changed = changed }
   func setChangeError(_ error: Error) { changeError = error }
   func setChangeOutcome(_ outcome: PlanChangeOutcome) { changeOutcome = outcome }
   func setUndoes(_ undoes: Bool) { self.undoes = undoes }
   func setSavedFocusTest(_ summary: FocusTestSummary) { savedFocusTest = summary }
+
+  func setPreview(_ preview: PlanChangePreview) { previewed = preview }
+
+  /// The next `call` waits for `releaseHeldCall()`.
+  func hold(_ call: HeldCall) { holds = call }
+
+  func waitForHeldCall() async {
+    guard heldCall == nil else {
+      return
+    }
+
+    await withCheckedContinuation { heldCallWaiter = $0 }
+  }
+
+  func releaseHeldCall() {
+    heldCall?.resume()
+    heldCall = nil
+  }
+
+  private func holdIfAsked(_ call: HeldCall) async {
+    guard holds == call else {
+      return
+    }
+
+    holds = nil
+    await withCheckedContinuation { continuation in
+      heldCall = continuation
+      heldCallWaiter?.resume()
+      heldCallWaiter = nil
+    }
+  }
 
   func plan(token: String, goalId: String) async throws -> GoalPlan {
     calls.plan += 1
@@ -269,6 +425,10 @@ private actor PlanAPIStub: PlanAPIClient {
   }
 
   func change(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangeOutcome {
+    await holdIfAsked(.change)
+    // As URLSession does, a request whose task was canceled meanwhile doesn't arrive.
+    try Task.checkCancellation()
+
     if let changeError {
       throw changeError
     }
@@ -324,10 +484,18 @@ private actor PlanAPIStub: PlanAPIClient {
   func resumeChangesPlan(token: String, goalId: String) async throws -> Bool { false }
   func setStatus(token: String, goalId: String, status: GoalStatusChange) async throws
     -> GoalStatusOutcome
-  { .saved }
+  {
+    await holdIfAsked(.setStatus)
+    try Task.checkCancellation()
+    calls.statuses.append(status)
+    return .saved
+  }
   func rename(token: String, goalId: String, displayName: String) async throws -> Bool { true }
   func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangePreview?
-  { nil }
+  {
+    await holdIfAsked(.preview)
+    return previewed
+  }
   func chooseExamOption(token: String, goalId: String, group: String, subjects: [String])
     async throws -> PlanChangeOutcome
   { .unchanged }
@@ -352,7 +520,7 @@ private actor PlanAPIStub: PlanAPIClient {
     throw APIError.notFound
   }
   func createOutline(token: String, goalId: String, skillId: String) async throws -> OutlineRequest
-  { .limit }
+  { .unavailable }
 }
 
 extension AppliedPlanChange {

@@ -242,7 +242,7 @@ private struct MockTimeUpView: View {
     .navigationTitle(MockLabels.title(number: view.number))
     .bottomBar(note: run.barNote) {
       BusyButton(isBusy: run.busy == .submit) {
-        Task { await run.submitSection() }
+        run.start { await run.submitSection() }
       } label: {
         if view.isLastSectionCurrent {
           Text("See result", tableName: "Mock", comment: "Hands in the mock's last section")
@@ -268,7 +268,7 @@ private struct MockGradingView: View {
     )
     .bottomBar(note: run.barNote) {
       BusyButton(isBusy: run.busy == .finish) {
-        Task { await run.finish() }
+        run.start { await run.finish() }
       } label: {
         Text("See result", tableName: "Mock", comment: "Grades a handed-in mock")
       }
@@ -363,7 +363,7 @@ private struct MockBreakView: View {
     }
     .bottomBar(note: run.barNote) {
       BusyButton(isBusy: run.busy == .endBreak) {
-        Task { await run.endBreak() }
+        run.start { await run.endBreak() }
       } label: {
         Text("Start now", tableName: "Mock", comment: "Ends a mock's break early")
       }
@@ -439,7 +439,7 @@ private struct MockSpeakingView: View {
       if view.speaking == nil {
         if !run.isWritingPaper {
           BusyButton(isBusy: run.busy == .startSpeaking) {
-            Task { await run.startSpeaking() }
+            run.start { await run.startSpeaking() }
           } label: {
             Text("Start", tableName: "Mock", comment: "Starts mock speaking")
           }
@@ -463,7 +463,7 @@ private struct MockSpeakingView: View {
         Text("Keep going", tableName: "Mock", comment: "Cancels handing in speaking")
       }
       Button {
-        Task { await run.submitSection() }
+        run.start { await run.submitSection() }
       } label: {
         Text("Hand in", tableName: "Mock", comment: "Confirms handing in")
       }

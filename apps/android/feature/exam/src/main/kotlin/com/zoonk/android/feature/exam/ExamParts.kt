@@ -148,7 +148,7 @@ internal fun examDayDate(
     date: LocalDate,
     today: LocalDate,
     locale: Locale,
-): String = "${formatDate(date, locale, DateStyle.WeekdayShort)}, ${formatPlanDate(date, today, locale)}"
+): String = formatPlanDate(date, today, locale, weekday = true)
 
 internal val ExamView.showsMoment: Boolean
     get() = stage == ExamView.Stage.FINAL_STRETCH || stage == ExamView.Stage.DAY_BEFORE || stage == ExamView.Stage.EXAM_DAY

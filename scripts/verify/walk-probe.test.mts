@@ -3,7 +3,6 @@ import assert from "node:assert/strict";
 import { afterEach, beforeEach, test, vi } from "vitest";
 import { focusReturned } from "./keys-probe.mts";
 import { type Target } from "./measure.mts";
-import { OVERLAYS } from "./overlays.mts";
 import { installPageHelpers } from "./page-helpers.mts";
 import { walkStates } from "./states.mts";
 
@@ -283,7 +282,7 @@ test("opens a menu item's panel and accepts focus on the surviving menu trigger"
     assert.ok(!report.findings.some(({ message }) => message.includes("focus")));
     assert.equal(document.querySelector("[role=menu]"), null);
     document.querySelector<HTMLElement>("#unrelated")?.focus();
-    assert.equal(focusReturned({ opener: "2", overlays: OVERLAYS, returnTo: "0" }), false);
+    assert.equal(focusReturned({ opener: "2", returnTo: "0" }), false);
   } finally {
     document.removeEventListener("click", menuClick);
     vi.unstubAllGlobals();

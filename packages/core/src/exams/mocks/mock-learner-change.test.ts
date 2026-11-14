@@ -175,32 +175,42 @@ describe("mock writes under the learner's lock", () => {
     },
   );
 
-  it("rolls back the anytime creation marker when a short mock needs acceptance", async () => {
-    const { goal, user } = await scheduledMockSetup();
-    const setup = await loadAnytimeMockSetup(goal);
+  it.each(["day", "rolling30Days"] as const)(
+    "rolls back the anytime creation marker when a short mock needs acceptance at %s",
+    async (period) => {
+      const { goal, user } = await scheduledMockSetup();
+      const setup = await loadAnytimeMockSetup(goal);
 
-    const option = resolveAnytimeOption({
-      choice: { shape: { area: null, day: null, kind: "full" } },
-      setup,
-    });
-
-    if (!option) {
-      throw new Error("Expected a full mock option");
-    }
-
-    await expect(
-      createAnytimeMock({
-        acceptFewer: false,
-        goal,
-        option,
+      const option = resolveAnytimeOption({
+        choice: { shape: { area: null, day: null, kind: "full" } },
         setup,
-        userId: user.id,
-        writesCap: "day",
-      }),
-    ).resolves.toMatchObject({ limit: "day", status: "short" });
+      });
 
-    await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
-  });
+      if (!option) {
+        throw new Error("Expected a full mock option");
+      }
+
+      await expect(
+        createAnytimeMock({
+          acceptFewer: false,
+          goal,
+          option,
+          setup,
+          userId: user.id,
+          writesCap: {
+            period,
+            ...(period === "rolling30Days" && { availableAt: new Date("2031-02-01T12:00:00Z") }),
+          },
+        }),
+      ).resolves.toMatchObject({
+        limit: period,
+        ...(period === "rolling30Days" && { availableAt: new Date("2031-02-01T12:00:00Z") }),
+        status: "short",
+      });
+
+      await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+    },
+  );
 
   it("marks a block payload before locking it and leaves a repeated completion unchanged", async () => {
     const { mock, user } = await sittingFixture();

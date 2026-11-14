@@ -72,7 +72,6 @@
     <string name="conversation_end">End</string>
 
     <string name="conversation_no_calls_today">No more calls today</string>
-    <string name="conversation_no_calls_month">No more calls this month</string>
     <string name="conversation_calls_need_account">Calls need a free account</string>
     <string name="conversation_ended_title">This call has ended</string>
     <string name="conversation_taken_over">It ended when you started another call.</string>

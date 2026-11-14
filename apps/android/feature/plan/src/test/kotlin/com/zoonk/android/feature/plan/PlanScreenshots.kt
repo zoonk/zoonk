@@ -21,6 +21,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
@@ -29,6 +30,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.onboarding.DAILY_TIMES
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
@@ -36,6 +38,7 @@ import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChangePreview
+import com.zoonk.api.models.PlanPhase
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineChapter
 import kotlinx.coroutines.CoroutineScope
@@ -57,7 +60,10 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class PlanScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -101,6 +107,55 @@ class PlanScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
     fun expanded() = capture("plan-expanded")
+
+    @Test
+    @Config(qualifiers = "w852dp-h1600dp-xhdpi")
+    fun openBook() {
+        show()
+        compose.unfoldBook(folds)
+        compose.waitForIdle()
+        write("plan-open-book", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun examPhone() = capture("plan-exam-phone", exam = examPage(dated = true))
+
+    @Test
+    @Config(qualifiers = "w411dp-h3200dp-xhdpi")
+    fun examPhoneAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("plan-exam-phone-font200", exam = examPage(dated = true))
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun examWithoutADatePhone() = capture("plan-exam-no-date-phone", exam = examPage(dated = false))
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun examExpanded() = capture("plan-exam-expanded", exam = examPage(dated = true))
+
+    /** Ana's ENEM: four phases to the exam, then After the exam; without a date, the plan's estimate ends it. */
+    private fun examPage(dated: Boolean): PlanPageState {
+        val summary = learnerSummary(kind = "exam", title = "ENEM")
+        val base = learnPlan()
+        val after =
+            base.phases.last().copy(
+                index = 4,
+                name = "After the exam",
+                kind = PlanPhase.Kind.AFTER_EXAM,
+                startDate = kotlinx.datetime.LocalDate(2027, 2, 1),
+                endDate = kotlinx.datetime.LocalDate(2027, 3, 15),
+            )
+        val plan =
+            base.copy(
+                phases = base.phases + after,
+                schedule = base.schedule.copy(targetDate = base.schedule.targetDate.takeIf { dated }, fullCourse = true),
+                estimate = base.estimate.copy(endDate = kotlinx.datetime.LocalDate(2027, 2, 6)),
+            )
+        return PlanPageState(summary.goals.first(), plan, summary)
+    }
 
     @Test
     @Config(qualifiers = "w1280dp-h900dp-land-night-xhdpi")
@@ -337,6 +392,8 @@ class PlanScreenshots {
                     """"lessonsRemoved":0,"topicsAdded":[{"area":"Web apps","topics":["Flask","Django","FastAPI"]}]}}""",
             )
         val pagedPlan = fitPlan.copy(status = learnPlan().status)
+        val laterFitPlan = fitPlan.copy(fitOffer = fitPlan.fitOffer?.copy(canApply = false))
+        val fitOperations = laterFitPlan.fitOffer!!.operations.map { it.op }
         val pastDate = plan(""""status":{"kind":"pastDate","lessons":4}""")
         val found = TimeToCoverState.Answered(timeToCoverRevision(goalPlan), timeToCover(recommended = 75))
         val moved = listOf<PlanOp>(PlanOp.TargetDate(java.time.LocalDate.parse("2027-04-18")))
@@ -407,6 +464,12 @@ class PlanScreenshots {
                         edits = PlanEdits(timeToCover = found),
                         host = SlotHost(preview = ready(listOf(PlanOp.DailyMinutes(75)), goalPlan)),
                     ),
+                "plan-slot-coverage-checking" to
+                    Shot(
+                        goalPlan,
+                        edits = PlanEdits(timeToCover = found),
+                        host = SlotHost(preview = PlanPreviewState.Loading(listOf(PlanOp.DailyMinutes(75)), goalPlan)),
+                    ),
                 "plan-slot-coverage-checking-date" to
                     Shot(
                         goalPlan,
@@ -422,6 +485,12 @@ class PlanScreenshots {
                         SlotState().apply { result = SlotResult(SlotItem.Coverage, change) }
                     }),
                 "plan-slot-fit" to Shot(fitPlan),
+                "plan-slot-fit-checking" to
+                    Shot(laterFitPlan, host = SlotHost(preview = PlanPreviewState.Loading(fitOperations, laterFitPlan))),
+                "plan-slot-fit-adding" to Shot(laterFitPlan, edits = PlanEdits(pending = setOf(PlanPart.Suggestion))),
+                "plan-slot-fit-repriced" to Shot(laterFitPlan, host = SlotHost(preview = ready(fitOperations, laterFitPlan))),
+                "plan-slot-fit-check-failed" to
+                    Shot(laterFitPlan, host = SlotHost(preview = PlanPreviewState.Failed(fitOperations, laterFitPlan))),
                 "plan-slot-paged" to Shot(pagedPlan, state = { SlotState(position = 1) }),
                 "plan-slot-paged-applied" to
                     Shot(pagedPlan, edits = PlanEdits(changes = mapOf(change.id to EditorChange(change))), state = {
@@ -744,8 +813,9 @@ class PlanScreenshots {
         paused: Boolean = false,
         failure: ResumeFailure? = null,
         examOver: Boolean = false,
+        exam: PlanPageState? = null,
     ) {
-        show(dark, moreContrast, paused, failure, examOver)
+        show(dark, moreContrast, paused, failure, examOver, exam)
         compose.waitForIdle()
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
@@ -756,9 +826,14 @@ class PlanScreenshots {
         paused: Boolean = false,
         failure: ResumeFailure? = null,
         examOver: Boolean = false,
+        exam: PlanPageState? = null,
     ) {
         val page =
             when {
+                exam != null -> {
+                    exam
+                }
+
                 paused -> {
                     page().let { it.copy(goal = it.goal.copy(status = LearnerSummaryGoal.Status.PAUSED)) }
                 }

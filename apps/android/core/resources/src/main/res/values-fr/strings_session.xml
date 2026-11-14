@@ -35,13 +35,14 @@
   "session_level_up": "9ebf40b654dcc8315b07de863dc883ae0e2f0726b70d1988d232a3daa6e9b66e",
   "session_next_continue": "7a9fa061c18068c3a1ff2d144812949a01fed3626f2bb5b9ac9b9174e9cc5543",
   "session_next_eyebrow": "f6c59bc49295e97b030ed9537c19a95f7be2ec2544b16be13d58f8dd8a721d48",
-  "session_next_instead": "fea6a3f5549574e86737666066c307d2ddd6715aeeb6ed3639e5b56f0196f0fa",
   "session_next_lesson_ready": "6bd01547980cf502e95a4332b9d661791236479936c3618d1a2e880c3552875d",
+  "session_next_practice_now": "bd3bab5e56824a04477854b348092ffc6acaac5c0f70cd02599dae29b04096d7",
+  "session_next_review_now": "983840dfcd8de6ab169bc7c4771d2ad7bddc1f7c9c0fb72b7a1ae180d1d8bfc0",
   "session_next_start": "bcb67a5b784924ba728cdcecee496365f2511cd9c37e11666a817116440fac3f",
+  "session_next_start_title": "18758a44880b8c52aa3255adb3e5f8c1d8d234fec5503bf7686c089832bbe281",
   "session_next_stop": "cc300448c004e0cf1f4137ab26bfd1d1a3dc243d5b6dc241a3ab7acd43882d5d",
   "session_next_stop_failed": "adc1245d17b6c593dc9f8b4c33ff6326fa0c318bde6cf759b9a83e13023e9b5f",
-  "session_next_while_waiting": "c1f91a69ee395cc8b092ec94afbbe0e2920c170cdf18f7214d8a3c9aea8a6c5f",
-  "session_next_writing_note": "2ec9722d0fbb57d8c32c3a2aa7d47cb4d60f0a25fe05aaa0f9d494eac6bb483a",
+  "session_next_writing_note": "9804842c3dd63577a3b9e694523c46950a7b9e7a776ea8aecf2b3248bb6dc747",
   "session_no_catch_up_left": "dc9e05f747153053433791d64c06f4534250941d1322a46f8e93b25cce78a997",
   "session_opening_slow": "a65296b4f88c225dbab5c63ee55dba9a3591d7975d9dfa3b9af9427b869917bc",
   "session_opening_very_slow": "de01cfac0eeee7f3f6f6af6cb448134b18bdcca867bdbb600709db58dd78b4b2",
@@ -204,14 +205,16 @@
     <string name="session_review_intro_weakest_title">Les sujets les plus difficiles pour toi aujourd’hui</string>
     <string name="session_review_intro_weakest">Tu as encore bien en tête ce que tu as appris, alors tu t’entraînes sur ce qui t’a donné le plus de mal.</string>
     <string name="session_review_intro_first_week">Quelques questions rapides pour vérifier ce que tu sais déjà.</string>
-    <string name="session_next_writing_note">Cette leçon est en cours de préparation pour toi. Elle est généralement prête en quelques minutes.</string>
+    <string name="session_next_writing_note">Ça prend quelques minutes.</string>
     <string name="session_next_lesson_ready">Ta leçon est prête.</string>
     <string name="session_next_stop">Arrêter pour aujourd’hui</string>
     <string name="session_next_stop_failed">Impossible d’arrêter la séance. Réessaie.</string>
-    <!-- A button on the session's next step while its lesson is prepared: %1$s is another step's title, such as "Review", to do meanwhile. -->
-    <string name="session_next_while_waiting">En attendant : %1$s</string>
-    <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
-    <string name="session_next_instead">À la place : %1$s</string>
+    <!-- A button on the session's next step that starts the day's review instead, while its lesson is written or when it can't be. -->
+    <string name="session_next_review_now">Réviser maintenant</string>
+    <!-- A button on the session's next step that starts the day's practice instead, while its lesson is written or when it can't be. -->
+    <string name="session_next_practice_now">S’entraîner maintenant</string>
+    <!-- A button on the session's next step that starts one of the day's challenges instead: %1$s is its name, such as "Weekly challenge". -->
+    <string name="session_next_start_title">Commencer %1$s</string>
     <!-- A finished block's line about today's session. %1$s is how many of the day's blocks are done, shown larger; %2$s is how many the session has. A block can be a lesson, a review or practice, so no noun. -->
     <plurals name="session_day_done">
         <item quantity="one">%1$s sur %2$s terminé aujourd’hui</item>

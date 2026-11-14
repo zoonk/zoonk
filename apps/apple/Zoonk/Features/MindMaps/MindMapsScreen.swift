@@ -201,11 +201,26 @@ private struct MindMapCreateSection: View {
   let maps: GoalMindMaps
   let notMade: [ChapterMindMap]
 
+  /// The stop takes the rows' Create until its day has come; then Create is back, the stop's line
+  /// goes, and the offer is read again.
   var body: some View {
+    OpeningClock(availableAt: maps.createOffer.stop?.availableAt) { now in
+      let isOver = maps.createOffer.stop?.isOver(at: now) ?? false
+
+      section(canStart: maps.createOffer.stop == nil || isOver)
+        .task(id: isOver) {
+          if isOver {
+            await store.readOfferAgain(goalId: goalId, now: now)
+          }
+        }
+    }
+  }
+
+  /// A failed map's row keeps its Try again, whose retry is free.
+  @ViewBuilder
+  private func section(canStart: Bool) -> some View {
     let offer = maps.createOffer
-    let line = line(offer)
-    // A failed map's row keeps its Try again, whose retry is free.
-    let canStart = offer.stop == nil
+    let line = line(offer, canStart: canStart)
 
     let ready = notMade.filter { $0.lessonsToWrite == 0 && $0.status != .writingLessons }
     let others = notMade.filter { !ready.contains($0) }
@@ -285,7 +300,7 @@ private struct MindMapCreateSection: View {
     case fewer(Int)
   }
 
-  private func line(_ offer: MindMapCreateOffer) -> Line? {
+  private func line(_ offer: MindMapCreateOffer, canStart: Bool) -> Line? {
     let onTheWay = maps.chapters.count { $0.status.isOnItsWay }
     // Only the ones the button retries: a failed map whose lessons aren't written says so in its
     // own row.
@@ -303,7 +318,7 @@ private struct MindMapCreateSection: View {
       return .unfinished(unfinished)
     }
 
-    if offer.startable == 0, let stop = offer.stop {
+    if offer.startable == 0, !canStart, let stop = offer.stop {
       return .stopped(stop.limit(tier: learner.summary.value?.tier ?? .free))
     }
 

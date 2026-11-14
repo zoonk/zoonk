@@ -235,6 +235,9 @@
   "plan_effect_topics_added": "14ae4e310757e4a82bdc6da5f7dee4a9f02da03ae9e5f04e076836b9d2641bdd",
   "plan_effect_topics_leave": "b2fe3e2d4821d9c1f14a767841e54235f1a2616949e86f3c8ef4b7a27b57497e",
   "plan_effect_weekly_challenge_on": "f2039da5ccfc79383d65089ebbfd673eac70c55b5c7d3d56a47ef2172c4a1506",
+  "plan_ends": "4a924e83f3621bbdf901b3640177d687f24312e7b616dbcddeda9affd6f28af7",
+  "plan_ends_about": "55d47b0fee6c8c2839068bf294f5478715064380f60f8aa8aa055e307cc0df81",
+  "plan_ends_about_month": "10ceffe8cfbc0c2d7c60197d732ae411223cf40c0b6fc59f74b1bc3f0cc82518",
   "plan_estimate_based_on": "535ac646f07b081200dd43aeb38f9105688534f80d2a29d5109e19c4ef242f79",
   "plan_estimate_based_on_last": "3691f6601bb15a1f8352d18193fcb926a64b72c684460090c9ce4362e5234229",
   "plan_estimate_based_on_reviews": "e73415e05169f98ca1c3f5db24c35cf068c77dc5cf53f889362eab3ab504fb1d",
@@ -302,7 +305,6 @@
   "plan_keep_studying": "92981b39491ef5320d97f9d110c6f5f05a77389626abda9207090300a4662580",
   "plan_last_week_recap": "43c91a29f350fb875253e9bcac3abf613cdfe567951a031de10f4204fef2b3ab",
   "plan_lessons": "56bedeaeea4bc07e669e164401573bfd11ca76dad04f68ec64e4f57c0d1b661b",
-  "plan_lessons_count": "35b0c7b3210d3bb16128f031a3dcb53f69e7e5302c24c46a7a4160522145cfe6",
   "plan_lessons_done_of": "225a776889f0cc67b5844f74a028524fca70ba9d4830e9138aa5c3f059bc277c",
   "plan_lessons_left": "4df3969bdd163b0ddda3930cd6e9d1e54870bced633dd784f911ef1332b0bb91",
   "plan_lessons_not_studied": "fd9f77d5b2d53b87060b00cc4fde1abef580b4d58bdfe6d06ecc55a478b3cf09",
@@ -326,7 +328,7 @@
   "plan_more": "77852aca1ed9d6fb9d7fa86df94f821f88031943115ae64d6ceb92876a414b37",
   "plan_more_chapters": "c29a8a3105219660046e237ddcfd5f3d9b00c52a8482db3e51f00805bfd42c2f",
   "plan_more_lessons": "165daca0cb6e79a3c360f2f0f54cea384076c726ec1735164c959fef920cc15d",
-  "plan_more_lessons_fit": "7ebc19a6103ef54ce9462d5067956aeb32fe59405785cfefddc793d87e4dc745",
+  "plan_more_lessons_fit": "cceb5f2acd9b34ec9bbd859214fd9dd5babb99fe8cd7db58f9631d05fe793c89",
   "plan_most_asked_first_until_exam": "a86fafed2d1af309e1088ffa749b0a340448208dc9a58bddf8a2ae6a7b97d9f3",
   "plan_move_date": "8fd9718b0428f1ba687e60986286cca3e92dea79fc30b98e563786c1e6ae2b51",
   "plan_move_date_to": "8d7598fa2aa52e54d744f53dcc8e6af08d4c8cd34b971b0e80db0c89a30a230c",
@@ -405,10 +407,6 @@
   "plan_roadmap_from": "25d30045cd448e4f99d77918c51b5cd8a30a87b358ef8eed99182be10f9063f7",
   "plan_roadmap_phase_number": "7a723dd397ece5c3d5cb0e8df01eda62188a3c300a106c4c8623811961608608",
   "plan_roadmap_phase_of": "55bc7350bc33fd3b8a28e5df6ea54e0cbc2122f03517b910b9dc6d95baaa7d12",
-  "plan_roadmap_until": "52a56a1518d3b034763fdbc946fec7e174877d025aeb9210015c19f212d35c18",
-  "plan_roadmap_until_about": "f21b5df5f41960ec37eaac86b58f052848f0c9c806b3b80ed8bd9582c11cfecb",
-  "plan_roadmap_until_about_month": "10a57e435fc2c615e393eeda20af87de535aa85186c63d901c0d8d4f372ff7d6",
-  "plan_roadmap_until_month": "684a59d3ce2dddaeccfe29feef3f1a8d38819f945cea67002a2d82455c9e3dc7",
   "plan_saturdays": "e7637bde72e1e3ea23ab7d5e29e0b86f6557ef97b07b9be20f321cade2f05561",
   "plan_save": "22325f6a3e515eed577e2199ee85be063ed8b6b7134cf0f21205c65d9de4c9ff",
   "plan_save_failed": "f1e5a42d6a44689dd16ef9af30c02b0fdf4958f5d0de2a4bbb740b84cf0fcc4c",
@@ -534,11 +532,6 @@
   "plan_try_again": "50e02d0d3e47d8caa6a659dc55954ac010d31d3325bb5159c45e4891d509fb84",
   "plan_tuesdays": "9a3111d3e87d051c2cd00f248ca46da5915610fc9c46657aac3a3dec3724d56b",
   "plan_undo": "28728aeba8c09e920c42f4047c90175c836be9d323cfdd4d0dd7e295ed0089f9",
-  "plan_until": "3ff1508a8e7d4c9fb0ff57da29633d0c851834ec0fb7b1f9c7a7c40a829df744",
-  "plan_until_estimate": "9941d8a76ddd633fd29fd46fb067aabb99f05dcc09212fcac4a334e01fd56b6c",
-  "plan_until_estimate_month": "a47ee958eb68b534969a284313d80acda12a71e1c1adbcf16b5f09b1b4b0d20d",
-  "plan_until_estimate_month_spoken": "6f6a5736fc69d82192a9e7ee7059bdd1cc3430e735630f1973644bd1739500bc",
-  "plan_until_estimate_spoken": "f1ee036c97d61e5ba12a75181e6172b26a76b827cfba5bb9c83ee0aacf346348",
   "plan_up_next": "d707df702fdead2672554a8b69359991d52fe6df69da6fc0884aff7e6f4b832b",
   "plan_up_next_suffix": "49c671195af2f65be9b0a66b1338a7b71b1386ec4f82d43ecacbb9a7605d75a9",
   "plan_updated": "5320dc6cf341f0c1192645ded882c710e46b6179f2f7d2f155262280e0066059",
@@ -585,6 +578,12 @@
     </plurals>
     <string name="plan_date_estimate">~%1$s</string>
     <string name="plan_date_estimate_spoken">Yaklaşık %1$s</string>
+    <!-- When a phase of the plan ends. %1$s is a day, like "Dec 12". -->
+    <string name="plan_ends">%1$s tarihinde biter</string>
+    <!-- When a phase of the plan is expected to end. %1$s is a day, like "Dec 12". -->
+    <string name="plan_ends_about">%1$s civarında biter</string>
+    <!-- When a phase of the plan is expected to end. %1$s is a month, like "Jan". -->
+    <string name="plan_ends_about_month">%1$s ayı civarında biter</string>
     <string name="plan_date_range">%1$s – %2$s</string>
     <string name="plan_no_goal_description">Ne öğrenmek istediğini söyle, hedefine ulaşana kadar her gününü biz planlayalım.</string>
     <string name="plan_setup_left_title">Planından önce birkaç soru</string>
@@ -624,14 +623,6 @@
     </plurals>
     <string name="plan_roadmap_phase_of">%1$d. aşama / %2$d</string>
     <string name="plan_roadmap_from">%1$s itibarıyla</string>
-    <!-- %1$s is the day the plan ends, such as "Nov 3". -->
-    <string name="plan_roadmap_until">%1$s tarihine kadar</string>
-    <!-- %1$s is the month the plan ends, such as "May" or "May 2027". -->
-    <string name="plan_roadmap_until_month">%1$s ayına kadar</string>
-    <!-- An estimated end. %1$s is the day the plan ends, such as "Nov 3". -->
-    <string name="plan_roadmap_until_about">Yaklaşık %1$s tarihine kadar</string>
-    <!-- An estimated end. %1$s is the month the plan ends, such as "May" or "May 2027". -->
-    <string name="plan_roadmap_until_about_month">Yaklaşık %1$s ayına kadar</string>
     <string name="plan_today">Bugün</string>
     <string name="plan_mock_exam">Deneme sınavı</string>
     <string name="plan_exam_day">Sınav günü</string>
@@ -655,20 +646,10 @@
     <string name="plan_short_day">%1$d. gün / %2$d</string>
     <string name="plan_short_days">%1$d–%2$d. günler / %3$d</string>
     <string name="plan_your_path">Yolun</string>
-    <string name="plan_lessons_count">%1$d / %2$d</string>
     <plurals name="plan_lessons_done_of">
         <item quantity="one">%1$d / %2$d ders tamamlandı</item>
         <item quantity="other">%1$d / %2$d ders tamamlandı</item>
     </plurals>
-    <string name="plan_until">%1$s tarihine kadar</string>
-    <!-- %1$s is a day, such as "Nov 10". -->
-    <string name="plan_until_estimate">~%1$s tarihine kadar</string>
-    <!-- %1$s is a day, such as "Nov 10". -->
-    <string name="plan_until_estimate_spoken">%1$s civarına kadar</string>
-    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
-    <string name="plan_until_estimate_month">~%1$s ayına kadar</string>
-    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
-    <string name="plan_until_estimate_month_spoken">%1$s civarına kadar</string>
     <string name="plan_not_in_your_plan">Planında yok</string>
     <plurals name="plan_lessons_not_studied">
         <item quantity="one">%d ders çalışılmadı</item>
@@ -1306,8 +1287,8 @@
     <string name="plan_most_asked_first_until_exam">Sınava kadar en sık çıkan konulara öncelik verilir.</string>
     <string name="plan_time_covers_everything_in_depth">Günde %1$s ile her şey ayrıntılı olarak işlenir</string>
     <plurals name="plan_more_lessons_fit">
-        <item quantity="one">Çalışma sürene %1$d ders daha sığıyor</item>
-        <item quantity="other">Çalışma sürene %1$d ders daha sığıyor</item>
+        <item quantity="one">%1$d ders daha için zamanın var</item>
+        <item quantity="other">%1$d ders daha için zamanın var</item>
     </plurals>
     <string name="plan_past_date_goal_title">Bitiş tarihin geçti</string>
     <string name="plan_past_date_exam_title">Sınav tarihin geçti</string>

@@ -35,6 +35,30 @@ export function toOpeningDay({
   return daysAway === 1 ? "tomorrow" : day.toISOString().slice(0, "YYYY-MM-DD".length);
 }
 
+/**
+ * The day a render names before the browser's clock is read: the instant's own day in UTC. The
+ * server and the first hydration both give it, so the two renders agree; the browser then corrects it.
+ */
+export function toFirstRenderDay(availableAt: string | null): OpeningDay | null {
+  const opens = availableAt ? new Date(availableAt) : null;
+
+  if (!opens || Number.isNaN(opens.getTime())) {
+    return null;
+  }
+
+  return opens.toISOString().slice(0, "YYYY-MM-DD".length);
+}
+
+/**
+ * A cap's day is never more than 30 days away, so it's said by its day and month alone: no year,
+ * and so no clock to read, which a server and a browser could read on different days.
+ */
+export const OPENING_DATE_OPTIONS = {
+  day: "numeric",
+  month: "long",
+  timeZone: "UTC",
+} as const satisfies Intl.DateTimeFormatOptions;
+
 function nextLocalMidnight(now: number): number {
   const midnight = new Date(now);
   midnight.setHours(24, 0, 0, 0);

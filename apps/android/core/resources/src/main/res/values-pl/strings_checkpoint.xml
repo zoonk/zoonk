@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "checkpoint_after_lessons": "1068c4fd9d4f39211b62556a94056b175ff75e46385c4c6af8acd10ad388506c",
-  "checkpoint_answer": "4b27cf390dad6a63e56349dbcb91ff9c80019c142073941563d1c3a3e03f2eed",
   "checkpoint_answers": "7b535e80eb86feacd7c528a9a05cb5392f05cfe1be88caab41d65edb1a9dea51",
   "checkpoint_badge": "79b8c7825841bcf4644918e9a4a193c211a472a36c930467964ed5e6351b5d6f",
   "checkpoint_beat": "a0dcf2aaa7f090aeb2d3195dd9ae54d3fcc7680ac5dc6d389a829744cceee382",
@@ -158,6 +157,4 @@
     <string name="checkpoint_next_phase_open">Kolejny etap jest już dostępny: %1$s.</string>
     <string name="checkpoint_answers">Odpowiedzi</string>
     <string name="checkpoint_review">Przejrzyj odpowiedzi</string>
-    <!-- %1$s is the right answer. -->
-    <string name="checkpoint_answer">Odpowiedź: %1$s</string>
 </resources>

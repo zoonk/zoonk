@@ -269,25 +269,23 @@ private fun ColumnScope.LevelTestWaiting(
         hold,
         stringResource(R.string.onboarding_continue),
         onRetry,
-        afterWait = {
-            OnboardingActions {
-                FinishFailed(failed)
-                TextButton(
-                    busy = pending,
-                    onClick = onSkip,
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
-                ) {
-                    Text(stringResource(R.string.onboarding_language_test_skip))
-                }
-                Text(
-                    text = stringResource(R.string.onboarding_language_test_skip_note),
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+        skip = {
+            FinishFailed(failed)
+            TextButton(
+                busy = pending,
+                onClick = onSkip,
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+            ) {
+                Text(stringResource(R.string.onboarding_language_test_skip))
             }
+            Text(
+                text = stringResource(R.string.onboarding_language_test_skip_note),
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+            )
         },
     ) { share ->
         GenerationWait(GenerationKind.LevelTestBank, run, onRetry, share = share) {

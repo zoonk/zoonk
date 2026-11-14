@@ -7,6 +7,7 @@ import {
   renamePasskey,
 } from "@zoonk/auth/passkey-client";
 import { type PasskeyView } from "@zoonk/core/users/passkeys";
+import { findRowMenu, useKeepFocus } from "@zoonk/learn/keep-focus";
 import {
   ListGroup,
   ListRow,
@@ -103,6 +104,15 @@ function PasskeyRow({
 
 type OpenDialog = { kind: "delete" | "rename"; passkey: PasskeyView };
 
+function findPasskeyList() {
+  return document.querySelector("[data-slot=passkey-list]");
+}
+
+/** "Add a passkey", which stays when the last passkey goes. */
+function findAddPasskey() {
+  return findPasskeyList()?.querySelector<HTMLElement>("button[type=submit]");
+}
+
 /** `passkeys` comes from the server again after every change, so the list keeps no copy of it. */
 export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
   const t = useExtracted();
@@ -110,6 +120,7 @@ export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
   const [asksLogin, setAsksLogin] = useState(false);
   const [dialog, setDialog] = useState<OpenDialog | null>(null);
   const failureMessage = useFailureMessage();
+  const keepFocus = useKeepFocus(passkeys, findAddPasskey);
 
   /** Resolves to whether it changed; a failure has been said by then. */
   const settle = async (run: () => Promise<PasskeyChangeFailure | null>) => {
@@ -140,11 +151,15 @@ export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
       return added.status === "added" ? null : added.status;
     });
 
-  const remove = (id: string) =>
+  const remove = (id: string) => {
+    const index = passkeys.findIndex((passkey) => passkey.id === id);
+    keepFocus(() => findRowMenu(findPasskeyList(), index));
+
     change(async () => {
       const deleted = await deletePasskey(id);
       return deleted === "deleted" ? null : deleted;
     });
+  };
 
   /** In the rename sheet's own save, which keeps the name typed if it didn't go through. */
   const rename = (id: string, name: string) =>
@@ -154,7 +169,7 @@ export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
     });
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2" data-slot="passkey-list">
       <ListGroup>
         {passkeys.map((passkey) => (
           <PasskeyRow

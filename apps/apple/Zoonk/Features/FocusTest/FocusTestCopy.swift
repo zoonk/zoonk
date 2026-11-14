@@ -47,16 +47,6 @@ enum FocusTestCopy {
         comment: "What the Focus test is and why, for an exam without a date or with one subject")
   }
 
-  /// The offer's line where no chip over the title says the test's time, such as Today's sheet.
-  static func timedLine(minutes: Int) -> String {
-    String(
-      localized:
-        "A \(studyDuration(minutes: minutes)) test shows what you already know, so more of your time goes to what you need most. It never removes a subject.",
-      table: "FocusTest",
-      comment:
-        "What the Focus test is and why; the argument is how long it takes, such as \"15 min\"")
-  }
-
   static let start = LocalizedStringResource(
     "Start", table: "FocusTest", comment: "Starts the Focus test")
 

@@ -55,4 +55,17 @@ class SpeakingStore(
         }
 
     fun paper(goalId: UUID) = papers[goalId]
+
+    /**
+     * The server refused a start because it needs a subscription: that answer is the access now, so a
+     * read that fails after it keeps the gate, and the next read that succeeds (a purchase) replaces it.
+     */
+    suspend fun refused(goalId: UUID) {
+        val resource = papers[goalId]
+        resource.update { read -> (read as? SpeakingRead.Paper)?.let { SpeakingRead.Paper(it.paper.locked()) } ?: read }
+        resource.refresh()
+    }
 }
+
+/** A paper whose tasks need a subscription. */
+fun SpeakingPaper.locked(): SpeakingPaper = copy(access = SpeakingPaper.Access.PLUS_REQUIRED)

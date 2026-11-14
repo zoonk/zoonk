@@ -246,9 +246,9 @@ export function useDetailRows() {
   };
 }
 
-export function useUnderstoodRows() {
+export function useUnderstoodRows(timeZone: string) {
   const t = useExtracted();
-  const dateRow = useDateRow();
+  const dateRow = useDateRow(timeZone);
   const languageRows = useLanguageRows();
   const detailRows = useDetailRows();
   const contentCountryRow = useContentCountryRow();

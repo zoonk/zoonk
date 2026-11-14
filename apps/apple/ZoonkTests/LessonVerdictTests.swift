@@ -22,6 +22,18 @@ final class LessonVerdictTests: XCTestCase {
       XCTAssertEqual(String(localized: verdict.title), "Not checked this time")
       XCTAssertEqual(verdict.tone, .neutral)
     }
+
+    // A choice restored on a reopened lesson carries no text: still not checked, never a good
+    // answer over nothing. Only "I don't know yet" reads that, with its sample.
+    var restored = LessonStepResult(
+      isCorrect: false, answerText: nil, correctAnswer: nil, feedback: nil)
+    restored.checked = false
+
+    XCTAssertEqual(
+      String(localized: LessonVerdict.of(restored, step: check).title), "Not checked this time")
+    XCTAssertEqual(
+      String(localized: LessonVerdict.of(.sampleAnswer("Paris"), step: check).title),
+      "Here's a good answer")
   }
 
   private func step(_ kindAndContent: String) throws -> LessonStep {

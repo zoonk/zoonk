@@ -17,9 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
@@ -37,7 +35,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.LocalSnackbarHostState
+import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.LearningProfileStore
 import com.zoonk.android.data.LoadState
@@ -62,20 +60,13 @@ import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.scaffold.PageScaffold
 import kotlinx.coroutines.launch
 
+/** A switch that didn't save is put back, and says so in the app's snackbars, which a recreated window still shows. */
 class PrivacyViewModel(
     private val profile: LearningProfileStore,
+    private val snackbars: AppSnackbars,
 ) : ViewModel() {
-    /** The switch didn't save: it was put back. */
-    var saveFailed by mutableStateOf(false)
-        private set
-
-    fun saveFailedShown() {
-        saveFailed = false
-    }
-
     fun setShareUsageData(share: Boolean) {
-        saveFailed = false
-        viewModelScope.launch { saveFailed = !profile.setShareUsageData(share) }
+        viewModelScope.launch { if (!profile.setShareUsageData(share)) snackbars.show(R.string.settings_preferences_save_failed) }
     }
 }
 
@@ -92,17 +83,8 @@ fun PrivacyScreen(
     val signedIn = (session as? SessionState.SignedIn)?.takeUnless { it.isGuest }
     val profile by app.learningProfile.profile.collectShown()
     val summary by app.learnerSummary.summary.collectShown()
-    val privacy = viewModel { PrivacyViewModel(app.learningProfile) }
+    val privacy = viewModel { PrivacyViewModel(app.learningProfile, app.snackbars) }
     val scope = rememberCoroutineScope()
-    val snackbars = LocalSnackbarHostState.current
-    val saveFailed = stringResource(R.string.settings_preferences_save_failed)
-
-    LaunchedEffect(privacy.saveFailed) {
-        if (privacy.saveFailed) {
-            privacy.saveFailedShown()
-            snackbars.showSnackbar(saveFailed)
-        }
-    }
 
     PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.settings_privacy)) }) { padding ->
         Box(

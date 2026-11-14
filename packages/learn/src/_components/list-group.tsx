@@ -126,18 +126,22 @@ export function ListRowButton({
 }
 
 /**
- * Beside three lines or more a mark sits on the first (craft E5): centered on a box as tall as the
- * title's line, under the content's top room. A mark taller than the line starts level with the text.
+ * Beside three lines or more a mark sits on the first (craft E5), centered on the first line's box.
+ * A mark taller than the line starts level with the text.
  */
-const FIRST_LINE_MARK_CLASS =
-  "beside-three-lines:min-h-[calc(--spacing(2.75)+var(--text-sm)*var(--leading-snug))] beside-three-lines:self-start beside-three-lines:pt-2.75";
+const MARK_ALIGN_CLASS = "self-center beside-three-lines:row-first-line";
 
-export function ListRowLeading({ className, ...props }: React.ComponentProps<"span">) {
+/** `firstLine`: a lead, such as a date before a day's lessons, sits on the first line however many follow. */
+export function ListRowLeading({
+  className,
+  firstLine = false,
+  ...props
+}: React.ComponentProps<"span"> & { firstLine?: boolean }) {
   return (
     <span
       className={cn(
-        "flex min-w-4 shrink-0 items-center justify-center self-center empty:hidden",
-        FIRST_LINE_MARK_CLASS,
+        "flex min-w-4 shrink-0 items-center justify-center empty:hidden",
+        firstLine ? "row-first-line" : MARK_ALIGN_CLASS,
         className,
       )}
       data-slot="list-row-leading"
@@ -151,8 +155,8 @@ export function ListRowIcon({ className, ...props }: React.ComponentProps<"span"
     <span
       aria-hidden="true"
       className={cn(
-        "text-muted-foreground flex size-4 shrink-0 items-center justify-center self-center [&_svg]:size-4",
-        FIRST_LINE_MARK_CLASS,
+        "text-muted-foreground flex size-4 shrink-0 items-center justify-center [&_svg]:size-4",
+        MARK_ALIGN_CLASS,
         className,
       )}
       data-slot="list-row-icon"

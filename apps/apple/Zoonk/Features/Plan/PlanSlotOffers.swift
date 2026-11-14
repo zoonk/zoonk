@@ -8,8 +8,12 @@ struct PlanSlotActions {
 }
 
 /// A suggestion's card: its mark and title, at most one line under it, what it holds, then its
-/// buttons in one row, the main one last.
+/// buttons in one row, the main one last. In the suggestion's sheet its buttons are the sheet's
+/// bottom bar.
 struct PlanSlotCard<Content: View, Actions: View>: View {
+  @Environment(\.isInSuggestionSheet) private var isInSheet
+  @Environment(\.suggestionSheetNote) private var sheetNote
+
   let title: Text
   let mark: SuggestionMark.Kind
   let description: Text?
@@ -28,26 +32,41 @@ struct PlanSlotCard<Content: View, Actions: View>: View {
   }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Label {
-        title.typeStyle(.body.weight(.semibold))
-      } icon: {
-        SuggestionMark(kind: mark)
+    if isInSheet {
+      SuggestionSheetBody(note: sheetNote) {
+        words
+      } actions: {
+        Group {
+          actions
+        }
+        .buttonStyle(.outline)
       }
+    } else {
+      VStack(alignment: .leading, spacing: 8) {
+        words
 
-      if let description {
-        description
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        ButtonRow {
+          actions
+        }
+        .buttonStyle(.outline)
       }
-
-      content
-
-      ButtonRow {
-        actions
-      }
-      .buttonStyle(.outline)
     }
+  }
+
+  @ViewBuilder private var words: some View {
+    Label {
+      title.typeStyle(.body.weight(.semibold))
+    } icon: {
+      SuggestionMark(kind: mark)
+    }
+
+    if let description {
+      description
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+    }
+
+    content
   }
 }
 
@@ -144,28 +163,20 @@ func planPastDateTitle(isExam: Bool) -> String {
 }
 
 /// An exam whose date passed with lessons left: its answers are the Plan's bottom bar
-/// (`examOverBar`), so the card only says what's left.
+/// (`examOverBar`), so it only says what's left.
 struct PlanExamOverSlot: View {
   let context: PlanContext
+  var isLine = false
 
   var body: some View {
     let lessons = context.plan.status?.lessons ?? 0
 
-    VStack(alignment: .leading, spacing: 8) {
-      Label {
-        Text(planPastDateTitle(isExam: true))
-          .typeStyle(.body.weight(.semibold))
-      } icon: {
-        SuggestionMark(kind: .symbol("calendar.badge.clock"))
-      }
-
-      Text(
+    PlanStatement(
+      mark: .symbol("calendar.badge.clock"), title: Text(planPastDateTitle(isExam: true)),
+      description: Text(
         "You have \(lessons) lessons left. Keep studying them, or archive this goal?",
-        tableName: "Plan", comment: "Lessons left once the exam's date passed, and the question"
-      )
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
-    }
+        tableName: "Plan", comment: "Lessons left once the exam's date passed, and the question"),
+      isLine: isLine)
   }
 }
 
@@ -176,11 +187,17 @@ struct PlanPastDateSlot: View {
   @State private var isWorking = false
   @State private var failed = false
   @State private var noDate = false
+  @State private var tasks = ScreenTasks()
 
   let context: PlanContext
   let actions: PlanSlotActions
 
   var body: some View {
+    card
+      .onDisappear { tasks.cancel() }
+  }
+
+  @ViewBuilder private var card: some View {
     let lessons = context.plan.status?.lessons ?? 0
 
     if let asked {
@@ -227,7 +244,7 @@ struct PlanPastDateSlot: View {
           }
 
           BusyButton(isBusy: isWorking) {
-            Task { await findDate() }
+            tasks.run { await findDate() }
           } label: {
             Text(
               "Find a date", tableName: "Plan",
@@ -300,6 +317,7 @@ struct PlanCoverageSlot: View {
   @State private var asked: PlanSlotAskedChange?
   @State private var isPreviewing = false
   @State private var previewFailed = false
+  @State private var tasks = ScreenTasks()
 
   let context: PlanContext
   let title: String
@@ -313,6 +331,11 @@ struct PlanCoverageSlot: View {
   }
 
   var body: some View {
+    card
+      .onDisappear { tasks.cancel() }
+  }
+
+  @ViewBuilder private var card: some View {
     if let asked {
       PlanSlotAskedCard(asked: asked, context: context, actions: actions)
     } else {
@@ -332,7 +355,7 @@ struct PlanCoverageSlot: View {
 
         if found == .failed {
           Button {
-            Task { await find() }
+            tasks.run { await find() }
           } label: {
             Text("Try again", tableName: "Plan", comment: "Asks again after it failed")
           }
@@ -350,7 +373,7 @@ struct PlanCoverageSlot: View {
           }
         } else {
           BusyButton(isBusy: found == .asking || isPreviewing) {
-            Task { await seeChanges() }
+            tasks.run { await seeChanges() }
           } label: {
             Text(
               "See what changes", tableName: "Plan",
@@ -551,6 +574,7 @@ struct PlanFitSlot: View {
   @State private var repriced: PlanChangePreview?
   @State private var isChecking = false
   @State private var failed = false
+  @State private var tasks = ScreenTasks()
 
   let context: PlanContext
   let offer: GoalPlan.FitOffer
@@ -575,7 +599,7 @@ struct PlanFitSlot: View {
 
       if !unchanged {
         BusyButton(isBusy: isChecking) {
-          Task { await add() }
+          tasks.run { await add() }
         } label: {
           Text(
             "Add to my plan", tableName: "Plan",
@@ -584,13 +608,12 @@ struct PlanFitSlot: View {
         .buttonStyle(.mainAction)
       }
     }
+    .onDisappear { tasks.cancel() }
   }
 
   private func add() async {
-    let edits = offer.operations.map { PlanEdit.operation($0) }
-
     guard repriced == nil else {
-      actions.apply(edits)
+      actions.apply(offer.operations.map { PlanEdit.operation($0) })
       return
     }
 
@@ -598,22 +621,46 @@ struct PlanFitSlot: View {
     defer { isChecking = false }
     failed = false
 
-    let goalId = context.goal.id
-    let result = await store.write { api, token in
+    switch await store.addFitOffer(offer, goalId: context.goal.id, apply: actions.apply) {
+    case .repriced(let preview): repriced = preview
+    case .failed: failed = true
+    case .applied, nil: break
+    }
+  }
+}
+
+/// What "Add to my plan" found.
+enum FitOfferCheck: Equatable {
+  /// Today's numbers are the offer's, so its edits were applied.
+  case applied
+  /// Other numbers, shown before the next tap applies them.
+  case repriced(PlanChangePreview)
+  case failed
+}
+
+extension PlanStore {
+  /// Checks the offer against today's numbers and applies its edits when they're the same. Nil when
+  /// the check was canceled, as a dismissed suggestion's is: then nothing is applied.
+  func addFitOffer(
+    _ offer: GoalPlan.FitOffer, goalId: String, apply: ([PlanEdit]) -> Void
+  ) async -> FitOfferCheck? {
+    let edits = offer.operations.map { PlanEdit.operation($0) }
+    let result = await write { api, token in
       try await api.preview(token: token, goalId: goalId, edits: edits)
     } changed: { _ in
       false
     }
 
-    guard case .done(let preview?) = result else {
-      failed = true
-      return
-    }
-
-    if !preview.unchanged, preview.effect == offer.effect {
-      actions.apply(edits)
-    } else {
-      repriced = preview
+    switch result {
+    case .done(let preview?) where !preview.unchanged && preview.effect == offer.effect:
+      apply(edits)
+      return .applied
+    case .done(let preview?):
+      return .repriced(preview)
+    case .done(nil), .failed:
+      return .failed
+    case .obsolete:
+      return nil
     }
   }
 }

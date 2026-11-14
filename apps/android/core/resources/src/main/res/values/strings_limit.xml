@@ -4,21 +4,33 @@
     <string name="limit_slow_down">Take a short break, then try again.</string>
     <string name="limit_sign_up_required">This needs a free account</string>
     <string name="limit_more_tomorrow">More tomorrow.</string>
-    <string name="limit_more_next_month">More next month.</string>
     <string name="limit_more_tomorrow_or_subscribe">More tomorrow, or subscribe to keep going.</string>
-    <string name="limit_more_next_month_or_subscribe">More next month, or subscribe to keep going.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
+    <string name="limit_more_later_today">More later today.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
+    <string name="limit_more_later_today_or_subscribe">More later today, or subscribe to keep going.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_more_on">More on %1$s.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_more_on_or_subscribe">More on %1$s, or subscribe to keep going.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
+    <string name="limit_try_again_now">You can try again now.</string>
+    <!-- A notice that something the learner uses ran out, as one line: {title} says what ran out, such as "You've used your uploads", and {line} when more comes back, such as "More on November 22, or subscribe to keep going." -->
+    <string name="limit_sentence">%1$s. %2$s</string>
     <string name="limit_still_review">You can still review and practice your mistakes.</string>
-    <string name="limit_lesson_opens_today">Your next free lesson opens later today, or subscribe to keep going.</string>
-    <string name="limit_lesson_opens_tomorrow">Your next free lesson opens tomorrow, or subscribe to keep going.</string>
-    <!-- On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="limit_lesson_opens_on">Your next free lesson opens on %1$s, or subscribe to keep going.</string>
     <string name="limit_help_guest">That\'s all you can try without an account</string>
     <string name="limit_help_day">You\'ve reached today\'s limit</string>
-    <string name="limit_help_month">You\'ve reached this month\'s limit</string>
+    <string name="limit_help_used">You\'ve reached your limit</string>
     <string name="limit_messages_day">No more messages today</string>
-    <string name="limit_messages_month">No more messages this month</string>
+    <string name="limit_messages_used">You\'ve used your messages</string>
     <string name="limit_explanations_day">No more explanations today</string>
-    <string name="limit_explanations_month">No more explanations this month</string>
+    <string name="limit_explanations_used">You\'ve used your explanations</string>
+    <string name="limit_quick_explanations_used">You\'ve used your quick explanations</string>
+    <string name="limit_goals_used">You\'ve started all the new goals you can</string>
+    <string name="limit_uploads_used">You\'ve used your uploads</string>
+    <string name="limit_questions_used">You\'ve used your questions</string>
+    <string name="limit_call_time_used">You\'ve used your call time</string>
+    <string name="limit_mock_exams_used">You\'ve used your mock exams</string>
     <string name="limit_lessons_guest">No more lessons without an account</string>
     <string name="limit_lessons_free">You\'ve used your free lessons</string>
     <string name="limit_lessons_day">No more new lessons today</string>
@@ -36,8 +48,8 @@
     <string name="limit_map_needs_subscription_line">It writes more lessons than you get for free.</string>
     <string name="limit_mind_maps_guest">No more mind maps without an account</string>
     <string name="limit_mind_maps_day">No more new mind maps today</string>
-    <string name="limit_mind_maps_month">No more new mind maps this month</string>
+    <string name="limit_mind_maps_used">You\'ve used your mind maps</string>
     <string name="limit_outlines_guest">No more previews without an account</string>
     <string name="limit_outlines_day">No more previews today</string>
-    <string name="limit_outlines_month">No more previews this month</string>
+    <string name="limit_outlines_used">You\'ve used your previews</string>
 </resources>

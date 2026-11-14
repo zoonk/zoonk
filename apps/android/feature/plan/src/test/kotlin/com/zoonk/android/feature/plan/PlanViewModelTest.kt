@@ -8,11 +8,14 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.HeldRuns
 import com.zoonk.android.data.WritingRuns
 import com.zoonk.android.data.writingWaits
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChangeDecisionInput
+import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanEffect
 import com.zoonk.api.models.PlanTool
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -79,12 +82,87 @@ class PlanViewModelTest {
     @Test
     fun anyOtherFailureSaysItDidntSave() =
         runTest {
+            var failures = 0
+            val viewModel = PlanViewModel(store, goalId, writingWaits(runs)) { failures++ }
             api.statusFailure = ApiException(ApiError.Network)
 
             viewModel.setStatus(LearnerSummaryGoal.Status.PAUSED)
 
-            assertEquals(PlanEvent.SaveFailed, viewModel.events.first())
+            assertEquals(1, failures)
         }
+
+    @Test
+    fun aLaterDaysFitOfferAddsItsLessonsOnceTheCheckShowsTheSameNumbers() =
+        runTest {
+            val held = CompletableDeferred<Unit>()
+            api.previewGate = held
+            api.preview = checked(FIT_PLAN.fitOffer!!.effect)
+
+            viewModel.addFitOffer(FIT_PLAN, FIT_PLAN.fitOffer!!)
+
+            assertTrue(viewModel.slotPreview.value is PlanPreviewState.Loading)
+            assertEquals(emptyList<List<PlanOp>>(), api.changes)
+            held.complete(Unit)
+            assertEquals(listOf(FIT_OPERATIONS), api.changes)
+        }
+
+    @Test
+    fun aFitCheckPutOffWithNotNowOrAClosedSuggestionAddsNothing() =
+        runTest {
+            val held = CompletableDeferred<Unit>()
+            api.previewGate = held
+            api.preview = checked(FIT_PLAN.fitOffer!!.effect)
+
+            viewModel.addFitOffer(FIT_PLAN, FIT_PLAN.fitOffer!!)
+            viewModel.clearSlotPreview()
+            held.complete(Unit)
+
+            assertEquals(emptyList<List<PlanOp>>(), api.changes)
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+        }
+
+    @Test
+    fun otherNumbersTodayShowAndTheNextTapAddsThem() =
+        runTest {
+            val today = ApiJson.decodeFromString<PlanEffect>(effect(""""lessonsAdded":4"""))
+            api.preview = checked(today)
+
+            viewModel.addFitOffer(FIT_PLAN, FIT_PLAN.fitOffer!!)
+
+            assertEquals(emptyList<List<PlanOp>>(), api.changes)
+            assertEquals(today, (viewModel.slotPreview.value as PlanPreviewState.Ready).preview.effect)
+
+            viewModel.addFitOffer(FIT_PLAN, FIT_PLAN.fitOffer!!)
+
+            assertEquals(listOf(FIT_OPERATIONS), api.changes)
+        }
+
+    @Test
+    fun aFitCheckThatFailsSaysSoAndAddsNothing() =
+        runTest {
+            api.preview = PlanChangePreview(finishDate = null, effect = null, feasibility = null, ready = false, unchanged = false)
+
+            viewModel.addFitOffer(FIT_PLAN, FIT_PLAN.fitOffer!!)
+
+            assertTrue(viewModel.slotPreview.value is PlanPreviewState.Failed)
+            assertEquals(emptyList<List<PlanOp>>(), api.changes)
+        }
+
+    @Test
+    fun aFitOfferThatDidntSaveSaysSoInTheAppsSnackbars() =
+        runTest {
+            var failures = 0
+            val viewModel = PlanViewModel(store, goalId, writingWaits(runs)) { failures++ }
+            api.changeFailure = ApiException(ApiError.Network)
+            val offer = FIT_PLAN.fitOffer!!.copy(canApply = true)
+
+            viewModel.addFitOffer(FIT_PLAN, offer)
+
+            assertEquals(1, failures)
+        }
+
+    private fun checked(effect: PlanEffect) =
+        PlanChangePreview(finishDate = null, effect = effect, feasibility = null, ready = true, unchanged = false)
 
     @Test
     fun aChangeAnswersOnceThePlanShownIsReadAgain() =
@@ -515,4 +593,14 @@ class PlanViewModelTest {
             viewModel.forgetLatest()
             assertEquals(emptyMap<UUID, PlanChangeResult?>(), viewModel.sheetAnswers.value)
         }
+
+    private companion object {
+        /** A later day's fit offer: its numbers are the last plan write's, so the tap checks today's first. */
+        val FIT_PLAN =
+            plan(
+                """"fitOffer":{"canApply":false,"fits":false,"operations":[{"kind":"fitLessons"}],"effect":{"lessonsAdded":6,""" +
+                    """"lessonsRemoved":0,"topicsAdded":[{"area":"Web apps","topics":["Flask","Django","FastAPI"]}]}}""",
+            )
+        val FIT_OPERATIONS = FIT_PLAN.fitOffer!!.operations.map { it.op }
+    }
 }

@@ -199,7 +199,7 @@ private struct ExamHero: View {
     if let noticeDay = exam.noticeDay, studyDate(noticeDay.date) != nil {
       Section {
         VStack(alignment: .leading, spacing: 8) {
-          let day = PlanDate.longDay(noticeDay.date, today: isoDay(.now))
+          let day = PlanDate.longDay(noticeDay.date, today: PlanDate.today())
           if noticeDay.estimated {
             Text("The exam's likely date is now \(day).", tableName: "Exam")
           } else if exam.examDocument == .notice {
@@ -233,12 +233,12 @@ private struct ExamHero: View {
 
   @ViewBuilder
   private var noSittingSection: some View {
-    if exam.noticeDay == nil, let noSitting = exam.noSitting, let month = studyDate(noSitting.month)
-    {
+    if exam.noticeDay == nil, let noSitting = exam.noSitting {
+      let month = PlanDate.monthText(noSitting.month, today: PlanDate.today(), wide: true)
       Section {
         VStack(alignment: .leading, spacing: 4) {
           Text(
-            "No exam date in \(month.formatted(.studyDay.month(.wide)))", tableName: "Exam",
+            "No exam date in \(month)", tableName: "Exam",
             comment:
               "An exam with no sitting in the learner's month; the argument is a month like 'May'"
           )
@@ -302,7 +302,7 @@ private struct ExamHero: View {
 
     let times = Set(exam.days.map(\.startTime))
     let shared = times.count == 1 ? exam.days.first?.startTime : nil
-    let today = isoDay(.now)
+    let today = PlanDate.today()
     let days = dates.map { day, _ in
       let text = PlanDate.text(day.date, today: today, weekday: dates.count == 1)
       let time = shared == nil ? day.startTime.flatMap(examTimeOfDay) : nil
@@ -398,9 +398,15 @@ private struct ExamDateTag: View {
 
 /// The score is optional and so is knowing whether they passed; either is enough.
 private struct ExamResultSection: View {
+  private enum Field {
+    case score
+    case maxScore
+  }
+
   @Environment(ExamStore.self) private var store
   let exam: ExamView
   @Binding var form: ExamResultForm
+  @FocusState private var focusedField: Field?
 
   private var scale: String {
     exam.scoring.scale?.rawValue ?? (exam.scoring.method == .irt ? "irt" : "points")
@@ -446,12 +452,26 @@ private struct ExamResultSection: View {
         scoreLabel
       }
       .keyboardType(.decimalPad)
+      .focused($focusedField, equals: .score)
+      // The decimal pad has no Return key and covers the rows under the field, "Did you pass?" and
+      // Save among them, until it closes. Declared once: the bar serves both fields, and a section's
+      // modifier would repeat it on every row.
+      .toolbar {
+        ToolbarItemGroup(placement: .keyboard) {
+          Spacer()
+
+          Button(role: .confirm) {
+            focusedField = nil
+          }
+        }
+      }
 
       if scale == "points" {
         TextField(text: $form.maxScore) {
           Text("out of", tableName: "Exam", comment: "The score's maximum")
         }
         .keyboardType(.decimalPad)
+        .focused($focusedField, equals: .maxScore)
       }
 
       Picker(selection: $form.passed) {
@@ -599,7 +619,7 @@ private struct ExamMocksSection: View {
               StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
             } trailing: {
               if let date = next.date {
-                Text(PlanDate.text(date, today: isoDay(.now), weekday: true))
+                Text(PlanDate.text(date, today: PlanDate.today(), weekday: true))
               }
             }
             .disclosureChevron()
@@ -815,7 +835,7 @@ private struct ExamFormatSection: View {
       }
 
       if let date = day.date {
-        Text(PlanDate.text(date, today: isoDay(.now), weekday: true))
+        Text(PlanDate.text(date, today: PlanDate.today(), weekday: true))
       } else {
         Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
       }
@@ -975,14 +995,8 @@ private struct SpeakingMockSection: View {
 
         switch start.refusal {
         case .limit(let limit):
-          FailureLine(
-            message: limit.period == .month
-              ? String(
-                localized: "Not enough call time this month for this mock", table: "Exam",
-                comment: "The call time left this month can't fit the mock")
-              : String(
-                localized: "Not enough call time today for this mock", table: "Exam",
-                comment: "The call time left today can't fit the mock"))
+          LimitNotice(limit: limit, kind: .callTime)
+            .announcesAlert(limit.words(.callTime).said)
         case nil:
           EmptyView()
         case .some:

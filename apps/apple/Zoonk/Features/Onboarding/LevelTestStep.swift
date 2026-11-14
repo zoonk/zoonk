@@ -540,18 +540,25 @@ private struct ListeningMessage: View {
   }
 
   private func failedNote(_ limit: HelpLimit?) -> some View {
-    let canRetry = if case .slowDown? = limit { true } else { limit == nil }
+    OpeningClock(availableAt: limit?.availableAt) { now in
+      failedNote(limit, now: now)
+    }
+  }
 
-    return VStack(alignment: .leading, spacing: 8) {
+  /// The gate takes Try again's place until its day has come, then Try again takes it back.
+  private func failedNote(_ limit: HelpLimit?, now: Date) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
       if let limit {
-        LimitNotice(limit: limit)
+        if !limit.isOpen(at: now) {
+          LimitNotice(limit: limit)
+        }
       } else {
         Text(audioDidntPlay)
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
       }
 
-      if canRetry {
+      if limit?.letsTry(at: now) ?? true {
         Button(action: play) {
           Label {
             Text(
@@ -578,7 +585,7 @@ private struct ListeningMessage: View {
       return nil
     }
 
-    return limit?.helpWords().said ?? audioDidntPlay
+    return limit?.words().said ?? audioDidntPlay
   }
 
   private func play() {

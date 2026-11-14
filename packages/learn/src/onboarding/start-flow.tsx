@@ -21,7 +21,7 @@ import { type GoalError } from "./goal-errors";
 import { OnboardingHowItWorks } from "./how-it-works";
 import {
   type AttachedSource,
-  type GoalLimitReason,
+  type GoalLimit,
   type OnboardingActions,
   type OnboardingNavigation,
   type OnboardingRoutes,
@@ -154,7 +154,7 @@ type GoalStartFlowProps = {
   canAttach?: boolean;
   defaultGoal?: string;
   fromSharedPlan?: boolean;
-  goalLimit?: GoalLimitReason | null;
+  goalLimit?: GoalLimit | null;
   initialDraft?: OnboardingDraftView | null;
   navigation: OnboardingNavigation;
   routes: OnboardingRoutes;
@@ -269,7 +269,7 @@ function GoalStartFlow({
 
   const backToEntry = (words: string) => showEntry({ words });
 
-  const atGoalLimit = goalLimit === "activeGoals";
+  const atGoalLimit = goalLimit?.reason === "activeGoals";
 
   const rail = atGoalLimit ? null : (
     <>

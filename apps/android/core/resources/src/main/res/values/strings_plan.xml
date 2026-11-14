@@ -17,6 +17,12 @@
     </plurals>
     <string name="plan_date_estimate">~%1$s</string>
     <string name="plan_date_estimate_spoken">About %1$s</string>
+    <!-- When a phase of the plan ends. %1$s is a day, like "Dec 12". -->
+    <string name="plan_ends">Ends %1$s</string>
+    <!-- When a phase of the plan is expected to end. %1$s is a day, like "Dec 12". -->
+    <string name="plan_ends_about">Ends about %1$s</string>
+    <!-- When a phase of the plan is expected to end. %1$s is a month, like "Jan". -->
+    <string name="plan_ends_about_month">Ends about %1$s</string>
     <string name="plan_date_range">%1$s – %2$s</string>
 
     <string name="plan_no_goal_description">Tell us what you want to learn, and we\'ll plan every day until you get there.</string>
@@ -59,14 +65,6 @@
     </plurals>
     <string name="plan_roadmap_phase_of">phase %1$d of %2$d</string>
     <string name="plan_roadmap_from">From %1$s</string>
-    <!-- %1$s is the day the plan ends, such as "Nov 3". -->
-    <string name="plan_roadmap_until">Until %1$s</string>
-    <!-- %1$s is the month the plan ends, such as "May" or "May 2027". -->
-    <string name="plan_roadmap_until_month">Until %1$s</string>
-    <!-- An estimated end. %1$s is the day the plan ends, such as "Nov 3". -->
-    <string name="plan_roadmap_until_about">Until about %1$s</string>
-    <!-- An estimated end. %1$s is the month the plan ends, such as "May" or "May 2027". -->
-    <string name="plan_roadmap_until_about_month">Until about %1$s</string>
     <string name="plan_today">Today</string>
     <string name="plan_mock_exam">Mock exam</string>
     <string name="plan_exam_day">Exam day</string>
@@ -92,20 +90,10 @@
     <string name="plan_short_days">Days %1$d to %2$d of %3$d</string>
 
     <string name="plan_your_path">Your path</string>
-    <string name="plan_lessons_count">%1$d / %2$d</string>
     <plurals name="plan_lessons_done_of">
         <item quantity="one">%1$d of %2$d lesson done</item>
         <item quantity="other">%1$d of %2$d lessons done</item>
     </plurals>
-    <string name="plan_until">until %1$s</string>
-    <!-- %1$s is a day, such as "Nov 10". -->
-    <string name="plan_until_estimate">until ~%1$s</string>
-    <!-- %1$s is a day, such as "Nov 10". -->
-    <string name="plan_until_estimate_spoken">until about %1$s</string>
-    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
-    <string name="plan_until_estimate_month">until ~%1$s</string>
-    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
-    <string name="plan_until_estimate_month_spoken">until about %1$s</string>
     <string name="plan_not_in_your_plan">Not in your plan</string>
     <plurals name="plan_lessons_not_studied">
         <item quantity="one">%d lesson not studied</item>
@@ -754,8 +742,8 @@
     <string name="plan_most_asked_first_until_exam">Until the exam, what comes up most comes first.</string>
     <string name="plan_time_covers_everything_in_depth">%1$s a day covers everything in depth</string>
     <plurals name="plan_more_lessons_fit">
-        <item quantity="one">%1$d more lesson fits in your time</item>
-        <item quantity="other">%1$d more lessons fit in your time</item>
+        <item quantity="one">You have time for %1$d more lesson</item>
+        <item quantity="other">You have time for %1$d more lessons</item>
     </plurals>
     <string name="plan_past_date_goal_title">Your end date has passed</string>
     <string name="plan_past_date_exam_title">Your exam date has passed</string>

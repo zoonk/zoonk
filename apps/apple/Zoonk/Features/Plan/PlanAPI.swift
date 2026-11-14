@@ -14,8 +14,10 @@ enum GoalStatusChange: String, Sendable {
 }
 
 enum OutlineRequest: Equatable, Sendable {
-  case limit
+  case limit(HelpLimit)
   case started
+  /// The plan has nothing left to write for the topic: studied, settled or left out.
+  case unavailable
 }
 
 protocol PlanAPIClient: Sendable {
@@ -424,12 +426,23 @@ struct PlanAPI: PlanAPIClient {
         path: .init(goalId: goalId, skillId: skillId))
       {
       case .ok, .accepted: return .started
-      case .code402, .forbidden, .tooManyRequests: return .limit
+      case .unprocessableContent: return .unavailable
+      case .code402(let response): return Self.outlineLimit(try? response.body.json, status: 402)
+      case .forbidden(let response): return Self.outlineLimit(try? response.body.json, status: 403)
+      case .tooManyRequests(let response):
+        return Self.outlineLimit(try? response.body.json, status: 429)
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
       }
     }
+  }
+
+  private static func outlineLimit(_ error: Components.Schemas._Error?, status: Int)
+    -> OutlineRequest
+  {
+    .limit(
+      voiceRefusal(status: status, error: error).limit ?? .limitReached(period: .day, tier: .free))
   }
 
   /// A change's body, sent as its own JSON: the generated types drop a `null` date, which is how a

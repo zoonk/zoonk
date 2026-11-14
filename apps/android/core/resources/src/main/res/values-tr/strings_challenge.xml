@@ -56,7 +56,7 @@
   "challenge_weekly_detail": "bdc53e276752ba619d1322ac989099eb0684aa72b30af39e1548429da03619c7",
   "challenge_weekly_rule": "0d19541ecf5a1e32a0a5b2c76bd518a66a020f423313ef1d6e949c66df2c4ff3",
   "challenge_writing": "a2b6e2da3700bb12944f7d5d12a9b3f0f64a7eb11102fafd46a83805be2486ef",
-  "challenge_writing_detail": "277d08cf9fe23ae2abc6e543d3d1b61173141f051c4aef56434fad7fe9a33464",
+  "challenge_writing_detail": "38ead4651ebbf04e9ff4416d4551642c762b766c5cfc2ca242fa5272ab3b4716",
   "challenge_writing_line": "5ee10558e7ba5ba080ab111ce49b10fb30819a7b88d231d25bffca2ae858224e",
   "challenge_writing_questions": "63635f3be88cb105871fd60d1df5b094e1226017bf9917362757edb0e5b88cde",
   "challenge_writing_title": "3adda4ea6d96b15a5fe6ec41a1c6408937c6f1f234fbc2a17a0251cbc9767fcb"
@@ -67,7 +67,7 @@
     <string name="challenge_writing_questions">Çalıştıklarınla ilgili sorular hazırlıyoruz</string>
     <string name="challenge_writing_line">Sorularla ölçeceğimiz becerileri seçiyoruz…</string>
     <string name="challenge_writing_title">Meydan okumanı hazırlıyoruz</string>
-    <string name="challenge_writing_detail">Sorularını hazırlıyoruz. Hazır olunca meydan okuma burada başlayacak.</string>
+    <string name="challenge_writing_detail">Hazır olduğunda burada başlayacak.</string>
     <!-- %1$s is the challenge's name, like "Phase 2 challenge". -->
     <string name="challenge_rematch">Yeni deneme · %1$s</string>
     <string name="challenge_trickster_recordings">Bu aşamadaki ses kayıtlarıyla ilgili ipucusuz sorular. Kayıtlar sınavdaki gibi dinletilir.</string>

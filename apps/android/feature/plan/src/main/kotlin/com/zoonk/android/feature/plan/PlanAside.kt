@@ -20,6 +20,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -85,16 +86,10 @@ private fun NextChapterRow(
     links: PlanLinks,
 ) {
     val id = chapter.chapterId ?: return
-    val count =
-        PlanDateWords(
-            stringResource(R.string.plan_lessons_count, chapter.lessonsDone.toInt(), chapter.lessonsTotal.toInt()),
-            lessonsDoneSpoken(chapter.lessonsDone, chapter.lessonsTotal),
-        )
     ListRow(
         headline = { Text(chapter.title, maxLines = 2, overflow = TextOverflow.Ellipsis) },
         onClick = { links.chapter(id.toString()) },
         leading = { ChapterMark(chapter, isNext = true) },
-        meta = { TrailingText(count) },
     )
 }
 
@@ -103,19 +98,14 @@ private fun FinishRow(
     page: PlanPageState,
     links: PlanLinks,
 ) {
-    val finish = page.finish
-    val date =
-        when {
-            finish != null -> planDate(finish.date, page.today, finish.estimate, finish.month).text
-            page.isExam -> stringResource(R.string.plan_date_to_be_confirmed)
-            else -> null
-        }
+    val finish = page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
 
     ListRow(
         headline = { Text(page.goal.displayName, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         onClick = if (links.hasExam) links::exam else null,
         leading = { FlagMark() },
-        supporting = date?.let { { Text(it) } },
+        supporting = if (finish == null && page.isExam) ({ Text(stringResource(R.string.plan_date_to_be_confirmed)) }) else null,
+        meta = finish?.let { { TrailingText(it) } },
     )
 }
 
@@ -212,11 +202,13 @@ internal fun PlanProperties(
             )
             PropertyRow(
                 stringResource(R.string.plan_study_days),
-                studyDaysWords(
-                    schedule.weekdayMinutes.map {
-                        it.toInt()
-                    },
-                    locale,
+                AnnotatedString(
+                    studyDaysWords(
+                        schedule.weekdayMinutes.map {
+                            it.toInt()
+                        },
+                        locale,
+                    ),
                 ),
                 onOpen?.let { { it(PlanSection.Days) } },
                 onClickLabel = adjust,
@@ -233,7 +225,7 @@ internal fun PlanProperties(
                 val picked = choice.pickedNames()
                 PropertyRow(
                     label = choice.group,
-                    value = if (picked.isEmpty()) stringResource(R.string.plan_choose) else joinList(picked),
+                    value = AnnotatedString(if (picked.isEmpty()) stringResource(R.string.plan_choose) else joinList(picked)),
                     onClick = onOpen?.let { { it(PlanSection.Choices) } },
                     onClickLabel = adjust,
                     warning = picked.isEmpty(),
@@ -242,7 +234,7 @@ internal fun PlanProperties(
             page.variety?.let { variety ->
                 PropertyRow(
                     stringResource(R.string.onboarding_row_language),
-                    varietyName(variety.language, variety.region, locale),
+                    AnnotatedString(varietyName(variety.language, variety.region, locale)),
                     onOpen?.let { { it(PlanSection.Language) } },
                     onClickLabel = adjust,
                 )
@@ -257,11 +249,13 @@ internal fun PlanProperties(
                     PropertyRow(
                         label = stringResource(R.string.plan_practice),
                         value =
-                            if (practiced.size == PlanSteering.SkippedActivities.entries.size) {
-                                stringResource(R.string.plan_everything)
-                            } else {
-                                practiced.map { activityName(it) }.factsLine()
-                            },
+                            AnnotatedString(
+                                if (practiced.size == PlanSteering.SkippedActivities.entries.size) {
+                                    stringResource(R.string.plan_everything)
+                                } else {
+                                    practiced.map { activityName(it) }.factsLine()
+                                },
+                            ),
                         onClick = onOpen?.let { { it(PlanSection.Practice) } },
                         onClickLabel = adjust,
                     )
@@ -296,20 +290,22 @@ private fun CountryRows(
                     R.string.country_content_label
                 },
             ),
-            country.name,
+            AnnotatedString(country.name),
             onOpen.takeIf { editable },
             onClickLabel = adjust,
         )
-        country.lessonVariety?.let { PropertyRow(stringResource(R.string.country_lesson_language_label), lessonVarietyName(it), null) }
+        country.lessonVariety?.let {
+            PropertyRow(stringResource(R.string.country_lesson_language_label), AnnotatedString(lessonVarietyName(it)), null)
+        }
     }
-    goal.examplesCountry?.let { PropertyRow(stringResource(R.string.country_lesson_examples_label), it.name, null) }
+    goal.examplesCountry?.let { PropertyRow(stringResource(R.string.country_lesson_examples_label), AnnotatedString(it.name), null) }
 }
 
 /** A label and its value on one line, the value at the end; when both don't fit (large text, a long country name), the value goes under the label. */
 @Composable
 private fun PropertyRow(
     label: String,
-    value: String,
+    value: AnnotatedString,
     onClick: (() -> Unit)?,
     onClickLabel: String? = null,
     warning: Boolean = false,
@@ -349,18 +345,22 @@ private fun PropertyRow(
 }
 
 @Composable
-private fun goalDateValue(page: PlanPageState): String {
+private fun goalDateValue(page: PlanPageState): AnnotatedString {
     val schedule = page.plan.schedule
-    val target = schedule.targetDate ?: return stringResource(if (page.isExam) R.string.plan_to_be_confirmed else R.string.plan_no_date)
-    return planDate(target.toJavaLocalDate(), page.today, schedule.targetDateEstimated, schedule.targetDateNamedMonth).text
+    val target =
+        schedule.targetDate
+            ?: return AnnotatedString(stringResource(if (page.isExam) R.string.plan_to_be_confirmed else R.string.plan_no_date))
+    val date = planDate(target.toJavaLocalDate(), page.today, schedule.targetDateEstimated, schedule.targetDateNamedMonth).text
+    return withData(date, date)
 }
 
 @Composable
-private fun dailyTimeValue(page: PlanPageState): String {
+private fun dailyTimeValue(page: PlanPageState): AnnotatedString {
     val locale = currentLocale()
     val shape = page.plan.schedule.shape
     val weekdays = formatMinutes(shape.weekdays.toInt(), locale)
-    return shape.weekend?.let { stringResource(R.string.plan_time_weekends, weekdays, formatMinutes(it.toInt(), locale)) } ?: weekdays
+    val weekend = shape.weekend?.let { formatMinutes(it.toInt(), locale) } ?: return withData(weekdays, weekdays)
+    return withData(stringResource(R.string.plan_time_weekends, weekdays, weekend), weekdays, weekend)
 }
 
 internal fun studyDaysText(
@@ -399,15 +399,23 @@ private const val MIN_RANGE_DAYS = 3
 private fun mockScheduleValue(
     page: PlanPageState,
     mocks: PlanMockSchedule,
-): String {
+): AnnotatedString {
     val weekday = mocks.weekday?.toInt()
     if (weekday != null) {
         val days = weekdaysWord(weekday)
         val every = mocks.everyWeeks?.toInt()
-        return if (every != null && every > 1) pluralStringResource(R.plurals.plan_mocks_every_weeks, every, days, every) else days
+        return AnnotatedString(
+            if (every != null &&
+                every > 1
+            ) {
+                pluralStringResource(R.plurals.plan_mocks_every_weeks, every, days, every)
+            } else {
+                days
+            },
+        )
     }
     val date = formatPlanDate(mocks.nextDate.toJavaLocalDate(), page.today, currentLocale())
-    return if (mocks.count > 1) stringResource(R.string.plan_mocks_next, date) else date
+    return withData(if (mocks.count > 1) stringResource(R.string.plan_mocks_next, date) else date, date)
 }
 
 /** "Sundays" … "Saturdays", Sunday counted 0 as the API counts it. */

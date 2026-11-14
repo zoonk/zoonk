@@ -9,10 +9,10 @@ import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identit
 import { Button } from "@zoonk/ui/components/button";
 import { createOnDemand } from "@zoonk/ui/lib/on-demand";
 import { cn } from "@zoonk/ui/lib/utils";
-import { MessageCircleQuestionIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useMemo, useState } from "react";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
+import { AskTutorFace } from "./ask-tutor-face";
 import {
   LessonQuestionHostProvider,
   useLessonQuestionController,
@@ -127,13 +127,7 @@ function AskTutorButton({
         type="button"
         variant="outline"
       >
-        <MessageCircleQuestionIcon aria-hidden="true" className="lg:hidden" />
-        <span
-          aria-hidden="true"
-          className="flex size-6 items-center justify-center *:size-6! max-lg:hidden"
-        >
-          {identity.avatar}
-        </span>
+        <AskTutorFace identity={identity} />
         <span className="truncate max-lg:hidden">{name}</span>
       </Button>
     );
@@ -150,9 +144,7 @@ function AskTutorButton({
       type="button"
       variant="outline"
     >
-      <span aria-hidden="true" className="flex size-6 items-center justify-center *:size-6!">
-        {identity.avatar}
-      </span>
+      <AskTutorFace identity={identity} />
       <span className={BAR_ASK_LABEL_CLASS}>{name}</span>
     </Button>
   );

@@ -122,18 +122,23 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
     case aiSpend, mindMap
   }
 
+  let availableAt: Date?
   let period: String?
   let reason: Reason
-  let resetsAt: Date?
   let resource: Resource?
+
+  /// Its instant has passed, so a map's Create asks the server again.
+  func isOver(at now: Date) -> Bool {
+    availableAt.map { $0 <= now } ?? false
+  }
 
   func limit(tier: LearnerTier, now: Date = .now) -> MindMapLimit {
     let limit: HelpLimit =
       switch reason {
       case .signUpRequired: .signUpRequired
       case .slowDown:
-        .slowDown(retryAfterSeconds: max(1, Int((resetsAt ?? now).timeIntervalSince(now))))
-      case .limitReached: .reached(period: period, tier: tier, opensAt: resetsAt)
+        .slowDown(retryAfterSeconds: max(1, Int((availableAt ?? now).timeIntervalSince(now))))
+      case .limitReached: .reached(period: period, tier: tier, availableAt: availableAt)
       }
 
     let ranOut: MindMapLimit.Resource =

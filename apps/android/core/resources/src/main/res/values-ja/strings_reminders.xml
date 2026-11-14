@@ -35,9 +35,11 @@
 <resources>
     <!-- The name of the app's notification channel in Android's settings. -->
     <string name="reminders_channel_name">学習リマインダー</string>
-    <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
+    <!-- Under the channel's name in Android's settings. -->
     <string name="reminders_channel_description">学習する日に、その日の学習がまだ終わっていなければ1回お知らせします。</string>
+    <!-- Under the reminders page's title: what reminders do; %1$s is the link "study days", which opens the Plan. -->
     <string name="reminders_line">%1$sに、その日の学習がまだ終わっていなければ1回お知らせします。</string>
+    <!-- Link to the Plan inside "One reminder on your study days…" -->
     <string name="reminders_study_days">学習する日</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">学習リマインダーを受け取りますか？</string>

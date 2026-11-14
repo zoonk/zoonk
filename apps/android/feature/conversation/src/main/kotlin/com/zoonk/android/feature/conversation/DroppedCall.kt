@@ -25,6 +25,7 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.comesBackLine
+import com.zoonk.android.ui.components.limitLifted
 
 internal enum class DroppedReason { CallInProgress, CallsPaused, Ended, Limit, Microphone, PlusRequired }
 
@@ -76,17 +77,26 @@ internal fun DroppedCallScreen(
     title: String,
     actions: DroppedCallActions,
 ) {
+    // Once the day the cap gave comes, it's a plain dropped call that can be called again.
+    val shown =
+        if (dropped.reason == DroppedReason.Limit &&
+            limitLifted(limit)
+        ) {
+            DroppedCall(reason = null, DroppedRetry.CallAgain)
+        } else {
+            dropped
+        }
     // Leaving a dropped call ends it, so what was said still gets its feedback.
     BackHandler(onBack = actions.onEnd)
     CallFrame(
         title = { CallTitle(title) },
         onClose = actions.onEnd,
-        bottomBar = { DroppedActions(dropped.retry, actions) },
+        bottomBar = { DroppedActions(shown.retry, actions) },
         lonePage = true,
     ) {
         item(key = "dropped") {
             CallOffMessage(stringResource(R.string.conversation_dropped_title), Modifier.callItem()) {
-                DroppedReasonText(dropped.reason, limit, characterName, actions)
+                DroppedReasonText(shown.reason, limit, characterName, actions)
             }
         }
     }

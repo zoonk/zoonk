@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -36,6 +37,7 @@ import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.rememberWaitQuiz
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.LocalMainActionInBar
 
 internal val LocalSetupWarmUp = compositionLocalOf<WarmUpStore?> { null }
 internal val LocalSetupWait = compositionLocalOf { SetupWaitContext() }
@@ -63,7 +65,7 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
     onRetry: (() -> Unit)? = null,
     next: PlanNext? = null,
     waitSurface: String = surface.value,
-    afterWait: (@Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit)? = null,
+    skip: (@Composable () -> Unit)? = null,
     progress: @Composable (Float) -> Unit,
 ) {
     val context = LocalSetupWait.current
@@ -111,60 +113,62 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
             }
         }
     TrackVisibleWait(waitSurface, "curriculum", context.goalId)
-    SetupContent(aside = aside, reversed = canShowAside) {
-        val beside = LocalWaitBeside.current && canShowAside
-        WaitContent(
-            quiz,
-            hold,
-            surface,
-            kind,
-            run,
-            title,
-            goalId = context.goalId,
-            lessonLine = line,
-            lessonReady = first?.ready == true,
-            progressBeside = beside,
-            progressShare = share,
-            onRetry = onRetry,
-            progress = shownProgress,
-        )
-        afterWait?.invoke(this)
-        val firstReady = first?.ready == true && !context.planReady && context.onStartLesson != null
-        val course = context.course?.takeIf { !context.planReady && first?.ready != true }
-        val actionsVisible =
-            hold.holding || firstReady || course != null ||
-                (quiz.canShowQuiz && ((quiz.showingProgress && !beside) || quiz.hasNext))
-        PageActions(hold, visible = actionsVisible) {
-            when {
-                hold.holding -> {
-                    if (!quiz.showingProgress && next == PlanNext.TimeQuestion) {
+    val firstReady = first?.ready == true && !context.planReady && context.onStartLesson != null
+    CompositionLocalProvider(LocalMainActionInBar provides firstReady) {
+        SetupContent(aside = aside, reversed = canShowAside) {
+            val beside = LocalWaitBeside.current && canShowAside
+            WaitContent(
+                quiz,
+                hold,
+                surface,
+                kind,
+                run,
+                title,
+                goalId = context.goalId,
+                lessonLine = line,
+                lessonReady = first?.ready == true,
+                progressBeside = beside,
+                progressShare = share,
+                onRetry = onRetry,
+                progress = shownProgress,
+            )
+            val course = context.course?.takeIf { !context.planReady && first?.ready != true }
+            val actionsVisible =
+                hold.holding || firstReady || course != null || skip != null ||
+                    (quiz.canShowQuiz && ((quiz.showingProgress && !beside) || quiz.hasNext))
+            PageActions(hold, visible = actionsVisible) {
+                when {
+                    hold.holding -> {
+                        if (!quiz.showingProgress && next == PlanNext.TimeQuestion) {
+                            Text(
+                                stringResource(R.string.warm_up_plan_ready_one_question),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Button(onClick = hold::moveOn, modifier = Modifier.fillMaxWidth()) { Text(readyAction) }
+                    }
+
+                    firstReady -> {
                         Text(
-                            stringResource(R.string.warm_up_plan_ready_one_question),
+                            stringResource(R.string.warm_up_plan_waiting),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
+                        Button(
+                            onClick = context.onStartLesson,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(stringResource(R.string.warm_up_start_first_lesson))
+                        }
                     }
-                    Button(onClick = hold::moveOn, modifier = Modifier.fillMaxWidth()) { Text(readyAction) }
-                }
 
-                firstReady -> {
-                    Text(
-                        stringResource(R.string.warm_up_plan_waiting),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Button(
-                        onClick = context.onStartLesson,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(stringResource(R.string.warm_up_start_first_lesson))
+                    else -> {
+                        if (course != null && context.onOpenCourse != null) LibraryCourseOffer(course, context.onOpenCourse)
+                        WaitQuizAction(quiz, hold, beside)
                     }
                 }
-
-                else -> {
-                    if (course != null && context.onOpenCourse != null) LibraryCourseOffer(course, context.onOpenCourse)
-                    WaitQuizAction(quiz, hold, beside)
-                }
+                if (!hold.holding) skip?.invoke()
             }
         }
     }

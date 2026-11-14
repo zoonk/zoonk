@@ -4,26 +4,47 @@ enum GoalLimitReason: Equatable, Sendable {
   case dailyExplanations
   case dailyGoals
   case guest
-  case monthlyExplanations
   case activeGoals
-  case monthlyGoals
   case signUpRequired
   case slowDown
+  /// A monthly cap, with when it comes back.
+  case monthlyExplanations(HelpLimit)
+  case monthlyGoals(HelpLimit)
 
-  var isPlusLimit: Bool { self == .activeGoals || self == .monthlyGoals }
+  var isPlusLimit: Bool {
+    if case .monthlyGoals = self {
+      return true
+    }
+
+    return self == .activeGoals
+  }
+
+  /// When a monthly cap's next use comes back.
+  var availableAt: Date? {
+    switch self {
+    case .monthlyGoals(let limit), .monthlyExplanations(let limit): limit.availableAt
+    default: nil
+    }
+  }
+
+  /// The gate takes the start's place until the monthly cap's day has come; then the start is back
+  /// and the server decides again.
+  func holdsStart(at now: Date) -> Bool {
+    isPlusLimit && !(availableAt.map { $0 <= now } ?? false)
+  }
 
   /// Mirrors main's `getGoalLimitReason`.
   init(_ limit: OnboardingLimit) {
-    let monthly = limit.period == "month"
+    let help = limit.help
 
     if limit.tier == "guest" {
       self = .guest
     } else if limit.resource == "activeGoals" {
       self = .activeGoals
     } else if limit.resource == "explanation" {
-      self = monthly ? .monthlyExplanations : .dailyExplanations
+      self = help.isMonthly ? .monthlyExplanations(help) : .dailyExplanations
     } else {
-      self = monthly ? .monthlyGoals : .dailyGoals
+      self = help.isMonthly ? .monthlyGoals(help) : .dailyGoals
     }
   }
 
@@ -42,15 +63,10 @@ enum GoalLimitReason: Equatable, Sendable {
       LocalizedStringResource(
         "Without an account, you study one goal. Create a free account to start another.",
         table: "Onboarding", comment: "A guest can't start another goal")
-    case .monthlyExplanations:
-      LocalizedStringResource(
-        "No more quick explanations this month. More next month, or subscribe to keep going.",
-        table: "Onboarding",
-        comment: "A free learner asked for as many quick explanations as allowed this month")
-    case .monthlyGoals:
-      LocalizedStringResource(
-        "No more new goals this month. More next month, or subscribe to keep going.",
-        table: "Onboarding", comment: "A free learner started as many goals as allowed this month")
+    case .monthlyExplanations(let limit):
+      limit.sentence(.quickExplanations)
+    case .monthlyGoals(let limit):
+      limit.sentence(.goals)
     case .activeGoals:
       LocalizedStringResource(
         "That's all the goals you can study at once. Pause one, or subscribe to study more.",
@@ -94,16 +110,13 @@ struct GoalError: Equatable {
           "No more new goals today without an account.",
           table: "Onboarding", comment: "A guest sent as many goals as allowed today"),
         needsAccount: true)
+    case .limit(let limit) where limit.help.isMonthly:
+      return GoalError(message: limit.help.sentence(.goals))
     case .limit(let limit) where limit.tier == "plus":
       return GoalError(
         message: LocalizedStringResource(
           "No more new goals today. More tomorrow.",
           table: "Onboarding", comment: "A subscriber sent as many goals as allowed today"))
-    case .limit(let limit) where limit.period == "month":
-      return GoalError(
-        message: LocalizedStringResource(
-          "No more new goals this month. More next month, or subscribe to keep going.",
-          table: "Onboarding", comment: "A free learner sent as many goals as allowed this month"))
     case .limit:
       return GoalError(
         message: LocalizedStringResource(
@@ -149,10 +162,12 @@ struct GoalError: Equatable {
 
 struct GoalErrorSection: View {
   let error: GoalError
+  /// The gate stands in for the screen's start, so it goes once that start is back.
+  var replacesStart = false
 
   var body: some View {
     if let limit = error.limit, limit.isPlusLimit {
-      GoalLimitNoticeSection(reason: limit)
+      GoalLimitNoticeSection(reason: limit, replacesStart: replacesStart)
     } else if error.needsAccount {
       Section {
         Text(error.message)
@@ -193,6 +208,8 @@ struct CreateAccountButton: View {
 /// room for.
 struct GoalLimitNoticeSection: View {
   let reason: GoalLimitReason
+  /// The gate stands in for the screen's start, so it goes once that start is back.
+  var replacesStart = false
 
   @Environment(AppRouter.self) private var router
 
@@ -219,15 +236,14 @@ struct GoalLimitNoticeSection: View {
         }
         .announcesAlert(String(localized: reason.message))
       }
-    } else if reason == .monthlyGoals {
-      Section {
-        SubscribeGate(
-          title: Text(
-            "No more new goals this month", tableName: "Onboarding",
-            comment: "A free learner started as many new goals as their plan allows this month"),
-          line: HelpLimit.limitReached(period: .month, tier: .free).comesBack.map(Text.init)
-        )
-        .announcesAlert(String(localized: reason.message))
+    } else if case .monthlyGoals(let limit) = reason {
+      OpeningClock(availableAt: limit.availableAt) { now in
+        if !replacesStart || reason.holdsStart(at: now) {
+          Section {
+            LimitNotice(limit: limit, kind: .goals)
+              .announcesAlert(String(localized: reason.message))
+          }
+        }
       }
     }
   }

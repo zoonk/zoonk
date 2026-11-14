@@ -220,7 +220,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/catch-up-blocks": {
     post: {
       description:
-        "\"Catch up today\": the lessons earlier days left that the day's normal time didn't fit (`catchUp.later` on the session) join the end of today's session, in plan order, so the learner is back on pace once they're done. Without it they come first on the next days. A finished day opens again. Only while the day offers it (`catchUp.later.offered`).",
+        "Adds the lessons earlier days left that the day's normal time didn't fit (`catchUp.later` on the session) to the end of today's session, in plan order, so the learner is back on pace once they're done. Without it they come first on the next days. A finished day opens again. Only while the day offers it (`catchUp.later.offered`).",
       operationId: "createStudyCatchUpBlocks",
       requestBody: timeZoneBody,
       requestParams: { path: studySessionPathParamsSchema },
@@ -240,7 +240,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/extra-blocks": {
     post: {
       description:
-        "\"Keep learning\" after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them before the tap), studied a day early. With every lesson done, a bonus block of mixed practice instead, again with each tap, with capped Brain Power.",
+        "More study after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them beforehand), studied a day early. With every lesson done, a bonus block of mixed practice instead, again with each call, with capped Brain Power.",
       operationId: "createStudyExtraBlock",
       requestBody: timeZoneBody,
       requestParams: { path: studySessionPathParamsSchema },

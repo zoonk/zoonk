@@ -4801,65 +4801,6 @@
         }
       }
     },
-    "Next lesson" : {
-      "comment" : "Starts the day's next lesson instead",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nächste Lektion"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Empezar la siguiente lección"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Leçon suivante"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inizia la prossima lezione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次のレッスン"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다음 레슨"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zacznij następną lekcję"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Próxima aula"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sonraki derse geç"
-          }
-        }
-      }
-    },
     "No lessons left to catch up." : {
       "comment" : "Under a finished block's facts: every lesson earlier days left is done",
       "localizations" : {
@@ -6761,7 +6702,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eles vêm com seu Parceiro."
+            "value" : "Eles vêm com seu parceiro."
           }
         },
         "tr" : {
@@ -7186,7 +7127,7 @@
       }
     },
     "Try again" : {
-      "comment" : "Asks again for a lesson that failed\nRetries loading\nRetries loading the session\nRetries loading the summary",
+      "comment" : "Retries loading\nRetries loading the session\nRetries loading the summary",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7417,65 +7358,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugünkü çalışmayı sonlandıramadık. Tekrar dene."
-          }
-        }
-      }
-    },
-    "We couldn't write this lesson." : {
-      "comment" : "Writing a lesson failed",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir konnten diese Lektion nicht erstellen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No pudimos preparar esta lección."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Impossible de préparer cette leçon."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non siamo riusciti a preparare questa lezione."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このレッスンを作成できませんでした。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 레슨을 만들지 못했어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie udało się przygotować tej lekcji."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi possível criar esta aula."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu dersi hazırlayamadık."
           }
         }
       }

@@ -8,6 +8,7 @@ import { Button, ButtonSkeleton } from "@zoonk/ui/components/button";
 import { EnterButton, EnterLink, type EnterLinkHostProps } from "@zoonk/ui/components/enter-button";
 import { Input } from "@zoonk/ui/components/input";
 import { showSuccessToast } from "@zoonk/ui/components/toast";
+import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { Undo2Icon } from "lucide-react";
 import { useActionState, useId, useState } from "react";
@@ -83,18 +84,41 @@ function SettingsLink({ children, ...props }: EnterLinkHostProps) {
   return <a {...props}>{children}</a>;
 }
 
-function RejectButton({ children, size }: { children: React.ReactNode; size: "sm" | "xl" }) {
+/**
+ * A phone's bar grows only its main action, which sits in a `<form className="contents">` here,
+ * out of the bar's reach: these buttons fill their line themselves, and a secondary does when it
+ * shares a line the main action left (`sharedLine`).
+ */
+const FILL_LINE_CLASS = "max-lg:grow";
+
+function RejectButton({
+  children,
+  className,
+  size,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  size: "sm" | "xl";
+}) {
   const status = useFormStatus();
 
   return (
-    <Button busy={status.pending} size={size} type="submit" variant="outline">
+    <Button busy={status.pending} className={className} size={size} type="submit" variant="outline">
       {children}
     </Button>
   );
 }
 
 /** One fix: in the bar on its own page (`xl`), or on its row of a batch (`sm`). */
-export function RejectForm({ fixId, size = "xl" }: { fixId: string; size?: "sm" | "xl" }) {
+export function RejectForm({
+  className,
+  fixId,
+  size = "xl",
+}: {
+  className?: string;
+  fixId: string;
+  size?: "sm" | "xl";
+}) {
   const [, formAction] = useAdminActionState({
     action: rejectContentFixAction,
     initialState: INITIAL_STATE,
@@ -103,7 +127,9 @@ export function RejectForm({ fixId, size = "xl" }: { fixId: string; size?: "sm" 
   return (
     <form action={formAction} className="contents">
       <input name="fixId" type="hidden" value={fixId} />
-      <RejectButton size={size}>Reject</RejectButton>
+      <RejectButton className={className} size={size}>
+        Reject
+      </RejectButton>
     </form>
   );
 }
@@ -120,7 +146,15 @@ function rejectedNotice(rejected: number): string {
  * Rejects every fix of the batch still waiting for review; one that's approved, applied or stale
  * keeps where it stands. The count is a toast, since the bar leaves once nothing waits.
  */
-function RejectBatchForm({ batchId, label }: { batchId: string; label: string }) {
+function RejectBatchForm({
+  batchId,
+  className,
+  label,
+}: {
+  batchId: string;
+  className?: string;
+  label: string;
+}) {
   const [, formAction] = useAdminActionState({
     action: async (previous: BatchRejectState, formData: FormData) => {
       const next = await rejectContentFixBatchAction(previous, formData);
@@ -137,12 +171,36 @@ function RejectBatchForm({ batchId, label }: { batchId: string; label: string })
   return (
     <form action={formAction} className="contents">
       <input name="batchId" type="hidden" value={batchId} />
-      <RejectButton size="xl">{label}</RejectButton>
+      <RejectButton className={className} size="xl">
+        {label}
+      </RejectButton>
     </form>
   );
 }
 
 type Reject = { batchId: string; label: string } | { fixId: string };
+
+/**
+ * A batch's labels are long ("Approve all 3 with passkey"), so on a phone its approval takes a
+ * line of its own and the other actions share the one above it, as do Finish applying and Reject
+ * beside an approval. A single fix's Reject and approval fit one line.
+ */
+function phoneLines({
+  finishing,
+  fixIds,
+  reject,
+}: {
+  finishing: number;
+  fixIds: readonly string[];
+  reject?: Reject;
+}) {
+  const stacked = (reject && "label" in reject) || (finishing > 0 && fixIds.length > 0);
+
+  return {
+    approveClass: cn(FILL_LINE_CLASS, stacked && "max-lg:basis-full"),
+    sharedLine: stacked ? FILL_LINE_CLASS : undefined,
+  };
+}
 
 /**
  * The page's one decision, in the shared bottom bar: reject, then approve with a passkey (the way
@@ -186,6 +244,7 @@ export function ReviewBar({
 
   const notice = lastAction === "finish" ? finishNotice : approveNotice;
   const needsPasskey = !hasPasskey || approveNotice === "needsPasskey";
+  const { approveClass, sharedLine } = phoneLines({ finishing, fixIds, reject });
 
   return (
     <BottomBar
@@ -198,28 +257,34 @@ export function ReviewBar({
       }
     >
       <BottomBarActions>
-        {reject && "fixId" in reject && <RejectForm fixId={reject.fixId} />}
+        {reject && "fixId" in reject && <RejectForm className={sharedLine} fixId={reject.fixId} />}
         {reject && "label" in reject && (
-          <RejectBatchForm batchId={reject.batchId} label={reject.label} />
+          <RejectBatchForm batchId={reject.batchId} className={sharedLine} label={reject.label} />
         )}
 
         {finishing > 0 && fixIds.length > 0 && (
           <form action={finishAction} className="contents">
-            <Button busy={isFinishing} size="xl" type="submit" variant="outline">
+            <Button
+              busy={isFinishing}
+              className={sharedLine}
+              size="xl"
+              type="submit"
+              variant="outline"
+            >
               Finish applying
             </Button>
           </form>
         )}
 
         {fixIds.length > 0 && needsPasskey && (
-          <EnterLink href={settingsUrl} link={SettingsLink} size="xl">
+          <EnterLink className={approveClass} href={settingsUrl} link={SettingsLink} size="xl">
             Add a passkey to approve
           </EnterLink>
         )}
 
         {fixIds.length > 0 && !needsPasskey && (
           <form action={approveAction} className="contents">
-            <EnterButton busy={isApproving} size="xl" type="submit">
+            <EnterButton busy={isApproving} className={approveClass} size="xl" type="submit">
               {approveLabel}
             </EnterButton>
           </form>
@@ -227,7 +292,7 @@ export function ReviewBar({
 
         {finishing > 0 && fixIds.length === 0 && (
           <form action={finishAction} className="contents">
-            <EnterButton busy={isFinishing} size="xl" type="submit">
+            <EnterButton busy={isFinishing} className={FILL_LINE_CLASS} size="xl" type="submit">
               Finish applying
             </EnterButton>
           </form>
@@ -238,14 +303,22 @@ export function ReviewBar({
 }
 
 /** Holds the bar's height while the passkey read streams, so nothing moves when it lands. */
-export function ReviewBarSkeleton() {
+export function ReviewBarSkeleton({ batch = false }: { batch?: boolean }) {
+  const { approveClass, sharedLine } = phoneLines({
+    finishing: 0,
+    fixIds: [],
+    reject: batch ? { batchId: "", label: "" } : undefined,
+  });
+
   return (
     <BottomBar aria-hidden="true">
       <BottomBarActions>
-        <ButtonSkeleton size="xl" variant="outline">
-          Reject
+        <ButtonSkeleton className={sharedLine} size="xl" variant="outline">
+          {batch ? "Reject all" : "Reject"}
         </ButtonSkeleton>
-        <ButtonSkeleton size="xl">Approve with passkey</ButtonSkeleton>
+        <ButtonSkeleton className={approveClass} size="xl">
+          {batch ? "Approve all with passkey" : "Approve with passkey"}
+        </ButtonSkeleton>
       </BottomBarActions>
     </BottomBar>
   );

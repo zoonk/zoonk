@@ -14,8 +14,10 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { startCourseWithLevel } from "./course-start";
 import { type Page, expect, test } from "./fixtures";
+import { holdActionAnswer } from "./held-action";
 
 const GOAL_URL = /\/start\/(?<goalId>[0-9a-f-]{36})$/u;
 
@@ -167,5 +169,102 @@ test.describe("Starting a course from its page", () => {
     await startFromHero(page, { link: "Continue your plan", name: course.title });
 
     await expect(page).toHaveURL(new RegExp(`/start/${goalId}$`, "u"));
+  });
+
+  test("a free learner who started every new goal they can this month sees when more come back", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const { course } = await createOutlinedCourse();
+    const firstGoal = new Date(Date.now() - 10 * 86_400_000);
+    const moreOn = new Date(firstGoal.getTime() + 30 * 86_400_000);
+
+    await usageRecordsFixture({
+      count: 10,
+      createdAt: firstGoal,
+      kind: "goal",
+      userId: noProgressUser.id,
+    });
+
+    const response = await page.request.get(`/start/course/${course.id}?minutes=15`);
+    const html = await response.text();
+
+    expect(html).toMatch(
+      /<p class="[^"]*\binvisible\b[^"]*">You&#x27;ve started all the new goals you can\. More on /u,
+    );
+
+    await page.goto(`/start/course/${course.id}?minutes=15`);
+
+    const gate = page
+      .getByText("You've started all the new goals you can")
+      .filter({ visible: true });
+
+    await expect(gate).toBeVisible();
+
+    await expect(
+      page.getByText(
+        `More on ${moreOn.toLocaleDateString("en-US", { day: "numeric", month: "long" })}, or subscribe to keep going.`,
+      ),
+    ).toBeVisible();
+
+    await expect(page.getByRole("link", { name: "Subscribe" })).toHaveAttribute(
+      "href",
+      "/subscription",
+    );
+
+    await expect(page.getByRole("link", { name: "Go to your Plan" })).toBeHidden();
+    await expect(page.getByRole("button", { name: /Build my plan/u })).toBeHidden();
+    await expect(prisma.goal.count({ where: { primaryCourseId: course.id } })).resolves.toBe(0);
+  });
+
+  test("a refused course start comes back on its own once more goals do, and starts", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const { course } = await createOutlinedCourse();
+
+    await usageRecordsFixture({
+      count: 10,
+      createdAt: new Date(Date.now() - 30 * 86_400_000 + 15_000),
+      kind: "goal",
+      userId: noProgressUser.id,
+    });
+
+    await page.goto(`/start/course/${course.id}?minutes=15`);
+
+    const gate = page
+      .getByText("You've started all the new goals you can")
+      .filter({ visible: true });
+
+    await expect(gate).toBeVisible();
+    await expect(page.getByRole("button", { name: /Build my plan/u })).toBeHidden();
+
+    await expect(page.getByRole("button", { name: /Build my plan/u })).toBeVisible({
+      timeout: 30_000,
+    });
+
+    await expect(gate).toBeHidden();
+    await startCourseWithLevel(page);
+    await readGoalId(page);
+  });
+
+  test("a visitor who goes back while the course starts stays there, and the start still stands", async ({
+    page,
+  }) => {
+    const { course, coursePath } = await createOutlinedCourse();
+
+    await page.goto(coursePath);
+    await startFromHero(page, { name: course.title });
+    await expect(page).toHaveURL(new RegExp(`/start/course/${course.id}\\?minutes=15$`, "u"));
+    const start = await holdActionAnswer(page, `/start/course/${course.id}*`);
+
+    await startCourseWithLevel(page);
+    await start.held;
+    await page.goBack();
+    await expect(page).toHaveURL((url) => url.pathname === coursePath);
+
+    expect(await start.release(GOAL_URL)).toBe(false);
+    await expect(page).toHaveURL((url) => url.pathname === coursePath);
+    await expect(prisma.goal.count({ where: { primaryCourseId: course.id } })).resolves.toBe(1);
   });
 });

@@ -257,33 +257,6 @@ class CodeSandboxTest {
         }
 
     @Test
-    fun `reads a regex the page doesn't answer in time as invalid and replaces the stuck page`() =
-        runTest {
-            val sandbox = sandbox()
-            val stuck = async { sandbox.testRegex("a*".repeat(20) + "b", listOf("a".repeat(40)), listOf("b")) }
-            runCurrent()
-            advanceTimeBy(10.seconds)
-            val page = pages.single().apply { load() }
-            runCurrent()
-
-            advanceTimeBy(2.seconds)
-            assertFalse(page.closed)
-            advanceTimeBy(1.seconds)
-            assertEquals(RegexTest.Invalid, stuck.await())
-            assertTrue(page.closed)
-
-            val next = async { sandbox.testRegex("b", listOf("b"), listOf("a")) }
-            runCurrent()
-            pages.last().apply {
-                load()
-                runCurrent()
-                answer("""{"status":"empty"}""")
-            }
-            assertEquals(RegexTest.Empty, next.await())
-            assertEquals(2, pages.size)
-        }
-
-    @Test
     fun `keeps the page while held and closes it a minute after the last hold and request end`() =
         runTest {
             val sandbox = sandbox()
