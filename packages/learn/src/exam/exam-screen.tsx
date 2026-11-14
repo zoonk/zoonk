@@ -195,7 +195,6 @@ function ExamMoment() {
 
   return (
     <ExamMomentCard
-      href={null}
       moment={{
         checklist: exam.stage === "dayBefore" || exam.stage === "examDay" ? exam.checklist : [],
         // The date is under the page's title already.

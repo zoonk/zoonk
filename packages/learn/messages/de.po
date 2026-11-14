@@ -3406,19 +3406,16 @@ msgid "From now on, review and mock exams."
 msgstr "Ab jetzt stehen Wiederholungen und Probeprüfungen an."
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "VYBPRQ"
 msgid "The final stretch"
 msgstr "Der Endspurt"
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "Qr0X96"
 msgid "{exam} is tomorrow"
 msgstr "{exam} ist morgen"
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "7OX7b1"
 msgid "{exam} is today"
 msgstr "{exam} ist heute"
@@ -3430,20 +3427,9 @@ msgstr "Trag dein offizielles Ergebnis ein, sobald du es hast."
 
 #: src/exam/exam-moment-card.tsx
 #: src/exam/exam-result-section.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "yMXlRJ"
 msgid "How did it go?"
 msgstr "Wie ist es gelaufen?"
-
-#: src/exam/exam-moment-card.tsx
-msgctxt "GDT0eI"
-msgid "Add your result"
-msgstr "Ergebnis eintragen"
-
-#: src/exam/exam-moment-card.tsx
-msgctxt "0LZY2s"
-msgid "See your exam"
-msgstr "Prüfung ansehen"
 
 #: src/exam/exam-next-mock.tsx
 #: src/plan-diff/use-change-rows.ts
@@ -13255,6 +13241,16 @@ msgstr "Für heute hinzufügen"
 msgctxt "SVKPfj"
 msgid "Exam choice"
 msgstr "Prüfungsauswahl"
+
+#: src/today/today-exam-moment.tsx
+msgctxt "GDT0eI"
+msgid "Add your result"
+msgstr "Ergebnis eintragen"
+
+#: src/today/today-exam-moment.tsx
+msgctxt "0LZY2s"
+msgid "See your exam"
+msgstr "Prüfung ansehen"
 
 #: src/today/today-exam-moment.tsx
 msgctxt "9HjIgh"
