@@ -1301,8 +1301,11 @@
         <item quantity="many">%1$d bases · só as primeiras aulas · %2$s</item>
         <item quantity="other">%1$d bases · só as primeiras aulas · %2$s</item>
     </plurals>
+    <!-- Choice to study a prerequisite with all its lessons. -->
     <string name="plan_base_deep">Todas as aulas</string>
+    <!-- Choice to study only the first, most important lessons of a prerequisite. -->
     <string name="plan_base_essential">Só as primeiras aulas</string>
+    <!-- Choice to study a prerequisite as one short lesson. -->
     <string name="plan_base_quick">Uma aula curta para cada base</string>
     <string name="plan_base_skip">Pular</string>
     <string name="plan_all_prerequisites">Todas as bases</string>

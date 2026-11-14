@@ -1227,8 +1227,11 @@
         <item quantity="one">%1$d ön bilgi · yalnızca ilk dersler · %2$s</item>
         <item quantity="other">%1$d ön bilgi · yalnızca ilk dersler · %2$s</item>
     </plurals>
+    <!-- Choice to study a prerequisite with all its lessons. -->
     <string name="plan_base_deep">Tüm dersler</string>
+    <!-- Choice to study only the first, most important lessons of a prerequisite. -->
     <string name="plan_base_essential">Yalnızca ilk dersler</string>
+    <!-- Choice to study a prerequisite as one short lesson. -->
     <string name="plan_base_quick">Her biri için kısa bir ders</string>
     <string name="plan_base_skip">Atla</string>
     <string name="plan_all_prerequisites">Tüm ön bilgiler</string>

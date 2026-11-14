@@ -1301,8 +1301,11 @@
         <item quantity="many">%1$d prerequisiti · solo le prime lezioni · %2$s</item>
         <item quantity="other">%1$d prerequisiti · solo le prime lezioni · %2$s</item>
     </plurals>
+    <!-- Choice to study a prerequisite with all its lessons. -->
     <string name="plan_base_deep">Tutte le lezioni</string>
+    <!-- Choice to study only the first, most important lessons of a prerequisite. -->
     <string name="plan_base_essential">Solo le prime lezioni</string>
+    <!-- Choice to study a prerequisite as one short lesson. -->
     <string name="plan_base_quick">Una breve lezione per prerequisito</string>
     <string name="plan_base_skip">Salta</string>
     <string name="plan_all_prerequisites">Tutti i prerequisiti</string>

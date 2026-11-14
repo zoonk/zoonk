@@ -15,7 +15,7 @@
   "plan_archive_description": "ff3e797ad6c9c8b35ebb8f4a9574015d234e80523298e847d13e0d2e23c4f3a3",
   "plan_archive_goal": "4df48b54e7ea991edd2f836d6b01e7f2db99ddd0c100b2b2386647d78137cbb2",
   "plan_archive_title": "3828fac534dd40cf568f7986005f80447dd9c78b56b6bc69ddb93a7bcc3018b2",
-  "plan_base_deep": "dc0aa18d8d7b776f83776ac61d4e49c06ee1f4081c38bf6f60090a5a71fbc383",
+  "plan_base_deep": "379c23c7d57aaaae0a5e39bee2d9fb892d0e4e68d5f6b487fc58b2ccd07082c5",
   "plan_base_essential": "e51123050dee923b557f58495ef04a2486c91197103ab9450e6eaf8013eb0bab",
   "plan_base_names_time": "8100c871024673d233809ca02fcb7bada9b1e624917bb9c6584ef9a98d121c79",
   "plan_base_quick": "2bede98b76da4a831057642354acbe18874629e6c8c3cf97e9ac439c49eeb9a6",
@@ -1153,8 +1153,11 @@
     <plurals name="plan_bases_essential">
         <item quantity="other">前提知識%1$d項目・最初の数レッスンのみ・%2$s</item>
     </plurals>
-    <string name="plan_base_deep">全レッスン</string>
+    <!-- Choice to study a prerequisite with all its lessons. -->
+    <string name="plan_base_deep">すべてのレッスン</string>
+    <!-- Choice to study only the first, most important lessons of a prerequisite. -->
     <string name="plan_base_essential">最初のレッスンのみ</string>
+    <!-- Choice to study a prerequisite as one short lesson. -->
     <string name="plan_base_quick">それぞれ短いレッスンを1つ</string>
     <string name="plan_base_skip">スキップ</string>
     <string name="plan_all_prerequisites">すべての前提知識</string>

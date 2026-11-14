@@ -418,7 +418,7 @@
   "onboarding_start_over_description": "942dfe59dba0267e294e6c04e03186cc32b91b424322004d9054d09858893c54",
   "onboarding_start_over_title": "2e5657b6494ddfc470d9ab19f6c104eb6ed1486aecb90521ede270dc12677a20",
   "onboarding_start_title": "33e50fb85346db8d31dcde40a4a625967e10f41458323ce95a4b237a1ed8efe5",
-  "onboarding_step_of": "4dfd5234375afa1d9b48667e26d7c84a44cf1ad34030a994f2fd0e238d855126",
+  "onboarding_step_of": "4ba37a102e476f476adab017f321e1e6d34d086c3048bd146a8022a44986570d",
   "onboarding_study_days": "bb962da4eb90c1b0004491cc3d95c64249f3f7af1e0700a2a2a792ea63210a4c",
   "onboarding_study_material": "eb3295262c00852ba35340e530d4ac683bcf23fda26e8c7df17516c9491798d8",
   "onboarding_subjects_description": "4d7dee7ebe9da7dfc71b5c2c9556378e4a38fb778f4830fe459d2af8c7b61464",
@@ -962,7 +962,7 @@
     <string name="onboarding_buddy_title">짝꿍 고르기</string>
     <string name="onboarding_buddy_description">배울수록 짝꿍도 자라요.</string>
     <!-- Screen reader name of the step dots, like "Step 2 of 6". -->
-    <string name="onboarding_step_of">%1$s/%2$s단계</string>
+    <string name="onboarding_step_of">%1$d/%2$d단계</string>
     <string name="onboarding_more">많음</string>
     <string name="onboarding_finish_later">나중에 마무리하기</string>
     <string name="onboarding_finish_later_description">답변은 그대로 남아요</string>

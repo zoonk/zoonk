@@ -686,8 +686,11 @@
         <item quantity="one">%1$d prerequisite · first lessons only · %2$s</item>
         <item quantity="other">%1$d prerequisites · first lessons only · %2$s</item>
     </plurals>
+    <!-- Choice to study a prerequisite with all its lessons. -->
     <string name="plan_base_deep">Every lesson</string>
+    <!-- Choice to study only the first, most important lessons of a prerequisite. -->
     <string name="plan_base_essential">First lessons only</string>
+    <!-- Choice to study a prerequisite as one short lesson. -->
     <string name="plan_base_quick">One short lesson each</string>
     <string name="plan_base_skip">Skip</string>
     <string name="plan_all_prerequisites">All prerequisites</string>

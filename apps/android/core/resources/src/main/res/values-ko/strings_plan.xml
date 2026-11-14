@@ -1153,8 +1153,11 @@
     <plurals name="plan_bases_essential">
         <item quantity="other">사전 지식 %1$d개 · 초반 레슨만 · %2$s</item>
     </plurals>
+    <!-- Choice to study a prerequisite with all its lessons. -->
     <string name="plan_base_deep">모든 레슨</string>
+    <!-- Choice to study only the first, most important lessons of a prerequisite. -->
     <string name="plan_base_essential">초반 레슨만</string>
+    <!-- Choice to study a prerequisite as one short lesson. -->
     <string name="plan_base_quick">각각 짧은 레슨 하나씩</string>
     <string name="plan_base_skip">건너뛰기</string>
     <string name="plan_all_prerequisites">모든 사전 지식</string>

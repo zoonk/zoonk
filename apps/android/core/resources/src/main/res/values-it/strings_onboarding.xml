@@ -323,7 +323,7 @@
   "onboarding_reveal_phase_mock_and_practice": "40e078e6e05bd92e8e8f65660fb8b5b6d87324a2373fae2bc3d1fc51ebbfa298",
   "onboarding_reveal_phase_number": "c81280affb7e5e44fc94cffe5760ad11098c2e65c2b2e414d4c3dc2b16bd0d96",
   "onboarding_reveal_phase_place": "c08fd43f1805329ac87eb92e135928f9069f8cacd9fa7f753b69e69c5852de07",
-  "onboarding_reveal_phase_position": "17254a1a89a326a23be34fa0e85cde3edc1f5f22adab85b108ac277376bae07f",
+  "onboarding_reveal_phase_position": "bcb3109ec1fd4698d1282f0a87b26ac691545f6a060c31e08f0621a5ad5f24c3",
   "onboarding_reveal_phase_practice": "8907c524b17570c05f36995dba62dc9670950dbce34dbc1b44631dd8d306669e",
   "onboarding_reveal_phase_short_mock": "a5ef00efd4f6576cac8d31b8583b82d473ea55b7b91201df3df0c0e64c40d5ed",
   "onboarding_reveal_phases": "6c1f856a441e699453ed56f49b42a0fa8c0d2db0e86e2963ebc81afbb95d9ebc",
@@ -418,7 +418,7 @@
   "onboarding_start_over_description": "abc00cadaf726a95d4b4d45956a58847a9161e5e76df3afe30c468370aa7997d",
   "onboarding_start_over_title": "7a233734031527cfe4d624647d936f934105a7f629da3a120e67eed8a2170584",
   "onboarding_start_title": "04c5900d079675cc387ceb7a709c20cce80124ac67695de188dc93cbb50e896e",
-  "onboarding_step_of": "51f0f98daa080a7e3bd03455320afdbeeda5a8638b42fb4fee68462a07b7a9db",
+  "onboarding_step_of": "dcd9e9d39d38e347410296462a6047906925a7928d4c08fa1f383bc325e45fe5",
   "onboarding_study_days": "62cc9554b517a1d3609a078f7c72dfcdb72bf6abca6d0bd79ac64b6c241a3c6e",
   "onboarding_study_material": "334b3b8df8ec6aba9493ce9bc57a58551304948afeac732347dacebac545c4b5",
   "onboarding_subjects_description": "9c24a0b25175b64154469c7707c2f44e7600f1dcc6ce880e5c373f774380690b",
@@ -795,7 +795,7 @@
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">Oggi</string>
     <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
-    <string name="onboarding_reveal_phase_position">%1$s su %2$s</string>
+    <string name="onboarding_reveal_phase_position">%1$d su %2$d</string>
     <string name="onboarding_reveal_phase_place">fase %1$d di %2$d</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">La data più probabile per l’esame è ora %1$s.</string>
@@ -1004,7 +1004,7 @@
     <string name="onboarding_buddy_title">Scegli il tuo compagno</string>
     <string name="onboarding_buddy_description">Il tuo compagno cresce mentre impari.</string>
     <!-- Screen reader name of the step dots, like "Step 2 of 6". -->
-    <string name="onboarding_step_of">Passo %1$s di %2$s</string>
+    <string name="onboarding_step_of">Passo %1$d di %2$d</string>
     <string name="onboarding_more">Più</string>
     <string name="onboarding_finish_later">Completa più tardi</string>
     <string name="onboarding_finish_later_description">Le tue risposte restano salvate</string>

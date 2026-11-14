@@ -418,7 +418,7 @@
   "onboarding_start_over_description": "09dd2cb34889bad37e65b4dc6c2430f45720448b3f667d29199c13386fc99a4c",
   "onboarding_start_over_title": "f2a6d68362814def95ad4a5702cf334a3923a28b4e956f359f4d85443d086079",
   "onboarding_start_title": "14ab4270aceedb7f2b4f0e1b96ec4bd8bc28f7fae3fc1d18256f01813e055b17",
-  "onboarding_step_of": "1859a3560c8eac207b6bf5b21e09fd87e4e684d219f97b8e826e1ae196d5890c",
+  "onboarding_step_of": "b340b1d37e87b1cf405e07c35af6321c64f1e03b2c1f07c42cdac4f56c5dcf69",
   "onboarding_study_days": "05407950d9c8390e6598ef67c58d6ffb6e61d44e898f9942cd6670630f554cae",
   "onboarding_study_material": "a431b480b0dd9b74f485b9bf6f7d9b8259701b44e07a24d8a7879b101265e808",
   "onboarding_subjects_description": "ecad18a628e205f6d443856191fee37b093d74f14ebe95e17b202d8eba0655a4",
@@ -983,7 +983,7 @@
     <string name="onboarding_buddy_title">Arkadaşını seç</string>
     <string name="onboarding_buddy_description">Öğrendikçe arkadaşın da büyür.</string>
     <!-- Screen reader name of the step dots, like "Step 2 of 6". -->
-    <string name="onboarding_step_of">Adım %1$s / %2$s</string>
+    <string name="onboarding_step_of">Adım %1$d / %2$d</string>
     <string name="onboarding_more">Çok</string>
     <string name="onboarding_finish_later">Sonra tamamla</string>
     <string name="onboarding_finish_later_description">Cevapların korunur</string>

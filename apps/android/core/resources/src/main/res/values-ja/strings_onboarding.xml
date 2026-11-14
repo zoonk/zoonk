@@ -418,7 +418,7 @@
   "onboarding_start_over_description": "1c56b2d482e9f5341cde25a3d10da75f65299f5bc6645e6c6e31e8a680f6f495",
   "onboarding_start_over_title": "86d6f294f50acb2672516761bec100d76bdda65bc73fdb145176c4332edc511c",
   "onboarding_start_title": "93a7ea788ca812f7b064a3641a249c924e5ee3853bb19427512f0470a656eab9",
-  "onboarding_step_of": "c95f9be76015a4d2bf6f577272d7d9e3b7e9910119af11ce1ebf89addf8c1755",
+  "onboarding_step_of": "91eb9ed6bf68d4657573393bd7d742804db24ae3fa1c44aea61f23207adb88da",
   "onboarding_study_days": "97afb7c1dd2e5dbf72ebfbd70add2e709dee8aa48617689537da6cfa791f8a76",
   "onboarding_study_material": "cf15f7da30c4695e0560335cc1606219aef11b7028d682b881a7c804cbb01875",
   "onboarding_subjects_description": "d960487c7ac14646b35ebd1da39db6147f9dfa36aeccbfaa7c2488378473f87f",
@@ -962,7 +962,7 @@
     <string name="onboarding_buddy_title">相棒を選ぶ</string>
     <string name="onboarding_buddy_description">学ぶにつれて、相棒も成長します。</string>
     <!-- Screen reader name of the step dots, like "Step 2 of 6". -->
-    <string name="onboarding_step_of">ステップ %1$s / %2$s</string>
+    <string name="onboarding_step_of">ステップ %1$d / %2$d</string>
     <string name="onboarding_more">多い</string>
     <string name="onboarding_finish_later">あとで続ける</string>
     <string name="onboarding_finish_later_description">回答は保存されます</string>
