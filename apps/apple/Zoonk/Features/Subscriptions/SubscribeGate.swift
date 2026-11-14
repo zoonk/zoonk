@@ -191,7 +191,7 @@ extension HelpLimit {
   }
 
   /// A short break and a guest's account need words of their own; a reached limit has none here.
-  private var refusalWords: LimitWords {
+  private func refusalWords(now: Date = .now, calendar: Calendar = .current) -> LimitWords {
     switch self {
     case .slowDown:
       LimitWords(
@@ -201,7 +201,7 @@ extension HelpLimit {
     case .freeLessonsUsed(let opensAt):
       LimitWords(
         title: LocalizedStringResource("You've used your free lessons", table: "Subscriptions"),
-        line: Self.nextFreeLesson(opensAt))
+        line: Self.nextFreeLesson(opensAt, now: now, calendar: calendar))
     case .signUpRequired, .limitReached:
       LimitWords(
         title: LocalizedStringResource(
@@ -212,7 +212,7 @@ extension HelpLimit {
 
   func helpWords(_ kind: Kind? = nil) -> LimitWords {
     guard case .limitReached(_, let tier) = self else {
-      return refusalWords
+      return refusalWords()
     }
 
     guard tier != .guest else {
@@ -271,6 +271,17 @@ extension HelpLimit {
   static let freeLessonReady = LimitWords(
     title: LocalizedStringResource("Your next free lesson is ready", table: "Subscriptions"))
 
+  /// When the gate's words next change: the learner's next midnight or the opening, whichever is
+  /// first. Nothing once the lesson has opened.
+  static func nextWake(opensAt: Date, now: Date, calendar: Calendar = .current) -> Date? {
+    guard opensAt > now else {
+      return nil
+    }
+
+    let midnight = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now))
+    return min(opensAt, midnight ?? opensAt)
+  }
+
   /// The day a free learner's next lesson opens, in their own time zone: no clock time, no count of
   /// days. Without the instant, or once it has passed, nothing about a day, never a guess.
   static func nextFreeLesson(_ opensAt: Date?, now: Date = .now, calendar: Calendar = .current)
@@ -310,13 +321,13 @@ extension HelpLimit {
 
   /// A free learner's lessons are the plan's one allowance, so its title says so. Every other
   /// lesson cap is a guest's or the day's: no lesson is refused for the month.
-  func lessonWords(now: Date = .now) -> LimitWords {
+  func lessonWords(now: Date = .now, calendar: Calendar = .current) -> LimitWords {
     if freeLessonOpened(at: now) {
       return Self.freeLessonReady
     }
 
     guard case .limitReached(_, let tier) = self else {
-      return refusalWords
+      return refusalWords(now: now, calendar: calendar)
     }
 
     guard tier != .guest else {
@@ -335,7 +346,7 @@ extension HelpLimit {
 
   var mindMapWords: LimitWords {
     guard case .limitReached(_, let tier) = self else {
-      return refusalWords
+      return refusalWords()
     }
 
     guard tier != .guest else {
@@ -359,7 +370,7 @@ extension HelpLimit {
   /// Seeing a far topic's lessons ahead of time.
   var previewWords: LimitWords {
     guard case .limitReached(_, let tier) = self else {
-      return refusalWords
+      return refusalWords()
     }
 
     guard tier != .guest else {
@@ -381,8 +392,9 @@ extension HelpLimit {
   }
 }
 
-/// Main's `useOpeningDay`: the time a free lesson's opening is read at. It moves when the instant
-/// passes and when the app comes back to the front, so a passed instant stops being promised.
+/// Main's `useOpeningDay`: the time a free lesson's opening is read at. It moves at the learner's
+/// midnight (its day changes), when the instant passes and when the app comes back to the front, so
+/// a gate left open never promises a day that has gone.
 struct OpeningClock<Content: View>: View {
   @Environment(\.scenePhase) private var scenePhase
   @State private var now = Date.now
@@ -399,13 +411,12 @@ struct OpeningClock<Content: View>: View {
 
         while !Task.isCancelled {
           now = .now
-          let left = opensAt.timeIntervalSince(now)
 
-          guard left > 0 else {
+          guard let wake = HelpLimit.nextWake(opensAt: opensAt, now: now) else {
             return
           }
 
-          try? await Task.sleep(for: .seconds(left))
+          try? await Task.sleep(for: .seconds(wake.timeIntervalSince(now)))
         }
       }
       .onChange(of: scenePhase) { _, phase in
@@ -414,4 +425,5 @@ struct OpeningClock<Content: View>: View {
         }
       }
   }
+
 }
