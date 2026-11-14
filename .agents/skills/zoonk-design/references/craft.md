@@ -494,6 +494,7 @@ Each is one named place where a rule above doesn't hold, by the user's decision.
 - The day's bar on Today keeps its look and its parts' popovers; it is never made 44px tall to press (Z3).
 - A row on Today that counts toward a mission keeps its small violet target (it isn't a paid mark, R4).
 - Where plans are compared (pricing, the subscription page), a plan is named ("Plus"); the action still reads "Subscribe" (R4).
+- The way out of a test before its end (the short test, the level test, the Focus test) is a quiet link under the options that reads "Stop and use my answers": leaving early keeps the answers given so far, and the label has to say so, since "Stop" alone reads as losing them ([buttons are verbs](../SKILL.md#words)).
 - Sign-in's three steps (log in, the code, the name) keep "Continue" right under the field, in one layout: log in has several ways in, so no one action to pin, and the form stays the same through sign-in. The pinned bar starts where onboarding does (R2).
 - The lesson's "ask the buddy" sheet is the buddy's chat, so its header is the chat's row (the face, the name, the screen it's about) and its thread and composer keep the chat's 16px sides: a chat reads the same wherever it opens. Its ✕, its header's height, its dim, its corner and how it rises are the sheet's (T1, S4).
 - The command palette has no ✕, since it has no title to put one beside. On a computer its "Esc" keycap is a button that closes it; on a phone its field ends with "Cancel" (B4).
