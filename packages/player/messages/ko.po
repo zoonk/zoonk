@@ -3710,6 +3710,11 @@ msgctxt "QuYUAL"
 msgid "The microphone is blocked. Type your answer instead."
 msgstr "마이크 사용이 차단되어 있어요. 대신 답을 입력하세요."
 
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "2Px63n"
+msgid "We can't use your microphone. Type your answer instead."
+msgstr "마이크를 사용할 수 없어요. 대신 답을 입력해 주세요."
+
 #: src/lesson/steps/summary-step.tsx
 msgctxt "RrCui3"
 msgid "Summary"

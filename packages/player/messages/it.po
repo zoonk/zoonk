@@ -3710,6 +3710,11 @@ msgctxt "QuYUAL"
 msgid "The microphone is blocked. Type your answer instead."
 msgstr "Il microfono è bloccato. Rispondi per iscritto."
 
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "2Px63n"
+msgid "We can't use your microphone. Type your answer instead."
+msgstr "Non riusciamo a usare il microfono. Rispondi per iscritto."
+
 #: src/lesson/steps/summary-step.tsx
 msgctxt "RrCui3"
 msgid "Summary"
