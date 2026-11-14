@@ -11,7 +11,7 @@ import java.util.UUID
 import kotlin.time.Instant
 
 class FakeTodayApi(
-    private val answers: List<Today>,
+    var answers: List<Today>,
 ) : TodayApi {
     var reads = 0
     var changed = false

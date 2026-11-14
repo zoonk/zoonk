@@ -9,9 +9,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
 import com.zoonk.android.ui.components.SuggestionDescription
+import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionMenu
 import com.zoonk.android.ui.components.SuggestionMenuItem
@@ -332,14 +334,19 @@ internal fun PastDateSuggestion(
     onAdjust: (PlanSection?) -> Unit,
 ) {
     if (slot.page.isExam) {
-        // The page's bar holds the answers (ExamOverActions).
-        PlanChangeSuggestion(
-            item,
-            stringResource(R.string.plan_past_date_exam_title),
-            slot,
-            SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
+        // A statement: the page's bar asks and answers it (ExamOverActions), which a sheet over it would cover.
+        val title = stringResource(R.string.plan_past_date_exam_title)
+        val left = pluralStringResource(R.plurals.plan_exam_over_left, item.lessons, item.lessons)
+        Suggestion(
+            label = title,
+            summary = title,
+            layout = slot.layout,
+            mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
+            lineAction = null,
+            lineDescription = left,
         ) {
-            SuggestionDescription(stringResource(R.string.plan_exam_over_ask))
+            SuggestionHeader(title)
+            SuggestionDescription(left)
         }
     } else {
         DateOverSuggestion(item, slot, onAdjust)

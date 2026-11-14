@@ -67,24 +67,11 @@ msgid "Source:"
 msgstr "Źródło:"
 
 #: src/activities/_components/activity-feedback.tsx
-#: src/activities/labeled-diagram/diagram-slots.tsx
-#: src/activities/pattern-table/pattern-row.tsx
-msgctxt "QAJ_Tl"
-msgid "Correct answer:"
-msgstr "Poprawna odpowiedź:"
-
-#: src/activities/_components/activity-feedback.tsx
 #: src/activities/combination-grid/grid-board.tsx
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"
 msgstr "Twoja odpowiedź:"
-
-#: src/activities/_components/activity-feedback.tsx
-#: src/lesson/feedback/lesson-step-result.tsx
-msgctxt "hmBFza"
-msgid "Answer:"
-msgstr "Odpowiedź:"
 
 #: src/activities/_components/activity-feedback.tsx
 #: src/lesson/feedback/lesson-step-result.tsx
@@ -1308,6 +1295,12 @@ msgstr "Miejsce {number}:"
 msgctxt "uilHxe"
 msgid "Pick a name"
 msgstr "Wybierz nazwę"
+
+#: src/activities/labeled-diagram/diagram-slots.tsx
+#: src/activities/pattern-table/pattern-row.tsx
+msgctxt "QAJ_Tl"
+msgid "Correct answer:"
+msgstr "Poprawna odpowiedź:"
 
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "vjLo-k"
@@ -3157,6 +3150,12 @@ msgstr "Co usłyszeliśmy"
 msgctxt "yDk4bj"
 msgid "Also correct:"
 msgstr "Inna poprawna wersja:"
+
+#. Under “Not checked this time”: we corrected this lesson question while the learner was in the lesson, so their answer isn't graded either way.
+#: src/lesson/feedback/lesson-step-result.tsx
+msgctxt "FtNhyg"
+msgid "This question was updated after you started, so this answer doesn't count."
+msgstr "To pytanie zmieniło się po rozpoczęciu lekcji, więc ta odpowiedź się nie liczy."
 
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "WGhDaL"
