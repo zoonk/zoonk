@@ -24,6 +24,9 @@ sealed interface TutorFailure {
         val limit: Limit,
     ) : TutorFailure
 
+    /** A question a help limit refused, once the day it gave has come: still unanswered, and Try again asks the server again. */
+    data object Unanswered : TutorFailure
+
     data object PlusRequired : TutorFailure
 
     data object Gone : TutorFailure

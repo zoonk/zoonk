@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.conversation
 
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -12,6 +13,8 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.LocalClock
+import com.zoonk.android.ui.components.TestClock
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguagePracticeCall
@@ -31,17 +34,20 @@ class PracticeConversationTest {
     private val started = UUID.fromString("00000000-0000-4000-8000-0000000000c2")
     private val requests = mutableListOf<CallRequest>()
     private val opened = mutableListOf<AppRoute>()
+    private val clock by lazy { TestClock(compose.mainClock) }
 
     private fun show(start: CallStarter) {
         compose.setContent {
-            ZoonkTheme {
-                PracticeConversation(
-                    call = practiceCall(),
-                    chapterId = chapter,
-                    goalId = null,
-                    start = start,
-                    open = { opened += it },
-                )
+            CompositionLocalProvider(LocalClock provides clock) {
+                ZoonkTheme {
+                    PracticeConversation(
+                        call = practiceCall(),
+                        chapterId = chapter,
+                        goalId = null,
+                        start = start,
+                        open = { opened += it },
+                    )
+                }
             }
         }
         compose.onNodeWithText("Practice a conversation").performClick()
@@ -72,7 +78,7 @@ class PracticeConversationTest {
                 callStarter(HeldRuns()) { request ->
                     requests += request
                     if (requests.size == 1) {
-                        CallStart.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, Instant.now().plusSeconds(2)))
+                        CallStart.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, clock.opening))
                     } else {
                         CallStart.Started(started)
                     }
@@ -83,6 +89,7 @@ class PracticeConversationTest {
         compose.onNodeWithText("You've used your call time").assertExists()
         compose.onNodeWithText("More later today, or subscribe to keep going.").assertExists()
 
+        clock.passOpening()
         compose.waitUntil(LIFT_TIMEOUT) { compose.onAllNodesWithText("Start the call").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("You can try again now.").assertDoesNotExist()
         compose.onNodeWithText("Start the call").performClick()

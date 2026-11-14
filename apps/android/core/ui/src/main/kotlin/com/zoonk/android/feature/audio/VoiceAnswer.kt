@@ -116,11 +116,19 @@ sealed interface VoiceIssue {
     ) : VoiceIssue
 }
 
-/** The take for [key], shared by its [VoiceAnswerButton] and its [VoiceAnswerLine] wherever each is drawn. */
+/**
+ * The take for [key], shared by its [VoiceAnswerButton] and its [VoiceAnswerLine] wherever each is drawn.
+ * Wherever the take shows, even only as "The microphone is off", coming back with the microphone allowed gives it back.
+ */
 @Composable
 fun voiceAnswerModel(key: String): VoiceAnswerModel {
     val context = LocalContext.current
-    return viewModel(key = key) { VoiceAnswerModel(context) }
+    val model = viewModel(key = key) { VoiceAnswerModel(context) }
+    LifecycleResumeEffect(model) {
+        if (model.recorder.hasPermission) model.microphoneOff = false
+        onPauseOrDispose {}
+    }
+    return model
 }
 
 /**
@@ -166,7 +174,6 @@ fun <T> VoiceAnswerButton(
     val tapRecord =
         rememberRecordTap(
             recorder = model.recorder,
-            onAllowed = { model.microphoneOff = false },
             onRefused = { lasting ->
                 when {
                     onBlocked != null -> onBlocked()
@@ -241,9 +248,9 @@ fun VoiceAnswerLine(
 @Composable
 fun rememberRecordTap(
     recorder: VoiceRecorder,
-    onAllowed: () -> Unit,
     onRefused: (lasting: Boolean) -> Unit,
     record: () -> Unit,
+    onAllowed: () -> Unit = {},
 ): () -> Unit {
     val activity = LocalActivity.current
     val currentRecord by rememberUpdatedState(record)
