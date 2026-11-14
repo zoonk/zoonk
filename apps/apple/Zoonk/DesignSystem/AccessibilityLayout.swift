@@ -91,6 +91,7 @@ extension View {
       .groupBoxStyle(.panel)
       .disclosureGroupStyle(.fold)
       .typeStyle(.body)
+      .layoutSurface()
   }
 }
 
@@ -220,12 +221,16 @@ struct IconLabeledContent<Content: View, Title: View, Icon: View>: View {
     Label {
       LabeledContent {
         content
+          .layoutPart(.value)
       } label: {
         title
+          .layoutPart(.label)
       }
     } icon: {
       icon
+        .layoutPart(.mark)
     }
+    .layoutRow(.listGroup)
   }
 }
 

@@ -209,20 +209,24 @@ private struct PlanPhaseRow: View {
           )
           .typeWeight(phase.state == .current ? .semibold : .regular)
           .foregroundStyle(phase.state == .done ? .mutedForeground : .primary)
+          .layoutPart(.label)
 
           if let meta {
             meta
+              .layoutPart(.note)
               .typeStyle(.meta)
               .foregroundStyle(.mutedForeground)
           }
         }
       } icon: {
         StatusMark(status: next ? .next : phase.mark)
+          .layoutPart(.mark)
       }
     } value: {
       if let end {
         Text(verbatim: end.shown)
           .typeStyle(.data)
+          .layoutRole(.date)
           .accessibilityHidden(true)
       }
     }
@@ -316,15 +320,18 @@ private struct PlanChapterRow: View {
       Label {
         VStack(alignment: .leading, spacing: 2) {
           title
+            .layoutPart(.label, text: title)
 
           if let note {
             note
+              .layoutPart(.note)
               .typeStyle(.meta)
               .foregroundStyle(.mutedForeground)
           }
         }
       } icon: {
         StatusMark(status: mark)
+          .layoutPart(.mark)
       }
       .accessibilityLabel { label in
         if let markWords {
@@ -461,8 +468,8 @@ enum PlanWhen: View {
 
   var body: some View {
     switch self {
-    case .date(let text): text.typeStyle(.data)
-    case .words(let text): text.typeStyle(.meta)
+    case .date(let text): text.typeStyle(.data).layoutRole(.date)
+    case .words(let text): text.typeStyle(.meta).layoutRole(.words)
     }
   }
 
@@ -683,9 +690,11 @@ struct PlanPathRow<Title: View, Value: View>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
 
       value
+        .layoutPart(.value)
         .foregroundStyle(.mutedForeground)
         .fixedSize()
     }
+    .layoutRow(.listGroup)
   }
 }
 
@@ -749,9 +758,11 @@ struct PlanChallengeLabel: View {
             }
           }
           .foregroundStyle(.primary)
+          .layoutPart(.label)
           .frame(maxWidth: .infinity, alignment: .leading)
 
           when?
+            .layoutPart(.value)
             .foregroundStyle(.mutedForeground)
         }
 
@@ -767,6 +778,7 @@ struct PlanChallengeLabel: View {
                 comment: "What the Trickster is, under its row")
             }
           }
+          .layoutPart(.note)
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
         }
@@ -775,6 +787,7 @@ struct PlanChallengeLabel: View {
       .fixedSize(horizontal: false, vertical: true)
     } icon: {
       KindMark(kind: .challenge)
+        .layoutPart(.mark)
     }
   }
 }

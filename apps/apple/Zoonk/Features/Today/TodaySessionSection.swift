@@ -400,10 +400,12 @@ struct BlockRow: View {
   var body: some View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       mark
+        .layoutPart(.mark)
 
       AccessibilityStack(alignment: .firstTextBaseline, spacing: 12, stackedSpacing: 2) {
         VStack(alignment: .leading, spacing: 2) {
           Text(block.displayTitle)
+            .layoutPart(.label, text: Text(verbatim: block.displayTitle))
             .typeStyle(.rowTitle)
             .foregroundStyle(block.isFinished ? .mutedForeground : .primary)
 
@@ -425,6 +427,7 @@ struct BlockRow: View {
 
           if !block.isFinished, let line {
             Text(line)
+              .layoutPart(.note)
               .typeStyle(.meta)
               .foregroundStyle(.mutedForeground)
           }
@@ -435,6 +438,7 @@ struct BlockRow: View {
       }
       .alignmentGuide(.blockTitle) { $0[.leading] }
     }
+    .layoutRow(.listGroup)
     .accessibilityElement(children: .combine)
     .accessibilityValue(status)
   }
@@ -453,6 +457,7 @@ struct BlockRow: View {
         }
 
         Text(studyDuration(minutes: block.estimatedMinutes))
+          .layoutPart(.value)
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
       }

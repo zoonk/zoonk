@@ -111,8 +111,10 @@ struct RoadmapPhaseRow: View {
       Label {
         Text(phase.title)
           .typeWeight(.medium)
+          .layoutPart(.label, text: Text(phase.title))
       } icon: {
         StatusMark(status: phase.mark)
+          .layoutPart(.mark)
       }
     } value: {
       Group {

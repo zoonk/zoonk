@@ -260,6 +260,7 @@ private struct TypeStyleModifier: ViewModifier {
       .tracking(style.tracking * pointSize)
       .textCase(style.isUppercase ? .uppercase : textCase)
       .environment(\.typeStyle, style)
+      .layoutType(style)
 
     if let lineHeight = style.lineHeight {
       styled.lineSpacing(max(0, (lineHeight - style.face.ownLineHeight) * pointSize))
@@ -336,3 +337,21 @@ extension Font.TextStyle {
     }
   }
 }
+
+#if DEBUG
+  extension EnvironmentValues {
+    /// The type role text here takes, for the debug layout report.
+    var layoutTypeStyle: TypeStyle { typeStyle }
+  }
+
+  extension TypeStyle {
+    /// The font this role draws in at this text size, for the debug layout report's capitals.
+    func layoutFont(_ dynamicTypeSize: DynamicTypeSize, legibility: LegibilityWeight?) -> UIFont {
+      let weight = legibility == .bold ? weight.withBoldText : weight
+      let descriptor = UIFontDescriptor(fontAttributes: [
+        .family: family, .traits: [UIFontDescriptor.TraitKey.weight: weight.uiFontWeight],
+      ])
+      return UIFont(descriptor: descriptor, size: pointSize(dynamicTypeSize))
+    }
+  }
+#endif

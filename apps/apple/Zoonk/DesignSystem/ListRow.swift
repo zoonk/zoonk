@@ -31,12 +31,18 @@ struct ListRow<Leading: View, Trailing: View>: View {
   }
 
   var body: some View {
+    row
+      .layoutRow(.listGroup)
+  }
+
+  @ViewBuilder private var row: some View {
     if isStacked, Leading.self == EmptyView.self {
       words
     } else {
       MarkedRow(alignment: alignment, stackedSpacing: 4) {
         if Leading.self != EmptyView.self {
           leading
+            .layoutPart(.mark)
             .foregroundStyle(.mutedForeground)
             .frame(minWidth: markWidth)
         }
@@ -55,6 +61,7 @@ struct ListRow<Leading: View, Trailing: View>: View {
       HStack(alignment: .firstTextBaseline, spacing: 6) {
         if let number {
           Text(verbatim: "\(number).")
+            .layoutPart(.lead)
             .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
             .accessibilityHidden(true)
@@ -65,6 +72,7 @@ struct ListRow<Leading: View, Trailing: View>: View {
 
       if let description {
         description
+          .layoutPart(.note, text: description)
           .typeStyle(.meta)
           .foregroundStyle(.mutedForeground)
       }
@@ -79,12 +87,14 @@ struct ListRow<Leading: View, Trailing: View>: View {
 
   private var value: some View {
     trailing
+      .layoutPart(.value)
       .typeStyle(.data)
       .foregroundStyle(.mutedForeground)
   }
 
   @ViewBuilder private var titleText: some View {
-    let text = title.typeStyle(.rowTitle).foregroundStyle(Color(.foreground))
+    let text = title.layoutPart(.label, text: title).typeStyle(.rowTitle)
+      .foregroundStyle(Color(.foreground))
 
     if let number {
       // One phrase, "3. Title", rather than the number and the title read apart.

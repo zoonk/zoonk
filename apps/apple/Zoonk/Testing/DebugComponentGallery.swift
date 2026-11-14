@@ -567,6 +567,44 @@
         RoadmapPhaseRow(phase: Self.phase(0), when: .today, today: "2026-11-14")
         RoadmapPhaseRow(phase: Self.phase(1), when: .starts("2027-02-17"), today: "2026-11-14")
 
+        // A phase with a line under its name, and a folded one, as the path draws them.
+        PlanPathRow {
+          Label {
+            VStack(alignment: .leading, spacing: 2) {
+              Text(verbatim: "Foundations")
+                .typeWeight(.semibold)
+                .layoutPart(.label)
+
+              Text(verbatim: "Continues Nov 16")
+                .layoutPart(.note)
+                .typeStyle(.meta)
+                .foregroundStyle(.mutedForeground)
+            }
+          } icon: {
+            StatusMark(status: .next)
+              .layoutPart(.mark)
+          }
+        } value: {
+          PlanWhen.date(Text(verbatim: "18 Feb 2027"))
+        }
+        .disclosureChevron()
+
+        DisclosureGroup(isExpanded: .constant(true)) {
+          EmptyView()
+        } label: {
+          PlanPathRow {
+            Label {
+              Text(verbatim: "Fill the gaps")
+                .layoutPart(.label)
+            } icon: {
+              StatusMark(status: .todo)
+                .layoutPart(.mark)
+            }
+          } value: {
+            PlanWhen.date(Text(verbatim: "14 Jul 2027"))
+          }
+        }
+
         ForEach(Array(Self.challengeDays.enumerated()), id: \.offset) { _, when in
           PlanChallengeLabel(when: when, explains: false, isLanguage: false)
         }

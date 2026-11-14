@@ -15,6 +15,7 @@ struct DisclosureChevron: View {
       .typeStyle(.note.weight(.semibold))
       .foregroundStyle(Color.mutedForeground.opacity(0.6))
       .accessibilityHidden(true)
+      .layoutPart(.end)
   }
 }
 
