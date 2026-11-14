@@ -111,6 +111,13 @@ struct TodayDayView: View {
         holdShownNotice()
       }
     }
+    // Its open state is kept above the panes, so it outlives a proposal that's answered here, answered
+    // elsewhere or replaced by a newer edit; main's sheet closes with it.
+    .onChange(of: asksPlanChange) {
+      if !asksPlanChange {
+        disclosures.planChange = false
+      }
+    }
     .modifier(LanguageTodayLoading(goal: view.goal))
     .sheet(item: $adjusting) { section in
       TodayAdjustPlanSheet(goalID: view.goal.id, section: section)
@@ -262,6 +269,11 @@ struct TodayDayView: View {
 
   private func prepareLessons() {
     perform(.prepare) { await store.prepareLessons(in: view) }
+  }
+
+  /// A proposal still waits for an answer, in the sheet its line opens.
+  private var asksPlanChange: Bool {
+    store.shownPlanChange(in: view).map { $0.decision == nil } ?? false
   }
 
   @ViewBuilder
