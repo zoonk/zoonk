@@ -25,15 +25,29 @@ final class NextFreeLessonTests: XCTestCase {
     // 02:30 UTC on the 14th is still the 13th in São Paulo.
     XCTAssertEqual(day(Date(timeIntervalSince1970: 1_794_623_400)), today)
     XCTAssertEqual(day(Date(timeIntervalSince1970: 1_794_627_000)), tomorrow)
-    XCTAssertEqual(day(Date(timeIntervalSince1970: 1_794_607_200)), today)
     XCTAssertEqual(
       day(Date(timeIntervalSince1970: 1_795_339_800)),
       "Your next free lesson opens on November 22, or subscribe to keep going.")
     XCTAssertNil(day(nil))
   }
 
+  func testAnOpenedLessonStopsPromisingADay() {
+    let limit = HelpLimit.freeLessonsUsed(opensAt: Date(timeIntervalSince1970: 1_794_607_200))
+
+    XCTAssertTrue(limit.freeLessonOpened(at: now))
+    XCTAssertEqual(limit.lessonWords(now: now).said, "Your next free lesson is ready")
+    XCTAssertNil(day(Date(timeIntervalSince1970: 1_794_607_200)))
+  }
+
+  func testNoLessonIsRefusedForTheMonth() {
+    let words = HelpLimit.limitReached(period: .month, tier: .plus).lessonWords()
+
+    XCTAssertEqual(words.title.map { String(localized: $0) }, "No more new lessons today")
+    XCTAssertEqual(words.line.map { String(localized: $0) }, "More tomorrow.")
+  }
+
   func testTheGateWithoutADaySaysNothingAboutOne() {
-    let words = HelpLimit.freeLessonsUsed(opensAt: nil).lessonWords
+    let words = HelpLimit.freeLessonsUsed(opensAt: nil).lessonWords()
 
     XCTAssertEqual(words.said, "You've used your free lessons")
   }

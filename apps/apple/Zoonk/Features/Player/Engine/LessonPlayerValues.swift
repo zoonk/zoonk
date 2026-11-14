@@ -85,7 +85,7 @@ enum LessonRunRefusal: Hashable, Sendable, Error {
   }
 
   enum Period: Hashable, Sendable {
-    case day, month, total
+    case day, total
     /// A free learner's last 30 days, with the instant the next lesson opens.
     case last30Days(opensAt: Date?)
   }

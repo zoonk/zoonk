@@ -374,7 +374,7 @@ extension MindMapLimit {
   var words: LimitWords {
     switch resource {
     case .aiSpend: limit.helpWords()
-    case .lessons: limit.lessonWords
+    case .lessons: limit.lessonWords()
     case .mindMap: limit.mindMapWords
     }
   }

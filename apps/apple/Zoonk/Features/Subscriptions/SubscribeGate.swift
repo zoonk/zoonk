@@ -114,6 +114,12 @@ struct LimitNotice: View {
   }
 
   var body: some View {
+    OpeningClock(opensAt: limit.opensAt) { now in
+      notice(limit.freeLessonOpened(at: now) ? HelpLimit.freeLessonReady : words)
+    }
+  }
+
+  private func notice(_ words: LimitWords) -> some View {
     VStack(alignment: .leading, spacing: 8) {
       GateWords(title: words.title.map(Text.init), line: words.line.map(Text.init))
 
@@ -247,12 +253,30 @@ extension HelpLimit {
     return LimitWords(title: title, line: comesBack)
   }
 
+  /// When a free learner's next lesson opens.
+  var opensAt: Date? {
+    if case .freeLessonsUsed(let opensAt) = self {
+      return opensAt
+    }
+
+    return nil
+  }
+
+  /// Main's opening day `"open"`: the instant has passed, so only the server can say whether the
+  /// learner is still at the limit. Only their tap asks again, since a start spends a free lesson.
+  func freeLessonOpened(at now: Date) -> Bool {
+    opensAt.map { $0 <= now } ?? false
+  }
+
+  static let freeLessonReady = LimitWords(
+    title: LocalizedStringResource("Your next free lesson is ready", table: "Subscriptions"))
+
   /// The day a free learner's next lesson opens, in their own time zone: no clock time, no count of
-  /// days. Without the instant, nothing about a day, never a guess.
+  /// days. Without the instant, or once it has passed, nothing about a day, never a guess.
   static func nextFreeLesson(_ opensAt: Date?, now: Date = .now, calendar: Calendar = .current)
     -> LocalizedStringResource?
   {
-    guard let opensAt else {
+    guard let opensAt, opensAt > now else {
       return nil
     }
 
@@ -284,31 +308,29 @@ extension HelpLimit {
     }
   }
 
-  /// A free learner's lessons are the plan's one allowance, so its title says so.
-  var lessonWords: LimitWords {
+  /// A free learner's lessons are the plan's one allowance, so its title says so. Every other
+  /// lesson cap is a guest's or the day's: no lesson is refused for the month.
+  func lessonWords(now: Date = .now) -> LimitWords {
+    if freeLessonOpened(at: now) {
+      return Self.freeLessonReady
+    }
+
     guard case .limitReached(_, let tier) = self else {
       return refusalWords
     }
 
-    switch (tier, isMonthly) {
-    case (.guest, _):
+    guard tier != .guest else {
       return LimitWords(
         title: LocalizedStringResource(
           "No more lessons without an account", table: "Subscriptions",
           comment: "A guest took the lessons they can try without an account"))
-    case (_, true):
-      return LimitWords(
-        title: LocalizedStringResource(
-          "No more new lessons this month", table: "Subscriptions",
-          comment: "The learner started all the new lessons they can this month"),
-        line: comesBack)
-    case (_, false):
-      return LimitWords(
-        title: LocalizedStringResource(
-          "No more new lessons today", table: "Subscriptions",
-          comment: "The learner started all the new lessons they can today"),
-        line: comesBack)
     }
+
+    return LimitWords(
+      title: LocalizedStringResource(
+        "No more new lessons today", table: "Subscriptions",
+        comment: "The learner started all the new lessons they can today"),
+      line: HelpLimit.limitReached(period: .day, tier: tier).comesBack)
   }
 
   var mindMapWords: LimitWords {
@@ -356,5 +378,40 @@ extension HelpLimit {
           "No more previews today", table: "Subscriptions",
           comment: "The learner saw all the topics ahead of time they can today"),
       line: comesBack)
+  }
+}
+
+/// Main's `useOpeningDay`: the time a free lesson's opening is read at. It moves when the instant
+/// passes and when the app comes back to the front, so a passed instant stops being promised.
+struct OpeningClock<Content: View>: View {
+  @Environment(\.scenePhase) private var scenePhase
+  @State private var now = Date.now
+
+  let opensAt: Date?
+  @ViewBuilder let content: (Date) -> Content
+
+  var body: some View {
+    content(now)
+      .task(id: opensAt) {
+        guard let opensAt else {
+          return
+        }
+
+        while !Task.isCancelled {
+          now = .now
+          let left = opensAt.timeIntervalSince(now)
+
+          guard left > 0 else {
+            return
+          }
+
+          try? await Task.sleep(for: .seconds(left))
+        }
+      }
+      .onChange(of: scenePhase) { _, phase in
+        if phase == .active {
+          now = .now
+        }
+      }
   }
 }
