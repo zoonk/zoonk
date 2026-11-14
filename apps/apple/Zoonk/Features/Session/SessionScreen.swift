@@ -374,6 +374,7 @@ private struct NextStopView: View {
           GenerationFailureNotice(failure: .generation, isActing: isOpening) {
             open(next)
           }
+          .environment(\.barHoldsMainAction, alternative != nil)
         }
       }
     }

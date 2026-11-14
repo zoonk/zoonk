@@ -1046,6 +1046,8 @@ struct GenerationFailureNotice: View {
   var isActing = false
   let act: (() -> Void)?
 
+  @Environment(\.barHoldsMainAction) private var barHoldsMainAction
+
   var body: some View {
     HStack(alignment: .top, spacing: 12) {
       Image(
@@ -1067,7 +1069,7 @@ struct GenerationFailureNotice: View {
           Button(action: act) {
             action
           }
-          .buttonStyle(.mainAction)
+          .buttonStyle(ZoonkButtonStyle(variant: barHoldsMainAction ? .outline : .main))
           .controlSize(.small)
           .disabled(isActing)
           .padding(.top, 8)
@@ -1118,6 +1120,11 @@ struct GenerationFailureNotice: View {
       Text("Try again", tableName: "Onboarding", comment: "Starts a failed run again")
     }
   }
+}
+
+extension EnvironmentValues {
+  /// One main action per screen: set where the bar holds it, so a notice's retry is secondary.
+  @Entry var barHoldsMainAction = false
 }
 
 /// Main's `GenerationWait`: a bar split in the phases' usual times with how far it got, then each
