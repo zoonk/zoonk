@@ -155,6 +155,11 @@ class FormattersTest {
         assertEquals("Monday, January 4, 2027", formatDate(LocalDate.of(2027, 1, 4), en, DateStyle.WeekdayDay, newYearsEve))
         assertEquals("Thursday, December 31", formatDate(newYearsEve, en, DateStyle.WeekdayDay, newYearsEve))
         assertEquals("January 4, 2027", formatDate(LocalDate.of(2027, 1, 4), en, DateStyle.Long, newYearsEve))
+        assertEquals("Mon, Jan 4, 2027", formatDate(LocalDate.of(2027, 1, 4), en, DateStyle.WeekdayDayShort, newYearsEve))
+        assertEquals("Thu, Dec 31", formatDate(newYearsEve, en, DateStyle.WeekdayDayShort, newYearsEve))
+        val week = { start: LocalDate -> formatDayRange(start, start.plusDays(6), en, newYearsEve).replace(' ', ' ') }
+        assertEquals("Dec 28, 2026 – Jan 3, 2027", week(LocalDate.of(2026, 12, 28)))
+        assertEquals("Dec 21 – 27", week(LocalDate.of(2026, 12, 21)))
         val utc = java.time.ZoneOffset.UTC
         val lastYear = kotlin.time.Instant.parse("2025-11-08T12:00:00Z")
         assertEquals("Nov 8, 2025", formatMomentDay(lastYear, en, utc, today = LocalDate.of(2026, 11, 14)))

@@ -227,8 +227,8 @@ enum class DateStyle(
     /** "Sunday, November 14, 2027": an exam's day, whose edition may be years ahead. */
     WeekdayDayYear("yMMMMEEEEd"),
 
-    /** "Wed, Oct 28": Today's date line. */
-    WeekdayDayShort("MMMEEEd"),
+    /** "Wed, Oct 28": Today's date line, and the days of a plan's first week. */
+    WeekdayDayShort("MMMEEEd", yearWhenAnotherYear = true),
 }
 
 fun formatDate(
@@ -239,6 +239,20 @@ fun formatDate(
 ): String {
     val skeleton = if (style.yearWhenAnotherYear && isInAnotherYear(date, today)) "y${style.skeleton}" else style.skeleton
     return formatUtc(Date(date.toEpochDay() * MILLIS_PER_DAY), skeleton, locale)
+}
+
+/** "Nov 9 – 15", or "Dec 28, 2026 – Jan 3, 2027" once either end is in another year than [today]. */
+fun formatDayRange(
+    start: LocalDate,
+    end: LocalDate,
+    locale: Locale,
+    today: LocalDate = LocalDate.now(),
+): String {
+    val skeleton = if (isInAnotherYear(start, today) || isInAnotherYear(end, today)) "yMMMd" else "MMMd"
+    return DateIntervalFormat
+        .getInstance(skeleton, ULocale.forLocale(locale))
+        .apply { timeZone = TimeZone.GMT_ZONE }
+        .format(DateInterval(start.toEpochDay() * MILLIS_PER_DAY, end.toEpochDay() * MILLIS_PER_DAY))
 }
 
 /** Main's `useFormatMomentDay`: the day a moment happened, in the device's time zone ("Nov 8", "Nov 8, 2025"). */
