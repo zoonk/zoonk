@@ -539,7 +539,7 @@ struct MockSummaryRow: View {
         Text(MockLabels.title(number: mock.number)),
         description: Text(
           [
-            mock.finishedAt.formatted(.dateTime.month(.abbreviated).day()),
+            PlanDate.momentDay(mock.finishedAt),
             mock.shape?.kind == .area ? mock.shape?.area : nil,
           ]
           .compactMap { $0 }.joinedFacts())

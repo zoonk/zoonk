@@ -234,7 +234,8 @@ private struct CourseExamEyebrow: View {
   }
 
   private var dates: String {
-    exam.days.compactMap(catalogDay).formatted(.list(type: .and))
+    let today = PlanDate.today()
+    return exam.days.map { PlanDate.text($0, today: today) }.formatted(.list(type: .and))
   }
 
   private var daysLeft: String {
@@ -251,19 +252,6 @@ private struct CourseExamEyebrow: View {
         localized: "\(exam.daysLeft) days left", table: "Courses",
         comment: "How long until an exam's sitting")
   }
-}
-
-/// Read at UTC midnight, so no time zone moves it to another day.
-func catalogDay(_ isoDate: String) -> String? {
-  let style = Date.ISO8601FormatStyle(timeZone: .gmt).year().month().day()
-
-  guard let date = try? style.parse(isoDate) else {
-    return nil
-  }
-
-  var format = Date.FormatStyle.dateTime.month(.abbreviated).day()
-  format.timeZone = .gmt
-  return date.formatted(format)
 }
 
 struct PlanLine: View {

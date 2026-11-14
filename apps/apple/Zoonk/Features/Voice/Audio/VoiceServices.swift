@@ -49,7 +49,7 @@ final class VoiceServices {
       return paper
     }
 
-    let paper = cache.resource(audience: .signedIn, domains: [.userProgress]) {
+    let paper = cache.resource(audience: .signedIn, domains: [.userProgress, .userSubscription]) {
       [api] session -> Components.Schemas.SpeakingPaper? in
       guard let session else {
         return nil

@@ -256,10 +256,13 @@ private struct WeeklySummary: View {
 
   private var weekRange: String {
     let range = [recap.weekStart, recap.weekEnd].compactMap(studyDate)
+    let style = Date.IntervalFormatStyle(timeZone: .gmt).month(.abbreviated).day()
+    let thisYear = PlanDate.today().prefix(4)
     let text =
       range.count == 2
       ? (range[0]..<range[1]).formatted(
-        Date.IntervalFormatStyle(timeZone: .gmt).month(.abbreviated).day())
+        recap.weekStart.hasPrefix(thisYear) && recap.weekEnd.hasPrefix(thisYear)
+          ? style : style.year())
       : recap.weekStart
 
     return String(

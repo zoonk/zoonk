@@ -686,6 +686,7 @@ extension LessonRunRefusal.Period {
   fileprivate var helpPeriod: HelpLimit.Period {
     switch self {
     case .day, .last30Days: .day
+    case .month: .month
     case .total: .total
     }
   }
