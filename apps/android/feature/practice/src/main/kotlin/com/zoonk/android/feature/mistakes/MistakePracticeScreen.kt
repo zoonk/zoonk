@@ -89,14 +89,19 @@ private fun PracticeRead(
 ) {
     val onClose = navigator::closeTask
     val loaded by viewModel.practice.collectShown()
+    val fresh by viewModel.practice.freshState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
     BackHandler(onBack = onClose)
 
     when (val read = loaded) {
         is LoadState.Loaded -> {
-            LaunchedEffect(read.value) { viewModel.begin(read.value) }
-            RunLoading(onClose)
+            LaunchedEffect(read.value, fresh) { viewModel.begin(read.value) }
+            if (fresh is LoadState.Failed) {
+                RunLoadFailed(onClose, onRetry = { scope.launch { viewModel.practice.refresh() } })
+            } else {
+                RunLoading(onClose)
+            }
         }
 
         LoadState.Empty -> {
