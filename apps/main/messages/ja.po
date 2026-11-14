@@ -1104,11 +1104,11 @@ msgid "Your plan follows this course, in the time you have each day."
 msgstr "毎日使える時間に合わせて、このコースを進める学習計画です。"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-#: src/app/[lang]/(home)/page.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-pricing.tsx
 #: src/components/public/goal-form.tsx
+#: src/components/public/public-start-bar.tsx
 #: src/components/public/public-visitor-actions.tsx
 #: src/components/public/start-plan-link.tsx
 #: src/components/public/visitor-start.tsx

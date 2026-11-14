@@ -133,19 +133,28 @@ function DrawerHeader({
 }
 
 /**
- * A sheet's answers, held under its content while that scrolls. On a phone they stack full width
- * with the last one (the main action) on top; from `sm` they sit in a row at the end, in order.
+ * A sheet's foot, held under its content while that scrolls: one line that says what the actions
+ * will do (`note`), then the actions. On a phone they stack full width with the last one (the main
+ * action) on top; from `sm` they sit in a row at the end, in order. Its edge is the content's, drawn
+ * only while something scrolls under it.
  */
-function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
+function DrawerFooter({
+  children,
+  className,
+  note,
+  ...props
+}: React.ComponentProps<"div"> & { note?: React.ReactNode }) {
   return (
     <div
-      className={cn(
-        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-4 pb-6 sm:flex-row sm:justify-end",
-        className,
-      )}
+      className={cn("flex shrink-0 flex-col gap-3 px-6 pt-4 pb-6", className)}
       data-slot="drawer-footer"
       {...props}
-    />
+    >
+      {note}
+      {children && (
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">{children}</div>
+      )}
+    </div>
   );
 }
 

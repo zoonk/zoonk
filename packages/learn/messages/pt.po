@@ -338,14 +338,14 @@ msgid "Your next free lesson opens on {date}, or subscribe to keep going."
 msgstr "Sua próxima aula grátis será liberada em {date}. Assine para continuar agora."
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "5SLMld"
+msgid "Your next free lesson is ready"
+msgstr "Sua próxima aula grátis está disponível"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "y0Yu1A"
 msgid "You've used your free lessons"
 msgstr "Você usou todas as suas aulas grátis"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "Sem novas aulas por hoje"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
@@ -353,9 +353,9 @@ msgid "No more lessons without an account"
 msgstr "Mais aulas só com uma conta"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "VGhCC9"
-msgid "No more new lessons this month"
-msgstr "Sem novas aulas este mês"
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "Sem novas aulas por hoje"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
@@ -411,6 +411,11 @@ msgstr "Aulas"
 msgctxt "dVwB3J"
 msgid "{done, number} of {total, number}"
 msgstr "{done, number} de {total, number}"
+
+#: src/_components/lesson-not-written-notice.tsx
+msgctxt "4NMpnC"
+msgid "Start the lesson"
+msgstr "Começar a aula"
 
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/save-error.tsx
@@ -5052,6 +5057,11 @@ msgid "{count, plural, one {Based on your last mock exam} other {Based on your l
 msgstr "{count, plural, one {Com base no seu último simulado} other {Com base nos seus últimos # simulados}}"
 
 #: src/journey/preparation/preparation-details.tsx
+msgctxt "JcR3T_"
+msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once."
+msgstr "Cada matéria conta de acordo com o peso que tem na prova. O número de cada matéria é a parte que você já estudou multiplicada pelo seu desempenho nas respostas e fica abaixo de 75% até você revisar todos os tópicos uma vez."
+
+#: src/journey/preparation/preparation-details.tsx
 msgctxt "QexwxS"
 msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam."
 msgstr "Cada matéria conta de acordo com seu peso na prova. O valor de cada matéria é a parte que você estudou multiplicada pelo seu desempenho nas respostas e fica abaixo de 75% até você fazer um simulado."
@@ -5084,9 +5094,20 @@ msgid "Remembered"
 msgstr "Na memória"
 
 #: src/journey/preparation/use-preparation-parts.ts
+msgctxt "ey4ACX"
+msgid "Reviews of every topic"
+msgstr "Revisões de todos os tópicos"
+
+#: src/journey/preparation/use-preparation-parts.ts
 msgctxt "hK7cUG"
 msgid "Weekly challenges"
 msgstr "Desafios semanais"
+
+#. How many reviews of every topic the learner has done, beside the label "Reviews of every topic". The count is of reviews.
+#: src/journey/preparation/use-preparation-parts.ts
+msgctxt "z8bUxd"
+msgid "{reviews, plural, one {# done} other {# done}}"
+msgstr "{reviews, plural, one {# concluída} other {# concluídas}}"
 
 #: src/journey/preparation/use-preparation-parts.ts
 msgctxt "9_WhRd"
@@ -5119,14 +5140,19 @@ msgid "Needed to go past 75%"
 msgstr "Necessário para passar de 75%"
 
 #: src/journey/preparation/use-still-needed.ts
-msgctxt "xOPwTm"
-msgid "Take your first weekly challenge"
-msgstr "Faça seu primeiro desafio semanal"
+msgctxt "v5t0w3"
+msgid "Review every topic once"
+msgstr "Revisar todos os tópicos uma vez"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "ePGEKw"
 msgid "Take your first mock exam"
 msgstr "Faça seu primeiro simulado"
+
+#: src/journey/preparation/use-still-needed.ts
+msgctxt "xOPwTm"
+msgid "Take your first weekly challenge"
+msgstr "Faça seu primeiro desafio semanal"
 
 #. A learning goal's name, not a person's name
 #: src/journey/rename-goal-dialog.tsx

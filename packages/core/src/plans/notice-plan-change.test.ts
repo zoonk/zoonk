@@ -9,6 +9,7 @@ import { listGoalChangeNotices } from "../library/sources/source-change-notices"
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { followNoticeReading, noticeWaitFixture } from "./_test-utils/notice-landing";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { seenQuote } from "./_test-utils/seen-quote";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { proposeNoticeChange } from "./notice-plan-change";
@@ -80,7 +81,7 @@ function findProposals(goalId: string) {
   return prisma.planChange.findMany({ where: { plan: { goalId }, status: "proposed" } });
 }
 
-function decide({
+async function decide({
   changeId,
   goalId,
   status,
@@ -89,7 +90,11 @@ function decide({
   goalId: string;
   status: "applied" | "declined";
 }) {
-  return decidePlanChange({ changeId, goalId, input: { status, timeZone: "UTC" } });
+  return decidePlanChange({
+    changeId,
+    goalId,
+    input: { quote: await seenQuote(changeId), status, timeZone: "UTC" },
+  });
 }
 
 describe(proposeNoticeChange, () => {

@@ -71,7 +71,11 @@ function useTestItem({
     done: mocks.taken > 0,
     key: "test",
     kind: kinds[mocks.kind],
-    label: weekly ? t("Take your first weekly challenge") : t("Take your first mock exam"),
+    label: {
+      fullReviews: t("Review every topic once"),
+      mockExams: t("Take your first mock exam"),
+      weeklyChallenges: t("Take your first weekly challenge"),
+    }[mocks.kind],
   };
 }
 

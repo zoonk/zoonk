@@ -4,11 +4,28 @@ import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ComponentProps } from "react";
-import { type LessonLimit, LessonLimitNotice } from "./help-limit-notice";
+import { type LessonLimit, LessonLimitNotice, useFreeLessonReady } from "./help-limit-notice";
 
 export type LessonNotWritten = { limit: LessonLimit; status: "refused" } | { status: "setAside" };
 
 type NoticeLinks = Pick<ComponentProps<typeof LessonLimitNotice>, "linkComponent" | "routes">;
+
+function RetryButton({ limit, onRetry }: { limit: LessonLimit; onRetry: () => void }) {
+  const t = useExtracted();
+  const ready = useFreeLessonReady(limit);
+
+  if (limit.status !== "slowDown" && !ready) {
+    return null;
+  }
+
+  return (
+    <form action={() => onRetry()} className="contents">
+      <Button size="sm" type="submit" variant="outline">
+        {ready ? t("Start the lesson") : t("Try again")}
+      </Button>
+    </form>
+  );
+}
 
 export function LessonNotWrittenNotice({
   className,
@@ -27,13 +44,7 @@ export function LessonNotWrittenNotice({
         <>
           <LessonLimitNotice limit={reason.limit} {...links} />
 
-          {reason.limit.status === "slowDown" && onRetry && (
-            <form action={() => onRetry()} className="contents">
-              <Button size="sm" type="submit" variant="outline">
-                {t("Try again")}
-              </Button>
-            </form>
-          )}
+          {onRetry && <RetryButton limit={reason.limit} onRetry={onRetry} />}
         </>
       )}
 

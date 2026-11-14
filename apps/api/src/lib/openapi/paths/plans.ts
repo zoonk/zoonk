@@ -1,5 +1,6 @@
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
-import { planChangeDecisionInputSchema, planChangeInputSchema } from "@zoonk/core/plans/contract";
+import { planChangeInputSchema } from "@zoonk/core/plans/contract";
+import { planChangeDecisionInputSchema } from "@zoonk/core/plans/decision-contract";
 import { planLinkStartInputSchema } from "@zoonk/core/plans/link-contract";
 import { ownLevelChangeInputSchema } from "@zoonk/core/plans/own-level-contract";
 import { planToolChoiceInputSchema } from "@zoonk/core/plans/tool-choice-contract";
@@ -79,7 +80,7 @@ export const planPaths = {
   "/goals/{goalId}/plan/changes/{changeId}": {
     post: {
       description:
-        "The learner's answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen for an applied change the learner has acknowledged. Applying a proposal works it out against the plan as it is today first: when that differs from the `effect` it had, nothing is applied and the answer is the change still `proposed`, with the new `effect`, for the learner to answer again. Applying or undoing a change prepares the lessons it brings in soon on the server; ask for nothing after it. 409 when the change was already answered or the plan moved on.",
+        "The learner's answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen for an applied change the learner has acknowledged. Applying a proposal sends the `quote` the learner saw and works the change out against the plan as it is today first: when that differs from the `effect` it had, or `quote` isn't the change's current one (another app or a retried request already got today's numbers), nothing is applied and the answer is the change still `proposed`, with today's `effect` and `quote`, for the learner to answer again. Applying or undoing a change prepares the lessons it brings in soon on the server; ask for nothing after it. 409 when the change was already answered or the plan moved on.",
       operationId: "decidePlanChange",
       requestBody: {
         content: { "application/json": { schema: planChangeDecisionInputSchema } },

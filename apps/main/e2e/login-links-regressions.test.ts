@@ -51,6 +51,17 @@ test("the sidebar logs in with one document request and returns to Plan", async 
   await expect(page).toHaveURL(/\/plan$/u);
 });
 
+test("a task page outside the app's frame offers to log in to a visitor", async ({ page }) => {
+  await page.goto("/pronunciation");
+
+  await expect(page.getByRole("heading", { level: 1, name: "Log in to continue" })).toBeVisible();
+
+  await expect(page.getByRole("link", { exact: true, name: "Log in" })).toHaveAttribute(
+    "href",
+    `/login?next=${encodeURIComponent("/pronunciation")}`,
+  );
+});
+
 test("signed-in home resolves browser, saved, and explicit locales in one redirect", async ({
   browser,
   noProgressUser,

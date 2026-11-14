@@ -12,6 +12,7 @@ import {
 import { mockSession } from "../_test-utils/mock-session";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { seenQuote } from "./_test-utils/seen-quote";
 import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
@@ -102,7 +103,7 @@ describe("plan decisions preserve the first committed answer", () => {
     const applying = decidePlanChange({
       changeId: fixture.changeId,
       goalId: fixture.goal.id,
-      input: { status: "applied", timeZone: "UTC" },
+      input: { quote: await seenQuote(fixture.changeId), status: "applied", timeZone: "UTC" },
     });
 
     const settled = Promise.allSettled([held.done, applying]);
@@ -156,7 +157,7 @@ describe("plan decisions preserve the first committed answer", () => {
     await decidePlanChange({
       changeId: applied.changeId,
       goalId: applied.goal.id,
-      input: { status: "applied", timeZone: "UTC" },
+      input: { quote: await seenQuote(applied.changeId), status: "applied", timeZone: "UTC" },
     });
 
     await expect(listOwed(applied.user.id)).resolves.toStrictEqual([
@@ -209,7 +210,7 @@ describe("plan decisions preserve the first committed answer", () => {
       decidePlanChange({
         changeId: fixture.changeId,
         goalId: fixture.goal.id,
-        input: { status: "applied", timeZone: "UTC" },
+        input: { quote: await seenQuote(fixture.changeId), status: "applied", timeZone: "UTC" },
       }),
     ).resolves.toMatchObject({ status: "updated" });
 
@@ -290,7 +291,7 @@ describe("plan decisions preserve the first committed answer", () => {
       decidePlanChange({
         changeId: fixture.changeId,
         goalId: fixture.goal.id,
-        input: { status: "applied", timeZone: "UTC" },
+        input: { quote: await seenQuote(fixture.changeId), status: "applied", timeZone: "UTC" },
       }),
     ).resolves.toMatchObject({ status: "updated" });
 

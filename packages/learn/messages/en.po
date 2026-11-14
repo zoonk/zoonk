@@ -338,14 +338,14 @@ msgid "Your next free lesson opens on {date}, or subscribe to keep going."
 msgstr "Your next free lesson opens on {date}, or subscribe to keep going."
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "5SLMld"
+msgid "Your next free lesson is ready"
+msgstr "Your next free lesson is ready"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "y0Yu1A"
 msgid "You've used your free lessons"
 msgstr "You've used your free lessons"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "No more new lessons today"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
@@ -353,9 +353,9 @@ msgid "No more lessons without an account"
 msgstr "No more lessons without an account"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "VGhCC9"
-msgid "No more new lessons this month"
-msgstr "No more new lessons this month"
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "No more new lessons today"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
@@ -411,6 +411,11 @@ msgstr "Lessons"
 msgctxt "dVwB3J"
 msgid "{done, number} of {total, number}"
 msgstr "{done, number} of {total, number}"
+
+#: src/_components/lesson-not-written-notice.tsx
+msgctxt "4NMpnC"
+msgid "Start the lesson"
+msgstr "Start the lesson"
 
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/save-error.tsx
@@ -5052,6 +5057,11 @@ msgid "{count, plural, one {Based on your last mock exam} other {Based on your l
 msgstr "{count, plural, one {Based on your last mock exam} other {Based on your last # mock exams}}"
 
 #: src/journey/preparation/preparation-details.tsx
+msgctxt "JcR3T_"
+msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once."
+msgstr "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once."
+
+#: src/journey/preparation/preparation-details.tsx
 msgctxt "QexwxS"
 msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam."
 msgstr "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam."
@@ -5084,9 +5094,20 @@ msgid "Remembered"
 msgstr "Remembered"
 
 #: src/journey/preparation/use-preparation-parts.ts
+msgctxt "ey4ACX"
+msgid "Reviews of every topic"
+msgstr "Reviews of every topic"
+
+#: src/journey/preparation/use-preparation-parts.ts
 msgctxt "hK7cUG"
 msgid "Weekly challenges"
 msgstr "Weekly challenges"
+
+#. How many reviews of every topic the learner has done, beside the label "Reviews of every topic". The count is of reviews.
+#: src/journey/preparation/use-preparation-parts.ts
+msgctxt "z8bUxd"
+msgid "{reviews, plural, one {# done} other {# done}}"
+msgstr "{reviews, plural, one {# done} other {# done}}"
 
 #: src/journey/preparation/use-preparation-parts.ts
 msgctxt "9_WhRd"
@@ -5119,14 +5140,19 @@ msgid "Needed to go past 75%"
 msgstr "Needed to go past 75%"
 
 #: src/journey/preparation/use-still-needed.ts
-msgctxt "xOPwTm"
-msgid "Take your first weekly challenge"
-msgstr "Take your first weekly challenge"
+msgctxt "v5t0w3"
+msgid "Review every topic once"
+msgstr "Review every topic once"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "ePGEKw"
 msgid "Take your first mock exam"
 msgstr "Take your first mock exam"
+
+#: src/journey/preparation/use-still-needed.ts
+msgctxt "xOPwTm"
+msgid "Take your first weekly challenge"
+msgstr "Take your first weekly challenge"
 
 #. A learning goal's name, not a person's name
 #: src/journey/rename-goal-dialog.tsx

@@ -1,8 +1,9 @@
 "use client";
 
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
-import { type MemoryInsightView } from "@zoonk/core/memory/contract";
-import { type PlanChangeDecisionInput, type PlanOperation } from "@zoonk/core/plans/contract";
+import { type MemoryInsightAnswerInput, type MemoryInsightView } from "@zoonk/core/memory/contract";
+import { type PlanOperation } from "@zoonk/core/plans/contract";
+import { type PlanChangeAnswer } from "@zoonk/core/plans/decision-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { createContext, use } from "react";
@@ -22,10 +23,9 @@ export type TodayActions = {
   /** Today reads itself again once the goal is archived, and shows the learner's next goal. */
   archiveGoal: () => Promise<boolean>;
   /** The insight as it stands after the answer; null when it wasn't saved. */
-  answerInsight: (input: {
-    insightId: string;
-    status: "accepted" | "dismissed";
-  }) => Promise<MemoryInsightView | null>;
+  answerInsight: (
+    input: MemoryInsightAnswerInput & { insightId: string },
+  ) => Promise<MemoryInsightView | null>;
   answerSuggestedGoal: (input: {
     status: "accepted" | "dismissed";
     suggestion: SuggestedGoalView;
@@ -52,11 +52,7 @@ export type TodayActions = {
    * Resolves to the change as it stands after the answer, `stale` when it was out of date (Today
    * reads itself again), or null when it wasn't saved.
    */
-  decidePlanChange: (input: {
-    changeId: NonNullable<TodayView["planChange"]>["id"];
-    status: PlanChangeDecisionInput["status"];
-    surface?: PlanChangeDecisionInput["surface"];
-  }) => Promise<PlanChangeView | "stale" | null>;
+  decidePlanChange: (answer: PlanChangeAnswer) => Promise<PlanChangeView | "stale" | null>;
   dismissFocusTest: () => Promise<boolean>;
   /** The standalone player for a lesson finished today, never its block in the session. */
   lessonHref: (block: DayStep) => string | null;

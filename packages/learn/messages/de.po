@@ -338,14 +338,14 @@ msgid "Your next free lesson opens on {date}, or subscribe to keep going."
 msgstr "Deine nächste kostenlose Lektion wird am {date} freigeschaltet. Mit einem Abo kannst du gleich weiterlernen."
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "5SLMld"
+msgid "Your next free lesson is ready"
+msgstr "Deine nächste kostenlose Lektion ist verfügbar"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "y0Yu1A"
 msgid "You've used your free lessons"
 msgstr "Deine kostenlosen Lektionen sind aufgebraucht"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "Heute keine neuen Lektionen mehr"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
@@ -353,9 +353,9 @@ msgid "No more lessons without an account"
 msgstr "Für weitere Lektionen brauchst du ein Konto"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "VGhCC9"
-msgid "No more new lessons this month"
-msgstr "Diesen Monat keine neuen Lektionen mehr"
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "Heute keine neuen Lektionen mehr"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
@@ -411,6 +411,11 @@ msgstr "Lektionen"
 msgctxt "dVwB3J"
 msgid "{done, number} of {total, number}"
 msgstr "{done, number} von {total, number}"
+
+#: src/_components/lesson-not-written-notice.tsx
+msgctxt "4NMpnC"
+msgid "Start the lesson"
+msgstr "Lektion starten"
 
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/save-error.tsx
@@ -5052,6 +5057,11 @@ msgid "{count, plural, one {Based on your last mock exam} other {Based on your l
 msgstr "{count, plural, one {Basierend auf deiner letzten Probeprüfung} other {Basierend auf deinen letzten # Probeprüfungen}}"
 
 #: src/journey/preparation/preparation-details.tsx
+msgctxt "JcR3T_"
+msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once."
+msgstr "Jedes Fach zählt so viel wie in der Prüfung. Der Wert für ein Fach ist der Anteil, den du schon gelernt hast, mal deine Trefferquote. Er bleibt unter 75 %, bis du jedes Thema einmal wiederholt hast."
+
+#: src/journey/preparation/preparation-details.tsx
 msgctxt "QexwxS"
 msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam."
 msgstr "Jedes Fach zählt so viel wie in der Prüfung. Für seinen Wert multiplizieren wir den gelernten Anteil mit der Qualität deiner Antworten. Er bleibt unter 75 %, bis du eine Probeprüfung machst."
@@ -5084,9 +5094,20 @@ msgid "Remembered"
 msgstr "Behalten"
 
 #: src/journey/preparation/use-preparation-parts.ts
+msgctxt "ey4ACX"
+msgid "Reviews of every topic"
+msgstr "Wiederholungen aller Themen"
+
+#: src/journey/preparation/use-preparation-parts.ts
 msgctxt "hK7cUG"
 msgid "Weekly challenges"
 msgstr "Wöchentliche Herausforderungen"
+
+#. How many reviews of every topic the learner has done, beside the label "Reviews of every topic". The count is of reviews.
+#: src/journey/preparation/use-preparation-parts.ts
+msgctxt "z8bUxd"
+msgid "{reviews, plural, one {# done} other {# done}}"
+msgstr "{reviews, plural, other {# abgeschlossen}}"
 
 #: src/journey/preparation/use-preparation-parts.ts
 msgctxt "9_WhRd"
@@ -5119,14 +5140,19 @@ msgid "Needed to go past 75%"
 msgstr "Nötig, um über 75 % zu kommen"
 
 #: src/journey/preparation/use-still-needed.ts
-msgctxt "xOPwTm"
-msgid "Take your first weekly challenge"
-msgstr "Absolviere deine erste wöchentliche Herausforderung"
+msgctxt "v5t0w3"
+msgid "Review every topic once"
+msgstr "Jedes Thema einmal wiederholen"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "ePGEKw"
 msgid "Take your first mock exam"
 msgstr "Absolviere deine erste Probeprüfung"
+
+#: src/journey/preparation/use-still-needed.ts
+msgctxt "xOPwTm"
+msgid "Take your first weekly challenge"
+msgstr "Absolviere deine erste wöchentliche Herausforderung"
 
 #. A learning goal's name, not a person's name
 #: src/journey/rename-goal-dialog.tsx

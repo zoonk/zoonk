@@ -338,14 +338,14 @@ msgid "Your next free lesson opens on {date}, or subscribe to keep going."
 msgstr "다음 무료 레슨은 {date}에 열려요. 구독하면 계속 학습할 수 있어요."
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "5SLMld"
+msgid "Your next free lesson is ready"
+msgstr "다음 무료 레슨이 준비됐어요"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "y0Yu1A"
 msgid "You've used your free lessons"
 msgstr "무료 레슨을 모두 이용했어요"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "오늘은 새 레슨을 더 볼 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
@@ -353,9 +353,9 @@ msgid "No more lessons without an account"
 msgstr "레슨을 더 보려면 계정이 필요해요"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "VGhCC9"
-msgid "No more new lessons this month"
-msgstr "이번 달에는 새 레슨을 더 볼 수 없어요"
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "오늘은 새 레슨을 더 볼 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
@@ -411,6 +411,11 @@ msgstr "레슨"
 msgctxt "dVwB3J"
 msgid "{done, number} of {total, number}"
 msgstr "{done, number}/{total, number}"
+
+#: src/_components/lesson-not-written-notice.tsx
+msgctxt "4NMpnC"
+msgid "Start the lesson"
+msgstr "레슨 시작하기"
 
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/save-error.tsx
@@ -5052,6 +5057,11 @@ msgid "{count, plural, one {Based on your last mock exam} other {Based on your l
 msgstr "{count, plural, other {최근 모의고사 #회 기준}}"
 
 #: src/journey/preparation/preparation-details.tsx
+msgctxt "JcR3T_"
+msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once."
+msgstr "각 과목은 시험에서 차지하는 비중만큼 반영돼요. 과목별 수치는 공부한 비율에 정답률을 곱한 값으로, 모든 주제를 한 번씩 복습하기 전까지는 75% 미만으로 유지돼요."
+
+#: src/journey/preparation/preparation-details.tsx
 msgctxt "QexwxS"
 msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam."
 msgstr "각 과목은 시험에서 차지하는 비중만큼 반영돼요. 과목별 수치는 공부한 비율에 정답률을 곱한 값이고, 모의고사를 보기 전까지는 75% 미만이에요."
@@ -5084,9 +5094,20 @@ msgid "Remembered"
 msgstr "기억하는 내용"
 
 #: src/journey/preparation/use-preparation-parts.ts
+msgctxt "ey4ACX"
+msgid "Reviews of every topic"
+msgstr "모든 주제 복습"
+
+#: src/journey/preparation/use-preparation-parts.ts
 msgctxt "hK7cUG"
 msgid "Weekly challenges"
 msgstr "주간 챌린지"
+
+#. How many reviews of every topic the learner has done, beside the label "Reviews of every topic". The count is of reviews.
+#: src/journey/preparation/use-preparation-parts.ts
+msgctxt "z8bUxd"
+msgid "{reviews, plural, one {# done} other {# done}}"
+msgstr "{reviews, plural, other {#회 완료}}"
 
 #: src/journey/preparation/use-preparation-parts.ts
 msgctxt "9_WhRd"
@@ -5119,14 +5140,19 @@ msgid "Needed to go past 75%"
 msgstr "75%를 넘기려면 필요해요"
 
 #: src/journey/preparation/use-still-needed.ts
-msgctxt "xOPwTm"
-msgid "Take your first weekly challenge"
-msgstr "첫 주간 챌린지에 도전하기"
+msgctxt "v5t0w3"
+msgid "Review every topic once"
+msgstr "모든 주제 한 번씩 복습하기"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "ePGEKw"
 msgid "Take your first mock exam"
 msgstr "첫 모의고사 보기"
+
+#: src/journey/preparation/use-still-needed.ts
+msgctxt "xOPwTm"
+msgid "Take your first weekly challenge"
+msgstr "첫 주간 챌린지에 도전하기"
 
 #. A learning goal's name, not a person's name
 #: src/journey/rename-goal-dialog.tsx

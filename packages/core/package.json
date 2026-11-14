@@ -556,6 +556,7 @@
     "./plans/choose-tools": "./src/plans/choose-plan-tools.ts",
     "./plans/conflict": "./src/plans/plan-conflict.ts",
     "./plans/contract": "./src/plans/plan-contract.ts",
+    "./plans/decision-contract": "./src/plans/plan-decision-contract.ts",
     "./plans/course-contract": "./src/plans/plan-course-contract.ts",
     "./plans/create": "./src/plans/create-goal-plan.ts",
     "./plans/daily-minutes": "./src/plans/daily-minutes.ts",

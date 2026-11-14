@@ -8,6 +8,7 @@ import { claimLessonQuestionAnswer } from "../../lesson-questions/answer-lifecyc
 import { createLessonQuestion } from "../../lesson-questions/create-lesson-question";
 import { proposeTutorPlanChange } from "../../lesson-questions/propose-tutor-plan-change";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
+import { seenQuote } from "../../plans/_test-utils/seen-quote";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
@@ -165,7 +166,12 @@ describe("the language an ENEM learner takes, in their plan's areas", () => {
 
     expect(change.operations).toStrictEqual([{ areas: [LANGUAGES], kind: "focusAreas" }]);
 
-    await decidePlanChange({ changeId: change.id, goalId: goal.id, input: { status: "applied" } });
+    await decidePlanChange({
+      changeId: change.id,
+      goalId: goal.id,
+      input: { quote: await seenQuote(change.id), status: "applied" },
+    });
+
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
     expect(parsePlanSettings(plan.settings).focusAreas.toSorted()).toStrictEqual(

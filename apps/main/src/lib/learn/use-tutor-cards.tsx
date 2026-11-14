@@ -56,12 +56,8 @@ export function useTutorCardActions(goalId: string): TutorCardActions {
     };
 
     return {
-      decide: async ({ changeId, status }) => {
-        const answered = await answerPlanChangeAction(goalId, {
-          changeId,
-          status,
-          surface: "tutor",
-        });
+      decide: async (answer) => {
+        const answered = await answerPlanChangeAction(goalId, { ...answer, surface: "tutor" });
 
         if (answered) {
           router.refresh();
