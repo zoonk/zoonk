@@ -149,6 +149,11 @@ class PlanScreenshots {
             compose.waitForIdle()
             write(name, compose.onRoot().captureRender().asAndroidBitmap())
         }
+        shown = "plan-change-diff"
+        compose.waitForIdle()
+        compose.onNodeWithText("See all changes").performClick()
+        compose.waitForIdle()
+        write("plan-change-diff-open", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     /** A far topic's sheet in each state, driven through its view model as the sheet is. */
