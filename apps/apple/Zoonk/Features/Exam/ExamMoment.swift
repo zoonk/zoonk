@@ -33,69 +33,72 @@ struct ExamMomentSection<Action: View>: View {
   @ViewBuilder var action: Action
 
   var body: some View {
-    if let copy {
+    if let words = moment.words {
       Section {
         Label {
           VStack(alignment: .leading, spacing: 4) {
-            Text(copy.title).typeStyle(.body.weight(.semibold))
-            if moment.stage != .afterExam, let day = moment.day, let date = studyDate(day.date) {
-              Text(
-                verbatim: [
-                  date.formatted(.studyDay.weekday(.wide).month(.wide).day().year()),
-                  day.startTime.flatMap(examTimeOfDay),
-                ].compactMap(\.self).joinedFacts()
-              )
-              .typeStyle(.data)
+            Text(words.title).typeStyle(.body.weight(.semibold))
+            if let day = moment.dayLine {
+              Text(verbatim: day)
+                .typeStyle(.data)
             }
-            Text(copy.body)
+            Text(words.body)
               .foregroundStyle(.mutedForeground)
           }
         } icon: {
-          Image(systemName: icon)
+          Image(systemName: moment.icon)
         }
 
-        if !moment.checklist.isEmpty {
-          LabeledContent {
-            Text(tally)
-              .monospacedDigit()
-          } label: {
-            Text("For exam day", tableName: "Exam", comment: "Title of the exam day's checklist")
-          }
-          .typeStyle(.body)
-          .announcesStatus(tally)
-        }
-
-        ForEach(moment.checklist, id: \.self) { item in
-          let isDone = checked.contains(item)
-
-          Button {
-            if isDone {
-              checked.remove(item)
-            } else {
-              checked.insert(item)
-            }
-          } label: {
-            Label {
-              Text(checklistLabel(item))
-            } icon: {
-              Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
-                .foregroundStyle(isDone ? AnyShapeStyle(.success) : AnyShapeStyle(.mutedForeground))
-            }
-          }
-          .tint(.primary)
-          .accessibilityAddTraits(isDone ? .isSelected : [])
-        }
+        ExamChecklistRows(moment: moment, checked: $checked)
 
         action
       } footer: {
         SectionFooter {
-          if !moment.checklist.isEmpty, !moment.tools.isEmpty {
-            Text(
-              "What you may use: \(moment.tools.formatted(.list(type: .and)))", tableName: "Exam",
-              comment: "The tools the exam allows")
+          if let tools = moment.toolsLine {
+            Text(tools)
           }
         }
       }
+    }
+  }
+}
+
+/// The exam day's checklist, its tally then one row an item, ticked in place.
+struct ExamChecklistRows: View {
+  let moment: ExamMoment
+  @Binding var checked: Set<ExamView.ChecklistItem>
+
+  var body: some View {
+    if !moment.checklist.isEmpty {
+      LabeledContent {
+        Text(tally)
+          .monospacedDigit()
+      } label: {
+        Text("For exam day", tableName: "Exam", comment: "Title of the exam day's checklist")
+      }
+      .typeStyle(.body)
+      .announcesStatus(tally)
+    }
+
+    ForEach(moment.checklist, id: \.self) { item in
+      let isDone = checked.contains(item)
+
+      Button {
+        if isDone {
+          checked.remove(item)
+        } else {
+          checked.insert(item)
+        }
+      } label: {
+        Label {
+          Text(moment.checklistLabel(item))
+        } icon: {
+          Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
+            .foregroundStyle(isDone ? AnyShapeStyle(.success) : AnyShapeStyle(.mutedForeground))
+        }
+      }
+      .tint(.primary)
+      .accessibilityAddTraits(isDone ? .isSelected : [])
     }
   }
 
@@ -104,9 +107,32 @@ struct ExamMomentSection<Action: View>: View {
       localized: "\(checked.intersection(moment.checklist).count) of \(moment.checklist.count)",
       table: "Exam", comment: "Checklist items ticked off of all of them")
   }
+}
 
-  private var icon: String {
-    switch moment.stage {
+extension ExamMoment {
+  /// The exam's date and start time, until it's over.
+  var dayLine: String? {
+    guard stage != .afterExam, let day, let date = studyDate(day.date) else {
+      return nil
+    }
+
+    return [
+      date.formatted(.studyDay.weekday(.wide).month(.wide).day().year()),
+      day.startTime.flatMap(examTimeOfDay),
+    ].compactMap(\.self).joinedFacts()
+  }
+
+  /// Under the checklist, the tools the exam allows.
+  var toolsLine: String? {
+    checklist.isEmpty || tools.isEmpty
+      ? nil
+      : String(
+        localized: "What you may use: \(tools.formatted(.list(type: .and)))", table: "Exam",
+        comment: "The tools the exam allows")
+  }
+
+  var icon: String {
+    switch stage {
     case .afterExam: "questionmark.bubble"
     case .dayBefore: "moon"
     case .examDay: "calendar"
@@ -114,8 +140,9 @@ struct ExamMomentSection<Action: View>: View {
     }
   }
 
-  private var copy: (title: String, body: String)? {
-    switch moment.stage {
+  /// Nil while it says nothing: before the final stretch, and once the result is in.
+  var words: (title: String, body: String)? {
+    switch stage {
     case .finalStretch:
       (
         String(localized: "The final stretch", table: "Exam", comment: "The exam's last weeks"),
@@ -127,15 +154,15 @@ struct ExamMomentSection<Action: View>: View {
     case .dayBefore:
       (
         String(
-          localized: "\(moment.examName) is tomorrow", table: "Exam", comment: "The day before"),
+          localized: "\(examName) is tomorrow", table: "Exam", comment: "The day before"),
         dayBeforeBody
       )
     case .examDay:
       (
-        String(localized: "\(moment.examName) is today", table: "Exam", comment: "Exam day"),
+        String(localized: "\(examName) is today", table: "Exam", comment: "Exam day"),
         work
       )
-    case .afterExam where !moment.resultReported:
+    case .afterExam where !resultReported:
       (
         String(
           localized: "How did it go?", table: "Exam",
@@ -152,22 +179,22 @@ struct ExamMomentSection<Action: View>: View {
 
   private var work: String {
     let done =
-      moment.mocksTaken == 0
+      mocksTaken == 0
       ? String(
-        localized: "You did \(moment.sessionsDone) sessions.", table: "Exam",
+        localized: "You did \(sessionsDone) sessions.", table: "Exam",
         comment: "Sessions done before the exam")
       : String(
-        localized: "You did \(moment.sessionsDone) sessions and \(moment.mocksTaken) mock exams.",
+        localized: "You did \(sessionsDone) sessions and \(mocksTaken) mock exams.",
         table: "Exam", comment: "Sessions and mocks done before the exam")
 
-    return moment.prepared
+    return prepared
       ? [done, String(localized: "You've prepared for this.", table: "Exam", comment: "Prepared")]
         .joinedSentences()
       : done
   }
 
   private var dayBeforeBody: String {
-    switch moment.dayBefore {
+    switch dayBefore {
     case .mock:
       String(
         localized: "Today is your short mock, then a look at what it finds. Then rest. \(work)",
@@ -192,7 +219,7 @@ struct ExamMomentSection<Action: View>: View {
     }
   }
 
-  private func checklistLabel(_ item: ExamView.ChecklistItem) -> String {
+  func checklistLabel(_ item: ExamView.ChecklistItem) -> String {
     switch item {
     case .documents:
       String(

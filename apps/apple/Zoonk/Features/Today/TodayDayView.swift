@@ -319,17 +319,7 @@ struct TodayDayView: View {
       }
     case .exam:
       if let exam = view.exam {
-        ExamMomentSection(moment: exam, checked: $examChecklist) {
-          Button {
-            router.open(.exam)
-          } label: {
-            exam.stage == .afterExam
-              ? Text(
-                "Add your result", tableName: "Today",
-                comment: "Opens the exam to add the official result")
-              : Text("See your exam", tableName: "Today", comment: "Opens the exam")
-          }
-        }
+        TodayExamMomentSection(moment: exam, checked: $examChecklist)
       }
     case .examAccess:
       // The free week is gone (the free plan is 20 lessons a month): core no longer picks it.
