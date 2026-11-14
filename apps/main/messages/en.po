@@ -2130,7 +2130,7 @@ msgctxt "yyFZMH"
 msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
 msgstr "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
 
-#. In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”
+#. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "RcBICI"
 msgid "Can I trust lessons made by AI?"
@@ -2164,7 +2164,7 @@ msgctxt "r4pGG1"
 msgid "Any exam, such as {exams}. Also languages, a new career or any topic you want to learn. Write your goal in your own words."
 msgstr "Any exam, such as {exams}. Also languages, a new career or any topic you want to learn. Write your goal in your own words."
 
-#. In Brazilian Portuguese: “Para quais provas e objetivos eu posso estudar?”
+#. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Para quais provas e objetivos eu posso estudar?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "iJ_ZyQ"
 msgid "Which exams and goals can I study for?"

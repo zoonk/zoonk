@@ -54,7 +54,8 @@ export async function HomeFaq() {
       }),
       id: "trust",
       question: t({
-        description: "In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”",
+        description:
+          "A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”",
         message: "Can I trust lessons made by AI?",
       }),
     },
@@ -88,7 +89,8 @@ export async function HomeFaq() {
       }),
       id: "goals",
       question: t({
-        description: "In Brazilian Portuguese: “Para quais provas e objetivos eu posso estudar?”",
+        description:
+          "A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Para quais provas e objetivos eu posso estudar?”",
         message: "Which exams and goals can I study for?",
       }),
     },
