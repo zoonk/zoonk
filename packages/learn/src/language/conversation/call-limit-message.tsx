@@ -38,7 +38,6 @@ export function CallLimitReason({
   );
 }
 
-/** Beside the Start it answers, so it reads as the page's other inline limit notices do. */
 function CallStartLimit({ className, limit }: { className?: string; limit: CallLimit }) {
   const routes = useLearnRoutes();
 

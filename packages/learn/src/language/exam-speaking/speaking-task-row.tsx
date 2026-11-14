@@ -127,7 +127,6 @@ export function TaskRow({
   level: string;
   /** The tasks look as they do for a subscriber; "Start" then shows the gate in its place. */
   needsSubscription: boolean;
-  /** Why this task's Start didn't open, under it. */
   note?: React.ReactNode;
   onStart: () => void;
   paused: boolean;
