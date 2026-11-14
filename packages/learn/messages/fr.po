@@ -47,10 +47,6 @@ msgid "Up next"
 msgstr "À suivre"
 
 #: src/_components/chapter-mark.tsx
-#: src/journey/journey-chapters.tsx
-#: src/journey/journey-path.tsx
-#: src/journey/next-on-path.tsx
-#: src/journey/path-phase-row.tsx
 msgctxt "npC_pq"
 msgid "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}"
 msgstr "{total, plural, one {{done, number} leçon terminée sur #} other {{done, number} leçons terminées sur #}}"
@@ -4705,13 +4701,6 @@ msgid "More lessons"
 msgstr "D’autres leçons"
 
 #: src/journey/journey-chapters.tsx
-#: src/journey/next-on-path.tsx
-#: src/journey/path-phase-row.tsx
-msgctxt "KcgJH7"
-msgid "{done, number} / {total, number}"
-msgstr "{done, number} / {total, number}"
-
-#: src/journey/journey-chapters.tsx
 #: src/syllabus/syllabus-chapter-row.tsx
 #: src/syllabus/topic-note.tsx
 msgctxt "VPnXIm"
@@ -4851,6 +4840,18 @@ msgctxt "L_oGIZ"
 msgid "Not in your plan"
 msgstr "Pas dans ton plan"
 
+#: src/journey/journey-path.tsx
+#: src/journey/path-phase-row.tsx
+msgctxt "oIX23Q"
+msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
+msgstr "{count, plural, one {# leçon non étudiée} other {# leçons non étudiées}}"
+
+#: src/journey/journey-path.tsx
+#: src/journey/next-on-path.tsx
+msgctxt "8sxDix"
+msgid "Date to be confirmed"
+msgstr "Date à confirmer"
+
 #. The name of a study step: a live voice call in the language being learned.
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
@@ -4932,44 +4933,9 @@ msgid "Your plan at a glance"
 msgstr "Ton plan en un coup d’œil"
 
 #: src/journey/next-on-path.tsx
-#: src/journey/use-phase-when.ts
-msgctxt "8sxDix"
-msgid "Date to be confirmed"
-msgstr "Date à confirmer"
-
-#: src/journey/next-on-path.tsx
 msgctxt "F1DaXB"
 msgid "Next on your path"
 msgstr "La suite de ton parcours"
-
-#. {date} is a month, like "Jan" or "Jan 2028", never a day.
-#: src/journey/path-phase-row.tsx
-msgctxt "0r6xAZ"
-msgid "until ~{date}"
-msgstr "jusque vers {date}"
-
-#. {date} is a month, like "Jan" or "Jan 2028", never a day.
-#: src/journey/path-phase-row.tsx
-msgctxt "JzTTux"
-msgid "until about {date}"
-msgstr "jusque vers {date}"
-
-#. {date} is a day, like "Nov 10".
-#: src/journey/path-phase-row.tsx
-msgctxt "phaseUntilAboutDay"
-msgid "until ~{date}"
-msgstr "jusqu’au ~{date}"
-
-#. {date} is a day, like "Nov 10".
-#: src/journey/path-phase-row.tsx
-msgctxt "phaseUntilAboutDaySpoken"
-msgid "until about {date}"
-msgstr "jusqu’aux environs du {date}"
-
-#: src/journey/path-phase-row.tsx
-msgctxt "oPz0RK"
-msgid "until {date}"
-msgstr "jusqu’au {date}"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "M6MlNv"
@@ -4981,11 +4947,6 @@ msgstr "Se poursuit aujourd’hui"
 msgctxt "-DKe0Q"
 msgid "Continues {date}"
 msgstr "Reprend le {date}"
-
-#: src/journey/path-phase-row.tsx
-msgctxt "oIX23Q"
-msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
-msgstr "{count, plural, one {# leçon non étudiée} other {# leçons non étudiées}}"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "sk-jVa"
@@ -5011,6 +4972,24 @@ msgstr "{start} – {end}"
 msgctxt "yYQBka"
 msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of # lesson} other {{done, number} of # lessons}}"
 msgstr "{total, plural, =0 {{done, number} sur # leçon} one {{done, number} sur # leçon} other {{done, number} sur # leçons}}"
+
+#: src/journey/phase-when.tsx
+#: src/plan/plan-date-text.tsx
+msgctxt "7KwTGn"
+msgid "~{date}"
+msgstr "~{date}"
+
+#. In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".
+#: src/journey/phase-when.tsx
+msgctxt "55jrFz"
+msgid "{dateKind, select, month {Ends about {date}} other {Ends about {date}}}"
+msgstr "{dateKind, select, month {Fin vers {date}} other {Fin vers le {date}}}"
+
+#. When a phase of the plan ends. {date} is a day, like "Dec 12".
+#: src/journey/phase-when.tsx
+msgctxt "JQlKi_"
+msgid "Ends {date}"
+msgstr "Fin le {date}"
 
 #: src/journey/plan-header.tsx
 msgctxt "8PP61v"
@@ -5319,25 +5298,6 @@ msgstr "Cours associés"
 msgctxt "uNzqcn"
 msgid "You finished your plan"
 msgstr "Tu as terminé ton plan"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/journey/use-phase-when.ts
-msgctxt "bs_tuX"
-msgid "{dateKind, select, month {Until about {date}} other {Until about {date}}}"
-msgstr "{dateKind, select, month {Jusque vers {date}} other {Jusque vers le {date}}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/journey/use-phase-when.ts
-msgctxt "w5zaIw"
-msgid "{dateKind, select, month {Until {date}} other {Until {date}}}"
-msgstr "{dateKind, select, month {Jusqu’à {date}} other {Jusqu’au {date}}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/journey/use-phase-when.ts
-#: src/plan/plan-date-text.tsx
-msgctxt "IGvm5x"
-msgid "{dateKind, select, month {About {date}} other {About {date}}}"
-msgstr "{dateKind, select, month {Vers {date}} other {Vers le {date}}}"
 
 #: src/journey/use-roadmap.ts
 msgctxt "nO5Gb7"
@@ -10479,10 +10439,11 @@ msgctxt "hzzrUH"
 msgid "Move your date to cover everything"
 msgstr "Repousser ta date pour tout couvrir"
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "~{date}"
+msgctxt "IGvm5x"
+msgid "{dateKind, select, month {About {date}} other {About {date}}}"
+msgstr "{dateKind, select, month {Vers {date}} other {Vers le {date}}}"
 
 #: src/plan/plan-date.tsx
 msgctxt "3VeTk-"

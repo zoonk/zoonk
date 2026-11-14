@@ -48,7 +48,7 @@ import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanCourse
 import com.zoonk.api.models.PlanPhase
@@ -163,7 +163,7 @@ private fun PhaseRow(
     byPlace: Boolean = false,
     nextChapter: PlanPhaseChaptersInner? = null,
 ) {
-    val until = phaseUntil(page, phase, isLast)
+    val date = phaseEnd(page, phase, isLast)
     val name = phaseName(phase, page.mocksRequirePlus, byPlace = byPlace)
     val state =
         if (nextChapter != null && phase.state != PlanPhase.State.CURRENT) {
@@ -187,36 +187,22 @@ private fun PhaseRow(
         expanded = expanded,
         leading = { if (nextChapter != null) ChapterMark(nextChapter, isNext = true) else PhaseMark(phase) },
         supporting = line?.let { { Text(it.text, Modifier.semantics { contentDescription = it.spoken }) } },
-        meta =
-            if (phase.lessonsTotal > 0 || until != null) {
-                {
-                    if (phase.lessonsTotal > 0) LessonsCount(phase.lessonsDone, phase.lessonsTotal)
-                    until?.let { TrailingText(it) }
-                }
-            } else {
-                null
-            },
+        meta = date?.let { { TrailingText(it) } },
     )
 }
 
+/**
+ * When a phase ends, the same on its path row and on the line under the roadmap: a short plan's days,
+ * its booked day, or the plan's estimate ("~Nov 10", "~Jan"), which a learning phase's end is while
+ * it's upcoming or its challenge, with no booked day, is still ahead.
+ */
 @Composable
-private fun LessonsCount(
-    done: Long,
-    total: Long,
-) {
-    val spoken = lessonsDoneSpoken(done, total)
-    TrailingText(
-        PlanDateWords(stringResource(R.string.plan_lessons_count, done.toInt(), total.toInt()), spoken),
-    )
-}
-
-@Composable
-internal fun phaseUntil(
+internal fun phaseEnd(
     page: PlanPageState,
     phase: PlanPhase,
     isLast: Boolean,
 ): PlanDateWords? {
-    shortDays(page.plan, phase)?.let { return PlanDateWords(it, it) }
+    shortDays(page.plan, phase)?.let { return sameWords(it) }
     val end = phase.end ?: return null
     if (phase.state == PlanPhase.State.DONE || phase.state == PlanPhase.State.UNFINISHED ||
         phase.state == PlanPhase.State.LEFT_OUT
@@ -225,26 +211,36 @@ internal fun phaseUntil(
     }
     if (isLast && phase.kind != PlanPhase.Kind.AFTER_EXAM && page.finish != null) return null
     val learns = phase.kind == PlanPhase.Kind.LEARN || phase.kind == PlanPhase.Kind.AFTER_EXAM
-    val month = learns && phase.state == PlanPhase.State.UPCOMING
-    val date = formatPlanDate(end, page.today, currentLocale(), month = month)
-    return when {
+    val estimate =
+        learns && (phase.state == PlanPhase.State.UPCOMING || phase.checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING)
+    val month = estimate && page.plan.estimateNamesMonth(end)
+    return endWords(formatPlanDate(end, page.today, currentLocale(), month = month), estimate, month)
+}
+
+/** A phase's or the goal's end as it's shown ("Nov 10", "~Nov 10") and as TalkBack says it ("Ends about Nov 10"). */
+@Composable
+internal fun endWords(
+    date: String,
+    estimate: Boolean,
+    month: Boolean,
+): PlanDateWords =
+    when {
+        !estimate -> {
+            PlanDateWords(date, stringResource(R.string.plan_ends, date), date = true)
+        }
+
         month -> {
             PlanDateWords(
-                stringResource(R.string.plan_until_estimate_month, date),
-                stringResource(R.string.plan_until_estimate_month_spoken, date),
+                stringResource(R.string.plan_date_estimate, date),
+                stringResource(R.string.plan_ends_about_month, date),
+                date = true,
             )
         }
 
-        // The phase ends with its challenge, which has no booked day, only the plan's estimate.
-        learns && phase.checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING -> {
-            PlanDateWords(stringResource(R.string.plan_until_estimate, date), stringResource(R.string.plan_until_estimate_spoken, date))
-        }
-
         else -> {
-            stringResource(R.string.plan_until, date).let { PlanDateWords(it, it) }
+            PlanDateWords(stringResource(R.string.plan_date_estimate, date), stringResource(R.string.plan_ends_about, date), date = true)
         }
     }
-}
 
 @Composable
 private fun phaseMeta(
@@ -433,12 +429,6 @@ private fun ChapterRow(
         indent = indent,
         leading = { ChapterMark(chapter, isNext) },
         supporting = line?.let { { Text(it) } },
-        meta =
-            if (!chapter.writing && chapter.lessonsTotal > 0 && !chapter.isSkipped) {
-                { LessonsCount(chapter.lessonsDone, chapter.lessonsTotal) }
-            } else {
-                null
-            },
     )
 }
 
@@ -542,7 +532,6 @@ internal fun MockRow(
             }
         }
     val locale = currentLocale()
-    val words = formatPlanDate(date, page.today, locale)
     val minutes = funded?.minutes?.takeIf { it > 0 }
 
     ListRow(
@@ -550,7 +539,7 @@ internal fun MockRow(
         onClick = onClick,
         leading = { KindMark(LearnKind.Mock) },
         supporting = minutes?.let { { Text(formatMinutes(it.roundToInt(), locale)) } },
-        meta = { TrailingText(PlanDateWords(words, words)) },
+        meta = { TrailingText(planDate(date, page.today)) },
     )
 }
 
@@ -577,12 +566,13 @@ internal fun MetaLine(text: String) {
     Text(text = text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
+/** Main's `ListRowTrailing` on every Plan row and line: a date is data in mono, words keep the text face. */
 @Composable
 internal fun TrailingText(words: PlanDateWords) {
     Text(
         text = words.text,
         modifier = Modifier.semantics { contentDescription = words.spoken },
-        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+        style = if (words.date) MaterialTheme.zoonkType.data else MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         maxLines = 1,
     )
@@ -654,7 +644,7 @@ internal fun ColumnScope.PhaseDetails(
         )
         Text(
             text = listOfNotNull(range, lessons).factsLine(),
-            style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
+            style = MaterialTheme.zoonkType.data,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
