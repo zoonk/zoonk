@@ -93,7 +93,6 @@
   "today_rest_next_lessons": "3e8ce4cc93ac567b653aaa553a69afd7f0d5c160d5c242dd549ad0fd7564747f",
   "today_resume": "95e76e8b143182dc464fd7d764725585a3521836972295dee0503cb404ccaa5b",
   "today_resume_effect": "05aef9964c6ae48f51af66c44073a1097569307c244ace52b20a98f4b28f87de",
-  "today_resume_goal_limit": "aa638baf4579838f8031aa8040b6bd4006efe0eadc257fd211b844746ff52d06",
   "today_save_failed": "5ad9213e7f58485c60d91ab901ffa5abc8b40c6fbfd2141730ff68d1ff093a0d",
   "today_see_day_challenge": "683107ca0e41f535d221198954012d8cc0461f6a47b153d705313e36a0915700",
   "today_see_day_mock": "4cb7beaa9f26cc127486d200ca09f18439b18f4657ece5a22e996fc16ea06a05",
@@ -258,8 +257,6 @@
     <string name="today_paused_detail">Rien n’est prévu tant que tu ne reprends pas cet objectif.</string>
     <string name="today_new_goal">Nouvel objectif</string>
     <string name="today_resume_effect">Ton plan reprend aujourd’hui, en commençant par les leçons prévues pendant ta pause.</string>
-    <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="today_resume_goal_limit">Tu as atteint ta limite d’objectifs en cours. Mets-en un en pause ou abonne-toi pour travailler sur plus d’objectifs.</string>
     <string name="today_setting_up_goal">Il manque encore quelques réponses pour ton plan %1$s.</string>
     <string name="today_building_plan_goal">Préparation de ton plan %1$s</string>
     <string name="today_building_plan_detail">Ça prend une ou deux minutes. Ta première journée s’affichera ici dès qu’elle sera prête.</string>

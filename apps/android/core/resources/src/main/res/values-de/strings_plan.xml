@@ -290,7 +290,7 @@
   "plan_get_recommendation": "7b7e4820598f08700f679cc207b10553825997b4a602bee6b71bff32be1e88e7",
   "plan_go_to_today": "d6a62283d93aeff8d3ba9d28390281e7fe6d6c1498f2484b1cbdb0176956624a",
   "plan_goal_date": "b446fe7ede82a727c514a3c58637afe97d9793532cbb0a8f58fac837ebe95cbc",
-  "plan_goal_limit_reached": "e82677c305fd2aac8ad64270ca477a76ffcc083dc1908e7a9a444521369010e3",
+  "plan_goal_limit_reached": "0ad4559c2ffdec2c8eadb0cf434d078e302d59f35d3d983857281068180a0301",
   "plan_goal_paused": "f3b75f0ebd903e4b96a380af62109d90a72493461fd573334ca1cb1b6d7837b6",
   "plan_going_deeper": "fea689e4d7bfde9c769d43469297ec6852a449c7904b82a9e18ea74a798d9f24",
   "plan_last_week_recap": "11d91d99bfe59050e1325bc37214aa85cef3ec0df8276e64a42bd69838ec7e1a",
@@ -605,7 +605,7 @@
     <string name="plan_resume">Fortsetzen</string>
     <string name="plan_cancel">Abbrechen</string>
     <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="plan_goal_limit_reached">Mehr Ziele kannst du nicht gleichzeitig verfolgen. Pausier ein Ziel oder schließ ein Abo ab, um mehr Ziele zu verfolgen.</string>
+    <string name="plan_goal_limit_reached">Mehr Ziele kannst du nicht gleichzeitig verfolgen. Pausier ein anderes Ziel, um dieses fortzusetzen.</string>
     <string name="plan_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <plurals name="plan_phases_done">
         <item quantity="one">%1$d von %2$d Phase abgeschlossen</item>

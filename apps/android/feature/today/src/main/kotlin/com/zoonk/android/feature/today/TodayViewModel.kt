@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.focustest.FocusTestStore
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.plan.ResumeFailure
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.introTo
@@ -454,8 +455,6 @@ class TodayViewModel(
         }
     }
 }
-
-enum class ResumeFailure { Failed, GoalLimit }
 
 /** A tap's destination; one made on a day opens only while Today still shows that goal and day. */
 data class TodayRoute(

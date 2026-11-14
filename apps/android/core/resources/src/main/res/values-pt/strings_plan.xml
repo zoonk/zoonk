@@ -290,7 +290,7 @@
   "plan_get_recommendation": "5561bedfeea6335f356dba7f32fa89012798d8ab168371706bcb17e52cde5f59",
   "plan_go_to_today": "abf2646e09fb844fc1de46656d22c60abc476e11b0797016ddfa6fb423ba59dd",
   "plan_goal_date": "48914f2d960646bbfcb3d1aab53a61443583fcfed5fb3c88e7868cab5f255dd0",
-  "plan_goal_limit_reached": "173c4b0a2e97130a2d863759287813784b90c383667ec20c92980ab79eef886d",
+  "plan_goal_limit_reached": "b59deff5fb4667f03cb66b0de6248f7f6309928b260d9be765c4655fde15aaec",
   "plan_goal_paused": "751bf1e9d619412bc9f613f7ee8035cbefce6ec11f73871deaeb6bbae08c8383",
   "plan_going_deeper": "96976af3c3af0fdc25023e378a1df3248578b96103ea989f28ac4bd942c973bb",
   "plan_last_week_recap": "a5cdeea1733a9c00d2e62799b85a072df3a69aad905ff1f48cfd3c328aa539df",
@@ -608,7 +608,7 @@
     <string name="plan_resume">Retomar</string>
     <string name="plan_cancel">Cancelar</string>
     <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="plan_goal_limit_reached">Você já tem o máximo de objetivos em andamento. Pause um ou assine para estudar mais.</string>
+    <string name="plan_goal_limit_reached">Você chegou ao limite de objetivos que pode estudar ao mesmo tempo. Pause outro objetivo para retomar este.</string>
     <string name="plan_save_failed">Não foi possível salvar. Tente de novo.</string>
     <plurals name="plan_phases_done">
         <item quantity="one">%1$d de %2$d fase concluída</item>

@@ -90,8 +90,6 @@
     <string name="today_paused_detail">Nothing is planned until you resume it.</string>
     <string name="today_new_goal">New goal</string>
     <string name="today_resume_effect">Your plan picks up from today, starting with the lessons planned for the days you paused.</string>
-    <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="today_resume_goal_limit">That\'s all the goals you can study at once. Pause one, or subscribe to study more.</string>
     <string name="today_setting_up_goal">Your %1$s plan needs a few more answers.</string>
     <string name="today_building_plan_goal">Building your %1$s plan</string>
     <string name="today_building_plan_detail">It takes a minute or two. Your first day opens here as soon as it\'s ready.</string>

@@ -290,7 +290,7 @@
   "plan_get_recommendation": "564ff2cd3af329fc60e18931e8ae9f52061a74a321adb3c1bcc83f4130311191",
   "plan_go_to_today": "f84146d0a318222dc7292256a3b8be6b8fcc243a4f2cfb0ed0f728ed35566cc6",
   "plan_goal_date": "1cbecdc3fc356730a16ba0c6b1e9d114715b3f2ffb1d4f58ddd0ccf8179c0075",
-  "plan_goal_limit_reached": "f4fce526093e11de58e1638b41c764b4a89bc9436ecfedc3d9fb8f0e79c40d2f",
+  "plan_goal_limit_reached": "6f6813c41802cd4017c9f24532bf7356c606ebb0f0f1fa7d0eba0c2495f65cb2",
   "plan_goal_paused": "896c464f0a074cffe81e4ce57d8248b86ba3982fb4b8c8564e736d0152895d57",
   "plan_going_deeper": "c6676339e3672f28169c69eeacc170db63d3e8ebf0115415c2c81d71034c6a19",
   "plan_last_week_recap": "43c91a29f350fb875253e9bcac3abf613cdfe567951a031de10f4204fef2b3ab",
@@ -605,7 +605,7 @@
     <string name="plan_resume">Devam et</string>
     <string name="plan_cancel">Vazgeç</string>
     <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="plan_goal_limit_reached">Aynı anda çalışabileceğin hedef sınırına ulaştın. Birini duraklat veya daha fazla hedef üzerinde çalışmak için abone ol.</string>
+    <string name="plan_goal_limit_reached">Aynı anda çalışabileceğin hedef sınırına ulaştın. Bu hedefe devam etmek için başka bir hedefi duraklat.</string>
     <string name="plan_save_failed">Kaydedilemedi. Tekrar dene.</string>
     <plurals name="plan_phases_done">
         <item quantity="one">%1$d / %2$d aşama tamamlandı</item>

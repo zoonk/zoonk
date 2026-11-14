@@ -290,7 +290,7 @@
   "plan_get_recommendation": "d2a54a427111e0f0179091bf089ee5d1f43e0e6b96061243b1f0dd277d3d1136",
   "plan_go_to_today": "36a158089e1823ea76dd08fbfa52cb9f8b722bd54bcb9ac4e36f86fbe50d0d50",
   "plan_goal_date": "5aa8e7d3452151e824211fc2878e8ce22f4ea819d96b9ed87bd3ad28903fad46",
-  "plan_goal_limit_reached": "970dbc5af10586c3e56c42b691d3925e3811e0d173a12de4649627a8fed1b3f7",
+  "plan_goal_limit_reached": "144c776a2644eea115c77fac6ed4e6653475b449d4613d3e6320e1b8aa556d44",
   "plan_goal_paused": "1045372d879d08c975679cc0279b44a73830d65339e66049f0126f6049bea082",
   "plan_going_deeper": "94fb0cff69cebfe4114dc7eda9f884837ed8d4d7e83be869c1e4eaaf323f3d46",
   "plan_last_week_recap": "739052e376668b83ec63f20584b8781c82877a28240847433d8a0aa72744364b",
@@ -602,7 +602,7 @@
     <string name="plan_resume">再開する</string>
     <string name="plan_cancel">キャンセル</string>
     <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="plan_goal_limit_reached">同時に取り組める目標の上限に達しました。どれかの目標を一時停止するか、サブスクリプションに登録して取り組める目標を増やしてください。</string>
+    <string name="plan_goal_limit_reached">同時に学習できる目標の上限に達しています。ほかの目標を一時停止すると、この目標を再開できます。</string>
     <string name="plan_save_failed">保存できませんでした。もう一度お試しください。</string>
     <plurals name="plan_phases_done">
         <item quantity="other">%1$d / %2$dフェーズ完了</item>

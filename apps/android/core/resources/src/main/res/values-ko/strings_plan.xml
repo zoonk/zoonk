@@ -290,7 +290,7 @@
   "plan_get_recommendation": "001170cd154b0f570dffb49a1d6dff979bcd51371627dbfeff81e285c485af85",
   "plan_go_to_today": "e57c1665706b339788018cd54e6e00fc73a3ab471b55650173ddefde8c0d1b8b",
   "plan_goal_date": "621fdd06f7c1f96171ffe6de59bb85c23031f620fe24eff9ef8df1a5b6cabda0",
-  "plan_goal_limit_reached": "34b136583517119cd79374542c7991ac554c83ae845c5166899d06bf23483ada",
+  "plan_goal_limit_reached": "246ae51803ae2ea2f38bf11e49230526b1ce90069a47920ca611cc88cb59e089",
   "plan_goal_paused": "170f451390b2f0159f25e06340dbbfd710768540178bfd4a34b308d96e7e0704",
   "plan_going_deeper": "03f217a5f80dd0d811378afa697746bbdf73728d151ab6bcc543df99f1ac903a",
   "plan_last_week_recap": "01838d93d151d0a0399ce283281c3b883c79434595ab950d7f3d2ebba846c4c8",
@@ -602,7 +602,7 @@
     <string name="plan_resume">이어가기</string>
     <string name="plan_cancel">취소</string>
     <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="plan_goal_limit_reached">동시에 학습할 수 있는 목표 수를 다 채웠어요. 목표 하나를 일시 중지하거나 구독해서 더 많은 목표를 학습해 보세요.</string>
+    <string name="plan_goal_limit_reached">동시에 공부할 수 있는 목표 수를 다 채웠어요. 이 목표를 이어서 공부하려면 다른 목표를 일시 중지하세요.</string>
     <string name="plan_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
     <plurals name="plan_phases_done">
         <item quantity="other">단계 %1$d개 완료(총 %2$d개)</item>

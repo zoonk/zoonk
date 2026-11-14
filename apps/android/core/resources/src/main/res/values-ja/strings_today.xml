@@ -93,7 +93,6 @@
   "today_rest_next_lessons": "7a9400321098aed07f084f1dca965be8237719f698022ef5853e08549ef774f9",
   "today_resume": "2978c8efa3ea9a28c95ac8b052432bc937b54fa4458611decaf15a6b22d55f27",
   "today_resume_effect": "8d04268c73ddd7daf1bcf31c9d7f70cadaafcd51eeedd42e006576e96555b224",
-  "today_resume_goal_limit": "5a6bb160b3f672854c4f13fb9d730c191d0f7f76e804754012786a3eef6e99d1",
   "today_save_failed": "62afa501eeb9717c3f297c31bd8f498206e5352af6ff171b6fdccef8faaee2bc",
   "today_see_day_challenge": "f9a1ebcc5dbee1703cc36601c1d77ab3733632b3ce1e80f985d8b7d067785177",
   "today_see_day_mock": "49c0051b552a9af1db3bf57a94fabb2f9a3e51ade0d40b849c47d475608f8971",
@@ -246,8 +245,6 @@
     <string name="today_paused_detail">再開するまで、学習の予定は入りません。</string>
     <string name="today_new_goal">新しい目標</string>
     <string name="today_resume_effect">今日から学習計画を再開し、休んでいた日に予定されていたレッスンから進めます。</string>
-    <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="today_resume_goal_limit">同時に取り組める目標の上限に達しました。どれかの目標を一時停止するか、サブスクリプションに登録して取り組める目標を増やしてください。</string>
     <string name="today_setting_up_goal">「%1$s」の学習計画は、あと数問に答えると完成します。</string>
     <string name="today_building_plan_goal">%1$sの学習計画を作成しています</string>
     <string name="today_building_plan_detail">1〜2分ほどかかります。準備ができ次第、ここで初日の学習を始められます。</string>

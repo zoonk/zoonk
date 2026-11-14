@@ -290,7 +290,7 @@
   "plan_get_recommendation": "2b7f15621faabcb916f53b284a1ddf801dfe20c17d6b57f253d3bb749669f303",
   "plan_go_to_today": "29b18f35a7dd5a9252a006122ff9e37a71b245b5a94deb90f5d226330b1ac15a",
   "plan_goal_date": "64d9f89975e54efe1862e1630e8c8c750c5dfba4639cdda302578d698ca8aba8",
-  "plan_goal_limit_reached": "5deac2a9884a2bbb17e97761a9c6de5679d39f8f5b2a3c1b11d94f18f904d0ef",
+  "plan_goal_limit_reached": "c11e1906d98f421aa5b101ef0a17ceb1d173733bba28401658f7d4c24c5c38ea",
   "plan_goal_paused": "933537f92adfccf676899e3895b8d778520b827afea33f261f0c054f9f39d0fd",
   "plan_going_deeper": "89d4e05c735c996784212a36bd6fbd6c8bfd9ae4e2e7ca964da3f206ab6038e3",
   "plan_last_week_recap": "f18af2a2e609189b84e5b87444390f224a08e688969e4b6c81049499fab22102",
@@ -611,7 +611,7 @@
     <string name="plan_resume">Wznów</string>
     <string name="plan_cancel">Anuluj</string>
     <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="plan_goal_limit_reached">Masz już maksymalną liczbę aktywnych celów. Wstrzymaj jeden z nich lub wykup subskrypcję, by realizować więcej.</string>
+    <string name="plan_goal_limit_reached">To maksymalna liczba celów, które możesz realizować jednocześnie. Wstrzymaj inny cel, aby wznowić ten.</string>
     <string name="plan_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
     <plurals name="plan_phases_done">
         <item quantity="one">Ukończono %1$d z %2$d etapu</item>

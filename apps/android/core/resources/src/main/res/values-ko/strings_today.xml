@@ -93,7 +93,6 @@
   "today_rest_next_lessons": "2a1fcee4d7fcdaefb709dfb05b87e3170a04fc0326f68372a9c10e204d3e53d3",
   "today_resume": "8953c78feeeebcdcf1cca975e9b9b909249a520dfbc6f4587d217541a76b664f",
   "today_resume_effect": "8727388af898a5097e96dadb7c3da21456b282bdf66a026f44f7f1c0e22643b2",
-  "today_resume_goal_limit": "ec49cc19e4484d0e38b969315b236f105b1006b76a74499b78fbae6d867475c5",
   "today_save_failed": "740763a2ae8e5f163a5da691446d97c86c21152714d7d38484a0e64738d04a31",
   "today_see_day_challenge": "6f3a9b310a06bb73b2e98dfdfdfdd6f946c7f41ea385fd53005daf0afade6c72",
   "today_see_day_mock": "bdcf2bf8323a5430fc50cd91ed4a2c9409f37d68197a4018066c4f790e934189",
@@ -246,8 +245,6 @@
     <string name="today_paused_detail">다시 시작할 때까지는 학습 일정이 잡히지 않아요.</string>
     <string name="today_new_goal">새 목표</string>
     <string name="today_resume_effect">오늘부터 계획을 다시 이어 가요. 일시 중지한 기간에 예정되어 있던 레슨부터 시작해요.</string>
-    <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="today_resume_goal_limit">동시에 학습할 수 있는 목표 수를 다 채웠어요. 목표 하나를 일시 중지하거나 구독해서 더 많은 목표를 학습해 보세요.</string>
     <string name="today_setting_up_goal">%1$s 계획을 세우려면 몇 가지 답변이 더 필요해요.</string>
     <string name="today_building_plan_goal">%1$s 계획을 만들고 있어요</string>
     <string name="today_building_plan_detail">1~2분 정도 걸려요. 준비가 끝나면 여기에서 첫날 학습이 바로 열려요.</string>

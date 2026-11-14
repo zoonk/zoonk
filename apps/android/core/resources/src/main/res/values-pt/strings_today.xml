@@ -93,7 +93,6 @@
   "today_rest_next_lessons": "0ced18bc2f16e23e79173228d079ece7963fbf4a5467242878eb87e9007ef2d4",
   "today_resume": "cbb1f1e0d5df999e74d1c4c2c711c2ed436d462ddb1514a7d4e86e14313e7736",
   "today_resume_effect": "0a9e3154cdc83c4ad57aa1aa51ff96f1e073bade975fe6c501a72c416308bcda",
-  "today_resume_goal_limit": "da53723cdafae0a2e3b2e7c313a5e5bcfda25e4851ec1111a49d97dbd3279084",
   "today_save_failed": "c1ea8538034879b8bae005fcb0132c4e2c246ba2059fdd7efd341b00a99e2ce2",
   "today_see_day_challenge": "c1239e96f8d7ec61fd6cf274ea4dde3a16d2a1a1e720d705ce9936ff602e79b2",
   "today_see_day_mock": "51adef24effd4e26b32c8d6f97b9e12523b72c2cf248d5f9453fdfb48b2f8855",
@@ -258,8 +257,6 @@
     <string name="today_paused_detail">Nada está planejado até você retomar o objetivo.</string>
     <string name="today_new_goal">Novo objetivo</string>
     <string name="today_resume_effect">Seu plano continua a partir de hoje, começando pelas aulas planejadas para os dias em que você fez uma pausa.</string>
-    <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="today_resume_goal_limit">Você já tem o máximo de objetivos em andamento. Pause um ou assine para estudar mais.</string>
     <string name="today_setting_up_goal">Seu plano de %1$s precisa de mais algumas respostas.</string>
     <string name="today_building_plan_goal">Criando seu plano de %1$s</string>
     <string name="today_building_plan_detail">Leva um ou dois minutos. Seu primeiro dia de estudo aparece aqui assim que estiver pronto.</string>
