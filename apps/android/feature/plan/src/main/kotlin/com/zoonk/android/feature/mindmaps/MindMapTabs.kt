@@ -283,7 +283,6 @@ internal fun MindMapAllowanceStop.limit(tier: LimitTier): Limit =
                 tier,
                 when (period) {
                     MindMapAllowanceStop.Period.MONTH -> LimitPeriod.Month
-                    MindMapAllowanceStop.Period.ROLLING30_DAYS -> LimitPeriod.Rolling30Days
                     MindMapAllowanceStop.Period.TOTAL -> LimitPeriod.Total
                     MindMapAllowanceStop.Period.DAY, null -> LimitPeriod.Day
                 },
@@ -296,7 +295,6 @@ private val MindMapAllowanceStop?.limitSubject: LimitSubject
     get() =
         when (this?.resource) {
             MindMapAllowanceStop.Resource.AI_SPEND -> LimitSubject.Help
-            MindMapAllowanceStop.Resource.LESSON_START -> LimitSubject.Lessons
             else -> LimitSubject.MindMaps
         }
 

@@ -81593,6 +81593,10 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "chapterTitle": {
+            "type": "string",
+            "description": "The chapter's name: the test's screens are titled \"Test: {chapter}\""
+          },
           "needsItems": {
             "type": "array",
             "items": {
@@ -81627,6 +81631,7 @@
         },
         "required": [
           "chapterId",
+          "chapterTitle",
           "needsItems",
           "passMark",
           "questions",

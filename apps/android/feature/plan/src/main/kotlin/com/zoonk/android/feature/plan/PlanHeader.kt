@@ -308,18 +308,28 @@ private fun GoalStatusDialog(
     onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val archive = dialog == GoalDialog.Archive
+    if (dialog == GoalDialog.Archive) {
+        ArchiveGoalDialog(
+            goal.displayName,
+            onArchive = {
+                onDismiss()
+                onSetStatus(LearnerSummaryGoal.Status.ARCHIVED)
+            },
+            onDismiss = onDismiss,
+        )
+        return
+    }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(if (archive) R.string.plan_archive_title else R.string.plan_resume_title, goal.displayName)) },
-        text = { Text(stringResource(if (archive) R.string.plan_archive_description else R.string.plan_resume_effect)) },
+        title = { Text(stringResource(R.string.plan_resume_title, goal.displayName)) },
+        text = { Text(stringResource(R.string.plan_resume_effect)) },
         confirmButton = {
             TextButton(
                 onClick = {
                     onDismiss()
-                    onSetStatus(if (archive) LearnerSummaryGoal.Status.ARCHIVED else LearnerSummaryGoal.Status.ACTIVE)
+                    onSetStatus(LearnerSummaryGoal.Status.ACTIVE)
                 },
-            ) { Text(stringResource(if (archive) R.string.plan_archive else R.string.plan_resume)) }
+            ) { Text(stringResource(R.string.plan_resume)) }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.plan_cancel)) } },
     )

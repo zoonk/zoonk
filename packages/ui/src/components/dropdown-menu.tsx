@@ -3,6 +3,7 @@
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
+import { yieldMenuFocus } from "./_utils/menu-handoff";
 import type * as React from "react";
 
 /** A menu keeps the page's gutter from the screen's edge, as content does (craft S5). */
@@ -27,6 +28,7 @@ function DropdownMenuContent({
   side = "bottom",
   sideOffset = 4,
   className,
+  finalFocus,
   ...props
 }: MenuPrimitive.Popup.Props &
   Pick<MenuPrimitive.Portal.Props, "keepMounted"> &
@@ -51,6 +53,7 @@ function DropdownMenuContent({
             className,
           )}
           data-slot="dropdown-menu-content"
+          finalFocus={yieldMenuFocus(finalFocus)}
           {...props}
         />
       </MenuPrimitive.Positioner>

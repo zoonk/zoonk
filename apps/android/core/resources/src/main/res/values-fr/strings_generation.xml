@@ -32,7 +32,7 @@
   "generation_phase_completed": "1b8cc26cc7efe5b50a22f867b07b06ac67f0b80a187e041386fafa996414d37f",
   "generation_phase_failed": "cbc7efdbe4ed408d2d53cbcf92edd3784431bee8cc15b86d9ed38b5564ed55a0",
   "generation_phase_pending": "b0894e3ba55fffa93dad55849564f2775dcac4f82afc041e6c4f3995ec0c0b73",
-  "generation_placement": "dd22242bf39d7757ab75caf2cd2459002598411e8a8f67606278de10755f8a7f",
+  "generation_placement": "61f6aa91f754e557a0de360a1605d7eb4a8792cd251c59bd4f38ddd7691cc7b2",
   "generation_placement_questions": "ab7cd71c1ee7007d7d725792b2c74d1cdda240e2597809d430863076a4a730be",
   "generation_placement_questions_line": "c2b84ed39f523feb9965f1efb501ad6990c74c03b8eb9879d752ba7ec7e4a9a7",
   "generation_question_line": "700b5878c7b568f9d61011ba10e2d8d5d950bb21b931cace4d42b27e0e31c99e",
@@ -103,7 +103,7 @@
     <string name="generation_curriculum_plan_line_2">Répartition des compétences sur tes journées…</string>
     <string name="generation_curriculum_plan_line_3">Enregistrement de ton plan…</string>
     <!-- The wait while placement questions are written. -->
-    <string name="generation_placement">Préparation de tes questions</string>
+    <string name="generation_placement">Préparation de ton test</string>
     <string name="generation_placement_questions">Préparation de tes questions</string>
     <string name="generation_placement_questions_line">Choix des compétences à évaluer…</string>
     <!-- The wait while the first day of a plan is prepared. -->

@@ -32,7 +32,7 @@
   "generation_phase_completed": "e3835fa9efd13e11e4e85df447c12a3f7485fbe41ae008d05d9f7345e023d020",
   "generation_phase_failed": "d4fe35f009b6f7dbdc1439eaea40c06ddb84307f55626c345e7acc206729e27b",
   "generation_phase_pending": "11e3b2acbec32bdc43a4c406700381b1deda62941969056149b60df9af60b3ff",
-  "generation_placement": "f35e953e3ac5713e31961e8b0c5c88c2b6a5ecc03af041616533fbb92f3155e7",
+  "generation_placement": "994e8d2e63d41915e68c1c7166654f8a576591d357c2adf17b22a24b780a527d",
   "generation_placement_questions": "d2f9c7225ba2222f59a4c600f825f7b38189d6c14ded3400dcc973a8d4726496",
   "generation_placement_questions_line": "0491a479e6f9a465605b08cf945123a9253028c0c7662f2d5071281adc2792de",
   "generation_question_line": "e181e7bd27e9042b769aba5ec295aeb0df64fdfc99e3311121184ccc60336374",
@@ -103,7 +103,7 @@
     <string name="generation_curriculum_plan_line_2">Becerileri çalışma günlerine dağıtıyoruz…</string>
     <string name="generation_curriculum_plan_line_3">Planını kaydediyoruz…</string>
     <!-- The wait while placement questions are written. -->
-    <string name="generation_placement">Sorularını hazırlıyoruz</string>
+    <string name="generation_placement">Seviye tespit testini hazırlıyoruz</string>
     <string name="generation_placement_questions">Sorularını hazırlıyoruz</string>
     <string name="generation_placement_questions_line">Sorularla ölçeceğimiz becerileri seçiyoruz…</string>
     <!-- The wait while the first day of a plan is prepared. -->

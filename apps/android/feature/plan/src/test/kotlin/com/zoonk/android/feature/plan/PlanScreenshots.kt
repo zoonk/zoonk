@@ -118,6 +118,14 @@ class PlanScreenshots {
     @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
     fun expandedPaused() = capture("plan-paused-expanded", paused = true)
 
+    @Test
+    @Config(qualifiers = "w411dp-h900dp-xxhdpi")
+    fun phoneExamOver() = capture("plan-exam-over-phone", examOver = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun expandedExamOver() = capture("plan-exam-over-expanded", examOver = true)
+
     /** Robolectric copies only the activity's window, so a sheet's content is drawn here as it shows in its sheet. */
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
@@ -127,12 +135,25 @@ class PlanScreenshots {
             mapOf(
                 "plan-sheet-pace" to { links -> PaceDetails(page, page.plan.status!!.pace, links, onAdjust = {}) },
                 "plan-sheet-progress" to
+                    { links -> PreparationDetails(Standing.Progress(progress(), done = 13, known = 0, total = 46), links) },
+                "plan-sheet-preparation-review" to
                     { links ->
                         PreparationDetails(
-                            progress(),
-                            forExam = false,
-                            lessons = Standing.Progress(progress(), done = 13, known = 0, total = 46),
-                            links = links,
+                            Standing.Preparation(
+                                progress(
+                                    mocks = """{"kind":"fullReviews","taken":0,"value":0}""",
+                                    rule = "examWeighted",
+                                    fading = 0,
+                                ),
+                            ),
+                            links,
+                        )
+                    },
+                "plan-sheet-preparation-reviewed" to
+                    { links ->
+                        PreparationDetails(
+                            Standing.Preparation(progress(mocks = """{"kind":"fullReviews","taken":2,"value":0.5}""")),
+                            links,
                         )
                     },
                 "plan-sheet-phase-details" to { links -> PhaseDetails(page, page.plan.phases[1], links) },
@@ -722,8 +743,9 @@ class PlanScreenshots {
         moreContrast: Boolean = false,
         paused: Boolean = false,
         failure: ResumeFailure? = null,
+        examOver: Boolean = false,
     ) {
-        show(dark, moreContrast, paused, failure)
+        show(dark, moreContrast, paused, failure, examOver)
         compose.waitForIdle()
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
@@ -733,8 +755,24 @@ class PlanScreenshots {
         moreContrast: Boolean = false,
         paused: Boolean = false,
         failure: ResumeFailure? = null,
+        examOver: Boolean = false,
     ) {
-        val page = page().let { if (paused) it.copy(goal = it.goal.copy(status = LearnerSummaryGoal.Status.PAUSED)) else it }
+        val page =
+            when {
+                paused -> {
+                    page().let { it.copy(goal = it.goal.copy(status = LearnerSummaryGoal.Status.PAUSED)) }
+                }
+
+                examOver -> {
+                    learnerSummary(kind = "exam", title = "ENEM").let {
+                        PlanPageState(it.goals.first(), plan(""""status":{"kind":"pastDate","lessons":4}"""), it)
+                    }
+                }
+
+                else -> {
+                    page()
+                }
+            }
         compose.setContent {
             val navigator = rememberAppNavigator()
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {

@@ -26,11 +26,8 @@
   "profile_questions_memory_off": "1725bdca0763985d75c106a68a8a56f54be38694c546c5810879434194279385",
   "profile_questions_never_ask": "d1033f19a6e2b55d742785d5eabc4391676f8856a71b71a81fa06ea49376cf45",
   "profile_questions_never_ask_help": "c803f87c70811f05eb5cef757aaf1e581d8290f1dc8a34b703fe78ae9e8aa4df",
-  "profile_questions_none": "37dee02859c6b23c19c7133c4f0dcd282df4ec35c990c28e52a87d2a30210003",
   "profile_questions_not_answered": "9dcafae723752f7f5bfcdc05f805484362a09487e8e0692ea25b2c4698d02139",
   "profile_questions_not_shared": "d72342c170736a73d0405e39f04c56989e4e381e2d69972dbdce688920225990",
-  "profile_questions_nothing_particular": "bb95297e67ed74b52505267b2ead47dac5855926572d91330a95c51bfb598dbf",
-  "profile_questions_nothing_to_add": "fea28cfb03fc8f67fd8e29f6d1b9ac30aea60221563c982ec884ba27aa8d1a57",
   "profile_questions_play_favorites": "9b4198512dc5389a69d69cc0665d1005960e000f400418bdcd550cf283910506",
   "profile_questions_play_placeholder": "4c8ced0377e6733b89a84dc74eee4440b5d65304d02103761febda4ebc2cc474",
   "profile_questions_play_title": "16b7eeb2b3e58c1a805a65a3aa9655b7173a3a115e7513c94061c26057408995",
@@ -100,10 +97,8 @@
     <string name="profile_questions_tools_description">En fazla 3 tane seç. Bunları örneklerinde kullanacağız.</string>
     <string name="profile_questions_tools_other">Diğerleri (isteğe bağlı)</string>
     <string name="profile_questions_tools_placeholder">Örn. Photoshop, Python, SAP</string>
-    <string name="profile_questions_none">Bunların hiçbiri</string>
     <string name="profile_questions_studies_title">Hangi alanlarda eğitim aldın?</string>
     <string name="profile_questions_studies_description">Geçmişte aldığın ya da şu an devam ettiğin eğitimler olabilir. Bitirmiş olman veya işinle ilgili olması gerekmez.</string>
-    <string name="profile_questions_nothing_to_add">Ekleyeceğim bir şey yok</string>
     <string name="profile_questions_subject">%1$s: program veya alan (isteğe bağlı)</string>
     <string name="profile_questions_which_field">Hangi alan?</string>
     <string name="profile_questions_subject_placeholder">Örn. gazetecilik</string>
@@ -132,7 +127,6 @@
     <string name="profile_questions_address_title">Sana nasıl hitap edelim?</string>
     <string name="profile_questions_address_description">Sana böyle hitap edeceğiz.</string>
     <string name="profile_questions_suggested">Seçtiğin durumlarda genelde nelerin işe yaradığına baktık. İstediğini değiştirebilirsin.</string>
-    <string name="profile_questions_nothing_particular">Özel bir şey yok</string>
     <string name="profile_questions_something_else">+ İşime yarayan başka bir şey</string>
     <string name="profile_questions_support_note">Sana neyin yardımcı olduğunu kendi sözlerinle anlat (isteğe bağlı)</string>
     <string name="profile_questions_support_placeholder">Örneğin, şemaları metinlerden daha iyi anlıyorum</string>

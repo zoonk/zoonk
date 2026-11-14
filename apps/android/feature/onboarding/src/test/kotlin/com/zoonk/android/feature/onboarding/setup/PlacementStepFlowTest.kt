@@ -131,7 +131,7 @@ class PlacementStepFlowTest {
         api.placementGate = read
         tap("Start")
 
-        rule.onNodeWithText("Getting your questions ready").assertDoesNotExist()
+        rule.onNodeWithText("Getting your test ready").assertDoesNotExist()
         rule.onNodeWithText("Let's see what you already know").assertIsDisplayed()
         rule.onNodeWithText("Start").assertIsNotEnabled()
         rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true).assertExists()
@@ -147,7 +147,7 @@ class PlacementStepFlowTest {
         api.placementGate = CompletableDeferred<Unit>().apply { completeExceptionally(ApiException(ApiError.Network)) }
         tap("Start")
 
-        rule.onNodeWithText("Getting your questions ready").assertIsDisplayed()
+        rule.onNodeWithText("Getting your test ready").assertIsDisplayed()
         rule.onNodeWithText("Which court hears appeals from state courts?").assertDoesNotExist()
 
         api.placementGate = null
@@ -224,7 +224,7 @@ class PlacementStepFlowTest {
         tap("Start")
         api.writeFailure = ApiException(ApiError.Network)
         rule.mainClock.advanceTimeBy(30_000)
-        tap("Skip for now")
+        tap("Skip")
         api.writeFailure = null
         api.placement = placementOf()
         rule.mainClock.advanceTimeBy(POLL_MS)
@@ -248,7 +248,7 @@ class PlacementStepFlowTest {
         show(inSetup = true)
         tap("Start")
         rule.mainClock.advanceTimeBy(30_000)
-        tap("Skip for now")
+        tap("Skip")
         api.placement = placementOf()
         rule.mainClock.advanceTimeBy(POLL_MS)
         rule.onNodeWithText("Which court hears appeals from state courts?").assertIsDisplayed()
@@ -274,7 +274,7 @@ class PlacementStepFlowTest {
         show(inSetup = true)
         tap("Start")
         rule.mainClock.advanceTimeBy(30_000)
-        tap("Skip for now")
+        tap("Skip")
         api.placement = placementOf()
         rule.mainClock.advanceTimeBy(POLL_MS)
         rule.onNodeWithText("Which court hears appeals from state courts?").assertIsDisplayed()

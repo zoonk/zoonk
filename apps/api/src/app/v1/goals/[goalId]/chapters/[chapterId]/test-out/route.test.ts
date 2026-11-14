@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { chapterTestOutResponseSchema } from "@/lib/openapi/schemas/test-out";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { NextRequest } from "next/server";
@@ -10,6 +11,30 @@ import { POST as generate } from "./generations/route";
 import { GET as getTestOut, POST as submitTestOut } from "./route";
 
 vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
+
+describe("chapter test-out read", () => {
+  it("names the chapter in the documented shape", async () => {
+    const user = await userFixture();
+
+    const { goal, chapters } = await learnerGoalFixture({
+      itemsPerSkill: 2,
+      phases: [4],
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    const chapter = chapters[0]!;
+    const url = `http://localhost/v1/goals/${goal.id}/chapters/${chapter.id}/test-out`;
+    const context = { params: Promise.resolve({ chapterId: chapter.id, goalId: goal.id }) };
+    const response = await getTestOut(new NextRequest(url), context);
+
+    const body = chapterTestOutResponseSchema.parse(await response.json());
+
+    expect(response.status).toBe(200);
+    expect(body.chapterTitle).toBe(chapter.title);
+  });
+});
 
 describe("chapter test-out with nothing left to skip", () => {
   it("exposes the outcome for reads, question requests, and new submissions without starting a run", async () => {
