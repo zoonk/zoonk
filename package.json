@@ -50,6 +50,7 @@
     "perf:build-metrics": "node scripts/perf/check-build-metrics.mts",
     "perf:check": "node scripts/perf/check-static-routes.mts",
     "pr:capture": "node scripts/pr/capture.mts",
+    "pr:media": "node scripts/pr/media-cli.mts",
     "start": "node scripts/dev/start.mts --production",
     "preview": "node scripts/deploy/request-preview.mts",
     "staging": "gh workflow run staging.yml --ref main",
