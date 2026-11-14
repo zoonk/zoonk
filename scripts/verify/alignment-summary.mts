@@ -5,7 +5,11 @@ export type Summary = {
   /** Null until the scenario list (slice 4) says which were required. */
   scenariosMissing: number | null;
   discovery: number;
+  /** What a declared piece promised and the read couldn't measure: it fails, never passes. */
   notMeasured: number;
+  /** Not measured while a decision is pending (a tolerance): counted, not failing. */
+  pending: number;
+  failed: boolean;
 };
 
 /** One fault is one line, however many screens and rows it showed on. */
@@ -17,23 +21,20 @@ export function summarize(
   findings: AlignmentFinding[],
   scenariosMissing: number | null = null,
 ): Summary {
-  const faults = (level: Level, unresolvedOnly = false) =>
-    new Set(
-      findings
-        .filter((item) => item.level === level && !(unresolvedOnly && item.exception))
-        .map((item) => faultKey(item)),
-    ).size;
+  const faults = (keep: (item: AlignmentFinding) => boolean) =>
+    new Set(findings.filter((item) => keep(item)).map((item) => faultKey(item))).size;
+
+  const unresolved = faults((item) => item.level === "fail" && !item.exception);
+  const notMeasured = faults((item) => item.level === "not-measured" && !item.pending);
 
   return {
-    discovery: faults("discovery"),
-    notMeasured: faults("not-measured"),
+    discovery: faults((item) => item.level === "discovery"),
+    failed: unresolved > 0 || notMeasured > 0 || (scenariosMissing ?? 0) > 0,
+    notMeasured,
+    pending: faults((item) => item.level === "not-measured" && Boolean(item.pending)),
     scenariosMissing,
-    unresolved: faults("fail", true),
+    unresolved,
   };
-}
-
-export function failed(summary: Summary) {
-  return summary.unresolved > 0 || (summary.scenariosMissing ?? 0) > 0;
 }
 
 export function summaryLine(summary: Summary) {
@@ -42,7 +43,9 @@ export function summaryLine(summary: Summary) {
       ? "scenarios not listed yet"
       : `${summary.scenariosMissing} required scenario${summary.scenariosMissing === 1 ? "" : "s"} missing`;
 
-  return `${failed(summary) ? "FAIL" : "PASS"}: ${summary.unresolved} unresolved; ${scenarios}; ${summary.discovery} discovery leads; ${summary.notMeasured} not measured`;
+  const pending = summary.pending > 0 ? `; ${summary.pending} waiting on a tolerance` : "";
+
+  return `${summary.failed ? "FAIL" : "PASS"}: ${summary.unresolved} unresolved; ${scenarios}; ${summary.discovery} discovery leads; ${summary.notMeasured} not measured${pending}`;
 }
 
 const LEVEL_TITLES: Record<Level, string> = {

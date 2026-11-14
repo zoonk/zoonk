@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { type Browser, type BrowserContextOptions, type Page } from "@playwright/test";
 import { type Capture } from "./alignment-capture.mts";
 import { readAlignment, webCapture } from "./alignment-probe.mts";
-import { FILLED_ACTION, PIECES, SURFACES } from "./alignment-table.mts";
+import { ACTIONS, PIECES, SURFACES } from "./alignment-table.mts";
 import { type DiscoveryLead, readDiscovery } from "./alignment-web.mts";
 import {
   type Traffic,
@@ -135,7 +135,7 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
     ...measureFrames(probe?.mainFrames ?? [], fcpMs),
     ...summarizePrefetches(traffic.requests, probe?.timeOrigin ?? null),
     alignment: await page.evaluate(readAlignment, {
-      filled: FILLED_ACTION,
+      actions: ACTIONS,
       pieces: WEB_PIECES,
       surfaces: SURFACES,
     }),

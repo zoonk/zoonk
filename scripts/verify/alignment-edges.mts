@@ -13,6 +13,32 @@ import {
   tenths,
 } from "./alignment-geometry.mts";
 
+/**
+ * Whether measured positions share one edge (all within one unit of each other), and if not, the
+ * position most of them agree with and the ones off it. Positions are compared as measured;
+ * rounding is for printing only, so 1.3 apart fails and 0.8 apart passes.
+ */
+function oneEdge<Item>(items: Item[], at: (item: Item) => number) {
+  const values = items.map((item) => at(item));
+
+  if (values.length < 2 || Math.max(...values) - Math.min(...values) <= EDGE) {
+    return null;
+  }
+
+  const near = (value: number) => values.filter((other) => Math.abs(other - value) <= EDGE).length;
+  const common = values.toSorted((one, other) => near(other) - near(one))[0] ?? 0;
+  const off = items.filter((item) => Math.abs(at(item) - common) > EDGE);
+
+  const odd =
+    off.length > 0
+      ? off
+      : items
+          .toSorted((one, other) => Math.abs(at(other) - common) - Math.abs(at(one) - common))
+          .slice(0, 1);
+
+  return { common, odd, shared: items.length - odd.length };
+}
+
 /** Labels, or leads, of one group start on one edge: read by the first line's drawn start. */
 export function startLeads(
   context: Context,
@@ -31,23 +57,13 @@ export function startLeads(
       here.toSorted((one, other) => one.element.bounds[1] - other.element.bounds[1])[0] ?? [],
   );
 
-  if (firsts.length < 2) {
+  const edge = oneEdge(firsts, ({ start }) => start);
+
+  if (!edge) {
     return [];
   }
 
-  const low = Math.min(...firsts.map(({ start }) => start));
-  const high = Math.max(...firsts.map(({ start }) => start));
-
-  if (high - low <= EDGE) {
-    return [];
-  }
-
-  const edges = [...Map.groupBy(firsts, ({ start }) => Math.round(start))].toSorted(
-    ([, one], [, other]) => other.length - one.length,
-  );
-
-  const [common] = edges[0] ?? [low];
-  const odd = edges.slice(1).flatMap(([, here]) => here);
+  const { common, odd, shared } = edge;
 
   const held = odd
     .map(({ element, start }) => {
@@ -67,7 +83,7 @@ export function startLeads(
 
   return [
     finding(context, {
-      detail: `${odd.map(({ element }) => rowName(read, element.row)).join(", ")} at ${odd.map(({ start }) => tenths(start)).join(", ")} where ${edges[0]?.[1].length ?? 0} of ${firsts.length} start at ${common}`,
+      detail: `${odd.map(({ element }) => rowName(read, element.row)).join(", ")} at ${odd.map(({ start }) => tenths(start)).join(", ")} where ${shared} of ${firsts.length} start at ${tenths(common)}`,
       level: "fail",
       measured: Math.max(...odd.map(({ start }) => Math.abs(start - common))),
       message: `the ${part}s of ${groupName(read)} don't start on one edge`,
@@ -86,24 +102,17 @@ export function axisLeads(context: Context, read: Group): AlignmentFinding[] {
     .filter((element) => element.part === "mark" && drawn(element))
     .map((element) => ({ center: element.bounds[0] + element.bounds[2] / 2, element }));
 
-  if (marks.length < 2) {
+  const axis = oneEdge(marks, ({ center }) => center);
+
+  if (!axis) {
     return [];
   }
 
-  const axes = [...Map.groupBy(marks, ({ center }) => Math.round(center))].toSorted(
-    ([, one], [, other]) => other.length - one.length,
-  );
-
-  const [common] = axes[0] ?? [0];
-  const odd = marks.filter(({ center }) => Math.abs(center - common) > EDGE);
-
-  if (odd.length === 0) {
-    return [];
-  }
+  const { common, odd } = axis;
 
   return [
     finding(context, {
-      detail: `${odd.map(({ element }) => rowName(read, element.row)).join(", ")} centered at ${odd.map(({ center }) => tenths(center)).join(", ")} where the others are at ${common}`,
+      detail: `${odd.map(({ element }) => rowName(read, element.row)).join(", ")} centered at ${odd.map(({ center }) => tenths(center)).join(", ")} where the others are at ${tenths(common)}`,
       level: "fail",
       measured: Math.max(...odd.map(({ center }) => Math.abs(center - common))),
       message: `the marks of ${groupName(read)} aren't on one axis`,

@@ -118,8 +118,14 @@ export const DECLARATIONS = new Map(
   PIECES.map((piece) => [piece.name, new Set<string>(piece.relations)]),
 );
 
-/** A main action's fill: `Button`'s `default` variant. */
-export const FILLED_ACTION = "[data-slot=button][data-variant=default]";
+/**
+ * Controls that can be a main action. One is filled when the shared button's variant says so: each
+ * variant of `buttonVariants` declares `--button-variant`, on a `Button` and on a link drawn as one
+ * alike. One filled action per surface; the same words to the same destination offered again
+ * (a page's start link at its top and its end) count once, and each action without a destination
+ * counts.
+ */
+export const ACTIONS = "a, button, [role=button]";
 
 /** What covers the page and becomes the surface its own actions are counted on. */
 export const SURFACES =

@@ -1,0 +1,147 @@
+// @vitest-environment jsdom
+/* oxlint-disable no-magic-numbers -- The fixtures are measurements in pixels. */
+import assert from "node:assert/strict";
+import { afterEach, beforeEach, describe, it, vi } from "vitest";
+import { readAlignment, webCapture } from "./alignment-probe.mts";
+import { ACTIONS, PIECES, SURFACES } from "./alignment-table.mts";
+import { evaluateCapture } from "./alignment.mts";
+import { installPageHelpers } from "./page-helpers.mts";
+
+/** jsdom has no layout: each element's box comes from its `data-box` (x, y, width, height). */
+function box(element: Element) {
+  const [left = 0, top = 0, width = 0, height = 0] = (
+    element instanceof HTMLElement ? (element.dataset.box ?? "") : ""
+  )
+    .split(",")
+    .map(Number);
+
+  return new DOMRect(left, top, width, height);
+}
+
+const PIECE_SELECTORS = PIECES.flatMap((piece) =>
+  piece.web ? [{ name: piece.name, web: piece.web }] : [],
+);
+
+function read() {
+  return webCapture({
+    page: readAlignment({ actions: ACTIONS, pieces: PIECE_SELECTORS, surfaces: SURFACES }),
+    path: "/fixture",
+    scheme: "light",
+    viewport: "phone",
+  });
+}
+
+let hit: Element | null = null;
+
+beforeEach(() => {
+  installPageHelpers();
+
+  vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function measured(
+    this: Element,
+  ) {
+    return box(this);
+  });
+
+  Object.defineProperty(Element.prototype, "checkVisibility", {
+    configurable: true,
+    value: () => true,
+  });
+
+  Object.defineProperty(HTMLElement.prototype, "innerText", {
+    configurable: true,
+    get(this: HTMLElement) {
+      return this.textContent;
+    },
+  });
+
+  Object.defineProperty(Range.prototype, "getClientRects", {
+    configurable: true,
+    value(this: Range) {
+      const element = this.commonAncestorContainer.parentElement;
+      return element ? [box(element)] : [];
+    },
+  });
+
+  Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
+    configurable: true,
+    value: () => ({
+      clearRect: vi.fn(),
+      fillRect: vi.fn(),
+      fillStyle: "",
+      getImageData: () => ({ data: [0, 0, 0, 0] }),
+      measureText: () => ({
+        actualBoundingBoxAscent: 10,
+        fontBoundingBoxAscent: 15,
+        fontBoundingBoxDescent: 5,
+        width: 8,
+      }),
+    }),
+  });
+
+  Object.defineProperty(document, "fonts", { configurable: true, value: [] });
+  Object.defineProperty(document, "elementFromPoint", { configurable: true, value: () => hit });
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+  document.body.replaceChildren();
+  hit = null;
+});
+
+const row = (label: string, y: number, x = 0) =>
+  `<div data-box="0,${y},300,30"><span data-slot="list-row-title" data-box="${x},${y + 5},100,20">${label}</span></div>`;
+
+function link(text: string, href: string, y: number) {
+  return `<a href="${href}" style="--button-variant: default" data-box="0,${y},100,40">${text}</a>`;
+}
+
+describe("reading a declared piece in the page", () => {
+  it("reads rows through a display-contents wrapper, so their fault still fails", () => {
+    document.body.innerHTML = `<div data-slot="list-group" data-box="0,0,300,60">
+      <div style="display: contents">${row("A", 0)}${row("B", 30, 28)}</div></div>`;
+
+    const fault = evaluateCapture(read()).find((finding) => finding.level === "fail");
+
+    assert.equal(fault?.rule, "label-start");
+    assert.equal(fault?.measured, 28);
+  });
+
+  it("keeps a declared group whose rows carry no parts, so it reads as not measured", () => {
+    document.body.innerHTML = `<div data-slot="list-group" data-box="0,0,300,60">
+      <div data-box="0,0,300,30">A</div><div data-box="0,30,300,30">B</div></div>`;
+
+    const [record] = evaluateCapture(read());
+
+    assert.equal(record?.level, "not-measured");
+    assert.equal(record?.rule, "label");
+  });
+
+  it("counts filled actions on the surface the document shows on top, not the last one in order", () => {
+    document.body.innerHTML = `
+      <div role="dialog" aria-modal="true" aria-label="Top" data-box="0,0,300,300">
+        <button style="--button-variant: default" data-box="0,0,100,40">Top A</button>
+        <button style="--button-variant: default" data-box="0,50,100,40">Top B</button>
+      </div>
+      <div role="dialog" aria-modal="true" aria-label="Under" data-box="0,0,300,300">
+        <button style="--button-variant: default" data-box="0,100,100,40">Under</button>
+      </div>`;
+
+    hit = document.querySelector("[aria-label=Top] button");
+    const [fault] = evaluateCapture(read());
+
+    assert.equal(fault?.rule, "one-filled");
+    assert.match(fault?.detail ?? "", /"Top A", "Top B"/u);
+  });
+
+  it("counts a link to the same place with the same words once, and two different ones twice", () => {
+    document.body.innerHTML =
+      link("Build my plan", "/start", 0) + link("Build my plan", "/start", 900);
+
+    assert.deepEqual(evaluateCapture(read()), []);
+
+    document.body.innerHTML =
+      link("Build my plan", "/start", 0) + link("See pricing", "/pricing", 900);
+
+    assert.equal(evaluateCapture(read())[0]?.rule, "one-filled");
+  });
+});

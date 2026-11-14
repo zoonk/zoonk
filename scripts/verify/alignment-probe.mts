@@ -10,11 +10,11 @@ export type AlignmentPage = Pick<Capture, "activeSurface" | "elements">;
  * pixels, rounded to a tenth, like the craft read's, so they match a full-page screenshot.
  */
 export function readAlignment({
-  filled,
+  actions: controls,
   pieces,
   surfaces,
 }: {
-  filled: string;
+  actions: string;
   pieces: { name: string; web: WebPiece }[];
   surfaces: string;
 }): AlignmentPage {
@@ -164,6 +164,39 @@ export function readAlignment({
     return first.top + (first.height - content) / 2 + metrics.fontBoundingBoxAscent;
   }
 
+  /** The characters the primary face's own `@font-face` ranges cover: it draws them, no fallback does. */
+  function primaryRanges(style: CSSStyleDeclaration): [number, number][] {
+    const family = style.fontFamily.split(",")[0]?.replaceAll(/["']/gu, "").trim() ?? "";
+
+    return [...document.fonts]
+      .filter((face) => face.family.replaceAll(/["']/gu, "") === family)
+      .flatMap((face) => face.unicodeRange.split(","))
+      .flatMap((range): [number, number][] => {
+        const [low = "", high = low] = range.trim().replace(/^U\+/iu, "").split("-");
+        const start = Number.parseInt(low.replaceAll("?", "0"), 16);
+        const end = Number.parseInt(high.replaceAll("?", "F"), 16);
+        return Number.isNaN(start) || Number.isNaN(end) ? [] : [[start, end]];
+      });
+  }
+
+  function drawnByPrimary(text: string, style: CSSStyleDeclaration) {
+    const ranges = primaryRanges(style);
+
+    const codes: number[] = [];
+
+    // A string iterates by code point, so a character past the basic plane is one.
+    for (const character of text) {
+      if (!/\s/u.test(character)) {
+        codes.push(character.codePointAt(0) ?? 0);
+      }
+    }
+
+    return (
+      ranges.length > 0 &&
+      codes.every((code) => ranges.some(([start, end]) => code >= start && code <= end))
+    );
+  }
+
   function capHeight(style: CSSStyleDeclaration): number | null {
     if (!pen) {
       return null;
@@ -205,11 +238,12 @@ export function readAlignment({
     const line = union(rects.filter((rect) => rect.top < top + rect.height / 2));
     const style = getComputedStyle(first.parentElement ?? element);
     const base = baselineOf(first);
-    const cap = capHeight(style);
+    // The cap height is the primary face's: a text another face draws has no capitals to read.
+    const cap = drawnByPrimary(first.data, style) ? capHeight(style) : null;
 
     return {
       baseline: base === null ? "not measured" : round(base + scrollY),
-      capBottom: base === null ? "not measured" : round(base + scrollY),
+      capBottom: base === null || cap === null ? "not measured" : round(base + scrollY),
       capTop: base === null || cap === null ? "not measured" : round(base - cap + scrollY),
       ...(line ? { firstLine: bounds(line) } : {}),
       lines: lineCount(rects),
@@ -233,11 +267,39 @@ export function readAlignment({
     return lines.length;
   }
 
+  /** A `display: contents` element has no box: it is there when what it holds draws. */
+  function isContents(element: Element) {
+    return getComputedStyle(element).display === "contents";
+  }
+
+  function present(element: Element) {
+    return isContents(element) ? inkOf(element) !== null : shown(element);
+  }
+
+  function boxOf(element: Element): Rect {
+    return (isContents(element) ? inkOf(element) : null) ?? element.getBoundingClientRect();
+  }
+
+  function isRtl(element: Element) {
+    return getComputedStyle(element).direction === "rtl";
+  }
+
+  /** Where its content ends: the right edge, or the left one in a right-to-left layout. */
   function contentEnd(element: Element) {
-    const box = element.getBoundingClientRect();
+    const box = boxOf(element);
     const style = getComputedStyle(element);
     const { pixels } = globalThis.zoonkPage;
-    return box.right - pixels(style.paddingRight) - pixels(style.borderRightWidth);
+
+    return isRtl(element)
+      ? box.left + pixels(style.paddingLeft) + pixels(style.borderLeftWidth)
+      : box.right - pixels(style.paddingRight) - pixels(style.borderRightWidth);
+  }
+
+  /** A row wrapped in `display: contents` is its children. */
+  function expandRows(element: Element): Element[] {
+    return isContents(element)
+      ? [...element.children].flatMap((child) => expandRows(child))
+      : [element];
   }
 
   function flowGap(parent: Element) {
@@ -324,7 +386,7 @@ export function readAlignment({
       const found = matches.filter(
         (element) =>
           ownerRow(element, read.rows) === row &&
-          element.getBoundingClientRect().width > 0 &&
+          present(element) &&
           !matches.some((other) => other !== element && other.contains(element)),
       );
 
@@ -333,7 +395,7 @@ export function readAlignment({
         const isText = part !== "mark" && part !== "end";
 
         return {
-          bounds: bounds(element.getBoundingClientRect()),
+          bounds: bounds(boxOf(element)),
           group: read.groupId,
           id: `${rowId}.${part}${index}`,
           ink: ink ? bounds(ink) : null,
@@ -375,7 +437,7 @@ export function readAlignment({
 
     return [
       {
-        bounds: bounds(row.getBoundingClientRect()),
+        bounds: bounds(boxOf(row)),
         endEdge: round(
           (read.bar ? read.bar.getBoundingClientRect().right : contentEnd(row)) + scrollX,
         ),
@@ -412,17 +474,15 @@ export function readAlignment({
     const isRowOf = (row: Element) =>
       row.closest(piece.group) === group || row.parentElement?.closest(piece.group) === group;
 
-    const candidates = [...group.querySelectorAll(piece.rows)].filter(
-      (row) => isRowOf(row) && !["absolute", "fixed"].includes(getComputedStyle(row).position),
-    );
+    const candidates = [...group.querySelectorAll(piece.rows)]
+      .flatMap((row) => expandRows(row))
+      .filter(
+        (row) => isRowOf(row) && !["absolute", "fixed"].includes(getComputedStyle(row).position),
+      );
 
     const rows = candidates.filter(
-      (row) => shown(row) && !candidates.some((other) => other !== row && other.contains(row)),
+      (row) => present(row) && !candidates.some((other) => other !== row && other.contains(row)),
     );
-
-    if (rows.length === 0) {
-      return [];
-    }
 
     const bar = piece.bar ? group.querySelector(piece.bar) : null;
     const groupInk = inkOf(group);
@@ -431,7 +491,8 @@ export function readAlignment({
 
     return [
       {
-        bounds: bounds(group.getBoundingClientRect()),
+        bounds: bounds(boxOf(group)),
+        ...(isRtl(group) ? { direction: "rtl" as const } : {}),
         endEdge: round((bar ? bar.getBoundingClientRect().right : contentEnd(group)) + scrollX),
         group: null,
         id: groupId,
@@ -453,35 +514,52 @@ export function readAlignment({
 
   const elements = pieces.flatMap(({ name: pieceName, web: piece }) =>
     [...document.querySelectorAll(piece.group)]
-      .filter((group) => shown(group))
+      .filter((group) => present(group))
       .flatMap((group, groupIndex) => readGroup(pieceName, piece, group, groupIndex)),
   );
 
-  const covers = [...document.querySelectorAll(surfaces)].filter((surface) => shown(surface));
+  const covers = [...document.querySelectorAll(surfaces)].filter((surface) => present(surface));
+  const surfaceName = (cover: Element) => `${name(cover)} #${covers.indexOf(cover) + 1}`;
+
+  /** The surface on top: the one whose own middle the document hits inside it, not the last in order. */
+  const onTop = covers.filter((cover) => {
+    const box = boxOf(cover);
+    const hit = document.elementFromPoint((box.left + box.right) / 2, (box.top + box.bottom) / 2);
+    return hit !== null && cover.contains(hit);
+  });
+
+  const top = onTop.at(-1) ?? covers.at(-1);
 
   const surfaceOf = (element: Element) => {
     const cover = covers.findLast((surface) => surface.contains(element));
-    return cover ? name(cover) : "page";
+    return cover ? surfaceName(cover) : "page";
   };
 
-  const actions = [...document.querySelectorAll(filled)]
-    .filter((action) => shown(action))
-    .map((action, index): CaptureElement => ({
-      bounds: bounds(action.getBoundingClientRect()),
-      group: null,
-      id: `action.${index}`,
-      ink: bounds(action.getBoundingClientRect()),
-      name: name(action),
-      part: "action",
-      piece: "action",
-      row: null,
-      surface: surfaceOf(action),
-      variant: "filled",
-    }));
+  const filled = (control: Element) =>
+    getComputedStyle(control).getPropertyValue("--button-variant").trim() === "default";
 
-  const top = covers.at(-1);
+  const actions = [...document.querySelectorAll(controls)]
+    .filter((action) => filled(action) && present(action))
+    .map((action, index): CaptureElement => {
+      const target = action instanceof HTMLAnchorElement ? action.href : null;
 
-  return { activeSurface: top ? name(top) : "page", elements: [...elements, ...actions] };
+      return {
+        bounds: bounds(boxOf(action)),
+        group: null,
+        id: `action.${index}`,
+        ink: bounds(boxOf(action)),
+        name: name(action),
+        part: "action",
+        piece: "action",
+        row: null,
+        surface: surfaceOf(action),
+        text: globalThis.zoonkPage.label(action),
+        ...(target ? { target } : {}),
+        variant: "filled",
+      };
+    });
+
+  return { activeSurface: top ? surfaceName(top) : "page", elements: [...elements, ...actions] };
 }
 
 /** The UI's locale is the path's first segment where it names one (`/pt/plan`). */

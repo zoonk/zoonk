@@ -8,7 +8,7 @@ import { chromium } from "@playwright/test";
 import { assertBrowserLaunchAllowed } from "../../packages/testing/src/browser-preflight.ts";
 import { getMailboxCaptureUrl, getServiceUrl } from "../dev/config.mts";
 import { readActionNames } from "./actions.mts";
-import { failed, summaryLine } from "./alignment-summary.mts";
+import { summaryLine } from "./alignment-summary.mts";
 import { alignmentOfLoads, alignmentSection, isDiscovery } from "./alignment-web.mts";
 import { compareWithBaseline, comparisonRows, readBaseline } from "./baseline.mts";
 import { markBusy } from "./busy.mts";
@@ -344,4 +344,4 @@ await writeFile(
 
 console.log(`\n${report.markdown}\n\nReport: ${join(out, "report.md")}`);
 console.log(summaryLine(alignment.summary));
-process.exitCode = report.failures > 0 || failed(alignment.summary) ? 1 : 0;
+process.exitCode = report.failures > 0 || alignment.summary.failed ? 1 : 0;

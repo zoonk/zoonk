@@ -1,4 +1,5 @@
 import { type AlignmentFile, type AlignmentFinding, type Capture } from "./alignment-capture.mts";
+import { coverageLeads, isOneStack } from "./alignment-coverage.mts";
 import { axisLeads, endLeads, gapLeads, stackedLeads, startLeads } from "./alignment-edges.mts";
 import {
   type Context,
@@ -54,7 +55,11 @@ function typeLeads(context: Context, read: Group): AlignmentFinding[] {
   });
 }
 
-/** At most one filled action on the active surface; a covering dialog or sheet is its own. */
+/**
+ * One filled action on the active surface; a covering dialog or sheet is its own surface. The same
+ * action offered again (the same words to the same destination, such as a page's start link at
+ * its top and its end) counts once; actions with no destination each count.
+ */
 function filledLeads(context: Context): AlignmentFinding[] {
   const { capture } = context;
 
@@ -70,13 +75,22 @@ function filledLeads(context: Context): AlignmentFinding[] {
       element.surface === capture.activeSurface,
   );
 
-  if (filled.length < 2) {
+  const actions = [
+    ...new Map(
+      filled.map((action) => [
+        action.target ? `${action.text ?? action.name ?? ""} ${action.target}` : action.id,
+        action,
+      ]),
+    ).values(),
+  ];
+
+  if (actions.length < 2) {
     return [];
   }
 
   return [
     finding(context, {
-      detail: `${filled.map((action) => action.name ?? action.text ?? action.id).join(", ")} on ${capture.activeSurface}`,
+      detail: `${actions.map((action) => action.name ?? action.text ?? action.id).join(", ")} on ${capture.activeSurface}`,
       level: "fail",
       message: "more than one filled action on one surface",
       piece: "action",
@@ -86,24 +100,41 @@ function filledLeads(context: Context): AlignmentFinding[] {
 }
 
 function groupLeads(context: Context, group: Group): AlignmentFinding[] {
-  const relations = DECLARATIONS.get(group.group.piece) ?? new Set<string>();
+  const relations = DECLARATIONS.get(group.group.piece);
+
+  if (!relations) {
+    return [
+      finding(context, {
+        detail: group.group.piece,
+        level: "not-measured",
+        message: "a piece the table doesn't declare",
+        piece: group.group.piece,
+        rule: "piece",
+      }),
+    ];
+  }
+
+  // Start, end and gap assume one stack of rows; side by side they print as not measured.
+  const stacked = isOneStack(group);
   const has = (relation: Relation) => relations.has(relation);
+  const one = (relation: Relation) => stacked && has(relation);
 
   const found = [
-    ...(has("label-start")
+    ...coverageLeads(context, group, relations),
+    ...(one("label-start")
       ? [...startLeads(context, group, "label"), ...stackedLeads(context, group)]
       : []),
-    ...(has("lead-start") ? startLeads(context, group, "lead") : []),
-    ...(has("mark-axis") ? axisLeads(context, group) : []),
-    ...(has("end-edge") ? endLeads(context, group) : []),
-    ...(has("gap") ? gapLeads(context, group) : []),
+    ...(one("lead-start") ? startLeads(context, group, "lead") : []),
+    ...(one("mark-axis") ? axisLeads(context, group) : []),
+    ...(one("end-edge") ? endLeads(context, group) : []),
+    ...(one("gap") ? gapLeads(context, group) : []),
     ...(has("type") ? typeLeads(context, group) : []),
     ...(has("line") ? lineLeads(context, group) : []),
   ];
 
-  // Rows a platform grouped by the stack holding them, with no piece framing them: a lead.
+  // Rows a platform grouped by the stack holding them, with no piece framing them: leads only.
   return group.group.source === "stack"
-    ? found.map((item) => (item.level === "fail" ? { ...item, level: "discovery" } : item))
+    ? found.map((item) => (item.level === "discovery" ? item : { ...item, level: "discovery" }))
     : found;
 }
 

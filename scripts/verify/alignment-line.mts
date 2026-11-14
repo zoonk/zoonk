@@ -135,6 +135,7 @@ export function lineLeads(context: Context, read: Group): AlignmentFinding[] {
         level: "not-measured",
         measured: Math.max(...off.map((miss) => Math.abs(miss.off))),
         message: `a row of ${groupName(read)} is off one line by more than ${LINE} (tolerance pending)`,
+        pending: true,
         piece: group.piece,
         rule: "line",
       }),

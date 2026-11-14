@@ -42,6 +42,8 @@ export type CaptureElement = {
   /** An action's: its look, and the surface it is on ("page", or a dialog's or sheet's name). */
   variant?: string;
   surface?: string;
+  /** An action's destination, when it is a link: the same words to the same place are one action. */
+  target?: string;
   /** A state pair's anchor: the same id in both captures of one screen. */
   anchor?: string;
   /** A group's: its layout runs right to left, so its start edge is the right one. */
@@ -95,6 +97,8 @@ export type AlignmentFinding = {
   unit?: string;
   holder?: string;
   exception?: string;
+  /** A not-measured record that waits on a decision (a tolerance), not on a missing input. */
+  pending?: boolean;
 };
 
 export function configurationName({ locale, pointer, size, textScale }: Configuration) {

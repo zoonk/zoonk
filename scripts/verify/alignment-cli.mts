@@ -3,7 +3,7 @@ import { readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { type AlignmentFile, type Capture } from "./alignment-capture.mts";
-import { alignmentLines, failed, summarize, summaryLine } from "./alignment-summary.mts";
+import { alignmentLines, summarize, summaryLine } from "./alignment-summary.mts";
 import { evaluateFile } from "./alignment.mts";
 
 const USAGE = `Usage: pnpm verify:alignment <file or folder>... [--write]
@@ -33,25 +33,38 @@ function isFile(value: unknown): value is AlignmentFile {
   return typeof value === "object" && value !== null && "captures" in value;
 }
 
-async function jsonFiles(path: string): Promise<string[]> {
+function asFile(parsed: unknown): AlignmentFile | null {
+  if (isFile(parsed)) {
+    return parsed;
+  }
+
+  return isCapture(parsed) ? { captures: [parsed] } : null;
+}
+
+/** A named file must be captures; a folder's other JSON files are skipped. */
+async function jsonFiles(path: string): Promise<{ named: boolean; path: string }[]> {
   const status = await stat(path);
 
   if (!status.isDirectory()) {
-    return [path];
+    return [{ named: true, path }];
   }
 
   const entries = await readdir(path, { recursive: true });
-  return entries.filter((entry) => entry.endsWith(".json")).map((entry) => join(path, entry));
+
+  return entries
+    .filter((entry) => entry.endsWith(".json"))
+    .map((entry) => ({ named: false, path: join(path, entry) }));
 }
 
-async function read(path: string): Promise<{ file: AlignmentFile; path: string } | null> {
+async function read({ named, path }: { named: boolean; path: string }) {
   const parsed: unknown = JSON.parse(await readFile(path, "utf8"));
+  const file = asFile(parsed);
 
-  if (isFile(parsed)) {
-    return { file: parsed, path };
+  if (named && (!file || file.captures.length === 0)) {
+    throw new Error(`${path} holds no captures`);
   }
 
-  return isCapture(parsed) ? { file: { captures: [parsed] }, path } : null;
+  return file && file.captures.length > 0 ? { file, path } : null;
 }
 
 if (values.help || positionals.length === 0) {
@@ -83,7 +96,7 @@ if (values.help || positionals.length === 0) {
     const summary = summarize(findings);
 
     console.log([...alignmentLines(findings), summaryLine(summary)].join("\n"));
-    process.exitCode = failed(summary) ? 1 : 0;
+    process.exitCode = summary.failed ? 1 : 0;
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
     process.exitCode = 2;
