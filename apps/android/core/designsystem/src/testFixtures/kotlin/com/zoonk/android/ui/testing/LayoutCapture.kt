@@ -406,6 +406,8 @@ internal object LayoutCapture {
                         }.distinct()
                         .size
                 fields["type"] = type(layout)
+                // How many texts the part holds: a row's descriptions count one each toward E5's lines.
+                fields["texts"] = texts.size
             }
         }
 
