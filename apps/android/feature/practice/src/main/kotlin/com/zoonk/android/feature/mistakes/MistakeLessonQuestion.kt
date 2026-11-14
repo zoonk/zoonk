@@ -99,8 +99,6 @@ internal fun MistakeLessonQuestion(
 
             override fun dontKnow(stepId: String) = viewModel.checkLesson(dontKnow = true)
 
-            override fun skipWriting() = Unit
-
             override fun explainFirst() = Unit
 
             override val cantTalk get() = cannotTalk

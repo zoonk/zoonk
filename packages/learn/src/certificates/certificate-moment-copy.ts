@@ -30,8 +30,8 @@ function useOneCertificateCopy() {
 }
 
 /**
- * `certificates` is newest last, as completion results carry them. A locked one isn't ready to
- * use, so it gets no line: the Plus notice says how to get it.
+ * `certificates` is newest last, as completion results carry them. One its owner can't open
+ * without a subscription gets no line.
  */
 export function useCertificateMomentCopy(certificates: OwnedCertificateFacts[]) {
   const t = useExtracted();

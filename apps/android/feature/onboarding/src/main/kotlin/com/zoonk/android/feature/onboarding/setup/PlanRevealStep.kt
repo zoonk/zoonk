@@ -237,7 +237,6 @@ internal fun ColumnScope.PlanRevealStep(
                             },
                         ),
                     onCreateAccount = { navigator.open(AppRoute.Login) },
-                    onSeePlus = { navigator.open(AppRoute.Subscription) },
                 )
             }
         }
@@ -402,7 +401,6 @@ private fun ColumnScope.RevealBody(
     onAdjust: () -> Unit,
     onChangeChoice: () -> Unit,
     onCreateAccount: () -> Unit,
-    onSeePlus: () -> Unit,
     focus: RevealFocus,
 ) {
     SetupContent {
@@ -434,7 +432,6 @@ private fun ColumnScope.RevealBody(
                     busy = starting,
                     onClick = onStart,
                     modifier = Modifier.weight(2f),
-                    leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                 ) {
                     Text(
                         stringResource(if (started) R.string.onboarding_continue else R.string.onboarding_reveal_start),
@@ -469,7 +466,7 @@ private fun ColumnScope.RevealBody(
 
         // F16: the plan editor's coverage actions (move the date to cover everything, the syllabus's
         // topics) and choices (bases, study everything) go with this.
-        coverage?.let { CoverageWords(it, plan, onSeePlus, focus) }
+        coverage?.let { CoverageWords(it, plan, focus) }
     }
 }
 
@@ -566,14 +563,11 @@ private fun PlanPhases(
             },
         )
         if (current != null) {
-            val day = current.dayOf(today)
             val name = phaseName(current, mocksRequirePlus)
             val place = stringResource(R.string.onboarding_reveal_phase_place, currentIndex + 1, phases.size)
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
-                    text =
-                        listOfNotNull(name, day?.let { stringResource(R.string.onboarding_reveal_phase_day, it.day, it.days) })
-                            .factsLine(),
+                    text = name,
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.labelMedium,
                 )
@@ -790,17 +784,12 @@ internal class RevealFocus(
 private fun CoverageWords(
     coverage: RevealCoverage,
     plan: Plan,
-    onSeePlus: () -> Unit,
     focus: RevealFocus,
 ) {
     val locale = currentLocale()
     val time = formatMinutes(plan.schedule.dailyMinutes.toInt(), locale)
     val text =
         when (coverage) {
-            RevealCoverage.FreeWeekOver -> {
-                return FreeWeekOverNotice(onSeePlus)
-            }
-
             is RevealCoverage.Covered -> {
                 focusTradeOff(plan, time)?.let { return FocusTradeOff(it, plan, focus) }
                 coveredText(coverage, time)
@@ -949,30 +938,6 @@ private fun summaryDetail(
             pluralStringResource(R.plurals.onboarding_reveal_topics_planned, detail.total, detail.planned, detail.total)
         }
     }
-
-/** The plan stays, locked, with what Plus opens. */
-@Composable
-private fun FreeWeekOverNotice(onSeePlus: () -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-    ) {
-        Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Icon(painterResource(R.drawable.ic_lock), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(stringResource(R.string.onboarding_reveal_free_week_over_title), style = MaterialTheme.typography.titleSmall)
-                Text(
-                    stringResource(R.string.onboarding_reveal_free_week_over_body),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                OutlinedButton(onClick = onSeePlus, modifier = Modifier.padding(top = 8.dp)) {
-                    Text(stringResource(R.string.onboarding_see_plus))
-                }
-            }
-        }
-    }
-}
 
 /** A flat row of a list, one touch target tall. */
 @Composable

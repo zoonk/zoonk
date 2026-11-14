@@ -56,7 +56,6 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.DisclosureRow
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
@@ -79,6 +78,7 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.ResourceScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.ChapterLesson
@@ -162,52 +162,37 @@ internal fun ChapterContent(
     val scope = rememberCoroutineScope()
     val back: () -> Unit = { navigator.back() }
 
-    when (val shown = state) {
-        is LoadState.Loaded -> {
-            val practice = viewModel(key = "chapter-${key.goalId}-${key.chapterId}") { ChapterViewModel(store, key) }
-            val practiceState by practice.state.collectAsStateWithLifecycle()
-            val opened = (practiceState.outcome as? PracticeOutcome.Opened)?.route
+    ResourceScaffold(
+        state,
+        onBack = back,
+        onRetry = { scope.launch { resource.refresh() } },
+        onGoHome = { navigator.showRoot(AppTab.Today) },
+    ) { value ->
+        val practice = viewModel(key = "chapter-${key.goalId}-${key.chapterId}") { ChapterViewModel(store, key) }
+        val practiceState by practice.state.collectAsStateWithLifecycle()
+        val opened = (practiceState.outcome as? PracticeOutcome.Opened)?.route
 
-            LaunchedEffect(opened) {
-                if (opened != null) {
-                    practice.consumeOpened()
-                    navigator.open(opened)
-                }
-            }
-
-            ChapterPage(
-                chapter = shown.value,
-                practice = practiceState,
-                menu = menu,
-                ask = ask,
-                mindMap = mindMap(),
-                actions =
-                    ChapterActions(
-                        back = back,
-                        openLesson = { navigator.open(AppRoute.Lesson(it.toString())) },
-                        testOut = { navigator.open(AppRoute.TestOut(key.chapterId.toString())) },
-                        practice = practice::practice,
-                    ),
-            )
-        }
-
-        is LoadState.Failed -> {
-            PageScaffold(onBack = back) { padding ->
-                if (shown.error == ApiError.NotFound) {
-                    NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(padding))
-                } else {
-                    LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }, modifier = Modifier.padding(padding))
-                }
+        LaunchedEffect(opened) {
+            if (opened != null) {
+                practice.consumeOpened()
+                navigator.open(opened)
             }
         }
 
-        LoadState.Empty -> {
-            PageScaffold(onBack = back) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
-        }
-
-        LoadState.Idle, LoadState.Loading -> {
-            PageScaffold(onBack = back) { PageLoading(Modifier.padding(it), MaterialTheme.colorScheme.tertiary) }
-        }
+        ChapterPage(
+            chapter = value,
+            practice = practiceState,
+            menu = menu,
+            ask = ask,
+            mindMap = mindMap(),
+            actions =
+                ChapterActions(
+                    back = back,
+                    openLesson = { navigator.open(AppRoute.Lesson(it.toString())) },
+                    testOut = { navigator.open(AppRoute.TestOut(key.chapterId.toString())) },
+                    practice = practice::practice,
+                ),
+        )
     }
 }
 
@@ -291,7 +276,6 @@ private fun ChapterLesson.listed() =
         minutes = minutes.toInt(),
         done = state == ChapterLesson.State.DONE,
         next = state == ChapterLesson.State.NEXT,
-        plusRequired = plusRequired,
     )
 
 @Composable
@@ -305,37 +289,26 @@ private fun ChapterHero(
     val done = lessons.count { it.state == ChapterLesson.State.DONE }
     val next = lessons.firstOrNull { it.state == ChapterLesson.State.NEXT }
     val number = formatNumber(chapter.chapter.position.toDouble(), locale)
-    val subject = chapter.chapter.subject
     val minutes = lessons.sumOf { it.minutes }.toInt()
-    val facts =
+    val counts =
         if (lessons.isEmpty()) {
-            null
+            emptyList()
         } else {
             listOfNotNull(
                 pluralStringResource(R.plurals.goalcontent_lesson_count, lessons.size, lessons.size),
                 minutes.takeIf { it > 0 }?.let { formatMinutes(it, locale) },
                 percentDone(done.toDouble() / lessons.size),
-            ).factsLine()
+            )
         }
+    val facts = (listOf(stringResource(R.string.goalcontent_chapter_number, number)) + counts).factsLine()
 
-    val action: (@Composable (Modifier) -> Unit)? =
-        next?.let { { modifier -> ContinueButton(started = done > 0, onClick = { actions.openLesson(it.lessonId) }, modifier) } }
-
-    DetailHero(action, menu) {
-        Eyebrow(
-            text =
-                if (subject == null) {
-                    stringResource(R.string.goalcontent_chapter_number, number)
-                } else {
-                    stringResource(R.string.goalcontent_subject_chapter, subject.name, number)
-                },
-        )
+    DetailHero(menu) {
         Text(
             text = chapter.chapter.title,
             modifier = Modifier.pageTitle(),
             style = MaterialTheme.typography.headlineMedium,
         )
-        if (facts != null) Text(text = facts, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle())
+        Text(text = facts, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle())
     }
 }
 
@@ -370,7 +343,7 @@ private fun ChapterPractice(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.goalcontent_practice), Modifier.padding(horizontal = LIST_ITEM_INSET))
         Column {
-            if (canTestOut) TestOutRow(TestOutScope.Chapter, onOpen = actions.testOut, plusRequired = chapter.testOut.plusRequired)
+            if (canTestOut) TestOutRow(TestOutScope.Chapter, onOpen = actions.testOut)
             if (mistakes) {
                 if (canTestOut) HorizontalDivider()
                 PracticeChapterRow(practice, onPractice = actions.practice)

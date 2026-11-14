@@ -14,7 +14,7 @@
   "audio_open_settings": "9945fe5c9979a3d245acb4c0ee47b7e75fa99feb86d6a2536dc26cf1d48822e2",
   "audio_record": "8327ca0ab6c34341f29cc190040b83eecc676a3c891d85699258f5402327ec30",
   "audio_record_stop": "c8146287dc6cca3de5a501f0c9e6d1c2bcb713af26790824e08587c34024a715",
-  "audio_say_it": "9d6812732fe8d393968e3ce7a104f3b82a90ffa5a3070a4dcb42dceefe83dfa6",
+  "audio_say_it": "606571bad981f492cc0529d4981a1b3090b4c1f16062cb964872ceaf469176eb",
   "audio_stop": "67ff582a452558ae1c77c577b18cbf0624e31b6f9d6969c3201d7c143e52850c",
   "audio_try_again": "f0b8a4648895808bf6240d79cfa9b9625eec4916b22e6d01ac4a1b3a3b824a08",
   "audio_try_again_label": "f3fe2290d4a82ee932039cab958881d189844ea72a74dafbb47b2298a0b99a12"
@@ -37,7 +37,7 @@
     <string name="audio_checking_slow">答え合わせを続けています。いつもより時間がかかっています。</string>
     <string name="audio_no_speech">言葉が聞き取れませんでした。もう一度試してください。</string>
     <string name="audio_check_failed">今回は答え合わせができませんでした。もう一度試してください。</string>
-    <string name="audio_say_it">タップして声に出して言ってください</string>
+    <string name="audio_say_it">「録音」をタップして、声に出して言ってください</string>
     <string name="audio_microphone_off_title">マイクがオフになっています</string>
     <string name="audio_microphone_off_answer">声に出して答えるには、設定でZoonkにマイクの使用を許可してください。</string>
     <string name="audio_open_settings">設定を開く</string>

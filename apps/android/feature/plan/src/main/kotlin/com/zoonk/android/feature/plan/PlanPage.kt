@@ -105,8 +105,6 @@ class PlanLinks(
 
     fun today() = open(AppRoute.Today)
 
-    fun plus() = open(AppRoute.Subscription)
-
     fun speaking() = open(AppRoute.Speaking())
 
     fun focusTest() = open(AppRoute.FocusTest(page.goal.id.toString()))
@@ -301,10 +299,6 @@ internal fun PlanPage(
             page = page,
             edits = edits,
             section = editingAt,
-            onTellBuddy = {
-                editing = false
-                links.buddy()
-            },
             onDismiss = { editing = false },
         )
     }

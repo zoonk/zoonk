@@ -58,19 +58,13 @@ internal fun TutorComposer(
     val limit = turns?.let(state::limit)
 
     if (limit != null) {
-        Surface(
-            modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.large,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-        ) {
-            LimitNotice(
-                limit = limit,
-                subject = LimitSubject.Help,
-                onCreateAccount = routes.createAccount,
-                onSeePlus = routes.seePlus,
-                modifier = Modifier.padding(16.dp).semantics { liveRegion = LiveRegionMode.Polite },
-            )
-        }
+        LimitNotice(
+            limit = limit,
+            subject = LimitSubject.Messages,
+            onCreateAccount = routes.createAccount,
+            onSubscribe = routes.subscribe,
+            modifier = modifier.fillMaxWidth(),
+        )
         return
     }
 

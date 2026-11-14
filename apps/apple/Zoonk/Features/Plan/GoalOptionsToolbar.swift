@@ -7,6 +7,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
   @State private var confirming: Confirmation?
+  @State private var isArchiving = false
   @State private var failure: GoalStatusOutcome?
   @State private var isSaving = false
   @State private var isRenaming = false
@@ -17,7 +18,6 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
   @ViewBuilder let planItems: PlanItems
 
   private enum Confirmation: Identifiable {
-    case archive
     case resume
 
     var id: Self { self }
@@ -37,34 +37,23 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
       }
       .environment(\.resumeGoal, ResumeGoal(isBusy: isSaving, action: resume))
       .confirmationDialog(
-        confirmationTitle, isPresented: isConfirming, titleVisibility: .visible,
-        presenting: confirming
-      ) { confirmation in
-        switch confirmation {
-        case .archive:
-          Button(role: .destructive) {
-            set(.archived)
-          } label: {
-            Text("Archive", tableName: "Plan", comment: "Confirms archiving the goal")
-          }
-        case .resume:
-          Button {
-            set(.active)
-          } label: {
-            Text("Resume", tableName: "Plan", comment: "Confirms resuming the paused goal")
-          }
+        Text(
+          "Resume your \(goal.displayName) goal?", tableName: "Plan",
+          comment: "Asks before resuming the paused goal named here"),
+        isPresented: isConfirming, titleVisibility: .visible, presenting: confirming
+      ) { _ in
+        Button {
+          set(.active)
+        } label: {
+          Text("Resume", tableName: "Plan", comment: "Confirms resuming the paused goal")
         }
-      } message: { confirmation in
-        switch confirmation {
-        case .archive:
-          Text(
-            "It leaves your goals and its plan stops. What you learned stays in your progress.",
-            tableName: "Plan", comment: "Explains what archiving a goal does")
-        case .resume:
-          Text(
-            "Your plan picks up from today, starting with the lessons planned for the days you paused.",
-            tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
-        }
+      } message: { _ in
+        Text(
+          "Your plan picks up from today, starting with the lessons planned for the days you paused.",
+          tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
+      }
+      .archiveGoalConfirmation(goal, isPresented: $isArchiving) {
+        set(.archived)
       }
       .alert(
         Text(
@@ -104,10 +93,10 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
       } message: { outcome in
         if outcome == .limitReached {
           Text(
-            "That's all the goals you can study at once. Pause another goal to resume this one, or subscribe to study more.",
+            "You're following as many goals as you can for free. Pause another to resume this one, or subscribe.",
             tableName: "Plan",
             comment:
-              "Explains why resuming a goal failed: the learner follows as many goals at once as their plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress"
+              "Shown when a learner tries to resume a paused goal while already following as many goals at once as they can without a subscription. Pausing a goal keeps its progress."
           )
         } else {
           Text(
@@ -159,26 +148,13 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
     }
 
     Button(role: .destructive) {
-      confirming = .archive
+      isArchiving = true
     } label: {
       Label {
         Text("Archive this goal", tableName: "Plan", comment: "Archives the goal, after asking")
       } icon: {
         Image(systemName: "archivebox")
       }
-    }
-  }
-
-  private var confirmationTitle: Text {
-    switch confirming {
-    case .resume:
-      Text(
-        "Resume your \(goal.displayName) goal?", tableName: "Plan",
-        comment: "Asks before resuming the paused goal named here")
-    default:
-      Text(
-        "Archive your \(goal.displayName) goal?", tableName: "Plan",
-        comment: "Asks before archiving the goal named here")
     }
   }
 
@@ -257,6 +233,35 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
 extension GoalOptionsToolbar where PlanItems == EmptyView {
   init(goal: LearnerGoal) {
     self.init(goal: goal) { EmptyView() }
+  }
+}
+
+extension View {
+  func archiveGoalConfirmation(
+    _ goal: LearnerGoal, isPresented: Binding<Bool>, archive: @escaping () -> Void
+  ) -> some View {
+    archiveGoalConfirmation(named: goal.displayName, isPresented: isPresented, archive: archive)
+  }
+
+  /// The one archive confirm: the "…" menu's, and the Plan's and Today's question after an exam's
+  /// date.
+  func archiveGoalConfirmation(
+    named name: String, isPresented: Binding<Bool>, archive: @escaping () -> Void
+  ) -> some View {
+    confirmationDialog(
+      Text(
+        "Archive your \(name) goal?", tableName: "Plan",
+        comment: "Asks before archiving the goal named here"),
+      isPresented: isPresented, titleVisibility: .visible
+    ) {
+      Button(role: .destructive, action: archive) {
+        Text("Archive", tableName: "Plan", comment: "Confirms archiving the goal")
+      }
+    } message: {
+      Text(
+        "It leaves your goals and its plan stops. What you learned stays in your progress.",
+        tableName: "Plan", comment: "Explains what archiving a goal does")
+    }
   }
 }
 

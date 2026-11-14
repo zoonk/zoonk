@@ -6,6 +6,7 @@ import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import java.time.Instant
 
 class LimitTest {
     private fun refusal(
@@ -23,6 +24,20 @@ class LimitTest {
             Limit.of(refusal("USAGE_LIMIT_REACHED", """{"limit":{"period":"month","tier":"free"}}""")),
         )
         assertEquals(Limit.Reached(LimitTier.Guest), Limit.of(refusal("USAGE_LIMIT_REACHED", """{"limit":{"tier":"guest"}}""")))
+    }
+
+    @Test
+    fun aFreeLessonRefusalSaysWhenTheNextOneOpens() {
+        assertEquals(
+            Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, Instant.parse("2026-12-02T09:15:00Z")),
+            Limit.of(
+                refusal(
+                    "USAGE_LIMIT_REACHED",
+                    """{"limit":{"availableAt":"2026-12-02T09:15:00Z","limit":20,"period":"rolling30Days","resource":"lessonStart","tier":"free"}}""",
+                    402,
+                ),
+            ),
+        )
     }
 
     @Test

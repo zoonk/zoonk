@@ -67,6 +67,20 @@ export function useCertificateName() {
   };
 }
 
+/**
+ * A list row's two parts: the course or the language with its level, and a course's level, which
+ * goes on the row's second line so the name never wraps around a separator.
+ */
+export function useCertificateRowName() {
+  const certificateName = useCertificateName();
+  const levelName = useLevelName();
+
+  return (facts: NamedFacts): { level: string | null; name: string } =>
+    facts.kind === "course" && facts.courseLevel
+      ? { level: levelName(facts.courseLevel), name: facts.title ?? "" }
+      : { level: null, name: certificateName(facts) };
+}
+
 /** "about 41 hr", "about 45 min". */
 export function useStudyTime() {
   const t = useExtracted();

@@ -72,7 +72,7 @@ class ChoiceQuestionsRunTest {
             .assertIsFocused()
             .assertIsNotEnabled()
             .performClick()
-        rule.assertOnlySpinnerBeside("Finish")
+        rule.assertOnlySpinnerOver("Finish")
         assertEquals(1, presses)
     }
 

@@ -14,7 +14,7 @@
   "audio_open_settings": "23162c5b9dbe02a234b7ade9008b02385d5b2879d19d28cdb6a4e0b6a61b119a",
   "audio_record": "b53f31b2f40a899d7f7b9ed9765607c5d9554e7fb65d98fce6642eda1e6cb56e",
   "audio_record_stop": "8816870597de039f249527d7048c668a48a92d01676c9dd2dd59949dc7621b8b",
-  "audio_say_it": "a62fb9cb7a83655bb79bf170c0cc740f4c4a2c46d9a03e5b984885562bc02ab9",
+  "audio_say_it": "6baacdb94f99dedaa8465a158f89d8a6dab0a0c18964e8f11c4d434391b52419",
   "audio_stop": "9a141e164c910f3b650092a13ddba1b1cc4619a6e4c460bde3de25b89d8c56be",
   "audio_try_again": "4c0eb0a9100ce55d356a25e0f9db1ab2f511d11e411c31d351d0cd9718c6281f",
   "audio_try_again_label": "aa3e4b1827a80690245be2e16650c65d7ea582056dccb05cebf0c38a6289f5ab"
@@ -37,7 +37,7 @@
     <string name="audio_checking_slow">Hâlâ kontrol ediyoruz. Normalden uzun sürüyor.</string>
     <string name="audio_no_speech">Hiçbir kelime duyamadık. Tekrar dene.</string>
     <string name="audio_check_failed">Bu kez cevabını kontrol edemedik. Tekrar dene.</string>
-    <string name="audio_say_it">Dokun ve sesli söyle</string>
+    <string name="audio_say_it">Kaydet düğmesine dokun ve sesli söyle</string>
     <string name="audio_microphone_off_title">Mikrofon kapalı</string>
     <string name="audio_microphone_off_answer">Sesli cevap vermek için Ayarlar’dan Zoonk’a mikrofon izni ver.</string>
     <string name="audio_open_settings">Ayarlar’ı aç</string>

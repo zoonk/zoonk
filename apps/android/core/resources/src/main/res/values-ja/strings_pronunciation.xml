@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "pronunciation_accent": "ed529297011ba173cf66aa6dabf62a07e9c5bd139c8d4a34507e9641c43c0aa9",
   "pronunciation_continue": "26294479b46ac128c41d6ceb80f362476a076879d2d6af15296c88f033500143",
   "pronunciation_done": "de123c80613e26bcf53ac1243cb17a250bb4d0c74a65fadd5ad5705179fd850a",
   "pronunciation_failed": "bcb31be01a5265d9b50199cc3f5120c18c4ab4c2e98822926f1bb49c8acc13b9",
@@ -59,7 +58,6 @@
     <string name="pronunciation_no_words">今日はもう一度声に出して言う単語はありません。</string>
     <string name="pronunciation_practice_done">練習完了</string>
     <string name="pronunciation_nothing_said">今回は発音しませんでした</string>
-    <string name="pronunciation_accent">なまりがあっても、先に進めます。</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">完了</string>
 </resources>

@@ -81,7 +81,7 @@ export function DetailActions({ className, ...props }: React.ComponentProps<"div
 }
 
 /** As tall as the action beside it; alone beside the title, a small button's 30px. */
-export const DETAIL_MENU_TRIGGER_CLASS =
+const DETAIL_MENU_TRIGGER_CLASS =
   "[--control-size:--spacing(11)] only:rounded-md only:[--control-size:--spacing(7.5)]";
 
 export function DetailMenu({

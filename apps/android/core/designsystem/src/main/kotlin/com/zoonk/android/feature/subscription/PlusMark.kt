@@ -10,7 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import com.zoonk.android.R
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 
 /** Main's quiet Plus chip; [label] is what TalkBack reads, "Available with Plus" unless it says otherwise. */
 @Composable
@@ -18,7 +18,7 @@ fun PlusMark(
     modifier: Modifier = Modifier,
     label: String = stringResource(R.string.subscription_available_with_plus),
 ) {
-    LabelChip(
+    Eyebrow(
         text = stringResource(R.string.subscription_plus),
         modifier = modifier.clearAndSetSemantics { contentDescription = label },
     )

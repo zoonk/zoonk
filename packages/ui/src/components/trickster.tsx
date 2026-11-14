@@ -8,7 +8,15 @@ const PUPIL = "#16123a";
 
 export type TricksterExpression = "sly" | "smug" | "defeated";
 
-export type TricksterPart = "arm-left" | "arm-right" | "body" | "crown" | "tail";
+export type TricksterPart =
+  | "arm-left"
+  | "arm-right"
+  | "body"
+  | "crown"
+  | "shield-fracture"
+  | "shield-left"
+  | "shield-right"
+  | "tail";
 
 export const TRICKSTER_POSES: Record<
   TricksterExpression,
@@ -19,10 +27,13 @@ export const TRICKSTER_POSES: Record<
     "arm-right": { rotate: 22 },
     body: { rotate: 5, scale: [1.03, 0.95] },
     crown: { rotate: -18, translate: [-3, 8] },
+    "shield-fracture": { opacity: 1 },
+    "shield-left": { rotate: -70, translate: [5, 21] },
+    "shield-right": { rotate: 82, translate: [16, 24] },
     tail: { rotate: 16 },
   },
-  sly: {},
-  smug: { crown: { rotate: -7 }, tail: { rotate: -5 } },
+  sly: { "shield-fracture": { opacity: 0 } },
+  smug: { crown: { rotate: -7 }, "shield-fracture": { opacity: 0 }, tail: { rotate: -5 } },
 };
 
 const LIDS: Record<TricksterExpression, { left: string; right: string }> = {
@@ -41,6 +52,27 @@ const LIDS: Record<TricksterExpression, { left: string; right: string }> = {
 };
 
 const EXPRESSIONS: readonly TricksterExpression[] = ["sly", "smug", "defeated"];
+
+const SHIELD_RIM =
+  "M9.3 98.4 Q29 92 48.7 98.4 L48.7 115.2 Q48.7 132.6 29 143 Q9.3 132.6 9.3 115.2 Z";
+
+const SHIELD_FACE =
+  "M13.9 102 Q29 97.3 44.1 102 L44.1 115.2 Q44.1 129.1 29 137.7 Q13.9 129.1 13.9 115.2 Z";
+
+const SHIELD_FRACTURE = "M30.9 93.6 L26.1 103.6 L32.5 112.9 L24.9 123.3 L28.8 141.8";
+
+/** The halves overlap by a hair along the fracture, so the whole shield shows no seam. */
+const SHIELD_HALVES = {
+  left: "M0 86 L31.6 86 L31.6 90.8 L26.4 103.6 L32.8 112.9 L25.2 123.3 L29.3 145.4 L29.3 150 L0 150 Z",
+  right:
+    "M60 86 L31 86 L31 90.8 L25.8 103.6 L32.2 112.9 L24.6 123.3 L28.7 145.4 L28.7 150 L60 150 Z",
+};
+
+/** A right answer cracks the shield: the first mark, then the second. */
+const SHIELD_CRACKS = [
+  "M42.5 96.9 L38.3 103.1 L41.3 108.2",
+  "M9.7 121.5 L16 119.4 L15.3 114 L19.3 112",
+];
 
 const NO_SWAPS: readonly TricksterExpression[] = [];
 
@@ -70,6 +102,15 @@ function TricksterDefs({ uid }: { uid: string }) {
         <stop offset="0" stopColor="#fff0b8" />
         <stop offset="1" stopColor="#f5b52e" />
       </linearGradient>
+      <clipPath id={buddyDefId(uid, "shield-left")}>
+        <path d={SHIELD_HALVES.left} />
+      </clipPath>
+      <clipPath id={buddyDefId(uid, "shield-right")}>
+        <path d={SHIELD_HALVES.right} />
+      </clipPath>
+      <clipPath id={buddyDefId(uid, "shield")}>
+        <path d={SHIELD_RIM} />
+      </clipPath>
       {EXPRESSIONS.map((expression) => (
         <g key={expression}>
           <clipPath id={buddyDefId(uid, `lid-left-${expression}`)}>
@@ -340,30 +381,109 @@ function Crown({ uid }: { uid: string }) {
   );
 }
 
-function QuestionSign() {
+function ShieldCrack({ path }: { path: string }) {
   return (
-    <Part name="sign" pivot={[46, 116]}>
-      <g transform="rotate(-14 30 120)">
-        <path d="M30 124 V104" stroke="#c4b5fd" strokeLinecap="round" strokeWidth="3" />
-        <circle cx="30" cy="96" fill="#fbfaff" r="13" stroke="#c4b5fd" strokeWidth="1.8" />
-        <path
-          d="M25.5 92.5 C25.5 86.5 34.5 86.5 34.5 92 C34.5 95.5 30 96 30 99.5"
-          fill="none"
-          stroke="#7c3aed"
-          strokeLinecap="round"
-          strokeWidth="2.6"
-        />
-        <circle cx="30" cy="103.5" fill="#7c3aed" r="1.6" />
+    <path
+      d={path}
+      fill="none"
+      stroke={INK}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+    />
+  );
+}
+
+function ShieldDrawing({
+  cracks,
+  fracture,
+  uid,
+}: {
+  cracks: number;
+  fracture?: PartPose;
+  uid: string;
+}) {
+  return (
+    <>
+      <path
+        d={SHIELD_RIM}
+        fill={buddyDefUrl(uid, "gold")}
+        stroke="#c7861c"
+        strokeLinejoin="round"
+        strokeWidth="2.1"
+      />
+      <path
+        d={SHIELD_FACE}
+        fill="#f3edff"
+        stroke="#c7861c"
+        strokeLinejoin="round"
+        strokeWidth="1.4"
+      />
+      <path
+        d="M23.9 110.6 C23.9 103.8 34.1 103.8 34.1 110.1 C34.1 114 29 114.5 29 118.4"
+        fill="none"
+        stroke="#7c3aed"
+        strokeLinecap="round"
+        strokeWidth="3"
+      />
+      <circle cx="29" cy="123.6" fill="#7c3aed" r="1.9" />
+      <path
+        d="M12.3 100.6 Q19.7 98 26.7 97.1"
+        fill="none"
+        opacity=".75"
+        stroke="#fff"
+        strokeLinecap="round"
+        strokeWidth="1.7"
+      />
+      {SHIELD_CRACKS.slice(0, cracks).map((path) => (
+        <ShieldCrack key={path} path={path} />
+      ))}
+      <Part name="shield-fracture" pivot={[29, 117.5]} pose={fracture}>
+        <ShieldCrack path={SHIELD_FRACTURE} />
+      </Part>
+    </>
+  );
+}
+
+/**
+ * His shield, in two halves that sit together until he is beaten. Each half carries the whole
+ * drawing behind its own clip, so the pieces keep their marks as they fall apart.
+ */
+function Shield({
+  cracks,
+  parts,
+  uid,
+}: {
+  cracks: number;
+  parts: Partial<Record<TricksterPart, PartPose>>;
+  uid: string;
+}) {
+  return (
+    <Part name="shield" pivot={[29, 117.5]}>
+      <Part name="shield-left" pivot={[18.6, 116.4]} pose={parts["shield-left"]}>
+        <g clipPath={buddyDefUrl(uid, "shield-left")}>
+          <ShieldDrawing cracks={cracks} fracture={parts["shield-fracture"]} uid={uid} />
+        </g>
+      </Part>
+      <Part name="shield-right" pivot={[39.4, 116.4]} pose={parts["shield-right"]}>
+        <g clipPath={buddyDefUrl(uid, "shield-right")}>
+          <ShieldDrawing cracks={cracks} fracture={parts["shield-fracture"]} uid={uid} />
+        </g>
+      </Part>
+      <g clipPath={buddyDefUrl(uid, "shield")}>
+        <Part name="shield-glint" pivot={[29, 117.5]} pose={{ opacity: 0 }}>
+          <path d="M22 88 L31 88 L21 148 L12 148 Z" fill="#fff" />
+        </Part>
       </g>
-      <ellipse cx="34" cy="121" fill="#7c3aed" rx="6.5" ry="7" />
     </Part>
   );
 }
 
 export type TricksterProps = Omit<React.ComponentProps<"svg">, "children"> & {
   expression?: TricksterExpression;
+  /** The marks right answers have left on his shield, before the one that breaks it. */
+  cracks?: 0 | 1 | 2;
   label?: string;
-  pose?: "hero" | "sly";
   view?: CharacterView;
 };
 
@@ -373,9 +493,9 @@ const FACE_BOX = "25.5 51.5 93 93";
 
 export function TricksterFigure({
   className,
+  cracks = 0,
   expression = "sly",
   label,
-  pose = "sly",
   swapFaces = NO_SWAPS,
   view = "body",
   ...props
@@ -443,7 +563,6 @@ export function TricksterFigure({
             transform="rotate(-28 58 84)"
           />
           <circle cx="93" cy="92" fill="#fff" opacity=".35" r="2" />
-          {whole && pose === "hero" && <QuestionSign />}
           <Part name="face" pivot={[70, 104]}>
             <TricksterFace expression={expression} uid={uid} />
             {swapFaces
@@ -457,6 +576,7 @@ export function TricksterFigure({
           </Part>
         </Part>
       </Part>
+      {whole && <Shield cracks={cracks} parts={parts} uid={uid} />}
     </svg>
   );
 }

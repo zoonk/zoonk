@@ -24,7 +24,7 @@ test.describe("Trusted Origin Validation", () => {
     expect(new URL(page.url()).searchParams.get("redirectTo")).toBe(redirectTo);
 
     await expect(
-      page.getByRole("heading", { name: /sign in or create an account/iu }),
+      page.getByRole("heading", { name: /log in or create an account/iu }),
     ).toBeVisible();
   });
 

@@ -221,7 +221,6 @@ private fun PracticeDone(
             title = stringResource(R.string.practice_done_title),
             action = stringResource(R.string.navigation_back),
             saving = end == null,
-            actionLeadingIcon = { ButtonIcon(R.drawable.ic_arrow_back) },
             onClose = onClose,
             detail = if (end != null && note != null) stringResource(note) else null,
         ) {

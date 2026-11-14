@@ -35,46 +35,24 @@ describe(getResultRows, () => {
     expect(hasResultRows(rows)).toBe(false);
   });
 
-  it("lists a won phase's completion, badge and the next phase", () => {
+  it("lists only the badge after a win: Continue leads on to the next lessons", () => {
     const rows = getResultRows({
       checkpoint: checkpoint({ badge: true, phaseComplete: true }),
       hasRetry: false,
       won: true,
     });
 
-    expect(rows).toStrictEqual({ badge: true, nextPhase: NEXT, phaseComplete: true, retry: false });
+    expect(rows).toStrictEqual({ badge: true, retry: false });
   });
 
-  it("names the next phase after a win only when this one is complete", () => {
-    const rows = getResultRows({ checkpoint: checkpoint(), hasRetry: false, won: true });
-
-    expect(hasResultRows(rows)).toBe(false);
-  });
-
-  it("lists a loss's retry and the already open next phase", () => {
+  it("lists only the rematch after a loss", () => {
     const rows = getResultRows({
       checkpoint: checkpoint({ retry: "tomorrow" }),
       hasRetry: true,
       won: false,
     });
 
-    expect(rows).toStrictEqual({
-      badge: false,
-      nextPhase: NEXT,
-      phaseComplete: false,
-      retry: true,
-    });
-  });
-
-  it("drops the next phase after a loss a later try passed", () => {
-    const rows = getResultRows({
-      checkpoint: checkpoint({ nextPhase: NEXT, retry: "passed" }),
-      hasRetry: true,
-      won: false,
-    });
-
-    expect(rows.nextPhase).toBeNull();
-    expect(hasResultRows(rows)).toBe(true);
+    expect(rows).toStrictEqual({ badge: false, retry: true });
   });
 });
 

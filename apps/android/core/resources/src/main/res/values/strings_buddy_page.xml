@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Under the buddy's name; %1$s is its stage, like "Baby". -->
-    <string name="buddy_page_line">Your study buddy · %1$s</string>
     <string name="buddy_page_more">More about %1$s</string>
     <string name="buddy_page_change">Change %1$s</string>
     <string name="buddy_page_choose">Choose your buddy</string>
@@ -12,11 +10,11 @@
     <string name="buddy_page_save_failed">That didn\'t save. Try again.</string>
 
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
-    <string name="buddy_page_greeting">Hi! I\'m %1$s, your AI study buddy. Ask me anything about what you\'re studying, or tell me what you\'d like to change in your plan.</string>
+    <string name="buddy_page_greeting">Hi! I\'m %1$s, your AI study buddy. Ask me anything, or tell me what to change in your plan.</string>
     <string name="buddy_page_goal_placeholder">What you want to learn</string>
     <string name="buddy_page_goal_label">Your goal</string>
-    <string name="buddy_page_goal_greeting">Hi! I\'m %1$s, your AI study buddy. What do you want to learn, and by when? I\'ll turn it into a plan for every day until then.</string>
-    <string name="buddy_page_placeholder">Ask a question or request a change</string>
+    <string name="buddy_page_goal_greeting">Hi! I\'m %1$s, your AI study buddy. Tell me what you want to learn, and I\'ll build your plan.</string>
+    <string name="buddy_page_placeholder">Ask anything</string>
     <string name="buddy_page_suggest_plan_today">What\'s in my plan for today?</string>
     <string name="buddy_page_suggest_lighter">I want to study less this week</string>
     <string name="buddy_page_suggest_mistake">Explain my last mistake</string>
@@ -24,21 +22,28 @@
 
     <string name="buddy_page_today">%1$s today</string>
     <string name="buddy_page_energy">Energy</string>
-    <string name="buddy_page_energy_starts">Energy starts with your first lesson and grows as you learn.</string>
-    <string name="buddy_page_energy_napping">%1$s took a nap. Anything you learn wakes it up.</string>
-    <string name="buddy_page_energy_studied">You studied today, so Energy won\'t drop.</string>
-    <string name="buddy_page_energy_study">Studying today keeps Energy up.</string>
+    <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
+    <string name="buddy_page_energy_named">%1$s\'s Energy</string>
+    <string name="buddy_page_energy_starts">It starts with your first lesson.</string>
+    <string name="buddy_page_energy_napping">%1$s is napping. Study to wake it up.</string>
+    <string name="buddy_page_energy_study">Study today to keep it up.</string>
     <string name="buddy_page_not_yet">Not yet</string>
     <string name="buddy_page_missions">Missions</string>
+    <!-- The buddy's Energy beside its mark, like "68% Energy"; a dash before any lesson. -->
+    <string name="buddy_page_energy_share">%1$s Energy</string>
+    <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
+    <plurals name="buddy_page_missions_count">
+        <item quantity="one">%1$d of %2$d mission</item>
+        <item quantity="other">%1$d of %2$d missions</item>
+    </plurals>
     <!-- Read aloud for the missions shown as "1/3". -->
     <string name="buddy_page_missions_done">Missions done: %1$d of %2$d</string>
     <string name="buddy_page_fully_grown">Fully grown</string>
     <!-- %1$s is a belt, like "Orange belt". -->
-    <string name="buddy_page_grows_young">Grows to Young at %1$s</string>
-    <string name="buddy_page_grows_adult">Grows to Adult at %1$s</string>
+    <string name="buddy_page_grows">Grows when you reach %1$s</string>
     <string name="buddy_page_remembers">What %1$s remembers</string>
     <!-- Under the buddy's glasses: the learner picks a pair they've earned, and the buddy wears it. -->
-    <string name="buddy_page_glasses_description">Pick a pair you\'ve earned to wear it.</string>
+    <string name="buddy_page_glasses_description">Pick a pair you\'ve earned.</string>
 
     <string name="buddy_page_first_steps">First steps</string>
     <string name="buddy_page_first_steps_done">You\'ve tried everything your plan uses.</string>

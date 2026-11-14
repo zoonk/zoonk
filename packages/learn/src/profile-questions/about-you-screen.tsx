@@ -4,6 +4,7 @@ import {
   type ProfileQuestionView,
   type ProfileQuestionsView,
 } from "@zoonk/core/profile/questions/contract";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import {
   ListGroup,
@@ -68,31 +69,31 @@ function QuestionName({ question }: { question: ProfileQuestion }) {
       return t({
         description: "What the learner likes to watch.",
         id: "aboutYouWatch",
-        message: "Watch",
+        message: "What you watch",
       });
     case "listen":
       return t({
         description: "What the learner likes to listen to.",
         id: "aboutYouListen",
-        message: "Listen",
+        message: "What you listen to",
       });
     case "play":
       return t({
         description: "What the learner likes to play.",
         id: "aboutYouPlay",
-        message: "Play",
+        message: "What you play",
       });
     case "read":
       return t({
         description: "What the learner likes to read.",
         id: "aboutYouRead",
-        message: "Read",
+        message: "What you read",
       });
     case "activities":
       return t({
         description: "What the learner likes to do for fun.",
         id: "aboutYouDo",
-        message: "Do",
+        message: "What you do for fun",
       });
     case "conditions":
       return t({
@@ -120,18 +121,12 @@ function labelsOf(question: ProfileQuestionView, ids: readonly string[]): string
  * What's saved, short: conditions only count and the address form only says it's saved, so the
  * list is safe on a shared screen.
  */
-function useSavedSummary(question: ProfileQuestionView): string {
+function useSavedSummary(question: ProfileQuestionView): string | null {
   const t = useExtracted();
   const { picks, studies, text } = question.saved;
 
   if (picks.length === 0 && studies.length === 0 && text === "") {
-    if (question.status === "declined") {
-      return t("Not shared");
-    }
-
-    return question.status === "answered"
-      ? t({ description: "Invites the learner to fill in an empty answer.", message: "Add" })
-      : t("Not answered");
+    return question.status === "declined" ? t("Not shared") : null;
   }
 
   switch (question.id) {
@@ -168,18 +163,20 @@ function QuestionRow({ editable, question }: { editable: boolean; question: Prof
   const body = (
     <ListRowBody>
       <ListRowContent>
-        <ListRowTitle>
+        <ListRowTitle className={editable ? undefined : "text-muted-foreground"}>
           <QuestionName question={question.id} />
         </ListRowTitle>
       </ListRowContent>
-      <ListRowTrailing className="max-w-[55%] truncate font-sans">{summary}</ListRowTrailing>
+      {summary && (
+        <ListRowTrailing className="max-w-[55%] truncate font-sans">{summary}</ListRowTrailing>
+      )}
     </ListRowBody>
   );
 
   return editable ? (
     <ListRowLink href={aboutYouQuestionHref(question.id)}>{body}</ListRowLink>
   ) : (
-    <ListRow className="py-3">{body}</ListRow>
+    <ListRow>{body}</ListRow>
   );
 }
 
@@ -189,14 +186,13 @@ function MemoryOffNotice() {
   return (
     <NoticeCard>
       <NoticeCardContent>
-        <NoticeCardDescription>
-          {t(
-            "Memory is off, so Zoonk isn't using your day or what you do for fun. Turn it on in Memory to change them.",
-          )}
-        </NoticeCardDescription>
+        <NoticeCardDescription>{t("Your day and For fun need Memory.")}</NoticeCardDescription>
         <NoticeCardActions>
-          <LearnLink className="text-sm font-medium underline" href="/settings/memory">
-            {t("Memory")}
+          <LearnLink
+            className={buttonVariants({ size: "sm", variant: "outline" })}
+            href="/settings/memory"
+          >
+            {t("Turn on Memory")}
           </LearnLink>
         </NoticeCardActions>
       </NoticeCardContent>

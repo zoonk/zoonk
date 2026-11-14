@@ -42,18 +42,6 @@ struct TodayUpNextSection: View {
         Text("Up next in your plan", tableName: "Today", comment: "The plan's next lessons"))
     }
 
-    Section {
-      TodayMainAction(
-        kind: .keepLearning, isBusy: busy == .keepLearning,
-        failed: failed == .keepLearning || failed == .upNextLesson
-      ) {
-        keepLearning(.keepLearning)
-      }
-      .disabled(busy != nil && busy != .keepLearning)
-    }
-    .listRowBackground(Color.clear)
-    .listRowInsets(.vertical, 0)
-    .listSectionSpacing(.compact)
   }
 }
 
@@ -110,11 +98,11 @@ struct TodayMoreSection: View {
                 VStack(alignment: .leading, spacing: 2) {
                   view.studiedToday
                     ? Text(
-                      "Study \(view.session.extraTime.minutes) more minutes", tableName: "Today",
-                      comment: "Adds study time once the day is done")
+                      "Practice \(view.session.extraTime.minutes) more min", tableName: "Today",
+                      comment: "Adds study time once the day is done; the number is minutes")
                     : Text(
-                      "Study for \(view.session.extraTime.minutes) minutes", tableName: "Today",
-                      comment: "Adds study time on a rest day")
+                      "Practice \(view.session.extraTime.minutes) min", tableName: "Today",
+                      comment: "Adds practice on a day with nothing new; the number is minutes")
 
                   if failed == .keepLearning {
                     saveFailure
@@ -129,28 +117,36 @@ struct TodayMoreSection: View {
             .accessibilityBusy(busy == .keepLearning)
           }
 
-          if let later = view.session.catchUp?.later, later.offered,
+          if let later = view.session.catchUp?.later, later.offered, !view.isWelcomeBack,
             state == .underway || state == .done
           {
-            Button(action: catchUp) {
-              Label {
-                VStack(alignment: .leading, spacing: 2) {
-                  Text(
-                    "Catch up today\u{00A0}· +\(studyDuration(minutes: later.minutes))",
-                    tableName: "Today",
-                    comment: "Adds the lessons earlier days left to today")
+            VStack(alignment: .leading, spacing: 8) {
+              HStack(alignment: .firstTextBaseline) {
+                Text(
+                  "\(later.lessons) lessons from earlier days", tableName: "Today",
+                  comment: "Lessons earlier days left, which can be added to today"
+                )
+                .typeStyle(.rowTitle)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                  if failed == .catchUp {
-                    saveFailure
-                  }
-                }
-              } icon: {
-                Image(systemName: ActionIcon.addLessons.rawValue)
-                  .coveredBySpinner(busy == .catchUp)
+                Text(studyDuration(minutes: later.minutes))
+                  .typeStyle(.data)
+                  .foregroundStyle(.mutedForeground)
+              }
+
+              BusyButton(isBusy: busy == .catchUp, action: catchUp) {
+                Text(
+                  "Add to today", tableName: "Today",
+                  comment: "Adds the lessons earlier days left to today")
+              }
+              .buttonStyle(.outline)
+              .controlSize(.small)
+              .disabled(busy != nil && busy != .catchUp)
+
+              if failed == .catchUp {
+                saveFailure
               }
             }
-            .disabled(busy != nil && busy != .catchUp)
-            .accessibilityBusy(busy == .catchUp)
           }
         }
       }
@@ -194,20 +190,12 @@ struct TodayChallengeRow: View {
       Button {
         router.open(.challenge(planItemId: planItemID))
       } label: {
-        HStack {
-          Label {
-            challenge.kind == "mock"
-              ? Text("See \(day)'s mock exam", tableName: "Today", comment: "The week's mock")
-              : Text("See \(day)'s challenge", tableName: "Today", comment: "The week's challenge")
-          } icon: {
-            KindMark(kind: challenge.kind == "mock" ? .mock : .challenge)
-          }
-
-          if challenge.requiresPlus {
-            Spacer()
-            Text("Plus", tableName: "Today", comment: "Marks something that comes with Plus")
-              .chip()
-          }
+        Label {
+          challenge.kind == "mock"
+            ? Text("See \(day)'s mock exam", tableName: "Today", comment: "The week's mock")
+            : Text("See \(day)'s challenge", tableName: "Today", comment: "The week's challenge")
+        } icon: {
+          KindMark(kind: challenge.kind == "mock" ? .mock : .challenge)
         }
       }
       .tint(.primary)
@@ -216,7 +204,7 @@ struct TodayChallengeRow: View {
 }
 
 /// Main answers a proposal right on Today, where the Plan never shows it, and missed days that put
-/// the goal's date at risk with their choices.
+/// the goal's date at risk with their choices (C-42, C-43).
 struct TodayPlanChangeSection: View {
   @AccessibilityFocusState private var isResultFocused: Bool
 
@@ -234,20 +222,19 @@ struct TodayPlanChangeSection: View {
 
   private var isBehind: Bool { change.kind == "missedDays" && change.behind != nil }
 
-  /// The proposal's Apply and Not now are in its sheet, so while it's open a failed answer shows
-  /// there, beside them; the page keeps it for Undo and the missed-days choices.
+  private var isExam: Bool { view.goal.kind == .exam }
+
+  /// The proposal's answers are in its sheet, so while it's open a failed answer shows there,
+  /// beside them; the page keeps it for Undo and the missed-days choices.
   private var answersInSheet: Bool { isOpen && shown.decision == nil && !isBehind }
 
   var body: some View {
     Section {
       if let decision = shown.decision {
-        // Main's answered line: the done mark, what the answer did, then Next or Undo.
         SuggestionLine {
           StatusMark(status: .done)
         } summary: {
           Text(result(decision))
-            .typeWeight(.medium)
-            .foregroundStyle(Color(.foreground))
             .accessibilityFocused($isResultFocused)
         } action: {
           Group {
@@ -270,33 +257,15 @@ struct TodayPlanChangeSection: View {
         }
         .listRowSeparator(.hidden)
       } else if isBehind, let behind = change.behind {
-        Label {
-          Text(behindSentence(behind))
-        } icon: {
-          Image(systemName: "calendar.badge.clock")
-        }
-
-        ForEach(behindChoices(behind), id: \.self) { choice in
-          behindButton(choice)
-        }
-        .disabled(isSaving)
+        missedDays(behind)
       } else {
-        // Main's `Suggestion`: the sentence on a panel, "View" opening the whole change.
         SuggestionLine {
           SuggestionMark(kind: change.source == "notice" ? .symbol("doc.badge.clock") : .sparkle)
         } summary: {
-          Text(summary)
+          Text(title)
         } action: {
           SuggestionOpen(isOpen: $isOpen) {
-            Text(summary)
-              .typeStyle(.body.weight(.semibold))
-              .foregroundStyle(Color(.foreground))
-
-            details
-
-            if failed {
-              SuggestionSaveError()
-            }
+            proposal
           }
         }
         .listRowSeparator(.hidden)
@@ -305,8 +274,7 @@ struct TodayPlanChangeSection: View {
       if failed, !answersInSheet {
         FailureLine(
           message: LocalizedStringResource(
-            "We couldn't save your answer. Try again.", table: "Today",
-            comment: "Answering a plan change failed")
+            "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved")
         )
         .typeStyle(.note)
       }
@@ -317,160 +285,100 @@ struct TodayPlanChangeSection: View {
     }
   }
 
-  private enum BehindChoice: Hashable {
-    case adjustTime
-    case focus
-    case keep
-    case studyEverything
+  private var words: PlanChangeWords.Words {
+    PlanChangeWords.words(
+      kind: change.kind, source: change.source, status: change.status,
+      operations: change.operations, reason: change.reason, effect: change.effect,
+      dateKind: GoalDateKind(isExam: isExam))
   }
 
-  /// Main's order: on a return after a break, nothing that asks for more hours leads.
-  private func behindChoices(_ behind: TodayView.PlanChange.Behind) -> [BehindChoice] {
-    let choices: [BehindChoice] =
-      view.session.freshStart == .welcomeBack
-      ? [.focus, .keep, .adjustTime, .studyEverything]
-      : [.adjustTime, .focus, .studyEverything, .keep]
-
-    return choices.filter { $0 != .focus || behind.canFocus }
-  }
-
-  private func behindButton(_ choice: BehindChoice) -> some View {
-    let isExam = view.goal.kind == .exam
-
-    return Button {
-      switch choice {
-      case .adjustTime:
-        adjust(isExam ? .time : .date)
-      case .focus:
-        adjust(.focus)
-      case .keep:
-        answer(.seen)
-      case .studyEverything:
-        adjust(.everything)
-      }
-    } label: {
-      switch choice {
-      case .adjustTime:
-        isExam
-          ? Text("More time a day", tableName: "Today", comment: "Opens the plan's daily time")
-          : Text(
-            "More time or a later date", tableName: "Today",
-            comment: "Opens the plan's daily time and date")
-      case .focus:
-        Text(
-          "Choose where to focus", tableName: "Today",
-          comment: "Opens the choice of the plan's areas to focus on")
-      case .keep:
-        Text(
-          "Keep my time", tableName: "Today",
-          comment: "Keeps the daily time after falling behind, with less depth")
-      case .studyEverything:
-        Text("Study everything", tableName: "Today", comment: "Opens studying the whole goal")
-      }
-    }
-  }
-
-  private func behindSentence(_ behind: TodayView.PlanChange.Behind) -> String {
-    let time = studyDuration(minutes: behind.currentMinutes)
-    let after = behind.coveredAfter.formatted(.percent.precision(.fractionLength(0)))
-    let before = behind.coveredBefore.formatted(.percent.precision(.fractionLength(0)))
-
-    return behind.measure == "exam"
-      ? String(
-        localized:
-          "At \(time) a day, your plan now covers \(after) of the exam, down from \(before).",
-        table: "Today", comment: "Missed days left an exam plan covering less")
-      : String(
-        localized:
-          "At \(time) a day, your plan now covers \(after) of your goal, down from \(before).",
-        table: "Today", comment: "Missed days left a plan covering less of its goal")
-  }
-
-  private var summary: String {
+  /// The question; a focus the Focus test proposes keeps the test's own words (lane A's).
+  private var title: String {
     if change.source == "focusTest", let areas = change.operations.first?.areas, !areas.isEmpty {
       return String(
         localized: "Your Focus test suggests more time for \(areas.formatted(.list(type: .and))).",
         table: "Today", comment: "A focus the learner's Focus test answers propose; then subjects")
     }
 
-    return change.reason
-      ?? String(
-        localized: "Your plan has a change for you to look at.", table: "Today",
-        comment: "A proposed plan change")
+    return words.title
   }
 
   @ViewBuilder
-  private var details: some View {
+  private var proposal: some View {
     let today = view.session.localDate
-    let effect =
-      (change.setsFocus ? planAreaEndTexts(change.effect, today: today) : [])
-      + [
-        // Only a plan without a date says its new end, as main does.
-        view.goal.targetDate == nil
-          ? planEffectText(change.effect, today: today, isEstimated: true) : nil,
-        planLessonsEffectText(change.effect),
-      ].compactMap(\.self)
 
-    // A focus the Focus test proposes says what it changes with the diff alone, as the test's own
-    // proposal does.
-    if change.source == "focusTest" {
-      PlanEffectDiff(effect: change.effect, today: today)
-    } else if !effect.isEmpty {
-      Text(effect.joinedSentences())
-        .foregroundStyle(.mutedForeground)
+    VStack(alignment: .leading, spacing: 4) {
+      Text(title)
+        .typeStyle(.body.weight(.semibold))
+        .foregroundStyle(Color(.foreground))
+
+      if change.source != "focusTest", let why = words.why {
+        Text(why)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+      }
     }
 
+    PlanEffectDiff(
+      effect: change.effect, today: today,
+      options: PlanChangeOptions(
+        byDate: view.goal.targetDate != nil, dateKind: GoalDateKind(isExam: isExam)))
+
     if let date = change.officialDate?.date {
-      Text(officialDateLine(PlanDate.text(date, today: view.session.localDate)))
-        .foregroundStyle(.mutedForeground)
+      Text(
+        "The official exam date is \(PlanDate.longDay(date, today: today)).", tableName: "Today",
+        comment: "Under a change that moves the exam off its official date; the argument is a day"
+      )
+      .typeStyle(.note.weight(.medium))
     }
 
     ButtonRow {
+      Button {
+        answer(.declined)
+      } label: {
+        declineLabel
+      }
+      .buttonStyle(.outline)
+
       if change.canApply {
         Button {
           answer(.applied)
         } label: {
           applyLabel
-            .frame(maxWidth: .infinity)
         }
         .buttonStyle(.mainAction)
+        .buttonSizing(.flexible)
       }
-
-      Button {
-        answer(.declined)
-      } label: {
-        declineLabel
-          .frame(maxWidth: .infinity)
-      }
-      .buttonStyle(.outline)
     }
     .disabled(isSaving)
+
+    if failed {
+      SuggestionSaveError()
+    }
   }
 
-  /// Answering the notice or the phase dates keeps what the learner has.
+  /// The official guide's or phase dates' change keeps what the learner has.
   private var keepsMine: Bool {
     change.source == "notice" || change.source == "phaseDates"
   }
 
   private var applyLabel: Text {
-    change.officialDate != nil
-      ? Text(
-        "Use my date anyway", tableName: "Today",
-        comment: "Applies a change that moves the exam off the notice's date")
-      : change.source == "focusTest"
-        ? Text(FocusTestCopy.updatePlan)
-        : Text("Apply", tableName: "Today", comment: "Applies a proposed plan change")
+    if change.officialDate != nil {
+      return Text(
+        "Use my date", tableName: "Today",
+        comment: "Applies a change that moves the exam off its official date")
+    }
+
+    return change.source == "focusTest"
+      ? Text(FocusTestCopy.updatePlan)
+      : Text("Change my plan", tableName: "Today", comment: "Applies a proposed plan change")
   }
 
   private var declineLabel: Text {
     if change.officialDate != nil {
-      return change.examDocument == .notice
-        ? Text(
-          "Keep the notice's date", tableName: "Today",
-          comment: "Declines a change and keeps the date the exam notice sets")
-        : Text(
-          "Keep the official date", tableName: "Today",
-          comment: "Declines a change and keeps the date the exam's official calendar sets")
+      return Text(
+        "Keep official date", tableName: "Today",
+        comment: "Declines a change and keeps the exam's official date")
     }
 
     if change.source == "focusTest" {
@@ -482,33 +390,96 @@ struct TodayPlanChangeSection: View {
       : Text("Not now", tableName: "Today", comment: "Declines a proposed plan change")
   }
 
-  private func officialDateLine(_ date: String) -> String {
-    change.examDocument == .notice
+  // MARK: Missed days (C-43)
+
+  @ViewBuilder
+  private func missedDays(_ behind: TodayView.PlanChange.Behind) -> some View {
+    VStack(alignment: .leading, spacing: 4) {
+      Text("You missed a few days", tableName: "Today", comment: "Title after missed study days")
+        .typeStyle(.body.weight(.semibold))
+
+      Text(behindSentence(behind))
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+    }
+
+    ButtonRow {
+      // On a return after a break, nothing that asks for more hours leads.
+      if view.session.freshStart == .welcomeBack {
+        keepTimeButton
+        addTimeButton
+      } else {
+        addTimeButton
+        keepTimeButton
+      }
+    }
+    .disabled(isSaving)
+
+    Menu {
+      if behind.canFocus {
+        Button {
+          adjust(.focus)
+        } label: {
+          Text(
+            "Choose where to focus", tableName: "Today",
+            comment: "Opens the choice of the plan's areas to focus on")
+        }
+      }
+
+      Button {
+        adjust(.everything)
+      } label: {
+        isExam
+          ? Text(
+            "Keep studying after the exam", tableName: "Today",
+            comment: "Opens studying every topic, past the exam's date")
+          : Text("Study everything", tableName: "Today", comment: "Opens studying the whole goal")
+      }
+    } label: {
+      Text("More options", tableName: "Today", comment: "Opens the other answers to missed days")
+        .typeStyle(.note.weight(.medium))
+    }
+    .disabled(isSaving)
+  }
+
+  private var addTimeButton: some View {
+    Button {
+      adjust(isExam ? .time : .date)
+    } label: {
+      Text("Add time", tableName: "Today", comment: "Opens the plan's time a day after missed days")
+    }
+    .buttonStyle(.outline)
+  }
+
+  private var keepTimeButton: some View {
+    Button {
+      answer(.seen)
+    } label: {
+      Text(
+        "Keep my time", tableName: "Today",
+        comment: "Keeps the time a day after missed days, with less of the plan covered")
+    }
+    .buttonStyle(.outline)
+  }
+
+  private func behindSentence(_ behind: TodayView.PlanChange.Behind) -> String {
+    let time = studyDuration(minutes: behind.currentMinutes)
+    let after = behind.coveredAfter.formatted(.percent.precision(.fractionLength(0)))
+    let before = behind.coveredBefore.formatted(.percent.precision(.fractionLength(0)))
+
+    return behind.measure == "exam"
       ? String(
-        localized: "The exam notice sets the exam for \(date).", table: "Today",
-        comment: "The exam's official day, from its notice")
+        localized: "\(time) a day now covers \(after) of the exam, down from \(before).",
+        table: "Today", comment: "Missed days left an exam plan covering less")
       : String(
-        localized: "The exam's official calendar sets the exam for \(date).", table: "Today",
-        comment: "The exam's official day, from its official calendar")
+        localized: "\(time) a day now covers \(after) of your goal, down from \(before).",
+        table: "Today", comment: "Missed days left a plan covering less of its goal")
   }
 
   private func result(_ decision: PlanChangeDecision) -> String {
     switch decision {
     case .applied:
-      switch change.todaySession {
-      case "changed":
-        String(
-          localized: "It's in your plan, and today's session follows it.", table: "Today",
-          comment: "A plan change was applied")
-      case "unchanged":
-        String(
-          localized: "It's in your plan from your next study day. Today's session stays as it is.",
-          table: "Today", comment: "A plan change was applied")
-      default:
-        String(
-          localized: "Your plan follows it from now on.", table: "Today",
-          comment: "A plan change was applied")
-      }
+      PlanChangeWords.appliedLine(todaySession: change.todaySession)
     case .declined:
       String(
         localized: "Your plan stays as it was.", table: "Today",
@@ -519,18 +490,18 @@ struct TodayPlanChangeSection: View {
         comment: "A plan change was undone")
     case .seen:
       String(
-        localized: "Noted. You keep your time, with less depth where it counts least.",
-        table: "Today", comment: "The learner kept their daily time after falling behind")
+        localized: "Okay. Your time stays the same.", table: "Today",
+        comment: "The learner kept their time a day after missed days")
     }
   }
 }
 
-/// Under the queue, when every mission only opens one of the blocks it shows above its fold, the
-/// card leaves the rows to the queue, whose marks name those blocks, so no block is listed twice.
+/// Today's missions: the header, and the missions behind a press on its title (B1-002).
 struct TodayMissionsSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
-  @Environment(\.isPaneSplit) private var isBesideTheDay
+
+  @State private var showsMissions = false
 
   let view: TodayView
   let busy: TodayDayView.Tap?
@@ -543,16 +514,19 @@ struct TodayMissionsSection: View {
     let earned = view.session.fullMeal.earned
 
     PageSection(isPanel: true) {
-      MissionsSummary(missions: missions, bonus: view.session.fullMeal.bonus, earned: earned)
-        .rowSeparatorHiddenBelow()
+      MissionsSummary(
+        missions: missions, bonus: view.session.fullMeal.bonus, earned: earned,
+        isOpen: $showsMissions
+      )
+      .rowSeparatorHiddenBelow()
 
-      if !earned, isBesideTheDay || !leavesRowsToQueue {
+      if !earned, showsMissions {
         ForEach(Array(missions.enumerated()), id: \.offset) { _, mission in
           let block = view.session.blocks.first { mission.opens($0) }
           let tap = block.map { TodayDayView.Tap.mission($0.position) }
 
           MissionRow(
-            mission: mission, buddyName: learner.buddyDisplayName, block: block,
+            mission: mission, buddyName: learner.buddyDisplayName,
             isBusy: tap != nil && busy == tap, failed: tap != nil && failed == tap
           ) {
             go(mission)
@@ -561,20 +535,7 @@ struct TodayMissionsSection: View {
         }
       }
     } header: {
-      if !earned {
-        SectionTitle(
-          Text("Today's missions", tableName: "Today", comment: "Today's missions header"))
-      }
-    }
-  }
-
-  private var leavesRowsToQueue: Bool {
-    let folded = view.session.foldedBlocks
-
-    return missions.allSatisfy { mission in
-      mission.isDone
-        || (mission.opens?.kind == "block" && mission.waitReason == nil && mission.total <= 1
-          && !folded.contains { mission.opens($0) })
+      EmptyView()
     }
   }
 
@@ -634,7 +595,8 @@ struct TodayWeekSection: View {
         ForEach(week.days, id: \.date) { day in
           WeekDayMark(
             day: day, localDate: localDate,
-            challenge: view.weeklyChallenge.flatMap { $0.date == day.date ? $0 : nil }
+            challenge: view.weeklyChallenge.flatMap { $0.date == day.date ? $0 : nil },
+            isExam: view.goal.kind == .exam
           )
         }
       }
@@ -667,10 +629,10 @@ private struct WeekChallengeRow: View {
     if challenge.kind == "mock" && challenge.requiresPlus {
       Label {
         VStack(alignment: .leading, spacing: 2) {
-          Text("Full review", tableName: "Today", comment: "A free plan's mock day")
+          Text("Review", tableName: "Today", comment: "A review block")
           Text(
-            "\(day)\u{00A0}· every topic, your weakest first", tableName: "Today",
-            comment: "When a free plan's full review is and what it asks"
+            "\(day)\u{00A0}· every topic", tableName: "Today",
+            comment: "When a review of every topic is; the argument is a weekday"
           )
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
@@ -728,6 +690,7 @@ private struct WeekDayMark: View {
   let localDate: String
   /// The week's challenge, when it falls on this day.
   let challenge: TodayView.WeeklyChallenge?
+  let isExam: Bool
 
   @ScaledMetric(relativeTo: .title3) private var ringSize = 26.0
   @State private var isShown = false
@@ -869,8 +832,8 @@ private struct WeekDayMark: View {
     switch challengeKind {
     case .review:
       String(
-        localized: "full review", table: "Today",
-        comment: "A day's challenge in a spoken day label: a full review of every topic")
+        localized: "review", table: "Today",
+        comment: "A day's challenge in a spoken day label: a review of every topic")
     case .mock:
       String(
         localized: "mock exam", table: "Today", comment: "A day's challenge in a spoken day label")
@@ -886,7 +849,7 @@ private struct WeekDayMark: View {
   private var status: String {
     if day.hitGoal {
       return String(
-        localized: "daily time met", table: "Today",
+        localized: "done", table: "Today",
         comment: "A day's status: the day's study time was met")
     }
 
@@ -898,11 +861,13 @@ private struct WeekDayMark: View {
     case "exam":
       return String(localized: "exam day", table: "Today", comment: "A day's status")
     case "deadline":
-      return String(localized: "your goal's date", table: "Today", comment: "A day's status")
+      return String(localized: "end date", table: "Today", comment: "A day's status")
     case "beforeStart":
       return String(localized: "before your plan", table: "Today", comment: "A day's status")
     case "afterEnd":
-      return String(localized: "after your date", table: "Today", comment: "A day's status")
+      return isExam
+        ? String(localized: "after your exam", table: "Today", comment: "A day's status")
+        : String(localized: "after your end date", table: "Today", comment: "A day's status")
     case "rest":
       return String(localized: "rest day", table: "Today", comment: "A day's status")
     default:
@@ -925,8 +890,6 @@ struct TodayProgressSection: View {
 
   let view: TodayView
 
-  private let shownSubjects = 5
-
   var body: some View {
     if view.goal.kind == .language {
       let standing = plans.languageStanding(goalId: view.goal.id)
@@ -940,8 +903,6 @@ struct TodayProgressSection: View {
       .loads(standing, refreshable: false)
     } else if let progress = view.progress {
       let syllabus = plans.syllabus(goalId: view.goal.id)
-      let subjects = (syllabus.value?.hasSubjectPages == true ? syllabus.value?.subjects : nil)?
-        .filter { $0.notPlannedReason == nil }.prefix(shownSubjects)
 
       Group {
         if progress.measure == "preparation" {
@@ -951,7 +912,7 @@ struct TodayProgressSection: View {
             value: progress.value.formatted(.percent.precision(.fractionLength(0))),
             detail: weekGain(progress.weekGain ?? 0)
           ) {
-            subjectRows(subjects, isExam: true)
+            EmptyView()
           }
         } else if let lessons = progress.lessons {
           card(
@@ -966,8 +927,6 @@ struct TodayProgressSection: View {
                 .frame(height: 6)
                 .accessibilityHidden(true)
             }
-
-            subjectRows(subjects, isExam: false)
           }
         }
       }
@@ -1056,15 +1015,6 @@ struct TodayProgressSection: View {
         .foregroundStyle(.successText)
       : Text("\(points) this week", tableName: "Today", comment: "Preparation lost this week")
   }
-
-  @ViewBuilder
-  private func subjectRows(_ subjects: ArraySlice<SyllabusSubject>?, isExam: Bool) -> some View {
-    if let subjects {
-      ForEach(subjects) { subject in
-        SyllabusSubjectRow(subject: subject, isExam: isExam)
-      }
-    }
-  }
 }
 
 struct TodayPracticeSection: View {
@@ -1102,10 +1052,6 @@ struct TodayPracticeSection: View {
               KindMark(kind: .conversation)
             }
 
-            if speaking.access == "plusRequired" {
-              Spacer()
-              PlusMark()
-            }
           }
         }
       }
@@ -1131,17 +1077,9 @@ struct TodayPracticeSection: View {
       if places?.completedLessons == true {
         PageLink(route: .completedLessons) {
           Label {
-            VStack(alignment: .leading, spacing: 2) {
-              Text(
-                "Completed lessons", tableName: "Today",
-                comment: "Opens the page of the lessons the learner finished")
-              Text(
-                "Go back to any lesson you've finished", tableName: "Today",
-                comment: "The completed lessons page's line"
-              )
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
-            }
+            Text(
+              "Completed lessons", tableName: "Today",
+              comment: "Opens the page of the lessons the learner finished")
           } icon: {
             KindMark(kind: .lesson)
           }
@@ -1253,16 +1191,9 @@ private struct TodayMockRow: View {
       .tint(.primary)
     } else {
       NavigationLink(value: AppRoute.mockChooser) {
-        HStack {
-          label(
-            title: Text("Take a mock exam", tableName: "Today", comment: "Opens the mock chooser"),
-            detail: value.map(description))
-
-          if value?.access == .plusRequired {
-            Spacer()
-            PlusMark()
-          }
-        }
+        label(
+          title: Text("Take a mock exam", tableName: "Today", comment: "Opens the mock chooser"),
+          detail: value.map(description))
       }
     }
   }

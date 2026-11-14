@@ -35,6 +35,7 @@ import {
 } from "./requests.mts";
 import { readRoleFacts, roleFindings } from "./role-checks.mts";
 import { readCpuMs } from "./server-process.mts";
+import { type WalkCoverage } from "./states.mts";
 import { LOAD_TIMEOUT_MS } from "./tap.mts";
 import { type Scheme, type ViewportName } from "./viewports.mts";
 import {
@@ -75,6 +76,7 @@ export type LoadReport = LoadMeasurement & {
   screenshots: string[];
   viewport: ViewportName;
   words: PageWords;
+  walk?: WalkCoverage;
 };
 
 const QUERY_HASH_LENGTH = 8;

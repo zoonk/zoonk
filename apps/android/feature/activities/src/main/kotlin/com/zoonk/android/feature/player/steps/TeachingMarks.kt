@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.richtext.isNumberedItem
@@ -95,12 +96,8 @@ internal fun IdeaStrip(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IdeasDrawing(ideas.size, index)
-            Column(Modifier.weight(1f)) {
-                Text(
-                    stringResource(R.string.player_idea_position, count(index + 1), count(ideas.size)),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.zoonkType.data,
-                )
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Eyebrow(stringResource(R.string.player_idea_position, count(index + 1), count(ideas.size)))
                 idea.label?.let {
                     Text(
                         it,

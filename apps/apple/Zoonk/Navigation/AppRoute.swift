@@ -12,7 +12,8 @@ enum AppRoute: Hashable, Identifiable {
   case completedLessons
   case speaking
   case earlierQuestions
-  case statistics
+  /// `section` opens that statistics page beside the overview where the window has room.
+  case statistics(section: StatsSection? = nil)
   case certificates
   case certificate(code: String)
   case catalog
@@ -89,6 +90,6 @@ enum AppRoute: Hashable, Identifiable {
   }
 
   var studyTab: AppTab? {
-    AppTab.study.first { $0.studyRoute == self }
+    AppTab.sidebarPlaces.first { $0.studyRoute == self }
   }
 }

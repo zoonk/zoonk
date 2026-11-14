@@ -47,7 +47,6 @@ import com.zoonk.android.feature.audio.SpokenText
 import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
-import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DiffKind
 import com.zoonk.android.ui.components.DiffLine
@@ -82,7 +81,7 @@ internal fun ConversationResult(
     speech: SpeechPlayer,
     onContinue: () -> Unit,
     onClose: () -> Unit,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
     dayMoment: @Composable () -> Unit = {},
 ) {
     val feedback = (result.feedback as? LanguageConversationResultFeedback.CallWrapper)?.value
@@ -91,7 +90,7 @@ internal fun ConversationResult(
     val missed = conversation.objectives.filterNot { it.met }
     val steps =
         buildList<@Composable ColumnScope.() -> Unit> {
-            add { StarsStep(conversation, result, feedback, onSeePlus) }
+            add { StarsStep(conversation, result, feedback, onSubscribe) }
             if (met.isNotEmpty() || feedback?.wentWell.orEmpty().isNotEmpty()) {
                 add { WentWellStep(feedback, language, met.map { it.label }) }
             }
@@ -125,7 +124,7 @@ private fun StarsStep(
     conversation: LanguageConversation,
     result: LanguageConversationResult,
     feedback: LanguageCallFeedback?,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
 ) {
     val checkpoint = conversation.kind == LanguageConversation.Kind.CHECKPOINT
     val lost = checkpoint && !result.passed
@@ -156,7 +155,7 @@ private fun StarsStep(
 
     when {
         lost && conversation.locked -> {
-            PlusNotice(onSeePlus = onSeePlus, description = stringResource(R.string.conversation_challenge_plus))
+            ChallengeCallGate(onSubscribe)
         }
 
         lost -> {

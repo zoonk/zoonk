@@ -52,11 +52,12 @@ Examples of native behavior:
 Zoonk's [roles](../zoonk-design/SKILL.md#find-the-piece-before-you-build-one) each have one piece and one way on every screen. Here they are Material's pieces:
 
 - **A page's top and the way back:** `PageScaffold`'s top app bar with Material's back icon (`autoMirrored`) and predictive back, the same on every pushed page; the page's title in `PageTitleRow` or `PageHeader` right under it, with no eyebrow and no padding of the screen's own above it. A task keeps its close in `TaskScaffold`.
-- **The main action:** one main `Button` in `DockedActionBar` (`TaskActionBar` in a task), at the bottom on every screen that has one, at every window size; never under the content on one screen and docked on the next. A screen with no main action has no bar.
+- **The main action:** one main `Button` in `BottomBar` (`PageScaffold(bottomBar = …)`; `TaskActionBar` with `TaskActions` in a task), at the bottom on every screen that has one, at every window size; never under the content on one screen and docked on the next. It fills its line on a phone or a book's page and sits at the bar's end at its own width where the bar is wider. An error or status goes in the bar's `note`. A screen with no main action has no bar.
 - **What opens over a page:** a modal bottom sheet on a compact window and Material's dialog on a wider one, chosen by the window's size class in one place; an `AlertDialog` only to confirm.
 - **A button:** its label and at most one symbol, and no arrow on a main action. While it works, the progress indicator takes the symbol's place and the button keeps its width.
 - **The small line over a title:** the `Eyebrow` chip (`SuccessEyebrow` for something done), written as a sentence, never `zoonkType.eyebrow`'s mono uppercase.
-- **Paying:** the action reads "Subscribe". A paid feature's row or card looks like any other (no "Plus" `LabelChip`, no notice in a list), and the subscription gate shows once, when the learner starts the feature.
+- **Paying:** the action reads "Subscribe". A paid feature's row or card looks like any other (no "Plus" chip, no notice in a list), and the subscription gate shows once, when the learner starts the feature.
+- **A page's loading, failed and not-found states:** `ResourceScaffold`, which takes the loaded content; no page switches on `LoadState.Failed` itself.
 - **Words:** main's. "Your buddy", a buddy's name or a feature's name only after the screen that introduces it; before that, "we". A step with Skip has no "none" option.
 
 Compare a role across the app the way [the role read](../zoonk-design/references/craft.md#the-role-read) does on the web: renders of every screen that draws it, side by side.

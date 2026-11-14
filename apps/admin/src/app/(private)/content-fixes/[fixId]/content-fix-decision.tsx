@@ -8,7 +8,7 @@ import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { safeAsync } from "@zoonk/utils/error";
 import { FingerprintIcon, Undo2Icon } from "lucide-react";
-import { useActionState, useId } from "react";
+import { useActionState, useId, useState } from "react";
 import { useFormStatus } from "react-dom";
 import {
   approveContentFixAction,
@@ -145,6 +145,10 @@ export function ReviewBar({
 export function RevertForm({ fixId }: { fixId: string }) {
   const reasonId = useId();
 
+  // React resets uncontrolled fields after a form action, and a refused undo keeps what was typed.
+  // An accepted one opens the new fix's page.
+  const [reason, setReason] = useState("");
+
   const [, formAction] = useAdminActionState({
     action: revertContentFixAction,
     initialState: INITIAL_STATE,
@@ -158,7 +162,14 @@ export function RevertForm({ fixId }: { fixId: string }) {
           <label className="text-sm font-medium" htmlFor={reasonId}>
             Why undo it?
           </label>
-          <Input id={reasonId} maxLength={2000} name="reason" required />
+          <Input
+            id={reasonId}
+            maxLength={2000}
+            name="reason"
+            onChange={(event) => setReason(event.target.value)}
+            required
+            value={reason}
+          />
         </div>
         <AdminActionSubmitButton icon={<Undo2Icon />} size="lg">
           Propose undoing it

@@ -1,6 +1,6 @@
 "use client";
 
-import { type BuddyGlasses, type BuddyKind, type BuddyStage } from "@zoonk/utils/buddy";
+import { type BuddyGlasses, type BuddyKind } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
 import { type LearnBuddy, useBuddyName } from "./use-buddy-name";
 
@@ -36,21 +36,6 @@ export function BuddyTagline({ kind }: { kind: BuddyKind }) {
   }
 }
 
-export function BuddyStageName({ stage }: { stage: BuddyStage }) {
-  const t = useExtracted();
-
-  switch (stage) {
-    case "young":
-      return t("Young");
-    case "adult":
-      return t("Adult");
-    case "baby":
-      return t("Baby");
-    default:
-      return t("Baby");
-  }
-}
-
 export function BuddyGlassesName({ glasses }: { glasses: BuddyGlasses }) {
   const t = useExtracted();
 
@@ -69,27 +54,6 @@ export function BuddyGlassesName({ glasses }: { glasses: BuddyGlasses }) {
       return t("Round");
     default:
       return t("Round");
-  }
-}
-
-export function BuddyGlassesWorn({ glasses }: { glasses: BuddyGlasses }) {
-  const t = useExtracted();
-
-  switch (glasses) {
-    case "star":
-      return t("Star glasses");
-    case "aviator":
-      return t("Aviator glasses");
-    case "catEye":
-      return t("Cat-eye glasses");
-    case "retro":
-      return t("Retro glasses");
-    case "monocle":
-      return t("A monocle");
-    case "round":
-      return t("Round glasses");
-    default:
-      return t("Round glasses");
   }
 }
 

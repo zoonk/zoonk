@@ -2,14 +2,13 @@ import SwiftUI
 
 /// What an About you screen shows beyond its answer, from where it's opened.
 struct ProfileScreenContext {
-  /// Onboarding's "About you · 4 of 10".
+  /// Onboarding's "About you".
   var eyebrow: String?
   /// What helps: rows were checked for the conditions just picked.
   var prechecked = false
   /// Work: the job came from the goal's current-role answer.
   var jobFromEarlierAnswer = false
-  /// Onboarding's skip button reads "I'd rather not say" and declines, so the screen has no row
-  /// for it.
+  /// Onboarding's Skip declines the question, so the screen has no row that declines it.
   var skipDeclines = false
   var memoryEnabled = true
 }
@@ -21,8 +20,6 @@ struct ProfileQuestionSections: View {
   let context: ProfileScreenContext
   @Binding var draft: ProfileDraft
 
-  /// A fourth chip was tapped.
-  @State private var capped = false
   @State private var opensNote = false
   /// Something else was just picked, so its words, now required, take focus as its field appears.
   @State private var asksOther = false
@@ -99,17 +96,13 @@ struct ProfileQuestionSections: View {
         }
       }
 
-      if !context.skipDeclines {
-        declineRow(.ratherNotSay)
-      }
+      declineRow(.ratherNotSay)
     }
   }
 
   @ViewBuilder private var interests: some View {
     Section {
       chips
-    } footer: {
-      capLine
     }
 
     Section {
@@ -118,17 +111,11 @@ struct ProfileQuestionSections: View {
         text: limited($draft.text, to: 120))
     }
 
-    Section {
-      declineChip(.noneOfThese)
-    }
   }
 
   @ViewBuilder private var studies: some View {
     Section {
       chips
-      declineChip(.noneOfThese)
-    } footer: {
-      capLine
     }
 
     let picked = draft.picks.compactMap { id in view.options.first { $0.id == id } }
@@ -206,8 +193,6 @@ struct ProfileQuestionSections: View {
           draft.toggle(option.id)
         }
       }
-
-      declineRow(.noneOfThese)
     }
 
     if context.memoryEnabled {
@@ -238,7 +223,7 @@ struct ProfileQuestionSections: View {
         if opensNote || !draft.text.isEmpty {
           SectionFooter {
             Text(
-              "We'll remember this for your buddy. You can delete it in Memory.",
+              "We'll remember this. You can delete it anytime in Settings.",
               tableName: "AboutYou", comment: "Under the box for what helps the learner learn")
           }
         }
@@ -248,46 +233,31 @@ struct ProfileQuestionSections: View {
 
   // MARK: Parts
 
+  /// Once three are picked, the others dim until one is let go, as the line under the title says.
   private var chips: some View {
-    FlowLayout(spacing: 8) {
+    let isFull = view.id.pickLimit.map { draft.picks.count >= $0 } ?? false
+
+    return FlowLayout(spacing: 8) {
       ForEach(view.options, id: \.id) { option in
-        ProfileChip(label: Text(option.label), isOn: draft.picks.contains(option.id)) {
-          capped = !draft.toggle(option.id)
+        let isOn = draft.picks.contains(option.id)
 
-          if capped {
-            announcePolitely(capLimit)
-          }
+        ProfileChip(label: Text(option.label), isOn: isOn) {
+          draft.toggle(option.id)
         }
+        .disabled(isFull && !isOn)
       }
     }
     .listRowSeparator(.hidden)
   }
 
-  @ViewBuilder private var capLine: some View {
-    if capped {
-      SectionFooter {
-        Text(capLimit)
-      }
-    }
-  }
-
-  private var capLimit: String {
-    String(
-      localized: "Pick up to 3.", table: "AboutYou",
-      comment: "Said when a fourth choice is tapped on a screen that takes three")
-  }
-
-  private func declineChip(_ decline: ProfileDraft.Decline) -> some View {
-    ProfileChip(label: ProfileCopy.decline(view.id, decline), isOn: draft.decline == decline) {
-      capped = false
-      draft.toggle(decline)
-    }
-    .listRowSeparator(.hidden)
-  }
-
+  /// Onboarding declines through its Skip, so only Settings shows the row: on a pick-one question
+  /// it's the only way to take a pick back. A question with several picks declines by saving none.
+  @ViewBuilder
   private func declineRow(_ decline: ProfileDraft.Decline) -> some View {
-    ProfileRow(label: ProfileCopy.decline(view.id, decline), isOn: draft.decline == decline) {
-      draft.toggle(decline)
+    if !context.skipDeclines {
+      ProfileRow(label: ProfileCopy.decline(view.id, decline), isOn: draft.decline == decline) {
+        draft.toggle(decline)
+      }
     }
   }
 
@@ -413,50 +383,39 @@ enum ProfileCopy {
     }
   }
 
+  /// Shown before the learner has met their buddy, so it says "we".
   static func description(_ question: ProfileQuestion) -> Text {
     switch question {
     case .addressForm:
       Text(
-        "Your buddy and your feedback will talk to you this way. Lessons stay the same.",
-        tableName: "AboutYou", comment: "Under How should we address you?")
+        "We'll talk to you this way.", tableName: "AboutYou",
+        comment: "Under How should we address you?")
     case .work:
       Text(
-        "We'll use situations from your day in your examples.", tableName: "AboutYou",
+        "We use this to pick examples you'll care about.", tableName: "AboutYou",
         comment: "Under What do you do now?")
-    case .tools:
-      Text(
-        "Pick up to 3. We'll use them in your examples.", tableName: "AboutYou",
-        comment: "Under the apps and tools question")
     case .studies:
       Text(
-        "Past or present, finished or not. It can be different from your work.",
-        tableName: "AboutYou", comment: "Under What have you studied?")
-    case .watch, .listen, .play, .read, .activities:
+        "Past or present, finished or not. Pick up to 3.", tableName: "AboutYou",
+        comment: "Under What have you studied?")
+    case .tools, .watch, .listen, .play, .read, .activities:
       Text(
-        "Pick up to 3. We'll use them for examples in your lessons.", tableName: "AboutYou",
-        comment: "Under the questions about what the learner likes")
+        "Pick up to 3.", tableName: "AboutYou",
+        comment: "Under the questions whose chips take up to three picks")
     case .conditions:
       Text(
-        "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings.",
+        "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings.",
         tableName: "AboutYou", comment: "Under the conditions question")
     case .learningSupport:
       Text(
-        "Pick anything that helps. No label or diagnosis needed.", tableName: "AboutYou",
-        comment: "Under What helps you learn?")
+        "Pick anything that helps.", tableName: "AboutYou", comment: "Under What helps you learn?")
     }
   }
 
   static func decline(_ question: ProfileQuestion, _ decline: ProfileDraft.Decline) -> Text {
-    switch (question, decline) {
-    case (_, .ratherNotSay):
+    switch decline {
+    case .ratherNotSay:
       Text("I'd rather not say", tableName: "AboutYou", comment: "Declines an About you question")
-    case (.studies, .noneOfThese):
-      Text("Nothing to add", tableName: "AboutYou", comment: "Declines What have you studied?")
-    case (.learningSupport, .noneOfThese):
-      Text(
-        "Nothing in particular", tableName: "AboutYou", comment: "Declines What helps you learn?")
-    case (_, .noneOfThese):
-      Text("None of these", tableName: "AboutYou", comment: "Declines an About you question")
     }
   }
 
@@ -490,10 +449,13 @@ enum ProfileCopy {
     case .tools:
       Text("E.g., Photoshop, Python, SAP", tableName: "AboutYou", comment: "Example tools")
     case .watch:
-      Text("E.g., Star Trek, Flamengo", tableName: "AboutYou", comment: "Example shows and teams")
+      Text(
+        "E.g., Star Trek, Formula 1", tableName: "AboutYou",
+        comment: "Example shows and sports, known in every country")
     case .listen:
       Text(
-        "E.g., Coldplay, Radiolab", tableName: "AboutYou", comment: "Example artists and podcasts")
+        "E.g., Coldplay, TED Talks Daily", tableName: "AboutYou",
+        comment: "Example artists and podcasts, known in every country")
     case .play:
       Text("E.g., Catan, Valorant", tableName: "AboutYou", comment: "Example games")
     case .read:
@@ -506,8 +468,8 @@ enum ProfileCopy {
   }
 }
 
-/// An About you question during onboarding: Skip leaves it for the next goal, and lesson 1 can
-/// start from it once it's ready.
+/// An About you question during onboarding: Skip declines it, so the next goal doesn't ask it again,
+/// and lesson 1 can start from it once it's ready.
 struct ProfileStep: View {
   let view: GoalOnboarding
   let question: ProfileQuestionView
@@ -564,14 +526,12 @@ struct ProfileStep: View {
 
             onStartLesson(hasAnswer ? draft.input : nil)
           } label: {
-            (hasAnswer
-              ? Text(
-                "Save and start lesson 1", tableName: "AboutYou",
-                comment: "Saves the About you answer, then opens the goal's first lesson")
-              : Text(
-                "Start lesson 1", tableName: "AboutYou",
-                comment: "Opens the goal's first lesson from an About you question"))
-              .underline()
+            Text(
+              "Start lesson 1", tableName: "AboutYou",
+              comment:
+                "Opens the goal's first lesson from an About you question, saving its answer first"
+            )
+            .underline()
           }
           .buttonStyle(.plain)
           .foregroundStyle(Color(.foreground))
@@ -584,7 +544,8 @@ struct ProfileStep: View {
     } buttons: {
       StepButtons(
         canContinue: hasAnswer,
-        skipLabel: context.skipDeclines ? ProfileCopy.decline(question.id, .ratherNotSay) : nil
+        skipLabel: question.id == .addressForm
+          ? ProfileCopy.decline(question.id, .ratherNotSay) : nil
       ) {
         keepConditions()
         onAnswer(draft.input)

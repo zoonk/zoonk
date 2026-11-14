@@ -11,6 +11,10 @@ import {
 import { parseSearchParams } from "@/lib/parse-search-params";
 import { type Metadata } from "next";
 import { Suspense } from "react";
+import {
+  LessonProvenanceFilters,
+  LessonProvenanceFiltersSkeleton,
+} from "./lesson-provenance-filters";
 import { LibraryLessonList, LibraryLessonListSkeleton } from "./library-lesson-list";
 import { RewriteLessons } from "./rewrite-lessons";
 
@@ -32,6 +36,11 @@ async function readFilters({ searchParams }: Params) {
 async function RewriteAction({ searchParams }: Params) {
   const { model, promptVersion } = await readFilters({ searchParams });
   return <RewriteLessons model={model} promptVersion={promptVersion} />;
+}
+
+async function ProvenanceFilters({ searchParams }: Params) {
+  const { model } = await readFilters({ searchParams });
+  return <LessonProvenanceFilters model={model} />;
 }
 
 async function StateViews({ searchParams }: Params) {
@@ -89,6 +98,9 @@ export default function LessonsPage({ searchParams }: PageProps<"/lessons">) {
           </Suspense>
           <Suspense fallback={null}>
             <StateViews searchParams={searchParams} />
+          </Suspense>
+          <Suspense fallback={<LessonProvenanceFiltersSkeleton />}>
+            <ProvenanceFilters searchParams={searchParams} />
           </Suspense>
         </AdminToolbar>
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// A month the learner named stays a month until they pick its day. Dropping a deadline says what it
-/// changes first; an exam keeps its date and offers "Study everything, even after the exam" instead.
+/// A month the learner named stays a month until they pick its day. Dropping an end date says what
+/// it changes first; an exam keeps its date.
 struct PlanDateSection: View {
   @State private var isPicking = false
   @State private var picked: Date?
@@ -78,8 +78,8 @@ struct PlanDateSection: View {
         }
       }
 
-      if !isExam, let date = schedule.targetDate {
-        dropDeadline(date: date, namedMonth: namedMonth)
+      if !isExam, schedule.targetDate != nil {
+        dropDeadline()
       }
     } footer: {
       SectionFooter {
@@ -90,10 +90,6 @@ struct PlanDateSection: View {
             comment:
               "A month the learner named stands until they pick the day; the argument is the month the learner named, like 'May 2027'"
           )
-        } else if schedule.targetDate == nil && !isExam {
-          Text(
-            "No deadline: you study everything at your own pace. With a deadline, your plan fits what matters most by then.",
-            tableName: "Plan", comment: "A goal without a deadline, and what a deadline would do")
         }
       }
     }
@@ -108,61 +104,31 @@ struct PlanDateSection: View {
   private var label: Text {
     goal.kind == .exam
       ? Text("Exam date", tableName: "Plan", comment: "Setting: the exam's date")
-      : Text("Deadline", tableName: "Plan", comment: "Setting: the goal's deadline")
+      : Text("End date", tableName: "Plan", comment: "Setting: the goal's end date")
   }
 
   /// True once saved.
   @discardableResult
   private func save(_ isoDate: String) async -> Bool {
-    let date = PlanDate.date(isoDate).map(Self.longDate) ?? isoDate
-    let isFirstDay = plan.schedule.targetDate == nil || plan.schedule.targetDateNamedMonth
-
-    return await editor.change(
-      [.targetDate(isoDate)],
-      sentence: isFirstDay
-        ? String(localized: "Date set to \(date).", table: "Plan", comment: "Says the goal's date")
-        : String(
-          localized: "Date moved to \(date).", table: "Plan",
-          comment:
-            "Says the goal's date moved, earlier or later; the argument is a date like 'May 5'")
-    )
+    await editor.change([.targetDate(isoDate)])
   }
 
-  private func dropDeadline(date: String, namedMonth: Bool) -> some View {
-    let shown = PlanDate.text(date, today: plan.today, month: namedMonth)
+  private func dropDeadline() -> some View {
+    let title = Text(
+      "Study everything", tableName: "Plan",
+      comment: "Title asking to drop the goal's end date, and its button")
 
     return PreviewedPlanChange(
-      editor: editor, plan: plan, edits: [.targetDate(nil)],
-      title: Text(
-        "Study everything", tableName: "Plan",
-        comment: "Title asking to drop the deadline, and its button"),
+      editor: editor, plan: plan, edits: [.targetDate(nil)], title: title, button: title,
       what: String(
-        localized: "Every part of your goal, at your own pace, with no end date.", table: "Plan",
-        comment: "What dropping the deadline does"),
-      sentence: namedMonth
-        ? String(
-          localized: "Your \(shown) deadline comes off your plan. You can set one again anytime.",
-          table: "Plan",
-          comment:
-            "Says the goal's deadline was dropped; the argument is the month the learner named, like 'May 2027'"
-        )
-        : String(
-          localized:
-            "Your deadline of \(shown) comes off your plan. You can set one again anytime.",
-          table: "Plan",
-          comment:
-            "Says the goal's deadline was dropped; the argument is a date like 'May 5, 2027' or 'May 5'"
-        ),
+        localized: "Every part of your goal, with no end date.", table: "Plan",
+        comment: "What dropping the goal's end date does"),
       asksOnAppear: asksStudyEverything
     ) { isPreviewing, ask in
       BusyButton(isBusy: isPreviewing, isRow: true, action: ask) {
-        Text("Study everything", tableName: "Plan", comment: "Drops the goal's deadline")
+        title
       }
     }
-  }
-
-  private static func longDate(_ date: Date) -> String {
-    date.formatted(Date.FormatStyle(date: .long, time: .omitted, timeZone: .gmt))
   }
 
   /// Core's `getTargetDateBounds`.
@@ -192,15 +158,9 @@ func planNoticeDayText(_ noticeDay: GoalPlan.Schedule.NoticeDay, document: ExamD
     )
   }
 
-  if document == .notice {
-    return Text(
-      "The exam notice says \(date).", tableName: "Plan",
-      comment: "The exam's day its notice gives; the argument is a date like 'May 5, 2027'")
-  }
-
   return Text(
-    "The exam's official calendar says \(date).", tableName: "Plan",
+    "The exam is on \(date).", tableName: "Plan",
     comment:
-      "A language certificate's day its official calendar gives; the argument is a date like 'May 5, 2027'"
+      "The exam's day its notice or official calendar gives; the argument is a date like 'May 5, 2027'"
   )
 }

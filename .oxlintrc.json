@@ -180,7 +180,6 @@
     "zoonk/no-page-top-spacing": "off",
     "zoonk/no-plus-badge": "off",
     "zoonk/one-eyebrow": "off",
-    "zoonk/one-overlay-piece": "off",
     "zoonk/no-hand-made-fold": "off",
     "zoonk/no-hand-placed-icon-button": "off",
     "zoonk/one-answer-option": "off",
@@ -334,11 +333,7 @@
     },
     {
       "files": ["packages/ui/src/**"],
-      "rules": {
-        "zoonk/no-page-top-spacing": "off",
-        "zoonk/one-back-link": "off",
-        "zoonk/one-overlay-piece": "off"
-      }
+      "rules": { "zoonk/no-page-top-spacing": "off", "zoonk/one-back-link": "off" }
     },
     {
       "files": ["packages/ui/src/**", "packages/oxlint-plugin/**"],

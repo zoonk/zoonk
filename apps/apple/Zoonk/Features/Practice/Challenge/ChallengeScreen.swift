@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Writes its questions first when the bank holds too few, only on the learner's tap. Plus-only
-/// challenges stay visible with a lock.
+/// Writes its questions first when the bank holds too few, only on the learner's tap. A challenge
+/// that needs a subscription shows the gate once it's opened.
 struct ChallengeScreen: View {
   let planItemId: String
   var sessionId: String?
@@ -10,7 +10,6 @@ struct ChallengeScreen: View {
   @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
   @Environment(\.dismiss) private var dismiss
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @State private var currentPlanItemId: String?
   @State private var load: PracticeLoad<Components.Schemas.Challenge> = .loading
   @State private var isStarting = false
@@ -91,10 +90,9 @@ struct ChallengeScreen: View {
       }
 
       VStack(alignment: .leading, spacing: 6) {
-        if let eyebrow = eyebrow(challenge) {
-          Text(eyebrow)
-            .typeStyle(.eyebrow)
-            .foregroundStyle(.faint)
+        if challenge.rematch, isCheckpoint(challenge), challenge.status != .done {
+          Chip(Text("Rematch", tableName: "Practice", comment: "Over a challenge's second go"))
+            .padding(.bottom, 2)
         }
 
         titleText(challenge)
@@ -130,50 +128,30 @@ struct ChallengeScreen: View {
           .foregroundStyle(.mutedForeground)
       }
 
-      if isLocked(challenge), !isNoticeInBar {
-        plusNotice(challenge)
-      }
-
-      if let result = challenge.result, challenge.status == .done, !won {
-        Label {
-          Text(
-            result.passed
-              ? LocalizedStringResource(
-                "You beat the Trickster!", table: "Practice", comment: "A won phase challenge.")
-              : LocalizedStringResource(
-                "Challenge passed", table: "Practice", comment: "A finished challenge.")
-          )
-          Text("\(result.correct)/\(result.total)").monospacedDigit()
-        } icon: {
-          Image(systemName: "checkmark.seal")
-        }
+      if isLocked(challenge) {
+        gateWords(challenge)
       }
 
       if !challenge.topics.isEmpty, !challenge.mock {
-        VStack(alignment: .leading, spacing: 8) {
-          SectionTitle(
-            Text(
-              challenge.kind == .weekly
-                ? LocalizedStringResource(
-                  "This week's topics", table: "Practice",
-                  comment: "Heading over a weekly challenge's topics.")
-                : challenge.status == .done
-                  ? LocalizedStringResource(
-                    "What he asked", table: "Practice",
-                    comment: "Heading over a finished phase challenge's topics.")
-                  : LocalizedStringResource(
-                    "What he'll ask", table: "Practice",
-                    comment: "Heading over a phase challenge's topics.")
-            )
-          )
-          .accessibilityAddTraits(.isHeader)
-
+        // A closed row the learner can open: the intro is the character and one sentence.
+        DisclosureGroup {
           ChallengeTopicRows(topics: challenge.topics.map { (name: $0.name, area: $0.subject) })
+        } label: {
+          Text(
+            challenge.kind == .weekly
+              ? LocalizedStringResource(
+                "This week's topics", table: "Practice",
+                comment: "Opens a weekly challenge's topics.")
+              : challenge.status == .done
+                ? LocalizedStringResource(
+                  "What he asked", table: "Practice",
+                  comment: "Opens a finished Trickster duel's topics.")
+                : LocalizedStringResource(
+                  "What he'll ask", table: "Practice", comment: "Opens a Trickster duel's topics.")
+          )
+          .typeStyle(.rowTitle)
         }
-      }
-
-      if let rule = duelRule(challenge) {
-        Text(rule).typeStyle(.note).foregroundStyle(.mutedForeground)
+        .tint(.primary)
       }
 
       if isWriting {
@@ -186,8 +164,7 @@ struct ChallengeScreen: View {
             )
             .typeStyle(.body.weight(.semibold))
             Text(
-              "We're writing its questions. It starts here when they're ready.",
-              tableName: "Practice",
+              "It starts here when it's ready.", tableName: "Practice",
               comment: "A challenge waits for its questions."
             )
             .typeStyle(.note).foregroundStyle(.mutedForeground)
@@ -251,14 +228,9 @@ struct ChallengeScreen: View {
   @ViewBuilder
   private func actions(_ challenge: Components.Schemas.Challenge) -> some View {
     if isLocked(challenge) {
-      if isNoticeInBar {
-        plusNotice(challenge)
-      }
-
       PracticeMainButton(
         title: LocalizedStringResource(
-          "See Plus", table: "Practice",
-          comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"."),
+          "Subscribe", table: "Practice", comment: "Opens the subscription page."),
         icon: .forward
       ) {
         hooks.navigate(.subscription)
@@ -266,6 +238,10 @@ struct ChallengeScreen: View {
     } else if challenge.status == .done || challenge.status == .tried,
       let blockId = challenge.blockId
     {
+      if let status = statusLine(challenge) {
+        Text(status).typeStyle(.note).foregroundStyle(.mutedForeground)
+      }
+
       PracticeMainButton(
         title: LocalizedStringResource(
           "See how it went", table: "Practice", comment: "Opens a finished checkpoint's result."),
@@ -295,9 +271,10 @@ struct ChallengeScreen: View {
           }
 
           PracticeMainButton(
-            title: challenge.mock
+            title: challenge.status == .started
               ? LocalizedStringResource(
-                "Start the mock exam", table: "Practice", comment: "Starts a mock exam challenge.")
+                "Continue", table: "Practice",
+                comment: "Goes back into a challenge already started.")
               : LocalizedStringResource("Start", table: "Practice", comment: "Starts a challenge."),
             icon: .play, isBusy: isStarting || isWriting,
             isDisabled: isMoving
@@ -305,8 +282,8 @@ struct ChallengeScreen: View {
         }
       }
     } else {
-      if let wait = waitLine(challenge) {
-        Text(wait).typeStyle(.note).foregroundStyle(.mutedForeground)
+      if let status = statusLine(challenge) {
+        Text(status).typeStyle(.note).foregroundStyle(.mutedForeground)
       }
 
       if challenge.canMove, moved == nil {
@@ -324,35 +301,72 @@ struct ChallengeScreen: View {
     [.ready, .started].contains(challenge.status) && challenge.waitReason == nil
   }
 
-  /// Main's footer line for a challenge with nothing to start yet. A dated one already says its day
-  /// above.
-  private func waitLine(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource? {
-    let waits = [.ready, .started].contains(challenge.status) && challenge.waitReason != nil
+  /// Main's footer line: where the challenge stands when there's nothing to start yet, or when a
+  /// lost duel comes back.
+  private func statusLine(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource? {
+    switch challenge.status {
+    case .ready, .started:
+      guard challenge.waitReason != nil else {
+        return nil
+      }
 
-    guard waits || (challenge.status == .upcoming && challenge.date == nil) else {
+      return LocalizedStringResource(
+        "After today's lessons", table: "Today",
+        comment: "A challenge that opens once the lessons before it are done")
+    case .tried:
+      return CheckpointCopy.rematchTomorrow(lessons: challenge.reinforcementLessons)
+    case .waiting:
+      let empty = challenge.questions == 0 && challenge.call == nil && !challenge.mock
+
+      if empty, let date = challenge.date, date > challenge.today {
+        return opensLine(challenge)
+      }
+
+      return empty
+        ? LocalizedStringResource(
+          "This challenge isn't ready yet.", table: "Practice",
+          comment: "A challenge whose questions aren't there yet.")
+        : LocalizedStringResource(
+          "Next time you study", table: "Practice",
+          comment: "A challenge that opens in the learner's next study session.")
+    case .upcoming, .queued:
+      return opensLine(challenge)
+    case .done, .plusRequired:
       return nil
     }
+  }
 
-    return LocalizedStringResource(
-      "Opens after this phase's lessons", table: "Practice",
-      comment: "A phase challenge waiting for earlier lessons.")
+  /// When a challenge opens: its day, else once the lessons before it are done.
+  private func opensLine(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource {
+    guard let date = challenge.date.flatMap(Self.parseDay),
+      let today = Self.parseDay(challenge.today)
+    else {
+      return LocalizedStringResource(
+        "Opens when you finish the lessons before it", table: "Practice",
+        comment: "A challenge waiting for the lessons before it.")
+    }
+
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = .gmt
+    let days = max(1, calendar.dateComponents([.day], from: today, to: date).day ?? 1)
+
+    return days == 1
+      ? LocalizedStringResource(
+        "Opens tomorrow", table: "Practice", comment: "A challenge that opens tomorrow.")
+      : LocalizedStringResource(
+        "Opens in \(days) days", table: "Practice",
+        comment: "How many days until a challenge opens.")
   }
 
   private func isLocked(_ challenge: Components.Schemas.Challenge) -> Bool {
     challenge.locked || challenge.status == .plusRequired
   }
 
-  /// As main's footer, what Plus opens sits right above the way to it; at accessibility sizes the
-  /// pinned bar would cover the screen with it, so it reads with the rest instead.
-  private var isNoticeInBar: Bool {
-    !dynamicTypeSize.isAccessibilitySize
-  }
-
   /// Before its day a challenge has nothing to do yet: no pinned bar.
   private func hasActions(_ challenge: Components.Schemas.Challenge) -> Bool {
     isLocked(challenge)
       || challenge.canMove
-      || waitLine(challenge) != nil
+      || statusLine(challenge) != nil
       || [.ready, .started].contains(challenge.status)
       || ([.done, .tried].contains(challenge.status) && challenge.blockId != nil)
   }
@@ -372,35 +386,6 @@ struct ChallengeScreen: View {
 
   private func isTrickster(_ challenge: Components.Schemas.Challenge) -> Bool {
     isCheckpoint(challenge) && challenge.call == nil
-  }
-
-  private func eyebrow(_ challenge: Components.Schemas.Challenge) -> String? {
-    let phase = challenge.phase.map { $0.value1.index + 1 }
-
-    guard isCheckpoint(challenge) else {
-      return when(challenge)
-    }
-
-    let name =
-      if challenge.kind == .finalBoss {
-        String(
-          localized: "Final challenge", table: "Practice",
-          comment: "Title of the final challenge block.")
-      } else if let phase {
-        String(
-          localized: "Phase \(phase) challenge", table: "Practice",
-          comment: "Eyebrow naming a phase's checkpoint, as in “Phase 2 challenge”.")
-      } else {
-        String(
-          localized: "Phase challenge", table: "Practice",
-          comment: "Title of a phase challenge block.")
-      }
-
-    return challenge.rematch
-      ? String(
-        localized: "New try\u{00A0}· \(name)", table: "Practice",
-        comment: "Eyebrow of a lost checkpoint's rematch; the argument names the checkpoint.")
-      : name
   }
 
   /// A mock always says when it is; a weekly challenge only once it has a start time, as on main.
@@ -425,26 +410,6 @@ struct ChallengeScreen: View {
     }
 
     return date.formatted(Date.FormatStyle(timeZone: .gmt).hour().minute())
-  }
-
-  private func duelRule(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource? {
-    if challenge.mock || challenge.call != nil {
-      return nil
-    }
-
-    if challenge.kind == .weekly {
-      return LocalizedStringResource(
-        "You'll see right or wrong after each answer, and why at the end.", table: "Practice",
-        comment: "How a weekly challenge gives feedback, on its intro.")
-    }
-
-    return challenge.status == .done
-      ? nil
-      : LocalizedStringResource(
-        "You'll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day.",
-        table: "Practice",
-        comment:
-          "How a phase challenge gives feedback, and that a loss brings a rematch, on its intro.")
   }
 
   private func titleText(_ challenge: Components.Schemas.Challenge) -> Text {
@@ -476,55 +441,64 @@ struct ChallengeScreen: View {
         ? LocalizedStringResource(
           "You beat the Trickster!", table: "Practice", comment: "A won phase challenge.")
         : LocalizedStringResource(
-          "The Trickster", table: "Practice", comment: "Title of a phase or final checkpoint duel.")
+          "Beat the Trickster", table: "Practice", comment: "Title of a Trickster duel's intro.")
     }
 
     switch challenge.kind {
     case .weekly:
       return LocalizedStringResource(
         "Weekly challenge", table: "Practice", comment: "Title of the weekly challenge block.")
-    case .finalBoss:
+    case .finalBoss, .boss:
       return LocalizedStringResource(
-        "Final challenge", table: "Practice", comment: "Title of the final challenge block.")
-    case .boss:
-      return challenge.rematch
-        ? LocalizedStringResource(
-          "Challenge, second try", table: "Practice",
-          comment: "Title of a lost phase challenge's rematch.")
-        : LocalizedStringResource(
-          "Phase challenge", table: "Practice", comment: "Title of a phase challenge block.")
+        "Mock exam", table: "Practice", comment: "Title of a mock exam challenge.")
     }
   }
 
-  private func description(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource {
+  private func description(_ challenge: Components.Schemas.Challenge) -> String {
     if challenge.call != nil {
-      return LocalizedStringResource(
-        "A live call where you get your point across. Speak or type.", table: "Practice",
+      return String(
+        localized: "A live call where you get your point across. Speak or type.", table: "Practice",
         comment: "What a challenge call is.")
     }
 
     if challenge.mock {
-      return LocalizedStringResource(
-        "Your result only shows at the end, like on exam day.", table: "Practice",
+      return String(
+        localized: "Your result only shows at the end, like on exam day.", table: "Practice",
         comment: "What a mock exam challenge is.")
     }
 
     if challenge.kind == .weekly {
-      return LocalizedStringResource(
-        "Questions from what you studied this week, with no hints.", table: "Practice",
+      return String(
+        localized: "Questions on what you studied this week.", table: "Practice",
         comment: "What the weekly challenge asks.")
     }
 
+    let count = challenge.questions.flatMap { $0 > 0 ? $0 : nil }
+    let passMark = challenge.passMark.flatMap { $0 > 0 ? $0 : nil }
+
     if (challenge.recordings ?? 0) > 0 {
-      return LocalizedStringResource(
-        "Questions on recordings from this phase, played as in the exam, with no hints.",
+      guard let count, let passMark else {
+        return String(
+          localized: "Questions on recordings, played as in the exam.", table: "Practice",
+          comment: "What a listening Trickster duel asks, before its count is known.")
+      }
+
+      return String(
+        localized:
+          "\(count) questions on recordings, played as in the exam. Get \(passMark) right to win.",
         table: "Practice",
-        comment: "What a listening phase challenge asks.")
+        comment: "What a listening Trickster duel asks; then how many right answers win it")
     }
 
-    return LocalizedStringResource(
-      "Mixed questions from this phase, with no hints.", table: "Practice",
-      comment: "What a phase challenge asks.")
+    guard let count, let passMark else {
+      return String(
+        localized: "Questions on what you just learned.", table: "Practice",
+        comment: "What a Trickster duel asks, before its count is known.")
+    }
+
+    return String(
+      localized: "\(count) questions on what you just learned. Get \(passMark) right to win.",
+      table: "Practice", comment: "What a Trickster duel asks; then how many right answers win it")
   }
 
   /// Main's `TaskMeta`: the facts in mono, then the Brain Power a win brings in its color.
@@ -552,21 +526,23 @@ struct ChallengeScreen: View {
     return line
   }
 
+  /// A weekly challenge's or a mock's day leads; a Trickster duel says its count in its sentence.
   private func facts(_ challenge: Components.Schemas.Challenge) -> [String] {
     var facts: [String] = []
+
+    if let when = when(challenge) {
+      facts.append(when)
+    }
+
+    if isTrickster(challenge) {
+      return facts
+    }
 
     if let questions = challenge.questions, questions > 0 {
       facts.append(
         String(
           localized: "\(questions) questions", table: "Practice",
           comment: "How many questions a test asks."))
-    }
-
-    if let passMark = challenge.passMark, challenge.kind != .weekly, passMark > 0 {
-      facts.append(
-        String(
-          localized: "\(passMark) right to win", table: "Practice",
-          comment: "A phase challenge's pass mark."))
     }
 
     // Main says how long only a mock or a call takes; a duel's length is its questions.
@@ -583,23 +559,39 @@ struct ChallengeScreen: View {
     return facts
   }
 
+  /// The gate's words, shown once the learner opened the challenge (lane E's 13.1 and 13.2).
   @ViewBuilder
-  private func plusNotice(_ challenge: Components.Schemas.Challenge) -> some View {
-    if challenge.mock {
-      PlusNotice(
-        description: Text(
-          "Mock exams come with Plus: whenever you want, and every week in your plan.",
-          tableName: "Practice", comment: "A mock exam challenge is Plus-only."),
-        showsSeePlus: false)
-    } else if challenge.call != nil {
-      PlusNotice(
-        description: Text(
-          "Challenge calls come with Plus. Your plan keeps going without them.",
-          tableName: "Practice", comment: "A challenge call is Plus-only."),
-        showsSeePlus: false)
-    } else {
-      FreeWeekOverNotice(showsSeePlus: false)
+  private func gateWords(_ challenge: Components.Schemas.Challenge) -> some View {
+    VStack(alignment: .leading, spacing: 4) {
+      if challenge.mock {
+        Text("Mock exams need a subscription", tableName: "Practice", comment: "A mock exam's gate")
+          .typeStyle(.body.weight(.semibold))
+      } else if challenge.call != nil {
+        Text(
+          "This call needs a subscription", tableName: "Practice",
+          comment: "A challenge call's gate"
+        )
+        .typeStyle(.body.weight(.semibold))
+        Text(
+          "Your plan goes on without it.", tableName: "Practice", comment: "A challenge call's gate"
+        )
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+      } else {
+        Text(
+          "You've used your free lessons", tableName: "Practice",
+          comment: "A Trickster duel's gate once the free plan's lessons are used"
+        )
+        .typeStyle(.body.weight(.semibold))
+        Text(
+          "You can still review and practice your mistakes.", tableName: "Practice",
+          comment: "A Trickster duel's gate once the free plan's lessons are used"
+        )
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+      }
     }
+    .frame(maxWidth: .infinity, alignment: .leading)
   }
 
   private static func parseDay(_ day: String) -> Date? {
@@ -792,7 +784,10 @@ struct ChallengeScreen: View {
   }
 
   private func movedDetail(_ effect: PlanEffect?) -> String {
-    let leftOut = effect.flatMap { $0.lessonsRemoved > 0 ? planLessonsEffectText($0) : nil }
+    let leftOut = effect.flatMap {
+      $0.lessonsRemoved > 0
+        ? PlanChangeEffect.consequence($0, today: PlanDate.isoDate(.now))?.text : nil
+    }
 
     return [
       String(

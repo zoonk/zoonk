@@ -224,7 +224,7 @@ private fun CheckpointIntro(
         conversation = call.intro,
         start = start,
         launcher = launcher,
-        onSeePlus = { exits.open(AppRoute.Subscription) },
+        onSubscribe = { exits.open(AppRoute.Subscription) },
         onClose = exits::close,
     )
 }

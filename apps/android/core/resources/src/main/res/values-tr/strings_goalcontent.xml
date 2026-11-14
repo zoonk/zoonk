@@ -43,7 +43,6 @@
   "goalcontent_mastery_right": "343ef601077b48bc752d3960da3011747f24f05a9bf8cca46b23f3edf93be782",
   "goalcontent_material_topic_count": "e839f6dc6ef7f24eb77780973d1f7c900149426f01b4547e2b97c2f5ba0cdff1",
   "goalcontent_matrix_title": "dc852a02e0adc20eb6a02dfcc51107ad26c61c6f6fe19ddbe864a36deb1a92f8",
-  "goalcontent_module": "984c2d7581fa7ffd04a1c0493974c10f1a803d90aaedff6aa10d5c5791271653",
   "goalcontent_module_count": "58109cb58a65e0bfab9ff266cb5aa9ef27fb25d0a23860f890e75600622e17d0",
   "goalcontent_modules": "fd5ee7a77628ff793c52a7856d78007b0c660186b8c6b8085c05f0001ae5b9c3",
   "goalcontent_more_chapters": "0fba75557ce1fb2a6344b53c3726fe490235a05e05d9fa41605e5a1d02a5c510",
@@ -75,8 +74,6 @@
   "goalcontent_skipped_known": "753d9ca0509ba763ec31d6827a3de970556490ff5fc1df43ecd66cceedba6eb8",
   "goalcontent_start": "f7ad2965f13dfc17a2aed81b6d6b8ced8eaee68137dd71c1be689ab332628eaa",
   "goalcontent_studied": "a343b22f5e86829b4b3d93f9c2a2a496302d3015a7b7923743b6ae5650212739",
-  "goalcontent_subject": "ccfa913f7a81fca291728d29a2b0947bd82be4bc96eb2548d7bce539b856d706",
-  "goalcontent_subject_chapter": "f5f9450bbb1958b8a37f103a6d7e6c5671ea9620297da297144f5309abe92816",
   "goalcontent_subject_count": "240c585c5f049fcb075f02dfe2355fe75d8983215fdd7a8a4c6789c431047103",
   "goalcontent_subject_missing": "3848c562734b405aae7a49ec0fef40ee917c51124cf36d43f3aafbd0fff76b96",
   "goalcontent_subject_skipped": "6a0a79650c550a312d99f69590ee5205ccc6a32bce19973b0b3a176f0fde841c",
@@ -196,10 +193,6 @@
         <item quantity="one">%d sınavla da ortak</item>
         <item quantity="other">%d sınavla da ortak</item>
     </plurals>
-    <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
-    <string name="goalcontent_subject">Branş</string>
-    <!-- Eyebrow of a subject's page for a module of the learner's plan. -->
-    <string name="goalcontent_module">Modül</string>
     <string name="goalcontent_from_material">Materyalinden</string>
     <!-- How much of the exam a subject is: "20% of the exam". -->
     <string name="goalcontent_share_of_exam">Sınavdaki payı: %1$s</string>
@@ -286,8 +279,6 @@
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
     <string name="goalcontent_matrix_title">Soruların ölçtüğü beceriler</string>
     <string name="goalcontent_see_all">Tümünü gör (%1$s)</string>
-    <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
-    <string name="goalcontent_subject_chapter">%1$s · Ünite %2$s</string>
     <string name="goalcontent_chapter_number">Ünite %1$s</string>
     <string name="goalcontent_progress">İlerleme</string>
     <string name="goalcontent_practice">Alıştırma</string>

@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
@@ -28,7 +27,6 @@ data class ListedLesson(
     val minutes: Int,
     val done: Boolean,
     val next: Boolean,
-    val plusRequired: Boolean = false,
 )
 
 /**
@@ -97,11 +95,8 @@ private fun LessonRow(
         highlighted = isNext,
         leading = { StatusMark(status, contentDescription = label) },
         meta =
-            if (lesson.plusRequired || lesson.minutes > 0) {
-                {
-                    if (lesson.plusRequired) PlusMark()
-                    if (lesson.minutes > 0) Text(formatMinutes(lesson.minutes, locale))
-                }
+            if (lesson.minutes > 0) {
+                { Text(formatMinutes(lesson.minutes, locale)) }
             } else {
                 null
             },

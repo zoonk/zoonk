@@ -1,10 +1,13 @@
 "use client";
 
+import { COLUMN_CONTENT_CLASS } from "@/components/public/column-screen";
+import { EnterButton } from "@zoonk/learn/enter-button";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { Button } from "@zoonk/ui/components/button";
 import { Field, FieldLabel } from "@zoonk/ui/components/field";
 import { Input } from "@zoonk/ui/components/input";
+import { cn } from "@zoonk/ui/lib/utils";
 import {
-  CheckIcon,
   CircleCheckIcon,
   CircleXIcon,
   ClockIcon,
@@ -12,7 +15,6 @@ import {
   FilePenLineIcon,
   PencilOffIcon,
   ShieldAlertIcon,
-  XIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useActionState, useId } from "react";
@@ -112,38 +114,41 @@ function Grant({ email }: { email: string }) {
   );
 }
 
+/**
+ * Approve is first in the form, so Enter in the code field approves as before, and drawn last as the
+ * bar's main action. Enter alone never approves a login: the learner presses it.
+ */
 function DecisionButtons() {
   const t = useExtracted();
   const { data, pending } = useFormStatus();
   const deciding = pending ? data?.get("decision") : null;
 
   return (
-    <div className="flex flex-wrap gap-2">
-      <Button
+    <BottomBarActions>
+      <EnterButton
         busy={deciding === "approve"}
         disabled={deciding === "deny"}
-        icon={<CheckIcon aria-hidden="true" />}
+        enter="off"
         name="decision"
-        size="lg"
         type="submit"
         value="approve"
       >
         {t("Approve")}
-      </Button>
+      </EnterButton>
 
       <Button
         busy={deciding === "deny"}
+        className="order-first"
         disabled={deciding === "approve"}
-        icon={<XIcon aria-hidden="true" />}
         name="decision"
-        size="lg"
+        size="xl"
         type="submit"
         value="deny"
         variant="outline"
       >
         {t("Deny")}
       </Button>
-    </div>
+    </BottomBarActions>
   );
 }
 
@@ -237,25 +242,25 @@ export function CliLoginForm({ email, userCode }: { email: string; userCode?: st
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-8">
-      {userCode ? (
-        <CodeReadout userCode={userCode} />
-      ) : (
-        <CodeField defaultValue={failed?.userCode} errorId={failed ? errorId : undefined} />
-      )}
+    <form action={formAction} className="contents">
+      <div className={cn(COLUMN_CONTENT_CLASS, "mt-2 flex flex-1 flex-col gap-8")}>
+        {userCode ? (
+          <CodeReadout userCode={userCode} />
+        ) : (
+          <CodeField defaultValue={failed?.userCode} errorId={failed ? errorId : undefined} />
+        )}
 
-      <Grant email={email} />
+        <Grant email={email} />
 
-      <div className="flex flex-col gap-4">
         <p className="flex gap-3 text-sm text-pretty">
           <ShieldAlertIcon aria-hidden="true" className="text-warning mt-0.5 size-4 shrink-0" />
           {t("Only approve a login you started yourself. If someone sent you this link, deny it.")}
         </p>
-
-        <DecisionButtons />
-
-        {failed && <FailureNote failure={failed.failure} id={errorId} />}
       </div>
+
+      <BottomBar note={failed && <FailureNote failure={failed.failure} id={errorId} />}>
+        <DecisionButtons />
+      </BottomBar>
     </form>
   );
 }

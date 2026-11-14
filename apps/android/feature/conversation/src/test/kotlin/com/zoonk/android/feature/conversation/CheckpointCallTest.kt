@@ -45,7 +45,7 @@ class CheckpointCallTest {
         harness.api.writings += "run-1"
         show()
 
-        compose.onNodeWithText("Get the call ready").performClick()
+        compose.onNodeWithText("Start").performClick()
         compose.waitForIdle()
 
         assertEquals(listOf(CallRequest.Checkpoint(block), CallRequest.Checkpoint(block)), harness.api.starts)

@@ -55,6 +55,7 @@ internal fun TodayWeek(
     challenge: TodayWeeklyChallenge?,
     onOpen: (AppRoute) -> Unit,
     modifier: Modifier = Modifier,
+    exam: Boolean = false,
 ) {
     val week = day.week
     // The week marks the current local day even while a lesson carries the previous day's session.
@@ -68,7 +69,7 @@ internal fun TodayWeek(
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             week.days.forEach { weekDay ->
                 val challengeDay = challenge?.takeIf { it.date == weekDay.date }
-                DayCell(weekDay, weekDate, challengeDay, names, Modifier.weight(1f))
+                DayCell(weekDay, weekDate, challengeDay, names, exam, Modifier.weight(1f))
             }
         }
 
@@ -91,11 +92,12 @@ private fun DayCell(
     weekDate: LocalDate,
     challenge: TodayWeeklyChallenge?,
     names: WeekdayNames,
+    exam: Boolean,
     modifier: Modifier,
 ) {
     val dayOfWeek = day.date.toJavaLocalDate().dayOfWeek
     val weekday = names.full.getValue(dayOfWeek)
-    val status = dayStatus(day, weekDate)
+    val status = dayStatus(day, weekDate, exam)
     val description =
         when {
             challenge == null -> stringResource(R.string.today_week_day, weekday, status)
@@ -236,19 +238,49 @@ private val WeekDay.isOutsidePlan get() =
 private fun dayStatus(
     day: WeekDay,
     weekDate: LocalDate,
+    exam: Boolean,
 ): String =
     stringResource(
         when {
-            day.hitGoal -> R.string.today_week_goal_reached
-            day.studied -> R.string.today_week_studied
-            day.kind == StudySessionWeekDaysInner.Kind.EXAM -> R.string.today_week_exam_day
-            day.kind == StudySessionWeekDaysInner.Kind.DEADLINE -> R.string.today_week_deadline
-            day.kind == StudySessionWeekDaysInner.Kind.BEFORE_START -> R.string.today_week_before_plan
-            day.kind == StudySessionWeekDaysInner.Kind.AFTER_END -> R.string.today_week_after_date
-            day.kind == StudySessionWeekDaysInner.Kind.REST -> R.string.today_week_rest_day
-            day.isToday -> R.string.today_week_today
-            day.date > weekDate -> R.string.today_week_planned
-            else -> R.string.today_week_not_studied
+            day.hitGoal -> {
+                R.string.today_week_goal_reached
+            }
+
+            day.studied -> {
+                R.string.today_week_studied
+            }
+
+            day.kind == StudySessionWeekDaysInner.Kind.EXAM -> {
+                R.string.today_week_exam_day
+            }
+
+            day.kind == StudySessionWeekDaysInner.Kind.DEADLINE -> {
+                R.string.today_week_deadline
+            }
+
+            day.kind == StudySessionWeekDaysInner.Kind.BEFORE_START -> {
+                R.string.today_week_before_plan
+            }
+
+            day.kind == StudySessionWeekDaysInner.Kind.AFTER_END -> {
+                if (exam) R.string.today_week_after_exam else R.string.today_week_after_date
+            }
+
+            day.kind == StudySessionWeekDaysInner.Kind.REST -> {
+                R.string.today_week_rest_day
+            }
+
+            day.isToday -> {
+                R.string.today_week_today
+            }
+
+            day.date > weekDate -> {
+                R.string.today_week_planned
+            }
+
+            else -> {
+                R.string.today_week_not_studied
+            }
         },
     )
 
@@ -287,7 +319,7 @@ private fun ChallengeRow(
     val facts: List<String>
 
     if (challenge.isFullReview) {
-        name = stringResource(R.string.session_block_full_review)
+        name = stringResource(R.string.session_block_review)
         facts = listOf(weekday, stringResource(R.string.today_week_full_review_detail))
     } else {
         name =

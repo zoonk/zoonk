@@ -1,10 +1,7 @@
-import { getProgressDayCountLabel } from "@/components/progress/progress-day-count-label";
 import { type EnergyData } from "@zoonk/core/progress/energy";
 import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
-import { formatMetricPercent } from "@zoonk/utils/number";
-import { BatteryFullIcon, GaugeIcon, ZapIcon } from "lucide-react";
+import { BatteryFullIcon, ZapIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
-import { STAT_PAGE_TILES_CLASS, StatsLine } from "../_components/stats-tiles";
 
 const PERCENT = 100;
 
@@ -20,12 +17,10 @@ export async function EnergyTiles({
   const t = await getExtracted();
   const format = await getFormatter();
 
-  const fullDays = insights
-    ? await getProgressDayCountLabel({ count: insights.fullEnergyDays })
-    : DASH;
+  const fullDays = insights ? format.number(insights.fullEnergyDays) : DASH;
 
   return (
-    <StatTiles className={STAT_PAGE_TILES_CLASS}>
+    <StatTiles>
       <StatTile
         detail={t("Today")}
         icon={<ZapIcon />}
@@ -37,31 +32,11 @@ export async function EnergyTiles({
         })}
       />
       <StatTile
-        detail={t("Since you started")}
-        icon={<GaugeIcon />}
-        label={t("Average")}
-        tone="energy"
-        value={insights ? formatMetricPercent({ format, value: insights.averageEnergy }) : DASH}
-      />
-      <StatTile
-        detail={t("Days with full Energy")}
         icon={<BatteryFullIcon />}
-        label={t("At 100%")}
+        label={t("Days at 100%")}
         tone="energy"
         value={fullDays}
       />
     </StatTiles>
-  );
-}
-
-export async function EnergyLine() {
-  const t = await getExtracted();
-
-  return (
-    <StatsLine>
-      {t(
-        "Every lesson you finish raises your Energy. On days off it drops a little, and your belt and progress stay.",
-      )}
-    </StatsLine>
   );
 }

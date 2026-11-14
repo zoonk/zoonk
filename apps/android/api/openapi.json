@@ -23029,7 +23029,7 @@
     },
     "/me/study-reminder/offer": {
       "post": {
-        "description": "Send when the offer after a plan lesson shows (`reminderOffer` in the block's completion). It's asked once per learner, so show it only when `claimed` is true.",
+        "description": "Send when the offer shows on the day's summary (`reminderOffer` in the session's summary). It's asked once per learner, so show it only when `claimed` is true.",
         "operationId": "claimCurrentUserStudyReminderOffer",
         "security": [
           {
@@ -26959,7 +26959,7 @@
             ]
           },
           "homeCountry": {
-            "description": "Where the learner says they live, or null to clear it. Used for new goals and personal examples; existing plans keep their content country.",
+            "description": "Where the learner lives. It starts as the country they signed in from and they can change it; null clears it, and the next sign-in fills it again. Used for new goals and personal examples, never for prices; existing plans keep their content country.",
             "nullable": true,
             "type": "string"
           },
@@ -77237,7 +77237,7 @@
       },
       "StudyReminderOffer": {
         "nullable": true,
-        "description": "After a plan lesson, while no reminder channel is on and the offer was never shown: the one-time offer of study reminders, with the `time` they would start at (the saved time, the goal's study time or 19:00). POST /me/study-reminder/offer claims it. Null otherwise",
+        "description": "While no reminder channel is on and the offer was never shown: offer study reminders at `time` (the saved time, the goal's study time or 19:00). Show it on the day's summary, where the learner is done for the day, never at a lesson's end, and claim it with POST /me/study-reminder/offer when it's shown. Null otherwise",
         "type": "object",
         "properties": {
           "time": {
@@ -97198,6 +97198,9 @@
             "minimum": 0,
             "maximum": 9007199254740991
           },
+          "reminderOffer": {
+            "$ref": "#/components/schemas/StudyReminderOffer"
+          },
           "sessionId": {
             "type": "string",
             "format": "uuid",
@@ -97294,6 +97297,7 @@
           "preparation",
           "progress",
           "questions",
+          "reminderOffer",
           "sessionId",
           "skillsMoved",
           "status",

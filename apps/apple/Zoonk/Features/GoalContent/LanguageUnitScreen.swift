@@ -146,13 +146,12 @@ struct LanguageUnitScreen: View {
           ProgressView()
         }
       }
-      .navigationTitle(
-        unit.value.map { Text($0.unit.title) }
-          ?? Text(
-            "Unit", tableName: "Navigation",
+      .barTitleAfterHero(
+        unit.value?.unit.title
+          ?? String(
+            localized: "Unit", table: "Navigation",
             comment: "Title shown instead of a unit of a language plan until it can open")
       )
-      .barTitleAfterHero(unit.value?.unit.title ?? "")
       .toolbar {
         TutorAskToolbarItem(scope: .chapter(chapterId: chapterId))
 
@@ -212,6 +211,21 @@ private struct LanguageUnitContent: View {
         practice
       }
     }
+    .bottomBar {
+      if let next = unit.lessons.first(where: { $0.state == .next }) {
+        Button {
+          router.open(.lesson(lessonId: next.lessonId))
+        } label: {
+          if unit.lessons.contains(where: { $0.state == .done }) {
+            Text("Continue", tableName: "Plan", comment: "Opens the unit's next lesson")
+          } else {
+            Text("Start", tableName: "Plan", comment: "Opens the unit's first lesson")
+          }
+        }
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+      }
+    }
     .onDisappear {
       callStart.cancel()
     }
@@ -221,45 +235,15 @@ private struct LanguageUnitContent: View {
   private var unitAndLessons: some View {
     let lessons = unit.lessons
     let done = lessons.filter { $0.state == .done }.count
-    let next = lessons.first { $0.state == .next }
 
     Section {
-      VStack(alignment: .leading, spacing: 6) {
-        if let eyebrow {
-          eyebrow
-            .typeStyle(.eyebrow)
-            .foregroundStyle(.faint)
-        }
+      PageHeader(Text(unit.unit.title), supporting: place)
 
-        Text(unit.unit.title)
-          .typeStyle(.pageTitle)
-          .accessibilityAddTraits(.isHeader)
-          .heroTitle()
-
-        if let description = unit.unit.description, !description.isEmpty {
-          Text(description)
-            .foregroundStyle(.mutedForeground)
-        }
-
-        if let next {
-          Button {
-            router.open(.lesson(lessonId: next.lessonId))
-          } label: {
-            Group {
-              if done > 0 {
-                Text("Continue", tableName: "Plan", comment: "Opens the unit's next lesson")
-              } else {
-                Text("Start", tableName: "Plan", comment: "Opens the unit's first lesson")
-              }
-            }
-            .frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.mainAction)
-          .controlSize(.large)
-          .padding(.top, 8)
-        }
+      if let description = unit.unit.description, !description.isEmpty {
+        Text(description)
+          .foregroundStyle(.mutedForeground)
+          .listRowSeparator(.hidden)
       }
-      .padding(.vertical, 4)
     }
 
     if !lessons.isEmpty {
@@ -492,7 +476,7 @@ private struct LanguageUnitContent: View {
   }
 
   /// A unit outside the learner's plan has no number.
-  private var eyebrow: Text? {
+  private var place: Text? {
     let range = unit.unit.levelRange.flatMap { $0.isEmpty ? nil : $0 }
 
     guard let position = unit.unit.position else {

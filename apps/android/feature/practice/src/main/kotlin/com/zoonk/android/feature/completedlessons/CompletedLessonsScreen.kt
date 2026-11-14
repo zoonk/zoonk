@@ -49,7 +49,7 @@ import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
-import com.zoonk.android.ui.scaffold.detailPagePadding
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.api.models.CompletedLesson
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -149,7 +149,7 @@ internal fun CompletedLessons(
     val days = list.`data`.groupBy { it.finishedOn.toJavaLocalDate() }
 
     BeforeFold { beforeFold ->
-        LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, detailPagePadding()) {
+        LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, pagePadding()) {
             item(key = "title", contentType = "title") {
                 // Main's page header: the goal's name over the page's title.
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {

@@ -534,7 +534,7 @@ private fun baseChoicesSentence(choices: List<BaseChoice>): String {
         if (essential > 0) pluralStringResource(R.plurals.plan_change_bases_essential, essential, essential) else null,
         if (quick > 0) pluralStringResource(R.plurals.plan_change_bases_quick, quick, quick) else null,
         if (skip > 0) pluralStringResource(R.plurals.plan_change_bases_skip, skip, skip) else null,
-    ).joinSentences()
+    ).let { stringResource(R.string.plan_change_bases, joinList(it)) }
 }
 
 @Composable
