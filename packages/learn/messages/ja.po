@@ -4772,12 +4772,6 @@ msgctxt "dhP2hY"
 msgid "Course complete"
 msgstr "コース修了"
 
-#. Shown when a learner tries to resume a paused goal while already following as many goals at once as they can without a subscription. Pausing a goal keeps its progress.
-#: src/journey/goal-actions.tsx
-msgctxt "7MouSk"
-msgid "You're following as many goals as you can for free. Pause another to resume this one, or subscribe."
-msgstr "無料で同時に取り組める目標の数が上限に達しています。この目標を再開するには、ほかの目標を一時停止するか、サブスクリプションに登録してください。"
-
 #: src/journey/goal-actions.tsx
 #: src/journey/rename-goal-dialog.tsx
 msgctxt "kvT_KU"
@@ -4805,7 +4799,7 @@ msgid "Resume your {goal} goal?"
 msgstr "目標「{goal}」を再開しますか？"
 
 #: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
+#: src/journey/resume-goal-bar.tsx
 msgctxt "3y9DGg"
 msgid "Resume"
 msgstr "再開する"
@@ -5310,6 +5304,11 @@ msgstr "目標名"
 msgctxt "ViPPTn"
 msgid "Your plan picks up from today, starting with the lessons planned for the days you paused."
 msgstr "今日から学習計画を再開し、休んでいた日に予定されていたレッスンから進めます。"
+
+#: src/journey/resume-goal-bar.tsx
+msgctxt "DuuVCx"
+msgid "That's as many goals as you can study at once. Pause another goal to resume this one."
+msgstr "同時に学習できる目標の上限に達しています。ほかの目標を一時停止すると、この目標を再開できます。"
 
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/plan-receipt.tsx
