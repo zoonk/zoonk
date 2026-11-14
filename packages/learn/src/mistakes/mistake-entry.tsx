@@ -191,8 +191,8 @@ export function MistakeEntryCard({
   const entryDate = useEntryDate();
   const { answerText } = useTrueFalseLabels(trueFalseLabels);
   const { snapshot } = mistake;
-  const answer = answerText(snapshot.answer);
-  const correct = answerText(snapshot.correctAnswer);
+  const answer = answerText({ answer: snapshot.answer, format: snapshot.format });
+  const correct = answerText({ answer: snapshot.correctAnswer, format: snapshot.format });
   const date = mistake.status === "fixed" && mistake.fixedAt ? mistake.fixedAt : mistake.createdAt;
 
   return (
