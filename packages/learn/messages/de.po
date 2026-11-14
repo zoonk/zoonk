@@ -12774,6 +12774,12 @@ msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "Lernbereiche"
 
+#. The search button at the end of the phone's tab bar, after the tabs.
+#: src/shell/learn-navigation.tsx
+msgctxt "xmcVZ0"
+msgid "Search"
+msgstr "Suchen"
+
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.tFFMkF"
 msgid "Pause"

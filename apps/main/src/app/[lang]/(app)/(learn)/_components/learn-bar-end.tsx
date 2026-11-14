@@ -57,26 +57,20 @@ function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
   );
 }
 
-type BarEndProps = {
-  /** A learner's way to the command palette; a visitor's is at the bar's start. */
-  search: React.ReactNode;
-  visitor: React.ReactNode;
-};
+/** A learner's search is the tab bar's last item; a visitor's, with no tab bar, starts the bar. */
+type BarEndProps = { visitor: React.ReactNode };
 
-function PendingBarEnd({ search, visitor }: BarEndProps) {
+function PendingBarEnd({ visitor }: BarEndProps) {
   return (
     <>
       <VisitorLook>{visitor}</VisitorLook>
-      <div className="signed-in:contents hidden">
-        {search}
-        <span aria-hidden="true" className={LEVEL_BOX_CLASS} />
-      </div>
+      <span aria-hidden="true" className={cn(LEVEL_BOX_CLASS, "signed-in:block hidden")} />
       <PendingAccountAvatar className="size-7" />
     </>
   );
 }
 
-function BarEnd({ search, visitor }: BarEndProps) {
+function BarEnd({ visitor }: BarEndProps) {
   const learner = useFrameLearner();
 
   if (learner.status === "visitor") {
@@ -84,14 +78,13 @@ function BarEnd({ search, visitor }: BarEndProps) {
   }
 
   if (learner.status !== "ready") {
-    return <PendingBarEnd search={search} visitor={visitor} />;
+    return <PendingBarEnd visitor={visitor} />;
   }
 
   const { level } = learner.summary;
 
   return (
     <>
-      {search}
       {level && <LevelLink level={level} />}
       <UserAvatarMenu />
     </>

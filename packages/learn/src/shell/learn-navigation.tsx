@@ -1,7 +1,7 @@
 "use client";
 
 import { SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
-import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
+import { BarSearch, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MapIcon, SunIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -173,10 +173,53 @@ export function LearnSideNavigation(props: LearnNavigationProps) {
   );
 }
 
-/** Place it after `LearnShellMain`; toasts rise above it (`data-bottom-bar`). */
-export function LearnBottomNavigation({ activeTab, buddy, missions }: LearnNavigationProps) {
+/** An action beside the tabs, not a fourth tab: round and filled at the bar's end, as Apple's search tab is. */
+const TAB_BAR_SEARCH_CLASS =
+  "bg-muted hover:bg-foreground/10 text-foreground shrink-0 rounded-full";
+
+function TabBarSearch({ onSearch }: { onSearch: () => void }) {
+  const t = useExtracted();
+
+  return (
+    <BarSearch
+      className={TAB_BAR_SEARCH_CLASS}
+      label={t({
+        description: "The search button at the end of the phone's tab bar, after the tabs.",
+        message: "Search",
+      })}
+      onClick={onSearch}
+    />
+  );
+}
+
+function BottomTab({ activeTab, buddy, missions, tab }: LearnNavigationProps & { tab: LearnTab }) {
   const routes = useLearnRoutes();
 
+  return (
+    <LearnLink
+      aria-current={tab === activeTab ? "page" : undefined}
+      className={cn(
+        TAB_ITEM_CLASS,
+        "text-2xs flex min-h-13 w-18 min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1",
+      )}
+      href={routes[tab]}
+    >
+      <span className="flex h-7 items-center justify-center">
+        <TabIcon buddy={buddy} missions={missions} size="md" tab={tab} />
+      </span>
+      <span className="max-w-full truncate">
+        <TabLabel buddy={buddy} tab={tab} />
+      </span>
+      {tab === "buddy" && missions && <MissionsLabel missions={missions} />}
+    </LearnLink>
+  );
+}
+
+/** Place it after `LearnShellMain`; toasts rise above it (`data-bottom-bar`). */
+export function LearnBottomNavigation({
+  onSearch,
+  ...props
+}: LearnNavigationProps & { onSearch?: () => void }) {
   return (
     <NavigationRoot
       className={cn(
@@ -186,28 +229,16 @@ export function LearnBottomNavigation({ activeTab, buddy, missions }: LearnNavig
       data-bottom-bar=""
       data-slot="learn-bottom-navigation"
     >
-      <ul className="mx-auto flex justify-around px-4 py-1.5 sm:max-w-3xl sm:px-8">
-        {LEARN_TABS.map((tab) => (
-          <li className="flex" key={tab}>
-            <LearnLink
-              aria-current={tab === activeTab ? "page" : undefined}
-              className={cn(
-                TAB_ITEM_CLASS,
-                "text-2xs flex min-h-13 w-18 min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1",
-              )}
-              href={routes[tab]}
-            >
-              <span className="flex h-7 items-center justify-center">
-                <TabIcon buddy={buddy} missions={missions} size="md" tab={tab} />
-              </span>
-              <span className="max-w-full truncate">
-                <TabLabel buddy={buddy} tab={tab} />
-              </span>
-              {tab === "buddy" && missions && <MissionsLabel missions={missions} />}
-            </LearnLink>
-          </li>
-        ))}
-      </ul>
+      <div className="mx-auto flex items-center gap-2 px-4 py-1.5 sm:max-w-3xl sm:px-8">
+        <ul className="flex flex-1 justify-around">
+          {LEARN_TABS.map((tab) => (
+            <li className="flex" key={tab}>
+              <BottomTab {...props} tab={tab} />
+            </li>
+          ))}
+        </ul>
+        {onSearch && <TabBarSearch onSearch={onSearch} />}
+      </div>
     </NavigationRoot>
   );
 }
