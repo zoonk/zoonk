@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// The day's summary, one screen of numbers (B2-020): the title, the tiles, Tomorrow and more time.
-/// Two panes keep "Earned today" beside it, as main's wide layout does.
+/// The day's summary, one screen of numbers (B2-020): the title, the tiles, Tomorrow, more time and,
+/// once, the reminder offer. Two panes keep "Earned today" beside it, as main's wide layout does.
 struct SessionSummaryView: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(AppRouter.self) private var router
@@ -14,6 +14,7 @@ struct SessionSummaryView: View {
   @State private var action: Task<Void, Never>?
   @State private var isBusy = false
   @State private var failed: SummaryAction?
+  @State private var reminderOffer: ReminderOfferState?
 
   private enum SummaryAction {
     case keepGoing, extraTime
@@ -47,6 +48,12 @@ struct SessionSummaryView: View {
       }
     }
     .loads(summary)
+    .onChange(of: summary.value?.reminderOffer, initial: true) { _, offer in
+      if let offer, reminderOffer == nil {
+        reminderOffer = ReminderOfferState(
+          time: ReminderTime.rounded(offer.time), timeZone: offer.timeZone)
+      }
+    }
     .completionMoments(
       certificates: summary.value?.certificates ?? [], milestone: summary.value?.ceremony
     )
@@ -134,6 +141,13 @@ struct SessionSummaryView: View {
       .listRowBackground(Color.clear)
     }
 
+    if let offer = Binding($reminderOffer) {
+      Section {
+        ReminderOfferCard(offer: offer)
+      }
+      .listRowBackground(Color.clear)
+      .listRowInsets(.vertical, 0)
+    }
   }
 
   /// "Earned today" beside the numbers: the buddy, the day's Brain Power even when it's none, and

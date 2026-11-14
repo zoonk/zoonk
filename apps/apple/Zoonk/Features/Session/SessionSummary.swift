@@ -42,6 +42,8 @@ struct SessionSummary: Decodable, Equatable, Sendable {
   let preparation: Share
   let progress: Share
   let questions: Int
+  /// Asked once per learner, on the day's summary (B2).
+  let reminderOffer: ReminderOffer?
   let sessionId: String
   let tomorrow: Tomorrow?
 }
@@ -55,8 +57,6 @@ struct BlockMoment: Decodable, Hashable, Sendable {
   let blocks: [StudyBlock]
   let dayProgress: DayProgress
   let minutes: StudyDay.Minutes
-  /// Asked once per learner, after a plan lesson; B2 moves it to the day's summary with its API.
-  let reminderOffer: ReminderOffer?
   let sessionId: String
   let goalId: String?
   let finishedChapterId: String?

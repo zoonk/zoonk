@@ -15,7 +15,6 @@ struct LessonCompletionView: View {
   let finish: () -> Void
   let close: () -> Void
 
-  @State private var reminderOffer: ReminderOfferState?
   @State private var isStopping = false
   @State private var stopFailed = false
 
@@ -33,7 +32,6 @@ struct LessonCompletionView: View {
       page {
         upNext
         planRevealRow
-        reminderOfferCard
         guestEndingView
       }
       .bottomBar(note: stopFailure) { actionBar }
@@ -43,16 +41,9 @@ struct LessonCompletionView: View {
         dayMoment
         upNext
         planRevealRow
-        reminderOfferCard
         guestEndingView
       }
       .bottomBar(note: stopFailure) { actionBar }
-    }
-    .onChange(of: block?.reminderOffer, initial: true) {
-      if let offer = block?.reminderOffer, reminderOffer == nil {
-        reminderOffer = ReminderOfferState(
-          time: ReminderTime.rounded(offer.time), timeZone: offer.timeZone)
-      }
     }
     .completionMoments(day)
     .feedbackSheet(
@@ -172,13 +163,6 @@ struct LessonCompletionView: View {
 
   private var block: BlockMoment? {
     completion.status == .saved ? completion.summary?.block : nil
-  }
-
-  @ViewBuilder
-  private var reminderOfferCard: some View {
-    if let offer = Binding($reminderOffer) {
-      ReminderOfferCard(offer: offer)
-    }
   }
 
   /// The day's next step, and the chapter test's line when the next lesson starts a chapter the
