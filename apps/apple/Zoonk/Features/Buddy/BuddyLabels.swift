@@ -57,7 +57,7 @@ extension Components.Schemas.GlassesProgress.GlassesPayload {
       Text("Comes with your buddy", tableName: "Buddy", comment: "How the round glasses are earned")
     case .star:
       Text(
-        "Win your first phase challenge", tableName: "Buddy",
+        "Win your first challenge", tableName: "Buddy",
         comment: "How the star glasses are earned")
     case .aviator:
       Text(
@@ -70,7 +70,8 @@ extension Components.Schemas.GlassesProgress.GlassesPayload {
     case .retro:
       Text("Finish 50 reviews", tableName: "Buddy", comment: "How the retro glasses are earned")
     case .monocle:
-      Text("Win the final challenge", tableName: "Buddy", comment: "How the monocle is earned")
+      Text(
+        "Win your plan's last challenge", tableName: "Buddy", comment: "How the monocle is earned")
     }
   }
 
@@ -89,34 +90,24 @@ extension BuddyStatus {
       return Text("Fully grown", tableName: "Buddy", comment: "The buddy reached its last stage")
     }
 
-    let beltName = String(localized: belt.localizedTitle)
-
-    return switch next.stage {
-    case .adult:
-      Text(
-        "Grows to Adult at \(beltName)", tableName: "Buddy",
-        comment: "The buddy's next stage; the argument is a belt")
-    case .baby, .young:
-      Text(
-        "Grows to Young at \(beltName)", tableName: "Buddy",
-        comment: "The buddy's next stage; the argument is a belt")
-    }
+    return Text(
+      "Grows when you reach \(String(localized: belt.localizedTitle))", tableName: "Buddy",
+      comment: "When the buddy grows next; the argument is a belt, such as \"Orange belt\"")
   }
 
-  func energyLine(name: String) -> Text {
+  /// Nothing to say once the learner studied today.
+  func energyLine(name: String) -> Text? {
     if energy.state == .napping {
       return Text(
-        "\(name) took a nap. Anything you learn wakes it up.", tableName: "Buddy",
+        "\(name) is napping. Study to wake it up.", tableName: "Buddy",
         comment: "The buddy naps; the argument is its name")
     }
 
     return energy.studiedToday
-      ? Text(
-        "You studied today, so Energy won't drop.", tableName: "Buddy",
-        comment: "Energy holds today")
+      ? nil
       : Text(
-        "Studying today keeps Energy up.", tableName: "Buddy",
-        comment: "Energy drops without studying today")
+        "Study today to keep it up.", tableName: "Buddy",
+        comment: "The buddy's Energy drops without studying today")
   }
 
   var earnedGlasses: Int {

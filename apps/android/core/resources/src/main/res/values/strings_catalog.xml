@@ -61,18 +61,16 @@
     <string name="catalog_check_note">Your choice opens the %1$s-minute lesson. Check your answer there.</string>
     <string name="catalog_no_sign_up">No sign-up needed.</string>
 
-    <string name="catalog_example_plan">Example plan</string>
+    <string name="catalog_example_plan">How long it takes</string>
     <plurals name="catalog_plan_weeks">
         <item quantity="one">~%1$s week</item>
         <item quantity="other">~%1$s weeks</item>
     </plurals>
     <plurals name="catalog_plan_whole_course">
-        <item quantity="one">to finish the whole course at %1$d minute a day, Monday to Friday, from scratch.</item>
-        <item quantity="other">to finish the whole course at %1$d minutes a day, Monday to Friday, from scratch.</item>
+        <item quantity="one">Studying %1$d minute a day. Your plan skips what you already know, so it can take less.</item>
+        <item quantity="other">Studying %1$d minutes a day. Your plan skips what you already know, so it can take less.</item>
     </plurals>
-    <!-- %1$s is a month and year, such as "March 2027". -->
-    <string name="catalog_plan_finish_around">Starting today, you\'d finish around %1$s.</string>
-    <string name="catalog_plan_today">Today</string>
+    <string name="catalog_plan_today">Your first day</string>
     <plurals name="catalog_plan_lessons">
         <item quantity="one">%1$d lesson</item>
         <item quantity="other">%1$d lessons</item>
@@ -81,33 +79,7 @@
         <item quantity="one">+ %1$d more lesson</item>
         <item quantity="other">+ %1$d more lessons</item>
     </plurals>
-    <string name="catalog_plan_study">%1$s of study</string>
-    <string name="catalog_plan_dated_written_later">by %1$s, at %2$s a day, Monday to Friday, what comes up most first: lessons already in the course, and more written as you reach them.</string>
-    <plurals name="catalog_plan_dated_some_written">
-        <item quantity="one">by %1$s, at %2$s a day, Monday to Friday, what comes up most first: %3$d lesson already in the course, and more written as you reach them.</item>
-        <item quantity="other">by %1$s, at %2$s a day, Monday to Friday, what comes up most first: %3$d lessons already in the course, and more written as you reach them.</item>
-    </plurals>
-    <string name="catalog_plan_dated_quick">by %1$s, at %2$s a day, Monday to Friday, in quick lessons on what comes up most. The full lessons come once there\'s more time.</string>
-    <!-- %1$s is a date, such as "June 5"; %2$s a daily study time; %3$s how many of the course's lessons fit, a number. -->
-    <plurals name="catalog_plan_dated_fitting">
-        <item quantity="one">by %1$s, at %2$s a day, Monday to Friday, what comes up most first: %3$s of the course\'s %4$d lesson.</item>
-        <item quantity="other">by %1$s, at %2$s a day, Monday to Friday, what comes up most first: %3$s of the course\'s %4$d lessons.</item>
-    </plurals>
-    <string name="catalog_plan_not_all_fits">Not all of it fits by then. Before you start, you see how much fits at your level and your time.</string>
-    <string name="catalog_plan_every_topic">That\'s every topic in the course, in depth.</string>
-    <string name="catalog_plan_every_exam_topic">That\'s every exam topic in the course, in depth.</string>
     <string name="catalog_plan_caption">An example. Your plan follows your answers, so it can start later and end sooner.</string>
-
-    <string name="catalog_workload_title">What fills the time</string>
-    <string name="catalog_workload_total">%1$s in all</string>
-    <string name="catalog_workload_lessons">Lessons</string>
-    <string name="catalog_workload_unwritten">Lessons not written yet</string>
-    <string name="catalog_workload_practice">Reviews and practice</string>
-    <string name="catalog_workload_challenges">Challenges</string>
-    <string name="catalog_workload_challenges_mocks">Challenges and mock exams</string>
-    <string name="catalog_workload_reviews_note">What you studied comes back right before you\'d forget it.</string>
-    <string name="catalog_workload_after_exam">Of this, %1$s comes after the exam.</string>
-    <string name="catalog_workload_unwritten_note">Lessons not written yet are written as you reach them.</string>
 
     <string name="catalog_audience">Who it\'s for</string>
     <string name="catalog_outcomes">What you\'ll be able to do</string>
@@ -122,28 +94,15 @@
         <item quantity="one">%1$d short lesson</item>
         <item quantity="other">%1$d short lessons</item>
     </plurals>
-    <!-- After the course's chapter count. Zoonk writes more lessons as learners reach them, so this counts only those written until now. -->
-    <plurals name="catalog_lessons_written">
-        <item quantity="one">%1$d lesson written so far</item>
-        <item quantity="other">%1$d lessons written so far</item>
-    </plurals>
-    <!-- Under the name of a course's level, such as Intermediate, that has no chapters yet. “it” is that level. -->
-    <string name="catalog_level_unwritten">Not written yet. Zoonk writes its chapters as learners reach it.</string>
+    <!-- Under the name of a course's level, such as Intermediate, that has no chapters yet; its lessons get ready when the learner reaches it. -->
+    <string name="catalog_level_unwritten">Ready when you get there.</string>
     <!-- Marks the chapter (or level) of the next lesson in the learner's plan on the course's outline. -->
     <string name="catalog_you_are_here">You are here</string>
-    <string name="catalog_outline_plan_dated">Your plan until %1$s, at %2$s a day</string>
-    <plurals name="catalog_outline_plan_undated">
-        <item quantity="one">Your plan at %1$d minute a day, from scratch</item>
-        <item quantity="other">Your plan at %1$d minutes a day, from scratch</item>
-    </plurals>
-    <string name="catalog_outline_unwritten">Build your plan and Zoonk writes this course\'s chapters and lessons for you, starting at your level.</string>
+    <string name="catalog_outline_unwritten">Build your plan and Zoonk gets this course\'s lessons ready, starting from what you already know.</string>
     <string name="catalog_level_overview">Overview</string>
     <string name="catalog_level_beginner">Beginner</string>
     <string name="catalog_level_intermediate">Intermediate</string>
     <string name="catalog_level_advanced">Advanced</string>
-    <string name="catalog_level_week">week %1$s</string>
-    <string name="catalog_level_weeks">weeks %1$s–%2$s</string>
-    <string name="catalog_chapter_week">Week %1$s</string>
     <plurals name="catalog_show_more_chapters">
         <item quantity="one">Show %1$d more chapter</item>
         <item quantity="other">Show %1$d more chapters</item>
@@ -151,26 +110,6 @@
     <string name="catalog_show_fewer_chapters">Show fewer chapters</string>
     <string name="catalog_expand">Expand</string>
     <string name="catalog_collapse">Collapse</string>
-    <string name="catalog_left_out">Left out</string>
-    <plurals name="catalog_chapters_left_out">
-        <item quantity="one">%1$d chapter left out</item>
-        <item quantity="other">%1$d chapters left out</item>
-    </plurals>
-    <!-- %1$s of an exam area's %2$s lessons fit in the plan. -->
-    <string name="catalog_lessons_fit">%1$s of %2$s lessons fit</string>
-    <plurals name="catalog_plus_quick_lessons">
-        <item quantity="one">+ %1$d quick lesson</item>
-        <item quantity="other">+ %1$d quick lessons</item>
-    </plurals>
-    <plurals name="catalog_quick_lesson_count">
-        <item quantity="one">%1$d quick lesson</item>
-        <item quantity="other">%1$d quick lessons</item>
-    </plurals>
-    <string name="catalog_quick_and_written_later">quick lessons and lessons written as you reach them</string>
-    <string name="catalog_quick_lessons">quick lessons</string>
-    <string name="catalog_written_later">lessons written as you reach them</string>
-    <!-- %1$s of a chapter's %2$s lessons the plan holds; shown only when it holds some but not all, so %2$s is always 2 or more. -->
-    <string name="catalog_lessons_in_plan">%1$s of %2$s lessons</string>
 
     <string name="catalog_closing_start">Start today, at your level</string>
     <string name="catalog_closing_follows">Your plan follows this course</string>

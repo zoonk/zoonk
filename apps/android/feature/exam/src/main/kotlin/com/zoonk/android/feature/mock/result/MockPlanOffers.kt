@@ -17,15 +17,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -33,22 +29,18 @@ import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionSource
 import com.zoonk.android.feature.mock.runner.MockRunStore
-import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
-import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.DiffKind
-import com.zoonk.android.ui.components.DiffLine
-import com.zoonk.android.ui.components.DiffLines
-import com.zoonk.android.ui.components.DiffTone
-import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.MockAdapt
 import com.zoonk.api.models.MockPlanOfferInput.Offer
 import com.zoonk.api.models.MockPlanOfferResult
@@ -58,6 +50,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.math.floor
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
@@ -78,7 +71,7 @@ data class PlanOffers(
 
 private val OfferAnswer?.isSettled: Boolean get() = this != null && this != OfferAnswer.Failed
 
-/** Main's `usePlanChange`: the plan changes only on the learner's Apply; Keep my plan changes nothing. */
+/** Main's `usePlanChange`: one question at a time; the plan changes only on the learner's yes. */
 class MockPlanOffersViewModel(
     private val store: MockRunStore,
     private val sessions: SessionSource,
@@ -87,35 +80,34 @@ class MockPlanOffersViewModel(
     private val mutable = MutableStateFlow(PlanOffers())
     val state: StateFlow<PlanOffers> = mutable.asStateFlow()
 
-    /** Applies the offers not settled yet, one after another, as main does, all for the session that tapped Apply. */
-    fun apply(offers: List<Offer>) {
-        if (mutable.value.applying) return
-        val open = offers.filterNot { mutable.value.answers[it].isSettled }
+    /** Says yes to [offer] for the session that tapped it. */
+    fun accept(offer: Offer) {
+        if (mutable.value.applying || mutable.value.answers[offer].isSettled) return
         val owner = sessions.current
         mutable.update { it.copy(applying = true) }
         viewModelScope.launch {
-            val answers = mutableMapOf<Offer, OfferAnswer>()
-            for (offer in open) {
-                if (sessions.current != owner) break
+            val answer =
                 when (val result = store.adapt(blockId, offer)) {
-                    is MutationResult.Done -> answers[offer] = OfferAnswer.Outcome(result.value)
-                    is MutationResult.Failed -> answers[offer] = OfferAnswer.Failed
-                    MutationResult.Obsolete -> break
+                    is MutationResult.Done -> OfferAnswer.Outcome(result.value)
+                    is MutationResult.Failed -> OfferAnswer.Failed
+                    MutationResult.Obsolete -> null
                 }
+            mutable.update { state ->
+                val kept = answer?.takeIf { sessions.current == owner }
+                state.copy(answers = state.answers + listOfNotNull(kept?.let { offer to it }), applying = false)
             }
-            mutable.update { it.copy(answers = it.answers + answers.takeIf { sessions.current == owner }.orEmpty(), applying = false) }
         }
     }
 
-    fun keep(offers: List<Offer>) {
+    fun decline(offer: Offer) {
         mutable.update { state ->
-            state.copy(
-                answers =
-                    state.answers + offers.filterNot { state.answers[it].isSettled }.associateWith { OfferAnswer.Declined },
-            )
+            if (state.answers[offer].isSettled) state else state.copy(answers = state.answers + (offer to OfferAnswer.Declined))
         }
     }
 }
+
+/** The offer the learner answers now: the next ones show once this one is answered. */
+internal fun PlanOffers.open(adapt: MockAdapt?): Offer? = planOffers(adapt).firstOrNull { !answers[it].isSettled }
 
 fun planOffers(adapt: MockAdapt?): List<Offer> =
     listOfNotNull(
@@ -134,55 +126,125 @@ internal fun PlanStep(
     adapt: MockAdapt?,
     preparation: MockResultPreparation?,
     offers: PlanOffers,
-    onApply: () -> Unit,
-    onKeep: () -> Unit,
 ) {
-    Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Eyebrow(stringResource(if (preparation != null) R.string.mock_result_your_preparation else R.string.mock_result_your_plan))
+    val question = offers.open(adapt) ?: planOffers(adapt).firstOrNull()
+
+    Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(
+            stringResource(if (preparation != null) R.string.mock_result_your_preparation else R.string.mock_result_your_plan),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.titleMedium,
+        )
         if (preparation != null) {
-            PreparationNumbers(preparation, MaterialTheme.typography.displayMedium)
+            PreparationReadout(preparation, MaterialTheme.typography.displayMedium)
         } else {
-            planChangeTitle(adapt)?.let { StepTitle(it) }
+            question?.let { StepTitle(offerTitle(it, adapt)) }
         }
     }
     preparation?.let { PreparationMeter(it) }
-    if (adapt != null && planOffers(adapt).isNotEmpty()) PlanChange(adapt, offers, showTitle = preparation != null, onApply, onKeep)
+    if (adapt != null && planOffers(adapt).isNotEmpty()) PlanChange(adapt, offers, showTitle = preparation != null)
 }
 
+/** "14%", with where it came from under it: "Up from 12%". */
 @Composable
-internal fun PreparationNumbers(
+internal fun PreparationReadout(
     preparation: MockResultPreparation,
     style: TextStyle,
 ) {
     val locale = currentLocale()
-    val muted = MaterialTheme.colorScheme.onSurfaceVariant
-    Text(
-        buildAnnotatedString {
-            withStyle(SpanStyle(color = muted)) { append("${formatPercent(preparation.before, locale)} → ") }
-            append(formatPercent(preparation.after, locale))
-        },
-        style = style.withTabularFigures().copy(fontWeight = FontWeight.SemiBold),
-    )
+    val before = formatPercent(preparation.before, locale)
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(
+            formatPercent(preparation.after, locale),
+            style = style.withTabularFigures().copy(fontWeight = FontWeight.SemiBold),
+        )
+        Text(
+            stringResource(
+                if (preparation.after <
+                    preparation.before
+                ) {
+                    R.string.mock_result_down_from
+                } else {
+                    R.string.mock_result_up_from
+                },
+                before,
+            ),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.zoonkType.data,
+        )
+    }
 }
 
 @Composable
 internal fun PreparationMeter(preparation: MockResultPreparation) {
     Meter(preparation.after.toFloat(), Modifier.widthIn(max = METER_WIDTH))
-    StepDetail(
-        stringResource(
-            if (preparation.after < preparation.before) R.string.mock_result_preparation_fell else R.string.mock_result_preparation_counts,
-        ),
-    )
 }
 
+internal class OfferCopy(
+    val title: String,
+    val line: String,
+    val accept: String,
+    val decline: String,
+)
+
 @Composable
-private fun planChangeTitle(adapt: MockAdapt?): String? {
-    val skip = adapt?.skip
-    val focus = adapt?.focus
-    return when {
-        skip != null -> pluralStringResource(R.plurals.mock_result_skip_title, skip.topics.size, skip.topics.size)
-        focus != null -> stringResource(R.string.mock_result_focus_title, focus.area)
-        else -> null
+private fun offerTitle(
+    offer: Offer,
+    adapt: MockAdapt?,
+): String =
+    when (offer) {
+        Offer.SKIP -> {
+            val lessons = adapt?.skip?.lessons?.toInt() ?: 0
+            pluralStringResource(R.plurals.mock_result_skip_title, lessons, lessons)
+        }
+
+        Offer.FOCUS -> {
+            stringResource(R.string.mock_result_focus_title, adapt?.focus?.area.orEmpty())
+        }
+    }
+
+@Composable
+internal fun offerCopy(
+    offer: Offer,
+    adapt: MockAdapt,
+): OfferCopy {
+    val locale = currentLocale()
+    return when (offer) {
+        Offer.SKIP -> {
+            val topics = adapt.skip?.topics.orEmpty()
+            val named = topics.take(TOPICS_NAMED)
+            val more = topics.size - named.size
+            val names =
+                if (more > 0) {
+                    pluralStringResource(R.plurals.mock_result_topics_and_more, more, named.joinToString(", "), more)
+                } else {
+                    formatList(named, locale)
+                }
+            OfferCopy(
+                title = offerTitle(offer, adapt),
+                line = stringResource(R.string.mock_result_skip_line, names),
+                accept = stringResource(R.string.mock_result_skip_them),
+                decline = stringResource(R.string.mock_result_keep_them),
+            )
+        }
+
+        Offer.FOCUS -> {
+            val focus = adapt.focus
+            // Partial credit reads to the hundredth.
+            val correct = ((focus?.correct ?: 0.0) * PERCENT).roundToInt() / PERCENT
+            OfferCopy(
+                title = offerTitle(offer, adapt),
+                line =
+                    pluralStringResource(
+                        R.plurals.mock_result_focus_line,
+                        floor(correct).toInt(),
+                        formatNumber(correct, locale),
+                        (focus?.total ?: 0L).toInt(),
+                    ),
+                accept = stringResource(R.string.mock_result_change_plan),
+                decline = stringResource(R.string.mock_result_not_now),
+            )
+        }
     }
 }
 
@@ -191,65 +253,81 @@ internal fun PlanChange(
     adapt: MockAdapt,
     offers: PlanOffers,
     showTitle: Boolean,
-    onApply: () -> Unit,
-    onKeep: () -> Unit,
+    answers: (@Composable (Offer) -> Unit)? = null,
 ) {
-    val open = planOffers(adapt).filterNot { offers.answers[it].isSettled }
+    val open = offers.open(adapt)
 
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (showTitle) {
-            planChangeTitle(adapt)?.let { Text(it, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium) }
-        }
-        OfferLines(adapt)
-        if (open.isNotEmpty()) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(busy = offers.applying, onClick = onApply, leadingIcon = { ButtonIcon(R.drawable.ic_check) }) {
-                    Text(stringResource(R.string.mock_result_apply))
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        OfferStatus(adapt, offers)
+        open?.let { offer ->
+            val copy = offerCopy(offer, adapt)
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    if (showTitle) Text(copy.title, style = MaterialTheme.typography.bodyMedium)
+                    Text(copy.line, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
                 }
-                TextButton(onClick = onKeep, enabled = !offers.applying) { Text(stringResource(R.string.mock_result_keep_plan)) }
+                answers?.invoke(offer)
             }
         }
-        OfferStatus(adapt, offers)
     }
 }
 
-/** Main's `PlanChangeStatus`: one line per outcome; a declined offer goes unsaid once another applied. */
+/** The open question's answers inside the page, where the aside asks it. */
+@Composable
+internal fun InlinePlanAnswers(
+    adapt: MockAdapt,
+    offer: Offer,
+    offers: PlanOffers,
+    onAccept: (Offer) -> Unit,
+    onDecline: (Offer) -> Unit,
+) {
+    val copy = offerCopy(offer, adapt)
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        OutlinedButton(busy = offers.applying, onClick = { onAccept(offer) }, size = ButtonSize.Small) { Text(copy.accept) }
+        TextButton(onClick = { onDecline(offer) }, enabled = !offers.applying, size = ButtonSize.Small) { Text(copy.decline) }
+    }
+}
+
+/** Main's `PlanChangeStatus`: one line per answer that changed something or failed; a no says nothing. */
 @Composable
 private fun OfferStatus(
     adapt: MockAdapt,
     offers: PlanOffers,
 ) {
-    val answered = planOffers(adapt).mapNotNull { offer -> offers.answers[offer]?.let { offer to it } }
-    val applied = answered.any { (_, answer) -> (answer as? OfferAnswer.Outcome)?.result?.status == MockPlanOfferResult.Status.APPLIED }
     val lines =
-        answered
-            .filterNot { (_, answer) -> applied && answer == OfferAnswer.Declined }
-            .map { (offer, answer) -> answerLine(offer, answer) }
-            .distinct()
-    if (lines.isEmpty()) return
+        planOffers(adapt).mapNotNull { offer ->
+            val answer = offers.answers[offer] ?: return@mapNotNull null
+            val applied = (answer as? OfferAnswer.Outcome)?.result?.status == MockPlanOfferResult.Status.APPLIED
+            answerLine(offer, answer, adapt)?.let { it to applied }
+        }
+    val declinedAll = planOffers(adapt).let { all -> all.isNotEmpty() && all.all { offers.answers[it] == OfferAnswer.Declined } }
+    // Declining writes nothing, so the step would still read as an open question.
+    val shown = if (declinedAll) listOf(stringResource(R.string.plan_stays_as_it_is) to false) else lines
+    if (shown.isEmpty()) return
+    val glyph =
+        with(LocalDensity.current) {
+            MaterialTheme.typography.bodyMedium.lineHeight
+                .toDp()
+        }
 
-    Row(
+    Column(
         Modifier.semantics(mergeDescendants = true) {
             liveRegion = LiveRegionMode.Polite
         },
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        if (applied) {
-            Icon(
-                painterResource(R.drawable.ic_check_circle),
-                contentDescription = null,
-                modifier =
-                    Modifier.size(
-                        with(LocalDensity.current) {
-                            MaterialTheme.typography.bodyMedium.lineHeight
-                                .toDp()
-                        },
-                    ),
-                tint = MaterialTheme.colorScheme.tertiary,
-            )
-        }
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            lines.forEach { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
+        shown.forEach { (line, applied) ->
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (applied) {
+                    Icon(
+                        painterResource(R.drawable.ic_check_circle),
+                        contentDescription = null,
+                        modifier = Modifier.size(glyph),
+                        tint = MaterialTheme.colorScheme.tertiary,
+                    )
+                }
+                Text(line, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+            }
         }
     }
 }
@@ -258,10 +336,11 @@ private fun OfferStatus(
 private fun answerLine(
     offer: Offer,
     answer: OfferAnswer,
-): String =
+    adapt: MockAdapt,
+): String? =
     when (answer) {
         OfferAnswer.Declined -> {
-            stringResource(R.string.mock_result_plan_stays)
+            null
         }
 
         OfferAnswer.Failed -> {
@@ -271,63 +350,21 @@ private fun answerLine(
         is OfferAnswer.Outcome -> {
             val result = answer.result
             when {
-                result.status == MockPlanOfferResult.Status.APPLIED && offer == Offer.SKIP -> {
+                result.status != MockPlanOfferResult.Status.APPLIED -> {
+                    stringResource(R.string.mock_result_plan_unchanged)
+                }
+
+                offer == Offer.SKIP -> {
                     val lessons = result.lessonsSkipped.toInt()
                     pluralStringResource(R.plurals.mock_result_skip_done, lessons, lessons)
                 }
 
-                result.status == MockPlanOfferResult.Status.APPLIED -> {
-                    stringResource(R.string.mock_result_focus_done)
-                }
-
-                result.reason == MockPlanOfferResult.Reason.ALREADY_IN -> {
-                    stringResource(R.string.mock_result_already_in)
-                }
-
-                result.reason == MockPlanOfferResult.Reason.CANT_MOVE -> {
-                    stringResource(R.string.mock_result_cant_move)
-                }
-
                 else -> {
-                    stringResource(R.string.mock_result_already_changed)
+                    stringResource(R.string.mock_result_focus_done, adapt.focus?.area.orEmpty())
                 }
             }
         }
     }
-
-/** Topics off the plan are good news, so they take the progress blue, as main's `DiffLines` do. */
-@Composable
-private fun OfferLines(adapt: MockAdapt) {
-    val skip = adapt.skip
-    val focus = adapt.focus
-    val named = skip?.topics.orEmpty().take(TOPICS_NAMED)
-    val more = (skip?.topics?.size ?: 0) - named.size
-    val lines =
-        named.map { DiffLine(DiffKind.Removed, it, DiffTone.Good) } +
-            listOfNotNull(
-                more.takeIf { it > 0 }?.let {
-                    DiffLine(DiffKind.Removed, pluralStringResource(R.plurals.mock_result_more_topics, it, it), DiffTone.Good)
-                },
-                skip?.let {
-                    val lessons = it.lessons.toInt()
-                    DiffLine(DiffKind.Context, pluralStringResource(R.plurals.mock_result_lessons_less, lessons, lessons))
-                },
-                focus?.let {
-                    // Partial credit reads to the hundredth.
-                    val correct = (it.correct * PERCENT).roundToInt() / PERCENT
-                    val right =
-                        pluralStringResource(
-                            R.plurals.mock_right_answers,
-                            correct.toInt(),
-                            formatNumber(correct, currentLocale()),
-                            it.total.toInt(),
-                        )
-                    DiffLine(DiffKind.Added, stringResource(R.string.mock_result_more_time, it.area, right), DiffTone.Neutral)
-                },
-            )
-
-    DiffLines(lines, added = stringResource(R.string.mock_result_new), removed = stringResource(R.string.mock_result_off_plan))
-}
 
 private const val PERCENT = 100.0
 private const val TOPICS_NAMED = 3

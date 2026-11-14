@@ -1,4 +1,4 @@
-package com.zoonk.android.feature.player
+package com.zoonk.android.feature.session
 
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException

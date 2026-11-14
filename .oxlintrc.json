@@ -178,11 +178,11 @@
     // Shared-piece rules with existing callers to migrate stay off.
     "zoonk/no-page-top-spacing": "error",
     "zoonk/no-plus-badge": "error",
-    "zoonk/one-eyebrow": "off",
     "zoonk/no-hand-made-fold": "error",
+    "zoonk/no-hand-made-panel": "error",
     "zoonk/no-hand-placed-icon-button": "error",
     "zoonk/one-answer-option": "error",
-    "zoonk/one-glyph-button": "off",
+    "zoonk/one-glyph-button": "error",
     "zoonk/one-question-action-bar": "error",
     "zoonk/shortcut-keys": "error",
     "zoonk/padding-around-multiline-statements": "error",

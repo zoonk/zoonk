@@ -58,16 +58,9 @@ struct ExamSpeakingSections: View {
             comment: "An exam task's place in its speaking paper"))
       } footer: {
         SectionFooter {
-          if feedback.heard, task.criteria.contains(where: \.sound) {
-            Text(
-              "An estimate from one practice task, not an official score. How you sound is rated by how easy you are to understand, never by your accent.",
-              tableName: "Voice",
-              comment: "An exam task's estimate isn't official; sound is rated for intelligibility")
-          } else {
-            Text(
-              "An estimate from one practice task, not an official score.", tableName: "Voice",
-              comment: "An exam task's estimate isn't official")
-          }
+          Text(
+            "An estimate, not an official score.", tableName: "Voice",
+            comment: "An exam task's estimate isn't official")
         }
       }
 
@@ -92,15 +85,8 @@ struct ExamSpeakingSections: View {
       }
     } else {
       Section {
-        VStack(alignment: .leading, spacing: 4) {
-          Text("This task has no estimate", tableName: "Voice", comment: "An ungraded exam task")
-            .typeStyle(.body.weight(.semibold))
-          Text(
-            "Try the task again when you're ready.", tableName: "Voice",
-            comment: "Under an ungraded exam task"
-          )
-          .foregroundStyle(.mutedForeground)
-        }
+        Text("This task has no estimate", tableName: "Voice", comment: "An ungraded exam task")
+          .typeStyle(.body.weight(.semibold))
       }
     }
   }
@@ -122,9 +108,8 @@ struct ExamSpeakingSections: View {
     if feedback.brief {
       notes.append(
         String(
-          localized:
-            "You said little in this task, so there wasn't much to judge. A longer try gives a closer estimate.",
-          table: "Voice", comment: "A speaking estimate from a short answer"))
+          localized: "You said little, so this estimate is rough.", table: "Voice",
+          comment: "A speaking estimate from a short answer"))
     }
 
     return notes

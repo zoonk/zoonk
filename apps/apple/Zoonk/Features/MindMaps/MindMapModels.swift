@@ -123,10 +123,11 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
   }
 
   enum Resource: String, Decodable, Sendable {
-    case aiSpend, mindMap
+    case aiSpend, lessonStart, mindMap
   }
 
-  let period: HelpLimit.Period?
+  /// `rolling30Days` is a free learner's lessons, which come back at `resetsAt`.
+  let period: String?
   let reason: Reason
   let resetsAt: Date?
   let resource: Resource?
@@ -137,14 +138,19 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
       case .signUpRequired: .signUpRequired
       case .slowDown:
         .slowDown(retryAfterSeconds: max(1, Int((resetsAt ?? now).timeIntervalSince(now))))
-      case .limitReached: .limitReached(period: period ?? .day, tier: tier)
+      case .limitReached: .reached(period: period, tier: tier, opensAt: resetsAt)
       }
 
-    return MindMapLimit(limit: limit, resource: resource == .aiSpend ? .aiSpend : .mindMap)
+    let ranOut: MindMapLimit.Resource =
+      switch resource {
+      case .aiSpend: .aiSpend
+      case .lessonStart: .lessons
+      case .mindMap, nil: .mindMap
+      }
+
+    return MindMapLimit(limit: limit, resource: ranOut)
   }
 }
-
-extension HelpLimit.Period: Decodable {}
 
 struct GoalMindMaps: Decodable, Equatable, Sendable {
   enum Tab: String, Decodable, Hashable, Sendable, CaseIterable {

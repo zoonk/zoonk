@@ -466,7 +466,7 @@ struct PlacementQuestionScreen<Media: View>: View {
       asked.response
 
       if let saveFailure, !isSaving {
-        FailureLine(message: testSaveFailure)
+        FailureLine(message: saveFailure)
       }
 
       if failures > 0, !isSaving {

@@ -9,10 +9,12 @@ import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-lib
 import { seenInsightQuote, seenQuote } from "./_test-utils/seen-quote";
 import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
 import { loadTodayPlanChange } from "./_utils/today-plan-change";
+import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { PHASE_DATES_SOURCE } from "./plan-change-contract";
 import { type PlanChangeQuote } from "./plan-decision-contract";
+import { type PlanEffect } from "./planner/plan-effect";
 import { proposePlanChange } from "./propose-plan-change";
 
 /** A Monday in 2020, before the learning events other tests write, which estimates read. */
@@ -77,6 +79,24 @@ async function ageProposal(changeId: string, effect?: { lessonsAdded: number }) 
         ...payload,
         effect: payload.effect && { ...payload.effect, ...effect },
         previewBasis: payload.previewBasis && { ...payload.previewBasis, studyDay: "2020-09-27" },
+      }),
+    },
+    where: { id: changeId },
+  });
+
+  return payload.effect;
+}
+
+/** As a write that keeps the plan's version and study day: new numbers under the same basis. */
+async function setEffect(changeId: string, effect: Partial<PlanEffect> | null) {
+  const change = await prisma.planChange.findUniqueOrThrow({ where: { id: changeId } });
+  const payload = parsePlanChangePayload(change.payload);
+
+  await prisma.planChange.update({
+    data: {
+      payload: toPlanChangePayload({
+        ...payload,
+        effect: payload.effect && effect && { ...payload.effect, ...effect },
       }),
     },
     where: { id: changeId },
@@ -184,12 +204,56 @@ describe("a suggestion answered on a later day than it was priced", () => {
     const changeId = await proposeLongerDays(goal.id);
     const quote = await seenQuote(changeId);
 
-    await expect(
-      accept(goal.id, changeId, quote && { ...quote, studyDay: "2020-09-27" }),
-    ).resolves.toMatchObject({ change: { quote, status: "proposed" }, status: "updated" });
+    await expect(accept(goal.id, changeId, "another-quote")).resolves.toMatchObject({
+      change: { quote, status: "proposed" },
+      status: "updated",
+    });
 
     await expect(accept(goal.id, changeId, null)).resolves.toMatchObject({
       change: { status: "proposed" },
+    });
+
+    await expect(readDailyMinutes(goal.id)).resolves.toBe(12);
+  });
+
+  it("applies nothing when a plan write gave it new numbers after the app showed it", async () => {
+    const { goal } = await setup({ library: LONG, targetDate: null });
+    const changeId = await proposeLongerDays(goal.id);
+    const shown = await seenQuote(changeId);
+
+    await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ kind: "setTargetDate", targetDate: "2020-12-31" }], timeZone: "UTC" },
+    });
+
+    const today = await seenQuote(changeId);
+    expect(today).not.toBe(shown);
+
+    await expect(accept(goal.id, changeId, shown)).resolves.toMatchObject({
+      change: { quote: today, status: "proposed" },
+      status: "updated",
+    });
+
+    await expect(readDailyMinutes(goal.id)).resolves.toBe(12);
+
+    await expect(accept(goal.id, changeId, today)).resolves.toMatchObject({
+      change: { status: "applied" },
+    });
+
+    await expect(readDailyMinutes(goal.id)).resolves.toBe(30);
+  });
+
+  it("applies nothing when a refresh that keeps the plan's version gave it new numbers", async () => {
+    const { goal } = await setup({ library: LONG, targetDate: null });
+    const changeId = await proposeLongerDays(goal.id);
+    const real = await setEffect(changeId, { lessonsAdded: 999 });
+    const shown = await seenQuote(changeId);
+
+    await setEffect(changeId, real);
+
+    await expect(accept(goal.id, changeId, shown)).resolves.toMatchObject({
+      change: { status: "proposed" },
+      status: "updated",
     });
 
     await expect(readDailyMinutes(goal.id)).resolves.toBe(12);

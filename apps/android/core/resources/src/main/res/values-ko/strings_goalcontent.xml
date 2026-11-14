@@ -5,7 +5,7 @@
   "goalcontent_also": "7b01d560e70d5f5df13c9aa948abc9dce9166d1b80fe27e77345ab81083f574e",
   "goalcontent_also_in_exam_count": "b61d23f5380bef9380f52cec3694faeafa4e8bd5ed7d2c20c8a1e21457a87a8a",
   "goalcontent_also_in_exams": "5413d76ed0c4e3fb9e8ac68b3c35d59b7d4706c033a649ab29be66270edfd508",
-  "goalcontent_also_in_plan": "739ae6ae87bdf96ed4111772ff702191e0169667149fb7ee0d61756132a6a41c",
+  "goalcontent_also_in_plan": "63280142ff0026005674a514ffcbb9f231d4173e1bbcf23eb3a06aec2f6a327d",
   "goalcontent_appears_a_lot": "861b0f67e4b7a203e088462941b93973191ac9a82aa1597a87a4e527f247ec9e",
   "goalcontent_beyond_guide": "93b3c08ab7bb9ab49200c0147257543da2b501332e5f724e55c447731428323f",
   "goalcontent_beyond_notice": "b2f162c5011fef134d00411c49a54027508b1990440ddf2b856c33c3985592fe",
@@ -18,7 +18,7 @@
   "goalcontent_chapters_known": "019fe47e34915c0b908369ca7ed68322bd4974ed3542a0b0be308e1244a74b1a",
   "goalcontent_chapters_known_after_done": "f637e15b990bdffa0d629e4844fcc9090a8dc740b067837bce97d88e6a656bb9",
   "goalcontent_continue": "60315fdd8feeeec5771cdc59881b02860a4797571625240cf363192cf7d39efa",
-  "goalcontent_count_of": "8bd6c915fcb6ecc23fb3c4cb9f91de7e34a52eda653726b6b296bf302271bd78",
+  "goalcontent_count_of": "e65b1c7c19d47cbd8b709d8f6be11058805815cba2df46a612e851d25e22231a",
   "goalcontent_course_weights_even": "4ae031184f294c55a669aff4b2927c3b4c14334a0f685a1ca5c7828acbf8280b",
   "goalcontent_course_weights_heavier": "c2f62d923cf2fa5bb33d82365388cdeb77ea82e174306525a93ff5ee5ea03295",
   "goalcontent_coverage": "8c29cfda92a8d36e3beefc384ba83dc526eb58da432023f5d79498977f6bb329",
@@ -42,7 +42,7 @@
   "goalcontent_mastery_pending": "9b69f27a14fea63220b0eb1deb402a32304007c80a16ec495cbca87984f8d123",
   "goalcontent_mastery_right": "caed7769337a41f3040249875cbbc29dc6462b891d6507fe17a02ace477492e0",
   "goalcontent_material_topic_count": "182076f0b834484f601f05df493e2db45981b4b7a10238f933816cc0a16bd8bd",
-  "goalcontent_matrix_title": "f4f7276d70e47687241029359758bd564eeaf566652c4e9c4bd188d1f1bc6f1c",
+  "goalcontent_matrix_title": "6e183eea440439d0fd3a2d3fd44381c7cd3af88e0dc26e2c3fb1f881d8b6f436",
   "goalcontent_module_count": "72b7309f191fd98e3415ab3d1bf8dd80215c7c134c538353ebfcfa660dcc4db6",
   "goalcontent_modules": "f1f3bbb9ee6f122205fb84044fb9b158dc30399e8afd6c1e2aa67d9883aabe8c",
   "goalcontent_more_chapters": "299c88859a8d877b96e5489d6667d413145d512fafba2379affd6adc118f8842",
@@ -82,7 +82,7 @@
   "goalcontent_to_review": "e598e585d98c27474196bcb8a7cc5b4130998cf4a779be4fcfd7f40b090cfe97",
   "goalcontent_topic_count": "f1f93c1a7f811ac7eac486451f3babd242a536abf25b9b0f0278b3e93d4c17ff",
   "goalcontent_topic_in_progress": "14a9c050d273773fd34b58644e3cd54290913cd2433ece2a4aa545f966ec14e2",
-  "goalcontent_topic_known": "72001e2daaa2033656769e879659acc191d998ce8b84b8988c6045b73d8321f0",
+  "goalcontent_topic_known": "b64a0cdee4ed67a1523d277b22d91a807088efcd23cf82b7c0ff8dc3c052ac83",
   "goalcontent_topic_known_practice": "0d835dd7c7adcb307256d68be915a7564813ed7da8c34fd159a79fb17a034bec",
   "goalcontent_topic_known_reviews": "5dfdaf3d6c6add9f7a35975b99d5ec989676c5af6d919a2b3b5527e5151569d7",
   "goalcontent_topic_missing": "a037cc843befe36fdd194118757ac732a6b556257f5f1b59867e0a8234ee4115",
@@ -130,7 +130,7 @@
         <item quantity="other">스킬 %d개</item>
     </plurals>
     <!-- Progress in words: "3 of 12". -->
-    <string name="goalcontent_count_of">현재 %1$s, 전체 %2$s</string>
+    <string name="goalcontent_count_of">%1$s / %2$s</string>
     <!-- A subject's topics studied of all its topics: "3 of 12 topics". -->
     <plurals name="goalcontent_topics_studied_of">
         <item quantity="other">학습한 주제 %1$s개, 전체 %2$d개</item>
@@ -154,7 +154,7 @@
     <string name="goalcontent_mastery_pending">연습 문제를 몇 개 풀면 표시돼요</string>
     <string name="goalcontent_not_in_plan">계획에 없어요</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
-    <string name="goalcontent_also_in_plan">계획에 추가된 과목</string>
+    <string name="goalcontent_also_in_plan">내 계획에도 포함</string>
     <!-- A group of subjects the plan adds outside an exam's public notice. -->
     <string name="goalcontent_beyond_notice">공고 외 추가 과목</string>
     <!-- A group of subjects the plan adds outside a language certificate's official guide. -->
@@ -235,7 +235,7 @@
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · %2$s개 완료</string>
     <!-- A topic's state for screen readers. -->
-    <string name="goalcontent_topic_known">이미 알고 있어요</string>
+    <string name="goalcontent_topic_known">이미 아는 내용</string>
     <string name="goalcontent_topic_in_progress">진행 중</string>
     <string name="goalcontent_topic_to_study">학습 예정</string>
     <string name="goalcontent_topic_known_reviews">이미 알고 있어요 · 복습할 때 다시 나와요</string>
@@ -257,7 +257,7 @@
     <string name="goalcontent_frequency_waits">기출문제에 가장 적게 나온 주제는 나중에 학습해요(%1$s, 출처: %2$s).</string>
     <string name="goalcontent_frequency_most">기출문제에 가장 자주 나온 주제에 학습 시간을 더 배정해요(%1$s, 출처: %2$s).</string>
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
-    <string name="goalcontent_matrix_title">문제에서 평가하는 능력</string>
+    <string name="goalcontent_matrix_title">문제에서 묻는 내용</string>
     <string name="goalcontent_see_all">%1$s개 모두 보기</string>
     <string name="goalcontent_chapter_number">챕터 %1$s</string>
     <string name="goalcontent_progress">진도</string>

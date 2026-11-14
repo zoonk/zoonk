@@ -777,7 +777,7 @@ class TutorViewModelTest {
             decision = { MutationResult.Done(proposed.copy(status = PlanChange.Status.APPLIED)) }
             val vm = conversation()
 
-            vm.decidePlanChange(proposed.id, PlanChangeDecisionInput.Status.APPLIED)
+            vm.decidePlanChange(proposed, PlanChangeDecisionInput.Status.APPLIED)
             advanceUntilIdle()
 
             assertEquals(listOf(false, true), vm.turns.map { it.planChange?.canUndo })
@@ -791,6 +791,22 @@ class TutorViewModelTest {
         }
 
     @Test
+    fun anAcceptWhoseNumbersMovedAsksAgainWithTodays() =
+        runTest(dispatcher) {
+            api.thread = TutorThread(listOf(changeTurn("q1", proposed)), hasMore = false, nextCursor = null)
+            decision = { MutationResult.Done(proposed.copy(quote = "quote-today")) }
+            val vm = conversation()
+
+            vm.decidePlanChange(proposed, PlanChangeDecisionInput.Status.APPLIED)
+            advanceUntilIdle()
+
+            val shown = vm.turns.single().planChange
+            assertEquals(PlanChange.Status.PROPOSED, shown?.status)
+            assertEquals("quote-today", shown?.quote)
+            assertEquals(setOf(proposed.id), vm.state.value.repricedChanges)
+        }
+
+    @Test
     fun aDecisionOutlastsAReadThatStartedBeforeIt() =
         runTest(dispatcher) {
             api.thread = TutorThread(listOf(changeTurn("q1", proposed)), hasMore = false, nextCursor = null)
@@ -800,7 +816,7 @@ class TutorViewModelTest {
             launch { vm.thread.refresh() }
             advanceUntilIdle()
 
-            vm.decidePlanChange(proposed.id, PlanChangeDecisionInput.Status.DECLINED)
+            vm.decidePlanChange(proposed, PlanChangeDecisionInput.Status.DECLINED)
             advanceUntilIdle()
             api.gate?.complete(Unit)
             advanceUntilIdle()

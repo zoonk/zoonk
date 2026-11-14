@@ -2,6 +2,7 @@ import { eslintCompatPlugin } from "@oxlint/plugins";
 import noDynamicTranslationKey from "./rules/no-dynamic-translation-key.js";
 import noGetExtractedInPromise from "./rules/no-get-extracted-in-promise.js";
 import noHandMadeFold from "./rules/no-hand-made-fold.js";
+import noHandMadePanel from "./rules/no-hand-made-panel.js";
 import noHandPlacedIconButton from "./rules/no-hand-placed-icon-button.js";
 import noHardcodedAriaLabel from "./rules/no-hardcoded-aria-label.js";
 import noObjectParamsInCache from "./rules/no-object-params-in-cache.js";
@@ -10,7 +11,6 @@ import noPlusBadge from "./rules/no-plus-badge.js";
 import noTFunctionAsArgument from "./rules/no-t-function-as-argument.js";
 import noUncaughtTransitionAwait from "./rules/no-uncaught-transition-await.js";
 import oneAnswerOption from "./rules/one-answer-option.js";
-import oneEyebrow from "./rules/one-eyebrow.js";
 import oneGlyphButton from "./rules/one-glyph-button.js";
 import oneQuestionActionBar from "./rules/one-question-action-bar.js";
 import paddingAroundMultilineStatements from "./rules/padding-around-multiline-statements.js";
@@ -24,11 +24,11 @@ export default eslintCompatPlugin({
     "no-dynamic-translation-key": noDynamicTranslationKey,
     "no-get-extracted-in-promise": noGetExtractedInPromise,
     "no-hand-made-fold": noHandMadeFold,
+    "no-hand-made-panel": noHandMadePanel,
     "no-hand-placed-icon-button": noHandPlacedIconButton,
     "no-hardcoded-aria-label": noHardcodedAriaLabel,
     "no-page-top-spacing": noPageTopSpacing,
     "no-plus-badge": noPlusBadge,
-    "one-eyebrow": oneEyebrow,
     "no-object-params-in-cache": noObjectParamsInCache,
     "no-t-function-as-argument": noTFunctionAsArgument,
     "no-uncaught-transition-await": noUncaughtTransitionAwait,

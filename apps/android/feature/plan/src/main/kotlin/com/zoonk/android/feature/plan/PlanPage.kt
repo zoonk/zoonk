@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,20 +50,22 @@ import com.zoonk.android.feature.language.AlphabetRow
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.scaffold.BarError
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.LanguageProgress
-import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.Syllabus
-import java.time.LocalDate
 
 class PlanLinks(
     private val navigator: AppNavigator,
@@ -250,6 +251,7 @@ internal fun PlanPage(
             },
         isSaving = isSaving,
         onSetStatus = viewModel::setStatus,
+        resumeFailure = viewModel.resumeFailure.collectAsStateWithLifecycle().value,
         rename = GoalRename(renameDialog, viewModel::openRename, viewModel::closeRename, viewModel::rename),
         report = report,
         onAdjust = { section ->
@@ -358,6 +360,7 @@ internal fun PlanContent(
     resume: Resume,
     isSaving: Boolean,
     onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
+    resumeFailure: ResumeFailure? = null,
     rename: GoalRename? = null,
     report: FeedbackSheet? = null,
     onAdjust: ((PlanSection?) -> Unit)? = null,
@@ -377,8 +380,6 @@ internal fun PlanContent(
                 edits = edits,
                 links = links,
                 resume = resume,
-                isSaving = isSaving,
-                onSetStatus = onSetStatus,
                 onAdjust = { onAdjust?.invoke(it) },
                 layout = layout,
                 host = slot,
@@ -395,70 +396,77 @@ internal fun PlanContent(
     val list = rememberLazyListState()
     val main =
         @Composable { asideBeside: Boolean ->
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                state = list,
-                contentPadding = PaddingValues(start = PAGE_MARGIN, end = PAGE_MARGIN, top = 8.dp, bottom = 32.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-            ) {
-                item(key = "header", contentType = "header") {
-                    PlanHeader(
-                        page = page,
-                        links = links,
-                        resume = resume,
-                        isSaving = isSaving,
-                        onSetStatus = onSetStatus,
-                        rename = rename,
-                        report = report,
-                        onAdjust = adjust,
-                    )
-                }
-                countryRebuild?.let { rebuild ->
-                    item(key = "country-rebuild", contentType = "notice") {
-                        CountryRebuildNotice(rebuild, edits.isPending(PlanPart.CountryRebuild), edits.retryCountryRebuild)
+            Column(Modifier.fillMaxSize()) {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    state = list,
+                    contentPadding = PaddingValues(start = PAGE_MARGIN, end = PAGE_MARGIN, top = 8.dp, bottom = 32.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                ) {
+                    item(key = "header", contentType = "header") {
+                        PlanHeader(
+                            page = page,
+                            links = links,
+                            resume = resume,
+                            isSaving = isSaving,
+                            onSetStatus = onSetStatus,
+                            rename = rename,
+                            report = report,
+                            onAdjust = adjust,
+                        )
                     }
-                }
-                item(key = "roadmap", contentType = "roadmap") {
-                    PlanRoadmap(page, links, onOpenPath = if (structure != null) ({ pathOpen = true }) else null)
-                }
-                if (!asideBeside) {
-                    item(key = "numbers", contentType = "numbers") { numbers(NumberVariant.Tiles) }
-                    if (hasSuggestion) item(key = "suggestion", contentType = "suggestion") { suggestion(SuggestionLayout.Line) }
-                }
-                if (focusTest != null || completedLessonsRow || mindMapsRow) {
-                    item(key = "places", contentType = "places") {
-                        Column {
-                            focusTest?.invoke()
-                            if (completedLessonsRow) {
-                                PlaceRow(
-                                    R.drawable.ic_history,
-                                    R.string.navigation_completed_lessons,
-                                    links::completedLessons,
-                                )
-                            }
-                            if (mindMapsRow) PlaceRow(R.drawable.ic_lan, R.string.plan_mind_maps, links::mindMaps)
+                    countryRebuild?.let { rebuild ->
+                        item(key = "country-rebuild", contentType = "notice") {
+                            CountryRebuildNotice(rebuild, edits.isPending(PlanPart.CountryRebuild), edits.retryCountryRebuild)
                         }
                     }
-                }
-                if (structure != null) {
-                    item(key = "structure", contentType = "structure") {
-                        PlanSyllabusSection(structure, onOpenSubject = links::subject, modifier = Modifier.bleed(PAGE_MARGIN)) {
-                            // Unpicked choices are the suggestion's; beside the aside, its properties name the pick.
-                            if (!asideBeside) {
-                                PlanChoiceLines(
-                                    choices = page.plan.examChoices.filter { it.subjects.isNotEmpty() },
-                                    onChange = { onAdjust?.invoke(PlanSection.Choices) },
-                                )
+                    item(key = "roadmap", contentType = "roadmap") {
+                        PlanRoadmap(page, links, onOpenPath = if (structure != null) ({ pathOpen = true }) else null)
+                    }
+                    if (!asideBeside) {
+                        item(key = "numbers", contentType = "numbers") { numbers(NumberVariant.Tiles) }
+                        if (hasSuggestion) item(key = "suggestion", contentType = "suggestion") { suggestion(SuggestionLayout.Line) }
+                    }
+                    if (focusTest != null || completedLessonsRow || mindMapsRow) {
+                        item(key = "places", contentType = "places") {
+                            Column {
+                                focusTest?.invoke()
+                                if (completedLessonsRow) {
+                                    PlaceRow(
+                                        R.drawable.ic_history,
+                                        R.string.navigation_completed_lessons,
+                                        links::completedLessons,
+                                    )
+                                }
+                                if (mindMapsRow) PlaceRow(R.drawable.ic_lan, R.string.plan_mind_maps, links::mindMaps)
                             }
                         }
                     }
-                } else {
-                    item(key = "path", contentType = "path") {
-                        PathSection(page, links, alphabet = alphabet, course = page.libraryCourse)
+                    if (structure != null) {
+                        item(key = "structure", contentType = "structure") {
+                            PlanSyllabusSection(structure, onOpenSubject = links::subject, modifier = Modifier.bleed(PAGE_MARGIN)) {
+                                // Unpicked choices are the suggestion's; beside the aside, its properties name the pick.
+                                if (!asideBeside) {
+                                    PlanChoiceLines(
+                                        choices = page.plan.examChoices.filter { it.subjects.isNotEmpty() },
+                                        onChange = { onAdjust?.invoke(PlanSection.Choices) },
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        item(key = "path", contentType = "path") {
+                            PathSection(page, links, alphabet = alphabet, course = page.libraryCourse)
+                        }
+                    }
+                    if (!asideBeside) {
+                        item(key = "next", contentType = "next") { NextAndMore(page, links) }
                     }
                 }
-                if (!asideBeside) {
-                    item(key = "next", contentType = "next") { NextAndMore(page, links) }
+                if (page.isPaused) {
+                    ResumeGoalBar(enabled = resume != Resume.Pending, busy = isSaving, failure = resumeFailure) {
+                        onSetStatus(LearnerSummaryGoal.Status.ACTIVE)
+                    }
                 }
             }
         }
@@ -549,14 +557,12 @@ internal fun PlanEvents(
     navigator: AppNavigator,
 ) {
     val snackbars: SnackbarHostState = LocalSnackbarHostState.current
-    val limitReached = stringResource(R.string.plan_goal_limit_reached)
     val saveFailed = stringResource(R.string.plan_save_failed)
 
     LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
             when (event) {
                 PlanEvent.Archived -> navigator.select(AppTab.Today)
-                PlanEvent.GoalLimitReached -> snackbars.showSnackbar(limitReached)
                 PlanEvent.SaveFailed -> snackbars.showSnackbar(saveFailed)
             }
         }
@@ -591,4 +597,28 @@ internal fun standingOf(
     if (page.isExam) return Standing.Preparation(progress)
     val lessons = syllabus?.lessons
     return Standing.Progress(progress, lessons?.done ?: 0, lessons?.known ?: 0, lessons?.total ?: 0)
+}
+
+/** Main's `ResumeGoalBar`: a paused goal's Resume as the page's main action, and why it didn't save over it. */
+@Composable
+private fun ResumeGoalBar(
+    enabled: Boolean,
+    busy: Boolean,
+    failure: ResumeFailure?,
+    onResume: () -> Unit,
+) {
+    BottomBar(
+        note =
+            failure?.let {
+                {
+                    BarError(
+                        stringResource(if (it == ResumeFailure.GoalLimit) R.string.plan_goal_limit_reached else R.string.plan_save_failed),
+                    )
+                }
+            },
+    ) {
+        TaskActions { main ->
+            Button(onClick = onResume, modifier = main, enabled = enabled, busy = busy) { Text(stringResource(R.string.plan_resume)) }
+        }
+    }
 }

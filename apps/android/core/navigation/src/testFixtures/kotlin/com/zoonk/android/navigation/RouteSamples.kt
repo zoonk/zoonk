@@ -22,6 +22,7 @@ val routeSamples: List<AppRoute> =
         AppRoute.Settings,
         AppRoute.Preferences,
         AppRoute.Memory,
+        AppRoute.PrivacySettings,
         AppRoute.Reminders,
         AppRoute.AboutYou,
         AppRoute.ProfileQuestionEdit("watch"),

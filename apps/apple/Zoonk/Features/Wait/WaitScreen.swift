@@ -202,7 +202,7 @@ extension EnvironmentValues {
 /// Main's `WaitHeading`: the progress's title as the page's, or as a block's in the aside.
 struct WaitHeading: View {
   let title: Text
-  let description: Text
+  var description: Text?
 
   @Environment(\.isWaitAside) private var isAside
 
@@ -214,9 +214,11 @@ struct WaitHeading: View {
             .typeStyle(.sectionTitle)
             .accessibilityAddTraits(.isHeader)
 
-          description
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+          if let description {
+            description
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
+          }
         }
         .listRowBackground(Color.clear)
       }

@@ -534,11 +534,10 @@ struct PracticeCallSection: View {
         }
 
         if !isPlus && conversation.plusMinutes.contains(picked) || outcome == .plusRequired {
-          PlusNotice(
-            description: Text(
-              "Longer calls come with a subscription.", tableName: "Plan",
-              comment: "Says longer practice calls need a subscription"),
-            isInset: true)
+          SubscribeGate(
+            title: Text(
+              "Longer calls need a subscription", tableName: "Plan",
+              comment: "A free learner picked a practice call length their plan doesn't include"))
         } else if start.isWriting {
           WritingWait(
             title: Text(

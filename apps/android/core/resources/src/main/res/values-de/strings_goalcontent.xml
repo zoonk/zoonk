@@ -42,7 +42,7 @@
   "goalcontent_mastery_pending": "6af6ad6c8cfdf2738ad4e923e2b9809f52e4cc0e9f7a1c6605954dc5972c3e44",
   "goalcontent_mastery_right": "cc190e215b5d1bfe6a55bdd3024fd2bf0761f70357ffa92de83e8a50fe9998a7",
   "goalcontent_material_topic_count": "d383b1ce6b5d741943d024d0906dbfc9d638c8aa2957d3d1ce8002a6510136c6",
-  "goalcontent_matrix_title": "1763ed93c5992f81557f923a86f8d291f7f5ea343ae2b11d74b48ce7c1c6896e",
+  "goalcontent_matrix_title": "9e9b5bfaf9c23cfece87ecbc8f29f37df07eb22799dda0caeeb2315362169223",
   "goalcontent_module_count": "bbeb46413d5837b5714a9e4472d0ae6f4de6936da9f601c637ca98a5d43cdd1f",
   "goalcontent_modules": "8f78b7ac4521eb120e408b021a0916c4554af3d734e16a1c986395645e7ae98f",
   "goalcontent_more_chapters": "d36f3eefa885482c9e5488d10d497f6090f150fd09728774d1df604f0642b07a",
@@ -82,7 +82,7 @@
   "goalcontent_to_review": "699cc972663a050ba2bf1575f131c097327a96c7e199deb771202c2e9eedb776",
   "goalcontent_topic_count": "a92fa1a73b9c7a543863a3f809ce6b42a9c8d739c57a3e145602f389ee985f89",
   "goalcontent_topic_in_progress": "6c092bf498cac1ec7cc3e11f0358393355c1d27703fb8f487baf0c144d40ddde",
-  "goalcontent_topic_known": "8e0d54b0833a8ff8b8fda34d9a3d35ed56a05184b2fd534880185a9c4fdad96d",
+  "goalcontent_topic_known": "cd435ca42b3cd753cfd0cda5cc9673742cbc132b492b7c839073660112e62ca1",
   "goalcontent_topic_known_practice": "7dd3ee84a890067c9061773ddbc70167609a5e872b9a2a01550eae5c12091393",
   "goalcontent_topic_known_reviews": "ae6a2bf2cf835cfb99c2eab2d03a0a9f89a5e8bdd3e7e843f2a97af883bdd871",
   "goalcontent_topic_missing": "1f460ecabb501aea40081b56e5b4dfb09de123b736dabe9a45f995677b9022a5",
@@ -255,7 +255,7 @@
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · %2$s abgeschlossen</string>
     <!-- A topic's state for screen readers. -->
-    <string name="goalcontent_topic_known">Das kennst du schon</string>
+    <string name="goalcontent_topic_known">Das weißt du schon</string>
     <string name="goalcontent_topic_in_progress">In Bearbeitung</string>
     <string name="goalcontent_topic_to_study">Noch zu lernen</string>
     <string name="goalcontent_topic_known_reviews">Das kennst du schon · kommt beim Wiederholen wieder dran</string>
@@ -277,7 +277,7 @@
     <string name="goalcontent_frequency_waits">Die Themen, die in früheren Prüfungen am seltensten abgefragt wurden, kommen später dran (%1$s, laut %2$s).</string>
     <string name="goalcontent_frequency_most">Du verbringst mehr Zeit mit den Themen, die in früheren Prüfungen am häufigsten abgefragt wurden (%1$s, laut %2$s).</string>
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
-    <string name="goalcontent_matrix_title">Was in den Fragen drankommt</string>
+    <string name="goalcontent_matrix_title">Was die Fragen behandeln</string>
     <string name="goalcontent_see_all">Alle %1$s ansehen</string>
     <string name="goalcontent_chapter_number">Kapitel %1$s</string>
     <string name="goalcontent_progress">Fortschritt</string>

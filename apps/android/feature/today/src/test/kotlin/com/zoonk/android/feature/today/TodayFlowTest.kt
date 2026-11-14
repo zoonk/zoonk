@@ -50,6 +50,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
@@ -723,7 +724,8 @@ class TodayFlowTest {
             session: AuthenticatedSession,
             insightId: UUID,
             accepted: Boolean,
-        ) = Unit
+            quote: String?,
+        ): MemoryInsight = error("Not used")
 
         override suspend fun prepareLessons(
             session: AuthenticatedSession,

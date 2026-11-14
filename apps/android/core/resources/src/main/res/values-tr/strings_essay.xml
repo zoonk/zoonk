@@ -41,11 +41,11 @@
   "essay_rewrite_label": "ff673351308f9a35eb87f9c66e6556f27e9cbee058719c874dea5618955e2b4e",
   "essay_scale": "3add3bc3b18ba0ad74d13cfb94db9a4e5a856924d103a17939e78b0467848f7e",
   "essay_score_of": "10e1a7291d55820f75166b665966d983fbce501d1078d94ebcd6f28536c9b0b0",
-  "essay_see_comments": "7955690aded7a395da58ceaf3fdfa756d99eca5de9a924e9854e9e4be0a03e31",
+  "essay_see_comments": "21b1a1d0e3ef9265d2f00f5331234d78e983549ffdb94fc037bf3a8d393aad70",
   "essay_see_grade": "2e5fbb82ac41ef978c65bc1e466f25667e315ad78f1450e7d824d60659f35b14",
   "essay_send": "62886978de76a32b3bcdf1a938e72a33a12fa45b44178262e5d299b95b851795",
   "essay_send_failed": "620484cfceb1898f324c6765faf8d4332fd15f2d7221626e77235863d80b6fb6",
-  "essay_skip_rewrite": "38d209182fd6e03a808f25f52f6b3f30e25074782c984ca79c9030a7506f2028",
+  "essay_skip_rewrite": "4dbeca0cff4ab5310d602e45ddc68a2303e94a0810e326b175e42efd7be31853",
   "essay_skipped": "be168f28ba3b7e44b507e076434363eac5d25b84752da0979fab572294cce9af",
   "essay_supporting_texts": "284247f75176a73283ece11d20d21dc967460d7094a301abf75a6aac733da29e",
   "essay_the_case": "f49fccea8d964c1d742be1ddc878a0adf8120fb67b6b0841f1c49f312934d622",
@@ -109,7 +109,7 @@
     <string name="essay_limit_reached">Bugünkü kompozisyon değerlendirme haklarını kullandın. Metnin burada kalacak; yarın gönder.</string>
     <string name="essay_grading">Kompozisyonunu her ölçüte göre inceliyoruz. Bu işlem 30 saniyeye kadar sürebilir.</string>
     <string name="essay_grading_slow">Değerlendirmeye devam ediyoruz. Normalden uzun sürüyor.</string>
-    <string name="essay_skip_rewrite">Yeniden yazmayı atla</string>
+    <string name="essay_skip_rewrite">Atla</string>
     <string name="essay_grade_rewrite">Yeni taslağı değerlendir</string>
     <string name="essay_send">Değerlendirmeye gönder</string>
     <string name="essay_leave_title">Şimdilik çıkmak ister misin?</string>
@@ -122,7 +122,7 @@
     <string name="essay_too_short_detail">Kompozisyonun tamamını yaz, sonra yeniden gönder.</string>
     <string name="essay_rewrite">Yeniden yaz</string>
     <string name="essay_finish_failed">İşlem tamamlanamadı. Birazdan tekrar dene.</string>
-    <string name="essay_see_comments">Her ölçütle ilgili yorumları gör</string>
+    <string name="essay_see_comments">Yorumları gör</string>
     <string name="essay_comments">Yorumlar</string>
     <string name="essay_proposal_elements">Önerinin beş unsuru</string>
     <!-- One of the five elements of an ENEM essay's intervention proposal: who carries it out. -->

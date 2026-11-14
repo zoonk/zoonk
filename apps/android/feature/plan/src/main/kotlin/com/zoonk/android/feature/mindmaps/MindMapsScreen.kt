@@ -45,14 +45,11 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.goalcontent.WithPlanGoal
-import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.EmptyState
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.ListRow
@@ -60,8 +57,10 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -69,7 +68,6 @@ import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.pagePadding
-import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMaps
@@ -242,12 +240,22 @@ internal fun MindMapsPage(
             toggleNotMade = { notMadeOpen = !notMadeOpen },
         )
 
-    PageScaffold(onBack = actions.back, title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) }) { padding ->
+    val study = { actions.study(tab, null) }.takeIf { decks.getValue(tab) > 0 }
+
+    PageScaffold(
+        onBack = actions.back,
+        title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        barWidth = DETAIL_PAGE_WIDTH,
+        bottomBar =
+            study?.let {
+                { TaskActions { main -> Button(onClick = it, modifier = main) { Text(stringResource(R.string.mindmaps_study)) } } }
+            },
+    ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
             BeforeFold { beforeFold ->
                 LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, pagePadding()) {
                     item(key = "hero", contentType = "hero") {
-                        MindMapsHeader(mindMaps, study = { actions.study(tab, null) }.takeIf { decks.getValue(tab) > 0 }, actions.navigate)
+                        PageHeader(title, supporting = mindMaps.goal.displayName, modifier = Modifier.padding(bottom = 16.dp))
                     }
                     stickyHeader(key = "tabs", contentType = "tabs") { MindMapsTabs(tab, decks) { picked = it.key } }
 
@@ -298,33 +306,6 @@ internal class TabActions(
         target: MindMapTarget,
         server: Boolean,
     ) = state.saves[target] ?: server
-}
-
-/** The goal over the title, then Study, which opens the tab's maps where this device stopped; and why rows are locked for Plus. */
-@Composable
-private fun MindMapsHeader(
-    mindMaps: GoalMindMaps,
-    study: (() -> Unit)?,
-    navigate: (AppRoute) -> Unit,
-) {
-    Column(Modifier.padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Eyebrow(mindMaps.goal.displayName)
-        Text(stringResource(R.string.navigation_mind_maps), Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
-        if (study != null) {
-            Button(
-                onClick = study,
-                modifier = Modifier.padding(top = 12.dp),
-            ) { Text(stringResource(R.string.mindmaps_study)) }
-        }
-        if (mindMaps.chapters.any { it.status == GoalMindMap.Status.PLUS_REQUIRED }) {
-            PlusNotice(
-                onSeePlus = { navigate(AppRoute.Subscription) },
-                modifier = Modifier.padding(top = 12.dp),
-                title = stringResource(R.string.subscription_free_week_over_title),
-                description = stringResource(R.string.subscription_free_week_over_description),
-            )
-        }
-    }
 }
 
 /** Material's tabs, each with how many maps Study would open there. */

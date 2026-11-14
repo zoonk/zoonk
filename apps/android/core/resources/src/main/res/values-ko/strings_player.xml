@@ -156,6 +156,7 @@
   "player_spelled": "bc696ab62574789ab97287c5654832ae704c4ee245c5ed5ecfe45df963e8a210",
   "player_start_failed_description": "cababaf28fec77c9ededda5499f8e5fb3e728e4b8c516f9371d8436d7dade0ce",
   "player_start_failed_title": "76b959c5abe6409ebec1037e310665845449fc12b3bc49825149b9abbbe7aed4",
+  "player_start_the_lesson": "cb996068be45b1c58f6b1f0dc87ab8ac76c78729a4cc95797cbb0d9739ebadfd",
   "player_start_this_challenge": "2ce75b1de9103e0e32776e86e85fc6be61ee7c4906af770f4575195899e5a8c2",
   "player_start_this_lesson": "2737d9c93b6777255b92d403f7ab9b5405a23cd8ee50423c7f20de5a744aae93",
   "player_still_checking": "a493d73d2deee78c064616eb39a5301b98894b3e7f19df53f07b5e9489302fd3",
@@ -298,6 +299,7 @@
     <string name="player_challenge_ready">챌린지가 준비됐어요</string>
     <string name="player_challenge_wait_stopped">챌린지를 준비하지 못했어요</string>
     <string name="player_start_this_challenge">챌린지 시작하기</string>
+    <string name="player_start_the_lesson">레슨 시작하기</string>
     <string name="player_writing_lesson">레슨을 만들고 있어요</string>
     <string name="player_phase_plan">레슨을 계획하고 있어요</string>
     <string name="player_phase_plan_line_1">다룰 내용을 고르고 있어요…</string>

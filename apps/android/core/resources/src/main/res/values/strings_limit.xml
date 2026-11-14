@@ -22,7 +22,7 @@
     <string name="limit_lessons_guest">No more lessons without an account</string>
     <string name="limit_lessons_free">You\'ve used your free lessons</string>
     <string name="limit_lessons_day">No more new lessons today</string>
-    <string name="limit_lessons_month">No more new lessons this month</string>
+    <string name="limit_lesson_ready">Your next free lesson is ready</string>
     <string name="limit_mind_maps_guest">No more mind maps without an account</string>
     <string name="limit_mind_maps_day">No more new mind maps today</string>
     <string name="limit_mind_maps_month">No more new mind maps this month</string>

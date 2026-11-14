@@ -18,6 +18,7 @@ import { type LoadReport, measureLoad, warmUp } from "./measure.mts";
 import { type SoakReport, judgeSoak, measureSoak, soakRows } from "./memory.mts";
 import { type NavigationMode } from "./navigation-checks.mts";
 import { type NavigationReport, measureNavigations } from "./navigations.mts";
+import { pageTopComparisons } from "./page-top-comparisons.mts";
 import { PAGE_OPTIONS, USAGE } from "./pages-usage.mts";
 import {
   type RenderReport,
@@ -275,6 +276,10 @@ const report = renderReport({
           },
         ]
       : []),
+    ...pageTopComparisons(loads).map(({ finding, path, viewport }) => ({
+      findings: [finding],
+      place: { page: path, screen: viewport },
+    })),
     ...(comparison?.findings ?? []).map(({ finding, path, viewport }) => ({
       findings: judge([finding]),
       place: { page: path, screen: viewport },

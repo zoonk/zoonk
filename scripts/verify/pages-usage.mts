@@ -36,7 +36,7 @@ dark, and writes a report of what it found. The verify skill's "Measuring pages"
   --baseline <dir>        compare with an earlier run's folder
   --soak <laps>           walk the paths that many times in one tab and compare memory
   --queries <file>        read the statements a server started with ZOONK_QUERY_LOG=<file> logged
-  --roles                 also save crops and comparison sheets of shared roles (buttons, bars, titles)
+  --roles                 also save crops and comparison sheets of shared roles (page tops, bars, overlays)
   --local-storage <n=v>   set a value the page keeps on the device; repeatable
   --viewports <list>      every screen by default (${VIEWPORT_NAMES.join(", ")})
   --schemes <list>        ${SCHEMES.join(", ")} by default

@@ -134,13 +134,12 @@ struct TutorLimitNotice: View {
   let failure: TutorFailure
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 10) {
-      Text(failure.message)
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
+    VStack(alignment: .leading, spacing: 8) {
+      GateWords(title: failure.words.title.map(Text.init), line: failure.words.line.map(Text.init))
         .announcesAlert(failure.message)
 
       TutorRemedyButton(failure: failure, retry: {})
+        .controlSize(.small)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
   }
@@ -161,14 +160,14 @@ struct TutorRemedyButton: View {
         Text("Create a free account", tableName: "Tutor", comment: "Opens sign-up from the buddy")
       }
       .buttonStyle(.outline)
-    case .seePlus:
-      SeePlusButton()
+    case .subscribe:
+      SubscribeButton()
         .buttonStyle(.outline)
     case .signIn:
       Button {
         places.open(.account)
       } label: {
-        Text("Sign in", tableName: "Tutor", comment: "Opens sign-in after the session expired")
+        Text("Log in", tableName: "Tutor", comment: "Opens sign-in after the session expired")
       }
       .buttonStyle(.outline)
     case .tryAgain:

@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "missions_after_lessons": "a3f8a6ed596b3c80457dca9508f81bb7de1e962867d04592094f8a25dd2af7e6",
-  "missions_ask_buddy": "827971315c28fdc04393182ca8f39f9cbee71b24a1a76c8014e4ced3f2fd8a15",
+  "missions_ask_buddy": "05241478e2154739e16569698b75be79c3fc6a351604b317faadcd939d16c4f8",
   "missions_brain_power": "8733c75a1aa7c30a94b91bd11aff21ba012b3996bff7aaa5f336a7734a9c9635",
   "missions_brain_power_about": "280501758798427294618bd8e23df17a2edcd389944a45ea9e118495589f8239",
   "missions_brain_power_total": "765cae2d43be196e9ee27a10e2ecb6024cbe90a0164678035008942533fd0d5f",
@@ -99,7 +99,7 @@
     <string name="missions_pronunciation">Ćwicz wymowę</string>
     <string name="missions_call">Porozmawiaj</string>
     <!-- %1$s is the learner's buddy's name. -->
-    <string name="missions_ask_buddy">Zapytaj o coś: %1$s</string>
+    <string name="missions_ask_buddy">Zapytaj o coś. Odpowie %1$s</string>
     <!-- %1$s is a skill area's title. -->
     <string name="missions_practice_area">Poćwicz: %1$s</string>
     <string name="missions_after_lessons">Po dzisiejszych lekcjach</string>

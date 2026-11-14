@@ -9,7 +9,7 @@
   "belt_brown": "850541eab27bccc8448447431c823650c591f272c635e0176cefbffda55be666",
   "belt_gray": "a55ba233a6619f7376c2d2ab7f92939b372103bc608f9e2976f087e204d5dd95",
   "belt_green": "7f5b15bbe9990a921c849bc8e91a1013e59a4340c10a46d47dbb69ac5ccaccc5",
-  "belt_level": "14a1d063a747d3ef0e91f683abfc01e40517b63f0c65a21c21e787305cd349f8",
+  "belt_level": "6e6baa7f451a2739ab4c14eb946989e16a763cdc9251e8f7da11879a1275d231",
   "belt_orange": "6c8f300f6b5d24ca82f8aa702b208a8fd2f94a115d0623ecceae1393125540c8",
   "belt_purple": "e19807ec6616efacb0a6c11340c21b58ace30dc68e7fc5aca899dbb3fb06cbc9",
   "belt_red": "43b0f1da55e2b586d711036f928b7dd44cab643b6549ea840eb7ec6ac0732b02",
@@ -28,16 +28,14 @@
   "disclosure_collapsed": "f49121409f18b6d4eb2d5c5f87fcd6e7883b31987745452e63a3550f2847fa0b",
   "disclosure_expanded": "02e11e04e3cfd7f7f8dd0b5458f7d4b0917eee97af279d7c7efb1650da415a09",
   "exam_choice_pick_up_to": "a02c3cee13132eb47b9a6bfafa62b284c0bab495494c860de2a960c5a8ad29c1",
+  "gate_build_plan": "4b04786adf6d3bb03bb86da456ae533d0d48ae496afc6802ca7020225f765cbb",
   "gate_log_in": "2b0884dd61bbc490df35f2b14bf94c213eb0b7c5dec16b99c03c1651f2d73f52",
-  "gate_session_ended_description": "9827a2669afccc474161e590b1fb1563f2a22ca4903e537f68a789d160e1de5d",
-  "gate_session_ended_title": "6f0d4f323add0fd2b672ce977655c96e977dd6c9246769cd8015052b6e2c3182",
-  "gate_sign_in_description": "e8d7e3cbc66be9eec0da72a0be13372c68a1d238a2c4f16f0e7a10129918c13a",
+  "gate_session_ended_description": "9e66c3dd024d6e3282cc37bead14e35933fe62c5669195605543378cfdd507e2",
+  "gate_session_ended_title": "11a63efb474a84341e71bfe87da70756851f1fbf655aec74d7c241db1e31c07e",
   "gate_sign_in_title": "ef3321dd0e7aeda405ae9d362baef1d98e23e42e37c6df0332fbe822f90aacf8",
-  "gate_start_free": "ab3489d336362e2ef5bf5151b9729e55296974af5d130efe162df798614ff6dd",
   "gate_start_goal": "abdfff831a39fd42c8f0d3e26a6bd8f1c7febd9cd792cea8739e277339d2ac05",
   "gate_start_goal_description": "f980d8439336c84c90159c4cac4bc141940509f1fdbbc960d6b794b01deaa942",
   "gate_start_goal_title": "5866acf2ad5b461231a18976e341d09edb94ed427d16925474f0b0109cce0d68",
-  "gate_start_something_new": "256aa5116e78bb6672baf3c9fbdba93a00de239938226339af6285d4cf2bdff8",
   "goal_with_variety": "bb14ee32488efd61dc80d41de9790162c08fcd2a2384b68192bb427bd1c02eef",
   "lesson_summaries_title": "3b1f2450312d780f2e8a1a8e6637af6fc8e2fb05a2d0708ee267fa3292f42da9",
   "lessons_coming_up": "02783708e6847c46d1421e3d18b5fd3f71a2466b0db25c86e6a2d2ddd208e1b4",
@@ -47,7 +45,7 @@
   "lessons_title": "13c14aedb185c8588b2c2c9e6c1de142e3f92a53bfb326e90eb97157ee002c48",
   "lessons_up_next": "a2e9ca05197cbbf1d8c69782893ac7427d6de10a58e05c1130da3557b57a348c",
   "list_row_states": "650143092dcd67d306bba2f1f8b6b4ef9bf5a5b9b5942eac57b5ef7579f5cbb6",
-  "load_failed_description": "37dabdb27760546ae50e7a1a1a8f65c95475dcfc201f7a6277a87004f4f4a321",
+  "load_failed_description": "1cf750d03ce6b1924aecc4d10f5adc9cb2fbf4e7a2dcb0e8c097744e45e8f0c5",
   "load_failed_title": "785e5861dd84250db47b3c38ae5393a7bb7068ddf7d5463c7355b504745117bb",
   "load_failed_try_again": "b2fb2fb6f246e570782d8e78c5d54a370ad40c10e896581b53ca646acaf96077",
   "navigation_back": "fc505d03120503d5e190f98ec4ce47fe4e3142c3f81b679073fa054882640c3d",
@@ -67,6 +65,7 @@
   "not_found_title": "a54234e10a21588e264d0111397d9372b3841c8601914ce752cb8b49faae8c71",
   "player_not_saved": "11615190eb8261b3acc51d85bc78d22be0f663366a996d45afe64aca44994c97",
   "player_not_saved_description": "86828e39de8ae7d5d416b0bb67c3e45bc144b9425f1bac37eaf184e3d982a66a",
+  "suggestion_other_options": "f9be4bfafc5d7f4c4cca0982fc79187353b37b20c9fa9177cb5db61bc8b85d63",
   "suggestion_save_failed": "64f77e2077e7d4f067f974eabdcc53a20ac52105964c1a1d6fe1a1f03e6f09e6",
   "suggestion_view": "3d160efc2a851cc8cb8b887b76439d4c85bf15bdbeec4eb2da058732e8bcad57",
   "task_leave": "177cb39387567943127b8e077274966476e8573f7f4bec70580fe56164773c57",
@@ -92,12 +91,11 @@
     <string name="navigation_user_menu">Menu do usuário</string>
     <string name="task_leave">Sair</string>
     <string name="gate_sign_in_title">Entre para continuar</string>
-    <string name="gate_sign_in_description">Entre para continuar de onde parou ou comece grátis.</string>
     <string name="gate_session_ended_title">Sua sessão terminou</string>
-    <string name="gate_session_ended_description">Entre para continuar seu plano.</string>
+    <string name="gate_session_ended_description">Entre para voltar ao seu plano.</string>
     <string name="gate_log_in">Entrar</string>
-    <string name="gate_start_free">Começar grátis</string>
-    <string name="gate_start_something_new">Começar algo novo</string>
+    <!-- Starts a new goal: the visitor tells us what to learn and gets a plan. -->
+    <string name="gate_build_plan">Criar meu plano</string>
     <string name="gate_start_goal_title">Comece com um objetivo</string>
     <string name="gate_start_goal_description">Conte o que você quer aprender e a gente planeja cada dia até você chegar lá.</string>
     <string name="gate_start_goal">Começar um objetivo</string>
@@ -113,15 +111,17 @@
     <string name="belt_red">Faixa vermelha</string>
     <string name="belt_gray">Faixa cinza</string>
     <string name="belt_black">Faixa preta</string>
-    <string name="belt_level">%1$s, nível %2$s</string>
+    <!-- A belt and its number from 1 to 10, such as White belt 4. %1$s is the belt's name. -->
+    <string name="belt_level">%1$s %2$s</string>
     <string name="answer_tag_correct">Correta</string>
     <string name="answer_tag_your_answer">Sua resposta</string>
     <string name="answer_tag_your_guess">Seu palpite</string>
     <string name="load_failed_title">Esta página não carregou</string>
-    <string name="load_failed_description">Pode ser sua conexão ou um problema do nosso lado. Tentar de novo geralmente resolve.</string>
+    <string name="load_failed_description">Confira sua conexão e tente de novo.</string>
     <string name="load_failed_try_again">Tentar de novo</string>
     <string name="suggestion_view">Ver</string>
     <string name="suggestion_save_failed">Não foi possível salvar. Tente de novo.</string>
+    <string name="suggestion_other_options">Outras opções</string>
     <!-- Above the options of an exam's choice when each candidate takes several of them, such as two of a course's modules. %1$d is how many, at least 2. -->
     <string name="exam_choice_pick_up_to">Escolha até %1$d.</string>
     <string name="disclosure_expanded">Expandido</string>

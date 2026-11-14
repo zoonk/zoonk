@@ -1,32 +1,20 @@
 package com.zoonk.android.feature.plan
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
 import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionMark
+import com.zoonk.android.ui.components.SuggestionMenu
+import com.zoonk.android.ui.components.SuggestionMenuItem
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -216,6 +204,7 @@ internal fun CoverageSuggestion(slot: Slot) {
         when {
             preview != PlanPreviewState.Idle && offer != null -> {
                 PlanPreviewResult(
+                    dateKind = page.dateKind,
                     state = preview,
                     onApply = { slot.applyPreview(SlotItem.Coverage, preview) },
                     onRetry = { slot.host.requestPreview(offer.operations) },
@@ -253,22 +242,27 @@ internal fun CoverageSuggestion(slot: Slot) {
                         }, secondary = true)
                     }
                     if (coverage != null) {
-                        OtherOptions { done ->
-                            if (moveDate) Option(stringResource(R.string.plan_move_date), done) { ask(CoverageIntent.Date, focus) }
+                        SuggestionMenu { done ->
+                            if (moveDate) {
+                                SuggestionMenuItem(
+                                    stringResource(R.string.plan_move_date),
+                                    done,
+                                ) { ask(CoverageIntent.Date, focus) }
+                            }
                             if (canChooseFocus(plan)) {
-                                Option(stringResource(R.string.plan_choose_focus), done) {
+                                SuggestionMenuItem(stringResource(R.string.plan_choose_focus), done) {
                                     close()
                                     edits.chooseFocus()
                                 }
                             }
                             if (course != null && !course.on && !studiesEverything) {
                                 val text = if (course.isExam) R.string.plan_study_everything_after_exam else R.string.plan_study_everything
-                                Option(stringResource(text), done) {
+                                SuggestionMenuItem(stringResource(text), done) {
                                     close()
                                     edits.studyEverything()
                                 }
                             }
-                            Option(stringResource(R.string.plan_not_now), done) { slot.dismiss(SlotItem.Coverage) }
+                            SuggestionMenuItem(stringResource(R.string.plan_not_now), done) { slot.dismiss(SlotItem.Coverage) }
                         }
                     }
                 }
@@ -314,12 +308,11 @@ internal fun FitLessonsSuggestion(slot: Slot) {
         }
 
     PlanChangeSuggestion(SlotItem.FitLessons, title, slot) {
-        offer?.let { topicsMoved(it.effect, named = NAMED_TOPICS) }?.let { SuggestionDescription(it) }
-        offer?.let { PlanEffectDiff(it.effect) }
+        offer?.let { PlanEffectDiff(it.effect, dateKind = page.dateKind, said = EffectSaid.LessonsAdded) }
         SuggestionActions {
             if (offer != null && offer.canApply) {
                 SuggestionAction(
-                    stringResource(R.string.plan_apply),
+                    stringResource(R.string.plan_add_to_my_plan),
                     onClick = { slot.apply(SlotItem.FitLessons, offer.operations.map { it.op }) },
                     busy = slot.edits.isPending(PlanPart.Suggestion),
                     leadingIcon = { ButtonIcon(R.drawable.ic_check) },
@@ -393,6 +386,7 @@ internal fun PastDateSuggestion(
         when {
             preview != null -> {
                 PlanPreviewResult(
+                    dateKind = page.dateKind,
                     state = preview,
                     onApply = { slot.applyPreview(item, preview) },
                     onRetry = { slot.host.requestPreview(preview.operations) },
@@ -428,9 +422,9 @@ internal fun PastDateSuggestion(
                 }
                 SuggestionActions {
                     SuggestionAction(stringResource(if (retry) R.string.plan_try_again else R.string.plan_preview), onClick = ::showChange)
-                    OtherOptions { done ->
-                        Option(stringResource(R.string.plan_adjust_plan), done, adjust)
-                        Option(stringResource(R.string.plan_not_now), done) { slot.dismiss(item) }
+                    SuggestionMenu { done ->
+                        SuggestionMenuItem(stringResource(R.string.plan_adjust_plan), done, adjust)
+                        SuggestionMenuItem(stringResource(R.string.plan_not_now), done) { slot.dismiss(item) }
                     }
                 }
             }
@@ -445,35 +439,4 @@ private fun Slot.applyPreview(
 ) {
     val ready = (preview as? PlanPreviewState.Ready)?.takeIf { !it.preview.unchanged && it.preview.effect != null } ?: return
     apply(item, ready.operations)
-}
-
-/** Main's `OtherOptions` menu; each option closes it with [done] before acting. */
-@Composable
-private fun OtherOptions(options: @Composable (done: () -> Unit) -> Unit) {
-    var open by rememberSaveable { mutableStateOf(false) }
-
-    Box {
-        SuggestionAction(
-            onClick = { open = true },
-            modifier = Modifier.semantics { role = Role.DropdownList },
-            secondary = true,
-        ) {
-            Text(stringResource(R.string.plan_other_options))
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Icon(painterResource(R.drawable.ic_expand_more), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-        }
-        DropdownMenu(expanded = open, onDismissRequest = { open = false }) { options { open = false } }
-    }
-}
-
-@Composable
-private fun Option(
-    text: String,
-    done: () -> Unit,
-    onClick: () -> Unit,
-) {
-    DropdownMenuItem(text = { Text(text) }, onClick = {
-        done()
-        onClick()
-    })
 }

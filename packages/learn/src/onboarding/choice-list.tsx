@@ -41,7 +41,7 @@ export const CHOICE_ROW_CLASS = cn(
  */
 function ChoiceKey({ index }: { index: number }) {
   return (
-    <ListRowLeading className="hidden w-5 justify-center empty:block pointer-fine:flex">
+    <ListRowLeading className="hidden w-5 justify-center pointer-fine:flex">
       {index < MAX_PICK_KEYS && <ShortcutKbd index={index} shortcut="pick" />}
     </ListRowLeading>
   );

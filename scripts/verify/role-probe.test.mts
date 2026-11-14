@@ -50,12 +50,13 @@ describe("reading the page's named roles", () => {
 
   it("finds hand-drawn title eyebrows but accepts the shared hook and controls", () => {
     document.body.innerHTML = `<header><p>Your plan</p><h1>Today</h1></header>
+      <header><div>From a div</div><h1>Today</h1></header>
       <header><p data-slot="eyebrow">Your plan</p><h1>Today</h1></header>
       <header><p><span data-slot="eyebrow">Your plan</span></p><h1>Today</h1></header>
       <header><p><button>Change goal</button></p><h1>Today</h1></header>
       <header><p hidden>Hidden</p><h1>Today</h1></header>`;
 
-    assert.deepEqual(readRoleFacts().unmarkedEyebrows, ["Your plan"]);
+    assert.deepEqual(readRoleFacts().unmarkedEyebrows, ["Your plan", "From a div"]);
     assert.equal(roleFindings(readRoleFacts())[0]?.check, "R3 eyebrow piece");
   });
 });

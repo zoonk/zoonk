@@ -210,7 +210,7 @@ private struct PronunciationRoundView: View {
       if recorder.isDenied {
         MicrophoneOffView(description: Text(microphoneOff)) {}
       } else if case .limit(let limit) = notice {
-        HelpLimitNotice(limit: limit)
+        LimitNotice(limit: limit)
       } else if notice == .failed, round?.isPending != true, !recorder.isRecording {
         SaveFailureNotice(
           failures: round?.answerFailures ?? 0,
@@ -250,7 +250,7 @@ private struct PronunciationRoundView: View {
       }
 
       if case .limit(let limit) = notice {
-        return limit.message
+        return limit.helpWords().said
       }
 
       // A failure is a `FailureLine`, which reads itself out.
@@ -304,7 +304,7 @@ private struct PronunciationRoundView: View {
           .controlSize(.large)
         }
 
-        BusyButton(isBusy: round.isPending, icon: .forward) {
+        BusyButton(isBusy: round.isPending) {
           Task { await round.next() }
         } label: {
           if round.isLast {
@@ -337,6 +337,7 @@ private struct PronunciationRoundView: View {
             }
           }
         }
+        .controlSize(.large)
       }
     }
   }
@@ -442,7 +443,7 @@ private struct PronunciationResultView: View {
           Image(systemName: "checkmark.circle")
         }
       }
-      .safeAreaBar(edge: .bottom) { doneButton }
+      .bottomBar { doneButton }
       .lonePage()
     } else {
       PaneSplit {
@@ -452,13 +453,13 @@ private struct PronunciationResultView: View {
         }
       } secondary: {
         Color.clear
-          .safeAreaBar(edge: .bottom) { doneButton }
+          .bottomBar { doneButton }
       } single: {
         ZoonkList {
           summary
           dayMoment
         }
-        .safeAreaBar(edge: .bottom) { doneButton.keepsOffFold() }
+        .bottomBar { doneButton }
       }
       .completionMoments(day)
     }
@@ -476,12 +477,6 @@ private struct PronunciationResultView: View {
           }
         }
         .typeStyle(.section)
-
-        Text(
-          "An accent never blocks you.", tableName: "Voice",
-          comment: "What a pronunciation round's grade means"
-        )
-        .foregroundStyle(.mutedForeground)
       }
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)
@@ -523,11 +518,8 @@ private struct PronunciationResultView: View {
   private var doneButton: some View {
     Button(action: done) {
       Text("Done", tableName: "Voice", comment: "Closes the finished round")
-        .frame(maxWidth: .infinity)
     }
     .buttonStyle(.mainAction)
-    .controlSize(.large)
     .keyboardShortcut(.defaultAction)
-    .scenePadding()
   }
 }

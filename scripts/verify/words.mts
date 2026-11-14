@@ -2,7 +2,7 @@ import { type Finding } from "./checks.mts";
 
 /** Zoonk-design's Words budget, as leads for a designer: none of them fails a run. */
 export const WORD_BUDGET = {
-  /** Text elements between a page's title and its main action. */
+  /** Text elements before an action, through the first main block when the action is pinned. */
   aboveAction: 4,
   buttonWords: 3,
   /** Words on a page with a main action, which asks the learner to decide. */
@@ -13,6 +13,7 @@ export const WORD_BUDGET = {
 };
 
 type PagePlace = {
+  primaryOutsideBar?: string[];
   /** Whether the one main action is pinned (fixed or sticky) in the screen's lower half; null without exactly one. */
   actionPinned: boolean | null;
   /** Null without a page header, or inside task and onboarding frames. */
@@ -20,6 +21,7 @@ type PagePlace = {
 };
 
 export type PageText = PagePlace & {
+  publicSurface?: boolean;
   aboveAction: number | null;
   action: string | null;
   buttons: string[];
@@ -44,6 +46,17 @@ export function readWords(): PageText {
   const { shown, pixels } = globalThis.zoonkPage;
   const main = document.querySelector("main") ?? document.body;
   const all = [...document.body.querySelectorAll("*")];
+  const primary = getComputedStyle(document.documentElement).getPropertyValue("--primary").trim();
+  const swatch = document.createElement("span");
+  swatch.style.cssText = "position:fixed;visibility:hidden;pointer-events:none;width:0;height:0";
+  swatch.style.backgroundColor = primary;
+  document.body.append(swatch);
+  const color = getComputedStyle(swatch).backgroundColor;
+
+  const primaryColor =
+    primary && !["transparent", "rgba(0, 0, 0, 0)"].includes(color) ? color : null;
+
+  swatch.remove();
 
   const buttons = [...document.querySelectorAll<HTMLElement>(String.raw`.group\/button`)].filter(
     (button) => shown(button) && !getComputedStyle(button).textDecorationLine.includes("underline"),
@@ -115,14 +128,19 @@ export function readWords(): PageText {
 
     const bar = button.closest("[data-slot=bottom-bar]");
 
-    if (bar && pinned(bar) && pinned(button)) {
-      return [];
-    }
+    const first = main.firstElementChild;
+    const block = first && first !== title && first.contains(title) ? first : main;
+
+    const last =
+      bar && pinned(bar) && pinned(button)
+        ? all.indexOf(block) + block.querySelectorAll("*").length + 1
+        : all.indexOf(button);
 
     return all
-      .slice(start + 1, all.indexOf(button))
+      .slice(start + 1, last)
       .filter(
         (element) =>
+          !element.closest("[data-slot=bottom-bar]") &&
           !title?.contains(element) &&
           !element.contains(button) &&
           [...element.childNodes].some(
@@ -146,6 +164,18 @@ export function readWords(): PageText {
     action: action ? globalThis.zoonkPage.label(action, true) : null,
     actionPinned: actions.length === 1 && only ? Boolean(bar && pinned(bar) && pinned(only)) : null,
     buttons: buttons.map((button) => globalThis.zoonkPage.label(button, true)).filter(Boolean),
+    primaryOutsideBar: [...main.querySelectorAll<HTMLElement>("button, a")]
+      .filter(
+        (button) =>
+          shown(button) &&
+          (button.classList.contains("bg-primary") ||
+            (primaryColor && getComputedStyle(button).backgroundColor === primaryColor)) &&
+          !button.closest(
+            "[data-slot=bottom-bar], [role=dialog], [role=alertdialog], [role=menu], [role=listbox], [data-slot*=notice], [data-slot^=suggestion]",
+          ),
+      )
+      .map((button) => globalThis.zoonkPage.label(button, true)),
+    publicSurface: main.closest("[data-slot=public-page]") !== null,
     // oxlint-disable-next-line unicorn/prefer-dom-node-text-content -- Only `innerText` skips hidden text (`display: none`), which `textContent` would count.
     text: main.innerText,
     titleTop: titlePlace(),
@@ -171,7 +201,11 @@ export function pageKind(app: string, path: string): PageKind {
     return "long-form";
   }
 
-  return app === "blog" || (app === "main" && MARKETING_PATH.test(path)) ? "marketing" : "app";
+  return app === "blog" ||
+    (app === "playground" && /^\/design(?:[/?#]|$)/u.test(path)) ||
+    (app === "main" && MARKETING_PATH.test(path))
+    ? "marketing"
+    : "app";
 }
 
 /** A word has a letter or a digit, so a dot, a dash or an arrow between words isn't one. */
@@ -187,30 +221,45 @@ export function summarizeWords(page: PageText, kind: PageKind): PageWords {
   );
 
   return {
+    ...(page.primaryOutsideBar ? { primaryOutsideBar: page.primaryOutsideBar } : {}),
     aboveAction: page.aboveAction,
     action: page.action,
     actionPinned: page.actionPinned,
-    kind,
+    kind: page.publicSurface && kind === "app" ? "marketing" : kind,
     longestButton,
     titleTop: page.titleTop,
     words: countWords(page.text),
   };
 }
 
-/**
- * R2 on one load: a screen's one main action is pinned in the bottom bar. A
- * screen that keeps it elsewhere says why in its decisions, so this is a lead.
- */
-export function placeFindings(page: PageWords): Finding[] {
-  return page.kind !== "marketing" && page.actionPinned === false
-    ? [
-        {
-          check: "R2 main action pinned",
-          level: "warn",
-          message: `"${page.action ?? ""}" is the screen's one main action and isn't pinned in the bottom bar`,
-        },
-      ]
-    : [];
+/** A screen's one main action is pinned in its bottom bar. */
+export function placeFindings(page: PageWords, surface?: { app: string; path: string }): Finding[] {
+  const signIn =
+    surface?.app === "api" &&
+    /^\/auth\/[^/]+\/(?:login|otp|setup)\/?(?:[?#]|$)/u.test(surface.path);
+
+  if (page.kind === "marketing" || signIn) {
+    return [];
+  }
+
+  const inline = page.kind === "app" ? (page.primaryOutsideBar ?? []) : [];
+
+  return [
+    ...inline.map((label) => ({
+      check: "R2 primary action in page",
+      level: "warn" as const,
+      message: `"${label}" has the primary fill in main, outside the bottom bar, an overlay or a notice`,
+    })),
+    ...(page.actionPinned === false && !inline.includes(page.action ?? "")
+      ? [
+          {
+            check: "R2 main action pinned",
+            level: "warn" as const,
+            message: `"${page.action ?? ""}" is the screen's one main action and isn't pinned in the bottom bar`,
+          },
+        ]
+      : []),
+  ];
 }
 
 /** Shared page headers use the drawn bar; task and centered form tops have their own placement. */
@@ -255,7 +304,7 @@ export function wordFindings(page: PageWords): Finding[] {
           {
             check: "text before the action",
             level: "warn" as const,
-            message: `over ${WORD_BUDGET.aboveAction} text elements between the title and the main action: which would a learner miss?`,
+            message: `over ${WORD_BUDGET.aboveAction} text elements before the main action: which would a learner miss?`,
             value: page.aboveAction ?? 0,
           },
         ]

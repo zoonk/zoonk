@@ -48,7 +48,7 @@
     <string name="essay_limit_reached">You\'ve used today\'s essay grades. Your text stays here; send it tomorrow.</string>
     <string name="essay_grading">Reading your essay against each criterion. It can take up to 30 seconds.</string>
     <string name="essay_grading_slow">Still grading. This is taking longer than usual.</string>
-    <string name="essay_skip_rewrite">Skip the rewrite</string>
+    <string name="essay_skip_rewrite">Skip</string>
     <string name="essay_grade_rewrite">Grade the rewrite</string>
     <string name="essay_send">Send for grading</string>
     <string name="essay_leave_title">Leave for now?</string>
@@ -61,7 +61,7 @@
     <string name="essay_too_short_detail">Write the whole essay, then send it again.</string>
     <string name="essay_rewrite">Rewrite</string>
     <string name="essay_finish_failed">That didn\'t go through. Try again in a moment.</string>
-    <string name="essay_see_comments">See comments on every criterion</string>
+    <string name="essay_see_comments">See comments</string>
     <string name="essay_comments">Comments</string>
     <string name="essay_proposal_elements">The five elements of the proposal</string>
     <!-- One of the five elements of an ENEM essay's intervention proposal: who carries it out. -->

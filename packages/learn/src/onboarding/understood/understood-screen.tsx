@@ -6,7 +6,7 @@ import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { CreateAccountLink } from "../../_components/create-account-link";
 import { GateWords, SubscribeGate } from "../../_components/subscribe-gate";
-import { GoalLimitWall } from "../entry/goal-limit-notice";
+import { GoalLimitBar } from "../entry/goal-limit-notice";
 import { GoalActions, GoalErrorMessage } from "../entry/goal-outcomes";
 import { type GoalError } from "../goal-errors";
 import { type GoalLimitReason } from "../onboarding-actions";
@@ -194,7 +194,9 @@ export function UnderstoodScreen({
   return (
     <OnboardingColumn
       bar={
-        !plusLimit && (
+        plusLimit ? (
+          <GoalLimitBar reason={plusLimit} words />
+        ) : (
           <GoalActions error={cardError} signUpHref={signUpHref}>
             <OnboardingSecondaryButton
               disabled={isCreating || rewriting}
@@ -264,7 +266,7 @@ export function UnderstoodScreen({
         </div>
       )}
 
-      {plusLimit ? <GoalLimitWall reason={plusLimit} /> : <GoalErrorMessage error={cardError} />}
+      {!plusLimit && <GoalErrorMessage error={cardError} />}
     </OnboardingColumn>
   );
 }

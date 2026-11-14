@@ -4,14 +4,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
-import com.zoonk.android.data.collectShown
-import com.zoonk.android.data.value
 import com.zoonk.android.feature.exam.ExamMomentCard
 import com.zoonk.android.feature.exam.examMomentTitle
 import com.zoonk.android.feature.exam.icon
@@ -19,11 +16,8 @@ import com.zoonk.android.feature.language.LanguagePracticeNotice
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.plan.ExamChoicePicks
 import com.zoonk.android.feature.plan.PlanEffectDiff
-import com.zoonk.android.feature.plan.PlanEnd
-import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.examChoiceLeftOut
 import com.zoonk.android.feature.plan.planChangeAppliedLine
-import com.zoonk.android.feature.plan.planChangeProposalEffect
 import com.zoonk.android.feature.plan.planChangeSentence
 import com.zoonk.android.feature.research.SourceChangeNotice
 import com.zoonk.android.feature.research.UploadRequestNotice
@@ -48,7 +42,6 @@ import com.zoonk.api.models.MemoryInsightPlanChange
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import com.zoonk.api.models.TodayFocusTest
-import kotlinx.datetime.toJavaLocalDate
 
 /** What a notice needs from the screen: its read, the answers it saves, and where it leads. */
 internal class TodayNoticeState(
@@ -57,7 +50,6 @@ internal class TodayNoticeState(
     val settled: Boolean,
     val viewModel: TodayViewModel,
     val navigate: (AppRoute) -> Unit,
-    val plans: PlanStore? = null,
     val language: LanguageToday? = null,
     val onboarding: OnboardingStore? = null,
 )
@@ -175,11 +167,7 @@ private fun ExamChoiceNotice(
 
     if (made != null) {
         val sentence =
-            planChangeSentence(
-                made.change,
-                state.read.today.goal.targetDate
-                    ?.toJavaLocalDate(),
-            )
+            planChangeSentence(made.change, state.read.today.goal.dateKind)
         val undo: (@Composable () -> Unit)? =
             if (made.change.canUndo) {
                 {
@@ -205,8 +193,7 @@ private fun ExamChoiceNotice(
             lineAction = undo,
         ) {
             SuggestionResult(sentence)
-            planChangeProposalEffect(made.change.effect, planEnd(state), besideDiff = true)?.let { SuggestionDescription(it) }
-            PlanEffectDiff(made.change.effect)
+            PlanEffectDiff(made.change.effect, dateKind = state.read.today.goal.dateKind)
             undo?.let { SuggestionActions { it() } }
             if (viewModel.examChoiceFailedOn == state.read.noticeVisit()) SuggestionSaveError()
         }
@@ -352,17 +339,18 @@ private fun FocusTestNotice(
 
 @Composable
 private fun InsightNotice(
-    insight: MemoryInsight,
+    opened: MemoryInsight,
     state: TodayNoticeState,
     layout: SuggestionLayout,
     modifier: Modifier,
 ) {
     val viewModel = state.viewModel
+    val repriced = viewModel.repricedInsights[opened.id]
+    val insight = repriced ?: opened
     val answer = viewModel.insightAnswers[insight.id]
     val result = answer?.takeIf { it != InsightAnswer.Failed }?.let { insightResult(insight, it) }
     val label = stringResource(R.string.today_insight_label)
     val proposed = insight.planChange?.status == MemoryInsightPlanChange.Status.PROPOSED
-    val effect = if (proposed) planChangeProposalEffect(insight.planChange?.effect, planEnd(state)) else null
 
     Suggestion(
         label = label,
@@ -375,7 +363,7 @@ private fun InsightNotice(
     ) {
         SuggestionHeader(label)
         SuggestionDescription(insight.message)
-        effect?.let { SuggestionDescription(it) }
+        if (proposed) PlanEffectDiff(insight.planChange?.effect, dateKind = state.read.today.goal.dateKind, repriced = repriced != null)
         if (result != null) {
             SuggestionResult(result)
         } else {
@@ -447,21 +435,4 @@ private fun insightResult(
             stringResource(R.string.today_noted)
         }
     }
-}
-
-/** A plan with a date says what a change does to it; one without reads its estimated end from the plan. */
-@Composable
-internal fun planEnd(state: TodayNoticeState): PlanEnd {
-    val goal = state.read.today.goal
-    val plans = state.plans
-    if (goal.targetDate != null || plans == null) return PlanEnd(goal.targetDate?.toJavaLocalDate(), null)
-    val plan by plans.plan[goal.id].collectShown()
-    return PlanEnd(
-        null,
-        plan.value
-            ?.plan
-            ?.estimate
-            ?.endDate
-            ?.toJavaLocalDate(),
-    )
 }

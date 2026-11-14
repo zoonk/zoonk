@@ -6,6 +6,8 @@ import Observation
 final class PlanEditor {
   enum Latest: Equatable {
     case applied(AppliedPlanChange, sentence: String)
+    /// Saved without moving a lesson: what the learner asked is all there is to say.
+    case saved(sentence: String)
     case invalid
     case undone
     case unchanged
@@ -72,6 +74,9 @@ final class PlanEditor {
     case .done(.applied(let change)):
       latest = .applied(change, sentence: sentence)
       return true
+    case .done(.saved):
+      latest = .saved(sentence: sentence)
+      return true
     case .done(.invalid):
       latest = .invalid
     case .done(.unchanged):
@@ -111,7 +116,7 @@ final class PlanEditor {
     let goalId = goalId
     let undone = await store.write { api, token in
       try await api.decide(
-        token: token, goalId: goalId, changeId: change.id, decision: .undone)
+        token: token, goalId: goalId, changeId: change.id, decision: .undone, quote: nil)
     } changed: {
       $0 != nil
     }

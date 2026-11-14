@@ -29,7 +29,7 @@ const CHANGE: PlanChangeView = {
       parts: [{ area: "Ciências da Natureza", name: "Biologia", skillIds: ["skill"] }],
     },
   ],
-  quote: null,
+  quote: "quote",
   reason: null,
   seen: false,
   source: "planEdit",

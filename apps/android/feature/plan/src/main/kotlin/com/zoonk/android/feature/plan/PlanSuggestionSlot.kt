@@ -53,7 +53,6 @@ import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.ExamChoice
-import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeResult
@@ -301,8 +300,6 @@ internal fun PlanSuggestionSlot(
     edits: PlanEdits,
     links: PlanLinks,
     resume: Resume,
-    isSaving: Boolean,
-    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     onAdjust: (PlanSection?) -> Unit,
     layout: SuggestionLayout,
     modifier: Modifier = Modifier,
@@ -345,7 +342,7 @@ internal fun PlanSuggestionSlot(
         }
     val suggestion: @Composable () -> Unit = {
         Box(Modifier.focusRequester(focus.suggestion)) {
-            key(item.key) { SlotSuggestion(item, slot, resume, isSaving, onSetStatus, onAdjust) }
+            key(item.key) { SlotSuggestion(item, slot, resume, onAdjust) }
         }
     }
 
@@ -365,18 +362,13 @@ private fun SlotSuggestion(
     item: SlotItem,
     slot: Slot,
     resume: Resume,
-    isSaving: Boolean,
-    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     onAdjust: (PlanSection?) -> Unit,
 ) {
     val layout = slot.layout
     val links = slot.links
     when (item) {
         SlotItem.Paused -> {
-            PausedSuggestion(slot.page, layout, resume, isSaving) {
-                slot.focus.next = true
-                onSetStatus(it)
-            }
+            PausedSuggestion(slot.page, layout, resume)
         }
 
         is SlotItem.Choice -> {
@@ -502,7 +494,7 @@ internal class SlotAnswer(
 @Composable
 internal fun Slot.shownAnswer(item: SlotItem): SlotAnswer? {
     val answer = answer(item) ?: return null
-    val text = answer.change?.let { planChangeSentence(it) } ?: stringResource(R.string.plan_updated_sentence)
+    val text = answer.change?.let { planChangeSentence(it, page.dateKind) } ?: stringResource(R.string.plan_updated_sentence)
     return SlotAnswer(text, answer.change, edits) { focus.next = true }
 }
 
@@ -536,36 +528,35 @@ internal fun PlanChangeSuggestion(
     }
 }
 
+/** Main's `GoalPausedSuggestion`: what pausing means; the page's bottom bar holds Resume. */
 @Composable
 private fun PausedSuggestion(
     page: PlanPageState,
     layout: SuggestionLayout,
     resume: Resume,
-    isSaving: Boolean,
-    onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
 ) {
     val title = stringResource(R.string.plan_goal_paused, page.goal.displayName)
-    val resumeAction =
-        @Composable {
-            SuggestionAction(
-                text = stringResource(R.string.plan_resume),
-                onClick = { onSetStatus(LearnerSummaryGoal.Status.ACTIVE) },
-                enabled = !isSaving && resume != Resume.Pending,
-            )
-        }
+    val description =
+        stringResource(
+            if (resume ==
+                Resume.Confirm
+            ) {
+                R.string.plan_resume_effect
+            } else {
+                R.string.plan_nothing_planned_until_resume
+            },
+        )
 
     Suggestion(
         label = title,
         summary = title,
         layout = layout,
         mark = SuggestionMark.Symbol(R.drawable.ic_pause),
-        lineAction = if (resume == Resume.Confirm) ({ SuggestionOpen() }) else resumeAction,
+        lineAction = null,
+        lineDescription = description,
     ) {
         SuggestionHeader(title)
-        SuggestionDescription(
-            stringResource(if (resume == Resume.Confirm) R.string.plan_resume_effect else R.string.plan_nothing_planned_until_resume),
-        )
-        SuggestionActions { resumeAction() }
+        SuggestionDescription(description)
     }
 }
 

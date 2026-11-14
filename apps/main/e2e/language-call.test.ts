@@ -390,7 +390,7 @@ test.describe("Language practice in the plan", () => {
 
     expect(clip.fileLoaded()).toBe(true);
 
-    await page.getByRole("button", { exact: true, name: "Stop" }).click();
+    await page.getByRole("button", { name: "Stop and use my answers" }).click();
 
     await expect(page.getByRole("heading", { name: "Your level" })).toBeVisible();
     await expect(page.getByRole("button", { exact: true, name: "Continue" })).toBeEnabled();

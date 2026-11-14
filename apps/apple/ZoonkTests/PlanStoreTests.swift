@@ -277,9 +277,10 @@ private actor PlanAPIStub: PlanAPIClient {
     return changeOutcome
   }
 
-  func decide(token: String, goalId: String, changeId: String, decision: PlanChangeDecision)
-    async throws -> TodayView.PlanChange?
-  {
+  func decide(
+    token: String, goalId: String, changeId: String, decision: PlanChangeDecision,
+    quote: PlanChangeQuote?
+  ) async throws -> TodayView.PlanChange? {
     calls.undone.append(changeId)
     guard undoes else {
       return nil
@@ -290,7 +291,7 @@ private actor PlanAPIStub: PlanAPIClient {
 
   private static let undoneChange = Data(
     #"""
-    {"behind":null,"canApply":false,"canUndo":false,"effect":null,"examDocument":"notice",
+    {"behind":null,"canApply":false,"canUndo":false,"effect":null,"examDocument":"notice","quote":"q1",
     "id":"change-1","kind":"edited","officialDate":null,"operations":[],"reason":null,
     "source":"planEdit","status":"undone","todaySession":null}
     """#.utf8)
@@ -363,7 +364,7 @@ extension GoalPlan {
   fileprivate static func stub(planId: String) throws -> GoalPlan {
     let json = """
       {
-        "access": { "freeWeekOver": false, "mocksRequirePlus": false },
+        "access": { "freeUntil": null, "mocksRequirePlus": false },
         "areas": [], "bases": null, "course": null, "end": null,
         "estimate": { "endDate": null, "fullCourseEndDate": null },
         "examChoices": [], "examDocument": "notice", "feasibility": null, "fitOffer": null, "goalId": "goal",

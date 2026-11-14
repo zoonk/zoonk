@@ -7,11 +7,11 @@ import { type Finding } from "./checks.mts";
  * 4 px for meters, cells and keycaps. Type sizes are read from the checkout (`craft-scale.mts`).
  */
 export const RADIUS_STEPS = [-2, 0, 2, 4, 8];
-export const SMALL_RADII = [0, 2, 3, 4];
+export const SMALL_RADII = [0, 2, 3, 4, 6];
 /** `Button`'s heights and chips' (Z1); 40 px is a bar's button from `lg`. */
 export const CONTROL_HEIGHTS = [22, 24, 30, 36, 40, 44];
 /** I2: beside text and as a list's mark (`ICON_RULES`), in a bar, in an `xs` button. */
-export const ICON_SIZES = [12, 14, 16, 20];
+export const ICON_SIZES = [12, 14, 16, 20, 24];
 /** Lucide's stroke on its 24-unit canvas; only a glyph of 12 px or less may be thickened (I3). */
 export const ICON_STROKE = 2;
 export const THICKENED_MAX = 12;

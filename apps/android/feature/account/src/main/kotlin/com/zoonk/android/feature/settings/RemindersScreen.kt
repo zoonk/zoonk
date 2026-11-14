@@ -57,6 +57,7 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.StudyReminder
 import kotlinx.coroutines.launch
 import java.time.LocalTime
+import java.time.ZoneId
 
 /** A switch shows what it was flipped to while the change saves, and turns back if it doesn't. */
 class RemindersViewModel(
@@ -124,8 +125,7 @@ class RemindersViewModel(
 }
 
 /**
- * Main's Settings > Reminders: the time in the learner's zone, email, push to one phone, then where
- * the study days come from. Android's notification permission and the reminders channel are read
+ * Main's Settings > Reminders: the time in the learner's zone, email and push to one phone. Android's notification permission and the reminders channel are read
  * live, so a phone that can't show them says so.
  */
 @Composable
@@ -193,7 +193,8 @@ private fun ReminderSettings(
     Column {
         ListRow(
             headline = { Text(stringResource(R.string.reminders_time)) },
-            supporting = { Text(reminderZone(reminder.timeZone)) },
+            // The zone is said only when it isn't the phone's own.
+            supporting = reminder.timeZone.takeUnless { it == ZoneId.systemDefault().id }?.let { zone -> { Text(reminderZone(zone)) } },
             meta = { Text(time) },
             onClick = { picking = true },
         )
@@ -202,17 +203,6 @@ private fun ReminderSettings(
         ListDivider()
         PushRows(reminder, thisPhone, viewModel)
     }
-
-    ListRow(
-        headline = {
-            Text(
-                stringResource(R.string.reminders_study_days),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        },
-        onClick = { navigator.open(AppRoute.Plan()) },
-    )
 
     if (reminder.quiet) {
         Text(

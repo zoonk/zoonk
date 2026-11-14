@@ -43,6 +43,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.VisitorWelcome
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.questionsLeft
+import com.zoonk.android.feature.plan.ResumeFailure
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.LearnerAccess
@@ -57,10 +58,10 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.rememberGoalExamples
+import com.zoonk.android.ui.scaffold.BarError
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
@@ -221,7 +222,7 @@ internal fun WelcomeBack(
 ) {
     TodayPage(
         padding,
-        note = if (viewModel.answerFailed) ({ BarFailure(stringResource(R.string.today_save_failed)) }) else null,
+        note = if (viewModel.answerFailed) ({ BarError(stringResource(R.string.today_save_failed)) }) else null,
         bottomBar = {
             TaskActions(
                 back = {
@@ -363,7 +364,7 @@ private fun GoalAtRest(
         detail = { if (goal?.status == LearnerSummaryGoal.Status.PAUSED) ResumeEffect(app, goal) },
         failure =
             when (viewModel.resumeFailure) {
-                ResumeFailure.GoalLimit -> stringResource(R.string.today_resume_goal_limit)
+                ResumeFailure.GoalLimit -> stringResource(R.string.plan_goal_limit_reached)
                 ResumeFailure.Failed -> stringResource(R.string.today_save_failed)
                 null -> null
             },
@@ -504,7 +505,7 @@ internal fun TodayAtRest(
 ) {
     TodayPage(
         padding,
-        note = failure?.let { { BarFailure(it) } },
+        note = failure?.let { { BarError(it) } },
         bottomBar = { TaskActions(back = other) { modifier -> main(modifier) } },
     ) {
         banner()
@@ -538,11 +539,6 @@ internal fun TodayPage(
             if (bottomBar != null) BottomBar(note = note, columnWidth = PAGE_WIDTH, content = bottomBar)
         }
     }
-}
-
-@Composable
-private fun BarFailure(message: String) {
-    Text(text = message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
 }
 
 internal val PAGE_WIDTH = 720.dp

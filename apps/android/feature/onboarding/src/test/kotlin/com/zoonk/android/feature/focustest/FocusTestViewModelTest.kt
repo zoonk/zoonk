@@ -72,7 +72,10 @@ class FocusTestViewModelTest {
     ): PlanChange? {
         val focus = FocusTestFocus(proposal = next, rows = emptyList(), state = FocusTestFocus.State.PROPOSED)
         val questions = SessionQuestionsModel(unusedFocusTests(AppCache(FakeSession(ana), backgroundScope)), UUID.fromString(GOAL_ID))
-        return focus.waitingProposal(PlanControls(vm.proposalAnswer, vm.deciding, vm.decisionFailed, vm::decide, {}, questions))
+        return focus.waitingProposal(
+            PlanControls(vm.proposalAnswer, vm.repricedProposal, vm.deciding, vm.decisionFailed, vm::decide, {
+            }, questions),
+        )
     }
 
     /** What the screen does after the app comes back from process death with what [handle] saved. */
@@ -169,7 +172,15 @@ class FocusTestViewModelTest {
                         goalId: UUID,
                         changeId: UUID,
                         status: PlanChangeDecisionInput.Status,
-                    ): PlanChange = if (status == PlanChangeDecisionInput.Status.UNDONE) undone.await() else proposal
+                        quote: String?,
+                    ): PlanChange =
+                        if (status ==
+                            PlanChangeDecisionInput.Status.UNDONE
+                        ) {
+                            undone.await()
+                        } else {
+                            proposal.copy(status = PlanChange.Status.APPLIED)
+                        }
                 }
             val vm = viewModel(api, SavedStateHandle(), plans)
             vm.decide(proposal, PlanChangeDecisionInput.Status.APPLIED)

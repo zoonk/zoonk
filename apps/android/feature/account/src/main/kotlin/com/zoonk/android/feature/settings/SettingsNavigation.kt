@@ -37,6 +37,7 @@ fun EntryProviderScope<NavKey>.settingsEntries(
     entry<AppRoute.Profile>(metadata = ListDetailSceneStrategy.detailPane()) { ProfileScreen(app, navigator) }
     entry<AppRoute.Reminders>(metadata = ListDetailSceneStrategy.detailPane()) { RemindersScreen(app, navigator) }
     entry<AppRoute.AboutYou>(metadata = ListDetailSceneStrategy.detailPane()) { AboutYouScreen(app, navigator) }
+    entry<AppRoute.PrivacySettings>(metadata = ListDetailSceneStrategy.detailPane()) { PrivacyScreen(app, navigator) }
     entry<AppRoute.ProfileQuestionEdit>(
         metadata = ListDetailSceneStrategy.detailPane(),
     ) { ProfileQuestionScreen(it.question, app, navigator) }

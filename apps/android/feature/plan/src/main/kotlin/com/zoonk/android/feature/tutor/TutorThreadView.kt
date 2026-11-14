@@ -325,7 +325,8 @@ private fun TurnView(
                     change = change,
                     deciding = change.id in state.decidingChanges,
                     failed = change.id in state.failedDecisions,
-                    onDecide = { vm.decidePlanChange(change.id, it) },
+                    repriced = change.id in state.repricedChanges,
+                    onDecide = { vm.decidePlanChange(change, it) },
                 )
             }
             turn.toolOffer?.let { offer ->

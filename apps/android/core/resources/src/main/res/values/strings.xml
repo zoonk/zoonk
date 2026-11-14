@@ -16,12 +16,11 @@
     <string name="navigation_user_menu">User menu</string>
     <string name="task_leave">Leave</string>
     <string name="gate_sign_in_title">Log in to continue</string>
-    <string name="gate_sign_in_description">Log in to pick up where you left off, or start free.</string>
-    <string name="gate_session_ended_title">Your session ended</string>
-    <string name="gate_session_ended_description">Log in to pick up your plan.</string>
+    <string name="gate_session_ended_title">You\'ve been logged out</string>
+    <string name="gate_session_ended_description">Log in to get back to your plan.</string>
     <string name="gate_log_in">Log in</string>
-    <string name="gate_start_free">Start free</string>
-    <string name="gate_start_something_new">Start something new</string>
+    <!-- Starts a new goal: the visitor tells us what to learn and gets a plan. -->
+    <string name="gate_build_plan">Build my plan</string>
     <string name="gate_start_goal_title">Start with a goal</string>
     <string name="gate_start_goal_description">Tell us what you want to learn, and we\'ll plan every day until you get there.</string>
     <string name="gate_start_goal">Start a goal</string>
@@ -37,15 +36,17 @@
     <string name="belt_red">Red belt</string>
     <string name="belt_gray">Gray belt</string>
     <string name="belt_black">Black belt</string>
-    <string name="belt_level">%1$s, level %2$s</string>
+    <!-- A belt and its number from 1 to 10, such as White belt 4. %1$s is the belt's name. -->
+    <string name="belt_level">%1$s %2$s</string>
     <string name="answer_tag_correct">Correct</string>
     <string name="answer_tag_your_answer">Your answer</string>
     <string name="answer_tag_your_guess">Your guess</string>
     <string name="load_failed_title">This page didn\'t load</string>
-    <string name="load_failed_description">It might be your connection or a problem on our side. Trying again usually fixes it.</string>
+    <string name="load_failed_description">Check your connection and try again.</string>
     <string name="load_failed_try_again">Try again</string>
     <string name="suggestion_view">View</string>
     <string name="suggestion_save_failed">That didn\'t save. Try again.</string>
+    <string name="suggestion_other_options">Other options</string>
     <!-- Above the options of an exam's choice when each candidate takes several of them, such as two of a course's modules. %1$d is how many, at least 2. -->
     <string name="exam_choice_pick_up_to">Pick up to %1$d.</string>
     <string name="disclosure_expanded">Expanded</string>

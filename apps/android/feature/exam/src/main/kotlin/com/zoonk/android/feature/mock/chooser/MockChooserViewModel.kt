@@ -24,9 +24,10 @@ sealed interface ChooserStatus {
     /** Questions are being written; the mock starts once they're ready. */
     data object Writing : ChooserStatus
 
-    /** For the mock picked as [key] only: Start again takes it as it is. */
+    /** The mock exam picked as [key] would be shorter than the exam: the learner is asked before it starts. */
     data class Short(
         val key: String,
+        val shape: MockShape,
         val outcome: MockStartOutcome.Short,
     ) : ChooserStatus
 
@@ -84,8 +85,26 @@ class MockChooserViewModel(
         shape: MockShape,
         key: String,
     ) {
+        begin(shape, key, MockStartAsk.First)
+    }
+
+    /** The learner agreed, in the confirmation, to start the shorter mock exam. */
+    fun startShort() {
+        val short = mutableStatus.value as? ChooserStatus.Short ?: return
+        begin(short.shape, short.key, MockStartAsk.AcceptFewer)
+    }
+
+    /** "Pick another" closes the confirmation; the pick stays. */
+    fun stayChoosing() {
+        if (mutableStatus.value is ChooserStatus.Short) mutableStatus.value = ChooserStatus.Choosing
+    }
+
+    private fun begin(
+        shape: MockShape,
+        key: String,
+        ask: MockStartAsk,
+    ) {
         if (mutableBusy.value || mutableStatus.value == ChooserStatus.Writing) return
-        val acceptFewer = (mutableStatus.value as? ChooserStatus.Short)?.key == key
         owner = sessions.current
         mutableStatus.value = ChooserStatus.Choosing
         mutableBusy.value = true
@@ -95,15 +114,9 @@ class MockChooserViewModel(
                 mutableBusy.value = false
                 return@launch
             }
-            when (val result = starter.start(goalId, shape, acceptFewer)) {
+            when (val result = starter.start(goalId, shape, ask)) {
                 is MutationResult.Done -> {
-                    if (result.value ==
-                        MockStartOutcome.NeedsQuestions
-                    ) {
-                        write(shape, key)
-                    } else {
-                        show(result.value, key)
-                    }
+                    if (result.value == MockStartOutcome.NeedsQuestions) write(shape, key) else show(result.value, shape, key)
                 }
 
                 is MutationResult.Failed -> {
@@ -184,8 +197,8 @@ class MockChooserViewModel(
         shape: MockShape,
         key: String,
     ) {
-        when (val result = starter.start(goalId, shape, acceptFewer = true)) {
-            is MutationResult.Done -> show(result.value, key)
+        when (val result = starter.start(goalId, shape, MockStartAsk.AfterWriting)) {
+            is MutationResult.Done -> show(result.value, shape, key)
             is MutationResult.Failed -> mutableStatus.value = ChooserStatus.Failed(notEnoughQuestions = false)
             MutationResult.Obsolete -> mutableStatus.value = ChooserStatus.Choosing
         }
@@ -193,13 +206,14 @@ class MockChooserViewModel(
 
     private fun show(
         outcome: MockStartOutcome,
+        shape: MockShape,
         key: String,
     ) {
         mutableStatus.value =
             when (outcome) {
                 is MockStartOutcome.Opened -> ChooserStatus.Choosing.also { mutableOpened.value = outcome.id }
 
-                is MockStartOutcome.Short -> ChooserStatus.Short(key, outcome)
+                is MockStartOutcome.Short -> ChooserStatus.Short(key, shape, outcome)
 
                 MockStartOutcome.NotEnoughQuestions -> ChooserStatus.Failed(notEnoughQuestions = true)
 

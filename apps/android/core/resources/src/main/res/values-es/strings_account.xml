@@ -16,11 +16,11 @@
   "account_email_placeholder": "a77d6245953ef625ebb841dd19640eb5c67c132c5553d079b00a6d1ce2d98e53",
   "account_failure_code_expired": "846f888bc9b0167e62d4096853a31f9d6eb2da71934ad93ece1331f10c4ee64f",
   "account_failure_code_locked": "756097c9a2abd169ea574453957422cff61d853146d362c77d6c9cb141f043a4",
-  "account_failure_disposable_email": "424fab81b6c5b53ab42ac2c6f14f43138b27609aaee15d2da0b7097f913bd8ec",
+  "account_failure_disposable_email": "58e5a903bcceb50a2bdffa9bda82a5603f7f6a973da7dd619ef99d45c8d55aca",
   "account_failure_invalid_email": "685a7bc5b2f17034282cc41969b53dd3b8ea7eb44f6706af4d20a667cbd80086",
   "account_failure_network": "d73e7e2c4d8cf0efe342bd0210f6716d6fdef271de0e9a7a537210c1362312e2",
   "account_failure_rate_limited": "1df2ac19e694c5cb1dd165988c2b4ad4e024d4c4fee415428d147719ce2ca5ab",
-  "account_failure_sign_in": "6d0fcb7e86a53cb4ab1f5bdb17f4e1b406bbf01cb877e2a2bc8d65707c8bbaa6",
+  "account_failure_sign_in": "86e9c0e582c779c6233d1e17a3ccce564960508e0d73b91680d40e5bc26d9ae0",
   "account_failure_wrong_code": "c423266f82d2b2103053ecccfaad6e256dabd7c8cee74df5efec7487451ed5bd",
   "account_menu_create_account": "030692ffe21570bdce0eb7721a44de1ae45eb4ec5a4d8f3b5958a428af5632b0",
   "account_menu_help": "ff97ebf4ba36fcf690dcd6eff61bb076bf33bb7e3adf9432f7229e7da22e4f8b",
@@ -29,7 +29,7 @@
   "account_menu_settings": "19ac910aa135455de5f138d9b40f5a43fc74de613cfef125be490613722d7ba0",
   "account_menu_subscription": "bc84494ab056102f473ab4601db3bb5ca34f9046292ecb1afefb5697579ccec7",
   "account_name": "5118c593cbc9fd62ba338856e789559394e766fe333346462d7ab41f3746a3a1",
-  "account_name_description": "da4d6280eadf7c908933c35309479aac377b2394433d60c32e9925f25a882e96",
+  "account_name_description": "8c43efa59110466eaf2392013e5d2b4daf98ac618e0f5e4e456e1d1bc7ff1614",
   "account_name_too_long": "6cff3e79b00f66fe68e9295384f2f41ee69852aeb12572a2741168cb4f0ceb4b",
   "account_new_code_failed": "1e909cddf55014dc6e775b630ed31bc7dfbcb39b63d6e652a5a038cc27cd68b1",
   "account_new_code_sent": "325fda4a4ae302f99afadfc6af42aa57e3e6b2eb6e757d85cbc01a5905c918eb",
@@ -39,10 +39,9 @@
   "account_save_failed": "4d362c66388289c7791b2970d903f840e873a3a7273392563a289aa1d35a578a",
   "account_send_again": "20390dd9aa18cec5d883cebb34b5fdbd24cfcd443ce2f61799078fe9baef3e73",
   "account_send_new_code": "0b1c49cd7a16f5363e8dffc5b5327cdbe56b1d796199fc43b4d8c317a5c4d1e8",
-  "account_setup_description": "9102a08a3508dadbddb7265c5a397d64fb0c51793e51fc286b1563f97b8f77a0",
   "account_setup_title": "b493260eb5ceba696ab1887aa9f1f988452c4945d54fed2bbee8f0bcecdadf09",
-  "account_sign_in_expired": "c29bcb55b98fe46a0013a219529fe9e24b6687a3c1d08917fab6b487998ef3d9",
-  "account_sign_in_title": "167255553e708391c3995feb7f15e7d64ebde4182d8b474e63287804f8b0b53c",
+  "account_sign_in_expired": "811d8c26731049c17c382154d7bc5630cf30197d235cc59019f7c2aa183dc7e9",
+  "account_sign_in_title": "84cf19a685b4d0fdd7f339db4bcb047fbcdc357cd3650f4c82a1ec14389ba48e",
   "account_sign_out_failed": "7bcaea8b200b63330764777cb81d7f7ab387b8de0b39ae510a1aa1023a047826",
   "account_terms": "ab4742f6cd27e0be7210fb74feb3bdddad4401e73bddf18958242e9a227aaad8",
   "account_unavailable_description": "b0c5161064bb36c00bc7905ff2d84d5306b9c9d7ec38aece895294a69dc6f8ae",
@@ -64,8 +63,8 @@
     <string name="account_welcome_note">Empieza gratis, sin necesidad de una cuenta.</string>
     <string name="account_terms">Términos de servicio</string>
     <string name="account_privacy">Política de privacidad</string>
-    <string name="account_sign_in_title">Inicia sesión o crea una cuenta</string>
-    <string name="account_sign_in_expired">Se agotó el tiempo para iniciar sesión. Inténtalo de nuevo.</string>
+    <string name="account_sign_in_title">Iniciar sesión o crear una cuenta</string>
+    <string name="account_sign_in_expired">Ese enlace expiró. Inicia sesión de nuevo.</string>
     <string name="account_continue_with_google">Continuar con Google</string>
     <string name="account_continue_with_apple">Continuar con Apple</string>
     <string name="account_or">O</string>
@@ -87,17 +86,16 @@
     <string name="account_new_code_wait">Espera un minuto antes de pedir otro código.</string>
     <string name="account_new_code_failed">No pudimos enviar un nuevo código. Inténtalo de nuevo.</string>
     <string name="account_failure_invalid_email">Ingresa una dirección de correo válida</string>
-    <string name="account_failure_disposable_email">No se aceptan direcciones de correo temporales. Usa otro correo o un alias para proteger tu privacidad.</string>
+    <string name="account_failure_disposable_email">Los correos temporales no funcionan aquí. Usa otro correo.</string>
     <string name="account_failure_network">Zoonk no pudo conectarse. Revisa tu conexión e inténtalo de nuevo.</string>
     <string name="account_failure_rate_limited">Demasiados intentos. Espera un minuto y vuelve a intentarlo.</string>
     <string name="account_failure_wrong_code">Ese código no es correcto. Revisa el correo e inténtalo de nuevo.</string>
     <string name="account_failure_code_expired">Este código expiró. Obtén uno nuevo.</string>
     <string name="account_failure_code_locked">Demasiados intentos incorrectos con este código. Pide uno nuevo.</string>
-    <string name="account_failure_sign_in">Hubo un error al iniciar sesión. Inténtalo de nuevo o escríbenos a contacto@zoonk.com</string>
+    <string name="account_failure_sign_in">No pudimos iniciar sesión. Inténtalo de nuevo o escríbenos a contacto@zoonk.com.</string>
     <string name="account_setup_title">¿Cómo quieres que te llamemos?</string>
-    <string name="account_setup_description">Puedes cambiarlos después en tu perfil.</string>
     <string name="account_name">Nombre</string>
-    <string name="account_name_description">El nombre que usan Zoonk y tu compañero para llamarte y que aparece en tus certificados.</string>
+    <string name="account_name_description">Tu compañero y todos tus certificados usan este nombre.</string>
     <string name="account_name_too_long">Usa 150 caracteres o menos.</string>
     <string name="account_username">Nombre de usuario</string>
     <!-- %1$s is a username. -->

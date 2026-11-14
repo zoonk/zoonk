@@ -52,11 +52,11 @@ class PatternFlowTest {
         val api = FakePatternApi(failures = 1)
         show(pattern(), api)
 
-        rule.onNodeWithText("Practice this", substring = true).performClick()
+        rule.onNodeWithText("Practice").performClick()
         answer("agree")
         rule.onNodeWithText("Continue").performClick()
         answer("agree")
-        rule.onNodeWithText("See how you did").performClick()
+        rule.onNodeWithText("See how it went").performClick()
 
         rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
         rule.onNodeWithText("Try again").performClick()
@@ -77,11 +77,11 @@ class PatternFlowTest {
         val api = FakePatternApi(gate = CompletableDeferred())
         val viewModel = show(pattern(), api)
 
-        rule.onNodeWithText("Practice this", substring = true).performClick()
+        rule.onNodeWithText("Practice").performClick()
         answer("agree")
         rule.onNodeWithText("Continue").performClick()
         answer("agree")
-        rule.onNodeWithText("See how you did").performClick()
+        rule.onNodeWithText("See how it went").performClick()
         rule.onNodeWithContentDescription("Leave").performClick()
 
         assertFalse(viewModel.closed.value)
@@ -95,7 +95,7 @@ class PatternFlowTest {
     fun aRightAnswerWithSpacesAroundItIsMarkedRight() {
         show(pattern(firstAnswer = " agree "), FakePatternApi())
 
-        rule.onNodeWithText("Practice this", substring = true).performClick()
+        rule.onNodeWithText("Practice").performClick()
         answer("agree")
 
         rule.onNodeWithText("Correct!").assertIsDisplayed()
@@ -119,7 +119,7 @@ class PatternFlowTest {
 
         show(patternViewModel(api, SavedStateHandle(saved.keys().associateWith { saved.get<Any>(it) })).also { it.begin(pattern()) })
         rule.onNodeWithText("Correct!").assertIsDisplayed()
-        rule.onNodeWithText("See how you did").performClick()
+        rule.onNodeWithText("See how it went").performClick()
 
         rule.onNodeWithText("You've got this rule.").assertIsDisplayed()
         assertEquals(2, api.practices.size)

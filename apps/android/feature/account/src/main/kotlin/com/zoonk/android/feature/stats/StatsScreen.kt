@@ -49,7 +49,6 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ChartInspector
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.holdsChartTooltips
@@ -84,7 +83,7 @@ internal class StatsContext(
 }
 
 /**
- * Main's stats layout: the page's name in the bar and "All goals" over its content. On phones the
+ * Main's stats layout: the page's name in the bar and over its content, with the line that says how its number moves. On phones the
  * overview's tiles lead to each page, as on main; where the page splits into panes (expanded widths,
  * an unfolded book foldable) the section's list sits beside the page, and the page lays out by the
  * room its own pane has. Pull to refresh reads every read the page shows again.
@@ -147,8 +146,8 @@ private fun StatsPageArea(
             ) {
                 item(key = "title") {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Eyebrow(stringResource(R.string.stats_all_goals))
                         PageTitleRow(stringResource(page.title))
+                        page.line?.let { StatsLine(stringResource(it)) }
                     }
                 }
                 item(key = "content") {
@@ -181,7 +180,7 @@ private fun shownBy(
     wide: Boolean,
 ): List<Resource<*>> =
     when (page) {
-        StatsPage.Overview -> listOfNotNull(stats.progress, stats.energy, stats.activity, stats.score.takeIf { wide }, stats.patterns)
+        StatsPage.Overview -> listOfNotNull(stats.progress, stats.activity, stats.score.takeIf { wide }, stats.patterns)
         StatsPage.Level -> listOf(stats.progress)
         StatsPage.Energy -> listOf(stats.energy)
         StatsPage.Activity -> listOf(stats.activity)
@@ -238,11 +237,14 @@ private fun StatsNavList(
 internal fun StatsEmpty(context: StatsContext) {
     Column(Modifier.padding(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Icon(painterResource(R.drawable.ic_bar_chart), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(
-            stringResource(R.string.stats_empty_title),
-            modifier = Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleMedium,
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                stringResource(R.string.stats_empty_title),
+                modifier = Modifier.semantics { heading() },
+                style = MaterialTheme.typography.titleMedium,
+            )
+            StatsLine(stringResource(R.string.stats_empty_line))
+        }
         Button(onClick = { context.navigator.showRoot(AppTab.Today) }) { Text(stringResource(R.string.stats_go_to_today)) }
     }
 }
@@ -252,6 +254,16 @@ internal fun StatsEmpty(context: StatsContext) {
 internal fun StatsLine(text: String) {
     Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }
+
+/** What makes the page's number move, said under its title. */
+private val StatsPage.line: Int?
+    get() =
+        when (this) {
+            StatsPage.Level -> R.string.stats_belt_line
+            StatsPage.Energy -> R.string.stats_energy_line
+            StatsPage.Patterns -> R.string.stats_patterns_intro
+            else -> null
+        }
 
 /** The overview is the section itself, so the bar names it "Statistics". */
 private val StatsPage.title: Int

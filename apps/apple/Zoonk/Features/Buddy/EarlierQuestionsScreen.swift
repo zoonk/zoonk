@@ -48,7 +48,7 @@ struct EarlierQuestionsScreen: View {
       } header: {
         SectionTitle(
           Text(
-            "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread.",
+            "Questions you asked in lessons that have since changed.",
             tableName: "Buddy", comment: "What the earlier questions page holds"
           ))
       }
@@ -65,9 +65,7 @@ private struct EarlierQuestionRow: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      source
-        .typeStyle(.meta)
-        .foregroundStyle(.mutedForeground)
+      Chip(source)
 
       Text(question.question)
         .typeStyle(.body.weight(.semibold))
