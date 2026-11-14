@@ -49,54 +49,45 @@ struct ConversationResultView: View {
     }
     .completionMoments(day)
     .onDisappear { again?.cancel() }
-    .safeAreaBar(edge: .bottom) {
-      VStack(spacing: 8) {
-        if let startFailure {
-          FailureLine(message: startFailureMessage(startFailure))
-            .typeStyle(.body)
-        }
-
-        mainAction
-
-        if isWritingAgain {
-          writingAgain
-        } else if let input = againInput {
-          BusyButton(isBusy: isStartingAgain, icon: .retry) {
-            again = Task { await startAgain(input) }
-          } label: {
-            if conversation.kind == .speakingMock {
-              Text("Try another mock", tableName: "Voice", comment: "Starts a new speaking mock")
-            } else {
-              Text(
-                "Try this task with a new card", tableName: "Voice",
-                comment: "Starts the same exam task again with a new card")
-            }
+    .bottomBar(note: barNote) {
+      if let input = againInput {
+        BusyButton(isBusy: isStartingAgain, icon: .retry) {
+          again = Task { await startAgain(input) }
+        } label: {
+          if conversation.kind == .speakingMock {
+            Text("Try another mock", tableName: "Voice", comment: "Starts a new speaking mock")
+          } else {
+            Text(
+              "Try again", tableName: "Voice",
+              comment: "Starts the same exam task again with a new card")
           }
-          .buttonStyle(.borderless)
         }
+        .buttonStyle(.outline)
       }
-      .scenePadding()
-      .keepsOffFold()
+
+      mainAction
     }
   }
 
-  @ViewBuilder
-  private var writingAgain: some View {
-    if conversation.kind == .speakingMock {
-      WritingWait(
-        title: Text(
-          "Writing your mock", tableName: "Voice", comment: "A speaking mock is being written"),
-        hint: Text(
-          "Your mock opens as soon as it's ready.", tableName: "Voice",
-          comment: "A speaking mock opens by itself once it's written"))
+  /// A new card being written keeps "Try again" busy, and says it opens by itself.
+  private var barNote: BarNote? {
+    if let startFailure {
+      BarNote(startFailureMessage(startFailure))
+    } else if isWritingAgain {
+      BarNote(writingAgain, tone: .status)
     } else {
-      WritingWait(
-        title: Text(
-          "Writing your task", tableName: "Voice", comment: "An exam task's card is being written"),
-        hint: Text(
-          "Your task opens as soon as its card is ready.", tableName: "Voice",
-          comment: "An exam task opens by itself once its card is written"))
+      nil
     }
+  }
+
+  private var writingAgain: LocalizedStringResource {
+    conversation.kind == .speakingMock
+      ? LocalizedStringResource(
+        "Your mock opens as soon as it's ready.", table: "Voice",
+        comment: "A speaking mock opens by itself once it's written")
+      : LocalizedStringResource(
+        "Your task opens as soon as its card is ready.", table: "Voice",
+        comment: "An exam task opens by itself once its card is written")
   }
 
   /// The paper's next task when this one stands alone: a mock's tasks go back to the mock.
@@ -135,19 +126,13 @@ struct ConversationResultView: View {
         dismiss()
       }
     } label: {
-      Group {
-        if let nextTask {
-          Text(
-            "Go to task \(nextTask.number)", tableName: "Voice",
-            comment: "Opens the speaking paper's next task")
-        } else {
-          Text("Continue", tableName: "Voice", comment: "Leaves a call's result")
-        }
+      if nextTask != nil {
+        Text("Next task", tableName: "Voice", comment: "Opens the speaking paper's next task")
+      } else {
+        Text("Continue", tableName: "Voice", comment: "Leaves a call's result")
       }
-      .frame(maxWidth: .infinity)
     }
     .buttonStyle(.mainAction)
-    .controlSize(.large)
     .keyboardShortcut(.defaultAction)
   }
 
@@ -276,7 +261,7 @@ struct ConversationResultView: View {
       SectionFooter {
         if conversation.kind == .checkpoint, !result.passed {
           Text(
-            "Nothing is lost: the call comes back so you can try again.", tableName: "Voice",
+            "The call comes back so you can try again.", tableName: "Voice",
             comment: "A checkpoint call that didn't pass")
         } else if showsStars {
           Text(
@@ -307,15 +292,21 @@ private struct CallFeedbackSections: View {
           Image(systemName: "checkmark.circle.fill").foregroundStyle(.success)
         }
       }
-
-      ForEach(feedback.wentWell, id: \.self) { phrase in
-        Text(phrase)
-          .typeWeight(.medium)
-          .typesettingLanguage(.init(identifier: language))
-      }
     } header: {
       SectionTitle(
         Text("What went well", tableName: "Voice", comment: "A call result's first part"))
+    }
+
+    if !feedback.wentWell.isEmpty {
+      Section {
+        ForEach(feedback.wentWell, id: \.self) { phrase in
+          Text("“\(phrase)”", tableName: "Voice", comment: "A phrase the learner said well, quoted")
+            .typeWeight(.medium)
+            .typesettingLanguage(.init(identifier: language))
+        }
+      } header: {
+        Text("Phrases you said well", tableName: "Voice")
+      }
     }
 
     if feedback.improve != nil || !missed.isEmpty || !feedback.pronunciation.isEmpty {
@@ -328,7 +319,7 @@ private struct CallFeedbackSections: View {
               Text("You said", tableName: "Voice", comment: "What the learner said in the call")
             }
 
-            HStack(alignment: .firstTextBaseline) {
+            HStack {
               LabeledContent {
                 Text(improve.better)
                   .typeWeight(.medium)
@@ -336,6 +327,8 @@ private struct CallFeedbackSections: View {
               } label: {
                 Text("Better", tableName: "Voice", comment: "A better way to say it")
               }
+
+              Spacer()
 
               SpeakButton(sound: .text(improve.better, language: language, personal: true))
             }

@@ -92,12 +92,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
       ) { _ in
       } message: { outcome in
         if outcome == .limitReached {
-          Text(
-            "You're following as many goals as the free plan allows. Pause another goal to resume this one, or subscribe to follow more.",
-            tableName: "Plan",
-            comment:
-              "Explains why resuming a goal failed: the learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress"
-          )
+          Text(GoalError.resumeLimit)
         } else {
           Text(
             "Check your connection and try again.", tableName: "Plan",

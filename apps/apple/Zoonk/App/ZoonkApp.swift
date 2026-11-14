@@ -147,7 +147,7 @@ private struct AppWindow: View {
   var body: some View {
     AppView()
       #if DEBUG
-        .modifier(DebugLessonLaunch())
+        .modifier(DebugLaunch())
         // Inside the app's environment, so the gallery's screens get the app's renderers.
         .modifier(ActivityGalleryLaunch())
         .modifier(DebugCharacterGallery())

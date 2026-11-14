@@ -410,12 +410,7 @@ private struct TodayGoalPaused: View {
 
         if failure == .limitReached {
           FailureLine(
-            message: LocalizedStringResource(
-              "That's as many goals as you can study at once. Pause another goal to resume this one.",
-              table: "Today",
-              comment:
-                "Why resuming the goal failed: the learner studies as many goals at once as they can; it's about goals studied at the same time, not new goals started per day or month"
-            ))
+            message: GoalError.resumeLimit)
         } else if failure != nil {
           FailureLine(
             message: LocalizedStringResource(

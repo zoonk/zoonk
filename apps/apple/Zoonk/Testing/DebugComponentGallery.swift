@@ -16,7 +16,8 @@
         content.fullScreenCover(isPresented: .constant(true)) {
           NavigationStack {
             if let writing = DebugLessonWait.writing(section) {
-              DebugLessonWait(writing: writing)
+              DebugLessonWait(
+                writing: writing, kind: section.hasPrefix("challenge") ? .challenge : .lesson)
             } else {
               ComponentGallery(start: section)
             }
@@ -524,12 +525,12 @@
         MindMapRow(goalId: "debug", map: Self.map(.ready, id: "library-text"), place: .library)
 
         ForEach(Self.refusals, id: \.self) { resource in
-          HelpLimitNotice(
+          LimitNotice(
             limit: .limitReached(period: .day, tier: .free),
-            message: MindMapLimit(
+            words: MindMapLimit(
               limit: .limitReached(period: .day, tier: .free), resource: resource
             )
-            .message
+            .words
           )
           .controlSize(.small)
         }
@@ -557,26 +558,30 @@
   /// a lesson's wait as the player shows it, with a run's first minute already reported.
   private struct DebugLessonWait: View {
     let writing: LessonPlayerStore.LessonWriting
+    let kind: LessonWaitWords
 
+    /// `lessonWait`, `lessonUnwritten`, `lessonFailed`, `lessonSetAside`, or `challenge` in place of
+    /// `lesson` for a challenge's words.
     static func writing(_ section: String) -> LessonPlayerStore.LessonWriting? {
-      switch section {
-      case "lessonWait": .writing
-      case "lessonUnwritten": .notStarted
-      case "lessonFailed": .failed
-      case "lessonSetAside": .setAside
+      switch section.replacing(/^(lesson|challenge)/, with: "") {
+      case "Wait": .writing
+      case "Unwritten": .notStarted
+      case "Failed": .failed
+      case "SetAside": .setAside
       default: nil
       }
     }
 
     /// `reported` of the lesson's events: planning started, planning finished, writing started.
-    static func sample(reported: Int) -> GenerationWait {
+    static func sample(reported: Int, kind: LessonWaitWords = .lesson) -> GenerationWait {
       let now = Date.now
+      let noun = kind == .challenge ? "Challenge" : "Lesson"
       let events = [
-        GenerationEvent(at: now.addingTimeInterval(-60), status: "started", step: "planLesson"),
-        GenerationEvent(at: now.addingTimeInterval(-8), status: "completed", step: "planLesson"),
-        GenerationEvent(at: now.addingTimeInterval(-7), status: "started", step: "writeLesson"),
+        GenerationEvent(at: now.addingTimeInterval(-60), status: "started", step: "plan\(noun)"),
+        GenerationEvent(at: now.addingTimeInterval(-8), status: "completed", step: "plan\(noun)"),
+        GenerationEvent(at: now.addingTimeInterval(-7), status: "started", step: "write\(noun)"),
       ]
-      var wait = GenerationWait(kind: .lesson).started
+      var wait = GenerationWait(kind: kind == .challenge ? .challenge : .lesson).started
 
       for event in events.prefix(reported) {
         wait.apply(event, receivedAt: event.at ?? now)
@@ -593,8 +598,8 @@
 
     var body: some View {
       LessonWaitingView(
-        outline: outline, writing: writing,
-        progress: writing == .failed ? Self.sample(reported: 3) : Self.sample(reported: 1),
+        outline: outline, kind: kind, writing: writing,
+        progress: Self.sample(reported: writing == .failed ? 3 : 1, kind: kind),
         alternative: .case2(.init(dueSkills: 1, kind: .review))
       ) {}
       .lonePage()
