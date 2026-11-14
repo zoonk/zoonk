@@ -347,9 +347,9 @@ describe("making all of a goal's chapter maps", () => {
     });
 
     const stop = {
+      availableAt: getUsageResets(new Date()).day.toISOString(),
       period: "day",
       reason: "limitReached",
-      resetsAt: getUsageResets(new Date()).day.toISOString(),
       resource: "mindMap",
     };
 
@@ -465,9 +465,9 @@ describe("making all of a goal's chapter maps", () => {
         needLessons: 2,
         startable: 0,
         stop: {
+          availableAt: getUsageResets(new Date()).day.toISOString(),
           period: "day",
           reason: "limitReached",
-          resetsAt: getUsageResets(new Date()).day.toISOString(),
           resource: "mindMap",
         },
       },
@@ -499,9 +499,9 @@ describe("making all of a goal's chapter maps", () => {
         needLessons: 2,
         startable: 1,
         stop: {
+          availableAt: getUsageResets(new Date()).day.toISOString(),
           period: "day",
           reason: "limitReached",
-          resetsAt: getUsageResets(new Date()).day.toISOString(),
           resource: "mindMap",
         },
       },
@@ -577,7 +577,7 @@ describe("a guest making all chapter maps", () => {
     await expect(requestGoalMindMaps({ goalId: goal.id })).resolves.toMatchObject({
       generations: {
         accepted: [chapters[0]?.id],
-        stop: { period: "total", reason: "limitReached", resetsAt: null, resource: "mindMap" },
+        stop: { availableAt: null, period: "total", reason: "limitReached", resource: "mindMap" },
       },
     });
 
@@ -601,7 +601,7 @@ describe("a guest making all chapter maps", () => {
     await expect(requestGoalMindMaps({ goalId: goal.id })).resolves.toMatchObject({
       generations: {
         accepted: [],
-        stop: { period: null, reason: "signUpRequired", resetsAt: null, resource: null },
+        stop: { availableAt: null, period: null, reason: "signUpRequired", resource: null },
       },
     });
 

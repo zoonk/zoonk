@@ -158,7 +158,13 @@ describe(claimUsage, () => {
     vi.setSystemTime(new Date(NOW.getTime() + 24 * 60 * MINUTE_MS));
 
     await expect(makeMindMap()).resolves.toStrictEqual({
-      limit: { limit: 10, period: "month", resource: "mindMap", tier: "free" },
+      limit: {
+        availableAt: new Date("2026-10-03T09:00:00Z"),
+        limit: 10,
+        period: "rolling30Days",
+        resource: "mindMap",
+        tier: "free",
+      },
       status: "limitReached",
     });
   });
@@ -227,7 +233,13 @@ describe(claimUsage, () => {
     await expect(
       claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
     ).resolves.toStrictEqual({
-      limit: { limit: 5220, period: "month", resource: "callSeconds", tier: "plus" },
+      limit: {
+        availableAt: new Date("2026-10-03T09:00:00Z"),
+        limit: 5220,
+        period: "rolling30Days",
+        resource: "callSeconds",
+        tier: "plus",
+      },
       status: "limitReached",
     });
 
@@ -235,9 +247,15 @@ describe(claimUsage, () => {
 
     await expect(
       claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
-    ).resolves.toMatchObject({ limit: { period: "month" }, status: "limitReached" });
+    ).resolves.toMatchObject({ limit: { period: "rolling30Days" }, status: "limitReached" });
 
     vi.setSystemTime(new Date("2026-10-01T00:00:00Z"));
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
+    ).resolves.toMatchObject({ limit: { period: "rolling30Days" }, status: "limitReached" });
+
+    vi.setSystemTime(new Date("2026-10-03T09:00:00Z"));
 
     await expect(
       claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
@@ -262,7 +280,13 @@ describe(claimUsage, () => {
     await expect(
       claimUsage({ kind: "conversation", seconds: 60, targetId: randomUUID() }),
     ).resolves.toStrictEqual({
-      limit: { limit: 300, period: "month", resource: "callSeconds", tier: "free" },
+      limit: {
+        availableAt: new Date("2026-10-03T09:00:00Z"),
+        limit: 300,
+        period: "rolling30Days",
+        resource: "callSeconds",
+        tier: "free",
+      },
       status: "limitReached",
     });
   });
@@ -292,7 +316,13 @@ describe(claimUsage, () => {
       await expect(
         claimUsage({ generated: true, kind, targetId: randomUUID() }),
       ).resolves.toStrictEqual({
-        limit: { limit: month, period: "month", resource: kind, tier: "free" },
+        limit: {
+          availableAt: new Date("2026-10-03T09:00:00Z"),
+          limit: month,
+          period: "rolling30Days",
+          resource: kind,
+          tier: "free",
+        },
         status: "limitReached",
       });
     },

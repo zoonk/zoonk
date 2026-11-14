@@ -68,26 +68,32 @@ export function toAllowanceStop({
   now: Date;
 }): MindMapAllowanceStop {
   if (decision.status === "signUpRequired") {
-    return { period: null, reason: "signUpRequired", resetsAt: null, resource: null };
+    return { availableAt: null, period: null, reason: "signUpRequired", resource: null };
   }
 
   if (decision.status === "slowDown") {
-    const resetsAt = new Date(now.getTime() + decision.retryAfterSeconds * MS_PER_SECOND);
-    return { period: null, reason: "slowDown", resetsAt: resetsAt.toISOString(), resource: null };
-  }
+    const availableAt = new Date(now.getTime() + decision.retryAfterSeconds * MS_PER_SECOND);
 
-  if (decision.limit.period === "rolling30Days") {
-    throw new Error("A map-only claim cannot reach the rolling lesson limit");
+    return {
+      availableAt: availableAt.toISOString(),
+      period: null,
+      reason: "slowDown",
+      resource: null,
+    };
   }
 
   const { period, resource } = decision.limit;
   const resets = getUsageResets(now);
-  const resetsAt = period === "total" ? null : resets[period].toISOString();
+
+  const availableAt =
+    period === "day"
+      ? resets.day.toISOString()
+      : (decision.limit.availableAt?.toISOString() ?? null);
 
   return {
+    availableAt,
     period,
     reason: "limitReached",
-    resetsAt,
     resource: resource === "aiSpend" ? "aiSpend" : "mindMap",
   };
 }

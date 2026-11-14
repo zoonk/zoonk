@@ -68,13 +68,7 @@ export async function claimUsageInTransaction({
       viewer.tier === "free"
         ? evaluateUsage({
             costMicros: 0,
-            counts: await countUsage({
-              client: transaction,
-              kind,
-              now,
-              tier: viewer.tier,
-              userId: viewer.userId,
-            }),
+            counts: await countUsage({ client: transaction, kind, now, userId: viewer.userId }),
             generated: false,
             kind,
             now,
@@ -107,17 +101,12 @@ export async function claimUsageInTransaction({
     ? { status: "allowed" }
     : evaluateUsage({
         costMicros,
-        counts: await countUsage({
-          client: transaction,
-          kind,
-          now,
-          tier: viewer.tier,
-          userId: viewer.userId,
-        }),
+        counts: await countUsage({ client: transaction, kind, now, userId: viewer.userId }),
         generated,
         kind,
         now,
         preparing,
+        seconds,
         tier: viewer.tier,
       });
 

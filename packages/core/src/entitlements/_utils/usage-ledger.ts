@@ -1,8 +1,9 @@
 import { type TransactionClient, type UsageKind } from "@zoonk/db";
 import { type UsageDecision } from "../contract";
-import { FREE_LESSON_LIMIT, FREE_LESSON_WINDOW_MS, getEstimatedCostMicros } from "../limits";
+import { FREE_LESSON_LIMIT, getEstimatedCostMicros } from "../limits";
 import { type EntitlementViewer } from "./entitlement-viewer";
 import { evaluateUsage } from "./evaluate-usage";
+import { getUsageAvailableAt } from "./rolling-usage";
 import { type UsageTotals, addUsage, getUsageCounts, promotePreparedUsage } from "./usage-counts";
 
 export type BundleClaim = { generated: boolean; kind: UsageKind; targetId: string };
@@ -161,16 +162,27 @@ export function decideBundle({
     lessons > 0 &&
     ledger.totals.lessonStarts.count + lessons > FREE_LESSON_LIMIT
   ) {
-    const claim = ledger.totals.lessonStarts.latest[FREE_LESSON_LIMIT - lessons];
+    const availableAt = getUsageAvailableAt({
+      costMicros: fresh.reduce(
+        (sum, claim) =>
+          sum + (ledger.prepared.has(toClaimKey(claim)) ? 0 : getEstimatedCostMicros(claim)),
+        0,
+      ),
+      counts: getUsageCounts(ledger.totals, "lessonStart"),
+      kind: "lessonStart",
+      now: ledger.now,
+      required: lessons,
+      tier: ledger.viewer.tier,
+    });
 
-    if (!claim) {
+    if (!availableAt) {
       throw new Error("Rolling lesson usage is missing the claim that admits this bundle.");
     }
 
     return {
       decision: {
         limit: {
-          availableAt: new Date(claim.getTime() + FREE_LESSON_WINDOW_MS),
+          availableAt,
           limit: FREE_LESSON_LIMIT,
           period: "rolling30Days",
           resource: "chapterLessons",

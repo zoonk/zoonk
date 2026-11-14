@@ -2,13 +2,9 @@ import { type UsageKind } from "@zoonk/db";
 
 export type EntitlementTier = "free" | "guest" | "plus";
 
-export type UsagePeriod = "day" | "month" | "rolling30Days" | "total";
+export const USAGE_PERIODS = ["day", "rolling30Days", "total"] as const;
 
-export type CalendarPeriod = Exclude<UsagePeriod, "rolling30Days">;
-
-export function toCalendarPeriod(period: UsagePeriod): CalendarPeriod {
-  return period === "rolling30Days" ? "month" : period;
-}
+export type UsagePeriod = (typeof USAGE_PERIODS)[number];
 
 type AllowanceResource =
   | UsageKind
@@ -60,35 +56,20 @@ type AllowanceItemBase = {
   usedTotal: number;
 };
 
-export type AllowanceItem = AllowanceItemBase &
-  (
-    | {
-        availableAt: Date | null;
-        kind: "lessonStart";
-        rollingLimit: number | null;
-        usedLast30Days: number;
-      }
-    | {
-        kind: Exclude<UsageKind, "lessonStart">;
-        monthlyLimit: number | null;
-        usedThisMonth: number;
-      }
-  );
+export type AllowanceItem = AllowanceItemBase & {
+  availableAt: Date | null;
+  kind: UsageKind;
+  rollingLimit: number | null;
+  usedLast30Days: number;
+};
 
 export type Allowance = {
   activeGoals: { limit: number | null; used: number };
-  /** Null limits mean uncapped; usage includes held reservations. */
-  callTime: {
-    limitSeconds: number | null;
-    monthLimitSeconds: number | null;
-    usedSeconds: number;
-    usedSecondsThisMonth: number;
-  };
   examPrep: { includesMockExams: boolean };
   /** A guest's newly generated lessons; null for accounts. */
   generatedLessons: { limit: number; used: number } | null;
   items: AllowanceItem[];
-  resets: { day: Date; month: Date };
+  resets: { day: Date };
   tier: EntitlementTier;
 };
 
@@ -96,14 +77,19 @@ function isUsedUp(limit: number | null, used: number): boolean {
   return limit !== null && used >= limit;
 }
 
-/** Returns null while capacity remains or only fair use applies; checks lifetime, rolling or monthly, then daily caps. */
+/** Returns null while capacity remains or only fair use applies; checks lifetime, rolling, then daily caps. */
 export function getReachedCap({
   allowance,
   kind,
 }: {
   allowance: Pick<Allowance, "items" | "tier">;
   kind: UsageKind;
-}): { period: UsagePeriod; status: "limitReached"; tier: EntitlementTier } | null {
+}): {
+  availableAt?: Date | null;
+  period: UsagePeriod;
+  status: "limitReached";
+  tier: EntitlementTier;
+} | null {
   const item = allowance.items.find((entry) => entry.kind === kind);
 
   if (!item || item.remaining === null || item.remaining > 0) {
@@ -112,10 +98,14 @@ export function getReachedCap({
 
   const period = [
     isUsedUp(item.totalLimit, item.usedTotal) && ("total" as const),
-    item.kind === "lessonStart"
-      ? isUsedUp(item.rollingLimit, item.usedLast30Days) && ("rolling30Days" as const)
-      : isUsedUp(item.monthlyLimit, item.usedThisMonth) && ("month" as const),
+    (item.availableAt !== null || isUsedUp(item.rollingLimit, item.usedLast30Days)) &&
+      ("rolling30Days" as const),
   ].find((value) => value !== false);
 
-  return { period: period ?? "day", status: "limitReached", tier: allowance.tier };
+  return {
+    ...(period === "rolling30Days" && { availableAt: item.availableAt }),
+    period: period ?? "day",
+    status: "limitReached",
+    tier: allowance.tier,
+  };
 }
