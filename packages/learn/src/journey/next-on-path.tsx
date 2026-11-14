@@ -62,8 +62,6 @@ function NextChapterRow({
   chapter: PlanChapterView & { chapterId: string };
   links: JourneyPathLinks;
 }) {
-  const t = useExtracted();
-
   return (
     <LearnLink
       className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}
@@ -74,20 +72,6 @@ function NextChapterRow({
       </span>
       <span className={PATH_ROW_BODY_CLASS}>
         <span className="line-clamp-2 font-medium text-pretty">{chapter.title}</span>
-        <span className="text-muted-foreground font-mono text-xs tabular-nums">
-          <span aria-hidden="true">
-            {t("{done, number} / {total, number}", {
-              done: chapter.lessonsDone,
-              total: chapter.lessonsTotal,
-            })}
-          </span>
-          <span className="sr-only">
-            {t(
-              "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}",
-              { done: chapter.lessonsDone, total: chapter.lessonsTotal },
-            )}
-          </span>
-        </span>
       </span>
       <RowChevron />
     </LearnLink>

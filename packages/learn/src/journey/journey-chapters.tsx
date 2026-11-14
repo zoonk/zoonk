@@ -51,31 +51,6 @@ export function isWritingAhead(chapter: PlanChapterView): boolean {
   return chapter.writing && !chapter.far && chapter.skills.length === 0;
 }
 
-function ChapterLessons({ chapter }: { chapter: PlanChapterView }) {
-  const t = useExtracted();
-
-  if (chapter.writing || chapter.lessonsTotal === 0 || isSkipped(chapter)) {
-    return null;
-  }
-
-  return (
-    <span className="text-muted-foreground font-mono text-xs tabular-nums">
-      <span aria-hidden="true">
-        {t("{done, number} / {total, number}", {
-          done: chapter.lessonsDone,
-          total: chapter.lessonsTotal,
-        })}
-      </span>
-      <span className="sr-only">
-        {t(
-          "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}",
-          { done: chapter.lessonsDone, total: chapter.lessonsTotal },
-        )}
-      </span>
-    </span>
-  );
-}
-
 function ChapterRow({
   chapter,
   isNext,
@@ -118,7 +93,6 @@ function ChapterRow({
           </span>
           {line && <span className="text-muted-foreground text-xs">{line}</span>}
         </span>
-        <ChapterLessons chapter={chapter} />
       </span>
     </>
   );

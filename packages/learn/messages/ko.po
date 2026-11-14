@@ -47,10 +47,6 @@ msgid "Up next"
 msgstr "다음"
 
 #: src/_components/chapter-mark.tsx
-#: src/journey/journey-chapters.tsx
-#: src/journey/journey-path.tsx
-#: src/journey/next-on-path.tsx
-#: src/journey/path-phase-row.tsx
 msgctxt "npC_pq"
 msgid "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}"
 msgstr "{total, plural, other {레슨 {done, number}개 완료(전체 #개)}}"
@@ -4705,13 +4701,6 @@ msgid "More lessons"
 msgstr "추가 레슨"
 
 #: src/journey/journey-chapters.tsx
-#: src/journey/next-on-path.tsx
-#: src/journey/path-phase-row.tsx
-msgctxt "KcgJH7"
-msgid "{done, number} / {total, number}"
-msgstr "{done, number} / {total, number}"
-
-#: src/journey/journey-chapters.tsx
 #: src/syllabus/syllabus-chapter-row.tsx
 #: src/syllabus/topic-note.tsx
 msgctxt "VPnXIm"
@@ -4851,6 +4840,18 @@ msgctxt "L_oGIZ"
 msgid "Not in your plan"
 msgstr "계획에 없어요"
 
+#: src/journey/journey-path.tsx
+#: src/journey/path-phase-row.tsx
+msgctxt "oIX23Q"
+msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
+msgstr "{count, plural, other {아직 공부하지 않은 레슨 #개}}"
+
+#: src/journey/journey-path.tsx
+#: src/journey/next-on-path.tsx
+msgctxt "8sxDix"
+msgid "Date to be confirmed"
+msgstr "날짜 미정"
+
 #. The name of a study step: a live voice call in the language being learned.
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
@@ -4932,44 +4933,9 @@ msgid "Your plan at a glance"
 msgstr "내 계획 한눈에 보기"
 
 #: src/journey/next-on-path.tsx
-#: src/journey/use-phase-when.ts
-msgctxt "8sxDix"
-msgid "Date to be confirmed"
-msgstr "날짜 미정"
-
-#: src/journey/next-on-path.tsx
 msgctxt "F1DaXB"
 msgid "Next on your path"
 msgstr "다음 단계"
-
-#. {date} is a month, like "Jan" or "Jan 2028", never a day.
-#: src/journey/path-phase-row.tsx
-msgctxt "0r6xAZ"
-msgid "until ~{date}"
-msgstr "{date}쯤까지"
-
-#. {date} is a month, like "Jan" or "Jan 2028", never a day.
-#: src/journey/path-phase-row.tsx
-msgctxt "JzTTux"
-msgid "until about {date}"
-msgstr "{date}쯤까지"
-
-#. {date} is a day, like "Nov 10".
-#: src/journey/path-phase-row.tsx
-msgctxt "phaseUntilAboutDay"
-msgid "until ~{date}"
-msgstr "~{date}까지"
-
-#. {date} is a day, like "Nov 10".
-#: src/journey/path-phase-row.tsx
-msgctxt "phaseUntilAboutDaySpoken"
-msgid "until about {date}"
-msgstr "{date}쯤까지"
-
-#: src/journey/path-phase-row.tsx
-msgctxt "oPz0RK"
-msgid "until {date}"
-msgstr "{date}까지"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "M6MlNv"
@@ -4981,11 +4947,6 @@ msgstr "오늘 이어서 진행해요"
 msgctxt "-DKe0Q"
 msgid "Continues {date}"
 msgstr "{date}에 이어서 진행해요"
-
-#: src/journey/path-phase-row.tsx
-msgctxt "oIX23Q"
-msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
-msgstr "{count, plural, other {아직 공부하지 않은 레슨 #개}}"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "sk-jVa"
@@ -5011,6 +4972,24 @@ msgstr "{start} ~ {end}"
 msgctxt "yYQBka"
 msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of # lesson} other {{done, number} of # lessons}}"
 msgstr "{total, plural, =0 {레슨 {done, number}개 완료 / 총 #개} other {레슨 {done, number}개 완료 / 전체 #개}}"
+
+#: src/journey/phase-when.tsx
+#: src/plan/plan-date-text.tsx
+msgctxt "7KwTGn"
+msgid "~{date}"
+msgstr "{date}쯤"
+
+#. In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".
+#: src/journey/phase-when.tsx
+msgctxt "55jrFz"
+msgid "{dateKind, select, month {Ends about {date}} other {Ends about {date}}}"
+msgstr "{dateKind, select, month {{date}쯤 끝나요} other {{date}쯤 끝나요}}"
+
+#. When a phase of the plan ends. {date} is a day, like "Dec 12".
+#: src/journey/phase-when.tsx
+msgctxt "JQlKi_"
+msgid "Ends {date}"
+msgstr "{date}에 끝나요"
 
 #: src/journey/plan-header.tsx
 msgctxt "8PP61v"
@@ -5319,25 +5298,6 @@ msgstr "관련 코스"
 msgctxt "uNzqcn"
 msgid "You finished your plan"
 msgstr "계획을 모두 마쳤어요"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/journey/use-phase-when.ts
-msgctxt "bs_tuX"
-msgid "{dateKind, select, month {Until about {date}} other {Until about {date}}}"
-msgstr "{dateKind, select, month {{date}쯤까지} other {{date}쯤까지}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/journey/use-phase-when.ts
-msgctxt "w5zaIw"
-msgid "{dateKind, select, month {Until {date}} other {Until {date}}}"
-msgstr "{dateKind, select, month {{date}까지} other {{date}까지}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/journey/use-phase-when.ts
-#: src/plan/plan-date-text.tsx
-msgctxt "IGvm5x"
-msgid "{dateKind, select, month {About {date}} other {About {date}}}"
-msgstr "{dateKind, select, month {{date}쯤} other {{date}쯤}}"
 
 #: src/journey/use-roadmap.ts
 msgctxt "nO5Gb7"
@@ -10479,10 +10439,11 @@ msgctxt "hzzrUH"
 msgid "Move your date to cover everything"
 msgstr "전체 내용을 공부할 수 있게 날짜 변경하기"
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "{date}쯤"
+msgctxt "IGvm5x"
+msgid "{dateKind, select, month {About {date}} other {About {date}}}"
+msgstr "{dateKind, select, month {{date}쯤} other {{date}쯤}}"
 
 #: src/plan/plan-date.tsx
 msgctxt "3VeTk-"
