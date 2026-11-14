@@ -79,12 +79,35 @@ describe(findBareLatex, () => {
     expect(wrap(text)).toBe(text);
   });
 
+  it("finds a one-letter subscript written against a coefficient, a difference or a short product", () => {
+    const text =
+      "Then kC_A², V = QX/[kC_A0(1 − X)], pK_a, kT_e, αC_A, ΔH_f, ΔG_rxn, Δx_1, δq_rev, RT_m and nRT_m.";
+
+    expect(find(text)).toStrictEqual([
+      problem("kC_A²"),
+      problem("QX/[kC_A0(1"),
+      problem("pK_a"),
+      problem("kT_e"),
+      problem("αC_A"),
+      problem("ΔH_f"),
+      problem("ΔG_rxn"),
+      problem("Δx_1"),
+      problem("δq_rev"),
+      problem("RT_m"),
+      problem("nRT_m"),
+    ]);
+
+    expect(wrap(text)).toBe(text);
+  });
+
   it("leaves italics, names, code and math that hold an underscore", () => {
     const texts = [
       "Read _carefully_ and _a_ word, then _the whole phrase_.",
       "Store it in user_id or max_value, and call `x_1 = load()`.",
       String.raw`The rate is $k = A e^{-E_a/RT}$ and $C_{A0}$ is given.`,
       "Set user_id=max_value+1 and keep CH_4/UTF_8 in db_1.",
+      "Call __init__ in snake_case, then read API_key, HTTP_proxy, PATH_info and SEEK_SET.",
+      "Rename myVar_1, parseJSON_data, iOS_version and macOS_14, and call `kC_A = 1`.",
     ];
 
     expect(texts.flatMap((text) => find(text))).toStrictEqual([]);

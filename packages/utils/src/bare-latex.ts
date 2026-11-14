@@ -5,10 +5,13 @@ import { type TextLayout } from "./text-flaws";
 
 /**
  * A caret between two characters, a braced script, or one letter with a subscript (`C_A0=2`,
- * `E_a/RT`, `1/x_1`, `2x_1`, `F_Y(y)`) is math a writer left outside `$…$`. A longer base (`user_id`,
- * `CH_4`, `UTF_8`) is as often a name.
+ * `E_a/RT`, `1/x_1`, `2x_1`, `F_Y(y)`) is math a writer left outside `$…$`, also against a
+ * coefficient or a difference (`kC_A0`, `pK_a`, `ΔG_rxn`, `δq_rev`), as is a short product of capitals
+ * with a one-letter subscript (`RT_m`, `nRT_m`). A longer base is as often a name (`user_id`,
+ * `myVar_1`, `API_key`, `CH_4`, `UTF_8`).
  */
-const RAW_SCRIPT = /\S\^\S|[\^_]\{|(?<![\p{L}_])\p{L}_[\p{L}\p{N}]+(?![\p{L}\p{N}_])/u;
+const RAW_SCRIPT =
+  /\S\^\S|[\^_]\{|(?:(?<![\p{L}_])|(?<=\p{Ll})(?=\p{Lu})|(?<=[Δδ]))\p{L}_[\p{L}\p{N}]+(?![\p{L}\p{N}_])|(?<![\p{L}_])\p{Ll}?\p{Lu}{2,3}_\p{Ll}\p{N}*(?![\p{L}\p{N}_])/u;
 
 /** Trimming took the mark after this caret (`10^?`, `|x|^?`); a lone caret in quotes is a symbol. */
 const ENDING_CARET = /[\p{L}\p{N})\]}|]\^$/u;
