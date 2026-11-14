@@ -61,7 +61,6 @@ function useNameAppEntry(name?: string) {
   }, [name]);
 }
 
-/** For a page whose bar doesn't know its name, such as a section's page under the section's bar. */
 export function AppEntryName({ name }: { name: string }) {
   useNameAppEntry(name);
   return null;
