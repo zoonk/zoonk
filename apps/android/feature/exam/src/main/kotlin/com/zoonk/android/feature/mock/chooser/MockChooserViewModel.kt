@@ -226,13 +226,9 @@ class MockChooserViewModel(
         mutableStatus.value =
             when (outcome) {
                 is MockStartOutcome.Opened -> ChooserStatus.Choosing.also { mutableOpened.value = outcome.id }
-
                 is MockStartOutcome.Short -> ChooserStatus.Short(key, shape, outcome)
-
                 MockStartOutcome.NotEnoughQuestions -> ChooserStatus.Failed(notEnoughQuestions = true)
-
                 MockStartOutcome.NeedsQuestions -> ChooserStatus.Failed(notEnoughQuestions = false)
-
                 MockStartOutcome.PlusRequired -> ChooserStatus.Choosing.also { tryLocked() }
             }
     }
