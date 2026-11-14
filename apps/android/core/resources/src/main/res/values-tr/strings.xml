@@ -28,7 +28,7 @@
   "disclosure_collapsed": "fcd7630ba4dc71efaab53d712b71e7b3497072e6c3f7bdfb54323dc86bab99ef",
   "disclosure_expanded": "ef1bf7e2d28892c32b244eafef0271c4189d5800fcc4a5b4b08879bfb573c0e7",
   "exam_choice_pick_up_to": "0394ea194e2f963787f04e2e95fcc1da97fc23da6264d2b873576611c44be1b4",
-  "gate_build_plan": "7a501db2d2eeb28f7465c1d6cc1ca79560df98e2576fd3a480629c2aec8218b6",
+  "gate_build_plan": "213a6aac116dc01a1430a4b4677720d2f76de9e094f4ad231a53f3b18e345f0f",
   "gate_log_in": "1c71d46eaf237666a02992594fcf206f0995899f0f72eff412c4c5535e8b2162",
   "gate_session_ended_description": "0bbc2de5edb86886ddb1ca0748a39a70874ea4a7a0c22105a921a52d20f00f1b",
   "gate_session_ended_title": "c88953d238310c35b2a4d1b54cc682cb033aeada5b33c9c1c756cf094f8656ff",
@@ -91,11 +91,13 @@
     <string name="navigation_user_menu">Kullanıcı menüsü</string>
     <string name="task_leave">Çık</string>
     <string name="gate_sign_in_title">Devam etmek için giriş yap</string>
+    <!-- Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session. -->
     <string name="gate_session_ended_title">Oturumun kapatıldı</string>
+    <!-- Under "You've been logged out". Their plan is still saved; logging in shows it again. -->
     <string name="gate_session_ended_description">Planına dönmek için giriş yap.</string>
     <string name="gate_log_in">Giriş yap</string>
     <!-- Starts a new goal: the visitor tells us what to learn and gets a plan. -->
-    <string name="gate_build_plan">Planını oluştur</string>
+    <string name="gate_build_plan">Planımı oluştur</string>
     <string name="gate_start_goal_title">Bir hedefle başla</string>
     <string name="gate_start_goal_description">Ne öğrenmek istediğini söyle, hedefine ulaşana kadar her gününü biz planlayalım.</string>
     <string name="gate_start_goal">Bir hedefe başla</string>

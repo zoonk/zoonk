@@ -31,7 +31,7 @@
   "gate_build_plan": "4b04786adf6d3bb03bb86da456ae533d0d48ae496afc6802ca7020225f765cbb",
   "gate_log_in": "2b0884dd61bbc490df35f2b14bf94c213eb0b7c5dec16b99c03c1651f2d73f52",
   "gate_session_ended_description": "9e66c3dd024d6e3282cc37bead14e35933fe62c5669195605543378cfdd507e2",
-  "gate_session_ended_title": "11a63efb474a84341e71bfe87da70756851f1fbf655aec74d7c241db1e31c07e",
+  "gate_session_ended_title": "3e528ab96d7c808b3a611ac95475fde552194da5cc7f69d7a4d1fc68931c006c",
   "gate_sign_in_title": "ef3321dd0e7aeda405ae9d362baef1d98e23e42e37c6df0332fbe822f90aacf8",
   "gate_start_goal": "abdfff831a39fd42c8f0d3e26a6bd8f1c7febd9cd792cea8739e277339d2ac05",
   "gate_start_goal_description": "f980d8439336c84c90159c4cac4bc141940509f1fdbbc960d6b794b01deaa942",
@@ -91,7 +91,9 @@
     <string name="navigation_user_menu">Menu do usuário</string>
     <string name="task_leave">Sair</string>
     <string name="gate_sign_in_title">Entre para continuar</string>
-    <string name="gate_session_ended_title">Sua sessão terminou</string>
+    <!-- Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session. -->
+    <string name="gate_session_ended_title">Você saiu da sua conta</string>
+    <!-- Under "You've been logged out". Their plan is still saved; logging in shows it again. -->
     <string name="gate_session_ended_description">Entre para voltar ao seu plano.</string>
     <string name="gate_log_in">Entrar</string>
     <!-- Starts a new goal: the visitor tells us what to learn and gets a plan. -->
