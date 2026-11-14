@@ -47,6 +47,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -81,7 +82,9 @@ import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionAnswer
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
+import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.WorkedSteps
+import com.zoonk.android.feature.questions.trueFalseLabel
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -912,26 +915,25 @@ private fun ReviewItem(
                 modifier = Modifier.size(20.dp),
                 tint = if (answer.isCorrect) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
             )
-            ItemText(question.question, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+            ItemText(
+                question.question,
+                Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+            )
             ReportProblemMenu(app, FeedbackTarget("checkpoint-review", FeedbackSubmissionContext.ContentKind.ITEM, answer.itemId))
         }
         Column(Modifier.padding(start = 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (question.format == QuestionFormat.MultipleChoice || question.format == QuestionFormat.TrueFalse) {
+                val choices = reviewChoices(question, duel.read.words)
                 QuestionAnswer(
-                    question = question,
+                    question = choices,
                     words = duel.read.words,
                     allowBlank = false,
                     // An answer given before the screen opened again isn't known: a miss then shows only the right option.
                     check =
                         AnswerCheck(
-                            given ?: if (answer.isCorrect &&
-                                correct != null
-                            ) {
-                                correct
-                            } else {
-                                Answer.DontKnow
-                            },
-                            correct,
+                            (given ?: if (answer.isCorrect && correct != null) correct else Answer.DontKnow).asChoice(),
+                            correct?.asChoice(),
                             answer.isCorrect,
                         ),
                     draft = null,
@@ -940,12 +942,33 @@ private fun ReviewItem(
                     onSubmit = {},
                 )
             } else {
-                AnswerLine(R.string.checkpoint_answer, correct, question, duel.read.words, MaterialTheme.typography.bodyMedium)
+                AnswerLine(
+                    R.string.checkpoint_answer,
+                    correct,
+                    question,
+                    duel.read.words,
+                    MaterialTheme.typography.bodyMedium,
+                    mutedLabel = true,
+                )
             }
             answer.explanation?.let { ItemText(it, style = MaterialTheme.typography.bodyMedium) }
             if (!answer.isCorrect) WorkedSteps(answer.workedSteps)
         }
     }
 }
+
+/** A statement's verdict reviews as main's two answer rows, without the statement's card under its own title. */
+@Composable
+private fun reviewChoices(
+    question: Question,
+    words: TrueFalseWords,
+): Question =
+    if (question.format == QuestionFormat.TrueFalse) {
+        question.copy(format = QuestionFormat.MultipleChoice, options = listOf(trueFalseLabel(true, words), trueFalseLabel(false, words)))
+    } else {
+        question
+    }
+
+private fun Answer.asChoice(): Answer = if (this is Answer.TrueFalse) Answer.Choice(if (isTrue) 0 else 1) else this
 
 private fun StudyQuestionAnswer.toAnswer(): Answer? = runCatching { recode<StudyQuestionAnswer, Answer>() }.getOrNull()

@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.compose.material3.Surface
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.layout.FoldingFeature
@@ -62,6 +64,7 @@ class MistakesNotebookScreenshots {
         answer: String,
         correct: String,
         explanation: String? = null,
+        format: String? = null,
     ) = """{"cause":${cause?.let { "\"$it\"" } ?: "null"},"createdAt":"2026-10-2${id}T12:00:00Z","fixedAt":null,
         "id":"00000000-0000-4000-8000-00000000000$id","itemId":null,
         "lesson":{"id":"00000000-0000-4000-8000-0000000000c$id","title":"Lesson"},"practiceAvailable":${id != 3},
@@ -76,7 +79,9 @@ class MistakesNotebookScreenshots {
             "b2"
         }}","name":"$it"}"""
     } ?: "null"},
-        "snapshot":{"answer":"$answer","correctAnswer":"$correct","question":"$question"${explanation?.let {
+        "snapshot":{"answer":"$answer","correctAnswer":"$correct",${format?.let {
+        "\"format\":\"$it\","
+    } ?: ""}"question":"$question"${explanation?.let {
         ""","explanation":"$it""""
     } ?: ""}},
         "status":"open"}"""
@@ -100,6 +105,37 @@ class MistakesNotebookScreenshots {
             "pagination":{"hasMore":true,"nextCursor":"c1"},"trueFalseLabels":"trueFalse"}""",
         )
 
+    /** Math, a long formula, a number, a typed name and a true/false answer, as #2770 draws them. */
+    private val mathNotebook: MistakeList =
+        ApiJson.decodeFromString(
+            MistakeList.serializer(),
+            """{"availability":{"ready":5,"tomorrow":0},"counts":{"byCause":{"gap":2,"guess":0,"misread":1,"time":0,"trap":2,"unsorted":0},
+            "fixed":0,"open":5},"data":[
+              ${mistake(
+                1,
+                "trap",
+                "Equações",
+                "Quais são as raízes de \$x^2 - 5x + 6 = 0\$?",
+                "\$x = 1\$ e \$x = 6\$",
+                "\$x = 2\$ e \$x = 3\$",
+                "Fatorando, \$(x - 2)(x - 3) = 0\$.",
+                format = "multipleChoice",
+            )},
+              ${mistake(
+                2,
+                "gap",
+                "Equações",
+                "Qual é a fórmula de Bhaskara?",
+                "\$x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 + 4ac}}{2a}\$",
+                "\$x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a} \\\\text{, com } a \\\\neq 0 \\\\text{ e } \\\\Delta = b^2 - 4ac \\\\geq 0\$",
+                format = "multipleChoice",
+            )},
+              ${mistake(4, "misread", "Porcentagem", "Qual é 10% de \$250\$?", "2,5", "25", format = "numeric")},
+              ${mistake(5, "gap", "Python", "Que método inicia um objeto em Python?", "init", "__init__", format = "typed")},
+              ${mistake(6, "trap", "Porcentagem", "\$25\\\\%\$ de \$80\$ é \$25\$.", "true", "false", format = "trueFalse")}],
+            "pagination":{"hasMore":false,"nextCursor":null},"trueFalseLabels":"trueFalse"}""",
+        )
+
     private val pattern: GoalMistakePattern =
         ApiJson.decodeFromString(
             GoalMistakePattern.serializer(),
@@ -110,6 +146,8 @@ class MistakesNotebookScreenshots {
         name: String,
         dark: Boolean = false,
         fold: Boolean = false,
+        page: MistakeList = notebook,
+        expand: String? = null,
     ) {
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
         val api =
@@ -119,7 +157,7 @@ class MistakesNotebookScreenshots {
                     key: NotebookKey,
                     cursor: String?,
                     timeZone: String,
-                ) = notebook
+                ) = page
 
                 override suspend fun pattern(
                     session: AuthenticatedSession,
@@ -132,6 +170,11 @@ class MistakesNotebookScreenshots {
         if (fold) unfold()
         rule.mainClock.advanceTimeBy(1_000)
         rule.waitForIdle()
+        expand?.let {
+            rule.onNodeWithText(it).performClick()
+            rule.mainClock.advanceTimeBy(1_000)
+            rule.waitForIdle()
+        }
         val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
@@ -180,6 +223,22 @@ class MistakesNotebookScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tablet() = show("tablet")
+
+    @Test
+    @Config(qualifiers = "w411dp-h2600dp-xxhdpi")
+    fun phoneMath() = show("notebook-math-phone", page = mathNotebook, expand = "Porcentagem")
+
+    @Test
+    @Config(qualifiers = "w411dp-h2600dp-night-xxhdpi")
+    fun phoneMathDark() = show("notebook-math-phone-dark", dark = true, page = mathNotebook, expand = "Porcentagem")
+
+    @Test
+    @Config(qualifiers = "w360dp-h2800dp-xxhdpi")
+    fun narrowPhoneMath() = show("notebook-math-narrow", page = mathNotebook, expand = "Porcentagem")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h1800dp-night-xhdpi")
+    fun tabletMathDark() = show("notebook-math-tablet-dark", dark = true, page = mathNotebook, expand = "Porcentagem")
 
     /** Opens the book flat, telling again what the fold composed, as a device tells every new reader. */
     private fun unfold() =
