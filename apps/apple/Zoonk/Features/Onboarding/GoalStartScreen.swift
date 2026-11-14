@@ -39,7 +39,7 @@ extension PlanAllowance {
       } else if newGoalsToday.isReached {
         ("day", "goal")
       } else if newGoalsThisMonth.isReached {
-        ("month", "goal")
+        ("rolling30Days", "goal")
       } else {
         nil
       }

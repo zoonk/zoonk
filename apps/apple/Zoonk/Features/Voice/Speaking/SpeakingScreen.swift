@@ -42,7 +42,7 @@ private struct SpeakingPaperView: View {
   let paper: Resource<Components.Schemas.SpeakingPaper>
 
   private enum StartFailure: Equatable {
-    case limit(CallLimit)
+    case limit(HelpLimit)
     case failed
   }
 
@@ -280,10 +280,8 @@ private struct SpeakingPaperView: View {
 
   private func startFailureMessage(_ failure: StartFailure) -> String {
     switch failure {
-    case .limit(let limit) where limit.period == .month:
-      String(
-        localized: "Not enough call time this month for this task", table: "Voice",
-        comment: "The call time left this month can't fit this speaking exam task")
+    case .limit(let limit) where limit.isMonthly:
+      limit.words(.callTime).said
     case .limit:
       String(
         localized: "Not enough call time today for this task", table: "Voice",

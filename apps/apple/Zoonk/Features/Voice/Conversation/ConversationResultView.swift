@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ConversationResultView: View {
   private enum StartFailure: Equatable {
-    case limit(CallLimit)
+    case limit(HelpLimit)
     case failed
   }
 
@@ -140,14 +140,8 @@ struct ConversationResultView: View {
     let isMock = conversation.kind == .speakingMock
 
     switch failure {
-    case .limit(let limit) where limit.period == .month:
-      return isMock
-        ? String(
-          localized: "Not enough call time this month for this mock", table: "Voice",
-          comment: "The call time left this month can't fit the mock")
-        : String(
-          localized: "Not enough call time this month for this task", table: "Voice",
-          comment: "The call time left this month can't fit this task")
+    case .limit(let limit) where limit.isMonthly:
+      return limit.words(.callTime).said
     case .limit:
       return isMock
         ? String(

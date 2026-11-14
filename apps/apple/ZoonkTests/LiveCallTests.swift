@@ -94,10 +94,14 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(reservation(503, "CALLS_PAUSED"), .callsPaused)
     XCTAssertEqual(reservation(402, "PLUS_REQUIRED"), .plusRequired)
     XCTAssertEqual(
-      reservation(429, "CONVERSATION_LIMIT_REACHED", #"{"period":"month","tier":"free"}"#),
-      .limit(CallLimit(period: .month, tier: .free)))
+      reservation(
+        429, "CONVERSATION_LIMIT_REACHED",
+        #"{"limit":{"period":"rolling30Days","tier":"free","availableAt":"2026-11-22T09:30:00.000Z"}}"#
+      ),
+      .limit(.usedUp(tier: .free, availableAt: Date(timeIntervalSince1970: 1_795_339_800))))
     XCTAssertEqual(
-      reservation(403, "SIGN_UP_REQUIRED"), .limit(CallLimit(period: .total, tier: .guest)))
+      reservation(403, "SIGN_UP_REQUIRED"),
+      .limit(HelpLimit.limitReached(period: .total, tier: .guest)))
     XCTAssertEqual(
       reservation(429, "CONNECTION_LIMIT_REACHED", #"{"period":"conversation"}"#), .ended)
     XCTAssertEqual(reservation(500, "SOMETHING_NEW"), .failed)
@@ -110,8 +114,8 @@ final class LiveCallTests: XCTestCase {
       .slowDown(retryAfterSeconds: 120)
     )
     XCTAssertEqual(
-      refusal(402, "USAGE_LIMIT_REACHED", #"{"limit":{"period":"month","tier":"free"}}"#).limit,
-      .limitReached(period: .month, tier: .free))
+      refusal(402, "USAGE_LIMIT_REACHED", #"{"limit":{"period":"day","tier":"free"}}"#).limit,
+      .limitReached(period: .day, tier: .free))
     XCTAssertEqual(
       refusal(403, "USAGE_LIMIT_REACHED").limit, .limitReached(period: .day, tier: .guest))
     XCTAssertEqual(
@@ -119,11 +123,11 @@ final class LiveCallTests: XCTestCase {
         402, "USAGE_LIMIT_REACHED",
         #"{"limit":{"period":"rolling30Days","tier":"free","availableAt":"2026-11-22T09:30:00.000Z"}}"#
       ).limit,
-      .freeLessonsUsed(opensAt: Date(timeIntervalSince1970: 1_795_339_800)))
+      .usedUp(tier: .free, availableAt: Date(timeIntervalSince1970: 1_795_339_800)))
     XCTAssertEqual(
       refusal(402, "USAGE_LIMIT_REACHED", #"{"limit":{"period":"rolling30Days","tier":"free"}}"#)
         .limit,
-      .freeLessonsUsed(opensAt: nil))
+      .usedUp(tier: .free, availableAt: nil))
     XCTAssertNil(refusal(422, "NO_SPEECH").limit)
     XCTAssertTrue(refusal(422, "NO_SPEECH").isNoSpeech)
   }
@@ -331,7 +335,7 @@ final class LiveCallTests: XCTestCase {
 
   func testARefusedReservationSaysWhy() async {
     let server = FakeServer(reservations: [
-      .limit(CallLimit(period: .day, tier: .free))
+      .limit(HelpLimit(period: .day, tier: .free))
     ])
     let transport = FakeTransport()
     let call = LiveCall(conversation: .fixture(), client: server.client(transport))
@@ -340,7 +344,7 @@ final class LiveCallTests: XCTestCase {
 
     XCTAssertEqual(call.phase, .failed)
     XCTAssertEqual(call.failure, .limit)
-    XCTAssertEqual(call.limit, CallLimit(period: .day, tier: .free))
+    XCTAssertEqual(call.limit, HelpLimit(period: .day, tier: .free))
     XCTAssertEqual(transport.offers, 0)
   }
 
@@ -472,7 +476,7 @@ final class LiveCallTests: XCTestCase {
 
     let refused = LiveCall(
       conversation: .fixture(),
-      client: FakeServer(reservations: [.limit(CallLimit(period: .day, tier: .free))])
+      client: FakeServer(reservations: [.limit(HelpLimit(period: .day, tier: .free))])
         .client(FakeTransport()),
       soFar: first.soFar)
     await refused.start()

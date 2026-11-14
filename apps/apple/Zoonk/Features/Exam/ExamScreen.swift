@@ -976,10 +976,8 @@ private struct SpeakingMockSection: View {
         switch start.refusal {
         case .limit(let limit):
           FailureLine(
-            message: limit.period == .month
-              ? String(
-                localized: "Not enough call time this month for this mock", table: "Exam",
-                comment: "The call time left this month can't fit the mock")
+            message: limit.isMonthly
+              ? limit.words(.callTime).said
               : String(
                 localized: "Not enough call time today for this mock", table: "Exam",
                 comment: "The call time left today can't fit the mock"))

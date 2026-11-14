@@ -133,7 +133,7 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
       case .signUpRequired: .signUpRequired
       case .slowDown:
         .slowDown(retryAfterSeconds: max(1, Int((resetsAt ?? now).timeIntervalSince(now))))
-      case .limitReached: .reached(period: period, tier: tier, opensAt: resetsAt)
+      case .limitReached: .reached(period: period, tier: tier, availableAt: resetsAt)
       }
 
     let ranOut: MindMapLimit.Resource =

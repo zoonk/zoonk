@@ -221,18 +221,15 @@ extension TutorTurn.About {
 }
 
 extension TutorFailure {
-  /// A limit reads as every other limit; the rest are one line.
-  var words: LimitWords {
+  /// A limit reads as every other limit, its day read at `now`; the rest are one line.
+  func words(now: Date = .now) -> LimitWords {
     switch self {
     case .signUpRequired:
-      return HelpLimit.signUpRequired.helpWords(.messages)
+      return HelpLimit.signUpRequired.words(.messages)
     case .slowDown:
-      return HelpLimit.slowDown(retryAfterSeconds: 0).helpWords(.messages)
-    case .limitReached(let period, let tier):
-      return HelpLimit.limitReached(
-        period: HelpLimit.Period(rawValue: period.rawValue) ?? .day, tier: tier
-      )
-      .helpWords(.messages)
+      return HelpLimit.slowDown(retryAfterSeconds: 0).words(.messages)
+    case .limit(let limit):
+      return limit.words(.messages, now: now)
     case .plusRequired:
       return LimitWords(
         title: LocalizedStringResource(
@@ -261,7 +258,7 @@ extension TutorFailure {
   }
 
   var message: String {
-    words.said
+    words().said
   }
 
   enum Remedy {
@@ -274,13 +271,17 @@ extension TutorFailure {
 
   var remedy: Remedy {
     switch self {
-    case .signUpRequired, .limitReached(_, .guest):
+    case .limit(let limit) where limit.needsAccount:
       .createAccount
-    case .limitReached(_, .free), .plusRequired:
+    case .limit(let limit) where limit.offersSubscription:
+      .subscribe
+    case .signUpRequired:
+      .createAccount
+    case .plusRequired:
       .subscribe
     case .signedOut:
       .signIn
-    case .limitReached(_, .plus), .gone:
+    case .limit, .gone:
       .none
     case .slowDown, .invalid, .conflict, .failed:
       .tryAgain

@@ -519,12 +519,12 @@ struct LessonPlayerAPI: Sendable {
         }
       let period: LessonRunRefusal.Period =
         switch periodName {
-        case "month": .month
         case "total": .total
-        case "rolling30Days":
+        case "rolling30Days", "month":
           .last30Days(
-            opensAt: ((limit?["availableAt"] ?? details?["availableAt"] ?? nil) as? String).flatMap(
-              Date.init(serverInstant:)))
+            availableAt: ((limit?["availableAt"] ?? details?["availableAt"] ?? nil) as? String)
+              .flatMap(
+                Date.init(serverInstant:)))
         default: .day
         }
       return .limitReached(tier: tier, period: period)

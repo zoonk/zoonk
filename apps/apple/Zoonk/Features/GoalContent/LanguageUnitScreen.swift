@@ -554,11 +554,8 @@ struct PracticeCallSection: View {
         }
 
         if case .limit(let limit) = outcome {
-          if limit.period == .month {
-            FailureLine(
-              message: LocalizedStringResource(
-                "Not enough call time this month.", table: "Plan",
-                comment: "The plan's call time this month is used"))
+          if limit.isMonthly {
+            FailureLine(message: limit.words(.callTime).said)
           } else {
             FailureLine(
               message: LocalizedStringResource(

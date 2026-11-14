@@ -365,14 +365,12 @@ extension Binding<MaterialDraft> {
 extension MaterialDraft {
   fileprivate static func message(for error: Error) -> LocalizedStringResource {
     switch error as? OnboardingError {
+    case .limit(let limit) where limit.help.isMonthly:
+      limit.help.sentence(.uploads)
     case .limit(let limit) where limit.tier == "plus":
       LocalizedStringResource(
         "No more material today. More tomorrow.",
         table: "Onboarding", comment: "A subscriber added as much material as allowed today")
-    case .limit(let limit) where limit.period == "month":
-      LocalizedStringResource(
-        "No more material this month. More next month, or subscribe to keep going.",
-        table: "Onboarding", comment: "A free learner added as much material as allowed this month")
     case .limit:
       LocalizedStringResource(
         "No more material today. More tomorrow, or subscribe to keep going.",
@@ -632,15 +630,12 @@ struct MaterialQuestionsView: View {
 
   private static func message(for error: Error) -> LocalizedStringResource {
     switch error as? OnboardingError {
+    case .limit(let limit) where limit.help.isMonthly:
+      limit.help.sentence(.questions)
     case .limit(let limit) where limit.tier == "plus":
       LocalizedStringResource(
         "No more questions today. More tomorrow.", table: "Onboarding",
         comment: "A subscriber asked as many material questions as allowed today")
-    case .limit(let limit) where limit.period == "month":
-      LocalizedStringResource(
-        "No more questions this month. More next month, or subscribe to keep going.",
-        table: "Onboarding",
-        comment: "A free learner asked as many material questions as allowed this month")
     case .limit:
       LocalizedStringResource(
         "No more questions today. More tomorrow, or subscribe to keep going.",

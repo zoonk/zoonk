@@ -134,9 +134,15 @@ struct TutorLimitNotice: View {
   let failure: TutorFailure
 
   var body: some View {
+    OpeningClock(availableAt: failure.helpLimit?.availableAt) { now in
+      notice(failure.words(now: now))
+    }
+  }
+
+  private func notice(_ words: LimitWords) -> some View {
     VStack(alignment: .leading, spacing: 8) {
-      GateWords(title: failure.words.title.map(Text.init), line: failure.words.line.map(Text.init))
-        .announcesAlert(failure.message)
+      GateWords(title: words.title.map(Text.init), line: words.line.map(Text.init))
+        .announcesAlert(words.said)
 
       TutorRemedyButton(failure: failure, retry: {})
         .controlSize(.small)

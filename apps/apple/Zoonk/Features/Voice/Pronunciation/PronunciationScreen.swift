@@ -250,7 +250,7 @@ private struct PronunciationRoundView: View {
       }
 
       if case .limit(let limit) = notice {
-        return limit.helpWords().said
+        return limit.words().said
       }
 
       // A failure is a `FailureLine`, which reads itself out.

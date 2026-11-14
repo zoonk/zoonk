@@ -538,7 +538,7 @@
       MindMapLimit(limit: .limitReached(period: .day, tier: .free), resource: .lessons),
       MindMapLimit(limit: .limitReached(period: .day, tier: .free), resource: .aiSpend),
       MindMapLimit(
-        limit: .freeLessonsUsed(opensAt: .now.addingTimeInterval(3 * 86_400)),
+        limit: .usedUp(tier: .free, availableAt: .now.addingTimeInterval(3 * 86_400)),
         resource: .chapterLessons),
       MindMapLimit(limit: .limitReached(period: .total, tier: .free), resource: .chapterLessons),
     ]
@@ -565,7 +565,7 @@
     let opensIn: TimeInterval
 
     static func refusal(opensIn: TimeInterval = 20) -> LessonRunRefusal {
-      .limitReached(tier: .free, period: .last30Days(opensAt: .now.addingTimeInterval(opensIn)))
+      .limitReached(tier: .free, period: .last30Days(availableAt: .now.addingTimeInterval(opensIn)))
     }
 
     var body: some View {
@@ -578,22 +578,24 @@
   /// `ZOONK_DEBUG_GALLERY=limits` opens the buddy's and the explanations' monthly gates, free and
   /// subscribed, as their screens draw them.
   private struct DebugLimits: View {
+    static let later = Date.now.addingTimeInterval(5 * 86_400)
+
     var body: some View {
       ZoonkList {
         Section {
-          TutorLimitNotice(failure: .limitReached(period: .month, tier: .free))
+          TutorLimitNotice(failure: .limit(.usedUp(tier: .free, availableAt: Self.later)))
         } header: {
           Text(verbatim: "Buddy's messages, free")
         }
 
         Section {
-          TutorLimitNotice(failure: .limitReached(period: .month, tier: .plus))
+          TutorLimitNotice(failure: .limit(.usedUp(tier: .plus, availableAt: Self.later)))
         } header: {
           Text(verbatim: "Buddy's messages, Plus")
         }
 
         Section {
-          LimitNotice(limit: .limitReached(period: .month, tier: .free), kind: .explanations)
+          LimitNotice(limit: .usedUp(tier: .free, availableAt: Self.later), kind: .explanations)
         } header: {
           Text(verbatim: "Explanations, free")
         }

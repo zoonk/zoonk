@@ -60,6 +60,17 @@
         }
       }
     },
+    "%@. %@" : {
+      "comment" : "A limit's words where they're one sentence, such as under a button or as the buddy's answer: what ran out, then when more comes back",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@. %2$@"
+          }
+        }
+      }
+    },
     "%lld goals" : {
       "comment" : "How many goals the free plan has at a time",
       "localizations" : {
@@ -1269,6 +1280,65 @@
         }
       }
     },
+    "Calls need a free account" : {
+      "comment" : "A guest can't call",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für Gespräche brauchst du ein kostenloses Konto"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Necesitas una cuenta gratis para llamar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un compte gratuit est nécessaire pour appeler"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per le conversazioni serve un account gratuito"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話練習には無料アカウントが必要です"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화하려면 무료 계정이 필요해요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do rozmów potrzebujesz bezpłatnego konta"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para conversar, você precisa de uma conta grátis"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sohbet etmek için ücretsiz bir hesap gerekli"
+          }
+        }
+      }
+    },
     "Can I get a refund?" : {
       "localizations" : {
         "de" : {
@@ -1736,65 +1806,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ücretsiz hesap oluştur"
-          }
-        }
-      }
-    },
-    "It writes more lessons than you get for free." : {
-      "comment" : "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dafür werden mehr Lektionen erstellt, als du kostenlos bekommst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Al crearlo, se preparan más lecciones de las que incluye el plan gratis."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elle prépare plus de leçons que la formule gratuite n’en inclut."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per crearla dobbiamo preparare più lezioni di quelle incluse gratis."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このマップで作成されるレッスン数は、無料で使える数を超えています。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료로 제공되는 것보다 더 많은 레슨을 만들어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Do tej mapy przygotowujemy więcej lekcji, niż dostajesz bezpłatnie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ele cria mais aulas do que você recebe de graça."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu harita için ücretsiz ders hakkından daha fazla ders hazırlamamız gerekiyor."
           }
         }
       }
@@ -2269,6 +2280,65 @@
         }
       }
     },
+    "It writes more lessons than you get for free." : {
+      "comment" : "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dafür werden mehr Lektionen erstellt, als du kostenlos bekommst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al crearlo, se preparan más lecciones de las que incluye el plan gratis."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elle prépare plus de leçons que la formule gratuite n’en inclut."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per crearla dobbiamo preparare più lezioni di quelle incluse gratis."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このマップで作成されるレッスン数は、無料で使える数を超えています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "무료로 제공되는 것보다 더 많은 레슨을 만들어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do tej mapy przygotowujemy więcej lekcji, niż dostajesz bezpłatnie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ele cria mais aulas do que você recebe de graça."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu harita için ücretsiz ders hakkından daha fazla ders hazırlamamız gerekiyor."
+          }
+        }
+      }
+    },
     "Keep Plus" : {
       "comment" : "Turns the stopped renewal of Plus bought on the web back on, so it renews as before",
       "localizations" : {
@@ -2737,6 +2807,18 @@
         }
       }
     },
+    "More later today, or subscribe to keep going." : {
+      "comment" : "Under a monthly limit a free learner reached: more comes back later today"
+    },
+    "More later today." : {
+      "comment" : "Under a monthly limit a subscriber reached: more comes back later today"
+    },
+    "More on %@, or subscribe to keep going." : {
+      "comment" : "Under a monthly limit a free learner reached: the day more comes back. {date} is a day and its month, such as \"November 22\" in English."
+    },
+    "More on %@." : {
+      "comment" : "Under a monthly limit a subscriber reached: the day more comes back. {date} is a day and its month, such as \"November 22\" in English."
+    },
     "More speaking practice calls" : {
       "localizations" : {
         "de" : {
@@ -2791,418 +2873,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konuşma pratiği için daha fazla sohbet"
-          }
-        }
-      }
-    },
-    "No active subscription found" : {
-      "comment" : "Title shown when restored App Store purchases do not currently provide Plus",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kein aktives Abo gefunden"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No se encontró una suscripción activa"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun abonnement actif trouvé"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessun abbonamento attivo trovato"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "有効なサブスクリプションが見つかりません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이용 중인 구독을 찾지 못했어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie znaleziono aktywnej subskrypcji"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhuma assinatura ativa encontrada"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aktif abonelik bulunamadı"
-          }
-        }
-      }
-    },
-    "No card needed." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keine Karte nötig."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No necesitas tarjeta."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucune carte bancaire requise."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non serve una carta."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "クレジットカードは不要です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "카드 등록이 필요 없어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie potrzebujesz karty."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não precisa de cartão."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kart gerekmez."
-          }
-        }
-      }
-    },
-    "No purchases found" : {
-      "comment" : "Title shown when restore finds no eligible App Store purchases",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keine Käufe gefunden"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No se encontraron compras"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun achat trouvé"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessun acquisto trovato"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "購入履歴が見つかりません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "구매 내역을 찾지 못했어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie znaleziono zakupów"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhuma compra encontrada"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Satın alma işlemi bulunamadı"
-          }
-        }
-      }
-    },
-    "None of your App Store purchases include Plus right now." : {
-      "comment" : "Explains that restored App Store purchases do not grant an active subscription",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keiner deiner App-Store-Käufe enthält aktuell Plus."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ninguna de tus compras en el App Store incluye Plus en este momento."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun de tes achats App Store n’inclut Plus pour le moment."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Al momento nessuno dei tuoi acquisti su App Store include Plus."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "現在、App Storeで購入した有効なPlusはありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "현재 App Store 구매 내역에 이용 중인 Plus 구독이 없어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Żaden z twoich zakupów w App Store nie daje teraz dostępu do pakietu Plus."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhuma das suas compras na App Store inclui o Plus agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App Store satın alımlarının hiçbiri şu anda Plus içermiyor."
-          }
-        }
-      }
-    },
-    "OK" : {
-      "comment" : "Dismisses a subscription status message",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aceptar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "확인"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tamam"
-          }
-        }
-      }
-    },
-    "More next month, or subscribe to keep going." : {
-      "comment" : "Under a limit a free learner reached: it comes back next month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nächsten Monat gibt es mehr. Mit einem Abo kannst du weitermachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tendrás más el próximo mes o puedes suscribirte para seguir."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu en auras d’autres le mois prochain, ou tu peux t’abonner pour continuer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Potrai continuare il mese prossimo, oppure abbonati per farlo subito."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "来月また利用できます。サブスクリプションに登録すると、このまま続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다음 달에 다시 이용할 수 있어요. 구독하면 지금 계속 이용할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Więcej w przyszłym miesiącu lub już teraz z subskrypcją."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No mês que vem tem mais. Para continuar agora, assine."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hakkın gelecek ay yenilenecek. Devam etmek için abone ol."
-          }
-        }
-      }
-    },
-    "More next month." : {
-      "comment" : "Under a limit a subscriber reached: it comes back next month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nächsten Monat gibt es mehr."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tendrás más el próximo mes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu en auras d’autres le mois prochain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Potrai continuare il mese prossimo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "来月また利用できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다음 달에 다시 이용할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Więcej w przyszłym miesiącu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No mês que vem tem mais."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hakkın gelecek ay yenilenecek."
           }
         }
       }
@@ -3325,61 +2995,178 @@
         }
       }
     },
-    "No more explanations this month" : {
-      "comment" : "The learner asked for all the answer explanations they can this month",
+    "No active subscription found" : {
+      "comment" : "Title shown when restored App Store purchases do not currently provide Plus",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diesen Monat keine Erklärungen mehr"
+            "value" : "Kein aktives Abo gefunden"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No te quedan explicaciones este mes"
+            "value" : "No se encontró una suscripción activa"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Limite d’explications atteinte pour ce mois-ci"
+            "value" : "Aucun abonnement actif trouvé"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hai esaurito le spiegazioni per questo mese"
+            "value" : "Nessun abbonamento attivo trovato"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今月利用できる解説はここまでです"
+            "value" : "有効なサブスクリプションが見つかりません"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이번 달에는 해설을 더 볼 수 없어요"
+            "value" : "이용 중인 구독을 찾지 못했어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wykorzystano limit wyjaśnień na ten miesiąc"
+            "value" : "Nie znaleziono aktywnej subskrypcji"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu o limite de explicações deste mês"
+            "value" : "Nenhuma assinatura ativa encontrada"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu ayki açıklama hakkın bitti"
+            "value" : "Aktif abonelik bulunamadı"
+          }
+        }
+      }
+    },
+    "No card needed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Karte nötig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No necesitas tarjeta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune carte bancaire requise."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non serve una carta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クレジットカードは不要です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "카드 등록이 필요 없어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie potrzebujesz karty."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não precisa de cartão."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kart gerekmez."
+          }
+        }
+      }
+    },
+    "No more calls today" : {
+      "comment" : "The plan's call time is used",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute sind keine Gespräche mehr möglich"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No quedan llamadas por hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus d’appels aujourd’hui"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessun’altra conversazione oggi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日の会話時間を使い切りました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘 대화 시간을 다 썼어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dzisiejszy limit rozmów wyczerpany"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sem mais conversas hoje"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugünkü sohbet süren doldu"
           }
         }
       }
@@ -3498,65 +3285,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Daha fazla ders için hesap gerekiyor"
-          }
-        }
-      }
-    },
-    "No more messages this month" : {
-      "comment" : "The learner sent all the messages to their buddy they can this month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diesen Monat keine Nachrichten mehr"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No te quedan mensajes este mes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limite de messages atteinte pour ce mois-ci"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai esaurito i messaggi per questo mese"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今月送れるメッセージはここまでです"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이번 달에는 메시지를 더 보낼 수 없어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano limit wiadomości na ten miesiąc"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de mensagens deste mês"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu ayki mesaj hakkın bitti"
           }
         }
       }
@@ -3738,65 +3466,6 @@
         }
       }
     },
-    "No more new mind maps this month" : {
-      "comment" : "The learner made all the new mind maps they can this month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diesen Monat keine neuen Mindmaps mehr"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No te quedan mapas mentales nuevos este mes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limite de nouvelles cartes mentales atteinte pour ce mois-ci"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il limite mensile di nuove mappe mentali"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今月作れる新しいマインドマップはここまでです"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이번 달에는 새 마인드맵을 더 만들 수 없어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano limit nowych map myśli na ten miesiąc"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de novos mapas mentais deste mês"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu ayki yeni zihin haritası hakkın bitti"
-          }
-        }
-      }
-    },
     "No more new mind maps today" : {
       "comment" : "The learner made all the new mind maps they can today",
       "localizations" : {
@@ -3852,65 +3521,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugünkü yeni zihin haritası hakkın bitti"
-          }
-        }
-      }
-    },
-    "No more previews this month" : {
-      "comment" : "The learner saw all the topics ahead of time they can this month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diesen Monat keine Vorschauen mehr"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No te quedan vistas previas este mes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limite d’aperçus atteinte pour ce mois-ci"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai esaurito le anteprime per questo mese"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今月利用できるプレビューはここまでです"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이번 달에는 미리 보기를 더 이용할 수 없어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano limit podglądów tematów na ten miesiąc"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de prévias deste mês"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu ayki ön izleme hakkın bitti"
           }
         }
       }
@@ -4033,6 +3643,124 @@
         }
       }
     },
+    "No purchases found" : {
+      "comment" : "Title shown when restore finds no eligible App Store purchases",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Käufe gefunden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontraron compras"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun achat trouvé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessun acquisto trovato"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "購入履歴が見つかりません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "구매 내역을 찾지 못했어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie znaleziono zakupów"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhuma compra encontrada"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satın alma işlemi bulunamadı"
+          }
+        }
+      }
+    },
+    "None of your App Store purchases include Plus right now." : {
+      "comment" : "Explains that restored App Store purchases do not grant an active subscription",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keiner deiner App-Store-Käufe enthält aktuell Plus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguna de tus compras en el App Store incluye Plus en este momento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun de tes achats App Store n’inclut Plus pour le moment."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al momento nessuno dei tuoi acquisti su App Store include Plus."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在、App Storeで購入した有効なPlusはありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "현재 App Store 구매 내역에 이용 중인 Plus 구독이 없어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Żaden z twoich zakupów w App Store nie daje teraz dostępu do pakietu Plus."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhuma das suas compras na App Store inclui o Plus agora."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store satın alımlarının hiçbiri şu anda Plus içermiyor."
+          }
+        }
+      }
+    },
     "Not enough free lessons for this map yet" : {
       "localizations" : {
         "de" : {
@@ -4087,6 +3815,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu harita için henüz yeterli ücretsiz ders hakkın yok"
+          }
+        }
+      }
+    },
+    "OK" : {
+      "comment" : "Dismisses a subscription status message",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aceptar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확인"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamam"
           }
         }
       }
@@ -4973,6 +4760,65 @@
         }
       }
     },
+    "Subscribe" : {
+      "comment" : "Opens the subscription from a feature or limit that needs one",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abo abschließen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suscribirte"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S’abonner"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbonati"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登録する"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "구독하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykup subskrypcję"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assinar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abone ol"
+          }
+        }
+      }
+    },
     "Subscription" : {
       "comment" : "Account option for subscription",
       "localizations" : {
@@ -5032,6 +4878,124 @@
         }
       }
     },
+    "Take a short break, then try again." : {
+      "comment" : "Fair use asks the learner to wait a moment before trying again",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mach eine kurze Pause und versuch es dann noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descansa un momento y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fais une petite pause, puis réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fai una breve pausa, poi riprova."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "少し休んでから、もう一度試してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "잠시 쉬었다가 다시 시도해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zrób krótką przerwę, a potem spróbuj ponownie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faça uma pausa rápida e tente de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kısa bir ara ver, sonra tekrar dene."
+          }
+        }
+      }
+    },
+    "That's all you can try without an account" : {
+      "comment" : "A guest used what they can try without an account",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mehr kannst du ohne Konto nicht ausprobieren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eso es todo lo que puedes probar sin una cuenta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est tout ce que tu peux essayer sans compte"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per provare altro serve un account"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アカウントなしで試せるのはここまでです"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계정 없이 체험할 수 있는 건 여기까지예요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To wszystko, co możesz wypróbować bez konta"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isso é tudo o que dá para experimentar sem uma conta"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hesap açmadan deneyebileceklerin bu kadar"
+          }
+        }
+      }
+    },
     "The App Store couldn't complete this purchase. Check your connection and try again." : {
       "comment" : "Recovery guidance after an App Store purchase fails",
       "localizations" : {
@@ -5087,6 +5051,123 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "App Store bu satın alma işlemini tamamlayamadı. Bağlantını kontrol et ve tekrar dene."
+          }
+        }
+      }
+    },
+    "This map needs a subscription" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für diese Mindmap brauchst du ein Abo"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este mapa necesita una suscripción"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette carte nécessite un abonnement"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per questa mappa serve un abbonamento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このマップの作成にはサブスクリプションが必要です"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 마인드맵을 만들려면 구독이 필요해요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta mapa wymaga subskrypcji"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você precisa assinar para criar este mapa"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu harita için abonelik gerekiyor"
+          }
+        }
+      }
+    },
+    "This needs a free account" : {
+      "comment" : "A guest tried something that needs a signed-up account",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dafür brauchst du ein kostenloses Konto"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Necesitas una cuenta gratis para esto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il te faut un compte gratuit"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serve un account gratuito"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "利用するには無料アカウントが必要です"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "무료 계정이 필요해요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do tego potrzebujesz bezpłatnego konta"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você precisa de uma conta grátis para isso"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bunun için ücretsiz bir hesap gerekiyor"
           }
         }
       }
@@ -5908,6 +5989,64 @@
         }
       }
     },
+    "You can make this map now" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du kannst diese Mindmap jetzt erstellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya puedes crear este mapa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu peux créer cette carte maintenant"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ora puoi creare questa mappa"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このマップを今すぐ作成できます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이제 이 마인드맵을 만들 수 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Możesz już utworzyć tę mapę"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já pode criar este mapa"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu haritayı şimdi oluşturabilirsin"
+          }
+        }
+      }
+    },
     "You can try %lld lessons with no account. With a free account, you get:" : {
       "comment" : "Leads the free list for someone without an account",
       "localizations" : {
@@ -6080,6 +6219,9 @@
           }
         }
       }
+    },
+    "You can try again now." : {
+      "comment" : "Under a monthly limit the learner reached: the day more comes back has come while the screen was open"
     },
     "You have Plus until %@." : {
       "comment" : "When Plus that Zoonk added to the account ends",
@@ -6373,358 +6515,6 @@
         }
       }
     },
-    "Subscribe" : {
-      "comment" : "Opens the subscription from a feature or limit that needs one",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abo abschließen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suscribirte"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "S’abonner"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abbonati"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "登録する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "구독하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykup subskrypcję"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Assinar"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abone ol"
-          }
-        }
-      }
-    },
-    "Take a short break, then try again." : {
-      "comment" : "Fair use asks the learner to wait a moment before trying again",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mach eine kurze Pause und versuch es dann noch einmal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Descansa un momento y vuelve a intentarlo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fais une petite pause, puis réessaie."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fai una breve pausa, poi riprova."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "少し休んでから、もう一度試してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "잠시 쉬었다가 다시 시도해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zrób krótką przerwę, a potem spróbuj ponownie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Faça uma pausa rápida e tente de novo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kısa bir ara ver, sonra tekrar dene."
-          }
-        }
-      }
-    },
-    "That's all you can try without an account" : {
-      "comment" : "A guest used what they can try without an account",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mehr kannst du ohne Konto nicht ausprobieren"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eso es todo lo que puedes probar sin una cuenta"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "C’est tout ce que tu peux essayer sans compte"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per provare altro serve un account"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "アカウントなしで試せるのはここまでです"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계정 없이 체험할 수 있는 건 여기까지예요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To wszystko, co możesz wypróbować bez konta"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Isso é tudo o que dá para experimentar sem uma conta"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hesap açmadan deneyebileceklerin bu kadar"
-          }
-        }
-      }
-    },
-    "This map needs a subscription" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Für diese Mindmap brauchst du ein Abo"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este mapa necesita una suscripción"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cette carte nécessite un abonnement"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per questa mappa serve un abbonamento"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このマップの作成にはサブスクリプションが必要です"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 마인드맵을 만들려면 구독이 필요해요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta mapa wymaga subskrypcji"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você precisa assinar para criar este mapa"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu harita için abonelik gerekiyor"
-          }
-        }
-      }
-    },
-    "This needs a free account" : {
-      "comment" : "A guest tried something that needs a signed-up account",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dafür brauchst du ein kostenloses Konto"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Necesitas una cuenta gratis para esto"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il te faut un compte gratuit"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Serve un account gratuito"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "利用するには無料アカウントが必要です"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 계정이 필요해요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Do tego potrzebujesz bezpłatnego konta"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você precisa de uma conta grátis para isso"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bunun için ücretsiz bir hesap gerekiyor"
-          }
-        }
-      }
-    },
-    "You can make this map now" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du kannst diese Mindmap jetzt erstellen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya puedes crear este mapa"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu peux créer cette carte maintenant"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ora puoi creare questa mappa"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このマップを今すぐ作成できます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이제 이 마인드맵을 만들 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Możesz już utworzyć tę mapę"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você já pode criar este mapa"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu haritayı şimdi oluşturabilirsin"
-          }
-        }
-      }
-    },
     "You'll have enough later today, or subscribe to make it now." : {
       "comment" : "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.",
       "localizations" : {
@@ -6902,65 +6692,6 @@
         }
       }
     },
-    "You've reached this month's limit" : {
-      "comment" : "The learner used this month's AI checks, clips and similar",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast dein Limit für diesen Monat erreicht"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alcanzaste el límite de este mes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint ta limite pour ce mois-ci"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il limite di questo mese"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今月の上限に達しました"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이번 달 이용 한도를 다 썼어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano limit na ten miesiąc"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite deste mês"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu ayki kullanım sınırına ulaştın"
-          }
-        }
-      }
-    },
     "You've reached today's limit" : {
       "comment" : "The learner used today's AI checks, clips and similar",
       "localizations" : {
@@ -7020,6 +6751,18 @@
         }
       }
     },
+    "You've reached your limit" : {
+      "comment" : "The learner used all the small AI help their plan allows: checks, clips and similar"
+    },
+    "You've started all the new goals you can" : {
+      "comment" : "Where a new goal starts: the learner started all the new goals their plan allows"
+    },
+    "You've used your call time" : {
+      "comment" : "Where a speaking call starts: the learner used all the call time their plan allows"
+    },
+    "You've used your explanations" : {
+      "comment" : "In place of an answer's explanation: the learner asked for all the explanations their plan allows"
+    },
     "You've used your free lessons" : {
       "localizations" : {
         "de" : {
@@ -7078,6 +6821,27 @@
         }
       }
     },
+    "You've used your messages" : {
+      "comment" : "In place of the buddy's message box: the learner sent all the messages their plan allows"
+    },
+    "You've used your mind maps" : {
+      "comment" : "In place of making a chapter's mind map: the learner made all the mind maps their plan allows"
+    },
+    "You've used your mock exams" : {
+      "comment" : "In place of starting a mock exam: the learner took all the mock exams their plan allows"
+    },
+    "You've used your previews" : {
+      "comment" : "In place of a topic's lessons ahead of time: the learner saw all the previews their plan allows"
+    },
+    "You've used your questions" : {
+      "comment" : "Under asking about the learner's material: they asked all the questions their plan allows"
+    },
+    "You've used your quick explanations" : {
+      "comment" : "Before a goal starts: the learner asked for all the quick explanations of a topic their plan allows"
+    },
+    "You've used your uploads" : {
+      "comment" : "Under adding material to a goal: the learner added all the material their plan allows"
+    },
     "Your last renewal payment failed." : {
       "localizations" : {
         "de" : {
@@ -7132,6 +6896,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Son yenileme ödemen alınamadı."
+          }
+        }
+      }
+    },
+    "Your next free lesson is ready" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine nächste kostenlose Lektion ist verfügbar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu próxima lección gratis está lista"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta prochaine leçon gratuite est prête"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua prossima lezione gratuita è pronta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次の無料レッスンを始められます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음 무료 레슨이 준비됐어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoja kolejna bezpłatna lekcja jest już dostępna"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua próxima aula grátis está disponível"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıradaki ücretsiz dersin hazır"
           }
         }
       }
@@ -7533,239 +7355,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zoonk hesabına Plus ekledi. Değiştirmek için bize yaz."
-          }
-        }
-      }
-    },
-    "Your next free lesson is ready" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine nächste kostenlose Lektion ist verfügbar"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu próxima lección gratis está lista"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta prochaine leçon gratuite est prête"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua prossima lezione gratuita è pronta"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次の無料レッスンを始められます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다음 무료 레슨이 준비됐어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoja kolejna bezpłatna lekcja jest już dostępna"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua próxima aula grátis está disponível"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sıradaki ücretsiz dersin hazır"
-          }
-        }
-      }
-    },
-    "Your next free lesson opens later today, or subscribe to keep going." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine nächste kostenlose Lektion wird heute noch freigeschaltet. Mit einem Abo kannst du gleich weiterlernen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu próxima lección gratis estará disponible hoy más tarde, o puedes suscribirte para seguir."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta prochaine leçon gratuite sera disponible plus tard dans la journée. Tu peux aussi t’abonner pour continuer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua prossima lezione gratuita sarà disponibile più tardi oggi, oppure puoi abbonarti per continuare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次の無料レッスンは今日中に受けられるようになります。登録すると、このまま学習を続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다음 무료 레슨은 오늘 중에 열려요. 구독하면 계속 학습할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kolejna bezpłatna lekcja będzie dostępna jeszcze dziś. Możesz też wykupić subskrypcję, by uczyć się dalej."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua próxima aula grátis será liberada ainda hoje. Assine para continuar agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir sonraki ücretsiz dersin bugün ilerleyen saatlerde açılacak. Abone olup hemen devam edebilirsin."
-          }
-        }
-      }
-    },
-    "Your next free lesson opens on %@, or subscribe to keep going." : {
-      "comment" : "On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as \"November 22\" in English.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine nächste kostenlose Lektion wird am %@ freigeschaltet. Mit einem Abo kannst du gleich weiterlernen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu próxima lección gratis estará disponible el %@, o puedes suscribirte para seguir."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta prochaine leçon gratuite sera disponible le %@. Tu peux aussi t’abonner pour continuer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua prossima lezione gratuita sarà disponibile il %@, oppure puoi abbonarti per continuare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次の無料レッスンは%@から受けられます。登録すると、このまま学習を続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다음 무료 레슨은 %@에 열려요. 구독하면 계속 학습할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kolejna bezpłatna lekcja będzie dostępna %@. Możesz też wykupić subskrypcję, by uczyć się dalej."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua próxima aula grátis será liberada em %@. Assine para continuar agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir sonraki ücretsiz dersin %@ tarihinde açılacak. Abone olup hemen devam edebilirsin."
-          }
-        }
-      }
-    },
-    "Your next free lesson opens tomorrow, or subscribe to keep going." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine nächste kostenlose Lektion wird morgen freigeschaltet. Mit einem Abo kannst du gleich weiterlernen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu próxima lección gratis estará disponible mañana, o puedes suscribirte para seguir."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta prochaine leçon gratuite sera disponible demain. Tu peux aussi t’abonner pour continuer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua prossima lezione gratuita sarà disponibile domani, oppure puoi abbonarti per continuare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次の無料レッスンは明日から受けられます。登録すると、このまま学習を続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다음 무료 레슨은 내일 열려요. 구독하면 계속 학습할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kolejna bezpłatna lekcja będzie dostępna jutro. Możesz też wykupić subskrypcję, by uczyć się dalej."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua próxima aula grátis será liberada amanhã. Assine para continuar agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir sonraki ücretsiz dersin yarın açılacak. Abone olup hemen devam edebilirsin."
           }
         }
       }

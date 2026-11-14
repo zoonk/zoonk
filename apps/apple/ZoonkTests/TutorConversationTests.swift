@@ -60,7 +60,7 @@ final class TutorConversationTests: XCTestCase {
   }
 
   func testRefusedAnswerTakesTheComposersPlace() async {
-    let limit = TutorFailure.limitReached(period: .day, tier: .free)
+    let limit = TutorFailure.limit(.limitReached(period: .day, tier: .free))
     let api = TutorAPIStub(answers: [], answerFailure: limit)
     let conversation = makeConversation(api: api)
     await conversation.thread.load()
