@@ -37,6 +37,7 @@ function CoveredWords({ coverage }: { coverage: Coverage }) {
 }
 
 function SyllabusWords({ syllabus }: { syllabus: SyllabusView }) {
+  const { plan } = usePlanScreen();
   return useSyllabusSummaryText({ dailyMinutes: plan.schedule.dailyMinutes, syllabus });
 }
 
@@ -47,6 +48,7 @@ function useFocusTradeOff(): string | null {
   const formatDuration = useFormatDuration();
   const goalDate = useGoalDateValues();
   const coverage = usePlanCoverage();
+  const { plan } = usePlanScreen();
   const { dailyMinutes, targetDate, targetDateNamedMonth } = plan.schedule;
 
   const focused = plan.areas
