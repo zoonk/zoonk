@@ -309,6 +309,10 @@
         <item quantity="one">Based on your last %d mock exam</item>
         <item quantity="other">Based on your last %d mock exams</item>
     </plurals>
+    <plurals name="plan_estimate_based_on_reviews">
+        <item quantity="one">Based on %d review of every topic</item>
+        <item quantity="other">Based on %d reviews of every topic</item>
+    </plurals>
     <string name="plan_score_percent">%1$s%%</string>
     <string name="plan_score_percent_range">%1$s%% to %2$s%%</string>
     <string name="plan_score_band">Band %1$s</string>

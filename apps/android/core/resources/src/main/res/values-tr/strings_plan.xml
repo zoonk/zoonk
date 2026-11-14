@@ -237,6 +237,7 @@
   "plan_effect_weekly_challenge_on": "f2039da5ccfc79383d65089ebbfd673eac70c55b5c7d3d56a47ef2172c4a1506",
   "plan_estimate_based_on": "535ac646f07b081200dd43aeb38f9105688534f80d2a29d5109e19c4ef242f79",
   "plan_estimate_based_on_last": "3691f6601bb15a1f8352d18193fcb926a64b72c684460090c9ce4362e5234229",
+  "plan_estimate_based_on_reviews": "81b5dd3a0a8b8e50f301ecadd2a17dba07deec23ae16e7ed09908def191340ca",
   "plan_estimate_waits": "15e8e0857257cd54dc64bb638abba2fc31c75b52b9e2e2000cb8a8931a41b795",
   "plan_estimated_score": "277d72459e85d2a1150feb3c32e851e46fc94cdb4e2834d801d11ae08feae49d",
   "plan_every_day": "884871734e12a40320ad81f42481bde981c746fd0906ecfb1a6541470bbbb8c2",
@@ -866,6 +867,10 @@
     <plurals name="plan_estimate_based_on">
         <item quantity="one">Son %d deneme sınavına göre</item>
         <item quantity="other">Son %d deneme sınavına göre</item>
+    </plurals>
+    <plurals name="plan_estimate_based_on_reviews">
+        <item quantity="one">Tüm konuların %d tekrarına göre</item>
+        <item quantity="other">Tüm konuların %d tekrarına göre</item>
     </plurals>
     <string name="plan_score_percent">%%%1$s</string>
     <string name="plan_score_percent_range">%%%1$s ile %%%2$s arası</string>

@@ -237,6 +237,7 @@
   "plan_effect_weekly_challenge_on": "52ea1b0c86d8349ebedafd31cf14beff5a6ecb8d0d250c5ebe475eb48ea8c5e3",
   "plan_estimate_based_on": "1f3168fa02f322c306d4e24bcaa6777e42d5ee66c6b166ba6b08967f32aba687",
   "plan_estimate_based_on_last": "86b6d05ddd46d6851c6f9d874b70a745e29d7df281b273f229963fe2454faa1e",
+  "plan_estimate_based_on_reviews": "a0283b1ac6bdb9f9df6bbff1cbff676f188f26c9ad2a288145050d1ba8143a03",
   "plan_estimate_waits": "8718311ad1786e342e325071a8237b44582c4f3646273417743027766234108a",
   "plan_estimated_score": "7945c81279e5e3cceee7d6444fac1882bf0b5d514ce94fee80924050bd9c73c2",
   "plan_every_day": "dff76e68074267fac608ca3548d475c2b38a68853e7de1fbc8c1bf6ffaf92e45",
@@ -866,6 +867,10 @@
     <plurals name="plan_estimate_based_on">
         <item quantity="one">Basierend auf deiner letzten %d Probeprüfung</item>
         <item quantity="other">Basierend auf deinen letzten %d Probeprüfungen</item>
+    </plurals>
+    <plurals name="plan_estimate_based_on_reviews">
+        <item quantity="one">Basierend auf %d Wiederholung aller Themen</item>
+        <item quantity="other">Basierend auf %d Wiederholungen aller Themen</item>
     </plurals>
     <string name="plan_score_percent">%1$s%%</string>
     <string name="plan_score_percent_range">%1$s%% bis %2$s%%</string>

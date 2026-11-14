@@ -237,6 +237,7 @@
   "plan_effect_weekly_challenge_on": "f60b8b4c04d9ba2e77412448e26293b6fec1797b46c41d3adf741ed798ab8559",
   "plan_estimate_based_on": "a4f963d229baad20d97ab4268b4af60667089c888ad29224148b6dfce9107592",
   "plan_estimate_based_on_last": "a557f26b5a248fc9ef974607ff9946f1415292fcbbdf7d8367e44d924e65f915",
+  "plan_estimate_based_on_reviews": "a7cb6111a180f953a7c64109bdc306846526aafb7e846332427a50a286160591",
   "plan_estimate_waits": "5a503dd45d01385699d21c533c0b4e3c337709f7d517b3751f33daeda0ce2196",
   "plan_estimated_score": "23c9cae7314afe000eec6765c33f1a1cc2a489f2677da396718968d618abe6e4",
   "plan_every_day": "218543d1c5c2c19e7dddaf7ebe21dd17dc76f4f873e8ae3c2595966403a2e653",
@@ -892,6 +893,11 @@
         <item quantity="one">Com base no seu último %d simulado</item>
         <item quantity="many">Com base nos seus últimos %d simulados</item>
         <item quantity="other">Com base nos seus últimos %d simulados</item>
+    </plurals>
+    <plurals name="plan_estimate_based_on_reviews">
+        <item quantity="one">Com base em %d revisão de todos os tópicos</item>
+        <item quantity="many">Com base em %d revisões de todos os tópicos</item>
+        <item quantity="other">Com base em %d revisões de todos os tópicos</item>
     </plurals>
     <string name="plan_score_percent">%1$s%%</string>
     <string name="plan_score_percent_range">%1$s%% a %2$s%%</string>

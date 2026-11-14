@@ -237,6 +237,7 @@
   "plan_effect_weekly_challenge_on": "d07dda9ec56bc876544e8ea9c2026b7ea680ad8504a34e22a7e191b2d7c7a2e3",
   "plan_estimate_based_on": "6edb41d2955dff8d7a5def12392b389a1d78584c997a4022db67c228d07840f1",
   "plan_estimate_based_on_last": "bba743495159f715405e15dc57bebb2f8688eecd5760802370a7a3df165d9533",
+  "plan_estimate_based_on_reviews": "64674ddb0494daa181a2ef40a42591dae758d8264943211d5bab22e3b24c1e48",
   "plan_estimate_waits": "78afcb50def71c2ad7a1040355ad86cc97fbbbe07773966330af09bbda378cba",
   "plan_estimated_score": "471ba09383b266bb1ae2d1e0e64492502e45da480ab3d606f34d5fe572793f58",
   "plan_every_day": "67e5455f0a80959a38845bd03a9c49b00c1a86fe73787b398593a67c43b3f2b8",
@@ -892,6 +893,11 @@
         <item quantity="one">D’après %d examen blanc, le plus récent</item>
         <item quantity="many">D’après %d examens blancs, les plus récents</item>
         <item quantity="other">D’après %d examens blancs, les plus récents</item>
+    </plurals>
+    <plurals name="plan_estimate_based_on_reviews">
+        <item quantity="one">D’après %d révision de tous les sujets</item>
+        <item quantity="many">D’après %d révisions de tous les sujets</item>
+        <item quantity="other">D’après %d révisions de tous les sujets</item>
     </plurals>
     <string name="plan_score_percent">%1$s %%</string>
     <string name="plan_score_percent_range">%1$s %% à %2$s %%</string>

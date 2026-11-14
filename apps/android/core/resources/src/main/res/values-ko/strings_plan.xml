@@ -237,6 +237,7 @@
   "plan_effect_weekly_challenge_on": "d4b529a5104c56a954edecd7f9208e46c4215c90f16dfacb550221cb15d65c3c",
   "plan_estimate_based_on": "f39657c5b892bebefbf7fd7fa43cf17b6585cb18160adf8ef66ebe74ec5f5e48",
   "plan_estimate_based_on_last": "9a84f00f05c74328076349e2458e239aff2e9911838f181955099513493110eb",
+  "plan_estimate_based_on_reviews": "358c59b98f564e981ee80fc50325f256f710a9f0240cb7675c21cb1123efbd5e",
   "plan_estimate_waits": "c63f829e2767dd057670c6ff6718fa658235b8f26302f531bccee5aa1cf85056",
   "plan_estimated_score": "00ea4b92cc768f8cf84ef9c5e6a016641daf37dcb8db005fc4c3a6c772f6a2bf",
   "plan_every_day": "7b0616256cd2d2a7a3ba3ac2fc38f80686583f7a2b0235be2bfe8ad01d36b471",
@@ -840,6 +841,9 @@
     <string name="plan_estimate_based_on_last">최근 모의고사 기준</string>
     <plurals name="plan_estimate_based_on">
         <item quantity="other">최근 모의고사 %d회 기준</item>
+    </plurals>
+    <plurals name="plan_estimate_based_on_reviews">
+        <item quantity="other">모든 주제 복습 %d회 기준</item>
     </plurals>
     <string name="plan_score_percent">%1$s%%</string>
     <string name="plan_score_percent_range">%1$s%%~%2$s%%</string>
