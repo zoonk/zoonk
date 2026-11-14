@@ -123,7 +123,7 @@ export function GoalMenuItems({ menu }: { menu: GoalMenu }) {
   return (
     <DropdownMenuGroup>
       {control.onRename && (
-        <DropdownMenuItem onClick={() => menu.setRenaming(true)}>
+        <DropdownMenuItem aria-haspopup="dialog" onClick={() => menu.setRenaming(true)}>
           <PencilIcon aria-hidden="true" />
           {t("Rename goal")}
         </DropdownMenuItem>
@@ -143,7 +143,7 @@ export function GoalMenuItems({ menu }: { menu: GoalMenu }) {
         </DropdownMenuItem>
       )}
 
-      <DropdownMenuItem onClick={() => menu.setArchiving(true)}>
+      <DropdownMenuItem aria-haspopup="dialog" onClick={() => menu.setArchiving(true)}>
         <ArchiveIcon aria-hidden="true" />
         {t("Archive this goal")}
       </DropdownMenuItem>

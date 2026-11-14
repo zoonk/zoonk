@@ -82,7 +82,12 @@ function OwnerNameRow({ facts, owner }: { facts: CertificateFacts; owner: Certif
       })}
     >
       {facts.recipientName}
-      <Button className="ml-2 font-medium" onClick={() => setOpen(true)} variant="link">
+      <Button
+        aria-haspopup="dialog"
+        className="ml-2 font-medium"
+        onClick={() => setOpen(true)}
+        variant="link"
+      >
         {t("Change")}
       </Button>
       <CertificateNameDialog
