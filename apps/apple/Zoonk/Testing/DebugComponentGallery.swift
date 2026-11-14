@@ -16,7 +16,8 @@
         content.fullScreenCover(isPresented: .constant(true)) {
           NavigationStack {
             if let writing = DebugLessonWait.writing(section) {
-              DebugLessonWait(writing: writing)
+              DebugLessonWait(
+                writing: writing, kind: section.hasPrefix("challenge") ? .challenge : .lesson)
             } else {
               ComponentGallery(start: section)
             }
@@ -557,13 +558,16 @@
   /// a lesson's wait as the player shows it, with a run's first minute already reported.
   private struct DebugLessonWait: View {
     let writing: LessonPlayerStore.LessonWriting
+    let kind: LessonWaitWords
 
+    /// `lessonWait`, `lessonUnwritten`, `lessonFailed`, `lessonSetAside`, or `challenge` in place of
+    /// `lesson` for a challenge's words.
     static func writing(_ section: String) -> LessonPlayerStore.LessonWriting? {
-      switch section {
-      case "lessonWait": .writing
-      case "lessonUnwritten": .notStarted
-      case "lessonFailed": .failed
-      case "lessonSetAside": .setAside
+      switch section.replacing(/^(lesson|challenge)/, with: "") {
+      case "Wait": .writing
+      case "Unwritten": .notStarted
+      case "Failed": .failed
+      case "SetAside": .setAside
       default: nil
       }
     }
@@ -593,7 +597,7 @@
 
     var body: some View {
       LessonWaitingView(
-        outline: outline, kind: .lesson, writing: writing,
+        outline: outline, kind: kind, writing: writing,
         progress: writing == .failed ? Self.sample(reported: 3) : Self.sample(reported: 1),
         alternative: .case2(.init(dueSkills: 1, kind: .review))
       ) {}
