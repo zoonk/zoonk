@@ -7,6 +7,7 @@ import { type ReactNode } from "react";
 import {
   isRollingCap,
   useComesBackLine,
+  useEnoughLine,
   useMapLessonsWords,
   useOpeningDay,
 } from "./comes-back-words";
@@ -260,8 +261,24 @@ export function useCallLimitLine(limit: CallLimit): string | undefined {
   return useComesBackLine(toCapLimit(limit));
 }
 
+/** What a call needs: any time left, or a speaking task's or mock's whole length. */
+export type CallNeed = "any" | "mock" | "task";
+
 /** Its screen's title says what ran out, so this is only the line and the way on. */
-export function CallLimitNotice({ limit, ...props }: LimitNoticeProps & { limit: CallLimit }) {
+export function CallLimitNotice({
+  limit,
+  need = "any",
+  ...props
+}: LimitNoticeProps & { limit: CallLimit; need?: CallNeed }) {
   const reached = toCapLimit(limit);
-  return <LimitNoticeBody {...props} limit={reached} words={{ line: useComesBackLine(reached) }} />;
+  const comesBack = useComesBackLine(reached);
+  const enough = useEnoughLine(reached);
+
+  return (
+    <LimitNoticeBody
+      {...props}
+      limit={reached}
+      words={{ line: need === "any" ? comesBack : enough }}
+    />
+  );
 }

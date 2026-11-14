@@ -172,6 +172,42 @@ msgctxt "eFx_I9"
 msgid "Not enough free lessons for this map yet"
 msgstr "Not enough free lessons for this map yet"
 
+#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
+#: src/_components/comes-back-words.ts
+msgctxt "yWgcBI"
+msgid "You'll have enough on {date}."
+msgstr "You'll have enough on {date}."
+
+#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
+#: src/_components/comes-back-words.ts
+msgctxt "aRxkUZ"
+msgid "You'll have enough later today."
+msgstr "You'll have enough later today."
+
+#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
+#: src/_components/comes-back-words.ts
+msgctxt "jYqTRI"
+msgid "You'll have enough tomorrow."
+msgstr "You'll have enough tomorrow."
+
+#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
+#: src/_components/comes-back-words.ts
+msgctxt "yUB2A_"
+msgid "You'll have enough on {date}, or subscribe to keep going."
+msgstr "You'll have enough on {date}, or subscribe to keep going."
+
+#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
+#: src/_components/comes-back-words.ts
+msgctxt "vEiMvb"
+msgid "You'll have enough later today, or subscribe to keep going."
+msgstr "You'll have enough later today, or subscribe to keep going."
+
+#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
+#: src/_components/comes-back-words.ts
+msgctxt "EiK7tf"
+msgid "You'll have enough tomorrow, or subscribe to keep going."
+msgstr "You'll have enough tomorrow, or subscribe to keep going."
+
 #: src/_components/coverage-bar.tsx
 #: src/syllabus/subject-aside.tsx
 msgctxt "9U6D5-"
@@ -5672,6 +5708,16 @@ msgstr "You've used your call time"
 msgctxt "fZ-NXt"
 msgid "Calls need a free account"
 msgstr "Calls need a free account"
+
+#: src/language/conversation/call-limit-message.tsx
+msgctxt "gHCTIf"
+msgid "Not enough call time for this mock exam"
+msgstr "Not enough call time for this mock exam"
+
+#: src/language/conversation/call-limit-message.tsx
+msgctxt "D43Ixe"
+msgid "Not enough call time for this task"
+msgstr "Not enough call time for this task"
 
 #: src/language/conversation/call-objectives.tsx
 #: src/language/conversation/conversation-live.tsx

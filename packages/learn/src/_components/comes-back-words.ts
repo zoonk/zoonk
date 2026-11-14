@@ -200,7 +200,8 @@ export function useLimitSentence() {
 
 /**
  * A map writes its lessons first, so a free learner's map waits until all of them fit in the
- * lessons they have left this month; one that needs more lessons than the free plan has never fits.
+ * lessons they have left over the last 30 days; one that needs more lessons than the free plan has
+ * never fits.
  * The learner may have lessons left, so these words never say they used them.
  */
 export function useMapLessonsWords(limit: MindMapLimit): LimitWords | null {
@@ -279,4 +280,71 @@ export function useCapSentence() {
       title: period === "rolling30Days" ? titles.rolling : titles.day,
     });
   };
+}
+
+/**
+ * When a start that needs more than is left (a speaking task of a set length) fits whole: the day
+ * the server's `availableAt` gives, or tomorrow for a day's cap. The learner may have some left, so
+ * these words never say they used it.
+ */
+export function useEnoughLine(limit: HelpLimit): string | undefined {
+  const t = useExtracted();
+  const dayLine = useDayLine();
+  const { ready } = useLines();
+  const opensOn = useOpeningDay(isRollingCap(limit) ? limit.availableAt : null);
+
+  if (limit.status !== "limitReached" || limit.tier === "guest" || limit.period === "total") {
+    return undefined;
+  }
+
+  const lines: DayLines =
+    limit.tier === "plus"
+      ? {
+          onDate: (date) =>
+            t({
+              description:
+                "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
+              message: "You'll have enough on {date}.",
+              values: { date },
+            }),
+          today: () =>
+            t({
+              description:
+                "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
+              message: "You'll have enough later today.",
+            }),
+          tomorrow: () =>
+            t({
+              description:
+                "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
+              message: "You'll have enough tomorrow.",
+            }),
+        }
+      : {
+          onDate: (date) =>
+            t({
+              description:
+                "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
+              message: "You'll have enough on {date}, or subscribe to keep going.",
+              values: { date },
+            }),
+          today: () =>
+            t({
+              description:
+                "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
+              message: "You'll have enough later today, or subscribe to keep going.",
+            }),
+          tomorrow: () =>
+            t({
+              description:
+                "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
+              message: "You'll have enough tomorrow, or subscribe to keep going.",
+            }),
+        };
+
+  if (!isRollingCap(limit)) {
+    return lines.tomorrow();
+  }
+
+  return opensOn === "open" ? ready() : dayLine(opensOn, lines);
 }
