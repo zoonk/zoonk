@@ -46,11 +46,9 @@ test.describe("Trusted Origin Validation", () => {
 
     await page.waitForURL(/\/auth\/en\/untrusted-origin/u);
 
-    await expect(page.getByRole("heading", { name: /unable to redirect/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "That link didn't work" })).toBeVisible();
 
-    await expect(page.getByRole("link", { name: /continue to zoonk/iu })).toBeVisible();
-
-    const link = page.getByRole("link", { name: /continue to zoonk/iu });
+    const link = page.getByRole("link", { name: "Go to Zoonk" });
     await expect(link).toHaveAttribute("href", E2E_MAIN_APP_URL);
   });
 
