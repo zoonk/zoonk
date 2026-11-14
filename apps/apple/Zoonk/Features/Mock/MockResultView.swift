@@ -1118,14 +1118,18 @@ private struct MockReviewSection: View {
             if item.outcome == .blank {
               Text("You left it blank.", tableName: "Mock", comment: "A blank question")
                 .foregroundStyle(.mutedForeground)
-            } else if let answer = TrueFalseWords.savedAnswer(item.learnerAnswer, labels: labels) {
+            } else if let answer = TrueFalseWords.savedAnswer(
+              item.learnerAnswer, format: item.format, labels: labels)
+            {
               Label {
                 answerText(answer, of: item)
               } icon: {
                 Image(systemName: "xmark").foregroundStyle(.destructive)
               }
             }
-            if let correct = TrueFalseWords.savedAnswer(item.correctAnswer, labels: labels) {
+            if let correct = TrueFalseWords.savedAnswer(
+              item.correctAnswer, format: item.format, labels: labels)
+            {
               Label {
                 answerText(correct, of: item)
               } icon: {

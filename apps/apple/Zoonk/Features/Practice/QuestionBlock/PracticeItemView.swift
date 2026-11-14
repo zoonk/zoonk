@@ -276,10 +276,13 @@ enum TrueFalseWords {
     }
   }
 
-  static func savedAnswer(_ answer: String?, labels: PracticeTrueFalseLabels) -> String? {
+  /// A statement's answer is saved as `true` or `false`; any other format keeps its words as saved.
+  static func savedAnswer(_ answer: String?, format: String?, labels: PracticeTrueFalseLabels)
+    -> String?
+  {
     guard let answer else { return nil }
 
-    if answer == "true" || answer == "false" {
+    if format == "trueFalse" && (answer == "true" || answer == "false") {
       return String(localized: label(isTrue: answer == "true", labels: labels))
     }
 

@@ -373,13 +373,17 @@ private struct MistakeEntryView: View {
 
       LessonTextBlocks(snapshot.question).typeStyle(.body.weight(.medium))
 
-      if let answer = TrueFalseWords.savedAnswer(snapshot.answer, labels: labels) {
+      if let answer = TrueFalseWords.savedAnswer(
+        snapshot.answer, format: snapshot.format, labels: labels)
+      {
         MistakeAnswerRow(
           text: answer, isRight: false,
           isLiteral: Self.writtenAnswerFormats.contains(snapshot.format ?? ""))
       }
 
-      if let correct = TrueFalseWords.savedAnswer(snapshot.correctAnswer, labels: labels) {
+      if let correct = TrueFalseWords.savedAnswer(
+        snapshot.correctAnswer, format: snapshot.format, labels: labels)
+      {
         MistakeAnswerRow(text: correct, isRight: true, isLiteral: snapshot.format == "typed")
       }
 
