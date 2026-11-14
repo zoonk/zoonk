@@ -56,12 +56,11 @@
   "activities_music_same_notes_guitar": "e5e6a10f1e8518fa0798ef0ba9bfe72fdf2b77921b481f9e7498ba3eaa03407a",
   "activities_music_show_as": "35e6917bef72e12d0e4a13ff53c91925b7e5d2c57ae1b4f1833886dd00c48552",
   "activities_music_skip_for_now": "6f360f3e3f25b020d6b21f213bc5c52ffea9fed5418b581ec766f131a55b8564",
+  "activities_music_sound_check_done": "2ac16cb18b58217ec668c5891c75491f4d8b0c00d9b3c470ac2e8e44d0608753",
   "activities_music_sound_check_failed": "232c68191fbc17df78d8900c6d088270ea7195b05ad55728b73cd255ea77a075",
-  "activities_music_sound_check_intro": "3e293f03d5fbac471ec6fe2c0cac91810680b619f729e5118753b4510c04f8cc",
-  "activities_music_sound_check_late": "7071855fb843237c56f7acea538d1607162e839d83592115d13887de547b2cef",
+  "activities_music_sound_check_intro": "2d61a0fb9ffae1db331ca98a2a9c89cbadd53ae9cf4c71cb0f6d638a4c4c63b2",
   "activities_music_sound_check_listen": "38a1073642ec271773046f6fb5a5bac00faf3090d165d1a6a885933876450f90",
-  "activities_music_sound_check_on_time": "fce5f0d3474355c7cebbd345e848b245ec9e7d349d8bc80e4fb97743a42b6350",
-  "activities_music_sound_check_start": "6400cca151f6f9ab5d283b2dd0be75a9039f7cc9ba3cce339503d423626fbb83",
+  "activities_music_sound_check_start": "0a3a545ed2e46abb2513d5e18a025ad1a9b0b3190572396d149c7f52b62f6c71",
   "activities_music_sound_check_tap": "5f5f89ee49d4e8d43b119bff6e7007e25a26bd41baed8df151df8ac0d5b903ac",
   "activities_music_sound_check_title": "6a490a4cf1dd3a6360278efeef9fd14e3672b5237239eb0a6124a707346d8ba6",
   "activities_music_sound_notes": "9cd89fb50fc76a9f309fd100136c92bf3fca1826b3e337cddfb0cf55f248fa93",
@@ -241,18 +240,16 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Configure ton son</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="one">Le son peut avoir un léger retard avec un casque. Tape en rythme une fois au son de %1$d clic, et le rythme sera assez bien calé sur cet appareil.</item>
-        <item quantity="many">Le son peut avoir un léger retard avec un casque. Tape en rythme une fois au son de %1$d clics, et le rythme sera assez bien calé sur cet appareil.</item>
-        <item quantity="other">Le son peut avoir un léger retard avec un casque. Tape en rythme une fois au son de %1$d clics, et le rythme sera assez bien calé sur cet appareil.</item>
+        <item quantity="one">Appuie au rythme de %1$d clic pour bien synchroniser tes appuis.</item>
+        <item quantity="many">Appuie au rythme de %1$d clics pour bien synchroniser tes appuis.</item>
+        <item quantity="other">Appuie au rythme de %1$d clics pour bien synchroniser tes appuis.</item>
     </plurals>
     <string name="activities_music_sound_check_listen">Écoute les clics…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
     <string name="activities_music_sound_check_tap">Appuie à chaque clic · %1$d sur %2$d</string>
     <string name="activities_music_sound_check_failed">Nous n’avons pas réussi à faire correspondre assez de frappes aux clics. Réessaie en tapant à chaque clic.</string>
-    <string name="activities_music_sound_check_on_time">Le son de cet appareil arrive à temps.</string>
-    <!-- How late this device plays sound, like "about 120 ms late". -->
-    <string name="activities_music_sound_check_late">Le son de cet appareil arrive avec environ %1$d ms de retard. Les rythmes en tiennent compte.</string>
-    <string name="activities_music_sound_check_start">Lance le test du son</string>
+    <string name="activities_music_sound_check_done">Tout est prêt.</string>
+    <string name="activities_music_sound_check_start">Commencer</string>
     <string name="activities_music_skip_for_now">Sauter pour l’instant</string>
     <string name="activities_music_continue">Continuer</string>
 </resources>

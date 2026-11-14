@@ -3,27 +3,19 @@
 {
   "session_block_bonus_practice": "06916cc5bcde1dbef1b34b5340b3ec248bb83955fd11b4a9ded5a4ea7d4c5066",
   "session_block_bonus_practice_areas": "6a51967c50c26d52deeaf8d0cad38c7f5a55dbc74aa70139f1c5d8bccab2f045",
-  "session_block_challenge_questions": "23ef0af3b1567331b3e9a4c52162bd9caef596e31f4e36836da6f308dfb437e4",
-  "session_block_challenge_rematch": "8a6af81ea8f847ac60793dbb1e9cf1c5652458527a124d80bfe80dd4ad5e45d1",
-  "session_block_final_challenge": "28fbe446b4cfdbdc4b8d7315e8b3addf959c7099e6079685932bcc186283d14e",
-  "session_block_full_review": "9fe0dcce6c8a881295450c844eedb1174391f408d1ef053db513f0f3848fe231",
-  "session_block_full_review_questions": "422727409f5a35bbb87c2da4a7a8f986909c9a2f0be71703f2ad3bc149b95076",
-  "session_block_live_call": "f7fc0cf1e88aeb3f1356eccf039ce018f888d43ebf346cdc0c4340764b2f4b32",
+  "session_block_call": "4b42cc87234c734491ce5db302371c242c03e70156efe6dee734701b0238df9d",
+  "session_block_full_review_questions": "1bd0397878fa4b173b9bdf1c51410b6119373931861041f8b4b72a6d121c39b5",
   "session_block_mixed_practice": "5c827997dc2b82b6f9396abb4e5ac9e0edbcad345eff42233a991e79b8d43a4a",
   "session_block_mock_exam": "b488d0a5eeebd53e67b9e93d0062260d474fee969ef8f40bef03343d462f9f46",
   "session_block_new_lesson": "58856249e2f03d803085ca9a23d02f3f05e4b72185dc2edb18e5b9b5a9580f9a",
-  "session_block_phase_challenge": "4ab7adb1fe5383e294c215453155de3dc6d57c00f987bbb395752a824ee328e6",
-  "session_block_phase_live_call": "ea7f34b85a1cf4c8d6216e56b7ac7554d8c6748b544a2700a5edb617444d7249",
-  "session_block_phase_questions": "9270cc0a0b51d187c69af8df822c26e3a4f73bbfaf0389a70b32e806a8a5dc2a",
   "session_block_practice_areas": "b215ac12082ee9d235a1c685ae859623bc1b1a498b932481723e297a073c1d2d",
   "session_block_practice_mistakes": "6524d90127d8cada2fb7c902691a7d971884b4552e52f746181f5103d2878bb7",
   "session_block_questions": "5e6e40a7b318dbddd4629890da4baa6ecfdbe565509edb62acd2a5ab711a3169",
-  "session_block_quick_review": "6db4ef1d8073e735d4fde033df126537ece355fee19d695c1f8719b88c593ede",
+  "session_block_rematch": "d186ec0e0805bf56fc3a3f06a3c6d8f43351f436188ed05ff2ecb5eec9b7df20",
   "session_block_rematch_lesson": "e45c1a45a7c5a8470bc6b96ca18b174375a34113039178cf5f7726558ea9a439",
+  "session_block_review": "f3b5918860f373706ba37742cbc0973a713df11c91d87575bc1226c9cb76e9f8",
   "session_block_review_topics": "1cc0e0d07e156b0baadfd909c6edcf3e179b87b7ff70686d3f0fb8b60ad7fb19",
-  "session_block_review_topics_and_known": "a3ec7fa9c08984801a792d87f653a46d4727f4ce655ee3dc0ee950e73c94967d",
-  "session_block_reviews": "6a9d1faaca119721b60b78c6a70d618cd2756bdee7a21c10c20e6828d23120ba",
-  "session_block_weakest": "4585ea150baf6fb4ae11d1fd4279af3455c48b900deeaee2320d26a8d5ced5ff",
+  "session_block_weakest": "f39e904a0b2f3006125e7032325bffb659277ed586810724beac7b5ca675ee98",
   "session_block_weekly_challenge": "a1d8bc4f37b93c7e3063e09e9e79117748fe4e1551c912140b9ba665988eb96d",
   "session_block_what_you_know": "478cf5bc9fc6ae3f9206edfb9e2d3dfbc6cd0b8839af307725548103307dfe98",
   "session_block_writing_practice": "ab972e73b77584a0cedec2923dc635f18f287cbe6061e1cbfa21286731e22259",
@@ -94,18 +86,17 @@
 }
 -->
 <resources>
+    <string name="session_block_review">Tekrar yap</string>
+    <!-- A second go at the Trickster after losing. -->
+    <string name="session_block_rematch">Rövanş</string>
+    <!-- A language plan's live call with the Trickster. -->
+    <string name="session_block_call">Sohbet</string>
     <string name="session_block_mock_exam">Deneme sınavı</string>
     <string name="session_block_weekly_challenge">Haftalık meydan okuma</string>
-    <string name="session_block_final_challenge">Son meydan okuma</string>
-    <string name="session_block_challenge_rematch">Meydan okuma, ikinci deneme</string>
-    <string name="session_block_phase_challenge">Aşama meydan okuması</string>
     <!-- The first week's warm-up: only placement's questions, which check rather than review. -->
     <string name="session_block_what_you_know">Zaten bildiklerin</string>
-    <string name="session_block_reviews">Tekrarlar</string>
-    <string name="session_block_quick_review">Hızlı tekrar</string>
     <string name="session_block_new_lesson">Yeni ders</string>
     <string name="session_block_writing_practice">Yazma alıştırması</string>
-    <string name="session_block_full_review">Genel tekrar</string>
     <string name="session_block_practice_mistakes">Yanlışlarına çalış</string>
     <string name="session_block_bonus_practice">Ek alıştırma</string>
     <string name="session_block_mixed_practice">Karma alıştırma</string>
@@ -119,34 +110,18 @@
         <item quantity="other">%d soru</item>
     </plurals>
     <plurals name="session_block_weakest">
-        <item quantity="one">Bugün bekleyen tekrar yok · en zorlandığın konulardan %d soru</item>
-        <item quantity="other">Bugün bekleyen tekrar yok · en zorlandığın konulardan %d soru</item>
+        <item quantity="one">En çok zorlandığın konulardan %d soru</item>
+        <item quantity="other">En çok zorlandığın konulardan %d soru</item>
     </plurals>
     <!-- %2$s lists the topics reviewed, such as "Fractions, Ratios and 2 more topics". -->
     <plurals name="session_block_review_topics">
         <item quantity="one">%1$d soru · %2$s</item>
         <item quantity="other">%1$d soru · %2$s</item>
     </plurals>
-    <plurals name="session_block_review_topics_and_known">
-        <item quantity="one">%1$d soru · %2$s ve zaten bildiklerin</item>
-        <item quantity="other">%1$d soru · %2$s ve zaten bildiklerin</item>
-    </plurals>
-    <!-- %2$s is the phase's name. -->
-    <plurals name="session_block_phase_questions">
-        <item quantity="one">%2$s · %1$d soru, ipucu yok</item>
-        <item quantity="other">%2$s · %1$d soru, ipucu yok</item>
-    </plurals>
-    <!-- %1$s is the phase's name; a language unit's challenge is a live call with the Trickster. -->
-    <string name="session_block_phase_live_call">%1$s · canlı sohbet</string>
-    <string name="session_block_live_call">Canlı sohbet</string>
-    <plurals name="session_block_challenge_questions">
-        <item quantity="one">%d soru, ipucu yok</item>
-        <item quantity="other">%d soru, ipucu yok</item>
-    </plurals>
-    <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic, weakest first. -->
+    <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic. -->
     <plurals name="session_block_full_review_questions">
-        <item quantity="one">En zorlandıkların başta, tüm konulardan %d soru</item>
-        <item quantity="other">En zorlandıkların başta, tüm konulardan %d soru</item>
+        <item quantity="one">Tüm konuları kapsayan %d soru</item>
+        <item quantity="other">Tüm konuları kapsayan %d soru</item>
     </plurals>
     <!-- %1$s names the first topics; %2$d counts the rest. -->
     <plurals name="session_topics_and_more">

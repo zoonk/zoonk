@@ -102,6 +102,13 @@ test.describe("Buddy tab", () => {
       expect(asked).toStrictEqual([{ question: `No studying on ${day}s` }]);
       expect(await readChangeStatus(change.id)).toBe("proposed");
 
+      // The fixture saves the change without its numbers, as one from an earlier day: the first
+      // tap works them out from today's plan and asks again; the second applies it.
+      await card.getByRole("button", { name: "Change my plan" }).click();
+      await expect(card.getByText("The numbers are different today.")).toBeVisible();
+      await expect(card).toHaveAccessibleName(`Make ${day} a rest day?`);
+      expect(await readChangeStatus(change.id)).toBe("proposed");
+
       await card.getByRole("button", { name: "Change my plan" }).click();
       await expect(card).toHaveAccessibleName(`${day}: rest day.`);
       await expect.poll(() => readChangeStatus(change.id)).toBe("applied");
@@ -114,6 +121,7 @@ test.describe("Buddy tab", () => {
         .toBe(0);
 
       await card.getByRole("button", { name: "Undo" }).click();
+      await expect(card).toHaveAccessibleName(`Make ${day} a rest day?`);
       await expect(card.getByRole("button", { name: "Change my plan" })).toBeVisible();
       await expect.poll(() => readChangeStatus(change.id)).toBe("proposed");
     });

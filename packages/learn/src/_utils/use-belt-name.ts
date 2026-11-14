@@ -38,3 +38,12 @@ export function useBeltName() {
     }
   };
 }
+
+/** A level with the belt it shows as, the one way the game's level is said: "White belt, level 4". */
+export function useBeltStep() {
+  const t = useExtracted();
+  const beltName = useBeltName();
+
+  return ({ color, level }: { color: BeltColor; level: number }): string =>
+    t("{belt}, level {level}", { belt: beltName(color), level: String(level) });
+}

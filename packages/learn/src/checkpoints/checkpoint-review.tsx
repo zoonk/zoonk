@@ -114,11 +114,13 @@ function ReviewItem({
           <ItemStem text={question.question} />
         </div>
 
-        <ContentFeedbackMenu
-          label={t("Question options")}
-          screen="checkpoint-review"
-          target={{ contentId: answer.itemId, contentKind: "item" }}
-        />
+        <LineMarker>
+          <ContentFeedbackMenu
+            label={t("Question options")}
+            screen="checkpoint-review"
+            target={{ contentId: answer.itemId, contentKind: "item" }}
+          />
+        </LineMarker>
       </div>
 
       <div className="flex flex-col gap-3 pl-7">

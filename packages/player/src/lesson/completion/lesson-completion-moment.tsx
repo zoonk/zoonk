@@ -10,6 +10,7 @@ import {
   MomentSavingTitle,
   PendingMainAction,
 } from "@zoonk/learn/session/moment-header";
+import { pickDayMoment } from "@zoonk/learn/session/pick-day-moment";
 import {
   TASK_WRAPPING_ACTION_CLASS,
   TaskActionBar,
@@ -21,6 +22,7 @@ import { useStudyTimeFact } from "@zoonk/learn/time-format";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { type ComponentProps } from "react";
 import {
   type LessonCompletionSlotProps,
   useLessonPlayer,
@@ -109,12 +111,60 @@ function SavedReadouts({ completion, correctCount, incorrectCount }: LessonCompl
   );
 }
 
+/** The lesson end's actions: the plan's reveal, a host's own, or the way to the next lesson. */
+function CompletionBar({
+  planReveal,
+  ...props
+}: LessonCompletionSlotProps & {
+  planReveal: ComponentProps<typeof SeePlanAction>["reveal"] | null;
+}) {
+  const { slots } = useLessonPlayerConfig();
+  const isSaved = props.completion.status === "saved";
+
+  if (planReveal) {
+    return <SeePlanAction reveal={planReveal} />;
+  }
+
+  if (slots.completionActions) {
+    return isSaved && slots.completionActions(props);
+  }
+
+  return <CompletionLinks pending={!isSaved} />;
+}
+
+/** A lesson's end shows one extra moment at most; the host draws a finished chapter's. */
+function ExtraMoment({
+  result,
+}: {
+  result: NonNullable<LessonCompletionSlotProps["completion"]["result"]>;
+}) {
+  const { buddy, slots } = useLessonPlayerConfig();
+  const celebration = getLessonCelebration(result);
+  const { finishedChapter } = result;
+
+  if (
+    slots.finishedChapter &&
+    finishedChapter &&
+    pickDayMoment({ ...celebration, finishedChapter }) === "chapter"
+  ) {
+    return slots.finishedChapter(finishedChapter);
+  }
+
+  return (
+    <DayMoment
+      buddy={buddy}
+      ceremony={celebration.ceremony}
+      missionMoment={celebration.missionMoment}
+      reached={celebration.reached}
+    />
+  );
+}
+
 export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
   const { completion, onRetry } = props;
   const t = useExtracted();
-  const { buddy, slots } = useLessonPlayerConfig();
+  const { slots } = useLessonPlayerConfig();
   const { result } = completion;
-  const celebration = result ? getLessonCelebration(result) : null;
   const isSaved = completion.status === "saved";
   const planReveal = isSaved ? (result?.planReveal ?? null) : null;
   const title = completion.testedOut ? t("You already knew this") : t("Lesson complete");
@@ -130,25 +180,12 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
           {isSaved && <SavedReadouts {...props} />}
         </MomentHeader>
 
-        {isSaved && celebration && (
-          <DayMoment
-            buddy={buddy}
-            ceremony={celebration.ceremony}
-            missionMoment={celebration.missionMoment}
-            reached={celebration.reached}
-          />
-        )}
-
-        {isSaved && result?.finishedChapter && slots.finishedChapter?.(result.finishedChapter)}
+        {isSaved && result && <ExtraMoment result={result} />}
         {planReveal && <LessonCompletionPlan reveal={planReveal} />}
-        {isSaved && slots.completionActions?.(props)}
+        {isSaved && slots.completionDetails?.(props)}
       </TaskBody>
 
-      {planReveal ? (
-        <SeePlanAction reveal={planReveal} />
-      ) : (
-        !slots.completionActions && <CompletionLinks pending={!isSaved} />
-      )}
+      <CompletionBar {...props} planReveal={planReveal} />
     </>
   );
 }

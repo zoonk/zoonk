@@ -9,6 +9,7 @@ import { ChevronLeftIcon, HelpCircleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
 import { EnterButton } from "./enter-button";
+import { useHasPlacedMainAction } from "./main-action-slot";
 import { useFocusOnRemovedControl } from "./suggestion-focus";
 import { TASK_BACK_ACTION_CLASS, TaskActionLabel, TaskActions } from "./task-layout";
 
@@ -51,8 +52,13 @@ function useActionLabel(action: QuestionAction): string {
 export function QuestionActions({ className, ...props }: React.ComponentProps<typeof TaskActions>) {
   const row = useRef<HTMLDivElement>(null);
 
-  useFocusOnRemovedControl(row, () =>
-    document.querySelector<HTMLElement>(`#${QUESTION_MAIN_ACTION_ID}`),
+  // A recording's Record and Stop are drawn into the row from the step, so the row reads them to
+  // render again, and recover focus, when Stop leaves. The main action is whatever Enter presses.
+  useHasPlacedMainAction();
+
+  useFocusOnRemovedControl(
+    row,
+    () => row.current?.querySelector<HTMLElement>("[data-enter]") ?? null,
   );
 
   return (

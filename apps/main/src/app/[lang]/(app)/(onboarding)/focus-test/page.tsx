@@ -1,4 +1,5 @@
 import { LearnNoGoal } from "@/app/[lang]/(app)/(learn)/_components/learn-no-goal";
+import { JourneyPageBar } from "@/components/learn/journey-page-bar";
 import { redirect } from "@/i18n/navigation";
 import { FOCUS_TEST_GOAL_PARAM, FOCUS_TEST_STARTED_PARAM } from "@/lib/focus-test/focus-test-href";
 import { type GoalView } from "@zoonk/core/goals/contract";
@@ -42,6 +43,7 @@ async function FocusTestContent({ searchParams }: Props) {
 
     return (
       <LearnNoGoal
+        bar={<JourneyPageBar root />}
         description={t("Quick questions that find where your study time should go")}
         next="/focus-test"
         title={t("Focus test")}

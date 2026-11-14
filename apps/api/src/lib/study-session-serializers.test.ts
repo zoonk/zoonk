@@ -35,6 +35,7 @@ const SUMMARY: StudySessionSummary = {
   preparation: { after: null, before: null },
   progress: { after: null, before: null },
   questions: 0,
+  reminderOffer: null,
   sessionId: "01a12345-0000-7000-8000-000000000003",
   skillsMoved: [],
   status: "completed",

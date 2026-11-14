@@ -87,7 +87,7 @@ function AskTutorRow({
   const label = useAskLabel({ kind, name: identity.name });
 
   return (
-    <ListRowButton {...PRELOAD_ON_INTENT} onClick={openDrawer}>
+    <ListRowButton aria-haspopup="dialog" {...PRELOAD_ON_INTENT} onClick={openDrawer}>
       <ListRowLeading>
         <span aria-hidden="true" className="flex size-5 items-center justify-center *:size-5!">
           {identity.avatar}
@@ -118,6 +118,7 @@ function AskTutorButton({
   if (size === "task") {
     return (
       <Button
+        aria-haspopup="dialog"
         {...PRELOAD_ON_INTENT}
         aria-label={label}
         className={TASK_ASK_CLASS}
@@ -140,6 +141,7 @@ function AskTutorButton({
 
   return (
     <Button
+      aria-haspopup="dialog"
       {...PRELOAD_ON_INTENT}
       aria-label={label}
       className={cn("pl-1.5", size === "bar" && BAR_ASK_CLASS)}

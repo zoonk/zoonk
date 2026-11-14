@@ -2914,6 +2914,11 @@ msgid "Subscribe"
 msgstr "Assinar"
 
 #: src/lesson/access/lesson-access-screen.tsx
+msgctxt "4NMpnC"
+msgid "Start the lesson"
+msgstr "Começar a aula"
+
+#: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "cyR7Kh"
 msgid "Back"

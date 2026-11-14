@@ -5,22 +5,15 @@ import {
   type OwnedCertificateFacts,
 } from "@zoonk/core/certificates/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import {
-  Dialog,
-  DialogDescription,
-  DialogPopup,
-  DialogPortal,
-  DialogTitle,
-} from "@zoonk/ui/components/dialog";
+import { DialogDescription, DialogTitle } from "@zoonk/ui/components/dialog";
 import { type CertificateLinks, getCertificatePath } from "@zoonk/utils/certificate-links";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { TaskBody } from "../_components/task-layout";
-import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
 import { useCeremonyClosing } from "../ceremonies/ceremony-closing";
+import { CeremonyBar, CeremonyFrame, useCeremonyFrame } from "../ceremonies/ceremony-frame";
 import { LearnLink } from "../learn-link";
 import { useCertificateMomentCopy } from "./certificate-moment-copy";
-import { ContinueBar, MomentSheets, NameRow } from "./certificate-moment-parts";
+import { MomentSheets, NameRow } from "./certificate-moment-parts";
 import { CertificateNameField, type SaveCertificateName } from "./certificate-name";
 import {
   AddToLinkedInButton,
@@ -101,12 +94,21 @@ export function CertificateMoment({
   onShown,
   saveName,
 }: CertificateMomentProps) {
-  const [open, setOpen] = useState(true);
+  const t = useExtracted();
   const [savedName, setSavedName] = useState<string | null>(null);
-  const isSteady = useSteady(SCREEN_STEADY_MS);
   const onClosing = useCeremonyClosing();
   const copy = useCertificateMomentCopy(certificates);
-  const t = useExtracted();
+
+  /** Seen once it's closed: leaving before that brings it back at the end of the next task. */
+  const frame = useCeremonyFrame(() => {
+    for (const { code } of certificates) {
+      onShown(code);
+    }
+
+    if (!beforeCeremony) {
+      onClosing();
+    }
+  });
 
   const [top, behind] = certificates
     .map((facts) => ({ ...facts, recipientName: savedName ?? facts.recipientName }))
@@ -118,77 +120,41 @@ export function CertificateMoment({
 
   const links = top.locked ? null : getLinks(top);
 
-  /** Seen once it's closed: leaving before that brings it back at the end of the next task. */
-  const close = () => {
-    setOpen(false);
-
-    for (const { code } of certificates) {
-      onShown(code);
-    }
-
-    if (!beforeCeremony) {
-      onClosing();
-    }
-  };
-
   return (
-    <Dialog
-      onOpenChange={(isOpen) => {
-        if (!isOpen) {
-          close();
-        }
-      }}
-      onOpenChangeComplete={(isOpen) => {
-        if (!isOpen) {
-          onClose?.();
-        }
-      }}
-      open={open}
+    <CeremonyFrame
+      bar={<CeremonyBar action={t("Continue")} onConfirm={() => frame.whenSteady(frame.close)} />}
+      onClose={frame.close}
+      onClosed={onClose}
+      open={frame.open}
+      slot="certificate-moment"
     >
-      <DialogPortal>
-        <DialogPopup
-          className="data-open:animate-in data-open:fade-in data-closed:animate-out data-closed:fade-out duration-base fixed inset-0 z-50 flex flex-col overflow-y-auto"
-          data-slot="certificate-moment"
-        >
-          <TaskBody className="items-center justify-center gap-0 pt-12 pb-16 text-center">
-            <MomentSheets behind={behind ?? null} getLinks={getLinks} top={top} />
+      <MomentSheets behind={behind ?? null} getLinks={getLinks} top={top} />
 
-            <DialogTitle className="text-headline mt-8">{copy.title}</DialogTitle>
-            {copy.line && (
-              <DialogDescription className="text-lead mt-2 max-w-136">
-                {copy.line}
-              </DialogDescription>
-            )}
+      <div className="flex w-full flex-col items-center">
+        <DialogTitle className="text-headline">{copy.title}</DialogTitle>
+        {copy.line && (
+          <DialogDescription className="text-lead mt-2 max-w-136">{copy.line}</DialogDescription>
+        )}
 
-            <div className="mt-4.5 flex w-full flex-col items-center">
-              {links ? (
-                <OwnerPart
-                  facts={top}
-                  links={links}
-                  onNamed={setSavedName}
-                  saveName={saveName}
-                  saved={copy.saved}
-                />
-              ) : (
-                <LearnLink
-                  className={buttonVariants({ size: "lg", variant: "outline" })}
-                  href={getCertificatePath(top.code)}
-                >
-                  {t("See your certificate")}
-                </LearnLink>
-              )}
-            </div>
-          </TaskBody>
-
-          <ContinueBar
-            onContinue={() => {
-              if (isSteady()) {
-                close();
-              }
-            }}
-          />
-        </DialogPopup>
-      </DialogPortal>
-    </Dialog>
+        <div className="mt-4.5 flex w-full flex-col items-center">
+          {links ? (
+            <OwnerPart
+              facts={top}
+              links={links}
+              onNamed={setSavedName}
+              saveName={saveName}
+              saved={copy.saved}
+            />
+          ) : (
+            <LearnLink
+              className={buttonVariants({ size: "lg", variant: "outline" })}
+              href={getCertificatePath(top.code)}
+            >
+              {t("See your certificate")}
+            </LearnLink>
+          )}
+        </div>
+      </div>
+    </CeremonyFrame>
   );
 }

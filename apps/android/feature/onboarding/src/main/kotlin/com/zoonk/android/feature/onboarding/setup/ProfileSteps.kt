@@ -26,7 +26,6 @@ import com.zoonk.android.feature.profile.profileJobPrefill
 import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.android.feature.profile.profileQuestionDescription
 import com.zoonk.android.feature.profile.profileQuestionTitle
-import com.zoonk.android.feature.profile.profileSkip
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.TextButton
@@ -48,7 +47,6 @@ internal fun ColumnScope.ProfileStep(
     val draft = vm.profileDraft(question, role)
     val scope = rememberCoroutineScope()
     val memory = view.profile.memoryEnabled
-    val declinesOnSkip = id == ProfileQuestion.ADDRESS_FORM
     val valid = draft.valid(id, memory)
     val holdsAnswer = draft.declined || !draft.empty(id, memory)
     val save = { vm.answer(draft.onboardingInput(id, memory), profileAnswer = draft) }
@@ -64,11 +62,9 @@ internal fun ColumnScope.ProfileStep(
         pending = vm.isSaving,
         canContinue = valid,
         onContinue = { save() },
-        onSkip = {
-            val declines = declinesOnSkip || id == ProfileQuestion.CONDITIONS
-            vm.answer(if (declines) ProfileDraft(declined = true).onboardingInput(id, memory) else profileSkip(id))
-        },
-        skipLabel = stringResource(R.string.profile_questions_prefer_not).takeIf { declinesOnSkip },
+        // Skip is the "none" answer (rule 10): it declines, so the question isn't asked again at the next goal.
+        onSkip = { vm.answer(ProfileDraft(declined = true).onboardingInput(id, memory)) },
+        skipLabel = stringResource(R.string.profile_questions_prefer_not).takeIf { id == ProfileQuestion.ADDRESS_FORM },
         notice = {
             if (view.goal.kind == Goal.Kind.LEARN && wait.firstLesson?.ready == true && wait.onStartLesson != null) {
                 FlowRow(
@@ -96,7 +92,7 @@ internal fun ColumnScope.ProfileStep(
                         busy = vm.isSaving && startingLesson,
                         focusableWhenDisabled = vm.isSaving,
                         size = ButtonSize.Small,
-                        trailingIcon = { ButtonIcon(R.drawable.ic_chevron_right) },
+                        forward = true,
                     ) {
                         Text(
                             stringResource(
@@ -122,7 +118,7 @@ internal fun ColumnScope.ProfileStep(
             memoryEnabled = memory,
             role = role,
             suggested = id == ProfileQuestion.LEARNING_SUPPORT && vm.supportsSuggested,
-            declineAsSkip = declinesOnSkip,
+            declineAsSkip = true,
         )
     }
 }

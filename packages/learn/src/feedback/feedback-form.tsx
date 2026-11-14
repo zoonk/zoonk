@@ -11,9 +11,8 @@ import {
 import { Input } from "@zoonk/ui/components/input";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Textarea } from "@zoonk/ui/components/textarea";
-import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { parseFormField } from "@zoonk/utils/form";
-import { PaperclipIcon, SendIcon } from "lucide-react";
+import { PaperclipIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useActionState, useEffect, useId, useState } from "react";
 import { EnterButton } from "../_components/enter-button";
@@ -118,6 +117,20 @@ async function sendMessage({
 
 type FeedbackFormLayout = "dialog" | "page";
 
+/**
+ * The form's main action, in the dialog and on the page alike. Enter presses it from anywhere but
+ * the message, which keeps Enter for a new line, as every text area does.
+ */
+function SendButton({ busy, disabled, form }: { busy: boolean; disabled: boolean; form?: string }) {
+  const t = useExtracted("feedback");
+
+  return (
+    <EnterButton busy={busy} disabled={disabled} form={form} type="submit">
+      {t("Send message")}
+    </EnterButton>
+  );
+}
+
 function ScreenAttached() {
   const t = useExtracted("feedback");
 
@@ -214,16 +227,8 @@ export function FeedbackForm({
         )}
 
         {layout === "dialog" && (
-          <div className="flex flex-col sm:flex-row sm:justify-end">
-            <SubmitButton
-              className="sm:w-max"
-              disabled={viewerEmail === undefined}
-              full
-              icon={<SendIcon aria-hidden="true" />}
-              size="lg"
-            >
-              {t("Send message")}
-            </SubmitButton>
+          <div className="flex sm:justify-end">
+            <SendButton busy={isPending} disabled={viewerEmail === undefined} />
           </div>
         )}
       </form>
@@ -233,15 +238,7 @@ export function FeedbackForm({
       {layout === "page" && (
         <BottomBar>
           <BottomBarActions>
-            <EnterButton
-              busy={isPending}
-              disabled={viewerEmail === undefined}
-              enter="off"
-              form={formId}
-              type="submit"
-            >
-              {t("Send message")}
-            </EnterButton>
+            <SendButton busy={isPending} disabled={viewerEmail === undefined} form={formId} />
           </BottomBarActions>
         </BottomBar>
       )}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "earlier_questions_description": "afd86cc4af111af5af5bcd43598937020de04d82f933dc02284c08bfadad1a6e",
+  "earlier_questions_description": "08b7a9cc64132143490135fb0c19da683c70ae855e72cd13f1fc7f672952ca33",
   "earlier_questions_empty": "4214a90d720417540a627b869b891db5d230a37fe9bee75370cd74bf7e384f12",
   "earlier_questions_from": "06ab764e51233c4f0761949dc639bf8f5a8636d8f044396cf3d621fc207c0563",
   "earlier_questions_from_course": "7648863739119e45c3f641f49faf68d797320bd8ab2a15d2e87897f66855ff37",
@@ -16,8 +16,7 @@
 <resources>
     <!-- Title of the page that keeps the questions the learner asked about lessons before every course was rewritten. -->
     <string name="earlier_questions_title">Questions précédentes</string>
-    <!-- Keep "before we rewrote them": every course was rewritten, which is why these questions moved here. -->
-    <string name="earlier_questions_description">Les questions que tu as posées dans tes cours avant leur réécriture. Les leçons ont changé, mais tes questions restent ici pour que tu puisses les relire.</string>
+    <string name="earlier_questions_description">Les questions que tu as posées dans des leçons qui ont changé depuis.</string>
     <string name="earlier_questions_empty">Tu n’as pas de questions précédentes.</string>
     <!-- Above a question about a lesson that no longer exists. %1$s is the course's title as the learner saw it, %2$s the lesson's. -->
     <string name="earlier_questions_from_course_lesson">D’une ancienne version de %1$s · %2$s</string>

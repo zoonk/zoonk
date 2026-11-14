@@ -3,16 +3,11 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "vitest";
-import {
-  type KeyFacts,
-  type PanelFacts,
-  keyFindings,
-  panelFindings,
-  readShortcuts,
-} from "./keys.mts";
+import { type KeyFacts, keyFindings, readShortcuts } from "./keys.mts";
+import { type PanelFacts, panelFindings } from "./panels.mts";
 
 const QUIET: KeyFacts = {
-  enter: { bound: [], pressed: null, unbuilt: [] },
+  enter: { bound: [], pressed: null },
   escape: { pressed: null, task: false, taskClose: false },
   groups: [],
   keycaps: [],
@@ -54,7 +49,7 @@ describe("the screen's keyboard controls", () => {
 
   it("distinguishes controls with the same label", () => {
     const findings = messages({
-      enter: { bound: [{ id: "expected", label: "Start" }], pressed: START, unbuilt: [] },
+      enter: { bound: [{ id: "expected", label: "Start" }], pressed: START },
       keycaps: [
         {
           announced: "Enter",
@@ -76,7 +71,7 @@ describe("the screen's keyboard controls", () => {
   it("says nothing for a page whose keys press what they show", () => {
     assert.deepEqual(
       messages({
-        enter: { bound: [{ id: "start", label: "Start" }], pressed: START, unbuilt: [] },
+        enter: { bound: [{ id: "start", label: "Start" }], pressed: START },
         escape: {
           pressed: { ...START, enter: null, keycap: false, label: "Close", taskClose: true },
           task: true,
@@ -116,7 +111,7 @@ describe("the screen's keyboard controls", () => {
     );
   });
 
-  it("leads to Enter pressing the wrong control, missing the main action, or a main action built by hand", () => {
+  it("leads to Enter pressing the wrong control, missing the main action, or multiple main actions", () => {
     assert.deepEqual(
       messages({
         enter: {
@@ -125,18 +120,16 @@ describe("the screen's keyboard controls", () => {
             { id: "skip", label: "Skip" },
           ],
           pressed: { ...START, enter: null, label: "Skip" },
-          unbuilt: ["Continue"],
         },
       }),
       [
         "warn Behavior: Enter: Enter clicked Skip, which isn't a main action showing ⏎",
         "warn Behavior: Enter: two main actions answer Enter: Start, Skip",
-        "warn Behavior: Enter: Continue is a main action drawn without the piece that binds Enter",
       ],
     );
 
     assert.deepEqual(
-      messages({ enter: { bound: [{ id: "start", label: "Start" }], pressed: null, unbuilt: [] } }),
+      messages({ enter: { bound: [{ id: "start", label: "Start" }], pressed: null } }),
       ["warn Behavior: Enter: Enter didn't press Start, the screen's main action"],
     );
   });
@@ -171,10 +164,13 @@ describe("a panel the walk opened", () => {
   const panel: PanelFacts = {
     centered: null,
     closeDrawn: true,
+    dim: null,
+    edge: null,
     focusBack: true,
     focusInside: true,
     label: "Rename",
     needsClose: true,
+    shared: true,
     sheet: true,
   };
 

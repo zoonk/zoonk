@@ -35,7 +35,7 @@ function BottomBar({
       >
         {note && (
           <div className="bg-background border-border border-t">
-            <div className={cn(ROW_CLASS, "pt-2 text-sm", className)}>{note}</div>
+            <div className={cn(ROW_CLASS, "pt-2 text-sm lg:text-end", className)}>{note}</div>
           </div>
         )}
       </div>

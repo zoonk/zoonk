@@ -18,7 +18,7 @@ import {
 } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { type AnswerOptionResult } from "../_components/answer-tone";
-import { PageEyebrow } from "../_components/page";
+import { Eyebrow } from "../_components/eyebrow";
 import { QuestionTitle } from "../_components/question-title";
 import { VerdictLabel } from "../_components/verdict-label";
 import { tabStorage } from "../_utils/device-storage";
@@ -213,13 +213,13 @@ function QuizEyebrow() {
   const t = useExtracted();
 
   return (
-    <PageEyebrow>
+    <Eyebrow>
       {t({
         description:
           "The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
         message: "Quiz while you wait",
       })}
-    </PageEyebrow>
+    </Eyebrow>
   );
 }
 
@@ -229,13 +229,16 @@ const OPTION_COUNT = 3;
 export function WaitQuizSkeleton() {
   return (
     <div aria-hidden="true" className="flex flex-col gap-5">
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         <QuizEyebrow />
-        <Skeleton className="h-6 w-full" />
-        <Skeleton className="h-6 w-2/3" />
+
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-6 w-full" />
+          <Skeleton className="h-6 w-2/3" />
+        </div>
       </div>
 
-      <div className="flex flex-col gap-2.5">
+      <div className="flex flex-col gap-2">
         {Array.from({ length: OPTION_COUNT }, (_, index) => (
           <Skeleton className="h-12.5 w-full rounded-xl" key={index} />
         ))}
@@ -300,10 +303,10 @@ export function WaitQuizCard({
 
   return (
     <section aria-labelledby={questionId} className="flex flex-col gap-5" data-slot="wait-quiz">
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         <QuizEyebrow />
 
-        <QuestionTitle id={questionId} ref={questionRef} tabIndex={-1}>
+        <QuestionTitle className="text-balance" id={questionId} ref={questionRef} tabIndex={-1}>
           {card.question}
         </QuestionTitle>
       </div>

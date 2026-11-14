@@ -116,8 +116,8 @@ import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -278,7 +278,6 @@ internal fun EssayWrite(
                         onClick = viewModel::send,
                         modifier = width,
                         enabled = ui.canSend && !finishing,
-                        leadingIcon = { ButtonIcon(R.drawable.ic_send) },
                     ) {
                         Text(stringResource(if (rewriting) R.string.essay_grade_rewrite else R.string.essay_send))
                     }
@@ -476,7 +475,7 @@ private fun StatusLine(
             limit = Limit.SignUpRequired,
             subject = LimitSubject.Help,
             onCreateAccount = { navigator.open(AppRoute.Login) },
-            onSeePlus = { navigator.open(AppRoute.Subscription) },
+            onSubscribe = { navigator.open(AppRoute.Subscription) },
             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         )
         return
@@ -529,7 +528,7 @@ private fun EssayAside(
             Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(detailPagePadding())
+                .padding(pagePadding())
                 .semantics { paneTitle = label },
             verticalArrangement = Arrangement.spacedBy(28.dp),
         ) {
@@ -772,7 +771,7 @@ private fun CommentsAside(grade: EssayGrade) {
             Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(detailPagePadding())
+                .padding(pagePadding())
                 .semantics { paneTitle = label },
         ) { Comments(grade) }
     }

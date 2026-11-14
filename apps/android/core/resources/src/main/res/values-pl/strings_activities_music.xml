@@ -56,12 +56,11 @@
   "activities_music_same_notes_guitar": "2a5a311ddf23ca58131d19fc28fb1b219d78b4a33b1a1c813b6a665c980fa145",
   "activities_music_show_as": "869efd5521840e27cb77ddf8d342c5010396bea2267b53e43eb3a7f29bd0fa12",
   "activities_music_skip_for_now": "d7e47ae7c9c8238455552beafc6a98c0242a93d79624789c1f67c594e5a46377",
+  "activities_music_sound_check_done": "f4d726ba84282ab3646d3deee7f2a26635357fc488209d57563c1879c94a6995",
   "activities_music_sound_check_failed": "f5cd59fd3aabc4991ee27111c1baf67dd4b7c0fb33be6389a4c4f8bf83ecbde6",
-  "activities_music_sound_check_intro": "e3256d469597c74810f989e149948c9f21f80ae992d74471aef09a0b9041aede",
-  "activities_music_sound_check_late": "68b0b8c793628332acd2ce60922eec05789214a0e21e047675f2798b314ae5c7",
+  "activities_music_sound_check_intro": "7d283c64fba5ae4e1bf8eb90b8dc04cef135bb7099d8bdd03cbec1386febb0c3",
   "activities_music_sound_check_listen": "2464c531ff9ae4f1153d63cb26147590d86fc42189de54e8c559022afadbb80e",
-  "activities_music_sound_check_on_time": "64c31ae373ae3d16db30e676590473983690be101a5d5c4140996c7581331588",
-  "activities_music_sound_check_start": "60860883de1496d02a774f0e52e63bed25becb29f73a35b7bd7d90436cbed5f5",
+  "activities_music_sound_check_start": "658efc58a0283613bafa6587fa23a27da208a61added27c1796daf3e7ab51744",
   "activities_music_sound_check_tap": "3cd7af4d7a085bfb907144c520754b86116aa65aa8216c42d0a1abb5faa01ce2",
   "activities_music_sound_check_title": "1fa9fd95e3fd401ea23129098b5e624f2f109ac45a0da8ba9e2419012461df30",
   "activities_music_sound_notes": "6c37b20f2b52fa10b0d86edd8a97590e75cebebfcee6ce8fdd6837853d64d129",
@@ -247,19 +246,17 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Ustaw dźwięk</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="one">Słuchawki mogą odtwarzać dźwięk z niewielkim opóźnieniem. Wystarczy raz wystukać rytm %1$d kliknięcia, by ćwiczenia rytmiczne na tym urządzeniu uwzględniały to opóźnienie.</item>
-        <item quantity="few">Słuchawki mogą odtwarzać dźwięk z niewielkim opóźnieniem. Wystarczy raz wystukać rytm %1$d kliknięć, by ćwiczenia rytmiczne na tym urządzeniu uwzględniały to opóźnienie.</item>
-        <item quantity="many">Słuchawki mogą odtwarzać dźwięk z niewielkim opóźnieniem. Wystarczy raz wystukać rytm %1$d kliknięć, by ćwiczenia rytmiczne na tym urządzeniu uwzględniały to opóźnienie.</item>
-        <item quantity="other">Słuchawki mogą odtwarzać dźwięk z niewielkim opóźnieniem. Wystarczy raz wystukać rytm %1$d kliknięć, by ćwiczenia rytmiczne na tym urządzeniu uwzględniały to opóźnienie.</item>
+        <item quantity="one">Usłyszysz %1$d kliknięcie. Stukaj w rytm, żeby dobrze zgrać uderzenia z dźwiękiem.</item>
+        <item quantity="few">Usłyszysz %1$d kliknięcia. Stukaj w rytm, żeby dobrze zgrać uderzenia z dźwiękiem.</item>
+        <item quantity="many">Usłyszysz %1$d kliknięć. Stukaj w rytm, żeby dobrze zgrać uderzenia z dźwiękiem.</item>
+        <item quantity="other">Usłyszysz %1$d kliknięcia. Stukaj w rytm, żeby dobrze zgrać uderzenia z dźwiękiem.</item>
     </plurals>
     <string name="activities_music_sound_check_listen">Słuchaj kliknięć…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
     <string name="activities_music_sound_check_tap">Stukaj przy każdym kliknięciu · %1$d z %2$d</string>
     <string name="activities_music_sound_check_failed">Nie udało nam się dopasować wystarczającej liczby uderzeń do kliknięć. Spróbuj ponownie i stukaj przy każdym kliknięciu.</string>
-    <string name="activities_music_sound_check_on_time">Na tym urządzeniu dźwięk nie jest opóźniony.</string>
-    <!-- How late this device plays sound, like "about 120 ms late". -->
-    <string name="activities_music_sound_check_late">Dźwięk na tym urządzeniu jest opóźniony o około %1$d ms. Ćwiczenia rytmiczne to uwzględniają.</string>
-    <string name="activities_music_sound_check_start">Rozpocznij test dźwięku</string>
+    <string name="activities_music_sound_check_done">Gotowe.</string>
+    <string name="activities_music_sound_check_start">Zacznij</string>
     <string name="activities_music_skip_for_now">Pomiń na razie</string>
     <string name="activities_music_continue">Kontynuuj</string>
 </resources>

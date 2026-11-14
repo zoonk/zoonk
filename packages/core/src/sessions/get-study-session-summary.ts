@@ -7,6 +7,8 @@ import { type OwnedCertificateFacts } from "../certificates/certificate-contract
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { readActiveSubscription } from "../learner/facts/subscription";
 import { loadCeremony } from "../milestones/load-ceremony";
+import { findReminderOffer } from "../reminders/_utils/reminder-offer";
+import { type ReminderOffer } from "../reminders/study-reminder-contract";
 import { measureSessionState } from "./_utils/capture-snapshot";
 import { isCurrentSession } from "./_utils/current-session";
 import { withExtraStudyCheck } from "./_utils/extra-blocks";
@@ -67,6 +69,8 @@ type StudySessionSummary = {
   /** Share of plan lessons studied or known; null for exam goals. */
   progress: Change<number | null>;
   questions: number;
+  /** Asked where the day's study ends, since that's when coming back tomorrow is on the learner's mind. */
+  reminderOffer: ReminderOffer;
   sessionId: string;
   skillsMoved: SkillMove[];
   status: "active" | "completed" | "planned";
@@ -175,6 +179,7 @@ export async function getStudySessionSummary({
     tomorrow,
     extraTime,
     netScore,
+    reminderOffer,
   ] = await Promise.all([
     loadComesBack({ answers, session, timeZone, userId }),
     loadSealedCapsules({ session, timeZone, userId }),
@@ -186,6 +191,7 @@ export async function getStudySessionSummary({
     netScoredItemIds.length > 0
       ? getNetScore({ itemIds: netScoredItemIds, sessionId, userId })
       : null,
+    findReminderOffer({ goalStudyTime: session.goal?.studyTime ?? null, userId }),
   ]);
 
   const correct = answers.filter((answer) => answer.isCorrect).length;
@@ -220,6 +226,7 @@ export async function getStudySessionSummary({
       preparation: { after: after.preparation, before: snapshot?.preparation ?? null },
       progress: { after: after.progress, before: snapshot?.progress ?? null },
       questions: answers.length,
+      reminderOffer,
       sessionId,
       skillsMoved: moves
         .filter((move) => move.from !== "new")

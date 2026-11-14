@@ -1,10 +1,8 @@
 import SwiftUI
 
-/// Main's two steps: how the session went, then what it earned. One column pages them, and gives
-/// the rewards a step of their own only when the session earned more than Brain Power; two panes
-/// show both, as main's wide layout does.
+/// The day's summary, one screen of numbers (B2-020): the title, the tiles, Tomorrow, more time and,
+/// once, the reminder offer. Two panes keep "Earned today" beside it, as main's wide layout does.
 struct SessionSummaryView: View {
-  @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(AppRouter.self) private var router
   @Environment(StudySessionStore.self) private var store
@@ -16,22 +14,10 @@ struct SessionSummaryView: View {
   @State private var action: Task<Void, Never>?
   @State private var isBusy = false
   @State private var failed: SummaryAction?
-  /// Above the split, so folding or unfolding keeps the learner's step.
-  @State private var step = SummaryStep.done
-  /// Main's `revisited`: a step the learner moved on from shows still when they come back to it.
-  @State private var stepsLeft: Set<SummaryStep> = []
-  @AccessibilityFocusState private var focusedStep: SummaryStep?
-
-  /// The least Finish keeps beside a stopped session's two choices (main's `lg:min-w-40`), so on a
-  /// phone it fills a line of its own.
-  @ScaledMetric(relativeTo: .body) private var finishMinimumWidth = 160.0
+  @State private var reminderOffer: ReminderOfferState?
 
   private enum SummaryAction {
     case keepGoing, extraTime
-  }
-
-  private enum SummaryStep: Hashable {
-    case done, rewards
   }
 
   var body: some View {
@@ -62,6 +48,12 @@ struct SessionSummaryView: View {
       }
     }
     .loads(summary)
+    .onChange(of: summary.value?.reminderOffer, initial: true) { _, offer in
+      if let offer, reminderOffer == nil {
+        reminderOffer = ReminderOfferState(
+          time: ReminderTime.rounded(offer.time), timeZone: offer.timeZone)
+      }
+    }
     .completionMoments(
       certificates: summary.value?.certificates ?? [], milestone: summary.value?.ceremony
     )
@@ -75,79 +67,45 @@ struct SessionSummaryView: View {
 
     return SummaryVisit(visit: visit) {
       PaneSplit {
-        page(.done, visit: visit) {
-          doneStep(summary, showsBrainPower: false)
+        page {
+          numbers(summary, showsBrainPower: false)
         }
       } secondary: {
-        page(.rewards, visit: visit) {
-          rewards(summary, isStep: false)
+        page {
+          earnedToday(summary)
         }
-        .bottomBar { actionBar(summary, at: nil) }
+        .bottomBar(note: failureNote) { actions(summary) }
       } single: {
-        if !stopped, summary.hasRewardsBeyondBrainPower {
-          TabView(selection: $step) {
-            page(.done, visit: visit) {
-              doneStep(summary, showsBrainPower: true)
-            }
-            .tag(SummaryStep.done)
-
-            page(.rewards, visit: visit) {
-              rewards(summary, isStep: true)
-            }
-            .tag(SummaryStep.rewards)
-          }
-          .tabViewStyle(.page(indexDisplayMode: .always))
-          .indexViewStyle(.page(backgroundDisplayMode: .always))
-          .bottomBar {
-            // Only the page slides: the buttons change at once, as they do after a swipe.
-            actionBar(summary, at: step)
-              .animation(nil, value: step)
-          }
-        } else {
-          page(.done, visit: visit) {
-            doneStep(summary, showsBrainPower: true)
-          }
-          .bottomBar { actionBar(summary, at: nil) }
+        page {
+          numbers(summary, showsBrainPower: true)
         }
-      }
-      .onChange(of: step) { previous, current in
-        stepsLeft.insert(previous)
-        focusedStep = current
+        .bottomBar(note: failureNote) { actions(summary) }
       }
     }
   }
 
-  /// A step celebrates on its first visit only: coming back to it, or drawing it again after a
-  /// fold, shows it still.
-  private func page(
-    _ shown: SummaryStep, visit: String, @ViewBuilder content: () -> some View
-  ) -> some View {
+  private func page(@ViewBuilder content: () -> some View) -> some View {
     ZoonkList {
       content()
     }
     .contentMargins(.top, 0, for: .scrollContent)
     .pageMargins()
     .listSectionSpacing(.compact)
-    .celebratesOnce(id: "\(visit):\(shown)")
-    .transformEnvironment(\.celebrates) { celebrates in
-      celebrates = celebrates && !stepsLeft.contains(shown)
-    }
   }
 
-  /// Main's `DoneStep`. Brain Power is a tile only where the rewards aren't beside it.
+  /// Brain Power is a tile only where "Earned today" isn't beside it.
   @ViewBuilder
-  private func doneStep(_ summary: SessionSummary, showsBrainPower: Bool) -> some View {
+  private func numbers(_ summary: SessionSummary, showsBrainPower: Bool) -> some View {
     Section {
       VStack(alignment: .leading, spacing: 4) {
         title(summary)
           .typeStyle(.heroTitle)
           .accessibilityAddTraits(.isHeader)
-          .accessibilityFocused($focusedStep, equals: .done)
 
         if stopped, summary.minutes >= 1 {
           Text(
-            "\(studyDuration(minutes: summary.minutes)) so far", tableName: "Session",
-            comment: "Time studied in a session stopped for today"
+            "\(studyDuration(minutes: summary.minutes)) today", tableName: "Session",
+            comment: "Time studied today, under a summary stopped early"
           )
           .monospacedDigit()
           .foregroundStyle(.mutedForeground)
@@ -164,26 +122,6 @@ struct SessionSummaryView: View {
     .listRowBackground(Color.clear)
     .listRowInsets(.vertical, 0)
 
-    let risen = summary.risenSkills
-
-    if !risen.isEmpty {
-      Section {
-        ForEach(risen, id: \.skillId) { skill in
-          LabeledContent {
-            Text(
-              "\(skill.from.label) → \(skill.to.label.foregroundStyle(Color(.foreground)))",
-              tableName: "Session",
-              comment: "A skill's state before and after the session, such as Learning → Solid")
-          } label: {
-            Text(skill.name)
-          }
-        }
-      } header: {
-        SectionTitle(
-          Text("Skills that rose", tableName: "Session", comment: "Skills that moved up"))
-      }
-    }
-
     if !stopped, let tomorrow = summary.tomorrow {
       Section {
         Label {
@@ -195,225 +133,107 @@ struct SessionSummaryView: View {
         SectionTitle(Text("Tomorrow", tableName: "Session", comment: "Tomorrow's lesson"))
       }
     }
-  }
 
-  /// Main's `RewardsStep`, or its "Earned today" beside the session, which shows the Brain Power
-  /// even when the session earned none.
-  @ViewBuilder
-  private func rewards(_ summary: SessionSummary, isStep: Bool) -> some View {
-    if isStep {
+    if !stopped, summary.extraTime.available {
       Section {
-        rewardsHead(summary, isStep: true)
+        extraTimeButton(summary.extraTime)
       }
-    } else {
-      Section {
-        rewardsHead(summary, isStep: false)
-      } header: {
-        SectionTitle(Text("Earned today", tableName: "Session", comment: "What the session earned"))
-      }
+      .listRowBackground(Color.clear)
     }
 
-    RewardRows(summary: summary, missionsBonus: store.session(id: sessionID).value?.fullMeal.bonus)
+    if let offer = Binding($reminderOffer) {
+      Section {
+        ReminderOfferCard(offer: offer)
+      }
+      .listRowBackground(Color.clear)
+      .listRowInsets(.vertical, 0)
+    }
   }
 
-  private func rewardsHead(_ summary: SessionSummary, isStep: Bool) -> some View {
-    VStack(alignment: .leading, spacing: 16) {
-      SummaryBuddy(look: learner.summary.value?.buddy ?? BuddyLook())
+  /// "Earned today" beside the numbers: the buddy, the day's Brain Power even when it's none, and
+  /// the rewards.
+  @ViewBuilder
+  private func earnedToday(_ summary: SessionSummary) -> some View {
+    Section {
+      VStack(alignment: .leading, spacing: 16) {
+        SummaryBuddy(look: learner.summary.value?.buddy ?? BuddyLook())
 
-      if summary.brainPower > 0 || !isStep {
         MomentReadout(tint: .brainText) {
           EarnedNumber(value: summary.brainPower)
         } words: {
           Text("Brain Power", tableName: "Session", comment: "Brain Power earned")
         }
-        .accessibilityAddTraits(isStep ? .isHeader : [])
-        .accessibilityFocused($focusedStep, equals: .rewards)
-      } else if isStep {
-        Text("Rewards", tableName: "Session", comment: "Title of what the session earned")
-          .typeStyle(.heroTitle)
-          .accessibilityAddTraits(.isHeader)
-          .accessibilityFocused($focusedStep, equals: .rewards)
       }
+      .listRowBackground(Color.clear)
+    } header: {
+      SectionTitle(Text("Earned today", tableName: "Session", comment: "What the session earned"))
     }
-    .listRowBackground(Color.clear)
+
+    RewardRows(summary: summary, missionsBonus: store.session(id: sessionID).value?.fullMeal.bonus)
   }
 
-  /// Main's `SummaryButtons` and `SummaryOptions`. `shownStep` is the step one column shows, nil
-  /// where the summary has no steps. More time sits only beside Finish: two buttons that keep
-  /// studying would leave the learner guessing which one does.
-  private func actionBar(_ summary: SessionSummary, at shownStep: SummaryStep?) -> some View {
-    VStack(spacing: 12) {
-      if failed == .keepGoing {
-        failure(
-          LocalizedStringResource(
-            "We couldn't open the next step. Try again.", table: "Session",
-            comment: "Keep going failed"))
-      }
-
-      actions(summary, at: shownStep)
-
-      if !stopped, shownStep != .done, summary.extraTime.available {
-        extraTimeButton(summary.extraTime)
-
-        if failed == .extraTime {
-          failure(
-            LocalizedStringResource(
-              "That didn't save. Try again.", table: "Session",
-              comment: "Adding more time failed"))
-        }
-      }
+  private var failureNote: BarNote? {
+    switch failed {
+    case .keepGoing:
+      BarNote(
+        LocalizedStringResource(
+          "We couldn't open the next step. Try again.", table: "Session",
+          comment: "Going on with a stopped day failed"))
+    case .extraTime:
+      BarNote(
+        LocalizedStringResource(
+          "That didn't save. Try again.", table: "Session", comment: "Adding more time failed"))
+    case nil:
+      nil
     }
-    .controlSize(.large)
   }
 
-  /// See mistakes and Keep going sit before Finish, which takes the rest of the line. A stopped
-  /// session with mistakes has both: they share a line above Finish where it would keep less than
-  /// `finishMinimumWidth` beside them, and take a line each where their labels don't fit side by
-  /// side. The first of two steps ends with Continue, and the rewards step starts with Back.
+  /// "See mistakes" when there are some, "Continue" on a day stopped early, then Finish.
   @ViewBuilder
-  private func actions(_ summary: SessionSummary, at shownStep: SummaryStep?) -> some View {
-    let next = stopped ? store.session(id: sessionID).value?.nextBlock : nil
-    let seesMistakes = summary.mistakesSaved > 0
-
-    if shownStep == .rewards {
-      HStack(spacing: 12) {
-        StepBackButton(
-          label: Text(
-            "Back", tableName: "Session", comment: "Goes back to the summary's first step")
-        ) {
-          turn(to: .done)
-        }
-
-        finishButton
+  private func actions(_ summary: SessionSummary) -> some View {
+    if summary.mistakesSaved > 0 {
+      Button {
+        router.open(.mistakes)
+      } label: {
+        Text("See mistakes", tableName: "Session", comment: "Opens the mistakes notebook")
       }
-    } else if seesMistakes, let next {
-      ViewThatFits(in: .horizontal) {
-        HStack(spacing: 12) {
-          seeMistakesButton(sharesLine: false)
-          keepGoingButton(next, sharesLine: false)
-          finishButton
-            .frame(minWidth: finishMinimumWidth)
-        }
+      .buttonStyle(.outline)
+      .disabled(isBusy)
+    }
 
-        VStack(spacing: 12) {
-          HStack(spacing: 12) {
-            seeMistakesButton(sharesLine: true)
-            keepGoingButton(next, sharesLine: true)
-          }
-
-          finishButton
-        }
-
-        VStack(spacing: 12) {
-          seeMistakesButton(sharesLine: false)
-          keepGoingButton(next, sharesLine: false)
-          finishButton
-        }
-        .buttonSizing(.flexible)
+    if stopped, let next = store.session(id: sessionID).value?.nextBlock {
+      BusyButton(isBusy: isBusy) {
+        keepGoing(next)
+      } label: {
+        Text("Continue", tableName: "Session", comment: "Goes on with today's list after stopping")
       }
-    } else {
-      ButtonRow(spacing: 12) {
-        if seesMistakes {
-          seeMistakesButton(sharesLine: false)
-        }
-
-        if let next {
-          keepGoingButton(next, sharesLine: false)
-        }
-
-        if shownStep == .done {
-          continueButton
-        } else {
-          finishButton
-        }
-      }
+      .buttonStyle(.outline)
     }
-  }
 
-  private var continueButton: some View {
-    Button {
-      turn(to: .rewards)
-    } label: {
-      Text("Continue", tableName: "Session", comment: "Turns to what the session earned")
-        .frame(maxWidth: .infinity)
-    }
-    .buttonStyle(.mainAction)
-    .keyboardShortcut(.defaultAction)
-  }
-
-  private func turn(to shown: SummaryStep) {
-    withAnimation(reduceMotion ? nil : .default) {
-      step = shown
-    }
-  }
-
-  private var finishButton: some View {
     Button {
       router.dismissTask()
     } label: {
       Text("Finish", tableName: "Session", comment: "Closes the summary")
-        .frame(maxWidth: .infinity)
     }
     .buttonStyle(.mainAction)
     .keyboardShortcut(.defaultAction)
   }
 
-  private func seeMistakesButton(sharesLine: Bool) -> some View {
-    Button {
-      router.open(.mistakes)
-    } label: {
-      choiceLabel(
-        Text("See mistakes", tableName: "Session", comment: "Opens the mistakes notebook"),
-        sharesLine: sharesLine)
-    }
-    .buttonStyle(.outline)
-    .buttonSizing(sharesLine ? .flexible : .automatic)
-    .disabled(isBusy)
-  }
-
-  private func keepGoingButton(_ next: StudyBlock, sharesLine: Bool) -> some View {
-    BusyButton(isBusy: isBusy, icon: .play) {
-      keepGoing(next)
-    } label: {
-      choiceLabel(
-        Text("Keep going", tableName: "Session", comment: "Goes on with a stopped session"),
-        sharesLine: sharesLine)
-    }
-    .buttonStyle(.outline)
-    .buttonSizing(sharesLine ? .flexible : .automatic)
-  }
-
-  /// Main's `SHARED_ROW_ACTION_CLASS`: the two split a shared line evenly (as flexible buttons), and
-  /// neither cuts its label short.
-  @ViewBuilder
-  private func choiceLabel(_ label: Text, sharesLine: Bool) -> some View {
-    if sharesLine {
-      label
-        .fixedSize()
-    } else {
-      label
-    }
-  }
-
+  /// One small button in the column, the same piece Today's extra time uses.
   private func extraTimeButton(_ extraTime: StudyDay.ExtraTime) -> some View {
-    BusyButton(isBusy: isBusy, icon: .play) {
+    BusyButton(isBusy: isBusy) {
       keepLearning()
     } label: {
       if extraTime.lessons.isEmpty {
         Text(
-          "Study \(extraTime.minutes) more minutes", tableName: "Session",
-          comment: "Adds practice once the day is done")
+          "Practice \(extraTime.minutes) more min", tableName: "Session",
+          comment: "Adds practice once the day is done; the number is minutes")
       } else {
         Text("Keep learning", tableName: "Session", comment: "Adds the next lessons")
       }
     }
-    .buttonStyle(.ghost)
-    .buttonSizing(.flexible)
-  }
-
-  private func failure(_ message: LocalizedStringResource) -> some View {
-    FailureLine(message: message)
-      .typeStyle(.note)
+    .buttonStyle(.outline)
+    .controlSize(.small)
   }
 
   private func title(_ summary: SessionSummary) -> Text {
@@ -428,7 +248,7 @@ struct SessionSummaryView: View {
         comment: "Session time")
   }
 
-  /// Main's "Keep going" opens the next block, as the next stop's button does.
+  /// Opens the next block, as the next stop's button does.
   private func keepGoing(_ next: StudyBlock) {
     isBusy = true
     failed = nil
@@ -472,8 +292,8 @@ struct SessionSummaryView: View {
   }
 }
 
-/// Main's session numbers: right answers, where the goal stands, what comes back to review and, where
-/// the rewards aren't beside them, the Brain Power earned.
+/// Main's session numbers: right answers, where the goal stands and, where "Earned today" isn't
+/// beside them, the Brain Power earned.
 private struct SummaryTiles: View {
   let summary: SessionSummary
   let goalKind: LearnerGoal.Kind?
@@ -502,11 +322,6 @@ private struct SummaryTiles: View {
           })
       }
 
-      StatTile(
-        label: Text("To review", tableName: "Session", comment: "Topics that come back to review"),
-        value: Text(summary.comesBack.reduce(0) { $0 + $1.skills }, format: .number),
-        systemImage: "arrow.counterclockwise")
-
       if showsBrainPower {
         StatTile(
           label: Text("Brain Power", tableName: "Session", comment: "Brain Power earned"),
@@ -518,10 +333,8 @@ private struct SummaryTiles: View {
   }
 
   private var belt: Text? {
-    summary.belt.map {
-      Text(
-        "\(beltName($0.after.color) ?? $0.after.color), level \($0.after.level)",
-        tableName: "Session", comment: "The belt and level reached")
+    summary.belt.flatMap { belt in
+      ProgressBelt(rawValue: belt.after.color).map { Text(levelName($0, belt.after.level)) }
     }
   }
 
@@ -613,7 +426,7 @@ private struct SummaryBuddy: View {
   }
 }
 
-/// Main's reward rows: the day's missions bonus, a belt's new levels and the best streak.
+/// Main's reward rows: the day's missions bonus, the new levels and the best streak.
 private struct RewardRows: View {
   let summary: SessionSummary
   let missionsBonus: Int?
@@ -651,9 +464,7 @@ private struct RewardRows: View {
               .monospacedDigit()
               .foregroundStyle(.successText)
             } title: {
-              Text(
-                "\(beltName(stripes.after.color) ?? stripes.after.color), level \(stripes.after.level)",
-                tableName: "Session", comment: "The belt and level reached")
+              Text(levelName(belt, stripes.after.level))
             } icon: {
               BeltDot(belt: belt)
             }
@@ -691,27 +502,5 @@ extension SessionSummary {
 
   fileprivate var shownStreak: Int? {
     bestStreak >= 3 ? bestStreak : nil
-  }
-
-  /// Main's `hasRewardsBeyondBrainPower`: what gives the rewards a step of their own.
-  fileprivate var hasRewardsBeyondBrainPower: Bool {
-    missionsDone || beltGain != nil || shownStreak != nil
-  }
-
-  /// Main's `getRisenSkills`: a skill that slipped back is memory's to bring back, not news for the
-  /// end of the day.
-  fileprivate var risenSkills: [SkillMove] {
-    Array(skillsMoved.filter { $0.to.rank > $0.from.rank }.prefix(2))
-  }
-}
-
-extension GoalChapter.Skill.State {
-  fileprivate var rank: Int {
-    switch self {
-    case .new: 0
-    case .learning: 1
-    case .solid: 2
-    case .mastered: 3
-    }
   }
 }

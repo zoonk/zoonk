@@ -56,8 +56,10 @@ struct CountryPickerSheet: View {
       .announcesStatus(resultCount(catalog))
       .alert(
         Text(
-          "Change the content country?", tableName: "Plan",
-          comment: "Title of the question before a goal's plan is rebuilt for another country"),
+          "Switch to \(confirming?.name ?? "")?", tableName: "Plan",
+          comment:
+            "Title of the question before a goal's plan is made again for another country; the argument is a country's name, such as Portugal"
+        ),
         isPresented: Binding(get: { confirming != nil }, set: { if !$0 { confirming = nil } }),
         presenting: confirming
       ) { choice in
@@ -70,12 +72,12 @@ struct CountryPickerSheet: View {
           commit(choice)
         } label: {
           Text(
-            "Rebuild plan", tableName: "Plan",
-            comment: "Confirms a new content country, which rebuilds the goal's plan")
+            "Switch", tableName: "Plan",
+            comment: "Confirms a new country, which makes the goal a new plan")
         }
       } message: { choice in
         Text(
-          "New country: \(choice.name). Your plan will be rebuilt for it. The lessons you've finished stay done, and you can keep studying your current plan until the new one is ready.",
+          "We'll make a new plan for \(choice.name). Finished lessons stay done.",
           tableName: "Plan",
           comment:
             "Body of the question before a goal's plan is rebuilt for another country; the argument is a country's name, such as Portugal"

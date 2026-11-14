@@ -66,6 +66,7 @@ private struct BusyButtonLabel<Title: View>: View {
 /// leads its label except `forward`, which trails it, and a busy button's spinner takes its place.
 enum ActionIcon: String {
   case addLessons = "text.badge.plus"
+  case archive = "archivebox"
   case back = "chevron.backward"
   case call = "phone.fill"
   case certificate = "rosette"

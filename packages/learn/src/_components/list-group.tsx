@@ -1,6 +1,6 @@
 import { BusyIcon } from "@zoonk/ui/components/button";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon } from "lucide-react";
 import { type LearnLinkComponentProps } from "../learn-context";
 import { LearnLink, type LearnPrefetch } from "../learn-link";
 import { SURFACE_CLASS } from "./surface";
@@ -43,21 +43,9 @@ export const LIST_ROW_INTERACTIVE_CLASS = cn(
 
 export const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
 
-/**
- * A row's trailing chevron, its ink on the row's end edge. The pull moves the glyph, not its place:
- * every glyph keeps a 16px slot, so the value before a ">" ends where the value before a fold arrow
- * does.
- */
-const ROW_CHEVRON_CLASS =
-  "text-faint edge ms-(--edge-pull) -me-(--edge-pull) size-4 shrink-0 self-center";
-
 /** The same chevron after a 12px line, such as a header's "1 of 4". */
 export const SMALL_CHEVRON_CLASS =
   "edge -me-(--edge-pull) size-3.5 shrink-0 [--icon-size:--spacing(3.5)]";
-
-export function ListRowChevron() {
-  return <ChevronRightIcon aria-hidden="true" className={ROW_CHEVRON_CLASS} />;
-}
 
 /**
  * The chevron's slot, empty, at the end of a row that can't be opened: the value before it ends
@@ -96,7 +84,7 @@ export function ListRowLink({
     >
       {children}
       <BusyIcon className="text-muted-foreground self-center">
-        <ListRowChevron />
+        <RowChevron />
       </BusyIcon>
     </LearnLink>
   );
@@ -130,7 +118,7 @@ export function ListRowButton({
       {children}
       {chevron && (
         <BusyIcon className="text-muted-foreground self-center">
-          <ListRowChevron />
+          <RowChevron />
         </BusyIcon>
       )}
     </button>
@@ -232,8 +220,8 @@ export function ListRowNumberedTitle({
   return (
     <span className={cn("flex flex-col", className)}>
       <ListRowTitle className={textClassName}>
-        <span className="text-muted-foreground me-1.5 font-mono text-xs font-normal tabular-nums">
-          {`${number}.`}
+        <span className="text-muted-foreground font-mono text-xs font-normal tabular-nums">
+          {`${number}.\u00A0`}
         </span>
         {children}
       </ListRowTitle>

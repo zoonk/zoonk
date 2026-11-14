@@ -90,7 +90,6 @@ internal fun ColumnScope.FocusTestOffer(
                 onClick = onStart,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = pressed != Pressed.Other,
-                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
             ) {
                 Text(stringResource(R.string.focustest_start))
             }
@@ -127,7 +126,6 @@ internal fun ColumnScope.FocusTestResume(
                 onClick = onContinue,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = pressed == null,
-                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
             ) {
                 Text(stringResource(R.string.focustest_continue))
             }

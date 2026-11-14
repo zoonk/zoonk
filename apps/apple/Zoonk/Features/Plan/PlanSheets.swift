@@ -5,7 +5,7 @@ import SwiftUI
 enum PlanSheet: Identifiable, Hashable {
   case path
   case standing
-  case pace
+  case schedule
   case farTopic(skillId: String, title: String)
   case certificate(code: String)
   case suggestion(PlanSlotItem)
@@ -60,9 +60,9 @@ private struct PlanSheets: ViewModifier {
               }
             }
             .presentationDetents([.medium, .large])
-          case .pace:
+          case .schedule:
             NavigationStack {
-              PlanPaceSheet(context: context) {
+              PlanScheduleSheet(context: context) {
                 then = .adjust(.top)
                 self.sheet = nil
               }

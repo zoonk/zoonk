@@ -2,14 +2,12 @@ import { UsageDataNotice } from "@/app/[lang]/usage-data-notice";
 import { VisitorSummarySeed } from "@/components/learner/learner-summary-seed";
 import { JsonLd } from "@/components/public/json-ld";
 import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
-import { StickyStartBar } from "@/components/public/page-start";
 import { PublicFooter } from "@/components/public/public-footer";
+import { PublicStartBar } from "@/components/public/public-start-bar";
 import { PublicViewTracker } from "@/components/public/public-view-tracker";
-import { Link, getPathname } from "@/i18n/navigation";
+import { getPathname } from "@/i18n/navigation";
 import { getLocalizedAlternates } from "@/lib/metadata/localized-url";
 import { HOME_JSON_LD } from "@/lib/public/structured-data";
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -50,7 +48,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** Anyone with a session opens Today instead (`proxy.ts`). */
 export default async function HomePage() {
-  const t = await getExtracted();
   const language = await lang();
   const locale = getSupportedLocaleFromLanguage(language);
   const startPath = getPathname({ href: "/start", locale });
@@ -77,11 +74,7 @@ export default async function HomePage() {
 
       <PublicFooter pathname="/" />
 
-      <StickyStartBar className="sm:hidden">
-        <Link className={cn(buttonVariants({ size: "lg" }), "w-full")} href="/start">
-          {t("Build my plan")}
-        </Link>
-      </StickyStartBar>
+      <PublicStartBar />
     </div>
   );
 }

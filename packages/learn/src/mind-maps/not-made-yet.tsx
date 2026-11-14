@@ -189,6 +189,13 @@ export function NotMadeYet({
             icon={null}
             title={t("Other chapters")}
           >
+            {!plus && later.some((chapter) => chapter.lessonsToWrite > 0) && (
+              <p className={LINE_CLASS}>
+                {t(
+                  "Making one of these maps writes its lessons first, and they count toward your free lessons.",
+                )}
+              </p>
+            )}
             <NotMadeRows chapters={later} library={library} plus={plus} />
           </Disclosure>
         </ListGroup>

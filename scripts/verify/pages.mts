@@ -1,3 +1,4 @@
+/* oxlint-disable unicorn/no-process-exit -- Help and invalid options exit the CLI before browser setup. */
 /* oxlint-disable no-console, no-await-in-loop -- This CLI measures one page load at a time, in order, and prints its report. */
 import { mkdir, writeFile } from "node:fs/promises";
 import { availableParallelism, loadavg } from "node:os";
@@ -17,8 +18,7 @@ import { type LoadReport, measureLoad, warmUp } from "./measure.mts";
 import { type SoakReport, judgeSoak, measureSoak, soakRows } from "./memory.mts";
 import { type NavigationMode } from "./navigation-checks.mts";
 import { type NavigationReport, measureNavigations } from "./navigations.mts";
-import { readPageTopClasses } from "./page-top.mts";
-import { PAGE_OPTIONS } from "./pages-usage.mts";
+import { PAGE_OPTIONS, USAGE } from "./pages-usage.mts";
 import {
   type RenderReport,
   findUnindexed,
@@ -36,13 +36,24 @@ import { signIn } from "./sign-in.mts";
 import { walkStates } from "./states.mts";
 import { SCHEMES, THROTTLING, VIEWPORT_NAMES, type ViewportName, pick } from "./viewports.mts";
 
-/**
- * `pnpm verify:pages [path...]`, started by `verify-pages.mts`, which also prints its usage. The
- * verify skill explains when to run it and how to read it.
- */
 const repository = resolve(import.meta.dirname, "../..");
 
-const { positionals, values } = parseArgs({ allowPositionals: true, options: PAGE_OPTIONS });
+function options() {
+  try {
+    return parseArgs({ allowPositionals: true, options: PAGE_OPTIONS });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`${message.split(" To specify a positional argument")[0]}\n\n${USAGE}`);
+    process.exit(2);
+  }
+}
+
+const { positionals, values } = options();
+
+if (values.help) {
+  console.log(USAGE);
+  process.exit(0);
+}
 
 const served = resolve(values.checkout ?? repository);
 
@@ -108,7 +119,6 @@ const target = {
   baseUrl,
   browser,
   out,
-  pageTop: readPageTopClasses(served),
   queries,
   serverPid,
   shortcuts: await readShortcuts(served),
@@ -147,17 +157,18 @@ try {
 
       // Craft's X3 on the two sizes the craft read uses: what a person's taps and typing move.
       if (navigationViewports.includes(viewport)) {
-        load.findings.push(
-          ...(await walkStates(target, {
-            capture: values.roles
-              ? async (page, state) => {
-                  roles.push(...(await captureRoles(page, { out, path, state, viewport })));
-                }
-              : undefined,
-            path,
-            viewport,
-          })),
-        );
+        const { findings, ...coverage } = await walkStates(target, {
+          capture: values.roles
+            ? async (page, state) => {
+                roles.push(...(await captureRoles(page, { out, path, state, viewport })));
+              }
+            : undefined,
+          path,
+          viewport,
+        });
+
+        load.walk = coverage;
+        load.findings.push(...findings);
       }
 
       const failing = load.findings.filter((finding) => finding.level === "fail").length;

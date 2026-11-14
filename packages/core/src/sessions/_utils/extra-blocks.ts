@@ -1,7 +1,6 @@
 import "server-only";
 import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
-import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { loadGoalSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-learner-changed";
@@ -23,9 +22,7 @@ import { lockSessionQueue } from "./session-queue-lock";
 import { type StudyBlockView, toStudyBlockView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 
-type ExtraDay = Pick<StudySessionRow, "goal" | "goalId" | "localDate"> & {
-  blocks: readonly DayBlockInput[];
-};
+type ExtraDay = Pick<StudySessionRow, "goal" | "goalId"> & { blocks: readonly DayBlockInput[] };
 
 async function loadPracticePlan(goalId: string | null) {
   const plan = goalId
@@ -37,8 +34,6 @@ async function loadPracticePlan(goalId: string | null) {
     graph: parsePlanGraph(plan?.graph),
   };
 }
-
-/** Uses the session's saved local day, not the request's later date. */
 
 /** Null without an askable question; never reuses questions already asked by the session. */
 export async function buildExtraPractice({
@@ -124,7 +119,6 @@ export async function buildExtraLessons({
   areaId?: string | null;
   minutes?: number;
   planItemIds?: readonly string[];
-  readViewer?: typeof readEntitlementViewer;
   session: ExtraDay;
 }): Promise<PlannedBlock[]> {
   const done = getLessonsDoneToday(session);
@@ -188,7 +182,6 @@ export async function planExtraBlocks({
   userId,
 }: {
   minutes: number;
-  readViewer?: typeof readEntitlementViewer;
   session: ExtraDay;
   skillIds: string[];
   userId: string;
@@ -219,13 +212,7 @@ export async function withExtraStudyCheck({
 
   const skillIds = session.goalId ? await loadGoalSkillIds(session.goalId) : [];
 
-  const planned = await planExtraBlocks({
-    minutes: extraTime.minutes,
-    readViewer: readEntitlementViewer,
-    session,
-    skillIds,
-    userId,
-  });
+  const planned = await planExtraBlocks({ minutes: extraTime.minutes, session, skillIds, userId });
 
   if (!planned) {
     return { available: false, lessons: [], minutes: 0, reason: "nothingToStudy" };

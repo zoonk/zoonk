@@ -61,6 +61,7 @@ export function toPlanChangeView({
     lessonsSkipped: payload.lessonsSkipped ?? 0,
     officialDate: payload.officialDate,
     operations: payload.operations,
+    quote: payload.previewBasis,
     reason: LEARNER_FACING_SOURCES.has(payload.source) || !change.reason ? null : change.reason,
     seen: payload.seenAt !== null,
     source: payload.source,

@@ -97,6 +97,7 @@ import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.PrimaryLabel
 import com.zoonk.android.feature.player.engine.asAnswered
+import com.zoonk.android.feature.player.engine.isNumberAnswer
 import com.zoonk.android.feature.player.engine.isReadStep
 import com.zoonk.android.feature.player.engine.lessonMap
 import com.zoonk.android.feature.player.engine.round
@@ -117,11 +118,14 @@ import com.zoonk.android.feature.player.steps.LocalAskSimpler
 import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
 import com.zoonk.android.feature.player.steps.LocalScreenWork
 import com.zoonk.android.feature.player.steps.LocalStepViewHeight
+import com.zoonk.android.feature.player.steps.SpokenRecordAction
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.player.steps.keyPick
+import com.zoonk.android.feature.player.steps.offersDontKnow
+import com.zoonk.android.feature.player.steps.recordsInBar
 import com.zoonk.android.feature.player.steps.rememberScreenWork
 import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.navigation.AppNavigator
@@ -129,7 +133,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedIconButton
@@ -140,7 +144,9 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.components.taskColumn
+import com.zoonk.android.ui.scaffold.BAR_GAP
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.SpreadScreen
@@ -152,7 +158,6 @@ import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.spreadShows
 import com.zoonk.api.models.FinishedChapter
 import com.zoonk.api.models.LearnerSummaryBuddy
-import com.zoonk.api.models.StudyReminderOffer
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -240,7 +245,6 @@ fun LessonPlayer(
     certificatesMoment: CertificatesMoment? = null,
     finishedChapter: FinishedChapterSlot? = null,
     onReportSaveFailure: () -> Unit = {},
-    reminderOffer: (@Composable (StudyReminderOffer) -> Unit)? = null,
 ) {
     val screen = remember(state) { state?.screen() }
     val ownEnd =
@@ -297,8 +301,6 @@ fun LessonPlayer(
                 }
 
                 override fun dontKnow(stepId: String) = viewModel.dispatch(LessonAction.DontKnow(stepId))
-
-                override fun skipWriting() = viewModel.skipWriting()
 
                 override fun explainFirst() = viewModel.dispatch(LessonAction.ExplainFirst)
 
@@ -411,6 +413,10 @@ fun LessonPlayer(
                 },
             bottomBar =
                 when {
+                    state?.run is LessonRun.Refused -> {
+                        lessonAccessBar((state.run as LessonRun.Refused).refusal, viewModel::retryStart, exits)
+                    }
+
                     state == null || screen == null -> {
                         null
                     }
@@ -430,6 +436,7 @@ fun LessonPlayer(
                                 ActionBar(
                                     screen,
                                     actions,
+                                    offersDontKnow(screen, state),
                                     language.prompt,
                                     primaryFocus,
                                     onBack = { viewModel.dispatch(LessonAction.GoBack) },
@@ -479,7 +486,6 @@ fun LessonPlayer(
                             ceremony,
                             certificatesMoment,
                             finishedChapter,
-                            reminderOffer,
                             offer,
                             help,
                             touches,
@@ -591,7 +597,6 @@ private fun Content(
     ceremony: MomentCeremony?,
     certificatesMoment: CertificatesMoment?,
     finishedChapter: FinishedChapterSlot?,
-    reminderOffer: (@Composable (StudyReminderOffer) -> Unit)?,
     offer: (@Composable (BuddyOfferReason) -> Unit)?,
     help: (@Composable (simplerOnScreen: Boolean) -> Unit)?,
     touches: IntState,
@@ -603,7 +608,7 @@ private fun Content(
     when {
         run is LessonRun.Refused -> {
             Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                LessonAccessScreen(run.refusal, onRetry = viewModel::retryStart, exits = exits)
+                LessonAccessScreen(run.refusal, onRetry = viewModel::retryStart)
             }
         }
 
@@ -611,7 +616,7 @@ private fun Content(
             val result = state.completion?.result
             MomentAfterCeremony(result?.ceremonyMilestone(), ceremony, result?.awardedCertificates().orEmpty(), certificatesMoment) {
                 if (ownEnd == null) {
-                    LessonCompletionView(state, ending, buddy, finishedChapter, onReportSaveFailure, reminderOffer)
+                    LessonCompletionView(state, ending, buddy, finishedChapter, onReportSaveFailure)
                 } else {
                     ownEnd.body(state)
                 }
@@ -759,7 +764,7 @@ private fun Notice(
     if (!shown) return
 
     if (quickCheck != null) {
-        LabelChip(
+        Eyebrow(
             text = stringResource(R.string.player_quick_check, count(quickCheck.first + 1), count(quickCheck.second)),
             icon = R.drawable.ic_bolt,
         )
@@ -834,7 +839,7 @@ private fun Result(
                     explanation = explanations[step.id],
                     onExplain = viewModel::explainAnswer,
                     onCreateAccount = { exits.open(AppRoute.Login) },
-                    onSeePlus = { exits.open(AppRoute.Subscription) },
+                    onSubscribe = { exits.open(AppRoute.Subscription) },
                 )
             }
         }
@@ -857,6 +862,7 @@ private suspend fun PointerInputScope.countTouches(touches: MutableIntState) {
 private fun ActionBar(
     screen: LessonScreen,
     actions: StepActions,
+    dontKnow: Boolean,
     prompt: PromptAudio?,
     primaryFocus: FocusRequester,
     onBack: () -> Unit,
@@ -877,44 +883,51 @@ private fun ActionBar(
             null
         }
 
-    TaskActions(back) { width ->
-        if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
-        val label: @Composable RowScope.() -> Unit = { Text(stringResource(primary.label.text())) }
-        val iconId = primary.label.icon()
-        val icon: @Composable () -> Unit = { ButtonIcon(iconId) }
-        val forward = iconId == R.drawable.ic_arrow_forward
-        if (primary.label == PrimaryLabel.DontKnowYet) {
-            SecondaryButton(
-                onClick = actions::runPrimary,
-                enabled = primary.enabled,
-                busy = primary.busy,
-                modifier = width.focusRequester(primaryFocus),
-                leadingIcon = icon,
-                content = label,
-            )
-        } else {
-            Button(
-                busy = primary.busy,
-                onClick = actions::runPrimary,
-                modifier = width.focusRequester(primaryFocus),
-                enabled = primary.enabled,
-                leadingIcon = icon.takeUnless { forward },
-                trailingIcon = icon.takeIf { forward },
-                content = label,
-            )
+    val step = screen.step
+    val records = primary.label == PrimaryLabel.Check && !primary.busy && recordsInBar(step, actions)
+
+    val dontKnowAbove = dontKnow && back != null && !isWideLayout()
+    val giveUp: @Composable (Modifier) -> Unit = { modifier ->
+        SecondaryButton(
+            onClick = { step?.let { actions.dontKnow(it.id) } },
+            modifier = modifier,
+            leadingIcon = { ButtonIcon(R.drawable.ic_help) },
+        ) { Text(stringResource(R.string.player_dont_know_yet)) }
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(BAR_GAP)) {
+        if (dontKnowAbove) giveUp(Modifier.fillMaxWidth())
+        TaskActions(back) { width ->
+            if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
+            if (dontKnow && !dontKnowAbove) giveUp(Modifier)
+            if (records && step != null) {
+                SpokenRecordAction(step, actions, width.focusRequester(primaryFocus))
+                ask()
+                return@TaskActions
+            }
+            val label: @Composable RowScope.() -> Unit = { Text(stringResource(primary.label.text())) }
+            if (primary.label == PrimaryLabel.DontKnowYet) {
+                SecondaryButton(
+                    onClick = actions::runPrimary,
+                    enabled = primary.enabled,
+                    busy = primary.busy,
+                    modifier = width.focusRequester(primaryFocus),
+                    leadingIcon = { ButtonIcon(R.drawable.ic_help) },
+                    content = label,
+                )
+            } else {
+                Button(
+                    busy = primary.busy,
+                    onClick = actions::runPrimary,
+                    modifier = width.focusRequester(primaryFocus),
+                    enabled = primary.enabled,
+                    content = label,
+                )
+            }
+            ask()
         }
-        ask()
     }
 }
-
-private fun PrimaryLabel.icon(): Int =
-    when (this) {
-        PrimaryLabel.Check, PrimaryLabel.Confirm -> R.drawable.ic_check
-        PrimaryLabel.Continue, PrimaryLabel.Next, PrimaryLabel.NextStep, PrimaryLabel.SeeHowItWent -> R.drawable.ic_arrow_forward
-        PrimaryLabel.DontKnowYet -> R.drawable.ic_help
-        PrimaryLabel.SeeAnswer -> R.drawable.ic_visibility
-        PrimaryLabel.Start -> R.drawable.ic_play_arrow
-    }
 
 private fun PrimaryLabel.text(): Int =
     when (this) {
@@ -977,6 +990,17 @@ private fun ScreenMenu(
                 leadingIcon = { Icon(painterResource(R.drawable.ic_auto_awesome), contentDescription = null) },
             )
             HorizontalDivider()
+            val typed = screen?.step?.content as? StepContent.TypedAnswer
+            if (typed != null && state?.phase == LessonPhase.Playing && !isNumberAnswer(typed.content.acceptedAnswers)) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.player_cant_write_now)) },
+                    onClick = {
+                        open = false
+                        viewModel.skipWriting()
+                    },
+                    leadingIcon = { Icon(painterResource(R.drawable.ic_edit_off), contentDescription = null) },
+                )
+            }
             if (screen?.canKnowThis == true) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.player_know_this)) },

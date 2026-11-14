@@ -46,7 +46,8 @@ export function MemoryFactRow({
   fact: MemoryFactView;
   memoryEnabled: boolean;
   onDelete: () => void;
-  onEdit: (statement: string) => void;
+  /** Resolves to whether the new statement was saved; until then the sheet keeps it. */
+  onEdit: (statement: string) => Promise<boolean>;
 }) {
   const t = useExtracted();
   const [isEditing, setIsEditing] = useState(false);
@@ -83,7 +84,7 @@ export function MemoryFactRow({
               {t("Edit")}
             </DropdownMenuItem>
           ) : (
-            <DropdownMenuItem onClick={() => setIsEditing(true)}>
+            <DropdownMenuItem aria-haspopup="dialog" onClick={() => setIsEditing(true)}>
               <PencilIcon aria-hidden="true" />
               {t("Edit")}
             </DropdownMenuItem>
@@ -105,10 +106,7 @@ export function MemoryFactRow({
           maxLength={MAX_MEMORY_STATEMENT_LENGTH}
           multiline
           onClose={() => setIsEditing(false)}
-          onSave={(statement) => {
-            setIsEditing(false);
-            onEdit(statement);
-          }}
+          onSave={onEdit}
           title={t({
             description: "A memory is one fact Zoonk remembers about the learner.",
             message: "Edit memory",

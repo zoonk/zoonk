@@ -317,7 +317,7 @@ export function StepsFlow({
           // Answers change in "Adjust" now, not by going back through the questions.
           onBack: state.history.length > 0 && !isPlan ? back : undefined,
         }}
-        notice={<StepSaveError current={state.current} failed={failed} />}
+        failure={<StepSaveError current={state.current} failed={failed} />}
       >
         {/* Placement follows the run itself, so only the questions say it stopped. */}
         <PlanStartNoticeProvider

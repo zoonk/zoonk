@@ -14,7 +14,7 @@
   "audio_open_settings": "faa9ebb2a645f11f29ebbbeb0157e1a089f28264e5b1fd8124ae24aa788e9761",
   "audio_record": "693b387c4398cce4334373939e42ca9fbac2522d6bc88237da4c5f5ab04568d4",
   "audio_record_stop": "41d858f4fb46369b514886843f1ed6d01ea678cf59c01a8801ff677e1f4c08a0",
-  "audio_say_it": "132331ba05ab4804a916caabb0fe8ee6090150e3f2fb704c8c04d31def482175",
+  "audio_say_it": "abeeb779189e93f88bac844245fe431f061c72c20fca69856a1a31f2189f5137",
   "audio_stop": "3154d3d82c1f2d2cda28468ff17b700e528ebf00d80111cada3d089aacf91d63",
   "audio_try_again": "9bbd06183246ed1b589a5cf33708391401616f279fd4f157b1f273e030ceea1d",
   "audio_try_again_label": "7f57095bf65ca085095074c4ede013d95164b65ea583037d9bebec53f9cbcf68"
@@ -37,7 +37,7 @@
     <string name="audio_checking_slow">La vérification est toujours en cours. Cela prend plus de temps que d’habitude.</string>
     <string name="audio_no_speech">Nous n’avons entendu aucun mot. Réessaie.</string>
     <string name="audio_check_failed">Nous n’avons pas pu vérifier ta réponse cette fois. Réessaie.</string>
-    <string name="audio_say_it">Appuie et dis-le à voix haute</string>
+    <string name="audio_say_it">Appuie sur Enregistrer et dis-le à voix haute</string>
     <string name="audio_microphone_off_title">Le microphone est désactivé</string>
     <string name="audio_microphone_off_answer">Active le microphone pour Zoonk dans les paramètres pour répondre à voix haute.</string>
     <string name="audio_open_settings">Ouvrir les paramètres</string>

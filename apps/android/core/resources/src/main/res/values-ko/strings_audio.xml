@@ -14,7 +14,7 @@
   "audio_open_settings": "eea75fb9dbe49ddac9b9946d4e166e152c92eba47c6cccb7f2af796986284eb4",
   "audio_record": "214eb82843e16b3b63e71183c9bff02c1f74065e254ded9bf87eed3f187df17f",
   "audio_record_stop": "efc0ddcbb14e1301f15acf5957f1510ca00513920407c79480dcf9df84e1c89e",
-  "audio_say_it": "ea0700d3c86686e280f31be392f5db78192268bf369a46a69e2bbbaa1c6089ce",
+  "audio_say_it": "4442b29c515d861ac8ac949c89454b0d39a951b8f4f044f9ce93fc05b69256ac",
   "audio_stop": "d67e514aa54485349fb0493c4e742ce3b00cca0802bb2348ff6214e790233ae5",
   "audio_try_again": "0b419a9817a96e139104926a23074817aed1c19ff485be6c0f7d1cebb28b2b60",
   "audio_try_again_label": "8d421aa98cc257bb75f3fb0372f0611ab50e7f455423338bdaa50a185f8f18d7"
@@ -37,7 +37,7 @@
     <string name="audio_checking_slow">아직 확인하고 있어요. 평소보다 시간이 더 걸리고 있어요.</string>
     <string name="audio_no_speech">말소리가 들리지 않았어요. 다시 시도해 보세요.</string>
     <string name="audio_check_failed">이번에는 답을 확인하지 못했어요. 다시 시도해 보세요.</string>
-    <string name="audio_say_it">누르고 소리 내어 말하세요</string>
+    <string name="audio_say_it">녹음을 누르고 소리 내어 말해 보세요</string>
     <string name="audio_microphone_off_title">마이크가 꺼져 있어요</string>
     <string name="audio_microphone_off_answer">소리 내어 답하려면 설정에서 Zoonk의 마이크 사용을 허용하세요.</string>
     <string name="audio_open_settings">설정 열기</string>

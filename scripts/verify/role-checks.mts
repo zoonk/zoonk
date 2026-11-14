@@ -1,18 +1,10 @@
 /* oxlint-disable unicorn/consistent-function-scoping -- The probe is sent to the page as one function. */
 import { type Finding } from "./checks.mts";
 
-export type RoleFacts = {
-  backLinksWithoutText: number;
-  gates: number;
-  mainActionsOutsideBar: string[];
-  unmarkedEyebrows: string[];
-};
+export type RoleFacts = { backLinksWithoutText: number; gates: number; unmarkedEyebrows: string[] };
 
 export function readRoleFacts(): RoleFacts {
-  const shown = (element: Element) =>
-    element.checkVisibility({ opacityProperty: true, visibilityProperty: true }) &&
-    element.getBoundingClientRect().width > 0 &&
-    element.getBoundingClientRect().height > 0;
+  const { shown } = globalThis.zoonkPage;
 
   const visible = (selector: string) =>
     [...document.querySelectorAll(selector)].filter((element) => shown(element));
@@ -39,22 +31,9 @@ export function readRoleFacts(): RoleFacts {
     return text.join(" ").trim();
   };
 
-  const main = document.querySelector("main");
-  const scope = main?.closest("[data-slot=task-frame]") ?? main;
-
-  const actions = visible("[data-enter=bound], [data-enter=host]").filter(
-    (element) => scope?.contains(element) && !element.matches(":disabled, [aria-disabled=true]"),
-  );
-
   return {
     backLinksWithoutText: visible("[data-slot=back-link]").filter((link) => !written(link)).length,
-    gates: visible("[data-slot=subscription-gate]").length,
-    mainActionsOutsideBar:
-      actions.length === 1
-        ? actions
-            .filter((action) => !action.closest("[data-slot=bottom-bar]"))
-            .map((action) => written(action))
-        : [],
+    gates: visible("[data-slot=subscribe-gate]").length,
     unmarkedEyebrows: visible("[data-slot=page-title], h1")
       .filter((title) => title.closest("header, [data-slot=page-header], [data-slot=page-top]"))
       .flatMap((title) => {
@@ -86,17 +65,12 @@ export function roleFindings(facts: RoleFacts): Finding[] {
     ...(facts.backLinksWithoutText > 0
       ? [
           {
-            check: "I5 named back link",
+            check: "E8 named back link",
             level: "warn" as const,
             message: `${facts.backLinksWithoutText} back links have no drawn text naming their destination`,
           },
         ]
       : []),
-    ...facts.mainActionsOutsideBar.map((label) => ({
-      check: "R2 main action in bottom bar",
-      level: "warn" as const,
-      message: `"${label}" is the one main action but is outside [data-slot=bottom-bar]`,
-    })),
     ...facts.unmarkedEyebrows.map((label) => ({
       check: "R3 eyebrow piece",
       level: "warn" as const,

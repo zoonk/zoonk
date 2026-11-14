@@ -4,7 +4,7 @@ import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
-import { type ReactNode, useSyncExternalStore } from "react";
+import { type ReactNode, useCallback, useSyncExternalStore } from "react";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { type OpeningDay, toOpeningDay } from "../_utils/opening-day";
 import { CreateAccountLink } from "./create-account-link";
@@ -25,17 +25,24 @@ export type CalendarLimit =
   | SignUpRequired;
 
 /** The free plan's lessons come back one at a time: `availableAt` is the instant the next one opens. */
-type FreeLessonsUsed = {
+export type FreeLessonsUsed = {
   availableAt: string;
   period: "rolling30Days";
   status: "limitReached";
   tier: "free";
 };
 
-export type LessonLimit = CalendarLimit | FreeLessonsUsed;
+/** Any other new lesson stops for the day (the day's AI budget), or for a guest until they make an account. */
+type LessonCap = { status: "limitReached"; tier: EntitlementTier };
+
+export type LessonLimit =
+  | { retryAfterSeconds: number; status: "slowDown" }
+  | LessonCap
+  | SignUpRequired
+  | FreeLessonsUsed;
 
 /** `resource` says what ran out: the maps, the lessons a map writes first, or the day's AI spend. */
-export type MindMapLimit = LessonLimit & {
+export type MindMapLimit = (CalendarLimit | FreeLessonsUsed) & {
   resource?: "aiSpend" | "generatedLessons" | "lessonStart" | "mindMap";
 };
 
@@ -190,16 +197,53 @@ function useCapWords() {
 }
 
 function isFreeLessonsUsed(limit: LessonLimit): limit is FreeLessonsUsed {
-  return limit.status === "limitReached" && limit.period === "rolling30Days";
+  return "period" in limit && limit.period === "rolling30Days";
 }
 
-// oxlint-disable-next-line no-empty-function -- useSyncExternalStore requires a subscribe that returns an unsubscribe
-const subscribeToNothing = () => () => {};
+/** The longest wait `setTimeout` holds; a later instant is waited for in steps. */
+const MAX_TIMER_MS = 2_147_483_647;
 
-/** The server doesn't know the learner's time zone, so it draws the day in UTC and the browser corrects it. */
+/** Tells the screen when the instant passes, and when the tab is seen again (a computer that slept). */
+function watchOpening(availableAt: string | null, notify: () => void) {
+  const opens = availableAt ? Date.parse(availableAt) : Number.NaN;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  const wait = () => {
+    const left = opens - Date.now();
+
+    if (left > 0) {
+      timer = setTimeout(
+        () => {
+          notify();
+          wait();
+        },
+        Math.min(left, MAX_TIMER_MS),
+      );
+    }
+  };
+
+  wait();
+  document.addEventListener("visibilitychange", notify);
+
+  return () => {
+    clearTimeout(timer);
+    document.removeEventListener("visibilitychange", notify);
+  };
+}
+
+/**
+ * The day follows the clock while the screen is open, so a passed instant stops being promised.
+ * The server doesn't know the learner's time zone, so it draws the day in UTC and the browser
+ * corrects it.
+ */
 function useOpeningDay(availableAt: string | null): OpeningDay | null {
+  const subscribe = useCallback(
+    (notify: () => void) => watchOpening(availableAt, notify),
+    [availableAt],
+  );
+
   return useSyncExternalStore(
-    subscribeToNothing,
+    subscribe,
     () => toOpeningDay({ availableAt, now: new Date(), timeZone: getLocalTimeZone() }),
     () => toOpeningDay({ availableAt, now: new Date(), timeZone: "UTC" }),
   );
@@ -231,21 +275,38 @@ function useNextFreeLessonLine() {
   };
 }
 
+/** Whether a free learner's next lesson has opened since the refusal: the server then gets asked again. */
+export function useFreeLessonReady(limit: LessonLimit): boolean {
+  return useOpeningDay(isFreeLessonsUsed(limit) ? limit.availableAt : null) === "open";
+}
+
 export function useLessonLimitWords(limit: LessonLimit): LimitWords {
   const t = useExtracted();
-  const capWords = useCapWords();
+  const refusal = useRefusalWords();
+  const comesBack = useComesBackLine();
   const nextFreeLesson = useNextFreeLessonLine();
   const opensOn = useOpeningDay(isFreeLessonsUsed(limit) ? limit.availableAt : null);
+
+  if (opensOn === "open") {
+    return { title: t("Your next free lesson is ready") };
+  }
 
   if (isFreeLessonsUsed(limit)) {
     return { line: nextFreeLesson(opensOn), title: t("You've used your free lessons") };
   }
 
-  return capWords(limit, {
-    day: t("No more new lessons today"),
-    guest: t("No more lessons without an account"),
-    month: t("No more new lessons this month"),
-  });
+  if (limit.status !== "limitReached") {
+    return refusal(limit);
+  }
+
+  if (limit.tier === "guest") {
+    return { title: t("No more lessons without an account") };
+  }
+
+  return {
+    line: comesBack({ period: "day", status: "limitReached", tier: limit.tier }),
+    title: t("No more new lessons today"),
+  };
 }
 
 function useMindMapRefusalWords(limit: MindMapLimit): LimitWords {

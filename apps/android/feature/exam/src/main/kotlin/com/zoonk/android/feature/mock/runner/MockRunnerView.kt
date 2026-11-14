@@ -396,8 +396,6 @@ private fun RunnerActions(
                 enabled = !run.pending && run.moves.canAdvance,
                 onClick = { if (last) onHandIn() else viewModel.go(run.position + 1) },
                 modifier = width,
-                leadingIcon = if (last) ({ ButtonIcon(R.drawable.ic_send) }) else null,
-                trailingIcon = if (last) null else ({ ButtonIcon(R.drawable.ic_arrow_forward) }),
             )
         }
     }

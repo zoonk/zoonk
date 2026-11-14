@@ -1,10 +1,10 @@
 "use client";
 
 import { type ProgressView } from "@zoonk/core/view-models/progress/get";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { useExtracted } from "next-intl";
 import { BigQuantity } from "../../_components/big-quantity";
 import { KindDot, KindMark } from "../../_components/kind-tile";
-import { ListRowChevron } from "../../_components/list-group";
 import { Meter, MeterFill } from "../../_components/meter";
 import { QuietDisclosure } from "../../_components/quiet-disclosure";
 import { SectionLabel } from "../../_components/section-label";
@@ -58,8 +58,15 @@ function EstimatedScore({ preparation }: { preparation: Preparation }) {
   );
 }
 
-function useMeasureNote(forExam: boolean): string {
+/** A learner without mock exams reads the review their day names "Review", never a mock. */
+function useMeasureNote({ forExam, preparation }: { forExam: boolean; preparation: Preparation }) {
   const t = useExtracted();
+
+  if (forExam && preparation.components.mocks.kind === "fullReviews") {
+    return t(
+      "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once.",
+    );
+  }
 
   return forExam
     ? t(
@@ -73,7 +80,7 @@ function useMeasureNote(forExam: boolean): string {
 function Readout({ share, value }: { share: number; value: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2" data-slot="preparation-readout">
-      <span className="text-readout text-4xl leading-none">
+      <span className="text-readout text-[2.5rem] leading-none">
         {typeof value === "string" ? <BigQuantity>{value}</BigQuantity> : value}
       </span>
       <Meter>
@@ -128,7 +135,7 @@ function StillNeededRow({ examHref, item }: { examHref: string | null; item: Sti
         href={examHref}
       >
         {content}
-        <ListRowChevron />
+        <RowChevron />
       </LearnLink>
     );
   }
@@ -186,7 +193,7 @@ export function PreparationDetails({
   value: React.ReactNode;
 }) {
   const t = useExtracted();
-  const note = useMeasureNote(forExam);
+  const note = useMeasureNote({ forExam, preparation });
 
   return (
     <div className="flex flex-col gap-6">

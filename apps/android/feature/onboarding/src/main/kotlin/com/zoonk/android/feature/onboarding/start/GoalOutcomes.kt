@@ -33,9 +33,10 @@ import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.goalErrorMessage
 import com.zoonk.android.feature.onboarding.goalLimitMessage
-import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.scaffold.pageTitle
@@ -106,7 +107,7 @@ internal fun GoalErrorAlert(
     error: GoalError?,
     onCreateAccount: () -> Unit,
     onOpenPlan: () -> Unit,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
 ) {
     error ?: return
     val alert = Modifier.semantics { liveRegion = LiveRegionMode.Polite }
@@ -114,7 +115,7 @@ internal fun GoalErrorAlert(
 
     when {
         limit != null && limit.isPlusLimit -> {
-            GoalLimitNotice(limit, upFront = false, onOpenPlan = onOpenPlan, onSeePlus = onSeePlus, modifier = alert)
+            GoalLimitNotice(limit, onOpenPlan = onOpenPlan, onSubscribe = onSubscribe, modifier = alert)
         }
 
         error.needsAccount -> {
@@ -141,52 +142,52 @@ internal fun ColumnScope.GoalFooter(
     error: GoalError?,
     onCreateAccount: () -> Unit,
     onOpenPlan: () -> Unit,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
     actions: @Composable ColumnScope.() -> Unit,
 ) {
     if (error?.needsAccount == true) {
-        OnboardingActions { GoalErrorAlert(error, onCreateAccount, onOpenPlan, onSeePlus) }
+        OnboardingActions { GoalErrorAlert(error, onCreateAccount, onOpenPlan, onSubscribe) }
         return
     }
-    GoalErrorAlert(error, onCreateAccount, onOpenPlan, onSeePlus)
+    GoalErrorAlert(error, onCreateAccount, onOpenPlan, onSubscribe)
     OnboardingActions(actions)
 }
 
-/** Shown only for limits Plus lifts. */
+/** The gate a learner meets on trying to start a goal that only subscribing makes room for. */
 @Composable
 internal fun GoalLimitNotice(
     reason: GoalLimitReason,
-    upFront: Boolean,
     onOpenPlan: () -> Unit,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (!reason.isPlusLimit) return
 
     if (reason != GoalLimitReason.ActiveGoals) {
-        PlusNotice(onSeePlus = onSeePlus, modifier = modifier, description = goalLimitMessage(reason))
+        SubscribeGate(
+            title = stringResource(R.string.onboarding_month_goals_title),
+            onSubscribe = onSubscribe,
+            modifier = modifier,
+            line = stringResource(R.string.onboarding_month_goals_line),
+        )
         return
     }
-    PlusNotice(
-        onSeePlus = onSeePlus,
+    SubscribeGate(
+        title = stringResource(R.string.onboarding_goals_at_once_title),
+        onSubscribe = onSubscribe,
         modifier = modifier,
-        title = stringResource(R.string.onboarding_plus_more_goals),
-        description = if (upFront) stringResource(R.string.onboarding_plus_more_goals_up_front) else goalLimitMessage(reason),
+        line = stringResource(R.string.onboarding_goals_at_once_line),
         action = {
-            OutlinedButton(
-                onClick = onOpenPlan,
-            ) {
-                Text(stringResource(R.string.onboarding_go_to_plan))
-            }
+            OutlinedButton(onClick = onOpenPlan, size = ButtonSize.Small) { Text(stringResource(R.string.onboarding_go_to_plan)) }
         },
     )
 }
 
-/** In place of confirming, when Plus is what lifts the limit. */
+/** In place of confirming, when only subscribing makes room for the goal. */
 @Composable
 internal fun ColumnScope.GoalLimitWall(
     reason: GoalLimitReason,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
     onOpenPlan: () -> Unit,
 ) {
     OnboardingActions {
@@ -196,13 +197,13 @@ internal fun ColumnScope.GoalLimitWall(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-        Button(onClick = onSeePlus, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.onboarding_see_plus)) }
         if (reason == GoalLimitReason.ActiveGoals) {
             OutlinedButton(
                 onClick = onOpenPlan,
                 modifier = Modifier.fillMaxWidth(),
             ) { Text(stringResource(R.string.onboarding_go_to_plan)) }
         }
+        Button(onClick = onSubscribe, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.subscription_subscribe)) }
     }
 }
 
@@ -216,17 +217,16 @@ internal fun ColumnScope.ExplainGoal(
     onStart: () -> Unit,
     onCreateAccount: () -> Unit,
     onOpenPlan: () -> Unit,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
 ) {
     TypedGoal(goal)
     OutcomeIcon(R.drawable.ic_lightbulb)
     OnboardingHeading(question, stringResource(R.string.onboarding_explain_description))
-    GoalFooter(error, onCreateAccount, onOpenPlan, onSeePlus) {
+    GoalFooter(error, onCreateAccount, onOpenPlan, onSubscribe) {
         Button(
             busy = isStarting,
             onClick = onStart,
             modifier = Modifier.fillMaxWidth(),
-            leadingIcon = { ButtonIcon(R.drawable.ic_lightbulb) },
         ) { Text(stringResource(R.string.onboarding_explain_it)) }
     }
 }
@@ -269,7 +269,7 @@ internal fun ColumnScope.InstrumentGoal(
     onJoinWaitlist: () -> Unit,
     onCreateAccount: () -> Unit,
     onOpenPlan: () -> Unit,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
 ) {
     TypedGoal(goal)
     OutcomeIcon(R.drawable.ic_music_note)
@@ -318,12 +318,11 @@ internal fun ColumnScope.InstrumentGoal(
         null -> {}
     }
 
-    GoalFooter(error, onCreateAccount, onOpenPlan, onSeePlus) {
+    GoalFooter(error, onCreateAccount, onOpenPlan, onSubscribe) {
         Button(
             busy = isStarting,
             onClick = onStartMusicianship,
             modifier = Modifier.fillMaxWidth(),
-            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
         ) { Text(stringResource(R.string.onboarding_start_musicianship)) }
         TextButton(
             busy = isJoining,

@@ -33,10 +33,7 @@ export function useReasonCopy() {
       case "certificate":
         return { description: t("IELTS, DELE, CELI and others"), label: t("Pass a certificate") };
       case "other":
-        return {
-          description: t("In your own words. Aims for {level}", { level: view.aim ?? "" }),
-          label: t("Something else"),
-        };
+        return { description: t("In your own words"), label: t("Something else") };
       default:
         return view.reason satisfies never;
     }

@@ -4,7 +4,6 @@ import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -75,7 +74,6 @@ import com.zoonk.android.ui.characters.BuddyGlasses
 import com.zoonk.android.ui.characters.BuddyGlassesPicker
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
-import com.zoonk.android.ui.characters.buddyStageName
 import com.zoonk.android.ui.characters.rememberBuddyActorState
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -214,7 +212,7 @@ fun BuddyPage(
         TutorRoutes(
             createAccount = { navigator.open(AppRoute.Login) },
             signIn = { navigator.open(AppRoute.Login) },
-            seePlus = { navigator.open(AppRoute.Subscription) },
+            subscribe = { navigator.open(AppRoute.Subscription) },
             open = navigator::open,
             startCall = app.conversations,
         )
@@ -299,20 +297,8 @@ internal fun BuddyHeader(
         Box(Modifier.size(FACE_SIZE)) {
             if (face != null) BuddyActor(look, Modifier.size(FACE_SIZE), state = face) else BuddyStill(look)
         }
-        // With large text the day's line moves under the name instead of squeezing it.
-        FlowRow(
-            Modifier.weight(1f),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            itemVerticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column {
-                Text(name, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
-                Text(
-                    stringResource(R.string.buddy_page_line, buddyStageName(look.stage)),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
+        Column(Modifier.weight(1f), horizontalAlignment = Alignment.Start) {
+            Text(name, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
             line?.invoke()
         }
         menu?.invoke()

@@ -55,8 +55,7 @@ final class ProfileDraftTests: XCTestCase {
       ))
     XCTAssertEqual(
       try sent(draft.skipInput),
-      try decode(
-        #"{"question":"conditions","answer":{"conditions":[],"consented":false,"declined":true}}"#))
+      try decode(#"{"question":"conditions","answer":{"declined":true}}"#))
   }
 
   func testTheAddressFormSendsOneFormAndRatherNotSayDeclinesIt() throws {
@@ -71,7 +70,9 @@ final class ProfileDraftTests: XCTestCase {
 
     let declined = try XCTUnwrap(
       Self.fixtures.first { $0.view.id == .addressForm && $0.view.status == .declined })
-    XCTAssertEqual(try sent(draft.skipInput), declined.answer)
+    XCTAssertEqual(
+      try sent(draft.skipInput),
+      try decode(#"{"question":"addressForm","answer":{"declined":true}}"#))
     XCTAssertEqual(
       try sent(ProfileDraft(declined.view).declining(.ratherNotSay).input), declined.answer)
   }

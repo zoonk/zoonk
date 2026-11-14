@@ -5,6 +5,8 @@ import { type ReactNode } from "react";
 import { HERO_CLASS, PUBLIC_CONTAINER_CLASS } from "./landing-styles";
 import { PublicFooter } from "./public-footer";
 import { PublicHeader } from "./public-header";
+import { PublicStartBar } from "./public-start-bar";
+import { VisitorOnly } from "./visitor-only";
 
 export const PUBLIC_COLUMN_CLASS = "mx-auto w-full max-w-[704px] px-4 sm:px-6";
 
@@ -27,6 +29,12 @@ export function PublicPage({
       <PublicHeader ownStart={ownStart} pathname={pathname} />
       <main className={cn("flex-1", className)}>{children}</main>
       <PublicFooter pathname={pathname} />
+
+      {ownStart && (
+        <VisitorOnly>
+          <PublicStartBar />
+        </VisitorOnly>
+      )}
     </div>
   );
 }

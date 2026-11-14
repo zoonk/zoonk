@@ -51,7 +51,10 @@ export type LessonPlayerSlots = {
   completion?: (props: LessonCompletionSlotProps) => ReactNode;
   /** Return null to keep the lesson header; render `menu` at the replacement header's end. */
   completionHeader?: (props: LessonCompletionSlotProps & { menu: ReactNode }) => ReactNode;
+  /** The lesson end's bar, in place of its links to the next lesson. */
   completionActions?: (props: LessonCompletionSlotProps) => ReactNode;
+  /** More under a saved lesson's end, above its bar. */
+  completionDetails?: (props: LessonCompletionSlotProps) => ReactNode;
   finishedChapter?: (chapter: FinishedChapter) => ReactNode;
   reportMenuItem?: (target: LessonReportTarget) => ReactNode;
 };

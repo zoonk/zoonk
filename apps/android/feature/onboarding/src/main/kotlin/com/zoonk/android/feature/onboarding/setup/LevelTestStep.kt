@@ -215,7 +215,6 @@ private fun ColumnScope.LevelTestIntro(
                 onClick = onStart,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !pending,
-                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
             ) {
                 Text(stringResource(R.string.onboarding_placement_start))
             }
@@ -512,7 +511,6 @@ private fun ColumnScope.LevelTestDone(
                 busy = pending,
                 onClick = onContinue,
                 modifier = Modifier.fillMaxWidth(),
-                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             ) {
                 Text(stringResource(R.string.onboarding_language_test_build_plan))
             }

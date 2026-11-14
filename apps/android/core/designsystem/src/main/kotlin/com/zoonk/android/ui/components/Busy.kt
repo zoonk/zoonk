@@ -27,6 +27,7 @@ import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.R
 
 /*
  * Main's busy state, for every button in Buttons.kt and for rows. From the press until its work ends
@@ -105,33 +106,36 @@ internal fun ButtonColors.disabledWhen(waiting: Boolean): ButtonColors =
     if (waiting) copy(containerColor = disabledContainerColor, contentColor = disabledContentColor) else this
 
 /**
- * A button's words with [padding] around them and its icon before ([leadingIcon]) or after
- * ([trailingIcon]) them; while [busy], a spinner takes the icon's place, or covers the words without one.
+ * A button's words with [padding] around them and one glyph: an icon before them ([leadingIcon]) or the
+ * forward chevron after them ([forward]), never both. While [busy], a spinner takes the glyph's place,
+ * or covers the words without one.
  */
 @Composable
 internal fun ButtonContent(
     busy: Boolean,
     leadingIcon: (@Composable () -> Unit)?,
-    trailingIcon: (@Composable () -> Unit)?,
+    forward: Boolean,
     iconSize: Dp,
     padding: PaddingValues,
     content: @Composable RowScope.() -> Unit,
 ) {
-    if (leadingIcon == null && trailingIcon == null) {
+    require(leadingIcon == null || !forward) { "A button shows at most one glyph." }
+
+    if (leadingIcon == null && !forward) {
         BusyContent(busy) { Row(Modifier.padding(padding), verticalAlignment = Alignment.CenterVertically, content = content) }
         return
     }
 
-    // The words are weighted so they're measured after the icon's spot, wrapping instead of taking it.
+    // The words are weighted so they're measured after the glyph's spot, wrapping instead of taking it.
     Row(Modifier.padding(padding), verticalAlignment = Alignment.CenterVertically) {
         leadingIcon?.let {
             IconSlot(busy, iconSize, it)
             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
         }
         Row(Modifier.weight(1f, fill = false), verticalAlignment = Alignment.CenterVertically, content = content)
-        trailingIcon?.let {
+        if (forward) {
             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-            IconSlot(busy, iconSize, it)
+            IconSlot(busy, iconSize) { ButtonIcon(R.drawable.ic_chevron_right) }
         }
     }
 }

@@ -243,11 +243,12 @@ private fun SqlTableViewer(table: SqlTable) {
             )
         }
         if (open) {
+            HorizontalDivider(color = colors.outlineVariant)
             SqlRowsTable(
                 caption = stringResource(R.string.activities_code_table_named, table.name),
                 columns = table.columns.map { it.name },
                 rows = table.rows.map { row -> row.map { it.primitive() } },
-                modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
+                framed = false,
             )
         }
     }
@@ -269,6 +270,7 @@ private fun SqlRowsTable(
     rows: SqlRows,
     modifier: Modifier = Modifier,
     rowStates: List<RowState>? = null,
+    framed: Boolean = true,
 ) {
     val colors = MaterialTheme.colorScheme
     val shape = RoundedCornerShape(ZoonkRadius.option)
@@ -289,12 +291,12 @@ private fun SqlRowsTable(
     val extra = stringResource(R.string.activities_code_row_extra)
     val missing = stringResource(R.string.activities_code_row_missing)
 
+    val frame = if (framed) Modifier.clip(shape).background(colors.surface).border(1.dp, colors.outlineVariant, shape) else Modifier
+
     BoxWithConstraints(
         modifier
             .fillMaxWidth()
-            .clip(shape)
-            .background(colors.surface)
-            .border(1.dp, colors.outlineVariant, shape)
+            .then(frame)
             .semantics { contentDescription = caption },
     ) {
         val natural = naturalWidths.fold(0.dp) { sum, width -> sum + width }
@@ -307,6 +309,7 @@ private fun SqlRowsTable(
                         name,
                         Modifier.width(widths[index]).padding(horizontal = CELL_PADDING, vertical = 6.dp),
                         color = colors.onSurfaceVariant,
+                        textAlign = if (rows.isNumberColumn(index)) TextAlign.End else TextAlign.Start,
                         style = header,
                     )
                 }
@@ -347,6 +350,11 @@ private fun SqlRowsTable(
             }
         }
     }
+}
+
+private fun SqlRows.isNumberColumn(column: Int): Boolean {
+    val values = mapNotNull { row -> row.getOrNull(column)?.takeUnless { it is JsonNull } }
+    return values.isNotEmpty() && values.none { it.isString }
 }
 
 /** Main's `SqlResult`: the learner's rows, marked against the expected ones once checked. */

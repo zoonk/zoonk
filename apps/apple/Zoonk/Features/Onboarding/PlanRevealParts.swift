@@ -39,7 +39,7 @@ struct RevealHero: View {
   }
 }
 
-/// Main's `RevealReadouts`: the time a day, the lessons and when it ends, side by side.
+/// Main's `RevealReadouts`: the time a day and when it ends, side by side.
 struct RevealReadouts: View {
   let plan: GoalPlan
   let isExam: Bool
@@ -48,14 +48,6 @@ struct RevealReadouts: View {
     HStack(alignment: .top, spacing: 0) {
       readout(label: timeLabel) {
         BigQuantity(planDurationText(minutes: Double(plan.schedule.shape.weekdays)))
-      }
-
-      if lessons.total > 0 {
-        Divider()
-        readout(label: lessonsLabel) {
-          EarnedNumber(value: lessons.total, delay: .beat, isSigned: false)
-            .typeStyle(.readout)
-        }
       }
 
       if let finish {
@@ -101,33 +93,6 @@ struct RevealReadouts: View {
         localized: "a day", table: "Onboarding",
         comment: "Under the plan's time a day, as in \"15 min a day\"")
       : studyDaysText(schedule.weekdayMinutes)
-  }
-
-  /// Main's `useRevealPhases`: studying after an exam comes past its finish.
-  private var lessons: (total: Int, done: Int) {
-    let phases = plan.phases.filter { $0.kind != .afterExam }
-    return (phases.reduce(0) { $0 + $1.lessonsTotal }, phases.reduce(0) { $0 + $1.lessonsDone })
-  }
-
-  /// Under the number, so it never shows it: one string for one lesson and one for more.
-  private var lessonsLabel: String {
-    switch (lessons.total == 1, lessons.done > 0) {
-    case (true, true):
-      String(
-        localized: "lesson, \(lessons.done) done", table: "Onboarding",
-        comment: "Under the plan's number of lessons when it's one, once it's done")
-    case (false, true):
-      String(
-        localized: "lessons, \(lessons.done) done", table: "Onboarding",
-        comment: "Under the plan's number of lessons, once some are done; the argument is how many")
-    case (true, false):
-      String(
-        localized: "lesson", table: "Onboarding",
-        comment: "Under the plan's number of lessons when it's one")
-    case (false, false):
-      String(
-        localized: "lessons", table: "Onboarding", comment: "Under the plan's number of lessons")
-    }
   }
 
   private var finish: (value: AnyView, label: String)? {
@@ -184,7 +149,7 @@ private struct MonthYear: View {
 
   var body: some View {
     let parts = date.formatted(
-      Date.FormatStyle(timeZone: .gmt).month(.abbreviated).year().attributed)
+      Date.FormatStyle(timeZone: .gmt).month(.abbreviated).year().attributedStyle)
 
     HStack(alignment: .firstTextBaseline, spacing: 0) {
       ForEach(Array(parts.runs.enumerated()), id: \.offset) { _, run in
@@ -200,7 +165,8 @@ private struct MonthYear: View {
         }
       }
     }
-    .accessibilityElement(children: .combine)
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(String(parts.characters))
   }
 }
 
@@ -285,10 +251,13 @@ struct RevealTodayPlaceholder: View {
   }
 }
 
-/// Main's `RevealWeek`: the six days after today, each day's lessons by name.
+/// Main's `RevealWeek`: the six days after today, each day's lessons by name. A phone's short
+/// rows leave out the lessons' marks.
 struct RevealWeek: View {
   let days: [RevealDay]
   let week: PlanRevealRead.Week
+
+  @Environment(\.horizontalSizeClass) private var sizeClass
 
   private static let marksShown = 4
 
@@ -325,7 +294,7 @@ struct RevealWeek: View {
       Text(revealDay(day.date))
         .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
-        .frame(minWidth: 84, alignment: .leading)
+        .frame(minWidth: 56, alignment: .leading)
 
       VStack(alignment: .leading, spacing: 2) {
         if day.items.isEmpty {
@@ -340,7 +309,7 @@ struct RevealWeek: View {
       .typeStyle(.body)
       .frame(maxWidth: .infinity, alignment: .leading)
 
-      if !day.items.isEmpty {
+      if !day.items.isEmpty, sizeClass != .compact {
         HStack(spacing: 4) {
           ForEach(Array(day.items.prefix(Self.marksShown).enumerated()), id: \.offset) { _, item in
             KindMark(kind: item.kind.learnKind)
@@ -359,7 +328,6 @@ struct RevealWeek: View {
   }
 }
 
-/// "Mon, Nov 9", in the locale's order.
 private func revealDay(_ isoDate: String) -> String {
   guard let date = PlanDate.date(isoDate) else {
     return isoDate

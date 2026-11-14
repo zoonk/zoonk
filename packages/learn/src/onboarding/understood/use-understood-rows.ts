@@ -163,7 +163,7 @@ function useTargetRow() {
         aimChoices: languageAim.choices,
         editable: { key: "targetScore", kind: "aim" },
         id: "targetScore",
-        label: t("Level you're aiming for"),
+        label: words.title,
         note: words.label(languageAim.aim) ?? undefined,
         value: languageAim.aim,
       };
