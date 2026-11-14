@@ -40,12 +40,10 @@ extension ScorePatterns {
       switch dayVerdict {
       case .best(let best):
         String(
-          localized: "Your best day is \(best.weekday.localizedTitle()).", table: "Progress",
-          comment: "Over the patterns charts; the argument is a weekday's full name")
+          localized: "Your best day is \(best.weekday.localizedTitle()).", table: "Progress")
       case .even:
         String(
-          localized: "You answer about the same every day.", table: "Progress",
-          comment: "Over the patterns charts, when every day scores about the same")
+          localized: "You answer about the same every day.", table: "Progress")
       case .notEnough:
         nil
       }
@@ -56,8 +54,7 @@ extension ScorePatterns {
         best.daypart.bestTimeSentence
       case .even:
         String(
-          localized: "The time of day makes no difference.", table: "Progress",
-          comment: "Over the patterns charts, when every part of the day scores about the same")
+          localized: "The time of day makes no difference.", table: "Progress")
       case .notEnough:
         nil
       }
@@ -66,8 +63,7 @@ extension ScorePatterns {
 
     return parts.isEmpty
       ? String(
-        localized: "Answer more questions to see when you do best.", table: "Progress",
-        comment: "Over the patterns charts, before there are enough answers")
+        localized: "Answer more questions to see when you do best.", table: "Progress")
       : parts.joined(separator: " ")
   }
 }
@@ -418,8 +414,7 @@ private struct WeekPatterns: View {
   var body: some View {
     PatternChart(
       title: Text(
-        "Throughout the week", tableName: "Progress",
-        comment: "Title of the chart with a column per day of the week"),
+        "Throughout the week", tableName: "Progress"),
       bestLabel: String(
         localized: "Best day", table: "Progress",
         comment: "The day of the week the learner answers best"),
@@ -444,8 +439,7 @@ private struct DayPatterns: View {
   var body: some View {
     PatternChart(
       title: Text(
-        "Throughout the day", tableName: "Progress",
-        comment: "Title of the chart with a column per part of the day"),
+        "Throughout the day", tableName: "Progress"),
       bestLabel: String(
         localized: "Best time", table: "Progress",
         comment: "The part of the day the learner answers best"),

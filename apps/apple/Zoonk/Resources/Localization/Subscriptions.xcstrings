@@ -753,7 +753,6 @@
       }
     },
     "A certificate for every level you finish" : {
-      "comment" : "Zoonk Plus benefit: certificates for finished course and language levels",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -812,30 +811,29 @@
       }
     },
     "A plan for your goal and your date" : {
-      "comment" : "Free plan: a plan for the learner's goal",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Plan für dein Ziel und deinen Termin"
+            "value" : "Ein Plan für dein Ziel und dein Zieldatum"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un plan para alcanzar tu objetivo en la fecha que elijas"
+            "value" : "Un plan adaptado a tu objetivo y a tu fecha"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un plan adapté à ton objectif et à ton échéance"
+            "value" : "Un plan adapté à ton objectif et à ta date"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un piano per il tuo obiettivo e la data che hai scelto"
+            "value" : "Un piano per il tuo obiettivo e la tua scadenza"
           }
         },
         "ja" : {
@@ -847,7 +845,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "목표와 원하는 날짜에 맞춘 계획"
+            "value" : "목표와 목표일에 맞춘 계획"
           }
         },
         "pl" : {
@@ -859,7 +857,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um plano para seu objetivo e seu prazo"
+            "value" : "Um plano para seu objetivo e sua data"
           }
         },
         "tr" : {
@@ -930,36 +928,35 @@
       }
     },
     "An AI study buddy whenever you're stuck" : {
-      "comment" : "Zoonk Plus benefit: the study buddy",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein KI-Lernkumpel, wenn du nicht weiterkommst"
+            "value" : "Ein KI-Lernkumpel, der dir hilft, wenn du nicht weiterkommst"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un compañero de estudio con IA cuando necesites ayuda"
+            "value" : "Un compañero de estudio con IA cuando no sepas cómo seguir"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un compagnon d’étude IA pour t’aider quand tu bloques"
+            "value" : "Un Compagnon d’étude avec IA quand tu bloques"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un compagno di studio con l’IA quando ti serve aiuto"
+            "value" : "Un compagno di studio con l’IA ogni volta che ti blocchi"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "困ったときにいつでも頼れる学習の相棒AI"
+            "value" : "困ったときはいつでも、AIが学習の相棒に"
           }
         },
         "ko" : {
@@ -971,19 +968,19 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kumpel do nauki z AI, który pomoże, gdy utkniesz"
+            "value" : "Kumpel do nauki z AI zawsze, gdy potrzebujesz pomocy"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um Parceiro de estudos com IA para quando você precisar de ajuda"
+            "value" : "Um parceiro de estudos com IA para quando você precisar de ajuda"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Takıldığın her an yardımcı olacak yapay zekâ destekli bir ders arkadaşı"
+            "value" : "Takıldığın her an yanında olan yapay zekâ destekli bir ders arkadaşı"
           }
         }
       }
@@ -1274,7 +1271,6 @@
       }
     },
     "Bought on the website" : {
-      "comment" : "Plus bought on the website, shown beside a store purchase",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1285,13 +1281,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprado en el sitio web"
+            "value" : "Contratado en el sitio web"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acheté sur le site web"
+            "value" : "Souscrit sur le site web"
           }
         },
         "it" : {
@@ -1309,13 +1305,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "웹사이트에서 구매"
+            "value" : "웹사이트에서 구독한 Plus"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kupiono na stronie internetowej"
+            "value" : "Zakup na stronie internetowej"
           }
         },
         "pt" : {
@@ -1327,18 +1323,17 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Web sitesinden alındı"
+            "value" : "Web sitesinden satın alındı"
           }
         }
       }
     },
     "Can I get a refund?" : {
-      "comment" : "A pricing question",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kann ich mein Geld zurückbekommen?"
+            "value" : "Kann ich eine Rückerstattung bekommen?"
           }
         },
         "es" : {
@@ -1356,7 +1351,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Posso ricevere un rimborso?"
+            "value" : "Posso avere un rimborso?"
           }
         },
         "ja" : {
@@ -1374,7 +1369,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Czy mogę dostać zwrot pieniędzy?"
+            "value" : "Czy mogę otrzymać zwrot pieniędzy?"
           }
         },
         "pt" : {
@@ -1386,7 +1381,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para iadesi alabilir miyim?"
+            "value" : "Ücret iadesi alabilir miyim?"
           }
         }
       }
@@ -1746,7 +1741,6 @@
       }
     },
     "Create a free account" : {
-      "comment" : "Opens sign-up from the free plan's card for a guest",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1787,7 +1781,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utwórz bezpłatne konto"
+            "value" : "Załóż bezpłatne konto"
           }
         },
         "pt" : {
@@ -1805,7 +1799,6 @@
       }
     },
     "Create an account" : {
-      "comment" : "Asks a guest to create an account before subscribing",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1846,7 +1839,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utwórz konto"
+            "value" : "Załóż konto"
           }
         },
         "pt" : {
@@ -2218,7 +2211,6 @@
       }
     },
     "Is Plus really unlimited?" : {
-      "comment" : "A pricing question",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2259,7 +2251,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Czy Plus naprawdę jest bez limitów?"
+            "value" : "Czy Plus naprawdę nie ma limitów?"
           }
         },
         "pt" : {
@@ -2336,12 +2328,11 @@
       }
     },
     "Keep Plus, and it renews as before." : {
-      "comment" : "Above the button that turns the stopped renewal of Plus bought on the web back on",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn du Plus behältst, verlängert sich dein Abo wie bisher."
+            "value" : "Wenn du Plus behältst, verlängert es sich wie bisher."
           }
         },
         "es" : {
@@ -2353,37 +2344,37 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec « Garder Plus », le renouvellement reprend comme avant."
+            "value" : "Garde Plus et ton abonnement se renouvellera comme avant."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantieni Plus e l’abbonamento si rinnoverà come prima."
+            "value" : "Mantieni Plus e si rinnoverà come prima."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plusを継続すると、これまでどおり自動更新されます。"
+            "value" : "Plusを継続すると、これまでと同じように自動更新されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "‘Plus 계속 이용하기’를 선택하면 이전처럼 갱신돼요."
+            "value" : "Plus를 계속 이용하면 이전처럼 자동 갱신돼요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zachowaj Plus, a pakiet będzie się odnawiać tak jak wcześniej."
+            "value" : "Jeśli zachowasz Plus, będzie się odnawiać jak wcześniej."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantenha o Plus e a renovação continua como antes."
+            "value" : "Mantenha o Plus e ele será renovado como antes."
           }
         },
         "tr" : {
@@ -2454,7 +2445,6 @@
       }
     },
     "Log in again" : {
-      "comment" : "Title shown when subscription synchronization requires authentication",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2465,13 +2455,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vuelve a iniciar sesión"
+            "value" : "Volver a iniciar sesión"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reconnecte-toi"
+            "value" : "Se reconnecter"
           }
         },
         "it" : {
@@ -2489,7 +2479,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "다시 로그인해 주세요"
+            "value" : "다시 로그인하기"
           }
         },
         "pl" : {
@@ -2631,12 +2621,11 @@
       }
     },
     "Manage in App Store" : {
-      "comment" : "Button that opens Apple's subscription settings for Plus bought in the App Store",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App-Store-Abo verwalten"
+            "value" : "Im App Store verwalten"
           }
         },
         "es" : {
@@ -2678,7 +2667,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gerenciar via App Store"
+            "value" : "Gerenciar na App Store"
           }
         },
         "tr" : {
@@ -2690,18 +2679,17 @@
       }
     },
     "Mock exams, timed like the real one" : {
-      "comment" : "Zoonk Plus benefit: timed mock exams",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Probeprüfungen unter echten Zeitbedingungen"
+            "value" : "Probeprüfungen mit Zeitvorgaben wie in der echten Prüfung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simulacros con el mismo tiempo que el examen real"
+            "value" : "Simulacros, con el mismo límite de tiempo que el examen real"
           }
         },
         "fr" : {
@@ -2725,7 +2713,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "실제 시험과 같은 제한 시간으로 보는 모의고사"
+            "value" : "실제 시험과 시간 제한이 같은 모의고사"
           }
         },
         "pl" : {
@@ -2737,24 +2725,23 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simulados com tempo de prova"
+            "value" : "Simulados com tempo de prova real"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gerçek sınavla aynı süreli deneme sınavları"
+            "value" : "Gerçek sınavla aynı süre sınırına sahip deneme sınavları"
           }
         }
       }
     },
     "More speaking practice calls" : {
-      "comment" : "Zoonk Plus benefit: more speaking call time, never a number",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mehr Übungsgespräche"
+            "value" : "Mehr Gespräche zum Üben"
           }
         },
         "es" : {
@@ -2766,7 +2753,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus d’appels pour s’entraîner à l’oral"
+            "value" : "Plus d’appels pour t’entraîner à l’oral"
           }
         },
         "it" : {
@@ -2790,7 +2777,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Więcej rozmów do ćwiczenia mówienia"
+            "value" : "Więcej rozmów, by ćwiczyć mówienie"
           }
         },
         "pt" : {
@@ -2802,7 +2789,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Daha fazla konuşma pratiği sohbeti"
+            "value" : "Konuşma pratiği için daha fazla sohbet"
           }
         }
       }
@@ -2867,7 +2854,6 @@
       }
     },
     "No card needed." : {
-      "comment" : "Under the free plan's sign-up button; card means a payment card",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3103,7 +3089,7 @@
       }
     },
     "Plus" : {
-      "comment" : "Mark on a feature that comes with Zoonk Plus",
+      "comment" : "The plan's name beside Subscription in a menu, shown only to subscribers: the plan they have.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3221,12 +3207,11 @@
       }
     },
     "Plus ends right away, and you won't be charged again." : {
-      "comment" : "In the dialog that cancels Plus bought on the web whose renewal payment failed",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus endet sofort und dir wird nichts mehr berechnet."
+            "value" : "Plus endet sofort und es fallen keine weiteren Kosten an."
           }
         },
         "es" : {
@@ -3238,7 +3223,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus s’arrête tout de suite et tu n’auras plus rien à payer."
+            "value" : "Plus s’arrête tout de suite et tu ne paieras plus rien."
           }
         },
         "it" : {
@@ -3250,31 +3235,31 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plusはすぐに終了し、今後の請求はありません。"
+            "value" : "Plusはすぐに終了し、それ以降は請求されません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus가 바로 종료되고, 더 이상 요금이 청구되지 않아요."
+            "value" : "Plus가 바로 종료되고 더 이상 요금이 청구되지 않아요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus zakończy się od razu i nie pobierzemy już żadnych opłat."
+            "value" : "Plus wygaśnie od razu i nie pobierzemy już kolejnych opłat."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Plus termina na hora e você não vai receber mais cobranças."
+            "value" : "O Plus termina na hora, e não haverá novas cobranças."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus hemen sona erer ve senden tekrar ücret alınmaz."
+            "value" : "Plus hemen sona erer ve senden bir daha ücret alınmaz."
           }
         }
       }
@@ -3929,12 +3914,11 @@
       }
     },
     "Speaking practice calls" : {
-      "comment" : "Free plan: practice calls, never a number",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Übungsgespräche"
+            "value" : "Gespräche zum Üben"
           }
         },
         "es" : {
@@ -3946,7 +3930,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Appels pour s’entraîner à l’oral"
+            "value" : "Appels d’entraînement à l’oral"
           }
         },
         "it" : {
@@ -3982,13 +3966,12 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Konuşma pratiği sohbetleri"
+            "value" : "Konuşma pratiği için sohbetler"
           }
         }
       }
     },
     "Speaking practice calls, fewer than with Plus" : {
-      "comment" : "Free plan: practice calls, never a number",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3999,49 +3982,49 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Menos llamadas para practicar la expresión oral que con Plus"
+            "value" : "Llamadas para practicar la expresión oral, aunque menos que con Plus"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Appels pour s’entraîner à l’oral, moins nombreux qu’avec Plus"
+            "value" : "Des appels pour t’entraîner à l’oral, moins nombreux qu’avec Plus"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meno conversazioni di allenamento rispetto a Plus"
+            "value" : "Conversazioni di allenamento, ma meno che con Plus"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "会話練習（Plusより少なめ）"
+            "value" : "会話練習（Plusより利用回数は少なめ）"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus보다 한도가 낮은 말하기 연습 대화"
+            "value" : "말하기 연습 대화(Plus보다 적은 횟수)"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rozmowy do ćwiczenia mówienia, mniej niż w pakiecie Plus"
+            "value" : "Rozmowy do ćwiczenia mówienia, ale mniej niż w pakiecie Plus"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conversas para praticar, menos do que com o Plus"
+            "value" : "Prática de conversação, com menos conversas que no Plus"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus’a göre daha az konuşma pratiği sohbeti"
+            "value" : "Konuşma pratiği için Plus’a göre daha az sohbet"
           }
         }
       }
@@ -4283,30 +4266,29 @@
       }
     },
     "We couldn't cancel Plus. Try again or email %@." : {
-      "comment" : "Canceling Plus bought on the web failed; the argument is the email address to write to",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir konnten Plus nicht kündigen. Versuch es noch einmal oder schreib eine E-Mail an %@."
+            "value" : "Wir konnten Plus nicht kündigen. Versuch es noch einmal oder schreib uns an %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No pudimos cancelar Plus. Vuelve a intentarlo o escríbenos a %@."
+            "value" : "No pudimos cancelar Plus. Inténtalo de nuevo o escríbenos a %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de résilier Plus. Réessaie ou écris à %@."
+            "value" : "Nous n’avons pas pu résilier Plus. Réessaie ou écris-nous à %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non siamo riusciti a disdire Plus. Riprova o scrivici a %@."
+            "value" : "Non abbiamo potuto disdire Plus. Riprova o scrivi a %@."
           }
         },
         "ja" : {
@@ -4318,19 +4300,19 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus를 해지하지 못했어요. 다시 시도해 보거나 %@ 주소로 이메일을 보내 주세요."
+            "value" : "Plus를 해지하지 못했어요. 다시 시도해 보거나 %@로 이메일을 보내 주세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie udało się anulować subskrypcji Plus. Spróbuj ponownie lub napisz na adres %@."
+            "value" : "Nie udało się zrezygnować z Plus. Spróbuj ponownie lub napisz na %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente não conseguiu cancelar o Plus. Tente de novo ou mande um e-mail para %@."
+            "value" : "A gente não conseguiu cancelar o Plus. Tente de novo ou envie um e-mail para %@."
           }
         },
         "tr" : {
@@ -4342,7 +4324,6 @@
       }
     },
     "We couldn't keep Plus. Try again or email hello@zoonk.com." : {
-      "comment" : "Turning the stopped renewal of Plus bought on the web back on failed",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4353,13 +4334,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No pudimos conservar Plus. Inténtalo de nuevo o escribe a contacto@zoonk.com."
+            "value" : "No pudimos conservar tu suscripción a Plus. Inténtalo de nuevo o escribe a contacto@zoonk.com."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous n’avons pas pu réactiver le renouvellement de Plus. Réessaie ou écris à hello@zoonk.com."
+            "value" : "Impossible de réactiver le renouvellement de Plus. Réessaie ou écris à hello@zoonk.com."
           }
         },
         "it" : {
@@ -4371,13 +4352,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plusを継続できませんでした。もう一度試すか、hello@zoonk.comまでメールでお問い合わせください。"
+            "value" : "Plusを継続できませんでした。もう一度試すか、hello@zoonk.comまでメールでご連絡ください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus 자동 갱신을 다시 켜지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내세요."
+            "value" : "Plus 자동 갱신을 다시 켜지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내 주세요."
           }
         },
         "pl" : {
@@ -4389,7 +4370,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente não conseguiu manter o Plus. Tente de novo ou envie um e-mail para contato@zoonk.com."
+            "value" : "A gente não conseguiu manter o Plus. Tente de novo ou mande um e-mail para contato@zoonk.com."
           }
         },
         "tr" : {
@@ -4460,7 +4441,6 @@
       }
     },
     "What happens if I cancel?" : {
-      "comment" : "A pricing question",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4483,7 +4463,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cosa succede se disdico?"
+            "value" : "Cosa succede se disdico l’abbonamento?"
           }
         },
         "ja" : {
@@ -4519,12 +4499,12 @@
       }
     },
     "What you have now" : {
-      "comment" : "On the free card, in the button's place, for a learner who doesn't have Plus",
+      "comment" : "On the Free card, in the button's place, for a learner who doesn't have Plus: it tells them this card is what they have today. Don't call it a “plan” or use your language's word for the learner's study plan.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein aktueller Tarif"
+            "value" : "Das nutzt du gerade"
           }
         },
         "es" : {
@@ -4536,7 +4516,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce que tu as actuellement"
+            "value" : "Ce que tu as aujourd’hui"
           }
         },
         "it" : {
@@ -4548,7 +4528,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "現在のプラン"
+            "value" : "現在利用中"
           }
         },
         "ko" : {
@@ -4560,7 +4540,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twój obecny pakiet"
+            "value" : "Z tego teraz korzystasz"
           }
         },
         "pt" : {
@@ -4572,7 +4552,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Şu anki paketin"
+            "value" : "Şu an kullandığın"
           }
         }
       }
@@ -4637,7 +4617,6 @@
       }
     },
     "Without Plus, you get:" : {
-      "comment" : "Leads the list of what a learner gets without paying",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4660,7 +4639,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Senza Plus, hai:"
+            "value" : "Senza Plus hai:"
           }
         },
         "ja" : {
@@ -4678,7 +4657,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bez pakietu Plus otrzymujesz:"
+            "value" : "Bez pakietu Plus masz:"
           }
         },
         "pt" : {
@@ -4690,13 +4669,12 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus olmadan kullanabileceklerin:"
+            "value" : "Plus olmadan da şunlar var:"
           }
         }
       }
     },
     "Write to us" : {
-      "comment" : "Opens Zoonk's Help page",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4743,7 +4721,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fale com a gente"
+            "value" : "Escreva para a gente"
           }
         },
         "tr" : {
@@ -4814,7 +4792,6 @@
       }
     },
     "You already have Plus through Google Play." : {
-      "comment" : "Shown instead of buying Plus to someone who already bought it on Google Play, so they don't pay twice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4843,13 +4820,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すでにGoogle PlayでPlusに登録しています。"
+            "value" : "Google Play経由でPlusに登録済みです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Play에서 이미 Plus를 구독 중이에요."
+            "value" : "이미 Google Play에서 Plus를 구독하고 있어요."
           }
         },
         "pl" : {
@@ -4861,7 +4838,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já tem o Plus via Google Play."
+            "value" : "Você já tem o Plus pelo Google Play."
           }
         },
         "tr" : {
@@ -4873,7 +4850,6 @@
       }
     },
     "You already have Plus through the App Store." : {
-      "comment" : "Shown instead of buying Plus to someone who already bought it in the App Store, so they don't pay twice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4902,13 +4878,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すでにApp StoreでPlusに登録しています。"
+            "value" : "App Store経由でPlusに登録済みです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App Store에서 이미 Plus를 구독 중이에요."
+            "value" : "이미 App Store에서 Plus를 구독하고 있어요."
           }
         },
         "pl" : {
@@ -4932,7 +4908,6 @@
       }
     },
     "You already have Plus through the Zoonk website." : {
-      "comment" : "Shown instead of buying Plus to someone who already bought it on Zoonk's website, so they don't pay twice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4949,7 +4924,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as déjà Plus via le site Zoonk."
+            "value" : "Tu as déjà Plus via le site de Zoonk."
           }
         },
         "it" : {
@@ -4961,13 +4936,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すでにZoonkのウェブサイトでPlusに登録しています。"
+            "value" : "Zoonkのウェブサイト経由でPlusに登録済みです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk 웹사이트에서 이미 Plus를 구독 중이에요."
+            "value" : "이미 Zoonk 웹사이트에서 Plus를 구독하고 있어요."
           }
         },
         "pl" : {
@@ -4991,7 +4966,6 @@
       }
     },
     "You already have Plus." : {
-      "comment" : "Shown instead of buying Plus to someone who already has it, so they don't pay twice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5020,13 +4994,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すでにPlusに登録しています。"
+            "value" : "Plusに登録済みです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이미 Plus를 이용하고 있어요."
+            "value" : "이미 Plus를 구독하고 있어요."
           }
         },
         "pl" : {
@@ -5282,36 +5256,35 @@
       }
     },
     "You keep Plus until the end of the period you already paid for." : {
-      "comment" : "In the dialog that cancels Plus bought on the web",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du behältst Plus bis zum Ende des Zeitraums, für den du schon bezahlt hast."
+            "value" : "Du behältst Plus bis zum Ende des bereits bezahlten Zeitraums."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conservarás Plus hasta el final del periodo que ya pagaste."
+            "value" : "Conservarás Plus hasta que termine el periodo que ya pagaste."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu gardes Plus jusqu’à la fin de la période déjà payée."
+            "value" : "Tu gardes Plus jusqu’à la fin de la période que tu as déjà payée."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus resta attivo fino alla fine del periodo che hai già pagato."
+            "value" : "Plus resta attivo fino alla fine del periodo già pagato."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "お支払い済みの期間が終わるまで、Plusを利用できます。"
+            "value" : "お支払い済みの期間が終わるまで、引き続きPlusを利用できます。"
           }
         },
         "ko" : {
@@ -5323,7 +5296,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zachowasz dostęp do Plus do końca opłaconego okresu."
+            "value" : "Możesz korzystać z Plus do końca opłaconego okresu."
           }
         },
         "pt" : {
@@ -5341,71 +5314,70 @@
       }
     },
     "You keep Plus until the end of the period you already paid for. Then you're back to free, and your goals and progress stay with you." : {
-      "comment" : "Answers what canceling Plus does. “Back to free” means using Zoonk without paying again, not a study plan",
+      "comment" : "“Back to free” means using Zoonk without paying again. Don't call it a “free plan” or use your language's word for the learner's study plan.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du behältst Plus bis zum Ende des bereits bezahlten Zeitraums. Danach nutzt du Zoonk wieder kostenlos und behältst deine Ziele und Fortschritte."
+            "value" : "Du behältst Plus bis zum Ende des Zeitraums, für den du schon bezahlt hast. Danach nutzt du Zoonk wieder kostenlos, und deine Ziele und dein Fortschritt bleiben erhalten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conservas Plus hasta que termine el período que ya pagaste. Después vuelves a usar Zoonk gratis y mantienes tus objetivos y tu progreso."
+            "value" : "Conservas Plus hasta el final del periodo que ya pagaste. Después vuelves a usar Zoonk gratis y conservas tus objetivos y tu progreso."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu gardes Plus jusqu’à la fin de la période déjà payée. Ensuite, tu repasses à la formule gratuite et tu conserves tes objectifs et tes progrès."
+            "value" : "Tu gardes Plus jusqu’à la fin de la période que tu as déjà payée. Ensuite, tu utilises à nouveau Zoonk gratuitement et tu gardes tes objectifs et ta progression."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantieni Plus fino alla fine del periodo che hai già pagato. Poi torni a usare Zoonk gratis e conservi i tuoi obiettivi e progressi."
+            "value" : "Continui a usare Plus fino alla fine del periodo che hai già pagato. Poi torni a usare Zoonk gratis e conservi i tuoi obiettivi e progressi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "お支払い済みの期間が終わるまでPlusを利用できます。その後は無料プランに戻り、目標や学習の進捗はそのまま残ります。"
+            "value" : "お支払い済みの期間が終わるまでPlusを利用できます。その後は無料での利用に戻り、目標や学習の進み具合はそのまま残ります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이미 결제한 기간이 끝날 때까지 Plus를 이용할 수 있어요. 그 후에는 무료로 이용하게 되고, 목표와 진도는 그대로 유지돼요."
+            "value" : "이미 결제한 기간이 끝날 때까지 Plus를 계속 이용할 수 있어요. 그 후에는 다시 무료로 이용하게 되고, 목표와 진도는 그대로 유지돼요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zachowujesz Plus do końca opłaconego okresu. Potem wracasz do bezpłatnej wersji, a twoje cele i postępy pozostają bez zmian."
+            "value" : "Zachowasz Plus do końca opłaconego okresu. Potem znów będziesz korzystać z Zoonka bezpłatnie, a twoje cele i postępy zostaną z tobą."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você continua com o Plus até o fim do período que já pagou. Depois, volta a usar o Zoonk de graça, e seus objetivos e seu progresso ficam salvos."
+            "value" : "Você continua com o Plus até o fim do período que já pagou. Depois, volta a usar o Zoonk de graça e mantém seus objetivos e seu progresso."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ücretini ödediğin dönemin sonuna kadar Plus kullanmaya devam edersin. Ardından Ücretsiz pakete dönersin; hedeflerin ve ilerlemen korunur."
+            "value" : "Ödemesini yaptığın dönem bitene kadar Plus’ı kullanmaya devam edersin. Ardından ücretsiz kullanıma dönersin; hedeflerin ve ilerlemen korunur."
           }
         }
       }
     },
     "You subscribed in Google Play." : {
-      "comment" : "Where Plus bought in Google Play was bought",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast dein Abo bei Google Play abgeschlossen."
+            "value" : "Du hast Plus über Google Play abonniert."
           }
         },
         "es" : {
@@ -5429,7 +5401,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google PlayでPlusに登録しました。"
+            "value" : "Google Playで登録しています。"
           }
         },
         "ko" : {
@@ -5441,13 +5413,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Subskrypcję wykupiono w Google Play."
+            "value" : "Subskrybujesz przez Google Play."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você assinou via Google Play."
+            "value" : "Você assinou pelo Google Play."
           }
         },
         "tr" : {
@@ -5459,12 +5431,11 @@
       }
     },
     "You subscribed in the App Store." : {
-      "comment" : "Where Plus bought in the App Store was bought",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast dein Abo im App Store abgeschlossen."
+            "value" : "Du hast Plus im App Store abonniert."
           }
         },
         "es" : {
@@ -5476,7 +5447,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as souscrit ton abonnement sur l’App Store."
+            "value" : "Tu as souscrit ton abonnement dans l’App Store."
           }
         },
         "it" : {
@@ -5488,7 +5459,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App StoreでPlusに登録しました。"
+            "value" : "App Storeで登録しています。"
           }
         },
         "ko" : {
@@ -5500,13 +5471,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Subskrypcję wykupiono w App Store."
+            "value" : "Subskrybujesz przez App Store."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você assinou na App Store."
+            "value" : "Você assinou pela App Store."
           }
         },
         "tr" : {
@@ -5577,7 +5548,6 @@
       }
     },
     "Your last renewal payment failed." : {
-      "comment" : "Plus bought on the web whose renewal payment couldn't be charged",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5588,7 +5558,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo cobrar tu último pago de renovación."
+            "value" : "No pudimos procesar tu último pago de renovación."
           }
         },
         "fr" : {
@@ -5600,13 +5570,13 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il pagamento del tuo ultimo rinnovo non è andato a buon fine."
+            "value" : "Il pagamento dell’ultimo rinnovo non è andato a buon fine."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "前回の更新料金の決済ができませんでした。"
+            "value" : "前回の更新料金を決済できませんでした。"
           }
         },
         "ko" : {
@@ -5618,7 +5588,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie udało się pobrać opłaty za ostatnie odnowienie."
+            "value" : "Nie udało się pobrać ostatniej opłaty za odnowienie."
           }
         },
         "pt" : {
@@ -5921,95 +5891,93 @@
       }
     },
     "Your whole exam plan, every day to the exam" : {
-      "comment" : "Zoonk Plus benefit: the full exam plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein ganzer Prüfungsplan, für jeden Tag bis zur Prüfung"
+            "value" : "Dein vollständiger Prüfungsplan für jeden Tag bis zur Prüfung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo tu plan de estudio, día a día hasta el examen"
+            "value" : "Tu plan completo de preparación, día a día hasta el examen"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tout ton plan de préparation, chaque jour jusqu’à l’examen"
+            "value" : "Ton plan d’examen complet, pour chaque jour jusqu’à l’examen"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo piano completo, giorno per giorno fino all’esame"
+            "value" : "Il tuo piano completo, per ogni giorno fino all’esame"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "試験当日まで、毎日の学習計画をまるごと"
+            "value" : "試験当日までの毎日の学習計画をまるごと"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "시험 당일까지 매일 공부할 내용이 담긴 전체 계획"
+            "value" : "시험일까지 매일 이어지는 전체 시험 준비 계획"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twój pełny plan nauki na każdy dzień aż do egzaminu"
+            "value" : "Cały twój plan nauki, dzień po dniu aż do egzaminu"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu plano completo de estudos, para cada dia até a prova"
+            "value" : "Seu plano completo para a prova, todos os dias até a data"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sınav gününe kadar her günü kapsayan eksiksiz planın"
+            "value" : "Sınava kadar her günü kapsayan eksiksiz planın"
           }
         }
       }
     },
     "Zoonk added Plus to your account. To change it, write to us." : {
-      "comment" : "Plus that Zoonk added to the learner's account",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk hat Plus für dein Konto aktiviert. Wenn du das ändern möchtest, schreib uns."
+            "value" : "Zoonk hat Plus für dein Konto freigeschaltet. Um das zu ändern, schreib uns."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk agregó Plus a tu cuenta. Para cambiarlo, escríbenos."
+            "value" : "Zoonk agregó Plus a tu cuenta. Para hacer cambios, escríbenos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk a ajouté Plus à ton compte. Pour changer cela, écris-nous."
+            "value" : "Zoonk a ajouté Plus à ton compte. Pour modifier cet abonnement, écris-nous."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk ha attivato Plus sul tuo account. Per fare modifiche, scrivici."
+            "value" : "Zoonk ha attivato Plus sul tuo account. Per modificare l’abbonamento, scrivici."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ZoonkがアカウントにPlusを追加しました。変更したい場合は、ご連絡ください。"
+            "value" : "ZoonkがアカウントにPlusを追加しました。変更するには、お問い合わせください。"
           }
         },
         "ko" : {
@@ -6021,19 +5989,19 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk dodał Plus do twojego konta. Aby to zmienić, napisz do nas."
+            "value" : "Zoonk włączył pakiet Plus na twoim koncie. Aby to zmienić, napisz do nas."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zoonk adicionou o Plus à sua conta. Para mudar isso, fale com a gente."
+            "value" : "O Zoonk adicionou o Plus à sua conta. Para mudar isso, escreva para a gente."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk, hesabına Plus ekledi. Bunu değiştirmek için bize yaz."
+            "value" : "Zoonk hesabına Plus ekledi. Değiştirmek için bize yaz."
           }
         }
       }

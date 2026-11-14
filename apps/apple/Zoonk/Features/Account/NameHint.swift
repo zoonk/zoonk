@@ -4,7 +4,6 @@ import SwiftUI
 struct NameHint: View {
   var body: some View {
     Text(
-      "Your buddy and all your certificates use this name.", tableName: "Account",
-      comment: "Under a field that changes the learner's name")
+      "Your buddy and all your certificates use this name.", tableName: "Account")
   }
 }

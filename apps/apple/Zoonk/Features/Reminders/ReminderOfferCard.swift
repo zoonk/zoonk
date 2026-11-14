@@ -44,8 +44,7 @@ struct ReminderOfferCard: View {
         if offer.failed {
           FailureLine(
             message: LocalizedStringResource(
-              "That didn't save. Try again.", table: "Reminders",
-              comment: "Turning reminders on failed"))
+              "That didn't save. Try again.", table: "Reminders"))
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -71,8 +70,7 @@ struct ReminderOfferCard: View {
     case .asking:
       words(
         title: Text(
-          "Want a study reminder?", tableName: "Reminders",
-          comment: "Title of the offer below a finished lesson"),
+          "Want a study reminder?", tableName: "Reminders"),
         line: promise(time), symbol: "bell")
 
       if offer.claim == .claimed {
@@ -100,8 +98,7 @@ struct ReminderOfferCard: View {
     case .emailOn:
       words(
         title: Text(
-          "Email reminders are on.", tableName: "Reminders",
-          comment: "Email study reminders were just turned on"),
+          "Email reminders are on.", tableName: "Reminders"),
         line: promise(time), symbol: "envelope")
     case .dismissed:
       EmptyView()

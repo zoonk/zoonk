@@ -90,7 +90,7 @@ private struct BeltProgression: View {
   private var nextLine: some View {
     if level.nextBelt == nil, level.isMaxLevel {
       Label {
-        Text("Every belt earned", tableName: "Progress", comment: "Shown on Black, the last belt")
+        Text("Every belt earned", tableName: "Progress")
       } icon: {
         StatusMark(status: .done)
       }
@@ -111,6 +111,7 @@ private struct BeltProgression: View {
   private func beltAndNumber(_ belt: ProgressBelt, _ number: Int) -> String {
     String(
       localized: "\(String(localized: belt.localizedTitle)) \(number)", table: "Progress",
-      comment: "A belt and its number from 1 to 10, as in White belt 4")
+      comment:
+        "A belt and its number from 1 to 10, as in White belt 4")
   }
 }

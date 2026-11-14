@@ -49,8 +49,7 @@ struct RemindersView: View {
           Section {
             Label {
               Text(
-                "Paused while you're away. Studying turns them back on.", tableName: "Reminders",
-                comment: "Reminders stopped after a week without study")
+                "Paused while you're away. Studying turns them back on.", tableName: "Reminders")
             } icon: {
               Image(systemName: "moon.zzz")
             }
@@ -109,8 +108,7 @@ struct RemindersView: View {
         ListRow(
           Text("Email", tableName: "Reminders", comment: "Switch for email reminders"),
           description: Text(
-            "Create an account to get email reminders", tableName: "Reminders",
-            comment: "A guest's email reminders row, which opens account creation")
+            "Create an account to get email reminders", tableName: "Reminders")
         )
         .disclosureChevron()
       }

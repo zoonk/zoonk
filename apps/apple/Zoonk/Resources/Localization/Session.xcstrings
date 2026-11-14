@@ -867,7 +867,6 @@
       }
     },
     "%@ more than the week before!" : {
-      "comment" : "More time than last week",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -890,25 +889,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ in più rispetto alla settimana precedente!"
+            "value" : "%@ in più rispetto alla settimana prima!"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "先週より%@長く学習しました！"
+            "value" : "前の週より%@長く学習しました！"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "지난주보다 %@ 더 공부했어요!"
+            "value" : "전주보다 %@ 더 공부했어요!"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ więcej niż w poprzednim tygodniu!"
+            "value" : "%@ więcej niż tydzień wcześniej!"
           }
         },
         "pt" : {
@@ -2970,7 +2969,6 @@
       }
     },
     "A quiet week" : {
-      "comment" : "A week without study",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2999,7 +2997,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "お休みの1週間"
+            "value" : "静かな1週間"
           }
         },
         "ko" : {
@@ -3017,7 +3015,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma semana de pausa"
+            "value" : "Uma semana tranquila"
           }
         },
         "tr" : {
@@ -4211,7 +4209,6 @@
       }
     },
     "Every week starts fresh." : {
-      "comment" : "A quiet week",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4240,13 +4237,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "毎週、新しいスタートを切れます。"
+            "value" : "毎週が新しいスタートです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "매주 새롭게 시작할 수 있어요."
+            "value" : "매주가 새로운 시작이에요."
           }
         },
         "pl" : {
@@ -8922,7 +8919,6 @@
       }
     },
     "What a week, %@!" : {
-      "comment" : "The recap's title",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8957,7 +8953,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "멋진 한 주였어요, %@님!"
+            "value" : "%@님, 멋진 한 주였어요!"
           }
         },
         "pl" : {
@@ -8981,7 +8977,6 @@
       }
     },
     "What a week!" : {
-      "comment" : "The recap's title",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9276,7 +9271,6 @@
       }
     },
     "You finished %@." : {
-      "comment" : "Under the weekly summary's title: the plan's phase that ended this week",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9299,7 +9293,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hai completato la fase %@."
+            "value" : "Hai completato %@."
           }
         },
         "ja" : {
@@ -9311,13 +9305,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ 단계를 마쳤어요."
+            "value" : "%@을(를) 마쳤어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ukończony etap: %@."
+            "value" : "Ukończono: %@."
           }
         },
         "pt" : {
@@ -9329,7 +9323,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ aşamasını tamamladın."
+            "value" : "%@ tamamlandı."
           }
         }
       }
@@ -9394,24 +9388,23 @@
       }
     },
     "Your first weekly summary comes this Sunday" : {
-      "comment" : "No weekly summary yet",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein erster Wochenrückblick kommt diesen Sonntag"
+            "value" : "Diesen Sonntag bekommst du deinen ersten Wochenrückblick"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu primer resumen semanal estará listo este domingo"
+            "value" : "Tu primer resumen semanal llega este domingo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton premier bilan de la semaine arrive ce dimanche"
+            "value" : "Ton premier bilan de la semaine sera prêt ce dimanche"
           }
         },
         "it" : {
@@ -9423,19 +9416,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今週の日曜日に最初の週間まとめが届きます"
+            "value" : "初めての週間まとめは今度の日曜日に届きます"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이번 주 일요일에 첫 주간 요약이 나와요"
+            "value" : "첫 주간 요약은 이번 일요일에 나와요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twoje pierwsze podsumowanie tygodnia pojawi się w tę niedzielę"
+            "value" : "Pierwsze podsumowanie tygodnia zobaczysz w tę niedzielę"
           }
         },
         "pt" : {
@@ -9447,7 +9440,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "İlk haftalık özetin bu pazar hazır olacak"
+            "value" : "İlk haftalık özetin bu pazar gelecek"
           }
         }
       }

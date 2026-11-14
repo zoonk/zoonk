@@ -29,8 +29,7 @@ struct StatisticsScreen: View {
         .navigationTitle(Text(section.title))
         .navigationSubtitle(
           Text(
-            "When you answer best, over the last 90 days.", tableName: "Progress",
-            comment: "Under the Patterns title on a phone: what the patterns cover"))
+            "When you answer best, over the last 90 days.", tableName: "Progress"))
     } else {
       page(section)
         .navigationTitle(Text(section.title))

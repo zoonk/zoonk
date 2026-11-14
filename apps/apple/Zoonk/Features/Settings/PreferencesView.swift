@@ -11,7 +11,11 @@ struct PreferencesView: View {
     ZoonkList {
       Section {
         PageHeader(
-          Text("Preferences", tableName: "Account", comment: "Title of the Preferences page"))
+          Text(
+            "Preferences", tableName: "Account",
+            comment:
+              "A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”."
+          ))
       }
 
       if let preferences = settings.preferences.value {
@@ -24,8 +28,7 @@ struct PreferencesView: View {
                 Text("Change", tableName: "Settings", comment: "Opens the buddy editor")
               } else {
                 Text(
-                  "Choose your buddy", tableName: "Settings",
-                  comment: "Opens the buddy editor before the learner picked one")
+                  "Choose your buddy", tableName: "Settings")
               }
             }
             .buttonStyle(.outline)
@@ -47,8 +50,7 @@ struct PreferencesView: View {
             isOn: soundsBinding(preferences),
             title: Text("Sounds", tableName: "Settings", comment: "Switch for the lessons' sounds"),
             description: Text(
-              "When you get it right or finish", tableName: "Settings",
-              comment: "When the lessons' sounds play"))
+              "When you get it right or finish", tableName: "Settings"))
 
         } header: {
           SectionTitle(
@@ -81,8 +83,7 @@ struct PreferencesView: View {
           } label: {
             ListRow(
               Text(
-                "Where you live", tableName: "Settings",
-                comment: "Row with the country the learner lives in, which they tell us")
+                "Where you live", tableName: "Settings")
             ) {
               EmptyView()
             } trailing: {
@@ -97,14 +98,12 @@ struct PreferencesView: View {
       } header: {
         SectionTitle(
           Text(
-            "Language and region", tableName: "Settings",
-            comment: "Preferences section about the app's language and where the learner lives"))
+            "Language and region", tableName: "Settings"))
       } footer: {
         if settings.preferences.value != nil {
           SectionFooter {
             Text(
-              "So examples and exams match your country.", tableName: "Settings",
-              comment: "Under the country the learner lives in: what it changes")
+              "So examples and exams match your country.", tableName: "Settings")
           }
         }
       }
@@ -180,8 +179,7 @@ struct SettingsSaveError: View {
     Section {
       FailureLine(
         message: LocalizedStringResource(
-          "That didn't save. Try again.", table: "Settings",
-          comment: "Shown when a setting change didn't save"),
+          "That didn't save. Try again.", table: "Settings"),
         systemImage: "exclamationmark.circle")
     }
   }
@@ -206,8 +204,7 @@ struct SettingsLoadingState<Value: Equatable & Sendable>: View {
         }
       } description: {
         Text(
-          "Check your connection and try again.", tableName: "Settings",
-          comment: "Explains how to recover when a settings page couldn't load")
+          "Check your connection and try again.", tableName: "Settings")
       } actions: {
         Button(action: retry) {
           Text("Try again", tableName: "Settings", comment: "Retries loading a settings page")

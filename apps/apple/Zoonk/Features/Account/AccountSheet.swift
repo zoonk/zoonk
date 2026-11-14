@@ -391,7 +391,11 @@ private struct SettingsHubView: View {
       Section {
         AccountSectionLink(destination: .preferences, sectionOpen: sectionOpen) {
           ListRow(
-            Text("Preferences", tableName: "Account", comment: "Settings row for Preferences"))
+            Text(
+              "Preferences", tableName: "Account",
+              comment:
+                "A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”."
+            ))
         }
 
         AccountSectionLink(destination: .reminders, sectionOpen: sectionOpen) {
@@ -405,7 +409,10 @@ private struct SettingsHubView: View {
                 if reminder.emailOn || reminder.pushOn {
                   Text(ReminderTime.formatted(reminder.time))
                 } else {
-                  Text("Off", tableName: "Account", comment: "Study reminders are off")
+                  Text(
+                    "Off", tableName: "Account",
+                    comment:
+                      "Study reminders are off: the value beside the Reminders row in Settings")
                 }
               }
             }
@@ -458,8 +465,7 @@ private struct SettingsHubView: View {
           AccountSectionLink(destination: .createAccount, sectionOpen: sectionOpen) {
             ListRow(
               Text(
-                "Create an account", tableName: "Account",
-                comment: "Settings row where a guest creates the account that keeps their plan"))
+                "Create an account", tableName: "Account"))
           }
         } else {
           BusyButton(isBusy: session.isWorking, role: .destructive, isRow: true) {
@@ -541,8 +547,12 @@ private struct AccountSubscriptionRow: View {
         EmptyView()
       } trailing: {
         if access.subscription != nil {
-          Text("Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name")
-            .typeStyle(.meta)
+          Text(
+            "Plus", tableName: "Account",
+            comment:
+              "The plan's name beside Subscription in a menu, shown only to subscribers: the plan they have."
+          )
+          .typeStyle(.meta)
         }
       }
     }

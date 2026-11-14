@@ -15,7 +15,7 @@ struct MemoryView: View {
           Text("Memory", tableName: "Settings", comment: "Title of the Memory page"),
           supporting: Text(
             "What Zoonk remembers to give you examples and plans that fit your life.",
-            tableName: "Settings", comment: "What the Memory page is for"))
+            tableName: "Settings"))
       }
 
       if let memory = settings.memory.value {
@@ -83,8 +83,7 @@ struct MemoryView: View {
         Section {
           DataExportRow(
             title: Text(
-              "Download my memory", tableName: "Settings",
-              comment: "Row that downloads everything in the learner's memory"),
+              "Download my memory", tableName: "Settings"),
             description: Text(
               "Everything in your memory, as one file", tableName: "Settings",
               comment: "What the memory download contains"),
@@ -96,8 +95,7 @@ struct MemoryView: View {
           SectionFooter {
             Text(
               "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to.",
-              tableName: "Settings",
-              comment: "Note about sensitive details at the Memory page's end")
+              tableName: "Settings")
           }
         }
       }
@@ -116,14 +114,14 @@ struct MemoryView: View {
     .alert(
       Text(
         "Edit memory", tableName: "Settings",
-        comment: "Title of the dialog correcting one remembered fact"),
+        comment:
+          "A memory is one fact Zoonk remembers about the learner."),
       isPresented: isEditingBinding,
       presenting: editing
     ) { fact in
       TextField(text: $statement) {
         Text(
-          "What Zoonk remembers", tableName: "Settings",
-          comment: "Field holding a fact Zoonk remembers")
+          "What Zoonk remembers", tableName: "Settings")
       }
       .onChange(of: statement) { _, value in
         statement = String(value.prefix(memoryStatementLimit))
@@ -145,7 +143,8 @@ struct MemoryView: View {
     } message: { _ in
       Text(
         "Say it the way it's true for you.", tableName: "Settings",
-        comment: "Asks the learner to correct a fact in their own words")
+        comment:
+          "\"It\" is the note Zoonk keeps about the learner, edited in this dialog.")
     }
   }
 
@@ -222,8 +221,7 @@ private struct MemoryFactRow: View {
       }
       .accessibilityLabel(
         Text(
-          "Options for “\(fact.statement)”", tableName: "Settings",
-          comment: "Names the menu that edits or deletes a remembered fact"))
+          "Options for “\(fact.statement)”", tableName: "Settings"))
     }
     .swipeActions {
       Button(role: .destructive, action: delete) {
@@ -263,16 +261,14 @@ private struct MemoryUpdatedNotice: View {
         if status == .failed {
           FailureLine(
             message: LocalizedStringResource(
-              "Couldn't undo. Try again.", table: "Settings",
-              comment: "A deleted fact didn't come back, and Undo stays to try again"))
+              "Couldn't undo. Try again.", table: "Settings"))
         }
       case .undone:
         Text(undone)
       case .changedSince:
         FailureLine(
           message: LocalizedStringResource(
-            "Couldn't undo. It changed since.", table: "Settings",
-            comment: "Says a deleted fact couldn't come back"))
+            "Couldn't undo. It changed since.", table: "Settings"))
       }
     }
     .typeStyle(.note)
@@ -293,12 +289,16 @@ extension MemoryFact.Category {
     case .background:
       Text(
         "Background", tableName: "Settings",
-        comment: "Memory category: facts about the learner's background, like studies and work")
+        comment:
+          "A category of what Zoonk remembers about the learner: their studies, job, school year and the languages they speak."
+      )
     case .routine: Text("Routine", tableName: "Settings", comment: "Memory category: routine")
     case .preferences:
       Text(
         "Preferences", tableName: "Settings",
-        comment: "Memory category: how the learner likes to learn, like short explanations")
+        comment:
+          "A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”."
+      )
     case .learning: Text("Learning", tableName: "Settings", comment: "Memory category: learning")
     case .context: Text("Context", tableName: "Settings", comment: "Memory category: context")
     }
@@ -310,12 +310,10 @@ extension MemoryFact.Source {
     switch self {
     case .noticed:
       Text(
-        "Noticed from your activity", tableName: "Settings",
-        comment: "Source of a fact Zoonk noticed")
+        "Noticed from your activity", tableName: "Settings")
     case .told:
       Text(
-        "You told us", tableName: "Settings",
-        comment: "Source of a fact the learner told Zoonk themselves (\"us\" is Zoonk)")
+        "You told us", tableName: "Settings")
     case .call:
       Text(
         "From a call", tableName: "Settings",
@@ -323,7 +321,7 @@ extension MemoryFact.Source {
           "Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor."
       )
     case .chat:
-      Text("From a chat", tableName: "Settings", comment: "Source of a fact from a chat")
+      Text("From a chat", tableName: "Settings")
     case .onboarding:
       Text("From onboarding", tableName: "Settings", comment: "Source of a fact from onboarding")
     case .session:

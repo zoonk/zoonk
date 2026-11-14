@@ -50,13 +50,11 @@ private struct EnergyCalendar: View {
 
     StatsCalendar(
       title: Text(
-        "Past 12 months", tableName: "Progress",
-        comment: "Title of a calendar of the past year's days"),
+        "Past 12 months", tableName: "Progress"),
       gridLabel: Text(
-        "Energy by day", tableName: "Progress", comment: "Spoken name of the Energy calendar"),
+        "Energy by day", tableName: "Progress"),
       legendLabel: Text(
-        "Energy intensity from low to high", tableName: "Progress",
-        comment: "Spoken key of the Energy calendar's shades"),
+        "Energy intensity from low to high", tableName: "Progress"),
       low: Text("Low", tableName: "Progress", comment: "Low end of the Energy calendar's key"),
       high: Text("High", tableName: "Progress", comment: "High end of the Energy calendar's key"),
       shades: [
@@ -73,11 +71,14 @@ private struct EnergyCalendar: View {
               String(
                 localized: "\(metricPercent($0)) Energy", table: "Progress",
                 comment:
-                  "An Energy calendar day's value, under its date: the buddy's Energy that day")
+                  "A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, such as “72% Energy”."
+              )
             }
               ?? String(
                 localized: "No Energy recorded", table: "Progress",
-                comment: "An Energy calendar day's value, under its date, for a day without Energy")
+                comment:
+                  "A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value."
+              )
           ),
           value: day.energy)
       },

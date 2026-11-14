@@ -2,7 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     ", %@" : {
-      "comment" : "Read by VoiceOver right after a goal's name: the language and country the learner chose, such as Spanish (Argentina)",
+      "comment" : "Read by screen readers right after a goal's name. {variety} is the language and country the learner chose, such as “Spanish (Argentina)”.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -61,7 +61,7 @@
       }
     },
     "%@ · %@" : {
-      "comment" : "A course level certificate's name: the course, then its level, such as Python · Beginner",
+      "comment" : "A course level's certificate name, such as \"Python · Beginner\": the course's title, then the level's name.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -126,7 +126,7 @@
       }
     },
     "%@ %@" : {
-      "comment" : "A language certificate's name: the language, then its CEFR level, such as Spanish B1",
+      "comment" : "A language and a CEFR level, such as \"Spanish B1\": a certificate's name.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -315,7 +315,6 @@
       }
     },
     "%@ completed level %@ in %@" : {
-      "comment" : "A language level certificate read aloud: the learner's name, the level, the language",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -380,7 +379,6 @@
       }
     },
     "%@, completed on Zoonk" : {
-      "comment" : "A course certificate's heading before the learner gives a name: the course or its level, such as Python · Beginner",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -391,37 +389,37 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, completado en Zoonk"
+            "value" : "%@, curso completado en Zoonk"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, terminé sur Zoonk"
+            "value" : "%@, cours terminé sur Zoonk"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, completato su Zoonk"
+            "value" : "%@: corso completato su Zoonk"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@をZoonkで修了"
+            "value" : "%@をZoonkで修了しました"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk에서 %@ 수료"
+            "value" : "%@ 코스를 Zoonk에서 수료했어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, ukończono w Zoonku"
+            "value" : "%@, kurs ukończony w Zoonku"
           }
         },
         "pt" : {
@@ -612,7 +610,6 @@
       }
     },
     "A certificate for every level and plan you finish." : {
-      "comment" : "Under the learner's certificates: what earns one",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -671,66 +668,65 @@
       }
     },
     "A record of completion on Zoonk, not academic credit." : {
-      "comment" : "What a course certificate is, before the note about its name",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Nachweis über deinen Abschluss auf Zoonk, keine anrechenbare Studienleistung."
+            "value" : "Ein Nachweis über den Abschluss auf Zoonk, keine anrechenbare Studienleistung."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una constancia de lo que completaste en Zoonk, sin créditos académicos."
+            "value" : "Una constancia de finalización en Zoonk, sin créditos académicos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une attestation de fin de cours sur Zoonk, sans crédits universitaires."
+            "value" : "Une attestation de réussite sur Zoonk, sans crédits universitaires."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un attestato di completamento su Zoonk, senza crediti formativi."
+            "value" : "Attesta il completamento su Zoonk, ma non dà crediti formativi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonkでの修了を示すもので、学校の単位にはなりません。"
+            "value" : "Zoonkで学習を終えた記録で、学校などの単位にはなりません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk에서 학습을 마쳤다는 기록이에요. 학점으로 인정되지는 않아요."
+            "value" : "Zoonk에서 학습을 마쳤다는 기록이며, 학점으로 인정되지는 않아요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Potwierdzenie ukończenia nauki w Zoonku, bez punktów zaliczeniowych na studiach."
+            "value" : "Potwierdzenie ukończenia nauki w Zoonku, a nie zaliczenie na uczelni."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um registro de conclusão no Zoonk, sem créditos acadêmicos."
+            "value" : "Um registro de conclusão no Zoonk, que não conta como crédito acadêmico."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk’ta eğitimi tamamladığını gösterir, akademik kredi yerine geçmez."
+            "value" : "Zoonk’ta tamamladığın eğitimi belgeler, akademik kredi sağlamaz."
           }
         }
       }
     },
     "about %@" : {
-      "comment" : "An approximate study time, such as \"about 41 hr\"",
+      "comment" : "A certificate's study time, the plan's estimate for the lessons studied, such as “about 41 hr”. Brazilian schools read it as the certificate's workload (carga horária).",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -789,7 +785,6 @@
       }
     },
     "Add to LinkedIn" : {
-      "comment" : "Adds a certificate to LinkedIn",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -848,7 +843,6 @@
       }
     },
     "Add to your LinkedIn profile" : {
-      "comment" : "Title of the sheet that adds a certificate to LinkedIn",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -907,7 +901,6 @@
       }
     },
     "Anyone with the link can see this certificate." : {
-      "comment" : "Who can see a certificate's page",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -936,7 +929,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "リンクを知っている人は誰でもこの証明書を見ることができます。"
+            "value" : "リンクを知っていれば、誰でもこの証明書を見られます。"
           }
         },
         "ko" : {
@@ -954,7 +947,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qualquer pessoa com o link pode ver esse certificado."
+            "value" : "Qualquer pessoa com o link pode ver este certificado."
           }
         },
         "tr" : {
@@ -1379,7 +1372,7 @@
       }
     },
     "Completed" : {
-      "comment" : "When a certificate was earned",
+      "comment" : "A certificate's fact: the day the learner finished the course or level.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1969,7 +1962,6 @@
       }
     },
     "For finishing every lesson and challenge of this level." : {
-      "comment" : "How a certificate for a course's level is earned",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1980,7 +1972,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por completar cada lección y desafío de este nivel."
+            "value" : "Por completar todas las lecciones y desafíos de este nivel."
           }
         },
         "fr" : {
@@ -1998,13 +1990,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このレベルのすべてのレッスンとチャレンジを終えると取得できます。"
+            "value" : "このレベルのすべてのレッスンとチャレンジを終えたことを示します。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 레벨의 모든 레슨과 챌린지를 마치면 받을 수 있어요."
+            "value" : "이 레벨의 모든 레슨과 챌린지를 마쳤다는 뜻이에요."
           }
         },
         "pl" : {
@@ -2028,7 +2020,6 @@
       }
     },
     "For finishing every lesson and challenge of this plan." : {
-      "comment" : "How a certificate for a course's whole plan is earned",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2039,7 +2030,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por completar cada lección y desafío de este plan."
+            "value" : "Por completar todas las lecciones y desafíos de este plan."
           }
         },
         "fr" : {
@@ -2057,13 +2048,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この学習計画のすべてのレッスンとチャレンジを終えると取得できます。"
+            "value" : "この学習計画のすべてのレッスンとチャレンジを終えたことを示します。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 계획의 모든 레슨과 챌린지를 마치면 받을 수 있어요."
+            "value" : "이 계획의 모든 레슨과 챌린지를 마쳤다는 뜻이에요."
           }
         },
         "pl" : {
@@ -2087,18 +2078,17 @@
       }
     },
     "For finishing this level, studying at least half of its lessons." : {
-      "comment" : "How a language level certificate is earned",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für den Abschluss dieses Levels, wenn du mindestens die Hälfte der Lektionen bearbeitet hast."
+            "value" : "Du hast dieses Level abgeschlossen und mindestens die Hälfte der Lektionen bearbeitet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por completar este nivel y estudiar al menos la mitad de sus lecciones."
+            "value" : "Por completar este nivel estudiando al menos la mitad de sus lecciones."
           }
         },
         "fr" : {
@@ -2116,19 +2106,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "半分以上のレッスンを学習し、このレベルを終えると取得できます。"
+            "value" : "このレベルのレッスンを半分以上学習し、レベルを終えたことを示します。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 레벨의 레슨을 절반 이상 학습하고 레벨을 마치면 받을 수 있어요."
+            "value" : "이 레벨의 레슨을 절반 이상 공부하고 레벨을 마쳤다는 뜻이에요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Za ukończenie tego poziomu po przerobieniu co najmniej połowy jego lekcji."
+            "value" : "Za ukończenie tego poziomu i przerobienie co najmniej połowy jego lekcji."
           }
         },
         "pt" : {
@@ -2205,7 +2195,6 @@
       }
     },
     "I just completed level %@ in %@ on Zoonk." : {
-      "comment" : "Suggested text for sharing a language level certificate: the level, then the language",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2816,7 +2805,6 @@
       }
     },
     "I just finished %@ on Zoonk." : {
-      "comment" : "Suggested text for sharing a course certificate whose lessons were all passed by test: the course",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3052,7 +3040,7 @@
       }
     },
     "Lessons studied" : {
-      "comment" : "How many lessons a certificate's learner studied",
+      "comment" : "A certificate's fact: how many of the plan's lessons the learner studied.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3170,7 +3158,6 @@
       }
     },
     "Level %@ in %@, completed on Zoonk" : {
-      "comment" : "A language level certificate's heading before the learner gives a name: the level, then the language",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3205,19 +3192,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "レベル%1$@（%2$@）をZoonkで修了"
+            "value" : "%1$@レベルの%2$@をZoonkで修了しました"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk에서 레벨 %1$@(%2$@) 수료"
+            "value" : "%1$@ 레벨의 %2$@ 과정을 Zoonk에서 수료했어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Poziom %1$@ (%2$@), ukończono w Zoonku"
+            "value" : "Poziom %1$@ (%2$@), ukończony w Zoonku"
           }
         },
         "pt" : {
@@ -3229,13 +3216,12 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ seviyesinde %2$@, Zoonk’ta tamamlandı"
+            "value" : "%1$@ seviyesi, %2$@ dilinde Zoonk’ta tamamlandı"
           }
         }
       }
     },
     "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result." : {
-      "comment" : "What a language certificate's level is, before the note about its name",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3412,7 +3398,6 @@
       }
     },
     "LinkedIn opens its form to add a license or certification. Copy each field into it." : {
-      "comment" : "How adding a certificate to LinkedIn works",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3596,7 +3581,6 @@
       }
     },
     "Name on your certificates" : {
-      "comment" : "Label of the field that changes the name on the learner's certificates",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3655,7 +3639,6 @@
       }
     },
     "Names aren't checked against an ID." : {
-      "comment" : "Ends a certificate's explanation: the name on it is the one the learner gave",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3666,13 +3649,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No verificamos los nombres con una identificación."
+            "value" : "Los nombres no se verifican con una identificación."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les noms ne sont pas vérifiés avec une pièce d’identité."
+            "value" : "Les noms ne sont pas vérifiés à l’aide d’une pièce d’identité."
           }
         },
         "it" : {
@@ -3684,7 +3667,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "名前は本人確認書類と照合していません。"
+            "value" : "氏名は身分証明書と照合していません。"
           }
         },
         "ko" : {
@@ -3696,7 +3679,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie sprawdzamy imion i nazwisk na podstawie dokumentu tożsamości."
+            "value" : "Nie porównujemy imienia i nazwiska z dokumentem tożsamości."
           }
         },
         "pt" : {
@@ -3708,13 +3691,12 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adlar kimlik belgesiyle doğrulanmaz."
+            "value" : "İsimler kimlik belgesiyle doğrulanmaz."
           }
         }
       }
     },
     "No certificates yet" : {
-      "comment" : "Title when the learner has no certificate",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3891,7 +3873,7 @@
       }
     },
     "Passed by test" : {
-      "comment" : "How many of a certificate's lessons the learner passed by a test",
+      "comment" : "A certificate's fact: lessons the learner skipped by passing a test, said for outsiders.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4245,7 +4227,7 @@
       }
     },
     "Study time" : {
-      "comment" : "About how long a certificate's lessons took to study",
+      "comment" : "A certificate's fact: about how long the studied lessons take. In Brazilian Portuguese: “Carga horária”.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4304,7 +4286,6 @@
       }
     },
     "That didn't work. Try again in a moment." : {
-      "comment" : "Loading a certificate to print failed",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4321,25 +4302,25 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ça n’a pas fonctionné. Réessaie dans un instant."
+            "value" : "Ça n’a pas marché. Réessaie dans un instant."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non ha funzionato. Riprova tra poco."
+            "value" : "Qualcosa non ha funzionato. Riprova tra un momento."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "うまくいきませんでした。少し待ってから、もう一度お試しください。"
+            "value" : "うまくいきませんでした。少し待ってからもう一度お試しください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
+            "value" : "잘되지 않았어요. 잠시 후 다시 시도해 보세요."
           }
         },
         "pl" : {
@@ -4351,13 +4332,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não deu certo. Tente de novo daqui a pouco."
+            "value" : "Não deu certo. Tente de novo em instantes."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bir sorun oluştu. Birazdan tekrar dene."
+            "value" : "Bir sorun oldu. Birazdan tekrar dene."
           }
         }
       }
@@ -4422,7 +4403,7 @@
       }
     },
     "Topics covered" : {
-      "comment" : "Heading over the chapters a course certificate covers",
+      "comment" : "Above the topics a finished course covered, on its certificate.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4481,12 +4462,11 @@
       }
     },
     "Verified certificate · issued by Zoonk" : {
-      "comment" : "Over an issued certificate's heading: Zoonk vouches for it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geprüftes Zertifikat · ausgestellt von Zoonk"
+            "value" : "Verifiziertes Zertifikat · ausgestellt von Zoonk"
           }
         },
         "es" : {
@@ -4534,13 +4514,12 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Doğrulanmış sertifika · Zoonk tarafından düzenlendi"
+            "value" : "Doğrulanmış sertifika · Zoonk tarafından verildi"
           }
         }
       }
     },
     "What this certificate means" : {
-      "comment" : "Heading over how Zoonk issues a certificate and what it isn't",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4782,7 +4761,6 @@
       }
     },
     "Your full name" : {
-      "comment" : "Placeholder of the field for the name on the learner's certificates",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4841,7 +4819,6 @@
       }
     },
     "Your name, as it should appear" : {
-      "comment" : "Label of the field asking for the name to print on a certificate",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4900,7 +4877,6 @@
       }
     },
     "Your next certificate" : {
-      "comment" : "Heading over the learner's goals that can still earn a certificate",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4929,13 +4905,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "次に目指す証明書"
+            "value" : "次に獲得できる証明書"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "다음 인증서"
+            "value" : "다음에 받을 인증서"
           }
         },
         "pl" : {

@@ -2,7 +2,6 @@
   "sourceLanguage" : "en",
   "strings" : {
     "%@ is already taken" : {
-      "comment" : "Another account has the typed username; the argument is the username",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -31,7 +30,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@はすでに使用されています"
+            "value" : "%@はすでに使われています"
           }
         },
         "ko" : {
@@ -55,7 +54,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ kullanıcı adı zaten kullanılıyor"
+            "value" : "%@ zaten kullanılıyor"
           }
         }
       }
@@ -120,7 +119,6 @@
       }
     },
     "3-30 characters. Letters a–z, numbers, and underscores only." : {
-      "comment" : "Username requirements below the profile field",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -137,7 +135,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3 à 30 caractères. Lettres a–z, chiffres et traits de soulignement uniquement."
+            "value" : "3 à 30 caractères. Lettres de a à z, chiffres et tirets bas uniquement."
           }
         },
         "it" : {
@@ -149,13 +147,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3〜30文字。英小文字（a–z）、数字、アンダースコアのみ使えます。"
+            "value" : "3〜30文字。半角英小文字（a–z）、数字、アンダースコアのみ使えます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3~30자. 영문 소문자(a–z), 숫자, 밑줄(_)만 사용할 수 있어요."
+            "value" : "3~30자. 영문 소문자(a–z), 숫자, 밑줄만 사용할 수 있어요."
           }
         },
         "pl" : {
@@ -173,7 +171,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3-30 karakter. Yalnızca a–z harfleri, rakamlar ve alt çizgi."
+            "value" : "3-30 karakter. Yalnızca a–z harfleri, rakamlar ve alt çizgi kullanılabilir."
           }
         }
       }
@@ -716,7 +714,6 @@
       }
     },
     "Check your connection and try again." : {
-      "comment" : "Error shown when an account request cannot reach the service",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -745,7 +742,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "インターネット接続を確認して、もう一度お試しください。"
+            "value" : "インターネット接続を確認して、もう一度試してください。"
           }
         },
         "ko" : {
@@ -763,13 +760,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verifique sua conexão e tente de novo."
+            "value" : "Confira sua conexão e tente de novo."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bağlantını kontrol et ve tekrar dene."
+            "value" : "Bağlantını kontrol edip tekrar dene."
           }
         }
       }
@@ -1011,7 +1008,6 @@
       }
     },
     "Create an account" : {
-      "comment" : "Asks a guest to create an account before subscribing\nSettings row where a guest creates the account that keeps their plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1052,7 +1048,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utwórz konto"
+            "value" : "Załóż konto"
           }
         },
         "pt" : {
@@ -1129,7 +1125,6 @@
       }
     },
     "Delete my account" : {
-      "comment" : "Opens permanent account deletion",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1164,7 +1159,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "내 계정 삭제하기"
+            "value" : "내 계정 삭제"
           }
         },
         "pl" : {
@@ -1188,12 +1183,11 @@
       }
     },
     "Delete your account?" : {
-      "comment" : "Final confirmation title before permanent account deletion",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Konto löschen?"
+            "value" : "Dein Konto löschen?"
           }
         },
         "es" : {
@@ -1241,13 +1235,13 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hesabını silmek istiyor musun?"
+            "value" : "Hesabın silinsin mi?"
           }
         }
       }
     },
     "Deleting your account ends Plus right away." : {
-      "comment" : "Before deleting the account, what happens to Plus bought on the web",
+      "comment" : "Shown only to subscribers, in the box that deletes their account.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1258,13 +1252,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si eliminas tu cuenta, Plus termina de inmediato."
+            "value" : "Al eliminar tu cuenta, dejas de tener Plus de inmediato."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer ton compte met immédiatement fin à Plus."
+            "value" : "La suppression de ton compte met immédiatement fin à Plus."
           }
         },
         "it" : {
@@ -1276,7 +1270,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アカウントを削除すると、Plusはすぐに利用できなくなります。"
+            "value" : "アカウントを削除すると、Plusもすぐに終了します。"
           }
         },
         "ko" : {
@@ -1300,7 +1294,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hesabını silersen Plus hemen sona erer."
+            "value" : "Hesabını sildiğinde Plus hemen sona erer."
           }
         }
       }
@@ -1365,7 +1359,6 @@
       }
     },
     "Download my data" : {
-      "comment" : "Row that downloads everything Zoonk keeps about the learner",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1601,12 +1594,11 @@
       }
     },
     "For your safety, log in again, then delete your account." : {
-      "comment" : "Why the learner logs in again before deleting their account",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meld dich zu deiner Sicherheit noch einmal an und lösch dann dein Konto."
+            "value" : "Melde dich zu deiner Sicherheit noch einmal an und lösch dann dein Konto."
           }
         },
         "es" : {
@@ -1636,7 +1628,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "보안을 위해 다시 로그인한 다음 계정을 삭제하세요."
+            "value" : "보안을 위해 다시 로그인한 후 계정을 삭제해 주세요."
           }
         },
         "pl" : {
@@ -1648,7 +1640,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por segurança, entre de novo e depois exclua sua conta."
+            "value" : "Para sua segurança, entre de novo e depois exclua sua conta."
           }
         },
         "tr" : {
@@ -2191,7 +2183,7 @@
       }
     },
     "Off" : {
-      "comment" : "Study reminders are off",
+      "comment" : "Study reminders are off: the value beside the Reminders row in Settings",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2250,7 +2242,7 @@
       }
     },
     "Plus" : {
-      "comment" : "Zoonk Plus, the plan's name",
+      "comment" : "The plan's name beside Subscription in a menu, shown only to subscribers: the plan they have.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2315,24 +2307,24 @@
       }
     },
     "Plus from Google Play keeps charging until you cancel it there." : {
-      "comment" : "Before deleting the account, for Plus bought in Google Play",
+      "comment" : "Shown only to subscribers, in the box that deletes their account.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für dein Plus-Abo bei Google Play zahlst du weiter, bis du es dort kündigst."
+            "value" : "Für Plus von Google Play zahlst du weiter, bis du es dort kündigst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus de Google Play se sigue cobrando hasta que lo canceles ahí."
+            "value" : "Google Play seguirá cobrándote por Plus hasta que lo canceles ahí."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton abonnement Plus via Google Play reste facturé tant que tu ne l’annules pas sur Google Play."
+            "value" : "Tu continues à payer Plus tant que tu ne résilies pas ton abonnement sur Google Play."
           }
         },
         "it" : {
@@ -2344,7 +2336,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Playで登録したPlusは、Google Playで解約するまで料金がかかります。"
+            "value" : "Google Playで登録したPlusは、Google Playで解約するまで請求が続きます。"
           }
         },
         "ko" : {
@@ -2356,42 +2348,42 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opłaty za Plus z Google Play będą pobierane, dopóki nie anulujesz tam subskrypcji."
+            "value" : "Google Play będzie pobierać opłaty za Plus, dopóki go tam nie anulujesz."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Plus comprado via Google Play continua sendo cobrado até você cancelar por lá."
+            "value" : "O Plus do Google Play continua sendo cobrado até você cancelar por lá."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Play’den aldığın Plus aboneliğini orada iptal edene kadar ücret alınmaya devam eder."
+            "value" : "Google Play’den aldığın Plus için oradan iptal edene kadar ücret alınmaya devam eder."
           }
         }
       }
     },
     "Plus from the App Store keeps charging until you cancel it there." : {
-      "comment" : "Before deleting the account, for Plus bought in the App Store",
+      "comment" : "Shown only to subscribers, in the box that deletes their account.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für dein Plus-Abo im App Store zahlst du weiter, bis du es dort kündigst."
+            "value" : "Für Plus aus dem App Store zahlst du weiter, bis du es dort kündigst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus del App Store se sigue cobrando hasta que lo canceles ahí."
+            "value" : "El App Store seguirá cobrándote por Plus hasta que lo canceles ahí."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton abonnement Plus via l’App Store reste facturé tant que tu ne l’annules pas dans l’App Store."
+            "value" : "Tu continues à payer Plus tant que tu ne résilies pas ton abonnement dans l’App Store."
           }
         },
         "it" : {
@@ -2403,7 +2395,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App Storeで登録したPlusは、App Storeで解約するまで料金がかかります。"
+            "value" : "App Storeで登録したPlusは、App Storeで解約するまで請求が続きます。"
           }
         },
         "ko" : {
@@ -2415,7 +2407,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opłaty za Plus z App Store będą pobierane, dopóki nie anulujesz tam subskrypcji."
+            "value" : "App Store będzie pobierać opłaty za Plus, dopóki go tam nie anulujesz."
           }
         },
         "pt" : {
@@ -2427,18 +2419,18 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App Store’dan aldığın Plus aboneliğini orada iptal edene kadar ücret alınmaya devam eder."
+            "value" : "App Store’dan aldığın Plus için oradan iptal edene kadar ücret alınmaya devam eder."
           }
         }
       }
     },
     "Preferences" : {
-      "comment" : "Settings row for Preferences\nTitle of the Preferences page",
+      "comment" : "A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einstellungen"
+            "value" : "Personalisierung"
           }
         },
         "es" : {
@@ -2468,7 +2460,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "환경설정"
+            "value" : "사용 환경"
           }
         },
         "pl" : {
@@ -3554,7 +3546,6 @@
       }
     },
     "Use 150 characters or fewer." : {
-      "comment" : "Shown under the profile name field when the typed name is too long",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3908,7 +3899,6 @@
       }
     },
     "We couldn't delete your account. Try again or email hello@zoonk.com." : {
-      "comment" : "Generic account deletion failure message",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3937,13 +3927,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アカウントを削除できませんでした。もう一度試すか、hello@zoonk.comまでお問い合わせください。"
+            "value" : "アカウントを削除できませんでした。もう一度試すか、hello@zoonk.comまでメールでご連絡ください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "계정을 삭제하지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 문의해 주세요."
+            "value" : "계정을 삭제하지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내 주세요."
           }
         },
         "pl" : {
@@ -3955,7 +3945,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não deu para excluir sua conta. Tente de novo ou envie um e-mail para contato@zoonk.com."
+            "value" : "Não foi possível excluir sua conta. Tente de novo ou envie um e-mail para contato@zoonk.com."
           }
         },
         "tr" : {
@@ -4268,7 +4258,6 @@
       }
     },
     "Your account was deleted." : {
-      "comment" : "Shown once the learner's account is deleted",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4279,7 +4268,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu cuenta se eliminó."
+            "value" : "Se eliminó tu cuenta."
           }
         },
         "fr" : {
@@ -4309,7 +4298,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twoje konto zostało usunięte."
+            "value" : "Usunięto twoje konto."
           }
         },
         "pt" : {
@@ -4327,48 +4316,47 @@
       }
     },
     "Your buddy and all your certificates use this name." : {
-      "comment" : "Under a field that changes the learner's name",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kumpel spricht dich mit diesem Namen an. Er steht auch auf all deinen Zertifikaten."
+            "value" : "Dein Kumpel nennt dich so, und dieser Name steht auf all deinen Zertifikaten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este es el nombre que usan tu compañero y todos tus certificados."
+            "value" : "Tu compañero te llama así y todos tus certificados llevan este nombre."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compagnon t’appelle ainsi et ce nom figure sur tous tes certificats."
+            "value" : "Ton compagnon t’appelle par ce nom, qui figure sur tous tes certificats."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo compagno ti chiama così e questo nome compare su tutti i tuoi certificati."
+            "value" : "Il tuo compagno ti chiama così e tutti i tuoi certificati riportano questo nome."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "相棒からの呼びかけや、すべての証明書に使われる名前です。"
+            "value" : "相棒からの呼びかけや、すべての証明書に使う名前です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "짝꿍이 이 이름으로 부르고, 모든 인증서에도 이 이름이 표시돼요."
+            "value" : "짝꿍이 이 이름으로 부르고, 모든 인증서에도 이 이름이 들어가요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tak zwraca się do ciebie twój kumpel i takie imię widnieje na wszystkich twoich certyfikatach."
+            "value" : "Twój kumpel zwraca się do ciebie tym imieniem. Widnieje ono też na wszystkich twoich certyfikatach."
           }
         },
         "pt" : {
@@ -4380,18 +4368,17 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ders arkadaşın sana bu adla seslenir. Tüm sertifikalarında bu ad yer alır."
+            "value" : "Ders arkadaşın sana bu adla seslenir ve tüm sertifikalarında bu ad yer alır."
           }
         }
       }
     },
     "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone." : {
-      "comment" : "What deleting the account deletes, under its title and in its confirmation",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Ziele, Pläne, Lernfortschritte, Erinnerungen und hochgeladenen Dateien werden endgültig gelöscht. Das lässt sich nicht rückgängig machen."
+            "value" : "Deine Ziele, Pläne, dein Fortschritt, deine Erinnerungen und Uploads werden endgültig gelöscht. Das lässt sich nicht rückgängig machen."
           }
         },
         "es" : {
@@ -4403,49 +4390,49 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes objectifs, tes plans, ta progression, les informations mémorisées et tes fichiers importés sont supprimés définitivement. Cette action est irréversible."
+            "value" : "Tes objectifs, tes plans, ta progression, ta mémoire et tes fichiers importés seront définitivement supprimés. Cette action est irréversible."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I tuoi obiettivi, i piani, i progressi, la memoria e i file caricati vengono eliminati per sempre. Non si può tornare indietro."
+            "value" : "I tuoi obiettivi, piani e progressi, la memoria e i file caricati vengono eliminati per sempre. Non puoi annullare questa operazione."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "目標、学習計画、学習の進捗、メモリ、アップロードしたデータが完全に削除されます。元に戻すことはできません。"
+            "value" : "目標、学習計画、進捗、メモリ、アップロードしたファイルが完全に削除されます。元には戻せません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "목표, 계획, 진도, 메모리와 업로드한 자료가 영구적으로 삭제돼요. 되돌릴 수 없어요."
+            "value" : "목표, 계획, 진도, 메모리와 업로드한 파일이 영구적으로 삭제돼요. 되돌릴 수 없어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twoje cele, plany, postępy, zapamiętane informacje i przesłane pliki zostaną usunięte na zawsze. Nie da się tego cofnąć."
+            "value" : "Twoje cele, plany, postępy, zapamiętane informacje i przesłane pliki zostaną usunięte na zawsze. Nie można tego cofnąć."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seus objetivos, planos, progresso, memória e arquivos enviados são apagados de vez. Não dá para desfazer."
+            "value" : "Seus objetivos, planos, progresso, memória e arquivos enviados serão apagados para sempre. Não dá para desfazer isso."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hedeflerin, planların, ilerlemen, bellek kayıtların ve yüklediğin dosyalar kalıcı olarak silinir. Bu işlem geri alınamaz."
+            "value" : "Hedeflerin, planların, ilerlemen, bellekteki bilgilerin ve yüklediğin dosyalar kalıcı olarak silinir. Bu işlem geri alınamaz."
           }
         }
       }
     },
     "Your name" : {
-      "comment" : "Placeholder for the profile name field",
+      "comment" : "Shown on a certificate where the learner's name goes, until they add one to their profile.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4462,7 +4449,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton prénom"
+            "value" : "Ton nom"
           }
         },
         "it" : {
@@ -4474,7 +4461,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "名前"
+            "value" : "氏名"
           }
         },
         "ko" : {
@@ -4486,7 +4473,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twoje imię"
+            "value" : "Twoje imię i nazwisko"
           }
         },
         "pt" : {

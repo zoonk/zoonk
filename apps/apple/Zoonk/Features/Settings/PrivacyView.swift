@@ -18,19 +18,16 @@ struct PrivacyView: View {
         SettingToggle(
           isOn: usageDataBinding,
           title: Text(
-            "Share usage data", tableName: "Settings",
-            comment: "Switch that lets Zoonk record how the learner uses it, for analytics"),
+            "Share usage data", tableName: "Settings"),
           description: Text(
-            "Shows us how you use Zoonk, so we can improve it", tableName: "Settings",
-            comment: "What sharing usage data does"))
+            "Shows us how you use Zoonk, so we can improve it", tableName: "Settings"))
       }
 
       if let deleteAccount {
         Section {
           DataExportRow(
             title: Text(
-              "Download my data", tableName: "Account",
-              comment: "Row that downloads everything Zoonk keeps about the learner"),
+              "Download my data", tableName: "Account"),
             filename: "zoonk-data"
           ) {
             await settings.exportAccountData()
@@ -38,8 +35,7 @@ struct PrivacyView: View {
 
           Button(role: .destructive, action: deleteAccount) {
             Text(
-              "Delete my account", tableName: "Account",
-              comment: "Opens permanent account deletion"
+              "Delete my account", tableName: "Account"
             )
             .typeStyle(.rowTitle)
           }

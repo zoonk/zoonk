@@ -148,8 +148,7 @@ struct AccountFailureMessage: View {
     case .accountDeletion:
       LocalizedStringResource(
         "We couldn't delete your account. Try again or email hello@zoonk.com.",
-        table: "Account",
-        comment: "Generic account deletion failure message")
+        table: "Account")
     case .accountMismatch:
       LocalizedStringResource(
         "That code is for another account. Send a new code.",
@@ -173,8 +172,7 @@ struct AccountFailureMessage: View {
     case .network:
       LocalizedStringResource(
         "Check your connection and try again.",
-        table: "Account",
-        comment: "Error shown when an account request cannot reach the service")
+        table: "Account")
     case .rateLimited:
       LocalizedStringResource(
         "Too many tries. Wait a minute, then try again.",

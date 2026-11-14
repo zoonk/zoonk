@@ -37,8 +37,7 @@ struct CertificateNameEditor: View {
         TextField(
           text: $name,
           prompt: Text(
-            "Your full name", tableName: "Certificates",
-            comment: "Placeholder of the field for the name on the learner's certificates")
+            "Your full name", tableName: "Certificates")
         ) {
           label
         }
@@ -87,11 +86,9 @@ struct CertificateNameEditor: View {
   private var label: Text {
     isFirst
       ? Text(
-        "Your name, as it should appear", tableName: "Certificates",
-        comment: "Label of the field asking for the name to print on a certificate")
+        "Your name, as it should appear", tableName: "Certificates")
       : Text(
-        "Name on your certificates", tableName: "Certificates",
-        comment: "Label of the field that changes the name on the learner's certificates")
+        "Name on your certificates", tableName: "Certificates")
   }
 
   private func save() {

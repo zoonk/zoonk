@@ -33,8 +33,7 @@ struct DataExportRow: View {
       if failed {
         FailureLine(
           message: LocalizedStringResource(
-            "We couldn't prepare the download. Try again.", table: "Settings",
-            comment: "Shown when a data download failed")
+            "We couldn't prepare the download. Try again.", table: "Settings")
         )
         .typeStyle(.body)
       }

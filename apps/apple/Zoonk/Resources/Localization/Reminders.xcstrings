@@ -120,12 +120,11 @@
       }
     },
     "Create an account to get email reminders" : {
-      "comment" : "A guest's email reminders row, which opens account creation",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Konto für E-Mail-Erinnerungen erstellen"
+            "value" : "Konto erstellen, um E-Mail-Erinnerungen zu bekommen"
           }
         },
         "es" : {
@@ -149,7 +148,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アカウントを作成してメールで通知を受け取る"
+            "value" : "アカウントを作成してメールでリマインダーを受け取る"
           }
         },
         "ko" : {
@@ -161,7 +160,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Załóż konto, aby otrzymywać przypomnienia e-mail"
+            "value" : "Załóż konto, by otrzymywać przypomnienia e-mailem"
           }
         },
         "pt" : {
@@ -173,7 +172,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "E-posta ile hatırlatma almak için hesap oluştur"
+            "value" : "E-posta hatırlatmaları almak için hesap oluştur"
           }
         }
       }
@@ -297,7 +296,6 @@
       }
     },
     "Email reminders are on." : {
-      "comment" : "Email study reminders were just turned on",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -592,7 +590,6 @@
       }
     },
     "Paused while you're away. Studying turns them back on." : {
-      "comment" : "Reminders stopped after a week without study",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1005,30 +1002,29 @@
       }
     },
     "That didn't save. Try again." : {
-      "comment" : "Turning reminders on failed",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das wurde nicht gespeichert. Versuch es noch einmal."
+            "value" : "Das ließ sich nicht speichern. Versuch es noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo guardar. Inténtalo de nuevo."
+            "value" : "No se guardó el cambio. Inténtalo de nuevo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’enregistrement a échoué. Réessaie."
+            "value" : "Ça n’a pas été enregistré. Réessaie."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il salvataggio non è riuscito. Riprova."
+            "value" : "La modifica non è stata salvata. Riprova."
           }
         },
         "ja" : {
@@ -1046,13 +1042,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie udało się zapisać. Spróbuj ponownie."
+            "value" : "Nie udało się zapisać zmiany. Spróbuj ponownie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível salvar. Tente de novo."
+            "value" : "Não deu para salvar. Tente de novo."
           }
         },
         "tr" : {
@@ -1182,7 +1178,6 @@
       }
     },
     "Want a study reminder?" : {
-      "comment" : "Title of the offer below a finished lesson",
       "localizations" : {
         "de" : {
           "stringUnit" : {

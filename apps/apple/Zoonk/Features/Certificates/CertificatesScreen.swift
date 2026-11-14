@@ -85,8 +85,7 @@ private struct CertificatesHeader: View {
       PageHeader(
         Self.title,
         supporting: Text(
-          "A certificate for every level and plan you finish.", tableName: "Certificates",
-          comment: "Under the learner's certificates: what earns one")
+          "A certificate for every level and plan you finish.", tableName: "Certificates")
       )
     }
   }
@@ -109,8 +108,7 @@ private struct EmptyCertificates: View {
             .padding(.bottom, 18)
 
           Text(
-            "No certificates yet", tableName: "Certificates",
-            comment: "Title when the learner has no certificate"
+            "No certificates yet", tableName: "Certificates"
           )
           .typeStyle(.reading.weight(.semibold))
           .foregroundStyle(Color(.foreground))
@@ -127,8 +125,7 @@ private struct EmptyCertificates: View {
         } header: {
           SectionTitle(
             Text(
-              "Your next certificate", tableName: "Certificates",
-              comment: "Heading over the learner's goals that can still earn a certificate"))
+              "Your next certificate", tableName: "Certificates"))
         }
       }
     }
@@ -226,7 +223,7 @@ private struct UpNextRow: View {
         + String(
           localized: ", \(variety)", table: "Certificates",
           comment:
-            "Read by VoiceOver right after a goal's name: the language and country the learner chose, such as Spanish (Argentina)"
+            "Read by screen readers right after a goal's name. {variety} is the language and country the learner chose, such as “Spanish (Argentina)”."
         ))
   }
 }

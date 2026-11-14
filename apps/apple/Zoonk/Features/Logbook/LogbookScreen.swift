@@ -209,20 +209,19 @@ private struct WeeklySummary: View {
   private var title: Text {
     if !recap.ready {
       return Text(
-        "Your first weekly summary comes this Sunday", tableName: "Session",
-        comment: "No weekly summary yet")
+        "Your first weekly summary comes this Sunday", tableName: "Session")
     }
 
     if recap.isQuiet {
-      return Text("A quiet week", tableName: "Session", comment: "A week without study")
+      return Text("A quiet week", tableName: "Session")
     }
 
     if let learnerName {
       return Text(
-        "What a week, \(learnerName)!", tableName: "Session", comment: "The recap's title")
+        "What a week, \(learnerName)!", tableName: "Session")
     }
 
-    return Text("What a week!", tableName: "Session", comment: "The recap's title")
+    return Text("What a week!", tableName: "Session")
   }
 
   /// A finished phase leads; otherwise only good news is compared, and a quieter week starts over.
@@ -232,19 +231,18 @@ private struct WeeklySummary: View {
     }
 
     if recap.isQuiet {
-      return Text("Every week starts fresh.", tableName: "Session", comment: "A quiet week")
+      return Text("Every week starts fresh.", tableName: "Session")
     }
 
     if let finished = recap.phasesFinished.first {
       return Text(
-        "You finished \(finished.name).", tableName: "Session",
-        comment: "Under the weekly summary's title: the plan's phase that ended this week")
+        "You finished \(finished.name).", tableName: "Session")
     }
 
     if recap.comparison.minutes > 0 {
       return Text(
         "\(studyDuration(minutes: recap.comparison.minutes)) more than the week before!",
-        tableName: "Session", comment: "More time than last week")
+        tableName: "Session")
     }
 
     if recap.comparison.questions > 0 {

@@ -517,7 +517,7 @@
       }
     },
     "%@ Energy" : {
-      "comment" : "An Energy calendar day's value, under its date: the buddy's Energy that day",
+      "comment" : "A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, such as “72% Energy”.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1366,12 +1366,11 @@
       }
     },
     "Activity by day" : {
-      "comment" : "Spoken name of the study days calendar",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktivität nach Tagen"
+            "value" : "Aktivität nach Tag"
           }
         },
         "es" : {
@@ -1395,19 +1394,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "日別の学習状況"
+            "value" : "日ごとの学習量"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "날짜별 학습 활동"
+            "value" : "일별 활동"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktywność w poszczególnych dniach"
+            "value" : "Aktywność według dni"
           }
         },
         "pt" : {
@@ -1425,42 +1424,42 @@
       }
     },
     "Activity from less to more" : {
-      "comment" : "Spoken key of the study days calendar's shades",
+      "comment" : "Legend of a heatmap, from the lightest to the darkest squares.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktivität von weniger bis mehr"
+            "value" : "Von wenig bis viel Aktivität"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Actividad de menor a mayor"
+            "value" : "Actividad de menos a más"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activité de la plus faible à la plus forte"
+            "value" : "Niveau d’activité, du plus faible au plus élevé"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Livello di attività da basso ad alto"
+            "value" : "Livello di attività dal più basso al più alto"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習量の少ない方から多い方へ"
+            "value" : "活動量の少ない順"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "학습 활동량, 적음부터 많음까지"
+            "value" : "활동량이 적은 쪽부터 많은 쪽까지"
           }
         },
         "pl" : {
@@ -1472,13 +1471,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atividade da menor para a maior"
+            "value" : "Nível de atividade, do menor para o maior"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Azdan çoğa etkinlik düzeyi"
+            "value" : "Etkinlik düzeyi: azdan çoğa"
           }
         }
       }
@@ -1543,7 +1542,6 @@
       }
     },
     "Answer more questions to see when you do best." : {
-      "comment" : "Over the patterns charts, before there are enough answers",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1560,43 +1558,43 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réponds à plus de questions pour voir quand tu réussis le mieux."
+            "value" : "Réponds à plus de questions pour savoir quand tu réussis le mieux."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rispondi ad altre domande per scoprire quando dai il meglio."
+            "value" : "Rispondi ad altre domande per scoprire quando rendi meglio."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "問題にもっと答えると、いつ一番よい結果が出るかがわかります。"
+            "value" : "問題にもっと答えると、いちばん成績がよい曜日や時間帯がわかります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "문제를 더 풀면 언제 정답률이 가장 높은지 알 수 있어요."
+            "value" : "언제 가장 잘 푸는지 확인하려면 문제를 더 풀어 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odpowiedz na więcej pytań, by zobaczyć, kiedy idzie ci najlepiej."
+            "value" : "Odpowiedz na więcej pytań, żeby zobaczyć, kiedy idzie ci najlepiej."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Responda a mais perguntas para ver quando você se sai melhor."
+            "value" : "Responda mais perguntas para ver quando você se sai melhor."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ne zaman daha başarılı olduğunu görmek için daha fazla soru cevapla."
+            "value" : "En iyi sonuçları ne zaman aldığını görmek için daha çok soru cevapla."
           }
         }
       }
@@ -2369,12 +2367,11 @@
       }
     },
     "Check your connection and try again." : {
-      "comment" : "Under the title when a Statistics page can't load",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüf deine Internetverbindung und versuch es noch einmal."
+            "value" : "Prüf deine Verbindung und versuch es noch einmal."
           }
         },
         "es" : {
@@ -2398,7 +2395,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "接続を確認して、もう一度試してください。"
+            "value" : "インターネット接続を確認して、もう一度試してください。"
           }
         },
         "ko" : {
@@ -2664,12 +2661,11 @@
       }
     },
     "Energy by day" : {
-      "comment" : "Spoken name of the Energy calendar",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energie nach Tagen"
+            "value" : "Energie nach Tag"
           }
         },
         "es" : {
@@ -2687,7 +2683,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energia per giorno"
+            "value" : "Energia giorno per giorno"
           }
         },
         "ja" : {
@@ -2699,13 +2695,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "날짜별 에너지"
+            "value" : "일별 에너지"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energia w poszczególnych dniach"
+            "value" : "Energia każdego dnia"
           }
         },
         "pt" : {
@@ -2782,18 +2778,17 @@
       }
     },
     "Energy intensity from low to high" : {
-      "comment" : "Spoken key of the Energy calendar's shades",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energie von niedrig bis hoch"
+            "value" : "Energiestärke von niedrig bis hoch"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Intensidad de Energía de baja a alta"
+            "value" : "Nivel de Energía de menor a mayor"
           }
         },
         "fr" : {
@@ -2811,13 +2806,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "エネルギーの低い方から高い方へ"
+            "value" : "エネルギーの低い順"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "에너지 수준, 낮음부터 높음까지"
+            "value" : "낮은 에너지부터 높은 에너지까지"
           }
         },
         "pl" : {
@@ -2900,18 +2895,17 @@
       }
     },
     "Every belt earned" : {
-      "comment" : "Shown on Black, the last belt",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Gürtel verdient"
+            "value" : "Alle Gürtel erreicht"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todos los cinturones ganados"
+            "value" : "Conseguiste todos los cinturones"
           }
         },
         "fr" : {
@@ -2923,7 +2917,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tutte le cinture conquistate"
+            "value" : "Hai conquistato tutte le cinture"
           }
         },
         "ja" : {
@@ -2935,7 +2929,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모든 띠 획득"
+            "value" : "모든 띠를 획득했어요"
           }
         },
         "pl" : {
@@ -2953,13 +2947,12 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tüm kuşaklar kazanıldı"
+            "value" : "Tüm kuşakları kazandın"
           }
         }
       }
     },
     "Go to Today" : {
-      "comment" : "Opens Today from an empty Statistics page",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2994,13 +2987,13 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오늘로 가기"
+            "value" : "오늘로 이동하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przejdź do zakładki Dziś"
+            "value" : "Przejdź do „Dziś”"
           }
         },
         "pt" : {
@@ -3012,7 +3005,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bugün sayfasına git"
+            "value" : "Bugün’e git"
           }
         }
       }
@@ -3372,7 +3365,7 @@
       }
     },
     "Less" : {
-      "comment" : "Low end of the study days calendar's key",
+      "comment" : "The light end of a heatmap's legend: less activity.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3425,7 +3418,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Az"
+            "value" : "Daha az"
           }
         }
       }
@@ -3667,7 +3660,7 @@
       }
     },
     "More" : {
-      "comment" : "High end of the study days calendar's key",
+      "comment" : "The dark end of a heatmap's legend: more activity.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3720,7 +3713,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Çok"
+            "value" : "Daha fazla"
           }
         }
       }
@@ -3962,7 +3955,7 @@
       }
     },
     "No Energy recorded" : {
-      "comment" : "An Energy calendar day's value, under its date, for a day without Energy",
+      "comment" : "A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4021,7 +4014,6 @@
       }
     },
     "No statistics yet" : {
-      "comment" : "Title shown on Statistics to a learner with nothing to count yet",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4050,7 +4042,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "まだ統計データがありません"
+            "value" : "統計はまだありません"
           }
         },
         "ko" : {
@@ -4062,13 +4054,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie masz jeszcze statystyk"
+            "value" : "Nie ma jeszcze statystyk"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda não há estatísticas"
+            "value" : "Ainda sem estatísticas"
           }
         },
         "tr" : {
@@ -4375,7 +4367,6 @@
       }
     },
     "Past 12 months" : {
-      "comment" : "Title of a calendar of the past year's days",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5083,7 +5074,6 @@
       }
     },
     "The time of day makes no difference." : {
-      "comment" : "Over the patterns charts, when every part of the day scores about the same",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5094,7 +5084,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La hora del día no cambia tus resultados."
+            "value" : "La hora del día no influye."
           }
         },
         "fr" : {
@@ -5106,19 +5096,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’orario non fa differenza."
+            "value" : "Il momento della giornata non fa differenza."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正答率はどの時間帯もほぼ同じです。"
+            "value" : "時間帯による成績の差はありません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "시간대에 따른 차이가 없어요."
+            "value" : "시간대에 따른 차이는 없어요."
           }
         },
         "pl" : {
@@ -5130,30 +5120,29 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O horário não faz diferença."
+            "value" : "O horário do dia não faz diferença."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Günün hangi saatinde çalıştığın fark etmiyor."
+            "value" : "Günün saati fark yaratmıyor."
           }
         }
       }
     },
     "They show up after your first lesson." : {
-      "comment" : "Under the title of an empty Statistics page",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nach deiner ersten Lektion siehst du sie hier."
+            "value" : "Du siehst sie nach deiner ersten Lektion."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aparecen después de tu primera lección."
+            "value" : "Aparecerán después de tu primera lección."
           }
         },
         "fr" : {
@@ -5165,7 +5154,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le vedrai dopo la tua prima lezione."
+            "value" : "Compariranno dopo la tua prima lezione."
           }
         },
         "ja" : {
@@ -5183,7 +5172,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pojawią się po twojej pierwszej lekcji."
+            "value" : "Pojawią się po pierwszej lekcji."
           }
         },
         "pt" : {
@@ -5201,7 +5190,6 @@
       }
     },
     "This page didn't load" : {
-      "comment" : "Title shown when a Statistics page can't load",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5212,7 +5200,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo cargar esta página"
+            "value" : "Esta página no cargó"
           }
         },
         "fr" : {
@@ -5230,7 +5218,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ページを読み込めませんでした"
+            "value" : "このページを読み込めませんでした"
           }
         },
         "ko" : {
@@ -5260,12 +5248,11 @@
       }
     },
     "Throughout the day" : {
-      "comment" : "Title of the chart with a column per part of the day",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im Tagesverlauf"
+            "value" : "Im Laufe des Tages"
           }
         },
         "es" : {
@@ -5313,18 +5300,17 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Günün saatlerine göre"
+            "value" : "Gün boyunca"
           }
         }
       }
     },
     "Throughout the week" : {
-      "comment" : "Title of the chart with a column per day of the week",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im Wochenverlauf"
+            "value" : "Im Laufe der Woche"
           }
         },
         "es" : {
@@ -5372,7 +5358,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Haftanın günlerine göre"
+            "value" : "Hafta boyunca"
           }
         }
       }
@@ -5614,7 +5600,6 @@
       }
     },
     "Weekly score trend" : {
-      "comment" : "Spoken name of the Score chart",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5625,7 +5610,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tendencia del puntaje semanal"
+            "value" : "Evolución semanal del puntaje"
           }
         },
         "fr" : {
@@ -5655,7 +5640,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zmiany wyniku w kolejnych tygodniach"
+            "value" : "Wynik w kolejnych tygodniach"
           }
         },
         "pt" : {
@@ -5673,7 +5658,6 @@
       }
     },
     "When you answer best, over the last 90 days." : {
-      "comment" : "Under the Patterns title on a phone: what the patterns cover",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5968,7 +5952,6 @@
       }
     },
     "You answer about the same every day." : {
-      "comment" : "Over the patterns charts, when every day scores about the same",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5979,13 +5962,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus resultados son parecidos todos los días."
+            "value" : "Te va más o menos igual todos los días."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes résultats sont à peu près les mêmes chaque jour."
+            "value" : "Tu réussis à peu près aussi bien chaque jour."
           }
         },
         "it" : {
@@ -5997,19 +5980,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正答率はどの曜日もほぼ同じです。"
+            "value" : "どの曜日も成績はほぼ同じです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "요일별 정답률이 비슷해요."
+            "value" : "어느 요일에 풀든 결과가 비슷해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Każdego dnia radzisz sobie podobnie."
+            "value" : "Każdego dnia masz podobne wyniki."
           }
         },
         "pt" : {
@@ -6021,7 +6004,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Doğru cevap oranın her gün benzer."
+            "value" : "Her gün benzer sonuçlar alıyorsun."
           }
         }
       }
@@ -6086,7 +6069,6 @@
       }
     },
     "Your best day is %@." : {
-      "comment" : "Over the patterns charts; the argument is a weekday's full name",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6115,13 +6097,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "最も正答率が高いのは%@です。"
+            "value" : "いちばん成績がよい曜日は%@です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "정답률은 %@에 가장 높아요."
+            "value" : "%@에 문제를 가장 잘 풀어요."
           }
         },
         "pl" : {
@@ -6139,7 +6121,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En başarılı olduğun gün %@."
+            "value" : "En iyi sonuç aldığın gün %@."
           }
         }
       }

@@ -188,8 +188,7 @@ private struct CertificateDetail: View {
         } label: {
           Label {
             Text(
-              "Add to LinkedIn", tableName: "Certificates",
-              comment: "Adds a certificate to LinkedIn")
+              "Add to LinkedIn", tableName: "Certificates")
           } icon: {
             Image(systemName: "arrow.up.right")
           }
@@ -203,8 +202,7 @@ private struct CertificateDetail: View {
       if printFailed {
         FailureLine(
           message: LocalizedStringResource(
-            "That didn't work. Try again in a moment.", table: "Certificates",
-            comment: "Loading a certificate to print failed"))
+            "That didn't work. Try again in a moment.", table: "Certificates"))
       }
     }
   }
@@ -276,7 +274,7 @@ private struct CertificateDetail: View {
   private var linkNote: Text {
     Text(
       "Anyone with the link can see this certificate.",
-      tableName: "Certificates", comment: "Who can see a certificate's page")
+      tableName: "Certificates")
   }
 
   private static var linkCopiedLine: LocalizedStringResource {
@@ -350,8 +348,7 @@ private struct CertificateHeading: View {
         if isIssued {
           Label {
             Text(
-              "Verified certificate · issued by Zoonk", tableName: "Certificates",
-              comment: "Over an issued certificate's heading: Zoonk vouches for it")
+              "Verified certificate · issued by Zoonk", tableName: "Certificates")
           } icon: {
             Image(systemName: "checkmark.seal")
               .foregroundStyle(.success)
@@ -406,7 +403,9 @@ private struct CertificateDetails<Name: View, Link: View, Footer: View>: View {
 
       CertificateDetailRow(
         label: Text(
-          "Completed", tableName: "Certificates", comment: "When a certificate was earned"),
+          "Completed", tableName: "Certificates",
+          comment:
+            "A certificate's fact: the day the learner finished the course or level."),
         isData: true
       ) {
         Text(facts.completedOnDay)
@@ -416,7 +415,8 @@ private struct CertificateDetails<Name: View, Link: View, Footer: View>: View {
         CertificateDetailRow(
           label: Text(
             "Lessons studied", tableName: "Certificates",
-            comment: "How many lessons a certificate's learner studied"),
+            comment:
+              "A certificate's fact: how many of the plan's lessons the learner studied."),
           isData: true
         ) {
           Text(lessons, format: .number)
@@ -427,7 +427,9 @@ private struct CertificateDetails<Name: View, Link: View, Footer: View>: View {
         CertificateDetailRow(
           label: Text(
             "Passed by test", tableName: "Certificates",
-            comment: "How many of a certificate's lessons the learner passed by a test"),
+            comment:
+              "A certificate's fact: lessons the learner skipped by passing a test, said for outsiders."
+          ),
           isData: true
         ) {
           Text(lessons, format: .number)
@@ -438,13 +440,17 @@ private struct CertificateDetails<Name: View, Link: View, Footer: View>: View {
         CertificateDetailRow(
           label: Text(
             "Study time", tableName: "Certificates",
-            comment: "About how long a certificate's lessons took to study"),
+            comment:
+              "A certificate's fact: about how long the studied lessons take. In Brazilian Portuguese: “Carga horária”."
+          ),
           isData: true
         ) {
           Text(
             "about \(studyDuration(minutes: roundStudyMinutes(minutes)))",
             tableName: "Certificates",
-            comment: "An approximate study time, such as \"about 41 hr\"")
+            comment:
+              "A certificate's study time, the plan's estimate for the lessons studied, such as “about 41 hr”. Brazilian schools read it as the certificate's workload (carga horária)."
+          )
         }
       }
 
@@ -502,19 +508,17 @@ private struct CertificateMeaning: View {
 
   private var paragraphs: [String] {
     let nameNote = String(
-      localized: "Names aren't checked against an ID.", table: "Certificates",
-      comment: "Ends a certificate's explanation: the name on it is the one the learner gave")
+      localized: "Names aren't checked against an ID.", table: "Certificates")
 
     if facts.kind == .languageLevel {
       return [
         String(
           localized: "For finishing this level, studying at least half of its lessons.",
-          table: "Certificates", comment: "How a language level certificate is earned"),
+          table: "Certificates"),
         String(
           localized:
             "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result.",
-          table: "Certificates",
-          comment: "What a language certificate's level is, before the note about its name")
+          table: "Certificates")
           + " " + nameNote,
       ]
     }
@@ -523,17 +527,16 @@ private struct CertificateMeaning: View {
       facts.courseLevel == nil
       ? String(
         localized: "For finishing every lesson and challenge of this plan.",
-        table: "Certificates", comment: "How a certificate for a course's whole plan is earned")
+        table: "Certificates")
       : String(
         localized: "For finishing every lesson and challenge of this level.",
-        table: "Certificates", comment: "How a certificate for a course's level is earned")
+        table: "Certificates")
 
     return [
       issued,
       String(
         localized: "A record of completion on Zoonk, not academic credit.",
-        table: "Certificates",
-        comment: "What a course certificate is, before the note about its name")
+        table: "Certificates")
         + " " + nameNote,
     ]
   }
@@ -544,8 +547,7 @@ private struct CertificateMeaning: View {
     Section {
       VStack(alignment: .leading, spacing: paragraphSpacing) {
         Text(
-          "What this certificate means", tableName: "Certificates",
-          comment: "Heading over how Zoonk issues a certificate and what it isn't"
+          "What this certificate means", tableName: "Certificates"
         )
         .typeStyle(.section)
         .foregroundStyle(Color(.foreground))
@@ -585,7 +587,8 @@ private struct CertificateCovered: View {
           facts.kind == .course
             ? Text(
               "Topics covered", tableName: "Certificates",
-              comment: "Heading over the chapters a course certificate covers")
+              comment:
+                "Above the topics a finished course covered, on its certificate.")
             : Text(
               "Can do", tableName: "Certificates",
               comment: "Heading over what a language certificate's learner can do")

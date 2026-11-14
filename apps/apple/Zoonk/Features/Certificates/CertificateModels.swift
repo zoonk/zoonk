@@ -124,7 +124,7 @@ extension CertificateFacts {
         localized: "\(title) · \(String(localized: courseLevel.localizedTitle))",
         table: "Certificates",
         comment:
-          "A course level certificate's name: the course, then its level, such as Python · Beginner"
+          "A course level's certificate name, such as \"Python · Beginner\": the course's title, then the level's name."
       )
     }
 
@@ -135,7 +135,7 @@ extension CertificateFacts {
     return String(
       localized: "\(languageTitle) \(level ?? "")", table: "Certificates",
       comment:
-        "A language certificate's name: the language, then its CEFR level, such as Spanish B1"
+        "A language and a CEFR level, such as \"Spanish B1\": a certificate's name."
     )
   }
 
@@ -187,22 +187,16 @@ extension CertificateFacts {
       )
     case (.course, nil):
       String(
-        localized: "\(self.name), completed on Zoonk", table: "Certificates",
-        comment:
-          "A course certificate's heading before the learner gives a name: the course or its level, such as Python · Beginner"
+        localized: "\(self.name), completed on Zoonk", table: "Certificates"
       )
     case (.languageLevel, let name?):
       String(
         localized: "\(name) completed level \(level ?? "") in \(languageName)",
-        table: "Certificates",
-        comment:
-          "A language level certificate read aloud: the learner's name, the level, the language")
+        table: "Certificates")
     case (.languageLevel, nil):
       String(
         localized: "Level \(level ?? "") in \(languageName), completed on Zoonk",
-        table: "Certificates",
-        comment:
-          "A language level certificate's heading before the learner gives a name: the level, then the language"
+        table: "Certificates"
       )
     }
   }

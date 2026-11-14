@@ -132,7 +132,7 @@ struct ScoreTrendChart: View {
     }
     .frame(height: 220)
     .accessibilityLabel(
-      Text("Weekly score trend", tableName: "Progress", comment: "Spoken name of the Score chart")
+      Text("Weekly score trend", tableName: "Progress")
     )
     .accessibilityValue(
       Text(

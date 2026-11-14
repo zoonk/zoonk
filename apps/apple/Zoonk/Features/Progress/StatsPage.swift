@@ -47,21 +47,19 @@ struct StatsEmpty: View {
     ContentUnavailableView {
       Label {
         Text(
-          "No statistics yet", tableName: "Progress",
-          comment: "Title shown on Statistics to a learner with nothing to count yet")
+          "No statistics yet", tableName: "Progress")
       } icon: {
         Image(systemName: "chart.bar")
       }
     } description: {
       Text(
-        "They show up after your first lesson.", tableName: "Progress",
-        comment: "Under the title of an empty Statistics page")
+        "They show up after your first lesson.", tableName: "Progress")
     } actions: {
       Button {
         router.showRoot(of: .today)
       } label: {
         Text(
-          "Go to Today", tableName: "Progress", comment: "Opens Today from an empty Statistics page"
+          "Go to Today", tableName: "Progress"
         )
       }
       .buttonStyle(.mainAction)
@@ -92,15 +90,13 @@ struct StatsFailure: View {
     ContentUnavailableView {
       Label {
         Text(
-          "This page didn't load", tableName: "Progress",
-          comment: "Title shown when a Statistics page can't load")
+          "This page didn't load", tableName: "Progress")
       } icon: {
         Image(systemName: failure == .network ? "wifi.exclamationmark" : "exclamationmark.triangle")
       }
     } description: {
       Text(
-        "Check your connection and try again.", tableName: "Progress",
-        comment: "Under the title when a Statistics page can't load")
+        "Check your connection and try again.", tableName: "Progress")
     } actions: {
       Button {
         Task {

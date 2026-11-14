@@ -40,8 +40,7 @@ struct AccountDeletionView: View {
       .confirmationDialog(
         Text(
           "Delete your account?",
-          tableName: "Account",
-          comment: "Final confirmation title before permanent account deletion"),
+          tableName: "Account"),
         isPresented: $isConfirmingDeletion,
         titleVisibility: .visible
       ) {
@@ -297,20 +296,17 @@ struct AccountDeletionView: View {
     String(
       localized:
         "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone.",
-      table: "Account",
-      comment: "What deleting the account deletes, under its title and in its confirmation")
+      table: "Account")
   }
 
   private var logInAgainReason: Text {
     Text(
-      "For your safety, log in again, then delete your account.", tableName: "Account",
-      comment: "Why the learner logs in again before deleting their account")
+      "For your safety, log in again, then delete your account.", tableName: "Account")
   }
 
   private var accountDeleted: Text {
     Text(
-      "Your account was deleted.", tableName: "Account",
-      comment: "Shown once the learner's account is deleted")
+      "Your account was deleted.", tableName: "Account")
   }
 
   private var storeSubscriptionProvider: StoreSubscriptionProvider? {
@@ -323,7 +319,8 @@ struct AccountDeletionView: View {
       ? nil
       : String(
         localized: "Deleting your account ends Plus right away.", table: "Account",
-        comment: "Before deleting the account, what happens to Plus bought on the web")
+        comment:
+          "Shown only to subscribers, in the box that deletes their account.")
   }
 
   private var normalizedCode: String {
@@ -381,12 +378,14 @@ struct AccountDeletionView: View {
       Text(
         "Plus from the App Store keeps charging until you cancel it there.",
         tableName: "Account",
-        comment: "Before deleting the account, for Plus bought in the App Store")
+        comment:
+          "Shown only to subscribers, in the box that deletes their account.")
     case .google:
       Text(
         "Plus from Google Play keeps charging until you cancel it there.",
         tableName: "Account",
-        comment: "Before deleting the account, for Plus bought in Google Play")
+        comment:
+          "Shown only to subscribers, in the box that deletes their account.")
     }
   }
 
