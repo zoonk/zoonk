@@ -43,6 +43,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
@@ -234,7 +235,11 @@ private fun NotMadeLine(
     val onTheWay = later.count { it.status == GoalMindMap.Status.DRAWING || it.status == GoalMindMap.Status.WRITING_LESSONS }
     val failed = later.count { it.status == GoalMindMap.Status.FAILED }
     // What stops a new map also takes the rows' Create away, so it shows whether or not a chapter is ready to make.
-    val limit = offer.stop?.takeIf { offer.startable == 0L }?.limit(actions.state.tier)
+    val limit =
+        offer.stop
+            ?.takeIf { offer.startable == 0L }
+            ?.limit(actions.state.tier)
+            ?.takeUnless { limitLifted(it) }
     val counted = @Composable { id: Int, count: Long -> pluralStringResource(id, count.toInt(), formatNumber(count.toDouble(), locale)) }
 
     val text =
