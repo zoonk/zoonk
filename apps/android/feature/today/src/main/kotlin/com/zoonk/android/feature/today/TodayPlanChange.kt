@@ -47,13 +47,14 @@ internal fun PlanChangeNotice(
 ) {
     val viewModel = state.viewModel
     val answer = viewModel.planChangeAnswer?.takeIf { it.visit == state.read.noticeVisit() }
-    val change = answer?.change ?: state.read.today.planChange ?: return
+    val repriced = viewModel.repricedChange?.takeIf { it.visit == state.read.noticeVisit() }?.change
+    val change = answer?.change ?: repriced ?: state.read.today.planChange ?: return
     val behind = change.behind
 
     if (change.kind == MISSED_DAYS && behind != null) {
         FallingBehindNotice(change, behind, state, layout, modifier)
     } else {
-        ChangeNotice(change, answer, state, layout, modifier)
+        ChangeNotice(change, answer, repriced != null, state, layout, modifier)
     }
 }
 
@@ -61,6 +62,7 @@ internal fun PlanChangeNotice(
 private fun ChangeNotice(
     change: PlanChange,
     answer: PlanChangeAnswer?,
+    repriced: Boolean,
     state: TodayNoticeState,
     layout: SuggestionLayout,
     modifier: Modifier,
@@ -116,7 +118,7 @@ private fun ChangeNotice(
     ) {
         SuggestionHeader(words.title)
         words.why?.let { SuggestionDescription(it) }
-        PlanEffectDiff(change.effect, byDate = byDate, dateKind = today.goal.dateKind)
+        PlanEffectDiff(change.effect, byDate = byDate, dateKind = today.goal.dateKind, repriced = repriced)
         officialDate?.let { SuggestionDescription(it) }
 
         if (result != null) {

@@ -36,6 +36,7 @@ internal fun TutorPlanChange(
     change: PlanChange,
     deciding: Boolean,
     failed: Boolean,
+    repriced: Boolean,
     onDecide: (Decision) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -59,7 +60,7 @@ internal fun TutorPlanChange(
             }
 
             if (proposed) {
-                PlanEffectDiff(change.effect)
+                PlanEffectDiff(change.effect, repriced = repriced)
             }
             planChangeOfficialDateLine(
                 change,

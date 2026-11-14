@@ -47,6 +47,10 @@ class FakePlanApi : PlanApi {
     var planGate: CompletableDeferred<Unit>? = null
     val changes = mutableListOf<List<PlanOp>>()
     val decisions = mutableListOf<PlanChangeDecisionInput.Status>()
+    val decisionQuotes = mutableListOf<String?>()
+
+    /** The next accept's answer when its numbers moved: still proposed, with a new quote. */
+    var repriced: PlanChange? = null
     var shownPlan: Plan = plan()
     var shownSyllabus: Syllabus = syllabus()
     var timeToCover: PlanTimeToCover = timeToCover()
@@ -188,9 +192,12 @@ class FakePlanApi : PlanApi {
         goalId: UUID,
         changeId: UUID,
         status: PlanChangeDecisionInput.Status,
+        quote: String?,
     ): PlanChange {
         decisions += status
-        return planChange(status = status.value)
+        decisionQuotes += quote
+        return repriced?.takeIf { status == PlanChangeDecisionInput.Status.APPLIED }?.also { repriced = null }
+            ?: planChange(status = status.value)
     }
 
     override suspend fun timeToCover(

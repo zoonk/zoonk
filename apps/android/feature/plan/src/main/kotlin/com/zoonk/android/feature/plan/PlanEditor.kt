@@ -128,7 +128,10 @@ internal data class PlanEdits(
     fun sheetApplied(opening: UUID): EditorChange? =
         sheetAnswer(opening)?.takeIf { it.status == PlanChangeResult.Status.APPLIED }?.change?.let { changes[it.id] }
 
-    /** Whether [opening]'s save went to a plan not built yet, which keeps it for when it is: there's no change to show. */
+    /**
+     * Whether [opening]'s save was kept with no change to show: a plan not built yet keeps it for when it is,
+     * and removing a focus that moves no lesson saves only the focus.
+     */
     fun sheetKept(opening: UUID) = sheetAnswer(opening)?.let { it.status == PlanChangeResult.Status.APPLIED && it.change == null } == true
 
     /** Whether [opening]'s save didn't, and [part] hasn't saved again since. */

@@ -69,6 +69,10 @@ internal class FocusTestViewModel(
     var saveFailures by mutableStateOf(0)
         private set
 
+    /** The proposal accepted after its numbers moved, as it now stands: the result asks again with today's. */
+    var repricedProposal by mutableStateOf<PlanChange?>(null)
+        private set
+
     var proposalAnswer by mutableStateOf<ProposalAnswer?>(null)
         private set
 
@@ -172,11 +176,14 @@ internal class FocusTestViewModel(
         deciding = status
         decisionFailed = false
         viewModelScope.launch {
-            val result = plans.decideChange(UUID.fromString(goalId), change.id, status)
+            val result = plans.decideChange(UUID.fromString(goalId), change, status)
             if (on != sittings) return@launch
             when (result) {
                 is MutationResult.Done -> {
-                    proposalAnswer = ProposalAnswer(status, result.value)
+                    val saved = result.value
+                    val repriced = status == PlanChangeDecisionInput.Status.APPLIED && saved.status == PlanChange.Status.PROPOSED
+                    repricedProposal = saved.takeIf { repriced }
+                    proposalAnswer = ProposalAnswer(status, saved).takeIf { !repriced }
                 }
 
                 is MutationResult.Failed -> {
@@ -196,6 +203,7 @@ internal class FocusTestViewModel(
         closed = null
         sittings++
         proposalAnswer = null
+        repricedProposal = null
         deciding = null
         decisionFailed = false
     }

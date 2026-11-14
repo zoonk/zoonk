@@ -339,12 +339,14 @@ private fun FocusTestNotice(
 
 @Composable
 private fun InsightNotice(
-    insight: MemoryInsight,
+    opened: MemoryInsight,
     state: TodayNoticeState,
     layout: SuggestionLayout,
     modifier: Modifier,
 ) {
     val viewModel = state.viewModel
+    val repriced = viewModel.repricedInsights[opened.id]
+    val insight = repriced ?: opened
     val answer = viewModel.insightAnswers[insight.id]
     val result = answer?.takeIf { it != InsightAnswer.Failed }?.let { insightResult(insight, it) }
     val label = stringResource(R.string.today_insight_label)
@@ -361,7 +363,7 @@ private fun InsightNotice(
     ) {
         SuggestionHeader(label)
         SuggestionDescription(insight.message)
-        if (proposed) PlanEffectDiff(insight.planChange?.effect, dateKind = state.read.today.goal.dateKind)
+        if (proposed) PlanEffectDiff(insight.planChange?.effect, dateKind = state.read.today.goal.dateKind, repriced = repriced != null)
         if (result != null) {
             SuggestionResult(result)
         } else {
