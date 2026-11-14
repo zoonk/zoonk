@@ -55,7 +55,6 @@
     "./focus-test": "./src/focus-test/focus-test-flow.tsx",
     "./focus-test/actions": "./src/focus-test/focus-test-actions.ts",
     "./format-number": "./src/_utils/use-format-number.ts",
-    "./free-week": "./src/_components/free-week-over.tsx",
     "./generation": "./src/generation/generation-wait.tsx",
     "./generation/follower": "./src/generation/generation-follower.tsx",
     "./generation/kinds": "./src/generation/generation-kinds.ts",

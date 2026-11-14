@@ -25,17 +25,24 @@ export type CalendarLimit =
   | SignUpRequired;
 
 /** The free plan's lessons come back one at a time: `availableAt` is the instant the next one opens. */
-type FreeLessonsUsed = {
+export type FreeLessonsUsed = {
   availableAt: string;
   period: "rolling30Days";
   status: "limitReached";
   tier: "free";
 };
 
-export type LessonLimit = CalendarLimit | FreeLessonsUsed;
+/** Any other new lesson stops for the day (the day's AI budget), or for a guest until they make an account. */
+type LessonCap = { status: "limitReached"; tier: EntitlementTier };
+
+export type LessonLimit =
+  | { retryAfterSeconds: number; status: "slowDown" }
+  | LessonCap
+  | SignUpRequired
+  | FreeLessonsUsed;
 
 /** `resource` says what ran out: the maps, the lessons a map writes first, or the day's AI spend. */
-export type MindMapLimit = LessonLimit & {
+export type MindMapLimit = (CalendarLimit | FreeLessonsUsed) & {
   resource?: "aiSpend" | "generatedLessons" | "lessonStart" | "mindMap";
 };
 
@@ -190,7 +197,7 @@ function useCapWords() {
 }
 
 function isFreeLessonsUsed(limit: LessonLimit): limit is FreeLessonsUsed {
-  return limit.status === "limitReached" && limit.period === "rolling30Days";
+  return "period" in limit && limit.period === "rolling30Days";
 }
 
 // oxlint-disable-next-line no-empty-function -- useSyncExternalStore requires a subscribe that returns an unsubscribe
@@ -233,7 +240,8 @@ function useNextFreeLessonLine() {
 
 export function useLessonLimitWords(limit: LessonLimit): LimitWords {
   const t = useExtracted();
-  const capWords = useCapWords();
+  const refusal = useRefusalWords();
+  const comesBack = useComesBackLine();
   const nextFreeLesson = useNextFreeLessonLine();
   const opensOn = useOpeningDay(isFreeLessonsUsed(limit) ? limit.availableAt : null);
 
@@ -241,11 +249,18 @@ export function useLessonLimitWords(limit: LessonLimit): LimitWords {
     return { line: nextFreeLesson(opensOn), title: t("You've used your free lessons") };
   }
 
-  return capWords(limit, {
-    day: t("No more new lessons today"),
-    guest: t("No more lessons without an account"),
-    month: t("No more new lessons this month"),
-  });
+  if (limit.status !== "limitReached") {
+    return refusal(limit);
+  }
+
+  if (limit.tier === "guest") {
+    return { title: t("No more lessons without an account") };
+  }
+
+  return {
+    line: comesBack({ period: "day", status: "limitReached", tier: limit.tier }),
+    title: t("No more new lessons today"),
+  };
 }
 
 function useMindMapRefusalWords(limit: MindMapLimit): LimitWords {

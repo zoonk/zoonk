@@ -29,11 +29,7 @@ function readLimit(body: unknown): LimitRefusal {
     };
   }
 
-  return {
-    period: period === "month" || period === "total" ? period : "day",
-    reason: "limitReached",
-    tier: tier === "free" || tier === "plus" ? tier : "guest",
-  };
+  return { reason: "limitReached", tier: tier === "free" || tier === "plus" ? tier : "guest" };
 }
 
 function toStartOutcome({

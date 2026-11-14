@@ -4,7 +4,6 @@ import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted, useFormatter } from "next-intl";
 import { Fragment, useEffect, useRef, useState } from "react";
-import { FreeWeekOverNotice } from "../../_components/free-week-over";
 import { useGoalDateValues } from "../../_utils/iso-date";
 import { useSentenceSpace } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";
@@ -38,7 +37,6 @@ function CoveredWords({ coverage }: { coverage: Coverage }) {
 }
 
 function SyllabusWords({ syllabus }: { syllabus: SyllabusView }) {
-  const { plan } = usePlanScreen();
   return useSyllabusSummaryText({ dailyMinutes: plan.schedule.dailyMinutes, syllabus });
 }
 
@@ -49,7 +47,6 @@ function useFocusTradeOff(): string | null {
   const formatDuration = useFormatDuration();
   const goalDate = useGoalDateValues();
   const coverage = usePlanCoverage();
-  const { plan } = usePlanScreen();
   const { dailyMinutes, targetDate, targetDateNamedMonth } = plan.schedule;
 
   const focused = plan.areas
@@ -127,7 +124,6 @@ function FocusTradeOff({ syllabus, text }: { syllabus: SyllabusView | null; text
 
 export function RevealCoverage({ syllabus }: { syllabus: SyllabusView | null }) {
   const t = useExtracted();
-  const { plan } = usePlanScreen();
   const coverage = usePlanCoverage();
   const canMoveDate = useCanMoveDate();
   const space = useSentenceSpace();
@@ -145,10 +141,6 @@ export function RevealCoverage({ syllabus }: { syllabus: SyllabusView | null }) 
       done.current?.focus();
     }
   }, [covered]);
-
-  if (plan.access.freeWeekOver) {
-    return <FreeWeekOverNotice />;
-  }
 
   if (tradeOff) {
     return <FocusTradeOff syllabus={shown} text={tradeOff} />;

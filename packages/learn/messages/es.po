@@ -226,7 +226,6 @@ msgstr "Descargar"
 
 #: src/_components/edit-text-dialog.tsx
 #: src/certificates/certificate-name.tsx
-#: src/country/country-picker.tsx
 #: src/journey/goal-actions.tsx
 #: src/language/conversation/call-control.tsx
 #: src/onboarding/start-over-menu.tsx
@@ -351,19 +350,14 @@ msgid "You've used your free lessons"
 msgstr "Ya usaste tus lecciones gratis"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "No te quedan lecciones nuevas hoy"
-
-#: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
 msgstr "No hay más lecciones sin una cuenta"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "VGhCC9"
-msgid "No more new lessons this month"
-msgstr "No te quedan lecciones nuevas este mes"
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "No te quedan lecciones nuevas hoy"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
@@ -615,6 +609,7 @@ msgstr "No se pudo guardar. Inténtalo de nuevo."
 
 #: src/_components/sheet-header.tsx
 #: src/_components/suggestion.tsx
+#: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 #: src/plan/plan-editor.tsx
