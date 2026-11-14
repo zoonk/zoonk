@@ -15,7 +15,9 @@
       if let section {
         content.fullScreenCover(isPresented: .constant(true)) {
           NavigationStack {
-            if let writing = DebugLessonWait.writing(section) {
+            if section == "lessonGate" {
+              DebugLessonGate()
+            } else if let writing = DebugLessonWait.writing(section) {
               DebugLessonWait(
                 writing: writing, kind: section.hasPrefix("challenge") ? .challenge : .lesson)
             } else {
@@ -554,6 +556,19 @@
     }
   }
 
+  /// `ZOONK_DEBUG_GALLERY=lessonGate` opens the free lessons gate as a screen, and `lessonRefused`
+  /// in place on a lesson's wait; the next free lesson opens 20 seconds after launch.
+  private struct DebugLessonGate: View {
+    static let refusal = LessonRunRefusal.limitReached(
+      tier: .free, period: .last30Days(opensAt: .now.addingTimeInterval(20)))
+
+    var body: some View {
+      LessonUnavailableView(refusal: Self.refusal) {}
+        .lonePage()
+        .navigationBarTitleDisplayMode(.inline)
+    }
+  }
+
   /// `ZOONK_DEBUG_GALLERY=lessonWait` (or `lessonUnwritten`, `lessonFailed`, `lessonSetAside`) opens
   /// a lesson's wait as the player shows it, with a run's first minute already reported.
   private struct DebugLessonWait: View {
@@ -568,6 +583,7 @@
       case "Unwritten": .notStarted
       case "Failed": .failed
       case "SetAside": .setAside
+      case "Refused": .refused(DebugLessonGate.refusal)
       default: nil
       }
     }
