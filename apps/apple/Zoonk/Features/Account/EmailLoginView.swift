@@ -101,6 +101,7 @@ struct EmailLoginView: View {
           }
         }
         .controlSize(.large)
+        .buttonSizing(.flexible)
         .listRowSeparator(.hidden)
       }
 
