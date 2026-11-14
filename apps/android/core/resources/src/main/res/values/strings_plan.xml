@@ -39,6 +39,9 @@
     <string name="plan_pause_goal">Pause this goal</string>
     <string name="plan_resume_goal">Resume this goal</string>
     <string name="plan_archive_goal">Archive this goal</string>
+    <!-- The button that archives a goal whose exam date has passed; it asks first. -->
+    <string name="plan_archive_goal_short">Archive goal</string>
+    <string name="plan_keep_studying">Keep studying</string>
     <string name="plan_archive_title">Archive your %1$s goal?</string>
     <string name="plan_archive_description">It leaves your goals and its plan stops. What you learned stays in your progress.</string>
     <string name="plan_archive">Archive</string>
@@ -750,15 +753,15 @@
         <item quantity="one">%1$d more lesson fits in your time</item>
         <item quantity="other">%1$d more lessons fit in your time</item>
     </plurals>
-    <plurals name="plan_past_date_goal_title">
-        <item quantity="one">Your date came with %1$d lesson left</item>
-        <item quantity="other">Your date came with %1$d lessons left</item>
+    <string name="plan_past_date_goal_title">Your end date has passed</string>
+    <string name="plan_past_date_exam_title">Your exam date has passed</string>
+    <!-- Under "Your exam date has passed": the lessons left are what "them" means. -->
+    <string name="plan_exam_over_ask">Keep studying them, or archive this goal?</string>
+    <plurals name="plan_past_date_offer">
+        <item quantity="one">You have %d lesson left. A later end date fits it.</item>
+        <item quantity="other">You have %d lessons left. A later end date fits them.</item>
     </plurals>
-    <plurals name="plan_past_date_exam_title">
-        <item quantity="one">%1$d lesson was left before your exam</item>
-        <item quantity="other">%1$d lessons were left before your exam</item>
-    </plurals>
-    <string name="plan_move_date_covers_whats_left">Move your date so your time covers what\'s left.</string>
+    <string name="plan_find_date">Find a date</string>
     <string name="plan_finished_title">You finished your plan</string>
     <string name="plan_study_next">Here\'s what to study next.</string>
     <string name="plan_continue_at">Continue at %1$s</string>

@@ -15,6 +15,7 @@
   "plan_archive": "4fb4d503b14cff59a3b97bdfd8c75a3cdf4e62fd491ae3cffc278425d2c28349",
   "plan_archive_description": "d809c009fbb9f10c47d70fd3844398f5e0e5ebe3971d382b6b1dfb69ac496116",
   "plan_archive_goal": "4f0d90e24759b3ee84b03cd282c4df7608df69182b5734a8825fd8df7fe81fe4",
+  "plan_archive_goal_short": "a6649e28ca455621e7078842b597d9b0b43c272eaf52f2c94b0be1cffad0577c",
   "plan_archive_title": "e095fcfa43fc484503e2ebd01fb007b29f699429f3d8270408a70bb91d079b35",
   "plan_ask_add_topics": "886744af7f624da052f744ebff3f8d51f4b0c9fd538c2c04f3f399e7fc58c414",
   "plan_ask_aim": "3276395e15a1ede42949d8e96b6b657168def9e4dd6852a2e4f70bd0fd8db3b4",
@@ -249,6 +250,7 @@
   "plan_exam_date": "be27cc6bbb76f7ac14aed161fbca88c6b68999909d958fe448bbf55a46b01ed9",
   "plan_exam_date_label": "caea26dfa6fa36c007b3812992075aca6905b815cead875eedefff25c646dc17",
   "plan_exam_day": "acf946054bb780e369a63070aa177cdf27c0a15450b0b5ca98e28296cd9c63c7",
+  "plan_exam_over_ask": "dcd885221c3d6dc4b7cc9d8c35657a45cfeda10f747d298f61a924508b565c9f",
   "plan_eyebrow": "6cad505ddd282cdfdcf5c61f2d80009da444abe9ca35345d63b1e3d7edbaca13",
   "plan_far_count_from": "0417dfa25c1b41740e8285f1efb04325cb0e86aa31d7ff24c8989e70c46e6d53",
   "plan_far_count_from_month": "84b50220152e4acfab6425db56f8d931f0d1b1c243820195991e17cb87327d29",
@@ -263,6 +265,7 @@
   "plan_far_writing": "d60ff660c639c48035623876100336fa3b6e48bd34f30064cd9da52fa2f79dee",
   "plan_find": "fb65d45e38ad57d79332867d72192bbf6804cca5d2d1f47f57194548f0fe9ef1",
   "plan_find_building": "14b577b0965045c75a4c7b70931bbfdac032fb4ca34c22eca923890c6e0ed3f8",
+  "plan_find_date": "18ba631da435f3eafe1d0f8dc58e359c6a21a40222397b00f8c6afa9d6ba7ba5",
   "plan_find_failed": "440ac8dcb7c7bf360fb0ee1c3b9df51a1c3f78a535a4974618903e8338899701",
   "plan_find_fitting_date": "146eaf09ec7669d9313cc1bbe8b2711d9197e6d964a2a42f3dcfc5ccb38f91f5",
   "plan_find_no_date": "c05ed34fed97b4fc9149d840995afa91b36149b3e541e32249c037d64f6c622e",
@@ -295,6 +298,7 @@
   "plan_goal_paused": "170f451390b2f0159f25e06340dbbfd710768540178bfd4a34b308d96e7e0704",
   "plan_going_deeper": "03f217a5f80dd0d811378afa697746bbdf73728d151ab6bcc543df99f1ac903a",
   "plan_how_calculated": "7ce829a1b2d889ac1956707e436377b146de370982785cede27a5adbbbb3e66f",
+  "plan_keep_studying": "8886bf31b84c648c8f910574f29889d9af073db71149bf9f6a844f8da699118f",
   "plan_last_week_recap": "01838d93d151d0a0399ce283281c3b883c79434595ab950d7f3d2ebba846c4c8",
   "plan_lessons": "b3c5878d231409800298e7e37dfcb5f2c3a3b8df01b0308493b8666f4192ef08",
   "plan_lessons_count": "4e2c59c3060e57077e272d4ceb4534f574e8be0d920bae9e03728b365c2118fb",
@@ -324,7 +328,6 @@
   "plan_more_lessons_fit": "decc8bc78def00375f405743d435e6feac65ae3283793e31ffc51f0e0d8cc081",
   "plan_most_asked_first_until_exam": "98a6c53f1e9301551ecdb27d8315b8962b174f1728f354f47b2e153428f205fd",
   "plan_move_date": "86f154933a78c5149afd996c4214109e4b46354219fa60033d224c805c669136",
-  "plan_move_date_covers_whats_left": "bcebe85461a28d26df19f11be83f397ca1f1dab854c818b77db15bfaec0a5f6c",
   "plan_move_date_to": "0fbc8328724c22ab752ddaa41921dd916352bd4b6e74eb767ad8f6322ac5c902",
   "plan_named_month_note": "5626a830559ce1d00c95d4ea7b1e5a61c40118f1eb70dc5639c2fc2988876fa2",
   "plan_next": "21329501b8a88e581b81bcb872e8bd336b29a6a9d5439671e783eabc668925a5",
@@ -362,9 +365,10 @@
   "plan_pace_win_challenge": "a6004c1dbde9155efbebedc169fff513fba6fec89f61dfb197b1d15645cd13e7",
   "plan_pace_win_challenges": "093de2d445672e914863037ed3cf051ebd26a829bc1f78d778ce13a07e706208",
   "plan_past_date_exam_sentence": "0de318a4c18250bd589cceaf44e82da05e35130336f3c56e716481d31454b201",
-  "plan_past_date_exam_title": "99e429de0ab5b8abd21453bded3a47828d283b75142f8a81e2d07ebec3bab017",
+  "plan_past_date_exam_title": "033a796c884b76a3625a7863ef410813ae06c6bd8ddb28db7b79fa167ffae464",
   "plan_past_date_goal_sentence": "4210dbf4cee98041970843d731052ce49634bbcffe15617b69c298e3c8f84d62",
-  "plan_past_date_goal_title": "44ffc128ead601443ccfe042b786d2b119c98643121f1e9e4f37fb76a68ca218",
+  "plan_past_date_goal_title": "45aad9fbf7f4ce4794028e9c3e43f56672642a70f1aa8fd47c5c8372f4c37b51",
+  "plan_past_date_offer": "b475c7f66ad051b993a08d0d084d16528eb9f4a10aedab908f70d62b09df5432",
   "plan_pause_goal": "bf672f3f7c1ddd50b3b5695ce78524c117c280978f76cf385f3626861ba65ec3",
   "plan_phase_after_exam": "4fb0cd462512371792c32da35fb73b392e1b7543febd75923671dae634958680",
   "plan_phase_final_stretch": "5cc34f095e5916f8e442d8d2a6e005e9e7dad5428c82c822628f436a44beff03",
@@ -597,6 +601,9 @@
     <string name="plan_pause_goal">이 목표 일시 중지하기</string>
     <string name="plan_resume_goal">이 목표 이어가기</string>
     <string name="plan_archive_goal">이 목표 보관하기</string>
+    <!-- The button that archives a goal whose exam date has passed; it asks first. -->
+    <string name="plan_archive_goal_short">목표 보관하기</string>
+    <string name="plan_keep_studying">계속 공부하기</string>
     <string name="plan_archive_title">%1$s 목표를 보관할까요?</string>
     <string name="plan_archive_description">목표 목록에서 빠지고 계획도 멈춰요. 배운 내용은 진도에 남아요.</string>
     <string name="plan_archive">보관하기</string>
@@ -1242,13 +1249,14 @@
     <plurals name="plan_more_lessons_fit">
         <item quantity="other">학습 시간 안에 레슨 %1$d개를 더 공부할 수 있어요</item>
     </plurals>
-    <plurals name="plan_past_date_goal_title">
-        <item quantity="other">목표 날짜에 레슨 %1$d개가 남았어요</item>
+    <string name="plan_past_date_goal_title">종료일이 지났어요</string>
+    <string name="plan_past_date_exam_title">시험 날짜가 지났어요</string>
+    <!-- Under "Your exam date has passed": the lessons left are what "them" means. -->
+    <string name="plan_exam_over_ask">남은 레슨을 계속 공부할까요, 아니면 이 목표를 보관할까요?</string>
+    <plurals name="plan_past_date_offer">
+        <item quantity="other">레슨이 %d개 남았어요. 종료일을 늦추면 모두 공부할 수 있어요.</item>
     </plurals>
-    <plurals name="plan_past_date_exam_title">
-        <item quantity="other">시험일에 레슨 %1$d개가 남았어요</item>
-    </plurals>
-    <string name="plan_move_date_covers_whats_left">날짜를 늦춰 남은 내용을 모두 배울 시간을 마련해요.</string>
+    <string name="plan_find_date">날짜 찾기</string>
     <string name="plan_finished_title">계획을 모두 마쳤어요</string>
     <string name="plan_study_next">다음으로 공부할 내용이에요.</string>
     <string name="plan_continue_at">%1$s 학습 이어가기</string>

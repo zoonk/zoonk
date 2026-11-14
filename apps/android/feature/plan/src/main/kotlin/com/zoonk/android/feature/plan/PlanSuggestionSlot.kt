@@ -119,10 +119,10 @@ internal fun slotItems(
     return buildList {
         if (!finished && courseComplete) add(SlotItem.CourseComplete)
         if (page.isPaused) add(SlotItem.Paused)
+        pastDate?.let { add(SlotItem.PastDate(it.lessons)) }
         plan.examChoices
             .filter { it.subjects.isEmpty() }
             .forEach { add(SlotItem.Choice(it)) }
-        pastDate?.let { add(SlotItem.PastDate(it.lessons)) }
         if (finished) {
             addAll(time)
             add(SlotItem.Finished)

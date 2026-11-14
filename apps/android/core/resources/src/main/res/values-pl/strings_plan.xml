@@ -15,6 +15,7 @@
   "plan_archive": "c19545e8006338f04df319f2de591bcd9e43f0c01d2490882a77370ae409b8d1",
   "plan_archive_description": "88d94eca628ee484b4bbf3b404d2c0e5113b551c6e2d92492f67f88f1fc0cd48",
   "plan_archive_goal": "20e115e29de9e1841d6109dedbe417f925934aa1a243afa7769bb408ff23e2a2",
+  "plan_archive_goal_short": "127e841705d33ac35adcad9aa11caad7e2649d9e84c2d1fbb6c5027978a707cd",
   "plan_archive_title": "24c1c78648124319e5dc10ed0f82ce542b99265d6869f2641677c95e41bda5ee",
   "plan_ask_add_topics": "b3faa101d0575e09020536ef1399bf4b55b3745cc411238bf81fed0266fb4e1f",
   "plan_ask_aim": "d37954f4573c493b09d3526168ceca8fae70161cf98e1ea7b38c561165801cf6",
@@ -249,6 +250,7 @@
   "plan_exam_date": "c5711827dcfe7af649409c795ba6f776b9fb376b0594db29bf5e393671bf8ac7",
   "plan_exam_date_label": "dc2242ff6e25e8702d7df8f1a88c458921ceb67b30668213e99acd6551677f7d",
   "plan_exam_day": "98c5fcab7fc79810f39106060b3ef3c9c784fb654f8291ef3da0fa92c9f4e34e",
+  "plan_exam_over_ask": "192f2ad5a7c0c429560d5be87a195a6ccb06253dd457231784b4410bcc11c02e",
   "plan_eyebrow": "5ad77f73e20d2e27a61114b18878189c721782186081eac6eb34ee2a54d404d0",
   "plan_far_count_from": "fa4968a8c50f43078a70f2b1996476f71d9169ab9b322874b9a0f6e96004a2bb",
   "plan_far_count_from_month": "345db0f799c15d827459cf92df48d5544fdd3b19b4ba195d4182aba7e48cfe8f",
@@ -263,6 +265,7 @@
   "plan_far_writing": "280a56480e1f573fa5baebfd8f6f3818116116d4652ecacf97d91d443871b49c",
   "plan_find": "25df050b68a883ef07d74691df6654892b214fddc4231d17febef817eb5b0974",
   "plan_find_building": "97ebb0b02b4fc6072fc7de75f7012f1c11f356785d3622b693fb8ed66514e824",
+  "plan_find_date": "2ca5da6b492e9803f0f14d73d9da96e44d4d3648bcd7356649b4b20ec1b96123",
   "plan_find_failed": "7055b653d7ce66ef3d21207beaaea7be362b2f6774b39dfafe5439aa18d39833",
   "plan_find_fitting_date": "be3bde62e9711038b5c3fe03f55905414c49fc7d35144e881f0435f7c919dbdf",
   "plan_find_no_date": "1b11aa7b2f0a75a7005a4dce1bd8d013a350a33c5bd53b94cfc9a0f38b18c009",
@@ -295,6 +298,7 @@
   "plan_goal_paused": "933537f92adfccf676899e3895b8d778520b827afea33f261f0c054f9f39d0fd",
   "plan_going_deeper": "89d4e05c735c996784212a36bd6fbd6c8bfd9ae4e2e7ca964da3f206ab6038e3",
   "plan_how_calculated": "81dd1ef57ddba8cefbed7bb3a15c5938912255ec77a1c9a3fcd4dec46562a7a4",
+  "plan_keep_studying": "8472263ee8b0944d8959927aeda18f99380ddd8c9ccb6fd724fac14ee7941e3b",
   "plan_last_week_recap": "f18af2a2e609189b84e5b87444390f224a08e688969e4b6c81049499fab22102",
   "plan_lessons": "399b9b30b38d7aa4df256a358ad172dd4ef14a0ce6fd5dfe8cdc308fb442665f",
   "plan_lessons_count": "8d57d9ecd3e068f4d6ea19ca1038d19ca6b091c0c5244831cdff8c0510925220",
@@ -324,7 +328,6 @@
   "plan_more_lessons_fit": "a63cb47521465a93737810dee538334b985c8df6f057bc6244932f1d708b8206",
   "plan_most_asked_first_until_exam": "af06c29be6624565f739ba90e9f159c07c3532c95ac711efc0aa357ee208152b",
   "plan_move_date": "2cc7d9370bc4826889bcd09a41bb7e0507abc985487fe8fed57768e466b81cec",
-  "plan_move_date_covers_whats_left": "9dd8ebd096e6bef892a75396382e7dd977bbaf6dfe621aaf59009911aededa59",
   "plan_move_date_to": "d6106c8611394f71f99454b610e51f86b842e0ab76f5269e924820cfbab45c64",
   "plan_named_month_note": "1c334e496cbdd2cb68f97af1afac7a01da1241fd343985959a069ccc650d1b0b",
   "plan_next": "72a6d1f2a1c140db8ab099cf12d0fd0115e2223b851abe1e299912b5bb4a22a0",
@@ -362,9 +365,10 @@
   "plan_pace_win_challenge": "695cfd726ac31a89bb0abe39b173674e0d90cc7219bb9b4ea09025aee4d07611",
   "plan_pace_win_challenges": "43379fbdfd7def00bb8b708d7d4fbebbfe8918725880b897e8395007b14ef9fe",
   "plan_past_date_exam_sentence": "a47537ddc8a4741f012e34453aead0d914b0091cb99f7a1be8fbffb1dbceab3c",
-  "plan_past_date_exam_title": "fabaffa26cf73ab06eb7e320e13c91175736069bb136279bb98836d509692767",
+  "plan_past_date_exam_title": "b60edf6e40327c0ecbd1f33d2e3579045889bb256d7e11851419fa403f43d9e0",
   "plan_past_date_goal_sentence": "3fc06076b014f6003a7ca6da2f3c4e9d6f8a17fa55d8036eae28c6fe3c63a0e0",
-  "plan_past_date_goal_title": "a8734231b6c0547a316c60bbc62f9281c97d44bc3c37f6420392094ada50bb9e",
+  "plan_past_date_goal_title": "6d6bf562ecae940970f31a19d1bc4ca19328631607cb8dc29117023e006f9d7b",
+  "plan_past_date_offer": "9066ee4a4465513707667b3e65cc0741ea4790fe9651d8a00fc3ad3b931cea75",
   "plan_pause_goal": "66b668dd2fbe26b03a122cd6e8be75f6e6a8ec93fc061110d2936db7c5df98c2",
   "plan_phase_after_exam": "0b8723d3d79bfb8aeb6e4e6ea02764f1be4c4f6855756c6d2196539526085f16",
   "plan_phase_final_stretch": "93a587e2e677a195948f26e2e6c7f881eef6bd6e328a0917357b3d5b9b960dfd",
@@ -606,6 +610,9 @@
     <string name="plan_pause_goal">Wstrzymaj ten cel</string>
     <string name="plan_resume_goal">Wznów ten cel</string>
     <string name="plan_archive_goal">Przenieś ten cel do archiwum</string>
+    <!-- The button that archives a goal whose exam date has passed; it asks first. -->
+    <string name="plan_archive_goal_short">Zarchiwizuj cel</string>
+    <string name="plan_keep_studying">Ucz się dalej</string>
     <string name="plan_archive_title">Zarchiwizować cel: %1$s?</string>
     <string name="plan_archive_description">Cel znika z twojej listy celów, a jego plan zostaje zatrzymany. Twoje postępy w nauce zostają zachowane.</string>
     <string name="plan_archive">Przenieś do archiwum</string>
@@ -1407,19 +1414,17 @@
         <item quantity="many">Masz czas na jeszcze %1$d lekcji</item>
         <item quantity="other">Masz czas na jeszcze %1$d lekcji</item>
     </plurals>
-    <plurals name="plan_past_date_goal_title">
-        <item quantity="one">Termin minął, a została %1$d lekcja</item>
-        <item quantity="few">Termin minął, a zostały %1$d lekcje</item>
-        <item quantity="many">Termin minął, a zostało %1$d lekcji</item>
-        <item quantity="other">Termin minął, a zostało %1$d lekcji</item>
+    <string name="plan_past_date_goal_title">Termin zakończenia minął</string>
+    <string name="plan_past_date_exam_title">Termin egzaminu minął</string>
+    <!-- Under "Your exam date has passed": the lessons left are what "them" means. -->
+    <string name="plan_exam_over_ask">Uczyć się dalej czy zarchiwizować ten cel?</string>
+    <plurals name="plan_past_date_offer">
+        <item quantity="one">Masz jeszcze %d lekcję. Późniejszy termin zakończenia daje na nią czas.</item>
+        <item quantity="few">Masz jeszcze %d lekcje. Późniejszy termin zakończenia daje na nie czas.</item>
+        <item quantity="many">Masz jeszcze %d lekcji. Późniejszy termin zakończenia daje na nie czas.</item>
+        <item quantity="other">Masz jeszcze %d lekcji. Późniejszy termin zakończenia daje na nie czas.</item>
     </plurals>
-    <plurals name="plan_past_date_exam_title">
-        <item quantity="one">Przed egzaminem została %1$d lekcja do ukończenia</item>
-        <item quantity="few">Przed egzaminem zostały %1$d lekcje do ukończenia</item>
-        <item quantity="many">Przed egzaminem zostało %1$d lekcji do ukończenia</item>
-        <item quantity="other">Przed egzaminem zostało %1$d lekcji do ukończenia</item>
-    </plurals>
-    <string name="plan_move_date_covers_whats_left">Przesuń termin, żeby starczyło ci czasu na pozostały materiał.</string>
+    <string name="plan_find_date">Znajdź datę</string>
     <string name="plan_finished_title">Plan ukończony</string>
     <string name="plan_study_next">Oto propozycje dalszej nauki.</string>
     <string name="plan_continue_at">Kontynuuj na poziomie: %1$s</string>

@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
@@ -38,6 +39,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.language.LanguageLevelCard
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.plan.ExamOverActions
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.MissionOpens
@@ -271,6 +273,10 @@ private fun TodayAction(
         val waiting = viewModel.pending != null && !busy
 
         when {
+            model.pastDate != null && model.today.goal.kind == TodayGoal.Kind.EXAM -> {
+                TodayExamOver(model, viewModel)
+            }
+
             model.pastDate != null -> {
                 ActionButton(stringResource(R.string.today_see_plan), busy = false, buttonModifier) {
                     actions.navigate(AppRoute.Plan())
@@ -404,3 +410,25 @@ internal fun Modifier.pageItem(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWi
 internal fun Modifier.pageRow(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWidth()
 
 private const val SWITCHING_ALPHA = 0.6f
+
+/** Main's `TodayExamOver`: the Plan's answers after the exam's date, and a failed save in the shared toast. */
+@Composable
+private fun TodayExamOver(
+    model: TodayDayModel,
+    viewModel: TodayViewModel,
+) {
+    val goal = model.today.goal
+    val answer = viewModel.examOverAnswer?.takeIf { it.goalId == goal.id }
+    val snackbars = LocalSnackbarHostState.current
+    val scope = rememberCoroutineScope()
+    val saveFailed = stringResource(R.string.today_save_failed)
+    val failed = { scope.launch { snackbars.showSnackbar(saveFailed) } }
+
+    ExamOverActions(
+        goalTitle = goal.displayName,
+        keeping = answer?.archive == false,
+        archiving = answer?.archive == true,
+        onArchive = { viewModel.archiveGoal(goal.id) { failed() } },
+        onKeepStudying = { viewModel.keepStudying(goal.id) { failed() } },
+    )
+}

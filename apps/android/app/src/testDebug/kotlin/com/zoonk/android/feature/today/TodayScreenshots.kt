@@ -493,6 +493,29 @@ class TodayScreenshots {
                     ),
                 "done-up-next" to doneWithUpNext(),
                 "rest" to day(blocks = emptyList(), next = null, dailyGoal = 0, extra = mapOf("state" to "rest")),
+                "exam-over" to
+                    day(
+                        blocks = emptyList(),
+                        next = null,
+                        dailyGoal = 0,
+                        extra = mapOf("state" to "rest"),
+                        today =
+                            mapOf(
+                                "progress" to
+                                    buildJsonObject {
+                                        put("measure", "preparation")
+                                        put(
+                                            "status",
+                                            buildJsonObject {
+                                                put("kind", "pastDate")
+                                                put("lessons", 4)
+                                            },
+                                        )
+                                        put("value", 0.62)
+                                        put("weekGain", 0)
+                                    },
+                            ),
+                    ),
                 "waiting" to day(blocks = emptyList(), next = null, extra = mapOf("emptyDay" to "lessonsComing", "state" to "waiting")),
             )
         }
