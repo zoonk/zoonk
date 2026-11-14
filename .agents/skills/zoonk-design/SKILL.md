@@ -30,6 +30,8 @@ ls packages/ui/src/components packages/learn/src/_components packages/learn/src/
 
 Use the piece that does this. Extend the one that does almost this, in the same change, and check its other callers. Write a second one only for a different product rule, and name that rule in the PR. Before building a missing web primitive, check the shadcn registry; build with Tailwind utilities and semantic tokens, as [compound components](../zoonk-compound-components/SKILL.md).
 
+Lint fails the copies it can name: a fold's own height animation or chevron (`zoonk/no-hand-made-fold`), an icon-only button or link pulled to an edge by its own negative margin (`zoonk/no-hand-placed-icon-button`), a second `ANSWER_OPTION_CLASS` (`zoonk/one-answer-option`), "I don't know yet" in a button outside `QuestionActions` (`zoonk/one-question-action-bar`), and a shortcut key bound, announced or drawn outside the shared keyboard pieces (`zoonk/shortcut-keys`). Every other copy is found by the search above.
+
 These roles each have one piece and one way on every app screen. A screen never draws its own, spaces one its own way or words one differently ([rules and checks](references/craft.md#roles)):
 
 | Role                        | The one way                                                                                                                                                                                                                                                                       |
