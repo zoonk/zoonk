@@ -42,27 +42,10 @@ function getRows({
     : listed;
 }
 
-function CountryNotice({
-  defaultCountry,
-  picked,
-}: {
-  defaultCountry: CountryName | null;
-  picked: CountryChoice | null;
-}) {
-  const t = useExtracted();
+function CountryNotice({ picked }: { picked: CountryChoice | null }) {
   const lessonLanguage = useLessonLanguageLine()(picked?.lessonVariety ?? null);
 
-  const line =
-    lessonLanguage ??
-    (defaultCountry &&
-      t({
-        description:
-          "{country} is a country's name. It always follows the colon, so it never needs an article or a case.",
-        message: "If you skip: {country}",
-        values: { country: defaultCountry.name },
-      }));
-
-  return <StatusRegion className="text-muted-foreground text-sm">{line}</StatusRegion>;
+  return <StatusRegion className="text-muted-foreground text-sm">{lessonLanguage}</StatusRegion>;
 }
 
 /**
@@ -101,10 +84,7 @@ export function CountryStep({
   return (
     <StepForm
       canContinue={picked !== null}
-      description={t(
-        "What you learn here changes from country to country. You can change it later in your plan.",
-      )}
-      notice={<CountryNotice defaultCountry={defaultCountry} picked={picked} />}
+      notice={<CountryNotice picked={picked} />}
       onContinue={() => picked && onAnswer({ country: picked.code, question: "contentCountry" })}
       onSkip={() => onAnswer({ country: null, question: "contentCountry" })}
       pending={pending}
@@ -150,12 +130,9 @@ export function CountryStep({
         language={language}
         onOpenChange={setPickerOpen}
         onPick={(country) => {
-          if (country) {
-            pickedInPicker.current = true;
-            setOther(country);
-            setCode(country.code);
-          }
-
+          pickedInPicker.current = true;
+          setOther(country);
+          setCode(country.code);
           setPickerOpen(false);
         }}
         open={pickerOpen}

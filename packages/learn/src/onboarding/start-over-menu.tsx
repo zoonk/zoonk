@@ -80,7 +80,12 @@ function OnboardingBarMenu({ disabled, onDeclineProfile, onStartOver }: MenuProp
           </DropdownMenuItem>
         )}
 
-        <DropdownMenuItem className={MENU_ROW_CLASS} disabled={disabled} onClick={onStartOver}>
+        <DropdownMenuItem
+          aria-haspopup="dialog"
+          className={MENU_ROW_CLASS}
+          disabled={disabled}
+          onClick={onStartOver}
+        >
           {t("Start over")}
           <span className="text-muted-foreground text-xs">{t("Clears your answers")}</span>
         </DropdownMenuItem>

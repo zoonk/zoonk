@@ -126,7 +126,7 @@ export function LessonScreenMenu() {
         )}
 
         {showsMap && (
-          <DropdownMenuItem onClick={() => mapSheet.change(true)}>
+          <DropdownMenuItem aria-haspopup="dialog" onClick={() => mapSheet.change(true)}>
             <NetworkIcon aria-hidden="true" />
             {t("Lesson map")}
           </DropdownMenuItem>
