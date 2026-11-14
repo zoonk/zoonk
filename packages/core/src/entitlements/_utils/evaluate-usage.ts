@@ -32,7 +32,8 @@ function getLimitChecks({ counts, generated, kind, tier }: UsageClaim): LimitChe
   const rule = getUsageRule({ kind, tier });
   const activeGoalLimit = kind === "goal" ? getActiveGoalLimit(tier) : null;
 
-  // Goals followed come first: pausing one is a remedy that the day's or month's caps don't offer.
+  // The rolling cap comes first: pausing a goal cannot make room in that window.
+  // Otherwise, offer pausing a followed goal before waiting for the daily cap.
   const checks: (LimitCheck | false)[] = [
     activeGoalLimit !== null && {
       limit: activeGoalLimit,

@@ -105,20 +105,20 @@ describe(createSourceUploadToken, () => {
     expect(issueSignedToken).not.toHaveBeenCalled();
   });
 
-  it("refuses once today's or this month's uploads are used up, saying which", async () => {
+  it("refuses once today's or the rolling month's uploads are used up, saying which", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2026-10-15T12:00:00Z"));
 
-    const [today, thisMonth] = await Promise.all([userFixture(), userFixture()]);
-    const earlierThisMonth = new Date("2026-10-02T12:00:00Z");
+    const [today, rollingMonth] = await Promise.all([userFixture(), userFixture()]);
+    const earlierInWindow = new Date("2026-10-02T12:00:00Z");
 
     await Promise.all([
       usageRecordsFixture({ count: 3, kind: "upload", userId: today.id }),
       usageRecordsFixture({
         count: 10,
-        createdAt: earlierThisMonth,
+        createdAt: earlierInWindow,
         kind: "upload",
-        userId: thisMonth.id,
+        userId: rollingMonth.id,
       }),
     ]);
 
@@ -131,11 +131,14 @@ describe(createSourceUploadToken, () => {
       status: "limitReached",
     });
 
-    mockSession(thisMonth.id);
+    mockSession(rollingMonth.id);
 
     await expect(
-      createSourceUploadToken({ pathname: `sources/${thisMonth.id}/edital.pdf` }),
-    ).resolves.toMatchObject({ limit: { period: "month", tier: "free" }, status: "limitReached" });
+      createSourceUploadToken({ pathname: `sources/${rollingMonth.id}/edital.pdf` }),
+    ).resolves.toMatchObject({
+      limit: { period: "rolling30Days", tier: "free" },
+      status: "limitReached",
+    });
 
     expect(issueSignedToken).not.toHaveBeenCalled();
   });
