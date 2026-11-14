@@ -11,7 +11,14 @@ import {
   CommandInput,
   CommandList,
 } from "@zoonk/ui/components/command";
-import { Drawer, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerPopup,
+  DrawerTitle,
+} from "@zoonk/ui/components/drawer";
 import { SidePanel, SidePanelContent, SidePanelTitle } from "@zoonk/ui/components/side-panel";
 import { useRef, useState } from "react";
 import { describe, expect, it } from "vitest";
@@ -166,4 +173,44 @@ describe("the search palette's way out", () => {
     await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
     await expect.element(opener).toHaveFocus();
   });
+});
+
+/** How strongly the sheet's content draws a line along its bottom: 0 when it draws none. */
+function bottomEdge() {
+  const content = document.querySelector("[data-slot=drawer-content]");
+  const style = content ? getComputedStyle(content) : null;
+
+  return style && style.borderBottomStyle !== "none" && style.borderBottomWidth !== "0px"
+    ? alphaOf(style.borderBottomColor)
+    : 0;
+}
+
+describe("a sheet's footer", () => {
+  it.each(WIDTHS)(
+    "on $name, has an edge while the content scrolls under it",
+    async ({ height, width }) => {
+      await page.viewport(width, height);
+
+      render(
+        <Drawer open>
+          <DrawerPopup>
+            <DrawerHeader closeLabel="Close">
+              <DrawerTitle>Your buddy</DrawerTitle>
+            </DrawerHeader>
+            <DrawerContent>
+              <div style={{ height: 2000 }}>Glasses</div>
+            </DrawerContent>
+            <DrawerFooter>
+              <button type="button">Save</button>
+            </DrawerFooter>
+          </DrawerPopup>
+        </Drawer>,
+      );
+
+      await expect.poll(bottomEdge).toBeGreaterThan(0);
+
+      document.querySelector("[data-slot=drawer-content]")?.scrollTo({ top: 10_000 });
+      await expect.poll(bottomEdge).toBe(0);
+    },
+  );
 });

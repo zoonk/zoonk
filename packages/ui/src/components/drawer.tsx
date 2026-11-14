@@ -91,7 +91,11 @@ function DrawerPopup({ className, children, ...props }: DrawerPrimitive.Popup.Pr
 function DrawerContent({ className, ...props }: DrawerPrimitive.Content.Props) {
   return (
     <DrawerPrimitive.Content
-      className={cn("scroll-hairline-t overflow-y-auto px-6 pb-6", className)}
+      className={cn(
+        "scroll-hairline-t overflow-y-auto px-6 pb-6",
+        "[&:has(+[data-slot=drawer-footer])]:scroll-hairline-y [&:has(+[data-slot=drawer-footer])]:pb-2",
+        className,
+      )}
       data-slot="drawer-content"
       {...props}
     />
@@ -136,7 +140,7 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 sm:flex-row sm:justify-end",
+        "flex shrink-0 flex-col-reverse gap-2 px-6 pt-4 pb-6 sm:flex-row sm:justify-end",
         className,
       )}
       data-slot="drawer-footer"
