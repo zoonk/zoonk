@@ -58,8 +58,14 @@ type DayLines = {
 };
 
 /** The sentence for the day something opens, with no sentence once it's open or unreadable. */
-function useDayLine() {
+/** A cap's day as the learner reads it: "November 22", from its ISO day alone. */
+export function useFormatOpeningDate() {
   const format = useFormatter();
+  return (isoDay: string) => format.dateTime(isoDateToUtc(isoDay), OPENING_DATE_OPTIONS);
+}
+
+function useDayLine() {
+  const formatDate = useFormatOpeningDate();
 
   return (opensOn: OpeningDay | null, lines: DayLines): string | undefined => {
     if (!opensOn || opensOn === "open") {
@@ -74,7 +80,7 @@ function useDayLine() {
       return lines.tomorrow();
     }
 
-    return lines.onDate(format.dateTime(isoDateToUtc(opensOn), OPENING_DATE_OPTIONS));
+    return lines.onDate(formatDate(opensOn));
   };
 }
 
