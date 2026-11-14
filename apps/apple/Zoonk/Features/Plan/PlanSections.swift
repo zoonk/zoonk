@@ -101,7 +101,7 @@ enum PhaseWhen: Equatable {
   }
 }
 
-private struct RoadmapPhaseRow: View {
+struct RoadmapPhaseRow: View {
   let phase: PlanPhase
   let when: PhaseWhen?
   let today: String
@@ -118,14 +118,14 @@ private struct RoadmapPhaseRow: View {
       Group {
         switch when {
         case .today?:
-          Text("Today", tableName: "Plan", comment: "When the learner's current phase starts")
+          PlanWhen.words(
+            Text("Today", tableName: "Plan", comment: "When the learner's current phase starts"))
         case .starts(let start)?:
-          Text(PlanDate.text(start, today: today))
+          PlanWhen.date(Text(PlanDate.text(start, today: today)))
         case nil:
           EmptyView()
         }
       }
-      .typeStyle(.data)
       .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
