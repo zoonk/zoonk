@@ -8,6 +8,31 @@ import { countUsage } from "./usage-counts";
 
 type UsageClaim = { decision: UsageDecision; recorded: boolean };
 
+async function findRefusedLessonReplay({
+  decision,
+  lessonId,
+  transaction,
+  userId,
+}: {
+  decision: UsageDecision;
+  lessonId: string;
+  transaction: TransactionClient;
+  userId: string;
+}): Promise<Date | null> {
+  if (decision.status !== "limitReached" || decision.limit.resource !== "lessonStart") {
+    return null;
+  }
+
+  const [event] = await transaction.$queryRaw<{ startedAt: Date }[]>`
+    SELECT started_at AS "startedAt" FROM learning_events
+    WHERE user_id = ${userId}::uuid AND kind = 'lesson'
+      AND content_ids @> jsonb_build_object('lessonId', ${lessonId}::text)
+    ORDER BY started_at ASC LIMIT 1
+  `;
+
+  return event?.startedAt ?? null;
+}
+
 export async function claimUsageInTransaction({
   continuing = false,
   generated,
@@ -57,13 +82,23 @@ export async function claimUsageInTransaction({
           })
         : { status: "allowed" as const };
 
-    if (decision.status !== "allowed") {
+    const replayedAt = await findRefusedLessonReplay({
+      decision,
+      lessonId: targetId,
+      transaction,
+      userId: viewer.userId,
+    });
+
+    if (decision.status !== "allowed" && !replayedAt) {
       return { decision, recorded: false };
     }
 
-    await transaction.usageRecord.update({ data: { countedAt: now }, where: { id: existing.id } });
+    await transaction.usageRecord.update({
+      data: { countedAt: replayedAt ?? now },
+      where: { id: existing.id },
+    });
 
-    return { decision, recorded: true };
+    return { decision: { status: "allowed" }, recorded: true };
   }
 
   const costMicros = getEstimatedCostMicros({ generated, kind, seconds });
