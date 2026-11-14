@@ -137,7 +137,7 @@ class FocusTestScreenTest {
     }
 
     private fun typeTheAnswer() {
-        rule.onNodeWithText("Continue").performScrollTo().performClick()
+        rule.onNodeWithText("Continue").performClick()
         rule.onNode(hasSetTextAction()).performTextInput(ANSWER)
     }
 

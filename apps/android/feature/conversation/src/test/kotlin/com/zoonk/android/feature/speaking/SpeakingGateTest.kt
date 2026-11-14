@@ -1,90 +1,153 @@
 package com.zoonk.android.feature.speaking
 
 import androidx.activity.ComponentActivity
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
+import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
 import com.zoonk.android.feature.conversation.CallStart
 import com.zoonk.android.feature.conversation.CallStarter
 import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.SpeakingPaper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.UUID
 
-/** A locked task's Start turns into the gate, which keeps the task's Last result, until a purchase opens the paper. */
+/**
+ * A locked task's Start turns into the gate, which keeps the task's Last result. The gate reads the
+ * paper's access in [SpeakingStore], which a server refusal writes and a successful read replaces.
+ */
 @RunWith(AndroidJUnit4::class)
 class SpeakingGateTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
-    private val paper = mutableStateOf(paper("plusRequired"))
     private val goalId = UUID.randomUUID()
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
+    /** What the server answers the next read of the paper with; it throws when the read fails. */
+    private var answer: () -> SpeakingPaper = { paper("plusRequired") }
+    private val store =
+        SpeakingStore(
+            { _, _ -> SpeakingRead.Paper(answer()) },
+            AppCache(FakeSession(AuthenticatedSession("ana", "token", "local")), scope),
+        )
 
     private fun show(start: CallStarter = callStarter { error("A locked task never starts a call") }) {
         rule.setContent {
             ZoonkTheme {
-                SpeakingPaperSection(
-                    paper = paper.value,
-                    goalId = goalId,
-                    openTask = "1",
-                    start = start,
-                    open = {},
-                    openWeb = {},
-                )
+                val state by store.paper(goalId).collectShown()
+                (state.value as? SpeakingRead.Paper)?.let {
+                    SpeakingPaperSection(
+                        paper = it.paper,
+                        goalId = goalId,
+                        openTask = "1",
+                        start = start,
+                        open = {},
+                        openWeb = {},
+                        onRefused = { store.refused(goalId) },
+                    )
+                }
             }
         }
         rule.onNodeWithText("Start").performClick()
     }
 
+    /** A read of the paper after the server [answer]s, as a purchase or a pull to refresh starts one. */
+    private fun readAgain(next: () -> SpeakingPaper) {
+        answer = next
+        rule.runOnIdle { scope.launch { store.paper(goalId).refresh() } }
+        rule.waitForIdle()
+    }
+
+    private fun assertGate() {
+        rule.onNodeWithText("Subscribe").assertExists()
+        rule.onNodeWithText("Last result").assertExists()
+        rule.onNodeWithText("Start").assertDoesNotExist()
+    }
+
+    private fun assertStart() {
+        rule.onNodeWithText("Subscribe").assertDoesNotExist()
+        rule.onNodeWithText("Start").assertExists()
+        rule.onNodeWithText("Last result").assertExists()
+    }
+
     @Test
     fun theGateKeepsLastResultAndAPurchaseLiftsIt() {
         show()
+        assertGate()
 
-        rule.onNodeWithText("Subscribe").assertExists()
-        rule.onNodeWithText("Last result").assertExists()
+        readAgain { paper("open") }
 
-        paper.value = paper("open")
-
-        rule.onNodeWithText("Subscribe").assertDoesNotExist()
-        rule.onNodeWithText("Start").assertExists()
-        rule.onNodeWithText("Last result").assertExists()
+        assertStart()
     }
 
-    /** The paper said open, then the subscription lapsed: the server's refusal shows the gate, not a failure. */
+    /** The paper read open, then the subscription lapsed: the server's refusal is the gate, not a failure. */
     @Test
     fun aStartTheServerRefusesShowsTheGate() {
-        paper.value = paper("open")
-        show(callStarter { CallStart.PlusRequired })
+        answer = { paper("open") }
+        show(
+            callStarter {
+                answer = { paper("plusRequired") }
+                CallStart.PlusRequired
+            },
+        )
 
-        paper.value = paper("plusRequired")
-
-        rule.onNodeWithText("Subscribe").assertExists()
-        rule.onNodeWithText("Last result").assertExists()
-        rule.onNodeWithText("Start").assertDoesNotExist()
+        assertGate()
     }
 
-    /**
-     * The paper can't be read again after the refusal (offline): the refusal alone keeps the gate.
-     * Back from the subscription page with a purchase, the paper's access decides.
-     */
+    /** Offline after the refusal: the paper can't be read again, and opening Subscribe and coming back changes nothing. */
     @Test
-    fun aRefusalShowsTheGateWhenThePaperCantBeReadAgain() {
-        paper.value = paper("open")
-        show(callStarter { CallStart.PlusRequired })
-
-        rule.onNodeWithText("Subscribe").assertExists()
-        rule.onNodeWithText("Start").assertDoesNotExist()
+    fun aRefusalKeepsTheGateThroughAFailedReadAndALeftSubscription() {
+        answer = { paper("open") }
+        var starts = 0
+        show(
+            callStarter {
+                starts++
+                answer = { throw ApiException(ApiError.Network) }
+                CallStart.PlusRequired
+            },
+        )
+        assertGate()
 
         rule.onNodeWithText("Subscribe").performClick()
+        readAgain { throw ApiException(ApiError.Network) }
 
-        rule.onNodeWithText("Subscribe").assertDoesNotExist()
-        rule.onNodeWithText("Start").assertExists()
+        assertGate()
+        assertEquals(1, starts)
+    }
+
+    /** A purchase made elsewhere: the paper reads open again, the same answer as before the refusal, and Start is back. */
+    @Test
+    fun aSuccessfulOpenReadAfterARefusalLiftsTheGate() {
+        answer = { paper("open") }
+        show(
+            callStarter {
+                answer = { throw ApiException(ApiError.Network) }
+                CallStart.PlusRequired
+            },
+        )
+        assertGate()
+
+        readAgain { paper("open") }
+
+        assertStart()
     }
 
     private fun paper(access: String): SpeakingPaper =

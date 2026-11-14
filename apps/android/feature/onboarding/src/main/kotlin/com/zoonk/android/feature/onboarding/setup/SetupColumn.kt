@@ -37,13 +37,13 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.pageMargin
 
 internal data class SetupLayout(
     val fold: PageFold?,
@@ -69,7 +69,7 @@ internal fun ColumnScope.SetupContent(
 }
 
 /**
- * At least the page's height, so a step's actions can sit at its bottom on phones. Across an open book's [fold] it
+ * One column with the step's actions pinned in a bar under it ([PageActions], [com.zoonk.android.feature.onboarding.start.OnboardingActions]). Across an open book's [fold] it
  * is the page before the fold, with [aside] on the page after it; without an aside, a test's question takes both
  * pages ([QuestionPages]). A held wait's way on is pinned to the page's bottom ([PageHold]).
  */
@@ -152,7 +152,7 @@ private fun SetupColumnBody(
                                         .widthIn(max = COLUMN_WIDTH)
                                         .fillMaxWidth()
                                         .heightIn(min = height)
-                                        .padding(horizontal = MARGIN, vertical = EDGE)
+                                        .padding(horizontal = pageMargin(), vertical = EDGE)
                                 } else {
                                     Modifier.fillMaxSize()
                                 },
@@ -190,6 +190,7 @@ internal data class PageBar(
     val action: String,
     val actions: State<@Composable () -> Unit>? = null,
     val visible: Boolean = true,
+    val note: State<(@Composable () -> Unit)?>? = null,
 )
 
 /**
@@ -207,26 +208,30 @@ internal fun PageHold(
     DisposableEffect(slot) { onDispose { slot.value = null } }
 }
 
+/** The page's actions, pinned in its bottom bar; [note] (what the last action couldn't do) sits over the bar, where it moves nothing. */
 @Composable
 internal fun PageActions(
     hold: ReadyHold? = null,
     visible: Boolean = true,
+    note: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     val slot = LocalSetupPage.current?.bar
     if (slot == null) {
+        note?.invoke()
         content()
         return
     }
     val actions = rememberUpdatedState(content)
-    val bar = PageBar(hold, "", actions, visible)
+    val shownNote = rememberUpdatedState(note)
+    val bar = PageBar(hold, "", actions, visible, shownNote)
     SideEffect { slot.value = bar }
     DisposableEffect(slot) { onDispose { slot.value = null } }
 }
 
 @Composable
 private fun SetupActionBar(bar: PageBar) {
-    BottomBar(columnWidth = COLUMN_WIDTH) {
+    BottomBar(columnWidth = COLUMN_WIDTH, note = bar.note?.value) {
         if (bar.actions != null) {
             bar.actions.value()
         } else {
@@ -291,7 +296,8 @@ internal fun ColumnScope.QuestionPages(
                     answer()
                 }
                 if (fold != null) {
-                    OnboardingActions(actions)
+                    // Across the fold the answer's page holds its own actions at its bottom.
+                    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp), content = actions)
                 } else {
                     PageActions { Column(verticalArrangement = Arrangement.spacedBy(8.dp), content = actions) }
                 }

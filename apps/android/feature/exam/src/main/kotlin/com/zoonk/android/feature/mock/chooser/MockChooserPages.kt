@@ -102,15 +102,13 @@ internal fun PracticeChooser(
 
     // The bar's button becomes Subscribe once a Start met the lock, until a purchase opens the mocks.
     val triedLocked by viewModel.triedLocked.collectAsStateWithLifecycle()
-    val refusedOn by viewModel.refusedOn.collectAsStateWithLifecycle()
-    val gated = triedLocked && (!open || refusedOn === view)
+    val gated = triedLocked && !open
     val mainAction = {
         if (gated) {
-            viewModel.leftForSubscription()
             navigator.open(AppRoute.Subscription)
         } else if (option != null && !busy) {
             onStart()
-            if (open) viewModel.start(option.shape, option.key, view) else viewModel.tryLocked()
+            if (open) viewModel.start(option.shape, option.key) else viewModel.tryLocked()
         }
     }
     val action: @Composable (Modifier) -> Unit = { modifier ->

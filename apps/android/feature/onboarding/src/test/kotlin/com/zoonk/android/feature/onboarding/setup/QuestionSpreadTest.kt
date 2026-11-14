@@ -70,7 +70,7 @@ class QuestionSpreadTest {
                 )
             }
         }
-        rule.onNodeWithText("Start").performScrollTo().performClick()
+        rule.onNodeWithText("Start").performClick()
         rule.waitForIdle()
     }
 
