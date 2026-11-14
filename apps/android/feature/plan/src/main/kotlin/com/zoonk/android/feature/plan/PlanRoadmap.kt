@@ -72,7 +72,7 @@ import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.PlanPhase
 import kotlinx.datetime.toJavaLocalDate
 import kotlin.math.ceil
@@ -561,9 +561,7 @@ private fun PhaseAxis(
     width: Dp,
 ) {
     val style =
-        MaterialTheme.typography.labelSmall
-            .withTabularFigures()
-            .copy(lineBreak = LineBreak.Heading)
+        MaterialTheme.zoonkType.data.copy(lineBreak = LineBreak.Heading)
     val faint = MaterialTheme.colorScheme.onSurfaceVariant
     val ink = MaterialTheme.colorScheme.onSurface
     val overrunSide = overrun?.let { if (it.share < MIDDLE_SHARE) Anchor.Start else Anchor.End }

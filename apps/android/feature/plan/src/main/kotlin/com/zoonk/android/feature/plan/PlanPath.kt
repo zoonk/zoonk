@@ -48,7 +48,7 @@ import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanCourse
 import com.zoonk.api.models.PlanPhase
@@ -225,9 +225,21 @@ internal fun endWords(
     month: Boolean,
 ): PlanDateWords =
     when {
-        !estimate -> PlanDateWords(date, stringResource(R.string.plan_ends, date))
-        month -> PlanDateWords(stringResource(R.string.plan_date_estimate, date), stringResource(R.string.plan_ends_about_month, date))
-        else -> PlanDateWords(stringResource(R.string.plan_date_estimate, date), stringResource(R.string.plan_ends_about, date))
+        !estimate -> {
+            PlanDateWords(date, stringResource(R.string.plan_ends, date), date = true)
+        }
+
+        month -> {
+            PlanDateWords(
+                stringResource(R.string.plan_date_estimate, date),
+                stringResource(R.string.plan_ends_about_month, date),
+                date = true,
+            )
+        }
+
+        else -> {
+            PlanDateWords(stringResource(R.string.plan_date_estimate, date), stringResource(R.string.plan_ends_about, date), date = true)
+        }
     }
 
 @Composable
@@ -520,7 +532,6 @@ internal fun MockRow(
             }
         }
     val locale = currentLocale()
-    val words = formatPlanDate(date, page.today, locale)
     val minutes = funded?.minutes?.takeIf { it > 0 }
 
     ListRow(
@@ -528,7 +539,7 @@ internal fun MockRow(
         onClick = onClick,
         leading = { KindMark(LearnKind.Mock) },
         supporting = minutes?.let { { Text(formatMinutes(it.roundToInt(), locale)) } },
-        meta = { TrailingText(PlanDateWords(words, words)) },
+        meta = { TrailingText(planDate(date, page.today)) },
     )
 }
 
@@ -555,12 +566,13 @@ internal fun MetaLine(text: String) {
     Text(text = text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
+/** Main's `ListRowTrailing` on every Plan row and line: a date is data in mono, words keep the text face. */
 @Composable
 internal fun TrailingText(words: PlanDateWords) {
     Text(
         text = words.text,
         modifier = Modifier.semantics { contentDescription = words.spoken },
-        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+        style = if (words.date) MaterialTheme.zoonkType.data else MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         maxLines = 1,
     )
@@ -632,7 +644,7 @@ internal fun ColumnScope.PhaseDetails(
         )
         Text(
             text = listOfNotNull(range, lessons).factsLine(),
-            style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
+            style = MaterialTheme.zoonkType.data,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
