@@ -57,6 +57,7 @@ import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.feature.plan.lessonsText
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
+import com.zoonk.android.feature.subscription.GateWords
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -862,19 +863,11 @@ private fun ChallengeGate(
     actions: ChallengeActions,
 ) {
     TrackShown(AnalyticsEvent.SubscriptionGateShown)
-    Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(
-            stringResource(if (challenge.mock) R.string.challenge_mock_gate else R.string.challenge_call_gate),
-            style = MaterialTheme.typography.titleSmall,
-        )
-        if (!challenge.mock) {
-            Text(
-                stringResource(R.string.challenge_call_gate_line),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
+    GateWords(
+        title = stringResource(if (challenge.mock) R.string.challenge_mock_gate else R.string.challenge_call_gate),
+        line = stringResource(R.string.challenge_call_gate_line).takeUnless { challenge.mock },
+        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+    )
     TaskActions { width ->
         Button(onClick = actions::seePlus, modifier = width) { Text(stringResource(R.string.subscription_subscribe)) }
     }

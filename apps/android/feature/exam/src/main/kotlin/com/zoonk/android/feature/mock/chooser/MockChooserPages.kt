@@ -55,6 +55,7 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.mock.MockSummaryRow
+import com.zoonk.android.feature.subscription.GateWords
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.AlertDialog
@@ -274,19 +275,14 @@ private fun ChooserPage(
 @Composable
 private fun MockGate() {
     TrackShown(AnalyticsEvent.SubscriptionGateShown)
-    Text(
-        stringResource(R.string.challenge_mock_gate),
-        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        style = MaterialTheme.typography.titleSmall,
-    )
+    GateWords(title = stringResource(R.string.challenge_mock_gate), line = null)
 }
 
-/** Why the last Start failed, over the bar where Start was pressed, read out as it appears (main's `role="status"`). */
+/** Why the last Start failed, over the bar where Start was pressed (the bar's note reads it out). */
 @Composable
 private fun StartFailed(failed: ChooserStatus.Failed) {
     Text(
         stringResource(if (failed.notEnoughQuestions) R.string.mock_chooser_not_enough else R.string.mock_chooser_failed),
-        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,
     )
