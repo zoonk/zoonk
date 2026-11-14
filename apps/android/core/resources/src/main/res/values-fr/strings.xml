@@ -28,10 +28,10 @@
   "disclosure_collapsed": "2c949888045de91fdf88192313ad12ce396489bf2ee588cdb2be6dd96137ca37",
   "disclosure_expanded": "9a95085ed99408ab6e89dd4e381a88222034c87d4d38447ec1f243e353bab80a",
   "exam_choice_pick_up_to": "8e8020929908a0508eea9d51d1d464113c6ae286a5d7061a43e2ef36aa02b748",
-  "gate_build_plan": "62546d6629f0e7651930a9664f83d1a126fa4b6ad2f8b89cc9b5fa88923c11e8",
+  "gate_build_plan": "dcf1f0d278a7940fc8e289573597ea0ee212fcf581546b721661289a6680b68e",
   "gate_log_in": "2be55c412a383b70cf84eed736fba6b2744b6863fc6f6a2ca5e4b63a96ffd2c7",
   "gate_session_ended_description": "e1bdd1b9885c82e9ee364548e3071c47e918e49fd36b70691762330b0b78f0bd",
-  "gate_session_ended_title": "bbf9658b5af1494577168d78478056318a86e20af492e088d37ea8b24d08391d",
+  "gate_session_ended_title": "33ecf2a179a0b2dc11865d6d197669bf012e26e90a262f1ff7e7f53a15fbd045",
   "gate_sign_in_title": "8bbd2ce8f8340d34865d1f8803d6ed87ce5b653b180490aa9fbaec6e41db8783",
   "gate_start_goal": "ef60eb2e195f8065aee0100a3008cdfd990c4801540c526871a12141df9e2516",
   "gate_start_goal_description": "6ec328d6fe6b489110fec2198628aa97aaeb271240491119b18b88624609bba1",
@@ -91,11 +91,13 @@
     <string name="navigation_user_menu">Menu utilisateur</string>
     <string name="task_leave">Quitter</string>
     <string name="gate_sign_in_title">Connecte-toi pour continuer</string>
-    <string name="gate_session_ended_title">Ta session a pris fin</string>
+    <!-- Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session. -->
+    <string name="gate_session_ended_title">Ta session a été fermée</string>
+    <!-- Under "You've been logged out". Their plan is still saved; logging in shows it again. -->
     <string name="gate_session_ended_description">Connecte-toi pour retrouver ton plan.</string>
     <string name="gate_log_in">Se connecter</string>
     <!-- Starts a new goal: the visitor tells us what to learn and gets a plan. -->
-    <string name="gate_build_plan">Créer mon plan</string>
+    <string name="gate_build_plan">Préparer mon plan</string>
     <string name="gate_start_goal_title">Commence par un objectif</string>
     <string name="gate_start_goal_description">Dis-nous ce que tu veux apprendre et nous préparerons ton plan jour après jour jusqu’à ton objectif.</string>
     <string name="gate_start_goal">Commencer un objectif</string>

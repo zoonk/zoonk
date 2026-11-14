@@ -41,21 +41,18 @@ fun SignInGate(
         title = stringResource(if (ended) R.string.gate_session_ended_title else R.string.gate_sign_in_title),
         description = if (ended) stringResource(R.string.gate_session_ended_description) else null,
         padding = padding,
-        // A learner who was logged out still has a plan; a second start would make a new one.
-        inPage =
-            if (ended) {
-                null
-            } else {
-                { OutlinedButton(onClick = { navigator.open(AppRoute.StartGoal()) }) { Text(stringResource(R.string.gate_build_plan)) } }
-            },
     ) { main ->
+        // A learner who was logged out still has a plan; a second start would make a new one.
+        if (!ended) {
+            OutlinedButton(onClick = { navigator.open(AppRoute.StartGoal()) }) { Text(stringResource(R.string.gate_build_plan)) }
+        }
         Button(onClick = { navigator.open(AppRoute.Login) }, modifier = main) { Text(stringResource(R.string.gate_log_in)) }
     }
 }
 
 /**
- * A gate that is the page's whole content: its words centered, an optional [inPage] button under them,
- * and its main action ([action], given the `main` modifier of [TaskActions]) in the page's bottom bar.
+ * A gate that is the page's whole content: its words centered, and its ways in ([action], the main one
+ * given the `main` modifier of [TaskActions]) in the page's bottom bar.
  */
 @Composable
 fun GateMessage(
@@ -63,7 +60,6 @@ fun GateMessage(
     title: String,
     description: String?,
     padding: PaddingValues,
-    inPage: (@Composable () -> Unit)? = null,
     action: @Composable FlowRowScope.(main: Modifier) -> Unit,
 ) {
     Column(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
@@ -95,7 +91,6 @@ fun GateMessage(
                             textAlign = TextAlign.Center,
                         )
                     }
-                    inPage?.invoke()
                 }
             }
         }
