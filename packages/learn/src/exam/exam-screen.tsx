@@ -124,7 +124,6 @@ function ExamNoticeDay() {
 
   return (
     <NoticeDatesCard
-      document={exam.examDocument}
       noSitting={exam.noSitting}
       noticeDay={exam.noticeDay}
       onUse={actions.setDate}

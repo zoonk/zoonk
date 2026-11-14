@@ -1,6 +1,5 @@
 "use client";
 
-import { BottomBar } from "@zoonk/ui/components/bottom-bar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
@@ -72,7 +71,7 @@ export function OnboardingScreenPage({
       aside={rail}
       asideClassName={wide ? WIDE_ASIDE_CLASS : "hidden min-[72rem]:flex"}
       asideLabel={t("Getting started")}
-      className="flex-1 gap-4"
+      className="flex-1 gap-1 lg:gap-4"
     >
       <OnboardingPageBar backHref={backHref} bar={bar} barEnd={barEnd} />
 
@@ -81,7 +80,7 @@ export function OnboardingScreenPage({
         {children}
       </Page>
 
-      {bottomBar && <BottomBar data-slot="onboarding-bottom-bar">{bottomBar}</BottomBar>}
+      {bottomBar}
     </PageWithAside>
   );
 }

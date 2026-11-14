@@ -1098,19 +1098,9 @@ msgid "How much do you already know?"
 msgstr "Wie viel weißt du schon?"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-msgctxt "eePhP0"
-msgid "It only changes where your plan starts."
-msgstr "Das bestimmt nur, wo dein Plan beginnt."
-
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "C1D9a4"
 msgid "Your plan follows this course, in the time you have each day."
 msgstr "Dein Plan folgt diesem Kurs und passt sich deiner täglichen Lernzeit an."
-
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-msgctxt "6CVLNb"
-msgid "{minutes, plural, one {# minute} other {# minutes}} a day for now. You can change it in the next steps."
-msgstr "Vorerst {minutes, plural, one {# Minute} other {# Minuten}} pro Tag. Du kannst das in den nächsten Schritten ändern."
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/(home)/page.tsx
@@ -1124,6 +1114,11 @@ msgstr "Vorerst {minutes, plural, one {# Minute} other {# Minuten}} pro Tag. Du 
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "Meinen Plan erstellen"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "54WyfN"
+msgid "{minutes, plural, one {# minute} other {# minutes}} a day. You can change it later."
+msgstr "{minutes, plural, one {# Minute} other {# Minuten}} pro Tag. Das kannst du später ändern."
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
