@@ -147,7 +147,7 @@ export const reminderOfferSchema = z
   .nullable()
   .meta({
     description:
-      "While no reminder channel is on and the offer was never shown: offer study reminders at `time` (the saved time, the goal's study time or 19:00). Show it on the day's summary, where the learner is done for the day, never at a lesson's end, and claim it with POST /me/study-reminder/offer when it's shown. Null otherwise",
+      "Set while no reminder channel is on and the offer was never shown: the time study reminders would be offered at is `time` (the saved time, the goal's study time or 19:00). POST /me/study-reminder/offer marks it shown. Null otherwise",
     id: "StudyReminderOffer",
   });
 
