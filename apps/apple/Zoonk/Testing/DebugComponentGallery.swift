@@ -573,14 +573,15 @@
     }
 
     /// `reported` of the lesson's events: planning started, planning finished, writing started.
-    static func sample(reported: Int) -> GenerationWait {
+    static func sample(reported: Int, kind: LessonWaitWords = .lesson) -> GenerationWait {
       let now = Date.now
+      let noun = kind == .challenge ? "Challenge" : "Lesson"
       let events = [
-        GenerationEvent(at: now.addingTimeInterval(-60), status: "started", step: "planLesson"),
-        GenerationEvent(at: now.addingTimeInterval(-8), status: "completed", step: "planLesson"),
-        GenerationEvent(at: now.addingTimeInterval(-7), status: "started", step: "writeLesson"),
+        GenerationEvent(at: now.addingTimeInterval(-60), status: "started", step: "plan\(noun)"),
+        GenerationEvent(at: now.addingTimeInterval(-8), status: "completed", step: "plan\(noun)"),
+        GenerationEvent(at: now.addingTimeInterval(-7), status: "started", step: "write\(noun)"),
       ]
-      var wait = GenerationWait(kind: .lesson).started
+      var wait = GenerationWait(kind: kind == .challenge ? .challenge : .lesson).started
 
       for event in events.prefix(reported) {
         wait.apply(event, receivedAt: event.at ?? now)
@@ -598,7 +599,7 @@
     var body: some View {
       LessonWaitingView(
         outline: outline, kind: kind, writing: writing,
-        progress: writing == .failed ? Self.sample(reported: 3) : Self.sample(reported: 1),
+        progress: Self.sample(reported: writing == .failed ? 3 : 1, kind: kind),
         alternative: .case2(.init(dueSkills: 1, kind: .review))
       ) {}
       .lonePage()
