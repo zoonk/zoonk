@@ -10734,6 +10734,11 @@ msgid "Keep studying them, or archive this goal?"
 msgstr "남은 레슨을 계속 공부할까요, 아니면 이 목표를 보관할까요?"
 
 #: src/plan/plan-status-label.tsx
+msgctxt "xNjzfh"
+msgid "{count, plural, one {You have # lesson left. Keep studying it, or archive this goal?} other {You have # lessons left. Keep studying them, or archive this goal?}}"
+msgstr "{count, plural, other {레슨이 #개 남았어요. 계속 공부할까요, 아니면 이 목표를 보관할까요?}}"
+
+#: src/plan/plan-status-label.tsx
 msgctxt "kWj6AT"
 msgid "{count, plural, one {Your exam date has passed with # lesson left.} other {Your exam date has passed with # lessons left.}}"
 msgstr "{count, plural, other {시험 날짜가 지났고 레슨이 #개 남아 있어요.}}"

@@ -10734,6 +10734,11 @@ msgid "Keep studying them, or archive this goal?"
 msgstr "Kalan dersleri çalışmak mı, bu hedefi arşivlemek mi istersin?"
 
 #: src/plan/plan-status-label.tsx
+msgctxt "xNjzfh"
+msgid "{count, plural, one {You have # lesson left. Keep studying it, or archive this goal?} other {You have # lessons left. Keep studying them, or archive this goal?}}"
+msgstr "{count, plural, one {# dersin kaldı. Bu dersi çalışmaya devam etmek mi, bu hedefi arşivlemek mi istersin?} other {# dersin kaldı. Kalan dersleri çalışmak mı, bu hedefi arşivlemek mi istersin?}}"
+
+#: src/plan/plan-status-label.tsx
 msgctxt "kWj6AT"
 msgid "{count, plural, one {Your exam date has passed with # lesson left.} other {Your exam date has passed with # lessons left.}}"
 msgstr "{count, plural, other {Sınav tarihin geçti ve # dersin kaldı.}}"
