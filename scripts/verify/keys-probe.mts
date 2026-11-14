@@ -177,7 +177,7 @@ export function readPanel({
   const last = (query: string) =>
     [...document.querySelectorAll<HTMLElement>(query)].toReversed().find(shown);
 
-  const known = last(selector);
+  const known = last(`${selector}, [role=menu]`);
   const panel = known ?? last("[role=dialog], [role=alertdialog]");
 
   if (!panel) {
@@ -240,6 +240,7 @@ export function readPanel({
 
   const box = panel.getBoundingClientRect();
   const slot = panel.dataset.slot;
+  const menu = panel.getAttribute("role") === "menu";
   const title = panel.querySelector("h2, [data-slot$=-title]")?.textContent.trim();
 
   function centered() {
@@ -261,17 +262,20 @@ export function readPanel({
         "[data-slot=drawer-close], [data-slot=dialog-close], [data-slot=side-panel-close], [data-slot$=-footer] button",
       ),
     ].some(shown),
-    dim: known ? dim(overlays.find(({ panel: piece }) => piece === slot)?.backdrop) : null,
+    dim: known && !menu ? dim(overlays.find(({ panel: piece }) => piece === slot)?.backdrop) : null,
     edge: edge(),
     focusInside: known ? panel.contains(document.activeElement) : null,
-    label: panel.getAttribute("aria-label") ?? title?.slice(0, LABEL_LENGTH) ?? "a panel",
+    label:
+      panel.getAttribute("aria-label") ??
+      title?.slice(0, LABEL_LENGTH) ??
+      (menu ? "a menu" : "a panel"),
     needsClose: Boolean(known) && panel.getAttribute("role") === "dialog",
     shared: Boolean(known),
-    sheet: known && phone ? Math.abs(box.bottom - innerHeight) <= 2 : null,
+    sheet: known && !menu && phone ? Math.abs(box.bottom - innerHeight) <= 2 : null,
   };
 }
 
-/** Whether Esc closed a shared panel and restored its opener's focus. */
+/** Whether Esc closed a panel or menu and restored its opener's focus. */
 export function focusReturned({
   opener,
   overlays,
@@ -281,20 +285,29 @@ export function focusReturned({
   returnTo?: string;
   overlays: { panel: string }[];
 }) {
-  const selector = overlays.map(({ panel }) => `[data-slot=${panel}]`).join(", ");
+  const selector = `${overlays.map(({ panel }) => `[data-slot=${panel}]`).join(", ")}, [role=menu]`;
+  const trigger = document.querySelector(`[data-zoonk-act="${opener}"]`);
 
-  if ([...document.querySelectorAll(selector)].some(globalThis.zoonkPage.shown)) {
+  const targets = [
+    trigger,
+    returnTo ? document.querySelector(`[data-zoonk-act="${returnTo}"]`) : null,
+  ];
+
+  if (
+    [...document.querySelectorAll(selector)].some(
+      (panel) =>
+        globalThis.zoonkPage.shown(panel) &&
+        !targets.some((target) => target && panel.contains(target)),
+    )
+  ) {
     return false;
   }
 
   const focused = document.activeElement;
-  const trigger = document.querySelector(`[data-zoonk-act="${opener}"]`);
 
   if (trigger?.closest("[data-task-header]") && trigger.matches("[aria-haspopup=menu]")) {
     return Boolean(focused?.closest("[data-enter], [data-slot=task-frame-body]"));
   }
 
-  return [trigger, returnTo ? document.querySelector(`[data-zoonk-act="${returnTo}"]`) : null].some(
-    (target) => target && (target === focused || target.contains(focused)),
-  );
+  return targets.some((target) => target && (target === focused || target.contains(focused)));
 }
