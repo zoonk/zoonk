@@ -141,7 +141,7 @@ struct ConversationResultView: View {
 
     switch failure {
     case .limit(let limit):
-      return limit.enoughWords(isMock ? .mock : .task).said
+      return limit.words(.callTime).said
     case .failed:
       return isMock
         ? String(

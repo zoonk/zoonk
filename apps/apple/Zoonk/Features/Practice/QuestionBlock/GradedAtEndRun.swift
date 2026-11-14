@@ -296,14 +296,15 @@ struct PracticeQuestionsPreparingView: View {
         }
       }
     } actions: {
-      if let limit {
-        LimitNotice(limit: limit)
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .accessibilityElement(children: .combine)
-          .accessibilityFocused($focus, equals: .notice)
-      }
-
+      // The gate takes Start's place until its day has come, then Start takes it back.
       OpeningClock(availableAt: limit?.availableAt) { now in
+        if let limit, !limit.isOpen(at: now) {
+          LimitNotice(limit: limit)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityElement(children: .combine)
+            .accessibilityFocused($focus, equals: .notice)
+        }
+
         if !isWriting, limit?.letsTry(at: now) ?? true {
           PracticeMainButton(
             title: LocalizedStringResource(

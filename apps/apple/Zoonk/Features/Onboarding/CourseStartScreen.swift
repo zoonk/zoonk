@@ -65,7 +65,7 @@ struct CourseStartScreen: View {
       }
 
       if let error {
-        GoalErrorSection(error: error)
+        GoalErrorSection(error: error, replacesStart: true)
       }
 
       if session.authenticatedSession == nil {

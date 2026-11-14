@@ -189,7 +189,7 @@ private struct UnderstoodCard: View {
       if startable.isEmpty, !isGuest {
         GoalLimitNoticeSection(reason: .activeGoals)
       } else if let limit = shownError?.limit, limit.isPlusLimit {
-        GoalLimitNoticeSection(reason: limit)
+        GoalLimitNoticeSection(reason: limit, replacesStart: true)
       } else {
         if let shownError {
           GoalErrorSection(error: shownError)

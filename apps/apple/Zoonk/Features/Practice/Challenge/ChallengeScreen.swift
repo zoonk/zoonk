@@ -254,12 +254,13 @@ struct ChallengeScreen: View {
             : .checkpoint(blockId: blockId, sessionId: sessionId))
       }
     } else if canStart(challenge) {
-      if let writeLimit {
-        LimitNotice(limit: writeLimit)
-          .frame(maxWidth: .infinity, alignment: .leading)
-      }
-
+      // The gate takes the buttons' place until its day has come, then they take it back.
       OpeningClock(availableAt: writeLimit?.availableAt) { now in
+        if let writeLimit, !writeLimit.isOpen(at: now) {
+          LimitNotice(limit: writeLimit)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+
         if writeLimit?.letsTry(at: now) ?? true {
           PracticeActionRow {
             if challenge.canMove, moved == nil {

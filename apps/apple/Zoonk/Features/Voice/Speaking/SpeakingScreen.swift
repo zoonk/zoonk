@@ -272,8 +272,8 @@ private struct SpeakingPaperView: View {
       // Only the open task starts, so a failure is said right under its button.
       switch startFailure {
       case .limit(let limit):
-        LimitNotice(limit: limit) { now in limit.enoughWords(.task, now: now) }
-          .announcesAlert(limit.enoughWords(.task).said)
+        LimitNotice(limit: limit, kind: .callTime)
+          .announcesAlert(limit.words(.callTime).said)
       case .failed:
         FailureLine(
           message: LocalizedStringResource(

@@ -246,7 +246,8 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertEqual(store.failure(goalId: "goal", chapterId: "chapter"), .unreachable)
   }
 
-  /// The page's stop gives each map its Create back once its day has come; Create asks the server.
+  /// The page's stop gives each map its Create back once its day has come, and the page reads its
+  /// offer again then, so its counts and Create all are today's; Create asks the server.
   func testAStopWhoseDayCameLetsAMapStartAgain() async {
     let opens = Date(timeIntervalSince1970: 1_795_339_800)
     let stop = MindMapAllowanceStop(
@@ -255,12 +256,24 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertTrue(stop.isOver(at: opens))
 
     let api = MindMapsAPIStub(server: .available, statuses: [], startsAs: .drawing)
+    await api.stopNewMaps(stop)
     let store = makeStore(api: api)
-    await store.list(goalId: "goal").load()
+    let list = store.list(goalId: "goal")
+    await list.load()
+
+    await store.readOfferAgain(goalId: "goal", now: opens.addingTimeInterval(-60))
+    var calls = await api.calls
+    XCTAssertEqual(calls.list, 1, "before its day the stop holds and nothing is read")
+
+    await api.stopNewMaps(nil)
+    await store.readOfferAgain(goalId: "goal", now: opens)
+    calls = await api.calls
+    XCTAssertEqual(calls.list, 2)
+    XCTAssertNil(list.value?.createOffer.stop)
 
     await store.create(goalId: "goal", chapterId: "chapter")
 
-    let calls = await api.calls
+    calls = await api.calls
     XCTAssertEqual(calls.create, 1)
     XCTAssertNil(store.failure(goalId: "goal", chapterId: "chapter"))
   }
@@ -589,6 +602,7 @@ final class MindMapsStoreTests: XCTestCase {
 /// A server whose reads agree: the list shows the status its status route last answered. The last
 /// status answers every read after it.
 private actor MindMapsAPIStub: MindMapsAPIClient {
+  private var stop: MindMapAllowanceStop?
   struct Calls {
     var create = 0
     var createAll = 0
@@ -665,6 +679,10 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
     answered = (chapters, saved)
   }
 
+  func stopNewMaps(_ stop: MindMapAllowanceStop?) {
+    self.stop = stop
+  }
+
   func failCreateAll(_ count: Int) {
     createAllFailures = count
   }
@@ -699,7 +717,7 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
     calls.list += 1
     let read = GoalMindMaps(
       chapters: answered?.chapters ?? [chapter],
-      createOffer: MindMapCreateOffer(eligible: 0, startable: 0, stop: nil),
+      createOffer: MindMapCreateOffer(eligible: 0, startable: 0, stop: stop),
       firstTab: .chapters,
       lessonGroups: lessonIds.isEmpty
         ? []

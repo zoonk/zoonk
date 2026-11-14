@@ -162,10 +162,12 @@ struct GoalError: Equatable {
 
 struct GoalErrorSection: View {
   let error: GoalError
+  /// The gate stands in for the screen's start, so it goes once that start is back.
+  var replacesStart = false
 
   var body: some View {
     if let limit = error.limit, limit.isPlusLimit {
-      GoalLimitNoticeSection(reason: limit)
+      GoalLimitNoticeSection(reason: limit, replacesStart: replacesStart)
     } else if error.needsAccount {
       Section {
         Text(error.message)
@@ -206,6 +208,8 @@ struct CreateAccountButton: View {
 /// room for.
 struct GoalLimitNoticeSection: View {
   let reason: GoalLimitReason
+  /// The gate stands in for the screen's start, so it goes once that start is back.
+  var replacesStart = false
 
   @Environment(AppRouter.self) private var router
 
@@ -233,9 +237,13 @@ struct GoalLimitNoticeSection: View {
         .announcesAlert(String(localized: reason.message))
       }
     } else if case .monthlyGoals(let limit) = reason {
-      Section {
-        LimitNotice(limit: limit, kind: .goals)
-          .announcesAlert(String(localized: reason.message))
+      OpeningClock(availableAt: limit.availableAt) { now in
+        if !replacesStart || reason.holdsStart(at: now) {
+          Section {
+            LimitNotice(limit: limit, kind: .goals)
+              .announcesAlert(String(localized: reason.message))
+          }
+        }
       }
     }
   }

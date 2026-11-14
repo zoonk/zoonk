@@ -134,36 +134,19 @@ final class LimitWordsTests: XCTestCase {
       ["This map needs a subscription", "It writes more lessons than you get for free."])
   }
 
-  /// A speaking task may leave some call time unused, so its title never says it ran out, for a
-  /// day's cap or the month's alike.
-  func testAStartOfASetLengthSaysWhenItFitsWhole() {
-    let fits = Date(timeIntervalSince1970: 1_795_339_800)
-    let task = { (limit: HelpLimit, now: Date) in
-      self.text(limit.enoughWords(.task, now: now, calendar: self.calendar))
+  /// A call start is refused only when no call time is left, so a speaking task's refusal is the
+  /// call time's own gate.
+  func testARefusedCallStartSaysTheCallTimeIsUsed() {
+    let later = Date(timeIntervalSince1970: 1_795_339_800)
+    let callTime = { (tier: LearnerTier) in
+      self.text(
+        HelpLimit.usedUp(tier: tier, availableAt: later)
+          .words(.callTime, now: self.now, calendar: self.calendar))
     }
 
     XCTAssertEqual(
-      task(.usedUp(tier: .free, availableAt: fits), now),
-      [
-        "Not enough call time for this task",
-        "You'll have enough on November 22, or subscribe to keep going.",
-      ])
-    XCTAssertEqual(
-      task(.usedUp(tier: .plus, availableAt: fits), now),
-      ["Not enough call time for this task", "You'll have enough on November 22."])
-    XCTAssertEqual(
-      task(.limitReached(period: .day, tier: .free), now),
-      [
-        "Not enough call time for this task",
-        "You'll have enough tomorrow, or subscribe to keep going.",
-      ])
-    XCTAssertEqual(
-      task(.usedUp(tier: .free, availableAt: fits), fits),
-      ["Not enough call time for this task", "You can try again now."])
-    XCTAssertEqual(
-      text(
-        HelpLimit.usedUp(tier: .plus, availableAt: Date(timeIntervalSince1970: 1_794_623_400))
-          .enoughWords(.mock, now: now, calendar: calendar)),
-      ["Not enough call time for this mock exam", "You'll have enough later today."])
+      callTime(.free),
+      ["You've used your call time", "More on November 22, or subscribe to keep going."])
+    XCTAssertEqual(callTime(.plus), ["You've used your call time", "More on November 22."])
   }
 }
