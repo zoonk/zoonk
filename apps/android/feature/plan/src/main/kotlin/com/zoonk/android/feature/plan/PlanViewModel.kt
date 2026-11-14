@@ -35,7 +35,7 @@ import java.util.UUID
  * What a write did that the screen acts on: a refusal said in a snackbar (the menu that started it
  * has closed by then), or an archived goal, which leaves the Plan.
  */
-enum class PlanEvent { SaveFailed, Archived }
+enum class PlanEvent { Archived, }
 
 enum class ResumeFailure { GoalLimit, Failed }
 
@@ -78,6 +78,7 @@ class PlanViewModel(
     private val store: PlanStore,
     private val goalId: UUID,
     writingWaits: WritingWaits,
+    private val saveFailed: () -> Unit = {},
 ) : ViewModel() {
     private val saving = MutableStateFlow(false)
     private val resumeFailureState = MutableStateFlow<ResumeFailure?>(null)
@@ -178,7 +179,7 @@ class PlanViewModel(
                     if (resuming) {
                         resumeFailureState.value = if (result.status == TOO_MANY_REQUESTS) ResumeFailure.GoalLimit else ResumeFailure.Failed
                     } else {
-                        notices.send(PlanEvent.SaveFailed)
+                        saveFailed()
                     }
                 }
 
@@ -203,7 +204,7 @@ class PlanViewModel(
     /** Prepares the new country's plan again after that failed; a retry that doesn't start says so in a snackbar. */
     fun retryCountryRebuild() =
         saveGoal(PlanPart.CountryRebuild, saved = {}) {
-            store.retryCountryRebuild(goalId).also { if (it is MutationResult.Failed) notices.send(PlanEvent.SaveFailed) }
+            store.retryCountryRebuild(goalId).also { if (it is MutationResult.Failed) saveFailed() }
         }
 
     private fun saveGoal(

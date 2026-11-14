@@ -13,7 +13,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
@@ -35,7 +34,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalNavigationSuiteType
-import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -559,14 +557,10 @@ internal fun PlanEvents(
     viewModel: PlanViewModel,
     navigator: AppNavigator,
 ) {
-    val snackbars: SnackbarHostState = LocalSnackbarHostState.current
-    val saveFailed = stringResource(R.string.plan_save_failed)
-
     LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
             when (event) {
                 PlanEvent.Archived -> navigator.select(AppTab.Today)
-                PlanEvent.SaveFailed -> snackbars.showSnackbar(saveFailed)
             }
         }
     }
