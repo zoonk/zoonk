@@ -1,26 +1,10 @@
-import { Button } from "@zoonk/ui/components/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@zoonk/ui/components/dropdown-menu";
 import { cn } from "@zoonk/ui/lib/utils";
-import { EllipsisIcon } from "lucide-react";
 import { PAGE_HEADER_CLASS } from "./page-header-class";
 
-/**
- * A "…" with no action beside it sits on the title's first line, at the column's end, at every
- * width.
- */
 export function DetailHero({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
-      className={cn(
-        PAGE_HEADER_CLASS,
-        "group/detail-hero gap-4 md:flex-row md:items-end md:justify-between md:gap-6",
-        "has-[>[data-slot=detail-actions]>[data-slot=detail-menu]:only-child]:grid has-[>[data-slot=detail-actions]>[data-slot=detail-menu]:only-child]:grid-cols-[minmax(0,1fr)_auto] has-[>[data-slot=detail-actions]>[data-slot=detail-menu]:only-child]:gap-x-4 has-[>[data-slot=detail-actions]>[data-slot=detail-menu]:only-child]:gap-y-1",
-        className,
-      )}
+      className={cn(PAGE_HEADER_CLASS, "gap-4", className)}
       data-slot="detail-hero"
       {...props}
     />
@@ -30,11 +14,7 @@ export function DetailHero({ className, ...props }: React.ComponentProps<"header
 export function DetailHeroText({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "flex min-w-0 flex-col gap-1",
-        "group-has-[>[data-slot=detail-actions]>[data-slot=detail-menu]:only-child]/detail-hero:contents group-has-[>[data-slot=detail-actions]>[data-slot=detail-menu]:only-child]/detail-hero:*:col-start-1",
-        className,
-      )}
+      className={cn("flex min-w-0 flex-col gap-1", className)}
       data-slot="detail-hero-text"
       {...props}
     />
@@ -63,51 +43,5 @@ export function DetailFacts({ className, ...props }: React.ComponentProps<"p">) 
       data-slot="detail-facts"
       {...props}
     />
-  );
-}
-
-export function DetailActions({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn(
-        "flex flex-wrap items-center gap-2 md:shrink-0",
-        "has-[>[data-slot=detail-menu]:only-child]:col-start-2 has-[>[data-slot=detail-menu]:only-child]:row-start-1 has-[>[data-slot=detail-menu]:only-child]:mt-[0.09375rem] has-[>[data-slot=detail-menu]:only-child]:self-start",
-        className,
-      )}
-      data-slot="detail-actions"
-      {...props}
-    />
-  );
-}
-
-/** As tall as the action beside it; alone beside the title, a small button's 30px. */
-const DETAIL_MENU_TRIGGER_CLASS =
-  "[--control-size:--spacing(11)] group-only/detail-menu:rounded-md group-only/detail-menu:[--control-size:--spacing(7.5)]";
-
-export function DetailMenu({
-  children,
-  label,
-  onOpenChange,
-}: {
-  children: React.ReactNode;
-  label: string;
-  onOpenChange?: (open: boolean) => void;
-}) {
-  // An open menu mounts focus guards beside its trigger, so "alone" is asked of this wrapper.
-  return (
-    <span className="group/detail-menu contents" data-slot="detail-menu">
-      <DropdownMenu onOpenChange={onOpenChange}>
-        <DropdownMenuTrigger
-          render={<Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />}
-        >
-          <EllipsisIcon aria-hidden="true" />
-          <span className="sr-only">{label}</span>
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent align="end" className="w-60">
-          {children}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </span>
   );
 }

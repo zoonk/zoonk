@@ -2,13 +2,7 @@
 
 import { type ExamView } from "@zoonk/core/exams/view/contract";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
-import {
-  DetailActions,
-  DetailFacts,
-  DetailHero,
-  DetailHeroText,
-  DetailTitle,
-} from "@zoonk/ui/components/detail";
+import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted, useFormatter } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
 import { DetailsDrawer } from "../_components/details-drawer";
@@ -68,16 +62,13 @@ function useExamDays(): string[] {
   return sharedTime ? [...dates, formatTimeOfDay(sharedTime)] : dates;
 }
 
-/** On a phone the options sit across from the back arrow every day, so the page's top never moves. */
 function ExamBar() {
   const t = useExtracted();
   const { exam, hrefs } = useExamScreen();
 
   return (
     <LearnPageBar back={{ href: hrefs.back }} root title={exam.examName}>
-      <div className="contents lg:hidden">
-        <ReportProblemMenu label={t("Exam options")} place="bar" screen="exam" />
-      </div>
+      <ReportProblemMenu label={t("Exam options")} screen="exam" />
     </LearnPageBar>
   );
 }
@@ -169,7 +160,6 @@ function isLastDays(stage: ExamView["stage"]): boolean {
 }
 
 function ExamHero() {
-  const t = useExtracted();
   const { exam } = useExamScreen();
 
   return (
@@ -178,10 +168,6 @@ function ExamHero() {
         <DetailTitle>{exam.examName}</DetailTitle>
         <ExamFacts />
       </DetailHeroText>
-
-      <DetailActions className="max-lg:hidden">
-        <ReportProblemMenu label={t("Exam options")} screen="exam" />
-      </DetailActions>
     </DetailHero>
   );
 }
