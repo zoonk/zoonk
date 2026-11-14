@@ -3406,19 +3406,16 @@ msgid "From now on, review and mock exams."
 msgstr "이제 복습과 모의고사에 집중해요."
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "VYBPRQ"
 msgid "The final stretch"
 msgstr "막바지 준비"
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "Qr0X96"
 msgid "{exam} is tomorrow"
 msgstr "내일은 {exam} 보는 날이에요"
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "7OX7b1"
 msgid "{exam} is today"
 msgstr "오늘은 {exam} 보는 날이에요"
@@ -3430,20 +3427,9 @@ msgstr "공식 시험 결과가 나오면 입력해 주세요."
 
 #: src/exam/exam-moment-card.tsx
 #: src/exam/exam-result-section.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "yMXlRJ"
 msgid "How did it go?"
 msgstr "시험은 어땠어요?"
-
-#: src/exam/exam-moment-card.tsx
-msgctxt "GDT0eI"
-msgid "Add your result"
-msgstr "결과 입력하기"
-
-#: src/exam/exam-moment-card.tsx
-msgctxt "0LZY2s"
-msgid "See your exam"
-msgstr "시험 정보 보기"
 
 #: src/exam/exam-next-mock.tsx
 #: src/plan-diff/use-change-rows.ts
@@ -13255,6 +13241,16 @@ msgstr "오늘 학습에 추가하기"
 msgctxt "SVKPfj"
 msgid "Exam choice"
 msgstr "시험 선택"
+
+#: src/today/today-exam-moment.tsx
+msgctxt "GDT0eI"
+msgid "Add your result"
+msgstr "결과 입력하기"
+
+#: src/today/today-exam-moment.tsx
+msgctxt "0LZY2s"
+msgid "See your exam"
+msgstr "시험 정보 보기"
 
 #: src/today/today-exam-moment.tsx
 msgctxt "9HjIgh"
