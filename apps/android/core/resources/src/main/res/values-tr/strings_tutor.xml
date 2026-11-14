@@ -100,14 +100,11 @@
   "tutor_placeholder_plan": "2922c63309a1dba0e56a825e9cbf7d6dc883f4f31bc58020d57d44135451b68c",
   "tutor_placeholder_subject": "54e4c7b66898ed531109bc58777e8871b4887bc5f940cdd0110836447ab60767",
   "tutor_plan_change_apply": "6c3287eab6a6bf85875c89600f5b9fc1e5659940dd31329f79bae0eb1559d8ae",
-  "tutor_plan_change_declined": "7c2cca7c515f0b639377c93764bab6f09e10ed2815a72ddac02bca647f1ea5b0",
+  "tutor_plan_change_declined": "356aee17920e73a1c4fa98c86ebf4d581c6758488e299d620dad7e41105521ab",
   "tutor_plan_change_failed": "dbab4dc7b6369c90455b11fce329d0c1550e7c4f1cc8c76fa4ee70292db23548",
   "tutor_plan_change_not_now": "1508a1682fbc267c68dfd4aa37ff389c28f5c80cbcabaded63e0be5ecfa07e63",
-  "tutor_plan_change_one_week": "69567605707a64f252880b3318cb44e929f1289b4a9b4597980cfe267c565fa8",
   "tutor_plan_change_replaced": "74530aa7dfe3112fe1a558eede9889969cb5e37408614eb0288df93173557116",
-  "tutor_plan_change_title": "668b97447926a579c67e93ae188fcccb1d1d78e843d5ff4fc27f5bcedac2033a",
   "tutor_plan_change_undo": "64f82fed65ea2630c7d7126a38efe9b319aceafa54dd0c38963ca386185ca83f",
-  "tutor_plan_change_use_my_date": "362932c849074ec27df956d9a933908586af69679f1c17bfae0fee3ba57eb0d0",
   "tutor_retry_last_question": "522c8cd26e22d19428c873974aa18fc01f1e6d8978d9dd78de8026ec21374d38",
   "tutor_send": "08e93890983ac2d7a684b4a887b55955c4c4b42bac135740e4963b9848b1867c",
   "tutor_sign_in": "6c9639610de06bdd56a35aaaa2609f40573a9ed86800ff303873b3e169cdbdfe",
@@ -267,16 +264,10 @@
     <string name="tutor_offer_plus_subscribed">Paketin ve ödeme bilgilerin.</string>
     <!-- Button that opens the Zoonk Plus page, with what Plus includes and its price. Not "see more". -->
     <string name="tutor_offer_manage">Yönet</string>
-    <!-- A card's title naming the change the buddy suggests: a noun phrase, not an action. -->
-    <string name="tutor_plan_change_title">Planında değişiklik</string>
-    <!-- Beside the title of a change that lasts one week, like a lighter week. -->
-    <string name="tutor_plan_change_one_week">1 hafta</string>
     <string name="tutor_plan_change_apply">Uygula</string>
     <string name="tutor_plan_change_not_now">Sonraya bırak</string>
-    <!-- Applies the learner's own date over the one the exam notice or calendar sets. -->
-    <string name="tutor_plan_change_use_my_date">Yine de benim tarihimi kullan</string>
     <string name="tutor_plan_change_undo">Geri al</string>
-    <string name="tutor_plan_change_declined">Uygulanmadı. Planın değişmedi.</string>
+    <string name="tutor_plan_change_declined">Planın olduğu gibi kalıyor.</string>
     <string name="tutor_plan_change_replaced">Bu önerinin yerini daha yeni bir öneri aldı.</string>
     <string name="tutor_plan_change_failed">Kaydedilemedi. Tekrar dene.</string>
     <!-- Above the questions asked that day, in the buddy's conversation. -->

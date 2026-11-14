@@ -53,6 +53,7 @@ import com.zoonk.api.models.PlanChangeDecisionInput
 /** What the result can do on a plan that's already the learner's: answer its proposal, change its focus, pause its questions. */
 internal class PlanControls(
     val answer: ProposalAnswer?,
+    val repriced: PlanChange?,
     val deciding: PlanChangeDecisionInput.Status?,
     val failed: Boolean,
     val onDecide: (PlanChange, PlanChangeDecisionInput.Status) -> Unit,
@@ -67,7 +68,7 @@ internal fun displayName(
 
 /** A proposal still waiting for the learner's answer, which then is the screen's question. */
 internal fun FocusTestFocus.waitingProposal(plan: PlanControls?): PlanChange? =
-    proposal?.takeIf { plan != null && plan.answer == null && state == FocusTestFocus.State.PROPOSED && it.canApply }
+    (plan?.repriced ?: proposal)?.takeIf { plan != null && plan.answer == null && state == FocusTestFocus.State.PROPOSED && it.canApply }
 
 /** The test's result: where to focus, or where the plan starts. On a plan, a proposal asks first. */
 @Composable
@@ -174,7 +175,7 @@ private fun ColumnScope.FocusProposal(
     SetupContent {
         TestHeader(stringResource(R.string.focustest_proposal_title), stringResource(R.string.focustest_proposal_description))
         FocusRows(rows)
-        PlanEffectDiff(proposal.effect, dateKind = GoalDateKind.Exam)
+        PlanEffectDiff(proposal.effect, dateKind = GoalDateKind.Exam, repriced = plan.repriced != null)
         OnboardingActions {
             FinishFailed(plan.failed)
             Button(

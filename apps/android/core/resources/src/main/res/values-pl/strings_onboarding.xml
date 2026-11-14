@@ -8,7 +8,6 @@
   "onboarding_admission_title": "9d58e862ae98af6e53d8bc2213ed1a96c05e79eb17adaea6020bc35f5210d4cb",
   "onboarding_aim_by_month": "7ecc9b7fa55e38d2557e34f5dde4d489f8e0102b08c778d21d546b90f6541975",
   "onboarding_aim_change": "42618b7b3fa4887205f5ffc88cbbf948a656553779cdc92120333aef8f3ff338",
-  "onboarding_aim_changed": "8b55e3e4008ec13fc16411da976298b86be95779bff73858d9852b9ed6e225ec",
   "onboarding_aim_description": "c80e2157bb4a994c536a43d8504a598e65a9e09470ac8b5073821eaa216f1c08",
   "onboarding_aim_finish": "103f885e8a057b8e2564e772fefce1d2584c9d0b7e74bb534c8b1eda15ee8801",
   "onboarding_aim_fluent": "48434aa4d4ca6e3850bd914bb203b08d2d47263b0d4032c0c44aaacfb7504ea1",
@@ -1098,7 +1097,6 @@
     <string name="onboarding_aim_hours">%1$s godz.</string>
     <string name="onboarding_aim_by_month">Termin: %1$s</string>
     <string name="onboarding_aim_finish">Przy %1$s nauki dziennie orientacyjny termin osiągnięcia poziomu %2$s to %3$s.</string>
-    <string name="onboarding_aim_changed">Twój kurs obejmuje teraz materiał do poziomu %1$s.</string>
     <string name="onboarding_reason_travel">Podróże</string>
     <string name="onboarding_reason_travel_description">Dogadać się w podróży: zamówić coś, zapytać o drogę, porozmawiać</string>
     <string name="onboarding_reason_talk">Rozmawiać z ludźmi</string>

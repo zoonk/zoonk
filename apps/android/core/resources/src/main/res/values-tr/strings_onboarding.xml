@@ -8,7 +8,6 @@
   "onboarding_admission_title": "4dc2ecb29937fcc79060260804da50e8f7788a51acccfe5afcb313eccf4e6fb8",
   "onboarding_aim_by_month": "8c18223bb3fd179ba0ec3a64456ff27d00b04796521e40660da67a698b9e851d",
   "onboarding_aim_change": "3917b4a0202f421cd6b4bf35763df80ac30301a5ac660f7ac23f0a42b9fdd1f0",
-  "onboarding_aim_changed": "6cd65563b495bc0fff6053cd631e18d2d7ecd0d0f798854d69c66006894c2e8f",
   "onboarding_aim_description": "f085f2b4e875003f31a7bcc5b19d401f948de823112156e345960efe602fa29b",
   "onboarding_aim_finish": "4a50c316fb11821f10df76f5f218c98bdcf467492d0cf1687aefef36d2b3280d",
   "onboarding_aim_fluent": "0616eaf8f3de8b4cf6ba42014520cc73955fffa20c2021d95d9df58c3d345eaa",
@@ -1054,7 +1053,6 @@
     <string name="onboarding_aim_hours">%1$s sa.</string>
     <string name="onboarding_aim_by_month">en geç %1$s</string>
     <string name="onboarding_aim_finish">Günde %1$s çalışarak %2$s düzeyine %3$s civarında ulaşırsın.</string>
-    <string name="onboarding_aim_changed">Kursunun hedef seviyesi artık %1$s.</string>
     <string name="onboarding_reason_travel">Seyahat</string>
     <string name="onboarding_reason_travel_description">Seyahatlerde anlaşabilmek: sipariş vermek, yol sormak, sohbet etmek</string>
     <string name="onboarding_reason_talk">İnsanlarla konuşmak</string>

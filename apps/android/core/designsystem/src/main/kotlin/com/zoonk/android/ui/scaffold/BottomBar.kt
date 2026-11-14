@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -106,3 +108,9 @@ private fun Modifier.aboveBar(): Modifier =
 
 /** Main's gap between a bar's buttons. */
 val BAR_GAP = 8.dp
+
+/** A [BottomBar] note for what its last tap couldn't do, such as a failed save: read out as the note's slot appears. */
+@Composable
+fun BarError(message: String) {
+    Text(text = message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
+}
