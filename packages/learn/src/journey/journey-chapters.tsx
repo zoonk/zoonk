@@ -183,11 +183,13 @@ export function JourneyChapters({
             <span aria-hidden="true" className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
               {showAll ? <MinusIcon className="size-3.5" /> : <PlusIcon className="size-3.5" />}
             </span>
-            {showAll
-              ? t("Show fewer chapters")
-              : t("{count, plural, one {# more chapter} other {# more chapters}}", {
-                  count: hidden,
-                })}
+            <span data-slot="path-row-title">
+              {showAll
+                ? t("Show fewer chapters")
+                : t("{count, plural, one {# more chapter} other {# more chapters}}", {
+                    count: hidden,
+                  })}
+            </span>
           </button>
         </li>
       )}
