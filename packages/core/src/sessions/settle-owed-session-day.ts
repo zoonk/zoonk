@@ -110,10 +110,7 @@ export async function settleOwedSessionDay(owed: OwedDay & { userId: string }): 
     await prisma.$transaction(async (tx) => {
       await markLearnerChanged(tx, { userId: owed.userId });
 
-      await refitSessionLessons(tx, {
-        sessionId: owed.sessionId,
-        timeZone: getAnswerTimeZone({ goal: session.goal, timeZone: owed.timeZone }),
-      });
+      await refitSessionLessons(tx, { sessionId: owed.sessionId });
     });
   }
 

@@ -59,9 +59,7 @@ export async function findGoalsWithWork({
 
   const sessions = await Promise.all(
     stored.map(async (session) => {
-      const goal = days.find((day) => day.goal.id === session.goalId)?.goal;
-      const timeZone = goal ? getAnswerTimeZone({ goal }) : "UTC";
-      const { minutes } = await loadSessionTime({ stored: session, timeZone, userId });
+      const { minutes } = await loadSessionTime({ stored: session, userId });
       return { ...session, minutes };
     }),
   );
