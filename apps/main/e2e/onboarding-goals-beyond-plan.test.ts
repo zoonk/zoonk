@@ -142,20 +142,16 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     await page.context().close();
   });
 
-  test("following as many goals as the free plan allows, the card shows the plan's limit, and Today brings it back once a goal is paused", async ({
+  test("following as many goals as the free plan allows, the new-goal page is only the limit, and the box is back once a goal is paused", async ({
     browser,
   }) => {
     const { user } = await createLearnerFollowing(3);
-    const { page, words } = await openCard({ browser, user });
+    const page = await openAs(browser, user);
+    await page.goto("/start");
 
-    await expect(
-      page.getByRole("main").getByText(STATISTICS.subject, { exact: true }),
-    ).toBeVisible();
-
-    await expect(page.getByText(FULL, { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: FULL })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "I want to" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Looks right" })).toHaveCount(0);
-    await expect(page.getByText(LOCKED_NOTE)).toHaveCount(0);
 
     await page.getByRole("link", { name: "Go to your Plan" }).click();
     await page.getByRole("button", { name: "Plan options" }).click();
@@ -165,12 +161,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
       page.getByText("Nothing is planned until you resume it.").filter({ visible: true }),
     ).toBeVisible();
 
-    await page.goto("/today");
-
-    const offer = page.getByRole("region", { name: "A goal you started" });
-    await expect(offer.getByText(words)).toBeVisible();
-    await offer.getByRole("link", { name: "Continue" }).click();
-
+    const words = await typeCard({ page, userId: user.id });
     await expect(page.getByText(LOCKED_NOTE)).toBeVisible();
     await page.getByRole("button", { name: "Looks right" }).click();
     await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
