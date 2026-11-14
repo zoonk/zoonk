@@ -174,9 +174,6 @@ struct TodaySessionAction: View {
   let keepStudying: () -> Void
   /// After an exam's date, once confirmed.
   let archive: () -> Void
-  /// Beside the page's title rather than across the column.
-  var isInHeader = false
-
   private var session: StudyDay { view.session }
 
   /// Whether the day has one, so a place that holds it can leave itself out.
@@ -205,34 +202,16 @@ struct TodaySessionAction: View {
     } else {
       let action = action
 
-      action?.inHeader(isInHeader)
+      action
         .disabled(busy != nil && action?.isBusy != true)
     }
   }
 
-  @ViewBuilder
   private var examOver: some View {
-    let buttons = ExamOverButtons(
+    ExamOverButtons(
       goalName: view.goal.title,
       pressed: busy == .archive ? .archive : busy == .keepStudying ? .keepStudying : nil,
       archive: archive, keepStudying: keepStudying)
-
-    if isInHeader {
-      VStack(alignment: .trailing, spacing: 8) {
-        HStack(spacing: 8) {
-          buttons
-        }
-        .controlSize(.large)
-        .buttonSizing(.fitted)
-
-        if let failure {
-          FailureLine(message: failure)
-            .typeStyle(.note)
-        }
-      }
-    } else {
-      buttons
-    }
   }
 
   /// What failed, for the bottom bar's line: in the bar the button can't say it under itself.
@@ -309,8 +288,6 @@ struct TodayMainAction: View {
   let kind: Kind
   let isBusy: Bool
   let failed: Bool
-  /// Beside the page's title, its own width, rather than across the column.
-  private var isInHeader = false
   let action: () -> Void
 
   init(kind: Kind, isBusy: Bool, failed: Bool, action: @escaping () -> Void) {
@@ -320,26 +297,13 @@ struct TodayMainAction: View {
     self.action = action
   }
 
-  func inHeader(_ isInHeader: Bool) -> Self {
-    var shown = self
-    shown.isInHeader = isInHeader
-    return shown
-  }
-
   var body: some View {
-    VStack(alignment: isInHeader ? .trailing : .center, spacing: 8) {
-      BusyButton(isBusy: isBusy, action: action) {
-        title
-      }
-      .buttonStyle(.mainAction)
-      .controlSize(.large)
-      .buttonSizing(isInHeader ? .fitted : .flexible)
-
-      if failed, isInHeader {
-        FailureLine(message: failure)
-          .typeStyle(.note)
-      }
+    BusyButton(isBusy: isBusy, action: action) {
+      title
     }
+    .buttonStyle(.mainAction)
+    .controlSize(.large)
+    .buttonSizing(.flexible)
   }
 
   static let saveFailure = LocalizedStringResource(
