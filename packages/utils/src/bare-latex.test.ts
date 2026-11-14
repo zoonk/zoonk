@@ -63,14 +63,18 @@ describe(findBareLatex, () => {
   });
 
   it("finds a one-letter subscript written against operators, brackets or punctuation", () => {
-    const text = "Use C_A0=2, then E_a/RT, x_1+x_2 and (k_B·T).";
+    const text = "Use C_A0=2, then E_a/RT, 1/x_1, x_1+x_2, 2x_1 and (k_B·T).";
 
     expect(find(text)).toStrictEqual([
       problem("C_A0=2"),
       problem("E_a/RT"),
+      problem("1/x_1"),
       problem("x_1+x_2"),
+      problem("2x_1"),
       problem("k_B·T"),
     ]);
+
+    expect(findBareLatex({ layout: "inline", text: "C_A0 = 2" })).toStrictEqual([problem("C_A0")]);
 
     expect(wrap(text)).toBe(text);
   });
@@ -82,9 +86,12 @@ describe(findBareLatex, () => {
       String.raw`The rate is $k = A e^{-E_a/RT}$ and $C_{A0}$ is given.`,
       "See https://example.com/a_b/x_1 or write to j_doe@example.com.",
       "Open data/x_train.csv, set user_id=max_value+1 and keep CH_4/UTF_8 in db_1.",
+      "Fetch https://example.com?q=x_1 or www.example.com?q=x_1 and save x_1-x_2.csv.",
+      String.raw`Run ./x_1, ~/x_1 or /tmp/x_1 and open C:\x_1 or (mailto:a_b@example.com).`,
     ];
 
     expect(texts.flatMap((text) => find(text))).toStrictEqual([]);
+    expect(texts.flatMap((text) => findBareLatex({ layout: "inline", text }))).toStrictEqual([]);
   });
 
   it("doesn't look for backslash commands, longer subscripted names or spaced carets, which are as often something else", () => {
