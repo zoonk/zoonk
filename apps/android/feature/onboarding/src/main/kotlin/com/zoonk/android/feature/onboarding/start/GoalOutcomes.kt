@@ -197,14 +197,34 @@ internal fun ColumnScope.GoalLimitWall(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-        if (reason == GoalLimitReason.ActiveGoals) {
-            OutlinedButton(
-                onClick = onOpenPlan,
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text(stringResource(R.string.onboarding_go_to_plan)) }
-        }
-        Button(onClick = onSubscribe, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.subscription_subscribe)) }
+        GoalLimitButtons(reason, onSubscribe, onOpenPlan)
     }
+}
+
+/** Main's `GoalLimitScreen`: at the goals-at-once limit, starting a goal is only the gate, its words as the heading. */
+@Composable
+internal fun ColumnScope.GoalLimitScreen(
+    onSubscribe: () -> Unit,
+    onOpenPlan: () -> Unit,
+) {
+    OnboardingHeading(stringResource(R.string.onboarding_goals_at_once_title), stringResource(R.string.onboarding_goals_at_once_line))
+    OnboardingActions { GoalLimitButtons(GoalLimitReason.ActiveGoals, onSubscribe, onOpenPlan) }
+}
+
+/** Main's `GoalLimitBar`: the Plan, where a goal can be paused, before Subscribe, the main action. */
+@Composable
+private fun GoalLimitButtons(
+    reason: GoalLimitReason,
+    onSubscribe: () -> Unit,
+    onOpenPlan: () -> Unit,
+) {
+    if (reason == GoalLimitReason.ActiveGoals) {
+        OutlinedButton(
+            onClick = onOpenPlan,
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(stringResource(R.string.onboarding_go_to_plan)) }
+    }
+    Button(onClick = onSubscribe, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.subscription_subscribe)) }
 }
 
 /** Right after sending, it opens by itself; coming back later it waits for a tap, since writing it is new work. */

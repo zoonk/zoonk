@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "checkpoint_after_lessons": "cb87484891473bfc2b8c905f27071c7d5964c20220bfea7d0758bccf7d300e19",
-  "checkpoint_answer": "fb3a33c664754479ff599c19964f5fef6db1f9fad4021391a6ed3e010eb10659",
   "checkpoint_answers": "dffcda18b1e579742bee99d5668bcd8290d5a1330ea8d78214d3acb9cbe160c3",
   "checkpoint_badge": "bb04d2bccff96bd2989c1eb096a147da7e0bd7bf3e21e71d9824d6c56c577124",
   "checkpoint_beat": "47b31a45fe7e464375fc26b7200ec19a2b1e0ae739ca8573ad72a3e22fc386aa",
@@ -142,6 +141,4 @@
     <string name="checkpoint_next_phase_open">Sıradaki aşama olan %1$s şimdiden açık.</string>
     <string name="checkpoint_answers">Cevaplar</string>
     <string name="checkpoint_review">Cevapları incele</string>
-    <!-- %1$s is the right answer. -->
-    <string name="checkpoint_answer">Cevap: %1$s</string>
 </resources>

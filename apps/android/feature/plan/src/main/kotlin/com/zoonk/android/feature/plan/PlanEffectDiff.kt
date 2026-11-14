@@ -467,7 +467,7 @@ private fun eventRows(effect: PlanEffect): List<ChangeRow> {
 @Composable
 private fun rowDate(date: kotlinx.datetime.LocalDate): String = rowDate(date.toJavaLocalDate())
 
-/** Short in a row ("Nov 14"), with the year beyond twelve months. */
+/** Short in a row ("Nov 14"), with the year when it's in another year. */
 @Composable
 private fun rowDate(date: LocalDate): String = formatPlanDate(date, LocalDate.now(), currentLocale())
 

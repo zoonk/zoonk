@@ -943,7 +943,7 @@ private fun ReviewItem(
                 )
             } else {
                 AnswerLine(
-                    R.string.checkpoint_answer,
+                    R.string.questions_right_answer,
                     correct,
                     question,
                     duel.read.words,

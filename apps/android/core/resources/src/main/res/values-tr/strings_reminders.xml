@@ -35,9 +35,11 @@
 <resources>
     <!-- The name of the app's notification channel in Android's settings. -->
     <string name="reminders_channel_name">Çalışma hatırlatmaları</string>
-    <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
+    <!-- Under the channel's name in Android's settings. -->
     <string name="reminders_channel_description">Günlük çalışmanı bitirmediysen çalışma günlerinde bir kez hatırlatırız.</string>
+    <!-- Under the reminders page's title: what reminders do; %1$s is the link "study days", which opens the Plan. -->
     <string name="reminders_line">Günlük çalışmanı bitirmediysen %1$s bir kez hatırlatırız.</string>
+    <!-- Link to the Plan inside "One reminder on your study days…" -->
     <string name="reminders_study_days">çalışma günlerinde</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Çalışma hatırlatması ister misin?</string>

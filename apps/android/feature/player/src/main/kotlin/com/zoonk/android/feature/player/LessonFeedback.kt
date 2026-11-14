@@ -32,6 +32,8 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
+import com.zoonk.android.feature.player.steps.FeedbackAnswer
+import com.zoonk.android.feature.player.steps.RightAnswerLine
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.FeedbackNote
@@ -116,15 +118,25 @@ fun LessonStepResultView(
             end = hyperdriveStreak?.let { stringResource(R.string.player_hyperdrive_streak, count(it)) },
         )
 
-        result.spelling?.let { LabeledAnswer(stringResource(R.string.player_spelled), it) }
+        // A screen a staff fix changed after the learner started: why it doesn't count, and nothing else.
+        if (verdict == Verdict.Unchecked && result.correctAnswer == null) {
+            Text(
+                stringResource(R.string.player_unchecked_updated),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            return@FeedbackPanel
+        }
+
+        result.spelling?.let { FeedbackAnswer(stringResource(R.string.player_spelled), it) }
         if (result.corrections.isNotEmpty()) Corrections(result.corrections)
 
         val showsCorrectAnswer =
             result.correctAnswer != null && !result.isCorrect && result.checked && step.isLanguageStep &&
                 step.kind !in OPTION_LANGUAGE_KINDS
-        if (showsCorrectAnswer) LabeledAnswer(stringResource(R.string.player_correct_answer_label), result.correctAnswer.orEmpty())
+        if (showsCorrectAnswer) RightAnswerLine(result.correctAnswer.orEmpty())
         if (result.isCorrect && result.checked) {
-            result.correctAnswer?.let { LabeledAnswer(stringResource(R.string.player_also_correct_label), it) }
+            result.correctAnswer?.let { FeedbackAnswer(stringResource(R.string.player_also_correct_label), it) }
         }
 
         SampleAnswer(result)
@@ -191,24 +203,6 @@ internal fun ExplainAnswer(
 
             else -> {}
         }
-    }
-}
-
-@Composable
-private fun LabeledAnswer(
-    label: String,
-    answer: String,
-) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-        RichInlineText(
-            text = answer,
-            style =
-                MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
-                    fontWeight = FontWeight.Medium,
-                ),
-        )
     }
 }
 
