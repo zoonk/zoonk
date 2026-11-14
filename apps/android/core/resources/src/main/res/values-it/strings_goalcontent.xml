@@ -42,7 +42,7 @@
   "goalcontent_mastery_pending": "b97bd68dcb1e937067afbce09b13e8689c2b683fcbdb68e3df8234726aa6fcdd",
   "goalcontent_mastery_right": "0e0689f2f62828fde4d6e5a87101789eeb7749c34fef283fce0234975f53dd28",
   "goalcontent_material_topic_count": "906e5d1d390c17fa88dbf6aa9de0d2b305e7720036d220ee11e4da380111b6fd",
-  "goalcontent_matrix_title": "15fe1e880ba74c05ff351ff9b0c8d4784e423193851ba9090a4b2f04fb353e6d",
+  "goalcontent_matrix_title": "7dcd9b0053932f308e65dbdfd43884e51f6d744fefdd3ad88bed7001d7a10430",
   "goalcontent_module_count": "7b47272080de59fb9a31143abe695d461b5d2712470e3cf22f63e05eaca7fa44",
   "goalcontent_modules": "07ea9e399e7f5c15795af7f1d0e41cb66a5faf4a645ec67813a5f703b2372f1c",
   "goalcontent_more_chapters": "d0f121525601426acddbef2af67329dc3efccb1a3e033fd539b624ee9d2b8d72",
@@ -297,7 +297,7 @@
     <string name="goalcontent_frequency_waits">Gli argomenti meno frequenti negli esami passati vengono rimandati (%1$s, secondo %2$s).</string>
     <string name="goalcontent_frequency_most">Il piano dedica più tempo agli argomenti più frequenti negli esami passati (%1$s, secondo %2$s).</string>
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
-    <string name="goalcontent_matrix_title">Cosa valutano le domande</string>
+    <string name="goalcontent_matrix_title">Cosa richiedono le domande</string>
     <string name="goalcontent_see_all">Vedi tutti e %1$s</string>
     <string name="goalcontent_chapter_number">Capitolo %1$s</string>
     <string name="goalcontent_progress">Progressi</string>

@@ -82,7 +82,7 @@
   "goalcontent_to_review": "5b2965135310fddd909b1cc5df0f8d7431d6d4a745ceadb8c204aed57447a9ce",
   "goalcontent_topic_count": "ec5248539178418bf60b0d1a1d5f8affdd4a269011c9f3202f3b61d18bcba755",
   "goalcontent_topic_in_progress": "3f4c85ea2af608c27c463432fffae46f31ed9b0babfc5b83515cff6165207e6b",
-  "goalcontent_topic_known": "271fa88fd1e566596b589c60626869d5d26a92298db52f608d794431d888d8d2",
+  "goalcontent_topic_known": "b7f203ddbc039bb0daeb717b4b7fee5162351d45cc5d03d272c34e563b1dfe3f",
   "goalcontent_topic_known_practice": "73a85d7ba9edf467af856bc461cf16480c5de47e2d13c82e2f61133f64a40286",
   "goalcontent_topic_known_reviews": "bca5d94760bee6379e9e77468046b306099c14a1b8c13bc590319e035863addc",
   "goalcontent_topic_missing": "93a8592373455717839919df4922f5ce88b63c18f1a4031faa579ec6eab9b9d4",
@@ -295,7 +295,7 @@
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · ukończono %2$s</string>
     <!-- A topic's state for screen readers. -->
-    <string name="goalcontent_topic_known">Znasz to</string>
+    <string name="goalcontent_topic_known">Już to znasz</string>
     <string name="goalcontent_topic_in_progress">W trakcie nauki</string>
     <string name="goalcontent_topic_to_study">Do nauki</string>
     <string name="goalcontent_topic_known_reviews">Znasz to · wróci w powtórkach</string>
