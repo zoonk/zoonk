@@ -86,7 +86,7 @@ async function requestFor({
   };
 }
 
-/** Claims the later lesson start before AI work; starting after generation must not consume allowance again. */
+/** A learner-requested lesson is counted before its work; replaying its admitted target is free. */
 export async function requestLessonGeneration({
   lessonId,
 }: {
@@ -106,7 +106,7 @@ export async function requestLessonGeneration({
   });
 }
 
-/** Internal, for the lesson a learner's write owes: `userId` must come from that write. */
+/** Internal preparation reserves work, not a learner start; `userId` comes from the write that owes it. */
 export async function requestLessonGenerationFor({
   lessonId,
   userId,

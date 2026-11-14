@@ -3,8 +3,8 @@ import { getUser } from "@/data/users/get-user";
 import { getUserLearningTotals } from "@/data/users/get-user-learning-stats";
 import { capitalize, formatCount } from "@/lib/format";
 import { formatDuration } from "@/lib/format-duration";
-import { Meter, MeterFill } from "@zoonk/learn/meter";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { BookOpenIcon, BrainIcon, ClockIcon, ZapIcon } from "lucide-react";
 

@@ -11,7 +11,7 @@ export const MIND_MAP_STALE_AFTER_MS = 10 * 60 * 1000;
 export type MindMapRow = Pick<
   ChapterMindMap,
   "imageHeight" | "imageUrl" | "imageWidth" | "status" | "structure" | "thumbnailUrl" | "updatedAt"
->;
+> & { redrawOwedAt?: Date | null };
 
 /** Excludes picture-only sketches; returns null for invalid stored structures. */
 function toMindMapOutline(structure: unknown): MindMapOutline | null {
@@ -59,25 +59,23 @@ export function getMindMapStatus({
   lessonsToWrite,
   now,
   owed,
-  plusRequired,
   row,
 }: {
   canHaveMap: boolean;
   lessonsToWrite: number;
   now: Date;
   owed: boolean;
-  plusRequired: boolean;
   row: MindMapRow | null;
 }): MindMapStatus {
   if (!canHaveMap) {
     return "unavailable";
   }
 
-  if (plusRequired) {
-    return "plusRequired";
-  }
-
-  if (row?.status === "completed" && toMindMapOutline(row.structure)) {
+  if (
+    (row?.status === "completed" || row?.redrawOwedAt) &&
+    row &&
+    toMindMapOutline(row.structure)
+  ) {
     return "ready";
   }
 

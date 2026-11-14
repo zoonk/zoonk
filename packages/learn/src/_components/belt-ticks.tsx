@@ -1,7 +1,7 @@
 import { beltColorClasses } from "@zoonk/ui/components/belt-indicator";
+import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BeltColor } from "@zoonk/utils/belt-level";
-import { MeterPart, MeterParts } from "./meter";
 
 const LEVELS_PER_BELT = 10;
 

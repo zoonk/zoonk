@@ -26,11 +26,8 @@
   "profile_questions_memory_off": "bd981a9a37661546d20a778f44e6ab0b0e82aec0e271be2b404c6d1d2876c250",
   "profile_questions_never_ask": "772c6cb4f3ffac6f98b3928fcce0977bb32d1c4fc1770ec7c27a83f8ddb9b5d6",
   "profile_questions_never_ask_help": "fcd07fd9161e9b2f4a661b415a368e9ef3a86e79a3537346cfabcb40fdb79640",
-  "profile_questions_none": "9da880e87d79bae408589b293db4864525965b22c205e3482f6a3cd72c0a0fda",
   "profile_questions_not_answered": "5c9619f445c50e83e728023f19cfa1e789b50e64c85aab103eff20a1263f7f59",
   "profile_questions_not_shared": "fda9bd43562987ea3eb89dba2b67169c9407683ada2cb8c3eaf7ce8579cb25f7",
-  "profile_questions_nothing_particular": "02df92c3e8cb98d000dbdaa5628fa5d2290df1a7e18a102cb1d88ebba716b424",
-  "profile_questions_nothing_to_add": "b48156f3b04aa7d5d0af896d205dc22498015b7a761d08b22ff6255ab5a9bcbc",
   "profile_questions_play_favorites": "d307163d393877d943e130df469c530bb528bad78ec648e185901c1fd8b3f8c4",
   "profile_questions_play_placeholder": "35697f9704b77c090fda724c73993b5aace1040a243c4f75d5679c8ccfcc333f",
   "profile_questions_play_title": "e18febc0c5cffbc9b02fb435c5e52c088ffb91e358a9db5fb2c15b0f797f14c5",
@@ -100,10 +97,8 @@
     <string name="profile_questions_tools_description">Wähl bis zu 3 aus. Wir nutzen sie in deinen Beispielen.</string>
     <string name="profile_questions_tools_other">Weitere (optional)</string>
     <string name="profile_questions_tools_placeholder">Z. B. Photoshop, Python, SAP</string>
-    <string name="profile_questions_none">Nichts davon</string>
     <string name="profile_questions_studies_title">Was hast du gelernt oder studiert?</string>
     <string name="profile_questions_studies_description">Früher oder heute, mit oder ohne Abschluss. Es muss nichts mit deinem Beruf zu tun haben.</string>
-    <string name="profile_questions_nothing_to_add">Nichts hinzuzufügen</string>
     <string name="profile_questions_subject">%1$s: Kurs oder Fach (optional)</string>
     <string name="profile_questions_which_field">Welcher Fachbereich?</string>
     <string name="profile_questions_subject_placeholder">Z. B. Journalismus</string>
@@ -132,7 +127,6 @@
     <string name="profile_questions_address_title">Wie sollen wir dich ansprechen?</string>
     <string name="profile_questions_address_description">So sprechen wir dich an.</string>
     <string name="profile_questions_suggested">Wir haben geprüft, was bei deiner Auswahl oft hilft. Pass alles so an, wie du möchtest.</string>
-    <string name="profile_questions_nothing_particular">Nichts Bestimmtes</string>
     <string name="profile_questions_something_else">+ Etwas anderes, das dir hilft</string>
     <string name="profile_questions_support_note">Was dir hilft, in deinen eigenen Worten (optional)</string>
     <string name="profile_questions_support_placeholder">Z. B.: Ich verstehe Diagramme besser als Texte</string>

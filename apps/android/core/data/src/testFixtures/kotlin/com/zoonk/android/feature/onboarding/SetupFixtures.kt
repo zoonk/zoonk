@@ -176,7 +176,7 @@ fun planOf(
     val weekStart = LocalDate.now()
     return ApiJson.decodeFromString(
         """
-        {"access":{"freeUntil":null,"freeWeekOver":false,"mocksRequirePlus":false},"areas":[],"changes":[],
+        {"access":{"mocksRequirePlus":false},"areas":[],"changes":[],
          "estimate":{"remainingHours":40,"totalHours":40${endDate?.let { ""","endDate":"$it"""" } ?: ""}},
          "examChoices":$examChoices,"examDocument":"notice","fundedMocks":[],"goalId":"$GOAL_ID","phases":[${phases.joinToString(",")}],
          "planId":"$PLAN_ID","ready":$ready${notice?.let {

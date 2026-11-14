@@ -4,7 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { type DayStep } from "../session/session-types";
-import { BlockRow, PlusLessonRow } from "./today-block-row";
+import { BlockRow } from "./today-block-row";
 import { ComingLessonsRow } from "./today-coming-lessons";
 import { useTodayScreen } from "./today-context";
 import { DayProgress } from "./today-day-progress";
@@ -62,7 +62,7 @@ function useDoneFoldLabel(done: readonly DayStep[]): string {
 function SessionQueue({ next }: { next: DayStep | null }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
-  const { blocks, lessonsComing, lessonsToPrepare, plusLessons } = today.session;
+  const { blocks, lessonsComing, lessonsToPrepare } = today.session;
   const [doneOpen, setDoneOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const listRef = useRef<HTMLOListElement>(null);
@@ -92,18 +92,14 @@ function SessionQueue({ next }: { next: DayStep | null }) {
 
   const lessonsAhead = opens && (lessonsComing || lessonsToPrepare);
   const coming = Number(lessonsAhead);
-  const more = after.length + coming + plusLessons.length - UPCOMING_ROWS;
-
-  const plusRows = moreOpen
-    ? plusLessons.length
-    : Math.max(0, UPCOMING_ROWS - after.length - coming);
+  const more = after.length + coming - UPCOMING_ROWS;
 
   const toggleMore = () => {
     revealFrom.current = moreOpen ? null : (listRef.current?.children.length ?? null);
     setMoreOpen(!moreOpen);
   };
 
-  if (blocks.length === 0 && plusLessons.length === 0) {
+  if (blocks.length === 0) {
     return null;
   }
 
@@ -133,11 +129,6 @@ function SessionQueue({ next }: { next: DayStep | null }) {
         ))}
 
         {lessonsAhead && (moreOpen || after.length < UPCOMING_ROWS) && <ComingLessonsRow />}
-
-        {plusLessons.slice(0, plusRows).map((lesson, index) => (
-          // oxlint-disable-next-line react/no-array-index-key -- two plan items can share a title, and a read replaces the list whole.
-          <PlusLessonRow key={index} title={lesson.title} />
-        ))}
       </ol>
 
       {more > 0 && (

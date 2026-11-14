@@ -52,9 +52,7 @@ import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
-import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitSubject
-import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.freeLessonReady
 import com.zoonk.api.models.ReadyAlternative
@@ -294,11 +292,7 @@ fun LessonNotWrittenNotice(
     onOpen: (AppRoute) -> Unit,
 ) {
     val limit =
-        when (val refusal = (writing as? LessonWriting.Refused)?.refusal) {
-            is LessonRefusal.Limited -> refusal.limit
-            LessonRefusal.PlusRequired -> Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days)
-            else -> null
-        }
+        ((writing as? LessonWriting.Refused)?.refusal as? LessonRefusal.Limited)?.limit
     when {
         limit != null -> {
             LimitNotice(

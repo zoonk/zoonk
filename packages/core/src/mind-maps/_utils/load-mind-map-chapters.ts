@@ -1,6 +1,5 @@
 import "server-only";
 import { type GenerationStatus, type Goal, prisma, sql } from "@zoonk/db";
-import { type EntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { chapterLessonStats } from "./chapter-lesson-stats";
 import { type MindMapRow } from "./mind-map-view";
 import { mindMapScopeChapters } from "./scope-chapters";
@@ -14,6 +13,7 @@ type MindMapChapterRow = {
   mapImageUrl: string | null;
   mapImageWidth: number | null;
   mapOwed: boolean;
+  mapRedrawOwedAt: Date | null;
   mapStatus: GenerationStatus | null;
   mapStructure: unknown;
   mapThumbnailUrl: string | null;
@@ -31,8 +31,6 @@ export type MindMapChapterFacts = {
   lessonsToWrite: number;
   /** The learner's finish owes this map and no run has taken it yet. */
   owed: boolean;
-  plusLessonIds: string[];
-  plusRequired: boolean;
   /** Internal scope order; display numbering must use loadChapterNumbering. */
   position: number;
   row: MindMapRow | null;
@@ -50,6 +48,7 @@ function toMindMapRow(chapter: MindMapChapterRow): MindMapRow | null {
     imageHeight: chapter.mapImageHeight,
     imageUrl: chapter.mapImageUrl,
     imageWidth: chapter.mapImageWidth,
+    redrawOwedAt: chapter.mapRedrawOwedAt,
     status: chapter.mapStatus,
     structure: chapter.mapStructure ?? null,
     thumbnailUrl: chapter.mapThumbnailUrl,
@@ -83,6 +82,7 @@ function readChapterRows({
             AND f.input->>'chapterId' = pc.chapter_id::text
         ) AS "mapOwed",
         mm.status::text AS "mapStatus",
+        mm.redraw_owed_at AS "mapRedrawOwedAt",
         mm.structure AS "mapStructure",
         mm.image_url AS "mapImageUrl",
         mm.image_width AS "mapImageWidth",
@@ -100,35 +100,23 @@ function readChapterRows({
     ORDER BY m.position`;
 }
 
-/**
- * Returns only visible chapters of the goal's mind map scope, in its order. `readViewer` decides
- * the Plus lock: a page's display read, a fresh session check for a learner's tap, or the learner
- * a workflow acts for.
- */
 export async function loadMindMapChapters({
   chapterIds,
   goal,
 }: {
   chapterIds?: readonly string[];
   goal: MindMapGoal;
-  readViewer?: () => Promise<EntitlementViewer | null>;
 }): Promise<MindMapChapterFacts[]> {
   const chapters = await readChapterRows({ chapterIds, goalId: goal.id });
 
-  return chapters.map((chapter) => {
-    const plusLessonIds: string[] = [];
-
-    return {
-      canHaveMap: chapter.canHaveMap,
-      chapterId: chapter.chapterId,
-      lessonIds: chapter.lessonIds,
-      lessonsToWrite: chapter.lessonsToWrite,
-      owed: chapter.mapOwed,
-      plusLessonIds,
-      plusRequired: false,
-      position: chapter.position,
-      row: toMindMapRow(chapter),
-      title: chapter.title,
-    };
-  });
+  return chapters.map((chapter) => ({
+    canHaveMap: chapter.canHaveMap,
+    chapterId: chapter.chapterId,
+    lessonIds: chapter.lessonIds,
+    lessonsToWrite: chapter.lessonsToWrite,
+    owed: chapter.mapOwed,
+    position: chapter.position,
+    row: toMindMapRow(chapter),
+    title: chapter.title,
+  }));
 }

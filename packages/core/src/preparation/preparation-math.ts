@@ -48,7 +48,7 @@ export type PreparationComponents = {
     supported: number | null;
     value: number | null;
   };
-  mocks: { kind: PreparationTestKind; plusRequired: boolean; taken: number; value: number | null };
+  mocks: { kind: PreparationTestKind; taken: number; value: number | null };
   retention: { studiedSkills: number; value: number | null };
 };
 
@@ -185,12 +185,10 @@ function getMocks({
   asOf,
   kind,
   mocks,
-  plusRequired,
 }: {
   asOf: Date;
   kind: PreparationTestKind;
   mocks: readonly MockResult[];
-  plusRequired: boolean;
 }) {
   const taken = mocks
     .filter((mock) => mock.total > 0 && mock.endedAt.getTime() <= asOf.getTime())
@@ -200,7 +198,6 @@ function getMocks({
 
   return {
     kind,
-    plusRequired,
     taken: taken.length,
     value: scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : null,
   };
@@ -215,21 +212,19 @@ export function getPreparationComponents({
   mocks,
   skills,
   testKind = "mockExams",
-  testPlusRequired = false,
 }: {
   answers: readonly UnseenAnswer[];
   asOf: Date;
   mocks: readonly MockResult[];
   skills: readonly PreparationSkill[];
   testKind?: PreparationTestKind;
-  testPlusRequired?: boolean;
 }): PreparationComponents {
   const importance = new Map(skills.map((skill) => [skill.skillId, importanceOf(skill)]));
 
   return {
     coverage: getCoverage({ asOf, skills }),
     mastery: getMastery({ answers, asOf, importance }),
-    mocks: getMocks({ asOf, kind: testKind, mocks, plusRequired: testPlusRequired }),
+    mocks: getMocks({ asOf, kind: testKind, mocks }),
     retention: getRetention({ asOf, skills }),
   };
 }
@@ -250,12 +245,10 @@ function measureQuality({
   components: PreparationComponents;
   needsTest: boolean;
 }) {
-  const canTest = needsTest && !components.mocks.plusRequired;
-
   const parts = [
     { value: components.mastery.supported, weight: QUALITY_WEIGHTS.mastery },
     { value: components.retention.value, weight: QUALITY_WEIGHTS.retention },
-    ...(canTest ? [{ value: components.mocks.value, weight: QUALITY_WEIGHTS.mocks }] : []),
+    ...(needsTest ? [{ value: components.mocks.value, weight: QUALITY_WEIGHTS.mocks }] : []),
   ].filter((part) => needsTest || part.value !== null);
 
   const totalWeight = parts.reduce((sum, part) => sum + part.weight, 0);

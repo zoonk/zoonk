@@ -214,11 +214,10 @@
     <string name="onboarding_placement_description">A few quick questions, so your plan skips what you already know. There\'s no score, and “I don\'t know yet” is a fine answer.</string>
     <string name="onboarding_placement_start">Start</string>
     <string name="onboarding_placement_skip_basics">Skip and start from the basics</string>
-    <string name="onboarding_placement_waiting_title">Getting your questions ready</string>
-    <string name="onboarding_placement_waiting_material">They come from the material you added. Reading it takes a few minutes.</string>
-    <string name="onboarding_placement_waiting_time">This usually takes a minute or two.</string>
-    <string name="onboarding_placement_skip_for_now">Skip for now</string>
-    <string name="onboarding_placement_skip_note">Your first sessions will ask a few of these instead.</string>
+    <string name="onboarding_placement_waiting_material">Reading your material takes a few minutes.</string>
+    <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
+    <string name="onboarding_placement_waiting_time">This takes a minute or two.</string>
+    <string name="onboarding_placement_ready">Your test is ready</string>
     <!-- Beside the subject, above a placement question. %1$d is its number. -->
     <string name="onboarding_placement_question_number">Question %1$d</string>
     <string name="onboarding_placement_progress">Questions answered</string>

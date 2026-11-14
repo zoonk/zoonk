@@ -285,7 +285,7 @@ private fun chapterLessons(): List<ChapterLesson> =
     listOf(LESSON_ID to "done", DONE_LESSON_ID to "done", NEXT_LESSON_ID to "upcoming").map { (id, state) ->
         ApiJson.decodeFromString(
             ChapterLesson.serializer(),
-            """{"lessonId":"$id","minutes":5,"plusRequired":false,"skillIds":[],"state":"$state","title":"Lesson","written":true}""",
+            """{"lessonId":"$id","minutes":5,"skillIds":[],"state":"$state","title":"Lesson","written":true}""",
         )
     }
 

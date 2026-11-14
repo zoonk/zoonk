@@ -2,7 +2,6 @@ import { type TodayView } from "./get-today-view";
 
 export const TODAY_NOTICE_KINDS = [
   "exam",
-  "examAccess",
   "examChoice",
   "focusTest",
   "insight",
@@ -31,7 +30,6 @@ type NoticeTodayView = {
   planChange: Pick<NonNullable<TodayView["planChange"]>, "behind" | "id" | "status"> | null;
   session: {
     blocks: Pick<TodaySession["blocks"][number], "status">[];
-    examAccess: Pick<TodaySession["examAccess"], "trialEnded">;
     freshStart: TodaySession["freshStart"];
   };
   studiedToday: boolean;

@@ -32,7 +32,7 @@
   "generation_phase_completed": "e1b21dd92d3ff7be6a6146f5818826710df9d970b89344a9618f831c3836a151",
   "generation_phase_failed": "d963770ade901f5c2310deacc9b75aa5272c6ae4eaa68ea53cdd355dfc274892",
   "generation_phase_pending": "74a098817397c4c35fffcca54c58dea33a4ff457fa908db8d100c72a7502f031",
-  "generation_placement": "cb1a6f84cf9a4ebfbc887ff90a42a9483eec465779c9214eabbfd8ec472d2569",
+  "generation_placement": "263153cd928d20a2bf30f27bcf5e6985f5e4574f65fee59918df3ffab8e6fab2",
   "generation_placement_questions": "121633a4a6de41a06dc4cdf06eb34b51fddc546341501a5fd774cf2c8604c1c0",
   "generation_placement_questions_line": "1169beeb3d692872f4bf09e4771f0f055e2f998ce45009ca1f34a627e9720f2f",
   "generation_question_line": "34affb872da76742622d1ccd74cfe6b4bf8cbee384705e2be6553b6ae4c0ef5a",
@@ -103,7 +103,7 @@
     <string name="generation_curriculum_plan_line_2">Distribuyendo las habilidades por día…</string>
     <string name="generation_curriculum_plan_line_3">Guardando tu plan…</string>
     <!-- The wait while placement questions are written. -->
-    <string name="generation_placement">Preparando tus preguntas</string>
+    <string name="generation_placement">Preparando tu prueba</string>
     <string name="generation_placement_questions">Preparando tus preguntas</string>
     <string name="generation_placement_questions_line">Eligiendo qué habilidades evaluar…</string>
     <!-- The wait while the first day of a plan is prepared. -->

@@ -97,9 +97,7 @@ internal fun LazyListScope.chaptersTab(
 
     if (groups.isEmpty() && notMade.isEmpty()) {
         item(key = "chapters-empty", contentType = "empty") {
-            TabEmpty(R.drawable.ic_lan, R.string.mindmaps_empty_title, R.string.mindmaps_empty_description) {
-                KeepStudying(actions.page.keepStudying)
-            }
+            TabEmpty(R.string.mindmaps_empty)
         }
         return
     }
@@ -285,7 +283,6 @@ internal fun MindMapAllowanceStop.limit(tier: LimitTier): Limit =
                 tier,
                 when (period) {
                     MindMapAllowanceStop.Period.MONTH -> LimitPeriod.Month
-                    MindMapAllowanceStop.Period.ROLLING30_DAYS -> LimitPeriod.Rolling30Days
                     MindMapAllowanceStop.Period.TOTAL -> LimitPeriod.Total
                     MindMapAllowanceStop.Period.DAY, null -> LimitPeriod.Day
                 },
@@ -298,7 +295,6 @@ private val MindMapAllowanceStop?.limitSubject: LimitSubject
     get() =
         when (this?.resource) {
             MindMapAllowanceStop.Resource.AI_SPEND -> LimitSubject.Help
-            MindMapAllowanceStop.Resource.LESSON_START -> LimitSubject.Lessons
             else -> LimitSubject.MindMaps
         }
 
@@ -313,7 +309,7 @@ internal fun LazyListScope.lessonsTab(
 ) {
     if (mindMaps.lessonGroups.isEmpty()) {
         item(key = "lessons-empty", contentType = "empty") {
-            TabEmpty(R.drawable.ic_lan, R.string.mindmaps_lessons_empty_title, R.string.mindmaps_lessons_empty_description)
+            TabEmpty(R.string.mindmaps_lessons_empty)
         }
         return
     }
@@ -358,7 +354,7 @@ internal fun LazyListScope.savedTab(
     val kept = mindMaps.saved.filter { actions.saved(it.target, true) }
     if (kept.isEmpty()) {
         item(key = "saved-empty", contentType = "empty") {
-            TabEmpty(R.drawable.ic_bookmark, R.string.mindmaps_saved_empty_title, R.string.mindmaps_saved_empty_description)
+            TabEmpty(R.string.mindmaps_saved_empty)
         }
         return
     }

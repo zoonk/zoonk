@@ -11,7 +11,7 @@ data class InlineMarkup(
     val text: String,
 )
 
-private data class Span(
+internal data class Span(
     val content: String,
     val start: Int,
     val end: Int,
@@ -30,7 +30,7 @@ private fun isWordAt(
     index: Int,
 ): Boolean = text.getOrNull(index)?.let { WORD_CHARACTER.matches(it.toString()) } ?: false
 
-private fun findCode(text: String): Span? {
+internal fun findCode(text: String): Span? {
     val start = text.indexOf('`')
     val end = if (start == -1) -1 else text.indexOf('`', start + 1)
     return if (end > start + 1) Span(text.substring(start + 1, end), start, end + 1) else null

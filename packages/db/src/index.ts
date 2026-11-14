@@ -145,6 +145,7 @@ export {
 } from "./generated/prisma/client";
 
 export type { AiCallCreateManyInput } from "./generated/prisma/models/AiCall";
+export type { ContentFixWhereInput } from "./generated/prisma/models/ContentFix";
 export type { CourseGetPayload } from "./generated/prisma/models/Course";
 export type { LessonUncheckedCreateInput } from "./generated/prisma/models/Lesson";
 export type {

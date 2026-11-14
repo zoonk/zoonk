@@ -85,7 +85,6 @@ function randomGoal(random: Random) {
     mocks: random() < 0.5 ? [] : [{ correct: count(random, 45), endedAt: BEFORE, total: 45 }],
     skills: goalSkills,
     testKind: pick(random, ["mockExams", "fullReviews"] as const),
-    testPlusRequired: random() < 0.2,
   };
 }
 

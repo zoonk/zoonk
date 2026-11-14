@@ -1,4 +1,5 @@
 import { followUpsWorkflow } from "@/workflows/follow-ups/follow-ups-workflow";
+import { chapterMindMapWorkflow } from "@/workflows/mind-maps/chapter-mind-map-workflow";
 import { FOLLOW_UP_SECRET_HEADER } from "@zoonk/core/follow-ups/contract";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
@@ -54,6 +55,17 @@ describe("POST /internal/follow-ups", () => {
     expect(start).toHaveBeenCalledExactlyOnceWith(followUpsWorkflow, [{ userId: USER_ID }], {
       experimental_hook: { token: `follow-ups:${USER_ID}` },
     });
+  });
+
+  it("starts an owed shared redraw with the same token as learner requests", async () => {
+    const response = await askToStart({ body: { chapterId: USER_ID }, secret: "expected" });
+    expect(response.status).toBe(202);
+
+    expect(start).toHaveBeenCalledExactlyOnceWith(
+      chapterMindMapWorkflow,
+      [{ chapterId: USER_ID, redraw: true }],
+      { experimental_hook: { token: `mind-map:${USER_ID}` } },
+    );
   });
 
   it("refuses a learner id that isn't one", async () => {

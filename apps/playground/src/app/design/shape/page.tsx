@@ -1,7 +1,7 @@
 import { CONTROL_RULES, EDGE_RULES, MEASURES, RADII, SHAPE_RULES } from "@/design-system/shape";
 import { kindFillClass } from "@zoonk/learn/kind-tile";
-import { MeterPart, MeterParts } from "@zoonk/learn/meter";
 import { Surface } from "@zoonk/learn/surface";
+import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import { DocHeader, DocRules, DocSection, Specimen, renderCode } from "../_components/doc";

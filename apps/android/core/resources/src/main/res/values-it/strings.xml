@@ -31,7 +31,7 @@
   "gate_build_plan": "cb9276710a92701698c494bce630f064637b54e95aa2c5ca499003a8786c1944",
   "gate_log_in": "98f660ca3b309bf732757e35901309eb90404492511da552f789554f7ff88e5e",
   "gate_session_ended_description": "9105e2e7e6ecc27355c4a941d61ce2ff31a885fcf146e2eead4e3fc7eef70976",
-  "gate_session_ended_title": "71703455c294c71ca0ee092673cf98841a806792d297b8cf3ed2cbdbc8c858d6",
+  "gate_session_ended_title": "9ff24c34a8548afec96de4a26277481e474a9fb1142062bcfc45c1b3beec0c54",
   "gate_sign_in_title": "4c6438517fb9358e3a00cadbd353d9aef55badbfd57979013768a85c7f0d99af",
   "gate_start_goal": "ee3460b8dfe630c4e392810a53c2a33cfd608e195b62a33f26f51a05c9b08595",
   "gate_start_goal_description": "7bdf46c16999970253a324a32d50b67472dd48dfc08d35443d96adcd7913961d",
@@ -91,7 +91,9 @@
     <string name="navigation_user_menu">Menu utente</string>
     <string name="task_leave">Esci</string>
     <string name="gate_sign_in_title">Accedi per continuare</string>
-    <string name="gate_session_ended_title">La sessione è terminata</string>
+    <!-- Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session. -->
+    <string name="gate_session_ended_title">Disconnessione effettuata</string>
+    <!-- Under "You've been logged out". Their plan is still saved; logging in shows it again. -->
     <string name="gate_session_ended_description">Accedi per tornare al tuo piano.</string>
     <string name="gate_log_in">Accedi</string>
     <!-- Starts a new goal: the visitor tells us what to learn and gets a plan. -->

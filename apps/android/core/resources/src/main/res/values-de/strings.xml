@@ -32,7 +32,7 @@
   "gate_log_in": "a83605d8917f901db673fe7067bb6ccf8da935238194afa9219561a8ecfebbd3",
   "gate_session_ended_description": "c7671c27ba00821fe437c3b5bdef3421396d064b4d817693a4bae4229d3c90ce",
   "gate_session_ended_title": "15a0461e060ae2c6e70ba494ac314318db093883755c4bd7ef444aafdadc4a9c",
-  "gate_sign_in_title": "6ce52ad0a76cb821085bf93ec80e0683112c152337a0e3ea97a008a273138f0b",
+  "gate_sign_in_title": "166c6ab99b5990ce770c48ba480c7614550d36b545b8d361e4239a507dbc25b2",
   "gate_start_goal": "6d956a1f028a1cb2764fa601fadfd6b526f7bb845b7087f1a819c6166da8a7a4",
   "gate_start_goal_description": "a9c8505e4b826c180fcee17fc544dd4fc5912d3d8c7a0f8f5ad2a32628d4efb3",
   "gate_start_goal_title": "ce62479880f78cd9115b282879c068c11fb96217efb0b5e1ef74abdd08f4302e",
@@ -90,8 +90,10 @@
     <string name="navigation_back">Zurück</string>
     <string name="navigation_user_menu">Benutzermenü</string>
     <string name="task_leave">Verlassen</string>
-    <string name="gate_sign_in_title">Melde dich an, um weiterzumachen</string>
+    <string name="gate_sign_in_title">Melde dich an, um fortzufahren</string>
+    <!-- Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session. -->
     <string name="gate_session_ended_title">Du wurdest abgemeldet</string>
+    <!-- Under "You've been logged out". Their plan is still saved; logging in shows it again. -->
     <string name="gate_session_ended_description">Meld dich an, um zu deinem Plan zurückzukehren.</string>
     <string name="gate_log_in">Anmelden</string>
     <!-- Starts a new goal: the visitor tells us what to learn and gets a plan. -->

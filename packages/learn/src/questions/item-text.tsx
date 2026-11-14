@@ -1,43 +1,19 @@
 import { type LessonVisual as LessonVisualData } from "@zoonk/core/library/steps/contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type InlineMarkup } from "@zoonk/utils/inline-markup";
 import { Fragment } from "react";
 import { RichTable } from "../_components/rich-table";
+import { type RichInlineSegment, RichInlineSegments } from "../rich-text/rich-inline-segments";
 import { RichTextBlocks } from "../rich-text/rich-text-blocks";
+import { speakSegments } from "../rich-text/rich-text-speech";
+import { SpokenMath } from "../rich-text/spoken-math";
+import { useMathWords } from "../rich-text/use-spoken-text";
 import { LessonVisual } from "../visuals/lesson-visual";
 import { type ItemTextBlock, parseItemLine, parseItemText } from "./_utils/item-text";
 import { ItemPicture, type ItemPictureData } from "./item-picture";
 
 type ItemTable = Extract<ItemTextBlock, { kind: "table" }>;
 
-function InlineMarkupView({ segments }: { segments: InlineMarkup[] }) {
-  return segments.map((segment, index) => {
-    const key = `${segment.kind}-${index}`;
-
-    if (segment.kind === "bold") {
-      return <strong key={key}>{segment.text}</strong>;
-    }
-
-    if (segment.kind === "italic") {
-      return <em key={key}>{segment.text}</em>;
-    }
-
-    if (segment.kind === "code") {
-      return (
-        <code
-          className="bg-muted text-foreground rounded-sm px-1 py-0.5 font-mono text-[0.85em]"
-          key={key}
-        >
-          {segment.text}
-        </code>
-      );
-    }
-
-    return <Fragment key={key}>{segment.text}</Fragment>;
-  });
-}
-
-function ItemParagraph({ lines }: { lines: InlineMarkup[][] }) {
+function ItemParagraph({ lines }: { lines: RichInlineSegment[][] }) {
   return (
     <p>
       {lines.map((line, index) => {
@@ -46,7 +22,7 @@ function ItemParagraph({ lines }: { lines: InlineMarkup[][] }) {
         return (
           <Fragment key={key}>
             {index > 0 && <br />}
-            <InlineMarkupView segments={line} />
+            <RichInlineSegments segments={line} />
           </Fragment>
         );
       })}
@@ -54,17 +30,15 @@ function ItemParagraph({ lines }: { lines: InlineMarkup[][] }) {
   );
 }
 
-function toPlainText(cell: InlineMarkup[]): string {
-  return cell.map((segment) => segment.text).join("");
-}
-
 function ItemTableView({ table }: { table: ItemTable }) {
+  const words = useMathWords();
+
   return (
     <RichTable
       align={table.align}
       header={table.header}
-      label={table.header.map((cell) => toPlainText(cell)).join(", ")}
-      renderCell={(cell) => <InlineMarkupView segments={cell} />}
+      label={table.header.map((cell) => speakSegments({ segments: cell, words })).join(", ")}
+      renderCell={(cell) => <RichInlineSegments segments={cell} />}
       rows={table.rows}
     />
   );
@@ -86,12 +60,16 @@ export function ItemText({ className, text }: { className?: string; text: string
   );
 }
 
-/** One element, so a flex parent such as an answer option wraps the line as text instead of stacking each styled word. */
+/**
+ * One element, so a flex parent such as an answer option wraps the line as text instead of stacking
+ * each styled word. A line usually names a control (an option, a pair, a step), so its formulas
+ * read in words.
+ */
 export function ItemLine({ text }: { text: string }) {
   return (
-    <span>
-      <InlineMarkupView segments={parseItemLine(text)} />
-    </span>
+    <SpokenMath>
+      <RichInlineSegments segments={parseItemLine(text)} />
+    </SpokenMath>
   );
 }
 

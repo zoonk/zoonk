@@ -14,6 +14,13 @@
   "limit_lessons_day": "546b71b169bef918a461e9e2eadcd2295c43e689d4d0692db00febf7ea3da51e",
   "limit_lessons_free": "317c72621ec17168c7387f956f39724199f2d905f6da0f1ad12afe0475d05988",
   "limit_lessons_guest": "9a35392a0483d4da9a6bc9abf7d78e6eb36b615ef432e40590f1af0d4e037f33",
+  "limit_map_enough_on": "17bf1e933f2a236344bcc02ac51ba8c14a0062e52afffa2b752e370a4ce63448",
+  "limit_map_enough_today": "06a0852e2222ca5059d9501bf2a5af867fd16679407e64ec6770745f3daf1cc9",
+  "limit_map_enough_tomorrow": "140f094604ebb0088d9571be49069df1df943dc7fd666fbf88dfed74653ff5b5",
+  "limit_map_needs_subscription": "9ca6190762d622a2af32cc962688b3932b457cab0e677c19278b481b37a10ca5",
+  "limit_map_needs_subscription_line": "581392ae8b262b2381d93913972fee84a8af8044d467c10462fdbda873de1390",
+  "limit_map_not_enough": "6b235604efc54c85bc3c380764eb9b94fbc9061153c0fd1d196a7ae49514d786",
+  "limit_map_ready": "d5e051c74d97be0a94917c27f16872a766b8e7c9cbe1412432335cdaef5136c7",
   "limit_messages_day": "0572dd58be69e1ea4e3c1c17c3e5da99738e91978be9e447847d369ee4aecb36",
   "limit_messages_month": "a7d17bfb0b51202379213ce71539f8ad118709a781244e5603a8a08450797454",
   "limit_mind_maps_day": "c8c671f2443618d0356eac79302dd7619bb7429593ed3e1012359558b9b974ba",
@@ -55,6 +62,17 @@
     <string name="limit_lessons_free">Você usou todas as suas aulas grátis</string>
     <string name="limit_lessons_day">Sem novas aulas por hoje</string>
     <string name="limit_lesson_ready">Sua próxima aula grátis está disponível</string>
+    <string name="limit_map_not_enough">Você ainda não tem aulas grátis suficientes para este mapa</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. -->
+    <string name="limit_map_enough_today">Você vai ter aulas suficientes ainda hoje. Ou assine para criar o mapa agora.</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. -->
+    <string name="limit_map_enough_tomorrow">Você vai ter aulas suficientes amanhã. Ou assine para criar o mapa agora.</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_map_enough_on">Você vai ter aulas suficientes em %1$s. Ou assine para criar o mapa agora.</string>
+    <string name="limit_map_ready">Você já pode criar este mapa</string>
+    <string name="limit_map_needs_subscription">Você precisa assinar para criar este mapa</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start. -->
+    <string name="limit_map_needs_subscription_line">Ele cria mais aulas do que você recebe de graça.</string>
     <string name="limit_mind_maps_guest">Mais mapas mentais só com uma conta</string>
     <string name="limit_mind_maps_day">Sem novos mapas mentais por hoje</string>
     <string name="limit_mind_maps_month">Sem novos mapas mentais este mês</string>

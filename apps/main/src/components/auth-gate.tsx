@@ -1,11 +1,12 @@
 import { AuthGateAction } from "@/components/auth-gate-action";
-import { ColumnScreen } from "@/components/public/column-screen";
+import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
 import { getSession } from "@zoonk/core/users/session";
 import { AccountAskMark } from "@zoonk/learn/account-ask";
 import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
+import { TaskFrame } from "@zoonk/learn/task-frame";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
@@ -56,16 +57,28 @@ async function GateMessage({
 }) {
   const t = await getExtracted();
 
-  const words = {
+  const words: { description?: string; title: string } = {
     account: {
-      description: t("Your plan and progress move to your account, safe on any device."),
+      description: t({
+        description:
+          "Under the title, for a guest: what they had before keeps going once they create an account.",
+        message: "Your plan and progress come with you.",
+      }),
       title: t("Create an account to use this page"),
     },
-    ended: { description: t("Log in to pick up your plan."), title: t("Your session ended") },
-    login: {
-      description: t("Log in to pick up where you left off, or start free."),
-      title: t("Log in to continue"),
+    ended: {
+      description: t({
+        description:
+          'Under "You\'ve been logged out". Their plan is still saved; logging in shows it again.',
+        message: "Log in to get back to your plan.",
+      }),
+      title: t({
+        description:
+          "Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session.",
+        message: "You've been logged out",
+      }),
     },
+    login: { title: t("Log in to continue") },
   }[gate.kind];
 
   return (
@@ -78,7 +91,7 @@ async function GateMessage({
         <EmptyTitle>
           <Heading>{words.title}</Heading>
         </EmptyTitle>
-        <EmptyDescription>{words.description}</EmptyDescription>
+        {words.description && <EmptyDescription>{words.description}</EmptyDescription>}
       </EmptyHeader>
       {children && <EmptyContent>{children}</EmptyContent>}
     </Empty>
@@ -133,20 +146,27 @@ export async function AuthGate({
           >
             {t("Log in")}
           </PendingLink>
-          <Link className={buttonVariants({ variant: "outline" })} href="/start">
-            {gate.kind === "ended" ? t("Start something new") : t("Start free")}
-          </Link>
+          {gate.kind === "login" && (
+            <Link className={buttonVariants({ variant: "outline" })} href="/start">
+              {t("Build my plan")}
+            </Link>
+          )}
         </div>
       )}
     </GateMessage>
   );
 }
 
-export function AuthGateScreen({ next }: { next: string }) {
+/** A task's gate, in the task's own frame: its ✕ leaves for the home page, as its not-found does. */
+export async function AuthGateScreen({ next }: { next: string }) {
+  const gate = await readGate({ next });
+
   return (
-    <ColumnScreen width="message">
-      <AuthGate bar heading="h1" next={next} />
-    </ColumnScreen>
+    <MainLearnProvider>
+      <TaskFrame exitHref="/" exitToApp footer={<GateActions gate={gate} />}>
+        <GateMessage className="flex-1" gate={gate} heading="h1" />
+      </TaskFrame>
+    </MainLearnProvider>
   );
 }
 
@@ -174,23 +194,30 @@ export function GatedPage({
 }
 
 /** A whole page's gate: its ways in are the bottom bar's. */
-async function GateBar({ gate }: { gate: Gate }) {
+function GateBar({ gate }: { gate: Gate }) {
+  return (
+    <BottomBar>
+      <GateActions gate={gate} />
+    </BottomBar>
+  );
+}
+
+/** The gate's ways in, as a bar's row: a page's bottom bar or a task's. */
+async function GateActions({ gate }: { gate: Gate }) {
   const t = await getExtracted();
 
   return (
-    <BottomBar>
-      <BottomBarActions>
-        {gate.kind !== "account" && (
-          <Link className={buttonVariants({ size: "xl", variant: "outline" })} href="/start">
-            {gate.kind === "ended" ? t("Start something new") : t("Start free")}
-          </Link>
-        )}
+    <BottomBarActions>
+      {gate.kind === "login" && (
+        <Link className={buttonVariants({ size: "xl", variant: "outline" })} href="/start">
+          {t("Build my plan")}
+        </Link>
+      )}
 
-        <AuthGateAction href={gate.login}>
-          {gate.kind === "account" ? t("Create an account") : t("Log in")}
-        </AuthGateAction>
-      </BottomBarActions>
-    </BottomBar>
+      <AuthGateAction href={gate.login}>
+        {gate.kind === "account" ? t("Create an account") : t("Log in")}
+      </AuthGateAction>
+    </BottomBarActions>
   );
 }
 

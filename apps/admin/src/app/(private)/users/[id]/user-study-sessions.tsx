@@ -8,7 +8,7 @@ import {
 } from "@/data/users/list-user-study-sessions";
 import { formatDate, toWords } from "@/lib/format";
 import { type DayMeterPart, DaySegment } from "@zoonk/learn/day-segments";
-import { MeterParts } from "@zoonk/learn/meter";
+import { MeterParts } from "@zoonk/ui/components/meter";
 import { TableCell } from "@zoonk/ui/components/table";
 
 type Block = UserStudySession["blocks"][number];

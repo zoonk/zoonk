@@ -2,13 +2,7 @@
 
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
-import {
-  DetailActions,
-  DetailFacts,
-  DetailHero,
-  DetailHeroText,
-  DetailTitle,
-} from "@zoonk/ui/components/detail";
+import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted, useFormatter } from "next-intl";
 import {
   DetailAside,
@@ -160,8 +154,6 @@ function SubjectHeader({
   sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSubject;
 }) {
-  const t = useExtracted();
-
   return (
     <DetailHero>
       <DetailHeroText>
@@ -173,10 +165,6 @@ function SubjectHeader({
           subject={subject}
         />
       </DetailHeroText>
-
-      <DetailActions>
-        <ReportProblemMenu label={t("Subject options")} screen="subject" />
-      </DetailActions>
     </DetailHero>
   );
 }
@@ -246,6 +234,7 @@ export function SubjectScreen({
       bar={
         <LearnPageBar back={{ href: hrefs.back, label: t("Plan") }} title={subject.name}>
           {ask && <div className="contents min-[72rem]:hidden">{ask.bar}</div>}
+          <ReportProblemMenu label={t("Subject options")} screen="subject" />
         </LearnPageBar>
       }
       bottomBar={<SubjectBottomBar chapterHref={hrefs.chapter} subject={subject} />}

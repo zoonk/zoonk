@@ -11,7 +11,7 @@ import { type StudySessionTimeZoneInput } from "./contract";
 
 export type CatchUpTodayResult =
   | { session: StudySessionView; status: "ready" }
-  | { status: "nothingToCatchUp" | "notFound" | "plusRequired" | "unauthorized" };
+  | { status: "nothingToCatchUp" | "notFound" | "unauthorized" };
 
 export async function catchUpToday({
   input,

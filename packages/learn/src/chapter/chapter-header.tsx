@@ -1,13 +1,7 @@
 "use client";
 
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
-import {
-  DetailActions,
-  DetailFacts,
-  DetailHero,
-  DetailHeroText,
-  DetailTitle,
-} from "@zoonk/ui/components/detail";
+import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted } from "next-intl";
 import { DetailContinueLink, useDoneShare } from "../_components/detail-page";
 import { useFormatDuration } from "../_utils/time-format";
@@ -36,7 +30,6 @@ function ChapterFacts() {
 }
 
 export function ChapterHeader() {
-  const t = useExtracted();
   const { chapter } = useChapterScreen();
 
   return (
@@ -45,15 +38,6 @@ export function ChapterHeader() {
         <DetailTitle>{chapter.chapter.title}</DetailTitle>
         <ChapterFacts />
       </DetailHeroText>
-
-      <DetailActions>
-        <ContentFeedbackMenu
-          label={t("Chapter options")}
-          screen="chapter"
-          size="detail"
-          target={{ contentId: chapter.chapter.chapterId, contentKind: "chapter" }}
-        />
-      </DetailActions>
     </DetailHero>
   );
 }
@@ -90,6 +74,11 @@ export function ChapterBar() {
       title={chapter.chapter.title}
     >
       {ask}
+      <ContentFeedbackMenu
+        label={t("Chapter options")}
+        screen="chapter"
+        target={{ contentId: chapter.chapter.chapterId, contentKind: "chapter" }}
+      />
     </LearnPageBar>
   );
 }

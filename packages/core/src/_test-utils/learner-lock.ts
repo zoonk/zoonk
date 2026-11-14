@@ -106,3 +106,17 @@ export function holdLessonLock(lessonId: string) {
       tx.$queryRaw`SELECT id FROM library_lessons WHERE id = ${lessonId}::uuid FOR UPDATE`,
   });
 }
+
+export function holdProductLock({
+  beforeCommit,
+  productId,
+}: {
+  beforeCommit?: (tx: TransactionClient) => Promise<unknown>;
+  productId: string;
+}) {
+  return holdLock({
+    beforeCommit,
+    lock: (tx) =>
+      tx.$queryRaw`SELECT id FROM products WHERE id = ${productId}::uuid FOR NO KEY UPDATE`,
+  });
+}

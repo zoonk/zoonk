@@ -162,7 +162,7 @@ export async function getStudySessionSummary({
     answers,
     current: isCurrentSession({ now: new Date(), session, timeZone }),
     dayMinutes: session.plannedMinutes,
-    examAccess: { includesMockExams: true, trialEnded: false },
+    examAccess: { includesMockExams: true },
     missions,
     session,
     week: EMPTY_WEEK,

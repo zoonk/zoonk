@@ -144,12 +144,6 @@ const componentsSchema = z
             description:
               "fullReviews: an exam goal whose plan has no mock exams (free) counts its full reviews in the exam's format (study blocks with `fullReview`), which its plan gives it on the mock's day",
           }),
-        plusRequired: z
-          .boolean()
-          .meta({
-            description:
-              "Always false. Free exam goals measure full reviews instead of subscription-only mocks",
-          }),
         taken: z.number().int().min(0),
         value: shareSchema.nullable().meta({ description: "Recent results" }),
       })

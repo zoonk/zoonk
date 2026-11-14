@@ -44,11 +44,6 @@ const learnerErrors = {
   "404": notFoundResponse,
 } as const;
 
-const testOutPlusRequired = {
-  ...paymentRequiredResponse,
-  description: "Reserved for subscription-only activities",
-} as const;
-
 export const placementPaths = {
   "/goals/{goalId}/chapters/{chapterId}/test-out": {
     get: {
@@ -67,7 +62,6 @@ export const placementPaths = {
           description:
             "The chapter's test-out questions, or nothingToSkip when no lessons remain to skip",
         },
-        "402": testOutPlusRequired,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Get a chapter test-out",
@@ -93,7 +87,6 @@ export const placementPaths = {
           description:
             "The test-out result, or nothingToSkip for a new submission with no lessons left to skip",
         },
-        "402": testOutPlusRequired,
         "422": unprocessableEntityResponse,
       },
       security: AUTHENTICATED_SECURITY,

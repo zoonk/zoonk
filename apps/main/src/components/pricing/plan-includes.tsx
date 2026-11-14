@@ -1,5 +1,5 @@
 import { CheckItem } from "@/components/public/check-mark";
-import { BigQuantity } from "@zoonk/learn/big-quantity";
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 
 export function PlanIncludes({
   items,

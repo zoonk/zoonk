@@ -7,7 +7,7 @@ import {
   readItemAnswerStats,
 } from "@/data/items/get-item-answer-stats";
 import { formatCount, formatPercent } from "@/lib/format";
-import { Meter, MeterFill } from "@zoonk/learn/meter";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { CircleCheckIcon, MessageSquareIcon } from "lucide-react";
 
 const PERCENT = 100;

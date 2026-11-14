@@ -4,6 +4,7 @@ import { prisma } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
 import { generateLanguageAudio } from "../../../audio/generate-language-audio";
+import { toAudioData } from "./audio-data";
 
 type AudioTarget = { id: string; text: string };
 
@@ -28,16 +29,6 @@ async function generateAudio({
   return data;
 }
 
-export function toAudioData({ provenance, url }: VoicedClip) {
-  return {
-    audioGeneratedAt: new Date(provenance.generatedAt),
-    audioModel: provenance.model,
-    audioPromptVersion: provenance.promptVersion,
-    audioRunId: provenance.runId,
-    audioUrl: url,
-  };
-}
-
 async function fillWordAudio({
   orgSlug,
   targetLanguage,
@@ -52,7 +43,7 @@ async function fillWordAudio({
   if (clip) {
     await prisma.word.updateMany({
       data: toAudioData(clip),
-      where: { audioUrl: null, id: word.id },
+      where: { audioUrl: null, id: word.id, word: word.text },
     });
   }
 }
@@ -71,7 +62,7 @@ async function fillSentenceAudio({
   if (clip) {
     await prisma.sentence.updateMany({
       data: toAudioData(clip),
-      where: { audioUrl: null, id: sentence.id },
+      where: { audioUrl: null, id: sentence.id, sentence: sentence.text },
     });
   }
 }

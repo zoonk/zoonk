@@ -45,6 +45,7 @@ export async function lockMindMapRows(
       imageHeight: true,
       imageUrl: true,
       imageWidth: true,
+      redrawOwedAt: true,
       status: true,
       structure: true,
       thumbnailUrl: true,
@@ -75,7 +76,6 @@ export async function admitChapterMap(
     lessonsToWrite: lessonIds.length,
     now: ledger.now,
     owed: false,
-    plusRequired: false,
     row,
   });
 

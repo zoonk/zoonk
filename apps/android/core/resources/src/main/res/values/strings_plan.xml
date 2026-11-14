@@ -39,6 +39,9 @@
     <string name="plan_pause_goal">Pause this goal</string>
     <string name="plan_resume_goal">Resume this goal</string>
     <string name="plan_archive_goal">Archive this goal</string>
+    <!-- The button that archives a goal whose exam date has passed; it asks first. -->
+    <string name="plan_archive_goal_short">Archive goal</string>
+    <string name="plan_keep_studying">Keep studying</string>
     <string name="plan_archive_title">Archive your %1$s goal?</string>
     <string name="plan_archive_description">It leaves your goals and its plan stops. What you learned stays in your progress.</string>
     <string name="plan_archive">Archive</string>
@@ -299,7 +302,7 @@
         <item quantity="one">%d this week</item>
         <item quantity="other">%d this week</item>
     </plurals>
-    <string name="plan_estimate_waits">Take more mock exams of the whole exam or half of it to see your estimated score.</string>
+    <string name="plan_estimate_waits">Take a full or half mock exam to see your estimated score.</string>
     <string name="plan_estimated_score">Estimated score</string>
     <string name="plan_estimate_based_on_last">Based on your last mock exam</string>
     <plurals name="plan_estimate_based_on">
@@ -312,48 +315,41 @@
     <string name="plan_score_band_range">Band %1$s to %2$s</string>
     <string name="plan_score_range">%1$s to %2$s</string>
     <string name="plan_lessons">Lessons</string>
-    <string name="plan_coverage">Coverage</string>
-    <plurals name="plan_coverage_caption">
-        <item quantity="one">%1$d of %2$d skill, weighted by importance</item>
-        <item quantity="other">%1$d of %2$d skills, weighted by importance</item>
-    </plurals>
-    <string name="plan_mastery">Mastery</string>
-    <string name="plan_mastery_waits">Shows after a few practice questions</string>
-    <plurals name="plan_mastery_caption">
-        <item quantity="one">%1$d of %2$d right</item>
-        <item quantity="other">%1$d of %2$d right</item>
-    </plurals>
-    <string name="plan_long_term_memory">Long-term memory</string>
-    <string name="plan_retention_caption">Of what you studied</string>
+    <string name="plan_topics_studied">Topics studied</string>
     <string name="plan_not_yet">Not yet</string>
-    <string name="plan_full_reviews">Full reviews</string>
+    <!-- A count against a total in the preparation sheet's rows, such as "24 of 142". -->
+    <string name="plan_done_of_total">%1$s of %2$s</string>
+    <string name="plan_right_answers">Right answers</string>
+    <string name="plan_remembered">Remembered</string>
     <string name="plan_weekly_challenges">Weekly challenges</string>
-    <plurals name="plan_full_reviews_done">
-        <item quantity="one">%d full review done</item>
-        <item quantity="other">%d full reviews done</item>
+    <string name="plan_reviews_of_every_topic">Reviews of every topic</string>
+    <plurals name="plan_tests_taken">
+        <item quantity="one">%d taken</item>
+        <item quantity="other">%d taken</item>
     </plurals>
-    <plurals name="plan_weekly_challenges_count">
-        <item quantity="one">%d weekly challenge</item>
-        <item quantity="other">%d weekly challenges</item>
+    <!-- How many reviews of every topic the learner has done, beside the label "Reviews of every topic". The count is of reviews. -->
+    <plurals name="plan_reviews_done">
+        <item quantity="one">%d done</item>
+        <item quantity="other">%d done</item>
     </plurals>
-    <plurals name="plan_mock_exams_taken">
-        <item quantity="one">%d mock exam taken</item>
-        <item quantity="other">%d mock exams taken</item>
+    <string name="plan_how_calculated">How it\'s calculated</string>
+    <string name="plan_measure_progress">The share of your plan\'s lessons you\'ve studied or already knew. Right answers, what you remember and weekly challenges show how well you know them.</string>
+    <!-- %1$s is a share, such as "75%". -->
+    <string name="plan_measure_review_once">Each subject counts as much as it\'s worth on the exam. A subject\'s number is how much of it you\'ve studied times how well you answer, and it stays under %1$s until you review every topic once.</string>
+    <!-- %1$s is a share, such as "75%". -->
+    <string name="plan_measure_mock_exam">Each subject counts as much as it\'s worth on the exam. A subject\'s number is how much of it you\'ve studied times how well you answer, and it stays under %1$s until you take a mock exam.</string>
+    <!-- A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button. -->
+    <string name="plan_next">Next</string>
+    <string name="plan_next_topics_count_most">Study the topics that count most</string>
+    <string name="plan_next_keep_going">Keep going with your lessons</string>
+    <string name="plan_next_review_forgetting">Review what you\'re starting to forget</string>
+    <plurals name="plan_next_topics_in_reviews">
+        <item quantity="one">%d topic, in your next reviews</item>
+        <item quantity="other">%d topics, in your next reviews</item>
     </plurals>
-    <string name="plan_measure_progress">Your progress is the share of your plan\'s lessons you\'ve studied or already knew. Mastery, memory and weekly challenges show how well you know them.</string>
-    <string name="plan_measure_full_reviews">Your preparation adds up your subjects, each counting as much as it\'s worth on the exam. A subject\'s preparation is how much you\'ve studied times how well you know it: right answers, memory and full reviews. Harder and more frequent topics count more, and a subject stays under 75%% until you\'ve answered them and done a full review in your test\'s format.</string>
-    <string name="plan_measure_mocks">Your preparation adds up your subjects, each counting as much as it\'s worth on the exam. A subject\'s preparation is how much you\'ve studied times how well you know it: right answers, memory and mock exams. Harder and more frequent topics count more, and a subject stays under 75%% until you\'ve answered them and taken a mock exam.</string>
-    <string name="plan_still_to_do">Still to do</string>
-    <!-- An item in the "Still to do" list, worded like the others, such as "Take your first mock exam". -->
-    <string name="plan_still_topics_solid">Get the topics that weigh most to Solid</string>
-    <string name="plan_still_skills_solid">Get every skill to Solid</string>
-    <string name="plan_still_time_in_plan">About %1$s in your plan</string>
-    <string name="plan_still_keep_fresh">Keep what you studied fresh</string>
-    <plurals name="plan_still_fading">
-        <item quantity="one">%d skill fading, back in your reviews</item>
-        <item quantity="other">%d skills fading, back in your reviews</item>
-    </plurals>
-    <string name="plan_still_full_review">Do a full review in your test\'s format</string>
+    <!-- Under a next step toward an exam, such as "Take your first mock exam". %1$s is a share, such as "75%". -->
+    <string name="plan_next_past_share">Needed to go past %1$s</string>
+    <string name="plan_next_review_every_topic">Review every topic once</string>
     <string name="plan_still_first_mock">Take your first mock exam</string>
     <string name="plan_still_first_challenge">Take your first weekly challenge</string>
 
@@ -757,15 +753,15 @@
         <item quantity="one">%1$d more lesson fits in your time</item>
         <item quantity="other">%1$d more lessons fit in your time</item>
     </plurals>
-    <plurals name="plan_past_date_goal_title">
-        <item quantity="one">Your date came with %1$d lesson left</item>
-        <item quantity="other">Your date came with %1$d lessons left</item>
+    <string name="plan_past_date_goal_title">Your end date has passed</string>
+    <string name="plan_past_date_exam_title">Your exam date has passed</string>
+    <!-- Under "Your exam date has passed": the lessons left are what "them" means. -->
+    <string name="plan_exam_over_ask">Keep studying them, or archive this goal?</string>
+    <plurals name="plan_past_date_offer">
+        <item quantity="one">You have %d lesson left. A later end date fits it.</item>
+        <item quantity="other">You have %d lessons left. A later end date fits them.</item>
     </plurals>
-    <plurals name="plan_past_date_exam_title">
-        <item quantity="one">%1$d lesson was left before your exam</item>
-        <item quantity="other">%1$d lessons were left before your exam</item>
-    </plurals>
-    <string name="plan_move_date_covers_whats_left">Move your date so your time covers what\'s left.</string>
+    <string name="plan_find_date">Find a date</string>
     <string name="plan_finished_title">You finished your plan</string>
     <string name="plan_study_next">Here\'s what to study next.</string>
     <string name="plan_continue_at">Continue at %1$s</string>

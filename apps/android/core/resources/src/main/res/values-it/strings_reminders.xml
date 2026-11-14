@@ -2,12 +2,13 @@
 <!-- eloqnt-fingerprints-v1
 {
   "reminders_cancel": "d85c9d78af6a3fff11a2433dbe764f121184dca85705f7ed52ceb59122537569",
-  "reminders_channel_description": "e83fffe8411a4d93ca288faba7a7e0745ea40414af7d96ae92cd700c8ebab726",
+  "reminders_channel_description": "74427a47f4bc1c7b3aa781892b2d6c98687600a8e6ae13831e5cc127b7324cf0",
   "reminders_channel_name": "4536d4010f4459f958a45c7cf968b7e705a6e1a8a2e0112a633cfe860ccd2397",
   "reminders_email": "e78c3d6cd19cf0ed685135270eb15a55144281474ff90c3579c3a375e112a9d4",
   "reminders_email_instead": "099c65dff4e27384d3cc80988685c9021e39b22773d73c363ef4f47f4e1e03e8",
   "reminders_email_needs_account": "a958726df123af7bc80954b6800d9f39db4d0c68ef4b2ce84dfc0b33804c8e3b",
   "reminders_email_on": "117948a99c98533bdd66bc4f62777638b214f0b3301d3cb3f1c8c70208246e8e",
+  "reminders_line": "83ba73a17fc1fa3f21dbbca24d85d07f747360b2015e1725405ff9d861485dfd",
   "reminders_no_thanks": "68b41e450158581e347f003c8a48b2d67d7e5f77d6cd15369b73614cb2d5dbe9",
   "reminders_not_now": "eae25cef6d3351e8e7d88df484e93bd3e4e44ab602c464b87f609b165d41a40d",
   "reminders_notifications_off": "fb6a418df6c3c9f6a1a0e6e960dbcef2dfd15d629cc03705a6c6136ced971cd8",
@@ -15,7 +16,7 @@
   "reminders_offer_title": "e3967601ff5b80a53e707c72bbc8a522bf5645e155ce42524378853e60c0bb54",
   "reminders_on": "4234ee75213a07980946487c42e85ca45c57d4081472893b3c70b81e2ef3b9e6",
   "reminders_open_settings": "325da0939b326683ddecb8a5c760469fd782924efea3d971d15a24123dfacfb2",
-  "reminders_permission_body": "948376604bc721911cf8b661a1541f16e16c8ff4bb6074bf44f0a7014aea033c",
+  "reminders_permission_body": "cc1901d25cab36d2d65e8cd8249ca72175a1e3d4f3bc0529b3fae25ad7fd19e8",
   "reminders_permission_continue": "13778e82dfa01c5a90919192312fee46bd337443f6c35aeb0573d6ac8cb6b3fc",
   "reminders_permission_title": "c3564c761e0f085cda7b0f89ff992c7ac63617f20db0537821b34e819e3e6815",
   "reminders_push": "a5add4142003bc6a5c710d886c7d9a09d19629e66389ccd9ec537d3f04448b8a",
@@ -23,6 +24,7 @@
   "reminders_remind_me": "dbdc196a1d54cf95921749099d09dc9b0d685fdcedb35c4a9496b0ba3eee6817",
   "reminders_save": "ffd7f5ecd82d3ce6b201bdd9e197bd533a346f15c93adac15e5f74957afb08ef",
   "reminders_save_failed": "45019847f762471d84fa11c92480d36d5f927374500596a0781be0fa3e5da941",
+  "reminders_study_days": "be24f24b17fa99f24bb428fe6b6cb9da1b19c2869ae55fcf14715ac6bc2c4400",
   "reminders_this_device": "58ac697cadabbea2f76f9d3a5772cc9d98a73f654af70dacbdd67ca10c4275da",
   "reminders_time": "edee9c9a12dbccb98b1f2fa584d33db4319373e67de6279f23d48c69826c851d",
   "reminders_time_title": "2c0174bfc49e1174b80072159e312da1decade95db3e4abea3e870e2b2417a58",
@@ -34,7 +36,9 @@
     <!-- The name of the app's notification channel in Android's settings. -->
     <string name="reminders_channel_name">Promemoria di studio</string>
     <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
-    <string name="reminders_channel_description">Un promemoria nei tuoi giorni di studio, se hai ancora qualcosa da studiare.</string>
+    <string name="reminders_channel_description">Un promemoria nei tuoi giorni di studio, se non hai ancora finito di studiare.</string>
+    <string name="reminders_line">Un promemoria nei tuoi %1$s, se non hai ancora finito di studiare.</string>
+    <string name="reminders_study_days">giorni di studio</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Vuoi un promemoria per studiare?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
@@ -54,7 +58,7 @@
     <string name="reminders_email_instead">Ricordamelo via email</string>
     <!-- Before Android asks to allow notifications again, after the learner said no once. -->
     <string name="reminders_permission_title">Vuoi consentire le notifiche?</string>
-    <string name="reminders_permission_body">Zoonk invia un promemoria nei tuoi giorni di studio, solo se hai ancora qualcosa da studiare.</string>
+    <string name="reminders_permission_body">Zoonk invia un promemoria nei giorni di studio, se non hai ancora finito per oggi.</string>
     <string name="reminders_permission_continue">Continua</string>
     <string name="reminders_not_now">Non ora</string>
     <!-- The title of the clock that changes the reminder's time. -->

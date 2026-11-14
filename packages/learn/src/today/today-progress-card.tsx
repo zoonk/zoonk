@@ -1,10 +1,10 @@
 "use client";
 
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
-import { BigQuantity } from "../_components/big-quantity";
 import {
   PageSection,
   PageSectionDetail,

@@ -40,7 +40,6 @@ export type ChapterMindMapRequest =
   | { generationId: string | null; status: OnItsWay }
   | { decision: RefusedUsage; status: "refused" }
   | { status: "notFound" }
-  | { status: "plusRequired" }
   | { status: "unauthorized" }
   | { status: "unavailable" };
 
@@ -136,7 +135,7 @@ async function requestFor({
     return { status: "notFound" };
   }
 
-  const [facts] = await loadMindMapChapters({ chapterIds: [chapterId], goal, readViewer });
+  const [facts] = await loadMindMapChapters({ chapterIds: [chapterId], goal });
 
   if (!facts) {
     return { status: "notFound" };
@@ -146,7 +145,7 @@ async function requestFor({
   // The owed follow-up asks through here too, so a map that's only owed still starts.
   const status = getMindMapStatus({ ...facts, now, owed: false });
 
-  if (status === "ready" || status === "unavailable" || status === "plusRequired") {
+  if (status === "ready" || status === "unavailable") {
     return { status };
   }
 

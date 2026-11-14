@@ -21,7 +21,8 @@ async function claimAs({
   seconds,
   targetId,
   viewer,
-}: UsageClaim & { viewer: EntitlementViewer | null }): Promise<UsageDecision> {
+  preparing = false,
+}: UsageClaim & { preparing?: boolean; viewer: EntitlementViewer | null }): Promise<UsageDecision> {
   if (!viewer) {
     return { status: "unauthorized" };
   }
@@ -30,6 +31,7 @@ async function claimAs({
     generated,
     kind,
     now: new Date(),
+    preparing,
     ...(seconds === undefined ? {} : { seconds }),
     targetId,
     viewer,
@@ -52,7 +54,11 @@ export async function claimUsageFor({
   userId,
   ...claim
 }: UsageClaim & { userId: string }): Promise<UsageDecision> {
-  return claimAs({ ...claim, viewer: await getEntitlementViewerFor(userId) });
+  return claimAs({
+    ...claim,
+    preparing: claim.kind === "lessonStart" && claim.generated === true,
+    viewer: await getEntitlementViewerFor(userId),
+  });
 }
 
 /** Claim immediately before starting a small AI call. */

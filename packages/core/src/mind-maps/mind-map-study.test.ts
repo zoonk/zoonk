@@ -97,7 +97,7 @@ describe("mind maps study page", () => {
     await expect(
       listChapterLessonMaps({ chapterId: beginner.id, goalId: goal.id }),
     ).resolves.toMatchObject({
-      lessonMaps: { lessons: [{ lessonId: extra.id, locked: false, map: lessonMap }] },
+      lessonMaps: { lessons: [{ lessonId: extra.id, map: lessonMap }] },
       status: "ready",
     });
 
@@ -135,8 +135,8 @@ describe("mind maps study page", () => {
     const list = await readyList(goal.id);
 
     expect(list.lessonGroups).toStrictEqual([
-      { chapterId: first, count: 1, lessonIds: [labelless?.id], locked: 0 },
-      { chapterId: beginner.id, count: 1, lessonIds: [extra.id], locked: 0 },
+      { chapterId: first, count: 1, lessonIds: [labelless?.id] },
+      { chapterId: beginner.id, count: 1, lessonIds: [extra.id] },
     ]);
 
     expect(list.firstTab).toBe("lessons");
@@ -178,7 +178,6 @@ describe("mind maps study page", () => {
       chapterId: beginner.id,
       count: 1,
       lessonIds: [extra.id],
-      locked: 0,
     });
 
     await expect(
@@ -211,8 +210,8 @@ describe("mind maps study page", () => {
     const list = await readyList(goal.id);
 
     expect(list.lessonGroups).toStrictEqual([
-      { chapterId: first, count: 2, lessonIds: [shared?.id, firstOther?.id], locked: 0 },
-      { chapterId: beginner.id, count: 1, lessonIds: [extra.id], locked: 0 },
+      { chapterId: first, count: 2, lessonIds: [shared?.id, firstOther?.id] },
+      { chapterId: beginner.id, count: 1, lessonIds: [extra.id] },
     ]);
 
     expect(list.saved).toStrictEqual([

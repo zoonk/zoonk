@@ -60,7 +60,7 @@ export async function loadSessionTime({
     : new Map();
 
   const reserved = hasSessionLessonReservation({
-    access: access ?? { includesMockExams: true, trialEnded: false },
+    access: access ?? { includesMockExams: true },
     plan,
     prerequisites,
     session,

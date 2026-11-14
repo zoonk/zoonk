@@ -684,6 +684,55 @@ test.describe("Mind maps", () => {
     }
   });
 
+  for (const refusal of [
+    {
+      limit: { availableAt: null, limit: 20, period: "total" },
+      line: "It writes more lessons than you get for free.",
+      title: "This map needs a subscription",
+    },
+    {
+      limit: {
+        availableAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+        limit: 20,
+        period: "rolling30Days",
+      },
+      line: /^You'll have enough on .+, or subscribe to make it now\.$/u,
+      title: "Not enough free lessons for this map yet",
+    },
+  ]) {
+    test(`a map whose lessons don't fit (${refusal.limit.period}) says so without saying the free lessons are used`, async ({
+      browser,
+    }) => {
+      const { second, user } = await createLearner();
+      const page = await openAs(browser, user);
+      const row = page.getByRole("listitem").filter({ hasText: second.chapter.title });
+
+      try {
+        await page.route("**/generations", (route) =>
+          route.fulfill({
+            json: {
+              error: {
+                code: "USAGE_LIMIT_REACHED",
+                details: { limit: { ...refusal.limit, resource: "chapterLessons", tier: "free" } },
+              },
+            },
+            status: 402,
+          }),
+        );
+
+        await page.goto("/mind-maps");
+        await row.getByRole("button", { name: "Create" }).click();
+
+        await expect(row.getByText(refusal.title)).toBeVisible();
+        await expect(row.getByText(refusal.line)).toBeVisible();
+        await expect(row.getByRole("link", { name: "Subscribe" })).toBeVisible();
+        await expect(row.getByText(/free lessons are used|used your free lessons/u)).toBeHidden();
+      } finally {
+        await page.context().close();
+      }
+    });
+  }
+
   test("a read of the list that comes back late doesn't undo a map started after it", async ({
     browser,
   }) => {

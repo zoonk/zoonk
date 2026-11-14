@@ -6,21 +6,26 @@ export type UsagePeriod = "day" | "month" | "rolling30Days" | "total";
 
 export type CalendarPeriod = Exclude<UsagePeriod, "rolling30Days">;
 
-/**
- * Only a new lesson is counted over rolling 30 days, and its gate gives the day from `availableAt`.
- * Every other cap names a calendar window, and this lets its screen take core's one period type.
- */
 export function toCalendarPeriod(period: UsagePeriod): CalendarPeriod {
   return period === "rolling30Days" ? "month" : period;
 }
 
-type AllowanceResource = UsageKind | "activeGoals" | "aiSpend" | "callSeconds" | "generatedLessons";
+type AllowanceResource =
+  | UsageKind
+  | "activeGoals"
+  | "aiSpend"
+  | "callSeconds"
+  | "chapterLessons"
+  | "lessonPreparation"
+  | "generatedLessons";
 
 export type AllowanceLimit = {
+  availableAt?: Date | null;
   limit: number;
+  period: UsagePeriod;
   resource: AllowanceResource;
   tier: EntitlementTier;
-} & ({ availableAt: Date; period: "rolling30Days" } | { period: CalendarPeriod });
+};
 
 /** slowDown retries after retryAfterSeconds; limitReached waits for a cap reset. signUpRequired moves guest work into an account. */
 export type UsageDecision =
@@ -79,8 +84,7 @@ export type Allowance = {
     usedSeconds: number;
     usedSecondsThisMonth: number;
   };
-  /** studyDays is always null; exam plans have no time-based expiry. */
-  examPrep: { includesMockExams: boolean; studyDays: number | null };
+  examPrep: { includesMockExams: boolean };
   /** A guest's newly generated lessons; null for accounts. */
   generatedLessons: { limit: number; used: number } | null;
   items: AllowanceItem[];

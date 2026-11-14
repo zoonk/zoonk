@@ -3,6 +3,13 @@ import { cn } from "@zoonk/ui/lib/utils";
 const ROW_CLASS = "w-full px-(--page-gutter)";
 
 /**
+ * The frame's side padding at each size: the app's shell, a full page drawn without it, and the
+ * toasts that rise over the bar this sets the height of.
+ */
+export const FRAME_GUTTER_CLASS =
+  "[--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(8)] lg:[--page-gutter:--spacing(10)]";
+
+/**
  * The one home of a screen's main action, on a phone and a computer: pinned to the bottom of its
  * frame while the screen scrolls under it. Its buttons never move: what the last action couldn't do
  * goes in `note`, which is drawn over the screen above the bar instead of pushing the bar taller,

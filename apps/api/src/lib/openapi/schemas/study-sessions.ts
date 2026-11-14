@@ -38,7 +38,7 @@ export const extraTimeSchema = z
       }),
     minutes: z.number().int().min(0),
     reason: z
-      .enum(["dayOver", "nothingToStudy", "plusRequired", "sessionNotFinished"])
+      .enum(["dayOver", "nothingToStudy", "sessionNotFinished"])
       .nullable()
       .meta({
         description:
@@ -66,7 +66,7 @@ export const studySessionResponseSchema = z
         "Epoch milliseconds when this current day gives way, including a carried session after midnight",
       ),
     emptyDay: emptyDaySchema,
-    examAccess: z.object({ includesMockExams: z.boolean(), trialEnded: z.boolean() }),
+    examAccess: z.object({ includesMockExams: z.boolean() }),
     examTomorrow: examTomorrowSchema,
     extraTime: extraTimeSchema,
     freshStart: z.enum(StudyFreshStart).nullable(),
@@ -92,9 +92,6 @@ export const studySessionResponseSchema = z
     nextBlockId: idSchema.nullable(),
     nextPosition: z.number().int().nonnegative().nullable(),
     pauseSuggested: z.boolean(),
-    plusLessons: z
-      .array(z.object({ title: z.string() }))
-      .meta({ description: "Always empty. Exam lessons no longer have time-based restrictions" }),
     sessionBar: z
       .object({ completed: z.number().int().min(0), total: z.number().int().min(0) })
       .meta({ description: "One step per block still in the day, filled as blocks are done" }),
