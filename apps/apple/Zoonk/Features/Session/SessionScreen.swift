@@ -483,20 +483,17 @@ private struct NextStopView: View {
         "Start", tableName: "Session", comment: "Opens the session's next block, not begun yet")
   }
 
-  /// Named by what it starts, the same while a lesson is written and when it can't be.
+  /// A verb for what the learner can do meanwhile; only a challenge needs its name.
   private func alternativeTitle(_ block: StudyBlock) -> Text {
-    switch block.kind {
-    case .review:
-      Text("Review now", tableName: "Session", comment: "Starts the day's review instead")
-    case .practice:
-      Text("Practice now", tableName: "Session", comment: "Starts the day's practice instead")
-    case .learn:
-      Text("Next lesson", tableName: "Session", comment: "Starts the day's next lesson instead")
-    default:
-      Text(
+    if block.checkpoint != nil {
+      return Text(
         "Start \(block.displayTitle)", tableName: "Session",
         comment: "Starts another of the day's steps instead; the argument is its name")
     }
+
+    return block.kind == .review
+      ? Text("Review now", tableName: "Session", comment: "Starts the day's review instead")
+      : Text("Practice now", tableName: "Session", comment: "Starts the day's practice instead")
   }
 
   private var lessonLine: AnyView? {
