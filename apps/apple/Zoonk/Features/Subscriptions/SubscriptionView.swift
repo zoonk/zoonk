@@ -58,11 +58,16 @@ struct SubscriptionScreen: View {
 }
 
 extension View {
-  /// Settings' name for the page, the same in every state and from every entry; "Plus" heads its
-  /// first section.
+  /// Settings' name for the page, the same in every state and from every entry, over its
+  /// `SubscriptionHeader`; "Plus" heads its first section.
   func subscriptionPageTitle() -> some View {
-    navigationTitle(Text("Subscription", tableName: "Subscriptions"))
-      .navigationBarTitleDisplayMode(.inline)
+    barTitleAfterHero(String(localized: "Subscription", table: "Subscriptions"))
+  }
+}
+
+private struct SubscriptionHeader: View {
+  var body: some View {
+    PageHeader(Text("Subscription", tableName: "Subscriptions"))
   }
 }
 
@@ -341,6 +346,8 @@ private struct SubscriptionMarketingContent: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 24) {
+      SubscriptionHeader()
+
       VStack(alignment: .leading, spacing: 8) {
         Text(
           "Plus", tableName: "Subscriptions",
@@ -461,6 +468,10 @@ struct PlusStatusView: View {
 
   var body: some View {
     ZoonkList {
+      Section {
+        SubscriptionHeader()
+      }
+
       Section {
         VStack(alignment: .leading, spacing: 6) {
           HStack(spacing: 8) {
@@ -632,6 +643,10 @@ private struct UnpaidPlusView: View {
 
   var body: some View {
     ZoonkList {
+      Section {
+        SubscriptionHeader()
+      }
+
       Section {
         VStack(alignment: .leading, spacing: 6) {
           Text("Plus", tableName: "Subscriptions", comment: "Zoonk Plus, the plan's name")
