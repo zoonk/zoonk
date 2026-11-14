@@ -201,6 +201,9 @@ private struct SpeakingPaperView: View {
     _ task: Components.Schemas.SpeakingPaperTask, paper: Components.Schemas.SpeakingPaper
   ) -> some View {
     let locked = paper.access == .plusRequired
+    // Tried while locked: a subscription that opens the paper takes the gate away.
+    let isGated = gatedTask == task.key && locked
+    let showsStart = paper.access != .callsPaused && writingTask != task.key && !isGated
 
     return VStack(alignment: .leading, spacing: 8) {
       if !task.criteria.isEmpty {
@@ -228,16 +231,19 @@ private struct SpeakingPaperView: View {
             comment: "An exam task opens by itself once its card is written"))
       }
 
-      if gatedTask == task.key {
+      if isGated {
         SubscribeGate(
           title: Text(
             "Speaking practice needs a subscription", tableName: "Voice",
             comment: "A free learner tried to start an exam speaking task")
         )
         .padding(.top, 4)
-      } else {
+      }
+
+      // The gate takes Start's place only; the last result stays one tap away.
+      if showsStart || task.lastTry != nil {
         ButtonRow(spacing: 12) {
-          if paper.access != .callsPaused && writingTask != task.key {
+          if showsStart {
             BusyButton(isBusy: startingTask == task.key, icon: .play) {
               if locked {
                 gatedTask = task.key
