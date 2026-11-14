@@ -68,9 +68,9 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
-import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.StripeSubscriptionCancellation
@@ -238,8 +238,8 @@ internal fun WebPlusPlan(
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
             Text(
                 stringResource(if (standalone) R.string.subscription_plus else R.string.subscription_website),
-                if (standalone) Modifier.pageTitle() else Modifier.semantics { heading() },
-                style = if (standalone) MaterialTheme.typography.headlineMedium else MaterialTheme.typography.titleMedium,
+                Modifier.semantics { heading() },
+                style = if (standalone) MaterialTheme.typography.titleLarge else MaterialTheme.typography.titleMedium,
             )
             if (standalone && subscription.state != State.UNPAID) {
                 val label = if (subscription.state == State.ENDING) R.string.subscription_ending else R.string.subscription_active
@@ -268,7 +268,10 @@ private fun PageColumn(
     maxWidth: Dp = PAGE_WIDTH,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(Modifier.widthIn(max = maxWidth).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(24.dp), content = content)
+    Column(Modifier.widthIn(max = maxWidth).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        PageTitleRow(stringResource(R.string.account_menu_subscription))
+        content()
+    }
 }
 
 @Composable
@@ -284,8 +287,8 @@ internal fun CurrentPlan(
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
             Text(
                 stringResource(R.string.subscription_plus),
-                Modifier.pageTitle(),
-                style = MaterialTheme.typography.headlineMedium,
+                Modifier.semantics { heading() },
+                style = MaterialTheme.typography.titleLarge,
             )
             Eyebrow(stringResource(if (isEnding) R.string.subscription_ending else R.string.subscription_active))
         }
@@ -408,12 +411,6 @@ internal fun PlanOffer(
         val sideBySide = minOf(maxWidth, TWO_PLANS_WIDTH) >= PLAN_MIN_WIDTH * LocalDensity.current.fontScale * 2 + PLAN_GAP
 
         PageColumn(maxWidth = if (sideBySide) TWO_PLANS_WIDTH else PAGE_WIDTH) {
-            Text(
-                stringResource(R.string.subscription_offer_title),
-                Modifier.pageTitle(),
-                style = MaterialTheme.typography.headlineMedium,
-            )
-
             PlanColumns(sideBySide, verticalSpacing = 24.dp) {
                 PlusPlanCard(offers, purchase, hasAccount, navigator, onSubscribe)
                 Box {

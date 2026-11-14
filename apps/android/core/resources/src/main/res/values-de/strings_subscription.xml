@@ -18,7 +18,6 @@
   "subscription_answer_free_uploads": "fbe084ffd70a5c0440f221b0a5a4fd071d627fefb15f779e37d7c7d2cddb613b",
   "subscription_answer_refund": "996fb35c04268f4a44a54c8d8846790bedc42f6404e8211252b526e6acd21b7e",
   "subscription_answer_unlimited": "cf1aa0452acb4285a55e967946991945053907769e26fdb8881ffbb3a76de4be",
-  "subscription_available_with_plus": "c1f0a8dbf6c53c615c5e8b607884619c669c4cbe61ffffe3a944d354cfbb225d",
   "subscription_benefit_buddy": "1e1cbf7a03898933b894e35118c1f7fe98a7778d99c496bb1b62c7b56f1f05cd",
   "subscription_benefit_calls": "0bc2aae919524fb94bea60da243033cac2b0d06b1722cd878180767ff2e701d7",
   "subscription_benefit_certificates": "c2b76ee3038da5f051df1c486b94f8f575e87b6b65772cf36a67cd632df597f6",
@@ -58,7 +57,6 @@
   "subscription_managed_zoonk": "e88c89d39e12e78e7883d3c4d975b4b7c3a231fcbd147e92fcaf9b4bec2f4cf1",
   "subscription_monthly": "f1e53edbf4cb4cab6bdf361ea17a2e36dc8f9d4979bd46cafe3fa3d76465dc58",
   "subscription_no_card_needed": "63f85ab3a6eeceed470b2f2a1a5d367abd0e8b08b11e8847631f2c94c4d64f6b",
-  "subscription_offer_title": "3ce99d21235c7871176bb59dd81d76b93f411ebc830961d9d3f3508b729c7618",
   "subscription_per_month": "9121b7b96834497b2e30cc0f566870617e71c249ef5ee9944148de54059dce69",
   "subscription_per_year": "232a325e4d9c0fa9dff0f4ee0c4150152c8d1a040c618c2ba10e668272269903",
   "subscription_period_ends_on": "94713729c5f09fb1cb51b7237fc2f2fa6cc55e6b38894d2856ec148bb07e185f",
@@ -78,7 +76,6 @@
   "subscription_renewal_failed": "82cbda2f52f5eefa887c36076a23ef96a43fb31028ccefc8b4b082d84cbc772c",
   "subscription_renews_on": "a27ca67eed27ca7271e5b253b1d2673161be5c8fbb9284ca7d7c8fc78155ecee",
   "subscription_save": "9bdf89aa0c6e000bade7736c4d671804af96580aa87e0c6d0978dffe036dcbd6",
-  "subscription_see_plus": "f12215b93038e6c39c7bc9d27ec4b69a48ee06aaaf4a17b288fef94929de3831",
   "subscription_show_answer": "570c4c77482c0ab7d68d379b01c3a7c97d89eaaca67042aebd3345f32c887b7d",
   "subscription_start_free": "9c8eddb8d20009a3f6fcf409cf45ac49149400c90fea5c2c65e0d234242091bb",
   "subscription_subscribe": "7cc8965d6c6ae991879d725ecee58ef25a3aae1e658f6d92b23c7dc6c668cac7",
@@ -90,8 +87,6 @@
 -->
 <resources>
     <string name="subscription_plus">Plus</string>
-    <string name="subscription_available_with_plus">Mit Plus verfügbar</string>
-    <string name="subscription_see_plus">Plus ansehen</string>
     <string name="subscription_active">Aktiv</string>
     <string name="subscription_ending">Läuft aus</string>
     <!-- %1$s is a date. -->
@@ -124,7 +119,6 @@
     <string name="subscription_deletion_app_store">Für Plus aus dem App Store zahlst du weiter, bis du es dort kündigst.</string>
     <!-- The same, for Plus bought in Google Play. -->
     <string name="subscription_deletion_google_play">Für Plus von Google Play zahlst du weiter, bis du es dort kündigst.</string>
-    <string name="subscription_offer_title">Plus</string>
     <string name="subscription_free">Free</string>
     <string name="subscription_monthly">Monatlich</string>
     <string name="subscription_yearly">Jährlich</string>

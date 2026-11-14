@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="subscription_plus">Plus</string>
-    <string name="subscription_available_with_plus">Available with Plus</string>
-    <string name="subscription_see_plus">See Plus</string>
     <string name="subscription_active">Active</string>
     <string name="subscription_ending">Ending</string>
     <!-- %1$s is a date. -->
@@ -35,7 +33,6 @@
     <string name="subscription_deletion_app_store">Plus from the App Store keeps charging until you cancel it there.</string>
     <!-- The same, for Plus bought in Google Play. -->
     <string name="subscription_deletion_google_play">Plus from Google Play keeps charging until you cancel it there.</string>
-    <string name="subscription_offer_title">Plus</string>
     <string name="subscription_free">Free</string>
     <string name="subscription_monthly">Monthly</string>
     <string name="subscription_yearly">Yearly</string>

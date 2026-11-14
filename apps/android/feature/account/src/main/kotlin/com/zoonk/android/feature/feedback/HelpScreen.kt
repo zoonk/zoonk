@@ -45,7 +45,14 @@ fun HelpScreen(
     val context = LocalContext.current
     val portuguese = currentLocale().language == "pt"
 
-    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.account_menu_help)) }) { padding ->
+    val form = viewModel { FeedbackViewModel(app.feedback, FeedbackTarget(screen = "support")) }
+    val accountEmail = accountEmail(app)
+
+    PageScaffold(
+        onBack = { navigator.back() },
+        title = { Text(stringResource(R.string.account_menu_help)) },
+        bottomBar = { SendButton(form, accountEmail, Modifier.fillMaxWidth()) },
+    ) { padding ->
         Box(
             modifier =
                 Modifier
@@ -66,7 +73,7 @@ fun HelpScreen(
             ) {
                 PageHeader(stringResource(R.string.account_menu_help), stringResource(R.string.feedback_help_description))
 
-                FeedbackForm(app, viewModel { FeedbackViewModel(app.feedback, FeedbackTarget(screen = "support")) })
+                FeedbackForm(app, form, withSend = false)
 
                 // Main's row of quiet icons, each a 48dp target whose mark lines up with the page's margin.
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
