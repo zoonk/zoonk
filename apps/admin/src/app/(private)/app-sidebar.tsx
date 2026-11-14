@@ -89,10 +89,11 @@ function AdminSidebarContent({
 export function AppSidebar({ account, counts }: AdminSidebarProps) {
   return (
     <Sidebar aria-label="Sidebar" className="gap-3">
-      {/* One row, so the whole navigation fits a laptop's height; collapsed, the toggle sits over the search. */}
-      <SidebarHeader className="sidebar-collapsed:flex-col-reverse sidebar-collapsed:gap-4 flex-row items-center gap-1">
-        <SidebarSearch label="Search…" onClick={openCommandPalette} />
+      {/* One row, so the whole navigation fits a laptop's height. The toggle comes first at both
+          widths, beside the search and, collapsed, above it, so it's read where it's drawn. */}
+      <SidebarHeader className="sidebar-collapsed:flex-col sidebar-collapsed:gap-4 flex-row items-center gap-1">
         <SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar" />
+        <SidebarSearch label="Search…" onClick={openCommandPalette} />
       </SidebarHeader>
 
       <AdminSidebarContent account={account} counts={counts} />

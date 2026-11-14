@@ -1,4 +1,3 @@
-import { Badge } from "@zoonk/ui/components/badge";
 import { cn } from "@zoonk/ui/lib/utils";
 import { isJsonObject } from "@zoonk/utils/json";
 import { diffArrays } from "diff";
@@ -96,9 +95,8 @@ function EntryList({
               <mark className={cn("text-foreground bg-transparent", ENTRY_MARKS[change])}>
                 {names.get(entry.id) ?? "Deleted or unknown"}
               </mark>
-              {entry.detail && <span className="text-muted-foreground"> · {entry.detail}</span>}{" "}
-              {change === "moved" && <Badge variant="outline">Moved</Badge>}{" "}
-              <span className="text-muted-foreground font-mono text-xs">{entry.id}</span>
+              {entry.detail && <span className="text-muted-foreground"> · {entry.detail}</span>}
+              {change === "moved" && <span className="text-muted-foreground"> · moved</span>}
             </li>
           );
         })}
