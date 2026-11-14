@@ -46,6 +46,10 @@ struct ExamMomentSection<Action: View>: View {
               )
               .typeStyle(.data)
             }
+            if isLastDays, moment.prepared {
+              Text("You've prepared for this.", tableName: "Exam", comment: "Prepared")
+                .typeStyle(.body.weight(.medium))
+            }
             if let body = copy.body {
               Text(body)
                 .foregroundStyle(.mutedForeground)
@@ -149,6 +153,10 @@ struct ExamMomentSection<Action: View>: View {
     }
   }
 
+  private var isLastDays: Bool {
+    moment.stage == .dayBefore || moment.stage == .examDay
+  }
+
   /// Today's list shows today's work, so the day before and exam day say only what was done.
   private var work: String? {
     let parts = [
@@ -164,18 +172,11 @@ struct ExamMomentSection<Action: View>: View {
         : nil,
     ].compactMap(\.self)
 
-    let done =
-      parts.isEmpty
+    return parts.isEmpty
       ? nil
       : String(
         localized: "\(parts.formatted(.list(type: .and))) done.", table: "Exam",
         comment: "What the learner did before the exam: days of study, mock exams or both")
-    let prepared =
-      moment.prepared
-      ? String(localized: "You've prepared for this.", table: "Exam", comment: "Prepared") : nil
-    let sentences = [prepared, done].compactMap(\.self)
-
-    return sentences.isEmpty ? nil : sentences.joinedSentences()
   }
 
   private func checklistLabel(_ item: ExamView.ChecklistItem) -> String {
