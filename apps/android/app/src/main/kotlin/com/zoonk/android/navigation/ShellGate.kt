@@ -61,8 +61,8 @@ fun ShellGate(
                     title = stringResource(R.string.account_unavailable_title),
                     description = stringResource(R.string.account_unavailable_description),
                     padding = padding,
-                ) {
-                    Button(onClick = { scope.launch { app.sessions.retryRestore() } }) {
+                ) { main ->
+                    Button(onClick = { scope.launch { app.sessions.retryRestore() } }, modifier = main) {
                         Text(stringResource(R.string.load_failed_try_again))
                     }
                 }
@@ -87,7 +87,7 @@ private fun StartGoalGate(
         title = stringResource(R.string.gate_start_goal_title),
         description = stringResource(R.string.gate_start_goal_description),
         padding = padding,
-    ) {
-        Button(onClick = { navigator.showRoot(AppTab.Today) }) { Text(stringResource(R.string.gate_start_goal)) }
+    ) { main ->
+        Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = main) { Text(stringResource(R.string.gate_start_goal)) }
     }
 }
