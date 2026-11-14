@@ -30,7 +30,6 @@ export function PromptAudioButton({
   if (variant === "labeled") {
     return (
       <Button {...shared} className="w-fit" size="lg" variant="outline">
-        <Icon aria-hidden="true" />
         {audio.isPlaying ? t("Pause") : t("Play")}
         <ShortcutKbd shortcut="audio" />
       </Button>
