@@ -51,6 +51,17 @@ internal object LayoutCapture {
 
     fun of(bitmap: Bitmap): String? = captures[bitmap]
 
+    /** A record for a picture whose layout wasn't read, and why. */
+    fun notMeasured(reason: String): String =
+        Json
+            .obj(
+                "version" to 1,
+                "platform" to "android",
+                "screen" to testName(),
+                "elements" to NOT_MEASURED,
+                "reason" to reason,
+            ).json
+
     fun read(
         captured: SemanticsNode,
         view: View,
@@ -360,7 +371,18 @@ internal object LayoutCapture {
                 val lines = texts.map { (each, result) -> lineBox(each, result) }
                 val left = lines.minOf { it[0] }
                 val top = lines.minOf { it[1] }
-                fields["ink"] = listOf(left, top, lines.maxOf { it[0] + it[2] } - left, lines.maxOf { it[1] + it[3] } - top)
+                // A cut-off paragraph's line boxes reach past what the picture shows.
+                fields["ink"] =
+                    if (clipped) {
+                        NOT_MEASURED
+                    } else {
+                        listOf(
+                            left,
+                            top,
+                            lines.maxOf { it[0] + it[2] } - left,
+                            lines.maxOf { it[1] + it[3] } - top,
+                        )
+                    }
                 val y =
                     (
                         text.layoutInfo.coordinates
@@ -450,9 +472,16 @@ internal object LayoutCapture {
             return words.joinToString(" ")
         }
 
-        /** The font's own cap height (its `OS/2` table), for the two faces the app ships; other faces aren't measured. */
+        /**
+         * The font's own cap height (its `OS/2` table), for the two faces the app ships, when that face drew every
+         * character: Japanese, Korean or Arabic in a Geist style is drawn by a system font whose capitals sit
+         * elsewhere, so such text, mixed text included, isn't measured. Neither is text with a span in another family.
+         */
         private fun capHeight(layout: TextLayoutResult): Float? {
             val style = layout.layoutInput.style
+            val text = layout.layoutInput.text
+            if (text.spanStyles.any { it.item.fontFamily != null && it.item.fontFamily != style.fontFamily }) return null
+            if (!FontFiles.covers(style.fontFamily, text.text, resources)) return null
             val ratio = FontFiles.capRatio(style.fontFamily, resources) ?: return null
             val size = with(layout.layoutInput.density) { style.fontSize.toPx() }
             return ratio * size / density
@@ -543,24 +572,44 @@ internal object LayoutCapture {
         ): Boolean = (0..3).any { shift -> abs((a shr (shift * 8) and 0xFF) - (b shr (shift * 8) and 0xFF)) > INK_THRESHOLD }
     }
 
-    /** The app's two faces' cap heights per em, read from their files' `OS/2` and `head` tables. */
+    /** The app's two faces, read from their files: cap height per em (`OS/2`, `head`) and the characters they draw (`cmap`). */
     private object FontFiles {
-        private val ratios = mutableMapOf<Int, Float?>()
+        private class Face(
+            val capRatio: Float?,
+            val draws: (Int) -> Boolean,
+        )
+
+        private val faces = mutableMapOf<Int, Face>()
 
         fun capRatio(
             family: FontFamily?,
             resources: android.content.res.Resources,
-        ): Float? {
+        ): Float? = face(family, resources)?.capRatio
+
+        /** Whether [family]'s own file draws every character of [text], so no fallback font drew any of it. */
+        fun covers(
+            family: FontFamily?,
+            text: String,
+            resources: android.content.res.Resources,
+        ): Boolean {
+            val face = face(family, resources) ?: return false
+            return text.codePoints().allMatch { it < ' '.code || face.draws(it) }
+        }
+
+        private fun face(
+            family: FontFamily?,
+            resources: android.content.res.Resources,
+        ): Face? {
             val id =
                 when (family) {
                     Geist -> R.font.geist
                     GeistMono -> R.font.geist_mono
                     else -> return null
                 }
-            return ratios.getOrPut(id) { read(resources.openRawResource(id).use { it.readBytes() }) }
+            return faces.getOrPut(id) { read(resources.openRawResource(id).use { it.readBytes() }) }
         }
 
-        private fun read(bytes: ByteArray): Float? {
+        private fun read(bytes: ByteArray): Face {
             val font = ByteBuffer.wrap(bytes)
             val tables = font.getShort(4).toInt()
 
@@ -570,13 +619,67 @@ internal object LayoutCapture {
                     val found = String(bytes, entry, 4, Charsets.US_ASCII)
                     if (found == tag) font.getInt(entry + 8) else null
                 }
-            val head = table("head") ?: return null
-            val os2 = table("OS/2") ?: return null
-            if (font.getShort(os2).toInt() < 2) return null
-            val unitsPerEm = font.getShort(head + 18).toInt() and 0xFFFF
-            val capHeight = font.getShort(os2 + 88).toInt()
-            return capHeight.toFloat() / unitsPerEm
+            val head = table("head")
+            val os2 = table("OS/2")
+            val capRatio =
+                if (head == null || os2 == null || font.getShort(os2).toInt() < 2) {
+                    null
+                } else {
+                    font.getShort(os2 + 88).toFloat() / (font.getShort(head + 18).toInt() and 0xFFFF)
+                }
+            return Face(capRatio, table("cmap")?.let { characterMap(font, it) } ?: { false })
         }
+
+        /** The Unicode subtable of a `cmap`: format 12 (every plane) when there is one, else format 4 (the first plane). */
+        private fun characterMap(
+            font: ByteBuffer,
+            cmap: Int,
+        ): ((Int) -> Boolean)? {
+            val subtables =
+                (0 until u16(font, cmap + 2)).map { index ->
+                    val record = cmap + 4 + index * 8
+                    cmap + font.getInt(record + 4)
+                }
+            subtables.firstOrNull { u16(font, it) == 12 }?.let { table ->
+                val groups =
+                    (0 until font.getInt(table + 12)).map { index ->
+                        val group = table + 16 + index * 12
+                        font.getInt(group).toLong()..font.getInt(group + 4).toLong()
+                    }
+                return { code -> groups.any { code.toLong() in it } }
+            }
+            val table = subtables.firstOrNull { u16(font, it) == 4 } ?: return null
+            val segments = u16(font, table + 6) / 2
+            val ends = table + 14
+            val starts = ends + segments * 2 + 2
+            val deltas = starts + segments * 2
+            val offsets = deltas + segments * 2
+            return { code ->
+                (0 until segments).any { index ->
+                    val start = u16(font, starts + index * 2)
+                    val end = u16(font, ends + index * 2)
+                    code in start..end && glyph(font, code, start, deltas + index * 2, offsets + index * 2) != 0
+                }
+            }
+        }
+
+        private fun glyph(
+            font: ByteBuffer,
+            code: Int,
+            start: Int,
+            delta: Int,
+            offset: Int,
+        ): Int {
+            val rangeOffset = u16(font, offset)
+            if (rangeOffset == 0) return (code + font.getShort(delta)) and 0xFFFF
+            val found = u16(font, offset + rangeOffset + (code - start) * 2)
+            return if (found == 0) 0 else (found + font.getShort(delta)) and 0xFFFF
+        }
+
+        private fun u16(
+            font: ByteBuffer,
+            at: Int,
+        ) = font.getShort(at).toInt() and 0xFFFF
     }
 
     /** Why an area is written as unmeasured: whatever it holds was taken out of the tree, for TalkBack to read one phrase. */
@@ -611,7 +714,7 @@ fun writeRender(
 ) {
     file.parentFile?.mkdirs()
     file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
-    val capture = LayoutCapture.of(bitmap) ?: return
+    if (!LayoutCapture.enabled) return
     val sha = MessageDigest.getInstance("SHA-256").digest(file.readBytes()).joinToString("") { "%02x".format(Locale.ROOT, it) }
     val item =
         Json.obj(
@@ -623,6 +726,8 @@ fun writeRender(
                     "uncommitted" to System.getProperty("zoonk.build.uncommitted").orEmpty().ifEmpty { "unknown" },
                 ),
         )
+    // A picture that isn't the frame captureRender copied (a copy, or several windows drawn together) says so.
+    val capture = LayoutCapture.of(bitmap) ?: LayoutCapture.notMeasured(NOT_ONE_FRAME)
     // The capture is the shared report's capture file; `picture` is its PNG's manifest item.
     File(file.parentFile, file.nameWithoutExtension + ".json").writeText("{\"picture\":${item.json},${capture.removePrefix("{")}\n")
 }
@@ -669,3 +774,4 @@ internal object Json {
 private fun decimals(value: Float): String = "%.2f".format(Locale.ROOT, value).trimEnd('0').trimEnd('.')
 
 private const val NOT_MEASURED = "not measured"
+private const val NOT_ONE_FRAME = "the picture isn't the one frame captureRender copied: a copy, or several windows drawn together"

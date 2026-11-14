@@ -1,14 +1,19 @@
 package com.zoonk.android.ui.testing
 
+import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -82,6 +87,55 @@ class LayoutCaptureTest {
         assertTrue(!parts.has("label") && !parts.has("value"))
     }
 
+    @Test
+    fun clippedTextKeepsItsBaselineAndHasNoInk() {
+        val parts =
+            capture {
+                Box(Modifier.height(10.dp).clipToBounds()) {
+                    ListRow(headline = { Text("Mixed practice") }, meta = { Text("12 min") })
+                }
+            }
+
+        listOf(parts.part("label"), parts.part("value")).forEach { text ->
+            assertEquals(NOT_MEASURED, text.getString("ink"))
+            // Laid out from the font, not read from pixels: still real when the pixels are cut off.
+            assertTrue(text.get("baseline") is Number)
+        }
+    }
+
+    @Test
+    fun textAFallbackFontDrewHasNoCapitals() {
+        val labels =
+            capture {
+                ListRow(headline = { Text("日本語の練習") })
+                ListRow(headline = { Text("Kanji 漢字") })
+            }.elements().filter { it.getString("part") == "label" }
+
+        assertEquals(2, labels.size)
+        labels.forEach { label ->
+            assertEquals(NOT_MEASURED, label.getString("capTop"))
+            assertEquals(NOT_MEASURED, label.getString("capBottom"))
+            assertTrue(label.get("baseline") is Number)
+        }
+    }
+
+    @Test
+    fun aPictureWithoutItsFramesCaptureSaysItIsNotMeasured() {
+        compose.setContent { ZoonkTheme { ListRow(headline = { Text("Copy") }) } }
+        val copy =
+            compose
+                .onRoot()
+                .captureRender()
+                .asAndroidBitmap()
+                .copy(Bitmap.Config.ARGB_8888, true)
+        writeRender(File(folder.root, "copied.png"), copy)
+
+        val record = JSONObject(File(folder.root, "copied.json").readText())
+        assertEquals("copied.png", record.getJSONObject("picture").getString("file"))
+        assertEquals(NOT_MEASURED, record.getString("elements"))
+        assertTrue(record.getString("reason").isNotEmpty())
+    }
+
     private fun capture(content: @androidx.compose.runtime.Composable () -> Unit): JSONArray {
         compose.setContent { ZoonkTheme { Column { content() } } }
         val file = File(folder.root, "row.png")
@@ -95,3 +149,5 @@ class LayoutCaptureTest {
 
     private fun JSONArray.part(part: String) = elements().first { it.getString("part") == part }
 }
+
+private const val NOT_MEASURED = "not measured"
