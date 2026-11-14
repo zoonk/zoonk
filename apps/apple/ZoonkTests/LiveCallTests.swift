@@ -335,7 +335,7 @@ final class LiveCallTests: XCTestCase {
 
   func testARefusedReservationSaysWhy() async {
     let server = FakeServer(reservations: [
-      .limit(HelpLimit(period: .day, tier: .free))
+      .limit(HelpLimit.limitReached(period: .day, tier: .free))
     ])
     let transport = FakeTransport()
     let call = LiveCall(conversation: .fixture(), client: server.client(transport))
@@ -344,7 +344,7 @@ final class LiveCallTests: XCTestCase {
 
     XCTAssertEqual(call.phase, .failed)
     XCTAssertEqual(call.failure, .limit)
-    XCTAssertEqual(call.limit, HelpLimit(period: .day, tier: .free))
+    XCTAssertEqual(call.limit, HelpLimit.limitReached(period: .day, tier: .free))
     XCTAssertEqual(transport.offers, 0)
   }
 
@@ -476,7 +476,7 @@ final class LiveCallTests: XCTestCase {
 
     let refused = LiveCall(
       conversation: .fixture(),
-      client: FakeServer(reservations: [.limit(HelpLimit(period: .day, tier: .free))])
+      client: FakeServer(reservations: [.limit(HelpLimit.limitReached(period: .day, tier: .free))])
         .client(FakeTransport()),
       soFar: first.soFar)
     await refused.start()
