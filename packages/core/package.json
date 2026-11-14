@@ -750,7 +750,7 @@
     "@sentry/nextjs": "catalog:",
     "@vercel/analytics": "catalog:",
     "@vercel/blob": "2.9.0",
-    "@vercel/functions": "3.11.3",
+    "@vercel/functions": "3.11.2",
     "@vercel/oidc": "4.0.9",
     "@zoonk/ai": "workspace:*",
     "@zoonk/auth": "workspace:*",
