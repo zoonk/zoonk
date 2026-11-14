@@ -663,10 +663,10 @@ private fun MistakeEntry(
             contextStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
         )
         RichText(snapshot.question, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
-        snapshot.answer?.let { savedAnswerText(it, words) }?.let {
+        snapshot.answer?.let { savedAnswerText(it, words, snapshot.format) }?.let {
             if (snapshot.format in WRITTEN_ANSWER_FORMATS) MistakeAnswer(it, right = false) else MistakeAnswer(itemLine(it), right = false)
         }
-        snapshot.correctAnswer?.let { savedAnswerText(it, words) }?.let {
+        snapshot.correctAnswer?.let { savedAnswerText(it, words, snapshot.format) }?.let {
             if (snapshot.format == "typed") MistakeAnswer(it, right = true) else MistakeAnswer(itemLine(it), right = true)
         }
         snapshot.explanation?.let {
