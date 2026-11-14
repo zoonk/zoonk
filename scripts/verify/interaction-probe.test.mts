@@ -3,15 +3,48 @@ import assert from "node:assert/strict";
 import { type Page } from "@playwright/test";
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import { readHooks, recordNextClick, takeRecordedClick } from "./keys-probe.mts";
-import { pressKeys } from "./keys.mts";
+import { type Shortcuts, pressKeys } from "./keys.mts";
+import { installPageHelpers } from "./page-helpers.mts";
 import { markActions } from "./states-probe.mts";
 import { readWords } from "./words.mts";
+
+const FIXTURE_URL = "https://fixture.test/";
+
+const SHORTCUTS: Shortcuts = {
+  isModShortcut: () => false,
+  keys: (name) => [name === "main" ? "Enter" : "Escape"],
+  shortcutKeys: () => "Enter",
+};
+
+function keyboardPage(perform?: (key: string) => void) {
+  const pressed: string[] = [];
+
+  const adapter = {
+    evaluate: async (run: (argument: unknown) => unknown, argument?: unknown) => run(argument),
+    keyboard: {
+      press: async (key: string) => {
+        pressed.push(key);
+        perform?.(key);
+      },
+    },
+    locator: () => ({ all: async () => [] }),
+    url: () => FIXTURE_URL,
+    waitForTimeout: () => Promise.resolve(),
+  };
+
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- This adapter implements the browser operations the keyboard-only walk uses.
+  const page = adapter as unknown as Page;
+
+  return { page, pressed };
+}
 
 const CONTROL_HEIGHT = 44;
 const OFFSCREEN_TOP = 1000;
 const PARAGRAPHS = 5;
 
 beforeEach(() => {
+  installPageHelpers();
+
   vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function box(
     this: HTMLElement,
   ) {
@@ -49,7 +82,7 @@ function textAboveAction({ position, top }: { position: string; top: number }) {
       <button class="group/button" data-enter="bound" data-top="${top}">Start</button>
     </footer></main>`;
 
-  return readWords(null).aboveAction;
+  return readWords().aboveAction;
 }
 
 describe("text before an available main action", () => {
@@ -108,33 +141,66 @@ describe("checking a main keycap after Enter", () => {
 
     const action = document.querySelector<HTMLButtonElement>("button");
     assert.ok(action);
-    const pressed: string[] = [];
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- This page adapter implements the browser operations this keyboard-only walk uses.
-    const page = {
-      evaluate: async (run: (argument: unknown) => unknown, argument?: unknown) => run(argument),
-      keyboard: {
-        press: async (key: string) => {
-          pressed.push(key);
 
-          if (key === "Enter") {
-            action.click();
-            action.remove();
-          }
-        },
-      },
-      locator: () => ({ all: async () => [] }),
-      url: () => "https://fixture.test/",
-      waitForTimeout: () => Promise.resolve(),
-    } as unknown as Page;
-
-    const findings = await pressKeys(page, "https://fixture.test/", {
-      isModShortcut: () => false,
-      keys: (name) => [name === "main" ? "Enter" : "Escape"],
-      shortcutKeys: () => "Enter",
+    const { page, pressed } = keyboardPage((key) => {
+      if (key === "Enter") {
+        action.click();
+        action.remove();
+      }
     });
+
+    const findings = await pressKeys(page, FIXTURE_URL, SHORTCUTS);
 
     assert.deepEqual(findings, []);
     assert.equal(pressed.filter((key) => key === "Enter").length, 1);
+  });
+
+  it.each([
+    'data-enter="host"',
+    'data-enter="bound" disabled',
+    'data-enter="bound" aria-disabled="true"',
+  ])(
+    "does not report a missing press for a host-owned or disabled action: %s",
+    async (attributes) => {
+      document.body.innerHTML = `<button ${attributes} aria-keyshortcuts="Enter">Continue
+      <kbd data-slot="shortcut-kbd" data-shortcut="main">⏎</kbd></button>`;
+
+      const { page } = keyboardPage();
+
+      assert.deepEqual(await pressKeys(page, FIXTURE_URL, SHORTCUTS), []);
+      assert.equal(readHooks().keycaps[0]?.canPress, false);
+    },
+  );
+
+  it("still reports an enabled bound main action that does not answer Enter", async () => {
+    document.body.innerHTML = `<button data-enter="bound" aria-keyshortcuts="Enter">Continue
+      <kbd data-slot="shortcut-kbd" data-shortcut="main">⏎</kbd></button>`;
+
+    const { page } = keyboardPage();
+    const findings = await pressKeys(page, FIXTURE_URL, SHORTCUTS);
+
+    assert.equal(
+      findings.some((finding) => finding.message.includes("Enter didn't press")),
+      true,
+    );
+
+    assert.equal(
+      findings.some((finding) => finding.message.includes("main key didn't press")),
+      true,
+    );
+
+    assert.equal(readHooks().keycaps[0]?.canPress, true);
+  });
+
+  it("still checks the announced key when its field owns the main action", async () => {
+    document.body.innerHTML = `<button data-enter="host" aria-keyshortcuts="Space">Continue
+      <kbd data-slot="shortcut-kbd" data-shortcut="main">⏎</kbd></button>`;
+
+    const { page } = keyboardPage();
+    const findings = await pressKeys(page, FIXTURE_URL, SHORTCUTS);
+
+    assert.equal(findings.length, 1);
+    assert.match(findings[0]?.message ?? "", /announces "Space" where its key is "Enter"/u);
   });
 });
 

@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
+import { installPageHelpers } from "./page-helpers.mts";
 import { readRoleFacts, roleFindings } from "./role-checks.mts";
 
 const CONTROL_HEIGHT = 44;
@@ -10,6 +11,7 @@ function value(this: HTMLElement) {
 }
 
 beforeEach(() => {
+  installPageHelpers();
   const box = new DOMRect(0, 0, 100, CONTROL_HEIGHT);
   vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue(box);
 

@@ -1,5 +1,5 @@
 import { defineRule } from "@oxlint/plugins";
-import { classSource, elementName, elementProp, isImportedName } from "../utils/jsx.js";
+import { classSource, elementName, elementProp } from "../utils/jsx.js";
 
 const CONTROL = /^Button$|(?:Link|Trigger)$/u;
 const PULL = /(?:^|[\s"'`])(?:[a-z0-9-]+:)*-m[lrxse]-/u;
@@ -41,11 +41,6 @@ function iconButton(node) {
 export default defineRule({
   createOnce(context) {
     return {
-      Identifier(node) {
-        if (node.name === "TASK_HEADER_ICON_CLASS" && !isImportedName(node)) {
-          context.report({ messageId: "edge", node });
-        }
-      },
       JSXElement(node) {
         const rendered = elementProp(node.openingElement, "render");
 

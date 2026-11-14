@@ -57,12 +57,3 @@ function countNode(node, count) {
       return 0;
   }
 }
-
-/** An import's `{ name }` holds the name twice; count it once, by the local binding. */
-export function isImportedName(node) {
-  return (
-    node.parent?.type === "ImportSpecifier" &&
-    node.parent.imported === node &&
-    node.parent.local !== node
-  );
-}
