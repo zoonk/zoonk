@@ -1,11 +1,14 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { useComesBackLineNow, useLimitSentence } from "../_components/comes-back-words";
-import { type LimitWords } from "../_components/help-limit-notice";
+import {
+  type CapWords,
+  type LimitText,
+  toCapWords,
+  useLimitText,
+} from "../_components/comes-back-words";
 import {
   type GoalLimit,
-  type GoalLimitReason,
   type StartUnderstandingOutcome,
   type UsageCap,
 } from "./onboarding-actions";
@@ -14,13 +17,7 @@ import {
  * Its own namespace (`goalErrors`), which apps ship on every page, since a goal starts from public
  * pages too.
  */
-export type GoalError = { limit?: GoalLimit; message: string; needsAccount: boolean };
-
-const ACCOUNT_REASONS = new Set<GoalLimitReason>(["guest", "signUpRequired"]);
-
-export function needsAccountFor(reason: GoalLimitReason): boolean {
-  return ACCOUNT_REASONS.has(reason);
-}
+export type GoalError = { limit?: GoalLimit; message: LimitText; needsAccount: boolean };
 
 function useNewGoalTitles() {
   const t = useExtracted("goalErrors");
@@ -37,16 +34,10 @@ function useNewGoalTitles() {
  */
 export function useGoalLimitWords() {
   const t = useExtracted("goalErrors");
-  const comesBack = useComesBackLineNow();
   const newGoals = useNewGoalTitles();
 
-  return ({ availableAt = null, reason }: GoalLimit): LimitWords => {
-    const rolling = {
-      availableAt,
-      period: "rolling30Days",
-      status: "limitReached",
-      tier: "free",
-    } as const;
+  return ({ availableAt = null, reason }: GoalLimit): CapWords => {
+    const rolling = { availableAt, period: "rolling30Days", tier: "free" } as const;
 
     switch (reason) {
       case "activeGoals":
@@ -56,14 +47,11 @@ export function useGoalLimitWords() {
         };
       case "dailyExplanations":
         return {
-          line: comesBack({ period: "day", status: "limitReached", tier: "free" }),
+          cap: { period: "day", tier: "free" },
           title: t("No more quick explanations today"),
         };
       case "dailyGoals":
-        return {
-          line: comesBack({ period: "day", status: "limitReached", tier: "plus" }),
-          title: newGoals.day,
-        };
+        return { cap: { period: "day", tier: "plus" }, title: newGoals.day };
       case "guest":
         return {
           line: t(
@@ -71,9 +59,9 @@ export function useGoalLimitWords() {
           ),
         };
       case "monthlyExplanations":
-        return { line: comesBack(rolling), title: t("You've used your quick explanations") };
+        return { cap: rolling, title: t("You've used your quick explanations") };
       case "monthlyGoals":
-        return { line: comesBack(rolling), title: newGoals.rolling };
+        return { cap: rolling, title: newGoals.rolling };
       case "signUpRequired":
         return { line: t("This needs a free account.") };
       case "slowDown":
@@ -84,43 +72,23 @@ export function useGoalLimitWords() {
   };
 }
 
-export function useGoalLimitMessage() {
-  const words = useGoalLimitWords();
-  const sentence = useLimitSentence();
-
-  return (limit: GoalLimit) => sentence(words(limit));
-}
-
 function useUnderstandingLimit() {
   const t = useExtracted("goalErrors");
-  const comesBack = useComesBackLineNow();
-  const sentence = useLimitSentence();
   const newGoals = useNewGoalTitles();
 
-  return ({ availableAt = null, period, tier }: UsageCap): GoalError => {
-    if (tier === "guest") {
-      return { message: t("No more new goals today without an account."), needsAccount: true };
-    }
-
-    const limit =
-      period === "rolling30Days"
-        ? ({ availableAt, period, status: "limitReached", tier } as const)
-        : ({ period, status: "limitReached", tier } as const);
-
-    return {
-      message: sentence({
-        line: comesBack(limit),
-        title: period === "rolling30Days" ? newGoals.rolling : newGoals.day,
-      }),
-      needsAccount: false,
-    };
-  };
+  return (cap: UsageCap): GoalError =>
+    cap.tier === "guest"
+      ? { message: t("No more new goals today without an account."), needsAccount: true }
+      : {
+          message: toCapWords(cap, { day: newGoals.day, rolling: newGoals.rolling }),
+          needsAccount: false,
+        };
 }
 
 export function useStartError() {
   const t = useExtracted("goalErrors");
   const limitError = useUnderstandingLimit();
-  const goalLimitMessage = useGoalLimitMessage();
+  const goalLimitWords = useGoalLimitWords();
 
   return (
     outcome: Exclude<StartUnderstandingOutcome, { status: "started" | "startFailed" }>,
@@ -130,11 +98,11 @@ export function useStartError() {
     }
 
     if (outcome.status === "needsAccount") {
-      return { message: goalLimitMessage({ reason: "guest" }), needsAccount: true };
+      return { message: goalLimitWords({ reason: "guest" }), needsAccount: true };
     }
 
     if (outcome.status === "signUpRequired") {
-      return { message: goalLimitMessage({ reason: "signUpRequired" }), needsAccount: true };
+      return { message: goalLimitWords({ reason: "signUpRequired" }), needsAccount: true };
     }
 
     return {
@@ -145,4 +113,9 @@ export function useStartError() {
       needsAccount: false,
     };
   };
+}
+
+export function useGoalLimitText(limit: GoalLimit | null): string {
+  const words = useGoalLimitWords();
+  return useLimitText(limit ? words(limit) : null);
 }

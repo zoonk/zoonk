@@ -35,6 +35,20 @@ export function toOpeningDay({
   return daysAway === 1 ? "tomorrow" : day.toISOString().slice(0, "YYYY-MM-DD".length);
 }
 
+/**
+ * The day a render names before the browser's clock is read: the instant's own day in UTC. The
+ * server and the first hydration both give it, so the two renders agree; the browser then corrects it.
+ */
+export function toFirstRenderDay(availableAt: string | null): OpeningDay | null {
+  const opens = availableAt ? new Date(availableAt) : null;
+
+  if (!opens || Number.isNaN(opens.getTime())) {
+    return null;
+  }
+
+  return opens.toISOString().slice(0, "YYYY-MM-DD".length);
+}
+
 function nextLocalMidnight(now: number): number {
   const midnight = new Date(now);
   midnight.setHours(24, 0, 0, 0);

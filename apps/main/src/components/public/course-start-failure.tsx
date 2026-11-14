@@ -2,7 +2,7 @@
 
 import { Link, getPathname } from "@/i18n/navigation";
 import { useAppLocale } from "@zoonk/learn/locale";
-import { useGoalLimitMessage } from "@zoonk/learn/onboarding/goal-errors";
+import { useGoalLimitText } from "@zoonk/learn/onboarding/goal-errors";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
@@ -39,15 +39,17 @@ function FailureAction({
     );
   }
 
-  if (remedy === "upgrade") {
+  if (remedy === "subscribe" || remedy === "upgrade") {
     return (
       <>
         <Link className={className} href="/subscription" prefetch={false}>
           {t("Subscribe")}
         </Link>
-        <Link className={secondaryClassName} href="/plan" prefetch>
-          {t("Go to your Plan")}
-        </Link>
+        {remedy === "upgrade" && (
+          <Link className={secondaryClassName} href="/plan" prefetch>
+            {t("Go to your Plan")}
+          </Link>
+        )}
       </>
     );
   }
@@ -77,7 +79,7 @@ export function CourseStartFailureNote({
   secondaryActionClassName?: string;
 }) {
   const t = useExtracted();
-  const limitMessage = useGoalLimitMessage();
+  const limitText = useGoalLimitText(failure?.status === "limitReached" ? failure : null);
 
   if (!failure) {
     return null;
@@ -90,9 +92,7 @@ export function CourseStartFailureNote({
       role="alert"
     >
       <p className="text-muted-foreground text-sm text-pretty">
-        {failure.status === "limitReached"
-          ? limitMessage(failure)
-          : t("We couldn't start this course.")}
+        {failure.status === "limitReached" ? limitText : t("We couldn't start this course.")}
       </p>
 
       <FailureAction

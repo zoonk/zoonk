@@ -20,7 +20,7 @@ import {
 } from "../../_components/page";
 import { WritingWait } from "../../generation/writing-wait";
 import { CallLimitReason } from "../conversation/call-limit-message";
-import { type LimitedCallStart, useCallStart } from "../conversation/use-call-start";
+import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
 import { TaskRow, getTaskRowId } from "./speaking-task-row";
 
 function useOpenTask(openTask: string | null) {
@@ -42,7 +42,7 @@ export function SpeakingPaperSection({
   resultHref,
   title,
 }: {
-  onStart: (task: string) => Promise<LimitedCallStart>;
+  onStart: (task: string) => Promise<CallStartOutcome>;
   openTask?: string | null;
   paper: SpeakingPaperView;
   resultHref: (conversationId: string) => string;

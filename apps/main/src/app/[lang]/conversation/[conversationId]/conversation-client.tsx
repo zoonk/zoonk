@@ -2,7 +2,7 @@
 
 import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useRouter } from "@/i18n/navigation";
-import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
+import { useOpenLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
 import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import {
@@ -70,7 +70,7 @@ export function ConversationClient({
 }) {
   const router = useRouter();
   const locale = useAppLocale();
-  const startConversation = useStartLanguageConversation(fromExam ? { from: "exam" } : {});
+  const startConversation = useOpenLanguageConversation(fromExam ? { from: "exam" } : {});
   const { examTask, goalId, id, kind } = conversation;
   const examTaskKey = examTask && examTask.sectionId === null ? examTask.task.key : null;
 

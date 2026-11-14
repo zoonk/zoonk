@@ -10,7 +10,7 @@ import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { getCourseHref } from "@/data/courses/course-href";
 import { useRouter } from "@/i18n/navigation";
-import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
+import { useOpenLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { getLearnerGeneration, mergeLearnerSummary } from "@/lib/learner/learner-store";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { getGoalStartHref } from "@/lib/public/public-hrefs";
@@ -36,7 +36,7 @@ const TOOL_HREFS: TutorCardActions["tools"]["hrefs"] = {
 export function useTutorCardActions(goalId: string): TutorCardActions {
   const router = useRouter();
   const startTestOut = useStartTestOut();
-  const startConversation = useStartLanguageConversation();
+  const startConversation = useOpenLanguageConversation();
   const learner = useFrameLearner();
   const summary = learner.status === "ready" ? learner.summary : null;
   const goals = summary?.goals ?? null;

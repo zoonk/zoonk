@@ -5,7 +5,12 @@ import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { useCallback, useSyncExternalStore } from "react";
 import { useFormatIsoDate } from "../_utils/iso-date";
-import { type OpeningDay, toOpeningDay, watchOpeningClock } from "../_utils/opening-day";
+import {
+  type OpeningDay,
+  toFirstRenderDay,
+  toOpeningDay,
+  watchOpeningClock,
+} from "../_utils/opening-day";
 import {
   type FreeLessonsUsed,
   type HelpLimit,
@@ -29,11 +34,7 @@ function watchOpening(availableAt: string | null, notify: () => void) {
   };
 }
 
-/**
- * The day follows the clock while the screen is open, so a passed instant stops being promised.
- * The server doesn't know the learner's time zone, so it draws the day in UTC and the browser
- * corrects it.
- */
+/** The day follows the clock while the screen is open, so a passed instant stops being promised. */
 export function useOpeningDay(availableAt: string | null): OpeningDay | null {
   const subscribe = useCallback(
     (notify: () => void) => watchOpening(availableAt, notify),
@@ -43,7 +44,7 @@ export function useOpeningDay(availableAt: string | null): OpeningDay | null {
   return useSyncExternalStore(
     subscribe,
     () => toOpeningDay({ availableAt, now: new Date(), timeZone: getLocalTimeZone() }),
-    () => toOpeningDay({ availableAt, now: new Date(), timeZone: "UTC" }),
+    () => toFirstRenderDay(availableAt),
   );
 }
 
@@ -165,22 +166,7 @@ export function useComesBackLine(limit: HelpLimit): string | undefined {
   return lineFor(limit, useOpeningDay(isRollingCap(limit) ? limit.availableAt : null));
 }
 
-/** The same line, read once when a refusal comes back, for words that are written as it arrives. */
-export function useComesBackLineNow() {
-  const lineFor = useLineFor();
-
-  return (limit: HelpLimit): string | undefined =>
-    lineFor(
-      limit,
-      toOpeningDay({
-        availableAt: isRollingCap(limit) ? limit.availableAt : null,
-        now: new Date(),
-        timeZone: getLocalTimeZone(),
-      }),
-    );
-}
-
-export function useLimitSentence() {
+function useLimitSentence() {
   const t = useExtracted("limits");
 
   return ({ line, title }: LimitWords): string => {
@@ -253,30 +239,49 @@ export function useMapLessonsWords(limit: MindMapLimit): LimitWords | null {
   };
 }
 
-type RefusedCap = {
+export type RefusedCap = {
   availableAt?: string | null;
   period: "day" | "rolling30Days" | "total";
   tier: EntitlementTier;
 };
 
-export function useCapSentence() {
-  const comesBack = useComesBackLineNow();
+/** A cap's words kept as the refusal brought them: with `cap`, the line is said when it shows. */
+export type CapWords = LimitWords & { cap?: RefusedCap };
+
+/** A message that stays on screen: plain words, or a cap's, whose line follows the clock. */
+export type LimitText = string | CapWords;
+
+function toHelpLimit({ availableAt = null, period, tier }: RefusedCap): HelpLimit {
+  return period === "rolling30Days"
+    ? { availableAt, period, status: "limitReached", tier }
+    : { period, status: "limitReached", tier };
+}
+
+export function toCapWords(cap: RefusedCap, titles: { day: string; rolling: string }): CapWords {
+  return { cap, title: cap.period === "rolling30Days" ? titles.rolling : titles.day };
+}
+
+export function useLiveWords(words: CapWords | null): LimitWords {
+  const lineFor = useLineFor();
+  const limit = words?.cap ? toHelpLimit(words.cap) : null;
+  const opensOn = useOpeningDay(limit && isRollingCap(limit) ? limit.availableAt : null);
+
+  if (!words) {
+    return {};
+  }
+
+  return { line: limit ? lineFor(limit, opensOn) : words.line, title: words.title };
+}
+
+export function useLimitText(text: LimitText | null | undefined): string {
   const sentence = useLimitSentence();
+  const words = useLiveWords(text && typeof text === "object" ? text : null);
 
-  return (
-    { availableAt = null, period, tier }: RefusedCap,
-    titles: { day: string; rolling: string },
-  ): string => {
-    const limit: HelpLimit =
-      period === "rolling30Days"
-        ? { availableAt, period, status: "limitReached", tier }
-        : { period, status: "limitReached", tier };
+  if (!text) {
+    return "";
+  }
 
-    return sentence({
-      line: comesBack(limit),
-      title: period === "rolling30Days" ? titles.rolling : titles.day,
-    });
-  };
+  return typeof text === "string" ? text : sentence(words);
 }
 
 /**

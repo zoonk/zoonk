@@ -1,7 +1,7 @@
 "use client";
 
 import { isPlusGoalLimit } from "../entry/goal-limit-notice";
-import { type GoalError, useGoalLimitMessage } from "../goal-errors";
+import { type GoalError, useGoalLimitWords } from "../goal-errors";
 import { type GoalLimit } from "../onboarding-actions";
 import { type UnderstandingDraft } from "./understanding-draft";
 
@@ -44,11 +44,11 @@ export function useCardLimit({
   goalLimit: GoalLimit | null;
   hasAccount: boolean;
 }): { cardError: GoalError | null; plusLimit: GoalLimit | null } {
-  const goalLimitMessage = useGoalLimitMessage();
+  const goalLimitWords = useGoalLimitWords();
 
   const cardError: GoalError | null =
     draft.goals.length === 0 && !hasAccount
-      ? { limit: GUEST, message: goalLimitMessage(GUEST), needsAccount: true }
+      ? { limit: GUEST, message: goalLimitWords(GUEST), needsAccount: true }
       : error;
 
   return {

@@ -10,6 +10,7 @@ import {
   UserPlusIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useLimitText } from "../../_components/comes-back-words";
 import { ChangeSaveError } from "../../_components/save-error";
 import { useSentenceSpace } from "../../_utils/locale";
 import { type GoalError } from "../goal-errors";
@@ -47,6 +48,8 @@ export function SignUpLink({ href }: { href: string }) {
 
 /** What starting a goal couldn't do. The way on (an account to create) is `GoalActions`' or the alert's. */
 export function GoalErrorMessage({ error }: { error: GoalError | null }) {
+  const message = useLimitText(error?.message);
+
   if (!error) {
     return null;
   }
@@ -61,10 +64,10 @@ export function GoalErrorMessage({ error }: { error: GoalError | null }) {
 
   return error.needsAccount ? (
     <p className="text-base text-pretty" role="alert">
-      {error.message}
+      {message}
     </p>
   ) : (
-    <ChangeSaveError>{error.message}</ChangeSaveError>
+    <ChangeSaveError>{message}</ChangeSaveError>
   );
 }
 

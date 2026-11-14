@@ -6,11 +6,9 @@ import { type ContentWriting } from "../../generation/writing-wait";
 
 /**
  * True once the call opens, false when it didn't start, `"paused"` when calls are paused for
- * everyone, or the run writing the call when it isn't written yet.
+ * everyone, the run writing the call when it isn't written yet, or the cap that refused it.
  */
-export type CallStartOutcome = boolean | "paused" | { generationId: string };
-
-export type LimitedCallStart = CallStartOutcome | { limit: CallLimit };
+export type CallStartOutcome = boolean | "paused" | { generationId: string } | { limit: CallLimit };
 
 type CallStartState =
   | { generationId: string; status: "writing" }
@@ -25,7 +23,7 @@ function settle({
   started,
 }: {
   afterWrite: boolean;
-  started: LimitedCallStart;
+  started: CallStartOutcome;
 }): CallStartState {
   if (typeof started === "object" && "limit" in started) {
     return { limit: started.limit, status: "limited" };
@@ -46,7 +44,7 @@ function settle({
   return { status: "failed" };
 }
 
-export function useCallStart({ onStart }: { onStart: () => Promise<LimitedCallStart> }) {
+export function useCallStart({ onStart }: { onStart: () => Promise<CallStartOutcome> }) {
   const [state, setState] = useState<CallStartState>(IDLE);
 
   // The router keeps the card's page while its call runs, so back on it that start is over; one
