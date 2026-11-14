@@ -37,7 +37,7 @@ export function useExamDayText() {
   const formatTimeOfDay = useFormatTimeOfDay();
 
   return (day: ExamDay): string => {
-    const date = `${formatDate(day.date, "weekday")}, ${formatDate(day.date, "longYear")}`;
+    const date = formatDate(day.date, "weekdayLongYear");
 
     if (!day.startTime) {
       return date;
@@ -48,9 +48,7 @@ export function useExamDayText() {
 }
 
 export function useExamDayDate() {
-  const formatDate = useFormatIsoDate();
   const formatPlanDate = useFormatPlanDate();
 
-  return (isoDate: string): string =>
-    `${formatDate(isoDate, "weekdayShort")}, ${formatPlanDate(isoDate)}`;
+  return (isoDate: string): string => formatPlanDate(isoDate, { weekday: true });
 }

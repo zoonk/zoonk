@@ -88,10 +88,13 @@ function FitOfferSuggestion({ item, offer }: { item: SlotItem; offer: FitOffer }
         <>
           <PlanEffectDiff dateKind={dateKind} effect={offer.effect} said="lessonsAdded" />
 
-          <SuggestionActions>
-            <SuggestionAction action={accept} busy={isPending}>
-              {t("Add to my plan")}
-            </SuggestionAction>
+          <SuggestionActions
+            main={
+              <SuggestionAction action={accept} busy={isPending}>
+                {t("Add to my plan")}
+              </SuggestionAction>
+            }
+          >
             <SuggestionAction onClick={() => dismiss(item.key)} variant="outline">
               {t("Not now")}
             </SuggestionAction>
