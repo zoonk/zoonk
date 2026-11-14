@@ -209,7 +209,7 @@ msgid "Today"
 msgstr "今日"
 
 #: src/_components/create-account-link.tsx
-#: src/language/conversation/call-problem.tsx
+#: src/_components/subscribe-gate.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -718,6 +718,7 @@ msgstr "戻る"
 
 #: src/_components/subscribe-gate.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/language/unit/practice-conversation.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "登録する"
