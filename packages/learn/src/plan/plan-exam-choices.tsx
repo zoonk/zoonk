@@ -12,6 +12,7 @@ import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
+  SuggestionChoices,
   SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
@@ -178,7 +179,7 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
                 pending={isPending}
               />
             ) : (
-              <SuggestionActions className="*:min-w-0 *:flex-1">
+              <SuggestionChoices>
                 {choice.options.map((option) => (
                   <SuggestionAction
                     action={() => choose({ group: choice.group, subjects: [option.name] })}
@@ -189,7 +190,7 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
                     {option.shortName ?? option.name}
                   </SuggestionAction>
                 ))}
-              </SuggestionActions>
+              </SuggestionChoices>
             )}
           </>
         )}

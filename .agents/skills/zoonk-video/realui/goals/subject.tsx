@@ -1,4 +1,3 @@
-// An exam subject's page (/plan/[subject]): its topics, the often-asked ones tagged "Appears a lot".
 import { SubjectScreen } from "@repo/packages/learn/src/syllabus/subject-screen.tsx";
 import { story, type Lang } from "../story";
 import { examSyllabus } from "./plan";
