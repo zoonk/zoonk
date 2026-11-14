@@ -5,10 +5,11 @@ import { BAR_PADDING_CLASS, TASK_ASIDE_PLACE_CLASS } from "@zoonk/learn/task-lay
 import { Button } from "@zoonk/ui/components/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeftIcon, ChevronRightIcon, MessageCircleQuestionIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useMemo, useRef } from "react";
 import { getLessonFocusTarget } from "../lesson/_utils/lesson-focus";
+import { AskTutorFace } from "./ask-tutor-face";
 import { QuestionComposer } from "./lesson-question-composer";
 import { isAboutCheckedAnswer } from "./lesson-question-context";
 import { LessonQuestionNavigationContext } from "./lesson-question-navigation";
@@ -262,13 +263,7 @@ export function TutorAskButton() {
           />
         }
       >
-        {buddy.identity.avatar ? (
-          <span aria-hidden="true" className="flex size-6 items-center justify-center *:size-6!">
-            {buddy.identity.avatar}
-          </span>
-        ) : (
-          <MessageCircleQuestionIcon aria-hidden="true" />
-        )}
+        <AskTutorFace identity={buddy.identity} />
       </TooltipTrigger>
       <TooltipContent>{label}</TooltipContent>
     </Tooltip>
