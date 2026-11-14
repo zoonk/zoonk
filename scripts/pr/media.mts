@@ -136,6 +136,23 @@ export async function writeManifest(folder: string, items: ManifestItem[]): Prom
   await writeFile(join(folder, MANIFEST), `${JSON.stringify(items, null, 2)}\n`);
 }
 
+/**
+ * A picture registered again with the same bytes keeps its record, read and findings included,
+ * and a capture's record is never replaced by one made by hand.
+ */
+export async function registerItems(folder: string, added: ManifestItem[]): Promise<void> {
+  const existing = (await readManifest(folder)) ?? [];
+  const byFile = new Map(existing.map((item) => [item.file, item]));
+
+  const replacing = added.filter((item) => {
+    const earlier = byFile.get(item.file);
+    return !earlier || (earlier.sha256 !== item.sha256 && !isRecorded(earlier));
+  });
+
+  const files = new Set(replacing.map((item) => item.file));
+  await writeManifest(folder, [...existing.filter((item) => !files.has(item.file)), ...replacing]);
+}
+
 /** A read counts only with the name of whoever read. */
 export function readOf(item: ManifestItem): Read | undefined {
   const read = "read" in item ? item.read : undefined;
