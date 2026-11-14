@@ -219,6 +219,36 @@ function hasExamplesKeyword(value: unknown, parentKey?: string): boolean {
 }
 
 describe("OpenAPI document", () => {
+  it("omits expired trial fields and keeps actual subscription entitlements", () => {
+    const document = documentContractSchema.parse(openAPIDocument);
+    const { schemas } = document.components;
+    expect(schemas.Plan).not.toHaveProperty("properties.access.properties.freeUntil");
+    expect(schemas.Plan).toHaveProperty("properties.access.properties.mocksRequirePlus");
+    expect(schemas.AllowanceResponse).not.toHaveProperty(
+      "properties.examPrep.properties.studyDays",
+    );
+    expect(schemas.AllowanceResponse).toHaveProperty(
+      "properties.examPrep.properties.includesMockExams",
+    );
+    expect(schemas.FreePlan).not.toHaveProperty("properties.examPrepDays");
+    expect(schemas.FreePlan).not.toHaveProperty("properties.lessonsPerDay");
+    expect(schemas.StudySession).not.toHaveProperty("properties.examAccess.properties.trialEnded");
+    expect(schemas.StudySession).not.toHaveProperty("properties.plusLessons");
+    expect(schemas.ChapterLesson).not.toHaveProperty("properties.plusRequired");
+    expect(schemas.GoalChapter).not.toHaveProperty("properties.testOut.properties.plusRequired");
+    expect(schemas.LessonMindMap).not.toHaveProperty("properties.locked");
+    expect(schemas.LessonMapGroup).not.toHaveProperty("properties.locked");
+    const testOut = document.paths["/goals/{goalId}/chapters/{chapterId}/test-out"];
+    expect(testOut?.get?.responses).not.toHaveProperty("402");
+    expect(testOut?.post?.responses).not.toHaveProperty("402");
+    expect(document.paths["/goals/{goalId}/mind-maps/saved"]?.post?.responses).not.toHaveProperty(
+      "402",
+    );
+    expect(
+      document.paths["/study-sessions/{sessionId}/catch-up-blocks"]?.post?.responses,
+    ).not.toHaveProperty("402");
+  });
+
   it("does not expose a reminder phone deletion operation", () => {
     expect(openAPIDocument.paths).not.toHaveProperty("/me/study-reminder/phone/{token}");
     expect(JSON.stringify(openAPIDocument)).not.toContain("removeCurrentUserStudyReminderPhone");

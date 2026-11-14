@@ -31,7 +31,6 @@ type ChapterTestOut = {
 export type ChapterTestOutResult =
   | { status: "notFound" }
   | { status: "nothingToSkip" }
-  | { status: "plusRequired" }
   | { status: "ready"; testOut: ChapterTestOut }
   | { status: "unauthorized" };
 

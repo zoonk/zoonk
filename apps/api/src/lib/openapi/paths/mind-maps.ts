@@ -128,7 +128,7 @@ export const mindMapPaths = {
   "/goals/{goalId}/mind-maps": {
     get: {
       description:
-        "A goal's Mind maps page. `chapters`: every chapter of the goal's scope that can have a map, finished or not (the plan's, and for a goal that follows a course every chapter of that course), in syllabus order, with its subject (an exam's notice subject or the plan's module) to group by, its number, whether the learner saved it, and its map's status, picture (`image.thumbnailUrl` for lists) and outline, so the chapter maps open with no further request. A chapter without one yet is `available` (POST `/goals/{goalId}/chapters/{chapterId}/mind-map/generations` makes it), `writingLessons`, `drawing`, `failed` or `plusRequired`. Topics without a chapter yet and a language's units aren't listed. `lessonGroups`: each chapter's lesson maps, how many and which open (`GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` reads them). `saved`: the Saved tab. `createOffer`: what `POST /goals/{goalId}/mind-maps/generations` would start now. `firstTab`: the tab to open first. While a map is `drawing` GET this again every 5 seconds, and every 15 while one is only `writingLessons`.",
+        "A goal's Mind maps page. `chapters`: every chapter of the goal's scope that can have a map, finished or not (the plan's, and for a goal that follows a course every chapter of that course), in syllabus order, with its subject (an exam's notice subject or the plan's module) to group by, its number, whether the learner saved it, and its map's status, picture (`image.thumbnailUrl` for lists) and outline, so the chapter maps open with no further request. A chapter without one yet is `available` (POST `/goals/{goalId}/chapters/{chapterId}/mind-map/generations` makes it), `writingLessons`, `drawing`, or `failed`. Topics without a chapter yet and a language's units aren't listed. `lessonGroups`: each chapter's lesson maps, how many and which open (`GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` reads them). `saved`: the Saved tab. `createOffer`: what `POST /goals/{goalId}/mind-maps/generations` would start now. `firstTab`: the tab to open first. While a map is `drawing` GET this again every 5 seconds, and every 15 while one is only `writingLessons`.",
       operationId: "listGoalMindMaps",
       requestParams: { path: goalPathParamsSchema },
       responses: {
@@ -146,7 +146,7 @@ export const mindMapPaths = {
   "/goals/{goalId}/mind-maps/generations": {
     post: {
       description:
-        "Create all chapter maps, when the learner asks for it (never on a screen view). Starts the map of every chapter of the goal's scope that has no map ready or on its way (failed ones included), whose lessons are all written and that isn't `plusRequired`, in course order, as far as the learner's allowance goes; it never writes lessons, so a chapter that still needs them waits for its own `POST .../mind-map/generations`. Each new map counts once toward the learner's mind maps (`resource: mindMap`); a map they claimed before, such as a failed one, counts nothing again, and a map another learner is making is joined free. When the allowance runs out partway, the chapters before it still start and the rest are `unstarted` with reason `allowance` and `stop` says why; nothing is refused as a whole. Always 202: follow progress with `GET /goals/{goalId}/mind-maps`. Sending it again starts only what's still missing.",
+        "Create all chapter maps, when the learner asks for it (never on a screen view). Starts the map of every chapter of the goal's scope that has no map ready or on its way (failed ones included), whose lessons are all written, in course order, as far as the learner's allowance goes; it never writes lessons, so a chapter that still needs them waits for its own `POST .../mind-map/generations`. Each new map counts once toward the learner's mind maps (`resource: mindMap`); a map they claimed before, such as a failed one, counts nothing again, and a map another learner is making is joined free. When the allowance runs out partway, the chapters before it still start and the rest are `unstarted` with reason `allowance` and `stop` says why; nothing is refused as a whole. Always 202: follow progress with `GET /goals/{goalId}/mind-maps`. Sending it again starts only what's still missing.",
       operationId: "createGoalMindMapGenerations",
       requestParams: { path: goalPathParamsSchema },
       responses: {
@@ -164,7 +164,7 @@ export const mindMapPaths = {
   "/goals/{goalId}/mind-maps/saved": {
     post: {
       description:
-        "Saves a map to study again (`saved: true`) or removes it (`saved: false`). It's the state the learner wants, so sending it again changes nothing. Saving needs a map the learner can open now in this goal's scope: a `ready` chapter map, or a lesson map from `GET .../lesson-maps` that isn't locked; otherwise 404, or 402 `PLUS_REQUIRED` for a locked one. Removing needs only the learner's own save, from any goal. Saves belong to the learner's account and are free on every plan; a save never opens a map the learner couldn't open.",
+        "Saves a map to study again (`saved: true`) or removes it (`saved: false`). It's the state the learner wants, so sending it again changes nothing. Saving needs a map the learner can open now in this goal's scope: a `ready` chapter map, or a lesson map from `GET .../lesson-maps`; otherwise 404. Removing needs only the learner's own save, from any goal. Saves belong to the learner's account and are free on every plan; a save never opens a map the learner couldn't open.",
       operationId: "saveMindMap",
       requestBody: {
         content: { "application/json": { schema: saveMindMapSchema } },
@@ -177,7 +177,6 @@ export const mindMapPaths = {
           description: "The map's saved state now",
         },
         ...readErrors,
-        "402": { ...paymentRequiredResponse, description: "The map is unavailable" },
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Save or remove a map",

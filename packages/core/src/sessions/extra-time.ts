@@ -2,7 +2,7 @@ import { type StudyBlockStatus } from "@zoonk/db";
 
 const EXTRA_BLOCK_MINUTES = 10;
 
-export type ExtraTimeReason = "dayOver" | "nothingToStudy" | "plusRequired" | "sessionNotFinished";
+export type ExtraTimeReason = "dayOver" | "nothingToStudy" | "sessionNotFinished";
 
 type ExtraLesson = { minutes: number; title: string };
 

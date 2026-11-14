@@ -45,7 +45,6 @@ export type SubmitChapterTestOutResult =
   | { status: "invalidItem" }
   | { status: "notFound" }
   | { status: "nothingToSkip" }
-  | { status: "plusRequired" }
   | { status: "unauthorized" };
 
 type GradedAnswer = { answer: ItemAnswerInput; item: ChoiceItem } & ReturnType<

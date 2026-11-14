@@ -17,11 +17,7 @@ function today(overrides: Partial<Today> = {}): Today {
     focusTest: null,
     insight: null,
     planChange: null,
-    session: {
-      blocks: [{ status: "pending" }],
-      examAccess: { trialEnded: false },
-      freshStart: null,
-    },
+    session: { blocks: [{ status: "pending" }], freshStart: null },
     studiedToday: false,
     suggestedGoal: null,
     ...overrides,
@@ -40,7 +36,6 @@ function pick({
 
 const welcomeBack = (overrides: Partial<Today["session"]> = {}): Today["session"] => ({
   blocks: [{ status: "pending" }],
-  examAccess: { trialEnded: false },
   freshStart: "welcomeBack",
   ...overrides,
 });
@@ -121,7 +116,7 @@ describe(pickTodayNotice, () => {
   });
 
   it("keeps a change already made, a tip and a language's practice in their priority order", () => {
-    const ordinarySession = welcomeBack({ examAccess: { trialEnded: false }, freshStart: null });
+    const ordinarySession = welcomeBack({ freshStart: null });
 
     expect(
       pick({
@@ -152,7 +147,7 @@ describe(pickTodayNotice, () => {
     expect(pick({ view: { ...explained, planChange: planChange("proposed") } })).toBe("planChange");
   });
 
-  it("holds everything but the exam's own days and the ended free week while the day welcomes the learner back", () => {
+  it("holds everything but the exam's own days while the day welcomes the learner back", () => {
     const waiting = {
       examChoice: { group: "Língua Estrangeira" },
       insight: insightChange("proposed"),

@@ -43,7 +43,7 @@ export type LessonLimit =
 
 /** `resource` says what ran out: the maps, the lessons a map writes first, or the day's AI spend. */
 export type MindMapLimit = (CalendarLimit | FreeLessonsUsed) & {
-  resource?: "aiSpend" | "generatedLessons" | "lessonStart" | "mindMap";
+  resource?: "aiSpend" | "chapterLessons" | "generatedLessons" | "lessonStart" | "mindMap";
 };
 
 export type OutlineLimit = CalendarLimit;

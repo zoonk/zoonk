@@ -103,7 +103,7 @@ const allowanceLimitSchema = z
         .datetime()
         .meta({
           description:
-            "The instant this request fits the rolling allowance, computed from recorded starts before the request; null for a chapterLessons request-size refusal",
+            "The instant this request fits the rolling allowance, computed from recorded starts before the request",
         }),
       period: z.literal("rolling30Days"),
     }),

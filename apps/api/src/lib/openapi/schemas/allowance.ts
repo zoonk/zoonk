@@ -76,10 +76,6 @@ export const allowanceResponseSchema = z
     examPrep: z
       .object({
         includesMockExams: z.boolean().meta({ description: "Whether mock exams are included" }),
-        studyDays: limitSchema.meta({
-          description:
-            "Always null. Exam goals use the shared lesson allowance without time-based expiry",
-        }),
       })
       .meta({ description: "What exam prep the plan includes" }),
     generatedLessons: z
