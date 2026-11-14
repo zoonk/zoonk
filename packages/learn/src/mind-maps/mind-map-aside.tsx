@@ -14,6 +14,7 @@ import { MindMapLimitNotice } from "../_components/help-limit-notice";
 import { KindDot } from "../_components/kind-tile";
 import { StatusRegion } from "../_components/status-region";
 import { Surface } from "../_components/surface";
+import { useHeldSlot } from "../_utils/use-held-slot";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { useStateLines } from "./mind-map-copy";
@@ -116,13 +117,14 @@ function MapRequest({
   const routes = useLearnRoutes();
   const { create, isPending, retry } = request;
   const { limit, shown } = useLiveRefusal(request, view.status);
+  const slot = useHeldSlot<HTMLDivElement>(limit !== null && !isPending);
   const { hint, line } = useStateLines({ place: "chapter", plus, shown, view });
   const working = shown === "drawing" || shown === "writingLessons";
   const failure = shown === "failed" || shown === "unreachable";
   const canCreate = shown === "available" || (shown === "refused" && limit?.status === "slowDown");
 
   return (
-    <div className="flex flex-col gap-4" data-slot="mind-map-request">
+    <div className="flex flex-col gap-4" data-slot="mind-map-request" ref={slot}>
       <StateHeading>
         <div aria-live="polite" className="flex flex-col gap-0.5">
           <p className="text-reading font-medium">{t("Mind map")}</p>
