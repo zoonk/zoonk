@@ -2,11 +2,11 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { HeadphonesIcon, PauseIcon, PlayIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { Meter, MeterFill } from "../_components/meter";
 import { SURFACE_CLASS } from "../_components/surface";
 
 const MS_PER_SECOND = 1000;

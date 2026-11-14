@@ -106,10 +106,10 @@ fun limitWords(
         }
 
         is Limit.Reached -> {
-            if (subject == LimitSubject.Lessons) {
-                lessonWords(limit)
-            } else {
-                LimitWords(reachedTitle(limit, subject)?.let { stringResource(it) }, comesBackLine(limit))
+            when (subject) {
+                LimitSubject.Lessons -> lessonWords(limit)
+                LimitSubject.MapLessons -> mapLessonsWords(limit)
+                else -> LimitWords(reachedTitle(limit, subject)?.let { stringResource(it) }, comesBackLine(limit))
             }
         }
     }
@@ -139,12 +139,47 @@ private fun reachedLine(
         }
     }
 
+/**
+ * Main's `useMapLessonsWords`: a map writes its lessons first, so a free learner's map waits until all of
+ * them fit in the lessons left over the last 30 days, and one that needs more than that never fits. The
+ * learner may still have lessons left, so these words never say they used them.
+ */
+@Composable
+private fun mapLessonsWords(limit: Limit.Reached): LimitWords {
+    val opens = rememberOpeningDay(limit.availableAt.takeIf { limit.freeLessons })
+    return when {
+        !limit.freeLessons -> {
+            LimitWords(
+                stringResource(R.string.limit_map_needs_subscription),
+                stringResource(R.string.limit_map_needs_subscription_line),
+            )
+        }
+
+        opens == OpeningDay.Open -> {
+            LimitWords(stringResource(R.string.limit_map_ready), line = null)
+        }
+
+        else -> {
+            LimitWords(stringResource(R.string.limit_map_not_enough), mapOpensLine(opens))
+        }
+    }
+}
+
+@Composable
+private fun mapOpensLine(day: OpeningDay?): String? =
+    when (day) {
+        null, OpeningDay.Open -> null
+        OpeningDay.Today -> stringResource(R.string.limit_map_enough_today)
+        OpeningDay.Tomorrow -> stringResource(R.string.limit_map_enough_tomorrow)
+        is OpeningDay.On -> stringResource(R.string.limit_map_enough_on, formatDate(day.date, currentLocale(), DateStyle.DayMonth))
+    }
+
 /** The lesson screen's line: what stays free, then when the next lesson comes, as the web joins them. */
 @Composable
 fun stillReviewLine(limit: Limit.Reached): String =
     listOfNotNull(stringResource(R.string.limit_still_review), lessonWords(limit).line).joinToString(" ")
 
-/** Calls have no title here: their screen already says what ran out. Lessons read [lessonWords]. */
+/** Calls have no title here: their screen already says what ran out. Lessons read [lessonWords], a map's lessons [mapLessonsWords]. */
 @StringRes
 private fun reachedTitle(
     limit: Limit.Reached,
@@ -204,7 +239,7 @@ private fun reachedTitle(
             }
         }
 
-        LimitSubject.Lessons, LimitSubject.Calls -> {
+        LimitSubject.Lessons, LimitSubject.MapLessons, LimitSubject.Calls -> {
             null
         }
     }

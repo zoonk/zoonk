@@ -30,7 +30,7 @@
   "exam_choice_pick_up_to": "d3968e178d549411ff8a536ae05f4976439c63cab2ba8c5c0c89c287f3fe7547",
   "gate_build_plan": "3eafff30c3e43a38ccfd2d87c952b1907d03fa0c9cc6f9c80f3279c7060ea419",
   "gate_log_in": "8da7ec76ed6463a841dfd016b5f9ab1915734d6b05d2278ff11cdf4e9b917e96",
-  "gate_session_ended_description": "3c3edb9554af82f49f0f04eef3c7527cd584d018fd3c282fab21a8b9f3b719b7",
+  "gate_session_ended_description": "bac6db46879f921badef91fed73f4464b22025e98ab5878ada185b39a3ab91bf",
   "gate_session_ended_title": "3ccb7a74af9a6d338dbc40d2c4db16a46949ff2b36e446ebde136734af9aab85",
   "gate_sign_in_title": "a6421c2effe0a04fe7862525aca8a515c8889aac439d285f4d196284f9c1d074",
   "gate_start_goal": "a09f4deb614a1346402ee152f5322f24b53c474f5eda5af72a90a1a7aecb5985",
@@ -91,8 +91,10 @@
     <string name="navigation_user_menu">Menu użytkownika</string>
     <string name="task_leave">Wyjdź</string>
     <string name="gate_sign_in_title">Zaloguj się, aby kontynuować</string>
+    <!-- Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session. -->
     <string name="gate_session_ended_title">Wylogowano cię</string>
-    <string name="gate_session_ended_description">Zaloguj się, by wrócić do swojego planu.</string>
+    <!-- Under "You've been logged out". Their plan is still saved; logging in shows it again. -->
+    <string name="gate_session_ended_description">Zaloguj się, żeby wrócić do swojego planu.</string>
     <string name="gate_log_in">Zaloguj się</string>
     <!-- Starts a new goal: the visitor tells us what to learn and gets a plan. -->
     <string name="gate_build_plan">Ułóż mój plan</string>

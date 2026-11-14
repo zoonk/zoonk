@@ -1,8 +1,8 @@
 "use client";
 
 import { type EssayDraft } from "@zoonk/core/exams/essays/contract";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { useExtracted } from "next-intl";
-import { Meter, MeterFill } from "../_components/meter";
 import { StepRow, StepRows } from "../_components/step-card";
 import { useCriterionName, useFormatScore } from "./essay-labels";
 

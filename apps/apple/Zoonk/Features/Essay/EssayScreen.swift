@@ -200,7 +200,7 @@ private struct EssayContent: View {
         Button {
           Task { await finish() }
         } label: {
-          Text("Skip the rewrite", tableName: "Essay", comment: "Goes on without rewriting")
+          Text("Skip", tableName: "Essay", comment: "Goes on without rewriting")
         }
         .buttonStyle(.outline)
         .controlSize(.large)
@@ -208,7 +208,7 @@ private struct EssayContent: View {
       }
 
       if writer.isWriting {
-        BusyButton(isBusy: writer.status == .grading, icon: .send) {
+        BusyButton(isBusy: writer.status == .grading) {
           Task { await writer.send() }
         } label: {
           if essay.drafts.isEmpty {

@@ -2,7 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     ", %@" : {
-      "comment" : "Read by VoiceOver right after a goal's name: the language and country the learner chose, such as Spanish (Argentina)",
+      "comment" : "Read by screen readers right after a goal's name. {variety} is the language and country the learner chose, such as “Spanish (Argentina)”.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -61,7 +61,7 @@
       }
     },
     "%@ · %@" : {
-      "comment" : "A course level certificate's name: the course, then its level, such as Python · Beginner",
+      "comment" : "A course level's certificate name, such as \"Python · Beginner\": the course's title, then the level's name.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -126,7 +126,7 @@
       }
     },
     "%@ %@" : {
-      "comment" : "A language certificate's name: the language, then its CEFR level, such as Spanish B1",
+      "comment" : "A language and a CEFR level, such as \"Spanish B1\": a certificate's name.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -315,7 +315,6 @@
       }
     },
     "%@ completed level %@ in %@" : {
-      "comment" : "A language level certificate read aloud: the learner's name, the level, the language",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -380,7 +379,6 @@
       }
     },
     "%@, completed on Zoonk" : {
-      "comment" : "A course certificate's heading before the learner gives a name: the course or its level, such as Python · Beginner",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -391,37 +389,37 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, completado en Zoonk"
+            "value" : "%@, curso completado en Zoonk"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, terminé sur Zoonk"
+            "value" : "%@, cours terminé sur Zoonk"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, completato su Zoonk"
+            "value" : "%@: corso completato su Zoonk"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@をZoonkで修了"
+            "value" : "%@をZoonkで修了しました"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk에서 %@ 수료"
+            "value" : "%@ 코스를 Zoonk에서 수료했어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, ukończono w Zoonku"
+            "value" : "%@, kurs ukończony w Zoonku"
           }
         },
         "pt" : {
@@ -434,244 +432,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@, Zoonk’ta tamamlandı"
-          }
-        }
-      }
-    },
-    "%@, locked" : {
-      "comment" : "VoiceOver for a certificate that comes with Plus: its name, then that it's locked",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, gesperrt"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, bloqueado"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, verrouillé"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, bloccato"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@、ロック中"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, 잠김"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, zablokowany"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, bloqueado"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, kilitli"
-          }
-        }
-      }
-    },
-    "%lld certificates" : {
-      "comment" : "Over the learner's certificates: how many they have",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Zertifikat"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Zertifikate"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld certificate"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld certificates"
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld certificado"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld certificados"
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld certificat"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld certificats"
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld certificato"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld certificati"
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld枚の証明書"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "인증서 %lld개"
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld certyfikaty"
-                }
-              },
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld certyfikatów"
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld certyfikat"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld certyfikatu"
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld certificado"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld certificados"
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld sertifika"
-                }
-              }
-            }
           }
         }
       }
@@ -850,7 +610,6 @@
       }
     },
     "A certificate for every level and plan you finish." : {
-      "comment" : "Under the learner's certificates: what earns one",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -908,8 +667,66 @@
         }
       }
     },
+    "A record of completion on Zoonk, not academic credit." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Nachweis über den Abschluss auf Zoonk, keine anrechenbare Studienleistung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una constancia de finalización en Zoonk, sin créditos académicos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une attestation de réussite sur Zoonk, sans crédits universitaires."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attesta il completamento su Zoonk, ma non dà crediti formativi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonkで学習を終えた記録で、学校などの単位にはなりません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk에서 학습을 마쳤다는 기록이며, 학점으로 인정되지는 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Potwierdzenie ukończenia nauki w Zoonku, a nie zaliczenie na uczelni."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um registro de conclusão no Zoonk, que não conta como crédito acadêmico."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk’ta tamamladığın eğitimi belgeler, akademik kredi sağlamaz."
+          }
+        }
+      }
+    },
     "about %@" : {
-      "comment" : "An approximate study time, such as \"about 41 hr\"",
+      "comment" : "A certificate's study time, the plan's estimate for the lessons studied, such as “about 41 hr”. Brazilian schools read it as the certificate's workload (carga horária).",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -968,7 +785,6 @@
       }
     },
     "Add to LinkedIn" : {
-      "comment" : "Adds a certificate to LinkedIn",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1027,7 +843,6 @@
       }
     },
     "Add to your LinkedIn profile" : {
-      "comment" : "Title of the sheet that adds a certificate to LinkedIn",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1085,61 +900,60 @@
         }
       }
     },
-    "Anyone with the link can see this certificate. Its page doesn't show up in search." : {
-      "comment" : "Who can see a certificate's page",
+    "Anyone with the link can see this certificate." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wer den Link hat, kann dieses Zertifikat sehen. Die Seite erscheint nicht in Suchergebnissen."
+            "value" : "Wer den Link hat, kann dieses Zertifikat sehen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cualquier persona que tenga el enlace puede ver este certificado. Su página no aparece en los resultados de búsqueda."
+            "value" : "Cualquier persona con el enlace puede ver este certificado."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toute personne qui a le lien peut voir ce certificat. Sa page n’apparaît pas dans les résultats de recherche."
+            "value" : "Toute personne qui a le lien peut voir ce certificat."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chiunque abbia il link può vedere questo certificato. La sua pagina non compare nei risultati di ricerca."
+            "value" : "Chiunque abbia il link può vedere questo certificato."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "リンクを知っている人なら誰でもこの証明書を見られます。このページは検索結果に表示されません。"
+            "value" : "リンクを知っていれば、誰でもこの証明書を見られます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "링크가 있으면 누구나 이 인증서를 볼 수 있어요. 이 페이지는 검색 결과에 나오지 않아요."
+            "value" : "링크가 있으면 누구나 이 인증서를 볼 수 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Każdy, kto ma link, może zobaczyć ten certyfikat. Jego strona nie pojawia się w wynikach wyszukiwania."
+            "value" : "Każdy, kto ma link, może zobaczyć ten certyfikat."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qualquer pessoa com o link pode ver este certificado. A página dele não aparece nas buscas."
+            "value" : "Qualquer pessoa com o link pode ver este certificado."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bağlantıya sahip herkes bu sertifikayı görebilir. Sertifika sayfası arama sonuçlarında görünmez."
+            "value" : "Bağlantıya sahip herkes bu sertifikayı görebilir."
           }
         }
       }
@@ -1321,65 +1135,6 @@
         }
       }
     },
-    "Certificate of completion" : {
-      "comment" : "The kind of certificate earned by finishing a course or a language level",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abschlusszertifikat"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Certificado de finalización"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Certificat de fin de formation"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Certificato di completamento"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "修了証明書"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "수료 인증서"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Certyfikat ukończenia"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Certificado de conclusão"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tamamlama sertifikası"
-          }
-        }
-      }
-    },
     "Certificate of completion, issued on %@." : {
       "comment" : "Under an issued certificate's heading; the argument is a date like October 28, 2026",
       "localizations" : {
@@ -1494,65 +1249,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sertifikalar"
-          }
-        }
-      }
-    },
-    "Certificates come with Plus" : {
-      "comment" : "Title of the notice at the top of the learner's certificates without Plus",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zertifikate gibt es mit Plus"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus incluye certificados"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus inclut les certificats"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I certificati sono inclusi in Plus"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusなら証明書を受け取れます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus로 인증서를 받을 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Certyfikaty w pakiecie Plus"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Certificados vêm com o Plus"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sertifikalar Plus’a dahil"
           }
         }
       }
@@ -1675,67 +1371,8 @@
         }
       }
     },
-    "Comes when you finish a level, studying at least half of it" : {
-      "comment" : "Under a language goal on the empty certificates page: when it earns one",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erhältst du, wenn du ein Level abschließt und mindestens die Hälfte der Lektionen bearbeitet hast"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lo obtienes al completar un nivel si estudiaste al menos la mitad de sus lecciones"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu l’obtiens en terminant un niveau dont tu as étudié au moins la moitié des leçons"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lo ottieni quando completi un livello, dopo averne studiato almeno metà"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レベルのレッスンを半分以上学習し、そのレベルを終えると取得できます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "레벨의 레슨을 절반 이상 학습하고 해당 레벨을 완료하면 받을 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otrzymasz go po ukończeniu poziomu, jeśli przerobisz co najmniej połowę jego lekcji"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você recebe ao concluir um nível, com pelo menos metade das aulas estudadas"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir seviyeyi derslerinin en az yarısını çalışarak tamamladığında verilir"
-          }
-        }
-      }
-    },
     "Completed" : {
-      "comment" : "When a certificate was earned",
+      "comment" : "A certificate's fact: the day the learner finished the course or level.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2324,67 +1961,181 @@
         }
       }
     },
-    "Get your certificate with Plus" : {
-      "comment" : "Title of the notice on a certificate the learner earned without Plus",
+    "For finishing every lesson and challenge of this level." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit Plus bekommst du dein Zertifikat"
+            "value" : "Für den Abschluss aller Lektionen und Herausforderungen dieses Levels."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obtén tu certificado con Plus"
+            "value" : "Por completar todas las lecciones y desafíos de este nivel."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obtiens ton certificat avec Plus"
+            "value" : "Pour avoir terminé toutes les leçons et tous les défis de ce niveau."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ottieni il tuo certificato con Plus"
+            "value" : "Per aver completato tutte le lezioni e le sfide di questo livello."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plusで証明書を受け取る"
+            "value" : "このレベルのすべてのレッスンとチャレンジを終えたことを示します。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus로 인증서 받기"
+            "value" : "이 레벨의 모든 레슨과 챌린지를 마쳤다는 뜻이에요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Odbierz certyfikat z pakietem Plus"
+            "value" : "Za ukończenie wszystkich lekcji i wyzwań na tym poziomie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Receba seu certificado com o Plus"
+            "value" : "Por concluir todas as aulas e todos os desafios deste nível."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus ile sertifikanı al"
+            "value" : "Bu seviyedeki tüm dersleri ve meydan okumaları tamamladığın için."
+          }
+        }
+      }
+    },
+    "For finishing every lesson and challenge of this plan." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für den Abschluss aller Lektionen und Herausforderungen dieses Plans."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por completar todas las lecciones y desafíos de este plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour avoir terminé toutes les leçons et tous les défis de ce plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per aver completato tutte le lezioni e le sfide di questo piano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この学習計画のすべてのレッスンとチャレンジを終えたことを示します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 계획의 모든 레슨과 챌린지를 마쳤다는 뜻이에요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Za ukończenie wszystkich lekcji i wyzwań w tym planie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por concluir todas as aulas e todos os desafios deste plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu plandaki tüm dersleri ve meydan okumaları tamamladığın için."
+          }
+        }
+      }
+    },
+    "For finishing this level, studying at least half of its lessons." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast dieses Level abgeschlossen und mindestens die Hälfte der Lektionen bearbeitet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por completar este nivel estudiando al menos la mitad de sus lecciones."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour avoir terminé ce niveau en étudiant au moins la moitié de ses leçons."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per aver completato questo livello studiando almeno metà delle lezioni."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このレベルのレッスンを半分以上学習し、レベルを終えたことを示します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 레벨의 레슨을 절반 이상 공부하고 레벨을 마쳤다는 뜻이에요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Za ukończenie tego poziomu i przerobienie co najmniej połowy jego lekcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por concluir este nível, estudando pelo menos metade das aulas."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Derslerinin en az yarısını çalışarak bu seviyeyi tamamladığın için."
           }
         }
       }
     },
     "I just completed level %@ in %@ on Zoonk." : {
-      "comment" : "Suggested text for sharing a language level certificate: the level, then the language",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2995,7 +2746,6 @@
       }
     },
     "I just finished %@ on Zoonk." : {
-      "comment" : "Suggested text for sharing a course certificate whose lessons were all passed by test: the course",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3171,65 +2921,6 @@
         }
       }
     },
-    "It's a record of completion on Zoonk, not academic credit." : {
-      "comment" : "What a course certificate is, before the note about its name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Es bestätigt den Abschluss auf Zoonk, zählt aber nicht als Studienleistung."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Es una constancia de finalización en Zoonk, pero no otorga créditos académicos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il atteste que le cours a été terminé sur Zoonk, sans donner droit à des crédits universitaires."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Attesta il completamento su Zoonk, ma non dà crediti formativi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonkでの修了記録で、学校の単位にはなりません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk에서 학습을 완료했다는 기록이에요. 학점으로 인정되지는 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To potwierdzenie ukończenia nauki w Zoonku, a nie zaliczenie na uczelni."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "É um registro de conclusão no Zoonk e não vale como crédito acadêmico."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk’ta kursun tamamlandığını gösterir; akademik kredi yerine geçmez."
-          }
-        }
-      }
-    },
     "It's saved in Certificates." : {
       "comment" : "Where the certificate just earned is kept",
       "localizations" : {
@@ -3290,7 +2981,7 @@
       }
     },
     "Lessons studied" : {
-      "comment" : "How many lessons a certificate's learner studied",
+      "comment" : "A certificate's fact: how many of the plan's lessons the learner studied.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3408,7 +3099,6 @@
       }
     },
     "Level %@ in %@, completed on Zoonk" : {
-      "comment" : "A language level certificate's heading before the learner gives a name: the level, then the language",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3443,19 +3133,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "レベル%1$@（%2$@）をZoonkで修了"
+            "value" : "%1$@レベルの%2$@をZoonkで修了しました"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk에서 레벨 %1$@(%2$@) 수료"
+            "value" : "%1$@ 레벨의 %2$@ 과정을 Zoonk에서 수료했어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Poziom %1$@ (%2$@), ukończono w Zoonku"
+            "value" : "Poziom %1$@ (%2$@), ukończony w Zoonku"
           }
         },
         "pt" : {
@@ -3467,13 +3157,12 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ seviyesinde %2$@, Zoonk’ta tamamlandı"
+            "value" : "%1$@ seviyesi, %2$@ dilinde Zoonk’ta tamamlandı"
           }
         }
       }
     },
     "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result." : {
-      "comment" : "What a language certificate's level is, before the note about its name",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3650,7 +3339,6 @@
       }
     },
     "LinkedIn opens its form to add a license or certification. Copy each field into it." : {
-      "comment" : "How adding a certificate to LinkedIn works",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3834,7 +3522,6 @@
       }
     },
     "Name on your certificates" : {
-      "comment" : "Label of the field that changes the name on the learner's certificates",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3892,8 +3579,65 @@
         }
       }
     },
+    "Names aren't checked against an ID." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Namen werden nicht mit einem Ausweis abgeglichen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los nombres no se verifican con una identificación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les noms ne sont pas vérifiés à l’aide d’une pièce d’identité."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I nomi non vengono verificati con un documento d’identità."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "氏名は身分証明書と照合していません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이름은 신분증으로 확인하지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie porównujemy imienia i nazwiska z dokumentem tożsamości."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os nomes não são conferidos com um documento de identidade."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İsimler kimlik belgesiyle doğrulanmaz."
+          }
+        }
+      }
+    },
     "No certificates yet" : {
-      "comment" : "Title when the learner has no certificate",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4070,7 +3814,7 @@
       }
     },
     "Passed by test" : {
-      "comment" : "How many of a certificate's lessons the learner passed by a test",
+      "comment" : "A certificate's fact: lessons the learner skipped by passing a test, said for outsiders.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4124,65 +3868,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Testle geçilen dersler"
-          }
-        }
-      }
-    },
-    "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends." : {
-      "comment" : "What Plus does for certificates, on one the learner earned without Plus",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Plus bekommst du für jedes abgeschlossene Level ein Zertifikat zum Ausdrucken und Teilen. Deine Zertifikate bleiben dir auch erhalten, wenn dein Plus-Abo endet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus te da un certificado por cada nivel que completes, para imprimir y compartir. Los certificados que obtengas siguen siendo tuyos aunque termine tu suscripción a Plus."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec Plus, tu reçois un certificat à imprimer et à partager pour chaque niveau terminé. Tu conserves tes certificats même si ton abonnement Plus prend fin."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con Plus ricevi un certificato per ogni livello che completi, da stampare e condividere. I certificati che ottieni restano tuoi anche se non hai più Plus."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusでは、レベルを終えるたびに、印刷や共有ができる証明書を受け取れます。受け取った証明書は、Plusの利用が終了してもそのまま残ります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus를 이용하면 레벨을 마칠 때마다 인쇄하고 공유할 수 있는 인증서를 받아요. 받은 인증서는 Plus 이용이 끝나도 계속 보관할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W pakiecie Plus za każdy ukończony poziom dostajesz certyfikat do wydrukowania i udostępnienia. Otrzymane certyfikaty zachowujesz, nawet gdy pakiet Plus wygaśnie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Plus te dá um certificado para cada nível que você conclui, para imprimir e compartilhar. Os certificados que você recebe continuam sendo seus mesmo se sua assinatura do Plus acabar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus ile tamamladığın her seviye için yazdırıp paylaşabileceğin bir sertifika alırsın. Plus üyeliğin sona erse de aldığın sertifikalar sende kalır."
           }
         }
       }
@@ -4424,7 +4109,7 @@
       }
     },
     "Study time" : {
-      "comment" : "About how long a certificate's lessons took to study",
+      "comment" : "A certificate's fact: about how long the studied lessons take. In Brazilian Portuguese: “Carga horária”.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4542,7 +4227,6 @@
       }
     },
     "That didn't work. Try again in a moment." : {
-      "comment" : "Loading a certificate to print failed",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4559,25 +4243,25 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ça n’a pas fonctionné. Réessaie dans un instant."
+            "value" : "Ça n’a pas marché. Réessaie dans un instant."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non ha funzionato. Riprova tra poco."
+            "value" : "Qualcosa non ha funzionato. Riprova tra un momento."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "うまくいきませんでした。少し待ってから、もう一度お試しください。"
+            "value" : "うまくいきませんでした。少し待ってからもう一度お試しください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
+            "value" : "잘되지 않았어요. 잠시 후 다시 시도해 보세요."
           }
         },
         "pl" : {
@@ -4589,72 +4273,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não deu certo. Tente de novo daqui a pouco."
+            "value" : "Não deu certo. Tente de novo em instantes."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bir sorun oluştu. Birazdan tekrar dene."
-          }
-        }
-      }
-    },
-    "The name is the one the learner gave their Zoonk account; Zoonk doesn't check IDs." : {
-      "comment" : "Ends a certificate's explanation: the name on it is the one the learner gave",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der Name stammt aus den eigenen Angaben im Zoonk-Konto; Zoonk prüft keine Ausweise."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El nombre es el que la persona registró en su cuenta de Zoonk; Zoonk no verifica documentos de identidad."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le nom affiché est celui indiqué sur le compte Zoonk ; Zoonk ne vérifie pas les pièces d’identité."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il nome è quello indicato per l’account Zoonk; Zoonk non controlla i documenti d’identità."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "名前は学習者がZoonkアカウントに登録したもので、Zoonkでは身分証明書による確認はしていません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이름은 학습자가 Zoonk 계정에 등록한 이름이에요. Zoonk는 신분증을 확인하지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Na certyfikacie widnieją imię i nazwisko podane na koncie w Zoonku; Zoonk nie sprawdza dokumentów tożsamości."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O nome é o que a pessoa informou na conta do Zoonk; o Zoonk não verifica documentos de identidade."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sertifikada öğrencinin Zoonk hesabında belirttiği ad yer alır; Zoonk kimlik kontrolü yapmaz."
+            "value" : "Bir sorun oldu. Birazdan tekrar dene."
           }
         }
       }
@@ -4719,7 +4344,7 @@
       }
     },
     "Topics covered" : {
-      "comment" : "Heading over the chapters a course certificate covers",
+      "comment" : "Above the topics a finished course covered, on its certificate.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4777,72 +4402,12 @@
         }
       }
     },
-    "Up next" : {
-      "comment" : "Heading over the learner's goals that can still earn a certificate",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Als Nächstes"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A continuación"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "À suivre"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A seguire"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次の学習"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다음"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Następne"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A seguir"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sıradaki"
-          }
-        }
-      }
-    },
     "Verified certificate · issued by Zoonk" : {
-      "comment" : "Over an issued certificate's heading: Zoonk vouches for it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geprüftes Zertifikat · ausgestellt von Zoonk"
+            "value" : "Verifiziertes Zertifikat · ausgestellt von Zoonk"
           }
         },
         "es" : {
@@ -4890,13 +4455,12 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Doğrulanmış sertifika · Zoonk tarafından düzenlendi"
+            "value" : "Doğrulanmış sertifika · Zoonk tarafından verildi"
           }
         }
       }
     },
     "What this certificate means" : {
-      "comment" : "Heading over how Zoonk issues a certificate and what it isn't",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5078,65 +4642,6 @@
         }
       }
     },
-    "Your certificate comes when you finish the plan" : {
-      "comment" : "Under a course goal on the empty certificates page: when it earns one",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du bekommst dein Zertifikat, wenn du den Plan abschließt"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recibes tu certificado cuando terminas el plan"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu obtiens ton certificat quand tu termines le plan"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ricevi il certificato quando completi il piano"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習計画を終えると証明書がもらえます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계획을 마치면 인증서를 받을 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otrzymasz certyfikat po ukończeniu planu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você recebe seu certificado quando conclui o plano"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planı tamamladığında sertifikanı alırsın"
-          }
-        }
-      }
-    },
     "Your certificate for %@ is ready." : {
       "comment" : "Under the title when a course certificate was earned; the course",
       "localizations" : {
@@ -5196,185 +4701,7 @@
         }
       }
     },
-    "Your certificates and your buddy use this name." : {
-      "comment" : "Under the field that changes the learner's name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dieser Name steht auf deinen Zertifikaten. Dein Kumpel nennt dich auch so."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este nombre aparece en tus certificados y tu compañero te llama así."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce nom figure sur tes certificats et ton compagnon l’utilise."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "È il nome che appare sui tuoi certificati e con cui ti chiama il tuo compagno."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "証明書にこの名前が載ります。相棒もこの名前で呼びます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "인증서에 이 이름이 표시돼요. 짝꿍도 이 이름으로 불러요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To imię i nazwisko widnieją na twoich certyfikatach. Tak też zwraca się do ciebie twój kumpel."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seus certificados e seu parceiro usam esse nome."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir."
-          }
-        }
-      }
-    },
-    "Your certificates and your buddy use this name. You can change it anytime." : {
-      "comment" : "Under the field asking for the learner's name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dieser Name steht auf deinen Zertifikaten. Dein Kumpel nennt dich auch so. Du kannst ihn jederzeit ändern."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este nombre aparece en tus certificados y tu compañero te llama así. Puedes cambiarlo cuando quieras."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce nom figure sur tes certificats et ton compagnon l’utilise. Tu peux le modifier à tout moment."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "È il nome che appare sui tuoi certificati e con cui ti chiama il tuo compagno. Puoi cambiarlo quando vuoi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "証明書にこの名前が載ります。相棒もこの名前で呼びます。いつでも変更できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "인증서에 이 이름이 표시돼요. 짝꿍도 이 이름으로 불러요. 언제든 바꿀 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To imię i nazwisko widnieją na twoich certyfikatach. Tak też zwraca się do ciebie twój kumpel. Możesz je zmienić w każdej chwili."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seus certificados e seu parceiro usam esse nome. Você pode mudar quando quiser."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir. İstediğin zaman değiştirebilirsin."
-          }
-        }
-      }
-    },
-    "Your certificates show up here when you finish a level or a plan." : {
-      "comment" : "How the learner earns certificates",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Zertifikate erscheinen hier, wenn du ein Level oder einen Plan abschließt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus certificados aparecerán aquí cuando completes un nivel o un plan."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes certificats apparaissent ici quand tu termines un niveau ou un plan."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I tuoi certificati compaiono qui quando completi un livello o un piano."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レベルや学習計画を完了すると、ここに証明書が表示されます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "레벨이나 계획을 마치면 여기에 인증서가 표시돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoje certyfikaty pojawią się tutaj, gdy ukończysz poziom lub plan."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seus certificados aparecem aqui quando você conclui um nível ou um plano."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir seviyeyi veya planı tamamladığında sertifikaların burada görünür."
-          }
-        }
-      }
-    },
     "Your full name" : {
-      "comment" : "Placeholder of the field for the name on the learner's certificates",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5433,7 +4760,6 @@
       }
     },
     "Your name, as it should appear" : {
-      "comment" : "Label of the field asking for the name to print on a certificate",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5491,179 +4817,60 @@
         }
       }
     },
-    "Zoonk issues this certificate when a learner finishes a level, studying at least half of its lessons." : {
-      "comment" : "How a language level certificate is earned",
+    "Your next certificate" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk stellt dieses Zertifikat aus, wenn jemand ein Level abschließt und dabei mindestens die Hälfte der zugehörigen Lektionen bearbeitet."
+            "value" : "Dein nächstes Zertifikat"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk emite este certificado cuando una persona completa un nivel y estudia al menos la mitad de sus lecciones."
+            "value" : "Tu próximo certificado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk délivre ce certificat quand tu termines un niveau après avoir étudié au moins la moitié de ses leçons."
+            "value" : "Ton prochain certificat"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk rilascia questo certificato a chi completa un livello studiando almeno la metà delle lezioni."
+            "value" : "Il tuo prossimo certificato"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonkは、レッスンの半分以上を学習してレベルを修了した方に、この証明書を発行します。"
+            "value" : "次に獲得できる証明書"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk는 학습자가 한 레벨의 레슨을 절반 이상 공부하고 그 레벨을 완료하면 이 인증서를 발급해요."
+            "value" : "다음에 받을 인증서"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk wydaje ten certyfikat po ukończeniu poziomu i przerobieniu co najmniej połowy jego lekcji."
+            "value" : "Twój kolejny certyfikat"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zoonk emite este certificado quando alguém conclui um nível após estudar pelo menos metade das aulas."
+            "value" : "Seu próximo certificado"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk, bir seviyedeki derslerin en az yarısını çalışıp seviyeyi tamamlayanlara bu sertifikayı verir."
-          }
-        }
-      }
-    },
-    "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it." : {
-      "comment" : "How a certificate for a course's level is earned",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk stellt dieses Zertifikat aus, wenn du alle Kapitel eines Kurslevels abschließt, dabei jede Lektion bearbeitest oder den jeweiligen Test bestehst und alle Herausforderungen des Levels gewinnst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk emite este certificado cuando una persona completa todos los capítulos de un nivel de un curso, estudiando cada lección o aprobando su prueba, y supera todos los desafíos de ese nivel."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk délivre ce certificat à toute personne qui termine tous les chapitres d’un niveau de cours, en étudiant chaque leçon ou en réussissant son test, et remporte tous les défis de ce niveau."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk rilascia questo certificato a chi completa tutti i capitoli di un livello del corso, studiando ogni lezione o superando il relativo test, e vince tutte le sfide del livello."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonkは、コースの各レベルで、各レッスンを学習するかテストに合格してすべての章を終え、すべてのチャレンジをクリアした学習者に、この証明書を発行します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "코스의 한 레벨에서 각 레슨을 공부하거나 해당 레슨의 테스트를 통과해 모든 챕터를 마치고, 모든 챌린지에서 이기면 Zoonk가 이 인증서를 발급해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk wydaje ten certyfikat osobom, które ukończą wszystkie rozdziały danego poziomu kursu, przerabiając każdą lekcję lub zdając jej test, i wygrają wszystkie wyzwania na tym poziomie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Zoonk emite este certificado quando você conclui todos os capítulos de um nível do curso, estudando cada aula ou passando no teste dela, e vence todos os desafios desse nível."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk bu sertifikayı, bir kurs seviyesindeki her dersi çalışarak veya testini geçerek tüm üniteleri tamamlayan ve o seviyedeki tüm meydan okumaları kazanan öğrencilere verir."
-          }
-        }
-      }
-    },
-    "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it." : {
-      "comment" : "How a certificate for a course's whole plan is earned",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk stellt dieses Zertifikat aus, wenn alle Lektionen im Plan eines Kurses entweder durch Lernen oder durch Bestehen des jeweiligen Tests abgeschlossen und alle Herausforderungen darin gewonnen wurden."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk emite este certificado cuando una persona completa todas las lecciones del plan de un curso, ya sea estudiándolas o aprobando sus pruebas, y gana todos los desafíos del plan."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk délivre ce certificat lorsqu’une personne termine toutes les leçons du plan d’un cours, en les étudiant ou en réussissant leur test, et remporte tous les défis du plan."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk rilascia questo certificato a chi completa ogni lezione del piano di un corso, studiandola o superandone il test, e vince tutte le sfide del piano."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonkでは、コースの学習計画にあるすべてのレッスンを、学習またはテストへの合格で終え、計画内のすべてのチャレンジに勝つと、この証明書が発行されます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "코스 계획의 모든 레슨을 학습하거나 테스트에 통과하는 방식으로 완료하고, 그 안의 모든 챌린지에서 이기면 Zoonk가 이 인증서를 발급해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk wydaje ten certyfikat po ukończeniu wszystkich lekcji z planu kursu i wygraniu wszystkich wyzwań w tym planie. Lekcje można ukończyć, przerabiając je lub zdając ich testy."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Zoonk emite este certificado quando a pessoa conclui todas as aulas do plano de um curso, estudando cada uma ou passando no teste dela, e vence todos os desafios do plano."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk bu sertifikayı, öğrenci bir kursun planındaki tüm dersleri çalışarak veya testlerini geçerek tamamladığında ve plandaki tüm meydan okumaları kazandığında verir."
+            "value" : "Sıradaki sertifikan"
           }
         }
       }

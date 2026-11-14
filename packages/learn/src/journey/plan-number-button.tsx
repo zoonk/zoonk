@@ -1,8 +1,8 @@
 "use client";
 
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
-import { BigQuantity } from "../_components/big-quantity";
-import { Meter, MeterFill } from "../_components/meter";
 import { PAGE_SECTION_TITLE_CLASS } from "../_components/page";
 
 /** `share` is 0 to 1. */

@@ -30,7 +30,7 @@
   "exam_choice_pick_up_to": "6794baca64fe6d3075e568d624d6f91a3967410fea886d6c8e507bb150f7b7b7",
   "gate_build_plan": "6d554b328e568cb66a6a596ba27486b6155c32c45d4d793c45a4603375e25861",
   "gate_log_in": "3f1e893127f663b43010ec90f4b5e06e7a3ae15633e3cc836bb377fce475fff8",
-  "gate_session_ended_description": "26d36e6143d0e82118120794a00841ef6ab379a2c8448978701d2ee96053f4e4",
+  "gate_session_ended_description": "b59523da90cecd55cefdac19a297a9dfdfb869598ae315f1d48b053f833b7f72",
   "gate_session_ended_title": "be938fc77b9739081b98f546303c1a70eeec86156f161dcbb62e82cc5a593910",
   "gate_sign_in_title": "8a5e135549f45f9240e7f441a9eb2a59fcfa757ecf0061bf024cdfae6eb85e49",
   "gate_start_goal": "f82275fe95452c39957ca373ced73406c90be17c5f226858fb0e249567668ad8",
@@ -91,8 +91,10 @@
     <string name="navigation_user_menu">사용자 메뉴</string>
     <string name="task_leave">나가기</string>
     <string name="gate_sign_in_title">계속하려면 로그인하세요</string>
+    <!-- Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session. -->
     <string name="gate_session_ended_title">로그아웃됐어요</string>
-    <string name="gate_session_ended_description">로그인해서 계획을 이어 가세요.</string>
+    <!-- Under "You've been logged out". Their plan is still saved; logging in shows it again. -->
+    <string name="gate_session_ended_description">로그인해서 계획을 이어가세요.</string>
     <string name="gate_log_in">로그인</string>
     <!-- Starts a new goal: the visitor tells us what to learn and gets a plan. -->
     <string name="gate_build_plan">내 계획 만들기</string>

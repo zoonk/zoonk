@@ -80,7 +80,7 @@ fun day(
         emptyDay = null,
         minutes = StudySessionMinutes(dailyGoal = dailyGoal, left = dailyGoal, done = 0, planned = dailyGoal.toLong()),
         freshStart = null,
-        examAccess = StudySessionExamAccess(includesMockExams = true, trialEnded = false),
+        examAccess = StudySessionExamAccess(includesMockExams = true),
         examTomorrow = false,
         extraTime = StudyExtraTime(available = false, lessons = emptyList(), minutes = 10, reason = null),
         catchUp = null,

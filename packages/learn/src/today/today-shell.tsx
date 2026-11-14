@@ -1,9 +1,9 @@
 "use client";
 
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { METER_PARTS_CLASS } from "@zoonk/ui/components/meter";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
-import { METER_PARTS_CLASS } from "../_components/meter";
 import { Page, PageHeader, PageHeaderContent, PageTitle } from "../_components/page";
 import { PageWithAside } from "../shell/learn-shell";
 import { TODAY_ASIDE_CLASS, TODAY_MAIN_CLASS } from "./today-layout";

@@ -52,7 +52,6 @@ struct EssayScoreSections: View {
             .monospacedDigit()
           } label: {
             Text(criterion.name)
-              .typeWeight(criterion.id == grade.nextStep?.criterionId ? .semibold : .regular)
           }
         }
       } header: {

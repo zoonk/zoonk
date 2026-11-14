@@ -239,10 +239,6 @@ export function promotePreparedUsage({
   const usage = totals.lessonStarts;
   const inWindow = preparedAt.getTime() > now.getTime() - FREE_LESSON_WINDOW_MS;
 
-  const remove = inWindow
-    ? usage.latestPrepared.findIndex((at) => at.getTime() === preparedAt.getTime())
-    : -1;
-
   return {
     ...totals,
     lessonStarts: {
@@ -251,7 +247,6 @@ export function promotePreparedUsage({
       latest: [now, ...usage.latest]
         .toSorted((a, b) => b.getTime() - a.getTime())
         .slice(0, FREE_LESSON_LIMIT),
-      latestPrepared: usage.latestPrepared.filter((_at, index) => index !== remove),
       prepared: Math.max(0, usage.prepared - Number(inWindow)),
     },
   };

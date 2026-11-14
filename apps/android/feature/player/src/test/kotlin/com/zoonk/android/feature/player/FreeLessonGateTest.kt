@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.player
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -9,7 +10,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assert.assertEquals
@@ -65,6 +68,33 @@ class FreeLessonGateTest {
         assertEquals(0, starts)
         rule.onNodeWithText("Start the lesson").performClick()
         assertEquals(1, starts)
+    }
+
+    /** E 13.17: a map whose lessons don't fit has its own words, never "You've used your free lessons". */
+    @Test
+    fun aMapWhoseLessonsDontFitSaysSo() {
+        rule.setContent {
+            ZoonkTheme {
+                Column {
+                    LimitNotice(
+                        Limit.Reached(LimitTier.Free, LimitPeriod.Total),
+                        LimitSubject.MapLessons,
+                        onCreateAccount = {},
+                        onSubscribe = {},
+                    )
+                    LimitNotice(
+                        Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, Instant.now().minusSeconds(60)),
+                        LimitSubject.MapLessons,
+                        onCreateAccount = {},
+                        onSubscribe = {},
+                    )
+                }
+            }
+        }
+
+        rule.onNodeWithText("This map needs a subscription").assertExists()
+        rule.onNodeWithText("You can make this map now").assertExists()
+        rule.onNodeWithText("You've used your free lessons").assertDoesNotExist()
     }
 }
 

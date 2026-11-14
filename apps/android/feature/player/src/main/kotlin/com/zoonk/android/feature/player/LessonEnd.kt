@@ -119,8 +119,8 @@ fun LessonAccessScreen(
     onRetry: () -> Unit,
 ) {
     when (refusal) {
-        is LessonRefusal.Limited, LessonRefusal.PlusRequired -> {
-            val limit = (refusal as? LessonRefusal.Limited)?.limit
+        is LessonRefusal.Limited -> {
+            val limit = refusal.limit
             if (limit is Limit.SlowDown) {
                 SlowDown(limit.retryAfterSeconds.toLong(), onRetry)
             } else {
@@ -166,7 +166,7 @@ fun lessonAccessBar(
                 R.string.player_try_again to onRetry
             }
 
-            is LessonRefusal.Limited, LessonRefusal.PlusRequired -> {
+            is LessonRefusal.Limited -> {
                 val reached = refusal.reached() ?: return null
                 when (reached.tier) {
                     LimitTier.Guest -> R.string.limit_create_account to { exits.open(AppRoute.Login) }
@@ -201,7 +201,6 @@ private fun FreeLessonsBar(
     }
 }
 
-/** A refusal that still says the old free week draws the free lessons' gate, so no screen says "free week". */
 private fun LessonRefusal.reached(): Limit.Reached? =
     when (this) {
         is LessonRefusal.Limited -> {
@@ -210,10 +209,6 @@ private fun LessonRefusal.reached(): Limit.Reached? =
                 Limit.SignUpRequired -> Limit.Reached(LimitTier.Guest, LimitPeriod.Total)
                 is Limit.Reached -> limit
             }
-        }
-
-        LessonRefusal.PlusRequired -> {
-            Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days)
         }
 
         else -> {

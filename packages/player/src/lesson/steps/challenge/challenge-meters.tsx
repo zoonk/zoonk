@@ -1,7 +1,7 @@
 "use client";
 
 import { type ChallengeMeterState } from "@zoonk/core/library/challenges/run";
-import { Meter, MeterFill } from "@zoonk/learn/meter";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon, ArrowUpIcon, ChevronsDownIcon, ChevronsUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";

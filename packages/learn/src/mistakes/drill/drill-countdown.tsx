@@ -1,11 +1,11 @@
 "use client";
 
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { TimerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { Meter, MeterFill } from "../../_components/meter";
 import { formatClock } from "../../_utils/clock";
 import { useTimeLeft } from "../../_utils/use-time-left";
 import { WARNING_SECONDS, getAnnouncedSeconds } from "./countdown-announcement";

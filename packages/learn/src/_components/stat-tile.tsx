@@ -1,6 +1,6 @@
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { Stat, StatDetail, StatIcon, StatLabel, StatValue } from "@zoonk/ui/components/stat";
 import { cn } from "@zoonk/ui/lib/utils";
-import { BigQuantity } from "./big-quantity";
 
 const STAT_TONE = {
   brain: "text-brain",

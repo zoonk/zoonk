@@ -143,11 +143,7 @@ function BuddyMenu({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button className="text-muted-foreground" edge="end" size="icon-sm" variant="ghost" />
-        }
-      >
+      <DropdownMenuTrigger render={<Button edge="end" size="icon-sm" variant="ghost" />}>
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">{t("More about {buddy}", { buddy: name })}</span>
       </DropdownMenuTrigger>

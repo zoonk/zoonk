@@ -61,8 +61,8 @@ data class MapPlace(
 }
 
 /**
- * The tab's maps in syllabus order, Plus-locked ones left out: chapters' ready maps; every chapter's
- * open lesson maps, as the list names them, read when the deck reaches their chapter; or the saved
+ * The tab's maps in syllabus order: chapters' ready maps; every chapter's
+ * lesson maps, as the list names them, read when the deck reaches their chapter; or the saved
  * maps that open.
  */
 fun GoalMindMaps.deck(tab: StudyTab): List<DeckSlot> =
