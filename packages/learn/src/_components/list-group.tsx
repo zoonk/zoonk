@@ -197,7 +197,7 @@ export function ListRowContent({ className, ...props }: React.ComponentProps<"sp
 export function ListRowTitle({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-sm leading-snug font-medium text-pretty wrap-break-word", className)}
+      className={cn("text-sm font-medium text-pretty wrap-break-word", className)}
       data-slot="list-row-title"
       {...props}
     />

@@ -109,13 +109,13 @@ function WeekDayRow({
 
       <ListRowContent className="justify-start">
         {day.items.length === 0 ? (
-          <span className="text-muted-foreground text-sm leading-snug" data-slot="week-day-item">
+          <span className="text-muted-foreground text-sm" data-slot="week-day-item">
             {t("Rest day")}
           </span>
         ) : (
           names.map((name, index) => (
             <span
-              className="text-sm leading-snug text-pretty"
+              className="text-sm text-pretty"
               data-slot="week-day-item"
               // oxlint-disable-next-line react/no-array-index-key -- two lessons can share a title
               key={index}
