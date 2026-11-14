@@ -79,7 +79,10 @@ export function GoalEntry({
   const goal = useGoalFieldAction({ canSendEmpty: canSubmitEmpty, onSend: onSubmit });
 
   return (
-    <OnboardingColumn className={cn(section && "gap-4")}>
+    <OnboardingColumn
+      bar={!section && <SubmitButton form={formId} />}
+      className={cn(section && "gap-4")}
+    >
       {section ? (
         <PageSectionTitle>{t("Start a goal")}</PageSectionTitle>
       ) : (
@@ -145,8 +148,6 @@ export function GoalEntry({
       <GoalErrorAlert error={error} signUpHref={signUpHref} />
 
       <GoalExamples className={cn(section && "min-[72rem]:hidden")} onPick={goal.send} />
-
-      {!section && <SubmitButton form={formId} />}
     </OnboardingColumn>
   );
 }
