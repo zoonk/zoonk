@@ -46,8 +46,8 @@ function useActionLabel(action: QuestionAction): string {
 
 /**
  * The row a question is answered from, for a frame's pinned bar (`TaskFrame`'s `footer`,
- * `TaskActionBar`, onboarding's `bar`): "I don't know yet", the way back, the main action, then
- * the screen's own extras. Focus lost with a control that left moves to the main action.
+ * `TaskActionBar`, onboarding's `bar`): the way back with "I don't know yet"
+ * (`BackWithSecondAction`), the main action, then the screen's own extras. Focus lost with a control that left moves to the main action.
  */
 export function QuestionActions({ className, ...props }: React.ComponentProps<typeof TaskActions>) {
   const row = useRef<HTMLDivElement>(null);
@@ -100,6 +100,28 @@ export function QuestionBack({
         <span className="sr-only">{name}</span>
       </Button>
     </ShortcutTooltip>
+  );
+}
+
+/**
+ * A bar's way back with its second action, each where it's drawn so it's read in that order: from
+ * `lg` the way back starts the row; on a phone the second action takes the line above and the way
+ * back starts the row under it. The way back is placed at both spots and hidden at the size that
+ * doesn't draw it there, so only one is ever reachable.
+ */
+export function BackWithSecondAction({
+  back,
+  children,
+}: {
+  back: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      <div className="contents max-lg:hidden">{back}</div>
+      {children}
+      <div className="contents lg:hidden">{back}</div>
+    </>
   );
 }
 

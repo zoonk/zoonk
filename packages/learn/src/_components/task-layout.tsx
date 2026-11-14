@@ -64,11 +64,7 @@ export const TASK_MAIN_ACTION_CLASS = cn(
 
 export const TASK_OPTION_CLASS = "w-full lg:w-auto";
 
-/**
- * A bar's second action comes before the way back in the row, since on a phone it takes the line
- * above and is read first; from `lg` the way back is drawn first, in the bar's corner under ✕.
- */
-export const TASK_BACK_ACTION_CLASS = "size-11 shrink-0 lg:order-first lg:mr-auto";
+export const TASK_BACK_ACTION_CLASS = "size-11 shrink-0 lg:mr-auto";
 
 export type TaskAsideWidth = "default" | "half";
 
