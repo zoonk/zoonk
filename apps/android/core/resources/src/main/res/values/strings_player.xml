@@ -52,9 +52,10 @@
     <string name="player_verdict_typo">Right, watch the spelling</string>
     <!-- Verdict when the learner's answer wasn't checked this time. -->
     <string name="player_verdict_unchecked">Not checked this time</string>
+    <!-- Under “Not checked this time”: we corrected this lesson question while the learner was in the lesson, so their answer isn't graded either way. -->
+    <string name="player_unchecked_updated">This question was updated after you started, so this answer doesn\'t count.</string>
     <string name="player_answer_feedback">Answer feedback</string>
     <string name="player_spelled">Spelled:</string>
-    <string name="player_correct_answer_label">Answer:</string>
     <!-- After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too. -->
     <string name="player_also_correct_label">Also correct:</string>
     <string name="player_explain_answer">Explain my answer</string>
@@ -176,7 +177,6 @@
     <!-- %1$s names where an activity's data comes from, such as "World Bank (2023)". -->
     <string name="player_activity_source">Source: %1$s</string>
     <string name="player_activity_your_answer">Your answer:</string>
-    <string name="player_activity_correct_answer">Correct answer:</string>
     <!-- A work challenge's label: %1$s is where it happens, such as "Customer support". -->
     <string name="player_challenge_case">Challenge · %1$s</string>
     <!-- A what-if scenario's label: %1$s is where it happens. -->
