@@ -66,6 +66,9 @@ describe("the Plan's path and Android's captures", () => {
     assert.equal(rest.length, 0);
     assert.equal(line?.rule, "line");
     assert.match(line?.detail ?? "", /The Trickster.*the value 8\.25 above the row's center/u);
+
+    // Lane C's row piece puts it 0.26 above, within the line.
+    assert.deepEqual(failures(real("plan path after 21c684874d, phone")), []);
   });
 
   it("fails Android's note 0 dp under its wait where the piece lays out 24, from the group's gap", () => {
