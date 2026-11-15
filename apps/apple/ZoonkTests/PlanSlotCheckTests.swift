@@ -33,14 +33,67 @@ final class PlanSlotCheckTests: XCTestCase {
 
   /// Leaving the Plan ends the visit: what a card's check found or failed at shows nothing on the
   /// next one.
-  func testLeavingThePlanShowsNothingOfACardsCheck() {
-    let checks = PlanSlotChecks()
-    let check = checks.check(.fitLessons, goalId: "goal")
-    check.failed = true
+  func testLeavingThePlanShowsNothingOfACardsCheck() throws {
+    let context = try context()
+    context.slotCheck(.fitLessons).failed = true
 
-    checks.leave()
+    context.slotChecks.leave()
 
-    XCTAssertFalse(checks.check(.fitLessons, goalId: "goal").failed)
+    XCTAssertFalse(context.slotCheck(.fitLessons).failed)
+  }
+
+  /// PR comment 28: Add to my plan found other numbers, then the plan changed (Adjust plan, a
+  /// refresh). The card shows the offer as the plan now has it, and Add checks it again: what it
+  /// found was about the plan before.
+  func testAFitCheckAboutAnEarlierPlanShowsNothingOnTheNextOne() async throws {
+    let api = PlanAPIStub()
+    await api.setPreview(try preview(lessons: 3))
+    var applied: [[PlanEdit]] = []
+    let shown = ShownFit(context: try context(), offer: try fitOffer())
+    let window = try showFit(shown, api: api, apply: { applied.append($0) })
+    try await settle()
+
+    try activate(String(localized: "Add to my plan", table: "Plan"), in: window)
+    try await settle()
+    XCTAssertTrue(
+      spoken(in: window).contains { $0.contains(Self.repriced) },
+      "The check found other numbers: \(spoken(in: window))")
+
+    let next = try fitOffer(lessons: 4)
+    await api.setPreview(try preview(lessons: 4))
+    shown.context = try context(plan: goalPlanFixture(estimateEnd: "2027-12-01"))
+    shown.offer = next
+    try await settle()
+    XCTAssertFalse(
+      spoken(in: window).contains { $0.contains(Self.repriced) },
+      "Nothing of the earlier plan's check shows: \(spoken(in: window))")
+
+    try activate(String(localized: "Add to my plan", table: "Plan"), in: window)
+    try await settle()
+    XCTAssertEqual(
+      applied, [next.operations.map { PlanEdit.operation($0) }], "Add applies the offer shown")
+  }
+
+  /// A check that found the offer adds nothing hides Add; once the plan changes, the new offer has
+  /// its Add again.
+  func testAnUnchangedFitCheckAboutAnEarlierPlanLeavesAddOnTheNextOne() async throws {
+    let api = PlanAPIStub()
+    await api.setPreview(
+      PlanChangePreview(
+        effect: nil, feasibility: nil, finishDate: nil, ready: true, unchanged: true))
+    let shown = ShownFit(context: try context(), offer: try fitOffer())
+    let window = try showFit(shown, api: api, apply: { _ in })
+    try await settle()
+    let add = String(localized: "Add to my plan", table: "Plan")
+
+    try activate(add, in: window)
+    try await settle()
+    XCTAssertFalse(spoken(in: window).contains(add), "The check found nothing to add")
+
+    shown.context = try context(plan: goalPlanFixture(estimateEnd: "2027-12-01"))
+    shown.offer = try fitOffer(lessons: 4)
+    try await settle()
+    XCTAssertTrue(spoken(in: window).contains(add), "The next plan's offer has its Add")
   }
 
   // MARK: Each card
@@ -82,7 +135,7 @@ final class PlanSlotCheckTests: XCTestCase {
     }
 
     XCTAssertNotNil(
-      context.slotChecks.check(.coverage("Coverage"), goalId: "goal").asked, "The change it found")
+      context.slotCheck(.coverage("Coverage")).asked, "The change it found")
     XCTAssertTrue(
       spoken(in: window).contains(String(localized: "Change my plan", table: "Plan")),
       "The card shows the change: \(spoken(in: window))")
@@ -148,25 +201,77 @@ final class PlanSlotCheckTests: XCTestCase {
     CGRect(x: 0, y: 0, width: width.rawValue, height: width == .wide ? 1032 : 912)
   }
 
-  private func context() throws -> PlanContext {
+  private static let repriced = String(
+    localized: "Your plan changed since you saw this. Here's what it does now.", table: "Plan")
+
+  /// The Plan's checks are the screen's, so a context for another plan keeps them.
+  private let checks = PlanSlotChecks()
+
+  private func context(plan: GoalPlan? = nil) throws -> PlanContext {
     PlanContext(
       goal: LearnerGoal(
         dailyMinutes: 30, id: "goal", kind: .exam, language: "en", status: .active,
         targetDate: "2026-01-04", displayName: "ENEM", title: "ENEM"),
-      plan: try goalPlanFixture(), adjust: { _ in }, show: { _ in })
+      plan: try plan ?? goalPlanFixture(), adjust: { _ in }, show: { _ in }, slotChecks: checks)
   }
 
-  private func fitOffer() throws -> GoalPlan.FitOffer {
+  private func fitOffer(lessons: Int = 6) throws -> GoalPlan.FitOffer {
     try JSONDecoder().decode(
       GoalPlan.FitOffer.self,
       from: Data(
-        #"""
-        {"canApply":true,"effect":{"lessonsAdded":6,"lessonsRemoved":0},"fits":true,
-         "operations":[{"kind":"addLessons","count":6}]}
-        """#.utf8))
+        """
+        {"canApply":false,"effect":{"lessonsAdded":\(lessons),"lessonsRemoved":0},"fits":true,
+         "operations":[{"kind":"addLessons","count":\(lessons)}]}
+        """.utf8))
+  }
+
+  private func preview(lessons: Int) throws -> PlanChangePreview {
+    PlanChangePreview(
+      effect: try fitOffer(lessons: lessons).effect, feasibility: nil, finishDate: nil,
+      ready: true, unchanged: false)
+  }
+
+  /// The fit card on a phone's Plan, drawn from whichever plan `shown` holds.
+  private func showFit(
+    _ shown: ShownFit, api: PlanAPIStub, apply: @escaping ([PlanEdit]) -> Void
+  ) throws -> UIWindow {
+    try readsWhatVoiceOverReads()
+    let session = SessionStore.preview(account: .planTestAccount)
+    let window = try show(
+      FitHost(shown: shown, actions: PlanSlotActions(apply: apply, notNow: {}))
+        .environment(PlanStore(api: api, cache: AppCache(session: session)))
+        .environment(session)
+        .environment(AppRouter())
+        .zoonkStyles())
+    window.frame = frame(.narrow)
+    return window
   }
 
   private func settle() async throws {
     try await Task.sleep(for: .milliseconds(300))
+  }
+}
+
+@MainActor
+@Observable
+private final class ShownFit {
+  var context: PlanContext
+  var offer: GoalPlan.FitOffer
+
+  init(context: PlanContext, offer: GoalPlan.FitOffer) {
+    self.context = context
+    self.offer = offer
+  }
+}
+
+private struct FitHost: View {
+  let shown: ShownFit
+  let actions: PlanSlotActions
+
+  var body: some View {
+    List {
+      PlanFitSlot(
+        context: shown.context, offer: shown.offer, title: Text(verbatim: "Fit"), actions: actions)
+    }
   }
 }

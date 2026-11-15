@@ -188,7 +188,7 @@ struct PlanPastDateSlot: View {
   }
 
   private var check: PlanSlotCheck {
-    context.slotChecks.check(.pastDate, goalId: context.goal.id)
+    context.slotCheck(.pastDate)
   }
 
   @ViewBuilder private var card: some View {
@@ -321,7 +321,7 @@ struct PlanCoverageSlot: View {
   let actions: PlanSlotActions
 
   private var check: PlanSlotCheck {
-    context.slotChecks.check(.coverage(title), goalId: context.goal.id)
+    context.slotCheck(.coverage(title))
   }
 
   private var isAsked: Bool {
@@ -589,11 +589,11 @@ struct PlanFitSlot: View {
   let actions: PlanSlotActions
 
   private var check: PlanSlotCheck {
-    context.slotChecks.check(.fitLessons, goalId: context.goal.id)
+    context.slotCheck(.fitLessons)
   }
 
   var body: some View {
-    let repriced = check.repriced
+    let repriced = check.repriced?.preview
     let unchanged = repriced?.unchanged == true
 
     PlanSlotCard(title: title, mark: .sparkle, description: nil) {
@@ -625,8 +625,8 @@ struct PlanFitSlot: View {
   private func add() async {
     let check = check
 
-    guard check.repriced == nil else {
-      actions.apply(offer.operations.map { PlanEdit.operation($0) })
+    if let repriced = check.repriced {
+      actions.apply(repriced.edits)
       return
     }
 
@@ -635,7 +635,7 @@ struct PlanFitSlot: View {
     check.failed = false
 
     switch await store.addFitOffer(offer, goalId: context.goal.id, apply: actions.apply) {
-    case .repriced(let preview): check.repriced = preview
+    case .repriced(let repriced): check.repriced = repriced
     case .failed: check.failed = true
     case .applied, nil: break
     }
@@ -647,7 +647,7 @@ enum FitOfferCheck: Equatable {
   /// Today's numbers are the offer's, so its edits were applied.
   case applied
   /// Other numbers, shown before the next tap applies them.
-  case repriced(PlanChangePreview)
+  case repriced(PlanSlotRepriced)
   case failed
 }
 
@@ -667,7 +667,7 @@ extension PlanStore {
       apply(edits)
       return .applied
     case .done(let preview?):
-      return .repriced(preview)
+      return .repriced(PlanSlotRepriced(edits: edits, preview: preview))
     case .done(nil), .failed:
       return .failed
     case .obsolete:
@@ -691,9 +691,18 @@ func planCoverageLine(minutes: Int, share: Double, exam: Bool) -> String {
       comment: "The share of a goal a time a day covers; the first argument is a duration")
 }
 
+extension PlanContext {
+  /// The check `item`'s card keeps for the plan shown now.
+  func slotCheck(_ item: PlanSlotItem) -> PlanSlotCheck {
+    slotChecks.check(item, goalId: goal.id, plan: plan)
+  }
+}
+
 /// What the Plan's suggestion cards are checking and what they found, kept by the Plan above its
 /// panes: a card is drawn again as the Plan splits into panes or joins them, and its check goes on
-/// and shows there, or in the sheet the line opens. The Plan calls `leave()` as it closes.
+/// and shows there, or in the sheet the line opens. A check is an answer about one plan: once the
+/// Plan shows another (Adjust plan, a refresh that read a change), the card starts clean. The Plan
+/// calls `leave()` as it closes.
 @MainActor
 final class PlanSlotChecks {
   private struct Key: Hashable {
@@ -701,29 +710,42 @@ final class PlanSlotChecks {
     let item: PlanSlotItem
   }
 
-  private var checks: [Key: PlanSlotCheck] = [:]
+  private struct Kept {
+    let plan: GoalPlan
+    let check: PlanSlotCheck
+  }
 
-  func check(_ item: PlanSlotItem, goalId: String) -> PlanSlotCheck {
+  private var checks: [Key: Kept] = [:]
+
+  func check(_ item: PlanSlotItem, goalId: String, plan: GoalPlan) -> PlanSlotCheck {
     let key = Key(goalId: goalId, item: item)
 
-    if let check = checks[key] {
-      return check
+    if let kept = checks[key], kept.plan == plan {
+      return kept.check
     }
 
+    checks[key]?.check.leave()
     let check = PlanSlotCheck()
-    checks[key] = check
+    checks[key] = Kept(plan: plan, check: check)
     return check
   }
 
   /// Leaving the Plan ends its checks: what one was waiting for, found or failed at shows
   /// nothing on the next visit.
   func leave() {
-    for check in checks.values {
-      check.leave()
+    for kept in checks.values {
+      kept.check.leave()
     }
 
     checks = [:]
   }
+}
+
+/// The fit offer's numbers today, when they aren't the offer's, with the edits they're for: the
+/// next tap applies those edits.
+struct PlanSlotRepriced: Equatable {
+  let edits: [PlanEdit]
+  let preview: PlanChangePreview
 }
 
 @MainActor
@@ -732,7 +754,7 @@ final class PlanSlotCheck {
   /// The change a tap worked out, asked before it applies.
   var asked: PlanSlotAskedChange?
   /// The fit offer's numbers today, when they aren't the offer's.
-  var repriced: PlanChangePreview?
+  var repriced: PlanSlotRepriced?
   var isAsked = false
   var isWorking = false
   var failed = false
