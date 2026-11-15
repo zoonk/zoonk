@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join, relative } from "node:path";
 import { assert as assertProperty, asyncProperty, string } from "fast-check";
 import { describe, it } from "vitest";
 import { checkBody } from "./body-check.mts";
 import { CLEAN, checkFixture, kinds } from "./check-fixture.mts";
 import { deviceSection, readDeviceShots, unwritablePath } from "./device-section.mts";
 import { type DeviceBridge, takeDevicePicture } from "./device.mts";
-import { type CaptureItem, readManifest, writeManifest } from "./media.mts";
+import { type CaptureItem, isRecorded, readManifest, writeManifest } from "./media.mts";
 import { sha256File } from "./provenance.mts";
 import { formatCheck } from "./report.mts";
 
@@ -208,6 +208,37 @@ describe("the pictures device-section names (RV79)", () => {
     );
 
     assert.ok(refused.every((why) => /another folder/u.test(why)));
+  });
+
+  it("prints each picture once, by the file it names, in the order first named (RV82)", async () => {
+    const { device } = await fixture();
+    const other = join(dirname(device), "other.png");
+
+    writeFileSync(other, "another picture");
+    const [item] = (await readManifest(dirname(device))) ?? [];
+
+    await writeManifest(dirname(device), [
+      ...(item ? [item] : []),
+      ...(item && isRecorded(item)
+        ? [{ ...item, file: "other.png", sha256: await sha256File(other), shows: "Other" }]
+        : []),
+    ]);
+
+    const aliases = [
+      device,
+      other,
+      `${dirname(device)}/./sheet-over-plan.png`,
+      relative(process.cwd(), device),
+      other,
+    ];
+
+    const section = deviceSection(await readDeviceShots(aliases));
+
+    const images = [...section.matchAll(/!\[[^\]]*\]\((?<link>[^)]+)\)/gu)].map(
+      ({ groups }) => groups?.link,
+    );
+
+    assert.deepEqual(images, [device, other]);
   });
 
   it("for any path, either refuses it or prints a section that passes the check", async () => {

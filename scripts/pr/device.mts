@@ -3,7 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { z } from "zod";
-import { REFERENCE, unwritablePath } from "./device-section.mts";
+import { REFERENCE, captionWords, unwritablePath } from "./device-section.mts";
 import { type CaptureItem, fileName, pathWithin, registerItems } from "./media.mts";
 import { readCheckoutBuild, sha256File, sha256Text } from "./provenance.mts";
 
@@ -211,19 +211,7 @@ export async function takeDevicePicture({
     throw new Error(unwritable);
   }
 
-  if (REFERENCE.test(name)) {
-    throw new Error(
-      "--name is the picture's caption, and GitHub links an @name, a #number or a GH-number in it, notifying that person or leaving a reference on that issue: write it without one.",
-    );
-  }
-
   const device = await bridge.describe(deviceId).catch(() => null);
-
-  if (device && REFERENCE.test(device)) {
-    throw new Error(
-      `The device describes itself as "${device}", and GitHub links an @name, a #number or a GH-number in a caption, notifying that person or leaving a reference on that issue: rename the device.`,
-    );
-  }
 
   if (!device) {
     throw new Error(
@@ -247,9 +235,7 @@ export async function takeDevicePicture({
     throw new Error(why);
   }
 
-  await mkdir(to, { recursive: true });
   const file = `${fileName(name)}.png`;
-  await bridge.screenshot(deviceId, join(to, file));
 
   // Only what the device reported: an emulator's app names no commit, so none is recorded.
   const build =
@@ -272,13 +258,26 @@ export async function takeDevicePicture({
     pointer: "coarse",
     scale: 1,
     scheme: "light",
-    sha256: await sha256File(join(to, file)),
+    sha256: "",
     shows: name,
     side: "after",
     steps: sha256Text(`${deviceId} ${name}`),
     viewport: device,
   };
 
-  await registerItems(to, [item]);
-  return item;
+  // Everything the caption will print, refused before anything is taken.
+  const linked = captionWords(item).find((words) => REFERENCE.test(words));
+
+  if (linked) {
+    throw new Error(
+      `The caption would print "${linked}", and GitHub links an @name, a #number, a GH-number or an issue's URL in it even escaped, notifying that person or leaving a reference on that issue: change --name, rename the device, or install a build whose version holds none.`,
+    );
+  }
+
+  await mkdir(to, { recursive: true });
+  await bridge.screenshot(deviceId, join(to, file));
+
+  const taken = { ...item, sha256: await sha256File(join(to, file)) };
+  await registerItems(to, [taken]);
+  return taken;
 }

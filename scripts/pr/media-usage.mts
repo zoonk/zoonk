@@ -33,9 +33,10 @@ Checks that every picture a PR body shows was captured, from which build, and re
            failing the check as pending.
   device   takes an after picture from a booted simulator (--device its udid) or emulator (its
            adb serial) that no capture can take, such as an Android sheet over its page, with
-           --name saying what it shows (its caption, written as literal words; an @name is
-           refused, as are a #number, a GH-number and an issue's URL, which GitHub links even
-           escaped) and --to a folder whose path holds only letters and digits of any script,
+           --name saying what it shows (its caption, written as literal words; a caption that
+           would hold an @name, a #number, a GH-number or an issue's URL, which GitHub links
+           even escaped, is refused, whether from --name, the device's name or the build's
+           version) and --to a folder whose path holds only letters and digits of any script,
            /, ., - and _, the path a body writes for an image. It takes the
            picture itself and records the installed build as the device reports it: a
            simulator's Debug build stamp must be this checkout's head, built clean, and its

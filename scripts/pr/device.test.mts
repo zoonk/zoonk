@@ -163,4 +163,26 @@ describe("pnpm pr:media device: a picture the tool takes from a booted device", 
       /GitHub links/u,
     );
   });
+
+  it("refuses what GitHub links in the build the device reports, too (RV82)", async () => {
+    const { repository } = checkFixture();
+
+    const versions = await Promise.all(
+      ["1.0-@octocat", "1.0-#123"].map(async (version) =>
+        takeDevicePicture({
+          bridge: bridge({ installedAt: new Date(), version }),
+          deviceId: "booted-device",
+          name: "sheet",
+          platform: "android",
+          repository,
+          to: mkdtempSync(join(repository, "device-")),
+        }).then(() => "taken", String),
+      ),
+    );
+
+    assert.ok(
+      versions.every((why) => /GitHub links/u.test(why)),
+      versions.join("\n"),
+    );
+  });
 });

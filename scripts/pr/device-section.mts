@@ -57,16 +57,29 @@ function showsOf(item: CaptureItem): string {
   return item.shows ?? (item.kind === "shot" ? item.name.replaceAll("-", " ") : "Device picture");
 }
 
+/**
+ * Every word a device picture's caption prints: what it shows, then what was verified of it. The
+ * writer prints these and the device command refuses a reference in them, from this one list.
+ */
+export function captionWords(item: CaptureItem): [shows: string, verified: string] {
+  return [showsOf(item), deviceLine(item)];
+}
+
 function row(cells: string[]): string {
   return `| ${cells.join(" | ")} |`;
 }
 
 function table(shots: DeviceShot[]): string {
+  const captions = shots.map(({ item, link }) => {
+    const [shows, verified] = captionWords(item);
+    return { link, shows: literal(shows), verified: literal(verified) };
+  });
+
   return [
-    row(shots.map(({ item }) => literal(showsOf(item)))),
+    row(captions.map(({ shows }) => shows)),
     row(shots.map(() => "---")),
-    row(shots.map(({ item, link }) => `![${literal(showsOf(item))}](${link})`)),
-    row(shots.map(({ item }) => literal(deviceLine(item)))),
+    row(captions.map(({ link, shows }) => `![${shows}](${link})`)),
+    row(captions.map(({ verified }) => verified)),
   ].join("\n");
 }
 
