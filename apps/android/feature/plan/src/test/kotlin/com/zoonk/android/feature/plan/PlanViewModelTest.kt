@@ -1016,6 +1016,17 @@ class PlanViewModelTest {
             assertEquals(TimeToCoverState.Answered(planAdviceRevision(plan), api.timeToCover), viewModel.timeToCover.value)
         }
 
+    @Test
+    fun aRegionFailureFromAnEarlierEditorOpeningMarksNothingInTheNext() =
+        runTest {
+            val held = CompletableDeferred<Unit>().also { api.goalGate = it }
+            api.goalFailure = ApiException(ApiError.Network)
+            viewModel.setRegion("MX")
+            reopenEditor()
+            held.complete(Unit)
+            assertFalse(viewModel.failed.value.contains(PlanPart.Region))
+        }
+
     private companion object {
         /** A later day's fit offer: its numbers are the last plan write's, so the tap checks today's first. */
         val FIT_PLAN =

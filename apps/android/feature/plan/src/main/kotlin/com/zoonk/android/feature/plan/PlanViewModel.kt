@@ -194,18 +194,23 @@ class PlanViewModel(
     }
 
     /** A language goal's country: the plan stays as it is, so its picker closes once the server has it. */
-    fun setRegion(region: String?) = saveGoal(PlanPart.Region, outcomes.regionSaved) { store.setRegion(goalId, region) }
+    fun setRegion(region: String?) = saveGoal(PlanPart.Region, outcomes.editor, outcomes.regionSaved) { store.setRegion(goalId, region) }
 
     /** A learn goal's content country: the plan stays until its rebuild saves the new one; its question closes once the server has it. */
-    fun setContentCountry(country: String) = saveGoal(PlanPart.Country, outcomes.countrySaved) { store.setContentCountry(goalId, country) }
+    fun setContentCountry(country: String) =
+        saveGoal(PlanPart.Country, outcomes.editor, outcomes.countrySaved) { store.setContentCountry(goalId, country) }
 
     /** Prepares the new country's plan again after that failed; a retry that doesn't start says so in a snackbar. */
     fun retryCountryRebuild() =
-        saveGoal(PlanPart.CountryRebuild, saved = null, failed = outcomes.saveFailed) { store.retryCountryRebuild(goalId) }
+        saveGoal(PlanPart.CountryRebuild, visit, saved = null, failed = outcomes.saveFailed) { store.retryCountryRebuild(goalId) }
 
-    /** What [write] did shows only on the visit that started it: [saved] is the editor opening's, [failed] the Plan's. */
+    /**
+     * What [write] did shows only on the visit of what asked ([asker]: the editor opening for a picker, the Plan for a
+     * retry), its success and its failure alike, noted when it's asked.
+     */
     private fun saveGoal(
         part: PlanPart,
+        asker: Visit,
         saved: VisitOutcome<Unit>?,
         failed: VisitOutcome<Unit>? = null,
         write: suspend () -> MutationResult<Unit>,
@@ -213,17 +218,16 @@ class PlanViewModel(
         if (part in savingParts.value) return
         savingParts.update { it + part }
         failedParts.update { it - part }
-        val started = visit.number
-        val opened = outcomes.editor.number
+        val asked = asker.number
         viewModelScope.launch {
             when (write()) {
                 is MutationResult.Done -> {
-                    saved?.send(opened, Unit)
+                    saved?.send(asked, Unit)
                 }
 
                 is MutationResult.Failed -> {
-                    if (started == visit.number) failedParts.update { it + part }
-                    failed?.send(started, Unit)
+                    if (asked == asker.number) failedParts.update { it + part }
+                    failed?.send(asked, Unit)
                 }
 
                 MutationResult.Obsolete -> {}
