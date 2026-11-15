@@ -7,6 +7,7 @@ import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-ar
 import { namesMatch } from "../_utils/name-match";
 import { findSubjectSections, getObjectiveSectionNames } from "./exam-parts";
 import { type MockOptionView, type MockShape } from "./mock-contract";
+import { estimateMockMinutes } from "./mock-estimate";
 import { type MockTypedPart, listCoveredSections, listMockLeftOut } from "./mock-left-out";
 import { getMockDays, outlineMock } from "./mock-plan";
 import { type SubjectShare } from "./mock-subject-shares";
@@ -18,18 +19,6 @@ import { isObjectiveSection, isQuestionSubject } from "./written-subject";
 const DEFAULT_SUBJECT_QUESTIONS = 20;
 
 const MIN_SUBJECT_QUESTIONS = 5;
-
-export function estimateMockMinutes({
-  minutes,
-  pace,
-  questions,
-}: {
-  minutes: number;
-  pace: number | null;
-  questions: number;
-}): number {
-  return pace === null ? minutes : Math.min(minutes, Math.max(1, Math.round(questions * pace)));
-}
 
 export type MockOption = MockOptionView;
 
@@ -164,6 +153,7 @@ function toDayOption({
   essays,
   kind,
   listening,
+  pace,
   speaking,
   subjects,
   structure,
@@ -174,6 +164,7 @@ function toDayOption({
   essays: readonly MockEssayCandidate[];
   kind: "full" | "half";
   listening: ReadonlySet<string>;
+  pace: number | null;
   speaking: boolean;
   subjects: readonly Subject[];
   structure: ExamStructure | null;
@@ -197,18 +188,28 @@ function toDayOption({
   const asked = outline.written.filter((part) => part.asked).map((part) => part.name);
   const choices = listLeftOutChoices({ day, kind, unpicked });
   const leftOut = listMockLeftOut({ asked, choices, day, kind, running, structure, typed });
+  const questions = outline.sections.reduce((sum, section) => sum + section.questions, 0);
+
+  const onlyQuestions =
+    asked.length === 0 &&
+    outline.sections.every((section) => section.questions > 0 && section.essays.length === 0);
 
   return {
     area: null,
     areas: getDayAreas({ day, structure, subjects }),
     covers: listCoveredSections({ asked, day, leftOut, structure }),
     day,
-    estimatedMinutes: outline.minutes,
+    estimatedMinutes: estimateMockMinutes({
+      minutes: outline.minutes,
+      onlyQuestions,
+      pace,
+      questions,
+    }),
     kind,
     leftOut,
     minutes: outline.minutes,
     objectiveOnly: asked.length < parts.length,
-    questions: outline.sections.reduce((sum, section) => sum + section.questions, 0),
+    questions,
     written: asked,
   };
 }
@@ -227,11 +228,13 @@ function getEvenSubjectQuestions(structure: ExamStructure): number | null {
 }
 
 function toSubjectOption({
+  pace,
   parts,
   subject,
   structure,
   typed,
 }: {
+  pace: number | null;
   parts: readonly Subject[];
   subject: Subject;
   structure: ExamStructure;
@@ -258,7 +261,7 @@ function toSubjectOption({
     areas: [subject.name, ...parts.map((part) => part.name)],
     covers: null,
     day: null,
-    estimatedMinutes: minutes,
+    estimatedMinutes: estimateMockMinutes({ minutes, onlyQuestions: true, pace, questions }),
     kind: "area",
     leftOut: listMockLeftOut({ asked: [], day: null, kind: "area", structure, typed }),
     minutes,
@@ -289,7 +292,7 @@ export function listMockOptions({
 }): MockOption[] {
   const subjects = structure ? getObjectiveSubjects({ goalAreas, structure }) : [];
   const days = getMockDays(structure);
-  const shared = { essays, listening, speaking, structure, subjects, typed, unpicked };
+  const shared = { essays, listening, pace, speaking, structure, subjects, typed, unpicked };
   const full = days.map((day) => toDayOption({ ...shared, day, kind: "full" }));
   const halves = days.map((day) => toDayOption({ ...shared, day, kind: "half" }));
 
@@ -300,6 +303,7 @@ export function listMockOptions({
       ? wholes
           .map((subject) =>
             toSubjectOption({
+              pace,
               parts: subjects.filter((part) => part.partOf === subject.name),
               structure,
               subject,
@@ -309,9 +313,9 @@ export function listMockOptions({
           .toSorted((first, second) => second.questions - first.questions)
       : [];
 
-  return [...full, ...halves, ...bySubject]
-    .filter((option) => option.questions > 0 || option.written.length > 0)
-    .map((option) => ({ ...option, estimatedMinutes: estimateMockMinutes({ ...option, pace }) }));
+  return [...full, ...halves, ...bySubject].filter(
+    (option) => option.questions > 0 || option.written.length > 0,
+  );
 }
 
 export function findMockOption({
