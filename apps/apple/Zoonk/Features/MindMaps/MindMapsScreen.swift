@@ -182,9 +182,12 @@ private struct MindMapChaptersTab: View {
         Text(
           "No mind maps yet", tableName: "MindMaps", comment: "Title when no chapter has a map")
       } description: {
-        Text(
-          "Your plan's chapters show here once they're ready, each with its mind map.",
-          tableName: "MindMaps", comment: "Why the mind maps page has no chapters yet")
+        // A finished chapter's map is claimed like any other, so it waits while the maps are used up.
+        if maps.createOffer.stop == nil {
+          Text(
+            "Your plan's chapters show here once they're ready, each with its mind map.",
+            tableName: "MindMaps", comment: "Why the mind maps page has no chapters yet")
+        }
       }
     }
   }
