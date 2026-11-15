@@ -35,6 +35,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.conversation.OpenStartedCall
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.mock.MockEntryButton
@@ -44,6 +45,8 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.feature.speaking.SpeakingMockCard
 import com.zoonk.android.feature.speaking.SpeakingPaperSection
+import com.zoonk.android.feature.speaking.speakingMockStart
+import com.zoonk.android.feature.speaking.speakingStart
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -109,6 +112,21 @@ internal fun GoalExam(
     val loaded = state.value
 
     val main = loaded?.let { exam -> options.value?.takeUnless { exam.isLastDays }?.takeIf { mockEntryRoute(it) != null } }
+    loaded?.let { exam ->
+        val openCall = { id: UUID -> navigator.open(AppRoute.Conversation(id.toString(), from = FROM_EXAM)) }
+        when {
+            exam.speaking != null -> {
+                OpenStartedCall(
+                    speakingStart(exam.goalId, app.conversations) { app.exams.speakingRefused(exam.goalId) },
+                    openCall,
+                )
+            }
+
+            exam.speakingMock != null -> {
+                OpenStartedCall(speakingMockStart(exam.goalId, app.conversations), openCall)
+            }
+        }
+    }
 
     ExamFrame(
         navigator = navigator,
