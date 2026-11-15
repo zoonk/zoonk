@@ -488,10 +488,10 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertNotNil(store.shownStop(goalId: "goal"))
     XCTAssertNil(store.shownStop(goalId: "goal")?.limit(tier: .free).limit.availableAt)
 
-    // Its date has passed here, so the page reads the list once; the server still stops it.
+    // Its day was past when it arrived, so no read is scheduled for it; the next read lifts it.
     await store.readOfferAgain(goalId: "goal", now: .now)
     var calls = await api.calls
-    XCTAssertEqual(calls.list, 2)
+    XCTAssertEqual(calls.list, 1)
     XCTAssertNotNil(store.shownStop(goalId: "goal"))
 
     await api.stopNewMaps(nil)
@@ -829,6 +829,24 @@ final class MindMapsStoreTests: XCTestCase {
       list.value?.createOffer.stop, stop, "The empty page must retain its stop to hide the promise")
     XCTAssertNotEqual(
       list.state, .empty, "The unconditional empty-page description must not be selected")
+  }
+
+  func testAStopPastOnArrivalStartsNoRead() async {
+    let stop = MindMapAllowanceStop(
+      availableAt: .now.addingTimeInterval(-60), period: "rolling30Days",
+      reason: .limitReached, resource: .mindMap)
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    await api.stopNewMaps(stop)
+    let store = makeStore(api: api)
+    await store.list(goalId: "goal").load()
+    // MindMapCreateSection's initial task runs this branch for a past-on-arrival stop.
+    let now = Date.now
+    if store.shownStop(goalId: "goal")?.isOver(at: now) == true {
+      await store.readOfferAgain(goalId: "goal", now: now)
+    }
+    let calls = await api.calls
+    XCTAssertEqual(calls.list, 1, "A stop already past on arrival must not schedule an expiry read")
+    XCTAssertEqual(calls.create + calls.createAll, 0)
   }
 
   private static let chapterKey = MindMapKey(kind: .chapter, targetId: "chapter")
