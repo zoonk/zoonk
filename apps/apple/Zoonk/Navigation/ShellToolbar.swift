@@ -81,8 +81,11 @@ struct ShellToolbar: ViewModifier {
   }
 }
 
+/// The belt's dot and the level: "Level 2" where the bar has room, as main's sidebar says it; a
+/// phone's bar keeps the number, so the goal's name keeps its room.
 private struct LevelButton: View {
   @Environment(AppRouter.self) private var router
+  @Environment(\.horizontalSizeClass) private var sizeClass
 
   let level: LearnerLevel
 
@@ -95,8 +98,14 @@ private struct LevelButton: View {
       HStack(spacing: 6) {
         BeltDot(belt: belt)
 
-        Text(level.level, format: .number)
-          .monospacedDigit()
+        if sizeClass == .regular {
+          Text(
+            "Level \(level.level)", tableName: "Navigation",
+            comment: "Beside the belt's dot in a wide top bar: the learner's level")
+        } else {
+          Text(level.level, format: .number)
+            .monospacedDigit()
+        }
       }
     }
     .accessibilityLabel(

@@ -148,7 +148,7 @@ private struct DayMomentContent: View {
               bonus(moment.fullMeal.bonus)
             } else {
               Text(
-                "\(moment.left) more for +\(moment.fullMeal.bonus) Brain Power",
+                "\(moment.left) more missions for +\(moment.fullMeal.bonus) Brain Power",
                 tableName: "Session",
                 comment: "Missions still to do today, then the bonus finishing them earns"
               )
