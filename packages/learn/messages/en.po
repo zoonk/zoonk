@@ -397,6 +397,26 @@ msgid "You've used your mock exams"
 msgstr "You've used your mock exams"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "TPgNQb"
+msgid "No more questions today"
+msgstr "No more questions today"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "GYGZpe"
+msgid "You've used your questions"
+msgstr "You've used your questions"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "aw2Ukw"
+msgid "No more material today"
+msgstr "No more material today"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "g0Nshd"
+msgid "You've used your uploads"
+msgstr "You've used your uploads"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
 msgstr "You've reached today's limit"
@@ -7184,6 +7204,11 @@ msgid "Chapter maps"
 msgstr "Chapter maps"
 
 #: src/mind-maps/mind-maps-screen.tsx
+msgctxt "e39t_E"
+msgid "No chapter maps yet."
+msgstr "No chapter maps yet."
+
+#: src/mind-maps/mind-maps-screen.tsx
 msgctxt "sI50Mb"
 msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "No chapter maps yet. Every chapter you finish gets one."
@@ -8729,16 +8754,6 @@ msgid "You picked {answer}"
 msgstr "You picked {answer}"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "aw2Ukw"
-msgid "No more material today"
-msgstr "No more material today"
-
-#: src/onboarding/entry/attach-panel.tsx
-msgctxt "g0Nshd"
-msgid "You've used your uploads"
-msgstr "You've used your uploads"
-
-#: src/onboarding/entry/attach-panel.tsx
 msgctxt "yeNv9c"
 msgid "You're adding material quickly. Try again in a few minutes."
 msgstr "You're adding material quickly. Try again in a few minutes."
@@ -9049,16 +9064,6 @@ msgstr "What do you want to do?"
 msgctxt "AkPJMI"
 msgid "What you want to do with your material"
 msgstr "What you want to do with your material"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "TPgNQb"
-msgid "No more questions today"
-msgstr "No more questions today"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "GYGZpe"
-msgid "You've used your questions"
-msgstr "You've used your questions"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "KIdIMi"

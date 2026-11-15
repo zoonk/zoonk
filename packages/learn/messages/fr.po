@@ -397,6 +397,26 @@ msgid "You've used your mock exams"
 msgstr "Tu as atteint ta limite d’examens blancs"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "TPgNQb"
+msgid "No more questions today"
+msgstr "Tu as atteint ta limite de questions pour aujourd’hui"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "GYGZpe"
+msgid "You've used your questions"
+msgstr "Tu as atteint ta limite de questions"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "aw2Ukw"
+msgid "No more material today"
+msgstr "Tu ne peux plus ajouter de documents aujourd’hui"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "g0Nshd"
+msgid "You've used your uploads"
+msgstr "Tu as atteint ta limite d’envois de documents"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
 msgstr "Tu as atteint la limite d’aujourd’hui"
@@ -7184,6 +7204,11 @@ msgid "Chapter maps"
 msgstr "Cartes mentales des chapitres"
 
 #: src/mind-maps/mind-maps-screen.tsx
+msgctxt "e39t_E"
+msgid "No chapter maps yet."
+msgstr "Pas encore de cartes mentales de chapitre."
+
+#: src/mind-maps/mind-maps-screen.tsx
 msgctxt "sI50Mb"
 msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "Pas encore de cartes mentales de chapitre. Chaque chapitre que tu termines a la sienne."
@@ -8729,16 +8754,6 @@ msgid "You picked {answer}"
 msgstr "Tu as choisi {answer}"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "aw2Ukw"
-msgid "No more material today"
-msgstr "Tu ne peux plus ajouter de documents aujourd’hui"
-
-#: src/onboarding/entry/attach-panel.tsx
-msgctxt "g0Nshd"
-msgid "You've used your uploads"
-msgstr "Tu as atteint ta limite d’envois de documents"
-
-#: src/onboarding/entry/attach-panel.tsx
 msgctxt "yeNv9c"
 msgid "You're adding material quickly. Try again in a few minutes."
 msgstr "Tu ajoutes des documents trop rapidement. Réessaie dans quelques minutes."
@@ -9049,16 +9064,6 @@ msgstr "Que veux-tu faire ?"
 msgctxt "AkPJMI"
 msgid "What you want to do with your material"
 msgstr "Ce que tu veux faire avec tes documents"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "TPgNQb"
-msgid "No more questions today"
-msgstr "Tu as atteint ta limite de questions pour aujourd’hui"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "GYGZpe"
-msgid "You've used your questions"
-msgstr "Tu as atteint ta limite de questions"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "KIdIMi"
