@@ -6,10 +6,7 @@ import {
   renderHelpLink,
 } from "@/components/public/public-disclosure";
 import { Link } from "@/i18n/navigation";
-import {
-  getFreePlanLimits,
-  getFreeTutorMessagesPer30Days,
-} from "@zoonk/core/entitlements/plan-limits";
+import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
@@ -59,10 +56,7 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
     ),
     t(
       "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month",
-      {
-        count: limits.tutorMessagesPerDay ?? 0,
-        month: String(getFreeTutorMessagesPer30Days() ?? 0),
-      },
+      { count: limits.tutorMessagesPerDay ?? 0, month: String(limits.tutorMessagesPer30Days ?? 0) },
     ),
     t({
       description:
