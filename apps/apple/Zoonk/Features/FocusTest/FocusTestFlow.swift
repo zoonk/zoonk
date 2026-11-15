@@ -45,6 +45,8 @@ struct FocusTestFlow: View {
   @State private var shownAt = ContinuousClock.now
   @State private var showsSaveReport = false
   @State private var waitRound = 0
+  /// The saves and answers: a test left during one does nothing when it answers.
+  @State private var tasks = ScreenTasks()
   /// `startsTest`'s start ran; one that failed offers the test with its Start to try again.
   @State private var triedStart = false
   /// The goal's run while its questions are written, as the wait shows it.
@@ -65,6 +67,7 @@ struct FocusTestFlow: View {
         opening = store.openingPlacement(goalID: goalID)
       }
     }
+    .onDisappear { tasks.cancel() }
     .onChange(of: isChoosingFocus) {
       if !isChoosingFocus, case .checkpoint = phase {
         reached = nil
@@ -218,7 +221,7 @@ struct FocusTestFlow: View {
     pressed = button
     failed = false
 
-    Task {
+    tasks.run {
       defer { pressed = nil }
 
       do {
@@ -271,7 +274,7 @@ struct FocusTestFlow: View {
     if let focusTest, focusTest.checkpoint != nil {
       reached = .checkpoint(focusTest)
     } else {
-      try await onDone()
+      try await goOnUnlessLeft(onDone)
     }
   }
 
@@ -281,7 +284,7 @@ struct FocusTestFlow: View {
     if closing {
       try await close()
     } else {
-      try await onDone()
+      try await goOnUnlessLeft(onDone)
     }
   }
 
@@ -296,7 +299,7 @@ struct FocusTestFlow: View {
       answer: answer, sender: answer.isDontKnow ? .notSure : .check,
       measuredMs: Int(shownAt.duration(to: .now).components.seconds * 1000), failed: failedAnswer)
 
-    Task {
+    tasks.run {
       defer { isAnswering = false }
 
       let result: Components.Schemas.PlacementAnswerResult
@@ -334,7 +337,7 @@ struct FocusTestFlow: View {
 
     isAnswering = true
 
-    Task {
+    tasks.run {
       defer { isAnswering = false }
 
       do {
