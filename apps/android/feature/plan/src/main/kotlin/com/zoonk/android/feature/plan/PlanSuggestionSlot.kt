@@ -464,9 +464,8 @@ internal class SlotAnswer(
 ) {
     private val tracked: EditorChange? get() = change?.let { edits.changes[it.id] }
 
-    /** The line's summary. */
-    @Composable
-    fun summary(): String = if (tracked?.undoFailed == true) stringResource(R.string.suggestion_save_failed) else text
+    /** Undo didn't save: a line reads the save error in place of [text], with no done mark. */
+    val failed: Boolean get() = tracked?.undoFailed == true
 
     @Composable
     fun Undo() {
@@ -513,10 +512,11 @@ internal fun PlanChangeSuggestion(
 
     Suggestion(
         label = stringResource(R.string.plan_suggestion),
-        summary = answer?.summary() ?: title,
+        summary = answer?.text ?: title,
         layout = slot.layout,
         mark = if (answer != null) SuggestionMark.Done else mark,
         answered = answer != null,
+        failed = answer?.failed == true,
         lineAction = if (answer != null) ({ answer.Undo() }) else ({ SuggestionOpen() }),
     ) {
         if (answer != null) {

@@ -305,7 +305,7 @@ fun MarkedLine(
 /**
  * A row's mark, title, value and descriptions, placed as E5 and E6 say. The value sits at the end, past
  * [VALUE_GAP], or moves under the title when the title would get too little room (half the width, or what
- * it needs). Beside one or two lines (the title however it wraps, a value moved under it, each description)
+ * it needs) or the words beside it would stand taller than with it under them. Beside one or two lines (the title however it wraps, a value moved under it, each description)
  * the mark is centered on the words; beside three or more, or as a text lead ([leadOnFirstLine]), it is
  * centered on the first line, a line as tall as [firstLine]'s at this text size. A value beside the words
  * sits on the row's center.
@@ -335,10 +335,19 @@ private fun RowContent(
         val valuePlaceable = values.firstOrNull()?.measure(Constraints(maxWidth = width))?.takeIf { it.width > 0 }
         val titleMeasurable = titles.first()
         val room = width - (valuePlaceable?.let { it.width + VALUE_GAP.roundToPx() } ?: 0)
-        val beside = valuePlaceable == null || room >= minOf(titleMeasurable.maxIntrinsicWidth(Constraints.Infinity), width / 2)
+        val notesMeasurable = notes.firstOrNull()
+        val wordsHeightAt = { textWidth: Int ->
+            titleMeasurable.minIntrinsicHeight(textWidth) + (notesMeasurable?.minIntrinsicHeight(textWidth) ?: 0)
+        }
+        val beside =
+            valuePlaceable == null ||
+                (
+                    room >= minOf(titleMeasurable.maxIntrinsicWidth(Constraints.Infinity), width / 2) &&
+                        wordsHeightAt(room) <= wordsHeightAt(width) + valuePlaceable.height
+                )
         val textWidth = if (beside) room.coerceAtLeast(0) else width
         val titlePlaceable = titleMeasurable.measure(Constraints(maxWidth = textWidth))
-        val notesPlaceable = notes.firstOrNull()?.measure(Constraints(maxWidth = textWidth))
+        val notesPlaceable = notesMeasurable?.measure(Constraints(maxWidth = textWidth))
         if (notesPlaceable == null) parts.descriptions = 0
         val under = if (beside) null else valuePlaceable
         parts.stacked = under != null

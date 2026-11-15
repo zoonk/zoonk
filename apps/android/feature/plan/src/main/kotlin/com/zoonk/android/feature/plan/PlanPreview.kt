@@ -1,16 +1,23 @@
 package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.SuggestionAction
@@ -112,6 +119,8 @@ internal fun PlanPreviewResult(
     repriced: Boolean = false,
     /** The consequence lines the card held before the check, so its buttons stay where they were. */
     roomLines: Int = 2,
+    /** The card's room before the check, which its answer's room keeps at least. */
+    heldRoom: HeldRoom? = null,
 ) {
     val notNow = stringResource(R.string.plan_not_now)
 
@@ -123,7 +132,7 @@ internal fun PlanPreviewResult(
         }
 
         is PlanPreviewState.Failed -> {
-            EffectRoom(roomLines) { StatusDescription(stringResource(R.string.plan_couldnt_check_changes)) }
+            EffectRoom(roomLines, heldRoom) { StatusDescription(stringResource(R.string.plan_couldnt_check_changes)) }
             SuggestionActions {
                 SuggestionAction(stringResource(R.string.plan_try_again), onRetry)
                 SuggestionAction(notNow, onDismiss, secondary = true)
@@ -132,7 +141,7 @@ internal fun PlanPreviewResult(
 
         is PlanPreviewState.Ready -> {
             val preview = state.preview
-            EffectRoom(roomLines) {
+            EffectRoom(roomLines, heldRoom) {
                 if (preview.unchanged) {
                     SuggestionDescription(stringResource(R.string.plan_stays_as_it_is))
                 } else {
@@ -165,18 +174,50 @@ internal fun CheckingChange(onCancel: () -> Unit) {
 /**
  * Main's `EFFECT_ROOM_CLASS`: room for a consequence of [lines] and its "See all changes", which a
  * check's note and its answer both take, so the actions under them stay put; a longer answer grows it.
+ * With [held], it is also as tall as the card's room has been at this width and text size.
  */
 @Composable
 internal fun EffectRoom(
     lines: Int = 2,
+    held: HeldRoom? = null,
     content: @Composable () -> Unit,
 ) {
+    val density = LocalDensity.current
     val line =
-        with(LocalDensity.current) {
+        with(density) {
             MaterialTheme.typography.bodyMedium.lineHeight
                 .toDp()
         }
-    Column(Modifier.heightIn(min = line * lines + 6.dp + 48.dp)) { content() }
+    BoxWithConstraints {
+        val at = HeldRoom.At(maxWidth, density.density, density.fontScale)
+        val room = maxOf(line * lines + 6.dp + 48.dp, held?.tallestAt(at) ?: 0.dp)
+        val keep = held?.let { Modifier.onSizeChanged { size -> it.keep(at, with(density) { size.height.toDp() }) } } ?: Modifier
+        Column(Modifier.heightIn(min = room).then(keep)) { content() }
+    }
+}
+
+/**
+ * The tallest a card's [EffectRoom] has been, so the room of its next state is as tall. It belongs to one width and
+ * text size: at another the card's words wrap anew, so the held height goes (main's `useHeldSlot`).
+ */
+@Stable
+internal class HeldRoom {
+    data class At(
+        val width: Dp,
+        val density: Float,
+        val fontScale: Float,
+    )
+
+    private var held by mutableStateOf<Pair<At, Dp>?>(null)
+
+    fun tallestAt(at: At): Dp = held?.takeIf { it.first == at }?.second ?: 0.dp
+
+    fun keep(
+        at: At,
+        height: Dp,
+    ) {
+        if (height > tallestAt(at)) held = at to height
+    }
 }
 
 @Composable

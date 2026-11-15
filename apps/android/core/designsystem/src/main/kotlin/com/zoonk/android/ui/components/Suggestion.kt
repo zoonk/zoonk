@@ -40,7 +40,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -53,7 +52,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -308,7 +306,20 @@ private fun SuggestionLine(
         CompositionLocalProvider(LocalPresentation provides Presentation.Line) {
             LineLayout(
                 modifier = Modifier.heightIn(min = 56.dp).padding(8.dp),
-                mark = { Mark(PANEL_MARK) },
+                firstLine = lineHeight(MaterialTheme.typography.bodyMedium),
+                // A line that failed to save shows the alert mark in the done mark's place, as the failure notice does.
+                mark = {
+                    if (failed && LocalFrame.current.mark == SuggestionMark.Done) {
+                        Icon(
+                            painterResource(R.drawable.ic_error),
+                            contentDescription = null,
+                            modifier = Modifier.size(PANEL_MARK * glyphScale()),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    } else {
+                        Mark(PANEL_MARK)
+                    }
+                },
                 summary = {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
@@ -333,8 +344,6 @@ private fun SuggestionLine(
                                     whole -> MaterialTheme.colorScheme.onSurface
                                     else -> MaterialTheme.colorScheme.onSurfaceVariant
                                 },
-                            maxLines = if (whole || LocalDensity.current.fontScale > FULL_SUMMARY_FONT_SCALE) Int.MAX_VALUE else 2,
-                            overflow = TextOverflow.Ellipsis,
                         )
                         description?.let {
                             Text(
@@ -352,12 +361,13 @@ private fun SuggestionLine(
 }
 
 /**
- * The mark, the summary and the action side by side, the action at the end; the action goes under the summary when
- * beside it a word of the summary would have to break, as a long action at large text would leave it.
+ * The mark, the summary and the action side by side, the action at the end, or the action under the summary when that
+ * makes the line shorter (a long action or large text squeezes the words beside it) or beside it a word would break.
  */
 @Composable
 private fun LineLayout(
     modifier: Modifier,
+    firstLine: Dp,
     mark: @Composable () -> Unit,
     summary: @Composable () -> Unit,
     action: (@Composable () -> Unit)?,
@@ -365,14 +375,21 @@ private fun LineLayout(
     Layout(contents = listOf(mark, summary, action ?: {}), modifier = modifier) { (markPart, summaryPart, actionPart), constraints ->
         val gap = LINE_GAP.roundToPx()
         val markPlaced = markPart.single().measure(Constraints())
-        val textMax = constraints.maxWidth - markPlaced.width - gap
+        val textMax = (constraints.maxWidth - markPlaced.width - gap).coerceAtLeast(0)
         val actionPlaced = actionPart.firstOrNull()?.measure(Constraints(maxWidth = textMax))
         val words = summaryPart.single()
         val besideWidth = textMax - (actionPlaced?.let { it.width + gap } ?: 0)
-        val beside = actionPlaced == null || besideWidth >= words.minIntrinsicWidth(constraints.maxHeight)
+        val stackGap = STACKED_ACTION_GAP.roundToPx()
+        // In order, so the words are only measured at a width they can have: an action that leaves them none goes under.
+        val beside =
+            actionPlaced == null ||
+                (
+                    besideWidth > 0 &&
+                        besideWidth >= words.minIntrinsicWidth(constraints.maxHeight) &&
+                        words.minIntrinsicHeight(besideWidth) <= words.minIntrinsicHeight(textMax) + stackGap + actionPlaced.height
+                )
         val textWidth = if (beside) besideWidth else textMax
         val summaryPlaced = words.measure(Constraints.fixedWidth(textWidth))
-        val stackGap = STACKED_ACTION_GAP.roundToPx()
         val content =
             when {
                 actionPlaced == null -> summaryPlaced.height
@@ -380,15 +397,22 @@ private fun LineLayout(
                 else -> summaryPlaced.height + stackGap + actionPlaced.height
             }
         val height = maxOf(content, markPlaced.height, constraints.minHeight)
+        // E5: beside one or two lines the mark is centered on the words, beside three or more on the first line.
+        val line = firstLine.roundToPx()
+        val onFirstLine = summaryPlaced.height > line * 2 + line / 2
+        val markAt = { wordsTop: Int ->
+            if (onFirstLine) wordsTop + (line - markPlaced.height) / 2 else wordsTop + (summaryPlaced.height - markPlaced.height) / 2
+        }
         layout(constraints.maxWidth, height) {
             val top = (height - content) / 2
             val textStart = markPlaced.width + gap
             if (beside) {
-                markPlaced.place(0, (height - markPlaced.height) / 2)
-                summaryPlaced.place(textStart, (height - summaryPlaced.height) / 2)
+                val wordsTop = (height - summaryPlaced.height) / 2
+                markPlaced.place(0, markAt(wordsTop))
+                summaryPlaced.place(textStart, wordsTop)
                 actionPlaced?.place(constraints.maxWidth - actionPlaced.width, (height - actionPlaced.height) / 2)
             } else {
-                markPlaced.place(0, top + (summaryPlaced.height - markPlaced.height) / 2)
+                markPlaced.place(0, markAt(top))
                 summaryPlaced.place(textStart, top)
                 actionPlaced.place(textStart, top + summaryPlaced.height + stackGap)
             }
@@ -460,8 +484,6 @@ private val PANEL_MARK = 18.dp
 private val LINE_GAP = 10.dp
 private val STACKED_ACTION_GAP = 8.dp
 
-/** From here two lines hold only the start of a summary, cutting off its key words. */
-private const val FULL_SUMMARY_FONT_SCALE = 1.3f
 private val SHEET_MARK = 24.dp
 
 /** The quiet disclosure's gap from its words to its chevron's ink. */

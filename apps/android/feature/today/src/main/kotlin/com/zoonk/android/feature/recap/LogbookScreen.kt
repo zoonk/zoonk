@@ -55,6 +55,7 @@ import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.WeekDaysRow
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDayRange
@@ -238,12 +239,7 @@ private fun WeekRings(recap: WeeklyRecap) {
     val locale = currentLocale()
     val description = pluralStringResource(R.plurals.recap_days_studied, studied.size, studied.size)
 
-    Row(
-        Modifier.widthIn(max = 320.dp).fillMaxWidth().clearAndSetSemantics {
-            contentDescription = description
-        },
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
+    WeekDaysRow(Modifier.clearAndSetSemantics { contentDescription = description }) {
         repeat(DAYS_PER_WEEK) { offset ->
             val day = recap.weekStart.plus(DatePeriod(days = offset))
             val isStudied = day in studied

@@ -34,6 +34,7 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.WeekDaysRow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.WeekdayNames
@@ -66,10 +67,10 @@ internal fun TodayWeek(
         WeekHeader()
 
         val names = weekdayNames(currentLocale())
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        WeekDaysRow {
             week.days.forEach { weekDay ->
                 val challengeDay = challenge?.takeIf { it.date == weekDay.date }
-                DayCell(weekDay, weekDate, challengeDay, names, exam, Modifier.weight(1f))
+                DayCell(weekDay, weekDate, challengeDay, names, exam)
             }
         }
 
@@ -93,7 +94,6 @@ private fun DayCell(
     challenge: TodayWeeklyChallenge?,
     names: WeekdayNames,
     exam: Boolean,
-    modifier: Modifier,
 ) {
     val dayOfWeek = day.date.toJavaLocalDate().dayOfWeek
     val weekday = names.full.getValue(dayOfWeek)
@@ -109,17 +109,14 @@ private fun DayCell(
         title = weekday,
         facts = dayTime(day),
         note = dayNote(day, weekDate, status),
-        modifier = modifier,
         footer = { if (challenge != null) ChallengeLine(challenge) },
     ) { open ->
         Column(
             modifier =
                 Modifier
-                    .fillMaxWidth()
                     .clip(MaterialTheme.shapes.small)
                     .then(open)
-                    .clearAndSetSemantics { contentDescription = description }
-                    .heightIn(min = 48.dp),
+                    .clearAndSetSemantics { contentDescription = description },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {

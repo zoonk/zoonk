@@ -5,6 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -316,13 +317,14 @@ internal fun FitLessonsSuggestion(slot: Slot) {
     val checking = preview is PlanPreviewState.Loading
     val add = { slot.host.addFitOffer(offer) }
     val checkingWords = stringResource(R.string.plan_checking_changes)
+    val room = remember(offer) { HeldRoom() }
 
     PlanChangeSuggestion(SlotItem.FitLessons, title, slot) {
         CancelCheckWhenGone(slot, offer)
         // While it checks, the card stays as it was with its Add busy: the same numbers add from there. In the room a
         // check's answer takes, so its buttons stay put when the answer is a failure.
         if (preview == PlanPreviewState.Idle || checking) {
-            EffectRoom(FIT_ROOM_LINES) { PlanEffectDiff(offer.effect, dateKind = page.dateKind, said = EffectSaid.LessonsAdded) }
+            EffectRoom(FIT_ROOM_LINES, room) { PlanEffectDiff(offer.effect, dateKind = page.dateKind, said = EffectSaid.LessonsAdded) }
             SuggestionActions {
                 SuggestionAction(
                     onClick = add,
@@ -342,6 +344,7 @@ internal fun FitLessonsSuggestion(slot: Slot) {
                 dateKind = page.dateKind,
                 repriced = true,
                 roomLines = FIT_ROOM_LINES,
+                heldRoom = room,
             )
         }
     }
