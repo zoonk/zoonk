@@ -98,7 +98,6 @@ const CAPTURE = z
       width: z.number(),
     }),
     elements: z.array(ELEMENT),
-    panels: z.array(z.string()).optional(),
     platform: z.enum(["android", "apple", "web"]),
     scale: z.number().positive(),
     scenario: z.string().nullable(),
