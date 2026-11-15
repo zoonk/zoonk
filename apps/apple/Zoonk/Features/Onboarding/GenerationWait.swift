@@ -1142,7 +1142,7 @@ struct GenerationTimeline<Header: View>: View {
       VStack(alignment: .leading, spacing: 10) {
         ForEach(wait.visiblePhases) { phase in
           GenerationPhaseRow(
-            phase: phase, status: status(of: phase),
+            phase: phase, status: phase.status(failure: failure),
             isFollowing: failure == nil && !wait.isDone, clockOffset: wait.clockOffset)
         }
       }
@@ -1150,12 +1150,16 @@ struct GenerationTimeline<Header: View>: View {
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 
-  /// A failed run stops at the phase it was in; one that never started has nothing running.
-  private func status(of phase: GenerationWait.Phase) -> GenerationPhaseRow.Status {
-    switch (phase.state, failure) {
+}
+
+extension GenerationWait.Phase {
+  /// A failed run stops at the phase it was in; one that never started has nothing running. The
+  /// API never names the phase that failed, so it's marked only where the run reported a step.
+  func status(failure: GenerationFailure?) -> GenerationPhaseRow.Status {
+    switch (state, failure) {
     case (.done, _): .done
     case (.waiting, _), (.working, .notStarted?): .waiting
-    case (.working, .generation?): .failed
+    case (.working, .generation?): isReported ? .failed : .waiting
     case (.working, _): .working
     }
   }
@@ -1259,7 +1263,7 @@ private struct FilledParts: View, Animatable {
   }
 }
 
-private struct GenerationPhaseRow: View {
+struct GenerationPhaseRow: View {
   enum Status {
     case waiting
     case working

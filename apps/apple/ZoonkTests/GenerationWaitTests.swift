@@ -283,6 +283,30 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertGreaterThan(wait.shownShare(at: opened), wait.progress.share + 0.1)
   }
 
+  /// The API never names the phase that failed, so a failed run marks where it stopped only on a
+  /// phase it reported a step of (main's `phase-progress.ts`).
+  func testAFailedRunThatReportedNothingMarksNoPhaseStopped() {
+    let wait = GenerationWait(kind: .curriculum).started
+
+    XCTAssertFalse(wait.visiblePhases.contains { $0.status(failure: .generation) == .failed })
+  }
+
+  func testAFailedRunMarksThePhaseItReportedStarting() {
+    var wait = GenerationWait(kind: .curriculum).started
+    wait.apply(GenerationEvent(status: "started", step: "buildSkillGraph"))
+
+    XCTAssertEqual(
+      wait.visiblePhases.filter { $0.status(failure: .generation) == .failed }.map(\.id),
+      ["skills"])
+  }
+
+  func testAFailedRunMarksNoPhaseItMovedOnToWithoutAReport() {
+    var wait = GenerationWait(kind: .explanation).started
+    wait.apply(GenerationEvent(status: "completed", step: "findExplanation"))
+
+    XCTAssertFalse(wait.visiblePhases.contains { $0.status(failure: .generation) == .failed })
+  }
+
   func testIgnoresStepsItDoesntKnow() {
     let fresh = GenerationWait(kind: .curriculum)
     var wait = fresh
