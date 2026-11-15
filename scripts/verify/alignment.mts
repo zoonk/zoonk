@@ -9,6 +9,7 @@ import {
   type Group,
   drawn,
   finding,
+  glyphsOnly,
   groupName,
   groupsOf,
   notMeasured,
@@ -39,7 +40,10 @@ function typeLeads(context: Context, read: Group): AlignmentFinding[] {
   return (["label", "lead", "note", "value"] as const).flatMap((part) => {
     const current = new Set(read.rows.filter((row) => row.current).map((row) => row.id));
     // What a learner sees: a part that draws nothing holds room, and a cut one has its own record.
-    const shown = parts.filter((element) => element.part === part && drawn(element));
+    const shown = parts.filter(
+      (element) => element.part === part && drawn(element) && !glyphsOnly(element),
+    );
+
     const untyped = shown.filter((element) => !element.type || element.type === "not measured");
 
     // A current row may set its words apart, and a word in a value's place ("Won", "Today") is
@@ -112,35 +116,44 @@ function filledLeads(context: Context): AlignmentFinding[] {
     ];
   }
 
+  // The surface on top, and while that's the page, each side panel beside it on its own.
+  const judged = new Set([
+    capture.activeSurface,
+    ...(capture.activeSurface === "page" ? (capture.panels ?? []) : []),
+  ]);
+
   const filled = capture.elements.filter(
     (element) =>
       element.part === "action" &&
       element.variant === "filled" &&
-      element.surface === capture.activeSurface,
+      !element.disabled &&
+      judged.has(element.surface ?? ""),
   );
 
-  const actions = [
-    ...new Map(
-      filled.map((action) => [
-        action.target ? `${action.text ?? action.name ?? ""} ${action.target}` : action.id,
-        action,
-      ]),
-    ).values(),
-  ];
+  return [...Map.groupBy(filled, (action) => action.surface ?? "")].flatMap(([surface, found]) => {
+    const actions = [
+      ...new Map(
+        found.map((action) => [
+          action.target ? `${action.text ?? action.name ?? ""} ${action.target}` : action.id,
+          action,
+        ]),
+      ).values(),
+    ];
 
-  if (actions.length < 2) {
-    return [];
-  }
+    if (actions.length < 2) {
+      return [];
+    }
 
-  return [
-    finding(context, {
-      detail: `${actions.map((action) => `${action.name ?? action.text ?? action.id}${action.disabled ? " (disabled)" : ""}`).join(", ")} on ${capture.activeSurface}`,
-      level: "fail",
-      message: "more than one filled action on one surface",
-      piece: "action",
-      rule: "one-filled",
-    }),
-  ];
+    return [
+      finding(context, {
+        detail: `${actions.map((action) => action.name ?? action.text ?? action.id).join(", ")} on ${surface}`,
+        level: "fail",
+        message: "more than one filled action on one surface",
+        piece: "action",
+        rule: "one-filled",
+      }),
+    ];
+  });
 }
 
 function groupLeads(context: Context, group: Group): AlignmentFinding[] {
@@ -236,9 +249,12 @@ export function evaluateFile(file: AlignmentFile): {
 } {
   const scenarios = reconcile(file);
 
+  // A capture whose scenario never showed is a missing record, not a screen to judge.
+  const shown = file.captures.filter((capture) => capture.reached !== false);
+
   const findings = applyExceptions([
-    ...file.captures.flatMap((capture) => evaluateCapture(capture)),
-    ...pairLeads(file.captures),
+    ...shown.flatMap((capture) => evaluateCapture(capture)),
+    ...pairLeads(shown),
     ...scenarios.findings,
     ...(file.discovery ?? []),
   ]);

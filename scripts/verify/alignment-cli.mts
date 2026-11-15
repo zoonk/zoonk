@@ -1,6 +1,6 @@
 /* oxlint-disable no-console -- This CLI prints the findings it evaluates. */
 import { readFile, readdir, stat, writeFile } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { parseArgs } from "node:util";
 import { READ_LIMITS, alignmentLines, summarize, summaryLine } from "./alignment-summary.mts";
 import { readCaptures } from "./alignment-validate.mts";
@@ -87,7 +87,26 @@ if (values.help || positionals.length === 0) {
       );
     }
 
-    const findings = evaluated.flatMap((input) => input.findings);
+    // Several files at once (a folder that keeps an earlier run, or files named by path): each
+    // finding names its own, by its path from the folder they all share, so an earlier run's never
+    // reads as the latest's.
+    const folders = evaluated.map(({ path }) => dirname(path).split(sep));
+
+    const first = folders[0] ?? [];
+
+    const differs = first.findIndex((part, index) =>
+      folders.some((folder) => folder[index] !== part),
+    );
+
+    const shared = differs === -1 ? first : first.slice(0, differs);
+
+    const sourceOf = (path: string) => relative(shared.join(sep) || sep, path);
+
+    const findings = evaluated.flatMap((input) =>
+      evaluated.length > 1
+        ? input.findings.map((item) => ({ ...item, source: sourceOf(input.path) }))
+        : input.findings,
+    );
 
     // Each file's own list of required scenarios: "not listed" only when no file lists any.
     const listed = evaluated.flatMap(({ summary: { scenariosMissing } }) =>

@@ -2,6 +2,7 @@
 /* oxlint-disable no-magic-numbers -- The fixtures are measurements in pixels. */
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
+import { type Capture } from "./alignment-capture.mts";
 import { read, setUpProbeDom } from "./alignment-probe-dom.mts";
 import { evaluateCapture } from "./alignment.mts";
 
@@ -319,5 +320,61 @@ describe("the current tab's fill", () => {
     assert.equal(tabFillMisses("div", 'aria-current="false"').length, 1);
     assert.equal(tabFillMisses("a", 'href="/chapters" aria-current="false"').length, 1);
     assert.equal(tabFillMisses("button", 'role="tab" aria-selected="false"').length, 1);
+  });
+});
+
+/** A button with a glyph `glyphTop` down from its top beside one line of words (#44's chip). */
+function glyphButton(glyphTop: number | null) {
+  const mark =
+    glyphTop === null
+      ? ""
+      : `<span data-icon="inline-start" data-box="28,${40 + glyphTop},16,16">◆</span>`;
+
+  return `<div data-slot="page" data-box="16,0,358,400">
+    <button data-slot="button" data-box="16,40,120,40">${mark}<span data-box="52,50,60,20">Explain</span></button></div>`;
+}
+
+/**
+ * What the probe reads, with each label's capitals centered on its first line as a browser
+ * measures them: jsdom has no font metrics, so it reads them as not measured.
+ */
+function withCapitals(capture: Capture): Capture {
+  return {
+    ...capture,
+    elements: capture.elements.map((element) => {
+      const [, top = 0, , height = 0] = element.firstLine ?? [];
+
+      return element.part === "label" && element.firstLine
+        ? { ...element, capBottom: top + height * 0.75, capTop: top + height * 0.25 }
+        : element;
+    }),
+  };
+}
+
+function glyphLine(glyphTop: number) {
+  document.body.innerHTML = glyphButton(glyphTop);
+  return evaluateCapture(withCapitals(read())).filter((finding) => finding.rule === "line");
+}
+
+describe("a glyph and the words it goes with (addition 2)", () => {
+  it("are one row of their control, held to one line: centered passes, 8 px down fails (RV97)", () => {
+    document.body.innerHTML = glyphButton(12);
+
+    const parts = read()
+      .elements.filter((element) => element.piece === "glyph-label")
+      .map((element) => element.part);
+
+    assert.deepEqual(parts, ["group", "row", "mark", "label"]);
+    assert.deepEqual(glyphLine(12), []);
+    assert.match(glyphLine(20)[0]?.detail ?? "", /the mark 8 below/u);
+
+    // A control isn't a list: it needn't reach its column's end.
+    assert.deepEqual(
+      evaluateCapture(read()).filter((finding) => finding.rule === "column"),
+      [],
+    );
+
+    document.body.innerHTML = glyphButton(null);
+    assert.ok(read().elements.every((element) => element.piece !== "glyph-label"));
   });
 });

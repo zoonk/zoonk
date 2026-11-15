@@ -1,3 +1,8 @@
+import { type Anchor, PHONE_AND_LAPTOP, type Scenario } from "./shape.mts";
+import { STATE_SCENARIOS } from "./states.mts";
+
+export type { Prerequisites, Scenario, Step } from "./shape.mts";
+
 /**
  * The named states a screen can be in, shared by the web, Android and Apple (`REPORT-SHAPE.md`).
  * A capture says which scenario it shows; the evaluator fails a scenario a run was asked for and
@@ -5,51 +10,8 @@
  * pair. Whoever adds a branch to a screen (a gate, a limit, a notice, a wait) adds its scenario
  * here; a screen's lane fills in the rest of its own.
  */
-type Pointer = "keys" | "touch";
-
-/** Where the screen is and who sees it. `persona` is `pnpm dev:persona`'s name and flags. */
-export type Prerequisites = {
-  persona: { flags?: string[]; name: string } | "visitor";
-  /** A state no persona or step reaches yet: what has to be seeded first. */
-  seed?: string;
-  /** Values the page keeps on the device, as `verify:pages --local-storage`. */
-  storage?: Record<string, string>;
-};
-
-/** One step toward the state, in the words a learner sees. */
-export type Step =
-  | { click: string }
-  | { fill: { field: string; value: string } }
-  | { press: string }
-  | { scroll: "end" }
-  | { wait: string };
-
-/** An element a state pair compares: its id is the same on every platform. */
-type Anchor = { id: string; web?: string };
-
-export type Scenario = {
-  id: string;
-  screen: string;
-  prerequisites: Prerequisites;
-  /** The steps after the screen loads; null when the web can't reach it yet. */
-  reach: Step[] | null;
-  /** Words on the screen that prove this state is showing. */
-  proof: string;
-  /**
-   * Each configuration to capture. `locale` loads the screen in that language (English when
-   * absent); `textScale` sets the browser's default text size to that multiple of 16 px, as a
-   * learner's text-size setting does (Android's font scale, Apple's Dynamic Type).
-   */
-  sizes: { locale?: string; pointer: Pointer; size: string; textScale?: number }[];
-  anchors: Anchor[];
-  /** The scenario this one is the other half of, and the anchors allowed to change between them. */
-  pair?: { change: string[]; with: string };
-};
-
-const PHONE_AND_LAPTOP: Scenario["sizes"] = [
-  { pointer: "touch", size: "phone" },
-  { pointer: "keys", size: "laptop" },
-];
+/** A laptop at twice the default text: large-text learners on the web, otherwise unmeasured. */
+const LAPTOP_TEXT_2X: Scenario["sizes"][number] = { pointer: "keys", size: "laptop", textScale: 2 };
 
 const PINNED_ACTION: Anchor = {
   id: "pinned-action",
@@ -76,6 +38,7 @@ export const SCENARIOS: Scenario[] = [
       { locale: "de", pointer: "touch", size: "phone" },
       { locale: "ja", pointer: "touch", size: "phone" },
       { pointer: "touch", size: "phone", textScale: 2 },
+      LAPTOP_TEXT_2X,
     ],
   },
   {
@@ -114,6 +77,16 @@ export const SCENARIOS: Scenario[] = [
     reach: [{ scroll: "end" }],
     screen: "/settings/about-you/conditions",
     sizes: PHONE_AND_LAPTOP,
+  },
+  // The catalog at a phone's text x2: its subject glyphs and chips, for a large-text learner.
+  {
+    anchors: [],
+    id: "catalog.visitor.large-text",
+    prerequisites: { persona: "visitor" },
+    proof: "Log in",
+    reach: [],
+    screen: "/courses",
+    sizes: [{ pointer: "touch", size: "phone", textScale: 2 }],
   },
   {
     anchors: [],
@@ -194,15 +167,15 @@ export const SCENARIOS: Scenario[] = [
     sizes: PHONE_AND_LAPTOP,
   },
   // A notice under a pinned action (case 9), and a failed lesson's two actions (case 12): reached
-  // only from a seeded state, which these list so a run can't skip them unnoticed.
+  // from a state written on the copy, or listed by what it needs so a run can't skip it unnoticed.
   {
     anchors: [PINNED_ACTION],
-    id: "today.limit-notice",
-    pair: { change: ["notice"], with: "today.start" },
-    prerequisites: { persona: { name: "maya" }, seed: "the learner's daily lessons used up" },
-    proof: "You've used",
-    reach: null,
-    screen: "/today",
+    from: "/today",
+    id: "lesson.limit-notice",
+    prerequisites: { persona: { flags: ["--free"], name: "maya" }, state: "lessons-used-up" },
+    proof: "You've used your free lessons",
+    reach: [{ click: "Continue" }],
+    screen: "/learn/[lesson]",
     sizes: PHONE_AND_LAPTOP,
   },
   {
@@ -212,7 +185,7 @@ export const SCENARIOS: Scenario[] = [
     proof: "Today",
     reach: [],
     screen: "/today",
-    sizes: PHONE_AND_LAPTOP,
+    sizes: [...PHONE_AND_LAPTOP, LAPTOP_TEXT_2X],
   },
   {
     anchors: [PINNED_ACTION],
@@ -239,12 +212,13 @@ export const SCENARIOS: Scenario[] = [
     anchors: [],
     id: "mind-maps.offer.stopped",
     pair: { change: ["notice"], with: "mind-maps.offer.lifted" },
-    prerequisites: { persona: { name: "maya" }, seed: "the day's map count used up" },
+    prerequisites: { persona: { flags: ["--free"], name: "maya" }, state: "maps-used-up" },
     proof: "Subscribe",
-    reach: null,
+    reach: [],
     screen: "/mind-maps",
     sizes: PHONE_AND_LAPTOP,
   },
+  ...STATE_SCENARIOS,
   {
     anchors: [],
     id: "mind-maps.offer.lifted",
@@ -252,6 +226,6 @@ export const SCENARIOS: Scenario[] = [
     proof: "Other chapters",
     reach: [],
     screen: "/mind-maps",
-    sizes: PHONE_AND_LAPTOP,
+    sizes: [...PHONE_AND_LAPTOP, LAPTOP_TEXT_2X],
   },
 ];

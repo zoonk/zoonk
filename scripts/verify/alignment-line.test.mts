@@ -124,3 +124,128 @@ describe("one line of a row, as craft E5 places each part", () => {
     );
   });
 });
+
+function line(capture: Capture) {
+  return evaluateCapture(capture).filter((finding) => finding.rule === "line");
+}
+
+/** The `type` findings, the row's label given the kit's label type. */
+function type(capture: Capture) {
+  const typed = {
+    ...capture,
+    elements: capture.elements.map((item) =>
+      item.id === "l0" ? { ...item, type: LABEL_TYPE } : item,
+    ),
+  };
+
+  return evaluateCapture(typed).filter((finding) => finding.rule === "type");
+}
+
+/** The row with a value drawn only as glyphs (a day's kind marks), its ink centered at `at`. */
+function glyphValue(at: number) {
+  const capture = lineRow("value", at, 0);
+
+  return {
+    ...capture,
+    elements: capture.elements.map((item) =>
+      item.id === "p"
+        ? { ...item, capBottom: undefined, capTop: undefined, type: undefined }
+        : item,
+    ),
+  };
+}
+
+describe("a value drawn only as glyphs", () => {
+  it("is read by its ink, as a mark is, and a value whose words weren't measured still isn't", () => {
+    assert.deepEqual(line(glyphValue(15)), []);
+    assert.equal(line(glyphValue(19))[0]?.level, "fail");
+
+    const unmeasured = lineRow("value", 15, 0);
+
+    const words = {
+      ...unmeasured,
+      elements: unmeasured.elements.map((item) =>
+        item.id === "p" ? { ...item, capTop: "not measured" as const } : item,
+      ),
+    };
+
+    assert.equal(line(words)[0]?.level, "not-measured");
+  });
+
+  it("has no type to compare, while a value whose words weren't typed still fails as unmeasured", () => {
+    assert.deepEqual(type(glyphValue(15)), []);
+
+    const words = lineRow("value", 15, 0);
+
+    const untyped = {
+      ...words,
+      elements: words.elements.map((item) =>
+        item.id === "p" ? { ...item, type: undefined } : item,
+      ),
+    };
+
+    assert.equal(type(untyped)[0]?.level, "not-measured");
+  });
+});
+
+/** AP1's stacked row at accessibility sizes: its mark at `markTop`, the label from 40 to 60. */
+function stackedRow(markTop: number) {
+  return fixtureCapture([
+    element({ group: null, id: "g", part: "group" }),
+    element({ bounds: [0, 0, 358, 120], id: "r0", part: "row", stacked: true }),
+    element({ id: "m", ink: [16, markTop, 24, 24], part: "mark", row: "r0" }),
+    element({
+      capBottom: 56,
+      capTop: 44,
+      id: "l0",
+      ink: [16, 40, 200, 20],
+      lines: 1,
+      part: "label",
+      row: "r0",
+      type: LABEL_TYPE,
+    }),
+  ]);
+}
+
+describe("a stacked row's mark (AP1's C4)", () => {
+  it("has a line of its own above the words, and one beside them still shares theirs", () => {
+    assert.deepEqual(line(stackedRow(8)), []);
+    assert.equal(line(stackedRow(44))[0]?.level, "fail");
+  });
+});
+
+/** A one-line row at a 2x scale, its `part` off the label's middle by `off`. */
+function atTwoX(part: "mark" | "value", off: number) {
+  const capture = oneLine(15 + off);
+
+  return {
+    ...capture,
+    elements: capture.elements.map((item) =>
+      item.id === "p" && part === "value"
+        ? { ...item, capBottom: 19 + off, capTop: 11 + off, part: "value" as const }
+        : item,
+    ),
+    scale: 2,
+  };
+}
+
+/** The same capture at text ×`textScale`. */
+function atText(capture: Capture, textScale: number): Capture {
+  return { ...capture, configuration: { ...capture.configuration, textScale } };
+}
+
+describe("line's tolerance", () => {
+  it("allows a part read by its ink half a device pixel more, the measurement's resolution", () => {
+    assert.deepEqual(line(atTwoX("mark", 0.7)), []);
+    assert.equal(line(atTwoX("mark", 0.8))[0]?.level, "fail");
+    assert.equal(line(atTwoX("value", 0.6))[0]?.level, "fail");
+  });
+
+  it("grows with the text: an offset that doubles at text ×2 passes, one that more than doubles fails", () => {
+    assert.deepEqual(line(atText(atTwoX("value", 0.45), 1)), []);
+    assert.deepEqual(line(atText(atTwoX("value", 0.9), 2)), []);
+    assert.equal(line(atText(atTwoX("value", 1.1), 2))[0]?.level, "fail");
+    assert.deepEqual(line(atText(atTwoX("mark", 1.2), 2)), []);
+    assert.equal(line(atText(atTwoX("mark", 1.3), 2))[0]?.level, "fail");
+  });
+});

@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { type Capture, type CaptureElement } from "./alignment-capture.mts";
-import { fixtureCapture } from "./alignment-fixtures.mts";
+import { filledActions, fixtureCapture } from "./alignment-fixtures.mts";
 import { pairLeads, reconcile } from "./alignment-scenarios.mts";
 import { summarize, summaryLine } from "./alignment-summary.mts";
 import { readCaptures } from "./alignment-validate.mts";
@@ -73,6 +73,27 @@ describe("reconciling a run with the list", () => {
     );
 
     assert.equal(missing, 1);
+  });
+
+  it("fails each size a scenario wasn't reached at, and doesn't judge what that size showed", () => {
+    const phone = scenarioCapture("screen.plain", []);
+
+    const laptop = {
+      ...scenarioCapture("screen.plain", filledActions("page", 2)),
+      configuration: { ...phone.configuration, size: "laptop" },
+      reached: false,
+    };
+
+    const file = { captures: [phone, laptop], required: ["screen.plain"] };
+    const { findings, missing } = reconcile(file, PAIR);
+
+    assert.equal(missing, 1);
+    assert.match(findings[0]?.detail ?? "", /^screen\.plain · laptop/u);
+
+    assert.deepEqual(
+      evaluateFile(file).findings.filter((finding) => finding.rule === "one-filled"),
+      [],
+    );
   });
 
   it("can't measure a scenario the list doesn't name", () => {
@@ -154,5 +175,54 @@ describe("state pairs", () => {
     assert.equal(rest.length, 0);
     assert.equal(record?.level, "not-measured");
     assert.match(record?.detail ?? "", /action wasn't placed/u);
+  });
+
+  it("holds what a placeholder draws to the loaded page, and lets the page add what it didn't", () => {
+    const LOADING: Scenario[] = [
+      {
+        anchors: [{ id: "back-link" }, { id: "title" }, { id: "action" }],
+        id: "detail",
+        pair: { change: [], placeholder: true, with: "detail.placeholder" },
+        prerequisites: { persona: "visitor" },
+        proof: "Exam",
+        reach: [],
+        screen: "/screen",
+        sizes: [{ pointer: "touch", size: "phone" }],
+      },
+      {
+        anchors: [],
+        id: "detail.placeholder",
+        prerequisites: { persona: "visitor" },
+        proof: "Exam",
+        reach: [],
+        screen: "/screen",
+        sizes: [{ pointer: "touch", size: "phone" }],
+      },
+    ];
+
+    const loaded = scenarioCapture("detail", [
+      anchor("back-link", 12),
+      anchor("title", 64),
+      anchor("action", 760),
+    ]);
+
+    const waiting = (title: number, backLink = true) =>
+      scenarioCapture("detail.placeholder", [
+        ...(backLink ? [anchor("back-link", 12)] : []),
+        anchor("title", title),
+      ]);
+
+    assert.deepEqual(pairLeads([waiting(64), loaded], LOADING), []);
+
+    assert.match(pairLeads([waiting(80), loaded], LOADING)[0]?.detail ?? "", /^title: down -16/u);
+
+    const hidden = scenarioCapture("detail", [anchor("title", 64), anchor("action", 760)]);
+
+    assert.match(
+      pairLeads([waiting(64), hidden], LOADING)[0]?.detail ?? "",
+      /back-link is missing/u,
+    );
+
+    assert.deepEqual(pairLeads([waiting(64, false), hidden], LOADING), []);
   });
 });

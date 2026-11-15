@@ -1,12 +1,12 @@
 /* oxlint-disable no-magic-numbers -- The fixtures are measurements in pixels. */
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "vitest";
 import { type Capture } from "./alignment-capture.mts";
-import { fixtureCapture, real } from "./alignment-fixtures.mts";
+import { filledActions, fixtureCapture, real } from "./alignment-fixtures.mts";
 import { summaryLine } from "./alignment-summary.mts";
 import { readCaptures } from "./alignment-validate.mts";
 import { alignmentSection } from "./alignment-web.mts";
@@ -187,5 +187,50 @@ describe("what the command says it reads", () => {
       assert.match(text, /a row's `::before` highlight/u);
       assert.match(text, /hover/u);
     }
+  });
+});
+
+describe("a folder holding more than one capture file (AP1's run1/)", () => {
+  it("names each file a finding came from, so an earlier run's never reads as the latest's", () => {
+    const folder = mkdtempSync(join(tmpdir(), "alignment-runs-"));
+    const capture = fixtureCapture(filledActions("page", 2));
+
+    mkdirSync(join(folder, "run1"));
+    writeFileSync(join(folder, "alignment.json"), JSON.stringify({ captures: [capture] }));
+    writeFileSync(join(folder, "run1", "alignment.json"), JSON.stringify({ captures: [capture] }));
+
+    const { stdout } = spawnSync(
+      process.execPath,
+      [join(import.meta.dirname, "alignment-cli.mts"), folder],
+      { encoding: "utf8" },
+    );
+
+    assert.match(stdout, / · phone touch · alignment\.json: /u);
+    assert.match(stdout, / · phone touch · run1\/alignment\.json: /u);
+  });
+});
+
+describe("capture files named by path (RV97)", () => {
+  it("names each by its path from the folder they share, so old/ and new/ never merge", () => {
+    const folder = mkdtempSync(join(tmpdir(), "alignment-paths-"));
+    const capture = fixtureCapture(filledActions("page", 2));
+
+    for (const run of ["old", "new"]) {
+      mkdirSync(join(folder, run));
+      writeFileSync(join(folder, run, "alignment.json"), JSON.stringify({ captures: [capture] }));
+    }
+
+    const { stdout } = spawnSync(
+      process.execPath,
+      [
+        join(import.meta.dirname, "alignment-cli.mts"),
+        join(folder, "old", "alignment.json"),
+        join(folder, "new", "alignment.json"),
+      ],
+      { encoding: "utf8" },
+    );
+
+    assert.match(stdout, / · phone touch · old\/alignment\.json: /u);
+    assert.match(stdout, / · phone touch · new\/alignment\.json: /u);
   });
 });
