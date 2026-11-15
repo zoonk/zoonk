@@ -410,13 +410,14 @@ private fun RhythmControls(
                 ButtonIcon(R.drawable.ic_headphones)
                 Text(stringResource(R.string.activities_music_listen_first))
             }
-            Button(
-                onClick = onStart,
-                enabled = enabled,
-                contentPadding = if (hasTried) ButtonDefaults.ButtonWithIconContentPadding else ButtonDefaults.ContentPadding,
-            ) {
-                if (hasTried) ButtonIcon(R.drawable.ic_replay)
-                Text(stringResource(if (hasTried) R.string.activities_music_try_again else R.string.activities_music_start_tapping))
+            // A try enables Check, so Try again steps down and Check is the one filled action, as Run does.
+            if (hasTried) {
+                OutlinedButton(onClick = onStart, enabled = enabled, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
+                    ButtonIcon(R.drawable.ic_replay)
+                    Text(stringResource(R.string.activities_music_try_again))
+                }
+            } else {
+                Button(onClick = onStart, enabled = enabled) { Text(stringResource(R.string.activities_music_start_tapping)) }
             }
         }
         TextButton(onClick = onCheckSound, enabled = enabled) {

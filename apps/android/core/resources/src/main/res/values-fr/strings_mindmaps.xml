@@ -15,7 +15,6 @@
   "mindmaps_create": "f2197ba6a2dd540a535203bb23992f3c302705c9c90715a9f95593a9b5883781",
   "mindmaps_create_all": "7aed6ed81b114ab2ef4c40d8bfbbc84d7ab90eb31745f7fe9f4b2373b59e66db",
   "mindmaps_create_spoken": "38a534b0409033bda1223d489efdeaff2bbd7dcee171e4665bb887889775c838",
-  "mindmaps_didnt_finish": "c587a5c5bc8a08acc7f2b1dda00167d2d4df9bdc93241c740c1145102bc1ff53",
   "mindmaps_done": "cae7ff65cbf7a10d8357fe404f699b9dfe5377205387969b1e69ac81423808fd",
   "mindmaps_download": "b5d542bc091862ff63e3550d54c70f5599e32d92b4707565ae0f5132317ef467",
   "mindmaps_drawing": "f6d62f32023ac72540524b6db2918ccba5ec2a2b2895c4e0c2b7cc8a63962c10",
@@ -183,12 +182,6 @@
         <item quantity="one">%1$s en préparation. Tu peux quitter la page en attendant.</item>
         <item quantity="many">%1$s en préparation. Tu peux quitter la page en attendant.</item>
         <item quantity="other">%1$s en préparation. Tu peux quitter la page en attendant.</item>
-    </plurals>
-    <!-- Under "Not made yet", when chapter maps the Create button tries again failed. %1$s is how many. -->
-    <plurals name="mindmaps_didnt_finish">
-        <item quantity="one">%1$s carte mentale n’a pas pu être préparée. Réessaie.</item>
-        <item quantity="many">%1$s cartes mentales n’ont pas pu être préparées. Réessaie.</item>
-        <item quantity="other">%1$s cartes mentales n’ont pas pu être préparées. Réessaie.</item>
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">

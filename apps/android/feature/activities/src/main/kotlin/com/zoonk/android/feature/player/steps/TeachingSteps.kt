@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +46,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -62,6 +64,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.constrainHeight
+import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
@@ -140,6 +144,9 @@ private val MIN_YIELDED_PICTURE = 140.dp
 /** The layout id of the screen part that takes the height the lesson screen's other parts leave in view. */
 object FillsView
 
+/** What a check adds to a word bank's screen (its feedback, or "fix it yourself"), which the bank places itself. */
+val LocalWordBankCheck = compositionLocalOf<(@Composable () -> Unit)?> { null }
+
 /**
  * A word bank's screen. In one narrow column the bank sits at the bottom of the view, just above the
  * actions, so it stays under the learner's thumb while the answer grows; once the screen outgrows the
@@ -150,14 +157,57 @@ internal fun WordBankScene(
     question: @Composable ColumnScope.() -> Unit,
     bank: @Composable () -> Unit,
 ) {
+    val wide = isWideLayout()
+
     Column(
-        Modifier.fillMaxWidth().then(if (isWideLayout()) Modifier else Modifier.layoutId(FillsView)),
+        Modifier.fillMaxWidth().then(if (wide) Modifier else Modifier.layoutId(FillsView)),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         QuestionScene(question)
-        Box(Modifier.padding(top = QUESTION_SPACING)) { bank() }
+        CheckBesideBank(wide, LocalWordBankCheck.current, bank, Modifier.padding(top = QUESTION_SPACING))
     }
 }
+
+/**
+ * What a check adds takes the room the bank leaves, so the bank and the answer above it hold still: right above the
+ * bank in one narrow column, where the bank waits above the actions, and under it in a wide layout. Both are always
+ * composed in the same place and only placed in a different order, so crossing widths keeps what the learner did in
+ * the feedback and where focus was.
+ */
+@Composable
+private fun CheckBesideBank(
+    wide: Boolean,
+    added: (@Composable () -> Unit)?,
+    bank: @Composable () -> Unit,
+    modifier: Modifier,
+) {
+    Layout(listOf<@Composable () -> Unit>({ added?.invoke() }, bank), modifier) { (addedParts, bankParts), constraints ->
+        val loose = constraints.copy(minHeight = 0)
+        val check = addedParts.map { it.measure(loose) }
+        val words = bankParts.map { it.measure(loose) }
+        val checkHeight = check.sumOf { it.height }
+        val bankHeight = words.sumOf { it.height }
+        val gap = if (checkHeight > 0) CHECK_GAP.roundToPx() else 0
+        val width = (check + words).maxOfOrNull { it.width } ?: 0
+
+        layout(constraints.constrainWidth(width), constraints.constrainHeight(checkHeight + gap + bankHeight)) {
+            val stack = { parts: List<Placeable>, top: Int ->
+                parts.fold(top) { y, part ->
+                    part.placeRelative(0, y)
+                    y + part.height
+                }
+            }
+            // Placed in the order they show, which is the order focus moves through them.
+            if (wide) {
+                stack(check, stack(words, 0) + gap)
+            } else {
+                stack(words, stack(check, 0) + gap)
+            }
+        }
+    }
+}
+
+private val CHECK_GAP = 16.dp
 
 @Composable
 private fun BodyText(text: String) {

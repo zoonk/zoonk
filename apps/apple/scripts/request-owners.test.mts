@@ -104,51 +104,85 @@ async function swiftFiles(directory: string): Promise<string[]> {
   return nested.flat();
 }
 
-/** The `onDisappear` closure's text: from its line to the brace that closes it. */
+/**
+ * What `onDisappear` is given, from the modifier to the bracket that closes it: its closure, or its
+ * `perform:` argument.
+ */
 function closureAt(lines: string[], start: number): string {
   let text = "";
   let depth = 0;
+  let opened = false;
 
   for (let index = start; index < lines.length; index += 1) {
     const line = lines[index] ?? "";
-    text += ` ${line}`;
-    depth += (line.match(/\{/gu) ?? []).length - (line.match(/\}/gu) ?? []).length;
+    const from = index === start ? line.indexOf(".onDisappear") : 0;
 
-    if (depth <= 0 && text.includes("{")) {
-      break;
+    for (const character of line.slice(from)) {
+      text += character;
+
+      if (character === "{" || character === "(") {
+        depth += 1;
+        opened = true;
+      } else if (character === "}" || character === ")") {
+        depth -= 1;
+      }
+
+      if (opened && depth === 0) {
+        return text;
+      }
     }
+
+    text += " ";
   }
 
   return text;
 }
 
-/** What each `onDisappear` ends, by file: the receivers of its `cancel…()` and `leave(…)` calls. */
+/** What each `onDisappear` in one file ends: the receivers of its `cancel…()` and `leave(…)` calls. */
+function sitesIn(source: string, relative: string): string[] {
+  const lines = source.split("\n");
+
+  return counted(
+    lines.flatMap((line, index) => {
+      if (!line.includes(".onDisappear")) {
+        return [];
+      }
+
+      const receivers = [
+        ...closureAt(lines, index).matchAll(
+          /(?<receiver>[\w?.]+?)\??\.(?:cancel\w*|leave)(?=\s*[()])/gu,
+        ),
+      ].map((match) => match.groups?.receiver ?? "");
+
+      return receivers.length === 0
+        ? []
+        : [`${relative}: ${[...new Set(receivers)].toSorted().join(", ")}`];
+    }),
+  );
+}
+
+/** Each site once: a second site that ends the same things in one file is `… #2`, its own entry. */
+function counted(keys: string[]): string[] {
+  const seen = new Map<string, number>();
+
+  return keys.map((key) => {
+    const count = (seen.get(key) ?? 0) + 1;
+    seen.set(key, count);
+    return count === 1 ? key : `${key} #${count}`;
+  });
+}
+
 async function sites(): Promise<string[]> {
   const files = await swiftFiles(SOURCES);
 
   const found = await Promise.all(
     files.map(async (file) => {
       const source = await readFile(file, "utf8");
-      const lines = source.split("\n");
-      const relative = path.relative(SOURCES, file);
-
-      return lines.flatMap((line, index) => {
-        if (!line.includes(".onDisappear")) {
-          return [];
-        }
-
-        const receivers = [
-          ...closureAt(lines, index).matchAll(/(?<receiver>[\w?.]+?)\??\.(?:cancel\w*|leave)\(/gu),
-        ].map((match) => match.groups?.receiver ?? "");
-
-        return receivers.length === 0
-          ? []
-          : [`${relative}: ${[...new Set(receivers)].toSorted().join(", ")}`];
-      });
+      return sitesIn(source, path.relative(SOURCES, file));
     }),
   );
 
-  return [...new Set(found.flat())].toSorted();
+  return found.flat().toSorted();
 }
 
 describe("what a view ends as it disappears", () => {
@@ -166,5 +200,30 @@ describe("what a view ends as it disappears", () => {
       [],
       "A listed site is gone: remove it from OWNERS",
     );
+  });
+});
+
+describe(sitesIn, () => {
+  it("counts a second site in a file that already has one", () => {
+    const source = `
+      struct Sheet: View {
+        var body: some View { Text("a").onDisappear { start.cancel() } }
+      }
+      struct Card: View {
+        var body: some View { Text("b").onDisappear { start.cancel() } }
+      }
+    `;
+
+    assert.deepEqual(sitesIn(source, "Card.swift"), ["Card.swift: start", "Card.swift: start #2"]);
+  });
+
+  it("reads a cancellation passed as onDisappear's perform", () => {
+    const source = `
+      struct Card: View {
+        var body: some View { Text("b").onDisappear(perform: start.cancel) }
+      }
+    `;
+
+    assert.deepEqual(sitesIn(source, "Card.swift"), ["Card.swift: start"]);
   });
 });
