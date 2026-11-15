@@ -449,6 +449,7 @@ private fun PhaseColumn(
     }
 }
 
+private const val COVERED_ALPHA = 0.3f
 private val BAND_HEIGHT = 32.dp
 private val BAND_GAP = 3.dp
 private val BAND_PADDING_X = 10.dp
@@ -499,6 +500,7 @@ private fun PhaseBand(
         contentColor = content,
         border = if (current) BorderStroke(1.5.dp, colors.tertiary) else null,
     ) {
+        // The part already covered, tinted under the name: a line at the band's edge read as a thicker ring.
         Box(
             Modifier.drawBehind {
                 if (current &&
@@ -506,7 +508,7 @@ private fun PhaseBand(
                 ) {
                     val width = size.width * share
                     val left = if (layoutDirection == LayoutDirection.Rtl) size.width - width else 0f
-                    drawRect(colors.tertiary, Offset(left, size.height - 2.dp.toPx()), Size(width, 2.dp.toPx()))
+                    drawRect(colors.tertiary.copy(alpha = COVERED_ALPHA), Offset(left, 0f), Size(width, size.height))
                 }
             },
         ) {
