@@ -101,8 +101,6 @@ export type AlignmentFinding = {
   unit?: string;
   holder?: string;
   exception?: string;
-  /** A not-measured record that waits on a decision (a tolerance), not on a missing input. */
-  pending?: boolean;
 };
 
 export function configurationName({ locale, pointer, size, textScale }: Configuration) {

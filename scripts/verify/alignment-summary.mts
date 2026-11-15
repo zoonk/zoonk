@@ -7,8 +7,6 @@ export type Summary = {
   discovery: number;
   /** What a declared piece promised and the read couldn't measure: it fails, never passes. */
   notMeasured: number;
-  /** Not measured while a decision is pending (a tolerance): counted, not failing. */
-  pending: number;
   failed: boolean;
 };
 
@@ -25,13 +23,12 @@ export function summarize(
     new Set(findings.filter((item) => keep(item)).map((item) => faultKey(item))).size;
 
   const unresolved = faults((item) => item.level === "fail" && !item.exception);
-  const notMeasured = faults((item) => item.level === "not-measured" && !item.pending);
+  const notMeasured = faults((item) => item.level === "not-measured");
 
   return {
     discovery: faults((item) => item.level === "discovery"),
     failed: unresolved > 0 || notMeasured > 0 || (scenariosMissing ?? 0) > 0,
     notMeasured,
-    pending: faults((item) => item.level === "not-measured" && Boolean(item.pending)),
     scenariosMissing,
     unresolved,
   };
@@ -43,9 +40,7 @@ export function summaryLine(summary: Summary) {
       ? "scenarios not listed yet"
       : `${summary.scenariosMissing} required scenario${summary.scenariosMissing === 1 ? "" : "s"} missing`;
 
-  const pending = summary.pending > 0 ? `; ${summary.pending} waiting on a tolerance` : "";
-
-  return `${summary.failed ? "FAIL" : "PASS"}: ${summary.unresolved} unresolved; ${scenarios}; ${summary.discovery} discovery leads; ${summary.notMeasured} not measured${pending}`;
+  return `${summary.failed ? "FAIL" : "PASS"}: ${summary.unresolved} unresolved; ${scenarios}; ${summary.discovery} discovery leads; ${summary.notMeasured} not measured`;
 }
 
 const LEVEL_TITLES: Record<Level, string> = {

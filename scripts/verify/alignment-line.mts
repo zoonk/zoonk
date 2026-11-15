@@ -1,4 +1,4 @@
-/* oxlint-disable no-magic-numbers -- The tolerance `ROW-LINE.md` proposes, in logical units. */
+/* oxlint-disable no-magic-numbers -- The tolerance `ROW-LINE.md` settles, in logical units. */
 import { type AlignmentFinding, type CaptureElement } from "./alignment-capture.mts";
 import { isStacked } from "./alignment-edges.mts";
 import {
@@ -12,10 +12,7 @@ import {
 
 /**
  * One line of a row (`ROW-LINE.md`, craft E6): every part sits on the middle of the label's
- * capitals, whatever its face or size. The tolerance (0.5, between what nobody saw and what the
- * owner saw) is pending: a one-line `ListRow` puts its chevron and mark 0.55 to 0.65 below its
- * label's capitals, and the owner is deciding whether the row moves or the tolerance does. Until
- * then the misses print as "not measured" with their numbers, and nothing fails.
+ * capitals, whatever its face or size, within half a logical unit.
  */
 const LINE = 0.5;
 
@@ -131,10 +128,9 @@ export function lineLeads(context: Context, read: Group): AlignmentFinding[] {
     return [
       finding(context, {
         detail: `${rowName(read, row.id)}: ${off.map((miss) => describe(miss)).join("; ")}`,
-        level: "not-measured",
+        level: "fail",
         measured: Math.max(...off.map((miss) => Math.abs(miss.off))),
-        message: `a row of ${groupName(read)} is off one line by more than ${LINE} (tolerance pending)`,
-        pending: true,
+        message: `a row of ${groupName(read)} is off one line by more than ${LINE}`,
         piece: group.piece,
         rule: "line",
       }),

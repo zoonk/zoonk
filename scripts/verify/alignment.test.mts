@@ -60,13 +60,12 @@ describe("the declared relationships on the faults the owner caught", () => {
 });
 
 describe("the Plan's path and Android's captures", () => {
-  it("prints the Trickster row's date 8.3 px above its chevron as a line miss, failing nothing yet", () => {
-    const findings = evaluateCapture(real("plan path, phone"));
-    const line = findings.find((finding) => finding.detail.includes("The Trickster"));
+  it("fails the Trickster row's date 8.3 px above its chevron", () => {
+    const [line, ...rest] = failures(real("plan path, phone"));
 
-    assert.deepEqual(failures(real("plan path, phone")), []);
-    assert.equal(line?.level, "not-measured");
-    assert.match(line?.detail ?? "", /the value 8\.25 above the row's center/u);
+    assert.equal(rest.length, 0);
+    assert.equal(line?.rule, "line");
+    assert.match(line?.detail ?? "", /The Trickster.*the value 8\.25 above the row's center/u);
   });
 
   it("fails Android's note 0 dp under its wait where the piece lays out 24, from the group's gap", () => {

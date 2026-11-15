@@ -4380,5 +4380,481 @@
         "source": "stack"
       }
     ]
+  },
+  "round 2 pending-line": {
+    "activeSurface": "page",
+    "elements": [
+      {
+        "id": "g",
+        "part": "group",
+        "bounds": [0, 0, 100, 100],
+        "ink": [0, 0, 100, 100],
+        "piece": "list-group",
+        "group": null,
+        "row": null,
+        "endEdge": 100,
+        "gap": 0
+      },
+      {
+        "id": "r0",
+        "part": "row",
+        "bounds": [0, 0, 100, 20],
+        "ink": [0, 0, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null
+      },
+      {
+        "id": "l0",
+        "part": "label",
+        "bounds": [0, 0, 20, 10],
+        "ink": [0, 0, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 0,
+        "capBottom": 10,
+        "type": "font",
+        "lines": 1
+      },
+      {
+        "id": "r1",
+        "part": "row",
+        "bounds": [0, 20, 100, 20],
+        "ink": [0, 20, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null
+      },
+      {
+        "id": "l1",
+        "part": "label",
+        "bounds": [0, 20, 20, 10],
+        "ink": [0, 20, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r1",
+        "capTop": 20,
+        "capBottom": 30,
+        "type": "font",
+        "lines": 1
+      },
+      {
+        "id": "v",
+        "part": "value",
+        "bounds": [80, 5, 20, 10],
+        "ink": [80, 5, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 5,
+        "capBottom": 15,
+        "type": "font",
+        "text": "1"
+      }
+    ],
+    "configuration": {
+      "height": 844,
+      "locale": "en",
+      "pointer": "touch",
+      "scheme": "light",
+      "size": "phone",
+      "textScale": 1,
+      "width": 390
+    },
+    "platform": "web",
+    "scale": 3,
+    "scenario": null,
+    "screen": "/fixture",
+    "unit": "px",
+    "version": 1
+  },
+  "round 2 missing-end": {
+    "activeSurface": "page",
+    "elements": [
+      {
+        "id": "g",
+        "part": "group",
+        "bounds": [0, 0, 100, 100],
+        "ink": [0, 0, 100, 100],
+        "piece": "list-group",
+        "group": null,
+        "row": null,
+        "endEdge": "not measured",
+        "gap": 0
+      },
+      {
+        "id": "r0",
+        "part": "row",
+        "bounds": [0, 0, 100, 20],
+        "ink": [0, 0, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null
+      },
+      {
+        "id": "l0",
+        "part": "label",
+        "bounds": [0, 0, 20, 10],
+        "ink": [0, 0, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 0,
+        "capBottom": 10,
+        "type": "font",
+        "lines": 1
+      },
+      {
+        "id": "r1",
+        "part": "row",
+        "bounds": [0, 20, 100, 20],
+        "ink": [0, 20, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null
+      },
+      {
+        "id": "l1",
+        "part": "label",
+        "bounds": [0, 20, 20, 10],
+        "ink": [0, 20, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r1",
+        "capTop": 20,
+        "capBottom": 30,
+        "type": "font",
+        "lines": 1
+      },
+      {
+        "id": "v",
+        "part": "value",
+        "bounds": [80, 0, 20, 10],
+        "ink": [80, 0, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 0,
+        "capBottom": 10,
+        "type": "font",
+        "text": "1"
+      }
+    ],
+    "configuration": {
+      "height": 844,
+      "locale": "en",
+      "pointer": "touch",
+      "scheme": "light",
+      "size": "phone",
+      "textScale": 1,
+      "width": 390
+    },
+    "platform": "web",
+    "scale": 3,
+    "scenario": null,
+    "screen": "/fixture",
+    "unit": "px",
+    "version": 1
+  },
+  "round 2 explicit-missing-type": {
+    "activeSurface": "page",
+    "elements": [
+      {
+        "id": "g",
+        "part": "group",
+        "bounds": [0, 0, 100, 100],
+        "ink": [0, 0, 100, 100],
+        "piece": "list-group",
+        "group": null,
+        "row": null,
+        "endEdge": 100,
+        "gap": 0
+      },
+      {
+        "id": "r0",
+        "part": "row",
+        "bounds": [0, 0, 100, 20],
+        "ink": [0, 0, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null
+      },
+      {
+        "id": "l0",
+        "part": "label",
+        "bounds": [0, 0, 20, 10],
+        "ink": [0, 0, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 0,
+        "capBottom": 10,
+        "lines": 1,
+        "type": "not measured"
+      },
+      {
+        "id": "r1",
+        "part": "row",
+        "bounds": [0, 20, 100, 20],
+        "ink": [0, 20, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null
+      },
+      {
+        "id": "l1",
+        "part": "label",
+        "bounds": [0, 20, 20, 10],
+        "ink": [0, 20, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r1",
+        "capTop": 20,
+        "capBottom": 30,
+        "lines": 1,
+        "type": "not measured"
+      }
+    ],
+    "configuration": {
+      "height": 844,
+      "locale": "en",
+      "pointer": "touch",
+      "scheme": "light",
+      "size": "phone",
+      "textScale": 1,
+      "width": 390
+    },
+    "platform": "web",
+    "scale": 3,
+    "scenario": null,
+    "screen": "/fixture",
+    "unit": "px",
+    "version": 1
+  },
+  "round 2 missing-gap": {
+    "activeSurface": "page",
+    "elements": [
+      {
+        "id": "g",
+        "part": "group",
+        "bounds": [0, 0, 100, 100],
+        "ink": [0, 0, 100, 100],
+        "piece": "list-group",
+        "group": null,
+        "row": null,
+        "endEdge": 100
+      },
+      {
+        "id": "r0",
+        "part": "row",
+        "bounds": [0, 0, 100, 20],
+        "ink": [0, 0, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null
+      },
+      {
+        "id": "l0",
+        "part": "label",
+        "bounds": [0, 0, 20, 10],
+        "ink": [0, 0, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 0,
+        "capBottom": 10,
+        "type": "font",
+        "lines": 1
+      },
+      {
+        "id": "r1",
+        "part": "row",
+        "bounds": [0, 20, 100, 20],
+        "ink": [0, 20, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null
+      },
+      {
+        "id": "l1",
+        "part": "label",
+        "bounds": [0, 20, 20, 10],
+        "ink": [0, 20, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r1",
+        "capTop": 20,
+        "capBottom": 30,
+        "type": "font",
+        "lines": 1
+      }
+    ],
+    "configuration": {
+      "height": 844,
+      "locale": "en",
+      "pointer": "touch",
+      "scheme": "light",
+      "size": "phone",
+      "textScale": 1,
+      "width": 390
+    },
+    "platform": "web",
+    "scale": 3,
+    "scenario": null,
+    "screen": "/fixture",
+    "unit": "px",
+    "version": 1
+  },
+  "round 2 partial-gap": {
+    "activeSurface": "page",
+    "elements": [
+      {
+        "id": "g",
+        "part": "group",
+        "bounds": [0, 0, 100, 100],
+        "ink": [0, 0, 100, 100],
+        "piece": "list-group",
+        "group": null,
+        "row": null,
+        "endEdge": 100,
+        "gap": "not measured"
+      },
+      {
+        "id": "r0",
+        "part": "row",
+        "bounds": [0, 0, 100, 20],
+        "ink": [0, 0, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null,
+        "gapBefore": 0
+      },
+      {
+        "id": "l0",
+        "part": "label",
+        "bounds": [0, 0, 20, 10],
+        "ink": [0, 0, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 0,
+        "capBottom": 10,
+        "type": "font",
+        "lines": 1
+      },
+      {
+        "id": "r1",
+        "part": "row",
+        "bounds": [0, 20, 100, 20],
+        "ink": [0, 20, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null
+      },
+      {
+        "id": "l1",
+        "part": "label",
+        "bounds": [0, 20, 20, 10],
+        "ink": [0, 20, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r1",
+        "capTop": 20,
+        "capBottom": 30,
+        "type": "font",
+        "lines": 1
+      }
+    ],
+    "configuration": {
+      "height": 844,
+      "locale": "en",
+      "pointer": "touch",
+      "scheme": "light",
+      "size": "phone",
+      "textScale": 1,
+      "width": 390
+    },
+    "platform": "web",
+    "scale": 3,
+    "scenario": null,
+    "screen": "/fixture",
+    "unit": "px",
+    "version": 1
+  },
+  "round 2 invalid-unit": {
+    "activeSurface": "page",
+    "elements": [
+      {
+        "id": "g",
+        "part": "group",
+        "bounds": [0, 0, 100, 100],
+        "ink": [0, 0, 100, 100],
+        "piece": "list-group",
+        "group": null,
+        "row": null,
+        "endEdge": 100,
+        "gap": 2
+      },
+      {
+        "id": "r0",
+        "part": "row",
+        "bounds": [0, 0, 100, 20],
+        "ink": [0, 0, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null
+      },
+      {
+        "id": "l0",
+        "part": "label",
+        "bounds": [0, 0, 20, 10],
+        "ink": [0, 0, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 0,
+        "capBottom": 10,
+        "type": "font",
+        "lines": 1
+      },
+      {
+        "id": "r1",
+        "part": "row",
+        "bounds": [0, 22, 100, 20],
+        "ink": [0, 20, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null
+      },
+      {
+        "id": "l1",
+        "part": "label",
+        "bounds": [0, 20, 20, 10],
+        "ink": [0, 20, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r1",
+        "capTop": 20,
+        "capBottom": 30,
+        "type": "font",
+        "lines": 1
+      }
+    ],
+    "configuration": {
+      "height": 844,
+      "locale": "en",
+      "pointer": "touch",
+      "scheme": "light",
+      "size": "phone",
+      "textScale": 1,
+      "width": 390
+    },
+    "platform": "android",
+    "scale": 3,
+    "scenario": null,
+    "screen": "/fixture",
+    "unit": "meters",
+    "version": 1
   }
 }
