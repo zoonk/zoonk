@@ -54,10 +54,6 @@ function withoutSaved(page: MindMapsPage, { kind, targetId }: SavedMapTarget): M
 }
 
 /**
- * The Mind maps page's state: what the server sent, kept current by one read of the list while
- * any map is on its way, with the learner's own taps (create one, create all, remove a save).
- */
-/**
  * The clock asks the list again once, when the offer's day comes during the visit; that read lifts
  * the gate. A day already past when the page gets it arms nothing: the offer still gates, and the
  * page's next read decides.
@@ -81,6 +77,10 @@ function useReadWhenOfferOpens(stop: MindMapAllowanceStop | null, read: () => vo
   }, [passed, opensAt]);
 }
 
+/**
+ * The Mind maps page's state: what the server sent, kept current by one read of the list while
+ * any map is on its way, with the learner's own taps (create one, create all, remove a save).
+ */
 export function useMindMapsLibrary({
   actions,
   served,
