@@ -3,6 +3,7 @@ import { type AlignmentFinding, type CaptureElement } from "./alignment-capture.
 import { isStacked } from "./alignment-edges.mts";
 import {
   type Context,
+  EDGE,
   type Group,
   drawn,
   finding,
@@ -55,12 +56,24 @@ function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
     .toSorted((one, other) => one.bounds[1] - other.bounds[1])[0];
 
   const stacked = isStacked(row, own);
+  const labelTop = label ? drawn(label)?.top : undefined;
+
+  // Stacked (large text), a value goes under the label, and Apple's stacked layout puts a mark on
+  // a line of its own above the words: neither shares the label's line. A mark beside the label
+  // still does.
+  const above = (element: CaptureElement) => {
+    const ink = drawn(element);
+
+    return (
+      element.part === "mark" && ink && labelTop !== undefined && ink.bottom <= labelTop + EDGE
+    );
+  };
 
   const others = own.filter(
     (element) =>
       ["end", "lead", "mark", "value"].includes(element.part) &&
       drawn(element) &&
-      !(stacked && element.part === "value"),
+      !(stacked && (element.part === "value" || above(element))),
   );
 
   if (!label || others.length === 0) {

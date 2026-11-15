@@ -187,3 +187,29 @@ describe("a value drawn only as glyphs", () => {
     assert.equal(type(untyped)[0]?.level, "not-measured");
   });
 });
+
+/** AP1's stacked row at accessibility sizes: its mark at `markTop`, the label from 40 to 60. */
+function stackedRow(markTop: number) {
+  return fixtureCapture([
+    element({ group: null, id: "g", part: "group" }),
+    element({ bounds: [0, 0, 358, 120], id: "r0", part: "row", stacked: true }),
+    element({ id: "m", ink: [16, markTop, 24, 24], part: "mark", row: "r0" }),
+    element({
+      capBottom: 56,
+      capTop: 44,
+      id: "l0",
+      ink: [16, 40, 200, 20],
+      lines: 1,
+      part: "label",
+      row: "r0",
+      type: LABEL_TYPE,
+    }),
+  ]);
+}
+
+describe("a stacked row's mark (AP1's C4)", () => {
+  it("has a line of its own above the words, and one beside them still shares theirs", () => {
+    assert.deepEqual(line(stackedRow(8)), []);
+    assert.equal(line(stackedRow(44))[0]?.level, "fail");
+  });
+});
