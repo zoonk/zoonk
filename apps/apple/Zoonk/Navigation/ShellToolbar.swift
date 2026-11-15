@@ -6,14 +6,19 @@ struct ShellToolbar: ViewModifier {
   @Environment(SessionStore.self) private var session
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.isToolbarVertical) private var isToolbarVertical
+  @Environment(\.tabBarPlacement) private var tabBarPlacement
   @State private var barWidth: CGFloat?
-  /// What a phone's bar keeps beside the goal's name: its margins (20 each), the menu's padding and
-  /// chevron (34), the gap the bar leaves before its next item (12), a two-digit level (45), the
-  /// spacer (20) and the account (52). Less, and the bar sends the level and the account to its
-  /// overflow menu.
+  /// What the bar keeps beside the goal's name: its margins (20 each), the menu's padding and
+  /// chevron (34), the gap the bar leaves before its next item (12), a two-digit level (45, or 83
+  /// as "Level 12" where the bar has room), the spacer (20) and the account (52). Less, and the bar
+  /// sends the level and the account to its overflow menu.
   @ScaledMetric(relativeTo: .body) private var besideName: CGFloat = 206
-  /// A wide bar also holds the page's own items, such as the Plan's.
-  @ScaledMetric(relativeTo: .body) private var wideBarName: CGFloat = 140
+  @ScaledMetric(relativeTo: .body) private var besideNameWide: CGFloat = 244
+  /// iPad's tabs in the bar, centered on it (453 with the sidebar's button), and what the name's
+  /// side keeps besides: its margin (14), the menu's padding and chevron (34) and a gap (12).
+  @ScaledMetric(relativeTo: .body) private var tabsInBar: CGFloat = 470
+  @ScaledMetric(relativeTo: .body) private var besideNameByTabs: CGFloat = 60
+  @ScaledMetric(relativeTo: .body) private var shortestName: CGFloat = 96
 
   let isShown: Bool
 
@@ -33,15 +38,20 @@ struct ShellToolbar: ViewModifier {
     content.onGeometryChange(for: CGFloat.self, of: \.size.width) { barWidth = $0 }
   }
 
-  /// On a phone the goal's name takes the room the bar leaves (main's phone bar holds only the goal,
-  /// the level and the account), so it truncates there instead of sending the bar's items to its
-  /// overflow menu.
+  /// The goal's name takes the room the bar leaves (main's bar holds only the goal, the level and
+  /// the account), so it truncates there instead of sending the bar's items to its overflow menu.
+  /// Where the tabs sit in the bar, centered, the name has the side they leave.
   private var nameWidth: CGFloat {
-    guard horizontalSizeClass == .compact, let barWidth else {
-      return wideBarName
+    guard let barWidth else {
+      return shortestName
     }
 
-    return max(wideBarName, barWidth - besideName)
+    if tabBarPlacement == .topBar {
+      return max(shortestName, (barWidth - tabsInBar) / 2 - besideNameByTabs)
+    }
+
+    return max(
+      shortestName, barWidth - (horizontalSizeClass == .regular ? besideNameWide : besideName))
   }
 
   /// iPhone Duo's folded vertical bar can't fit the tab's title and the goal's name, and the system
