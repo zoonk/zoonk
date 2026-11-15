@@ -633,6 +633,9 @@ struct PlanPathLink: View {
 }
 
 struct SyllabusSubjectRow: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   let subject: SyllabusSubject
   let isExam: Bool
   var sharedExams: [GoalSyllabus.SharedExam] = []
@@ -666,9 +669,15 @@ struct SyllabusSubjectRow: View {
         }
       }
     } value: {
+      // As wide as the widest share, so every subject's bar ends on one edge.
       Text(share, format: .percent.precision(.fractionLength(0)))
         .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
+        .frame(
+          minWidth: TypeStyle.data.width(
+            of: 1.0.formatted(.percent.precision(.fractionLength(0))),
+            dynamicTypeSize: dynamicTypeSize, legibility: legibilityWeight),
+          alignment: .trailing)
     }
     .accessibilityElement(children: .combine)
   }
