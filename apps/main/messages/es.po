@@ -1156,10 +1156,10 @@ msgctxt "G4ZsrK"
 msgid "Start with your goal"
 msgstr "Empieza con tu objetivo"
 
+#. The page inside Settings for usage data, a copy of the learner's data and deleting the account; not the privacy policy.
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
-#: src/components/public/public-footer.tsx
-msgctxt "cXBJ7U"
+msgctxt "settingsPrivacy"
 msgid "Privacy"
 msgstr "Privacidad"
 
@@ -3389,6 +3389,11 @@ msgstr "No pudimos encontrar esta página"
 msgctxt "Vge-RX"
 msgid "Footer"
 msgstr "Pie de página"
+
+#: src/components/public/public-footer.tsx
+msgctxt "cXBJ7U"
+msgid "Privacy"
+msgstr "Privacidad"
 
 #: src/components/public/public-footer.tsx
 msgctxt "xkr-zo"
