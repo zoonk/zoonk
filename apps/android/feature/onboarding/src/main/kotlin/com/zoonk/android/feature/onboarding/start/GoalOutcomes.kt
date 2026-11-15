@@ -36,10 +36,12 @@ import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.HeldSlot
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.comesBackLine
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -162,12 +164,10 @@ internal fun GoalLimitNotice(
     if (!reason.isPlusLimit) return
 
     if (reason is GoalLimitReason.MonthlyGoals) {
-        SubscribeGate(
-            title = stringResource(R.string.limit_goals_used),
-            onSubscribe = onSubscribe,
-            modifier = modifier,
-            line = comesBackLine(reason.limit),
-        )
+        // Its day coming while it shows changes only its line; what's under the notice doesn't move for that.
+        HeldSlot(gated = !limitLifted(reason.limit), modifier) {
+            SubscribeGate(title = stringResource(R.string.limit_goals_used), onSubscribe = onSubscribe, line = comesBackLine(reason.limit))
+        }
         return
     }
     SubscribeGate(

@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitActions
 import com.zoonk.android.ui.components.LimitSubject
@@ -173,10 +175,9 @@ fun SpeechFailedNote(
                 textAlign = TextAlign.Start,
             )
         }
+        // Beside the note's words, small, as the limit's Subscribe it takes the place of.
         if (refusal == null || refusal is Limit.SlowDown) {
-            OutlinedButton(onClick = onRetry) {
-                Icon(painterResource(R.drawable.ic_refresh), contentDescription = null, modifier = Modifier.size(buttonIconSize()))
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            OutlinedButton(onClick = onRetry, size = ButtonSize.Small, leadingIcon = { ButtonIcon(R.drawable.ic_refresh) }) {
                 Text(stringResource(R.string.audio_try_again))
             }
         }
