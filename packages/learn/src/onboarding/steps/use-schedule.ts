@@ -41,23 +41,32 @@ export type ScheduleDraft = {
   weekendPicked: number | null;
 };
 
+/** A weekend time of its own needs a weekend day to use it and a weekday whose time it differs from. */
+function getMissingDays(days: number[]): "weekdays" | "weekend" | null {
+  if (!days.some((day) => isWeekend(day))) {
+    return "weekend";
+  }
+
+  return days.some((day) => !isWeekend(day)) ? null : "weekdays";
+}
+
 /** The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'. */
 function useStudyWeek({ draft, goal }: { draft: ScheduleDraft | null; goal: GoalView }) {
   const [days, setDays] = useState(() => draft?.days ?? getStartingDays(goal.studyDays));
   const [weekendOn, setWeekendOn] = useState(draft?.weekendOn ?? false);
   const [weekendPicked, setWeekendPicked] = useState(draft?.weekendPicked ?? null);
-  const studiesOnWeekends = days.some((day) => isWeekend(day));
+  const missingDays = getMissingDays(days);
 
   return {
     days,
+    missingDays,
     setDays,
     setWeekendOn: (on: boolean) => {
       setWeekendOn(on);
       setWeekendPicked(null);
     },
     setWeekendPicked,
-    studiesOnWeekends,
-    weekend: studiesOnWeekends && weekendOn ? weekendPicked : null,
+    weekend: missingDays === null && weekendOn ? weekendPicked : null,
     weekendOn,
     weekendPicked,
   };
