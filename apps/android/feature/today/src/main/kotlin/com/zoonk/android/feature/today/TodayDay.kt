@@ -49,6 +49,7 @@ import com.zoonk.android.feature.session.page
 import com.zoonk.android.feature.session.rememberWaitState
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -106,6 +107,8 @@ fun TodayDay(
     val fresh by today.freshState.collectAsStateWithLifecycle()
     val activity = LocalActivity.current
     DisposableEffect(viewModel, read.noticeVisit()) { onDispose { if (activity?.isChangingConfigurations != true) viewModel.endVisit() } }
+    // In the app's snackbars, since the save it reports can end after a recreated window took this one's place.
+    ActOn(viewModel.examOverFailure) { snackbars.show(R.string.today_save_failed) }
     TrackShown(AnalyticsEvent.TodayViewed)
     // Here rather than in the notice, which a lazy list or a layout change can compose again within one visit.
     viewModel.noticeEvent(read)?.let { TrackShown(it) }
@@ -123,7 +126,6 @@ fun TodayDay(
                 upNext = { if (idle()) viewModel.keepLearning(read, fromUpNext = true) },
                 prepare = { if (idle()) viewModel.prepareLessons(read) },
                 navigate = navigator::open,
-                saveFailed = { snackbars.show(R.string.today_save_failed) },
             )
         }
 
@@ -236,8 +238,6 @@ internal class TodayActionHandlers(
     val upNext: () -> Unit,
     val prepare: () -> Unit,
     val navigate: (AppRoute) -> Unit,
-    /** Said in the app's snackbars, since the save it reports can end after a recreated window took this one's place. */
-    val saveFailed: () -> Unit,
 )
 
 /** The day's one action, pinned to the bottom at every width; what it waits for or why it failed shows over the bar. */
@@ -278,7 +278,7 @@ private fun TodayAction(
 
         when {
             model.pastDate != null && model.today.goal.kind == TodayGoal.Kind.EXAM -> {
-                TodayExamOver(model, viewModel, actions.saveFailed)
+                TodayExamOver(model, viewModel)
             }
 
             model.pastDate != null -> {
@@ -415,12 +415,11 @@ internal fun Modifier.pageRow(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWid
 
 private const val SWITCHING_ALPHA = 0.6f
 
-/** Main's `TodayExamOver`: the Plan's answers after the exam's date, and a failed save in the shared toast. */
+/** Main's `TodayExamOver`: the Plan's answers after the exam's date; [TodayDay] says a failed save in the shared toast. */
 @Composable
 private fun TodayExamOver(
     model: TodayDayModel,
     viewModel: TodayViewModel,
-    saveFailed: () -> Unit,
 ) {
     val goal = model.today.goal
     val answer = viewModel.examOverAnswer?.takeIf { it.goalId == goal.id }
@@ -429,7 +428,7 @@ private fun TodayExamOver(
         goalTitle = goal.displayName,
         keeping = answer?.archive == false,
         archiving = answer?.archive == true,
-        onArchive = { viewModel.archiveGoal(goal.id, saveFailed) },
-        onKeepStudying = { viewModel.keepStudying(goal.id, saveFailed) },
+        onArchive = { viewModel.archiveGoal(goal.id) },
+        onKeepStudying = { viewModel.keepStudying(goal.id) },
     )
 }

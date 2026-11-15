@@ -326,29 +326,28 @@ class TodayViewModel(
     var examOverAnswer by mutableStateOf<ExamOverAnswer?>(null)
         private set
 
-    fun keepStudying(
-        goalId: UUID,
-        failed: () -> Unit,
-    ) = answerExamOver(ExamOverAnswer(goalId, archive = false), failed) { plans.change(goalId, listOf(PlanOp.FullCourse(true))) }
+    /** An answer after the exam's date that didn't save on this visit, which the screen says in the app's snackbars. */
+    val examOverFailure = visits.outcome<ExamOverAnswer>()
 
-    fun archiveGoal(
-        goalId: UUID,
-        failed: () -> Unit,
-    ) = answerExamOver(ExamOverAnswer(goalId, archive = true), failed) { plans.setStatus(goalId, LearnerSummaryGoal.Status.ARCHIVED) }
+    fun keepStudying(goalId: UUID) =
+        answerExamOver(ExamOverAnswer(goalId, archive = false)) { plans.change(goalId, listOf(PlanOp.FullCourse(true))) }
+
+    fun archiveGoal(goalId: UUID) =
+        answerExamOver(ExamOverAnswer(goalId, archive = true)) { plans.setStatus(goalId, LearnerSummaryGoal.Status.ARCHIVED) }
 
     private fun answerExamOver(
         answer: ExamOverAnswer,
-        failed: () -> Unit,
         write: suspend () -> MutationResult<*>,
     ) {
         if (examOverAnswer?.goalId == answer.goalId) return
         examOverAnswer = answer
+        val started = visit
 
         viewModelScope.launch {
             val result = write()
             if (result is MutationResult.Done) todayReadAgain()
             examOverAnswer = null
-            if (result is MutationResult.Failed) failed()
+            if (result is MutationResult.Failed) examOverFailure.send(started, answer)
         }
     }
 
