@@ -163,7 +163,7 @@ private fun RoadmapCompact(
                             listOf(position.name),
                         ),
                     modifier = Modifier.weight(1f),
-                    style = small,
+                    style = small.copy(lineBreak = LineBreak.Heading),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
