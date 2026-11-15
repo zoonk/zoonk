@@ -9,6 +9,7 @@ import {
   type Group,
   drawn,
   finding,
+  glyphsOnly,
   groupName,
   groupsOf,
   notMeasured,
@@ -39,7 +40,10 @@ function typeLeads(context: Context, read: Group): AlignmentFinding[] {
   return (["label", "lead", "note", "value"] as const).flatMap((part) => {
     const current = new Set(read.rows.filter((row) => row.current).map((row) => row.id));
     // What a learner sees: a part that draws nothing holds room, and a cut one has its own record.
-    const shown = parts.filter((element) => element.part === part && drawn(element));
+    const shown = parts.filter(
+      (element) => element.part === part && drawn(element) && !glyphsOnly(element),
+    );
+
     const untyped = shown.filter((element) => !element.type || element.type === "not measured");
 
     // A current row may set its words apart, and a word in a value's place ("Won", "Today") is

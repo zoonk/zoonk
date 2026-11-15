@@ -6,6 +6,7 @@ import {
   type Group,
   drawn,
   finding,
+  glyphsOnly,
   groupName,
   measured,
   rowName,
@@ -28,8 +29,9 @@ function capMiddle(element: CaptureElement): number | null {
   return top === null || bottom === null ? null : (top + bottom) / 2;
 }
 
+/** A mark's, an end glyph's or a glyphs-only part's middle is its ink's. */
 function middleOf(element: CaptureElement): number | null {
-  if (element.part !== "mark" && element.part !== "end") {
+  if (element.part !== "mark" && element.part !== "end" && !glyphsOnly(element)) {
     return capMiddle(element);
   }
 

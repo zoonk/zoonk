@@ -124,3 +124,66 @@ describe("one line of a row, as craft E5 places each part", () => {
     );
   });
 });
+
+function line(capture: Capture) {
+  return evaluateCapture(capture).filter((finding) => finding.rule === "line");
+}
+
+/** The `type` findings, the row's label given the kit's label type. */
+function type(capture: Capture) {
+  const typed = {
+    ...capture,
+    elements: capture.elements.map((item) =>
+      item.id === "l0" ? { ...item, type: LABEL_TYPE } : item,
+    ),
+  };
+
+  return evaluateCapture(typed).filter((finding) => finding.rule === "type");
+}
+
+/** The row with a value drawn only as glyphs (a day's kind marks), its ink centered at `at`. */
+function glyphValue(at: number) {
+  const capture = lineRow("value", at, 0);
+
+  return {
+    ...capture,
+    elements: capture.elements.map((item) =>
+      item.id === "p"
+        ? { ...item, capBottom: undefined, capTop: undefined, type: undefined }
+        : item,
+    ),
+  };
+}
+
+describe("a value drawn only as glyphs", () => {
+  it("is read by its ink, as a mark is, and a value whose words weren't measured still isn't", () => {
+    assert.deepEqual(line(glyphValue(15)), []);
+    assert.equal(line(glyphValue(19))[0]?.level, "fail");
+
+    const unmeasured = lineRow("value", 15, 0);
+
+    const words = {
+      ...unmeasured,
+      elements: unmeasured.elements.map((item) =>
+        item.id === "p" ? { ...item, capTop: "not measured" as const } : item,
+      ),
+    };
+
+    assert.equal(line(words)[0]?.level, "not-measured");
+  });
+
+  it("has no type to compare, while a value whose words weren't typed still fails as unmeasured", () => {
+    assert.deepEqual(type(glyphValue(15)), []);
+
+    const words = lineRow("value", 15, 0);
+
+    const untyped = {
+      ...words,
+      elements: words.elements.map((item) =>
+        item.id === "p" ? { ...item, type: undefined } : item,
+      ),
+    };
+
+    assert.equal(type(untyped)[0]?.level, "not-measured");
+  });
+});
