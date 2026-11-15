@@ -250,7 +250,7 @@ private struct LanguageUnitContent: View {
     let done = lessons.filter { $0.state == .done }.count
 
     Section {
-      PageHeader(Text(unit.unit.title), supporting: place)
+      PageHeader(Text(unit.unit.title), supporting: place, supportingIsFacts: true)
 
       if let description = unit.unit.description, !description.isEmpty {
         Text(description)
