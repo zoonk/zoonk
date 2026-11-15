@@ -7,6 +7,8 @@ enum AppSheet: Hashable, Identifiable {
   case makeRoom(LearnerWaitingGoal)
   case signIn
   case subscription
+  /// Over the screen, above its panes, so a resize never takes it away.
+  case practiceCall(Components.Schemas.TutorToolOffer.Case4Payload)
 
   var id: Self { self }
 }

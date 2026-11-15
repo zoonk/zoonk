@@ -19,6 +19,8 @@ enum TutorPlace: Hashable, Sendable {
   case mission(Components.Schemas.StudyMissionOpens)
   /// What a mission's block opened.
   case missionStep(StudyDestination)
+  /// A practice call the buddy offered, to set up before it starts.
+  case practiceCall(Components.Schemas.TutorToolOffer.Case4Payload)
 }
 
 struct TutorPlaces {
@@ -35,10 +37,6 @@ extension EnvironmentValues {
 struct TutorToolOfferCard: View {
   @Environment(\.tutorPlaces) private var places
   @State private var isGated = false
-  @State private var isCallOpen = false
-  @State private var callMinutes: Int?
-  @State private var callStart = CallStart()
-  @State private var startedCall: String?
 
   let offer: Components.Schemas.TutorToolOffer
 
@@ -70,7 +68,9 @@ struct TutorToolOfferCard: View {
             .buttonStyle(.outline)
           case .practiceCall(let label):
             Button {
-              isCallOpen = true
+              if case .case4(let call) = offer {
+                places.open(.practiceCall(call))
+              }
             } label: {
               label
             }
@@ -95,45 +95,6 @@ struct TutorToolOfferCard: View {
         content.title
       }
     }
-    .sheet(isPresented: $isCallOpen, onDismiss: openStartedCall) {
-      if case .case4(let call) = offer,
-        let conversation: LanguageUnit.Conversation = try? PracticeJSON.recode(call.call)
-      {
-        NavigationStack {
-          ZoonkList {
-            PracticeCallSection(
-              conversation: conversation, chapterId: call.chapterId, goalId: call.goalId,
-              minutes: $callMinutes, start: callStart
-            ) { conversationId in
-              startedCall = conversationId
-              isCallOpen = false
-            }
-          }
-          .navigationTitle(Text(call.unitTitle))
-          .navigationBarTitleDisplayMode(.inline)
-          .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-              Button(role: .close) {
-                isCallOpen = false
-              }
-            }
-          }
-        }
-        .presentationDetents([.medium, .large])
-        .onDisappear { callStart.cancel() }
-        .zoonkStyles()
-      }
-    }
-  }
-
-  /// A call opens once its sheet is gone: one modal can't present another.
-  private func openStartedCall() {
-    guard let startedCall else {
-      return
-    }
-
-    self.startedCall = nil
-    places.open(.call(conversationId: startedCall))
   }
 
   private enum Action {
@@ -476,6 +437,45 @@ private struct TutorApplyButton: View {
       failed = !(await apply())
       isSaving = false
       isResultFocused = !failed
+    }
+  }
+}
+
+/// A practice call the buddy offered, set up in a sheet the window presents over the screen, never
+/// from the offer: a resize can take the offer's pane away, and the sheet and a start under way
+/// stay. Closing the sheet ends the start; once the call starts, it opens in the sheet's place.
+struct TutorPracticeCallSheet: View {
+  @Environment(\.dismiss) private var dismiss
+  @Environment(AppRouter.self) private var router
+  @State private var minutes: Int?
+  @State private var start = CallStart()
+
+  let call: Components.Schemas.TutorToolOffer.Case4Payload
+
+  var body: some View {
+    if let conversation: LanguageUnit.Conversation = try? PracticeJSON.recode(call.call) {
+      NavigationStack {
+        ZoonkList {
+          PracticeCallSection(
+            conversation: conversation, chapterId: call.chapterId, goalId: call.goalId,
+            minutes: $minutes, start: start
+          ) { conversationId in
+            router.open(.conversation(conversationId: conversationId))
+          }
+        }
+        .navigationTitle(Text(call.unitTitle))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+          ToolbarItem(placement: .cancellationAction) {
+            Button(role: .close) {
+              dismiss()
+            }
+          }
+        }
+      }
+      .presentationDetents([.medium, .large])
+      .closesOnNavigation()
+      .onDisappear { start.cancel() }
     }
   }
 }

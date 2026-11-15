@@ -59,6 +59,8 @@ extension TutorPlaces {
         router.open(.focusTest(goalId: goalId))
       case .call(let conversationId):
         router.open(.conversation(conversationId: conversationId))
+      case .practiceCall(let call):
+        router.present(.practiceCall(call))
       case .mockChooser:
         router.open(.mockChooser)
       case .subject(let subjectKey):

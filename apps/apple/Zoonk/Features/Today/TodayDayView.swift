@@ -133,6 +133,7 @@ struct TodayDayView: View {
     .onDisappear {
       tapTask?.cancel()
       examChoice?.cancel()
+      suggestedGoalAnswer.leave()
     }
   }
 
