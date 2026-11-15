@@ -46,7 +46,7 @@ const WRITING_REFRESH_MS = 10_000;
 
 const IN_COLUMN_CLASS = "min-[72rem]:hidden";
 const IN_ASIDE_CLASS = "hidden min-[72rem]:flex";
-const IN_ASIDE_GRID_CLASS = "hidden min-[72rem]:grid";
+const IN_ASIDE_BLOCK_CLASS = "hidden min-[72rem]:block";
 
 export type JourneyLinks = JourneyPathLinks & {
   completedLessons: string | null;
@@ -138,14 +138,14 @@ function JourneyBody({
       <PageWithAside
         aside={
           <>
-            {numbers("stats", IN_ASIDE_GRID_CLASS)}
+            {numbers("stats", IN_ASIDE_BLOCK_CLASS)}
             <PlanSuggestionSlot className="hidden min-[72rem]:block" />
             <NextOnPath className={structure ? undefined : IN_ASIDE_CLASS} links={links} />
             <MoreSection links={links} />
             <PlanProperties className={IN_ASIDE_CLASS} examHref={links.exam} onOpen={editor.open} />
           </>
         }
-        asideClassName="sm:max-[72rem]:grid sm:max-[72rem]:grid-cols-2 sm:max-[72rem]:items-start sm:max-[72rem]:gap-x-10"
+        asideClassName="sm:max-[72rem]:grid sm:max-[72rem]:grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] sm:max-[72rem]:items-start sm:max-[72rem]:gap-x-10"
         asideLabel={t("Your plan at a glance")}
         bottomBar={
           goalStatus && (

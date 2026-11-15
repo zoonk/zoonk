@@ -130,7 +130,7 @@ export const memoryInsightTask: Task<
     "Turn a week of answers, mistakes and study times into at most one tip, plan change or schedule idea",
   generate: generateMemoryInsight,
   id: "memory-insight",
-  name: "Memory Insight",
+  name: "Memory insight",
   score: scoreMemoryInsight,
   testCases: TEST_CASES,
 };

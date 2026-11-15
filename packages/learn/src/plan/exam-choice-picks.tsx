@@ -13,9 +13,11 @@ type ExamChoicePicksProps = {
   choice: ExamChoiceView;
   onSave: (subjects: string[]) => void;
   pending: boolean;
+  /** Outline where the page beside it keeps its own filled action. */
+  saveVariant?: "default" | "outline";
 };
 
-function Picks({ choice, onSave, pending }: ExamChoicePicksProps) {
+function Picks({ choice, onSave, pending, saveVariant = "default" }: ExamChoicePicksProps) {
   const t = useExtracted();
   const [draft, setDraft] = useState<string[]>(choice.subjects);
   const isFull = draft.length >= choice.take;
@@ -69,6 +71,7 @@ function Picks({ choice, onSave, pending }: ExamChoicePicksProps) {
           )
         }
         size="sm"
+        variant={saveVariant}
       >
         {t("Save")}
       </Button>

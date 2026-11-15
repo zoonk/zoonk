@@ -19,7 +19,7 @@ export const mistakeCauseTask: Task<MistakeCauseParams, MistakeCauseSchema, Mist
     }),
     generate: classifyMistakeCause,
     id: "mistake-cause",
-    name: "Mistake Cause",
+    name: "Mistake cause",
     score: scoreMistakeCause,
     testCases: [...TEST_CASES, ...PERSONA_TEST_CASES],
   };

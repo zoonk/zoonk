@@ -10,6 +10,7 @@ import { DetailField, DetailFields } from "@/components/detail-field";
 import { getContentFixBatch } from "@/data/content-fixes/get-content-fix";
 import { languagePairName } from "@/lib/language-filter";
 import { LINK_CLASS } from "@/lib/link-class";
+import { cn } from "@zoonk/ui/lib/utils";
 import { getMainPageUrl } from "@zoonk/utils/url";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
@@ -79,6 +80,12 @@ function batchFacts(fixes: readonly BatchFix[]): string[] {
   ].filter(Boolean);
 }
 
+/** Fixes in different places are each named under Fixes, so this only counts them. */
+function placesInWords(fixes: readonly BatchFix[]): string {
+  const places = new Set(fixes.map((fix) => fix.location.trail.join(" › ")));
+  return `${String(places.size)} places, each named under Fixes`;
+}
+
 function Where({ batchId, fixes }: { batchId: string; fixes: readonly BatchFix[] }) {
   const place = sharedPlace(fixes.map((fix) => fix.location.trail)).join(" › ");
   const [first] = fixes;
@@ -87,7 +94,7 @@ function Where({ batchId, fixes }: { batchId: string; fixes: readonly BatchFix[]
     <>
       <AdminSection title="Where">
         <DetailFields>
-          <DetailField label="Content">{place || "Several places"}</DetailField>
+          <DetailField label="Content">{place || placesInWords(fixes)}</DetailField>
           <DetailField label="Language">
             {first?.location.language ? languagePairName(first.location) : null}
           </DetailField>
@@ -121,7 +128,7 @@ function fixesDescription({
       fixes.some((fix) => contentFixState(fix) === "applied") &&
         "To undo an applied fix, open it and propose undoing it.",
       mine > 0 &&
-        `${mine === 1 ? "1 fix" : `${String(mine)} fixes`} you approved didn't finish applying. Finish applying completes ${mine === 1 ? "it" : "them"} with no passkey and decides nothing else.`,
+        `${mine === 1 ? "1 fix" : `${String(mine)} fixes`} you approved didn't finish applying. Finish applying puts ${mine === 1 ? "it" : "them"} live without your passkey and leaves the other fixes as they are.`,
     ]
       .filter(Boolean)
       .join(" ") || undefined
@@ -132,21 +139,35 @@ function fixesDescription({
  * A fix waiting for review shows what it changes; a decided one is its place and outcome, with the
  * rest one tap away on its own page.
  */
-function FixRow({ fix, reason }: { fix: BatchFix; reason: string | null }) {
+function FixRow({
+  fix,
+  reason,
+  sharedDepth,
+}: {
+  fix: BatchFix;
+  reason: string | null;
+  /** How much of each fix's place the batch shares, which "Where" already names. */
+  sharedDepth: number;
+}) {
   const revert = findAppliedRevert(fix);
   const isWaiting = fix.status === "proposed";
+  const subject = fix.location.trail.at(-1) ?? "Deleted content";
+  const place = fix.location.trail.slice(sharedDepth, -1).join(" › ");
 
   return (
     <li className="flex flex-col gap-3 py-4">
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1">
+          {/* Named by what it changes, as its own page is, with where that sits under it, below the
+              place the batch shares. */}
           <Link
-            className="hit-area relative font-medium wrap-break-word hover:underline"
+            className={cn(LINK_CLASS, "font-medium wrap-break-word")}
             href={`/content-fixes/${fix.id}`}
             prefetch
           >
-            {fix.location.trail.join(" › ") || "Deleted content"}
+            {subject}
           </Link>
+          {place && <span className="text-muted-foreground text-xs">{place}</span>}
           <p className="text-sm">
             <ContentFixStatusMark state={contentFixState(fix)} />
             {fix.staleReason && <span className="text-muted-foreground"> · {fix.staleReason}</span>}
@@ -198,15 +219,22 @@ function Fixes({
   mine: number;
   reason: string | null;
 }) {
+  const sharedDepth = sharedPlace(fixes.map((fix) => fix.location.trail)).length;
+
   return (
     <AdminSection description={fixesDescription({ fixes, mine })} title="Fixes">
       <ol className="divide-y border-t">
         {fixes.map((fix) => (
-          <FixRow fix={fix} key={fix.id} reason={reason} />
+          <FixRow fix={fix} key={fix.id} reason={reason} sharedDepth={sharedDepth} />
         ))}
       </ol>
     </AdminSection>
   );
+}
+
+/** "Reject the waiting fix", "Approve the 3 waiting": the part of a batch still to decide. */
+function waitingLabel(verb: string, count: number): string {
+  return count === 1 ? `${verb} the waiting fix` : `${verb} the ${String(count)} waiting`;
 }
 
 function rejectFor(fixes: readonly BatchFix[]) {
@@ -226,7 +254,7 @@ function rejectFor(fixes: readonly BatchFix[]) {
     label:
       waiting.length === fixes.length
         ? `Reject all ${String(waiting.length)}`
-        : `Reject the remaining ${String(waiting.length)}`,
+        : waitingLabel("Reject", waiting.length),
   };
 }
 
@@ -243,7 +271,7 @@ function approveLabel({
 
   return approvable.length === fixes.length
     ? `Approve all ${String(approvable.length)} with passkey`
-    : `Approve the remaining ${String(approvable.length)} with passkey`;
+    : `${waitingLabel("Approve", approvable.length)} with passkey`;
 }
 
 async function BatchContent({ params }: Pick<Props, "params">) {

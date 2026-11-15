@@ -16,7 +16,7 @@ export const sourceResearchPlanTask: Task<
     "Name the canonical law, product or subject, where it's published, and the queries to find its current text or reference syllabi",
   generate: generateSourceResearchPlan,
   id: "source-research-plan",
-  name: "Source Research Plan",
+  name: "Source research plan",
   score: scoreResearchPlan,
   testCases: TEST_CASES,
 };
