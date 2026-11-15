@@ -233,6 +233,8 @@ struct AppSheetView: View {
         SubscriptionScreen()
       case .practiceCall(let call):
         TutorPracticeCallSheet(call: call)
+      case .tutor(let scope, let quote):
+        TutorPanel(scope: scope, quote: quote)
       }
     }
     .zoonkStyles()

@@ -116,18 +116,19 @@ struct TutorAskToolbarItem: ToolbarContent {
 
 /// After a missed answer it says the buddy's name, when asking helps most.
 struct TutorAskButton: View {
+  @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var summary
 
   let scope: TutorScope
   var quote: String?
   var iconOnly = false
 
-  @State private var isPresented = false
-
   var body: some View {
     let name = summary.buddyDisplayName
+    // The router presents the panel over the screen: the button can sit in a pane or a bar that a
+    // resize draws again, and the panel stays.
     let button = Button {
-      isPresented = true
+      router.present(.tutor(scope, quote: quote))
     } label: {
       Label {
         Text(
@@ -152,8 +153,5 @@ struct TutorAskButton: View {
     }
     .buttonStyle(.outline)
     .accessibilityLabel(Text(scope.askLabel(name)))
-    .sheet(isPresented: $isPresented) {
-      TutorPanel(scope: scope, quote: quote)
-    }
   }
 }
