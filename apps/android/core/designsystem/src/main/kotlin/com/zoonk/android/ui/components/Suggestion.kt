@@ -370,16 +370,19 @@ private fun LineLayout(
     Layout(contents = listOf(mark, summary, action ?: {}), modifier = modifier) { (markPart, summaryPart, actionPart), constraints ->
         val gap = LINE_GAP.roundToPx()
         val markPlaced = markPart.single().measure(Constraints())
-        val textMax = constraints.maxWidth - markPlaced.width - gap
+        val textMax = (constraints.maxWidth - markPlaced.width - gap).coerceAtLeast(0)
         val actionPlaced = actionPart.firstOrNull()?.measure(Constraints(maxWidth = textMax))
         val words = summaryPart.single()
         val besideWidth = textMax - (actionPlaced?.let { it.width + gap } ?: 0)
         val stackGap = STACKED_ACTION_GAP.roundToPx()
-        val wholeWords = actionPlaced == null || besideWidth >= words.minIntrinsicWidth(constraints.maxHeight)
-        val shorter =
+        // In order, so the words are only measured at a width they can have: an action that leaves them none goes under.
+        val beside =
             actionPlaced == null ||
-                words.minIntrinsicHeight(besideWidth) <= words.minIntrinsicHeight(textMax) + stackGap + actionPlaced.height
-        val beside = wholeWords && shorter
+                (
+                    besideWidth > 0 &&
+                        besideWidth >= words.minIntrinsicWidth(constraints.maxHeight) &&
+                        words.minIntrinsicHeight(besideWidth) <= words.minIntrinsicHeight(textMax) + stackGap + actionPlaced.height
+                )
         val textWidth = if (beside) besideWidth else textMax
         val summaryPlaced = words.measure(Constraints.fixedWidth(textWidth))
         val content =
