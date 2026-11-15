@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -53,6 +54,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -304,47 +306,91 @@ private fun SuggestionLine(
     val whole = answered || action == null
     Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large, border = frameBorder()) {
         CompositionLocalProvider(LocalPresentation provides Presentation.Line) {
-            Row(
+            LineLayout(
                 modifier = Modifier.heightIn(min = 56.dp).padding(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Mark(PANEL_MARK)
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(
-                        text = if (failed) stringResource(R.string.suggestion_save_failed) else summary,
-                        modifier =
-                            Modifier
-                                .focusRequester(LocalFrame.current.focus)
-                                // A statement (nothing to open, nothing answered) is read, never a stop for the keyboard.
-                                .then(if (whole && !answered && !failed) Modifier else Modifier.focusable())
-                                .then(
-                                    when {
-                                        failed -> Modifier.semantics { liveRegion = LiveRegionMode.Assertive }
-                                        answered -> Modifier.semantics { liveRegion = LiveRegionMode.Polite }
-                                        else -> Modifier
-                                    },
-                                ),
-                        style = MaterialTheme.typography.bodyMedium.copy(lineBreak = LineBreak.Heading),
-                        fontWeight = if (answered) FontWeight.Medium else null,
-                        color =
-                            when {
-                                failed -> MaterialTheme.colorScheme.error
-                                whole -> MaterialTheme.colorScheme.onSurface
-                                else -> MaterialTheme.colorScheme.onSurfaceVariant
-                            },
-                        maxLines = if (whole || LocalDensity.current.fontScale > FULL_SUMMARY_FONT_SCALE) Int.MAX_VALUE else 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    description?.let {
+                mark = { Mark(PANEL_MARK) },
+                summary = {
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
-                            it,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            text = if (failed) stringResource(R.string.suggestion_save_failed) else summary,
+                            modifier =
+                                Modifier
+                                    .focusRequester(LocalFrame.current.focus)
+                                    // A statement (nothing to open, nothing answered) is read, never a stop for the keyboard.
+                                    .then(if (whole && !answered && !failed) Modifier else Modifier.focusable())
+                                    .then(
+                                        when {
+                                            failed -> Modifier.semantics { liveRegion = LiveRegionMode.Assertive }
+                                            answered -> Modifier.semantics { liveRegion = LiveRegionMode.Polite }
+                                            else -> Modifier
+                                        },
+                                    ),
+                            style = MaterialTheme.typography.bodyMedium.copy(lineBreak = LineBreak.Heading),
+                            fontWeight = if (answered) FontWeight.Medium else null,
+                            color =
+                                when {
+                                    failed -> MaterialTheme.colorScheme.error
+                                    whole -> MaterialTheme.colorScheme.onSurface
+                                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                                },
+                            maxLines = if (whole || LocalDensity.current.fontScale > FULL_SUMMARY_FONT_SCALE) Int.MAX_VALUE else 2,
+                            overflow = TextOverflow.Ellipsis,
                         )
+                        description?.let {
+                            Text(
+                                it,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
-                }
-                action?.invoke()
+                },
+                action = action,
+            )
+        }
+    }
+}
+
+/**
+ * The mark, the summary and the action side by side, the action at the end; the action goes under the summary when
+ * beside it a word of the summary would have to break, as a long action at large text would leave it.
+ */
+@Composable
+private fun LineLayout(
+    modifier: Modifier,
+    mark: @Composable () -> Unit,
+    summary: @Composable () -> Unit,
+    action: (@Composable () -> Unit)?,
+) {
+    Layout(contents = listOf(mark, summary, action ?: {}), modifier = modifier) { (markPart, summaryPart, actionPart), constraints ->
+        val gap = LINE_GAP.roundToPx()
+        val markPlaced = markPart.single().measure(Constraints())
+        val textMax = constraints.maxWidth - markPlaced.width - gap
+        val actionPlaced = actionPart.firstOrNull()?.measure(Constraints(maxWidth = textMax))
+        val words = summaryPart.single()
+        val besideWidth = textMax - (actionPlaced?.let { it.width + gap } ?: 0)
+        val beside = actionPlaced == null || besideWidth >= words.minIntrinsicWidth(constraints.maxHeight)
+        val textWidth = if (beside) besideWidth else textMax
+        val summaryPlaced = words.measure(Constraints.fixedWidth(textWidth))
+        val stackGap = STACKED_ACTION_GAP.roundToPx()
+        val content =
+            when {
+                actionPlaced == null -> summaryPlaced.height
+                beside -> maxOf(summaryPlaced.height, actionPlaced.height)
+                else -> summaryPlaced.height + stackGap + actionPlaced.height
+            }
+        val height = maxOf(content, markPlaced.height, constraints.minHeight)
+        layout(constraints.maxWidth, height) {
+            val top = (height - content) / 2
+            val textStart = markPlaced.width + gap
+            if (beside) {
+                markPlaced.place(0, (height - markPlaced.height) / 2)
+                summaryPlaced.place(textStart, (height - summaryPlaced.height) / 2)
+                actionPlaced?.place(constraints.maxWidth - actionPlaced.width, (height - actionPlaced.height) / 2)
+            } else {
+                markPlaced.place(0, top + (summaryPlaced.height - markPlaced.height) / 2)
+                summaryPlaced.place(textStart, top)
+                actionPlaced.place(textStart, top + summaryPlaced.height + stackGap)
             }
         }
     }
@@ -411,6 +457,8 @@ private val LocalFrame = staticCompositionLocalOf { Frame(SuggestionMark.New, Fo
 private val LocalFraming = staticCompositionLocalOf { Framing.Own }
 
 private val PANEL_MARK = 18.dp
+private val LINE_GAP = 10.dp
+private val STACKED_ACTION_GAP = 8.dp
 
 /** From here two lines hold only the start of a summary, cutting off its key words. */
 private const val FULL_SUMMARY_FONT_SCALE = 1.3f
