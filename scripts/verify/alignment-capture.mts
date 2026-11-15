@@ -29,6 +29,8 @@ export type CaptureElement = {
    * (Japanese, Korean) its ideographic face, read from a full-frame glyph in the same fonts.
    */
   textBox?: "capitals" | "ideographic face";
+  /** An action's: drawn disabled. A disabled filled button still counts toward `one-filled`. */
+  disabled?: boolean;
   /** A text's: how many lines it runs to. */
   lines?: number;
   /** A row's: a supporting line sits under its label. */

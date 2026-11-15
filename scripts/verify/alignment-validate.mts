@@ -23,6 +23,7 @@ const OPTIONAL = z
     capTop: MEASURE,
     current: z.boolean(),
     direction: z.enum(["ltr", "rtl"]),
+    disabled: z.boolean(),
     endEdge: MEASURE,
     firstLine: BOUNDS,
     flow: z.string(),

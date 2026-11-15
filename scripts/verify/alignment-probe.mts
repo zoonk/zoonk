@@ -790,6 +790,7 @@ export function readAlignment({
         part: "action",
         piece: "action",
         row: null,
+        ...(action.matches(":disabled, [aria-disabled=true]") ? { disabled: true } : {}),
         surface: surfaceOf(action),
         text: globalThis.zoonkPage.label(action),
         ...(target ? { target } : {}),
