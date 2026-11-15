@@ -85,13 +85,18 @@ function useTabName(href: string): string | undefined {
 }
 
 /**
- * From `lg` the sidebar is the way between the pages it lists, so a `root` page's way back gives
- * way only while the sidebar marks a page as the current one. Which pages it lists depends on the
- * learner (Exam only with an exam goal, Completed lessons once one is done), so a page it doesn't
- * list keeps its way back.
+ * From `lg` the sidebar is the way between the pages it lists, so a page it lists has no way back
+ * there. A learner's sidebar lists their own pages, a visitor's the catalog. Which sidebar this is
+ * comes from `data-signed-in`, which a script sets before the first paint, never from the
+ * sidebar's current mark, which streams in after it: the bar draws no way back it then hides.
  */
-export const LISTED_IN_SIDEBAR_CLASS =
-  "lg:[body:has([data-slot=sidebar]_[aria-current=page])_&]:hidden";
+const LISTED_IN_SIDEBAR_CLASS = {
+  learner: "lg:[[data-signed-in]_&]:hidden",
+  visitor: "lg:[:root:not([data-signed-in])_&]:hidden",
+} as const;
+
+/** Whose sidebar lists the page: `learner` for their own pages, `visitor` for the catalog. */
+type ListedBy = keyof typeof LISTED_IN_SIDEBAR_CLASS;
 
 /**
  * `label` names the page at `href`; a tab's page needs none. With `toApp` the link returns to
@@ -140,18 +145,20 @@ function LearnBackLink({
 }
 
 /**
- * A `root` page is one the sidebar may list (`LISTED_IN_SIDEBAR_CLASS`). In a `section`, back
- * returns to the page the learner came from outside it, as in `LearnSectionBar`.
+ * A `root` page goes back to the app page the learner came from. In a `section`, back returns to
+ * the page the learner came from outside it, as in `LearnSectionBar`.
  */
 export function LearnPageBar({
   back,
   children,
+  listed,
   root = false,
   section = false,
   title,
 }: {
   back: { href: string; label?: string };
   children?: React.ReactNode;
+  listed?: ListedBy;
   root?: boolean;
   section?: boolean;
   title?: string;
@@ -182,7 +189,7 @@ export function LearnPageBar({
           {/* With the page's name in the bar, the way back is its chevron; its words stay its name. */}
           <LearnBackLink
             className={cn(
-              root && LISTED_IN_SIDEBAR_CLASS,
+              listed && LISTED_IN_SIDEBAR_CLASS[listed],
               title && titleAway && "[&]:shrink-0 [&>span]:sr-only",
             )}
             href={back.href}
@@ -212,19 +219,19 @@ export function LearnPageBar({
 export function LearnSectionBar({
   back,
   end,
+  listed,
   parent,
-  root = false,
   title,
 }: {
   back: { href: string; label?: string };
   end?: React.ReactNode;
+  listed?: ListedBy;
   /** `tabs`: the section's hub, which from a tablet up is these pages' own tabbed page. */
   parent?: { href: string; label: string; tabs?: boolean };
-  root?: boolean;
   title?: string;
 }) {
   const fromApp = useCameFromApp();
-  const className = root ? LISTED_IN_SIDEBAR_CLASS : undefined;
+  const className = listed && LISTED_IN_SIDEBAR_CLASS[listed];
 
   useNameAppEntry(title);
 

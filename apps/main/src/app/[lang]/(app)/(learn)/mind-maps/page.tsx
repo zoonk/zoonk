@@ -28,7 +28,7 @@ async function MindMapsBody() {
 
     return (
       <LearnNoGoal
-        bar={<JourneyPageBar root title={t("Mind maps")} />}
+        bar={<JourneyPageBar listed root title={t("Mind maps")} />}
         description={t("Each chapter's ideas on one map, to review how they connect.")}
         next="/mind-maps"
         title={t("Mind maps")}
@@ -79,7 +79,7 @@ async function MindMapsSkeleton() {
 
   return (
     <div aria-busy="true" className="flex flex-col gap-8">
-      <JourneyPageBar root />
+      <JourneyPageBar listed root />
       <div
         className={cn(
           PAGE_COLUMN_CLASS,

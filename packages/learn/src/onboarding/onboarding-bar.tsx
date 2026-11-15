@@ -9,7 +9,6 @@ import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { TaskClose } from "../_components/task-close";
 import { useAppLocale } from "../_utils/locale";
-import { LISTED_IN_SIDEBAR_CLASS } from "../shell/learn-bar";
 import { type OnboardingBar } from "./onboarding-host";
 import { testProgressPercent } from "./test-progress";
 
@@ -93,7 +92,7 @@ export function OnboardingPageBar({
           {bar.onBack ? (
             <BackButton disabled={bar.backDisabled} onBack={bar.onBack} />
           ) : (
-            <TaskClose className={LISTED_IN_SIDEBAR_CLASS} href={backHref} toApp />
+            <TaskClose href={backHref} toApp />
           )}
           {/* Centered on the bar's row: 12px over it, half of its 44px. */}
           {bar.middle && (
