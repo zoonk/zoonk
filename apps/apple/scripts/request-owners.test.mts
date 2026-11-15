@@ -18,6 +18,8 @@ const OWNERS: Record<string, string> = {
   "Features/Buddy/BuddyScreen.swift: missionTap":
     "Zu's page, which holds its PaneBeside: above the day's pane.",
   "Features/Certificates/CertificateScreen.swift: printing": "A certificate's page has no split.",
+  "Features/Courses/CatalogStartActions.swift: goalSwitch":
+    "The course, chapter and lesson pages' goal switch, attached to the view that holds their PaneSplit.",
   "Features/Exam/ExamScreen.swift: callStart": "The exam page, which holds its PaneSplit.",
   "Features/FocusTest/FocusTestFlow.swift: tasks": "The focus test has no split.",
   "Features/GoalContent/ChapterScreen.swift: practiceTask":
