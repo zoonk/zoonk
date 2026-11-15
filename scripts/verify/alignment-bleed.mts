@@ -1,16 +1,20 @@
 import { type AlignmentFinding, type CaptureElement } from "./alignment-capture.mts";
 import { type Context, EDGE, finding, tenths } from "./alignment-geometry.mts";
 
-/** Craft E7: a highlighted row passes its column by this much on each side, no more. */
+/**
+ * Craft E7: a highlighted row passes its column by the kit's 10 on each side, no more. The kit's
+ * lengths are in rem, so with larger text the bleed grows with it.
+ */
 const ROW_BLEED = 10;
 
-function allowed(fill: CaptureElement, past: { end: number; start: number }) {
+function allowed(fill: CaptureElement, past: { end: number; start: number }, textScale: number) {
+  const bleed = ROW_BLEED * textScale;
   const [frameStart = 0, frameEnd = 0] = fill.frame ?? [];
   const [x, , width] = fill.bounds;
 
   if (fill.kind === "highlight") {
     return (
-      Math.abs(past.start - past.end) <= EDGE && Math.max(past.start, past.end) <= ROW_BLEED + EDGE
+      Math.abs(past.start - past.end) <= EDGE && Math.max(past.start, past.end) <= bleed + EDGE
     );
   }
 
@@ -45,7 +49,7 @@ export function bleedLeads(context: Context): AlignmentFinding[] {
     const [x, , width] = fill.bounds;
     const past = { end: x + width - end, start: start - x };
 
-    if (allowed(fill, past)) {
+    if (allowed(fill, past, context.capture.configuration.textScale)) {
       return [];
     }
 

@@ -64,6 +64,16 @@ describe("the page's column (craft E7)", () => {
     assert.equal(columnMisses(fill("highlight", 6, 370)).length, 1);
   });
 
+  it("scales the kit's 10 with the text, since every length is in rem: 20 at 2x text", () => {
+    const scaled = (x: number, width: number) => {
+      const capture = fill("highlight", x, width);
+      return { ...capture, configuration: { ...capture.configuration, textScale: 2 } };
+    };
+
+    assert.deepEqual(columnMisses(scaled(-4, 398)), []);
+    assert.equal(columnMisses(scaled(-14, 418)).length, 1);
+  });
+
   it("lets a hairline or a picture pass only across the frame's whole room, and never a box", () => {
     assert.deepEqual(columnMisses(fill("hairline", 0, 390)), []);
     assert.deepEqual(columnMisses(fill("picture", 0, 390)), []);
