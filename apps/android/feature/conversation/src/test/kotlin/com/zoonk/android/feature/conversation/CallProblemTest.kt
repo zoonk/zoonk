@@ -3,6 +3,7 @@ package com.zoonk.android.feature.conversation
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -28,7 +29,10 @@ class CallProblemTest {
 
     private val clock by lazy { TestClock(compose.mainClock) }
 
-    /** A call refused for the month's cap: once the day comes on the open screen, the bar offers Try again, which starts the call again. */
+    /**
+     * A call refused for the month's cap: once the day comes on the open screen, nothing ran out, so no title
+     * says it did, and the bar offers Try again, which starts the call again.
+     */
     @Test
     fun aRefusedCallOffersTryAgainOnceItsDayComes() {
         var retries = 0
@@ -47,10 +51,14 @@ class CallProblemTest {
 
         compose.onNodeWithText("You've used your call time").assertExists()
         compose.onNodeWithText("Subscribe").assertExists()
+        val line = compose.onNodeWithText("More later today, or subscribe to keep going.").getBoundsInRoot().top
 
         clock.passOpening()
         compose.waitUntil(10_000) { compose.onAllNodesWithText("Try again").fetchSemanticsNodes().isNotEmpty() }
-        compose.onNodeWithText("You can try again now.").assertExists()
+        // The title's room stays, so the line under it doesn't move.
+        assertEquals(line, compose.onNodeWithText("You can try again now.").getBoundsInRoot().top)
+        compose.onNodeWithText("You've used your call time").assertDoesNotExist()
+        compose.onNodeWithText("Subscribe").assertDoesNotExist()
         compose.onNodeWithText("Try again").performClick()
 
         assertEquals(1, retries)

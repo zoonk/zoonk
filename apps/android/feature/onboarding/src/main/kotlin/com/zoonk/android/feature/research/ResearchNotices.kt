@@ -15,7 +15,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.AttachControls
-import com.zoonk.android.feature.onboarding.start.attachErrorMessage
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -41,6 +40,8 @@ fun UploadRequestNotice(
     store: OnboardingStore,
     visit: Int,
     layout: SuggestionLayout,
+    onCreateAccount: () -> Unit,
+    onSubscribe: () -> Unit,
     modifier: Modifier = Modifier,
     onAnswering: () -> Unit = {},
 ) {
@@ -72,10 +73,12 @@ fun UploadRequestNotice(
             if (answer.uploading) {
                 AttachControls(
                     pending = !idle,
-                    error = answer.attachFailure?.let { attachErrorMessage(it) },
+                    failure = answer.attachFailure,
                     onFile = { vm.attachFile(visit, shown, it) },
                     onText = { vm.attachText(visit, shown, it) },
                     onLink = { vm.attachLink(visit, shown, it) },
+                    onCreateAccount = onCreateAccount,
+                    onSubscribe = onSubscribe,
                     pendingText = if (vm.work == UploadWork.Sending) stringResource(R.string.research_upload_sending) else null,
                     draft = vm.draft,
                 )

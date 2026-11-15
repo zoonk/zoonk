@@ -28,8 +28,6 @@
   "onboarding_ask": "1c788fcb7651824dacf3e12605eaf8eecbd31b9335cf32042f16c374388f757c",
   "onboarding_attach_already_read": "d7ac1d6eabb8b724eef79fd9cc0596f9e185df1db5ccf9555f7806eeee11d59f",
   "onboarding_attach_failed": "a09f557dd44d45315c596f1e87b67ccf44c96559cd8e3e31b7462f4a2802c689",
-  "onboarding_attach_limit_day": "2745f9e7c246c78fada5b221f949b9e5ea5c40701f8071c8cc84808e91c332af",
-  "onboarding_attach_limit_plus": "7bfe3959daad1768756b138b07a86f7a2d160fedbbf9aea55d4cc75a2785cdd5",
   "onboarding_attach_sign_in": "221132afb7e0df152f4760aa154377dd2a95fcd9ac7f21c87c9f17b40452ad14",
   "onboarding_attach_slow_down": "1d5ac23805c28b36f51051a2d1e541bce864f370d085a702c6a5245b41ae785b",
   "onboarding_attach_unsupported": "a84fa31364abe36a11fbdb6f7d65949697ce1d01b9c854652d26cea7daa9fde1",
@@ -50,7 +48,6 @@
   "onboarding_course_chapters": "69ba2b77b7dfc6e4956b9b2228d7b517e215eb9da5e65c9b29bf3ccbf812d6fb",
   "onboarding_course_daily_minutes": "d46a024f9410bf7ae63fbf76e705fe930bf4230b40cfb3b218dc61944e8a13ed",
   "onboarding_course_failed": "fcac4b946414e435d14684f91ad3b42f9fde4a5fe9c3d23afa310be4efee6233",
-  "onboarding_course_follows": "f82f055c8d2dc6053266cfbc1aeea4a6a5e3948f616210f8ff76a03011648d15",
   "onboarding_course_lessons": "6d2dc61f67eda67915c2a0188ed7737b0131733d6dbddf11a31d3bfaddd24fcc",
   "onboarding_course_more_chapters": "fd95e5cdd4b1092062855a828cd342e1dc72fed635ba3c85474ea2c0a9598f21",
   "onboarding_course_start_free": "bc310504a6b45eccb53d5f52ad2eee04bdfd6d6fb08abe896600679d392d77bb",
@@ -226,8 +223,6 @@
   "onboarding_purpose_work": "ec4ca21698cd77f03fa4b37ffa52a4f9c07c4579955af7337d148cc3817b13be",
   "onboarding_purpose_work_description": "078780ccaf434b33755d47677eff08826a7d48dad703ee7a04c77a4659dd34b6",
   "onboarding_question_failed": "a143e6921ace338451770a4fdf17092825bba940903fa56e9b272803c23ef5d2",
-  "onboarding_question_limit_day": "58457afd43265499c2126afe90aca2646076252886ff57317e547a6a274da675",
-  "onboarding_question_limit_plus": "475f58eccafac39193c89dc5ea8bec18eaa9c774730e1fd6d00509911510d350",
   "onboarding_question_placeholder": "e0b66da452700d8e257b42cad31424993cba7e854d84e7554ae66c5e8627d481",
   "onboarding_question_sign_in": "dc2ff0a1ad5327f6b6faea6c23afa1cc14e9df71dda7dbfb73fcb14c686a2a40",
   "onboarding_question_slow_down": "8dc90621d854089fe39867bf6ece896c3ba4718e59a08aed80715e724a34c195",
@@ -612,8 +607,6 @@
     <string name="onboarding_adding_material">Dodajemy twoje materiały…</string>
     <!-- Removes an attached file or text. %1$s is its title. -->
     <string name="onboarding_remove_material">Usuń: %1$s</string>
-    <string name="onboarding_attach_limit_plus">Wykorzystano już limit materiałów na dziś. Kolejne dodasz jutro.</string>
-    <string name="onboarding_attach_limit_day">Wykorzystano już limit materiałów na dziś. Kolejne dodasz jutro lub po wykupieniu subskrypcji.</string>
     <string name="onboarding_attach_slow_down">Dodajesz materiały w szybkim tempie. Spróbuj ponownie za kilka minut.</string>
     <string name="onboarding_attach_unsupported">Nie możemy odczytać tego pliku. Spróbuj dodać plik PDF, zdjęcie, plik programu Word lub PowerPoint albo tekst.</string>
     <string name="onboarding_attach_sign_in">Załóż konto, by dodać własne materiały.</string>
@@ -637,8 +630,6 @@
     <string name="onboarding_question_failed">Nie udało nam się odpowiedzieć. Spróbuj ponownie za chwilę.</string>
     <string name="onboarding_question_sign_in">Utwórz konto, aby zadawać pytania o swoje materiały.</string>
     <string name="onboarding_question_slow_down">Zadajesz pytania jedno po drugim. Spróbuj ponownie za kilka minut.</string>
-    <string name="onboarding_question_limit_plus">Wykorzystano już limit pytań na dziś. Kolejne będą dostępne jutro.</string>
-    <string name="onboarding_question_limit_day">Wykorzystano już limit pytań na dziś. Kolejne będą dostępne jutro lub po wykupieniu subskrypcji.</string>
     <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_title">Sprawdźmy, co już wiesz</string>
     <!-- %d is how many areas of the goal the questions cover. -->
@@ -880,7 +871,6 @@
     <!-- Screen reader, as a one-answer question moves on: the answer picked. -->
     <string name="onboarding_you_picked">Twój wybór: %1$s</string>
     <string name="onboarding_course_chapter_description">Twój plan obejmuje kurs od tego rozdziału i jest dopasowany do czasu, który masz każdego dnia.</string>
-    <string name="onboarding_course_follows">Twój plan obejmuje ten kurs i jest dopasowany do czasu, który masz każdego dnia.</string>
     <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->
     <plurals name="onboarding_course_chapters">
         <item quantity="one">%d rozdział</item>

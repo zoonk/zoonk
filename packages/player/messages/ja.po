@@ -2901,15 +2901,15 @@ msgid "You can still review and practice your mistakes."
 msgstr "復習や間違えた問題の練習は引き続きできます。"
 
 #: src/lesson/access/lesson-access-screen.tsx
+msgctxt "4NMpnC"
+msgid "Start the lesson"
+msgstr "レッスンを始める"
+
+#: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-errors.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "登録する"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "4NMpnC"
-msgid "Start the lesson"
-msgstr "レッスンを始める"
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/tutor-dock.tsx
@@ -3449,14 +3449,14 @@ msgid "Say it instead"
 msgstr "声に出して答える"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "QuYUAL"
-msgid "The microphone is blocked. Type your answer instead."
-msgstr "マイクの使用が許可されていません。代わりに答えを入力してください。"
+msgctxt "iFYEjY"
+msgid "The microphone is blocked."
+msgstr "マイクの使用が許可されていません。"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "2Px63n"
-msgid "We can't use your microphone. Type your answer instead."
-msgstr "マイクが使えません。代わりに答えを入力してください。"
+msgctxt "NTpdCz"
+msgid "We can't use your microphone."
+msgstr "マイクを使用できません。"
 
 #: src/lesson/steps/summary-step.tsx
 msgctxt "RrCui3"

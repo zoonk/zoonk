@@ -8,14 +8,12 @@
   "subscription_already_plus_website": "45719405f6d2b983720fa4e04508f922c61e7c2e0846adf07034afe93dbcf507",
   "subscription_answer_cancel": "5f6cdc15899685c25d8df5437e634bcbacc9ebe121ff7540f74dab3c5118f30f",
   "subscription_answer_fair_use": "5ec5e8ede4bed3eaa7c114f774b099840148be2368f04fc4d2706f04503d04fa",
-  "subscription_answer_free_buddy": "5faf92535023b73946f1418fcba718897f1a4c147809f6db6fa950c09a95dc33",
-  "subscription_answer_free_buddy_uploads": "9c6bebc0eb24e9b3522b5e5e518e476b4aa4848ce98a5e9d5fd611c7f56f47e3",
   "subscription_answer_free_calls": "bc8d38c3c985577f85a0ca85fdf2fc634bf93cd5c935512fb36500f39cafa5c5",
   "subscription_answer_free_goals": "34e38b1558d1e3caa540d7ea098621dbe87d100b4b32f4614fd371f9c8057582",
   "subscription_answer_free_guest_lead": "35eb1e79ef279fc5b189781e94c1d804b02578c1af2bbc8b885f281b8755efed",
   "subscription_answer_free_lead": "b40ab342c342f0724db135c2da5d361ac06e437e9d847123e46eb7bce7fdffbf",
   "subscription_answer_free_lessons": "2dcdd155368d80e2beccc92b8cbcdad11165088e9535f92805cf7b6bb5470779",
-  "subscription_answer_free_uploads": "09df73d8e8dc4dc12f8708cb26b632792a177138bd1a03c58ffeaedee8c700ee",
+  "subscription_answer_free_material": "1f0b4a48b43fa0378932ef5cdc151392ad3c5861fe2f2aee90e50ca9a4e8e436",
   "subscription_answer_refund": "68db17f81c2f8fb78e5dcad495c7bb0b97e588065be73fc6769e804b04243b6f",
   "subscription_answer_unlimited": "9c09922e0733f158b1cbb800132703093a2b1d60211f8a84b43c11c4a96d524e",
   "subscription_benefit_buddy": "de49ac157e537c1a1079558a35a24922077698d46b39d868be686119cd786e03",
@@ -42,6 +40,7 @@
   "subscription_ends_on": "725bb759a3090794ca18dd729c35b71b8ccc9514f693d626da2ec32cf8f76251",
   "subscription_free": "ef9f35d283bc847c3cc86acaec29477ff8f2296a435f5b596bac9e5314591d50",
   "subscription_free_buddy": "b4992c83b30e36ffd5f44d18327a6fb7247f6c4e53008c4b09ad7bd01cc3a5d7",
+  "subscription_free_buddy_monthly": "475d7186b14ce6191ecd74454cd588f270f682675770861138d8b26224c71ce1",
   "subscription_free_calls": "ecc0676919d70c8c3412e2b440abf21d660612a3f8f203e652a86266c782ff0c",
   "subscription_free_goals": "df91b6ce42ade0df312a14f376870c754a6563add840b075e9826d2d78acc51b",
   "subscription_free_lessons_a_month": "52e72c791c6da928db772b55ccf4e48056beeae3ab2b1c259aab048cfde57efa",
@@ -205,20 +204,6 @@
         <item quantity="many">%d lekcji miesięcznie łącznie na wszystkie twoje cele, w tym egzaminy</item>
         <item quantity="other">%d lekcji miesięcznie łącznie na wszystkie twoje cele, w tym egzaminy</item>
     </plurals>
-    <!-- %1$s is the buddy messages ("10 messages"), %2$s the uploads ("3 uploads"). -->
-    <string name="subscription_answer_free_buddy_uploads">Kumpel do nauki z AI: %1$s i %2$s dziennie</string>
-    <plurals name="subscription_answer_free_buddy">
-        <item quantity="one">%d wiadomość</item>
-        <item quantity="few">%d wiadomości</item>
-        <item quantity="many">%d wiadomości</item>
-        <item quantity="other">%d wiadomości</item>
-    </plurals>
-    <plurals name="subscription_answer_free_uploads">
-        <item quantity="one">%d przesłany plik</item>
-        <item quantity="few">%d przesłane pliki</item>
-        <item quantity="many">%d przesłanych plików</item>
-        <item quantity="other">%d przesłanego pliku</item>
-    </plurals>
     <string name="subscription_answer_free_calls">Rozmowy do ćwiczenia mówienia, mniej niż w Plus (zadania egzaminacyjne z mówienia są dostępne w Plus)</string>
     <string name="subscription_question_unlimited">Czy Plus naprawdę nie ma limitów?</string>
     <string name="subscription_answer_unlimited">Prawie. Limity lekcji, celów i kontaktu z kumplem służą tylko blokowaniu botów i automatycznych narzędzi, a nie osób, które się uczą. Rozmowy, w których ćwiczysz mówienie, mają dzienne i miesięczne limity, wyższe niż bez pakietu Plus.</string>
@@ -228,4 +213,18 @@
     <string name="subscription_answer_cancel">Zachowasz Plus do końca opłaconego okresu. Potem wrócisz do pakietu Free, a twoje cele i postępy pozostaną bez zmian.</string>
     <string name="subscription_question_refund">Czy mogę otrzymać zwrot pieniędzy?</string>
     <string name="subscription_answer_refund">Google Play zajmuje się zwrotami za kupiony tam pakiet Plus: poproś o zwrot w Google Play. Jeśli subskrypcja została wykupiona na naszej stronie, napisz do nas na hello@zoonk.com, a przyjrzymy się sprawie.</string>
+    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
+    <plurals name="subscription_free_buddy_monthly">
+        <item quantity="one">Kumpel do nauki z AI: %1$d wiadomość dziennie, do %2$s miesięcznie</item>
+        <item quantity="few">Kumpel do nauki z AI: %1$d wiadomości dziennie, do %2$s miesięcznie</item>
+        <item quantity="many">Kumpel do nauki z AI: %1$d wiadomości dziennie, do %2$s miesięcznie</item>
+        <item quantity="other">Kumpel do nauki z AI: %1$d wiadomości dziennie, do %2$s miesięcznie</item>
+    </plurals>
+    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
+    <plurals name="subscription_answer_free_material">
+        <item quantity="one">Własne materiały do nauki: %d plik dziennie</item>
+        <item quantity="few">Własne materiały do nauki: %d pliki dziennie</item>
+        <item quantity="many">Własne materiały do nauki: %d plików dziennie</item>
+        <item quantity="other">Własne materiały do nauki: %d pliku dziennie</item>
+    </plurals>
 </resources>

@@ -43,7 +43,7 @@ import {
   UnavailableMapRow,
 } from "./mind-map-index-rows";
 import { useMindMapPlace } from "./mind-map-resume";
-import { NotMadeYet, canMakeNow } from "./not-made-yet";
+import { NotMadeYet, canMakeNow, useShownStop } from "./not-made-yet";
 import { type MindMapsLibrary, useMindMapsLibrary } from "./use-mind-maps-library";
 
 export type { MindMapLimit } from "../_components/help-limit-notice";
@@ -99,6 +99,8 @@ function StudyLink({ goalId, study, view }: { goalId: string; study: string; vie
 function ChaptersTab({ hrefs, library, subject, tier }: IndexTabProps & { tier: EntitlementTier }) {
   const t = useExtracted();
   const { index, notMade } = splitChapters(library.page.chapters);
+  // The map a finished chapter gets is claimed like any other, so it waits while the maps are used up.
+  const stopped = useShownStop(library) !== null;
 
   const groups = groupBySubject(index).map((group) => ({
     ...group,
@@ -114,7 +116,11 @@ function ChaptersTab({ hrefs, library, subject, tier }: IndexTabProps & { tier: 
         <MindMapIndex groups={groups} label={t("Chapter maps")} opensAt={subject} />
       ) : (
         !notMade.some((chapter) => canMakeNow(chapter)) && (
-          <EmptyTab>{t("No chapter maps yet. Every chapter you finish gets one.")}</EmptyTab>
+          <EmptyTab>
+            {stopped
+              ? t("No chapter maps yet.")
+              : t("No chapter maps yet. Every chapter you finish gets one.")}
+          </EmptyTab>
         )
       )}
 

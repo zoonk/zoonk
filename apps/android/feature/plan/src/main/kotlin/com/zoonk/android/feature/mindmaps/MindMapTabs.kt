@@ -41,11 +41,12 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.OpeningDay
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
-import com.zoonk.android.ui.components.limitLifted
+import com.zoonk.android.ui.components.rememberOpeningDay
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
@@ -100,7 +101,9 @@ internal fun LazyListScope.chaptersTab(
 
     if (groups.isEmpty() && notMade.isEmpty()) {
         item(key = "chapters-empty", contentType = "empty") {
-            TabEmpty(R.string.mindmaps_empty)
+            // A finished chapter's map is claimed like any other, so it waits while the offer is stopped.
+            val stopped = mindMaps.createOffer.let { it.stop != null && it.startable == 0L }
+            TabEmpty(if (stopped) R.string.mindmaps_empty_stopped else R.string.mindmaps_empty)
         }
         return
     }
@@ -112,17 +115,17 @@ internal fun LazyListScope.chaptersTab(
     if (notMade.isNotEmpty()) notMadeBlock(mindMaps, notMade, notMadeOpen, actions)
 }
 
-/** [stop] is what keeps any new map from starting now, which takes its Create away; [numbered] rows say which chapter they are. */
+/** [stop] is what keeps any new map from starting now ([gate]), which takes its Create away; [numbered] rows say which chapter they are. */
 @Composable
 private fun ChapterRow(
     map: GoalMindMap,
     actions: TabActions,
     open: (() -> Unit)? = null,
-    stop: Limit? = null,
+    stop: MindMapAllowanceStop? = null,
     numbered: Boolean = true,
 ) {
     val target = MindMapTarget(SavedMindMapKind.CHAPTER, map.chapterId)
-    val local = actions.state.requests[map.chapterId]
+    val local = rowLocal(actions.state.requests[map.chapterId], MindMapPlace.Library)
     val shown = shownMindMap(map.status.shown, local)
     val ready = shown == MindMapShown.Ready
     val saved = ready && actions.saved(target, map.saved)
@@ -134,7 +137,7 @@ private fun ChapterRow(
             place = MindMapPlace.Library,
             shown = shown,
             local = local,
-            cap = stop,
+            cap = stop?.gate(actions.state.tier),
             plus = actions.state.plus,
             actions =
                 MindMapRowActions(
@@ -167,7 +170,7 @@ private fun LazyListScope.notMadeBlock(
 ) {
     val now = notMade.filter { it.canMakeNow() }
     val later = notMade.filterNot { it.canMakeNow() }
-    val stop = mindMaps.createOffer.stop?.limit(actions.state.tier)
+    val stop = mindMaps.createOffer.stop
 
     items(now, key = { "now-${it.chapterId}" }, contentType = { "map" }) { map ->
         Divided(map != now.first()) { ChapterRow(map, actions, stop = stop, numbered = false) }
@@ -213,8 +216,7 @@ private fun NotMadeSummary(
     val limit =
         offer.stop
             ?.takeIf { offer.startable == 0L }
-            ?.limit(actions.state.tier)
-            ?.takeUnless { limitLifted(it) }
+            ?.gate(actions.state.tier)
     HeldSlot(gated = limit != null, Modifier.padding(top = 16.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (offer.startable > 1) {
@@ -276,6 +278,17 @@ private fun NotMadeLine(
             }
         }
     Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+}
+
+/**
+ * The offer's stop gates the page until a read of the list lifts it, whatever this device's clock says: a day
+ * already past here isn't printed (main's rule for a list with its own offer).
+ */
+@Composable
+private fun MindMapAllowanceStop.gate(tier: LimitTier): Limit {
+    val limit = limit(tier)
+    val passed = rememberOpeningDay((limit as? Limit.Reached)?.availableAt) == OpeningDay.Open
+    return if (passed && limit is Limit.Reached) limit.copy(availableAt = null) else limit
 }
 
 /** The server's reason nothing more can start, as the app's limits word it; [tier] is the learner's plan. */

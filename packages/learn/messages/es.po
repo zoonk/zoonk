@@ -397,6 +397,26 @@ msgid "You've used your mock exams"
 msgstr "Alcanzaste tu límite de simulacros"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "TPgNQb"
+msgid "No more questions today"
+msgstr "No hay más preguntas por hoy"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "GYGZpe"
+msgid "You've used your questions"
+msgstr "Alcanzaste tu límite de preguntas"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "aw2Ukw"
+msgid "No more material today"
+msgstr "No puedes subir más material hoy"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "g0Nshd"
+msgid "You've used your uploads"
+msgstr "Alcanzaste tu límite de archivos subidos"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
 msgstr "Alcanzaste el límite de hoy"
@@ -7184,6 +7204,11 @@ msgid "Chapter maps"
 msgstr "Mapas de capítulos"
 
 #: src/mind-maps/mind-maps-screen.tsx
+msgctxt "e39t_E"
+msgid "No chapter maps yet."
+msgstr "Aún no hay mapas de capítulos."
+
+#: src/mind-maps/mind-maps-screen.tsx
 msgctxt "sI50Mb"
 msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "Aún no hay mapas de capítulos. Cada capítulo que completes tendrá uno."
@@ -8729,16 +8754,6 @@ msgid "You picked {answer}"
 msgstr "Elegiste {answer}"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "aw2Ukw"
-msgid "No more material today"
-msgstr "No puedes subir más material hoy"
-
-#: src/onboarding/entry/attach-panel.tsx
-msgctxt "g0Nshd"
-msgid "You've used your uploads"
-msgstr "Alcanzaste tu límite de archivos subidos"
-
-#: src/onboarding/entry/attach-panel.tsx
 msgctxt "yeNv9c"
 msgid "You're adding material quickly. Try again in a few minutes."
 msgstr "Estás agregando material muy rápido. Inténtalo de nuevo en unos minutos."
@@ -9049,16 +9064,6 @@ msgstr "¿Qué quieres hacer?"
 msgctxt "AkPJMI"
 msgid "What you want to do with your material"
 msgstr "Lo que quieres hacer con tu material"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "TPgNQb"
-msgid "No more questions today"
-msgstr "No hay más preguntas por hoy"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "GYGZpe"
-msgid "You've used your questions"
-msgstr "Alcanzaste tu límite de preguntas"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "KIdIMi"

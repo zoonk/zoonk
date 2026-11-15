@@ -273,8 +273,8 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
           {answerMode.micProblem && !isLocked && (
             <p className="text-muted-foreground text-sm text-pretty" role="status">
               {answerMode.micProblem === "blocked"
-                ? t("The microphone is blocked. Type your answer instead.")
-                : t("We can't use your microphone. Type your answer instead.")}
+                ? t("The microphone is blocked.")
+                : t("We can't use your microphone.")}
             </p>
           )}
 

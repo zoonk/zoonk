@@ -1,6 +1,7 @@
 "use client";
 
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
+import { type MindMapAllowanceStop } from "@zoonk/core/mind-maps/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { PlusIcon } from "lucide-react";
@@ -24,14 +25,36 @@ import { type MindMapsLibrary } from "./use-mind-maps-library";
 
 const LINE_CLASS = "text-muted-foreground max-w-prose text-sm text-pretty";
 
-function useShownStop({ bulk, page }: MindMapsLibrary) {
-  return useLiveLimit(bulk.stop ?? (startsNoMap(page.createOffer) ? page.createOffer.stop : null));
+/** What stops a new map on this page: a refusal while the list is read again, then the list's offer. */
+export function useShownStop({ page, refusal }: MindMapsLibrary) {
+  return refusal ?? (startsNoMap(page.createOffer) ? page.createOffer.stop : null);
+}
+
+/** The gate holds until a read lifts it; the clock only decides whether its day still prints. */
+function useNoticeStop(stop: MindMapAllowanceStop): MindMapAllowanceStop {
+  const comingDay = useLiveLimit(stop);
+  return comingDay ?? { ...stop, availableAt: null };
+}
+
+function PageStopNotice({ stop, tier }: { stop: MindMapAllowanceStop; tier: EntitlementTier }) {
+  const routes = useLearnRoutes();
+  const mountedAt = useMountTime();
+  const shown = useNoticeStop(stop);
+
+  return (
+    <MindMapLimitNotice
+      limit={toMindMapLimit({ now: mountedAt.getTime(), stop: shown, tier })}
+      linkComponent={LearnLink}
+      routes={routes}
+    />
+  );
 }
 
 /**
- * Only the first line that applies shows, so the block never stacks paragraphs. Maps on their way
- * and maps that didn't finish come before the limit: the learner just started them, and the limit
- * read first looks like a refusal.
+ * Only the first line that applies shows, so the block never stacks paragraphs. Maps that didn't
+ * finish come before the limit, which reads as a refusal of what the learner just started. A stop
+ * on new maps outranks maps on their way, whose rows each say they're being made (their group opens
+ * on arrival).
  */
 function NotMadeLine({
   chapters,
@@ -43,8 +66,6 @@ function NotMadeLine({
   tier: EntitlementTier;
 }) {
   const t = useExtracted();
-  const routes = useLearnRoutes();
-  const mountedAt = useMountTime();
   const { bulk, follower, page } = library;
   const { eligible, startable } = page.createOffer;
   const shownStop = useShownStop(library);
@@ -67,17 +88,6 @@ function NotMadeLine({
     );
   }
 
-  if (onTheWay > 0) {
-    return (
-      <p className={LINE_CLASS}>
-        {t(
-          "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}",
-          { count: onTheWay },
-        )}
-      </p>
-    );
-  }
-
   if (failed > 0) {
     return (
       <p className={LINE_CLASS}>
@@ -90,12 +100,17 @@ function NotMadeLine({
   }
 
   if (shownStop && bulk.status !== "sending") {
+    return <PageStopNotice stop={shownStop} tier={tier} />;
+  }
+
+  if (onTheWay > 0) {
     return (
-      <MindMapLimitNotice
-        limit={toMindMapLimit({ now: mountedAt.getTime(), stop: shownStop, tier })}
-        linkComponent={LearnLink}
-        routes={routes}
-      />
+      <p className={LINE_CLASS}>
+        {t(
+          "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}",
+          { count: onTheWay },
+        )}
+      </p>
     );
   }
 
@@ -175,7 +190,7 @@ export function NotMadeYet({
         className="flex flex-col gap-3 [&:not([data-held]):not(:has(>:not(:empty)))]:contents"
         ref={slot}
       >
-        {startable > 1 && (
+        {startable > 1 && !library.refusal && (
           <Button
             busy={bulk.status === "sending"}
             className="self-start"
@@ -197,6 +212,7 @@ export function NotMadeYet({
         <ListGroup>
           <Disclosure
             aside={<span className="font-mono text-xs tabular-nums">{later.length}</span>}
+            defaultOpen={countChapterMaps(later).onTheWay > 0}
             icon={null}
             title={t("Other chapters")}
           >

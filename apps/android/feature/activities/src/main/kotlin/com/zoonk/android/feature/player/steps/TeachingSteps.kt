@@ -618,7 +618,7 @@ internal fun SpokenAnswerView(
                 types -> {
                     if (voice.blocked && !locked) {
                         Text(
-                            stringResource(R.string.player_microphone_blocked),
+                            stringResource(R.string.player_microphone_is_blocked),
                             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodyMedium,

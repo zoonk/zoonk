@@ -8,8 +8,8 @@
   "generation_curriculum_plan_line_1": "70b99a53ec4171c553506678f6fe90269284b970a2fc3b3c32b4cc22f00c2aec",
   "generation_curriculum_plan_line_2": "7c1cd927104f4f7196359e184304d3c6df395f73b1322449fd2eb3a4d77763c2",
   "generation_curriculum_plan_line_3": "06fa96a7d8b1e146bc7177a30df261f922ccabc0ab86fe4237a1c295f27eee7e",
-  "generation_failed": "96db1c6ce93c9fe78fb2005bb1d094c290046e5aae066c40f6b155818833eb67",
   "generation_failed_description": "ab23a1a7cd0d6cc037e59dfe853d99d6ba296f1ab9d7dccc0235cbecaf6e6b6f",
+  "generation_failed_ours": "477f61b4ffad45db48d736eae7e7c4ca9ce99acca56ddf2eb0cb98c7dc467c80",
   "generation_first_lesson": "119d4ee92cac1cbf6050653f86c7c9beee336c69cb76827eade0bc87ca9c5cb0",
   "generation_first_lesson_day": "5e02ad93fabb3332dd36a1d99018f0f9f587ac316d53793a4996fdae06a39d08",
   "generation_first_lesson_day_line_1": "2c533b0def9f765f9a2311a04f0f8619b4400df6a82cfd4a345d6b44768880a7",
@@ -23,8 +23,6 @@
   "generation_level_test_bank_line_2": "142188104f27acc220b8046a63dc6ca541a3aa587920158bc8120546829ac903",
   "generation_level_test_bank_line_3": "cab4c58ce096389a06ed060f5985e97eff42baf5c763dd07cc9f8e35146fbddc",
   "generation_level_test_bank_line_4": "562110310e69344a48f596395e502bce6090843123096551c5c91722ea79565b",
-  "generation_not_started": "a2376c0aa5a887fa9a41b1eeed1bc0bcccd36cee839818e8fc20afedb236d6b9",
-  "generation_not_started_description": "5d6d5374ebc24c2159a9de207ad8bcf35f06e74ec6a9740fb8b318f68516424b",
   "generation_notice": "87b7e7eb9d2aa5e96400ea8aead0813d0cd3da88b434fa523e9c2d9847fd8579",
   "generation_notice_line_1": "0fecafec0a204ee4136f076e5b2dba8015db2994c5c8c28f03f52c593625751e",
   "generation_notice_line_2": "b145603254b3ee05294f0d412d574cccc277c62019350763550ed9daf1788b52",
@@ -59,12 +57,9 @@
     <string name="generation_connection_lost_description">Wir erhalten keine Updates mehr. Der Vorgang läuft möglicherweise noch.</string>
     <!-- Follows a run again after its updates stopped. -->
     <string name="generation_reconnect">Erneut verbinden</string>
-    <!-- Title when something being written failed. -->
-    <string name="generation_failed">Vorgang nicht abgeschlossen</string>
+    <string name="generation_failed_ours">Bei uns ist etwas schiefgelaufen</string>
+    <!-- A stopped lesson's line in a list. -->
     <string name="generation_failed_description">Bei uns ist etwas schiefgelaufen.</string>
-    <!-- Title when something to be written never started. -->
-    <string name="generation_not_started">Vorgang nicht gestartet</string>
-    <string name="generation_not_started_description">Wir konnten den Vorgang nicht starten.</string>
     <!-- Starts something that failed or never started again. -->
     <string name="generation_try_again">Noch einmal versuchen</string>
     <!-- Screen reader state of a step of a wait. -->
