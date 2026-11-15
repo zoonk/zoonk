@@ -94,3 +94,21 @@ describe("a media control", () => {
     );
   });
 });
+
+/** A proposal's filled answer beside a composer holding typed text, its filled send marked `slot`. */
+function beside(slot: string | null) {
+  const mark = slot ? ` data-slot="${slot}"` : "";
+
+  document.body.innerHTML = `<div data-slot="page" data-box="16,0,358,400">${filledButton("Change my plan", 16)}
+    <form data-box="16,340,358,44"><textarea data-box="20,340,300,44">Why?</textarea>
+    <button${mark} aria-label="Send" style="--button-variant: default" data-box="330,346,30,30"></button></form></div>`;
+
+  return evaluateCapture(read()).filter((finding) => finding.rule === "one-filled");
+}
+
+describe("a composer's send", () => {
+  it("is its input's control, not the screen's action; a filled button that isn't one still counts", () => {
+    assert.deepEqual(beside("composer-send"), []);
+    assert.match(beside(null)[0]?.detail ?? "", /"Change my plan", <button> on page/u);
+  });
+});
