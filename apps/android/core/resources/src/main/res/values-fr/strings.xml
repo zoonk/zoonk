@@ -10,6 +10,7 @@
   "belt_gray": "fadf2f29007207b66302060253d59825cd95eadfb7bfdbd56d9204bb79970137",
   "belt_green": "eaa30bdca53d32fa4684a04331268d5f8daa1afcb73ec78db391b952d161c0e9",
   "belt_level": "a307a642a266a159c62a606b678a40421e77ebf7bfe4329fba216db241ba53d9",
+  "belt_level_words": "ff785ea9cce3c34a81740c03bbb62e2f46ea28b5ae3dc3538a225190d5a3a80a",
   "belt_orange": "54f6949a5707e9def3743650eefdf25af95c30de5a1a4cb302a17242a52c6aee",
   "belt_purple": "db1201e766c1718a72283a22e1a9b73b39670eca24cf174586b88f02c7796c67",
   "belt_red": "a9f02985c569f17bc3351efe4294456664c666ca9d15f43f2e1f7adeee7cc6d3",
@@ -120,6 +121,7 @@
     <string name="belt_black">Ceinture noire</string>
     <!-- A belt and its number from 1 to 10, such as White belt 4. %1$s is the belt's name. -->
     <string name="belt_level">%1$s %2$s</string>
+    <string name="belt_level_words">Niveau %1$s</string>
     <string name="answer_tag_correct">Correct</string>
     <string name="answer_tag_your_answer">Ta réponse</string>
     <string name="answer_tag_your_guess">Ton estimation</string>

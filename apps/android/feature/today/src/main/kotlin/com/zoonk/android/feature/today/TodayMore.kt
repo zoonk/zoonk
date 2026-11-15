@@ -26,6 +26,7 @@ import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
@@ -56,7 +57,7 @@ internal fun TodayMore(
                 ChallengeLink(model, actions)
                 LinkRow(
                     text = stringResource(R.string.today_practice_with_buddy, buddyName),
-                    leading = { Icon(painterResource(R.drawable.ic_forum), contentDescription = null, modifier = Modifier.size(16.dp)) },
+                    leading = { MarkIcon(R.drawable.ic_forum, size = 16.dp) },
                 ) { actions.navigate(AppRoute.Buddy()) }
             }
         }

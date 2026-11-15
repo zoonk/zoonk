@@ -2,6 +2,7 @@ package com.zoonk.android.feature.onboarding.start
 
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,6 +16,14 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.lifecycle.HasDefaultViewModelProviderFactory
+import androidx.lifecycle.SavedStateViewModelFactory
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewmodel.MutableCreationExtras
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -66,20 +75,53 @@ class StartGoalFlowTest {
     private lateinit var navigator: AppNavigator
     private lateinit var backDispatcher: OnBackPressedDispatcher
 
+    /** Owns the screen's view model, as its back stack entry does: null while the learner is elsewhere. */
+    private var owner by mutableStateOf<ViewModelStoreOwner?>(entry())
+
+    /** The activity's extras, which give each entry's view model its saved state. */
+    private lateinit var hostExtras: CreationExtras
+
+    private fun entry(): ViewModelStoreOwner = Entry { hostExtras }
+
+    private class Entry(
+        private val host: () -> CreationExtras,
+    ) : ViewModelStoreOwner,
+        HasDefaultViewModelProviderFactory {
+        override val viewModelStore = ViewModelStore()
+        override val defaultViewModelProviderFactory get() = SavedStateViewModelFactory()
+        override val defaultViewModelCreationExtras
+            get() = MutableCreationExtras(host()).apply { set(VIEW_MODEL_STORE_OWNER_KEY, this@Entry) }
+    }
+
+    /** The learner leaves the screen, which clears its view model, and opens the same link again. */
+    private fun leaveAndOpenAgain() {
+        val left = requireNotNull(owner)
+        owner = null
+        rule.waitForIdle()
+        rule.runOnUiThread { left.viewModelStore.clear() }
+        owner = entry()
+    }
+
     private fun show(route: AppRoute.StartGoal = AppRoute.StartGoal()) {
         cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
         rule.setContent {
             backDispatcher = requireNotNull(LocalOnBackPressedDispatcherOwner.current).onBackPressedDispatcher
+            hostExtras = (LocalViewModelStoreOwner.current as HasDefaultViewModelProviderFactory).defaultViewModelCreationExtras
             ZoonkTheme {
-                StartGoalScreen(
-                    route,
-                    store,
-                    cache.noAllowance(),
-                    sessionKey = sessionKey,
-                    canAttach = sessionKey != null && hasAccount,
-                    rememberAppNavigator().also { navigator = it },
-                )
+                val appNavigator = rememberAppNavigator().also { navigator = it }
+                owner?.let {
+                    CompositionLocalProvider(LocalViewModelStoreOwner provides it) {
+                        StartGoalScreen(
+                            route,
+                            store,
+                            cache.noAllowance(),
+                            sessionKey = sessionKey,
+                            canAttach = sessionKey != null && hasAccount,
+                            appNavigator,
+                        )
+                    }
+                }
             }
         }
     }
@@ -163,6 +205,88 @@ class StartGoalFlowTest {
 
         assertEquals(1, api.created.size)
         assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
+    }
+
+    @Test
+    fun aCardOpenedAgainWhileItsCreateWasOutSendsNoCreateBeforeItsDraftIsReadAgain() {
+        api.draft = understoodDraft()
+        api.createGate = CompletableDeferred()
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+
+        api.draftGate = CompletableDeferred()
+        leaveAndOpenAgain()
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+
+        assertEquals(1, api.created.size)
+    }
+
+    @Test
+    fun aDraftReadAgainThatNamesTheGoalOpensItsSetupWithOneCreateSent() {
+        api.draft = understoodDraft()
+        api.createGate = CompletableDeferred()
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+
+        val read = CompletableDeferred<Unit>()
+        api.draftGate = read
+        leaveAndOpenAgain()
+        rule.onNodeWithText("Looks right").performClick()
+        api.draft = understoodDraft().copy(goalId = java.util.UUID.fromString(GOAL_ID))
+        read.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
+        assertEquals(1, api.created.size)
+    }
+
+    @Test
+    fun aCreateThatGotNoAnswerReadsTheDraftAgainBeforeTheNextTapCreates() {
+        api.draft = understoodDraft()
+        api.refusal = ApiException(ApiError.Network)
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.waitForIdle()
+        val readsBefore = api.drafts.size
+        val read = CompletableDeferred<Unit>()
+        api.draftGate = read
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+
+        api.refusal = null
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+
+        assertEquals(readsBefore + 1, api.drafts.size)
+        assertEquals(1, api.created.size)
+        read.complete(Unit)
+        rule.waitForIdle()
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+        assertEquals(2, api.created.size)
+    }
+
+    @Test
+    fun aDraftReadAgainThatFailsOffersTheReadAgainNotTheCreate() {
+        api.draft = understoodDraft()
+        api.createGate = CompletableDeferred()
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+
+        api.draftFailure = ApiException(ApiError.Network)
+        leaveAndOpenAgain()
+        rule.waitForIdle()
+        rule.onNodeWithText("Looks right").assertDoesNotExist()
+
+        api.draftFailure = null
+        rule.onNodeWithText("Try again").performClick()
+        rule.waitForIdle()
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+        assertEquals(2, api.created.size)
     }
 
     @Test

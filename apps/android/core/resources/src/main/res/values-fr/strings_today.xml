@@ -67,6 +67,7 @@
   "today_notice_suggested_goal": "9cd95bf70f5a78a635b655de2d67a4f785440dfd7f1d3eae17ba9fa491d12a39",
   "today_open_failed": "d7b4958323b3eb77f521410556299220497a02133868a1c09a7ff4247a27bee7",
   "today_pace_lessons_to_catch_up": "6ecdd7ccbb3820530f782c82903fca43a8e3bc882f386b05b1a75e5803cfa997",
+  "today_past_date_exam_left": "afc2e2057f76eaf2131f290277317a4e674497a01abbececda3c5bb72a3bd583",
   "today_paused_detail": "1a28003c0a9c95ee03408275b186789a1f68a068d1a93acc265a541a1f7bc5a1",
   "today_paused_goal": "8557439b36c1e3794e8a5ad153f77217f0bdcfcd4dde54595e07a5e2f92aff0f",
   "today_paused_this_goal": "2e686e85e2a63d4b5cae0ec41071dc89a3f90245133888fec43f5d0362be1e2d",
@@ -338,6 +339,11 @@
     <string name="today_choose_focus">Choisir tes priorités</string>
     <string name="today_study_everything">Tout étudier</string>
     <string name="today_keep_studying_after_exam">Continuer à étudier après l’examen</string>
+    <plurals name="today_past_date_exam_left">
+        <item quantity="one">Il te reste %d leçon. Continuer à l’étudier ou archiver cet objectif ?</item>
+        <item quantity="many">Il te reste %d leçons. Continuer à les étudier ou archiver cet objectif ?</item>
+        <item quantity="other">Il te reste %d leçons. Continuer à les étudier ou archiver cet objectif ?</item>
+    </plurals>
     <string name="today_missed_days_title">Tu as manqué quelques jours</string>
     <!-- Keeps the learner's time a day as it is. -->
     <string name="today_keep_my_time">Garder ma durée quotidienne</string>

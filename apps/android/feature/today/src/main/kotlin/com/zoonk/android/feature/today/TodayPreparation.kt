@@ -55,6 +55,7 @@ import com.zoonk.api.models.TodayProgress
 import com.zoonk.api.models.TodayProgressOneOf
 import com.zoonk.api.models.TodayProgressOneOf1
 import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -185,38 +186,58 @@ internal data class LessonCounts(
     }
 }
 
-/** Shares from 0 to 1 of one cell; [planned] marks a lesson planned today, shown only when each cell is one lesson. */
-internal data class LessonCell(
-    val studied: Float,
-    val known: Float,
-    val planned: Boolean,
-)
+/** What one cell of the bar stands for, in the bar's order. */
+internal enum class LessonCell { Studied, Known, Today, Rest }
 
-/** Main's `getLessonCells`: at most [MAX_CELLS] cells, each holding as many lessons as it takes. */
+/**
+ * Main's `getLessonCells`: at most [MAX_CELLS] cells, each one whole state. A cell stands for as many lessons as it
+ * takes once the plan is longer, and each state takes its share of the cells.
+ */
 internal fun lessonCells(counts: LessonCounts): List<LessonCell> {
     val (known, studied, today, total) = counts
     if (total <= 0) return emptyList()
     val size = max(1, ceil(total.toDouble() / MAX_CELLS).toLong())
-    val done = studied + known
+    val count = ceil(total.toDouble() / size).toInt()
+    // Lessons done past the plan's total fill it and no more.
+    val lessons =
+        listOf(studied, known, today, total).runningFold(0L) { taken, value -> taken + value }.zipWithNext { taken, upTo ->
+            min(upTo, total) - min(taken, total)
+        }
+    val cells = giveEveryStateACell(shareCells(count, lessons, total), lessons)
 
-    return (0 until ceil(total.toDouble() / size).toLong()).map { index ->
-        val start = index * size
-        val end = min(total, start + size)
-        val length = (end - start).toFloat()
-        LessonCell(
-            studied = overlap(start, end, 0, studied) / length,
-            known = overlap(start, end, studied, done) / length,
-            planned = size == 1L && start >= done && start < done + today,
-        )
-    }
+    return LessonCell.entries.flatMap { state -> List(cells[state.ordinal]) { state } }
 }
 
-private fun overlap(
-    start: Long,
-    end: Long,
-    from: Long,
-    to: Long,
-): Float = max(0, min(end, to) - max(start, from)).toFloat()
+/** Each state's share of [count] cells by largest remainder, so the shares add up to [count] exactly. */
+private fun shareCells(
+    count: Int,
+    lessons: List<Long>,
+    total: Long,
+): List<Int> {
+    val exact = lessons.map { it.toDouble() * count / total }
+    val cells = exact.map { floor(it).toInt() }.toMutableList()
+    val left = count - cells.sum()
+    exact.indices
+        .sortedByDescending { exact[it] - floor(exact[it]) }
+        .take(left)
+        .forEach { cells[it]++ }
+    return cells
+}
+
+/** A state the legend names gets one cell at least, taken from the state holding the most, so the bar never draws less than it says. */
+private fun giveEveryStateACell(
+    shares: List<Int>,
+    lessons: List<Long>,
+): List<Int> {
+    val cells = shares.toMutableList()
+    lessons.forEachIndexed { state, value ->
+        if (value == 0L || cells[state] > 0) return@forEachIndexed
+        val largest = cells.indexOf(cells.max())
+        cells[largest]--
+        cells[state] = 1
+    }
+    return cells
+}
 
 /** Hidden from TalkBack but for today's lessons, which only the cells show. */
 @Composable
@@ -245,31 +266,30 @@ private fun LessonCells(counts: LessonCounts) {
         cells.forEachIndexed { index, cell ->
             val start = index * (width + gap)
             val left = if (rtl) size.width - start - width else start
+            when (cell) {
+                LessonCell.Today -> {
+                    drawRoundRect(
+                        studiedColor,
+                        Offset(left + ring / 2, ring / 2),
+                        Size(width - ring, size.height - ring),
+                        radius,
+                        style = Stroke(ring),
+                    )
+                }
 
-            fun fill(
-                from: Float,
-                share: Float,
-                color: Color,
-            ) {
-                if (share <= 0f) return
-                val fillWidth = width * share
-                val x = if (rtl) left + width - from - fillWidth else left + from
-                drawRoundRect(color, Offset(x, 0f), Size(fillWidth, size.height), radius)
-            }
+                LessonCell.Studied -> {
+                    drawRoundRect(studiedColor, Offset(left, 0f), Size(width, size.height), radius)
+                }
 
-            if (cell.planned) {
-                drawRoundRect(
-                    studiedColor,
-                    Offset(left + ring / 2, ring / 2),
-                    Size(width - ring, size.height - ring),
-                    radius,
-                    style = Stroke(ring),
-                )
-            } else {
-                drawRoundRect(track, Offset(left, 0f), Size(width, size.height), radius)
+                LessonCell.Known -> {
+                    drawRoundRect(track, Offset(left, 0f), Size(width, size.height), radius)
+                    drawRoundRect(knownColor, Offset(left, 0f), Size(width, size.height), radius)
+                }
+
+                LessonCell.Rest -> {
+                    drawRoundRect(track, Offset(left, 0f), Size(width, size.height), radius)
+                }
             }
-            fill(0f, cell.studied, studiedColor)
-            fill(width * cell.studied, cell.known, knownColor)
         }
     }
 }

@@ -26,6 +26,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
@@ -88,7 +89,7 @@ fun AlphabetRow(
                     ),
                 )
             },
-            leading = { Icon(painterResource(R.drawable.ic_translate), contentDescription = null, modifier = Modifier.size(16.dp)) },
+            leading = { MarkIcon(R.drawable.ic_translate, size = 16.dp) },
             onClick = { open(AppRoute.Lesson(alphabet.lessonId.toString())) },
         )
         if (alphabet.pending) {

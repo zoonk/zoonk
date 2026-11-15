@@ -13,6 +13,7 @@
   "checkpoint_finishing": "a2690c8c1601e0bd59cbde101c82d16ed9abcf11a74de5db29c6ea8673e48ab1",
   "checkpoint_held": "3015c47bfad83fb777d9e872f596690412102ddff78001fd1716940e9d8a1615",
   "checkpoint_lost_line": "e24b287658953a813b4963247aca5ccafd471bc846e52318e015b64f5d99c3c7",
+  "checkpoint_needed_to_win": "0fa8219c990e2933aa49280ae8485f8ddfe5a2b4832cf7e973b0af3633be42e9",
   "checkpoint_new_try_next": "36c7326beadc8215d676973c06798f816dbe44d6157a624144f3400ab58fdcd8",
   "checkpoint_new_try_tomorrow": "259608f4800405782d7fc4e020aaca14efe7bd3af755977aeaf52e4d38da96ba",
   "checkpoint_next": "cf20e8b8c63dbbe0e4bc54cd46a678aaa79a158f460fd4ec03996f0d4491125b",
@@ -40,7 +41,6 @@
   "checkpoint_review": "a7195be1c7202c61227338d59a63848d7fc17e0a383d9e741a00d66e50e637e4",
   "checkpoint_rewards": "960bf0019ad89bb81ebb1a69d5ba4c393b209053c68d3c907e4ad4bb88b4931b",
   "checkpoint_right_to_win": "5b4fee749a5b7862d6b2bd0e7547a4df5ca74a22a7923bfd0debd1a35cd33db4",
-  "checkpoint_right_to_win_of": "e0d1e58e9add80311a6daa0a9fb8d10cb19d1f931350783b65b244a5247b2606",
   "checkpoint_see_result": "2297b2fead5811a253055b73dd791f3d564ad81070e69ab1ffd8f8c78a9fffcb",
   "checkpoint_shield": "6161a5c1dc06960591233856cc8076a669b49f07f63a198eeeb13954b93a0242",
   "checkpoint_shield_value": "11e20fa37fce152960a4c7eb3972647f210242c19d47e1b96b74a56d311bc556",
@@ -108,9 +108,8 @@
     <string name="checkpoint_weekly_done">週間チャレンジ完了</string>
     <string name="checkpoint_beat">トリックスターに勝ちました！</string>
     <string name="checkpoint_not_this_time">今回はクリアできませんでした</string>
-    <!-- %1$d right answers were needed out of %2$d questions. -->
-    <plurals name="checkpoint_right_to_win_of">
-        <item quantity="other">%1$d問正解で勝利（全%2$d問）</item>
+    <plurals name="checkpoint_needed_to_win">
+        <item quantity="other">勝つには%d問の正解が必要でした。</item>
     </plurals>
     <string name="checkpoint_rewards">報酬</string>
     <!-- %1$s is the phase's number. -->

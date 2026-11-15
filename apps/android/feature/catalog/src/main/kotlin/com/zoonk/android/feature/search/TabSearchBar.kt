@@ -76,6 +76,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -435,7 +436,7 @@ private fun SearchResults(
                         headline = { Text(item.label, maxLines = 2, overflow = TextOverflow.Ellipsis) },
                         modifier = Modifier.background(if (item == highlighted) tint else Color.Transparent),
                         onClick = { onOpen(item) },
-                        leading = { Icon(painterResource(item.icon), contentDescription = null) },
+                        leading = { MarkIcon(item.icon) },
                         supporting =
                             item.detail?.let { detail ->
                                 { Text(detail.replaceFirstChar { it.titlecase(locale) }, maxLines = 1, overflow = TextOverflow.Ellipsis) }

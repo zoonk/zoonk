@@ -74,6 +74,8 @@
     <string name="session_summary_brain_power">Brain Power</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>
+    <string name="session_summary_up_from">Up from %1$s</string>
+    <string name="session_summary_down_from">Down from %1$s</string>
     <string name="session_summary_skills_rose">Skills that rose</string>
     <string name="session_summary_tomorrow">Tomorrow</string>
     <string name="session_summary_earned_today">Earned today</string>

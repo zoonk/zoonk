@@ -65,6 +65,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LocalButtonSize
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
@@ -316,7 +317,7 @@ internal fun LibraryCourseOffer(
         onClick = onOpen,
         headline = { Text(course.title) },
         supporting = { Text(stringResource(R.string.onboarding_library_course_fits)) },
-        leading = { Icon(painterResource(R.drawable.ic_menu_book), contentDescription = null) },
+        leading = { MarkIcon(R.drawable.ic_menu_book) },
         chevron = true,
     )
 }

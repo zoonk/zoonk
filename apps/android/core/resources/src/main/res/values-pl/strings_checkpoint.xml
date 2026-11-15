@@ -13,6 +13,7 @@
   "checkpoint_finishing": "f5b7e8496ba433a1894dd2a390b531b3be3a7d0b876cc30666152bed406e0ca8",
   "checkpoint_held": "8315c3b7fb8ed22314f1e6db3f7411704836f0ec545cd672ac27d0fa206507f6",
   "checkpoint_lost_line": "d2203eb41426824df91512366730293717160f48eed87bb8d977cfdb4a790053",
+  "checkpoint_needed_to_win": "84a5f62d85f93900688ca039fb51e9c511097185c938bfb581dae29892dc1fa6",
   "checkpoint_new_try_next": "eaddc720949192153874bd817e088162a71bcc0d3ea2df2cfe5b460ffc84542d",
   "checkpoint_new_try_tomorrow": "61a037a1d57de7eb1427d7e5b177226816b65a49eaa8cd0f97a5ce9c01be0c85",
   "checkpoint_next": "18aa77faf2c6471b6d345e5bc048e807eb8109038f9bd98b424a3043b9ab671a",
@@ -40,7 +41,6 @@
   "checkpoint_review": "a8be73e4a3f095ab252c81bff3501a2cd28a50c0a66ef6e0f9e99a08d21ac1a5",
   "checkpoint_rewards": "179b94bb09d317eed2a848ef43cf678b8cff7d855e7171542a075cfa5d69f586",
   "checkpoint_right_to_win": "b2a662e62272da839bd69b5c78570db7c884d6d09698507860b8bb1f41b8a2bd",
-  "checkpoint_right_to_win_of": "8cd77e5b4e7debb5477582cdf902d45588cb272a9c5e4b186ee99220f23f8995",
   "checkpoint_see_result": "848c36274a3aeae1c0a5fc32f6d9f974d2a1e4988bab539579cf3cf5777bd700",
   "checkpoint_shield": "fa668e1d67a0c52e1233cc2a6d9ad4c0b9adb434bae1f9f0b336c25ce571703b",
   "checkpoint_shield_value": "da514b57a4c6440ac14a8efdc89ef248e45a4f30e62e975a7d37788d74c696da",
@@ -126,12 +126,11 @@
     <string name="checkpoint_weekly_done">Wyzwanie tygodnia ukończone</string>
     <string name="checkpoint_beat">Spryciarz pokonany!</string>
     <string name="checkpoint_not_this_time">Tym razem się nie udało</string>
-    <!-- %1$d right answers were needed out of %2$d questions. -->
-    <plurals name="checkpoint_right_to_win_of">
-        <item quantity="one">Do wygranej potrzeba %1$d poprawnej odpowiedzi z %2$d</item>
-        <item quantity="few">Do wygranej potrzeba %1$d poprawnych odpowiedzi z %2$d</item>
-        <item quantity="many">Do wygranej potrzeba %1$d poprawnych odpowiedzi z %2$d</item>
-        <item quantity="other">Do wygranej potrzeba %1$d poprawnych odpowiedzi z %2$d</item>
+    <plurals name="checkpoint_needed_to_win">
+        <item quantity="one">Do wygranej trzeba było podać %d poprawną odpowiedź.</item>
+        <item quantity="few">Do wygranej trzeba było podać %d poprawne odpowiedzi.</item>
+        <item quantity="many">Do wygranej trzeba było podać %d poprawnych odpowiedzi.</item>
+        <item quantity="other">Do wygranej trzeba było podać %d poprawnej odpowiedzi.</item>
     </plurals>
     <string name="checkpoint_rewards">Nagrody</string>
     <!-- %1$s is the phase's number. -->

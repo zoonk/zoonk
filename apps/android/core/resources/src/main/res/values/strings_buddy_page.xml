@@ -29,8 +29,6 @@
     <string name="buddy_page_energy_study">Study today to keep it up.</string>
     <string name="buddy_page_not_yet">Not yet</string>
     <string name="buddy_page_missions">Missions</string>
-    <!-- The buddy's Energy beside its mark, like "68% Energy"; a dash before any lesson. -->
-    <string name="buddy_page_energy_share">%1$s Energy</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">
         <item quantity="one">%1$d of %2$d mission</item>

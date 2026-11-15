@@ -59,10 +59,9 @@
     <string name="checkpoint_weekly_done">Weekly challenge done</string>
     <string name="checkpoint_beat">You beat the Trickster!</string>
     <string name="checkpoint_not_this_time">Not this time</string>
-    <!-- %1$d right answers were needed out of %2$d questions. -->
-    <plurals name="checkpoint_right_to_win_of">
-        <item quantity="one">%1$d of %2$d right to win</item>
-        <item quantity="other">%1$d of %2$d right to win</item>
+    <plurals name="checkpoint_needed_to_win">
+        <item quantity="one">You needed %d right to win.</item>
+        <item quantity="other">You needed %d right to win.</item>
     </plurals>
     <string name="checkpoint_rewards">Rewards</string>
     <!-- %1$s is the phase's number. -->

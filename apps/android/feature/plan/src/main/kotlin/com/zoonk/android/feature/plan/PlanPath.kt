@@ -38,6 +38,7 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.ProgressMark
@@ -96,7 +97,7 @@ internal fun PathSection(
                 ListRow(
                     headline = { Text(stringResource(R.string.plan_full_course)) },
                     onClick = { links.course(it.courseId.toString()) },
-                    leading = { Icon(painterResource(R.drawable.ic_local_library), contentDescription = null) },
+                    leading = { MarkIcon(R.drawable.ic_local_library) },
                 )
             }
         }
@@ -604,7 +605,7 @@ private fun FinishItem(
 
 @Composable
 internal fun FlagMark() {
-    Icon(painterResource(R.drawable.ic_flag), contentDescription = null)
+    MarkIcon(R.drawable.ic_flag)
 }
 
 internal val SHEET_MARGIN = 24.dp
