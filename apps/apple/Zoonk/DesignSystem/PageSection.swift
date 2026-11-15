@@ -50,7 +50,9 @@ struct PageSection<Content: View, Header: View, Footer: View>: View {
   }
 
   @ViewBuilder private var block: some View {
-    let stack = VStack(alignment: .leading, spacing: 4) {
+    // The room a list leaves between a section's title and its first row, so a block's rows start
+    // where a list section's beside it do.
+    let stack = VStack(alignment: .leading, spacing: 12) {
       header
 
       VStack(alignment: .leading, spacing: 0) {

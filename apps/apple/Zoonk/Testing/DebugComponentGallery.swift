@@ -19,6 +19,8 @@
               DebugLessonGate(opensIn: section == "lessonGate" ? 20 : 5 * 86_400)
             } else if section == "limits" {
               DebugLimits()
+            } else if section == "todayNotices" {
+              DebugTodayNotices()
             } else if section == "rowStack" {
               DebugRowStack()
             } else if let writing = DebugLessonWait.writing(section) {
@@ -734,6 +736,60 @@
 
   /// `ZOONK_DEBUG_GALLERY=limits` opens the buddy's and the explanations' monthly gates, free and
   /// subscribed, as their screens draw them.
+  /// Today's notices no persona reaches on demand, drawn from the shapes the API sends: missed days
+  /// on an exam goal, and a goal suggested from an earlier course.
+  private struct DebugTodayNotices: View {
+    @State private var isOpen = false
+    @State private var answer = SuggestedGoalAnswer()
+
+    private static func decode<Value: Decodable>(_ json: String) -> Value {
+      try! JSONDecoder().decode(Value.self, from: Data(json.utf8))
+    }
+
+    private static let view = TodayView(
+      earlierWork: [], exam: nil, examChoice: nil, focusTest: nil,
+      goal: decode(
+        #"{"dateEstimated":false,"daysLeft":120,"id":"g1","kind":"exam","title":"ENEM 2027"}"#),
+      insight: nil, lessonStatus: [:], mockFunding: nil, notice: nil, pattern: nil,
+      planChange: change, progress: nil,
+      session: decode(
+        #"""
+        {"blocks":[],"brainPower":0,"catchUp":null,"current":true,"dayEndsAt":1793242800000,
+        "emptyDay":null,"examAccess":{"includesMockExams":true},"examTomorrow":false,
+        "extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},"freshStart":null,
+        "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"g1","lessonsComing":false,
+        "lessonsToPrepare":false,"localDate":"2026-11-15",
+        "minutes":{"dailyGoal":45,"done":0,"left":45,"planned":45},"missions":[],
+        "nextPosition":null,"pauseSuggested":false,"sessionBar":{"completed":0,"total":0},
+        "state":"underway","week":{"days":[],"nextStudyDate":null},"status":"unstarted"}
+        """#),
+      sourceChange: nil, studiedToday: false, suggestedGoal: nil, uploadRequest: nil,
+      weeklyChallenge: nil)
+
+    private static let change: TodayView.PlanChange = decode(
+      #"""
+      {"behind":{"canFocus":true,"coveredAfter":0.62,"coveredBefore":0.8,"currentMinutes":45,
+      "measure":"exam"},"canApply":true,"canUndo":false,"effect":null,"examDocument":"notice",
+      "quote":"q1","id":"c1","kind":"missedDays","officialDate":null,"operations":[],"reason":"",
+      "source":"memory","status":"proposed","todaySession":null}
+      """#)
+
+    var body: some View {
+      ZoonkList {
+        TodayPlanChangeSection(
+          view: Self.view, shown: AnsweredPlanChange(change: Self.change), next: nil,
+          isOpen: $isOpen, isSaving: false, failed: false, answer: { _ in }, showNext: {},
+          adjust: { _ in })
+
+        SuggestedGoalSection(
+          suggestion: SuggestedGoal(courseId: nil, id: "s1", title: "Microeconomics"),
+          answer: answer)
+      }
+      .navigationTitle(Text(verbatim: "Today's notices"))
+      .navigationBarTitleDisplayMode(.inline)
+    }
+  }
+
   private struct DebugLimits: View {
     static let later = Date.now.addingTimeInterval(5 * 86_400)
 

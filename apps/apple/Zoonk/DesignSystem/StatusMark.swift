@@ -10,6 +10,8 @@ struct StatusMark: View {
 
   let status: Status
 
+  @ScaledMetric(relativeTo: .body) private var nextSize = 12.0
+
   var body: some View {
     mark
       .markColumn()
@@ -24,9 +26,12 @@ struct StatusMark: View {
         .fontWeight(.bold)
         .foregroundStyle(.success)
     case .next:
+      // Resizable, so its ink centers in its box rather than sitting on a text baseline's.
       Image(systemName: "smallcircle.filled.circle.fill")
+        .resizable()
+        .scaledToFit()
         .symbolRenderingMode(.hierarchical)
-        .imageScale(.small)
+        .frame(width: nextSize, height: nextSize)
         .foregroundStyle(.success)
     case .skipped:
       Image(systemName: "forward.fill")

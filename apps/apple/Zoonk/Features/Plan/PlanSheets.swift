@@ -152,7 +152,7 @@ private struct PlanPathSheet: View {
 
     return NavigationStack {
       ZoonkList {
-        PlanPathRows(context: rows, brief: true)
+        PlanPathRows(context: rows)
       }
       .navigationTitle(
         Text("Your path", tableName: "Plan", comment: "Title of the plan's phases")

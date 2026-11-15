@@ -225,7 +225,7 @@ function useEventRows() {
   };
 }
 
-/** Everything a change does, as plain rows: what "See all changes" opens. */
+/** Everything a change does, as plain rows: what "All changes" opens. */
 export function usePlanChangeRows() {
   const lessonRows = useLessonRows();
   const dateRows = useDateRows();

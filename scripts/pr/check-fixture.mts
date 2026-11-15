@@ -8,15 +8,25 @@ import { type CaptureItem, type ManifestItem, type Read } from "./media.mts";
 
 export const CLEAN: Read = { at: "2026-11-14T12:00:00.000Z", by: "reader", findings: [] };
 
+/** The fixture's commits are dated from here, a minute apart: no test reads the real clock. */
+const FIRST_COMMIT = Date.parse("2026-01-01T12:00:00.000Z");
+const MINUTE = 60_000;
+
 function git(repository: string, ...args: string[]): string {
   return execFileSync("git", args, { cwd: repository, encoding: "utf8" }).trim();
 }
 
-function commitFile(repository: string, path: string, text: string): string {
+function commitFile(repository: string, path: string, text: string, at: number): string {
   mkdirSync(dirname(join(repository, path)), { recursive: true });
   writeFileSync(join(repository, path), text);
   git(repository, "add", path);
-  git(repository, "commit", "-qm", `change ${path}`);
+  const date = `${at / 1000} +0000`;
+
+  execFileSync("git", ["commit", "-qm", `change ${path}`], {
+    cwd: repository,
+    env: { ...process.env, GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date },
+  });
+
   return git(repository, "rev-parse", "HEAD");
 }
 
@@ -26,16 +36,18 @@ export function sha256(text: string): string {
 
 /**
  * A repository where `apps/main` changed after `older` and only docs changed after `current`,
- * with captures written into it: each picture's bytes are its own name.
+ * with captures written into it: each picture's bytes are its own name. `changedAt` is when its
+ * code last changed (`packages/`, at `current`), from the fixture's own dates.
  */
 export function checkFixture() {
   const repository = mkdtempSync(join(tmpdir(), "pr-media-check-"));
   git(repository, "init", "-q");
   git(repository, "config", "user.email", "agent@example.com");
   git(repository, "config", "user.name", "Agent");
-  const older = commitFile(repository, "apps/main/page.txt", "one");
-  const current = commitFile(repository, "packages/ui/row.txt", "two");
-  commitFile(repository, "docs/notes.md", "unrelated");
+  const older = commitFile(repository, "apps/main/page.txt", "one", FIRST_COMMIT);
+  const current = commitFile(repository, "packages/ui/row.txt", "two", FIRST_COMMIT + MINUTE);
+  commitFile(repository, "docs/notes.md", "unrelated", FIRST_COMMIT + 2 * MINUTE);
+  const changedAt = new Date(FIRST_COMMIT + MINUTE);
 
   function shot(overrides: Partial<CaptureItem> & { file: string }): CaptureItem {
     return {
@@ -80,7 +92,7 @@ export function checkFixture() {
     };
   }
 
-  return { capture, current, older, repository, shot };
+  return { capture, changedAt, current, older, repository, shot };
 }
 
 export function kinds(result: Awaited<ReturnType<typeof checkPictures>>): string[] {

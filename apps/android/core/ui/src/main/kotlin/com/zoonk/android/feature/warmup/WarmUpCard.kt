@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
@@ -152,6 +153,15 @@ class WaitQuizState internal constructor(
         showingProgress = false
     }
 
+    /** The run failed, so the wait is over: the quiz goes whole, and a retry's wait offers the next card afresh. */
+    internal fun end() {
+        showingProgress = true
+        if (picked != null) {
+            picked = null
+            index = maxOf(index + 1, warmUpId?.let { warmUps?.next(it) } ?: 0)
+        }
+    }
+
     fun pick(
         option: WarmUpDeckCardsInnerOptionsInner,
         hold: ReadyHold,
@@ -230,6 +240,9 @@ fun WaitContent(
     progress: @Composable () -> Unit,
 ) {
     quiz.open()
+    // A failed run ends the wait and its quiz with it; a lost connection may still finish, so its quiz stays.
+    val ended = run.status == GenerationRun.Status.Failed && run.failure != GenerationFailure.Connection
+    LaunchedEffect(ended) { if (ended) quiz.end() }
     val share =
         progressShare ?: com.zoonk.android.ui.components
             .rememberGenerationProgress(kind, run)
@@ -244,7 +257,7 @@ fun WaitContent(
     val showingProgress = quiz.showingProgress && quiz.canShowQuiz && !progressBeside
     BackHandler(enabled = showingProgress) { quiz.back() }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(24.dp)) {
-        if (!progressBeside && quiz.canShowQuiz && !quiz.showingProgress) {
+        if (!ended && !progressBeside && quiz.canShowQuiz && !quiz.showingProgress) {
             val failure = run.failure
             if (failure != null) {
                 GenerationFailureNotice(failure, onRetry)
@@ -263,7 +276,7 @@ fun WaitContent(
             HorizontalDivider()
         }
         AnimatedContent(
-            targetState = !progressBeside && (quiz.showingProgress || !quiz.canShowQuiz),
+            targetState = ended || (!progressBeside && (quiz.showingProgress || !quiz.canShowQuiz)),
             transitionSpec = {
                 fadeIn(tween(150, easing = ZoonkMotion.EaseOut)) togetherWith
                     fadeOut(tween(150, easing = ZoonkMotion.EaseOut)) using
@@ -271,7 +284,8 @@ fun WaitContent(
             },
             label = "wait view",
         ) { progressShown ->
-            if (progressShown) {
+            // Beside its progress, an ended wait has nothing to show here: the progress pane says it failed.
+            if (progressShown && !(ended && progressBeside)) {
                 Column(
                     Modifier
                         .layoutPart(LayoutPart.WAIT, LayoutPart.Part.Group, gap = WAIT_GAP)
@@ -279,7 +293,7 @@ fun WaitContent(
                         .focusable()
                         .semantics { contentDescription = title },
                 ) { progress() }
-            } else {
+            } else if (!progressShown) {
                 QuizCard(quiz, surface, hold, goalId)
             }
         }

@@ -7,7 +7,7 @@ import {
   FoldChevron,
 } from "@zoonk/ui/components/collapsible";
 
-/** The look of a small text action under a line: "See all changes", or "Try again" in its place. */
+/** The look of a small text action under a line: "All changes", or "Try again" in its place. */
 export const QUIET_ACTION_CLASS =
   "text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 hit-area text-compact relative -mx-1 flex w-fit items-center gap-1 rounded-md px-1 leading-snug underline-offset-4 outline-none hover:underline focus-visible:ring-[3px]";
 

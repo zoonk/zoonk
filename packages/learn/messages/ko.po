@@ -192,7 +192,6 @@ msgstr "학습함"
 #: src/challenge/challenge-labels.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/journey-phase-events.tsx
-#: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-header.tsx
@@ -5003,20 +5002,14 @@ msgid ", up next"
 msgstr ", 다음 단계"
 
 #: src/journey/phase-details.tsx
-msgctxt "kxXCJy"
-msgid "{start} – {end}"
-msgstr "{start} ~ {end}"
+msgctxt "sFnTpp"
+msgid "<start></start> – <end></end>"
+msgstr "<start></start>~<end></end>"
 
 #: src/journey/phase-details.tsx
 msgctxt "yYQBka"
 msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of # lesson} other {{done, number} of # lessons}}"
 msgstr "{total, plural, =0 {레슨 {done, number}개 완료 / 총 #개} other {레슨 {done, number}개 완료 / 전체 #개}}"
-
-#: src/journey/phase-when.tsx
-#: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "{date}쯤"
 
 #. In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".
 #: src/journey/phase-when.tsx
@@ -5029,6 +5022,12 @@ msgstr "{dateKind, select, month {{date}쯤 끝나요} other {{date}쯤 끝나�
 msgctxt "JQlKi_"
 msgid "Ends {date}"
 msgstr "{date}에 끝나요"
+
+#: src/journey/phase-when.tsx
+#: src/plan/plan-date-text.tsx
+msgctxt "7KwTGn"
+msgid "~{date}"
+msgstr "{date}쯤"
 
 #: src/journey/plan-header.tsx
 msgctxt "8PP61v"
@@ -5049,11 +5048,6 @@ msgstr "{days, plural, other {약 #일 남았어요}}"
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
 msgstr "{done, number}개 단계 완료 / {total, plural, other {전체 #개}}"
-
-#: src/journey/plan-roadmap.tsx
-msgctxt "dM-p3_"
-msgid "From"
-msgstr "시작일"
 
 #: src/journey/plan-roadmap.tsx
 msgctxt "mElWfu"
@@ -7253,14 +7247,14 @@ msgid "Saved"
 msgstr "저장한 항목"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "ifrM2C"
-msgid "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}"
-msgstr "{count, plural, other {#개를 만들고 있어요. 만드는 동안 나가도 괜찮아요.}}"
-
-#: src/mind-maps/not-made-yet.tsx
 msgctxt "uSD0Jk"
 msgid "{count, plural, one {# map didn't finish. Try again.} other {# maps didn't finish. Try again.}}"
 msgstr "{count, plural, other {마인드맵 #개를 완성하지 못했어요. 다시 시도해 보세요.}}"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "ifrM2C"
+msgid "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}"
+msgstr "{count, plural, other {#개를 만들고 있어요. 만드는 동안 나가도 괜찮아요.}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "VSfWXI"
@@ -10163,14 +10157,14 @@ msgid "{names} and more"
 msgstr "{names} 등"
 
 #: src/plan-diff/plan-effect-diff.tsx
-msgctxt "61Vs84"
-msgid "The numbers are different today."
-msgstr "오늘은 계산 결과가 달라졌어요."
+msgctxt "SBr2Ck"
+msgid "Your plan changed since you saw this. Here's what it does now."
+msgstr "이 내용을 확인한 뒤 계획이 바뀌었어요. 지금 적용하면 이렇게 달라져요."
 
 #: src/plan-diff/plan-effect-diff.tsx
-msgctxt "3vidCV"
-msgid "See all changes"
-msgstr "전체 변경 사항 보기"
+msgctxt "7FvDSg"
+msgid "All changes"
+msgstr "전체 변경 사항"
 
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "oGZanC"
@@ -12291,9 +12285,9 @@ msgid "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught
 msgstr "{done, plural, other {<gain>오늘 밀린 레슨 #개 완료</gain>}} · {left, plural, other {#개 남음}}"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "v8WYcE"
-msgid "It takes a few minutes."
-msgstr "몇 분 정도 걸려요."
+msgctxt "y1FyTB"
+msgid "Your lesson is usually ready in a few minutes."
+msgstr "레슨은 보통 몇 분 안에 준비돼요."
 
 #. {title} is the name of one of the day's challenges, such as "Weekly challenge", never a course.
 #: src/session/next-stop-wait.tsx

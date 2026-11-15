@@ -81,7 +81,6 @@
   "plan_cancel": "4f8e8234a33f8e6a966fd36361c1ca533fc6ac2c7065e630b52bb546c7c7fba3",
   "plan_challenge_live_call": "f7a6e77ab091ca4de038d0afe2c60b27853be1fb6d073985bb5e5416bf5ec149",
   "plan_challenge_next_session": "01874489d209cdd75ecafbec5d880e9c02c0c2193d5374e316ea434b71919074",
-  "plan_challenge_opens_after_lessons": "229999d365a96ba4249eb33a7100d004822305c672aedf25957f5fc54d662f4e",
   "plan_challenge_questions": "010e6153892ac2cac4a1dfcb584c43d4d64114a25f934abd3c38c4e5b5228edc",
   "plan_challenge_won": "8242ea9396f7409e4736f4f963f1620ad1a8f7d5d9c4c39338a8c5f1b5a55061",
   "plan_change_about_more_lessons": "2c7de3f0fe61c91ebbcd65ae6b7724d56cb42d4be46a4fb29d1c1da5bc8270cc",
@@ -680,7 +679,6 @@
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">승리</string>
     <string name="plan_challenge_next_session">다음 학습 때</string>
-    <string name="plan_challenge_opens_after_lessons">이 단계의 레슨을 마치면 열려요</string>
     <string name="plan_challenge_questions">힌트 없이 푸는 이번 단계의 문제</string>
     <string name="plan_challenge_live_call">하고 싶은 말을 전하는 실시간 대화</string>
     <plurals name="plan_mock_exams_count">

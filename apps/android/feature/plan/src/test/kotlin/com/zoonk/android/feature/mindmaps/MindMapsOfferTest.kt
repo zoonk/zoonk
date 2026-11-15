@@ -416,6 +416,42 @@ class MindMapsOfferTest {
         waitFor("Other chapters")
         compose.onNodeWithText("Optics").assertDoesNotExist()
     }
+
+    /**
+     * RV81's data, against main's `countChapterMaps`: the line counts only the chapters under Other chapters. A failed map
+     * whose lessons are written has its own row with Try again; the one writing lessons is on its way.
+     */
+    @Test
+    fun theLineCountsOnlyTheChaptersUnderOtherChapters() {
+        api.mindMaps = {
+            goalMindMaps(
+                listOf(mapJson(1, "Waves", "failed"), mapJson(2, "Optics", "writingLessons", lessonsToWrite = 2)),
+                offer = """{"eligible":1,"needLessons":1,"startable":1,"stop":null}""",
+            )
+        }
+        show()
+
+        waitFor("1 on the way. You can leave while it's made.")
+        compose.onNodeWithText("didn't finish", substring = true).assertDoesNotExist()
+    }
+
+    /** An empty list that keeps its stop still reads the list once at the stop's day, which lifts it. */
+    @Test
+    fun anEmptyStoppedListReadsAgainAtTheStopsDay() {
+        val stopped =
+            """
+            {"eligible":0,"needLessons":0,"startable":0,
+            "stop":{"reason":"limitReached","resource":"mindMap","period":"rolling30Days","availableAt":"${clock.opening}"}}
+            """.trimIndent()
+        api.mindMaps = { goalMindMaps(emptyList(), offer = if (api.lists == 1) stopped else FRESH_OFFER) }
+        show()
+        waitFor("No chapter maps yet.")
+        assertEquals(1, api.lists)
+
+        clock.passOpening()
+        waitFor("No chapter maps yet. Every chapter you finish gets one.")
+        assertEquals(2, api.lists)
+    }
 }
 
 private const val FRESH_OFFER = """{"eligible":2,"needLessons":2,"startable":2,"stop":null}"""

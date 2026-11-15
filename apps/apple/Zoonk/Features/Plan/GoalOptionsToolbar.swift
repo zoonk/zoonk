@@ -3,11 +3,10 @@ import SwiftUI
 /// The Plan's "…" options. What acts on the goal itself (rename, pause or resume, archive) lives
 /// here, on its own page, so it's clear which goal changes. None of it needs a plan, so the Plan
 /// keeps it while the goal is set up or its plan is built; a ready plan's own items go above. A
-/// ready plan's header holds them on a phone, beside its title as main's phone does, so the bar
-/// keeps the goal's name, the level and the account.
+/// ready plan's header holds them beside its title as main's does, so the bar keeps the goal's
+/// name, the level and the account.
 struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
   @Environment(AppRouter.self) private var router
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(PlanStore.self) private var store
   @State private var confirming: Confirmation?
   @State private var isArchiving = false
@@ -29,11 +28,9 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
   }
 
   func body(content: Content) -> some View {
-    let isInBar = !inPageHeader || horizontalSizeClass == .regular
-
     content
-      .taskOptions(isShown: isInBar, label: label) { items }
-      .environment(\.planOptions, isInBar ? nil : AnyView(headerMenu))
+      .taskOptions(isShown: !inPageHeader, label: label) { items }
+      .environment(\.planOptions, inPageHeader ? AnyView(headerMenu) : nil)
       .environment(
         \.resumeGoal, ResumeGoal(isBusy: isSaving, failure: resumeFailure, action: resume)
       )

@@ -177,6 +177,8 @@ private struct RoadmapCompact: View {
               .accessibilityLabel(Text(verbatim: end.spoken))
           }
         }
+        // Stacked at accessibility sizes too, the chevron ends the row on its edge.
+        .frame(maxWidth: .infinity, alignment: .leading)
       } else if opens {
         Text(
           "\(phases.filter { $0.state == .done }.count) of \(phases.count) phases done",

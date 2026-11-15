@@ -90,6 +90,13 @@ class GenerationKindTest {
     }
 
     @Test
+    fun aRunReadAsFailedWithNothingReportedMarksNoPhase() {
+        val progress = GenerationKind.Lesson.progress(run(status = GenerationRun.Status.Failed, failure = GenerationFailure.Generation))
+
+        assert(progress.phases.none { it.status == PhaseStatus.Failed })
+    }
+
+    @Test
     fun aPhaseStartsAsTheOneBeforeItEndsWhenItReportsNoTimeOfItsOwn() {
         val progress =
             GenerationKind.Understanding.progress(

@@ -39,9 +39,11 @@ struct SuggestedGoalSection: View {
       }
 
       if !buttonsInBar {
-        SuggestedGoalButtons(suggestion: suggestion, answer: answer)
-          .controlSize(.large)
-          .buttonSizing(.flexible)
+        // A card's answers under its words, small, as main's suggestion panel draws them.
+        ButtonRow {
+          SuggestedGoalButtons(suggestion: suggestion, answer: answer)
+        }
+        .controlSize(.small)
       }
     } header: {
       Label {

@@ -518,7 +518,8 @@ fun GenerationKind.progress(run: GenerationRun): RunProgress {
             val startedAt = passedAt(stageTimes, index - 1, doneAt)
             stage.mapIndexed { at, phase ->
                 val times = reported[index][at]
-                when (val status = status(index, activeIndex, stage.size > 1 && finishedShare(phase.id, run) == 1f, run)) {
+                val reported = stepsOf(phase.id).any(run.steps::containsKey)
+                when (val status = status(index, activeIndex, stage.size > 1 && finishedShare(phase.id, run) == 1f, reported, run)) {
                     PhaseStatus.Pending -> {
                         PhaseProgress(phase, status, null, null)
                     }
@@ -574,18 +575,23 @@ private fun stages(phases: List<GenerationPhase>): List<List<GenerationPhase>> =
         if (phase.alongside && stages.isNotEmpty()) stages.dropLast(1) + listOf(stages.last() + phase) else stages + listOf(listOf(phase))
     }
 
-/** A phase running alongside others is done once its own steps are, while they go on. */
+/**
+ * A phase running alongside others is done once its own steps are, while they go on. A failed run marks where it
+ * stopped only on a phase it reported starting: the API never names the phase that failed, so a run read as failed
+ * with nothing reported marks none (main's `getStatus`).
+ */
 private fun status(
     index: Int,
     activeIndex: Int,
     isDoneAlongside: Boolean,
+    isReported: Boolean,
     run: GenerationRun,
 ): PhaseStatus =
     when {
         index < activeIndex -> PhaseStatus.Completed
         index > activeIndex -> PhaseStatus.Pending
         isDoneAlongside -> PhaseStatus.Completed
-        run.failure == GenerationFailure.Generation -> PhaseStatus.Failed
+        run.failure == GenerationFailure.Generation -> if (isReported) PhaseStatus.Failed else PhaseStatus.Pending
         run.failure == GenerationFailure.NotStarted -> PhaseStatus.Pending
         else -> PhaseStatus.Active
     }
