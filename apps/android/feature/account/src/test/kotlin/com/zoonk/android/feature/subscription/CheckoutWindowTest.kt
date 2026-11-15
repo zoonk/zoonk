@@ -17,6 +17,8 @@ import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ANA
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
@@ -92,6 +94,38 @@ class CheckoutWindowTest {
         rule.waitForIdle()
 
         assertEquals(emptyList<Pair<BillingPeriod, String>>(), billing.bought)
+        assertEquals(PurchaseState.Idle, CheckoutTest.store.purchase.value)
+    }
+
+    @Test
+    fun aCheckoutWhosePlanReadFailsWhileTheWindowWidensAndNarrowsSaysSo() {
+        val (planRead, billing) = launchACheckout()
+
+        rule.onNodeWithText("Subscribe").performClick()
+        RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
+        scenario.recreate()
+        RuntimeEnvironment.setQualifiers("w411dp-h891dp")
+        scenario.recreate()
+        planRead.completeExceptionally(ApiException(ApiError.Network))
+        rule.waitForIdle()
+
+        assertEquals(emptyList<Pair<BillingPeriod, String>>(), billing.bought)
+        assertEquals(PurchaseState.PlanCheckFailed, CheckoutTest.store.purchase.value)
+    }
+
+    @Test
+    fun aCheckoutsFailureShownBeforeTheLearnerLeftIsGoneOnTheirReturn() {
+        val (planRead, _) = launchACheckout()
+
+        rule.onNodeWithText("Subscribe").performClick()
+        planRead.completeExceptionally(ApiException(ApiError.Network))
+        rule.waitForIdle()
+        assertEquals(PurchaseState.PlanCheckFailed, CheckoutTest.store.purchase.value)
+        CheckoutTest.visible = false
+        rule.waitForIdle()
+        CheckoutTest.visible = true
+        rule.waitForIdle()
+
         assertEquals(PurchaseState.Idle, CheckoutTest.store.purchase.value)
     }
 

@@ -729,7 +729,7 @@ internal fun rememberCheckout(subscriptions: SubscriptionStore): ((BillingPeriod
 
 /**
  * A Plus checkout belongs to the visit that started it: a width change, a fold or a rotation while it reads fresh
- * offers is the same visit, and Play's sheet opens on the window shown then; leaving before it opens ends the checkout.
+ * offers is the same visit, and Play's sheet opens on the window shown then; leaving ends the checkout and its outcome.
  */
 internal class Checkout(
     private val subscriptions: SubscriptionStore,
@@ -747,9 +747,10 @@ internal class Checkout(
         buying = viewModelScope.launch { subscriptions.buy({ host.filterNotNull().first() }, period) }
     }
 
-    /** The learner left before Play's sheet opened: no sheet opens on their return. One that opened is Play's. */
+    /** The learner left: a checkout not yet on Play's sheet ends, and what it led to is gone on their return. */
     fun endVisit() {
         buying?.cancel()
         buying = null
+        subscriptions.forgetCheckout()
     }
 }

@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -238,6 +239,15 @@ class SubscriptionStore(
         }
     }
 
+    /**
+     * What a checkout itself led to (its plan check failed, Plus was there already, Play's sheet couldn't open or
+     * finish) belongs to the visit that started it, so the next visit starts clean. A purchase Play still holds, and
+     * its link to the account, are the account's and stay.
+     */
+    fun forgetCheckout() {
+        mutablePurchase.update { if (it in CHECKOUT_OUTCOMES) PurchaseState.Idle else it }
+    }
+
     /** Shown only when nothing changed the plan meanwhile, such as a purchase linked while it was read. */
     private suspend fun readPlan(): MutationResult<MeResponse> {
         val revision = account.revision
@@ -288,6 +298,7 @@ class SubscriptionStore(
 
     private companion object {
         val OTHER_ACCOUNT_CODES = setOf("GOOGLE_PLAY_ACCOUNT_MISMATCH", "GOOGLE_PLAY_SUBSCRIPTION_CONFLICT")
+        val CHECKOUT_OUTCOMES = setOf(PurchaseState.PlanCheckFailed, PurchaseState.AlreadyPlus, PurchaseState.PlayFailed)
 
         // Subscribing issues the certificates the learner already earned.
         val SUBSCRIPTION_DOMAINS = setOf(DataDomain.UserSubscription, DataDomain.Allowance, DataDomain.UserSession, DataDomain.Certificates)
