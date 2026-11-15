@@ -9,11 +9,13 @@ struct HeldSlot<Content: View>: View {
   @State private var held: Held?
 
   let gated: Bool
+  /// Where the content sits across the slot, such as centered under a centered title.
+  var alignment = HorizontalAlignment.leading
   @ViewBuilder let content: Content
 
   var body: some View {
     content
-      .frame(maxWidth: .infinity, alignment: .leading)
+      .frame(maxWidth: .infinity, alignment: Alignment(horizontal: alignment, vertical: .center))
       // Measured before the held height applies, so it reads what the content needs.
       .onGeometryChange(for: CGSize.self, of: \.size) { size in
         let sameLayout = held?.width == size.width && held?.typeSize == typeSize
@@ -27,7 +29,8 @@ struct HeldSlot<Content: View>: View {
           held = nil
         }
       }
-      .frame(minHeight: held?.height ?? 0, alignment: .top)
+      .frame(
+        minHeight: held?.height ?? 0, alignment: Alignment(horizontal: alignment, vertical: .top))
   }
 }
 

@@ -126,7 +126,10 @@ struct DroppedCallView: View {
           Image(systemName: "phone.down")
         }
       } description: {
-        reason(now)
+        // A limit's words change when its day comes, in the room they had.
+        HeldSlot(gated: limit?.isOpen(at: now) == false, alignment: .center) {
+          reason(now)
+        }
       } actions: {
         actions(now)
       }
@@ -160,11 +163,7 @@ struct DroppedCallView: View {
   private func actions(_ now: Date) -> some View {
     switch dropped.retryNow(limit: limit, at: now) {
     case .callAgain:
-      CallMainButton {
-        onAction(.retry)
-      } label: {
-        Text("Call again", tableName: "Voice", comment: "Calls again after a drop")
-      }
+      callAgainButton
 
       endButton
     case .takeover:
@@ -192,6 +191,18 @@ struct DroppedCallView: View {
       .buttonStyle(.outline)
 
       endButton
+    case nil where dropped.reason == .limit:
+      // The limit's way on holds Call again's place until its day comes, then Call again takes it.
+      if let limit, limit.tier == .free || limit.tier == .guest {
+        CallLimitUpsell(limit: limit)
+          .buttonStyle(.mainAction)
+          .controlSize(.large)
+      } else {
+        callAgainButton
+          .disabled(true)
+      }
+
+      endButton
     case nil:
       CallMainButton {
         onAction(.end)
@@ -199,17 +210,18 @@ struct DroppedCallView: View {
         endLabel
       }
 
-      upsell
-        .buttonStyle(.outline)
+      if dropped.reason == .plusRequired {
+        SubscribeButton()
+          .buttonStyle(.outline)
+      }
     }
   }
 
-  @ViewBuilder
-  private var upsell: some View {
-    if dropped.reason == .plusRequired {
-      SubscribeButton()
-    } else if dropped.reason == .limit, let limit {
-      CallLimitUpsell(limit: limit)
+  private var callAgainButton: some View {
+    CallMainButton {
+      onAction(.retry)
+    } label: {
+      Text("Call again", tableName: "Voice", comment: "Calls again after a drop")
     }
   }
 
