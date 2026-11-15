@@ -59,8 +59,8 @@ const KINDS = [
   },
   {
     kind: "alignment",
-    label: "Unresolved layout finding in the capture's alignment.json",
-    summary: "unresolved layout findings",
+    label: "Layout the capture's alignment.json fails or couldn't measure",
+    summary: "layout findings failing or not measured",
   },
   {
     kind: "scenarios",

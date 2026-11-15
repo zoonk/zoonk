@@ -4,40 +4,60 @@ import { join } from "node:path";
 import { describe, it } from "vitest";
 import { z } from "zod";
 import { adoptRenders } from "./adopt.mts";
-import { checkFixture, kinds, sha256 } from "./check-fixture.mts";
+import { CLEAN, checkFixture, kinds, sha256 } from "./check-fixture.mts";
 import { checkPictures } from "./check.mts";
-import { readManifest } from "./media.mts";
+import { type Side, readManifest, writeManifest } from "./media.mts";
 
 const fixture = checkFixture();
 
 /**
- * A real render's layout file (`PlanScreenshots.phone` with `-Pzoonk.shots`), its picture stood in
- * by a few bytes whose hash it records, built from `commit` with `uncommitted` changes or none.
+ * A real render's layout file (`PlanScreenshots.phone`, or `OnboardingScreenshots.phone`'s
+ * connection lost, with `-Pzoonk.shots`), its picture stood in by a few bytes whose hash it
+ * records, built from `commit` with `uncommitted` changes or none.
  */
-function render(build: { commit?: string; uncommitted: string }, bytes = "plan picture") {
+function render(
+  build: { commit?: string; uncommitted: string },
+  { bytes = "picture", name = "plan-phone" }: { bytes?: string; name?: string } = {},
+) {
   const folder = mkdtempSync(join(fixture.repository, "render-"));
-  const text = readFileSync(join(import.meta.dirname, "fixtures/android-plan-phone.json"), "utf8");
+  const text = readFileSync(join(import.meta.dirname, `fixtures/android-${name}.json`), "utf8");
   const capture = z.record(z.string(), z.unknown()).parse(JSON.parse(text));
 
-  writeFileSync(join(folder, "plan-phone.png"), bytes);
+  writeFileSync(join(folder, `${name}.png`), bytes);
 
   const picture = {
     build: { commit: fixture.current, ...build },
-    file: "plan-phone.png",
-    sha256: sha256("plan picture"),
+    file: `${name}.png`,
+    sha256: sha256("picture"),
   };
 
-  writeFileSync(join(folder, "plan-phone.json"), JSON.stringify({ ...capture, picture }));
-  return join(folder, "plan-phone.json");
+  writeFileSync(join(folder, `${name}.json`), JSON.stringify({ ...capture, picture }));
+  return join(folder, `${name}.json`);
 }
 
-async function adoptAndCheck(renders: string[]) {
+async function adoptAndCheck(
+  renders: string[],
+  {
+    name = "plan-phone",
+    read = false,
+    side = "after",
+  }: { name?: string; read?: boolean; side?: Side } = {},
+) {
   const to = mkdtempSync(join(fixture.repository, "capture-"));
-  await adoptRenders({ renders, side: "after", to });
+  await adoptRenders({ renders, side, to });
+
+  if (read) {
+    const items = (await readManifest(to)) ?? [];
+
+    await writeManifest(
+      to,
+      items.map((item) => ({ ...item, read: CLEAN })),
+    );
+  }
 
   const result = await checkPictures({
     manifests: [to],
-    pictures: [join(to, "plan-phone.png")],
+    pictures: [join(to, `${name}.png`)],
     repository: fixture.repository,
   });
 
@@ -62,7 +82,7 @@ describe("pr:media adopt, an Android render into a capture folder", () => {
       pointer: "coarse",
       scale: 3,
       scheme: "light",
-      sha256: sha256("plan picture"),
+      sha256: sha256("picture"),
       side: "after",
       steps: "",
       viewport: "phone 411×1900",
@@ -79,8 +99,19 @@ describe("pr:media adopt, an Android render into a capture folder", () => {
 
   it("refuses a picture that isn't the one its layout file measured", async () => {
     await assert.rejects(
-      adoptAndCheck([render({ uncommitted: "clean" }, "another picture")]),
+      adoptAndCheck([render({ uncommitted: "clean" }, { bytes: "another picture" })]),
       /isn't the picture .* measured: render it again/u,
     );
+  });
+
+  it("fails a read render the evaluator leaves not measured, and leaves a before side alone", async () => {
+    const lost = { name: "connection-lost-phone" };
+    const clean = { uncommitted: "clean" };
+    const after = await adoptAndCheck([render(clean, lost)], { ...lost, read: true });
+    const before = await adoptAndCheck([render(clean, lost)], { ...lost, side: "before" });
+
+    assert.deepEqual(kinds(after.result), ["alignment"]);
+    assert.match(after.result.problems[0]?.detail ?? "", /no rows the read could find/u);
+    assert.deepEqual(before.result.problems, []);
   });
 });
