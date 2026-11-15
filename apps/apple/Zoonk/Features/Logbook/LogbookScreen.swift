@@ -241,14 +241,14 @@ private struct WeeklySummary: View {
 
     if recap.comparison.minutes > 0 {
       return Text(
-        "\(studyDuration(minutes: recap.comparison.minutes)) more than the week before!",
+        "\(studyDuration(minutes: recap.comparison.minutes)) more than the week before.",
         tableName: "Session")
     }
 
     if recap.comparison.questions > 0 {
       return Text(
-        "\(recap.comparison.questions) more questions than the week before!",
-        tableName: "Session", comment: "More questions than last week")
+        "\(recap.comparison.questions) more questions than the week before.",
+        tableName: "Session")
     }
 
     return nil

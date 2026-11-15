@@ -2162,6 +2162,64 @@
         }
       }
     },
+    "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional. Wir nutzen deine Auswahl, um die Inhalte an deine Bedürfnisse anzupassen. Du kannst deine Auswahl jederzeit löschen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opcional. Usamos lo que eliges para adaptar el contenido a tus necesidades. Puedes eliminarlo cuando quieras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Facultatif. Nous utilisons tes choix pour adapter le contenu à tes besoins. Tu peux les supprimer à tout moment."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Facoltativo. Usiamo le tue scelte per adattare i contenuti alle tue esigenze. Puoi rimuoverle quando vuoi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回答は任意です。選んだ内容に応じて、学習内容を調整します。いつでも削除できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택 사항이에요. 선택한 내용을 바탕으로 필요에 맞게 학습 내용을 조정해요. 언제든 삭제할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To opcjonalne. Twój wybór pomaga nam dopasować treści do twoich potrzeb. Możesz usunąć te informacje w każdej chwili."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opcional. A gente usa suas escolhas para adaptar o conteúdo às suas necessidades. Você pode remover isso quando quiser."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İsteğe bağlı. İçeriği ihtiyaçlarına göre uyarlamak için seçimlerini kullanırız. İstediğin zaman kaldırabilirsin."
+          }
+        }
+      }
+    },
     "Others (optional)" : {
       "comment" : "Box for other apps and tools",
       "localizations" : {
@@ -3102,6 +3160,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bunu aklımızda tutacağız. İstediğin zaman Ayarlar’dan silebilirsin."
+          }
+        }
+      }
+    },
+    "We'll remember this. You can delete it anytime." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das merken wir uns. Du kannst es jederzeit löschen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo recordaremos. Puedes eliminarlo cuando quieras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On gardera ça en mémoire. Tu peux l’effacer à tout moment."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo terremo a mente. Puoi eliminarlo quando vuoi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この内容を覚えておきます。いつでも削除できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 내용을 기억해 둘게요. 언제든 삭제할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapamiętamy to. Możesz to usunąć w każdej chwili."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente vai lembrar disso. Você pode apagar quando quiser."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bunu hatırlayacağız. İstediğin zaman silebilirsin."
           }
         }
       }

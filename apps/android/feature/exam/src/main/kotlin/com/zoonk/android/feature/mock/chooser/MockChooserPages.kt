@@ -444,10 +444,13 @@ private fun PickedMock(
             Column {
                 PickedFact(stringResource(R.string.mock_chooser_questions), formatNumber(size.questions.toDouble(), currentLocale()))
                 PickedFact(stringResource(R.string.mock_chooser_time_limit), minutesText(size.minutes))
-                PickedFact(
-                    stringResource(R.string.mock_chooser_usually_takes),
-                    stringResource(R.string.mock_chooser_about, minutesText(size.estimatedMinutes)),
-                )
+                // Core sends the limit when no estimate covers the whole mock (an essay, too few answers).
+                if (size.estimatedMinutes < size.minutes) {
+                    PickedFact(
+                        stringResource(R.string.mock_chooser_usually_takes),
+                        stringResource(R.string.mock_chooser_about, minutesText(size.estimatedMinutes)),
+                    )
+                }
             }
         }
         if (names.isNotEmpty() || written.isNotEmpty()) {

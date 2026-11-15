@@ -82,11 +82,8 @@ struct MemoryView: View {
 
         Section {
           DataExportRow(
-            title: Text(
-              "Download my memory", tableName: "Settings"),
-            description: Text(
-              "Everything in your memory, as one file", tableName: "Settings",
-              comment: "What the memory download contains"),
+            title: Text("A copy of your memory", tableName: "Settings"),
+            spokenAction: Text("Download your memory", tableName: "Settings"),
             filename: "zoonk-memory"
           ) {
             await settings.exportMemory()

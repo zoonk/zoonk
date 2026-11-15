@@ -6,8 +6,8 @@
   "recap_first_summary": "eead06dcb9c4f04c380ebcb99e703736c4f0d7375d5e8fea2698160fe7e0f8e6",
   "recap_fresh_week": "76452fb05fbb71f20967b84e72ae3a846ec6007ae4f7a8b202ad1db6fab897fa",
   "recap_mistakes_fixed": "66c1e0e493b30266391053d557cfab76fa085cddd3e4fda07f59b262cc41f878",
-  "recap_more_questions": "a2b2e3159a2f4fa96afe58c98a2faf75973f11a9b5842f51697c55d9055326d1",
-  "recap_more_time": "60f081fe324d517ab2ee87a4b1534b943f6f79cd0b63b125f42caf5c38f4f935",
+  "recap_more_questions": "af123538b1424a120fa3734f8144a99c23315b119f03f6a061ad8d45c3bce7a6",
+  "recap_more_time": "becbba296ac6799b20c32047c5c9e932a209838ddfc5cd58a24c93cc56b3a379",
   "recap_most_improved": "d4289079c4c353928f9cf65124925cc6f65e0cfa703c96948c526c3525766605",
   "recap_most_improved_value": "680269dfe715813e83a0218d28cb3b4c8be71e819739bfffa2886abf94b21e1b",
   "recap_new_topics": "29a8f2b242024e16ac6f8bb5ce4b5ff31f7df2e752ff0883a5f040eef4f60653",
@@ -27,10 +27,9 @@
     <plurals name="recap_days_studied">
         <item quantity="other">%d일 학습</item>
     </plurals>
-    <!-- %1$s is a duration, such as "20 min". -->
-    <string name="recap_more_time">전주보다 %1$s 더 공부했어요!</string>
+    <string name="recap_more_time">전주보다 %1$s 더 공부했어요.</string>
     <plurals name="recap_more_questions">
-        <item quantity="other">전주보다 %d문제 더 풀었어요!</item>
+        <item quantity="other">그 전 주보다 문제가 %d개 더 많아요.</item>
     </plurals>
     <!-- %1$s is the name of a part of the learner's plan they finished this week, such as "Foundations". -->
     <string name="recap_phase_finished">%1$s을(를) 끝냈어요.</string>

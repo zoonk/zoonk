@@ -36,10 +36,9 @@ export const CHOICE_ROW_CLASS = cn(
 );
 
 /**
- * A row's number key, only where there is a keyboard. Rows past the ninth keep its room, so every
- * label starts on one edge.
+ * A row's number key, only where there is a keyboard (a fine pointer). There, rows past the ninth
+ * keep its room empty, so every label starts on one edge.
  */
-/** Keys show only with a fine pointer; there, a row past the ninth keeps the empty slot's width. */
 function ChoiceKey({ index }: { index: number }) {
   return (
     <ListRowLeading className="hidden w-5 justify-center pointer-fine:flex pointer-fine:empty:flex">

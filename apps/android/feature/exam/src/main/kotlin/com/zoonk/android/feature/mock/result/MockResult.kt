@@ -154,7 +154,7 @@ internal fun MockResult(
                                                 if (hasDetails(view, it, about)) {
                                                     {
                                                         OutlinedButton(onClick = { detailsOpen = true }, size = ButtonSize.Small) {
-                                                            Text(stringResource(R.string.mock_result_details))
+                                                            Text(stringResource(R.string.mock_result_see_details))
                                                         }
                                                     }
                                                 } else {

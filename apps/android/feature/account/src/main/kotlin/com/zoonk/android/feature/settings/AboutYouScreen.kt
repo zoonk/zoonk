@@ -238,7 +238,7 @@ fun ProfileQuestionScreen(
                 LaunchedEffect(question) { editor.read(question) }
                 PageHeader(
                     profileQuestionTitle(question.id),
-                    profileQuestionDescription(question.id),
+                    profileQuestionDescription(question.id, inSettings = true),
                     Modifier.padding(horizontal = LIST_ITEM_INSET),
                 )
                 Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(24.dp)) {
@@ -251,6 +251,7 @@ fun ProfileQuestionScreen(
                         editor::change,
                         enabled = canEdit && !editor.saving && editor.source == question,
                         memoryEnabled = memoryEnabled,
+                        inSettings = true,
                     )
                 }
             }

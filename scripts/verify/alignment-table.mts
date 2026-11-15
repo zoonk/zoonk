@@ -105,7 +105,7 @@ export const PIECES: Piece[] = [
         label: "[data-slot=path-row-words] > :first-child",
         mark: "[data-slot=path-row-mark]",
         note: "[data-slot=path-row-words] > :not(:first-child)",
-        value: "[data-slot=path-row-body] > :not([data-slot=path-row-words])",
+        value: "[data-slot=path-row-value]",
       },
       rows: "[data-slot=path-row]",
     },
