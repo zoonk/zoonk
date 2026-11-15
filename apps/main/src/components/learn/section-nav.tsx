@@ -24,7 +24,10 @@ export function SectionNav<Href extends string>({
 
   return (
     <nav aria-label={label} data-slot="section-nav">
-      <ul className={cn(TAB_LIST_CLASS, "-mx-2.5 -my-2 scrollbar-none overflow-x-auto py-2")}>
+      <ul
+        className={cn(TAB_LIST_CLASS, "-mx-2.5 -my-2 scrollbar-none overflow-x-auto py-2")}
+        data-tabs
+      >
         {items.map((item) => (
           <li key={item.url}>
             <Link

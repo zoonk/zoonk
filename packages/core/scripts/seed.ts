@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { SEED_PERSONA_NAMES, type SeedPersonaName } from "@zoonk/db/seed/personas";
 import { logError } from "@zoonk/utils/logger";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
-import { seed, seedPersonaCopy } from "../src/seed/seed";
+import { SCENARIO_STATES, seed, seedPersonaCopy } from "../src/seed/seed";
 
 function isPersonaName(value: string): value is SeedPersonaName {
   return SEED_PERSONA_NAMES.some((name) => name === value);
@@ -25,6 +25,7 @@ async function copyPersona({
   day,
   email,
   persona,
+  state,
   timeZone,
 }: {
   away?: string;
@@ -32,10 +33,12 @@ async function copyPersona({
   day?: string;
   email?: string;
   persona: string;
+  state?: string;
   timeZone?: string;
 }) {
   const planDay = toWholeNumber(day);
   const awayDays = toWholeNumber(away);
+  const scenarioState = SCENARIO_STATES.find((known) => known === state);
 
   if (
     !isPersonaName(persona) ||
@@ -43,14 +46,23 @@ async function copyPersona({
     !email ||
     planDay === null ||
     awayDays === null ||
-    (timeZone !== undefined && !isValidTimeZone(timeZone))
+    (timeZone !== undefined && !isValidTimeZone(timeZone)) ||
+    (state !== undefined && !scenarioState)
   ) {
     throw new Error(
-      `A copy needs a persona (${SEED_PERSONA_NAMES.join("|")}), a copy key and an email, and whole days and an IANA zone when given.`,
+      `A copy needs a persona (${SEED_PERSONA_NAMES.join("|")}), a copy key and an email, and whole days, an IANA zone and a state (${SCENARIO_STATES.join("|")}) when given.`,
     );
   }
 
-  return seedPersonaCopy({ awayDays, copyKey, day: planDay, email, persona, timeZone });
+  return seedPersonaCopy({
+    awayDays,
+    copyKey,
+    day: planDay,
+    email,
+    persona,
+    state: scenarioState,
+    timeZone,
+  });
 }
 
 type CopyRequest = Parameters<typeof copyPersona>[0] & { id: string };

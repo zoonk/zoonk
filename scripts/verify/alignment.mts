@@ -1,7 +1,8 @@
-import { bleedLeads } from "./alignment-bleed.mts";
+import { bleedLeads, spanLeads } from "./alignment-bleed.mts";
 import { type AlignmentFile, type AlignmentFinding, type Capture } from "./alignment-capture.mts";
 import { coverageLeads, isOneStack } from "./alignment-coverage.mts";
 import { axisLeads, endLeads, stackedLeads, startLeads } from "./alignment-edges.mts";
+import { evenLeads } from "./alignment-even.mts";
 import { gapLeads } from "./alignment-gap.mts";
 import {
   type Context,
@@ -14,6 +15,8 @@ import {
   rowName,
 } from "./alignment-geometry.mts";
 import { lineLeads } from "./alignment-line.mts";
+import { pinnedLeads } from "./alignment-pinned.mts";
+import { roomLeads } from "./alignment-room.mts";
 import { pairLeads, reconcile } from "./alignment-scenarios.mts";
 import { type Summary, summarize } from "./alignment-summary.mts";
 import {
@@ -185,6 +188,8 @@ function groupLeads(context: Context, group: Group): AlignmentFinding[] {
     ...(one("gap") ? gapLeads(context, group) : []),
     ...(has("type") ? typeLeads(context, group) : []),
     ...(has("line") ? lineLeads(context, group) : []),
+    ...(has("room") ? roomLeads(context, group) : []),
+    ...(has("even") ? evenLeads(context, group) : []),
   ];
 
   // Rows a platform grouped by the stack holding them, with no piece framing them: leads only.
@@ -200,6 +205,8 @@ export function evaluateCapture(capture: Capture): AlignmentFinding[] {
     ...groupsOf(capture).flatMap((group) => groupLeads(context, group)),
     ...filledLeads(context),
     ...bleedLeads(context),
+    ...spanLeads(context),
+    ...pinnedLeads(context),
   ];
 }
 

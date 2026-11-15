@@ -79,7 +79,7 @@ export type CaptureElement = {
    */
   column?: [number, number];
   frame?: [number, number];
-  kind?: "box" | "hairline" | "highlight" | "picture";
+  kind?: "box" | "hairline" | "highlight" | "picture" | "tab";
   /** A state pair's anchor: the same id in both captures of one screen. */
   anchor?: string;
   /** An anchor the platform couldn't place (a node it didn't find): the pair can't measure it. */

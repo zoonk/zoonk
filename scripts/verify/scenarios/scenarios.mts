@@ -87,6 +87,16 @@ export const SCENARIOS: Scenario[] = [
     screen: "/plan",
     sizes: PHONE_AND_LAPTOP,
   },
+  // The "Your path" sheet a phone opens from the roadmap: the exam's row with its date (#1).
+  {
+    anchors: [SHEET_FRAME],
+    id: "plan.path.sheet",
+    prerequisites: { persona: { name: "ana" } },
+    proof: "Your path",
+    reach: [{ click: "Phase 1 of 4" }],
+    screen: "/plan",
+    sizes: [{ pointer: "touch", size: "phone" }],
+  },
   {
     anchors: [],
     id: "settings.conditions.past-nine",
