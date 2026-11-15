@@ -176,8 +176,11 @@ class TodayViewModel(
         resumeFailure = null
     }
 
-    /** Returns once Today has read the server since the last write, so a saved answer stays busy only until its result shows. */
-    private suspend fun todayReadAgain() = store.today.freshState.first { it !is LoadState.Idle && it !is LoadState.Loading }
+    /**
+     * Returns once a read of Today has succeeded since the write, which dropped any read already on its way, so a saved
+     * answer stays busy until its result shows. A failed read shows the old notice still, so it keeps waiting.
+     */
+    private suspend fun todayReadAgain() = store.today.freshState.first { it is LoadState.Loaded }
 
     var isAnswering by mutableStateOf(false)
         private set
