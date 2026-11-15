@@ -450,7 +450,7 @@ private struct ListeningMessage: View {
       }
 
       if case .failed(let limit) = state {
-        failedNote(limit)
+        ListeningFailedNote(limit: limit, play: play)
       }
     }
     .padding()
@@ -539,53 +539,12 @@ private struct ListeningMessage: View {
     .accessibilityElement(children: .combine)
   }
 
-  private func failedNote(_ limit: HelpLimit?) -> some View {
-    OpeningClock(availableAt: limit?.availableAt) { now in
-      failedNote(limit, now: now)
-    }
-  }
-
-  /// The gate takes Try again's place until its day has come, then Try again takes it back.
-  private func failedNote(_ limit: HelpLimit?, now: Date) -> some View {
-    VStack(alignment: .leading, spacing: 8) {
-      if let limit {
-        if !limit.isOpen(at: now) {
-          LimitNotice(limit: limit)
-        }
-      } else {
-        Text(audioDidntPlay)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-      }
-
-      if limit?.letsTry(at: now) ?? true {
-        Button(action: play) {
-          Label {
-            Text(
-              "Try again", tableName: "Onboarding",
-              comment: "Plays a level test listening question's message again after it failed")
-          } icon: {
-            Image(systemName: "arrow.counterclockwise")
-          }
-        }
-        .buttonStyle(.outline)
-        .controlSize(.small)
-      }
-    }
-  }
-
-  private var audioDidntPlay: String {
-    String(
-      localized: "The audio didn't play.", table: "Onboarding",
-      comment: "A level test listening question's message failed to play")
-  }
-
   private func failure(_ state: SpeechPlayer.State) -> String? {
     guard case .failed(let limit) = state else {
       return nil
     }
 
-    return limit?.words().said ?? audioDidntPlay
+    return limit?.words().said ?? ListeningFailedNote.audioDidntPlay
   }
 
   private func play() {
@@ -595,6 +554,56 @@ private struct ListeningMessage: View {
       await voice.player.play(
         .word(question.passage, recording: question.audio?.url, language: language), rate: 0.9,
         owner: owner, fallback: (question.passage, language))
+    }
+  }
+}
+
+/// Why a listening question's message didn't play, and Try again. The gate takes Try again's place
+/// until its day has come, then Try again takes it back, in the room the gate had: the answers sit
+/// under it.
+struct ListeningFailedNote: View {
+  static var audioDidntPlay: String {
+    String(
+      localized: "The audio didn't play.", table: "Onboarding",
+      comment: "A level test listening question's message failed to play")
+  }
+
+  let limit: HelpLimit?
+  let play: () -> Void
+
+  var body: some View {
+    OpeningClock(availableAt: limit?.availableAt) { now in
+      note(now)
+    }
+  }
+
+  private func note(_ now: Date) -> some View {
+    HeldSlot(gated: limit.map { !$0.isOpen(at: now) } ?? false) {
+      VStack(alignment: .leading, spacing: 8) {
+        if let limit {
+          if !limit.isOpen(at: now) {
+            LimitNotice(limit: limit)
+          }
+        } else {
+          Text(Self.audioDidntPlay)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
+
+        if limit?.letsTry(at: now) ?? true {
+          Button(action: play) {
+            Label {
+              Text(
+                "Try again", tableName: "Onboarding",
+                comment: "Plays a level test listening question's message again after it failed")
+            } icon: {
+              Image(systemName: "arrow.counterclockwise")
+            }
+          }
+          .buttonStyle(.outline)
+          .controlSize(.small)
+        }
+      }
     }
   }
 }

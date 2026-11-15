@@ -435,17 +435,19 @@ private struct LessonUnavailableBody: View {
 
   var body: some View {
     if isNotice {
-      VStack(alignment: .leading, spacing: 8) {
-        GateWords(title: Text(title), line: noticeLine.map(Text.init))
+      // Once a dated limit opens, the words that go keep their room.
+      HeldSlot(gated: refusal.limit?.isOpen(at: now) == false) {
+        VStack(alignment: .leading, spacing: 8) {
+          GateWords(title: Text(title), line: noticeLine.map(Text.init))
 
-        HStack(spacing: 8) {
-          secondAction
-          action
+          HStack(spacing: 8) {
+            secondAction
+            action
+          }
+          .buttonStyle(.outline)
+          .controlSize(.small)
         }
-        .buttonStyle(.outline)
-        .controlSize(.small)
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
     } else {
       ContentUnavailableView {
         Label {
