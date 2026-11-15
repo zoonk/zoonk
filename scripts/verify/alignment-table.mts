@@ -10,11 +10,13 @@ export type Part = (typeof PART_NAMES)[number];
 
 export type Relation =
   | "end-edge"
+  | "even"
   | "gap"
   | "label-start"
   | "lead-start"
   | "line"
   | "mark-axis"
+  | "room"
   | "type";
 
 /** How the web finds a piece in the page: selectors, as the pieces' `data-slot`s name them. */
@@ -27,6 +29,10 @@ export type WebPiece = {
   parts: Partial<Record<Part, string>>;
   /** Inside the group: the drawn track whose end is the group's end edge, where it has one. */
   bar?: string;
+  /** Parts the group holds outside its rows (a bar's note over its buttons), read from the group. */
+  groupParts?: Partial<Record<Part, string>>;
+  /** Its rows are those that draw words, and a group with none has nothing to compare. */
+  words?: boolean;
 };
 
 /**
@@ -74,8 +80,19 @@ const PIECES: Piece[] = [
     name: "sidebar",
     relations: ["label-start", "mark-axis"],
     web: {
-      group: "[data-slot=sidebar]",
+      group: "[data-slot=sidebar]:not([data-sidebar-collapsed] *)",
       parts: { label: ":scope > :nth-child(2)", mark: ":scope > :first-child" },
+      rows: "[data-slot=sidebar-item]",
+    },
+  },
+  // Collapsed, the sidebar is an icon rail: its labels are for screen readers and its names show
+  // in tooltips, so only its icons' axis is compared.
+  {
+    name: "sidebar-rail",
+    relations: ["mark-axis"],
+    web: {
+      group: "[data-sidebar-collapsed] [data-slot=sidebar]",
+      parts: { mark: ":scope > :first-child" },
       rows: "[data-slot=sidebar-item]",
     },
   },
@@ -115,6 +132,65 @@ const PIECES: Piece[] = [
       rows: "[data-slot=path-row]",
     },
   },
+  // A top bar's buttons and text links that are actions share one type. The back link is its own
+  // part, quieter by the kit's design, and an icon alone has no type to compare.
+  {
+    name: "page-top-bar",
+    relations: ["type"],
+    web: {
+      group: "[data-slot=page-top-bar]",
+      parts: { label: ":scope" },
+      rows: "[data-slot=page-top-end] :is(a, button):not(:has([data-slot=avatar]))",
+      words: true,
+    },
+  },
+  // A screen's main action: its note sits as far from its line as its buttons sit from the note.
+  {
+    name: "bottom-bar",
+    relations: ["room"],
+    web: {
+      group: "[data-slot=bottom-bar]",
+      groupParts: {
+        end: ":scope > [data-slot=bottom-bar-row] > :first-child",
+        note: ":scope > [data-slot=bottom-bar-note] > div > div",
+      },
+      parts: {},
+      rows: ":scope > [data-slot=bottom-bar-row]",
+    },
+  },
+  // A guess's worked numbers, a small table (#15): the labels start on one edge, and the numbers,
+  // ending on one edge before them, share one type.
+  {
+    name: "guess-workings",
+    relations: ["label-start", "type"],
+    web: {
+      group: "[data-slot=guess-workings]",
+      parts: { label: "[data-slot=guess-working-label]", value: "[data-slot=guess-working-value]" },
+      rows: ":scope > li",
+    },
+  },
+  // Siblings of one kind side by side share a top and a height (craft E6): a page's stat tiles,
+  // and a tab list's tabs, whichever way the list is written.
+  {
+    name: "stat-tiles",
+    relations: ["even"],
+    web: { group: "[data-slot=stat-tiles]", parts: {}, rows: ":scope > li" },
+  },
+  {
+    name: "tab-list",
+    relations: ["even"],
+    web: {
+      group: "[role=tablist], [data-slot=tabs-list], [data-tabs]",
+      parts: {},
+      rows: ":scope > :is(a, button, [role=tab]), :scope > li > :is(a, button)",
+    },
+  },
+  // A row of marks, one a day: declared so it starts and ends on its column (`spanLeads`).
+  {
+    name: "week-rings",
+    relations: [],
+    web: { group: "[data-slot=week-rings]", parts: {}, rows: ":scope > *" },
+  },
   // Android's wait screens name these; the web's wait pieces aren't marked yet.
   { name: "wait-content", relations: ["gap"] },
   { name: "generation-wait", relations: ["gap"] },
@@ -143,13 +219,14 @@ const SURFACES =
  * or bleeds as E7 allows. A frame's main column, the column beside an aside, the aside, and `Page`.
  */
 const COLUMNS =
-  "[data-slot=learn-shell-main], [data-slot=page-with-aside] > div, [data-slot=page-aside], [data-slot=page]";
+  "[data-slot=learn-shell-main], [data-slot=page-with-aside] > div, [data-slot=page-aside], [data-slot=page], [data-slot=task-body]";
 
 /** What `readAlignment` reads a web page by. */
 export const WEB_TABLE = {
   actions: ACTIONS,
   columns: COLUMNS,
   pieces: PIECES.flatMap((piece) => (piece.web ? [{ name: piece.name, web: piece.web }] : [])),
+  pinned: "[data-slot=bottom-bar]",
   surfaces: SURFACES,
 };
 

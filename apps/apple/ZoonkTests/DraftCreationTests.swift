@@ -59,6 +59,7 @@ final class DraftCreationTests: XCTestCase {
     await server.answerCreates(.unavailable)
     await server.holdNextCreate()
     let page = Page(shown: Self.draftID)
+    try readsWhatVoiceOverReads()
 
     let window = try host(page, cards: [Self.draftID: card], store: store, router: AppRouter())
     // Sent here, the question's explanation starts by itself.
@@ -183,6 +184,22 @@ final class DraftCreationTests: XCTestCase {
     }
 
     return controller.children.lazy.compactMap { navigationController(in: $0) }.first
+  }
+
+  /// SwiftUI builds what VoiceOver reads only while the simulator has app accessibility on, which
+  /// a simulator an automation tool has driven keeps and a new one lacks, so the test turns it on
+  /// for itself through the system's accessibility library, as accessibility snapshot tests do.
+  private func readsWhatVoiceOverReads() throws {
+    typealias Enabled = @convention(c) () -> Bool
+    typealias SetEnabled = @convention(c) (Bool) -> Void
+    let library = try XCTUnwrap(dlopen("/usr/lib/libAccessibility.dylib", RTLD_NOW))
+    let enabled = unsafeBitCast(
+      try XCTUnwrap(dlsym(library, "_AXSApplicationAccessibilityEnabled")), to: Enabled.self)
+    let setEnabled = unsafeBitCast(
+      try XCTUnwrap(dlsym(library, "_AXSApplicationAccessibilitySetEnabled")), to: SetEnabled.self)
+    let wasOn = enabled()
+    setEnabled(true)
+    addTeardownBlock { setEnabled(wasOn) }
   }
 
   /// What VoiceOver can read on the screen.
