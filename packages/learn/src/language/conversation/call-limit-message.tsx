@@ -2,7 +2,12 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { type CallLimit, CallLimitNotice } from "../../_components/help-limit-notice";
+import {
+  type CallLimit,
+  CallLimitNotice,
+  useCallLimitLine,
+} from "../../_components/help-limit-notice";
+import { GateWords } from "../../_components/subscribe-gate";
 import { useLearnRoutes } from "../../learn-context";
 import { LearnLink } from "../../learn-link";
 import { CallReason } from "./conversation-parts";
@@ -17,6 +22,11 @@ export function useCallLimitTitle(limit: CallLimit): string {
   };
 
   return titles[limit.period];
+}
+
+/** The call cap's words alone, for a place that draws its way on where its action was. */
+export function CallLimitWords({ limit }: { limit: CallLimit }) {
+  return <GateWords title={useCallLimitTitle(limit)} {...useCallLimitLine(limit)} />;
 }
 
 /** Never says how much call time a plan has. */
