@@ -1,12 +1,27 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
-import { choiceCheck, exampleData, interactionCheck, numericCheck } from "./activity-checks";
+import { exampleData, explained, numericCheck, reasonedChoice } from "./activity-checks";
 
 export const numbersAlgebraActivities = {
   areaModel: {
-    check: choiceCheck("What is the garden's area?", [
-      ["212 m²", false, 212],
-      ["322 m²", true, 322],
-      ["37 m²", false, 37],
+    check: reasonedChoice("What is the garden's area?", [
+      {
+        isCorrect: false,
+        reason: "That adds only two of the four pieces, 200 and 12.",
+        text: "212 m²",
+        value: 212,
+      },
+      {
+        isCorrect: true,
+        reason: "The four pieces are 200, 80, 30 and 12. Together they make 322.",
+        text: "322 m²",
+        value: 322,
+      },
+      {
+        isCorrect: false,
+        reason: "That adds the two sides, 23 + 14. An area multiplies them.",
+        text: "37 m²",
+        value: 37,
+      },
     ]),
     fields: {
       height: { parts: [10, 4], total: 14 },
@@ -18,7 +33,12 @@ export const numbersAlgebraActivities = {
     template: "areaModel",
   },
   balance: {
-    check: numericCheck(3),
+    check: numericCheck(3, {
+      explanation:
+        "Take 2 bags and 1 kg off each side and 2 bags balance 6 kg, so one bag weighs 3 kg.",
+      question: "How heavy is one bag?",
+      unit: "kg",
+    }),
     fields: {
       equation: { left: "4*x + 1", right: "2*x + 7" },
       hints: [{ hint: "Take the same off both sides.", move: "Took bags off one side" }],
@@ -33,11 +53,16 @@ export const numbersAlgebraActivities = {
       ],
       variable: "x",
     },
-    prompt: "Every bag weighs the same. How heavy is one bag?",
+    prompt: "Every bag weighs the same. Take the same off both sides until one bag is alone.",
     template: "balance",
   },
   formulaModel: {
-    check: numericCheck(3869.68, { inputs: [{ name: "rate", value: 7 }] }),
+    check: numericCheck(3869.68, {
+      explanation: "At 7% a year, $1,000 grows to $3,869.68 in 20 years.",
+      inputs: [{ name: "rate", value: 7 }],
+      question: "What is $1,000 worth after 20 years at 7% a year?",
+      unit: "$",
+    }),
     data: exampleData,
     fields: {
       compareAt: 5,
@@ -53,11 +78,17 @@ export const numbersAlgebraActivities = {
         { initial: 5, label: "Rate per year", max: 12, min: 0, name: "rate", step: 0.5, unit: "%" },
       ],
     },
-    prompt: "Move the rate. What is $1,000 worth after 20 years?",
+    prompt: "Move the rate and watch $1,000 grow over 20 years.",
     template: "formulaModel",
   },
   guessReveal: {
-    check: { ...numericCheck(11.57), tolerance: { kind: "relative", value: 0.01 } },
+    check: {
+      ...numericCheck(11.57, {
+        explanation: "A day has 86,400 seconds, and 1,000,000 ÷ 86,400 is about 11.6.",
+        question: "How many days is a million seconds?",
+      }),
+      tolerance: { kind: "relative", value: 0.01 },
+    },
     fields: {
       comparison: "Less than two weeks.",
       max: 3650,
@@ -78,7 +109,11 @@ export const numbersAlgebraActivities = {
     template: "guessReveal",
   },
   numberLine: {
-    check: numericCheck(5),
+    check: numericCheck(5, {
+      explanation: "Start at −3 and go up 8: it takes 3 to reach zero, then 5 more.",
+      question: "What is the temperature at noon?",
+      unit: "°C",
+    }),
     fields: {
       label: "Temperature",
       max: 7,
@@ -92,7 +127,9 @@ export const numbersAlgebraActivities = {
     template: "numberLine",
   },
   stepSolver: {
-    check: interactionCheck,
+    check: explained(
+      "The discount comes first: $60 less 25% is $45. The tax is 8% of $45, which is $3.60, so you pay $48.60.",
+    ),
     fields: {
       problem: "A $60 jacket is 25% off. With 8% sales tax, what do you pay?",
       steps: [

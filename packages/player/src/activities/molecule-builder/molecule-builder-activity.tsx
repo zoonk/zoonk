@@ -116,17 +116,11 @@ function MoleculeQuestion({ answer, content, labelId, onAnswerChange, phase }: M
 
   return (
     <ActivityCanvas labelId={labelId}>
-      <div className="flex items-baseline justify-between gap-3 text-sm tabular-nums">
-        <ActivityCanvasLabel className="text-sm">
-          {t("Target: {formula}", { formula: formulaText(target, order) })}
-        </ActivityCanvasLabel>
-
-        {build.atoms.length > 0 && (
-          <ActivityCanvasLabel className="text-sm">
-            {t("Built: {formula}", { formula: formulaText(builtCounts(build), order) })}
-          </ActivityCanvasLabel>
-        )}
-      </div>
+      {/* The title names the molecule to build; this line keeps its room so the first atom moves nothing. */}
+      <ActivityCanvasLabel className="min-h-5 text-sm tabular-nums">
+        {build.atoms.length > 0 &&
+          t("Built: {formula}", { formula: formulaText(builtCounts(build), order) })}
+      </ActivityCanvasLabel>
 
       <div className="bg-background/60 rounded-xl bg-[radial-gradient(var(--viz-grid)_1px,transparent_1.2px)] bg-size-[18px_18px]">
         <MoleculeCanvas
@@ -144,7 +138,7 @@ function MoleculeQuestion({ answer, content, labelId, onAnswerChange, phase }: M
         />
       </div>
 
-      <div className="flex items-start gap-3">
+      <div className="flex flex-col gap-3">
         <MoleculeStatus
           build={build}
           isChecked={isChecked}

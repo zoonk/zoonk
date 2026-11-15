@@ -1,9 +1,11 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
-import { interactionCheck } from "./activity-checks";
+import { explained } from "./activity-checks";
 
 export const computingLanguagesActivities = {
   codeRunner: {
-    check: interactionCheck,
+    check: explained(
+      "range(1, 101) stops before 101, so the loop adds 1 through 100 and prints 5050.",
+    ),
     fields: {
       editableLines: [2],
       expectedOutput: "5050",
@@ -16,7 +18,9 @@ export const computingLanguagesActivities = {
     template: "codeRunner",
   },
   codeTracer: {
-    check: interactionCheck,
+    check: explained(
+      "Each pass halves the range: mid is 3, then 5, then 6, where the search stops.",
+    ),
     fields: {
       code: "let lo = 0, hi = 7;\nwhile (lo <= hi) {\n  const mid = Math.floor((lo + hi) / 2);\n  if (mid < 6) lo = mid + 1;\n  else if (mid > 6) hi = mid - 1;\n  else break;\n}",
       language: "javascript",
@@ -111,7 +115,9 @@ export const computingLanguagesActivities = {
     template: "dialogueSimulator",
   },
   patternTable: {
-    check: interactionCheck,
+    check: explained(
+      "Comer follows hablar's pattern with e in place of a: habláis becomes coméis and hablan becomes comen.",
+    ),
     fields: {
       choices: ["áis", "éis", "ís", "en"],
       modelMeaning: "to speak",
@@ -155,7 +161,9 @@ export const computingLanguagesActivities = {
     template: "patternTable",
   },
   patternTester: {
-    check: interactionCheck,
+    check: explained(
+      "Five digits, then an optional hyphen and four more, with ^ and $ so nothing can come before or after.",
+    ),
     fields: {
       hints: [{ hint: "Say where the text must end.", mistake: "Matches extra digits" }],
       mode: "regex",
@@ -168,7 +176,9 @@ export const computingLanguagesActivities = {
     template: "patternTester",
   },
   sqlPlayground: {
-    check: interactionCheck,
+    check: explained(
+      "WHERE keeps the rows that pass both tests, in Asia and over 200 million: India, China and Indonesia.",
+    ),
     data: {
       source: { publisher: "United Nations", title: "World Population Prospects", year: 2024 },
     },

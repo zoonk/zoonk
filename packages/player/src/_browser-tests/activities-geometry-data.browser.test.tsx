@@ -76,7 +76,7 @@ describe("geometry and data activities", () => {
 
     await expect
       .element(
-        page.getByRole("region", { name: "Answer feedback" }).getByText("180", { exact: true }),
+        page.getByRole("region", { name: "Answer feedback" }).getByText("180°", { exact: true }),
       )
       .toBeVisible();
   });
@@ -279,7 +279,10 @@ describe("geometry and data activities", () => {
 
   it("random simulation by sampling: a margin shown as 1 is one point", async () => {
     openActivity({
-      content: { ...polls, fields: { ...polls.fields, sampleSizes: [100, 8000] } },
+      content: {
+        ...polls,
+        fields: { ...polls.fields, sampleSizes: [100, 8000], sizeLabel: "People per poll" },
+      },
       template: "randomSimulation",
     });
 
@@ -324,7 +327,7 @@ describe("geometry and data activities with a keyboard or a pointer", () => {
 
   it("random simulation by sampling: the size slider switches the runs", async () => {
     openActivity({ content: polls, template: "randomSimulation" });
-    await pressOnSlider("People per poll", "ArrowLeft", 1);
+    await pressOnSlider("People per sample", "ArrowLeft", 1);
     await expect.element(page.getByText("200 samples of 100", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Run again" }).click();
     await expect.element(page.getByText("200 samples of 100", { exact: true })).toBeVisible();

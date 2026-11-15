@@ -58,10 +58,13 @@ function NameChip({
 
 export function NameBank({
   activeNumber,
+  extraNames,
   names,
   onPlace,
 }: {
   activeNumber: number | null;
+  /** How many names belong to no spot, so the learner knows some are left over. */
+  extraNames: number;
   names: readonly string[];
   onPlace: (name: string) => void;
 }) {
@@ -91,6 +94,14 @@ export function NameBank({
           : t("Tap a name for spot {number}, or drag it onto any spot.", {
               number: String(activeNumber),
             })}
+        {extraNames > 0 && (
+          <>
+            {" "}
+            {t("{count, plural, one {# name has no spot.} other {# names have no spot.}}", {
+              count: extraNames,
+            })}
+          </>
+        )}
       </p>
 
       <ul aria-label={t("Names")} className="flex flex-wrap gap-2" ref={listRef}>

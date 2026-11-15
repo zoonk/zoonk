@@ -3,6 +3,7 @@ import { type VoiceText } from "@zoonk/learn/speech/provider";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { expect } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
+import { type GuessScale, SCALE_POSITIONS, shareOfValue } from "../activities/_utils/guess-scale";
 import { type LessonRunAnswers } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import { type ActivityContent, activityStep, explanationStep } from "../preview/preview-steps";
@@ -87,7 +88,7 @@ export function openActivityToResume(content: ActivityContent) {
 }
 
 export function valueInput() {
-  return page.getByRole("textbox", { name: "What is the value?" });
+  return page.getByRole("textbox", { name: /\?$/u });
 }
 
 export async function checkActivity() {
@@ -127,6 +128,20 @@ export async function focusOn(locator: Locator) {
 export async function pressOnSlider(name: string, key: string, times: number) {
   await focusOn(page.getByRole("slider", { name }));
   await press(key, times);
+}
+
+const PAGE_STEP = 10;
+
+/** Puts the guess scale's thumb on the place nearest `value`, the way a keyboard does. */
+export async function guessOnScale(
+  { max, min, scale }: { max: number; min: number; scale: string },
+  value: number,
+) {
+  const guessScale: GuessScale = { max, min, scale: scale === "log" ? "log" : "linear" };
+  const position = Math.round(shareOfValue(guessScale, value) * SCALE_POSITIONS);
+  await pressOnSlider("Your guess", "Home", 1);
+  await press("PageUp", Math.floor(position / PAGE_STEP));
+  await press("ArrowRight", position % PAGE_STEP);
 }
 
 export async function dragOnto(

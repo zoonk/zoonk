@@ -168,8 +168,9 @@ export function CauseEffectChainActivity({
     <ActivityCanvas labelId={labelId}>
       {!isLessonChain && (
         <div className="flex items-baseline justify-between gap-3">
+          {/* The row stays once checked, so the count keeps its place; only the instruction goes. */}
           <ActivityCanvasLabel className="text-sm">
-            {t("Pick a cause, then pick what it led to.")}
+            {!isChecked && t("Pick a cause, then pick what it led to.")}
           </ActivityCanvasLabel>
 
           {check.kind === "interaction" && (

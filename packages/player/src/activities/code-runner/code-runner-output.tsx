@@ -121,10 +121,7 @@ export function CodeRunnerOutput({
           expectedOutput !== null && "grid-cols-2",
         )}
       >
-        <OutputCell
-          className={cn(isStale && run && "opacity-60")}
-          label={expectedOutput === null ? t("Output") : t("Your output")}
-        >
+        <OutputCell className={cn(isStale && run && "opacity-60")} label={t("Output")}>
           <PrintedOutput
             hasTarget={expectedOutput !== null && !isStale}
             matches={matches}

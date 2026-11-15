@@ -124,12 +124,7 @@ export function ChallengeDebriefView({
         <ul className="flex flex-wrap gap-2">
           {debrief.skills.map((skill) => (
             <li
-              className={cn(
-                CHIP_CLASS,
-                "h-auto min-h-5.5 py-0.75 leading-4 text-balance",
-                skill.id === debrief.practice?.id &&
-                  "bg-warning/10 text-warning-text ring-warning/40",
-              )}
+              className={cn(CHIP_CLASS, "h-auto min-h-5.5 py-0.75 leading-4 text-balance")}
               key={skill.id}
             >
               {fill(skill.name)}
@@ -141,15 +136,15 @@ export function ChallengeDebriefView({
       {debrief.practice && (
         <section
           aria-labelledby="challenge-practice"
-          className="bg-muted/50 flex w-full flex-col gap-1 rounded-xl p-4"
+          className="flex w-full flex-col gap-2"
           data-slot="challenge-practice"
         >
-          <ChallengeLabel as="h3" id="challenge-practice">
+          <PageSectionLabel id="challenge-practice">
             {t("Practice “{skill}” · {time}", {
               skill: fill(debrief.practice.name),
               time: formatDuration({ locale, totalSeconds: PRACTICE_SECONDS }),
             })}
-          </ChallengeLabel>
+          </PageSectionLabel>
           <p className="text-foreground text-base leading-relaxed">
             <LessonRichText text={fill(debrief.practice.practice)} />
           </p>

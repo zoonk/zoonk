@@ -4,6 +4,7 @@ import { useFormatNumber } from "@zoonk/learn/format-number";
 import { Slider, SliderControl, SliderThumb, SliderTrack } from "@zoonk/ui/components/slider";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
+import { splitMoneyUnit } from "@zoonk/utils/math-answer";
 import { Lock } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
@@ -92,6 +93,9 @@ export function ActivityGuessScale({
   const formatValue = (value: number) => format(value, { unit });
   const { ref: trackRef, width: trackWidth } = useMeasuredWidth<HTMLDivElement>(0);
 
+  const ticks = scaleTicks(scale);
+  const isMoney = splitMoneyUnit(unit) !== null;
+
   function handleChange(position: number) {
     onGuessChange(roundGuess(valueAtPosition(scale, position)));
   }
@@ -150,13 +154,17 @@ export function ActivityGuessScale({
       </Slider>
 
       <div aria-hidden="true" className="text-muted-foreground relative h-5 text-xs tabular-nums">
-        {scaleTicks(scale).map((tick) => (
+        {ticks.map((tick, index) => (
           <span
             className={cn("absolute top-0", edgeAlign(shareOfValue(scale, tick)))}
             key={tick}
             style={{ left: `${shareOfValue(scale, tick) * PERCENT}%` }}
           >
-            {format(tick, { compact: true })}
+            {/* The scale says what it counts before any guess: money on every tick, a word once, at its end. */}
+            {format(tick, {
+              compact: true,
+              unit: isMoney || index === ticks.length - 1 ? unit : undefined,
+            })}
           </span>
         ))}
       </div>

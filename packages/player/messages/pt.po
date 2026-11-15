@@ -196,9 +196,14 @@ msgid "Try again"
 msgstr "Tentar de novo"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "g91Ps-"
-msgid "Start over with the original code"
-msgstr "Recomeçar com o código original"
+msgctxt "KiXNvz"
+msgid "Run"
+msgstr "Executar"
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "4prk89"
+msgid "Start over"
+msgstr "Começar de novo"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/random-simulation/chance-simulation.tsx
@@ -206,11 +211,6 @@ msgstr "Recomeçar com o código original"
 msgctxt "zG-cZG"
 msgid "Run again"
 msgstr "Executar de novo"
-
-#: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "KiXNvz"
-msgid "Run"
-msgstr "Executar"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "6k80XR"
@@ -744,11 +744,6 @@ msgid "Output"
 msgstr "Saída"
 
 #: src/activities/code-runner/code-runner-output.tsx
-msgctxt "e2tgwJ"
-msgid "Your output"
-msgstr "Sua saída"
-
-#: src/activities/code-runner/code-runner-output.tsx
 msgctxt "6srLb2"
 msgid "Expected"
 msgstr "Esperado"
@@ -757,6 +752,11 @@ msgstr "Esperado"
 msgctxt "d8Wy56"
 msgid "You changed the code. Run it again to see the new output."
 msgstr "Você alterou o código. Execute de novo para ver a nova saída."
+
+#: src/activities/code-tracer/code-tracer-activity.tsx
+msgctxt "DhXJyL"
+msgid "Step forward to run the next line. We'll stop for you to predict a value."
+msgstr "Avance para executar a próxima linha. A gente vai parar para você prever um valor."
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "isBSlr"
@@ -894,14 +894,9 @@ msgid "Every square is filled. Tap one to change it."
 msgstr "Todos os quadrados estão preenchidos. Toque em um para mudar."
 
 #: src/activities/combination-grid/grid-palette.tsx
-msgctxt "ZJ9RKr"
-msgid "Which genotype goes in square {number}?"
-msgstr "Qual genótipo vai no quadrado {number}?"
-
-#: src/activities/combination-grid/grid-palette.tsx
-msgctxt "_Z7gdQ"
-msgid "What goes in square {number}?"
-msgstr "O que vai no quadrado {number}?"
+msgctxt "mLazZP"
+msgid "What goes in the highlighted square?"
+msgstr "O que vai no quadrado em destaque?"
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "9-BMAt"
@@ -917,6 +912,11 @@ msgstr "Você disse:"
 msgctxt "ZWpFH7"
 msgid "Hear this line"
 msgstr "Ouvir esta fala"
+
+#: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
+msgctxt "HArSl0"
+msgid "Best reply:"
+msgstr "Melhor resposta:"
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "TSUuRN"
@@ -1262,6 +1262,11 @@ msgid "Play the sound"
 msgstr "Reproduzir o som"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "X9t3Pl"
+msgid "Hear your notes"
+msgstr "Ouvir suas notas"
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "f6zKAc"
 msgid "Hear it"
 msgstr "Ouvir"
@@ -1343,6 +1348,11 @@ msgid "Tap a name for spot {number}, or drag it onto any spot."
 msgstr "Toque em um nome para o ponto {number} ou arraste ele para qualquer ponto."
 
 #: src/activities/labeled-diagram/name-bank.tsx
+msgctxt "TNAgYA"
+msgid "{count, plural, one {# name has no spot.} other {# names have no spot.}}"
+msgstr "{count, plural, one {# nome não tem lugar no diagrama.} other {# nomes não têm lugar no diagrama.}}"
+
+#: src/activities/labeled-diagram/name-bank.tsx
 msgctxt "vhw8-j"
 msgid "Names"
 msgstr "Nomes"
@@ -1354,19 +1364,19 @@ msgid "What happened"
 msgstr "O que aconteceu"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "HSYVGq"
-msgid "{axis} goes down."
-msgstr "{axis} diminui."
+msgctxt "IHxN7y"
+msgid "{axis}: down"
+msgstr "{axis}: para baixo"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "AMYIvl"
-msgid "{axis} stays the same."
-msgstr "{axis} continua igual."
+msgctxt "wEr5qf"
+msgid "{axis}: no change"
+msgstr "{axis}: sem mudança"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "K23AEK"
-msgid "{axis} goes up."
-msgstr "{axis} aumenta."
+msgctxt "cwnIuM"
+msgid "{axis}: up"
+msgstr "{axis}: para cima"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "m3ASYj"
@@ -1399,14 +1409,24 @@ msgid "{line} moved down."
 msgstr "{line} se moveu para baixo."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "PHEAQb"
-msgid "Drag a line by its handle."
-msgstr "Arraste uma linha pelo controle."
+msgctxt "K-pwvx"
+msgid "Drag a line left or right by its handle."
+msgstr "Arraste uma linha pela alça para a esquerda ou para a direita."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "5H0MTv"
-msgid "Drag a line by its handle, or use the arrow keys."
-msgstr "Arraste uma linha pelo controle ou use as teclas de seta."
+msgctxt "5xSynH"
+msgid "Drag a line left or right by its handle, or use the arrow keys."
+msgstr "Arraste uma linha pela alça para a esquerda ou para a direita, ou use as teclas de seta."
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "TvX9Up"
+msgid "Drag a line up or down by its handle."
+msgstr "Arraste uma linha pela alça para cima ou para baixo."
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "Ku-lfL"
+msgid "Drag a line up or down by its handle, or use the arrow keys."
+msgstr "Arraste uma linha pela alça para cima ou para baixo, ou use as teclas de seta."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "QqIq-i"
@@ -1730,11 +1750,6 @@ msgid "Nothing selected."
 msgstr "Nada selecionado."
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
-msgctxt "DLio1y"
-msgid "Target: {formula}"
-msgstr "Objetivo: {formula}"
-
-#: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "thePhu"
 msgid "Built: {formula}"
 msgstr "Construído: {formula}"
@@ -1783,6 +1798,12 @@ msgstr "Remover {atom}"
 msgctxt "E6Wo-S"
 msgid "Remove the selected atom"
 msgstr "Remover o átomo selecionado"
+
+#. Button that removes the atom the learner selected from the molecule.
+#: src/activities/molecule-builder/molecule-palette.tsx
+msgctxt "G_yZLu"
+msgid "Remove"
+msgstr "Remover"
 
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "hXYqS7"
@@ -2336,11 +2357,6 @@ msgid "Listen first"
 msgstr "Ouvir primeiro"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
-msgctxt "V8V6gJ"
-msgid "Start tapping"
-msgstr "Começar a tocar"
-
-#: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "zuJJlV"
 msgid "Check the sound delay again"
 msgstr "Conferir o atraso do som de novo"
@@ -2366,9 +2382,9 @@ msgid "All set."
 msgstr "Tudo certo."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "Jk0E1p"
-msgid "Tap along with {count} clicks, so your taps are timed right."
-msgstr "Toque no ritmo de {count} cliques para sincronizar seus toques."
+msgctxt "Q4pNZZ"
+msgid "Speakers and headphones can play a little late. Tap along with {count} clicks so your taps are timed right."
+msgstr "Caixas de som e fones de ouvido podem ter um pequeno atraso. Toque no ritmo dos {count} cliques para ajustar o tempo dos seus toques."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2452,6 +2468,11 @@ msgid "or press Space"
 msgstr "ou aperte a barra de espaço"
 
 #: src/activities/rhythm-tapper/rhythm-tapper-activity.tsx
+msgctxt "V8V6gJ"
+msgid "Start tapping"
+msgstr "Começar a tocar"
+
+#: src/activities/rhythm-tapper/rhythm-tapper-activity.tsx
 msgctxt "eP7OeM"
 msgid "A rhythm of {length} steps with a beat every {perBeat}. Tap on steps {hits}, over a click on every beat."
 msgstr "Um ritmo de {length} passos, com uma batida a cada {perBeat} passos. Toque nos passos {hits}, acompanhando o clique de cada batida."
@@ -2511,11 +2532,6 @@ msgstr "SQLite não carregou. Confira sua conexão e tente de novo."
 msgctxt "qj71j1"
 msgid "Query"
 msgstr "Consulta"
-
-#: src/activities/sql-playground/sql-playground-activity.tsx
-msgctxt "Vpa3uJ"
-msgid "Your query"
-msgstr "Sua consulta"
 
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "fv34i9"
@@ -2660,9 +2676,15 @@ msgid "Time between the dates"
 msgstr "Tempo entre as datas"
 
 #: src/activities/timeline/timeline-gaps.tsx
-msgctxt "V9pdjC"
-msgid "from {earlier} ({earlierYear}) to {later} ({laterYear})"
-msgstr "de {earlier} ({earlierYear}) até {later} ({laterYear})"
+msgctxt "aDM2Dn"
+msgid "{event} ({year})"
+msgstr "{event} ({year})"
+
+#. Read aloud by a screen reader between two events on a timeline, where sighted learners see an arrow: “Great Pyramid built (2560 BCE) to Moon landing (1969)”.
+#: src/activities/timeline/timeline-gaps.tsx
+msgctxt "NLeFGn"
+msgid "to"
+msgstr "até"
 
 #: src/activities/timeline/timeline-tray.tsx
 msgctxt "WeCA4I"

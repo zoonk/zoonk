@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ActivityCanvas, ActivityCanvasLabel } from "../_components/activity-canvas";
@@ -133,8 +134,12 @@ function FormulaModelBoard({
 
       <ActivityOutputReadouts items={readouts} />
 
+      {/* At the compared input this line would repeat the readout, so it keeps its room and says nothing. */}
       {view.compared && (
-        <ActivityCanvasLabel aria-hidden="true" className="tabular-nums">
+        <ActivityCanvasLabel
+          aria-hidden="true"
+          className={cn("tabular-nums", view.compared.x === view.x && "invisible")}
+        >
           {t("{output} at {input}: {value}", {
             input: formatX(view.compared.x),
             output: charted.label,
@@ -164,6 +169,7 @@ function FormulaModelBoard({
         disabled={isChecked}
         onChange={(name, value) => update({ ...sliders, [name]: value }, events)}
         output={{ label: charted.label, value: formatOutput(charted, view.chartedNow) }}
+        scaledAbove={axis.name}
         values={sliders}
         variables={fields.variables}
       />

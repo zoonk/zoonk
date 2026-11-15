@@ -28,7 +28,8 @@ import {
 } from "./line-crossing-parts";
 
 type LineCrossingProps = ActivityRendererProps<"lineCrossing">;
-type Fields = LineCrossingProps["content"]["fields"];
+type Content = LineCrossingProps["content"];
+type Fields = Content["fields"];
 type FieldLine = Fields["lines"][number];
 
 const NOT_MOVED: LineOffsets = {};
@@ -42,8 +43,28 @@ function realMove(fields: Fields): LineOffsets {
   return moveLine(fields.shift.line, realOffset(fields));
 }
 
-function restoredOffsets(fields: Fields, answer: LineCrossingProps["answer"]): LineOffsets {
+const SAME_VALUE = 1e-9;
+
+/**
+ * A number read off the chart is saved without the line that gave it. When it's the number the
+ * real move gives, a reopened chart shows that move, so the picture agrees with the checked answer.
+ */
+function isReadAtRealMove({ check, fields }: Content, value: number): boolean {
+  if (check.kind !== "numeric") {
+    return false;
+  }
+
+  const point = crossingAfter(fields, realMove(fields), shiftAxis(fields.shift.direction));
+  return Math.abs((check.output === "x" ? point.x : point.y) - value) < SAME_VALUE;
+}
+
+function restoredOffsets(content: Content, answer: LineCrossingProps["answer"]): LineOffsets {
+  const { fields } = content;
   const [first, second] = fields.lines;
+
+  if (answer?.kind === "numeric" && isReadAtRealMove(content, answer.value)) {
+    return realMove(fields);
+  }
 
   if (answer?.kind !== "curveShift" || !first || !second) {
     return NOT_MOVED;
@@ -87,7 +108,7 @@ export function LineCrossingActivity({
   const lineWords = useLineWords();
   const space = useSentenceSpace();
   const { check, fields } = content;
-  const [offsets, setOffsets] = useState(() => restoredOffsets(fields, answer));
+  const [offsets, setOffsets] = useState(() => restoredOffsets(content, answer));
   const isChecked = phase === "checked";
   const axis = shiftAxis(fields.shift.direction);
   const [first, second] = fields.lines;
@@ -147,6 +168,7 @@ export function LineCrossingActivity({
       />
 
       <LineCrossingChanges
+        axis={axis}
         fields={fields}
         isChecked={isChecked}
         moved={moved}

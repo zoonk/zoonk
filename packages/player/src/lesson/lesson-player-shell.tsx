@@ -144,19 +144,24 @@ export function LessonPlayerShell() {
   return <LessonPlayerFrame />;
 }
 
-/** Reading screens and the map sit on a teacher's dotted paper; questions keep a plain ground for their answers. */
+/**
+ * Reading screens and the map sit on a teacher's dotted paper; questions keep a plain ground for
+ * their answers. A language lesson's screens are plain too, except its summary, which looks the
+ * same in every lesson.
+ */
 function useDotPaper(): boolean {
   const { lesson } = useLessonPlayerConfig();
   const { screen, state } = useLessonPlayer();
 
-  if (lesson.targetLanguage || state.run.status === "refused") {
+  if (state.run.status === "refused" || state.phase === "completed") {
     return false;
   }
 
-  return (
-    state.phase === "map" ||
-    (state.phase !== "completed" && Boolean(screen.step && isReadStep(screen.step)))
-  );
+  if (lesson.targetLanguage) {
+    return state.phase !== "map" && screen.step?.kind === "summary";
+  }
+
+  return state.phase === "map" || Boolean(screen.step && isReadStep(screen.step));
 }
 
 function LessonPlayerFrame() {

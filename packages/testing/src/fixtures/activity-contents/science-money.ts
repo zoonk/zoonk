@@ -1,12 +1,27 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
-import { choiceCheck, interactionCheck } from "./activity-checks";
+import { explained, reasonedChoice } from "./activity-checks";
 
 export const scienceMoneyActivities = {
   combinationGrid: {
-    check: choiceCheck("What share of the seeds grow white flowers?", [
-      ["1 in 4", false, 0.25],
-      ["1 in 2", true, 0.5],
-      ["3 in 4", false, 0.75],
+    check: reasonedChoice("What share of the seeds grow white flowers?", [
+      {
+        isCorrect: false,
+        reason: "That's the white share when both parents are Pp. Here one parent is pp.",
+        text: "1 in 4",
+        value: 0.25,
+      },
+      {
+        isCorrect: true,
+        reason: "Two of the four squares are pp, and only pp grows white.",
+        text: "1 in 2",
+        value: 0.5,
+      },
+      {
+        isCorrect: false,
+        reason: "That's the purple share when both parents are Pp.",
+        text: "3 in 4",
+        value: 0.75,
+      },
     ]),
     fields: {
       columns: { label: "White parent", values: ["p", "p"] },
@@ -19,7 +34,9 @@ export const scienceMoneyActivities = {
     template: "combinationGrid",
   },
   labeledDiagram: {
-    check: interactionCheck,
+    check: explained(
+      "The atria sit on top and the ventricles under them, with the aorta arching over the heart. You face the heart, so its right side is on your left.",
+    ),
     fields: {
       distractors: ["Pulmonary valve"],
       mixUps: [
@@ -36,15 +53,17 @@ export const scienceMoneyActivities = {
         { label: "Aorta", part: "aorta" },
       ],
       picture: {
-        alt: "A human heart cut open from the front, with five numbered parts",
+        alt: "A human heart cut open from the front, with five numbered spots",
         prompt: "A human heart cut open from the front, showing its four chambers and the aorta",
       },
     },
-    prompt: "Put each name on its number in the heart.",
+    prompt: "Put each name on its spot in the heart.",
     template: "labeledDiagram",
   },
   lineCrossing: {
-    check: interactionCheck,
+    check: explained(
+      "Fewer hens lay fewer eggs at every price, so Supply moves left. Along Demand, the price goes up and fewer eggs are sold.",
+    ),
     data: { source: { publisher: "USDA", title: "Egg Markets Overview", year: 2022 } },
     fields: {
       change: "Bird flu cut the number of laying hens.",
@@ -64,13 +83,17 @@ export const scienceMoneyActivities = {
     template: "lineCrossing",
   },
   moleculeBuilder: {
-    check: interactionCheck,
+    check: explained(
+      "Carbon makes four bonds and oxygen two, so each oxygen joins the carbon with a double bond: O=C=O.",
+    ),
     fields: { elements: ["C", "O", "H"], formula: "CO2" },
     prompt: "Build CO₂ so every atom has all its bonds.",
     template: "moleculeBuilder",
   },
   processOrder: {
-    check: interactionCheck,
+    check: explained(
+      "Light comes first. It splits water and charges ATP and NADPH, which power the Calvin cycle that builds the sugar a plant stores.",
+    ),
     fields: {
       steps: [
         { icon: "sun", id: "absorb", text: "Chlorophyll absorbs sunlight" },

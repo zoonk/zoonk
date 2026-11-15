@@ -8,18 +8,21 @@ import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 
 type Hint = { hint: string; mistake: string };
 
+/** `reveal` shows every hint: a checked answer that still fails an example gets them all. */
 export function PatternHints({
   hints,
   isChecked,
   literalNumbers,
+  reveal,
 }: {
   hints: readonly Hint[];
   isChecked: boolean;
   literalNumbers: boolean;
+  reveal: boolean;
 }) {
   const t = useExtracted();
   const [shown, setShown] = useState(0);
-  const visible = isChecked ? hints : hints.slice(0, shown);
+  const visible = reveal ? hints : hints.slice(0, isChecked ? 0 : shown);
 
   if (hints.length === 0) {
     return null;

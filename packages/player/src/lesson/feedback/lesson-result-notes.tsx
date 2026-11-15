@@ -2,8 +2,14 @@
 
 import { FeedbackNote } from "@zoonk/learn/feedback-panel";
 import { useExtracted } from "next-intl";
+import { createContext } from "react";
 
 export type LessonResultNext = { savedMistake: boolean; willReturn: boolean };
+
+/** What a lesson adds to the feedback card of a step that draws its own (an activity). */
+export const OwnResultNotesContext = createContext<
+  (LessonResultNext & { hyperdriveStreak: number | null }) | null
+>(null);
 
 function ResultNextText({ savedMistake, willReturn }: LessonResultNext) {
   const t = useExtracted();

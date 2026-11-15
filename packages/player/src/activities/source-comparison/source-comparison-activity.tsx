@@ -237,7 +237,8 @@ export function SourceComparisonActivity({
           aria-hidden="true"
           className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs"
         >
-          {found && (
+          {/* With nothing missed or wrong the learner's marks are the answer, so no legend is needed. */}
+          {found && (learnerMarks === null || missed || wrong) && (
             <span className="flex items-center gap-1.5">
               <span className="bg-success/25 h-3 w-4 rounded-sm" />
               {t("What to mark")}

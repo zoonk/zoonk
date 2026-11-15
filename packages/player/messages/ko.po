@@ -196,9 +196,14 @@ msgid "Try again"
 msgstr "다시 시도"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "g91Ps-"
-msgid "Start over with the original code"
-msgstr "원래 코드로 다시 시작하기"
+msgctxt "KiXNvz"
+msgid "Run"
+msgstr "실행"
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "4prk89"
+msgid "Start over"
+msgstr "처음부터 다시 시작하기"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/random-simulation/chance-simulation.tsx
@@ -206,11 +211,6 @@ msgstr "원래 코드로 다시 시작하기"
 msgctxt "zG-cZG"
 msgid "Run again"
 msgstr "다시 실행"
-
-#: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "KiXNvz"
-msgid "Run"
-msgstr "실행"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "6k80XR"
@@ -744,11 +744,6 @@ msgid "Output"
 msgstr "출력"
 
 #: src/activities/code-runner/code-runner-output.tsx
-msgctxt "e2tgwJ"
-msgid "Your output"
-msgstr "내 출력"
-
-#: src/activities/code-runner/code-runner-output.tsx
 msgctxt "6srLb2"
 msgid "Expected"
 msgstr "예상 출력"
@@ -757,6 +752,11 @@ msgstr "예상 출력"
 msgctxt "d8Wy56"
 msgid "You changed the code. Run it again to see the new output."
 msgstr "코드를 수정했어요. 새 출력 결과를 보려면 다시 실행하세요."
+
+#: src/activities/code-tracer/code-tracer-activity.tsx
+msgctxt "DhXJyL"
+msgid "Step forward to run the next line. We'll stop for you to predict a value."
+msgstr "한 단계 진행해 다음 줄을 실행하세요. 값을 예상할 차례가 되면 멈출게요."
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "isBSlr"
@@ -894,14 +894,9 @@ msgid "Every square is filled. Tap one to change it."
 msgstr "모든 칸을 채웠어요. 바꿀 칸을 누르세요."
 
 #: src/activities/combination-grid/grid-palette.tsx
-msgctxt "ZJ9RKr"
-msgid "Which genotype goes in square {number}?"
-msgstr "{number}번 칸에는 어떤 유전자형이 들어가나요?"
-
-#: src/activities/combination-grid/grid-palette.tsx
-msgctxt "_Z7gdQ"
-msgid "What goes in square {number}?"
-msgstr "{number}번 칸에는 무엇이 들어가나요?"
+msgctxt "mLazZP"
+msgid "What goes in the highlighted square?"
+msgstr "강조된 칸에는 무엇이 들어갈까요?"
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "9-BMAt"
@@ -917,6 +912,11 @@ msgstr "내가 한 말:"
 msgctxt "ZWpFH7"
 msgid "Hear this line"
 msgstr "이 대사 듣기"
+
+#: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
+msgctxt "HArSl0"
+msgid "Best reply:"
+msgstr "가장 적절한 답변:"
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "TSUuRN"
@@ -1262,6 +1262,11 @@ msgid "Play the sound"
 msgstr "소리 재생하기"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "X9t3Pl"
+msgid "Hear your notes"
+msgstr "선택한 음 듣기"
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "f6zKAc"
 msgid "Hear it"
 msgstr "들어 보기"
@@ -1343,6 +1348,11 @@ msgid "Tap a name for spot {number}, or drag it onto any spot."
 msgstr "{number}번 자리에 놓을 이름을 누르거나, 원하는 자리로 이름을 끌어다 놓으세요."
 
 #: src/activities/labeled-diagram/name-bank.tsx
+msgctxt "TNAgYA"
+msgid "{count, plural, one {# name has no spot.} other {# names have no spot.}}"
+msgstr "{count, plural, other {들어갈 자리가 없는 이름이 #개 있어요.}}"
+
+#: src/activities/labeled-diagram/name-bank.tsx
 msgctxt "vhw8-j"
 msgid "Names"
 msgstr "이름"
@@ -1354,19 +1364,19 @@ msgid "What happened"
 msgstr "결과"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "HSYVGq"
-msgid "{axis} goes down."
-msgstr "{axis} 값이 작아져요."
+msgctxt "IHxN7y"
+msgid "{axis}: down"
+msgstr "{axis}: 감소"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "AMYIvl"
-msgid "{axis} stays the same."
-msgstr "{axis} 값은 그대로예요."
+msgctxt "wEr5qf"
+msgid "{axis}: no change"
+msgstr "{axis}: 변화 없음"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "K23AEK"
-msgid "{axis} goes up."
-msgstr "{axis} 값이 커져요."
+msgctxt "cwnIuM"
+msgid "{axis}: up"
+msgstr "{axis}: 증가"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "m3ASYj"
@@ -1399,14 +1409,24 @@ msgid "{line} moved down."
 msgstr "{line}은(는) 아래로 이동했어요."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "PHEAQb"
-msgid "Drag a line by its handle."
-msgstr "손잡이를 끌어 선을 움직이세요."
+msgctxt "K-pwvx"
+msgid "Drag a line left or right by its handle."
+msgstr "손잡이를 잡고 선을 좌우로 옮기세요."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "5H0MTv"
-msgid "Drag a line by its handle, or use the arrow keys."
-msgstr "손잡이를 끌거나 방향키로 선을 움직이세요."
+msgctxt "5xSynH"
+msgid "Drag a line left or right by its handle, or use the arrow keys."
+msgstr "손잡이를 잡고 선을 좌우로 옮기거나 방향키를 사용하세요."
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "TvX9Up"
+msgid "Drag a line up or down by its handle."
+msgstr "손잡이를 잡고 선을 위아래로 옮기세요."
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "Ku-lfL"
+msgid "Drag a line up or down by its handle, or use the arrow keys."
+msgstr "손잡이를 잡고 선을 위아래로 옮기거나 방향키를 사용하세요."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "QqIq-i"
@@ -1730,11 +1750,6 @@ msgid "Nothing selected."
 msgstr "선택한 항목이 없어요."
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
-msgctxt "DLio1y"
-msgid "Target: {formula}"
-msgstr "목표: {formula}"
-
-#: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "thePhu"
 msgid "Built: {formula}"
 msgstr "만든 분자: {formula}"
@@ -1783,6 +1798,12 @@ msgstr "{atom} 삭제하기"
 msgctxt "E6Wo-S"
 msgid "Remove the selected atom"
 msgstr "선택한 원자 삭제하기"
+
+#. Button that removes the atom the learner selected from the molecule.
+#: src/activities/molecule-builder/molecule-palette.tsx
+msgctxt "G_yZLu"
+msgid "Remove"
+msgstr "제거"
 
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "hXYqS7"
@@ -2336,11 +2357,6 @@ msgid "Listen first"
 msgstr "먼저 듣기"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
-msgctxt "V8V6gJ"
-msgid "Start tapping"
-msgstr "두드리기 시작"
-
-#: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "zuJJlV"
 msgid "Check the sound delay again"
 msgstr "소리 지연 다시 확인하기"
@@ -2366,9 +2382,9 @@ msgid "All set."
 msgstr "준비됐어요."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "Jk0E1p"
-msgid "Tap along with {count} clicks, so your taps are timed right."
-msgstr "터치 타이밍을 맞추려면 클릭 소리에 맞춰 {count}번 터치하세요."
+msgctxt "Q4pNZZ"
+msgid "Speakers and headphones can play a little late. Tap along with {count} clicks so your taps are timed right."
+msgstr "스피커나 헤드폰에서 소리가 조금 늦게 나올 수 있어요. 타이밍을 정확히 맞출 수 있도록 클릭 소리에 맞춰 {count}번 두드려 보세요."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2452,6 +2468,11 @@ msgid "or press Space"
 msgstr "또는 스페이스바 누르기"
 
 #: src/activities/rhythm-tapper/rhythm-tapper-activity.tsx
+msgctxt "V8V6gJ"
+msgid "Start tapping"
+msgstr "두드리기 시작"
+
+#: src/activities/rhythm-tapper/rhythm-tapper-activity.tsx
 msgctxt "eP7OeM"
 msgid "A rhythm of {length} steps with a beat every {perBeat}. Tap on steps {hits}, over a click on every beat."
 msgstr "리듬은 총 {length}칸이고 {perBeat}칸마다 한 박자예요. 박자마다 나는 클릭 소리를 들으며 {hits}번 칸에서 탭하세요."
@@ -2511,11 +2532,6 @@ msgstr "SQLite를 불러오지 못했어요. 인터넷 연결을 확인하고 �
 msgctxt "qj71j1"
 msgid "Query"
 msgstr "쿼리"
-
-#: src/activities/sql-playground/sql-playground-activity.tsx
-msgctxt "Vpa3uJ"
-msgid "Your query"
-msgstr "내 쿼리"
 
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "fv34i9"
@@ -2660,9 +2676,15 @@ msgid "Time between the dates"
 msgstr "연도 사이의 간격"
 
 #: src/activities/timeline/timeline-gaps.tsx
-msgctxt "V9pdjC"
-msgid "from {earlier} ({earlierYear}) to {later} ({laterYear})"
-msgstr "{earlier}({earlierYear})부터 {later}({laterYear})까지"
+msgctxt "aDM2Dn"
+msgid "{event} ({year})"
+msgstr "{event} ({year})"
+
+#. Read aloud by a screen reader between two events on a timeline, where sighted learners see an arrow: “Great Pyramid built (2560 BCE) to Moon landing (1969)”.
+#: src/activities/timeline/timeline-gaps.tsx
+msgctxt "NLeFGn"
+msgid "to"
+msgstr "부터"
 
 #: src/activities/timeline/timeline-tray.tsx
 msgctxt "WeCA4I"

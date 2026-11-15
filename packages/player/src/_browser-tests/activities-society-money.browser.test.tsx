@@ -120,11 +120,11 @@ describe("money and society activities", () => {
 
   it("formula model what-ifs: the rent event and the price give the profit", async () => {
     openActivity({ content: scenario, template: "formulaModel" });
-    await page.getByRole("button", { name: "Rent goes up $500" }).click();
+    await page.getByRole("switch", { name: "Rent goes up $500" }).click();
 
     await expect
-      .element(page.getByRole("button", { name: "Rent goes up $500" }))
-      .toHaveAttribute("aria-pressed", "true");
+      .element(page.getByRole("switch", { name: "Rent goes up $500" }))
+      .toHaveAttribute("aria-checked", "true");
 
     await pressOnSlider("Price per cup", "ArrowRight", 2);
     await expect.element(page.getByText("$1,500 before", { exact: true })).toBeVisible();
@@ -135,13 +135,13 @@ describe("money and society activities", () => {
 
   it("formula model what-ifs: the right answer's label stays clear of the other chart labels", async () => {
     openActivity({ content: scenario, template: "formulaModel" });
-    await page.getByRole("button", { name: "Rent goes up $500" }).click();
+    await page.getByRole("switch", { name: "Rent goes up $500" }).click();
     await pressOnSlider("Price per cup", "ArrowRight", 2);
     await checkActivity();
     await expectVerdict("Correct!");
 
-    await expect.poll(() => chartLabels().map((label) => label.text)).toContain("1,000");
-    expect(labelsOver("1,000")).toStrictEqual([]);
+    await expect.poll(() => chartLabels().map((label) => label.text)).toContain("$1,000");
+    expect(labelsOver("$1,000")).toStrictEqual([]);
   });
 
   it("formula model what-ifs: leaving the event off gives the wrong profit", async () => {
@@ -155,8 +155,8 @@ describe("money and society activities", () => {
   it("line crossing: moving supply left explains the spike", async () => {
     openActivity({ template: "lineCrossing" });
     await pressOnSlider("Move the line Supply", "ArrowLeft", 1);
-    await expect.element(page.getByText("Price per dozen goes up.", { exact: true })).toBeVisible();
-    await expect.element(page.getByText("Eggs sold goes down.", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Price per dozen: up", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Eggs sold: down", { exact: true })).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
   });
@@ -173,7 +173,7 @@ describe("money and society activities", () => {
   it("line crossing: moving the cost line up gives the new break-even", async () => {
     openActivity({ content: breakEven, template: "lineCrossing" });
     await pressOnSlider("Move the line Cost", "ArrowUp", 4);
-    await expect.element(page.getByText("Lamps sold goes up.", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Lamps sold: up", { exact: true })).toBeVisible();
     await expect.element(valueInput()).toHaveValue("250");
     await checkActivity();
     await expectVerdict("Correct!");
@@ -181,7 +181,7 @@ describe("money and society activities", () => {
 
   it("line crossing: the drag hint goes once the answer is checked", async () => {
     openActivity({ content: breakEven, template: "lineCrossing" });
-    const hint = page.getByText("Drag a line by its handle, or use the arrow keys.");
+    const hint = page.getByText("Drag a line up or down by its handle, or use the arrow keys.");
     await expect.element(hint).toBeVisible();
     await valueInput().fill("250");
     await checkActivity();
@@ -202,8 +202,8 @@ describe("money and society activities", () => {
 
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("about 2,000 years")).toBeVisible();
-    await expect.element(page.getByText("about 2,500 years")).toBeVisible();
+    await expect.element(page.getByText("about 2,000 years", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("about 2,500 years", { exact: true })).toBeVisible();
   });
 
   it("timeline: events in the wrong order are wrong, with the real dates", async () => {
@@ -310,13 +310,13 @@ describe("money and society activities", () => {
     await expectVerdict("Correct!");
   });
 
-  it("source comparison: a right answer's legend says nothing was missed", async () => {
+  it("source comparison: a right answer has no legend, since the learner's marks are the answer", async () => {
     openActivity({ template: "sourceComparison" });
     await page.getByRole("checkbox", { name: "The regulars fired on us" }).click();
     await page.getByRole("checkbox", { name: "the rebels fired first" }).click();
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("What to mark", { exact: true })).toBeInTheDocument();
+    await expect.element(page.getByText("What to mark", { exact: true })).not.toBeInTheDocument();
     await expect.element(page.getByText("Missed", { exact: true })).not.toBeInTheDocument();
   });
 
@@ -367,7 +367,7 @@ describe("money and society activities by dragging", () => {
     openActivity({ template: "lineCrossing" });
     await dragBy(page.getByRole("slider", { name: "Move the line Supply" }), { x: -60, y: 0 });
 
-    await expect.element(page.getByText("Price per dozen goes up.", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Price per dozen: up", { exact: true })).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
   });
@@ -376,7 +376,7 @@ describe("money and society activities by dragging", () => {
     openActivity({ content: breakEven, template: "lineCrossing" });
     await dragBy(page.getByRole("slider", { name: "Move the line Cost" }), { x: 0, y: -40 });
 
-    await expect.element(page.getByText("Lamps sold goes up.", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Lamps sold: up", { exact: true })).toBeVisible();
   });
 });
 
@@ -391,7 +391,7 @@ describe("money and society activities with a keyboard only", () => {
 
   it("formula model what-ifs", async () => {
     openActivity({ content: scenario, template: "formulaModel" });
-    await focusOn(page.getByRole("button", { name: "Rent goes up $500" }));
+    await focusOn(page.getByRole("switch", { name: "Rent goes up $500" }));
     await press("Space");
     await press("Tab");
     await expect.element(page.getByRole("slider", { name: "Price per cup" })).toHaveFocus();
@@ -552,17 +552,40 @@ describe("money and society activities reopened from their saved answer", () => 
     await expect.element(page.getByText("Missed link")).not.toBeInTheDocument();
   });
 
+  it("line crossing break-even: the line comes back where the answer was read", async () => {
+    const { reopenSaved } = openActivityToResume(breakEven);
+    await pressOnSlider("Move the line Cost", "ArrowUp", 4);
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await reopenSaved();
+
+    await expect.element(page.getByText("Lamps sold: up", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("What happened")).not.toBeInTheDocument();
+  });
+
+  it("unit circle: the wheel comes back at the angle it was checked at", async () => {
+    const { reopenSaved } = openActivityToResume(fixtures.unitCircle);
+    await pressOnSlider("Point on the circle", "ArrowRight", 6);
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await reopenSaved();
+
+    await expect
+      .element(page.getByRole("slider", { name: "Point on the circle" }))
+      .toHaveAttribute("aria-valuetext", expect.stringContaining("30°"));
+  });
+
   it("formula model what-ifs: the checked inputs come back, so the right answer sits on the curve", async () => {
     const { reopenSaved } = openActivityToResume(scenario);
-    await page.getByRole("button", { name: "Rent goes up $500" }).click();
+    await page.getByRole("switch", { name: "Rent goes up $500" }).click();
     await pressOnSlider("Price per cup", "ArrowRight", 2);
     await checkActivity();
     await expectVerdict("Correct!");
     await reopenSaved();
 
     await expect
-      .element(page.getByRole("button", { name: "Rent goes up $500" }))
-      .toHaveAttribute("aria-pressed", "true");
+      .element(page.getByRole("switch", { name: "Rent goes up $500" }))
+      .toHaveAttribute("aria-checked", "true");
 
     await expect
       .element(page.getByRole("slider", { name: "Price per cup" }))

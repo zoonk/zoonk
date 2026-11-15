@@ -4,6 +4,7 @@ import { page } from "vitest/browser";
 import {
   checkActivity,
   expectVerdict,
+  guessOnScale,
   openActivity,
   pressOnSlider,
   valueInput,
@@ -97,7 +98,7 @@ describe("lesson activities", () => {
     await expect.element(page.getByText("Drag to guess")).toBeVisible();
     await pressOnSlider("Your guess", "ArrowRight", 20);
     await expect.element(page.getByText(/Your guess: /u)).toBeVisible();
-    await valueInput().fill("11.57");
+    await guessOnScale(activityContentFixtures.guessReveal.fields, 11.57);
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("A billion seconds is about 32 years.")).toBeVisible();
