@@ -41,6 +41,9 @@ export const LIST_ROW_INTERACTIVE_CLASS = cn(
   "hover:before:bg-muted/70 active:before:bg-muted press focus-visible:before:ring-ring/50 outline-none select-none [--press-scale:0.99] focus-visible:before:ring-[3px] focus-visible:before:ring-inset",
 );
 
+/** A fold's panel clips what it folds, so it reaches as far as its rows' fills do (craft E7). */
+export const ROW_FOLD_CLASS = "-mx-2.5 px-2.5";
+
 export const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
 
 /** The same chevron after a 12px line, such as a header's "1 of 4". */
