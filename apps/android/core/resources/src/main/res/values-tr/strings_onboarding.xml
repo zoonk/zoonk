@@ -28,8 +28,6 @@
   "onboarding_ask": "053572b57dfcca6a47e32555e78af1683b7c972e6c4fb01efe9694d8d2369fd6",
   "onboarding_attach_already_read": "bc32e347dc72d1c7dc8e42dedd1ecfbbff09465a1ff87497defe1c1701c9d2bc",
   "onboarding_attach_failed": "fc4f3f21de4cc88c93ec8baf8b04ca35615e3512930de17585ab9dd9cda919c8",
-  "onboarding_attach_limit_day": "964ba40c5708995bcd2d8e2bc9219318e6fde4126b3fbbf78d460a764aaeec7c",
-  "onboarding_attach_limit_plus": "db439fb76037575aeb5755cb0c5bbf8fd1c4588da3663e3f65e94844f9f94203",
   "onboarding_attach_sign_in": "f5b4499c94d31c04e3d7d31fe1b9c161ef4aa6861d2d64f621d2e77c6ed49e63",
   "onboarding_attach_slow_down": "31e6ea78bc736b762a1b8c2f28c178b8fd000961221b49517f95f78b6d9c7a58",
   "onboarding_attach_unsupported": "fa04db7c333c5f238bab7779987266dcd34fca6b3e924b1d4ae42bffbba7bd7d",
@@ -226,8 +224,6 @@
   "onboarding_purpose_work": "ca4e06be6a27ae793dd014c71d4c55ea90be2dcb9ea62de649c4757eb6e24878",
   "onboarding_purpose_work_description": "6a62cb20fb9337c99be1e04353a6f867eba658e78ac065b6caddd0cde1c0379e",
   "onboarding_question_failed": "6ffbb901ac4489e1ca5e38c345098bc15469a389ca812fa2f4f1271c96878d54",
-  "onboarding_question_limit_day": "f6dfafba991c1fca83bc62016acc0e15b375591ace75796fba0c4142889873f0",
-  "onboarding_question_limit_plus": "507cdd488e51da50adea54ef2cb8a8e2b701837a7d3621cdfd524ca9bd49c22c",
   "onboarding_question_placeholder": "9e6163e32b9496d7767d44dcd5eafac461a7c22caaf0afb08f57c9b325a2dd43",
   "onboarding_question_sign_in": "685c9e263159d3949820696716a02882330628942afb202512d3f3bde8652411",
   "onboarding_question_slow_down": "45f2e0c577052972ea42f465cfb17782a3bdcce09181ecf4e8523932cc438869",
@@ -612,8 +608,6 @@
     <string name="onboarding_adding_material">Materyalini ekliyoruz…</string>
     <!-- Removes an attached file or text. %1$s is its title. -->
     <string name="onboarding_remove_material">%1$s adlı materyali kaldır</string>
-    <string name="onboarding_attach_limit_plus">Bugünkü materyal ekleme hakkın doldu. Yarın yenilenir.</string>
-    <string name="onboarding_attach_limit_day">Bugünkü materyal ekleme hakkın doldu. Yarın yenilenir, istersen abone olup hemen devam edebilirsin.</string>
     <string name="onboarding_attach_slow_down">Kısa sürede çok materyal ekledin. Birkaç dakika sonra tekrar dene.</string>
     <string name="onboarding_attach_unsupported">Bu dosyayı okuyamıyoruz. PDF, fotoğraf, Word, PowerPoint veya metin eklemeyi dene.</string>
     <string name="onboarding_attach_sign_in">Kendi materyalini eklemek için hesap oluştur.</string>
@@ -637,8 +631,6 @@
     <string name="onboarding_question_failed">Bu soruyu cevaplayamadık. Birazdan tekrar dene.</string>
     <string name="onboarding_question_sign_in">Materyalin hakkında soru sormak için hesap oluştur.</string>
     <string name="onboarding_question_slow_down">Peş peşe soru soruyorsun. Birkaç dakika sonra tekrar dene.</string>
-    <string name="onboarding_question_limit_plus">Bugünkü soru hakkın doldu. Yarın yenilenir.</string>
-    <string name="onboarding_question_limit_day">Bugünkü soru hakkın doldu. Yarın yenilenir, istersen abone olup hemen devam edebilirsin.</string>
     <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_title">Neler bildiğine bakalım</string>
     <!-- %d is how many areas of the goal the questions cover. -->

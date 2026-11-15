@@ -123,7 +123,9 @@ internal fun TodayNotice(
                     it,
                     viewModel.visit,
                     layout,
-                    modifier,
+                    onCreateAccount = { state.navigate(AppRoute.Login) },
+                    onSubscribe = { state.navigate(AppRoute.Subscription) },
+                    modifier = modifier,
                     onAnswering = { viewModel.holdNotice(read, Today.Notice.UPLOAD_REQUEST, opens = true) },
                 )
             }

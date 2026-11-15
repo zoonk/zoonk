@@ -29,6 +29,8 @@
     <string name="limit_goals_used">You\'ve started all the new goals you can</string>
     <string name="limit_uploads_used">You\'ve used your uploads</string>
     <string name="limit_questions_used">You\'ve used your questions</string>
+    <string name="limit_uploads_day">No more material today</string>
+    <string name="limit_questions_day">No more questions today</string>
     <string name="limit_call_time_used">You\'ve used your call time</string>
     <string name="limit_mock_exams_used">You\'ve used your mock exams</string>
     <string name="limit_lessons_guest">No more lessons without an account</string>

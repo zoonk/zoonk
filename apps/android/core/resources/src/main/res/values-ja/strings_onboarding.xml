@@ -28,8 +28,6 @@
   "onboarding_ask": "70bc25ad5dd15a22397ecb08fb48065b9a42e2ab09d549112e126434d39992e3",
   "onboarding_attach_already_read": "007cbc669d679a587cfb1e47bc0f72d3478b0373d5210fb8d41d3449b7ae6af9",
   "onboarding_attach_failed": "1b36d782aec03cdc2c4048e31340e437d1f51b0bd771605d986724cad1475d87",
-  "onboarding_attach_limit_day": "a85ab160487db70a8b98ec629de06ec1c6e5c8e9d2e76864b491a3b6c14e1c15",
-  "onboarding_attach_limit_plus": "784aba5cab42549c455c7b08ef642da50fe624b7ab881966d7cf5c9ff1abf4ac",
   "onboarding_attach_sign_in": "4154f944ddee78b5b95203b2d56b66474ccd180b8da355fefbd69cc8406a810d",
   "onboarding_attach_slow_down": "563bcac23b0bbafce5f042580984571c9893aca873dd8ea19775140974e90ce1",
   "onboarding_attach_unsupported": "a728be94710b81d547b932e6ab041abbee55028eed33e00e590512ef0ac17199",
@@ -226,8 +224,6 @@
   "onboarding_purpose_work": "b78b57bd3bcdf4c05d2df0e9b2e85516af7ee06d52e68c5e650e1a248dcc49d4",
   "onboarding_purpose_work_description": "c257328c47b3e126fee2cf4dd41a84452b76ad2fbe2cb318fe9a565d2bc2c1b4",
   "onboarding_question_failed": "250545d15513859569193944ad878c5f295e43ceea298f222cacca744536a399",
-  "onboarding_question_limit_day": "16b4a0b2ae4f22827d9122f38710f45d034fd85c6de5beb1286323d04c8bf766",
-  "onboarding_question_limit_plus": "0351828a93046effffdf8175589eeec4fe89511b4919ae9c52129554bd34d81d",
   "onboarding_question_placeholder": "744a3b5030a06c86fb9e2d5f1776c4e59a8751f5d3bddd9d9464a7b99cf98cc2",
   "onboarding_question_sign_in": "51117949825e361a5a7e7aec85b62059939991ab51acb2555b695577a4d8966b",
   "onboarding_question_slow_down": "73e29acca291668568c23e49bf026ebabb48c841c96e10f490f9225f61c74487",
@@ -610,8 +606,6 @@
     <string name="onboarding_adding_material">資料を追加しています…</string>
     <!-- Removes an attached file or text. %1$s is its title. -->
     <string name="onboarding_remove_material">%1$sを外す</string>
-    <string name="onboarding_attach_limit_plus">今日はこれ以上資料を追加できません。明日また追加できます。</string>
-    <string name="onboarding_attach_limit_day">今日はこれ以上資料を追加できません。明日また追加できます。サブスクリプションに登録すると、このまま続けられます。</string>
     <string name="onboarding_attach_slow_down">短時間に資料が続けて追加されています。数分後にもう一度お試しください。</string>
     <string name="onboarding_attach_unsupported">このファイルを読み取れません。PDF、写真、Word、PowerPoint、テキストのいずれかをお試しください。</string>
     <string name="onboarding_attach_sign_in">アカウントを作成すると、自分の資料を追加できます。</string>
@@ -635,8 +629,6 @@
     <string name="onboarding_question_failed">回答できませんでした。少し待ってからもう一度お試しください。</string>
     <string name="onboarding_question_sign_in">資料について質問するには、アカウントを作成してください。</string>
     <string name="onboarding_question_slow_down">短時間に質問が続いています。数分後にもう一度お試しください。</string>
-    <string name="onboarding_question_limit_plus">今日はこれ以上質問できません。明日また質問できます。</string>
-    <string name="onboarding_question_limit_day">今日はこれ以上質問できません。明日また質問できます。サブスクリプションに登録すると、このまま続けられます。</string>
     <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_title">すでに知っていることを確かめましょう</string>
     <!-- %d is how many areas of the goal the questions cover. -->

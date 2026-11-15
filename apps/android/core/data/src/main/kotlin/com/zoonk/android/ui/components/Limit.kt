@@ -15,7 +15,7 @@ enum class LimitTier { Guest, Free, Plus }
 enum class LimitPeriod { Day, Rolling30Days, Total }
 
 /** What ran out: [Help] is anything else the day's AI budget stops (a spoken answer's check, a clip). */
-enum class LimitSubject { Help, Messages, Explanations, Lessons, MapLessons, MindMaps, Outlines, Calls, MockExams }
+enum class LimitSubject { Help, Messages, Explanations, Lessons, MapLessons, MindMaps, Outlines, Calls, MockExams, Uploads, Questions }
 
 sealed interface Limit {
     data class SlowDown(

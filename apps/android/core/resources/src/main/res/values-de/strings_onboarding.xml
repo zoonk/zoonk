@@ -28,8 +28,6 @@
   "onboarding_ask": "f54e670bdeb624d697b78340b24d403bcd171ace6968444db6319b9f5004281e",
   "onboarding_attach_already_read": "e8361df616a1a4e38d93a2d69f20035b46e6c1ee7884400c1f037c785dc3317a",
   "onboarding_attach_failed": "1f1078147852b9814c364114d0b227015c0d58d0674112caee34f0cfc9c591b5",
-  "onboarding_attach_limit_day": "9950a6c60c8840f37600ec8b8ca96e610f4f66b4031b4e3a5a8069acbe90236b",
-  "onboarding_attach_limit_plus": "7995b2c05152a111c378c015cb892b7e20ea69ba973e2d0a9e1457fd65c6fe30",
   "onboarding_attach_sign_in": "0ff3b609f3a46c7b5b8af10967cea61eb1f37e370af9108166e0ba041908fa87",
   "onboarding_attach_slow_down": "966e6460abb0ce403d0b5b42d3319de6eb3bde38427fc312ed587b00b6f7e396",
   "onboarding_attach_unsupported": "72ed8efa92241ea51dba6e256656e9f31bc9bc0cd6a58bfbe22cb5862d356c72",
@@ -226,8 +224,6 @@
   "onboarding_purpose_work": "d149938ba72425461663ddbc7309724f062e1c2a53571f54cd4cf743a3442cec",
   "onboarding_purpose_work_description": "a4f8dfd87b8ae5ee57cae2c05d47bfa5faa1828b6a7aa7d26892064a82ca30a6",
   "onboarding_question_failed": "1a6b4979e8d7ef111976852b3566184e9a5af5f935085c42cd77b6e61ca40c40",
-  "onboarding_question_limit_day": "e7e7ce832fe32dba731422c50de145b625b0fe6747856c2cb102f879811643ac",
-  "onboarding_question_limit_plus": "e2ccb8505fa20c5cfa4b02d66522e313c2b853b2e02f57fb5d6701f893b2c980",
   "onboarding_question_placeholder": "e59687713a45296ea996b0617f458940e3878f5fa9425ed03969450e80ca17a1",
   "onboarding_question_sign_in": "dad3f541fc82e66df5ca287236f215f6148eb528ed5e44fbd9cff8c323bc5b39",
   "onboarding_question_slow_down": "b8bb92980c79fd65b6ecea398a0fb2337ce76f24ebfda859de3f75631855232a",
@@ -612,8 +608,6 @@
     <string name="onboarding_adding_material">Wir fügen dein Material hinzu…</string>
     <!-- Removes an attached file or text. %1$s is its title. -->
     <string name="onboarding_remove_material">%1$s entfernen</string>
-    <string name="onboarding_attach_limit_plus">Heute kannst du kein weiteres Material hinzufügen. Morgen geht es weiter.</string>
-    <string name="onboarding_attach_limit_day">Heute kannst du kein weiteres Material hinzufügen. Morgen geht es weiter, mit einem Abo auch sofort.</string>
     <string name="onboarding_attach_slow_down">Du fügst gerade schnell Material hinzu. Versuch es in ein paar Minuten noch einmal.</string>
     <string name="onboarding_attach_unsupported">Wir können diese Datei nicht lesen. Versuch es mit einer PDF-Datei, einem Foto, einer Word- oder PowerPoint-Datei oder einem Text.</string>
     <string name="onboarding_attach_sign_in">Erstelle ein Konto, um eigenes Material hinzuzufügen.</string>
@@ -637,8 +631,6 @@
     <string name="onboarding_question_failed">Wir konnten das nicht beantworten. Versuch es gleich noch einmal.</string>
     <string name="onboarding_question_sign_in">Erstell ein Konto, um Fragen zu deinem Material zu stellen.</string>
     <string name="onboarding_question_slow_down">Du stellst gerade schnell Fragen. Versuch es in ein paar Minuten noch einmal.</string>
-    <string name="onboarding_question_limit_plus">Heute sind keine weiteren Fragen möglich. Morgen geht es weiter.</string>
-    <string name="onboarding_question_limit_day">Heute sind keine weiteren Fragen möglich. Morgen geht es weiter, mit einem Abo auch sofort.</string>
     <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_title">Schauen wir, was du schon weißt</string>
     <!-- %d is how many areas of the goal the questions cover. -->
