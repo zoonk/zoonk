@@ -146,6 +146,7 @@ async function capture(
       scenario.reach !== null &&
       (await page
         .getByText(scenario.proof)
+        .filter({ visible: true })
         .first()
         .isVisible()
         .catch(() => false));
