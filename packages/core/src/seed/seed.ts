@@ -7,6 +7,7 @@ import { buildSeededPastMissions } from "./build-seeded-past-missions";
 import { planSeededGoal } from "./plan-seeded-goal";
 import { type ScenarioState, writeScenarioState } from "./scenario-states";
 
+/** Seed tooling only: the persona scripts read them. @internal */
 export { SCENARIO_STATES, type ScenarioState } from "./scenario-states";
 
 async function planSeededLearner({
