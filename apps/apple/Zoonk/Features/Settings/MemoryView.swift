@@ -184,7 +184,8 @@ private struct MemoryFactRow: View {
   let delete: () -> Void
 
   var body: some View {
-    HStack(alignment: .firstTextBaseline) {
+    // The options sit on the row's center, as a row's end does beside a title and its note.
+    HStack {
       ListRow(
         Text(fact.statement),
         description: Text(
