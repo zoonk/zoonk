@@ -39,6 +39,11 @@ export function coverageLeads(
     : [];
 
   const unread = parts.filter((part) => part.ink === "not measured");
+
+  const reasons = [...Map.groupBy(read.unreadable, (area) => area.reason ?? "no reason given")].map(
+    ([reason, areas]) => `${areas.length} ${areas.length === 1 ? "area" : "areas"}: ${reason}`,
+  );
+
   const stackless = !isOneStack(read) && STACKED.some((relation) => relations.has(relation));
 
   return [
@@ -61,6 +66,17 @@ export function coverageLeads(
             "ink",
             "a part's drawing wasn't measured",
             unread.map((part) => `the ${part.part} of ${rowName(read, part.row)}`).join(", "),
+          ),
+        ]
+      : []),
+    ...(reasons.length > 0
+      ? [
+          notMeasured(
+            context,
+            read,
+            "unreadable",
+            "an area of it the platform couldn't read",
+            reasons.join("; "),
           ),
         ]
       : []),

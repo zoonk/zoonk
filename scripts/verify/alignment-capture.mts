@@ -61,6 +61,8 @@ export type CaptureElement = {
   middle?: number;
   /** A row's: its value moved under its label (large text), as the row piece does on purpose. */
   stacked?: boolean;
+  /** An area the platform couldn't read (`"part": "unmeasured"`): why. */
+  reason?: string;
 };
 
 export type Configuration = {

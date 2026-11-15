@@ -43,6 +43,15 @@ describe("a declared relationship is measured and holds, or the run fails", () =
     assert.deepEqual(unmeasured(real("round 2 missing-gap")), ["gap"]);
   });
 
+  it("writes a failing record for an area of a declared group the platform couldn't read", () => {
+    const record = evaluateCapture(real("android lesson wait before 43c393b7c4, writing")).find(
+      (finding) => finding.rule === "unreadable",
+    );
+
+    assert.equal(record?.level, "not-measured");
+    assert.match(record?.detail ?? "", /4 areas: a parent replaced its children's semantics/u);
+  });
+
   it("checks each neighbor pair's gap: a row's own gap doesn't stand in for the group's", () => {
     assert.deepEqual(unmeasured(real("round 2 partial-gap")), ["gap"]);
     assert.equal(evaluateFile({ captures: [real("round 2 partial-gap")] }).summary.failed, true);

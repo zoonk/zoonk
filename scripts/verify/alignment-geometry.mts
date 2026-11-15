@@ -72,6 +72,8 @@ export type Group = {
   rows: CaptureElement[];
   parts: CaptureElement[];
   holders: CaptureElement[];
+  /** Areas the platform couldn't read (`"part": "unmeasured"`). */
+  unreadable: CaptureElement[];
 };
 
 const PARTS = new Set<string>(PART_NAMES);
@@ -113,6 +115,7 @@ export function groupsOf(capture: Capture): Group[] {
         rows: inside
           .filter((element) => element.part === "row")
           .toSorted((one, other) => one.bounds[1] - other.bounds[1]),
+        unreadable: inside.filter((element) => element.part === "unmeasured"),
       };
     });
 }
