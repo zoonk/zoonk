@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { type Browser, type BrowserContextOptions, type Page } from "@playwright/test";
 import { type Capture } from "./alignment-capture.mts";
 import { readAlignment, webCapture } from "./alignment-probe.mts";
-import { ACTIONS, PIECES, SURFACES } from "./alignment-table.mts";
+import { WEB_TABLE } from "./alignment-table.mts";
 import { type DiscoveryLead, readDiscovery } from "./alignment-web.mts";
 import {
   type Traffic,
@@ -85,12 +85,8 @@ export type LoadReport = LoadMeasurement & {
 
 const QUERY_HASH_LENGTH = 8;
 
-const WEB_PIECES = PIECES.flatMap((piece) =>
-  piece.web ? [{ name: piece.name, web: piece.web }] : [],
-);
-
 /** Craft's E1 and E3 measure past their 24 px cap inside these. */
-const DECLARED_GROUPS = WEB_PIECES.map((piece) => piece.web.group).join(", ");
+const DECLARED_GROUPS = WEB_TABLE.pieces.map((piece) => piece.web.group).join(", ");
 
 export function slug(path: string): string {
   const { search } = new URL(path, "http://slug.invalid");
@@ -134,11 +130,7 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
   return {
     ...measureFrames(probe?.mainFrames ?? [], fcpMs),
     ...summarizePrefetches(traffic.requests, probe?.timeOrigin ?? null),
-    alignment: await page.evaluate(readAlignment, {
-      actions: ACTIONS,
-      pieces: WEB_PIECES,
-      surfaces: SURFACES,
-    }),
+    alignment: await page.evaluate(readAlignment, WEB_TABLE),
     blankSeenMs: probe?.blankFrames[0] ?? null,
     blockingMs: probe ? totalBlockingTime(probe.longTasks, fcpMs) : null,
     bytes: await page.evaluate(transferredBytes),

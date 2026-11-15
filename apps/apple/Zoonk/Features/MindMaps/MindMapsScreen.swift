@@ -182,9 +182,12 @@ private struct MindMapChaptersTab: View {
         Text(
           "No mind maps yet", tableName: "MindMaps", comment: "Title when no chapter has a map")
       } description: {
-        Text(
-          "Your plan's chapters show here once they're ready, each with its mind map.",
-          tableName: "MindMaps", comment: "Why the mind maps page has no chapters yet")
+        // A finished chapter's map is claimed like any other, so it waits while the maps are used up.
+        if maps.createOffer.stop == nil {
+          Text(
+            "Your plan's chapters show here once they're ready, each with its mind map.",
+            tableName: "MindMaps", comment: "Why the mind maps page has no chapters yet")
+        }
       }
     }
   }
@@ -203,13 +206,15 @@ private struct MindMapCreateSection: View {
   let maps: GoalMindMaps
   let notMade: [ChapterMindMap]
 
-  /// The stop takes the rows' Create until its day has come; then Create is back, the stop's line
-  /// goes, and the offer is read again.
+  /// The offer's stop takes the rows' Create until a read lifts it; its day, by this device's
+  /// clock, only says when to read the offer again.
   var body: some View {
-    OpeningClock(availableAt: maps.createOffer.stop?.availableAt) { now in
-      let isOver = maps.createOffer.stop?.isOver(at: now) ?? false
+    let stop = store.shownStop(goalId: goalId)
 
-      section(canStart: maps.createOffer.stop == nil || isOver)
+    OpeningClock(availableAt: stop?.availableAt) { now in
+      let isOver = stop?.isOver(at: now) ?? false
+
+      section(stop: stop, canStart: stop == nil)
         .task(id: isOver) {
           if isOver {
             await store.readOfferAgain(goalId: goalId, now: now)
@@ -220,9 +225,9 @@ private struct MindMapCreateSection: View {
 
   /// A failed map's row keeps its Try again, whose retry is free.
   @ViewBuilder
-  private func section(canStart: Bool) -> some View {
+  private func section(stop: MindMapAllowanceStop?, canStart: Bool) -> some View {
     let offer = maps.createOffer
-    let line = line(offer, canStart: canStart)
+    let line = line(offer, stop: stop, canStart: canStart)
     let isStopped = if case .stopped = line { true } else { false }
 
     let ready = notMade.filter { $0.lessonsToWrite == 0 && $0.status != .writingLessons }
@@ -233,10 +238,13 @@ private struct MindMapCreateSection: View {
         MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
       }
 
-      if offer.startable > 1 || line != nil || showedStop {
+      // A stop the page holds takes "Create all" too: each map it would start is refused.
+      let offersAll = offer.startable > 1 && canStart
+
+      if offersAll || line != nil || showedStop {
         HeldSlot(gated: isStopped) {
           VStack(alignment: .leading, spacing: 12) {
-            if offer.startable > 1 {
+            if offersAll {
               BusyButton(isBusy: store.creatingAll.contains(goalId), icon: .create) {
                 Task { await store.createAll(goalId: goalId) }
               } label: {
@@ -310,7 +318,9 @@ private struct MindMapCreateSection: View {
     case fewer(Int)
   }
 
-  private func line(_ offer: MindMapCreateOffer, canStart: Bool) -> Line? {
+  private func line(_ offer: MindMapCreateOffer, stop: MindMapAllowanceStop?, canStart: Bool)
+    -> Line?
+  {
     let onTheWay = maps.chapters.count { $0.status.isOnItsWay }
     // Only the ones the button retries: a failed map whose lessons aren't written says so in its
     // own row.
@@ -328,7 +338,7 @@ private struct MindMapCreateSection: View {
       return .unfinished(unfinished)
     }
 
-    if offer.startable == 0, !canStart, let stop = offer.stop {
+    if offer.startable == 0, !canStart, let stop {
       return .stopped(stop.limit(tier: learner.summary.value?.tier ?? .free))
     }
 
@@ -370,7 +380,7 @@ private struct MindMapCreateSection: View {
           "Chapter maps whose making failed; the button above makes them again, for free")
     case .fewer(let count):
       String(
-        localized: "You can make \(count) more right now.", table: "MindMaps",
+        localized: "You can create \(count) more maps right now.", table: "MindMaps",
         comment:
           "Fewer chapter maps can start than are ready to make: as many as the allowance lets")
     case .unreachable, .stopped, nil:

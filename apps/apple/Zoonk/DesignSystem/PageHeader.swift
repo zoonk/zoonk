@@ -11,16 +11,20 @@ struct PageHeader<Trailing: View>: View {
   /// A step keeps its chip's room without one, so every step's title sits at one height.
   var keepsChipRoom = false
   var supporting: Text?
+  /// Main's `DetailFacts`: a chapter's, subject's or unit's facts ("Chapter 3 · 3 lessons · 14 min")
+  /// are data, in its role, where any other page's line is words.
+  var supportingIsFacts = false
   @ViewBuilder let trailing: Trailing
 
   init(
     _ title: Text, chip: Chip? = nil, keepsChipRoom: Bool = false, supporting: Text? = nil,
-    @ViewBuilder trailing: () -> Trailing
+    supportingIsFacts: Bool = false, @ViewBuilder trailing: () -> Trailing
   ) {
     self.title = title
     self.chip = chip
     self.keepsChipRoom = keepsChipRoom
     self.supporting = supporting
+    self.supportingIsFacts = supportingIsFacts
     self.trailing = trailing()
   }
 
@@ -49,7 +53,7 @@ struct PageHeader<Trailing: View>: View {
 
       if let supporting {
         supporting
-          .typeStyle(.body)
+          .typeStyle(supportingIsFacts ? .data : .body)
           .foregroundStyle(.mutedForeground)
       }
     }
@@ -59,8 +63,14 @@ struct PageHeader<Trailing: View>: View {
 }
 
 extension PageHeader where Trailing == EmptyView {
-  init(_ title: Text, chip: Chip? = nil, keepsChipRoom: Bool = false, supporting: Text? = nil) {
-    self.init(title, chip: chip, keepsChipRoom: keepsChipRoom, supporting: supporting) {
+  init(
+    _ title: Text, chip: Chip? = nil, keepsChipRoom: Bool = false, supporting: Text? = nil,
+    supportingIsFacts: Bool = false
+  ) {
+    self.init(
+      title, chip: chip, keepsChipRoom: keepsChipRoom, supporting: supporting,
+      supportingIsFacts: supportingIsFacts
+    ) {
       EmptyView()
     }
   }

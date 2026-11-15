@@ -12,7 +12,7 @@
   "goal_box_kind_language": "a216c3a660c8c26a1f7f88eb9fd8388ffaa66a25b0afb39467828d8f6772f13b",
   "goal_box_kind_music": "934b2a9f231a55e1eab362f0d9d412217836aa1a2cc5ba4af89c4333e92efc46",
   "goal_box_kind_quick_explanation": "9bede60cec2065de7c44e002afcf48e3252dfed14bbb05783185e87e09b1f2eb",
-  "goal_box_kind_topic": "302e2bca6dded447eda0d65c4ff781dbb81e8db6c118bd53d26f0539922a40b4",
+  "goal_box_kind_topic": "381af159130dcf317440a793a19c22632a34b185e0ad4865400948ec647755d9",
   "goal_box_label": "4e872fb90e71cf0954a639c525ea6cb423a9fd208263b9b82f7a479c47ac7261",
   "goal_box_placeholder": "3cafd3a03f42c9c65c03e29f36f681291a32f9aa5fca5c52556c4ef0f36d3f99",
   "goal_box_submit": "e026a8d9d1f5c3a49df87d25ab5c07d3b79612e9c015d4544a2729b80a2034c7",
@@ -37,7 +37,7 @@
     <string name="goal_box_example_explanation">インフレはどういう仕組みですか？</string>
     <string name="goal_box_kind_exam">試験</string>
     <string name="goal_box_kind_language">言語</string>
-    <string name="goal_box_kind_topic">トピックを学ぶ</string>
+    <string name="goal_box_kind_topic">トピック</string>
     <string name="goal_box_kind_music">音楽</string>
     <!-- %1$s is a duration, like "5 min". -->
     <string name="goal_box_kind_quick_explanation">短い解説 · %1$s</string>

@@ -24,6 +24,7 @@ import com.zoonk.android.feature.tutor.turn
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.BuddyStatus
@@ -109,13 +110,7 @@ class BuddyScreenshots {
         }
         compose.waitForIdle()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use {
-            compose
-                .onRoot()
-                .captureRender()
-                .asAndroidBitmap()
-                .compress(Bitmap.CompressFormat.PNG, 100, it)
-        }
+        writeRender(file, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     private companion object {

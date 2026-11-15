@@ -21,10 +21,11 @@ function ReportSaveProblem() {
       aria-haspopup="dialog"
       className="inline-flex"
       icon={<FlagIcon aria-hidden="true" />}
-      onClick={() =>
+      onClick={(event) =>
         feedback.openFeedbackForm({
           context: { reportType: "saveFailure", screen: "answers-save-error" },
           isReport: true,
+          opener: event.currentTarget,
         })
       }
       type="button"

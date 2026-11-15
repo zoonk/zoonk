@@ -12,10 +12,15 @@ export type AlignmentPage = Pick<Capture, "activeSurface" | "elements">;
  */
 export function readAlignment({
   actions: controls,
+  anchors = [],
+  columns,
   pieces,
   surfaces,
 }: {
   actions: string;
+  /** A scenario's anchors: the first showing match of each is written for its state pair. */
+  anchors?: { id: string; web: string }[];
+  columns: string;
   pieces: { name: string; web: WebPiece }[];
   surfaces: string;
 }): AlignmentPage {
@@ -209,11 +214,34 @@ export function readAlignment({
     return pen.measureText("H").actualBoundingBoxAscent;
   }
 
+  /** Scripts with no capitals, set on their ideographic face: Han and kana, and Hangul. */
+  const HAN_KANA = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
+  const HANGUL = /\p{Script=Hangul}/u;
+
+  /**
+   * A script with no capitals is centered by its ideographic face, the box its glyphs are drawn
+   * in, not by a string's ink, which differs between "一" and "書". The face is read from a
+   * full-frame glyph through the same fonts, so it is the fallback face's: on Chromium it sits
+   * within 0.4 px of the line box's middle at 12 to 24 px, in Japanese and Korean
+   * (`evidence-ideographic` in the alignment build notes).
+   */
+  function ideographicFace(text: string, style: CSSStyleDeclaration) {
+    const glyph = HAN_KANA.test(text) ? "国" : HANGUL.test(text) && "국";
+
+    if (!pen || !glyph) {
+      return null;
+    }
+
+    pen.font = fontOf(style);
+    const metrics = pen.measureText(glyph);
+    return { ascent: metrics.actualBoundingBoxAscent, descent: metrics.actualBoundingBoxDescent };
+  }
+
   function textMetrics(
     element: Element,
   ): Pick<
     CaptureElement,
-    "baseline" | "capBottom" | "capTop" | "firstLine" | "lines" | "text" | "type"
+    "baseline" | "capBottom" | "capTop" | "firstLine" | "lines" | "text" | "textBox" | "type"
   > {
     const first = firstText(element);
     const main = mainText(element) ?? first;
@@ -243,11 +271,14 @@ export function readAlignment({
     const base = baselineOf(first);
     // The cap height is the primary face's: a text another face draws has no capitals to read.
     const cap = drawnByPrimary(first.data, style) ? capHeight(style) : null;
+    const face = cap === null ? ideographicFace(first.data, style) : null;
+    const box = cap === null ? face : { ascent: cap, descent: 0 };
 
     return {
       baseline: base === null ? "not measured" : base + scrollY,
-      capBottom: base === null || cap === null ? "not measured" : base + scrollY,
-      capTop: base === null || cap === null ? "not measured" : base - cap + scrollY,
+      capBottom: base === null || box === null ? "not measured" : base + box.descent + scrollY,
+      capTop: base === null || box === null ? "not measured" : base - box.ascent + scrollY,
+      ...(box ? { textBox: face ? ("ideographic face" as const) : ("capitals" as const) } : {}),
       ...(line ? { firstLine: bounds(line) } : {}),
       lines: lineCount(rects),
       text: (main.textContent ?? "").trim().slice(0, LABEL_LENGTH),
@@ -553,6 +584,141 @@ export function readAlignment({
       .flatMap((group, groupIndex) => readGroup(pieceName, piece, group, groupIndex)),
   );
 
+  /**
+   * Every drawn box that passes its column (craft E7): a row's highlight (its `::before` fill, or a
+   * fill on a current or highlighted row), a hairline, a picture, or any other box, with the
+   * column's content edges and its frame (the column with its gutter). The closest column that
+   * draws a box is the box's own; the bottom bar reaches the frame by design and isn't read.
+   */
+  function readBleeds(): CaptureElement[] {
+    const PAST = 1;
+    const HAIRLINE = 2;
+    const { pixels } = globalThis.zoonkPage;
+
+    const columnOf = (element: Element) => {
+      let column = element.parentElement?.closest(columns) ?? null;
+
+      while (column && isContents(column)) {
+        column = column.parentElement?.closest(columns) ?? null;
+      }
+
+      return column;
+    };
+
+    const edgesOf = (column: Element) => {
+      const frame = column.getBoundingClientRect();
+      const style = getComputedStyle(column);
+
+      return {
+        frame,
+        left: frame.left + pixels(style.paddingLeft),
+        right: frame.right - pixels(style.paddingRight),
+      };
+    };
+
+    const beforeFill = (element: Element): Rect | null => {
+      const pseudo = getComputedStyle(element, "::before");
+
+      if (
+        pseudo.content === "none" ||
+        pseudo.position !== "absolute" ||
+        globalThis.zoonkPage.rgba(pseudo.backgroundColor)[3] === 0
+      ) {
+        return null;
+      }
+
+      const box = element.getBoundingClientRect();
+
+      return {
+        bottom: box.bottom - pixels(pseudo.bottom),
+        left: box.left + pixels(pseudo.left),
+        right: box.right - pixels(pseudo.right),
+        top: box.top + pixels(pseudo.top),
+      };
+    };
+
+    /** A border on the top or the bottom alone: a rule drawn across the element at that edge. */
+    const ruleOf = (element: Element): Rect | null => {
+      const style = getComputedStyle(element);
+
+      const drawn = (side: string) =>
+        pixels(style.getPropertyValue(`border-${side}-width`)) > 0 &&
+        globalThis.zoonkPage.rgba(style.getPropertyValue(`border-${side}-color`))[3] > 0;
+
+      if (drawn("left") || drawn("right") || drawn("top") === drawn("bottom")) {
+        return null;
+      }
+
+      const box = element.getBoundingClientRect();
+
+      const width = pixels(
+        style.getPropertyValue(drawn("top") ? "border-top-width" : "border-bottom-width"),
+      );
+
+      return drawn("top")
+        ? { bottom: box.top + width, left: box.left, right: box.right, top: box.top }
+        : { bottom: box.bottom, left: box.left, right: box.right, top: box.bottom - width };
+    };
+
+    type Kind = NonNullable<CaptureElement["kind"]>;
+
+    const kindOf = (element: Element, box: Rect): Kind => {
+      if (element.matches("img, video, canvas, picture")) {
+        return "picture";
+      }
+
+      return Math.min(box.right - box.left, box.bottom - box.top) <= HAIRLINE ? "hairline" : "box";
+    };
+
+    return [...document.querySelectorAll(`:is(${columns}) *`)].flatMap(
+      (element, index): CaptureElement[] => {
+        const column = columnOf(element);
+
+        if (!column || !shown(element) || element.closest("[data-slot=bottom-bar]")) {
+          return [];
+        }
+
+        const edges = edgesOf(column);
+
+        const passes = (box: Rect) =>
+          edges.left - box.left > PAST || box.right - edges.right > PAST;
+
+        const highlight = beforeFill(element);
+
+        const ownBox = globalThis.zoonkPage.paints(element, ["top", "right", "bottom", "left"])
+          ? element.getBoundingClientRect()
+          : null;
+
+        const line = ownBox ? null : ruleOf(element);
+        const current = element.matches("[aria-current], [data-highlighted], [aria-selected=true]");
+
+        const found: { box: Rect; kind: Kind }[] = [
+          ...(highlight && passes(highlight)
+            ? [{ box: highlight, kind: "highlight" as const }]
+            : []),
+          ...(ownBox && passes(ownBox)
+            ? [{ box: ownBox, kind: current ? ("highlight" as const) : kindOf(element, ownBox) }]
+            : []),
+          ...(line && passes(line) ? [{ box: line, kind: "hairline" as const }] : []),
+        ];
+
+        return found.map(({ box, kind }, part) => ({
+          bounds: bounds(box),
+          column: [edges.left + scrollX, edges.right + scrollX],
+          frame: [edges.frame.left + scrollX, edges.frame.right + scrollX],
+          group: null,
+          id: `fill.${index}.${part}`,
+          ink: bounds(box),
+          kind,
+          name: name(element),
+          part: "fill",
+          piece: "page",
+          row: null,
+        }));
+      },
+    );
+  }
+
   const covers = [...document.querySelectorAll(surfaces)].filter((surface) => present(surface));
   const surfaceName = (cover: Element) => `${name(cover)} #${covers.indexOf(cover) + 1}`;
 
@@ -624,6 +790,7 @@ export function readAlignment({
         part: "action",
         piece: "action",
         row: null,
+        ...(action.matches(":disabled, [aria-disabled=true]") ? { disabled: true } : {}),
         surface: surfaceOf(action),
         text: globalThis.zoonkPage.label(action),
         ...(target ? { target } : {}),
@@ -631,12 +798,38 @@ export function readAlignment({
       };
     });
 
+  const anchored = anchors.flatMap(({ id, web }): CaptureElement[] => {
+    const element = [...document.querySelectorAll(web)].find((candidate) => present(candidate));
+
+    if (!element) {
+      return [];
+    }
+
+    const ink = inkOf(element);
+
+    return [
+      {
+        anchor: id,
+        bounds: bounds(boxOf(element)),
+        group: null,
+        id: `anchor.${id}`,
+        ink: ink ? bounds(ink) : null,
+        name: name(element),
+        part: "anchor",
+        piece: "",
+        row: null,
+      },
+    ];
+  });
+
+  const all = [...elements, ...actions, ...anchored, ...readBleeds()];
+
   // Null when two surfaces overlap and the document shows no declared surface where they do.
   if (top === null) {
-    return { activeSurface: "not measured", elements: [...elements, ...actions] };
+    return { activeSurface: "not measured", elements: all };
   }
 
-  return { activeSurface: top ? surfaceName(top) : "page", elements: [...elements, ...actions] };
+  return { activeSurface: top ? surfaceName(top) : "page", elements: all };
 }
 
 /** The UI's locale is the path's first segment where it names one (`/pt/plan`). */
@@ -649,11 +842,13 @@ export function webCapture({
   page,
   path,
   scheme,
+  textScale = 1,
   viewport,
 }: {
   page: AlignmentPage;
   path: string;
   scheme: Scheme;
+  textScale?: number;
   viewport: ViewportName;
 }): Capture {
   const size = VIEWPORTS[viewport];
@@ -666,7 +861,7 @@ export function webCapture({
       pointer: size.hasTouch ? "touch" : "keys",
       scheme,
       size: viewport,
-      textScale: 1,
+      textScale,
       width: size.viewport?.width ?? 0,
     },
     platform: "web",

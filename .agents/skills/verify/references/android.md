@@ -1,6 +1,6 @@
 # Measuring the Android app
 
-How to look at screens and measure requests, memory, leaks, CPU and jank for the Android app. JVM renders need no emulator; everything else runs on an emulator from `apps/android/README.md`. Measure the screens a change touches, before and after, on the same emulator, and put the numbers in the report.
+How to look at screens, measure their layout, and measure requests, memory, leaks, CPU and jank for the Android app. JVM renders need no emulator; everything else runs on an emulator from `apps/android/README.md`. Measure the screens a change touches, before and after, on the same emulator, and put the numbers in the report.
 
 ## Look at it without an emulator
 
@@ -15,6 +15,27 @@ Use `captureRender()` on one selected Compose root, tagged node, or dialog for J
 Run the test task of the module that owns the screen (`:app` for the gallery and the shell); each module writes its reports under its own `build/`.
 
 Read the PNGs. Images aren't committed and CI doesn't compare pixels. A render shows layout, color and type; it doesn't show system bars, timing or TalkBack, so the emulator check still follows for runtime behavior.
+
+## Layout capture
+
+With `-Pzoonk.shots=<folder>`, each render taken with `captureRender()` and saved with `writeRender()` also writes its layout beside the picture as `<name>.json`, so the [alignment check](pages.md#alignment) judges Android's screens by the web's rules: run `pnpm verify:alignment <folder>`. Without the flag, nothing is measured or written. Commit first: each file records the build's commit and a digest of uncommitted changes.
+
+The capture reads the unmerged semantics tree of the frame `captureRender()` copied, in dp from the picture's top start: each part's bounds; a text's first baseline, its capitals from the font file's own cap height, its line bounds, line count and type (`Geist 14 500 20`); ink from the picture's pixels; how many descriptions a row drew; each filled action and its surface (a dialog's window is its own); and the size, locale, font scale and night mode. What the tree or the picture can't give is written "not measured", never estimated, and fails the check. Pass `captureRender(scenario = "<id>")` to name the state.
+
+A shared piece names its parts with `Modifier.layoutPart(piece, part)` (`LayoutParts.kt`, debug builds only), with the piece's name from the table (`LayoutPart.LIST`, `CHOICES`, `NAVIGATION`, `WAIT`, `GENERATION_WAIT`), and gives the group's `gap`, a row's `endInset` and `firstLine` (a row with a text lead) where its layout has them. `ListRow`, the choice list, the navigation, the wait pieces and the buttons already do. A new piece is declared in `alignment-table.mts` first (a piece with no `web` when the web has no twin). Rows no piece frames are grouped by the stack that holds them, and their findings are discovery leads, never failures: frame them with the list piece to make them count.
+
+A dialog or a sheet is a window of its own: with one open, `onRoot()` fails on two roots, so capture `onNode(isDialog())` or the last root (`onAllNodes(isRoot()).onLast()`). The picture is that window alone, without the page and the dim behind it, and its capture counts filled actions on its own surface. A picture that must show the sheet over its page comes from an emulator.
+
+To put renders in a PR, `pnpm pr:media adopt <before|after> <render.json>...` copies each picture into a capture folder (`tmp/pr-media/android/<side>` by default, `--to <dir>` for another) with its record in `capture.json` and its layout in `alignment.json`. It refuses a render whose picture changed after it was measured. The [picture gate](../../zoonk-commit/SKILL.md#every-picture-is-captured-current-and-read) then judges it like any other.
+
+What it can't measure, as the capture states:
+
+- A part whose parent replaced its children's semantics (`clearAndSetSemantics`, so TalkBack reads one phrase): written as an unmeasured area, which fails inside a declared group.
+- Capitals of text a fallback font drew (Japanese, Korean or Arabic in a Geist style, or a span in another family), so that row's line isn't measured.
+- Ink of text that is clipped, covered (wholly, partly or by a gradient), drawn with a brush, or dimmed by its parent so no pixel is its own color; and of a dimmed part whose faint edge doesn't reach its box, such as a disabled outline button.
+- Lazy rows that weren't composed.
+- A picture that isn't the one frame `captureRender()` copied (a copy, several windows drawn together): its file says so and holds no parts.
+- A scheme a test passes its theme itself: only the configuration's night mode is recorded. The pointer is always touch.
 
 ## Set up the emulator
 

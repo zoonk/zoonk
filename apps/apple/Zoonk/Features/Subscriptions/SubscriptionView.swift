@@ -870,11 +870,8 @@ private struct FreePlanCard: View {
           Text(
             "A plan for your goal and your date", tableName: "Subscriptions"))
 
-        if let messages = limits.tutorMessagesPerDay {
-          item(
-            Text(
-              "An AI study buddy: \(messages) messages a day", tableName: "Subscriptions",
-              comment: "Free plan: the study buddy's daily messages"))
+        if let buddy = limits.buddyLine {
+          item(Text(buddy))
         }
 
         item(
@@ -1007,11 +1004,8 @@ private struct PlusQuestions: View {
             tableName: "Subscriptions", comment: "Free plan: lessons a month"))
       }
 
-      if let messages = limits.tutorMessagesPerDay {
-        bullet(
-          Text(
-            "An AI study buddy: \(messages) messages a day", tableName: "Subscriptions",
-            comment: "Free plan: the study buddy's daily messages"))
+      if let buddy = limits.buddyLine {
+        bullet(Text(buddy))
       }
 
       if let uploads = limits.uploadsPerDay {

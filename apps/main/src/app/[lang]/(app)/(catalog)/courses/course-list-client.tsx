@@ -32,7 +32,7 @@ const MINUTES_PER_HOUR = 60;
 
 /** The focus ring sits inside its edges, which the grid's frame clips. */
 const COURSE_LINK_CLASS =
-  "hover:bg-muted/60 focus-visible:ring-ring/50 relative flex h-full min-w-0 items-start gap-3.5 px-4 py-4 transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-inset sm:px-5 lg:flex-col lg:gap-4 lg:py-5 motion-reduce:transition-none";
+  "hover:bg-muted/60 focus-visible:ring-ring/50 relative flex h-full min-w-0 items-start gap-3.5 px-4 py-4 transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-inset sm:px-2.5 lg:flex-col lg:gap-4 lg:py-5 motion-reduce:transition-none";
 
 function useDurationLabel(totalMinutes: number) {
   const formatDuration = useFormatDuration();
@@ -108,7 +108,7 @@ function CourseItem({
 
         {subjectName && (
           <SubjectLabel
-            className="absolute top-7.25 right-5 hidden lg:inline-flex"
+            className="absolute top-7.25 right-2.5 hidden lg:inline-flex"
             subject={subject}
           >
             {subjectName}

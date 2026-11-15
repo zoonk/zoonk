@@ -3051,12 +3051,6 @@ msgid "A plan for your goal and your date"
 msgstr "Um plano para seu objetivo e sua data"
 
 #: src/components/pricing/free-plan.tsx
-#: src/components/pricing/plus-questions.tsx
-msgctxt "LKY79v"
-msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
-msgstr "Um parceiro de estudos com IA: {count, plural, one {# mensagem} other {# mensagens}} por dia, até {month} por mês"
-
-#: src/components/pricing/free-plan.tsx
 msgctxt "72Jr7b"
 msgid "Speaking practice calls"
 msgstr "Conversas para praticar"
@@ -3295,6 +3289,26 @@ msgstr "Posso receber um reembolso?"
 msgctxt "C0JMHR"
 msgid "<link>Write to us</link> and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
 msgstr "<link>Escreva para a gente</link> e vamos analisar seu caso. As compras na App Store ou no Google Play seguem as regras de reembolso da Apple ou do Google."
+
+#: src/components/pricing/study-buddy-allowance.ts
+msgctxt "LKY79v"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
+msgstr "Um parceiro de estudos com IA: {count, plural, one {# mensagem} other {# mensagens}} por dia, até {month} por mês"
+
+#: src/components/pricing/study-buddy-allowance.ts
+msgctxt "5ZDN6U"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
+msgstr "Um parceiro de estudos com IA: {count, plural, one {# mensagem} other {# mensagens}} por dia"
+
+#: src/components/pricing/study-buddy-allowance.ts
+msgctxt "K2QNT9"
+msgid "An AI study buddy: up to {month, plural, one {# message} other {# messages}} a month"
+msgstr "Um parceiro de estudos com IA: até {month, plural, one {# mensagem} other {# mensagens}} por mês"
+
+#: src/components/pricing/study-buddy-allowance.ts
+msgctxt "y1mZxN"
+msgid "An AI study buddy"
+msgstr "Um parceiro de estudos com IA"
 
 #: src/components/pricing/subscribe-button.tsx
 msgctxt "iB3ixY"

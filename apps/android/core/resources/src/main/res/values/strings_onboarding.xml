@@ -535,6 +535,11 @@
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
     </plurals>
+    <!-- Over the plan's first week: how many of its days the learner studies, today among them. -->
+    <plurals name="onboarding_reveal_study_days">
+        <item quantity="one">%d study day</item>
+        <item quantity="other">%d study days</item>
+    </plurals>
     <string name="onboarding_schedule_title">How much time can you study each day?</string>
     <string name="onboarding_full_course">Study everything, even after the exam</string>
     <string name="onboarding_full_course_rule">Until the exam, what comes up most comes first. What doesn\'t fit comes after it.</string>

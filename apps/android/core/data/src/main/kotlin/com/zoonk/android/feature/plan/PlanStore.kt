@@ -38,12 +38,15 @@ import com.zoonk.api.models.SkillOutlineGeneration
 import com.zoonk.api.models.StudyNext
 import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import java.io.IOException
 import java.time.ZoneId
 import java.util.UUID
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 /**
@@ -300,7 +303,11 @@ class LivePlanApi(
     override suspend fun timeToCover(
         session: AuthenticatedSession,
         goalId: UUID,
-    ) = perform { api.clients(session).plans.findPlanTimeToCover(goalId, PlanTimeToCoverInput()) }
+    ) = perform {
+        // The server plans the goal at each daily time, which can outlast the usual 30 s read: wait the web's 45 s.
+        withTimeoutOrNull(TIME_TO_COVER_WAIT) { api.streamingClients(session).plans.findPlanTimeToCover(goalId, PlanTimeToCoverInput()) }
+            ?: throw IOException("Time to cover took longer than $TIME_TO_COVER_WAIT")
+    }
 
     override suspend fun chooseExamOption(
         session: AuthenticatedSession,
@@ -594,3 +601,5 @@ class PlanStore(
         internal val CLOCK_MARGIN = 1.minutes
     }
 }
+
+private val TIME_TO_COVER_WAIT = 45.seconds

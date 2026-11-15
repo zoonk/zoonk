@@ -270,6 +270,7 @@ function GoalStartFlow({
   const backToEntry = (words: string) => showEntry({ words });
 
   const atGoalLimit = goalLimit?.reason === "activeGoals";
+  const bar = { backDisabled: creation.isCreating, onBack: getBack({ backToEntry, state }) };
 
   const rail = atGoalLimit ? null : (
     <>
@@ -280,7 +281,7 @@ function GoalStartFlow({
 
   return (
     <OnboardingRailProvider rail={rail}>
-      <OnboardingFrame bar={{ onBack: getBack({ backToEntry, state }) }}>
+      <OnboardingFrame bar={bar}>
         {state.kind === "entry" && (
           <GoalStartEntry
             atGoalLimit={atGoalLimit}

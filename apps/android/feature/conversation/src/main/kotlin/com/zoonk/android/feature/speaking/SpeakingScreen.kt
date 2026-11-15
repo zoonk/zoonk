@@ -409,11 +409,10 @@ private fun TaskRow(
         onClick = { open = !open },
         expanded = open,
         leading = { Text(formatNumber(index + 1.0, locale), style = MaterialTheme.zoonkType.data) },
+        leadOnFirstLine = true,
         supporting = {
-            Column {
-                Text(facts)
-                lastTry?.let { Text(it) }
-            }
+            Text(facts)
+            lastTry?.let { Text(it) }
         },
     )
     if (open) {

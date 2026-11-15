@@ -510,7 +510,9 @@ extension TutorMemoryChange {
 
 extension TutorFailure {
   /// `fallback` when the error body names no allowance.
-  init(refusal error: Components.Schemas._Error?, fallback: TutorFailure) {
+  init(
+    refusal error: Components.Schemas._Error?, fallback: TutorFailure, receivedAt: Date = .now
+  ) {
     switch error?.error.code {
     case "SIGN_UP_REQUIRED":
       self = .signUpRequired
@@ -527,7 +529,7 @@ extension TutorFailure {
       self = .limit(
         .reached(
           period: limit.period, tier: tier,
-          availableAt: limit.availableAt.flatMap(Date.init(serverInstant:))))
+          availableAt: Date(opening: limit.availableAt, receivedAt: receivedAt)))
     default:
       self = fallback
     }

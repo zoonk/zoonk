@@ -23,6 +23,7 @@ import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Challenge
 import com.zoonk.api.models.ChallengeGeneration
@@ -141,7 +142,7 @@ class ChallengeScreenshots {
         if (fold) rule.unfoldBook(folds)
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
-        File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(File(folder, "$name.png"), bitmap)
     }
 
     private val leftOutEffect =
