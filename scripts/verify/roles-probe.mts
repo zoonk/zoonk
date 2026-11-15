@@ -6,6 +6,8 @@ export type RoleSample = {
   gap: number | null;
   glyph: string | null;
   label: string;
+  /** The face, size, weight and color its first drawn words are set in; null when it draws none. */
+  type: string | null;
 };
 
 /** Runs in the measured page; the slots belong to the shared pieces, not to a screen's classes. */
@@ -27,7 +29,7 @@ export function readRoles({
     overlay: overlays.map(({ panel }) => `[data-slot=${panel}]`).join(", "),
     "page-top": '[data-slot="page-top"], [data-slot="page-header"]',
     "subscription-gate": '[data-slot="subscribe-gate"]',
-    tabs: '[data-slot="tabs-list"]',
+    tabs: '[data-slot="tabs-list"], [data-tabs]',
   };
 
   const { shown } = globalThis.zoonkPage;
@@ -65,6 +67,17 @@ export function readRoles({
           return [];
         }
 
+        const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+        let words: Element | null = null;
+
+        for (let text = walker.nextNode(); text && !words; text = walker.nextNode()) {
+          words =
+            text.textContent?.trim() && text.parentElement && shown(text.parentElement)
+              ? text.parentElement
+              : null;
+        }
+
+        const set = words ? getComputedStyle(words) : null;
         const icon = node.querySelector("svg");
         const glyph = icon?.getBoundingClientRect();
         const gap = Number(getComputedStyle(node).columnGap.replace(/px$/u, ""));
@@ -84,6 +97,9 @@ export function readRoles({
               .replaceAll(/\s+/gu, " ")
               .trim(),
             role,
+            type: set
+              ? `${set.fontFamily.split(",")[0]?.replaceAll(/["']/gu, "").trim()} ${set.fontSize} ${set.fontWeight} ${set.color}`
+              : null,
           },
         ];
       }),

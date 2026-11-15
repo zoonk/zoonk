@@ -73,6 +73,7 @@ function CategoryNavView(props: CategoryNavProps) {
           <HorizontalScrollContent
             aria-label={t("Course categories")}
             className={TAB_LIST_CLASS}
+            data-tabs
             role="navigation"
           >
             {links.map((link) => (

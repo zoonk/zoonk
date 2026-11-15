@@ -53,6 +53,10 @@ export type Read = { at: string; by: string; carriedFrom?: string; findings: Fin
  */
 export type CaptureItem = {
   build: Build | NativeStamp;
+  /** The simulator or emulator a picture came from, as it describes itself: no capture behind it. */
+  device?: string;
+  /** What a device picture shows, in plain words given when it was taken. */
+  shows?: string;
   file: string;
   locale: string;
   platform: Platform;
@@ -189,6 +193,16 @@ export function buildOf({ build, platform }: CaptureItem): Build {
     commit,
     id: commit === "unknown" ? "unknown" : commit,
   };
+}
+
+/**
+ * What was verified about a device picture: its device, and the installed build's commit, or, for
+ * an emulator's app, which carries none, that the build wasn't verified and when it was installed.
+ */
+export function deviceLine(item: CaptureItem): string {
+  const { commit, id } = buildOf(item);
+  const build = commit === "unknown" ? `build not verified, ${id}` : `build ${commit.slice(0, 10)}`;
+  return `${item.device}; ${build}`;
 }
 
 export function isRecorded(item: ManifestItem): item is CaptureItem {
