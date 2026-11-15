@@ -432,6 +432,47 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertEqual(calls.saveTokens, ["token-learner-a", "token-learner-b"])
   }
 
+  /// With this device's clock ahead of the server, the stop "Create all" got back is already past
+  /// when it arrives: it keeps its gate with no day, through the list read after it, instead of
+  /// giving every row its Create back.
+  func testCreatingAllThatStopsWithTheClockAheadKeepsItsStop() async {
+    let behind = MindMapAllowanceStop(
+      availableAt: .now.addingTimeInterval(-60), period: "rolling30Days", reason: .limitReached,
+      resource: .mindMap)
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    await api.stopNewMaps(behind)
+    await api.stopCreatingAll(behind)
+    let store = makeStore(api: api)
+    await store.list(goalId: "goal").load()
+
+    await store.createAll(goalId: "goal")
+
+    let calls = await api.calls
+    XCTAssertEqual(calls.list, 2, "the list is read again after the answer")
+    let shown = store.shownStop(goalId: "goal")
+    XCTAssertNotNil(shown)
+    XCTAssertNil(shown?.availableAt, "no day can be told on this device")
+    XCTAssertFalse(shown?.isOver(at: .now.addingTimeInterval(3600)) ?? true)
+  }
+
+  /// A stop received before its day opens when the day comes, so Create is back then.
+  func testCreatingAllThatStopsBeforeItsDayOpensWhenTheDayComes() async {
+    let opens = Date.now.addingTimeInterval(60)
+    let ahead = MindMapAllowanceStop(
+      availableAt: opens, period: "rolling30Days", reason: .limitReached, resource: .mindMap)
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    await api.stopNewMaps(ahead)
+    await api.stopCreatingAll(ahead)
+    let store = makeStore(api: api)
+    await store.list(goalId: "goal").load()
+
+    await store.createAll(goalId: "goal")
+
+    XCTAssertEqual(store.shownStop(goalId: "goal")?.availableAt, opens)
+    XCTAssertFalse(store.shownStop(goalId: "goal")?.isOver(at: .now) ?? true)
+    XCTAssertTrue(store.shownStop(goalId: "goal")?.isOver(at: opens) ?? false)
+  }
+
   func testCreatingAllReadsTheListAgainToShowWhatStarted() async {
     let api = MindMapsAPIStub(server: .available, statuses: [])
     let store = makeStore(api: api)
@@ -603,6 +644,7 @@ final class MindMapsStoreTests: XCTestCase {
 /// status answers every read after it.
 private actor MindMapsAPIStub: MindMapsAPIClient {
   private var stop: MindMapAllowanceStop?
+  private var createAllStop: MindMapAllowanceStop?
   struct Calls {
     var create = 0
     var createAll = 0
@@ -681,6 +723,11 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
 
   func stopNewMaps(_ stop: MindMapAllowanceStop?) {
     self.stop = stop
+  }
+
+  /// "Create all" starts nothing and answers with this stop.
+  func stopCreatingAll(_ stop: MindMapAllowanceStop?) {
+    createAllStop = stop
   }
 
   func failCreateAll(_ count: Int) {
@@ -782,7 +829,7 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
     return saved
   }
 
-  func createAll(token: String, goalId: String) async throws {
+  func createAll(token: String, goalId: String) async throws -> MindMapAllowanceStop? {
     calls.createAll += 1
 
     if createAllFailures > 0 {
@@ -790,7 +837,12 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
       throw APIError.network
     }
 
+    if let createAllStop {
+      return createAllStop
+    }
+
     server = .drawing
+    return nil
   }
 
   func map(token: String, goalId: String, chapterId: String) async throws -> ChapterMindMap {

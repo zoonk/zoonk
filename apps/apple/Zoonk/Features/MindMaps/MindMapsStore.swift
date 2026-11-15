@@ -28,6 +28,9 @@ final class MindMapsStore {
   /// Goals whose "Create all chapter maps" is on its way.
   private(set) var creatingAll: Set<String> = []
   private(set) var createAllFailures: [String: MindMapRequestFailure] = [:]
+  /// The stop "Create all" answered with, as this device received it. A list read's stop is a fact
+  /// the page holds, so this one is shown ahead of it.
+  private(set) var createAllStops: [String: MindMapAllowanceStop] = [:]
 
   init(
     api: any MindMapsAPIClient, cache: AppCache, drawingPoll: Duration = .seconds(4),
@@ -43,11 +46,14 @@ final class MindMapsStore {
   /// A read only: once the page's stop is over, its offer is read again, so its counts and Create
   /// all are today's answer.
   func readOfferAgain(goalId: String, now: Date) async {
-    let list = list(goalId: goalId)
-
-    if list.value?.createOffer.stop?.isOver(at: now) == true {
-      await list.refresh()
+    if shownStop(goalId: goalId)?.isOver(at: now) == true {
+      await list(goalId: goalId).refresh()
     }
+  }
+
+  /// What stops a new map on the page: the one "Create all" answered with, or the list's own.
+  func shownStop(goalId: String) -> MindMapAllowanceStop? {
+    createAllStops[goalId] ?? lists[goalId]?.value?.createOffer.stop
   }
 
   func list(goalId: String) -> Resource<GoalMindMaps> {
@@ -201,14 +207,17 @@ final class MindMapsStore {
     creatingAll.insert(goalId)
     defer { creatingAll.remove(goalId) }
     failCreateAll(nil, goalId: goalId)
+    createAllStops[goalId] = nil
 
     let api = api
     let started = await cache.mutate { identity in
-      try await api.createAll(token: identity.bearerToken, goalId: goalId)
+      try await api.createAll(token: identity.bearerToken, goalId: goalId)?.received(at: .now)
     }
 
     switch started {
-    case .done:
+    case .done(let stop):
+      createAllStops[goalId] = stop
+
       if await !Self.reread(lists[goalId]) {
         failCreateAll(.unreachable, goalId: goalId)
       }

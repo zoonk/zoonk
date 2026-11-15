@@ -127,6 +127,14 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
   let reason: Reason
   let resource: Resource?
 
+  /// As this device received it: an instant already past by then came from a server whose clock
+  /// is behind this device's, so it has no day here and the stop stands until the next try.
+  func received(at receivedAt: Date) -> MindMapAllowanceStop {
+    MindMapAllowanceStop(
+      availableAt: availableAt.flatMap { $0 > receivedAt ? $0 : nil }, period: period,
+      reason: reason, resource: resource)
+  }
+
   /// Its instant has passed, so a map's Create asks the server again.
   func isOver(at now: Date) -> Bool {
     availableAt.map { $0 <= now } ?? false
