@@ -6,7 +6,11 @@ import { element, fixtureCapture, real } from "./alignment-fixtures.mts";
 import { evaluateCapture } from "./alignment.mts";
 
 /** A box at `x` and `width` on a phone whose column runs 16 to 374 in a 390-wide frame. */
-function fill(kind: "box" | "hairline" | "highlight" | "picture", x: number, width: number) {
+function fill(
+  kind: "box" | "hairline" | "highlight" | "picture" | "tab",
+  x: number,
+  width: number,
+) {
   return fixtureCapture([
     element({
       bounds: [x, 100, width, kind === "hairline" ? 1 : 44],
@@ -39,6 +43,12 @@ function groups(...boxes: [number, number, number][]) {
   );
 }
 
+/** A highlighted row's fill at 2x text. */
+function scaled(x: number, width: number) {
+  const capture = fill("highlight", x, width);
+  return { ...capture, configuration: { ...capture.configuration, textScale: 2 } };
+}
+
 function columnMisses(capture: Capture) {
   return evaluateCapture(capture)
     .filter((finding) => finding.rule === "column")
@@ -65,13 +75,13 @@ describe("the page's column (craft E7)", () => {
   });
 
   it("scales the kit's 10 with the text, since every length is in rem: 20 at 2x text", () => {
-    const scaled = (x: number, width: number) => {
-      const capture = fill("highlight", x, width);
-      return { ...capture, configuration: { ...capture.configuration, textScale: 2 } };
-    };
-
     assert.deepEqual(columnMisses(scaled(-4, 398)), []);
     assert.equal(columnMisses(scaled(-14, 418)).length, 1);
+  });
+
+  it("lets the current tab's fill pass by the same 10, on the side it reaches (craft's deliberate choice)", () => {
+    assert.deepEqual(columnMisses(fill("tab", 6, 80)), []);
+    assert.equal(columnMisses(fill("tab", 2, 80)).length, 1);
   });
 
   it("lets a hairline or a picture pass only across the frame's whole room, and never a box", () => {

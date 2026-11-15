@@ -30,7 +30,7 @@ const OPTIONAL = z
     frame: z.tuple([z.number(), z.number()]),
     gap: MEASURE,
     gapBefore: MEASURE,
-    kind: z.enum(["box", "hairline", "highlight", "picture"]),
+    kind: z.enum(["box", "hairline", "highlight", "picture", "tab"]),
     layoutScale: z.number().positive(),
     lines: z.union([z.int().positive(), NOT_MEASURED]),
     margins: z.tuple([z.number(), z.number()]),

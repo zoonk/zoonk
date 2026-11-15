@@ -807,13 +807,14 @@ export function readAlignment({
 
         const line = ownBox ? null : ruleOf(element);
         const current = element.matches("[aria-current], [data-highlighted], [aria-selected=true]");
+        const lit: Kind = element.closest("[role=tablist], [data-slot=tabs-list]")
+          ? "tab"
+          : "highlight";
 
         const found: { box: Rect; kind: Kind }[] = [
-          ...(highlight && passes(highlight)
-            ? [{ box: highlight, kind: "highlight" as const }]
-            : []),
+          ...(highlight && passes(highlight) ? [{ box: highlight, kind: lit }] : []),
           ...(ownBox && passes(ownBox)
-            ? [{ box: ownBox, kind: current ? ("highlight" as const) : kindOf(element, ownBox) }]
+            ? [{ box: ownBox, kind: current ? lit : kindOf(element, ownBox) }]
             : []),
           ...(line && passes(line) ? [{ box: line, kind: "hairline" as const }] : []),
         ];

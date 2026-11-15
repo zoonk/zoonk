@@ -18,6 +18,12 @@ function allowed(fill: CaptureElement, past: { end: number; start: number }, tex
     );
   }
 
+  // The current tab's fill reaches past the column like a highlighted row, on the side it reaches
+  // (craft's Deliberate choices), so the first tab's label starts on the title's edge.
+  if (fill.kind === "tab") {
+    return Math.max(past.start, past.end) <= bleed + EDGE;
+  }
+
   // A hairline or a picture passes the column only by reaching the page's whole room.
   if (fill.kind === "hairline" || fill.kind === "picture") {
     return x <= frameStart + EDGE && x + width >= frameEnd - EDGE;
@@ -35,8 +41,9 @@ function side(by: number, edge: "ends" | "starts") {
 }
 
 /**
- * Only three things pass the page's column (craft E7): a row in a highlighted state, by 10 px on
- * each side; a bar's or a section's hairline, across the page's whole room; and a full-bleed
+ * Only four things pass the page's column (craft E7 and its Deliberate choices): a row in a
+ * highlighted state, by the kit's 10 on each side; the current tab's fill, by the same 10 on the
+ * side it reaches; a bar's or a section's hairline, across the page's whole room; and a full-bleed
  * picture. A static box, an underline that passes by a few pixels, or an uneven bleed fails.
  */
 export function bleedLeads(context: Context): AlignmentFinding[] {
