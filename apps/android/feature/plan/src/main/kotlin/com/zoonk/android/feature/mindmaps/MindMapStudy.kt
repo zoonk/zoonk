@@ -346,7 +346,7 @@ internal fun MindMapStudy(
                                 {
                                     OutlinedIconButton(onClick = { previous() }) {
                                         Icon(
-                                            painterResource(R.drawable.ic_arrow_back),
+                                            painterResource(R.drawable.ic_chevron_left),
                                             contentDescription = stringResource(R.string.mindmaps_previous),
                                         )
                                     }

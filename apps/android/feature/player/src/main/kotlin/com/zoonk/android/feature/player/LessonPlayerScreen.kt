@@ -909,7 +909,7 @@ private fun ActionBar(
         if (screen.canGoBack) {
             {
                 OutlinedIconButton(onClick = onBack) {
-                    Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.player_previous_screen))
+                    Icon(painterResource(R.drawable.ic_chevron_left), contentDescription = stringResource(R.string.player_previous_screen))
                 }
             }
         } else {

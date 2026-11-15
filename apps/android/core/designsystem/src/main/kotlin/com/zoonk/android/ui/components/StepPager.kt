@@ -49,10 +49,11 @@ fun StepPagerActions(
     }
 }
 
+/** Main's `QuestionBack`: a task's way back one screen, a chevron as on every task's bar (the page's back is the arrow). */
 @Composable
 fun StepBackButton(onClick: () -> Unit) {
     OutlinedIconButton(onClick = onClick) {
-        Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.navigation_back))
+        Icon(painterResource(R.drawable.ic_chevron_left), contentDescription = stringResource(R.string.navigation_back))
     }
 }
 
