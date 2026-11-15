@@ -28,11 +28,21 @@ export async function PricingBarLink({
   );
 }
 
-export async function CoursesBarLink({ className }: { className?: string }) {
+export async function CoursesBarLink({
+  className,
+  current = false,
+}: {
+  className?: string;
+  current?: boolean;
+}) {
   const t = await getExtracted();
 
   return (
-    <Link className={cn(NAV_LINK_CLASS, className)} href="/courses">
+    <Link
+      aria-current={current ? "page" : undefined}
+      className={cn(NAV_LINK_CLASS, className)}
+      href="/courses"
+    >
       {t("Courses")}
     </Link>
   );

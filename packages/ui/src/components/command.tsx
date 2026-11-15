@@ -199,7 +199,9 @@ function CommandGroup({ className, ...props }: AutocompleteGroupProps) {
   );
 }
 
-const COMMAND_GROUP_LABEL_CLASS = "text-label pt-3.5 pb-1.5 sm:px-2.5 sm:pt-2 sm:pb-1";
+/** The sidebar's group label (`SidebarSection`), since both list the same places. */
+const COMMAND_GROUP_LABEL_CLASS =
+  "text-faint pt-3.5 pb-1.5 text-xs leading-4 font-medium sm:px-2.5 sm:pt-2 sm:pb-1";
 
 function CommandGroupLabel({ className, ...props }: AutocompleteGroupLabelProps) {
   return (
