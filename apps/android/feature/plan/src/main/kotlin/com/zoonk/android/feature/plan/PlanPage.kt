@@ -169,7 +169,7 @@ internal fun PlanPage(
     val renameDialog by viewModel.rename.collectAsStateWithLifecycle()
     val pending by viewModel.pending.collectAsStateWithLifecycle()
     val asked by viewModel.asked.collectAsStateWithLifecycle()
-    val failed by viewModel.failed.collectAsStateWithLifecycle()
+    val failed = viewModel.failed
     val latest by viewModel.latest.collectAsStateWithLifecycle()
     val changes by viewModel.changes.collectAsStateWithLifecycle()
     val sheetAnswers by viewModel.sheetAnswers.collectAsStateWithLifecycle()
@@ -177,7 +177,7 @@ internal fun PlanPage(
     val basesAdvice by viewModel.basesAdvice.collectAsStateWithLifecycle()
     val preview by viewModel.preview.collectAsStateWithLifecycle()
     val slotPreview by viewModel.slotPreview.collectAsStateWithLifecycle()
-    val nextLevel by viewModel.nextLevel.collectAsStateWithLifecycle()
+    val nextLevel = viewModel.nextLevel
     val end =
         if (page.plan.end != null || page.isExam) {
             app.plans.end[page.goal.id]
