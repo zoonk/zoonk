@@ -65,6 +65,39 @@ class CheckoutWindowTest {
     fun close() = scenario.close()
 
     @Test
+    fun playsFailureThatArrivesWhileTheWindowWidensAndNarrowsSaysSo() {
+        val (planRead, billing) = launchACheckout()
+        rule.onNodeWithText("Subscribe").performClick()
+        planRead.complete(account(ANA))
+        rule.waitForIdle()
+
+        RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
+        scenario.recreate()
+        RuntimeEnvironment.setQualifiers("w411dp-h891dp")
+        scenario.recreate()
+        billing.fail()
+        rule.waitForIdle()
+
+        assertEquals(PurchaseState.PlayFailed, CheckoutTest.store.purchase.value)
+    }
+
+    @Test
+    fun playsFailureThatArrivesAfterTheLearnerLeftShowsNothingOnReturn() {
+        val (planRead, billing) = launchACheckout()
+        rule.onNodeWithText("Subscribe").performClick()
+        planRead.complete(account(ANA))
+        rule.waitForIdle()
+        assertEquals(1, billing.bought.size)
+        CheckoutTest.visible = false
+        rule.waitForIdle()
+        billing.fail()
+        rule.waitForIdle()
+        CheckoutTest.visible = true
+        rule.waitForIdle()
+        assertEquals(PurchaseState.Idle, CheckoutTest.store.purchase.value)
+    }
+
+    @Test
     fun aCheckoutReadingWhileTheWindowWidensAndNarrowsOpensPlaysSheetOnceOnTheCurrentWindow() {
         val (planRead, billing) = launchACheckout()
 
@@ -162,6 +195,10 @@ class CheckoutWindowTest {
     private class HostRecordingBilling(
         private val play: FakePlayBilling = FakePlayBilling(),
     ) : PlayBilling by play {
+        fun fail() {
+            play.updates.tryEmit(PlayPurchaseUpdate.Failed)
+        }
+
         val bought get() = play.bought
         val hosts = mutableListOf<Activity>()
 

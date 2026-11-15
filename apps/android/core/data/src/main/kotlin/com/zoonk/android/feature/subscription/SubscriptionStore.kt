@@ -156,14 +156,29 @@ class SubscriptionStore(
 
     private val linking = mutableSetOf<String>()
 
+    /** A checkout still on its screen's visit, so Play's failure or cancel for it shows there; one that ended shows nothing. */
+    private var checkoutOnVisit = false
+
     init {
         scope.launch {
             billing.updates.collect { update ->
                 when (update) {
-                    is PlayPurchaseUpdate.Purchased -> fullAccount()?.let { link(it, update.purchaseToken) }
-                    PlayPurchaseUpdate.Pending -> mutablePurchase.value = PurchaseState.Pending
-                    PlayPurchaseUpdate.Canceled -> mutablePurchase.value = PurchaseState.Idle
-                    PlayPurchaseUpdate.Failed -> mutablePurchase.value = PurchaseState.PlayFailed
+                    is PlayPurchaseUpdate.Purchased -> {
+                        fullAccount()?.let { link(it, update.purchaseToken) }
+                    }
+
+                    PlayPurchaseUpdate.Pending -> {
+                        mutablePurchase.value = PurchaseState.Pending
+                    }
+
+                    PlayPurchaseUpdate.Canceled -> {
+                        mutablePurchase.value = PurchaseState.Idle
+                    }
+
+                    PlayPurchaseUpdate.Failed -> {
+                        mutablePurchase.value =
+                            if (checkoutOnVisit) PurchaseState.PlayFailed else PurchaseState.Idle
+                    }
                 }
             }
         }
@@ -210,6 +225,7 @@ class SubscriptionStore(
         val session = fullAccount() ?: return
         if (mutablePurchase.value == PurchaseState.Buying || mutablePurchase.value == PurchaseState.Confirming) return
         mutablePurchase.value = PurchaseState.Buying
+        checkoutOnVisit = true
         try {
             // Play's details go stale, and Plus may have been bought elsewhere since; a checkout always starts from fresh ones.
             val (offers, plan) =
@@ -241,10 +257,11 @@ class SubscriptionStore(
 
     /**
      * What a checkout itself led to (its plan check failed, Plus was there already, Play's sheet couldn't open or
-     * finish) belongs to the visit that started it, so the next visit starts clean. A purchase Play still holds, and
-     * its link to the account, are the account's and stay.
+     * finish) belongs to the visit that started it, so the next visit starts clean, and Play's failure that arrives
+     * later says nothing. A purchase Play still holds, and its link to the account, are the account's and stay.
      */
     fun forgetCheckout() {
+        checkoutOnVisit = false
         mutablePurchase.update { if (it in CHECKOUT_OUTCOMES) PurchaseState.Idle else it }
     }
 
