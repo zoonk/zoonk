@@ -2,6 +2,7 @@ import { eslintCompatPlugin } from "@oxlint/plugins";
 import noDynamicTranslationKey from "./rules/no-dynamic-translation-key.js";
 import noGetExtractedInPromise from "./rules/no-get-extracted-in-promise.js";
 import noHandMadeFold from "./rules/no-hand-made-fold.js";
+import noHandMadeFormat from "./rules/no-hand-made-format.js";
 import noHandMadePanel from "./rules/no-hand-made-panel.js";
 import noHandPlacedIconButton from "./rules/no-hand-placed-icon-button.js";
 import noHardcodedAriaLabel from "./rules/no-hardcoded-aria-label.js";
@@ -24,6 +25,7 @@ export default eslintCompatPlugin({
     "no-dynamic-translation-key": noDynamicTranslationKey,
     "no-get-extracted-in-promise": noGetExtractedInPromise,
     "no-hand-made-fold": noHandMadeFold,
+    "no-hand-made-format": noHandMadeFormat,
     "no-hand-made-panel": noHandMadePanel,
     "no-hand-placed-icon-button": noHandPlacedIconButton,
     "no-hardcoded-aria-label": noHardcodedAriaLabel,
