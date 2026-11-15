@@ -89,11 +89,11 @@ struct LessonStageView: View {
         let teachesKnowledge = store.lesson?.targetLanguage == nil
         let offersDidntGetIt = store.lesson?.offersDidntGetIt(on: step) == true
         let opensWithMap = step.opensLesson && map != nil
-        // One column gives the turn spare height and its word bank waits at the bottom; what a check
-        // adds then takes the room above the bank, so the bank holds still under the thumb.
-        let bankAtBottom = spread == nil && step.hasWordBank
+        let place = step.checkAddedPlace(isOneColumn: spread == nil)
+        let isWithBank = place != .underScreen
+        let bankAtBottom = place == .aboveBank
         let added = LessonCheckAdded(
-          step: step, state: state, store: store, includesSelfCorrect: step.hasWordBank
+          step: step, state: state, store: store, includesSelfCorrect: isWithBank
         )
         .id(Self.verdictId)
 
@@ -148,7 +148,7 @@ struct LessonStageView: View {
                   LessonStepView(step: step, state: state, store: store, part: .turn)
                     .environment(
                       \.wordBankAdded,
-                      step.hasWordBank
+                      isWithBank
                         ? WordBankAdded(view: AnyView(added), isAbove: bankAtBottom) : nil
                     )
 
@@ -164,11 +164,11 @@ struct LessonStageView: View {
               }
 
               LessonCheckNote(
-                state: state, isSlow: isCheckSlow, showsSelfCorrect: !step.hasWordBank
+                state: state, isSlow: isCheckSlow, showsSelfCorrect: !isWithBank
               )
               .id(Self.checkNoteId)
 
-              if !step.hasWordBank {
+              if !isWithBank {
                 added
               }
 
@@ -198,8 +198,8 @@ struct LessonStageView: View {
             .onChange(of: state.notice == .selfCorrect || state.checkFailed || isCheckSlow) {
               _, hasNote in
               if hasNote {
-                let isWithBank = step.hasWordBank && state.notice == .selfCorrect
-                scroll.scrollTo(isWithBank ? Self.verdictId : Self.checkNoteId, anchor: .bottom)
+                let isNoteWithBank = isWithBank && state.notice == .selfCorrect
+                scroll.scrollTo(isNoteWithBank ? Self.verdictId : Self.checkNoteId, anchor: .bottom)
               }
             }
             // A worked example's newest step is its last. A challenge's turn is its newest
@@ -698,6 +698,21 @@ extension LessonStep {
 
     return [.reading, .listening, .fillBlank].contains(exercise.kind)
   }
+
+  /// Where what a check adds goes. One column gives the turn spare height and its word bank waits
+  /// at the bottom, so the feedback takes the room above the bank and the bank holds still under the
+  /// thumb; a spread puts it under the bank; a screen without a bank has it under the screen.
+  func checkAddedPlace(isOneColumn: Bool) -> CheckAddedPlace {
+    guard hasWordBank else {
+      return .underScreen
+    }
+
+    return isOneColumn ? .aboveBank : .underBank
+  }
+}
+
+enum CheckAddedPlace: Equatable {
+  case underScreen, aboveBank, underBank
 }
 
 private struct LessonNotice: View {

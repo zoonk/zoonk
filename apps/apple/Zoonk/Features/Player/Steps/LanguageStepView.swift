@@ -411,7 +411,7 @@ extension EnvironmentValues {
 
 /// Where the stage gives the turn spare height (one column), the bank sits at its bottom, so it
 /// stays put while the answer grows.
-private struct LessonWordBank<Tiles: View>: View {
+struct LessonWordBank<Tiles: View>: View {
   @Environment(\.wordBankAdded) private var added
 
   @ViewBuilder let tiles: Tiles
