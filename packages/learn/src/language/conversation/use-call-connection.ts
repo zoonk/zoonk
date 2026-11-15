@@ -2,7 +2,7 @@
 
 import { type LanguageConversationSetup } from "@zoonk/core/language/conversations/contract";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { type CallLimit } from "../../_components/help-limit-notice";
+import { type CallLimit, received } from "../../_components/help-limit-notice";
 
 export type LiveCallSetup = Pick<
   LanguageConversationSetup,
@@ -103,6 +103,10 @@ export function useCallConnection(actions: CallConnectionActions) {
 
       const answer =
         first.status === "previousConnectionClosing" && isCurrent() ? await retry() : first;
+
+      if (answer.status === "limit") {
+        return { ...answer, limit: received(answer.limit) };
+      }
 
       if (answer.status !== "ready") {
         return answer;

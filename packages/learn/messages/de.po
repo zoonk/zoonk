@@ -4172,6 +4172,12 @@ msgctxt "vNw6Rg"
 msgid "Writing each card's instructions…"
 msgstr "Wir erstellen die Anweisungen für jede Karte…"
 
+#. The title of a notice over something being prepared for the learner (a lesson, a list, a map) that failed or never started. A Try again button follows.
+#: src/generation/generation-failure-notice.tsx
+msgctxt "Yc1thK"
+msgid "Something went wrong on our side"
+msgstr "Bei uns ist etwas schiefgelaufen"
+
 #: src/generation/generation-failure-notice.tsx
 msgctxt "Eg11ZY"
 msgid "Reconnect"
@@ -4186,29 +4192,6 @@ msgstr "Wir erhalten keine Updates mehr. Vielleicht läuft es noch."
 msgctxt "CN_B_k"
 msgid "Connection lost"
 msgstr "Verbindung verloren"
-
-#: src/generation/generation-failure-notice.tsx
-#: src/onboarding/steps/step-parts.tsx
-#: src/wait/first-lesson-row.tsx
-msgctxt "YXnM-X"
-msgid "Something went wrong on our side."
-msgstr "Bei uns ist etwas schiefgelaufen."
-
-#. Preparing this content failed. It is not still running.
-#: src/generation/generation-failure-notice.tsx
-msgctxt "0fLHBg"
-msgid "This didn't finish"
-msgstr "Das hat nicht geklappt"
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "iKz0K6"
-msgid "We couldn't get this started."
-msgstr "Wir konnten das nicht starten."
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "q8l1Sf"
-msgid "This didn't start"
-msgstr "Das wurde nicht gestartet"
 
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
@@ -9952,6 +9935,12 @@ msgstr "Wie viel Zeit kannst du jeden Tag lernen?"
 msgctxt "jNPr7M"
 msgid "This didn't open"
 msgstr "Das ließ sich nicht öffnen"
+
+#: src/onboarding/steps/step-parts.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "YXnM-X"
+msgid "Something went wrong on our side."
+msgstr "Bei uns ist etwas schiefgelaufen."
 
 #: src/onboarding/steps/study-week.tsx
 #: src/plan/plan-properties.tsx

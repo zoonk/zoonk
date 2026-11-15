@@ -33,25 +33,24 @@ export function GenerationFailureNotice({
 }) {
   const t = useExtracted();
 
+  const failed = {
+    action: t("Try again"),
+    description: null,
+    title: t({
+      description:
+        "The title of a notice over something being prepared for the learner (a lesson, a list, a map) that failed or never started. A Try again button follows.",
+      message: "Something went wrong on our side",
+    }),
+  };
+
   const copy = {
     connection: {
       action: t("Reconnect"),
       description: t("We stopped getting updates. It may still be working."),
       title: t("Connection lost"),
     },
-    generation: {
-      action: t("Try again"),
-      description: t("Something went wrong on our side."),
-      title: t({
-        description: "Preparing this content failed. It is not still running.",
-        message: "This didn't finish",
-      }),
-    },
-    notStarted: {
-      action: t("Try again"),
-      description: t("We couldn't get this started."),
-      title: t("This didn't start"),
-    },
+    generation: failed,
+    notStarted: failed,
   }[failure];
 
   return (
@@ -61,7 +60,7 @@ export function GenerationFailureNotice({
       </NoticeCardLeading>
       <NoticeCardContent>
         <NoticeCardTitle>{copy.title}</NoticeCardTitle>
-        <NoticeCardDescription>{copy.description}</NoticeCardDescription>
+        {copy.description && <NoticeCardDescription>{copy.description}</NoticeCardDescription>}
         {retry && (
           <form action={() => retry()} className="contents">
             <NoticeCardActions>

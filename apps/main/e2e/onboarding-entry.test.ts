@@ -10,7 +10,7 @@ type Understanding = Parameters<typeof goalUnderstandingFixture>[0]["result"];
 
 const DRAFT_URL = /\/start\?draft=[0-9a-f-]{36}$/u;
 
-const FAILED_READ = /^This didn't (?:start|finish)$/u;
+const FAILED_READ = /^Something went wrong on our side$/u;
 
 function uniqueWords(words: string) {
   return `${words} ${randomUUID().slice(0, 8)}`;
