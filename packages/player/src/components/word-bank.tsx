@@ -2,17 +2,63 @@
 
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useExtracted } from "next-intl";
-import { createContext, use } from "react";
+import { createContext, use, useLayoutEffect, useRef, useSyncExternalStore } from "react";
 import { placeKeepingFocus } from "./_utils/word-bank-focus";
 import { WordBankOptionButton } from "./word-bank-option-content";
 
 type WordBankTile = { isUsed: boolean; key: string; option: WordBankOption };
 
+/** What a check adds to a word bank's step: its feedback, or "fix it yourself". */
+export const WordBankCheckContext = createContext<React.ReactNode>(null);
+
+/** Tailwind's `lg`: below it the bank waits above the action bar. */
+const LG_QUERY = "(min-width: 64rem)";
+
+function watchLg(notify: () => void) {
+  const media = globalThis.matchMedia(LG_QUERY);
+  media.addEventListener("change", notify);
+  return () => media.removeEventListener("change", notify);
+}
+
+function useFromLg(): boolean {
+  return useSyncExternalStore(
+    watchLg,
+    () => globalThis.matchMedia(LG_QUERY).matches,
+    () => false,
+  );
+}
+
 /**
- * What a check adds (its feedback, "fix it yourself") when the bank waits above the action bar: it
- * goes right above the bank, in the room the bank leaves, so the bank holds still under the thumb.
+ * Moving a node in the page drops the focus inside it, so what the check added gets back the
+ * control the learner was on when crossing `lg` moves it.
  */
-export const WordBankAboveContext = createContext<React.ReactNode>(null);
+function useFocusKeptAcross({
+  fromLg,
+  slot,
+}: {
+  fromLg: boolean;
+  slot: React.RefObject<HTMLDivElement | null>;
+}) {
+  const focused = useRef<HTMLElement | null>(null);
+  const placed = useRef(fromLg);
+
+  useLayoutEffect(() => {
+    if (placed.current === fromLg) {
+      return;
+    }
+
+    placed.current = fromLg;
+    const last = focused.current;
+
+    if (last?.isConnected && slot.current?.contains(last) && document.activeElement !== last) {
+      last.focus({ preventScroll: true });
+    }
+  }, [fromLg, slot]);
+
+  return (event: React.FocusEvent<HTMLDivElement>) => {
+    focused.current = event.target;
+  };
+}
 
 export function WordBank<Tile extends WordBankTile>({
   disabled,
@@ -27,29 +73,45 @@ export function WordBank<Tile extends WordBankTile>({
   tiles: Tile[];
 }) {
   const t = useExtracted();
-  const above = use(WordBankAboveContext);
+  const added = use(WordBankCheckContext);
+  const fromLg = useFromLg();
+  const slot = useRef<HTMLDivElement>(null);
+  const keepFocus = useFocusKeptAcross({ fromLg, slot });
 
+  const bank = (
+    <div
+      aria-label={t("Word bank")}
+      className="flex flex-wrap gap-2"
+      data-slot="word-bank"
+      key="bank"
+      role="group"
+    >
+      {tiles.map((tile) => (
+        <WordBankOptionButton
+          disabled={disabled}
+          isSelected={tile.isUsed}
+          key={tile.key}
+          onToggle={(event) =>
+            placeKeepingFocus({ event, fillsAnswer, place: () => onPlace(tile) })
+          }
+          option={tile.option}
+        />
+      ))}
+    </div>
+  );
+
+  const check = added && (
+    <div className="contents" key="check" onFocus={keepFocus} ref={slot}>
+      {added}
+    </div>
+  );
+
+  // What a check adds takes the room the bank leaves, so the bank holds still: above it below
+  // `lg`, where the bank waits above the action bar, and under it from `lg`. One keyed node either
+  // way, so crossing `lg` moves it with what the learner did in it.
   return (
     <div className="flex flex-col gap-4 max-lg:mt-auto">
-      {above}
-      <div
-        aria-label={t("Word bank")}
-        className="flex flex-wrap gap-2"
-        data-slot="word-bank"
-        role="group"
-      >
-        {tiles.map((tile) => (
-          <WordBankOptionButton
-            disabled={disabled}
-            isSelected={tile.isUsed}
-            key={tile.key}
-            onToggle={(event) =>
-              placeKeepingFocus({ event, fillsAnswer, place: () => onPlace(tile) })
-            }
-            option={tile.option}
-          />
-        ))}
-      </div>
+      {fromLg ? [bank, check] : [check, bank]}
     </div>
   );
 }

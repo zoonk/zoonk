@@ -7,10 +7,10 @@ import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CloudOffIcon, ImageIcon, PenOffIcon, PencilIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useLayoutEffect, useSyncExternalStore } from "react";
+import { useLayoutEffect } from "react";
 import { SCREEN_TURN_CLASS, type ScreenTurn } from "../components/screen-turn";
 import { FILL_SCREEN_CLASS, PlayerContentFrame } from "../components/step-layouts";
-import { WordBankAboveContext } from "../components/word-bank";
+import { WordBankCheckContext } from "../components/word-bank";
 import { LessonCitation } from "./_components/lesson-citation";
 import { UpcomingPictures } from "./_components/lesson-pictures";
 import { OrientationStrip } from "./_components/orientation-strip";
@@ -147,23 +147,6 @@ function LessonCheckNote() {
   );
 }
 
-/** Tailwind's `lg`: below it a word bank waits above the action bar. */
-const LG_QUERY = "(min-width: 64rem)";
-
-function watchLg(notify: () => void) {
-  const media = globalThis.matchMedia(LG_QUERY);
-  media.addEventListener("change", notify);
-  return () => media.removeEventListener("change", notify);
-}
-
-function useFromLg(): boolean {
-  return useSyncExternalStore(
-    watchLg,
-    () => globalThis.matchMedia(LG_QUERY).matches,
-    () => false,
-  );
-}
-
 type CheckAdditions = { feedback: boolean; selfCorrect: boolean };
 
 /** What a check adds to the screen: "fix it yourself", its feedback, or both on a screen revisited. */
@@ -275,13 +258,12 @@ export function LessonStage({
 }) {
   const { actions, state } = useLessonPlayer();
   const result = state.results[step.id];
-  const fromLg = useFromLg();
   const answered = getAnsweredStep({ answer: state.answers[step.id], step });
   const additions = getCheckAdditions({ isShown, state, step });
   const added = additions && <CheckAdded additions={additions} step={step} />;
 
-  // A word bank's check adds above the bank below `lg`; everywhere else it follows the screen.
-  const aboveBank = canSelfCorrect(answered) && !fromLg;
+  // A word bank places what a check adds itself, so it holds still; everywhere else it follows the screen.
+  const inBank = canSelfCorrect(answered);
 
   return (
     <div className={cn("flex w-full flex-col", FILL_SCREEN_CLASS)} data-slot="lesson-stage">
@@ -289,7 +271,7 @@ export function LessonStage({
       {isShown && <LessonNotice />}
 
       <LessonScreenFrame turn={turn}>
-        <WordBankAboveContext value={aboveBank ? added : null}>
+        <WordBankCheckContext value={inBank ? added : null}>
           <LessonStepView
             answer={state.answers[step.id]}
             isLocked={isShown && state.phase !== "playing"}
@@ -297,13 +279,13 @@ export function LessonStage({
             result={result}
             step={step}
           />
-        </WordBankAboveContext>
+        </WordBankCheckContext>
       </LessonScreenFrame>
 
       {isShown && <LessonCheckNote />}
       {isShown && !isLanguageStep(step) && <LessonCitation citation={step.citation} />}
 
-      {added && !aboveBank && <PlayerContentFrame className="pb-6">{added}</PlayerContentFrame>}
+      {added && !inBank && <PlayerContentFrame className="pb-6">{added}</PlayerContentFrame>}
 
       {isShown && <LessonRecapRow />}
       {isShown && <UpcomingPictures steps={getUpcomingSteps(state)} />}
