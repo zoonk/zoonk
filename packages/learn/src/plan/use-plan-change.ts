@@ -32,6 +32,7 @@ export function usePlanChange() {
     const done = Promise.withResolvers<PlanChangeOutcome | null>();
 
     startTransition(async () => {
+      request.start();
       const { data: outcome } = await safeAsync(() => actions.change(operations));
 
       // Updates after an `await` join the transition only when started in one again.
@@ -52,7 +53,7 @@ export function usePlanChange() {
       done.resolve(outcome ?? null);
     });
 
-    return request.track(done.promise);
+    return done.promise;
   };
 
   return { change, isPending: request.busy };

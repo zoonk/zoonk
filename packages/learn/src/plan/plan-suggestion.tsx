@@ -16,7 +16,7 @@ import {
 import { CourseCompleteSuggestion } from "../journey/course-certificate";
 import { GoalPausedSuggestion } from "../journey/goal-actions";
 import { StudyNextSuggestion } from "../journey/study-next";
-import { LayoutSharedProvider, SharedItem } from "./layout-shared";
+import { RequestScope } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
 import { usePlanCoverage, useTimeEnough } from "./plan-coverage";
 import { CoverageSuggestion } from "./plan-coverage-suggestion";
@@ -145,7 +145,7 @@ export function PlanSuggestionProvider({
         showNext,
       }}
     >
-      <LayoutSharedProvider>{children}</LayoutSharedProvider>
+      {children}
     </PlanSuggestionContext>
   );
 }
@@ -242,9 +242,9 @@ export function PlanSuggestionSlot({ className }: { className?: string }) {
     >
       {/* The panel's pager heads it, so paging never moves it under the pointer. */}
       <SlotPager className="hidden min-[72rem]:mx-3.5 min-[72rem]:mt-2.5 min-[72rem]:flex" />
-      <SharedItem itemKey={item.key} key={item.key}>
+      <RequestScope key={item.key} name={item.key}>
         <SlotSuggestion item={item} />
-      </SharedItem>
+      </RequestScope>
       <SlotPager className="mt-1 min-[72rem]:hidden" />
     </div>
   );

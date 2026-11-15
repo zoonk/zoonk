@@ -46,9 +46,8 @@ function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => vo
     keepFocus();
 
     startTransition(async () => {
-      const { data: outcome } = await safeAsync(() =>
-        request.track(actions.chooseExamOption(input)),
-      );
+      request.start();
+      const { data: outcome } = await safeAsync(() => actions.chooseExamOption(input));
 
       // Updates after an `await` join the transition only when started in one again.
       startTransition(() => {

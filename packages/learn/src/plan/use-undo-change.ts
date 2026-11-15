@@ -25,8 +25,10 @@ export function useUndoChange({
 
   const undo = () => {
     startTransition(async () => {
+      request.start();
+
       const { data: undone } = await safeAsync(() =>
-        request.track(actions.decide({ changeId: change.id, status: "undone" })),
+        actions.decide({ changeId: change.id, status: "undone" }),
       );
 
       startTransition(() => {

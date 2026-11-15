@@ -1,6 +1,7 @@
 import { cleanup } from "@testing-library/react";
 import { planTimeToCoverSchema } from "@zoonk/core/plans/time-advice-contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
+import { useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { type PlanActions, PlanScreenProvider } from "../../../learn/src/plan/plan-context";
@@ -155,23 +156,30 @@ function renderPlanSlots({
     preview: async () => null,
   };
 
-  render(
+  const screen = (shown: { host: PlanSuggestionHost; plan: PlanView }) => (
     <PlanScreenProvider
       value={{
         actions,
         goal: { displayName: "Learn Spanish", kind: "learn" },
-        plan,
+        plan: shown.plan,
         shareHref: "/plan",
       }}
     >
-      <PlanSuggestionProvider host={host}>
+      <PlanSuggestionProvider host={shown.host}>
         <PlanSuggestionSlot className="hidden min-[72rem]:block" />
         <PlanSuggestionSlot className="min-[72rem]:hidden" />
       </PlanSuggestionProvider>
-    </PlanScreenProvider>,
+    </PlanScreenProvider>
   );
 
-  return { change, releaseChange: () => heldChange.resolve({ change: null, status: "applied" }) };
+  const mounted = render(screen({ host, plan }));
+
+  return {
+    change,
+    releaseChange: () => heldChange.resolve({ change: null, status: "applied" }),
+    /** The same screen showing another plan, as switching goals does. */
+    show: (shown: { host: PlanSuggestionHost; plan: PlanView }) => mounted.rerender(screen(shown)),
+  };
 }
 
 /** The one the learner sees: the other copy is in the DOM, hidden at this width. */
@@ -184,6 +192,13 @@ function shownButton(name: string): Element | undefined {
 
 function isBusy(name: string): boolean {
   return shownButton(name)?.getAttribute("aria-busy") === "true";
+}
+
+/** Hidden at a width, a copy is out of the accessibility tree, so the DOM finds every one. */
+function busyInEveryCopy(name: string): (string | null)[] {
+  return [...document.querySelectorAll("button")]
+    .filter((button) => button.textContent === name)
+    .map((button) => button.getAttribute("aria-busy"));
 }
 
 function isTextShown(text: string): boolean {
@@ -351,6 +366,149 @@ describe.each([
 
       await expect.poll(() => isBusy("Save")).toBe(false);
       expect(held.change).toHaveBeenCalledOnce();
+    });
+  });
+});
+
+describe("the Plan's requests belong to its screen", () => {
+  afterEach(cleanup);
+
+  it(`shows "Add to my plan" busy in both copies while its form action runs`, async () => {
+    await atViewport(LAPTOP, async () => {
+      const held = renderPlanSlots({ host: { ...HOST_BASE, certificates: null }, plan: PLAN });
+
+      await press("Add to my plan");
+
+      await expect.poll(() => busyInEveryCopy("Add to my plan")).toEqual(["true", "true"]);
+
+      held.releaseChange();
+
+      await expect.poll(() => isTextShown("Your plan is updated.")).toBe(true);
+      expect(held.change).toHaveBeenCalledOnce();
+    });
+  });
+
+  it("shows another goal's Plan nothing of a request still running on the first", async () => {
+    await atViewport(LAPTOP, async () => {
+      const host = { ...HOST_BASE, certificates: null };
+      const held = renderPlanSlots({ host, plan: PLAN });
+      await press("Add to my plan");
+      await expect.poll(() => held.change).toHaveBeenCalledOnce();
+
+      const other = { ...PLAN, goalId: "another-goal", planId: "another-plan" };
+      const pastDate = { kind: "pastDate" as const, lessons: 3 };
+      held.show({ host, plan: { ...other, fitOffer: null, status: pastDate } });
+      await expect.poll(() => shownButton("Add to my plan")).toBeUndefined();
+      held.show({ host, plan: other });
+
+      await expect.poll(() => shownButton("Add to my plan")).toBeDefined();
+      expect(isBusy("Add to my plan")).toBe(false);
+      held.releaseChange();
+    });
+  });
+
+  it("shows another goal's Plan nothing of a claim that failed on the first", async () => {
+    await atViewport(LAPTOP, async () => {
+      const onClaim = vi.fn(async () => false);
+      const unclaimed = [{ courseLevel: "beginner" as const }];
+      const host = { ...HOST_BASE, certificates: { onClaim, unclaimed, view: null } };
+      const plan = { ...PLAN, fitOffer: null };
+      const held = renderPlanSlots({ host, plan });
+      await press("Get your certificate");
+      await expect.poll(() => isTextShown("That didn't save. Try again.")).toBe(true);
+
+      const other = { ...plan, goalId: "another-goal", planId: "another-plan" };
+      held.show({ host: { ...HOST_BASE, certificates: null }, plan: other });
+      await expect.poll(() => shownButton("Get your certificate")).toBeUndefined();
+      held.show({ host, plan: other });
+
+      await expect.poll(() => shownButton("Get your certificate")).toBeDefined();
+      expect(isTextShown("That didn't save. Try again.")).toBe(false);
+      expect(onClaim).toHaveBeenCalledOnce();
+    });
+  });
+
+  it("shows a reopened editor no Undo from a save made before it closed", async () => {
+    await atViewport(LAPTOP, async () => {
+      const saved = Promise.withResolvers<Awaited<ReturnType<PlanActions["change"]>>>();
+      const change = vi.fn<PlanActions["change"]>(() => saved.promise);
+
+      const actions: PlanActions = {
+        adviseOnBases: async () => null,
+        change,
+        chooseExamOption: async () => null,
+        chooseTools: async () => false,
+        decide: async () => true,
+        findTimeToCover: async () => null,
+        preview: async () => null,
+      };
+
+      function Screen() {
+        const [open, setOpen] = useState(false);
+
+        return (
+          <PlanScreenProvider
+            value={{
+              actions,
+              goal: { displayName: "Learn Spanish", kind: "learn" },
+              plan: PLAN,
+              shareHref: "/plan",
+            }}
+          >
+            <PlanSheetHosts>
+              <button onClick={() => setOpen(true)} type="button">
+                Open editor
+              </button>
+              <PlanEditor onOpenChange={setOpen} open={open} />
+            </PlanSheetHosts>
+          </PlanScreenProvider>
+        );
+      }
+
+      render(<Screen />);
+      await press("Open editor");
+      await page.getByLabelText("End date").fill("2027-04-01");
+      await press("Save");
+      await expect.poll(() => change).toHaveBeenCalledOnce();
+
+      await userEvent.keyboard("{Escape}");
+      await expect.poll(() => page.getByRole("dialog").elements()).toHaveLength(0);
+      await press("Open editor");
+      await expect.poll(isSidePanelShown).toBe(true);
+      expect(shownButton("Undo")).toBeUndefined();
+
+      saved.resolve({
+        change: {
+          behind: null,
+          canApply: false,
+          canUndo: true,
+          createdAt: "2026-11-15",
+          days: null,
+          effect: FIT_EFFECT,
+          examDocument: "notice",
+          id: "made-before-closing",
+          kind: "manual",
+          lessonsSkipped: 0,
+          officialDate: null,
+          operations: [{ kind: "setTargetDate", targetDate: "2027-04-01" }],
+          quote: "q",
+          reason: null,
+          seen: true,
+          source: "learner",
+          status: "applied",
+          todaySession: null,
+        },
+        status: "applied",
+      });
+
+      await expect.poll(() => isBusy("Save")).toBe(false);
+
+      // The save's answer renders within a few frames: its Undo must not show up in this opening.
+      await expect(
+        expect.poll(() => shownButton("Undo"), { timeout: 1000 }).toBeDefined(),
+      ).rejects.toThrow();
+
+      expect(change).toHaveBeenCalledOnce();
     });
   });
 });

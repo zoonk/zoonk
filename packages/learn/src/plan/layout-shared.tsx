@@ -1,195 +1,106 @@
 "use client";
 
-import { createContext, use, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { createContext, use, useOptimistic, useRef, useState } from "react";
 
 /**
- * State held above a layout switch: the Plan's suggestion is drawn twice (a line under 72rem, a
- * panel from it) and its editor is a sheet under 768px and a side panel from it. What a request
- * started lives here, so the copy or frame a resize shows is still busy with it and shows how it
- * went, whichever started it and even once that one is gone.
- */
-
-/**
- * Kept outside React state, so an update made inside a transition (a form action) shows at once
- * rather than when the transition ends.
+ * What a request on the Plan started, held by the Plan screen above its layout switches: the
+ * suggestion is drawn twice (a line under 72rem, a panel from it) and the editor is a sheet under
+ * 768px and a side panel from it. Whichever copy or frame started a request, the one a resize
+ * shows is busy with it and shows how it went. The Plan screen holds one per goal.
  */
 type Shared = {
-  marks: Map<string, { current: unknown }>;
-  read: (key: string) => unknown;
-  subscribe: (listener: () => void) => () => void;
-  update: (key: string, next: (current: unknown) => unknown) => void;
+  busy: readonly string[];
+  addBusy: (key: string) => void;
+  marks: React.RefObject<Map<string, unknown>>;
+  setValue: (key: string, value: unknown) => void;
+  values: Readonly<Record<string, unknown>>;
 };
 
-function createShared(): Shared {
-  const values = new Map<string, unknown>();
-  const listeners = new Set<() => void>();
-
-  return {
-    marks: new Map(),
-    read: (key) => values.get(key),
-    subscribe: (listener) => {
-      listeners.add(listener);
-      return () => listeners.delete(listener);
-    },
-    update: (key, next) => {
-      const value = next(values.get(key));
-
-      if (Object.is(values.get(key), value)) {
-        return;
-      }
-
-      values.set(key, value);
-
-      for (const listener of listeners) {
-        listener();
-      }
-    },
-  };
-}
-
 const SharedContext = createContext<Shared | null>(null);
-
-/** Names the suggestion whose copies share their state. */
-const ItemContext = createContext<string | null>(null);
 
 /** Names what a request belongs to: a suggestion, or a section of the editor. */
 const ScopeContext = createContext<string | null>(null);
 
+function addKey(current: readonly string[], key: string): readonly string[] {
+  return [...current, key];
+}
+
 export function LayoutSharedProvider({ children }: { children: React.ReactNode }) {
-  const shared = useMemo(() => createShared(), []);
-  return <SharedContext value={shared}>{children}</SharedContext>;
-}
+  // Optimistic, so a request marked busy inside a form action shows at once and clears when it
+  // settles, whichever copy started it.
+  const [busy, addBusy] = useOptimistic<readonly string[], string>([], addKey);
+  const [values, setValues] = useState<Readonly<Record<string, unknown>>>({});
+  const marks = useRef(new Map<string, unknown>());
 
-/** Read when there's no provider: always empty. */
-const NO_STORE = createShared();
+  const setValue = (key: string, value: unknown) =>
+    setValues((current) => ({ ...current, [key]: value }));
 
-/** The stored value under `key`, read again whenever the store changes. */
-function useStored(shared: Shared | null, key: string | null): unknown {
-  const store = shared ?? NO_STORE;
-  const read = () => (key ? store.read(key) : null);
-  return useSyncExternalStore(store.subscribe, read, read);
-}
-
-/** A suggestion: its copies share their state, and its requests are its own. */
-export function SharedItem({ children, itemKey }: { children: React.ReactNode; itemKey: string }) {
   return (
-    <ItemContext value={itemKey}>
-      <ScopeContext value={itemKey}>{children}</ScopeContext>
-    </ItemContext>
+    <SharedContext value={{ addBusy, busy, marks, setValue, values }}>{children}</SharedContext>
   );
 }
 
-/** A part whose requests are its own, such as a section of the editor. */
 export function RequestScope({ children, name }: { children: React.ReactNode; name: string }) {
   return <ScopeContext value={name}>{children}</ScopeContext>;
 }
 
-function useItemKey(name: string): { key: string; shared: Shared } | null {
+function useScopedKey(name: string): { key: string; shared: Shared } | null {
   const shared = use(SharedContext);
-  const item = use(ItemContext);
-  return shared && item ? { key: `${item}:${name}`, shared } : null;
+  const scope = use(ScopeContext);
+  return shared && scope ? { key: `${scope}:${name}`, shared } : null;
 }
 
-type SetSharedState<Value> = (next: Value | ((current: Value) => Value)) => void;
-
-function isUpdater<Value>(
-  next: Value | ((current: Value) => Value),
-): next is (current: Value) => Value {
-  return typeof next === "function";
-}
-
-/** A suggestion's state, the same in both copies; anywhere else it's the caller's own. */
+/** A scope's state, the same in every copy; outside a scope it's the caller's own. */
 export function useSharedState<Value>(
   name: string,
   initial: Value,
-): [Value, SetSharedState<Value>] {
+): [Value, (next: Value) => void] {
   const [own, setOwn] = useState(initial);
-  const item = useItemKey(name);
-  const stored = useStored(item?.shared ?? null, item?.key ?? null);
+  const scoped = useScopedKey(name);
 
-  if (!item) {
+  if (!scoped) {
     return [own, setOwn];
   }
 
-  const { key, shared } = item;
+  const { key, shared } = scoped;
 
-  const read = (value: unknown): Value => {
-    if (value === undefined || value === null) {
-      return initial;
-    }
-
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Only this hook writes `key`, always with `Value`.
-    return value as Value;
-  };
-
-  return [
-    read(stored),
-    (next) => shared.update(key, (current) => (isUpdater(next) ? next(read(current)) : next)),
-  ];
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Only this hook writes `key`, always with `Value`.
+  const value = key in shared.values ? (shared.values[key] as Value) : initial;
+  return [value, (next) => shared.setValue(key, next)];
 }
 
 type SharedMark<Value> = { read: () => Value; write: (value: Value) => void };
 
-/** A value both copies read and write outside render, such as which request is the latest. */
+/** A value every copy reads and writes outside render, such as which request is the latest. */
 export function useSharedMark<Value>(name: string, initial: Value): SharedMark<Value> {
-  const own = useRef(initial);
-  const item = useItemKey(name);
-
-  if (!item) {
-    return {
-      read: () => own.current,
-      write: (value) => {
-        own.current = value;
-      },
-    };
-  }
-
-  const { key, shared } = item;
-
-  const box = () => {
-    const found = shared.marks.get(key) ?? { current: initial };
-    shared.marks.set(key, found);
-    return found;
-  };
+  const own = useRef(new Map<string, unknown>());
+  const scoped = useScopedKey(name);
+  const marks = scoped?.shared.marks ?? own;
+  const key = scoped?.key ?? name;
 
   return {
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Only this hook stores `key`, always with `Value`.
-    read: () => box().current as Value,
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Only this hook writes `key`, always with `Value`.
+    read: () => (marks.current.has(key) ? (marks.current.get(key) as Value) : initial),
     write: (value) => {
-      box().current = value;
+      marks.current.set(key, value);
     },
   };
 }
 
-function countOf(value: unknown): number {
-  return typeof value === "number" ? value : 0;
-}
-
 /**
- * A request's busy state, held above the switch: `track` counts the request until it settles, so
- * every copy or frame of its scope is busy with that kind of request meanwhile. Outside a scope
- * it's the caller's own.
+ * A request's busy state, the same in every copy of its scope: call `start` inside the request's
+ * transition, before it awaits. Outside a scope it's the caller's own.
  */
 export function useSharedRequest(
   kind: string,
   isPending: boolean,
-): { busy: boolean; track: <Result>(request: Promise<Result>) => Promise<Result> } {
-  const shared = use(SharedContext);
-  const scope = use(ScopeContext);
-  const key = scope ? `${scope}:${kind}:requests` : null;
-  const count = countOf(useStored(shared, key));
+): { busy: boolean; start: () => void } {
+  const scoped = useScopedKey(`${kind}:requests`);
 
-  if (!shared || !key) {
-    return { busy: isPending, track: (request) => request };
+  if (!scoped) {
+    return { busy: isPending, start: () => null };
   }
 
-  return {
-    busy: isPending || count > 0,
-    track: (request) => {
-      shared.update(key, (current) => countOf(current) + 1);
-      const settle = () => shared.update(key, (current) => Math.max(0, countOf(current) - 1));
-      request.then(settle, settle);
-      return request;
-    },
-  };
+  const { key, shared } = scoped;
+  return { busy: isPending || shared.busy.includes(key), start: () => shared.addBusy(key) };
 }

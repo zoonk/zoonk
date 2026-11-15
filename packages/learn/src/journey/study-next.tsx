@@ -49,7 +49,8 @@ function ContinueAtNextLevel({
 
   const start = () => {
     startTransition(async () => {
-      const { data: started } = await safeAsync(() => request.track(onContinue()));
+      request.start();
+      const { data: started } = await safeAsync(onContinue);
       setFailed(!started);
     });
   };

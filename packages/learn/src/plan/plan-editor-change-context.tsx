@@ -13,7 +13,10 @@ type EditorChangeValue = {
 
 const EditorChangeContext = createContext<EditorChangeValue | null>(null);
 
-/** Each opening of the editor starts with no change shown (`open`). */
+/**
+ * A change shows only in the opening of the editor (`open`) whose save made it, so a save that
+ * lands after the learner closed and reopened the editor shows nothing in the new one.
+ */
 export function PlanEditorChangeProvider({
   children,
   open,
@@ -21,28 +24,27 @@ export function PlanEditorChangeProvider({
   children: React.ReactNode;
   open: boolean;
 }) {
-  const [latest, setLatest] = useState<EditorChange | null>(null);
-  const [wasOpen, setWasOpen] = useState(open);
+  const [opening, setOpening] = useState({ count: 0, open });
+  const [reported, setReported] = useState<(EditorChange & { opening: number }) | null>(null);
 
-  if (open !== wasOpen) {
-    setWasOpen(open);
-
-    if (open) {
-      setLatest(null);
-    }
+  if (open !== opening.open) {
+    setOpening({ count: opening.count + (open ? 1 : 0), open });
   }
+
+  const latest = reported?.opening === opening.count ? reported : null;
 
   const value = useMemo<EditorChangeValue>(
     () => ({
       latest,
       // Setting back by hand what the latest change set is its Undo: the change comes back undone.
-      report: (change) => setLatest({ change, undone: change.status === "undone" }),
+      report: (change) =>
+        setReported({ change, opening: opening.count, undone: change.status === "undone" }),
       undo: (changeId) =>
-        setLatest((current) =>
+        setReported((current) =>
           current?.change.id === changeId ? { ...current, undone: true } : current,
         ),
     }),
-    [latest],
+    [latest, opening.count],
   );
 
   return <EditorChangeContext value={value}>{children}</EditorChangeContext>;

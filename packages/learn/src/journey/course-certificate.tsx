@@ -37,7 +37,8 @@ function useCertificateClaim(onClaim: PlanCertificates["onClaim"]) {
 
   const claim = () => {
     startTransition(async () => {
-      const { data: claimed } = await safeAsync(() => request.track(onClaim()));
+      request.start();
+      const { data: claimed } = await safeAsync(onClaim);
       setFailed(!claimed);
     });
   };

@@ -102,15 +102,13 @@ function DateOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDat
   const { apply, isPending } = useApplyPreview(item);
   const [operations, setOperations] = useSharedState<Operations>("operations", null);
   const [search, setSearch] = useSharedState<DateSearch>("search", null);
-  // The search the learner waits for (0 for none), so one put off or superseded shows nothing.
-  const waiting = useSharedMark("waiting", 0);
-  const asked = useSharedMark("asked", 0);
+  // The search the learner waits for, so one put off or superseded shows nothing.
+  const waiting = useSharedMark<symbol | null>("waiting", null);
   const { title } = pastDateText({ isExam: false, lessons: item.lessons });
   const preview = currentPlanPreview({ operations: operations ?? [], plan, state: storedPreview });
 
   const showChange = async () => {
-    asked.write(asked.read() + 1);
-    const request = asked.read();
+    const request = Symbol("search");
     waiting.write(request);
     setSearch("finding");
     const found = await finder.find();
@@ -119,7 +117,7 @@ function DateOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDat
       return;
     }
 
-    waiting.write(0);
+    waiting.write(null);
 
     if (found.status !== "answered") {
       setSearch(found.status === "stale" ? null : found.status);
@@ -141,7 +139,7 @@ function DateOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDat
   };
 
   const stopWaiting = () => {
-    waiting.write(0);
+    waiting.write(null);
     setSearch(null);
   };
 

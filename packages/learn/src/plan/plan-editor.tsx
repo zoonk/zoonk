@@ -15,7 +15,7 @@ import {
 } from "@zoonk/ui/components/side-panel";
 import { useIsMobile } from "@zoonk/ui/hooks/mobile";
 import { useExtracted } from "next-intl";
-import { LayoutSharedProvider, RequestScope } from "./layout-shared";
+import { RequestScope } from "./layout-shared";
 import { PlanActivities } from "./plan-activities";
 import { PlanAim } from "./plan-aim";
 import { PlanBases } from "./plan-bases";
@@ -150,13 +150,11 @@ export function PlanEditor({
   const initialFocus = () => (section && findSectionControl(section)) || true;
   const props = { initialFocus, onOpenChange, open };
 
-  // Below 768px a sheet and from it a side panel: what a change started, and the change it made,
-  // live above that switch, so a resize mid-save shows it in the frame it brings.
+  // The change a save made lives above the sheet/panel switch, so a resize mid-save shows it in the
+  // frame it brings.
   return (
-    <LayoutSharedProvider>
-      <PlanEditorChangeProvider open={open}>
-        {isPhone ? <EditorSheet {...props} /> : <EditorPanel {...props} />}
-      </PlanEditorChangeProvider>
-    </LayoutSharedProvider>
+    <PlanEditorChangeProvider open={open}>
+      {isPhone ? <EditorSheet {...props} /> : <EditorPanel {...props} />}
+    </PlanEditorChangeProvider>
   );
 }

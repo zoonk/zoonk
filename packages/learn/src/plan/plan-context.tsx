@@ -14,6 +14,7 @@ import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type CountryName, type SuggestedCountry } from "../country/country-choice";
 import { type LessonVariety } from "../country/use-country-lines";
 import { type BasesAdviceStore, useBasesAdviceStore } from "./bases-advice-store";
+import { LayoutSharedProvider } from "./layout-shared";
 import { getPlanAdviceRevision } from "./plan-advice-revision";
 
 /** `change` is null while the plan isn't built yet. */
@@ -247,7 +248,8 @@ export function PlanScreenProvider({
     <PlanScreenContext
       value={{ ...value, actions, basesAdvice, changes, keepFocus, timeToCover, today }}
     >
-      {children}
+      {/* One goal's: another goal's Plan starts with nothing of this one's requests. */}
+      <LayoutSharedProvider key={value.plan.goalId}>{children}</LayoutSharedProvider>
     </PlanScreenContext>
   );
 }
