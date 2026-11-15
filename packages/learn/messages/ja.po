@@ -340,6 +340,16 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "終了すると結果を確認できます。"
 
+#: src/_components/finish-sentence.ts
+msgctxt "XhpWxQ"
+msgid "At {time} a day, you reach {level} around {month}."
+msgstr "1日{time}なら、{level}に到達するのは{month}ごろです。"
+
+#: src/_components/finish-sentence.ts
+msgctxt "6Due7K"
+msgid "You finish around {month}."
+msgstr "{month}ごろに完了する予定です。"
+
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
 msgid "Take a short break, then try again."
@@ -798,16 +808,6 @@ msgstr "{dateKind, select, month {{date}までに目標の全範囲を学べま�
 msgctxt "2IAd52"
 msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your date, {date}, has passed.}}"
 msgstr "{dateKind, select, month {設定した月（{date}）は過ぎています。} other {設定した日（{date}）は過ぎています。}}"
-
-#: src/_components/time-answer-lines.tsx
-msgctxt "qQDZCf"
-msgid "At {time} a day, you reach {level} around <date>{month}</date>."
-msgstr "1日{time}の学習で、{level}には<date>{month}</date>ごろに到達します。"
-
-#: src/_components/time-answer-lines.tsx
-msgctxt "lzWfsi"
-msgid "You finish around <date>{month}</date>."
-msgstr "<date>{month}</date>ごろに完了します。"
 
 #: src/_components/time-answer-lines.tsx
 msgctxt "wRhIPZ"
@@ -10451,11 +10451,6 @@ msgstr "ひとまず{month}に設定しています。日にちがわかった�
 msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "学習計画の調整"
-
-#: src/plan/plan-finish.tsx
-msgctxt "6Due7K"
-msgid "You finish around {month}."
-msgstr "{month}ごろに完了する予定です。"
 
 #: src/plan/plan-fit-suggestion.tsx
 msgctxt "ylM0GM"

@@ -340,6 +340,16 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "Finalize para ver como foi."
 
+#: src/_components/finish-sentence.ts
+msgctxt "XhpWxQ"
+msgid "At {time} a day, you reach {level} around {month}."
+msgstr "Com {time} por dia, você chega ao nível {level} por volta de {month}."
+
+#: src/_components/finish-sentence.ts
+msgctxt "6Due7K"
+msgid "You finish around {month}."
+msgstr "Você termina por volta de {month}."
+
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
 msgid "Take a short break, then try again."
@@ -798,16 +808,6 @@ msgstr "{dateKind, select, month {Cobre todo o conteúdo do seu objetivo até {d
 msgctxt "2IAd52"
 msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your date, {date}, has passed.}}"
 msgstr "{dateKind, select, month {O mês que você escolheu, {date}, já passou.} other {A data que você escolheu, {date}, já passou.}}"
-
-#: src/_components/time-answer-lines.tsx
-msgctxt "qQDZCf"
-msgid "At {time} a day, you reach {level} around <date>{month}</date>."
-msgstr "Com {time} por dia, você chega ao nível {level} por volta de <date>{month}</date>."
-
-#: src/_components/time-answer-lines.tsx
-msgctxt "lzWfsi"
-msgid "You finish around <date>{month}</date>."
-msgstr "Você termina por volta de <date>{month}</date>."
 
 #: src/_components/time-answer-lines.tsx
 msgctxt "wRhIPZ"
@@ -10451,11 +10451,6 @@ msgstr "Por enquanto, {month}. Escolha o dia quando souber."
 msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "Ajustar seu plano"
-
-#: src/plan/plan-finish.tsx
-msgctxt "6Due7K"
-msgid "You finish around {month}."
-msgstr "Você termina por volta de {month}."
 
 #: src/plan/plan-fit-suggestion.tsx
 msgctxt "ylM0GM"

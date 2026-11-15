@@ -340,6 +340,16 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "마치고 결과를 확인해 보세요."
 
+#: src/_components/finish-sentence.ts
+msgctxt "XhpWxQ"
+msgid "At {time} a day, you reach {level} around {month}."
+msgstr "하루 {time}씩 공부하면 {level}에 {month}쯤 도달해요."
+
+#: src/_components/finish-sentence.ts
+msgctxt "6Due7K"
+msgid "You finish around {month}."
+msgstr "{month}쯤에 마쳐요."
+
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
 msgid "Take a short break, then try again."
@@ -798,16 +808,6 @@ msgstr "{dateKind, select, month {{date}까지 목표에 필요한 내용을 모
 msgctxt "2IAd52"
 msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your date, {date}, has passed.}}"
 msgstr "{dateKind, select, month {정한 날짜({date})가 지났어요.} other {정한 날짜({date})가 지났어요.}}"
-
-#: src/_components/time-answer-lines.tsx
-msgctxt "qQDZCf"
-msgid "At {time} a day, you reach {level} around <date>{month}</date>."
-msgstr "하루 {time}씩 공부하면 {level}에 <date>{month}</date>쯤 도달해요."
-
-#: src/_components/time-answer-lines.tsx
-msgctxt "lzWfsi"
-msgid "You finish around <date>{month}</date>."
-msgstr "<date>{month}</date>쯤 마쳐요."
 
 #: src/_components/time-answer-lines.tsx
 msgctxt "wRhIPZ"
@@ -10451,11 +10451,6 @@ msgstr "우선 {month}로 정해 뒀어요. 날짜를 알게 되면 선택하세
 msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "계획 조정하기"
-
-#: src/plan/plan-finish.tsx
-msgctxt "6Due7K"
-msgid "You finish around {month}."
-msgstr "{month}쯤에 마쳐요."
 
 #: src/plan/plan-fit-suggestion.tsx
 msgctxt "ylM0GM"
