@@ -54,6 +54,7 @@ struct ChallengeScreen: View {
             }
           } else {
             intro(challenge)
+              .barTitleAfterHero(titleString(challenge))
           }
         }
       }
@@ -95,9 +96,10 @@ struct ChallengeScreen: View {
             .padding(.bottom, 2)
         }
 
-        titleText(challenge)
+        Text(titleString(challenge))
           .typeStyle(.pageTitle)
           .accessibilityAddTraits(.isHeader)
+          .heroTitle()
 
         if won {
           if let result = challenge.result {
@@ -222,7 +224,7 @@ struct ChallengeScreen: View {
         "Challenge", tableName: "Practice", comment: "Names a challenge's screen until it loads")
     }
 
-    return titleText(challenge)
+    return Text(titleString(challenge))
   }
 
   @ViewBuilder
@@ -416,11 +418,11 @@ struct ChallengeScreen: View {
     return date.formatted(Date.FormatStyle(timeZone: .gmt).hour().minute())
   }
 
-  private func titleText(_ challenge: Components.Schemas.Challenge) -> Text {
+  private func titleString(_ challenge: Components.Schemas.Challenge) -> String {
     if let title = challenge.call?.title, challenge.status != .done, isCheckpoint(challenge) {
-      Text(title)
+      title
     } else {
-      Text(title(challenge))
+      String(localized: title(challenge))
     }
   }
 

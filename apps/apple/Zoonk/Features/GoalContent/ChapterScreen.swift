@@ -214,6 +214,7 @@ private struct ChapterContent: View {
                 comment: "Offers the chapter's test-out"
               )
               .foregroundStyle(.primary)
+              .layoutPart(.label)
 
               Text(
                 "Take the test and skip the chapter", tableName: "Plan",
@@ -221,6 +222,7 @@ private struct ChapterContent: View {
               )
               .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
+              .layoutPart(.note)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .disclosureChevron()
@@ -237,8 +239,10 @@ private struct ChapterContent: View {
                 comment: "Adds practice on the chapter"
               )
               .foregroundStyle(.primary)
+              .layoutPart(.label)
             } icon: {
               KindMark(kind: .practice)
+                .layoutPart(.mark)
             }
           }
           .disabled(isPracticing)
@@ -402,9 +406,12 @@ private struct ChapterReferenceSection: View {
       Label {
         Text(
           "Chapter summary", tableName: "Plan",
-          comment: "Folds a chapter's topics and summaries")
+          comment: "Folds a chapter's topics and summaries"
+        )
+        .layoutPart(.label)
       } icon: {
         Image(systemName: "list.bullet.clipboard")
+          .layoutPart(.mark)
       }
     }
   }

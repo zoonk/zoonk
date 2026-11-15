@@ -28,6 +28,9 @@ final class MindMapsStore {
   /// Goals whose "Create all chapter maps" is on its way.
   private(set) var creatingAll: Set<String> = []
   private(set) var createAllFailures: [String: MindMapRequestFailure] = [:]
+  /// When each goal's offer last arrived, from a read or a refusal: only a day still ahead then is
+  /// worth a read when it comes.
+  @ObservationIgnored private var offerArrivedAt: [String: Date] = [:]
 
   init(
     api: any MindMapsAPIClient, cache: AppCache, drawingPoll: Duration = .seconds(4),
@@ -40,12 +43,17 @@ final class MindMapsStore {
     self.writingPoll = writingPoll
   }
 
-  /// A read only: once the page's stop is over, its offer is read again, so its counts and Create
-  /// all are today's answer.
+  /// A read only, at the day of a stop that was still ahead when its offer arrived, so the counts
+  /// and Create all are that day's answer. A day already past on arrival schedules nothing: the
+  /// page has just read the list, and the next read (the foreground, a pull, coming back) lifts it.
   func readOfferAgain(goalId: String, now: Date) async {
-    if shownStop(goalId: goalId)?.isOver(at: now) == true {
-      await list(goalId: goalId).refresh()
+    guard let opens = shownStop(goalId: goalId)?.availableAt, opens <= now,
+      let arrived = offerArrivedAt[goalId], opens > arrived
+    else {
+      return
     }
+
+    await list(goalId: goalId).refresh()
   }
 
   /// What stops a new map on the page: the list's offer, which a refusal writes into as the newest
@@ -434,6 +442,7 @@ final class MindMapsStore {
   /// lesson maps once more of its lessons show (a map's run wrote them; the reader's deck takes them
   /// from the list). Only a change does, so the follower's beats don't restart a read on its way.
   private func listed(_ read: GoalMindMaps, goalId: String) {
+    offerArrivedAt[goalId] = .now
     let before = lists[goalId]?.value
 
     for chapter in read.chapters
@@ -454,6 +463,7 @@ final class MindMapsStore {
   /// dropped, and the next read replaces it.
   private func stopOffer(_ stop: MindMapAllowanceStop, goalId: String) {
     lists[goalId]?.update { $0.stopped(by: stop) }
+    offerArrivedAt[goalId] = .now
   }
 
   private func readStarted() -> Int {

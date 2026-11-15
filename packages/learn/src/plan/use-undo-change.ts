@@ -5,6 +5,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useTransition } from "react";
 import { useChangeSaveFailed } from "../_components/save-error";
 import { useStillMounted } from "../_utils/use-still-mounted";
+import { useSharedRequest } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
 
@@ -20,9 +21,12 @@ export function useUndoChange({
   const [isPending, startTransition] = useTransition();
   const saveFailed = useChangeSaveFailed();
   const isMounted = useStillMounted();
+  const request = useSharedRequest("undo", isPending);
 
   const undo = () => {
     startTransition(async () => {
+      request.start();
+
       const { data: undone } = await safeAsync(() =>
         actions.decide({ changeId: change.id, status: "undone" }),
       );
@@ -42,5 +46,5 @@ export function useUndoChange({
     });
   };
 
-  return { isPending, undo };
+  return { isPending: request.busy, undo };
 }

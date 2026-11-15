@@ -2,7 +2,6 @@
 
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { useExtracted } from "next-intl";
-import { useRef, useState } from "react";
 import {
   SuggestionAction,
   SuggestionActions,
@@ -11,6 +10,7 @@ import {
 } from "../_components/suggestion";
 import { useTimeAnswerTexts } from "../_components/time-answer";
 import { getLongerTime } from "../_utils/time-answer";
+import { useSharedMark, useSharedState } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
 import { type FindStatus, useCoveredText, usePlanCoverage } from "./plan-coverage";
 import { useFocusTestOfferHref, useTakeFocusTestLabel } from "./plan-focus-test";
@@ -216,8 +216,8 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
   const { goal, plan } = usePlanScreen();
   const finder = useTimeToCover();
   const { preview: storedPreview, requestPreview, setPreview } = usePlanSuggestionSlot();
-  const [intent, setIntent] = useState<Intent>("time");
-  const asking = useRef<Intent | null>(null);
+  const [intent, setIntent] = useSharedState<Intent>("intent", "time");
+  const asking = useSharedMark<Intent | null>("asking", null);
   const covered = coverage ? coveredText(coverage) : "";
   const found = finder.answered;
   const answered = found && coverage ? answerOffer({ covered, intent, time: found }) : null;
@@ -244,20 +244,20 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
   });
 
   const ask = async (next: Intent) => {
-    asking.current = next;
+    asking.write(next);
     setIntent(next);
     setPreview();
     const outcome = await finder.find();
     const time = outcome.status === "answered" ? outcome.time : null;
     const asked = time && coverage ? answerOffer({ covered, intent: next, time }) : null;
 
-    if (asked && asking.current === next) {
+    if (asked && asking.read() === next) {
       void requestPreview(asked.operations);
     }
   };
 
   const stopAsking = () => {
-    asking.current = null;
+    asking.write(null);
     setIntent("time");
   };
 

@@ -14,6 +14,21 @@ struct BuddyCharacter: View {
   }
 }
 
+/// The whole buddy cut to its own drawing, at the size a whole buddy `height` tall has, so it starts
+/// on the edge its text starts on, as main's `fit="ink"` does.
+struct BuddyFigure: View {
+  let look: BuddyLook
+  var height: CGFloat = 96
+
+  var body: some View {
+    let ink = BuddyArt(look: look, crop: .ink).viewBox
+    let scale = height / BuddyArt(look: look).viewBox.height
+
+    BuddyCharacter(look: look, crop: .ink)
+      .frame(width: ink.width * scale, height: ink.height * scale)
+  }
+}
+
 /// `reacts` where something just happened (the challenge opened, or its result came in); a revisit
 /// passes none, and he's still. `won` is his win: he lifts his shield whole.
 struct TricksterCharacter: View {

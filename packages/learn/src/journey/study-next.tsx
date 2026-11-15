@@ -4,7 +4,7 @@ import { type StudyNextView } from "@zoonk/core/view-models/map/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { LibraryIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import {
   ListGroup,
   ListRowContent,
@@ -25,6 +25,7 @@ import {
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useLevelName } from "../course/use-level-name";
+import { useSharedRequest, useSharedState } from "../plan/layout-shared";
 import { SlotContent } from "../plan/plan-suggestion-context";
 import { CertificateAction, type PlanCertificates } from "./course-certificate";
 
@@ -41,11 +42,14 @@ function ContinueAtNextLevel({
 }) {
   const t = useExtracted();
   const levelName = useLevelName();
-  const [failed, setFailed] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [failed, setFailed] = useSharedState("continueFailed", false);
+  const [ownPending, startTransition] = useTransition();
+  const request = useSharedRequest("continue", ownPending);
+  const isPending = request.busy;
 
   const start = () => {
     startTransition(async () => {
+      request.start();
       const { data: started } = await safeAsync(onContinue);
       setFailed(!started);
     });
