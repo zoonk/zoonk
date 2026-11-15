@@ -386,14 +386,12 @@ private fun GoFurtherRow(
 
 /** Main's `SlowWait`: after a while, a way to ask again; once asked, it says the explanation is still coming. */
 @Composable
-private fun SlowWait(
+internal fun SlowWait(
     explanation: Explanation,
     viewModel: ExplainViewModel,
 ) {
     var slow by remember { mutableStateOf(false) }
-    var retrying by remember { mutableStateOf(false) }
-    var joined by rememberSaveable { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
+    val retry = viewModel.slowRetry
 
     LaunchedEffect(Unit) {
         delay(SLOW)
@@ -404,21 +402,15 @@ private fun SlowWait(
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
-            stringResource(if (joined || retrying) R.string.explain_still_writing else R.string.explain_slow),
+            stringResource(if (retry == ExplainViewModel.SlowRetry.Idle) R.string.explain_slow else R.string.explain_still_writing),
             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-        if (!joined) {
+        if (retry != ExplainViewModel.SlowRetry.Asked) {
             OutlinedButton(
-                busy = retrying,
-                onClick = {
-                    retrying = true
-                    scope.launch {
-                        joined = viewModel.retrySlow(explanation)
-                        retrying = false
-                    }
-                },
+                busy = retry == ExplainViewModel.SlowRetry.Asking,
+                onClick = { viewModel.retrySlow(explanation) },
                 leadingIcon = { ButtonIcon(R.drawable.ic_refresh) },
             ) { Text(stringResource(R.string.explain_try_again)) }
         }
