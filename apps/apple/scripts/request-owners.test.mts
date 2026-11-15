@@ -215,7 +215,7 @@ function bracesAt(source: string, start: number): string {
 function looseRoutesIn(source: string, relative: string): string[] {
   return counted(
     [...source.matchAll(/^(?<before>[^\n]*?)\bTask\s*\{/gmu)].flatMap((match) => {
-      if (/=|\breturn\b/u.test(match.groups?.before ?? "")) {
+      if (/[=]|\breturn\b/u.test(match.groups?.before ?? "")) {
         return [];
       }
 
@@ -226,11 +226,13 @@ function looseRoutesIn(source: string, relative: string): string[] {
         return [];
       }
 
-      const routes = [
-        ...body.slice(awaited).matchAll(/\brouter\.(?<call>\w+)\(/gu),
-      ].map((route) => `router.${route.groups?.call ?? ""}`);
+      const routes = [...body.slice(awaited).matchAll(/\brouter\.(?<call>\w+)\(/gu)].map(
+        (route) => `router.${route.groups?.call ?? ""}`,
+      );
 
-      return routes.length === 0 ? [] : [`${relative}: ${[...new Set(routes)].toSorted().join(", ")}`];
+      return routes.length === 0
+        ? []
+        : [`${relative}: ${[...new Set(routes)].toSorted().join(", ")}`];
     }),
   );
 }
