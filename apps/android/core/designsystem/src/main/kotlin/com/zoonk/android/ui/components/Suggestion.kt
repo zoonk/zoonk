@@ -306,6 +306,7 @@ private fun SuggestionLine(
         CompositionLocalProvider(LocalPresentation provides Presentation.Line) {
             LineLayout(
                 modifier = Modifier.heightIn(min = 56.dp).padding(8.dp),
+                firstLine = lineHeight(MaterialTheme.typography.bodyMedium),
                 // A line that failed to save shows no done mark beside its error; the slot stays, so the words don't move.
                 mark = {
                     if (failed &&
@@ -363,6 +364,7 @@ private fun SuggestionLine(
 @Composable
 private fun LineLayout(
     modifier: Modifier,
+    firstLine: Dp,
     mark: @Composable () -> Unit,
     summary: @Composable () -> Unit,
     action: (@Composable () -> Unit)?,
@@ -392,15 +394,22 @@ private fun LineLayout(
                 else -> summaryPlaced.height + stackGap + actionPlaced.height
             }
         val height = maxOf(content, markPlaced.height, constraints.minHeight)
+        // E5: beside one or two lines the mark is centered on the words, beside three or more on the first line.
+        val line = firstLine.roundToPx()
+        val onFirstLine = summaryPlaced.height > line * 2 + line / 2
+        val markAt = { wordsTop: Int ->
+            if (onFirstLine) wordsTop + (line - markPlaced.height) / 2 else wordsTop + (summaryPlaced.height - markPlaced.height) / 2
+        }
         layout(constraints.maxWidth, height) {
             val top = (height - content) / 2
             val textStart = markPlaced.width + gap
             if (beside) {
-                markPlaced.place(0, (height - markPlaced.height) / 2)
-                summaryPlaced.place(textStart, (height - summaryPlaced.height) / 2)
+                val wordsTop = (height - summaryPlaced.height) / 2
+                markPlaced.place(0, markAt(wordsTop))
+                summaryPlaced.place(textStart, wordsTop)
                 actionPlaced?.place(constraints.maxWidth - actionPlaced.width, (height - actionPlaced.height) / 2)
             } else {
-                markPlaced.place(0, top + (summaryPlaced.height - markPlaced.height) / 2)
+                markPlaced.place(0, markAt(top))
                 summaryPlaced.place(textStart, top)
                 actionPlaced.place(textStart, top + summaryPlaced.height + stackGap)
             }

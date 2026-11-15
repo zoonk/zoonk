@@ -86,7 +86,7 @@ internal fun PathSection(
                 if (position > 0) HorizontalDivider()
                 PhaseItem(page, phase, phase.index == openIndex, links, brief)
             }
-            HorizontalDivider()
+            if (beforeFinish.isNotEmpty()) HorizontalDivider()
             FinishItem(page, links)
             afterExam.forEach { phase ->
                 HorizontalDivider()
