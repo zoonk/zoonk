@@ -347,7 +347,7 @@ private struct DraftView: View {
       failed(draft)
     case .understood:
       ReadDraftView(
-        draft: draft, sentHere: sentHere, onRewrite: onRewrite, onBack: onBack,
+        card: card, draft: draft, sentHere: sentHere, onRewrite: onRewrite, onBack: onBack,
         onCreated: onGoal, sourceIDs: sourceIDs)
     }
   }

@@ -99,6 +99,58 @@ final class OnboardingStoreTests: XCTestCase {
     XCTAssertEqual(card.value, Self.draft(prompt: "Spanish, fixed", goalsLeft: 1))
   }
 
+  /// While a goal is made from the card, Back waits with its controls (main's); a failed or refused
+  /// create lets Back go again and says why.
+  func testBackWaitsWhileAGoalIsMadeAndAFailureOrRefusalFreesIt() async {
+    let store = makeStore(transport: DraftServer(Self.draft(prompt: "Spanish", goalsLeft: 2)))
+    let card = store.draft(id: Self.draftID)
+    await card.load()
+
+    for refusal in [OnboardingError.failed(.unavailable), .slowDown] {
+      let creation = DraftCreation()
+      let (answer, answers) = AsyncStream<Void>.makeStream()
+      let making = Task {
+        await creation.create(from: card) {
+          for await _ in answer { break }
+          throw refusal
+        }
+      }
+
+      for _ in 0..<1_000 where !creation.isCreating { await Task.yield() }
+      XCTAssertFalse(creation.canLeave, "Back waits while the goal is made")
+
+      answers.yield()
+      answers.finish()
+      let goalID = await making.value
+
+      XCTAssertNil(goalID)
+      XCTAssertTrue(creation.canLeave, "Back goes again after \(refusal)")
+      XCTAssertEqual(creation.error, GoalError.creating(refusal), "it says why")
+    }
+  }
+
+  /// Back to a draft whose goal was just made, while its read is out: the card offers no second
+  /// create, so the draft makes one goal.
+  func testADraftReadAgainAfterItsGoalWasMadeOffersNoSecondCreate() async throws {
+    let server = DraftServer(Self.draft(prompt: "Why is the sky blue?", goalsLeft: 2))
+    let store = makeStore(transport: server)
+    let card = store.draft(id: Self.draftID)
+    await card.load()
+    let make = {
+      try await store.createExplanation(draft: try XCTUnwrap(card.value), question: "Why?")
+    }
+
+    let first = await DraftCreation().create(from: card) { try await make() }
+    XCTAssertNotNil(first)
+
+    // A new visit to the draft before its read says the goal is made.
+    let second = await DraftCreation().create(from: card) { try await make() }
+    let creates = await server.creates
+
+    XCTAssertNil(second, "the stale card offers no create")
+    XCTAssertEqual(creates, 1)
+  }
+
   private func makeStore(transport: some ClientTransport) -> OnboardingStore {
     let session = SessionStore.preview(account: .onboardingStoreTest)
     return OnboardingStore(
@@ -168,6 +220,7 @@ private actor DraftServer: ClientTransport {
   private var heldRead: CheckedContinuation<Void, Never>?
   private var editAnswered = false
   private var readsAfterEdit = 0
+  private(set) var creates = 0
 
   init(_ draft: OnboardingDraft) {
     served = draft
@@ -187,6 +240,16 @@ private actor DraftServer: ClientTransport {
         holdsRead = false
         await withCheckedContinuation { heldRead = $0 }
       }
+    }
+
+    if operationID == "createGoals" {
+      creates += 1
+
+      return (
+        HTTPResponse(status: .created, headerFields: [.contentType: "application/json"]),
+        HTTPBody(
+          #"{"generations":[],"goals":[\#(createdGoal)],"refused":[],"research":[]}"#)
+      )
     }
 
     if operationID == "reviseGoalUnderstanding" {
@@ -263,3 +326,7 @@ extension CurrentAccount {
       email: "learner@zoonk.test", id: "onboarding-store-test-user",
       image: nil, name: "Learner", username: "learner"))
 }
+
+/// The client reads dates with fractional seconds, as the API writes them.
+private let createdGoal =
+  #"{"contentCountry":null,"countryDependent":false,"createdAt":"2026-11-08T00:00:00.000Z","dailyMinutes":15,"details":{},"examBlueprintId":null,"examCountry":null,"examplesCountry":null,"id":"00000000-0000-0000-0000-000000000001","isActive":true,"kind":"learn","language":"en","languageCountry":{"code":"US","name":"United States"},"languageFlag":null,"plan":null,"primaryCourseId":null,"prompt":"Vaccines","regionChoices":[],"status":"active","studyDays":[],"suggested":[],"studyTime":null,"targetDate":null,"targetLanguage":null,"targetRegion":null,"timezone":null,"title":"Vaccines","displayName":"Vaccines"}"#

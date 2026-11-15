@@ -1,6 +1,46 @@
 import SwiftUI
 
+/// A goal made from a draft's card. While it's made, the card's controls wait, Back included, as
+/// main's do, so the goal is made once and its setup opens from the card the learner confirmed.
+@MainActor
+@Observable
+final class DraftCreation {
+  private(set) var isCreating = false
+  var error: GoalError?
+
+  var canLeave: Bool { !isCreating }
+
+  /// A draft read again since a goal changed (one may be made from it by now) offers no create until
+  /// the read says what the server has.
+  static func canCreate(from card: Resource<OnboardingDraft>) -> Bool {
+    card.freshValue != nil
+  }
+
+  /// The goal's id, or nil when it wasn't made (`error` says why) or can't be made now.
+  func create(from card: Resource<OnboardingDraft>, _ run: () async throws -> String) async
+    -> String?
+  {
+    guard !isCreating, Self.canCreate(from: card) else {
+      return nil
+    }
+
+    isCreating = true
+    error = nil
+    defer { isCreating = false }
+
+    do {
+      return try await run()
+    } catch is CancellationError {
+      return nil
+    } catch {
+      self.error = GoalError.creating(error)
+      return nil
+    }
+  }
+}
+
 struct ReadDraftView: View {
+  let card: Resource<OnboardingDraft>
   let draft: OnboardingDraft
   /// Sent in this flow just now: a question opens its explanation by itself.
   let sentHere: Bool
@@ -11,21 +51,40 @@ struct ReadDraftView: View {
 
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
-  @State private var isCreating = false
-  @State private var error: GoalError?
-  /// What a created goal leads to: leaving the draft (Back to the box) opens nothing of it.
-  @State private var tasks = ScreenTasks()
+  @State private var creation = DraftCreation()
 
   var body: some View {
     outcome
-      .onDisappear { tasks.cancel() }
+      // Hiding the system's Back also stops the edge swipe; the one in its place says Back waits.
+      .navigationBarBackButtonHidden(!creation.canLeave)
+      .toolbar {
+        if !creation.canLeave {
+          ToolbarItem(placement: .topBarLeading) {
+            Button {
+            } label: {
+              Label {
+                Text("Back", tableName: "Onboarding", comment: "Goes back to the previous question")
+              } icon: {
+                Image(systemName: "chevron.backward")
+              }
+            }
+            .disabled(true)
+          }
+        }
+      }
+  }
+
+  /// The card's controls wait while its goal is made, and while a draft read again since may
+  /// already have one.
+  private var isWaiting: Bool {
+    creation.isCreating || !DraftCreation.canCreate(from: card)
   }
 
   @ViewBuilder private var outcome: some View {
     switch draft.understanding?.value1 {
     case .case1(let understood):
       UnderstoodCard(
-        draft: draft, understood: understood, isCreating: isCreating, error: error,
+        draft: draft, understood: understood, isCreating: isWaiting, error: creation.error,
         onRewrite: onRewrite
       ) {
         create {
@@ -39,25 +98,27 @@ struct ReadDraftView: View {
       .onChange(of: draft) {
         // The draft is read again when the learner's goals or plan change, and it may have room by
         // then, such as after getting Plus; nil is no cap.
-        if error?.limit == .activeGoals, draft.activeGoalsLeft != 0 {
-          error = nil
+        if creation.error?.limit == .activeGoals, draft.activeGoalsLeft != 0 {
+          creation.error = nil
         }
       }
     case .case2(let explain):
       ExplainOutcome(
-        goal: draft.prompt, question: explain.question, isStarting: isCreating, error: error
+        goal: draft.prompt, question: explain.question, isStarting: isWaiting,
+        error: creation.error
       ) {
         startExplanation(question: explain.question)
       }
       .task {
         // Right after sending, a question opens its explanation by itself; coming back, it waits for a tap.
-        if sentHere, error == nil, !isCreating {
+        if sentHere, creation.error == nil, !isWaiting {
           startExplanation(question: explain.question)
         }
       }
     case .case3(let instrument):
       InstrumentOutcome(
-        goal: draft.prompt, instrument: instrument.instrument, isStarting: isCreating, error: error
+        goal: draft.prompt, instrument: instrument.instrument, isStarting: isWaiting,
+        error: creation.error
       ) {
         create {
           try await onboarding.createMusicianship(draft: draft, instrument: instrument.instrument)
@@ -86,23 +147,12 @@ struct ReadDraftView: View {
     }
   }
 
-  private func create(
-    _ run: @escaping @MainActor () async throws -> String,
-    then: @escaping @MainActor (String) -> Void
-  ) {
-    guard !isCreating else {
-      return
-    }
-
-    isCreating = true
-    error = nil
-
-    // The goal is created whatever happens to this screen; the next visit to the draft finds it and
-    // goes on with its setup.
-    tasks.send(run, then: then) { error in
-      self.error = GoalError.creating(error)
-    } ended: {
-      isCreating = false
+  private func create(_ run: @escaping () async throws -> String, then: @escaping (String) -> Void)
+  {
+    Task {
+      if let goalID = await creation.create(from: card, run) {
+        then(goalID)
+      }
     }
   }
 }

@@ -30,34 +30,6 @@ final class ScreenTasksTests: XCTestCase {
     XCTAssertFalse(wentOn, "the step that left doesn't finish setup")
   }
 
-  /// Back while a goal is created: the server keeps the goal (the next visit finds it), and the
-  /// visit that left opens nothing.
-  func testAGoalCreatedAfterTheVisitLeftIsKeptAndOpensNothing() async {
-    let tasks = ScreenTasks()
-    let (response, answer) = AsyncStream<Void>.makeStream()
-    let ended = expectation(description: "the visit's work ended")
-    var saved = false
-    var opened: String?
-
-    tasks.send {
-      for await _ in response { break }
-      saved = true
-      return "goal"
-    } then: { goalID in
-      opened = goalID
-    } ended: {
-      ended.fulfill()
-    }
-
-    tasks.cancel()
-    answer.yield()
-    answer.finish()
-    await fulfillment(of: [ended], timeout: 5)
-
-    XCTAssertTrue(saved, "the write the tap sent finishes")
-    XCTAssertNil(opened, "the visit that left opens nothing")
-  }
-
   /// The old visit's late answer opens nothing, and canceling it leaves the new visit's alone.
   func testANewVisitIsNotCanceledByTheOldVisit() async {
     let old = ScreenTasks()
