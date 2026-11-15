@@ -34,7 +34,7 @@ function chevronEnds(platform: Capture["platform"]) {
   return evaluateCapture(chevronRows(platform)).filter((finding) => finding.rule === "end-edge");
 }
 
-describe("an end glyph's column on Apple (AP1's C2, the lead's ruling)", () => {
+describe("an end glyph's column on Apple (AP1's C2)", () => {
   it("is its box, where the system insets its chevron's ink; elsewhere the ink decides", () => {
     assert.deepEqual(chevronEnds("apple"), []);
     assert.equal(chevronEnds("android")[0]?.level, "fail");

@@ -95,7 +95,7 @@ function cardFilled(slot: string | null) {
   return evaluateCapture(read()).filter((finding) => finding.rule === "one-filled");
 }
 
-describe("a card that asks its own question (the lead's ruling)", () => {
+describe("a card that asks its own question", () => {
   it("has its own filled answer while the page keeps its own; a card that merely holds one doesn't", () => {
     assert.deepEqual(cardFilled("suggestion"), []);
     assert.deepEqual(cardFilled("tutor-plan-change"), []);
@@ -103,7 +103,7 @@ describe("a card that asks its own question (the lead's ruling)", () => {
   });
 });
 
-describe("a media control (the lead's ruling)", () => {
+describe("a media control", () => {
   it("isn't the screen's action: the notation player's Play isn't a kit button and isn't counted", () => {
     document.body.innerHTML = `<div data-slot="page" data-box="16,0,358,400">${filledButton("Check", 16)}
       <button aria-label="Play the melody" style="background-color: rgb(20, 20, 20)" data-box="16,100,44,44"></button></div>`;

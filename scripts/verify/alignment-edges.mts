@@ -163,8 +163,8 @@ function inkRight(element: CaptureElement) {
 export function endLeads(context: Context, read: Group): AlignmentFinding[] {
   const { group, holders, parts, rows } = read;
 
-  // Apple's system chevron insets its ink in its own box; its column is that box (the lead's
-  // ruling), and `DisclosureChevron` draws where the system puts its own.
+  // Apple's system chevron insets its ink in its own box; its column is that box, and
+  // `DisclosureChevron` draws where the system puts its own.
   const reach = (element: CaptureElement) =>
     element.part === "end" && context.capture.platform === "apple"
       ? element.bounds[0] + element.bounds[2]
