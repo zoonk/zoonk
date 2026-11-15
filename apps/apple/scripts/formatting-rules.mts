@@ -1,0 +1,138 @@
+import { readFile, readdir } from "node:fs/promises";
+import path from "node:path";
+
+export const FORMATTING_MODULE = "Features/Plan/PlanModels.swift";
+export const FORMATTING_SEVERITY: "warning" | "error" = "warning";
+
+const DIRECT_FORMAT =
+  /\b(?:DateFormatter|DateComponentsFormatter|RelativeDateTimeFormatter|MeasurementFormatter)\s*(?=[(.])|\b(?:Date|Duration)\s*\.\s*(?:FormatStyle|ISO8601FormatStyle|VerbatimFormatStyle|UnitsFormatStyle|TimeFormatStyle)\b|\.\s*formatted\s*\(\s*(?:\.(?:dateTime|studyDay|relative|units|time|iso8601)\b|date\s*:)/gu;
+
+export function formattingViolations(source: string, file: string) {
+  if (file === FORMATTING_MODULE) {
+    return [];
+  }
+
+  const code = swiftCode(source);
+
+  return [...code.matchAll(DIRECT_FORMAT)].map((match) => ({
+    call: match[0].replaceAll(/\s+/gu, " "),
+    file,
+    line: code.slice(0, match.index).split("\n").length,
+  }));
+}
+
+export async function scanFormatting(directory: string, relative = "") {
+  const entries = await readdir(directory, { withFileTypes: true });
+
+  const results = await Promise.all(
+    entries.map(async (entry): Promise<ReturnType<typeof formattingViolations>> => {
+      const file = path.posix.join(relative, entry.name);
+      const full = path.join(directory, entry.name);
+
+      if (entry.isDirectory()) {
+        return scanFormatting(full, file);
+      }
+
+      return entry.name.endsWith(".swift")
+        ? formattingViolations(await readFile(full, "utf8"), file)
+        : [];
+    }),
+  );
+
+  return results.flat().toSorted((a, b) => a.file.localeCompare(b.file) || a.line - b.line);
+}
+
+// Preserve offsets and interpolation expressions while excluding comments and literal text.
+function swiftCode(source: string): string {
+  const output = source.split("");
+
+  const hide = (start: number, end: number) => {
+    for (let index = start; index < end; index += 1) {
+      if (source[index] !== "\n") {
+        output[index] = " ";
+      }
+    }
+  };
+
+  function stringAt(start: number, hashes: string): number {
+    const opening = start + hashes.length;
+    const quote = source.startsWith('"""', opening) ? '"""' : '"';
+    const close = quote + hashes;
+    hide(start, opening + quote.length);
+
+    for (let index = opening + quote.length; index < source.length;) {
+      if (source.startsWith(close, index)) {
+        hide(index, index + close.length);
+        return index + close.length;
+      }
+
+      if (source.startsWith(`\\${hashes}(`, index)) {
+        const expression = index + hashes.length + 2;
+        hide(index, expression);
+        index = codeAt(expression, true);
+      } else if (source.startsWith(`\\${hashes}`, index)) {
+        const end = Math.min(source.length, index + hashes.length + 2);
+        hide(index, end);
+        index = end;
+      } else {
+        hide(index, index + 1);
+        index += 1;
+      }
+    }
+
+    return source.length;
+  }
+
+  function codeAt(start: number, interpolation = false): number {
+    let depth = 0;
+
+    for (let index = start; index < source.length;) {
+      const rest = source.slice(index);
+
+      if (rest.startsWith("//")) {
+        const end = source.indexOf("\n", index);
+        hide(index, end === -1 ? source.length : end);
+        index = end === -1 ? source.length : end;
+      } else if (rest.startsWith("/*")) {
+        let end = index + 2;
+        let comments = 1;
+
+        while (end < source.length && comments > 0) {
+          if (source.startsWith("/*", end)) {
+            comments += 1;
+            end += 2;
+          } else if (source.startsWith("*/", end)) {
+            comments -= 1;
+            end += 2;
+          } else {
+            end += 1;
+          }
+        }
+
+        hide(index, end);
+        index = end;
+      } else if (/^#*"/u.test(rest)) {
+        index = stringAt(index, /^#*/u.exec(rest)?.[0] ?? "");
+      } else {
+        if (source[index] === "(") {
+          depth += 1;
+        }
+
+        if (source[index] === ")") {
+          if (interpolation && depth === 0) {
+            return index + 1;
+          }
+
+          depth -= 1;
+        }
+
+        index += 1;
+      }
+    }
+
+    return source.length;
+  }
+
+  codeAt(0);
+  return output.join("");
+}
