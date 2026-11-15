@@ -786,6 +786,11 @@ msgid "{belt}, level {level}"
 msgstr "{belt}, 레벨 {level}"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "bzSrZ6"
+msgid "Level {level}"
+msgstr "레벨 {level}"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "zF7Cth"
 msgid "Guest"
 msgstr "게스트"
