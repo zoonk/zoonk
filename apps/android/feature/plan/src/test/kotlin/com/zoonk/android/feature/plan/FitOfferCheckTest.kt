@@ -217,6 +217,7 @@ class FitOfferCheckTest {
                                 SlotHost(
                                     preview = preview,
                                     clearPreview = viewModel::clearSlotPreview,
+                                    dropCheck = viewModel::dropSlotCheck,
                                     addFitOffer = { viewModel.addFitOffer(page.plan, it) },
                                 ),
                                 viewModel.slotState,

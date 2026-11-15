@@ -44,6 +44,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import java.io.IOException
 import java.net.URI
 import java.util.UUID
 import kotlin.time.Instant
@@ -91,6 +92,44 @@ class PlanCertificateClaimWindowTest {
         rule.waitForIdle()
 
         assertEquals(AppRoute.Today, PlanClaimTest.navigator.currentRoute)
+    }
+
+    @Test
+    fun aClaimThatFailsWhileTheWindowWidensAndNarrowsSaysSoOnce() {
+        val held = launchWithAHeldClaim()
+
+        rule.onNodeWithText("Get your certificate").performScrollTo().performClick()
+        RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
+        scenario.recreate()
+        RuntimeEnvironment.setQualifiers("w411dp-h891dp")
+        scenario.recreate()
+        held.completeExceptionally(IOException("offline"))
+        rule.waitForIdle()
+
+        assertEquals(true, claimModel().failed)
+    }
+
+    @Test
+    fun aClaimThatFailsAfterTheLearnerLeftThePlanSaysNothingOnTheirReturn() {
+        val held = launchWithAHeldClaim()
+
+        rule.onNodeWithText("Get your certificate").performScrollTo().performClick()
+        PlanClaimTest.visible = false
+        rule.waitForIdle()
+        held.completeExceptionally(IOException("offline"))
+        rule.waitForIdle()
+        PlanClaimTest.visible = true
+        rule.waitForIdle()
+
+        assertEquals(false, claimModel().failed)
+    }
+
+    private fun claimModel(): CertificateClaimModel {
+        lateinit var claim: CertificateClaimModel
+        scenario.onActivity {
+            claim = ViewModelProvider(it)["certificate-claim-${PlanClaimTest.page.goal.id}", CertificateClaimModel::class.java]
+        }
+        return claim
     }
 
     /** The Plan with a certificate to claim, its claim held until the returned call completes. */

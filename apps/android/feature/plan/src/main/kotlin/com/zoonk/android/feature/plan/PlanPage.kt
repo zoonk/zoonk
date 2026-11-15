@@ -48,8 +48,8 @@ import com.zoonk.android.feature.language.AlphabetRow
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.CollectForVisit
-import com.zoonk.android.ui.OnVisitEnd
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
@@ -190,10 +190,8 @@ internal fun PlanPage(
     val openCertificates = { codes: List<String> ->
         navigator.open(codes.singleOrNull()?.let { AppRoute.Certificate(it) } ?: AppRoute.Certificates)
     }
-    // The claim's result reaches the screen shown when it lands, though a layout change composed it anew meanwhile.
-    CollectForVisit(claim.opened, openCertificates)
-    // A certificate's moment belongs to the visit that claimed it, as its opening does.
-    OnVisitEnd(claim, onEnd = claim::closeMoment)
+    VisitOf(claim.visit)
+    ActOn(claim.opened, openCertificates)
     val focusTest = page.plan.focusTest
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME || focus == ADJUST_CHOICES) }
     var editingAt by rememberSaveable {
@@ -277,6 +275,7 @@ internal fun PlanPage(
                 preview = slotPreview,
                 requestPreview = { viewModel.requestSlotPreview(page.plan, it) },
                 clearPreview = viewModel::clearSlotPreview,
+                dropCheck = viewModel::dropSlotCheck,
                 addFitOffer = { viewModel.addFitOffer(page.plan, it) },
                 next = end?.next,
                 nextLevel = nextLevel,

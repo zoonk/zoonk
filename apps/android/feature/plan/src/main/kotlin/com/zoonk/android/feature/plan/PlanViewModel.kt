@@ -461,6 +461,11 @@ class PlanViewModel(
         slotPreviewState.value = PlanPreviewState.Idle
     }
 
+    /** Leaving the card drops its check of [operations], so a late answer adds and says nothing; another card's check stays. */
+    fun dropSlotCheck(operations: List<PlanOp>) {
+        slotPreviewState.update { if (it is PlanPreviewState.Asked && it.operations == operations) PlanPreviewState.Idle else it }
+    }
+
     /**
      * Main's fit offer: adds its lessons when its numbers are today's, and applies the numbers a
      * check showed instead on the next tap. Otherwise it checks today's first, in the slot's

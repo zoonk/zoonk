@@ -6,6 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -27,16 +29,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import java.io.IOException
 
 /**
- * Add to my plan on a later day's fit offer adds its lessons once though the window changes width, both ways, while
- * it checks today's numbers. Leaving the Plan while it checks adds nothing (`FitOfferCheckTest`).
+ * Add to my plan on a later day's fit offer checks today's numbers first: a width change, both ways, while it checks
+ * still adds the lessons once, or says the check failed; leaving the Plan first adds nothing (`FitOfferCheckTest`) and
+ * says nothing.
  */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
@@ -51,6 +56,61 @@ class FitOfferWindowTest {
 
     @Test
     fun aCheckOutWhileTheWindowWidensAndNarrowsAddsTheLessonsOnce() {
+        val (held, api) = launchAFitOffer()
+
+        rule.onNodeWithText("Add to my plan").performClick()
+        recreateWideAndBack()
+        held.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(
+            listOf(
+                FitOfferTest.page.plan.fitOffer!!
+                    .operations
+                    .map { it.op },
+            ),
+            api.changes,
+        )
+    }
+
+    @Test
+    fun aCheckThatFailsWhileTheWindowWidensAndNarrowsSaysSo() {
+        val (held, api) = launchAFitOffer()
+
+        rule.onNodeWithText("Add to my plan").performClick()
+        recreateWideAndBack()
+        held.completeExceptionally(IOException("offline"))
+        rule.waitForIdle()
+
+        assertTrue(FitOfferTest.viewModel.slotPreview.value is PlanPreviewState.Failed)
+        assertEquals(emptyList<List<PlanOp>>(), api.changes)
+    }
+
+    @Test
+    fun aCheckThatFailsAfterTheLearnerLeftThePlanSaysNothingOnTheirReturn() {
+        val (held, api) = launchAFitOffer()
+
+        rule.onNodeWithText("Add to my plan").performClick()
+        FitOfferTest.visible = false
+        rule.waitForIdle()
+        held.completeExceptionally(IOException("offline"))
+        rule.waitForIdle()
+        FitOfferTest.visible = true
+        rule.waitForIdle()
+
+        assertEquals(PlanPreviewState.Idle, FitOfferTest.viewModel.slotPreview.value)
+        assertEquals(emptyList<List<PlanOp>>(), api.changes)
+    }
+
+    private fun recreateWideAndBack() {
+        RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
+        scenario.recreate()
+        RuntimeEnvironment.setQualifiers("w411dp-h891dp")
+        scenario.recreate()
+    }
+
+    /** A later day's fit offer, its check of today's numbers held until the returned call completes. */
+    private fun launchAFitOffer(): Pair<CompletableDeferred<Unit>, FakePlanApi> {
         val application = RuntimeEnvironment.getApplication()
         shadowOf(application.packageManager).addOrUpdateActivity(
             ActivityInfo().apply {
@@ -82,6 +142,7 @@ class FitOfferWindowTest {
                 FakeSession(AuthenticatedSession("ana", "token-a", "local-a")),
                 CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
             )
+        FitOfferTest.visible = true
         FitOfferTest.page = page
         FitOfferTest.viewModel =
             PlanViewModel(
@@ -90,21 +151,14 @@ class FitOfferWindowTest {
                 writingWaits(WritingRuns(write = "writeSetupLessons", ready = "setupLessonsReady")),
             )
         scenario = ActivityScenario.launch(FitOfferTestActivity::class.java)
-
-        rule.onNodeWithText("Add to my plan").performClick()
-        RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
-        scenario.recreate()
-        RuntimeEnvironment.setQualifiers("w411dp-h891dp")
-        scenario.recreate()
-        held.complete(Unit)
-        rule.waitForIdle()
-
-        assertEquals(listOf(plan.fitOffer!!.operations.map { it.op }), api.changes)
+        return held to api
     }
 }
 
 /** What outlives [FitOfferTestActivity]'s recreations, as a navigation entry's view models do. */
 object FitOfferTest {
+    /** False while the learner is away from the Plan, its view models kept, as another tab keeps them. */
+    var visible by mutableStateOf(true)
     lateinit var page: PlanPageState
     lateinit var viewModel: PlanViewModel
 }
@@ -119,21 +173,24 @@ class FitOfferTestActivity : ComponentActivity() {
                 val preview by viewModel.slotPreview.collectAsState()
                 val pending by viewModel.pending.collectAsState()
                 val navigator = rememberAppNavigator()
-                FitLessonsSuggestion(
-                    Slot(
-                        page,
-                        PlanEdits(pending = pending, change = viewModel::change),
-                        PlanLinks(navigator, page),
-                        SlotHost(
-                            preview = preview,
-                            clearPreview = viewModel::clearSlotPreview,
-                            addFitOffer = { viewModel.addFitOffer(page.plan, it) },
+                if (FitOfferTest.visible) {
+                    FitLessonsSuggestion(
+                        Slot(
+                            page,
+                            PlanEdits(pending = pending, change = viewModel::change),
+                            PlanLinks(navigator, page),
+                            SlotHost(
+                                preview = preview,
+                                clearPreview = viewModel::clearSlotPreview,
+                                dropCheck = viewModel::dropSlotCheck,
+                                addFitOffer = { viewModel.addFitOffer(page.plan, it) },
+                            ),
+                            viewModel.slotState,
+                            SuggestionLayout.Panel,
+                            SlotFocus(),
                         ),
-                        viewModel.slotState,
-                        SuggestionLayout.Panel,
-                        SlotFocus(),
-                    ),
-                )
+                    )
+                }
             }
         }
     }

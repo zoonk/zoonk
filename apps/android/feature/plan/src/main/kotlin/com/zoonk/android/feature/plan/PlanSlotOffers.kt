@@ -1,9 +1,7 @@
 package com.zoonk.android.feature.plan
 
-import androidx.activity.compose.LocalActivity
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -13,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import com.zoonk.android.R
+import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
@@ -352,26 +351,15 @@ internal fun FitLessonsSuggestion(slot: Slot) {
 
 /**
  * Closing the suggestion's sheet, or leaving the Plan, drops the offer's check, as Not now does, so
- * its late answer adds nothing, whatever plan the page shows by then. A recreated window keeps it.
+ * its late answer adds and says nothing, whatever plan the page shows by then. A recreated window keeps it.
  */
 @Composable
 private fun CancelCheckWhenGone(
     slot: Slot,
     offer: PlanFitOffer,
 ) {
-    val activity = LocalActivity.current
     val current by rememberUpdatedState(slot)
-
-    DisposableEffect(Unit) {
-        onDispose {
-            val host = current.host
-            if (activity?.isChangingConfigurations != true &&
-                (host.preview as? PlanPreviewState.Asked)?.operations == offer.operations.map { it.op }
-            ) {
-                host.clearPreview()
-            }
-        }
-    }
+    OnVisitEnd(Unit) { current.host.dropCheck(offer.operations.map { it.op }) }
 }
 
 private const val NAMED_TOPICS = 2
