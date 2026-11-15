@@ -67,10 +67,13 @@ extension View {
       bar?.start = start
     }
     .onChange(of: isChecking, initial: true) { _, value in bar?.isChecking = value }
+    // A step removed in the update that ends its check never sends that change, so its checking
+    // goes with its recorder.
     .onDisappear {
       if bar?.recorder === recorder {
         bar?.recorder = nil
         bar?.start = nil
+        bar?.isChecking = false
       }
     }
   }
