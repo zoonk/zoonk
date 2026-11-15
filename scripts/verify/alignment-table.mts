@@ -225,9 +225,10 @@ export const DECLARATIONS = new Map(
  * variant of `buttonVariants` declares `--button-variant`, on a `Button` and on a link drawn as one
  * alike. One filled action per surface. A link with the same words to the same place, or a button
  * whose piece names its action (`data-action-name`, a goal box drawn at a page's top and its end),
- * offered again counts once; every other action counts, each submit button included.
+ * offered again counts once; every other action counts, each submit button included, except a
+ * composer's send (`composer-send`): a control of its input, not the screen's action (craft D4).
  */
-const ACTIONS = "a, button, [role=button]";
+const ACTIONS = "a, button:not([data-slot=composer-send]), [role=button]";
 
 /** What covers the page and becomes the surface its own actions are counted on. */
 const SURFACES =
@@ -244,10 +245,6 @@ const COLUMNS =
 export const WEB_TABLE = {
   actions: ACTIONS,
   columns: COLUMNS,
-  // Surfaces of their own beside the page: a side panel, and a card that asks its own question (a
-  // suggestion, the tutor's proposed plan change), each named, so a card that only holds a button
-  // gets no filled action of its own.
-  panels: "[data-slot=page-aside], [data-slot=suggestion], [data-slot=tutor-plan-change]",
   pieces: PIECES.flatMap((piece) => (piece.web ? [{ name: piece.name, web: piece.web }] : [])),
   pinned: "[data-slot=bottom-bar]",
   surfaces: SURFACES,

@@ -300,9 +300,9 @@ No rail, aside or panel is drawn with nothing in it.
 
 ### D4. One strongest thing
 
-Each surface has one enabled filled button at most, its main action. A surface is the page; each dialog, sheet and side panel; and a card that asks its own question (a suggestion, a proposed plan change), which fills its own answer. A suggestion's answer is filled in its sheet and in its panel on a page with no main action of its own; in the panel beside a page that has one (Today's "Start") it is outline, so the page's action stays the strongest thing on the screen (`useMainActionVariant`). A notice's buttons are outline wherever the page has a main action. A disabled filled button isn't a choice yet, so it doesn't count; once the screen's main action is enabled, an activity's own action steps down to outline (the rhythm tapper's "Try again" beside Check). A media control (the notation player's Play) isn't the screen's action and isn't counted, however dark it's drawn. Around them, buttons step down: outline, then ghost.
+Each surface has one enabled filled button at most, its main action. A surface is the page, or a dialog, sheet or side panel over it; the page's aside and the cards in it or in the page (a suggestion, a proposed plan change) are part of the page. A suggestion's answer is filled in its sheet and in its panel on a page with no main action of its own; beside a page that has one (Today's "Start") it is outline, so the page's action stays the strongest thing on the screen (`useMainActionVariant`). A notice's buttons are outline wherever the page has a main action. A disabled filled button isn't a choice yet, so it doesn't count; once the screen's main action is enabled, an activity's own action steps down to outline (the rhythm tapper's "Try again" beside Check). A media control (the notation player's Play) and a composer's send, a control of its input, aren't the screen's action and aren't counted, however dark they're drawn, so the tutor's proposed plan change keeps its filled answer beside the field. Around them, buttons step down: outline, then ghost.
 
-- **Check.** On each surface, count the enabled filled buttons: one at most (`one-filled`, which counts each surface on its own).
+- **Check.** On the surface on top, count the enabled filled buttons: one at most (`one-filled`).
 
 ## States
 

@@ -116,18 +116,12 @@ function filledLeads(context: Context): AlignmentFinding[] {
     ];
   }
 
-  // The surface on top, and while that's the page, each side panel beside it on its own.
-  const judged = new Set([
-    capture.activeSurface,
-    ...(capture.activeSurface === "page" ? (capture.panels ?? []) : []),
-  ]);
-
   const filled = capture.elements.filter(
     (element) =>
       element.part === "action" &&
       element.variant === "filled" &&
       !element.disabled &&
-      judged.has(element.surface ?? ""),
+      element.surface === capture.activeSurface,
   );
 
   return [...Map.groupBy(filled, (action) => action.surface ?? "")].flatMap(([surface, found]) => {

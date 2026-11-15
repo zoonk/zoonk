@@ -3,7 +3,7 @@ import { type Bounds, type Capture, type CaptureElement } from "./alignment-capt
 import { type Part, type WebPiece } from "./alignment-table.mts";
 import { type Scheme, VIEWPORTS, type ViewportName } from "./viewports.mts";
 
-export type AlignmentPage = Pick<Capture, "activeSurface" | "elements" | "panels">;
+export type AlignmentPage = Pick<Capture, "activeSurface" | "elements">;
 
 /**
  * Runs in the browser, so it reads nothing outside itself and its arguments. Positions are page
@@ -14,7 +14,6 @@ export function readAlignment({
   actions: controls,
   anchors = [],
   columns,
-  panels: sidePanels,
   pieces,
   pinned: pinnedBars,
   surfaces,
@@ -26,8 +25,6 @@ export function readAlignment({
   pieces: { name: string; web: WebPiece }[];
   /** Bars pinned to the screen's bottom, which nothing rests under at the scroll's end. */
   pinned: string;
-  /** What sits beside the page as a surface of its own (an aside, a card asking its own question). */
-  panels: string;
   surfaces: string;
 }): AlignmentPage {
   const LABEL_LENGTH = 32;
@@ -1107,21 +1104,9 @@ export function readAlignment({
     exposed.at(-1) ?? covers.at(-1),
   );
 
-  const panels = [...document.querySelectorAll(sidePanels)].filter((panel) => present(panel));
-
-  const panelName = (panel: Element) =>
-    `${name(panel)} (${panel instanceof HTMLElement ? panel.dataset.slot : "panel"})`;
-
   const surfaceOf = (element: Element) => {
     const cover = covers.findLast((surface) => surface.contains(element));
-    // The innermost: a suggestion in the aside is the suggestion's.
-    const panel = panels.findLast((beside) => beside.contains(element));
-
-    if (cover) {
-      return surfaceName(cover);
-    }
-
-    return panel ? panelName(panel) : "page";
+    return cover ? surfaceName(cover) : "page";
   };
 
   const filled = (control: Element) =>
@@ -1201,11 +1186,7 @@ export function readAlignment({
     return { activeSurface: "not measured", elements: all };
   }
 
-  return {
-    activeSurface: top ? surfaceName(top) : "page",
-    elements: all,
-    panels: panels.map((panel) => panelName(panel)),
-  };
+  return { activeSurface: top ? surfaceName(top) : "page", elements: all };
 }
 
 /** The UI's locale is the path's first segment where it names one (`/pt/plan`). */

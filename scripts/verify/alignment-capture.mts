@@ -121,11 +121,6 @@ export type Capture = {
    * the page shows no dialog or sheet where they do, which fails `one-filled`.
    */
   activeSurface: string;
-  /**
-   * Surfaces of their own beside the page (a side panel, a card asking its own question): while the
-   * page is on top, each is judged apart from it.
-   */
-  panels?: string[];
   /** False when the run reached the screen but not its scenario's proof (its words never showed). */
   reached?: boolean;
   /** A gallery of the pieces shown side by side, not a screen: one filled action isn't judged. */

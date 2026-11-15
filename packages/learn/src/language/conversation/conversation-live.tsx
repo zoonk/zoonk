@@ -126,6 +126,7 @@ function TypedReply({ call }: { call: LiveCall }) {
       />
       <Button
         className="size-11"
+        data-slot="composer-send"
         disabled={!canSend || !text.trim()}
         focusableWhenDisabled
         size="icon"
