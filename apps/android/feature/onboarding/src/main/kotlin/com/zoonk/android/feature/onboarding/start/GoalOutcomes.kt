@@ -236,7 +236,7 @@ private fun GoalLimitBar(
 
 /** Main's `GoalLimitBar`: the Plan, where a goal can be paused, before Subscribe, the main action. */
 @Composable
-private fun GoalLimitButtons(
+internal fun GoalLimitButtons(
     reason: GoalLimitReason,
     onSubscribe: () -> Unit,
     onOpenPlan: () -> Unit,

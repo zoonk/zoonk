@@ -48,7 +48,6 @@
   "onboarding_course_chapters": "27be565a443ad21e4f10c8367861f32799255a4e69e46f0e8c4ececb964c20b0",
   "onboarding_course_daily_minutes": "1a1d0eaca438e7a148395bc8dbe0ef366d899d2e9f93573f2596721a71e60800",
   "onboarding_course_failed": "f1a5db26a52b970cb0c85940419d69c96754fa9eb3d2cee6a627ec4d6d2db094",
-  "onboarding_course_follows": "8736da2004666b1a735ccfb3863b01e60b735fa9c90f6f5952e9f7081e30c6e7",
   "onboarding_course_lessons": "3a18e4451e14f4fcb5ac613f44f91db46bc32e7a9af9a2de7b928a2182995e20",
   "onboarding_course_more_chapters": "be36d7872467730ea1188f6e5c90c134d2721d5ff19b8bacfb165bc886e4a098",
   "onboarding_course_start_free": "6c0e26112b69c84fd9c13ebe77911bddfc7e26680c5d2a5f55b2380001ca1632",
@@ -865,7 +864,6 @@
     <!-- Screen reader, as a one-answer question moves on: the answer picked. -->
     <string name="onboarding_you_picked">Tu as choisi %1$s</string>
     <string name="onboarding_course_chapter_description">Ton plan commence à ce chapitre et suit le cours à partir de là, selon le temps dont tu disposes chaque jour.</string>
-    <string name="onboarding_course_follows">Ton plan suit ce cours en fonction du temps dont tu disposes chaque jour.</string>
     <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->
     <plurals name="onboarding_course_chapters">
         <item quantity="one">%d chapitre</item>

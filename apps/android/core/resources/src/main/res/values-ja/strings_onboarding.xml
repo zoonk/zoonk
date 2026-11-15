@@ -48,7 +48,6 @@
   "onboarding_course_chapters": "3006bcdb0bd65e90138b3fcddf249938dd571b0f3127298aff391f87684341cd",
   "onboarding_course_daily_minutes": "89992466dca546d7327f28186f0aec956b00b78d7d305e190c0e1f7bc5ed6ba1",
   "onboarding_course_failed": "164136925b002dd70d61a2a78aebf8bbbb68d7d7ebfc626e150dff60eb6cac8c",
-  "onboarding_course_follows": "516d2e1202a1e02842c0caa81f1b19b0788fdf93f9cc5ef2a86a709d83119ab5",
   "onboarding_course_lessons": "ee2fb9b639c0dca1f992571a29ad91c6584d88fde538c3a7af0440ffb7bd398c",
   "onboarding_course_more_chapters": "885f28f61852822d530b27b0f0bfb7cfbfa57592705944da0aa0412e9799c19e",
   "onboarding_course_start_free": "5de0be2736fcf2c5117e3431695d9ecd72ebe2e14b6ac54f2f16ef06b8f13247",
@@ -837,7 +836,6 @@
     <!-- Screen reader, as a one-answer question moves on: the answer picked. -->
     <string name="onboarding_you_picked">「%1$s」を選びました</string>
     <string name="onboarding_course_chapter_description">この章からコースに沿って、毎日使える時間に合わせて学習を進める計画です。</string>
-    <string name="onboarding_course_follows">毎日使える時間に合わせて、このコースを進める学習計画です。</string>
     <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->
     <plurals name="onboarding_course_chapters">
         <item quantity="other">%d章</item>

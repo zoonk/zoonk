@@ -48,7 +48,6 @@
   "onboarding_course_chapters": "99fec4c02b107eca987853a6d63fa47d5754f5c17b2a066bd75c466a93c8edf0",
   "onboarding_course_daily_minutes": "3c1511236b7d3cbddced93b6967ec0b0be75b6f1d104a4a25ff614c3ab41b650",
   "onboarding_course_failed": "3ebeaa0138a390e6bcfd12f1c99c0864c069a00fab4de163ad3d4bb148d14725",
-  "onboarding_course_follows": "677d8f7b852c1418699d02f5ae3aeabfd1966c1833f43d46144a2e9dca62468a",
   "onboarding_course_lessons": "ede14005a156b1fc646bc9aa02d5430c13ed4cb8cb4d0755439645c968285cf5",
   "onboarding_course_more_chapters": "876d4449d7e1ef217243f6029cda7566b01c74a8e38113f849eb6529989cc6ec",
   "onboarding_course_start_free": "1e11c3d8021a70cb2dea22d2858beefa7778407868a271c8a0a3d44765b7ef06",
@@ -837,7 +836,6 @@
     <!-- Screen reader, as a one-answer question moves on: the answer picked. -->
     <string name="onboarding_you_picked">%1$s 항목을 선택했어요</string>
     <string name="onboarding_course_chapter_description">계획은 이 챕터부터 시작해 매일 공부할 수 있는 시간에 맞춰 코스를 따라 진행돼요.</string>
-    <string name="onboarding_course_follows">하루에 공부할 수 있는 시간에 맞춰 이 코스 순서대로 계획을 세워요.</string>
     <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->
     <plurals name="onboarding_course_chapters">
         <item quantity="other">챕터 %d개</item>

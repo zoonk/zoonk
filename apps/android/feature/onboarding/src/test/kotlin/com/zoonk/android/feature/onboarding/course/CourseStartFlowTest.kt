@@ -92,7 +92,7 @@ class CourseStartFlowTest {
         rule.waitForIdle()
     }
 
-    /** As on main: the month's goals cap takes Build my plan's place and the level choices, and both come back on its day. */
+    /** As on main: the month's goals cap is the start's heading and takes Build my plan's place and the level choices, and both come back on its day. */
     @Test
     fun aMonthlyGoalsCapTakesBuildMyPlansPlaceUntilItsDayComes() {
         api.refusal = ApiException(ApiError.Unavailable, "GOAL_LIMIT_REACHED", status = 429, details = monthlyGoalsLimit(clock.opening))
@@ -104,6 +104,9 @@ class CourseStartFlowTest {
         rule.onNodeWithText("Build my plan").assertDoesNotExist()
         rule.onNodeWithText(QUICK_TEST).assertDoesNotExist()
         rule.onNodeWithText("Subscribe").assertExists()
+        // As main's 7516d83dd9: the heading says why, the line under it, and the bar holds only Subscribe.
+        rule.onNodeWithText("You've started all the new goals you can").assertExists()
+        rule.onNodeWithText("More later today, or subscribe to keep going.").assertExists()
 
         api.refusal = null
         clock.passOpening()

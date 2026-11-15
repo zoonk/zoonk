@@ -48,7 +48,6 @@
   "onboarding_course_chapters": "50375ff7c64bcb7200debca8f3f533d3e66ce4ab6ed30b3dcfe0ee48b3ecb2e8",
   "onboarding_course_daily_minutes": "febcbf23bf425a174a41de41f1bba60cd4071eb3938c100fce02467fbf973ab6",
   "onboarding_course_failed": "f8d085b1a4ee163c8b92669a044f9c32de155c5da0ac94bc920c2d39c42d0b1e",
-  "onboarding_course_follows": "ac240aec70ce8559cadd2ed141cc65ab9d616dc56501e47046ed2d3f85dfce26",
   "onboarding_course_lessons": "bc07bb1273bf764818018281f42fe4b411be0e61104baf9cba00b6d19955e877",
   "onboarding_course_more_chapters": "b0f635d736499d92ba643a8b2bdc69efe9a3d966888a001ef9e8fb17c08b85c4",
   "onboarding_course_start_free": "d4aa5b9fc12cea0c22f4728a275ed4bc9a4c592dbca53b2a2cf1c7e113378c11",
@@ -865,7 +864,6 @@
     <!-- Screen reader, as a one-answer question moves on: the answer picked. -->
     <string name="onboarding_you_picked">Hai scelto %1$s</string>
     <string name="onboarding_course_chapter_description">Il tuo piano parte da questo capitolo e segue il corso, adattandosi al tempo che hai ogni giorno.</string>
-    <string name="onboarding_course_follows">Il tuo piano segue questo corso e si adatta al tempo che hai ogni giorno.</string>
     <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->
     <plurals name="onboarding_course_chapters">
         <item quantity="one">%d capitolo</item>

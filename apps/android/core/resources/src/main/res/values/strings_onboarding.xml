@@ -413,7 +413,6 @@
     <!-- Screen reader, as a one-answer question moves on: the answer picked. -->
     <string name="onboarding_you_picked">You picked %1$s</string>
     <string name="onboarding_course_chapter_description">Your plan starts at this chapter and follows the course from there, in the time you have each day.</string>
-    <string name="onboarding_course_follows">Your plan follows this course, in the time you have each day.</string>
     <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->
     <plurals name="onboarding_course_chapters">
         <item quantity="one">%d chapter</item>

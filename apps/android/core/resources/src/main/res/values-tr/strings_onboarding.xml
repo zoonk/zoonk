@@ -48,7 +48,6 @@
   "onboarding_course_chapters": "74f2c22e170847c6c1fb398017606d99f0e59d5b1d7c786e91a75234a149f84a",
   "onboarding_course_daily_minutes": "db0e785f9f27f3af8211a94e83b7c387167c0935745aa822fed52eaa844b8a4e",
   "onboarding_course_failed": "02ae033320d07994f8ceb68a917ba95cb9d7111dd9ca042d412c450c63d1567e",
-  "onboarding_course_follows": "ac06eaff453ada246873d2275ed802b42c65e4b5c888ad86f1a1fa29852b5e44",
   "onboarding_course_lessons": "d1943d3d9b647c01df111dd35d5d13e166f6a74950257b4e8d7e27498044ffdd",
   "onboarding_course_more_chapters": "ee57a552b18c8716ac11437a0dddf1ce87fb47124384223f68b0816b0fb092aa",
   "onboarding_course_start_free": "790e1bbf2860a5d7ef19c9cf8756495692bc07f07d41abbbe146d72de2520382",
@@ -851,7 +850,6 @@
     <!-- Screen reader, as a one-answer question moves on: the answer picked. -->
     <string name="onboarding_you_picked">Seçimin: %1$s</string>
     <string name="onboarding_course_chapter_description">Planın bu üniteden başlar ve kurstaki dersleri her gün ayırabildiğin süreye göre düzenler.</string>
-    <string name="onboarding_course_follows">Planın bu kurstaki dersleri her gün ayırabildiğin süreye göre düzenler.</string>
     <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->
     <plurals name="onboarding_course_chapters">
         <item quantity="one">%d ünite</item>
