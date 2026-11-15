@@ -1,8 +1,12 @@
+import { type CallLimit } from "@zoonk/learn/help-limit";
 import { LessonNotWrittenNotice } from "@zoonk/learn/lesson-not-written";
 import { LearnProvider } from "@zoonk/learn/provider";
+import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
+import { CallProblem } from "../../../learn/src/language/conversation/call-problem";
 import { DroppedCallScreen } from "../../../learn/src/language/conversation/dropped-call-screen";
+import { useCallConnection } from "../../../learn/src/language/conversation/use-call-connection";
 import { GoalErrorAlert } from "../../../learn/src/onboarding/entry/goal-outcomes";
 import { render } from "../_test-utils/render";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
@@ -22,6 +26,58 @@ const ADAPTERS: React.ComponentProps<typeof LearnProvider>["adapters"] = {
 };
 
 const passed = () => new Date(Date.now() - 60 * 1000).toISOString();
+
+/** A call whose reservation is refused with a day this device's clock already shows as past. */
+function RefusedCall({ first }: { first: boolean }) {
+  const [limit, setLimit] = useState<CallLimit | null>(null);
+
+  const connection = useCallConnection({
+    connect: async () => ({
+      limit: { availableAt: passed(), period: "rolling30Days", tier: "free" },
+      status: "limit",
+    }),
+    end: async () => ({ endedAtDeadline: false, status: "closed" }),
+  });
+
+  const call = async () => {
+    const answer = await connection.reserve({ isCurrent: () => true, takeover: false });
+
+    if (answer?.status === "limit") {
+      setLimit(answer.limit);
+    }
+  };
+
+  if (first) {
+    return limit ? (
+      <CallProblem
+        error="limit"
+        exitHref="/"
+        limit={limit}
+        onRetry={() => void call()}
+        onTakeover={vi.fn()}
+        title="Practice call"
+      />
+    ) : (
+      <button onClick={() => void call()} type="button">
+        Call Linda
+      </button>
+    );
+  }
+
+  return (
+    <DroppedCallScreen
+      dropped={limit ? { reason: "limit", retry: null } : { reason: null, retry: "callAgain" }}
+      limit={limit}
+      microphoneProblem={null}
+      name="Linda"
+      onEnd={vi.fn()}
+      onRetry={() => void call()}
+      onStart={vi.fn()}
+      onTakeover={vi.fn()}
+      title="Practice call"
+    />
+  );
+}
 
 describe("a limit whose day has come", () => {
   it("offers Start the lesson for a refusal reopened after its day, as from the lesson's address", async () => {
@@ -157,4 +213,24 @@ describe("a limit whose day has come", () => {
       .poll(() => page.getByText("You've started all the new goals you can").all().length)
       .toBe(shown);
   });
+
+  it.each([
+    ["a dropped call's Call again", false, "Call again"],
+    ["the first connection", true, "Call Linda"],
+  ] as const)(
+    "keeps the call-time notice when %s is refused with a day this device already shows as past",
+    async (_name, first, press) => {
+      render(
+        <LearnProvider adapters={ADAPTERS}>
+          <RefusedCall first={first} />
+        </LearnProvider>,
+      );
+
+      await page.getByRole("button", { name: press }).click();
+
+      await expect.element(page.getByText("You've used your call time")).toBeVisible();
+      await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
+      await expect.element(page.getByText("You can try again now.")).not.toBeInTheDocument();
+    },
+  );
 });
