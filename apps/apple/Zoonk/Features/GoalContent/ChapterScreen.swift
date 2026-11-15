@@ -399,11 +399,11 @@ private struct ChapterReferenceSection: View {
 
       LessonSummaries(summaries: chapter.summaries)
     } label: {
-      Label {
+      ListRow(
         Text(
           "Chapter summary", tableName: "Plan",
           comment: "Folds a chapter's topics and summaries")
-      } icon: {
+      ) {
         Image(systemName: "list.bullet.clipboard")
       }
     }
