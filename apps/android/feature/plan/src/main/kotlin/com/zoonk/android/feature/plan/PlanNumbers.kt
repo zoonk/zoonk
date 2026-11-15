@@ -33,6 +33,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -46,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.toUpperCase
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.language.CanDoList
@@ -362,8 +364,9 @@ private fun NumberButton(
                 modifier
                     .fillMaxHeight()
                     .bleed(LIST_ITEM_INSET)
+                    .bleedVertically(STAT_PADDING)
                     .clickable(role = Role.Button, onClick = onOpen)
-                    .padding(horizontal = LIST_ITEM_INSET, vertical = 8.dp),
+                    .padding(horizontal = LIST_ITEM_INSET, vertical = STAT_PADDING),
             verticalArrangement = Arrangement.spacedBy(6.dp),
             content = content,
         )
@@ -812,3 +815,13 @@ private const val MAX_STEPS_SHOWN = 2
 /** Core keeps a subject under this share until the learner takes their first test of it. */
 private const val TEST_THRESHOLD = 0.75
 private const val DAY_RING_SHARE = 1.5f
+
+/** A stat's touch room past its words, which takes no room in the column (main's `-m-2 p-2`). */
+private val STAT_PADDING = 8.dp
+
+private fun Modifier.bleedVertically(amount: Dp): Modifier =
+    layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+        val extra = amount.roundToPx()
+        layout(placeable.width, (placeable.height - extra * 2).coerceAtLeast(0)) { placeable.place(0, -extra) }
+    }
