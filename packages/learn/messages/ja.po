@@ -8879,9 +8879,9 @@ msgid "Exam"
 msgstr "試験"
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "rsoIT2"
-msgid "Learn a topic"
-msgstr "トピックを学ぶ"
+msgctxt "UdtpV7"
+msgid "Topic"
+msgstr "トピック"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "79lLl-"
@@ -9807,7 +9807,6 @@ msgid "{days, plural, one {About # day} other {About # days}}"
 msgstr "{days, plural, other {約#日}}"
 
 #: src/onboarding/steps/reveal-readouts.tsx
-#: src/onboarding/steps/reveal-week.tsx
 msgctxt "UA5qaX"
 msgid "{days, plural, one {# day} other {# days}}"
 msgstr "{days, plural, other {#日}}"
@@ -9844,6 +9843,11 @@ msgstr "休みの日"
 msgctxt "tWAtPK"
 msgid "Your first week"
 msgstr "最初の週"
+
+#: src/onboarding/steps/reveal-week.tsx
+msgctxt "V9hgFL"
+msgid "{days, plural, one {# study day} other {# study days}}"
+msgstr "{days, plural, other {#日間の学習}}"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "_1P3JX"

@@ -143,7 +143,7 @@ export function RevealWeek({ reveal }: { reveal: PlanRevealDays | null }) {
       <PageSectionHeader>
         <PageSectionTitle id="reveal-week">{t("Your first week")}</PageSectionTitle>
         <PageSectionDetail>
-          {`${t("{days, plural, one {# day} other {# days}}", { days: reveal.week.days })} · ${formatDuration(reveal.week.minutes)}`}
+          {`${t("{days, plural, one {# study day} other {# study days}}", { days: reveal.week.days })} · ${formatDuration(reveal.week.minutes)}`}
         </PageSectionDetail>
       </PageSectionHeader>
 
