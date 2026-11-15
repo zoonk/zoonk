@@ -1,108 +1,11 @@
 // @vitest-environment jsdom
 /* oxlint-disable no-magic-numbers -- The fixtures are measurements in pixels. */
 import assert from "node:assert/strict";
-import { afterEach, beforeEach, describe, it, vi } from "vitest";
-import { readAlignment, webCapture } from "./alignment-probe.mts";
-import { WEB_TABLE } from "./alignment-table.mts";
+import { describe, it } from "vitest";
+import { read, setHit, setUpProbeDom } from "./alignment-probe-dom.mts";
 import { evaluateCapture } from "./alignment.mts";
-import { installPageHelpers } from "./page-helpers.mts";
 
-/** jsdom has no layout: each element's box comes from its `data-box` (x, y, width, height). */
-function box(element: Element) {
-  const [left = 0, top = 0, width = 0, height = 0] = (
-    element instanceof HTMLElement ? (element.dataset.box ?? "") : ""
-  )
-    .split(",")
-    .map(Number);
-
-  return new DOMRect(left, top, width, height);
-}
-
-function read() {
-  return webCapture({
-    page: readAlignment(WEB_TABLE),
-    path: "/fixture",
-    scheme: "light",
-    viewport: "phone",
-  });
-}
-
-/** What the document shows at a point: one element everywhere, or one per point. */
-let hit: Element | null | ((x: number, y: number) => Element | null) = null;
-
-beforeEach(() => {
-  installPageHelpers();
-
-  vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function measured(
-    this: Element,
-  ) {
-    return box(this);
-  });
-
-  Object.defineProperty(Element.prototype, "checkVisibility", {
-    configurable: true,
-    value: () => true,
-  });
-
-  // An element's laid-out size, before a transform or zoom: its `data-layout`, or its box.
-  for (const [property, index] of [
-    ["offsetWidth", 0],
-    ["offsetHeight", 1],
-  ] as const) {
-    Object.defineProperty(HTMLElement.prototype, property, {
-      configurable: true,
-      get(this: HTMLElement) {
-        const layout = this.dataset.layout?.split(",").map(Number);
-        const drawn = box(this);
-        return layout?.[index] ?? (index === 0 ? drawn.width : drawn.height);
-      },
-    });
-  }
-
-  Object.defineProperty(HTMLElement.prototype, "innerText", {
-    configurable: true,
-    get(this: HTMLElement) {
-      return this.textContent;
-    },
-  });
-
-  Object.defineProperty(Range.prototype, "getClientRects", {
-    configurable: true,
-    value(this: Range) {
-      const element = this.commonAncestorContainer.parentElement;
-      return element ? [box(element)] : [];
-    },
-  });
-
-  Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
-    configurable: true,
-    value: () => ({
-      clearRect: vi.fn(),
-      fillRect: vi.fn(),
-      fillStyle: "",
-      getImageData: () => ({ data: [0, 0, 0, 0] }),
-      measureText: () => ({
-        actualBoundingBoxAscent: 10,
-        fontBoundingBoxAscent: 15,
-        fontBoundingBoxDescent: 5,
-        width: 8,
-      }),
-    }),
-  });
-
-  Object.defineProperty(document, "fonts", { configurable: true, value: [] });
-
-  Object.defineProperty(document, "elementFromPoint", {
-    configurable: true,
-    value: (x: number, y: number) => (typeof hit === "function" ? hit(x, y) : hit),
-  });
-});
-
-afterEach(() => {
-  vi.restoreAllMocks();
-  document.body.replaceChildren();
-  hit = null;
-});
+setUpProbeDom();
 
 const row = (label: string, y: number, x = 0) =>
   `<div data-box="0,${y},300,30"><span data-slot="list-row-title" data-box="${x},${y + 5},100,20">${label}</span></div>`;
@@ -189,7 +92,7 @@ describe("reading a declared piece in the page", () => {
         <button style="--button-variant: default" data-box="0,100,100,40">Under</button>
       </div>`;
 
-    hit = document.querySelector("[aria-label=Top] button");
+    setHit(document.querySelector("[aria-label=Top] button"));
     const [fault] = evaluateCapture(read());
 
     assert.equal(fault?.rule, "one-filled");
@@ -202,7 +105,7 @@ describe("reading a declared piece in the page", () => {
     const under = document.querySelector("[aria-label=Under] button");
 
     // Each surface's own middle shows itself; where they overlap, the earlier one is on top.
-    hit = (x) => (x < 200 ? top : under);
+    setHit((x) => (x < 200 ? top : under));
     const [fault] = evaluateCapture(read());
 
     assert.equal(fault?.rule, "one-filled");
@@ -214,13 +117,13 @@ describe("reading a declared piece in the page", () => {
     const top = document.querySelector("[aria-label=Top] button");
     const under = document.querySelector("[aria-label=Under] button");
 
-    hit = (x) => {
+    setHit((x) => {
       if (x === 150) {
         return document.body;
       }
 
       return x < 200 ? top : under;
-    };
+    });
 
     const [record] = evaluateCapture(read());
 
@@ -245,7 +148,7 @@ describe("reading a declared piece in the page", () => {
       )
       .join("");
 
-    hit = (x, y) => {
+    setHit((x, y) => {
       const [name] =
         byZ.find(
           ([, left, top, width, height]) =>
@@ -253,7 +156,7 @@ describe("reading a declared piece in the page", () => {
         ) ?? [];
 
       return name ? document.querySelector(`[aria-label=${name}]`) : document.body;
-    };
+    });
 
     const capture = read();
 
@@ -286,34 +189,5 @@ describe("reading a declared piece in the page", () => {
       link("Build my plan", "/start", 0) + link("See pricing", "/pricing", 900);
 
     assert.equal(evaluateCapture(read())[0]?.rule, "one-filled");
-  });
-});
-
-/** A top bar: its back link at 13px, then its end's actions, each `[words, font size]`. */
-function topBar(...actions: [string, number][]) {
-  const end = actions
-    .map(
-      ([words, size], index) =>
-        `<button style="font-size: ${size}px" data-box="${200 + index * 80},12,70,40">${words}</button>`,
-    )
-    .join("");
-
-  return `<div data-slot="page-top-bar" data-box="0,0,390,64">
-    <a data-slot="back-link" style="font-size: 13px" data-box="16,12,120,40"><span data-box="36,22,100,18">Courses</span></a>
-    <div data-slot="page-top-end" data-box="200,12,174,40">${end}</div></div>`;
-}
-
-describe("a top bar's word actions", () => {
-  it("share one type, and the back link is its own part", () => {
-    document.body.innerHTML = topBar(["Ask", 15], ["Log in", 15]);
-    assert.deepEqual(evaluateCapture(read()), []);
-
-    document.body.innerHTML = topBar(["Ask", 15], ["Log in", 14]);
-    assert.equal(evaluateCapture(read())[0]?.rule, "type");
-  });
-
-  it("measure nothing in a bar whose end holds only a glyph", () => {
-    document.body.innerHTML = topBar(["", 15]);
-    assert.deepEqual(evaluateCapture(read()), []);
   });
 });
