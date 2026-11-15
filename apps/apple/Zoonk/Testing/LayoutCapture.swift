@@ -59,11 +59,7 @@
       var disabled = false
       /// A view of UIKit's inside this one, whose superviews are the views that really hold it: the
       /// scroll views and other clipping views that can cut it.
-      weak var host: UIView? {
-        didSet { hosted = hosted || host != nil }
-      }
-      /// Its host was placed once: a view drawn into a picture never gets one, and says nothing.
-      private(set) var hosted = false
+      weak var host: UIView?
     }
 
     private(set) var records: [UUID: Record] = [:]
@@ -702,13 +698,11 @@
 
   enum LayoutHosts {
     /// A record counts while its view is in the window, and under a screen that covers the window,
-    /// inside that screen: a view can leave the window, or stay under a cover, without
-    /// `onDisappear`. A view drawn into a picture never has a host and keeps its record.
+    /// inside that screen. A view can leave the window, or stay under a cover, without
+    /// `onDisappear`, and one laid out and left at once, such as the tab a link leaves at launch,
+    /// never reaches the window at all.
     @MainActor
-    static func isOnScreen(_ host: UIView?, hosted: Bool, in window: UIWindow, top: UIView)
-      -> Bool
-    {
-      guard hosted else { return true }
+    static func isOnScreen(_ host: UIView?, in window: UIWindow, top: UIView) -> Bool {
       guard let host, host.window === window else { return false }
       let covers = top.convert(top.bounds, to: window).contains(window.bounds)
       return !covers || host.isDescendant(of: top)
@@ -800,10 +794,7 @@
       let top = window.topScreen
       let shown = LayoutRegistry.shared.records
         .filter { !$0.value.frame.isNull && $0.value.frame.intersects(window.bounds) }
-        .filter {
-          LayoutHosts.isOnScreen(
-            $0.value.host, hosted: $0.value.hosted, in: window, top: top)
-        }
+        .filter { LayoutHosts.isOnScreen($0.value.host, in: window, top: top) }
         .map { (id: $0.key, record: $0.value) }
         .sorted { $0.record.order < $1.record.order }
       let active = shown.last { $0.record.kind == .surface }?.id
