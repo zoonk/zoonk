@@ -21,12 +21,14 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.onboarding.DRAFT_ID
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
+import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.failedDraft
 import com.zoonk.android.feature.onboarding.goalsUnderstanding
 import com.zoonk.android.feature.onboarding.noAllowance
 import com.zoonk.android.feature.onboarding.readingDraft
 import com.zoonk.android.feature.onboarding.understoodDraft
+import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -57,6 +59,8 @@ class StartGoalFlowTest {
     private var sessionKey by mutableStateOf<String?>("local-a")
     private var hasAccount by mutableStateOf(true)
 
+    private lateinit var navigator: AppNavigator
+
     private fun show(route: AppRoute.StartGoal = AppRoute.StartGoal()) {
         cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
@@ -68,7 +72,7 @@ class StartGoalFlowTest {
                     cache.noAllowance(),
                     sessionKey = sessionKey,
                     canAttach = sessionKey != null && hasAccount,
-                    rememberAppNavigator(),
+                    rememberAppNavigator().also { navigator = it },
                 )
             }
         }
@@ -135,6 +139,35 @@ class StartGoalFlowTest {
 
         rule.onNodeWithText("What do you want to achieve?").assertIsDisplayed()
         assertFalse(store.wasSentHere(DRAFT_ID))
+    }
+
+    @Test
+    fun aGoalCreatedAfterTheLearnerWentBackLeavesThemAtTheTextBox() {
+        api.draft = understoodDraft()
+        val create = CompletableDeferred<Unit>()
+        api.createGate = create
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("Looks right").performClick()
+
+        rule.onNodeWithContentDescription("Back").performClick()
+        rule.onNodeWithText("What do you want to achieve?").assertIsDisplayed()
+        create.complete(Unit)
+        rule.waitForIdle()
+
+        // The write still finished: the goal exists, and only the move into its setup was dropped.
+        assertEquals(1, api.created.size)
+        assertFalse(navigator.currentRoute is AppRoute.GoalSetup)
+        rule.onNodeWithText("What do you want to achieve?").assertIsDisplayed()
+    }
+
+    @Test
+    fun aDraftWhoseGoalWasCreatedOpensItsSetupInsteadOfCreatingItAgain() {
+        api.draft = understoodDraft().copy(goalId = java.util.UUID.fromString(GOAL_ID))
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.waitForIdle()
+
+        assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
+        assertTrue(api.created.isEmpty())
     }
 
     @Test
