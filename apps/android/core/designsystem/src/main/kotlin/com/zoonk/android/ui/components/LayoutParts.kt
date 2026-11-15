@@ -69,3 +69,9 @@ fun Modifier.layoutPart(
 ): Modifier =
     // A constant in a release build, so R8 drops the marker and a learner's app never builds one.
     if (BuildConfig.DEBUG) semantics { this[LayoutPartKey] = LayoutPart(piece, part, variant, gap, endInset, firstLine) } else this
+
+/** How many descriptions a row drew: the row's own presence decision, read by the layout capture. */
+val DrawnDescriptionsKey = SemanticsPropertyKey<() -> Int>("ZoonkDrawnDescriptions") { parent, _ -> parent }
+
+internal fun Modifier.drawnDescriptions(count: () -> Int): Modifier =
+    if (BuildConfig.DEBUG) semantics { this[DrawnDescriptionsKey] = count } else this

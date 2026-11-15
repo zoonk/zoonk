@@ -23,6 +23,7 @@ import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
@@ -195,7 +196,7 @@ private fun PracticeRow(
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         onClick = onClick,
         leading = { KindDot(kind) },
-        supporting = description?.let { { Text(it) } },
+        supporting = listRowDescription(description),
         meta = trailing,
     )
 }

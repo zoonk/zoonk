@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.json.JSONArray
 import org.json.JSONObject
@@ -264,6 +265,31 @@ class LayoutCaptureTest {
             assertEquals(label.getString("text"), NOT_MEASURED, label.getString("ink"))
             assertTrue(label.get("lineBounds") is JSONArray)
         }
+    }
+
+    /** RV39 A3: a blank description is no description, and the count is the row's own. */
+    @Test
+    fun aBlankDescriptionMakesNoLineAndTheCountIsTheRowsOwn() {
+        val rows =
+            capture {
+                ListRow(headline = { Text("Whitespace") }, leading = { Text("A") }, supporting = listRowDescription("   "))
+                ListRow(headline = { Text("Alone") }, leading = { Text("A") })
+                ListRow(headline = { Text("Zero width") }, leading = { Text("A") }, supporting = {
+                    Text("\u200b")
+                    Text("Only description")
+                })
+                ListRow(headline = { Text("Control") }, leading = { Text("A") }, supporting = { Text("Only description") })
+                ListRow(headline = { Text("Sized box") }, leading = { Text("A") }, supporting = {
+                    Box(Modifier.fillMaxWidth().height(20.dp))
+                    Text("Only description")
+                })
+            }.elements()
+        val heights = rows.filter { it.getString("part") == "row" }.map { it.getJSONArray("bounds").getDouble(3) }
+        val notes = rows.filter { it.getString("part") == "note" }
+
+        assertEquals(heights[1], heights[0], 0.01)
+        assertEquals(heights[3], heights[2], 0.01)
+        assertEquals(listOf(1, 1, 2), notes.map { it.getInt("texts") })
     }
 
     private fun capture(content: @androidx.compose.runtime.Composable () -> Unit): JSONArray {

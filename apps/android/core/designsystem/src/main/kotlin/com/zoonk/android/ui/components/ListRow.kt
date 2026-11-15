@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
+import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -203,7 +204,11 @@ fun ListRow(
                     {
                         CompositionLocalProvider(LocalContentColor provides quiet) {
                             ProvideTextStyle(MaterialTheme.typography.bodySmall) {
-                                Descriptions(parts, Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Note), lines)
+                                Descriptions(
+                                    parts,
+                                    Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Note).drawnDescriptions { parts.descriptions },
+                                    lines,
+                                )
                             }
                         }
                     }
@@ -368,7 +373,11 @@ private class RowParts {
     val lines get() = 1 + (if (stacked) 1 else 0) + descriptions
 }
 
-/** A row's descriptions, one under another and 1dp under the title, counted for [RowParts]; none take no room. */
+/**
+ * A row's descriptions, one under another and 1dp under the title, counted for [RowParts]; none take no room.
+ * A child is drawn when it has a size, so a caller's sized content counts; a blank string never gets here
+ * ([listRowDescription] omits it), and a zero-width one measures no width.
+ */
 @Composable
 private fun Descriptions(
     parts: RowParts,
@@ -394,6 +403,16 @@ private fun Descriptions(
         }
     }
 }
+
+/** A row's description from a string that may say nothing: none at all when it's null or blank, so the row stays one line. */
+fun listRowDescription(text: String?): (@Composable () -> Unit)? = text?.takeUnless(::isBlankWords)?.let { { Text(it) } }
+
+/** Says nothing: empty, or only spaces and invisible characters (a zero-width space, a joiner). */
+fun isBlankWords(text: String): Boolean =
+    text.all {
+        it.isWhitespace() || Character.isSpaceChar(it) ||
+            Character.getType(it) == Character.FORMAT.toInt()
+    }
 
 /** Rows reach past their column's margin by [amount] on each side, so their words line up with the headings above them. */
 fun Modifier.bleed(amount: Dp): Modifier =

@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.DrawnDescriptionsKey
 import com.zoonk.android.ui.components.LayoutPart
 import com.zoonk.android.ui.components.LayoutPartKey
 import com.zoonk.android.ui.theme.Geist
@@ -378,7 +379,7 @@ internal object LayoutCapture {
                         fields["ink"] = pixelInk(bounds(node))
                         listOf("baseline", "capTop", "capBottom", "lines", "type").forEach { fields[it] = NOT_MEASURED }
                         // Known: no text with words, so no description a row counts.
-                        fields["texts"] = 0
+                        fields["texts"] = drawnDescriptions(node) ?: 0
                         return
                     }
                 val lines = texts.map { (each, result) -> lineBox(each, result) }
@@ -416,8 +417,8 @@ internal object LayoutCapture {
                         }.distinct()
                         .size
                 fields["type"] = type(layout)
-                // How many texts the part holds: a row's descriptions count one each toward E5's lines.
-                fields["texts"] = texts.size
+                // How many texts the part holds: a row's descriptions count one each toward E5's lines, as the row drew them.
+                fields["texts"] = drawnDescriptions(node) ?: texts.size
             }
         }
 
@@ -455,6 +456,9 @@ internal object LayoutCapture {
                 (layout.getLineBottom(last) - layout.getLineTop(0)) / density,
             )
         }
+
+        /** A row's descriptions as the row itself decided they're drawn, so the record and the row never differ. */
+        private fun drawnDescriptions(node: SemanticsNode): Int? = node.config.getOrNull(DrawnDescriptionsKey)?.invoke()
 
         /** The part's own text, or the texts inside it, in order. */
         private fun textNodes(node: SemanticsNode): List<SemanticsNode> =

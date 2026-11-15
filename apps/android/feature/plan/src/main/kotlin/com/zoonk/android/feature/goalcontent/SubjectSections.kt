@@ -58,6 +58,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -449,7 +450,7 @@ internal fun SyllabusChapterRow(
                 lessonsTotal = chapter.lessonsTotal,
             )
         },
-        supporting = line?.let { { Text(it) } },
+        supporting = listRowDescription(line),
         meta = nextDate?.let { { Text(formatPlanDate(it.toJavaLocalDate(), today, locale)) } },
     )
 }

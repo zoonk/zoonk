@@ -65,6 +65,7 @@ import com.zoonk.android.ui.components.QuietDisclosure
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -754,7 +755,7 @@ private fun NextSteps(
                     headline = { Text(step.label) },
                     onClick = if (step.opensExam && links.hasExam) links::exam else null,
                     leading = { KindMark(step.kind) },
-                    supporting = step.detail?.let { { Text(it) } },
+                    supporting = listRowDescription(step.detail),
                 )
             }
         }

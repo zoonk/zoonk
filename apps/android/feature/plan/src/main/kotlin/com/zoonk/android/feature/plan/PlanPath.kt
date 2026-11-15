@@ -44,6 +44,7 @@ import com.zoonk.android.ui.components.ProgressMark
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
@@ -461,7 +462,7 @@ private fun ChapterRow(
         highlighted = isNext && opensChapter,
         indent = indent,
         leading = { ChapterMark(chapter, isNext) },
-        supporting = line?.let { { Text(it) } },
+        supporting = listRowDescription(line),
     )
 }
 
