@@ -25,10 +25,13 @@ import com.zoonk.api.models.MockExamSectionsInner
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
@@ -201,12 +204,26 @@ class MockRunnerViewModel(
 
     fun retrySaves() = queue.retryNow()
 
-    /** Leaving waits at most a few seconds for answers going out, so the close action always leaves, even offline. */
-    suspend fun leave() {
-        run.value.question?.let { leaveQuestion(it.itemId) }
-        saveText()
-        queue.retryNow()
-        withTimeoutOrNull(LEAVE_WAIT) { queue.idle() }
+    private var leaving = false
+    private val closes = Channel<Unit>(Channel.CONFLATED)
+
+    /** [leave]'s close, for whichever screen shows the mock once its answers went out. */
+    val closed: Flow<Unit> = closes.receiveAsFlow()
+
+    /**
+     * Leaving waits at most a few seconds for answers going out, so the close action always leaves, even offline.
+     * Pressed again while they go out, it still closes only the mock.
+     */
+    fun leave() {
+        if (leaving) return
+        leaving = true
+        viewModelScope.launch {
+            run.value.question?.let { leaveQuestion(it.itemId) }
+            saveText()
+            queue.retryNow()
+            withTimeoutOrNull(LEAVE_WAIT) { queue.idle() }
+            closes.send(Unit)
+        }
     }
 
     /**

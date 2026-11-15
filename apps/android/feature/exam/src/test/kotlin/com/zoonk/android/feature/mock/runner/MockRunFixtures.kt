@@ -94,6 +94,9 @@ internal class FakeMockRunApi(
     var afterFinish: MockExam? = null
     var saveFailure: ApiException? = null
 
+    /** Holds every save until completed, as a slow connection does. */
+    var saveGate: CompletableDeferred<Unit>? = null
+
     /** Holds a hand-in until completed, then fails it with [stepFailure] if set. */
     var stepGate: CompletableDeferred<Unit>? = null
     var stepFailure: ApiException? = null
@@ -119,6 +122,7 @@ internal class FakeMockRunApi(
         blockId: String,
         draft: MockDraft,
     ): SaveOutcome {
+        saveGate?.await()
         saveFailure?.let { throw it }
         saved += draft
         return SaveOutcome.Stored

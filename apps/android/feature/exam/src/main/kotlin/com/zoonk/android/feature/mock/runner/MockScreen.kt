@@ -21,10 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -151,18 +149,9 @@ private fun MockRunScreen(
     navigator: AppNavigator,
 ) {
     val run by viewModel.state.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
-    var leaving by remember { mutableStateOf(false) }
-    // Pressed again while answers go out, it still closes only the mock.
-    val leave: () -> Unit = {
-        if (!leaving) {
-            leaving = true
-            scope.launch {
-                viewModel.leave()
-                navigator.closeTask()
-            }
-        }
-    }
+    val leave: () -> Unit = viewModel::leave
+    val currentNavigator by rememberUpdatedState(navigator)
+    LaunchedEffect(viewModel) { viewModel.closed.collect { currentNavigator.closeTask() } }
     val view = run.view
     val current = view.current
 
