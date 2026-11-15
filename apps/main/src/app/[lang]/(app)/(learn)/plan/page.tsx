@@ -16,6 +16,7 @@ import { hasOnboardingQuestions } from "@zoonk/core/view-models/onboarding/steps
 import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
 import { getProgressView } from "@zoonk/core/view-models/progress/get";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
+import { getPlanTopics } from "@zoonk/learn/journey/plan-topics";
 import { toSyllabusSection } from "@zoonk/learn/syllabus-section-view";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
@@ -240,6 +241,7 @@ async function JourneyContent() {
               lessons: syllabus.status === "ready" ? syllabus.syllabus.lessons : null,
               preparation: standing.preparation,
               stillNeeded: standing.stillNeeded,
+              topics: syllabus.status === "ready" ? getPlanTopics(syllabus.syllabus) : null,
             }
           : null
       }

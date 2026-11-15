@@ -55,7 +55,7 @@ export function JourneySetup({
       <PageSection aria-labelledby={SETUP_TITLE_ID} className="max-w-xl items-start gap-2">
         <h2 className={SETUP_TITLE_CLASS} id={SETUP_TITLE_ID}>
           {paused
-            ? t("Your {goal} goal is paused", { goal: goalTitle })
+            ? t("This goal is paused")
             : t("Your plan comes after a few questions")}
         </h2>
         <p className="text-muted-foreground text-sm">

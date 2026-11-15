@@ -1,6 +1,6 @@
 "use client";
 
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { Eyebrow } from "../_components/eyebrow";
 import { StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { useChallengeScreen } from "./challenge-context";
@@ -26,14 +26,6 @@ export function IntroHeading({
 export function useQuestionsFact() {
   const t = useExtracted();
   return (count: number) => t("{count, plural, one {# question} other {# questions}}", { count });
-}
-
-export function usePrizeFact(): string {
-  const t = useExtracted();
-  const format = useFormatter();
-  const { challenge } = useChallengeScreen();
-
-  return t("+{points} Brain Power", { points: format.number(challenge.reward.brainPower) });
 }
 
 /** A second go says so; a first one needs no label over its title. */

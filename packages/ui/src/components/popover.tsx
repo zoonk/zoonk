@@ -2,10 +2,38 @@
 
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { cn } from "@zoonk/ui/lib/utils";
+import { useState } from "react";
 import type * as React from "react";
 
 /** A popover keeps the page's gutter from the screen's edge, as content does (craft S5). */
 const PAGE_GUTTER = 16;
+
+/**
+ * The screen's main action is pinned over the page, so its bar is the screen's bottom edge too:
+ * a popover keeps the gutter above it, and turns upward when there's no room under its trigger.
+ * Read as the popover opens, since the bar shows or hides with the page.
+ */
+function getEdgePadding() {
+  const bars = [...document.querySelectorAll('[data-slot="bottom-bar"]')]
+    .map((bar) => bar.getBoundingClientRect())
+    .filter((rect) => rect.height > 0);
+
+  const barTop = Math.min(window.innerHeight, ...bars.map((rect) => rect.top));
+
+  return {
+    bottom: Math.max(0, window.innerHeight - barTop) + PAGE_GUTTER,
+    left: PAGE_GUTTER,
+    right: PAGE_GUTTER,
+    top: PAGE_GUTTER,
+  };
+}
+
+/** Mounted only while the popover is open, so it measures the bar the open popover has to clear. */
+function PopoverPositioner(props: PopoverPrimitive.Positioner.Props) {
+  const [collisionPadding] = useState(getEdgePadding);
+
+  return <PopoverPrimitive.Positioner collisionPadding={collisionPadding} {...props} />;
+}
 
 function Popover({ ...props }: PopoverPrimitive.Root.Props) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />;
@@ -31,11 +59,10 @@ function PopoverContent({
   return (
     <PopoverPrimitive.Portal>
       {backdrop ? <PopoverPrimitive.Backdrop className="fixed inset-0" /> : null}
-      <PopoverPrimitive.Positioner
+      <PopoverPositioner
         align={align}
         alignOffset={alignOffset}
         className="isolate z-50"
-        collisionPadding={PAGE_GUTTER}
         side={side}
         sideOffset={sideOffset}
       >
@@ -47,7 +74,7 @@ function PopoverContent({
           data-slot="popover-content"
           {...props}
         />
-      </PopoverPrimitive.Positioner>
+      </PopoverPositioner>
     </PopoverPrimitive.Portal>
   );
 }

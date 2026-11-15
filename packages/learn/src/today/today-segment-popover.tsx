@@ -11,6 +11,7 @@ import {
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import { KindMark, type LearnKind } from "../_components/kind-tile";
+import { FactSegments } from "../_components/task-meta";
 import { useFormatDuration } from "../_utils/time-format";
 import { type DayStepPart } from "../session/day-meter-parts";
 import { type DayStep } from "../session/session-types";
@@ -42,28 +43,37 @@ function useKindNote() {
   return (kind: LearnKind): string | undefined => notes[kind];
 }
 
+/** A state is a word, set in the text face; a time or a count is data, set in mono. */
+type SegmentFacts = { data?: string; status?: string };
+
 function useSegmentFacts() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
 
-  return ({ block, state }: { block: DayStep; state: DaySegmentState }): string => {
+  return ({ block, state }: { block: DayStep; state: DaySegmentState }): SegmentFacts => {
     const time = formatDuration(block.estimatedMinutes);
 
     if (state === "done") {
-      return t("Done");
+      return { status: t("Done") };
     }
 
     if (state === "ahead") {
-      return time;
+      return { data: time };
     }
 
     return block.status === "active" && block.answered > 0
-      ? t("{answered, number} of {count, plural, one {# question} other {# questions}}", {
-          answered: block.answered,
-          count: block.questions,
-        })
-      : [t("Up next"), time].join(FACT_SEPARATOR);
+      ? {
+          data: t("{answered, number} of {count, plural, one {# question} other {# questions}}", {
+            answered: block.answered,
+            count: block.questions,
+          }),
+        }
+      : { data: time, status: t("Up next") };
   };
+}
+
+function factsLabel({ data, status }: SegmentFacts): string {
+  return [status, data].filter(Boolean).join(FACT_SEPARATOR);
 }
 
 function SegmentPopover({
@@ -93,7 +103,7 @@ function SegmentContent({
   note,
   title,
 }: {
-  facts: string;
+  facts: SegmentFacts;
   kind: LearnKind;
   note?: string;
   title: string;
@@ -105,7 +115,12 @@ function SegmentContent({
           <KindMark kind={kind} />
           <span className="min-w-0">{title}</span>
         </PopoverTitle>
-        <p className="text-muted-foreground font-mono text-xs tabular-nums">{facts}</p>
+        <p className="text-muted-foreground font-mono text-xs tabular-nums">
+          <FactSegments
+            facts={[facts.data]}
+            lead={facts.status && <span className="font-sans">{facts.status}</span>}
+          />
+        </p>
       </PopoverHeader>
       {note && <PopoverDescription>{note}</PopoverDescription>}
     </PopoverContent>
@@ -121,7 +136,7 @@ export function BlockSegment({ focusable, part }: { focusable: boolean; part: Da
 
   return (
     <Popover>
-      <SegmentPopover focusable={focusable} label={`${title}: ${facts}`}>
+      <SegmentPopover focusable={focusable} label={`${title}: ${factsLabel(facts)}`}>
         <DaySegment kind={part.kind} share={part.share} state={part.state} />
       </SegmentPopover>
       <SegmentContent facts={facts} kind={part.kind} note={kindNote(part.kind)} title={title} />
@@ -145,7 +160,7 @@ export function HeldSegment({ minutes }: { minutes: number }) {
       <SegmentPopover focusable={false} label={`${title}: ${time}`}>
         <DaySegment kind="lesson" state="ahead" />
       </SegmentPopover>
-      <SegmentContent facts={time} kind="lesson" note={note} title={title} />
+      <SegmentContent facts={{ data: time }} kind="lesson" note={note} title={title} />
     </Popover>
   );
 }

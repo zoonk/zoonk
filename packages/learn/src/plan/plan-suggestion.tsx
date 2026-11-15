@@ -211,7 +211,7 @@ function SlotSuggestion({ item }: { item: SlotItem }) {
     case "paused":
       return (
         host.goalStatus && (
-          <GoalPausedSuggestion control={host.goalStatus} goalTitle={goal.displayName} />
+          <GoalPausedSuggestion control={host.goalStatus} />
         )
       );
     case "pastDate":

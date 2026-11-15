@@ -2,6 +2,7 @@
 
 import { useExtracted, useFormatter } from "next-intl";
 import { useShortList } from "../plan/use-short-list";
+import { getPracticeFocus } from "./practice-focus";
 import { type StudyBlock } from "./session-types";
 import { useReviewTitle } from "./use-review-title";
 
@@ -96,8 +97,26 @@ export function useBlockTitle() {
       return t("Practice mistakes");
     }
 
-    if (block.areas.length > 0) {
-      const areas = format.list(block.areas, { type: "conjunction" });
+    const focus = getPracticeFocus(block);
+
+    if (focus?.kind === "topic") {
+      return block.extra
+        ? t({
+            description:
+              'Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts".',
+            message: "Bonus practice: {topic}",
+            values: { topic: focus.name },
+          })
+        : t({
+            description:
+              'A block of the day\'s practice. {topic} names the topic most of its questions are on, like "Calculating discounts".',
+            message: "Practice: {topic}",
+            values: { topic: focus.name },
+          });
+    }
+
+    if (focus?.kind === "areas") {
+      const areas = format.list(focus.names, { type: "conjunction" });
 
       return block.extra
         ? t({

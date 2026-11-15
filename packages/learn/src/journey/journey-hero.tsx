@@ -26,6 +26,7 @@ import {
   type PlanNumberVariant,
 } from "./plan-number-button";
 import { PreparationDetails } from "./preparation/preparation-details";
+import { type PlanTopics } from "./preparation/use-preparation-parts";
 import { ScheduleDetails, useScheduleNumber } from "./schedule-details";
 
 const PERCENT = 100;
@@ -37,6 +38,7 @@ export type JourneyStanding =
       lessons: SyllabusView["lessons"] | null;
       preparation: NonNullable<ProgressView["preparation"]>;
       stillNeeded: ProgressView["stillNeeded"];
+      topics: PlanTopics | null;
     }
   | {
       kind: "language";
@@ -130,6 +132,7 @@ function StandingBody({
         preparation={standing.preparation}
         share={number.share ?? 0}
         stillNeeded={standing.stillNeeded}
+        topics={standing.topics}
         value={number.value}
       />
     );

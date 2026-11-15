@@ -254,16 +254,10 @@ export function ArchiveGoalDialog({
 }
 
 /** Says what pausing means; the page's bar holds Resume (`ResumeGoalBar`). */
-export function GoalPausedSuggestion({
-  control,
-  goalTitle,
-}: {
-  control: GoalStatusControl;
-  goalTitle: string;
-}) {
+export function GoalPausedSuggestion({ control }: { control: GoalStatusControl }) {
   const t = useExtracted();
   const effectText = useResumeEffectText();
-  const title = t("Your {goal} goal is paused", { goal: goalTitle });
+  const title = t("This goal is paused");
   const description = control.resume ? effectText : t("Nothing is planned until you resume it.");
 
   return (
