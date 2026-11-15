@@ -1,10 +1,10 @@
-import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { AdminNameCell } from "@/components/admin-name-cell";
 import { AdminTableRow } from "@/components/admin-table-row";
 import { StateMark } from "@/components/state-mark";
 import { type ListedFeedbackMessage } from "@/data/feedback/list-feedback-messages";
 import { formatDate } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import {
   feedbackStatusLabels,
   getFeedbackLearnerLabel,
@@ -44,7 +44,7 @@ export function MessageRow({
       ) : null}
       <TableCell>
         <span className="text-foreground block truncate">{subject}</span>
-        {context.screen && context.screen !== subject ? (
+        {context.screen && context.screen.toLowerCase() !== subject.toLowerCase() ? (
           <span className="block truncate text-xs">Sent from the {context.screen} screen</span>
         ) : null}
       </TableCell>
