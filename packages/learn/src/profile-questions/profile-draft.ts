@@ -207,6 +207,9 @@ function isComplete({ draft, question }: { draft: ProfileDraft; question: Profil
   return true;
 }
 
+/** Where a question is asked: in onboarding, or again from Settings › About you. */
+export type ProfileQuestionPlace = "onboarding" | "settings";
+
 /** Onboarding sends a screen only once it holds an answer; Settings saves an empty screen as declined. */
 export function canSendProfileDraft({
   draft,
@@ -214,7 +217,7 @@ export function canSendProfileDraft({
   question,
 }: {
   draft: ProfileDraft;
-  from: "onboarding" | "settings";
+  from: ProfileQuestionPlace;
   question: ProfileQuestion;
 }): boolean {
   if (!isComplete({ draft, question })) {

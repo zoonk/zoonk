@@ -195,52 +195,6 @@ msgctxt "u82Vi2"
 msgid "Continue today's session"
 msgstr "Continua la sessione di oggi"
 
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Livello"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-#: src/app/[lang]/(app)/(stats)/energy/page.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "Energia"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "BCauSf"
-msgid "Patterns"
-msgstr "Tendenze"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/score/page.tsx
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "oLkLww"
-msgid "Score"
-msgstr "Punteggio"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/activity/page.tsx
-msgctxt "ZmlNQ3"
-msgid "Activity"
-msgstr "Attività"
-
 #. The sizes of mock exam the learner can take: the full exam, half of it, or one subject.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "Zu-MTq"
@@ -307,10 +261,11 @@ msgstr "Certificati"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/exam/page.tsx
 #: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
-msgctxt "Xy7a7A"
-msgid "Exam"
-msgstr "Esame"
+msgctxt "9HjIgh"
+msgid "Your exam"
+msgstr "Il tuo esame"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
@@ -334,6 +289,7 @@ msgstr "Riepilogo settimanale"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/app/[lang]/(app)/(stats)/layout.tsx
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
 msgctxt "H3eDAS"
@@ -814,11 +770,6 @@ msgid "Mock exam"
 msgstr "Simulazione d’esame"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-msgctxt "U86B6w"
-msgid "Stats"
-msgstr "Statistiche"
-
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "UTFsoN"
 msgid "Study"
 msgstr "Studio"
@@ -833,6 +784,11 @@ msgstr "Menu"
 msgctxt "vj_mVz"
 msgid "{belt}, level {level}"
 msgstr "{belt}, livello {level}"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "bzSrZ6"
+msgid "Level {level}"
+msgstr "Livello {level}"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "zF7Cth"
@@ -939,11 +895,6 @@ msgstr "Unità"
 msgctxt "9dC4eV"
 msgid "A unit of your language plan, with its lessons and how far you are."
 msgstr "Un’unità del tuo piano per imparare una lingua, con le lezioni e i tuoi progressi."
-
-#: src/app/[lang]/(app)/(learn)/exam/page.tsx
-msgctxt "9HjIgh"
-msgid "Your exam"
-msgstr "Il tuo esame"
 
 #: src/app/[lang]/(app)/(learn)/exam/page.tsx
 msgctxt "KixPd0"
@@ -1156,10 +1107,10 @@ msgctxt "G4ZsrK"
 msgid "Start with your goal"
 msgstr "Parti dal tuo obiettivo"
 
+#. The page inside Settings for usage data, a copy of the learner's data and deleting the account; not the privacy policy.
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
-#: src/components/public/public-footer.tsx
-msgctxt "cXBJ7U"
+msgctxt "settingsPrivacy"
 msgid "Privacy"
 msgstr "Privacy"
 
@@ -1360,9 +1311,9 @@ msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
 msgstr "Non siamo riusciti a eliminare il tuo account. Riprova o scrivi a hello@zoonk.com."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
-msgctxt "Sk9SL5"
-msgid "Delete my account"
-msgstr "Elimina il mio account"
+msgctxt "95pnlV"
+msgid "Your account"
+msgstr "Il tuo account"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "wyxJrL"
@@ -1383,6 +1334,11 @@ msgstr "Vuoi eliminare il tuo account?"
 msgctxt "yF2UF2"
 msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
 msgstr "I tuoi obiettivi, piani e progressi, la memoria e i file caricati vengono eliminati per sempre. Non puoi annullare questa operazione."
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "Sk9SL5"
+msgid "Delete my account"
+msgstr "Elimina il mio account"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "huX1mW"
@@ -1408,9 +1364,14 @@ msgid "Plus from Google Play keeps charging until you cancel it there."
 msgstr "Continuerai a pagare Plus finché non lo disdici su Google Play."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/export-data-row.tsx
-msgctxt "RcXC-q"
-msgid "Download my data"
-msgstr "Scarica i miei dati"
+msgctxt "tTFZyH"
+msgid "Download your data"
+msgstr "Scarica i tuoi dati"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/export-data-row.tsx
+msgctxt "y8jK2R"
+msgid "A copy of your data"
+msgstr "Una copia dei tuoi dati"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
 msgctxt "s8-igB"
@@ -1632,6 +1593,42 @@ msgstr "Panoramica"
 msgctxt "QbGIBZ"
 msgid "Your stats"
 msgstr "Le tue statistiche"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Livello"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+#: src/app/[lang]/(app)/(stats)/energy/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "cVpmV7"
+msgid "Energy"
+msgstr "Energia"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/activity/page.tsx
+msgctxt "ZmlNQ3"
+msgid "Activity"
+msgstr "Attività"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/score/page.tsx
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "oLkLww"
+msgid "Score"
+msgstr "Punteggio"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "BCauSf"
+msgid "Patterns"
+msgstr "Tendenze"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 msgctxt "cMaydB"
@@ -2124,11 +2121,11 @@ msgctxt "tk_pDR"
 msgid "What do I get if I subscribe?"
 msgstr "Cosa ottengo con l’abbonamento?"
 
-#. In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem as matérias e os tópicos da sua prova. Erros são raros, mas podem acontecer. Viu algo errado? Avise a gente pela própria aula e vamos conferir.”
+#. In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem o que o seu objetivo cobre, como as matérias e os tópicos de uma prova. Erros são raros, mas podem acontecer. Viu algo errado? Avise a gente pela própria aula e vamos conferir.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "yyFZMH"
-msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
-msgstr "Le lezioni vengono create con i modelli di IA più recenti e controllate prima di arrivare a te: ne verifichiamo la qualità con vari test e altri modelli rivedono i contenuti. Seguono le materie e gli argomenti del tuo esame. Gli errori sono rari, ma possono capitare. Noti qualcosa di sbagliato? Segnalacelo direttamente dalla lezione e lo verificheremo."
+msgctxt "OhisJ3"
+msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow what your goal covers, such as an exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
+msgstr "Le lezioni sono create con i modelli di IA più recenti e controllate prima di mostrartele: ne verifichiamo la qualità con diverse valutazioni e altri modelli ne rivedono il contenuto. Seguono i contenuti previsti dal tuo obiettivo, come le materie e gli argomenti di un esame. Gli errori sono rari, ma possono capitare. Hai notato qualcosa che non va? Segnalacelo direttamente dalla lezione e faremo una verifica."
 
 #. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2369,9 +2366,9 @@ msgid "Close or leave"
 msgstr "Chiudi o esci"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "ofKpWV"
-msgid "Press the main button"
-msgstr "Premi il pulsante principale"
+msgctxt "GENWbK"
+msgid "Continue, Check or Start"
+msgstr "Continua, Controlla o Inizia"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "9-Ddtu"
@@ -2404,9 +2401,9 @@ msgid "Show or hide the sidebar"
 msgstr "Mostra o nascondi la barra laterale"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "GvB3Jb"
-msgid "Tap the beat"
-msgstr "Tocca a tempo"
+msgctxt "DOENlK"
+msgid "Tap the rhythm in a music question"
+msgstr "Tocca seguendo il ritmo in una domanda di musica"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "FVLl2T"
@@ -3055,9 +3052,9 @@ msgstr "Un piano per il tuo obiettivo e la tua scadenza"
 
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-questions.tsx
-msgctxt "5ZDN6U"
-msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
-msgstr "Un compagno di studio con l’IA: {count, plural, one {# messaggio} other {# messaggi}} al giorno"
+msgctxt "LKY79v"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
+msgstr "Un compagno di studio con l’IA: {count, plural, one {# messaggio} other {# messaggi}} al giorno, fino a {month} al mese"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "72Jr7b"
@@ -3379,6 +3376,11 @@ msgstr "Non abbiamo trovato questa pagina"
 msgctxt "Vge-RX"
 msgid "Footer"
 msgstr "Piè di pagina"
+
+#: src/components/public/public-footer.tsx
+msgctxt "cXBJ7U"
+msgid "Privacy"
+msgstr "Privacy"
 
 #: src/components/public/public-footer.tsx
 msgctxt "xkr-zo"

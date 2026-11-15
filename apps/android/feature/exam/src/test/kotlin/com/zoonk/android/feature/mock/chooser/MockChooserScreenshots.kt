@@ -102,6 +102,11 @@ class MockChooserScreenshots {
     @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
     fun expanded() = capture("chooser-expanded")
 
+    /** A mock of questions only: its usual time shows under the limit. */
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun expandedQuestionsOnly() = capture("chooser-expanded-day-2") { compose.onNodeWithText("Day 2").performClick() }
+
     @Test
     @Config(qualifiers = "w1280dp-h900dp-land-night-xhdpi")
     fun expandedDark() = capture("chooser-expanded-dark", dark = true)
@@ -200,7 +205,7 @@ class MockChooserScreenshots {
         val OPTIONS =
             """
             "examName":"ENEM",
-            "options":[{"area":null,"day":1,"kind":"full","areas":["Languages","Human Sciences"],"covers":null,"estimatedMinutes":300,"leftOut":[],
+            "options":[{"area":null,"day":1,"kind":"full","areas":["Languages","Human Sciences"],"covers":null,"estimatedMinutes":330,"leftOut":[],
               "minutes":330,"objectiveOnly":false,"questions":90,"written":["Essay"]},
              {"area":null,"day":1,"kind":"half","areas":["Languages"],"covers":null,"estimatedMinutes":140,"leftOut":[],
               "minutes":165,"objectiveOnly":true,"questions":45,"written":[]},

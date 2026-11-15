@@ -94,6 +94,7 @@
   "mock_result_scale_score": "5ce58b14a2b17d6ab0f4903a252ccac4f0ab9a2ed02c6a4800dcad401fdd4d79",
   "mock_result_scale_score_named": "2e1056ab40c0d9aef422f1cd9426ce3871ad2bd53eff4beaa869e490572a120d",
   "mock_result_see_answers": "2890e9e219c266ba8f367c9d2d7820ccadea9b0b52ca21e1cfc019cad34aaa69",
+  "mock_result_see_details": "421c55907e19ced0835716cdd74a6f167c7adb6f00bba0c59c44694dcc5e8f76",
   "mock_result_see_feedback": "47e27b23383619f0da5711a5da246f76ccb0676b36d16a312bbd35bf45f62b6b",
   "mock_result_short_points": "c95a0630a9eaa912d9341d1114b85e756f69de80f850949409689430467c5f20",
   "mock_result_short_points_decimal": "2f0d986f48bd80e19d133b5965d7aa8c4492d79340dc70e1af1e9c05b4fe34c4",
@@ -144,8 +145,9 @@
     <string name="mock_result_every_minimum">Du hast in dieser Probeprüfung alle Mindestwerte erreicht.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
     <string name="mock_result_strongest">Stärkstes Fach: %1$s. Noch üben: %2$s.</string>
-    <!-- A small button under the result that opens its details. -->
+    <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Details ansehen</string>
+    <string name="mock_result_see_details">Details ansehen</string>
     <!-- A small button under the result that opens the questions to review. -->
     <string name="mock_result_see_answers">Antworten ansehen</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->

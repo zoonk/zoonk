@@ -49,7 +49,7 @@ export const imageCheckTask: Task<ImageCheckCaseInput, ImageCheckVerdict, ImageC
     "Decide whether a generated lesson image shows its scene, is on style and has correct text",
   generate,
   id: TASK_ID,
-  name: "Image Check",
+  name: "Image check",
   score: scoreImageCheck,
   testCases: TEST_CASES,
 };

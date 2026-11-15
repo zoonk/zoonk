@@ -10,7 +10,8 @@
   "memory_change_undone": "5899a7872b7d47713a4c0757434e34373bf71a79a7537de4c700747ce6bb19d9",
   "memory_delete": "364d76d54430196d45167d5a794447277899b58b751abc439e60c7fe1d245df8",
   "memory_description": "c2940877e91e9d999021716e7d0583cbf7d222a381bc5b940d41c48edf9b5535",
-  "memory_download": "ec7d797913d11ac1f2b1a90ec967734965f6f022e0db81fe6a3ccaf15d7b3860",
+  "memory_download": "a77aebfb91da5b0534749c7934ced0427d7bf98a0cc5635e5f1c8961ebd5c18d",
+  "memory_download_your_memory": "e35f532ac0217a72aa9f9e9a0820b97db7812ab2cf439993c62d4b4876990dac",
   "memory_edit": "0126f8657f26e6b919727f2abb3d6b35de9d2dd5f0973bce96daab897040bfe9",
   "memory_edit_description": "58375dfdd29309935ac5f29e4c691dd7ce481311a11d2cc2a96e1db50e2f5ceb",
   "memory_edit_label": "adfaca8495df48e754630b08fb1fed3dcf64e8b0876dffc232fabd6ace2eb7b1",
@@ -63,7 +64,8 @@
     <string name="memory_edit_title">Editar memória</string>
     <string name="memory_edit_description">Escreva de acordo com a sua realidade.</string>
     <string name="memory_edit_label">O que o Zoonk lembra</string>
-    <string name="memory_download">Baixar minha memória</string>
+    <string name="memory_download">Uma cópia da sua memória</string>
+    <string name="memory_download_your_memory">Baixar sua memória</string>
     <string name="memory_sensitive_note">O Zoonk não guarda informações sobre sua saúde ou religião, nem outros dados sensíveis, a menos que você peça.</string>
     <string name="memory_updated">Memória atualizada:</string>
     <plurals name="memory_updated_more">

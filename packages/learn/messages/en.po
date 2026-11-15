@@ -210,6 +210,7 @@ msgstr "Today"
 
 #: src/_components/create-account-link.tsx
 #: src/_components/subscribe-gate.tsx
+#: src/language/unit/practice-conversation.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -339,6 +340,16 @@ msgstr "Nothing left to answer"
 msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "Finish to see how it went."
+
+#: src/_components/finish-sentence.ts
+msgctxt "XhpWxQ"
+msgid "At {time} a day, you reach {level} around {month}."
+msgstr "At {time} a day, you reach {level} around {month}."
+
+#: src/_components/finish-sentence.ts
+msgctxt "6Due7K"
+msgid "You finish around {month}."
+msgstr "You finish around {month}."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
@@ -493,7 +504,6 @@ msgstr "Start the lesson"
 #: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
-#: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
@@ -801,16 +811,6 @@ msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your dat
 msgstr "{dateKind, select, month {Your date, {date}, has passed.} other {Your date, {date}, has passed.}}"
 
 #: src/_components/time-answer-lines.tsx
-msgctxt "qQDZCf"
-msgid "At {time} a day, you reach {level} around <date>{month}</date>."
-msgstr "At {time} a day, you reach {level} around <date>{month}</date>."
-
-#: src/_components/time-answer-lines.tsx
-msgctxt "lzWfsi"
-msgid "You finish around <date>{month}</date>."
-msgstr "You finish around <date>{month}</date>."
-
-#: src/_components/time-answer-lines.tsx
 msgctxt "wRhIPZ"
 msgid "We can't estimate an end date. Try more time or more study days."
 msgstr "We can't estimate an end date. Try more time or more study days."
@@ -970,6 +970,18 @@ msgstr "Right, watch the spelling"
 msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "Not checked this time"
+
+#. Why a switch for a different study time on weekends is off: no weekend day is a study day.
+#: src/_components/weekend-time.tsx
+msgctxt "MuKIuz"
+msgid "Add Saturday or Sunday to your study days."
+msgstr "Add Saturday or Sunday to your study days."
+
+#. Why a switch for a different study time on weekends is off: only weekend days are study days.
+#: src/_components/weekend-time.tsx
+msgctxt "dQytAa"
+msgid "Add a weekday to your study days."
+msgstr "Add a weekday to your study days."
 
 #. A switch to study a different amount of time a day on weekends.
 #: src/_components/weekend-time.tsx
@@ -2457,6 +2469,18 @@ msgctxt "ooL306"
 msgid "The Trickster's shield"
 msgstr "The Trickster's shield"
 
+#: src/checkpoints/checkpoint-duel-view.tsx
+#: src/checkpoints/trickster-shield.tsx
+msgctxt "N6ZXzw"
+msgid "You won"
+msgstr "You won"
+
+#: src/checkpoints/checkpoint-duel-view.tsx
+#: src/checkpoints/trickster-shield.tsx
+msgctxt "Cu4K5p"
+msgid "He won"
+msgstr "He won"
+
 #. Right answers the learner still needs to beat the Trickster.
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/trickster-shield.tsx
@@ -2470,7 +2494,6 @@ msgid "{count, plural, =0 {No questions left} one {# question left} other {# que
 msgstr "{count, plural, =0 {No questions left} one {# question left} other {# questions left}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-#: src/checkpoints/checkpoint-result-view.tsx
 msgctxt "qqqXC2"
 msgid "{count, plural, one {# right to win} other {# right to win}}"
 msgstr "{count, plural, one {# right to win} other {# right to win}}"
@@ -2528,6 +2551,11 @@ msgctxt "1VpodI"
 msgid "Not this time"
 msgstr "Not this time"
 
+#: src/checkpoints/checkpoint-result-view.tsx
+msgctxt "3NtvGN"
+msgid "{count, plural, one {You needed # right to win.} other {You needed # right to win.}}"
+msgstr "{count, plural, one {You needed # right to win.} other {You needed # right to win.}}"
+
 #: src/checkpoints/checkpoint-review.tsx
 #: src/mistakes/mistake-entry.tsx
 #: src/questions/right-answer-line.tsx
@@ -2558,16 +2586,6 @@ msgstr "Review the answers"
 msgctxt "nbNiMs"
 msgid "{cracked, plural, =0 {# of {segments} broken} one {# of {segments} broken} other {# of {segments} broken}}"
 msgstr "{cracked, plural, =0 {# of {segments} broken} one {# of {segments} broken} other {# of {segments} broken}}"
-
-#: src/checkpoints/trickster-shield.tsx
-msgctxt "N6ZXzw"
-msgid "You won"
-msgstr "You won"
-
-#: src/checkpoints/trickster-shield.tsx
-msgctxt "Cu4K5p"
-msgid "He won"
-msgstr "He won"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "KLUSrr"
@@ -4875,15 +4893,6 @@ msgctxt "8sxDix"
 msgid "Date to be confirmed"
 msgstr "Date to be confirmed"
 
-#. The name of a study step: a live voice call in the language being learned.
-#: src/journey/journey-phase-events.tsx
-#: src/journey/roadmap-full.tsx
-#: src/language/conversation/conversation-live.tsx
-#: src/session/use-block-copy.ts
-msgctxt "f-GKc4"
-msgid "Call"
-msgstr "Call"
-
 #. The learner won this phase challenge.
 #: src/journey/journey-phase-events.tsx
 msgctxt "J15Qzq"
@@ -4894,6 +4903,15 @@ msgstr "Won"
 msgctxt "f0UFlY"
 msgid "In your next session"
 msgstr "In your next session"
+
+#. The name of a study step: a live voice call in the language being learned.
+#: src/journey/journey-phase-events.tsx
+#: src/journey/roadmap-full.tsx
+#: src/language/conversation/conversation-live.tsx
+#: src/session/use-block-copy.ts
+msgctxt "f-GKc4"
+msgid "Call"
+msgstr "Call"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
@@ -5222,6 +5240,12 @@ msgstr "Exam date"
 msgctxt "Humfno"
 msgid "End date"
 msgstr "End date"
+
+#. In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date.
+#: src/journey/roadmap-full.tsx
+msgctxt "VnP0TP"
+msgid "You finish"
+msgstr "You finish"
 
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/steps/plan-shape.tsx
@@ -6971,9 +6995,14 @@ msgid "Nothing yet. Notes show up here as you study and chat."
 msgstr "Nothing yet. Notes show up here as you study and chat."
 
 #: src/memory/memory-screen.tsx
-msgctxt "etMoG6"
-msgid "Download my memory"
-msgstr "Download my memory"
+msgctxt "dQaH-3"
+msgid "Download your memory"
+msgstr "Download your memory"
+
+#: src/memory/memory-screen.tsx
+msgctxt "U3W00j"
+msgid "A copy of your memory"
+msgstr "A copy of your memory"
 
 #: src/memory/memory-screen.tsx
 msgctxt "GUOjcs"
@@ -7490,9 +7519,9 @@ msgid "{count, plural, one {Mission done!} other {# missions done!}}"
 msgstr "{count, plural, one {Mission done!} other {# missions done!}}"
 
 #: src/missions/mission-moment.tsx
-msgctxt "oKqRoi"
-msgid "{count, plural, one {# more for +{points} Brain Power} other {# more for +{points} Brain Power}}"
-msgstr "{count, plural, one {# more for +{points} Brain Power} other {# more for +{points} Brain Power}}"
+msgctxt "y3EoXn"
+msgid "{count, plural, one {# more mission for +{points} Brain Power} other {# more missions for +{points} Brain Power}}"
+msgstr "{count, plural, one {# more mission for +{points} Brain Power} other {# more missions for +{points} Brain Power}}"
 
 #: src/missions/mission-moment.tsx
 msgctxt "aGylUw"
@@ -8231,6 +8260,11 @@ msgid "By topic"
 msgstr "By topic"
 
 #: src/mock/mock-result-details.tsx
+msgctxt "RQfEXO"
+msgid "See details"
+msgstr "See details"
+
+#: src/mock/mock-result-details.tsx
 msgctxt "2mUitd"
 msgid "Answers"
 msgstr "Answers"
@@ -8874,9 +8908,9 @@ msgid "Exam"
 msgstr "Exam"
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "rsoIT2"
-msgid "Learn a topic"
-msgstr "Learn a topic"
+msgctxt "UdtpV7"
+msgid "Topic"
+msgstr "Topic"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "79lLl-"
@@ -9802,7 +9836,6 @@ msgid "{days, plural, one {About # day} other {About # days}}"
 msgstr "{days, plural, one {About # day} other {About # days}}"
 
 #: src/onboarding/steps/reveal-readouts.tsx
-#: src/onboarding/steps/reveal-week.tsx
 msgctxt "UA5qaX"
 msgid "{days, plural, one {# day} other {# days}}"
 msgstr "{days, plural, one {# day} other {# days}}"
@@ -9839,6 +9872,11 @@ msgstr "Rest day"
 msgctxt "tWAtPK"
 msgid "Your first week"
 msgstr "Your first week"
+
+#: src/onboarding/steps/reveal-week.tsx
+msgctxt "V9hgFL"
+msgid "{days, plural, one {# study day} other {# study days}}"
+msgstr "{days, plural, one {# study day} other {# study days}}"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "_1P3JX"
@@ -10317,32 +10355,6 @@ msgctxt "p2OROv"
 msgid "What you practice"
 msgstr "What you practice"
 
-#: src/plan/plan-bases-advice.tsx
-#: src/plan/use-time-to-cover.ts
-msgctxt "ZBKOXO"
-msgid "Your plan is still being built. Try again in a moment."
-msgstr "Your plan is still being built. Try again in a moment."
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "R0UlFt"
-msgid "We couldn't get a recommendation."
-msgstr "We couldn't get a recommendation."
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "lBDux5"
-msgid "Getting a recommendation…"
-msgstr "Getting a recommendation…"
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "EgPIKi"
-msgid "Your plan already follows it."
-msgstr "Your plan already follows it."
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "IdA8la"
-msgid "Get a recommendation"
-msgstr "Get a recommendation"
-
 #. Choice to study a prerequisite with all its lessons.
 #: src/plan/plan-bases-choices.tsx
 msgctxt "beOzyz"
@@ -10460,11 +10472,6 @@ msgstr "{month} for now. Pick the day when you know it."
 msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "Adjust your plan"
-
-#: src/plan/plan-finish.tsx
-msgctxt "6Due7K"
-msgid "You finish around {month}."
-msgstr "You finish around {month}."
 
 #: src/plan/plan-fit-suggestion.tsx
 msgctxt "ylM0GM"
@@ -10699,11 +10706,6 @@ msgid "Date passed"
 msgstr "Date passed"
 
 #: src/plan/plan-status-label.tsx
-msgctxt "y7l0FJ"
-msgid "Keep studying them, or archive this goal?"
-msgstr "Keep studying them, or archive this goal?"
-
-#: src/plan/plan-status-label.tsx
 msgctxt "xNjzfh"
 msgid "{count, plural, one {You have # lesson left. Keep studying it, or archive this goal?} other {You have # lessons left. Keep studying them, or archive this goal?}}"
 msgstr "{count, plural, one {You have # lesson left. Keep studying it, or archive this goal?} other {You have # lessons left. Keep studying them, or archive this goal?}}"
@@ -10865,21 +10867,6 @@ msgstr "You study every topic. What doesn't fit before the exam comes after it."
 msgctxt "x7ZSzV"
 msgid "Every part of your goal, with no end date."
 msgstr "Every part of your goal, with no end date."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "wkUyCk"
-msgid "We recommend every lesson. Your time covers them."
-msgstr "We recommend every lesson. Your time covers them."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "5yF3ST"
-msgid "We recommend one short lesson each, so there's time for the rest."
-msgstr "We recommend one short lesson each, so there's time for the rest."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "jCiV53"
-msgid "We recommend the first lessons only."
-msgstr "We recommend the first lessons only."
 
 #: src/plan/use-bases-texts.ts
 msgctxt "c28kAC"
@@ -11466,6 +11453,11 @@ msgid "Windows"
 msgstr "Windows"
 
 #: src/plan/use-time-to-cover.ts
+msgctxt "ZBKOXO"
+msgid "Your plan is still being built. Try again in a moment."
+msgstr "Your plan is still being built. Try again in a moment."
+
+#: src/plan/use-time-to-cover.ts
 msgctxt "g7wBHi"
 msgid "We couldn't work out the time needed."
 msgstr "We couldn't work out the time needed."
@@ -11817,6 +11809,11 @@ msgid "Past or present, finished or not. Pick up to 3."
 msgstr "Past or present, finished or not. Pick up to 3."
 
 #: src/profile-questions/profile-question-copy.ts
+msgctxt "esh22C"
+msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime."
+msgstr "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime."
+
+#: src/profile-questions/profile-question-copy.ts
 msgctxt "zJoq3-"
 msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings."
 msgstr "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings."
@@ -11855,6 +11852,11 @@ msgstr "What helps you, in your words (optional)"
 msgctxt "dcwrhI"
 msgid "E.g., I understand diagrams better than text"
 msgstr "E.g., I understand diagrams better than text"
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "HOckqc"
+msgid "We'll remember this. You can delete it anytime."
+msgstr "We'll remember this. You can delete it anytime."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "mM7GRS"
@@ -12571,6 +12573,16 @@ msgstr "Done in under a minute"
 msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "Done in {time}"
+
+#: src/session/summary/summary-parts.tsx
+msgctxt "7N1uKO"
+msgid "Down from {value}"
+msgstr "Down from {value}"
+
+#: src/session/summary/summary-parts.tsx
+msgctxt "VngKEd"
+msgid "Up from {value}"
+msgstr "Up from {value}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "YwxEGP"
@@ -13662,14 +13674,14 @@ msgid "You finished {name}."
 msgstr "You finished {name}."
 
 #: src/week/logbook-sections.tsx
-msgctxt "koboTV"
-msgid "{time} more than the week before!"
-msgstr "{time} more than the week before!"
+msgctxt "Yj-wa7"
+msgid "{time} more than the week before."
+msgstr "{time} more than the week before."
 
 #: src/week/logbook-sections.tsx
-msgctxt "mY3vs_"
-msgid "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
-msgstr "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
+msgctxt "d9SZZ-"
+msgid "{questions, plural, one {# more question than the week before.} other {# more questions than the week before.}}"
+msgstr "{questions, plural, one {# more question than the week before.} other {# more questions than the week before.}}"
 
 #: src/week/logbook-sections.tsx
 msgctxt "gpv0cM"

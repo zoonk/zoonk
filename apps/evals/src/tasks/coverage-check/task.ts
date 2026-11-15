@@ -14,7 +14,7 @@ export const coverageCheckTask: Task<
     "Compare a skill graph with reference syllabi and return the skills they expect but the graph misses",
   generate: checkCoverage,
   id: "coverage-check",
-  name: "Coverage Check",
+  name: "Coverage check",
   score: scoreCoverageCheck,
   testCases: TEST_CASES,
 };

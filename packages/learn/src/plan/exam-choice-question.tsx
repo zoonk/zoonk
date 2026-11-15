@@ -2,7 +2,11 @@
 
 import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { useExtracted } from "next-intl";
-import { SuggestionAction, SuggestionDescription } from "../_components/suggestion";
+import {
+  SuggestionAction,
+  SuggestionDescription,
+  useMainActionVariant,
+} from "../_components/suggestion";
 import { SuggestionChoices } from "../_components/suggestion-choices";
 import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
 import { ExamChoicePicks } from "./exam-choice-picks";
@@ -28,6 +32,7 @@ export function ExamChoiceAnswers({
   pending: boolean;
 }) {
   const leftOutLine = useChoiceLeftOutLine();
+  const saveVariant = useMainActionVariant();
 
   return (
     <>
@@ -38,6 +43,7 @@ export function ExamChoiceAnswers({
           choice={choice}
           onSave={(subjects) => onPick({ group: choice.group, subjects })}
           pending={pending}
+          saveVariant={saveVariant}
         />
       ) : (
         <SuggestionChoices>

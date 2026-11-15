@@ -8,14 +8,15 @@ struct DataExportRow: View {
   @State private var failed = false
 
   let title: Text
-  var description: Text?
+  /// What Download is called aloud, since the button's own word doesn't say what it downloads.
+  let spokenAction: Text
   let filename: String
   let prepare: () async -> Data?
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       AccessibilityStack(spacing: 12, stackedSpacing: 8) {
-        ListRow(title, description: description)
+        ListRow(title)
           .frame(maxWidth: .infinity, alignment: .leading)
 
         BusyButton(isBusy: isPreparing, icon: .download) {
@@ -27,7 +28,7 @@ struct DataExportRow: View {
         }
         .buttonStyle(.outline)
         .controlSize(.small)
-        .accessibilityLabel(title)
+        .accessibilityLabel(spokenAction)
       }
 
       if failed {

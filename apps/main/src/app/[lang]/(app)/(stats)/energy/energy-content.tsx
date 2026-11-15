@@ -27,7 +27,7 @@ export async function EnergyContent() {
 export function EnergyContentSkeleton() {
   return (
     <ProgressContent>
-      <StatTilesSkeleton count={2} />
+      <StatTilesSkeleton count={2} detailed={1} />
       <StatsCalendarSkeleton />
     </ProgressContent>
   );

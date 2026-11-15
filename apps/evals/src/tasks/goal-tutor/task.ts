@@ -167,7 +167,7 @@ export const goalTutorTask: Task<GoalTutorInput, GoalTutorOutput> = {
   generate,
   id: "goal-tutor",
   latencyBudget: { p50: 8, p95: 15 },
-  name: "Goal Tutor",
+  name: "Goal tutor",
   testCases: [
     ...TEST_CASES,
     ...LEARNER_NEEDS_CASES.map((testCase) => ({

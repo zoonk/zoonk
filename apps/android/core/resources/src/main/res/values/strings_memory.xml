@@ -28,7 +28,8 @@
     <string name="memory_edit_title">Edit memory</string>
     <string name="memory_edit_description">Say it the way it\'s true for you.</string>
     <string name="memory_edit_label">What Zoonk remembers</string>
-    <string name="memory_download">Download my memory</string>
+    <string name="memory_download">A copy of your memory</string>
+    <string name="memory_download_your_memory">Download your memory</string>
     <string name="memory_sensitive_note">Zoonk doesn\'t keep health, religion or other sensitive details unless you ask it to.</string>
     <string name="memory_updated">Memory updated:</string>
     <plurals name="memory_updated_more">

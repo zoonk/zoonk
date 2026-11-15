@@ -5,24 +5,48 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 
+function useMissingDayReason() {
+  const t = useExtracted();
+
+  return (missing: "weekdays" | "weekend") =>
+    missing === "weekend"
+      ? t({
+          description:
+            "Why a switch for a different study time on weekends is off: no weekend day is a study day.",
+          message: "Add Saturday or Sunday to your study days.",
+        })
+      : t({
+          description:
+            "Why a switch for a different study time on weekends is off: only weekend days are study days.",
+          message: "Add a weekday to your study days.",
+        });
+}
+
+/**
+ * The weekend's time field is always there, off until the switch is on, so turning it on or off
+ * moves nothing. Off, it shows the weekdays' time, which the weekend takes then. While the switch
+ * can't turn on (`missing` names the days it needs), the field's room says why.
+ */
 export function WeekendTime({
   checked,
   children,
   className,
-  disabled = false,
+  missing = null,
   onCheckedChange,
   readOnly,
 }: {
   checked: boolean;
-  children: React.ReactNode;
+  children: (on: boolean) => React.ReactNode;
   className?: string;
-  /** No weekend day is studied, or only weekend days: the row keeps its place, so a day's pick moves nothing. */
-  disabled?: boolean;
+  missing?: "weekdays" | "weekend" | null;
   onCheckedChange: (checked: boolean) => void;
   readOnly?: boolean;
 }) {
   const t = useExtracted();
   const switchId = useId();
+  const reasonId = useId();
+  const missingDayReason = useMissingDayReason();
+  const disabled = missing !== null;
 
   return (
     <div className="flex flex-col gap-3" data-slot="weekend-time">
@@ -37,6 +61,7 @@ export function WeekendTime({
           })}
         </label>
         <Switch
+          aria-describedby={missing ? reasonId : undefined}
           checked={checked && !disabled}
           disabled={disabled}
           id={switchId}
@@ -45,7 +70,16 @@ export function WeekendTime({
         />
       </div>
 
-      {checked && !disabled && children}
+      {missing ? (
+        <p
+          className="text-muted-foreground flex min-h-11 items-center text-sm text-pretty"
+          id={reasonId}
+        >
+          {missingDayReason(missing)}
+        </p>
+      ) : (
+        children(checked)
+      )}
     </div>
   );
 }

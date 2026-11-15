@@ -176,7 +176,7 @@ class MindMapScreenshots {
         val STUDY_ACTIONS = StudyActions({}, { _, _, _ -> }, {}, {})
         val ALL = offer(needLessons = 0, startable = 5)
         val PART = offer(needLessons = 2, startable = 3, stop = stop("limitReached", "\"mindMap\"", "\"day\""))
-        val PLUS_MONTH = offer(needLessons = 0, startable = 0, stop = stop("limitReached", "\"mindMap\"", "\"month\""))
+        val PLUS_ROLLING = offer(needLessons = 0, startable = 0, stop = stop("limitReached", "\"mindMap\"", "\"rolling30Days\""))
         val GUEST = offer(needLessons = 1, startable = 0, stop = stop("signUpRequired", "null", "null"))
         val FREE_LIMIT = offer(needLessons = 2, startable = 0, stop = stop("limitReached", "\"mindMap\"", "\"day\""))
         val NEED_LESSONS = offer(needLessons = 2, startable = 0, eligible = 0)
@@ -326,7 +326,7 @@ class MindMapScreenshots {
                 "mind-maps" to { Library() },
                 "mind-maps-not-made-open" to { Library(notMade = true) },
                 "mind-maps-offer-part" to { Library(PART) },
-                "mind-maps-offer-plus-month" to { Library(PLUS_MONTH, tier = LimitTier.Plus) },
+                "mind-maps-offer-plus-rolling" to { Library(PLUS_ROLLING, tier = LimitTier.Plus) },
                 "mind-maps-offer-guest" to { Library(GUEST, tier = LimitTier.Guest) },
                 "mind-maps-offer-all-settled" to { Library(ALL, chapters = SETTLED) },
                 "mind-maps-offer-part-settled" to { Library(PART, chapters = SETTLED) },

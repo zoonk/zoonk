@@ -206,7 +206,7 @@ test("waits for the time new study days need before saving the suggestion", asyn
   const next = page.getByRole("button", { exact: true, name: "Continue" });
 
   await expect(time).toHaveValue("30");
-  await page.getByRole("button", { exact: true, name: "Friday" }).click();
+  await page.getByRole("button", { exact: true, name: "Fri" }).click();
   await expect(next).toBeDisabled();
 
   release.resolve(null);

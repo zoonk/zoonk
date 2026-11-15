@@ -18,7 +18,7 @@ export const courseIntentTask: Task<CourseIntentParams, CourseIntentSchema, Cour
     }),
     generate: classifyCourseIntent,
     id: "course-intent",
-    name: "Course Intent",
+    name: "Course intent",
     score: scoreCourseIntent,
     testCases: TEST_CASES,
   };

@@ -13,7 +13,7 @@ export const alphabetLessonTask: Task<GenerateAlphabetLessonParams, AlphabetLess
     "Write the first alphabet lesson for a non-Latin script: the letters, their sounds for the learner's language, real forms and a short intro: code checks, then a judge",
   generate: generateAlphabetLesson,
   id: "alphabet-lesson",
-  name: "Alphabet Lesson",
+  name: "Alphabet lesson",
   score: scoreAlphabetLesson,
   scoreCategories: ALPHABET_LESSON_SCORE_CATEGORIES,
   testCases: TEST_CASES,

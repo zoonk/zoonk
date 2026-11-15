@@ -113,8 +113,11 @@ export async function FreePlan({
             {
               id: "buddy",
               text: t(
-                "An AI study buddy: {count, plural, one {# message} other {# messages}} a day",
-                { count: limits.tutorMessagesPerDay ?? 0 },
+                "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month",
+                {
+                  count: limits.tutorMessagesPerDay ?? 0,
+                  month: String(limits.tutorMessagesPer30Days ?? 0),
+                },
               ),
             },
             { id: "calls", text: t("Speaking practice calls") },

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -197,9 +198,18 @@ fun GenerationFailureNotice(
 
     OutlinedCard(modifier = modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite }) {
         Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            val titleStyle = MaterialTheme.typography.titleSmall
+            // Beside a title, its description and a button, the mark sits on the title's line, at the size of text.
+            Box(Modifier.height(with(LocalDensity.current) { titleStyle.lineHeight.toDp() }), contentAlignment = Alignment.Center) {
+                Icon(
+                    painterResource(icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(TEXT_ICON_SIZE),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(title ?: stringResource(titleRes), style = MaterialTheme.typography.titleSmall)
+                Text(title ?: stringResource(titleRes), style = titleStyle)
                 Text(
                     description ?: stringResource(descriptionRes),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -226,6 +236,9 @@ fun GenerationFailureNotice(
         }
     }
 }
+
+/** An icon beside text is the text's size (main's `size-4`). */
+private val TEXT_ICON_SIZE = 16.dp
 
 /** Main's `GenerationTimelineProgress`: a part per phase, as long as the phase usually takes, filling in order. */
 @Composable

@@ -210,6 +210,7 @@ msgstr "오늘"
 
 #: src/_components/create-account-link.tsx
 #: src/_components/subscribe-gate.tsx
+#: src/language/unit/practice-conversation.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -339,6 +340,16 @@ msgstr "더 답할 문제가 없어요"
 msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "마치고 결과를 확인해 보세요."
+
+#: src/_components/finish-sentence.ts
+msgctxt "XhpWxQ"
+msgid "At {time} a day, you reach {level} around {month}."
+msgstr "하루 {time}씩 공부하면 {level}에 {month}쯤 도달해요."
+
+#: src/_components/finish-sentence.ts
+msgctxt "6Due7K"
+msgid "You finish around {month}."
+msgstr "{month}쯤에 마쳐요."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
@@ -493,7 +504,6 @@ msgstr "레슨 시작하기"
 #: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
-#: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
@@ -801,16 +811,6 @@ msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your dat
 msgstr "{dateKind, select, month {정한 날짜({date})가 지났어요.} other {정한 날짜({date})가 지났어요.}}"
 
 #: src/_components/time-answer-lines.tsx
-msgctxt "qQDZCf"
-msgid "At {time} a day, you reach {level} around <date>{month}</date>."
-msgstr "하루 {time}씩 공부하면 {level}에 <date>{month}</date>쯤 도달해요."
-
-#: src/_components/time-answer-lines.tsx
-msgctxt "lzWfsi"
-msgid "You finish around <date>{month}</date>."
-msgstr "<date>{month}</date>쯤 마쳐요."
-
-#: src/_components/time-answer-lines.tsx
 msgctxt "wRhIPZ"
 msgid "We can't estimate an end date. Try more time or more study days."
 msgstr "완료 날짜를 예상할 수 없어요. 하루 학습 시간이나 공부하는 날을 늘려 보세요."
@@ -970,6 +970,18 @@ msgstr "맞았어요, 철자만 확인해 보세요"
 msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "이번에는 답을 확인하지 않았어요"
+
+#. Why a switch for a different study time on weekends is off: no weekend day is a study day.
+#: src/_components/weekend-time.tsx
+msgctxt "MuKIuz"
+msgid "Add Saturday or Sunday to your study days."
+msgstr "학습 요일에 토요일이나 일요일을 추가하세요."
+
+#. Why a switch for a different study time on weekends is off: only weekend days are study days.
+#: src/_components/weekend-time.tsx
+msgctxt "dQytAa"
+msgid "Add a weekday to your study days."
+msgstr "학습 요일에 평일 중 하루를 추가하세요."
 
 #. A switch to study a different amount of time a day on weekends.
 #: src/_components/weekend-time.tsx
@@ -2457,6 +2469,18 @@ msgctxt "ooL306"
 msgid "The Trickster's shield"
 msgstr "트릭스터의 방패"
 
+#: src/checkpoints/checkpoint-duel-view.tsx
+#: src/checkpoints/trickster-shield.tsx
+msgctxt "N6ZXzw"
+msgid "You won"
+msgstr "승리"
+
+#: src/checkpoints/checkpoint-duel-view.tsx
+#: src/checkpoints/trickster-shield.tsx
+msgctxt "Cu4K5p"
+msgid "He won"
+msgstr "트릭스터 승리"
+
 #. Right answers the learner still needs to beat the Trickster.
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/trickster-shield.tsx
@@ -2470,7 +2494,6 @@ msgid "{count, plural, =0 {No questions left} one {# question left} other {# que
 msgstr "{count, plural, =0 {남은 문제 없음} other {남은 문제 #개}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-#: src/checkpoints/checkpoint-result-view.tsx
 msgctxt "qqqXC2"
 msgid "{count, plural, one {# right to win} other {# right to win}}"
 msgstr "{count, plural, other {#문제를 맞히면 승리}}"
@@ -2528,6 +2551,11 @@ msgctxt "1VpodI"
 msgid "Not this time"
 msgstr "이번엔 아쉬워요"
 
+#: src/checkpoints/checkpoint-result-view.tsx
+msgctxt "3NtvGN"
+msgid "{count, plural, one {You needed # right to win.} other {You needed # right to win.}}"
+msgstr "{count, plural, other {이기려면 #개를 맞혀야 했어요.}}"
+
 #: src/checkpoints/checkpoint-review.tsx
 #: src/mistakes/mistake-entry.tsx
 #: src/questions/right-answer-line.tsx
@@ -2558,16 +2586,6 @@ msgstr "정답 확인하기"
 msgctxt "nbNiMs"
 msgid "{cracked, plural, =0 {# of {segments} broken} one {# of {segments} broken} other {# of {segments} broken}}"
 msgstr "{cracked, plural, =0 {#개 깨짐(전체 {segments}개)} other {#개 깨짐(전체 {segments}개)}}"
-
-#: src/checkpoints/trickster-shield.tsx
-msgctxt "N6ZXzw"
-msgid "You won"
-msgstr "승리"
-
-#: src/checkpoints/trickster-shield.tsx
-msgctxt "Cu4K5p"
-msgid "He won"
-msgstr "트릭스터 승리"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "KLUSrr"
@@ -4875,15 +4893,6 @@ msgctxt "8sxDix"
 msgid "Date to be confirmed"
 msgstr "날짜 미정"
 
-#. The name of a study step: a live voice call in the language being learned.
-#: src/journey/journey-phase-events.tsx
-#: src/journey/roadmap-full.tsx
-#: src/language/conversation/conversation-live.tsx
-#: src/session/use-block-copy.ts
-msgctxt "f-GKc4"
-msgid "Call"
-msgstr "대화"
-
 #. The learner won this phase challenge.
 #: src/journey/journey-phase-events.tsx
 msgctxt "J15Qzq"
@@ -4894,6 +4903,15 @@ msgstr "승리"
 msgctxt "f0UFlY"
 msgid "In your next session"
 msgstr "다음 학습 때"
+
+#. The name of a study step: a live voice call in the language being learned.
+#: src/journey/journey-phase-events.tsx
+#: src/journey/roadmap-full.tsx
+#: src/language/conversation/conversation-live.tsx
+#: src/session/use-block-copy.ts
+msgctxt "f-GKc4"
+msgid "Call"
+msgstr "대화"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
@@ -5222,6 +5240,12 @@ msgstr "시험일"
 msgctxt "Humfno"
 msgid "End date"
 msgstr "종료일"
+
+#. In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date.
+#: src/journey/roadmap-full.tsx
+msgctxt "VnP0TP"
+msgid "You finish"
+msgstr "계획 완료"
 
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/steps/plan-shape.tsx
@@ -6971,9 +6995,14 @@ msgid "Nothing yet. Notes show up here as you study and chat."
 msgstr "아직 메모가 없어요. 공부하고 채팅하다 보면 여기에 메모가 생겨요."
 
 #: src/memory/memory-screen.tsx
-msgctxt "etMoG6"
-msgid "Download my memory"
-msgstr "내 메모리 다운로드"
+msgctxt "dQaH-3"
+msgid "Download your memory"
+msgstr "메모리 다운로드"
+
+#: src/memory/memory-screen.tsx
+msgctxt "U3W00j"
+msgid "A copy of your memory"
+msgstr "내 메모리 사본"
 
 #: src/memory/memory-screen.tsx
 msgctxt "GUOjcs"
@@ -7490,9 +7519,9 @@ msgid "{count, plural, one {Mission done!} other {# missions done!}}"
 msgstr "{count, plural, other {미션 #개 완료!}}"
 
 #: src/missions/mission-moment.tsx
-msgctxt "oKqRoi"
-msgid "{count, plural, one {# more for +{points} Brain Power} other {# more for +{points} Brain Power}}"
-msgstr "{count, plural, other {미션 #개 더 끝내면 두뇌력 +{points}}}"
+msgctxt "y3EoXn"
+msgid "{count, plural, one {# more mission for +{points} Brain Power} other {# more missions for +{points} Brain Power}}"
+msgstr "{count, plural, other {미션 #개 더 하면 두뇌력 +{points}}}"
 
 #: src/missions/mission-moment.tsx
 msgctxt "aGylUw"
@@ -8231,6 +8260,11 @@ msgid "By topic"
 msgstr "주제별"
 
 #: src/mock/mock-result-details.tsx
+msgctxt "RQfEXO"
+msgid "See details"
+msgstr "자세히 보기"
+
+#: src/mock/mock-result-details.tsx
 msgctxt "2mUitd"
 msgid "Answers"
 msgstr "답변 수"
@@ -8874,9 +8908,9 @@ msgid "Exam"
 msgstr "시험"
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "rsoIT2"
-msgid "Learn a topic"
-msgstr "주제 학습"
+msgctxt "UdtpV7"
+msgid "Topic"
+msgstr "주제"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "79lLl-"
@@ -9802,7 +9836,6 @@ msgid "{days, plural, one {About # day} other {About # days}}"
 msgstr "{days, plural, other {약 #일}}"
 
 #: src/onboarding/steps/reveal-readouts.tsx
-#: src/onboarding/steps/reveal-week.tsx
 msgctxt "UA5qaX"
 msgid "{days, plural, one {# day} other {# days}}"
 msgstr "{days, plural, other {#일}}"
@@ -9839,6 +9872,11 @@ msgstr "쉬는 날"
 msgctxt "tWAtPK"
 msgid "Your first week"
 msgstr "첫 주"
+
+#: src/onboarding/steps/reveal-week.tsx
+msgctxt "V9hgFL"
+msgid "{days, plural, one {# study day} other {# study days}}"
+msgstr "{days, plural, other {#일 학습}}"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "_1P3JX"
@@ -10317,32 +10355,6 @@ msgctxt "p2OROv"
 msgid "What you practice"
 msgstr "연습 내용"
 
-#: src/plan/plan-bases-advice.tsx
-#: src/plan/use-time-to-cover.ts
-msgctxt "ZBKOXO"
-msgid "Your plan is still being built. Try again in a moment."
-msgstr "아직 계획을 만들고 있어요. 잠시 후에 다시 시도해 보세요."
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "R0UlFt"
-msgid "We couldn't get a recommendation."
-msgstr "추천을 받지 못했어요."
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "lBDux5"
-msgid "Getting a recommendation…"
-msgstr "추천을 준비하고 있어요…"
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "EgPIKi"
-msgid "Your plan already follows it."
-msgstr "계획에 이미 반영되어 있어요."
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "IdA8la"
-msgid "Get a recommendation"
-msgstr "추천받기"
-
 #. Choice to study a prerequisite with all its lessons.
 #: src/plan/plan-bases-choices.tsx
 msgctxt "beOzyz"
@@ -10460,11 +10472,6 @@ msgstr "우선 {month}로 정해 뒀어요. 날짜를 알게 되면 선택하세
 msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "계획 조정하기"
-
-#: src/plan/plan-finish.tsx
-msgctxt "6Due7K"
-msgid "You finish around {month}."
-msgstr "{month}쯤에 마쳐요."
 
 #: src/plan/plan-fit-suggestion.tsx
 msgctxt "ylM0GM"
@@ -10699,11 +10706,6 @@ msgid "Date passed"
 msgstr "날짜 지남"
 
 #: src/plan/plan-status-label.tsx
-msgctxt "y7l0FJ"
-msgid "Keep studying them, or archive this goal?"
-msgstr "남은 레슨을 계속 공부할까요, 아니면 이 목표를 보관할까요?"
-
-#: src/plan/plan-status-label.tsx
 msgctxt "xNjzfh"
 msgid "{count, plural, one {You have # lesson left. Keep studying it, or archive this goal?} other {You have # lessons left. Keep studying them, or archive this goal?}}"
 msgstr "{count, plural, other {레슨이 #개 남았어요. 계속 공부할까요, 아니면 이 목표를 보관할까요?}}"
@@ -10865,21 +10867,6 @@ msgstr "모든 주제를 공부해요. 시험 전 일정에 다 넣지 못한 �
 msgctxt "x7ZSzV"
 msgid "Every part of your goal, with no end date."
 msgstr "종료일을 정하지 않고 목표에 필요한 모든 내용을 공부해요."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "wkUyCk"
-msgid "We recommend every lesson. Your time covers them."
-msgstr "모든 레슨을 추천해요. 계획한 시간 안에 끝낼 수 있어요."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "5yF3ST"
-msgid "We recommend one short lesson each, so there's time for the rest."
-msgstr "나머지도 공부할 수 있게 짧은 레슨을 하나씩 추천해요."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "jCiV53"
-msgid "We recommend the first lessons only."
-msgstr "첫 레슨만 추천해요."
 
 #: src/plan/use-bases-texts.ts
 msgctxt "c28kAC"
@@ -11466,6 +11453,11 @@ msgid "Windows"
 msgstr "Windows"
 
 #: src/plan/use-time-to-cover.ts
+msgctxt "ZBKOXO"
+msgid "Your plan is still being built. Try again in a moment."
+msgstr "아직 계획을 만들고 있어요. 잠시 후에 다시 시도해 보세요."
+
+#: src/plan/use-time-to-cover.ts
 msgctxt "g7wBHi"
 msgid "We couldn't work out the time needed."
 msgstr "필요한 시간을 계산하지 못했어요."
@@ -11817,6 +11809,11 @@ msgid "Past or present, finished or not. Pick up to 3."
 msgstr "예전에 했든 지금 하고 있든, 마쳤든 아니든 괜찮아요. 최대 3개까지 고르세요."
 
 #: src/profile-questions/profile-question-copy.ts
+msgctxt "esh22C"
+msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime."
+msgstr "선택 사항이에요. 선택한 내용을 바탕으로 필요에 맞게 학습 내용을 조정해요. 언제든 삭제할 수 있어요."
+
+#: src/profile-questions/profile-question-copy.ts
 msgctxt "zJoq3-"
 msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings."
 msgstr "선택 사항이에요. 선택한 내용을 바탕으로 필요에 맞게 학습 내용을 조정해요. 언제든 설정에서 삭제할 수 있어요."
@@ -11855,6 +11852,11 @@ msgstr "도움이 되는 방법을 자유롭게 적어 주세요 (선택)"
 msgctxt "dcwrhI"
 msgid "E.g., I understand diagrams better than text"
 msgstr "예: 글보다 도표로 보면 더 잘 이해해요"
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "HOckqc"
+msgid "We'll remember this. You can delete it anytime."
+msgstr "이 내용을 기억해 둘게요. 언제든 삭제할 수 있어요."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "mM7GRS"
@@ -12571,6 +12573,16 @@ msgstr "1분도 안 돼 끝냈어요"
 msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "{time} 만에 끝냈어요"
+
+#: src/session/summary/summary-parts.tsx
+msgctxt "7N1uKO"
+msgid "Down from {value}"
+msgstr "{value}에서 하락"
+
+#: src/session/summary/summary-parts.tsx
+msgctxt "VngKEd"
+msgid "Up from {value}"
+msgstr "{value}에서 상승"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "YwxEGP"
@@ -13662,14 +13674,14 @@ msgid "You finished {name}."
 msgstr "{name}을(를) 마쳤어요."
 
 #: src/week/logbook-sections.tsx
-msgctxt "koboTV"
-msgid "{time} more than the week before!"
-msgstr "전주보다 {time} 더 공부했어요!"
+msgctxt "Yj-wa7"
+msgid "{time} more than the week before."
+msgstr "전주보다 {time} 더 공부했어요."
 
 #: src/week/logbook-sections.tsx
-msgctxt "mY3vs_"
-msgid "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
-msgstr "{questions, plural, other {전주보다 #문제 더 풀었어요!}}"
+msgctxt "d9SZZ-"
+msgid "{questions, plural, one {# more question than the week before.} other {# more questions than the week before.}}"
+msgstr "{questions, plural, other {전주보다 문제를 #개 더 풀었어요.}}"
 
 #: src/week/logbook-sections.tsx
 msgctxt "gpv0cM"

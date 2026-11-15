@@ -145,7 +145,7 @@ export const readProductPagesTask: Task<
     "Read a product maker's official pages into its brand, product and releases, each with a passage the page states word for word",
   generate,
   id: "read-product-pages",
-  name: "Read Product Pages",
+  name: "Read product pages",
   score: scoreReading,
   testCases: TEST_CASES,
 };

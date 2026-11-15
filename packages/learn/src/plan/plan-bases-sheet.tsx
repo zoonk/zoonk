@@ -16,7 +16,6 @@ import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { QUIET_ACTION_CLASS } from "../_components/quiet-disclosure";
 import { SheetHeader } from "../_components/sheet-header";
 import { PlanEffectDiff, PlanEffectNote } from "../plan-diff/plan-effect-diff";
-import { BasesAdvice, useBasesAdvice } from "./plan-bases-advice";
 import {
   AllBasesChoice,
   type BaseChoice,
@@ -147,7 +146,7 @@ function BasesFooter({
 }
 
 function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => void }) {
-  const advice = useBasesAdvice();
+  const { basesAdvice } = usePlanScreen();
   const { change, isPending } = usePlanChange();
   const [draft, setDraft] = useState<Choices>(() => toChoices(bases.items));
   const [outcome, setOutcome] = useState<PlanChangeOutcome | null>(null);
@@ -195,26 +194,18 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
   return (
     <>
       <DrawerContent className="flex flex-col gap-5 pt-2">
-        <div className="flex flex-col gap-3">
-          <AllBasesChoice
-            items={bases.items}
-            onChoose={(choice) =>
-              choose(
-                bases.items.map((item) => item.skillId),
-                choice,
-              )
-            }
-            readOnly={isPending}
-            recommended={advice.recommended}
-            value={shared}
-          />
-
-          <BasesAdvice
-            ask={() => void advice.ask()}
-            followed={changed.length === 0 && shared !== null && shared === advice.recommended}
-            state={advice.state}
-          />
-        </div>
+        <AllBasesChoice
+          items={bases.items}
+          onChoose={(choice) =>
+            choose(
+              bases.items.map((item) => item.skillId),
+              choice,
+            )
+          }
+          readOnly={isPending}
+          recommended={basesAdvice.recommended}
+          value={shared}
+        />
 
         {areas.length > 1 && (
           <BasesBySubject
@@ -236,6 +227,19 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
       />
     </>
   );
+}
+
+/** Opening the sheet is the learner's ask for a recommendation, so the tap that opens it sends it. */
+export function useBasesSheet() {
+  const { basesAdvice } = usePlanScreen();
+  const [open, setOpen] = useState(false);
+
+  const show = () => {
+    setOpen(true);
+    basesAdvice.ask();
+  };
+
+  return { open, setOpen, show };
 }
 
 export function PlanBasesSheet({

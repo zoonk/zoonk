@@ -79,7 +79,7 @@ export function PhaseLane({ isLast, phase }: { isLast: boolean; phase: PlanPhase
         </LaneMark>
       )}
 
-      {flag && <FlagIcon className="absolute top-0 right-0 size-3.5" />}
+      {flag && <FlagIcon className="absolute top-1/2 right-0 size-3.5 -translate-y-1/2" />}
 
       {overrunShare !== null && (
         <LaneMark share={overrunShare}>
@@ -193,6 +193,7 @@ export function PhaseAxis({
         <AxisLabel className={cn(isLast && "@max-[10rem]/phase:hidden")} share={0}>
           <PlanDateText
             className={AXIS_TEXT_CLASS}
+            estimate={phase.kind === "learn"}
             isoDate={phase.startDate}
             month={phase.kind === "learn"}
           />

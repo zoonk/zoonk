@@ -92,7 +92,8 @@ function getVisitorStart({ placement, visitor }: GoalMenuProps): React.ReactNode
   return placement === "sidebar" ? <SidebarHomeLink /> : <PublicHomeLink />;
 }
 
-function PendingGoalMenu({ placement = "bar", visitor }: GoalMenuProps) {
+/** Holds the menu's room while the learner loads; a browser with no session shows `visitor` there. */
+export function PendingGoalMenu({ placement = "bar", visitor }: GoalMenuProps) {
   return (
     <>
       <VisitorLook>{getVisitorStart({ placement, visitor })}</VisitorLook>

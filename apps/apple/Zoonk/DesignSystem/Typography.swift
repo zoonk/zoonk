@@ -260,6 +260,7 @@ private struct TypeStyleModifier: ViewModifier {
       .tracking(style.tracking * pointSize)
       .textCase(style.isUppercase ? .uppercase : textCase)
       .environment(\.typeStyle, style)
+      .layoutType(style)
 
     if let lineHeight = style.lineHeight {
       styled.lineSpacing(max(0, (lineHeight - style.face.ownLineHeight) * pointSize))
@@ -336,3 +337,44 @@ extension Font.TextStyle {
     }
   }
 }
+
+extension TypeStyle {
+  /// The font this role draws in at this text size.
+  func uiFont(_ dynamicTypeSize: DynamicTypeSize, legibility: LegibilityWeight?) -> UIFont {
+    let weight = legibility == .bold ? weight.withBoldText : weight
+    let descriptor = UIFontDescriptor(fontAttributes: [
+      .family: family, .traits: [UIFontDescriptor.TraitKey.weight: weight.uiFontWeight],
+    ])
+    return UIFont(descriptor: descriptor, size: pointSize(dynamicTypeSize))
+  }
+}
+
+extension View {
+  /// Text in `style` beside the first line of text in `other` (a row's "3." before its title): its
+  /// capitals center on `other`'s instead of sharing its baseline, where they'd sit low (craft E6).
+  func capitalsLevel(_ style: TypeStyle, with other: TypeStyle) -> some View {
+    modifier(CapitalsLevel(style: style, other: other))
+  }
+}
+
+private struct CapitalsLevel: ViewModifier {
+  let style: TypeStyle
+  let other: TypeStyle
+
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibility
+
+  func body(content: Content) -> some View {
+    let own = style.uiFont(dynamicTypeSize, legibility: legibility).capHeight
+    let line = other.uiFont(dynamicTypeSize, legibility: legibility).capHeight
+
+    content.alignmentGuide(.firstTextBaseline) { $0[.firstTextBaseline] + (line - own) / 2 }
+  }
+}
+
+#if DEBUG
+  extension EnvironmentValues {
+    /// The type role text here takes, for the debug layout report.
+    var layoutTypeStyle: TypeStyle { typeStyle }
+  }
+#endif

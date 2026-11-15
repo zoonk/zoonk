@@ -116,7 +116,8 @@ export async function CoursePlanWindow({
         </RouteTitle>
       ) : (
         <h2 className="text-section relative" id={titleId}>
-          <RouteMark className="xl:hidden" down up />
+          {/* The hero's mark, in the same stop, draws the line through this one. */}
+          <RouteMark className="xl:hidden" />
           {title}
         </h2>
       )}
