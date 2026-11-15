@@ -1,5 +1,6 @@
 package com.zoonk.android.app.shell
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -90,6 +91,7 @@ fun GoalSwitcher(
         }
         navigator.open(AppRoute.GoalSetup(it.goalId))
     }
+    ActOn(viewModel.failed) { app.snackbars.show(it.message) }
 
     if (selected == null && explanations.isEmpty()) {
         TextButton(onClick = { navigator.open(AppRoute.StartGoal()) }) {
@@ -272,6 +274,14 @@ private fun MenuItems(
     )
 }
 
+/** What the switcher couldn't do: switch to a goal, or start a waiting one. */
+enum class SwitcherFailure(
+    @param:StringRes val message: Int,
+) {
+    Switch(R.string.goal_switcher_failed),
+    Start(R.string.goal_switcher_start_failed),
+}
+
 /** A waiting goal that started: its setup opens, over the Make room sheet when that started it. */
 data class StartedGoal(
     val goalId: String,
@@ -289,6 +299,9 @@ class GoalSwitcherViewModel(
 
     private val makeRoomFailure = visit.outcome<Unit>()
 
+    /** A switch or a start that failed on this visit, which the tab's frame says in the app's snackbars. */
+    val failed = visit.outcome<SwitcherFailure>()
+
     private var starting = false
 
     /** The goal a start from the Make room sheet pauses, while that request runs. */
@@ -301,10 +314,11 @@ class GoalSwitcherViewModel(
 
     fun select(goalId: UUID) {
         val session = app.sessions.current
+        val asked = visit.number
         viewModelScope.launch {
             val saved = app.switchGoal(goalId)
             // A switch its session didn't outlive (sign-out, another account) isn't the next learner's to retry.
-            if (saved == false && app.sessions.current == session) app.snackbars.show(R.string.goal_switcher_failed)
+            if (saved == false && app.sessions.current == session) failed.send(asked, SwitcherFailure.Switch)
         }
     }
 
@@ -330,7 +344,7 @@ class GoalSwitcherViewModel(
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    if (pauseGoalId == null) app.snackbars.show(R.string.goal_switcher_start_failed) else makeRoomFailure.send(asked, Unit)
+                    if (pauseGoalId == null) failed.send(asked, SwitcherFailure.Start) else makeRoomFailure.send(asked, Unit)
                 }
             }
             pausing = null

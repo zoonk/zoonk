@@ -120,6 +120,24 @@ class GoalSwitcherViewModelTest {
         }
 
     @Test
+    fun aWaitingGoalThatFailsToStartAfterTheTabWasLeftSaysNothingAnywhere() =
+        check(fails = true) { vm ->
+            leaveWhile(vm) { vm.start(WAITING) }
+
+            assertNull(vm.failed.value)
+        }
+
+    @Test
+    fun aWaitingGoalThatFailsToStartWhileTheTabIsRecreatedSaysSoOnce() =
+        check(fails = true) { vm ->
+            recreateWhile { vm.start(WAITING) }
+
+            assertEquals(SwitcherFailure.Start, vm.failed.value)
+            vm.failed.value?.let(vm.failed::acted)
+            assertNull(vm.failed.value)
+        }
+
+    @Test
     fun aMakeRoomThatFailsAfterTheTabWasLeftSaysNothingOnReturn() =
         check(fails = true) { vm ->
             leaveWhile(vm) { vm.start(WAITING, pauseGoalId = paused) }
