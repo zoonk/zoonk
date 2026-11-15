@@ -56,6 +56,7 @@
           GallerySection(id: "busy", title: "Busy") { BusySamples() }
           GallerySection(id: "chips", title: "Chips and subjects") { Chips() }
           ListSample()
+          GallerySection(id: "rowLine", title: "Row line") { RowLine() }
           GallerySection(id: "panels", title: "Panels and tiles") { Panels() }
           GallerySection(id: "meters", title: "Meters") { Meters() }
           GallerySection(id: "waits", title: "Waits") { Waits() }
@@ -453,6 +454,28 @@
         }
       }
       .id("lists")
+    }
+  }
+
+  /// A row's value against its label and its chevron: one line, a title that wraps, a note under
+  /// it, and values without capitals, which sit where "Off" does.
+  private struct RowLine: View {
+    var body: some View {
+      row(Text(verbatim: "Reminders"), value: "Off")
+      row(Text(verbatim: "When ownership is diluted and new shares are sold"), value: "2 days")
+      row(Text(verbatim: "Memory"), description: Text(verbatim: "4 things Zu knows"), value: "yes")
+      row(Text(verbatim: "Lessons studied"), value: "12")
+    }
+
+    private func row(_ title: Text, description: Text? = nil, value: String) -> some View {
+      NavigationLink {
+        title
+      } label: {
+        ListRow(title, description: description) {
+        } trailing: {
+          Text(verbatim: value)
+        }
+      }
     }
   }
 

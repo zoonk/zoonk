@@ -39,16 +39,21 @@ struct ListRow<Leading: View, Trailing: View>: View {
     if isStacked, Leading.self == EmptyView.self {
       words
     } else {
-      MarkedRow(alignment: alignment, stackedSpacing: 4) {
-        if Leading.self != EmptyView.self {
-          leading
-            .layoutPart(.mark)
-            .foregroundStyle(.mutedForeground)
-            .frame(minWidth: markWidth)
+      // The mark goes with the title's first line; the value centers on the row, as the chevron
+      // beside it does.
+      HStack(spacing: 12) {
+        MarkedRow(alignment: alignment, stackedSpacing: 4) {
+          if Leading.self != EmptyView.self {
+            leading
+              .layoutPart(.mark)
+              .foregroundStyle(.mutedForeground)
+              .frame(minWidth: markWidth)
+          }
+        } content: {
+          words
+        } end: {
         }
-      } content: {
-        words
-      } end: {
+
         if !isStacked {
           value
         }

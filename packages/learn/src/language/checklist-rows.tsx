@@ -33,7 +33,7 @@ export function ChecklistRow({
 
   return (
     <li
-      className={cn("flex items-start gap-3 py-2.5 text-sm leading-snug", className)}
+      className={cn("flex items-start gap-3 py-2.5 text-sm", className)}
       data-slot="checklist-row"
     >
       <LineMarker aria-hidden="true">

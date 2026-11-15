@@ -1,5 +1,5 @@
 /* oxlint-disable no-console -- This CLI prints where the capture went and how to attach it. */
-import { writeFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
@@ -8,9 +8,10 @@ import { assertBrowserLaunchAllowed } from "../../packages/testing/src/browser-p
 import { getMailboxCaptureUrl, getServiceUrl } from "../dev/config.mts";
 import { signIn } from "../verify/sign-in.mts";
 import { SCHEMES, VIEWPORT_NAMES, pick } from "../verify/viewports.mts";
-import { compareSides, describeChange } from "./compare.mts";
-import { SIDES, readCapture, renderMedia } from "./media.mts";
+import { SIDES } from "./media.mts";
+import { readCheckoutBuild, sha256Text } from "./provenance.mts";
 import { type Steps, captureSide, visitPaths } from "./record.mts";
+import { writeSection } from "./section.mts";
 
 const repository = resolve(import.meta.dirname, "../..");
 
@@ -18,7 +19,9 @@ const USAGE = `Usage: pnpm pr:capture <before|after> <path...> [options]
        pnpm pr:capture <before|after> --steps <file> [options]
 
 Captures an app the same way on each side of a change and writes tmp/pr-media/media.md, the PR's
-before-and-after section. zoonk-commit's "Show the change" says when and how.
+before-and-after section, once pnpm pr:media check passes on every file it links: an after
+picture needs this checkout's current build from pnpm start and a read (pnpm pr:media tiles,
+then pnpm pr:media read). zoonk-commit's "Show the change" says when and how.
 
   --email <address>   sign in as this learner, with the newest code in the dev mailbox
   --steps <file>      run the file's default export, async ({ page, shot }) => {...}, instead of
@@ -80,6 +83,12 @@ async function capture({ positionals, values }: ReturnType<typeof readArguments>
 
   const steps = values.steps ? await readSteps(values.steps) : visitPaths(paths);
 
+  const stepsDigest = sha256Text(
+    values.steps ? await readFile(values.steps, "utf8") : JSON.stringify(paths),
+  );
+
+  const checkout = await readCheckoutBuild({ app: values.app, repository });
+
   const signedIn = values.email
     ? await signIn({
         app: values.app,
@@ -96,36 +105,34 @@ async function capture({ positionals, values }: ReturnType<typeof readArguments>
   const items = await captureSide({
     baseUrl,
     browser,
+    checkout,
     out,
     schemes: pick(values.schemes, SCHEMES, "scheme"),
     side,
     steps,
+    stepsDigest,
     storageState: signedIn?.storageState,
     video: values.video,
     viewports: pick(values.viewports, VIEWPORT_NAMES, "viewport"),
   }).finally(async () => browser.close());
 
-  const [before, after] = await Promise.all(
-    SIDES.map(async (name) => readCapture(join(out, name))),
-  );
-
-  const sides = { after, before };
-  const changes = await compareSides(out, sides);
-  const unchanged = new Set(changes.filter(({ change }) => !change.box).map(({ row }) => row));
-  const media = renderMedia({ root: relative(repository, out), sides, unchanged });
-  await writeFile(join(out, "media.md"), `${media.markdown}\n`);
+  const unbound = items.filter((item) => item.build.id === "unknown").length;
+  const { report, written } = await writeSection({ out, repository });
 
   console.log(
     [
       `${side}: ${items.length} files from ${baseUrl} in ${relative(repository, join(out, side))}`,
-      ...(changes.length > 0
-        ? ["What changed in each pair:", ...changes.map((change) => `  ${describeChange(change)}`)]
-        : []),
-      `Before-and-after section: ${relative(repository, join(out, "media.md"))}${before && after ? "" : " (one side so far)"}`,
-      "Rewrite each panel's summary to say what changed there. Put the section in the PR body, and pass every file it links to gh pr create or gh pr edit, run from the repository root:",
-      media.attachments.map((file) => `--attach ${file}`).join(" "),
-    ].join("\n"),
+      unbound > 0 &&
+        `${unbound} of them came from a server that isn't this checkout's current ${values.app} build, so their build is unknown.`,
+      report,
+    ]
+      .filter(Boolean)
+      .join("\n"),
   );
+
+  if (!written) {
+    process.exitCode = 1;
+  }
 }
 
 const parsed = readArguments();
