@@ -9,7 +9,13 @@ export type RoleSample = {
 };
 
 /** Runs in the measured page; the slots belong to the shared pieces, not to a screen's classes. */
-export function readRoles(overlays: { panel: string }[]): RoleSample[] {
+export function readRoles({
+  listGroup,
+  overlays,
+}: {
+  listGroup: { group: string; rows: string };
+  overlays: { panel: string }[];
+}): RoleSample[] {
   const tailRows = 3;
 
   const selectors = {
@@ -17,7 +23,7 @@ export function readRoles(overlays: { panel: string }[]): RoleSample[] {
     "bottom-bar": '[data-slot="bottom-bar"]',
     empty: '[data-slot="empty"]',
     eyebrow: '[data-slot="eyebrow"]',
-    "list-tail": '[data-slot="list-group"]',
+    "list-tail": listGroup.group,
     overlay: overlays.map(({ panel }) => `[data-slot=${panel}]`).join(", "),
     "page-top": '[data-slot="page-top"], [data-slot="page-header"]',
     "subscription-gate": '[data-slot="subscribe-gate"]',
@@ -40,7 +46,7 @@ export function readRoles(overlays: { panel: string }[]): RoleSample[] {
       .flatMap((node, index) => {
         const rows =
           role === "list-tail"
-            ? [...node.querySelectorAll('[data-slot="list-row"]')]
+            ? [...node.querySelectorAll(listGroup.rows)]
                 .filter((row) => shown(row))
                 .slice(-tailRows)
             : [];
