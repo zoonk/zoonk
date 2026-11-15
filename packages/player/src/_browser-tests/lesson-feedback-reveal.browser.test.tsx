@@ -86,4 +86,26 @@ describe("feedback after a check", () => {
       }),
     );
   });
+
+  it("shows the verdict again when a picture or canvas that loads after the check pushes it down", async () => {
+    await onDevice({ reducedMotion: "reduce" }, () =>
+      atViewport(SHORT_WINDOW, async () => {
+        renderLessonPlayer({
+          lesson: buildLesson([contentStep("check", { content: playableStepContent.check })]),
+        });
+
+        await page.getByRole("radio", { name: RIGHT_OPTION }).click();
+        await page.getByRole("button", { name: /^Check/u }).click();
+
+        const verdict = page.getByRole("region", { name: "Answer feedback" }).getByText("Correct!");
+        await expect.element(verdict).toBeInViewport({ ratio: 1 });
+
+        const late = document.createElement("div");
+        late.style.minHeight = "600px";
+        document.querySelector('[data-slot="lesson-screen"]')?.prepend(late);
+
+        await expect.element(verdict).toBeInViewport({ ratio: 1 });
+      }),
+    );
+  });
 });
