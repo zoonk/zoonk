@@ -6,6 +6,14 @@ struct ShellToolbar: ViewModifier {
   @Environment(SessionStore.self) private var session
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.isToolbarVertical) private var isToolbarVertical
+  @State private var barWidth: CGFloat?
+  /// What a phone's bar keeps beside the goal's name: its margins (20 each), the menu's padding and
+  /// chevron (34), the gap the bar leaves before its next item (12), a two-digit level (45), the
+  /// spacer (20) and the account (52). Less, and the bar sends the level and the account to its
+  /// overflow menu.
+  @ScaledMetric(relativeTo: .body) private var besideName: CGFloat = 206
+  /// A wide bar also holds the page's own items, such as the Plan's.
+  @ScaledMetric(relativeTo: .body) private var wideBarName: CGFloat = 140
 
   let isShown: Bool
 
@@ -15,10 +23,25 @@ struct ShellToolbar: ViewModifier {
     if !isShown {
       content
     } else if #available(iOS 27, *) {
-      content.toolbar { items(account: account.visibilityPriority(.high)) }
+      measured(content).toolbar { items(account: account.visibilityPriority(.high)) }
     } else {
-      content.toolbar { items(account: account) }
+      measured(content).toolbar { items(account: account) }
     }
+  }
+
+  private func measured(_ content: Content) -> some View {
+    content.onGeometryChange(for: CGFloat.self, of: \.size.width) { barWidth = $0 }
+  }
+
+  /// On a phone the goal's name takes the room the bar leaves (main's phone bar holds only the goal,
+  /// the level and the account), so it truncates there instead of sending the bar's items to its
+  /// overflow menu.
+  private var nameWidth: CGFloat {
+    guard horizontalSizeClass == .compact, let barWidth else {
+      return wideBarName
+    }
+
+    return max(wideBarName, barWidth - besideName)
   }
 
   /// iPhone Duo's folded vertical bar can't fit the tab's title and the goal's name, and the system
@@ -45,7 +68,7 @@ struct ShellToolbar: ViewModifier {
     case .restoring, .signedIn, .unavailable:
       if let summary = learner.summary.value {
         ToolbarItem(placement: .topBarLeading) {
-          GoalSwitcher(summary: summary, isCompact: isSwitcherCompact)
+          GoalSwitcher(summary: summary, isCompact: isSwitcherCompact, maxTitleWidth: nameWidth)
         }
 
         if let level = summary.level {
@@ -190,11 +213,9 @@ private struct GoalSwitcher: View {
   @State private var isStartingWaitingGoal = false
   @State private var failure = Failure.switchGoal
   @State private var showsFailure = false
-  /// Caps a long goal title so it truncates in the bar instead of moving to its overflow menu.
-  @ScaledMetric(relativeTo: .body) private var maxTitleWidth: CGFloat = 140
-
   let summary: LearnerSummary
   let isCompact: Bool
+  let maxTitleWidth: CGFloat
 
   /// Said in an alert, since the menu the learner chose from has closed.
   private enum Failure {
