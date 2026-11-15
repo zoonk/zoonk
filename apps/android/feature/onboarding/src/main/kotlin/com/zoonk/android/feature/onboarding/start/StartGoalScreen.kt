@@ -147,10 +147,14 @@ fun StartGoalScreen(
             }
         }
 
-    BackHandler(enabled = backInFlow != null) { backInFlow?.invoke() }
+    // While a goal is being made from the card, Back waits with the card's other controls (system, bar and
+    // predictive back alike), so the goal is made once and its setup opens from the card the learner confirmed.
+    val creating = vm.isCreating
+    BackHandler(enabled = backInFlow != null || creating) { if (!creating) backInFlow?.invoke() }
 
     PageScaffold(
-        onBack = { backInFlow?.invoke() ?: navigator.back() },
+        onBack = { if (!creating) backInFlow?.invoke() ?: navigator.back() },
+        backEnabled = !creating,
         actions = {
             if (!hasSession) TextButton(onClick = { navigator.open(AppRoute.Login) }) { Text(stringResource(R.string.gate_log_in)) }
         },
@@ -175,7 +179,7 @@ fun StartGoalScreen(
                     }
 
                     screen == StartScreen.Questions -> {
-                        MaterialQuestions(vm, language)
+                        MaterialQuestions(vm, language, actions)
                     }
 
                     screen is StartScreen.Sending -> {
@@ -241,10 +245,12 @@ private fun ColumnScope.Entry(
     if (vm.isAttachOpen && canAttach) {
         AttachPanel(
             pending = vm.isAttaching,
-            error = vm.attachFailure?.let { attachErrorMessage(it) },
+            failure = vm.attachFailure,
             onFile = { vm.attachFile(it, language) },
             onText = { vm.attachText(it, language) },
             onLink = { vm.attachLink(it, language) },
+            onCreateAccount = actions.createAccount,
+            onSubscribe = actions.subscribe,
         )
     }
 
@@ -501,6 +507,7 @@ private fun failedRun(failure: GenerationFailure) = GenerationRun(status = Gener
 private fun ColumnScope.MaterialQuestions(
     vm: StartGoalViewModel,
     language: String,
+    actions: StartActions,
 ) {
     var question by rememberSaveable { mutableStateOf("") }
     val ask = {
@@ -516,7 +523,7 @@ private fun ColumnScope.MaterialQuestions(
         vm.turns.forEach { turn ->
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 TypedGoal(turn.question)
-                MaterialAnswer(turn.outcome)
+                MaterialAnswer(turn.outcome, actions.createAccount, actions.subscribe)
             }
         }
     }

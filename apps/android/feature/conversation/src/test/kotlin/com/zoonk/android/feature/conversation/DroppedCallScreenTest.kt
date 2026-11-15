@@ -3,6 +3,7 @@ package com.zoonk.android.feature.conversation
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -27,7 +28,7 @@ class DroppedCallScreenTest {
 
     private val clock by lazy { TestClock(compose.mainClock) }
 
-    /** A call the month's cap cut off: once the day comes, the cap's words go and it's a dropped call that can be called again. */
+    /** A call the month's cap cut off: once the day comes, it's the one sentence "You can try again now." with no title, and Call again. */
     @Test
     fun aCallTheCapCutOffCanBeCalledAgainOnceItsDayComes() {
         var retries = 0
@@ -48,11 +49,15 @@ class DroppedCallScreenTest {
 
         compose.onNodeWithText("You've used your call time").assertExists()
         compose.onNodeWithText("Call again").assertDoesNotExist()
+        val reason = compose.onNodeWithText("You've used your call time").getBoundsInRoot().top
 
         clock.passOpening()
         compose.waitUntil(10_000) { compose.onAllNodesWithText("Call again").fetchSemanticsNodes().isNotEmpty() }
+        // The title's room stays, so the sentence takes the reason's place.
+        assertEquals(reason, compose.onNodeWithText("You can try again now.").getBoundsInRoot().top)
         compose.onNodeWithText("You've used your call time").assertDoesNotExist()
-        compose.onNodeWithText("Call again, or end the call to get feedback on what you said.").assertExists()
+        compose.onNodeWithText("The call dropped").assertDoesNotExist()
+        compose.onNodeWithText("You can try again now.").assertExists()
         compose.onNodeWithText("Call again").performClick()
 
         assertEquals(1, retries)

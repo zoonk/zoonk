@@ -250,8 +250,7 @@
   "plan_exam_date": "02f49ad62a38af75b0a8718890f91fdd1143aeacfdc9d2e64851f18ed27d168b",
   "plan_exam_date_label": "f0ba48ca41908fad19a1ab00e680e71e8d407f927c859363a8fbe0b0ad1e41c0",
   "plan_exam_day": "1fdffcf8860479fba0728177493c2be4678ef0478b33634178089611c225644a",
-  "plan_exam_over_left": "6ac00492cda63caebe10fe8b10fc1da6889b54514084c027885acea6b43a975a",
-  "plan_eyebrow": "cdd281f0ee81317e76d22668c0997499dd6040fa046c318872015bf1c06a1ed5",
+  "plan_exam_over_ask": "004c8665d9841aaf0fbf998eee90dadbcddd7adea9aa8a6043c712d0cc56b125",
   "plan_far_count_from": "2e783a3041d1fe2a5b7032348e489e05f7dd3792df307dbae118594f8274e42c",
   "plan_far_count_from_month": "32bd0ae9174f5eb05efbb4640c4462f0f002a8686a57558556b969284f056dd5",
   "plan_far_explain": "9f3d871adacb29288d9e96d6f301dcc6b3a9fe4a9c55e09b0f56ed79565d8e6a",
@@ -396,7 +395,6 @@
   "plan_right_answers": "c63b0a08528d99d3a6221eff3bbb2c96e0a8a0308b8e722e2dad49a670fd9712",
   "plan_roadmap_from": "75526b7a2d8fb593d79a16d125a8bd16d56e21f465cf2bcaf8cef5e870b8e361",
   "plan_roadmap_phase_number": "bba5d4ff1de237b87235f2b0e797490e688e1f2015e4a8c8bd7be70c1fece36c",
-  "plan_roadmap_phase_of": "a14cb0240852c0476dfb7825f1e0f4ea31855c2a61a7bea6247dcd50db778b64",
   "plan_saturdays": "9a3f9ad1cad52efab4f17a1fea3102da45bb474e42d576c7e29e597dcf6993fe",
   "plan_save": "81c0d1d1d4445de88d065a12e0ee82ca4b6b1cca12f2394c6ea3642ce9bd7c67",
   "plan_save_failed": "ca361adcb523a0a75080453e0abc4631bcf84367e89357b1365b88dca9b7e9dc",
@@ -462,7 +460,6 @@
   "plan_time_no_days": "88b5e0c062ca3c7990b811f77eafc43300a493ed008342ae4127a5e08c06c74f",
   "plan_time_none": "50347b1aa97a8cb2b4dc3e01669a51f59b6fe58caa7ac02063dbd19d0a2b0b7b",
   "plan_time_none_month": "4f31206383c8e5e88596393137edd022a2e5163308f964b49293f8d5bd899a3c",
-  "plan_time_on_weekends": "05ab1cc64f4ae6a32ff7125ce481c7efc8cc5440d491f16b65c0ede70f78e831",
   "plan_time_past_date": "9fbe74e261b45d4ed10368eca021f019d7aa0ec02f2e0a36e402b93f0b4c273f",
   "plan_time_past_date_month": "7c837cb1ac041cc898bc00c456afdd71c9955aeab7fc340c37911bece32e5900",
   "plan_time_share_exam": "4cc49ae51e976b272170d85be45deaeac439b999f55778f585432c06eba738e1",
@@ -530,7 +527,6 @@
   "plan_wednesdays": "7c93953c7bf6ec3fb4ad6dc9713b6c00422c1889539bc2a2134369dd772c25b5",
   "plan_week_day": "5fa9680e4103794d68683b48b884130df0cb5ae1f29f65b80fa6b3d3f62737b1",
   "plan_week_time": "7498a8511c1052d3d63b65c862ac129e9d98147b959d63080e0cc01037dcf810",
-  "plan_weekend_time_differs": "7964b27193aba7680f3e13be7427688d416efdbd149d235827e93f52b67ea8e1",
   "plan_weekly_challenges": "5b1cf084d366cfbf3b6f9f9df9e5eab8f52657f10ada6559dbf16969273ef7bf",
   "plan_what_you_practice": "7ca3e03e273e90c6eeb3efd58cb8d17e01751c822b013f2c43eb83344786bc83",
   "plan_when_to_practice": "6720680c6f3117e37299f345b412066b3038046e2c452a48f2e5bc8c6ba9ac20",
@@ -551,7 +547,6 @@
 -->
 <resources>
     <string name="plan_title">Plan</string>
-    <string name="plan_eyebrow">%1$s · %2$s</string>
     <string name="plan_day_is_here">Le jour J est arrivé</string>
     <plurals name="plan_days_left">
         <item quantity="one">Il reste %d jour</item>
@@ -614,7 +609,6 @@
         <item quantity="many">Phases terminées : %1$d sur %2$d</item>
         <item quantity="other">Phases terminées : %1$d sur %2$d</item>
     </plurals>
-    <string name="plan_roadmap_phase_of">phase %1$d sur %2$d</string>
     <string name="plan_roadmap_from">À partir du %1$s</string>
     <string name="plan_today">Aujourd’hui</string>
     <string name="plan_mock_exam">Examen blanc</string>
@@ -1080,9 +1074,6 @@
     <string name="plan_pick_date">Choisir une date</string>
     <string name="plan_save">Enregistrer</string>
     <string name="plan_use_this_date">Choisir cette date</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="plan_weekend_time_differs">Durée différente le week-end</string>
-    <string name="plan_time_on_weekends">Durée le week-end</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$s : quelle épreuve passeras-tu ?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
@@ -1318,11 +1309,8 @@
     </plurals>
     <string name="plan_past_date_goal_title">La date de fin de ton plan est passée</string>
     <string name="plan_past_date_exam_title">La date de ton examen est passée</string>
-    <plurals name="plan_exam_over_left">
-        <item quantity="one">Il te reste %d leçon. Tu veux continuer à la travailler ou archiver cet objectif ?</item>
-        <item quantity="many">Il te reste %d leçons. Tu veux continuer à les travailler ou archiver cet objectif ?</item>
-        <item quantity="other">Il te reste %d leçons. Tu veux continuer à les travailler ou archiver cet objectif ?</item>
-    </plurals>
+    <!-- Under "Your exam date has passed" on the Plan, whose bottom bar holds the two answers and whose Schedule number says the lessons left. -->
+    <string name="plan_exam_over_ask">Continuer à étudier ou archiver cet objectif ?</string>
     <plurals name="plan_past_date_offer">
         <item quantity="one">Il te reste %d leçon. Repousser la date de fin te laisse le temps de la terminer.</item>
         <item quantity="many">Il te reste %d leçons. Repousser la date de fin te laisse le temps de les terminer.</item>

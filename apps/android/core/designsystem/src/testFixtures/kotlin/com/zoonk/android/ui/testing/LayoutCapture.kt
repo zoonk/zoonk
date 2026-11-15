@@ -18,6 +18,9 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.ResolvedTextDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import com.zoonk.android.R
@@ -185,6 +188,8 @@ internal object LayoutCapture {
                     else -> {}
                 }
             }
+            // A part that replaced its children's semantics (a bar read as one phrase) is measured whole; nothing under it is.
+            if (part != null && node.config.isClearingSemantics) return
             node.children.forEach { walk(it, nextGroup, nextRow) }
         }
 
@@ -327,6 +332,8 @@ internal object LayoutCapture {
                         fields["variant"] = part.variant?.id
                         fields["surface"] = surface
                         node?.let { fields["text"] = text(it) }
+                        // So the filled-action count can say a disabled one is disabled.
+                        if (node?.config?.contains(SemanticsProperties.Disabled) == true) fields["disabled"] = true
                     }
 
                     else -> {
@@ -391,7 +398,8 @@ internal object LayoutCapture {
                 val (text, layout) =
                     texts.firstOrNull() ?: run {
                         fields["ink"] = pixelInk(bounds(node))
-                        listOf("baseline", "capTop", "capBottom", "lines", "type").forEach { fields[it] = NOT_MEASURED }
+                        // The shape takes no "not measured" line count: an unknown one is left out.
+                        listOf("baseline", "capTop", "capBottom", "type").forEach { fields[it] = NOT_MEASURED }
                         // Zero only when it's known: texts laid out with no words. Semantics that hide a text's layout
                         // (clearAndSetSemantics) leave the count unknown.
                         fields["texts"] = drawnDescriptions(node) ?: if (laidOutTexts.isEmpty()) NOT_MEASURED else 0
@@ -418,8 +426,25 @@ internal object LayoutCapture {
                 val baseline = y + layout.firstBaseline / density
                 fields["baseline"] = baseline
                 val capHeight = capHeight(layout)
-                fields["capTop"] = capHeight?.let { baseline - it } ?: NOT_MEASURED
-                fields["capBottom"] = if (capHeight != null) baseline else NOT_MEASURED
+                val face = if (capHeight == null) ideographicFace(layout) else null
+                when {
+                    capHeight != null -> {
+                        fields["capTop"] = baseline - capHeight
+                        fields["capBottom"] = baseline
+                        fields["textBox"] = "capitals"
+                    }
+
+                    face != null -> {
+                        fields["capTop"] = baseline + face.first
+                        fields["capBottom"] = baseline + face.second
+                        fields["textBox"] = "ideographic face"
+                    }
+
+                    else -> {
+                        fields["capTop"] = NOT_MEASURED
+                        fields["capBottom"] = NOT_MEASURED
+                    }
+                }
                 // Every line the part's words take, when it stacks more than one text; texts side by side share theirs.
                 fields["lines"] =
                     texts
@@ -443,7 +468,8 @@ internal object LayoutCapture {
          */
         private fun alignmentShift(layout: TextLayoutResult): Float {
             val extra = layout.size.width - layout.multiParagraph.width
-            val rtl = layout.layoutInput.layoutDirection == LayoutDirection.Rtl
+            // Start and end follow the paragraph's own direction: English in a right-to-left layout still starts on the left.
+            val rtl = layout.multiParagraph.getParagraphDirection(0) == ResolvedTextDirection.Rtl
             return when (layout.layoutInput.style.textAlign) {
                 TextAlign.Center -> extra / 2
                 TextAlign.Right -> extra
@@ -501,6 +527,40 @@ internal object LayoutCapture {
             }
             visit(node)
             return words.joinToString(" ")
+        }
+
+        /**
+         * For text in a script with no capitals (Han, kana, Hangul), the box its glyphs are drawn in: a full-frame
+         * glyph ("国", or "국" for Hangul) laid out through the text's own typeface and its fallback, the face that
+         * drew it, as main's reader does. Its top and bottom from the baseline, in dp; null for any other text.
+         */
+        private fun ideographicFace(layout: TextLayoutResult): Pair<Float, Float>? {
+            val text = layout.layoutInput.text.text
+            val hangul = text.any { Character.UnicodeScript.of(it.code) == Character.UnicodeScript.HANGUL }
+            val ideographic =
+                hangul ||
+                    text.any {
+                        val script = Character.UnicodeScript.of(it.code)
+                        script == Character.UnicodeScript.HAN ||
+                            script == Character.UnicodeScript.HIRAGANA ||
+                            script == Character.UnicodeScript.KATAKANA
+                    }
+            if (!ideographic) return null
+            val style = layout.layoutInput.style
+            val typeface =
+                layout.layoutInput.fontFamilyResolver
+                    .resolve(style.fontFamily, style.fontWeight ?: FontWeight.Normal, style.fontStyle ?: FontStyle.Normal)
+                    .value as? android.graphics.Typeface ?: return null
+            val paint =
+                android.graphics.Paint().apply {
+                    this.typeface = typeface
+                    textSize = with(layout.layoutInput.density) { style.fontSize.toPx() }
+                }
+            val glyph = if (hangul) "국" else "国"
+            val bounds = android.graphics.Rect()
+            paint.getTextBounds(glyph, 0, glyph.length, bounds)
+            if (bounds.height() <= 0) return null
+            return bounds.top / density to bounds.bottom / density
         }
 
         /**

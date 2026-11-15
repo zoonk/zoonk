@@ -7,7 +7,7 @@
   "mindmaps_as_text": "571d43c3a86e1a401f8b274215fff626f62fd17302e9e72e6382d8f093039472",
   "mindmaps_as_text_note": "a6103cf9d0d80335e1439fda0d6c9c76ed2ab08eead8931e0032e81a9852bdba",
   "mindmaps_being_made": "b08ab76731b54658662fbb3852d40a54cdb47a9a4d04793466ba22663e487442",
-  "mindmaps_can_make_more": "c8724bd6c3f71570f2a96717e4e5f78e602e6d09786d2671f2a2aea27840e102",
+  "mindmaps_can_make_more": "c9614d3f0fa417eebb653831cea3e5496d10c62cf93c4e3a22be7d1723adf199",
   "mindmaps_chapter_count": "29b8522387b4ab60edbb37c3bb4dbfa1d38db55cfb098b2149ecc4760a2c9e0d",
   "mindmaps_chapter_finished": "667173a1248df99101607dd61eedcf97415ce356081bfee5e7d32c79eb7f733c",
   "mindmaps_chapter_map": "ed1d4c4eb28e083d0c8459986128e27fce4ad76e58ba9bd31fd8015d7165d045",
@@ -21,6 +21,7 @@
   "mindmaps_drawing": "7a5616033bfb58b5e5f02ee1310af3324a6f4252af7113db3c2781e18e18d413",
   "mindmaps_drawing_wait": "dd366881b9acce90fcd751a668c0511a0590803fd7e329d59aacf936dc201757",
   "mindmaps_empty": "b363968d1fcd4abec0e718be94019adb4f7ae46a4122a3df4d04ea69a45bc344",
+  "mindmaps_empty_stopped": "2716d82647ccc6c23996ad17746c2b3ab4ab85b2d60dab51b21edc661dbdf89f",
   "mindmaps_failed": "f9570911237951d827e0cd58be6371e7e199900fc9d586d7bd2c786f6e720db2",
   "mindmaps_fit": "20f43e8039030a5a9c08cddfae7c42d8f29f3604e59e741316566d2adcd65ed8",
   "mindmaps_free_lessons_note": "b0ec2369d7655fa21922f1b09fd43f54f1d466816e62fab324702a5d9c74c90a",
@@ -81,6 +82,7 @@
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">Capítulo %1$s</string>
     <string name="mindmaps_empty">Ainda não há mapas de capítulos. Cada capítulo que você conclui ganha um.</string>
+    <string name="mindmaps_empty_stopped">Ainda não há mapas de capítulos.</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">Mapa mental de %1$s</string>
     <!-- A mind map's description for screen readers: its title, then its central idea. -->
@@ -190,9 +192,9 @@
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">
-        <item quantity="one">Você pode criar mais %1$s agora.</item>
-        <item quantity="many">Você pode criar mais %1$s agora.</item>
-        <item quantity="other">Você pode criar mais %1$s agora.</item>
+        <item quantity="one">Você pode criar mais %1$s mapa agora.</item>
+        <item quantity="many">Você pode criar mais %1$s mapas agora.</item>
+        <item quantity="other">Você pode criar mais %1$s mapas agora.</item>
     </plurals>
     <!-- Saves a map to study again. -->
     <string name="mindmaps_save">Salvar</string>

@@ -73,7 +73,11 @@
   "test_out_skip_chapter": "9f0fcc87eab9ac5122963c3d62a6cdad48509d129d0594f7e5fee220ffea1097",
   "test_out_skip_unit": "d17b518f9774188bf3407681484e8d4ad105c0d53eefc266aa1da5cbaf5dc307",
   "test_out_title": "00d4a6c3257a27b4bc6dda336babd71ab48dce563575e757de6dd67bfc083ccb",
-  "web_page_unavailable": "bc5aec9f00829f3232d9ced3e688494e832c12f45ede614008713b3d2d87f264"
+  "web_page_unavailable": "bc5aec9f00829f3232d9ced3e688494e832c12f45ede614008713b3d2d87f264",
+  "weekend_time_add_weekday": "49ea9d728c6b57d2a4635298250628dfcb9114ce923206bf7cec25631023213c",
+  "weekend_time_add_weekend_day": "08f48fa480eab92fb34de4fec989a8d70301636e9fdbaf9a74dbe00f0c089f36",
+  "weekend_time_differs": "66161d1b42bd4b95e63e7b7aeb5ed4e082d2c6747e62fe01883f8989f2a5fc5d",
+  "weekend_time_label": "316489a00bd78b79dab295187f23b34eccf178394a90a82a50fe72928fab55b2"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -127,6 +131,13 @@
     <string name="suggestion_other_options">Otras opciones</string>
     <!-- Above the options of an exam's choice when each candidate takes several of them, such as two of a course's modules. %1$d is how many, at least 2. -->
     <string name="exam_choice_pick_up_to">Elige hasta %1$d.</string>
+    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
+    <string name="weekend_time_differs">Tiempo de estudio distinto los fines de semana</string>
+    <string name="weekend_time_label">Tiempo los fines de semana</string>
+    <!-- Why a switch for a different study time on weekends is off: no weekend day is a study day. -->
+    <string name="weekend_time_add_weekend_day">Agrega el sábado o el domingo a tus días de estudio.</string>
+    <!-- Why a switch for a different study time on weekends is off: only weekend days are study days. -->
+    <string name="weekend_time_add_weekday">Agrega un día entre semana a tus días de estudio.</string>
     <!-- Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options. -->
     <string name="exam_choice_left_out">Elige una opción para incluirla en tu plan.</string>
     <string name="disclosure_expanded">Expandido</string>

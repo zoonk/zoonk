@@ -35,6 +35,7 @@
   "limit_outlines_day": "529dd6114f1db5a762ea1cd4e321ac50d4632ffb31b46a6ef22136d8b3979bab",
   "limit_outlines_guest": "01be58ca32e9810d1c8c9ca13716db366e18bda775e94050ba942c6e4385ff51",
   "limit_outlines_used": "530a98919e856d1f5fa30d263622451d159dfa7546db652b4f92653f39641f0b",
+  "limit_questions_day": "9414a84de8a267a6049e0737df1b9cf7c0d825ebc8953f341643b21f8dd76d18",
   "limit_questions_used": "cb3677106a49741d48e2d8ec63f5a03aba2b98e16f3f33e497b39626c3632d1b",
   "limit_quick_explanations_used": "f557bf77ef6df9d439e77688013f94bcf5167e555712d8a4d6447626bd003508",
   "limit_sentence": "b2ba71e50648d586b8f76853a2215cc9f0d7ede270ffbec2cbd0a7619864ef9b",
@@ -42,6 +43,7 @@
   "limit_slow_down": "dc96b0ce3af7f0f3eb350a1540c4d2211650f68ff7aa78cb9626cf238ccff367",
   "limit_still_review": "c2e3ebaf90547192f02f4c79ceb3b896a8dab5f2b51a599700965646e3f8ad38",
   "limit_try_again_now": "8723af6682084a91aedf27966f36699043d4a60b44b4802af84b5fe759dcd848",
+  "limit_uploads_day": "3fb5709442dd1c848bfa2f10daff7080a0b9a0a0ea0864e3d0c309afb41410a4",
   "limit_uploads_used": "e207dcb29fd9fc983958d5c26d1aa61fb8b506929b08d7b6a6c8965eddfdedf7"
 }
 -->
@@ -75,6 +77,8 @@
     <string name="limit_goals_used">Yeni hedef başlatma hakkın bitti</string>
     <string name="limit_uploads_used">Yükleme hakkın bitti</string>
     <string name="limit_questions_used">Soru hakkın bitti</string>
+    <string name="limit_uploads_day">Bugünkü materyal yükleme hakkın bitti</string>
+    <string name="limit_questions_day">Bugünkü soru hakkın bitti</string>
     <string name="limit_call_time_used">Sohbet süren doldu</string>
     <string name="limit_mock_exams_used">Deneme sınavı hakkın bitti</string>
     <string name="limit_lessons_guest">Daha fazla ders için bir hesap gerekiyor</string>
