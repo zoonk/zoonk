@@ -8,7 +8,7 @@ import { assertBrowserLaunchAllowed } from "../../packages/testing/src/browser-p
 import { getMailboxCaptureUrl, getServiceUrl } from "../dev/config.mts";
 import { signIn } from "../verify/sign-in.mts";
 import { SCHEMES, VIEWPORT_NAMES, pick } from "../verify/viewports.mts";
-import { SIDES } from "./media.mts";
+import { SIDES, buildOf } from "./media.mts";
 import { readCheckoutBuild, sha256Text } from "./provenance.mts";
 import { type Steps, captureSide, visitPaths } from "./record.mts";
 import { writeSection } from "./section.mts";
@@ -118,7 +118,7 @@ async function capture({ positionals, values }: ReturnType<typeof readArguments>
     viewports: pick(values.viewports, VIEWPORT_NAMES, "viewport"),
   }).finally(async () => browser.close());
 
-  const unbound = items.filter((item) => item.build.id === "unknown").length;
+  const unbound = items.filter((item) => buildOf(item).id === "unknown").length;
   const { report, written } = await writeSection({ out, repository });
 
   console.log(

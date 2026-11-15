@@ -6,6 +6,7 @@ import {
   type CaptureItem,
   type Finding,
   type ManifestItem,
+  buildOf,
   isRecorded,
   readAlignment,
   readManifest,
@@ -73,7 +74,7 @@ async function buildProblems({
   item: CaptureItem;
   picture: string;
 }): Promise<Problem[]> {
-  const { app, changes, commit, id } = item.build;
+  const { app, changes, commit, id } = buildOf(item);
 
   if (id === "unknown") {
     return [{ kind: "unknown-build", picture }];
@@ -108,7 +109,7 @@ async function findingProblems({
       }
 
       if (finding.state === "fixed") {
-        const shown = item && (await git.includes(item.build.commit, finding.commit));
+        const shown = item && (await git.includes(buildOf(item).commit, finding.commit));
         return shown ? undefined : { detail, kind: "fixed-not-retaken", picture };
       }
 

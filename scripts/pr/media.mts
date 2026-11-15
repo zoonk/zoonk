@@ -18,6 +18,9 @@ type Platform = (typeof PLATFORMS)[number];
  */
 export type Build = { app: string; changes?: string; commit: string; id: string };
 
+/** What a native Debug build stamps on itself (`apps/apple/scripts/stamp-debug-build.sh`). */
+type NativeStamp = { changesDigest?: string; commit: string; dirty?: boolean };
+
 export type FindingState =
   | { state: "open" }
   | { commit: string; state: "fixed" }
@@ -41,7 +44,7 @@ export type Read = { at: string; by: string; carriedFrom?: string; findings: Fin
  * `steps` digests what the capture ran to reach the screen.
  */
 export type CaptureItem = {
-  build: Build;
+  build: Build | NativeStamp;
   file: string;
   locale: string;
   platform: Platform;
@@ -157,6 +160,25 @@ export async function registerItems(folder: string, added: ManifestItem[]): Prom
 export function readOf(item: ManifestItem): Read | undefined {
   const read = "read" in item ? item.read : undefined;
   return read?.by.trim() ? read : undefined;
+}
+
+/**
+ * Every platform's build in one shape. A native stamp names its app by its platform, and a build
+ * not stamped clean counts as built with changes.
+ */
+export function buildOf({ build, platform }: CaptureItem): Build {
+  if ("id" in build) {
+    return build;
+  }
+
+  const { changesDigest, commit, dirty } = build;
+
+  return {
+    app: platform,
+    changes: dirty === false ? undefined : changesDigest || "uncommitted",
+    commit,
+    id: commit === "unknown" ? "unknown" : commit,
+  };
 }
 
 export function isRecorded(item: ManifestItem): item is CaptureItem {
