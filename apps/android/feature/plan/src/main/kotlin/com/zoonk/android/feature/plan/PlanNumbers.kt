@@ -5,6 +5,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -32,6 +33,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -45,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.toUpperCase
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.language.CanDoList
@@ -64,6 +67,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.QuietDisclosure
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.WeekDaysRow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.markSize
@@ -100,6 +104,9 @@ private data class PlanNumber(
 
 private enum class NumberSheet { Standing, Pace }
 
+/** Main's `@2xl` container: 42rem. */
+private val SIDE_BY_SIDE_NUMBERS = 672.dp
+
 @Composable
 internal fun PlanNumbers(
     page: PlanPageState,
@@ -114,14 +121,41 @@ internal fun PlanNumbers(
     val gap = if (variant == NumberVariant.Tiles) 8.dp else 24.dp
     if (standing == null && pace == null) return
 
-    Row(modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
-        if (standing != null) {
-            NumberButton(standingNumber(standing), variant, Modifier.weight(1f)) { open = NumberSheet.Standing }
+    val standingCard: (@Composable (Modifier) -> Unit)? =
+        standing?.let { { cell -> NumberButton(standingNumber(it), variant, cell) { open = NumberSheet.Standing } } }
+    val paceCard: (@Composable (Modifier) -> Unit)? =
+        pace?.let {
+            { cell ->
+                NumberButton(paceNumber(page, it, timeShownBeside = variant == NumberVariant.Stats), variant, cell) {
+                    open =
+                        NumberSheet.Pace
+                }
+            }
         }
-        if (pace != null) {
-            NumberButton(paceNumber(page, pace, timeShownBeside = variant == NumberVariant.Stats), variant, Modifier.weight(1f)) {
-                open =
-                    NumberSheet.Pace
+
+    // Main's `@2xl/standing`: side by side only where each card's value fits one line in every language.
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        if (maxWidth >= SIDE_BY_SIDE_NUMBERS) {
+            Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
+                standingCard?.invoke(Modifier.weight(1f))
+                paceCard?.invoke(Modifier.weight(1f))
+            }
+        } else {
+            Column(
+                Modifier.fillMaxWidth(),
+                verticalArrangement =
+                    Arrangement.spacedBy(
+                        if (variant ==
+                            NumberVariant.Tiles
+                        ) {
+                            8.dp
+                        } else {
+                            16.dp
+                        },
+                    ),
+            ) {
+                standingCard?.invoke(Modifier.fillMaxWidth().height(IntrinsicSize.Min))
+                paceCard?.invoke(Modifier.fillMaxWidth().height(IntrinsicSize.Min))
             }
         }
     }
@@ -307,8 +341,13 @@ private fun NumberButton(
             number.numeric -> Readout(number.value, style = style)
             else -> Text(number.value, style = style.copy(fontWeight = FontWeight.SemiBold))
         }
-        number.share?.let { Meter(it, Modifier.padding(vertical = 2.dp)) }
-        number.detail?.let { MetaLine(it) }
+        // Main's foot is `self-end`: at the card's bottom, so two cards side by side end their captions level.
+        if (number.share != null || number.detail != null) {
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.Bottom)) {
+                number.share?.let { Meter(it, Modifier.padding(vertical = 2.dp)) }
+                number.detail?.let { MetaLine(it) }
+            }
+        }
     }
 
     if (variant == NumberVariant.Tiles) {
@@ -323,9 +362,11 @@ private fun NumberButton(
         Column(
             modifier =
                 modifier
+                    .fillMaxHeight()
                     .bleed(LIST_ITEM_INSET)
+                    .bleedVertically(STAT_PADDING)
                     .clickable(role = Role.Button, onClick = onOpen)
-                    .padding(horizontal = LIST_ITEM_INSET, vertical = 8.dp),
+                    .padding(horizontal = LIST_ITEM_INSET, vertical = STAT_PADDING),
             verticalArrangement = Arrangement.spacedBy(6.dp),
             content = content,
         )
@@ -416,13 +457,13 @@ private fun PlanWeek(page: PlanPageState) {
                 )
             }
         }
-        Row(Modifier.fillMaxWidth()) {
+        WeekDaysRow {
             days.forEach { day ->
                 val date = day.date.toJavaLocalDate()
                 val spoken =
                     stringResource(R.string.plan_week_day, weekdayNames(locale).full.getValue(date.dayOfWeek), dayStatus(day.state))
                 Column(
-                    modifier = Modifier.weight(1f).padding(vertical = 4.dp).clearAndSetSemantics { contentDescription = spoken },
+                    modifier = Modifier.padding(vertical = 4.dp).clearAndSetSemantics { contentDescription = spoken },
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
@@ -774,3 +815,13 @@ private const val MAX_STEPS_SHOWN = 2
 /** Core keeps a subject under this share until the learner takes their first test of it. */
 private const val TEST_THRESHOLD = 0.75
 private const val DAY_RING_SHARE = 1.5f
+
+/** A stat's touch room past its words, which takes no room in the column (main's `-m-2 p-2`). */
+private val STAT_PADDING = 8.dp
+
+private fun Modifier.bleedVertically(amount: Dp): Modifier =
+    layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+        val extra = amount.roundToPx()
+        layout(placeable.width, (placeable.height - extra * 2).coerceAtLeast(0)) { placeable.place(0, -extra) }
+    }

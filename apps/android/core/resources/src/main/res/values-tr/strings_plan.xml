@@ -81,7 +81,6 @@
   "plan_cancel": "a536b26bc303dc48560bdeae1df9b6360c6cc2914ab85b40b57afc2744866b7d",
   "plan_challenge_live_call": "ebb386320c58684873ed554ba9537dca1a1961bc5ee3e825a9f7f5eb6f9a0397",
   "plan_challenge_next_session": "3cbffcbfcf55abd1dd75eb3dd2a6651fd342113ae8d9d62af4936a2e63399d06",
-  "plan_challenge_opens_after_lessons": "d1bb097177c1c9f5c0611a92e699a8b5c49a01e33aa892c4ac2bd519971fc7cd",
   "plan_challenge_questions": "f55c6b3c6150cc79408d7ad4c08a9703aeca1278d818f91fd2907c442db3c041",
   "plan_challenge_won": "01e32640058e84195373ef3b9a697d990c622592d12637106d8b4b8249761588",
   "plan_change_about_more_lessons": "c1c5563b8aa8f02217b5b98a8fb89d65d21e8227613cba7e23d8fe9449492e7f",
@@ -690,7 +689,6 @@
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">Kazanıldı</string>
     <string name="plan_challenge_next_session">Bir sonraki çalışmanda</string>
-    <string name="plan_challenge_opens_after_lessons">Bu aşamanın dersleri bitince açılır</string>
     <string name="plan_challenge_questions">Bu aşamayla ilgili ipucusuz sorular</string>
     <string name="plan_challenge_live_call">Kendini ifade ettiğin canlı bir sohbet</string>
     <plurals name="plan_mock_exams_count">

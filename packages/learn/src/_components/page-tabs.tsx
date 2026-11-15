@@ -12,7 +12,9 @@ export function PageTabs({
 }: Omit<React.ComponentProps<"nav">, "aria-label"> & { label: string }) {
   return (
     <nav aria-label={label} {...props}>
-      <ul className={cn(TAB_LIST_CLASS, "-mx-2.5 flex-wrap")}>{children}</ul>
+      <ul className={cn(TAB_LIST_CLASS, "-mx-2.5 flex-wrap")} data-tabs>
+        {children}
+      </ul>
     </nav>
   );
 }

@@ -1,5 +1,13 @@
 import { type AlignmentFinding, type Level } from "./alignment-capture.mts";
 
+/** What the web's read can't see, said wherever its results print: the CLI's help and a report. */
+export const READ_LIMITS = [
+  "The read doesn't enter iframes or shadow roots. Of what a pseudo-element draws it reads only a row's `::before` highlight and a top or bottom rule (for `column`); a part drawn only by `::before` or `::after` otherwise isn't checked. A rule is clipped by its ancestors' `overflow`, not by a `clip-path`, which no screen sets on one.",
+  "A fill is judged as a highlight only on a row that says it's highlighted (`aria-current`, `data-highlighted`, `aria-selected`): a hover or focus fill isn't drawn while the read runs, so it isn't judged.",
+  "It counts a filled action only when the kit's button variants draw it (`--button-variant`), so a control filled some other way isn't counted; a disabled one counts, marked \"(disabled)\". Two filled buttons with the same `data-action-name` count as one action: the name is the author's statement that they are one, and the check trusts it.",
+  "A text in a script with no capitals (Japanese, Korean) is set on its ideographic face, the box of a full-frame glyph in the same fonts, not on its own ink. Nothing listed here isn't proof those were checked.",
+].join(" ");
+
 export type Summary = {
   unresolved: number;
   /** Null until the scenario list (slice 4) says which were required. */

@@ -138,6 +138,17 @@ class NextStopWarmUpScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun compactFailed() = capture("failed-compact", failed = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun compactFailedAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("failed-compact-font200", failed = true)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun compactStop() = captureStop("compact")
 
     @Test
@@ -218,11 +229,12 @@ class NextStopWarmUpScreenshots {
         layoutDirection: LayoutDirection = LayoutDirection.Ltr,
         alternative: DayStep? = null,
         stop: Boolean = false,
+        failed: Boolean = false,
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val api = FakeStudyApi()
-        var status = LessonReadiness.Status.GENERATING
+        var status = if (failed) LessonReadiness.Status.FAILED else LessonReadiness.Status.GENERATING
         val viewModel =
             SessionViewModel(
                 StudyOpener(api, api::writeLesson, cache, { "UTC" }),
@@ -243,11 +255,11 @@ class NextStopWarmUpScreenshots {
                         override fun events(id: String) =
                             flow {
                                 emit(GenerationEvent(at = 0, status = "completed", step = "planLesson"))
-                                emit(GenerationEvent(at = 6_000, status = "started", step = "writeLesson"))
+                                emit(GenerationEvent(at = 6_000, status = if (failed) "failed" else "started", step = "writeLesson"))
                                 awaitCancellation()
                             }
 
-                        override suspend fun status(id: String) = Generation.Status.RUNNING
+                        override suspend fun status(id: String) = if (failed) Generation.Status.FAILED else Generation.Status.RUNNING
                     }
                 },
                 now = { compose.mainClock.currentTime },
@@ -279,6 +291,7 @@ class NextStopWarmUpScreenshots {
         compose.mainClock.advanceTimeBy(1_000)
         if (fold) compose.unfoldBook(folds) else compose.waitForIdle()
         write("first-lesson-wait-$name")
+        if (failed) return
         compose.onNodeWithText("Play a quiz while you wait").performClick()
         compose.waitForIdle()
         write("first-lesson-wait-quiz-$name")

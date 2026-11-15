@@ -228,7 +228,7 @@ fun GenerationFailureNotice(
                 Icon(
                     painterResource(icon),
                     contentDescription = null,
-                    modifier = Modifier.size(TEXT_ICON_SIZE),
+                    modifier = Modifier.size(TEXT_ICON_SIZE * glyphScale()),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }

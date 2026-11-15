@@ -196,11 +196,12 @@ internal fun ExamChoiceSuggestion(
 
     Suggestion(
         label = title,
-        summary = answer?.summary() ?: title,
+        summary = answer?.text ?: title,
         layout = layout,
         modifier = modifier,
         mark = SuggestionMark.Symbol(R.drawable.ic_signpost),
         answered = answer != null,
+        failed = answer?.failed == true,
         lineAction = if (answer != null) ({ answer.Undo() }) else ({ SuggestionOpen(stringResource(R.string.plan_choose)) }),
     ) {
         SuggestionHeader(title)

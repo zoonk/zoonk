@@ -12,6 +12,7 @@ const SAMPLE: RoleCapture = {
   path: "/one",
   role: "back-link",
   state: "page",
+  type: "Geist 13px 500 rgb(100, 100, 100)",
   viewport: "phone",
 };
 

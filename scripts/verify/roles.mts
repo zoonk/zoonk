@@ -28,7 +28,7 @@ const ROLES = [
   "list-tail",
 ];
 
-const METRICS = ["top", "height", "gap", "glyph", "label"] as const;
+const METRICS = ["top", "height", "gap", "glyph", "label", "type"] as const;
 type Metric = (typeof METRICS)[number];
 
 function metric(sample: RoleCapture, key: Metric): string {

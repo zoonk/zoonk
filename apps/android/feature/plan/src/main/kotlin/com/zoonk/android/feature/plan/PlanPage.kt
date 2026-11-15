@@ -394,6 +394,7 @@ internal fun PlanContent(
         }
 
     val hasSuggestion = hasSlotItem(page, edits, slot, slotState)
+    val examOver = page.isExam && page.plan.status?.pace is Pace.PastDate
     // The drawer lists them where there's one, as main's sidebar does from `lg`.
     val withoutDrawer = LocalNavigationSuiteType.current != NavigationSuiteType.NavigationDrawer
     val completedLessonsRow = links.hasCompletedLessons && withoutDrawer
@@ -419,6 +420,7 @@ internal fun PlanContent(
                             rename = rename,
                             report = report,
                             onAdjust = adjust,
+                            examInMenu = asideBeside,
                         )
                     }
                     countryRebuild?.let { rebuild ->
@@ -428,6 +430,10 @@ internal fun PlanContent(
                     }
                     item(key = "roadmap", contentType = "roadmap") {
                         PlanRoadmap(page, links, onOpenPath = if (structure != null) ({ pathOpen = true }) else null)
+                    }
+                    // The exam-over question sits in the page's pane with its answers, the page's bar, never across panes.
+                    if (asideBeside && examOver && hasSuggestion) {
+                        item(key = "suggestion", contentType = "suggestion") { suggestion(SuggestionLayout.Panel) }
                     }
                     if (!asideBeside) {
                         item(key = "numbers", contentType = "numbers") { numbers(NumberVariant.Tiles) }
@@ -473,7 +479,7 @@ internal fun PlanContent(
                     ResumeGoalBar(enabled = resume != Resume.Pending, busy = isSaving, failure = resumeFailure) {
                         onSetStatus(LearnerSummaryGoal.Status.ACTIVE)
                     }
-                } else if (page.isExam && page.plan.status?.pace is Pace.PastDate) {
+                } else if (examOver) {
                     ExamOverBar(page, edits, archiving = isSaving, onArchive = { onSetStatus(LearnerSummaryGoal.Status.ARCHIVED) })
                 }
             }
@@ -489,7 +495,7 @@ internal fun PlanContent(
                     verticalArrangement = Arrangement.spacedBy(32.dp),
                 ) {
                     numbers(NumberVariant.Stats)
-                    suggestion(SuggestionLayout.Panel)
+                    if (!examOver) suggestion(SuggestionLayout.Panel)
                     // Without subjects the path is on the page, its highlighted row already saying what's next.
                     if (structure != null) NextOnPath(page, links)
                     PlanProperties(page, links, onOpen = onAdjust)

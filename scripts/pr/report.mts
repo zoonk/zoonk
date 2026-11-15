@@ -30,6 +30,12 @@ const KINDS = [
     label: "Not in any capture manifest: take it with pnpm pr:capture",
     summary: "not in any capture manifest",
   },
+  {
+    kind: "device-section",
+    label:
+      "Device pictures appear only in the section pnpm pr:media device-section prints: put this in the body as it is, with a blank line before and after it",
+    summary: "device sections not in the body as written",
+  },
   { kind: "pending", label: "Pending: no native capture record yet", summary: "pending" },
   {
     kind: "unknown-build",
@@ -81,6 +87,8 @@ type Reads = { carried: number; missing: number; new: number };
  */
 export type CheckResult = {
   checked: number;
+  /** The pictures under the device heading with a device record, and what was verified of each. */
+  devices?: { line: string; picture: string }[];
   nothingDeclared?: number;
   notMeasured: number;
   problems: Problem[];
@@ -94,7 +102,7 @@ function kindOf(kind: Kind) {
 }
 
 export function formatCheck(
-  { checked, nothingDeclared = 0, notMeasured, problems, reads }: CheckResult,
+  { checked, devices = [], nothingDeclared = 0, notMeasured, problems, reads }: CheckResult,
   root: string,
 ): string {
   if (checked === 0 && problems.length === 0) {
@@ -109,9 +117,14 @@ export function formatCheck(
 
   const lines = groups.flatMap(([kind, list]) => [
     `${kindOf(kind).label} (${list.length})`,
-    ...list.map(({ detail, picture }) =>
-      picture ? `  ${shown(picture)}${detail ? `: ${detail}` : ""}` : `  ${detail}`,
-    ),
+    // A section to paste prints as it is.
+    ...list.map(({ detail = "", picture }) => {
+      if (picture) {
+        return `  ${shown(picture)}${detail ? `: ${detail}` : ""}`;
+      }
+
+      return detail.includes("\n") ? detail : `  ${detail}`;
+    }),
   ]);
 
   const unmeasured =
@@ -124,14 +137,37 @@ export function formatCheck(
       ? `; layout measured with nothing declared on ${nothingDeclared} ${nothingDeclared === 1 ? "screen" : "screens"}`
       : "";
 
+  const others = checked - devices.length;
+
+  const counts = [
+    ...(others > 0 || devices.length === 0
+      ? [
+          `${others} pictures, each in a capture manifest; every after picture from a current, committed build and read${unmeasured}${undeclared}`,
+        ]
+      : []),
+    ...(devices.length > 0
+      ? [
+          `${devices.length} ${devices.length === 1 ? "picture" : "pictures"} on a device, layout not measured, listed above`,
+        ]
+      : []),
+  ];
+
   const summary =
     groups.length === 0
-      ? `PASS: ${checked} pictures, each in a capture manifest; every after picture from a current, committed build and read${unmeasured}${undeclared}`
+      ? `PASS: ${counts.join("; ")}`
       : `FAIL: ${groups.map(([kind, list]) => `${list.length} ${kindOf(kind).summary}`).join("; ")}, of ${checked} pictures${unmeasured}${undeclared}`;
+
+  const deviceLines =
+    devices.length > 0
+      ? [
+          `On a device, layout not measured (${devices.length}):`,
+          ...devices.map(({ line, picture }) => `  ${shown(picture)}: ${line}`),
+        ]
+      : [];
 
   const readLine =
     reads.carried + reads.new + reads.missing > 0 &&
     `Reads: ${reads.carried} carried over from a capture with the same pixels, ${reads.new} new, ${reads.missing} still to read`;
 
-  return [...lines, readLine, summary].filter(Boolean).join("\n");
+  return [...lines, ...deviceLines, readLine, summary].filter(Boolean).join("\n");
 }
