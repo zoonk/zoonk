@@ -54,8 +54,12 @@ fun profileQuestionTitle(question: ProfileQuestion): String =
         },
     )
 
+/** [inSettings] drops "in Settings" from the lines that point there, as main's Settings page does. */
 @Composable
-fun profileQuestionDescription(question: ProfileQuestion): String =
+fun profileQuestionDescription(
+    question: ProfileQuestion,
+    inSettings: Boolean = false,
+): String =
     stringResource(
         when (question) {
             ProfileQuestion.WORK -> {
@@ -71,7 +75,11 @@ fun profileQuestionDescription(question: ProfileQuestion): String =
             }
 
             ProfileQuestion.CONDITIONS -> {
-                R.string.profile_questions_conditions_description
+                if (inSettings) {
+                    R.string.profile_questions_conditions_description_settings
+                } else {
+                    R.string.profile_questions_conditions_description
+                }
             }
 
             ProfileQuestion.LEARNING_SUPPORT -> {
@@ -98,6 +106,7 @@ fun ProfileQuestionBody(
     role: String? = null,
     suggested: Boolean = false,
     declineAsSkip: Boolean = false,
+    inSettings: Boolean = false,
 ) {
     var atCap by rememberSaveable(question.id) { mutableStateOf(false) }
     var noteOpen by rememberSaveable(question.id) { mutableStateOf(false) }
@@ -223,7 +232,12 @@ fun ProfileQuestionBody(
                             300,
                             enabled,
                             placeholder = R.string.profile_questions_support_placeholder,
-                            help = R.string.profile_questions_support_note_help,
+                            help =
+                                if (inSettings) {
+                                    R.string.profile_questions_support_note_help_settings
+                                } else {
+                                    R.string.profile_questions_support_note_help
+                                },
                         ) { change(draft.copy(text = it, declined = false)) }
                     } else {
                         TextButton(

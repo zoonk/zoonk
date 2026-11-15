@@ -54,7 +54,7 @@ const EVENT_DATE_CLASS = "text-muted-foreground text-xs";
 function EventRow({ children, href }: { children: React.ReactNode; href: string | null }) {
   if (!href) {
     return (
-      <div className={PATH_ROW_CLASS}>
+      <div className={PATH_ROW_CLASS} data-slot="path-row">
         {children}
         <ListRowChevronSpace />
       </div>
@@ -62,7 +62,7 @@ function EventRow({ children, href }: { children: React.ReactNode; href: string 
   }
 
   return (
-    <LearnLink className={EVENT_ROW_CLASS} href={href}>
+    <LearnLink className={EVENT_ROW_CLASS} data-slot="path-row" href={href}>
       {children}
       <RowChevron />
     </LearnLink>
@@ -85,7 +85,7 @@ export function CheckpointRow({
 
   return (
     <EventRow href={checkpoint.planItemId ? links.challenge(checkpoint.planItemId) : null}>
-      <span className={PATH_ROW_LEADING_CLASS}>
+      <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
         <Trickster className="size-4" view="face" />
       </span>
       <PathRowBody
@@ -161,7 +161,7 @@ export function MockRow({
 
   return (
     <EventRow href={href}>
-      <span className={PATH_ROW_LEADING_CLASS}>
+      <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
         <KindMark kind="mock" />
       </span>
       <PathRowBody value={<PlanDateText className={EVENT_DATE_CLASS} isoDate={date} />}>

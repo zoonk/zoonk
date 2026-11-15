@@ -68,7 +68,10 @@ function RoadmapCompact({
       </MeterParts>
 
       {lined && position && (
-        <span className={cn(TITLE_ROW_CLASS, "w-full items-baseline text-xs")}>
+        <span
+          className={cn(TITLE_ROW_CLASS, "w-full items-baseline text-xs")}
+          data-slot="plan-roadmap-line"
+        >
           <span className="flex min-w-0 flex-wrap items-baseline">
             <span className="font-medium">{position.place}</span>
             {position.name && (
@@ -80,7 +83,10 @@ function RoadmapCompact({
               >{` · ${position.name}`}</span>
             )}
           </span>
-          <span className="text-muted-foreground flex items-center gap-3">
+          <span
+            className="text-muted-foreground flex items-center gap-3"
+            data-slot="plan-roadmap-when"
+          >
             <PhaseWhen phase={position.phase} />
             {onOpen && <RowChevron />}
           </span>

@@ -6,8 +6,8 @@
   "recap_first_summary": "f5061e6d7de1c78603f6d31cb4861ed2686d3f798f41aa3c9a43282438b433b6",
   "recap_fresh_week": "afd0b96cf93c7e41fbf8c814a904c68e7aa60358a372206a830ef3434a396fa7",
   "recap_mistakes_fixed": "b9212a5876e2ee445c588473bd5d382229fe7375e2eb29fa61990076cdb7956c",
-  "recap_more_questions": "d5a95d4386ef8ecdfeab664174d459db550323d7344827f4a86527d9508b80ed",
-  "recap_more_time": "207cf45e434818348f4cdbdf4c3824624aec801d48b07ddb80d5b846a56d1568",
+  "recap_more_questions": "d898df7e1074f81771573beb0cb3e862b7a535eefbf32281a9b2a9e47a34ae72",
+  "recap_more_time": "b5a4837d6397bf553cd3c860472b723c00ce7300291887685e5d462d3ace27f0",
   "recap_most_improved": "f61f22a8fe3450fff6b98e8663902e279db571b916270746d4798a2fc736f2d7",
   "recap_most_improved_value": "be9cf01acf246117bb28cd689134b69a3c1f419910b40eb927312d8357df1b59",
   "recap_new_topics": "d16399a7b1dafb61678a9ee3fcff5361bae1bd8c78184434e9d689c2189d9d4d",
@@ -30,13 +30,12 @@
         <item quantity="many">%d dni nauki</item>
         <item quantity="other">%d dni nauki</item>
     </plurals>
-    <!-- %1$s is a duration, such as "20 min". -->
-    <string name="recap_more_time">%1$s więcej niż tydzień wcześniej!</string>
+    <string name="recap_more_time">O %1$s więcej niż w poprzednim tygodniu.</string>
     <plurals name="recap_more_questions">
-        <item quantity="one">%d pytanie więcej niż tydzień wcześniej!</item>
-        <item quantity="few">%d pytania więcej niż tydzień wcześniej!</item>
-        <item quantity="many">%d pytań więcej niż tydzień wcześniej!</item>
-        <item quantity="other">%d pytania więcej niż tydzień wcześniej!</item>
+        <item quantity="one">O %d pytanie więcej niż w poprzednim tygodniu.</item>
+        <item quantity="few">O %d pytania więcej niż w poprzednim tygodniu.</item>
+        <item quantity="many">O %d pytań więcej niż w poprzednim tygodniu.</item>
+        <item quantity="other">O %d pytania więcej niż w poprzednim tygodniu.</item>
     </plurals>
     <!-- %1$s is the name of a part of the learner's plan they finished this week, such as "Foundations". -->
     <string name="recap_phase_finished">Udało ci się ukończyć etap: %1$s.</string>

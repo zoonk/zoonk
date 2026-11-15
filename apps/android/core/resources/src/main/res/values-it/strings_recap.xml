@@ -6,8 +6,8 @@
   "recap_first_summary": "461d343d6d6ed469153abf0e5ce4ae2bcd7ce80c7af274740a05ebd4d42b9b78",
   "recap_fresh_week": "d987bae146386932abe7d98acb88865780331c21ec9bfd679d2606b53ea92cae",
   "recap_mistakes_fixed": "5a09d0007303780e7367d2112560e11c21fbefe4fc14a1bd58f07997b27f4003",
-  "recap_more_questions": "843530e4564a484d06d864a6f2448b95d2474a2b9757c3dc7771d3d189fd022a",
-  "recap_more_time": "7a7810b6a1ed0bdf1487336df3b23cfcb11bf6399f764e0fbb7e0eef015162bd",
+  "recap_more_questions": "be4c5ef71bac096f41f7048ce87ccef8a8793842006100aeb3d2636c61b0ec16",
+  "recap_more_time": "605ba995f33963d792626f3183894263a9581993a27c2332bdc26cf19b82aeeb",
   "recap_most_improved": "5926b4209da0246afe65d7424b8e790389a2e460c672d923270ebc5b22356e97",
   "recap_most_improved_value": "a82b5b82cd1c146ad814b2d32146d087e96e6f24425dd3bfc1ec313fda5d67d0",
   "recap_new_topics": "7839c963395e105f907645f7976c958f95c619b55dc4f88395941c67c1726320",
@@ -29,12 +29,11 @@
         <item quantity="many">%d giorni di studio</item>
         <item quantity="other">%d giorni di studio</item>
     </plurals>
-    <!-- %1$s is a duration, such as "20 min". -->
-    <string name="recap_more_time">%1$s in più rispetto alla settimana precedente!</string>
+    <string name="recap_more_time">%1$s in più rispetto alla settimana precedente.</string>
     <plurals name="recap_more_questions">
-        <item quantity="one">%d domanda in più rispetto alla settimana precedente!</item>
-        <item quantity="many">%d domande in più rispetto alla settimana precedente!</item>
-        <item quantity="other">%d domande in più rispetto alla settimana precedente!</item>
+        <item quantity="one">%d domanda in più rispetto alla settimana prima.</item>
+        <item quantity="many">%d domande in più rispetto alla settimana prima.</item>
+        <item quantity="other">%d domande in più rispetto alla settimana prima.</item>
     </plurals>
     <!-- %1$s is the name of a part of the learner's plan they finished this week, such as "Foundations". -->
     <string name="recap_phase_finished">Hai completato %1$s.</string>

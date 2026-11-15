@@ -94,6 +94,7 @@
   "mock_result_scale_score": "84e679dffc81cb31dab3647b886520a80a47c63980f7b59b58907e73cfc34c6b",
   "mock_result_scale_score_named": "7936cbba1e6f7cb505316c5b6c6f48038bf05f9c2d963b6b3dfff16ddc5f2b61",
   "mock_result_see_answers": "3f83abc17b4f195db7c78cb84141326867d50eeb1c9c9351045ed737ef9f3a7a",
+  "mock_result_see_details": "50860166ec1bbf25934e1aa306b40708b7c69279f501acd8a5dd434754186cae",
   "mock_result_see_feedback": "81e4d2f4db02ab69cc91b86040866b581f084af3c4ba494aefef019eeb24c542",
   "mock_result_short_points": "f9ebd72f2073aab1507c25cd37b01b90c7adf04898c314c8ce7fbd0a22e303bd",
   "mock_result_short_points_decimal": "35e9d62ad38c43033e2a9b54fddc49b35cdf9e0b10a5b4321757ea65f2303c3d",
@@ -144,8 +145,9 @@
     <string name="mock_result_every_minimum">Bu deneme sınavında tüm baraj puanlarına ulaştın.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
     <string name="mock_result_strongest">En güçlü branşın: %1$s. Çalışman gereken branş: %2$s.</string>
-    <!-- A small button under the result that opens its details. -->
+    <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Ayrıntıları gör</string>
+    <string name="mock_result_see_details">Ayrıntıları gör</string>
     <!-- A small button under the result that opens the questions to review. -->
     <string name="mock_result_see_answers">Cevapları gör</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->
