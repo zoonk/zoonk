@@ -18,7 +18,7 @@ async function ChooserBar() {
   const t = await getExtracted();
 
   return (
-    <LearnPageBar back={{ href: "/exam", label: t("Exam") }} root title={t("Take a mock exam")} />
+    <LearnPageBar back={{ href: "/exam", label: t("Your exam") }} root title={t("Take a mock exam")} />
   );
 }
 
