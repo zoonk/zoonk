@@ -10,6 +10,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.MutationResult
@@ -29,6 +30,21 @@ import org.robolectric.Shadows.shadowOf
 class VoiceAnswerRecorderTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
+
+    @Test
+    fun aRefusedMicrophoneStillAnswersAnotherWayAfterTheProcessIsReclaimed() {
+        val handle = SavedStateHandle()
+        VoiceAnswerModel(rule.activity, { GradeOutcome.Failed }, handle).blocked = true
+
+        val restored =
+            VoiceAnswerModel(
+                rule.activity,
+                { GradeOutcome.Failed },
+                SavedStateHandle.createHandle(handle.savedStateProvider().saveState(), null),
+            )
+
+        assertEquals(true, restored.blocked)
+    }
 
     @Test
     fun aTakeStopsWhenTheRecorderLeavesTheScreenItsViewModelOutlives() {

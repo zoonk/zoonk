@@ -36,11 +36,15 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
+import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
@@ -61,9 +65,11 @@ import kotlinx.coroutines.launch
  * Holds the take and its grading through rotation; leaving the screen throws an unfinished take away.
  * [grade] is the screen's grading call (a ViewModel's or a store's), which saves what it graded.
  */
+@OptIn(SavedStateHandleSaveableApi::class)
 class VoiceAnswerModel(
     context: Context,
     private val grade: suspend (VoiceRecording) -> GradeOutcome<*>,
+    handle: SavedStateHandle,
 ) : ViewModel() {
     val recorder = VoiceRecorder(context.applicationContext, viewModelScope)
 
@@ -79,8 +85,8 @@ class VoiceAnswerModel(
     var microphoneOff by mutableStateOf(false)
         internal set
 
-    /** The learner refused the microphone on a screen that then answers another way. */
-    var blocked by mutableStateOf(false)
+    /** The learner refused the microphone on a screen that then answers another way, kept through a reclaimed process. */
+    var blocked by handle.saveable { mutableStateOf(false) }
 
     internal fun record() {
         issue.clear()
@@ -130,7 +136,7 @@ fun voiceAnswerModel(
     grade: suspend (VoiceRecording) -> GradeOutcome<*>,
 ): VoiceAnswerModel {
     val context = LocalContext.current
-    val model = viewModel(key = key) { VoiceAnswerModel(context, grade) }
+    val model = viewModel(key = key) { VoiceAnswerModel(context, grade, createSavedStateHandle()) }
     LifecycleResumeEffect(model) {
         if (model.recorder.hasPermission) model.microphoneOff = false
         onPauseOrDispose {}
