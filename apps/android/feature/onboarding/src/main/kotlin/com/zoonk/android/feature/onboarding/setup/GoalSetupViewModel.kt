@@ -28,6 +28,9 @@ import com.zoonk.api.models.ProfileQuestion
 import com.zoonk.api.models.ProfileQuestionView
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonArray
@@ -298,6 +301,19 @@ internal class GoalSetupViewModel(
      * One answer saves at a time, so a pick and a Continue never save twice. [from] is the screen the
      * answer belongs to: a placement that finishes after Back still answers placement.
      */
+    private val lessonStarts = Channel<Unit>(Channel.CONFLATED)
+
+    /** "Save and start lesson 1": the save, then the start once it saved, for whichever screen shows the setup then. */
+    val startLesson: Flow<Unit> = lessonStarts.receiveAsFlow()
+
+    fun answerThenStartLesson(
+        input: OnboardingAnswerInput,
+        profileAnswer: ProfileDraft,
+    ) {
+        val saving = answer(input, profileAnswer = profileAnswer) ?: return
+        viewModelScope.launch { if (saving.await() is WriteOutcome.Done) lessonStarts.send(Unit) }
+    }
+
     fun answer(
         input: OnboardingAnswerInput,
         from: OnboardingStep? = flow.current,

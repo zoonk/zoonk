@@ -346,6 +346,9 @@ private fun ColumnScope.SetupStep(
         TrackOnboardingQuestion(view.goal.id.toString(), step.value, onboardingId)
     }
     val firstLesson = run.firstLesson.withRead(view.firstLesson, view.generationId, run.id)
+    val startFirstLesson = firstLesson?.let { first -> { navigator.open(AppRoute.Lesson(first.id)) } }
+    val currentStart by rememberUpdatedState(startFirstLesson)
+    LaunchedEffect(vm) { vm.startLesson.collect { currentStart?.invoke() } }
     // Placement follows the run itself, so only the questions say it stopped.
     val planStart = PlanStart(run, onRetryRun).takeIf { step != OnboardingStep.PLACEMENT && step != OnboardingStep.PLAN }
 
@@ -362,7 +365,7 @@ private fun ColumnScope.SetupStep(
             SetupWaitContext(
                 view.goal.id.toString(),
                 firstLesson,
-                firstLesson?.let { first -> { navigator.open(AppRoute.Lesson(first.id)) } },
+                startFirstLesson,
                 view.planReadiness.ready || run.planMade,
                 run.warmUpId,
                 view.libraryCourse,
