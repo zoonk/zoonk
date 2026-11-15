@@ -185,6 +185,7 @@ private struct PlanContent: View {
   @State private var claimed: [CertificateFacts] = []
   @State private var slotAnswer: PlanSlotAnswer?
   @State private var certificateClaim = CertificateClaim()
+  @State private var slotChecks = PlanSlotChecks()
   /// The new plan arrived while the learner watched; gone on the next visit.
   @State private var rebuildReady = false
 
@@ -198,6 +199,7 @@ private struct PlanContent: View {
       goal: goal, plan: plan, adjust: { adjusting = $0 }, report: { isReporting = true },
       show: { sheet = $0 }, claimCertificate: claimCertificate, showClaim: show,
       certificateClaim: certificateClaim)
+      certificateClaim: certificateClaim, slotChecks: slotChecks)
 
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
@@ -273,6 +275,7 @@ private struct PlanContent: View {
     .onDisappear {
       slotAnswer?.editor.cancel()
       certificateClaim.leave()
+      slotChecks.leave()
     }
   }
 
@@ -393,6 +396,7 @@ struct PlanContext {
   var showClaim: (PlanClaim) -> Void = { _ in }
   /// The screen's, above its panes.
   var certificateClaim = CertificateClaim()
+  var slotChecks = PlanSlotChecks()
 
   var isPaused: Bool { goal.status == .paused }
 }

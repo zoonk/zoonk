@@ -1052,6 +1052,66 @@ final class SuggestedGoalAnswerTests: XCTestCase {
   }
 }
 
+/// A mission tapped in Zu's day, then the window crosses the width where the day is a pane beside
+/// the conversation: the tap is the page's, so the mission still opens.
+@MainActor
+final class BuddyMissionTapTests: XCTestCase {
+  func testAMissionOpensWhenTheDaysPaneGoes() async throws {
+    try await opensAcross(from: 1376, to: 420)
+  }
+
+  func testAMissionOpensWhenTheDaysPaneComes() async throws {
+    try await opensAcross(from: 420, to: 1376)
+  }
+
+  private func opensAcross(from: CGFloat, to: CGFloat) async throws {
+    let api = StudyAPIStub(
+      openings: [try opening(#"{"blockId":"b1","kind":"session","sessionId":"s1"}"#)],
+      holdsOpening: true)
+    let today = TodayStore(api: api, cache: signedInCache())
+    let tap = BuddyMissionTap()
+    var opened = 0
+    let places = TutorPlaces { _ in opened += 1 }
+    try readsWhatVoiceOverReads()
+
+    let window = try show(
+      PaneSplit {
+        Color.clear
+      } secondary: {
+        MissionButton(tap: tap, today: today, places: places)
+      } single: {
+        MissionButton(tap: tap, today: today, places: places)
+      }
+      .zoonkStyles())
+    window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
+    try await Task.sleep(for: .milliseconds(300))
+
+    try activate("Open the mission", in: window)
+    await api.waitForHeldCall()
+    window.frame = CGRect(x: 0, y: 0, width: to, height: 1032)
+    try await Task.sleep(for: .milliseconds(300))
+    await api.releaseHeldCall()
+    try await Task.sleep(for: .milliseconds(300))
+
+    XCTAssertEqual(opened, 1, "The mission opens")
+  }
+}
+
+/// A mission row's tap, as the day's rows start it.
+private struct MissionButton: View {
+  let tap: BuddyMissionTap
+  let today: TodayStore
+  let places: TutorPlaces
+
+  var body: some View {
+    Button {
+      tap.open("b1", today: today, places: places) {}
+    } label: {
+      Text(verbatim: "Open the mission")
+    }
+  }
+}
+
 private actor StudyAPIStub: StudyAPIClient {
   private let opened: OpenedStudyDay?
   private var openings: [StudyBlockOpening]
