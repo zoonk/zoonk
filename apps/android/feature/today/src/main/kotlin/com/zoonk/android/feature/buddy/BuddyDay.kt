@@ -126,10 +126,11 @@ internal fun BuddyTodayLine(
                     Modifier.size(icon),
                     tint = MaterialTheme.zoonk.energy,
                 )
+                Text(stringResource(R.string.buddy_page_energy), style = number, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(
-                    stringResource(R.string.buddy_page_energy_share, energy ?: DASH),
+                    energy ?: DASH,
                     style = number,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = if (energy == null) MaterialTheme.zoonk.faint else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             if (today == null || today.missions.isNotEmpty()) {
@@ -139,7 +140,6 @@ internal fun BuddyTodayLine(
                     } else {
                         Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(icon))
                     }
-                    if (today == null) Text(DASH, style = number, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(
                         today?.let { pluralStringResource(R.plurals.buddy_page_missions_count, it.missions.size, done, it.missions.size) }
                             ?: stringResource(R.string.buddy_page_missions),

@@ -8,7 +8,6 @@
   "buddy_page_energy": "12284981bc225fb16846030bca1c1f1c6a27d387a1e7fe099eeba608dc8c8e50",
   "buddy_page_energy_named": "6943ef5652b55f6a87e5283d5cacbeb697d02111373ac17781361cd20c98cf9f",
   "buddy_page_energy_napping": "11bfb22d9eaea27a48939684c5c61fe7a077aa66e9814f68cc2747a8c55788b6",
-  "buddy_page_energy_share": "84838f77f10566da238fabe0ff91ac3fd6f9d78203610232a4fd5a6bf40b1088",
   "buddy_page_energy_starts": "45edaa4d35a435e9c79285cf32091bb08b922c377ab180081f4d4205cb0ec0db",
   "buddy_page_energy_study": "904fef9ec3743f099abf42a7498a291a7fec5bdaf90d7e823a36d7a4c7312305",
   "buddy_page_first_anytime": "c5977058e90f3e2aa7f0591a666832b61ce29aa30c86712bad996f1f52eb072c",
@@ -85,8 +84,6 @@
     <string name="buddy_page_energy_study">오늘 공부해서 에너지를 유지해 보세요.</string>
     <string name="buddy_page_not_yet">아직이에요</string>
     <string name="buddy_page_missions">미션</string>
-    <!-- The buddy's Energy beside its mark, like "68% Energy"; a dash before any lesson. -->
-    <string name="buddy_page_energy_share">에너지 %1$s</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">
         <item quantity="other">미션 %1$d/%2$d개 완료</item>

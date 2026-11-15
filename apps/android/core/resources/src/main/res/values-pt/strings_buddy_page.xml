@@ -8,7 +8,6 @@
   "buddy_page_energy": "05b29266e81952273d0f691425ddd925d3e338477ab10bccc3872b4f5926ec4d",
   "buddy_page_energy_named": "71d67b8dafd4224afd4703678c01c4d35abb55fbb6d18af4a12056bd29207f23",
   "buddy_page_energy_napping": "cb5bff763e024f80b96b191f524fdee77149276c66683de7e30bcbe90a390c42",
-  "buddy_page_energy_share": "6a0b83e5c79fd1d932dfa555d323673eb2f21a523f242179e6d26e879f6477f1",
   "buddy_page_energy_starts": "0ab543dc1acfd1d0a0fecc4ee5959bb45519f82ebf0b402a1c47eb49a82abca7",
   "buddy_page_energy_study": "c68048f620b5d88b179d27191d03769e9bfe6fc756cb71943c6d7a6d4bfcc4cc",
   "buddy_page_first_anytime": "76990de936e4448eed83523b30e4e8c2ea67ce065ac713844d6b2cb7563a97db",
@@ -85,8 +84,6 @@
     <string name="buddy_page_energy_study">Estude hoje para manter a Energia em alta.</string>
     <string name="buddy_page_not_yet">Ainda não</string>
     <string name="buddy_page_missions">Missões</string>
-    <!-- The buddy's Energy beside its mark, like "68% Energy"; a dash before any lesson. -->
-    <string name="buddy_page_energy_share">%1$s de Energia</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">
         <item quantity="one">%1$d de %2$d missão</item>
