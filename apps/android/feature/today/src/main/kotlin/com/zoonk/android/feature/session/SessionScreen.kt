@@ -67,6 +67,8 @@ import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
@@ -130,11 +132,10 @@ fun SessionScreen(
             )
         }
 
-    LaunchedEffect(viewModel) {
-        viewModel.routes.collect {
-            navigator.closeTask()
-            navigator.open(it)
-        }
+    OnVisitEnd(viewModel, onEnd = viewModel::endVisit)
+    ActOn(viewModel.route) {
+        navigator.closeTask()
+        navigator.open(it)
     }
 
     when {
