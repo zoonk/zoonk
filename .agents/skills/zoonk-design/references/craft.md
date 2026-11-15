@@ -194,6 +194,8 @@ In the bottom bar (`BottomBar`, its row `BottomBarActions`; [R2](#r2-the-main-ac
 
 Every font size is a type role's (`TYPE_ROLES`, `apps/playground/src/design-system/type.ts`): 11.5px `text-2xs`, 12px `text-xs`, 13px `text-compact`, 14px `text-sm`, 15px `text-reading`, then 16, 18, 20, 24 and 30px from Tailwind's scale, and the sizes the title, headline, display, lead and readout roles set for themselves. No code writes a size (`text-[…]`) except a readout's 40 and 56px. A sheet's, a dialog's and a side sheet's title is 18px semibold, set by the piece, never by its caller. A block uses three sizes at most: the main thing, its supporting line, its meta.
 
+A bar's action buttons and text links share one type token; the way back is its own part, quieter by the kit (smaller, muted) and the same on every page.
+
 - **Check.** List the sizes in each block: four or more is a finding, and so is a size no role or shared piece has.
 - **Usual break.** `text-[1.1875rem]` for one heading; 13.5px beside 13px.
 
@@ -323,6 +325,8 @@ A pick is a 2px ring in the text color on its tint (`ChoiceList`, `AnswerOption`
 Hover, focus, selected, busy and disabled never change a control's size or shift its neighbors.
 
 A screen that changes height or moves a neighbor when data, a picture or a font arrives after the first paint breaks it too.
+
+A loading placeholder draws only what it can place: a part whose position and size don't depend on the learner's data, stopping at the first part that does. A placeholder whose rows then jump is worse than a shorter one.
 
 - **Check.** Between two state screenshots nothing else moves (`X3 a state change moves nothing`, from a walk that types, picks, opens, hovers and presses, and from any shift while the page loads). States the walk can't reach without submitting (saving, a check that calls the server, a busy button, a lesson's result) stay with the craft read: put their screenshots side by side.
 - **Usual break.** A heavier weight or a thicker border on the selected item. A hint that appears and pushes the form down. A spinner larger than the icon it replaces. A picture with no reserved size.
