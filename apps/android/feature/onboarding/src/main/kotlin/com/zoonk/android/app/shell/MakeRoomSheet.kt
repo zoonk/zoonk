@@ -22,6 +22,7 @@ import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.subscription.SubscribeButton
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.GoalMark
@@ -98,9 +99,7 @@ internal fun MakeRoomContent(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-            OutlinedButton(onClick = onSubscribe, modifier = Modifier.fillMaxWidth(), size = ButtonSize.Large) {
-                Text(stringResource(R.string.subscription_subscribe))
-            }
+            SubscribeButton(onSubscribe)
         }
     }
 }

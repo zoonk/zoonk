@@ -35,6 +35,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ChartInspector
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
@@ -268,7 +269,9 @@ private fun PatternsOverview(
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionHeader(stringResource(R.string.stats_patterns_90)) {
-            TextButton(onClick = { context.open(StatsPage.Patterns) }) { Text(stringResource(R.string.stats_see_all)) }
+            TextButton(onClick = { context.open(StatsPage.Patterns) }, edge = ButtonEdge.End) {
+                Text(stringResource(R.string.stats_see_all))
+            }
         }
 
         Column(Modifier.bleed(LIST_ITEM_INSET)) {

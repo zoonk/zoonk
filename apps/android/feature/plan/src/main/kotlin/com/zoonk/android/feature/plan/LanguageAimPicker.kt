@@ -21,8 +21,10 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -79,7 +81,7 @@ fun LanguageAimRow(
         trailing = { Text(stringResource(R.string.onboarding_aim_change)) },
         chevron = false,
         onClick = { onOpenChange(true) },
-        modifier = modifier,
+        modifier = modifier.bleed(LIST_ITEM_INSET),
     )
     if (open) {
         LanguageAimSheet(

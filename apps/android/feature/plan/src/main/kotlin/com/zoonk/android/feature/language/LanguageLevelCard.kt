@@ -2,19 +2,16 @@ package com.zoonk.android.feature.language
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -39,10 +36,6 @@ fun LanguageLevelCard(
             style = MaterialTheme.typography.headlineMedium.withTabularFigures(),
         )
         ladder()
-        TextButton(onClick = onOpenPlan) {
-            Text(stringResource(R.string.language_see_your_plan))
-            Spacer(Modifier.size(4.dp))
-            Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null, modifier = Modifier.size(16.dp))
-        }
+        TextButton(onClick = onOpenPlan, forward = true, edge = ButtonEdge.Start) { Text(stringResource(R.string.language_see_your_plan)) }
     }
 }

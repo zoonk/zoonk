@@ -71,6 +71,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
@@ -324,8 +325,8 @@ fun AuthColumn(
                 modifier =
                     Modifier
                         .widthIn(max = 480.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
+                        .taskColumn()
+                        .padding(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 content = content,
             )

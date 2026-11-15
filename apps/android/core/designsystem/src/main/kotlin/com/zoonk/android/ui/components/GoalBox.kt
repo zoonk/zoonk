@@ -42,6 +42,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.error
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -206,7 +207,6 @@ fun GoalBox(
         line?.let {
             Text(
                 it,
-                modifier = Modifier.padding(horizontal = 16.dp),
                 color = if (isAskingForWords) colors.error else colors.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,
             )
@@ -284,27 +284,15 @@ fun GoalExamples(
         SectionHeader(stringResource(R.string.goal_box_examples))
         Spacer(Modifier.size(8.dp))
         val pickLabel = stringResource(R.string.goal_box_example_pick)
-        examples.forEachIndexed { index, example ->
-            if (index > 0) HorizontalDivider()
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 48.dp)
-                        .clickable(role = Role.Button, onClickLabel = pickLabel) { onPick(example.label) }
-                        .padding(vertical = 11.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                // Main's `ListRowTitle` over its `ListRowDescription`.
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                    Text(example.label, style = MaterialTheme.typography.titleSmall)
-                    Text(example.kind, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-                }
-                Icon(
-                    painterResource(R.drawable.ic_chevron_right),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        Column(Modifier.bleed(LIST_ITEM_INSET)) {
+            examples.forEachIndexed { index, example ->
+                if (index > 0) ListDivider()
+                ListRow(
+                    headline = { Text(example.label) },
+                    // The row's own tap, named for TalkBack.
+                    modifier = Modifier.semantics { onClick(label = pickLabel, action = null) },
+                    onClick = { onPick(example.label) },
+                    supporting = { Text(example.kind) },
                 )
             }
         }

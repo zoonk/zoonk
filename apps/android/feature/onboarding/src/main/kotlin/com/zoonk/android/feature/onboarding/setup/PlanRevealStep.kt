@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
@@ -62,12 +61,14 @@ import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.MarkStatus
+import com.zoonk.android.ui.components.Measure
+import com.zoonk.android.ui.components.MeasureRows
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
@@ -76,7 +77,6 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.TextButton
-import com.zoonk.android.ui.components.labelInset
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -660,26 +660,16 @@ private fun AreaWeightList(weights: AreaWeights) {
     val locale = currentLocale()
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         SectionHeader(stringResource(R.string.onboarding_reveal_weights))
-        Column {
-            weights.areas.forEachIndexed { index, area ->
-                if (index > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        MeasureRows(
+            weights.areas.map { area ->
                 val percent = formatPercent(area.percent / PERCENT, locale)
-                ListRow {
-                    Text(
-                        area.name,
-                        modifier = Modifier.weight(1f),
-                        fontWeight = FontWeight.Medium,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    Meter(share = area.share, modifier = Modifier.weight(METER_WEIGHT))
-                    Text(
-                        text = if (area.assumed) stringResource(R.string.onboarding_reveal_estimated_percent, percent) else percent,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                    )
-                }
-            }
-        }
+                Measure(
+                    name = area.name,
+                    share = area.share,
+                    value = if (area.assumed) stringResource(R.string.onboarding_reveal_estimated_percent, percent) else percent,
+                )
+            },
+        )
         if (weights.assumed > 0) {
             val oneArea = weights.assumed == 1
             Text(
@@ -803,7 +793,7 @@ private fun RevealLink(
     text: String,
     onClick: () -> Unit,
 ) {
-    TextButton(onClick = onClick, modifier = Modifier.offset(x = -LocalButtonSize.current.labelInset)) { Text(text) }
+    TextButton(onClick = onClick, edge = ButtonEdge.Start) { Text(text) }
 }
 
 @Composable
@@ -900,7 +890,6 @@ private fun ListRow(content: @Composable RowScope.() -> Unit) {
 
 private const val CHAPTERS_SHOWN = 5
 private const val PERCENT = 100.0
-private const val METER_WEIGHT = 0.5f
 
 /** Below half a percent, the share would read "0%". */
 private const val MIN_SHOWN_SHARE = 0.005

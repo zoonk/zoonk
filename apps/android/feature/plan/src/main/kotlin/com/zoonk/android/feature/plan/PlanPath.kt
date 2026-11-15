@@ -37,6 +37,7 @@ import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.MarkStatus
@@ -84,17 +85,17 @@ internal fun PathSection(
 
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
             beforeFinish.forEachIndexed { position, phase ->
-                if (position > 0) HorizontalDivider()
+                if (position > 0) ListDivider()
                 PhaseItem(page, phase, phase.index == openIndex, links, brief)
             }
-            if (beforeFinish.isNotEmpty()) HorizontalDivider()
+            if (beforeFinish.isNotEmpty()) ListDivider()
             FinishItem(page, links, brief)
             afterExam.forEach { phase ->
-                HorizontalDivider()
+                ListDivider()
                 PhaseItem(page, phase, open = phase.index == openIndex, links = links, brief = brief)
             }
             course?.let {
-                HorizontalDivider()
+                ListDivider()
                 ListRow(
                     headline = { Text(stringResource(R.string.plan_full_course)) },
                     onClick = { links.course(it.courseId.toString()) },

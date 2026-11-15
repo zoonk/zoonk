@@ -54,7 +54,7 @@ import kotlin.math.roundToInt
  * Main's `ListRow`, as every list draws its rows: a mark, the title (`ListRowTitle`) over its
  * description, and mono data at its end (`ListRowTrailing`), 11dp above and below the words and at
  * least 48dp tall. [highlighted] is the learner's place, on `muted` with `lg` corners reaching 10dp
- * past the words, as main's; a row with [expanded] opens what's under it, TalkBack hearing whether
+ * past the words, as main's, or on [highlightColor] where the list's own surface is already `muted` (search's results); a row with [expanded] opens what's under it, TalkBack hearing whether
  * it's open after [stateDescription]. [meta] (numbers, a date, the Plus mark) ends the headline and
  * moves under it when the words would get too little room. [trailing] is a control at the row's end,
  * such as a switch or a button (main's `SettingRow`). [leading] is a mark at least a line tall, or a
@@ -82,6 +82,7 @@ fun ListRow(
     focusableWhenDisabled: Boolean = false,
     busy: Boolean = false,
     highlighted: Boolean = false,
+    highlightColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     indent: Dp = 0.dp,
     expanded: Boolean? = null,
     stateDescription: String? = null,
@@ -144,7 +145,7 @@ fun ListRow(
                     }
                 }.padding(horizontal = LIST_ITEM_INSET - HIGHLIGHT_OUTSET, vertical = HIGHLIGHT_INSET)
                 .clip(RoundedCornerShape(ZoonkRadius.lg))
-                .background(if (highlighted) MaterialTheme.colorScheme.surfaceContainerHigh else Color.Transparent)
+                .background(if (highlighted) highlightColor else Color.Transparent)
                 .indication(interaction, ripple())
                 .alpha(if (onClick != null && !enabled && !busy) DISABLED_ALPHA else 1f)
                 .padding(start = HIGHLIGHT_OUTSET + indent, end = HIGHLIGHT_OUTSET, top = WORDS_PADDING, bottom = WORDS_PADDING),

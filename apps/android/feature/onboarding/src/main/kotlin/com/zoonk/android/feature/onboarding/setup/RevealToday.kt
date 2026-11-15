@@ -37,6 +37,7 @@ import com.zoonk.android.ui.characters.BuddyActor
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.KindMark
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
@@ -44,6 +45,7 @@ import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.SuccessEyebrow
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -197,29 +199,33 @@ internal fun RevealToday(
                     formatMinutes(minutes.toInt(), currentLocale()),
                 ).factsLine(),
         )
-        ordered.forEachIndexed { index, step ->
-            val tagged = step.position == day.nextPosition
-            com.zoonk.android.feature.today.DayStepRow(
-                day,
-                step,
-                tagged,
-                onOpen = onOpenStep?.takeIf { step.canOpen }?.let { { it(day, step) } },
-                busy = openingStep == step.position,
-                openFailed = failedStep == step.position,
-                divider = index != ordered.lastIndex,
-                tag =
-                    if (tagged) {
-                        {
-                            Text(
-                                stringResource(if (started) R.string.onboarding_reveal_up_next else R.string.onboarding_reveal_start_here),
-                                Modifier.revealSettle(play, 2 * ZoonkMotion.BEAT_MILLIS),
-                                color = MaterialTheme.colorScheme.tertiary,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-            )
+        Column(Modifier.bleed(LIST_ITEM_INSET)) {
+            ordered.forEachIndexed { index, step ->
+                val tagged = step.position == day.nextPosition
+                com.zoonk.android.feature.today.DayStepRow(
+                    day,
+                    step,
+                    tagged,
+                    onOpen = onOpenStep?.takeIf { step.canOpen }?.let { { it(day, step) } },
+                    busy = openingStep == step.position,
+                    openFailed = failedStep == step.position,
+                    divider = index != ordered.lastIndex,
+                    tag =
+                        if (tagged) {
+                            {
+                                Text(
+                                    stringResource(
+                                        if (started) R.string.onboarding_reveal_up_next else R.string.onboarding_reveal_start_here,
+                                    ),
+                                    Modifier.revealSettle(play, 2 * ZoonkMotion.BEAT_MILLIS),
+                                    color = MaterialTheme.colorScheme.tertiary,
+                                )
+                            }
+                        } else {
+                            null
+                        },
+                )
+            }
         }
     }
 }
@@ -248,35 +254,37 @@ internal fun RevealWeek(reveal: com.zoonk.api.models.PlanRevealToday) {
                 ).factsLine(),
         )
         val kinds = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-        days.forEachIndexed { index, day ->
-            val teaching = day.items.filter { it.kind == PlanItem.Kind.LESSON || it.kind == PlanItem.Kind.CHAPTER }
-            val names = teaching.ifEmpty { day.items }
-            ListRow(
-                leading = {
-                    Text(
-                        dates[index],
-                        Modifier.widthIn(min = dateWidth),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = dateStyle,
-                        maxLines = 1,
-                        softWrap = false,
-                    )
-                },
-                leadOnFirstLine = true,
-                headline = {
-                    if (day.items.isEmpty()) {
+        Column(Modifier.bleed(LIST_ITEM_INSET)) {
+            days.forEachIndexed { index, day ->
+                val teaching = day.items.filter { it.kind == PlanItem.Kind.LESSON || it.kind == PlanItem.Kind.CHAPTER }
+                val names = teaching.ifEmpty { day.items }
+                ListRow(
+                    leading = {
                         Text(
-                            stringResource(R.string.onboarding_reveal_rest_day),
+                            dates[index],
+                            Modifier.widthIn(min = dateWidth),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = dateStyle,
+                            maxLines = 1,
+                            softWrap = false,
                         )
-                    } else {
-                        // Names sit further apart than a name's own lines, so a title that wraps reads as one lesson.
-                        Column(verticalArrangement = Arrangement.spacedBy(NAME_GAP)) { names.forEach { Text(revealItemTitle(it)) } }
-                    }
-                },
-                trailing = if (kinds && day.items.isNotEmpty()) ({ DayKinds(day.items) }) else null,
-            )
-            ListDivider()
+                    },
+                    leadOnFirstLine = true,
+                    headline = {
+                        if (day.items.isEmpty()) {
+                            Text(
+                                stringResource(R.string.onboarding_reveal_rest_day),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        } else {
+                            // Names sit further apart than a name's own lines, so a title that wraps reads as one lesson.
+                            Column(verticalArrangement = Arrangement.spacedBy(NAME_GAP)) { names.forEach { Text(revealItemTitle(it)) } }
+                        }
+                    },
+                    trailing = if (kinds && day.items.isNotEmpty()) ({ DayKinds(day.items) }) else null,
+                )
+                ListDivider()
+            }
         }
     }
 }

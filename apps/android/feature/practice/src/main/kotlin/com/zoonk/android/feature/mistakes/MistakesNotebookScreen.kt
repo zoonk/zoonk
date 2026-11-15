@@ -69,9 +69,12 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.CountTab
+import com.zoonk.android.ui.components.CountTabs
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MistakeAnswer
@@ -372,7 +375,7 @@ private fun NarrowNotebook(
         notebookBody(page, actions) {
             Column(Modifier.bleed(LIST_ITEM_INSET)) {
                 page.groups.forEachIndexed { index, group ->
-                    if (index > 0) HorizontalDivider()
+                    if (index > 0) ListDivider()
                     val groupKey = group.groupKey()
                     DisclosureRow(
                         title = group.skillName(),
@@ -408,7 +411,7 @@ private fun WideNotebook(
             notebookBody(page, actions) {
                 Column(Modifier.bleed(LIST_ITEM_INSET)) {
                     page.groups.forEachIndexed { index, group ->
-                        if (index > 0) HorizontalDivider()
+                        if (index > 0) ListDivider()
                         val groupKey = group.groupKey()
                         ListRow(
                             headline = { Text(group.skillName()) },
@@ -514,44 +517,23 @@ private fun NotebookHero(page: NotebookPage) {
     )
 }
 
-/** Main's small "To fix / Fixed" toggle: Material's segmented buttons, the current one on `muted` in ink. */
+/** Main's "To fix / Fixed" toggle, as the app's tabs. */
 @Composable
 private fun NotebookTabs(
     page: NotebookPage,
     onTab: (Boolean) -> Unit,
 ) {
     val counts = page.head.counts
-    val colors =
-        SegmentedButtonDefaults.colors(
-            activeContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            activeContentColor = MaterialTheme.colorScheme.onSurface,
-            activeBorderColor = Color.Transparent,
-            inactiveContainerColor = Color.Transparent,
-            inactiveContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            inactiveBorderColor = Color.Transparent,
-        )
 
-    SingleChoiceSegmentedButtonRow(space = 4.dp) {
-        listOf(false to counts.open, true to counts.fixed).forEach { (fixed, count) ->
-            SegmentedButton(
-                selected = page.fixed == fixed,
-                onClick = { onTab(fixed) },
-                shape = RoundedCornerShape(ZoonkRadius.md),
-                colors = colors,
-                icon = {},
-                contentPadding = PaddingValues(horizontal = 10.dp),
-                modifier = Modifier.heightIn(min = TOGGLE_HEIGHT),
-            ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        stringResource(if (fixed) R.string.mistakes_tab_fixed else R.string.mistakes_tab_open),
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                    Text(count.toString(), style = MaterialTheme.zoonkType.data)
-                }
-            }
-        }
-    }
+    CountTabs(
+        tabs =
+            listOf(
+                CountTab(stringResource(R.string.mistakes_tab_open), counts.open.toInt()),
+                CountTab(stringResource(R.string.mistakes_tab_fixed), counts.fixed.toInt()),
+            ),
+        selected = if (page.fixed) 1 else 0,
+        onPick = { onTab(it == 1) },
+    )
 }
 
 @Composable

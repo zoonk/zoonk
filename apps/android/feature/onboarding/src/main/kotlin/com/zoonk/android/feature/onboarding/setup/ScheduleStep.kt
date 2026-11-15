@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.FilterChip
@@ -15,7 +14,6 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,13 +50,14 @@ import com.zoonk.android.feature.plan.markedTimes
 import com.zoonk.android.feature.plan.timeLine
 import com.zoonk.android.feature.plan.timeOffer
 import com.zoonk.android.feature.warmup.rememberReadyHold
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.Eyebrow
-import com.zoonk.android.ui.components.LocalButtonSize
+import com.zoonk.android.ui.components.Switch
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimeSelect
+import com.zoonk.android.ui.components.WeekdayPicker
 import com.zoonk.android.ui.components.WeekendTime
-import com.zoonk.android.ui.components.labelInset
 import com.zoonk.android.ui.components.missingDays
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -399,7 +398,7 @@ private fun DateLink(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    TextButton(onClick = onClick, modifier = Modifier.offset(x = -LocalButtonSize.current.labelInset), enabled = enabled) {
+    TextButton(onClick = onClick, enabled = enabled, edge = ButtonEdge.Start) {
         Text(stringResource(if (dated) R.string.onboarding_change_date else R.string.onboarding_choose_date))
     }
 }
@@ -447,22 +446,12 @@ private fun WeekdayToggles(
     days: List<Int>,
     onChange: (List<Int>) -> Unit,
 ) {
-    val locale = currentLocale()
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(stringResource(R.string.onboarding_study_days), fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyMedium)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            EVERY_DAY.forEach { day ->
-                val weekday = DayOfWeek.of(if (day == 0) 7 else day)
-                val picked = day in days
-                FilterChip(
-                    selected = picked,
-                    onClick = { onChange(if (picked) days - day else (days + day).sorted()) },
-                    leadingIcon = selectedCheck(picked),
-                    label = { Text(weekday.getDisplayName(TextStyle.NARROW, locale)) },
-                    modifier = Modifier.semantics { contentDescription = weekday.getDisplayName(TextStyle.FULL, locale) },
-                )
-            }
-        }
+        WeekdayPicker(
+            isOn = { it in days },
+            onToggle = { day, on -> onChange(if (on) (days + day).sorted() else days - day) },
+        )
     }
 }
 
@@ -482,13 +471,6 @@ internal fun goalDate(
     namedMonth: Boolean,
     style: DateStyle = DateStyle.Day,
 ): String = formatDate(date.toJavaLocalDate(), currentLocale(), if (namedMonth) DateStyle.Month else style)
-
-internal fun selectedCheck(selected: Boolean): (@Composable () -> Unit)? =
-    if (selected) {
-        { Icon(painterResource(R.drawable.ic_check), contentDescription = null, modifier = Modifier.size(FilterChipDefaults.IconSize)) }
-    } else {
-        null
-    }
 
 /** The whole row toggles, its description read with it, at least a touch target tall. */
 @Composable

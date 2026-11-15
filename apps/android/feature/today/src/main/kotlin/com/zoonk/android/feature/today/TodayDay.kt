@@ -202,7 +202,7 @@ fun TodayDay(
                     }
                 }
 
-                TodayActionBar(model, viewModel, actions)
+                TodayActionBar(model, viewModel, actions, beside)
             }
         }
     }
@@ -246,11 +246,18 @@ private fun TodayActionBar(
     model: TodayDayModel,
     viewModel: TodayViewModel,
     actions: TodayActionHandlers,
+    beside: Boolean,
 ) {
     if (!model.hasAction) return
 
     val status = rememberActionStatus(model, viewModel)
-    BottomBar(columnWidth = PAGE_WIDTH, note = if (status.speaking) ({ TodayActionStatus(status) }) else null) {
+    // The day's column: at the pane's start beside its aside, its rows' inset at its sides.
+    BottomBar(
+        columnWidth = PAGE_WIDTH,
+        columnAtStart = beside,
+        columnMargin = LIST_ITEM_INSET,
+        note = if (status.speaking) ({ TodayActionStatus(status) }) else null,
+    ) {
         TodayAction(model, viewModel, actions, status)
     }
 }

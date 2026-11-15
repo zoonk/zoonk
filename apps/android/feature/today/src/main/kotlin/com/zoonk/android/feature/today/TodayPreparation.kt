@@ -6,14 +6,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +23,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -44,6 +41,7 @@ import com.zoonk.android.feature.goalcontent.bar
 import com.zoonk.android.feature.goalcontent.hasSubjectPages
 import com.zoonk.android.feature.plan.lessonsStudied
 import com.zoonk.android.feature.plan.studiedLessonsLine
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -142,11 +140,7 @@ private fun ProgressCard(
         }
         Text(value, style = MaterialTheme.typography.headlineMedium.withTabularFigures())
         content()
-        TextButton(onClick = onOpenPlan) {
-            Text(stringResource(R.string.today_see_your_plan))
-            Spacer(Modifier.size(4.dp))
-            Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null, modifier = Modifier.size(16.dp))
-        }
+        TextButton(onClick = onOpenPlan, forward = true, edge = ButtonEdge.Start) { Text(stringResource(R.string.today_see_your_plan)) }
     }
 }
 

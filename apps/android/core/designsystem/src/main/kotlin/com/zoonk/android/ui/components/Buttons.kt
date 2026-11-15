@@ -5,6 +5,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +24,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -47,6 +50,9 @@ enum class ButtonSize { Small, Medium, Large }
 
 /** The size of the buttons inside, unless they pick one: an action bar makes its buttons [ButtonSize.Large]. */
 val LocalButtonSize = staticCompositionLocalOf { ButtonSize.Medium }
+
+/** The edge a bare button's ink sits on: the start or the end of its column, row or bar. */
+enum class ButtonEdge { Start, End }
 
 /** A Material Symbol for a button's `leadingIcon`, sized by its slot. */
 @Composable
@@ -242,7 +248,10 @@ fun OutlinedButton(
     }
 }
 
-/** Main's `ghost` button: ink words, no line. */
+/**
+ * Main's `ghost` button: ink words, no line. A bare button that starts or ends a column, a row or a bar passes
+ * that [edge] (main's `edge`), so its words or glyph, which a learner sees, sit on the edge instead of its box.
+ */
 @Composable
 fun TextButton(
     onClick: () -> Unit,
@@ -252,6 +261,7 @@ fun TextButton(
     focusableWhenDisabled: Boolean = false,
     leadingIcon: (@Composable () -> Unit)? = null,
     forward: Boolean = false,
+    edge: ButtonEdge? = null,
     size: ButtonSize = LocalButtonSize.current,
     shape: Shape = size.shape(),
     colors: ButtonColors = ButtonDefaults.textButtonColors(),
@@ -265,7 +275,12 @@ fun TextButton(
     DrawnBox(size) {
         androidx.compose.material3.TextButton(
             onClick = { if (!held) onClick() },
-            modifier = modifier.action(LayoutPart.Variant.Ghost).sized(size).busy(held),
+            modifier =
+                modifier
+                    .onEdge(edge, contentPadding)
+                    .action(LayoutPart.Variant.Ghost)
+                    .sized(size)
+                    .busy(held),
             enabled = enabled || held,
             shape = shape,
             colors = colors.disabledWhen(held && !busy),
@@ -278,7 +293,11 @@ fun TextButton(
     }
 }
 
-/** Main's `size="icon"` outline button: `rounded-lg`, never a circle, as tall as a [ButtonSize.Large] action beside it. */
+/**
+ * Main's `size="icon"` outline button: `rounded-lg`, never a circle, as tall as a [ButtonSize.Large] action beside it.
+ * Its layout box is the button it draws, so it ends on its row's edge and sits level with the line beside it; a tap
+ * anywhere in the 48dp target around it still presses it.
+ */
 @Composable
 fun OutlinedIconButton(
     onClick: () -> Unit,
@@ -286,21 +305,26 @@ fun OutlinedIconButton(
     enabled: Boolean = true,
     busy: Boolean = false,
     size: ButtonSize = LocalButtonSize.current,
-    shape: Shape = RoundedCornerShape(ZoonkRadius.lg),
+    shape: Shape = ICON_BUTTON_SHAPE,
     colors: IconButtonColors = IconButtonDefaults.outlinedIconButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
     border: BorderStroke? = outlinedBorder(enabled || busy, IconButtonDefaults.outlinedIconButtonBorder(enabled || busy)),
     interactionSource: MutableInteractionSource? = null,
     content: @Composable () -> Unit,
-) = androidx.compose.material3.OutlinedIconButton(
-    onClick = { if (!busy) onClick() },
-    modifier = (if (size == ButtonSize.Large) modifier.size(44.dp) else modifier).action(LayoutPart.Variant.Outline).busy(busy),
-    enabled = enabled || busy,
-    shape = shape,
-    colors = colors,
-    border = border,
-    interactionSource = interactionSource,
-    content = { BusyContent(busy, content) },
-)
+) = CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified) {
+    androidx.compose.material3.OutlinedIconButton(
+        onClick = { if (!busy) onClick() },
+        modifier = (if (size == ButtonSize.Large) modifier.size(44.dp) else modifier).action(LayoutPart.Variant.Outline).busy(busy),
+        enabled = enabled || busy,
+        shape = shape,
+        colors = colors,
+        border = border,
+        interactionSource = interactionSource,
+        content = { BusyContent(busy, content) },
+    )
+}
+
+/** Every icon button's corners (main's `rounded-lg`), whichever Material button draws it: never Material's circle. */
+val ICON_BUTTON_SHAPE: Shape = RoundedCornerShape(ZoonkRadius.lg)
 
 /** Material's filled icon button, which can be [busy] as the others are: a composer's send. */
 @Composable
@@ -309,7 +333,7 @@ fun FilledIconButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     busy: Boolean = false,
-    shape: Shape = IconButtonDefaults.filledShape,
+    shape: Shape = ICON_BUTTON_SHAPE,
     colors: IconButtonColors = IconButtonDefaults.filledIconButtonColors(),
     content: @Composable () -> Unit,
 ) = androidx.compose.material3.FilledIconButton(
@@ -351,10 +375,37 @@ private fun ButtonSize.sidePadding(icon: Boolean): Dp =
         else -> if (icon) 12.dp else 16.dp
     }
 
-val ButtonSize.leadingIconInset: Dp get() = sidePadding(icon = true)
+/**
+ * Material's icon button centers its 24dp glyph in a 48dp box. At the end or start of a row or a bar, the box gives
+ * up that blank room on [edge]'s side, so the glyph, which a learner sees, sits on the edge.
+ */
+fun Modifier.iconButtonEdge(edge: ButtonEdge): Modifier =
+    layout { measurable, constraints ->
+        val pull = ICON_BUTTON_BLANK.roundToPx()
+        val placeable = measurable.measure(constraints)
+        layout(placeable.width - pull, placeable.height) { placeable.placeRelative(if (edge == ButtonEdge.Start) -pull else 0, 0) }
+    }
 
-/** How far a button's words sit in from its edge: offset by it to line them up with the text above. */
-val ButtonSize.labelInset: Dp get() = sidePadding(icon = false)
+private val ICON_BUTTON_BLANK = (48.dp - 24.dp) / 2
+
+/** The box gives up the padding on [edge]'s side and the button draws past it there, so the ink starts or ends the box. */
+private fun Modifier.onEdge(
+    edge: ButtonEdge?,
+    padding: PaddingValues,
+): Modifier =
+    if (edge == null) {
+        this
+    } else {
+        layout { measurable, constraints ->
+            val pull =
+                when (edge) {
+                    ButtonEdge.Start -> padding.calculateStartPadding(layoutDirection)
+                    ButtonEdge.End -> padding.calculateEndPadding(layoutDirection)
+                }.roundToPx()
+            val placeable = measurable.measure(constraints)
+            layout(placeable.width - pull, placeable.height) { placeable.placeRelative(if (edge == ButtonEdge.Start) -pull else 0, 0) }
+        }
+    }
 
 private fun ButtonSize.iconSize(): Dp = if (this == ButtonSize.Small) 16.dp else ButtonDefaults.IconSize
 

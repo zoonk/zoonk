@@ -52,6 +52,7 @@ import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.OutlinedButton
@@ -352,7 +353,7 @@ internal fun LazyListScope.subjectChapters(
                 )
                 if (expanded) {
                     done.forEach { chapter ->
-                        HorizontalDivider()
+                        ListDivider()
                         SyllabusChapterRow(chapter, today, actions)
                     }
                 }
@@ -367,11 +368,11 @@ internal fun LazyListScope.subjectChapters(
 
         Column {
             shown.forEachIndexed { index, chapter ->
-                if (index > 0 || done.isNotEmpty()) HorizontalDivider()
+                if (index > 0 || done.isNotEmpty()) ListDivider()
                 SyllabusChapterRow(chapter, today, actions)
             }
             if (hidden > 0) {
-                HorizontalDivider()
+                ListDivider()
                 MoreChaptersRow(pluralStringResource(R.plurals.goalcontent_more_chapters, hidden, hidden)) { showAll = true }
             }
         }
@@ -531,7 +532,7 @@ internal fun LazyListScope.subjectTopics(
         groupTopics(run.topics) { it.name }.forEachIndexed { index, group ->
             item(key = "topic-$runIndex-$index", contentType = "topic") {
                 Column {
-                    if (index > 0) HorizontalDivider()
+                    if (index > 0) ListDivider()
                     TopicGroupRow(group, showFrequency, syllabus.knownTopicsReturn, actions)
                 }
             }
@@ -823,11 +824,11 @@ internal fun LazyListScope.subjectMatrix(matrix: List<String>) {
 
         Column {
             shown.forEachIndexed { index, group ->
-                if (index > 0) HorizontalDivider()
+                if (index > 0) ListDivider()
                 MatrixGroupRow(group)
             }
             if (groups.size > shown.size) {
-                HorizontalDivider()
+                ListDivider()
                 ListRow(
                     headline = {
                         Text(

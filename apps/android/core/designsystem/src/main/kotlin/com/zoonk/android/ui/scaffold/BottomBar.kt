@@ -44,7 +44,8 @@ import com.zoonk.android.ui.components.LocalButtonSize
  * Main's `BottomBar`: the one home of a screen's main action, pinned to the bottom over a hairline. It
  * keeps the page's margin ([pageMargin]) on all four sides of its buttons, clear of the system bars and
  * the keyboard, with its lines 8dp apart and its buttons [ButtonSize.Large]; [columnWidth] keeps them
- * under a page's column. A [note] (an error, a status) shows over the screen just above the bar, so the
+ * under a page's column, which a page whose column starts at its pane's edge or keeps another side margin says
+ * with [columnAtStart] and [columnMargin], so the buttons end where the column does. A [note] (an error, a status) shows over the screen just above the bar, so the
  * bar and its buttons never move; its slot stays in place as a polite live region, so a new note is read out. The window's snackbars show above it. Across an unfolded book's fold,
  * or a spread's split on a wide window ([screenSplit]), it sits on the page after it, off the fold.
  */
@@ -53,6 +54,8 @@ fun BottomBar(
     modifier: Modifier = Modifier,
     note: (@Composable () -> Unit)? = null,
     columnWidth: Dp = Dp.Unspecified,
+    columnAtStart: Boolean = false,
+    columnMargin: Dp = pageMargin(),
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val anchors = LocalSnackbarAnchors.current
@@ -78,11 +81,11 @@ fun BottomBar(
                                         WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal,
                                     ).union(WindowInsets.ime),
                             ).padding(start = fold?.end ?: 0.dp),
-                        contentAlignment = Alignment.TopCenter,
+                        contentAlignment = if (columnAtStart) Alignment.TopStart else Alignment.TopCenter,
                     ) {
                         CompositionLocalProvider(LocalButtonSize provides ButtonSize.Large) {
                             Column(
-                                Modifier.widthIn(max = columnWidth).fillMaxWidth().padding(margin),
+                                Modifier.widthIn(max = columnWidth).fillMaxWidth().padding(horizontal = columnMargin, vertical = margin),
                                 verticalArrangement = Arrangement.spacedBy(BAR_GAP),
                                 content = content,
                             )

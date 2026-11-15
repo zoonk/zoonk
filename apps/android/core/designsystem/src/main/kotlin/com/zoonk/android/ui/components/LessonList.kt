@@ -56,7 +56,7 @@ fun LessonList(
         )
         Column {
             lessons.forEachIndexed { index, lesson ->
-                if (index > 0) HorizontalDivider()
+                if (index > 0) ListDivider()
                 LessonRow(lesson, index + 1, isNext = upNext && lesson.next, onOpen = { onOpen(lesson.id) })
             }
         }

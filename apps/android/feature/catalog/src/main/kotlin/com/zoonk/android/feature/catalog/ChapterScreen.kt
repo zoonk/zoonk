@@ -49,8 +49,11 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.Subject
 import com.zoonk.android.ui.components.SubjectGlyph
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.colors
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
@@ -492,45 +495,26 @@ internal fun ChapterLessonRows(
     val locale = currentLocale()
     val chapter = place.chapter
 
-    Column(Modifier.widthIn(max = COLUMN_WIDTH)) {
+    Column(Modifier.widthIn(max = COLUMN_WIDTH).bleed(LIST_ITEM_INSET)) {
         chapter.lessons.forEachIndexed { index, lesson ->
             val lessonId = lesson.id.toString()
             val isCurrent = lessonId == currentLessonId
 
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .background(
-                            if (isCurrent) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surface,
-                            MaterialTheme.shapes.small,
-                        ).then(
-                            if (isCurrent) {
-                                Modifier.semantics { selected = true }
-                            } else {
-                                Modifier.clickable { navigator.open(AppRoute.CatalogLesson(lessonId, chapter.id.toString(), courseId)) }
-                            },
-                        ).padding(horizontal = 8.dp, vertical = 14.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Text(
-                    formatNumber((index + 1).toDouble(), locale),
-                    modifier = Modifier.widthIn(min = 16.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                )
-                Text(
-                    lesson.title,
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
-                )
-                Text(
-                    formatMinutes(lesson.estimatedMinutes.toInt(), locale),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                )
-            }
+            ListRow(
+                headline = { Text(lesson.title) },
+                modifier = if (isCurrent) Modifier.semantics { selected = true } else Modifier,
+                onClick =
+                    if (isCurrent) {
+                        null
+                    } else {
+                        { navigator.open(AppRoute.CatalogLesson(lessonId, chapter.id.toString(), courseId)) }
+                    },
+                highlighted = isCurrent,
+                leading = { Text(formatNumber((index + 1).toDouble(), locale), style = MaterialTheme.zoonkType.data) },
+                leadOnFirstLine = true,
+                meta = { Text(formatMinutes(lesson.estimatedMinutes.toInt(), locale)) },
+                chevronSpace = true,
+            )
         }
     }
 }
