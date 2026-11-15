@@ -6,8 +6,9 @@ import {
   type LimitText,
   toCapWords,
   useLimitText,
+  useLiveWords,
 } from "../_components/comes-back-words";
-import { received } from "../_components/help-limit-notice";
+import { type LimitWords, received } from "../_components/help-limit-notice";
 import {
   type GoalLimit,
   type StartUnderstandingOutcome,
@@ -114,6 +115,12 @@ export function useStartError() {
       needsAccount: false,
     };
   };
+}
+
+/** A goal limit's title and line, for a screen that says them in its own heading. */
+export function useGoalLimitGateWords(limit: GoalLimit | null): LimitWords {
+  const words = useGoalLimitWords();
+  return useLiveWords(limit ? words(limit) : null);
 }
 
 export function useGoalLimitText(limit: GoalLimit | null) {
