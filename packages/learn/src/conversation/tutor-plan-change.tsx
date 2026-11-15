@@ -184,6 +184,7 @@ export function TutorPlanChange({
         TUTOR_CARD_WIDTH_CLASS,
         "focus-visible:ring-ring/50 flex flex-col gap-3 p-3 outline-none focus-visible:ring-[3px]",
       )}
+      data-slot="tutor-plan-change"
       data-status={change.status}
       ref={cardRef}
       tabIndex={-1}

@@ -18,6 +18,16 @@ export function box([x, y, width, height]: Bounds): Box {
 }
 
 /**
+ * A part drawn only as glyphs, with no words (a day's kind marks in a value's place): no capitals
+ * to center on and no type to compare. A part whose words weren't measured isn't one.
+ */
+export function glyphsOnly(element: CaptureElement): boolean {
+  return (
+    element.capTop === undefined && element.capBottom === undefined && element.type === undefined
+  );
+}
+
+/**
  * A number from the capture, for arithmetic: what was measured, its `fallback` when the capture
  * gives none, or null when it says it wasn't measured, for which the caller writes a failing
  * not-measured record. "not measured" never enters arithmetic, where NaN would pass every tolerance.

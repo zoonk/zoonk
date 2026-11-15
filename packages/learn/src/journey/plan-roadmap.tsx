@@ -155,9 +155,13 @@ function RoadmapRevealList() {
       {/* The list under it marks the learner's phase and dates each phase's end, so the meter has no line. */}
       <RoadmapCompact lined={false} onOpen={null} />
 
-      <ol className="flex flex-col [&>li+li]:border-t">
+      <ol className="flex flex-col [&>li+li]:border-t" data-slot="journey-path-list">
         {phases.map((phase) => (
-          <li className="flex min-h-11 items-center gap-3 py-2 text-sm" key={phase.index}>
+          <li
+            className="flex min-h-11 items-center gap-3 py-2 text-sm"
+            data-slot="path-row"
+            key={phase.index}
+          >
             <StatusMark
               label={phase.state === "current" ? t("You are here") : undefined}
               status={PHASE_MARK[phase.state]}

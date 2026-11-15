@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { type Page, chromium } from "@playwright/test";
+import { type BrowserContext, type Page, chromium } from "@playwright/test";
 import { getMailboxCaptureUrl, getServiceUrl } from "../../dev/config.mts";
 import { type Capture } from "../alignment-capture.mts";
 import { readAlignment, webCapture } from "../alignment-probe.mts";
@@ -32,6 +32,7 @@ const { positionals, values } = parseArgs({
 });
 
 const baseUrl = getServiceUrl({ currentDirectory: repository, serviceName: "main" });
+const playgroundUrl = getServiceUrl({ currentDirectory: repository, serviceName: "playground" });
 
 const mailboxUrl = getMailboxCaptureUrl(
   getServiceUrl({ currentDirectory: repository, serviceName: "mailbox" }),
@@ -41,11 +42,15 @@ const STEP_TIMEOUT_MS = 15_000;
 const SETTLE_MS = 1200;
 
 /** A fresh learner for each set of prerequisites, so one scenario's taps never reach another. */
-function makePersona({ flags = [], name }: { flags?: string[]; name: string }): string {
-  const output = execFileSync("pnpm", ["dev:persona", name, ...flags], {
-    cwd: repository,
-    encoding: "utf8",
-  });
+function makePersona(
+  { flags = [], name }: { flags?: string[]; name: string },
+  state: string | undefined,
+): string {
+  const output = execFileSync(
+    "pnpm",
+    ["dev:persona", name, ...flags, ...(state ? ["--state", state] : [])],
+    { cwd: repository, encoding: "utf8" },
+  );
 
   const email = /Email\s+(?<email>\S+@\S+)/u.exec(output)?.groups?.email;
 
@@ -63,7 +68,7 @@ async function storageFor(prerequisites: Prerequisites) {
       : await signIn({
           app: "main",
           baseUrl,
-          email: makePersona(prerequisites.persona),
+          email: makePersona(prerequisites.persona, prerequisites.state),
           mailboxUrl,
         });
 
@@ -96,10 +101,13 @@ async function take(page: Page, step: Step) {
       .filter({ visible: true })
       .first()
       .waitFor({ timeout: STEP_TIMEOUT_MS });
+  } else if ("pause" in step) {
+    await page.waitForTimeout(step.pause);
   } else if ("press" in step) {
     await page.keyboard.press(step.press);
   } else if ("fill" in step) {
-    await page.getByLabel(step.fill.field).first().fill(step.fill.value);
+    const field = page.getByLabel(step.fill.field).or(page.getByPlaceholder(step.fill.field));
+    await field.first().fill(step.fill.value);
   } else {
     await page.evaluate(() => globalThis.scrollTo(0, document.documentElement.scrollHeight));
   }
@@ -115,6 +123,24 @@ function configurationLabel({ locale, size, textScale }: Configuration) {
 /** Chromium's default text size, the browser setting a learner changes; the app sizes text in rem. */
 const DEFAULT_TEXT_PX = 16;
 
+/** React's inline functions that move streamed content into its placeholder's place. */
+const STREAM_SWAPS = ["$RC", "$RS", "$RX", "$RV", "$RM", "$RR", "$RT"];
+
+/**
+ * A hard load's first paint, held: the page's inline scripts run (the signed-in hint the bars read
+ * included), but its code never loads to hydrate and React's inline swaps do nothing, so what
+ * streams after the placeholder never takes its place.
+ */
+async function holdFirstPaint(context: BrowserContext) {
+  await context.route(/\/_next\/static\/chunks\/.+\.js(?:\?.*)?$/u, async (route) => route.abort());
+
+  await context.addInitScript((names: string[]) => {
+    for (const name of names) {
+      Object.defineProperty(globalThis, name, { value: () => null, writable: false });
+    }
+  }, STREAM_SWAPS);
+}
+
 async function capture(
   scenario: Scenario,
   configuration: Configuration,
@@ -123,17 +149,22 @@ async function capture(
 ): Promise<Capture> {
   const { locale, size, textScale = 1 } = configuration;
   const label = configurationLabel(configuration);
-  const path = localePath(scenario.screen, locale);
+  const path = localePath(scenario.from ?? scenario.screen, locale);
   const browser = await chromium.launch();
 
   try {
     const context = await browser.newContext({
       ...VIEWPORTS[size],
-      baseURL: baseUrl,
+      baseURL: scenario.app === "playground" ? playgroundUrl : baseUrl,
       storageState: storage,
     });
 
     await context.addInitScript(installPageHelpers);
+
+    if (scenario.firstPaint) {
+      await holdFirstPaint(context);
+    }
+
     const page = await context.newPage();
     const cdp = await context.newCDPSession(page);
 
@@ -161,15 +192,28 @@ async function capture(
 
     await page.waitForTimeout(SETTLE_MS);
 
+    const proof = scenario.firstPaint
+      ? page.locator("[aria-busy=true]")
+      : page.getByText(proofIn(scenario.proof, locale));
+
+    // Words a learner typed are a field's value, not its text.
+    const typed = async () =>
+      page
+        .locator("input, textarea")
+        .evaluateAll(
+          (fields, words) => fields.some((field) => "value" in field && field.value === words),
+          proofIn(scenario.proof, locale),
+        );
+
     const reached =
       stepped &&
       scenario.reach !== null &&
-      (await page
-        .getByText(proofIn(scenario.proof, locale))
+      ((await proof
         .filter({ visible: true })
         .first()
         .isVisible()
-        .catch(() => false));
+        .catch(() => false)) ||
+        (await typed()));
 
     const anchors = scenario.anchors.flatMap((anchor) =>
       anchor.web ? [{ id: anchor.id, web: anchor.web }] : [],
@@ -183,7 +227,14 @@ async function capture(
     });
 
     return {
-      ...webCapture({ page: read, path, scheme: "light", textScale, viewport: size }),
+      // The page a step reached (a placeholder's), not only the one the scenario opened.
+      ...webCapture({
+        page: read,
+        path: new URL(page.url()).pathname,
+        scheme: "light",
+        textScale,
+        viewport: size,
+      }),
       reached,
       scenario: scenario.id,
     };
@@ -212,7 +263,10 @@ if (values.help) {
   const captures: Capture[] = [];
 
   for (const scenario of chosen) {
-    const storage = scenario.reach === null ? undefined : await storageFor(scenario.prerequisites);
+    const shared =
+      scenario.reach === null || scenario.writes
+        ? undefined
+        : await storageFor(scenario.prerequisites);
 
     // The web's sizes; a native size (a watch, a fold) isn't the web's to capture.
     const configurations = scenario.sizes.flatMap(({ size, ...rest }) =>
@@ -233,7 +287,12 @@ if (values.help) {
               reached: false,
               scenario: scenario.id,
             }
-          : await capture(scenario, configuration, storage, out);
+          : await capture(
+              scenario,
+              configuration,
+              shared ?? (await storageFor(scenario.prerequisites)),
+              out,
+            );
 
       console.log(
         `${scenario.id} ${configurationLabel(configuration)}: ${taken.reached ? "reached" : `not reached${scenario.prerequisites.seed ? ` (needs ${scenario.prerequisites.seed})` : ""}`}`,
