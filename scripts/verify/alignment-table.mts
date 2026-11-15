@@ -158,6 +158,17 @@ const PIECES: Piece[] = [
       rows: ":scope > [data-slot=bottom-bar-row]",
     },
   },
+  // A guess's worked numbers, a small table (#15): the labels start on one edge, and the numbers,
+  // ending on one edge before them, share one type.
+  {
+    name: "guess-workings",
+    relations: ["label-start", "type"],
+    web: {
+      group: "[data-slot=guess-workings]",
+      parts: { label: "[data-slot=guess-working-label]", value: "[data-slot=guess-working-value]" },
+      rows: ":scope > li",
+    },
+  },
   // Siblings of one kind side by side share a top and a height (craft E6): a page's stat tiles,
   // and a tab list's tabs, whichever way the list is written.
   {
