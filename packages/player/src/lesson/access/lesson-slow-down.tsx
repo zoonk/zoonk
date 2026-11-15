@@ -1,6 +1,6 @@
 "use client";
 
-import { TaskActionBar, TaskActions } from "@zoonk/learn/task-layout";
+import { TaskActionBar, TaskActions, TaskStopMessage } from "@zoonk/learn/task-layout";
 import { HourglassIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
@@ -26,15 +26,7 @@ export function AccessLayout({
         className="flex flex-1 flex-col gap-6 pt-4 pb-8"
         data-slot="lesson-access"
       >
-        <span className="text-muted-foreground flex [&_svg]:size-6">{icon}</span>
-        <div className="flex flex-col gap-2" role="status">
-          <h2 className="text-title">{title}</h2>
-          {description && (
-            <p className="text-muted-foreground text-base leading-relaxed text-pretty">
-              {description}
-            </p>
-          )}
-        </div>
+        <TaskStopMessage description={description} icon={icon} title={title} />
       </PlayerContentFrame>
 
       {actions && (
