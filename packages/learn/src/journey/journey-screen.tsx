@@ -4,6 +4,7 @@ import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useState } from "react";
 import { Page } from "../_components/page";
+import { PageHasMainAction } from "../_components/suggestion";
 import { usePoll } from "../_utils/use-poll";
 import { type AlphabetLink } from "../language/units/alphabet-row";
 import { PlanExamOverBar } from "../plan/exam-over-actions";
@@ -125,6 +126,10 @@ function JourneyBody({
       />
     );
 
+  const examOver = goal.kind === "exam" && plan.status?.kind === "pastDate";
+  // The bottom bar is the page's own main action; without it, a suggestion's answer is the one.
+  const hasMainAction = goalStatus !== null && (goalStatus.status === "paused" || examOver);
+
   return (
     <PlanSuggestionProvider
       host={{
@@ -139,7 +144,9 @@ function JourneyBody({
         aside={
           <>
             {numbers("stats", IN_ASIDE_BLOCK_CLASS)}
-            <PlanSuggestionSlot className="hidden min-[72rem]:block" />
+            <PageHasMainAction value={hasMainAction}>
+              <PlanSuggestionSlot className="hidden min-[72rem]:block" />
+            </PageHasMainAction>
             <NextOnPath className={structure ? undefined : IN_ASIDE_CLASS} links={links} />
             <MoreSection links={links} />
             <PlanProperties className={IN_ASIDE_CLASS} examHref={links.exam} onOpen={editor.open} />
@@ -147,14 +154,7 @@ function JourneyBody({
         }
         asideClassName="sm:max-[72rem]:grid sm:max-[72rem]:grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] sm:max-[72rem]:items-start sm:max-[72rem]:gap-x-10"
         asideLabel={t("Your plan at a glance")}
-        bottomBar={
-          goalStatus && (
-            <JourneyBottomBar
-              examOver={goal.kind === "exam" && plan.status?.kind === "pastDate"}
-              goalStatus={goalStatus}
-            />
-          )
-        }
+        bottomBar={goalStatus && <JourneyBottomBar examOver={examOver} goalStatus={goalStatus} />}
       >
         <Page data-slot="journey">
           <PlanHeader subtitle={<PlanGoalLine />}>
