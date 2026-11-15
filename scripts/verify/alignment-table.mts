@@ -10,6 +10,7 @@ export type Part = (typeof PART_NAMES)[number];
 
 export type Relation =
   | "end-edge"
+  | "even"
   | "gap"
   | "label-start"
   | "lead-start"
@@ -155,6 +156,22 @@ const PIECES: Piece[] = [
       },
       parts: {},
       rows: ":scope > [data-slot=bottom-bar-row]",
+    },
+  },
+  // Siblings of one kind side by side share a top and a height (craft E6): a page's stat tiles,
+  // and a tab list's tabs, whichever way the list is written.
+  {
+    name: "stat-tiles",
+    relations: ["even"],
+    web: { group: "[data-slot=stat-tiles]", parts: {}, rows: ":scope > li" },
+  },
+  {
+    name: "tab-list",
+    relations: ["even"],
+    web: {
+      group: "[role=tablist], [data-slot=tabs-list], [data-tabs]",
+      parts: {},
+      rows: ":scope > :is(a, button, [role=tab]), :scope > li > :is(a, button)",
     },
   },
   // A row of marks, one a day: declared so it starts and ends on its column (`spanLeads`).

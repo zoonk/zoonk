@@ -2,6 +2,7 @@ import { bleedLeads, spanLeads } from "./alignment-bleed.mts";
 import { type AlignmentFile, type AlignmentFinding, type Capture } from "./alignment-capture.mts";
 import { coverageLeads, isOneStack } from "./alignment-coverage.mts";
 import { axisLeads, endLeads, stackedLeads, startLeads } from "./alignment-edges.mts";
+import { evenLeads } from "./alignment-even.mts";
 import { gapLeads } from "./alignment-gap.mts";
 import {
   type Context,
@@ -188,6 +189,7 @@ function groupLeads(context: Context, group: Group): AlignmentFinding[] {
     ...(has("type") ? typeLeads(context, group) : []),
     ...(has("line") ? lineLeads(context, group) : []),
     ...(has("room") ? roomLeads(context, group) : []),
+    ...(has("even") ? evenLeads(context, group) : []),
   ];
 
   // Rows a platform grouped by the stack holding them, with no piece framing them: leads only.
