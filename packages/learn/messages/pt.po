@@ -192,7 +192,6 @@ msgstr "Estudado"
 #: src/challenge/challenge-labels.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/journey-phase-events.tsx
-#: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-header.tsx
@@ -5049,11 +5048,6 @@ msgstr "{days, plural, one {Falta cerca de # dia} other {Faltam cerca de # dias}
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
 msgstr "{done, number} de {total, plural, one {# fase concluída} other {# fases concluídas}}"
-
-#: src/journey/plan-roadmap.tsx
-msgctxt "dM-p3_"
-msgid "From"
-msgstr "De"
 
 #: src/journey/plan-roadmap.tsx
 msgctxt "mElWfu"

@@ -192,7 +192,6 @@ msgstr "학습함"
 #: src/challenge/challenge-labels.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/journey-phase-events.tsx
-#: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-header.tsx
@@ -5049,11 +5048,6 @@ msgstr "{days, plural, other {약 #일 남았어요}}"
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
 msgstr "{done, number}개 단계 완료 / {total, plural, other {전체 #개}}"
-
-#: src/journey/plan-roadmap.tsx
-msgctxt "dM-p3_"
-msgid "From"
-msgstr "시작일"
 
 #: src/journey/plan-roadmap.tsx
 msgctxt "mElWfu"

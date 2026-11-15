@@ -25,6 +25,7 @@ import {
 } from "./roadmap-styles";
 import {
   getLessonShare,
+  useAxisDatedPhases,
   useRoadmapFinish,
   useRoadmapPhases,
   useRoadmapPosition,
@@ -143,70 +144,33 @@ const PHASE_MARK = {
   upcoming: "todo",
 } as const;
 
-/**
- * What the axis says under a phase: "Today" under the current one and the start of each one after
- * it. Earlier phases, done or settled by placement, say nothing, their check says it.
- */
-function getPhaseWhen({ currentIndex, position }: { currentIndex: number; position: number }) {
-  if (position === currentIndex) {
-    return "today";
-  }
-
-  return currentIndex !== -1 && position > currentIndex ? "start" : null;
-}
-
-function PhaseWhenText({ startDate, when }: { startDate: string; when: "start" | "today" }) {
-  const t = useExtracted();
-
-  if (when === "today") {
-    return t("Today");
-  }
-
-  return (
-    <>
-      {t("From")} <PlanDateText isoDate={startDate} />
-    </>
-  );
-}
-
 function RoadmapRevealList() {
   const t = useExtracted();
   const phaseName = usePhaseName();
   const { plan } = usePlanScreen();
-  const { currentIndex, phases } = useRoadmapPhases();
+  const { phases } = useRoadmapPhases();
 
   return (
     <div className="flex flex-col gap-2 sm:hidden" data-slot="plan-roadmap">
-      {/* The list under it marks the learner's phase and dates the next ones, so the meter has no line. */}
+      {/* The list under it marks the learner's phase and dates each phase's end, so the meter has no line. */}
       <RoadmapCompact lined={false} onOpen={null} />
 
       <ol className="flex flex-col [&>li+li]:border-t">
-        {phases.map((phase, position) => {
-          const when = getPhaseWhen({ currentIndex, position });
-
-          return (
-            <li className="flex min-h-11 items-center gap-3 py-2 text-sm" key={phase.index}>
-              <StatusMark
-                label={phase.state === "current" ? t("You are here") : undefined}
-                status={PHASE_MARK[phase.state]}
-              />
-              <PathRowBody
-                value={
-                  when &&
-                  phase.startDate && (
-                    <span className="text-muted-foreground text-xs">
-                      {when === "today" ? t("Today") : <PlanDateText isoDate={phase.startDate} />}
-                    </span>
-                  )
-                }
-              >
-                <span className="font-medium text-pretty">
-                  {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
-                </span>
-              </PathRowBody>
-            </li>
-          );
-        })}
+        {phases.map((phase) => (
+          <li className="flex min-h-11 items-center gap-3 py-2 text-sm" key={phase.index}>
+            <StatusMark
+              label={phase.state === "current" ? t("You are here") : undefined}
+              status={PHASE_MARK[phase.state]}
+            />
+            <PathRowBody
+              value={<PhaseWhen className="text-muted-foreground text-xs" phase={phase} />}
+            >
+              <span className="font-medium text-pretty">
+                {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
+              </span>
+            </PathRowBody>
+          </li>
+        ))}
       </ol>
     </div>
   );
@@ -216,6 +180,7 @@ function RoadmapReveal() {
   const t = useExtracted();
   const { currentIndex, phases, today } = useRoadmapPhases();
   const finish = useRoadmapFinish();
+  const axisDated = useAxisDatedPhases();
   const dated = phases.every((phase) => phase.startDate !== null);
 
   return (
@@ -225,7 +190,7 @@ function RoadmapReveal() {
         style={getBandColumnsStyle(phases.map((phase) => getPhaseWeight(phase)))}
       >
         {phases.map((phase, position) => {
-          const when = getPhaseWhen({ currentIndex, position });
+          const isCurrent = position === currentIndex;
 
           return (
             <li className={BAND_COLUMN_CLASS} key={phase.index}>
@@ -240,17 +205,15 @@ function RoadmapReveal() {
                 <>
                   <PhaseAxis
                     isLast={position === phases.length - 1}
-                    labelled={when !== null}
+                    labelled={axisDated.has(phase.index)}
                     phase={phase}
                     todayShare={
-                      when === "today" ? getShareInPhase({ at: "start", date: today, phase }) : null
+                      isCurrent ? getShareInPhase({ at: "start", date: today, phase }) : null
                     }
                   />
-                  {when && (
-                    <span className="sr-only">
-                      <PhaseWhenText startDate={phase.startDate} when={when} />
-                    </span>
-                  )}
+                  <span className="sr-only">
+                    <PhaseWhen phase={phase} />
+                  </span>
                 </>
               )}
             </li>

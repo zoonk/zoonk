@@ -180,8 +180,7 @@ export function PhaseAxis({
   const goalSide = goalShare === null ? null : getPointSide(goalShare);
 
   const todayLabelled = todayShare !== null && goalShare === null;
-  // Under its end, the date the list gives it: the next phase starts there.
-  const endLabelled = labelled && !isLast && goalSide !== "right";
+  const endLabelled = labelled && goalSide !== "right";
   const finishLabelled = isLast && goalSide !== "right";
 
   return (

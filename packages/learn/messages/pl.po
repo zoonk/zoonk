@@ -192,7 +192,6 @@ msgstr "Przerobione"
 #: src/challenge/challenge-labels.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/journey-phase-events.tsx
-#: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-header.tsx
@@ -5049,11 +5048,6 @@ msgstr "{days, plural, one {Został mniej więcej # dzień} few {Zostały mniej 
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
 msgstr "Ukończono {done, number} z {total, plural, one {# etapu} other {# etapów}}"
-
-#: src/journey/plan-roadmap.tsx
-msgctxt "dM-p3_"
-msgid "From"
-msgstr "Od"
 
 #: src/journey/plan-roadmap.tsx
 msgctxt "mElWfu"
