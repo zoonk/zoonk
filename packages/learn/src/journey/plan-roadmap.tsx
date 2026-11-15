@@ -72,19 +72,23 @@ function RoadmapCompact({
           className={cn(TITLE_ROW_CLASS, "w-full items-baseline text-xs")}
           data-slot="plan-roadmap-line"
         >
-          <span className="flex min-w-0 flex-wrap items-baseline">
+          {/* Too narrow for one line (large text), the place, the phase's name and its end each take a line of their own. */}
+          <span className="stacked:flex-col flex min-w-0 flex-wrap items-baseline">
             <span className="font-medium">{position.place}</span>
             {position.name && (
               <span
                 className={cn(
                   TRUNCATED_TITLE_CLASS,
-                  "text-muted-foreground max-w-max min-w-0 grow basis-24 whitespace-pre",
+                  "text-muted-foreground stacked:basis-auto max-w-max min-w-0 grow basis-24 text-pretty",
                 )}
-              >{` · ${position.name}`}</span>
+              >
+                <span className="stacked:hidden whitespace-pre">{" · "}</span>
+                {position.name}
+              </span>
             )}
           </span>
           <span
-            className="text-muted-foreground flex items-center gap-3"
+            className="text-muted-foreground ms-auto flex items-center gap-3"
             data-slot="plan-roadmap-when"
           >
             <PhaseWhen phase={position.phase} />

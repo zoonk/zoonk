@@ -127,7 +127,8 @@ function ChapterRow({
 
   return (
     <LearnLink
-      className={cn(PATH_ROW_CLASS, "hover:bg-muted/70", isNext && "bg-muted hover:bg-muted")}
+      className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}
+      data-highlighted={isNext || undefined}
       data-slot="path-row"
       href={links.chapter(chapter.chapterId)}
     >
