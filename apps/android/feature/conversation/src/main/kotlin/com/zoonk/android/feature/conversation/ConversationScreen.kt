@@ -47,6 +47,8 @@ import com.zoonk.android.feature.session.ReachedFacts
 import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -170,6 +172,12 @@ internal fun ConversationContent(
     val load by model.conversation.collectShown()
     val scope = rememberCoroutineScope()
 
+    OnVisitEnd(model, onEnd = model::endVisit)
+    ActOn(model.againStarted) { id ->
+        exits.close()
+        exits.open(AppRoute.Conversation(id.toString(), from = if (fromExam) FROM_EXAM else null))
+    }
+
     when (val state = load) {
         LoadState.Idle, LoadState.Loading -> {
             TaskScaffold(onClose = exits::close) { padding -> PageLoading(Modifier.padding(padding)) }
@@ -236,12 +244,7 @@ private fun Conversation(
             tryAgain =
                 again?.let { request ->
                     TryAgain(
-                        onStart = {
-                            model.startAgain(request) { id ->
-                                exits.close()
-                                exits.open(AppRoute.Conversation(id.toString(), from = if (fromExam) FROM_EXAM else null))
-                            }
-                        },
+                        onStart = { model.startAgain(request) },
                         starting = model.startingAgain,
                         failed = model.startAgainFailed,
                         writing = model.againWriting,

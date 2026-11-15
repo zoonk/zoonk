@@ -9,6 +9,8 @@ import com.zoonk.android.feature.livecall.setup
 import com.zoonk.api.models.LanguageConversationSetup
 import kotlinx.coroutines.CompletableDeferred
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
@@ -73,8 +75,55 @@ class ConversationViewModelTest {
         )
     }
 
+    @Test
+    fun anotherTryThatStartsWhileTheScreenIsRecreatedOpensOnce() {
+        val held = CompletableDeferred<Unit>()
+        harness.api.startGate = held
+
+        // A recreation: no screen acts while the try starts; the next one opens it.
+        model.startAgain(CallRequest.SpeakingMock(GOAL))
+        held.complete(Unit)
+        idle()
+
+        val started = model.againStarted.value
+        assertEquals(conversation.id, started)
+        model.againStarted.acted(started!!)
+        assertNull(model.againStarted.value)
+    }
+
+    @Test
+    fun anotherTryThatStartsAfterTheLearnerLeftOpensNothingOnReturn() {
+        val held = CompletableDeferred<Unit>()
+        harness.api.startGate = held
+
+        model.startAgain(CallRequest.SpeakingMock(GOAL))
+        model.endVisit()
+        held.complete(Unit)
+        idle()
+
+        assertNull(model.againStarted.value)
+        assertFalse(model.startAgainFailed)
+    }
+
+    @Test
+    fun anotherTryWhoseCardIsWrittenAfterTheLearnerLeftIsNotSentAgain() {
+        harness.api.writings += "run-1"
+        val held = CompletableDeferred<Unit>()
+        harness.api.startGate = held
+
+        model.startAgain(CallRequest.SpeakingMock(GOAL))
+        held.complete(Unit)
+        model.endVisit()
+        idle()
+
+        assertEquals(1, harness.api.starts.size)
+        assertNull(model.againStarted.value)
+        assertNull(model.againWriting)
+    }
+
     private companion object {
         val SECOND: UUID = UUID.fromString("00000000-0000-4000-8000-000000000002")
         val THIRD: UUID = UUID.fromString("00000000-0000-4000-8000-000000000003")
+        val GOAL: UUID = UUID.fromString("00000000-0000-4000-8000-0000000000e1")
     }
 }

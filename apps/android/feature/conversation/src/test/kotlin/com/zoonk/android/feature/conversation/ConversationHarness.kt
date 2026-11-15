@@ -34,6 +34,7 @@ import com.zoonk.api.models.CompletedLanguageConversation
 import com.zoonk.api.models.LanguageCheckpointCall
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationCompletionInput
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -162,6 +163,9 @@ internal class FakeConversationApi(
     /** The API's refusal of the next start, as `ApiException`. */
     var startRefusal: ApiException? = null
 
+    /** Holds the next starts until it completes. */
+    var startGate: CompletableDeferred<Unit>? = null
+
     /** Runs the next starts answer with, one each, before the call is written. */
     val writings = ArrayDeque<String>()
 
@@ -183,6 +187,7 @@ internal class FakeConversationApi(
         request: CallRequest,
     ): Written<UUID> {
         starts += request
+        startGate?.await()
         startRefusal?.let { throw it }
         return writings.removeFirstOrNull()?.let { Written.Writing(it) } ?: Written.Ready(stored.id)
     }
