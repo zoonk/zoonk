@@ -1156,12 +1156,12 @@ msgctxt "G4ZsrK"
 msgid "Start with your goal"
 msgstr "목표부터 시작하기"
 
+#. The page inside Settings for usage data, a copy of the learner's data and deleting the account; not the privacy policy.
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
-#: src/components/public/public-footer.tsx
-msgctxt "cXBJ7U"
+msgctxt "settingsPrivacy"
 msgid "Privacy"
-msgstr "개인정보 처리방침"
+msgstr "개인정보 보호"
 
 #. Study reminders are off: the value beside the Reminders row in Settings
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
@@ -3389,6 +3389,11 @@ msgstr "페이지를 찾을 수 없어요"
 msgctxt "Vge-RX"
 msgid "Footer"
 msgstr "하단 메뉴"
+
+#: src/components/public/public-footer.tsx
+msgctxt "cXBJ7U"
+msgid "Privacy"
+msgstr "개인정보 처리방침"
 
 #: src/components/public/public-footer.tsx
 msgctxt "xkr-zo"
