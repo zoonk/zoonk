@@ -21,6 +21,7 @@ import androidx.lifecycle.viewModelScope
 import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.AlertDialog
@@ -36,6 +37,9 @@ class WebPlusCancellationViewModel(
     private val send: suspend () -> MutationResult<StripeSubscriptionCancellationReceipt>,
     private val keepPlus: suspend () -> MutationResult<Unit>,
 ) : ViewModel() {
+    /** The Subscription page's visit: Keep Plus that didn't save says so only on it. */
+    val visit = Visit()
+
     var confirmation by mutableStateOf<State?>(null)
         private set
     var isSending by mutableStateOf(false)
@@ -44,8 +48,10 @@ class WebPlusCancellationViewModel(
         private set
     var isKeeping by mutableStateOf(false)
         private set
-    var keepFailed by mutableStateOf(false)
-        private set
+    private val keepFailure = visit.outcome<Unit>()
+
+    /** Keep Plus didn't save, on this visit. */
+    val keepFailed get() = keepFailure.value != null
 
     fun open(state: State) {
         if (isSending || state == State.ENDING) return
@@ -78,10 +84,11 @@ class WebPlusCancellationViewModel(
     fun keep() {
         if (isKeeping) return
         isKeeping = true
-        keepFailed = false
+        keepFailure.clear()
+        val started = visit.number
         viewModelScope.launch {
             val result = keepPlus()
-            keepFailed = result is MutationResult.Failed && result.status != HTTP_CONFLICT
+            if (result is MutationResult.Failed && result.status != HTTP_CONFLICT) keepFailure.send(started, Unit)
             isKeeping = false
         }
     }

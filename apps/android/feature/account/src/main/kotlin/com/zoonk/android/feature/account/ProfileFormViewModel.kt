@@ -37,14 +37,17 @@ class ProfileFormViewModel(
         private set
     var isSaving by mutableStateOf(false)
         private set
-    var failure by mutableStateOf<AccountFailure?>(null)
-        private set
 
     /** The last save went through and nothing changed since. */
     var isSaved by mutableStateOf(false)
         private set
 
     val visit = Visit()
+
+    private val saveFailure = visit.outcome<AccountFailure>()
+
+    /** Why the save didn't go through, on this visit. */
+    val failure get() = saveFailure.value
 
     /** A save that went through on this visit, which the page says once in the app's snackbars. */
     val saved = visit.outcome<Unit>()
@@ -74,7 +77,7 @@ class ProfileFormViewModel(
     fun onNameChange(value: String) {
         if (isSaving) return
         name = value
-        failure = null
+        saveFailure.clear()
         isSaved = false
     }
 
@@ -82,7 +85,7 @@ class ProfileFormViewModel(
         val normalized = value.trim().lowercase()
         if (isSaving || normalized == username) return
         username = normalized
-        failure = null
+        saveFailure.clear()
         isSaved = false
         check?.cancel()
         usernameStatus =
@@ -111,8 +114,9 @@ class ProfileFormViewModel(
         val started = visit.number
         viewModelScope.launch {
             try {
-                failure = account.saveProfile(trimmedName.takeIf { it != savedName }, username)
+                val failure = account.saveProfile(trimmedName.takeIf { it != savedName }, username)
                 if (failure == AccountFailure.UsernameTaken) usernameStatus = UsernameStatus.Taken
+                if (failure == null) saveFailure.clear() else saveFailure.send(started, failure)
                 if (failure == null) {
                     savedName = trimmedName
                     savedUsername = username
