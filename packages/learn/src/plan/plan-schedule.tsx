@@ -241,6 +241,17 @@ function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChan
   );
 }
 
+function getMissingDays({
+  weekdayDays,
+  weekendDays,
+}: ReturnType<typeof useWeekShape>): "weekdays" | "weekend" | null {
+  if (weekendDays.length === 0) {
+    return "weekend";
+  }
+
+  return weekdayDays.length === 0 ? "weekdays" : null;
+}
+
 function WeekendMinutes({
   checked,
   onCheckedChange,
@@ -265,7 +276,7 @@ function WeekendMinutes({
     <WeekendTime
       checked={checked}
       className="text-sm font-medium"
-      disabled={!shape.canDiffer}
+      missing={getMissingDays(shape)}
       // Switched off, the weekend takes the weekdays' time: wait for a change still saving, so it
       // takes the time that change sets rather than the one before it.
       readOnly={isPending}
