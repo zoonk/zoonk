@@ -47,7 +47,13 @@ export function useOnboardingSection(): boolean {
   return useOnboardingHost()?.kind === "section";
 }
 
-export type OnboardingBar = { end?: ReactNode; middle?: ReactNode; onBack?: () => void };
+export type OnboardingBar = {
+  /** While a request that moves the learner on is out, Back waits with it. */
+  backDisabled?: boolean;
+  end?: ReactNode;
+  middle?: ReactNode;
+  onBack?: () => void;
+};
 
 export const NO_BAR: OnboardingBar = {};
 

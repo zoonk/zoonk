@@ -61,9 +61,7 @@ export function MockSummaryRow({
           <ListRowTitle>{t("Mock exam {number}", { number: String(mock.number) })}</ListRowTitle>
           <ListRowDescription>{subject ? `${date} · ${subject}` : date}</ListRowDescription>
           {stacked && (
-            <ListRowDescription className="font-mono tabular-nums">
-              {measure(mock)}
-            </ListRowDescription>
+            <ListRowDescription className="tabular-nums">{measure(mock)}</ListRowDescription>
           )}
         </ListRowContent>
         {!stacked && <ListRowTrailing>{measure(mock)}</ListRowTrailing>}

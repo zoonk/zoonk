@@ -23,7 +23,7 @@ function PathMarker({ state }: { state: NodeState }) {
   return (
     <span
       aria-hidden="true"
-      className="relative z-10 flex h-11 w-4 shrink-0 items-center justify-center"
+      className="absolute inset-s-0 top-0 z-10 flex h-11 w-4 items-center justify-center"
     >
       {state === "done" && <DoneMark />}
       {state === "current" && <CurrentPhaseMark />}
@@ -80,10 +80,10 @@ function PhaseTitle({ note, phase }: { note?: string | null; phase: PlanPhaseVie
   );
 }
 
-const HEADER_CLASS = "flex min-h-11 w-full items-center gap-3 py-3 text-left";
+const HEADER_CLASS = "flex min-h-11 items-center gap-3 py-3 text-left";
 
 const HEADER_INTERACTIVE_CLASS =
-  "focus-visible:ring-ring/50 hover:bg-muted/70 -mx-2.5 w-[calc(100%+1.25rem)] rounded-lg px-2.5 outline-none transition-colors focus-visible:ring-[3px]";
+  "focus-visible:ring-ring/50 hover:bg-muted/70 row-bleed rounded-lg outline-none transition-colors focus-visible:ring-[3px]";
 
 function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
   const { plan } = usePlanScreen();
@@ -96,13 +96,13 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
   return (
     <li
       aria-current={isCurrent ? "step" : undefined}
-      className="relative flex gap-3 pb-3"
+      className="nested-rows relative pb-3"
       data-state={state}
     >
       <PathLine walked={state === "done"} />
       <PathMarker state={state} />
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-col">
         <div className={HEADER_CLASS}>
           <PhaseTitle
             note={
@@ -168,7 +168,7 @@ function FinishNode({ continues, examHref }: { continues: boolean; examHref: str
   );
 
   return (
-    <li className={cn("relative flex gap-3", continues && "pb-3")} data-state="finish">
+    <li className={cn("nested-rows relative", continues && "pb-3")} data-state="finish">
       {continues && <PathLine walked={false} />}
       <PathMarker state="finish" />
       {examHref ? (

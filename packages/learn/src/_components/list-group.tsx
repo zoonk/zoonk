@@ -30,9 +30,10 @@ export function ListGroup({
   );
 }
 
+/** A row under an indent (`nested-rows`, a route) reaches back to the column with its fill (craft E7). */
 export const LIST_ROW_CLASS = cn(
   "relative isolate flex w-full min-w-0 items-stretch gap-3 text-left",
-  "aria-[current]:before:bg-muted data-highlighted:before:bg-muted before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors",
+  "aria-[current]:before:bg-muted data-highlighted:before:bg-muted before:pointer-events-none before:absolute before:inset-y-0.5 before:-inset-s-[(--spacing(2.5)+var(--row-indent,0px))] before:-inset-e-2.5 before:-z-10 before:rounded-lg before:transition-colors",
   "in-data-[list=panel]:px-4 in-data-[list=panel]:before:inset-0 in-data-[list=panel]:before:rounded-none",
 );
 
@@ -40,6 +41,9 @@ export const LIST_ROW_INTERACTIVE_CLASS = cn(
   LIST_ROW_CLASS,
   "hover:before:bg-muted/70 active:before:bg-muted press focus-visible:before:ring-ring/50 outline-none select-none [--press-scale:0.99] focus-visible:before:ring-[3px] focus-visible:before:ring-inset",
 );
+
+/** A fold's panel clips what it folds, so it reaches as far as its rows' fills do (craft E7). */
+export const ROW_FOLD_CLASS = "-mx-2.5 px-2.5";
 
 export const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
 

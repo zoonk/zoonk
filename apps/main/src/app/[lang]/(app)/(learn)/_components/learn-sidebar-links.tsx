@@ -40,8 +40,12 @@ export function LearnSidebarFeedback() {
         aria-haspopup="dialog"
         className={SIDEBAR_ITEM_CLASS}
         data-slot="sidebar-item"
-        onClick={() =>
-          feedback?.openFeedbackForm({ context: { screen: "sidebar" }, isReport: false })
+        onClick={(event) =>
+          feedback?.openFeedbackForm({
+            context: { screen: "sidebar" },
+            isReport: false,
+            opener: event.currentTarget,
+          })
         }
         type="button"
       >
