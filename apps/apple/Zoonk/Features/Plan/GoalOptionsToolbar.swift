@@ -273,6 +273,16 @@ struct ResumeGoal {
 }
 
 extension View {
+  /// A shown bar holds the page's main action. The Plan stacks its bars and shows one at a time, so
+  /// a hidden one writes nothing and leaves the shown one's word.
+  fileprivate func holdsMainActionInBar(_ isShown: Bool) -> some View {
+    transformEnvironment(\.barHoldsMainAction) { holds in
+      if isShown {
+        holds = true
+      }
+    }
+  }
+
   /// A paused goal's page: "Resume" is its bottom bar's main action, and a refused resume is said
   /// over the bar.
   func resumeGoalBar(isShown: Bool = true) -> some View {
@@ -287,7 +297,7 @@ private struct ResumeGoalBar: ViewModifier {
 
   func body(content: Content) -> some View {
     content
-      .environment(\.barHoldsMainAction, isShown)
+      .holdsMainActionInBar(isShown)
       .bottomBar(note: isShown ? note : nil) {
         if isShown {
           BusyButton(isBusy: resumeGoal.isBusy, action: resumeGoal.action) {
@@ -373,7 +383,7 @@ private struct ExamOverBar: ViewModifier {
 
   func body(content: Content) -> some View {
     content
-      .environment(\.barHoldsMainAction, isShown)
+      .holdsMainActionInBar(isShown)
       .bottomBar(note: isShown && failed ? BarNote(saveFailure) : nil) {
         if isShown {
           ExamOverButtons(
