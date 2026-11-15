@@ -77,6 +77,9 @@ test.describe("The way back on a computer", () => {
     await expect(listedBack).toHaveCount(1);
     await expect(listedBack).toBeHidden();
 
+    await listed.goto("/stats");
+    await expect(listed.getByRole("link", { name: /^Back to /u })).toBeVisible();
+
     const unlisted = await openAs(browser, withoutGoal);
     await unlisted.setViewportSize({ height: 900, width: 1440 });
     await unlisted.goto("/completed-lessons");
