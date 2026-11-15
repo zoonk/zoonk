@@ -199,6 +199,9 @@ private struct MindMapCreateSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(MindMapsStore.self) private var store
   @State private var showsChapters = false
+  /// The fold opens once, on arrival, while one of its chapters is being made, so that chapter's
+  /// progress is in view; a learner who closes it keeps it closed.
+  @State private var arrived = false
   /// The block stays for the visit once it has shown the stop, so its held slot outlives the line.
   @State private var showedStop = false
 
@@ -287,6 +290,17 @@ private struct MindMapCreateSection: View {
             .layoutPart(.label)
           }
         }
+        .onAppear {
+          guard !arrived else {
+            return
+          }
+
+          arrived = true
+
+          if others.contains(where: \.status.isOnItsWay) {
+            showsChapters = true
+          }
+        }
 
         if showsChapters {
           // A row's Create spends lessons from a free learner's allowance, so the list says so once.
@@ -309,50 +323,17 @@ private struct MindMapCreateSection: View {
     }
   }
 
-  /// The one line under the button: the first of these that applies. Maps on their way and maps
-  /// that didn't finish come before the limit: the learner just started them, and the limit read
-  /// first looks like a refusal.
-  private enum Line {
-    case unreachable
-    case onTheWay(Int)
-    case unfinished(Int)
-    case stopped(MindMapLimit)
-    case fewer(Int)
-  }
-
   private func line(_ offer: MindMapCreateOffer, stop: MindMapAllowanceStop?, canStart: Bool)
-    -> Line?
+    -> MindMapsCreateLine?
   {
-    let onTheWay = maps.chapters.count { $0.status.isOnItsWay }
-    // Only the ones the button retries: a failed map whose lessons aren't written says so in its
-    // own row.
-    let unfinished = maps.chapters.count { $0.status == .failed && $0.lessonsToWrite == 0 }
-
-    if store.createAllFailures[goalId] == .unreachable {
-      return .unreachable
-    }
-
-    if onTheWay > 0 {
-      return .onTheWay(onTheWay)
-    }
-
-    if unfinished > 0 {
-      return .unfinished(unfinished)
-    }
-
-    if offer.startable == 0, !canStart, let stop {
-      return .stopped(stop.limit(tier: learner.summary.value?.tier ?? .free))
-    }
-
-    if offer.startable > 0, offer.startable < offer.eligible {
-      return .fewer(offer.startable)
-    }
-
-    return nil
+    MindMapsCreateLine(
+      maps: maps, stop: stop, canStart: canStart,
+      unreachable: store.createAllFailures[goalId] == .unreachable,
+      tier: learner.summary.value?.tier ?? .free)
   }
 
   @ViewBuilder
-  private func lineView(_ line: Line) -> some View {
+  private func lineView(_ line: MindMapsCreateLine) -> some View {
     switch line {
     case .unreachable:
       FailureLine(
@@ -369,7 +350,7 @@ private struct MindMapCreateSection: View {
   }
 
   /// The line's words, when it's a note of the block's own rather than a notice.
-  private func note(_ line: Line?) -> String? {
+  private func note(_ line: MindMapsCreateLine?) -> String? {
     switch line {
     case .onTheWay(let count):
       String(
@@ -748,5 +729,41 @@ private struct MindMapIndex<Item: Identifiable, Row: View>: View {
     let key: String
     let subject: ChapterMindMap.Subject?
     var items: [Item]
+  }
+}
+
+/// The one line under "Create all": the first of these that applies. Maps that didn't finish come
+/// first (their retry is free, even under a stop); then what stops the learner, which outranks
+/// what's in progress: a map on its way shows its progress on its own row.
+enum MindMapsCreateLine: Equatable {
+  case unreachable
+  case onTheWay(Int)
+  case unfinished(Int)
+  case stopped(MindMapLimit)
+  case fewer(Int)
+
+  init?(
+    maps: GoalMindMaps, stop: MindMapAllowanceStop?, canStart: Bool, unreachable: Bool,
+    tier: LearnerTier
+  ) {
+    let offer = maps.createOffer
+    let onTheWay = maps.chapters.count { $0.status.isOnItsWay }
+    // Only the ones the button retries: a failed map whose lessons aren't written says so in its
+    // own row.
+    let unfinished = maps.chapters.count { $0.status == .failed && $0.lessonsToWrite == 0 }
+
+    if unreachable {
+      self = .unreachable
+    } else if unfinished > 0 {
+      self = .unfinished(unfinished)
+    } else if offer.startable == 0, !canStart, let stop {
+      self = .stopped(stop.limit(tier: tier))
+    } else if onTheWay > 0 {
+      self = .onTheWay(onTheWay)
+    } else if offer.startable > 0, offer.startable < offer.eligible {
+      self = .fewer(offer.startable)
+    } else {
+      return nil
+    }
   }
 }

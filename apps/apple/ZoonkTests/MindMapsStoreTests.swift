@@ -871,6 +871,34 @@ final class MindMapsStoreTests: XCTestCase {
     await bulk.value
   }
 
+  /// What stops the learner outranks what's in progress: with a map on its way under a stop, the
+  /// line is the stop's notice (the map shows its progress on its own row), never both. The same
+  /// for a stop a tap's refusal wrote while its read is out.
+  func testAStopOutranksAMapOnItsWay() {
+    let stop = MindMapAllowanceStop(
+      availableAt: nil, period: "rolling30Days", reason: .limitReached, resource: .mindMap)
+    let drawing = ChapterMindMap(
+      chapterId: "drawing", image: nil, lessonsToWrite: 0, outline: nil, position: 1,
+      saved: false, status: .drawing, subject: nil, title: "Drawn now")
+    let maps = GoalMindMaps(
+      chapters: [drawing], createOffer: MindMapCreateOffer(eligible: 1, startable: 0, stop: stop),
+      firstTab: .chapters, lessonGroups: [], saved: [])
+
+    let line = MindMapsCreateLine(
+      maps: maps, stop: stop, canStart: false, unreachable: false, tier: .free)
+
+    guard case .stopped(let limit) = line else {
+      return XCTFail("Expected the stop's notice, got \(String(describing: line))")
+    }
+
+    XCTAssertEqual(limit, stop.limit(tier: .free))
+    XCTAssertEqual(
+      MindMapsCreateLine(
+        maps: maps.stopped(by: stop), stop: stop, canStart: false, unreachable: false,
+        tier: .free),
+      line)
+  }
+
   private static let chapterKey = MindMapKey(kind: .chapter, targetId: "chapter")
   private static let chapterTarget = SaveTarget(
     key: chapterKey, title: "Chapter", chapterId: "chapter")
