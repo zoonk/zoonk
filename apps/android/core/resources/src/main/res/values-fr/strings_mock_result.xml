@@ -94,6 +94,7 @@
   "mock_result_scale_score": "f678376731ea07dffa18fb4fb8787b3f308d89ffb03f28c9991aadc26ac1b3cb",
   "mock_result_scale_score_named": "4d38ae562ee0c1abf19207565af99e4bc85ed08cd8aeacc55708bdd65da893a9",
   "mock_result_see_answers": "31e391c573aff48beb0e7518e6ba29484908b6323fe763b015014cfa90b697c3",
+  "mock_result_see_details": "7427e25a2b2e5fe9ba7f49a63c6a05428f6091892efa9f71d9f7a90fd682a238",
   "mock_result_see_feedback": "6218bcbff3070b77002ea72644eee592a569b28b7c7a4a2454f3458b912f286b",
   "mock_result_short_points": "2f2477f577b5ac9136df792cfd5b77c89fbf754b50cd31ef94b298ec38f8c91f",
   "mock_result_short_points_decimal": "8fd9639ef229b18bcda97a6869b84bca74476ac33fd8558c2bab45be15b22917",
@@ -144,8 +145,9 @@
     <string name="mock_result_every_minimum">Tu as atteint tous les minimums requis dans cet examen blanc.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
     <string name="mock_result_strongest">Point fort : %1$s. À travailler : %2$s.</string>
-    <!-- A small button under the result that opens its details. -->
+    <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Détails</string>
+    <string name="mock_result_see_details">Voir les détails</string>
     <!-- A small button under the result that opens the questions to review. -->
     <string name="mock_result_see_answers">Voir les réponses</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->

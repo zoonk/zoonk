@@ -15,8 +15,9 @@
     <string name="mock_result_every_minimum">You reached every minimum in this mock exam.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
     <string name="mock_result_strongest">Strongest: %1$s. Work on: %2$s.</string>
-    <!-- A small button under the result that opens its details. -->
+    <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Details</string>
+    <string name="mock_result_see_details">See details</string>
     <!-- A small button under the result that opens the questions to review. -->
     <string name="mock_result_see_answers">See answers</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->
