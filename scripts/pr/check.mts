@@ -1,5 +1,7 @@
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
+import { readCaptures } from "../verify/alignment-validate.mts";
+import { evaluateFile } from "../verify/alignment.mts";
 import { isRemote } from "./locate.mts";
 import {
   type AlignmentReport,
@@ -17,14 +19,34 @@ import { type CheckResult, type Problem } from "./report.mts";
 
 type Entry = { folder: string; item: ManifestItem };
 
-type Manifest = { alignment: AlignmentReport; folder: string; items: ManifestItem[] };
+type Judged = AlignmentReport & { refused?: string };
+
+type Manifest = { alignment: Judged; folder: string; items: ManifestItem[] };
+
+/**
+ * The captures a folder holds are judged here, by the one evaluator, whatever wrote them: a native
+ * capture stores captures without findings, and stored findings could be older than the rules.
+ */
+function judge(report: AlignmentReport): Judged {
+  if (!report.captures?.length) {
+    return report;
+  }
+
+  const read = readCaptures(report);
+
+  if (read.kind !== "captures") {
+    return { ...report, refused: read.kind === "invalid" ? read.problems : "no captures" };
+  }
+
+  return { ...report, ...evaluateFile(read.file) };
+}
 
 async function loadManifests(folders: string[]): Promise<Manifest[]> {
   const unique = [...new Set(folders.map((folder) => resolve(folder)))];
 
   return Promise.all(
     unique.map(async (folder) => ({
-      alignment: await readAlignment(folder),
+      alignment: judge(await readAlignment(folder)),
       folder,
       items: (await readManifest(folder)) ?? [],
     })),
@@ -198,6 +220,12 @@ function measured({ alignment, items }: Manifest): boolean {
 }
 
 function alignmentProblems({ alignment, folder }: Manifest): Problem[] {
+  if (alignment.refused !== undefined) {
+    const [first = ""] = alignment.refused.split("\n");
+    const detail = `alignment.json isn't a capture the evaluator reads: ${first}`;
+    return [{ detail, kind: "alignment", picture: folder }];
+  }
+
   const { findings = [], summary = {} } = alignment;
   const failing = findings.filter((finding) => finding.level === "fail" && !finding.exception);
   const messages = [...new Set(failing.map((finding) => finding.message))];

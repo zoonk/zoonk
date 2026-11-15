@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "vitest";
+import CASES from "../verify/alignment-cases.json" with { type: "json" };
 import { CLEAN, checkFixture, kinds, sha256 } from "./check-fixture.mts";
 import { checkPictures } from "./check.mts";
 import { type ManifestItem } from "./media.mts";
@@ -218,5 +219,28 @@ describe("pr:media check, on a capture's measured layout", () => {
       formatCheck(result, fixture.repository),
       /; layout measured with nothing declared on 1 screen$/u,
     );
+  });
+
+  it("judges the captures a folder holds itself, as a native capture leaves them unjudged", async () => {
+    const failing = CASES["conditions before 0387bba5c6, phone"];
+    const passing = CASES["conditions after, phone"];
+
+    const judged = await Promise.all(
+      [failing, passing].map(async (screen) =>
+        capture([shot({ file: "a.png" })], { alignment: { captures: [screen] } }).check(),
+      ),
+    );
+
+    const refused = await capture([shot({ file: "b.png" })], {
+      alignment: { captures: [{ ...passing, unit: "pt" }] },
+    }).check();
+
+    assert.deepEqual(
+      judged.map((result) => kinds(result)),
+      [["alignment"], []],
+    );
+
+    assert.deepEqual(kinds(refused), ["alignment"]);
+    assert.match(refused.problems[0]?.detail ?? "", /isn't a capture the evaluator reads/u);
   });
 });
