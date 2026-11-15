@@ -43,7 +43,7 @@ export async function LoginScreen({
           <AuthTitle>{t("Log in or create an account")}</AuthTitle>
 
           {expired && (
-            <AuthDescription role="status">
+            <AuthDescription className="text-destructive-text" role="status">
               {t("Logging in took too long. Try again.")}
             </AuthDescription>
           )}

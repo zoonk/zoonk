@@ -15,7 +15,7 @@ import {
   AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { showErrorToast } from "@zoonk/ui/components/toast";
+import { InputError } from "@zoonk/ui/components/input";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
@@ -48,9 +48,11 @@ export function DeleteAccountRow({
   const t = useExtracted();
   const [isPending, startTransition] = useTransition();
   const [asksLogin, setAsksLogin] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   const deleteAccount = () => {
     startTransition(async () => {
+      setFailed(false);
       const { data } = await safeAsync(() => deleteAccountAction(userId));
       const outcome = data ?? "failed";
 
@@ -69,13 +71,13 @@ export function DeleteAccountRow({
         return;
       }
 
-      showErrorToast(t("We couldn't delete your account. Try again or email hello@zoonk.com."));
+      setFailed(true);
     });
   };
 
   return (
     <>
-      <AlertDialog>
+      <AlertDialog onOpenChange={(open) => !open && setFailed(false)}>
         <SettingRow label={t("Your account")}>
           <AlertDialogTrigger aria-label={t("Delete account")} className={DELETE_BUTTON_CLASS}>
             {t("Delete…")}
@@ -92,6 +94,11 @@ export function DeleteAccountRow({
                 )}
               </p>
               {plusNotice}
+              {failed && (
+                <InputError role="alert">
+                  {t("We couldn't delete your account. Try again or email hello@zoonk.com.")}
+                </InputError>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
 
