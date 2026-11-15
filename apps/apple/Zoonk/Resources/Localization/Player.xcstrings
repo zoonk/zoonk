@@ -11706,61 +11706,60 @@
         }
       }
     },
-    "The microphone is blocked. Type your answer instead." : {
-      "comment" : "A spoken screen falls back to typing when the microphone is off",
+    "The microphone is blocked." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Mikrofon ist blockiert. Tippe deine Antwort stattdessen ein."
+            "value" : "Der Zugriff auf das Mikrofon ist blockiert."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El micrófono está bloqueado. Responde por escrito."
+            "value" : "El micrófono está bloqueado."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le micro est bloqué. Écris ta réponse à la place."
+            "value" : "Le micro est bloqué."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il microfono è bloccato. Rispondi per iscritto."
+            "value" : "Il microfono è bloccato."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "マイクを使用できません。代わりに答えを入力してください。"
+            "value" : "マイクの使用が許可されていません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "마이크 사용이 차단되어 있어요. 대신 답을 글로 입력해 주세요."
+            "value" : "마이크 사용이 차단됐어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dostęp do mikrofonu jest zablokowany. Zamiast tego wpisz odpowiedź."
+            "value" : "Dostęp do mikrofonu jest zablokowany."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O microfone está bloqueado. Digite sua resposta."
+            "value" : "O microfone está bloqueado."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mikrofon erişimi engellendi. Cevabını yaz."
+            "value" : "Mikrofon erişimi engellendi."
           }
         }
       }

@@ -556,8 +556,7 @@ private struct SpokenAnswerStepView: View {
 
   private static var micBlockedLine: String {
     String(
-      localized: "The microphone is blocked. Type your answer instead.", table: "Player",
-      comment: "A spoken screen falls back to typing when the microphone is off")
+      localized: "The microphone is blocked.", table: "Player")
   }
 
   /// An answer started one way doesn't carry over, and asking to speak tries the microphone again.
