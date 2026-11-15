@@ -478,6 +478,8 @@
         return ["error": "the window couldn't be drawn"]
       }
 
+      let elements = writer.elements()
+
       return [
         "picture": [
           "file": pictureURL.lastPathComponent,
@@ -492,9 +494,9 @@
         "unit": "pt",
         "scale": window.screen.scale,
         "activeSurface": writer.activeSurface,
-        "elements": writer.elements(),
+        "elements": elements,
         "build": buildStamp,
-        "measured": writer.measuredSummary,
+        "measured": LayoutCounts.of(elements),
       ]
     }
 
@@ -680,6 +682,28 @@
     }
   }
 
+  /// The capture's summary: each part once, "not measured" when any of its fields is, when it is a
+  /// list row no piece reports, or when no row holds it; groups, rows a piece declares and anchors
+  /// aren't parts.
+  enum LayoutCounts {
+    static func of(_ elements: [[String: Any]]) -> [String: Int] {
+      let parts = elements.filter { element in
+        switch element["part"] as? String {
+        case "group", "anchor": false
+        case "row": element["ink"] as? String == "not measured"
+        default: true
+        }
+      }
+
+      let notMeasured = parts.filter { element in
+        element["piece"] as? String == "unreported"
+          || element.values.contains { $0 as? String == "not measured" }
+      }.count
+
+      return ["parts": parts.count - notMeasured, "notMeasured": notMeasured]
+    }
+  }
+
   /// A list's rows and sections as the system laid them out: a section is a group, a cell a row.
   @MainActor
   private struct ListCells {
@@ -735,8 +759,6 @@
     let window: UIWindow
 
     private let records: [(id: UUID, record: LayoutRegistry.Record)]
-    private var notMeasured = 0
-    private var measured = 0
 
     init(picture: WindowPicture, cells: ListCells, window: UIWindow) {
       self.picture = picture
@@ -780,10 +802,6 @@
       records.last { $0.record.kind == .surface }.flatMap { surfaces[$0.id] } ?? "page"
     }
 
-    var measuredSummary: [String: Int] {
-      ["parts": measured, "notMeasured": notMeasured]
-    }
-
     /// A row as written: a declared row by its own identity, or a list cell holding parts that no
     /// declared row holds.
     private struct Row {
@@ -799,7 +817,6 @@
       var declaredRows: [UUID: Row] = [:]
       var cellRows: [String: Row] = [:]
       var rowsByCell: [String: [Row]] = [:]
-      var unattached = 0
 
       func cellKey(_ cell: ListCells.Cell) -> String {
         "\(cell.section):\(Int(cell.frame.minY))"
@@ -948,7 +965,6 @@
             element["piece"] = out.first { $0["id"] as? String == row.group }?["piece"]
           } else {
             // Never dropped: a part no row holds is written, and counted as not measured.
-            unattached += 1
             element["group"] = NSNull()
             element["row"] = NSNull()
             element["piece"] = "unreported"
@@ -958,7 +974,6 @@
         case .action(let variant):
           // Only a main action's fill counts; another look is written only as a pair's anchor.
           guard variant == "filled" || record.anchor != nil else { continue }
-          measured += 1
           let surface = record.surface.flatMap { surfaces[$0] } ?? "page"
           var element: [String: Any] = [
             "id": "a\(index)", "piece": "action", "part": variant == "filled" ? "action" : "anchor",
@@ -986,8 +1001,6 @@
           continue
         }
       }
-
-      notMeasured += unattached
 
       let systemEnds = systemEnds(rowsByCell: rowsByCell, cellKey: cellKey)
       out.append(contentsOf: systemEnds)
@@ -1032,12 +1045,10 @@
 
       if part == .mark {
         guard picture.shows(record.frame, host: record.host) else { return clipped(element) }
-        measured += 1
         element["ink"] = picture.ink(in: record.frame).map(Self.bounds) ?? NSNull()
         return element
       }
 
-      var complete = true
       element["text"] = record.text.flatMap(Self.words)
 
       // The layout's baseline and capitals hold off screen too; what was drawn there doesn't show.
@@ -1046,7 +1057,6 @@
       } else {
         element["ink"] = "not measured"
         element["clipped"] = true
-        complete = false
       }
 
       guard let baseline = record.baseline,
@@ -1055,7 +1065,6 @@
           .min(by: { $0.rect.width * $0.rect.height < $1.rect.width * $1.rect.height })?.style
           ?? record.inherited
       else {
-        notMeasured += 1
         element["baseline"] = "not measured"
         element["capTop"] = "not measured"
         element["capBottom"] = "not measured"
@@ -1080,7 +1089,6 @@
         // nothing showed what drew it: the font's capitals aren't the drawn ones.
         element["capTop"] = "not measured"
         element["capBottom"] = "not measured"
-        complete = false
       }
 
       if part == .label {
@@ -1095,12 +1103,6 @@
         element["role"] = role.rawValue
       }
 
-      if complete {
-        measured += 1
-      } else {
-        notMeasured += 1
-      }
-
       return element
     }
 
@@ -1109,8 +1111,6 @@
       guard picture.shows(record.frame, host: record.host) else {
         return clipped(["part": "end", "bounds": Self.bounds(record.frame)])
       }
-
-      measured += 1
 
       // A turned glyph draws past its frame.
       guard let ink = picture.ink(in: record.frame.insetBy(dx: -2, dy: -2)) else {
@@ -1125,7 +1125,6 @@
 
     /// A part read from pixels that the screen's edge cuts: its ink can't be told from the picture.
     private mutating func clipped(_ element: [String: Any]) -> [String: Any] {
-      notMeasured += 1
       var element = element
       element["ink"] = "not measured"
       element["clipped"] = true
@@ -1174,18 +1173,15 @@
         case .none:
           return nil
         case .glyph(let ink):
-          measured += 1
           element["bounds"] = Self.bounds(ink)
           element["ink"] = Self.bounds(ink)
         case .unreadable(let clipped):
-          notMeasured += 1
           element["bounds"] = Self.bounds(room)
           element["ink"] = "not measured"
           if clipped {
             element["clipped"] = true
           }
         case .mirrored:
-          notMeasured += 1
           element["bounds"] = Self.bounds(cell.frame)
           element["ink"] = "not measured"
           element["reason"] = "right to left: the room is read on the right only"
@@ -1202,7 +1198,6 @@
       reported: Set<String>, groups: [String: String], cellKey: (ListCells.Cell) -> String
     ) -> [[String: Any]] {
       cells.cells.filter { !reported.contains(cellKey($0)) }.enumerated().map { index, cell in
-        notMeasured += 1
         let group = groups[cell.section]
         return [
           "id": group.map { "\($0).u\(index)" } ?? "u\(index)",

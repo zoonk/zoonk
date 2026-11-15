@@ -104,6 +104,21 @@ final class LayoutCaptureTests: XCTestCase {
       .mirrored)
   }
 
+  /// Each part counts once: a part no row holds, with its ink read, is still one not measured.
+  func testCountsEachPartOnce() {
+    let elements: [[String: Any]] = [
+      ["part": "group", "ink": [0, 0, 420, 300]],
+      ["part": "anchor", "anchor": "page/bar", "ink": "not measured"],
+      ["part": "row", "piece": "list-group", "ink": [20, 100, 380, 20]],
+      ["part": "row", "piece": "list-group", "ink": "not measured"],
+      ["part": "value", "ink": [360, 100, 40, 16], "baseline": 112, "capTop": 103],
+      ["part": "label", "ink": [52, 100, 100, 18], "baseline": "not measured"],
+      ["part": "end", "piece": "unreported", "ink": [390, 102, 7, 12]],
+    ]
+
+    XCTAssertEqual(LayoutCounts.of(elements), ["parts": 1, "notMeasured": 3])
+  }
+
   @MainActor
   private func drawnLines(_ words: String) -> [DrawnLine] {
     let part = UUID()
