@@ -6,6 +6,7 @@ import {
   type CallLimit,
   CallLimitNotice,
   useCallLimitLine,
+  useLiveLimit,
 } from "../../_components/help-limit-notice";
 import { GateWords } from "../../_components/subscribe-gate";
 import { useLearnRoutes } from "../../learn-context";
@@ -40,9 +41,13 @@ export function CallLimitReason({
   role?: "alert";
 }) {
   const routes = useLearnRoutes();
+  const title = useCallLimitTitle(limit);
+  const opened = useLiveLimit(limit) === null;
 
+  // Once its day has come nothing ran out, so no title says it did. The notice stays the same one,
+  // so it isn't read out again as a new refusal.
   return (
-    <CallReason className={className} role={role} title={useCallLimitTitle(limit)}>
+    <CallReason className={className} role={role} title={opened ? undefined : title}>
       <CallLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
     </CallReason>
   );
