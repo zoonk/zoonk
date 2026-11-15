@@ -20,6 +20,7 @@ import {
   SuggestionOpen,
   SuggestionSaveError,
   SuggestionSummary,
+  useMainActionVariant,
 } from "../_components/suggestion";
 import { useTodayScreen } from "./today-context";
 import { TodayStatusClause, TodayStatusLine, TodayStatusSentence } from "./today-status-line";
@@ -51,6 +52,7 @@ function SuggestedGoalCard({
   const t = useExtracted();
   const { answer, failed, isPending } = useSuggestedGoalAnswer(onAnswer);
   const question = t("Continue {course}?", { course: suggestion.title });
+  const mainVariant = useMainActionVariant();
 
   return (
     <Suggestion label={t("Suggested goal")} mark={<CompassIcon />}>
@@ -65,7 +67,11 @@ function SuggestedGoalCard({
 
         <SuggestionActions
           main={
-            <SuggestionAction action={() => answer("accepted")} disabled={isPending}>
+            <SuggestionAction
+              action={() => answer("accepted")}
+              disabled={isPending}
+              variant={mainVariant}
+            >
               {t("Start")}
             </SuggestionAction>
           }
