@@ -146,7 +146,8 @@ private fun IconSlot(
     size: Dp,
     icon: @Composable () -> Unit,
 ) {
-    Box(Modifier.size(size), propagateMinConstraints = true) { if (busy) Spinner(Modifier) else icon() }
+    // The glyph grows with the words, as a row's mark does.
+    Box(Modifier.size(size * glyphScale()), propagateMinConstraints = true) { if (busy) Spinner(Modifier) else icon() }
 }
 
 @Composable

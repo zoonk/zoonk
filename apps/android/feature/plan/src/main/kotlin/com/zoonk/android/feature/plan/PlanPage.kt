@@ -51,6 +51,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.components.TaskActions
@@ -531,7 +532,7 @@ private fun PlaceRow(
         headline = { Text(stringResource(title)) },
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         onClick = onClick,
-        leading = { Icon(painterResource(icon), contentDescription = null) },
+        leading = { MarkIcon(icon) },
     )
 }
 

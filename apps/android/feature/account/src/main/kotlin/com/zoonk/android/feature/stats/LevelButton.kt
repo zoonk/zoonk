@@ -1,15 +1,15 @@
 package com.zoonk.android.feature.stats
 
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import com.zoonk.android.R
-import com.zoonk.android.app.LocalNavigationSuiteType
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.LocalNavigationSuiteType
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator

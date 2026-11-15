@@ -66,6 +66,7 @@ import com.zoonk.android.ui.components.LessonSummary
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ListedLesson
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
@@ -419,7 +420,7 @@ private fun ChapterReference(
             stringResource(R.string.goalcontent_chapter_summary),
             expanded = expanded,
             onExpandedChange = { expanded = it },
-            leading = { Icon(painterResource(R.drawable.ic_checklist), contentDescription = null) },
+            leading = { MarkIcon(R.drawable.ic_checklist) },
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
                 if (chapter.skills.isNotEmpty()) {
