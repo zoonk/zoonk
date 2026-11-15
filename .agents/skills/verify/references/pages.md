@@ -144,7 +144,7 @@ FAIL: 1 unresolved; scenarios not listed yet; 0 discovery leads; 0 not measured
 **What it can't see,** as the tool states:
 
 - It reads the states you load. A state behind a tap is measured only where a run reaches and captures it, such as a [scenario](#scenarios).
-- The web's read doesn't enter iframes or shadow roots, and doesn't see what only a pseudo-element (`::before`, `::after`) draws, except a row's highlight fill for `column`.
+- The web's read doesn't enter iframes or shadow roots, and doesn't see what only a pseudo-element (`::before`, `::after`) draws, except a row's highlight fill and a top or bottom rule for `column`. It clips a rule by its ancestors' `overflow`, not by a `clip-path`, which no screen sets on one.
 - `column` reads only a box that passes its column by more than 1 px. A box that stops short of its column's edge isn't measured yet, and the bottom bar, which reaches the frame by design, isn't read.
 - `one-filled` counts a control as filled only when the kit's button variants draw it (`--button-variant`). The same action offered again counts once only when it has the same words and the same target: a link to the same place, or a button with the same `data-action-name`. Every other filled button counts, one per row of a list included. The name is trusted: two buttons with one name count as one even when they do different things.
 - A capture with nothing declared in it passes, which proves nothing about the screen.
