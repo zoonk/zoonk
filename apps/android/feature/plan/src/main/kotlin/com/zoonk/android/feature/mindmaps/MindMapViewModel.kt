@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.goalcontent.ChapterKey
+import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.api.models.MindMapAllowanceStop
 import com.zoonk.api.models.MindMapCreateOffer
 import kotlinx.coroutines.CoroutineDispatcher
@@ -29,7 +31,7 @@ enum class CreateAll { Pending, Unreachable }
 /**
  * What a tap's answer said keeps any new map from starting, shown over the offer the list reads
  * (main's `bulk.stop`): it holds through the read its tap started, and a later list read that says
- * a map can start retires it.
+ * a map can start retires it. Every other Create would be refused the same way, so the page offers none.
  */
 sealed interface PageStop {
     /** The read mark when it was kept: reads started after it are later. */
@@ -38,6 +40,12 @@ sealed interface PageStop {
     /** Create all started none: its answer's stop, as received. */
     data class Answered(
         val stop: MindMapAllowanceStop,
+        override val since: Long,
+    ) : PageStop
+
+    /** A row's Create was refused for the plan's cap on maps. */
+    data class Refused(
+        val limit: Limit.Reached,
         override val since: Long,
     ) : PageStop
 }
@@ -133,9 +141,21 @@ class MindMapViewModel(
         viewModelScope.launch {
             val local =
                 when (val created = store.create(ChapterKey(goalId, chapterId))) {
-                    null, MindMapCreated.Read -> null
-                    MindMapCreated.Unreachable -> MindMapLocal(unreachable = true, since = store.readMark())
-                    is MindMapCreated.Refused -> MindMapLocal(limit = created.limit, subject = created.subject, since = store.readMark())
+                    null, MindMapCreated.Read -> {
+                        null
+                    }
+
+                    MindMapCreated.Unreachable -> {
+                        MindMapLocal(unreachable = true, since = store.readMark())
+                    }
+
+                    is MindMapCreated.Refused -> {
+                        val since = store.readMark()
+                        (created.limit as? Limit.Reached)
+                            ?.takeIf { created.subject == LimitSubject.MindMaps }
+                            ?.let { kept.value = PageStop.Refused(it, since) }
+                        MindMapLocal(limit = created.limit, subject = created.subject, since = since)
+                    }
                 }
             locals.update { if (local == null) it - chapterId else it + (chapterId to local) }
         }
@@ -210,6 +230,7 @@ internal val PageStop.availableAt: java.time.Instant?
     get() =
         when (this) {
             is PageStop.Answered -> stop.availableAt?.toJavaInstant()
+            is PageStop.Refused -> limit.availableAt
         }
 
 /** Main's `startsNoMap`, turned: at least one map can start, or nothing stops one. */

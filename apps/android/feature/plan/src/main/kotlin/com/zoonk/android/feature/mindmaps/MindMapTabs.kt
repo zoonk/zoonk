@@ -284,12 +284,14 @@ private fun NotMadeLine(
 private fun PageStop.limit(tier: LimitTier): Limit =
     when (this) {
         is PageStop.Answered -> stop.limit(tier)
+        is PageStop.Refused -> limit
     }
 
 private val PageStop.subject: LimitSubject
     get() =
         when (this) {
             is PageStop.Answered -> stop.limitSubject
+            is PageStop.Refused -> LimitSubject.MindMaps
         }
 
 /** The server's reason nothing more can start, as the app's limits word it; [tier] is the learner's plan. */

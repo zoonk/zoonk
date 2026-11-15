@@ -12,6 +12,8 @@ import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import coil3.ImageLoader
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -29,6 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -164,5 +167,35 @@ class MindMapsOfferTest {
         scope.launch { store.list[UUID.fromString(GOAL)].refresh() }
         compose.waitUntil(10_000) { compose.onAllNodesWithText("Create").fetchSemanticsNodes().size == 2 }
         compose.onNodeWithText("You've used your mind maps").assertDoesNotExist()
+    }
+
+    /** A row refused for the cap on maps stops the page's other Creates and Create all, until a later read lets a map start. */
+    @Test
+    fun aRowRefusedForTheCapStopsThePagesOtherCreates() {
+        val opens = clock.start.plus(Duration.ofDays(3))
+        var allowanceBack = false
+        api.mindMaps = { if (api.lists == 1 || allowanceBack) fresh else stopped(opens) }
+        api.create = {
+            throw ApiException(
+                ApiError.Unavailable,
+                "USAGE_LIMIT_REACHED",
+                402,
+                Json.parseToJsonElement(
+                    """{"limit":{"availableAt":"$opens","period":"rolling30Days","resource":"mindMap","tier":"free"}}""",
+                ),
+            )
+        }
+        show()
+        waitFor("Create all")
+        compose.onAllNodesWithText("Create")[0].performClick()
+
+        waitFor("You've used your mind maps")
+        compose.onAllNodesWithText("Create").assertCountEquals(0)
+        compose.onNodeWithText("Create all").assertDoesNotExist()
+
+        allowanceBack = true
+        scope.launch { store.list[UUID.fromString(GOAL)].refresh() }
+        compose.waitUntil(10_000) { compose.onAllNodesWithText("Create").fetchSemanticsNodes().size == 2 }
+        compose.onNodeWithText("Create all").assertExists()
     }
 }
