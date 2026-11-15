@@ -1,6 +1,5 @@
 import { z } from "zod";
-import { type AlignmentFile } from "./alignment-capture.mts";
-import { PART_NAMES } from "./alignment-table.mts";
+import { type AlignmentFile, ELEMENT_PARTS } from "./alignment-capture.mts";
 
 /**
  * What a capture must hold before the evaluator reads it (`REPORT-SHAPE.md`): a file from another
@@ -62,7 +61,7 @@ const ELEMENT = z.union([
   z.looseObject({
     ...PLACE,
     ink: z.union([BOUNDS, NOT_MEASURED, z.null()]),
-    part: z.enum([...PART_NAMES, "action", "anchor", "fill", "group", "holder", "pinned", "row"]),
+    part: z.enum(ELEMENT_PARTS),
     piece: z.string(),
   }),
   // An area the platform can't read (a subtree whose semantics were replaced): only its place.

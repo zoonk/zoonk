@@ -1,5 +1,5 @@
 import { type Summary } from "./alignment-summary.mts";
-import { type Part } from "./alignment-table.mts";
+import { PART_NAMES } from "./alignment-table.mts";
 
 /**
  * What every platform writes for one screen and configuration, and what the one evaluator reads
@@ -10,10 +10,25 @@ export type Bounds = [number, number, number, number];
 
 export type NotMeasured = "not measured";
 
+/**
+ * Every part a capture's element may be, but an area the platform couldn't read: the one list the
+ * probes' type and the validator's schema both take, so what a probe writes is what's read.
+ */
+export const ELEMENT_PARTS = [
+  ...PART_NAMES,
+  "action",
+  "anchor",
+  "fill",
+  "group",
+  "holder",
+  "pinned",
+  "row",
+] as const;
+
 export type CaptureElement = {
   id: string;
   piece: string;
-  part: Part | "action" | "anchor" | "fill" | "group" | "holder" | "pinned" | "row" | "unmeasured";
+  part: (typeof ELEMENT_PARTS)[number] | "unmeasured";
   group: string | null;
   row: string | null;
   bounds: Bounds;
