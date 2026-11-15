@@ -31,7 +31,8 @@ const BOOTED = z.object({
 
 /** What `stamp-debug-build.sh` writes into a Debug build. */
 const STAMP = z.object({ commit: z.string(), dirty: z.boolean() });
-const ANDROID_PACKAGE = "com.zoonk";
+/** The Debug build an emulator runs (`applicationIdSuffix = ".debug"`). */
+const ANDROID_PACKAGE = "com.zoonk.debug";
 
 /** Room for a full-resolution PNG from `screencap`: 64 MB. */
 const SCREENSHOT_BYTES = 67_108_864;
