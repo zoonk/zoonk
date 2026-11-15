@@ -1,4 +1,4 @@
-import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/warm-up-contract";
+import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { LearnProvider } from "@zoonk/learn/provider";
 import { NextStop, type NextStopActions } from "@zoonk/learn/session/next-stop";
 import { type DayStep } from "@zoonk/learn/session/types";
