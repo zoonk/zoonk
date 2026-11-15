@@ -6,6 +6,7 @@ import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import {
   isRollingCap,
+  receivedAtOf,
   useComesBackLine,
   useMapLessonsWords,
   useOpeningDay,
@@ -18,6 +19,15 @@ import {
   SubscribeMainAction,
 } from "./subscribe-gate";
 
+/**
+ * A refusal as it arrives in answer to a request this screen just made, stamped with that moment so
+ * a server clock behind this device's can be told from a refusal that's over. A refusal restored
+ * from an address or a page is never stamped.
+ */
+export function received<Refusal extends object>(refusal: Refusal): Refusal {
+  return { ...refusal, receivedAt: Date.now() };
+}
+
 /** A refusal lasts until its instant: then the action it took the place of is back, and the server decides again. */
 export function useLiveLimit<Limit extends object>(limit: Limit | null): Limit | null {
   const availableAt =
@@ -25,7 +35,7 @@ export function useLiveLimit<Limit extends object>(limit: Limit | null): Limit |
       ? limit.availableAt
       : null;
 
-  return useOpeningDay(availableAt) === "open" ? null : limit;
+  return useOpeningDay(availableAt, receivedAtOf(limit)) === "open" ? null : limit;
 }
 
 type SignUpRequired = { status: "signUpRequired" };
@@ -39,6 +49,8 @@ type SlowDown = { retryAfterSeconds: number; status: "slowDown" };
 type RollingCap = {
   availableAt: string | null;
   period: "rolling30Days";
+  /** When this device received the refusal, for one that answers a request just made. */
+  receivedAt?: number;
   status: "limitReached";
   tier: EntitlementTier;
 };
@@ -66,6 +78,8 @@ export type OutlineLimit = HelpLimit;
 export type CallLimit = {
   availableAt?: string | null;
   period: "day" | "rolling30Days" | "total";
+  /** When this device received the refusal, for one that answers a request just made. */
+  receivedAt?: number;
   tier: EntitlementTier;
 };
 
@@ -77,7 +91,11 @@ type LimitNoticeProps = {
   routes: { signUp: string; upgrade: string };
 };
 
-export type LimitWords = { line?: string; provisional?: boolean; title?: string };
+/**
+ * `opened`: the cap's day has come, so nothing ran out any more: no title says it did and nothing is
+ * offered to buy; only `line` (or the lesson's ready title) is said.
+ */
+export type LimitWords = { line?: string; opened?: boolean; provisional?: boolean; title?: string };
 
 /** What the learner asked for when the help ran out; without it the notice names no kind. */
 export type HelpKind = "explanations" | "messages" | "mockExams";
@@ -116,11 +134,11 @@ function LimitNoticeBody({
   routes,
   words,
 }: LimitNoticeProps & { action?: ReactNode; limit: NoticeLimit; words: LimitWords }) {
-  const wayOn = toWayOn({ limit, linkComponent, routes });
+  const wayOn = words.opened ? null : toWayOn({ limit, linkComponent, routes });
 
   return (
     <div className={cn("flex flex-col items-start gap-2", className)}>
-      <GateWords {...words} />
+      <GateWords line={words.line} provisional={words.provisional} title={words.title} />
 
       {(wayOn || action) && (
         <div className="flex flex-wrap gap-2">
@@ -165,6 +183,10 @@ function useCapWords(limit: HelpLimit, titles: CapTitles): LimitWords {
     return { title: titles.guest };
   }
 
+  if (comesBack.opened) {
+    return { line: comesBack.line, opened: true };
+  }
+
   return { ...comesBack, title: isRollingCap(limit) ? titles.rolling : titles.day };
 }
 
@@ -204,7 +226,9 @@ export function useHelpLimitWords(limit: HelpLimit, kind?: HelpKind): LimitWords
 
 /** Whether a free learner's next lesson has opened since the refusal: the server then gets asked again. */
 export function useFreeLessonReady(limit: LessonLimit): boolean {
-  return useOpeningDay(isRollingCap(limit) ? limit.availableAt : null) === "open";
+  return (
+    useOpeningDay(isRollingCap(limit) ? limit.availableAt : null, receivedAtOf(limit)) === "open"
+  );
 }
 
 export function useLessonLimitWords(limit: LessonLimit): LimitWords {
@@ -217,7 +241,7 @@ export function useLessonLimitWords(limit: LessonLimit): LimitWords {
     rolling: t("You've used your free lessons"),
   });
 
-  return ready ? { title: t("Your next free lesson is ready") } : words;
+  return ready ? { opened: true, title: t("Your next free lesson is ready") } : words;
 }
 
 function useMindMapRefusalWords(limit: MindMapLimit): LimitWords {
@@ -308,8 +332,13 @@ export function CallLimitNotice({
   ...props
 }: LimitNoticeProps & { limit: CallLimit; title?: string }) {
   const reached = toCapLimit(limit);
+  const comesBack = useComesBackLine(reached);
 
   return (
-    <LimitNoticeBody {...props} limit={reached} words={{ ...useComesBackLine(reached), title }} />
+    <LimitNoticeBody
+      {...props}
+      limit={reached}
+      words={{ ...comesBack, title: comesBack.opened ? undefined : title }}
+    />
   );
 }

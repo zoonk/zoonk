@@ -11,13 +11,14 @@ import com.zoonk.android.data.Written
 import com.zoonk.android.data.value
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
-import com.zoonk.api.models.PlanBasesAdvice
+import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.PlanFitOffer
 import com.zoonk.api.models.PlanTimeToCover
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -278,8 +279,39 @@ class PlanViewModel(
             }
         }
 
-    /** Null when it couldn't be asked. */
-    suspend fun basesAdvice(): PlanBasesAdvice? = (store.basesAdvice(goalId) as? MutationResult.Done)?.value
+    private val basesAdviceState = MutableStateFlow<BasesAdviceAsk?>(null)
+
+    /** The one recommendation request out from this screen: another plan's ask, a save or an undo cancels it. */
+    private var basesAdviceJob: Job? = null
+
+    /** Read it with [recommendedFor]: it's the plan revision it was asked of. */
+    val basesAdvice: StateFlow<BasesAdviceAsk?> = basesAdviceState.asStateFlow()
+
+    /**
+     * Main's `useBasesAdviceStore`: the tap that opens the prerequisites sheet asks. The server plans the
+     * whole goal to answer, so a reopen while the plan and day are the same keeps the answer, or waits for
+     * the one still out, however long; one that never came is asked for on the next opening.
+     */
+    fun askBasesAdvice(plan: Plan) {
+        val revision = planAdviceRevision(plan)
+        val asked = basesAdviceState.value?.takeIf { it.revision == revision }
+        if (asked != null && asked.status != BasesAdviceAsk.Status.Unanswered) return
+        val pending = BasesAdviceAsk(revision, BasesAdviceAsk.Status.Pending)
+        basesAdviceJob?.cancel()
+        basesAdviceState.value = pending
+        basesAdviceJob =
+            viewModelScope.launch {
+                val advice = (store.basesAdvice(goalId) as? MutationResult.Done)?.value
+                val recommended = advice?.recommended?.takeIf { advice.ready }?.let { PlanBase.Choice.valueOf(it.name) }
+                val status = if (recommended != null) BasesAdviceAsk.Status.Answered else BasesAdviceAsk.Status.Unanswered
+                basesAdviceState.compareAndSet(pending, pending.copy(status = status, recommended = recommended))
+            }
+    }
+
+    private fun dropBasesAdvice() {
+        basesAdviceJob?.cancel()
+        basesAdviceState.value = null
+    }
 
     /** Null when it couldn't be asked. */
     suspend fun preview(operations: List<PlanOp>): PlanChangePreview? = (store.preview(goalId, operations) as? MutationResult.Done)?.value
@@ -304,6 +336,8 @@ class PlanViewModel(
                 return@launch
             }
             val saved = (result as? MutationResult.Done)?.value
+            // The recommendation was the plan's before this change, even when the plan can't be read again.
+            if (saved != null) dropBasesAdvice()
             val shown = if (saved != null) store.awaitWritesShown(goalId) else null
             val sameOpening = opening == openings
             if (saved != null && shown == PlanShown.Current) {
@@ -323,6 +357,7 @@ class PlanViewModel(
         update(change.id) { copy(undoing = true, undoFailed = false) }
         viewModelScope.launch {
             val result = store.undo(goalId, change.id)
+            if (result is MutationResult.Done) dropBasesAdvice()
             val shown = if (result is MutationResult.Done) store.awaitWritesShown(goalId) else null
             update(change.id) {
                 copy(
@@ -362,7 +397,7 @@ class PlanViewModel(
         plan: Plan,
         found: (TimeToCoverOutcome) -> Unit = {},
     ) {
-        val revision = timeToCoverRevision(plan)
+        val revision = planAdviceRevision(plan)
         (timeToCoverState.value as? TimeToCoverState.Answered)?.takeIf { it.revision == revision }?.let {
             found(TimeToCoverOutcome.Answered(it.time))
             return
@@ -390,7 +425,7 @@ class PlanViewModel(
         store.plan[goalId]
             .state.value.value
             ?.plan
-            ?.let(::timeToCoverRevision)
+            ?.let(::planAdviceRevision)
 
     private class TimeToCoverSearch(
         val revision: List<Any?>,

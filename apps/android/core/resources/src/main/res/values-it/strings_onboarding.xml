@@ -332,6 +332,7 @@
   "onboarding_reveal_save_note": "cabb81b5d4bfbc2f5dc697609c10cc683042513e943993a2436c2c63eccc9ed9",
   "onboarding_reveal_start": "f6064c5cbe81c2b4e676400aaa951d91fadda0681b9cadb6d276e65c93fc39b0",
   "onboarding_reveal_start_here": "e0bd90e2fc1157d1e642b1525334db6eef66cb0ab6fe1f397d935b13a9ee445a",
+  "onboarding_reveal_study_days": "fc8bc847971363a52b9a21c2c90679ecc1cbb38a069ec068d4ff915257307fc8",
   "onboarding_reveal_today": "53d509386b9e23ec9a341cca121d1f5c0ef3ea355c4c1dd5fdee36ad54363d72",
   "onboarding_reveal_topics": "60e16ee120b71ec1017861be183e41d23241dd7dbe294f4d944a844ea64f0477",
   "onboarding_reveal_topics_all_planned": "1ee37cf52bb53d013ef4d13a51037e8b52755527b4975a72440f797c2c894c40",
@@ -997,6 +998,12 @@
         <item quantity="one">%d giorno</item>
         <item quantity="many">%d giorni</item>
         <item quantity="other">%d giorni</item>
+    </plurals>
+    <!-- Over the plan's first week: how many of its days the learner studies, today among them. -->
+    <plurals name="onboarding_reveal_study_days">
+        <item quantity="one">%d giorno di studio</item>
+        <item quantity="many">%d giorni di studio</item>
+        <item quantity="other">%d giorni di studio</item>
     </plurals>
     <string name="onboarding_schedule_title">Quanto tempo puoi dedicare allo studio ogni giorno?</string>
     <string name="onboarding_full_course">Studia tutto, anche dopo l’esame</string>

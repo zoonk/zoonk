@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.session
 
-import android.graphics.Bitmap
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
@@ -26,6 +25,7 @@ import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.beekeepingDeck
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Generation
 import com.zoonk.api.models.LessonReadiness
@@ -235,28 +235,25 @@ class NextStopTest {
         show(alternative = practice)
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
-        shot("next-stop-writing-phone")
+        shot("next-stop-writing-phone", "session.lesson-wait.writing")
 
         rule.onNodeWithText("Practice now").assertExists()
 
         rule.mainClock.advanceTimeBy(5_000)
         rule.waitForIdle()
-        shot("next-stop-writing-failed-phone")
+        shot("next-stop-writing-failed-phone", "session.lesson-wait.failed")
 
         rule.onNodeWithText("This didn't finish").assertExists()
         rule.onNodeWithText("Practice now").assertExists()
     }
 
-    /** A review picture of the screen, written only on demand: `-Pzoonk.shots=<folder>`. */
-    private fun shot(name: String) {
+    /** A review picture of the screen and its layout, written only on demand: `-Pzoonk.shots=<folder>`. */
+    private fun shot(
+        name: String,
+        scenario: String,
+    ) {
         val folder = System.getProperty("zoonk.shots").orEmpty().ifEmpty { return }
-        File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use {
-            rule
-                .onRoot()
-                .captureRender()
-                .asAndroidBitmap()
-                .compress(Bitmap.CompressFormat.PNG, 100, it)
-        }
+        writeRender(File(folder, "$name.png"), rule.onRoot().captureRender(scenario).asAndroidBitmap())
     }
 
     @Test

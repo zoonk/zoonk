@@ -2,7 +2,7 @@
 
 import { type MindMapAllowanceStop } from "@zoonk/core/mind-maps/contract";
 import { useEffect, useEffectEvent, useState } from "react";
-import { type MindMapLimit, useLiveLimit } from "../_components/help-limit-notice";
+import { type MindMapLimit, received, useLiveLimit } from "../_components/help-limit-notice";
 import { usePoll } from "../_utils/use-poll";
 import { useReadOrder } from "../_utils/use-read-order";
 import { useRereadServed, useServedState } from "../_utils/use-served-state";
@@ -181,6 +181,7 @@ export function useMindMapsLibrary({
   const createAll = async () => {
     setBulk({ status: "sending", stop: null });
     const started = await actions.requestAll().catch(() => null);
+    const stop = started?.stop ? received(started.stop) : null;
 
     if (!started) {
       setBulk({ failedAt: order.now(), status: "unreachable", stop: null });
@@ -194,7 +195,7 @@ export function useMindMapsLibrary({
     await refresh().catch(() => null);
 
     // The offer can't foresee every refusal (a guest's shared day), so the answer's own reason shows.
-    setBulk({ status: "idle", stop: started.accepted.length === 0 ? started.stop : null });
+    setBulk({ status: "idle", stop: started.accepted.length === 0 ? stop : null });
   };
 
   return {

@@ -27,8 +27,6 @@
   "today_done_day_off": "449d36b73f37e0faa10223abfb0d85fad03946eef7d64443c6fee33b2a4de0a3",
   "today_earlier_lessons": "7662b7a719376feadc615d671582759906098ab957e19f3930ad6ca4adf207ea",
   "today_exam_choice_choose": "f00f538ae0d0895906ce1c25d3e9f7b9ad6c60adb7d27788b440da2a1efbd5ea",
-  "today_exam_choice_question": "d74505a93f02d385cf3bb599a5a98dbf9c1a06f300d5f3f66ed1b28ae55495dc",
-  "today_exam_choice_question_several": "7aac0173e21bae4cc172f4c782234290dc28ab607a29003c73005732b81994d0",
   "today_exam_in_days": "908cff2d5866f2b76e19c5bb503cace086df347b08a68e1168e6c63419cf2a2a",
   "today_exam_speaking": "2ca91b3e54745f3a937bdf0a39a3f497443480278d87a2937a88deda7e4880a6",
   "today_exam_speaking_detail": "cc8c483157a40a87f5eabf4b1af4882622947f3360fd7b484cb084f3d07cc630",
@@ -319,10 +317,6 @@
     <string name="today_noted">Not aldık.</string>
     <string name="today_undo">Geri al</string>
     <string name="today_notice_exam_choice">Sınav seçimi</string>
-    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
-    <string name="today_exam_choice_question">%1$s: hangisine gireceksin?</string>
-    <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
-    <string name="today_exam_choice_question_several">%1$s: Hangilerini seçeceksin?</string>
     <string name="today_exam_choice_choose">Seç</string>
     <string name="today_notice_plan_change">Önerilen değişiklik</string>
     <string name="today_plan_use_my_date">Tarihimi kullan</string>

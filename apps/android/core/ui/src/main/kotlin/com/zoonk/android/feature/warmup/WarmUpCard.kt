@@ -68,9 +68,11 @@ import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.components.GenerationFailureNotice
+import com.zoonk.android.ui.components.LayoutPart
 import com.zoonk.android.ui.components.MediaPending
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.focusMoveTarget
+import com.zoonk.android.ui.components.layoutPart
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
@@ -270,7 +272,13 @@ fun WaitContent(
             label = "wait view",
         ) { progressShown ->
             if (progressShown) {
-                Column(Modifier.focusMoveTarget(progressFocus).focusable().semantics { contentDescription = title }) { progress() }
+                Column(
+                    Modifier
+                        .layoutPart(LayoutPart.WAIT, LayoutPart.Part.Group, gap = WAIT_GAP)
+                        .focusMoveTarget(progressFocus)
+                        .focusable()
+                        .semantics { contentDescription = title },
+                ) { progress() }
             } else {
                 QuizCard(quiz, surface, hold, goalId)
             }
@@ -473,3 +481,9 @@ private fun Guess(
         Text(card.reveal, style = MaterialTheme.typography.bodyLarge)
     }
 }
+
+/**
+ * Main's `wait-content` (`gap-6`) between the wait's progress and what follows it, such as the first lesson's row.
+ * The layout capture holds this column to it; the column itself doesn't space its items yet.
+ */
+private val WAIT_GAP = 24.dp

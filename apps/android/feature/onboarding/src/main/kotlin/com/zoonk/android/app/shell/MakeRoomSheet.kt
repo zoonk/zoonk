@@ -22,7 +22,7 @@ import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.GoalMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -119,11 +119,12 @@ private fun ActiveGoalRow(
         headline = { Text(goal.displayName, Modifier.semantics { contentDescription = spoken }) },
         leading = { GoalMark(goal.displayName, goal.languageFlag) },
         trailing = {
-            Button(
+            OutlinedButton(
                 onClick = onPause,
                 modifier = Modifier.semantics { contentDescription = pauseGoal },
                 enabled = enabled,
                 busy = busy,
+                leadingIcon = { ButtonIcon(R.drawable.ic_pause) },
                 size = ButtonSize.Small,
             ) {
                 Text(stringResource(R.string.goal_switcher_pause))

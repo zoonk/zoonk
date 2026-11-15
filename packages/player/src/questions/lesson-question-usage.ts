@@ -1,4 +1,5 @@
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
+import { received } from "@zoonk/learn/help-limit";
 import { safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
 import { type LessonQuestionApiError } from "./lesson-question-api";
@@ -34,7 +35,7 @@ const usageErrorSchema = z.object({
 export type LessonQuestionUsageRefusal =
   | { kind: "signUpRequired" }
   | { kind: "slowDown"; retryAfterSeconds: number }
-  | ({ kind: "usageLimit" } & z.infer<typeof usageLimitSchema>);
+  | ({ kind: "usageLimit"; receivedAt?: number } & z.infer<typeof usageLimitSchema>);
 
 export function getUsageRefusal(body: unknown): LessonQuestionUsageRefusal | null {
   const parsed = usageErrorSchema.safeParse(body);
@@ -63,6 +64,10 @@ const REFUSAL_STATUSES = new Set([
 export async function getRefusalError(response: Response): Promise<LessonQuestionApiError> {
   const { data: body } = await safeAsync<unknown>(() => response.json());
   const usage = getUsageRefusal(body);
+
+  if (usage?.kind === "usageLimit") {
+    return received(usage);
+  }
 
   if (usage) {
     return usage;

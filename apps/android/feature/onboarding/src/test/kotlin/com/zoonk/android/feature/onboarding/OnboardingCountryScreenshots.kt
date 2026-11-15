@@ -31,6 +31,7 @@ import com.zoonk.android.feature.onboarding.setup.CountryStep
 import com.zoonk.android.feature.onboarding.start.FactEdits
 import com.zoonk.android.feature.onboarding.start.UnderstoodScreen
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.GoalContentCountry
@@ -182,6 +183,6 @@ class OnboardingCountryScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
     }
 }
