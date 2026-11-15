@@ -21,7 +21,7 @@ test.describe("Placement and the plan", () => {
   }) => {
     const goal = await createMappedGoal(noProgressUser.id);
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await page.getByRole("button", { exact: true, name: "Start the test" }).click();
 
     const question = page.getByRole("heading", { name: /^Question/u });
     await expect(question).toBeVisible();
@@ -99,7 +99,7 @@ test.describe("Placement and the plan", () => {
     const page = await openAs(browser, user);
     const release = await holdScripts(page);
     await page.goto(`/start/${goal.id}`, { waitUntil: "domcontentloaded" });
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await page.getByRole("button", { exact: true, name: "Start the test" }).click();
     await release();
 
     await expect(page).toHaveURL((url) => url.pathname === "/session");

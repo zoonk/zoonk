@@ -1,5 +1,8 @@
 import { isProfileQuestion } from "@zoonk/core/profile/questions/contract";
-import { type OnboardingStep } from "@zoonk/core/view-models/onboarding/contract";
+import {
+  type OnboardingStep,
+  QUESTIONS_THAT_ADD_QUESTIONS,
+} from "@zoonk/core/view-models/onboarding/contract";
 
 type ProgressInput = {
   current: OnboardingStep;
@@ -34,12 +37,20 @@ function getPlace<Step extends string>({
   return { current: order.indexOf(current), total: order.length };
 }
 
+/**
+ * No dashes until the count of questions left is known: an answer still to come could add one, and
+ * dashes would promise an end that moves.
+ */
 export function getSetupProgress({
   current,
   history,
   view,
 }: ProgressInput): { current: number; total: number } | null {
-  if (!isSetupQuestion(current)) {
+  const countKnown = ![current, ...view.steps].some((step) =>
+    QUESTIONS_THAT_ADD_QUESTIONS.includes(step),
+  );
+
+  if (!isSetupQuestion(current) || !countKnown) {
     return null;
   }
 
