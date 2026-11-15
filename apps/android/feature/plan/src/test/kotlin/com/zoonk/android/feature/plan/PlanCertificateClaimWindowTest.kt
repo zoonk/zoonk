@@ -4,6 +4,9 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -45,7 +48,10 @@ import java.net.URI
 import java.util.UUID
 import kotlin.time.Instant
 
-/** "Get your certificate" opens the certificate though the window changes width, both ways, while the claim is out. */
+/**
+ * "Get your certificate" opens the certificate though the window changes width, both ways, while the claim is out,
+ * and opens nothing once the learner left the Plan before it landed.
+ */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
 class PlanCertificateClaimWindowTest {
@@ -59,6 +65,36 @@ class PlanCertificateClaimWindowTest {
 
     @Test
     fun aClaimOutWhileTheWindowWidensAndNarrowsOpensItsCertificateOnce() {
+        val held = launchWithAHeldClaim()
+
+        rule.onNodeWithText("Get your certificate").performScrollTo().performClick()
+        RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
+        scenario.recreate()
+        RuntimeEnvironment.setQualifiers("w411dp-h891dp")
+        scenario.recreate()
+        held.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(AppRoute.Certificate(CODE), PlanClaimTest.navigator.currentRoute)
+    }
+
+    @Test
+    fun aClaimThatLandsAfterTheLearnerLeftThePlanOpensNothingOnTheirReturn() {
+        val held = launchWithAHeldClaim()
+
+        rule.onNodeWithText("Get your certificate").performScrollTo().performClick()
+        PlanClaimTest.visible = false
+        rule.waitForIdle()
+        held.complete(Unit)
+        rule.waitForIdle()
+        PlanClaimTest.visible = true
+        rule.waitForIdle()
+
+        assertEquals(AppRoute.Today, PlanClaimTest.navigator.currentRoute)
+    }
+
+    /** The Plan with a certificate to claim, its claim held until the returned call completes. */
+    private fun launchWithAHeldClaim(): CompletableDeferred<Unit> {
         val application = RuntimeEnvironment.getApplication()
         shadowOf(application.packageManager).addOrUpdateActivity(
             ActivityInfo().apply {
@@ -71,6 +107,7 @@ class PlanCertificateClaimWindowTest {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val summary = learnerSummary(kind = "exam", title = "ENEM")
         val page = PlanPageState(summary.goals.first(), plan(), summary)
+        PlanClaimTest.visible = true
         PlanClaimTest.app = AppContainer.preview(application)
         PlanClaimTest.page = page
         PlanClaimTest.viewModel = PlanViewModel(PlanStore(FakePlanApi(), cache), page.goal.id, PlanClaimTest.app.writingWaits)
@@ -83,16 +120,7 @@ class PlanCertificateClaimWindowTest {
             ),
         )
         scenario = ActivityScenario.launch(PlanClaimTestActivity::class.java)
-
-        rule.onNodeWithText("Get your certificate").performScrollTo().performClick()
-        RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
-        scenario.recreate()
-        RuntimeEnvironment.setQualifiers("w411dp-h891dp")
-        scenario.recreate()
-        held.complete(Unit)
-        rule.waitForIdle()
-
-        assertEquals(AppRoute.Certificate(CODE), PlanClaimTest.navigator.currentRoute)
+        return held
     }
 
     private class HeldClaims(
@@ -155,6 +183,8 @@ private const val CODE = "K7QF2M9XHD4P"
 
 /** What outlives [PlanClaimTestActivity]'s recreations, as the app's container and a navigation entry's view models do. */
 object PlanClaimTest {
+    /** False while the learner is away from the Plan, its entry and view models kept, as another tab keeps them. */
+    var visible by mutableStateOf(true)
     lateinit var app: AppContainer
     lateinit var page: PlanPageState
     lateinit var viewModel: PlanViewModel
@@ -179,7 +209,16 @@ class PlanClaimTestActivity : ComponentActivity() {
         setContent {
             ZoonkTheme {
                 PlanClaimTest.navigator = rememberAppNavigator()
-                PlanPage(page, PlanClaimTest.app, PlanClaimTest.navigator, PlanClaimTest.viewModel, PlanClaimTest.farTopics, focus = null)
+                if (PlanClaimTest.visible) {
+                    PlanPage(
+                        page,
+                        PlanClaimTest.app,
+                        PlanClaimTest.navigator,
+                        PlanClaimTest.viewModel,
+                        PlanClaimTest.farTopics,
+                        focus = null,
+                    )
+                }
             }
         }
     }

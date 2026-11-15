@@ -21,7 +21,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -49,6 +48,8 @@ import com.zoonk.android.feature.language.AlphabetRow
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.CollectForVisit
+import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
@@ -190,8 +191,9 @@ internal fun PlanPage(
         navigator.open(codes.singleOrNull()?.let { AppRoute.Certificate(it) } ?: AppRoute.Certificates)
     }
     // The claim's result reaches the screen shown when it lands, though a layout change composed it anew meanwhile.
-    val currentOpen by rememberUpdatedState(openCertificates)
-    LaunchedEffect(claim) { claim.opened.collect { currentOpen(it) } }
+    CollectForVisit(claim.opened, openCertificates)
+    // A certificate's moment belongs to the visit that claimed it, as its opening does.
+    OnVisitEnd(claim, onEnd = claim::closeMoment)
     val focusTest = page.plan.focusTest
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME || focus == ADJUST_CHOICES) }
     var editingAt by rememberSaveable {
