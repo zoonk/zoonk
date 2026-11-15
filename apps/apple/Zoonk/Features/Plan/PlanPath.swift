@@ -492,12 +492,17 @@ struct PlanSyllabusSection: View {
   var body: some View {
     let isExam = goalKind == .exam
 
-    // Main's order: the focus test and the plan's choices above the subjects, not among them, since
-    // neither is a subject with a preparation.
-    if focusTest != nil || choices.contains(where: { $0.followingLine != nil }) {
+    // Main's order: the focus test, then the plan's choices, above the subjects and not among them,
+    // since neither is a subject with a preparation. Each is its own group: a row with a mark and a
+    // sentence don't share one label edge.
+    if let focusTest {
       Section {
         focusTest
+      }
+    }
 
+    if choices.contains(where: { $0.followingLine != nil }) {
+      Section {
         ForEach(choices) { choice in
           if let line = choice.followingLine {
             PlanChoiceLine(line: line) { change(choice.group) }
