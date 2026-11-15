@@ -89,8 +89,12 @@ export function LessonScreen({
         </div>
 
         <div className="flex max-w-prose flex-col gap-3 text-sm leading-6">
-          {step.word ? <p>{step.word.word}</p> : null}
-          {step.sentence ? <p>{step.sentence.sentence}</p> : null}
+          {step.word && (step.kind === "vocabulary" || step.kind === "translation") ? (
+            <p>{step.word.word}</p>
+          ) : null}
+          {step.sentence && (step.kind === "reading" || step.kind === "listening") ? (
+            <p>{step.sentence.sentence}</p>
+          ) : null}
           <ContentWords content={step.content} />
         </div>
 
