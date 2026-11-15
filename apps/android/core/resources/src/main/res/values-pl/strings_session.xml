@@ -42,7 +42,7 @@
   "session_next_start_title": "43cdbcad2d4d6d7037b191e3c80e0aa021fe0e0c2e601776526a9d5ae693c5c2",
   "session_next_stop": "21f3f4f3a46f2a7f481827b819338e792d75081020f34d165fc4f875db12ba52",
   "session_next_stop_failed": "3448f47a16398cca5c75d4d84b65a1109526fe889f3d7563987c25948abc45a4",
-  "session_next_writing_note": "b6d5260c0f321452913bde204e3f775d981188fcb13c63b154573158a522ac94",
+  "session_next_writing_note": "877f79292eea754ba7c5b1296302f35300bd152209afff459a79b0b95f5090d9",
   "session_no_catch_up_left": "111ab7b1fbd4c40076e089f6ea543fd38c10d07b04883cd067345d433af8f09d",
   "session_opening_slow": "4b6f50356710d35c756a2a9ce21d829ff9330da21f1cc01b9d011c83b67c0a40",
   "session_opening_very_slow": "e5426a44182d4879e9e8a8fc1e1d3166698eb68cf2c79947aceb2213d4fd576c",
@@ -216,7 +216,7 @@
     <string name="session_review_intro_weakest_title">Najtrudniejsze dla ciebie tematy na dziś</string>
     <string name="session_review_intro_weakest">Na razie wszystko dobrze pamiętasz, więc ćwiczysz to, co dotąd sprawiało ci najwięcej trudności.</string>
     <string name="session_review_intro_first_week">Kilka krótkich pytań, żeby sprawdzić, co już wiesz.</string>
-    <string name="session_next_writing_note">To potrwa kilka minut.</string>
+    <string name="session_next_writing_note">Zwykle przygotowujemy lekcję w kilka minut.</string>
     <string name="session_next_lesson_ready">Twoja lekcja jest gotowa.</string>
     <string name="session_next_stop">Zakończ na dziś</string>
     <string name="session_next_stop_failed">Nie udało się zakończyć nauki. Spróbuj ponownie.</string>

@@ -41,12 +41,15 @@ import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.LearningProfileStore
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.AccountFailure
 import com.zoonk.android.feature.subscription.deletionPlusNotices
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
@@ -61,13 +64,18 @@ import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.scaffold.PageScaffold
 import kotlinx.coroutines.launch
 
-/** A switch that didn't save is put back, and says so in the app's snackbars, which a recreated window still shows. */
+/** A switch that didn't save is put back, and the page says so in the app's snackbars, on the visit that flipped it. */
 class PrivacyViewModel(
     private val profile: LearningProfileStore,
-    private val snackbars: AppSnackbars,
 ) : ViewModel() {
+    val visit = Visit()
+
+    /** A switch that didn't save on this visit. */
+    val saveFailed = visit.outcome<Unit>()
+
     fun setShareUsageData(share: Boolean) {
-        viewModelScope.launch { if (!profile.setShareUsageData(share)) snackbars.show(R.string.settings_preferences_save_failed) }
+        val started = visit.number
+        viewModelScope.launch { if (!profile.setShareUsageData(share)) saveFailed.send(started, Unit) }
     }
 }
 
@@ -84,7 +92,9 @@ fun PrivacyScreen(
     val signedIn = (session as? SessionState.SignedIn)?.takeUnless { it.isGuest }
     val profile by app.learningProfile.profile.collectShown()
     val summary by app.learnerSummary.summary.collectShown()
-    val privacy = viewModel { PrivacyViewModel(app.learningProfile, app.snackbars) }
+    val privacy = viewModel { PrivacyViewModel(app.learningProfile) }
+    VisitOf(privacy.visit)
+    ActOn(privacy.saveFailed) { app.snackbars.show(R.string.settings_preferences_save_failed) }
     val scope = rememberCoroutineScope()
 
     PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.settings_privacy)) }) { padding ->
@@ -137,14 +147,15 @@ private fun YourData(
     navigator: AppNavigator,
     signedIn: SessionState.SignedIn,
 ) {
+    val files = LocalContext.current.applicationContext.contentResolver
     val data =
         viewModel(key = "your-data:${signedIn.session.localId}") {
-            YourDataViewModel(app.account, signedIn.session, signedIn.account.user.email)
+            YourDataViewModel(app.account, signedIn.session, signedIn.account.user.email, files::openOutputStream)
         }
-    val context = LocalContext.current
+    VisitOf(data.visit)
     val export =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-            if (uri != null) data.export { context.contentResolver.openOutputStream(uri) }
+            if (uri != null) data.export(uri)
         }
 
     SettingsSection(stringResource(R.string.settings_your_data)) {

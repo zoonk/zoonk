@@ -29,19 +29,23 @@ class PlanSheetsTest {
     @get:Rule
     val compose = createAndroidComposeRule<ComponentActivity>()
 
-    private var answer: (PlanChangeResult?) -> Unit = {}
+    private var asker: PlanAsker? = null
     private var done = 0
     private val sheetAnswers = mutableStateMapOf<UUID, PlanChangeResult?>()
     private var open by mutableStateOf(true)
+
+    /** The view model's answer to the sheet that asked. */
+    private fun answer(result: PlanChangeResult?) {
+        sheetAnswers[(asker as PlanAsker.Sheet).opening] = result
+    }
 
     private fun focus() {
         val plan = coveragePlan(areas = "[${area("Algebra", focused = true)},${area("Geometry")}]")
         val page = learnerSummary().let { PlanPageState(it.goals.first(), plan, it) }
         val edits =
             PlanEdits(
-                change = { _, _, answered -> answer = answered },
+                change = { _, _, asked -> asker = asked },
                 sheetAnswers = sheetAnswers,
-                answerSheet = { opening, result -> sheetAnswers[opening] = result },
             )
         compose.setContent {
             ZoonkTheme { Column { if (open) ChooseFocusBody(page, edits, onFocusTest = {}, onDone = { done++ }) } }

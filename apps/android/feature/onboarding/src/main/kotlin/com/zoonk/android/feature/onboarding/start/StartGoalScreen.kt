@@ -58,6 +58,8 @@ import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.GoalBox
@@ -125,6 +127,13 @@ fun StartGoalScreen(
                 navigator.open(AppRoute.Explain(goalId))
             },
         )
+    VisitOf(vm.visit)
+    ActOn(vm.created) {
+        when (it.opens) {
+            GoalOpens.Setup -> actions.toSetup(it.id)
+            GoalOpens.Explanation -> actions.toExplanation(it.id)
+        }
+    }
     val backInFlow: (() -> Unit)? =
         when (screen) {
             StartScreen.Questions -> {
@@ -359,7 +368,7 @@ private fun ColumnScope.DraftContent(
 
     LaunchedEffect(draft.id, draft.status, draft.generationId) { vm.follow(draft) }
     LaunchedEffect(draft.id, draft.status) {
-        vm.settle(draft, explanation = { read, question -> explanationInput(read, question, language) }, onCreated = actions.toExplanation)
+        vm.settle(draft) { read, question -> explanationInput(read, question, language) }
     }
     LaunchedEffect(draft.activeGoalsLeft) { vm.readRoom(draft.activeGoalsLeft) }
 
@@ -455,7 +464,6 @@ private fun ColumnScope.DraftContent(
                             flow.intent.takeIf { flow.attached.isNotEmpty() },
                             flow.attached.map { it.id },
                         ),
-                        onCreated = actions.toSetup,
                     )
                 },
                 edits = FactEdits(vm.editing, vm.savingEdit, vm.failedEdit, vm::edit, vm::revise),
@@ -472,7 +480,7 @@ private fun ColumnScope.DraftContent(
                 question = understanding.value.question,
                 isStarting = vm.isOpeningExplanation(draft) || rereading,
                 error = vm.creationError,
-                onStart = { vm.create(explanationInput(draft, understanding.value.question, language), actions.toExplanation) },
+                onStart = { vm.create(explanationInput(draft, understanding.value.question, language), GoalOpens.Explanation) },
                 onCreateAccount = actions.createAccount,
                 onOpenPlan = actions.openPlan,
                 onSubscribe = actions.subscribe,
@@ -490,7 +498,7 @@ private fun ColumnScope.DraftContent(
                 error = vm.creationError,
                 waitlist = vm.waitlist,
                 isJoining = vm.isJoining,
-                onStartMusicianship = { vm.create(musicianshipInput(draft, instrument, title, subject, language), actions.toSetup) },
+                onStartMusicianship = { vm.create(musicianshipInput(draft, instrument, title, subject, language), GoalOpens.Setup) },
                 onJoinWaitlist = { vm.joinWaitlist(instrument, language) },
                 onCreateAccount = actions.createAccount,
                 onOpenPlan = actions.openPlan,

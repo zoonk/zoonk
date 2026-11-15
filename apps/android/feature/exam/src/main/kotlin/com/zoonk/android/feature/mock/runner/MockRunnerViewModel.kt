@@ -8,6 +8,7 @@ import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionSource
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.WritingWaits
 import com.zoonk.android.data.Written
 import com.zoonk.android.data.recode
@@ -26,6 +27,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -201,12 +203,30 @@ class MockRunnerViewModel(
 
     fun retrySaves() = queue.retryNow()
 
-    /** Leaving waits at most a few seconds for answers going out, so the close action always leaves, even offline. */
-    suspend fun leave() {
-        run.value.question?.let { leaveQuestion(it.itemId) }
-        saveText()
-        queue.retryNow()
-        withTimeoutOrNull(LEAVE_WAIT) { queue.idle() }
+    private var leavingOn: Int? = null
+
+    /** This visit to the mock: [leave]'s close shows only on it. */
+    val visit = Visit()
+
+    /** [leave]'s close, once its answers went out, while the visit that asked lasts. */
+    val closed = visit.outcome<Unit>()
+
+    /**
+     * Leaving waits at most a few seconds for answers going out, so the close action always leaves, even offline.
+     * Pressed again while they go out, it still closes only the mock; a visit that ended before they went out closes
+     * nothing, and the next one can leave again.
+     */
+    fun leave() {
+        val started = visit.number
+        if (leavingOn == started) return
+        leavingOn = started
+        viewModelScope.launch {
+            run.value.question?.let { leaveQuestion(it.itemId) }
+            saveText()
+            queue.retryNow()
+            withTimeoutOrNull(LEAVE_WAIT) { queue.idle() }
+            closed.send(started, Unit)
+        }
     }
 
     /**

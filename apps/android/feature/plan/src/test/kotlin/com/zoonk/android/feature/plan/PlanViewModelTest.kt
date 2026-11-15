@@ -6,6 +6,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.HeldRuns
+import com.zoonk.android.data.VisitOutcome
 import com.zoonk.android.data.WritingRuns
 import com.zoonk.android.data.writingWaits
 import com.zoonk.api.ApiJson
@@ -47,6 +48,9 @@ class PlanViewModelTest {
     private val api = FakePlanApi()
     private val runs = WritingRuns(write = "writeSetupLessons", ready = "setupLessonsReady")
     private val goalId = UUID.fromString(GOAL)
+
+    /** The sheet opening a save answers. */
+    private val opening = UUID.randomUUID()
     private lateinit var store: PlanStore
     private lateinit var viewModel: PlanViewModel
 
@@ -67,8 +71,32 @@ class PlanViewModelTest {
             viewModel.setStatus(LearnerSummaryGoal.Status.ARCHIVED)
 
             assertEquals(listOf(LearnerSummaryGoal.Status.ARCHIVED), api.statuses)
-            assertEquals(PlanEvent.Archived, viewModel.events.first())
+            assertEquals(PlanEvent.Archived, viewModel.event.value)
             assertFalse(viewModel.isSaving.value)
+        }
+
+    @Test
+    fun anArchiveThatSavedBeforeThePlanActedAndThenLeftLeavesNothingToDoOnReturn() =
+        runTest {
+            viewModel.setStatus(LearnerSummaryGoal.Status.ARCHIVED)
+            viewModel.visit.end()
+
+            assertEquals(listOf(LearnerSummaryGoal.Status.ARCHIVED), api.statuses)
+            assertNull(viewModel.event.value)
+        }
+
+    @Test
+    fun anArchiveThatSavesAfterThePlanLeftLeavesNothingToDoOnReturn() =
+        runTest {
+            val held = CompletableDeferred<Unit>()
+            api.statusGate = held
+
+            viewModel.setStatus(LearnerSummaryGoal.Status.ARCHIVED)
+            viewModel.visit.end()
+            held.complete(Unit)
+
+            assertEquals(listOf(LearnerSummaryGoal.Status.ARCHIVED), api.statuses)
+            assertNull(viewModel.event.value)
         }
 
     @Test
@@ -84,13 +112,11 @@ class PlanViewModelTest {
     @Test
     fun anyOtherFailureSaysItDidntSave() =
         runTest {
-            var failures = 0
-            val viewModel = PlanViewModel(store, goalId, writingWaits(runs)) { failures++ }
             api.statusFailure = ApiException(ApiError.Network)
 
             viewModel.setStatus(LearnerSummaryGoal.Status.PAUSED)
 
-            assertEquals(1, failures)
+            assertEquals(Unit, viewModel.outcomes.saveFailed.value)
         }
 
     @Test
@@ -153,14 +179,12 @@ class PlanViewModelTest {
     @Test
     fun aFitOfferThatDidntSaveSaysSoInTheAppsSnackbars() =
         runTest {
-            var failures = 0
-            val viewModel = PlanViewModel(store, goalId, writingWaits(runs)) { failures++ }
             api.changeFailure = ApiException(ApiError.Network)
             val offer = FIT_PLAN.fitOffer!!.copy(canApply = true)
 
             viewModel.addFitOffer(FIT_PLAN, offer)
 
-            assertEquals(1, failures)
+            assertEquals(Unit, viewModel.outcomes.saveFailed.value)
         }
 
     private fun checked(effect: PlanEffect) =
@@ -169,12 +193,15 @@ class PlanViewModelTest {
     @Test
     fun aChangeAnswersOnceThePlanShownIsReadAgain() =
         runTest {
-            var readsWhenAnswered = -1
+            val read = CompletableDeferred<Unit>().also { api.planGate = it }
 
-            viewModel.change(PlanPart.Schedule, listOf(PlanOp.DailyMinutes(45))) { readsWhenAnswered = api.plans }
-
+            viewModel.change(PlanPart.Schedule, listOf(PlanOp.DailyMinutes(45)), PlanAsker.Sheet(opening))
             assertEquals(listOf(listOf<PlanOp>(PlanOp.DailyMinutes(45))), api.changes)
-            assertEquals(1, readsWhenAnswered)
+            assertTrue(viewModel.sheetAnswers.value.isEmpty())
+            read.complete(Unit)
+
+            assertEquals(1, api.plans)
+            assertEquals(PlanChangeResult.Status.APPLIED, viewModel.sheetAnswers.value[opening]?.status)
             assertEquals(
                 CHANGE_ID,
                 viewModel.latest.value
@@ -189,11 +216,10 @@ class PlanViewModelTest {
     fun aChangeThatDidntSaveFailsOnlyItsOwnPart() =
         runTest {
             api.changeFailure = ApiException(ApiError.Network)
-            val answers = mutableListOf<PlanChangeResult?>()
 
-            viewModel.change(PlanPart.Steering, listOf(PlanOp.DifficultyBias("harder"))) { answers += it }
+            viewModel.change(PlanPart.Steering, listOf(PlanOp.DifficultyBias("harder")), PlanAsker.Sheet(opening))
 
-            assertEquals(listOf<PlanChangeResult?>(null), answers)
+            assertEquals(mapOf(opening to null), viewModel.sheetAnswers.value)
             assertEquals(setOf(PlanPart.Steering), viewModel.failed.value)
             assertNull(viewModel.latest.value)
             assertEquals(0, api.plans)
@@ -245,12 +271,11 @@ class PlanViewModelTest {
         runTest {
             withContext(Dispatchers.Main) { store.plan[goalId].load() }
             api.planFailure = ApiException(ApiError.Network)
-            val answers = mutableListOf<PlanChangeResult?>()
 
-            viewModel.change(PlanPart.Writing, listOf(PlanOp.WrittenCadence("biweekly"))) { answers += it }
+            viewModel.change(PlanPart.Writing, listOf(PlanOp.WrittenCadence("biweekly")), PlanAsker.Sheet(opening))
 
             assertEquals(setOf(PlanPart.Writing), viewModel.failed.value)
-            assertEquals(listOf<PlanChangeResult?>(null), answers)
+            assertEquals(mapOf(opening to null), viewModel.sheetAnswers.value)
             assertEquals(emptyMap<PlanPart, List<PlanOp>>(), viewModel.asked.value)
             assertEquals(emptySet<PlanPart>(), viewModel.pending.value)
             assertNull(viewModel.latest.value)
@@ -297,12 +322,11 @@ class PlanViewModelTest {
     fun aSessionThatEndsBeforeThePlanIsReadAgainShowsNothing() =
         runTest {
             api.planFailure = ApiException(ApiError.Unauthorized)
-            val answers = mutableListOf<PlanChangeResult?>()
 
-            viewModel.change(PlanPart.Schedule, listOf(PlanOp.DailyMinutes(45))) { answers += it }
+            viewModel.change(PlanPart.Schedule, listOf(PlanOp.DailyMinutes(45)), PlanAsker.Sheet(opening))
 
             assertNull(viewModel.latest.value)
-            assertEquals(emptyList<PlanChangeResult?>(), answers)
+            assertEquals(emptyMap<UUID, PlanChangeResult?>(), viewModel.sheetAnswers.value)
             assertEquals(emptyMap<PlanPart, List<PlanOp>>(), viewModel.asked.value)
         }
 
@@ -310,16 +334,17 @@ class PlanViewModelTest {
     fun aTapWhileTheTimeIsBeingFoundJoinsTheSameSearch() =
         runTest {
             val plan = shown()
-            val outcomes = mutableListOf<TimeToCoverOutcome>()
             api.timeToCoverGate = CompletableDeferred()
 
-            viewModel.findTimeToCover(plan) { outcomes += it }
-            viewModel.findTimeToCover(plan) { outcomes += it }
+            viewModel.findTimeToCover(plan, TimeAsker.MoveDate)
+            viewModel.findTimeToCover(plan, TimeAsker.Coverage(CoverageIntent.Time))
             assertEquals(TimeToCoverState.Pending(planAdviceRevision(plan)), viewModel.timeToCover.value)
             api.timeToCoverGate?.complete(Unit)
 
+            val answered = TimeToCoverOutcome.Answered(api.timeToCover)
             assertEquals(1, api.timeToCoverRequests)
-            assertEquals(List(2) { TimeToCoverOutcome.Answered(api.timeToCover) }, outcomes)
+            assertEquals(answered, actOnMoveDate())
+            assertEquals(TimeFound(CoverageIntent.Time, answered), viewModel.outcomes.coverageFound.value)
             assertEquals(TimeToCoverState.Answered(planAdviceRevision(plan), api.timeToCover), viewModel.timeToCover.value)
         }
 
@@ -327,27 +352,26 @@ class PlanViewModelTest {
     fun aTimeFoundIsGivenAgainWithoutPlanningTheGoalAgain() =
         runTest {
             val plan = shown()
-            val outcomes = mutableListOf<TimeToCoverOutcome>()
 
-            viewModel.findTimeToCover(plan) { outcomes += it }
-            viewModel.findTimeToCover(plan) { outcomes += it }
+            viewModel.findTimeToCover(plan, TimeAsker.MoveDate)
+            val first = actOnMoveDate()
+            viewModel.findTimeToCover(plan, TimeAsker.MoveDate)
 
             assertEquals(1, api.timeToCoverRequests)
-            assertEquals(List(2) { TimeToCoverOutcome.Answered(api.timeToCover) }, outcomes)
+            assertEquals(List(2) { TimeToCoverOutcome.Answered(api.timeToCover) }, listOf(first, actOnMoveDate()))
         }
 
     @Test
     fun aPlanReplannedWhileTheTimeIsFoundGetsNoAnswer() =
         runTest {
             val plan = shown()
-            val outcomes = mutableListOf<TimeToCoverOutcome>()
             api.timeToCoverGate = CompletableDeferred()
 
-            viewModel.findTimeToCover(plan) { outcomes += it }
+            viewModel.findTimeToCover(plan, TimeAsker.MoveDate)
             val replanned = shown(coveragePlan(coreFits = false))
             api.timeToCoverGate?.complete(Unit)
 
-            assertEquals(listOf<TimeToCoverOutcome>(TimeToCoverOutcome.Stale), outcomes)
+            assertEquals(TimeToCoverOutcome.Stale, actOnMoveDate())
             assertEquals(TimeToCoverState.Idle, viewModel.timeToCover.value.forPlan(replanned))
         }
 
@@ -355,16 +379,48 @@ class PlanViewModelTest {
     fun aPlanStillBeingBuiltLetsTheLearnerAskAgain() =
         runTest {
             val plan = shown()
-            val outcomes = mutableListOf<TimeToCoverOutcome>()
             api.timeToCover = timeToCover(ready = false)
 
-            viewModel.findTimeToCover(plan) { outcomes += it }
+            viewModel.findTimeToCover(plan, TimeAsker.MoveDate)
             assertEquals(TimeToCoverState.Building(planAdviceRevision(plan)), viewModel.timeToCover.value)
-            viewModel.findTimeToCover(plan) { outcomes += it }
+            val first = actOnMoveDate()
+            viewModel.findTimeToCover(plan, TimeAsker.MoveDate)
 
             assertEquals(2, api.timeToCoverRequests)
-            assertEquals(List(2) { TimeToCoverOutcome.Building }, outcomes)
+            assertEquals(List(2) { TimeToCoverOutcome.Building }, listOf(first, actOnMoveDate()))
         }
+
+    @Test
+    fun aTimeFoundWhileThePlanIsRecreatedIsActedOnOnce() =
+        runTest {
+            val plan = shown()
+            api.timeToCoverGate = CompletableDeferred()
+
+            // No frame acts while the search is out, as when the window is recreated.
+            viewModel.findTimeToCover(plan, TimeAsker.PastDate(request = 2))
+            api.timeToCoverGate?.complete(Unit)
+
+            assertEquals(TimeFound(2, TimeToCoverOutcome.Answered(api.timeToCover)), actOnPastDate())
+            assertNull(actOnPastDate())
+        }
+
+    @Test
+    fun aTimeFoundAfterThePlanLeftIsActedOnByNothingOnReturn() =
+        runTest {
+            val plan = shown()
+            api.timeToCoverGate = CompletableDeferred()
+
+            viewModel.findTimeToCover(plan, TimeAsker.PastDate(request = 2))
+            viewModel.visit.end()
+            api.timeToCoverGate?.complete(Unit)
+
+            assertNull(actOnPastDate())
+            assertEquals(TimeToCoverState.Answered(planAdviceRevision(plan), api.timeToCover), viewModel.timeToCover.value)
+        }
+
+    private fun actOnMoveDate() = actOn(viewModel.outcomes.moveDateFound)
+
+    private fun actOnPastDate() = actOn(viewModel.outcomes.pastDateFound)
 
     @Test
     fun aSearchThatFailedSaysSoAndSavesNothing() =
@@ -494,13 +550,15 @@ class PlanViewModelTest {
     @Test
     fun anExamChoiceShowsItsChangeOnceThePlanShownHasIt() =
         runTest {
-            var readsWhenAnswered = -1
+            val read = CompletableDeferred<Unit>().also { api.planGate = it }
 
-            viewModel.chooseExamOption("Foreign language", listOf("Spanish")) { readsWhenAnswered = api.plans }
+            viewModel.chooseExamOption("Foreign language", listOf("Spanish"), PlanAsker.Sheet(opening))
+            assertTrue(viewModel.sheetAnswers.value.isEmpty())
+            read.complete(Unit)
 
             assertEquals(listOf("Foreign language" to listOf("Spanish")), api.examChoices)
             assertEquals(emptyMap<PlanPart, List<PlanOp>>(), viewModel.asked.value)
-            assertEquals(1, readsWhenAnswered)
+            assertEquals(PlanChangeResult.Status.APPLIED, viewModel.sheetAnswers.value[opening]?.status)
             assertEquals(
                 CHANGE_ID,
                 viewModel.latest.value
@@ -516,30 +574,49 @@ class PlanViewModelTest {
             val held = HeldRuns(first = "writeSetupLessons", ready = "setupLessonsReady")
             viewModel = PlanViewModel(store, goalId, writingWaits(held))
             api.setupWritings += "run-1"
-            val answers = mutableListOf<PlanChangeResult?>()
             val answer = ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS)
 
-            viewModel.chooseTools(answer) { answers += it }
+            viewModel.chooseTools(answer, PlanAsker.Sheet(opening))
             assertEquals("run-1", viewModel.setupLessons.generationId.value)
             assertEquals(emptySet<PlanPart>(), viewModel.pending.value)
-            assertEquals(emptyList<PlanChangeResult?>(), answers)
+            assertEquals(emptyMap<UUID, PlanChangeResult?>(), viewModel.sheetAnswers.value)
 
             held.write()
             assertEquals(listOf(answer, answer), api.toolAnswers)
-            assertEquals(PlanChangeResult.Status.APPLIED, answers.single()?.status)
+            assertEquals(
+                PlanChangeResult.Status.APPLIED,
+                viewModel.sheetAnswers.value
+                    .getValue(opening)
+                    ?.status,
+            )
             assertNull(viewModel.setupLessons.generationId.value)
+        }
+
+    @Test
+    fun aToolChoiceWhoseSetupLessonIsWrittenAfterThePlanLeftShowsNothingOnReturn() =
+        runTest {
+            val held = HeldRuns(first = "writeSetupLessons", ready = "setupLessonsReady")
+            viewModel = PlanViewModel(store, goalId, writingWaits(held))
+            api.setupWritings += "run-1"
+            val answer = ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS)
+
+            viewModel.chooseTools(answer, PlanAsker.Sheet(opening))
+            viewModel.visit.end()
+            held.write()
+
+            assertEquals(listOf(answer, answer), api.toolAnswers)
+            assertEquals(emptyMap<UUID, PlanChangeResult?>(), viewModel.sheetAnswers.value)
         }
 
     @Test
     fun aSetupLessonStillUnwrittenAfterItsRunFailsTheTools() =
         runTest {
             api.setupWritings += listOf("run-1", "run-2")
-            val answers = mutableListOf<PlanChangeResult?>()
 
-            viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS)) { answers += it }
+            viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS), PlanAsker.Sheet(opening))
 
             assertEquals(2, api.toolAnswers.size)
-            assertEquals(listOf<PlanChangeResult?>(null), answers)
+            assertEquals(mapOf(opening to null), viewModel.sheetAnswers.value)
             assertEquals(setOf(PlanPart.Tools), viewModel.failed.value)
             assertNull(viewModel.setupLessons.generationId.value)
         }
@@ -550,14 +627,13 @@ class PlanViewModelTest {
             val held = HeldRuns(first = "writeSetupLessons", ready = "setupLessonsReady")
             viewModel = PlanViewModel(store, goalId, writingWaits(held))
             api.setupWritings += "run-1"
-            val answers = mutableListOf<PlanChangeResult?>()
 
-            viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS)) { answers += it }
+            viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS), PlanAsker.Sheet(opening))
             api.toolFailure = ApiException(ApiError.Unavailable, status = 502)
             held.write()
 
             assertNull(viewModel.setupLessons.generationId.value)
-            assertEquals(listOf<PlanChangeResult?>(null), answers)
+            assertEquals(mapOf(opening to null), viewModel.sheetAnswers.value)
             assertEquals(setOf(PlanPart.Tools), viewModel.failed.value)
         }
 
@@ -565,11 +641,10 @@ class PlanViewModelTest {
     fun aToolSetupThatDidntWorkFailsOnlyTheTools() =
         runTest {
             api.toolFailure = ApiException(ApiError.Unavailable, status = 502)
-            val answers = mutableListOf<PlanChangeResult?>()
 
-            viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS)) { answers += it }
+            viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS), PlanAsker.Sheet(opening))
 
-            assertEquals(listOf<PlanChangeResult?>(null), answers)
+            assertEquals(mapOf(opening to null), viewModel.sheetAnswers.value)
             assertEquals(setOf(PlanPart.Tools), viewModel.failed.value)
             assertEquals(emptySet<PlanPart>(), viewModel.pending.value)
             assertNull(viewModel.latest.value)
@@ -709,11 +784,247 @@ class PlanViewModelTest {
             val first = UUID.randomUUID()
             val saved = PlanChangeResult(change = planChange(), status = PlanChangeResult.Status.APPLIED)
 
-            viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.HAVE)) { viewModel.answerSheet(first, it) }
+            viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.HAVE), PlanAsker.Sheet(first))
 
             assertEquals(mapOf(first to saved), viewModel.sheetAnswers.value)
             viewModel.forgetLatest()
             assertEquals(emptyMap<UUID, PlanChangeResult?>(), viewModel.sheetAnswers.value)
+        }
+
+    @Test
+    fun anAimThatAppliesWhileThePlanIsRecreatedClosesItsPickerOnce() =
+        runTest {
+            // No frame acts while the save is out, as when the window is recreated.
+            viewModel.change(PlanPart.Aim, listOf(PlanOp.Aim("conversation")), PlanAsker.AimPicker)
+
+            assertEquals(Unit, actOn(viewModel.outcomes.aimPicked))
+            assertNull(actOn(viewModel.outcomes.aimPicked))
+        }
+
+    @Test
+    fun anAimThatAppliesAfterThePlanLeftClosesNothingOnReturn() =
+        runTest {
+            val aim = PlanOp.Aim("conversation")
+            val held = CompletableDeferred<Unit>().also { api.gates[aim] = it }
+
+            viewModel.change(PlanPart.Aim, listOf(aim), PlanAsker.AimPicker)
+            viewModel.visit.end()
+            held.complete(Unit)
+
+            assertEquals(listOf(listOf<PlanOp>(aim)), api.changes)
+            assertNull(actOn(viewModel.outcomes.aimPicked))
+        }
+
+    @Test
+    fun aMovedDateThatSavedBeforeThePlanActedAndThenLeftMovesNoFocusOnReturn() =
+        runTest {
+            viewModel.change(PlanPart.Schedule, listOf(PlanOp.TargetDate(LocalDate.parse("2027-06-12"))), PlanAsker.MoveDate)
+            viewModel.visit.end()
+
+            assertNull(actOn(viewModel.outcomes.dateMoved))
+        }
+
+    @Test
+    fun aSuggestionThatSavesAfterThePlanLeftShowsNoAnswerOnReturn() =
+        runTest {
+            val time = PlanOp.DailyMinutes(45)
+            val held = CompletableDeferred<Unit>().also { api.gates[time] = it }
+
+            viewModel.change(PlanPart.Suggestion, listOf(time), PlanAsker.Suggestion(SlotItem.Coverage))
+            viewModel.visit.end()
+            held.complete(Unit)
+
+            assertEquals(listOf(listOf<PlanOp>(time)), api.changes)
+            assertNull(viewModel.slotState.result)
+        }
+
+    @Test
+    fun aChangeThatFailsAfterThePlanLeftSaysNothingOnReturn() =
+        runTest {
+            val time = PlanOp.DailyMinutes(45)
+            val held = CompletableDeferred<Unit>().also { api.gates[time] = it }
+            api.changeFailure = ApiException(ApiError.Network)
+
+            viewModel.change(PlanPart.Schedule, listOf(time), PlanAsker.Sheet(opening))
+            viewModel.visit.end()
+            held.complete(Unit)
+
+            assertEquals(emptySet<PlanPart>(), viewModel.failed.value)
+            assertEquals(emptyMap<UUID, PlanChangeResult?>(), viewModel.sheetAnswers.value)
+        }
+
+    @Test
+    fun anExamChoiceThatSavesAfterThePlanLeftShowsNothingOnReturn() =
+        runTest {
+            val read = CompletableDeferred<Unit>().also { api.planGate = it }
+
+            viewModel.chooseExamOption("Foreign language", listOf("Spanish"), PlanAsker.Sheet(opening))
+            viewModel.visit.end()
+            read.complete(Unit)
+
+            assertEquals(listOf("Foreign language" to listOf("Spanish")), api.examChoices)
+            assertEquals(emptyMap<UUID, PlanChangeResult?>(), viewModel.sheetAnswers.value)
+        }
+
+    @Test
+    fun aCountrySavedWhileThePlanIsRecreatedClosesItsQuestionOnce() =
+        runTest {
+            viewModel.setRegion("MX")
+            viewModel.setContentCountry("PT")
+
+            assertEquals(Unit, actOn(viewModel.outcomes.regionSaved))
+            assertEquals(Unit, actOn(viewModel.outcomes.countrySaved))
+            assertNull(actOn(viewModel.outcomes.regionSaved))
+            assertNull(actOn(viewModel.outcomes.countrySaved))
+        }
+
+    @Test
+    fun aCountrySavedAfterThePlanLeftClosesNothingOnReturn() =
+        runTest {
+            val held = CompletableDeferred<Unit>().also { api.goalGate = it }
+
+            viewModel.setRegion("MX")
+            viewModel.setContentCountry("PT")
+            viewModel.visit.end()
+            held.complete(Unit)
+
+            assertNull(actOn(viewModel.outcomes.regionSaved))
+            assertNull(actOn(viewModel.outcomes.countrySaved))
+        }
+
+    @Test
+    fun aCountryThatFailsAfterThePlanLeftSaysNothingOnReturn() =
+        runTest {
+            val held = CompletableDeferred<Unit>().also { api.goalGate = it }
+            api.goalFailure = ApiException(ApiError.Network)
+
+            viewModel.setContentCountry("PT")
+            viewModel.visit.end()
+            held.complete(Unit)
+
+            assertEquals(emptySet<PlanPart>(), viewModel.failed.value)
+        }
+
+    /** What the frame acts on, then acknowledges, as `ActOn` does. */
+    private fun <T : Any> actOn(outcome: VisitOutcome<T>) = outcome.value?.also(outcome::acted)
+
+    @Test
+    fun anAimFromAnEarlierEditorOpeningClosesNoPickerInTheNext() =
+        runTest {
+            val aim = PlanOp.Aim("conversation")
+            val held = CompletableDeferred<Unit>().also { api.gates[aim] = it }
+
+            viewModel.change(PlanPart.Aim, listOf(aim), PlanAsker.AimPicker)
+            reopenEditor()
+            held.complete(Unit)
+
+            assertEquals(listOf(listOf<PlanOp>(aim)), api.changes)
+            assertNull(viewModel.outcomes.aimPicked.value)
+        }
+
+    @Test
+    fun aCountryFromAnEarlierEditorOpeningClosesNoPickerInTheNext() =
+        runTest {
+            val held = CompletableDeferred<Unit>().also { api.goalGate = it }
+
+            viewModel.setRegion("MX")
+            viewModel.setContentCountry("PT")
+            reopenEditor()
+            held.complete(Unit)
+
+            assertNull(viewModel.outcomes.regionSaved.value)
+            assertNull(viewModel.outcomes.countrySaved.value)
+        }
+
+    @Test
+    fun aDateMovedFromAnEarlierEditorOpeningMovesNoFocusInTheNext() =
+        runTest {
+            val plan = shown()
+            val date = PlanOp.TargetDate(LocalDate.parse("2027-06-12"))
+            val held = CompletableDeferred<Unit>().also { api.gates[date] = it }
+            api.timeToCoverGate = CompletableDeferred()
+
+            viewModel.change(PlanPart.Schedule, listOf(date), PlanAsker.MoveDate)
+            viewModel.findTimeToCover(plan, TimeAsker.MoveDate)
+            reopenEditor()
+            held.complete(Unit)
+            api.timeToCoverGate?.complete(Unit)
+
+            assertNull(viewModel.outcomes.dateMoved.value)
+            assertNull(viewModel.outcomes.moveDateFound.value)
+        }
+
+    /** The learner closes the editor, which ends its opening's visit (its `VisitOf`), and opens it again. */
+    private fun reopenEditor() {
+        viewModel.outcomes.editor.end()
+        viewModel.forgetLatest()
+    }
+
+    @Test
+    fun aFailureWhileThePlanIsRecreatedIsSaidOnce() =
+        runTest {
+            api.changeFailure = ApiException(ApiError.Network)
+
+            // No frame acts while the save is out, as when the window is recreated.
+            viewModel.change(PlanPart.FullCourse, listOf(PlanOp.FullCourse(true)), PlanAsker.SaysFailure)
+
+            assertEquals(Unit, actOn(viewModel.outcomes.saveFailed))
+            assertNull(actOn(viewModel.outcomes.saveFailed))
+        }
+
+    @Test
+    fun aFailureAfterThePlanLeftIsSaidNowhere() =
+        runTest {
+            val time = PlanOp.DailyMinutes(45)
+            val held = CompletableDeferred<Unit>().also { api.gates[time] = it }
+            api.changeFailure = ApiException(ApiError.Network)
+
+            viewModel.change(PlanPart.Schedule, listOf(time), PlanAsker.SaysFailure)
+            viewModel.visit.end()
+            held.complete(Unit)
+
+            assertNull(viewModel.outcomes.saveFailed.value)
+        }
+
+    @Test
+    fun aStatusThatFailsAfterThePlanLeftIsSaidNowhere() =
+        runTest {
+            val held = CompletableDeferred<Unit>()
+            api.statusGate = held
+            api.statusFailure = ApiException(ApiError.Network)
+
+            viewModel.setStatus(LearnerSummaryGoal.Status.PAUSED)
+            viewModel.visit.end()
+            held.complete(Unit)
+
+            assertNull(viewModel.outcomes.saveFailed.value)
+        }
+
+    @Test
+    fun aSearchWhoseSuggestionClosedBeforeItAnsweredOwesItNothing() =
+        runTest {
+            val plan = shown()
+            api.timeToCoverGate = CompletableDeferred()
+
+            viewModel.findTimeToCover(plan, TimeAsker.Coverage(CoverageIntent.Time))
+            viewModel.findTimeToCover(plan, TimeAsker.PastDate(request = 1))
+            viewModel.outcomes.suggestion.end()
+            api.timeToCoverGate?.complete(Unit)
+
+            assertNull(viewModel.outcomes.coverageFound.value)
+            assertNull(viewModel.outcomes.pastDateFound.value)
+            assertEquals(TimeToCoverState.Answered(planAdviceRevision(plan), api.timeToCover), viewModel.timeToCover.value)
+        }
+
+    @Test
+    fun aRegionFailureFromAnEarlierEditorOpeningMarksNothingInTheNext() =
+        runTest {
+            val held = CompletableDeferred<Unit>().also { api.goalGate = it }
+            api.goalFailure = ApiException(ApiError.Network)
+            viewModel.setRegion("MX")
+            reopenEditor()
+            held.complete(Unit)
+            assertFalse(viewModel.failed.value.contains(PlanPart.Region))
         }
 
     private companion object {

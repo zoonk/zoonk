@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.buddy
 
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,6 +66,8 @@ import com.zoonk.android.feature.tutor.rememberTutor
 import com.zoonk.android.feature.tutor.rememberTutorAccess
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.characters.Buddy
 import com.zoonk.android.ui.characters.BuddyAct
 import com.zoonk.android.ui.characters.BuddyActor
@@ -181,15 +181,13 @@ fun BuddyPage(
     }
     val taps = BuddyDayTaps(onMission, vm.opening, vm.openFailed)
     val earlier by app.earlierQuestions.questions.collectShown()
-    val activity = LocalActivity.current
 
-    DisposableEffect(vm, goalId) { onDispose { if (activity?.isChangingConfigurations != true) vm.endVisit() } }
-    LaunchedEffect(vm) {
-        vm.routes.collect {
-            dayOpen = false
-            navigator.open(it)
-        }
+    OnVisitEnd(vm, goalId, onEnd = vm::endVisit)
+    ActOn(vm.route) {
+        dayOpen = false
+        navigator.open(it)
     }
+    ActOn(vm.saved) { editing = false }
     LaunchedEffect(asking) {
         if (!asking) return@LaunchedEffect
         composer.requestFocus()
@@ -264,7 +262,7 @@ fun BuddyPage(
                 editing = false
                 vm.dismissSaveFailure()
             },
-            onSave = { kind, glasses, typed -> vm.save(kind, glasses, typed) { editing = false } },
+            onSave = vm::save,
         )
     }
 }
@@ -322,7 +320,7 @@ internal fun BuddyHeader(
  * don't, pulled back by its padding so its words start on the name's edge.
  */
 @Composable
-private fun NameAndLine(
+internal fun NameAndLine(
     modifier: Modifier,
     line: (@Composable () -> Unit)?,
     name: @Composable () -> Unit,
@@ -340,21 +338,21 @@ private fun NameAndLine(
         val day = measurables.getOrNull(1)?.measure(loose)
         when {
             day == null -> {
-                layout(constraints.constrainWidth(title.width), title.height) { title.place(0, 0) }
+                layout(constraints.constrainWidth(title.width), title.height) { title.placeRelative(0, 0) }
             }
 
             beside -> {
                 val height = maxOf(title.height, day.height)
                 layout(constraints.constrainWidth(title.width + gap + day.width), height) {
-                    title.place(0, (height - title.height) / 2)
-                    day.place(title.width + gap, (height - day.height) / 2)
+                    title.placeRelative(0, (height - title.height) / 2)
+                    day.placeRelative(title.width + gap, (height - day.height) / 2)
                 }
             }
 
             else -> {
                 layout(constraints.constrainWidth(maxOf(title.width, day.width)), title.height + day.height) {
-                    title.place(0, 0)
-                    day.place(-DAY_LINE_PADDING.roundToPx(), title.height)
+                    title.placeRelative(0, 0)
+                    day.placeRelative(-DAY_LINE_PADDING.roundToPx(), title.height)
                 }
             }
         }

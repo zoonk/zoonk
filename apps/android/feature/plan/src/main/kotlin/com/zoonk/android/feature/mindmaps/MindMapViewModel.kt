@@ -1,9 +1,11 @@
 package com.zoonk.android.feature.mindmaps
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -27,17 +29,26 @@ enum class CreateAll { Pending, Unreachable }
  * A screen's mind maps for one session: making one, or all of them, only from a tap, following one
  * while it's on its way (every 4 seconds while drawing, every 15 while its lessons are written,
  * giving up after three misses in a row; the server fails a run that stops reporting), saving a map
- * to study again, and saving a picture where the learner chose.
+ * to study again, and saving a picture where the learner chose ([files] opens it, from the application's content
+ * resolver).
  */
 class MindMapViewModel(
     private val store: MindMapStore,
     private val session: AuthenticatedSession,
     private val goalId: UUID,
     private val currentSession: () -> AuthenticatedSession?,
-    private val saveFailed: () -> Unit = {},
-    private val pictureSaved: (PictureSave) -> Unit = {},
+    private val files: (Uri) -> OutputStream? = { null },
     private val io: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
+    /** This visit to the screen that saves: what its saves lead to is said only on it. */
+    val visit = Visit()
+
+    /** A map's save that didn't, which the screen says in the app's snackbars. */
+    val saveFailed = visit.outcome<Unit>()
+
+    /** Whether a picture was written where the learner chose, which the screen says in the app's snackbars. */
+    val pictureSaved = visit.outcome<PictureSave>()
+
     private val locals = MutableStateFlow<Map<UUID, MindMapLocal>>(emptyMap())
     val requests: StateFlow<Map<UUID, MindMapLocal>> = locals.asStateFlow()
 
@@ -59,6 +70,9 @@ class MindMapViewModel(
     val saves: StateFlow<Map<MindMapTarget, Boolean>> = wanted.asStateFlow()
     private val sending = mutableSetOf<MindMapTarget>()
 
+    /** The visit of the tap each wanted save came from: a write that starts later still belongs to it. */
+    private val askedOn = mutableMapOf<MindMapTarget, Int>()
+
     /**
      * Shows [saved] at once and sends it. Taps while one is on its way only change what's wanted,
      * and the last one wanted is sent after it, so the server ends on the learner's last tap. A
@@ -70,15 +84,17 @@ class MindMapViewModel(
         saved: Boolean,
     ) {
         wanted.update { it + (target to saved) }
+        askedOn[target] = visit.number
         if (!sending.add(target)) return
 
         viewModelScope.launch {
             while (true) {
                 val sent = wanted.value[target] ?: break
+                val started = askedOn.getValue(target)
                 val result = store.save(goalId, target, chapterId, sent)
                 if (result !is MutationResult.Done) {
                     wanted.update { it - target }
-                    if (result is MutationResult.Failed) saveFailed()
+                    if (result is MutationResult.Failed) saveFailed.send(started, Unit)
                     break
                 }
                 if (wanted.value[target] == sent) {
@@ -87,6 +103,7 @@ class MindMapViewModel(
                 }
             }
             sending.remove(target)
+            askedOn.remove(target)
         }
     }
 
@@ -147,16 +164,20 @@ class MindMapViewModel(
         }
     }
 
-    /** Writes only for the session that asked, and says nothing once it ended. */
+    /**
+     * Writes to the file the learner picked at [to] only for the session that asked, and says nothing once it ended; what
+     * it wrote is said only on the visit that asked, though the file is written after the screen went too.
+     */
     fun savePicture(
         url: String,
-        open: () -> OutputStream?,
+        to: Uri,
     ) {
+        val started = visit.number
         viewModelScope.launch {
             val bytes = store.picture(session, url)
             if (!isCurrent) return@launch
-            val written = bytes != null && withContext(io) { isCurrent && write(open, bytes) }
-            if (isCurrent) pictureSaved(if (written) PictureSave.Saved else PictureSave.Failed)
+            val written = bytes != null && withContext(io) { isCurrent && write(to, bytes) }
+            if (isCurrent) pictureSaved.send(started, if (written) PictureSave.Saved else PictureSave.Failed)
         }
     }
 
@@ -165,11 +186,11 @@ class MindMapViewModel(
     override fun onCleared() = stopWatching()
 
     private fun write(
-        open: () -> OutputStream?,
+        to: Uri,
         bytes: ByteArray,
     ): Boolean =
         try {
-            open()?.use { it.write(bytes) } != null
+            files(to)?.use { it.write(bytes) } != null
         } catch (e: IOException) {
             false
         } catch (e: SecurityException) {

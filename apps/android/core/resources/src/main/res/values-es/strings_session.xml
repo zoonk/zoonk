@@ -42,7 +42,7 @@
   "session_next_start_title": "749b28854a432a593200239a37db956642d91ae43c4b879cfa079346aa10e1e5",
   "session_next_stop": "bf1cb4e583e2579e8ddd241e89d6fc104e966144ef6c363d89708f8ee96467be",
   "session_next_stop_failed": "b9282e85e20279ad51093694081298a7f3a9621efc85a59fb49b197fe64a8d76",
-  "session_next_writing_note": "71532810343582d4a79bc26a21fd51429a91e8f82c61bd46a5d4ad1bdb190f96",
+  "session_next_writing_note": "a1aaba750eaa695f387006069095b63b23b3ae6ff5e758ae84919c85f0cb1ece",
   "session_no_catch_up_left": "a60fcdc9124f8bef7d49d43f19d3686b123c68f7044e96066c259717e7d13571",
   "session_opening_slow": "c811d1d79512bddbfcb9454a09369afd262ba7c2e2035cce66902bc5e7c1e4df",
   "session_opening_very_slow": "7233b3958b298253de9f0be30b5be9d201e7c658c4d13b2eac03e2bbb8b1f98c",
@@ -209,7 +209,7 @@
     <string name="session_review_intro_weakest_title">Los temas que más te cuestan hoy</string>
     <string name="session_review_intro_weakest">No hay nada que estés a punto de olvidar, así que practicas lo que más te cuesta.</string>
     <string name="session_review_intro_first_week">Unas preguntas rápidas para comprobar lo que ya sabes.</string>
-    <string name="session_next_writing_note">Tarda unos minutos.</string>
+    <string name="session_next_writing_note">Tu lección suele estar lista en unos minutos.</string>
     <string name="session_next_lesson_ready">Tu lección está lista.</string>
     <string name="session_next_stop">Dejarlo por hoy</string>
     <string name="session_next_stop_failed">No pudimos detener la sesión. Inténtalo de nuevo.</string>

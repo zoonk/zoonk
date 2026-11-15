@@ -42,7 +42,7 @@
   "session_next_start_title": "c4a98b9f043f768dfd726894727bd5dbe7119c77fb40d556264793066a88de9b",
   "session_next_stop": "fc287d36ab301d3f7eb3a412ac486a19229145c145d44cbacf197f0a1de536bc",
   "session_next_stop_failed": "5ebef059b80687e427348e61c1095ae3d0819125e6d6c419390d0331a0d14dbb",
-  "session_next_writing_note": "57fe8b8740b0e5235f89c159ab047e9599cbcf8bdec3bed3ac2bfaf0e6d65d6a",
+  "session_next_writing_note": "c43ced4e684f9c8909f56e84e1e133ba32a2adfc24b9c0b5e1e1528189d0c31c",
   "session_no_catch_up_left": "061238ed81f768bd4b3dffa907c0fd68784231c3af2bc0e22b6adec959fb4b31",
   "session_opening_slow": "b8cce8b3e48a2581e50e48730313e0269e43065e40bf5f5991f2365baa698a8a",
   "session_opening_very_slow": "568ce72e3057f0884faab9cced37072d21a74c526c01ea1047d35f3e24165536",
@@ -209,7 +209,7 @@
     <string name="session_review_intro_weakest_title">Seus tópicos mais difíceis hoje</string>
     <string name="session_review_intro_weakest">Você ainda se lembra bem do que estudou, então pratica o que tem sido mais difícil para você.</string>
     <string name="session_review_intro_first_week">Algumas perguntas rápidas para ver o que você já sabe.</string>
-    <string name="session_next_writing_note">Leva alguns minutos.</string>
+    <string name="session_next_writing_note">Sua aula costuma ficar pronta em poucos minutos.</string>
     <string name="session_next_lesson_ready">Sua aula está pronta.</string>
     <string name="session_next_stop">Parar por hoje</string>
     <string name="session_next_stop_failed">Não foi possível parar a sessão. Tente de novo.</string>

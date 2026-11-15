@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -155,14 +156,36 @@ class SubscriptionStore(
 
     private val linking = mutableSetOf<String>()
 
+    /**
+     * A checkout still on its screen's visit, so Play's failure or cancel for it shows there; one that ended shows
+     * nothing. Play's update doesn't say which launch it answers (Billing Library 9's PurchasesUpdatedListener carries
+     * only a result and purchases), and a launch can never answer, which the reset on return to the foreground gives up
+     * on. So a first launch's late failure that arrives during a second checkout reads as the second's: the learner
+     * sees "the purchase failed" on the checkout they're looking at, and trying again works. No count or queue of
+     * launches can tell those two answers apart.
+     */
+    private var checkoutOnVisit = false
+
     init {
         scope.launch {
             billing.updates.collect { update ->
                 when (update) {
-                    is PlayPurchaseUpdate.Purchased -> fullAccount()?.let { link(it, update.purchaseToken) }
-                    PlayPurchaseUpdate.Pending -> mutablePurchase.value = PurchaseState.Pending
-                    PlayPurchaseUpdate.Canceled -> mutablePurchase.value = PurchaseState.Idle
-                    PlayPurchaseUpdate.Failed -> mutablePurchase.value = PurchaseState.PlayFailed
+                    is PlayPurchaseUpdate.Purchased -> {
+                        fullAccount()?.let { link(it, update.purchaseToken) }
+                    }
+
+                    PlayPurchaseUpdate.Pending -> {
+                        mutablePurchase.value = PurchaseState.Pending
+                    }
+
+                    PlayPurchaseUpdate.Canceled -> {
+                        mutablePurchase.value = PurchaseState.Idle
+                    }
+
+                    PlayPurchaseUpdate.Failed -> {
+                        mutablePurchase.value =
+                            if (checkoutOnVisit) PurchaseState.PlayFailed else PurchaseState.Idle
+                    }
                 }
             }
         }
@@ -199,15 +222,17 @@ class SubscriptionStore(
 
     /**
      * Only an account can buy: a guest creates one first, as main asks. A plan that can't be read
-     * keeps Play's sheet closed, since the cached one may predate a Plus bought elsewhere.
+     * keeps Play's sheet closed, since the cached one may predate a Plus bought elsewhere. [host] is the window
+     * Play's sheet opens on, asked for only then, since the one shown when the checkout started may be gone.
      */
     suspend fun buy(
-        activity: Activity,
+        host: suspend () -> Activity,
         period: BillingPeriod,
     ) {
         val session = fullAccount() ?: return
         if (mutablePurchase.value == PurchaseState.Buying || mutablePurchase.value == PurchaseState.Confirming) return
         mutablePurchase.value = PurchaseState.Buying
+        checkoutOnVisit = true
         try {
             // Play's details go stale, and Plus may have been bought elsewhere since; a checkout always starts from fresh ones.
             val (offers, plan) =
@@ -229,12 +254,22 @@ class SubscriptionStore(
                 mutablePurchase.value = PurchaseState.AlreadyPlus
                 return
             }
-            val opened = offers != null && offer != null && billing.buy(activity, offers, offer, session.accountId)
+            val opened = offers != null && offer != null && billing.buy(host(), offers, offer, session.accountId)
             if (!opened && fullAccount() == session) mutablePurchase.value = PurchaseState.PlayFailed
         } catch (e: CancellationException) {
             if (fullAccount() == session && mutablePurchase.value == PurchaseState.Buying) mutablePurchase.value = PurchaseState.Idle
             throw e
         }
+    }
+
+    /**
+     * What a checkout itself led to (its plan check failed, Plus was there already, Play's sheet couldn't open or
+     * finish) belongs to the visit that started it, so the next visit starts clean, and Play's failure that arrives
+     * later says nothing. A purchase Play still holds, and its link to the account, are the account's and stay.
+     */
+    fun forgetCheckout() {
+        checkoutOnVisit = false
+        mutablePurchase.update { if (it in CHECKOUT_OUTCOMES) PurchaseState.Idle else it }
     }
 
     /** Shown only when nothing changed the plan meanwhile, such as a purchase linked while it was read. */
@@ -287,6 +322,7 @@ class SubscriptionStore(
 
     private companion object {
         val OTHER_ACCOUNT_CODES = setOf("GOOGLE_PLAY_ACCOUNT_MISMATCH", "GOOGLE_PLAY_SUBSCRIPTION_CONFLICT")
+        val CHECKOUT_OUTCOMES = setOf(PurchaseState.PlanCheckFailed, PurchaseState.AlreadyPlus, PurchaseState.PlayFailed)
 
         // Subscribing issues the certificates the learner already earned.
         val SUBSCRIPTION_DOMAINS = setOf(DataDomain.UserSubscription, DataDomain.Allowance, DataDomain.UserSession, DataDomain.Certificates)

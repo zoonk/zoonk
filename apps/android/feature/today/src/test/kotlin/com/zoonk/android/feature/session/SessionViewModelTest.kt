@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.session
 
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -11,11 +13,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -57,11 +57,8 @@ class SessionViewModelTest {
         )
     }
 
-    private fun TestScope.routes(viewModel: SessionViewModel): List<AppRoute> {
-        val routes = mutableListOf<AppRoute>()
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.routes.toList(routes) }
-        return routes
-    }
+    /** The route the screen owes its visit, which `SessionScreen` opens and then acknowledges. */
+    private fun owed(viewModel: SessionViewModel): List<AppRoute> = listOfNotNull(viewModel.route.value)
 
     @Test
     fun aCeremonyStaysFromWhenItShowsUntilItsClosedThoughShowingItLeftItOutOfTheNextRead() =
@@ -88,7 +85,6 @@ class SessionViewModelTest {
             api.session = decodeFixture("study-session", "id" to SESSION.toString(), "nextBlockId" to null)
             api.studySummary = decodeFixture("study-session-summary", "finished" to false)
             val viewModel = viewModel(api)
-            val routes = routes(viewModel)
 
             viewModel.readUnfinished(SESSION)
             viewModel.readUnfinished(SESSION)
@@ -96,7 +92,7 @@ class SessionViewModelTest {
 
             assertEquals(1, api.sessionReads)
             assertEquals(1, api.summaryReads)
-            assertEquals(listOf(AppRoute.Today), routes)
+            assertEquals(listOf(AppRoute.Today), owed(viewModel))
         }
 
     @Test
@@ -106,14 +102,13 @@ class SessionViewModelTest {
             api.session = decodeFixture("study-session", "id" to SESSION.toString(), "nextBlockId" to blockId(1).toString())
             api.studySummary = decodeFixture("study-session-summary", "finished" to false)
             val viewModel = viewModel(api)
-            val routes = routes(viewModel)
 
             viewModel.readUnfinished(SESSION)
             advanceUntilIdle()
 
             assertEquals(1, api.sessionReads)
             assertEquals(1, api.summaryReads)
-            assertEquals(emptyList<AppRoute>(), routes)
+            assertEquals(emptyList<AppRoute>(), owed(viewModel))
         }
 
     @Test
@@ -127,6 +122,61 @@ class SessionViewModelTest {
             advanceUntilIdle()
 
             assertEquals(listOf(blockId(1)), api.targets.map { (it as StudyBlockOpeningTarget.BlockWrapper).value.blockId })
+        }
+
+    private fun opensALesson(api: FakeStudyApi) {
+        api.openings = listOf(opening("lesson", "lessonId" to step(1).lessonId.toString(), "sessionId" to SESSION.toString()))
+    }
+
+    @Test
+    fun aStartThatLandsWhileTheScreenIsRecreatedOpensItsStepOnce() =
+        runTest(dispatcher) {
+            val api = FakeStudyApi().also(::opensALesson)
+            val viewModel = viewModel(api)
+
+            // A recreation: no screen acts while the step opens; the next one does.
+            viewModel.start(day(listOf(step(0), step(1))), step(1), GOAL)
+            advanceUntilIdle()
+
+            assertEquals(1, owed(viewModel).size)
+        }
+
+    @Test
+    fun aStartThatLandedBeforeTheScreenActedAndThenLeftOpensNothingOnReturn() =
+        runTest(dispatcher) {
+            val api = FakeStudyApi().also(::opensALesson)
+            val viewModel = viewModel(api)
+
+            viewModel.start(day(listOf(step(0), step(1))), step(1), GOAL)
+            advanceUntilIdle()
+            viewModel.endVisit()
+
+            assertEquals(emptyList<AppRoute>(), owed(viewModel))
+        }
+
+    @Test
+    fun aStartThatFailsAfterTheLearnerLeftSaysNothingOnReturn() =
+        runTest(dispatcher) {
+            val api = FakeStudyApi().apply { failures += ApiException(ApiError.Network) }
+            val viewModel = viewModel(api)
+
+            viewModel.start(day(listOf(step(0), step(1))), step(1), GOAL)
+            viewModel.endVisit()
+            advanceUntilIdle()
+
+            assertEquals(null, viewModel.failed)
+        }
+
+    @Test
+    fun aStartThatFailsWhileTheScreenIsRecreatedSaysSo() =
+        runTest(dispatcher) {
+            val api = FakeStudyApi().apply { failures += ApiException(ApiError.Network) }
+            val viewModel = viewModel(api)
+
+            viewModel.start(day(listOf(step(0), step(1))), step(1), GOAL)
+            advanceUntilIdle()
+
+            assertTrue(viewModel.failed != null)
         }
 
     @Test

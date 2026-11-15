@@ -110,10 +110,11 @@ internal fun MindMapsContent(
     val state by resource.collectShown()
     val scope = rememberCoroutineScope()
     val back: () -> Unit = { navigator.back() }
+    val maps = host.maps(goalId)
+    host.SavesSaid(maps)
 
     when (val shown = state) {
         is LoadState.Loaded -> {
-            val maps = host.maps(goalId)
             val requests by maps.requests.collectAsStateWithLifecycle()
             val saves by maps.saves.collectAsStateWithLifecycle()
             val createAll by maps.createAll.collectAsStateWithLifecycle()

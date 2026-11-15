@@ -44,8 +44,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
@@ -55,17 +57,23 @@ import com.zoonk.android.ui.theme.GeistMono
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-/** Holds the take and its grading through rotation; leaving the screen throws an unfinished take away. */
+/**
+ * Holds the take and its grading through rotation; leaving the screen throws an unfinished take away.
+ * [grade] is the screen's grading call (a ViewModel's or a store's), which saves what it graded.
+ */
 class VoiceAnswerModel(
     context: Context,
+    private val grade: suspend (VoiceRecording) -> GradeOutcome<*>,
 ) : ViewModel() {
     val recorder = VoiceRecorder(context.applicationContext, viewModelScope)
 
     var checking by mutableStateOf(false)
         private set
 
-    var issue by mutableStateOf<VoiceIssue?>(null)
-        private set
+    /** The recorder on its screen, until it goes for real; [VoiceAnswerLine] stands for it. */
+    internal val visit = Visit()
+
+    internal val issue = visit.outcome<VoiceIssue>()
 
     /** The learner turned the microphone off for the app. */
     var microphoneOff by mutableStateOf(false)
@@ -74,30 +82,25 @@ class VoiceAnswerModel(
     /** The learner refused the microphone on a screen that then answers another way. */
     var blocked by mutableStateOf(false)
 
-    internal fun <T> record(
-        grade: suspend (VoiceRecording) -> GradeOutcome<T>,
-        onGraded: (T) -> Unit,
-    ) {
-        issue = null
-        recorder.start { recording -> viewModelScope.launch { check(recording, grade, onGraded) } }
+    internal fun record() {
+        issue.clear()
+        recorder.start(::check)
     }
 
-    private suspend fun <T> check(
-        recording: VoiceRecording,
-        grade: suspend (VoiceRecording) -> GradeOutcome<T>,
-        onGraded: (T) -> Unit,
-    ) {
+    internal fun check(recording: VoiceRecording) {
         checking = true
-        try {
-            when (val outcome = grade(recording)) {
-                is GradeOutcome.Graded -> onGraded(outcome.value)
-                GradeOutcome.NoSpeech -> issue = VoiceIssue.NoSpeech
-                is GradeOutcome.Limited -> issue = VoiceIssue.Limited(outcome.limit)
-                GradeOutcome.Failed -> issue = VoiceIssue.Failed
-                GradeOutcome.Obsolete -> Unit
+        val started = visit.number
+        viewModelScope.launch {
+            try {
+                when (val outcome = grade(recording)) {
+                    is GradeOutcome.Graded, GradeOutcome.Obsolete -> Unit
+                    GradeOutcome.NoSpeech -> issue.send(started, VoiceIssue.NoSpeech)
+                    is GradeOutcome.Limited -> issue.send(started, VoiceIssue.Limited(outcome.limit))
+                    GradeOutcome.Failed -> issue.send(started, VoiceIssue.Failed)
+                }
+            } finally {
+                checking = false
             }
-        } finally {
-            checking = false
         }
     }
 
@@ -117,13 +120,17 @@ sealed interface VoiceIssue {
 }
 
 /**
- * The take for [key], shared by its [VoiceAnswerButton] and its [VoiceAnswerLine] wherever each is drawn.
- * Wherever the take shows, even only as "The microphone is off", coming back with the microphone allowed gives it back.
+ * The take for [key], graded by [grade], shared by its [VoiceAnswerButton] and its [VoiceAnswerLine] wherever each is drawn,
+ * so each place that makes it grades it the same way. Wherever the take shows, even only as "The microphone is off",
+ * coming back with the microphone allowed gives it back.
  */
 @Composable
-fun voiceAnswerModel(key: String): VoiceAnswerModel {
+fun voiceAnswerModel(
+    key: String,
+    grade: suspend (VoiceRecording) -> GradeOutcome<*>,
+): VoiceAnswerModel {
     val context = LocalContext.current
-    val model = viewModel(key = key) { VoiceAnswerModel(context) }
+    val model = viewModel(key = key) { VoiceAnswerModel(context, grade) }
     LifecycleResumeEffect(model) {
         if (model.recorder.hasPermission) model.microphoneOff = false
         onPauseOrDispose {}
@@ -132,45 +139,37 @@ fun voiceAnswerModel(key: String): VoiceAnswerModel {
 }
 
 /**
- * Record, then [grade] in the screen's ViewModel scope; [onGraded] may run after a rotation, so it
- * should only call a ViewModel or store. With [onBlocked], a denied microphone hands over to the
- * screen's other way to answer instead of showing how to turn it on. [key] tells several
- * recorders on one screen apart. A take still running when the screen leaves or the app goes to
- * the background is thrown away.
+ * Record, then grade with [model]'s grading in its own scope, so a take still checking through a
+ * rotation is graded the same. With [onBlocked], a denied microphone hands over to the screen's
+ * other way to answer instead of showing how to turn it on. A take still running when the screen
+ * leaves or the app goes to the background is thrown away.
  */
 @Composable
-fun <T> VoiceAnswerRecorder(
-    grade: suspend (VoiceRecording) -> GradeOutcome<T>,
-    onGraded: (T) -> Unit,
+fun VoiceAnswerRecorder(
+    model: VoiceAnswerModel,
     navigator: AppNavigator,
     modifier: Modifier = Modifier,
-    key: String = "voice-answer",
     asksToSpeak: Boolean = true,
     onBlocked: (() -> Unit)? = null,
 ) {
-    if (voiceAnswerModel(key).microphoneOff && onBlocked == null) {
+    if (model.microphoneOff && onBlocked == null) {
         MicrophoneOff(stringResource(R.string.audio_microphone_off_answer), modifier)
         return
     }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        VoiceAnswerButton(grade, onGraded, key = key, onBlocked = onBlocked)
-        VoiceAnswerLine(navigator, key = key, asksToSpeak = asksToSpeak)
+        VoiceAnswerButton(model, onBlocked = onBlocked)
+        VoiceAnswerLine(model, navigator, asksToSpeak = asksToSpeak)
     }
 }
 
 /** The take's Record and Stop, for a screen that puts it in its bottom bar; [VoiceAnswerLine] says how it went. */
 @Composable
-fun <T> VoiceAnswerButton(
-    grade: suspend (VoiceRecording) -> GradeOutcome<T>,
-    onGraded: (T) -> Unit,
-    key: String,
+fun VoiceAnswerButton(
+    model: VoiceAnswerModel,
     modifier: Modifier = Modifier,
     onBlocked: (() -> Unit)? = null,
 ) {
-    val model = voiceAnswerModel(key)
-    val currentGrade by rememberUpdatedState(grade)
-    val currentOnGraded by rememberUpdatedState(onGraded)
     val tapRecord =
         rememberRecordTap(
             recorder = model.recorder,
@@ -180,22 +179,26 @@ fun <T> VoiceAnswerButton(
                     lasting -> model.microphoneOff = true
                 }
             },
-            record = { model.record({ currentGrade(it) }, { currentOnGraded(it) }) },
+            record = model::record,
         )
     val status by model.recorder.state.collectAsStateWithLifecycle()
 
     RecordButton(status = status, onStart = tapRecord, onStop = model.recorder::stop, modifier = modifier, enabled = !model.checking)
 }
 
-/** What the take for [key] is doing: listening, checking, what went wrong, or a limit with its way on. */
+/**
+ * What [model]'s take is doing: listening, checking, what went wrong, or a limit with its way on. The line is
+ * the take's visit, as the one piece shown from Record through the grading to what went wrong (a lesson's bar
+ * drops Record while the take is checked), so the take's visit ends only when the line goes for real.
+ */
 @Composable
 fun VoiceAnswerLine(
+    model: VoiceAnswerModel,
     navigator: AppNavigator,
-    key: String,
     modifier: Modifier = Modifier,
     asksToSpeak: Boolean = true,
 ) {
-    val model = voiceAnswerModel(key)
+    VisitOf(model.visit)
     val status by model.recorder.state.collectAsStateWithLifecycle()
     val recording = status is VoiceRecorder.Status.Recording
     val slow by produceState(false, model.checking) {
@@ -205,7 +208,7 @@ fun VoiceAnswerLine(
             value = true
         }
     }
-    val issue = model.issue.takeUnless { recording }
+    val issue = model.issue.value.takeUnless { recording }
     val hint =
         when {
             recording -> stringResource(R.string.audio_listening)

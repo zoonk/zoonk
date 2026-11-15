@@ -172,7 +172,7 @@ internal fun CheckingChange(onCancel: () -> Unit) {
 }
 
 /**
- * Main's `EFFECT_ROOM_CLASS`: room for a consequence of [lines] and its "See all changes", which a
+ * Main's `EFFECT_ROOM_CLASS`: room for a consequence of [lines] and its "All changes", which a
  * check's note and its answer both take, so the actions under them stay put; a longer answer grows it.
  * With [held], it is also as tall as the card's room has been at this width and text size.
  */

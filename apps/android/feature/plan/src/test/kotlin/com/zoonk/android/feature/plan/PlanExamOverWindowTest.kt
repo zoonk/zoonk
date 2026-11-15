@@ -25,6 +25,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -98,13 +99,17 @@ class PlanExamOverTestActivity : ComponentActivity() {
         setContent {
             ZoonkTheme {
                 val snackbars = rememberWindowSnackbars(PlanExamOverTest.app)
+                val navigator = rememberAppNavigator()
 
                 CompositionLocalProvider(LocalSnackbarHostState provides snackbars) {
                     Box {
+                        // As the Plan screen does around its page.
+                        VisitOf(PlanExamOverTest.viewModel.visit)
+                        PlanEvents(PlanExamOverTest.viewModel, navigator, PlanExamOverTest.app.snackbars)
                         PlanPage(
                             PlanExamOverTest.page,
                             PlanExamOverTest.app,
-                            rememberAppNavigator(),
+                            navigator,
                             PlanExamOverTest.viewModel,
                             PlanExamOverTest.farTopics,
                             focus = null,

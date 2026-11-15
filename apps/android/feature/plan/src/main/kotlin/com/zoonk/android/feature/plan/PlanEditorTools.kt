@@ -255,7 +255,7 @@ private fun NoToolsPath(
     TextButton(
         onClick = {
             asked = true
-            edits.chooseTools(ToolAnswer(tools.map { it.name }, PlanTool.Choice.NONE)) { edits.answerSheet(opening, it) }
+            edits.chooseTools(ToolAnswer(tools.map { it.name }, PlanTool.Choice.NONE), PlanAsker.Sheet(opening))
         },
         modifier = Modifier.focusRequester(link),
         shape = MaterialTheme.shapes.small,
@@ -332,7 +332,7 @@ internal fun ColumnScope.ToolChoiceForm(
                     onClick = {
                         if (chosen == null) return@Button
                         val answer = ToolAnswer(listOf(tool.name), chosen, system.takeIf { chosen == PlanTool.Choice.SETUP })
-                        edits.chooseTools(answer) { edits.answerSheet(draft.opening, it) }
+                        edits.chooseTools(answer, PlanAsker.Sheet(draft.opening))
                     },
                     modifier = Modifier.weight(1f),
                     enabled = chosen != null && !needsSystem,

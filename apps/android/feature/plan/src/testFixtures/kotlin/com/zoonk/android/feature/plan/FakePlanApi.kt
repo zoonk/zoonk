@@ -6,6 +6,7 @@ import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.Written
 import com.zoonk.android.feature.onboarding.examGoal
+import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalContentCountry
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
@@ -34,6 +35,13 @@ class FakePlanApi : PlanApi {
     var plans = 0
     var changed = false
     var statusFailure: ApiException? = null
+
+    /** Holds a goal's status change until completed. */
+    var statusGate: CompletableDeferred<Unit>? = null
+
+    /** Holds a goal's language country or content country change until completed. */
+    var goalGate: CompletableDeferred<Unit>? = null
+    var goalFailure: ApiException? = null
     val statuses = mutableListOf<LearnerSummaryGoal.Status>()
     val askedSince = mutableListOf<Instant>()
     var changeFailure: ApiException? = null
@@ -137,6 +145,7 @@ class FakePlanApi : PlanApi {
         goalId: UUID,
         status: LearnerSummaryGoal.Status,
     ) {
+        statusGate?.await()
         statusFailure?.let { throw it }
         statuses += status
     }
@@ -151,25 +160,36 @@ class FakePlanApi : PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
         region: String?,
-    ) = examGoal().copy(targetLanguage = "es", targetRegion = region, languageFlag = region?.lowercase() ?: "es")
+    ): Goal {
+        goalWrite()
+        return examGoal().copy(targetLanguage = "es", targetRegion = region, languageFlag = region?.lowercase() ?: "es")
+    }
 
     override suspend fun setContentCountry(
         session: AuthenticatedSession,
         goalId: UUID,
         country: String?,
-    ) = examGoal().copy(
-        countryDependent = true,
-        contentCountry =
-            GoalContentCountry(
-                country ?: "US",
-                country ?: "United States",
-                editable = true,
-                kind = GoalContentCountry.Kind.CONTENT,
-                lessonVariety = null,
-                rebuild = GoalContentCountry.Rebuild.PREPARING,
-                source = GoalContentCountry.Source.PICKED,
-            ),
-    )
+    ): Goal {
+        goalWrite()
+        return examGoal().copy(
+            countryDependent = true,
+            contentCountry =
+                GoalContentCountry(
+                    country ?: "US",
+                    country ?: "United States",
+                    editable = true,
+                    kind = GoalContentCountry.Kind.CONTENT,
+                    lessonVariety = null,
+                    rebuild = GoalContentCountry.Rebuild.PREPARING,
+                    source = GoalContentCountry.Source.PICKED,
+                ),
+        )
+    }
+
+    private suspend fun goalWrite() {
+        goalGate?.await()
+        goalFailure?.let { throw it }
+    }
 
     override suspend fun change(
         session: AuthenticatedSession,

@@ -61,6 +61,7 @@ import com.zoonk.android.app.shell.GoalSwitcherViewModel
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SignOutResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.catalog.CatalogQuery
@@ -73,6 +74,8 @@ import com.zoonk.android.feature.today.nextStep
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
@@ -199,11 +202,16 @@ internal fun SearchPanel(
             }
 
             SearchAction.Continue -> {
-                search.continueToday(
-                    open = { route -> if (route == null) navigator.showRoot(AppTab.Today) else navigator.open(route) },
-                    failed = { app.snackbars.show(R.string.search_continue_failed) },
-                )
+                search.continueToday()
             }
+        }
+    }
+
+    VisitOf(search.visit)
+    ActOn(search.continued) { continued ->
+        when (continued) {
+            is Continued.Open -> if (continued.route == null) navigator.showRoot(AppTab.Today) else navigator.open(continued.route)
+            Continued.Failed -> app.snackbars.show(R.string.search_continue_failed)
         }
     }
 
@@ -295,26 +303,38 @@ private fun Modifier.atBarWidth(state: SearchBarState): Modifier =
         layout(placeable.width, placeable.height) { placeable.place(0, 0) }
     }
 
+/** Where Continue leads: [Open] today's next step, or Today itself with no route; or that it didn't open. */
+internal sealed interface Continued {
+    data class Open(
+        val route: AppRoute?,
+    ) : Continued
+
+    data object Failed : Continued
+}
+
 class SearchViewModel(
     private val today: TodayStore,
     private val opener: StudyOpener,
 ) : ViewModel() {
     private var opening = false
 
+    /** This visit to the page search shows on: where Continue leads shows only on it. */
+    val visit = Visit()
+
+    internal val continued = visit.outcome<Continued>()
+
     /**
-     * Opens today's next step as Today's Start does. With no day read to start from, [open] gets
-     * null and Today shows where the day stands; the same when the day changed meanwhile.
+     * Opens today's next step as Today's Start does. With no day read to start from, it leads to
+     * Today, which shows where the day stands; the same when the day changed meanwhile.
      */
-    internal fun continueToday(
-        open: (AppRoute?) -> Unit,
-        failed: () -> Unit,
-    ) {
+    internal fun continueToday() {
         if (opening) return
         val read = today.today.state.value.value as? TodayRead.Day
         val step = read?.day?.nextStep
+        val started = visit.number
 
         if (read == null || step == null) {
-            open(null)
+            continued.send(started, Continued.Open(null))
             return
         }
 
@@ -322,8 +342,8 @@ class SearchViewModel(
         viewModelScope.launch {
             try {
                 when (val result = opener.open(read.day, step, next = true, read.today.goal.id)) {
-                    is MutationResult.Done -> open(result.value)
-                    is MutationResult.Failed -> failed()
+                    is MutationResult.Done -> continued.send(started, Continued.Open(result.value))
+                    is MutationResult.Failed -> continued.send(started, Continued.Failed)
                     MutationResult.Obsolete -> Unit
                 }
             } finally {

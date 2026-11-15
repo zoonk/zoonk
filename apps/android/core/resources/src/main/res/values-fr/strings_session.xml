@@ -42,7 +42,7 @@
   "session_next_start_title": "18758a44880b8c52aa3255adb3e5f8c1d8d234fec5503bf7686c089832bbe281",
   "session_next_stop": "cc300448c004e0cf1f4137ab26bfd1d1a3dc243d5b6dc241a3ab7acd43882d5d",
   "session_next_stop_failed": "adc1245d17b6c593dc9f8b4c33ff6326fa0c318bde6cf759b9a83e13023e9b5f",
-  "session_next_writing_note": "9804842c3dd63577a3b9e694523c46950a7b9e7a776ea8aecf2b3248bb6dc747",
+  "session_next_writing_note": "38ae18049d328308767044809e2217e764f5ec44b1a67276790b3ae1650ed170",
   "session_no_catch_up_left": "dc9e05f747153053433791d64c06f4534250941d1322a46f8e93b25cce78a997",
   "session_opening_slow": "a65296b4f88c225dbab5c63ee55dba9a3591d7975d9dfa3b9af9427b869917bc",
   "session_opening_very_slow": "de01cfac0eeee7f3f6f6af6cb448134b18bdcca867bdbb600709db58dd78b4b2",
@@ -209,7 +209,7 @@
     <string name="session_review_intro_weakest_title">Les sujets les plus difficiles pour toi aujourd’hui</string>
     <string name="session_review_intro_weakest">Tu as encore bien en tête ce que tu as appris, alors tu t’entraînes sur ce qui t’a donné le plus de mal.</string>
     <string name="session_review_intro_first_week">Quelques questions rapides pour vérifier ce que tu sais déjà.</string>
-    <string name="session_next_writing_note">Ça prend quelques minutes.</string>
+    <string name="session_next_writing_note">Ta leçon est généralement prête en quelques minutes.</string>
     <string name="session_next_lesson_ready">Ta leçon est prête.</string>
     <string name="session_next_stop">Arrêter pour aujourd’hui</string>
     <string name="session_next_stop_failed">Impossible d’arrêter la séance. Réessaie.</string>

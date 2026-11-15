@@ -110,7 +110,7 @@ internal fun ColumnScope.ChooseFocusBody(
     fun save() {
         val id = UUID.randomUUID()
         saved = id
-        edits.change(PlanPart.Focus, listOf(PlanOp.FocusAreas(chosen))) { edits.answerSheet(id, it) }
+        edits.change(PlanPart.Focus, listOf(PlanOp.FocusAreas(chosen)), PlanAsker.Sheet(id))
     }
 
     PlanSheetContent(

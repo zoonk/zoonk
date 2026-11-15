@@ -97,13 +97,25 @@ class ExplainViewModelTest {
             val viewModel = viewModel()
 
             viewModel.show(explanation("preparing", "gen-1"))
-            assertEquals(true, viewModel.retrySlow(explanation("ready", null)))
-            assertEquals(emptyList<String>(), writes)
-
-            assertEquals(true, viewModel.retrySlow(explanation("preparing", "gen-1")))
+            viewModel.retrySlow(explanation("ready", null))
             advanceUntilIdle()
+            assertEquals(emptyList<String>(), writes)
+            assertEquals(ExplainViewModel.SlowRetry.Asked, viewModel.slowRetry)
+        }
+
+    @Test
+    fun aSlowExplanationStillBeingPreparedIsWrittenAgainAndItsNewRunFollowed() =
+        runTest(dispatcher) {
+            val viewModel = viewModel()
+
+            viewModel.show(explanation("preparing", "gen-1"))
+            viewModel.retrySlow(explanation("preparing", "gen-1"))
+            assertEquals(ExplainViewModel.SlowRetry.Asking, viewModel.slowRetry)
+            advanceUntilIdle()
+
             assertEquals(listOf(GOAL_ID), writes)
             assertEquals("gen-2", followed.last())
+            assertEquals(ExplainViewModel.SlowRetry.Asked, viewModel.slowRetry)
         }
 
     @Test

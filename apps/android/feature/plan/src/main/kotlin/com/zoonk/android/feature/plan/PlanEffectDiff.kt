@@ -51,7 +51,7 @@ data class GoalDateMove(
 
 /**
  * Main's `PlanEffectDiff`: the one consequence a learner would notice about a plan change, and
- * every other change behind "See all changes". [repriced] says the numbers under it are today's,
+ * every other change behind "All changes". [repriced] says the plan changed since the learner saw the card,
  * to answer again; [summary] false leaves the consequence to the screen's own sentence.
  */
 @Composable
@@ -289,7 +289,7 @@ private fun eventConsequence(effect: PlanEffect): Consequence? {
     return Consequence("weekly", stringResource(words, day), whole = true)
 }
 
-/** Everything a change does, as plain rows: what "See all changes" opens. */
+/** Everything a change does, as plain rows: what "All changes" opens. */
 @Composable
 private fun changeRows(
     effect: PlanEffect,

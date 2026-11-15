@@ -43,4 +43,19 @@ class OpenStartedCallTest {
         assertEquals(listOf(call), opened)
         assertNull(model.started)
     }
+
+    /** The refusal goes in the access every screen reads, written by the model's own store call, whichever screen shows then. */
+    @Test
+    fun aRefusalThatAnswersWhileNoScreenShowsIsWrittenOnce() {
+        val answer = CompletableDeferred<CallStart>()
+        var refusals = 0
+        val model = CallStartModel(callStarter { answer.await() }, GenerationKind.ExamSpeaking) { refusals++ }
+
+        compose.runOnIdle { model.start(CallRequest.ExamSpeaking(UUID.randomUUID(), "task-1")) }
+        answer.complete(CallStart.PlusRequired)
+        compose.waitForIdle()
+
+        assertEquals(1, refusals)
+        assertEquals(CallStartModel.State.PlusRequired, model.state)
+    }
 }

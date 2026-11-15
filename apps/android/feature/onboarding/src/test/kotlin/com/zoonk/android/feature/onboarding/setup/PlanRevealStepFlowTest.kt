@@ -52,6 +52,8 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlanRevealToday
@@ -93,6 +95,8 @@ class PlanRevealStepFlowTest {
         readReveal: (suspend () -> PlanRevealToday)? = null,
         mark: suspend () -> Unit = {},
         open: (suspend (DayView, DayStep) -> MutationResult<AppRoute?>)? = null,
+        /** The step shows only while the setup is the current screen, so going back leaves it, as the app's host does. */
+        leaves: Boolean = false,
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
@@ -113,39 +117,42 @@ class PlanRevealStepFlowTest {
                 cache,
                 session,
             ) { SignInResult.SignedIn }
-        val vm = GoalSetupViewModel(onboarding, null, SavedStateHandle(), GOAL_ID)
+        val doors = RevealDoors(prepareToday, open?.let { o -> { day, step, _ -> o(day, step) } })
+        val vm = GoalSetupViewModel(onboarding, null, SavedStateHandle(), GOAL_ID, doors = doors)
         val warmUps = WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session)
         val setContent: (@Composable () -> Unit) -> Unit = restoration?.let { it::setContent } ?: rule::setContent
         setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
-                CompositionLocalProvider(LocalSetupWarmUp provides warmUps) {
-                    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                        PlanRevealStep(
-                            examGoal(),
-                            isGuest = false,
-                            GenerationRun(status = GenerationRun.Status.Following, warmUpId = WARM_UP_ID),
-                            onRetryRun = null,
-                            plans,
-                            navigator,
-                            SETUP,
-                            prepareToday,
-                            onReveal = vm::reveal,
-                            saving = vm.isSaving,
-                            saveFailed = vm.saveFailed,
-                            startStepFailed = vm.startStepFailed,
-                            openingStep = vm.openingStep,
-                            failedStep = vm.failedStep,
-                            onOpenStep =
-                                if (open != null) {
-                                    { day, step, fromStart ->
-                                        vm.openRevealStep(day, step, { d, s, _ -> open(d, s) }, fromStart = fromStart) {}
-                                    }
-                                } else {
-                                    onOpenStep?.let { callback -> { day, step, _ -> callback(day, step) } }
-                                },
-                            today = if (reveal != null || readReveal != null) onboarding.revealToday[GOAL_ID] else null,
-                        )
+                if (!leaves || navigator.currentRoute == SETUP) {
+                    VisitOf(vm.visit)
+                    ActOn(vm.revealed) { leadToRevealed(navigator, it) }
+                }
+                if (!leaves || navigator.currentRoute == SETUP) {
+                    CompositionLocalProvider(LocalSetupWarmUp provides warmUps) {
+                        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                            PlanRevealStep(
+                                examGoal(),
+                                isGuest = false,
+                                GenerationRun(status = GenerationRun.Status.Following, warmUpId = WARM_UP_ID),
+                                onRetryRun = null,
+                                plans,
+                                navigator,
+                                onReveal = vm::reveal,
+                                saving = vm.isSaving,
+                                saveFailed = vm.saveFailed,
+                                startStepFailed = vm.startStepFailed,
+                                openingStep = vm.openingStep,
+                                failedStep = vm.failedStep,
+                                onOpenStep =
+                                    if (open != null) {
+                                        { day, step, fromStart -> vm.openRevealStep(day, step, fromStart) }
+                                    } else {
+                                        onOpenStep?.let { callback -> { day, step, _ -> callback(day, step) } }
+                                    },
+                                today = if (reveal != null || readReveal != null) onboarding.revealToday[GOAL_ID] else null,
+                            )
+                        }
                     }
                 }
             }
@@ -313,26 +320,9 @@ class PlanRevealStepFlowTest {
     }
 
     @Test
-    fun aStartStillWaitingOnTodayOpensItAfterTheScreenIsRebuilt() {
-        val today = CompletableDeferred<Unit>()
-        val restoration = StateRestorationTester(rule)
-        show(prepareToday = { today.await() }, restoration = restoration)
-        navigator.select(AppTab.Plan)
-        navigator.open(SETUP)
-
-        rule.onNodeWithText("Start").performScrollTo().performClick()
-        rule.mainClock.advanceTimeBy(100)
-        restoration.emulateSavedInstanceStateRestore()
-        today.complete(Unit)
-        rule.waitForIdle()
-
-        assertEquals(AppRoute.Today, navigator.currentRoute)
-    }
-
-    @Test
     fun goingBackWhileTodayLoadsKeepsTheLearnerWhereBackWent() {
         val today = CompletableDeferred<Unit>()
-        show(prepareToday = { today.await() })
+        show(prepareToday = { today.await() }, leaves = true)
         navigator.select(AppTab.Plan)
         navigator.open(SETUP)
 

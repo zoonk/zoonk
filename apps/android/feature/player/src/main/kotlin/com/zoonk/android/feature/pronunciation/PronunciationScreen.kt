@@ -97,6 +97,7 @@ import com.zoonk.android.feature.session.ReachedFacts
 import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
@@ -224,6 +225,7 @@ internal fun PronunciationRoundScreen(
     ceremony: MomentCeremony,
     onReportSaveFailure: () -> Unit = {},
 ) {
+    VisitOf(round.visit)
     when (val step = round.step) {
         is RoundStep.Result -> {
             MomentAfterCeremony(
@@ -303,6 +305,7 @@ private fun WordStep(
                 word = { key(word.id) { WordCard(word, round.language, normal, slow, navigator) } },
             ) {
                 val grade = step.grade
+                val issue = round.issue
                 when {
                     grade != null -> {
                         GradeNote(grade)
@@ -312,9 +315,9 @@ private fun WordStep(
                         MicrophoneOff(stringResource(R.string.pronunciation_microphone_off))
                     }
 
-                    step.issue is VoiceIssue.Limited && !recording && !round.pending -> {
+                    issue is VoiceIssue.Limited && !recording && !round.pending -> {
                         LimitNotice(
-                            step.issue.limit,
+                            issue.limit,
                             LimitSubject.Help,
                             onCreateAccount = { navigator.open(AppRoute.Login) },
                             onSubscribe = { navigator.open(AppRoute.Subscription) },
@@ -323,7 +326,7 @@ private fun WordStep(
                     }
 
                     else -> {
-                        RecorderStatus(step.issue, pending = round.pending, recording = recording)
+                        RecorderStatus(issue, pending = round.pending, recording = recording)
                     }
                 }
             }

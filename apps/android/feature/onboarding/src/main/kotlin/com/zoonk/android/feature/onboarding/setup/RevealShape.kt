@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import com.zoonk.android.feature.plan.estimateNamesMonth
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.Plan
@@ -39,25 +40,12 @@ internal fun Plan.revealFacts(today: LocalDate): RevealFacts {
             },
         daysEstimated = schedule.targetDateEstimated,
         end = end,
-        endAsMonth = end != null && ChronoUnit.DAYS.between(week.startDate.toJavaLocalDate(), end) > NEAR_ESTIMATE_DAYS,
+        endAsMonth = end != null && estimateNamesMonth(end),
     )
 }
 
 /** The phases a new plan shows: what comes after the exam isn't part of it. */
 internal val Plan.revealPhases get() = phases.filter { it.kind != PlanPhase.Kind.AFTER_EXAM }
-
-/** The phases drawn in time, without those the plan holds none of. */
-internal val Plan.roadmapPhases get() = revealPhases.filter { it.state != PlanPhase.State.LEFT_OUT }
-
-/** Days when it has dates, else hours, so every drawing of the phases shares one scale: time. */
-internal fun PlanPhase.weight(): Float = days()?.toFloat() ?: hours.toFloat().coerceAtLeast(1f)
-
-/** Both its first and last day count: the planner's end date is its last day. */
-private fun PlanPhase.days(): Int? {
-    val start = startDate?.toJavaLocalDate() ?: return null
-    val end = endDate?.toJavaLocalDate() ?: return null
-    return (ChronoUnit.DAYS.between(start, end).toInt() + 1).coerceAtLeast(1)
-}
 
 /** A plan of one phase has nothing to draw in time: its chapters say its shape, without the ones still being written ahead. */
 internal fun Plan.revealChapters(): List<PlanPhaseChaptersInner> =
@@ -235,5 +223,4 @@ internal fun Syllabus.areaWeights(): AreaWeights? {
     return AreaWeights(areas, source).takeIf { areas.size >= 2 }
 }
 
-private const val NEAR_ESTIMATE_DAYS = 42
 private const val HEAVIEST_SHOWN = 3

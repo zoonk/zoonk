@@ -208,7 +208,7 @@
   "plan_effect_more_before_exam": "2aa31f639ba65ce3aa0472a54384d73aa3a4273ad2449c4eb484415bfce6cfe4",
   "plan_effect_names_and_more": "367239466f19db04f36918f95760117215c2ed219d716dbd38eccda2e2ea4fdd",
   "plan_effect_next_mock": "b3ad701341dc8b740d2aa8b2133d5d5d07dabf04744f3790016c480dfbef5d3b",
-  "plan_effect_numbers_different": "1e0527a39861dc26cb0e33aec6cfa9f2c0e6adbc40d77fb330bca3219c2a07ef",
+  "plan_effect_numbers_different": "faea427edcf3833ff5538e05dcdb639c46a05de095440420d14bcfe9a60a4129",
   "plan_effect_phase_ends": "22455a0cffc8511c1aa0970783f83fa8daf3e258d8d4ad24e4d34029006ba1c2",
   "plan_effect_plan_ends": "668129a97135e5aed98be67cc70a27eacf12dbff0326a07d7ee2eff6778a403e",
   "plan_effect_row_added": "313060f90cdfc359f5c3f69dd280ddbc65b52b93b8de1a82109ed99edd572260",
@@ -228,7 +228,7 @@
   "plan_effect_row_starts": "a22ece946df35c3d2fd597d8e26f26cd410339ef4878985d22c5a8f035fa656a",
   "plan_effect_row_starts_with": "fee2c7946e0932882581651049555a65c5770fffb7b05f47391508f4c870b074",
   "plan_effect_row_weekly_challenge": "3fd2aae41ceaba854e1014f0fee4936cc1f9420e341d066dd743e80d686b19a4",
-  "plan_effect_see_all": "693402c2384384350a2afc1355cce49aac8d3e3afd23d7c72494da80898e6018",
+  "plan_effect_see_all": "5e3f7c3e9792e25f5f2bef8360900abf06aa30f5b444f02f162ccd3d23246bd0",
   "plan_effect_topic_added": "6b77ed8420522db97748f795aac025af3b55e8bd7387b7595e02e593e1d74526",
   "plan_effect_topic_leaves": "37ca9ec499c0d875425c42b72bb742a869140562410d54b3198ed4dc73b78fc1",
   "plan_effect_topics_added": "1764728df85c3fe58a36184e9886c6f2555f05dcd94413fac59c25bfe8189f6d",
@@ -392,7 +392,6 @@
   "plan_reviews_done": "81801369760715ec6dc51c7cb84f4cdb6be11b6b0900748813badc2a9f9d4d72",
   "plan_reviews_of_every_topic": "f0de0cb61780acc5fa6ae35340f38185fbf0da3528428b2378d3c7cab6d9129d",
   "plan_right_answers": "8cd901a680d44a55bed8cc153a91e80e994bee426181bcd6e89a3ebf107233ee",
-  "plan_roadmap_from": "962cdc237eceeeb5bf1a841136830270434469c79dda408bc8c63aa5bc3bb42d",
   "plan_roadmap_phase_number": "a872055953f199ff4140481f30d713a985859394307974072875273d3d8a1dab",
   "plan_saturdays": "45930d51bbf62c9a1971e9aef93af0a162b8503ec5ac778cfe920169e380801e",
   "plan_save": "4e837c388fe4537c3e02f16c358de2b2665c3452982901283f7d958d5e5bd934",
@@ -608,7 +607,6 @@
         <item quantity="many">%1$d de %2$d fases completadas</item>
         <item quantity="other">%1$d de %2$d fases completadas</item>
     </plurals>
-    <string name="plan_roadmap_from">Desde %1$s</string>
     <string name="plan_today">Hoy</string>
     <string name="plan_mock_exam">Simulacro de examen</string>
     <string name="plan_exam_day">Día del examen</string>
@@ -1322,8 +1320,8 @@
     <string name="plan_course_complete">Curso completado</string>
     <!-- A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end -->
     <string name="plan_level_complete">%1$s completado</string>
-    <string name="plan_effect_see_all">Ver todos los cambios</string>
-    <string name="plan_effect_numbers_different">Hoy las cifras son diferentes.</string>
+    <string name="plan_effect_see_all">Todos los cambios</string>
+    <string name="plan_effect_numbers_different">Tu plan cambió desde que viste esto. Así queda ahora.</string>
     <!-- {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them. -->
     <string name="plan_effect_names_and_more">%1$s y más</string>
     <!-- %1$s is one topic\'s name. -->

@@ -60,12 +60,12 @@ fun varietyNote(
     )
 }
 
-/** The Adjust plan row, as the aim's: the language, with its country once chosen, and Change. */
+/** The Adjust plan row, as the aim's: the language, with its country once chosen, and Change; the editor closes its picker once saved. */
 @Composable
 internal fun VarietyRow(
     variety: Variety,
     drafts: EditorDrafts,
-    onPick: (String?, () -> Unit) -> Unit,
+    onPick: (String?) -> Unit,
     pending: Boolean,
     failed: Boolean,
     modifier: Modifier = Modifier,
@@ -79,8 +79,7 @@ internal fun VarietyRow(
         modifier = modifier,
     )
     if (drafts.picking == PlanPicker.Variety) {
-        val close = { drafts.picking = null }
-        VarietySheet(variety, onDismiss = close, onPick = { onPick(it, close) }, pending, failed)
+        VarietySheet(variety, onDismiss = { drafts.picking = null }, onPick = onPick, pending, failed)
     }
 }
 

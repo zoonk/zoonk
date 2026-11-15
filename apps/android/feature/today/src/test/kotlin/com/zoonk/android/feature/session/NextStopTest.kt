@@ -162,7 +162,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("It takes a few minutes.").assertExists()
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertExists()
         rule.onNodeWithText("Practice now").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
         assertEquals(0, dayReads)
@@ -204,7 +204,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("It takes a few minutes.").assertExists()
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(5_000)
@@ -348,7 +348,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(5_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("It takes a few minutes.").assertExists()
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertExists()
 
         rule.mainClock.advanceTimeBy(5_000)
         rule.waitForIdle()
@@ -400,7 +400,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("It takes a few minutes.").assertExists()
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(10_000)
@@ -416,7 +416,7 @@ class NextStopTest {
         rule.waitForIdle()
 
         rule.onNodeWithText("Start").assertExists()
-        rule.onNodeWithText("It takes a few minutes.").assertDoesNotExist()
+        rule.onNodeWithText("Your lesson is usually ready in a few minutes.").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(5_000)
         rule.waitForIdle()

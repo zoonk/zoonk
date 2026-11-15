@@ -49,6 +49,7 @@ import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -171,7 +172,7 @@ class TodayFlowTest {
             ZoonkTheme(moreContrast = moreContrast) {
                 Surface {
                     navigator = rememberAppNavigator()
-                    LaunchedEffect(viewModel) { viewModel.routes.collect { navigator.open(it.route) } }
+                    ActOn(viewModel.route) { navigator.open(it.route) }
                     TodayDay(
                         read,
                         store.today,

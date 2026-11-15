@@ -326,7 +326,6 @@
   "onboarding_reveal_start": "223dae6a00723f726799c58e31d093829a1fe71f3dc85acc8c3e2beb982a8d6e",
   "onboarding_reveal_start_here": "af10573729eec6a7cb436ea1dcbf428c1f4a4e9ea19901650a4ce148455b7c9c",
   "onboarding_reveal_study_days": "b0a3940f880087012292c4bafbbf43879dc3c58e425aa892fd5fe3d68338b3dc",
-  "onboarding_reveal_today": "a5bc42c755fa3e927e80e317cc20e72029df0ed46537d4b73be2275802a73700",
   "onboarding_reveal_topics": "d7ef0a18a6d24fba04dd5742f27111a390b7db19770d0abb84d5837be7e3cc45",
   "onboarding_reveal_topics_all_planned": "e788f9c2c48d2441ddb8c79914d81e35d37d3ce84de58b052916254c907e834a",
   "onboarding_reveal_topics_dont_fit": "78a2339c73a6bd2be70d802f883ed353049ab78b9049f916a9865f2a94398a83",
@@ -765,8 +764,6 @@
     <string name="onboarding_reveal_phase_short_mock">Krótki egzamin próbny i powtórka</string>
     <string name="onboarding_reveal_phase_full_review">Pełna powtórka</string>
     <string name="onboarding_reveal_phase_light_review">Lekka powtórka</string>
-    <!-- Beside the phase the learner is in, in place of its start date. -->
-    <string name="onboarding_reveal_today">Dziś</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">Przewidywany termin egzaminu to teraz %1$s.</string>
     <string name="onboarding_reveal_notice_day_notice">W ogłoszeniu o egzaminie podano termin: %1$s.</string>

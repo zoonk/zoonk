@@ -48,6 +48,8 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.LearnerAccess
 import com.zoonk.android.navigation.SignInGate
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
@@ -82,13 +84,13 @@ fun TodayScreen(
     val access by app.learnerAccess.collectAsStateWithLifecycle()
     val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today, app.plans, app.focusTests) }
 
-    LaunchedEffect(viewModel, navigator) {
-        viewModel.routes.collect { tapped ->
-            // A goal switch or a new day since the tap: what it opened belongs to the day no longer shown.
-            val shown = app.today.today.state.value.value as? TodayRead.Day
-            val same = tapped.goalId == null || (shown?.today?.goal?.id == tapped.goalId && shown.day.localDate == tapped.localDate)
-            if (same && app.goalSwitch.pending.value == null) navigator.open(tapped.route)
-        }
+    // A suggestion answered off the day (no goal yet) ends its visit here, where no day does.
+    OnVisitEnd(viewModel, onEnd = viewModel::endVisit)
+    ActOn(viewModel.route) { tapped ->
+        // A goal switch or a new day since the tap: what it opened belongs to the day no longer shown.
+        val shown = app.today.today.state.value.value as? TodayRead.Day
+        val same = tapped.goalId == null || (shown?.today?.goal?.id == tapped.goalId && shown.day.localDate == tapped.localDate)
+        if (same && app.goalSwitch.pending.value == null) navigator.open(tapped.route)
     }
 
     TabRootScaffold { padding ->

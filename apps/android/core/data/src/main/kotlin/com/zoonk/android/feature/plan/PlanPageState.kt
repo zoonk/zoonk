@@ -16,6 +16,6 @@ data class PlanPageState(
     val isExam: Boolean get() = goal.kind == LearnerSummaryGoal.Kind.EXAM
     val isPaused: Boolean get() = goal.status == LearnerSummaryGoal.Status.PAUSED
     val mocksRequirePlus: Boolean get() = plan.access.mocksRequirePlus
-    val finish: PlanFinish? = plan.finish(goal.kind)
+    val finish: PlanEnd? = plan.finish(goal.kind)
     val libraryCourse get() = plan.course?.takeIf { it.planChapterCount > 0 && it.brandSlug != null }
 }

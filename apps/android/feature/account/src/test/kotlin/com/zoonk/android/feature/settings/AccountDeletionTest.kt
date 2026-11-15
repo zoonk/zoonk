@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.settings
 
+import android.net.Uri
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -26,11 +28,14 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 @OptIn(ExperimentalCoroutinesApi::class)
 class AccountDeletionTest {
     @get:Rule
@@ -56,7 +61,7 @@ class AccountDeletionTest {
             )
         sessions.restore()
         advanceUntilIdle()
-        return sessions to YourDataViewModel(AccountStore(api, sessions, AppCache(sessions, main)), ana, "ana@zoonk.test")
+        return sessions to YourDataViewModel(AccountStore(api, sessions, AppCache(sessions, main)), ana, "ana@zoonk.test") { null }
     }
 
     @Test
@@ -128,4 +133,34 @@ class AccountDeletionTest {
             assertEquals(DeletionStep.Confirm, profile.deletionStep)
             assertTrue(sessions.state.value is SessionState.SignedIn)
         }
+
+    @Test
+    fun aDownloadThatFailsWhilePrivacyIsRecreatedStillSaysSo() =
+        runTest {
+            val (_, data) = signedIn()
+
+            // No page shows while the download is out, as when the window is recreated.
+            data.export(PICKED)
+            advanceUntilIdle()
+
+            assertTrue(data.exportFailed)
+            assertFalse(data.isExporting)
+        }
+
+    @Test
+    fun aDownloadThatFailsAfterPrivacyLeftSaysNothingOnReturn() =
+        runTest {
+            val (_, data) = signedIn()
+
+            data.export(PICKED)
+            data.visit.end()
+            advanceUntilIdle()
+
+            assertFalse(data.exportFailed)
+            assertFalse(data.isExporting)
+        }
+
+    private companion object {
+        val PICKED: Uri = Uri.parse("content://com.android.providers.downloads.documents/document/1")
+    }
 }

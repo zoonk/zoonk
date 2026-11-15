@@ -13,9 +13,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.theme.ZoonkTheme
+import kotlinx.coroutines.CompletableDeferred
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -33,9 +36,7 @@ class VoiceAnswerRecorderTest {
         var shown by mutableStateOf(true)
         rule.setContent {
             ZoonkTheme {
-                if (shown) {
-                    VoiceAnswerRecorder<Unit>(grade = { GradeOutcome.Failed }, onGraded = {}, navigator = rememberAppNavigator())
-                }
+                if (shown) VoiceAnswerRecorder(voiceAnswerModel(KEY) { GradeOutcome.Failed }, rememberAppNavigator())
             }
         }
         val record = rule.onNodeWithText("Record").fetchSemanticsNode().id
@@ -57,8 +58,8 @@ class VoiceAnswerRecorderTest {
         lateinit var model: VoiceAnswerModel
         rule.setContent {
             ZoonkTheme {
-                model = voiceAnswerModel(KEY)
-                VoiceAnswerRecorder<Unit>(grade = { GradeOutcome.Failed }, onGraded = {}, navigator = rememberAppNavigator(), key = KEY)
+                model = voiceAnswerModel(KEY) { GradeOutcome.Failed }
+                VoiceAnswerRecorder(model, rememberAppNavigator())
             }
         }
         rule.runOnIdle { model.microphoneOff = true }
@@ -81,6 +82,52 @@ class VoiceAnswerRecorderTest {
         assertEquals(GradeOutcome.Limited(Limit.SlowDown(60)), refused("SLOW_DOWN").toGradeOutcome())
         assertEquals(GradeOutcome.Failed, MutationResult.Failed(ApiError.Network).toGradeOutcome())
         assertEquals(GradeOutcome.Obsolete, MutationResult.Obsolete.toGradeOutcome())
+    }
+
+    /** The recorder leaves (another screen over it, the step left) while its take is graded, its view model kept. */
+    @Test
+    fun aTakeThatFailsAfterTheRecorderLeftSaysNothingOnReturn() {
+        val graded = CompletableDeferred<GradeOutcome<Unit>>()
+        var shown by mutableStateOf(true)
+        lateinit var model: VoiceAnswerModel
+        rule.setContent {
+            ZoonkTheme {
+                if (shown) {
+                    model = voiceAnswerModel(KEY) { graded.await() }
+                    VoiceAnswerRecorder(model, rememberAppNavigator())
+                }
+            }
+        }
+        rule.runOnIdle { model.check(VoiceRecording(ByteArray(8), 1_200)) }
+        shown = false
+        rule.waitForIdle()
+        graded.complete(GradeOutcome.Failed)
+        rule.waitForIdle()
+        shown = true
+        rule.waitForIdle()
+        rule.onNodeWithText("We couldn't check your answer this time. Try again.").assertDoesNotExist()
+    }
+
+    /** A guest's limit offers an account; Login opens over the take, and back from it the notice is gone. */
+    @Test
+    fun aLimitWhoseSignUpOpensOverTheTakeIsGoneOnReturn() {
+        lateinit var model: VoiceAnswerModel
+        lateinit var navigator: AppNavigator
+        rule.setContent {
+            ZoonkTheme {
+                navigator = rememberAppNavigator()
+                if (navigator.currentRoute != AppRoute.Login) {
+                    model = voiceAnswerModel(KEY) { GradeOutcome.Limited(Limit.SignUpRequired) }
+                    VoiceAnswerRecorder(model, navigator)
+                }
+            }
+        }
+        rule.runOnIdle { model.check(VoiceRecording(ByteArray(8), 1_200)) }
+        rule.onNodeWithText("Create a free account").performClick()
+        rule.runOnIdle { navigator.back() }
+
+        rule.onNodeWithText("Create a free account").assertDoesNotExist()
+        rule.onNodeWithText("Tap Record and say it out loud").assertIsDisplayed()
     }
 
     private companion object {

@@ -12,7 +12,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,13 +28,14 @@ import com.zoonk.android.feature.account.ProfileFormViewModel
 import com.zoonk.android.feature.account.ProfileSaveFailure
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.scaffold.PageScaffold
-import kotlinx.coroutines.launch
 
 /** Main's profile page: the name and the username. The data download and deleting the account are in Privacy. */
 @Composable
@@ -122,9 +122,8 @@ private fun Profile(
     form: ProfileFormViewModel,
 ) {
     // A save's answer is a snackbar, so Save and the rows under it stay where they are.
-    LaunchedEffect(form.isSaved) {
-        if (form.isSaved) app.scope.launch { app.snackbars.show(R.string.settings_saved) }
-    }
+    VisitOf(form.visit)
+    ActOn(form.saved) { app.snackbars.show(R.string.settings_saved) }
 
     Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         ProfileFields(form)

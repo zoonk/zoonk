@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -18,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.profile.ProfileDraft
 import com.zoonk.android.feature.profile.ProfileQuestionBody
@@ -33,7 +31,6 @@ import com.zoonk.api.models.Goal
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.ProfileQuestion
-import kotlinx.coroutines.launch
 
 @Composable
 internal fun ColumnScope.ProfileStep(
@@ -45,7 +42,6 @@ internal fun ColumnScope.ProfileStep(
     val question = view.profile.questions.first { it.id == id }
     val role = profileJobPrefill(view.goal.details.text("role"))
     val draft = vm.profileDraft(question, role)
-    val scope = rememberCoroutineScope()
     val memory = view.profile.memoryEnabled
     val valid = draft.valid(id, memory)
     val holdsAnswer = draft.declined || !draft.empty(id, memory)
@@ -82,8 +78,8 @@ internal fun ColumnScope.ProfileStep(
                         onClick = {
                             if (holdsAnswer && valid) {
                                 startingLesson = true
-                                val saving = save()
-                                scope.launch { if (saving?.await() is WriteOutcome.Done) wait.onStartLesson.invoke() }
+                                // The view model owns the start that follows the save: a layout change mid-save can't drop it.
+                                vm.answerThenStartLesson(draft.onboardingInput(id, memory), draft)
                             } else {
                                 wait.onStartLesson.invoke()
                             }

@@ -159,6 +159,43 @@ class SignInTest {
         }
 
     @Test
+    fun aProfileSavedWhileThePageIsRecreatedSaysSavedOnce() =
+        runTest {
+            val (sessions, account) = stores()
+            sessions.restore()
+            account.signInWithEmailCode("bia@zoonk.test", "123456")
+            val form = ProfileFormViewModel(account, (sessions.state.value as SessionState.SignedIn).account.user, SavedStateHandle())
+            advanceUntilIdle()
+
+            form.onNameChange("Bia")
+            form.save()
+            advanceUntilIdle()
+
+            assertEquals(Unit, form.saved.value)
+            form.saved.acted(Unit)
+            assertEquals(null, form.saved.value)
+            assertTrue(form.isSaved)
+        }
+
+    @Test
+    fun aProfileSavedAfterTheLearnerLeftThePageSaysNothingOnReturn() =
+        runTest {
+            val (sessions, account) = stores()
+            sessions.restore()
+            account.signInWithEmailCode("bia@zoonk.test", "123456")
+            val form = ProfileFormViewModel(account, (sessions.state.value as SessionState.SignedIn).account.user, SavedStateHandle())
+            advanceUntilIdle()
+
+            form.onNameChange("Bia")
+            form.save()
+            form.visit.end()
+            advanceUntilIdle()
+
+            assertEquals(null, form.saved.value)
+            assertEquals(listOf("Bia" to "ana_learner"), api.saved)
+        }
+
+    @Test
     fun aProfileBeingSavedCantBeEdited() =
         runTest {
             val (sessions, account) = stores()

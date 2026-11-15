@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.memory
 
+import android.net.Uri
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -37,6 +39,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import org.junit.runner.RunWith
 import java.util.UUID
 
 private val FACT_ID: UUID = UUID.fromString("0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0f1")
@@ -97,9 +100,13 @@ private class FakeMemoryApi : MemoryApi {
         failure?.let { throw it }
     }
 
-    override suspend fun export(session: AuthenticatedSession): MemoryExport = throw UnsupportedOperationException()
+    override suspend fun export(session: AuthenticatedSession): MemoryExport {
+        gate?.await()
+        throw failure ?: UnsupportedOperationException()
+    }
 }
 
+@RunWith(AndroidJUnit4::class)
 @OptIn(ExperimentalCoroutinesApi::class)
 class MemoryStoreTest {
     @get:Rule
@@ -153,7 +160,7 @@ class MemoryStoreTest {
         runTest {
             Dispatchers.setMain(StandardTestDispatcher(testScheduler))
             try {
-                val screen = MemoryViewModel(loadedStore())
+                val screen = MemoryViewModel(loadedStore()) { null }
                 api.gate = CompletableDeferred()
 
                 screen.openEdit(FACT_ID)
@@ -184,7 +191,7 @@ class MemoryStoreTest {
         runTest {
             Dispatchers.setMain(StandardTestDispatcher(testScheduler))
             try {
-                val screen = MemoryViewModel(loadedStore())
+                val screen = MemoryViewModel(loadedStore()) { null }
                 api.failure = ApiException(ApiError.Unavailable, "INTERNAL_ERROR", 500)
 
                 screen.openEdit(FACT_ID)
@@ -258,4 +265,49 @@ class MemoryStoreTest {
             api.failure = null
             assertEquals(MemoryUndo.Undone, store.undo(change).memoryUndo())
         }
+
+    @Test
+    fun aDownloadThatFailsWhileThePageIsRecreatedStillSaysSo() =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            try {
+                val screen = MemoryViewModel(loadedStore()) { null }
+                api.failure = ApiException(ApiError.Network)
+
+                // No page shows while the download is out, as when the window is recreated.
+                screen.export(PICKED)
+                advanceUntilIdle()
+
+                assertTrue(screen.exportFailed)
+                assertFalse(screen.isExporting)
+            } finally {
+                Dispatchers.resetMain()
+            }
+        }
+
+    @Test
+    fun aDownloadThatFailsAfterThePageLeftSaysNothingOnReturn() =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            try {
+                val screen = MemoryViewModel(loadedStore()) { null }
+                api.gate = CompletableDeferred()
+                api.failure = ApiException(ApiError.Network)
+
+                screen.export(PICKED)
+                runCurrent()
+                screen.visit.end()
+                api.gate!!.complete(Unit)
+                advanceUntilIdle()
+
+                assertFalse(screen.exportFailed)
+                assertFalse(screen.isExporting)
+            } finally {
+                Dispatchers.resetMain()
+            }
+        }
+
+    private companion object {
+        val PICKED: Uri = Uri.parse("content://com.android.providers.downloads.documents/document/1")
+    }
 }

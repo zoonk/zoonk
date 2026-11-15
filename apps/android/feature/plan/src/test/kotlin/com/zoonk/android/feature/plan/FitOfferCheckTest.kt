@@ -192,7 +192,7 @@ class FitOfferCheckTest {
 
         compose.onNodeWithText("Add to my plan").performClick()
 
-        compose.onNodeWithText("The numbers are different today.").assertExists()
+        compose.onNodeWithText("Your plan changed since you saw this. Here's what it does now.").assertExists()
         compose.onNodeWithText("You have time for 4 more lessons").assertExists()
         compose.onNodeWithText("Change my plan").assertIsEnabled()
         assertEquals(emptyList<List<PlanOp>>(), api.changes)
@@ -217,6 +217,7 @@ class FitOfferCheckTest {
                                 SlotHost(
                                     preview = preview,
                                     clearPreview = viewModel::clearSlotPreview,
+                                    dropCheck = viewModel::dropSlotCheck,
                                     addFitOffer = { viewModel.addFitOffer(page.plan, it) },
                                 ),
                                 viewModel.slotState,

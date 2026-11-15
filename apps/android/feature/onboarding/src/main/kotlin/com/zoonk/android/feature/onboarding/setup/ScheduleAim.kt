@@ -9,12 +9,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
+import com.zoonk.android.data.Visit
+import com.zoonk.android.data.VisitOutcome
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.AdviceQuery
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.plan.LanguageAimRow
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.Goal
@@ -28,7 +32,10 @@ internal data class SetupAimContext(
     val aim: OnboardingLanguageAim? = null,
     val pending: Boolean = false,
     val failed: Boolean = false,
-    val change: (String, () -> Unit) -> Unit = { _, _ -> },
+    val change: (String) -> Unit = {},
+    val saved: VisitOutcome<Unit>? = null,
+    /** The aim sheet's opening, which ends when the sheet closes. */
+    val sheet: Visit? = null,
 )
 
 internal val LocalSetupAim = compositionLocalOf { SetupAimContext() }
@@ -57,12 +64,14 @@ internal fun ScheduleAim(
             }
         }
     var aimOpen by rememberSaveable { mutableStateOf(false) }
+    if (aimOpen) context.sheet?.let { VisitOf(it) }
+    context.saved?.let { ActOn(it) { aimOpen = false } }
     LanguageAimRow(
         aim,
         languageAim.choices,
         aimOpen,
         { aimOpen = it },
-        context.change,
+        { picked, _ -> context.change(picked) },
         pending = context.pending,
         failed = context.failed,
         endDate = endDate,

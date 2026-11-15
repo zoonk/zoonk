@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentCompositeKeyHashCode
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,18 +40,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.SessionState
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.Button
@@ -125,20 +131,25 @@ internal fun courseContinue(goal: LearnerSummaryGoal): CourseContinue =
     }
 
 /**
- * Main's `CourseContinueLink` switch: Today opens once the goal is saved, unless the learner moved on
- * since the tap. Run it in the app's scope, so leaving the page doesn't cut the save short.
+ * Main's `CourseContinueLink` switch: Today opens once the goal is saved, on the visit that tapped. The save runs in the
+ * app's scope, so leaving the page doesn't cut it short; what it leads to ([switched]: saved or not) belongs to the
+ * page's visit, so leaving first opens nothing and says nothing.
  */
-internal fun CoroutineScope.switchThenOpenToday(
-    navigator: AppNavigator,
-    onFailed: () -> Unit,
-    select: suspend () -> Boolean?,
-) {
-    val tappedOn = navigator.currentRoute
+internal class SwitchThenToday(
+    private val appScope: CoroutineScope,
+    private val switch: suspend (UUID) -> Boolean?,
+) : ViewModel() {
+    val visit = Visit()
 
-    launch {
-        val saved = select() ?: return@launch
-        if (navigator.currentRoute != tappedOn) return@launch
-        if (saved) navigator.showRoot(AppTab.Today) else onFailed()
+    /** Whether the goal tapped was saved; null while none is owed. */
+    val switched = visit.outcome<Boolean>()
+
+    fun switchTo(goalId: UUID) {
+        val started = visit.number
+        appScope.launch {
+            val saved = switch(goalId) ?: return@launch
+            switched.send(started, saved)
+        }
     }
 }
 
@@ -275,6 +286,12 @@ internal fun StartActions(
     val follows = goal != null
     val visitorNote = if (isVisitor(app)) stringResource(R.string.catalog_start_free) else null
     val saving by app.goalSwitch.saving.collectAsStateWithLifecycle()
+    // Each place the actions show is its own asker, so two on one page don't end each other's visit.
+    val continuing = viewModel(key = "switch-then-today:$currentCompositeKeyHashCode") { SwitchThenToday(app.scope, app::switchGoal) }
+    VisitOf(continuing.visit)
+    ActOn(
+        continuing.switched,
+    ) { saved -> if (saved) navigator.showRoot(AppTab.Today) else app.snackbars.show(R.string.goal_switcher_failed) }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -295,9 +312,7 @@ internal fun StartActions(
                     }
 
                     is CourseContinue.Switch -> {
-                        app.scope.switchThenOpenToday(navigator, onFailed = { app.snackbars.show(R.string.goal_switcher_failed) }) {
-                            app.switchGoal(next.goalId)
-                        }
+                        continuing.switchTo(next.goalId)
                     }
                 }
             }

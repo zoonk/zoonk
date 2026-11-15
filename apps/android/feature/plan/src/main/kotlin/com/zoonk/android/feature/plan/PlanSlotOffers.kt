@@ -1,9 +1,7 @@
 package com.zoonk.android.feature.plan
 
-import androidx.activity.compose.LocalActivity
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -13,6 +11,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import com.zoonk.android.R
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.OnVisitEnd
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
@@ -184,20 +185,11 @@ internal fun CoverageSuggestion(slot: Slot) {
         }
     val preview = slot.host.preview.of(offer?.operations.orEmpty(), plan)
 
-    /** [focus] moves to the suggestion once the search answers, as the control that asked gives way. */
-    fun ask(
-        next: CoverageIntent,
-        focus: () -> Unit,
-    ) {
+    fun ask(next: CoverageIntent) {
         state.asking = next
         state.intent = next
         slot.host.clearPreview()
-        edits.findTimeToCover(plan) { outcome ->
-            if (state.asking == next) focus()
-            val time = (outcome as? TimeToCoverOutcome.Answered)?.time ?: return@findTimeToCover
-            val change = coverageChange(page.isExam, next, time, plan.schedule.dailyMinutes.toInt()) ?: return@findTimeToCover
-            if (coverage != null && state.asking == next) slot.host.requestPreview(change.operations)
-        }
+        edits.findTimeToCover(plan, TimeAsker.Coverage(next))
     }
 
     fun stopAsking() {
@@ -206,6 +198,16 @@ internal fun CoverageSuggestion(slot: Slot) {
     }
 
     PlanChangeSuggestion(SlotItem.Coverage, title, slot) {
+        // The sheet or panel asks: closing it drops what the search owes it, so a later opening only shows what was found.
+        VisitOf(edits.outcomes.suggestion)
+        // Focus moves to the suggestion once the search answers, as the control that asked gives way. What's kept is
+        // the answer for the plan shown now ([found]), never the time an older plan's search carried.
+        ActOn(edits.outcomes.coverageFound) { (next, _) ->
+            if (state.asking == next) focus()
+            val time = found ?: return@ActOn
+            val change = coverageChange(page.isExam, next, time, plan.schedule.dailyMinutes.toInt()) ?: return@ActOn
+            if (coverage != null && state.asking == next) slot.host.requestPreview(change.operations)
+        }
         offer?.description?.filter { it != title }?.forEach { SuggestionDescription(it) }
         status?.let { StatusDescription(it) }
 
@@ -235,7 +237,7 @@ internal fun CoverageSuggestion(slot: Slot) {
                         )
                     }
                     if (offer == null && found == null) {
-                        FindAction(pending, retry) { ask(if (retry) state.intent else CoverageIntent.Time, focus) }
+                        FindAction(pending, retry) { ask(if (retry) state.intent else CoverageIntent.Time) }
                     }
                     if (studiesEverything) {
                         SuggestionAction(stringResource(R.string.plan_study_everything_after_exam), onClick = {
@@ -255,7 +257,7 @@ internal fun CoverageSuggestion(slot: Slot) {
                                 SuggestionMenuItem(
                                     stringResource(R.string.plan_move_date),
                                     done,
-                                ) { ask(CoverageIntent.Date, focus) }
+                                ) { ask(CoverageIntent.Date) }
                             }
                             if (canChooseFocus(plan)) {
                                 SuggestionMenuItem(stringResource(R.string.plan_choose_focus), done) {
@@ -352,26 +354,15 @@ internal fun FitLessonsSuggestion(slot: Slot) {
 
 /**
  * Closing the suggestion's sheet, or leaving the Plan, drops the offer's check, as Not now does, so
- * its late answer adds nothing, whatever plan the page shows by then. A recreated window keeps it.
+ * its late answer adds and says nothing, whatever plan the page shows by then. A recreated window keeps it.
  */
 @Composable
 private fun CancelCheckWhenGone(
     slot: Slot,
     offer: PlanFitOffer,
 ) {
-    val activity = LocalActivity.current
     val current by rememberUpdatedState(slot)
-
-    DisposableEffect(Unit) {
-        onDispose {
-            val host = current.host
-            if (activity?.isChangingConfigurations != true &&
-                (host.preview as? PlanPreviewState.Asked)?.operations == offer.operations.map { it.op }
-            ) {
-                host.clearPreview()
-            }
-        }
-    }
+    OnVisitEnd(Unit) { current.host.dropCheck(offer.operations.map { it.op }) }
 }
 
 private const val NAMED_TOPICS = 2
@@ -422,19 +413,7 @@ private fun DateOverSuggestion(
         val request = ++state.searches
         state.waiting = request
         state.dateSearch = DateSearch.Finding
-        slot.edits.findTimeToCover(page.plan) { found ->
-            if (state.waiting != request) return@findTimeToCover
-            state.waiting = 0
-            val date = (found as? TimeToCoverOutcome.Answered)?.time?.fittingDate?.toJavaLocalDate()
-            date?.let { slot.host.requestPreview(CoverageChange.Date(it).operations) }
-            state.dateSearch =
-                when (found) {
-                    is TimeToCoverOutcome.Answered -> if (date == null) DateSearch.NoDate else null
-                    TimeToCoverOutcome.Building -> DateSearch.Building
-                    TimeToCoverOutcome.Failed -> DateSearch.Failed
-                    TimeToCoverOutcome.Stale -> null
-                }
-        }
+        slot.edits.findTimeToCover(page.plan, TimeAsker.PastDate(request))
     }
 
     fun stopWaiting() {
@@ -448,6 +427,22 @@ private fun DateOverSuggestion(
         slot,
         mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
     ) {
+        // The sheet or panel asks: closing it while the date is found stops the wait, and its answer does nothing.
+        VisitOf(slot.edits.outcomes.suggestion)
+        OnVisitEnd(Unit) { if (state.dateSearch == DateSearch.Finding) stopWaiting() }
+        ActOn(slot.edits.outcomes.pastDateFound) { (request, found) ->
+            if (state.waiting != request) return@ActOn
+            state.waiting = 0
+            val date = (found as? TimeToCoverOutcome.Answered)?.time?.fittingDate?.toJavaLocalDate()
+            date?.let { slot.host.requestPreview(CoverageChange.Date(it).operations) }
+            state.dateSearch =
+                when (found) {
+                    is TimeToCoverOutcome.Answered -> if (date == null) DateSearch.NoDate else null
+                    TimeToCoverOutcome.Building -> DateSearch.Building
+                    TimeToCoverOutcome.Failed -> DateSearch.Failed
+                    TimeToCoverOutcome.Stale -> null
+                }
+        }
         val adjust = {
             close()
             onAdjust(PlanSection.Date)

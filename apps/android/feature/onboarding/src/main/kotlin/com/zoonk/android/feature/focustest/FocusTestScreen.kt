@@ -28,7 +28,6 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.setup.LocalSetupDrafts
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.setup.SetupDrafts
@@ -111,10 +110,7 @@ internal fun FocusTestScreen(
                                 run = remember { GenerationRun() },
                                 onRetryRun = null,
                                 onProgress = { progress = it },
-                                onDone = {
-                                    navigator.closeTask()
-                                    WriteOutcome.Done(Unit)
-                                },
+                                onLeft = navigator::closeTask,
                                 plan =
                                     OnPlan(
                                         onChangeFocus = {

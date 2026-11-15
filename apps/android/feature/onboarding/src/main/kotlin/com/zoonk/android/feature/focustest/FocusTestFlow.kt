@@ -15,6 +15,7 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.TrackOnboardingQuestion
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.setup.LocalSetupDrafts
 import com.zoonk.android.feature.onboarding.setup.PlacementQuestion
 import com.zoonk.android.feature.onboarding.setup.PlacementUnavailable
@@ -28,6 +29,8 @@ import com.zoonk.android.feature.onboarding.setup.typedDraftStep
 import com.zoonk.android.feature.onboarding.setup.withPoll
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.warmup.rememberReadyHold
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.api.models.FocusTestSitting
@@ -42,8 +45,8 @@ internal class OnPlan(
 
 /**
  * An exam goal's Focus test, the same in onboarding's placement step and opened from the plan.
- * [onDone] leaves it: onboarding saves its step, a plan goes back to it. [plan] is set when the
- * plan is already the learner's.
+ * Leaving it saves [handBack] (onboarding's step), then [onLeft] goes on (a plan goes back to it).
+ * [plan] is set when the plan is already the learner's.
  */
 @Composable
 internal fun ColumnScope.FocusTestFlow(
@@ -54,12 +57,15 @@ internal fun ColumnScope.FocusTestFlow(
     run: GenerationRun,
     onRetryRun: (() -> Unit)?,
     onProgress: (Float?) -> Unit,
-    onDone: LeaveTest,
+    handBack: LeaveTest = { WriteOutcome.Done(Unit) },
     plan: OnPlan? = null,
     onReportSaveFailure: () -> Unit = {},
+    onLeft: () -> Unit = {},
 ) {
     val drafts = LocalSetupDrafts.current
-    val vm = viewModel(key = "focus-test:$goalId") { FocusTestViewModel(goalId, store, plans, drafts, createSavedStateHandle()) }
+    val vm = viewModel(key = "focus-test:$goalId") { FocusTestViewModel(goalId, store, plans, drafts, createSavedStateHandle(), handBack) }
+    VisitOf(vm.visit)
+    ActOn(vm.left) { onLeft() }
     val resource = store.placements[goalId]
     val placement by resource.collectShown()
     val phase = vm.phase(placement)
@@ -76,7 +82,7 @@ internal fun ColumnScope.FocusTestFlow(
     // Today's "Start the test" already made the offer; until the start answers, the offer waits behind a spinner.
     // A start the app was closed during runs again when the test comes back: the API answers it with the open sitting.
     val starting = plan?.startOnOpen == true && shown is FocusTestPhase.Offer && !vm.failed
-    if (starting) LaunchedEffect(Unit) { vm.start(onDone) }
+    if (starting) LaunchedEffect(Unit) { vm.start() }
 
     when {
         shown == FocusTestPhase.Loading || starting -> {
@@ -100,7 +106,7 @@ internal fun ColumnScope.FocusTestFlow(
                 hold = hold,
                 pending = vm.busy,
                 failed = vm.failed,
-                onSkip = { vm.leave(closes = shown.answered || onboarding, onDone) },
+                onSkip = { vm.leave(closes = shown.answered || onboarding) },
                 skipLabel = skip,
                 skipNote = stringResource(R.string.focustest_skip_note).takeIf { !shown.answered && onboarding },
             )
@@ -110,7 +116,7 @@ internal fun ColumnScope.FocusTestFlow(
             PlacementUnavailable(
                 pending = vm.pressed != null,
                 failed = vm.failed,
-                onContinue = { vm.leave(closes = onboarding, onDone) },
+                onContinue = { vm.leave(closes = onboarding) },
             )
         }
 
@@ -122,8 +128,8 @@ internal fun ColumnScope.FocusTestFlow(
                 onPlan = !onboarding,
                 pressed = vm.pressed,
                 failed = vm.failed,
-                onStart = { vm.start(onDone) },
-                onSkip = { vm.leave(closes = onboarding, onDone) },
+                onStart = vm::start,
+                onSkip = { vm.leave(closes = onboarding) },
             )
         }
 
@@ -134,16 +140,16 @@ internal fun ColumnScope.FocusTestFlow(
                 pressed = vm.pressed,
                 failed = vm.failed,
                 onContinue = vm::resume,
-                onSeeResult = { vm.leave(closes = true, onDone) },
+                onSeeResult = { vm.leave(closes = true) },
             )
         }
 
         shown is FocusTestPhase.Question -> {
-            TestQuestion(goalId, shown, subject, vm, onDone, onReportSaveFailure)
+            TestQuestion(goalId, shown, subject, vm, onReportSaveFailure)
         }
 
         shown == FocusTestPhase.Ended -> {
-            FocusTestEnded(pending = vm.pressed == Pressed.Main, failed = vm.failed, onFinish = { vm.finish(onDone) })
+            FocusTestEnded(pending = vm.pressed == Pressed.Main, failed = vm.failed, onFinish = vm::finish)
         }
 
         shown is FocusTestPhase.Checkpoint -> {
@@ -164,7 +170,7 @@ internal fun ColumnScope.FocusTestFlow(
                 canContinue = shown.test.offer != null,
                 pressed = vm.pressed,
                 failed = vm.failed,
-                onDone = { vm.done(onDone) },
+                onDone = vm::done,
                 onContinueTest = vm::continueTest,
             )
         }
@@ -177,7 +183,6 @@ private fun ColumnScope.TestQuestion(
     question: FocusTestPhase.Question,
     subject: String,
     vm: FocusTestViewModel,
-    onDone: LeaveTest,
     onReportSaveFailure: () -> Unit,
 ) {
     val sitting = question.sitting
@@ -197,8 +202,8 @@ private fun ColumnScope.TestQuestion(
                 pending = vm.answering,
                 saveFailures = vm.saveFailures,
                 onReportSaveFailure = onReportSaveFailure,
-                onAnswer = { answer, durationMs -> vm.answer(question, answer, durationMs, onDone) },
-                onStop = { vm.stop(onDone) },
+                onAnswer = { answer, durationMs -> vm.answer(question, answer, durationMs) },
+                onStop = vm::stop,
                 stopLabel = stringResource(R.string.focustest_stop),
                 stopHint = stringResource(R.string.focustest_many_unknown).takeIf { sitting.hint == FocusTestSitting.Hint.MANY_UNKNOWN },
             )

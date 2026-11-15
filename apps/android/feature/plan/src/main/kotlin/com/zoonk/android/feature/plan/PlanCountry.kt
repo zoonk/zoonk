@@ -52,14 +52,14 @@ internal val LearnerSummaryGoal.editableCountry: GoalContentCountry?
 /**
  * The Adjust plan row, as the language's: the content country, the lesson language when core
  * discloses one, and Change. A new country rebuilds the plan, so it asks first; the old plan stays
- * until the new one saves.
+ * until the new one saves, and the editor closes the question once the server has it.
  */
 @Composable
 internal fun ContentCountryRow(
     goal: LearnerSummaryGoal,
     country: GoalContentCountry,
     drafts: EditorDrafts,
-    onPick: (String, () -> Unit) -> Unit,
+    onPick: (String) -> Unit,
     pending: Boolean,
     failed: Boolean,
     modifier: Modifier = Modifier,
@@ -104,10 +104,7 @@ internal fun ContentCountryRow(
                     enabled = !pending,
                     onClick = {
                         drafts.countryAsked = asked.copy(sent = true)
-                        onPick(asked.code) {
-                            drafts.countryAsked = null
-                            drafts.picking = null
-                        }
+                        onPick(asked.code)
                     },
                 ) { Text(stringResource(R.string.country_change_confirm)) }
             },

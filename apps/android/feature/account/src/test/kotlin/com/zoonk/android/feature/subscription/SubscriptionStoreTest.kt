@@ -189,7 +189,7 @@ class SubscriptionStoreTest {
         runTest {
             val (sessions, store) = store(ana)
 
-            store.buy(activity, BillingPeriod.Yearly)
+            store.buy({ activity }, BillingPeriod.Yearly)
             assertEquals(listOf(BillingPeriod.Yearly to ANA), billing.bought)
             assertEquals(PurchaseState.Buying, store.purchase.value)
 
@@ -283,7 +283,7 @@ class SubscriptionStoreTest {
             val (_, store) = store(AuthenticatedSession(GUEST, "token-guest", "local-g"), isGuest = true)
             billing.unlinked = listOf("from-the-play-store")
 
-            store.buy(activity, BillingPeriod.Monthly)
+            store.buy({ activity }, BillingPeriod.Monthly)
             foreground.value = true
             billing.updates.emit(PlayPurchaseUpdate.Purchased("out-of-app"))
             advanceUntilIdle()
@@ -298,7 +298,7 @@ class SubscriptionStoreTest {
             val (_, store) = store(ana)
             val reads = billing.offerReads
 
-            store.buy(activity, BillingPeriod.Monthly)
+            store.buy({ activity }, BillingPeriod.Monthly)
 
             assertEquals(reads + 1, billing.offerReads)
             assertEquals(listOf(BillingPeriod.Monthly to ANA), billing.bought)
@@ -313,7 +313,7 @@ class SubscriptionStoreTest {
 
             listOf("stripe", "apple", "google", "zoonk").forEach { provider ->
                 api.accountRead = { subscribed(it.accountId, provider = provider) }
-                store.buy(activity, BillingPeriod.Monthly)
+                store.buy({ activity }, BillingPeriod.Monthly)
 
                 assertEquals(PurchaseState.AlreadyPlus, store.purchase.value)
                 assertEquals(
@@ -336,7 +336,7 @@ class SubscriptionStoreTest {
             advanceUntilIdle()
             api.accountRead = { throw ApiException(ApiError.Network) }
 
-            store.buy(activity, BillingPeriod.Monthly)
+            store.buy({ activity }, BillingPeriod.Monthly)
 
             assertTrue(billing.bought.isEmpty())
             assertEquals(PurchaseState.PlanCheckFailed, store.purchase.value)
@@ -352,7 +352,7 @@ class SubscriptionStoreTest {
             val planRead = CompletableDeferred<MeResponse>()
             api.accountRead = { planRead.await() }
 
-            val checkout = launch { store.buy(activity, BillingPeriod.Monthly) }
+            val checkout = launch { store.buy({ activity }, BillingPeriod.Monthly) }
             advanceUntilIdle()
             billing.updates.emit(PlayPurchaseUpdate.Purchased("out-of-app"))
             advanceUntilIdle()
@@ -377,7 +377,7 @@ class SubscriptionStoreTest {
             val planRead = CompletableDeferred<MeResponse>()
             api.accountRead = { planRead.await() }
 
-            val checkout = launch { store.buy(activity, BillingPeriod.Monthly) }
+            val checkout = launch { store.buy({ activity }, BillingPeriod.Monthly) }
             advanceUntilIdle()
             sessions.signOut()
             planRead.complete(subscribed(ANA, provider = "stripe"))
@@ -598,7 +598,7 @@ class SubscriptionStoreTest {
     fun anotherAccountStartsWithoutTheLastOnesPurchaseState() =
         runTest {
             val (sessions, store) = store(ana)
-            store.buy(activity, BillingPeriod.Yearly)
+            store.buy({ activity }, BillingPeriod.Yearly)
             assertEquals(PurchaseState.Buying, store.purchase.value)
 
             sessions.signOut()

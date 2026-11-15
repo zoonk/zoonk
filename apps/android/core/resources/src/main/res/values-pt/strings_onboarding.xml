@@ -326,7 +326,6 @@
   "onboarding_reveal_start": "52ab050bd17908a219d5c5edb1744bd6ce272dbfe651b7931d48eaab10b1cff4",
   "onboarding_reveal_start_here": "5daa0c4f6d8ab29254fdd3601604d07a63ebd502525cadc32ac71619b890b5de",
   "onboarding_reveal_study_days": "a3b128feb36bdb20ab999c082f785393377923c50128afe25085592db018de11",
-  "onboarding_reveal_today": "1eaad2c10699dde8c956c0dfa37e9a43a35c2dbabc7ea6c4c7704fd10cb6ba4f",
   "onboarding_reveal_topics": "121fbc941a442bc58bc6032afab9cf774893a8b61e72369f14dad1cbbea32f01",
   "onboarding_reveal_topics_all_planned": "99cfd226b4e8ccd4cfa12f596b7905656bc0b4a533c4a9f652af687f2c533705",
   "onboarding_reveal_topics_dont_fit": "7be4cbdf48a8326815db3a19a10ae8fceea7514e595f70a3ecbfc7cf1cf49ec8",
@@ -759,8 +758,6 @@
     <string name="onboarding_reveal_phase_short_mock">Simulado rápido e revisão</string>
     <string name="onboarding_reveal_phase_full_review">Revisão completa</string>
     <string name="onboarding_reveal_phase_light_review">Revisão leve</string>
-    <!-- Beside the phase the learner is in, in place of its start date. -->
-    <string name="onboarding_reveal_today">Hoje</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">A data provável da prova agora é %1$s.</string>
     <string name="onboarding_reveal_notice_day_notice">O edital da prova indica %1$s.</string>

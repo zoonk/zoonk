@@ -62,7 +62,6 @@
         <item quantity="one">%1$d of %2$d phase done</item>
         <item quantity="other">%1$d of %2$d phases done</item>
     </plurals>
-    <string name="plan_roadmap_from">From %1$s</string>
     <string name="plan_today">Today</string>
     <string name="plan_mock_exam">Mock exam</string>
     <string name="plan_exam_day">Exam day</string>
@@ -737,8 +736,8 @@
     <string name="plan_course_complete">Course complete</string>
     <!-- A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end -->
     <string name="plan_level_complete">%1$s complete</string>
-    <string name="plan_effect_see_all">See all changes</string>
-    <string name="plan_effect_numbers_different">The numbers are different today.</string>
+    <string name="plan_effect_see_all">All changes</string>
+    <string name="plan_effect_numbers_different">Your plan changed since you saw this. Here\'s what it does now.</string>
     <!-- {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them. -->
     <string name="plan_effect_names_and_more">%1$s and more</string>
     <!-- %1$s is one topic\'s name. -->

@@ -141,7 +141,7 @@ internal fun ColumnScope.BasesChoices(
             if (operations.isNotEmpty()) PreviewOutcome(page.dateKind, check, onRetry = { attempt++ })
             Button(
                 busy = pending,
-                onClick = { edits.change(PlanPart.Bases, operations) { edits.answerSheet(draft.opening, it) } },
+                onClick = { edits.change(PlanPart.Bases, operations, PlanAsker.Sheet(draft.opening)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = operations.isNotEmpty() && check is Check.Ready,
             ) { Text(stringResource(R.string.plan_save)) }

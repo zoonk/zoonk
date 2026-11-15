@@ -25,7 +25,7 @@ import java.time.LocalDate
 
 /**
  * What an applied change did, as main's `PlanChangeSummary`: its sentence, its consequence and every
- * change behind "See all changes", and whether today's session took it. An undone change says so
+ * change behind "All changes", and whether today's session took it. An undone change says so
  * instead. [targetDate] and [fullCourse] are the plan's after the change.
  */
 @Composable

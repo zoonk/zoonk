@@ -21,10 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -52,6 +49,8 @@ import com.zoonk.android.feature.mock.result.MockResult
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
@@ -151,18 +150,9 @@ private fun MockRunScreen(
     navigator: AppNavigator,
 ) {
     val run by viewModel.state.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
-    var leaving by remember { mutableStateOf(false) }
-    // Pressed again while answers go out, it still closes only the mock.
-    val leave: () -> Unit = {
-        if (!leaving) {
-            leaving = true
-            scope.launch {
-                viewModel.leave()
-                navigator.closeTask()
-            }
-        }
-    }
+    val leave: () -> Unit = viewModel::leave
+    VisitOf(viewModel.visit)
+    ActOn(viewModel.closed) { navigator.closeTask() }
     val view = run.view
     val current = view.current
 

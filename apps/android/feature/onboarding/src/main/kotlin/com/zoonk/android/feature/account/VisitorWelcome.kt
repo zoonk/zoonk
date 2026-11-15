@@ -34,6 +34,8 @@ import com.zoonk.android.feature.onboarding.start.GoalErrorAlert
 import com.zoonk.android.feature.onboarding.start.GoalSenderViewModel
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.TextButton
@@ -53,6 +55,8 @@ fun VisitorWelcome(
     modifier: Modifier = Modifier,
 ) {
     val sender = viewModel { GoalSenderViewModel(app.onboarding, app.analytics) }
+    VisitOf(sender.visit)
+    ActOn(sender.sent) { navigator.open(AppRoute.StartGoal(draftId = it)) }
     if (sender.isSending) {
         com.zoonk.android.data
             .TrackVisibleWait("understanding", "curriculum", attemptId = sender.attemptId)
@@ -64,7 +68,7 @@ fun VisitorWelcome(
         contentPadding = contentPadding,
         isSending = sender.isSending,
         error = sender.error,
-        onSend = { words -> sender.send(words, language) { draftId -> navigator.open(AppRoute.StartGoal(draftId = draftId)) } },
+        onSend = { words -> sender.send(words, language) },
         modifier = modifier,
     )
 }

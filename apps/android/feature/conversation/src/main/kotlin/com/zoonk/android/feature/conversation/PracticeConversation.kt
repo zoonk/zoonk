@@ -70,10 +70,14 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import kotlin.time.toJavaInstant
 
-/** Main's `useCallStart`: a call that isn't written yet waits on the run writing it, then starts again. */
+/**
+ * Main's `useCallStart`: a call that isn't written yet waits on the run writing it, then starts again.
+ * [refused] writes a subscription refusal into the access the screen reads, which shows its gate.
+ */
 class CallStartModel(
     private val starter: CallStarter,
     kind: GenerationKind,
+    private val refused: suspend () -> Unit = {},
 ) : ViewModel() {
     enum class State { Idle, Starting, Failed, Paused, PlusRequired }
 
@@ -90,16 +94,12 @@ class CallStartModel(
 
     val writing = starter.writingWaits.create(kind, viewModelScope)
 
-    /** [onRefused] writes a subscription refusal into the access the screen reads, which shows its gate. */
-    fun start(
-        request: CallRequest,
-        onRefused: suspend () -> Unit = {},
-    ) {
+    fun start(request: CallRequest) {
         state = State.Starting
         limit = null
         viewModelScope.launch {
             val started = starter.start(request)
-            val answer = writing.answered((started as? CallStart.Writing)?.generationId) { start(request, onRefused) }
+            val answer = writing.answered((started as? CallStart.Writing)?.generationId) { start(request) }
             limit = (started as? CallStart.Limited)?.limit
             state =
                 when {
@@ -124,7 +124,7 @@ class CallStartModel(
                         State.Failed
                     }
                 }
-            if (started == CallStart.PlusRequired) onRefused()
+            if (started == CallStart.PlusRequired) refused()
         }
     }
 

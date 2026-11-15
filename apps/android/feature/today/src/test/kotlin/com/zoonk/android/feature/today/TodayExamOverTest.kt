@@ -97,14 +97,13 @@ class TodayExamOverTest {
     fun keepStudyingStudiesEverythingAndStaysBusyUntilTodayShowsTheNewDay() =
         runTest(dispatcher) {
             val viewModel = today()
-            var failed = false
 
-            viewModel.keepStudying(goalId) { failed = true }
+            viewModel.keepStudying(goalId)
             advanceUntilIdle()
 
             assertEquals(listOf(listOf<PlanOp>(PlanOp.FullCourse(true))), plans.changes)
             assertEquals(ExamOverAnswer(goalId, archive = false), viewModel.examOverAnswer)
-            assertEquals(false, failed)
+            assertNull(viewModel.examOverFailure.value)
         }
 
     @Test
@@ -112,7 +111,7 @@ class TodayExamOverTest {
         runTest(dispatcher) {
             val viewModel = examOverShown()
 
-            viewModel.keepStudying(goalId) {}
+            viewModel.keepStudying(goalId)
             advanceUntilIdle()
             reads.answer = AFTER_ANSWER
             store.today.refresh()
@@ -124,7 +123,7 @@ class TodayExamOverTest {
             reads.answer = EXAM_OVER
             store.today.refresh()
             advanceUntilIdle()
-            viewModel.archiveGoal(goalId) {}
+            viewModel.archiveGoal(goalId)
             advanceUntilIdle()
 
             assertTrue(LearnerSummaryGoal.Status.ARCHIVED in plans.statuses)
@@ -135,12 +134,12 @@ class TodayExamOverTest {
         runTest(dispatcher) {
             val viewModel = examOverShown()
 
-            viewModel.keepStudying(goalId) {}
+            viewModel.keepStudying(goalId)
             advanceUntilIdle()
             reads.failure = ApiException(ApiError.Network)
             store.today.refresh()
             advanceUntilIdle()
-            viewModel.keepStudying(goalId) {}
+            viewModel.keepStudying(goalId)
             advanceUntilIdle()
 
             assertEquals(ExamOverAnswer(goalId, archive = false), viewModel.examOverAnswer)
@@ -163,7 +162,7 @@ class TodayExamOverTest {
             launch { store.today.refresh() }
             runCurrent()
 
-            viewModel.keepStudying(goalId) {}
+            viewModel.keepStudying(goalId)
             // The read the save starts waits, so only the one that started before it can finish.
             reads.gate = CompletableDeferred()
             runCurrent()
@@ -206,25 +205,40 @@ class TodayExamOverTest {
             assertEquals(goalId, viewModel.resuming)
         }
 
+    /** A recreation: no screen acts while the archive saves; the next one says it failed, once. */
     @Test
-    fun aFailedArchiveSaysSoAndCanBeAskedAgain() =
+    fun aFailedArchiveSaysSoOnceAndCanBeAskedAgain() =
         runTest(dispatcher) {
             val viewModel = today()
-            var failures = 0
             plans.statusFailure = ApiException(ApiError.Network)
 
-            viewModel.archiveGoal(goalId) { failures++ }
+            viewModel.archiveGoal(goalId)
             advanceUntilIdle()
 
-            assertEquals(1, failures)
+            val failed = viewModel.examOverFailure.value
+            assertEquals(ExamOverAnswer(goalId, archive = true), failed)
             assertNull(viewModel.examOverAnswer)
+            viewModel.examOverFailure.acted(failed!!)
 
             plans.statusFailure = null
-            viewModel.archiveGoal(goalId) { failures++ }
+            viewModel.archiveGoal(goalId)
             advanceUntilIdle()
 
-            assertEquals(1, failures)
+            assertNull(viewModel.examOverFailure.value)
             assertTrue(LearnerSummaryGoal.Status.ARCHIVED in plans.statuses)
+        }
+
+    @Test
+    fun aFailedArchiveThatLandsAfterTheLearnerLeftTodaySaysNothingOnReturn() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            plans.statusFailure = ApiException(ApiError.Network)
+
+            viewModel.archiveGoal(goalId)
+            viewModel.endVisit()
+            advanceUntilIdle()
+
+            assertNull(viewModel.examOverFailure.value)
         }
 
     private companion object {

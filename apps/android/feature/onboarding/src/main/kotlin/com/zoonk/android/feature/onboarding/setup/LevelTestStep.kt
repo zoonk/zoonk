@@ -57,17 +57,18 @@ import com.zoonk.android.feature.audio.SpeechState
 import com.zoonk.android.feature.audio.SpeechStatusIcon
 import com.zoonk.android.feature.audio.SpokenAudio
 import com.zoonk.android.feature.audio.SpokenText
-import com.zoonk.android.feature.audio.VoiceAnswerModel
 import com.zoonk.android.feature.audio.VoiceAnswerRecorder
 import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
+import com.zoonk.android.feature.audio.voiceAnswerModel
 import com.zoonk.android.feature.audio.withoutFailure
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
@@ -102,7 +103,8 @@ fun ColumnScope.LanguageLevelTestStep(
     onDone: suspend () -> WriteOutcome<*>,
     onReportSaveFailure: () -> Unit = {},
 ) {
-    val vm = viewModel(key = "level-test:$goalId") { LevelTestViewModel(goalId, store, createSavedStateHandle()) }
+    val vm = viewModel(key = "level-test:$goalId") { LevelTestViewModel(goalId, store, createSavedStateHandle(), onDone) }
+    VisitOf(vm.visit)
     val test by store.levelTests[goalId].collectShown()
     val phase = vm.phase(test)
     val hold =
@@ -120,7 +122,7 @@ fun ColumnScope.LanguageLevelTestStep(
         }
     LaunchedEffect(progress) { onProgress(progress) }
     DisposableEffect(Unit) { onDispose { onProgress(null) } }
-    val finish = { vm.finish(onDone = onDone) }
+    val finish = { vm.finish() }
 
     when (shown) {
         LevelTestPhase.Loading -> {
@@ -454,9 +456,8 @@ private fun ColumnScope.LevelTestSpeaking(
     onSkip: () -> Unit,
 ) {
     val recorderKey = "level-test-sentence:$goalId"
-    val context = LocalContext.current
-    // The recorder's own model, shared by its key: skipping while a sentence is graded would race the grade.
-    val voice = viewModel(key = recorderKey) { VoiceAnswerModel(context) }
+    // Skipping while a sentence is graded would race the grade.
+    val voice = voiceAnswerModel(recorderKey) { store.speakLevelTest(goalId, it) }
     QuestionPages(
         questionId = recorderKey,
         read = {
@@ -471,12 +472,7 @@ private fun ColumnScope.LevelTestSpeaking(
             }
         },
         answer = {
-            VoiceAnswerRecorder(
-                grade = { store.speakLevelTest(goalId, it) },
-                onGraded = {},
-                navigator = navigator,
-                key = recorderKey,
-            )
+            VoiceAnswerRecorder(voice, navigator)
         },
     ) {
         TextButton(onClick = onSkip, enabled = !voice.checking, modifier = Modifier.fillMaxWidth()) {

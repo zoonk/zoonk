@@ -408,13 +408,13 @@ private fun LineLayout(
             val textStart = markPlaced.width + gap
             if (beside) {
                 val wordsTop = (height - summaryPlaced.height) / 2
-                markPlaced.place(0, markAt(wordsTop))
-                summaryPlaced.place(textStart, wordsTop)
-                actionPlaced?.place(constraints.maxWidth - actionPlaced.width, (height - actionPlaced.height) / 2)
+                markPlaced.placeRelative(0, markAt(wordsTop))
+                summaryPlaced.placeRelative(textStart, wordsTop)
+                actionPlaced?.placeRelative(constraints.maxWidth - actionPlaced.width, (height - actionPlaced.height) / 2)
             } else {
-                markPlaced.place(0, markAt(top))
-                summaryPlaced.place(textStart, top)
-                actionPlaced.place(textStart, top + summaryPlaced.height + stackGap)
+                markPlaced.placeRelative(0, markAt(top))
+                summaryPlaced.placeRelative(textStart, top)
+                actionPlaced.placeRelative(textStart, top + summaryPlaced.height + stackGap)
             }
         }
     }

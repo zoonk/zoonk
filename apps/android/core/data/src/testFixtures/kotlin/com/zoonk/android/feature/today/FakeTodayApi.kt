@@ -75,9 +75,12 @@ class FakeTodayApi(
             ?: decodeFixture("memory-insight", "id" to insightId.toString(), "status" to if (accepted) "accepted" else "dismissed")
     }
 
+    /** The answer a suggested goal's Start or Not now saves; held as long as it suspends. */
+    var suggestedGoalAnswer: suspend (UUID, Boolean) -> SuggestedGoal = { _, _ -> error("Not used") }
+
     override suspend fun answerSuggestedGoal(
         session: AuthenticatedSession,
         suggestionId: UUID,
         accepted: Boolean,
-    ): SuggestedGoal = error("Not used")
+    ): SuggestedGoal = suggestedGoalAnswer(suggestionId, accepted)
 }

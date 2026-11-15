@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.tutor
 
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,13 +27,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -65,6 +62,8 @@ import com.zoonk.android.feature.session.toDayMission
 import com.zoonk.android.feature.subscription.SubscribeButton
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.StandingBuddy
 import com.zoonk.android.ui.components.AlertDialog
@@ -107,10 +106,8 @@ internal fun TutorThreadView(
     page: TutorPage? = null,
 ) {
     val coroutines = rememberCoroutineScope()
-    val openRoute by rememberUpdatedState(routes.open)
-    val activity = LocalActivity.current
-    LaunchedEffect(vm) { vm.blockRoutes.collect { openRoute(it) } }
-    DisposableEffect(vm) { onDispose { if (activity?.isChangingConfigurations != true) vm.leave() } }
+    ActOn(vm.blockRoute, routes.open)
+    OnVisitEnd(vm, onEnd = vm::leave)
 
     Box(modifier.fillMaxSize()) {
         when {

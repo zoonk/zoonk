@@ -48,6 +48,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.questionsLeft
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.GoalBox
@@ -113,6 +114,11 @@ private fun GoalPlan(
     val state by resource.collectShown()
     val scope = rememberCoroutineScope()
     val read = state.value
+    val viewModel = planViewModel(app, goal.id)
+
+    // One visit to this goal's Plan, whichever of its states shows: switching between them is the same visit.
+    VisitOf(viewModel.visit)
+    PlanEvents(viewModel, navigator, app.snackbars)
 
     when {
         // A plan is built while the questions are still answered, on a time the learner hasn't chosen yet.
@@ -230,9 +236,7 @@ private fun PlanWithoutPlan(
 private fun planViewModel(
     app: AppContainer,
     goalId: UUID,
-) = viewModel(key = "plan-$goalId") {
-    PlanViewModel(app.plans, goalId, app.writingWaits) { app.snackbars.show(R.string.plan_save_failed) }
-}
+) = viewModel(key = "plan-$goalId") { PlanViewModel(app.plans, goalId, app.writingWaits) }
 
 /**
  * The Plan's title before its plan shows, with the goal's menu at its end as on the ready Plan: an
@@ -247,8 +251,6 @@ private fun PlanTitleWithGoalMenu(
     val viewModel = planViewModel(app, goal.id)
     val isSaving by viewModel.isSaving.collectAsStateWithLifecycle()
     val renameDialog by viewModel.rename.collectAsStateWithLifecycle()
-
-    PlanEvents(viewModel, navigator)
 
     PageTitleRow(stringResource(R.string.plan_title), verticalAlignment = Alignment.CenterVertically) {
         GoalMenu(

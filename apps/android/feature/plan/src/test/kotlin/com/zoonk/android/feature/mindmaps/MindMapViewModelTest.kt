@@ -1,11 +1,14 @@
 package com.zoonk.android.feature.mindmaps
 
+import android.net.Uri
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.VisitOutcome
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.android.ui.components.Limit
@@ -42,11 +45,14 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.io.OutputStream
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
+@RunWith(AndroidJUnit4::class)
 @OptIn(ExperimentalCoroutinesApi::class)
 class MindMapViewModelTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
@@ -62,6 +68,30 @@ class MindMapViewModelTest {
 
     @After
     fun stop() = Dispatchers.resetMain()
+
+    @Test
+    fun aQueuedToggleThatFailsAfterTheLearnerLeftSaysNothingOnReturn() =
+        runTest(dispatcher) {
+            val (maps) = setUp()
+            val target = MindMapTarget(SavedMindMapKind.CHAPTER, chapterId)
+            val first = CompletableDeferred<Unit>()
+            api.save = { t, saved ->
+                if (api.saved.size == 1) {
+                    first.await()
+                    savedState(t, saved)
+                } else {
+                    throw ApiException(ApiError.Network)
+                }
+            }
+            maps.save(target, chapterId, saved = true)
+            advanceUntilIdle()
+            maps.save(target, chapterId, saved = false)
+            maps.visit.end()
+            first.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(listOf(target to true, target to false), api.saved)
+            assertNull(maps.saveFailed.value)
+        }
 
     @Test
     fun aTapAsksForTheMapAndReadsItAgainWhereItsShown() =
@@ -579,53 +609,89 @@ class MindMapViewModelTest {
     @Test
     fun aPictureThatArrivesAfterItsSessionEndedIsNeitherWrittenNorReported() =
         runTest(dispatcher) {
-            val (maps) = setUp()
             val file = ByteArrayOutputStream()
+            val (maps) = setUp(files = { file })
             api.picture = {
                 current = null
                 byteArrayOf(1, 2, 3)
             }
 
-            maps.savePicture("https://api.zoonk.test/v1/files/images/a/b.webp") { file }
+            maps.savePicture(PICTURE, PICKED)
             advanceUntilIdle()
 
             assertEquals(0, file.size())
-            assertEquals(emptyList<PictureSave>(), pictureSaves)
+            assertNull(maps.pictureSaved.value)
         }
 
     @Test
     fun aDestinationTheAppCantWriteIsAFailedSave() =
         runTest(dispatcher) {
-            val (maps) = setUp()
+            val (maps) = setUp(files = { throw SecurityException("revoked") })
 
-            maps.savePicture("https://api.zoonk.test/v1/files/images/a/b.webp") { throw SecurityException("revoked") }
+            maps.savePicture(PICTURE, PICKED)
             advanceUntilIdle()
 
-            assertEquals(listOf(PictureSave.Failed), pictureSaves)
+            assertEquals(PictureSave.Failed, maps.pictureSaved.value)
         }
 
     @Test
     fun aSavedPictureIsWrittenWhereTheLearnerChose() =
         runTest(dispatcher) {
-            val (maps) = setUp()
             val file = ByteArrayOutputStream()
+            val opened = mutableListOf<Uri>()
+            val (maps) =
+                setUp(files = {
+                    opened += it
+                    file
+                })
 
-            maps.savePicture("https://api.zoonk.test/v1/files/images/a/b.webp") { file }
+            maps.savePicture(PICTURE, PICKED)
             advanceUntilIdle()
 
+            assertEquals(listOf(PICKED), opened)
             assertEquals(listOf<Byte>(1, 2, 3), file.toByteArray().toList())
-            assertEquals(listOf(PictureSave.Saved), pictureSaves)
+            assertEquals(PictureSave.Saved, maps.pictureSaved.value)
         }
 
     @Test
     fun aPictureThatCouldntBeReadOrWrittenSaysSo() =
         runTest(dispatcher) {
-            val (maps) = setUp()
+            val (maps) = setUp(files = { throw IOException("full") })
 
-            maps.savePicture("https://api.zoonk.test/v1/files/images/a/b.webp") { throw IOException("full") }
+            maps.savePicture(PICTURE, PICKED)
             advanceUntilIdle()
 
-            assertEquals(listOf(PictureSave.Failed), pictureSaves)
+            assertEquals(PictureSave.Failed, maps.pictureSaved.value)
+        }
+
+    @Test
+    fun aPictureSavedWhileTheScreenIsRecreatedIsSaidOnce() =
+        runTest(dispatcher) {
+            val (maps) = setUp(files = { ByteArrayOutputStream() })
+
+            // No frame acts while the picture is saved, as when the window is recreated.
+            maps.savePicture(PICTURE, PICKED)
+            advanceUntilIdle()
+
+            assertEquals(PictureSave.Saved, actOn(maps.pictureSaved))
+            assertNull(actOn(maps.pictureSaved))
+        }
+
+    @Test
+    fun aPictureSavedAfterTheScreenLeftIsWrittenButSaysNothingOnReturn() =
+        runTest(dispatcher) {
+            val file = ByteArrayOutputStream()
+            val (maps) = setUp(files = { file })
+            api.picture = {
+                maps.visit.end()
+                byteArrayOf(1, 2, 3)
+            }
+
+            maps.savePicture(PICTURE, PICKED)
+            advanceUntilIdle()
+
+            assertEquals(listOf<Byte>(1, 2, 3), file.toByteArray().toList())
+            assertNull(maps.pictureSaved.value)
         }
 
     @Test
@@ -677,16 +743,38 @@ class MindMapViewModelTest {
     @Test
     fun aFailedSaveShowsTheReadsAgainAndSaysSo() =
         runTest(dispatcher) {
-            var said = 0
-            val (maps) = setUp(saveFailed = { said++ })
+            val (maps) = setUp()
             val target = MindMapTarget(SavedMindMapKind.CHAPTER, chapterId)
             api.save = { _, _ -> throw ApiException(ApiError.Unavailable) }
 
+            // No frame acts while the save is out, as when the window is recreated.
             maps.save(target, chapterId, saved = true)
             advanceUntilIdle()
 
             assertNull(maps.saves.value[target])
-            assertEquals(1, said)
+            assertEquals(Unit, actOn(maps.saveFailed))
+            assertNull(actOn(maps.saveFailed))
+        }
+
+    @Test
+    fun aSaveThatFailsAfterTheScreenLeftSaysNothingOnReturn() =
+        runTest(dispatcher) {
+            val (maps) = setUp()
+            val target = MindMapTarget(SavedMindMapKind.CHAPTER, chapterId)
+            val held = CompletableDeferred<Unit>()
+            api.save = { _, _ ->
+                held.await()
+                throw ApiException(ApiError.Unavailable)
+            }
+
+            maps.save(target, chapterId, saved = true)
+            advanceUntilIdle()
+            maps.visit.end()
+            held.complete(Unit)
+            advanceUntilIdle()
+
+            assertNull(maps.saves.value[target])
+            assertNull(maps.saveFailed.value)
         }
 
     @Test
@@ -793,13 +881,13 @@ class MindMapViewModelTest {
             assertNull(maps.createAll.value)
         }
 
-    /** What each picture save said, in order. */
-    private val pictureSaves = mutableListOf<PictureSave>()
+    /** What the frame acts on, then acknowledges, as `ActOn` does. */
+    private fun <T : Any> actOn(outcome: VisitOutcome<T>) = outcome.value?.also(outcome::acted)
 
-    private fun TestScope.setUp(saveFailed: () -> Unit = {}): Triple<MindMapViewModel, MindMapStore, AppCache> {
+    private fun TestScope.setUp(files: (Uri) -> OutputStream? = { null }): Triple<MindMapViewModel, MindMapStore, AppCache> {
         val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + dispatcher))
         val store = MindMapStore(api, cache)
-        return Triple(MindMapViewModel(store, ana, goalId, { current }, saveFailed, pictureSaves::add, io = dispatcher), store, cache)
+        return Triple(MindMapViewModel(store, ana, goalId, { current }, files, dispatcher), store, cache)
     }
 
     private fun MindMapStore.listed(id: UUID) =
@@ -818,4 +906,11 @@ class MindMapViewModelTest {
         period: String,
         resource: String = "mindMap",
     ): JsonElement = ApiJson.parseToJsonElement("""{"limit":{"tier":"$tier","period":"$period","resource":"$resource"}}""")
+
+    private companion object {
+        const val PICTURE = "https://api.zoonk.test/v1/files/images/a/b.webp"
+
+        /** The file the learner picked in the system's Save dialog. */
+        val PICKED: Uri = Uri.parse("content://com.android.providers.downloads.documents/document/1")
+    }
 }

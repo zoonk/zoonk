@@ -1,11 +1,13 @@
 package com.zoonk.android.feature.settings
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.account.AccountDeletion
 import com.zoonk.android.feature.account.AccountFailure
 import com.zoonk.android.feature.account.AccountStore
@@ -16,16 +18,26 @@ import java.io.OutputStream
 
 enum class DeletionStep { None, Confirm, Code, AppleNote, Deleted }
 
-/** Privacy's "Your data": the download and deleting the account, for the account [session] shows. */
+/**
+ * Privacy's "Your data": the download and deleting the account, for the account [session] shows. [open] gives the
+ * stream of a file the learner picked, from the application's content resolver, or null when it can't be opened.
+ */
 class YourDataViewModel(
     private val account: AccountStore,
     private val session: AuthenticatedSession,
     private val email: String,
+    private val open: (Uri) -> OutputStream?,
 ) : ViewModel() {
+    /** This visit to Privacy: a download that fails says so only on it. */
+    val visit = Visit()
+
+    private val exportFailure = visit.outcome<Unit>()
+
     var isExporting by mutableStateOf(false)
         private set
-    var exportFailed by mutableStateOf(false)
-        private set
+
+    /** The download didn't save, on this visit. */
+    val exportFailed get() = exportFailure.value != null
 
     var deletionStep by mutableStateOf(DeletionStep.None)
         private set
@@ -36,15 +48,16 @@ class YourDataViewModel(
     var code by mutableStateOf("")
         private set
 
-    /** [open] gives the stream of the file the learner picked, or null when it can't be opened. */
-    fun export(open: () -> OutputStream?) {
+    /** Writes the download to the file the learner picked at [to]; it's written even after the page goes. */
+    fun export(to: Uri) {
         if (isExporting) return
         isExporting = true
-        exportFailed = false
+        exportFailure.clear()
+        val started = visit.number
         viewModelScope.launch {
             try {
                 val json = account.exportData()
-                exportFailed = json == null || !withContext(Dispatchers.IO) { write(open, json) }
+                if (json == null || !withContext(Dispatchers.IO) { write(to, json) }) exportFailure.send(started, Unit)
             } finally {
                 isExporting = false
             }
@@ -122,11 +135,11 @@ class YourDataViewModel(
     }
 
     private fun write(
-        open: () -> OutputStream?,
+        to: Uri,
         json: String,
     ): Boolean =
         try {
-            open()?.use { it.write(json.toByteArray()) } != null
+            open(to)?.use { it.write(json.toByteArray()) } != null
         } catch (e: java.io.IOException) {
             false
         } catch (e: SecurityException) {

@@ -189,6 +189,8 @@ internal class SlotHost(
     val preview: PlanPreviewState = PlanPreviewState.Idle,
     val requestPreview: (List<PlanOp>) -> Unit = {},
     val clearPreview: () -> Unit = {},
+    /** Drops the check of these operations, as the view model holds it now, not as the card last drew it. */
+    val dropCheck: (List<PlanOp>) -> Unit = {},
     val addFitOffer: (PlanFitOffer) -> Unit = {},
     val next: StudyNext? = null,
     val nextLevel: NextLevelStart = NextLevelStart.Idle,
@@ -248,18 +250,7 @@ internal class Slot(
         operations: List<PlanOp>,
     ) {
         state.failed = null
-        edits.change(PlanPart.Suggestion, operations) { saved ->
-            when {
-                saved == null -> {
-                    state.failed = item.key
-                }
-
-                saved.status == PlanChangeResult.Status.APPLIED -> {
-                    host.clearPreview()
-                    state.result = SlotResult(item, saved.change)
-                }
-            }
-        }
+        edits.change(PlanPart.Suggestion, operations, PlanAsker.Suggestion(item))
     }
 
     private fun leave() {
@@ -381,13 +372,7 @@ private fun SlotSuggestion(
                 failed = edits.hasFailed(PlanPart.ExamChoices),
                 pending = edits.isPending(PlanPart.ExamChoices),
                 answer = slot.shownAnswer(item),
-                onChoose = { subjects ->
-                    edits.chooseExamOption(item.choice.group, subjects) { answer ->
-                        answer?.change?.takeIf { answer.status == PlanChangeResult.Status.APPLIED }?.let {
-                            slot.state.result = SlotResult(item, it)
-                        }
-                    }
-                },
+                onChoose = { subjects -> edits.chooseExamOption(item.choice.group, subjects, PlanAsker.SuggestedChoice(item)) },
             )
         }
 

@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.app.LocalNavigationSuiteType
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
@@ -48,6 +48,8 @@ import com.zoonk.android.feature.language.AlphabetRow
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
@@ -185,6 +187,11 @@ internal fun PlanPage(
             null
         }
     val claim = viewModel(key = "certificate-claim-${page.goal.id}") { CertificateClaimModel(app.certificates, page.goal.id) }
+    val openCertificates = { codes: List<String> ->
+        navigator.open(codes.singleOrNull()?.let { AppRoute.Certificate(it) } ?: AppRoute.Certificates)
+    }
+    VisitOf(claim.visit)
+    ActOn(claim.opened, openCertificates)
     val focusTest = page.plan.focusTest
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME || focus == ADJUST_CHOICES) }
     var editingAt by rememberSaveable {
@@ -207,7 +214,6 @@ internal fun PlanPage(
             latest = latest,
             changes = changes,
             change = viewModel::change,
-            saveFailed = { app.snackbars.show(R.string.plan_save_failed) },
             undo = viewModel::undo,
             setRegion = viewModel::setRegion,
             setContentCountry = viewModel::setContentCountry,
@@ -223,7 +229,7 @@ internal fun PlanPage(
             basesAdvice = basesAdvice,
             askBasesAdvice = viewModel::askBasesAdvice,
             sheetAnswers = sheetAnswers,
-            answerSheet = viewModel::answerSheet,
+            outcomes = viewModel.outcomes,
         )
     val report =
         rememberReportProblem(
@@ -231,7 +237,6 @@ internal fun PlanPage(
             FeedbackTarget(screen = "plan", contentKind = FeedbackSubmissionContext.ContentKind.PLAN, contentId = page.plan.planId),
         )
 
-    PlanEvents(viewModel, navigator)
     val countryRebuild = rememberCountryRebuild(page.goal, app)
 
     PlanContent(
@@ -268,6 +273,7 @@ internal fun PlanPage(
                 preview = slotPreview,
                 requestPreview = { viewModel.requestSlotPreview(page.plan, it) },
                 clearPreview = viewModel::clearSlotPreview,
+                dropCheck = viewModel::dropSlotCheck,
                 addFitOffer = { viewModel.addFitOffer(page.plan, it) },
                 next = end?.next,
                 nextLevel = nextLevel,
@@ -276,19 +282,16 @@ internal fun PlanPage(
                 claimingCertificate = claim.claiming,
                 claimFailed = claim.failed,
                 onCertificate = {
-                    val open = { codes: List<String> ->
-                        navigator.open(codes.singleOrNull()?.let { AppRoute.Certificate(it) } ?: AppRoute.Certificates)
-                    }
                     val certificates = end?.certificates
                     when {
                         certificates == null -> {}
 
                         certificates.unclaimed.isNotEmpty() -> {
-                            claim.claim { shown -> open(shown.map { it.code }) }
+                            claim.claim()
                         }
 
                         else -> {
-                            open(certificates.earned.map { it.code })
+                            openCertificates(certificates.earned.map { it.code })
                         }
                     }
                 },
@@ -571,14 +574,14 @@ private val SIDE_BY_SIDE_WIDTH = 600.dp
 internal fun PlanEvents(
     viewModel: PlanViewModel,
     navigator: AppNavigator,
+    snackbars: AppSnackbars,
 ) {
-    LaunchedEffect(viewModel) {
-        viewModel.events.collect { event ->
-            when (event) {
-                PlanEvent.Archived -> navigator.select(AppTab.Today)
-            }
+    ActOn(viewModel.event) { event ->
+        when (event) {
+            PlanEvent.Archived -> navigator.select(AppTab.Today)
         }
     }
+    ActOn(viewModel.outcomes.saveFailed) { snackbars.show(R.string.plan_save_failed) }
 }
 
 internal sealed interface Standing {
@@ -625,9 +628,7 @@ private fun ExamOverBar(
             keeping = edits.isPending(PlanPart.FullCourse),
             archiving = archiving,
             onArchive = onArchive,
-            onKeepStudying = {
-                edits.change(PlanPart.FullCourse, STUDY_AFTER_EXAM) { answer -> if (answer == null) edits.saveFailed() }
-            },
+            onKeepStudying = { edits.change(PlanPart.FullCourse, STUDY_AFTER_EXAM, PlanAsker.SaysFailure) },
         )
     }
 }
