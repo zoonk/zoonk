@@ -17,6 +17,7 @@ function box(element: Element) {
 
 export function read() {
   return webCapture({
+    app: "main",
     page: readAlignment(WEB_TABLE),
     path: "/fixture",
     scheme: "light",

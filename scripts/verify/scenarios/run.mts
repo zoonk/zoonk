@@ -229,6 +229,7 @@ async function capture(
     return {
       // The page a step reached (a placeholder's), not only the one the scenario opened.
       ...webCapture({
+        app: scenario.app ?? "main",
         page: read,
         path: new URL(page.url()).pathname,
         scheme: "light",
@@ -278,6 +279,7 @@ if (values.help) {
         scenario.reach === null
           ? {
               ...webCapture({
+                app: scenario.app ?? "main",
                 page: { activeSurface: "page", elements: [] },
                 path: localePath(scenario.screen, configuration.locale),
                 scheme: "light",

@@ -3,6 +3,7 @@ import {
   type Context,
   EDGE,
   type Group,
+  drawn,
   finding,
   notMeasured,
   tenths,
@@ -20,6 +21,20 @@ export function roomLeads(context: Context, read: Group): AlignmentFinding[] {
 
   if (!note) {
     return [];
+  }
+
+  // Words that render nothing leave the note's own room, and its line, over the bar.
+  if (!drawn(note)) {
+    return [
+      finding(context, {
+        detail: `${note.name ?? note.id} draws nothing and holds ${tenths(note.bounds[3])} over the bar`,
+        level: "fail",
+        measured: note.bounds[3],
+        message: "a bar's note draws nothing and holds its room",
+        piece: read.group.piece,
+        rule: "room",
+      }),
+    ];
   }
 
   if (!note.firstLine || !buttons) {

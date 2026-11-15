@@ -1,5 +1,10 @@
 import { bleedLeads, spanLeads } from "./alignment-bleed.mts";
-import { type AlignmentFile, type AlignmentFinding, type Capture } from "./alignment-capture.mts";
+import {
+  type AlignmentFile,
+  type AlignmentFinding,
+  type Capture,
+  type CaptureElement,
+} from "./alignment-capture.mts";
 import { coverageLeads, isOneStack } from "./alignment-coverage.mts";
 import { axisLeads, endLeads, stackedLeads, startLeads } from "./alignment-edges.mts";
 import { evenLeads } from "./alignment-even.mts";
@@ -91,10 +96,19 @@ function typeLeads(context: Context, read: Group): AlignmentFinding[] {
   });
 }
 
+/** An action's words: a keycap hint ("⏎") beside them isn't one. */
+function wordsOf(action: CaptureElement) {
+  return (action.text ?? action.name ?? "")
+    .split(/\s+/u)
+    .filter((word) => /[\p{L}\p{N}]/u.test(word))
+    .join(" ");
+}
+
 /**
  * One filled action on the active surface; a covering dialog or sheet is its own surface. The same
  * action offered again (the same words and the same `target`: a link's destination, or the action
- * a piece names) counts once; actions with no `target` each count.
+ * a piece names) counts once; actions with no `target` each count. A marketing page repeats its one
+ * action in the same words by rule, so there the same words count once wherever they go.
  */
 function filledLeads(context: Context): AlignmentFinding[] {
   const { capture } = context;
@@ -127,10 +141,13 @@ function filledLeads(context: Context): AlignmentFinding[] {
   return [...Map.groupBy(filled, (action) => action.surface ?? "")].flatMap(([surface, found]) => {
     const actions = [
       ...new Map(
-        found.map((action) => [
-          action.target ? `${action.text ?? action.name ?? ""} ${action.target}` : action.id,
-          action,
-        ]),
+        found.map((action) => {
+          if (capture.marketing) {
+            return [wordsOf(action), action];
+          }
+
+          return [action.target ? `${wordsOf(action)} ${action.target}` : action.id, action];
+        }),
       ).values(),
     ];
 
@@ -211,8 +228,8 @@ export function evaluateCapture(capture: Capture): AlignmentFinding[] {
   return [
     ...groupsOf(capture).flatMap((group) => groupLeads(context, group)),
     ...filledLeads(context),
-    ...bleedLeads(context),
-    ...spanLeads(context),
+    // A gallery's specimens each draw in a frame of their own, not on the page's column.
+    ...(capture.specimen ? [] : [...bleedLeads(context), ...spanLeads(context)]),
     ...pinnedLeads(context),
   ];
 }

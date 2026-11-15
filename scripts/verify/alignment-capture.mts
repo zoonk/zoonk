@@ -90,6 +90,8 @@ export type CaptureElement = {
   source?: "piece" | "picture" | "stack";
   /** A row's: the one the learner is on (current, picked), which may set its words apart. */
   current?: boolean;
+  /** A group's: the pinned bar (`pinned.N`) it is drawn in, which carries it over the page. */
+  pinnedIn?: string;
   /** A row's: the middle of what it lays out (inside a divider's border and its padding). */
   middle?: number | NotMeasured;
   /** A row's: its value moved under its label (large text), as the row piece does on purpose. */
@@ -123,8 +125,16 @@ export type Capture = {
   activeSurface: string;
   /** False when the run reached the screen but not its scenario's proof (its words never showed). */
   reached?: boolean;
-  /** A gallery of the pieces shown side by side, not a screen: one filled action isn't judged. */
+  /**
+   * A gallery of the pieces shown side by side, not a screen (the design site): one filled action
+   * and the page's column aren't judged.
+   */
   specimen?: boolean;
+  /**
+   * A marketing page (the landing, the catalog and its course pages, pricing, the blog): it repeats
+   * its one action in the same words by rule, so the same words count once wherever they go.
+   */
+  marketing?: boolean;
   elements: CaptureElement[];
 };
 

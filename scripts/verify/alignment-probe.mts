@@ -2,6 +2,7 @@ import { type Bounds, type Capture, type CaptureElement } from "./alignment-capt
 /* oxlint-disable max-lines, max-lines-per-function, max-statements, complexity, unicorn/consistent-function-scoping -- `readAlignment` is sent to the page as one function, so its helpers live inside it (`probe.mts`). */
 import { type Part, type WebPiece } from "./alignment-table.mts";
 import { type Scheme, VIEWPORTS, type ViewportName } from "./viewports.mts";
+import { pageKind } from "./words.mts";
 
 export type AlignmentPage = Pick<Capture, "activeSurface" | "elements">;
 
@@ -190,7 +191,31 @@ export function readAlignment({
       });
   }
 
+  /**
+   * A system face (the auth pages' `ui-sans-serif`) has no `@font-face` of its own: the platform's
+   * face draws Latin, Greek and Cyrillic, capitals included, and the canvas resolves the same face.
+   */
+  const SYSTEM_FACES = new Set([
+    "-apple-system",
+    "blinkmacsystemfont",
+    "sans-serif",
+    "serif",
+    "system-ui",
+    "ui-monospace",
+    "ui-sans-serif",
+    "ui-serif",
+  ]);
+
+  const CAPITAL_SCRIPTS =
+    /^[\p{Script=Latin}\p{Script=Greek}\p{Script=Cyrillic}\p{Script=Common}\p{Script=Inherited}]*$/u;
+
   function drawnByPrimary(text: string, style: CSSStyleDeclaration) {
+    const family = style.fontFamily.split(",")[0]?.replaceAll(/["']/gu, "").trim() ?? "";
+
+    if (SYSTEM_FACES.has(family.toLowerCase())) {
+      return CAPITAL_SCRIPTS.test(text);
+    }
+
     const ranges = primaryRanges(style);
 
     const codes: number[] = [];
@@ -634,11 +659,42 @@ export function readAlignment({
         (!column || column.contains(cell)) &&
         within(cell)
       ) {
-        return cell;
+        return isCard(cell) ? (paddedSection(element, cell) ?? cell) : cell;
       }
     }
 
     return column;
+  }
+
+  /**
+   * A card with no side padding of its own lays out its content in sections that pad it (the
+   * example plans' head and day, a sheet's body): the outermost one across the card is the column.
+   */
+  function paddedSection(element: Element, card: Element) {
+    const { pixels } = globalThis.zoonkPage;
+    const style = getComputedStyle(card);
+
+    if (pixels(style.paddingLeft) > 0 || pixels(style.paddingRight) > 0) {
+      return null;
+    }
+
+    const inner = card.getBoundingClientRect();
+    let section: Element | null = null;
+
+    for (let cell = element.parentElement; cell && cell !== card; cell = cell.parentElement) {
+      const box = cell.getBoundingClientRect();
+      const own = getComputedStyle(cell);
+
+      if (
+        box.left <= inner.left + pixels(style.borderLeftWidth) + 1 &&
+        box.right >= inner.right - pixels(style.borderRightWidth) - 1 &&
+        (pixels(own.paddingLeft) > 0 || pixels(own.paddingRight) > 0)
+      ) {
+        section = cell;
+      }
+    }
+
+    return section;
   }
 
   // A measure is rems and pixels, so one value draws one width wherever it's set.
@@ -693,6 +749,12 @@ export function readAlignment({
 
   const declaredGroups = pieces.map(({ web: piece }) => piece.group).join(", ");
 
+  /** The pinned bar a group is drawn in, which carries it over the page (`pinned.N`). */
+  function pinnedIn(group: Element): Pick<CaptureElement, "pinnedIn"> {
+    const index = pinnedShown.findIndex((bar) => bar.contains(group));
+    return index === -1 ? {} : { pinnedIn: `pinned.${index}` };
+  }
+
   /** A group no other declared group holds starts and ends on its column's edges (`spanLeads`). */
   function columnFields(group: Element): Pick<CaptureElement, "column" | "frame"> {
     const column = group.parentElement?.closest(declaredGroups) ? null : columnOf(group);
@@ -724,6 +786,10 @@ export function readAlignment({
 
     const candidates = listed
       .flatMap((row) => expandRows(row))
+      .flatMap((row) => {
+        const inner = piece.nested ? [...row.querySelectorAll(piece.nested)] : [];
+        return inner.length > 0 ? inner : [row];
+      })
       .filter(
         (row) => isRowOf(row) && !["absolute", "fixed"].includes(getComputedStyle(row).position),
       );
@@ -764,6 +830,7 @@ export function readAlignment({
         endEdge: (bar ? bar.getBoundingClientRect().right : contentEnd(group)) + scrollX,
         group: null,
         id: groupId,
+        ...pinnedIn(group),
         ink: groupInk ? bounds(groupInk) : null,
         name: name(group.getAttribute("aria-label") ? group : (rows[0] ?? group)),
         part: "group",
@@ -780,6 +847,13 @@ export function readAlignment({
       ),
     ];
   }
+
+  // Only at the scroll's end can the page be judged for what it leaves under a pinned bar.
+  const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 1;
+
+  const pinnedShown = (atEnd ? [...document.querySelectorAll(pinnedBars)] : []).filter(
+    (bar) => present(bar) && ["fixed", "sticky"].includes(getComputedStyle(bar).position),
+  );
 
   const elements = pieces.flatMap(({ name: pieceName, web: piece }) =>
     [...document.querySelectorAll(piece.group)]
@@ -962,6 +1036,48 @@ export function readAlignment({
       });
     };
 
+    /** What a control draws inside its box: its glyph's and its words' ink. */
+    const contentInk = (element: Element): Rect | null => {
+      const texts = [...element.childNodes]
+        .filter((node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
+        .flatMap((node) => {
+          const range = document.createRange();
+          range.selectNodeContents(node);
+          return [...range.getClientRects()].filter((rect) => rect.width > 0);
+        });
+
+      return union([...texts, ...[...element.children].flatMap((child) => inkOf(child) ?? [])]);
+    };
+
+    /**
+     * A control with no outline hangs its hover box past the column so its glyph's ink sits on the
+     * edge (craft's deliberate choices): its box, filled while hovered or open, is read by that ink.
+     */
+    const isGhost = (element: Element) =>
+      element.matches("a, button, [role=button]") &&
+      getComputedStyle(element).getPropertyValue("--button-variant").trim() === "ghost";
+
+    /**
+     * Where a strip that scrolls sideways (`HorizontalScroll`) continues, it fades past the column,
+     * the sign that it scrolls: what passes the column on that side is under the fade.
+     */
+    const unfaded = (element: Element, area: Rect, edges: { left: number; right: number }) => {
+      const scroller = element.closest("[data-slot=horizontal-scroll] > *");
+
+      if (!(scroller instanceof HTMLElement)) {
+        return area;
+      }
+
+      const left = scroller.scrollLeft > 1;
+      const right = scroller.scrollLeft < scroller.scrollWidth - scroller.clientWidth - 1;
+
+      return {
+        ...area,
+        left: left ? Math.max(area.left, edges.left) : area.left,
+        right: right ? Math.min(area.right, edges.right) : area.right,
+      };
+    };
+
     type Kind = NonNullable<CaptureElement["kind"]>;
 
     const kindOf = (element: Element, box: Rect): Kind => {
@@ -986,12 +1102,12 @@ export function readAlignment({
           edges.left - box.left > PAST || box.right - edges.right > PAST;
 
         // Only what shows: a strip that scrolls sideways (a calendar) clips the cells past its edge.
-        const area = shownArea(element);
+        const area = unfaded(element, shownArea(element), edges);
         const shows = (box: Rect | null) => within(area, box);
         const highlight = shows(beforeFill(element));
 
         const ownBox = globalThis.zoonkPage.paints(element, ["top", "right", "bottom", "left"])
-          ? shows(element.getBoundingClientRect())
+          ? shows(isGhost(element) ? contentInk(element) : element.getBoundingClientRect())
           : null;
 
         const line = ownBox ? null : shows(ruleOf(element));
@@ -1163,21 +1279,16 @@ export function readAlignment({
     ];
   });
 
-  // Only at the scroll's end can the page be judged for what it leaves under a pinned bar.
-  const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 1;
-
-  const pinned = (atEnd ? [...document.querySelectorAll(pinnedBars)] : [])
-    .filter((bar) => present(bar) && ["fixed", "sticky"].includes(getComputedStyle(bar).position))
-    .map((bar, index): CaptureElement => ({
-      bounds: bounds(boxOf(bar)),
-      group: null,
-      id: `pinned.${index}`,
-      ink: null,
-      name: name(bar),
-      part: "pinned",
-      piece: "page",
-      row: null,
-    }));
+  const pinned = pinnedShown.map((bar, index): CaptureElement => ({
+    bounds: bounds(boxOf(bar)),
+    group: null,
+    id: `pinned.${index}`,
+    ink: null,
+    name: name(bar),
+    part: "pinned",
+    piece: "page",
+    row: null,
+  }));
 
   const all = [...elements, ...actions, ...anchored, ...pinned, ...readBleeds()];
 
@@ -1194,14 +1305,20 @@ function localeOf(path: string) {
   return /^\/(?<locale>[a-z]{2})(?:\/|$)/u.exec(path)?.groups?.locale ?? "en";
 }
 
+/** The design site (`/design/*` in the playground) shows pieces as specimens: its own surface. */
+const DESIGN_SITE = /^\/design(?:[/?#]|$)/u;
+
 /** A load's capture, in the shape every platform writes. */
 export function webCapture({
+  app,
   page,
   path,
   scheme,
   textScale = 1,
   viewport,
 }: {
+  /** The app that served it, which with the path says what kind of page it is. */
+  app: string;
   page: AlignmentPage;
   path: string;
   scheme: Scheme;
@@ -1209,9 +1326,12 @@ export function webCapture({
   viewport: ViewportName;
 }): Capture {
   const size = VIEWPORTS[viewport];
+  const specimen = app === "playground" && DESIGN_SITE.test(path);
 
   return {
     ...page,
+    ...(specimen ? { specimen } : {}),
+    ...(!specimen && pageKind(app, path) === "marketing" ? { marketing: true } : {}),
     configuration: {
       height: size.viewport?.height ?? 0,
       locale: localeOf(path),
