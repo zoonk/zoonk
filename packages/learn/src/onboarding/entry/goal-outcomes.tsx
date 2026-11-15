@@ -8,18 +8,17 @@ import {
   HandHeartIcon,
   LightbulbIcon,
   MessageCircleQuestionIcon,
-  UserPlusIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLimitText } from "../../_components/comes-back-words";
 import { useLiveLimit } from "../../_components/help-limit-notice";
 import { ChangeSaveError } from "../../_components/save-error";
+import { SignUpMainLink } from "../../_components/subscribe-gate";
 import { useSentenceSpace } from "../../_utils/locale";
 import { useHeldSlot } from "../../_utils/use-held-slot";
 import { type GoalError } from "../goal-errors";
 import { type WaitlistOutcome } from "../onboarding-actions";
 import {
-  ONBOARDING_ACTION_LINK_CLASS,
   OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
@@ -34,20 +33,6 @@ const BUBBLE_CLASS =
   "bg-muted self-end rounded-xl rounded-br-sm px-3.5 py-2.5 text-reading leading-relaxed text-pretty whitespace-pre-wrap";
 
 const ICON_CLASS = "text-muted-foreground flex [&_svg]:size-6";
-
-export function SignUpLink({ href }: { href: string }) {
-  const t = useExtracted();
-
-  return (
-    <PendingLink
-      className={ONBOARDING_ACTION_LINK_CLASS.main}
-      href={href}
-      icon={<UserPlusIcon aria-hidden="true" />}
-    >
-      {t("Create a free account")}
-    </PendingLink>
-  );
-}
 
 /** What starting a goal couldn't do. The way on (an account to create) is `GoalActions`' or the alert's. */
 export function GoalErrorMessage({ error }: { error: GoalError | null }) {
@@ -91,7 +76,7 @@ export function GoalErrorAlert({
   return (
     <div className="flex flex-col gap-4 [&:not([data-held]):empty]:hidden" ref={slot}>
       <GoalErrorMessage error={error} />
-      {error?.needsAccount && <SignUpLink href={signUpHref} />}
+      {error?.needsAccount && <SignUpMainLink href={signUpHref} />}
     </div>
   );
 }
@@ -108,7 +93,7 @@ export function GoalActions({
 }) {
   return (
     <OnboardingActions>
-      {error?.needsAccount ? <SignUpLink href={signUpHref} /> : children}
+      {error?.needsAccount ? <SignUpMainLink href={signUpHref} /> : children}
     </OnboardingActions>
   );
 }
@@ -249,7 +234,7 @@ function WaitlistNote({
           className="text-foreground font-medium underline underline-offset-4"
           href={signUpHref}
         >
-          {t("Create an account")}
+          {t("Create a free account")}
         </PendingLink>
       </p>
     );
