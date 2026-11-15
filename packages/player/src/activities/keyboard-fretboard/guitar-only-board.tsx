@@ -164,7 +164,7 @@ export function GuitarOnlyBoard({
         {showAnswer && (
           <GuitarMirror
             caption={t("One way to play the answer")}
-            isChecked
+            kindOf={() => "correct"}
             pitches={expectedSet}
             spell={spell}
           />

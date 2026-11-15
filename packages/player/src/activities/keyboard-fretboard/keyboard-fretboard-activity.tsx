@@ -113,7 +113,11 @@ function PianoBoard(props: KeyboardFretboardProps) {
         )}
 
         {fields.instruments.includes("guitar") && (
-          <GuitarMirror isChecked={showAnswer} pitches={shown} spell={spell} />
+          <GuitarMirror
+            kindOf={(pitch) => marks.get(KEYBOARD_FROM + pitch) ?? "new"}
+            pitches={shown}
+            spell={spell}
+          />
         )}
 
         <ActivitySoundNote status={piano.status} />

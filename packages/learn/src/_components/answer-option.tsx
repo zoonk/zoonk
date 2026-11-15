@@ -237,7 +237,17 @@ export function TagBesideOrUnder({
         {children}
       </span>
 
-      {tag && <LineMarker className="h-auto min-h-lh min-w-0 flex-initial">{tag}</LineMarker>}
+      {/* The tag ends the option: the row's end in a list, the card's end under a picture. */}
+      {tag && (
+        <LineMarker
+          className={cn(
+            "h-auto min-h-lh min-w-0 flex-initial",
+            layout === "stacked" && "justify-end px-1 pb-0.5",
+          )}
+        >
+          {tag}
+        </LineMarker>
+      )}
     </span>
   );
 }

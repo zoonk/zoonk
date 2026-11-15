@@ -128,7 +128,7 @@ describe("money and society activities", () => {
 
     await pressOnSlider("Price per cup", "ArrowRight", 2);
     await expect.element(page.getByText("$1,500 before", { exact: true })).toBeVisible();
-    await expect.element(valueInput()).toHaveValue("1000");
+    await expect.element(valueInput()).toHaveValue("1,000");
     await checkActivity();
     await expectVerdict("Correct!");
   });
@@ -147,7 +147,7 @@ describe("money and society activities", () => {
   it("formula model what-ifs: leaving the event off gives the wrong profit", async () => {
     openActivity({ content: scenario, template: "formulaModel" });
     await pressOnSlider("Price per cup", "ArrowRight", 2);
-    await expect.element(valueInput()).toHaveValue("1500");
+    await expect.element(valueInput()).toHaveValue("1,500");
     await checkActivity();
     await expectVerdict("Not quite");
   });
@@ -592,6 +592,16 @@ describe("money and society activities reopened from their saved answer", () => 
       .toHaveAttribute("aria-valuenow", "4");
 
     await expect.element(page.getByText("$1,500 before", { exact: true })).toBeVisible();
+  });
+
+  it("distribution explorer: the handles come back where the answer was read", async () => {
+    const { reopenSaved } = openActivityToResume(fixtures.distributionExplorer);
+    await pressOnSlider("Lower handle", "ArrowLeft", 4);
+    await pressOnSlider("Upper handle", "ArrowRight", 4);
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await reopenSaved();
+    await expect.element(page.getByText("IQ score from 70 to 130", { exact: true })).toBeVisible();
   });
 
   it("timeline: events placed in order are still right, with no made-up guesses", async () => {

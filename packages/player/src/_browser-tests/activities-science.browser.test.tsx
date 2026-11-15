@@ -278,7 +278,7 @@ describe("science activities", () => {
     await page.getByRole("radio", { name: /1 in 2/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("2 of 4 squares: White")).toBeVisible();
+    await expect.element(page.getByText("White: 2 of 4 squares")).toBeVisible();
   });
 
   it("Punnett grid: the share is asked once the square is filled, one question at a time", async () => {
@@ -319,13 +319,13 @@ describe("science activities", () => {
     openActivity({ content: engineModeFixtures.combinationGrid.dice, template: "combinationGrid" });
 
     await expect
-      .element(page.getByRole("group", { name: /goes in square/u }))
+      .element(page.getByRole("group", { name: /goes in the highlighted square/u }))
       .not.toBeInTheDocument();
 
     await valueInput().fill("0.1667");
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("6 of 36 squares: 7")).toBeVisible();
+    await expect.element(page.getByText("7: 6 of 36 squares")).toBeVisible();
   });
 });
 

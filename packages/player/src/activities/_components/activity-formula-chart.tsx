@@ -1,6 +1,7 @@
 "use client";
 
 import { type NumericDomain, niceTicks } from "@zoonk/utils/plot-scale";
+import { tickLabels } from "../_utils/plot-ticks";
 import { type PlotPoint } from "../_utils/sample-formula";
 import {
   ActivityPlot,
@@ -104,20 +105,24 @@ export function ActivityFormulaChart({
   current: Curve;
   deltaLabel: string | null;
   expected: { label: string; x: number; y: number } | null;
-  formatTick: (value: number) => string;
+  /** `isShort` when the axis has no room for the number in full. */
+  formatTick: (value: number, isShort: boolean) => string;
   formatX: (value: number) => string;
   x: number;
   xDomain: NumericDomain;
   yDomain: NumericDomain;
 }) {
+  const ticks = niceTicks(yDomain, 3);
+  const labels = tickLabels({ format: formatTick, ticks });
+
   return (
     <ActivityPlot
       height={PLOT_HEIGHT}
-      padding={{ right: PLOT_LINE_WIDTH / 2 }}
+      padding={{ left: labels.room, right: PLOT_LINE_WIDTH / 2 }}
       xDomain={xDomain}
       yDomain={yDomain}
     >
-      <ActivityPlotGridY format={formatTick} ticks={niceTicks(yDomain, 3)} />
+      <ActivityPlotGridY format={labels.format} ticks={ticks} />
       <ActivityPlotAxisX format={formatX} ticks={[xDomain[0], xDomain[1]]} />
 
       {baseline && (

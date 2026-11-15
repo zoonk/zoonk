@@ -1,5 +1,6 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
+import { ACTIVITY_COLOR } from "../_utils/activity-colors";
 
 /** A box inside an activity's panel. Every card, slot, cell and code block there is this box. */
 export const ACTIVITY_BOX_CLASS = "bg-background rounded-xl border";
@@ -25,9 +26,9 @@ export const ACTIVITY_EMPTY_CLASS = "border-dashed bg-transparent";
  * It is drawn inside the box, so the box and everything around it stay where they were.
  */
 export const ACTIVITY_LINE_CLASS = {
-  active: "border-viz-accent ring-viz-accent ring-1 ring-inset",
-  right: "border-success ring-success ring-1 ring-inset",
-  wrong: "border-destructive ring-destructive ring-1 ring-inset",
+  active: ACTIVITY_COLOR.working.box,
+  right: ACTIVITY_COLOR.right.box,
+  wrong: ACTIVITY_COLOR.wrong.box,
 };
 
 export function ActivityCanvas({

@@ -18,7 +18,7 @@ describe("lesson activities", () => {
     openActivity({ template: "formulaModel" });
     await pressOnSlider("Rate per year", "ArrowRight", 4);
 
-    await expect.element(valueInput()).toHaveValue("3869.68");
+    await expect.element(valueInput()).toHaveValue("3,869.68");
 
     await checkActivity();
     await expectVerdict("Correct!");
@@ -168,7 +168,7 @@ describe("lesson activities", () => {
     await field.fill("3");
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("$3", { exact: true })).toBeVisible();
+    await expect.element(field).toHaveValue("3");
   });
 
   it("shows the close wrong number separately from the expected answer", async () => {
@@ -191,7 +191,7 @@ describe("lesson activities", () => {
     await checkActivity();
     await expectVerdict("Not quite");
     const feedback = page.getByRole("region", { name: "Answer feedback" });
-    await expect.element(feedback.getByText("0.1254", { exact: true })).toBeVisible();
+    await expect.element(valueInput()).toHaveValue("0.1254");
     await expect.element(feedback.getByText("0.125", { exact: true })).toBeVisible();
   });
 

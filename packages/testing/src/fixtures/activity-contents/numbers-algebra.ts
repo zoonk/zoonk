@@ -156,7 +156,7 @@ export const numbersAlgebraActivities = {
           ],
           expression: "45 * 0.08",
           id: "tax",
-          math: "8% of 45 = 3.60",
+          math: "8% of 45 = 3.6",
           prompt: "8% of which price?",
           value: 3.6,
         },

@@ -254,7 +254,7 @@ describe("geometry and data activities", () => {
     await expect.element(valueInput()).toHaveValue("95.45");
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("70 to 130: 95.4%")).toBeVisible();
+    await expect.element(page.getByText("70 to 130: 95.45%")).toBeVisible();
   });
 
   it("distribution explorer: half the range gives the wrong share", async () => {

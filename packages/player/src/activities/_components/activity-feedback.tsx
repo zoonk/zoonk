@@ -2,11 +2,7 @@
 
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
 import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
-import {
-  FeedbackAnswerLabel,
-  FeedbackExplanation,
-  FeedbackPanel,
-} from "@zoonk/learn/feedback-panel";
+import { FeedbackExplanation, FeedbackPanel } from "@zoonk/learn/feedback-panel";
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { RightAnswerLine } from "@zoonk/learn/right-answer-line";
 import { VerdictLabel } from "@zoonk/learn/verdict-label";
@@ -76,7 +72,6 @@ function NumericFeedback({
   isCorrect: boolean;
   showsNumbers: boolean;
 }) {
-  const t = useExtracted();
   const format = useFormatNumber();
 
   const written = exactAnswerFormat({
@@ -88,20 +83,10 @@ function NumericFeedback({
 
   return (
     <>
-      <div className="flex flex-wrap gap-x-4 gap-y-1 empty:hidden">
-        {showsNumbers && answer?.kind === "numeric" && (
-          <FeedbackExplanation>
-            <FeedbackAnswerLabel>{t("Your answer:")}</FeedbackAnswerLabel>{" "}
-            <span className="font-mono font-medium tabular-nums">{exact(answer.value)}</span>
-          </FeedbackExplanation>
-        )}
-
-        {showsNumbers && !isCorrect && (
-          <RightAnswerLine
-            answer={<span className="font-mono tabular-nums">{exact(check.answer)}</span>}
-          />
-        )}
-      </div>
+      {/* The learner's number is in the box right above, so only the right one is added. */}
+      {showsNumbers && !isCorrect && (
+        <RightAnswerLine answer={<span className="tabular-nums">{exact(check.answer)}</span>} />
+      )}
 
       <FeedbackText>{check.explanation}</FeedbackText>
     </>

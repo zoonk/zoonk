@@ -14,6 +14,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type KeyboardEvent, type Ref, useId, useLayoutEffect, useRef } from "react";
+import { EnterHint } from "../components/enter-hint";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import {
   QuestionErrorAction,
@@ -256,11 +257,7 @@ export function QuestionComposer({
         </div>
       )}
 
-      {variant === "page" && (
-        <p className="text-faint text-2xs mt-2 hidden px-1 font-mono leading-4 pointer-fine:block">
-          {t("⏎ send · ⇧⏎ new line")}
-        </p>
-      )}
+      {variant === "page" && <EnterHint action="send" className="mt-2 px-1" />}
     </div>
   );
 }

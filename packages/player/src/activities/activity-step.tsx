@@ -72,7 +72,7 @@ export function ActivityStep({
   return (
     <InteractiveStepLayout data-slot="activity-step">
       <div className="flex flex-col gap-3">
-        {badgeKind && <ActivityBadge kind={badgeKind} />}
+        {badgeKind && <ActivityBadge kind={badgeKind} title={content.prompt} />}
         <LessonQuestion id={labelId}>{content.prompt}</LessonQuestion>
       </div>
 

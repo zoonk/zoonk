@@ -65,9 +65,7 @@ function PictureOptionContent({
           icon={<ImageIcon aria-hidden="true" className="size-5 shrink-0" />}
           style={OPTION_PICTURE_BOX_STYLE}
         >
-          <span className="sr-only" role="status">
-            {t("Drawing the picture…")}
-          </span>
+          <p role="status">{t("Drawing the picture…")}</p>
           <p className="leading-snug">{pictureText}</p>
         </MediaPending>
       );

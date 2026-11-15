@@ -27,9 +27,9 @@ msgid "Estimate first"
 msgstr "Estime d’abord"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "wIskGV"
-msgid "Move a curve"
-msgstr "Déplace une courbe"
+msgctxt "s80KEd"
+msgid "Move a line"
+msgstr "Déplacer un trait"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "a2AaWv"
@@ -65,13 +65,6 @@ msgstr "Chiffres donnés à titre d’exemple, pas des données réelles"
 msgctxt "WFoGUE"
 msgid "Source:"
 msgstr "Source :"
-
-#: src/activities/_components/activity-feedback.tsx
-#: src/activities/combination-grid/grid-board.tsx
-#: src/activities/labeled-diagram/diagram-slots.tsx
-msgctxt "3nOd8f"
-msgid "Your answer:"
-msgstr "Ta réponse :"
 
 #: src/activities/_components/activity-feedback.tsx
 #: src/lesson/feedback/lesson-step-result.tsx
@@ -859,6 +852,12 @@ msgid "{title}: {rowLabel} ({rowValues}) down the side, {columnLabel} ({columnVa
 msgstr "{title} : {rowLabel} ({rowValues}) sur le côté, {columnLabel} ({columnValues}) en haut. Chaque case contient leur produit."
 
 #: src/activities/combination-grid/grid-board.tsx
+#: src/activities/labeled-diagram/diagram-slots.tsx
+msgctxt "3nOd8f"
+msgid "Your answer:"
+msgstr "Ta réponse :"
+
+#: src/activities/combination-grid/grid-board.tsx
 msgctxt "_RHUYG"
 msgid "Square {number}, {row} and {column}: empty"
 msgstr "Case {number}, {row} et {column} : vide"
@@ -869,9 +868,9 @@ msgid "Square {number}, {row} and {column}:"
 msgstr "Case {number}, {row} et {column} :"
 
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "5cNGIS"
-msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}}: {what}"
-msgstr "{count} sur {total, plural, =0 {# case} one {# case} other {# cases}} : {what}"
+msgctxt "nyV23o"
+msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
+msgstr "{what} : {count} sur {total, plural, =0 {# case} one {# case} other {# cases}}"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
@@ -2790,6 +2789,34 @@ msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "Choisis des mots pour construire ta réponse"
 
+#. Keyboard hint under an answer box, right after a picture of the Enter key: pressing Enter checks the answer. Lowercase, one word if possible.
+#: src/components/enter-hint.tsx
+msgctxt "3W8LgY"
+msgid "check"
+msgstr "vérifier"
+
+#. Keyboard hint under a message box, right after a picture of the Enter key: pressing Enter sends the message. Lowercase, one word if possible.
+#: src/components/enter-hint.tsx
+msgctxt "qITzR1"
+msgid "send"
+msgstr "envoyer"
+
+#. Keyboard hint under a text box, right after pictures of the Shift and Enter keys: pressing them together starts a new line. Lowercase.
+#: src/components/enter-hint.tsx
+msgctxt "4SYk2r"
+msgid "new line"
+msgstr "nouvelle ligne"
+
+#: src/components/enter-hint.tsx
+msgctxt "waVIZZ"
+msgid "Press Enter to check, Shift+Enter for a new line."
+msgstr "Appuie sur Entrée pour vérifier, Maj+Entrée pour aller à la ligne."
+
+#: src/components/enter-hint.tsx
+msgctxt "ZPgsC6"
+msgid "Press Enter to send, Shift+Enter for a new line."
+msgstr "Appuie sur Entrée pour envoyer, sur Maj+Entrée pour aller à la ligne."
+
 #. The numbered gap in a fill-in-the-blank sentence, read by screen readers. {item} is the word placed in it.
 #: src/components/fill-blank-step.tsx
 msgctxt "SL2Bob"
@@ -3434,11 +3461,6 @@ msgid "Just a guess, it doesn't count"
 msgstr "Tente une réponse, ça ne compte pas"
 
 #: src/lesson/steps/lesson-answer-field.tsx
-msgctxt "waVIZZ"
-msgid "Press Enter to check, Shift+Enter for a new line."
-msgstr "Appuie sur Entrée pour vérifier, Maj+Entrée pour aller à la ligne."
-
-#: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "Écris ta réponse"
@@ -3691,11 +3713,6 @@ msgstr "Envoyer"
 msgctxt "iPfRms"
 msgid "Ask a question"
 msgstr "Poser une question"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "uw7M-z"
-msgid "⏎ send · ⇧⏎ new line"
-msgstr "⏎ envoyer · ⇧⏎ nouvelle ligne"
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "NYRAZH"

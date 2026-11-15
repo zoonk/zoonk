@@ -156,7 +156,7 @@ function FormulaModelBoard({
         expected={
           isChecked ? expectedPoint({ axis, content, expected, format, submitted: answer }) : null
         }
-        formatTick={(value) => format(value, { compact: true, unit: charted.unit })}
+        formatTick={(value, isShort) => format(value, { compact: isShort, unit: charted.unit })}
         formatX={formatX}
         x={view.x}
         xDomain={[axis.min, axis.max]}

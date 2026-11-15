@@ -27,9 +27,9 @@ msgid "Estimate first"
 msgstr "Prima fai una stima"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "wIskGV"
-msgid "Move a curve"
-msgstr "Sposta una curva"
+msgctxt "s80KEd"
+msgid "Move a line"
+msgstr "Sposta una linea"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "a2AaWv"
@@ -65,13 +65,6 @@ msgstr "Numeri di esempio, non dati reali"
 msgctxt "WFoGUE"
 msgid "Source:"
 msgstr "Fonte:"
-
-#: src/activities/_components/activity-feedback.tsx
-#: src/activities/combination-grid/grid-board.tsx
-#: src/activities/labeled-diagram/diagram-slots.tsx
-msgctxt "3nOd8f"
-msgid "Your answer:"
-msgstr "La tua risposta:"
 
 #: src/activities/_components/activity-feedback.tsx
 #: src/lesson/feedback/lesson-step-result.tsx
@@ -859,6 +852,12 @@ msgid "{title}: {rowLabel} ({rowValues}) down the side, {columnLabel} ({columnVa
 msgstr "{title}: {rowLabel} ({rowValues}) a sinistra, {columnLabel} ({columnValues}) in alto; ogni casella contiene il loro prodotto."
 
 #: src/activities/combination-grid/grid-board.tsx
+#: src/activities/labeled-diagram/diagram-slots.tsx
+msgctxt "3nOd8f"
+msgid "Your answer:"
+msgstr "La tua risposta:"
+
+#: src/activities/combination-grid/grid-board.tsx
 msgctxt "_RHUYG"
 msgid "Square {number}, {row} and {column}: empty"
 msgstr "Casella {number}, {row} e {column}: vuota"
@@ -869,9 +868,9 @@ msgid "Square {number}, {row} and {column}:"
 msgstr "Casella {number}, {row} e {column}:"
 
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "5cNGIS"
-msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}}: {what}"
-msgstr "{count} su {total, plural, =0 {# caselle} one {# casella} other {# caselle}}: {what}"
+msgctxt "nyV23o"
+msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
+msgstr "{what}: {count} su {total, plural, =0 {# quadrati} one {# quadrato} other {# quadrati}}"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
@@ -2790,6 +2789,34 @@ msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "Scegli le parole per comporre la risposta"
 
+#. Keyboard hint under an answer box, right after a picture of the Enter key: pressing Enter checks the answer. Lowercase, one word if possible.
+#: src/components/enter-hint.tsx
+msgctxt "3W8LgY"
+msgid "check"
+msgstr "controlla"
+
+#. Keyboard hint under a message box, right after a picture of the Enter key: pressing Enter sends the message. Lowercase, one word if possible.
+#: src/components/enter-hint.tsx
+msgctxt "qITzR1"
+msgid "send"
+msgstr "invia"
+
+#. Keyboard hint under a text box, right after pictures of the Shift and Enter keys: pressing them together starts a new line. Lowercase.
+#: src/components/enter-hint.tsx
+msgctxt "4SYk2r"
+msgid "new line"
+msgstr "a capo"
+
+#: src/components/enter-hint.tsx
+msgctxt "waVIZZ"
+msgid "Press Enter to check, Shift+Enter for a new line."
+msgstr "Premi Invio per controllare, Maiusc+Invio per andare a capo."
+
+#: src/components/enter-hint.tsx
+msgctxt "ZPgsC6"
+msgid "Press Enter to send, Shift+Enter for a new line."
+msgstr "Premi Invio per inviare, Maiusc+Invio per andare a capo."
+
 #. The numbered gap in a fill-in-the-blank sentence, read by screen readers. {item} is the word placed in it.
 #: src/components/fill-blank-step.tsx
 msgctxt "SL2Bob"
@@ -3434,11 +3461,6 @@ msgid "Just a guess, it doesn't count"
 msgstr "È solo un’ipotesi, non fa punteggio"
 
 #: src/lesson/steps/lesson-answer-field.tsx
-msgctxt "waVIZZ"
-msgid "Press Enter to check, Shift+Enter for a new line."
-msgstr "Premi Invio per controllare, Maiusc+Invio per andare a capo."
-
-#: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "Scrivi la tua risposta"
@@ -3691,11 +3713,6 @@ msgstr "Invia"
 msgctxt "iPfRms"
 msgid "Ask a question"
 msgstr "Fai una domanda"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "uw7M-z"
-msgid "⏎ send · ⇧⏎ new line"
-msgstr "⏎ invia · ⇧⏎ nuova riga"
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "NYRAZH"

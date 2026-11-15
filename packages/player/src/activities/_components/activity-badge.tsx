@@ -15,13 +15,14 @@ import {
   Target,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { opensTitle } from "../_utils/badge-title";
 
 export type ActivityBadgeKind =
   | "beforeAfter"
   | "dragCorner"
   | "earTraining"
   | "estimateFirst"
-  | "moveCurve"
+  | "moveLine"
   | "predictFirst"
   | "stepByStep"
   | "stepThrough"
@@ -33,7 +34,7 @@ const BADGE_ICONS: Record<ActivityBadgeKind, LucideIcon> = {
   dragCorner: Move,
   earTraining: Ear,
   estimateFirst: Target,
-  moveCurve: ArrowLeftRight,
+  moveLine: ArrowLeftRight,
   predictFirst: Dices,
   stepByStep: ListOrdered,
   stepThrough: Footprints,
@@ -49,7 +50,7 @@ function useBadgeLabel(kind: ActivityBadgeKind): string {
     dragCorner: t("Drag a corner"),
     earTraining: t("Ear training"),
     estimateFirst: t("Estimate first"),
-    moveCurve: t("Move a curve"),
+    moveLine: t("Move a line"),
     predictFirst: t("Predict first"),
     stepByStep: t("Step by step"),
     stepThrough: t("Step through"),
@@ -60,9 +61,20 @@ function useBadgeLabel(kind: ActivityBadgeKind): string {
   return labels[kind];
 }
 
-export function ActivityBadge({ kind }: { kind: ActivityBadgeKind }) {
+/** Chips that say what a question asks for first: a screen that only explores asks for nothing. */
+const ASKS_FIRST: ReadonlySet<ActivityBadgeKind> = new Set(["estimateFirst", "predictFirst"]);
+
+export function isExploreBadge(kind: ActivityBadgeKind): boolean {
+  return !ASKS_FIRST.has(kind);
+}
+
+export function ActivityBadge({ kind, title }: { kind: ActivityBadgeKind; title?: string }) {
   const Icon = BADGE_ICONS[kind];
   const label = useBadgeLabel(kind);
+
+  if (title !== undefined && opensTitle({ label, title })) {
+    return null;
+  }
 
   return (
     <Eyebrow data-slot="activity-badge" icon={<Icon aria-hidden="true" />}>

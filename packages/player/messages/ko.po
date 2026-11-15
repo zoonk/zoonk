@@ -27,9 +27,9 @@ msgid "Estimate first"
 msgstr "먼저 어림하기"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "wIskGV"
-msgid "Move a curve"
-msgstr "곡선 움직이기"
+msgctxt "s80KEd"
+msgid "Move a line"
+msgstr "선 옮기기"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "a2AaWv"
@@ -65,13 +65,6 @@ msgstr "실제 데이터가 아닌 예시 수치예요"
 msgctxt "WFoGUE"
 msgid "Source:"
 msgstr "출처:"
-
-#: src/activities/_components/activity-feedback.tsx
-#: src/activities/combination-grid/grid-board.tsx
-#: src/activities/labeled-diagram/diagram-slots.tsx
-msgctxt "3nOd8f"
-msgid "Your answer:"
-msgstr "내 답:"
 
 #: src/activities/_components/activity-feedback.tsx
 #: src/lesson/feedback/lesson-step-result.tsx
@@ -859,6 +852,12 @@ msgid "{title}: {rowLabel} ({rowValues}) down the side, {columnLabel} ({columnVa
 msgstr "{title}: 왼쪽에는 {rowLabel} ({rowValues}) 항목이 세로로, 위쪽에는 {columnLabel} ({columnValues}) 항목이 가로로 놓여 있고, 각 칸에는 두 값의 곱이 들어가요."
 
 #: src/activities/combination-grid/grid-board.tsx
+#: src/activities/labeled-diagram/diagram-slots.tsx
+msgctxt "3nOd8f"
+msgid "Your answer:"
+msgstr "내 답:"
+
+#: src/activities/combination-grid/grid-board.tsx
 msgctxt "_RHUYG"
 msgid "Square {number}, {row} and {column}: empty"
 msgstr "{number}번 칸, {row} 및 {column}: 비어 있음"
@@ -869,9 +868,9 @@ msgid "Square {number}, {row} and {column}:"
 msgstr "{number}번 칸, {row} 및 {column}:"
 
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "5cNGIS"
-msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}}: {what}"
-msgstr "{count}칸 / {total, plural, =0 {전체 #칸} other {총 #칸}}: {what}"
+msgctxt "nyV23o"
+msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
+msgstr "{what}: {count}/{total, plural, =0 {#칸} other {#칸}}"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
@@ -2790,6 +2789,34 @@ msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "단어를 골라 답을 만드세요"
 
+#. Keyboard hint under an answer box, right after a picture of the Enter key: pressing Enter checks the answer. Lowercase, one word if possible.
+#: src/components/enter-hint.tsx
+msgctxt "3W8LgY"
+msgid "check"
+msgstr "확인"
+
+#. Keyboard hint under a message box, right after a picture of the Enter key: pressing Enter sends the message. Lowercase, one word if possible.
+#: src/components/enter-hint.tsx
+msgctxt "qITzR1"
+msgid "send"
+msgstr "보내기"
+
+#. Keyboard hint under a text box, right after pictures of the Shift and Enter keys: pressing them together starts a new line. Lowercase.
+#: src/components/enter-hint.tsx
+msgctxt "4SYk2r"
+msgid "new line"
+msgstr "줄 바꿈"
+
+#: src/components/enter-hint.tsx
+msgctxt "waVIZZ"
+msgid "Press Enter to check, Shift+Enter for a new line."
+msgstr "Enter를 눌러 답을 확인하고, Shift+Enter를 눌러 줄을 바꾸세요."
+
+#: src/components/enter-hint.tsx
+msgctxt "ZPgsC6"
+msgid "Press Enter to send, Shift+Enter for a new line."
+msgstr "Enter로 보내고, Shift+Enter로 줄을 바꾸세요."
+
 #. The numbered gap in a fill-in-the-blank sentence, read by screen readers. {item} is the word placed in it.
 #: src/components/fill-blank-step.tsx
 msgctxt "SL2Bob"
@@ -3434,11 +3461,6 @@ msgid "Just a guess, it doesn't count"
 msgstr "예상일 뿐, 점수에는 반영되지 않아요"
 
 #: src/lesson/steps/lesson-answer-field.tsx
-msgctxt "waVIZZ"
-msgid "Press Enter to check, Shift+Enter for a new line."
-msgstr "Enter를 눌러 답을 확인하고, Shift+Enter를 눌러 줄을 바꾸세요."
-
-#: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "답을 써 주세요"
@@ -3691,11 +3713,6 @@ msgstr "보내기"
 msgctxt "iPfRms"
 msgid "Ask a question"
 msgstr "질문하기"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "uw7M-z"
-msgid "⏎ send · ⇧⏎ new line"
-msgstr "⏎ 보내기 · ⇧⏎ 줄바꿈"
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "NYRAZH"
