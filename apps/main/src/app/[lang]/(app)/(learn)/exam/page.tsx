@@ -9,6 +9,7 @@ import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { getExamView } from "@zoonk/core/exams/view/get";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { StatSkeleton } from "@zoonk/ui/components/stat";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -51,16 +52,6 @@ async function ExamContent() {
   );
 }
 
-function StatTileSkeleton() {
-  return (
-    <div className="ring-border flex flex-col gap-2.5 rounded-xl p-3 ring-1 ring-inset">
-      <Skeleton className="h-3 w-20 rounded-sm" />
-      <Skeleton className="h-6 w-14 rounded-sm" />
-      <Skeleton className="h-3 w-28 max-w-full rounded-sm" />
-    </div>
-  );
-}
-
 function SubjectRowSkeleton() {
   return (
     <div className="flex h-11 items-center gap-3">
@@ -77,10 +68,7 @@ function MockProgressSkeleton() {
   return (
     <div className="flex flex-col gap-3">
       <SectionLabelSkeleton />
-      <div className="grid grid-cols-2 gap-2">
-        <StatTileSkeleton />
-        <StatTileSkeleton />
-      </div>
+      <StatSkeleton detailLines={2} />
       <div className="mt-1 flex flex-col [&>*+*]:border-t">
         <SubjectRowSkeleton />
         <SubjectRowSkeleton />

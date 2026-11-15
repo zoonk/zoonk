@@ -210,6 +210,7 @@ msgstr "Bugün"
 
 #: src/_components/create-account-link.tsx
 #: src/_components/subscribe-gate.tsx
+#: src/language/unit/practice-conversation.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -6982,9 +6983,14 @@ msgid "Nothing yet. Notes show up here as you study and chat."
 msgstr "Henüz bir şey yok. Ders çalışıp yazıştıkça notlar burada görünür."
 
 #: src/memory/memory-screen.tsx
-msgctxt "etMoG6"
-msgid "Download my memory"
-msgstr "Belleğimi indir"
+msgctxt "dQaH-3"
+msgid "Download your memory"
+msgstr "Belleğini indir"
+
+#: src/memory/memory-screen.tsx
+msgctxt "U3W00j"
+msgid "A copy of your memory"
+msgstr "Belleğinin bir kopyası"
 
 #: src/memory/memory-screen.tsx
 msgctxt "GUOjcs"
@@ -11787,6 +11793,11 @@ msgid "Past or present, finished or not. Pick up to 3."
 msgstr "Önceki ya da devam eden eğitimlerinden en fazla 3 tane seç. Bitirmiş olman gerekmez."
 
 #: src/profile-questions/profile-question-copy.ts
+msgctxt "esh22C"
+msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime."
+msgstr "İsteğe bağlı. İçeriği ihtiyaçlarına göre uyarlamak için seçimlerini kullanırız. İstediğin zaman kaldırabilirsin."
+
+#: src/profile-questions/profile-question-copy.ts
 msgctxt "zJoq3-"
 msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings."
 msgstr "İsteğe bağlı. İçeriği ihtiyaçlarına göre uyarlamak için seçtiklerini kullanıyoruz. Bunları istediğin zaman Ayarlar’dan kaldırabilirsin."
@@ -11825,6 +11836,11 @@ msgstr "Sana neyin yardımcı olduğunu kendi sözlerinle anlat (isteğe bağlı
 msgctxt "dcwrhI"
 msgid "E.g., I understand diagrams better than text"
 msgstr "Örneğin, şemaları metinlerden daha iyi anlıyorum"
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "HOckqc"
+msgid "We'll remember this. You can delete it anytime."
+msgstr "Bunu hatırlayacağız. İstediğin zaman silebilirsin."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "mM7GRS"
@@ -13642,14 +13658,14 @@ msgid "You finished {name}."
 msgstr "{name} tamamlandı."
 
 #: src/week/logbook-sections.tsx
-msgctxt "koboTV"
-msgid "{time} more than the week before!"
-msgstr "Önceki haftaya göre {time} daha fazla!"
+msgctxt "Yj-wa7"
+msgid "{time} more than the week before."
+msgstr "Bir önceki haftaya göre {time} daha fazla."
 
 #: src/week/logbook-sections.tsx
-msgctxt "mY3vs_"
-msgid "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
-msgstr "{questions, plural, other {Önceki haftaya göre # soru daha fazla!}}"
+msgctxt "d9SZZ-"
+msgid "{questions, plural, one {# more question than the week before.} other {# more questions than the week before.}}"
+msgstr "{questions, plural, other {Bir önceki haftaya göre # soru daha fazla.}}"
 
 #: src/week/logbook-sections.tsx
 msgctxt "gpv0cM"

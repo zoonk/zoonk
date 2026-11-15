@@ -92,29 +92,41 @@ export function needsAccount(limit: NoticeLimit): boolean {
   );
 }
 
+function toWayOn({
+  limit,
+  linkComponent,
+  routes,
+}: Omit<LimitNoticeProps, "className"> & { limit: NoticeLimit }): ReactNode {
+  if (limit.status === "slowDown" || (limit.status === "limitReached" && limit.tier === "plus")) {
+    return null;
+  }
+
+  return needsAccount(limit) ? (
+    <CreateAccountLink href={routes.signUp} />
+  ) : (
+    <SubscribeAction href={routes.upgrade} link={linkComponent} />
+  );
+}
+
 function LimitNoticeBody({
+  action,
   className,
   limit,
-  linkComponent: LinkComponent,
+  linkComponent,
   routes,
   words,
-}: LimitNoticeProps & { limit: NoticeLimit; words: LimitWords }) {
-  if (limit.status === "slowDown" || (limit.status === "limitReached" && limit.tier === "plus")) {
-    return (
-      <div className={className}>
-        <GateWords {...words} />
-      </div>
-    );
-  }
+}: LimitNoticeProps & { action?: ReactNode; limit: NoticeLimit; words: LimitWords }) {
+  const wayOn = toWayOn({ limit, linkComponent, routes });
 
   return (
     <div className={cn("flex flex-col items-start gap-2", className)}>
       <GateWords {...words} />
 
-      {needsAccount(limit) ? (
-        <CreateAccountLink href={routes.signUp} />
-      ) : (
-        <SubscribeAction href={routes.upgrade} link={LinkComponent} />
+      {(wayOn || action) && (
+        <div className="flex flex-wrap gap-2">
+          {wayOn}
+          {action}
+        </div>
       )}
     </div>
   );
@@ -262,7 +274,11 @@ export function LimitMainAction({ limit }: { limit: NoticeLimit }) {
   return limit.status === "limitReached" && limit.tier === "free" ? <SubscribeMainAction /> : null;
 }
 
-export function LessonLimitNotice({ limit, ...props }: LimitNoticeProps & { limit: LessonLimit }) {
+/** `action` sits beside its Subscribe, such as starting the lesson once the free one is back. */
+export function LessonLimitNotice({
+  limit,
+  ...props
+}: LimitNoticeProps & { action?: ReactNode; limit: LessonLimit }) {
   return <LimitNoticeBody {...props} limit={limit} words={useLessonLimitWords(limit)} />;
 }
 

@@ -1102,10 +1102,10 @@ msgctxt "G4ZsrK"
 msgid "Start with your goal"
 msgstr "Commence par ton objectif"
 
+#. The page inside Settings for usage data, a copy of the learner's data and deleting the account; not the privacy policy.
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
-#: src/components/public/public-footer.tsx
-msgctxt "cXBJ7U"
+msgctxt "settingsPrivacy"
 msgid "Privacy"
 msgstr "Confidentialité"
 
@@ -1306,9 +1306,9 @@ msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
 msgstr "Nous n’avons pas pu supprimer ton compte. Réessaie ou écris à hello@zoonk.com."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
-msgctxt "Sk9SL5"
-msgid "Delete my account"
-msgstr "Supprimer mon compte"
+msgctxt "95pnlV"
+msgid "Your account"
+msgstr "Ton compte"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "wyxJrL"
@@ -1329,6 +1329,11 @@ msgstr "Supprimer ton compte ?"
 msgctxt "yF2UF2"
 msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
 msgstr "Tes objectifs, tes plans, ta progression, ta mémoire et tes fichiers importés seront définitivement supprimés. Cette action est irréversible."
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "Sk9SL5"
+msgid "Delete my account"
+msgstr "Supprimer mon compte"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "huX1mW"
@@ -1354,9 +1359,14 @@ msgid "Plus from Google Play keeps charging until you cancel it there."
 msgstr "Tu continues à payer Plus tant que tu ne résilies pas ton abonnement sur Google Play."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/export-data-row.tsx
-msgctxt "RcXC-q"
-msgid "Download my data"
-msgstr "Télécharger mes données"
+msgctxt "tTFZyH"
+msgid "Download your data"
+msgstr "Télécharger tes données"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/export-data-row.tsx
+msgctxt "y8jK2R"
+msgid "A copy of your data"
+msgstr "Une copie de tes données"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
 msgctxt "s8-igB"
@@ -3361,6 +3371,11 @@ msgstr "Nous n’avons pas trouvé cette page"
 msgctxt "Vge-RX"
 msgid "Footer"
 msgstr "Pied de page"
+
+#: src/components/public/public-footer.tsx
+msgctxt "cXBJ7U"
+msgid "Privacy"
+msgstr "Confidentialité"
 
 #: src/components/public/public-footer.tsx
 msgctxt "xkr-zo"
