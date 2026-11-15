@@ -108,7 +108,7 @@ class GateScreenshots {
     fun lessonGone() = capture("gate-lesson-gone-phone") { access(LessonRefusal.NotFound) }
 
     @Test
-    @Config(qualifiers = PHONE, fontScale = 2f)
+    @Config(qualifiers = PHONE_TALL, fontScale = 2f)
     fun inPlace() =
         capture("gate-in-place-phone-font200") {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -118,12 +118,58 @@ class GateScreenshots {
                     Limit.Reached(LimitTier.Guest, LimitPeriod.Day) to LimitSubject.Messages,
                     Limit.Reached(LimitTier.Plus, LimitPeriod.Rolling30Days, Instant.now().plus(9, ChronoUnit.DAYS)) to LimitSubject.Help,
                     Limit.SignUpRequired to LimitSubject.Help,
+                    free(Instant.now().plus(9, ChronoUnit.DAYS)) to LimitSubject.Uploads,
+                    Limit.Reached(LimitTier.Free, LimitPeriod.Day) to LimitSubject.Questions,
                 ).forEach { (limit, subject) ->
                     LimitNotice(limit, subject, onCreateAccount = {}, onSubscribe = {})
                     HorizontalDivider()
                 }
                 RecordButton(VoiceRecorder.Status.Idle, onStart = {}, onStop = {})
                 RecordButton(VoiceRecorder.Status.Recording(SystemClock.elapsedRealtime() - 7_000), onStart = {}, onStop = {})
+            }
+        }
+
+    @Test
+    @Config(qualifiers = PHONE_TALL, fontScale = 2f)
+    fun lessonFreeOnADayFont200() =
+        capture("gate-lesson-free-on-day-phone-font200") { access(free(Instant.now().plus(9, ChronoUnit.DAYS))) }
+
+    @Test
+    @Config(qualifiers = TABLET)
+    fun lessonFreeReadyTablet() = capture("gate-lesson-free-ready-tablet") { access(free(Instant.now().minusSeconds(60))) }
+
+    @Test
+    @Config(qualifiers = PHONE_TALL, fontScale = 2f)
+    fun lessonFreeReadyFont200() = capture("gate-lesson-free-ready-phone-font200") { access(free(Instant.now().minusSeconds(60))) }
+
+    @Test
+    @Config(qualifiers = PHONE_TALL)
+    fun liftedInPlace() = capture("gate-lifted-in-place-phone") { LiftedNotices() }
+
+    @Test
+    @Config(qualifiers = PHONE_TALL, fontScale = 2f)
+    fun liftedInPlaceFont200() = capture("gate-lifted-in-place-phone-font200") { LiftedNotices() }
+
+    @Test
+    @Config(qualifiers = TABLET)
+    fun liftedInPlaceTablet() = capture("gate-lifted-in-place-tablet") { LiftedNotices() }
+
+    /** Each subject's notice once its day has come: the one sentence, with no title and no Subscribe. */
+    @Composable
+    private fun LiftedNotices() =
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            listOf(
+                LimitSubject.Messages,
+                LimitSubject.Explanations,
+                LimitSubject.Help,
+                LimitSubject.MockExams,
+                LimitSubject.Uploads,
+                LimitSubject.Questions,
+                LimitSubject.Lessons,
+                LimitSubject.MapLessons,
+            ).forEach { subject ->
+                LimitNotice(free(Instant.now().minusSeconds(60)), subject, onCreateAccount = {}, onSubscribe = {})
+                HorizontalDivider()
             }
         }
 
@@ -162,4 +208,5 @@ private val EXITS =
 
 private const val PHONE = "w411dp-h891dp-xxhdpi"
 private const val PHONE_DARK = "w411dp-h891dp-night-xxhdpi"
+private const val PHONE_TALL = "w411dp-h1800dp-xxhdpi"
 private const val TABLET = "w1280dp-h800dp-land-xhdpi"

@@ -37,6 +37,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationFailure
@@ -59,6 +60,8 @@ import com.zoonk.android.feature.onboarding.setup.GoalSetupScreen
 import com.zoonk.android.feature.onboarding.setup.LocalSetupSpeech
 import com.zoonk.android.feature.onboarding.setup.PlacementStep
 import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
+import com.zoonk.android.feature.onboarding.start.AttachPanel
+import com.zoonk.android.feature.onboarding.start.MaterialAnswer
 import com.zoonk.android.feature.onboarding.start.StartGoalScreen
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
@@ -73,6 +76,7 @@ import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -88,7 +92,9 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import org.robolectric.util.ReflectionHelpers
 import java.io.File
+import java.time.Instant
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 /**
@@ -507,6 +513,9 @@ class OnboardingScreenshots {
                 "plan-link" to { PlanLink(FakeOnboardingApi()) },
                 "course-start" to { CourseStart(AppRoute.CourseStart(COURSE)) },
                 "course-start-chapter" to { CourseStart(AppRoute.CourseStart(COURSE, chapterId = CHAPTER_ONE, dailyMinutes = 15)) },
+                "course-start-goals-at-once" to { CourseStart(AppRoute.CourseStart(COURSE), AT_THE_LIMIT) },
+                "course-start-monthly-goals" to { CourseStart(AppRoute.CourseStart(COURSE, chapterId = CHAPTER_ONE), MONTHLY_GOALS_USED) },
+                "material-notices" to { MaterialNotices() },
                 "research-notices" to { ResearchNotices(SuggestionLayout.Panel) },
                 "research-notices-line" to { ResearchNotices(SuggestionLayout.Line) },
                 "level-test-intro" to { LevelTest(FakeOnboardingApi(), targetLanguage = "ja", native = "pt") },
@@ -608,16 +617,40 @@ class OnboardingScreenshots {
             }
         }
 
+        /** A refused upload and a refused question about attached material: the shared dated notice, and a day's cap. */
         @Composable
-        private fun CourseStart(route: AppRoute.CourseStart) {
+        private fun MaterialNotices() {
+            val opens = Instant.now().plus(9, ChronoUnit.DAYS).toString()
+
+            fun refused(
+                resource: String,
+                period: String,
+                availableAt: String?,
+            ) = WriteOutcome.Refused(Refusal.Limit(UsageLimit(period, resource, "free", availableAt).received(Instant.now())))
+            Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                AttachPanel(false, refused("upload", "rolling30Days", opens), {}, {}, {}, onCreateAccount = {}, onSubscribe = {})
+                MaterialAnswer(refused("materialQuestion", "rolling30Days", opens), onCreateAccount = {}, onSubscribe = {})
+                MaterialAnswer(refused("materialQuestion", "day", null), onCreateAccount = {}, onSubscribe = {})
+            }
+        }
+
+        @Composable
+        private fun CourseStart(
+            route: AppRoute.CourseStart,
+            limit: AllowanceResponse? = null,
+        ) {
             val session = remember { FakeSession(AuthenticatedSession("ana", "token-a", "local-a")) }
             val cache = remember { AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)) }
             CourseStartScreen(
                 route = route,
                 catalog = remember { CatalogStore(FakeCatalogApi(), cache) },
                 store = remember { OnboardingStore(FakeOnboardingApi(), cache, session) { SignInResult.SignedIn } },
-                allowance = remember { cache.noAllowance() },
-                signedIn = false,
+                allowance =
+                    remember {
+                        limit?.let { value -> cache.resource<AllowanceResponse>(Audience.SignedIn) { value } }
+                            ?: cache.noAllowance()
+                    },
+                signedIn = limit != null,
                 existingGoalId = null,
                 navigator = rememberAppNavigator(),
             )
@@ -774,3 +807,27 @@ private fun focusedPlan(
         focusTest = ApiJson.decodeFromString(focusTest),
     )
 }
+
+/** At the goals-at-once limit: three goals studied at once. */
+private val AT_THE_LIMIT: AllowanceResponse =
+    ApiJson.decodeFromString(
+        """
+        {"tier":"free","activeGoals":{"limit":3,"used":3},
+         "examPrep":{"includesMockExams":false},"generatedLessons":null,
+         "resets":{"day":"2026-10-29T00:00:00Z"},
+         "items":[{"kind":"goal","dailyLimit":null,"rollingLimit":3,"totalLimit":null,"usedToday":0,"usedLast30Days":1,
+           "usedTotal":1,"fairUseDailyLimit":null,"remaining":null,"availableAt":null}]}
+        """.trimIndent(),
+    )
+
+/** A free learner's new goals over the last 30 days used up, the next one nine days away. */
+private val MONTHLY_GOALS_USED: AllowanceResponse =
+    ApiJson.decodeFromString(
+        """
+        {"tier":"free","activeGoals":{"limit":3,"used":1},
+         "examPrep":{"includesMockExams":false},"generatedLessons":null,
+         "resets":{"day":"2026-10-29T00:00:00Z"},
+         "items":[{"kind":"goal","dailyLimit":null,"rollingLimit":3,"totalLimit":null,"usedToday":0,"usedLast30Days":3,
+           "usedTotal":3,"fairUseDailyLimit":null,"remaining":0,"availableAt":"${Instant.now().plus(9, ChronoUnit.DAYS)}"}]}
+        """.trimIndent(),
+    )
