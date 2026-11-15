@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onLast
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.listRowDescription
@@ -389,6 +391,20 @@ class LayoutCaptureTest {
         // Ink is written only where the picture shows the words in their own color: a copy of the page has none.
         assertTrue(label.get("ink") is JSONArray)
         assertTrue((0 until picture.width).none { x -> picture.getPixel(x, picture.height / 2) == PAGE.toArgb() })
+    }
+
+    @Test
+    fun aDialogThatFillsTheWindowIsCutToItsWindow() {
+        compose.setContent {
+            ZoonkTheme {
+                FullScreenDialog(onDismissRequest = {}) { Box(Modifier.fillMaxSize().background(PAGE)) }
+            }
+        }
+        compose.waitForIdle()
+        val picture = compose.onNode(isDialog()).captureRender().asAndroidBitmap()
+
+        assertEquals(compose.activity.window.decorView.width, picture.width)
+        assertEquals(PAGE.toArgb(), picture.getPixel(picture.width / 2, picture.height / 2))
     }
 
     private fun capture(content: @androidx.compose.runtime.Composable () -> Unit): JSONArray {
