@@ -15,7 +15,6 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.LayoutPart
@@ -384,9 +383,9 @@ internal object LayoutCapture {
                 val laidOut = listOf(left, top, lines.maxOf { it[0] + it[2] } - left, lines.maxOf { it[1] + it[3] } - top)
                 // Where the paragraph's lines are laid out: real layout, whether or not anyone can see them.
                 fields["lineBounds"] = laidOut
-                // Ink only once the lines are seen: no text cut off by its part or anything inside it, and the
+                // Ink only once the lines are seen: no line past what shows of its text's box, and the
                 // picture shows something there (an opaque sibling over the row leaves nothing to see).
-                val textClipped = clipped || texts.any { (each, result) -> isClipped(each) || isCut(result) }
+                val textClipped = texts.any { (each, result) -> !linesShown(each, result) }
                 if (textClipped) fields["clipped"] = true
                 fields["ink"] = if (!textClipped && ink(laidOut) is List<*>) laidOut else NOT_MEASURED
                 val y =
@@ -512,12 +511,23 @@ internal object LayoutCapture {
         }
 
         /**
-         * A paragraph taller than its own box is cut at the box; one wider than it only when it clips rather than
-         * ellipsizes. (`hasVisualOverflow` also counts a short ellipsizing title drawn whole, so it isn't the test.)
+         * Every laid-out line of [layout], where it's drawn (its alignment included), lies inside what shows of
+         * [text]'s box: nothing over or around the text cut it. A box cut only past its words cuts no line.
          */
-        private fun isCut(layout: TextLayoutResult): Boolean =
-            layout.didOverflowHeight ||
-                (layout.didOverflowWidth && layout.layoutInput.overflow == TextOverflow.Clip && !layout.layoutInput.softWrap)
+        private fun linesShown(
+            text: SemanticsNode,
+            layout: TextLayoutResult,
+        ): Boolean {
+            val shown = text.boundsInRoot
+            val origin = text.layoutInfo.coordinates.positionInRoot()
+            val x = origin.x + alignmentShift(layout)
+            return (0 until layout.lineCount).all { line ->
+                x + layout.getLineLeft(line) >= shown.left - HALF_PIXEL &&
+                    x + layout.getLineRight(line) <= shown.right + HALF_PIXEL &&
+                    origin.y + layout.getLineTop(line) >= shown.top - HALF_PIXEL &&
+                    origin.y + layout.getLineBottom(line) <= shown.bottom + HALF_PIXEL
+            }
+        }
 
         private fun isClipped(node: SemanticsNode): Boolean {
             val shown = node.boundsInRoot

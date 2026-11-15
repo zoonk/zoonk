@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
@@ -16,6 +19,8 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.components.ListRow
@@ -24,6 +29,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -193,6 +199,48 @@ class LayoutCaptureTest {
         val label = capture { ListRow(headline = { Text("") }) }.part("label")
 
         assertEquals(0, label.getInt("texts"))
+    }
+
+    /** RV39 A1: the negative control. Visible words keep their ink, ellipsized or aligned. */
+    @Test
+    fun ordinaryVisibleTextKeepsItsInk() {
+        val parts =
+            capture {
+                listOf("I", "Normal").forEach { word -> ListRow(headline = { Text(word) }, meta = { Text("12 min") }, onClick = {}) }
+                ListRow(
+                    headline = {
+                        Text(
+                            "A title long enough to end in an ellipsis on a phone, with more words after it",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                )
+                ListRow(headline = { Text("Centered", Modifier.fillMaxWidth(), textAlign = TextAlign.Center) })
+            }.elements().filter { it.getString("part") == "label" || it.getString("part") == "value" }
+
+        assertEquals(6, parts.size)
+        parts.forEach { part ->
+            assertTrue(part.getString("text"), part.get("ink") is JSONArray)
+            assertFalse(part.getString("text"), part.has("clipped"))
+        }
+    }
+
+    /** RV39 A1: a text box cut only where it has no words still shows every line. */
+    @Test
+    fun textWhoseBoxIsCutOnlyPastItsWordsKeepsItsInk() {
+        val label =
+            capture {
+                ListRow(
+                    headline = {
+                        Box(Modifier.width(120.dp).clipToBounds()) {
+                            Text("Hi", Modifier.wrapContentWidth(Alignment.Start, unbounded = true).width(400.dp))
+                        }
+                    },
+                )
+            }.part("label")
+
+        assertTrue(label.get("ink") is JSONArray)
     }
 
     private fun capture(content: @androidx.compose.runtime.Composable () -> Unit): JSONArray {
