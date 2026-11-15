@@ -96,6 +96,7 @@ class MindMapsOfferTest {
         compose.onNodeWithText("You've used your mind maps").assertDoesNotExist()
     }
 
+    /** With a correct clock, the instant passing makes one read of the list and nothing else; the read lifts the gate. */
     @Test
     fun aStopThatEndsWhileThePageIsOpenGoesAndCreateAllComes() {
         api.mindMaps = { if (api.lists == 1) stopped(clock.opening) else fresh }
@@ -110,8 +111,32 @@ class MindMapsOfferTest {
         compose.onNodeWithText("You've used your mind maps").assertDoesNotExist()
         compose.onNodeWithText("You can try again now.").assertDoesNotExist()
         assertEquals(2, api.lists)
+        assertEquals(emptyList<Any>(), api.created)
+        assertEquals(0, api.createdAll)
         // The gate's slot holds its height for this visit, so nothing below it moves without a tap.
         assertEquals(below, compose.onNodeWithText("Other chapters").getBoundsInRoot().top)
+    }
+
+    /**
+     * The device's clock is ahead of the server's: the offer's stop, already past here, still gates the page with
+     * no day printed, and only a read that lets a map start lifts it.
+     */
+    @Test
+    fun aStopPastOnThisClockGatesUntilAReadLetsAMapStart() {
+        var allowed = false
+        api.mindMaps = { if (allowed) fresh else stopped(clock.start.minusSeconds(60)) }
+        show()
+
+        waitFor("You've used your mind maps")
+        compose.waitUntil(10_000) { api.lists >= 2 }
+        compose.onNodeWithText("You can try again now.").assertDoesNotExist()
+        compose.onNodeWithText("More", substring = true).assertDoesNotExist()
+        compose.onAllNodesWithText("Create").assertCountEquals(0)
+
+        allowed = true
+        scope.launch { store.list[UUID.fromString(GOAL)].refresh() }
+        compose.waitUntil(10_000) { compose.onAllNodesWithText("Create").fetchSemanticsNodes().size == 2 }
+        compose.onNodeWithText("You've used your mind maps").assertDoesNotExist()
     }
 
     /** The device's clock is ahead of the server's: Create all's own stop, already past here, keeps its gate through the list read after it. */
@@ -216,7 +241,12 @@ class MindMapsOfferTest {
     /** The day's AI help refuses every other map too, so the page offers none. */
     @Test
     fun aRowRefusedForTheDaysHelpStopsThePage() {
-        api.mindMaps = { fresh }
+        val noHelp =
+            goalMindMaps(
+                chapters,
+                offer = """{"eligible":2,"needLessons":2,"startable":0,"stop":{"reason":"limitReached","resource":"aiSpend","period":"day","availableAt":null}}""",
+            )
+        api.mindMaps = { if (api.lists == 1) fresh else noHelp }
         refuseCreate("aiSpend", "day")
         show()
         waitFor("Create all")

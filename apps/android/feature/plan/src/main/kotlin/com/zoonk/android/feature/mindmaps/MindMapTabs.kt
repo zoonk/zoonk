@@ -41,11 +41,12 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.OpeningDay
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
-import com.zoonk.android.ui.components.limitLifted
+import com.zoonk.android.ui.components.rememberOpeningDay
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
@@ -100,8 +101,9 @@ internal fun LazyListScope.chaptersTab(
 
     if (groups.isEmpty() && notMade.isEmpty()) {
         item(key = "chapters-empty", contentType = "empty") {
-            // A finished chapter's map is claimed like any other, so it waits while the maps are stopped.
-            TabEmpty(if (actions.shownLimit(mindMaps) != null) R.string.mindmaps_empty_stopped else R.string.mindmaps_empty)
+            // A finished chapter's map is claimed like any other, so it waits while the offer is stopped.
+            val stopped = mindMaps.createOffer.let { it.stop != null && it.startable == 0L }
+            TabEmpty(if (stopped) R.string.mindmaps_empty_stopped else R.string.mindmaps_empty)
         }
         return
     }
@@ -113,13 +115,13 @@ internal fun LazyListScope.chaptersTab(
     if (notMade.isNotEmpty()) notMadeBlock(mindMaps, notMade, notMadeOpen, actions)
 }
 
-/** [stop] is what keeps any new map from starting now, which takes its Create away; [numbered] rows say which chapter they are. */
+/** [stop] is what keeps any new map from starting now ([gate]), which takes its Create away; [numbered] rows say which chapter they are. */
 @Composable
 private fun ChapterRow(
     map: GoalMindMap,
     actions: TabActions,
     open: (() -> Unit)? = null,
-    stop: Limit? = null,
+    stop: MindMapAllowanceStop? = null,
     numbered: Boolean = true,
 ) {
     val target = MindMapTarget(SavedMindMapKind.CHAPTER, map.chapterId)
@@ -135,7 +137,7 @@ private fun ChapterRow(
             place = MindMapPlace.Library,
             shown = shown,
             local = local,
-            cap = stop,
+            cap = stop?.gate(actions.state.tier),
             plus = actions.state.plus,
             actions =
                 MindMapRowActions(
@@ -168,7 +170,7 @@ private fun LazyListScope.notMadeBlock(
 ) {
     val now = notMade.filter { it.canMakeNow() }
     val later = notMade.filterNot { it.canMakeNow() }
-    val stop = actions.state.pageStop?.limit(actions.state.tier) ?: mindMaps.createOffer.stop?.limit(actions.state.tier)
+    val stop = mindMaps.createOffer.stop
 
     items(now, key = { "now-${it.chapterId}" }, contentType = { "map" }) { map ->
         Divided(map != now.first()) { ChapterRow(map, actions, stop = stop, numbered = false) }
@@ -211,11 +213,13 @@ private fun NotMadeSummary(
 ) {
     val offer = mindMaps.createOffer
     // What stops a new map also takes the rows' Create away, so it shows whether or not a chapter is ready to make.
-    val page = actions.state.pageStop
-    val limit = actions.shownLimit(mindMaps)
+    val limit =
+        offer.stop
+            ?.takeIf { offer.startable == 0L }
+            ?.gate(actions.state.tier)
     HeldSlot(gated = limit != null, Modifier.padding(top = 16.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (offer.startable > 1 && (page == null || limit == null)) {
+            if (offer.startable > 1) {
                 OutlinedButton(
                     onClick = actions.page.createAll,
                     busy = actions.state.createAll == CreateAll.Pending,
@@ -223,9 +227,7 @@ private fun NotMadeSummary(
                 ) { Text(stringResource(R.string.mindmaps_create_all)) }
             }
 
-            Box(
-                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-            ) { NotMadeLine(mindMaps, later, limit, page?.subject ?: offer.stop.limitSubject, actions) }
+            Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) { NotMadeLine(mindMaps, later, limit, actions) }
         }
     }
 }
@@ -240,7 +242,6 @@ private fun NotMadeLine(
     mindMaps: GoalMindMaps,
     later: List<GoalMindMap>,
     limit: Limit?,
-    subject: LimitSubject,
     actions: TabActions,
 ) {
     val offer = mindMaps.createOffer
@@ -264,7 +265,7 @@ private fun NotMadeLine(
             }
 
             limit != null -> {
-                MindMapLimit(limit, subject, actions.page.navigate)
+                MindMapLimit(limit, offer.stop.limitSubject, actions.page.navigate)
                 return
             }
 
@@ -279,27 +280,16 @@ private fun NotMadeLine(
     Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }
 
-/** The page's stop as the app's limits word it; [tier] is the learner's plan. */
-private fun PageStop.limit(tier: LimitTier): Limit =
-    when (this) {
-        is PageStop.Answered -> stop.limit(tier)
-        is PageStop.Refused -> limit
-    }
-
-/** What stops a new map on this page as it reads now: the page's stop, else the offer's when none can start; none once its day comes. */
+/**
+ * The offer's stop gates the page until a read of the list lifts it, whatever this device's clock says: a day
+ * already past here isn't printed (main's rule for a list with its own offer).
+ */
 @Composable
-private fun TabActions.shownLimit(mindMaps: GoalMindMaps): Limit? {
-    val offer = mindMaps.createOffer
-    return (state.pageStop?.limit(state.tier) ?: offer.stop?.takeIf { offer.startable == 0L }?.limit(state.tier))
-        ?.takeUnless { limitLifted(it) }
+private fun MindMapAllowanceStop.gate(tier: LimitTier): Limit {
+    val limit = limit(tier)
+    val passed = rememberOpeningDay((limit as? Limit.Reached)?.availableAt) == OpeningDay.Open
+    return if (passed && limit is Limit.Reached) limit.copy(availableAt = null) else limit
 }
-
-private val PageStop.subject: LimitSubject
-    get() =
-        when (this) {
-            is PageStop.Answered -> stop.limitSubject
-            is PageStop.Refused -> subject
-        }
 
 /** The server's reason nothing more can start, as the app's limits word it; [tier] is the learner's plan. */
 internal fun MindMapAllowanceStop.limit(tier: LimitTier): Limit =

@@ -5,10 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.goalcontent.ChapterKey
-import com.zoonk.android.ui.components.Limit
-import com.zoonk.android.ui.components.LimitSubject
-import com.zoonk.api.models.MindMapAllowanceStop
-import com.zoonk.api.models.MindMapCreateOffer
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -21,35 +17,11 @@ import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.io.OutputStream
 import java.util.UUID
-import kotlin.time.toJavaInstant
 
 enum class PictureSave { Saved, Failed }
 
 /** What making every chapter map at once got: on its way, or a server out of reach. */
 enum class CreateAll { Pending, Unreachable }
-
-/**
- * What a tap's answer said keeps any new map from starting, shown over the offer the list reads
- * (main's `bulk.stop`): it holds through the read its tap started, and a later list read that says
- * a map can start retires it. Every other Create would be refused the same way, so the page offers none.
- */
-sealed interface PageStop {
-    /** The read mark when it was kept: reads started after it are later. */
-    val since: Long
-
-    /** Create all started none: its answer's stop, as received. */
-    data class Answered(
-        val stop: MindMapAllowanceStop,
-        override val since: Long,
-    ) : PageStop
-
-    /** A row's Create was refused for what refuses every other one too ([stopsThePage]). */
-    data class Refused(
-        val limit: Limit,
-        val subject: LimitSubject,
-        override val since: Long,
-    ) : PageStop
-}
 
 /**
  * A screen's mind maps for one session: making one, or all of them, only from a tap, following one
@@ -72,17 +44,13 @@ class MindMapViewModel(
     private val all = MutableStateFlow<CreateAll?>(null)
     val createAll: StateFlow<CreateAll?> = all.asStateFlow()
 
-    private val kept = MutableStateFlow<PageStop?>(null)
-    val pageStop: StateFlow<PageStop?> = kept.asStateFlow()
-
     /** The read mark when Create all last failed: a list read started after it clears the failure. */
     @Volatile private var createAllFailedSince = Long.MAX_VALUE
 
     private val stopWatching =
-        store.watchReads(goalId) { chapterIds, started, offer ->
+        store.watchReads(goalId) { chapterIds, started, wholeList ->
             locals.update { current -> current.filterNot { (id, local) -> id in chapterIds && !local.pending && local.since < started } }
-            if (offer != null && createAllFailedSince < started) all.compareAndSet(CreateAll.Unreachable, null)
-            if (offer != null && offer.letsOneStart()) kept.update { stop -> stop?.takeUnless { it.since < started } }
+            if (wholeList && createAllFailedSince < started) all.compareAndSet(CreateAll.Unreachable, null)
         }
 
     private val wanted = MutableStateFlow<Map<MindMapTarget, Boolean>>(emptyMap())
@@ -127,10 +95,9 @@ class MindMapViewModel(
         if (all.value == CreateAll.Pending) return
         all.value = CreateAll.Pending
         viewModelScope.launch {
-            val started = store.createAll(goalId)
-            if (started == MindMapsStarted.Unreachable) createAllFailedSince = store.readMark()
-            (started as? MindMapsStarted.Answered)?.stop?.let { kept.value = PageStop.Answered(it, store.readMark()) }
-            all.value = if (started == MindMapsStarted.Unreachable) CreateAll.Unreachable else null
+            val failed = store.createAll(goalId) == false
+            if (failed) createAllFailedSince = store.readMark()
+            all.value = if (failed) CreateAll.Unreachable else null
         }
     }
 
@@ -142,19 +109,9 @@ class MindMapViewModel(
         viewModelScope.launch {
             val local =
                 when (val created = store.create(ChapterKey(goalId, chapterId))) {
-                    null, MindMapCreated.Read -> {
-                        null
-                    }
-
-                    MindMapCreated.Unreachable -> {
-                        MindMapLocal(unreachable = true, since = store.readMark())
-                    }
-
-                    is MindMapCreated.Refused -> {
-                        val since = store.readMark()
-                        if (created.stopsThePage) kept.value = PageStop.Refused(created.limit, created.subject, since)
-                        MindMapLocal(limit = created.limit, subject = created.subject, since = since)
-                    }
+                    null, MindMapCreated.Read -> null
+                    MindMapCreated.Unreachable -> MindMapLocal(unreachable = true, since = store.readMark())
+                    is MindMapCreated.Refused -> MindMapLocal(limit = created.limit, subject = created.subject, since = store.readMark())
                 }
             locals.update { if (local == null) it - chapterId else it + (chapterId to local) }
         }
@@ -223,21 +180,3 @@ class MindMapViewModel(
         const val MAX_MISSES = 3
     }
 }
-
-/** When the page's stop gave its day, as received; null without one. */
-internal val PageStop.availableAt: java.time.Instant?
-    get() =
-        when (this) {
-            is PageStop.Answered -> stop.availableAt?.toJavaInstant()
-            is PageStop.Refused -> (limit as? Limit.Reached)?.availableAt
-        }
-
-/**
- * The plan's cap on maps, the day's AI help and a guest's need for an account refuse every other map too; a map's
- * own lessons, or a moment's slow-down, refuse only that one.
- */
-private val MindMapCreated.Refused.stopsThePage: Boolean
-    get() = limit == Limit.SignUpRequired || (limit is Limit.Reached && (subject == LimitSubject.MindMaps || subject == LimitSubject.Help))
-
-/** Main's `startsNoMap`, turned: at least one map can start, or nothing stops one. */
-private fun MindMapCreateOffer.letsOneStart(): Boolean = startable > 0 || stop == null

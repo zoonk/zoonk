@@ -25,7 +25,6 @@ import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMapGenerations
 import com.zoonk.api.models.GoalMindMaps
 import com.zoonk.api.models.MindMapAllowanceStop
-import com.zoonk.api.models.MindMapCreateOffer
 import com.zoonk.api.models.MindMapGeneration
 import com.zoonk.api.models.SaveMindMap
 import com.zoonk.api.models.SavedMindMapKind
@@ -45,7 +44,6 @@ import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Instant
-import kotlin.time.toKotlinInstant
 
 interface MindMapApi {
     suspend fun list(
@@ -158,20 +156,6 @@ data class MindMapTarget(
     val id: UUID,
 )
 
-sealed interface MindMapsStarted {
-    /** [stop]: why none started, as the answer gave it and this device received it; the list read again says the rest. */
-    data class Answered(
-        val stop: MindMapAllowanceStop?,
-    ) : MindMapsStarted
-
-    /** The request, or the read after it, didn't come through. */
-    data object Unreachable : MindMapsStarted
-}
-
-/** As this device received it: [Limit.Reached.received]. */
-fun MindMapAllowanceStop.received(now: Instant): MindMapAllowanceStop =
-    if (availableAt?.let { it > now } == false) copy(availableAt = null) else this
-
 sealed interface MindMapCreated {
     /** Started, joined, already drawn, locked for Plus or without a map: the reads, read again, say which. */
     data object Read : MindMapCreated
@@ -199,14 +183,14 @@ class MindMapStore(
     val list: KeyedResources<UUID, GoalMindMaps> =
         cache.keyed(Audience.SignedIn, DOMAINS) { session, goalId ->
             session?.let {
-                read(goalId, { maps -> maps.chapters.map { it.chapterId } }, { it.createOffer }) { api.list(it, goalId) }
+                read(goalId, wholeList = true, { maps -> maps.chapters.map { it.chapterId } }) { api.list(it, goalId) }
                     .also { listed(goalId, it) }
             }
         }
 
     val chapter: KeyedResources<ChapterKey, ChapterMindMap> =
         cache.keyed(Audience.SignedIn, DOMAINS) { session, key ->
-            session?.let { read(key.goalId, { listOf(key.chapterId) }, { null }) { api.chapter(it, key) } }
+            session?.let { read(key.goalId, wholeList = false, { listOf(key.chapterId) }) { api.chapter(it, key) } }
         }
 
     /** A chapter's lesson maps, read when a deck or a row reaches them. */
@@ -257,25 +241,40 @@ class MindMapStore(
      * The list, read again, says what came of it, and so does each of the goal's chapters read
      * earlier, once it shows again; null when the session changed meanwhile.
      */
-    suspend fun createAll(goalId: UUID): MindMapsStarted? =
+    suspend fun createAll(goalId: UUID): Boolean? =
         when (val result = cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.createAll(it, goalId) }) {
             is MutationResult.Done -> {
-                val stop =
-                    result.value.stop
-                        ?.takeIf { result.value.accepted.isEmpty() }
-                        ?.received(clock.instant().toKotlinInstant())
+                result.value.stop
+                    ?.takeIf { result.value.accepted.isEmpty() }
+                    ?.let { stopOffer(goalId, it) }
                 chapter.invalidate { it.goalId == goalId }
-                if (list[goalId].reread()) MindMapsStarted.Answered(stop) else MindMapsStarted.Unreachable
+                list[goalId].reread()
             }
 
             is MutationResult.Failed -> {
-                MindMapsStarted.Unreachable
+                result.pageStop()?.let {
+                    stopOffer(goalId, it)
+                    list[goalId].reread()
+                } ?: false
             }
 
             MutationResult.Obsolete -> {
                 null
             }
         }
+
+    /**
+     * A refusal that stops every map is the newest answer about the offer: it's written over the list as one, so
+     * a read already on its way can't land on it, and the read after it replaces it.
+     */
+    private fun stopOffer(
+        goalId: UUID,
+        stop: MindMapAllowanceStop,
+    ) {
+        val listed = list[goalId]
+        val maps = listed.state.value.value ?: return
+        listed.replace(maps.copy(createOffer = maps.createOffer.copy(startable = 0, stop = stop)))
+    }
 
     /**
      * Lessons a list read shows for a chapter that the list didn't before (a map's run wrote them)
@@ -302,12 +301,12 @@ class MindMapStore(
 
     /**
      * Tells [arrived] of each read of [goalId]'s maps that comes through: the chapters it read, the
-     * number it started with, and the offer when it read the goal's whole list (null for one chapter).
-     * Returns what stops it.
+     * number it started with, and whether it read the goal's whole list or one chapter. Returns what
+     * stops it.
      */
     fun watchReads(
         goalId: UUID,
-        arrived: (chapterIds: List<UUID>, started: Long, offer: MindMapCreateOffer?) -> Unit,
+        arrived: (chapterIds: List<UUID>, started: Long, wholeList: Boolean) -> Unit,
     ): () -> Unit {
         val watcher = ReadWatcher(goalId, arrived)
         watchers += watcher
@@ -316,17 +315,15 @@ class MindMapStore(
 
     private suspend fun <T> read(
         goalId: UUID,
+        wholeList: Boolean,
         chapters: (T) -> List<UUID>,
-        offer: (T) -> MindMapCreateOffer?,
         fetch: suspend () -> T,
     ): T {
         val started = readsStarted.incrementAndGet()
-        return fetch().also { value ->
-            watchers.filter { it.goalId == goalId }.forEach { it.arrived(chapters(value), started, offer(value)) }
-        }
+        return fetch().also { value -> watchers.filter { it.goalId == goalId }.forEach { it.arrived(chapters(value), started, wholeList) } }
     }
 
-    /** Null when the session changed meanwhile. The reads say what came of it; nothing is written into them. */
+    /** Null when the session changed meanwhile. The reads say what came of it; a refusal that stops every map is written into the offer. */
     suspend fun create(key: ChapterKey): MindMapCreated? =
         when (val result = cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.create(it, key) }) {
             is MutationResult.Done -> readAgain(key)
@@ -338,12 +335,14 @@ class MindMapStore(
         result: MutationResult.Failed,
         key: ChapterKey,
     ): MindMapCreated {
-        val limit = Limit.of(result, clock.instant())
-        return when {
-            result.status == UNPROCESSABLE -> readAgain(key)
-            limit != null -> MindMapCreated.Refused(limit, result.details.ranOut().limitSubject)
-            else -> MindMapCreated.Unreachable
+        if (result.status == UNPROCESSABLE) return readAgain(key)
+        val limit = Limit.of(result, clock.instant()) ?: return MindMapCreated.Unreachable
+        // What stops every map is the list's offer's to say; the row keeps its tap's answer, which other screens show alone.
+        result.pageStop()?.let {
+            stopOffer(key.goalId, it)
+            readAgain(key)
         }
+        return MindMapCreated.Refused(limit, result.details.ranOut().limitSubject)
     }
 
     private suspend fun readAgain(key: ChapterKey) = if (refresh(key)) MindMapCreated.Read else MindMapCreated.Unreachable
@@ -426,8 +425,42 @@ private val String?.limitSubject: LimitSubject
 
 private class ReadWatcher(
     val goalId: UUID,
-    val arrived: (chapterIds: List<UUID>, started: Long, offer: MindMapCreateOffer?) -> Unit,
+    val arrived: (chapterIds: List<UUID>, started: Long, wholeList: Boolean) -> Unit,
 )
+
+/**
+ * A refusal that refuses every other map too, as the offer words it: the cap on maps, the day's AI spend, a guest's
+ * need for an account. A map's own lessons, or a slow-down, refuse only that one.
+ */
+private fun MutationResult.Failed.pageStop(): MindMapAllowanceStop? {
+    val limit = (details as? JsonObject)?.get("limit") as? JsonObject
+
+    fun field(name: String) = (limit?.get(name) as? JsonPrimitive)?.contentOrNull
+    return when (code) {
+        "SIGN_UP_REQUIRED" -> {
+            MindMapAllowanceStop(availableAt = null, period = null, reason = MindMapAllowanceStop.Reason.SIGN_UP_REQUIRED, resource = null)
+        }
+
+        "USAGE_LIMIT_REACHED" -> {
+            val resource =
+                when (field("resource")) {
+                    "aiSpend" -> MindMapAllowanceStop.Resource.AI_SPEND
+                    "chapterLessons", "lessonStart", "generatedLessons" -> return null
+                    else -> MindMapAllowanceStop.Resource.MIND_MAP
+                }
+            MindMapAllowanceStop(
+                availableAt = field("availableAt")?.let { runCatching { Instant.parse(it) }.getOrNull() },
+                period = MindMapAllowanceStop.Period.entries.firstOrNull { it.value == field("period") },
+                reason = MindMapAllowanceStop.Reason.LIMIT_REACHED,
+                resource = resource,
+            )
+        }
+
+        else -> {
+            null
+        }
+    }
+}
 
 /** A refusal's `details.limit.resource`: what ran out. */
 private fun JsonElement?.ranOut(): String? =
