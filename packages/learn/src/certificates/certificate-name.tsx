@@ -13,7 +13,6 @@ import { Input } from "@zoonk/ui/components/input";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { NameHint } from "../_components/name-hint";
@@ -127,7 +126,6 @@ export function CertificateNameField({
           className="shrink-0"
           disabled={!canSave}
           focusableWhenDisabled
-          icon={<CheckIcon aria-hidden="true" />}
           size="lg"
           type="submit"
         >

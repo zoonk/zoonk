@@ -206,7 +206,11 @@ export function UnderstoodScreen({
               {t("Fix something")}
             </OnboardingSecondaryButton>
             <form action={() => onConfirm()} className="contents">
-              <OnboardingPrimaryButton busy={isCreating} disabled={rewriting} type="submit">
+              <OnboardingPrimaryButton
+                busy={isCreating}
+                disabled={rewriting || editing !== null}
+                type="submit"
+              >
                 {t("Looks right")}
               </OnboardingPrimaryButton>
             </form>

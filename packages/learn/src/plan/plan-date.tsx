@@ -126,6 +126,7 @@ export function PlanDate() {
         <Button
           busy={isPending}
           className={cn(!canSave && !isPending && "invisible")}
+          size="lg"
           type="submit"
           variant="outline"
         >
