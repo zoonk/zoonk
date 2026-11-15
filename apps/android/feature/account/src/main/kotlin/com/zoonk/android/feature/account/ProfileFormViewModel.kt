@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
+import com.zoonk.android.data.Visit
 import com.zoonk.api.models.MeUser
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -42,6 +43,11 @@ class ProfileFormViewModel(
     /** The last save went through and nothing changed since. */
     var isSaved by mutableStateOf(false)
         private set
+
+    val visit = Visit()
+
+    /** A save that went through on this visit, which the page says once in the app's snackbars. */
+    val saved = visit.outcome<Unit>()
 
     private var check: Job? = null
 
@@ -102,6 +108,7 @@ class ProfileFormViewModel(
         if (!canSave) return
         isSaving = true
         val trimmedName = name.trim()
+        val started = visit.number
         viewModelScope.launch {
             try {
                 failure = account.saveProfile(trimmedName.takeIf { it != savedName }, username)
@@ -111,6 +118,7 @@ class ProfileFormViewModel(
                     savedUsername = username
                     usernameStatus = UsernameStatus.Idle
                     isSaved = true
+                    saved.send(started, Unit)
                 }
             } finally {
                 isSaving = false
