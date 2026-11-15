@@ -78,7 +78,6 @@ class PlanViewModel(
     writingWaits: WritingWaits,
 ) : ViewModel() {
     private val saving = MutableStateFlow(false)
-    private val resumeFailureState = MutableStateFlow<ResumeFailure?>(null)
     private val savingParts = MutableStateFlow(emptySet<PlanPart>())
     private val askedOperations = MutableStateFlow(emptyMap<PlanPart, List<PlanOp>>())
     private val failedParts = MutableStateFlow(emptySet<PlanPart>())
@@ -97,11 +96,13 @@ class PlanViewModel(
 
     val isSaving: StateFlow<Boolean> = saving.asStateFlow()
 
-    /** Why the bar's Resume didn't save, said over the bar until the next try. */
-    val resumeFailure: StateFlow<ResumeFailure?> = resumeFailureState.asStateFlow()
-
     /** This visit to the Plan: what its writes lead to shows only on it. */
     val visit = Visit()
+
+    private val resumeFailed = visit.outcome<ResumeFailure>()
+
+    /** Why the bar's Resume didn't save on this visit, said over the bar until the next try. */
+    val resumeFailure: ResumeFailure? get() = resumeFailed.value
 
     /** What a write did that the screen acts on, while the visit that made it lasts. */
     val event = visit.outcome<PlanEvent>()
@@ -171,7 +172,7 @@ class PlanViewModel(
         if (saving.value) return
         saving.value = true
         val resuming = status == LearnerSummaryGoal.Status.ACTIVE
-        if (resuming) resumeFailureState.value = null
+        if (resuming) resumeFailed.clear()
         val started = visit.number
         viewModelScope.launch {
             when (val result = store.setStatus(goalId, status)) {
@@ -181,7 +182,16 @@ class PlanViewModel(
 
                 is MutationResult.Failed -> {
                     if (resuming) {
-                        resumeFailureState.value = if (result.status == TOO_MANY_REQUESTS) ResumeFailure.GoalLimit else ResumeFailure.Failed
+                        resumeFailed.send(
+                            started,
+                            if (result.status ==
+                                TOO_MANY_REQUESTS
+                            ) {
+                                ResumeFailure.GoalLimit
+                            } else {
+                                ResumeFailure.Failed
+                            },
+                        )
                     } else {
                         outcomes.saveFailed.send(started, Unit)
                     }

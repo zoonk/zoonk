@@ -106,7 +106,32 @@ class PlanViewModelTest {
 
             viewModel.setStatus(LearnerSummaryGoal.Status.ACTIVE)
 
-            assertEquals(ResumeFailure.GoalLimit, viewModel.resumeFailure.value)
+            assertEquals(ResumeFailure.GoalLimit, viewModel.resumeFailure)
+        }
+
+    @Test
+    fun aResumeThatFailsAfterTheLearnerLeftSaysNothingOnReturn() =
+        runTest {
+            val held = CompletableDeferred<Unit>().also { api.statusGate = it }
+            api.statusFailure = ApiException(ApiError.Network)
+
+            viewModel.setStatus(LearnerSummaryGoal.Status.ACTIVE)
+            viewModel.visit.end()
+            held.complete(Unit)
+
+            assertNull(viewModel.resumeFailure)
+        }
+
+    @Test
+    fun aResumeFailureShownBeforeTheLearnerLeftIsGoneOnReturn() =
+        runTest {
+            api.statusFailure = ApiException(ApiError.Network)
+
+            viewModel.setStatus(LearnerSummaryGoal.Status.ACTIVE)
+            assertEquals(ResumeFailure.Failed, viewModel.resumeFailure)
+            viewModel.visit.end()
+
+            assertNull(viewModel.resumeFailure)
         }
 
     @Test

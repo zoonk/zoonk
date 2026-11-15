@@ -259,7 +259,7 @@ internal fun PlanPage(
             },
         isSaving = isSaving,
         onSetStatus = viewModel::setStatus,
-        resumeFailure = viewModel.resumeFailure.collectAsStateWithLifecycle().value,
+        resumeFailure = viewModel.resumeFailure,
         rename = GoalRename(renameDialog, viewModel::openRename, viewModel::closeRename, viewModel::rename),
         report = report,
         onAdjust = { section ->
