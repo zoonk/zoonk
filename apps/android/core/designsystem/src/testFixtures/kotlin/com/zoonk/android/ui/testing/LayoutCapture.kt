@@ -348,6 +348,11 @@ internal object LayoutCapture {
             ) {
                 fields["ink"] = pixelInk(box)
                 fields["margins"] = listOf(0, 0)
+                // Where this row's end glyph, control or value ends; a row keeping an empty end slot declares the slot's start.
+                val inset = part.endInset?.value
+                val rtl = node?.layoutInfo?.layoutDirection == LayoutDirection.Rtl
+                fields["endEdge"] =
+                    if (inset != null && box != null) (if (rtl) box[0] + inset else box[0] + box[2] - inset) else NOT_MEASURED
                 fields["note"] = written.any { it.row === this && it.part.part == LayoutPart.Part.Note }
             }
 
