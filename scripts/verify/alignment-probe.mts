@@ -549,14 +549,51 @@ export function readAlignment({
   const covers = [...document.querySelectorAll(surfaces)].filter((surface) => present(surface));
   const surfaceName = (cover: Element) => `${name(cover)} #${covers.indexOf(cover) + 1}`;
 
-  /** The surface on top: the one whose own middle the document hits inside it, not the last in order. */
-  const onTop = covers.filter((cover) => {
-    const box = boxOf(cover);
-    const hit = document.elementFromPoint((box.left + box.right) / 2, (box.top + box.bottom) / 2);
+  const shows = (cover: Element, x: number, y: number) => {
+    const hit = document.elementFromPoint(x, y);
     return hit !== null && cover.contains(hit);
+  };
+
+  /** The surface on top: the one whose own middle the document hits inside it, not the last in order. */
+  const exposed = covers.filter((cover) => {
+    const box = boxOf(cover);
+    return shows(cover, (box.left + box.right) / 2, (box.top + box.bottom) / 2);
   });
 
-  const top = onTop.at(-1) ?? covers.at(-1);
+  /**
+   * Of two surfaces that partly overlap, the one the document shows where they overlap; one inside
+   * the other is the inner one. Null when the document shows neither there.
+   */
+  const upper = (one: Element, other: Element): Element | null => {
+    if (one.contains(other) || other.contains(one)) {
+      return one.contains(other) ? other : one;
+    }
+
+    const a = boxOf(one);
+    const b = boxOf(other);
+    const left = Math.max(a.left, b.left);
+    const right = Math.min(a.right, b.right);
+    const top = Math.max(a.top, b.top);
+    const bottom = Math.min(a.bottom, b.bottom);
+
+    if (left >= right || top >= bottom) {
+      return one;
+    }
+
+    const x = (left + right) / 2;
+    const y = (top + bottom) / 2;
+
+    if (shows(one, x, y)) {
+      return one;
+    }
+
+    return shows(other, x, y) ? other : null;
+  };
+
+  const top = covers.reduce<Element | null | undefined>(
+    (current, cover) => (current && cover !== current ? upper(current, cover) : current),
+    exposed.at(-1) ?? covers.at(-1),
+  );
 
   const surfaceOf = (element: Element) => {
     const cover = covers.findLast((surface) => surface.contains(element));
@@ -591,6 +628,11 @@ export function readAlignment({
         variant: "filled",
       };
     });
+
+  // Null when two surfaces overlap and the document shows neither where they do.
+  if (top === null) {
+    return { activeSurface: "not measured", elements: [...elements, ...actions] };
+  }
 
   return { activeSurface: top ? surfaceName(top) : "page", elements: [...elements, ...actions] };
 }

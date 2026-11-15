@@ -94,6 +94,18 @@ function filledLeads(context: Context): AlignmentFinding[] {
     return [];
   }
 
+  if (capture.activeSurface === "not measured") {
+    return [
+      finding(context, {
+        detail: "two surfaces overlap and the page shows neither where they do",
+        level: "not-measured",
+        message: "which surface is on top wasn't measured",
+        piece: "action",
+        rule: "one-filled",
+      }),
+    ];
+  }
+
   const filled = capture.elements.filter(
     (element) =>
       element.part === "action" &&

@@ -31,7 +31,8 @@ function read() {
   });
 }
 
-let hit: Element | null = null;
+/** What the document shows at a point: one element everywhere, or one per point. */
+let hit: Element | null | ((x: number, y: number) => Element | null) = null;
 
 beforeEach(() => {
   installPageHelpers();
@@ -79,7 +80,11 @@ beforeEach(() => {
   });
 
   Object.defineProperty(document, "fonts", { configurable: true, value: [] });
-  Object.defineProperty(document, "elementFromPoint", { configurable: true, value: () => hit });
+
+  Object.defineProperty(document, "elementFromPoint", {
+    configurable: true,
+    value: (x: number, y: number) => (typeof hit === "function" ? hit(x, y) : hit),
+  });
 });
 
 afterEach(() => {
@@ -94,6 +99,16 @@ const row = (label: string, y: number, x = 0) =>
 function link(text: string, href: string, y: number) {
   return `<a href="${href}" style="--button-variant: default" data-box="0,${y},100,40">${text}</a>`;
 }
+
+/** An earlier dialog over part of a later one: each one's own middle shows itself. */
+const OVERLAPPING = `
+  <div role="dialog" aria-modal="true" aria-label="Top" data-box="0,0,200,100">
+    <button style="--button-variant: default" data-box="0,0,100,40">Top A</button>
+    <button style="--button-variant: default" data-box="0,50,100,40">Top B</button>
+  </div>
+  <div role="dialog" aria-modal="true" aria-label="Under" data-box="100,0,400,300">
+    <button style="--button-variant: default" data-box="300,200,100,40">Under</button>
+  </div>`;
 
 describe("reading a declared piece in the page", () => {
   it("reads rows through a display-contents wrapper, so their fault still fails", () => {
@@ -142,6 +157,38 @@ describe("reading a declared piece in the page", () => {
 
     assert.equal(fault?.rule, "one-filled");
     assert.match(fault?.detail ?? "", /"Top A", "Top B"/u);
+  });
+
+  it("asks which of two partly overlapping surfaces is on top where they overlap", () => {
+    document.body.innerHTML = OVERLAPPING;
+    const top = document.querySelector("[aria-label=Top] button");
+    const under = document.querySelector("[aria-label=Under] button");
+
+    // Each surface's own middle shows itself; where they overlap, the earlier one is on top.
+    hit = (x) => (x < 200 ? top : under);
+    const [fault] = evaluateCapture(read());
+
+    assert.equal(fault?.rule, "one-filled");
+    assert.match(fault?.detail ?? "", /"Top A", "Top B"/u);
+  });
+
+  it("fails one-filled as not measured when the document can't say which surface is on top", () => {
+    document.body.innerHTML = OVERLAPPING;
+    const top = document.querySelector("[aria-label=Top] button");
+    const under = document.querySelector("[aria-label=Under] button");
+
+    hit = (x) => {
+      if (x === 150) {
+        return document.body;
+      }
+
+      return x < 200 ? top : under;
+    };
+
+    const [record] = evaluateCapture(read());
+
+    assert.equal(record?.level, "not-measured");
+    assert.equal(record?.rule, "one-filled");
   });
 
   it("counts a link to the same place with the same words once, and two different ones twice", () => {
