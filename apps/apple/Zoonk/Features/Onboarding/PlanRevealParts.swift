@@ -279,8 +279,8 @@ struct RevealWeek: View {
           Text(
             [
               String(
-                localized: "\(week.days) days", table: "Onboarding",
-                comment: "How many days of the plan's first week have lessons"),
+                localized: "\(week.days) study days", table: "Onboarding",
+                comment: "How many days of the plan's first week have lessons, today among them"),
               planDurationText(minutes: Double(week.minutes)),
             ].joinedFacts())
         }
