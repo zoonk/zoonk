@@ -54,6 +54,16 @@
   }
 }
 
+/*
+ * The shared button's variant, which each variant of `buttonVariants` declares, so a link drawn as a
+ * button says it is filled exactly as a Button does (the verify tooling counts filled actions by
+ * it). It doesn't inherit, so only the control itself carries it.
+ */
+@property --button-variant {
+  syntax: "*";
+  inherits: false;
+}
+
 @theme inline {
   --font-sans:
     var(--font-geist-sans, ui-sans-serif), ui-sans-serif, system-ui, sans-serif,

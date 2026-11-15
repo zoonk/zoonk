@@ -68,13 +68,17 @@ export function PhaseWhen({ className, phase }: { className?: string; phase: Pla
   }
 
   if ("days" in end) {
-    return <span className={cn(className, "font-sans")}>{end.days}</span>;
+    return (
+      <span className={cn(className, "font-sans")} data-slot="phase-when">
+        {end.days}
+      </span>
+    );
   }
 
   const date = formatPlanDate(end.isoDate, { month: end.month });
 
   return (
-    <span className={cn("font-mono tabular-nums", className)}>
+    <span className={cn("font-mono tabular-nums", className)} data-slot="phase-when">
       <span aria-hidden="true">{end.estimate ? t("~{date}", { date }) : date}</span>
       <span className="sr-only">
         {end.estimate
