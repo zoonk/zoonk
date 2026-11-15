@@ -81,6 +81,8 @@ type Reads = { carried: number; missing: number; new: number };
  */
 export type CheckResult = {
   checked: number;
+  /** After pictures from an emulator or a simulator: no capture, so only their read checks layout. */
+  devicePictures?: number;
   nothingDeclared?: number;
   notMeasured: number;
   problems: Problem[];
@@ -94,7 +96,7 @@ function kindOf(kind: Kind) {
 }
 
 export function formatCheck(
-  { checked, nothingDeclared = 0, notMeasured, problems, reads }: CheckResult,
+  { checked, devicePictures = 0, nothingDeclared = 0, notMeasured, problems, reads }: CheckResult,
   root: string,
 ): string {
   if (checked === 0 && problems.length === 0) {
@@ -124,10 +126,15 @@ export function formatCheck(
       ? `; layout measured with nothing declared on ${nothingDeclared} ${nothingDeclared === 1 ? "screen" : "screens"}`
       : "";
 
+  const devices =
+    devicePictures > 0
+      ? `; ${devicePictures} device ${devicePictures === 1 ? "picture" : "pictures"}: layout not measured, ${devicePictures === 1 ? "its read checks it" : "their reads check it"}`
+      : "";
+
   const summary =
     groups.length === 0
-      ? `PASS: ${checked} pictures, each in a capture manifest; every after picture from a current, committed build and read${unmeasured}${undeclared}`
-      : `FAIL: ${groups.map(([kind, list]) => `${list.length} ${kindOf(kind).summary}`).join("; ")}, of ${checked} pictures${unmeasured}${undeclared}`;
+      ? `PASS: ${checked} pictures, each in a capture manifest; every after picture from a current, committed build and read${unmeasured}${undeclared}${devices}`
+      : `FAIL: ${groups.map(([kind, list]) => `${list.length} ${kindOf(kind).summary}`).join("; ")}, of ${checked} pictures${unmeasured}${undeclared}${devices}`;
 
   const readLine =
     reads.carried + reads.new + reads.missing > 0 &&

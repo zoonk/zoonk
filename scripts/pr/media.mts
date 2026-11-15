@@ -53,6 +53,8 @@ export type Read = { at: string; by: string; carriedFrom?: string; findings: Fin
  */
 export type CaptureItem = {
   build: Build | NativeStamp;
+  /** An emulator's or a simulator's picture, as the agent names the device: no capture behind it. */
+  device?: string;
   file: string;
   locale: string;
   platform: Platform;

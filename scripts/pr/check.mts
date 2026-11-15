@@ -214,9 +214,11 @@ async function pictureProblems({
   return { entries, problems: [...unique.values()] };
 }
 
+/** A device picture has no capture to measure; its read checks its layout, and the check says so. */
 function measured({ alignment, items }: Manifest): boolean {
   const { captures = [], findings = [] } = alignment;
-  return !items.some((item) => isRecorded(item)) || captures.length + findings.length > 0;
+  const captured = items.some((item) => isRecorded(item) && !item.device);
+  return !captured || captures.length + findings.length > 0;
 }
 
 function alignmentProblems({ alignment, folder }: Manifest): Problem[] {
@@ -310,6 +312,7 @@ export async function checkPictures({
 
   return {
     checked: unique.length,
+    devicePictures: after.filter((item) => isRecorded(item) && item.device).length,
     notMeasured: judgedManifests.filter((manifest) => !measured(manifest)).length,
     nothingDeclared: judgedManifests
       .flatMap(({ alignment }) => alignment.captures ?? [])
