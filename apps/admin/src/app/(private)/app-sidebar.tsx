@@ -77,11 +77,13 @@ function AdminSidebarContent({
 }: AdminSidebarProps & { onNavigate?: () => void }) {
   return (
     <>
-      <AdminNav counts={counts} onNavigate={onNavigate} />
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <AdminNav counts={counts} onNavigate={onNavigate} />
+      </div>
 
       {/* Pinned: on a short window the navigation scrolls under it. Its hairline keeps the account
           apart from the last group, which runs down to it on a full sidebar. */}
-      <SidebarFooter className="bg-background sticky bottom-0 -mb-3 border-t pb-3">
+      <SidebarFooter className="bg-background shrink-0 border-t">
         <AdminAccountMenu account={account} />
       </SidebarFooter>
     </>
@@ -111,7 +113,7 @@ export function AdminMenuSheet({
 }: AdminSidebarProps & { onOpenChange: (open: boolean) => void; open: boolean }) {
   return (
     <SidePanel onOpenChange={onOpenChange} open={open}>
-      <SidePanelContent className="gap-4 overflow-y-auto p-3 data-[side=left]:w-60" side="left">
+      <SidePanelContent className="gap-4 overflow-hidden p-3 data-[side=left]:w-60" side="left">
         <SidePanelTitle className="sr-only">Menu</SidePanelTitle>
         <AdminSidebarContent
           account={account}

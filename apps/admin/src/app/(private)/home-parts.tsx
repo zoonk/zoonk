@@ -77,7 +77,7 @@ export function AttentionTiles({ items }: { items: AttentionItem[] }) {
   );
 }
 
-const ATTENTION_GRID_CLASS = "grid gap-2 sm:grid-cols-2 xl:grid-cols-3";
+const ATTENTION_GRID_CLASS = STAT_TILES_CLASS;
 const SKELETON_TILES = 3;
 
 export function AttentionTilesSkeleton() {

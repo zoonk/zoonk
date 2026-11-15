@@ -25,8 +25,8 @@ function GoalProgress({ children, goal }: { children?: React.ReactNode; goal: Us
 
   return (
     <li className="flex flex-col gap-2.5 py-3.5">
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm">
-        <span className="flex min-w-0 items-center gap-2">
+      <div className="flex items-start justify-between gap-4 text-sm">
+        <span className="grid min-w-0 flex-1 grid-cols-[auto_minmax(0,1fr)] items-start gap-x-2 gap-y-1">
           <GoalKindIcon kind={goal.kind} />
           {goal.primaryCourse ? (
             <Link
@@ -39,13 +39,13 @@ function GoalProgress({ children, goal }: { children?: React.ReactNode; goal: Us
           ) : (
             title
           )}
-          <span className="text-muted-foreground text-xs">
+          <span className="text-muted-foreground col-start-2 inline-flex items-center text-xs whitespace-nowrap">
             <FactSegments
               facts={[toWords(goal.kind), languagePairName(goal), goal.examBlueprint?.name]}
             />
           </span>
         </span>
-        <StateMark className="text-muted-foreground" state={goal.status} />
+        <StateMark className="text-muted-foreground shrink-0" state={goal.status} />
       </div>
 
       {goal.plan ? (
@@ -135,7 +135,7 @@ function PlanChanges({ goals }: { goals: UserGoal[] }) {
             <span className="flex min-w-0 flex-1 flex-col gap-0.5">
               <span className="flex flex-wrap items-baseline justify-between gap-x-4">
                 <span className="font-medium">{toWords(change.kind)}</span>
-                <span className="text-muted-foreground text-xs">
+                <span className="text-muted-foreground col-start-2 inline-flex items-center text-xs whitespace-nowrap">
                   {formatDate(change.createdAt)}
                 </span>
               </span>

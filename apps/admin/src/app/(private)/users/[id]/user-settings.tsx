@@ -5,7 +5,6 @@ import { getUserLearningProfile } from "@/data/users/get-user-learning-profile";
 import { getUserStudyReminder } from "@/data/users/get-user-study-reminder";
 import { toWords } from "@/lib/format";
 import { type PushPlatform } from "@zoonk/db/enums";
-import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import {
   BellOffIcon,
   BrainIcon,
@@ -17,6 +16,18 @@ import {
 } from "lucide-react";
 
 const PLATFORM_NAMES = { android: "Android", ios: "iOS" } satisfies Record<PushPlatform, string>;
+
+function buddyCharacter({ name, kind }: { name: string | null; kind: string | null }) {
+  if (!kind) {
+    return name || "—";
+  }
+
+  if (kind === name?.toLowerCase()) {
+    return `${name} (character)`;
+  }
+
+  return `${name || "—"} (${toWords(kind)} character)`;
+}
 
 /** A switch as its state's mark: on is the blue check, off is gray. */
 function OnOff({ on }: { on: boolean }) {
@@ -37,9 +48,7 @@ export async function UserSettings({ userId }: { userId: string }) {
       {profile ? (
         <DetailFields>
           <DetailField icon={<SmileIcon aria-hidden="true" />} label="Buddy">
-            {[profile.buddyName, profile.buddyKind && toWords(profile.buddyKind)]
-              .filter(Boolean)
-              .join(FACT_SEPARATOR) || "—"}
+            {buddyCharacter({ kind: profile.buddyKind, name: profile.buddyName })}
           </DetailField>
           <DetailField icon={<BrainIcon aria-hidden="true" />} label="Memory">
             <OnOff on={profile.memoryEnabled} />

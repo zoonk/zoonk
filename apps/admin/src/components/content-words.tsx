@@ -137,7 +137,11 @@ export function ContentWords({ content }: { content: unknown }) {
       <Answer label="Answer">{blanks.join(", ") || text(content.targetText)}</Answer>
       <Answer label="Also offered">{strings(content.distractors).join(", ") || null}</Answer>
       <Answer label="Accepted">{accepted.join(FACT_SEPARATOR) || null}</Answer>
-      <Prose quiet>{text(content.translation) ?? text(content.feedback)}</Prose>
+      <Prose quiet>
+        {text(content.translation) === text(content.targetText)
+          ? text(content.feedback)
+          : (text(content.translation) ?? text(content.feedback))}
+      </Prose>
     </>
   );
 }

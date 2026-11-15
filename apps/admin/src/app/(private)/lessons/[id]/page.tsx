@@ -12,7 +12,6 @@ import { getLibraryLesson } from "@/data/lessons/get-library-lesson";
 import { formatCount, formatDate, toWords } from "@/lib/format";
 import { languagePairName } from "@/lib/language-filter";
 import { libraryLessonStatusLabels } from "@/lib/library-lesson-filters";
-import { readQueryParam } from "@/lib/query-param";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -101,13 +100,8 @@ async function LessonContent({ params, searchParams }: PageProps<"/lessons/[id]"
         />
 
         {tab === "screens" ? (
-          <AdminDetailColumns aside={<LessonAbout lesson={lesson} />}>
-            <LessonScreens
-              answers={detail.answers}
-              json={readQueryParam(query.json) === "1"}
-              lessonId={lesson.id}
-              steps={lesson.steps}
-            />
+          <AdminDetailColumns aside={<LessonAbout lesson={lesson} />} factsFirst>
+            <LessonScreens answers={detail.answers} steps={lesson.steps} />
           </AdminDetailColumns>
         ) : null}
 

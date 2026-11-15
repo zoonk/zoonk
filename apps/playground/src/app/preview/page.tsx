@@ -29,7 +29,9 @@ async function PreviewScreen({ searchParams }: Pick<PageProps<"/preview">, "sear
 
   return (
     <NextIntlClientProvider>
-      <PlayerPreview lesson={preview.lesson} state={preview.state} />
+      <div className="contents [&_.group\/task]:pr-0 [&_[data-slot=task-aside]]:hidden">
+        <PlayerPreview lesson={preview.lesson} state={preview.state} />
+      </div>
     </NextIntlClientProvider>
   );
 }

@@ -1,15 +1,9 @@
 import { AdminSectionEmpty } from "@/components/admin-section";
 import { AdminTableRow } from "@/components/admin-table-row";
 import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
+import { ScrollTable as Table } from "@/components/scroll-table";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
+import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@zoonk/ui/components/table";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon } from "lucide-react";

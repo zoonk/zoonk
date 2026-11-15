@@ -39,7 +39,9 @@ export function getFeedbackSubject(context: FeedbackContext): string {
     return feedbackContentKindLabels[context.contentKind];
   }
 
-  return context.screen ?? context.url ?? "Not recorded";
+  return context.screen
+    ? context.screen.charAt(0).toUpperCase() + context.screen.slice(1)
+    : (context.url ?? "Not recorded");
 }
 
 const platformNames: Partial<Record<string, string>> = {

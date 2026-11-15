@@ -1,14 +1,8 @@
+import { ScrollTable as Table } from "@/components/scroll-table";
 import { type ClassificationSummary } from "@/lib/classification-metrics";
 import { formatPercent } from "@/lib/format";
 import { CELL_CLASS } from "@/lib/table-classes";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
+import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@zoonk/ui/components/table";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon, ArrowRightIcon } from "lucide-react";
 

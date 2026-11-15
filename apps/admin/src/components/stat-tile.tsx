@@ -128,7 +128,7 @@ export function StatTile({
 }) {
   const content = (
     <>
-      <StatLabel>
+      <StatLabel className="min-h-[2lh] items-start">
         {icon ? <StatIcon className={ICON_TONE[tone]}>{icon}</StatIcon> : null}
         <StatsTitle help={help} title={title} />
       </StatLabel>

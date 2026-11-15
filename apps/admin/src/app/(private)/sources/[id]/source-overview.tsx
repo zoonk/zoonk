@@ -6,9 +6,15 @@ import { StateMark } from "@/components/state-mark";
 import { type AdminPublicSource } from "@/data/sources/get-source";
 import { formatDate, formatDateTime, formatShortDate } from "@/lib/format";
 import { LINK_CLASS } from "@/lib/link-class";
+import { Badge } from "@zoonk/ui/components/badge";
 import { CalendarClockIcon, GraduationCapIcon, ListChecksIcon, UsersIcon } from "lucide-react";
 
 const SOURCE_LINK_CLASS = `${LINK_CLASS} break-all`;
+
+async function ExpiredSource({ until }: { until: Date | null }) {
+  "use cache: private";
+  return until && until < new Date() ? <Badge variant="outline">Out of date</Badge> : null;
+}
 
 /** What depends on the source, and when Zoonk looks at it next. */
 export function SourceTotals({ source }: { source: AdminPublicSource }) {
@@ -36,7 +42,12 @@ export function SourceTotals({ source }: { source: AdminPublicSource }) {
       />
 
       <StatTile
-        detail={source.validUntil ? `Good until ${formatDate(source.validUntil)}` : "No end date"}
+        detail={
+          <span className="flex flex-wrap items-center gap-1">
+            {source.validUntil ? `Good until ${formatDate(source.validUntil)}` : "No end date"}
+            <ExpiredSource until={source.validUntil} />
+          </span>
+        }
         icon={<CalendarClockIcon />}
         title="Last checked"
         value={source.fetchedAt ? formatShortDate(source.fetchedAt) : "Never"}
@@ -60,7 +71,10 @@ export function SourceChecking({ source }: { source: AdminPublicSource }) {
           {source.fetchedAt ? formatDateTime(source.fetchedAt) : null}
         </DetailField>
         <DetailField label="Good until" mono={false}>
-          {source.validUntil ? formatDateTime(source.validUntil) : "No end date"}
+          <span className="flex flex-wrap items-center gap-2">
+            {source.validUntil ? formatDateTime(source.validUntil) : "No end date"}
+            <ExpiredSource until={source.validUntil} />
+          </span>
         </DetailField>
         <DetailField label="Next check" mono={false}>
           {source.nextCheckAt ? (

@@ -8,7 +8,6 @@ import { TableCell } from "@zoonk/ui/components/table";
 import {
   feedbackStatusLabels,
   getFeedbackLearnerLabel,
-  getFeedbackPlatform,
   getFeedbackSubject,
 } from "../_utils/feedback-labels";
 
@@ -49,7 +48,6 @@ export function MessageRow({
           <span className="block truncate text-xs">Sent from the {context.screen} screen</span>
         ) : null}
       </TableCell>
-      <TableCell>{getFeedbackPlatform(context)}</TableCell>
       <TableCell>{formatDate(message.createdAt)}</TableCell>
     </AdminTableRow>
   );

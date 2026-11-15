@@ -1,3 +1,5 @@
+"use client";
+
 import { FormMainButton } from "@/components/form-main-button";
 import { type EvalSummary } from "@/lib/eval-summary";
 import { DEFAULT_REASONING, type ModelConfig } from "@/lib/models";
@@ -5,7 +7,14 @@ import { type OutputProgress } from "@/lib/output-loader";
 import { type ReviewExportEntry } from "@/lib/review-export";
 import { type FailedRun } from "@/lib/types";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { Button } from "@zoonk/ui/components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@zoonk/ui/components/dropdown-menu";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
+import { EllipsisIcon } from "lucide-react";
 import { generateOutputsAction, runEvalAction } from "./actions";
 import { DeleteModelDataDialog } from "./delete-model-data-dialog";
 import { type OutputExportEntry, OutputsExport } from "./outputs-export";
@@ -32,10 +41,9 @@ export function TaskModelFileActions({
   taskId: string;
   taskName: string;
 }) {
-  return (
+  const actions = (
     <>
       <OutputsExport entries={exportEntries} failedRuns={failedRuns} summary={summary} />
-
       <ReviewPdfExport
         entries={reviewEntries}
         key={`${taskId}-${modelId}`}
@@ -44,9 +52,24 @@ export function TaskModelFileActions({
         taskId={taskId}
         taskName={taskName}
       />
-
       <DeleteModelDataDialog disabled={summary.attempted === 0} modelId={modelId} taskId={taskId} />
     </>
+  );
+
+  return (
+    <DropdownMenu>
+      <div className="contents max-sm:hidden">{actions}</div>
+      <DropdownMenuTrigger
+        className="sm:hidden"
+        render={<Button edge="end" size="icon-bar" variant="ghost" />}
+      >
+        <EllipsisIcon />
+        <span className="sr-only">More</span>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="flex w-60 flex-col gap-1 sm:hidden" keepMounted>
+        {actions}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 

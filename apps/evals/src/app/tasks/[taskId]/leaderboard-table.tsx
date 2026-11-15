@@ -1,5 +1,6 @@
 "use client";
 
+import { ScrollTable as Table } from "@/components/scroll-table";
 import { formatDollarsColumn, formatSeconds } from "@/lib/format";
 import {
   type SortDirection,
@@ -12,14 +13,7 @@ import { CELL_CLASS } from "@/lib/table-classes";
 import { type CategoryScoreSummary } from "@/lib/types";
 import { Button } from "@zoonk/ui/components/button";
 import { SwapLabel } from "@zoonk/ui/components/swap-label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
+import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@zoonk/ui/components/table";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon, ArrowUpIcon, Columns3Icon } from "lucide-react";
 import Link from "next/link";

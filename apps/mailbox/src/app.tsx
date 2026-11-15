@@ -3,7 +3,7 @@ import { PageTitle, PageTop } from "@zoonk/ui/components/page-top";
 import { SwapLabel } from "@zoonk/ui/components/swap-label";
 import { useClipboard } from "@zoonk/ui/hooks/clipboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Mailbox,
   MailboxBody,
@@ -199,20 +199,61 @@ function EmailPreview({ email }: { email: CapturedEmail }) {
 
       <div className="p-4 md:p-6">
         {email.htmlBody ? (
-          <iframe
-            className="border-border block min-h-95 w-full rounded-xl border bg-white p-5 md:min-h-105"
-            referrerPolicy="no-referrer"
-            sandbox=""
-            srcDoc={email.htmlBody}
-            title={`${email.subject} email body`}
-          />
+          <EmailBody email={email} />
         ) : (
-          <pre className="border-border bg-background m-0 min-h-95 w-full overflow-auto rounded-xl border p-5 font-sans text-sm leading-normal whitespace-pre-wrap md:min-h-105">
+          <pre className="border-border bg-background m-0 min-h-95 w-full overflow-auto rounded-xl border p-5 font-sans text-sm leading-normal wrap-anywhere whitespace-pre-wrap md:min-h-105">
             {email.textBody || copy.noBody}
           </pre>
         )}
       </div>
     </MailboxPreview>
+  );
+}
+
+function EmailBody({ email }: { email: CapturedEmail }) {
+  const frame = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    const element = frame.current;
+
+    if (!element) {
+      return;
+    }
+
+    const observer = new ResizeObserver(() => {
+      if (element.contentDocument?.body) {
+        element.style.height = `${element.contentDocument.body.scrollHeight}px`;
+      }
+    });
+
+    const observe = () => {
+      observer.disconnect();
+
+      if (element.contentDocument?.body) {
+        observer.observe(element.contentDocument.body);
+      }
+    };
+
+    element.addEventListener("load", observe);
+    observe();
+
+    return () => {
+      observer.disconnect();
+      element.removeEventListener("load", observe);
+    };
+  }, []);
+
+  return (
+    <div className="border-border rounded-xl border bg-white p-5">
+      <iframe
+        className="block min-h-95 w-full border-0 bg-white md:min-h-105"
+        ref={frame}
+        referrerPolicy="no-referrer"
+        sandbox="allow-same-origin"
+        srcDoc={`${email.htmlBody}<style>html,body{height:auto!important;min-height:0!important}body{margin:0}a{overflow-wrap:anywhere!important;word-break:break-word!important}</style>`}
+        title={`${email.subject} email body`}
+      />
+    </div>
   );
 }
 

@@ -33,17 +33,12 @@ function answersLabel(answers?: StepAnswers): string | null {
 }
 
 function ScreenLinks({ step }: { step: LibraryLessonStep }) {
-  if (!(step.skill || step.item || step.mediaAsset)) {
+  if (!(step.item || step.mediaAsset)) {
     return null;
   }
 
   return (
     <p className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
-      {step.skill ? (
-        <Link className={LINK_CLASS} href={`/skills/${step.skill.id}`}>
-          {step.skill.name}
-        </Link>
-      ) : null}
       {step.item ? (
         <Link className={LINK_CLASS} href={`/items/${step.item.id}`}>
           Practice question
@@ -61,7 +56,7 @@ function ScreenLinks({ step }: { step: LibraryLessonStep }) {
 function ScreenJson({ step }: { step: LibraryLessonStep }) {
   return (
     <div className="flex flex-col">
-      <AdminJson label="JSON" open value={step.content} />
+      <AdminJson label="Technical details" value={step.content} />
       {step.variants.map((variant) => (
         <AdminJson
           key={variant.id}
@@ -75,12 +70,9 @@ function ScreenJson({ step }: { step: LibraryLessonStep }) {
 
 export function LessonScreen({
   answers,
-  json,
   step,
 }: {
   answers?: StepAnswers;
-  /** Shows what is stored under the words, for a screen whose words don't say everything. */
-  json: boolean;
   step: LibraryLessonStep;
 }) {
   return (
@@ -97,12 +89,14 @@ export function LessonScreen({
         </div>
 
         <div className="flex max-w-prose flex-col gap-3 text-sm leading-6">
+          {step.word ? <p>{step.word.word}</p> : null}
+          {step.sentence ? <p>{step.sentence.sentence}</p> : null}
           <ContentWords content={step.content} />
         </div>
 
         <ScreenLinks step={step} />
 
-        {json ? <ScreenJson step={step} /> : null}
+        <ScreenJson step={step} />
       </div>
     </li>
   );

@@ -18,7 +18,7 @@ export function AdminGateScreen({
       <ZoonkLogo className="size-10" />
 
       <div className="flex max-w-sm flex-col gap-1">
-        <h1 className="text-lg font-semibold">{title}</h1>
+        <h1 className="text-title">{title}</h1>
         <p aria-live="polite" className="text-muted-foreground text-sm text-balance">
           {children}
         </p>

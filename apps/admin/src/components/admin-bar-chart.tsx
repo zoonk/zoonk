@@ -78,7 +78,6 @@ const TICK = {
 const BAR_CORNER = 4;
 const BAR_RADIUS: [number, number, number, number] = [BAR_CORNER, BAR_CORNER, 0, 0];
 const MAX_BAR_SIZE = 24;
-const DATE_LABELS = 8;
 
 function BarTooltip({
   active,
@@ -121,8 +120,6 @@ export function AdminBarChart({
 }) {
   const maximumValue = Math.max(0, ...points.map((point) => point.value ?? 0));
   const ticks = getTicks({ format, maximumValue });
-  // A fixed step, so the dates are evenly spaced whatever each one's width.
-  const labelEvery = Math.max(1, Math.ceil(points.length / DATE_LABELS));
 
   return (
     <figure aria-label={label} className={className} data-slot="admin-bar-chart">
@@ -132,7 +129,8 @@ export function AdminBarChart({
           <XAxis
             axisLine={false}
             dataKey="label"
-            interval={labelEvery - 1}
+            interval="equidistantPreserveStart"
+            minTickGap={24}
             padding={{ left: 8, right: 8 }}
             tick={TICK}
             tickLine={false}
