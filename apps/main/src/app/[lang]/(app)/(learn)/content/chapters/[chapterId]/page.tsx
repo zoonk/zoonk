@@ -105,7 +105,7 @@ async function ChapterBody({ params, searchParams }: Props) {
 
 export default function ChapterPage(props: Props) {
   return (
-    <Suspense fallback={<DetailSkeleton rows={4} />}>
+    <Suspense fallback={<DetailSkeleton />}>
       <ChapterBody {...props} />
     </Suspense>
   );

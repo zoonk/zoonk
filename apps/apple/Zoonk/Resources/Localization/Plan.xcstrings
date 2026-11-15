@@ -320,65 +320,6 @@
         }
       }
     },
-    "%@ a day" : {
-      "comment" : "The plan's time a day, under the pace",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ am Tag"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ al día"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ par jour"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ al giorno"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1日%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하루 %@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ dziennie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ por dia"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günde %@"
-          }
-        }
-      }
-    },
     "%@ a day covers about %@ of your exam topics" : {
       "comment" : "The share of an exam's topics a time a day covers; the first argument is a duration",
       "localizations" : {
@@ -6513,34 +6454,6 @@
     "%lld of %lld lessons done" : {
       "comment" : "Spoken on a started chapter, before its title",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%#@total@"
-          },
-          "substitutions" : {
-            "total" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%1$lld of %arg lesson done"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%1$lld of %arg lessons done"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6562,6 +6475,34 @@
                     "stringUnit" : {
                       "state" : "translated",
                       "value" : "%1$lld von %arg Lektionen abgeschlossen"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%#@total@"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%1$lld of %arg lesson done"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%1$lld of %arg lessons done"
                     }
                   }
                 }
@@ -11097,6 +11038,65 @@
         }
       }
     },
+    "Add a weekday to your study days." : {
+      "comment" : "Why a switch for a different study time on weekends is off: only weekend days are study days.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Füg einen Tag von Montag bis Freitag zu deinen Lerntagen hinzu."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agrega un día entre semana a tus días de estudio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute un jour de semaine à tes jours d’étude."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi un giorno dal lunedì al venerdì ai tuoi giorni di studio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習する曜日に平日を追加してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 요일에 평일 중 하루를 추가하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj do dni nauki dowolny dzień od poniedziałku do piątku."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicione um dia de semana aos seus dias de estudo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalışma günlerine hafta içinden bir gün ekle."
+          }
+        }
+      }
+    },
     "Add it back" : {
       "comment" : "Puts a skipped subject back in the plan",
       "localizations" : {
@@ -11152,6 +11152,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yeniden ekle"
+          }
+        }
+      }
+    },
+    "Add Saturday or Sunday to your study days." : {
+      "comment" : "Why a switch for a different study time on weekends is off: no weekend day is a study day.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Füg Samstag oder Sonntag zu deinen Lerntagen hinzu."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agrega el sábado o el domingo a tus días de estudio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute le samedi ou le dimanche à tes jours d’étude."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi il sabato o la domenica ai tuoi giorni di studio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習する曜日に土曜日か日曜日を追加してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 요일에 토요일이나 일요일을 추가하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj do dni nauki sobotę lub niedzielę."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicione sábado ou domingo aos seus dias de estudo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalışma günlerine cumartesi veya pazar gününü ekle."
           }
         }
       }
@@ -13475,16 +13534,16 @@
       "comment" : "Spoken on a done chapter, before its title",
       "extractionState" : "extracted_with_value",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Done"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fertig"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Done"
           }
         },
         "es" : {
@@ -13541,16 +13600,16 @@
       "comment" : "Spoken on the path's next chapter, before its title",
       "extractionState" : "extracted_with_value",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Up next"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Als Nächstes"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Up next"
           }
         },
         "es" : {
@@ -13607,16 +13666,16 @@
       "comment" : "Spoken on a chapter the learner already knew, before its title",
       "extractionState" : "extracted_with_value",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Skipped"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Übersprungen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Skipped"
           }
         },
         "es" : {
@@ -16327,16 +16386,16 @@
       "comment" : "When a phase of the plan ends, about, read aloud; the argument is a month like 'Jan' or 'Jan 2028'",
       "extractionState" : "extracted_with_value",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Ends about %@"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Endet etwa im %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ends about %@"
           }
         },
         "es" : {
@@ -19630,6 +19689,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O zamana kadar bu planla çalışmaya devam et."
+          }
+        }
+      }
+    },
+    "Keep studying, or archive this goal?" : {
+      "comment" : "Under the Plan's notice once the exam's date passed: its bottom bar's question",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weiterlernen oder dieses Ziel archivieren?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Seguir estudiando o archivar este objetivo?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer à étudier ou archiver cet objectif ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuoi continuare a studiare o archiviare questo obiettivo?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習を続けますか？それとも、この目標をアーカイブしますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계속 공부할까요, 아니면 이 목표를 보관할까요?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uczyć się dalej czy zarchiwizować ten cel?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar estudando ou arquivar este objetivo?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalışmaya devam etmek mi, yoksa bu hedefi arşivlemek mi istersin?"
           }
         }
       }
@@ -34808,179 +34926,6 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Kalan %lld dersin var. Bitiş tarihini ileri alırsan bitirecek zamanın olur."
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "You have %lld lessons left. Keep studying them, or archive this goal?" : {
-      "comment" : "Lessons left once the exam's date passed, and the question",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Du hast noch %lld Lektion offen. Möchtest du weiterlernen oder dieses Ziel archivieren?"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Du hast noch %lld Lektionen offen. Möchtest du weiterlernen oder dieses Ziel archivieren?"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "You have %lld lesson left. Keep studying it, or archive this goal?"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "You have %lld lessons left. Keep studying them, or archive this goal?"
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Te queda %lld lección. ¿Quieres seguir estudiándola o archivar este objetivo?"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Te quedan %lld lecciones. ¿Quieres seguir estudiándolas o archivar este objetivo?"
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Il te reste %lld leçon. Tu veux continuer à la travailler ou archiver cet objectif ?"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Il te reste %lld leçons. Tu veux continuer à les travailler ou archiver cet objectif ?"
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Ti resta %lld lezione. Vuoi continuare a studiarla o archiviare questo obiettivo?"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Ti restano %lld lezioni. Vuoi continuare a studiarle o archiviare questo obiettivo?"
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "残りは%lldレッスンです。学習を続けますか、それともこの目標をアーカイブしますか？"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "레슨이 %lld개 남았어요. 계속 공부할까요, 아니면 이 목표를 보관할까요?"
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Zostały ci %lld lekcje. Chcesz kontynuować naukę czy zarchiwizować ten cel?"
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Została ci %lld lekcja. Chcesz kontynuować naukę czy zarchiwizować ten cel?"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Zostało ci %lld lekcji. Chcesz kontynuować naukę czy zarchiwizować ten cel?"
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Ainda falta %lld aula. Quer continuar estudando ou arquivar este objetivo?"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Ainda faltam %lld aulas. Quer continuar estudando ou arquivar este objetivo?"
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld dersin kaldı. Çalışmaya devam etmek mi istersin, yoksa bu hedefi arşivlemek mi?"
                 }
               }
             }

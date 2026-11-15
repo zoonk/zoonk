@@ -7,7 +7,8 @@ export function DoneMark({ className }: { className?: string }) {
   return (
     <CheckIcon
       aria-hidden="true"
-      className={cn("text-success size-4 shrink-0", className)}
+      // Lucide's check is drawn half a unit of its 24 above its box's middle: centered at any size.
+      className={cn("text-success size-4 shrink-0 translate-y-[2.0833%]", className)}
       data-slot="done-mark"
     />
   );

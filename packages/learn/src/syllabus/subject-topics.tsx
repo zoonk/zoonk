@@ -21,6 +21,7 @@ import {
   ListRowLeading,
   ListRowTitle,
   ListRowTrailing,
+  ROW_FOLD_CLASS,
 } from "../_components/list-group";
 import { PageSectionLabel } from "../_components/page";
 import { FrequencyChip, setsApart } from "./frequency-chip";
@@ -225,8 +226,8 @@ function TopicGroupRow({
         <FoldChevron />
       </CollapsibleTrigger>
 
-      <CollapsibleContent>
-        <div className="flex flex-col pb-2 pl-7">
+      <CollapsibleContent className={ROW_FOLD_CLASS}>
+        <div className="nested-rows flex flex-col pb-2">
           {group.children.length > 0 && (
             <ul className="flex flex-col">
               {group.children.map((child) => (

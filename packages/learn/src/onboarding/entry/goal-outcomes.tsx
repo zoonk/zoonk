@@ -67,7 +67,10 @@ export function GoalErrorMessage({ error }: { error: GoalError | null }) {
   }
 
   return error.needsAccount ? (
-    <p className={cn("text-base text-pretty", message.hidden && "invisible")} role="alert">
+    <p
+      className={cn("text-muted-foreground text-sm text-pretty", message.hidden && "invisible")}
+      role="alert"
+    >
       {message.text}
     </p>
   ) : (

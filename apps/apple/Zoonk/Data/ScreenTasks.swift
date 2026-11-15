@@ -22,3 +22,12 @@ final class ScreenTasks {
     }
   }
 }
+
+/// What a screen's work leads to once it's done, such as a step's way on to the next. A write can
+/// finish for a caller that's gone, so a screen that went away meanwhile (its task canceled) goes
+/// nowhere: Back during a step's last answer stays where the learner went.
+@MainActor
+func goOnUnlessLeft(_ next: () async throws -> Void) async throws {
+  try Task.checkCancellation()
+  try await next()
+}

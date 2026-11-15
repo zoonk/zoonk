@@ -132,20 +132,15 @@ function ComposerLimit({ limit }: { limit: HelpLimit }) {
   }, []);
 
   return (
+    // Focused only so a screen reader reads it where the composer was: no key reaches it, so no ring.
     <div
-      className={cn(
-        TUTOR_COMPOSER_FRAME_CLASS,
-        "focus-visible:outline-ring flex min-h-11 items-center p-3 outline-none focus-visible:outline-2 focus-visible:outline-solid",
-      )}
+      className="outline-none"
       data-slot="question-composer-limit"
       ref={ref}
       role="alert"
       tabIndex={-1}
     >
-      <QuestionLimitNotice
-        className="flex-1 flex-row items-center justify-between gap-3"
-        limit={limit}
-      />
+      <QuestionLimitNotice limit={limit} />
     </div>
   );
 }

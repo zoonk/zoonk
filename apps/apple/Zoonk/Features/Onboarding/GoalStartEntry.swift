@@ -332,7 +332,7 @@ struct GoalExamplesSection: View {
         LocalizedStringResource(
           "Understand quantum physics", table: "Onboarding", comment: "An example goal"),
         LocalizedStringResource(
-          "Learn a topic", table: "Onboarding", comment: "The kind of an example goal")
+          "Topic", table: "Onboarding", comment: "The kind of an example goal")
       ),
       (
         LocalizedStringResource(

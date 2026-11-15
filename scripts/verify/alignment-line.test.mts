@@ -69,6 +69,16 @@ function led(capture: Capture): Capture {
   };
 }
 
+/** The same capture with its label measured by its ideographic face (Japanese, Korean). */
+function faced(capture: Capture): Capture {
+  return {
+    ...capture,
+    elements: capture.elements.map((item) =>
+      item.part === "label" ? { ...item, textBox: "ideographic face" } : item,
+    ),
+  };
+}
+
 function lineMiss(capture: Capture) {
   return evaluateCapture(capture).find((finding) => finding.rule === "line")?.detail ?? "";
 }
@@ -102,6 +112,15 @@ describe("one line of a row, as craft E5 places each part", () => {
     assert.match(
       lineMiss(led(lineRow("value", 20, 1))),
       /the value 5 below the label's first line/u,
+    );
+  });
+
+  it("sets a label with no capitals (Japanese, Korean) on its ideographic face, and says so", () => {
+    assert.equal(lineMiss(faced(oneLine(15))), "");
+
+    assert.match(
+      lineMiss(faced(oneLine(16))),
+      /the mark 1 below the label's middle \(the label by its ideographic face: it has no capitals\)/u,
     );
   });
 });

@@ -189,9 +189,8 @@ test.describe("Starting a course from its page", () => {
     const response = await page.request.get(`/start/course/${course.id}?minutes=15`);
     const html = await response.text();
 
-    expect(html).toMatch(
-      /<p class="[^"]*\binvisible\b[^"]*">You&#x27;ve started all the new goals you can\. More on /u,
-    );
+    expect(html).toMatch(/>You&#x27;ve started all the new goals you can</u);
+    expect(html).toMatch(/<p class="[^"]*\binvisible\b[^"]*"[^>]*>More on /u);
 
     await page.goto(`/start/course/${course.id}?minutes=15`);
 
@@ -203,7 +202,7 @@ test.describe("Starting a course from its page", () => {
 
     await expect(
       page.getByText(
-        `More on ${moreOn.toLocaleDateString("en-US", { day: "numeric", month: "long" })}, or subscribe to keep going.`,
+        `More on ${moreOn.toLocaleDateString("en-US", { day: "numeric", month: "long", timeZone: "UTC" })}, or subscribe to keep going.`,
       ),
     ).toBeVisible();
 

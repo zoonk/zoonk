@@ -12,17 +12,18 @@ final class PhaseEndTests: XCTestCase {
     ])
 
     XCTAssertEqual(
-      plan.phaseEnd(plan.phases[0], goalKind: .learn),
+      plan.phaseEnd(plan.phases[0]),
       PhaseEnd("2027-01-22", estimate: true, month: false, today: "2027-01-04"),
       "the challenge's day, after the last lesson's, ends the phase")
-    XCTAssertEqual(plan.phaseEnd(plan.phases[0], goalKind: .learn)?.shown, "~Jan 22")
-    XCTAssertEqual(plan.phaseEnd(plan.phases[0], goalKind: .learn)?.spoken, "Ends about Jan 22")
-    XCTAssertEqual(plan.phaseEnd(plan.phases[1], goalKind: .learn)?.shown, "~Feb 5")
+    XCTAssertEqual(plan.phaseEnd(plan.phases[0])?.shown, "~Jan 22")
+    XCTAssertEqual(plan.phaseEnd(plan.phases[0])?.spoken, "Ends about Jan 22")
+    XCTAssertEqual(plan.phaseEnd(plan.phases[1])?.shown, "~Feb 5")
     XCTAssertEqual(
-      plan.phaseEnd(plan.phases[2], goalKind: .learn)?.shown, "~Apr",
+      plan.phaseEnd(plan.phases[2])?.shown, "~Apr",
       "past six weeks from this week's start, only the month")
-    XCTAssertNil(
-      plan.phaseEnd(plan.phases[3], goalKind: .learn), "the finish row says the last phase's end")
+    XCTAssertEqual(
+      plan.phaseEnd(plan.phases[3])?.shown, "~Jun",
+      "the last phase shows its end too, though the finish row shows the plan's")
   }
 
   func testAnExamPhaseEndsOnABookedDay() throws {
@@ -32,16 +33,24 @@ final class PhaseEndTests: XCTestCase {
       phase(2, kind: "finalStretch", state: "upcoming", end: "2027-11-10"),
     ])
 
-    XCTAssertNil(plan.phaseEnd(plan.phases[0], goalKind: .exam), "nothing for a phase behind")
-    XCTAssertEqual(plan.phaseEnd(plan.phases[1], goalKind: .exam)?.shown, "Feb 16")
-    XCTAssertEqual(plan.phaseEnd(plan.phases[1], goalKind: .exam)?.spoken, "Ends Feb 16")
+    XCTAssertNil(plan.phaseEnd(plan.phases[0]), "nothing for a phase behind")
+    XCTAssertEqual(plan.phaseEnd(plan.phases[1])?.shown, "Feb 16")
+    XCTAssertEqual(plan.phaseEnd(plan.phases[1])?.spoken, "Ends Feb 16")
     XCTAssertEqual(
-      plan.phaseEnd(plan.phases[2], goalKind: .exam)?.shown, "~Nov",
-      "an exam without a date ends its last phase on the plan's estimate")
+      plan.phaseEnd(plan.phases[2])?.shown, "Nov 10", "the last phase ends on its own day")
+  }
+
+  func testALastPhaseWithoutADayOfItsOwnEndsWithThePlan() throws {
+    let plan = try plan(phases: [
+      phase(0, kind: "learn", state: "current", end: "2027-02-16"),
+      phase(1, kind: "learn", state: "upcoming", end: nil),
+    ])
+
+    XCTAssertEqual(plan.phaseEnd(plan.phases[1])?.shown, "~Nov")
   }
 
   private func phase(
-    _ index: Int, kind: String, state: String, end: String, challenge: String? = nil
+    _ index: Int, kind: String, state: String, end: String?, challenge: String? = nil
   ) -> String {
     let checkpoint =
       challenge.map {
@@ -53,7 +62,7 @@ final class PhaseEndTests: XCTestCase {
 
     return """
       { "challengeLeftOut": false, "chapters": [], "checkpoint": \(checkpoint),
-        "endDate": "\(end)", "index": \(index), "kind": "\(kind)", "lessonsDone": 0,
+        "endDate": \(end.map { "\"\($0)\"" } ?? "null"), "index": \(index), "kind": "\(kind)", "lessonsDone": 0,
         "lessonsTotal": 10, "mocks": { "count": 0, "nextDate": null }, "name": null,
         "startDate": null, "state": "\(state)" }
       """

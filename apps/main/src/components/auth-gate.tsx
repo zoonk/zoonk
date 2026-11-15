@@ -7,6 +7,7 @@ import { getSession } from "@zoonk/core/users/session";
 import { AccountAskMark } from "@zoonk/learn/account-ask";
 import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
 import { TaskFrame } from "@zoonk/learn/task-frame";
+import { TaskStopMessage } from "@zoonk/learn/task-layout";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
@@ -44,20 +45,10 @@ async function readGate({ ended, next }: { ended?: boolean; next: string }): Pro
   return { kind: isEnded ? "ended" : "login", login };
 }
 
-async function GateMessage({
-  children,
-  className,
-  gate,
-  heading: Heading = "h2",
-}: {
-  children?: React.ReactNode;
-  className?: string;
-  gate: Gate;
-  heading?: "h1" | "h2";
-}) {
+async function getGateWords(gate: Gate): Promise<{ description?: string; title: string }> {
   const t = await getExtracted();
 
-  const words: { description?: string; title: string } = {
+  return {
     account: {
       description: t({
         description:
@@ -80,6 +71,20 @@ async function GateMessage({
     },
     login: { title: t("Log in to continue") },
   }[gate.kind];
+}
+
+async function GateMessage({
+  children,
+  className,
+  gate,
+  heading: Heading = "h2",
+}: {
+  children?: React.ReactNode;
+  className?: string;
+  gate: Gate;
+  heading?: "h1" | "h2";
+}) {
+  const words = await getGateWords(gate);
 
   return (
     <Empty className={className} data-account-ask>
@@ -160,11 +165,20 @@ export async function AuthGate({
 /** A task's gate, in the task's own frame: its ✕ leaves for the home page, as its not-found does. */
 export async function AuthGateScreen({ next }: { next: string }) {
   const gate = await readGate({ next });
+  const words = await getGateWords(gate);
 
   return (
     <MainLearnProvider>
       <TaskFrame exitHref="/" exitToApp footer={<GateActions gate={gate} />}>
-        <GateMessage className="flex-1" gate={gate} heading="h1" />
+        <div className="flex flex-1 flex-col gap-6 pt-4 pb-8" data-account-ask>
+          <AccountAskMark />
+          <TaskStopMessage
+            description={words.description}
+            heading="h1"
+            icon={<LockIcon aria-hidden="true" />}
+            title={words.title}
+          />
+        </div>
       </TaskFrame>
     </MainLearnProvider>
   );

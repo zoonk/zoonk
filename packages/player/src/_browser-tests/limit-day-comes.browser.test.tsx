@@ -7,7 +7,9 @@ import { page } from "vitest/browser";
 import { CallProblem } from "../../../learn/src/language/conversation/call-problem";
 import { DroppedCallScreen } from "../../../learn/src/language/conversation/dropped-call-screen";
 import { useCallConnection } from "../../../learn/src/language/conversation/use-call-connection";
+import { AttachControls } from "../../../learn/src/onboarding/entry/attach-panel";
 import { GoalErrorAlert } from "../../../learn/src/onboarding/entry/goal-outcomes";
+import { MaterialQuestions } from "../../../learn/src/onboarding/entry/material-questions";
 import { render } from "../_test-utils/render";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
@@ -26,6 +28,35 @@ const ADAPTERS: React.ComponentProps<typeof LearnProvider>["adapters"] = {
 };
 
 const passed = () => new Date(Date.now() - 60 * 1000).toISOString();
+
+/** A refusal from a request just made, with more coming back in a moment. */
+const refusedSoon = () => ({
+  availableAt: new Date(Date.now() + 4000).toISOString(),
+  period: "rolling30Days" as const,
+  receivedAt: Date.now(),
+  status: "limitReached" as const,
+  tier: "free" as const,
+});
+
+function RefusedUpload() {
+  return (
+    <AttachControls
+      attach={{ file: vi.fn(), link: vi.fn(), text: async () => refusedSoon() }}
+      language="en"
+      onAttached={vi.fn()}
+    />
+  );
+}
+
+function RefusedQuestion() {
+  return (
+    <MaterialQuestions
+      ask={async () => refusedSoon()}
+      buddy={null}
+      sources={[{ id: "s1", title: "Notes" }]}
+    />
+  );
+}
 
 /** A call whose reservation is refused with a day this device's clock already shows as past. */
 function RefusedCall({ first }: { first: boolean }) {
@@ -231,6 +262,35 @@ describe("a limit whose day has come", () => {
       await expect.element(page.getByText("You've used your call time")).toBeVisible();
       await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
       await expect.element(page.getByText("You can try again now.")).not.toBeInTheDocument();
+    },
+  );
+
+  it.each([
+    ["an upload", RefusedUpload, "You've used your uploads", "Paste text", "Add text"],
+    ["a question about the material", RefusedQuestion, "You've used your questions", null, "Ask"],
+  ] as const)(
+    "a refused %s says when more comes back with Subscribe, then only that it can be tried again",
+    async (_name, Screen, title, open, send) => {
+      render(
+        <LearnProvider adapters={ADAPTERS}>
+          <Screen />
+        </LearnProvider>,
+      );
+
+      if (open) {
+        await page.getByRole("button", { name: open }).click();
+      }
+
+      await page.getByRole("textbox").fill("My notes on cells");
+      await page.getByRole("button", { exact: true, name: send }).click();
+
+      await expect.element(page.getByText(title)).toBeVisible();
+      await expect.element(page.getByText(/subscribe to keep going\.$/u)).toBeVisible();
+      await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
+
+      await expect.element(page.getByText("You can try again now.")).toBeVisible();
+      await expect.element(page.getByText(title)).not.toBeInTheDocument();
+      await expect.element(page.getByRole("link", { name: "Subscribe" })).not.toBeInTheDocument();
     },
   );
 });

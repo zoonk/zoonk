@@ -33,7 +33,11 @@ export function DetailLayout({
   measure?: PageMeasure;
 }) {
   const page = (
-    <article className="flex min-w-0 flex-1 flex-col" {...props}>
+    <article
+      // Under 72rem the aside follows it in one column, so it can't take the room a short page leaves.
+      className={cn("flex min-w-0 flex-col", aside ? "min-[72rem]:flex-1" : "flex-1")}
+      {...props}
+    >
       {bar}
       <div
         className={cn(

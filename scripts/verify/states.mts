@@ -6,6 +6,7 @@ import { OVERLAY_SELECTOR } from "./overlays.mts";
 /* oxlint-disable no-await-in-loop, max-lines-per-function -- The walk acts on one page, one step at a time, and its steps share that page and its counters. */
 import { installPageHelpers } from "./page-helpers.mts";
 import { focusCameBack, inspectPanel, panelFindings } from "./panels.mts";
+import { SCENARIOS } from "./scenarios/scenarios.mts";
 import { stateLeads } from "./states-checks.mts";
 import {
   type Action,
@@ -18,6 +19,13 @@ import {
 import { holdStill, settle } from "./states-wait.mts";
 import { LOAD_TIMEOUT_MS } from "./tap.mts";
 import { VIEWPORTS, type ViewportName } from "./viewports.mts";
+
+/** Every anchor a scenario declares: the walk never excuses one for holding what changed. */
+const ANCHORS = [
+  ...new Set(
+    SCENARIOS.flatMap((scenario) => scenario.anchors.flatMap((anchor) => anchor.web ?? [])),
+  ),
+].join(", ");
 
 /**
  * What one step did, in the words of a lead ("typing a character in", "opening"), and whether the
@@ -69,7 +77,7 @@ async function walk(
     steps.push({
       action,
       blocked: blocked() > writes,
-      comparison: await page.evaluate(compareLayout, action.id),
+      comparison: await page.evaluate(compareLayout, { anchors: ANCHORS, targetId: action.id }),
       doing,
     });
 

@@ -64,6 +64,7 @@
     "verify:alignment": "node scripts/verify/alignment-cli.mts",
     "verify:catalog": "node scripts/verify/catalog-rules.mts",
     "verify:pages": "node scripts/verify/pages.mts",
+    "verify:scenarios": "node scripts/verify/scenarios/run.mts",
     "worktree:setup": "node scripts/worktree/setup.mts",
     "zoonk": "node apps/cli/src/main.ts"
   },
