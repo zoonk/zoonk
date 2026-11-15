@@ -84,7 +84,7 @@ extension PlanSlotCard where Content == EmptyView {
 }
 
 /// A change a suggestion's tap worked out, asked with main's anatomy: the question, its
-/// consequence and "See all changes", "Change my plan" and "Not now".
+/// consequence and "All changes", "Change my plan" and "Not now".
 struct PlanSlotAskedChange: Equatable {
   let edits: [PlanEdit]
   let question: String
@@ -578,7 +578,7 @@ struct PlanCoverageSlot: View {
 }
 
 /// Main's fit offer: more lessons fit the learner's time. The tap checks today's numbers: the
-/// same ones apply, other ones show with "The numbers are different today." and the next tap
+/// same ones apply, other ones show with "Your plan changed since you saw this. Here's what it does now." and the next tap
 /// applies them.
 struct PlanFitSlot: View {
   @Environment(PlanStore.self) private var store
