@@ -3,20 +3,24 @@ import { type Context, EDGE, type Group, finding, rowName, tenths } from "./alig
 
 /** Rows that share a band of the group: each overlaps the band's first row from top to bottom. */
 function bands(rows: CaptureElement[]): CaptureElement[][] {
-  const sorted = rows.toSorted((one, other) => one.bounds[1] - other.bounds[1]);
+  const found: CaptureElement[][] = [];
 
-  return sorted.reduce<CaptureElement[][]>((found, row) => {
+  for (const row of rows.toSorted((one, other) => one.bounds[1] - other.bounds[1])) {
     const [, top, , height] = row.bounds;
 
-    const band = found.findIndex(([first]) => {
+    const band = found.find(([first]) => {
       const [, firstTop, , firstHeight] = first?.bounds ?? [0, 0, 0, 0];
       return top < firstTop + firstHeight && firstTop < top + height;
     });
 
-    return band === -1
-      ? [...found, [row]]
-      : found.map((rowsOf, index) => (index === band ? [...rowsOf, row] : rowsOf));
-  }, []);
+    if (band) {
+      band.push(row);
+    } else {
+      found.push([row]);
+    }
+  }
+
+  return found;
 }
 
 function off(by: number, more: string, less: string) {
