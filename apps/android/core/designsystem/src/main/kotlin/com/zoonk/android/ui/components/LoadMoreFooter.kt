@@ -47,7 +47,7 @@ fun LoadMoreFooter(
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     OutlinedButton(onClick = onRetry) {
-                        Icon(painterResource(R.drawable.ic_refresh), contentDescription = null, Modifier.size(18.dp))
+                        Icon(painterResource(R.drawable.ic_refresh), contentDescription = null, Modifier.size(18.dp * glyphScale()))
                         Spacer(Modifier.size(8.dp))
                         Text(stringResource(R.string.load_failed_try_again))
                     }
