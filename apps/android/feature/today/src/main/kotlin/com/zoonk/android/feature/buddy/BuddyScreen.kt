@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.WindowInsetsRulers
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -44,6 +45,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
@@ -293,15 +296,68 @@ internal fun BuddyHeader(
     line: (@Composable () -> Unit)? = null,
     menu: (@Composable () -> Unit)? = null,
 ) {
-    Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(IDENTITY_GAP),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Box(Modifier.size(FACE_SIZE)) {
             if (face != null) BuddyActor(look, Modifier.size(FACE_SIZE), state = face) else BuddyStill(look)
         }
-        Column(Modifier.weight(1f), horizontalAlignment = Alignment.Start) {
-            Text(name, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
-            line?.invoke()
+        NameAndLine(Modifier.weight(1f), line) {
+            Text(
+                name,
+                Modifier.semantics { heading() },
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
         menu?.invoke()
+    }
+}
+
+/**
+ * Main's `BuddyIdentityRow`: the day's [line] beside the name while they fit, and under it when they
+ * don't, pulled back by its padding so its words start on the name's edge.
+ */
+@Composable
+private fun NameAndLine(
+    modifier: Modifier,
+    line: (@Composable () -> Unit)?,
+    name: @Composable () -> Unit,
+) {
+    Layout(content = {
+        name()
+        line?.invoke()
+    }, modifier = modifier) { measurables, constraints ->
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val title = measurables[0].measure(loose)
+        val gap = IDENTITY_GAP.roundToPx()
+        // Beside the name only while the line fits there on one line of its own.
+        val beside =
+            measurables.getOrNull(1)?.let { title.width + gap + it.maxIntrinsicWidth(title.height) <= constraints.maxWidth } == true
+        val day = measurables.getOrNull(1)?.measure(loose)
+        when {
+            day == null -> {
+                layout(constraints.constrainWidth(title.width), title.height) { title.place(0, 0) }
+            }
+
+            beside -> {
+                val height = maxOf(title.height, day.height)
+                layout(constraints.constrainWidth(title.width + gap + day.width), height) {
+                    title.place(0, (height - title.height) / 2)
+                    day.place(title.width + gap, (height - day.height) / 2)
+                }
+            }
+
+            else -> {
+                layout(constraints.constrainWidth(maxOf(title.width, day.width)), title.height + day.height) {
+                    title.place(0, 0)
+                    day.place(-DAY_LINE_PADDING.roundToPx(), title.height)
+                }
+            }
+        }
     }
 }
 
@@ -450,4 +506,7 @@ private fun SaveFailed(modifier: Modifier = Modifier) {
 }
 
 private val FACE_SIZE = 32.dp
+
+/** Main's `gap-2.5` in its identity row: face to name, and name to the day's line. */
+private val IDENTITY_GAP = 10.dp
 internal val BUDDY_COLUMN_WIDTH = 720.dp
