@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// A goal made from a draft's card. While it's made, the card's controls wait, Back included, as
-/// main's do, so the goal is made once and its setup opens from the card the learner confirmed.
+/// A goal made from a draft's card, owned by the draft's page. While it's made, the card's controls
+/// wait, Back included, as main's do, so the goal is made once and its setup opens from the card
+/// the learner confirmed.
 @MainActor
 @Observable
 final class DraftCreation {
@@ -10,31 +11,33 @@ final class DraftCreation {
 
   var canLeave: Bool { !isCreating }
 
-  /// Only a draft read since its last create was sent (the store marks it stale then) and that names
-  /// no goal: one made from it goes on with that goal's setup.
+  /// Only a draft read since a create from it that this device can't vouch for (the store marks it
+  /// stale then) and that names no goal: one made from it opens that goal's setup.
   static func canCreate(from card: Resource<OnboardingDraft>) -> Bool {
     card.freshValue.map { $0.goalId == nil } ?? false
   }
 
-  /// The goal's id, or nil when it wasn't made (`error` says why) or can't be made now.
-  func create(from card: Resource<OnboardingDraft>, _ run: () async throws -> String) async
-    -> String?
-  {
+  @discardableResult
+  func create(
+    from card: Resource<OnboardingDraft>, _ write: @escaping @MainActor () async throws -> String,
+    then: @escaping @MainActor (String) -> Void
+  ) -> Task<Void, Never>? {
     guard !isCreating, Self.canCreate(from: card) else {
       return nil
     }
 
     isCreating = true
     error = nil
-    defer { isCreating = false }
 
-    do {
-      return try await run()
-    } catch is CancellationError {
-      return nil
-    } catch {
-      self.error = GoalError.creating(error)
-      return nil
+    return Task {
+      defer { isCreating = false }
+
+      do {
+        then(try await write())
+      } catch is CancellationError {
+      } catch {
+        self.error = GoalError.creating(error)
+      }
     }
   }
 }
@@ -42,6 +45,7 @@ final class DraftCreation {
 struct ReadDraftView: View {
   let card: Resource<OnboardingDraft>
   let draft: OnboardingDraft
+  let creation: DraftCreation
   /// Sent in this flow just now: a question opens its explanation by itself.
   let sentHere: Bool
   let onRewrite: (String) -> Void
@@ -51,33 +55,15 @@ struct ReadDraftView: View {
 
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
-  @State private var creation = DraftCreation()
-
-  var body: some View {
-    outcome
-      // Hiding the system's Back also stops the edge swipe; the one in its place says Back waits.
-      .navigationBarBackButtonHidden(!creation.canLeave)
-      .toolbar {
-        if !creation.canLeave {
-          ToolbarItem(placement: .topBarLeading) {
-            Button {
-            } label: {
-              Label {
-                Text("Back", tableName: "Onboarding", comment: "Goes back to the previous question")
-              } icon: {
-                Image(systemName: "chevron.backward")
-              }
-            }
-            .disabled(true)
-          }
-        }
-      }
-  }
 
   /// The card's controls wait while its goal is made, and while a draft read again since may
   /// already have one.
   private var isWaiting: Bool {
     creation.isCreating || !DraftCreation.canCreate(from: card)
+  }
+
+  var body: some View {
+    outcome
   }
 
   @ViewBuilder private var outcome: some View {
@@ -135,7 +121,7 @@ struct ReadDraftView: View {
   }
 
   private func startExplanation(question: String) {
-    create {
+    creation.create(from: card) {
       try await onboarding.createExplanation(draft: draft, question: question)
     } then: { goalID in
       // Only while the start flow that asked is still on screen.
@@ -148,13 +134,11 @@ struct ReadDraftView: View {
     }
   }
 
-  private func create(_ run: @escaping () async throws -> String, then: @escaping (String) -> Void)
-  {
-    Task {
-      if let goalID = await creation.create(from: card, run) {
-        then(goalID)
-      }
-    }
+  private func create(
+    _ write: @escaping @MainActor () async throws -> String,
+    then: @escaping @MainActor (String) -> Void
+  ) {
+    creation.create(from: card, write, then: then)
   }
 }
 

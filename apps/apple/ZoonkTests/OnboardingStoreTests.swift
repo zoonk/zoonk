@@ -99,86 +99,32 @@ final class OnboardingStoreTests: XCTestCase {
     XCTAssertEqual(card.value, Self.draft(prompt: "Spanish, fixed", goalsLeft: 1))
   }
 
-  /// While a goal is made from the card, Back waits with its controls (main's); a failed or refused
-  /// create lets Back go again and says why.
-  func testBackWaitsWhileAGoalIsMadeAndAFailureOrRefusalFreesIt() async {
-    let store = makeStore(transport: DraftServer(Self.draft(prompt: "Spanish", goalsLeft: 2)))
-    let card = store.draft(id: Self.draftID)
-    await card.load()
-
-    for refusal in [OnboardingError.failed(.unavailable), .slowDown] {
-      let creation = DraftCreation()
-      let (answer, answers) = AsyncStream<Void>.makeStream()
-      let making = Task {
-        await creation.create(from: card) {
-          for await _ in answer { break }
-          throw refusal
-        }
-      }
-
-      for _ in 0..<1_000 where !creation.isCreating { await Task.yield() }
-      XCTAssertFalse(creation.canLeave, "Back waits while the goal is made")
-
-      answers.yield()
-      answers.finish()
-      let goalID = await making.value
-
-      XCTAssertNil(goalID)
-      XCTAssertTrue(creation.canLeave, "Back goes again after \(refusal)")
-      XCTAssertEqual(creation.error, GoalError.creating(refusal), "it says why")
-    }
-  }
-
-  /// Back to a draft whose goal was just made, while its read is out: the card offers no second
-  /// create, so the draft makes one goal.
+  /// Back to a draft whose goal was just made, before its read: the card offers no second create,
+  /// so the draft makes one goal.
   func testADraftReadAgainAfterItsGoalWasMadeOffersNoSecondCreate() async throws {
     let server = DraftServer(Self.draft(prompt: "Why is the sky blue?", goalsLeft: 2))
     let store = makeStore(transport: server)
     let card = store.draft(id: Self.draftID)
     await card.load()
-    let make = {
-      try await store.createExplanation(draft: try XCTUnwrap(card.value), question: "Why?")
-    }
+    let shown = try XCTUnwrap(card.value)
+    var made: String?
 
-    let first = await DraftCreation().create(from: card) { try await make() }
-    XCTAssertNotNil(first)
+    await DraftCreation().create(from: card) {
+      try await store.createExplanation(draft: shown, question: "Why?")
+    } then: {
+      made = $0
+    }?.value
 
     // A new visit to the draft before its read says the goal is made.
-    let second = await DraftCreation().create(from: card) { try await make() }
+    let second = DraftCreation().create(from: card) {
+      try await store.createExplanation(draft: shown, question: "Why?")
+    } then: { _ in
+    }
     let creates = await server.creates
 
+    XCTAssertNotNil(made)
     XCTAssertNil(second, "the stale card offers no create")
     XCTAssertEqual(creates, 1)
-  }
-
-  /// The screen is made again while its create is out (a link left it, or the app was restored):
-  /// the draft it was made from is stale, so the new card offers no second create until a read
-  /// after the create answers.
-  func testANewCardWhileTheCreateIsOutOffersNoSecondCreate() async throws {
-    let server = DraftServer(Self.draft(prompt: "Why is the sky blue?", goalsLeft: 2))
-    let store = makeStore(transport: server)
-    let card = store.draft(id: Self.draftID)
-    await card.load()
-    let shown = try XCTUnwrap(card.value)
-    await server.holdNextCreate()
-
-    let first = Task {
-      await DraftCreation().create(from: card) {
-        try await store.createExplanation(draft: shown, question: "Why?")
-      }
-    }
-    await server.waitForHeldCreate()
-
-    let second = await DraftCreation().create(from: card) {
-      try await store.createExplanation(draft: shown, question: "Why?")
-    }
-    let creates = await server.creates
-
-    XCTAssertNil(second, "the new card offers no create")
-    XCTAssertEqual(creates, 1)
-
-    await server.releaseHeldCreate()
-    _ = await first.value
   }
 
   /// A read after the create that names its goal leads to the goal's setup, and offers no create.
@@ -189,15 +135,17 @@ final class OnboardingStoreTests: XCTestCase {
     await card.load()
     let shown = try XCTUnwrap(card.value)
 
-    _ = await DraftCreation().create(from: card) {
+    await DraftCreation().create(from: card) {
       try await store.createExplanation(draft: shown, question: "Why?")
-    }
+    } then: { _ in
+    }?.value
     await server.serve(
       Self.draft(prompt: "Why is the sky blue?", goalsLeft: 1, goalID: Self.goalID))
     await card.load()
 
-    let again = await DraftCreation().create(from: card) {
+    let again = DraftCreation().create(from: card) {
       try await store.createExplanation(draft: shown, question: "Why?")
+    } then: { _ in
     }
     let creates = await server.creates
 
@@ -270,7 +218,13 @@ private struct DeckEventTransport: ClientTransport {
 
 /// Answers draft reads with the draft it serves now. A held edit or read waits to answer until
 /// released, so another request can land meanwhile.
-private actor DraftServer: ClientTransport {
+actor DraftServer: ClientTransport {
+  enum CreateAnswer {
+    case created
+    case refused
+    case unavailable
+  }
+
   private var served: OnboardingDraft
   private var editAnswer: OnboardingDraft?
   private var heldEdit: CheckedContinuation<Void, Never>?
@@ -280,6 +234,8 @@ private actor DraftServer: ClientTransport {
   private var editAnswered = false
   private var readsAfterEdit = 0
   private(set) var creates = 0
+  private(set) var reads = 0
+  private var createAnswer = CreateAnswer.created
   private var holdsCreate = false
   private var heldCreate: CheckedContinuation<Void, Never>?
 
@@ -293,6 +249,8 @@ private actor DraftServer: ClientTransport {
     var answer = served
 
     if operationID == "getGoalUnderstanding" {
+      reads += 1
+
       if editAnswered {
         readsAfterEdit += 1
       }
@@ -309,6 +267,17 @@ private actor DraftServer: ClientTransport {
       if holdsCreate {
         holdsCreate = false
         await withCheckedContinuation { heldCreate = $0 }
+      }
+
+      switch createAnswer {
+      case .created: break
+      case .refused:
+        return (
+          HTTPResponse(status: .tooManyRequests, headerFields: [.contentType: "application/json"]),
+          HTTPBody(#"{"error":{"code":"SLOW_DOWN","message":"Slow down"}}"#)
+        )
+      case .unavailable:
+        return (HTTPResponse(status: .internalServerError), nil)
       }
 
       return (
@@ -353,6 +322,10 @@ private actor DraftServer: ClientTransport {
     editAnswered = true
     heldEdit?.resume()
     heldEdit = nil
+  }
+
+  func answerCreates(_ answer: CreateAnswer) {
+    createAnswer = answer
   }
 
   func holdNextCreate() {
@@ -400,7 +373,7 @@ private actor DraftServer: ClientTransport {
 }
 
 extension CurrentAccount {
-  fileprivate static let onboardingStoreTest = CurrentAccount(
+  static let onboardingStoreTest = CurrentAccount(
     account: AccountAccess(
       deletion: AccountDeletionRequirements(hasAppleAccount: false), subscription: nil),
     user: AccountUser(
