@@ -87,7 +87,7 @@ internal fun PathSection(
                 PhaseItem(page, phase, phase.index == openIndex, links, brief)
             }
             if (beforeFinish.isNotEmpty()) HorizontalDivider()
-            FinishItem(page, links)
+            FinishItem(page, links, brief)
             afterExam.forEach { phase ->
                 HorizontalDivider()
                 PhaseItem(page, phase, open = phase.index == openIndex, links = links, brief = brief)
@@ -587,6 +587,7 @@ internal fun MockRow(
 private fun FinishItem(
     page: PlanPageState,
     links: PlanLinks,
+    inSheet: Boolean,
 ) {
     val finish =
         page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
@@ -597,7 +598,8 @@ private fun FinishItem(
         headline = { Text(page.goal.displayName) },
         onClick = if (links.hasExam) links::exam else null,
         leading = { FlagMark() },
-        supporting = if (links.hasExam) ({ Text(stringResource(R.string.plan_about_exam)) }) else null,
+        // On the page, More's row or the menu says "About the exam"; the phases sheet has neither, so its row says it.
+        supporting = if (links.hasExam && inSheet) ({ Text(stringResource(R.string.plan_about_exam)) }) else null,
         meta = finish?.let { { TrailingText(it) } },
     )
 }
