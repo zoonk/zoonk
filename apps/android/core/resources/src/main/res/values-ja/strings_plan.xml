@@ -167,7 +167,7 @@
   "plan_check_failed": "6887bd97151682cea6e353e39af5a0dbbff4636040339d400e386ce8a9dc9ca7",
   "plan_checking_changes": "921586e6316add192f0bd30b8d9b562399db50678aab8f805bb98a74d3ce497b",
   "plan_choice_change": "c6333de4cf1f76c2720cf4de8a1c76b0a88a7c7585c5e4ed3bf0f632826ab81e",
-  "plan_choice_following": "184eea71e7cd0b8273de9acd1e6f232899c763c78e49568ea4b816b31ad4a2a3",
+  "plan_choice_picked": "c30162ad41f2906fc60d95c5df1e0ad7c998a5d7877cbeff519dbf1cd3f8f5d0",
   "plan_choose": "14ded916e745a67d61f1a77e3058d65e4d854092429d048a4cfe14012488c94d",
   "plan_choose_by_subject": "084aeb6ac1b4adf1210cf630c78134a45a3977d562b738abbd347f5e2dbd420b",
   "plan_choose_focus": "0cb3a8617d4dcf67f939fb9b0600d887a7dfcb368672f73cdfac92b0a7c356a4",
@@ -245,10 +245,6 @@
   "plan_estimated_score": "41e09ef965330d4d179bd902b8b980b051904fe3bd7990dc691097721347cef6",
   "plan_every_day": "b902c43428c856c4ffd4dbde80b5be1a9bf462864418a649c6862b89588464ff",
   "plan_everything": "4d872a38a947c57fefa3169c8f96a8afb399c8001d2c6abf5a7813c9365cfc97",
-  "plan_exam_choice_left_out": "268836361f9317fcda7f8c0bebab3cb14f6ced96712d0c32f29d1d961b9dc33e",
-  "plan_exam_choice_left_out_points": "a12b4863f478bad046d32384210ab41c06f5976a4ec97715886b833f23f3b5f8",
-  "plan_exam_choice_left_out_questions": "87b7a1c19990dcaf14b4674359423f171b122203386d8b00e79c98ee53c81d6b",
-  "plan_exam_choice_left_out_questions_of": "b4e943efc997329db9e0995cb486621116ee6c0b3c2dda17d7ae09501de53afa",
   "plan_exam_choice_question": "5e92a161dc0b636007d121e9da390d2c31b776156156e809c5ac83fbc6bbd323",
   "plan_exam_choice_question_several": "f3d2e851620c6fa034804d7d57a21a63a7885c1e90a23cde85403f6e2c066f77",
   "plan_exam_date": "a0a39f1220465490a59bb9abcf23f3f4d0497a51b4250ed1919d38d807d29a6f",
@@ -295,7 +291,6 @@
   "plan_full_course_rule_goal_month": "89bb7cb31e6c905ba8cd6d87b7fe36fd26823bd6217ed390062f0806498eaaa6",
   "plan_full_course_switch": "2738966d8ac3626bffc7913fed4149dc52f5c25656c3024690225981fb4fd3ce",
   "plan_gain_this_week": "3e2d63de1e39c1386a902dea424bc14fc2f79c257d5d655a98701a83075173f6",
-  "plan_get_recommendation": "d2a54a427111e0f0179091bf089ee5d1f43e0e6b96061243b1f0dd277d3d1136",
   "plan_go_to_today": "36a158089e1823ea76dd08fbfa52cb9f8b722bd54bcb9ac4e36f86fbe50d0d50",
   "plan_goal_date": "5aa8e7d3452151e824211fc2878e8ce22f4ea819d96b9ed87bd3ad28903fad46",
   "plan_goal_limit_reached": "144c776a2644eea115c77fac6ed4e6653475b449d4613d3e6320e1b8aa556d44",
@@ -386,11 +381,6 @@
   "plan_prerequisites": "725402d0590dcfb0f16f87af604c4b8426849c36c4bb6fb19947d6d2cad13280",
   "plan_preview": "b53316e975f5418eb3a231e1768aeefd6ac2ac1a12bf93e940624438e1460b3b",
   "plan_progress": "04124c247a6a6d7d6789202fcf326d9ae0e54392cda206fb1f00968c1e6d5fb5",
-  "plan_recommend_deep": "51fece9cb9d8ad4fc4436615890a32da6506a43cd3e908f1d4c86ad2a5181a6a",
-  "plan_recommend_essential": "962b95f3a670937dafa7b9520352c25dd991d277637f7a81a3ba66f66b18c35d",
-  "plan_recommend_quick": "b3b48f7d7daa4822fe8c38e3a9cf508f4da35ae598a720c51587e84572bb74f9",
-  "plan_recommendation_failed": "1d036b92a3e87b12e2b660bacb7b43461568f15b38b599de950e725fe919250d",
-  "plan_recommendation_followed": "cc94c4cd70fde37a8e60ef4eef68d1778d3d7fec0653ab4eeca99fed425c334d",
   "plan_recommended": "22950871e020e78c8570ba714e26857e35ec984a23c47a95a6d38f503a155b4a",
   "plan_remembered": "6699768479523d91b714af1045bdff4f9f496718602ba9ec19de8cca94b476d9",
   "plan_remove_focus": "e1fe45f536b1254d33e0862f804e4a1784a28fe71f23dfb4b8a98831a8cf0564",
@@ -432,7 +422,6 @@
   "plan_skipped": "f2ec8ebeb085a46e5351f009d3ac2d5d1d4ee5e2900542e0eec5a4564bc4b43f",
   "plan_skipped_known": "0ccb7daa5200f64766a14f71c442fba9dc6697ae31a1080921634bfb3527aa19",
   "plan_stays_as_it_is": "c8a2b7c39f6b20740e7efda0e62813cd2ab29ddb62c26e52b9153ce29185b543",
-  "plan_still_building": "a78159e013ccf832eebc3ca9050acf1dac145e061ee4b4d612ef00ed539536c8",
   "plan_still_first_challenge": "fa2f49ea9d03e251ec5389a17160b1aa275649492dcc6c84ea1241c860bab329",
   "plan_still_first_mock": "6a37a14cb21bfcb131a41b90bad02c399898208c811914c71c2486c479d83738",
   "plan_study_days": "5246f37ff00b5580439770446be0a27f3865effa7a15c860a7978560b38b7ffb",
@@ -720,8 +709,8 @@
     <string name="plan_study_days">学習日数</string>
     <string name="plan_mock_exams">模試</string>
     <string name="plan_choose">選ぶ</string>
-    <!-- %1$s is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it. -->
-    <string name="plan_choice_following">%1$sの出題範囲に沿っています</string>
+    <!-- On the plan, which option of an exam's choice it follows. %1$s is the choice's group, such as Foreign language; %2$s is the option or options picked, such as Inglês. -->
+    <string name="plan_choice_picked">%1$s：%2$s</string>
     <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
     <string name="plan_choice_change">変更する</string>
     <string name="plan_practice">演習</string>
@@ -1000,16 +989,6 @@
     <string name="plan_exam_choice_question">%1$sはどの科目を受験しますか？</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s：どれを受験しますか？</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s and %3$s are points of the exam's score. -->
-    <string name="plan_exam_choice_left_out_points">選ぶまでは、学習計画と模試に%1$sは含まれません（配点は%2$s点、試験全体は%3$s点満点）。</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions; %3$s is the exam's. -->
-    <string name="plan_exam_choice_left_out_questions_of">選ぶまでは、学習計画と模試に%1$sは含まれません（%2$s問分、試験全体は%3$s問）。</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions. -->
-    <plurals name="plan_exam_choice_left_out_questions">
-        <item quantity="other">選ぶまでは、学習計画と模試に%1$sの%2$s問は含まれません。</item>
-    </plurals>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. -->
-    <string name="plan_exam_choice_left_out">選ぶまでは、学習計画と模試に%1$sは含まれません。</string>
     <string name="plan_prerequisites">前提知識</string>
     <plurals name="plan_bases_mixed">
         <item quantity="other">前提知識%1$d項目・選んだ学び方・%2$s</item>
@@ -1043,13 +1022,6 @@
     <string name="plan_base_names_time">%1$s · %2$s</string>
     <string name="plan_different_choices">項目ごとに異なる</string>
     <string name="plan_base_studied">学習済み</string>
-    <string name="plan_get_recommendation">おすすめを確認する</string>
-    <string name="plan_recommendation_failed">おすすめを確認できませんでした。</string>
-    <string name="plan_still_building">学習計画を作成しています。もう少し待ってから再度お試しください。</string>
-    <string name="plan_recommend_deep">すべてのレッスンをおすすめします。学習時間は十分にあります。</string>
-    <string name="plan_recommend_essential">最初のレッスンだけ学ぶのがおすすめです。</string>
-    <string name="plan_recommend_quick">ほかの学習にも時間を使えるよう、前提知識はそれぞれ短い1レッスンがおすすめです。</string>
-    <string name="plan_recommendation_followed">学習計画にはすでにおすすめの内容が反映されています。</string>
     <string name="plan_checking_changes">変更内容を確認しています…</string>
     <string name="plan_check_failed">変更内容を確認できませんでした。</string>
     <string name="plan_stays_as_it_is">学習計画はそのままです。</string>

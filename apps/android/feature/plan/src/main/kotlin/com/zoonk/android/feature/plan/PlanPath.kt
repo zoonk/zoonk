@@ -2,6 +2,7 @@ package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -43,6 +44,7 @@ import com.zoonk.android.ui.components.ProgressMark
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
@@ -171,6 +173,7 @@ private fun PhaseRow(
     val color = if (phase.state == PlanPhase.State.DONE) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
 
     ListRow(
+        chevronSpace = true,
         headline = {
             Text(
                 text = name,
@@ -328,6 +331,35 @@ internal fun ChapterMark(
     )
 }
 
+/** Main's list footer that shows the chapters left out: its small plus in the marks' column, so its words start where theirs do. */
+@Composable
+internal fun MoreChaptersRow(
+    text: String,
+    open: Boolean = false,
+    indent: Dp = 0.dp,
+    onClick: () -> Unit,
+) {
+    ListRow(
+        headline = { Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant) },
+        onClick = onClick,
+        indent = indent,
+        leading = {
+            Box(Modifier.size(MARK_COLUMN), contentAlignment = Alignment.Center) {
+                Icon(
+                    painterResource(if (open) R.drawable.ic_remove else R.drawable.ic_add),
+                    contentDescription = null,
+                    modifier = Modifier.size(FOOTER_PLUS),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        },
+        chevron = false,
+    )
+}
+
+private val MARK_COLUMN = 24.dp
+private val FOOTER_PLUS = 16.dp
+
 /** A chapter's mark wherever it's listed: next, part done as a ring, skipped, done or ahead. */
 @Composable
 internal fun ChapterMark(
@@ -379,23 +411,16 @@ internal fun PhaseChapters(
     Column {
         shown.forEach { ChapterRow(it, links, indent) }
         if (hidden > 0) {
-            ListRow(
-                headline = {
-                    Text(
-                        text =
-                            if (showAll) {
-                                stringResource(R.string.plan_show_fewer_chapters)
-                            } else {
-                                pluralStringResource(R.plurals.plan_more_chapters, hidden, hidden)
-                            },
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                },
-                onClick = { showAll = !showAll },
+            MoreChaptersRow(
+                text =
+                    if (showAll) {
+                        stringResource(R.string.plan_show_fewer_chapters)
+                    } else {
+                        pluralStringResource(R.plurals.plan_more_chapters, hidden, hidden)
+                    },
+                open = showAll,
                 indent = indent,
-                leading = { Icon(painterResource(if (showAll) R.drawable.ic_remove else R.drawable.ic_add), contentDescription = null) },
-                chevron = false,
-            )
+            ) { showAll = !showAll }
         }
         checkpoint?.let { CheckpointRow(page, it, links, indent, brief) }
     }
@@ -437,7 +462,7 @@ private fun ChapterRow(
         highlighted = isNext && opensChapter,
         indent = indent,
         leading = { ChapterMark(chapter, isNext) },
-        supporting = line?.let { { Text(it) } },
+        supporting = listRowDescription(line),
     )
 }
 
@@ -504,6 +529,7 @@ internal fun CheckpointRow(
         )
 
     ListRow(
+        chevronSpace = true,
         headline = {
             Text(
                 text = challengeName(page),
@@ -513,7 +539,7 @@ internal fun CheckpointRow(
         onClick = planItemId?.let { { links.challenge(it) } },
         indent = indent,
         leading = { Trickster(Modifier.size(markSize())) },
-        supporting = if (lines.isEmpty()) null else ({ Column { lines.forEach { Text(it) } } }),
+        supporting = if (lines.isEmpty()) null else ({ lines.forEach { Text(it) } }),
         meta =
             trailing?.let { { TrailingText(it) } },
     )
@@ -544,6 +570,7 @@ internal fun MockRow(
     val minutes = funded?.minutes?.takeIf { it > 0 }
 
     ListRow(
+        chevronSpace = true,
         headline = { Text(stringResource(R.string.plan_mock_exam)) },
         onClick = onClick,
         leading = { KindMark(LearnKind.Mock) },
@@ -562,6 +589,7 @@ private fun FinishItem(
             ?: if (page.isExam) sameWords(stringResource(R.string.plan_date_to_be_confirmed)) else null
 
     ListRow(
+        chevronSpace = true,
         headline = { Text(page.goal.displayName) },
         onClick = if (links.hasExam) links::exam else null,
         leading = { FlagMark() },

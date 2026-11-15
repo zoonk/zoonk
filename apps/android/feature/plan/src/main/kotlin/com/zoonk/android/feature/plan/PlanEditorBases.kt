@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.plan
 
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -21,11 +20,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -35,23 +31,18 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DisclosureRow
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanBaseMinutes
 import com.zoonk.api.models.PlanBases
-import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChangePreview
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 /** Main's `PlanBases`: how to study what an exam's or a goal's final work builds on. */
 @Composable
@@ -65,7 +56,11 @@ internal fun PlanBases(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionLabel(stringResource(R.string.plan_prerequisites))
         Text(basesSummary(bases), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        OutlinedButton(onClick = { drafts.bases = BasesDraft() }) { Text(stringResource(R.string.plan_choice_change)) }
+        // Opening the sheet is the learner's ask for a recommendation, so the tap that opens it sends it.
+        OutlinedButton(onClick = {
+            drafts.bases = BasesDraft()
+            edits.askBasesAdvice(page.plan)
+        }) { Text(stringResource(R.string.plan_choice_change)) }
     }
 
     drafts.bases?.let { draft ->
@@ -76,8 +71,8 @@ internal fun PlanBases(
 }
 
 /**
- * Main's `PlanBasesSheet`: the choices stay a draft, previewed as they change, until Save.
- * The app recommends a choice only when the learner asks.
+ * Main's `PlanBasesSheet`: the choices stay a draft, previewed as they change, until Save. The
+ * recommendation its opening asked for comes as a mark on its choice, in room every row keeps for it.
  */
 @Composable
 internal fun ColumnScope.BasesChoices(
@@ -88,9 +83,7 @@ internal fun ColumnScope.BasesChoices(
     onDraft: (BasesDraft) -> Unit,
     onDone: () -> Unit,
 ) {
-    var advice by remember { mutableStateOf<Advice>(Advice.Idle) }
     var attempt by remember { mutableIntStateOf(0) }
-    val scope = rememberCoroutineScope()
     val pending = edits.isPending(PlanPart.Bases)
 
     fun choiceOf(item: PlanBase) = draft.choices[item.skillId] ?: item.choice
@@ -104,7 +97,7 @@ internal fun ColumnScope.BasesChoices(
         }
     val operations = if (changed.isEmpty()) emptyList() else listOf(PlanOp.BaseChoices(changed))
     val check = rememberPreviewCheck(page, edits, operations, attempt)
-    val recommended = (advice as? Advice.Answered)?.recommended
+    val recommended = edits.basesAdvice.recommendedFor(page.plan)
     val title = stringResource(R.string.plan_prerequisites)
 
     if (edits.sheetKept(draft.opening)) {
@@ -131,17 +124,7 @@ internal fun ColumnScope.BasesChoices(
         title = title,
         description = null,
         body = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                AllBasesChoice(bases.items, shared, recommended, enabled = !pending, onChoose = { choose(bases.items, it) })
-                BasesAdvice(
-                    advice = advice,
-                    followed = changed.isEmpty() && shared != null && shared == recommended,
-                    onAsk = {
-                        advice = Advice.Pending(retrying = advice as? Advice.Failure)
-                        scope.launch { advice = adviceOf(edits.adviseOnBases()) }
-                    },
-                )
-            }
+            AllBasesChoice(bases.items, shared, recommended, enabled = !pending, onChoose = { choose(bases.items, it) })
             val areas = bases.items.groupBy { it.area }
             if (areas.size > 1) {
                 BasesBySubject(
@@ -186,7 +169,8 @@ private fun AllBasesChoice(
                     selected = choice == value,
                     onSelect = { onChoose(choice) },
                     enabled = enabled,
-                    mark = if (choice == recommended) ({ Eyebrow(stringResource(R.string.plan_recommended)) }) else null,
+                    markRoom = stringResource(R.string.plan_recommended),
+                    marked = choice == recommended,
                     trailing =
                         if (choice == PlanBase.Choice.SKIP) {
                             null
@@ -280,50 +264,6 @@ private fun SubjectChoice(
 }
 
 @Composable
-private fun BasesAdvice(
-    advice: Advice,
-    followed: Boolean,
-    onAsk: () -> Unit,
-) {
-    val failure = (advice as? Advice.Pending)?.retrying ?: advice as? Advice.Failure
-    val retry = failure != null
-    val answer = remember { FocusRequester() }
-
-    LaunchedEffect(advice) { if (advice is Advice.Answered) answer.requestFocus() }
-
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (advice is Advice.Answered) {
-            val text = adviceText(advice.recommended)
-            Note(
-                text = if (followed) joinSentences(text, stringResource(R.string.plan_recommendation_followed)) else text,
-                modifier = Modifier.focusRequester(answer).focusable(),
-            )
-        }
-        when (failure) {
-            Advice.Building -> {
-                Note(stringResource(R.string.plan_still_building), live = true)
-            }
-
-            Advice.Failed -> {
-                Note(stringResource(R.string.plan_recommendation_failed), live = true)
-            }
-
-            null -> {}
-        }
-        if (advice !is Advice.Answered) {
-            OutlinedButton(
-                onClick = onAsk,
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                busy = advice is Advice.Pending,
-                leadingIcon = { ButtonIcon(if (retry) R.drawable.ic_refresh else R.drawable.ic_lightbulb) },
-            ) {
-                Text(stringResource(if (retry) R.string.load_failed_try_again else R.string.plan_get_recommendation))
-            }
-        }
-    }
-}
-
-@Composable
 private fun PreviewOutcome(
     dateKind: GoalDateKind,
     check: Check,
@@ -369,35 +309,6 @@ private fun Note(
     )
 }
 
-private sealed interface Advice {
-    data object Idle : Advice
-
-    /** A failure that Try again answers. */
-    sealed interface Failure : Advice
-
-    /** A retry keeps the [retrying] failure, so Try again and its line stay put until it settles. */
-    data class Pending(
-        val retrying: Failure?,
-    ) : Advice
-
-    data object Building : Failure
-
-    data object Failed : Failure
-
-    data class Answered(
-        val recommended: PlanBase.Choice,
-    ) : Advice
-}
-
-private fun adviceOf(advice: PlanBasesAdvice?): Advice {
-    val recommended = advice?.recommended
-    return when {
-        advice == null -> Advice.Failed
-        !advice.ready || recommended == null -> Advice.Building
-        else -> Advice.Answered(PlanBase.Choice.valueOf(recommended.name))
-    }
-}
-
 private sealed interface Check {
     data object Loading : Check
 
@@ -432,16 +343,6 @@ private fun rememberPreviewCheck(
 }
 
 private const val PREVIEW_DELAY_MS = 300L
-
-@Composable
-private fun adviceText(recommended: PlanBase.Choice): String =
-    stringResource(
-        when (recommended) {
-            PlanBase.Choice.DEEP -> R.string.plan_recommend_deep
-            PlanBase.Choice.QUICK -> R.string.plan_recommend_quick
-            else -> R.string.plan_recommend_essential
-        },
-    )
 
 @Composable
 private fun basesSummary(bases: PlanBases): String {

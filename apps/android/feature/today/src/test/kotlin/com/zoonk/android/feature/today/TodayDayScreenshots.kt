@@ -23,6 +23,7 @@ import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.CoroutineScope
@@ -149,13 +150,7 @@ class TodayDayScreenshots {
         }
         rule.waitForIdle()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use {
-            rule
-                .onRoot()
-                .captureRender()
-                .asAndroidBitmap()
-                .compress(Bitmap.CompressFormat.PNG, 100, it)
-        }
+        writeRender(file, rule.onRoot().captureRender().asAndroidBitmap())
     }
 
     private fun sessionBar(session: JsonObject): JsonObject {

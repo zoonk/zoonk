@@ -332,6 +332,7 @@
   "onboarding_reveal_save_note": "845c258c416be977c3514b3bf5ce9e2832b3782cade59495736f31e294026259",
   "onboarding_reveal_start": "e7e8a7f949028c503ea130409e0685677090dc19b60c0ae24d64ad7b960be178",
   "onboarding_reveal_start_here": "c1ed39e9fbe81df17928e18f5e5b1114ca70108208039386b200060b23e73a72",
+  "onboarding_reveal_study_days": "dcf497fb2f9374d87bedc54406683827d64ac392a5894da4efeef6de9116c33f",
   "onboarding_reveal_today": "8a30a577722b319bf0503b6d92173b83df0d6209c8a9c3861edbefa5e053cd87",
   "onboarding_reveal_topics": "81d06174c928abdf38fbdc6f733775473aeb4d1dcfdefb4edef729c683487a7e",
   "onboarding_reveal_topics_all_planned": "aa2dd96d8ea0fb7753982a875db58fad9c3ab9ffd14c57da3098a6818ca96d6a",
@@ -953,6 +954,10 @@
     <string name="onboarding_time_a_day">1日の学習時間</string>
     <plurals name="onboarding_days">
         <item quantity="other">%d日</item>
+    </plurals>
+    <!-- Over the plan's first week: how many of its days the learner studies, today among them. -->
+    <plurals name="onboarding_reveal_study_days">
+        <item quantity="other">%d日間の学習</item>
     </plurals>
     <string name="onboarding_schedule_title">1日にどれくらい学習時間を取れますか？</string>
     <string name="onboarding_full_course">試験後も続けてすべて学ぶ</string>

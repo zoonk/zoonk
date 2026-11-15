@@ -11,10 +11,12 @@ import com.zoonk.android.data.writingWaits
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanDay
 import com.zoonk.api.models.PlanEffect
 import com.zoonk.api.models.PlanTool
 import kotlinx.coroutines.CompletableDeferred
@@ -313,12 +315,12 @@ class PlanViewModelTest {
 
             viewModel.findTimeToCover(plan) { outcomes += it }
             viewModel.findTimeToCover(plan) { outcomes += it }
-            assertEquals(TimeToCoverState.Pending(timeToCoverRevision(plan)), viewModel.timeToCover.value)
+            assertEquals(TimeToCoverState.Pending(planAdviceRevision(plan)), viewModel.timeToCover.value)
             api.timeToCoverGate?.complete(Unit)
 
             assertEquals(1, api.timeToCoverRequests)
             assertEquals(List(2) { TimeToCoverOutcome.Answered(api.timeToCover) }, outcomes)
-            assertEquals(TimeToCoverState.Answered(timeToCoverRevision(plan), api.timeToCover), viewModel.timeToCover.value)
+            assertEquals(TimeToCoverState.Answered(planAdviceRevision(plan), api.timeToCover), viewModel.timeToCover.value)
         }
 
     @Test
@@ -357,7 +359,7 @@ class PlanViewModelTest {
             api.timeToCover = timeToCover(ready = false)
 
             viewModel.findTimeToCover(plan) { outcomes += it }
-            assertEquals(TimeToCoverState.Building(timeToCoverRevision(plan)), viewModel.timeToCover.value)
+            assertEquals(TimeToCoverState.Building(planAdviceRevision(plan)), viewModel.timeToCover.value)
             viewModel.findTimeToCover(plan) { outcomes += it }
 
             assertEquals(2, api.timeToCoverRequests)
@@ -372,7 +374,7 @@ class PlanViewModelTest {
 
             viewModel.findTimeToCover(plan)
 
-            assertEquals(TimeToCoverState.Failed(timeToCoverRevision(plan)), viewModel.timeToCover.value)
+            assertEquals(TimeToCoverState.Failed(planAdviceRevision(plan)), viewModel.timeToCover.value)
             assertEquals(1, api.plans)
             assertTrue(api.changes.isEmpty())
         }
@@ -576,10 +578,130 @@ class PlanViewModelTest {
     @Test
     fun aRecommendationForThePrerequisitesSavesNothing() =
         runTest {
-            assertEquals(PlanBasesAdvice.Recommended.ESSENTIAL, viewModel.basesAdvice()?.recommended)
+            val plan = shown()
+
+            viewModel.askBasesAdvice(plan)
+
+            assertEquals(PlanBase.Choice.ESSENTIAL, viewModel.basesAdvice.value.recommendedFor(plan))
             assertEquals(1, api.advised)
-            assertEquals(0, api.plans)
+            assertTrue(api.changes.isEmpty())
         }
+
+    @Test
+    fun aNewDayAsksForTheRecommendationAgain() =
+        runTest {
+            val today = shown(onDay("2026-10-27"))
+            viewModel.askBasesAdvice(today)
+            viewModel.askBasesAdvice(today)
+            assertEquals(1, api.advised)
+
+            api.advice = api.advice.copy(recommended = PlanBasesAdvice.Recommended.QUICK)
+            val tomorrow = shown(onDay("2026-10-28"))
+            assertNull(viewModel.basesAdvice.value.recommendedFor(tomorrow))
+            viewModel.askBasesAdvice(tomorrow)
+
+            assertEquals(2, api.advised)
+            assertEquals(PlanBase.Choice.QUICK, viewModel.basesAdvice.value.recommendedFor(tomorrow))
+        }
+
+    @Test
+    fun aRecommendationStillOutIsNeverAskedForTwice() =
+        runTest {
+            val plan = shown()
+            val gate = CompletableDeferred<Unit>()
+            api.adviceGate = gate
+
+            viewModel.askBasesAdvice(plan)
+            viewModel.askBasesAdvice(plan)
+            assertNull(viewModel.basesAdvice.value.recommendedFor(plan))
+            gate.complete(Unit)
+
+            assertEquals(1, api.advised)
+            assertEquals(PlanBase.Choice.ESSENTIAL, viewModel.basesAdvice.value.recommendedFor(plan))
+        }
+
+    @Test
+    fun aLateRecommendationForAnOlderPlanMarksNothing() =
+        runTest {
+            val gate = CompletableDeferred<Unit>()
+            api.adviceGate = gate
+            viewModel.askBasesAdvice(shown())
+
+            api.advice = api.advice.copy(recommended = PlanBasesAdvice.Recommended.QUICK)
+            val replanned = shown(coveragePlan(coreFits = false))
+            viewModel.askBasesAdvice(replanned)
+            gate.complete(Unit)
+
+            assertEquals(2, api.advised)
+            assertEquals(PlanBase.Choice.QUICK, viewModel.basesAdvice.value.recommendedFor(replanned))
+        }
+
+    @Test
+    fun anotherPlansAskCancelsTheRecommendationStillOut() =
+        runTest {
+            val gate = CompletableDeferred<Unit>()
+            api.adviceGate = gate
+            viewModel.askBasesAdvice(shown())
+
+            api.advice = api.advice.copy(recommended = PlanBasesAdvice.Recommended.QUICK)
+            val replanned = shown(coveragePlan(coreFits = false))
+            viewModel.askBasesAdvice(replanned)
+
+            assertEquals(1, api.adviceCancelled)
+            assertEquals(PlanBase.Choice.QUICK, viewModel.basesAdvice.value.recommendedFor(replanned))
+            gate.complete(Unit)
+            assertEquals(PlanBase.Choice.QUICK, viewModel.basesAdvice.value.recommendedFor(replanned))
+        }
+
+    @Test
+    fun aSavedChangeCancelsTheRecommendationStillOut() =
+        runTest {
+            val gate = CompletableDeferred<Unit>()
+            api.adviceGate = gate
+            val plan = shown()
+            viewModel.askBasesAdvice(plan)
+
+            viewModel.change(PlanPart.Schedule, listOf(PlanOp.DailyMinutes(45)))
+
+            assertEquals(1, api.adviceCancelled)
+            assertNull(viewModel.basesAdvice.value.recommendedFor(plan))
+        }
+
+    @Test
+    fun aPlanStillBeingBuiltMarksNothingAndTheNextOpeningAsksAgain() =
+        runTest {
+            val plan = shown()
+            api.advice = api.advice.copy(ready = false)
+
+            viewModel.askBasesAdvice(plan)
+            assertNull(viewModel.basesAdvice.value.recommendedFor(plan))
+            viewModel.askBasesAdvice(plan)
+
+            assertEquals(2, api.advised)
+        }
+
+    @Test
+    fun aChangeWhosePlanCantBeReadAgainLeavesNoRecommendation() =
+        runTest {
+            val plan = shown()
+            viewModel.askBasesAdvice(plan)
+            api.planFailure = ApiException(ApiError.Network)
+
+            viewModel.change(PlanPart.Schedule, listOf(PlanOp.DailyMinutes(45)))
+
+            assertNull(viewModel.basesAdvice.value.recommendedFor(plan))
+        }
+
+    /** [plan] as read on [date], so its advice is that day's. */
+    private fun onDay(
+        date: String,
+        plan: Plan = coveragePlan(),
+    ) = plan.copy(
+        week =
+            plan.week.copy(
+                days = listOf(PlanDay(kotlinx.datetime.LocalDate.parse(date), emptyList(), 20.0, null, PlanDay.State.TODAY)),
+            ),
+    )
 
     @Test
     fun aSheetsAnswerStaysWithItsOwnOpeningUntilTheEditorOpensAgain() =

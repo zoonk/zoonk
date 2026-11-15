@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.account.AccountAvatar
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.GoalExamCountry
@@ -92,13 +93,6 @@ class LetterMarkTest {
             }
         }
         val file = File(folder, "top-bar-font200.png")
-        file.parentFile?.mkdirs()
-        file.outputStream().use {
-            compose
-                .onRoot()
-                .captureRender()
-                .asAndroidBitmap()
-                .compress(Bitmap.CompressFormat.PNG, 100, it)
-        }
+        writeRender(file, compose.onRoot().captureRender().asAndroidBitmap())
     }
 }

@@ -32,10 +32,11 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LearnerSummaryGoal
-import com.zoonk.api.models.PlanBasesAdvice
+import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanPhase
@@ -395,7 +396,7 @@ class PlanScreenshots {
         val laterFitPlan = fitPlan.copy(fitOffer = fitPlan.fitOffer?.copy(canApply = false))
         val fitOperations = laterFitPlan.fitOffer!!.operations.map { it.op }
         val pastDate = plan(""""status":{"kind":"pastDate","lessons":4}""")
-        val found = TimeToCoverState.Answered(timeToCoverRevision(goalPlan), timeToCover(recommended = 75))
+        val found = TimeToCoverState.Answered(planAdviceRevision(goalPlan), timeToCover(recommended = 75))
         val moved = listOf<PlanOp>(PlanOp.TargetDate(java.time.LocalDate.parse("2027-04-18")))
         val change = planChange(operations = """[{"kind":"setDailyMinutes","minutes":75}]""", effect = effect(""""lessonsAdded":14"""))
         val course = java.util.UUID.fromString(CHANGE_ID)
@@ -473,7 +474,7 @@ class PlanScreenshots {
                 "plan-slot-coverage-checking-date" to
                     Shot(
                         goalPlan,
-                        edits = PlanEdits(timeToCover = TimeToCoverState.Pending(timeToCoverRevision(goalPlan))),
+                        edits = PlanEdits(timeToCover = TimeToCoverState.Pending(planAdviceRevision(goalPlan))),
                         state = { SlotState(intent = CoverageIntent.Date) },
                     ),
                 "plan-slot-coverage-applied" to
@@ -561,7 +562,7 @@ class PlanScreenshots {
         val examPage = PlanPageState(exam.goals.first(), examPlan, exam)
         val examAreas = "[${area("Administrative law")},${area("Constitutional law")},${area("Portuguese")},${area("Logical reasoning")}]"
         val examFocusPage = PlanPageState(exam.goals.first(), coveragePlan(kind = "exam", areas = examAreas).withFocusTest(CHECKED), exam)
-        val found = TimeToCoverState.Answered(timeToCoverRevision(goalPlan), timeToCover(recommended = 75, fittingDate = "2027-04-18"))
+        val found = TimeToCoverState.Answered(planAdviceRevision(goalPlan), timeToCover(recommended = 75, fittingDate = "2027-04-18"))
 
         fun preview(
             operations: List<PlanOp>,
@@ -717,7 +718,7 @@ class PlanScreenshots {
                 """.trimIndent(),
             )
         val page = PlanPageState(summary.goals.first(), plan, summary)
-        val found = TimeToCoverState.Answered(timeToCoverRevision(plan), timeToCover(recommended = 805, focus = 240))
+        val found = TimeToCoverState.Answered(planAdviceRevision(plan), timeToCover(recommended = 805, focus = 240))
         compose.setContent {
             ZoonkTheme(darkTheme = dark) {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
@@ -770,11 +771,8 @@ class PlanScreenshots {
                  "finishDate":null,"feasibility":{"coreFits":true,"coveredShare":0.82,"fits":false,"measure":"exam"},"ready":true,"unchanged":false}
                 """.trimIndent(),
             )
-        val edits =
-            PlanEdits(
-                preview = { preview },
-                adviseOnBases = { PlanBasesAdvice(daysLeft = 12, ready = true, recommended = PlanBasesAdvice.Recommended.QUICK) },
-            )
+        val revision = planAdviceRevision(page.plan)
+        var advice by mutableStateOf(BasesAdviceAsk(revision, BasesAdviceAsk.Status.Pending))
         var sheet by mutableStateOf("bases")
         var bases by mutableStateOf(BasesDraft())
         var tool by mutableStateOf(ToolDraft("Spreadsheet (Google Sheets or Excel)", choice = null, system = null))
@@ -782,6 +780,7 @@ class PlanScreenshots {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
                     Column(Modifier.padding(top = 24.dp)) {
+                        val edits = PlanEdits(preview = { preview }, basesAdvice = advice)
                         when (sheet) {
                             "bases" -> BasesChoices(page, page.plan.bases!!, edits, bases, onDraft = { bases = it }, onDone = {})
                             else -> ToolChoiceForm(page.plan.tools.first(), tool, edits, onDraft = { tool = it }, onDone = {})
@@ -793,7 +792,11 @@ class PlanScreenshots {
         compose.waitForIdle()
         write("$prefix-bases", compose.onRoot().captureRender().asAndroidBitmap())
 
-        compose.onNodeWithText("Get a recommendation").performClick()
+        // The recommendation the sheet's opening asked for comes in the room every row keeps for it.
+        advice = advice.copy(status = BasesAdviceAsk.Status.Answered, recommended = PlanBase.Choice.QUICK)
+        compose.waitForIdle()
+        write("$prefix-bases-recommended", compose.onRoot().captureRender().asAndroidBitmap())
+
         compose.onNodeWithText("One short lesson each").performClick()
         compose.mainClock.advanceTimeBy(1_000)
         compose.waitForIdle()
@@ -875,7 +878,7 @@ class PlanScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
     }
 
     private companion object {

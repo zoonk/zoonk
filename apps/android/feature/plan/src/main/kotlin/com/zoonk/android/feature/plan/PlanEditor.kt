@@ -47,6 +47,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -67,6 +68,7 @@ import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ModalBottomSheet
@@ -78,7 +80,6 @@ import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBase
-import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
@@ -113,7 +114,8 @@ internal data class PlanEdits(
     val chooseTools: (ToolAnswer, (PlanChangeResult?) -> Unit) -> Unit = { _, _ -> },
     val setupLessons: ContentWritingWait? = null,
     val preview: suspend (List<PlanOp>) -> PlanChangePreview? = { null },
-    val adviseOnBases: suspend () -> PlanBasesAdvice? = { null },
+    val basesAdvice: BasesAdviceAsk? = null,
+    val askBasesAdvice: (Plan) -> Unit = {},
     val sheetAnswers: Map<UUID, PlanChangeResult?> = emptyMap(),
     val answerSheet: (opening: UUID, PlanChangeResult?) -> Unit = { _, _ -> },
     /** Said in the app's snackbars, since the save it reports can end after a recreated window took this one's place. */
@@ -495,7 +497,8 @@ internal fun ChoiceRow(
     selected: Boolean,
     onSelect: () -> Unit,
     enabled: Boolean = true,
-    mark: (@Composable () -> Unit)? = null,
+    markRoom: String? = null,
+    marked: Boolean = false,
     trailing: String? = null,
 ) {
     Row(
@@ -510,9 +513,15 @@ internal fun ChoiceRow(
     ) {
         RadioButton(selected = selected, onClick = null, enabled = enabled)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            // A mark that can come after the first frame, such as a recommendation: every row lays out room for
+            // it, beside the label where it fits and under it where it doesn't, so it moves nothing when it comes.
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                itemVerticalAlignment = Alignment.CenterVertically,
+            ) {
                 Text(label, style = MaterialTheme.typography.bodyLarge)
-                mark?.invoke()
+                markRoom?.let { room -> Eyebrow(room, if (marked) Modifier else Modifier.alpha(0f).clearAndSetSemantics {}) }
             }
             description?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         }

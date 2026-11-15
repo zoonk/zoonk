@@ -27,8 +27,6 @@
   "today_done_day_off": "947362f77c84d95608a4d7e104714f610b0983b2593241450ba9949be60afd61",
   "today_earlier_lessons": "c14acfa863fc7318a2079ae19070554729e5a7d7317c487c09aaf6c84dcd75ab",
   "today_exam_choice_choose": "5bf76a08297b29f5482a62ed9760977b002feeda8dcda4f65a03f9115b83597f",
-  "today_exam_choice_question": "2135e744ec0650ebd7c48d2813790e5ff422a47e7f2fbe57f2811ca5d6162148",
-  "today_exam_choice_question_several": "eb603dc06764da0a5ebeefa3190d4c63a183d61b36ebd96339a2f172d3b0f021",
   "today_exam_in_days": "1fe301aca628e30f406da649868c0aaae80fbd4d9895c15dff4fcf39da567df9",
   "today_exam_speaking": "7c0306a0eb367eca81d8a96f3e98c4913d4125be9715004a6067d03596f9d22d",
   "today_exam_speaking_detail": "ba143d3e536a58109bc246467c81a3b3b66e6bea42dc591a435ded1cde75205e",
@@ -327,10 +325,6 @@
     <string name="today_noted">Anotado.</string>
     <string name="today_undo">Desfazer</string>
     <string name="today_notice_exam_choice">Escolha da prova</string>
-    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
-    <string name="today_exam_choice_question">%1$s: qual você vai fazer?</string>
-    <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
-    <string name="today_exam_choice_question_several">%1$s: quais você vai fazer?</string>
     <string name="today_exam_choice_choose">Escolher</string>
     <string name="today_notice_plan_change">Mudança sugerida</string>
     <string name="today_plan_use_my_date">Usar minha data</string>
