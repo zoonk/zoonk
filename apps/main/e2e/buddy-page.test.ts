@@ -13,6 +13,8 @@ import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { fulfillTutorAnswer, proposeFutureRestDay, toProposal } from "./tutor-answer";
 
+const REPRICED = "Your plan changed since you saw this. Here's what it does now.";
+
 function readChangeStatus(changeId: string) {
   return prisma.planChange
     .findUniqueOrThrow({ where: { id: changeId } })
@@ -105,7 +107,7 @@ test.describe("Buddy tab", () => {
       // The fixture saves the change without its numbers, as one from an earlier day: the first
       // tap works them out from today's plan and asks again; the second applies it.
       await card.getByRole("button", { name: "Change my plan" }).click();
-      await expect(card.getByText("The numbers are different today.")).toBeVisible();
+      await expect(card.getByText(REPRICED)).toBeVisible();
       await expect(card).toHaveAccessibleName(`Make ${day} a rest day?`);
       expect(await readChangeStatus(change.id)).toBe("proposed");
 
