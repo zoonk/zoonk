@@ -175,15 +175,19 @@ function JourneyBody({
           <PlanSuggestionSlot className={IN_COLUMN_CLASS} />
 
           {structure ? (
-            <SyllabusSection subjectHref={links.subject} syllabus={structure}>
-              {focusTest}
-              {/* Unpicked choices are the suggestion's; from 72rem the aside's properties name the pick. */}
-              <PlanChoiceLines
-                choices={plan.examChoices.filter((choice) => choice.subjects.length > 0)}
-                className={IN_COLUMN_CLASS}
-                onChange={() => editor.open("choices")}
-              />
-            </SyllabusSection>
+            <>
+              {/* Above the subjects, not among them: neither is a subject with a preparation. */}
+              <div className="flex flex-col gap-2 empty:hidden">
+                {focusTest}
+                {/* Unpicked choices are the suggestion's; from 72rem the aside's properties name the pick. */}
+                <PlanChoiceLines
+                  choices={plan.examChoices.filter((choice) => choice.subjects.length > 0)}
+                  className={IN_COLUMN_CLASS}
+                  onChange={() => editor.open("choices")}
+                />
+              </div>
+              <SyllabusSection subjectHref={links.subject} syllabus={structure} />
+            </>
           ) : (
             <PathSection alphabet={alphabet} courseHref={courseHref} links={links}>
               {focusTest}

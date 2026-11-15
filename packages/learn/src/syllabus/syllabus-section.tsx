@@ -4,10 +4,10 @@ import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { hasSubjectPages } from "@zoonk/core/view-models/syllabus/subject-pages";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { Fragment } from "react";
 import { CoverageBar, CoverageLegend } from "../_components/coverage-bar";
 import {
   LIST_GROUP_CLASS,
+  ListRowChevronSpace,
   ListRowDescription,
   ListRowLink,
   ListRowTitle,
@@ -72,7 +72,9 @@ function useSectionCount(syllabus: SyllabusSectionView): string {
 }
 
 const ROW_GRID_CLASS = cn(
-  "flex min-h-11 min-w-0 flex-1 flex-col justify-center gap-2 py-3",
+  // A bar has no leading under it, so a phone's stacked row ending in one keeps the room the name
+  // has over its capitals.
+  "flex min-h-11 min-w-0 flex-1 flex-col justify-center gap-2 py-3 @max-lg/subjects:has-data-[slot=coverage-bar]:pb-4",
   "@lg/subjects:grid @lg/subjects:grid-cols-[minmax(0,1fr)_minmax(7rem,14rem)] @lg/subjects:items-center @lg/subjects:gap-x-3.5 @lg/subjects:py-2",
   "@2xl/subjects:grid-cols-[minmax(0,1fr)_6.5rem_minmax(8rem,14rem)]",
 );
@@ -85,8 +87,10 @@ function BarsMeaning({ syllabus }: { syllabus: SyllabusSectionView }) {
   }
 
   return (
-    <span className="text-muted-foreground text-2xs" data-slot="bars-meaning">
-      {t("Preparation")}
+    // Ends where the rows' values end: before the chevron's slot.
+    <span className="flex items-center gap-3" data-slot="bars-meaning">
+      <span className="text-muted-foreground text-2xs">{t("Preparation")}</span>
+      <ListRowChevronSpace />
     </span>
   );
 }
@@ -164,11 +168,9 @@ function GroupHeading({ group, id }: { group: SubjectGroup<SyllabusSectionSubjec
 }
 
 export function SyllabusSection({
-  children,
   subjectHref,
   syllabus,
 }: {
-  children?: React.ReactNode;
   subjectHref: (key: string) => string;
   syllabus: SyllabusSectionView;
 }) {
@@ -189,14 +191,18 @@ export function SyllabusSection({
       </PageSectionHeader>
 
       <SharedExamsNote sharedExams={syllabus.sharedExams} />
-      {children}
 
       <div className={LIST_GROUP_CLASS}>
         {groups.map((group, index) => (
-          <Fragment key={group.extra ? "extra" : (group.name ?? "all")}>
+          // A group's heading and its rows are one item of the list, so a rule sits above the
+          // heading and none between it and its rows.
+          <div key={group.extra ? "extra" : (group.name ?? "all")}>
             <GroupHeading group={group} id={getGroupId(index)} />
 
-            <ul aria-labelledby={group.extra || group.name ? getGroupId(index) : SECTION_TITLE_ID}>
+            <ul
+              aria-labelledby={group.extra || group.name ? getGroupId(index) : SECTION_TITLE_ID}
+              className="divided-rows"
+            >
               {group.subjects.map((subject) => (
                 <li key={subject.key}>
                   <SubjectRow
@@ -207,7 +213,7 @@ export function SyllabusSection({
                 </li>
               ))}
             </ul>
-          </Fragment>
+          </div>
         ))}
       </div>
 
