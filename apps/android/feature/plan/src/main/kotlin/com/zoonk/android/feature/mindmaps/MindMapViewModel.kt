@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.mindmaps
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.AuthenticatedSession
@@ -27,7 +28,8 @@ enum class CreateAll { Pending, Unreachable }
  * A screen's mind maps for one session: making one, or all of them, only from a tap, following one
  * while it's on its way (every 4 seconds while drawing, every 15 while its lessons are written,
  * giving up after three misses in a row; the server fails a run that stops reporting), saving a map
- * to study again, and saving a picture where the learner chose.
+ * to study again, and saving a picture where the learner chose ([files] opens it, from the application's content
+ * resolver).
  */
 class MindMapViewModel(
     private val store: MindMapStore,
@@ -36,6 +38,7 @@ class MindMapViewModel(
     private val currentSession: () -> AuthenticatedSession?,
     private val saveFailed: () -> Unit = {},
     private val pictureSaved: (PictureSave) -> Unit = {},
+    private val files: (Uri) -> OutputStream? = { null },
     private val io: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     private val locals = MutableStateFlow<Map<UUID, MindMapLocal>>(emptyMap())
@@ -147,15 +150,15 @@ class MindMapViewModel(
         }
     }
 
-    /** Writes only for the session that asked, and says nothing once it ended. */
+    /** Writes to the file the learner picked at [to] only for the session that asked, and says nothing once it ended. */
     fun savePicture(
         url: String,
-        open: () -> OutputStream?,
+        to: Uri,
     ) {
         viewModelScope.launch {
             val bytes = store.picture(session, url)
             if (!isCurrent) return@launch
-            val written = bytes != null && withContext(io) { isCurrent && write(open, bytes) }
+            val written = bytes != null && withContext(io) { isCurrent && write(to, bytes) }
             if (isCurrent) pictureSaved(if (written) PictureSave.Saved else PictureSave.Failed)
         }
     }
@@ -165,11 +168,11 @@ class MindMapViewModel(
     override fun onCleared() = stopWatching()
 
     private fun write(
-        open: () -> OutputStream?,
+        to: Uri,
         bytes: ByteArray,
     ): Boolean =
         try {
-            open()?.use { it.write(bytes) } != null
+            files(to)?.use { it.write(bytes) } != null
         } catch (e: IOException) {
             false
         } catch (e: SecurityException) {

@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.mindmaps
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -53,6 +54,7 @@ import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.MindMapImage
 import com.zoonk.api.models.MindMapOutline
+import java.io.OutputStream
 import java.util.UUID
 
 /** A map's picture through the session the screen shows; [original] decodes it whole, for zooming. */
@@ -217,10 +219,9 @@ internal fun rememberSavePicture(
     image: MindMapImage,
     chapterTitle: String,
 ): () -> Unit {
-    val context = LocalContext.current
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(PICTURE_TYPE)) { uri ->
-            if (uri != null) maps.savePicture(image.url) { context.contentResolver.openOutputStream(uri) }
+            if (uri != null) maps.savePicture(image.url, uri)
         }
 
     return { launcher.launch(mindMapFileName(chapterTitle)) }
@@ -284,8 +285,8 @@ internal fun FollowWhileOnItsWay(
 /**
  * What a screen's mind maps need from the app: the store, the session it shows (for its pictures
  * and the polls), the plan's cap on new maps (read only where a map could still be made), the
- * learner's plan (on Plus, rows say a chapter's lessons get written first without counting), and
- * where a failed save says so.
+ * learner's plan (on Plus, rows say a chapter's lessons get written first without counting),
+ * where a failed save says so, and the files a picture is saved to.
  */
 internal class MindMapsHost(
     val store: MindMapStore,
@@ -296,6 +297,7 @@ internal class MindMapsHost(
     private val currentSession: () -> AuthenticatedSession?,
     private val saveFailed: () -> Unit = {},
     private val pictureSaved: (PictureSave) -> Unit = {},
+    private val files: (Uri) -> OutputStream? = { null },
 ) {
     @Composable
     fun plus(): Boolean = tier() == LimitTier.Plus
@@ -303,13 +305,14 @@ internal class MindMapsHost(
     @Composable
     fun maps(goalId: UUID): MindMapViewModel =
         viewModel(key = "mindmaps-$goalId-${session.localId}") {
-            MindMapViewModel(store, session, goalId, currentSession, saveFailed, pictureSaved)
+            MindMapViewModel(store, session, goalId, currentSession, saveFailed, pictureSaved, files)
         }
 }
 
 @Composable
 internal fun mindMapsHost(app: AppContainer): MindMapsHost? {
     val session = app.sessions.current ?: return null
+    val files = LocalContext.current.applicationContext.contentResolver
     return MindMapsHost(
         store = app.mindMaps,
         session = session,
@@ -329,5 +332,6 @@ internal fun mindMapsHost(app: AppContainer): MindMapsHost? {
         currentSession = { app.sessions.current },
         saveFailed = { app.snackbars.show(R.string.mindmaps_save_map_failed) },
         pictureSaved = { app.snackbars.show(if (it == PictureSave.Saved) R.string.mindmaps_saved else R.string.mindmaps_save_failed) },
+        files = files::openOutputStream,
     )
 }

@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.mindmaps
 
+import android.net.Uri
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
@@ -42,11 +44,14 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.io.OutputStream
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
+@RunWith(AndroidJUnit4::class)
 @OptIn(ExperimentalCoroutinesApi::class)
 class MindMapViewModelTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
@@ -579,14 +584,14 @@ class MindMapViewModelTest {
     @Test
     fun aPictureThatArrivesAfterItsSessionEndedIsNeitherWrittenNorReported() =
         runTest(dispatcher) {
-            val (maps) = setUp()
             val file = ByteArrayOutputStream()
+            val (maps) = setUp(files = { file })
             api.picture = {
                 current = null
                 byteArrayOf(1, 2, 3)
             }
 
-            maps.savePicture("https://api.zoonk.test/v1/files/images/a/b.webp") { file }
+            maps.savePicture(PICTURE, PICKED)
             advanceUntilIdle()
 
             assertEquals(0, file.size())
@@ -596,9 +601,9 @@ class MindMapViewModelTest {
     @Test
     fun aDestinationTheAppCantWriteIsAFailedSave() =
         runTest(dispatcher) {
-            val (maps) = setUp()
+            val (maps) = setUp(files = { throw SecurityException("revoked") })
 
-            maps.savePicture("https://api.zoonk.test/v1/files/images/a/b.webp") { throw SecurityException("revoked") }
+            maps.savePicture(PICTURE, PICKED)
             advanceUntilIdle()
 
             assertEquals(listOf(PictureSave.Failed), pictureSaves)
@@ -607,12 +612,18 @@ class MindMapViewModelTest {
     @Test
     fun aSavedPictureIsWrittenWhereTheLearnerChose() =
         runTest(dispatcher) {
-            val (maps) = setUp()
             val file = ByteArrayOutputStream()
+            val opened = mutableListOf<Uri>()
+            val (maps) =
+                setUp(files = {
+                    opened += it
+                    file
+                })
 
-            maps.savePicture("https://api.zoonk.test/v1/files/images/a/b.webp") { file }
+            maps.savePicture(PICTURE, PICKED)
             advanceUntilIdle()
 
+            assertEquals(listOf(PICKED), opened)
             assertEquals(listOf<Byte>(1, 2, 3), file.toByteArray().toList())
             assertEquals(listOf(PictureSave.Saved), pictureSaves)
         }
@@ -620,9 +631,9 @@ class MindMapViewModelTest {
     @Test
     fun aPictureThatCouldntBeReadOrWrittenSaysSo() =
         runTest(dispatcher) {
-            val (maps) = setUp()
+            val (maps) = setUp(files = { throw IOException("full") })
 
-            maps.savePicture("https://api.zoonk.test/v1/files/images/a/b.webp") { throw IOException("full") }
+            maps.savePicture(PICTURE, PICKED)
             advanceUntilIdle()
 
             assertEquals(listOf(PictureSave.Failed), pictureSaves)
@@ -796,10 +807,13 @@ class MindMapViewModelTest {
     /** What each picture save said, in order. */
     private val pictureSaves = mutableListOf<PictureSave>()
 
-    private fun TestScope.setUp(saveFailed: () -> Unit = {}): Triple<MindMapViewModel, MindMapStore, AppCache> {
+    private fun TestScope.setUp(
+        saveFailed: () -> Unit = {},
+        files: (Uri) -> OutputStream? = { null },
+    ): Triple<MindMapViewModel, MindMapStore, AppCache> {
         val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + dispatcher))
         val store = MindMapStore(api, cache)
-        return Triple(MindMapViewModel(store, ana, goalId, { current }, saveFailed, pictureSaves::add, io = dispatcher), store, cache)
+        return Triple(MindMapViewModel(store, ana, goalId, { current }, saveFailed, pictureSaves::add, files, dispatcher), store, cache)
     }
 
     private fun MindMapStore.listed(id: UUID) =
@@ -818,4 +832,11 @@ class MindMapViewModelTest {
         period: String,
         resource: String = "mindMap",
     ): JsonElement = ApiJson.parseToJsonElement("""{"limit":{"tier":"$tier","period":"$period","resource":"$resource"}}""")
+
+    private companion object {
+        const val PICTURE = "https://api.zoonk.test/v1/files/images/a/b.webp"
+
+        /** The file the learner picked in the system's Save dialog. */
+        val PICKED: Uri = Uri.parse("content://com.android.providers.downloads.documents/document/1")
+    }
 }
