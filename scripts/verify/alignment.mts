@@ -152,6 +152,20 @@ function groupLeads(context: Context, group: Group): AlignmentFinding[] {
     ];
   }
 
+  const scale = group.group.layoutScale;
+
+  if (scale !== undefined) {
+    return [
+      notMeasured(
+        context,
+        group,
+        "scale",
+        "it is drawn at another size than it is laid out (a transform or a zoom)",
+        `drawn at ×${scale}`,
+      ),
+    ];
+  }
+
   // Start, end and gap assume one stack of rows; side by side they print as not measured.
   const stacked = isOneStack(group);
   const has = (relation: Relation) => relations.has(relation);

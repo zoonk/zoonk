@@ -35,6 +35,11 @@ export type CaptureElement = {
   endEdge?: number | NotMeasured;
   /** A group's: the gap its piece lays out between rows. */
   gap?: number | NotMeasured;
+  /**
+   * A group's, when it is drawn at another size than it is laid out (a transform or a zoom): its
+   * drawn width over its laid-out width. Its laid-out lengths and drawn positions don't compare.
+   */
+  layoutScale?: number;
   /** A row's: the gap its flow parent declares, which parent, and its margins before and after. */
   gapBefore?: number;
   flow?: string;

@@ -516,10 +516,21 @@ export function readAlignment({
     const groupInk = inkOf(group);
     const read = { bar, group, groupId, piece, pieceName, rows };
     const flows = [...new Set(rows.map((row) => unitIn(row, group).parentElement))];
+    const drawnBox = group.getBoundingClientRect();
+
+    // Layout sizes are whole pixels, so a drawn size more than one off is a transform or a zoom.
+    const scaled =
+      group instanceof HTMLElement &&
+      !isContents(group) &&
+      ((group.offsetWidth > 0 && Math.abs(drawnBox.width - group.offsetWidth) > 1) ||
+        (group.offsetHeight > 0 && Math.abs(drawnBox.height - group.offsetHeight) > 1));
 
     return [
       {
         bounds: bounds(boxOf(group)),
+        ...(scaled
+          ? { layoutScale: Math.round((drawnBox.width / group.offsetWidth) * 100) / 100 }
+          : {}),
         ...(isRtl(group) ? { direction: "rtl" as const } : {}),
         endEdge: round((bar ? bar.getBoundingClientRect().right : contentEnd(group)) + scrollX),
         group: null,

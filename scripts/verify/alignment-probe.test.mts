@@ -48,6 +48,21 @@ beforeEach(() => {
     value: () => true,
   });
 
+  // An element's laid-out size, before a transform or zoom: its `data-layout`, or its box.
+  for (const [property, index] of [
+    ["offsetWidth", 0],
+    ["offsetHeight", 1],
+  ] as const) {
+    Object.defineProperty(HTMLElement.prototype, property, {
+      configurable: true,
+      get(this: HTMLElement) {
+        const layout = this.dataset.layout?.split(",").map(Number);
+        const drawn = box(this);
+        return layout?.[index] ?? (index === 0 ? drawn.width : drawn.height);
+      },
+    });
+  }
+
   Object.defineProperty(HTMLElement.prototype, "innerText", {
     configurable: true,
     get(this: HTMLElement) {
@@ -130,6 +145,18 @@ describe("reading a declared piece in the page", () => {
 
     assert.equal(fault?.measured, 28);
     assert.equal(capture.elements.filter((element) => element.part === "group").length, 1);
+  });
+
+  it("writes a scaled group as not measured instead of comparing its drawn rows with unscaled gaps", () => {
+    document.body.innerHTML = `<div data-slot="list-group" data-box="0,0,600,152" data-layout="300,76"
+      style="display: flex; flex-direction: column; row-gap: 8px">${row("A", 0)}${row("B", 46)}</div>`;
+
+    const findings = evaluateCapture(read());
+
+    assert.deepEqual(
+      findings.map((finding) => `${finding.level} ${finding.rule}`),
+      ["not-measured scale"],
+    );
   });
 
   it("keeps a declared group whose rows carry no parts, so it reads as not measured", () => {
