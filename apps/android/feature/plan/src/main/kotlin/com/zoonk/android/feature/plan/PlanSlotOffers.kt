@@ -322,7 +322,7 @@ internal fun FitLessonsSuggestion(slot: Slot) {
         // While it checks, the card stays as it was with its Add busy: the same numbers add from there. In the room a
         // check's answer takes, so its buttons stay put when the answer is a failure.
         if (preview == PlanPreviewState.Idle || checking) {
-            EffectRoom { PlanEffectDiff(offer.effect, dateKind = page.dateKind, said = EffectSaid.LessonsAdded) }
+            EffectRoom(FIT_ROOM_LINES) { PlanEffectDiff(offer.effect, dateKind = page.dateKind, said = EffectSaid.LessonsAdded) }
             SuggestionActions {
                 SuggestionAction(
                     onClick = add,
@@ -341,6 +341,7 @@ internal fun FitLessonsSuggestion(slot: Slot) {
                 pending = pending,
                 dateKind = page.dateKind,
                 repriced = true,
+                roomLines = FIT_ROOM_LINES,
             )
         }
     }
@@ -371,6 +372,9 @@ private fun CancelCheckWhenGone(
 }
 
 private const val NAMED_TOPICS = 2
+
+/** The fit card names what it adds in a line, and a failed check says so in one. */
+private const val FIT_ROOM_LINES = 1
 
 @Composable
 internal fun PastDateSuggestion(
