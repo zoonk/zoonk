@@ -32,7 +32,7 @@ import { type JourneyStanding, PlanNumbers } from "./journey-hero";
 import { type JourneyPathLinks, getPlanLibraryCourse } from "./journey-links";
 import { AdjustPlanButton, JourneyMenu } from "./journey-menu";
 import { NextOnPath } from "./next-on-path";
-import { PlanGoalLine, PlanHeader } from "./plan-header";
+import { PlanHeader, usePlanDaysLeft } from "./plan-header";
 import { PlanRoadmap } from "./plan-roadmap";
 import { MoreSection, PathSection, PhasesSheet } from "./plan-sections";
 import { ResumeGoalBar } from "./resume-goal-bar";
@@ -126,6 +126,7 @@ function JourneyBody({
       />
     );
 
+  const daysLeft = usePlanDaysLeft();
   const examOver = goal.kind === "exam" && plan.status?.kind === "pastDate";
   // The bottom bar is the page's own main action; without it, a suggestion's answer is the one.
   const hasMainAction = goalStatus !== null && (goalStatus.status === "paused" || examOver);
@@ -157,7 +158,7 @@ function JourneyBody({
         bottomBar={goalStatus && <JourneyBottomBar examOver={examOver} goalStatus={goalStatus} />}
       >
         <Page data-slot="journey">
-          <PlanHeader subtitle={<PlanGoalLine />}>
+          <PlanHeader subtitle={daysLeft}>
             <AdjustPlanButton onAdjust={() => editor.open()} />
             <JourneyMenu courseHref={courseHref} examHref={links.exam} goal={goalMenu} />
           </PlanHeader>
