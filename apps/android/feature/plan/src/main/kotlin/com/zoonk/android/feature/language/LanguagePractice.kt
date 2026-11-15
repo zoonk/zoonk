@@ -23,7 +23,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkIcon
@@ -47,17 +49,23 @@ import java.util.UUID
 internal class AlphabetSkipModel(
     private val store: AlphabetStore,
 ) : ViewModel() {
+    /** The row's visit: a skip that didn't save says so only on it. */
+    val visit = Visit()
+
     var skipping by mutableStateOf(false)
         private set
 
-    var failed by mutableStateOf(false)
-        private set
+    private val failure = visit.outcome<Unit>()
+
+    /** The skip didn't save, on this visit. */
+    val failed get() = failure.value != null
 
     fun skip(goalId: UUID) {
+        skipping = true
+        failure.clear()
+        val started = visit.number
         viewModelScope.launch {
-            skipping = true
-            failed = false
-            failed = store.skipAlphabet(goalId) is MutationResult.Failed
+            if (store.skipAlphabet(goalId) is MutationResult.Failed) failure.send(started, Unit)
             skipping = false
         }
     }
@@ -76,6 +84,7 @@ fun AlphabetRow(
     modifier: Modifier = Modifier,
 ) {
     val model = viewModel(key = "alphabet-skip:$goalId") { AlphabetSkipModel(store) }
+    VisitOf(model.visit)
     val time = formatMinutes(alphabet.minutes.toInt(), currentLocale())
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
