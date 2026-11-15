@@ -84,13 +84,7 @@ fun GoalSwitcher(
     var expanded by rememberSaveable { mutableStateOf(false) }
     var makingRoomFor by rememberSaveable { mutableStateOf<String?>(null) }
     VisitOf(viewModel.visit)
-    ActOn(viewModel.started) {
-        if (it.madeRoom) {
-            makingRoomFor = null
-            viewModel.forgetMakeRoomFailure()
-        }
-        navigator.open(AppRoute.GoalSetup(it.goalId))
-    }
+    ActOn(viewModel.started) { navigator.open(AppRoute.GoalSetup(it)) }
     ActOn(viewModel.failed) { app.snackbars.show(it.message) }
 
     if (selected == null && explanations.isEmpty()) {
@@ -134,6 +128,10 @@ fun GoalSwitcher(
         val close = {
             makingRoomFor = null
             viewModel.forgetMakeRoomFailure()
+        }
+        ActOn(viewModel.startedFromSheet) {
+            close()
+            navigator.open(AppRoute.GoalSetup(it))
         }
         MakeRoomSheet(
             waitingName = waiting.displayName,
@@ -283,12 +281,6 @@ enum class SwitcherFailure(
     Start(R.string.goal_switcher_start_failed),
 }
 
-/** A waiting goal that started: its setup opens, over the Make room sheet when that started it. */
-data class StartedGoal(
-    val goalId: String,
-    val madeRoom: Boolean,
-)
-
 class GoalSwitcherViewModel(
     private val app: AppContainer,
     private val onboarding: OnboardingStore = app.onboarding,
@@ -296,12 +288,16 @@ class GoalSwitcherViewModel(
     /** This visit to the tab the switcher tops: a goal it started opens, or the sheet says it failed, only on it. */
     val visit = Visit()
 
-    val started = visit.outcome<StartedGoal>()
+    /** A waiting goal the switcher started (its id): its setup opens. */
+    val started = visit.outcome<String>()
 
     /** The Make room sheet's opening: a start asked from an earlier one says nothing in a later one. */
     val makeRoomSheet = visit.opening()
 
     private val makeRoomFailure = makeRoomSheet.outcome<Unit>()
+
+    /** A goal the Make room sheet started: the sheet closes and its setup opens, only while that sheet is the one open. */
+    val startedFromSheet = makeRoomSheet.outcome<String>()
 
     /** A switch or a start that failed on this visit, which the tab's frame says in the app's snackbars. */
     val failed = visit.outcome<SwitcherFailure>()
@@ -338,18 +334,18 @@ class GoalSwitcherViewModel(
         starting = true
         pausing = pauseGoalId
         makeRoomFailure.clear()
-        val asked = visit.number
-        val sheet = makeRoomSheet.number
+        // What asked: the Make room sheet, for a start that pauses a goal, else the switcher's tab.
+        val asked = if (pauseGoalId != null) makeRoomSheet.number else visit.number
         viewModelScope.launch {
             when (val outcome = onboarding.createGoals(waiting.input.toGoalCreateInput(pauseGoalId))) {
                 is WriteOutcome.Done -> {
-                    started.send(asked, StartedGoal(outcome.value, madeRoom = pauseGoalId != null))
+                    (if (pauseGoalId != null) startedFromSheet else started).send(asked, outcome.value)
                 }
 
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    if (pauseGoalId == null) failed.send(asked, SwitcherFailure.Start) else makeRoomFailure.send(sheet, Unit)
+                    if (pauseGoalId == null) failed.send(asked, SwitcherFailure.Start) else makeRoomFailure.send(asked, Unit)
                 }
             }
             pausing = null

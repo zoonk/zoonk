@@ -10,6 +10,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.SignInResult
+import com.zoonk.android.data.VisitOutcome
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -66,13 +67,13 @@ class GoalSwitcherViewModelTest {
         }
     }
 
-    /** What the tab's next frame does (`ActOn`): opens what's owed, then says so, as often as it's owed. */
-    private fun GoalSwitcherViewModel.actTwice(): List<StartedGoal> {
-        val opened = mutableListOf<StartedGoal>()
+    /** What the next frame does (`ActOn`): opens what's owed, then says so, as often as it's owed. */
+    private fun VisitOutcome<String>.actTwice(): List<String> {
+        val opened = mutableListOf<String>()
         repeat(2) {
-            started.value?.let {
+            value?.let {
                 opened += it
-                started.acted(it)
+                acted(it)
             }
         }
         return opened
@@ -108,7 +109,7 @@ class GoalSwitcherViewModelTest {
         check { vm ->
             recreateWhile { vm.start(WAITING) }
 
-            assertEquals(listOf(StartedGoal(GOAL_ID, madeRoom = false)), vm.actTwice())
+            assertEquals(listOf(GOAL_ID), vm.started.actTwice())
         }
 
     @Test
@@ -116,7 +117,8 @@ class GoalSwitcherViewModelTest {
         check { vm ->
             recreateWhile { vm.start(WAITING, pauseGoalId = paused) }
 
-            assertEquals(listOf(StartedGoal(GOAL_ID, madeRoom = true)), vm.actTwice())
+            assertEquals(listOf(GOAL_ID), vm.startedFromSheet.actTwice())
+            assertNull(vm.started.value)
         }
 
     @Test
@@ -156,6 +158,20 @@ class GoalSwitcherViewModelTest {
             runCurrent()
 
             assertFalse(vm.makeRoomFailed)
+        }
+
+    @Test
+    fun aGoalStartedFromAnEarlierMakeRoomSheetOpensNothingAnywhere() =
+        check { vm ->
+            vm.start(WAITING, pauseGoalId = paused)
+            runCurrent()
+            // The learner closed the sheet while it saved.
+            vm.makeRoomSheet.end()
+            gate.complete(Unit)
+            runCurrent()
+
+            assertNull(vm.startedFromSheet.value)
+            assertNull(vm.started.value)
         }
 
     @Test
