@@ -141,6 +141,7 @@ struct PlanScheduleSheet: View {
 
     ZoonkList {
       Section {
+        // Its answer sits under the status's words, so it's small, as main's sheet draws it.
         VStack(alignment: .leading, spacing: 6) {
           Text(planStatusText(status, isPaused: context.isPaused))
             .typeStyle(.body.weight(.semibold))
@@ -171,6 +172,7 @@ struct PlanScheduleSheet: View {
             .padding(.top, 4)
           }
         }
+        .controlSize(.small)
         .padding(.vertical, 4)
       }
 
