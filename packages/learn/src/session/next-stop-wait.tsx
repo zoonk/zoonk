@@ -83,25 +83,11 @@ function useWaitingCheck({
   });
 }
 
-/** Nothing is on its way: the lesson failed, or its writing never started or went quiet. */
-export function useWritingFailed(lesson: NextStopLesson): boolean {
-  const [stuckWhile, setStuckWhile] = useState<NextStopLesson | null>(null);
-
-  useEffect(() => {
-    if (lesson !== "notStarted" && lesson !== "writing") {
-      return;
-    }
-
-    const timer = setTimeout(() => setStuckWhile(lesson), STUCK_AFTER_MS[lesson]);
-    return () => clearTimeout(timer);
-  }, [lesson]);
-
-  return lesson === "failed" || stuckWhile === lesson;
-}
-
 /**
- * Failed is one fact: the session's snapshot or the followed run, whichever learns it first, and
- * the other one still behind doesn't bring the quiz back. Try again, or a new run, clears it.
+ * Nothing is on its way: the session's snapshot says the lesson failed, its writing never started
+ * or went quiet, or the followed run reported it stopped, whichever comes first, and the one still
+ * behind doesn't bring the quiz back. A stop belongs to the run and the try it was learned from: a
+ * new run, or Try again, starts clean.
  */
 export function useWaitFailed({
   generationId,
@@ -110,13 +96,24 @@ export function useWaitFailed({
   generationId: string | null;
   lesson: NextStopLesson;
 }) {
-  const snapshot = useWritingFailed(lesson);
-  const run = generationId ?? "";
+  const [attempt, setAttempt] = useState(0);
+  const run = `${generationId ?? ""}:${attempt}`;
+  const [stuckRun, setStuckRun] = useState<string | null>(null);
   const [stoppedRun, setStoppedRun] = useState<string | null>(null);
+  const quiet = `${lesson}:${run}`;
+
+  useEffect(() => {
+    if (lesson !== "notStarted" && lesson !== "writing") {
+      return;
+    }
+
+    const timer = setTimeout(() => setStuckRun(quiet), STUCK_AFTER_MS[lesson]);
+    return () => clearTimeout(timer);
+  }, [lesson, quiet]);
 
   return {
-    clearStopped: () => setStoppedRun(null),
-    failed: snapshot || stoppedRun === run,
+    clearStopped: () => setAttempt((count) => count + 1),
+    failed: lesson === "failed" || stuckRun === quiet || stoppedRun === run,
     runStopped: () => setStoppedRun(run),
   };
 }

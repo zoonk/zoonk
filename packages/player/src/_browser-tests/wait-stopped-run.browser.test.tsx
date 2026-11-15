@@ -8,9 +8,10 @@ import { LearnProvider } from "@zoonk/learn/provider";
 import { NextStop, type NextStopActions } from "@zoonk/learn/session/next-stop";
 import { type DayStep } from "@zoonk/learn/session/types";
 import { createContext, use } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page } from "vitest/browser";
 import { PlacementWaiting } from "../../../learn/src/onboarding/steps/placement-waiting";
+import { focusOn, press } from "../_test-utils/activity-player";
 import { render } from "../_test-utils/render";
 
 const ADAPTERS: React.ComponentProps<typeof LearnProvider>["adapters"] = {
@@ -73,10 +74,12 @@ function FakeFollower({ children }: FollowedRunProps) {
 function UpNext({
   deck,
   generationId = "run-1",
+  lesson = "writing",
   run,
 }: {
   deck: WarmUpDeck;
   generationId?: string;
+  lesson?: "failed" | "writing";
   run: GenerationRun;
 }) {
   const actions: NextStopActions = {
@@ -97,7 +100,7 @@ function UpNext({
             exitHref="/"
             generationId={generationId}
             goalId="goal"
-            lesson="writing"
+            lesson={lesson}
             minutesLeft={20}
             notWritten={null}
             sessionBar={{ completed: 1, total: 3 }}
@@ -125,6 +128,9 @@ function Placement({ deck, run }: { deck: WarmUpDeck; run: GenerationRun }) {
     </LearnProvider>
   );
 }
+
+/** Just past the ten minutes a lesson's writing may take without the wait calling it stuck. */
+const WENT_QUIET_MS = 600_001;
 
 const question = () => page.getByText(QUESTION);
 const helium = () => page.getByRole("radio", { name: /Helium/u });
@@ -165,6 +171,33 @@ describe("a wait whose run stops takes the quiz away whole", () => {
       await expect.element(picked()).not.toBeInTheDocument();
     },
   );
+
+  it("Up next gives a run that went quiet a clean start: after Try again, and for a new run", async () => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "Date"] });
+
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
+    const deck = newDeck();
+    const view = render(<UpNext deck={deck} run={RUNNING} />);
+    await expect.element(question()).toBeVisible();
+
+    // Ten minutes of writing with nothing new from the run: the wait says it didn't work.
+    await vi.advanceTimersByTimeAsync(WENT_QUIET_MS);
+    await expect.element(question()).not.toBeInTheDocument();
+
+    // A press, not a click: a click lets the fake clock run on.
+    await focusOn(page.getByRole("button", { name: "Try again" }));
+    await press("Enter");
+    await expect.element(question()).toBeVisible();
+
+    await vi.advanceTimersByTimeAsync(WENT_QUIET_MS);
+    await expect.element(question()).not.toBeInTheDocument();
+
+    view.rerender(<UpNext deck={deck} generationId="run-2" run={RUNNING} />);
+    await expect.element(question()).toBeVisible();
+  });
 
   it.each(["midQuestion", "answered"] as const)(
     "the placement wait, once its run stops, and not when only the connection drops: %s",
