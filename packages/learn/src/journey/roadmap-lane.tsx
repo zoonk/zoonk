@@ -114,12 +114,12 @@ function GoalDate() {
     message: "exam",
   });
 
-  // One line tall: the word shows beside the date when both fit, and is cut with its dot when it
-  // would wrap, so a second line never starts on the dot. The flag and the legend still say it.
+  // The word takes no height, so a row it wraps to has none and is cut with its dot: it shows only
+  // beside the date, and a second line never starts on the dot. The date keeps every line it needs.
   return (
-    <span className="flex h-lh flex-wrap justify-end overflow-hidden">
+    <span className="flex flex-wrap items-start justify-end overflow-hidden">
       {date}
-      <span className="whitespace-pre">{`${FACT_SEPARATOR}${exam}`}</span>
+      <span className="h-0 whitespace-pre">{`${FACT_SEPARATOR}${exam}`}</span>
     </span>
   );
 }
