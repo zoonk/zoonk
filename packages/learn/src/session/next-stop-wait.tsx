@@ -134,7 +134,7 @@ function WritingProgress({
     >
       {!held && (
         <GenerationTimelineDescription className="text-sm">
-          {t("It takes a few minutes.")}
+          {t("Your lesson is usually ready in a few minutes.")}
         </GenerationTimelineDescription>
       )}
     </GenerationWait>

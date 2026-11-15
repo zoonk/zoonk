@@ -7253,14 +7253,14 @@ msgid "Saved"
 msgstr "Enregistrées"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "ifrM2C"
-msgid "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}"
-msgstr "{count, plural, other {# en préparation. Tu peux quitter la page en attendant.}}"
-
-#: src/mind-maps/not-made-yet.tsx
 msgctxt "uSD0Jk"
 msgid "{count, plural, one {# map didn't finish. Try again.} other {# maps didn't finish. Try again.}}"
 msgstr "{count, plural, one {# carte mentale n’a pas pu être préparée. Réessaie.} other {# cartes mentales n’ont pas pu être préparées. Réessaie.}}"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "ifrM2C"
+msgid "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}"
+msgstr "{count, plural, other {# en préparation. Tu peux quitter la page en attendant.}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "VSfWXI"
@@ -10163,14 +10163,14 @@ msgid "{names} and more"
 msgstr "{names}, entre autres"
 
 #: src/plan-diff/plan-effect-diff.tsx
-msgctxt "61Vs84"
-msgid "The numbers are different today."
-msgstr "Les chiffres sont différents aujourd’hui."
+msgctxt "SBr2Ck"
+msgid "Your plan changed since you saw this. Here's what it does now."
+msgstr "Ton plan a changé entre-temps. Voici ce qui change maintenant."
 
 #: src/plan-diff/plan-effect-diff.tsx
-msgctxt "3vidCV"
-msgid "See all changes"
-msgstr "Voir tous les changements"
+msgctxt "7FvDSg"
+msgid "All changes"
+msgstr "Tous les changements"
 
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "oGZanC"
@@ -12291,9 +12291,9 @@ msgid "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught
 msgstr "{done, plural, one {<gain># leçon rattrapée aujourd’hui</gain>} other {<gain># leçons rattrapées aujourd’hui</gain>}} · {left, plural, other {# à rattraper}}"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "v8WYcE"
-msgid "It takes a few minutes."
-msgstr "Ça prend quelques minutes."
+msgctxt "y1FyTB"
+msgid "Your lesson is usually ready in a few minutes."
+msgstr "Ta leçon est généralement prête en quelques minutes."
 
 #. {title} is the name of one of the day's challenges, such as "Weekly challenge", never a course.
 #: src/session/next-stop-wait.tsx
