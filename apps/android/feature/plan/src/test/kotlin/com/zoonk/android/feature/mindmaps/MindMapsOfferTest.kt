@@ -348,4 +348,26 @@ class MindMapsOfferTest {
         compose.waitForIdle()
         compose.onAllNodesWithText("Create").assertCountEquals(0)
     }
+
+    /** What stops the learner outranks what is on its way: with a map being made and a stop, the line is the stop's. */
+    @Test
+    fun aStopOutranksAMapOnItsWay() {
+        val writing = chapters + mapJson(4, "Lenses", "writingLessons", lessonsToWrite = 3)
+        api.mindMaps = {
+            goalMindMaps(
+                writing,
+                offer =
+                    """
+                    {"eligible":2,"needLessons":2,"startable":0,
+                    "stop":{"reason":"limitReached","resource":"mindMap","period":"rolling30Days","availableAt":"${clock.start.plus(
+                        Duration.ofDays(3),
+                    )}"}}
+                    """.trimIndent(),
+            )
+        }
+        show()
+
+        waitFor("You've used your mind maps")
+        compose.onNodeWithText("on the way", substring = true).assertDoesNotExist()
+    }
 }

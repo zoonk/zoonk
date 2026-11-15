@@ -233,9 +233,9 @@ private fun NotMadeSummary(
 }
 
 /**
- * The block's one line about [later], the first that applies: the tap didn't reach the server, maps
- * on their way, maps that didn't finish, what stops every map from starting, or how many more fit
- * now. Maps the learner just started come before the limit, which read first looks like a refusal.
+ * The block's one line about [later], the first that applies: the tap didn't reach the server, what
+ * stops every map from starting, maps on their way, maps that didn't finish, or how many more fit now.
+ * What stops the learner outranks what's in progress; each map on its way shows that on its own row.
  */
 @Composable
 private fun NotMadeLine(
@@ -256,17 +256,17 @@ private fun NotMadeLine(
                 stringResource(R.string.mindmaps_unreachable)
             }
 
+            limit != null -> {
+                MindMapLimit(limit, offer.stop.limitSubject, actions.page.navigate)
+                return
+            }
+
             onTheWay > 0 -> {
                 counted(R.plurals.mindmaps_being_made, onTheWay.toLong())
             }
 
             failed > 0 -> {
                 counted(R.plurals.mindmaps_didnt_finish, failed.toLong())
-            }
-
-            limit != null -> {
-                MindMapLimit(limit, offer.stop.limitSubject, actions.page.navigate)
-                return
             }
 
             offer.startable in 1..<offer.eligible -> {
