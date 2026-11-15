@@ -3,7 +3,7 @@ import { useLayoutEffect, useRef } from "react";
 /**
  * A gate that lifts by itself, with no tap, leaves its slot as tall as it was for the rest of the
  * visit, so what's below doesn't move under the learner's finger; what replaces it sits at the top.
- * The next visit takes the natural height.
+ * The next visit, or a new width, takes the natural height.
  */
 export function useHeldSlot<Slot extends HTMLElement>(gated: boolean) {
   const slot = useRef<Slot>(null);
@@ -17,12 +17,29 @@ export function useHeldSlot<Slot extends HTMLElement>(gated: boolean) {
     }
 
     if (!gated) {
-      if (gate.current) {
-        element.dataset.held = "";
-        element.style.minHeight = `${gate.current.height}px`;
+      const held = gate.current;
+
+      if (!held) {
+        return;
       }
 
-      return;
+      element.dataset.held = "";
+      element.style.minHeight = `${held.height}px`;
+
+      // A new width is the learner's own change of layout: the slot takes its natural height again.
+      const release = new ResizeObserver(() => {
+        if (element.getBoundingClientRect().width === held.width) {
+          return;
+        }
+
+        delete element.dataset.held;
+        element.style.removeProperty("min-height");
+        gate.current = null;
+        release.disconnect();
+      });
+
+      release.observe(element);
+      return () => release.disconnect();
     }
 
     // The tallest it has been at this width: its line can go a moment before the gate does.
