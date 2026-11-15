@@ -48,6 +48,8 @@ class CoverageSheetWindowTest {
     @get:Rule
     val rule: ComposeTestRule = createEmptyComposeRule()
 
+    @get:Rule val testName = org.junit.rules.TestName()
+
     private val api = FakePlanApi()
     private val held = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
     private lateinit var scenario: ActivityScenario<CoverageSheetTestActivity>
@@ -74,13 +76,27 @@ class CoverageSheetWindowTest {
         CoverageSheetTest.page = page
         CoverageSheetTest.viewModel =
             PlanViewModel(store, page.goal.id, writingWaits(WritingRuns(write = "writeSetupLessons", ready = "setupLessonsReady")))
+        if (testName.methodName == "reviewPanelBecomingClosedLineDoesNotReplayPreview") RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
         scenario = ActivityScenario.launch(CoverageSheetTestActivity::class.java)
-        rule.onNodeWithText("View").performClick()
+        if (testName.methodName != "reviewPanelBecomingClosedLineDoesNotReplayPreview") rule.onNodeWithText("View").performClick()
         rule.onNodeWithText("Find the time").performClick()
     }
 
     @After
     fun close() = scenario.close()
+
+    @Test
+    fun aPanelRecreatedAsAClosedLineAsksNoPreviewWhenItOpens() {
+        RuntimeEnvironment.setQualifiers("w411dp-h891dp")
+        scenario.recreate()
+        rule.waitForIdle()
+        held.complete(Unit)
+        rule.waitForIdle()
+        assertEquals(PlanPreviewState.Idle, CoverageSheetTest.viewModel.slotPreview.value)
+        rule.onNodeWithText("View").performClick()
+        rule.waitForIdle()
+        assertEquals(PlanPreviewState.Idle, CoverageSheetTest.viewModel.slotPreview.value)
+    }
 
     @Test
     fun aSearchThatAnswersAfterItsSheetClosedAsksNoPreviewWhenItOpensAgain() {
@@ -141,7 +157,13 @@ class CoverageSheetTestActivity : ComponentActivity() {
                                 clearPreview = viewModel::clearSlotPreview,
                             ),
                             viewModel.slotState,
-                            SuggestionLayout.Line,
+                            if (androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp >
+                                900
+                            ) {
+                                SuggestionLayout.Panel
+                            } else {
+                                SuggestionLayout.Line
+                            },
                             SlotFocus(),
                         ),
                     )

@@ -22,6 +22,10 @@ class Visit {
     private val outcomes = mutableListOf<VisitOutcome<*>>()
     private val openings = mutableListOf<Visit>()
 
+    /** The places composed for this visit now, and whether one was before a recreation took them away. */
+    private var holders = 0
+    private var held = false
+
     fun <T : Any> outcome(): VisitOutcome<T> = VisitOutcome<T>(this).also { outcomes += it }
 
     /**
@@ -32,8 +36,31 @@ class Visit {
 
     fun end() {
         number++
+        held = false
         outcomes.forEach { it.clear() }
         openings.forEach { it.end() }
+    }
+
+    /** A place for this visit was composed (`VisitOf`). */
+    fun hold() {
+        holders++
+        held = true
+    }
+
+    /** A place for this visit left the composition: for real ([ending]), which ends it, or for a recreation. */
+    fun release(ending: Boolean) {
+        holders = (holders - 1).coerceAtLeast(0)
+        if (ending) end()
+    }
+
+    /**
+     * Once a recreated screen has drawn: an opening held before the recreation that no place in the new layout holds
+     * (a panel that came back as a closed line) has ended, as if it had closed.
+     */
+    fun endOpeningsLeftBehind() {
+        openings.forEach { opening ->
+            if (opening.held && opening.holders == 0) opening.end() else opening.endOpeningsLeftBehind()
+        }
     }
 }
 

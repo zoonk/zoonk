@@ -200,10 +200,11 @@ internal fun CoverageSuggestion(slot: Slot) {
     PlanChangeSuggestion(SlotItem.Coverage, title, slot) {
         // The sheet or panel asks: closing it drops what the search owes it, so a later opening only shows what was found.
         VisitOf(edits.outcomes.suggestion)
-        // Focus moves to the suggestion once the search answers, as the control that asked gives way.
-        ActOn(edits.outcomes.coverageFound) { (next, outcome) ->
+        // Focus moves to the suggestion once the search answers, as the control that asked gives way. What's kept is
+        // the answer for the plan shown now ([found]), never the time an older plan's search carried.
+        ActOn(edits.outcomes.coverageFound) { (next, _) ->
             if (state.asking == next) focus()
-            val time = (outcome as? TimeToCoverOutcome.Answered)?.time ?: return@ActOn
+            val time = found ?: return@ActOn
             val change = coverageChange(page.isExam, next, time, plan.schedule.dailyMinutes.toInt()) ?: return@ActOn
             if (coverage != null && state.asking == next) slot.host.requestPreview(change.operations)
         }
