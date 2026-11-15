@@ -246,7 +246,7 @@ fun SpeakingPaperSection(
     from: String? = null,
 ) {
     val locked = paper.access == SpeakingPaper.Access.PLUS_REQUIRED
-    val model = viewModel(key = "speaking-start:$goalId") { CallStartModel(start, GenerationKind.ExamSpeaking) }
+    val model = viewModel(key = "speaking-start:$goalId") { CallStartModel(start, GenerationKind.ExamSpeaking, onRefused) }
     val paused = paper.access == SpeakingPaper.Access.CALLS_PAUSED
     var started by rememberSaveable { mutableStateOf<String?>(null) }
     val writing by model.writing.generationId.collectAsStateWithLifecycle()
@@ -254,7 +254,7 @@ fun SpeakingPaperSection(
     val openCall = { id: UUID -> open(AppRoute.Conversation(id.toString(), from = from)) }
     val startTask = { key: String ->
         started = key
-        model.start(CallRequest.ExamSpeaking(goalId, key), onRefused)
+        model.start(CallRequest.ExamSpeaking(goalId, key))
     }
     val actions = SpeakingActions(start, open, openWeb) { onRefused() }
     OpenStartedCall(model, openCall)
