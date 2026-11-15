@@ -10,6 +10,7 @@
   "profile_questions_cap": "d53c70b37d98e52129481b1805214d325022d2b08769b8ed9dfc104f79218a95",
   "profile_questions_condition_note": "501c6125d895fab57aa884cad89a346bf60b11bb85487b4c9b491c3938a4150b",
   "profile_questions_conditions_description": "603c0f9ac947293f12933a9a5e6395ae500d0712ab977e32ff5b08a3659694bb",
+  "profile_questions_conditions_description_settings": "e25154d0f0cec5a2d73d437455a426f9e62f9ddc81cd57b09d41e95e40ba824c",
   "profile_questions_conditions_saved": "82d6ffa267e60758d035ab23b19a3da241abc942d04aa4d45613e295a5b3388f",
   "profile_questions_conditions_title": "699c506c665fa9ab545d11496be345aeb1786479ad8879bcb2541a9cce1a57f1",
   "profile_questions_description": "79c3dbfa373a2988476187c57ffc1f408071828a2b8f39ff84d204cf631cb8fd",
@@ -61,6 +62,7 @@
   "profile_questions_support_description": "14414bffc890ec669a4feffc862e368c12aa4a915098c26e9df354a7757dd667",
   "profile_questions_support_note": "ec96085b2642af6b95fdf0bc644c10beee80be64daaad36e8e8718e594a01dcd",
   "profile_questions_support_note_help": "0eb60d573d95a32bef8826582973b5daea64d01b176faae23ddb84399174de2e",
+  "profile_questions_support_note_help_settings": "a95d71960e8540fbf6ad50b20b56d3d71a473314b155e98ac6cfb5d7b7c20664",
   "profile_questions_support_placeholder": "ec9cf8fde8ecb3660478757dfab3d35bfe7e393971117841bfb82875dae0a035",
   "profile_questions_support_title": "6ac3c3964dc0aaf53be08a0970ca72d242592cee013cbb4aff5a79f8d209044e",
   "profile_questions_title": "647e7ca5ce7ba31e19450d033c3803d64c5e21786ced096bed2cff0b09ea0a2e",
@@ -120,6 +122,7 @@
     <string name="profile_questions_activities_placeholder">例：パン作り、車、天文学</string>
     <string name="profile_questions_conditions_title">この中にあてはまるものはありますか？</string>
     <string name="profile_questions_conditions_description">任意です。選んだ項目をもとに、学びやすいように内容を調整します。設定でいつでも削除できます。</string>
+    <string name="profile_questions_conditions_description_settings">回答は任意です。選んだ内容に応じて、学習内容を調整します。いつでも削除できます。</string>
     <string name="profile_questions_condition_note">知っておいてほしいことはありますか？</string>
     <string name="profile_questions_support_title">どんな工夫があると学びやすいですか？</string>
     <string name="profile_questions_support_description">役立つものをいくつでも選べます。特性に名前がついていなくても、診断を受けていなくても大丈夫です。</string>
@@ -131,6 +134,7 @@
     <string name="profile_questions_support_note">学びやすくなることを自分の言葉で（任意）</string>
     <string name="profile_questions_support_placeholder">例：文章より図のほうが理解しやすいです</string>
     <string name="profile_questions_support_note_help">この内容を覚えておきます。設定でいつでも削除できます。</string>
+    <string name="profile_questions_support_note_help_settings">この内容を覚えておきます。いつでも削除できます。</string>
     <string name="profile_questions_lesson_ready">レッスン1の準備ができました。</string>
     <string name="profile_questions_start_lesson">レッスン1を始める</string>
     <string name="profile_questions_save_start_lesson">保存してレッスン1を始める</string>

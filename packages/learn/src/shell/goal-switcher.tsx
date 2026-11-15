@@ -235,8 +235,7 @@ export function GoalSwitcher({
           title={selected?.displayName}
         >
           {selected ? <GoalMark goal={selected} /> : <NoGoalMark />}
-          {/* Trimmed to its capitals so `items-center` puts them on the mark's and the chevron's middle; clipped sideways only, so accents and descenders still show. */}
-          <span className="min-w-0 flex-1 overflow-x-clip text-left text-ellipsis whitespace-nowrap [text-box:trim-both_cap_alphabetic]">
+          <span className="min-w-0 flex-1 truncate text-left">
             {selected?.displayName ?? t("Start a goal")}
           </span>
           {/* After the title, so the trigger's name starts with the words on screen. */}

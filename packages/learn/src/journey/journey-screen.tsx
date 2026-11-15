@@ -4,6 +4,7 @@ import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useState } from "react";
 import { Page } from "../_components/page";
+import { PageHasMainAction } from "../_components/suggestion";
 import { usePoll } from "../_utils/use-poll";
 import { type AlphabetLink } from "../language/units/alphabet-row";
 import { PlanExamOverBar } from "../plan/exam-over-actions";
@@ -31,7 +32,7 @@ import { type JourneyStanding, PlanNumbers } from "./journey-hero";
 import { type JourneyPathLinks, getPlanLibraryCourse } from "./journey-links";
 import { AdjustPlanButton, JourneyMenu } from "./journey-menu";
 import { NextOnPath } from "./next-on-path";
-import { PlanGoalLine, PlanHeader } from "./plan-header";
+import { PlanHeader, usePlanDaysLeft } from "./plan-header";
 import { PlanRoadmap } from "./plan-roadmap";
 import { MoreSection, PathSection, PhasesSheet } from "./plan-sections";
 import { ResumeGoalBar } from "./resume-goal-bar";
@@ -125,6 +126,11 @@ function JourneyBody({
       />
     );
 
+  const daysLeft = usePlanDaysLeft();
+  const examOver = goal.kind === "exam" && plan.status?.kind === "pastDate";
+  // The bottom bar is the page's own main action; without it, a suggestion's answer is the one.
+  const hasMainAction = goalStatus !== null && (goalStatus.status === "paused" || examOver);
+
   return (
     <PlanSuggestionProvider
       host={{
@@ -139,25 +145,21 @@ function JourneyBody({
         aside={
           <>
             {numbers("stats", IN_ASIDE_BLOCK_CLASS)}
-            <PlanSuggestionSlot className="hidden min-[72rem]:block" />
-            <NextOnPath className={structure ? undefined : IN_ASIDE_CLASS} links={links} />
+            <PageHasMainAction value={hasMainAction}>
+              <PlanSuggestionSlot className="hidden min-[72rem]:block" />
+            </PageHasMainAction>
+            {/* Without subjects the path is in the column beside it, already saying what's next. */}
+            {structure && <NextOnPath links={links} />}
             <MoreSection links={links} />
             <PlanProperties className={IN_ASIDE_CLASS} examHref={links.exam} onOpen={editor.open} />
           </>
         }
         asideClassName="sm:max-[72rem]:grid sm:max-[72rem]:grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] sm:max-[72rem]:items-start sm:max-[72rem]:gap-x-10"
         asideLabel={t("Your plan at a glance")}
-        bottomBar={
-          goalStatus && (
-            <JourneyBottomBar
-              examOver={goal.kind === "exam" && plan.status?.kind === "pastDate"}
-              goalStatus={goalStatus}
-            />
-          )
-        }
+        bottomBar={goalStatus && <JourneyBottomBar examOver={examOver} goalStatus={goalStatus} />}
       >
         <Page data-slot="journey">
-          <PlanHeader subtitle={<PlanGoalLine />}>
+          <PlanHeader subtitle={daysLeft}>
             <AdjustPlanButton onAdjust={() => editor.open()} />
             <JourneyMenu courseHref={courseHref} examHref={links.exam} goal={goalMenu} />
           </PlanHeader>
@@ -175,15 +177,19 @@ function JourneyBody({
           <PlanSuggestionSlot className={IN_COLUMN_CLASS} />
 
           {structure ? (
-            <SyllabusSection subjectHref={links.subject} syllabus={structure}>
-              {focusTest}
-              {/* Unpicked choices are the suggestion's; from 72rem the aside's properties name the pick. */}
-              <PlanChoiceLines
-                choices={plan.examChoices.filter((choice) => choice.subjects.length > 0)}
-                className={IN_COLUMN_CLASS}
-                onChange={() => editor.open("choices")}
-              />
-            </SyllabusSection>
+            <>
+              {/* Above the subjects, not among them: neither is a subject with a preparation. */}
+              <div className="flex flex-col gap-2 empty:hidden">
+                {focusTest}
+                {/* Unpicked choices are the suggestion's; from 72rem the aside's properties name the pick. */}
+                <PlanChoiceLines
+                  choices={plan.examChoices.filter((choice) => choice.subjects.length > 0)}
+                  className={IN_COLUMN_CLASS}
+                  onChange={() => editor.open("choices")}
+                />
+              </div>
+              <SyllabusSection subjectHref={links.subject} syllabus={structure} />
+            </>
           ) : (
             <PathSection alphabet={alphabet} courseHref={courseHref} links={links}>
               {focusTest}

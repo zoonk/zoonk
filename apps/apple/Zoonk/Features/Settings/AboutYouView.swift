@@ -121,7 +121,8 @@ struct AboutYouQuestionView: View {
 
         QuestionForm {
           ProfileQuestionSections(
-            view: view, context: ProfileScreenContext(memoryEnabled: profile.memoryEnabled),
+            view: view,
+            context: ProfileScreenContext(memoryEnabled: profile.memoryEnabled, inSettings: true),
             draft: draft)
         } buttons: {
           StepButtons(

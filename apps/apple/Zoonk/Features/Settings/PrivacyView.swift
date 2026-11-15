@@ -26,18 +26,16 @@ struct PrivacyView: View {
       if let deleteAccount {
         Section {
           DataExportRow(
-            title: Text(
-              "Download my data", tableName: "Account"),
+            title: Text("A copy of your data", tableName: "Account"),
+            spokenAction: Text("Download your data", tableName: "Account"),
             filename: "zoonk-data"
           ) {
             await settings.exportAccountData()
           }
 
           Button(role: .destructive, action: deleteAccount) {
-            Text(
-              "Delete my account", tableName: "Account"
-            )
-            .typeStyle(.rowTitle)
+            Text("Delete account", tableName: "Account")
+              .typeStyle(.rowTitle)
           }
           .foregroundStyle(.destructiveText)
         } header: {

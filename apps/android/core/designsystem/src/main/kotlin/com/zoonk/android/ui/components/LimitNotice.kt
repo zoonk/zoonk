@@ -31,7 +31,10 @@ fun LimitNotice(
     modifier: Modifier = Modifier,
 ) {
     val words = limitWords(limit, subject)
-    GateLayout(words.title, words.line, modifier, if (limit.hasWayOn) ({ LimitActions(limit, onCreateAccount, onSubscribe) }) else null)
+    // Its day coming while it shows changes only its line; what's under the notice doesn't move for that.
+    HeldSlot(gated = !limitLifted(limit), modifier) {
+        GateLayout(words.title, words.line, buttons = if (limit.hasWayOn) ({ LimitActions(limit, onCreateAccount, onSubscribe) }) else null)
+    }
 }
 
 /** The limit's way on, for a screen that draws its own words. */

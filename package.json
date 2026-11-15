@@ -61,6 +61,7 @@
     "test:watch": "turbo test:watch",
     "typecheck": "turbo typecheck && tsrs --project scripts/tsconfig.json",
     "verify:diff": "node scripts/verify/diff.mts",
+    "verify:alignment": "node scripts/verify/alignment-cli.mts",
     "verify:catalog": "node scripts/verify/catalog-rules.mts",
     "verify:pages": "node scripts/verify/pages.mts",
     "worktree:setup": "node scripts/worktree/setup.mts",

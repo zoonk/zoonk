@@ -1,7 +1,8 @@
 import { useExtracted } from "next-intl";
-import { useFormatIsoDate, useGoalDateValues } from "../_utils/iso-date";
+import { useGoalDateValues } from "../_utils/iso-date";
 import { type TimeLine } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
+import { useFinishSentence } from "./finish-sentence";
 import { type GoalDate, useTimeAnswerTexts } from "./time-answer-texts";
 
 type DatedLine = Extract<TimeLine, { kind: "everything" | "focus" | "pastDate" | "share" }>;
@@ -17,10 +18,6 @@ function isDatedLine(line: TimeLine): line is DatedLine {
 
 function isFinishLine(line: TimeLine): line is FinishLine {
   return FINISH_KINDS.has(line.kind);
-}
-
-function FinishMonth(chunks: React.ReactNode) {
-  return <span className="text-foreground font-medium">{chunks}</span>;
 }
 
 function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line: DatedLine }) {
@@ -74,22 +71,11 @@ function FinishWords({
   minutes: number | null;
 }) {
   const t = useExtracted();
-  const formatDate = useFormatIsoDate();
-  const formatDuration = useFormatDuration();
+  const finishSentence = useFinishSentence();
 
   switch (line.kind) {
     case "finish":
-      return aim && minutes !== null
-        ? t.rich("At {time} a day, you reach {level} around <date>{month}</date>.", {
-            date: FinishMonth,
-            level: aim,
-            month: formatDate(line.endDate, "month"),
-            time: formatDuration(minutes),
-          })
-        : t.rich("You finish around <date>{month}</date>.", {
-            date: FinishMonth,
-            month: formatDate(line.endDate, "month"),
-          });
+      return finishSentence({ aim, endDate: line.endDate, minutes });
     case "noFinish":
       return t("We can't estimate an end date. Try more time or more study days.");
     default:

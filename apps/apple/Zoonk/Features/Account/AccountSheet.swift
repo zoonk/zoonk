@@ -449,7 +449,9 @@ private struct SettingsHubView: View {
         Link(destination: AccountLinks.support) {
           ListRow(
             Text(
-              "Help", tableName: "Account", comment: "Settings row that opens Zoonk's help pages"))
+              "Help", tableName: "Account", comment: "Settings row that opens Zoonk's help pages")
+          )
+          .disclosureChevron()
         }
         .foregroundStyle(.primary)
 
@@ -457,7 +459,9 @@ private struct SettingsHubView: View {
           ListRow(
             Text(
               "Send feedback", tableName: "Account",
-              comment: "Settings row that opens the form to write to Zoonk"))
+              comment: "Settings row that opens the form to write to Zoonk")
+          )
+          .disclosureChevron()
         }
         .foregroundStyle(.primary)
       }

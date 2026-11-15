@@ -94,6 +94,7 @@
   "mock_result_scale_score": "c3019bf15fea324bf1c4eb3de1590cd254615db6c653ff317ec8d7db2da0e576",
   "mock_result_scale_score_named": "229299d7a59f9feb8d51d033bc24c5bdaf813f0cebb32fe943dee79c06b60adb",
   "mock_result_see_answers": "1dd5d844ddbc21e4f428f1205e19a7f528b665de4871ea71debba82ac29f90fd",
+  "mock_result_see_details": "fd6481bae8b1e7e726af33f947a44c49098d3dc02e8d808096343056181dc730",
   "mock_result_see_feedback": "6b70cdcd06f7e550798e4d09f7bb5cc37e644485307de151888a2eea93e606a4",
   "mock_result_short_points": "d87b210880449c891b528c8ea467a65e6f9285d79b3519e0b492439d62db70ef",
   "mock_result_short_points_decimal": "84fa119a1e4ab162a279de053b3f768a0cadb45f880b24d56fcbea0eea7c73f7",
@@ -144,8 +145,9 @@
     <string name="mock_result_every_minimum">W tym egzaminie próbnym udało ci się osiągnąć wszystkie wymagane minima.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
     <string name="mock_result_strongest">Najlepszy wynik: %1$s. Do przećwiczenia: %2$s.</string>
-    <!-- A small button under the result that opens its details. -->
+    <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Zobacz szczegóły</string>
+    <string name="mock_result_see_details">Zobacz szczegóły</string>
     <!-- A small button under the result that opens the questions to review. -->
     <string name="mock_result_see_answers">Zobacz odpowiedzi</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->

@@ -550,9 +550,7 @@ struct ChallengeScreen: View {
     }
 
     // Main says how long only a mock or a call takes; a duel's length is its questions.
-    if challenge.mock || challenge.call != nil,
-      let minutes = challenge.estimatedMinutes ?? challenge.minutes
-    {
+    if challenge.mock || challenge.call != nil, let minutes = challenge.minutes {
       facts.append(studyDuration(minutes: minutes))
     }
 

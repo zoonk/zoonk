@@ -81,6 +81,7 @@ private struct BottomBar<Actions: View>: View {
       }
     }
     .controlSize(.large)
+    .layoutAnchor("bar")
     .environment(\.mainActionFillsRow, !isWide)
     .environment(\.mainActionMinWidth, isWide ? 160 : nil)
     .frame(maxWidth: .infinity, alignment: isWide ? .trailing : .center)

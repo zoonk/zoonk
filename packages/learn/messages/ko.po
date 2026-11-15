@@ -341,6 +341,16 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "마치고 결과를 확인해 보세요."
 
+#: src/_components/finish-sentence.ts
+msgctxt "XhpWxQ"
+msgid "At {time} a day, you reach {level} around {month}."
+msgstr "하루 {time}씩 공부하면 {level}에 {month}쯤 도달해요."
+
+#: src/_components/finish-sentence.ts
+msgctxt "6Due7K"
+msgid "You finish around {month}."
+msgstr "{month}쯤에 마쳐요."
+
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
 msgid "Take a short break, then try again."
@@ -801,16 +811,6 @@ msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your dat
 msgstr "{dateKind, select, month {정한 날짜({date})가 지났어요.} other {정한 날짜({date})가 지났어요.}}"
 
 #: src/_components/time-answer-lines.tsx
-msgctxt "qQDZCf"
-msgid "At {time} a day, you reach {level} around <date>{month}</date>."
-msgstr "하루 {time}씩 공부하면 {level}에 <date>{month}</date>쯤 도달해요."
-
-#: src/_components/time-answer-lines.tsx
-msgctxt "lzWfsi"
-msgid "You finish around <date>{month}</date>."
-msgstr "<date>{month}</date>쯤 마쳐요."
-
-#: src/_components/time-answer-lines.tsx
 msgctxt "wRhIPZ"
 msgid "We can't estimate an end date. Try more time or more study days."
 msgstr "완료 날짜를 예상할 수 없어요. 하루 학습 시간이나 공부하는 날을 늘려 보세요."
@@ -970,6 +970,18 @@ msgstr "맞았어요, 철자만 확인해 보세요"
 msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "이번에는 답을 확인하지 않았어요"
+
+#. Why a switch for a different study time on weekends is off: no weekend day is a study day.
+#: src/_components/weekend-time.tsx
+msgctxt "MuKIuz"
+msgid "Add Saturday or Sunday to your study days."
+msgstr "학습 요일에 토요일이나 일요일을 추가하세요."
+
+#. Why a switch for a different study time on weekends is off: only weekend days are study days.
+#: src/_components/weekend-time.tsx
+msgctxt "dQytAa"
+msgid "Add a weekday to your study days."
+msgstr "학습 요일에 평일 중 하루를 추가하세요."
 
 #. A switch to study a different amount of time a day on weekends.
 #: src/_components/weekend-time.tsx
@@ -4930,11 +4942,6 @@ msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "답해 주시면 목표를 이룰 때까지 매일의 학습 계획을 세워 드려요."
 
 #: src/journey/journey-planless.tsx
-msgctxt "3X96t0"
-msgid "{goal} · Building your plan"
-msgstr "{goal} · 계획을 만들고 있어요"
-
-#: src/journey/journey-planless.tsx
 msgctxt "vKk5P_"
 msgid "It usually takes a minute or two. Your plan opens here as soon as it's ready."
 msgstr "보통 1~2분 걸려요. 계획이 완성되면 여기에서 바로 열려요."
@@ -7231,9 +7238,9 @@ msgid "{count, plural, one {# map didn't finish. Try again.} other {# maps didn'
 msgstr "{count, plural, other {마인드맵 #개를 완성하지 못했어요. 다시 시도해 보세요.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "CHNbiu"
-msgid "{count, plural, one {You can make # more right now.} other {You can make # more right now.}}"
-msgstr "{count, plural, other {지금 #개를 더 만들 수 있어요.}}"
+msgctxt "VSfWXI"
+msgid "{count, plural, one {You can create # more map right now.} other {You can create # more maps right now.}}"
+msgstr "{count, plural, other {지금 마인드맵을 #개 더 만들 수 있어요.}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "BekXxP"
@@ -8231,6 +8238,11 @@ msgid "By topic"
 msgstr "주제별"
 
 #: src/mock/mock-result-details.tsx
+msgctxt "RQfEXO"
+msgid "See details"
+msgstr "자세히 보기"
+
+#: src/mock/mock-result-details.tsx
 msgctxt "2mUitd"
 msgid "Answers"
 msgstr "답변 수"
@@ -8874,9 +8886,9 @@ msgid "Exam"
 msgstr "시험"
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "rsoIT2"
-msgid "Learn a topic"
-msgstr "주제 학습"
+msgctxt "UdtpV7"
+msgid "Topic"
+msgstr "주제"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "79lLl-"
@@ -9802,7 +9814,6 @@ msgid "{days, plural, one {About # day} other {About # days}}"
 msgstr "{days, plural, other {약 #일}}"
 
 #: src/onboarding/steps/reveal-readouts.tsx
-#: src/onboarding/steps/reveal-week.tsx
 msgctxt "UA5qaX"
 msgid "{days, plural, one {# day} other {# days}}"
 msgstr "{days, plural, other {#일}}"
@@ -9839,6 +9850,11 @@ msgstr "쉬는 날"
 msgctxt "tWAtPK"
 msgid "Your first week"
 msgstr "첫 주"
+
+#: src/onboarding/steps/reveal-week.tsx
+msgctxt "V9hgFL"
+msgid "{days, plural, one {# study day} other {# study days}}"
+msgstr "{days, plural, other {#일 학습}}"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "_1P3JX"
@@ -10441,11 +10457,6 @@ msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "계획 조정하기"
 
-#: src/plan/plan-finish.tsx
-msgctxt "6Due7K"
-msgid "You finish around {month}."
-msgstr "{month}쯤에 마쳐요."
-
 #: src/plan/plan-fit-suggestion.tsx
 msgctxt "ylM0GM"
 msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
@@ -10562,6 +10573,11 @@ msgstr "하루 {time}이면 모두 공부할 수 있어요"
 msgctxt "tODRiS"
 msgid "Study everything"
 msgstr "모두 공부하기"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "hZ68v2"
+msgid "Keep studying, or archive this goal?"
+msgstr "계속 공부할까요, 아니면 이 목표를 보관할까요?"
 
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "PpW8Dz"

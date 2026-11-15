@@ -7,29 +7,27 @@ import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { daysBetween } from "../_utils/iso-date";
 import { PLAN_TITLE_ID, usePlanScreen } from "../plan/plan-context";
 
-export function PlanGoalLine() {
+/**
+ * The days left to the goal's date, under the Plan's title. The top bar names the goal on every
+ * width, so the line doesn't; a goal without a date to come has none.
+ */
+export function usePlanDaysLeft(): React.ReactNode {
   const t = useExtracted();
-  const { goal, plan, today } = usePlanScreen();
+  const { plan, today } = usePlanScreen();
   const { targetDate, targetDateEstimated } = plan.schedule;
 
   if (!targetDate || targetDate < today) {
-    return goal.displayName;
+    return null;
   }
 
   const days = daysBetween(today, targetDate);
 
   if (!targetDateEstimated) {
-    return (
-      <>
-        {`${goal.displayName} · `}
-        {t("{days, plural, =0 {The day is here} one {# day left} other {# days left}}", { days })}
-      </>
-    );
+    return t("{days, plural, =0 {The day is here} one {# day left} other {# days left}}", { days });
   }
 
   return (
     <>
-      {`${goal.displayName} · `}
       <span aria-hidden="true">
         {t("{days, plural, one {~# day left} other {~# days left}}", { days })}
       </span>
@@ -45,7 +43,7 @@ export function PlanHeader({
   subtitle,
 }: {
   children: React.ReactNode;
-  subtitle: React.ReactNode;
+  subtitle?: React.ReactNode;
 }) {
   const t = useExtracted();
 
@@ -60,9 +58,11 @@ export function PlanHeader({
           <div className="flex flex-wrap items-center gap-2">{children}</div>
         </div>
 
-        <PageSubtitle>
-          <p>{subtitle}</p>
-        </PageSubtitle>
+        {subtitle && (
+          <PageSubtitle>
+            <p>{subtitle}</p>
+          </PageSubtitle>
+        )}
       </PageHeaderContent>
     </PageHeader>
   );

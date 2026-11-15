@@ -10,7 +10,8 @@
   "memory_change_undone": "e310299dd284a2076211030789f782dae5f4c28a9443acf285c67d9eb4d2eb73",
   "memory_delete": "434b648cb3413eac5cff88a21b6125036dee019709460522faeced62b6a77fcb",
   "memory_description": "5c54bcb4e44fa6fa14eaee3175c1ce5356a8b084afb9d3b8afb5b3b5ccf4ea3c",
-  "memory_download": "471f609a150cc26c9ce56594ede64c714b6559d22bb89963bcfe18c3e0fd153a",
+  "memory_download": "ece12221201827afa15b249e4864d5eda4e9296f26d13c51332d6b4db5bc3b70",
+  "memory_download_your_memory": "661feb655637b36dcbaaede1dcd43dad584e02d3db300fe44ad264a7dbc29b1d",
   "memory_edit": "00f6d34375b460830b933347f46973138ebd1bf127f938fd4d2369f5c3c04d9b",
   "memory_edit_description": "99f8d0f5b381923929085b67f52c206c3126f2b10315ea4139cde52d7de5de1e",
   "memory_edit_label": "3d7b3aa1f40ed4771baab6c6df1a7bb06625a111e93a62554a290fa7a2369f1f",
@@ -63,7 +64,8 @@
     <string name="memory_edit_title">Bellek kaydını düzenle</string>
     <string name="memory_edit_description">Seni doğru yansıtacak şekilde yaz.</string>
     <string name="memory_edit_label">Zoonk’un hatırladıkları</string>
-    <string name="memory_download">Belleğimi indir</string>
+    <string name="memory_download">Belleğinin bir kopyası</string>
+    <string name="memory_download_your_memory">Belleğini indir</string>
     <string name="memory_sensitive_note">Sen istemedikçe Zoonk sağlık, din gibi hassas konulardaki bilgilerini saklamaz.</string>
     <string name="memory_updated">Bellek güncellendi:</string>
     <plurals name="memory_updated_more">
