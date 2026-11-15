@@ -6379,5 +6379,89 @@
     "screen": "/mind-maps",
     "unit": "px",
     "version": 1
+  },
+  "android reading bar 239de6628e, phone": {
+    "version": 1,
+    "platform": "android",
+    "scenario": "not declared",
+    "screen": "OnboardingScreenshots.phone",
+    "configuration": {
+      "size": "phone",
+      "width": 411,
+      "height": 156,
+      "pointer": "touch",
+      "locale": "en-US",
+      "textScale": 1,
+      "scheme": "light"
+    },
+    "unit": "dp",
+    "scale": 3,
+    "activeSurface": "page",
+    "elements": [
+      {
+        "id": "e0",
+        "piece": "generation-wait",
+        "part": "row",
+        "group": null,
+        "row": null,
+        "bounds": [24, 24, 363, 108],
+        "ink": [24, 27.33, 362.67, 102.67],
+        "margins": [0, 0],
+        "endEdge": "not measured",
+        "note": false
+      },
+      {
+        "id": "e1",
+        "piece": "generation-wait",
+        "part": "group",
+        "group": null,
+        "row": "e0",
+        "bounds": [24, 24, 363, 16],
+        "ink": "not measured",
+        "endEdge": "not measured",
+        "gap": 16
+      },
+      {
+        "id": "e2",
+        "piece": "generation-wait",
+        "part": "bar",
+        "group": "e1",
+        "row": null,
+        "bounds": [24, 24, 363, 16],
+        "ink": [24, 27.33, 362.67, 9]
+      },
+      {
+        "id": "h0",
+        "part": "unmeasured",
+        "group": "e1",
+        "row": null,
+        "bounds": [24, 29, 328.67, 6],
+        "reason": "a parent replaced its children's semantics"
+      },
+      {
+        "id": "h1",
+        "part": "unmeasured",
+        "group": null,
+        "row": "e0",
+        "bounds": [56, 64, 115, 20],
+        "reason": "a parent replaced its children's semantics"
+      },
+      {
+        "id": "h2",
+        "part": "unmeasured",
+        "group": null,
+        "row": "e0",
+        "bounds": [357.33, 64, 29.67, 20],
+        "reason": "a parent replaced its children's semantics"
+      },
+      {
+        "id": "h3",
+        "part": "unmeasured",
+        "group": null,
+        "row": "e0",
+        "bounds": [56, 94, 165, 20],
+        "reason": "a parent replaced its children's semantics"
+      }
+    ]
   }
 }

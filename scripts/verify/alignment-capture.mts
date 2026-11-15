@@ -18,6 +18,7 @@ export const ELEMENT_PARTS = [
   ...PART_NAMES,
   "action",
   "anchor",
+  "bar",
   "fill",
   "group",
   "holder",
