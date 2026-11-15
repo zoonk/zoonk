@@ -199,7 +199,7 @@ private struct PlanContent: View {
 
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
-        header
+        header(context)
         rebuildNotice
         PlanRoadmapSection(context: context, structure: structure)
         structureSections(context: context, structure: structure, namesChoices: false)
@@ -218,7 +218,7 @@ private struct PlanContent: View {
       }
     } single: {
       ZoonkList {
-        header
+        header(context)
         rebuildNotice
         PlanRoadmapSection(context: context, structure: structure)
         PlanNumbersSection(context: context, syllabus: syllabus)
@@ -305,10 +305,11 @@ private struct PlanContent: View {
     }
   }
 
-  private var header: some View {
+  private func header(_ context: PlanContext) -> some View {
     Section {
-      PageHeader(
-        Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"))
+      PageHeader(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab")) {
+        PlanHeaderActions(context: context)
+      }
     }
   }
 

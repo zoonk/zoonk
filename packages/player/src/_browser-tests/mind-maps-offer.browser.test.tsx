@@ -83,6 +83,7 @@ function Screen({ actions, served }: { actions: MindMapLibraryActions; served: G
       <MindMapsScreen
         actions={actions}
         hrefs={{ back: "/plan", page: "/mind-maps", study: "/mind-maps/study" }}
+        listed
         mindMaps={toMindMapsPage(served)}
         subject={null}
         tab="chapters"

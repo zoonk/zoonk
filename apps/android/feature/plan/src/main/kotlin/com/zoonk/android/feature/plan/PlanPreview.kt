@@ -110,6 +110,8 @@ internal fun PlanPreviewResult(
     dateKind: GoalDateKind = GoalDateKind.Unknown,
     /** The card showed other numbers before this check. */
     repriced: Boolean = false,
+    /** The consequence lines the card held before the check, so its buttons stay where they were. */
+    roomLines: Int = 2,
 ) {
     val notNow = stringResource(R.string.plan_not_now)
 
@@ -121,7 +123,7 @@ internal fun PlanPreviewResult(
         }
 
         is PlanPreviewState.Failed -> {
-            EffectRoom { StatusDescription(stringResource(R.string.plan_couldnt_check_changes)) }
+            EffectRoom(roomLines) { StatusDescription(stringResource(R.string.plan_couldnt_check_changes)) }
             SuggestionActions {
                 SuggestionAction(stringResource(R.string.plan_try_again), onRetry)
                 SuggestionAction(notNow, onDismiss, secondary = true)
@@ -130,7 +132,7 @@ internal fun PlanPreviewResult(
 
         is PlanPreviewState.Ready -> {
             val preview = state.preview
-            EffectRoom {
+            EffectRoom(roomLines) {
                 if (preview.unchanged) {
                     SuggestionDescription(stringResource(R.string.plan_stays_as_it_is))
                 } else {
@@ -161,17 +163,20 @@ internal fun CheckingChange(onCancel: () -> Unit) {
 }
 
 /**
- * Main's `EFFECT_ROOM_CLASS`: room for a consequence of two lines and its "See all changes", which
- * a check's note and its answer both take, so the actions under them stay put.
+ * Main's `EFFECT_ROOM_CLASS`: room for a consequence of [lines] and its "See all changes", which a
+ * check's note and its answer both take, so the actions under them stay put; a longer answer grows it.
  */
 @Composable
-private fun EffectRoom(content: @Composable () -> Unit) {
+internal fun EffectRoom(
+    lines: Int = 2,
+    content: @Composable () -> Unit,
+) {
     val line =
         with(LocalDensity.current) {
             MaterialTheme.typography.bodyMedium.lineHeight
                 .toDp()
         }
-    Column(Modifier.heightIn(min = line * 2 + 4.dp + 48.dp)) { content() }
+    Column(Modifier.heightIn(min = line * lines + 6.dp + 48.dp)) { content() }
 }
 
 @Composable

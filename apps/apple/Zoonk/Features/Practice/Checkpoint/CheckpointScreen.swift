@@ -474,19 +474,21 @@ private struct CheckpointResultView: View {
         PracticeResultNumbers(
           correct: correct, total: checkpoint.kind == .weekly ? total : nil,
           brainPower: state.completion?.ownBrainPower ?? (won ? checkpoint.reward.brainPower : 0),
-          facts: won
-            ? []
-            : (result?.passMark).map { passMark in
-              [
-                String(
-                  localized: "\(passMark) right to win", table: "Practice",
-                  comment: "Under a lost Trickster duel's score: the right answers it needed.")
-              ]
-            } ?? [],
+          facts: [],
           // A lost duel shows no extra moment.
           day: won
             ? state.completion.flatMap { try? StudyJSON.recode($0, as: BlockMoment.self) }?.day
             : nil)
+
+        // A sentence, not a readout: beside the score a number read as "3 more to win".
+        if !won, let passMark = result?.passMark {
+          Text(
+            "You needed \(passMark) right to win.", tableName: "Practice",
+            comment: "Under a lost Trickster duel's score: the right answers it needed"
+          )
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+        }
       }
     } response: {
       if checkpoint.endedWithoutQuestions != true {

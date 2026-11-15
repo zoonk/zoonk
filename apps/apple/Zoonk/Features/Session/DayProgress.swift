@@ -126,33 +126,35 @@ struct DayProgressBlock: View {
 /// What's done today, the number in bold: "2 of 3 done today", or "2 done today" while today's list
 /// still grows.
 struct DayProgressLead: View {
+  @Environment(\.legibilityWeight) private var legibility
+
   let bar: SessionBar
   let isOpen: Bool
 
   var body: some View {
-    lead
+    // The bold number in the line's own face: a strong run otherwise takes the font's bold face,
+    // which draws other figures than the rest of the line (read b13-6).
+    Text(lead, legibility: legibility)
       .typeStyle(.body.monospacedDigit())
   }
 
   /// `AttributedString` parses the bold after the plural variant resolves; `Text`'s key doesn't.
-  private var lead: Text {
+  private var lead: AttributedString {
     if isOpen {
-      return Text(
-        AttributedString(
-          localized:
-            "**\(bar.completed)** done today", table: "Session",
-          comment:
-            "At a block's end on a day still holding time for lessons not listed yet: blocks done today. Keep the ** around the number: it shows in bold."
-        ))
+      return AttributedString(
+        localized:
+          "**\(bar.completed)** done today", table: "Session",
+        comment:
+          "At a block's end on a day still holding time for lessons not listed yet: blocks done today. Keep the ** around the number: it shows in bold."
+      )
     }
 
-    return Text(
-      AttributedString(
-        localized:
-          "**\(bar.completed)** of \(bar.total) done today", table: "Session",
-        comment:
-          "At a block's end: blocks of today's session done out of all of them. Keep the ** around the first number: it shows in bold."
-      ))
+    return AttributedString(
+      localized:
+        "**\(bar.completed)** of \(bar.total) done today", table: "Session",
+      comment:
+        "At a block's end: blocks of today's session done out of all of them. Keep the ** around the first number: it shows in bold."
+    )
   }
 }
 

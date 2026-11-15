@@ -95,6 +95,7 @@ extension View {
       .groupBoxStyle(.panel)
       .disclosureGroupStyle(.fold)
       .typeStyle(.body)
+      .environment(\.barHoldsMainAction, false)
       .layoutSurface()
   }
 }

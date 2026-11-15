@@ -196,11 +196,13 @@ final class OnboardingStore {
   /// In the draft's `timeZone`, which counted the learner's today for the card's dates.
   func createGoals(
     _ goals: [Components.Schemas.GoalDraftOutput],
+    from draftID: String,
     schedule: Components.Schemas.GoalUnderstanding.Case1Payload.SchedulePayload,
     sourceIDs: [String],
     timeZone: String
   ) async throws -> String {
     try await create(
+      from: draftID,
       .init(
         dailyMinutes: schedule.dailyMinutes,
         goals: try goals.map { try PracticeJSON.recode($0) },
@@ -222,6 +224,7 @@ final class OnboardingStore {
 
   func createExplanation(draft: OnboardingDraft, question: String) async throws -> String {
     try await create(
+      from: draft.id,
       .init(
         dailyMinutes: Self.explanationMinutes,
         goals: [
@@ -238,6 +241,7 @@ final class OnboardingStore {
 
   func createMusicianship(draft: OnboardingDraft, instrument: String) async throws -> String {
     try await create(
+      from: draft.id,
       .init(
         dailyMinutes: Self.musicianshipMinutes,
         goals: [
@@ -531,6 +535,22 @@ final class OnboardingStore {
     onboarding(goalID: goalID).invalidate()
   }
 
+  /// A goal made from a draft's card. A create the server answered changes the draft only if it made
+  /// the goal, which the write's invalidation already reads. One that failed without an answer may
+  /// have made it, so the draft is stale until read again, and its card offers no create until then.
+  private func create(
+    from draftID: String, _ input: Components.Schemas.GoalCreateInput
+  ) async throws -> String {
+    do {
+      return try await create(input)
+    } catch let refusal as OnboardingError where refusal.isAnswer {
+      throw refusal
+    } catch {
+      draft(id: draftID).invalidate()
+      throw error
+    }
+  }
+
   private func create(
     _ input: Components.Schemas.GoalCreateInput, alsoInvalidating domains: Set<DataDomain> = []
   ) async throws -> String {
@@ -566,7 +586,9 @@ extension AppCache {
     invalidating domains: Set<DataDomain> = [],
     _ write: (AuthenticatedSession) async throws -> Value
   ) async throws -> Value {
-    let result = await mutate(invalidating: domains) {
+    // A refusal changed nothing, so nothing is read again for it.
+    let wrote: (Result<Value, OnboardingError>) -> Bool = { (try? $0.get()) != nil }
+    let result = await mutate(invalidating: domains, wrote: wrote) {
       identity -> Result<Value, OnboardingError> in
       do {
         return .success(try await write(identity))

@@ -47,12 +47,11 @@ class FitOfferCheckTest {
 
     private val api = FakePlanApi()
     private val summary = learnerSummary()
-    private val plan =
-        plan(
-            """"fitOffer":{"canApply":false,"fits":false,"operations":[{"kind":"fitLessons"}],"effect":{"lessonsAdded":6,""" +
-                """"lessonsRemoved":0,"topicsAdded":[{"area":"Web apps","topics":["Flask","Django","FastAPI"]}]}}""",
-        )
-    private val page = PlanPageState(summary.goals.first(), plan, summary)
+    private val offer =
+        """"fitOffer":{"canApply":false,"fits":false,"operations":[{"kind":"fitLessons"}],"effect":{"lessonsAdded":6,""" +
+            """"lessonsRemoved":0,"topicsAdded":[{"area":"Web apps","topics":["Flask","Django","FastAPI"]}]}}"""
+    private val plan = plan(offer)
+    private var page by mutableStateOf(PlanPageState(summary.goals.first(), plan, summary))
     private val viewModel =
         PlanViewModel(
             PlanStore(
@@ -76,6 +75,25 @@ class FitOfferCheckTest {
 
         compose.onNodeWithText("Add to my plan").performClick()
         compose.onNode(hasStateDescription("Checking what changes…")).assertExists()
+        shown = false
+        compose.waitForIdle()
+        held.complete(Unit)
+        compose.waitForIdle()
+
+        assertEquals(emptyList<List<PlanOp>>(), api.changes)
+        assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+    }
+
+    @Test
+    fun leavingThePlanWhileItChecksAddsNothingAfterThePlanWasReadAgain() {
+        val held = CompletableDeferred<Unit>()
+        api.previewGate = held
+        api.preview = checked(plan.fitOffer!!.effect)
+        show()
+
+        compose.onNodeWithText("Add to my plan").performClick()
+        page = page.copy(plan = plan(""""estimate":{"remainingHours":9,"totalHours":12},$offer"""))
+        compose.waitForIdle()
         shown = false
         compose.waitForIdle()
         held.complete(Unit)

@@ -243,6 +243,7 @@ function countDeck({ page, tab }: { page: MindMapsPage; tab: MindMapTab }): numb
 export function MindMapsScreen({
   actions,
   hrefs,
+  listed,
   mindMaps,
   subject,
   tab,
@@ -250,6 +251,8 @@ export function MindMapsScreen({
 }: {
   actions: MindMapLibraryActions;
   hrefs: MindMapsHrefs;
+  /** The learner's sidebar lists the page (`hasMindMapsPage`), so from `lg` it has no way back. */
+  listed: boolean;
   mindMaps: MindMapsPage;
   /** The subject the page was opened from, whose maps start unfolded. */
   subject: string | null;
@@ -274,7 +277,12 @@ export function MindMapsScreen({
   return (
     <DetailLayout
       bar={
-        <LearnPageBar back={{ href: hrefs.back }} listed="learner" root title={t("Mind maps")} />
+        <LearnPageBar
+          back={{ href: hrefs.back }}
+          listed={listed ? "learner" : undefined}
+          root
+          title={t("Mind maps")}
+        />
       }
       bottomBar={
         study && (

@@ -55,6 +55,8 @@
       var scale: CGFloat = 1
       /// A row whose layout put its value under its title (`layoutStacks(_:)`).
       var stacked = false
+      /// An action drawn disabled: it still counts toward one filled action, and says it's disabled.
+      var disabled = false
       /// A view of UIKit's inside this one, whose superviews are the views that really hold it: the
       /// scroll views and other clipping views that can cut it.
       weak var host: UIView?
@@ -330,6 +332,7 @@
 
     @Environment(\.layoutSurfaceID) private var surface
     @Environment(\.layoutAnchor) private var anchor
+    @Environment(\.isEnabled) private var isEnabled
     @State private var id = UUID()
 
     func body(content: Content) -> some View {
@@ -340,7 +343,11 @@
               $0.frame = frame
               $0.surface = surface
               $0.anchor = anchor
+              $0.disabled = !isEnabled
             }
+          }
+          .onChange(of: isEnabled) { _, isEnabled in
+            LayoutRegistry.shared.update(id, kind: .action(variant)) { $0.disabled = !isEnabled }
           }
           .onDisappear { LayoutRegistry.shared.remove(id) }
       } else {
@@ -982,6 +989,9 @@
           ]
           if let anchor = record.anchor {
             element["anchor"] = "\(surface)/\(anchor).\(variant)"
+          }
+          if record.disabled {
+            element["disabled"] = true
           }
           out.append(element)
         case .anchor(let name):

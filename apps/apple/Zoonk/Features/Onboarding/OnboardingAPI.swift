@@ -39,6 +39,15 @@ enum OnboardingError: Error, Equatable, Sendable {
   /// (`UPLOAD_ALREADY_READ`).
   case alreadyRead
   case failed(APIError)
+
+  /// The server's own answer, as opposed to a request that may or may not have reached it.
+  var isAnswer: Bool {
+    if case .failed = self {
+      return false
+    }
+
+    return true
+  }
 }
 
 struct AttachedSource: Decodable, Equatable, Identifiable, Sendable {

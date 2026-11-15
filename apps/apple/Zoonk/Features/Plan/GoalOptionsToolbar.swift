@@ -2,9 +2,12 @@ import SwiftUI
 
 /// The Plan's "…" options. What acts on the goal itself (rename, pause or resume, archive) lives
 /// here, on its own page, so it's clear which goal changes. None of it needs a plan, so the Plan
-/// keeps it while the goal is set up or its plan is built; a ready plan's own items go above.
+/// keeps it while the goal is set up or its plan is built; a ready plan's own items go above. A
+/// ready plan's header holds them on a phone, beside its title as main's phone does, so the bar
+/// keeps the goal's name, the level and the account.
 struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
   @Environment(AppRouter.self) private var router
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(PlanStore.self) private var store
   @State private var confirming: Confirmation?
   @State private var isArchiving = false
@@ -16,6 +19,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
   @State private var renameFailed = false
 
   let goal: LearnerGoal
+  var inPageHeader = false
   @ViewBuilder let planItems: PlanItems
 
   private enum Confirmation: Identifiable {
@@ -25,17 +29,11 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
   }
 
   func body(content: Content) -> some View {
-    content
-      .taskOptions(
-        label: Text("Plan options", tableName: "Plan", comment: "Spoken label of the Plan's … menu")
-      ) {
-        planItems
+    let isInBar = !inPageHeader || horizontalSizeClass == .regular
 
-        Section {
-          statusItems
-        }
-        .disabled(isSaving)
-      }
+    content
+      .taskOptions(isShown: isInBar, label: label) { items }
+      .environment(\.planOptions, isInBar ? nil : AnyView(headerMenu))
       .environment(
         \.resumeGoal, ResumeGoal(isBusy: isSaving, failure: resumeFailure, action: resume)
       )
@@ -98,6 +96,36 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
           "Check your connection and try again.", tableName: "Plan",
           comment: "Explains a failed save")
       }
+  }
+
+  private var label: Text {
+    Text("Plan options", tableName: "Plan", comment: "Spoken label of the Plan's … menu")
+  }
+
+  @ViewBuilder
+  private var items: some View {
+    planItems
+
+    Section {
+      statusItems
+    }
+    .disabled(isSaving)
+  }
+
+  /// Main's phone header: a quiet icon button after "Adjust plan".
+  private var headerMenu: some View {
+    Menu {
+      items
+    } label: {
+      Label {
+        label
+      } icon: {
+        Image(systemName: "ellipsis")
+      }
+      .labelStyle(.iconOnly)
+    }
+    .buttonStyle(.ghost.icon)
+    .controlSize(.small)
   }
 
   @ViewBuilder
@@ -273,6 +301,16 @@ struct ResumeGoal {
 }
 
 extension View {
+  /// A shown bar holds the page's main action. The Plan stacks its bars and shows one at a time, so
+  /// a hidden one writes nothing and leaves the shown one's word.
+  fileprivate func holdsMainActionInBar(_ isShown: Bool) -> some View {
+    transformEnvironment(\.barHoldsMainAction) { holds in
+      if isShown {
+        holds = true
+      }
+    }
+  }
+
   /// A paused goal's page: "Resume" is its bottom bar's main action, and a refused resume is said
   /// over the bar.
   func resumeGoalBar(isShown: Bool = true) -> some View {
@@ -287,6 +325,7 @@ private struct ResumeGoalBar: ViewModifier {
 
   func body(content: Content) -> some View {
     content
+      .holdsMainActionInBar(isShown)
       .bottomBar(note: isShown ? note : nil) {
         if isShown {
           BusyButton(isBusy: resumeGoal.isBusy, action: resumeGoal.action) {
@@ -372,6 +411,7 @@ private struct ExamOverBar: ViewModifier {
 
   func body(content: Content) -> some View {
     content
+      .holdsMainActionInBar(isShown)
       .bottomBar(note: isShown && failed ? BarNote(saveFailure) : nil) {
         if isShown {
           ExamOverButtons(
@@ -429,3 +469,8 @@ extension PlanStore {
 
 /// Core's `MAX_TITLE_LENGTH`, which bounds a goal's name.
 private let goalNameLimit = 120
+
+extension EnvironmentValues {
+  /// The Plan's "…" options for its header to draw, where the bar leaves them out.
+  @Entry var planOptions: AnyView?
+}

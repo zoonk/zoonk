@@ -1,14 +1,20 @@
 package com.zoonk.android.ui.testing
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Build
 import android.view.View
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.ViewRootForTest
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.graphics.createBitmap
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.roundToInt
 
 /**
  * The node as it's drawn now. Compose skips its pre-capture redraw on Robolectric, and SDK 37 PixelCopy
@@ -36,7 +42,27 @@ fun SemanticsNodeInteraction.captureRender(
         // Waits for the UI to idle, which runs the redraw and the commit callback the RenderThread posts.
         fetchSemanticsNode()
     }
-    return captureToImage().withLayout(this, view, scenario, anchors)
+    return (view.dialogWindowPicture(this) ?: captureToImage()).withLayout(this, view, scenario, anchors)
+}
+
+/**
+ * A dialog's own picture, cropped to the node: its window's root drawn on its own. Robolectric's PixelCopy of a dialog's
+ * window returns the page behind it at the dialog's bounds, so a dialog render would show the page.
+ */
+private fun View.dialogWindowPicture(node: SemanticsNodeInteraction): ImageBitmap? {
+    val dialog = generateSequence(this as View?) { it.parent as? View }.firstNotNullOfOrNull { it as? DialogWindowProvider } ?: return null
+    val root = dialog.window.decorView
+    val window = createBitmap(root.width, root.height)
+    root.draw(Canvas(window))
+    val bounds = node.fetchSemanticsNode().boundsInWindow
+    return Bitmap
+        .createBitmap(
+            window,
+            bounds.left.roundToInt(),
+            bounds.top.roundToInt(),
+            bounds.width.roundToInt(),
+            bounds.height.roundToInt(),
+        ).asImageBitmap()
 }
 
 /** With `-Pzoonk.shots`, the layout of the frame just copied, which [writeRender] writes beside the picture. */
