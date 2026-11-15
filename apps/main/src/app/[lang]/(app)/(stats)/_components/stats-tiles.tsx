@@ -1,4 +1,4 @@
-import { StatTileSkeleton } from "@zoonk/learn/stat-tile";
+import { StatSkeleton } from "@zoonk/ui/components/stat";
 import { cn } from "@zoonk/ui/lib/utils";
 
 export const STAT_PAGE_TILES_CLASS =
@@ -25,7 +25,7 @@ export function StatTilesSkeleton({
     >
       {Array.from({ length: count }, (_, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- Static placeholders.
-        <StatTileSkeleton detail={index < detailed} key={index} />
+        <StatSkeleton detailLines={index < detailed ? 1 : 0} key={index} />
       ))}
     </div>
   );

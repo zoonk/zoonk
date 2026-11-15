@@ -5,10 +5,8 @@ import { TaskNotFound } from "@/components/learn/task-not-found";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getWeeklyRecap } from "@zoonk/core/milestones/weekly-recap";
 import { getSession } from "@zoonk/core/users/session";
-import { LogbookScreen } from "@zoonk/learn/logbook";
-import { StatTileSkeleton } from "@zoonk/learn/stat-tile";
+import { LogbookScreen, LogbookSkeleton } from "@zoonk/learn/logbook";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -18,24 +16,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: t("Weekly summary") };
 }
 
-function LogbookSkeleton() {
+function LogbookPageSkeleton() {
   return (
     <TaskSkeleton>
-      <Skeleton className="h-12 w-full max-w-80" />
-      <div className="flex flex-col gap-2">
-        <Skeleton className="mb-1.5 h-5.5 w-40 rounded-sm" />
-        <Skeleton className="h-8 w-2/3" />
-        <Skeleton className="h-5 w-1/2" />
-      </div>
-      <div className="grid w-full grid-cols-2 gap-2">
-        <StatTileSkeleton />
-        <StatTileSkeleton />
-      </div>
-      <div className="flex w-full flex-col gap-6 py-3">
-        <Skeleton className="h-5 w-full" />
-        <Skeleton className="h-5 w-full" />
-        <Skeleton className="h-5 w-full" />
-      </div>
+      <LogbookSkeleton />
     </TaskSkeleton>
   );
 }
@@ -72,7 +56,7 @@ async function LogbookContent() {
 
 export default function LogbookPage() {
   return (
-    <Suspense fallback={<LogbookSkeleton />}>
+    <Suspense fallback={<LogbookPageSkeleton />}>
       <LogbookContent />
     </Suspense>
   );
