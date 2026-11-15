@@ -175,7 +175,7 @@ export function NotMadeYet({
         className="flex flex-col gap-3 [&:not([data-held]):not(:has(>:not(:empty)))]:contents"
         ref={slot}
       >
-        {startable > 1 && (
+        {startable > 1 && !bulk.stop && (
           <Button
             busy={bulk.status === "sending"}
             className="self-start"

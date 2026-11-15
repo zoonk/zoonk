@@ -10,6 +10,7 @@ import {
   type MindMapsPage,
   type MindMapsPageChapter,
   toMindMapsPage,
+  toPageStop,
 } from "./_utils/mind-maps-page";
 import { type MindMapLibraryActions, type MindMapRequestOutcome } from "./mind-map-actions";
 import { type SavedMapTarget, useMindMapSaves } from "./use-mind-map-saves";
@@ -23,8 +24,13 @@ const WRITING_POLL_MS = 15_000;
  */
 type RowNote = { failedAt: number; limit?: MindMapLimit; shown: "refused" | "unreachable" };
 
+/**
+ * A refusal kept on the page (Create all's, or a row's for the maps) holds through the read already
+ * under way when it came, then the next read of the list decides: a stop with no day that can come
+ * on this device's clock would otherwise never go.
+ */
 type Bulk =
-  | { status: "idle" | "sending"; stop: MindMapAllowanceStop | null }
+  | { status: "idle" | "sending"; stop: MindMapAllowanceStop | null; stoppedAt?: number }
   | { failedAt: number; status: "unreachable"; stop: null };
 
 function withStatus({
@@ -104,11 +110,13 @@ export function useMindMapsLibrary({
       return kept.length === current.size ? current : new Map(kept);
     });
 
-    setBulk((current) =>
-      current.status === "unreachable" && current.failedAt < read.started
+    setBulk((current) => {
+      const passedAt = current.status === "unreachable" ? current.failedAt : current.stoppedAt;
+
+      return passedAt !== undefined && passedAt < read.started
         ? { status: "idle", stop: null }
-        : current,
-    );
+        : current;
+    });
 
     if (read.isLatest()) {
       setPage(toMindMapsPage(listed));
@@ -121,6 +129,7 @@ export function useMindMapsLibrary({
 
   const shownStop = bulk.stop ?? page.createOffer.stop;
   const liveStop = useLiveLimit(shownStop);
+  const keptStop = useLiveLimit(bulk.stop);
   const stopPassed = shownStop !== null && liveStop === null;
   const readAgain = useEffectEvent(() => void refresh().catch(() => null));
 
@@ -145,7 +154,15 @@ export function useMindMapsLibrary({
 
   const settle = async (chapterId: string, outcome: MindMapRequestOutcome) => {
     if (outcome.status === "refused") {
-      note(chapterId, { limit: outcome.limit, shown: "refused" });
+      const stop = toPageStop(outcome.limit);
+
+      // Every other row and Create all would be refused for the same maps: the page stops instead.
+      if (stop) {
+        setBulk({ status: "idle", stop: received(stop), stoppedAt: order.now() });
+      } else {
+        note(chapterId, { limit: outcome.limit, shown: "refused" });
+      }
+
       return;
     }
 
@@ -195,11 +212,15 @@ export function useMindMapsLibrary({
     await refresh().catch(() => null);
 
     // The offer can't foresee every refusal (a guest's shared day), so the answer's own reason shows.
-    setBulk({ status: "idle", stop: started.accepted.length === 0 ? stop : null });
+    setBulk({
+      status: "idle",
+      stop: started.accepted.length === 0 ? stop : null,
+      stoppedAt: order.now(),
+    });
   };
 
   return {
-    bulk: { ...bulk, createAll: () => void createAll() },
+    bulk: { ...bulk, createAll: () => void createAll(), stop: keptStop },
     follower: { isStuck: poll.status === "failed", retry: poll.restart },
     page,
     row: (chapter: MindMapsPageChapter) => {
@@ -208,7 +229,7 @@ export function useMindMapsLibrary({
 
       return {
         // A failed map's row offers its own free retry, whatever stops a new map.
-        create: page.createOffer.stop === null ? start : undefined,
+        create: page.createOffer.stop === null && keptStop === null ? start : undefined,
         isPending: sending.has(chapter.chapterId),
         limit: local?.limit ?? null,
         retry: start,
