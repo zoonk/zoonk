@@ -22,7 +22,7 @@ export function CatalogBarContent({ visitor }: { visitor: React.ReactNode }) {
       <LearnSectionBar
         back={{ href: "/", label: t("Home") }}
         end={<PhoneEnd>{visitor}</PhoneEnd>}
-        root
+        listed="visitor"
         title={t("Explore courses")}
       />
     );
@@ -45,7 +45,7 @@ export function CatalogBarContent({ visitor }: { visitor: React.ReactNode }) {
           )}
         </PhoneEnd>
       }
-      root
+      listed="visitor"
       title={t("Explore courses")}
     />
   );

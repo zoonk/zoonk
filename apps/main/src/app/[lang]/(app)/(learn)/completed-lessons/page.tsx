@@ -35,7 +35,10 @@ function readShown(value: string | string[] | undefined): number {
 
 async function CompletedLessonsBar() {
   const t = await getExtracted();
-  return <LearnPageBar back={{ href: "/today" }} root title={t("Completed lessons")} />;
+
+  return (
+    <LearnPageBar back={{ href: "/today" }} listed="learner" root title={t("Completed lessons")} />
+  );
 }
 
 async function CompletedLessonsBody({ searchParams }: Pick<Props, "searchParams">) {

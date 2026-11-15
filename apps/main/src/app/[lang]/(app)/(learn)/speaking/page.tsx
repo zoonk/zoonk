@@ -18,7 +18,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 async function SpeakingBar() {
   const t = await getExtracted();
-  return <LearnPageBar back={{ href: "/today" }} root title={t("Speaking practice")} />;
+
+  return (
+    <LearnPageBar back={{ href: "/today" }} listed="learner" root title={t("Speaking practice")} />
+  );
 }
 
 async function SpeakingContent() {
