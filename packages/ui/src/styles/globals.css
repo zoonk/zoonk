@@ -34,14 +34,14 @@
 
 /*
  * A row whose fill (its hover, its focus ring, the current row's tint) passes the page's column by
- * 10px on both sides at any text size (craft E7). Under another row (`nested-rows`) its words start
- * at the list's label edge while its fill still spans the column: the indent is inside the fill.
+ * 10px on both sides (craft E7). Under another row (`nested-rows`) its words start at the list's
+ * label edge while its fill still spans the column: the indent is inside the fill.
  */
 @utility row-bleed {
-  --row-reach: calc(10px + var(--row-indent, 0px));
-  margin-inline: calc(var(--row-reach) * -1) -10px;
-  padding-inline: var(--row-reach) 10px;
-  width: calc(100% + var(--row-reach) + 10px);
+  --row-reach: calc(--spacing(2.5) + var(--row-indent, 0px));
+  margin-inline: calc(var(--row-reach) * -1) calc(--spacing(2.5) * -1);
+  padding-inline: var(--row-reach) --spacing(2.5);
+  width: calc(100% + var(--row-reach) + --spacing(2.5));
 }
 
 /* Rows under a row: everything in it starts at the list's label edge (craft E1: a 16px mark and a 12px gap), and its `row-bleed` rows reach back to the column. */
