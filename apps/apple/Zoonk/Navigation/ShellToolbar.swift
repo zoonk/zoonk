@@ -77,7 +77,6 @@ struct ShellToolbar: ViewModifier {
         router.present(.account())
       }
     }
-    .sharedBackgroundVisibility(.hidden)
   }
 }
 
