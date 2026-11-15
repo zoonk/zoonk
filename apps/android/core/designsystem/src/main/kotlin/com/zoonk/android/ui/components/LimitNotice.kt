@@ -12,16 +12,21 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 
-/** What ran out as the title, and when it comes back as the one line under it. */
+/**
+ * What ran out as the title, and when it comes back as the one line under it. [opened]: the cap's day has
+ * come, so nothing ran out any more: no title says it did and nothing is offered to buy.
+ */
 data class LimitWords(
     val title: String?,
     val line: String?,
+    val opened: Boolean = false,
 )
 
 /**
  * Main's limit notice, the gate's form for a cap: what ran out, when it comes back, and the way on:
- * "Create a free account" for a guest, "Subscribe" on Free, nothing when the limit only waits. An
- * [action] that tries again sits beside the way on, as the lesson gate pairs them.
+ * "Create a free account" for a guest, "Subscribe" on Free, nothing when the limit only waits. Once its day
+ * comes it's the one sentence "You can try again now.". An [action] that tries again is its one action, in the
+ * way on's box (a slow-down's Try again, a ready lesson's Start).
  */
 @Composable
 fun LimitNotice(
@@ -34,16 +39,14 @@ fun LimitNotice(
 ) {
     val words = limitWords(limit, subject)
     val buttons: (@Composable () -> Unit)? =
-        if (limit.hasWayOn || action != null) {
-            {
-                LimitActions(limit, onCreateAccount, onSubscribe)
-                action?.invoke()
-            }
-        } else {
-            null
+        when {
+            action != null -> action
+            limit.hasWayOn && !words.opened -> ({ LimitActions(limit, onCreateAccount, onSubscribe) })
+            else -> null
         }
-    // Its day coming while it shows changes only its line; what's under the notice doesn't move for that.
-    HeldSlot(gated = !limitLifted(limit), modifier) { GateLayout(words.title, words.line, buttons = buttons) }
+    // Its day coming while it shows changes its words and its one action in place: nothing moves for that.
+    val gated = !limitLifted(limit)
+    HeldSlot(gated = gated, modifier) { GateLayout(words.title, words.line, wordsGated = gated, buttons = buttons) }
 }
 
 /** The limit's way on, for a screen that draws its own words. */
@@ -136,7 +139,7 @@ fun freeLessonReady(limit: Limit): Boolean = limit is Limit.Reached && limit.fre
 private fun lessonWords(limit: Limit.Reached): LimitWords {
     val opens = rememberOpeningDay(limit.availableAt.takeIf { limit.freeLessons })
     return when {
-        opens == OpeningDay.Open -> LimitWords(stringResource(R.string.limit_lesson_ready), line = null)
+        opens == OpeningDay.Open -> LimitWords(stringResource(R.string.limit_lesson_ready), line = null, opened = true)
         limit.freeLessons -> LimitWords(stringResource(R.string.limit_lessons_free), comesBackLine(limit))
         limit.tier == LimitTier.Guest -> LimitWords(stringResource(R.string.limit_lessons_guest), line = null)
         else -> LimitWords(stringResource(R.string.limit_lessons_day), comesBackLine(limit))
@@ -159,9 +162,22 @@ fun limitWords(
 
         is Limit.Reached -> {
             when (subject) {
-                LimitSubject.Lessons -> lessonWords(limit)
-                LimitSubject.MapLessons -> mapLessonsWords(limit)
-                else -> LimitWords(reachedTitle(limit, subject)?.let { stringResource(it) }, comesBackLine(limit))
+                LimitSubject.Lessons -> {
+                    lessonWords(limit)
+                }
+
+                LimitSubject.MapLessons -> {
+                    mapLessonsWords(limit)
+                }
+
+                else -> {
+                    val line = comesBackLine(limit)
+                    if (limitLifted(limit)) {
+                        LimitWords(title = null, line = line, opened = true)
+                    } else {
+                        LimitWords(reachedTitle(limit, subject)?.let { stringResource(it) }, line)
+                    }
+                }
             }
         }
     }
@@ -183,7 +199,7 @@ private fun mapLessonsWords(limit: Limit.Reached): LimitWords {
         }
 
         opens == OpeningDay.Open -> {
-            LimitWords(stringResource(R.string.limit_map_ready), line = null)
+            LimitWords(stringResource(R.string.limit_map_ready), line = null, opened = true)
         }
 
         else -> {
