@@ -4,13 +4,19 @@ import path from "node:path";
 import { describe, it } from "vitest";
 
 /**
- * Every view-model or store function that takes a function, and why it isn't a screen's callback
- * called later (the rule in `apps/android/AGENTS.md`: a function in a view model or store that
- * suspends, launches or listens takes no function from the UI to call later; it publishes an outcome
- * for the visit, and the screen's current frame acts on it). A call in the same frame, before
- * anything suspends, is a reason; a call after a suspension or from a listener is not: publish a
+ * View-model and store functions that take a function, and why none is a screen's callback called
+ * later (the rule in `apps/android/AGENTS.md`: a function in a view model or store that suspends,
+ * launches or listens takes no function from the UI to call later; it publishes an outcome for the
+ * visit, and the screen's current frame acts on it). A call in the same frame, before anything
+ * suspends, is a reason; a call after a suspension or from a listener is not: publish a
  * `VisitOutcome` instead. A new function fails until it's listed here with its reason, and a listed
  * one that's gone fails too.
+ *
+ * It guards against a mistake, not a determined workaround. It reads a member function's parameters
+ * typed as a function (`() -> Unit`, `suspend (T) -> R`), as a function-type alias (an alias of an
+ * alias too) or as a `fun interface`, in a class extending `ViewModel` or named `…Store`, member
+ * extensions included. It doesn't read a function-valued property a frame sets, a lambda inside a
+ * data class or another parameter type, a constructor's parameters, or a class that is neither.
  */
 const REASONS: Record<string, string> = {
   "core/data DraftStore.follow(transition)":
@@ -18,13 +24,16 @@ const REASONS: Record<string, string> = {
   "core/data DraftStore.launch(block)": "The store's own work on its scope, from other stores.",
   "core/data LearningProfileStore.update(optimistic)":
     "Private: the store's own change to its cached profile.",
-  "core/data MemoryStore.edit(optimistic)": "Private: the store's own change to its cached memory.",
-  "core/data MindMapStore.read(chapters)": "Private: the store's own read.",
+  "core/data MemoryStore.edit(optimistic, write)":
+    "Private: the store's own change to its cached memory and its write.",
+  "core/data MindMapStore.read(chapters, fetch)": "Private: the store's own read and its fetch.",
   "core/data MindMapStore.watchReads(arrived)":
     "MindMapViewModel's own listener on its maps' state, held by the view model, never a frame.",
   "core/data MockRunStore.step(write)": "Private: the store's own write.",
-  "core/data OnboardingStore.write(replacing)": "Private: the store's own cache replacement.",
-  "core/data PlanStore.saveGoal(write)": "Private: the store's own write.",
+  "core/data OnboardingStore.write(replacing, write)":
+    "Private: the store's own write and cache replacement.",
+  "core/data PlanStore.saveGoal(write, saved)":
+    "Private: the store's own write and what it records once saved.",
   "core/data PlanStore.write(write)": "Private: the store's own write.",
   "core/data SessionStore.install(isStillWanted)": "Private: the store's own check.",
   "core/data SessionStore.signIn(obtain)":
@@ -34,8 +43,8 @@ const REASONS: Record<string, string> = {
   "core/data SubscriptionStore.buy(host)":
     "The Checkout view model's own window holder, asked for when Play's sheet opens; no frame passes it.",
   "feature/account PreferencesViewModel.save(write)": "Private: the view model's own write.",
-  "feature/account RemindersViewModel.save(settle)":
-    "Private: the view model's own state reset after its write.",
+  "feature/account RemindersViewModel.save(settle, write)":
+    "Private: the view model's own write and its state reset after it.",
   "feature/account SignInViewModel.run(block)": "Private: the view model's own sign-in call.",
   "feature/exam MockRunnerViewModel.step(request)": "Private: the view model's own request.",
   "feature/onboarding FocusTestViewModel.save(action)": "Private: the view model's own save.",
@@ -57,7 +66,8 @@ const REASONS: Record<string, string> = {
   "feature/plan PlanViewModel.save(write)": "Private: the view model's own write.",
   "feature/plan PlanViewModel.saveGoal(write)": "Private: the view model's own write.",
   "feature/plan PlanViewModel.update(transform)": "Private: the view model's own state change.",
-  "feature/plan TutorViewModel.applyOffer(write)": "Private: the view model's own write.",
+  "feature/plan TutorViewModel.applyOffer(write, saved)":
+    "Private: the view model's own write and the state it records once saved.",
   "feature/plan TutorViewModel.update(change)": "Private: the view model's own state change.",
   "feature/player LessonWritingViewModel.launchWork(block)":
     "Private: the view model's own work on its scope.",
@@ -126,10 +136,14 @@ function parameters(list: string): string[] {
   let depth = 0;
   let current = "";
 
-  for (const character of list) {
+  for (let index = 0; index < list.length; index += 1) {
+    const character = list[index] ?? "";
+    // The `>` of a function type's `->` closes nothing.
+    const arrow = character === ">" && list[index - 1] === "-";
+
     if ("(<".includes(character)) {
       depth += 1;
-    } else if (")>".includes(character)) {
+    } else if (")>".includes(character) && !arrow) {
       depth -= 1;
     }
 
@@ -144,15 +158,38 @@ function parameters(list: string): string[] {
   return [...parts, current];
 }
 
-/** Type aliases for function types (`typealias LeaveTest = suspend () -> …`). */
+/**
+ * The names that stand for a function type: a `typealias` of one (`typealias LeaveTest = suspend () -> …`), an alias
+ * of such an alias, and a `fun interface`.
+ */
 export function functionAliases(sources: string[]): Set<string> {
-  return new Set(
-    sources.flatMap((source) =>
-      [...source.matchAll(/typealias (?<name>\w+)\s*=\s*(?<type>[^\n]+)/gu)]
-        .filter((match) => match.groups?.type?.includes("->"))
-        .map((match) => match.groups?.name ?? ""),
+  const aliases = sources.flatMap((source) =>
+    [...source.matchAll(/typealias (?<name>\w+)(?:<[^=]*>)?\s*=\s*(?<type>[^\n]+)/gu)].map(
+      (match) => ({ name: match.groups?.name ?? "", type: (match.groups?.type ?? "").trim() }),
     ),
   );
+
+  const names = new Set(
+    sources.flatMap((source) =>
+      [...source.matchAll(/fun interface (?<name>\w+)/gu)].map((match) => match.groups?.name ?? ""),
+    ),
+  );
+
+  let grew = true;
+
+  while (grew) {
+    const before = names.size;
+
+    for (const { name, type } of aliases) {
+      if (type.includes("->") || names.has(type.replaceAll(/[?\s]|<.*>/gu, ""))) {
+        names.add(name);
+      }
+    }
+
+    grew = names.size > before;
+  }
+
+  return names;
 }
 
 /** Each function of a view model (a class extending `ViewModel`) or a store (a class named `…Store`) that takes a function. */
@@ -190,7 +227,7 @@ export function sitesIn(source: string, module: string, aliases: Set<string>): s
 
     return [
       ...body.matchAll(
-        /\n {4}(?:(?:private|internal|public|suspend|override|inline|operator)\s+)*fun (?:<[^>]*>\s*)?(?<fun>\w+)\s*\(/gu,
+        /\n {4}(?:(?:private|internal|public|suspend|override|inline|operator)\s+)*fun (?:<[^>]*>\s*)?(?:[\w.?]+(?:<[^>]*>)?\??\.)?(?<fun>\w+)\s*\(/gu,
       ),
     ].flatMap((found) => {
       const open = (found.index ?? 0) + found[0].length;
@@ -252,26 +289,50 @@ describe("view-model and store functions that take a function", () => {
 });
 
 describe(sitesIn, () => {
-  it("finds a view model's lambda, and one behind a function-type alias", () => {
-    const source = [
-      "internal class SetupViewModel(",
-      "    private val store: Store,",
-      ") : ViewModel() {",
-      "    fun save(",
-      "        input: Input,",
-      "        onSaved: () -> Unit,",
-      "    ) = Unit",
-      "",
-      "    fun leave(onDone: LeaveTest) = Unit",
-      "",
-      "    fun plain(input: Input) = Unit",
-      "}",
-    ].join("\n");
+  const kinds = [
+    "typealias Callback = () -> Unit",
+    "typealias Chained = Callback",
+    "fun interface Done { fun run() }",
+    "data class Input(val done: () -> Unit)",
+  ].join("\n");
 
-    assert.deepEqual(sitesIn(source, "feature/x", new Set(["LeaveTest"])), [
-      "feature/x SetupViewModel.save(onSaved)",
-      "feature/x SetupViewModel.leave(onDone)",
-    ]);
+  function found(member: string): string[] {
+    const source = `${kinds}\nclass ProbeViewModel : ViewModel() {\n${member}\n}`;
+    return sitesIn(source, "feature/probe", functionAliases([source]));
+  }
+
+  it.each([
+    ["a lambda", "    suspend fun save(done: () -> Unit) { done() }", "save(done)"],
+    [
+      "a lambda with a default",
+      "    suspend fun save(done: () -> Unit = {}) { done() }",
+      "save(done)",
+    ],
+    ["an alias", "    suspend fun save(done: Callback) { done() }", "save(done)"],
+    ["an alias of an alias", "    suspend fun save(done: Chained) { done() }", "save(done)"],
+    ["a fun interface", "    suspend fun save(done: Done) { done.run() }", "save(done)"],
+    [
+      "a member extension",
+      "    suspend fun String.save(done: () -> Unit) { done() }",
+      "save(done)",
+    ],
+    [
+      "two lambdas",
+      "    suspend fun save(first: () -> Unit, second: () -> Unit) { second() }",
+      "save(first, second)",
+    ],
+  ])("reads %s", (_, member, key) => {
+    assert.deepEqual(found(member), [`feature/probe ProbeViewModel.${key}`]);
+  });
+
+  it.each([
+    [
+      "a function-valued property",
+      "    var done: () -> Unit = {}\n    suspend fun save() { done() }",
+    ],
+    ["a lambda inside a data class", "    suspend fun save(input: Input) { input.done() }"],
+  ])("doesn't read %s, as the header says", (_, member) => {
+    assert.deepEqual(found(member), []);
   });
 
   it("reads a store by its name and leaves other classes out", () => {
