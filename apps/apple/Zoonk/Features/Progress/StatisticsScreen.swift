@@ -166,7 +166,7 @@ private struct OverviewTiles: View {
             "Days studied", tableName: "Progress",
             comment: "Tile: how many days the learner studied"),
           value: Text(activity.learningDays, format: .number),
-          systemImage: "chart.bar.fill", tone: .success)
+          systemImage: "calendar.badge.checkmark", tone: .success)
       }
 
       TileLink(section: .score) {

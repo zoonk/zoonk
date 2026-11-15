@@ -133,13 +133,13 @@ struct AdjustPlanSheet: View {
   private func aimRow(_ choice: LanguageAimView.Choice, isPicked: Bool) -> some View {
     let detail = aimChoiceDetail(end: aimEnds[choice.aim])
 
-    return Button {
+    return ChoiceRow(isPicked: isPicked) {
       guard !isPicked else {
         return
       }
 
       editor.run { await editor.change([.aim(choice.aim)]) }
-    } label: {
+    } words: {
       VStack(alignment: .leading, spacing: 2) {
         AimName(aim: choice.aim)
           .typeStyle(.rowTitle)
@@ -151,11 +151,7 @@ struct AdjustPlanSheet: View {
             .foregroundStyle(.mutedForeground)
         }
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .contentShape(.rect)
     }
-    .pickedRow(isPicked)
-    .accessibilityAddTraits(isPicked ? .isSelected : [])
   }
 
   private var daysSection: some View {

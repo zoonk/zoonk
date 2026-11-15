@@ -97,7 +97,7 @@ private func actions(_ summary: LearnerSummary) -> SearchGroup {
         title: String(
           localized: "Continue today's session", table: "Search",
           comment: "Search action that continues the day's session"),
-        systemImage: "play.fill",
+        systemImage: "play",
         action: .open(.session)))
   }
 

@@ -59,7 +59,7 @@ struct GradedAtEndRun: View {
           .foregroundStyle(.mutedForeground)
         }
       } else if total > questions.count {
-        ContentUnavailableView {
+        StateMessage {
           Label {
             if upcomingEnded {
               Text(

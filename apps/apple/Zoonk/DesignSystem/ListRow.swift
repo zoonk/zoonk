@@ -26,7 +26,7 @@ struct ListRow<Leading: View, Trailing: View>: View {
   }
 
   var body: some View {
-    RowLayout(alignment: alignment) {
+    RowLayout(alignment: alignment, hasMark: Leading.self != EmptyView.self) {
       leading
         .foregroundStyle(.mutedForeground)
     } words: {
@@ -78,22 +78,32 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
 
   /// `.firstTextBaseline` puts the mark on the first of three lines or more.
   var alignment = VerticalAlignment.center
+  /// A row without a mark starts its words on the list's edge. The mark's type can't say so: a
+  /// styled `EmptyView` is another type, and a part's report makes a view of it.
+  var hasMark = true
   @ViewBuilder let mark: Mark
   @ViewBuilder let words: Words
   @ViewBuilder let value: Value
 
   var body: some View {
     Group {
-      if isStacked, Mark.self == EmptyView.self {
-        column
+      if !hasMark {
+        if isStacked {
+          column
+        } else {
+          HStack(spacing: 12) {
+            column
+              .frame(maxWidth: .infinity, alignment: .leading)
+
+            shownValue
+          }
+        }
       } else {
         HStack(spacing: 12) {
           MarkedRow(alignment: alignment, stackedSpacing: 4) {
-            if Mark.self != EmptyView.self {
-              mark
-                .markColumn()
-                .layoutPart(.mark)
-            }
+            mark
+              .markColumn()
+              .layoutPart(.mark)
           } content: {
             column
           } end: {
@@ -117,6 +127,8 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
         shownValue
       }
     }
+    // A button centers the lines of its label; a row's words start on the list's edge.
+    .multilineTextAlignment(.leading)
     // A list sized a stacked row beside a picture short at accessibility sizes and cut a line.
     .fixedSize(horizontal: false, vertical: true)
   }

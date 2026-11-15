@@ -254,7 +254,9 @@ struct ChoiceRows<Value: Hashable>: View {
   var body: some View {
     Section {
       ForEach(choices, id: \.value) { choice in
-        Button {
+        ChoiceRow(
+          Text(verbatim: choice.label), detail: choice.detail, isPicked: picked == choice.value
+        ) {
           onPick(choice.value)
 
           if movesOn {
@@ -263,32 +265,7 @@ struct ChoiceRows<Value: Hashable>: View {
                 localized: "You picked \(choice.label)", table: "Onboarding",
                 comment: "VoiceOver, as a one-answer question moves on: the answer picked"))
           }
-        } label: {
-          HStack {
-            VStack(alignment: .leading, spacing: 2) {
-              Text(choice.label)
-                .foregroundStyle(.primary)
-                .layoutPart(.label, text: Text(verbatim: choice.label))
-              if let detail = choice.detail {
-                detail
-                  .layoutPart(.note, text: detail)
-                  .typeStyle(.note)
-                  .foregroundStyle(.mutedForeground)
-              }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            if picked == choice.value {
-              Image(systemName: "checkmark")
-                .fontWeight(.semibold)
-                .foregroundStyle(.tint)
-                .layoutPart(.end)
-            }
-          }
-          .contentShape(.rect)
-          .layoutRow(.choiceList)
         }
-        .accessibilityAddTraits(picked == choice.value ? .isSelected : [])
       }
     } header: {
       if let header {
@@ -323,17 +300,9 @@ private struct CountryQuestion: View {
 
       Section {
         ForEach(choices) { choice in
-          Button {
+          ChoiceRow(Text(choice.name), isPicked: picked?.code == choice.code) {
             picked = choice
-          } label: {
-            Text(choice.name)
-              .typeStyle(.rowTitle)
-              .foregroundStyle(Color(.foreground))
-              .frame(maxWidth: .infinity, alignment: .leading)
-              .contentShape(.rect)
           }
-          .pickedRow(picked?.code == choice.code)
-          .accessibilityAddTraits(picked?.code == choice.code ? .isSelected : [])
           .accessibilityFocused($focusedCountry, equals: choice.code)
         }
 
@@ -509,13 +478,11 @@ private struct ReasonQuestion: View {
 
       Section {
         ForEach(reasons, id: \.reason) { reason in
-          Button {
+          ChoiceRow(isPicked: picked == reason.reason) {
             pick(reason.reason)
-          } label: {
+          } words: {
             row(reason)
           }
-          .pickedRow(picked == reason.reason)
-          .accessibilityAddTraits(picked == reason.reason ? .isSelected : [])
         }
       }
       .locksWhileSaving()
@@ -568,15 +535,8 @@ private struct ReasonQuestion: View {
     let copy = Self.copy(reason.reason)
 
     return HStack(spacing: 12) {
-      VStack(alignment: .leading, spacing: 2) {
-        Text(copy.label)
-          .foregroundStyle(.primary)
-
-        Text(copy.description)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-      }
-      .frame(maxWidth: .infinity, alignment: .leading)
+      ChoiceWords(title: Text(copy.label), detail: Text(copy.description))
+        .frame(maxWidth: .infinity, alignment: .leading)
 
       VStack(alignment: .trailing, spacing: 2) {
         if let aim = reason.aim {
@@ -592,7 +552,6 @@ private struct ReasonQuestion: View {
       }
       .typeStyle(.data)
     }
-    .contentShape(.rect)
   }
 
   @ViewBuilder

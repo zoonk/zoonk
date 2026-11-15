@@ -153,7 +153,7 @@ struct CallLoadFailed: View {
   let retry: () -> Void
 
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text("The call didn't load", tableName: "Voice", comment: "Loading a conversation failed")
       } icon: {

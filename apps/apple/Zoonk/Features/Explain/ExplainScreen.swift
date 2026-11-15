@@ -18,7 +18,7 @@ struct ExplainScreen: View {
         case .failed(.notFound):
           NotFoundView()
         case .failed:
-          ContentUnavailableView {
+          StateMessage {
             Label {
               Text(
                 "We couldn't load this explanation", tableName: "Explain",

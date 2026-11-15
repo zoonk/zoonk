@@ -49,7 +49,7 @@ struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
               .safeAreaPadding(.leading, panes.gap)
               .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
           }
-          .environment(\.isPaneSplit, true)
+          .paneSplit(true)
           // A list right under the bar has no top margin, but SwiftUI decides it once per
           // collection view and gives a pane one it kept off screen through a fold or resize,
           // which brings back the margin it had there: one page would start lower than the other.
@@ -111,7 +111,7 @@ struct PaneBeside<Pane: View, Content: View>: View {
             .contentMargins(.top, 0, for: .scrollContent)
         }
       }
-      .environment(\.isPaneSplit, panes != nil)
+      .paneSplit(panes != nil)
     }
   }
 }
@@ -231,4 +231,21 @@ extension PaneSpace {
 
 extension EnvironmentValues {
   @Entry var isPaneSplit = false
+}
+
+extension View {
+  /// Says whether what's inside is laid out as two panes: to the views inside, and to a bar over
+  /// the screen (`taskSegmentsBar(_:)`), which then spans both.
+  func paneSplit(_ isSplit: Bool) -> some View {
+    environment(\.isPaneSplit, isSplit)
+      .preference(key: PaneSplitKey.self, value: isSplit)
+  }
+}
+
+struct PaneSplitKey: PreferenceKey {
+  static let defaultValue = false
+
+  static func reduce(value: inout Bool, nextValue: () -> Bool) {
+    value = value || nextValue()
+  }
 }

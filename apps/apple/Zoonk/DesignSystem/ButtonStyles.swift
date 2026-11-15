@@ -3,8 +3,9 @@ import SwiftUI
 /// Main's buttons on a native `Button`, which keeps its role, keyboard shortcut, VoiceOver and
 /// pointer behavior. `controlSize` picks main's sizes: `.large` for a screen's action (44pt),
 /// `.regular` (36pt), `.small` beside text (30pt). A destructive role draws main's destructive
-/// button in any of them; `.icon` on any of them is main's square icon button (`size="icon"`). Glass
-/// stays on floating controls and toolbar items.
+/// button in any of them; `.icon` on any of them is main's square icon button (`size="icon"`), and
+/// `.endsRow` on a ghost one is main's `edge="end"`. Glass stays on floating controls and toolbar
+/// items.
 struct ZoonkButtonStyle: ButtonStyle {
   enum Variant {
     /// Ink fill: one per area.
@@ -26,13 +27,22 @@ struct ZoonkButtonStyle: ButtonStyle {
 
   let variant: Variant
   var isIcon = false
+  var isAtRowEnd = false
 
   /// Main's `size="icon"`: a square as tall as the size, for a label that is only an icon.
   var icon: ZoonkButtonStyle { ZoonkButtonStyle(variant: variant, isIcon: true) }
 
+  /// Main's `edge="end"`, for a ghost icon button that ends a row or a header: its glyph sits on
+  /// the column's edge, where the row's other marks end, and its pressed box hangs past it.
+  var endsRow: ZoonkButtonStyle {
+    ZoonkButtonStyle(variant: variant, isIcon: isIcon, isAtRowEnd: true)
+  }
+
   func makeBody(configuration: Configuration) -> some View {
-    ZoonkButton(configuration: configuration, variant: variant, isIcon: isIcon)
-      .layoutAction(configuration.role == .destructive ? "destructive" : variant.layoutName)
+    ZoonkButton(
+      configuration: configuration, variant: variant, isIcon: isIcon, isAtRowEnd: isAtRowEnd
+    )
+    .layoutAction(configuration.role == .destructive ? "destructive" : variant.layoutName)
   }
 
   static func horizontalPadding(_ controlSize: ControlSize) -> CGFloat {
@@ -84,12 +94,14 @@ private struct ZoonkButton: View {
   @Environment(\.buttonSizing) private var sizing
   @Environment(\.mainActionFillsRow) private var fillsRow
   @Environment(\.mainActionMinWidth) private var mainMinWidth
+  @Environment(\.controlsShareHeight) private var sharesHeight
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   let configuration: ButtonStyleConfiguration
   let variant: ZoonkButtonStyle.Variant
   let isIcon: Bool
+  let isAtRowEnd: Bool
 
   var body: some View {
     let shape = RoundedRectangle(
@@ -102,9 +114,17 @@ private struct ZoonkButton: View {
       .foregroundStyle(label)
       .padding(.horizontal, isIcon ? 0 : ZoonkButtonStyle.horizontalPadding(controlSize))
       .padding(.vertical, isIcon ? 0 : 6)
-      .frame(minWidth: isIcon ? height : variant == .main ? mainMinWidth : nil, minHeight: height)
+      .frame(
+        minWidth: isIcon ? (isAtRowEnd ? nil : height) : variant == .main ? mainMinWidth : nil,
+        minHeight: height, maxHeight: sharesHeight ? .infinity : nil
+      )
       .frame(maxWidth: fills && !isIcon ? .infinity : nil)
-      .background(fill, in: shape)
+      .background {
+        // At a row's end the box is centered on the glyph and as wide as any icon button's, so
+        // it's the glyph, not the box, that ends on the edge.
+        shape.fill(fill)
+          .frame(width: isIcon && isAtRowEnd ? height : nil)
+      }
       .overlay {
         if variant == .outline && !isDestructive {
           shape.strokeBorder(Color(.input))
@@ -185,7 +205,18 @@ private struct MinimumHitArea: Shape {
   }
 }
 
+extension View {
+  /// Controls side by side are one height: when a button's label wraps or a field beside it is
+  /// taller, the row's buttons grow with it.
+  func controlsShareHeight() -> some View {
+    environment(\.controlsShareHeight, true)
+      .fixedSize(horizontal: false, vertical: true)
+  }
+}
+
 extension EnvironmentValues {
+  @Entry fileprivate var controlsShareHeight = false
+
   /// One main action per screen: set where the screen's bar holds it, so a button that would be the
   /// main action elsewhere (a notice's retry, a suggestion's answer) is secondary beside it. Each
   /// presented screen starts without it: its own bar is the one on it.

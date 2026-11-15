@@ -56,9 +56,32 @@ extension View {
 }
 
 private struct MarkColumn: ViewModifier {
-  @ScaledMetric(relativeTo: .body) private var width = 20.0
+  @ScaledMetric(relativeTo: .body) private var width = MarkColumnMetrics.width
 
   func body(content: Content) -> some View {
     content.frame(minWidth: width)
+  }
+}
+
+private enum MarkColumnMetrics {
+  static let width = 20.0
+  static let gap = 12.0
+}
+
+extension View {
+  /// A system `Label` drawn as a row takes `ListRow`'s mark column and gap, so a list's words
+  /// start on one edge whichever piece draws each row.
+  func rowLabelColumn() -> some View {
+    modifier(RowLabelColumn())
+  }
+}
+
+private struct RowLabelColumn: ViewModifier {
+  @ScaledMetric(relativeTo: .body) private var width = MarkColumnMetrics.width
+
+  func body(content: Content) -> some View {
+    content
+      .labelReservedIconWidth(width)
+      .labelIconToTitleSpacing(MarkColumnMetrics.gap)
   }
 }

@@ -29,9 +29,11 @@ private struct ExamContent: View {
     switch exam.state {
     case .idle, .loading:
       ProgressView()
-        .navigationTitle(Text("Your exam", tableName: "Exam", comment: "Exam page title"))
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .barTitleAfterHero(
+          String(localized: "Your exam", table: "Exam", comment: "Exam page title"))
     case .empty, .failed(.notFound):
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text("Your exam", tableName: "Exam", comment: "Exam page title")
         } icon: {
@@ -44,7 +46,7 @@ private struct ExamContent: View {
       }
       .lonePage()
     case .failed:
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text("Your exam didn't load", tableName: "Exam", comment: "Loading the exam failed")
         } icon: {
@@ -361,13 +363,7 @@ private struct ExamDateTag: View {
             .padding()
             .navigationTitle(tag.label)
             .toolbarTitleDisplayMode(.inline)
-            .toolbar {
-              ToolbarItem(placement: .cancellationAction) {
-                Button(role: .close) {
-                  isOpen = false
-                }
-              }
-            }
+            .sheetClose { isOpen = false }
         }
         .presentationDetents([.fraction(0.3), .medium])
         .zoonkStyles()

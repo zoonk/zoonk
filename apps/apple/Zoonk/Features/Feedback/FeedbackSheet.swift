@@ -265,7 +265,7 @@ private struct FeedbackForm: View {
   }
 
   private var confirmation: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(thanks)
       } icon: {

@@ -35,10 +35,7 @@ struct MistakesScreen: View {
       let showsFixedHere = showsFixed && !isBeside
       let shown = showsFixedHere ? fixed : open
 
-      ZoonkList(
-        readableWidth: isBeside ? nil : PracticeLayout.readableWidth,
-        alignment: isBeside ? .center : .leading
-      ) {
+      ZoonkList {
         if isBeside {
           listTitle(fixed: false, counts: open.value?.counts)
         }

@@ -189,6 +189,7 @@ extension View {
       if let listMargins {
         padding(.leading, column.leading + listMargins.leading)
           .padding(.trailing, column.trailing + listMargins.trailing)
+          .scenePadding(.vertical)
       } else {
         padding(.leading, column.leading)
           .padding(.trailing, column.trailing)

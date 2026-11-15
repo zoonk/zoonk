@@ -60,7 +60,7 @@ struct TestOutScreen: View {
           case .failed(let error):
             PracticeLoadFailureView(error: error) { Task { await read() } }
           case .loaded(.nothingToSkip):
-            ContentUnavailableView {
+            StateMessage {
               Label {
                 Text(
                   "Nothing to skip", tableName: "Practice",

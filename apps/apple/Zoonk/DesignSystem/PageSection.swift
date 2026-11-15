@@ -108,6 +108,7 @@ struct BlockGridSection<Content: View>: View {
         content
       }
       .environment(\.isGridBlock, true)
+      .rowLabelColumn()
       // A list row's buttons act as one; in blocks each row's button acts on its own.
       .buttonStyle(.plain)
       .listRowSeparator(.hidden)

@@ -57,7 +57,7 @@ private struct GuestGoalGate: View {
   @Environment(AppRouter.self) private var router
 
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(
           "Create a free account to start another goal", tableName: "Onboarding",

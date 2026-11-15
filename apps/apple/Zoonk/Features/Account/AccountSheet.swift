@@ -115,6 +115,9 @@ struct AccountSheet: View {
     .presentationDetents([.large])
     .presentationDragIndicator(requiresProfileSetup ? .hidden : .visible)
     .presentationSizing(.page)
+    // An iPad's sheet is gray under a page that isn't a list, such as the log in page.
+    .presentationBackground(.background)
+    .sheetColumn()
     .feedbackSheet(
       isPresented: $isFeedbackPresented, context: FeedbackContext(screen: "account-menu")
     )
@@ -290,7 +293,7 @@ struct AccountSheet: View {
         .toolbarTitleDisplayMode(.inline)
       }
     case .unavailable:
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
             "Account unavailable",

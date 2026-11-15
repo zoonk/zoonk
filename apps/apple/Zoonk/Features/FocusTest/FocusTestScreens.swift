@@ -140,11 +140,7 @@ private struct FocusTestSheet<Content: View>: View {
       }
       .navigationTitle(title)
       .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .confirmationAction) {
-          Button(role: .close) { dismiss() }
-        }
-      }
+      .sheetClose { dismiss() }
     }
     .presentationDetents([.medium, .large])
   }

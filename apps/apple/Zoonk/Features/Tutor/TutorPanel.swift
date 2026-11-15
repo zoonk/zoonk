@@ -21,13 +21,7 @@ struct TutorPanel: View {
         thread
           .navigationTitle(title)
           .navigationBarTitleDisplayMode(.inline)
-          .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-              Button(role: .close) {
-                dismiss()
-              }
-            }
-          }
+          .sheetClose { dismiss() }
       }
       .zoonkStyles()
       .presentationDetents([.medium, .large])
@@ -122,34 +116,51 @@ struct TutorAskButton: View {
   var iconOnly = false
 
   var body: some View {
-    let name = summary.buddyDisplayName
     // The router presents the panel over the screen: the button can sit in a pane or a bar that a
     // resize draws again, and the panel stays.
     let button = Button {
       router.present(.tutor(scope, quote: quote))
     } label: {
-      Label {
-        Text(
-          "Ask \(name)", tableName: "Tutor",
-          comment: "Opens the buddy's panel; the argument is the buddy's name")
-      } icon: {
-        let buddy = summary.summary.value?.buddy ?? BuddyLook()
-        BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
-      }
+      TutorAskLabel()
     }
 
     Group {
       // Beside a question's Check it's the buddy's face alone, so the bar keeps room for its
       // actions, until a miss, as main's bar does.
       if iconOnly {
-        button.labelStyle(.iconOnly)
+        button.tutorAskIcon()
       } else if case .item(_, _, _, missed: false, mistakeId: _) = scope {
-        button.labelStyle(.iconOnly)
+        button.tutorAskIcon()
       } else {
-        button
+        button.buttonStyle(.outline)
       }
     }
-    .buttonStyle(.outline)
-    .accessibilityLabel(Text(scope.askLabel(name)))
+    .accessibilityLabel(Text(scope.askLabel(summary.buddyDisplayName)))
+  }
+}
+
+/// The one ask-the-buddy label: "Ask" and the buddy's name beside its face.
+struct TutorAskLabel: View {
+  @Environment(LearnerSummaryStore.self) private var summary
+
+  var body: some View {
+    Label {
+      Text(
+        "Ask \(summary.buddyDisplayName)", tableName: "Tutor",
+        comment: "Opens the buddy's panel; the argument is the buddy's name")
+    } icon: {
+      let buddy = summary.summary.value?.buddy ?? BuddyLook()
+      BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
+    }
+  }
+}
+
+extension View {
+  /// The ask-the-buddy button beside a screen's main action: main's 44pt outline square with the
+  /// buddy's face, as tall as the action beside it.
+  func tutorAskIcon() -> some View {
+    labelStyle(.iconOnly)
+      .buttonStyle(.outline.icon)
+      .controlSize(.large)
   }
 }

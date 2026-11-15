@@ -20,7 +20,7 @@ struct SubjectScreen: View {
           case .idle, .loading:
             ProgressView()
           case .failed(let error) where error != .notFound:
-            ContentUnavailableView {
+            StateMessage {
               Label {
                 Text(
                   "Couldn't load this subject", tableName: "Plan",
@@ -38,7 +38,7 @@ struct SubjectScreen: View {
             }
             .lonePage()
           default:
-            ContentUnavailableView {
+            StateMessage {
               Label {
                 Text(
                   "This subject isn't in your plan", tableName: "Plan",

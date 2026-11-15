@@ -8,7 +8,7 @@ struct TodayScreen: View {
 
   var body: some View {
     content
-      .navigationTitle(Text("Today", tableName: "Today", comment: "Today tab's title"))
+      .barTitleAfterHero(String(localized: "Today", table: "Today", comment: "Today tab's title"))
   }
 
   @ViewBuilder
@@ -59,7 +59,7 @@ struct TodayScreen: View {
       }
       .lonePage()
     case .failed(let error) where error != .unauthorized:
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text("Today didn't load", tableName: "Today", comment: "Today failed to load")
         } icon: {
@@ -246,10 +246,10 @@ private struct TodayPreparing: View {
 
     Group {
       if !answersLeft, revealLeft {
-        ContentUnavailableView {
+        StateMessage {
           Label {
             Text(
-              "Your \(displayName) plan is ready.", tableName: "Today",
+              "Your \(displayName) plan is ready", tableName: "Today",
               comment: "A goal whose plan the learner hasn't looked at yet")
           } icon: {
             Image(systemName: "map")
@@ -267,10 +267,10 @@ private struct TodayPreparing: View {
           .keyboardShortcut(.defaultAction)
         }
       } else if answersLeft {
-        ContentUnavailableView {
+        StateMessage {
           Label {
             Text(
-              "Your \(displayName) plan needs a few more answers.", tableName: "Today",
+              "Your \(displayName) plan needs a few more answers", tableName: "Today",
               comment: "A goal left halfway through its questions")
           } icon: {
             Image(systemName: "list.bullet.clipboard")
@@ -286,7 +286,7 @@ private struct TodayPreparing: View {
           .keyboardShortcut(.defaultAction)
         }
       } else {
-        ContentUnavailableView {
+        StateMessage {
           Label {
             Text(
               "Building your \(displayName) plan", tableName: "Today",
@@ -374,10 +374,10 @@ private struct TodayGoalPaused: View {
 
   var body: some View {
     if let goal, goal.status == .completed {
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
-            "You finished your \(goal.displayName) goal.", tableName: "Today",
+            "You finished your \(goal.displayName) goal", tableName: "Today",
             comment: "Today for a finished goal")
         } icon: {
           Image(systemName: "flag.checkered")
@@ -392,15 +392,15 @@ private struct TodayGoalPaused: View {
   }
 
   private var paused: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         if let goal {
           Text(
-            "Your \(goal.displayName) goal is paused.", tableName: "Today",
+            "Your \(goal.displayName) goal is paused", tableName: "Today",
             comment: "Today for a paused goal"
           )
         } else {
-          Text("This goal is paused.", tableName: "Today", comment: "Today for a paused goal")
+          Text("This goal is paused", tableName: "Today", comment: "Today for a paused goal")
         }
       } icon: {
         Image(systemName: "pause.circle")

@@ -376,7 +376,7 @@ private struct CourseClosingSection: View {
 
 private struct CourseDetailEmptyView: View {
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(
           "Course unavailable",

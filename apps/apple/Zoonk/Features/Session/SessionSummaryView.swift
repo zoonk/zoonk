@@ -27,7 +27,7 @@ struct SessionSummaryView: View {
       if let value = summary.value {
         content(value)
       } else if case .failed = summary.state {
-        ContentUnavailableView {
+        StateMessage {
           Label {
             Text("The summary didn't load", tableName: "Session", comment: "Load failed")
           } icon: {

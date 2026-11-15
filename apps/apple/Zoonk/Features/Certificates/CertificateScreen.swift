@@ -42,11 +42,7 @@ struct CertificateSheet: View {
   var body: some View {
     NavigationStack {
       CertificateScreen(code: code)
-        .toolbar {
-          ToolbarItem(placement: .topBarLeading) {
-            Button(role: .close, action: dismiss.callAsFunction)
-          }
-        }
+        .sheetClose(dismiss.callAsFunction)
     }
   }
 }
@@ -182,6 +178,7 @@ private struct CertificateDetail: View {
           }
           .disabled(!picturesAreCurrent)
         }
+        .controlsShareHeight()
 
         Button {
           isLinkedInShown = true
@@ -354,15 +351,9 @@ private struct CertificateHeading: View {
     Section {
       VStack(alignment: .leading, spacing: 10) {
         if isIssued {
-          Label {
-            Text(
-              "Verified certificate · issued by Zoonk", tableName: "Certificates")
-          } icon: {
-            Image(systemName: "checkmark.seal")
-              .foregroundStyle(.success)
-          }
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+          Chip(
+            Text("Verified certificate · issued by Zoonk", tableName: "Certificates"),
+            systemImage: "checkmark.seal", tone: .success)
         }
 
         Text(facts.sentence)
@@ -629,11 +620,7 @@ private struct CertificateZoom: View {
           ProgressView()
         }
       }
-      .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
-          Button(role: .close, action: dismiss.callAsFunction)
-        }
-      }
+      .sheetClose(dismiss.callAsFunction)
     }
     .task {
       image = await images?.image(

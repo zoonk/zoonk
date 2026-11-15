@@ -215,9 +215,9 @@ struct CountryPickerSheet: View {
   private func row(_ choice: CountryChoice) -> some View {
     let isSelected = (saving?.code ?? selected) == choice.code
 
-    return Button {
+    return ChoiceRow(isPicked: isSelected) {
       pick(choice)
-    } label: {
+    } words: {
       HStack(alignment: .firstTextBaseline) {
         Text(choice.name)
           .typeStyle(.rowTitle)
@@ -230,11 +230,8 @@ struct CountryPickerSheet: View {
             .foregroundStyle(.mutedForeground)
         }
       }
-      .contentShape(.rect)
     }
-    .pickedRow(isSelected)
     .accessibilityLabel(label(choice))
-    .accessibilityAddTraits(isSelected ? .isSelected : [])
   }
 
   private var homeTag: Text {

@@ -85,7 +85,7 @@ struct MicrophoneOffView<Actions: View>: View {
   @ViewBuilder let actions: Actions
 
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(
           "The microphone is off", tableName: "Voice",

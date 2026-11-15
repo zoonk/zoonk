@@ -123,7 +123,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
       }
       .labelStyle(.iconOnly)
     }
-    .buttonStyle(.ghost.icon)
+    .buttonStyle(.ghost.icon.endsRow)
     .controlSize(.small)
   }
 

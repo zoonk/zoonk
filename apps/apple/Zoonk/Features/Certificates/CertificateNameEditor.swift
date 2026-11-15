@@ -53,6 +53,7 @@ struct CertificateNameEditor: View {
         .buttonStyle(.mainAction)
         .disabled(!canSave && !session.isWorking)
       }
+      .controlsShareHeight()
 
       Group {
         if isTooLong {

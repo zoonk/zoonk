@@ -465,13 +465,7 @@ struct TutorPracticeCallSheet: View {
         }
         .navigationTitle(Text(call.unitTitle))
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-          ToolbarItem(placement: .cancellationAction) {
-            Button(role: .close) {
-              dismiss()
-            }
-          }
-        }
+        .sheetClose { dismiss() }
       }
       .presentationDetents([.medium, .large])
       .closesOnNavigation()

@@ -102,13 +102,7 @@ struct LessonMapSheet: View {
       }
       .navigationTitle(Text(LessonMapView.name))
       .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .confirmationAction) {
-          Button(role: .close) {
-            dismiss()
-          }
-        }
-      }
+      .sheetClose { dismiss() }
     }
     .presentationDetents([.medium, .large])
   }

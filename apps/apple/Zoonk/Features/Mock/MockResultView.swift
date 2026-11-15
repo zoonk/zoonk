@@ -176,13 +176,7 @@ struct MockResultView: View {
         Text("Details", tableName: "Mock", comment: "Title of a mock exam's details")
       )
       .toolbarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          Button(role: .close) {
-            choices.showsDetails = false
-          }
-        }
-      }
+      .sheetClose { choices.showsDetails = false }
     }
     .zoonkStyles()
   }

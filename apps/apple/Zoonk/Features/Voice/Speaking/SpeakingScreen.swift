@@ -9,7 +9,7 @@ struct SpeakingScreen: View {
       if let goalId = summary.summary.value?.activeGoalID {
         SpeakingPaperView(goalId: goalId, paper: voice.speakingPaper(goalId: goalId))
       } else {
-        ContentUnavailableView {
+        StateMessage {
           Label {
             Text("Speaking practice", tableName: "Voice", comment: "Speaking practice page title")
           } icon: {
@@ -23,8 +23,9 @@ struct SpeakingScreen: View {
         .lonePage()
       }
     }
-    .navigationTitle(
-      Text("Speaking practice", tableName: "Voice", comment: "Speaking practice page title"))
+    .barTitleAfterHero(
+      String(
+        localized: "Speaking practice", table: "Voice", comment: "Speaking practice page title"))
   }
 }
 
@@ -58,7 +59,7 @@ private struct SpeakingPaperView: View {
     case .idle, .loading:
       ProgressView()
     case .empty, .failed(.notFound):
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
             "No speaking practice for this goal", tableName: "Voice",
@@ -69,7 +70,7 @@ private struct SpeakingPaperView: View {
       }
       .lonePage()
     case .failed:
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text("Speaking practice didn't load", tableName: "Voice", comment: "Loading failed")
         } icon: {

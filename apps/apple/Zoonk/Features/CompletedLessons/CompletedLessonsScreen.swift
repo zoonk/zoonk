@@ -66,7 +66,7 @@ struct CompletedLessonsScreen: View {
       }
       .lonePage()
     case .empty:
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
             "No completed lessons yet", tableName: "CompletedLessons",

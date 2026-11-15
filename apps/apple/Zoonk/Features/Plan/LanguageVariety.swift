@@ -135,17 +135,9 @@ struct LanguageVarietySheet: View {
   private func option(region: String?, selected: String?, name: Text) -> some View {
     let isSelected = region == selected
 
-    return Button {
+    return ChoiceRow(name, isPicked: isSelected) {
       pick(region)
-    } label: {
-      name
-        .typeStyle(.rowTitle)
-        .foregroundStyle(Color(.foreground))
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .contentShape(.rect)
     }
-    .pickedRow(isSelected)
-    .accessibilityAddTraits(isSelected ? .isSelected : [])
   }
 
   private func pick(_ region: String?) {

@@ -31,7 +31,7 @@ private struct MockChooserContent: View {
     case .idle, .loading:
       ProgressView()
     case .empty, .failed(.notFound):
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text("No mock exams for this goal", tableName: "Mock", comment: "Not an exam goal")
         } icon: {
@@ -42,7 +42,7 @@ private struct MockChooserContent: View {
       }
       .lonePage()
     case .failed:
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text("Mock exams didn't load", tableName: "Mock", comment: "Loading failed")
         } icon: {
@@ -464,17 +464,12 @@ private struct MockChooser: View {
       .typeStyle(.data)
       .foregroundStyle(.mutedForeground)
 
-    return Button(action: action) {
+    return ChoiceRow(isPicked: isPicked, action: action) {
       HStack(spacing: 12) {
         VStack(alignment: .leading, spacing: 2) {
-          Text(title)
-            .typeStyle(.rowTitle)
-            .foregroundStyle(Color(.foreground))
-          if let detail, !detail.isEmpty {
-            Text(detail)
-              .typeStyle(.meta)
-              .foregroundStyle(.mutedForeground)
-          }
+          ChoiceWords(
+            title: Text(title), detail: detail.flatMap { $0.isEmpty ? nil : Text($0) })
+
           if sizeUnderWords {
             size
           }
@@ -484,16 +479,9 @@ private struct MockChooser: View {
         if !sizeUnderWords {
           size
         }
-
-        Image(systemName: isPicked ? "checkmark.circle.fill" : "circle")
-          .foregroundStyle(Color(.foreground).opacity(isPicked ? 1 : 0.5))
-          .accessibilityHidden(true)
       }
-      .contentShape(.rect)
     }
     .disabled(busy)
-    .accessibilityAddTraits(isPicked ? .isSelected : [])
-    .pickedRow(isPicked)
   }
 
   private func optionDetail(_ option: MockOption) -> String {

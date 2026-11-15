@@ -51,7 +51,7 @@ struct PronunciationScreen: View {
     case .idle, .loading:
       ProgressView()
     case .empty, .failed(.notFound):
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text("Nothing to say again", tableName: "Voice", comment: "No pronunciation round found")
         } icon: {
@@ -60,7 +60,7 @@ struct PronunciationScreen: View {
       }
       .lonePage()
     case .failed:
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
             "The words didn't load", tableName: "Voice",
@@ -434,7 +434,7 @@ private struct PronunciationResultView: View {
 
   var body: some View {
     if isEmpty {
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
             "No words to say again today.", tableName: "Voice",

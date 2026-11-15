@@ -212,14 +212,15 @@ private struct MemoryFactRow: View {
           }
         }
       } label: {
-        Image(systemName: "ellipsis")
-          .foregroundStyle(.mutedForeground)
-          .frame(minWidth: 44, minHeight: 44)
-          .contentShape(.rect)
+        Label {
+          Text("Options for “\(fact.statement)”", tableName: "Settings")
+        } icon: {
+          Image(systemName: "ellipsis")
+        }
+        .labelStyle(.iconOnly)
       }
-      .accessibilityLabel(
-        Text(
-          "Options for “\(fact.statement)”", tableName: "Settings"))
+      .buttonStyle(.ghost.icon.endsRow)
+      .controlSize(.small)
     }
     .swipeActions {
       Button(role: .destructive, action: delete) {

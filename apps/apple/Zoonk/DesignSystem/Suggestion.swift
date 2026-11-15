@@ -128,13 +128,7 @@ struct SuggestionSheet<Content: View>: View {
     NavigationStack {
       content
         .environment(\.isInSuggestionSheet, true)
-        .toolbar {
-          ToolbarItem(placement: .topBarTrailing) {
-            Button(role: .close) {
-              dismiss()
-            }
-          }
-        }
+        .sheetClose { dismiss() }
     }
     .presentationDetents([.medium, .large])
     .closesOnNavigation()

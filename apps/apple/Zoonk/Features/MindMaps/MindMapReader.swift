@@ -71,7 +71,7 @@ struct MindMapReader: View {
     let index = current.flatMap { cards.firstIndex(of: $0) } ?? 0
 
     if cards.isEmpty {
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
             "No mind maps to study here yet.", tableName: "MindMaps",
@@ -188,7 +188,7 @@ struct MindMapReader: View {
         }
         .lonePage()
       } else if lessons.value != nil {
-        ContentUnavailableView {
+        StateMessage {
           Label {
             Text(
               "This map isn't available anymore.", tableName: "MindMaps",

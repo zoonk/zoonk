@@ -1,22 +1,15 @@
 import SwiftUI
 
 /// Main's `ListGroup` as a page's `List`: flat rows with a hairline between them, as wide as the
-/// column, and space rather than a line between sections. Where the width is regular it's
-/// one column at most 768pt wide, on the title's edge on a page and in the middle in a task, as
-/// `readableColumnAlignment` says; a pane is narrower, so it keeps its own width. The page is the
-/// system background, which a plain list's rows paint.
+/// column, and space rather than a line between sections. Where the width is regular it's the
+/// page's one column (`pageColumn()`), in the middle as main's tablet column is; a pane is
+/// narrower, so it keeps its own width. The page is the system background, which a plain list's
+/// rows paint.
 ///
 /// Rows are main's `ListRowContent`, at least 44pt high, rather than a plain list's 52pt. A row that
 /// sets its own insets keeps them.
 struct ZoonkList<Content: View>: View {
-  /// A page's own column, such as practice's narrower one, in place of the 768pt one.
-  var readableWidth: CGFloat?
-  /// In place of the one `readableColumnAlignment` gives.
-  var alignment: HorizontalAlignment?
   @ViewBuilder let content: Content
-
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-  @Environment(\.readableColumnAlignment) private var columnAlignment
 
   var body: some View {
     List {
@@ -27,35 +20,41 @@ struct ZoonkList<Content: View>: View {
         .listRowInsets(.vertical, 12)
         .listSectionSeparator(.hidden)
         .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+        .rowLabelColumn()
     }
     .listStyle(.plain)
     .listSectionSpacing(24)
     .environment(\.defaultMinListRowHeight, 44)
-    .readableColumn(
-      readableWidth ?? ListColumn.width(horizontalSizeClass),
-      alignment: alignment ?? columnAlignment)
+    .pageColumn()
+    .headsPage()
   }
 }
 
 extension View {
-  /// As wide as a `ZoonkList`'s column, for what lines up with its rows from outside the list, such
-  /// as the buttons pinned under it.
-  func listColumnWidth() -> some View {
-    modifier(ListColumnWidth())
+  /// The one column every page keeps where the width is regular: main's tablet column, 768pt in
+  /// the middle of the room. A sheet is a column already, so what's in one fills it
+  /// (`sheetColumn()`).
+  func pageColumn() -> some View {
+    modifier(PageColumn())
+  }
+
+  /// For a sheet's root: its pages fill the sheet's width, less its margins, instead of keeping the
+  /// page's column inside a sheet wider than it.
+  func sheetColumn() -> some View {
+    environment(\.pageColumnFillsRoom, true)
   }
 }
 
-private struct ListColumnWidth: ViewModifier {
+extension EnvironmentValues {
+  @Entry fileprivate var pageColumnFillsRoom = false
+}
+
+private struct PageColumn: ViewModifier {
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+  @Environment(\.pageColumnFillsRoom) private var fillsRoom
 
   func body(content: Content) -> some View {
-    content.frame(maxWidth: ListColumn.width(horizontalSizeClass))
-  }
-}
-
-private enum ListColumn {
-  static func width(_ sizeClass: UserInterfaceSizeClass?) -> CGFloat {
-    sizeClass == .regular ? 768 : .infinity
+    content.readableColumn(horizontalSizeClass == .regular && !fillsRoom ? 768 : .infinity)
   }
 }
 

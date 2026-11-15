@@ -60,7 +60,7 @@
         }
       }
     },
-    "%@ · %@" : {
+    "%@ · %@" : {
       "comment" : "A course level's certificate name, such as \"Python · Beginner\": the course's title, then the level's name.",
       "localizations" : {
         "de" : {
@@ -72,7 +72,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ · %2$@"
+            "value" : "%1$@ · %2$@"
           }
         },
         "es" : {

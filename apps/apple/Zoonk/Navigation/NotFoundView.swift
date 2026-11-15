@@ -4,7 +4,7 @@ struct NotFoundView: View {
   @Environment(AppRouter.self) private var router
 
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(
           "We couldn't find this page", tableName: "Navigation",

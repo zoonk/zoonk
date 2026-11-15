@@ -194,7 +194,7 @@ struct SettingsLoadingState<Value: Equatable & Sendable>: View {
     case .idle, .loading:
       ProgressView()
     case .failed:
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
             "Couldn't load this page", tableName: "Settings",
