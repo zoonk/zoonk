@@ -151,9 +151,7 @@ struct MockResultView: View {
         Button {
           choices.showsDetails = true
         } label: {
-          Text(
-            "Details", tableName: "Mock",
-            comment: "Opens everything else about a mock exam's result")
+          Text("See details", tableName: "Mock")
         }
         .buttonStyle(.outline)
         .controlSize(.small)
