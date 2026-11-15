@@ -43,17 +43,25 @@ export function reconcile(
 
   const known = new Set(scenarios.map((scenario) => scenario.id));
 
-  const reached = new Set(
-    file.captures.flatMap((capture) =>
-      capture.scenario && capture.reached !== false ? [capture.scenario] : [],
-    ),
-  );
+  const captured = new Set(file.captures.flatMap((capture) => capture.scenario ?? []));
 
   const unknown = [
     ...new Set([...file.required, ...file.captures.flatMap((capture) => capture.scenario ?? [])]),
   ].filter((id) => !known.has(id));
 
-  const missing = file.required.filter((id) => known.has(id) && !reached.has(id));
+  // A scenario never captured, and each size one was captured at without reaching it.
+  const uncaptured = file.required.filter((id) => known.has(id) && !captured.has(id));
+
+  const unreached = file.captures.flatMap((capture) =>
+    capture.scenario &&
+    capture.reached === false &&
+    known.has(capture.scenario) &&
+    file.required?.includes(capture.scenario)
+      ? [`${capture.scenario} · ${configurationName(capture.configuration)}`]
+      : [],
+  );
+
+  const missing = [...uncaptured, ...unreached];
 
   return {
     findings: [

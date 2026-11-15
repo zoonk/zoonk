@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { type Capture, type CaptureElement } from "./alignment-capture.mts";
-import { fixtureCapture } from "./alignment-fixtures.mts";
+import { filledActions, fixtureCapture } from "./alignment-fixtures.mts";
 import { pairLeads, reconcile } from "./alignment-scenarios.mts";
 import { summarize, summaryLine } from "./alignment-summary.mts";
 import { readCaptures } from "./alignment-validate.mts";
@@ -73,6 +73,27 @@ describe("reconciling a run with the list", () => {
     );
 
     assert.equal(missing, 1);
+  });
+
+  it("fails each size a scenario wasn't reached at, and doesn't judge what that size showed", () => {
+    const phone = scenarioCapture("screen.plain", []);
+
+    const laptop = {
+      ...scenarioCapture("screen.plain", filledActions("page", 2)),
+      configuration: { ...phone.configuration, size: "laptop" },
+      reached: false,
+    };
+
+    const file = { captures: [phone, laptop], required: ["screen.plain"] };
+    const { findings, missing } = reconcile(file, PAIR);
+
+    assert.equal(missing, 1);
+    assert.match(findings[0]?.detail ?? "", /^screen\.plain · laptop/u);
+
+    assert.deepEqual(
+      evaluateFile(file).findings.filter((finding) => finding.rule === "one-filled"),
+      [],
+    );
   });
 
   it("can't measure a scenario the list doesn't name", () => {

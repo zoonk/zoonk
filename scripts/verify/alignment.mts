@@ -249,9 +249,12 @@ export function evaluateFile(file: AlignmentFile): {
 } {
   const scenarios = reconcile(file);
 
+  // A capture whose scenario never showed is a missing record, not a screen to judge.
+  const shown = file.captures.filter((capture) => capture.reached !== false);
+
   const findings = applyExceptions([
-    ...file.captures.flatMap((capture) => evaluateCapture(capture)),
-    ...pairLeads(file.captures),
+    ...shown.flatMap((capture) => evaluateCapture(capture)),
+    ...pairLeads(shown),
     ...scenarios.findings,
     ...(file.discovery ?? []),
   ]);
