@@ -322,7 +322,7 @@ internal fun BuddyHeader(
  * don't, pulled back by its padding so its words start on the name's edge.
  */
 @Composable
-private fun NameAndLine(
+internal fun NameAndLine(
     modifier: Modifier,
     line: (@Composable () -> Unit)?,
     name: @Composable () -> Unit,
@@ -340,21 +340,21 @@ private fun NameAndLine(
         val day = measurables.getOrNull(1)?.measure(loose)
         when {
             day == null -> {
-                layout(constraints.constrainWidth(title.width), title.height) { title.place(0, 0) }
+                layout(constraints.constrainWidth(title.width), title.height) { title.placeRelative(0, 0) }
             }
 
             beside -> {
                 val height = maxOf(title.height, day.height)
                 layout(constraints.constrainWidth(title.width + gap + day.width), height) {
-                    title.place(0, (height - title.height) / 2)
-                    day.place(title.width + gap, (height - day.height) / 2)
+                    title.placeRelative(0, (height - title.height) / 2)
+                    day.placeRelative(title.width + gap, (height - day.height) / 2)
                 }
             }
 
             else -> {
                 layout(constraints.constrainWidth(maxOf(title.width, day.width)), title.height + day.height) {
-                    title.place(0, 0)
-                    day.place(-DAY_LINE_PADDING.roundToPx(), title.height)
+                    title.placeRelative(0, 0)
+                    day.placeRelative(-DAY_LINE_PADDING.roundToPx(), title.height)
                 }
             }
         }
