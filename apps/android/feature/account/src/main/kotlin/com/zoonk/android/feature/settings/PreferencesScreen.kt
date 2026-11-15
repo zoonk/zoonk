@@ -39,8 +39,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
+import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -82,26 +86,36 @@ import java.util.Locale
 import com.zoonk.api.models.Buddy as ProfileBuddy
 
 /** A change that didn't save is put back, and the page says so in the app's snackbars, on the visit that changed it. */
+@OptIn(SavedStateHandleSaveableApi::class)
 class PreferencesViewModel(
     private val profile: LearningProfileStore,
+    handle: SavedStateHandle,
 ) : ViewModel() {
     val visit = Visit()
 
     /** A change that didn't save on this visit. */
     val saveFailed = visit.outcome<Unit>()
 
-    var isEditingBuddy by mutableStateOf(false)
+    /** The buddy editor, kept open through a reclaimed process. */
+    var isEditingBuddy by handle.saveable { mutableStateOf(false) }
         private set
+
+    /** The buddy editor while it shows: its save closes it or says it didn't, and closing it ends it. */
+    val buddyEditor = visit.opening()
+
+    /** The open editor's change saved, so it closes. */
+    val buddySaved = buddyEditor.outcome<Unit>()
+
+    private val buddyFailure = buddyEditor.outcome<Unit>()
 
     var isSavingBuddy by mutableStateOf(false)
         private set
 
-    var buddySaveFailed by mutableStateOf(false)
-        private set
+    /** The open editor's change didn't save. */
+    val buddySaveFailed get() = buddyFailure.value != null
 
     fun editBuddy(editing: Boolean) {
         isEditingBuddy = editing
-        buddySaveFailed = false
     }
 
     fun setSoundsEnabled(enabled: Boolean) = save { profile.setSoundsEnabled(enabled) }
@@ -115,7 +129,8 @@ class PreferencesViewModel(
     ) {
         if (isSavingBuddy) return
         isSavingBuddy = true
-        buddySaveFailed = false
+        buddyFailure.clear()
+        val started = buddyEditor.number
         viewModelScope.launch {
             val saved =
                 profile.setBuddy(
@@ -124,7 +139,7 @@ class PreferencesViewModel(
                     name.trim().ifEmpty { null },
                 )
             isSavingBuddy = false
-            if (saved) isEditingBuddy = false else buddySaveFailed = true
+            (if (saved) buddySaved else buddyFailure).send(started, Unit)
         }
     }
 
@@ -145,7 +160,7 @@ fun PreferencesScreen(
 ) {
     val profile by app.learningProfile.profile.collectShown()
     val summary by app.learnerSummary.summary.collectShown()
-    val preferences = viewModel { PreferencesViewModel(app.learningProfile) }
+    val preferences = viewModel { PreferencesViewModel(app.learningProfile, createSavedStateHandle()) }
     VisitOf(preferences.visit)
     ActOn(preferences.saveFailed) { app.snackbars.show(R.string.settings_preferences_save_failed) }
     val scope = rememberCoroutineScope()
@@ -191,7 +206,7 @@ fun PreferencesScreen(
 }
 
 @Composable
-private fun BuddySection(
+internal fun BuddySection(
     profile: LearningProfile,
     summaryLook: BuddyLook,
     preferences: PreferencesViewModel,
@@ -212,6 +227,8 @@ private fun BuddySection(
     }
 
     if (preferences.isEditingBuddy) {
+        VisitOf(preferences.buddyEditor)
+        ActOn(preferences.buddySaved) { preferences.editBuddy(false) }
         BuddyEditor(
             look = look,
             name = profile.buddy.name.orEmpty(),
