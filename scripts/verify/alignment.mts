@@ -7,6 +7,7 @@ import {
   finding,
   groupName,
   groupsOf,
+  notMeasured,
   rowName,
 } from "./alignment-geometry.mts";
 import { lineLeads } from "./alignment-line.mts";
@@ -33,26 +34,41 @@ function typeLeads(context: Context, read: Group): AlignmentFinding[] {
 
     // A current row may set its words apart, and a word in a value's place ("Won", "Today") is
     // set in the text face where figures are mono: values compare only where they hold figures.
-    const typed = parts.filter(
+    const compared = parts.filter(
       (element) =>
         element.part === part &&
-        element.type &&
-        element.type !== "not measured" &&
         !current.has(element.row ?? "") &&
         (part !== "value" || /\d/u.test(element.text ?? "")),
     );
+
+    const typed = compared.filter((element) => element.type && element.type !== "not measured");
+    const untyped = compared.filter((element) => !typed.includes(element));
+
+    const unread =
+      untyped.length > 0
+        ? [
+            notMeasured(
+              context,
+              read,
+              "type",
+              `a ${part}'s type token wasn't measured`,
+              untyped.map((element) => rowName(read, element.row)).join(", "),
+            ),
+          ]
+        : [];
 
     const tokens = [...Map.groupBy(typed, (element) => element.type ?? "")].toSorted(
       ([, one], [, other]) => other.length - one.length,
     );
 
     if (tokens.length < 2) {
-      return [];
+      return unread;
     }
 
     const odd = tokens.slice(1).flatMap(([, here]) => here);
 
     return [
+      ...unread,
       finding(context, {
         detail: `${tokens.map(([token, here]) => `${token} ×${here.length}`).join(", ")}; the odd ones: ${odd.map((element) => rowName(read, element.row)).join(", ")}`,
         level: "fail",

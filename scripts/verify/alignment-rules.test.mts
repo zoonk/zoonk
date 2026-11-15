@@ -12,6 +12,7 @@ import {
   failures,
   filledActions,
   fixtureCapture,
+  LABEL_TYPE,
   labelledRows,
   real,
   valueList,
@@ -75,7 +76,7 @@ describe("relationships with no vote", () => {
   it("fails labels of one role in two type tokens", () => {
     const findings = evaluateCapture(
       fixtureCapture([
-        element({ group: null, id: "g", part: "group" }),
+        element({ gap: 0, group: null, id: "g", part: "group" }),
         ...labelledRows(2),
         element({ id: "l0", part: "label", row: "r0", type: "Geist 14px 500 19.25px" }),
         element({ id: "l1", part: "label", row: "r1", type: "Geist 14px 400 19.25px" }),
@@ -112,7 +113,7 @@ describe("relationships with no vote", () => {
   });
 });
 
-const GROUP = element({ endEdge: 358, group: null, id: "g", part: "group" });
+const GROUP = element({ endEdge: 358, gap: 0, group: null, id: "g", part: "group" });
 
 function marks(first: number, second: number) {
   return fixtureCapture([
@@ -188,8 +189,8 @@ describe("what the review found the checks could pass unmeasured", () => {
       group,
       element({ bounds: [0, 0, 150, 30], id: "r0", part: "row" }),
       element({ bounds: [152, 0, 150, 30], id: "r1", part: "row" }),
-      element({ id: "l0", ink: [8, 5, 20, 20], part: "label", row: "r0" }),
-      element({ id: "l1", ink: [160, 5, 20, 20], part: "label", row: "r1" }),
+      element({ id: "l0", ink: [8, 5, 20, 20], part: "label", row: "r0", type: LABEL_TYPE }),
+      element({ id: "l1", ink: [160, 5, 20, 20], part: "label", row: "r1", type: LABEL_TYPE }),
     ]);
 
     assert.deepEqual(

@@ -1,7 +1,7 @@
 /* oxlint-disable no-magic-numbers -- The fixtures are measurements in pixels. */
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { element, failures, fixtureCapture, real } from "./alignment-fixtures.mts";
+import { LABEL_TYPE, element, failures, fixtureCapture, real } from "./alignment-fixtures.mts";
 import { evaluateCapture } from "./alignment.mts";
 
 describe("the declared relationships on the faults the owner caught", () => {
@@ -100,7 +100,9 @@ describe("the Plan's path and Android's captures", () => {
 
   it("judges a row whose value stacked under its label by what still applies", () => {
     const findings = evaluateCapture(real("android plan rows stacked at 200%, phone"));
-    const line = findings.find((finding) => finding.detail.includes("Learn Python"));
+    const line = findings.find(
+      (finding) => finding.rule === "line" && finding.detail.includes("Learn Python"),
+    );
 
     // The stacked value no longer ends the row: only the chevron's own 6 dp short shows.
     assert.deepEqual(
@@ -117,11 +119,23 @@ describe("the Plan's path and Android's captures", () => {
 
   it("reads a right-to-left group mirrored, so its start is its right edge", () => {
     const rtl = fixtureCapture([
-      element({ direction: "rtl", endEdge: 16, group: null, id: "g", part: "group" }),
+      element({ direction: "rtl", endEdge: 16, gap: 0, group: null, id: "g", part: "group" }),
       element({ bounds: [16, 0, 358, 44], id: "r0", part: "row" }),
       element({ bounds: [16, 44, 358, 44], id: "r1", part: "row" }),
-      element({ firstLine: [200, 12, 150, 20], id: "l0", part: "label", row: "r0" }),
-      element({ firstLine: [250, 56, 100, 20], id: "l1", part: "label", row: "r1" }),
+      element({
+        firstLine: [200, 12, 150, 20],
+        id: "l0",
+        part: "label",
+        row: "r0",
+        type: LABEL_TYPE,
+      }),
+      element({
+        firstLine: [250, 56, 100, 20],
+        id: "l1",
+        part: "label",
+        row: "r1",
+        type: LABEL_TYPE,
+      }),
     ]);
 
     assert.deepEqual(evaluateCapture(rtl), []);
@@ -129,11 +143,23 @@ describe("the Plan's path and Android's captures", () => {
 
   it("makes a stack-grouped row's fault a lead, not a failure", () => {
     const stack = fixtureCapture([
-      element({ group: null, id: "g", part: "group", source: "stack" }),
+      element({ gap: 0, group: null, id: "g", part: "group", source: "stack" }),
       element({ bounds: [0, 0, 358, 44], id: "r0", part: "row" }),
       element({ bounds: [0, 44, 358, 44], id: "r1", part: "row" }),
-      element({ firstLine: [16, 12, 100, 20], id: "l0", part: "label", row: "r0" }),
-      element({ firstLine: [52, 56, 100, 20], id: "l1", part: "label", row: "r1" }),
+      element({
+        firstLine: [16, 12, 100, 20],
+        id: "l0",
+        part: "label",
+        row: "r0",
+        type: LABEL_TYPE,
+      }),
+      element({
+        firstLine: [52, 56, 100, 20],
+        id: "l1",
+        part: "label",
+        row: "r1",
+        type: LABEL_TYPE,
+      }),
     ]);
 
     assert.deepEqual(

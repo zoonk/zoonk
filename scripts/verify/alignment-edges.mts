@@ -9,6 +9,7 @@ import {
   finding,
   groupName,
   holderNamed,
+  notMeasured,
   rowName,
   tenths,
 } from "./alignment-geometry.mts";
@@ -160,6 +161,15 @@ function inkRight(element: CaptureElement) {
 export function endLeads(context: Context, read: Group): AlignmentFinding[] {
   const { group, holders, parts, rows } = read;
 
+  const edgeless = rows.filter((row) => {
+    const own = parts.filter((element) => element.row === row.id);
+
+    return (
+      typeof (row.endEdge ?? group.endEdge) !== "number" &&
+      own.some((element) => (element.part === "end" || element.part === "value") && drawn(element))
+    );
+  });
+
   const ending = rows.flatMap((row) => {
     const own = parts.filter((element) => element.row === row.id);
     const declared = row.endEdge ?? group.endEdge;
@@ -233,6 +243,17 @@ export function endLeads(context: Context, read: Group): AlignmentFinding[] {
   const column = oneEdge(values, ({ valueEnd }) => valueEnd);
 
   return [
+    ...(edgeless.length > 0
+      ? [
+          notMeasured(
+            context,
+            read,
+            "end-edge",
+            "a row's end edge wasn't measured",
+            edgeless.map((row) => rowName(read, row.id)).join(", "),
+          ),
+        ]
+      : []),
     ...short,
     ...(column
       ? [
@@ -294,44 +315,30 @@ export function gapLeads(context: Context, read: Group): AlignmentFinding[] {
     (one, other) => one.bounds[1] - other.bounds[1],
   );
 
-  if (
-    group.gap === "not measured" &&
-    rows.length > 1 &&
-    rows.every((row) => row.gapBefore === undefined)
-  ) {
-    return [
-      finding(context, {
-        detail: groupName(read),
-        level: "not-measured",
-        message: `the gap of a ${group.piece} wasn't measured`,
-        piece: group.piece,
-        rule: "gap",
-      }),
-    ];
-  }
-
-  return rows.slice(1).flatMap((next, index) => {
+  const pairs = rows.slice(1).flatMap((next, index) => {
     const previous = rows[index];
 
     // Rows of one flow only: the web names each row's flow; a platform that doesn't has one.
-    if (!previous || previous.flow !== next.flow) {
+    if (
+      !previous ||
+      previous.flow !== next.flow ||
+      next.bounds[1] < previous.bounds[1] + previous.bounds[3] - EDGE
+    ) {
+      return [];
+    }
+
+    return [{ gap: next.gapBefore ?? group.gap, next, previous }];
+  });
+
+  const unread = pairs.filter(({ gap }) => typeof gap !== "number");
+
+  const off = pairs.flatMap(({ gap, next, previous }) => {
+    if (typeof gap !== "number") {
       return [];
     }
 
     const above = box(previous.bounds);
     const below = box(next.bounds);
-
-    if (below.top < above.bottom - EDGE) {
-      return [];
-    }
-
-    const gap = next.gapBefore ?? group.gap;
-
-    // A gap the platform couldn't read prints once as not measured, below.
-    if (typeof gap !== "number") {
-      return [];
-    }
-
     const expected = gap + (previous.margins?.[1] ?? 0) + (next.margins?.[0] ?? 0);
 
     const measured = below.top - above.bottom;
@@ -359,4 +366,24 @@ export function gapLeads(context: Context, read: Group): AlignmentFinding[] {
       }),
     ];
   });
+
+  return [
+    ...(unread.length > 0
+      ? [
+          notMeasured(
+            context,
+            read,
+            "gap",
+            "the gap between two neighbors wasn't measured",
+            unread
+              .map(
+                ({ next, previous }) =>
+                  `${rowName(read, previous.id)} and ${rowName(read, next.id)}`,
+              )
+              .join(", "),
+          ),
+        ]
+      : []),
+    ...off,
+  ];
 }

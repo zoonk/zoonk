@@ -54,6 +54,8 @@ export function element(fields: Partial<CaptureElement> & Pick<CaptureElement, "
   } satisfies CaptureElement;
 }
 
+export const LABEL_TYPE = "Geist 14px 500 20px";
+
 /** Stacked rows 44 apart, each with a measured label, so a fixture judges only what it sets up. */
 export function labelledRows(count: number) {
   return Array.from({ length: count }, (_, index) => [
@@ -63,6 +65,7 @@ export function labelledRows(count: number) {
       ink: [28, index * 44 + 12, 100, 20],
       part: "label",
       row: `r${index}`,
+      type: LABEL_TYPE,
     }),
   ]).flat();
 }

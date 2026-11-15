@@ -1,20 +1,5 @@
 import { type AlignmentFinding, type CaptureElement } from "./alignment-capture.mts";
-import { type Context, type Group, finding, groupName, rowName } from "./alignment-geometry.mts";
-
-/**
- * What a declared piece promised and the read couldn't measure. An unmeasured relationship is
- * never a pass: each gap in the inputs is a not-measured record, and it fails the run like a
- * broken relationship, since the piece's declaration says these parts are there.
- */
-function notMeasured(context: Context, read: Group, rule: string, what: string, detail: string) {
-  return finding(context, {
-    detail,
-    level: "not-measured",
-    message: `${groupName(read)}: ${what}`,
-    piece: read.group.piece,
-    rule,
-  });
-}
+import { type Context, type Group, notMeasured, rowName } from "./alignment-geometry.mts";
 
 /** Rows side by side (a grid, two columns) aren't one stack, which start, end and gap assume. */
 export function isOneStack({ rows }: Group) {

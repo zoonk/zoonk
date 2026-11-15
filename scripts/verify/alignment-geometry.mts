@@ -127,3 +127,24 @@ export function rowName({ parts, rows }: Group, id: string | null): string {
 export function groupName(group: Group): string {
   return `${group.group.piece} ${group.group.name ?? rowName(group, group.rows[0]?.id ?? null)}`;
 }
+
+/**
+ * What a declared piece promised and the read couldn't measure. An unmeasured relationship is
+ * never a pass: each gap in the inputs is a not-measured record, and it fails the run like a
+ * broken relationship, since the piece's declaration says these parts are there.
+ */
+export function notMeasured(
+  context: Context,
+  read: Group,
+  rule: string,
+  what: string,
+  detail: string,
+) {
+  return finding(context, {
+    detail,
+    level: "not-measured",
+    message: `${groupName(read)}: ${what}`,
+    piece: read.group.piece,
+    rule,
+  });
+}
