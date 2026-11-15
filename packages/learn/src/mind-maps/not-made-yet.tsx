@@ -51,9 +51,10 @@ function PageStopNotice({ stop, tier }: { stop: MindMapAllowanceStop; tier: Enti
 }
 
 /**
- * Only the first line that applies shows, so the block never stacks paragraphs. Maps on their way
- * and maps that didn't finish come before the limit: the learner just started them, and the limit
- * read first looks like a refusal.
+ * Only the first line that applies shows, so the block never stacks paragraphs. Maps that didn't
+ * finish come before the limit, which reads as a refusal of what the learner just started. A stop
+ * on new maps outranks maps on their way, whose rows each say they're being made (their group opens
+ * on arrival).
  */
 function NotMadeLine({
   chapters,
@@ -87,17 +88,6 @@ function NotMadeLine({
     );
   }
 
-  if (onTheWay > 0) {
-    return (
-      <p className={LINE_CLASS}>
-        {t(
-          "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}",
-          { count: onTheWay },
-        )}
-      </p>
-    );
-  }
-
   if (failed > 0) {
     return (
       <p className={LINE_CLASS}>
@@ -111,6 +101,17 @@ function NotMadeLine({
 
   if (shownStop && bulk.status !== "sending") {
     return <PageStopNotice stop={shownStop} tier={tier} />;
+  }
+
+  if (onTheWay > 0) {
+    return (
+      <p className={LINE_CLASS}>
+        {t(
+          "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}",
+          { count: onTheWay },
+        )}
+      </p>
+    );
   }
 
   if (startable > 0 && startable < eligible) {
@@ -211,6 +212,7 @@ export function NotMadeYet({
         <ListGroup>
           <Disclosure
             aside={<span className="font-mono text-xs tabular-nums">{later.length}</span>}
+            defaultOpen={countChapterMaps(later).onTheWay > 0}
             icon={null}
             title={t("Other chapters")}
           >
