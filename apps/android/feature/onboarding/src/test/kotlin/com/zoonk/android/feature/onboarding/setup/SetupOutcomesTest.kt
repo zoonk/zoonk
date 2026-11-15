@@ -103,6 +103,23 @@ class SetupOutcomesTest {
     private fun aimPlans(cache: AppCache) = PlanStore(FakePlanApi().apply { gates[PlanOp.Aim("B1")] = gate }, cache)
 
     @Test
+    fun anAimFailureAfterItsSheetClosedSaysNothing() =
+        check { store, cache ->
+            val vm = setup(store)
+            val api =
+                FakePlanApi().apply {
+                    gates[PlanOp.Aim("B1")] = gate
+                    changeFailure = ApiException(ApiError.Network)
+                }
+            vm.changeAim(PlanStore(api, cache), "B1")
+            runCurrent()
+            vm.aimSheet.end()
+            gate.complete(Unit)
+            runCurrent()
+            assertFalse(vm.saveFailed)
+        }
+
+    @Test
     fun anAimSavedAfterTheSetupWasLeftClosesNothingOnReturn() =
         check { store, cache ->
             val vm = setup(store)

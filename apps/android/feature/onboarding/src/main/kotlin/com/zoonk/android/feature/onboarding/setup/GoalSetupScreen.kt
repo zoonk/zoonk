@@ -365,7 +365,7 @@ private fun ColumnScope.SetupStep(
             SetupAimContext(
                 view.languageAim,
                 vm.isSaving,
-                vm.saveFailed,
+                vm.aimFailed,
                 { aim -> vm.changeAim(plans, aim) },
                 vm.aimSaved,
                 vm.aimSheet,

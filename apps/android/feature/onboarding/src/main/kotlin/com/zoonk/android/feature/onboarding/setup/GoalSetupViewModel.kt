@@ -148,14 +148,18 @@ internal class GoalSetupViewModel(
     /** The aim the learner picked saved: the sheet that asked closes. */
     val aimSaved = aimSheet.outcome<Unit>()
 
+    private val aimFailure = aimSheet.outcome<Unit>()
+
+    /** The aim didn't save, said in the sheet that asked. */
+    val aimFailed get() = aimFailure.value != null
+
     fun changeAim(
         plans: com.zoonk.android.feature.plan.PlanStore,
         aim: String,
     ) {
         if (isSaving) return
         isSaving = true
-        clearFailure()
-        val started = visit.number
+        aimFailure.clear()
         val sheet = aimSheet.number
         viewModelScope.launch {
             when (
@@ -173,14 +177,14 @@ internal class GoalSetupViewModel(
                         store.onboardings[goalId].refresh()
                         aimSaved.send(sheet, Unit)
                     } else {
-                        failure.send(started, SaveFailure())
+                        aimFailure.send(sheet, Unit)
                     }
                 }
 
                 com.zoonk.android.data.MutationResult.Obsolete -> {}
 
                 else -> {
-                    failure.send(started, SaveFailure())
+                    aimFailure.send(sheet, Unit)
                 }
             }
             isSaving = false
