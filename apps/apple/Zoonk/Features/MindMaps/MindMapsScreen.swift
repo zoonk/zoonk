@@ -370,7 +370,7 @@ private struct MindMapCreateSection: View {
           "Chapter maps whose making failed; the button above makes them again, for free")
     case .fewer(let count):
       String(
-        localized: "You can make \(count) more right now.", table: "MindMaps",
+        localized: "You can create \(count) more maps right now.", table: "MindMaps",
         comment:
           "Fewer chapter maps can start than are ready to make: as many as the allowance lets")
     case .unreachable, .stopped, nil:
