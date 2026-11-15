@@ -15,6 +15,7 @@ import {
 } from "@zoonk/ui/components/side-panel";
 import { useIsMobile } from "@zoonk/ui/hooks/mobile";
 import { useExtracted } from "next-intl";
+import { RequestScope } from "./layout-shared";
 import { PlanActivities } from "./plan-activities";
 import { PlanAim } from "./plan-aim";
 import { PlanBases } from "./plan-bases";
@@ -39,25 +40,45 @@ function EditorSections() {
   return (
     <>
       <div className={SECTION_CLASS} id={getEditorSectionId("date")}>
-        <PlanDate />
+        <RequestScope name="date">
+          <PlanDate />
+        </RequestScope>
       </div>
-      <PlanAim />
-      <PlanSchedule />
+      <RequestScope name="aim">
+        <PlanAim />
+      </RequestScope>
+      <RequestScope name="schedule">
+        <PlanSchedule />
+      </RequestScope>
       <div className={SECTION_CLASS} id={getEditorSectionId("choices")}>
-        <PlanExamChoices />
+        <RequestScope name="choices">
+          <PlanExamChoices />
+        </RequestScope>
       </div>
-      <PlanBases />
+      <RequestScope name="bases">
+        <PlanBases />
+      </RequestScope>
       <div className={SECTION_CLASS} id={getEditorSectionId("language")}>
-        <PlanLanguage />
+        <RequestScope name="language">
+          <PlanLanguage />
+        </RequestScope>
       </div>
       <div className={SECTION_CLASS} id={getEditorSectionId("country")}>
-        <PlanCountry />
+        <RequestScope name="country">
+          <PlanCountry />
+        </RequestScope>
       </div>
       <div className={SECTION_CLASS} id={getEditorSectionId("practice")}>
-        <PlanActivities />
+        <RequestScope name="practice">
+          <PlanActivities />
+        </RequestScope>
       </div>
-      <PlanWrittenPractice />
-      <PlanTools />
+      <RequestScope name="written">
+        <PlanWrittenPractice />
+      </RequestScope>
+      <RequestScope name="tools">
+        <PlanTools />
+      </RequestScope>
     </>
   );
 }
@@ -78,17 +99,17 @@ function EditorPanel({ initialFocus, onOpenChange, open }: EditorFrameProps) {
         initialFocus={initialFocus}
         side="right"
       >
-        <PlanEditorChangeProvider>
-          <SidePanelHeader closeLabel={t("Close")}>
-            <SidePanelTitle>{t("Adjust your plan")}</SidePanelTitle>
-          </SidePanelHeader>
+        <SidePanelHeader closeLabel={t("Close")}>
+          <SidePanelTitle>{t("Adjust your plan")}</SidePanelTitle>
+        </SidePanelHeader>
 
-          <div className="flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-6 pt-4 pb-8">
-            <EditorSections />
-          </div>
+        <div className="flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-6 pt-4 pb-8">
+          <EditorSections />
+        </div>
 
+        <RequestScope name="change">
           <PlanEditorChange placement="panel" />
-        </PlanEditorChangeProvider>
+        </RequestScope>
       </SidePanelContent>
     </SidePanel>
   );
@@ -100,17 +121,17 @@ function EditorSheet({ initialFocus, onOpenChange, open }: EditorFrameProps) {
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup initialFocus={initialFocus}>
-        <PlanEditorChangeProvider>
-          <DrawerHeader closeLabel={t("Close")}>
-            <DrawerTitle>{t("Adjust your plan")}</DrawerTitle>
-          </DrawerHeader>
+        <DrawerHeader closeLabel={t("Close")}>
+          <DrawerTitle>{t("Adjust your plan")}</DrawerTitle>
+        </DrawerHeader>
 
-          <DrawerContent className="flex flex-col gap-7 pt-2">
-            <EditorSections />
-          </DrawerContent>
+        <DrawerContent className="flex flex-col gap-7 pt-2">
+          <EditorSections />
+        </DrawerContent>
 
+        <RequestScope name="change">
           <PlanEditorChange placement="foot" />
-        </PlanEditorChangeProvider>
+        </RequestScope>
       </DrawerPopup>
     </Drawer>
   );
@@ -129,5 +150,11 @@ export function PlanEditor({
   const initialFocus = () => (section && findSectionControl(section)) || true;
   const props = { initialFocus, onOpenChange, open };
 
-  return isPhone ? <EditorSheet {...props} /> : <EditorPanel {...props} />;
+  // The change a save made lives above the sheet/panel switch, so a resize mid-save shows it in the
+  // frame it brings.
+  return (
+    <PlanEditorChangeProvider open={open}>
+      {isPhone ? <EditorSheet {...props} /> : <EditorPanel {...props} />}
+    </PlanEditorChangeProvider>
+  );
 }
