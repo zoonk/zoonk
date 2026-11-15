@@ -177,6 +177,7 @@ export function TaskRow({
                 icon={<PlayIcon aria-hidden="true" />}
                 onClick={needsSubscription ? () => setGated(true) : onStart}
                 size="sm"
+                variant="outline"
               >
                 {t("Start")}
               </Button>
