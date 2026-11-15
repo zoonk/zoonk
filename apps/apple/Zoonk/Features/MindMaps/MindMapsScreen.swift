@@ -276,18 +276,21 @@ private struct MindMapCreateSection: View {
 
       if !others.isEmpty {
         FoldRow(isUnfolded: $showsChapters) {
-          LabeledContent {
-            Text(verbatim: others.count.formatted())
-              .typeStyle(.data)
-              .foregroundStyle(.mutedForeground)
-              .layoutPart(.value)
-          } label: {
+          // Centered, not on one baseline: a small count's capitals sit low on the label's.
+          HStack(spacing: 8) {
             Text(
               "Other chapters", tableName: "MindMaps",
               comment: "Unfolds the chapters whose maps can't be made right now"
             )
             .typeStyle(.body)
             .layoutPart(.label)
+
+            Spacer(minLength: 8)
+
+            Text(verbatim: others.count.formatted())
+              .typeStyle(.data)
+              .foregroundStyle(.mutedForeground)
+              .layoutPart(.value)
           }
         }
         .onAppear {
