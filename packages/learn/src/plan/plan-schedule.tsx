@@ -277,13 +277,15 @@ function WeekendMinutes({
         }
       }}
     >
-      <TimeSelect
-        disabled={isPending}
-        label={t("Time on weekends")}
-        onChange={(minutes) => void setWeekend(minutes)}
-        saves
-        value={weekend.shown}
-      />
+      {(on) => (
+        <TimeSelect
+          disabled={isPending || !on}
+          label={t("Time on weekends")}
+          onChange={(minutes) => void setWeekend(minutes)}
+          saves
+          value={on ? weekend.shown : shape.weekdays}
+        />
+      )}
     </WeekendTime>
   );
 }
