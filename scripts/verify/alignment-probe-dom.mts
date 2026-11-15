@@ -5,7 +5,7 @@ import { WEB_TABLE } from "./alignment-table.mts";
 import { installPageHelpers } from "./page-helpers.mts";
 
 /** jsdom has no layout: each element's box comes from its `data-box` (x, y, width, height). */
-export function box(element: Element) {
+function box(element: Element) {
   const [left = 0, top = 0, width = 0, height = 0] = (
     element instanceof HTMLElement ? (element.dataset.box ?? "") : ""
   )
