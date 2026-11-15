@@ -86,15 +86,14 @@ function CourseItem({
         <CourseMark course={course} locale={locale} />
 
         <span className="flex min-w-0 flex-1 flex-col self-stretch">
-          <span className="flex items-start justify-between gap-3">
-            <span className="text-reading min-w-0 leading-snug font-semibold text-pretty">
-              {course.title}
-            </span>
+          {/* The row carries the title's type, so the chip's box is one of its lines (`h-lh`) and the chip centers on the first. */}
+          <span className="text-reading flex items-start justify-between gap-3 leading-snug">
+            <span className="min-w-0 font-semibold text-pretty">{course.title}</span>
 
             {subjectName && (
-              <SubjectLabel className="lg:hidden" subject={subject}>
-                {subjectName}
-              </SubjectLabel>
+              <span className="flex h-lh shrink-0 items-center lg:hidden">
+                <SubjectLabel subject={subject}>{subjectName}</SubjectLabel>
+              </span>
             )}
           </span>
 

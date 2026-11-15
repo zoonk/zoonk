@@ -210,6 +210,7 @@ msgstr "Aujourd’hui"
 
 #: src/_components/create-account-link.tsx
 #: src/_components/subscribe-gate.tsx
+#: src/language/unit/practice-conversation.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -2456,6 +2457,18 @@ msgctxt "ooL306"
 msgid "The Trickster's shield"
 msgstr "Le bouclier du Farceur"
 
+#: src/checkpoints/checkpoint-duel-view.tsx
+#: src/checkpoints/trickster-shield.tsx
+msgctxt "N6ZXzw"
+msgid "You won"
+msgstr "Tu as gagné"
+
+#: src/checkpoints/checkpoint-duel-view.tsx
+#: src/checkpoints/trickster-shield.tsx
+msgctxt "Cu4K5p"
+msgid "He won"
+msgstr "Il a gagné"
+
 #. Right answers the learner still needs to beat the Trickster.
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/trickster-shield.tsx
@@ -2469,7 +2482,6 @@ msgid "{count, plural, =0 {No questions left} one {# question left} other {# que
 msgstr "{count, plural, =0 {Plus aucune question} one {# question restante} other {# questions restantes}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-#: src/checkpoints/checkpoint-result-view.tsx
 msgctxt "qqqXC2"
 msgid "{count, plural, one {# right to win} other {# right to win}}"
 msgstr "{count, plural, one {# bonne réponse pour gagner} other {# bonnes réponses pour gagner}}"
@@ -2527,6 +2539,11 @@ msgctxt "1VpodI"
 msgid "Not this time"
 msgstr "Pas cette fois"
 
+#: src/checkpoints/checkpoint-result-view.tsx
+msgctxt "3NtvGN"
+msgid "{count, plural, one {You needed # right to win.} other {You needed # right to win.}}"
+msgstr "{count, plural, one {Il te fallait # bonne réponse pour gagner.} other {Il te fallait # bonnes réponses pour gagner.}}"
+
 #: src/checkpoints/checkpoint-review.tsx
 #: src/mistakes/mistake-entry.tsx
 #: src/questions/right-answer-line.tsx
@@ -2557,16 +2574,6 @@ msgstr "Voir les réponses"
 msgctxt "nbNiMs"
 msgid "{cracked, plural, =0 {# of {segments} broken} one {# of {segments} broken} other {# of {segments} broken}}"
 msgstr "{cracked, plural, =0 {# plaque sur {segments} est brisée} one {# plaque est brisée sur {segments}} other {# plaques sont brisées sur {segments}}}"
-
-#: src/checkpoints/trickster-shield.tsx
-msgctxt "N6ZXzw"
-msgid "You won"
-msgstr "Tu as gagné"
-
-#: src/checkpoints/trickster-shield.tsx
-msgctxt "Cu4K5p"
-msgid "He won"
-msgstr "Il a gagné"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "KLUSrr"
@@ -6976,9 +6983,14 @@ msgid "Nothing yet. Notes show up here as you study and chat."
 msgstr "Rien pour l’instant. Des notes s’ajoutent ici au fil de ton apprentissage et de tes discussions."
 
 #: src/memory/memory-screen.tsx
-msgctxt "etMoG6"
-msgid "Download my memory"
-msgstr "Télécharger ma mémoire"
+msgctxt "dQaH-3"
+msgid "Download your memory"
+msgstr "Télécharger les informations mémorisées"
+
+#: src/memory/memory-screen.tsx
+msgctxt "U3W00j"
+msgid "A copy of your memory"
+msgstr "Une copie des informations mémorisées"
 
 #: src/memory/memory-screen.tsx
 msgctxt "GUOjcs"
@@ -7495,9 +7507,9 @@ msgid "{count, plural, one {Mission done!} other {# missions done!}}"
 msgstr "{count, plural, =1 {Mission terminée !} other {# missions terminées !}}"
 
 #: src/missions/mission-moment.tsx
-msgctxt "oKqRoi"
-msgid "{count, plural, one {# more for +{points} Brain Power} other {# more for +{points} Brain Power}}"
-msgstr "{count, plural, one {Encore # mission pour +{points} Puissance Mentale} other {Encore # missions pour +{points} Puissance Mentale}}"
+msgctxt "y3EoXn"
+msgid "{count, plural, one {# more mission for +{points} Brain Power} other {# more missions for +{points} Brain Power}}"
+msgstr "{count, plural, one {# mission de plus pour +{points} points de Puissance Mentale} other {# missions de plus pour +{points} points de Puissance Mentale}}"
 
 #: src/missions/mission-moment.tsx
 msgctxt "aGylUw"
@@ -10678,11 +10690,6 @@ msgid "Date passed"
 msgstr "Date passée"
 
 #: src/plan/plan-status-label.tsx
-msgctxt "y7l0FJ"
-msgid "Keep studying them, or archive this goal?"
-msgstr "Continuer à les étudier ou archiver cet objectif ?"
-
-#: src/plan/plan-status-label.tsx
 msgctxt "xNjzfh"
 msgid "{count, plural, one {You have # lesson left. Keep studying it, or archive this goal?} other {You have # lessons left. Keep studying them, or archive this goal?}}"
 msgstr "{count, plural, one {Il te reste # leçon. Tu veux continuer à la travailler ou archiver cet objectif ?} other {Il te reste # leçons. Tu veux continuer à les travailler ou archiver cet objectif ?}}"
@@ -11786,6 +11793,11 @@ msgid "Past or present, finished or not. Pick up to 3."
 msgstr "Études passées ou en cours, terminées ou non. Choisis jusqu’à 3 réponses."
 
 #: src/profile-questions/profile-question-copy.ts
+msgctxt "esh22C"
+msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime."
+msgstr "Facultatif. Nous utilisons tes choix pour adapter le contenu à tes besoins. Tu peux les supprimer à tout moment."
+
+#: src/profile-questions/profile-question-copy.ts
 msgctxt "zJoq3-"
 msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings."
 msgstr "Facultatif. Tes choix nous permettent d’adapter le contenu à tes besoins. Tu peux les supprimer à tout moment dans les Paramètres."
@@ -11824,6 +11836,11 @@ msgstr "Ce qui t’aide, avec tes mots (facultatif)"
 msgctxt "dcwrhI"
 msgid "E.g., I understand diagrams better than text"
 msgstr "Par exemple, je comprends mieux avec des schémas qu’avec du texte"
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "HOckqc"
+msgid "We'll remember this. You can delete it anytime."
+msgstr "On gardera ça en mémoire. Tu peux l’effacer à tout moment."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "mM7GRS"
@@ -12540,6 +12557,16 @@ msgstr "Terminé en moins d’une minute"
 msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "Terminé en {time}"
+
+#: src/session/summary/summary-parts.tsx
+msgctxt "7N1uKO"
+msgid "Down from {value}"
+msgstr "En baisse par rapport à {value}"
+
+#: src/session/summary/summary-parts.tsx
+msgctxt "VngKEd"
+msgid "Up from {value}"
+msgstr "En hausse par rapport à {value}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "YwxEGP"
@@ -13631,14 +13658,14 @@ msgid "You finished {name}."
 msgstr "Tu as terminé {name}."
 
 #: src/week/logbook-sections.tsx
-msgctxt "koboTV"
-msgid "{time} more than the week before!"
-msgstr "{time} de plus que la semaine précédente !"
+msgctxt "Yj-wa7"
+msgid "{time} more than the week before."
+msgstr "{time} de plus que la semaine précédente."
 
 #: src/week/logbook-sections.tsx
-msgctxt "mY3vs_"
-msgid "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
-msgstr "{questions, plural, one {# question de plus que la semaine précédente !} other {# questions de plus que la semaine précédente !}}"
+msgctxt "d9SZZ-"
+msgid "{questions, plural, one {# more question than the week before.} other {# more questions than the week before.}}"
+msgstr "{questions, plural, one {# question de plus que la semaine précédente.} other {# questions de plus que la semaine précédente.}}"
 
 #: src/week/logbook-sections.tsx
 msgctxt "gpv0cM"

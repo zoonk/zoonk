@@ -1,6 +1,7 @@
 import { type AppRoute } from "@/i18n/navigation";
 import { type getMenu } from "@/lib/menu";
 import { type ChapterSearchResult, type CourseSearchResult } from "@zoonk/core/catalog/search";
+import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { normalizeString } from "@zoonk/utils/string";
 import {
   ArrowLeftRightIcon,
@@ -20,6 +21,8 @@ import {
 type PaletteRoute = AppRoute<ReturnType<typeof getMenu>["url"]>;
 
 type PaletteRow = {
+  /** Drawn as the buddy's face, as its tab is, in the icon's place. */
+  buddy?: LearnBuddy;
   chip?: string;
   count?: number;
   icon: LucideIcon;
@@ -94,7 +97,7 @@ export function createNavigationPaletteItem({
   label,
   menu,
   ...extras
-}: Pick<PaletteRow, "chip" | "count" | "meta"> & {
+}: Pick<PaletteRow, "buddy" | "chip" | "count" | "meta"> & {
   id: string;
   keywords?: string;
   label: string;

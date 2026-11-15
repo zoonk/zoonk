@@ -80,8 +80,11 @@
   --container-wide: 84rem;
   --radius-meter: 3px;
   --text-2xs: 0.71875rem;
+  --text-2xs--line-height: 1.125rem;
   --text-compact: 0.8125rem;
+  --text-compact--line-height: 1.1875rem;
   --text-reading: 0.9375rem;
+  --text-reading--line-height: 1.4375rem;
   /* The web draws options at `rounded-xl`; the native apps still generate their option radius from this. */
   --radius-option: calc(var(--radius) + 2px);
   --radius-2xl: calc(var(--radius) + 8px);
@@ -892,7 +895,7 @@
 
 @utility text-title {
   font-size: 1.875rem;
-  line-height: 1.1;
+  line-height: 2.125rem;
   font-weight: 600;
   letter-spacing: -0.035em;
   text-wrap: balance;

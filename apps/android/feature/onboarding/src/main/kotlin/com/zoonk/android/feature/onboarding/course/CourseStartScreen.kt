@@ -47,6 +47,7 @@ import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.goalStartLimit
+import com.zoonk.android.feature.onboarding.lifted
 import com.zoonk.android.feature.onboarding.setup.LevelChoiceList
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.setup.StepHeading
@@ -171,8 +172,11 @@ private fun CourseStartForm(
     val course = detail.course
     val chapter = detail.chapters.find { it.id.toString() == route.chapterId && it.lessonCount > 0 }
     val planned = chapter?.let { detail.chapters.drop(detail.chapters.indexOf(it)) } ?: detail.chapters
-    val limit = (vm.failure as? CourseStartFailure.Limit)?.reason ?: upFront.takeIf { vm.failure == null }
-    val blocked = limit != null && (limit.needsAccount || limit == GoalLimitReason.ActiveGoals)
+    // A cap whose day came while the page is open gives the choices and Build my plan back; the server decides again.
+    val limit =
+        ((vm.failure as? CourseStartFailure.Limit)?.reason ?: upFront.takeIf { vm.failure == null })
+            ?.takeUnless { GoalError.Limit(it).lifted() }
+    val blocked = limit != null && (limit.needsAccount || limit.isPlusLimit)
     val minutes = route.dailyMinutes?.takeIf { it in MIN_DAILY_MINUTES..MAX_DAILY_MINUTES }
     val start = { vm.start(course.id.toString(), chapter?.id?.toString(), minutes) }
     val remedy = { to: AppRoute ->
@@ -198,7 +202,7 @@ private fun CourseStartForm(
             if (chapter != null) PlanPreview(planned) else LevelChoiceList(vm.level, course.quickTestMinutes.toInt(), onChange = vm::pick)
         }
 
-        if (limit == GoalLimitReason.ActiveGoals) {
+        if (limit?.isPlusLimit == true) {
             GoalLimitWall(limit, onSubscribe = { remedy(AppRoute.Subscription) }, onOpenPlan = { remedy(AppRoute.Plan()) })
             return@SetupColumn
         }

@@ -31,8 +31,11 @@ export function BeltLevel({
   );
 }
 
-/** The level's room, kept while the learner loads so the bar's end doesn't move when it arrives. */
-const LEVEL_BOX_CLASS = "h-9 min-w-12 shrink-0";
+/**
+ * The level's room, kept while the learner loads so the bar's end doesn't move when it arrives.
+ * It reaches into the bar's gap by its padding, so the dot sits one gap after the goal's chevron.
+ */
+const LEVEL_BOX_CLASS = "-ms-2 h-9 min-w-12 shrink-0";
 
 function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
   const t = useExtracted();
@@ -43,7 +46,7 @@ function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
     <Link
       className={cn(
         LEVEL_BOX_CLASS,
-        "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area text-compact relative flex items-center justify-center gap-1.5 rounded-lg px-2 font-mono tabular-nums transition-colors outline-none focus-visible:ring-[3px]",
+        "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area text-compact relative flex items-center justify-start gap-1.5 rounded-lg px-2 font-mono tabular-nums transition-colors outline-none focus-visible:ring-[3px]",
       )}
       href={getMenu("stats").url}
       prefetch

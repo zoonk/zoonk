@@ -77,8 +77,8 @@ function BeltDrawing({
       aria-hidden="true"
       className={cn("grid grid-cols-[36fr_52fr_12fr] md:grid-cols-[60fr_27fr_13fr]", className)}
     >
-      <span className={cn(band, "col-start-1 row-start-1")}>
-        <Stitching className={cn("right-2 left-0", stitch)} />
+      <span className={cn(band, "col-start-1 row-start-1 rounded-l-md border-l")}>
+        <Stitching className={cn("right-2 left-2.5", stitch)} />
       </span>
 
       <span
@@ -198,7 +198,6 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
 
           <BeltDrawing
             belt={belt}
-            className="-ml-4 md:-ml-6"
             level={currentBelt.level}
             share={
               currentBelt.isMaxLevel

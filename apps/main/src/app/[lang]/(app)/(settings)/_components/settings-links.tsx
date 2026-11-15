@@ -47,7 +47,15 @@ function useSettingsPages({
     toPage("reminders", t("Reminders")),
     toPage("aboutYou", t("About you")),
     toPage("memory", t("Memory")),
-    toPage("privacy", t("Privacy")),
+    toPage(
+      "privacy",
+      t({
+        description:
+          "The page inside Settings for usage data, a copy of the learner's data and deleting the account; not the privacy policy.",
+        id: "settingsPrivacy",
+        message: "Privacy",
+      }),
+    ),
   ].filter((item) => item !== false);
 
   const plan = [toPage("subscription", t("Subscription")), toPage("support", t("Help"))];

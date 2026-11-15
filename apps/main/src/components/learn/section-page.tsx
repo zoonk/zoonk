@@ -35,7 +35,7 @@ export function SectionPage({
       <SectionBarFrame end={end} hub={hub} parents={parents} root={root} />
 
       <div className="flex min-w-0 flex-1 flex-col gap-6">
-        <div className="-mx-2.5 hidden flex-col gap-3 border-b px-2.5 pb-3 md:flex">
+        <div className="hidden flex-col gap-3 border-b pb-3 md:flex">
           <div className={PAGE_HEADER_CLASS}>
             <p className="text-title" data-slot="section-title">
               {hub.title}

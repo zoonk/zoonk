@@ -3,6 +3,7 @@ package com.zoonk.android.feature.buddy
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -110,12 +111,13 @@ internal fun BuddyTodayLine(
     TextButton(
         onClick = { onOpenChange(true) },
         modifier = Modifier.semantics { contentDescription = spoken },
-        contentPadding = PaddingValues(horizontal = 8.dp),
+        contentPadding = PaddingValues(horizontal = DAY_LINE_PADDING),
     ) {
-        Row(
+        FlowRow(
             Modifier.clearAndSetSemantics {},
             horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            itemVerticalAlignment = Alignment.CenterVertically,
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -365,3 +367,6 @@ private const val PERCENT = 100.0
 private const val DASH = "–"
 private const val RING_STROKE = 6f
 private val LINE_ICON = 14.sp
+
+/** The day's line is a quiet button: its words sit this far inside its box. */
+internal val DAY_LINE_PADDING = 8.dp

@@ -11,6 +11,7 @@ import { useId, useState } from "react";
 import { CheckList } from "../onboarding/choice-list";
 import { TextField } from "../onboarding/steps/text-field";
 import { type BodyProps, setText, usePicker } from "./profile-body-parts";
+import { type ProfileQuestionPlace } from "./profile-draft";
 
 function changedRow(previous: readonly string[], next: readonly string[]): string | undefined {
   return next.find((id) => !previous.includes(id)) ?? previous.find((id) => !next.includes(id));
@@ -62,7 +63,7 @@ export function ConditionsBody(props: BodyProps & { label: string }) {
   );
 }
 
-function SupportNote(props: BodyProps) {
+function SupportNote(props: BodyProps & { from: ProfileQuestionPlace }) {
   const t = useExtracted();
   const noteId = useId();
   const helpId = useId();
@@ -98,13 +99,17 @@ function SupportNote(props: BodyProps) {
         value={props.draft.text}
       />
       <p className="text-muted-foreground text-sm" id={helpId}>
-        {t("We'll remember this. You can delete it anytime in Settings.")}
+        {props.from === "settings"
+          ? t("We'll remember this. You can delete it anytime.")
+          : t("We'll remember this. You can delete it anytime in Settings.")}
       </p>
     </div>
   );
 }
 
-export function SupportBody(props: BodyProps & { label: string; prechecked: boolean }) {
+export function SupportBody(
+  props: BodyProps & { from: ProfileQuestionPlace; label: string; prechecked: boolean },
+) {
   const t = useExtracted();
 
   return (
