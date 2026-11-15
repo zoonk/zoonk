@@ -172,6 +172,10 @@
     <string name="today_choose_focus">Choose where to focus</string>
     <string name="today_study_everything">Study everything</string>
     <string name="today_keep_studying_after_exam">Keep studying after the exam</string>
+    <plurals name="today_past_date_exam_left">
+        <item quantity="one">You have %d lesson left. Keep studying it, or archive this goal?</item>
+        <item quantity="other">You have %d lessons left. Keep studying them, or archive this goal?</item>
+    </plurals>
     <string name="today_missed_days_title">You missed a few days</string>
     <!-- Keeps the learner's time a day as it is. -->
     <string name="today_keep_my_time">Keep my time</string>
