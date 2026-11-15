@@ -237,7 +237,7 @@ export function ListRowNumberedTitle({
 export function ListRowDescription({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-muted-foreground text-xs leading-snug", className)}
+      className={cn("text-muted-foreground text-xs", className)}
       data-slot="list-row-description"
       {...props}
     />
