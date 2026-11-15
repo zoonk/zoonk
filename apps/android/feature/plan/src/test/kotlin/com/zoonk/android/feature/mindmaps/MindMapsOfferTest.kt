@@ -244,7 +244,11 @@ class MindMapsOfferTest {
         val noHelp =
             goalMindMaps(
                 chapters,
-                offer = """{"eligible":2,"needLessons":2,"startable":0,"stop":{"reason":"limitReached","resource":"aiSpend","period":"day","availableAt":null}}""",
+                offer =
+                    """
+                    {"eligible":2,"needLessons":2,"startable":0,
+                    "stop":{"reason":"limitReached","resource":"aiSpend","period":"day","availableAt":null}}
+                    """.trimIndent(),
             )
         api.mindMaps = { if (api.lists == 1) fresh else noHelp }
         refuseCreate("aiSpend", "day")
