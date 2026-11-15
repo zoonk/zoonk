@@ -5,6 +5,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -100,6 +101,9 @@ private data class PlanNumber(
 
 private enum class NumberSheet { Standing, Pace }
 
+/** Main's `@2xl` container: 42rem. */
+private val SIDE_BY_SIDE_NUMBERS = 672.dp
+
 @Composable
 internal fun PlanNumbers(
     page: PlanPageState,
@@ -114,14 +118,41 @@ internal fun PlanNumbers(
     val gap = if (variant == NumberVariant.Tiles) 8.dp else 24.dp
     if (standing == null && pace == null) return
 
-    Row(modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
-        if (standing != null) {
-            NumberButton(standingNumber(standing), variant, Modifier.weight(1f)) { open = NumberSheet.Standing }
+    val standingCard: (@Composable (Modifier) -> Unit)? =
+        standing?.let { { cell -> NumberButton(standingNumber(it), variant, cell) { open = NumberSheet.Standing } } }
+    val paceCard: (@Composable (Modifier) -> Unit)? =
+        pace?.let {
+            { cell ->
+                NumberButton(paceNumber(page, it, timeShownBeside = variant == NumberVariant.Stats), variant, cell) {
+                    open =
+                        NumberSheet.Pace
+                }
+            }
         }
-        if (pace != null) {
-            NumberButton(paceNumber(page, pace, timeShownBeside = variant == NumberVariant.Stats), variant, Modifier.weight(1f)) {
-                open =
-                    NumberSheet.Pace
+
+    // Main's `@2xl/standing`: side by side only where each card's value fits one line in every language.
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        if (maxWidth >= SIDE_BY_SIDE_NUMBERS) {
+            Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
+                standingCard?.invoke(Modifier.weight(1f))
+                paceCard?.invoke(Modifier.weight(1f))
+            }
+        } else {
+            Column(
+                Modifier.fillMaxWidth(),
+                verticalArrangement =
+                    Arrangement.spacedBy(
+                        if (variant ==
+                            NumberVariant.Tiles
+                        ) {
+                            8.dp
+                        } else {
+                            16.dp
+                        },
+                    ),
+            ) {
+                standingCard?.invoke(Modifier.fillMaxWidth().height(IntrinsicSize.Min))
+                paceCard?.invoke(Modifier.fillMaxWidth().height(IntrinsicSize.Min))
             }
         }
     }
@@ -307,8 +338,13 @@ private fun NumberButton(
             number.numeric -> Readout(number.value, style = style)
             else -> Text(number.value, style = style.copy(fontWeight = FontWeight.SemiBold))
         }
-        number.share?.let { Meter(it, Modifier.padding(vertical = 2.dp)) }
-        number.detail?.let { MetaLine(it) }
+        // Main's foot is `self-end`: at the card's bottom, so two cards side by side end their captions level.
+        if (number.share != null || number.detail != null) {
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.Bottom)) {
+                number.share?.let { Meter(it, Modifier.padding(vertical = 2.dp)) }
+                number.detail?.let { MetaLine(it) }
+            }
+        }
     }
 
     if (variant == NumberVariant.Tiles) {
@@ -323,6 +359,7 @@ private fun NumberButton(
         Column(
             modifier =
                 modifier
+                    .fillMaxHeight()
                     .bleed(LIST_ITEM_INSET)
                     .clickable(role = Role.Button, onClick = onOpen)
                     .padding(horizontal = LIST_ITEM_INSET, vertical = 8.dp),
