@@ -22,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
@@ -70,6 +69,7 @@ import com.zoonk.android.feature.warmup.rememberWaitQuiz
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.CollectForVisit
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -347,8 +347,7 @@ private fun ColumnScope.SetupStep(
     }
     val firstLesson = run.firstLesson.withRead(view.firstLesson, view.generationId, run.id)
     val startFirstLesson = firstLesson?.let { first -> { navigator.open(AppRoute.Lesson(first.id)) } }
-    val currentStart by rememberUpdatedState(startFirstLesson)
-    LaunchedEffect(vm) { vm.startLesson.collect { currentStart?.invoke() } }
+    CollectForVisit(vm.startLesson) { startFirstLesson?.invoke() }
     // Placement follows the run itself, so only the questions say it stopped.
     val planStart = PlanStart(run, onRetryRun).takeIf { step != OnboardingStep.PLACEMENT && step != OnboardingStep.PLAN }
 

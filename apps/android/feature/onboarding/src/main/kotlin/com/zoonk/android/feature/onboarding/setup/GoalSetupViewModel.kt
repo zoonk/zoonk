@@ -11,6 +11,7 @@ import com.zoonk.android.data.GenerationFollower
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.VisitOutcomes
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
@@ -28,9 +29,7 @@ import com.zoonk.api.models.ProfileQuestion
 import com.zoonk.api.models.ProfileQuestionView
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonArray
@@ -297,23 +296,22 @@ internal class GoalSetupViewModel(
         update(flow.copy(current = view.steps.firstOrNull() ?: OnboardingStep.PLAN, history = answeredScreens(view)))
     }
 
-    /**
-     * One answer saves at a time, so a pick and a Continue never save twice. [from] is the screen the
-     * answer belongs to: a placement that finishes after Back still answers placement.
-     */
-    private val lessonStarts = Channel<Unit>(Channel.CONFLATED)
-
-    /** "Save and start lesson 1": the save, then the start once it saved, for whichever screen shows the setup then. */
-    val startLesson: Flow<Unit> = lessonStarts.receiveAsFlow()
+    /** "Save and start lesson 1": the save, then the start once it saved, while the visit that tapped it lasts. */
+    val startLesson = VisitOutcomes<Unit>()
 
     fun answerThenStartLesson(
         input: OnboardingAnswerInput,
         profileAnswer: ProfileDraft,
     ) {
         val saving = answer(input, profileAnswer = profileAnswer) ?: return
-        viewModelScope.launch { if (saving.await() is WriteOutcome.Done) lessonStarts.send(Unit) }
+        val visit = startLesson.visit
+        viewModelScope.launch { if (saving.await() is WriteOutcome.Done) startLesson.send(visit, Unit) }
     }
 
+    /**
+     * One answer saves at a time, so a pick and a Continue never save twice. [from] is the screen the
+     * answer belongs to: a placement that finishes after Back still answers placement.
+     */
     fun answer(
         input: OnboardingAnswerInput,
         from: OnboardingStep? = flow.current,
