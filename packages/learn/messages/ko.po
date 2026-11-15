@@ -397,6 +397,26 @@ msgid "You've used your mock exams"
 msgstr "모의고사 이용 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "TPgNQb"
+msgid "No more questions today"
+msgstr "오늘은 질문을 더 할 수 없어요"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "GYGZpe"
+msgid "You've used your questions"
+msgstr "질문 한도를 다 썼어요"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "aw2Ukw"
+msgid "No more material today"
+msgstr "오늘은 자료를 더 올릴 수 없어요"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "g0Nshd"
+msgid "You've used your uploads"
+msgstr "업로드 한도를 다 썼어요"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
 msgstr "오늘 이용 한도를 다 썼어요"
@@ -7184,6 +7204,11 @@ msgid "Chapter maps"
 msgstr "챕터 마인드맵"
 
 #: src/mind-maps/mind-maps-screen.tsx
+msgctxt "e39t_E"
+msgid "No chapter maps yet."
+msgstr "아직 챕터 마인드맵이 없어요."
+
+#: src/mind-maps/mind-maps-screen.tsx
 msgctxt "sI50Mb"
 msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "아직 챕터 마인드맵이 없어요. 챕터를 끝낼 때마다 하나씩 생겨요."
@@ -8729,16 +8754,6 @@ msgid "You picked {answer}"
 msgstr "{answer} 항목을 선택했어요"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "aw2Ukw"
-msgid "No more material today"
-msgstr "오늘은 자료를 더 올릴 수 없어요"
-
-#: src/onboarding/entry/attach-panel.tsx
-msgctxt "g0Nshd"
-msgid "You've used your uploads"
-msgstr "업로드 한도를 다 썼어요"
-
-#: src/onboarding/entry/attach-panel.tsx
 msgctxt "yeNv9c"
 msgid "You're adding material quickly. Try again in a few minutes."
 msgstr "짧은 시간에 자료를 여러 번 추가했어요. 몇 분 후에 다시 시도해 보세요."
@@ -9049,16 +9064,6 @@ msgstr "무엇을 하고 싶으세요?"
 msgctxt "AkPJMI"
 msgid "What you want to do with your material"
 msgstr "자료로 하고 싶은 일"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "TPgNQb"
-msgid "No more questions today"
-msgstr "오늘은 질문을 더 할 수 없어요"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "GYGZpe"
-msgid "You've used your questions"
-msgstr "질문 한도를 다 썼어요"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "KIdIMi"

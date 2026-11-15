@@ -792,6 +792,28 @@ test.describe("Mind maps", () => {
     }
   });
 
+  test("with the maps used up, the empty list doesn't promise a map for every finished chapter", async ({
+    browser,
+  }) => {
+    const { first, second, user } = await createLearner();
+
+    await Promise.all([
+      prisma.lesson.update({ data: { contentStatus: "pending" }, where: { id: first.lessonId } }),
+      prisma.lesson.update({ data: { contentStatus: "pending" }, where: { id: second.lessonId } }),
+      usageRecordsFixture({ count: 3, createdAt: new Date(), kind: "mindMap", userId: user.id }),
+    ]);
+
+    const page = await openAs(browser, user);
+
+    try {
+      await page.goto("/mind-maps");
+      await expect(page.getByText("No chapter maps yet.", { exact: true })).toBeVisible();
+      await expect(page.getByText(/Every chapter you finish gets one/u)).toBeHidden();
+    } finally {
+      await page.context().close();
+    }
+  });
+
   test("a free learner out of maps for the day sees why, and no chapter offers to create one", async ({
     browser,
   }) => {

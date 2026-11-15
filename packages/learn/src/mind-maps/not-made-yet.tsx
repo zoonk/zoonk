@@ -24,7 +24,8 @@ import { type MindMapsLibrary } from "./use-mind-maps-library";
 
 const LINE_CLASS = "text-muted-foreground max-w-prose text-sm text-pretty";
 
-function useShownStop({ bulk, page }: MindMapsLibrary) {
+/** What stops a new map on this page, as it reads now; null once its day comes. */
+export function useShownStop({ bulk, page }: MindMapsLibrary) {
   return useLiveLimit(bulk.stop ?? (startsNoMap(page.createOffer) ? page.createOffer.stop : null));
 }
 

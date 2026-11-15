@@ -397,6 +397,26 @@ msgid "You've used your mock exams"
 msgstr "Deneme sınavı hakkın bitti"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "TPgNQb"
+msgid "No more questions today"
+msgstr "Bugünkü soru hakkın bitti"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "GYGZpe"
+msgid "You've used your questions"
+msgstr "Soru hakkın bitti"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "aw2Ukw"
+msgid "No more material today"
+msgstr "Bugünkü materyal yükleme hakkın bitti"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "g0Nshd"
+msgid "You've used your uploads"
+msgstr "Yükleme hakkın bitti"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
 msgstr "Bugünkü kullanım sınırına ulaştın"
@@ -7184,6 +7204,11 @@ msgid "Chapter maps"
 msgstr "Ünite haritaları"
 
 #: src/mind-maps/mind-maps-screen.tsx
+msgctxt "e39t_E"
+msgid "No chapter maps yet."
+msgstr "Henüz ünite haritası yok."
+
+#: src/mind-maps/mind-maps-screen.tsx
 msgctxt "sI50Mb"
 msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "Henüz ünite haritası yok. Bitirdiğin her ünite için bir harita hazırlanır."
@@ -8729,16 +8754,6 @@ msgid "You picked {answer}"
 msgstr "Seçimin: {answer}"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "aw2Ukw"
-msgid "No more material today"
-msgstr "Bugünkü materyal yükleme hakkın bitti"
-
-#: src/onboarding/entry/attach-panel.tsx
-msgctxt "g0Nshd"
-msgid "You've used your uploads"
-msgstr "Yükleme hakkın bitti"
-
-#: src/onboarding/entry/attach-panel.tsx
 msgctxt "yeNv9c"
 msgid "You're adding material quickly. Try again in a few minutes."
 msgstr "Kısa sürede çok materyal ekledin. Birkaç dakika sonra tekrar dene."
@@ -9049,16 +9064,6 @@ msgstr "Ne yapmak istiyorsun?"
 msgctxt "AkPJMI"
 msgid "What you want to do with your material"
 msgstr "Materyalinle ne yapmak istediğin"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "TPgNQb"
-msgid "No more questions today"
-msgstr "Bugünkü soru hakkın bitti"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "GYGZpe"
-msgid "You've used your questions"
-msgstr "Soru hakkın bitti"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "KIdIMi"
