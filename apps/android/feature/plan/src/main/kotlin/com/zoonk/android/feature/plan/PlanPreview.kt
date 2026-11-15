@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.MaterialTheme
@@ -173,7 +174,7 @@ internal fun CheckingChange(onCancel: () -> Unit) {
 /**
  * Main's `EFFECT_ROOM_CLASS`: room for a consequence of [lines] and its "See all changes", which a
  * check's note and its answer both take, so the actions under them stay put; a longer answer grows it.
- * With [held], it is also as tall as the card's room has been, whatever the text size wrapped it to.
+ * With [held], it is also as tall as the card's room has been at this width and text size.
  */
 @Composable
 internal fun EffectRoom(
@@ -187,19 +188,35 @@ internal fun EffectRoom(
             MaterialTheme.typography.bodyMedium.lineHeight
                 .toDp()
         }
-    val room = maxOf(line * lines + 6.dp + 48.dp, held?.tallest ?: 0.dp)
-    val keep = held?.let { Modifier.onSizeChanged { size -> it.keep(with(density) { size.height.toDp() }) } } ?: Modifier
-    Column(Modifier.heightIn(min = room).then(keep)) { content() }
+    BoxWithConstraints {
+        val at = HeldRoom.At(maxWidth, density.density, density.fontScale)
+        val room = maxOf(line * lines + 6.dp + 48.dp, held?.tallestAt(at) ?: 0.dp)
+        val keep = held?.let { Modifier.onSizeChanged { size -> it.keep(at, with(density) { size.height.toDp() }) } } ?: Modifier
+        Column(Modifier.heightIn(min = room).then(keep)) { content() }
+    }
 }
 
-/** The tallest a card's [EffectRoom] has been, so the room of its next state is as tall. */
+/**
+ * The tallest a card's [EffectRoom] has been, so the room of its next state is as tall. It belongs to one width and
+ * text size: at another the card's words wrap anew, so the held height goes (main's `useHeldSlot`).
+ */
 @Stable
 internal class HeldRoom {
-    var tallest by mutableStateOf(0.dp)
-        private set
+    data class At(
+        val width: Dp,
+        val density: Float,
+        val fontScale: Float,
+    )
 
-    fun keep(height: Dp) {
-        if (height > tallest) tallest = height
+    private var held by mutableStateOf<Pair<At, Dp>?>(null)
+
+    fun tallestAt(at: At): Dp = held?.takeIf { it.first == at }?.second ?: 0.dp
+
+    fun keep(
+        at: At,
+        height: Dp,
+    ) {
+        if (height > tallestAt(at)) held = at to height
     }
 }
 
