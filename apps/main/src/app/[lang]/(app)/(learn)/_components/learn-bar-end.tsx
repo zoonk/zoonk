@@ -9,7 +9,7 @@ import { useBeltLabel } from "@/lib/belt-label";
 import { getMenu } from "@/lib/menu";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type BeltColor } from "@zoonk/utils/belt-level";
+import { type BeltColor, LEVELS_PER_COLOR } from "@zoonk/utils/belt-level";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 
@@ -31,9 +31,28 @@ export function BeltLevel({
   );
 }
 
-/** It reaches into the bar's gap by its padding, so the dot sits one gap after what comes before it. */
-const LEVEL_BOX_CLASS =
-  "text-compact -ms-2 h-9 shrink-0 items-center gap-1.5 px-2 tabular-nums whitespace-nowrap";
+/** It reaches into the bar's gap by its padding. */
+const LEVEL_BOX_CLASS = "text-compact -ms-2 h-9 shrink-0 items-center px-2 whitespace-nowrap";
+
+/**
+ * The level's room: as wide as the highest level's words, so the bar's end sits in one place for
+ * every level and while the learner loads. The mark and its words (`children`) end where the room
+ * does.
+ */
+function LevelRoom({ children }: { children?: React.ReactNode }) {
+  const t = useExtracted();
+
+  return (
+    <span className="grid tabular-nums *:col-start-1 *:row-start-1 *:flex *:items-center *:gap-1.5">
+      <span aria-hidden="true" className="invisible">
+        <span className="size-2.5" />
+        {t("Level {level}", { level: String(LEVELS_PER_COLOR) })}
+      </span>
+
+      {children && <span className="justify-self-end">{children}</span>}
+    </span>
+  );
+}
 
 /** A phone's bar says the level in the sidebar's words ("Level 2"), with the belt's mark before it. */
 export function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
@@ -51,11 +70,13 @@ export function LevelLink({ level }: { level: { color: BeltColor; level: number 
       prefetch
       title={t("Statistics")}
     >
-      <BeltLevel
-        belt={belt}
-        color={level.color}
-        level={t("Level {level}", { level: levelNumber })}
-      />
+      <LevelRoom>
+        <BeltLevel
+          belt={belt}
+          color={level.color}
+          level={t("Level {level}", { level: levelNumber })}
+        />
+      </LevelRoom>
       <span className="sr-only">
         {t("{belt}, level {level}. Statistics", { belt, level: levelNumber })}
       </span>
@@ -66,17 +87,11 @@ export function LevelLink({ level }: { level: { color: BeltColor; level: number 
 /** A learner's search is the tab bar's last item; a visitor's, with no tab bar, starts the bar. */
 type BarEndProps = { visitor: React.ReactNode };
 
-/**
- * The level's room, kept while the learner loads so the bar's end doesn't move when it arrives: its
- * words are drawn unseen, with one digit.
- */
+/** The level's room, kept while the learner loads so the bar's end doesn't move when it arrives. */
 function PendingLevel() {
-  const t = useExtracted();
-
   return (
-    <span aria-hidden="true" className={cn(LEVEL_BOX_CLASS, "signed-in:flex invisible hidden")}>
-      <span className="size-2.5" />
-      {t("Level {level}", { level: "0" })}
+    <span aria-hidden="true" className={cn(LEVEL_BOX_CLASS, "signed-in:flex hidden")}>
+      <LevelRoom />
     </span>
   );
 }
