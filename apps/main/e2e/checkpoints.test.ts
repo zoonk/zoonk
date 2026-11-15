@@ -1,4 +1,5 @@
 import {
+  CHECKPOINT_PASS_MARK,
   CHECKPOINT_QUESTIONS,
   answerDuelQuestion,
   createCheckpointLearner,
@@ -107,6 +108,40 @@ test.describe("A checkpoint from today's session", () => {
     await page.getByRole("button", { name: "Start" }).click();
     await expect(page).toHaveURL(checkpointUrl);
     await expect(page.getByRole("progressbar", { name: question(2) })).toBeAttached();
+
+    await page.context().close();
+  });
+
+  test("keeps the last question on screen while its result loads", async ({ browser }) => {
+    const { block, user } = await createCheckpointLearner();
+    const page = await openAs(browser, user);
+    await page.goto(`/checkpoint/${block.id}`);
+
+    for (let number = 1; number < CHECKPOINT_PASS_MARK; number += 1) {
+      // oxlint-disable-next-line no-await-in-loop -- A duel is answered one question at a time.
+      await answerDuelQuestion(page, number);
+    }
+
+    await page.keyboard.press("1");
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("status")).toHaveText(/^Correct!/u);
+
+    const finish = await holdActionAnswer(page, `/checkpoint/${block.id}`);
+    await page.getByRole("button", { name: /^See how it went/u }).click();
+    await finish.held;
+
+    await expect(page.getByRole("status")).toHaveText(/^Correct!/u);
+    await expect(page.getByRole("radio", { name: "Right answer" })).toBeVisible();
+
+    await expect(
+      page.getByRole("progressbar", { name: question(CHECKPOINT_PASS_MARK) }),
+    ).toBeAttached();
+
+    await finish.release(/\/session/u);
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: "You beat the Trickster!" }),
+    ).toBeVisible();
 
     await page.context().close();
   });
