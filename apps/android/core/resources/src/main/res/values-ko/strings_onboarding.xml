@@ -326,7 +326,6 @@
   "onboarding_reveal_start": "f1cd8a804b02c32efffec62f2f3b5d581182364ead8e5666cd37b329fb122a51",
   "onboarding_reveal_start_here": "1e45bbf62bd7c3795b30de352358eea1edd0ffa4b26c881be5924e14fe37964e",
   "onboarding_reveal_study_days": "8432488bf38dbd0ce382d7f9b07e3fb5c5eaa8a8b745c9e229a5793637ee0f8e",
-  "onboarding_reveal_today": "a91c67c6d442a063af9c936de0331db32d862ac093bd2ddf819aaee3634ff1cf",
   "onboarding_reveal_topics": "04d233dcd5e343b6d80dea4aef1be19e2babe1ce123e83f1eb9fb5a3a8c1ec27",
   "onboarding_reveal_topics_all_planned": "d8f0244f311b5530df52855329739381dc01b9d72b1a4e5b5ef219f43395edb8",
   "onboarding_reveal_topics_dont_fit": "ce07f4bfb88a58e0f1284d7b81273f14bbfaf23a35550e508a10089f3538a679",
@@ -747,8 +746,6 @@
     <string name="onboarding_reveal_phase_short_mock">짧은 모의고사와 복습</string>
     <string name="onboarding_reveal_phase_full_review">총복습</string>
     <string name="onboarding_reveal_phase_light_review">가벼운 복습</string>
-    <!-- Beside the phase the learner is in, in place of its start date. -->
-    <string name="onboarding_reveal_today">오늘</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">현재 예상 시험일은 %1$s이에요.</string>
     <string name="onboarding_reveal_notice_day_notice">시험 공고에 나온 날짜는 %1$s이에요.</string>

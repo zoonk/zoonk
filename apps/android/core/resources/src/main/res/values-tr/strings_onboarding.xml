@@ -326,7 +326,6 @@
   "onboarding_reveal_start": "cf1d5489f55a69dd4bdb49074cd7f86fea3e95334cf0a01bd5ea86ec1101ca3c",
   "onboarding_reveal_start_here": "20cba9a08a3fc5766740dc7acc8e8792ae16714d8e11dc901de88b8df3d36449",
   "onboarding_reveal_study_days": "14162ac5e49f3eee6d6a88631724a404ad7ad59664cb6c5c0f8abe7fbd34fe01",
-  "onboarding_reveal_today": "e1120fbe57a22184347fe075aac841422abdc59ffa6583df8d896e6bde0b9be5",
   "onboarding_reveal_topics": "39c73ab44fffb11a0bf5e2f17f6a910270572f5523347ad8257037324448c5ff",
   "onboarding_reveal_topics_all_planned": "ec63abf9cc000ecbecbae077388e43aa72c39c0794ed390e83db935552ad42f5",
   "onboarding_reveal_topics_dont_fit": "1b437b449b4af17d9bba02cef6e3556741af8fc13afb73484d3a4cc41e86cec8",
@@ -753,8 +752,6 @@
     <string name="onboarding_reveal_phase_short_mock">Kısa deneme sınavı ve tekrar</string>
     <string name="onboarding_reveal_phase_full_review">Genel tekrar</string>
     <string name="onboarding_reveal_phase_light_review">Hafif tekrar</string>
-    <!-- Beside the phase the learner is in, in place of its start date. -->
-    <string name="onboarding_reveal_today">Bugün</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">Sınavın tahmini tarihi artık %1$s.</string>
     <string name="onboarding_reveal_notice_day_notice">İlanda sınav tarihi %1$s olarak belirtiliyor.</string>

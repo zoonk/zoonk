@@ -326,7 +326,6 @@
   "onboarding_reveal_start": "5c7bb491553f22479f3583d0c08b92bc25b29049648c6b8ae0ac4b1f9237f040",
   "onboarding_reveal_start_here": "e08fade620c4cac8256030dce2e2fa19ca41ee90f02594a4cd0da2796688e93a",
   "onboarding_reveal_study_days": "f1c2cc2290c70560a0379150951c497692bbb8038041842231075241098ddcc3",
-  "onboarding_reveal_today": "248b9e88e04c84191665cf51dbd28d035dbde7a94385193d853fc189cac2f17d",
   "onboarding_reveal_topics": "a274a3752a81e777dddd6a7c27a564a337b074d6b378df90e0c2d8898df86596",
   "onboarding_reveal_topics_all_planned": "a21f9309e8cc06917d0d000e7dfea7dfa975962057f4f3341443ff86f84e85d2",
   "onboarding_reveal_topics_dont_fit": "e72318f9ba1a07f4bc0ff773dd06bcc1d9c9cbcb286f52c3c37c0ce235ceb26a",
@@ -759,8 +758,6 @@
     <string name="onboarding_reveal_phase_short_mock">Simulacro breve y repaso</string>
     <string name="onboarding_reveal_phase_full_review">Revisión completa</string>
     <string name="onboarding_reveal_phase_light_review">Repaso ligero</string>
-    <!-- Beside the phase the learner is in, in place of its start date. -->
-    <string name="onboarding_reveal_today">Hoy</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">La fecha probable del examen ahora es el %1$s.</string>
     <string name="onboarding_reveal_notice_day_notice">La convocatoria del examen indica el %1$s.</string>
