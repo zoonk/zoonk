@@ -309,7 +309,7 @@ struct DraftView: View {
   @Environment(OnboardingStore.self) private var onboarding
   @State private var retryError: GoalError?
   @State private var isRetrying = false
-  /// The page's: one owner whatever the draft's read, so a read while its goal is made keeps Back
+  /// The visit's: one owner whatever the draft's read, so a read while its goal is made keeps Back
   /// waiting and the answer shows on the card the learner sees.
   @State private var creation = DraftCreation()
 
@@ -356,6 +356,7 @@ struct DraftView: View {
         onGoal(goalID)
       }
     }
+    .onDisappear { creation.leave(card) }
     .loads(card, refreshable: false)
   }
 

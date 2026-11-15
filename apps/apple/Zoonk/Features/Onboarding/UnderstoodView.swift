@@ -1,22 +1,25 @@
 import SwiftUI
 
-/// A goal made from a draft's card, owned by the draft's page. While it's made, the card's controls
-/// wait, Back included, as main's do, so the goal is made once and its setup opens from the card
-/// the learner confirmed.
+/// A goal made from a draft's card, owned by the visit to the draft's page. While it's made, the
+/// card's controls wait, Back included, as main's do, so the goal is made once and its setup opens
+/// from the card the learner confirmed.
 @MainActor
 @Observable
 final class DraftCreation {
   private(set) var isCreating = false
   var error: GoalError?
+  @ObservationIgnored private var leadsOn: Task<Void, Never>?
 
   var canLeave: Bool { !isCreating }
 
-  /// Only a draft read since a create from it that this device can't vouch for (the store marks it
-  /// stale then) and that names no goal: one made from it opens that goal's setup.
+  /// Only a draft read since a create from it that this device can't vouch for (the store or the
+  /// visit marks it stale then) and that names no goal: one made from it opens that goal's setup.
   static func canCreate(from card: Resource<OnboardingDraft>) -> Bool {
     card.freshValue.map { $0.goalId == nil } ?? false
   }
 
+  /// The write is the learner's, not the visit's: it finishes whatever happens to the screen. What
+  /// its answer leads to (`then`, or the error it shows) is the visit's, and ends when it leaves.
   @discardableResult
   func create(
     from card: Resource<OnboardingDraft>, _ write: @escaping @MainActor () async throws -> String,
@@ -28,17 +31,35 @@ final class DraftCreation {
 
     isCreating = true
     error = nil
+    let sent = Task { try await write() }
 
-    return Task {
+    leadsOn = Task {
       defer { isCreating = false }
 
       do {
-        then(try await write())
+        let goalID = try await sent.value
+        try Task.checkCancellation()
+        then(goalID)
       } catch is CancellationError {
       } catch {
-        self.error = GoalError.creating(error)
+        if !Task.isCancelled {
+          self.error = GoalError.creating(error)
+        }
       }
     }
+
+    return leadsOn
+  }
+
+  /// The visit left while its goal was being made: its answer opens nothing, and since this device
+  /// no longer waits for it, the draft is read again on the next visit.
+  func leave(_ card: Resource<OnboardingDraft>) {
+    guard isCreating else {
+      return
+    }
+
+    leadsOn?.cancel()
+    card.invalidate(rereadsWhileShown: false)
   }
 }
 
@@ -124,11 +145,6 @@ struct ReadDraftView: View {
     creation.create(from: card) {
       try await onboarding.createExplanation(draft: draft, question: question)
     } then: { goalID in
-      // Only while the start flow that asked is still on screen.
-      guard case .startGoal = router.tasks.last else {
-        return
-      }
-
       router.dismissTask()
       router.open(.explain(goalId: goalID))
     }

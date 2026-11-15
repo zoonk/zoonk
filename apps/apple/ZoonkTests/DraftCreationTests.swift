@@ -7,7 +7,8 @@ import XCTest
 @testable import Zoonk
 
 /// A goal made from a draft's card, through the store and the draft's page as the start flow shows
-/// it: Back waits while the goal is made, and the card keeps one owner through the draft's reads.
+/// it: Back waits while the goal is made, the card keeps one owner through the draft's reads, and
+/// what the create leads to belongs to the visit that asked.
 @MainActor
 final class DraftCreationTests: XCTestCase {
   /// A create the server answers needs no read of its own: refused, the draft is as it was, and the
@@ -76,6 +77,37 @@ final class DraftCreationTests: XCTestCase {
       localized: "We couldn't save your goal. Try again in a moment.", table: "Onboarding")
     let saysWhy = try await waitUntil { Self.spoken(in: window).contains { $0.contains(failure) } }
     XCTAssertTrue(saysWhy, "The failure shows on the card: \(Self.spoken(in: window))")
+  }
+
+  /// The learner leaves while an explanation is made and opens another draft: the first one's
+  /// answer opens nothing over the second, and its goal is made, which its draft names.
+  func testALeftVisitsLateGoalOpensNothingOverANewerStart() async throws {
+    let other = "00000000-0000-4000-8000-0000000000d2"
+    let server = DraftServer(try Self.explainDraft())
+    let store = makeStore(server)
+    let card = store.draft(id: Self.draftID)
+    await card.load()
+    await server.holdNextCreate()
+    let router = AppRouter()
+    router.open(.startGoal(draftId: Self.draftID))
+    let page = Page(shown: Self.draftID)
+
+    _ = try host(page, cards: [Self.draftID: card], store: store, router: router)
+    await server.waitForHeldCreate()
+
+    // Closed, then another draft's start flow opened.
+    page.shown = nil
+    router.dismissTask()
+    router.open(.startGoal(draftId: other))
+    try await Task.sleep(for: .milliseconds(300))
+
+    await server.serve(try Self.explainDraft(goalID: Self.goalID))
+    await server.releaseHeldCreate()
+    try await Task.sleep(for: .milliseconds(500))
+    await card.load()
+
+    XCTAssertEqual(router.tasks, [.startGoal(draftId: other)], "The newer start flow stays")
+    XCTAssertEqual(card.value?.goalId, Self.goalID, "The goal was made; its draft opens its setup")
   }
 
   // MARK: Helpers

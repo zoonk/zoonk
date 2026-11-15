@@ -127,6 +127,37 @@ final class OnboardingStoreTests: XCTestCase {
     XCTAssertEqual(creates, 1)
   }
 
+  /// The visit leaves while its create is out (a link left it) and the draft is opened again: the
+  /// draft it was made from is stale, so the new card offers no second create until it's read.
+  func testANewCardAfterTheVisitLeftWhileTheCreateIsOutOffersNoSecondCreate() async throws {
+    let server = DraftServer(Self.draft(prompt: "Why is the sky blue?", goalsLeft: 2))
+    let store = makeStore(transport: server)
+    let card = store.draft(id: Self.draftID)
+    await card.load()
+    let shown = try XCTUnwrap(card.value)
+    await server.holdNextCreate()
+    let first = DraftCreation()
+
+    let leadsOn = first.create(from: card) {
+      try await store.createExplanation(draft: shown, question: "Why?")
+    } then: { _ in
+    }
+    await server.waitForHeldCreate()
+    first.leave(card)
+
+    let second = DraftCreation().create(from: card) {
+      try await store.createExplanation(draft: shown, question: "Why?")
+    } then: { _ in
+    }
+    let creates = await server.creates
+
+    XCTAssertNil(second, "the new card offers no create")
+    XCTAssertEqual(creates, 1)
+
+    await server.releaseHeldCreate()
+    await leadsOn?.value
+  }
+
   /// A read after the create that names its goal leads to the goal's setup, and offers no create.
   func testADraftReadThatNamesItsGoalOffersNoCreate() async throws {
     let server = DraftServer(Self.draft(prompt: "Why is the sky blue?", goalsLeft: 2))
