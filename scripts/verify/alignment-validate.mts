@@ -1,0 +1,119 @@
+import { z } from "zod";
+import { type AlignmentFile } from "./alignment-capture.mts";
+import { PART_NAMES } from "./alignment-table.mts";
+
+/**
+ * What a capture must hold before the evaluator reads it (`REPORT-SHAPE.md`): a file from another
+ * platform or an older capture run that doesn't match is refused, never judged as a clean screen.
+ */
+const NOT_MEASURED = z.literal("not measured");
+const BOUNDS = z.tuple([z.number(), z.number(), z.number(), z.number()]);
+
+/** Each platform's logical unit. */
+const UNITS = { android: "dp", apple: "pt", web: "px" } as const;
+
+const PLACE = {
+  bounds: BOUNDS,
+  group: z.string().nullable(),
+  id: z.string(),
+  row: z.string().nullable(),
+};
+
+const ELEMENT = z.union([
+  z.looseObject({
+    ...PLACE,
+    ink: z.union([BOUNDS, NOT_MEASURED, z.null()]),
+    part: z.enum([...PART_NAMES, "action", "anchor", "group", "holder", "row"]),
+    piece: z.string(),
+  }),
+  // An area the platform can't read (a subtree whose semantics were replaced): only its place.
+  z.looseObject({ ...PLACE, part: z.literal("unmeasured") }),
+]);
+
+const CAPTURE = z
+  .looseObject({
+    activeSurface: z.string(),
+    configuration: z.looseObject({
+      height: z.number(),
+      locale: z.string(),
+      pointer: z.enum(["keys", "touch"]),
+      scheme: z.string(),
+      size: z.string(),
+      textScale: z.number(),
+      width: z.number(),
+    }),
+    elements: z.array(ELEMENT),
+    platform: z.enum(["android", "apple", "web"]),
+    scale: z.number().positive(),
+    scenario: z.string().nullable(),
+    screen: z.string(),
+    unit: z.enum(["dp", "pt", "px"]),
+    version: z.literal(1),
+  })
+  .superRefine((capture, context) => {
+    if (UNITS[capture.platform] !== capture.unit) {
+      context.addIssue({
+        code: "custom",
+        message: `${capture.platform} measures in ${UNITS[capture.platform]}, not ${capture.unit}`,
+        path: ["unit"],
+      });
+    }
+
+    const groups = new Set(
+      capture.elements.flatMap((item) => (item.part === "group" ? [item.id] : [])),
+    );
+
+    const rows = new Set(
+      capture.elements.flatMap((item) => (item.part === "row" ? [item.id] : [])),
+    );
+
+    for (const [index, item] of capture.elements.entries()) {
+      if (item.group !== null && !groups.has(item.group)) {
+        context.addIssue({
+          code: "custom",
+          message: `no group ${item.group}`,
+          path: ["elements", index, "group"],
+        });
+      }
+
+      if (item.row !== null && !rows.has(item.row)) {
+        context.addIssue({
+          code: "custom",
+          message: `no row ${item.row}`,
+          path: ["elements", index, "row"],
+        });
+      }
+    }
+  });
+
+const FILE = z.looseObject({ captures: z.array(CAPTURE) });
+
+type Read =
+  /** JSON that claims to be neither captures nor a capture. */
+  | { kind: "other" }
+  | { kind: "invalid"; problems: string }
+  | { file: AlignmentFile; kind: "captures"; single: boolean };
+
+/** A file holding captures, or one capture, checked against the shape before anything judges it. */
+export function readCaptures(parsed: unknown): Read {
+  if (typeof parsed !== "object" || parsed === null) {
+    return { kind: "other" };
+  }
+
+  const single = !("captures" in parsed);
+
+  if (single && !("version" in parsed) && !("elements" in parsed)) {
+    return { kind: "other" };
+  }
+
+  const checked = single ? CAPTURE.safeParse(parsed) : FILE.safeParse(parsed);
+
+  if (!checked.success) {
+    return { kind: "invalid", problems: z.prettifyError(checked.error) };
+  }
+
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Checked against the shape; a capture's other fields are optional.
+  const file = (single ? { captures: [checked.data] } : checked.data) as AlignmentFile;
+
+  return { file, kind: "captures", single };
+}

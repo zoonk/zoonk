@@ -3697,7 +3697,7 @@
         "id": "e3",
         "piece": "action",
         "part": "action",
-        "group": "e2",
+        "group": null,
         "row": null,
         "bounds": [68, 261.33, 96, 40],
         "ink": [68, 261.33, 96, 40],

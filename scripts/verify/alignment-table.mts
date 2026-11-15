@@ -4,7 +4,9 @@
  * (`REPORT-SHAPE.md` in the alignment build notes). Failures come only from these declarations; an
  * inferred group is a discovery lead.
  */
-export type Part = "end" | "label" | "lead" | "mark" | "note" | "value";
+export const PART_NAMES = ["end", "label", "lead", "mark", "note", "value"] as const;
+
+export type Part = (typeof PART_NAMES)[number];
 
 export type Relation =
   | "end-edge"

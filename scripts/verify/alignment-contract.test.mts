@@ -1,8 +1,12 @@
 /* oxlint-disable no-magic-numbers -- The fixtures are measurements in pixels. */
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, it } from "vitest";
 import { type Capture } from "./alignment-capture.mts";
-import { real } from "./alignment-fixtures.mts";
+import { fixtureCapture, real } from "./alignment-fixtures.mts";
 import { summaryLine } from "./alignment-summary.mts";
 import { evaluateCapture, evaluateFile } from "./alignment.mts";
 
@@ -42,5 +46,46 @@ describe("a declared relationship is measured and holds, or the run fails", () =
   it("checks each neighbor pair's gap: a row's own gap doesn't stand in for the group's", () => {
     assert.deepEqual(unmeasured(real("round 2 partial-gap")), ["gap"]);
     assert.equal(evaluateFile({ captures: [real("round 2 partial-gap")] }).summary.failed, true);
+  });
+});
+
+/** The command's exit for one file holding `content`. */
+function exitFor(content: unknown) {
+  const path = join(mkdtempSync(join(tmpdir(), "alignment-")), "capture.json");
+  writeFileSync(path, JSON.stringify(content));
+
+  return spawnSync(process.execPath, [join(import.meta.dirname, "alignment-cli.mts"), path]).status;
+}
+
+describe("what the command accepts", () => {
+  it("exits 2 for a capture of another version, a missing field, an unknown unit or a dangling part", () => {
+    const valid = fixtureCapture([]);
+    const { screen: _screen, ...unnamed } = valid;
+
+    assert.equal(exitFor({ elements: [], version: 99 }), 2);
+    assert.equal(exitFor(unnamed), 2);
+    assert.equal(exitFor(real("round 2 invalid-unit")), 2);
+    assert.equal(exitFor({ ...valid, platform: "web" }), 2);
+
+    assert.equal(
+      exitFor(
+        fixtureCapture([
+          {
+            bounds: [0, 0, 1, 1],
+            group: "g",
+            id: "l",
+            ink: null,
+            part: "label",
+            piece: "list-group",
+            row: null,
+          },
+        ]),
+      ),
+      2,
+    );
+  });
+
+  it("passes a valid capture with nothing declared", () => {
+    assert.equal(exitFor(fixtureCapture([])), 0);
   });
 });

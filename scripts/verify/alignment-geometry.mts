@@ -6,6 +6,7 @@ import {
   type CaptureElement,
   configurationName,
 } from "./alignment-capture.mts";
+import { PART_NAMES } from "./alignment-table.mts";
 
 export const EDGE = 1;
 
@@ -73,7 +74,7 @@ export type Group = {
   holders: CaptureElement[];
 };
 
-const PARTS = new Set(["end", "label", "lead", "mark", "note", "value"]);
+const PARTS = new Set<string>(PART_NAMES);
 
 function mirrorBounds([x, y, width, height]: Bounds): Bounds {
   return [-(x + width), y, width, height];
