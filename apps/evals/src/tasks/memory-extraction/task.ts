@@ -117,7 +117,7 @@ export const memoryExtractionTask: Task<
   description: "Pick out lasting facts about a learner from onboarding answers, a chat or a call",
   generate: extractMemoryFacts,
   id: "memory-extraction",
-  name: "Memory Extraction",
+  name: "Memory extraction",
   score: scoreMemoryExtraction,
   testCases: TEST_CASES,
 };
