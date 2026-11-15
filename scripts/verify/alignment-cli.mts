@@ -2,7 +2,7 @@
 import { readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { alignmentLines, summarize, summaryLine } from "./alignment-summary.mts";
+import { READ_LIMITS, alignmentLines, summarize, summaryLine } from "./alignment-summary.mts";
 import { readCaptures } from "./alignment-validate.mts";
 import { evaluateFile } from "./alignment.mts";
 
@@ -15,11 +15,7 @@ missing scenarios, discovery leads and what wasn't measured.
 
   --write   put the findings and the summary back into each alignment.json it read
 
-It judges only what a capture holds. The web's read doesn't enter iframes or shadow roots, doesn't
-see what only a pseudo-element (::before, ::after) draws, and counts a filled action only when the
-kit's button variants draw it, so a capture with nothing in it isn't proof those were checked.
-Two filled buttons with the same data-action-name count as one action: the name is the author's
-statement that they are one, and the check trusts it.
+It judges only what a capture holds. ${READ_LIMITS}
 
 Each capture is checked against the shape first (version 1, its platform's unit, every field the
 evaluator reads, and every part's group and row present); one that doesn't match is refused.

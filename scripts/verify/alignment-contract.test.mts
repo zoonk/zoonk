@@ -9,6 +9,7 @@ import { type Capture } from "./alignment-capture.mts";
 import { fixtureCapture, real } from "./alignment-fixtures.mts";
 import { summaryLine } from "./alignment-summary.mts";
 import { readCaptures } from "./alignment-validate.mts";
+import { alignmentSection } from "./alignment-web.mts";
 import { evaluateCapture, evaluateFile } from "./alignment.mts";
 
 /** The not-measured records a capture writes, by relationship. */
@@ -169,5 +170,22 @@ describe("what the command prints of a scenarios file", () => {
     );
 
     assert.match(stdout, /; 1 required scenario missing;/u);
+  });
+});
+
+describe("what the command says it reads", () => {
+  it("names the one pseudo-element it reads and the fills it can't, in the help as in a report", () => {
+    const { stdout } = spawnSync(
+      process.execPath,
+      [join(import.meta.dirname, "alignment-cli.mts"), "--help"],
+      { encoding: "utf8" },
+    );
+
+    const report = alignmentSection([]).join("\n");
+
+    for (const text of [stdout, report]) {
+      assert.match(text, /a row's `::before` highlight/u);
+      assert.match(text, /hover/u);
+    }
   });
 });
