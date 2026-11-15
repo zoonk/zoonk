@@ -11,6 +11,7 @@ import {
   getSubscriptionStore,
 } from "@/lib/subscription";
 import { CreditCardIcon } from "lucide-react";
+import { Fragment } from "react";
 import { ChangePlanButton } from "./change-plan-button";
 
 type UserSubscriptions = Awaited<ReturnType<typeof getUserSubscriptions>>;
@@ -39,7 +40,15 @@ function ActiveFacts({ subscription }: { subscription: ActiveSubscription }) {
 
   return (
     <>
-      <span>{facts.filter(Boolean).join(" · ")}</span>
+      {/* Each fact stays whole, so a line breaks between facts and never inside "Ends Nov 13". */}
+      <span>
+        {facts.filter(Boolean).map((fact, index) => (
+          <Fragment key={String(fact)}>
+            {index > 0 && " · "}
+            <span className="whitespace-nowrap">{fact}</span>
+          </Fragment>
+        ))}
+      </span>
       {cancels ? (
         <StateMark state="canceled" tone="attention">
           Cancels {formatDate(cancels)}

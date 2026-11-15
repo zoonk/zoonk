@@ -16,7 +16,7 @@ export const librarySearchTermsTask: Task<
     "Write search terms that find existing Library items worded differently, for each item of a batch",
   generate: generateSearchTerms,
   id: "library-search-terms",
-  name: "Library Search Terms",
+  name: "Library search terms",
   score: scoreLibrarySearchTerms,
   testCases: TEST_CASES,
 };

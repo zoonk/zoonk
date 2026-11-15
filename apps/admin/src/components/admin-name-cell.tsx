@@ -3,7 +3,8 @@ import { TableCell } from "@zoonk/ui/components/table";
 import { type Route } from "next";
 
 /**
- * A row's first cell: what the record is, then one quiet line that tells it from its neighbors.
+ * A row's first cell: what the record is, then a quiet line that tells it from its neighbors. Each
+ * may take two lines, so a narrow column cuts neither short.
  * It is the row's link, so the whole row opens the record.
  */
 export function AdminNameCell<Href extends string>({
@@ -31,7 +32,9 @@ export function AdminNameCell<Href extends string>({
             {title}
           </span>
           {note ? (
-            <span className="text-muted-foreground block truncate text-xs">{note}</span>
+            <span className="text-muted-foreground line-clamp-2 text-xs wrap-break-word whitespace-normal">
+              {note}
+            </span>
           ) : null}
         </span>
       </AdminTableRowLink>

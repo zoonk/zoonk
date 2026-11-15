@@ -27,6 +27,31 @@ function isTextOrMissing(value: unknown): boolean {
   return value === undefined || typeof value === "string";
 }
 
+/**
+ * The spaces around a changed run stay outside its mark: a mark that starts with a space leaves a
+ * lone highlighted sliver at a line's end when the line breaks there. A change of spaces alone
+ * stays marked, or it wouldn't show.
+ */
+function MarkedWords({ className, text }: { className: string; text: string }) {
+  const {
+    lead = "",
+    trail = "",
+    words = "",
+  } = /^(?<lead>\s*)(?<words>[\s\S]*?)(?<trail>\s*)$/u.exec(text)?.groups ?? {};
+
+  if (!words) {
+    return <mark className={className}>{text}</mark>;
+  }
+
+  return (
+    <>
+      {lead}
+      <mark className={className}>{words}</mark>
+      {trail}
+    </>
+  );
+}
+
 /** One side of a changed value, with the words only this side has marked. */
 function ValueSide({
   after,
@@ -54,7 +79,7 @@ function ValueSide({
       <span className="text-muted-foreground text-xs">{label}</span>
       <p
         className={cn(
-          "min-h-10 rounded-lg border px-3 py-2 text-sm leading-6 wrap-break-word whitespace-pre-wrap",
+          "min-h-10 flex-1 rounded-lg border px-3 py-2 text-sm leading-6 wrap-break-word whitespace-pre-wrap",
           !isText && !name && "font-mono text-xs",
         )}
       >
@@ -65,9 +90,7 @@ function ValueSide({
           parts.map((part, index) =>
             part[own] ? (
               // oxlint-disable-next-line react/no-array-index-key -- the parts never reorder
-              <mark className={cn("text-foreground", mark)} key={index}>
-                {part.value}
-              </mark>
+              <MarkedWords className={cn("text-foreground", mark)} key={index} text={part.value} />
             ) : (
               part.value
             ),

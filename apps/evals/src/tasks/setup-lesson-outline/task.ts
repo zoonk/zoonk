@@ -17,7 +17,7 @@ export const setupLessonOutlineTask: Task<
     "Outline the short lesson that sets up a tool on the learner's device: title, description, can-do line, minutes and skill",
   generate: generateSetupLessonOutline,
   id: "setup-lesson-outline",
-  name: "Setup Lesson Outline",
+  name: "Setup lesson outline",
   score: scoreSetupLessonOutline,
   testCases: TEST_CASES,
 };
