@@ -832,6 +832,24 @@ export function readAlignment({
         : { bottom: box.bottom, left: box.left, right: box.right, top: box.bottom - width };
     };
 
+    /** A box's left and right strokes, where it isn't drawn on all four sides. */
+    const sidesOf = (element: Element): Rect[] => {
+      const style = getComputedStyle(element);
+      const box = element.getBoundingClientRect();
+
+      return (["left", "right"] as const).flatMap((side): Rect[] => {
+        const width = pixels(style.getPropertyValue(`border-${side}-width`));
+        const color = globalThis.zoonkPage.rgba(style.getPropertyValue(`border-${side}-color`));
+
+        if (width <= 0 || color[3] === 0) {
+          return [];
+        }
+
+        const left = side === "left" ? box.left : box.right - width;
+        return [{ bottom: box.bottom, left, right: left + width, top: box.top }];
+      });
+    };
+
     type Kind = NonNullable<CaptureElement["kind"]>;
 
     const kindOf = (element: Element, box: Rect): Kind => {
@@ -878,6 +896,10 @@ export function readAlignment({
             ? [{ box: ownBox, kind: current ? lit : kindOf(element, ownBox), passing: true }]
             : []),
           ...(line ? [{ box: line, kind: "hairline" as const, passing: passes(line) }] : []),
+          // A tile's top stroke joins its row's line; its sides are still strokes on the page.
+          ...(ownBox ? [] : sidesOf(element))
+            .filter((side) => passes(side))
+            .map((side) => ({ box: side, kind: "box" as const, passing: true })),
         ];
 
         return found.map(({ box, kind, passing }, part) => ({

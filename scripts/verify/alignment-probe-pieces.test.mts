@@ -257,3 +257,21 @@ describe("the current tab's fill", () => {
     assert.equal(tabFillMisses("").length, 1);
   });
 });
+
+/** RV71's page: a 150 px box with a border on every side but its bottom, `x` to `x + width`. */
+function threeSides(x: number, width: number) {
+  return `<div data-slot="page" data-box="16,0,358,400">
+    <div style="border: 1px solid rgb(0, 0, 0); border-bottom: 0" data-box="${x},40,${width},150">Box</div></div>`;
+}
+
+function threeSidesMisses(x: number, width: number) {
+  document.body.innerHTML = threeSides(x, width);
+  return evaluateCapture(read()).filter((finding) => finding.rule === "column");
+}
+
+describe("a box whose top stroke is a hairline", () => {
+  it("still has its side strokes judged against the column (RV71)", () => {
+    assert.deepEqual(threeSidesMisses(16, 358), []);
+    assert.ok(threeSidesMisses(6, 378).length > 0);
+  });
+});
