@@ -15,6 +15,9 @@ import com.zoonk.android.feature.session.SESSION
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.opening
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.characters.BuddyGlasses
+import com.zoonk.android.ui.characters.BuddyKind
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.BuddyStatus
 import com.zoonk.api.models.LearningProfile
 import kotlinx.coroutines.CoroutineScope
@@ -153,6 +156,44 @@ class BuddyViewModelTest {
             assertEquals(emptyList<AppRoute>(), shownRoutes(vm))
         }
 
+    @Test
+    fun aSaveThatLandsWhileThePageIsRecreatedClosesTheEditorOnce() =
+        runTest(dispatcher) {
+            val vm = buddy(FakeStudyApi(), NoStatusApi)
+
+            // A recreation: no page acts while the change saves; the next one closes its editor.
+            vm.save(BuddyKind.Noodle, BuddyGlasses.Star, "Nox")
+            advanceUntilIdle()
+
+            assertEquals(Unit, vm.saved.value)
+            vm.saved.acted(Unit)
+            assertNull(vm.saved.value)
+        }
+
+    @Test
+    fun aSaveThatLandsAfterTheLearnerLeftClosesNothingOnReturn() =
+        runTest(dispatcher) {
+            val vm = buddy(FakeStudyApi(), NoStatusApi)
+
+            vm.save(BuddyKind.Noodle, BuddyGlasses.Star, "Nox")
+            vm.endVisit()
+            advanceUntilIdle()
+
+            assertNull(vm.saved.value)
+        }
+
+    @Test
+    fun aSaveThatFailsAfterTheLearnerLeftSaysNothingOnReturn() =
+        runTest(dispatcher) {
+            val vm = buddy(FakeStudyApi(), NoStatusApi, profileFails = true)
+
+            vm.save(BuddyKind.Noodle, BuddyGlasses.Star, "Nox")
+            vm.endVisit()
+            advanceUntilIdle()
+
+            assertEquals(false, vm.saveFailed)
+        }
+
     private fun opensALesson() =
         FakeStudyApi().apply {
             openings =
@@ -165,11 +206,12 @@ class BuddyViewModelTest {
     private fun TestScope.buddy(
         study: FakeStudyApi,
         status: BuddyApi,
+        profileFails: Boolean = false,
     ): BuddyViewModel {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
         return BuddyViewModel(
             BuddyStore(status, cache, { "UTC" }, cache.resource(Audience.SignedIn) { learnerSummary() }, backgroundScope),
-            LearningProfileStore(NoProfileApi, cache),
+            LearningProfileStore(ProfileApi(profileFails), cache),
             StudyOpener(study, { _, _ -> error("Not used") }, cache, { "UTC" }),
         )
     }
@@ -181,16 +223,20 @@ class BuddyViewModelTest {
         ): BuddyStatus = error("Not used")
     }
 
-    private object NoProfileApi : LearningProfileApi {
-        override suspend fun profile(session: AuthenticatedSession): LearningProfile = error("Not used")
+    private class ProfileApi(
+        private val fails: Boolean,
+    ) : LearningProfileApi {
+        override suspend fun profile(session: AuthenticatedSession): LearningProfile = throw ApiException(ApiError.Network)
 
         override suspend fun update(
             session: AuthenticatedSession,
             change: JsonObject,
-        ): LearningProfile = error("Not used")
+        ): LearningProfile = if (fails) throw ApiException(ApiError.Network) else ApiJson.decodeFromString(PROFILE)
     }
 
     private companion object {
+        const val PROFILE =
+            """{"activeGoalId":null,"availableGlasses":["round"],"homeCountry":null,"homeCountryName":null,"suggested":[],"buddy":{"glasses":"star","kind":"noodle","name":"Nox","picked":true},"shareUsageData":null,"soundsEnabled":true}"""
         const val GOAL = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00"
         const val LESSON = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d78"
         val BLOCK: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d77")

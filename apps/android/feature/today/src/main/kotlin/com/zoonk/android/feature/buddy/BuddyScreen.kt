@@ -187,6 +187,7 @@ fun BuddyPage(
         dayOpen = false
         navigator.open(it)
     }
+    ActOn(vm.saved) { editing = false }
     LaunchedEffect(asking) {
         if (!asking) return@LaunchedEffect
         composer.requestFocus()
@@ -261,7 +262,7 @@ fun BuddyPage(
                 editing = false
                 vm.dismissSaveFailure()
             },
-            onSave = { kind, glasses, typed -> vm.save(kind, glasses, typed) { editing = false } },
+            onSave = vm::save,
         )
     }
 }
