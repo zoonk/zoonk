@@ -24,6 +24,11 @@ export type CaptureElement = {
   baseline?: number | NotMeasured;
   capTop?: number | NotMeasured;
   capBottom?: number | NotMeasured;
+  /**
+   * The box `capTop` and `capBottom` bound: the face's capitals, or for a script with none
+   * (Japanese, Korean) its ideographic face, read from a full-frame glyph in the same fonts.
+   */
+  textBox?: "capitals" | "ideographic face";
   /** A text's: how many lines it runs to. */
   lines?: number;
   /** A row's: a supporting line sits under its label. */

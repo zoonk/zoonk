@@ -17,7 +17,10 @@ import {
  */
 const LINE = 0.5;
 
-/** A text's middle from the font's cap height, never from the string's ink: "yes" sits where "Off" would. */
+/**
+ * A text's middle from the font's cap height (or a script's ideographic face), never from the
+ * string's ink: "yes" sits where "Off" would, and "一" where "書" would.
+ */
 function capMiddle(element: CaptureElement): number | null {
   const top = measured(element.capTop);
   const bottom = measured(element.capBottom);
@@ -128,9 +131,16 @@ export function lineLeads(context: Context, read: Group): AlignmentFinding[] {
       return [];
     }
 
+    const label = own.find((element) => element.part === "label");
+
+    const faced =
+      label?.textBox === "ideographic face"
+        ? " (the label by its ideographic face: it has no capitals)"
+        : "";
+
     return [
       finding(context, {
-        detail: `${rowName(read, row.id)}: ${off.map((miss) => describe(miss)).join("; ")}`,
+        detail: `${rowName(read, row.id)}: ${off.map((miss) => describe(miss)).join("; ")}${faced}`,
         level: "fail",
         measured: Math.max(...off.map((miss) => Math.abs(miss.off))),
         message: `a row of ${groupName(read)} is off one line by more than ${LINE}`,

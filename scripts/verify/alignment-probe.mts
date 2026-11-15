@@ -214,11 +214,34 @@ export function readAlignment({
     return pen.measureText("H").actualBoundingBoxAscent;
   }
 
+  /** Scripts with no capitals, set on their ideographic face: Han and kana, and Hangul. */
+  const HAN_KANA = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
+  const HANGUL = /\p{Script=Hangul}/u;
+
+  /**
+   * A script with no capitals is centered by its ideographic face, the box its glyphs are drawn
+   * in, not by a string's ink, which differs between "一" and "書". The face is read from a
+   * full-frame glyph through the same fonts, so it is the fallback face's: on Chromium it sits
+   * within 0.4 px of the line box's middle at 12 to 24 px, in Japanese and Korean
+   * (`evidence-ideographic` in the alignment build notes).
+   */
+  function ideographicFace(text: string, style: CSSStyleDeclaration) {
+    const glyph = HAN_KANA.test(text) ? "国" : HANGUL.test(text) && "국";
+
+    if (!pen || !glyph) {
+      return null;
+    }
+
+    pen.font = fontOf(style);
+    const metrics = pen.measureText(glyph);
+    return { ascent: metrics.actualBoundingBoxAscent, descent: metrics.actualBoundingBoxDescent };
+  }
+
   function textMetrics(
     element: Element,
   ): Pick<
     CaptureElement,
-    "baseline" | "capBottom" | "capTop" | "firstLine" | "lines" | "text" | "type"
+    "baseline" | "capBottom" | "capTop" | "firstLine" | "lines" | "text" | "textBox" | "type"
   > {
     const first = firstText(element);
     const main = mainText(element) ?? first;
@@ -248,11 +271,14 @@ export function readAlignment({
     const base = baselineOf(first);
     // The cap height is the primary face's: a text another face draws has no capitals to read.
     const cap = drawnByPrimary(first.data, style) ? capHeight(style) : null;
+    const face = cap === null ? ideographicFace(first.data, style) : null;
+    const box = cap === null ? face : { ascent: cap, descent: 0 };
 
     return {
       baseline: base === null ? "not measured" : base + scrollY,
-      capBottom: base === null || cap === null ? "not measured" : base + scrollY,
-      capTop: base === null || cap === null ? "not measured" : base - cap + scrollY,
+      capBottom: base === null || box === null ? "not measured" : base + box.descent + scrollY,
+      capTop: base === null || box === null ? "not measured" : base - box.ascent + scrollY,
+      ...(box ? { textBox: face ? ("ideographic face" as const) : ("capitals" as const) } : {}),
       ...(line ? { firstLine: bounds(line) } : {}),
       lines: lineCount(rects),
       text: (main.textContent ?? "").trim().slice(0, LABEL_LENGTH),
