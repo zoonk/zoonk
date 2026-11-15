@@ -177,7 +177,7 @@ async function captureScreen({
     const path = new URL(page.url()).pathname;
 
     captures.push({
-      ...webCapture({ page: layout, path, scheme, viewport }),
+      ...webCapture({ app: checkout.app, page: layout, path, scheme, viewport }),
       scenario: scenario ?? null,
     });
 
