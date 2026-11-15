@@ -192,7 +192,6 @@ msgstr "学習済み"
 #: src/challenge/challenge-labels.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/journey-phase-events.tsx
-#: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-header.tsx
@@ -5003,20 +5002,14 @@ msgid ", up next"
 msgstr "、次のフェーズ"
 
 #: src/journey/phase-details.tsx
-msgctxt "kxXCJy"
-msgid "{start} – {end}"
-msgstr "{start}〜{end}"
+msgctxt "sFnTpp"
+msgid "<start></start> – <end></end>"
+msgstr "<start></start>〜<end></end>"
 
 #: src/journey/phase-details.tsx
 msgctxt "yYQBka"
 msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of # lesson} other {{done, number} of # lessons}}"
 msgstr "{total, plural, =0 {{done, number}レッスン完了（全#レッスン）} other {{done, number}レッスン完了（#レッスン中）}}"
-
-#: src/journey/phase-when.tsx
-#: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "{date}ごろ"
 
 #. In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".
 #: src/journey/phase-when.tsx
@@ -5029,6 +5022,12 @@ msgstr "{dateKind, select, month {{date}ごろに終了} other {{date}ごろに�
 msgctxt "JQlKi_"
 msgid "Ends {date}"
 msgstr "{date}に終了"
+
+#: src/journey/phase-when.tsx
+#: src/plan/plan-date-text.tsx
+msgctxt "7KwTGn"
+msgid "~{date}"
+msgstr "{date}ごろ"
 
 #: src/journey/plan-header.tsx
 msgctxt "8PP61v"
@@ -5049,11 +5048,6 @@ msgstr "{days, plural, other {あと約#日}}"
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
 msgstr "{done, number}フェーズ完了（全{total, plural, other {#フェーズ}}）"
-
-#: src/journey/plan-roadmap.tsx
-msgctxt "dM-p3_"
-msgid "From"
-msgstr "開始日"
 
 #: src/journey/plan-roadmap.tsx
 msgctxt "mElWfu"
@@ -7256,11 +7250,6 @@ msgstr "保存済み"
 msgctxt "ifrM2C"
 msgid "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}"
 msgstr "{count, plural, other {#章分のマップを作成しています。作成中はこの画面を離れても大丈夫です。}}"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "uSD0Jk"
-msgid "{count, plural, one {# map didn't finish. Try again.} other {# maps didn't finish. Try again.}}"
-msgstr "{count, plural, other {マップ#件の作成が完了しませんでした。もう一度お試しください。}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "VSfWXI"
@@ -10163,14 +10152,14 @@ msgid "{names} and more"
 msgstr "{names}など"
 
 #: src/plan-diff/plan-effect-diff.tsx
-msgctxt "61Vs84"
-msgid "The numbers are different today."
-msgstr "今日は数が変わっています。"
+msgctxt "SBr2Ck"
+msgid "Your plan changed since you saw this. Here's what it does now."
+msgstr "前回見たときから学習計画が変わりました。今この変更をすると、次のようになります。"
 
 #: src/plan-diff/plan-effect-diff.tsx
-msgctxt "3vidCV"
-msgid "See all changes"
-msgstr "変更をすべて見る"
+msgctxt "7FvDSg"
+msgid "All changes"
+msgstr "すべての変更"
 
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "oGZanC"
@@ -12291,9 +12280,9 @@ msgid "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught
 msgstr "{done, plural, other {<gain>今日は#レッスン分の遅れを取り戻しました</gain>}} · {left, plural, other {あと#レッスン}}"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "v8WYcE"
-msgid "It takes a few minutes."
-msgstr "数分かかります。"
+msgctxt "y1FyTB"
+msgid "Your lesson is usually ready in a few minutes."
+msgstr "レッスンは通常、数分でできあがります。"
 
 #. {title} is the name of one of the day's challenges, such as "Weekly challenge", never a course.
 #: src/session/next-stop-wait.tsx

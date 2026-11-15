@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { expectHydrated } from "@zoonk/e2e/hydration";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   courseChapterFixture,
@@ -15,12 +15,13 @@ import { type Page, expect, test } from "./fixtures";
 import { pressUntil } from "./study-day";
 
 const COURSE_TITLE = "Atoms up close";
+const MOCK_POSITION = 10_000;
 
 /**
  * A plan of a Library course's whole Beginner level, its challenge won and one lesson left:
  * finishing that lesson finishes the level.
  */
-async function createLastLessonGoal(userId: string) {
+async function createLastLessonGoal(userId: string, kind: "exam" | "learn" = "learn") {
   const [course, chapter, skill, { lesson }] = await Promise.all([
     courseFixture({ isPublished: true, title: COURSE_TITLE }),
     libraryChapterFixture({ title: "Inside the atom" }),
@@ -30,7 +31,7 @@ async function createLastLessonGoal(userId: string) {
 
   // The level counts the chapters it had when the plan began, so the chapter joins it first.
   const [goal] = await Promise.all([
-    goalFixture({ primaryCourseId: course.id, timezone: "UTC", userId }),
+    goalFixture({ kind, primaryCourseId: course.id, timezone: "UTC", userId }),
     courseChapterFixture({ chapterId: chapter.id, courseId: course.id, level: "beginner" }),
     chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
   ]);
@@ -55,7 +56,28 @@ async function createLastLessonGoal(userId: string) {
     where: { kind: "boss", planId: plan.id },
   });
 
-  return { goal, lesson };
+  return { goal, lesson, plan };
+}
+
+/** An exam's Beginner level finished, its certificate unclaimed, and a mock exam still ahead. */
+async function createFinishedLevelExamGoal(userId: string) {
+  const { goal, plan } = await createLastLessonGoal(userId, "exam");
+
+  await Promise.all([
+    prisma.planItem.updateMany({
+      data: { status: "done" },
+      where: { kind: { in: ["chapter", "lesson"] }, planId: plan.id },
+    }),
+    planItemFixture({
+      kind: "mock",
+      planId: plan.id,
+      position: MOCK_POSITION,
+      scheduledFor: new Date(Date.now() + 7 * MS_PER_DAY),
+      titleSnapshot: "",
+    }),
+  ]);
+
+  return goal;
 }
 
 async function finishLastLesson(page: Page, lessonId: string) {
@@ -165,5 +187,29 @@ test.describe("Course certificates", () => {
     } finally {
       await visitor.close();
     }
+  });
+
+  test("a claim that doesn't save takes the done mark off its line", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    await createFinishedLevelExamGoal(noProgressUser.id);
+    await page.setViewportSize({ height: 844, width: 390 });
+
+    await page.route(
+      (url) => url.pathname.endsWith("/plan"),
+      (route) => (route.request().method() === "POST" ? route.abort() : route.continue()),
+    );
+
+    await page.goto("/plan");
+    const line = page.getByRole("region", { name: "Beginner complete" });
+    await expect(line.locator('[data-slot="done-mark"]')).toBeVisible();
+
+    const claim = line.getByRole("button", { name: "Get your certificate" });
+    await expectHydrated(claim);
+    await claim.click();
+
+    await expect(line.getByRole("alert")).toHaveText("That didn't save. Try again.");
+    await expect(line.locator('[data-slot="done-mark"]')).toHaveCount(0);
   });
 });

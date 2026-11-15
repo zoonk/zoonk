@@ -37,7 +37,7 @@ function ChangeRows({ rows }: { rows: readonly ChangeRow[] }) {
 
 /**
  * A line in the consequence's place while a change is worked out, when it can't be, or when there
- * is none. It keeps the room of "See all changes" under it, where an `action` such as "Try again"
+ * is none. It keeps the room of "All changes" under it, where an `action` such as "Try again"
  * goes, so what follows holds still when the changes arrive.
  */
 export function PlanEffectNote({
@@ -99,14 +99,16 @@ function RepricedLine({ changes }: { changes: boolean }) {
 
   return (
     <p className="text-sm font-medium text-pretty" role="status">
-      {changes ? t("The numbers are different today.") : t("Your plan stays as it is.")}
+      {changes
+        ? t("Your plan changed since you saw this. Here's what it does now.")
+        : t("Your plan stays as it is.")}
     </p>
   );
 }
 
 /**
  * What a plan change does: the one consequence a learner would notice, and every other change
- * behind "See all changes".
+ * behind "All changes".
  */
 export function PlanEffectDiff({
   byDate = true,
@@ -153,7 +155,7 @@ export function PlanEffectDiff({
       )}
 
       {hasMore && (
-        <QuietDisclosure label={t("See all changes")}>
+        <QuietDisclosure label={t("All changes")}>
           <ChangeRows rows={rows} />
         </QuietDisclosure>
       )}

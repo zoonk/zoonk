@@ -271,6 +271,40 @@ class NextStopTest {
     }
 
     @Test
+    fun aRunThatFailsOffersTryAgainAndNoQuiz() {
+        warmUpId = UUID.fromString(WARM_UP_ID)
+        settled = LessonReadiness.Status.FAILED
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Try again").assertExists()
+        rule.onNodeWithText("Play a quiz while you wait").assertDoesNotExist()
+        rule.onNodeWithText("Back to the quiz").assertDoesNotExist()
+        rule.onNodeWithText("Next guess").assertDoesNotExist()
+    }
+
+    @Test
+    fun aQuizOpenWhenTheRunFailsGoesWithIt() {
+        warmUpId = UUID.fromString(WARM_UP_ID)
+        settled = LessonReadiness.Status.GENERATING
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.waitForIdle()
+        rule.onNodeWithText("Play a quiz while you wait").performClick()
+        rule.onNodeWithText(QUIZ_QUESTION).assertExists()
+
+        settled = LessonReadiness.Status.FAILED
+        rule.mainClock.advanceTimeBy(6_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Try again").assertExists()
+        rule.onNodeWithText(QUIZ_QUESTION).assertDoesNotExist()
+    }
+
+    @Test
     fun aLessonItsChecksSetAsideSaysSoInsteadOfOfferingToTryAgain() {
         settled = LessonReadiness.Status.FAILED
         setAside = true
@@ -402,6 +436,8 @@ class NextStopTest {
     }
 
     private companion object {
+        const val QUIZ_QUESTION = "Why do beekeepers puff smoke into a hive before opening it?"
+
         val WRITTEN: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2f00")
     }
 }

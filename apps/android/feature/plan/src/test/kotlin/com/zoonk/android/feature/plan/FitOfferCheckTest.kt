@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,6 +16,7 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -36,7 +38,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 /** The fit offer's card on a later day, where Add to my plan checks today's numbers first. */
 @RunWith(AndroidJUnit4::class)
@@ -65,6 +69,7 @@ class FitOfferCheckTest {
             writingWaits(WritingRuns(write = "writeSetupLessons", ready = "setupLessonsReady")),
         )
     private var shown by mutableStateOf(true)
+    private var cardWidth by mutableStateOf(411.dp)
 
     @Test
     fun closingTheSuggestionWhileItChecksAddsNothing() {
@@ -144,6 +149,38 @@ class FitOfferCheckTest {
         assertEquals(listOf(operations), api.changes)
     }
 
+    @Test
+    fun aFailedCheckAtLargeTextLeavesTheButtonsWhereTheyWere() {
+        RuntimeEnvironment.setFontScale(2f)
+        val held = CompletableDeferred<Unit>()
+        api.previewGate = held
+        api.preview = PlanChangePreview(finishDate = null, effect = null, feasibility = null, ready = false, unchanged = false)
+        show()
+        val before = compose.onNodeWithText("Not now").getUnclippedBoundsInRoot()
+
+        compose.onNodeWithText("Add to my plan").performClick()
+        held.complete(Unit)
+        compose.waitForIdle()
+
+        compose.onNodeWithText("Try again").assertExists()
+        assertEquals(before, compose.onNodeWithText("Not now").getUnclippedBoundsInRoot())
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun aCardMadeNarrowerAndWideAgainKeepsNoRoomFromTheNarrowWidth() {
+        RuntimeEnvironment.setFontScale(2f)
+        show()
+        val wide = layout()
+
+        cardWidth = 220.dp
+        compose.waitForIdle()
+        cardWidth = 411.dp
+        compose.waitForIdle()
+
+        assertEquals(wide, layout())
+    }
+
     /** The card's height and where Not now sits, which a state change must leave as they are. */
     private fun layout() =
         compose.onNodeWithTag(CARD).getUnclippedBoundsInRoot() to compose.onNodeWithText("Not now").getUnclippedBoundsInRoot()
@@ -171,7 +208,7 @@ class FitOfferCheckTest {
                 val pending by viewModel.pending.collectAsState()
                 if (shown) {
                     val navigator = rememberAppNavigator()
-                    Box(Modifier.testTag(CARD)) {
+                    Box(Modifier.width(cardWidth).testTag(CARD)) {
                         FitLessonsSuggestion(
                             Slot(
                                 page,

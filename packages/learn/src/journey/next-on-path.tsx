@@ -27,6 +27,7 @@ import {
   PathRowBody,
   usePhaseMocksLine,
 } from "./journey-phase-events";
+import { PhaseWhen } from "./phase-when";
 import { useRoadmapFinish } from "./use-roadmap";
 
 const TITLE_ID = "next-on-path-title";
@@ -136,18 +137,7 @@ function AfterExamRow({ phase }: { phase: PlanPhaseView }) {
       <span className={PATH_ROW_LEADING_CLASS}>
         <StatusMark status="todo" />
       </span>
-      <PathRowBody
-        value={
-          phase.endDate && (
-            <PlanDateText
-              className="text-muted-foreground text-xs"
-              estimate
-              isoDate={phase.endDate}
-              month
-            />
-          )
-        }
-      >
+      <PathRowBody value={<PhaseWhen className="text-muted-foreground text-xs" phase={phase} />}>
         <span className={cn(TRUNCATED_TITLE_CLASS, "font-medium")}>{phaseName(phase)}</span>
         {phase.mocks.count > 0 && (
           <span className="text-muted-foreground text-xs">
