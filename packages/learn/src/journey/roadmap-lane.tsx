@@ -193,6 +193,7 @@ export function PhaseAxis({
         <AxisLabel className={cn(isLast && "@max-[10rem]/phase:hidden")} share={0}>
           <PlanDateText
             className={AXIS_TEXT_CLASS}
+            estimate={phase.kind === "learn"}
             isoDate={phase.startDate}
             month={phase.kind === "learn"}
           />
