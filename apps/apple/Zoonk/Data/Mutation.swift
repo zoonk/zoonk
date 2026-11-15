@@ -14,8 +14,11 @@ extension AppCache {
   /// write whose session changed or whose task was cancelled comes back `.obsolete`. A sent write
   /// cancelled in the same session still invalidates `domains`: the server may have made it, as a
   /// closed screen's start or save does.
+  /// `wrote` tells an answer that changed nothing, such as a refusal returned as a value, from one
+  /// that wrote: only the second invalidates.
   func mutate<Value: Sendable>(
     invalidating domains: Set<DataDomain> = [],
+    wrote: (Value) -> Bool = { _ in true },
     _ write: (AuthenticatedSession) async throws -> Value
   ) async -> MutationResult<Value> {
     guard !Task.isCancelled, let identity = session.authenticatedSession else {
@@ -30,7 +33,10 @@ extension AppCache {
         return .obsolete
       }
 
-      invalidate(domains)
+      if wrote(value) {
+        invalidate(domains)
+      }
+
       return .done(value)
     } catch {
       let error = apiError(from: error)

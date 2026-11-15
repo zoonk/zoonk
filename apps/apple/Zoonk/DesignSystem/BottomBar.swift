@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 extension View {
   /// Main's `BottomBar`: the one home of a screen's main action, pinned at the bottom in a
@@ -43,6 +44,8 @@ private struct BottomBar<Actions: View>: View {
   /// The bar's own width: a page beside another (an iPad's lesson spread) is as narrow as a phone,
   /// whatever the window's size class says.
   @State private var width: CGFloat = 0
+  /// The margins a list's rows sit in, so over a list the buttons end where the rows do.
+  @State private var listMargins: NSDirectionalEdgeInsets?
 
   var body: some View {
     // A bar whose buttons all hide draws nothing, so it takes no room under the content.
@@ -90,7 +93,8 @@ private struct BottomBar<Actions: View>: View {
     } action: {
       width = $0
     }
-    .barColumn(column)
+    .barColumn(column, listMargins: listMargins)
+    .background(ListMarginsReader { listMargins = $0 })
     .keepsOffFold()
     .overlay(alignment: .top) {
       if let note {
@@ -176,11 +180,20 @@ extension View {
   /// The bar lines up with the screen's one readable column, such as a list's 768pt one on iPad,
   /// so its buttons end where the rows do; without one it keeps main's 680pt task column.
   @ViewBuilder
-  fileprivate func barColumn(_ column: ColumnMargins?) -> some View {
+  fileprivate func barColumn(_ column: ColumnMargins?, listMargins: NSDirectionalEdgeInsets?)
+    -> some View
+  {
     if let column {
-      padding(.leading, column.leading)
-        .padding(.trailing, column.trailing)
-        .scenePadding()
+      // A list's rows sit in the system's margins inside its column (20pt on a wide phone), not
+      // the scene's padding (16pt).
+      if let listMargins {
+        padding(.leading, column.leading + listMargins.leading)
+          .padding(.trailing, column.trailing + listMargins.trailing)
+      } else {
+        padding(.leading, column.leading)
+          .padding(.trailing, column.trailing)
+          .scenePadding()
+      }
     } else {
       taskColumn()
     }
@@ -191,5 +204,39 @@ extension View {
     frame(maxWidth: 680, alignment: alignment)
       .frame(maxWidth: .infinity)
       .scenePadding()
+  }
+}
+
+/// The system's least margins for a screen's content, the ones a list lays its rows in, read from
+/// the window's root controller as they change with the width.
+private struct ListMarginsReader: UIViewRepresentable {
+  let report: (NSDirectionalEdgeInsets) -> Void
+
+  func makeUIView(context: Context) -> MarginsView {
+    let view = MarginsView()
+    view.report = report
+    view.isUserInteractionEnabled = false
+    return view
+  }
+
+  func updateUIView(_ view: MarginsView, context: Context) {
+    view.report = report
+  }
+
+  final class MarginsView: UIView {
+    var report: ((NSDirectionalEdgeInsets) -> Void)?
+    private var reported: NSDirectionalEdgeInsets?
+
+    override func layoutSubviews() {
+      super.layoutSubviews()
+
+      guard let margins = window?.rootViewController?.systemMinimumLayoutMargins,
+        margins != reported
+      else { return }
+
+      reported = margins
+      // Reported after layout, so a margin change lays the bar out once more, not within this pass.
+      DispatchQueue.main.async { [report] in report?(margins) }
+    }
   }
 }

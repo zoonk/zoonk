@@ -913,9 +913,11 @@ struct TodayProgressSection: View {
             detail: syllabus.value.map { studied(lessons, known: $0.lessons.known) }
           ) {
             if lessons.total > 0 {
-              MeterParts(parts: parts(lessons, known: syllabus.value?.lessons.known ?? 0))
-                .frame(height: 6)
-                .accessibilityHidden(true)
+              MeterParts(
+                parts: cells(lessons, known: syllabus.value?.lessons.known ?? 0), gap: 3
+              )
+              .frame(height: 6)
+              .accessibilityHidden(true)
             }
           }
         }
@@ -979,17 +981,21 @@ struct TodayProgressSection: View {
         comment: "Lessons studied, under the goal's progress")
   }
 
-  private func parts(_ lessons: TodayView.Progress.Lessons, known: Int) -> [MeterParts.Part] {
+  /// Main's `LessonCells`: whole cells, studied, known, today's outlined, then the rest.
+  private func cells(_ lessons: TodayView.Progress.Lessons, known: Int) -> [MeterParts.Part] {
     let known = min(lessons.done, known)
     let today = min(lessons.today, max(0, lessons.total - lessons.done))
-    let rest = max(0, lessons.total - lessons.done - today)
 
-    return [
-      MeterParts.Part(weight: Double(lessons.done - known), fill: .color(.success)),
-      MeterParts.Part(weight: Double(known), fill: .color(.mutedForeground)),
-      MeterParts.Part(weight: Double(today), fill: .current),
-      MeterParts.Part(weight: Double(rest), fill: .track),
-    ].filter { $0.weight > 0 }
+    return LessonCells.of(
+      studied: lessons.done - known, known: known, today: today, total: lessons.total
+    ).map { state in
+      switch state {
+      case .studied: MeterParts.Part(fill: .color(.success))
+      case .known: MeterParts.Part(fill: .color(.mutedForeground.opacity(0.7)))
+      case .today: MeterParts.Part(fill: .current)
+      case .rest: MeterParts.Part(fill: .track)
+      }
+    }
   }
 
   /// Nothing in a week without a whole point either way.

@@ -1287,7 +1287,7 @@
         }
       }
     },
-    "%lld more for +%lld Brain Power" : {
+    "%lld more missions for +%lld Brain Power" : {
       "comment" : "Missions still to do today, then the bonus finishing them earns",
       "localizations" : {
         "de" : {
@@ -1301,10 +1301,16 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Noch %arg Mission"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "Noch %arg"
+                      "value" : "Noch %arg Missionen"
                     }
                   }
                 }
@@ -1326,13 +1332,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "new",
-                      "value" : "%arg more"
+                      "value" : "%arg more mission"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "new",
-                      "value" : "%arg more"
+                      "value" : "%arg more missions"
                     }
                   }
                 }
@@ -1351,10 +1357,16 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg misión más"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg más"
+                      "value" : "%arg misiones más"
                     }
                   }
                 }
@@ -1365,7 +1377,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@left@ pour +%2$lld Puissance Mentale"
+            "value" : "%#@left@ pour +%2$lld points de Puissance Mentale"
           },
           "substitutions" : {
             "left" : {
@@ -1401,10 +1413,16 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "Ancora %arg missione"
+                    }
+                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "Ancora %arg"
+                      "value" : "Ancora %arg missioni"
                     }
                   }
                 }
@@ -1437,7 +1455,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "미션 %#@left@ 두뇌력 +%2$lld"
+            "value" : "%#@left@ 두뇌력 +%2$lld"
           },
           "substitutions" : {
             "left" : {
@@ -1448,7 +1466,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg개 더 완료하면"
+                      "value" : "미션 %arg개를 더 완료하면"
                     }
                   }
                 }
@@ -1459,7 +1477,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@left@ do +%2$lld pkt Mocy Umysłu"
+            "value" : "Jeszcze %#@left@ do +%2$lld pkt Mocy Umysłu"
           },
           "substitutions" : {
             "left" : {
@@ -1470,19 +1488,19 @@
                   "few" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "Jeszcze %arg misje"
+                      "value" : "%arg misje"
                     }
                   },
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "Jeszcze %arg misja"
+                      "value" : "%arg misja"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "Jeszcze %arg misji"
+                      "value" : "%arg misji"
                     }
                   }
                 }
@@ -1493,7 +1511,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@left@ para ganhar +%2$lld Poder Mental"
+            "value" : "%#@left@ para ganhar +%2$lld de Poder Mental"
           },
           "substitutions" : {
             "left" : {
@@ -1521,7 +1539,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@left@ +%2$lld Beyin Gücü"
+            "value" : "%#@left@, +%2$lld Beyin Gücü kazan"
           },
           "substitutions" : {
             "left" : {
@@ -1532,7 +1550,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg görev daha tamamlanınca"
+                      "value" : "%arg görev daha tamamla"
                     }
                   }
                 }
@@ -3433,6 +3451,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bir dakikadan kısa sürede tamamlandı"
+          }
+        }
+      }
+    },
+    "Down from %@" : {
+      "comment" : "Under the day's progress number when it went down; the argument is where it was",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesunken von %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bajó de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En baisse par rapport à %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In calo rispetto a %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@から低下"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@에서 하락"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spadek z %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caiu de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ değerinden düştü"
           }
         }
       }
@@ -7297,6 +7374,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tekrar dene"
+          }
+        }
+      }
+    },
+    "Up from %@" : {
+      "comment" : "Under the day's progress number when it went up; the argument is where it was",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestiegen von %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subió de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En hausse par rapport à %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In aumento rispetto a %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@から上昇"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@에서 상승"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wzrost z %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subiu de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ değerinden yükseldi"
           }
         }
       }

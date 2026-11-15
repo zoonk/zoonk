@@ -195,17 +195,19 @@ private struct RoadmapCompact: View {
   }
 
   private func position(phase: PlanPhase, number: Int, count: Int) -> Text {
+    // Main's: the place leads, in the text's color; the phase's own name follows, muted.
     let place = Text(
       "Phase \(number) of \(count)", tableName: "Plan",
-      comment: "The learner's phase of the plan's phases, under the roadmap")
+      comment: "The learner's phase of the plan's phases, under the roadmap"
+    )
+    .typeWeight(.medium, legibility: legibilityWeight)
+    .foregroundStyle(Color(.foreground))
 
     guard phase.hasOwnName else {
-      return place.foregroundStyle(Color(.foreground))
+      return place
     }
 
     let title = Text(phase.title)
-      .typeWeight(.medium, legibility: legibilityWeight)
-      .foregroundStyle(Color(.foreground))
 
     return Text(
       "\(place)\u{00A0}· \(title)", tableName: "Plan",

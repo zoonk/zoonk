@@ -298,7 +298,7 @@ private struct GoalStartFlow: View {
   }
 }
 
-private struct DraftView: View {
+struct DraftView: View {
   let card: Resource<OnboardingDraft>
   let sentHere: Bool
   let onRewrite: (String) -> Void
@@ -309,12 +309,18 @@ private struct DraftView: View {
   @Environment(OnboardingStore.self) private var onboarding
   @State private var retryError: GoalError?
   @State private var isRetrying = false
+  /// The visit's: one owner whatever the draft's read, so a read while its goal is made keeps Back
+  /// waiting and the answer shows on the card the learner sees.
+  @State private var creation = DraftCreation()
 
   var body: some View {
     Group {
-      switch card.state {
-      case .loaded(let draft):
-        page(draft)
+      // One card for a draft read or being read again, its controls waiting while it is; a read
+      // that fails offers to read it again.
+      switch card.freshState {
+      case .loaded,
+        .loading where card.value != nil:
+        card.value.map(page)
       case .failed:
         GoalLoadFailure {
           await card.refresh()
@@ -327,12 +333,30 @@ private struct DraftView: View {
         }
       }
     }
+    // Hiding the system's Back also stops the edge swipe; the one in its place says Back waits.
+    .navigationBarBackButtonHidden(!creation.canLeave)
+    .toolbar {
+      if !creation.canLeave {
+        ToolbarItem(placement: .topBarLeading) {
+          Button {
+          } label: {
+            Label {
+              Text("Back", tableName: "Onboarding", comment: "Goes back to the previous question")
+            } icon: {
+              Image(systemName: "chevron.backward")
+            }
+          }
+          .disabled(true)
+        }
+      }
+    }
     // One saved as a goal meanwhile goes on with that goal's setup.
     .onChange(of: card.value?.goalId, initial: true) { _, goalID in
       if let goalID {
         onGoal(goalID)
       }
     }
+    .onDisappear { creation.leave(card) }
     .loads(card, refreshable: false)
   }
 
@@ -347,7 +371,8 @@ private struct DraftView: View {
       failed(draft)
     case .understood:
       ReadDraftView(
-        draft: draft, sentHere: sentHere, onRewrite: onRewrite, onBack: onBack,
+        card: card, draft: draft, creation: creation, sentHere: sentHere, onRewrite: onRewrite,
+        onBack: onBack,
         onCreated: onGoal, sourceIDs: sourceIDs)
     }
   }

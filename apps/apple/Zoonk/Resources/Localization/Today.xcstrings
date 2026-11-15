@@ -6513,65 +6513,6 @@
         }
       }
     },
-    "Keep studying them, or archive this goal?" : {
-      "comment" : "After an exam's date: asks whether to study the lessons left or archive the goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Möchtest du die übrigen Lektionen noch lernen oder dieses Ziel archivieren?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Quieres seguir estudiándolas o archivar este objetivo?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuer à les étudier ou archiver cet objectif ?"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vuoi continuare a studiarle o archiviare questo obiettivo?"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "残りのレッスンを続けますか？それとも、この目標をアーカイブしますか？"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "남은 레슨을 계속 공부할까요, 아니면 이 목표를 보관할까요?"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chcesz uczyć się dalej czy zarchiwizować ten cel?"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuar estudando essas aulas ou arquivar este objetivo?"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalan derslere çalışmaya devam etmek mi, bu hedefi arşivlemek mi istersin?"
-          }
-        }
-      }
-    },
     "Level" : {
       "comment" : "Title of a language goal's level card",
       "localizations" : {
@@ -13401,6 +13342,185 @@
         }
       }
     },
+    "You have %lld lessons left. Keep studying them, or archive this goal?" : {
+      "comment" : "After an exam's date: the lessons left, and whether to study them or archive the goal",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Du hast noch %lld Lektion offen. Möchtest du weiterlernen oder dieses Ziel archivieren?"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Du hast noch %lld Lektionen offen. Möchtest du weiterlernen oder dieses Ziel archivieren?"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "You have %lld lesson left. Keep studying it, or archive this goal?"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "You have %lld lessons left. Keep studying them, or archive this goal?"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Te queda %lld lección. ¿Quieres seguir estudiándola o archivar este objetivo?"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Te quedan %lld lecciones. ¿Quieres seguir estudiándolas o archivar este objetivo?"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Il te reste %lld leçon. Tu veux continuer à la travailler ou archiver cet objectif ?"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Il te reste %lld leçons. Tu veux continuer à les travailler ou archiver cet objectif ?"
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ti resta %lld lezione. Vuoi continuare a studiarla o archiviare questo obiettivo?"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ti restano %lld lezioni. Vuoi continuare a studiarle o archiviare questo obiettivo?"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "残りは%lldレッスンです。学習を続けますか、それともこの目標をアーカイブしますか？"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "레슨이 %lld개 남았어요. 계속 공부할까요, 아니면 이 목표를 보관할까요?"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Została ci %lld lekcja. Chcesz kontynuować naukę czy zarchiwizować ten cel?"
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zostały ci %lld lekcje. Chcesz kontynuować naukę czy zarchiwizować ten cel?"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zostało ci %lld lekcji. Chcesz kontynuować naukę czy zarchiwizować ten cel?"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zostało ci %lld lekcji. Chcesz kontynuować naukę czy zarchiwizować ten cel?"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ainda falta %lld aula. Quer continuar estudando ou arquivar este objetivo?"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ainda faltam %lld aulas. Quer continuar estudando ou arquivar este objetivo?"
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld dersin kaldı. Çalışmaya devam etmek mi istersin, yoksa bu hedefi arşivlemek mi?"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "You missed a few days" : {
       "comment" : "Title after missed study days",
       "localizations" : {
@@ -13932,61 +14052,61 @@
         }
       }
     },
-    "Your exam date has passed with %lld lessons left." : {
-      "comment" : "An exam's date passed with lessons left; the number is the lessons",
+    "Your exam date has passed" : {
+      "comment" : "Title of Today's notice once the exam's date passed with lessons left",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Prüfungstermin ist vorbei und du hast noch %lld Lektionen vor dir."
+            "value" : "Dein Prüfungstermin ist vorbei"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya pasó la fecha de tu examen y te quedan %lld lecciones."
+            "value" : "La fecha de tu examen ya pasó"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La date de ton examen est passée et il te reste %lld leçons."
+            "value" : "La date de ton examen est passée"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La data dell’esame è passata e restano %lld lezioni."
+            "value" : "La data dell’esame è passata"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lldレッスンが残ったまま試験日を過ぎました。"
+            "value" : "試験日を過ぎました"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "레슨이 %lld개 남은 채로 시험일이 지났어요."
+            "value" : "시험 날짜가 지났어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termin egzaminu minął, a liczba pozostałych lekcji to %lld."
+            "value" : "Termin egzaminu minął"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A data da sua prova passou e ainda faltam %lld aulas."
+            "value" : "A data da sua prova já passou"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sınav tarihin geçti, %lld dersin kaldı."
+            "value" : "Sınav tarihin geçti"
           }
         }
       }

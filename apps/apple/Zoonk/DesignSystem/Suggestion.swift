@@ -55,9 +55,9 @@ struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
 
       action
     }
-    .padding(.leading, 12)
-    .padding(.trailing, 8)
-    .padding(.vertical, 8)
+    // The same room on every side, as main's card: the mark sits as far from its edge as the
+    // action from its own.
+    .padding(8)
     .frame(minHeight: 48)
     .panel()
   }

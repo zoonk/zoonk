@@ -669,14 +669,16 @@ struct TodayDayStatus: View {
       let lessons = view.progress?.status?.lessons ?? 0
       systemImage = "calendar.badge.clock"
 
+      // As the Plan's notice reads: its title, then what's left and the question.
       if view.goal.kind == .exam {
         sentence = String(
-          localized: "Your exam date has passed with \(lessons) lessons left.", table: "Today",
-          comment: "An exam's date passed with lessons left; the number is the lessons")
+          localized: "Your exam date has passed", table: "Today",
+          comment: "Title of Today's notice once the exam's date passed with lessons left")
         clause = String(
-          localized: "Keep studying them, or archive this goal?", table: "Today",
+          localized: "You have \(lessons) lessons left. Keep studying them, or archive this goal?",
+          table: "Today",
           comment:
-            "After an exam's date: asks whether to study the lessons left or archive the goal")
+            "After an exam's date: the lessons left, and whether to study them or archive the goal")
       } else {
         sentence = String(
           localized: "Your end date has passed with \(lessons) lessons left.", table: "Today",

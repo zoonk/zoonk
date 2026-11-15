@@ -316,7 +316,19 @@ private struct SummaryTiles: View {
           systemImage: goal.dropped ? "chart.line.downtrend.xyaxis" : "chart.line.uptrend.xyaxis",
           tone: goal.dropped ? .neutral : .success,
           detail: goal.before.map { before in
-            let change = Text(verbatim: "\(before) → \(goal.value)")
+            // Where the number came from: the tile already shows where it is now.
+            let change =
+              goal.dropped
+              ? Text(
+                "Down from \(before)", tableName: "Session",
+                comment:
+                  "Under the day's progress number when it went down; the argument is where it was"
+              )
+              : Text(
+                "Up from \(before)", tableName: "Session",
+                comment:
+                  "Under the day's progress number when it went up; the argument is where it was"
+              )
             // A number that went down says so quietly, never in the color of progress.
             return goal.dropped ? change : change.foregroundStyle(.successText)
           })
