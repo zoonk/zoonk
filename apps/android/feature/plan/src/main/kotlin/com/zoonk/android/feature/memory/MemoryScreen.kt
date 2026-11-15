@@ -47,6 +47,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
@@ -76,8 +77,10 @@ fun MemoryScreen(
     navigator: AppNavigator,
 ) {
     val memory by app.memory.memory.collectShown()
-    val screen = viewModel { MemoryViewModel(app.memory) }
+    val files = LocalContext.current.applicationContext.contentResolver
+    val screen = viewModel { MemoryViewModel(app.memory, files::openOutputStream) }
     val scope = rememberCoroutineScope()
+    VisitOf(screen.visit)
 
     PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.settings_memory)) }) { padding ->
         Box(
@@ -129,10 +132,9 @@ private fun Loaded(
     screen: MemoryViewModel,
     navigator: AppNavigator,
 ) {
-    val context = LocalContext.current
     val export =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-            if (uri != null) screen.export { context.contentResolver.openOutputStream(uri) }
+            if (uri != null) screen.export(uri)
         }
     val groups =
         MemoryCategory.entries
