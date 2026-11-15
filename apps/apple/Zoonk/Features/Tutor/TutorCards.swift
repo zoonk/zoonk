@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Main's `TutorPlanChange`: the question, one consequence, "See all changes" and the two answers;
+/// Main's `TutorPlanChange`: the question, one consequence, "All changes" and the two answers;
 /// once answered, what it did and Undo while the plan is still as the change left it.
 struct TutorPlanChangeCard: View {
   let change: Components.Schemas.PlanChange

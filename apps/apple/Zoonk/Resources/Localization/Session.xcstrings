@@ -4398,65 +4398,6 @@
         }
       }
     },
-    "It takes a few minutes." : {
-      "comment" : "A lesson being written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das dauert ein paar Minuten."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tarda unos minutos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ça prend quelques minutes."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ci vogliono pochi minuti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "数分かかります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "몇 분 정도 걸려요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Potrzebujemy kilku minut."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Leva alguns minutos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Birkaç dakika sürer."
-          }
-        }
-      }
-    },
     "Just before you forget" : {
       "comment" : "How reviews work: when an idea comes back",
       "localizations" : {
@@ -8432,6 +8373,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dersin hazır."
+          }
+        }
+      }
+    },
+    "Your lesson is usually ready in a few minutes." : {
+      "comment" : "A lesson being written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Lektion ist meist in wenigen Minuten fertig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu lección suele estar lista en unos minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta leçon est généralement prête en quelques minutes."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di solito prepariamo la tua lezione in pochi minuti."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レッスンは通常、数分でできあがります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레슨은 보통 몇 분 안에 준비돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zwykle przygotowujemy lekcję w kilka minut."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua aula costuma ficar pronta em poucos minutos."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dersin genellikle birkaç dakika içinde hazır olur."
           }
         }
       }

@@ -223,7 +223,8 @@ struct PlanBuilding: View {
         library: ready == nil
           ? view.libraryCourse.map {
             WaitLibraryCourse(courseID: $0.courseId, title: $0.title)
-          } : nil
+          } : nil,
+        ended: failure?.endsWait == true
       ) {
         if let failure {
           GenerationFailureNotice(failure: failure, isActing: run.isRestarting, act: run.retry)

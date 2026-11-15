@@ -80,6 +80,31 @@ final class LayoutCaptureTests: XCTestCase {
       [CGRect(x: 0, y: 100, width: 420, height: 600)])
   }
 
+  /// A view that never reached the window or left it, or one under a screen that covers it, isn't
+  /// on the screen; under a sheet it still is.
+  @MainActor
+  func testOnlyAViewInTheWindowAndNotUnderACoverIsOnScreen() {
+    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 420, height: 912))
+    let page = UIView(frame: window.bounds)
+    let action = UIView(frame: CGRect(x: 16, y: 800, width: 388, height: 44))
+    window.addSubview(page)
+    page.addSubview(action)
+    let cover = UIView(frame: window.bounds)
+    let sheet = UIView(frame: CGRect(x: 0, y: 60, width: 420, height: 852))
+
+    XCTAssertTrue(LayoutHosts.isOnScreen(action, in: window, top: page))
+    XCTAssertFalse(LayoutHosts.isOnScreen(nil, in: window, top: page), "never in the window")
+
+    window.addSubview(sheet)
+    XCTAssertTrue(LayoutHosts.isOnScreen(action, in: window, top: sheet), "under a sheet")
+
+    window.addSubview(cover)
+    XCTAssertFalse(LayoutHosts.isOnScreen(action, in: window, top: cover), "under a cover")
+
+    action.removeFromSuperview()
+    XCTAssertFalse(LayoutHosts.isOnScreen(action, in: window, top: page), "left the window")
+  }
+
   /// A row half scrolled out: its end can't be seen, so its chevron is unknown, never absent.
   func testARowHalfOutOfItsListHasAnEndNotMeasured() {
     let room = CGRect(x: 380, y: 90, width: 20, height: 44)

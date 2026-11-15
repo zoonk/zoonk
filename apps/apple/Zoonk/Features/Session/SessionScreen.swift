@@ -807,7 +807,8 @@ extension GenerationWait.Kind {
         comment: "A challenge whose questions are being made")
     default:
       LocalizedStringResource(
-        "It takes a few minutes.", table: "Session", comment: "A lesson being written")
+        "Your lesson is usually ready in a few minutes.", table: "Session",
+        comment: "A lesson being written")
     }
   }
 }

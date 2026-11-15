@@ -211,6 +211,7 @@ struct PresentedTask: View {
       .accessibilityHidden(isHidden)
       .presentationBackground(isHidden ? AnyShapeStyle(.clear) : AnyShapeStyle(.background))
       .environment(\.isCoveredByTask, router.tasks.count > depth + 1)
+      .environment(\.readableColumnAlignment, .center)
       .fullScreenCover(item: router.task(at: depth + 1)) { next in
         PresentedTask(route: next, depth: depth + 1)
       }

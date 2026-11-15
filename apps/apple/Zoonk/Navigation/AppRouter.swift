@@ -9,6 +9,8 @@ enum AppSheet: Hashable, Identifiable {
   case subscription
   /// Over the screen, above its panes, so a resize never takes it away.
   case practiceCall(Components.Schemas.TutorToolOffer.Case4Payload)
+  /// The buddy's panel an Ask button opens, over the screen for the same reason.
+  case tutor(TutorScope, quote: String?)
 
   var id: Self { self }
 }

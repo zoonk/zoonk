@@ -206,15 +206,23 @@ final class BuddyMissionTap {
     task = Task {
       let result = await today.open(blockID: blockID)
 
+      guard !Task.isCancelled else {
+        return
+      }
+
       switch result {
       // Busy until the card shows what changed, which the open's own invalidation doesn't wait for.
-      case .done(.changed) where !Task.isCancelled:
+      case .done(.changed):
         await refreshDay()
-      case .done(let destination) where !Task.isCancelled:
+
+        guard !Task.isCancelled else {
+          return
+        }
+      case .done(let destination):
         places.open(.missionStep(destination))
       case .failed:
         failed = blockID
-      case .done, .obsolete:
+      case .obsolete:
         break
       }
 
@@ -222,13 +230,12 @@ final class BuddyMissionTap {
     }
   }
 
+  /// The page left, a task covers it, or another goal's or day's missions show: the tap ends, and
+  /// the next one starts with nothing of it, whether it opened, failed or still runs.
   func cancel() {
     task?.cancel()
-  }
-
-  /// Another goal's or day's missions start without the last one's tap.
-  func startOver() {
-    task?.cancel()
+    task = nil
+    opening = nil
     failed = nil
   }
 }

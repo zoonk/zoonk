@@ -72,6 +72,7 @@ private struct ChapterLandingList: View {
         closing
       }
     }
+    .catalogGoalSwitch()
   }
 
   private var outline: [CourseChapter] {

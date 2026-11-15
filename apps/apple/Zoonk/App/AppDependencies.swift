@@ -1,3 +1,5 @@
+import SwiftUI
+
 @MainActor
 struct AppDependencies {
   let buddyStore: BuddyStore
@@ -95,5 +97,51 @@ struct AppDependencies {
     tutorStore = TutorStore(api: tutorAPI ?? TutorAPI(clients: clients), cache: cache)
     voice = VoiceServices(clients: clients, cache: cache)
     warmUpStore = WarmUpStore(api: WarmUpAPI(clients: clients), cache: cache)
+  }
+}
+
+extension View {
+  /// The app's stores and services in the environment, as every window has them. Tests show a
+  /// screen with them too.
+  @MainActor
+  func appDependencies(_ dependencies: AppDependencies) -> some View {
+    let session = dependencies.sessionStore
+
+    return
+      self
+      .environment(dependencies.buddyStore)
+      .environment(dependencies.certificatesStore)
+      .environment(dependencies.completedLessonsStore)
+      .environment(dependencies.countryCatalogStore)
+      .environment(dependencies.courseCatalogStore)
+      .environment(dependencies.examStore)
+      .environment(dependencies.explainStore)
+      .environment(dependencies.goalContentStore)
+      .environment(dependencies.learnerSummaryStore)
+      .environment(dependencies.mindMapsStore)
+      .environment(dependencies.planStore)
+      .environment(dependencies.onboardingStore)
+      .environment(dependencies.practiceStore)
+      .environment(dependencies.progressStore)
+      .environment(session)
+      .environment(dependencies.settingsStore)
+      .environment(dependencies.studyRemindersStore)
+      .environment(PushNotifications.shared)
+      .environment(dependencies.studySessionStore)
+      .environment(dependencies.subscriptionStore)
+      .environment(dependencies.todayStore)
+      .environment(dependencies.tutorStore)
+      .environment(dependencies.voice)
+      .environment(dependencies.warmUpStore)
+      .environment(\.imageLoader, dependencies.imageLoader)
+      .environment(\.lessonTutor, .buddy)
+      .environment(
+        \.lessonGuestStart, LessonGuestStart { [session] in await session.continueAsGuest() }
+      )
+      .environment(\.lessonPlayer, dependencies.lessonPlayer)
+      .environment(\.lessonAudio, .voice(dependencies.voice))
+      .environment(\.spokenAnswerRecording, .voice)
+      .environment(\.activityRenderers, .app)
+      .environment(\.openURL, OpenURLAction(handler: LinkOpening.open))
   }
 }

@@ -6,32 +6,8 @@ import SwiftUI
 @main
 struct ZoonkApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-  @State private var buddy: BuddyStore
-  @State private var certificates: CertificatesStore
-  @State private var completedLessons: CompletedLessonsStore
-  @State private var countryCatalog: CountryCatalogStore
-  @State private var courseCatalog: CourseCatalogStore
-  @State private var exam: ExamStore
-  @State private var explain: ExplainStore
-  @State private var goalContent: GoalContentStore
-  @State private var learnerSummary: LearnerSummaryStore
-  @State private var mindMaps: MindMapsStore
-  @State private var onboarding: OnboardingStore
-  @State private var plan: PlanStore
-  @State private var practice: PracticeStore
-  @State private var progress: ProgressStore
-  @State private var session: SessionStore
-  @State private var settings: SettingsStore
-  @State private var studyReminders: StudyRemindersStore
-  @State private var studySession: StudySessionStore
-  @State private var subscriptions: AppStoreSubscriptionStore
-  @State private var today: TodayStore
-  @State private var tutor: TutorStore
-  @State private var voice: VoiceServices
-  @State private var warmUps: WarmUpStore
-  private let cache: AppCache
-  private let images: ImageLoader
-  private let lessonPlayer: LessonPlayerDependencies
+  /// The stores live as long as the app, whatever happens to its windows.
+  @State private var dependencies: AppDependencies
   #if DEBUG
     private let uiTestFixtureFailure: String?
   #endif
@@ -53,82 +29,24 @@ struct ZoonkApp: App {
       let dependencies = AppDependencies.live()
     #endif
 
-    _buddy = State(initialValue: dependencies.buddyStore)
-    cache = dependencies.cache
-    _certificates = State(initialValue: dependencies.certificatesStore)
-    _completedLessons = State(initialValue: dependencies.completedLessonsStore)
-    _countryCatalog = State(initialValue: dependencies.countryCatalogStore)
-    _courseCatalog = State(initialValue: dependencies.courseCatalogStore)
-    _exam = State(initialValue: dependencies.examStore)
-    _explain = State(initialValue: dependencies.explainStore)
-    _goalContent = State(initialValue: dependencies.goalContentStore)
-    images = dependencies.imageLoader
-    _learnerSummary = State(initialValue: dependencies.learnerSummaryStore)
-    lessonPlayer = dependencies.lessonPlayer
-    _mindMaps = State(initialValue: dependencies.mindMapsStore)
-    _plan = State(initialValue: dependencies.planStore)
-    _onboarding = State(initialValue: dependencies.onboardingStore)
-    _practice = State(initialValue: dependencies.practiceStore)
-    _progress = State(initialValue: dependencies.progressStore)
-    _session = State(initialValue: dependencies.sessionStore)
-    _settings = State(initialValue: dependencies.settingsStore)
-    _studyReminders = State(initialValue: dependencies.studyRemindersStore)
-    _studySession = State(initialValue: dependencies.studySessionStore)
-    _subscriptions = State(initialValue: dependencies.subscriptionStore)
-    _today = State(initialValue: dependencies.todayStore)
-    _tutor = State(initialValue: dependencies.tutorStore)
-    _voice = State(initialValue: dependencies.voice)
-    _warmUps = State(initialValue: dependencies.warmUpStore)
+    _dependencies = State(initialValue: dependencies)
   }
 
   var body: some Scene {
     WindowGroup {
-      AppWindow(today: today)
+      AppWindow(today: dependencies.todayStore)
         #if DEBUG
           .modifier(UITestFixtureFailureCover(failure: uiTestFixtureFailure))
         #endif
-        .loads(learnerSummary.summary, refreshable: false)
+        .loads(dependencies.learnerSummaryStore.summary, refreshable: false)
         .usageAnalytics()
-        .task(id: learnerSummary.summary.value?.nextChangeAt) {
-          await learnerSummary.refreshAtNextChange()
+        .task(id: dependencies.learnerSummaryStore.summary.value?.nextChangeAt) {
+          await dependencies.learnerSummaryStore.refreshAtNextChange()
         }
-        .onChange(of: session.authenticatedSession) {
-          cache.followSession()
+        .onChange(of: dependencies.sessionStore.authenticatedSession) {
+          dependencies.cache.followSession()
         }
-        .environment(buddy)
-        .environment(certificates)
-        .environment(completedLessons)
-        .environment(countryCatalog)
-        .environment(courseCatalog)
-        .environment(exam)
-        .environment(explain)
-        .environment(goalContent)
-        .environment(learnerSummary)
-        .environment(mindMaps)
-        .environment(plan)
-        .environment(onboarding)
-        .environment(practice)
-        .environment(progress)
-        .environment(session)
-        .environment(settings)
-        .environment(studyReminders)
-        .environment(PushNotifications.shared)
-        .environment(studySession)
-        .environment(subscriptions)
-        .environment(today)
-        .environment(tutor)
-        .environment(voice)
-        .environment(warmUps)
-        .environment(\.imageLoader, images)
-        .environment(\.lessonTutor, .buddy)
-        .environment(
-          \.lessonGuestStart, LessonGuestStart { [session] in await session.continueAsGuest() }
-        )
-        .environment(\.lessonPlayer, lessonPlayer)
-        .environment(\.lessonAudio, .voice(voice))
-        .environment(\.spokenAnswerRecording, .voice)
-        .environment(\.activityRenderers, .app)
-        .environment(\.openURL, OpenURLAction(handler: LinkOpening.open))
+        .appDependencies(dependencies)
         .zoonkStyles()
     }
   }

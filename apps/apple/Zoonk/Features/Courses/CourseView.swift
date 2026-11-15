@@ -66,6 +66,7 @@ private struct CourseLandingList: View {
         contents
       }
     }
+    .catalogGoalSwitch()
   }
 
   @ViewBuilder

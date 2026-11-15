@@ -18,6 +18,8 @@ const OWNERS: Record<string, string> = {
   "Features/Buddy/BuddyScreen.swift: missionTap":
     "Zu's page, which holds its PaneBeside: above the day's pane.",
   "Features/Certificates/CertificateScreen.swift: printing": "A certificate's page has no split.",
+  "Features/Courses/CatalogStartActions.swift: goalSwitch":
+    "The course, chapter and lesson pages' goal switch, attached to the view that holds their PaneSplit.",
   "Features/Exam/ExamScreen.swift: callStart": "The exam page, which holds its PaneSplit.",
   "Features/FocusTest/FocusTestFlow.swift: tasks": "The focus test has no split.",
   "Features/GoalContent/ChapterScreen.swift: practiceTask":
@@ -39,6 +41,8 @@ const OWNERS: Record<string, string> = {
   "Features/Plan/AdjustPlanSheet.swift: editor":
     "The Adjust plan sheet, presented above the Plan's split.",
   "Features/Plan/GoalOptionsToolbar.swift: saving": "The Plan's bar, outside its split.",
+  "Features/Plan/GoalOptionsToolbar.swift: statusChange":
+    "The Plan's options, applied above its split.",
   "Features/Plan/PlanBasesView.swift: saving":
     "In the Adjust plan sheet, presented above the Plan's split.",
   "Features/Plan/PlanScreen.swift: certificateClaim, slotAnswer?.editor, slotChecks":
@@ -56,6 +60,7 @@ const OWNERS: Record<string, string> = {
     "The challenge's action, owned above its layout.",
   "Features/Practice/QuestionBlock/QuestionBlockScreen.swift: stopping":
     "The question block, above the question's split.",
+  "Features/Search/SearchScreen.swift: goalSwitch": "Search, which holds its PaneSplit.",
   "Features/Session/SessionScreen.swift: action":
     "The next stop, above the split NextStopWait draws.",
   "Features/Session/SessionScreen.swift: playback": "The session's screen, which has no split.",
@@ -82,6 +87,21 @@ const OWNERS: Record<string, string> = {
   "Features/Voice/Speaking/SpeakingScreen.swift: start":
     "The speaking paper, which holds its PaneSplit.",
   "Navigation/MakeRoomSheet.swift: start": "A sheet the router presents.",
+};
+
+/**
+ * Every `Task {}` nobody keeps (not assigned, so nothing can cancel it) that routes after an
+ * `await`, and why routing then is right: the screen that started it may be gone by the time it
+ * lands, and what it opens covers wherever the learner went. Keep the task in an owner that ends it
+ * as the screen closes instead (`apps/apple/AGENTS.md`, "Requests outlive a layout change").
+ */
+const LOOSE_ROUTES: Record<string, string> = {
+  "App/ZoonkApp.swift: router.openStudyReminder":
+    "A study reminder the learner tapped, opened from the app's root, which never leaves.",
+  "Navigation/FeatureHooks.swift: router.open":
+    "A mission with a block never reaches the hooks: Zu's page opens it through BuddyMissionTap.",
+  "Navigation/ShellToolbar.swift: router.popToRoots":
+    "The top bar's goal menu: the shell never leaves, and a switch changes every tab's goal.",
 };
 
 const SOURCES = path.join(import.meta.dirname, "../Zoonk");
@@ -172,17 +192,70 @@ function counted(keys: string[]): string[] {
   });
 }
 
-async function sites(): Promise<string[]> {
-  const files = await swiftFiles(SOURCES);
+/** The text of the braces that open at `start`, without them. */
+function bracesAt(source: string, start: number): string {
+  let depth = 0;
 
-  const found = await Promise.all(
-    files.map(async (file) => {
-      const source = await readFile(file, "utf8");
-      return sitesIn(source, path.relative(SOURCES, file));
+  for (let index = start; index < source.length; index += 1) {
+    if (source[index] === "{") {
+      depth += 1;
+    } else if (source[index] === "}") {
+      depth -= 1;
+
+      if (depth === 0) {
+        return source.slice(start + 1, index);
+      }
+    }
+  }
+
+  return source.slice(start + 1);
+}
+
+/** The router calls each unkept `Task {}` in one file makes after its first `await`. */
+function looseRoutesIn(source: string, relative: string): string[] {
+  return counted(
+    [...source.matchAll(/^(?<before>[^\n]*?)\bTask\s*\{/gmu)].flatMap((match) => {
+      if (/[=]|\breturn\b/u.test(match.groups?.before ?? "")) {
+        return [];
+      }
+
+      const body = bracesAt(source, (match.index ?? 0) + match[0].length - 1);
+      const awaited = body.indexOf("await");
+
+      if (awaited === -1) {
+        return [];
+      }
+
+      const routes = [...body.slice(awaited).matchAll(/\brouter\.(?<call>\w+)\(/gu)].map(
+        (route) => `router.${route.groups?.call ?? ""}`,
+      );
+
+      return routes.length === 0
+        ? []
+        : [`${relative}: ${[...new Set(routes)].toSorted().join(", ")}`];
     }),
   );
+}
 
-  return found.flat().toSorted();
+async function sources(): Promise<{ relative: string; source: string }[]> {
+  const files = await swiftFiles(SOURCES);
+
+  return Promise.all(
+    files.map(async (file) => ({
+      relative: path.relative(SOURCES, file),
+      source: await readFile(file, "utf8"),
+    })),
+  );
+}
+
+async function sites(): Promise<string[]> {
+  const files = await sources();
+  return files.flatMap(({ source, relative }) => sitesIn(source, relative)).toSorted();
+}
+
+async function looseRoutes(): Promise<string[]> {
+  const files = await sources();
+  return files.flatMap(({ source, relative }) => looseRoutesIn(source, relative)).toSorted();
 }
 
 describe("what a view ends as it disappears", () => {
@@ -200,6 +273,54 @@ describe("what a view ends as it disappears", () => {
       [],
       "A listed site is gone: remove it from OWNERS",
     );
+  });
+});
+
+describe("what a task nobody keeps opens after it waits", () => {
+  it("says why routing then is right", async () => {
+    const found = await looseRoutes();
+
+    assert.deepEqual(
+      found.filter((site) => !(site in LOOSE_ROUTES)),
+      [],
+      "A Task nobody keeps routes after an await: keep it in an owner that ends it as its screen closes, or list it in LOOSE_ROUTES with why routing then is right",
+    );
+
+    assert.deepEqual(
+      Object.keys(LOOSE_ROUTES).filter((site) => !found.includes(site)),
+      [],
+      "A listed site is gone: remove it from LOOSE_ROUTES",
+    );
+  });
+});
+
+describe(looseRoutesIn, () => {
+  it("reads a router call after the task's await", () => {
+    const source = `
+      func pick() {
+        Task {
+          if await save() { router.showRoot(of: .today) }
+        }
+      }
+    `;
+
+    assert.deepEqual(looseRoutesIn(source, "Card.swift"), ["Card.swift: router.showRoot"]);
+  });
+
+  it("leaves a kept task, and a call before the await, to the owners list", () => {
+    const source = `
+      func pick() {
+        task = Task {
+          if await save() { router.showRoot(of: .today) }
+        }
+        Task {
+          router.open(.today)
+          await save()
+        }
+      }
+    `;
+
+    assert.deepEqual(looseRoutesIn(source, "Card.swift"), []);
   });
 });
 
