@@ -244,8 +244,13 @@ export async function checkPictures({
   );
 
   const matched = new Set(checked.flatMap(({ entries: found }) => found));
-  const used = new Set([...matched].map(({ folder }) => folder));
   const after = [...matched].flatMap(({ item }) => (item.side === "after" ? [item] : []));
+
+  // A before's layout is the fault the change fixes, so only folders holding an after are judged.
+  const judged = new Set(
+    [...matched].flatMap(({ folder, item }) => (item.side === "after" ? [folder] : [])),
+  );
+
   const read = after.flatMap((item) => readOf(item) ?? []);
 
   const reads = {
@@ -254,13 +259,16 @@ export async function checkPictures({
     new: read.filter((record) => !record.carriedFrom).length,
   };
 
-  const usedManifests = loaded.filter(({ folder }) => used.has(folder));
-  const fromAlignment = usedManifests.flatMap((manifest) => alignmentProblems(manifest));
+  const judgedManifests = loaded.filter(({ folder }) => judged.has(folder));
+  const fromAlignment = judgedManifests.flatMap((manifest) => alignmentProblems(manifest));
   const unreadable = unsupported.map((detail): Problem => ({ detail, kind: "unsupported" }));
 
   return {
     checked: unique.length,
-    notMeasured: usedManifests.filter((manifest) => !measured(manifest)).length,
+    notMeasured: judgedManifests.filter((manifest) => !measured(manifest)).length,
+    nothingDeclared: judgedManifests
+      .flatMap(({ alignment }) => alignment.captures ?? [])
+      .filter((screen) => screen.elements?.length === 0).length,
     problems: [...unreadable, ...checked.flatMap(({ problems }) => problems), ...fromAlignment],
     reads,
   };

@@ -81,7 +81,7 @@ export const MANIFEST = "capture.json";
  * relationship lane owns its shape (unresolved means failing and not excepted).
  */
 export type AlignmentReport = {
-  captures?: unknown[];
+  captures?: { elements?: unknown[] }[];
   findings?: { exception?: string; level: string; message: string }[];
   summary?: { scenariosMissing?: number | null; unresolved?: number };
 };

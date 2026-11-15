@@ -192,3 +192,31 @@ describe("pr:media check, when records and reports disagree or are missing", () 
     ]);
   });
 });
+
+describe("pr:media check, on a capture's measured layout", () => {
+  it("judges a before capture's layout not at all: its faults are what the change fixes", async () => {
+    const failing = { findings: [{ level: "fail", message: "wrong edge" }], summary: {} };
+
+    const before = await capture([shot({ file: "a.png", side: "before" })], {
+      alignment: failing,
+    }).check();
+
+    const unmeasured = await capture([shot({ file: "b.png", side: "before" })]).check();
+
+    assert.deepEqual([...kinds(before), ...kinds(unmeasured)], []);
+    assert.deepEqual([before.notMeasured, unmeasured.notMeasured], [0, 0]);
+  });
+
+  it("tells a screen measured with nothing declared on it from one not measured", async () => {
+    const result = await capture([shot({ file: "a.png" }), shot({ file: "b.png" })], {
+      alignment: { captures: [{ elements: [] }, { elements: [{ id: "row" }] }], findings: [] },
+    }).check();
+
+    assert.equal(result.notMeasured, 0);
+
+    assert.match(
+      formatCheck(result, fixture.repository),
+      /; layout measured with nothing declared on 1 screen$/u,
+    );
+  });
+});
