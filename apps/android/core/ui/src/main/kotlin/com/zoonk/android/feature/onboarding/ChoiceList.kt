@@ -30,6 +30,7 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LayoutPart
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.controlInk
 import com.zoonk.android.ui.components.layoutPart
 import com.zoonk.android.ui.theme.zoonk
 
@@ -101,7 +102,7 @@ fun <T> ChoiceList(
                             }
                         }.selectable(selected = selected, enabled = !readOnly, role = Role.RadioButton) { choose(choice) },
                 supporting = choice.description?.let { { Text(it) } },
-                trailing = { RadioButton(selected = selected, onClick = null) },
+                trailing = { RadioButton(selected = selected, onClick = null, modifier = Modifier.controlInk()) },
             )
             afterChoice(choice.value)
         }
@@ -140,7 +141,7 @@ fun <T> CheckList(
                         .alpha(if (open) 1f else DISABLED_ALPHA)
                         .toggleable(checked, enabled = open && !readOnly, role = Role.Checkbox) { onToggle(choice.value) },
                 supporting = choice.description?.let { { Text(it) } },
-                trailing = { Checkbox(checked = checked, onCheckedChange = null) },
+                trailing = { Checkbox(checked = checked, onCheckedChange = null, modifier = Modifier.controlInk()) },
             )
             afterChoice(choice.value)
         }

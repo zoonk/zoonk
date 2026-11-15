@@ -58,6 +58,7 @@ import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.controlInk
 import com.zoonk.android.ui.components.labelInset
 import com.zoonk.android.ui.theme.zoonk
 import kotlinx.coroutines.launch
@@ -201,7 +202,7 @@ private fun CountryRow(
             Modifier
                 .background(if (selected) MaterialTheme.zoonk.selectedTint else Color.Transparent)
                 .selectable(selected = selected, enabled = enabled, role = Role.RadioButton, onClick = onClick),
-        trailing = { RadioButton(selected = selected, onClick = null) },
+        trailing = { RadioButton(selected = selected, onClick = null, modifier = Modifier.controlInk()) },
     )
     HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
 }
