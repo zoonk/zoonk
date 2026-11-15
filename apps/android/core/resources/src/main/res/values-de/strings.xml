@@ -10,6 +10,7 @@
   "belt_gray": "a53da5c9dfe444e2f1b3d1d3a9b36f3c55eb17c4d6908c54c5c0bb8c5c23f981",
   "belt_green": "0f267974f5458635b0d0a5c7270da1ceb1c0d7348c1205f850cdff4123bfcaef",
   "belt_level": "a7261150bbd6fbefdbbd82ec46f5d64fcf62fc01f1dc70fe190b0edd15c19f35",
+  "belt_level_words": "f3d76cf5970eee63b1d52edf03b202ab4b572c757f4568e0e91f14c16ee2b4f3",
   "belt_orange": "818f56446c683afe225683776c9513405ff19762a2336474f0a4bc476b317c50",
   "belt_purple": "e7446787632ef7f0f017eead848662483dfcb038f1673b0e07986e7708c5cd39",
   "belt_red": "de1ef1d0df57e7c24eed5022d1e96445e23d03ddeac023d4cc05d2268460bf91",
@@ -120,6 +121,7 @@
     <string name="belt_black">Schwarzer Gürtel</string>
     <!-- A belt and its number from 1 to 10, such as White belt 4. %1$s is the belt's name. -->
     <string name="belt_level">%1$s %2$s</string>
+    <string name="belt_level_words">Level %1$s</string>
     <string name="answer_tag_correct">Richtig</string>
     <string name="answer_tag_your_answer">Deine Antwort</string>
     <string name="answer_tag_your_guess">Deine Schätzung</string>

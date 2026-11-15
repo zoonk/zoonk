@@ -6,7 +6,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import com.zoonk.android.R
+import com.zoonk.android.app.LocalNavigationSuiteType
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -38,6 +40,6 @@ fun LevelButton(
                 }
             },
     ) {
-        BeltLevel(belt, level.level.toInt())
+        BeltLevel(belt, level.level.toInt(), inWords = LocalNavigationSuiteType.current == NavigationSuiteType.NavigationDrawer)
     }
 }

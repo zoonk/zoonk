@@ -10,6 +10,7 @@
   "belt_gray": "ab699306ecf8276004daefa8b0b6d11e5f93dfcea8d18c899ea89e81224966c1",
   "belt_green": "fa5c63728375a87334e64d76ef2704e3f52d7b596ca708c78dfc4cb44f794ba2",
   "belt_level": "777d2cc1b50da2fd040538723177784f8a30a4a5d53086b82c94faf4f2c921ab",
+  "belt_level_words": "afe9b61ca7799c04a66661c5ed3bede37bfb58c9615fcc85bfe236ab6fab4595",
   "belt_orange": "5960ffaf972d35e20edb592293504fc805c824aa0439323bb711163b3c4bd33b",
   "belt_purple": "ab511a69a1ce4c82a64893f6d65f6852f159e9690d47abb5bf1cb1179afd9b72",
   "belt_red": "42a38720c1f366c71d0dd75c16f774bf3627060ed897b3e5a0801e85c9e4acb7",
@@ -120,6 +121,7 @@
     <string name="belt_black">Cintura nera</string>
     <!-- A belt and its number from 1 to 10, such as White belt 4. %1$s is the belt's name. -->
     <string name="belt_level">%1$s %2$s</string>
+    <string name="belt_level_words">Livello %1$s</string>
     <string name="answer_tag_correct">Corretto</string>
     <string name="answer_tag_your_answer">La tua risposta</string>
     <string name="answer_tag_your_guess">La tua ipotesi</string>
