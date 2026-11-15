@@ -11,6 +11,8 @@ struct ProfileScreenContext {
   /// Onboarding's Skip declines the question, so the screen has no row that declines it.
   var skipDeclines = false
   var memoryEnabled = true
+  /// Settings › About you, whose notes don't send the learner to Settings.
+  var inSettings = false
 }
 
 /// One question's title and answer, shared by onboarding and Settings › About you, which add their
@@ -28,7 +30,7 @@ struct ProfileQuestionSections: View {
   var body: some View {
     StepHeader(
       subject: context.eyebrow, title: ProfileCopy.title(view.id),
-      description: ProfileCopy.description(view.id))
+      description: ProfileCopy.description(view.id, inSettings: context.inSettings))
 
     Group {
       switch view.id {
@@ -222,9 +224,11 @@ struct ProfileQuestionSections: View {
       } footer: {
         if opensNote || !draft.text.isEmpty {
           SectionFooter {
-            Text(
-              "We'll remember this. You can delete it anytime in Settings.",
-              tableName: "AboutYou", comment: "Under the box for what helps the learner learn")
+            context.inSettings
+              ? Text("We'll remember this. You can delete it anytime.", tableName: "AboutYou")
+              : Text(
+                "We'll remember this. You can delete it anytime in Settings.",
+                tableName: "AboutYou", comment: "Under the box for what helps the learner learn")
           }
         }
       }
@@ -384,7 +388,7 @@ enum ProfileCopy {
   }
 
   /// Shown before the learner has met their buddy, so it says "we".
-  static func description(_ question: ProfileQuestion) -> Text {
+  static func description(_ question: ProfileQuestion, inSettings: Bool) -> Text {
     switch question {
     case .addressForm:
       Text(
@@ -403,9 +407,13 @@ enum ProfileCopy {
         "Pick up to 3.", tableName: "AboutYou",
         comment: "Under the questions whose chips take up to three picks")
     case .conditions:
-      Text(
-        "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings.",
-        tableName: "AboutYou", comment: "Under the conditions question")
+      inSettings
+        ? Text(
+          "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime.",
+          tableName: "AboutYou")
+        : Text(
+          "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings.",
+          tableName: "AboutYou", comment: "Under the conditions question")
     case .learningSupport:
       Text(
         "Pick anything that helps.", tableName: "AboutYou", comment: "Under What helps you learn?")

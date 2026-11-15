@@ -43,7 +43,7 @@ export const challengeFixTask: Task<FixInput, { edits: ChallengeEdit[] }> = {
     return result;
   },
   id: "challenge-fix",
-  name: "Challenge Fix",
+  name: "Challenge fix",
   testCases: cases.map((saved) => ({
     expectations: `${describeLabels(saved.labels)}
 Every other word of the case stays as it was: ids, structure, meters, correct numbers, tone and language. Any new error an edit introduces on any route fails the case.`,

@@ -4,11 +4,10 @@
         <item quantity="one">%d day studied</item>
         <item quantity="other">%d days studied</item>
     </plurals>
-    <!-- %1$s is a duration, such as "20 min". -->
-    <string name="recap_more_time">%1$s more than the week before!</string>
+    <string name="recap_more_time">%1$s more than the week before.</string>
     <plurals name="recap_more_questions">
-        <item quantity="one">%d more question than the week before!</item>
-        <item quantity="other">%d more questions than the week before!</item>
+        <item quantity="one">%d more question than the week before.</item>
+        <item quantity="other">%d more questions than the week before.</item>
     </plurals>
     <!-- %1$s is the name of a part of the learner's plan they finished this week, such as "Foundations". -->
     <string name="recap_phase_finished">You finished %1$s.</string>

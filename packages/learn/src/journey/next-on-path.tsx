@@ -22,9 +22,9 @@ import { type JourneyPathLinks } from "./journey-links";
 import {
   CheckpointRow,
   MockRow,
-  PATH_ROW_BODY_CLASS,
   PATH_ROW_CLASS,
   PATH_ROW_LEADING_CLASS,
+  PathRowBody,
   usePhaseMocksLine,
 } from "./journey-phase-events";
 import { useRoadmapFinish } from "./use-roadmap";
@@ -70,9 +70,9 @@ function NextChapterRow({
       <span className={PATH_ROW_LEADING_CLASS}>
         <ChapterMark chapter={chapter} isNext />
       </span>
-      <span className={PATH_ROW_BODY_CLASS}>
+      <PathRowBody>
         <span className="line-clamp-2 font-medium text-pretty">{chapter.title}</span>
-      </span>
+      </PathRowBody>
       <RowChevron />
     </LearnLink>
   );
@@ -88,21 +88,24 @@ function FinishRow({ examHref }: { examHref: string | null }) {
       <span className={PATH_ROW_LEADING_CLASS}>
         <FlagIcon aria-hidden="true" className="size-4" />
       </span>
-      <span className={PATH_ROW_BODY_CLASS}>
-        <span className="truncate font-medium">{goal.displayName}</span>
-        {finish ? (
-          <PlanDateText
-            className="text-muted-foreground text-xs"
-            estimate={finish.estimate}
-            isoDate={finish.isoDate}
-            month={finish.month}
-          />
-        ) : (
-          goal.kind === "exam" && (
-            <span className="text-muted-foreground text-xs">{t("Date to be confirmed")}</span>
+      <PathRowBody
+        value={
+          finish ? (
+            <PlanDateText
+              className="text-muted-foreground text-xs"
+              estimate={finish.estimate}
+              isoDate={finish.isoDate}
+              month={finish.month}
+            />
+          ) : (
+            goal.kind === "exam" && (
+              <span className="text-muted-foreground text-xs">{t("Date to be confirmed")}</span>
+            )
           )
-        )}
-      </span>
+        }
+      >
+        <span className="line-clamp-2 font-medium">{goal.displayName}</span>
+      </PathRowBody>
     </>
   );
 
@@ -133,33 +136,34 @@ function AfterExamRow({ phase }: { phase: PlanPhaseView }) {
       <span className={PATH_ROW_LEADING_CLASS}>
         <StatusMark status="todo" />
       </span>
-      <span className={PATH_ROW_BODY_CLASS}>
-        <span className="flex flex-col">
-          <span className={cn(TRUNCATED_TITLE_CLASS, "font-medium")}>{phaseName(phase)}</span>
-          {phase.mocks.count > 0 && (
-            <span className="text-muted-foreground text-xs">
-              {mocksLine({
-                count: phase.mocks.count,
-                forNextSitting: true,
-                nextSitting: plan.schedule.nextSitting,
-              })}
-            </span>
-          )}
-        </span>
-        {phase.endDate && (
-          <PlanDateText
-            className="text-muted-foreground text-xs"
-            estimate
-            isoDate={phase.endDate}
-            month
-          />
+      <PathRowBody
+        value={
+          phase.endDate && (
+            <PlanDateText
+              className="text-muted-foreground text-xs"
+              estimate
+              isoDate={phase.endDate}
+              month
+            />
+          )
+        }
+      >
+        <span className={cn(TRUNCATED_TITLE_CLASS, "font-medium")}>{phaseName(phase)}</span>
+        {phase.mocks.count > 0 && (
+          <span className="text-muted-foreground text-xs">
+            {mocksLine({
+              count: phase.mocks.count,
+              forNextSitting: true,
+              nextSitting: plan.schedule.nextSitting,
+            })}
+          </span>
         )}
-      </span>
+      </PathRowBody>
     </div>
   );
 }
 
-export function NextOnPath({ className, links }: { className?: string; links: JourneyPathLinks }) {
+export function NextOnPath({ links }: { links: JourneyPathLinks }) {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
   const { checkpoint, mockDate } = findNextEvents(plan.phases);
@@ -190,7 +194,7 @@ export function NextOnPath({ className, links }: { className?: string; links: Jo
   }
 
   return (
-    <PageSection aria-labelledby={TITLE_ID} className={className} data-slot="next-on-path">
+    <PageSection aria-labelledby={TITLE_ID} data-slot="next-on-path">
       <PageSectionHeader>
         <PageSectionTitle id={TITLE_ID}>{t("Next on your path")}</PageSectionTitle>
       </PageSectionHeader>

@@ -41,9 +41,12 @@ function ChooserPicked({
         <DetailProperty label={t("Time limit")} mono>
           {duration(size.minutes)}
         </DetailProperty>
-        <DetailProperty label={t("Usually takes")} mono>
-          {t("About {time}", { time: duration(size.estimatedMinutes) })}
-        </DetailProperty>
+        {/* Core gives the limit when no estimate covers the whole mock (an essay, too few answers). */}
+        {size.estimatedMinutes < size.minutes && (
+          <DetailProperty label={t("Usually takes")} mono>
+            {t("About {time}", { time: duration(size.estimatedMinutes) })}
+          </DetailProperty>
+        )}
       </DetailProperties>
 
       {asks.names.length + written.length > 0 && (

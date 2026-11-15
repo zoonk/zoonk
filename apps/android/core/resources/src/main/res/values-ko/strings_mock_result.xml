@@ -94,6 +94,7 @@
   "mock_result_scale_score": "49d1b77722a7a7668049f36089358e01a41ffa2792aee96175ed4595fb89cd4d",
   "mock_result_scale_score_named": "2e9147f570ab220674c95ce1902fa0be19cac17582a75bf55ab7c009f61663b7",
   "mock_result_see_answers": "786f579ed3c919596aa50782772afba36cef10ea2152680f5480768216fc58f5",
+  "mock_result_see_details": "fcaf82b39b865fd616c794b39b6405f7ae1c864f8094a1562e464d2837bc320c",
   "mock_result_see_feedback": "8d2f0ee4e40b1e56f888e7f35d153296efb65acd8006b14813171420622241e5",
   "mock_result_short_points": "944fa042b0374aa0b31f22f3949939ba6a55ce4a2d2f99d0e4b54e0941d07292",
   "mock_result_short_points_decimal": "6788b42a165221c230c38085d2e8741ccfe1b1ebbdb2f753ddeb6ca87a95fe54",
@@ -144,8 +145,9 @@
     <string name="mock_result_every_minimum">이번 모의고사에서 최소 점수 기준을 모두 충족했어요.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
     <string name="mock_result_strongest">가장 잘한 과목: %1$s. 더 공부할 과목: %2$s.</string>
-    <!-- A small button under the result that opens its details. -->
+    <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">자세히 보기</string>
+    <string name="mock_result_see_details">자세히 보기</string>
     <!-- A small button under the result that opens the questions to review. -->
     <string name="mock_result_see_answers">답안 보기</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->

@@ -17,21 +17,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.LocaleList
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
+import kotlin.math.roundToInt
 
 /** Main's `StatTone`: what a tile's symbol is colored by. */
 enum class StatTone { Neutral, Success, Energy, Brain }
@@ -83,7 +88,17 @@ fun StatTile(
                     color = if (tone == StatTone.Brain) MaterialTheme.zoonk.brainText else MaterialTheme.colorScheme.onSurface,
                 )
             // A description would replace the whole merged card for TalkBack; replaced text joins the label and detail.
-            val spoken = spokenValue?.let { Modifier.clearAndSetSemantics { text = AnnotatedString(it) } } ?: Modifier
+            val spoken =
+                (
+                    spokenValue?.let {
+                        Modifier.clearAndSetSemantics {
+                            text =
+                                AnnotatedString(
+                                    it,
+                                )
+                        }
+                    } ?: Modifier
+                ).endAtBaseline(style)
             // Main's `BigQuantity` for a quantity ("40 Brain Power", "2 days"), its words smaller; other values whole.
             if (value.any(Char::isDigit)) {
                 Readout(value, spoken, style)
@@ -105,6 +120,21 @@ fun StatTile(
         OutlinedCard(modifier.semantics(mergeDescendants = true) {}) { content() }
     } else {
         OutlinedCard(onClick = onClick, modifier = modifier) { content() }
+    }
+}
+
+/**
+ * Main's trimmed value: the number's box ends at its baseline, so the room under it is the tile's
+ * own. The trim is the style's room under a baseline, so a row that sizes its tiles from their
+ * intrinsic heights trims it too.
+ */
+@Composable
+private fun Modifier.endAtBaseline(style: TextStyle): Modifier {
+    val measurer = rememberTextMeasurer()
+    val below = remember(style, measurer) { measurer.measure("0", style).let { it.size.height - it.lastBaseline.roundToInt() } }
+    return layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+        layout(placeable.width, (placeable.height - below).coerceAtLeast(0)) { placeable.place(0, 0) }
     }
 }
 

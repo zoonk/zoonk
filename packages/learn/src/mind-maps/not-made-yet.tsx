@@ -103,7 +103,7 @@ function NotMadeLine({
     return (
       <p className={LINE_CLASS}>
         {t(
-          "{count, plural, one {You can make # more right now.} other {You can make # more right now.}}",
+          "{count, plural, one {You can create # more map right now.} other {You can create # more maps right now.}}",
           { count: startable },
         )}
       </p>

@@ -13,6 +13,15 @@ struct ZoonkButtonStyle: ButtonStyle {
     case outline
     /// No line: main's `ghost`, a quiet option beside or under the main action.
     case ghost
+
+    /// As every platform's layout captures name a button's look.
+    var layoutName: String {
+      switch self {
+      case .main: "filled"
+      case .outline: "outline"
+      case .ghost: "ghost"
+      }
+    }
   }
 
   let variant: Variant
@@ -23,6 +32,7 @@ struct ZoonkButtonStyle: ButtonStyle {
 
   func makeBody(configuration: Configuration) -> some View {
     ZoonkButton(configuration: configuration, variant: variant, isIcon: isIcon)
+      .layoutAction(configuration.role == .destructive ? "destructive" : variant.layoutName)
   }
 
   static func horizontalPadding(_ controlSize: ControlSize) -> CGFloat {

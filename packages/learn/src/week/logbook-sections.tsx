@@ -21,6 +21,9 @@ import { useFormatDuration } from "../_utils/time-format";
 import { useLogbook } from "./logbook-context";
 
 const DAYS_PER_WEEK = 7;
+const RINGS_CLASS = "flex w-full max-w-80 justify-between";
+const DAY_CLASS = "flex flex-col items-center gap-1.5";
+const DAY_LETTER_CLASS = "text-2xs font-mono uppercase";
 
 export function WeekRings() {
   const t = useExtracted();
@@ -34,7 +37,7 @@ export function WeekRings() {
         "{count, plural, =0 {# days studied} one {# day studied} other {# days studied}}",
         { count: studied.size },
       )}
-      className="grid w-full max-w-80 grid-cols-7 gap-1"
+      className={RINGS_CLASS}
       role="img"
     >
       {Array.from({ length: DAYS_PER_WEEK }, (_, index) => {
@@ -42,19 +45,29 @@ export function WeekRings() {
         const isStudied = studied.has(day.getTime());
 
         return (
-          <span className="flex flex-col items-center gap-1.5" key={day.toISOString()}>
+          <span className={DAY_CLASS} key={day.toISOString()}>
             <GoalRing share={isStudied ? 1 : 0}>{isStudied && <DoneMark />}</GoalRing>
-            <span
-              className={cn(
-                "text-2xs font-mono uppercase",
-                isStudied ? "text-foreground" : "text-faint",
-              )}
-            >
+            <span className={cn(DAY_LETTER_CLASS, isStudied ? "text-foreground" : "text-faint")}>
               {format.dateTime(day, { timeZone: "UTC", weekday: "narrow" })}
             </span>
           </span>
         );
       })}
+    </div>
+  );
+}
+
+/** The week's empty rings with a blank line under each, at the loaded row's size. */
+export function WeekRingsSkeleton() {
+  return (
+    <div aria-hidden="true" className={RINGS_CLASS}>
+      {Array.from({ length: DAYS_PER_WEEK }, (_, index) => (
+        // oxlint-disable-next-line react/no-array-index-key -- Static placeholders.
+        <span className={DAY_CLASS} key={index}>
+          <GoalRing share={0} />
+          <span className={DAY_LETTER_CLASS}>{"\u00A0"}</span>
+        </span>
+      ))}
     </div>
   );
 }
@@ -72,12 +85,12 @@ function useGoodNews(): string | null {
   }
 
   if (minutes > 0) {
-    return t("{time} more than the week before!", { time: formatDuration(minutes) });
+    return t("{time} more than the week before.", { time: formatDuration(minutes) });
   }
 
   if (questions > 0) {
     return t(
-      "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}",
+      "{questions, plural, one {# more question than the week before.} other {# more questions than the week before.}}",
       { questions },
     );
   }

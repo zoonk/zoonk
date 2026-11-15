@@ -4,8 +4,8 @@ import { type GoalView } from "@zoonk/core/goals/contract";
 import { getDaySplit } from "@zoonk/core/goals/daily-budget";
 import { type LanguageAim } from "@zoonk/core/language/aims";
 import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
-import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { useState } from "react";
+import { getMissingDays } from "../../_components/weekend-time";
 import { getTimeLine } from "../../_utils/time-answer";
 import { type PollStatus } from "../../_utils/use-poll";
 import {
@@ -46,18 +46,18 @@ function useStudyWeek({ draft, goal }: { draft: ScheduleDraft | null; goal: Goal
   const [days, setDays] = useState(() => draft?.days ?? getStartingDays(goal.studyDays));
   const [weekendOn, setWeekendOn] = useState(draft?.weekendOn ?? false);
   const [weekendPicked, setWeekendPicked] = useState(draft?.weekendPicked ?? null);
-  const studiesOnWeekends = days.some((day) => isWeekend(day));
+  const missingDays = getMissingDays(days);
 
   return {
     days,
+    missingDays,
     setDays,
     setWeekendOn: (on: boolean) => {
       setWeekendOn(on);
       setWeekendPicked(null);
     },
     setWeekendPicked,
-    studiesOnWeekends,
-    weekend: studiesOnWeekends && weekendOn ? weekendPicked : null,
+    weekend: missingDays === null && weekendOn ? weekendPicked : null,
     weekendOn,
     weekendPicked,
   };

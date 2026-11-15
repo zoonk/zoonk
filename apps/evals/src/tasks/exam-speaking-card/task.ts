@@ -13,7 +13,7 @@ export const examSpeakingCardTask: Task<GenerateExamSpeakingCardParams, ExamSpea
     "Write one task card of a DELE, DELF, Goethe or Cambridge speaking paper like the exam's sheet: instructions, prompts, the material (photo scenes, a text or a table), and the script of the examiner or partner the voice model plays",
   generate: generateExamSpeakingCard,
   id: "exam-speaking-card",
-  name: "Exam Speaking Card",
+  name: "Exam speaking card",
   score: scoreExamSpeakingCardOutput,
   scoreCategories: EXAM_SPEAKING_CARD_SCORE_CATEGORIES,
   testCases: TEST_CASES,

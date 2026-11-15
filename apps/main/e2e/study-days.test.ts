@@ -45,8 +45,8 @@ test.describe("Study days", () => {
 
       const editor = page.getByRole("dialog", { name: "Adjust your plan" });
       const days = editor.getByRole("group", { name: "Study days" });
-      const sunday = days.getByRole("button", { exact: true, name: "Sunday" });
-      const monday = days.getByRole("button", { exact: true, name: "Monday" });
+      const sunday = days.getByRole("button", { exact: true, name: "Sun" });
+      const monday = days.getByRole("button", { exact: true, name: "Mon" });
       const time = editor.getByLabel("Time a day", { exact: true });
       // A change that didn't save says so in the shared toast, outside the sheet, announced as an alert.
       const failed = page.getByRole("alert").filter({ hasText: "That didn't save. Try again." });

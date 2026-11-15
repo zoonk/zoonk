@@ -46,11 +46,15 @@ export function PlanDateText({
   const date = formatPlanDate(isoDate, { month });
 
   if (!estimate) {
-    return <span className={cn(PLAN_DATE_CLASS, className)}>{date}</span>;
+    return (
+      <span className={cn(PLAN_DATE_CLASS, className)} data-slot="plan-date">
+        {date}
+      </span>
+    );
   }
 
   return (
-    <span className={cn(PLAN_DATE_CLASS, className)}>
+    <span className={cn(PLAN_DATE_CLASS, className)} data-slot="plan-date">
       <span aria-hidden="true">{t("~{date}", { date })}</span>
       <span className="sr-only">
         {t({

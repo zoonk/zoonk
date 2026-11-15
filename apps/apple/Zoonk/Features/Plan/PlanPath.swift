@@ -53,11 +53,7 @@ struct PlanPathRows: View {
         context: context, phase: phase, isOpen: phase.index == open, brief: brief)
     }
 
-    IconLabeledContent {
-      planFinish(context)
-    } title: {
-      Text(context.goal.displayName)
-    } icon: {
+    PlanMarkedRow(title: Text(context.goal.displayName), when: planFinish(context)) {
       Image(systemName: "flag")
     }
     .chevronSlot()
@@ -82,6 +78,7 @@ extension PlanPhase {
 private struct PlanPhaseRow: View {
   @Environment(PlanStore.self) private var store
   @Environment(\.stacksContent) private var isStacked
+  @Environment(\.legibilityWeight) private var legibilityWeight
 
   let context: PlanContext
   let phase: PlanPhase
@@ -197,32 +194,23 @@ private struct PlanPhaseRow: View {
   }
 
   private func header(byPlace: Bool, next: Bool) -> some View {
-    PlanPathRow {
-      Label {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(
-            byPlace
-              ? String(
-                localized: "Phase \(phase.index + 1)", table: "Plan",
-                comment: "Name of an unnamed phase by its number")
-              : phase.title
-          )
-          .typeWeight(phase.state == .current ? .semibold : .regular)
-          .foregroundStyle(phase.state == .done ? .mutedForeground : .primary)
+    let title = Text(
+      byPlace
+        ? String(
+          localized: "Phase \(phase.index + 1)", table: "Plan",
+          comment: "Name of an unnamed phase by its number")
+        : phase.title
+    )
+    .typeWeight(phase.state == .current ? .semibold : .medium, legibility: legibilityWeight)
+    .foregroundStyle(phase.state == .done ? Color.mutedForeground : Color(.foreground))
 
-          if let meta {
-            meta
-              .typeStyle(.meta)
-              .foregroundStyle(.mutedForeground)
-          }
-        }
-      } icon: {
-        StatusMark(status: next ? .next : phase.mark)
-      }
-    } value: {
+    return ListRow(title, description: meta) {
+      StatusMark(status: next ? .next : phase.mark)
+    } trailing: {
       if let end {
         Text(verbatim: end.shown)
           .typeStyle(.data)
+          .layoutRole(.date)
           .accessibilityHidden(true)
       }
     }
@@ -293,48 +281,38 @@ private struct PlanChapterRow: View {
   var body: some View {
     if let chapterId = chapter.chapterId {
       PlanRouteLink(route: route(chapterId)) {
-        content
+        content(isMuted: false)
       }
     } else if chapter.far, let skillId = chapter.skillId {
       // Past the weeks the plan writes ahead: its outline is the learner's to ask for.
       Button {
         context.show(.farTopic(skillId: skillId, title: chapter.title))
       } label: {
-        content
-          .foregroundStyle(.primary)
+        content(isMuted: false)
           .disclosureChevron()
       }
     } else {
-      content
-        .foregroundStyle(.mutedForeground)
+      content(isMuted: true)
         .chevronSlot()
     }
   }
 
-  private var content: some View {
-    PlanPathRow {
-      Label {
-        VStack(alignment: .leading, spacing: 2) {
-          title
-
-          if let note {
-            note
-              .typeStyle(.meta)
-              .foregroundStyle(.mutedForeground)
-          }
-        }
-      } icon: {
-        StatusMark(status: mark)
+  /// A chapter the learner can't open yet is quiet.
+  private func content(isMuted: Bool) -> some View {
+    ListRow(
+      title.foregroundStyle(isMuted ? Color.mutedForeground : Color(.foreground)),
+      description: note
+    ) {
+      StatusMark(status: mark)
+    } trailing: {
+    }
+    .accessibilityElement(children: .combine)
+    .accessibilityLabel { label in
+      if let markWords {
+        Text(markWords)
       }
-      .accessibilityLabel { label in
-        if let markWords {
-          Text(markWords)
-        }
 
-        label
-      }
-    } value: {
-      EmptyView()
+      label
     }
   }
 
@@ -461,8 +439,8 @@ enum PlanWhen: View {
 
   var body: some View {
     switch self {
-    case .date(let text): text.typeStyle(.data)
-    case .words(let text): text.typeStyle(.meta)
+    case .date(let text): text.typeStyle(.data).layoutRole(.date)
+    case .words(let text): text.typeStyle(.meta).layoutRole(.words)
     }
   }
 
@@ -644,48 +622,37 @@ struct SyllabusSubjectRow: View {
   var body: some View {
     let share = isExam ? (subject.preparation ?? 0) : subject.lessonShare
 
-    VStack(alignment: .leading, spacing: 6) {
-      PlanPathRow {
+    // The bar is part of the row's words, so the share centers on the row with the chevron the
+    // list draws after it, as main's subject row does.
+    RowLayout {
+    } words: {
+      VStack(alignment: .leading, spacing: 6) {
         VStack(alignment: .leading, spacing: 2) {
           Text(subject.name)
             .typeStyle(.rowTitle)
             .foregroundStyle(
-              subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground)
+              subject.notPlannedReason == nil ? Color(.foreground) : .mutedForeground
+            )
+            .layoutPart(.label, text: Text(subject.name))
 
           AlsoInExams(exams: sharedExams)
         }
-      } value: {
-        Text(share, format: .percent.precision(.fractionLength(0)))
-          .typeStyle(.data)
-      }
 
-      if subject.notPlannedReason != nil {
-        Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
-      } else {
-        Meter(value: share, fill: .success)
-          .accessibilityHidden(true)
+        if subject.notPlannedReason != nil {
+          Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
+        } else {
+          Meter(value: share, fill: .success)
+            .accessibilityHidden(true)
+        }
       }
+    } value: {
+      Text(share, format: .percent.precision(.fractionLength(0)))
+        .typeStyle(.data)
+        .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
-  }
-}
-
-/// The counts stay at the trailing edge beside a long name, which wraps; stacked, they go under it.
-struct PlanPathRow<Title: View, Value: View>: View {
-  @ViewBuilder let title: Title
-  @ViewBuilder let value: Value
-
-  var body: some View {
-    AccessibilityStack(alignment: .firstTextBaseline, spacing: 12, stackedSpacing: 4) {
-      title
-        .frame(maxWidth: .infinity, alignment: .leading)
-
-      value
-        .foregroundStyle(.mutedForeground)
-        .fixedSize()
-    }
   }
 }
 
@@ -728,6 +695,22 @@ func planChapterWindow(states: [PlanChapter.State]) -> Range<Int> {
   return start..<min(states.count, start + shown)
 }
 
+/// A path row with a mark and its date: the goal's finish, a mock exam, a review.
+struct PlanMarkedRow<Mark: View>: View {
+  let title: Text
+  let when: PlanWhen?
+  @ViewBuilder let mark: Mark
+
+  var body: some View {
+    ListRow(title) {
+      mark
+    } trailing: {
+      when
+    }
+    .accessibilityElement(children: .combine)
+  }
+}
+
 /// Says what a challenge is under its row, since a learner meets one before they've ever taken one.
 struct PlanChallengeLabel: View {
   let when: PlanWhen?
@@ -735,46 +718,28 @@ struct PlanChallengeLabel: View {
   let isLanguage: Bool
 
   var body: some View {
-    Label {
-      VStack(alignment: .leading, spacing: 2) {
-        AccessibilityStack(alignment: .firstTextBaseline) {
-          Group {
-            if isLanguage {
-              Text("Call", tableName: "Plan", comment: "The live call that closes a language phase")
-            } else {
-              Text(
-                "The Trickster", tableName: "Plan",
-                comment:
-                  "The challenge that closes a phase, named after its character, the Trickster")
-            }
-          }
-          .foregroundStyle(.primary)
-          .frame(maxWidth: .infinity, alignment: .leading)
-
-          when?
-            .foregroundStyle(.mutedForeground)
-        }
-
-        if explains {
-          Group {
-            if isLanguage {
-              Text(
-                "A live call where you get your point across", tableName: "Plan",
-                comment: "What a language unit's challenge is, under its row")
-            } else {
-              Text(
-                "Questions on this phase, with no hints", tableName: "Plan",
-                comment: "What the Trickster is, under its row")
-            }
-          }
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
-        }
-      }
-      // In a list row's button it otherwise gets one line's height and truncates its title.
-      .fixedSize(horizontal: false, vertical: true)
-    } icon: {
+    ListRow(name, description: explains ? explanation : nil) {
       KindMark(kind: .challenge)
+    } trailing: {
+      when
     }
+  }
+
+  private var name: Text {
+    isLanguage
+      ? Text("Call", tableName: "Plan", comment: "The live call that closes a language phase")
+      : Text(
+        "The Trickster", tableName: "Plan",
+        comment: "The challenge that closes a phase, named after its character, the Trickster")
+  }
+
+  private var explanation: Text {
+    isLanguage
+      ? Text(
+        "A live call where you get your point across", tableName: "Plan",
+        comment: "What a language unit's challenge is, under its row")
+      : Text(
+        "Questions on this phase, with no hints", tableName: "Plan",
+        comment: "What the Trickster is, under its row")
   }
 }

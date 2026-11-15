@@ -94,6 +94,7 @@
   "mock_result_scale_score": "400ee4e0a5bca6ef6fad5b4e2fc4049cac9feac6222333a2c626a60dab8a7891",
   "mock_result_scale_score_named": "9b753db0150e15bff7f5053cec04a8d510992a3df4a4dcefd7c4077c7a5874b8",
   "mock_result_see_answers": "f9275a6505714573f0a72e34eba6a0525ba1bb08fcea2d331f6b935af1fd1446",
+  "mock_result_see_details": "e9e5b8d0542d4250127c7e895e8778b560f8daa85b0b5c37fbfb87b258162531",
   "mock_result_see_feedback": "e9f96d3d18602e1242a546d4d40b0a2f5ff343729332e0b35b13ee1c94f9f97d",
   "mock_result_short_points": "e565e2bba92373154f3eb3e8ce7d947bf74339a478bb0dbf97c21462c3e0886a",
   "mock_result_short_points_decimal": "20d975a635311511324c893f53782068eed58bf2453650b415ba129c992c02f1",
@@ -144,8 +145,9 @@
     <string name="mock_result_every_minimum">Hai raggiunto tutti i punteggi minimi in questa simulazione.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
     <string name="mock_result_strongest">Punto forte: %1$s. Lavora su %2$s.</string>
-    <!-- A small button under the result that opens its details. -->
+    <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Vedi i dettagli</string>
+    <string name="mock_result_see_details">Vedi i dettagli</string>
     <!-- A small button under the result that opens the questions to review. -->
     <string name="mock_result_see_answers">Vedi le risposte</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->

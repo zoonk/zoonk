@@ -3,7 +3,6 @@
 import { Badge } from "@zoonk/ui/components/badge";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon } from "lucide-react";
 import { CHOICE_ROW_CLASS } from "../onboarding/choice-list";
 import {
   LIST_GROUP_CLASS,
@@ -22,9 +21,30 @@ export type RowChoice<Value extends string> = {
   value: Value;
 };
 
+function ChoiceTitle({ choice, markRoom }: { choice: RowChoice<string>; markRoom?: string }) {
+  if (!markRoom) {
+    return (
+      <ListRowTitle className={cn(choice.mark && "flex flex-wrap items-center gap-x-2 gap-y-1")}>
+        {choice.label}
+        {choice.mark && <Badge variant="outline">{choice.mark}</Badge>}
+      </ListRowTitle>
+    );
+  }
+
+  return (
+    <ListRowTitle className="flex gap-x-2">
+      <span className="min-w-0">{choice.label}</span>
+      <span className={cn("flex h-lh shrink-0 items-center", !choice.mark && "invisible")}>
+        <Badge variant="outline">{choice.mark ?? markRoom}</Badge>
+      </span>
+    </ListRowTitle>
+  );
+}
+
 export function ChoiceRows<Value extends string>({
   choices,
   label,
+  markRoom,
   onChange,
   readOnly = false,
   stackOnPhone = true,
@@ -32,6 +52,11 @@ export function ChoiceRows<Value extends string>({
 }: {
   choices: readonly RowChoice<Value>[];
   label: string;
+  /**
+   * A mark that can come after the first frame, such as a recommendation: every row keeps room for
+   * it on its first line, so it moves nothing when it comes.
+   */
+  markRoom?: string;
   onChange: (value: Value) => void;
   readOnly?: boolean;
   stackOnPhone?: boolean;
@@ -57,6 +82,7 @@ export function ChoiceRows<Value extends string>({
         <RadioGroupOption
           className={cn(CHOICE_ROW_CLASS, "font-normal")}
           data-highlighted={choice.value === value || undefined}
+          data-slot="choice-row"
           key={choice.value}
         >
           <ListRowBody
@@ -65,23 +91,14 @@ export function ChoiceRows<Value extends string>({
             )}
           >
             <ListRowContent>
-              <ListRowTitle
-                className={cn(choice.mark && "flex flex-wrap items-center gap-x-2 gap-y-1")}
-              >
-                {choice.label}
-                {choice.mark && <Badge variant="outline">{choice.mark}</Badge>}
-              </ListRowTitle>
+              <ChoiceTitle choice={choice} markRoom={markRoom} />
               {choice.description && <ListRowDescription>{choice.description}</ListRowDescription>}
             </ListRowContent>
 
             {choice.trailing && <ListRowTrailing>{choice.trailing}</ListRowTrailing>}
           </ListRowBody>
 
-          <span aria-hidden="true" className="flex size-4 shrink-0 self-center">
-            <CheckIcon className="text-selected hidden size-4 group-has-data-checked/choice:block" />
-          </span>
-          {/* `absolute` replaces the item's own `relative`, which outranks `sr-only` and kept it in the row. */}
-          <RadioGroupItem className="sr-only absolute" value={choice.value} />
+          <RadioGroupItem className="self-center" value={choice.value} />
         </RadioGroupOption>
       ))}
     </RadioGroup>

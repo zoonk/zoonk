@@ -11,7 +11,7 @@ import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
 import { type JourneyPathLinks } from "./journey-links";
-import { PATH_ROW_BODY_CLASS } from "./journey-phase-events";
+import { PathRowBody } from "./journey-phase-events";
 import { PhaseWhen } from "./phase-when";
 import { BandFace } from "./roadmap-band";
 import { RoadmapFull } from "./roadmap-full";
@@ -34,9 +34,11 @@ const PERCENT = 100;
 
 function RoadmapCompact({
   className,
+  lined = true,
   onOpen,
 }: {
   className?: string;
+  lined?: boolean;
   onOpen: (() => void) | null;
 }) {
   const t = useExtracted();
@@ -65,8 +67,11 @@ function RoadmapCompact({
         ))}
       </MeterParts>
 
-      {position && (
-        <span className={cn(TITLE_ROW_CLASS, "w-full items-baseline text-xs")}>
+      {lined && position && (
+        <span
+          className={cn(TITLE_ROW_CLASS, "w-full items-baseline text-xs")}
+          data-slot="plan-roadmap-line"
+        >
           <span className="flex min-w-0 flex-wrap items-baseline">
             <span className="font-medium">{position.place}</span>
             {position.name && (
@@ -78,7 +83,10 @@ function RoadmapCompact({
               >{` · ${position.name}`}</span>
             )}
           </span>
-          <span className="text-muted-foreground flex items-center gap-3">
+          <span
+            className="text-muted-foreground flex items-center gap-3"
+            data-slot="plan-roadmap-when"
+          >
             <PhaseWhen phase={position.phase} />
             {onOpen && <RowChevron />}
           </span>
@@ -165,7 +173,8 @@ function RoadmapRevealList() {
 
   return (
     <div className="flex flex-col gap-2 sm:hidden" data-slot="plan-roadmap">
-      <RoadmapCompact onOpen={null} />
+      {/* The list under it marks the learner's phase and dates the next ones, so the meter has no line. */}
+      <RoadmapCompact lined={false} onOpen={null} />
 
       <ol className="flex flex-col [&>li+li]:border-t">
         {phases.map((phase, position) => {
@@ -177,16 +186,20 @@ function RoadmapRevealList() {
                 label={phase.state === "current" ? t("You are here") : undefined}
                 status={PHASE_MARK[phase.state]}
               />
-              <span className={PATH_ROW_BODY_CLASS}>
+              <PathRowBody
+                value={
+                  when &&
+                  phase.startDate && (
+                    <span className="text-muted-foreground text-xs">
+                      {when === "today" ? t("Today") : <PlanDateText isoDate={phase.startDate} />}
+                    </span>
+                  )
+                }
+              >
                 <span className="font-medium text-pretty">
                   {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
                 </span>
-                {when && phase.startDate && (
-                  <span className="text-muted-foreground text-xs">
-                    {when === "today" ? t("Today") : <PlanDateText isoDate={phase.startDate} />}
-                  </span>
-                )}
-              </span>
+              </PathRowBody>
             </li>
           );
         })}

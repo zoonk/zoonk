@@ -95,7 +95,7 @@ export function MissionMoment({
   const status = () => {
     if (left > 0) {
       return t(
-        "{count, plural, one {# more for +{points} Brain Power} other {# more for +{points} Brain Power}}",
+        "{count, plural, one {# more mission for +{points} Brain Power} other {# more missions for +{points} Brain Power}}",
         { count: left, points },
       );
     }

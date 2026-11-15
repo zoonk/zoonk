@@ -24,6 +24,7 @@ import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.contentType
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -150,8 +151,10 @@ private fun YourData(
         ListRow(
             headline = { Text(stringResource(R.string.settings_download_data)) },
             trailing = {
+                val spoken = stringResource(R.string.settings_download_your_data)
                 OutlinedButton(
                     onClick = { export.launch(EXPORT_FILE_NAME) },
+                    modifier = Modifier.semantics { contentDescription = spoken },
                     busy = data.isExporting,
                     leadingIcon = { ButtonIcon(R.drawable.ic_download) },
                     size = ButtonSize.Small,
@@ -162,9 +165,14 @@ private fun YourData(
         )
         if (data.exportFailed) Failure(stringResource(R.string.settings_download_failed), Modifier.padding(horizontal = LIST_ITEM_INSET))
         ListRow(
-            headline = { Text(stringResource(R.string.settings_delete_my_account)) },
+            headline = { Text(stringResource(R.string.settings_your_account)) },
             trailing = {
-                DestructiveButton(onClick = data::askToDelete, size = ButtonSize.Small) {
+                val spoken = stringResource(R.string.settings_delete_account)
+                DestructiveButton(
+                    onClick = data::askToDelete,
+                    modifier = Modifier.semantics { contentDescription = spoken },
+                    size = ButtonSize.Small,
+                ) {
                     Text(stringResource(R.string.settings_delete_ellipsis))
                 }
             },

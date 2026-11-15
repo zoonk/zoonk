@@ -113,7 +113,7 @@ export const extractQuestionFormatsTask: Task<
     "List an exam's question formats from its documents, each tied to the sections that ask it and quoting its passage",
   generate: generateQuestionFormats,
   id: "extract-question-formats",
-  name: "Extract Question Formats",
+  name: "Extract question formats",
   score: scoreFormats,
   testCases: TEST_CASES,
 };

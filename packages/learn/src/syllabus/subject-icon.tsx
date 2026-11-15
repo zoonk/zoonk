@@ -38,7 +38,7 @@ export function SubjectIcon({
       alt=""
       aria-hidden="true"
       className={cn(
-        "shrink-0 bg-white object-cover ring-1 ring-black/5 dark:ring-white/10",
+        "shrink-0 bg-white object-cover outline-1 -outline-offset-1 outline-black/5 dark:outline-white/10",
         IMAGE_CLASS[size],
       )}
       data-slot="subject-icon"

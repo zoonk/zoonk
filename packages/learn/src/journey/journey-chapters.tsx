@@ -18,9 +18,9 @@ import { getChapterWindow } from "./chapter-window";
 import { type JourneyPathLinks } from "./journey-links";
 import {
   CheckpointRow,
-  PATH_ROW_BODY_CLASS,
   PATH_ROW_CLASS,
   PATH_ROW_LEADING_CLASS,
+  PathRowBody,
 } from "./journey-phase-events";
 
 export function getChapterKey(chapter: PlanChapterView): string {
@@ -78,22 +78,20 @@ function ChapterRow({
 
   const content = (
     <>
-      <span className={PATH_ROW_LEADING_CLASS}>
+      <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
         <ChapterMark chapter={chapter} isNext={isNext} skipped={isSkipped(chapter)} />
       </span>
-      <span className={PATH_ROW_BODY_CLASS}>
-        <span className="flex flex-col">
-          <span
-            className={cn(
-              "line-clamp-2 font-medium",
-              chapter.state === "done" && "text-muted-foreground",
-            )}
-          >
-            {title(chapter)}
-          </span>
-          {line && <span className="text-muted-foreground text-xs">{line}</span>}
+      <PathRowBody>
+        <span
+          className={cn(
+            "line-clamp-2 font-medium",
+            chapter.state === "done" && "text-muted-foreground",
+          )}
+        >
+          {title(chapter)}
         </span>
-      </span>
+        {line && <span className="text-muted-foreground text-xs">{line}</span>}
+      </PathRowBody>
     </>
   );
 
@@ -106,7 +104,13 @@ function ChapterRow({
         nextDate={chapter.nextDate}
         skillId={chapter.skillId}
         title={title(chapter)}
-        trigger={<button className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")} type="submit" />}
+        trigger={
+          <button
+            className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}
+            data-slot="path-row"
+            type="submit"
+          />
+        }
       >
         {content}
       </FarTopicSheet>
@@ -114,12 +118,17 @@ function ChapterRow({
   }
 
   if (!chapter.chapterId) {
-    return <div className={PATH_ROW_CLASS}>{content}</div>;
+    return (
+      <div className={PATH_ROW_CLASS} data-slot="path-row">
+        {content}
+      </div>
+    );
   }
 
   return (
     <LearnLink
       className={cn(PATH_ROW_CLASS, "hover:bg-muted/70", isNext && "bg-muted hover:bg-muted")}
+      data-slot="path-row"
       href={links.chapter(chapter.chapterId)}
     >
       {content}
@@ -160,17 +169,22 @@ export function JourneyChapters({
               PATH_ROW_CLASS,
               "text-muted-foreground hover:bg-muted/70 hover:text-foreground",
             )}
+            data-slot="path-row"
             onClick={() => setShowAll(!showAll)}
             type="button"
           >
-            <span aria-hidden="true" className={PATH_ROW_LEADING_CLASS}>
+            <span aria-hidden="true" className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
               {showAll ? <MinusIcon className="size-3.5" /> : <PlusIcon className="size-3.5" />}
             </span>
-            {showAll
-              ? t("Show fewer chapters")
-              : t("{count, plural, one {# more chapter} other {# more chapters}}", {
-                  count: hidden,
-                })}
+            <PathRowBody>
+              <span>
+                {showAll
+                  ? t("Show fewer chapters")
+                  : t("{count, plural, one {# more chapter} other {# more chapters}}", {
+                      count: hidden,
+                    })}
+              </span>
+            </PathRowBody>
           </button>
         </li>
       )}

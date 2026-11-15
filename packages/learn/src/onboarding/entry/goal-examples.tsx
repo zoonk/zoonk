@@ -25,7 +25,7 @@ function useGoalExamples(): GoalExample[] {
   return [
     { kind: t("Exam"), label: exam },
     { kind: t("Language"), label: t("Speak {language} for a job interview", { language }) },
-    { kind: t("Learn a topic"), label: t("Understand quantum physics") },
+    { kind: t("Topic"), label: t("Understand quantum physics") },
     { kind: t("Music"), label: t("Learn music from scratch") },
     { kind: quickExplanation, label: t("How does inflation work?") },
   ];

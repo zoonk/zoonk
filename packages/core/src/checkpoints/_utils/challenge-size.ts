@@ -3,8 +3,8 @@ import { type StudySessionBlock } from "@zoonk/db";
 import { countFinishedMocksBefore } from "../../exams/mocks/_utils/mock-number";
 import { loadMockPace } from "../../exams/mocks/_utils/mock-pace";
 import { getMock } from "../../exams/mocks/get-mock";
+import { estimateMockMinutes } from "../../exams/mocks/mock-estimate";
 import { readMockWrittenParts } from "../../exams/mocks/mock-left-out";
-import { estimateMockMinutes } from "../../exams/mocks/mock-options";
 import { CHECKPOINT_CALL_BLOCK_MINUTES } from "../../language/conversations/conversation-rules";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { countAskableQuestions } from "../../sessions/_utils/askable-questions";
@@ -45,8 +45,17 @@ async function loadMockSize({
   if (fixed?.status === "ready") {
     const { mock } = fixed;
 
+    const written = readMockWrittenParts({
+      day: mock.day,
+      essays: mock.sections.reduce((sum, section) => sum + section.essays, 0),
+      fullLength: mock.fullLength,
+      structure: challenge.goal.examBlueprint
+        ? readBlueprintContent(challenge.goal.examBlueprint).structure
+        : null,
+    });
+
     return {
-      estimatedMinutes: estimateMockMinutes({ ...mock, pace }),
+      estimatedMinutes: estimateMockMinutes({ ...mock, pace, written }),
       fullLength: mock.fullLength,
       leftOut: mock.leftOut,
       minutes: mock.minutes,
@@ -58,14 +67,7 @@ async function loadMockSize({
       ),
       startTime: mock.startTime,
       timeZone: mock.timeZone,
-      written: readMockWrittenParts({
-        day: mock.day,
-        essays: mock.sections.reduce((sum, section) => sum + section.essays, 0),
-        fullLength: mock.fullLength,
-        structure: challenge.goal.examBlueprint
-          ? readBlueprintContent(challenge.goal.examBlueprint).structure
-          : null,
-      }),
+      written,
     };
   }
 
@@ -81,6 +83,8 @@ async function loadMockSize({
       minutes: card.conditions.timeLimitMinutes,
       pace,
       questions: card.conditions.questions,
+      sections: card.conditions.sections,
+      written: card.conditions.written,
     }),
     fullLength: card.conditions.fullLength,
     leftOut: card.conditions.leftOut,

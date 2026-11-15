@@ -144,6 +144,7 @@ function SideTab({ activeTab, buddy, missions, tab }: LearnNavigationProps & { t
       <LearnLink
         aria-current={tab === activeTab ? "page" : undefined}
         className={SIDE_TAB_ITEM_CLASS}
+        data-slot="sidebar-item"
         href={routes[tab]}
       >
         <span className="flex size-4 shrink-0 items-center justify-center">
@@ -178,6 +179,7 @@ function TabBarSearch({ onSearch }: { onSearch: () => void }) {
 
   return (
     <BarSearch
+      className="text-muted-foreground"
       label={t({
         description: "The search button at the end of the phone's tab bar, after the tabs.",
         message: "Search",

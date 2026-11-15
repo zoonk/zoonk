@@ -223,6 +223,8 @@ function TricksterPanel() {
           <TricksterShieldPlates broken={score.correct} segments={checkpoint.passMark} />
           <TaskMeta
             facts={[
+              score.decision === "won" && t("You won"),
+              score.decision === "lost" && t("He won"),
               !score.decision &&
                 toGo > 0 &&
                 t({
