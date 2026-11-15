@@ -2351,9 +2351,9 @@ msgid "Close or leave"
 msgstr "Fermer ou quitter"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "ofKpWV"
-msgid "Press the main button"
-msgstr "Appuyer sur le bouton principal"
+msgctxt "GENWbK"
+msgid "Continue, Check or Start"
+msgstr "Continuer, vérifier ou commencer"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "9-Ddtu"
@@ -2386,9 +2386,9 @@ msgid "Show or hide the sidebar"
 msgstr "Afficher ou masquer la barre latérale"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "GvB3Jb"
-msgid "Tap the beat"
-msgstr "Appuyer en rythme"
+msgctxt "DOENlK"
+msgid "Tap the rhythm in a music question"
+msgstr "Appuyer en rythme dans une question de musique"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "FVLl2T"

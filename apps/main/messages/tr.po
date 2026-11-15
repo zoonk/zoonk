@@ -2351,9 +2351,9 @@ msgid "Close or leave"
 msgstr "Kapat veya çık"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "ofKpWV"
-msgid "Press the main button"
-msgstr "Ana düğmeye bas"
+msgctxt "GENWbK"
+msgid "Continue, Check or Start"
+msgstr "Devam et, Kontrol et veya Başla"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "9-Ddtu"
@@ -2386,9 +2386,9 @@ msgid "Show or hide the sidebar"
 msgstr "Kenar çubuğunu göster veya gizle"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "GvB3Jb"
-msgid "Tap the beat"
-msgstr "Ritme göre dokun"
+msgctxt "DOENlK"
+msgid "Tap the rhythm in a music question"
+msgstr "Müzik sorusunda ritme göre dokun"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "FVLl2T"

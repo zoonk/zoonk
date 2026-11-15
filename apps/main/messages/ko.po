@@ -2351,9 +2351,9 @@ msgid "Close or leave"
 msgstr "닫기 또는 나가기"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "ofKpWV"
-msgid "Press the main button"
-msgstr "주요 버튼 누르기"
+msgctxt "GENWbK"
+msgid "Continue, Check or Start"
+msgstr "계속하기, 정답 확인 또는 시작하기"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "9-Ddtu"
@@ -2386,9 +2386,9 @@ msgid "Show or hide the sidebar"
 msgstr "사이드바 표시 또는 숨기기"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "GvB3Jb"
-msgid "Tap the beat"
-msgstr "박자에 맞춰 누르기"
+msgctxt "DOENlK"
+msgid "Tap the rhythm in a music question"
+msgstr "음악 문제에서 리듬에 맞춰 두드리기"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "FVLl2T"
