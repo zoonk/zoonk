@@ -15,6 +15,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.LayoutPart
@@ -383,7 +384,7 @@ internal object LayoutCapture {
                 fields["lineBounds"] = laidOut
                 // Ink only once the lines are seen: no text cut off by its part or anything inside it, and the
                 // picture shows something there (an opaque sibling over the row leaves nothing to see).
-                val textClipped = clipped || texts.any { (each, result) -> isClipped(each) || result.hasVisualOverflow }
+                val textClipped = clipped || texts.any { (each, result) -> isClipped(each) || isCut(result) }
                 if (textClipped) fields["clipped"] = true
                 fields["ink"] = if (!textClipped && ink(laidOut) is List<*>) laidOut else NOT_MEASURED
                 val y =
@@ -507,6 +508,13 @@ internal object LayoutCapture {
                     ?.let(::decimals) ?: "auto"
             return "$family ${decimals(style.fontSize.value)} ${style.fontWeight?.weight ?: 400} $lineHeight"
         }
+
+        /**
+         * A paragraph taller than its own box is cut at the box; one wider than it only when it clips rather than
+         * ellipsizes. (`hasVisualOverflow` also counts a short ellipsizing title drawn whole, so it isn't the test.)
+         */
+        private fun isCut(layout: TextLayoutResult): Boolean =
+            layout.didOverflowHeight || (layout.didOverflowWidth && layout.layoutInput.overflow == TextOverflow.Clip && !layout.layoutInput.softWrap)
 
         private fun isClipped(node: SemanticsNode): Boolean {
             val shown = node.boundsInRoot
