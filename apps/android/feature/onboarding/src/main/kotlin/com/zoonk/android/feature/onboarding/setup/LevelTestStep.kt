@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -51,13 +50,15 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.feature.audio.MicrophoneOff
 import com.zoonk.android.feature.audio.SpeechFailedNote
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.SpeechState
 import com.zoonk.android.feature.audio.SpeechStatusIcon
 import com.zoonk.android.feature.audio.SpokenAudio
 import com.zoonk.android.feature.audio.SpokenText
-import com.zoonk.android.feature.audio.VoiceAnswerRecorder
+import com.zoonk.android.feature.audio.VoiceAnswerButton
+import com.zoonk.android.feature.audio.VoiceAnswerLine
 import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
@@ -71,6 +72,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.FilledIconButton
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LevelBar
 import com.zoonk.android.ui.components.MediaPending
@@ -472,9 +474,15 @@ private fun ColumnScope.LevelTestSpeaking(
             }
         },
         answer = {
-            VoiceAnswerRecorder(voice, navigator)
+            // The title already asks to say it out loud; the line says only how the take went.
+            if (voice.microphoneOff) {
+                MicrophoneOff(stringResource(R.string.audio_microphone_off_answer))
+            } else {
+                VoiceAnswerLine(voice, navigator, asksToSpeak = false)
+            }
         },
     ) {
+        if (!voice.microphoneOff) VoiceAnswerButton(voice, Modifier.fillMaxWidth())
         TextButton(onClick = onSkip, enabled = !voice.checking, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_language_test_skip_part))
         }

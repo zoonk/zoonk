@@ -85,6 +85,7 @@ import com.zoonk.android.feature.questions.ItemText
 import com.zoonk.android.feature.questions.NoteRow
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.isLongText
+import com.zoonk.android.feature.subscription.GateWords
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -93,7 +94,6 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Limit
-import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LocalStepHeading
 import com.zoonk.android.ui.components.ModalBottomSheet
@@ -104,6 +104,7 @@ import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.components.stepHeading
@@ -263,6 +264,13 @@ internal fun EssayWrite(
                 StatusLine(ui.send, ui.gradesLeft, navigator)
                 if (finishFailures > 0 && !finishing) SaveErrorText(finishFailures, viewModel::finish, onReport = onReportSaveFailure)
                 TaskActions { width ->
+                    if (ui.send == EssaySend.SignUpRequired) {
+                        // Sending again would only meet the gate, so its way on is the bar's one action.
+                        Button(onClick = { navigator.open(AppRoute.Login) }, modifier = width) {
+                            Text(stringResource(R.string.limit_create_account))
+                        }
+                        return@TaskActions
+                    }
                     if (rewriting) {
                         OutlinedButton(
                             busy = finishing,
@@ -471,13 +479,8 @@ private fun StatusLine(
     navigator: AppNavigator,
 ) {
     if (send == EssaySend.SignUpRequired) {
-        LimitNotice(
-            limit = Limit.SignUpRequired,
-            subject = LimitSubject.Help,
-            onCreateAccount = { navigator.open(AppRoute.Login) },
-            onSubscribe = { navigator.open(AppRoute.Subscription) },
-            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        )
+        val words = limitWords(Limit.SignUpRequired, LimitSubject.Help)
+        GateWords(words.title, words.line, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
         return
     }
     var slow by remember(send) { mutableStateOf(false) }

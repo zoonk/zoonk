@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -74,6 +75,7 @@ import com.zoonk.android.ui.components.LessonList
 import com.zoonk.android.ui.components.LessonProgress
 import com.zoonk.android.ui.components.LessonSummaries
 import com.zoonk.android.ui.components.LessonSummary
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListedLesson
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MarkIcon
@@ -81,6 +83,7 @@ import com.zoonk.android.ui.components.MistakeAnswer
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TestOutRow
 import com.zoonk.android.ui.components.TestOutScope
 import com.zoonk.android.ui.format.currentLocale
@@ -89,6 +92,7 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.mainActionWidth
@@ -241,14 +245,15 @@ internal fun UnitPage(
             }
         },
     ) { asideBeside ->
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
+        val next = lessons.firstOrNull { it.next }
+        Column(Modifier.fillMaxSize()) {
             LazyColumn(
                 state = listState,
-                modifier = Modifier.then(if (asideBeside) Modifier else Modifier.widthIn(max = PAGE_WIDTH)).fillMaxSize(),
+                modifier = Modifier.then(if (asideBeside) Modifier else Modifier.widthIn(max = PAGE_WIDTH)).weight(1f).fillMaxWidth(),
                 contentPadding = padding,
                 verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
             ) {
-                item(key = "hero") { UnitHero(unit, lessons, onOpen = openLesson) }
+                item(key = "hero") { UnitHero(unit, lessons) }
                 if (lessons.isNotEmpty()) item(key = "lessons") { LessonList(lessons, upNext, onOpen = openLesson) }
                 if (unit.unit.objectives.isNotEmpty()) {
                     item(key = "objectives") {
@@ -264,6 +269,20 @@ internal fun UnitPage(
                     if (hasReference(unit)) item(key = "reference") { UnitReference(unit, expanded) }
                 }
             }
+            // The unit's one main action, in the bar as on a subject's and a chapter's page.
+            next?.let { lesson ->
+                BottomBar {
+                    TaskActions { main ->
+                        Button(onClick = { openLesson(lesson.id) }, modifier = main) {
+                            Text(
+                                stringResource(
+                                    if (lessons.any { it.done }) R.string.language_unit_continue else R.string.language_unit_start,
+                                ),
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -272,12 +291,10 @@ internal fun UnitPage(
 private fun UnitHero(
     unit: LanguageUnit,
     lessons: List<ListedLesson>,
-    onOpen: (UUID) -> Unit,
 ) {
     val locale = currentLocale()
     val info = unit.unit
     val done = lessons.count { it.done }
-    val next = lessons.firstOrNull { it.next }
     val eyebrow =
         info.position?.let { stringResource(R.string.language_unit_eyebrow, formatNumber(it.toDouble(), locale), info.levelRange) }
             ?: info.levelRange
@@ -292,17 +309,10 @@ private fun UnitHero(
             ).factsLine()
         }
 
-    Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Eyebrow(eyebrow)
-            Text(info.title, Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
-            facts?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data) }
-        }
-        next?.let { lesson ->
-            Button(onClick = { onOpen(lesson.id) }, modifier = Modifier.mainActionWidth()) {
-                Text(stringResource(if (done > 0) R.string.language_unit_continue else R.string.language_unit_start))
-            }
-        }
+    Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Eyebrow(eyebrow)
+        Text(info.title, Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
+        facts?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data) }
     }
 }
 
@@ -384,7 +394,7 @@ private fun UnitPractice(
         SectionHeader(stringResource(R.string.language_unit_practice), Modifier.padding(horizontal = LIST_ITEM_INSET))
         Column {
             rows.forEachIndexed { index, row ->
-                if (index > 0) HorizontalDivider()
+                if (index > 0) ListDivider()
                 row()
             }
         }
@@ -500,7 +510,7 @@ private fun UnitReference(
         SectionHeader(stringResource(R.string.language_unit_reference), Modifier.padding(horizontal = LIST_ITEM_INSET))
         Column {
             rows.forEachIndexed { index, row ->
-                if (index > 0) HorizontalDivider()
+                if (index > 0) ListDivider()
                 row()
             }
         }
