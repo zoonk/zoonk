@@ -27,6 +27,7 @@ import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Checkpoint
 import com.zoonk.api.models.StudyAnswerFeedback
@@ -113,7 +114,7 @@ class CheckpointScreenshots {
         play()
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
-        File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(File(folder, "$name.png"), bitmap)
     }
 
     private fun confirm() {
@@ -380,7 +381,7 @@ class CheckpointScreenshots {
             rule.waitForIdle()
         }
         val bitmap = (if (openReview) rule.onNode(isDialog()) else rule.onRoot()).captureRender().asAndroidBitmap()
-        File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(File(folder, "$name.png"), bitmap)
     }
 
     @Test

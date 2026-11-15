@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -302,15 +303,15 @@ private fun ColumnScope.ScheduleTime(
         // The days decide the time, and what the time covers arrives last, so nothing above it moves.
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             WeekdayToggles(days, onChange = { onChoiceChange(choice.copy(days = it)) })
-            if (days.any(::isWeekend)) {
-                WeekendTime(
-                    times = timeChoices.map { it.minutes },
-                    checked = choice.weekendOn,
-                    minutes = choice.weekendPicked ?: minutes ?: recommendedMinutes,
-                    onCheckedChange = { onChoiceChange(choice.copy(weekendOn = it, weekendPicked = null)) },
-                    onChange = { onChoiceChange(choice.copy(weekendPicked = it)) },
-                )
-            }
+            WeekendTime(
+                times = timeChoices.map { it.minutes },
+                checked = choice.weekendOn,
+                enabled = days.any(::isWeekend),
+                weekdayMinutes = minutes ?: recommendedMinutes,
+                minutes = choice.weekendPicked ?: minutes ?: recommendedMinutes,
+                onCheckedChange = { onChoiceChange(choice.copy(weekendOn = it, weekendPicked = null)) },
+                onChange = { onChoiceChange(choice.copy(weekendPicked = it)) },
+            )
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -460,18 +461,31 @@ private fun WeekdayToggles(
     }
 }
 
-/** The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'. */
+/**
+ * Main's `WeekendTime`: always there, so a switch or a day's pick moves nothing. The weekend has a time of
+ * its own only once one is picked; until then, or with no weekend day picked, its time is disabled and
+ * shows the weekdays', which the weekend takes.
+ */
 @Composable
 private fun WeekendTime(
     times: List<Long>,
     checked: Boolean,
+    enabled: Boolean,
+    weekdayMinutes: Int,
     minutes: Int,
     onCheckedChange: (Boolean) -> Unit,
     onChange: (Int) -> Unit,
 ) {
+    val on = checked && enabled
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SwitchRow(stringResource(R.string.onboarding_weekend_time), checked, onCheckedChange)
-        if (checked) TimeSelect(stringResource(R.string.onboarding_weekend_time_label), times, minutes, onChange)
+        SwitchRow(stringResource(R.string.onboarding_weekend_time), on, onCheckedChange, enabled = enabled)
+        TimeSelect(
+            stringResource(R.string.onboarding_weekend_time_label),
+            times,
+            if (on) minutes else weekdayMinutes,
+            onChange,
+            enabled = on,
+        )
     }
 }
 
@@ -506,18 +520,29 @@ private fun SwitchRow(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     description: String? = null,
+    enabled: Boolean = true,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(checked, role = Role.Switch, onValueChange = onCheckedChange),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .heightIn(min = 48.dp)
+                .toggleable(checked, enabled = enabled, role = Role.Switch, onValueChange = onCheckedChange),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(title, fontWeight = FontWeight.Medium)
+            Text(
+                title,
+                color = if (enabled) Color.Unspecified else MaterialTheme.colorScheme.onSurface.copy(alpha = DISABLED_ALPHA),
+                fontWeight = FontWeight.Medium,
+            )
             description?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
         }
-        Switch(checked = checked, onCheckedChange = null)
+        Switch(checked = checked, onCheckedChange = null, enabled = enabled)
     }
 }
 
 private const val UPDATING_ALPHA = 0.5f
+
+private const val DISABLED_ALPHA = 0.38f

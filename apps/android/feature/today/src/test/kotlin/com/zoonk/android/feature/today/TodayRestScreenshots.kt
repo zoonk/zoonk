@@ -24,6 +24,7 @@ import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
@@ -149,13 +150,7 @@ class TodayRestScreenshots {
         rule.setContent { ZoonkTheme { Surface { content() } } }
         rule.waitForIdle()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use {
-            rule
-                .onRoot()
-                .captureRender()
-                .asAndroidBitmap()
-                .compress(Bitmap.CompressFormat.PNG, 100, it)
-        }
+        writeRender(file, rule.onRoot().captureRender().asAndroidBitmap())
     }
 
     private companion object {

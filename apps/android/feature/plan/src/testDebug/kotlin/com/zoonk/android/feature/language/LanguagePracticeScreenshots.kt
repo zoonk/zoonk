@@ -17,6 +17,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.LanguagePlanLevel
 import com.zoonk.api.models.LanguageTodayPronunciation
@@ -115,13 +116,6 @@ class LanguagePracticeScreenshots {
         }
         compose.waitForIdle()
         val file = File(folder, "language-practice-$name.png")
-        file.parentFile?.mkdirs()
-        file.outputStream().use {
-            compose
-                .onRoot()
-                .captureRender()
-                .asAndroidBitmap()
-                .compress(Bitmap.CompressFormat.PNG, 100, it)
-        }
+        writeRender(file, compose.onRoot().captureRender().asAndroidBitmap())
     }
 }

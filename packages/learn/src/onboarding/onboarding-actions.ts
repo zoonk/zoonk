@@ -61,7 +61,12 @@ export function needsAccountFor(reason: GoalLimitReason): boolean {
 }
 
 /** Why a goal can't start; a cap over the last 30 days also says when more comes back. */
-export type GoalLimit = { availableAt?: string | null; reason: GoalLimitReason };
+export type GoalLimit = {
+  availableAt?: string | null;
+  reason: GoalLimitReason;
+  /** When this device received the refusal, for one that answers a request just made. */
+  receivedAt?: number;
+};
 
 export type CreateGoalsOutcome =
   | {

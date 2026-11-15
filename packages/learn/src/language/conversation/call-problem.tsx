@@ -72,6 +72,7 @@ function CallLimitScreen({
   const t = useExtracted();
   const { line, provisional } = useCallLimitLine(limit);
   const opened = useLiveLimit(limit) === null;
+  const limitTitle = useCallLimitTitle(limit);
 
   return (
     <TaskFrame
@@ -94,7 +95,7 @@ function CallLimitScreen({
       }
       headerTitle={title}
     >
-      <CallOffMessage title={useCallLimitTitle(limit)}>
+      <CallOffMessage title={opened ? undefined : limitTitle}>
         {line && (
           <p
             className={cn(

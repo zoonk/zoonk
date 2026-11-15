@@ -332,6 +332,7 @@
   "onboarding_reveal_save_note": "2ee4334a0536dbf7619636acf02deef5875c98944ade54e4ce61c2e793cc9a86",
   "onboarding_reveal_start": "cf1d5489f55a69dd4bdb49074cd7f86fea3e95334cf0a01bd5ea86ec1101ca3c",
   "onboarding_reveal_start_here": "20cba9a08a3fc5766740dc7acc8e8792ae16714d8e11dc901de88b8df3d36449",
+  "onboarding_reveal_study_days": "14162ac5e49f3eee6d6a88631724a404ad7ad59664cb6c5c0f8abe7fbd34fe01",
   "onboarding_reveal_today": "e1120fbe57a22184347fe075aac841422abdc59ffa6583df8d896e6bde0b9be5",
   "onboarding_reveal_topics": "39c73ab44fffb11a0bf5e2f17f6a910270572f5523347ad8257037324448c5ff",
   "onboarding_reveal_topics_all_planned": "ec63abf9cc000ecbecbae077388e43aa72c39c0794ed390e83db935552ad42f5",
@@ -975,6 +976,11 @@
     <plurals name="onboarding_days">
         <item quantity="one">%d gün</item>
         <item quantity="other">%d gün</item>
+    </plurals>
+    <!-- Over the plan's first week: how many of its days the learner studies, today among them. -->
+    <plurals name="onboarding_reveal_study_days">
+        <item quantity="one">%d çalışma günü</item>
+        <item quantity="other">%d çalışma günü</item>
     </plurals>
     <string name="onboarding_schedule_title">Her gün ne kadar süre ders çalışabilirsin?</string>
     <string name="onboarding_full_course">Sınavdan sonra da olsa tüm konuları çalış</string>

@@ -6,20 +6,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
-import androidx.compose.ui.test.hasAnySibling
-import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.theme.ZoonkTheme
-import com.zoonk.api.models.PlanBasesAdvice
+import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanChangeResult
-import kotlinx.coroutines.CompletableDeferred
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -68,30 +64,27 @@ class PlanSheetsTest {
         assertEquals(0, done)
     }
 
+    /** On a narrow phone, where a label and its mark no longer fit one line. */
     @Test
-    fun tryAgainKeepsItsPlaceAndTheFailureWhileTheRecommendationIsAskedAgain() {
-        val retried = CompletableDeferred<PlanBasesAdvice?>()
-        var asks = 0
+    @Config(qualifiers = "w300dp-h1600dp")
+    fun theRecommendationComesAsAMarkThatMovesNoChoice() {
         val summary = learnerSummary(kind = "exam", title = "ENEM")
         val page = PlanPageState(summary.goals.first(), plan(BASES), summary)
-        val edits = PlanEdits(adviseOnBases = { if (asks++ == 0) null else retried.await() })
+        var advice by mutableStateOf(BasesAdviceAsk(planAdviceRevision(page.plan), BasesAdviceAsk.Status.Pending))
         compose.setContent {
-            ZoonkTheme { Column { BasesChoices(page, page.plan.bases!!, edits, BasesDraft(), onDraft = {}, onDone = {}) } }
+            ZoonkTheme {
+                Column { BasesChoices(page, page.plan.bases!!, PlanEdits(basesAdvice = advice), BasesDraft(), onDraft = {}, onDone = {}) }
+            }
         }
-        compose.onNodeWithText("Get a recommendation").performClick()
-        val failed = compose.onNodeWithText("Try again").getUnclippedBoundsInRoot()
+        val choices = listOf("Every lesson", "First lessons only", "One short lesson each", "Skip")
+        val waiting = choices.map { compose.onNodeWithText(it).getUnclippedBoundsInRoot() }
+        compose.onNodeWithText("Recommended").assertDoesNotExist()
 
-        compose.onNodeWithText("Try again").performClick()
+        advice = advice.copy(status = BasesAdviceAsk.Status.Answered, recommended = PlanBase.Choice.QUICK)
         compose.waitForIdle()
 
-        assertEquals(failed, compose.onNodeWithText("Try again").getUnclippedBoundsInRoot())
-        compose.onNodeWithText("We couldn't get a recommendation.").assertIsDisplayed()
-        compose
-            .onNode(
-                hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate) and hasAnySibling(hasText("Try again")),
-                useUnmergedTree = true,
-            ).assertExists()
-        retried.complete(null)
+        assertEquals(waiting, choices.map { compose.onNodeWithText(it).getUnclippedBoundsInRoot() })
+        compose.onNode(hasText("One short lesson each") and hasText("Recommended")).assertIsDisplayed()
     }
 
     private companion object {

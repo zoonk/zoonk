@@ -595,7 +595,7 @@ private fun DetailRow(
 ) {
     ListRow(
         headline = { Text(title) },
-        supporting = details.takeIf { it.isNotEmpty() }?.let { lines -> { Column { lines.forEach { Text(it) } } } },
+        supporting = details.takeIf { it.isNotEmpty() }?.let { lines -> { lines.forEach { Text(it) } } },
         meta = meta?.let { { Text(it) } },
     )
 }

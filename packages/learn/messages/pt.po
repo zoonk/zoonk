@@ -4172,6 +4172,12 @@ msgctxt "vNw6Rg"
 msgid "Writing each card's instructions…"
 msgstr "Criando as instruções de cada cartão…"
 
+#. The title of a notice over something being prepared for the learner (a lesson, a list, a map) that failed or never started. A Try again button follows.
+#: src/generation/generation-failure-notice.tsx
+msgctxt "Yc1thK"
+msgid "Something went wrong on our side"
+msgstr "Algo deu errado por aqui"
+
 #: src/generation/generation-failure-notice.tsx
 msgctxt "Eg11ZY"
 msgid "Reconnect"
@@ -4186,29 +4192,6 @@ msgstr "A gente parou de receber atualizações. O processo ainda pode estar em 
 msgctxt "CN_B_k"
 msgid "Connection lost"
 msgstr "Conexão perdida"
-
-#: src/generation/generation-failure-notice.tsx
-#: src/onboarding/steps/step-parts.tsx
-#: src/wait/first-lesson-row.tsx
-msgctxt "YXnM-X"
-msgid "Something went wrong on our side."
-msgstr "Algo deu errado do nosso lado."
-
-#. Preparing this content failed. It is not still running.
-#: src/generation/generation-failure-notice.tsx
-msgctxt "0fLHBg"
-msgid "This didn't finish"
-msgstr "Não deu para concluir"
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "iKz0K6"
-msgid "We couldn't get this started."
-msgstr "A gente não conseguiu iniciar o processo."
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "q8l1Sf"
-msgid "This didn't start"
-msgstr "Não começou"
 
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
@@ -7255,9 +7238,9 @@ msgid "{count, plural, one {# map didn't finish. Try again.} other {# maps didn'
 msgstr "{count, plural, one {# mapa não foi concluído. Tente de novo.} other {# mapas não foram concluídos. Tente de novo.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "CHNbiu"
-msgid "{count, plural, one {You can make # more right now.} other {You can make # more right now.}}"
-msgstr "{count, plural, other {Você pode criar mais # agora.}}"
+msgctxt "VSfWXI"
+msgid "{count, plural, one {You can create # more map right now.} other {You can create # more maps right now.}}"
+msgstr "{count, plural, one {Você pode criar mais # mapa agora.} other {Você pode criar mais # mapas agora.}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "BekXxP"
@@ -9952,6 +9935,12 @@ msgstr "Quanto tempo você pode estudar por dia?"
 msgctxt "jNPr7M"
 msgid "This didn't open"
 msgstr "Não deu para abrir"
+
+#: src/onboarding/steps/step-parts.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "YXnM-X"
+msgid "Something went wrong on our side."
+msgstr "Algo deu errado do nosso lado."
 
 #: src/onboarding/steps/study-week.tsx
 #: src/plan/plan-properties.tsx

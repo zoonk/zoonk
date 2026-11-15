@@ -69,6 +69,7 @@ fun Button(
 ) = FilledButton(
     onClick = onClick,
     modifier = modifier,
+    variant = LayoutPart.Variant.Filled,
     enabled = enabled,
     busy = busy,
     focusableWhenDisabled = focusableWhenDisabled,
@@ -86,6 +87,7 @@ fun Button(
 private fun FilledButton(
     onClick: () -> Unit,
     modifier: Modifier,
+    variant: LayoutPart.Variant,
     enabled: Boolean,
     busy: Boolean,
     focusableWhenDisabled: Boolean,
@@ -101,7 +103,7 @@ private fun FilledButton(
     val held = held(busy, enabled, focusableWhenDisabled)
     androidx.compose.material3.Button(
         onClick = { if (!held) onClick() },
-        modifier = modifier.sized(size).busy(held),
+        modifier = modifier.action(variant).sized(size).busy(held),
         enabled = enabled || held,
         shape = shape,
         colors = colors.disabledWhen(held && !busy),
@@ -131,6 +133,7 @@ fun SecondaryButton(
     FilledButton(
         onClick = onClick,
         modifier = modifier,
+        variant = LayoutPart.Variant.Secondary,
         enabled = enabled,
         busy = busy,
         focusableWhenDisabled = focusableWhenDisabled,
@@ -173,6 +176,7 @@ fun DestructiveButton(
     FilledButton(
         onClick = onClick,
         modifier = modifier,
+        variant = LayoutPart.Variant.Destructive,
         enabled = enabled,
         busy = busy,
         focusableWhenDisabled = focusableWhenDisabled,
@@ -219,7 +223,7 @@ fun OutlinedButton(
     val held = held(busy, enabled, focusableWhenDisabled)
     androidx.compose.material3.OutlinedButton(
         onClick = { if (!held) onClick() },
-        modifier = modifier.sized(size).busy(held),
+        modifier = modifier.action(LayoutPart.Variant.Outline).sized(size).busy(held),
         enabled = enabled || held,
         shape = shape,
         colors = colors.disabledWhen(held && !busy),
@@ -253,7 +257,7 @@ fun TextButton(
     val held = held(busy, enabled, focusableWhenDisabled)
     androidx.compose.material3.TextButton(
         onClick = { if (!held) onClick() },
-        modifier = modifier.sized(size).busy(held),
+        modifier = modifier.action(LayoutPart.Variant.Ghost).sized(size).busy(held),
         enabled = enabled || held,
         shape = shape,
         colors = colors.disabledWhen(held && !busy),
@@ -280,7 +284,7 @@ fun OutlinedIconButton(
     content: @Composable () -> Unit,
 ) = androidx.compose.material3.OutlinedIconButton(
     onClick = { if (!busy) onClick() },
-    modifier = (if (size == ButtonSize.Large) modifier.size(44.dp) else modifier).busy(busy),
+    modifier = (if (size == ButtonSize.Large) modifier.size(44.dp) else modifier).action(LayoutPart.Variant.Outline).busy(busy),
     enabled = enabled || busy,
     shape = shape,
     colors = colors,
@@ -301,7 +305,7 @@ fun FilledIconButton(
     content: @Composable () -> Unit,
 ) = androidx.compose.material3.FilledIconButton(
     onClick = { if (!busy) onClick() },
-    modifier = modifier.busy(busy),
+    modifier = modifier.action(LayoutPart.Variant.Filled).busy(busy),
     enabled = enabled || busy,
     shape = shape,
     colors = colors,
@@ -375,3 +379,5 @@ private fun outlinedBorder(
 private const val DISABLED_ALPHA = 0.5f
 
 private val NO_PADDING = PaddingValues()
+
+private fun Modifier.action(variant: LayoutPart.Variant): Modifier = layoutPart(LayoutPart.ACTIONS, LayoutPart.Part.Action, variant)

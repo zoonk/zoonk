@@ -115,9 +115,11 @@ import com.zoonk.android.navigation.rememberEntries
 import com.zoonk.android.navigation.section
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.components.LayoutPart
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.components.SnackbarHost
+import com.zoonk.android.ui.components.layoutPart
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -487,6 +489,7 @@ private fun AppNavigationSuite(
                 Column(
                     modifier =
                         Modifier
+                            .layoutPart(LayoutPart.NAVIGATION, LayoutPart.Part.Group)
                             .weight(1f)
                             .verticalScroll(rememberScrollState())
                             .padding(vertical = 12.dp),
@@ -548,12 +551,20 @@ private fun DrawerItem(
     onClick: () -> Unit,
 ) {
     NavigationDrawerItem(
-        label = { Text(label) },
+        label = { NavigationLabel(label) },
         selected = selected,
         onClick = onClick,
-        icon = icon,
-        badge = badge?.takeIf { it > 0 }?.let { count -> { Text(formatNumber(count.toDouble(), currentLocale())) } },
-        modifier = modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+        icon = { NavigationMark(icon) },
+        badge =
+            badge?.takeIf { it > 0 }?.let { count ->
+                {
+                    Text(
+                        formatNumber(count.toDouble(), currentLocale()),
+                        Modifier.layoutPart(LayoutPart.NAVIGATION, LayoutPart.Part.Value),
+                    )
+                }
+            },
+        modifier = modifier.navigationRow().padding(NavigationDrawerItemDefaults.ItemPadding),
     )
 }
 
@@ -569,6 +580,7 @@ private fun DrawerAction(
         onClick = onClick,
         modifier =
             modifier
+                .navigationRow()
                 .padding(NavigationDrawerItemDefaults.ItemPadding)
                 .fillMaxWidth()
                 .heightIn(min = 56.dp)
@@ -582,10 +594,22 @@ private fun DrawerAction(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            NavigationIcon(icon)
-            Text(label)
+            NavigationMark { NavigationIcon(icon) }
+            NavigationLabel(label)
         }
     }
+}
+
+private fun Modifier.navigationRow(): Modifier = layoutPart(LayoutPart.NAVIGATION, LayoutPart.Part.Row)
+
+@Composable
+private fun NavigationMark(icon: @Composable () -> Unit) {
+    Box(Modifier.layoutPart(LayoutPart.NAVIGATION, LayoutPart.Part.Mark)) { icon() }
+}
+
+@Composable
+private fun NavigationLabel(label: String) {
+    Text(label, Modifier.layoutPart(LayoutPart.NAVIGATION, LayoutPart.Part.Label))
 }
 
 /** The buddy's tab carries the name the learner gave it. */

@@ -126,7 +126,7 @@ test.describe("When a wait can't go on", () => {
     await stopRuns({ entityId: goal.id, page });
     await page.goto(`/start/${goal.id}`);
 
-    const failed = page.getByRole("alert").filter({ hasText: "This didn't finish" });
+    const failed = page.getByRole("alert").filter({ hasText: "Something went wrong on our side" });
     await expect(failed).toBeVisible();
     await expect(page.getByText("Plan created", { exact: true })).toBeHidden();
     await failed.getByRole("button", { name: "Try again" }).click();
@@ -161,7 +161,7 @@ test.describe("When a wait can't go on", () => {
     await page.goto(`/start/${goal.id}`);
     await page.getByRole("button", { exact: true, name: "Start" }).click();
 
-    const failed = page.getByRole("alert").filter({ hasText: "This didn't finish" });
+    const failed = page.getByRole("alert").filter({ hasText: "Something went wrong on our side" });
     await expect(failed).toBeVisible();
     await expect(page.getByRole("button", { exact: true, name: "Skip" })).toBeVisible();
     await failed.getByRole("button", { name: "Try again" }).click();
@@ -171,7 +171,7 @@ test.describe("When a wait can't go on", () => {
     await expect(
       page
         .getByRole("progressbar", { name: "Getting your test ready" })
-        .or(page.getByRole("alert").filter({ hasText: "This didn't start" })),
+        .or(page.getByRole("alert").filter({ hasText: "Something went wrong on our side" })),
     ).toBeVisible();
   });
 

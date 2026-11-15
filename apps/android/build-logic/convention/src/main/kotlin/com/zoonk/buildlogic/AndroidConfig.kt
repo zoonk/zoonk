@@ -9,8 +9,11 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
+import java.io.File
+import java.security.MessageDigest
 
 /** What every Android module shares: SDKs, Kotlin, Compose, lint and the JVM unit tests. */
 internal fun Project.configureAndroid(android: CommonExtension) {
@@ -69,7 +72,10 @@ internal fun Project.configureAndroid(android: CommonExtension) {
                 test.maxHeapSize = "2g"
                 test.enabled = runsTests
                 // Review screenshots are written only on demand: `-Pzoonk.shots=<folder>`.
-                test.systemProperty("zoonk.shots", providers.gradleProperty("zoonk.shots").getOrElse(""))
+                val shots = providers.gradleProperty("zoonk.shots").getOrElse("")
+                test.systemProperty("zoonk.shots", shots)
+                // Each picture's layout file names the build it came from, read when the tests run.
+                if (shots.isNotEmpty()) test.jvmArgumentProviders.add(buildIdentity())
             }
         }
     }
@@ -107,3 +113,42 @@ internal const val TARGET_SDK = 37
 private const val MIN_SDK = 26
 
 internal abstract class TestJvms : BuildService<BuildServiceParameters.None>
+
+/**
+ * The checkout the tests run from: its commit and a digest of what isn't committed (tracked changes and
+ * untracked files), or "clean". Review pictures carry it, so a picture can be tied to its build.
+ */
+private fun Project.buildIdentity(): CommandLineArgumentProvider {
+    val root = rootProject.layout.projectDirectory.asFile
+
+    fun git(vararg args: String) =
+        providers
+            .exec {
+                workingDir = root
+                commandLine("git", *args)
+            }.standardOutput.asBytes
+    val commit = git("rev-parse", "HEAD")
+    val changes = git("diff", "HEAD", "--binary")
+    // `:/` is the repository's top: run from apps/android, `ls-files` would list only the files under it.
+    val untracked = git("ls-files", "--others", "--exclude-standard", "--full-name", "-z", "--", ":/")
+    val top = git("rev-parse", "--show-toplevel")
+    return CommandLineArgumentProvider {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val files = String(untracked.get()).split('\u0000').filter { it.isNotEmpty() }
+        val repository = File(String(top.get()).trim())
+        digest.update(changes.get())
+        files.forEach { name ->
+            digest.update(name.toByteArray())
+            File(repository, name).takeIf { it.isFile }?.let { digest.update(it.readBytes()) }
+        }
+        val uncommitted =
+            if (changes.get().isEmpty() &&
+                files.isEmpty()
+            ) {
+                "clean"
+            } else {
+                digest.digest().joinToString("") { "%02x".format(it) }
+            }
+        listOf("-Dzoonk.build.commit=${String(commit.get()).trim()}", "-Dzoonk.build.uncommitted=$uncommitted")
+    }
+}

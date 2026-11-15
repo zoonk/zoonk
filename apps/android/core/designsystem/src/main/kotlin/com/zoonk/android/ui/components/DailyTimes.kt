@@ -146,6 +146,7 @@ fun TimeSelect(
     value: Int?,
     onPick: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val locale = currentLocale()
@@ -154,7 +155,8 @@ fun TimeSelect(
         OutlinedTextField(
             value = value?.let { formatMinutes(it, locale) }.orEmpty(),
             onValueChange = {},
-            modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+            modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled),
+            enabled = enabled,
             readOnly = true,
             label = label,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },

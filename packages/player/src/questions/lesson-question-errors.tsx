@@ -18,6 +18,7 @@ export function toHelpLimit(error: LessonQuestionApiError | null): HelpLimit | n
       ? {
           availableAt: error.availableAt ?? null,
           period: error.period,
+          receivedAt: error.receivedAt,
           status: "limitReached",
           tier: error.tier,
         }

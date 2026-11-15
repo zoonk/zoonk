@@ -36,18 +36,36 @@ function watchOpening(availableAt: string | null, notify: () => void) {
   };
 }
 
-/** The day follows the clock while the screen is open, so a passed instant stops being promised. */
-export function useOpeningDay(availableAt: string | null): OpeningDay | null {
+/** When this device received a refusal: a stored or server-rendered one has no such moment. */
+export function receivedAtOf(refusal: object | null): number | undefined {
+  return refusal && "receivedAt" in refusal && typeof refusal.receivedAt === "number"
+    ? refusal.receivedAt
+    : undefined;
+}
+
+/**
+ * The day follows the clock while the screen is open, so a passed instant stops being promised. A
+ * refusal whose instant had already passed when this device received it (`receivedAt`) came from a
+ * server whose clock is behind it: its day can't be told here, so it stays unknown and the refusal
+ * stands until the next try. A refusal restored from an address or a page has no `receivedAt`: past
+ * its instant, it is simply over.
+ */
+export function useOpeningDay(availableAt: string | null, receivedAt?: number): OpeningDay | null {
   const subscribe = useCallback(
     (notify: () => void) => watchOpening(availableAt, notify),
     [availableAt],
   );
 
-  return useSyncExternalStore(
+  const day = useSyncExternalStore(
     subscribe,
     () => toOpeningDay({ availableAt, now: new Date(), timeZone: getLocalTimeZone() }),
     () => toFirstRenderDay(availableAt),
   );
+
+  const passedOnArrival =
+    availableAt !== null && receivedAt !== undefined && Date.parse(availableAt) <= receivedAt;
+
+  return passedOnArrival ? null : day;
 }
 
 type DayLines = {
@@ -172,10 +190,19 @@ function useLineFor() {
 export function useComesBackLine(limit: HelpLimit): LimitWords {
   const lineFor = useLineFor();
   const known = useIsMounted();
-  const opensOn = useOpeningDay(isRollingCap(limit) ? limit.availableAt : null);
+
+  const opensOn = useOpeningDay(
+    isRollingCap(limit) ? limit.availableAt : null,
+    receivedAtOf(limit),
+  );
+
   const line = lineFor(limit, opensOn);
 
-  return { line, provisional: !known && opensOn !== null && line !== undefined };
+  return {
+    line,
+    opened: opensOn === "open",
+    provisional: !known && opensOn !== null && line !== undefined,
+  };
 }
 
 function useLimitSentence() {
@@ -205,7 +232,11 @@ export function useMapLessonsWords(limit: MindMapLimit): LimitWords | null {
   const t = useExtracted();
   const dayLine = useDayLine();
   const known = useIsMounted();
-  const opensOn = useOpeningDay(isRollingCap(limit) ? limit.availableAt : null);
+
+  const opensOn = useOpeningDay(
+    isRollingCap(limit) ? limit.availableAt : null,
+    receivedAtOf(limit),
+  );
 
   if (limit.status !== "limitReached") {
     return null;
@@ -223,7 +254,7 @@ export function useMapLessonsWords(limit: MindMapLimit): LimitWords | null {
   }
 
   if (opensOn === "open") {
-    return { title: t("You can make this map now") };
+    return { opened: true, title: t("You can make this map now") };
   }
 
   return {
@@ -256,6 +287,8 @@ export function useMapLessonsWords(limit: MindMapLimit): LimitWords | null {
 export type RefusedCap = {
   availableAt?: string | null;
   period: "day" | "rolling30Days" | "total";
+  /** When this device received the refusal, for one that answers a request just made. */
+  receivedAt?: number;
   tier: EntitlementTier;
 };
 
@@ -265,9 +298,9 @@ export type CapWords = LimitWords & { cap?: RefusedCap };
 /** A message that stays on screen: plain words, or a cap's, whose line follows the clock. */
 export type LimitText = string | CapWords;
 
-function toHelpLimit({ availableAt = null, period, tier }: RefusedCap): HelpLimit {
+function toHelpLimit({ availableAt = null, period, receivedAt, tier }: RefusedCap): HelpLimit {
   return period === "rolling30Days"
-    ? { availableAt, period, status: "limitReached", tier }
+    ? { availableAt, period, receivedAt, status: "limitReached", tier }
     : { period, status: "limitReached", tier };
 }
 
@@ -279,10 +312,18 @@ export function useLiveWords(words: CapWords | null): LimitWords {
   const lineFor = useLineFor();
   const known = useIsMounted();
   const limit = words?.cap ? toHelpLimit(words.cap) : null;
-  const opensOn = useOpeningDay(limit && isRollingCap(limit) ? limit.availableAt : null);
+
+  const opensOn = useOpeningDay(
+    limit && isRollingCap(limit) ? limit.availableAt : null,
+    receivedAtOf(limit),
+  );
 
   if (!words) {
     return {};
+  }
+
+  if (limit && opensOn === "open") {
+    return { line: lineFor(limit, opensOn), opened: true };
   }
 
   return {
@@ -295,16 +336,17 @@ export function useLiveWords(words: CapWords | null): LimitWords {
 /** `hidden` while its day can't be named yet: the text keeps its place without showing. */
 export function useLimitText(text: LimitText | null | undefined): {
   hidden: boolean;
+  opened: boolean;
   text: string;
 } {
   const sentence = useLimitSentence();
   const words = useLiveWords(text && typeof text === "object" ? text : null);
 
   if (!text) {
-    return { hidden: false, text: "" };
+    return { hidden: false, opened: false, text: "" };
   }
 
   return typeof text === "string"
-    ? { hidden: false, text }
-    : { hidden: words.provisional === true, text: sentence(words) };
+    ? { hidden: false, opened: false, text }
+    : { hidden: words.provisional === true, opened: words.opened === true, text: sentence(words) };
 }
