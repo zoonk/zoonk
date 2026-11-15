@@ -29,8 +29,9 @@ function useFromLg(): boolean {
 }
 
 /**
- * Moving a node in the page drops the focus inside it, so what the check added gets back the
- * control the learner was on when crossing `lg` moves it.
+ * Moving a node in the page drops the focus inside it in some browsers, so what the check added
+ * gets back the control the learner was on when crossing `lg` moves it: only while focus was still
+ * in it, and only when the move left the page with none. Focus elsewhere (Continue, the bar) stays.
  */
 function useFocusKeptAcross({
   fromLg,
@@ -50,13 +51,24 @@ function useFocusKeptAcross({
     placed.current = fromLg;
     const last = focused.current;
 
-    if (last?.isConnected && slot.current?.contains(last) && document.activeElement !== last) {
+    const dropped = document.activeElement === null || document.activeElement === document.body;
+
+    if (dropped && last?.isConnected && slot.current?.contains(last)) {
       last.focus({ preventScroll: true });
     }
   }, [fromLg, slot]);
 
-  return (event: React.FocusEvent<HTMLDivElement>) => {
-    focused.current = event.target;
+  return {
+    onBlur: (event: React.FocusEvent<HTMLDivElement>) => {
+      const next = event.relatedTarget;
+
+      if (next instanceof Node && !event.currentTarget.contains(next)) {
+        focused.current = null;
+      }
+    },
+    onFocus: (event: React.FocusEvent<HTMLDivElement>) => {
+      focused.current = event.target;
+    },
   };
 }
 
@@ -76,7 +88,7 @@ export function WordBank<Tile extends WordBankTile>({
   const added = use(WordBankCheckContext);
   const fromLg = useFromLg();
   const slot = useRef<HTMLDivElement>(null);
-  const keepFocus = useFocusKeptAcross({ fromLg, slot });
+  const keptFocus = useFocusKeptAcross({ fromLg, slot });
 
   const bank = (
     <div
@@ -101,7 +113,13 @@ export function WordBank<Tile extends WordBankTile>({
   );
 
   const check = added && (
-    <div className="contents" key="check" onFocus={keepFocus} ref={slot}>
+    <div
+      className="contents"
+      key="check"
+      onBlur={keptFocus.onBlur}
+      onFocus={keptFocus.onFocus}
+      ref={slot}
+    >
       {added}
     </div>
   );

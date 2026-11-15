@@ -85,4 +85,22 @@ describe("a word bank's feedback across lg", () => {
       await expect.element(noThanks()).not.toBeInTheDocument();
     });
   });
+
+  it("leaves focus where the learner moved it, such as Continue, when the screen crosses lg", async () => {
+    await atViewport(PHONE, async () => {
+      await missTwiceOnTheBank();
+      offerAsk()?.focus();
+
+      const next = page.getByRole("button", { name: /^Continue/u }).element();
+      expect(next).toBeInstanceOf(HTMLButtonElement);
+      (next as HTMLButtonElement).focus();
+      expect(document.activeElement).toBe(next);
+
+      await crossTo(LAPTOP);
+      expect(document.activeElement).toBe(next);
+
+      await crossTo(PHONE);
+      expect(document.activeElement).toBe(next);
+    });
+  });
 });
