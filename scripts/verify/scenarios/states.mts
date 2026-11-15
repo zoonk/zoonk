@@ -1,10 +1,7 @@
 import { type Anchor, PHONE_AND_LAPTOP, type Scenario, type Step } from "./shape.mts";
 
-/** Taps that set the sound delay up, then a try's: enough to cover each one's beat. */
-const SETUP_TAPS = 16;
+/** A try's taps: enough to cover its beat. */
 const TRY_TAPS = 30;
-/** The setup's last tap settling before its Continue shows. */
-const SETTLE_MS = 1500;
 
 /** A learner tapping the space bar `count` times, about a third of a second apart. */
 function taps(count: number): Step[] {
@@ -95,11 +92,8 @@ export const STATE_SCENARIOS: Scenario[] = [
     prerequisites: { persona: "visitor" },
     proof: "Try again",
     reach: [
-      // Its sound delay is set up first, by tapping along.
-      { click: "Start" },
-      ...taps(SETUP_TAPS),
-      { pause: SETTLE_MS },
-      { click: "Continue" },
+      // Its sound setup is skipped, since how well its taps match the clicks varies with load.
+      { click: "Skip for now" },
       { click: "Start tapping" },
       ...taps(TRY_TAPS),
       { wait: "Try again" },
