@@ -590,6 +590,12 @@ export function readAlignment({
       column = column.parentElement?.closest(columns) ?? null;
     }
 
+    // A cell holds what it lays out; what is positioned (the course page's route rail) is drawn
+    // on the page, so it keeps the page's column.
+    if (["absolute", "fixed"].includes(getComputedStyle(element).position)) {
+      return column;
+    }
+
     for (let cell = element.parentElement; cell && cell !== column; cell = cell.parentElement) {
       if (isGridCell(cell) && (!column || column.contains(cell))) {
         return cell;

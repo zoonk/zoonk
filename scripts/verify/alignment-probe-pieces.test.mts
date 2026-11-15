@@ -76,10 +76,14 @@ describe("a list against its page's column", () => {
   });
 });
 
-/** A laptop page column 280 to 1400 split by a grid into the hero (280 to 864) and a side (904 to 1400). */
+/**
+ * A laptop page column 280 to 1400 split by a grid into the hero (324 to 864, its route's rail
+ * drawn at 288, positioned on the page) and a side (904 to 1400).
+ */
 const SIDE_COLUMN = `<div data-slot="page" data-box="280,0,1120,600">
   <div style="display: grid; grid-template-columns: 584px 496px" data-box="280,0,1120,600">
-    <div data-box="280,0,584,600">Quantum physics</div>
+    <div data-box="324,0,540,600">Quantum physics
+      <span style="position: absolute; background-color: rgb(200, 200, 200)" data-box="288,10,4,600"></span></div>
     <div data-box="904,0,496,600">
       <div data-slot="list-group" data-box="904,100,496,60">
         <a aria-current="page" style="background-color: rgb(240, 240, 240)" data-box="894,100,516,30"><span data-slot="list-row-title" data-box="904,105,100,20">How small is an atom?</span></a>
