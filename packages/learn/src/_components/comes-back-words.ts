@@ -190,10 +190,12 @@ function useLineFor() {
 export function useComesBackLine(limit: HelpLimit): LimitWords {
   const lineFor = useLineFor();
   const known = useIsMounted();
+
   const opensOn = useOpeningDay(
     isRollingCap(limit) ? limit.availableAt : null,
     receivedAtOf(limit),
   );
+
   const line = lineFor(limit, opensOn);
 
   return {
@@ -230,6 +232,7 @@ export function useMapLessonsWords(limit: MindMapLimit): LimitWords | null {
   const t = useExtracted();
   const dayLine = useDayLine();
   const known = useIsMounted();
+
   const opensOn = useOpeningDay(
     isRollingCap(limit) ? limit.availableAt : null,
     receivedAtOf(limit),
@@ -309,6 +312,7 @@ export function useLiveWords(words: CapWords | null): LimitWords {
   const lineFor = useLineFor();
   const known = useIsMounted();
   const limit = words?.cap ? toHelpLimit(words.cap) : null;
+
   const opensOn = useOpeningDay(
     limit && isRollingCap(limit) ? limit.availableAt : null,
     receivedAtOf(limit),
