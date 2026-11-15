@@ -255,7 +255,10 @@ suspend fun read(
     timeZone: String,
 ): TodayRead =
     try {
-        api.today(session, timeZone).let { TodayRead.Day(it, it.session.toDayView()) }
+        api.today(session, timeZone).let { read ->
+            val today = read.copy(notice = read.notice.takeUnless { it == Today.Notice.PLAN_CHANGE })
+            TodayRead.Day(today, today.session.toDayView())
+        }
     } catch (e: ApiException) {
         when (e.code) {
             "NO_ACTIVE_GOAL" -> {
