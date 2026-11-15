@@ -44,16 +44,21 @@ const LIST_PARTS = {
   value: "[data-slot=list-row-trailing]",
 } satisfies WebPiece["parts"];
 
+/**
+ * What a list and its rows are for every probe. A row is what `LIST_GROUP_CLASS` divides: the
+ * group's children, or the items of one list inside, whatever slot a row carries (`list-row`,
+ * the first week's `week-day`).
+ */
+export const LIST_GROUP = {
+  group: "[data-slot=list-group]",
+  rows: ":scope > :not(ol, ul), :scope > :is(ol, ul) > *",
+};
+
 export const PIECES: Piece[] = [
   {
     name: "list-group",
     relations: ["label-start", "lead-start", "mark-axis", "end-edge", "gap", "type", "line"],
-    web: {
-      group: "[data-slot=list-group]",
-      parts: LIST_PARTS,
-      // `LIST_GROUP_CLASS`: rows are its children, or the items of one list inside.
-      rows: ":scope > :not(ol, ul), :scope > :is(ol, ul) > *",
-    },
+    web: { ...LIST_GROUP, parts: LIST_PARTS },
   },
   {
     name: "choice-list",
