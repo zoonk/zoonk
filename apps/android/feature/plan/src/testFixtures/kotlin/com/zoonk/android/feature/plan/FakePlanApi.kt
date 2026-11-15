@@ -34,6 +34,9 @@ class FakePlanApi : PlanApi {
     var plans = 0
     var changed = false
     var statusFailure: ApiException? = null
+
+    /** Holds a goal's status change until completed. */
+    var statusGate: CompletableDeferred<Unit>? = null
     val statuses = mutableListOf<LearnerSummaryGoal.Status>()
     val askedSince = mutableListOf<Instant>()
     var changeFailure: ApiException? = null
@@ -137,6 +140,7 @@ class FakePlanApi : PlanApi {
         goalId: UUID,
         status: LearnerSummaryGoal.Status,
     ) {
+        statusGate?.await()
         statusFailure?.let { throw it }
         statuses += status
     }

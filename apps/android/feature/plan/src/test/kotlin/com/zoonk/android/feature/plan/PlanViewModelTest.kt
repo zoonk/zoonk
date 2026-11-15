@@ -67,8 +67,32 @@ class PlanViewModelTest {
             viewModel.setStatus(LearnerSummaryGoal.Status.ARCHIVED)
 
             assertEquals(listOf(LearnerSummaryGoal.Status.ARCHIVED), api.statuses)
-            assertEquals(PlanEvent.Archived, viewModel.events.first())
+            assertEquals(PlanEvent.Archived, viewModel.event.value)
             assertFalse(viewModel.isSaving.value)
+        }
+
+    @Test
+    fun anArchiveThatSavedBeforeThePlanActedAndThenLeftLeavesNothingToDoOnReturn() =
+        runTest {
+            viewModel.setStatus(LearnerSummaryGoal.Status.ARCHIVED)
+            viewModel.visit.end()
+
+            assertEquals(listOf(LearnerSummaryGoal.Status.ARCHIVED), api.statuses)
+            assertNull(viewModel.event.value)
+        }
+
+    @Test
+    fun anArchiveThatSavesAfterThePlanLeftLeavesNothingToDoOnReturn() =
+        runTest {
+            val held = CompletableDeferred<Unit>()
+            api.statusGate = held
+
+            viewModel.setStatus(LearnerSummaryGoal.Status.ARCHIVED)
+            viewModel.visit.end()
+            held.complete(Unit)
+
+            assertEquals(listOf(LearnerSummaryGoal.Status.ARCHIVED), api.statuses)
+            assertNull(viewModel.event.value)
         }
 
     @Test

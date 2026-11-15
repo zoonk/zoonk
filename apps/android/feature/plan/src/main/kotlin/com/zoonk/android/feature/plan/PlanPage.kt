@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -238,7 +237,6 @@ internal fun PlanPage(
             FeedbackTarget(screen = "plan", contentKind = FeedbackSubmissionContext.ContentKind.PLAN, contentId = page.plan.planId),
         )
 
-    PlanEvents(viewModel, navigator)
     val countryRebuild = rememberCountryRebuild(page.goal, app)
 
     PlanContent(
@@ -577,11 +575,9 @@ internal fun PlanEvents(
     viewModel: PlanViewModel,
     navigator: AppNavigator,
 ) {
-    LaunchedEffect(viewModel) {
-        viewModel.events.collect { event ->
-            when (event) {
-                PlanEvent.Archived -> navigator.select(AppTab.Today)
-            }
+    ActOn(viewModel.event) { event ->
+        when (event) {
+            PlanEvent.Archived -> navigator.select(AppTab.Today)
         }
     }
 }

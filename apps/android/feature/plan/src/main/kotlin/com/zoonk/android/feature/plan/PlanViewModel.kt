@@ -6,6 +6,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.WritingWaits
 import com.zoonk.android.data.Written
 import com.zoonk.android.data.value
@@ -20,14 +21,11 @@ import com.zoonk.api.models.PlanTimeToCover
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -84,7 +82,6 @@ class PlanViewModel(
 ) : ViewModel() {
     private val saving = MutableStateFlow(false)
     private val resumeFailureState = MutableStateFlow<ResumeFailure?>(null)
-    private val notices = Channel<PlanEvent>(Channel.BUFFERED)
     private val savingParts = MutableStateFlow(emptySet<PlanPart>())
     private val askedOperations = MutableStateFlow(emptyMap<PlanPart, List<PlanOp>>())
     private val failedParts = MutableStateFlow(emptySet<PlanPart>())
@@ -106,7 +103,11 @@ class PlanViewModel(
     /** Why the bar's Resume didn't save, said over the bar until the next try. */
     val resumeFailure: StateFlow<ResumeFailure?> = resumeFailureState.asStateFlow()
 
-    val events: Flow<PlanEvent> = notices.receiveAsFlow()
+    /** This visit to the Plan: what its writes lead to shows only on it. */
+    val visit = Visit()
+
+    /** What a write did that the screen acts on, while the visit that made it lasts. */
+    val event = visit.outcome<PlanEvent>()
 
     /** Parts whose change is saving, which take no other tap meanwhile. */
     val pending: StateFlow<Set<PlanPart>> = savingParts.asStateFlow()
@@ -171,10 +172,11 @@ class PlanViewModel(
         saving.value = true
         val resuming = status == LearnerSummaryGoal.Status.ACTIVE
         if (resuming) resumeFailureState.value = null
+        val started = visit.number
         viewModelScope.launch {
             when (val result = store.setStatus(goalId, status)) {
                 is MutationResult.Done -> {
-                    if (status == LearnerSummaryGoal.Status.ARCHIVED) notices.send(PlanEvent.Archived)
+                    if (status == LearnerSummaryGoal.Status.ARCHIVED) event.send(started, PlanEvent.Archived)
                 }
 
                 is MutationResult.Failed -> {
