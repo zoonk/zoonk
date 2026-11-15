@@ -118,7 +118,7 @@ function endKey(end: PhaseEnd): string {
  * The phases whose end the timeline's axis dates, under the phase's end edge: the current one and
  * each after it, but not the last, whose place is the goal's date. A date says once where it
  * falls: when phases end on the same day only the last of them is dated, one that ends on the
- * goal's day leaves it to the goal, and the current one ending today leaves it to "Today".
+ * goal's day leaves it to the goal, and any ending on the learner's today leaves it to "Today".
  */
 export function getAxisDatedPhases({
   goalKind,
@@ -133,13 +133,9 @@ export function getAxisDatedPhases({
   const currentIndex = phases.findIndex((phase) => phase.state === "current");
   const finish = getRoadmapFinish({ goalKind, plan });
 
-  if (currentIndex === -1) {
-    return new Set();
-  }
-
   const dated = phases.slice(currentIndex, -1).flatMap((phase) => {
     const end = getPhaseEnd({ phase, plan });
-    return end ? [{ index: phase.index, key: endKey(end), today: phase.state === "current" }] : [];
+    return end ? [{ index: phase.index, key: endKey(end) }] : [];
   });
 
   return new Set(
@@ -148,7 +144,7 @@ export function getAxisDatedPhases({
         (entry, position) =>
           entry.key !== dated[position + 1]?.key &&
           entry.key !== finish?.isoDate &&
-          !(entry.today && entry.key === today),
+          entry.key !== today,
       )
       .map((entry) => entry.index),
   );

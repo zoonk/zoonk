@@ -1,10 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { getAxisDatedPhases, getPhaseEnd, getRoadmapFinish } from "./phase-dates";
+import { getAxisDatedPhases, getPhaseEnd, getRoadmapFinish, getRoadmapPhases } from "./phase-dates";
 
 type Phase = Parameters<typeof getPhaseEnd>[0]["phase"];
 type Plan = Parameters<typeof getPhaseEnd>[0]["plan"];
 
 const TODAY = "2026-11-15";
+
+const CHALLENGE = {
+  date: "2026-11-22",
+  locked: false,
+  planItemId: null,
+  state: "upcoming" as const,
+  when: "date" as const,
+};
 
 const EXAM_DAY = {
   targetDate: "2027-11-14",
@@ -33,6 +41,10 @@ function plan(phases: Phase[], attrs: Partial<Plan> = {}): Plan {
     week: { startDate: TODAY },
     ...attrs,
   };
+}
+
+function shortDays(firstDay: number, lastDay: number): NonNullable<Phase["short"]> {
+  return { firstDay, focus: "practice", lastDay };
 }
 
 /** Three phases ending on these days, the first under way unless the states say otherwise. */
@@ -78,15 +90,7 @@ describe(getPhaseEnd, () => {
   });
 
   it("ends a phase on its challenge's day when that comes after its last lesson", () => {
-    const checkpoint = {
-      date: "2026-11-22",
-      locked: false,
-      planItemId: null,
-      state: "upcoming" as const,
-      when: "date" as const,
-    };
-
-    const current = phase(0, { checkpoint, endDate: "2026-11-20", state: "current" });
+    const current = phase(0, { checkpoint: CHALLENGE, endDate: "2026-11-20", state: "current" });
     const end = getPhaseEnd({ phase: current, plan: plan([current]) });
     expect(end).toStrictEqual({ estimate: true, isoDate: "2026-11-22", month: false });
   });
@@ -96,6 +100,77 @@ describe(getPhaseEnd, () => {
     const shaped = plan([last], { estimate: { endDate: "2026-12-12" } });
     const end = getPhaseEnd({ phase: last, plan: shaped });
     expect(end).toStrictEqual({ estimate: true, isoDate: "2026-12-12", month: false });
+  });
+
+  it("says an estimate by its day up to 42 days from the plan's week, by its month after", () => {
+    const at42 = phase(1, { endDate: "2026-12-27" });
+    const at43 = phase(1, { endDate: "2026-12-28" });
+    const near = getPhaseEnd({ phase: at42, plan: plan([phase(0), at42]) });
+    const far = getPhaseEnd({ phase: at43, plan: plan([phase(0), at43]) });
+    expect(near).toMatchObject({ month: false });
+    expect(far).toMatchObject({ month: true });
+  });
+
+  it("gives a phase the learner didn't finish, or one left out, no date", () => {
+    const unfinished = phase(0, { endDate: "2026-11-10", state: "unfinished" });
+    const leftOut = phase(1, { endDate: "2026-11-20", state: "leftOut" });
+    const shaped = plan([unfinished, leftOut]);
+    expect(getPhaseEnd({ phase: unfinished, plan: shaped })).toBeNull();
+    expect(getPhaseEnd({ phase: leftOut, plan: shaped })).toBeNull();
+  });
+
+  it("gives a learning phase under way its own day while no challenge is ahead", () => {
+    const current = phase(0, { endDate: "2026-11-20", state: "current" });
+    const end = getPhaseEnd({ phase: current, plan: plan([current]) });
+    expect(end).toStrictEqual({ estimate: false, isoDate: "2026-11-20", month: false });
+  });
+
+  it("says a far phase under way by its day, even while its challenge keeps it an estimate", () => {
+    const checkpoint = { ...CHALLENGE, date: "2027-03-01" };
+    const current = phase(0, { checkpoint, endDate: "2027-02-20", state: "current" });
+    const end = getPhaseEnd({ phase: current, plan: plan([current]) });
+    expect(end).toStrictEqual({ estimate: true, isoDate: "2027-03-01", month: false });
+  });
+
+  it("keeps a challenge on its phase's last day at that day", () => {
+    const checkpoint = { ...CHALLENGE, date: "2026-11-20" };
+    const current = phase(0, { checkpoint, endDate: "2026-11-20", state: "current" });
+    const end = getPhaseEnd({ phase: current, plan: plan([current]) });
+    expect(end).toMatchObject({ isoDate: "2026-11-20" });
+  });
+
+  it("estimates the end of a phase after the exam, like a learning phase", () => {
+    const after = phase(1, { endDate: "2026-12-01", kind: "afterExam" });
+    const end = getPhaseEnd({ phase: after, plan: plan([phase(0), after]) });
+    expect(end).toStrictEqual({ estimate: true, isoDate: "2026-12-01", month: false });
+  });
+
+  it("ends the last phase before the exam with the plan, whatever comes after the exam", () => {
+    const last = phase(0, { state: "current" });
+    const afterExam = phase(1, { kind: "afterExam" });
+    const shaped = plan([last, afterExam], { estimate: { endDate: "2026-12-12" } });
+    const end = getPhaseEnd({ phase: last, plan: shaped });
+    expect(end).toMatchObject({ isoDate: "2026-12-12" });
+  });
+
+  it("names a short plan's phase by its days", () => {
+    const short = shortDays(1, 3);
+    const current = phase(0, { endDate: "2026-11-17", short, state: "current" });
+    const shaped = plan([current], { shortPlan: { days: 5, mockDate: null } });
+    expect(getPhaseEnd({ phase: current, plan: shaped })).toStrictEqual({ short });
+  });
+
+  it("leaves a phase at its last lesson once its challenge is behind the learner", () => {
+    const checkpoint = { ...CHALLENGE, state: "done" as const };
+    const current = phase(0, { checkpoint, endDate: "2026-11-20", state: "current" });
+    const end = getPhaseEnd({ phase: current, plan: plan([current]) });
+    expect(end).toStrictEqual({ estimate: false, isoDate: "2026-11-20", month: false });
+  });
+
+  it("names a phase by its day when the plan isn't a short one", () => {
+    const current = phase(0, { endDate: "2026-11-17", short: shortDays(1, 3), state: "current" });
+    const end = getPhaseEnd({ phase: current, plan: plan([current]) });
+    expect(end).toMatchObject({ isoDate: "2026-11-17" });
   });
 
   it("gives a phase still being planned no date", () => {
@@ -117,9 +192,26 @@ describe(getRoadmapFinish, () => {
     expect(finish).toStrictEqual({ estimate: true, isoDate: "2026-12-12", month: false });
   });
 
+  it("is none for a plan with no date and no end yet", () => {
+    expect(getRoadmapFinish({ goalKind: "learn", plan: plan([phase(0)]) })).toBeNull();
+  });
+
   it("is none for an exam without a date", () => {
     const shaped = plan([phase(0)], { estimate: { endDate: "2026-12-12" } });
     expect(getRoadmapFinish({ goalKind: "exam", plan: shaped })).toBeNull();
+  });
+});
+
+describe(getRoadmapPhases, () => {
+  it("draws neither the phases after the exam nor those left out", () => {
+    const drawn = getRoadmapPhases([
+      phase(0, { state: "current" }),
+      phase(1, { state: "leftOut" }),
+      phase(2),
+      phase(3, { kind: "afterExam" }),
+    ]);
+
+    expect(drawn.map((entry) => entry.index)).toStrictEqual([0, 2]);
   });
 });
 
@@ -155,6 +247,36 @@ describe(getAxisDatedPhases, () => {
     );
 
     expect(axis(shaped, { goalKind: "exam" })).toStrictEqual([0]);
+  });
+
+  it("leaves any phase ending on the learner's today to Today, not only the current one", () => {
+    const shaped = threePhases([TODAY, TODAY, "2026-12-01"]);
+    expect(axis(shaped)).toStrictEqual([]);
+  });
+
+  it("dates only the phases the roadmap draws", () => {
+    const shaped = plan([
+      phase(0, { endDate: "2026-11-20", state: "current" }),
+      phase(1, { endDate: "2026-11-25", state: "leftOut" }),
+      phase(2, { endDate: "2026-12-01" }),
+      phase(3, { endDate: "2026-12-10" }),
+      phase(4, { endDate: "2027-01-10", kind: "afterExam" }),
+    ]);
+
+    expect(axis(shaped)).toStrictEqual([0, 2]);
+  });
+
+  it("dates a short plan's phases once each", () => {
+    const shaped = plan(
+      [
+        phase(0, { endDate: "2026-11-16", short: shortDays(1, 2), state: "current" }),
+        phase(1, { endDate: "2026-11-18", short: shortDays(3, 4) }),
+        phase(2, { endDate: "2026-11-19", short: shortDays(5, 5) }),
+      ],
+      { shortPlan: { days: 5, mockDate: null } },
+    );
+
+    expect(axis(shaped)).toStrictEqual([0, 1]);
   });
 
   it("dates nothing on a one-phase plan, whose end is the goal's", () => {
