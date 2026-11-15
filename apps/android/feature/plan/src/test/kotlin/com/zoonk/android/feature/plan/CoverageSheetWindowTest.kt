@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -36,6 +37,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestName
 import org.junit.runner.RunWith
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
@@ -48,7 +50,8 @@ class CoverageSheetWindowTest {
     @get:Rule
     val rule: ComposeTestRule = createEmptyComposeRule()
 
-    @get:Rule val testName = org.junit.rules.TestName()
+    @get:Rule
+    val testName = TestName()
 
     private val api = FakePlanApi()
     private val held = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
@@ -76,9 +79,11 @@ class CoverageSheetWindowTest {
         CoverageSheetTest.page = page
         CoverageSheetTest.viewModel =
             PlanViewModel(store, page.goal.id, writingWaits(WritingRuns(write = "writeSetupLessons", ready = "setupLessonsReady")))
-        if (testName.methodName == "reviewPanelBecomingClosedLineDoesNotReplayPreview") RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
+        // One test starts as a wide panel, which a recreation then makes a closed line; the rest start in the line's sheet.
+        val startsAsPanel = testName.methodName == "aPanelRecreatedAsAClosedLineAsksNoPreviewWhenItOpens"
+        if (startsAsPanel) RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
         scenario = ActivityScenario.launch(CoverageSheetTestActivity::class.java)
-        if (testName.methodName != "reviewPanelBecomingClosedLineDoesNotReplayPreview") rule.onNodeWithText("View").performClick()
+        if (!startsAsPanel) rule.onNodeWithText("View").performClick()
         rule.onNodeWithText("Find the time").performClick()
     }
 
@@ -157,9 +162,7 @@ class CoverageSheetTestActivity : ComponentActivity() {
                                 clearPreview = viewModel::clearSlotPreview,
                             ),
                             viewModel.slotState,
-                            if (androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp >
-                                900
-                            ) {
+                            if (LocalConfiguration.current.screenWidthDp > 900) {
                                 SuggestionLayout.Panel
                             } else {
                                 SuggestionLayout.Line
