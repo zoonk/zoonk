@@ -148,7 +148,8 @@ function JourneyBody({
             <PageHasMainAction value={hasMainAction}>
               <PlanSuggestionSlot className="hidden min-[72rem]:block" />
             </PageHasMainAction>
-            <NextOnPath className={structure ? undefined : IN_ASIDE_CLASS} links={links} />
+            {/* Without subjects the path is in the column beside it, already saying what's next. */}
+            {structure && <NextOnPath links={links} />}
             <MoreSection links={links} />
             <PlanProperties className={IN_ASIDE_CLASS} examHref={links.exam} onOpen={editor.open} />
           </>

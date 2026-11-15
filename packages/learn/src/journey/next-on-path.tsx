@@ -163,7 +163,7 @@ function AfterExamRow({ phase }: { phase: PlanPhaseView }) {
   );
 }
 
-export function NextOnPath({ className, links }: { className?: string; links: JourneyPathLinks }) {
+export function NextOnPath({ links }: { links: JourneyPathLinks }) {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
   const { checkpoint, mockDate } = findNextEvents(plan.phases);
@@ -194,7 +194,7 @@ export function NextOnPath({ className, links }: { className?: string; links: Jo
   }
 
   return (
-    <PageSection aria-labelledby={TITLE_ID} className={className} data-slot="next-on-path">
+    <PageSection aria-labelledby={TITLE_ID} data-slot="next-on-path">
       <PageSectionHeader>
         <PageSectionTitle id={TITLE_ID}>{t("Next on your path")}</PageSectionTitle>
       </PageSectionHeader>
