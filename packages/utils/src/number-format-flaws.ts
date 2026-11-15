@@ -21,13 +21,17 @@ const GROUPING_SPACE = /[\u00A0\u202F ]/gu;
 /**
  * A number whose thousands are split by a space ("50 000"), in prose or in LaTeX (a thin space
  * `\,`), read where the language groups another way: the same number then shows two ways on one
- * screen. Digits a space only sits beside, like a phone number's, aren't one number.
+ * screen. Its sign and decimals are part of it. Digits a space only sits beside, like a phone
+ * number's, aren't one number.
  */
-function spaceGroupedNumber(space: string): RegExp {
-  return new RegExp(
-    String.raw`(?<![\d.,\p{L}/-])[1-9]\d{0,2}(?:${space}\d{3})+(?!${space}?\d|[\p{L}/-]|[.,]\d)`,
-    "gu",
-  );
+function spaceGroupedNumber(space: string): { number: RegExp; space: RegExp } {
+  return {
+    number: new RegExp(
+      String.raw`(?<![\d.,\p{L}/+-]|\d${space})[-−]?[1-9]\d{0,2}(?:${space}\d{3})+(?:[.,]\d+)?(?!${space}?\d|[\p{L}/-])`,
+      "gu",
+    ),
+    space: new RegExp(space, "gu"),
+  };
 }
 
 const SPACE_GROUPED = {
@@ -93,10 +97,8 @@ function usesDecimalComma(language: string): boolean {
   return parts.some((part) => part.type === "decimal" && part.value === ",");
 }
 
-function groupsWithSpace(number: Intl.NumberFormat): boolean {
-  return number
-    .formatToParts(GROUPED_SAMPLE)
-    .some((part) => part.type === "group" && part.value.trim() === "");
+function groupSeparator(number: Intl.NumberFormat): string {
+  return number.formatToParts(GROUPED_SAMPLE).find((part) => part.type === "group")?.value ?? "";
 }
 
 function toLatexNumber(grouped: string): string {
@@ -127,13 +129,17 @@ function findSpaceGrouping({
   number: Intl.NumberFormat;
   text: string;
 }): string[] {
-  if (groupsWithSpace(number)) {
+  const separator = groupSeparator(number);
+
+  if (separator.trim() === "") {
     return [];
   }
 
-  return [...text.matchAll(latex ? SPACE_GROUPED.latex : SPACE_GROUPED.prose)].map(([written]) => {
-    const grouped = number.format(Number(written.replaceAll(/\D/gu, "")));
-    return `Groups ${written} with a space; write ${latex ? toLatexNumber(grouped) : grouped}.`;
+  const grouped = latex ? SPACE_GROUPED.latex : SPACE_GROUPED.prose;
+
+  return [...text.matchAll(grouped.number)].map(([written]) => {
+    const rewritten = written.replaceAll(grouped.space, separator);
+    return `Groups ${written} with a space; write ${latex ? toLatexNumber(rewritten) : rewritten}.`;
   });
 }
 

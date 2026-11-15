@@ -115,11 +115,24 @@ describe(findNumberFormatFlaws, () => {
     ]);
   });
 
+  it("keeps the sign and the decimals of a number grouped with a space", () => {
+    const value = { text: "It fell by −50 000 kcal, then by -5 000.5 more." };
+
+    expect(findNumberFormatFlaws({ language: "en", value })).toStrictEqual([
+      "Groups −50 000 with a space; write −50,000.",
+      "Groups -5 000.5 with a space; write -5,000.5.",
+    ]);
+
+    expect(
+      findNumberFormatFlaws({ language: "pt", value: { text: "Caiu 5 000,5 kcal." } }),
+    ).toStrictEqual(["Groups 5 000,5 with a space; write 5.000,5."]);
+  });
+
   it("passes space grouping where the language groups with a space, and digits that aren't one number", () => {
     const french = { text: "L'herbe contient 50 000 kcal." };
-    const phone = { text: "Call 555 123 4567 or see items 12 and 345." };
+    const phones = { text: "Call 555 123 4567 or +41 800 123 456, or see items 12 and 345." };
 
     expect(findNumberFormatFlaws({ language: "fr", value: french })).toStrictEqual([]);
-    expect(findNumberFormatFlaws({ language: "en", value: phone })).toStrictEqual([]);
+    expect(findNumberFormatFlaws({ language: "en", value: phones })).toStrictEqual([]);
   });
 });
