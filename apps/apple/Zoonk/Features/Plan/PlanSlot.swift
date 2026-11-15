@@ -777,8 +777,6 @@ private struct PlanCertificatesButton: View {
 private struct PlanFinishedSlot: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
-  @State private var failed = false
-  @State private var isStarting = false
 
   let context: PlanContext
 
@@ -809,8 +807,8 @@ private struct PlanFinishedSlot: View {
         .foregroundStyle(.mutedForeground)
 
         if let level = value.nextLevel {
-          BusyButton(isBusy: isStarting, icon: .play) {
-            Task { await continueAtNextLevel() }
+          BusyButton(isBusy: context.nextLevel.isRunning, icon: .play) {
+            continueAtNextLevel()
           } label: {
             Text(
               "Continue at \(planLevelName(level.level))", tableName: "Plan",
@@ -830,7 +828,7 @@ private struct PlanFinishedSlot: View {
         }
       }
 
-      if failed {
+      if context.nextLevel.outcome == false {
         FailureLine(
           message: LocalizedStringResource(
             "That didn't work. Try again in a moment.", table: "Plan",
@@ -842,14 +840,14 @@ private struct PlanFinishedSlot: View {
     .loads(end, refreshable: false)
   }
 
-  private func continueAtNextLevel() async {
-    isStarting = true
-    switch await store.continueAtNextLevel(goalId: context.goal.id) {
-    case .done(let started): failed = !started
-    case .failed: failed = true
-    case .obsolete: break
+  private func continueAtNextLevel() {
+    context.nextLevel.run { [store, goalId = context.goal.id] in
+      switch await store.continueAtNextLevel(goalId: goalId) {
+      case .done(let started): started
+      case .failed: false
+      case .obsolete: nil
+      }
     }
-    isStarting = false
   }
 }
 
