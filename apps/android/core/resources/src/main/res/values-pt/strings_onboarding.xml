@@ -311,8 +311,6 @@
   "onboarding_reveal_phase_map_and_gaps": "600dfc50ba95cb296315d5ba3b5412fc05eb98b4a89e87b64cca03c82cc7fc48",
   "onboarding_reveal_phase_mock_and_practice": "42f42bc6380c6b07976b35d9da4c0a5310945975ca4766abb5a9756196340984",
   "onboarding_reveal_phase_number": "0e2424506d2fdf138666ec2618d676b525e4a6aff9fb06c4388047c5770ce4d3",
-  "onboarding_reveal_phase_place": "cbcf4060faf0cbb6cef6a2283979079799292f9ed48149c0b11c4598a83fb16b",
-  "onboarding_reveal_phase_position": "7fa805e69cedd41adff10df8a92def9a1307798d8341f52b031287fcdf7b0096",
   "onboarding_reveal_phase_practice": "186022d7ec0eabf8c1deabbaa33c6c2946ff32c2dd2fcc96ee24a5f4c283451e",
   "onboarding_reveal_phase_short_mock": "f6674069a80d87db3b62f8f926d224cf518579ae68a3ce95ee38d2ee271a3d4e",
   "onboarding_reveal_phases": "73d8843c1f1a2dbe0455bbc83100ff72f71070d0f3a49ea3777112b510709661",
@@ -439,8 +437,6 @@
   "onboarding_variety_title": "1dafe27746c7a2719048d3d3a4c91fa30cda90ff6357b76467832336658d5024",
   "onboarding_waitlist_joined": "d112481eaba6ef1e2b16f01bdc203b5b7aa97e80f5a4c59413767204bc43160a",
   "onboarding_waitlist_sign_in": "347aa36e6aec5cbca01bb72f6978a6d73832740bb58ecb2a88fd9186b2b420be",
-  "onboarding_weekend_time": "787b14698064a2d8a79aa853507649ae42c30ee8494f292e65feaed768902f77",
-  "onboarding_weekend_time_label": "9c9e484cf7f7813a548b689b2298d79a4f5da9defac5edbf75c2438065874e29",
   "onboarding_what_you_wrote": "c38a36c02377d52157060032c12868cac50a90aa8ae1188770be189b52f83d21",
   "onboarding_whats_next": "b8ca5f5784577cdcba3aec6c454553075684b8710b6bb5a36ea82971abece6ca",
   "onboarding_write_again": "0109a014ccfaae202d442e1675c93df24203f9cd0b1532a5e74423b3a42977c5",
@@ -774,9 +770,6 @@
     <string name="onboarding_reveal_phase_light_review">Revisão leve</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">Hoje</string>
-    <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
-    <string name="onboarding_reveal_phase_position">%1$d de %2$d</string>
-    <string name="onboarding_reveal_phase_place">fase %1$d de %2$d</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">A data provável da prova agora é %1$s.</string>
     <string name="onboarding_reveal_notice_day_notice">O edital da prova indica %1$s.</string>
@@ -1013,15 +1006,12 @@
     <string name="onboarding_full_course_finish">Com %1$s por dia, você termina em %2$s, depois da prova no dia %3$s.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="onboarding_full_course_finish_month">Com %1$s por dia, você termina em %2$s, depois da prova em %3$s.</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="onboarding_weekend_time">Tempo diferente nos fins de semana</string>
     <string name="onboarding_schedule_time_label">Tempo diário</string>
     <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
     <string name="onboarding_choose_date">Escolher uma data</string>
     <!-- The same link when the goal has a date. -->
     <string name="onboarding_change_date">Mudar data</string>
     <string name="onboarding_study_days">Dias de estudo</string>
-    <string name="onboarding_weekend_time_label">Tempo nos fins de semana</string>
     <string name="onboarding_answers_saved">Suas respostas estão salvas.</string>
     <!-- On a setup question when the plan's run never started. -->
     <string name="onboarding_plan_not_started">Não conseguimos começar a criar seu plano</string>

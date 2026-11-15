@@ -14,9 +14,11 @@ import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
@@ -101,17 +103,19 @@ private fun FilledButton(
     content: @Composable RowScope.() -> Unit,
 ) {
     val held = held(busy, enabled, focusableWhenDisabled)
-    androidx.compose.material3.Button(
-        onClick = { if (!held) onClick() },
-        modifier = modifier.action(variant).sized(size).busy(held),
-        enabled = enabled || held,
-        shape = shape,
-        colors = colors.disabledWhen(held && !busy),
-        elevation = null,
-        contentPadding = NO_PADDING,
-        interactionSource = interactionSource,
-        content = { Labeled(size) { ButtonContent(busy, leadingIcon, forward, size.iconSize(), contentPadding, content) } },
-    )
+    DrawnBox(size) {
+        androidx.compose.material3.Button(
+            onClick = { if (!held) onClick() },
+            modifier = modifier.action(variant).sized(size).busy(held),
+            enabled = enabled || held,
+            shape = shape,
+            colors = colors.disabledWhen(held && !busy),
+            elevation = null,
+            contentPadding = NO_PADDING,
+            interactionSource = interactionSource,
+            content = { Labeled(size) { ButtonContent(busy, leadingIcon, forward, size.iconSize(), contentPadding, content) } },
+        )
+    }
 }
 
 /** Main's `secondary` button: ink words on a quiet fill, as main draws the lesson's "I don't know yet" in place of Check. */
@@ -221,18 +225,20 @@ fun OutlinedButton(
     content: @Composable RowScope.() -> Unit,
 ) {
     val held = held(busy, enabled, focusableWhenDisabled)
-    androidx.compose.material3.OutlinedButton(
-        onClick = { if (!held) onClick() },
-        modifier = modifier.action(LayoutPart.Variant.Outline).sized(size).busy(held),
-        enabled = enabled || held,
-        shape = shape,
-        colors = colors.disabledWhen(held && !busy),
-        elevation = elevation,
-        border = border,
-        contentPadding = NO_PADDING,
-        interactionSource = interactionSource,
-        content = { Labeled(size) { ButtonContent(busy, leadingIcon, forward, size.iconSize(), contentPadding, content) } },
-    )
+    DrawnBox(size) {
+        androidx.compose.material3.OutlinedButton(
+            onClick = { if (!held) onClick() },
+            modifier = modifier.action(LayoutPart.Variant.Outline).sized(size).busy(held),
+            enabled = enabled || held,
+            shape = shape,
+            colors = colors.disabledWhen(held && !busy),
+            elevation = elevation,
+            border = border,
+            contentPadding = NO_PADDING,
+            interactionSource = interactionSource,
+            content = { Labeled(size) { ButtonContent(busy, leadingIcon, forward, size.iconSize(), contentPadding, content) } },
+        )
+    }
 }
 
 /** Main's `ghost` button: ink words, no line. */
@@ -255,18 +261,20 @@ fun TextButton(
     content: @Composable RowScope.() -> Unit,
 ) {
     val held = held(busy, enabled, focusableWhenDisabled)
-    androidx.compose.material3.TextButton(
-        onClick = { if (!held) onClick() },
-        modifier = modifier.action(LayoutPart.Variant.Ghost).sized(size).busy(held),
-        enabled = enabled || held,
-        shape = shape,
-        colors = colors.disabledWhen(held && !busy),
-        elevation = elevation,
-        border = border,
-        contentPadding = NO_PADDING,
-        interactionSource = interactionSource,
-        content = { Labeled(size) { ButtonContent(busy, leadingIcon, forward, size.iconSize(), contentPadding, content) } },
-    )
+    DrawnBox(size) {
+        androidx.compose.material3.TextButton(
+            onClick = { if (!held) onClick() },
+            modifier = modifier.action(LayoutPart.Variant.Ghost).sized(size).busy(held),
+            enabled = enabled || held,
+            shape = shape,
+            colors = colors.disabledWhen(held && !busy),
+            elevation = elevation,
+            border = border,
+            contentPadding = NO_PADDING,
+            interactionSource = interactionSource,
+            content = { Labeled(size) { ButtonContent(busy, leadingIcon, forward, size.iconSize(), contentPadding, content) } },
+        )
+    }
 }
 
 /** Main's `size="icon"` outline button: `rounded-lg`, never a circle, as tall as a [ButtonSize.Large] action beside it. */
@@ -356,6 +364,25 @@ private fun Modifier.sized(size: ButtonSize): Modifier =
         ButtonSize.Medium -> this
         ButtonSize.Large -> heightIn(min = 44.dp)
     }
+
+/**
+ * A small or medium button's layout box is the button it draws, so the words above it sit at the gap their
+ * column sets: Compose still takes a tap anywhere in the 48dp touch target around it, and reports that target,
+ * as the web's and Apple's small buttons take taps past their ink. A large one is near 48dp anyway.
+ */
+@Composable
+private fun DrawnBox(
+    size: ButtonSize,
+    content: @Composable () -> Unit,
+) {
+    if (size ==
+        ButtonSize.Large
+    ) {
+        content()
+    } else {
+        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified, content)
+    }
+}
 
 /** Material writes every button's words in `labelLarge`; a small one takes main's 13sp. */
 @Composable

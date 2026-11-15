@@ -249,13 +249,10 @@ private fun RoadmapFull(
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            // The bands name each phase, so the line names only the place.
             position?.let {
                 Text(
-                    text =
-                        positionWords(
-                            it.name,
-                            listOf(stringResource(R.string.plan_roadmap_phase_of, it.number, it.total)),
-                        ),
+                    text = stringResource(R.string.plan_roadmap_phase_number, it.number, it.total),
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.labelMedium,
                     maxLines = 2,
