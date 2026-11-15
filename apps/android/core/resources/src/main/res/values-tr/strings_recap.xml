@@ -6,8 +6,8 @@
   "recap_first_summary": "3401d0769b5d14b489fcb2703b50c3c32a1aa6e7ec34ab57fc16d655bfda402a",
   "recap_fresh_week": "38e4920cee82ad00b49abcd6c236bb5243d0360b97a85d0b259f6b29af359701",
   "recap_mistakes_fixed": "9d14da95e47cbf5bfc3d1a81556b55522a2b1e53059dd731e6aca3402aa23e04",
-  "recap_more_questions": "50f3f245986f0c24036f531fa6aa8ad8e8e05bd83629280aaa5245e93948faf8",
-  "recap_more_time": "8e1183bcb7a956ecd4067aab171964714e938b68434db06fa92a21a61eda2eb9",
+  "recap_more_questions": "4640cacb743c83c89867f1f0372d82f419ae5d7af2148253075372cc7e9c99b1",
+  "recap_more_time": "cf2e9133e125a8936409996338b98f13a6e935c5ac2f0ff9032694a00599a942",
   "recap_most_improved": "25267561a62e3bdb979dba2dad2b48a3d3600d9c1abfd58cb9b03241272d0b43",
   "recap_most_improved_value": "6c4eb450d3e0d18005f3c94c766db81a35f277a26c23f8d4aa36508a2f39952f",
   "recap_new_topics": "8f767c9db927c07b3cee1daad455c819d745d0ca7fa1d1d5d8fe3d990f876a36",
@@ -28,11 +28,10 @@
         <item quantity="one">%d gün çalıştın</item>
         <item quantity="other">%d gün çalıştın</item>
     </plurals>
-    <!-- %1$s is a duration, such as "20 min". -->
-    <string name="recap_more_time">Önceki haftaya göre %1$s daha fazla!</string>
+    <string name="recap_more_time">Bir önceki haftaya göre %1$s daha fazla.</string>
     <plurals name="recap_more_questions">
-        <item quantity="one">Önceki haftaya göre %d soru daha fazla!</item>
-        <item quantity="other">Önceki haftaya göre %d soru daha fazla!</item>
+        <item quantity="one">Önceki haftaya göre %d soru daha fazla.</item>
+        <item quantity="other">Önceki haftaya göre %d soru daha fazla.</item>
     </plurals>
     <!-- %1$s is the name of a part of the learner's plan they finished this week, such as "Foundations". -->
     <string name="recap_phase_finished">%1$s aşamasını bitirdin.</string>

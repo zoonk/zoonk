@@ -10,6 +10,7 @@
   "profile_questions_cap": "5e4bb7344677c0f0cc207b106d149173e716d75a966ea74f8425c014867b6f8a",
   "profile_questions_condition_note": "88842dd86e189e000d33973e65a2e1ce9f8bb923d29b407640423fd7d7c40dea",
   "profile_questions_conditions_description": "8469af823f0bb5b11bf1098bcc5b5823617955ec320c75c1fac3a461136b1ddf",
+  "profile_questions_conditions_description_settings": "7ee65e4b742d0d622a8f11a92daecbb1ccc65875a32b56830fe2a47715749d69",
   "profile_questions_conditions_saved": "642ac4860fb448cfe551ff752a93f84b06f6ebb05f57fd00749c349918420a00",
   "profile_questions_conditions_title": "f8e222e2ff5f428cd85f9b8646558a48412a8b9feaf801862e9ef3d2b570e899",
   "profile_questions_description": "cd68a2bf08dafdf6f82043e5cc73fc0aad29eb5be3bb129ec121f2b31856c5b6",
@@ -61,6 +62,7 @@
   "profile_questions_support_description": "ce2319e90c9d496b5a260487c65e7afd0be5d307cf50cc06833d43fbd33346c6",
   "profile_questions_support_note": "1436b254955edfba25d8bdf8ee3a1dbd7c5785c54df20fe26a63ec5db08f9694",
   "profile_questions_support_note_help": "6a165a2d339e347fd3609f2366e86add4bfc36ab0fd456910ebd3a7b8529ac6c",
+  "profile_questions_support_note_help_settings": "08c5617288f897fd6c079576e3ea28651f18f0a33dc10743bcfe0d824dfb4da6",
   "profile_questions_support_placeholder": "2e727db3167d260a2fcda4629503077c754b7793dabab33f2350218462ab4f04",
   "profile_questions_support_title": "e2b8b334ca1e422f1f3fa0d20dea34f71e1f13283d06925d09fdcefdc5088328",
   "profile_questions_title": "facc83c35874ec64c39f8a82399416492c6d9f5b645dd88fd633462a5ead0fe7",
@@ -120,6 +122,7 @@
     <string name="profile_questions_activities_placeholder">Ex. : faire du pain, voitures, astronomie</string>
     <string name="profile_questions_conditions_title">Est-ce que l’une de ces situations te concerne ?</string>
     <string name="profile_questions_conditions_description">Facultatif. Nous utilisons tes choix pour adapter le contenu à tes besoins. Tu peux les supprimer à tout moment dans les paramètres.</string>
+    <string name="profile_questions_conditions_description_settings">Facultatif. Nous utilisons tes choix pour adapter le contenu à tes besoins. Tu peux les supprimer à tout moment.</string>
     <string name="profile_questions_condition_note">Que devrions-nous savoir ?</string>
     <string name="profile_questions_support_title">Qu’est-ce qui t’aide à apprendre ?</string>
     <string name="profile_questions_support_description">Choisis tout ce qui t’aide. Pas besoin d’étiquette ni de diagnostic.</string>
@@ -131,6 +134,7 @@
     <string name="profile_questions_support_note">Ce qui t’aide, avec tes mots (facultatif)</string>
     <string name="profile_questions_support_placeholder">Ex. : je comprends mieux les schémas que les textes</string>
     <string name="profile_questions_support_note_help">Nous nous en souviendrons. Tu peux supprimer cette information à tout moment dans les paramètres.</string>
+    <string name="profile_questions_support_note_help_settings">On gardera ça en mémoire. Tu peux l’effacer à tout moment.</string>
     <string name="profile_questions_lesson_ready">La leçon 1 est prête.</string>
     <string name="profile_questions_start_lesson">Commencer la leçon 1</string>
     <string name="profile_questions_save_start_lesson">Enregistrer et commencer la leçon 1</string>

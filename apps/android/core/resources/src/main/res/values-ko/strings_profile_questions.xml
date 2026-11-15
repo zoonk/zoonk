@@ -10,6 +10,7 @@
   "profile_questions_cap": "fa71a9486bd5782b82710874fd3ac914ce7b7296c0b02ab048a34052c1eaff7e",
   "profile_questions_condition_note": "94b84b91fcb7ffb267f80babf4b30638946c1d7d1c6c57ffb5fc9496c937baef",
   "profile_questions_conditions_description": "eb1feda258c46d10e969c2dc230200cb18e821d49370396493b72aa74c97471d",
+  "profile_questions_conditions_description_settings": "a6c67f54d835de1e0588ec492736336617ebcff26a0e7176eedb224806c5030a",
   "profile_questions_conditions_saved": "4b6ad5691478e86710740421c422a3ccbbec9a7677ccab100914f44dfd476ec3",
   "profile_questions_conditions_title": "8d166896a970fc3bb9dce6e5c91c574ccc863ac7838f64131c78aa9a5e6cbba1",
   "profile_questions_description": "2b7e129301372058e29449306ae0baae192ce5639ec384dda022cd9a7d595301",
@@ -61,6 +62,7 @@
   "profile_questions_support_description": "15d8ccdaac0c8b9073340aa9ce7aeeaf8ae339874b458f28cce3745d56d26e8c",
   "profile_questions_support_note": "f7876469a33aae7c539967faa43275ed09e8a95f83236a0f010c86877a79c6d2",
   "profile_questions_support_note_help": "e4f3a4f945e562bfe4a4cef367122eaa576e835c46a67e657b87a3a016e5516e",
+  "profile_questions_support_note_help_settings": "bd8c2a4481ada597ce7a6a8f51763bf4a07cfb381038ed7f5e66185baa4ad565",
   "profile_questions_support_placeholder": "9eb15fd974e4470b5938c30ab9840a0e01e31d1a0145283c9a5832fe60cc5d6f",
   "profile_questions_support_title": "a38141384719701cafeb226f27bc7a9cf2b3130d6d0696fbbebf115db6367c1b",
   "profile_questions_title": "7eaf7e63f77e155874272b1473d0e7290e9233f956e78ce7c2975f76f438afb8",
@@ -120,6 +122,7 @@
     <string name="profile_questions_activities_placeholder">예: 빵 굽기, 자동차, 천문학</string>
     <string name="profile_questions_conditions_title">해당하는 항목이 있나요?</string>
     <string name="profile_questions_conditions_description">선택 사항이에요. 선택한 내용을 바탕으로 콘텐츠를 필요에 맞게 조정해요. 설정에서 언제든 삭제할 수 있어요.</string>
+    <string name="profile_questions_conditions_description_settings">선택 사항이에요. 선택한 내용을 바탕으로 필요에 맞게 학습 내용을 조정해요. 언제든 삭제할 수 있어요.</string>
     <string name="profile_questions_condition_note">어떤 점을 알아 두면 좋을까요?</string>
     <string name="profile_questions_support_title">어떤 방법이 공부에 도움이 되나요?</string>
     <string name="profile_questions_support_description">도움이 되는 건 모두 고르세요. 특정 유형에 해당하지 않아도, 진단을 받지 않았어도 괜찮아요.</string>
@@ -131,6 +134,7 @@
     <string name="profile_questions_support_note">도움이 되는 방법을 자유롭게 적어 주세요 (선택 사항)</string>
     <string name="profile_questions_support_placeholder">예: 글보다 도표로 보면 더 잘 이해해요</string>
     <string name="profile_questions_support_note_help">이 내용을 기억해 둘게요. 설정에서 언제든 삭제할 수 있어요.</string>
+    <string name="profile_questions_support_note_help_settings">이 내용을 기억해 둘게요. 언제든 삭제할 수 있어요.</string>
     <string name="profile_questions_lesson_ready">레슨 1이 준비됐어요.</string>
     <string name="profile_questions_start_lesson">1번 레슨 시작하기</string>
     <string name="profile_questions_save_start_lesson">저장하고 레슨 1 시작하기</string>
