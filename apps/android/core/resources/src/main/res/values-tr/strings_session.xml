@@ -42,7 +42,7 @@
   "session_next_start_title": "1e1ee0355f44b15e56bd45d3a6474b5f39c84a9453bd64592dea5d5124312861",
   "session_next_stop": "042d60d4ec828fabbaa46162c7c6095eb15128c7c4ff54885adb800daba147ef",
   "session_next_stop_failed": "e7898391383f1f3147a41fd3ebe82c5184882d32eaa710fa71aad35471c93dbb",
-  "session_next_writing_note": "d52dae3088b3d788cfc7d79e5195545b5f17d1ea11b6aac5a4c61d83b0d1221a",
+  "session_next_writing_note": "0cfdf86b2b0c06edc13ca84cb60c9043bc03e7800a6ff7bb679e3bce1ba1bfb0",
   "session_no_catch_up_left": "c55e5deb1893ad2a5e787196823553dbbdfd5a8363fe038cc910c6ae2b623f09",
   "session_opening_slow": "aa37c18d87444b6d187057ed23d13daddf917d98b2b45364680e2aeaa09f1cb2",
   "session_opening_very_slow": "844133ffa61653d54a2358e31352e77921d6e5325cc126f2c35f4a236ad58264",
@@ -202,7 +202,7 @@
     <string name="session_review_intro_weakest_title">Bugün en çok zorlandığın konular</string>
     <string name="session_review_intro_weakest">Şu an unutmak üzere olduğun bir konu yok, bu yüzden en çok zorlandığın konuları çalışıyorsun.</string>
     <string name="session_review_intro_first_week">Zaten bildiklerini kontrol etmek için birkaç kısa soru.</string>
-    <string name="session_next_writing_note">Birkaç dakika sürer.</string>
+    <string name="session_next_writing_note">Dersin genellikle birkaç dakika içinde hazır olur.</string>
     <string name="session_next_lesson_ready">Dersin hazır.</string>
     <string name="session_next_stop">Bugünlük bitir</string>
     <string name="session_next_stop_failed">Çalışmayı durduramadık. Tekrar dene.</string>

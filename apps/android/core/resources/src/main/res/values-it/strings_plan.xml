@@ -208,7 +208,7 @@
   "plan_effect_more_before_exam": "6daf77661ebd38ffc714ad8adba53377df2dab28378f67f9f5d46b2e863d76a3",
   "plan_effect_names_and_more": "108bfeb7c60ec9988567a0ba407314f8597bda7faef2a5324132925263488ebc",
   "plan_effect_next_mock": "8b30fc0e71df8f47ceda227e3340b0778cd1859d675d3388239d20e00aa60416",
-  "plan_effect_numbers_different": "2539fe33ec46933ca66ea38e9e054565fa6ddeeafc7561f4ff9820ba65fa9a0a",
+  "plan_effect_numbers_different": "b113256f9633db3be7e63f6d5785dba9a8e35d534698818124ec5952c9f7a0ef",
   "plan_effect_phase_ends": "1d0a850c892b8fd556a9c07b3db01925a384c9086dde6afa244339f090692f2f",
   "plan_effect_plan_ends": "d68a9779d4d38b5c315335ce1d049bdb3709213d3cff0975ea1c2bcb5352eedf",
   "plan_effect_row_added": "89ba39c87562dfba247ca38eff0139d0a22c1e9a95b01203457229bd658913f2",
@@ -228,7 +228,7 @@
   "plan_effect_row_starts": "321322e34d87de87de9394745511387f24907fabeb648b2f0404ae43428d947a",
   "plan_effect_row_starts_with": "15bf0490da2643ded642f69486de5e3cfc357cfc9a1cc284c96d6dd76bbd8b5a",
   "plan_effect_row_weekly_challenge": "08a7498848c83252836388b44b62d7672bd6ff3d8ad8db26264727934855e3f2",
-  "plan_effect_see_all": "f12b0d5dc21e9c2a36fff5b832ac2b41278b46d2b4d66f7017669eace5c784ed",
+  "plan_effect_see_all": "82cbd7cb8acb10f7ea403240645f0f1296dfd7f672a35c7451af1b60675c92f3",
   "plan_effect_topic_added": "823872a650322194ee5bcf0163b6506b7fcbd339dff7def3f90f0f1016cf8a30",
   "plan_effect_topic_leaves": "66af1148c57629e9d073ba293c2417a1afc3baab0a08bb0d04ba5fbd71662edb",
   "plan_effect_topics_added": "213b9870dee9dc09c9aa7f439fd8d4a356c1b808af3d9937ebbbb087e528fc66",
@@ -1320,8 +1320,8 @@
     <string name="plan_course_complete">Corso completato</string>
     <!-- A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end -->
     <string name="plan_level_complete">%1$s completato</string>
-    <string name="plan_effect_see_all">Vedi tutte le modifiche</string>
-    <string name="plan_effect_numbers_different">Oggi i numeri sono diversi.</string>
+    <string name="plan_effect_see_all">Mostra tutte le modifiche</string>
+    <string name="plan_effect_numbers_different">Il tuo piano è cambiato da quando hai visto questa proposta. Ecco cosa cambia ora.</string>
     <!-- {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them. -->
     <string name="plan_effect_names_and_more">%1$s e altre</string>
     <!-- %1$s is one topic\'s name. -->

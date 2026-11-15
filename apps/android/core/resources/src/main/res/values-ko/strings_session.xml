@@ -42,7 +42,7 @@
   "session_next_start_title": "4ab5ee63206a9d62d5f602753e0d2d9b58520719590bf26e9a0f953b179378d7",
   "session_next_stop": "0c3ea72636d0f181528d259ebb0a3ec93bd94cceddc2d77f9c88c398b6d4e360",
   "session_next_stop_failed": "7fc4f563b2bcc965a405745f3d9c19f917a3e2a6006ac6a3f44719aaac24e1a8",
-  "session_next_writing_note": "8d44d9c2a09f2b3afed6ce728d32cd5bed1618a0fbee3eecd8cad23a4b86f787",
+  "session_next_writing_note": "a48ec41de916efdfda996ff6f49be61cefbd02043909a8abaea192d5033a5eb7",
   "session_no_catch_up_left": "857f93d74c490b92542ddc166293bbfed79ca3e33aeb207b04a88bdbe9abc038",
   "session_opening_slow": "6910940508c5ce305852f8c8f5da24274aef65f6c7e1b122971ad459d22ff19f",
   "session_opening_very_slow": "db62f4bf88f9522ac8b876b8e0216011ec76fe72fedf55ecaf41a4fe72ee77e2",
@@ -195,7 +195,7 @@
     <string name="session_review_intro_weakest_title">오늘 가장 어려운 주제</string>
     <string name="session_review_intro_weakest">아직 기억이 흐려질 만한 내용이 없어서 가장 어려웠던 내용을 연습해요.</string>
     <string name="session_review_intro_first_week">짧은 문제 몇 개로 이미 아는 내용을 확인해요.</string>
-    <string name="session_next_writing_note">몇 분 정도 걸려요.</string>
+    <string name="session_next_writing_note">레슨은 보통 몇 분 안에 준비돼요.</string>
     <string name="session_next_lesson_ready">레슨이 준비됐어요.</string>
     <string name="session_next_stop">오늘 학습 마치기</string>
     <string name="session_next_stop_failed">학습을 중단하지 못했어요. 다시 시도해 보세요.</string>

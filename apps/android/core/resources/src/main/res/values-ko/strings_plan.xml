@@ -208,7 +208,7 @@
   "plan_effect_more_before_exam": "f8149e1081a570d78e1fac0595d45d085c5ef5b809ff0a0f9b16b462156f9eb5",
   "plan_effect_names_and_more": "f20f9cfdadaa9439eed47d060b45cc821896365b6a840f1783f7ede90443d6eb",
   "plan_effect_next_mock": "bdc8735a2bfd91f1c22b956273bd77a0b0d49ae1b9de2514b9a22a97ca5bc1ff",
-  "plan_effect_numbers_different": "e2637e5e8172bd89348e73e261e8ab0c89969a000484b8dfc82618f18021f891",
+  "plan_effect_numbers_different": "4f234499719ac7f09014f5999f85dac7aa36c66a04db36db8d63b3c1f4b78957",
   "plan_effect_phase_ends": "550c02f700d345106d34bc577de447437170a9663e657c4716dc3da6fc05a5b0",
   "plan_effect_plan_ends": "7f57ede39b16892f6446aece6a7bca1f9a01585d4db4c83cc57654e2631dc34e",
   "plan_effect_row_added": "a84791bfebfad44fe745f14029f00f3d44c1380fdbb6e8607396ed05b010050d",
@@ -228,7 +228,7 @@
   "plan_effect_row_starts": "e6844b2b1c2df44aa516786eab77a6df2d4d8d0ae9fd96ce67680a598f74ed85",
   "plan_effect_row_starts_with": "81358c76ef15e8e9d8f2d08aa936e8a923f6bd8acad151f045fe0b8f8be1f326",
   "plan_effect_row_weekly_challenge": "ce8f20c8551785b056c0e2b0d5a3c8c7ef3d4fc0605e5fb4e3a51dd810bce4f9",
-  "plan_effect_see_all": "6cf0016d1b3a0d445f560d0149eaa37868b371c0241c86bdee5ee4a96747cf55",
+  "plan_effect_see_all": "f631a07e4ebcef9b78c7b586d9b9e2f5b596537e64026cbf0e23e22b362df9ee",
   "plan_effect_topic_added": "7eef9f51d3a6e2629a83e251ecd6a21cb4a8b8d2a8f1464458bcbcb03d86900e",
   "plan_effect_topic_leaves": "5c8fd849a1b64e9d2bda44f46d4b398691f7373ed86d18ac577003f74d8764e3",
   "plan_effect_topics_added": "8a6403dbbf37a2cdf0d71c4a70f51363f895c8e74d50468428e729c712de5463",
@@ -1208,8 +1208,8 @@
     <string name="plan_course_complete">코스 완료</string>
     <!-- A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end -->
     <string name="plan_level_complete">%1$s 완료</string>
-    <string name="plan_effect_see_all">전체 변경 사항 보기</string>
-    <string name="plan_effect_numbers_different">오늘은 계산 결과가 달라졌어요.</string>
+    <string name="plan_effect_see_all">전체 변경 사항</string>
+    <string name="plan_effect_numbers_different">이 내용을 확인한 뒤 계획이 바뀌었어요. 지금 적용하면 이렇게 달라져요.</string>
     <!-- {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them. -->
     <string name="plan_effect_names_and_more">%1$s 등</string>
     <!-- %1$s is one topic\'s name. -->

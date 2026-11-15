@@ -241,7 +241,7 @@ class PlanScreenshots {
         }
         shown = "plan-change-diff"
         compose.waitForIdle()
-        compose.onNodeWithText("See all changes").performClick()
+        compose.onNodeWithText("All changes").performClick()
         compose.waitForIdle()
         write("plan-change-diff-open", compose.onRoot().captureRender().asAndroidBitmap())
     }

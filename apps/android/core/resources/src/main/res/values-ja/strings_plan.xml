@@ -208,7 +208,7 @@
   "plan_effect_more_before_exam": "ed59d864a6b09be0b646deab5b15df22caa763c104280ec2cbeb40d8d9867e38",
   "plan_effect_names_and_more": "13576dbe558454567c53161b344cf31590c4f22daf0ae364d6d7c919fbf24433",
   "plan_effect_next_mock": "7c180c8cdbc6016884c9847c2f79d12a3bbfe4153756f08d478d9f4029f1f374",
-  "plan_effect_numbers_different": "f137dad02ef399ea1134f332cdcc5d29ed706943bb5bc7917519edee57f05bea",
+  "plan_effect_numbers_different": "8d23365dbf5f53ae46e0df242724b4ecf5e56d85b17ca998f779662944d0d41a",
   "plan_effect_phase_ends": "526c6cdce0f71a114f7b8fb870a8e4e5751c1bbc1608bd565e7d7eea815f39c8",
   "plan_effect_plan_ends": "7006393b8b4b3273c255e66074b9e1f28d4a3ed3db76667f310822eb38a5bfc6",
   "plan_effect_row_added": "c39c0975a9c2cdd273f82dba5de8f2da9ac7e60b9dd39c3d08725bc4e9a12bec",
@@ -228,7 +228,7 @@
   "plan_effect_row_starts": "1f862ffb192f0259ca29aca1bb137522450dbfd6a3fff4a19e4155ecf80f23b0",
   "plan_effect_row_starts_with": "3564374ecc68cef655587e761977a79df1c3ea9967c0cf2e8b2ac2733857e955",
   "plan_effect_row_weekly_challenge": "d67b90917b2108871c2d73534bf5a092ba4f629895bb889d7f6700806bd8398d",
-  "plan_effect_see_all": "796075a2436ae36b1e50b9581ba02f91c0db1241ccd78183b1ffc4cd11adba8c",
+  "plan_effect_see_all": "4008b8ef34cd36740640a39c23048304b93ad630619a281d923b500340b82c4a",
   "plan_effect_topic_added": "54ba3e95e08afa7f5d36773b20687cabb3659cac0dc7a122b2381789104ba92b",
   "plan_effect_topic_leaves": "bba4054d5a75bef4d2afe322ce803828ebdc8d353852edac626c43d1098ac367",
   "plan_effect_topics_added": "51e3e95cbec196371aa2721e0aae6ce794f5c1eea2c2329b84c4ce860263176f",
@@ -1208,8 +1208,8 @@
     <string name="plan_course_complete">コース修了</string>
     <!-- A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end -->
     <string name="plan_level_complete">%1$s完了</string>
-    <string name="plan_effect_see_all">変更をすべて見る</string>
-    <string name="plan_effect_numbers_different">今日は数が変わっています。</string>
+    <string name="plan_effect_see_all">すべての変更</string>
+    <string name="plan_effect_numbers_different">前回見たときから学習計画が変わりました。今この変更をすると、次のようになります。</string>
     <!-- {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them. -->
     <string name="plan_effect_names_and_more">%1$sなど</string>
     <!-- %1$s is one topic\'s name. -->

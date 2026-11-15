@@ -208,7 +208,7 @@
   "plan_effect_more_before_exam": "a82435af4b7c871acf038ea1cb4529da41548a7df71bc6ef9094c10795ee1326",
   "plan_effect_names_and_more": "b603a4211331eadf34d09773edde2c9d2b120153ea0cede5f469568f889f77f8",
   "plan_effect_next_mock": "38a60d3597ac66c68bba53a50c4b1afdaf698986f6b4cd09e6c276f0ed63fe30",
-  "plan_effect_numbers_different": "f385fb14755a029d37ddd88fc2a41f0ac12115dc21923cfcbf21020a60115b5d",
+  "plan_effect_numbers_different": "482c81a9e592304546c9eca56d606a9f66ae84485372fa1d33c463d739e0d35a",
   "plan_effect_phase_ends": "9b60e915372c623b69e8fb24cb60a1999424b77418310579436c49107e43435b",
   "plan_effect_plan_ends": "9842b97eb78d6c73b01d46c48d3d5e4eeb03a88650b96436aeff86c641b5defd",
   "plan_effect_row_added": "1f8043155c5cbe7513b90620a0fa9c6b562a3aea1f21e18f95d7e29ad9cf5d57",
@@ -228,7 +228,7 @@
   "plan_effect_row_starts": "96c75a33d86b60837368c5d3d8c1076c2ce128a5dd120769882f021e3bb419d8",
   "plan_effect_row_starts_with": "8d2b9082527acb1e4c3c68e734b3cf1cb69ba7cc1dcb7ff4226b174818ca2a18",
   "plan_effect_row_weekly_challenge": "d985bc0b85229831124fe65464d1f79fc6c6a792ad08d4611546df7b94e59e02",
-  "plan_effect_see_all": "f4762ba3eecea2ecdb2ff245272efc9d2561e41429f354a54e16f5b401bcd821",
+  "plan_effect_see_all": "f667177c3fd5a530ea422211b015440d297a400f6add227000e0f2591344ab44",
   "plan_effect_topic_added": "0961836eac005a06cfa4de1b23c2ab3a1992579564e688d1fdc5304798d4c54b",
   "plan_effect_topic_leaves": "8f9a569d7214bc171158f9b73f71fc808f102c4d702c192631a0c1cc6dc8f412",
   "plan_effect_topics_added": "14ae4e310757e4a82bdc6da5f7dee4a9f02da03ae9e5f04e076836b9d2641bdd",
@@ -1265,7 +1265,7 @@
     <!-- A Plan suggestion's title once every lesson and challenge of a course level is done, such as “Beginner complete”, before the plan's end -->
     <string name="plan_level_complete">%1$s tamamlandı</string>
     <string name="plan_effect_see_all">Tüm değişiklikleri gör</string>
-    <string name="plan_effect_numbers_different">Bugün sayılar farklı.</string>
+    <string name="plan_effect_numbers_different">Bunu gördüğünden beri planın değişti. Şimdiki etkisi şöyle.</string>
     <!-- {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them. -->
     <string name="plan_effect_names_and_more">%1$s ve diğerleri</string>
     <!-- %1$s is one topic\'s name. -->
