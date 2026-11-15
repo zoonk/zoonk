@@ -510,9 +510,7 @@ class TodayViewModel(
                         failed = tap
                     }
 
-                    MutationResult.Obsolete -> {
-                        Unit
-                    }
+                    MutationResult.Obsolete -> {}
                 }
             }
 
