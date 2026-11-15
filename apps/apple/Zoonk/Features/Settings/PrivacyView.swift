@@ -35,7 +35,7 @@ struct PrivacyView: View {
 
           Button(role: .destructive, action: deleteAccount) {
             Text("Delete account", tableName: "Account")
-            .typeStyle(.rowTitle)
+              .typeStyle(.rowTitle)
           }
           .foregroundStyle(.destructiveText)
         } header: {
