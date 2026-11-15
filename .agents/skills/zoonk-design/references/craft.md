@@ -300,9 +300,9 @@ No rail, aside or panel is drawn with nothing in it.
 
 ### D4. One strongest thing
 
-A screen has one filled button, its main action. What covers the page (a dialog, a sheet) asks its own question and fills its own answer. A suggestion follows from that: its answer is filled in its sheet, which covers the page, and in its panel on a page with no main action of its own; in the panel beside a page that has one (Today's "Start") it is outline, so the page keeps one filled button (`useMainActionVariant`). A notice's buttons are outline wherever the page has a main action. Around them, buttons step down: outline, then ghost.
+Each surface has one enabled filled button at most, its main action. A surface is the page; each dialog, sheet and side panel; and a card that asks its own question (a suggestion, a proposed plan change), which fills its own answer. A suggestion's answer is filled in its sheet and in its panel on a page with no main action of its own; in the panel beside a page that has one (Today's "Start") it is outline, so the page's action stays the strongest thing on the screen (`useMainActionVariant`). A notice's buttons are outline wherever the page has a main action. A disabled filled button isn't a choice yet, so it doesn't count; once the screen's main action is enabled, an activity's own action steps down to outline (the rhythm tapper's "Try again" beside Check). A media control (the notation player's Play) isn't the screen's action and isn't counted, however dark it's drawn. Around them, buttons step down: outline, then ghost.
 
-- **Check.** Count the filled buttons on the screen, leaving out what covers it: one. In what covers it: one at most (`one-filled`).
+- **Check.** On each surface, count the enabled filled buttons: one at most (`one-filled`, which counts each surface on its own).
 
 ## States
 
@@ -426,7 +426,7 @@ The questions of [the craft read](../SKILL.md#the-craft-read), answered for one 
 9. **Type.** Which sizes are in each block? More than three, or two you can barely tell apart? Any other face, any bold, any uppercase heading? (T1, T2, T3, T6)
 10. **Numbers.** Do columns of numbers line up and end together? (T4)
 11. **Icons.** One family, one line weight, sizes that match their text, the usual glyph for back, close, more and forward, and no button with two glyphs? (I1 to I6)
-12. **Balance.** One filled button? Anything empty, centered in a start-aligned column, or bleeding on one side only? (D3, D4, E7, E9)
+12. **Balance.** One enabled filled button on each surface? Anything empty, centered in a start-aligned column, or bleeding on one side only? (D3, D4, E7, E9)
 13. **States, if shown.** Is the selected, focused, disabled or busy thing drawn the system's way, and did anything move? (X1 to X3)
 14. **Siblings, if given.** Does each piece here look and act like the same piece on the existing screen that does the same thing: words, icon, size, place, state?
 15. **Roles.** Is the title close under its bar, with the page's name beside the back chevron? Is the main action in the bar at the bottom? Is anything over a title a chip? Does any row, chip or card say something is paid, or any action that leads to paying say anything but "Subscribe"? (E8, R2, R3, R4)
