@@ -152,7 +152,7 @@ export function MakeRoomSheet({
     <Drawer onOpenChange={(open) => !isStarting && room.setOpen(open)} open={state.open}>
       <DrawerPopup>
         <SheetHeader>
-          <DrawerTitle className="text-balance">{t("Make room for {goal}", { goal })}</DrawerTitle>
+          <DrawerTitle>{t("Make room for {goal}", { goal })}</DrawerTitle>
           <DrawerDescription className="text-pretty">
             {t("That's as many goals as you can study at once. Pause one to start this one.")}
           </DrawerDescription>
