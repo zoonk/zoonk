@@ -7,6 +7,7 @@
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">Chapter %1$s</string>
     <string name="mindmaps_empty">No chapter maps yet. Every chapter you finish gets one.</string>
+    <string name="mindmaps_empty_stopped">No chapter maps yet.</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">Mind map of %1$s</string>
     <!-- A mind map's description for screen readers: its title, then its central idea. -->

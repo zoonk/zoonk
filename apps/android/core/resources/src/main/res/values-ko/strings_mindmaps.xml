@@ -21,6 +21,7 @@
   "mindmaps_drawing": "d88412a6dfbe0faad1e97d6fd5f7665082b93f1c92cc980baad34bcb4a2014c9",
   "mindmaps_drawing_wait": "f48a7cc3a317724552331148a96e60e302bb8c2f82a69467ab3c904c416c8498",
   "mindmaps_empty": "63d13c6402503777be0c6590d4540da32221df82516ab57f3b319a895a17a755",
+  "mindmaps_empty_stopped": "0170b838e3319d705ad7796db236e5ba39ab639e0913c8bc556e7a1816c7128b",
   "mindmaps_failed": "e4e62367b44859ec28dbb8a5421b1af5df5f6bd71ebef78244365bc178e8b8e2",
   "mindmaps_fit": "5b0cbb0433980cf81aa01c5f3a46bab5e334ed604db7154eaf6eab0e17518ad6",
   "mindmaps_free_lessons_note": "02670ec7b5cb0fe48dece477b54b6787965c5075fae889695db50928f71edba2",
@@ -79,6 +80,7 @@
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">챕터 %1$s</string>
     <string name="mindmaps_empty">아직 챕터 마인드맵이 없어요. 챕터를 끝낼 때마다 하나씩 생겨요.</string>
+    <string name="mindmaps_empty_stopped">아직 챕터 마인드맵이 없어요.</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">%1$s의 마인드맵</string>
     <!-- A mind map's description for screen readers: its title, then its central idea. -->

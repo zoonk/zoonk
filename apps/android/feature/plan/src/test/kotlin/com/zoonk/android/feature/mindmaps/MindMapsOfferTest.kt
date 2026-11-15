@@ -198,4 +198,64 @@ class MindMapsOfferTest {
         compose.waitUntil(10_000) { compose.onAllNodesWithText("Create").fetchSemanticsNodes().size == 2 }
         compose.onNodeWithText("Create all").assertExists()
     }
+
+    private fun refuseCreate(
+        resource: String,
+        period: String,
+    ) {
+        api.create = {
+            throw ApiException(
+                ApiError.Unavailable,
+                "USAGE_LIMIT_REACHED",
+                402,
+                Json.parseToJsonElement("""{"limit":{"period":"$period","resource":"$resource","tier":"free"}}"""),
+            )
+        }
+    }
+
+    /** The day's AI help refuses every other map too, so the page offers none. */
+    @Test
+    fun aRowRefusedForTheDaysHelpStopsThePage() {
+        api.mindMaps = { fresh }
+        refuseCreate("aiSpend", "day")
+        show()
+        waitFor("Create all")
+        compose.onAllNodesWithText("Create")[0].performClick()
+
+        compose.waitUntil(10_000) { compose.onAllNodesWithText("Create").fetchSemanticsNodes().isEmpty() }
+        compose.onNodeWithText("Create all").assertDoesNotExist()
+    }
+
+    /** A map whose own lessons don't fit refuses only that map: the others keep their Create. */
+    @Test
+    fun aRowRefusedForItsOwnLessonsStopsOnlyThatRow() {
+        api.mindMaps = { fresh }
+        refuseCreate("chapterLessons", "total")
+        show()
+        waitFor("Create all")
+        compose.onAllNodesWithText("Create")[0].performClick()
+
+        waitFor("This map needs a subscription")
+        compose.onAllNodesWithText("Create").assertCountEquals(1)
+    }
+
+    /** A finished chapter's map is claimed like any other, so while the maps are stopped the empty list promises none. */
+    @Test
+    fun theEmptyListPromisesNoMapWhileStopped() {
+        api.mindMaps = {
+            goalMindMaps(
+                emptyList(),
+                offer =
+                    """
+                    {"eligible":0,"needLessons":0,"startable":0,
+                    "stop":{"reason":"limitReached","resource":"mindMap","period":"rolling30Days","availableAt":"${clock.start.plus(
+                        Duration.ofDays(3),
+                    )}"}}
+                    """.trimIndent(),
+            )
+        }
+        show()
+        waitFor("No chapter maps yet.")
+        compose.onNodeWithText("Every chapter you finish gets one.", substring = true).assertDoesNotExist()
+    }
 }

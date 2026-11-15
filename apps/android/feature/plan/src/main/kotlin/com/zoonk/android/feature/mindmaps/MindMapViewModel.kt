@@ -43,9 +43,10 @@ sealed interface PageStop {
         override val since: Long,
     ) : PageStop
 
-    /** A row's Create was refused for the plan's cap on maps. */
+    /** A row's Create was refused for what refuses every other one too ([stopsThePage]). */
     data class Refused(
-        val limit: Limit.Reached,
+        val limit: Limit,
+        val subject: LimitSubject,
         override val since: Long,
     ) : PageStop
 }
@@ -151,9 +152,7 @@ class MindMapViewModel(
 
                     is MindMapCreated.Refused -> {
                         val since = store.readMark()
-                        (created.limit as? Limit.Reached)
-                            ?.takeIf { created.subject == LimitSubject.MindMaps }
-                            ?.let { kept.value = PageStop.Refused(it, since) }
+                        if (created.stopsThePage) kept.value = PageStop.Refused(created.limit, created.subject, since)
                         MindMapLocal(limit = created.limit, subject = created.subject, since = since)
                     }
                 }
@@ -230,8 +229,15 @@ internal val PageStop.availableAt: java.time.Instant?
     get() =
         when (this) {
             is PageStop.Answered -> stop.availableAt?.toJavaInstant()
-            is PageStop.Refused -> limit.availableAt
+            is PageStop.Refused -> (limit as? Limit.Reached)?.availableAt
         }
+
+/**
+ * The plan's cap on maps, the day's AI help and a guest's need for an account refuse every other map too; a map's
+ * own lessons, or a moment's slow-down, refuse only that one.
+ */
+private val MindMapCreated.Refused.stopsThePage: Boolean
+    get() = limit == Limit.SignUpRequired || (limit is Limit.Reached && (subject == LimitSubject.MindMaps || subject == LimitSubject.Help))
 
 /** Main's `startsNoMap`, turned: at least one map can start, or nothing stops one. */
 private fun MindMapCreateOffer.letsOneStart(): Boolean = startable > 0 || stop == null

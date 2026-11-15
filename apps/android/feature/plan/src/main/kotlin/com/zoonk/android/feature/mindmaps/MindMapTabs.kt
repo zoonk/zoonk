@@ -100,7 +100,8 @@ internal fun LazyListScope.chaptersTab(
 
     if (groups.isEmpty() && notMade.isEmpty()) {
         item(key = "chapters-empty", contentType = "empty") {
-            TabEmpty(R.string.mindmaps_empty)
+            // A finished chapter's map is claimed like any other, so it waits while the maps are stopped.
+            TabEmpty(if (actions.shownLimit(mindMaps) != null) R.string.mindmaps_empty_stopped else R.string.mindmaps_empty)
         }
         return
     }
@@ -211,9 +212,7 @@ private fun NotMadeSummary(
     val offer = mindMaps.createOffer
     // What stops a new map also takes the rows' Create away, so it shows whether or not a chapter is ready to make.
     val page = actions.state.pageStop
-    val limit =
-        (page?.limit(actions.state.tier) ?: offer.stop?.takeIf { offer.startable == 0L }?.limit(actions.state.tier))
-            ?.takeUnless { limitLifted(it) }
+    val limit = actions.shownLimit(mindMaps)
     HeldSlot(gated = limit != null, Modifier.padding(top = 16.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (offer.startable > 1 && (page == null || limit == null)) {
@@ -287,11 +286,19 @@ private fun PageStop.limit(tier: LimitTier): Limit =
         is PageStop.Refused -> limit
     }
 
+/** What stops a new map on this page as it reads now: the page's stop, else the offer's when none can start; none once its day comes. */
+@Composable
+private fun TabActions.shownLimit(mindMaps: GoalMindMaps): Limit? {
+    val offer = mindMaps.createOffer
+    return (state.pageStop?.limit(state.tier) ?: offer.stop?.takeIf { offer.startable == 0L }?.limit(state.tier))
+        ?.takeUnless { limitLifted(it) }
+}
+
 private val PageStop.subject: LimitSubject
     get() =
         when (this) {
             is PageStop.Answered -> stop.limitSubject
-            is PageStop.Refused -> LimitSubject.MindMaps
+            is PageStop.Refused -> subject
         }
 
 /** The server's reason nothing more can start, as the app's limits word it; [tier] is the learner's plan. */

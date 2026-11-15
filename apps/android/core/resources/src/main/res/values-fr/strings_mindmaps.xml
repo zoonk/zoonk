@@ -21,6 +21,7 @@
   "mindmaps_drawing": "f6d62f32023ac72540524b6db2918ccba5ec2a2b2895c4e0c2b7cc8a63962c10",
   "mindmaps_drawing_wait": "eeae842d8aee121cc6b9230e41ffada49871b9458ac58e5c0db129542f98c654",
   "mindmaps_empty": "7be6643e20abacb915a2d212a946707d72cf25001c78f5dbfc1afd4df5603926",
+  "mindmaps_empty_stopped": "76094e6a745e12afdb8a79edf582990e38b4d2d7df4be172463706c1116d4abe",
   "mindmaps_failed": "f07c06a153090b6ea847c197813e4d0e0ff99b24d06ecd8b77be441aab8d0d28",
   "mindmaps_fit": "3f91b91c817f76ae407b94fc49afcc196ad499e9cf544af3a271f1ef5e0fc18b",
   "mindmaps_free_lessons_note": "815a708f74afbc8934870280a5694c5fdf380fdb2319e90944df4db1a9555788",
@@ -81,6 +82,7 @@
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">Chapitre %1$s</string>
     <string name="mindmaps_empty">Pas encore de cartes mentales de chapitre. Chaque chapitre que tu termines a la sienne.</string>
+    <string name="mindmaps_empty_stopped">Pas encore de cartes mentales de chapitre.</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">Carte mentale de %1$s</string>
     <!-- A mind map's description for screen readers: its title, then its central idea. -->

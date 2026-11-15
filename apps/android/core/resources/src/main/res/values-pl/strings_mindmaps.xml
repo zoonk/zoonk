@@ -21,6 +21,7 @@
   "mindmaps_drawing": "fdd016d2b8712e8d3583ed68e1de4aa7457baaaabdcbeb31e7ad98252d7bc522",
   "mindmaps_drawing_wait": "e9ceca374d5a6d39b5de6e90a4755fe848100fad50e33d79442dcd0be64956c0",
   "mindmaps_empty": "7f4f802e6bcf72f7e580d0416c434a8983c33a2bcc1a4b4a96469ecefeda5e15",
+  "mindmaps_empty_stopped": "c23cd3b59afd3b7d26edf85309b711fc654383641f1a48b5a6e10cc393c85806",
   "mindmaps_failed": "393da92b6de70d4987b2d16cc5891552c8edb1175ad6ae304ae1b53086dcd2c5",
   "mindmaps_fit": "9bafcd2ee6f025fc1bc83c1def2764565640c2141003976cd91abff8206150b4",
   "mindmaps_free_lessons_note": "84636880b18fa75961b34ef7e85ef5ffbe4d9d20cb184b5c6d51a62d530b30f3",
@@ -82,6 +83,7 @@
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">Rozdział %1$s</string>
     <string name="mindmaps_empty">Nie ma jeszcze map rozdziałów. Każdy ukończony rozdział ma swoją mapę.</string>
+    <string name="mindmaps_empty_stopped">Nie ma jeszcze map rozdziałów.</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">Mapa myśli: %1$s</string>
     <!-- A mind map's description for screen readers: its title, then its central idea. -->

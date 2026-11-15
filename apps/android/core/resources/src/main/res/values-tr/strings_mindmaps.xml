@@ -21,6 +21,7 @@
   "mindmaps_drawing": "80ed264a9a7f6d48626aa45683a9a21b23c5666b703d125baf29cb1a7ae3d5a6",
   "mindmaps_drawing_wait": "bd6efb602cbe1b94f02cf083a25f7ce53ced54d2f0910b77f679fdfa1ffc0f21",
   "mindmaps_empty": "bd61da6acb4d5eb23bfaa4b3ab0fdd740424e18efc67c3cf194a4a4f8042e8f3",
+  "mindmaps_empty_stopped": "1fe8df166e6a3f033615795a35795eb8fa4575454b4830b889ca45e3b68314dd",
   "mindmaps_failed": "292f458295f824ff1bf48df0f01e304a7ec450d6b281e84feda205e843980f40",
   "mindmaps_fit": "13ce7ea637bbd0381a39ca82b622679f58a53abfb0c3e68542dd559d79e512ca",
   "mindmaps_free_lessons_note": "47423a3a0ef6e187288811dea67479abe4a6adb787f3978ec4abe5ca9f4662e2",
@@ -80,6 +81,7 @@
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">Ünite %1$s</string>
     <string name="mindmaps_empty">Henüz ünite haritası yok. Bitirdiğin her ünite için bir harita hazırlanır.</string>
+    <string name="mindmaps_empty_stopped">Henüz ünite haritası yok.</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">%1$s için zihin haritası</string>
     <!-- A mind map's description for screen readers: its title, then its central idea. -->
