@@ -927,6 +927,21 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertNil(line([drawing]))
   }
 
+  /// As main's `isOpenOnArrival`: "Other chapters" opens on arrival to show a map on its way, and
+  /// a map that didn't finish with its row's Try again.
+  func testOtherChaptersOpensOnArrivalForAMapOnItsWayOrOneThatDidntFinish() {
+    func map(_ status: ChapterMindMap.Status) -> ChapterMindMap {
+      ChapterMindMap(
+        chapterId: status.rawValue, image: nil, lessonsToWrite: 3, outline: nil, position: 1,
+        saved: false, status: status, subject: nil, title: "Chapter")
+    }
+
+    XCTAssertTrue(map(.writingLessons).opensItsGroupOnArrival)
+    XCTAssertTrue(map(.drawing).opensItsGroupOnArrival)
+    XCTAssertTrue(map(.failed).opensItsGroupOnArrival)
+    XCTAssertFalse(map(.available).opensItsGroupOnArrival)
+  }
+
   /// RV81: a list with no chapters keeps its stop, so the page itself reads it again at the stop's
   /// day, whichever tab is shown, as main's `useReadWhenOfferOpens` does.
   func testAnEmptyStoppedListReadsAgainAtItsStop() async throws {

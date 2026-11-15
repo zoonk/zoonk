@@ -302,7 +302,7 @@ private struct MindMapCreateSection: View {
 
           arrived = true
 
-          if others.contains(where: \.status.isOnItsWay) {
+          if others.contains(where: \.opensItsGroupOnArrival) {
             showsChapters = true
           }
         }
@@ -347,7 +347,7 @@ private struct MindMapCreateSection: View {
           comment: "Asking for a map didn't reach the server"))
     case .stopped(let limit):
       LimitNotice(limit: limit.limit, words: limit.words(now:))
-    case .onTheWay, .unfinished, .fewer:
+    case .onTheWay, .fewer:
       Text(verbatim: note(line) ?? "")
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
@@ -361,11 +361,6 @@ private struct MindMapCreateSection: View {
       String(
         localized: "\(count) on the way. You can leave while they're made.", table: "MindMaps",
         comment: "How many chapter maps are being made now")
-    case .unfinished(let count):
-      String(
-        localized: "\(count) maps didn't finish. Try again.", table: "MindMaps",
-        comment:
-          "Chapter maps whose making failed; the button above makes them again, for free")
     case .fewer(let count):
       String(
         localized: "You can create \(count) more maps right now.", table: "MindMaps",
@@ -737,13 +732,12 @@ private struct MindMapIndex<Item: Identifiable, Row: View>: View {
   }
 }
 
-/// The one line under "Create all": the first of these that applies. Maps that didn't finish come
-/// first (their retry is free, even under a stop); then what stops the learner, which outranks
-/// what's in progress: a map on its way shows its progress on its own row.
+/// The one line under "Create all": the first of these that applies. What stops the learner
+/// outranks what's in progress. Each map on its way, and each that didn't finish with its Try again,
+/// says so in its own row, and their group opens on arrival.
 enum MindMapsCreateLine: Equatable {
   case unreachable
   case onTheWay(Int)
-  case unfinished(Int)
   case stopped(MindMapLimit)
   case fewer(Int)
 
@@ -755,14 +749,9 @@ enum MindMapsCreateLine: Equatable {
     // As main's, only the chapters under "Other chapters": the others' rows say where they stand.
     let others = maps.chapters.filter { !$0.canMakeNow }
     let onTheWay = others.count { $0.status.isOnItsWay }
-    // Only the ones the button retries: a failed map whose lessons aren't written says so in its
-    // own row.
-    let unfinished = others.count { $0.status == .failed && $0.lessonsToWrite == 0 }
 
     if unreachable {
       self = .unreachable
-    } else if unfinished > 0 {
-      self = .unfinished(unfinished)
     } else if offer.startable == 0, !canStart, let stop {
       self = .stopped(stop.limit(tier: tier))
     } else if onTheWay > 0 {

@@ -21,6 +21,12 @@ struct ChapterMindMap: Decodable, Equatable, Identifiable, Sendable {
     lessonsToWrite == 0 && [.available, .drawing, .failed].contains(status)
   }
 
+  /// Main's `isOpenOnArrival`: a map on its way, or one that didn't finish with its Try again. Its
+  /// row says where it stands, so "Other chapters" opens on arrival to show it.
+  var opensItsGroupOnArrival: Bool {
+    status.isOnItsWay || status == .failed
+  }
+
   struct Image: Decodable, Equatable, Sendable {
     let height: Int
     let thumbnailUrl: String?
