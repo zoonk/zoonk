@@ -307,12 +307,15 @@ private fun SuggestionLine(
             LineLayout(
                 modifier = Modifier.heightIn(min = 56.dp).padding(8.dp),
                 firstLine = lineHeight(MaterialTheme.typography.bodyMedium),
-                // A line that failed to save shows no done mark beside its error; the slot stays, so the words don't move.
+                // A line that failed to save shows the alert mark in the done mark's place, as the failure notice does.
                 mark = {
-                    if (failed &&
-                        LocalFrame.current.mark == SuggestionMark.Done
-                    ) {
-                        Spacer(Modifier.size(PANEL_MARK * glyphScale()))
+                    if (failed && LocalFrame.current.mark == SuggestionMark.Done) {
+                        Icon(
+                            painterResource(R.drawable.ic_error),
+                            contentDescription = null,
+                            modifier = Modifier.size(PANEL_MARK * glyphScale()),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     } else {
                         Mark(PANEL_MARK)
                     }
