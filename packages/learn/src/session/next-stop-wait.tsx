@@ -4,7 +4,7 @@ import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useLayoutEffect, useState } from "react";
 import { EnterButton } from "../_components/enter-button";
 import {
   type LessonNotWritten,
@@ -13,7 +13,7 @@ import {
 import { usePoll } from "../_utils/use-poll";
 import { FollowedRun } from "../generation/generation-follower";
 import { type LessonKind } from "../generation/generation-kinds";
-import { type GenerationRun, toHeldRun } from "../generation/generation-run";
+import { type GenerationRun, hasStopped, toHeldRun } from "../generation/generation-run";
 import { GenerationFailureNotice, GenerationWait } from "../generation/generation-wait";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -99,6 +99,42 @@ export function useWritingFailed(lesson: NextStopLesson): boolean {
   return lesson === "failed" || stuckWhile === lesson;
 }
 
+/**
+ * Failed is one fact: the session's snapshot or the followed run, whichever learns it first, and
+ * the other one still behind doesn't bring the quiz back. Try again, or a new run, clears it.
+ */
+export function useWaitFailed({
+  generationId,
+  lesson,
+}: {
+  generationId: string | null;
+  lesson: NextStopLesson;
+}) {
+  const snapshot = useWritingFailed(lesson);
+  const run = generationId ?? "";
+  const [stoppedRun, setStoppedRun] = useState<string | null>(null);
+
+  return {
+    clearStopped: () => setStoppedRun(null),
+    failed: snapshot || stoppedRun === run,
+    runStopped: () => setStoppedRun(run),
+  };
+}
+
+/** Before the next paint, so the quiz never shows under a run that stopped. */
+function ReportStopped({ onStopped, run }: { onStopped: () => void; run: GenerationRun }) {
+  const stopped = hasStopped(run);
+  const report = useEffectEvent(onStopped);
+
+  useLayoutEffect(() => {
+    if (stopped) {
+      report();
+    }
+  }, [stopped]);
+
+  return null;
+}
+
 /** A written lesson's page no longer names its run, so its held wait keeps the one it followed. */
 function useHeldRunId({ generationId, held }: { generationId: string | null; held: boolean }) {
   const [followed, setFollowed] = useState(generationId);
@@ -154,7 +190,7 @@ export function Waiting({
   actions: NextStopActions;
   barHasMainAction: boolean;
   block: DayStep;
-  failed: boolean;
+  failed: ReturnType<typeof useWaitFailed>;
   generationId: string | null;
   kind: LessonKind;
   lesson: NextStopLesson;
@@ -165,12 +201,13 @@ export function Waiting({
 
   const poll = useWaitingCheck({ actions, block, generationId, lesson });
 
-  if (failed) {
+  if (failed.failed) {
     const failure = (
       <GenerationFailureNotice
         barHasMainAction={barHasMainAction}
         failure={lesson === "notStarted" ? "notStarted" : "generation"}
         retry={() => {
+          failed.clearStopped();
           poll.restart();
           void actions.start(block);
         }}
@@ -189,28 +226,31 @@ export function Waiting({
       restart={async () => ((await actions.start(block)) ? undefined : null)}
     >
       {(run) => (
-        <WaitContent
-          progress={
-            <WritingProgress
-              barHasMainAction={barHasMainAction}
-              held={held}
-              kind={kind}
-              run={run}
-              since={since}
-            />
-          }
-          status={
-            run.status === "failed" ? (
-              <GenerationFailureNotice
+        <>
+          <ReportStopped onStopped={failed.runStopped} run={run} />
+          <WaitContent
+            progress={
+              <WritingProgress
                 barHasMainAction={barHasMainAction}
-                failure={run.failure ?? "generation"}
-                retry={run.retry}
+                held={held}
+                kind={kind}
+                run={run}
+                since={since}
               />
-            ) : (
-              <LessonWaitStatus holding={held} kind={kind} run={run} since={since} />
-            )
-          }
-        />
+            }
+            status={
+              run.status === "failed" ? (
+                <GenerationFailureNotice
+                  barHasMainAction={barHasMainAction}
+                  failure={run.failure ?? "generation"}
+                  retry={run.retry}
+                />
+              ) : (
+                <LessonWaitStatus holding={held} kind={kind} run={run} since={since} />
+              )
+            }
+          />
+        </>
       )}
     </FollowedRun>
   );
