@@ -567,7 +567,11 @@ export function readAlignment({
     ];
   }
 
-  /** A cell of a grid laid out in two columns or more: a side column beside a hero or a list. */
+  /**
+   * A cell of a grid laid out in two columns or more with something beside it: a side column
+   * beside a hero or a list. A lone cell in such a grid (#13's "More") leaves the rest empty, so
+   * it isn't a column of its own.
+   */
   function isGridCell(element: Element) {
     const parent = element.parentElement;
 
@@ -575,7 +579,18 @@ export function readAlignment({
       return false;
     }
 
-    return getComputedStyle(parent).gridTemplateColumns.trim().split(/\s+/u).length > 1;
+    const box = element.getBoundingClientRect();
+
+    return (
+      getComputedStyle(parent).gridTemplateColumns.trim().split(/\s+/u).length > 1 &&
+      [...parent.children].some((other) => {
+        const beside = other.getBoundingClientRect();
+
+        return (
+          other !== element && shown(other) && beside.top < box.bottom && box.top < beside.bottom
+        );
+      })
+    );
   }
 
   /**

@@ -90,7 +90,20 @@ const SIDE_COLUMN = `<div data-slot="page" data-box="280,0,1120,600">
         ${row("Light behaves like a wave", 130)}
       </div></div></div></div>`;
 
+/** A tablet's aside laid out in two columns holding one lone list (#13's shape before its fix). */
+const LONE_SECTION = `<div data-slot="page-aside" data-box="58,0,704,300">
+  <div style="display: grid; grid-template-columns: 332px 332px" data-box="58,0,704,300">
+    <section data-box="58,0,332,100"><h2 data-box="58,0,332,30">More</h2>
+      <div data-slot="list-group" data-box="58,40,332,60">${row("Completed lessons", 40)}${row("Mind maps", 70)}</div></section>
+  </div></div>`;
+
 describe("a box in a side column (a grid's cell beside the hero or a category list)", () => {
+  it("isn't one when nothing sits beside it: a lone section stops short of its column (#13)", () => {
+    document.body.innerHTML = LONE_SECTION;
+
+    assert.equal(evaluateCapture(read()).filter((finding) => finding.rule === "column").length, 1);
+  });
+
   it("is judged against its cell, not the page's outer column", () => {
     document.body.innerHTML = SIDE_COLUMN;
 
