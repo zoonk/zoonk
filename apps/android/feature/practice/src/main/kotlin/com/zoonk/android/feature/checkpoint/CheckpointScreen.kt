@@ -94,7 +94,6 @@ import com.zoonk.android.ui.characters.TricksterAct
 import com.zoonk.android.ui.characters.TricksterActorState
 import com.zoonk.android.ui.characters.TricksterArt
 import com.zoonk.android.ui.characters.rememberTricksterActorState
-import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
@@ -106,6 +105,7 @@ import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment

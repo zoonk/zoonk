@@ -267,7 +267,7 @@ private fun LessonCells(counts: LessonCounts) {
             val start = index * (width + gap)
             val left = if (rtl) size.width - start - width else start
             when (cell) {
-                LessonCell.Today ->
+                LessonCell.Today -> {
                     drawRoundRect(
                         studiedColor,
                         Offset(left + ring / 2, ring / 2),
@@ -275,14 +275,20 @@ private fun LessonCells(counts: LessonCounts) {
                         radius,
                         style = Stroke(ring),
                     )
+                }
 
-                LessonCell.Studied -> drawRoundRect(studiedColor, Offset(left, 0f), Size(width, size.height), radius)
+                LessonCell.Studied -> {
+                    drawRoundRect(studiedColor, Offset(left, 0f), Size(width, size.height), radius)
+                }
+
                 LessonCell.Known -> {
                     drawRoundRect(track, Offset(left, 0f), Size(width, size.height), radius)
                     drawRoundRect(knownColor, Offset(left, 0f), Size(width, size.height), radius)
                 }
 
-                LessonCell.Rest -> drawRoundRect(track, Offset(left, 0f), Size(width, size.height), radius)
+                LessonCell.Rest -> {
+                    drawRoundRect(track, Offset(left, 0f), Size(width, size.height), radius)
+                }
             }
         }
     }
