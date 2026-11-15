@@ -18,8 +18,8 @@ fun BackButton(onClick: () -> Unit) {
 @Composable
 fun CloseButton(
     onClick: () -> Unit,
-    label: String? = null,
     modifier: Modifier = Modifier,
+    label: String? = null,
 ) {
     IconButton(onClick = onClick, modifier = modifier) {
         Icon(painterResource(R.drawable.ic_close), contentDescription = label ?: stringResource(R.string.task_leave))
