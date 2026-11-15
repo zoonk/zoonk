@@ -15,38 +15,37 @@ function getWholeFeedbackDelta(feedback: Span, visible: Span): number {
 }
 
 /**
- * How far a checked screen scrolls so its feedback is in sight. It shows the whole feedback, unless
- * that scrolls the screen's title away while less would still show the verdict: then it stops with
- * the title first on screen. A chip over the title is either whole or gone, never a sliver under
- * the top bar.
+ * How far a checked screen scrolls so its feedback is in sight: until the whole feedback shows,
+ * and never past the feedback's own top. Why an answer was right or wrong matters more than the
+ * title the learner just read, so the title may scroll away. What scrolls away leaves whole: a
+ * chip or a title the scroll would cut is scrolled out, never left as a sliver under the top bar.
  */
 export function getRevealDelta({
   chip,
   feedback,
-  titleTop,
-  verdict,
+  title,
   visible,
 }: {
   chip: Span | null;
   feedback: Span;
-  titleTop: number | null;
-  verdict: Span | null;
+  title: Span | null;
   visible: Span;
 }): number {
   const whole = getWholeFeedbackDelta(feedback, visible);
 
-  if (titleTop === null || !verdict) {
+  if (!title) {
     return whole;
   }
 
-  const roomOverTitle = chip ? Math.min(MARGIN, titleTop - chip.bottom) : MARGIN;
-  const keepsTitle = titleTop - visible.top - roomOverTitle;
+  const headingTop = (chip ?? title).top - visible.top;
+  const cutsHeading = whole > headingTop && whole < title.bottom - visible.top;
 
-  if (whole > keepsTitle) {
-    const showsVerdict = verdict.bottom - visible.bottom <= keepsTitle;
-    return keepsTitle >= 0 && showsVerdict ? keepsTitle : whole;
+  if (!cutsHeading) {
+    return whole;
   }
 
-  const cutsChip = chip !== null && whole > chip.top - visible.top;
-  return cutsChip ? keepsTitle : whole;
+  const keepsTitle =
+    title.top - visible.top - (chip ? Math.min(MARGIN, title.top - chip.bottom) : 0);
+
+  return chip && whole <= keepsTitle ? keepsTitle : title.bottom - visible.top;
 }

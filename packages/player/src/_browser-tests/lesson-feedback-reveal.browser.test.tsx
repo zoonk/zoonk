@@ -29,7 +29,7 @@ function nextFrame() {
 }
 
 describe("feedback after a check", () => {
-  it("shows the verdict on a tablet without scrolling the question away", async () => {
+  it("shows the whole feedback on a tablet, leaving no sliver of the chip over the question", async () => {
     await onDevice({ reducedMotion: "reduce" }, () =>
       atViewport(LANDSCAPE_TABLET, async () => {
         openActivity({ template: "unitCircle" });
@@ -40,19 +40,22 @@ describe("feedback after a check", () => {
         const scroller = page.getByRole("main", { name: "Lesson content" }).element();
         await expect.poll(() => scroller.scrollTop).toBeGreaterThan(0);
 
-        const question = page.getByRole("heading", { name: "Turn the wheel to 30°." }).element();
-        const verdict = page.getByRole("region", { name: "Answer feedback" }).getByText("Correct!");
+        await expect
+          .element(page.getByRole("region", { name: "Answer feedback" }))
+          .toBeInViewport({ ratio: 1 });
 
-        expect(question.getBoundingClientRect().top).toBeGreaterThanOrEqual(
-          scroller.getBoundingClientRect().top,
-        );
+        const chip = document
+          .querySelector('[data-slot="activity-badge"]')
+          ?.getBoundingClientRect();
 
-        await expect.element(verdict).toBeInViewport({ ratio: 1 });
+        const top = scroller.getBoundingClientRect().top;
+
+        expect(chip && (chip.top >= top || chip.bottom <= top)).toBe(true);
       }),
     );
   });
 
-  it("keeps a question with no badge in view when its verdict fits but the reason runs on", async () => {
+  it("starts a feedback taller than the screen at its top, so the verdict is read first", async () => {
     const content = {
       ...playableStepContent.check,
       options: playableStepContent.check.options.map((option) =>
@@ -74,9 +77,9 @@ describe("feedback after a check", () => {
         await nextFrame();
 
         const scroller = page.getByRole("main", { name: "Lesson content" }).element();
-        const question = page.getByRole("heading", { name: content.question }).element();
+        const feedback = page.getByRole("region", { name: "Answer feedback" }).element();
 
-        expect(question.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+        expect(feedback.getBoundingClientRect().top).toBeGreaterThanOrEqual(
           scroller.getBoundingClientRect().top,
         );
 

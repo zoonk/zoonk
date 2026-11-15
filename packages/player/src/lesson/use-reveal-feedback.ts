@@ -14,7 +14,6 @@ const FEEDBACK_SELECTOR = [
 const STAGE_SELECTOR = '[data-slot="lesson-stage"]';
 const CHIP_SELECTOR = '[data-slot="activity-badge"]';
 const TITLE_SELECTOR = "h2";
-const VERDICT_SELECTOR = '[data-slot="feedback-verdict"]';
 const OWN_SCROLL_EVENTS = ["wheel", "touchmove", "keydown"] as const;
 
 function getVisibleArea(scroller: HTMLElement) {
@@ -41,8 +40,7 @@ function getScrollDelta(scroller: HTMLElement): number {
       bottom: Math.max(...boxes.map((box) => box.bottom)),
       top: Math.min(...boxes.map((box) => box.top)),
     },
-    titleTop: stage.querySelector(TITLE_SELECTOR)?.getBoundingClientRect().top ?? null,
-    verdict: stage.querySelector(VERDICT_SELECTOR)?.getBoundingClientRect() ?? null,
+    title: stage.querySelector(TITLE_SELECTOR)?.getBoundingClientRect() ?? null,
     visible: getVisibleArea(scroller),
   });
 }
