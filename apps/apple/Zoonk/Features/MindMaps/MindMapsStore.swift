@@ -28,10 +28,6 @@ final class MindMapsStore {
   /// Goals whose "Create all chapter maps" is on its way.
   private(set) var creatingAll: Set<String> = []
   private(set) var createAllFailures: [String: MindMapRequestFailure] = [:]
-  /// A stop the page was answered with, as this device received it: "Create all"'s, or a row's
-  /// refusal for the maps cap. It's shown ahead of the list's own until a list read started after
-  /// it comes through; then the list's offer decides.
-  private var keptStops: [String: (stop: MindMapAllowanceStop, afterRead: Int)] = [:]
 
   init(
     api: any MindMapsAPIClient, cache: AppCache, drawingPoll: Duration = .seconds(4),
@@ -52,9 +48,10 @@ final class MindMapsStore {
     }
   }
 
-  /// What stops a new map on the page: the one "Create all" answered with, or the list's own.
+  /// What stops a new map on the page: the list's offer, which a refusal writes into as the newest
+  /// answer and the next read replaces.
   func shownStop(goalId: String) -> MindMapAllowanceStop? {
-    keptStops[goalId]?.stop ?? lists[goalId]?.value?.createOffer.stop
+    lists[goalId]?.value?.createOffer.stop
   }
 
   func list(goalId: String) -> Resource<GoalMindMaps> {
@@ -75,7 +72,6 @@ final class MindMapsStore {
       let read = try await api.list(token: session.bearerToken, goalId: goalId)
       self?.readCameThrough(
         started, keys: [goalId] + read.chapters.map { "\(goalId):\($0.chapterId)" })
-      self?.retireKeptStop(goalId: goalId, readStarted: started)
       self?.listed(read, goalId: goalId)
       return read
     }
@@ -209,20 +205,19 @@ final class MindMapsStore {
     creatingAll.insert(goalId)
     defer { creatingAll.remove(goalId) }
     failCreateAll(nil, goalId: goalId)
-    keptStops[goalId] = nil
 
     let api = api
     let started = await cache.mutate { identity in
-      try await api.createAll(token: identity.bearerToken, goalId: goalId)?.received(at: .now)
+      try await api.createAll(token: identity.bearerToken, goalId: goalId)
     }
 
     switch started {
     case .done(let stop):
-      let reached = await Self.reread(lists[goalId])
-      // Kept through its own read, which can't yet tell that nothing started.
-      keep(stop, goalId: goalId)
+      if let stop {
+        stopOffer(stop, goalId: goalId)
+      }
 
-      if !reached {
+      if await !Self.reread(lists[goalId]) {
         failCreateAll(.unreachable, goalId: goalId)
       }
     case .failed:
@@ -277,7 +272,9 @@ final class MindMapsStore {
     case .done(.refused(let limit)):
       fail(.refused(limit), goalId: goalId, chapterId: chapterId)
       // Main's b09-16: every other Create would be refused for the same cap.
-      keep(limit.pageStop, goalId: goalId)
+      if let stop = limit.pageStop {
+        stopOffer(stop, goalId: goalId)
+      }
     case .failed:
       fail(.unreachable, goalId: goalId, chapterId: chapterId)
     case .obsolete:
@@ -453,14 +450,10 @@ final class MindMapsStore {
     }
   }
 
-  private func keep(_ stop: MindMapAllowanceStop?, goalId: String) {
-    keptStops[goalId] = stop.map { ($0, reads) }
-  }
-
-  private func retireKeptStop(goalId: String, readStarted: Int?) {
-    if let readStarted, let kept = keptStops[goalId], readStarted > kept.afterRead {
-      keptStops[goalId] = nil
-    }
+  /// A refusal is the newest answer about the offer: a read already on its way predates it and is
+  /// dropped, and the next read replaces it.
+  private func stopOffer(_ stop: MindMapAllowanceStop, goalId: String) {
+    lists[goalId]?.update { $0.stopped(by: stop) }
   }
 
   private func readStarted() -> Int {

@@ -469,9 +469,36 @@ final class MindMapsStoreTests: XCTestCase {
     let calls = await api.calls
     XCTAssertEqual(calls.list, 2, "the list is read again after the answer")
     let shown = store.shownStop(goalId: "goal")
-    XCTAssertNotNil(shown)
-    XCTAssertNil(shown?.availableAt, "no day can be told on this device")
-    XCTAssertFalse(shown?.isOver(at: .now.addingTimeInterval(3600)) ?? true)
+    XCTAssertNotNil(shown, "the offer's stop gates the page whatever this device's clock says")
+    XCTAssertNil(shown?.limit(tier: .free).limit.availableAt, "no day can be told on this device")
+  }
+
+  /// The list's own stop, already past by this device's clock: it still gates the page, with no
+  /// day, and the next read that allows a map lifts it.
+  func testAListStopPastByThisClockGatesUntilAReadAllows() async {
+    let behind = MindMapAllowanceStop(
+      availableAt: .now.addingTimeInterval(-60), period: "rolling30Days", reason: .limitReached,
+      resource: .mindMap)
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    await api.stopNewMaps(behind)
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+
+    XCTAssertNotNil(store.shownStop(goalId: "goal"))
+    XCTAssertNil(store.shownStop(goalId: "goal")?.limit(tier: .free).limit.availableAt)
+
+    // Its date has passed here, so the page reads the list once; the server still stops it.
+    await store.readOfferAgain(goalId: "goal", now: .now)
+    var calls = await api.calls
+    XCTAssertEqual(calls.list, 2)
+    XCTAssertNotNil(store.shownStop(goalId: "goal"))
+
+    await api.stopNewMaps(nil)
+    await list.refresh()
+    calls = await api.calls
+    XCTAssertNil(store.shownStop(goalId: "goal"))
+    XCTAssertEqual(calls.create + calls.createAll, 0, "no request but the reads")
   }
 
   /// RV58's reproduction: a kept stop lives through its own follow-up read only. A later read of
@@ -706,6 +733,89 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertNil(positions.position(userId: "ana", goalId: "other", tab: .lessons))
   }
 
+  func testARowOnlyRefusalCantEraseThePagesStop() async {
+    let cap = MindMapLimit(
+      limit: .usedUp(tier: .free, availableAt: .now.addingTimeInterval(3600)),
+      resource: .mindMap)
+    let api = MindMapsAPIStub(server: .available, statuses: [], request: .refused(cap))
+    await api.offerTwoRows()
+    let store = makeStore(api: api)
+    await store.list(goalId: "goal").load()
+    await api.holdRowOnlyRefusal()
+    let older = Task { await store.create(goalId: "goal", chapterId: "older") }
+    while await !api.isHoldingRow { await Task.yield() }
+    await store.create(goalId: "goal", chapterId: "chapter")
+    XCTAssertNotNil(store.shownStop(goalId: "goal"))
+    await api.releaseRow()
+    await older.value
+    XCTAssertNotNil(
+      store.shownStop(goalId: "goal"),
+      "A pending row-only refusal must not erase another row's page-wide cap")
+  }
+
+  func testCreateAllsStopHoldsWhileItsOwnReadIsOnItsWay() async {
+    let stop = MindMapAllowanceStop(
+      availableAt: .now.addingTimeInterval(3600), period: "rolling30Days",
+      reason: .limitReached, resource: .mindMap)
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    await api.stopCreatingAll(stop)
+    await api.offerTwoRows()
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    await api.holdNextList()
+    let create = Task { await store.createAll(goalId: "goal") }
+    while await !api.isHoldingList { await Task.yield() }
+    XCTAssertEqual(
+      store.shownStop(goalId: "goal"), stop,
+      "The POST refusal must gate rows while its own follow-up is pending")
+    await api.releaseList()
+    await create.value
+  }
+
+  func testANewerReadThatAllowsWinsOverCreateAllsOlderRead() async {
+    let stop = MindMapAllowanceStop(
+      availableAt: .now.addingTimeInterval(-60), period: "rolling30Days",
+      reason: .limitReached, resource: .mindMap)
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    await api.stopCreatingAll(stop)
+    await api.offerTwoRows()
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    await api.holdNextList()
+    let create = Task { await store.createAll(goalId: "goal") }
+    while await !api.isHoldingList { await Task.yield() }
+    list.invalidate()
+    await list.refresh()
+    XCTAssertNil(list.value?.createOffer.stop)
+    await api.releaseList()
+    await create.value
+    XCTAssertNil(list.value?.createOffer.stop)
+    XCTAssertNil(
+      store.shownStop(goalId: "goal"),
+      "A later successful allowed read must not be masked when the old follow-up finishes")
+  }
+
+  func testAFailedReadKeepsTheStopUntilAReadComesThrough() async {
+    let stop = MindMapAllowanceStop(
+      availableAt: .now.addingTimeInterval(-60), period: "rolling30Days",
+      reason: .limitReached, resource: .mindMap)
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    await api.stopCreatingAll(stop)
+    await api.offerTwoRows()
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    await api.failLists(1)
+    await store.createAll(goalId: "goal")
+    XCTAssertNotNil(store.shownStop(goalId: "goal"))
+    await store.list(goalId: "other").load()
+    XCTAssertNotNil(store.shownStop(goalId: "goal"))
+    await list.refresh()
+    XCTAssertNil(store.shownStop(goalId: "goal"))
+  }
+
   private static let chapterKey = MindMapKey(kind: .chapter, targetId: "chapter")
   private static let chapterTarget = SaveTarget(
     key: chapterKey, title: "Chapter", chapterId: "chapter")
@@ -720,6 +830,26 @@ final class MindMapsStoreTests: XCTestCase {
 /// A server whose reads agree: the list shows the status its status route last answered. The last
 /// status answers every read after it.
 private actor MindMapsAPIStub: MindMapsAPIClient {
+  private var offerCount = 0
+  func offerTwoRows() {
+    offerCount = 2
+    answered = (
+      [
+        chapter,
+        ChapterMindMap(
+          chapterId: "older", image: nil, lessonsToWrite: 0, outline: nil, position: 2,
+          saved: false, status: .available, subject: nil, title: "Other chapter"),
+      ], []
+    )
+  }
+  private var heldRow: CheckedContinuation<Void, Never>?
+  private var holdsRow = false
+  var isHoldingRow: Bool { heldRow != nil }
+  func holdRowOnlyRefusal() { holdsRow = true }
+  func releaseRow() {
+    heldRow?.resume()
+    heldRow = nil
+  }
   private var stop: MindMapAllowanceStop?
   private var createAllStop: MindMapAllowanceStop?
   struct Calls {
@@ -841,7 +971,8 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
     calls.list += 1
     let read = GoalMindMaps(
       chapters: answered?.chapters ?? [chapter],
-      createOffer: MindMapCreateOffer(eligible: 0, startable: 0, stop: stop),
+      createOffer: MindMapCreateOffer(
+        eligible: offerCount, startable: stop == nil ? offerCount : 0, stop: stop),
       firstTab: .chapters,
       lessonGroups: lessonIds.isEmpty
         ? []
@@ -946,6 +1077,11 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
 
   func create(token: String, goalId: String, chapterId: String) async throws -> MindMapRequest {
     calls.create += 1
+    if holdsRow {
+      holdsRow = false
+      await withCheckedContinuation { heldRow = $0 }
+      return .refused(MindMapLimit(limit: .slowDown(retryAfterSeconds: 30), resource: .mindMap))
+    }
 
     if let startsAs {
       server = startsAs

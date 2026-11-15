@@ -203,15 +203,15 @@ private struct MindMapCreateSection: View {
   let maps: GoalMindMaps
   let notMade: [ChapterMindMap]
 
-  /// The stop takes the rows' Create until its day has come; then Create is back, the stop's line
-  /// goes, and the offer is read again.
+  /// The offer's stop takes the rows' Create until a read lifts it; its day, by this device's
+  /// clock, only says when to read the offer again.
   var body: some View {
     let stop = store.shownStop(goalId: goalId)
 
     OpeningClock(availableAt: stop?.availableAt) { now in
       let isOver = stop?.isOver(at: now) ?? false
 
-      section(stop: stop, canStart: stop == nil || isOver)
+      section(stop: stop, canStart: stop == nil)
         .task(id: isOver) {
           if isOver {
             await store.readOfferAgain(goalId: goalId, now: now)

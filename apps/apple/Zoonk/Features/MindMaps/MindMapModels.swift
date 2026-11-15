@@ -127,15 +127,8 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
   let reason: Reason
   let resource: Resource?
 
-  /// As this device received it: an instant already past by then came from a server whose clock
-  /// is behind this device's, so it has no day here and the stop stands until the next try.
-  func received(at receivedAt: Date) -> MindMapAllowanceStop {
-    MindMapAllowanceStop(
-      availableAt: availableAt.flatMap { $0 > receivedAt ? $0 : nil }, period: period,
-      reason: reason, resource: resource)
-  }
-
-  /// Its instant has passed, so a map's Create asks the server again.
+  /// Its instant has passed by this device's clock, so the page reads the list again; the stop
+  /// holds until a read says it's gone.
   func isOver(at now: Date) -> Bool {
     availableAt.map { $0 <= now } ?? false
   }
@@ -146,7 +139,10 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
       case .signUpRequired: .signUpRequired
       case .slowDown:
         .slowDown(retryAfterSeconds: max(1, Int((availableAt ?? now).timeIntervalSince(now))))
-      case .limitReached: .reached(period: period, tier: tier, availableAt: availableAt)
+      // A day already past here can't be told: the stop shows no day until a read lifts it.
+      case .limitReached:
+        .reached(
+          period: period, tier: tier, availableAt: availableAt.flatMap { $0 > now ? $0 : nil })
       }
 
     let ranOut: MindMapLimit.Resource =
@@ -160,6 +156,14 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
 }
 
 struct GoalMindMaps: Decodable, Equatable, Sendable {
+  /// The list as a refusal answered it: nothing starts until a read says otherwise.
+  func stopped(by stop: MindMapAllowanceStop) -> GoalMindMaps {
+    GoalMindMaps(
+      chapters: chapters,
+      createOffer: MindMapCreateOffer(eligible: createOffer.eligible, startable: 0, stop: stop),
+      firstTab: firstTab, lessonGroups: lessonGroups, saved: saved)
+  }
+
   enum Tab: String, Decodable, Hashable, Sendable, CaseIterable {
     case chapters, lessons, saved
   }
@@ -221,8 +225,8 @@ struct MindMapLimit: Equatable, Sendable {
   let limit: HelpLimit
   let resource: Resource
 
-  /// The page's stop when this refusal stops every new map (the maps cap or the day's AI spend);
-  /// a map's own lessons or a short break stop only its row.
+  /// The page's stop when this refusal stops every new map (the maps cap, the day's AI spend, a
+  /// guest's account); a map's own lessons or a short break stop only its row.
   var pageStop: MindMapAllowanceStop? {
     let ranOut: MindMapAllowanceStop.Resource
     switch resource {
@@ -236,7 +240,10 @@ struct MindMapLimit: Equatable, Sendable {
     case .usedUp: period = "rolling30Days"
     case .limitReached(.day, _): period = "day"
     case .limitReached(.total, _): period = "total"
-    case .slowDown, .signUpRequired: return nil
+    case .signUpRequired:
+      return MindMapAllowanceStop(
+        availableAt: nil, period: nil, reason: .signUpRequired, resource: ranOut)
+    case .slowDown: return nil
     }
 
     return MindMapAllowanceStop(
