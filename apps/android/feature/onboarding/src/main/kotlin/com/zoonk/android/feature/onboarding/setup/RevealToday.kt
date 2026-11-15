@@ -243,7 +243,7 @@ internal fun RevealWeek(reveal: com.zoonk.api.models.PlanRevealToday) {
             stringResource(R.string.onboarding_reveal_first_week),
             detail =
                 listOf(
-                    pluralStringResource(R.plurals.onboarding_days, reveal.week.days.toInt(), reveal.week.days.toInt()),
+                    pluralStringResource(R.plurals.onboarding_reveal_study_days, reveal.week.days.toInt(), reveal.week.days.toInt()),
                     formatMinutes(reveal.week.minutes.toInt(), locale),
                 ).factsLine(),
         )
@@ -270,7 +270,8 @@ internal fun RevealWeek(reveal: com.zoonk.api.models.PlanRevealToday) {
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     } else {
-                        names.forEach { Text(revealItemTitle(it)) }
+                        // Names sit further apart than a name's own lines, so a title that wraps reads as one lesson.
+                        Column(verticalArrangement = Arrangement.spacedBy(NAME_GAP)) { names.forEach { Text(revealItemTitle(it)) } }
                     }
                 },
                 trailing = if (kinds && day.items.isNotEmpty()) ({ DayKinds(day.items) }) else null,
@@ -300,6 +301,9 @@ private fun DayKinds(items: List<PlanItem>) {
 }
 
 private const val KINDS_SHOWN = 4
+
+/** Main's `gap-1.5` between a day's names. */
+private val NAME_GAP = 6.dp
 
 @Composable
 private fun revealItemTitle(item: PlanItem): String =

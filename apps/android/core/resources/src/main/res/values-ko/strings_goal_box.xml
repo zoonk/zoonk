@@ -12,7 +12,7 @@
   "goal_box_kind_language": "503a0cec01d9638eacb14bdb6aa4794698a556550a86e051a6779bb7b30d49c3",
   "goal_box_kind_music": "7e9a3dc807e6f0263312055a6a05c6e21eae0cfd1e23c1c52605ed164f4dbe32",
   "goal_box_kind_quick_explanation": "294c7189a1d9237ff413153d039532e417c29f3377bf78e9169fccbde03519a9",
-  "goal_box_kind_topic": "5abf8a3452f0aa929c0c91b52eb4f904a9f12daec9d55ab896e9a75ed0e6002b",
+  "goal_box_kind_topic": "f5778ae8b814b120252b14d84e9dc0d3868c16912167375d3801c64c4a2843d3",
   "goal_box_label": "ca4277cbaae82d06a48781d1db2e676a86b236d6874211c96dbb79e03fc66b4f",
   "goal_box_placeholder": "8ff6a9a4dacf584b62269f81b3736eae19547ed0f0c26ca055cabb585f95ba77",
   "goal_box_submit": "a3894ea8bf4847b091cc5690fec621f3ccce12c8b8aa1b0a233e778e5669253a",
@@ -37,7 +37,7 @@
     <string name="goal_box_example_explanation">인플레이션은 어떤 원리로 일어나나요?</string>
     <string name="goal_box_kind_exam">시험</string>
     <string name="goal_box_kind_language">언어</string>
-    <string name="goal_box_kind_topic">주제 학습</string>
+    <string name="goal_box_kind_topic">주제</string>
     <string name="goal_box_kind_music">음악</string>
     <!-- %1$s is a duration, like "5 min". -->
     <string name="goal_box_kind_quick_explanation">간단한 설명 · %1$s</string>
