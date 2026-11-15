@@ -48,7 +48,8 @@ Which sensor has more readings?`),
       const table = page.getByRole("table");
       await expect.element(table.getByRole("columnheader", { name: "Formula" })).toBeVisible();
       await expect.element(table.getByRole("cell", { name: "350,000" })).toBeVisible();
-      expect(table.element().querySelectorAll("math")).toHaveLength(2);
+      // Math without server-drawn markup is drawn once KaTeX loads.
+      await expect.poll(() => table.element().querySelectorAll("math")).toHaveLength(2);
       expect(document.querySelector("h2 table, p table")).toBeNull();
 
       await expect

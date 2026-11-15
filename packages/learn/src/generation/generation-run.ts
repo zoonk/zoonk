@@ -30,6 +30,14 @@ export type GenerationRun = {
   warmUpId?: string;
 };
 
+/**
+ * A run that failed for good: nothing is being made, so its wait offers Try again and no quiz. A
+ * lost connection only pauses a run, which may still finish.
+ */
+export function hasStopped(run: Pick<GenerationRun, "failure" | "status">): boolean {
+  return run.status === "failed" && run.failure !== "connection";
+}
+
 /** A wait held once ready shows the work as done: every row checked, the clocks stopped, the bar full. */
 export function isFollowing(run: GenerationRun): boolean {
   return run.status === "waiting" || run.status === "following";

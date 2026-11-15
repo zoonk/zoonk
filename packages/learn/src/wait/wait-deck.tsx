@@ -2,7 +2,7 @@
 
 import { type GoalWarmUp, type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { type ReactNode, createContext, use, useEffect, useState } from "react";
-import { type GenerationRun } from "../generation/generation-run";
+import { type GenerationRun, hasStopped } from "../generation/generation-run";
 
 type ReadDeck = (warmUpId: string) => Promise<WarmUpDeck | null>;
 
@@ -103,7 +103,7 @@ export function usePreloadedDeck({
 /**
  * The goal's deck once it's read, and whether it's still `coming`: claimed or named but not read
  * yet, while the goal's run, which writes it, goes on and hasn't said it won't come. A wait shows
- * the quiz's skeleton meanwhile.
+ * the quiz's skeleton meanwhile, and no quiz once its run has stopped.
  */
 export function useDeck({ readDeck, run }: { readDeck: ReadDeck; run: GenerationRun }) {
   const { claimed, id, page } = useDeckId(run.warmUpId);
@@ -136,5 +136,8 @@ export function useDeck({ readDeck, run }: { readDeck: ReadDeck; run: Generation
     (run.status === "following" || run.status === "waiting") &&
     run.steps.warmUpFailed !== "completed";
 
-  return { coming: !shown && (claimed !== null || id !== undefined) && going, deck: shown };
+  return {
+    coming: !shown && (claimed !== null || id !== undefined) && going,
+    deck: hasStopped(run) ? null : shown,
+  };
 }
