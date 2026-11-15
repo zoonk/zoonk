@@ -23,6 +23,8 @@ struct PlacementStep: View {
   @State private var run = GenerationWait(kind: .placement).started
   /// Neither a question's number nor the bar ever goes back while the plan is still being written.
   @State private var shown = (answered: 0, spent: 0.0)
+  /// The answers and the finish: a step left during one does nothing when it answers.
+  @State private var tasks = ScreenTasks()
 
   enum Phase: Equatable {
     case loading
@@ -81,6 +83,7 @@ struct PlacementStep: View {
         opening = onboarding.openingPlacement(goalID: view.goal.id)
       }
     }
+    .onDisappear { tasks.cancel() }
     .feedbackSheet(
       isPresented: $showsSaveReport,
       context: FeedbackContext(screen: "placement-question", reportType: .saveFailure),
@@ -276,7 +279,7 @@ struct PlacementStep: View {
       answer: answer, sender: answer.isDontKnow ? .notSure : .check,
       measuredMs: Int(shownAt.duration(to: .now).components.seconds * 1000), failed: failedAnswer)
 
-    Task {
+    tasks.run {
       defer { isSaving = false }
 
       do {
@@ -318,7 +321,7 @@ struct PlacementStep: View {
     isSaving = true
     finishFailed = false
 
-    Task {
+    tasks.run {
       defer { isSaving = false }
 
       do {
@@ -340,7 +343,7 @@ struct PlacementStep: View {
   /// Finishing is one save to the learner: it goes through once the step's save does too.
   private func finishAndGoOn(fromScratch: Bool) async throws {
     try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: fromScratch)
-    try await onDone()
+    try await goOnUnlessLeft(onDone)
   }
 }
 
