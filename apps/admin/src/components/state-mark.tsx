@@ -84,8 +84,11 @@ function getStateTone(state: string): StateTone {
   return STATE_TONES[state] ?? "waiting";
 }
 
-/** Inline, so the word keeps the text's baseline in a table row; the mark hangs centered on its capitals. */
-const MARK_CLASS = "me-1.5 inline-block size-3.5 shrink-0 align-[-0.15em]";
+/**
+ * Inline, so the word keeps the text's baseline in a table row; the mark hangs centered on its
+ * capitals. It is as tall as the text (1em), so the em-based drop centers it at every text size.
+ */
+const MARK_CLASS = "me-1.5 inline-block size-[1em] shrink-0 align-[-0.15em]";
 
 function ToneMark({ tone }: { tone: StateTone }) {
   if (tone === "going" || tone === "unread") {
