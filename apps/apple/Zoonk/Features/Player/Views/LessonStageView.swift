@@ -93,7 +93,7 @@ struct LessonStageView: View {
         // adds then takes the room above the bank, so the bank holds still under the thumb.
         let bankAtBottom = spread == nil && step.hasWordBank
         let added = LessonCheckAdded(
-          step: step, state: state, store: store, includesSelfCorrect: bankAtBottom
+          step: step, state: state, store: store, includesSelfCorrect: step.hasWordBank
         )
         .id(Self.verdictId)
 
@@ -146,7 +146,11 @@ struct LessonStageView: View {
                 // One container, so the id names the whole turn rather than each of its views.
                 VStack(alignment: .leading, spacing: 20) {
                   LessonStepView(step: step, state: state, store: store, part: .turn)
-                    .environment(\.wordBankAbove, bankAtBottom ? AnyView(added) : nil)
+                    .environment(
+                      \.wordBankAdded,
+                      step.hasWordBank
+                        ? WordBankAdded(view: AnyView(added), isAbove: bankAtBottom) : nil
+                    )
 
                   if offersHelp {
                     LessonScreenHelp(store: store)
@@ -159,10 +163,12 @@ struct LessonStageView: View {
                 }
               }
 
-              LessonCheckNote(state: state, isSlow: isCheckSlow, showsSelfCorrect: !bankAtBottom)
-                .id(Self.checkNoteId)
+              LessonCheckNote(
+                state: state, isSlow: isCheckSlow, showsSelfCorrect: !step.hasWordBank
+              )
+              .id(Self.checkNoteId)
 
-              if !bankAtBottom {
+              if !step.hasWordBank {
                 added
               }
 
@@ -192,8 +198,8 @@ struct LessonStageView: View {
             .onChange(of: state.notice == .selfCorrect || state.checkFailed || isCheckSlow) {
               _, hasNote in
               if hasNote {
-                let isAboveBank = bankAtBottom && state.notice == .selfCorrect
-                scroll.scrollTo(isAboveBank ? Self.verdictId : Self.checkNoteId, anchor: .bottom)
+                let isWithBank = step.hasWordBank && state.notice == .selfCorrect
+                scroll.scrollTo(isWithBank ? Self.verdictId : Self.checkNoteId, anchor: .bottom)
               }
             }
             // A worked example's newest step is its last. A challenge's turn is its newest
@@ -337,7 +343,7 @@ private struct LessonStepNotes: View {
   }
 }
 
-/// What a check adds: "fix it yourself" where the word bank waits at the bottom, and the verdict.
+/// What a check adds: the verdict, and "fix it yourself" on a word bank's step.
 private struct LessonCheckAdded: View {
   let step: LessonStep
   let state: LessonPlayerState
