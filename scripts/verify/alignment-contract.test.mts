@@ -8,6 +8,7 @@ import { describe, it } from "vitest";
 import { type Capture } from "./alignment-capture.mts";
 import { fixtureCapture, real } from "./alignment-fixtures.mts";
 import { summaryLine } from "./alignment-summary.mts";
+import { readCaptures } from "./alignment-validate.mts";
 import { evaluateCapture, evaluateFile } from "./alignment.mts";
 
 /** The not-measured records a capture writes, by relationship. */
@@ -66,18 +67,23 @@ function exitFor(content: unknown) {
   return spawnSync(process.execPath, [join(import.meta.dirname, "alignment-cli.mts"), path]).status;
 }
 
+/** What the check says of `content`: its kind, so a refusal reads as "invalid". */
+function kindOf(content: unknown) {
+  return readCaptures(content).kind;
+}
+
 describe("what the command accepts", () => {
-  it("exits 2 for a capture of another version, a missing field, an unknown unit or a dangling part", () => {
+  it("refuses a capture of another version, a missing field, an unknown unit or a dangling part", () => {
     const valid = fixtureCapture([]);
     const { screen: _screen, ...unnamed } = valid;
 
-    assert.equal(exitFor({ elements: [], version: 99 }), 2);
-    assert.equal(exitFor(unnamed), 2);
-    assert.equal(exitFor(real("round 2 invalid-unit")), 2);
-    assert.equal(exitFor({ ...valid, platform: "web" }), 2);
+    assert.equal(kindOf({ elements: [], version: 99 }), "invalid");
+    assert.equal(kindOf(unnamed), "invalid");
+    assert.equal(kindOf(real("round 2 invalid-unit")), "invalid");
+    assert.equal(kindOf({ ...valid, platform: "web" }), "invalid");
 
     assert.equal(
-      exitFor(
+      kindOf(
         fixtureCapture([
           {
             bounds: [0, 0, 1, 1],
@@ -90,11 +96,13 @@ describe("what the command accepts", () => {
           },
         ]),
       ),
-      2,
+      "invalid",
     );
+
+    assert.equal(kindOf(valid), "captures");
   });
 
-  it("passes a valid capture with nothing declared", () => {
-    assert.equal(exitFor(fixtureCapture([])), 0);
+  it("exits 2 for a capture it refuses", () => {
+    assert.equal(exitFor({ elements: [], version: 99 }), 2);
   });
 });
