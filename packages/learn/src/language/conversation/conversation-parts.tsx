@@ -62,10 +62,10 @@ export function CharacterRow({
 }
 
 /** A whole screen saying a call can't go on. Inside a sheet or under another title, use `CallReason`. */
-export function CallOffMessage({ children, title }: { children: React.ReactNode; title: string }) {
+export function CallOffMessage({ children, title }: { children: React.ReactNode; title?: string }) {
   return (
     <div className="flex flex-col gap-2" role="alert">
-      <p className="text-title">{title}</p>
+      {title && <p className="text-title">{title}</p>}
       {children}
     </div>
   );

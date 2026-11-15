@@ -192,7 +192,11 @@ export function useComesBackLine(limit: HelpLimit): LimitWords {
   const opensOn = useOpeningDay(isRollingCap(limit) ? limit.availableAt : null);
   const line = lineFor(limit, opensOn);
 
-  return { line, provisional: !known && opensOn !== null && line !== undefined };
+  return {
+    line,
+    opened: opensOn === "open",
+    provisional: !known && opensOn !== null && line !== undefined,
+  };
 }
 
 function useLimitSentence() {
@@ -240,7 +244,7 @@ export function useMapLessonsWords(limit: MindMapLimit): LimitWords | null {
   }
 
   if (opensOn === "open") {
-    return { title: t("You can make this map now") };
+    return { opened: true, title: t("You can make this map now") };
   }
 
   return {
@@ -300,6 +304,10 @@ export function useLiveWords(words: CapWords | null): LimitWords {
 
   if (!words) {
     return {};
+  }
+
+  if (limit && opensOn === "open") {
+    return { line: lineFor(limit, opensOn), opened: true };
   }
 
   return {

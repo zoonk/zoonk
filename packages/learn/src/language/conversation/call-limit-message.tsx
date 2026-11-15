@@ -6,6 +6,7 @@ import {
   type CallLimit,
   CallLimitNotice,
   useCallLimitLine,
+  useLiveLimit,
 } from "../../_components/help-limit-notice";
 import { GateWords } from "../../_components/subscribe-gate";
 import { useLearnRoutes } from "../../learn-context";
@@ -40,10 +41,22 @@ export function CallLimitReason({
   role?: "alert";
 }) {
   const routes = useLearnRoutes();
+  const title = useCallLimitTitle(limit);
+  const opened = useLiveLimit(limit) === null;
+  const notice = <CallLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />;
+
+  // Once its day has come nothing ran out, so no title says it did.
+  if (opened) {
+    return (
+      <div className={className} role={role}>
+        {notice}
+      </div>
+    );
+  }
 
   return (
-    <CallReason className={className} role={role} title={useCallLimitTitle(limit)}>
-      <CallLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
+    <CallReason className={className} role={role} title={title}>
+      {notice}
     </CallReason>
   );
 }

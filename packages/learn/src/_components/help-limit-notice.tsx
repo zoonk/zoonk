@@ -77,7 +77,11 @@ type LimitNoticeProps = {
   routes: { signUp: string; upgrade: string };
 };
 
-export type LimitWords = { line?: string; provisional?: boolean; title?: string };
+/**
+ * `opened`: the cap's day has come, so nothing ran out any more: no title says it did and nothing is
+ * offered to buy; only `line` (or the lesson's ready title) is said.
+ */
+export type LimitWords = { line?: string; opened?: boolean; provisional?: boolean; title?: string };
 
 /** What the learner asked for when the help ran out; without it the notice names no kind. */
 export type HelpKind = "explanations" | "messages" | "mockExams";
@@ -116,11 +120,11 @@ function LimitNoticeBody({
   routes,
   words,
 }: LimitNoticeProps & { action?: ReactNode; limit: NoticeLimit; words: LimitWords }) {
-  const wayOn = toWayOn({ limit, linkComponent, routes });
+  const wayOn = words.opened ? null : toWayOn({ limit, linkComponent, routes });
 
   return (
     <div className={cn("flex flex-col items-start gap-2", className)}>
-      <GateWords {...words} />
+      <GateWords line={words.line} provisional={words.provisional} title={words.title} />
 
       {(wayOn || action) && (
         <div className="flex flex-wrap gap-2">
@@ -163,6 +167,10 @@ function useCapWords(limit: HelpLimit, titles: CapTitles): LimitWords {
 
   if (limit.tier === "guest") {
     return { title: titles.guest };
+  }
+
+  if (comesBack.opened) {
+    return { line: comesBack.line, opened: true };
   }
 
   return { ...comesBack, title: isRollingCap(limit) ? titles.rolling : titles.day };
@@ -217,7 +225,7 @@ export function useLessonLimitWords(limit: LessonLimit): LimitWords {
     rolling: t("You've used your free lessons"),
   });
 
-  return ready ? { title: t("Your next free lesson is ready") } : words;
+  return ready ? { opened: true, title: t("Your next free lesson is ready") } : words;
 }
 
 function useMindMapRefusalWords(limit: MindMapLimit): LimitWords {
@@ -308,8 +316,13 @@ export function CallLimitNotice({
   ...props
 }: LimitNoticeProps & { limit: CallLimit; title?: string }) {
   const reached = toCapLimit(limit);
+  const comesBack = useComesBackLine(reached);
 
   return (
-    <LimitNoticeBody {...props} limit={reached} words={{ ...useComesBackLine(reached), title }} />
+    <LimitNoticeBody
+      {...props}
+      limit={reached}
+      words={{ ...comesBack, title: comesBack.opened ? undefined : title }}
+    />
   );
 }
