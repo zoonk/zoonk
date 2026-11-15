@@ -927,6 +927,7 @@ private fun ActionBar(
         OutlinedButton(
             onClick = { step?.let { actions.dontKnow(it.id) } },
             modifier = modifier,
+            leadingIcon = { ButtonIcon(R.drawable.ic_help) },
         ) { Text(stringResource(R.string.player_dont_know_yet)) }
     }
 
