@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.memory
 
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ANA
 import com.zoonk.android.data.ApiError
@@ -160,7 +161,7 @@ class MemoryStoreTest {
         runTest {
             Dispatchers.setMain(StandardTestDispatcher(testScheduler))
             try {
-                val screen = MemoryViewModel(loadedStore()) { null }
+                val screen = MemoryViewModel(loadedStore(), { null }, SavedStateHandle())
                 api.gate = CompletableDeferred()
 
                 screen.openEdit(FACT_ID)
@@ -187,11 +188,33 @@ class MemoryStoreTest {
         }
 
     @Test
+    fun anOpenEditComesBackAfterTheProcessIsReclaimedWithoutItsSave() =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            try {
+                val store = loadedStore()
+                val handle = SavedStateHandle()
+                val screen = MemoryViewModel(store, { null }, handle)
+                api.failure = ApiException(ApiError.Unavailable, "INTERNAL_ERROR", 500)
+
+                screen.openEdit(FACT_ID)
+                screen.saveEdit("Studies before work")
+                advanceUntilIdle()
+                val restored =
+                    MemoryViewModel(store, { null }, SavedStateHandle.createHandle(handle.savedStateProvider().saveState(), null))
+
+                assertEquals(FactEdit(FACT_ID), restored.factEdit)
+            } finally {
+                Dispatchers.resetMain()
+            }
+        }
+
+    @Test
     fun aFailedEditStaysOpenToTryAgain() =
         runTest {
             Dispatchers.setMain(StandardTestDispatcher(testScheduler))
             try {
-                val screen = MemoryViewModel(loadedStore()) { null }
+                val screen = MemoryViewModel(loadedStore(), { null }, SavedStateHandle())
                 api.failure = ApiException(ApiError.Unavailable, "INTERNAL_ERROR", 500)
 
                 screen.openEdit(FACT_ID)
@@ -271,7 +294,7 @@ class MemoryStoreTest {
         runTest {
             Dispatchers.setMain(StandardTestDispatcher(testScheduler))
             try {
-                val screen = MemoryViewModel(loadedStore()) { null }
+                val screen = MemoryViewModel(loadedStore(), { null }, SavedStateHandle())
                 api.failure = ApiException(ApiError.Network)
 
                 // No page shows while the download is out, as when the window is recreated.
@@ -290,7 +313,7 @@ class MemoryStoreTest {
         runTest {
             Dispatchers.setMain(StandardTestDispatcher(testScheduler))
             try {
-                val screen = MemoryViewModel(loadedStore()) { null }
+                val screen = MemoryViewModel(loadedStore(), { null }, SavedStateHandle())
                 api.gate = CompletableDeferred()
                 api.failure = ApiException(ApiError.Network)
 
