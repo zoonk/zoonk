@@ -76,6 +76,7 @@ import com.zoonk.android.ui.components.LessonSummaries
 import com.zoonk.android.ui.components.LessonSummary
 import com.zoonk.android.ui.components.ListedLesson
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.MistakeAnswer
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PageLoading
@@ -442,7 +443,7 @@ private fun UnitReference(
                         stringResource(R.string.language_unit_grammar_tips),
                         expanded = "tips" in expanded,
                         onExpandedChange = { expanded.show("tips", it) },
-                        leading = { Icon(painterResource(R.drawable.ic_menu_book), contentDescription = null) },
+                        leading = { MarkIcon(R.drawable.ic_menu_book) },
                         count = unit.grammarTips.size,
                     ) {
                         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -464,7 +465,7 @@ private fun UnitReference(
                         stringResource(R.string.language_unit_words),
                         expanded = "words" in expanded,
                         onExpandedChange = { expanded.show("words", it) },
-                        leading = { Icon(painterResource(R.drawable.ic_translate), contentDescription = null) },
+                        leading = { MarkIcon(R.drawable.ic_translate) },
                         count = unit.words.count.toInt(),
                     ) {
                         val sample = unit.words.sample.factsLine()
@@ -489,7 +490,7 @@ private fun UnitReference(
                         stringResource(R.string.language_unit_summary),
                         expanded = "summary" in expanded,
                         onExpandedChange = { expanded.show("summary", it) },
-                        leading = { Icon(painterResource(R.drawable.ic_checklist), contentDescription = null) },
+                        leading = { MarkIcon(R.drawable.ic_checklist) },
                     ) { LessonSummaries(unit.summaries.map { LessonSummary(it.title, it.ideas) }) }
                 }
             }

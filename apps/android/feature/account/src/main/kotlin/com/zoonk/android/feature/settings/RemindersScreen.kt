@@ -54,6 +54,7 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.TimeOfDayDialog
@@ -304,7 +305,7 @@ private fun PushRows(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             },
-            leading = { Icon(painterResource(R.drawable.ic_notifications_off), contentDescription = null) },
+            leading = { MarkIcon(R.drawable.ic_notifications_off) },
             trailing = {
                 OutlinedButton(onClick = context::openNotificationSettings, size = ButtonSize.Small) {
                     Text(stringResource(R.string.reminders_open_settings))

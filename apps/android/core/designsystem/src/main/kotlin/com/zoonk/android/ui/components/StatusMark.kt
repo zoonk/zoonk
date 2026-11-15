@@ -1,15 +1,18 @@
 package com.zoonk.android.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
@@ -110,6 +113,26 @@ fun markSize(): Dp =
         MaterialTheme.typography.bodyLarge.lineHeight
             .toDp()
     }
+
+/**
+ * How much a glyph beside words grows with the text size: as a mark's line does, 1 at the default size and about
+ * 1.5 at 200%. Every row mark, row end glyph and button glyph takes it, so none stays small beside larger words.
+ */
+@Composable
+fun glyphScale(): Float = markSize() / MaterialTheme.typography.bodyLarge.lineHeight.value.dp
+
+/** A row's mark drawn from a Material Symbol: [size] at the default text size, growing with the text as every mark does. */
+@Composable
+fun MarkIcon(
+    @DrawableRes id: Int,
+    modifier: Modifier = Modifier,
+    size: Dp = MARK_ICON_SIZE,
+    tint: Color = LocalContentColor.current,
+) {
+    Icon(painterResource(id), contentDescription = null, modifier = modifier.size(size * glyphScale()), tint = tint)
+}
+
+private val MARK_ICON_SIZE = 24.dp
 
 internal fun Modifier.markSemantics(contentDescription: String?): Modifier =
     clearAndSetSemantics {

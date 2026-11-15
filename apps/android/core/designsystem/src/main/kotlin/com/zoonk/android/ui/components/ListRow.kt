@@ -101,6 +101,7 @@ fun ListRow(
             else -> stateDescription ?: openWords
         }
     val keepsSlot = chevronSpace && !chevron && expanded == null && trailing == null
+    val endSlot = END_SLOT * glyphScale()
     val ink = MaterialTheme.colorScheme.onSurface
     val quiet = MaterialTheme.colorScheme.onSurfaceVariant
     val interaction = remember { MutableInteractionSource() }
@@ -112,7 +113,7 @@ fun ListRow(
                     LayoutPart.LIST,
                     LayoutPart.Part.Row,
                     // A row keeping an empty end slot ends its value where the slot starts.
-                    endInset = if (keepsSlot) LIST_ITEM_INSET + END_SLOT + LEADING_GAP else LIST_ITEM_INSET,
+                    endInset = if (keepsSlot) LIST_ITEM_INSET + endSlot + LEADING_GAP else LIST_ITEM_INSET,
                     firstLine = leadOnFirstLine,
                 ).fillMaxWidth()
                 .heightIn(min = MIN_HEIGHT)
@@ -225,7 +226,7 @@ fun ListRow(
 
         when {
             chevron -> OnFirstLine(firstLineBox) { BusyContent(busy) { ListRowChevron() } }
-            keepsSlot -> Spacer(Modifier.width(END_SLOT))
+            keepsSlot -> Spacer(Modifier.width(endSlot))
         }
     }
 }
@@ -255,18 +256,22 @@ fun ListRowChevron() {
 
 /**
  * A row's end glyph in main's 16dp slot, its ink on the slot's end: the drawables are cut to their ink, so
- * the value before a chevron ends where the value before a fold arrow, or before an empty slot, does.
+ * the value before a chevron ends where the value before a fold arrow, or before an empty slot, does. Slot and
+ * glyph grow with the text as the row's mark does ([glyphScale]).
  */
 @Composable
 private fun EndGlyph(
     @DrawableRes glyph: Int,
     tint: Color,
 ) {
-    Box(Modifier.width(END_SLOT), contentAlignment = Alignment.CenterEnd) {
+    val painter = painterResource(glyph)
+    val scale = glyphScale()
+    val size = with(LocalDensity.current) { painter.intrinsicSize.toDpSize() } * scale
+    Box(Modifier.width(END_SLOT * scale), contentAlignment = Alignment.CenterEnd) {
         Icon(
-            painterResource(glyph),
+            painter,
             contentDescription = null,
-            modifier = Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.End),
+            modifier = Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.End).size(size),
             tint = tint,
         )
     }

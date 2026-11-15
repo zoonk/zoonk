@@ -19,7 +19,7 @@
   "missions_mock": "6f04b7c7f8e4f68f735c3b56d10dc97b719c4bcd3d383478f7ffe99bd451aa3f",
   "missions_moment_all_done": "2672ea2d2050a67da62c828174c9033838950cf9dec0013738c25815e634cdf5",
   "missions_moment_done": "faca9abfd855ecc683b7755ee495c75aefe625bc034bbafa0924270578f3e23d",
-  "missions_moment_more": "386b3ea51aeef0db69f5348a67a64f264211744efe6b57ea8c65acf876c08790",
+  "missions_moment_more": "d6ab1e107ba852ce933a92a081194e63fc8e1f50ce6b52d615d3daafb358b003",
   "missions_moment_one_done": "8b2a81c9601e7fd4c2a5c0dbc7d16e4ff7141cb6496fa09057c754c7a678d885",
   "missions_open_buddy": "3d1524d1aab9c1c97ae44f5ccb1e1e82fa46a713c9c192e6e6cb3ae07385e93a",
   "missions_open_call": "decc31f5b3c8bb7c3eb66bb7320fa78fcf0661697d52247432fa0c4a0af00f1f",
@@ -57,9 +57,8 @@
     <plurals name="missions_moment_done">
         <item quantity="other">미션 %d개 완료!</item>
     </plurals>
-    <!-- %1$d is how many missions are left, %2$s the day's bonus, such as 50. -->
     <plurals name="missions_moment_more">
-        <item quantity="other">미션 %1$d개 더 완료하면 두뇌력 +%2$s</item>
+        <item quantity="other">미션 %1$d개 더 끝내면 두뇌력 +%2$s</item>
     </plurals>
     <string name="missions_just_done">방금 완료</string>
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->

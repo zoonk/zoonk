@@ -4,7 +4,6 @@ import {
   type MindMapAllowanceStop,
   type MindMapCreateOffer,
 } from "@zoonk/core/mind-maps/contract";
-import { receivedAtOf } from "../../_components/comes-back-words";
 import { type MindMapLimit } from "../../_components/help-limit-notice";
 import { type MindMapTab } from "./mind-map-urls";
 
@@ -111,6 +110,27 @@ export function startsNoMap({ startable, stop }: MindMapCreateOffer): boolean {
   return startable === 0 && stop !== null;
 }
 
+/** A row's refusal that every other row would get too: the maps or the day's AI spend ran out, or a guest needs an account. */
+export function toPageStop(limit: MindMapLimit): MindMapAllowanceStop | null {
+  if (limit.status === "signUpRequired") {
+    return { availableAt: null, period: null, reason: "signUpRequired", resource: null };
+  }
+
+  if (
+    limit.status !== "limitReached" ||
+    (limit.resource !== "mindMap" && limit.resource !== "aiSpend")
+  ) {
+    return null;
+  }
+
+  return {
+    availableAt: limit.period === "rolling30Days" ? limit.availableAt : null,
+    period: limit.period ?? "day",
+    reason: "limitReached",
+    resource: limit.resource,
+  };
+}
+
 export function toMindMapLimit({
   now,
   stop,
@@ -133,13 +153,6 @@ export function toMindMapLimit({
   const resource = stop.resource ?? undefined;
 
   return stop.period === "rolling30Days"
-    ? {
-        availableAt: stop.availableAt,
-        period: stop.period,
-        receivedAt: receivedAtOf(stop),
-        resource,
-        status: "limitReached",
-        tier,
-      }
+    ? { availableAt: stop.availableAt, period: stop.period, resource, status: "limitReached", tier }
     : { period: stop.period ?? "day", resource, status: "limitReached", tier };
 }

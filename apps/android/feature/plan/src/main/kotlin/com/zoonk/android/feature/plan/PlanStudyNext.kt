@@ -12,6 +12,7 @@ import com.zoonk.android.feature.catalog.courseLevelName
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -66,7 +67,7 @@ internal fun StudyNextSuggestion(
                     ListRow(
                         headline = { Text(course.title) },
                         onClick = { links.course(course.courseId.toString()) },
-                        leading = { Icon(painterResource(R.drawable.ic_library_books), contentDescription = null) },
+                        leading = { MarkIcon(R.drawable.ic_library_books) },
                     )
                 }
             }

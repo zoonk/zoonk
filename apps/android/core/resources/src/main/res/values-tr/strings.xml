@@ -10,6 +10,7 @@
   "belt_gray": "52c511c0a44dbc07cf431f530b367dde3e451e1f0f1131c1b0466ab49b0abe75",
   "belt_green": "68aae7beeb08f85b7e70c21a0299e968ff06ddfad0974b191d14061ecba7416c",
   "belt_level": "995f1d61aa15f45070a53a3c2510b8ed8dfd96bece3d9ad2880d59500974cc40",
+  "belt_level_words": "c723e84ad6679cd9758ef2ad4876e7f0d80d429df81e95991d5555e789c0362d",
   "belt_orange": "f932d10bc6bf3e097284d33a8d07f4498c1d7bbba698eb85a51bf369198393c6",
   "belt_purple": "da6577421cdc7b9a003e2808d0fa747fdd724ab567524a6942c44fee98c0ddde",
   "belt_red": "c35949a8133967e3fa6453781f5339467bb536f427c46932d7835b1dfd9cd056",
@@ -120,6 +121,7 @@
     <string name="belt_black">Siyah kuşak</string>
     <!-- A belt and its number from 1 to 10, such as White belt 4. %1$s is the belt's name. -->
     <string name="belt_level">%1$s %2$s</string>
+    <string name="belt_level_words">Seviye %1$s</string>
     <string name="answer_tag_correct">Doğru</string>
     <string name="answer_tag_your_answer">Cevabın</string>
     <string name="answer_tag_your_guess">Tahminin</string>

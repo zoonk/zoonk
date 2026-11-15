@@ -70,7 +70,7 @@ fun QuietDisclosure(
             Icon(
                 painter = painterResource(R.drawable.ic_expand_more),
                 contentDescription = null,
-                modifier = Modifier.size(16.dp).rotate(if (open) 180f else 0f),
+                modifier = Modifier.size(16.dp * glyphScale()).rotate(if (open) 180f else 0f),
                 tint = muted,
             )
         }

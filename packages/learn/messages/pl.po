@@ -397,6 +397,26 @@ msgid "You've used your mock exams"
 msgstr "Wykorzystano limit egzaminów próbnych"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "TPgNQb"
+msgid "No more questions today"
+msgstr "Wykorzystano dzienny limit pytań"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "GYGZpe"
+msgid "You've used your questions"
+msgstr "Wykorzystano limit pytań"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "aw2Ukw"
+msgid "No more material today"
+msgstr "Wykorzystano dzienny limit materiałów"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "g0Nshd"
+msgid "You've used your uploads"
+msgstr "Wykorzystano limit przesyłania plików"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
 msgstr "Dzisiejszy limit wykorzystany"
@@ -7184,6 +7204,11 @@ msgid "Chapter maps"
 msgstr "Mapy rozdziałów"
 
 #: src/mind-maps/mind-maps-screen.tsx
+msgctxt "e39t_E"
+msgid "No chapter maps yet."
+msgstr "Nie ma jeszcze map rozdziałów."
+
+#: src/mind-maps/mind-maps-screen.tsx
 msgctxt "sI50Mb"
 msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "Nie ma jeszcze map rozdziałów. Każdy ukończony rozdział ma swoją mapę."
@@ -8729,16 +8754,6 @@ msgid "You picked {answer}"
 msgstr "Twój wybór: {answer}"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "aw2Ukw"
-msgid "No more material today"
-msgstr "Wykorzystano dzienny limit materiałów"
-
-#: src/onboarding/entry/attach-panel.tsx
-msgctxt "g0Nshd"
-msgid "You've used your uploads"
-msgstr "Wykorzystano limit przesyłania plików"
-
-#: src/onboarding/entry/attach-panel.tsx
 msgctxt "yeNv9c"
 msgid "You're adding material quickly. Try again in a few minutes."
 msgstr "Dodajesz materiały w szybkim tempie. Spróbuj ponownie za kilka minut."
@@ -9049,16 +9064,6 @@ msgstr "Co chcesz zrobić?"
 msgctxt "AkPJMI"
 msgid "What you want to do with your material"
 msgstr "Co chcesz zrobić ze swoimi materiałami"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "TPgNQb"
-msgid "No more questions today"
-msgstr "Wykorzystano dzienny limit pytań"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "GYGZpe"
-msgid "You've used your questions"
-msgstr "Wykorzystano limit pytań"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "KIdIMi"

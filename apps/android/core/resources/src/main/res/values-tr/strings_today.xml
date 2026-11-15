@@ -67,6 +67,7 @@
   "today_notice_suggested_goal": "d48d8f80025bfa564170580537cb5d1e4c7d60d3eb8628e613a4ba50853ee9f7",
   "today_open_failed": "f23a78cfefafdd9b24d216237d7723f4f7164e7bb1afb67417e76e393490a385",
   "today_pace_lessons_to_catch_up": "65ebf8709dde91b96e182b1b3808552dafb9ac2339d6de55bb473a479bcc5d92",
+  "today_past_date_exam_left": "e3888c3a637c915c152dba9b9c302ab0663400b8c9feeb2638dde868fc862b89",
   "today_paused_detail": "7fa41a15cd163617829778a562399027e83556b5239e826f3268157b85af6d42",
   "today_paused_goal": "48dd9cc83f07d28efe2f7de45e53e1f60f0b0764e6344db429c1ec99520f5430",
   "today_paused_this_goal": "bcbd6bcb4596960cf7caa2616466fbca882da39d3b9f5966c9bf42672ee76068",
@@ -330,6 +331,10 @@
     <string name="today_choose_focus">Neye odaklanacağını seç</string>
     <string name="today_study_everything">Tüm konulara çalış</string>
     <string name="today_keep_studying_after_exam">Sınavdan sonra çalışmaya devam et</string>
+    <plurals name="today_past_date_exam_left">
+        <item quantity="one">%d dersin kaldı. Çalışmaya devam etmek mi, yoksa bu hedefi arşivlemek mi istersin?</item>
+        <item quantity="other">%d dersin kaldı. Çalışmaya devam etmek mi, yoksa bu hedefi arşivlemek mi istersin?</item>
+    </plurals>
     <string name="today_missed_days_title">Birkaç gün ara verdin</string>
     <!-- Keeps the learner's time a day as it is. -->
     <string name="today_keep_my_time">Günlük süreni koru</string>

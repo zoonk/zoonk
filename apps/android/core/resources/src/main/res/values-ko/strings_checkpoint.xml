@@ -13,6 +13,7 @@
   "checkpoint_finishing": "46940bd2663ef633dc78bc97f8eb0b79cea857dfacdb7decd73f401f98c8aed3",
   "checkpoint_held": "a32b878fd7db5a5918e4b76c97bf7067558547d48026892339955f3e257138f5",
   "checkpoint_lost_line": "453d3cd330de36c55b4610ea7b08148acf7e1d93bebd1926af61f17265a3dc95",
+  "checkpoint_needed_to_win": "bbcefb45fa7beeb3656b399fdd82140fbc5b5d546b85e0b51e6b0bbe64874c1d",
   "checkpoint_new_try_next": "71ee6f7ab7ff0e45f4a792cdc557de9c3e2c21584faa225bd947a3fee55c6f5a",
   "checkpoint_new_try_tomorrow": "0b088ec25e517c1ef53554b362ca6cde25b59586f4d2d7cdd6fe6e13512f6dff",
   "checkpoint_next": "b8ed60dc80b65558862c9505f372315494b92456434465e58e941a6695b801dd",
@@ -40,7 +41,6 @@
   "checkpoint_review": "e1ad8dd0f557642b6d6ba6cb4162cf335294d0cc227cfc96a28f60f51cc1f7a1",
   "checkpoint_rewards": "98cb8dc69e3c5b003344abf539ffe374242f0b299b227a16be5f351f77ffdebe",
   "checkpoint_right_to_win": "75b559cb7c2c3e24a205b8631f9561a4a89e28d5983d1ce254096d54090d62a8",
-  "checkpoint_right_to_win_of": "e97dae61534c06516ed49050abf584be84e365f2718d3e84fbc2f86be9de936b",
   "checkpoint_see_result": "c668a23baf2c237f7970c6377ddbabfd9ae0eba755b02a288ab60b00057f04cf",
   "checkpoint_shield": "ae9dcae1a43b9330aab9f5321f289c404c9b078c3302df2614c5de070b12d34f",
   "checkpoint_shield_value": "bfef6cb0d9937922ff80cfc08f28712a6b54487a6cb2815855c56f048c84637c",
@@ -108,9 +108,8 @@
     <string name="checkpoint_weekly_done">주간 챌린지 완료</string>
     <string name="checkpoint_beat">트릭스터를 이겼어요!</string>
     <string name="checkpoint_not_this_time">이번엔 아쉬워요</string>
-    <!-- %1$d right answers were needed out of %2$d questions. -->
-    <plurals name="checkpoint_right_to_win_of">
-        <item quantity="other">%1$d/%2$d문제를 맞히면 승리</item>
+    <plurals name="checkpoint_needed_to_win">
+        <item quantity="other">이기려면 %d개를 맞혀야 했어요.</item>
     </plurals>
     <string name="checkpoint_rewards">보상</string>
     <!-- %1$s is the phase's number. -->

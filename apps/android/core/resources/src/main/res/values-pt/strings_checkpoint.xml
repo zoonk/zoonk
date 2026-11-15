@@ -13,6 +13,7 @@
   "checkpoint_finishing": "06a326da61b879a40470cb4e458ddac98d3dcfb3268785b61a8c3a644af21d82",
   "checkpoint_held": "ad60b103ce7757e7f12d8369200f8018d56a97b126476d3170a5ad49d6a99f01",
   "checkpoint_lost_line": "5ec0583cf8fe526d46c25b3b109e70a0e10e99bb97fb18a1e122fc5a6f73eb45",
+  "checkpoint_needed_to_win": "8af32e5c5bdc5ff48ac3399165ddc32aaac2554ee2f555999184a1eb2c3107b7",
   "checkpoint_new_try_next": "25842898b475edffddb70c5f565adb2bec5baadd219713d2e816a8a74031e54e",
   "checkpoint_new_try_tomorrow": "ef9efe2e25c660af0d4c3cc50b7e4cb09a613d43dae2c72824ff980276ef722f",
   "checkpoint_next": "4e470161301a674e7a478297c7603e2561b90a6299ce7d6129e1ef4d2cb7bdfd",
@@ -40,7 +41,6 @@
   "checkpoint_review": "c9b50f228e0bd7ef299c0d41f595bc11289d3774f452347f9cd8e02fecd0180b",
   "checkpoint_rewards": "284e88905170e98451fa4bca5cc6ff191d702b0a9a32a3b32fb4e44ef6a283bb",
   "checkpoint_right_to_win": "7c78200d030e22e1d012cd133ba25fb6bfb0dbf52947e056ec89b3145dacf604",
-  "checkpoint_right_to_win_of": "1969096eab51ac189a24bf925d36131eb8821e6341c58281fa2223c4b80e8d46",
   "checkpoint_see_result": "f499877dea627a3689505d031f1955f2b677bb5dda204d3744bf89823b66c834",
   "checkpoint_shield": "7e57f3d8c621a1306b09e40a9cc2734b0175062318f69c62d7eba01b5f790765",
   "checkpoint_shield_value": "98a0134dabcaec7e1aa47c84d172d25c01d4bcd2ef34989022ede98632999679",
@@ -120,11 +120,10 @@
     <string name="checkpoint_weekly_done">Desafio semanal concluído</string>
     <string name="checkpoint_beat">Você venceu o Pegadinha!</string>
     <string name="checkpoint_not_this_time">Não foi dessa vez</string>
-    <!-- %1$d right answers were needed out of %2$d questions. -->
-    <plurals name="checkpoint_right_to_win_of">
-        <item quantity="one">Acertar %1$d de %2$d para vencer</item>
-        <item quantity="many">Acertar %1$d de %2$d para vencer</item>
-        <item quantity="other">Acertar %1$d de %2$d para vencer</item>
+    <plurals name="checkpoint_needed_to_win">
+        <item quantity="one">Você precisava de %d acerto para vencer.</item>
+        <item quantity="many">Você precisava de %d acertos para vencer.</item>
+        <item quantity="other">Você precisava de %d acertos para vencer.</item>
     </plurals>
     <string name="checkpoint_rewards">Recompensas</string>
     <!-- %1$s is the phase's number. -->

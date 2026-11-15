@@ -62,6 +62,7 @@
   "session_summary_done_for_now": "9e65d68d045d5acd6e23683d422a96795ff7516307bde988f71a62897a9953f9",
   "session_summary_done_in": "742c8767dff1b805e619ffb50b6303a40f70f4892b972ce20f767edb2cf56c81",
   "session_summary_done_under_minute": "3b4d7c1924f05af1e4399a8110f2f6f35b3729160d7ca0a5bec0a575a897fa48",
+  "session_summary_down_from": "64a6ddc91882b7670340e2b488a9212a4a7fb91ca1e5c7238be81c83d2d1310d",
   "session_summary_earned_today": "84b5fb7a8a88040f7ebacdeb9f8559f2724116894a5dd82246e961f0743095d4",
   "session_summary_eyebrow": "4012c17799d6107b2bba005326dc0bc65ae7f5beb20f9573a58575564f445cf8",
   "session_summary_finish": "2d9f68e5e0c28f97c8481ea5e3faf7d2cafe105d8f8e8f47b1ee67ed95be6c55",
@@ -83,6 +84,7 @@
   "session_summary_streak": "192e1b67ead74c700256aa463c86ace5c7c1e5175b1d92ff4ee64b040d7e9171",
   "session_summary_to_review": "5cb84e221cba334838e17dbe71c7d58b086813b86eb7cb1899aac0eac802759a",
   "session_summary_tomorrow": "cb3e610d0b67c4244b1a74a93e41808a7dc61b56011c65f2605996d46f77dbba",
+  "session_summary_up_from": "d09c800dd1e37d1ae15b4868e166935442018f841a11ce790359e912f8d59bf1",
   "session_topics_and_more": "5e327e54fbfea5e59ea95f817db652d11f41be979ecfdaaa85ccb0c5665b1660"
 }
 -->
@@ -156,6 +158,8 @@
     <string name="session_summary_brain_power">脳力</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>
+    <string name="session_summary_up_from">前回の%1$sから上昇</string>
+    <string name="session_summary_down_from">前回の%1$sから低下</string>
     <string name="session_summary_skills_rose">習熟度が上がったスキル</string>
     <string name="session_summary_tomorrow">明日</string>
     <string name="session_summary_earned_today">今日の獲得報酬</string>

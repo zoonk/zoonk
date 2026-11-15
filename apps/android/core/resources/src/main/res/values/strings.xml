@@ -40,6 +40,7 @@
     <string name="belt_black">Black belt</string>
     <!-- A belt and its number from 1 to 10, such as White belt 4. %1$s is the belt's name. -->
     <string name="belt_level">%1$s %2$s</string>
+    <string name="belt_level_words">Level %1$s</string>
     <string name="answer_tag_correct">Correct</string>
     <string name="answer_tag_your_answer">Your answer</string>
     <string name="answer_tag_your_guess">Your guess</string>

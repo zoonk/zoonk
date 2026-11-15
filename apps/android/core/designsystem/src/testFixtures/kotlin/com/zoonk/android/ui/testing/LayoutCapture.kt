@@ -533,6 +533,8 @@ internal object LayoutCapture {
          * For text in a script with no capitals (Han, kana, Hangul), the box its glyphs are drawn in: a full-frame
          * glyph ("国", or "국" for Hangul) laid out through the text's own typeface and its fallback, the face that
          * drew it, as main's reader does. Its top and bottom from the baseline, in dp; null for any other text.
+         * A row's mark a dp off this box is a lead, not a fault: rows center their mark on the label's line box in
+         * every script, and the JVM's fallback face isn't the one a device draws with.
          */
         private fun ideographicFace(layout: TextLayoutResult): Pair<Float, Float>? {
             val text = layout.layoutInput.text.text

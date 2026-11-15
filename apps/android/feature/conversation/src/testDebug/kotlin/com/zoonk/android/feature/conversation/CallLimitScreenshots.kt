@@ -1,14 +1,16 @@
 package com.zoonk.android.feature.conversation
 
 import androidx.activity.ComponentActivity
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.compose.ui.test.onLast
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.HeldRuns
 import com.zoonk.android.feature.livecall.LiveCallFailure
@@ -63,7 +65,11 @@ class CallLimitScreenshots {
     @Config(qualifiers = TABLET)
     fun tablet() = shots("tablet")
 
+    /** A test sets its content once, so each state is shown by swapping what that content draws. */
+    private var shown by mutableStateOf<Pair<String, @Composable () -> Unit>>("" to {})
+
     private fun shots(size: String) {
+        compose.setContent { ZoonkTheme { key(shown.first) { shown.second() } } }
         sheet("practice-call-sheet-$size", practiceCall())
         sheet("practice-call-sheet-free-limit-$size", practiceCall(limit = limit("free", later)))
         sheet("practice-call-sheet-guest-limit-$size", practiceCall(limit = """{"availableAt":null,"period":"total","tier":"guest"}"""))
@@ -80,38 +86,31 @@ class CallLimitScreenshots {
 
     private val later = Instant.now().plus(9, ChronoUnit.DAYS)
 
+    /**
+     * The sheet's content on a surface: Robolectric copies only the activity's window, so a sheet's own window
+     * would come out as the page behind it.
+     */
     private fun sheet(
         name: String,
         call: LanguagePracticeCall,
-    ) {
-        compose.setContent {
-            ZoonkTheme {
-                PracticeConversation(
-                    call = call,
-                    chapterId = UUID.fromString("00000000-0000-4000-8000-0000000000a1"),
-                    goalId = null,
-                    start = callStarter(HeldRuns()) { CallStart.Failed },
-                    open = {},
-                )
-            }
+    ) = screen(name) {
+        Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
+            PracticeCallSheetContent(
+                call = call,
+                chapterId = UUID.fromString("00000000-0000-4000-8000-0000000000a1"),
+                goalId = null,
+                start = callStarter(HeldRuns()) { CallStart.Failed },
+                open = {},
+                state = rememberPracticeCallState(call.defaultMinutes),
+            )
         }
-        compose.onNodeWithText("Practice a conversation").performClick()
-        compose.waitForIdle()
-        write(
-            name,
-            compose
-                .onAllNodes(isRoot())
-                .onLast()
-                .captureRender()
-                .asAndroidBitmap(),
-        )
     }
 
     private fun screen(
         name: String,
         content: @Composable () -> Unit,
     ) {
-        compose.setContent { ZoonkTheme { content() } }
+        shown = name to content
         compose.waitForIdle()
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }

@@ -397,6 +397,26 @@ msgid "You've used your mock exams"
 msgstr "模試の利用上限に達しました"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "TPgNQb"
+msgid "No more questions today"
+msgstr "今日の問題数の上限に達しました"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "GYGZpe"
+msgid "You've used your questions"
+msgstr "問題数の上限に達しました"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "aw2Ukw"
+msgid "No more material today"
+msgstr "今日はこれ以上資料を追加できません"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "g0Nshd"
+msgid "You've used your uploads"
+msgstr "アップロードの上限に達しました"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
 msgstr "今日の利用上限に達しました"
@@ -7184,6 +7204,11 @@ msgid "Chapter maps"
 msgstr "章のマップ"
 
 #: src/mind-maps/mind-maps-screen.tsx
+msgctxt "e39t_E"
+msgid "No chapter maps yet."
+msgstr "章のマップはまだありません。"
+
+#: src/mind-maps/mind-maps-screen.tsx
 msgctxt "sI50Mb"
 msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "章のマップはまだありません。章を終えるたびに作成されます。"
@@ -8729,16 +8754,6 @@ msgid "You picked {answer}"
 msgstr "「{answer}」を選びました"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "aw2Ukw"
-msgid "No more material today"
-msgstr "今日はこれ以上資料を追加できません"
-
-#: src/onboarding/entry/attach-panel.tsx
-msgctxt "g0Nshd"
-msgid "You've used your uploads"
-msgstr "アップロードの上限に達しました"
-
-#: src/onboarding/entry/attach-panel.tsx
 msgctxt "yeNv9c"
 msgid "You're adding material quickly. Try again in a few minutes."
 msgstr "短時間に資料が続けて追加されています。数分後にもう一度お試しください。"
@@ -9049,16 +9064,6 @@ msgstr "何をしたいですか？"
 msgctxt "AkPJMI"
 msgid "What you want to do with your material"
 msgstr "資料を使ってやりたいこと"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "TPgNQb"
-msgid "No more questions today"
-msgstr "今日の問題数の上限に達しました"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "GYGZpe"
-msgid "You've used your questions"
-msgstr "問題数の上限に達しました"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "KIdIMi"
