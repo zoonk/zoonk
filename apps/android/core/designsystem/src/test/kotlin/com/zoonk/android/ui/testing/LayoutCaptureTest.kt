@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -241,6 +242,28 @@ class LayoutCaptureTest {
             }.part("label")
 
         assertTrue(label.get("ink") is JSONArray)
+    }
+
+    /** RV39 A2: what covers the words, varied or partial, is never their ink. */
+    @Test
+    fun wordsUnderAGradientOrHalfCoveredHaveNoInk() {
+        val labels =
+            capture {
+                Box {
+                    ListRow(headline = { Text("Hidden by gradient", Modifier.fillMaxWidth()) })
+                    Box(Modifier.fillMaxWidth().height(80.dp).background(Brush.verticalGradient(listOf(Color.Blue, Color.Red))))
+                }
+                Box {
+                    ListRow(headline = { Text("Only half the label is visible") })
+                    Box(Modifier.fillMaxWidth(0.2f).height(80.dp).background(Color.Blue))
+                }
+            }.elements().filter { it.getString("part") == "label" }
+
+        assertEquals(2, labels.size)
+        labels.forEach { label ->
+            assertEquals(label.getString("text"), NOT_MEASURED, label.getString("ink"))
+            assertTrue(label.get("lineBounds") is JSONArray)
+        }
     }
 
     private fun capture(content: @androidx.compose.runtime.Composable () -> Unit): JSONArray {

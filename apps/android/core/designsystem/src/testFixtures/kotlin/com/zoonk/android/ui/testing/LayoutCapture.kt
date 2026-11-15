@@ -5,6 +5,10 @@ import android.graphics.Bitmap
 import android.view.View
 import android.view.WindowManager
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.isSpecified
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.LayoutInfo
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.semantics.SemanticsActions
@@ -383,11 +387,12 @@ internal object LayoutCapture {
                 val laidOut = listOf(left, top, lines.maxOf { it[0] + it[2] } - left, lines.maxOf { it[1] + it[3] } - top)
                 // Where the paragraph's lines are laid out: real layout, whether or not anyone can see them.
                 fields["lineBounds"] = laidOut
-                // Ink only once the lines are seen: no line past what shows of its text's box, and the
-                // picture shows something there (an opaque sibling over the row leaves nothing to see).
+                // Ink only once the lines are seen: no line past what shows of its text's box, and the picture
+                // shows each line in the text's own color (what covers it, varied or not, is no evidence).
                 val textClipped = texts.any { (each, result) -> !linesShown(each, result) }
                 if (textClipped) fields["clipped"] = true
-                fields["ink"] = if (!textClipped && ink(laidOut) is List<*>) laidOut else NOT_MEASURED
+                val seen = !textClipped && texts.all { (each, result) -> drawnInItsColor(each, result) }
+                fields["ink"] = if (seen) laidOut else NOT_MEASURED
                 val y =
                     (
                         text.layoutInfo.coordinates
@@ -526,6 +531,59 @@ internal object LayoutCapture {
                     x + layout.getLineRight(line) <= shown.right + HALF_PIXEL &&
                     origin.y + layout.getLineTop(line) >= shown.top - HALF_PIXEL &&
                     origin.y + layout.getLineBottom(line) <= shown.bottom + HALF_PIXEL
+            }
+        }
+
+        /**
+         * Each of [layout]'s lines shows pixels of the text's own resolved colors (its style's and its spans'),
+         * from near its start to near its end: words under a cover, partly or wholly, or the color of what's
+         * behind them, aren't shown. A text drawn with a brush, or dimmed by its parent so no pixel is its
+         * color, can't be shown this way.
+         */
+        private fun drawnInItsColor(
+            text: SemanticsNode,
+            layout: TextLayoutResult,
+        ): Boolean {
+            val style = layout.layoutInput.style
+            if (style.brush != null || !style.color.isSpecified) return false
+            val colors =
+                listOf(style.color) +
+                    layout.layoutInput.text.spanStyles
+                        .map { it.item.color }
+                        .filter { it.isSpecified }
+            val origin = text.layoutInfo.coordinates.positionInRoot()
+            val x = origin.x + alignmentShift(layout)
+            val reach = with(layout.layoutInput.density) { style.fontSize.toPx() } * LINE_END_REACH
+            return (0 until layout.lineCount).all { line ->
+                val left = (x + layout.getLineLeft(line)).roundToInt().coerceAtLeast(0)
+                val right = (x + layout.getLineRight(line)).roundToInt().coerceAtMost(bitmap.width)
+                val top = (origin.y + layout.getLineTop(line)).roundToInt().coerceAtLeast(0)
+                val bottom = (origin.y + layout.getLineBottom(line)).roundToInt().coerceAtMost(bitmap.height)
+                // A line with no width (an empty one) has nothing to show; one the picture can't hold isn't shown.
+                if (right - left < 1) return@all layout.getLineRight(line) <= layout.getLineLeft(line)
+                if (bottom - top < 2) return@all false
+                val width = right - left
+                val pixels = IntArray(width * (bottom - top))
+                bitmap.getPixels(pixels, 0, width, left, top, width, bottom - top)
+                val edge = (0 until width).map { pixels[it] } + (0 until width).map { pixels[pixels.size - width + it] }
+                val background =
+                    edge
+                        .groupingBy { it }
+                        .eachCount()
+                        .maxBy { it.value }
+                        .key
+                val expected = colors.map { it.compositeOver(Color(background)).toArgb() }
+                if (!differs(expected.first(), background)) return@all false
+                var first = Int.MAX_VALUE
+                var last = -1
+                pixels.forEachIndexed { index, color ->
+                    if (expected.any { !differs(color, it) }) {
+                        val px = index % width
+                        if (px < first) first = px
+                        if (px > last) last = px
+                    }
+                }
+                last >= 0 && first <= reach && width - 1 - last <= reach
             }
         }
 
@@ -719,6 +777,9 @@ internal object LayoutCapture {
     private const val HALF_PIXEL = 0.5f
     private const val NOT_DECLARED = "not declared"
     private const val INK_THRESHOLD = 24
+
+    /** How far in from a line's end its first or last stroke may start: a glyph's side bearing, or a space. */
+    private const val LINE_END_REACH = 0.35f
     private const val TABLET_WIDTH = 600
 
     private fun SemanticsNode.find(id: Int): SemanticsNode? {
