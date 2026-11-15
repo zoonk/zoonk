@@ -18,6 +18,8 @@ missing scenarios, discovery leads and what wasn't measured.
 It judges only what a capture holds. The web's read doesn't enter iframes or shadow roots, doesn't
 see what only a pseudo-element (::before, ::after) draws, and counts a filled action only when the
 kit's button variants draw it, so a capture with nothing in it isn't proof those were checked.
+Two filled buttons with the same data-action-name count as one action: the name is the author's
+statement that they are one, and the check trusts it.
 
 Each capture is checked against the shape first (version 1, its platform's unit, every field the
 evaluator reads, and every part's group and row present); one that doesn't match is refused.
