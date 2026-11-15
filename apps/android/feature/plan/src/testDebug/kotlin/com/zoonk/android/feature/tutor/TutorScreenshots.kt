@@ -87,11 +87,24 @@ class TutorScreenshots {
     /** A free learner's messages used up over the last 30 days: the notice in place of the composer, with the day more come back. */
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun messagesUsed() {
+    fun messagesUsed() = captureMessagesUsed("phone")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun messagesUsedTablet() = captureMessagesUsed("tablet")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun messagesUsedAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureMessagesUsed("phone-font200")
+    }
+
+    private fun captureMessagesUsed(size: String) {
         val opens = Instant.now().plus(9, ChronoUnit.DAYS)
         val limit = """{"availableAt":"$opens","limit":30,"period":"rolling30Days","resource":"tutorMessage","tier":"free"}"""
         capture(
-            "tutor-messages-used-phone",
+            "tutor-messages-used-$size",
             dark = false,
             turns = listOf(turn("t0", TutorTurn.Status.Completed, "Black holes bend light around them.", "What do black holes do?")),
             refusal =

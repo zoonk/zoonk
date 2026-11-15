@@ -24,6 +24,7 @@ import com.zoonk.api.models.ChapterMindMapStatus
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMapGenerations
 import com.zoonk.api.models.GoalMindMaps
+import com.zoonk.api.models.MindMapAllowanceStop
 import com.zoonk.api.models.MindMapGeneration
 import com.zoonk.api.models.SaveMindMap
 import com.zoonk.api.models.SavedMindMapKind
@@ -37,10 +38,12 @@ import kotlinx.serialization.json.contentOrNull
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Request
 import java.io.IOException
+import java.time.Clock
 import java.util.UUID
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Instant
 
 interface MindMapApi {
     suspend fun list(
@@ -171,6 +174,8 @@ sealed interface MindMapCreated {
 class MindMapStore(
     private val api: MindMapApi,
     private val cache: AppCache,
+    /** When a refusal arrives, as [Limit.Reached.received] reads it. */
+    private val clock: Clock = Clock.systemUTC(),
 ) {
     private val readsStarted = AtomicLong()
     private val watchers = CopyOnWriteArrayList<ReadWatcher>()
@@ -237,20 +242,39 @@ class MindMapStore(
      * earlier, once it shows again; null when the session changed meanwhile.
      */
     suspend fun createAll(goalId: UUID): Boolean? =
-        when (cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.createAll(it, goalId) }) {
+        when (val result = cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.createAll(it, goalId) }) {
             is MutationResult.Done -> {
+                result.value.stop
+                    ?.takeIf { result.value.accepted.isEmpty() }
+                    ?.let { stopOffer(goalId, it) }
                 chapter.invalidate { it.goalId == goalId }
                 list[goalId].reread()
             }
 
             is MutationResult.Failed -> {
-                false
+                Limit.of(result, clock.instant())?.let(result::pageStop)?.let {
+                    stopOffer(goalId, it)
+                    list[goalId].reread()
+                } ?: false
             }
 
             MutationResult.Obsolete -> {
                 null
             }
         }
+
+    /**
+     * A refusal that stops every map is the newest answer about the offer: it's written over the list as one, so
+     * a read already on its way can't land on it, and the read after it replaces it.
+     */
+    private fun stopOffer(
+        goalId: UUID,
+        stop: MindMapAllowanceStop,
+    ) {
+        val listed = list[goalId]
+        val maps = listed.state.value.value ?: return
+        listed.replace(maps.copy(createOffer = maps.createOffer.copy(startable = 0, stop = stop)))
+    }
 
     /**
      * Lessons a list read shows for a chapter that the list didn't before (a map's run wrote them)
@@ -299,7 +323,7 @@ class MindMapStore(
         return fetch().also { value -> watchers.filter { it.goalId == goalId }.forEach { it.arrived(chapters(value), started, wholeList) } }
     }
 
-    /** Null when the session changed meanwhile. The reads say what came of it; nothing is written into them. */
+    /** Null when the session changed meanwhile. The reads say what came of it; a refusal that stops every map is written into the offer. */
     suspend fun create(key: ChapterKey): MindMapCreated? =
         when (val result = cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.create(it, key) }) {
             is MutationResult.Done -> readAgain(key)
@@ -311,12 +335,14 @@ class MindMapStore(
         result: MutationResult.Failed,
         key: ChapterKey,
     ): MindMapCreated {
-        val limit = Limit.of(result)
-        return when {
-            result.status == UNPROCESSABLE -> readAgain(key)
-            limit != null -> MindMapCreated.Refused(limit, result.details.ranOut().limitSubject)
-            else -> MindMapCreated.Unreachable
+        if (result.status == UNPROCESSABLE) return readAgain(key)
+        val limit = Limit.of(result, clock.instant()) ?: return MindMapCreated.Unreachable
+        // What stops every map is the list's offer's to say; the row keeps its tap's answer, which other screens show alone.
+        result.pageStop(limit)?.let {
+            stopOffer(key.goalId, it)
+            readAgain(key)
         }
+        return MindMapCreated.Refused(limit, result.details.ranOut().limitSubject)
     }
 
     private suspend fun readAgain(key: ChapterKey) = if (refresh(key)) MindMapCreated.Read else MindMapCreated.Unreachable
@@ -401,6 +427,39 @@ private class ReadWatcher(
     val goalId: UUID,
     val arrived: (chapterIds: List<UUID>, started: Long, wholeList: Boolean) -> Unit,
 )
+
+/**
+ * Whether a refused Create refuses every other map too: the cap on maps, the day's AI spend, a guest's need for an
+ * account. A map's own lessons, or a slow-down, refuse only that one.
+ */
+fun stopsEveryMap(
+    limit: Limit,
+    subject: LimitSubject,
+): Boolean = limit == Limit.SignUpRequired || (limit is Limit.Reached && (subject == LimitSubject.MindMaps || subject == LimitSubject.Help))
+
+/** A refusal that stops every map ([stopsEveryMap]), as the list's offer words it. */
+private fun MutationResult.Failed.pageStop(limit: Limit): MindMapAllowanceStop? {
+    val subject = details.ranOut().limitSubject
+    if (!stopsEveryMap(limit, subject)) return null
+    if (limit == Limit.SignUpRequired) {
+        return MindMapAllowanceStop(
+            availableAt = null,
+            period = null,
+            reason = MindMapAllowanceStop.Reason.SIGN_UP_REQUIRED,
+            resource = null,
+        )
+    }
+    val fields = (details as? JsonObject)?.get("limit") as? JsonObject
+
+    fun field(name: String) = (fields?.get(name) as? JsonPrimitive)?.contentOrNull
+    return MindMapAllowanceStop(
+        // The offer's day as the server sent it: on this page the offer gates, and the clock only prints its day.
+        availableAt = field("availableAt")?.let { runCatching { Instant.parse(it) }.getOrNull() },
+        period = MindMapAllowanceStop.Period.entries.firstOrNull { it.value == field("period") },
+        reason = MindMapAllowanceStop.Reason.LIMIT_REACHED,
+        resource = if (subject == LimitSubject.Help) MindMapAllowanceStop.Resource.AI_SPEND else MindMapAllowanceStop.Resource.MIND_MAP,
+    )
+}
 
 /** A refusal's `details.limit.resource`: what ran out. */
 private fun JsonElement?.ranOut(): String? =

@@ -8,8 +8,8 @@
   "generation_curriculum_plan_line_1": "19ee9c7299a03a7f5dd7216e3f2406e9213e9ac436a83acc1db8b51f17603f3f",
   "generation_curriculum_plan_line_2": "aed43876ae0a51bc135b54ba28a7fbce18344f5798e745f0d4f04fa7504f867c",
   "generation_curriculum_plan_line_3": "2529093ae2ed9e44d8f66619f9eca461de84642f0dfb253faeba87ba03958b27",
-  "generation_failed": "90c36b3fee2b60116c22fa4df497c4bfc2397aeae650b9a09592b62f835e386b",
   "generation_failed_description": "076b4b7bdd6f6661c554c193554c695b51c10690298f734f2f5fda94d372b480",
+  "generation_failed_ours": "24d5a8100304c91338853d27202013db57a5d86d71bc818c2c94aeba92231f6a",
   "generation_first_lesson": "b4825aa35c398cd5b9ffc9ae06dfecb2fe73465b9c40274f62a79a3b0063786a",
   "generation_first_lesson_day": "33997a18c1d37f1cf9582f1d03c334b3daf12ebb4ab99e388f2de3fc9092cf5d",
   "generation_first_lesson_day_line_1": "d899dca1c2b6d1078146220f4e9ec9c7b226340a087f68f68190c799b1ad7efe",
@@ -23,8 +23,6 @@
   "generation_level_test_bank_line_2": "6cc81fc64e7fe9e929e4eeaa5761df88be80c94cb2cf229f94242cd957e3b1bb",
   "generation_level_test_bank_line_3": "0c75b29e2da30b0881a3a5a35f9ca05b7d30abd33e0c7abe03ddaa3ac56925a3",
   "generation_level_test_bank_line_4": "5528b35dbc00da1ee83d08246049abfebd6ebc56fe1e7c12e678cd1aebf44b97",
-  "generation_not_started": "d5c2667c85a20d004eca59afd9f49bfc8d65a6080eb7bb1552475e4e815bbddc",
-  "generation_not_started_description": "ada8cce390884cbeb66eb661d70c4f9c166baa5b3f963e0b9191cfa3c5a3b1a5",
   "generation_notice": "abd40b0592b60c4295c34a4d4518bfc5f6e6247651263e92fccce9e9307e5fdc",
   "generation_notice_line_1": "0a330711a02a802d21654c3a044387d9ed4bb18c4ff6e87aa11311029ae34a17",
   "generation_notice_line_2": "7b1362d1f17846bbbe3c2df426547de60144a5e38b929abbb1fdc804d5fea324",
@@ -59,12 +57,9 @@
     <string name="generation_connection_lost_description">進捗状況が届かなくなりました。準備は続いているかもしれません。</string>
     <!-- Follows a run again after its updates stopped. -->
     <string name="generation_reconnect">再接続する</string>
-    <!-- Title when something being written failed. -->
-    <string name="generation_failed">作成を完了できませんでした</string>
+    <string name="generation_failed_ours">システム側で問題が発生しました</string>
+    <!-- A stopped lesson's line in a list. -->
     <string name="generation_failed_description">こちら側で問題が発生しました。</string>
-    <!-- Title when something to be written never started. -->
-    <string name="generation_not_started">作成を開始できませんでした</string>
-    <string name="generation_not_started_description">準備を開始できませんでした。</string>
     <!-- Starts something that failed or never started again. -->
     <string name="generation_try_again">もう一度試す</string>
     <!-- Screen reader state of a step of a wait. -->

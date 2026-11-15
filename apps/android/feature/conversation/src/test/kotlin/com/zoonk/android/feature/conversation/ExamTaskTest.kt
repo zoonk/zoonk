@@ -33,7 +33,7 @@ class ExamTaskTest {
 
         compose.onNodeWithText("Try again").performClick()
         compose.waitForIdle()
-        compose.onNodeWithText("This didn't finish").assertExists()
+        compose.onNodeWithText("Something went wrong on our side").assertExists()
         compose.onAllNodesWithText("Try again").assertCountEquals(1)
 
         compose.onNodeWithText("Try again").performClick()

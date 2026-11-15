@@ -178,24 +178,25 @@ fun lessonAccessBar(
     return { TaskActionBar { TaskActions { main -> Button(onClick = onClick, modifier = main) { Text(stringResource(label)) } } } }
 }
 
-/** "Subscribe", and once the next free lesson has opened, "Start the lesson" asks the server again; it never starts by itself. */
+/**
+ * "Subscribe", and once the next free lesson has opened, "Start the lesson" in its place, which asks the server
+ * again; it never starts by itself. Nothing ran out then, so nothing is offered to buy.
+ */
 @Composable
 private fun FreeLessonsBar(
     reached: Limit.Reached,
     onRetry: () -> Unit,
     exits: LessonPlayerExits,
 ) {
-    val subscribe = { exits.open(AppRoute.Subscription) }
     TaskActionBar {
         TaskActions { main ->
             if (freeLessonReady(reached)) {
-                OutlinedButton(
-                    onClick = subscribe,
-                    modifier = Modifier.taskOption(),
-                ) { Text(stringResource(R.string.subscription_subscribe)) }
                 Button(onClick = onRetry, modifier = main) { Text(stringResource(R.string.player_start_the_lesson)) }
             } else {
-                Button(onClick = subscribe, modifier = main) { Text(stringResource(R.string.subscription_subscribe)) }
+                Button(
+                    onClick = { exits.open(AppRoute.Subscription) },
+                    modifier = main,
+                ) { Text(stringResource(R.string.subscription_subscribe)) }
             }
         }
     }

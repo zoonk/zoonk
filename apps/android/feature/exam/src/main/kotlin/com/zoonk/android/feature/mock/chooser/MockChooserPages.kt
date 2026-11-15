@@ -63,6 +63,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.GenerationWait
+import com.zoonk.android.ui.components.HeldSlot
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OpeningDay
@@ -201,31 +202,35 @@ private fun ShortDialog(
         onDismissRequest = onPickAnother,
         title = { Text(stringResource(R.string.mock_chooser_short_title)) },
         text = {
-            Text(
-                when {
-                    short.limit == AnytimeMock.Limit.DAY || full == OpeningDay.Tomorrow -> {
-                        stringResource(R.string.mock_chooser_short_day, count, total, time)
-                    }
+            // The full mock's day coming while the dialog is open shortens its sentence; the dialog keeps its size, its
+            // width too, since a dialog is as wide as its words and the slot keeps the height of the width it had.
+            HeldSlot(gated = full != OpeningDay.Open, Modifier.fillMaxWidth()) {
+                Text(
+                    when {
+                        short.limit == AnytimeMock.Limit.DAY || full == OpeningDay.Tomorrow -> {
+                            stringResource(R.string.mock_chooser_short_day, count, total, time)
+                        }
 
-                    full == OpeningDay.Today -> {
-                        stringResource(R.string.mock_chooser_short_later_today, count, total, time)
-                    }
+                        full == OpeningDay.Today -> {
+                            stringResource(R.string.mock_chooser_short_later_today, count, total, time)
+                        }
 
-                    full is OpeningDay.On -> {
-                        stringResource(
-                            R.string.mock_chooser_short_on,
-                            count,
-                            total,
-                            time,
-                            formatDate(full.date, locale, DateStyle.DayMonth),
-                        )
-                    }
+                        full is OpeningDay.On -> {
+                            stringResource(
+                                R.string.mock_chooser_short_on,
+                                count,
+                                total,
+                                time,
+                                formatDate(full.date, locale, DateStyle.DayMonth),
+                            )
+                        }
 
-                    else -> {
-                        stringResource(R.string.mock_chooser_short_line, count, total, time)
-                    }
-                },
-            )
+                        else -> {
+                            stringResource(R.string.mock_chooser_short_line, count, total, time)
+                        }
+                    },
+                )
+            }
         },
         confirmButton = { TextButton(onClick = onStart) { Text(stringResource(R.string.mock_chooser_start)) } },
         dismissButton = { TextButton(onClick = onPickAnother) { Text(stringResource(R.string.mock_chooser_pick_another)) } },

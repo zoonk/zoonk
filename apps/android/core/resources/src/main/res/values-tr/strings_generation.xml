@@ -8,8 +8,8 @@
   "generation_curriculum_plan_line_1": "e3fa4a81db5847b2bc654b4860d3676df63d67928e00f26e316496630ad81039",
   "generation_curriculum_plan_line_2": "522cc114d104248c055cb2966d61d55c97ebca5db89b83236ca42df3af29ec3b",
   "generation_curriculum_plan_line_3": "bf34330cf6d21f5b81d1fcf9bf9324430f39aa33bd5a00d08ad2643aef82437c",
-  "generation_failed": "d82fa5f42cc37f28e8405f41323432fcc47f16f8808155d214e0489bd6c6e6b3",
   "generation_failed_description": "d21d9a30bdbd024210ef88467174d1470c972a6ed2aaba9f742c4e83413873d5",
+  "generation_failed_ours": "f52b314da90894d660846706ade1a7455449a2d9f6e175425a93e2fc93fdb3c0",
   "generation_first_lesson": "01391a7a647084301230c1f44ca8a4e8b2404ff814022b6ec1bfc3b82550c21e",
   "generation_first_lesson_day": "352dc57424e5c7d3027fe69b11841886bd765586590bcfbb9c1d9fb43b9adbff",
   "generation_first_lesson_day_line_1": "869f924a072d9ef1f3a09b8afc54bbeafabc4bc79ea9dc36069b2959e9fb537e",
@@ -23,8 +23,6 @@
   "generation_level_test_bank_line_2": "978e4f2746c157d8530cfe78187b9e3b2599a57815646fd1412b35a43bb4e7ef",
   "generation_level_test_bank_line_3": "e3e5e6a738be39a39434e181909d5f5eb6d3512225a8b55f17fa0c9aa2d5111d",
   "generation_level_test_bank_line_4": "0efb75dae054211cae6fc10e7ce4776da7894ae7e6496eb16085bc2b290f69e3",
-  "generation_not_started": "9c1c652ffa031a6a3ed6dcca8d5616d1b47b38442c6a5a1bc4f6e3ddc5970cd1",
-  "generation_not_started_description": "d6aabab3eaa17c95493617e801b1351038226d1c0e2f175e99495efd2c9d8468",
   "generation_notice": "507b95bb4536601552cf0f7d0f30fc99ec69d80139b1ca468f1f99e4711cfacb",
   "generation_notice_line_1": "c2351f395705e7f88e0de4a9e051ab05ca3c58496e9b3722b4228733e1923939",
   "generation_notice_line_2": "3bbc33a91b63dafb854dc9b32c8f346e2d0b9fd53d74133be064634919bf76d6",
@@ -59,12 +57,9 @@
     <string name="generation_connection_lost_description">Güncellemeleri alamıyoruz. İşlem hâlâ sürüyor olabilir.</string>
     <!-- Follows a run again after its updates stopped. -->
     <string name="generation_reconnect">Yeniden bağlan</string>
-    <!-- Title when something being written failed. -->
-    <string name="generation_failed">Tamamlanamadı</string>
+    <string name="generation_failed_ours">Bizim tarafta bir sorun oluştu</string>
+    <!-- A stopped lesson's line in a list. -->
     <string name="generation_failed_description">Bizim tarafımızda bir sorun oluştu.</string>
-    <!-- Title when something to be written never started. -->
-    <string name="generation_not_started">Başlatılamadı</string>
-    <string name="generation_not_started_description">İşlemi başlatamadık.</string>
     <!-- Starts something that failed or never started again. -->
     <string name="generation_try_again">Tekrar dene</string>
     <!-- Screen reader state of a step of a wait. -->

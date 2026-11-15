@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.HeldSlot
 import com.zoonk.android.ui.components.OutlinedButton
 
 /** Main's `GateWords`: what stopped, and at most one line under it. */
@@ -68,12 +69,16 @@ fun SubscribeGate(
     }
 }
 
-/** [GateWords] over the gate's buttons, read out when it appears. */
+/**
+ * [GateWords] over the gate's buttons, read out when it appears. With [wordsGated], the words keep their
+ * height after its gate lifts, so the button that takes the way on's place takes its box too.
+ */
 @Composable
 internal fun GateLayout(
     title: String?,
     line: String?,
     modifier: Modifier = Modifier,
+    wordsGated: Boolean? = null,
     buttons: (@Composable () -> Unit)?,
 ) {
     Column(
@@ -81,7 +86,7 @@ internal fun GateLayout(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.Start,
     ) {
-        GateWords(title, line)
+        if (wordsGated == null) GateWords(title, line) else HeldSlot(gated = wordsGated) { GateWords(title, line) }
         buttons?.let {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { it() }
         }
