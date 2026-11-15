@@ -1,4 +1,4 @@
-import { requestWithin } from "../../plan/use-time-to-cover";
+import { requestWithin } from "../../plan/request-within";
 
 type Asked<Answer> = { key: string; request: () => Promise<Answer>; signal: AbortSignal };
 
