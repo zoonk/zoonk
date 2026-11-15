@@ -118,20 +118,34 @@ class LayoutCaptureTest {
         }
     }
 
+    /** Japanese and Korean have no capitals: they're set on their ideographic face, read through the font that drew them. */
     @Test
-    fun textAFallbackFontDrewHasNoCapitals() {
+    fun textWithNoCapitalsIsSetOnItsIdeographicFace() {
         val labels =
             capture {
                 ListRow(headline = { Text("日本語の練習") })
-                ListRow(headline = { Text("Kanji 漢字") })
+                ListRow(headline = { Text("한국어 연습") })
             }.elements().filter { it.getString("part") == "label" }
 
         assertEquals(2, labels.size)
         labels.forEach { label ->
-            assertEquals(NOT_MEASURED, label.getString("capTop"))
-            assertEquals(NOT_MEASURED, label.getString("capBottom"))
-            assertTrue(label.get("baseline") is Number)
+            assertEquals("ideographic face", label.getString("textBox"))
+            val top = label.getDouble("capTop")
+            val bottom = label.getDouble("capBottom")
+            val box = label.getJSONArray("bounds")
+            // The face sits about on the line box's middle (main measured within 0.4px).
+            assertEquals(box.getDouble(1) + box.getDouble(3) / 2, (top + bottom) / 2, 1.5)
         }
+    }
+
+    /** Arabic has no capitals and no ideographic face: its middle isn't measured. */
+    @Test
+    fun textAFallbackFontDrewWithNoFaceToReadHasNoCapitals() {
+        val label = capture { ListRow(headline = { Text("مرحبا بالعالم") }) }.part("label")
+
+        assertEquals(NOT_MEASURED, label.getString("capTop"))
+        assertEquals(NOT_MEASURED, label.getString("capBottom"))
+        assertTrue(label.get("baseline") is Number)
     }
 
     @Test

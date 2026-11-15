@@ -18,6 +18,8 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.ResolvedTextDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
@@ -424,8 +426,25 @@ internal object LayoutCapture {
                 val baseline = y + layout.firstBaseline / density
                 fields["baseline"] = baseline
                 val capHeight = capHeight(layout)
-                fields["capTop"] = capHeight?.let { baseline - it } ?: NOT_MEASURED
-                fields["capBottom"] = if (capHeight != null) baseline else NOT_MEASURED
+                val face = if (capHeight == null) ideographicFace(layout) else null
+                when {
+                    capHeight != null -> {
+                        fields["capTop"] = baseline - capHeight
+                        fields["capBottom"] = baseline
+                        fields["textBox"] = "capitals"
+                    }
+
+                    face != null -> {
+                        fields["capTop"] = baseline + face.first
+                        fields["capBottom"] = baseline + face.second
+                        fields["textBox"] = "ideographic face"
+                    }
+
+                    else -> {
+                        fields["capTop"] = NOT_MEASURED
+                        fields["capBottom"] = NOT_MEASURED
+                    }
+                }
                 // Every line the part's words take, when it stacks more than one text; texts side by side share theirs.
                 fields["lines"] =
                     texts
@@ -508,6 +527,40 @@ internal object LayoutCapture {
             }
             visit(node)
             return words.joinToString(" ")
+        }
+
+        /**
+         * For text in a script with no capitals (Han, kana, Hangul), the box its glyphs are drawn in: a full-frame
+         * glyph ("国", or "국" for Hangul) laid out through the text's own typeface and its fallback, the face that
+         * drew it, as main's reader does. Its top and bottom from the baseline, in dp; null for any other text.
+         */
+        private fun ideographicFace(layout: TextLayoutResult): Pair<Float, Float>? {
+            val text = layout.layoutInput.text.text
+            val hangul = text.any { Character.UnicodeScript.of(it.code) == Character.UnicodeScript.HANGUL }
+            val ideographic =
+                hangul ||
+                    text.any {
+                        val script = Character.UnicodeScript.of(it.code)
+                        script == Character.UnicodeScript.HAN ||
+                            script == Character.UnicodeScript.HIRAGANA ||
+                            script == Character.UnicodeScript.KATAKANA
+                    }
+            if (!ideographic) return null
+            val style = layout.layoutInput.style
+            val typeface =
+                layout.layoutInput.fontFamilyResolver
+                    .resolve(style.fontFamily, style.fontWeight ?: FontWeight.Normal, style.fontStyle ?: FontStyle.Normal)
+                    .value as? android.graphics.Typeface ?: return null
+            val paint =
+                android.graphics.Paint().apply {
+                    this.typeface = typeface
+                    textSize = with(layout.layoutInput.density) { style.fontSize.toPx() }
+                }
+            val glyph = if (hangul) "국" else "国"
+            val bounds = android.graphics.Rect()
+            paint.getTextBounds(glyph, 0, glyph.length, bounds)
+            if (bounds.height() <= 0) return null
+            return bounds.top / density to bounds.bottom / density
         }
 
         /**
