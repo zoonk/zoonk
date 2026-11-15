@@ -59,8 +59,8 @@ const KINDS = [
   },
   {
     kind: "alignment",
-    label: "Unresolved layout finding in the capture's alignment.json",
-    summary: "unresolved layout findings",
+    label: "Layout the capture's alignment.json fails or couldn't measure",
+    summary: "layout findings failing or not measured",
   },
   {
     kind: "scenarios",
@@ -75,9 +75,13 @@ export type Problem = { detail?: string; kind: Kind; picture?: string };
 
 type Reads = { carried: number; missing: number; new: number };
 
-/** `notMeasured` counts the captures with no alignment report, or one that measured nothing. */
+/**
+ * `notMeasured` counts the after captures with no alignment report, or one that measured nothing;
+ * `nothingDeclared`, the screens measured that hold no declared piece, drawn box or action.
+ */
 export type CheckResult = {
   checked: number;
+  nothingDeclared?: number;
   notMeasured: number;
   problems: Problem[];
   reads: Reads;
@@ -90,7 +94,7 @@ function kindOf(kind: Kind) {
 }
 
 export function formatCheck(
-  { checked, notMeasured, problems, reads }: CheckResult,
+  { checked, nothingDeclared = 0, notMeasured, problems, reads }: CheckResult,
   root: string,
 ): string {
   if (checked === 0 && problems.length === 0) {
@@ -115,10 +119,15 @@ export function formatCheck(
       ? `; layout not measured for ${notMeasured} ${notMeasured === 1 ? "capture" : "captures"}`
       : "";
 
+  const undeclared =
+    nothingDeclared > 0
+      ? `; layout measured with nothing declared on ${nothingDeclared} ${nothingDeclared === 1 ? "screen" : "screens"}`
+      : "";
+
   const summary =
     groups.length === 0
-      ? `PASS: ${checked} pictures, each in a capture manifest; every after picture from a current, committed build and read${unmeasured}`
-      : `FAIL: ${groups.map(([kind, list]) => `${list.length} ${kindOf(kind).summary}`).join("; ")}, of ${checked} pictures${unmeasured}`;
+      ? `PASS: ${checked} pictures, each in a capture manifest; every after picture from a current, committed build and read${unmeasured}${undeclared}`
+      : `FAIL: ${groups.map(([kind, list]) => `${list.length} ${kindOf(kind).summary}`).join("; ")}, of ${checked} pictures${unmeasured}${undeclared}`;
 
   const readLine =
     reads.carried + reads.new + reads.missing > 0 &&

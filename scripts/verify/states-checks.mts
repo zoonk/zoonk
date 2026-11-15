@@ -40,7 +40,7 @@ function size({ across, down, taller, wider }: ReturnType<typeof moved>) {
  * carried by a parent that moved), and a control, panel or picture that changed size. A fold or a
  * tab may push what's under it down, and a search field may change the list under it: that's what
  * they're for. The boxes holding the field or choice grow with what appeared in them, which their
- * moved neighbors already show.
+ * moved neighbors already show, unless a scenario declares one an anchor (a sheet's frame).
  */
 function jumps({ action, comparison }: Step): Moved[] {
   const { target } = comparison;
@@ -57,7 +57,11 @@ function jumps({ action, comparison }: Step): Moved[] {
       across === 0 &&
       change.before.top >= target.top + target.height - 1;
 
-    return !below && ((shifted && !change.carried) || (resized && change.drawn && !change.holds));
+    return (
+      !below &&
+      ((shifted && !change.carried) ||
+        (resized && change.drawn && (!change.holds || change.anchor)))
+    );
   });
 }
 

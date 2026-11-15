@@ -17,7 +17,10 @@ import {
  */
 const LINE = 0.5;
 
-/** A text's middle from the font's cap height, never from the string's ink: "yes" sits where "Off" would. */
+/**
+ * A text's middle from the font's cap height (or a script's ideographic face), never from the
+ * string's ink: "yes" sits where "Off" would, and "一" where "書" would.
+ */
 function capMiddle(element: CaptureElement): number | null {
   const top = measured(element.capTop);
   const bottom = measured(element.capBottom);
@@ -73,7 +76,13 @@ function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
   // A title counts as one line however it wraps; each description under it is another (E5).
   const notes = Math.max(own.filter((element) => element.part === "note").length, row.note ? 1 : 0);
 
-  const oneLine = !stacked && (label.lines ?? 1) === 1 && notes === 0;
+  const lines = measured(label.lines, 1);
+
+  if (lines === null) {
+    return null;
+  }
+
+  const oneLine = !stacked && lines === 1 && notes === 0;
   const endMiddle = middles.find(({ element }) => element.part === "end")?.middle ?? null;
 
   const led = others.some((element) => element.part === "lead");
@@ -128,9 +137,16 @@ export function lineLeads(context: Context, read: Group): AlignmentFinding[] {
       return [];
     }
 
+    const label = own.find((element) => element.part === "label");
+
+    const faced =
+      label?.textBox === "ideographic face"
+        ? " (the label by its ideographic face: it has no capitals)"
+        : "";
+
     return [
       finding(context, {
-        detail: `${rowName(read, row.id)}: ${off.map((miss) => describe(miss)).join("; ")}`,
+        detail: `${rowName(read, row.id)}: ${off.map((miss) => describe(miss)).join("; ")}${faced}`,
         level: "fail",
         measured: Math.max(...off.map((miss) => Math.abs(miss.off))),
         message: `a row of ${groupName(read)} is off one line by more than ${LINE}`,
