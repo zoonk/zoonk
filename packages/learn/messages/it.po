@@ -397,6 +397,26 @@ msgid "You've used your mock exams"
 msgstr "Hai esaurito le simulazioni"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "TPgNQb"
+msgid "No more questions today"
+msgstr "Hai esaurito le domande di oggi"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "GYGZpe"
+msgid "You've used your questions"
+msgstr "Hai esaurito le domande"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "aw2Ukw"
+msgid "No more material today"
+msgstr "Oggi non puoi caricare altro materiale"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "g0Nshd"
+msgid "You've used your uploads"
+msgstr "Hai esaurito i caricamenti"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
 msgstr "Hai raggiunto il limite di oggi"
@@ -7184,6 +7204,11 @@ msgid "Chapter maps"
 msgstr "Mappe dei capitoli"
 
 #: src/mind-maps/mind-maps-screen.tsx
+msgctxt "e39t_E"
+msgid "No chapter maps yet."
+msgstr "Non ci sono ancora mappe dei capitoli."
+
+#: src/mind-maps/mind-maps-screen.tsx
 msgctxt "sI50Mb"
 msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "Ancora nessuna mappa dei capitoli. Ne avrai una per ogni capitolo che completi."
@@ -8729,16 +8754,6 @@ msgid "You picked {answer}"
 msgstr "Hai scelto {answer}"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "aw2Ukw"
-msgid "No more material today"
-msgstr "Oggi non puoi caricare altro materiale"
-
-#: src/onboarding/entry/attach-panel.tsx
-msgctxt "g0Nshd"
-msgid "You've used your uploads"
-msgstr "Hai esaurito i caricamenti"
-
-#: src/onboarding/entry/attach-panel.tsx
 msgctxt "yeNv9c"
 msgid "You're adding material quickly. Try again in a few minutes."
 msgstr "Stai aggiungendo materiale molto velocemente. Riprova tra qualche minuto."
@@ -9049,16 +9064,6 @@ msgstr "Cosa vuoi fare?"
 msgctxt "AkPJMI"
 msgid "What you want to do with your material"
 msgstr "Cosa vuoi fare con il tuo materiale"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "TPgNQb"
-msgid "No more questions today"
-msgstr "Hai esaurito le domande di oggi"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "GYGZpe"
-msgid "You've used your questions"
-msgstr "Hai esaurito le domande"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "KIdIMi"
