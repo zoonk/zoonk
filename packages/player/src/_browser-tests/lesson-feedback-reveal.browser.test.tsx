@@ -22,6 +22,10 @@ const LONG_REASON = Array.from(
   () => "Where the cloud is densest, the electron is most likely to be.",
 ).join(" ");
 
+function checkStep() {
+  return contentStep("check", { content: playableStepContent.check });
+}
+
 function nextFrame() {
   return new Promise((resolve) => {
     requestAnimationFrame(resolve);
@@ -106,6 +110,33 @@ describe("feedback after a check", () => {
         const late = document.createElement("div");
         late.style.minHeight = "600px";
         document.querySelector('[data-slot="lesson-screen"]')?.prepend(late);
+
+        await expect.element(verdict).toBeInViewport({ ratio: 1 });
+      }),
+    );
+  });
+
+  it("watches the screen the learner went back to, not the one checked last", async () => {
+    await onDevice({ reducedMotion: "reduce" }, () =>
+      atViewport(SHORT_WINDOW, async () => {
+        renderLessonPlayer({ lesson: buildLesson([checkStep(), checkStep()]) });
+
+        await page.getByRole("radio", { name: RIGHT_OPTION }).click();
+        await page.getByRole("button", { name: /^Check/u }).click();
+        await page.getByRole("button", { name: /^Continue/u }).click();
+        await page.getByRole("radio", { name: RIGHT_OPTION }).click();
+        await page.getByRole("button", { name: /^Check/u }).click();
+        await page.getByRole("button", { name: "Previous screen" }).click();
+
+        const verdict = page.getByRole("region", { name: "Answer feedback" }).getByText("Correct!");
+        await expect.element(verdict).toBeInViewport({ ratio: 1 });
+
+        const late = document.createElement("div");
+        late.style.minHeight = "600px";
+
+        [...document.querySelectorAll<HTMLElement>('[data-slot="lesson-screen"]')]
+          .find((screen) => screen.getClientRects().length > 0)
+          ?.prepend(late);
 
         await expect.element(verdict).toBeInViewport({ ratio: 1 });
       }),

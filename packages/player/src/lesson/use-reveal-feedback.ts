@@ -24,11 +24,16 @@ function getVisibleArea(scroller: HTMLElement) {
   return { bottom: box.bottom - (isStuck && bar ? bar.offsetHeight : 0), top: box.top };
 }
 
-function getScrollDelta(scroller: HTMLElement): number {
-  const stage = queryShown(STAGE_SELECTOR, scroller);
-  const parts = [...(stage?.querySelectorAll<HTMLElement>(FEEDBACK_SELECTOR) ?? [])];
+function getScrollDelta({
+  scroller,
+  stage,
+}: {
+  scroller: HTMLElement;
+  stage: HTMLElement;
+}): number {
+  const parts = [...stage.querySelectorAll<HTMLElement>(FEEDBACK_SELECTOR)];
 
-  if (!stage || parts.length === 0) {
+  if (parts.length === 0) {
     return 0;
   }
 
@@ -48,35 +53,41 @@ function getScrollDelta(scroller: HTMLElement): number {
 /**
  * Scrolls a checked screen to its feedback, one frame after the check, once the bar holds its new
  * action. A canvas or a picture that finishes loading later moves the feedback, so it's revealed
- * again each time the screen's height changes, until the learner scrolls on their own.
+ * again each time the screen's height changes, until the learner scrolls on their own. It watches
+ * the screen that's showing, so going back to an answered screen watches that one.
  */
 export function useRevealFeedback(scrollerRef: RefObject<HTMLElement | null>) {
-  const { state } = useLessonPlayer();
+  const { screen, state } = useLessonPlayer();
   const showsFeedback = state.phase === "feedback";
+  const stepId = screen.step?.id ?? null;
 
   useEffect(() => {
     const scroller = scrollerRef.current;
-    const stage = scroller && queryShown(STAGE_SELECTOR, scroller);
+
+    const stage =
+      scroller && stepId !== null
+        ? queryShown(`${STAGE_SELECTOR}[data-step="${CSS.escape(stepId)}"]`, scroller)
+        : null;
 
     if (!showsFeedback || !scroller || !stage) {
       return;
     }
 
-    function reveal(target: HTMLElement) {
-      const delta = getScrollDelta(target);
+    function reveal(shown: { scroller: HTMLElement; stage: HTMLElement }) {
+      const delta = getScrollDelta(shown);
 
       if (delta !== 0) {
-        target.scrollBy({ behavior: getScrollBehavior(), top: delta });
+        shown.scroller.scrollBy({ behavior: getScrollBehavior(), top: delta });
       }
     }
 
-    const frame = requestAnimationFrame(() => reveal(scroller));
+    const frame = requestAnimationFrame(() => reveal({ scroller, stage }));
     let height = stage.offsetHeight;
 
     const observer = new ResizeObserver(() => {
       if (stage.offsetHeight !== height) {
         height = stage.offsetHeight;
-        reveal(scroller);
+        reveal({ scroller, stage });
       }
     });
 
@@ -96,5 +107,5 @@ export function useRevealFeedback(scrollerRef: RefObject<HTMLElement | null>) {
         scroller.removeEventListener(event, stop);
       }
     };
-  }, [scrollerRef, showsFeedback]);
+  }, [scrollerRef, showsFeedback, stepId]);
 }
