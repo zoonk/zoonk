@@ -292,6 +292,20 @@ class LayoutCaptureTest {
         assertEquals(listOf(1, 1, 2), notes.map { it.getInt("texts") })
     }
 
+    /** RV39 A4: a text whose layout semantics hide is an unknown count, never zero. */
+    @Test
+    fun wordsWhoseLayoutIsHiddenAreAnUnknownCount() {
+        val parts =
+            capture {
+                ListRow(headline = {
+                    Text("Brazil", Modifier.clearAndSetSemantics {})
+                }, supporting = { Text("Home country", Modifier.clearAndSetSemantics {}) })
+            }
+
+        assertEquals(NOT_MEASURED, parts.part("label").getString("texts"))
+        assertEquals(1, parts.part("note").getInt("texts"))
+    }
+
     private fun capture(content: @androidx.compose.runtime.Composable () -> Unit): JSONArray {
         compose.setContent { ZoonkTheme { Column { content() } } }
         val file = File(folder.root, "row.png")

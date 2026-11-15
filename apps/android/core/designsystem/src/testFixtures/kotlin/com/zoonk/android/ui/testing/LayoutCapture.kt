@@ -366,8 +366,9 @@ internal object LayoutCapture {
             private fun textFields(fields: MutableMap<String, Any?>) {
                 val node = node ?: return
                 // Texts with words: an empty text (a value with nothing to say yet) draws no glyphs.
+                val laidOutTexts = textNodes(node)
                 val texts =
-                    textNodes(node).mapNotNull { text ->
+                    laidOutTexts.mapNotNull { text ->
                         textLayout(text)?.takeIf { it.layoutInput.text.isNotEmpty() }?.let {
                             text to
                                 it
@@ -378,8 +379,9 @@ internal object LayoutCapture {
                     texts.firstOrNull() ?: run {
                         fields["ink"] = pixelInk(bounds(node))
                         listOf("baseline", "capTop", "capBottom", "lines", "type").forEach { fields[it] = NOT_MEASURED }
-                        // Known: no text with words, so no description a row counts.
-                        fields["texts"] = drawnDescriptions(node) ?: 0
+                        // Zero only when it's known: texts laid out with no words. Semantics that hide a text's layout
+                        // (clearAndSetSemantics) leave the count unknown.
+                        fields["texts"] = drawnDescriptions(node) ?: if (laidOutTexts.isEmpty()) NOT_MEASURED else 0
                         return
                     }
                 val lines = texts.map { (each, result) -> lineBox(each, result) }
