@@ -246,7 +246,14 @@ fun BuddyPage(
         }
     }
 
-    BuddyChanges(vm, status, look, BuddyChangesOpen(wearing, editing), closeGlasses = { wearing = false }, closeEditor = { editing = false })
+    BuddyChanges(
+        vm,
+        status,
+        look,
+        BuddyChangesOpen(wearing, editing),
+        closeGlasses = { wearing = false },
+        closeEditor = { editing = false },
+    )
 }
 
 /** Which of the buddy's change sheets show. */
