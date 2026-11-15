@@ -1,6 +1,7 @@
 "use client";
 
 import { CourseStartFailureNote } from "@/components/public/course-start-failure";
+import { isStartBlocked } from "@/components/public/course-start-remedy";
 import { useRouter } from "@/i18n/navigation";
 import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { DailyTimeField } from "@zoonk/learn/daily-time-picker";
@@ -61,9 +62,7 @@ export function StartPlanForm({
         {t("How much time a day?")}
       </p>
       <DailyTimeField defaultMinutes={DEFAULT_MINUTES} name="dailyMinutes" />
-      {failure?.status === "limitReached" ? (
-        <CourseStartFailureNote failure={failure} onRetry={() => form.current?.requestSubmit()} />
-      ) : (
+      {!isStartBlocked(failure) && (
         <EnterButton busy={isPending} className="mt-1" size="lg" type="submit">
           {t({
             description:
@@ -71,6 +70,9 @@ export function StartPlanForm({
             message: "Start my own plan",
           })}
         </EnterButton>
+      )}
+      {failure?.status === "limitReached" && (
+        <CourseStartFailureNote failure={failure} onRetry={() => form.current?.requestSubmit()} />
       )}
       {failure && failure.status !== "limitReached" && (
         <p className="text-destructive-text text-sm" role="alert">

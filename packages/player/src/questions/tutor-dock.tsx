@@ -87,7 +87,9 @@ function DockSignUp({ buddy }: { buddy: TutorBuddy }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-muted-foreground text-sm">{t("Questions need a free account")}</p>
+      {!buddy.docked && (
+        <p className="text-muted-foreground text-sm">{t("Questions need a free account")}</p>
+      )}
       <DocumentLink
         className={cn(buttonVariants({ variant: "outline" }), "w-full")}
         href={loginHref}
