@@ -219,7 +219,9 @@ private struct TodaySuggestedGoal: View {
       SuggestedGoalButtons(suggestion: suggestion, answer: answer)
     }
     .navigationSubtitle(
-      Text("Welcome back", tableName: "Today", comment: "Greets a learner back with no goal"))
+      Text("Welcome back", tableName: "Today", comment: "Greets a learner back with no goal")
+    )
+    .onDisappear { answer.leave() }
   }
 }
 

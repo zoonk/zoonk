@@ -67,7 +67,6 @@ struct SuggestedGoalSection: View {
 struct SuggestedGoalButtons: View {
   @Environment(AppRouter.self) private var router
   @Environment(TodayStore.self) private var store
-  @State private var answering: Task<Void, Never>?
 
   let suggestion: SuggestedGoal
   let answer: SuggestedGoalAnswer
@@ -89,13 +88,10 @@ struct SuggestedGoalButtons: View {
     .buttonStyle(.mainAction)
     .keyboardShortcut(.defaultAction)
     .disabled(answer.answering == false)
-    .onDisappear { answering?.cancel() }
   }
 
   private func respond(accepted: Bool) {
-    answering = Task {
-      await answer.respond(to: suggestion, accepted: accepted, store: store, router: router)
-    }
+    answer.respond(to: suggestion, accepted: accepted, store: store, router: router)
   }
 }
 
@@ -108,9 +104,25 @@ final class SuggestedGoalAnswer {
 
   private(set) var answering: Bool?
   private(set) var failed = false
+  @ObservationIgnored private var sent: Task<Void, Never>?
 
+  /// The answer is the visit's, not the buttons': they're drawn again when Today splits into panes
+  /// or joins them, and setup still opens. The screen that owns it calls `leave()` as it closes.
   func respond(
     to suggestion: SuggestedGoal, accepted: Bool, store: TodayStore, router: AppRouter
+  ) {
+    sent = Task {
+      await send(suggestion, accepted: accepted, store: store, router: router)
+    }
+  }
+
+  /// Leaving keeps the answer, which the store still saves, and opens nothing from it.
+  func leave() {
+    sent?.cancel()
+  }
+
+  private func send(
+    _ suggestion: SuggestedGoal, accepted: Bool, store: TodayStore, router: AppRouter
   ) async {
     answering = accepted
     failed = false
