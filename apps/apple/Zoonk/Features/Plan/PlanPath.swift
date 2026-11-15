@@ -194,30 +194,27 @@ private struct PlanPhaseRow: View {
 
   private func header(byPlace: Bool, next: Bool) -> some View {
     PlanPathRow {
-      Label {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(
-            byPlace
-              ? String(
-                localized: "Phase \(phase.index + 1)", table: "Plan",
-                comment: "Name of an unnamed phase by its number")
-              : phase.title
-          )
-          .typeWeight(phase.state == .current ? .semibold : .regular)
-          .foregroundStyle(phase.state == .done ? .mutedForeground : .primary)
-          .layoutPart(.label)
+      VStack(alignment: .leading, spacing: 2) {
+        Text(
+          byPlace
+            ? String(
+              localized: "Phase \(phase.index + 1)", table: "Plan",
+              comment: "Name of an unnamed phase by its number")
+            : phase.title
+        )
+        .typeWeight(phase.state == .current ? .semibold : .regular)
+        .foregroundStyle(phase.state == .done ? .mutedForeground : .primary)
+        .layoutPart(.label)
 
-          if let meta {
-            meta
-              .layoutPart(.note)
-              .typeStyle(.meta)
-              .foregroundStyle(.mutedForeground)
-          }
+        if let meta {
+          meta
+            .layoutPart(.note)
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
         }
-      } icon: {
-        StatusMark(status: next ? .next : phase.mark)
-          .layoutPart(.mark)
       }
+    } mark: {
+      StatusMark(status: next ? .next : phase.mark)
     } value: {
       if let end {
         Text(verbatim: end.shown)
@@ -313,31 +310,29 @@ private struct PlanChapterRow: View {
 
   private var content: some View {
     PlanPathRow {
-      Label {
-        VStack(alignment: .leading, spacing: 2) {
-          title
-            .layoutPart(.label, text: title)
+      VStack(alignment: .leading, spacing: 2) {
+        title
+          .layoutPart(.label, text: title)
 
-          if let note {
-            note
-              .layoutPart(.note)
-              .typeStyle(.meta)
-              .foregroundStyle(.mutedForeground)
-          }
+        if let note {
+          note
+            .layoutPart(.note)
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
         }
-      } icon: {
-        StatusMark(status: mark)
-          .layoutPart(.mark)
       }
-      .accessibilityLabel { label in
-        if let markWords {
-          Text(markWords)
-        }
-
-        label
-      }
+    } mark: {
+      StatusMark(status: mark)
     } value: {
       EmptyView()
+    }
+    .accessibilityElement(children: .combine)
+    .accessibilityLabel { label in
+      if let markWords {
+        Text(markWords)
+      }
+
+      label
     }
   }
 
@@ -676,23 +671,72 @@ struct SyllabusSubjectRow: View {
 }
 
 /// The counts stay at the trailing edge beside a long name, which wraps; stacked, they go under it.
-struct PlanPathRow<Title: View, Value: View>: View {
-  @ViewBuilder let title: Title
-  @ViewBuilder let value: Value
+struct PlanPathRow<Title: View, Mark: View, Value: View>: View {
+  @Environment(\.stacksContent) private var isStacked
+
+  private let title: Title
+  private let mark: Mark
+  private let value: Value
+
+  init(
+    @ViewBuilder title: () -> Title, @ViewBuilder mark: () -> Mark,
+    @ViewBuilder value: () -> Value
+  ) {
+    self.title = title()
+    self.mark = mark()
+    self.value = value()
+  }
 
   var body: some View {
-    // The value sits on the row's center with the chevron: on one line its capitals meet the
-    // title's, and under a wrapped title or a note it stays level with the chevron.
-    AccessibilityStack(alignment: .center, spacing: 12, stackedSpacing: 4) {
-      title
-        .frame(maxWidth: .infinity, alignment: .leading)
+    Group {
+      if isStacked {
+        // Under the title, where it starts, whether the mark is beside the title or above it.
+        marked {
+          VStack(alignment: .leading, spacing: 4) {
+            title
+            shownValue
+          }
+        }
+      } else {
+        // The value sits on the row's center with the chevron: on one line its capitals meet the
+        // title's, and under a wrapped title or a note it stays level with the chevron.
+        HStack(alignment: .center, spacing: 12) {
+          marked { title }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
-      value
-        .layoutPart(.value)
-        .foregroundStyle(.mutedForeground)
-        .fixedSize()
+          shownValue
+        }
+      }
     }
+    .layoutStacks(isStacked)
     .layoutRow(.listGroup)
+  }
+
+  private var shownValue: some View {
+    value
+      .layoutPart(.value)
+      .foregroundStyle(.mutedForeground)
+      .fixedSize()
+  }
+
+  @ViewBuilder private func marked(_ content: () -> some View) -> some View {
+    if Mark.self == EmptyView.self {
+      content()
+    } else {
+      Label {
+        content()
+      } icon: {
+        mark
+          .markColumn()
+          .layoutPart(.mark)
+      }
+    }
+  }
+}
+
+extension PlanPathRow where Mark == EmptyView {
+  init(@ViewBuilder title: () -> Title, @ViewBuilder value: () -> Value) {
+    self.init(title: title, mark: { EmptyView() }, value: value)
   }
 }
 
@@ -743,15 +787,11 @@ struct PlanMarkedRow<Mark: View>: View {
 
   var body: some View {
     PlanPathRow {
-      Label {
-        title
-          .foregroundStyle(.primary)
-          .layoutPart(.label, text: title)
-      } icon: {
-        mark
-          .markColumn()
-          .layoutPart(.mark)
-      }
+      title
+        .foregroundStyle(.primary)
+        .layoutPart(.label, text: title)
+    } mark: {
+      mark
     } value: {
       when
     }
@@ -767,28 +807,24 @@ struct PlanChallengeLabel: View {
 
   var body: some View {
     PlanPathRow {
-      Label {
-        VStack(alignment: .leading, spacing: 2) {
-          Group {
-            if isLanguage {
-              Text("Call", tableName: "Plan", comment: "The live call that closes a language phase")
-            } else {
-              Text(
-                "The Trickster", tableName: "Plan",
-                comment:
-                  "The challenge that closes a phase, named after its character, the Trickster")
-            }
+      VStack(alignment: .leading, spacing: 2) {
+        Group {
+          if isLanguage {
+            Text("Call", tableName: "Plan", comment: "The live call that closes a language phase")
+          } else {
+            Text(
+              "The Trickster", tableName: "Plan",
+              comment:
+                "The challenge that closes a phase, named after its character, the Trickster")
           }
-          .foregroundStyle(.primary)
-          .layoutPart(.label)
-
-          explanation
         }
-      } icon: {
-        KindMark(kind: .challenge)
-          .markColumn()
-          .layoutPart(.mark)
+        .foregroundStyle(.primary)
+        .layoutPart(.label)
+
+        explanation
       }
+    } mark: {
+      KindMark(kind: .challenge)
     } value: {
       when
     }

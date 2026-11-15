@@ -19,6 +19,8 @@
               DebugLessonGate(opensIn: section == "lessonGate" ? 20 : 5 * 86_400)
             } else if section == "limits" {
               DebugLimits()
+            } else if section == "rowStack" {
+              DebugRowStack()
             } else if let writing = DebugLessonWait.writing(section) {
               DebugLessonWait(
                 writing: writing, kind: section.hasPrefix("challenge") ? .challenge : .lesson)
@@ -569,21 +571,18 @@
 
         // A phase with a line under its name, and a folded one, as the path draws them.
         PlanPathRow {
-          Label {
-            VStack(alignment: .leading, spacing: 2) {
-              Text(verbatim: "Foundations")
-                .typeWeight(.semibold)
-                .layoutPart(.label)
+          VStack(alignment: .leading, spacing: 2) {
+            Text(verbatim: "Foundations")
+              .typeWeight(.semibold)
+              .layoutPart(.label)
 
-              Text(verbatim: "Continues Nov 16")
-                .layoutPart(.note)
-                .typeStyle(.meta)
-                .foregroundStyle(.mutedForeground)
-            }
-          } icon: {
-            StatusMark(status: .next)
-              .layoutPart(.mark)
+            Text(verbatim: "Continues Nov 16")
+              .layoutPart(.note)
+              .typeStyle(.meta)
+              .foregroundStyle(.mutedForeground)
           }
+        } mark: {
+          StatusMark(status: .next)
         } value: {
           PlanWhen.date(Text(verbatim: "18 Feb 2027"))
         }
@@ -593,13 +592,10 @@
           EmptyView()
         } label: {
           PlanPathRow {
-            Label {
-              Text(verbatim: "Fill the gaps")
-                .layoutPart(.label)
-            } icon: {
-              StatusMark(status: .todo)
-                .layoutPart(.mark)
-            }
+            Text(verbatim: "Fill the gaps")
+              .layoutPart(.label)
+          } mark: {
+            StatusMark(status: .todo)
           } value: {
             PlanWhen.date(Text(verbatim: "14 Jul 2027"))
           }
@@ -613,6 +609,11 @@
           PlanMarkedRow(title: Text(verbatim: "ENEM 2027"), when: when) {
             Image(systemName: "flag")
           }
+        }
+
+        // A goal named in a script and an emoji Geist doesn't draw.
+        PlanMarkedRow(title: Text(verbatim: "日本語の練習 🎯"), when: .words(Text(verbatim: "Today"))) {
+          Image(systemName: "flag")
         }
       }
     }
@@ -637,6 +638,29 @@
           "startDate": "2027-02-17", "state": "\(index == 0 ? "current" : "upcoming")" }
         """
       return try! JSONDecoder().decode(PlanPhase.self, from: Data(json.utf8))
+    }
+  }
+
+  /// `ZOONK_DEBUG_GALLERY=rowStack` draws rows in a scroll's stack with hairlines between them, as
+  /// a lesson's end and a challenge's topics do, outside any list.
+  private struct DebugRowStack: View {
+    var body: some View {
+      ScrollView {
+        VStack(spacing: 0) {
+          ForEach(["Percentages", "Ratios and proportions", "Brazil's Republic"], id: \.self) {
+            title in
+            ListRow(Text(verbatim: title), description: Text(verbatim: "3 questions")) {
+              KindMark(kind: .lesson)
+            } trailing: {
+              Text(verbatim: "12 min")
+            }
+            .padding(.vertical, 12)
+
+            Divider()
+          }
+        }
+        .padding(.horizontal, 20)
+      }
     }
   }
 

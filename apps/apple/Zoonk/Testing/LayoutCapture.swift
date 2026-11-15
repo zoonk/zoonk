@@ -1,5 +1,7 @@
 #if DEBUG
+  import CryptoKit
   import SwiftUI
+  import Synchronization
   import UIKit
 
   /// `ZOONK_LAYOUT_CAPTURE=1` (also a launch argument, `-ZOONK_LAYOUT_CAPTURE 1`) has the shared
@@ -51,8 +53,7 @@
       /// How much a transform above draws the view smaller or larger than it laid out, as a sheet
       /// behind another one does; a font's metrics are in layout points.
       var scale: CGFloat = 1
-      /// At accessibility sizes a row puts its value under its title, where it isn't on the row's
-      /// line or its end edge.
+      /// A row whose layout put its value under its title (`layoutStacks(_:)`).
       var stacked = false
     }
 
@@ -90,6 +91,57 @@
 
     static func reduce(value: inout [Entry], nextValue: () -> [Entry]) {
       value.append(contentsOf: nextValue())
+    }
+  }
+
+  struct LayoutStackedKey: PreferenceKey {
+    static let defaultValue = false
+
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+      value = value || nextValue()
+    }
+  }
+
+  /// The first line of each text a part drew, as its runs came out: a run in a fallback face (a
+  /// script or an emoji the font lacks) or another font has its own ascent.
+  struct DrawnLine: Equatable, Sendable {
+    let ascents: [CGFloat]
+    let lines: Int
+  }
+
+  /// What `LayoutRunsProbe` saw, by part; it draws on the render thread.
+  final class LayoutRuns: Sendable {
+    static let shared = LayoutRuns()
+
+    private let drawn = Mutex<[UUID: [String: DrawnLine]]>([:])
+
+    func record(_ line: DrawnLine, key: String, part: UUID) {
+      drawn.withLock { $0[part, default: [:]][key] = line }
+    }
+
+    func lines(of part: UUID) -> [DrawnLine] {
+      drawn.withLock { Array(($0[part] ?? [:]).values) }
+    }
+
+    func forget(_ part: UUID) {
+      _ = drawn.withLock { $0.removeValue(forKey: part) }
+    }
+  }
+
+  /// Draws text as it would draw anyway, noting each text's first line.
+  struct LayoutRunsProbe: TextRenderer {
+    let part: UUID
+
+    func draw(layout: Text.Layout, in context: inout GraphicsContext) {
+      if let first = layout.first {
+        LayoutRuns.shared.record(
+          DrawnLine(ascents: first.map(\.typographicBounds.ascent), lines: layout.count),
+          key: "\(first.typographicBounds.rect)", part: part)
+      }
+
+      for line in layout {
+        context.draw(line)
+      }
     }
   }
 
@@ -143,15 +195,27 @@
       if LayoutCapture.isOn {
         content
           .environment(\.layoutRowID, id)
+          .overlayPreferenceValue(LayoutStackedKey.self) { stacked in
+            Color.clear
+              .onChange(of: stacked, initial: true) {
+                update { $0.stacked = stacked }
+              }
+              .allowsHitTesting(false)
+              .accessibilityHidden(true)
+          }
           .probes { frame in
-            LayoutRegistry.shared.update(id, kind: .row(piece)) {
-              $0.frame = frame
-              $0.surface = surface
-            }
+            update { $0.frame = frame }
           }
           .onDisappear { LayoutRegistry.shared.remove(id) }
       } else {
         content
+      }
+    }
+
+    private func update(_ change: (inout LayoutRegistry.Record) -> Void) {
+      LayoutRegistry.shared.update(id, kind: .row(piece)) {
+        $0.surface = surface
+        change(&$0)
       }
     }
   }
@@ -165,12 +229,12 @@
     @Environment(\.layoutTypeStyle) private var inherited
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.legibilityWeight) private var legibility
-    @Environment(\.stacksContent) private var isStacked
     @State private var id = UUID()
 
     func body(content: Content) -> some View {
       if LayoutCapture.isOn {
         content
+          .textRenderer(LayoutRunsProbe(part: id))
           .overlayPreferenceValue(LayoutTypeKey.self) { entries in
             GeometryReader { proxy in
               let origin = proxy.frame(in: .global).origin
@@ -205,7 +269,10 @@
           } action: { scale in
             update { $0.scale = scale }
           }
-          .onDisappear { LayoutRegistry.shared.remove(id) }
+          .onDisappear {
+            LayoutRegistry.shared.remove(id)
+            LayoutRuns.shared.forget(id)
+          }
       } else {
         content
       }
@@ -219,7 +286,6 @@
         $0.text = text
         $0.dynamicTypeSize = dynamicTypeSize
         $0.legibility = legibility
-        $0.stacked = isStacked
         change(&$0)
       }
     }
@@ -307,7 +373,8 @@
   // MARK: - Requests
 
   /// `scripts/layout-capture.mts` writes `request.json` (`{"scenario", "screen"}`) in the app's
-  /// `Documents/layout-capture`; the app answers with `<scenario>.json` beside it.
+  /// `Documents/layout-capture`; the app answers with `<scenario>.png`, the frame it measured, then
+  /// `<scenario>.json` beside it, which names the picture by its SHA-256.
   @MainActor
   enum LayoutCaptureRequests {
     private static var isStarted = false
@@ -343,7 +410,8 @@
       try? FileManager.default.removeItem(at: requestURL)
 
       let capture = LayoutCaptureWriter.capture(
-        scenario: request.scenario, screen: request.screen ?? request.scenario)
+        scenario: request.scenario, screen: request.screen ?? request.scenario,
+        picture: folder.appending(path: "\(request.scenario).png"))
       let out = folder.appending(path: "\(request.scenario).json")
 
       if let json = try? JSONSerialization.data(
@@ -358,7 +426,9 @@
 
   @MainActor
   enum LayoutCaptureWriter {
-    static func capture(scenario: String, screen: String) -> [String: Any] {
+    /// The capture, with the picture its pixel reads came from written to `pictureURL`.
+    static func capture(scenario: String, screen: String, picture pictureURL: URL) -> [String: Any]
+    {
       guard
         let window = UIApplication.shared.connectedScenes
           .compactMap({ ($0 as? UIWindowScene)?.keyWindow }).first
@@ -370,7 +440,16 @@
       let cells = ListCells(window: window)
       var writer = ElementWriter(picture: picture, cells: cells, window: window)
 
+      guard let png = picture.png, (try? png.write(to: pictureURL, options: .atomic)) != nil else {
+        return ["error": "the window couldn't be drawn"]
+      }
+
       return [
+        "picture": [
+          "file": pictureURL.lastPathComponent,
+          "sha256": SHA256.hash(data: png).map { String(format: "%02x", $0) }.joined(),
+          "pixels": [picture.pixelWidth, picture.pixelHeight],
+        ],
         "version": 1,
         "platform": "apple",
         "scenario": scenario,
@@ -414,17 +493,68 @@
     }
   }
 
+  /// Where content shows: the window less its safe area (the status bar, the home indicator), and
+  /// inside each scroll view, what its bars and the screen's bottom bar leave uncovered.
+  struct LayoutViewports {
+    struct Viewport {
+      /// Where the scroll view sits in the window.
+      let frame: CGRect
+      /// The part of it its bars leave uncovered.
+      let visible: CGRect
+    }
+
+    let window: CGRect
+    let scrolls: [Viewport]
+
+    init(window: CGRect, scrolls: [Viewport]) {
+      self.window = window
+      self.scrolls = scrolls
+    }
+
+    @MainActor
+    init(window: UIWindow) {
+      var scrolls: [Viewport] = []
+
+      func visit(_ view: UIView) {
+        if let scroll = view as? UIScrollView, !scroll.isHidden, scroll.alpha > 0 {
+          let frame = scroll.convert(scroll.bounds, to: window)
+          scrolls.append(
+            Viewport(
+              frame: frame,
+              visible: scroll.convert(scroll.bounds.inset(by: scroll.safeAreaInsets), to: window)))
+        }
+
+        view.subviews.forEach(visit)
+      }
+
+      visit(window.topScreen)
+      self.init(window: window.bounds.inset(by: window.safeAreaInsets), scrolls: scrolls)
+    }
+
+    /// All of `rect` shows: inside the window's safe area and every scroll view it sits in.
+    func shows(_ rect: CGRect) -> Bool {
+      let center = CGPoint(x: rect.midX, y: rect.midY)
+      let inside = scrolls.filter { $0.frame.contains(center) }.map(\.visible)
+
+      return ([window] + inside).allSatisfy { $0.insetBy(dx: -0.5, dy: -0.5).contains(rect) }
+    }
+  }
+
   /// The window as drawn, read only inside a known region: a mark's, an end's, or the room after a
-  /// row where the system draws its chevron or accessory.
+  /// row where the system draws its chevron or accessory. It is also the capture's picture, so the
+  /// picture is the frame that was measured. The system draws its status bar and home indicator
+  /// outside the app's window, so the picture has neither.
   @MainActor
   private struct WindowPicture {
     let scale: CGFloat
-    /// Where the window shows content: a part past it, or under the status bar or the home
-    /// indicator, is drawn there only in part.
-    private let visible: CGRect
+    let png: Data?
+    private let viewports: LayoutViewports
     private let width: Int
     private let height: Int
     private let pixels: [UInt8]
+
+    var pixelWidth: Int { width }
+    var pixelHeight: Int { height }
 
     init(window: UIWindow) {
       let format = UIGraphicsImageRendererFormat(for: window.traitCollection)
@@ -434,7 +564,8 @@
       }
 
       scale = format.scale
-      visible = window.bounds.inset(by: window.safeAreaInsets)
+      png = image.pngData()
+      viewports = LayoutViewports(window: window)
 
       guard let cgImage = image.cgImage else {
         width = 0
@@ -459,7 +590,7 @@
 
     /// Whether all of `rect` is on the screen, so its pixels are all of its ink.
     func shows(_ rect: CGRect) -> Bool {
-      visible.insetBy(dx: -0.5, dy: -0.5).contains(rect)
+      viewports.shows(rect)
     }
 
     /// What differs from the region's most common color, in points; nil when nothing does.
@@ -514,6 +645,18 @@
     }
   }
 
+  extension UIWindow {
+    /// The top screen's view: a screen under a sheet keeps its lists and scroll views in the window.
+    var topScreen: UIView {
+      var top = rootViewController
+      while let presented = top?.presentedViewController, !presented.isBeingDismissed {
+        top = presented
+      }
+
+      return top?.view ?? self
+    }
+  }
+
   /// A list's rows and sections as the system laid them out: a section is a group, a cell a row.
   @MainActor
   private struct ListCells {
@@ -547,13 +690,7 @@
         view.subviews.forEach(visit)
       }
 
-      // The top screen's lists: a screen under a sheet keeps its cells in the window.
-      var top = window.rootViewController
-      while let presented = top?.presentedViewController, !presented.isBeingDismissed {
-        top = presented
-      }
-
-      visit(top?.view ?? window)
+      visit(window.topScreen)
       cells = found
     }
 
@@ -621,87 +758,176 @@
       ["parts": measured, "notMeasured": notMeasured]
     }
 
+    /// A row as written: a declared row by its own identity, or a list cell holding parts that no
+    /// declared row holds.
+    private struct Row {
+      let id: String
+      let group: String
+      let frame: CGRect
+      let surface: UUID?
+    }
+
     mutating func elements() -> [[String: Any]] {
       var out: [[String: Any]] = []
       var groupIDs: [String: String] = [:]
-      var rowIDs: [String: String] = [:]
-      var reportedCells = Set<String>()
+      var declaredRows: [UUID: Row] = [:]
+      var cellRows: [String: Row] = [:]
+      var rowsByCell: [String: [Row]] = [:]
+      var unattached = 0
 
       func cellKey(_ cell: ListCells.Cell) -> String {
         "\(cell.section):\(Int(cell.frame.minY))"
       }
 
-      /// A part's row: its piece's row, else the list cell it's in.
-      func rowOf(_ record: LayoutRegistry.Record) -> (row: String, group: String)? {
-        let rowRecord = record.row.flatMap { id in records.first { $0.id == id } }
-        let place = rowRecord?.record.frame ?? record.frame
+      func group(_ key: String, piece: String, frames: [CGRect], endEdge: CGFloat, source: String?)
+        -> String
+      {
+        if let id = groupIDs[key] { return id }
+        let id = "g\(groupIDs.count)"
+        groupIDs[key] = id
+        let bounds = frames.reduce(CGRect.null) { $0.union($1) }
+        var element: [String: Any] = [
+          "id": id, "piece": piece, "part": "group", "group": NSNull(), "row": NSNull(),
+          "bounds": Self.bounds(bounds), "ink": Self.bounds(bounds),
+          "endEdge": Self.round(endEdge), "gap": 0,
+        ]
+        if let source {
+          element["source"] = source
+        }
+        out.append(element)
+        return id
+      }
 
-        guard let cell = cells.cell(containing: place) else { return nil }
+      func sectionGroup(_ cell: ListCells.Cell, piece: String) -> String {
+        let inSection = cells.cells.filter { $0.section == cell.section }
+        return group(
+          cell.section, piece: piece, frames: inSection.map(\.frame),
+          endEdge: inSection.map(\.contentEnd).max() ?? cell.frame.maxX, source: nil)
+      }
 
-        let piece: String
-        if case .row(let declared) = rowRecord?.record.kind {
-          piece = declared.rawValue
-        } else {
-          piece = LayoutPiece.listGroup.rawValue
+      func addRow(
+        _ row: Row, piece: String, bounds: CGRect, endEdge: CGFloat, flow: String, stacked: Bool,
+        cell: ListCells.Cell?
+      ) {
+        var element: [String: Any] = [
+          "id": row.id, "piece": piece, "part": "row", "group": row.group, "row": NSNull(),
+          "bounds": Self.bounds(bounds), "ink": Self.bounds(row.frame), "flow": flow,
+          "gapBefore": 0, "margins": [0, 0], "endEdge": Self.round(endEdge),
+        ]
+        if stacked {
+          element["stacked"] = true
+        }
+        out.append(element)
+        if let cell {
+          rowsByCell[cellKey(cell), default: []].append(row)
+        }
+      }
+
+      // Declared rows, inside a list's cells or not.
+      let declared = records.compactMap { entry -> (UUID, LayoutRegistry.Record, LayoutPiece)? in
+        guard case .row(let piece) = entry.record.kind else { return nil }
+        return (entry.id, entry.record, piece)
+      }
+      let inCells = declared.map { cells.cell(containing: $0.1.frame) }
+      let declaredPerCell = Dictionary(grouping: inCells.compactMap { $0.map(cellKey) }) { $0 }
+        .mapValues(\.count)
+      let outside = declared.indices.filter { inCells[$0] == nil }
+      let stacks = LayoutStacks.groups(outside.map { declared[$0].1.frame })
+
+      for (index, (id, record, piece)) in declared.enumerated() {
+        guard let cell = inCells[index] else { continue }
+        let groupID = sectionGroup(cell, piece: piece.rawValue)
+        let row = Row(
+          id: "\(groupID).r\(out.count)", group: groupID, frame: record.frame,
+          surface: record.surface)
+        declaredRows[id] = row
+        // A cell with one declared row is that row; nested rows in a cell keep their own frames.
+        let alone = declaredPerCell[cellKey(cell)] == 1
+        addRow(
+          row, piece: piece.rawValue, bounds: alone ? cell.frame : record.frame,
+          endEdge: cell.contentEnd, flow: cell.section, stacked: record.stacked, cell: cell)
+      }
+
+      for (stackIndex, members) in stacks.enumerated() {
+        let rows = members.map { declared[outside[$0]] }
+        let frames = rows.map(\.1.frame)
+        let key = "stack\(stackIndex)"
+        let groupID = group(
+          key, piece: rows[0].2.rawValue, frames: frames,
+          endEdge: frames.map(\.maxX).max() ?? 0, source: "stack")
+
+        for (id, record, piece) in rows {
+          let row = Row(
+            id: "\(groupID).r\(out.count)", group: groupID, frame: record.frame,
+            surface: record.surface)
+          declaredRows[id] = row
+          addRow(
+            row, piece: piece.rawValue, bounds: record.frame, endEdge: record.frame.maxX,
+            flow: key, stacked: record.stacked, cell: nil)
+        }
+      }
+
+      /// A part's row: its declared row, else a declared row level with it in its cell or on its
+      /// surface (a chevron a modifier puts beside the row), else its cell.
+      func rowOf(_ record: LayoutRegistry.Record) -> Row? {
+        if let id = record.row, let row = declaredRows[id] { return row }
+
+        let center = CGPoint(x: record.frame.midX, y: record.frame.midY)
+        let level = { (row: Row) in row.frame.minY <= center.y && center.y <= row.frame.maxY }
+
+        guard let cell = cells.cell(containing: record.frame) else {
+          return declaredRows.values
+            .filter { $0.surface == record.surface && level($0) && $0.frame.minX <= center.x }
+            .min { abs($0.frame.maxX - center.x) < abs($1.frame.maxX - center.x) }
         }
 
-        let groupID =
-          groupIDs[cell.section]
-          ?? {
-            let id = "g\(groupIDs.count)"
-            groupIDs[cell.section] = id
-            let inSection = cells.cells.filter { $0.section == cell.section }
-            let bounds = inSection.reduce(CGRect.null) { $0.union($1.frame) }
-            out.append([
-              "id": id, "piece": piece, "part": "group", "group": NSNull(), "row": NSNull(),
-              "bounds": Self.bounds(bounds), "ink": Self.bounds(bounds),
-              "endEdge": Self.round(inSection.map(\.contentEnd).max() ?? bounds.maxX),
-              "gap": 0,
-            ])
-            return id
-          }()
+        if let row = rowsByCell[cellKey(cell)]?.filter(level).min(by: {
+          $0.frame.height < $1.frame.height
+        }) {
+          return row
+        }
 
         let key = cellKey(cell)
-        reportedCells.insert(key)
-
-        let rowID =
-          rowIDs[key]
-          ?? {
-            let id = "\(groupID).r\(rowIDs.count)"
-            rowIDs[key] = id
-            var row: [String: Any] = [
-              "id": id, "piece": piece, "part": "row", "group": groupID, "row": NSNull(),
-              "bounds": Self.bounds(cell.frame),
-              "ink": Self.bounds(rowRecord?.record.frame ?? place),
-              "flow": cell.section, "gapBefore": 0, "margins": [0, 0],
-              "endEdge": Self.round(cell.contentEnd),
-            ]
-            if record.stacked {
-              row["stacked"] = true
-            }
-            out.append(row)
-            return id
-          }()
-
-        return (rowID, groupID)
+        if let row = cellRows[key] { return row }
+        let groupID = sectionGroup(cell, piece: LayoutPiece.listGroup.rawValue)
+        let row = Row(
+          id: "\(groupID).r\(out.count)", group: groupID, frame: cell.frame,
+          surface: record.surface)
+        cellRows[key] = row
+        addRow(
+          row, piece: LayoutPiece.listGroup.rawValue, bounds: cell.frame,
+          endEdge: cell.contentEnd, flow: cell.section, stacked: false, cell: cell)
+        return row
       }
 
       let surfaces = surfaces
       var seenParts = Set<String>()
 
-      for (index, (_, record)) in records.enumerated() {
+      for (index, (id, record)) in records.enumerated() {
         switch record.kind {
         case .part(let part):
-          // A view drawn twice, such as one an accessibility representation repeats, is one part.
+          // A view drawn twice at one place, such as one an accessibility representation repeats,
+          // is one drawing of the part.
           let key = "\(part):\(record.row?.uuidString ?? ""):\(record.frame)"
           guard part == .end || part == .mark || !isEndGlyph(record),
-            seenParts.insert(key).inserted, let place = rowOf(record)
+            seenParts.insert(key).inserted
           else { continue }
-          var element = part == .end ? endElement(record) : partElement(part, record)
-          element["id"] = "\(place.row).p\(index)"
-          element["group"] = place.group
-          element["row"] = place.row
-          element["piece"] = out.first { $0["id"] as? String == place.group }?["piece"]
+          var element = part == .end ? endElement(record) : partElement(part, id, record)
+          element["id"] = "p\(index)"
+
+          if let row = rowOf(record) {
+            element["id"] = "\(row.id).p\(index)"
+            element["group"] = row.group
+            element["row"] = row.id
+            element["piece"] = out.first { $0["id"] as? String == row.group }?["piece"]
+          } else {
+            // Never dropped: a part no row holds is written, and counted as not measured.
+            unattached += 1
+            element["group"] = NSNull()
+            element["row"] = NSNull()
+            element["piece"] = "unreported"
+            element["name"] = "a part outside any row"
+          }
           out.append(element)
         case .action(let variant):
           // Only a main action's fill counts; another look is written only as a pair's anchor.
@@ -735,10 +961,13 @@
         }
       }
 
-      let systemEnds = systemEnds(rowIDs: rowIDs, cellKey: cellKey)
+      notMeasured += unattached
+
+      let systemEnds = systemEnds(rowsByCell: rowsByCell, cellKey: cellKey)
       out.append(contentsOf: systemEnds)
       out.append(
-        contentsOf: unreportedRows(reported: reportedCells, groups: groupIDs, cellKey: cellKey))
+        contentsOf: unreportedRows(
+          reported: Set(rowsByCell.keys), groups: groupIDs, cellKey: cellKey))
 
       // The system lays out its own chevron, and its glyph ends inside the margin a value without
       // one reaches; that row's end edge is where the system ends it.
@@ -769,9 +998,10 @@
     }
 
     /// A text's frame and first line: its baseline, its capitals from its font, its type role.
-    private mutating func partElement(_ part: LayoutPart, _ record: LayoutRegistry.Record)
-      -> [String: Any]
-    {
+    /// What can't be read says "not measured" in its own field.
+    private mutating func partElement(
+      _ part: LayoutPart, _ id: UUID, _ record: LayoutRegistry.Record
+    ) -> [String: Any] {
       var element: [String: Any] = ["part": part.rawValue, "bounds": Self.bounds(record.frame)]
 
       if part == .mark {
@@ -781,8 +1011,17 @@
         return element
       }
 
-      element["ink"] = Self.bounds(record.frame)
+      var complete = true
       element["text"] = record.text.flatMap(Self.words)
+
+      // The layout's baseline and capitals hold off screen too; what was drawn there doesn't show.
+      if picture.shows(record.frame) {
+        element["ink"] = Self.bounds(record.frame)
+      } else {
+        element["ink"] = "not measured"
+        element["clipped"] = true
+        complete = false
+      }
 
       guard let baseline = record.baseline,
         let style = record.styles
@@ -798,25 +1037,42 @@
         return element
       }
 
-      measured += 1
       let font = style.layoutFont(record.dynamicTypeSize, legibility: record.legibility)
+      let drawn = LayoutRuns.shared.lines(of: id)
       element["baseline"] = Self.round(baseline)
-      element["capTop"] = Self.round(baseline - font.capHeight * record.scale)
-      element["capBottom"] = Self.round(baseline)
       element["type"] = style.layoutName
-      element["firstLine"] = Self.bounds(
-        CGRect(
-          x: record.frame.minX, y: record.frame.minY, width: record.frame.width,
-          height: baseline - font.descender * record.scale - record.frame.minY))
+
+      if LayoutFaces.drewOnly(font, drawn) {
+        element["capTop"] = Self.round(baseline - font.capHeight * record.scale)
+        element["capBottom"] = Self.round(baseline)
+        element["firstLine"] = Self.bounds(
+          CGRect(
+            x: record.frame.minX, y: record.frame.minY, width: record.frame.width,
+            height: baseline - font.descender * record.scale - record.frame.minY))
+      } else {
+        // Another face drew some of it (a script or an emoji the font lacks, another font), or
+        // nothing showed what drew it: the font's capitals aren't the drawn ones.
+        element["capTop"] = "not measured"
+        element["capBottom"] = "not measured"
+        complete = false
+      }
 
       if part == .label {
         let spacing = style.layoutLineSpacing(font)
         let height = record.frame.height / record.scale
-        element["lines"] = max(1, Int(((height + spacing) / (font.lineHeight + spacing)).rounded()))
+        element["lines"] =
+          drawn.map(\.lines).max()
+          ?? max(1, Int(((height + spacing) / (font.lineHeight + spacing)).rounded()))
       }
 
       if let role = record.role {
         element["role"] = role.rawValue
+      }
+
+      if complete {
+        measured += 1
+      } else {
+        notMeasured += 1
       }
 
       return element
@@ -850,12 +1106,14 @@
     }
 
     /// What the system draws after a row's content (a link's chevron, a checkmark), read from the
-    /// picture between the content's end and the cell's.
-    private mutating func systemEnds(rowIDs: [String: String], cellKey: (ListCells.Cell) -> String)
-      -> [[String: Any]]
-    {
+    /// picture between the content's end and the cell's. SwiftUI draws it inside the cell's own
+    /// view, so the room is all that says it's there: one there that can't be read is written with
+    /// its ink "not measured".
+    private mutating func systemEnds(
+      rowsByCell: [String: [Row]], cellKey: (ListCells.Cell) -> String
+    ) -> [[String: Any]] {
       cells.cells.compactMap { cell in
-        guard let rowID = rowIDs[cellKey(cell)] else { return nil }
+        guard let rows = rowsByCell[cellKey(cell)], !rows.isEmpty else { return nil }
 
         let contentEnd = records.filter {
           if case .part = $0.record.kind {
@@ -864,23 +1122,40 @@
           return false
         }.map(\.record.frame.maxX).max()
 
-        guard let contentEnd,
-          let ink = picture.ink(
-            in: CGRect(
-              x: contentEnd + 1, y: cell.frame.minY + 1, width: cell.contentEnd - contentEnd + 1,
-              height: cell.frame.height - 2)),
-          // A glyph, such as a chevron or a checkmark; not a scroll indicator's sliver.
-          ink.width >= 3, ink.width <= 24, ink.height <= 24
-        else { return nil }
+        guard let contentEnd else { return nil }
 
-        measured += 1
-        return [
-          "id": "\(rowID).system", "piece": LayoutPiece.listGroup.rawValue, "part": "end",
-          "group": rowID.components(separatedBy: ".").first ?? NSNull(), "row": rowID,
-          "bounds": Self.bounds(ink), "ink": Self.bounds(ink),
-          "name": "drawn by the system after the row (from the picture)",
-          "source": "picture",
+        let room = CGRect(
+          x: contentEnd + 1, y: cell.frame.minY + 1, width: cell.contentEnd - contentEnd + 1,
+          height: cell.frame.height - 2)
+        let read = LayoutSystemEnd.read(
+          room: room, shown: picture.shows(room), ink: picture.ink(in: room))
+
+        let row =
+          rows.first { $0.frame.minY <= cell.frame.midY && cell.frame.midY <= $0.frame.maxY }
+          ?? rows[0]
+        var element: [String: Any] = [
+          "id": "\(row.id).system", "piece": LayoutPiece.listGroup.rawValue, "part": "end",
+          "group": row.group, "row": row.id,
+          "name": "drawn by the system after the row (from the picture)", "source": "picture",
         ]
+
+        switch read {
+        case .none:
+          return nil
+        case .glyph(let ink):
+          measured += 1
+          element["bounds"] = Self.bounds(ink)
+          element["ink"] = Self.bounds(ink)
+        case .unreadable(let clipped):
+          notMeasured += 1
+          element["bounds"] = Self.bounds(room)
+          element["ink"] = "not measured"
+          if clipped {
+            element["clipped"] = true
+          }
+        }
+
+        return element
       }
     }
 
@@ -923,6 +1198,60 @@
       }
 
       return search(text, depth: 0)
+    }
+  }
+
+  /// What the room after a list row's content holds.
+  enum LayoutSystemEnd: Equatable {
+    /// Nothing: no room for an accessory, or nothing drawn there.
+    case none
+    /// A glyph, such as a chevron or a checkmark.
+    case glyph(CGRect)
+    /// Something is drawn there that can't be read as one glyph, or the screen's edge cuts it.
+    case unreadable(clipped: Bool)
+
+    static func read(room: CGRect, shown: Bool, ink: CGRect?) -> LayoutSystemEnd {
+      // A scroll indicator's sliver isn't an accessory.
+      guard room.width > 1, let ink, ink.width >= 3 else { return .none }
+      guard shown else { return .unreadable(clipped: true) }
+      // Larger than one glyph: the accessory runs into something else.
+      guard ink.width <= 24, ink.height <= 24 else { return .unreadable(clipped: false) }
+      return .glyph(ink)
+    }
+  }
+
+  /// Declared rows outside a list, grouped as a list would group them: rows of one width and start
+  /// that touch, top to bottom.
+  enum LayoutStacks {
+    /// The indexes of `frames`, one array per group.
+    static func groups(_ frames: [CGRect]) -> [[Int]] {
+      var groups: [[Int]] = []
+
+      for index in frames.indices.sorted(by: { frames[$0].minY < frames[$1].minY }) {
+        let frame = frames[index]
+
+        if let last = groups.last?.last.map({ frames[$0] }),
+          abs(last.minX - frame.minX) <= 0.5, abs(last.width - frame.width) <= 0.5,
+          (-0.5...1).contains(frame.minY - last.maxY)
+        {
+          groups[groups.count - 1].append(index)
+        } else {
+          groups.append([index])
+        }
+      }
+
+      return groups
+    }
+  }
+
+  enum LayoutFaces {
+    /// Whether `font` drew every text's first line: each of its runs has the font's ascent. A run
+    /// a fallback face drew (a script or an emoji the font lacks) or another font has its own.
+    static func drewOnly(_ font: UIFont, _ lines: [DrawnLine]) -> Bool {
+      !lines.isEmpty
+        && lines.allSatisfy { line in
+          !line.ascents.isEmpty && line.ascents.allSatisfy { abs($0 - font.ascender) < 0.05 }
+        }
     }
   }
 

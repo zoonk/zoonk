@@ -23,6 +23,7 @@ struct AccessibilityStack<Content: View>: View {
       : AnyLayout(HStackLayout(alignment: alignment, spacing: spacing))
 
     layout { content }
+      .layoutStacks(isStacked)
   }
 }
 
@@ -39,26 +40,29 @@ struct MarkedRow<Mark: View, Content: View, End: View>: View {
   @ViewBuilder let end: End
 
   var body: some View {
-    if isStacked {
-      VStack(alignment: .leading, spacing: stackedSpacing) {
-        HStack(spacing: 12) {
+    Group {
+      if isStacked {
+        VStack(alignment: .leading, spacing: stackedSpacing) {
+          HStack(spacing: 12) {
+            mark
+            Spacer(minLength: 8)
+            end
+          }
+
+          content
+        }
+      } else {
+        HStack(alignment: alignment, spacing: 12) {
           mark
-          Spacer(minLength: 8)
+
+          content
+            .frame(maxWidth: .infinity, alignment: .leading)
+
           end
         }
-
-        content
-      }
-    } else {
-      HStack(alignment: alignment, spacing: 12) {
-        mark
-
-        content
-          .frame(maxWidth: .infinity, alignment: .leading)
-
-        end
       }
     }
+    .layoutStacks(isStacked)
   }
 }
 

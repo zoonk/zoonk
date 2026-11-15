@@ -51,6 +51,16 @@ extension View {
     #endif
   }
 
+  /// Whether this layout put a row's value under its title, read by the row around it: the value
+  /// then isn't on the row's line or its end edge.
+  func layoutStacks(_ isStacked: Bool) -> some View {
+    #if DEBUG
+      preference(key: LayoutStackedKey.self, value: isStacked)
+    #else
+      self
+    #endif
+  }
+
   /// What the value inside says, read by the value part around it.
   func layoutRole(_ role: LayoutRole) -> some View {
     #if DEBUG

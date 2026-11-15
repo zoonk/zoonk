@@ -108,14 +108,11 @@ struct RoadmapPhaseRow: View {
 
   var body: some View {
     PlanPathRow {
-      Label {
-        Text(phase.title)
-          .typeWeight(.medium)
-          .layoutPart(.label, text: Text(phase.title))
-      } icon: {
-        StatusMark(status: phase.mark)
-          .layoutPart(.mark)
-      }
+      Text(phase.title)
+        .typeWeight(.medium)
+        .layoutPart(.label, text: Text(phase.title))
+    } mark: {
+      StatusMark(status: phase.mark)
     } value: {
       Group {
         switch when {
@@ -535,11 +532,9 @@ struct NextOnPathSection: View {
         if let chapter, let chapterId = chapter.chapterId {
           PageLink(route: chapterRoute(chapterId)) {
             PlanPathRow {
-              Label {
-                Text(chapter.title)
-              } icon: {
-                StatusMark(status: .next)
-              }
+              Text(chapter.title)
+            } mark: {
+              StatusMark(status: .next)
             } value: {
               EmptyView()
             }
