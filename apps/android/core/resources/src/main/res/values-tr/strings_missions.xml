@@ -19,7 +19,7 @@
   "missions_mock": "6a54cd21c6b3a5a1bb07f430856a30cf1240f83d6261e601f27776ba205694e7",
   "missions_moment_all_done": "335d419548d776cb5bc00bedc60e58e35e7536dbfbb31c4f3f3c71f05c4384d0",
   "missions_moment_done": "4d0a86ae079498db08e4c066fbb2d06c8867dbe6473c4ee1200219b1773e91b6",
-  "missions_moment_more": "d15a8636db8d4de3c17de4b6675f908e2ef9c6501fefbd1d071fcf7c3d2b7b5a",
+  "missions_moment_more": "a90eb9d648fb2afc8866213f96a07e24b44c53795c790c133db08990dfe71d2d",
   "missions_moment_one_done": "01c43abd6b50c9584353782d9012adeea9b712a022646f75a07d174c4b9872c7",
   "missions_open_buddy": "199a8075e3df777f16f2c9cc83b99cf7e3f80f29d0b32ca059beccf6a0301bbc",
   "missions_open_call": "08f57f6a64cb60bbe424f5f5aa0fda270cda26dc045ae44a93355b6f8a05c3c5",
@@ -58,7 +58,6 @@
         <item quantity="one">%d görev tamamlandı!</item>
         <item quantity="other">%d görev tamamlandı!</item>
     </plurals>
-    <!-- %1$d is how many missions are left, %2$s the day's bonus, such as 50. -->
     <plurals name="missions_moment_more">
         <item quantity="one">%1$d görev daha tamamla, +%2$s Beyin Gücü kazan</item>
         <item quantity="other">%1$d görev daha tamamla, +%2$s Beyin Gücü kazan</item>
