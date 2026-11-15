@@ -179,8 +179,9 @@ struct GoalMindMaps: Decodable, Equatable, Sendable {
   let saved: [SavedMindMap]
 
   /// A save that can no longer open still shows, so the learner can remove it.
+  /// A list with nothing in it but a stop is still a list: the page's empty state reads the stop.
   var isEmpty: Bool {
-    chapters.isEmpty && saved.isEmpty
+    chapters.isEmpty && saved.isEmpty && createOffer.stop == nil
   }
 
   func chapter(_ id: String) -> ChapterMindMap? {

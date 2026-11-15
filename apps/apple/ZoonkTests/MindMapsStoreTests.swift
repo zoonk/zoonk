@@ -816,6 +816,21 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertNil(store.shownStop(goalId: "goal"))
   }
 
+  func testAnEmptyListKeepsItsOfferStop() async {
+    let stop = MindMapAllowanceStop(
+      availableAt: nil, period: "rolling30Days", reason: .limitReached, resource: .mindMap)
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    await api.answerLists(chapters: [], saved: [])
+    await api.stopNewMaps(stop)
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    XCTAssertEqual(
+      list.value?.createOffer.stop, stop, "The empty page must retain its stop to hide the promise")
+    XCTAssertNotEqual(
+      list.state, .empty, "The unconditional empty-page description must not be selected")
+  }
+
   private static let chapterKey = MindMapKey(kind: .chapter, targetId: "chapter")
   private static let chapterTarget = SaveTarget(
     key: chapterKey, title: "Chapter", chapterId: "chapter")
