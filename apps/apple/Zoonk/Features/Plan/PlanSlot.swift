@@ -190,6 +190,9 @@ struct PlanSuggestionSection: View {
           }
         }
         .padding(.vertical, isInline ? 4 : 0)
+        // Beside the page a card's actions sit beside its words, so they're small, as main's
+        // panel draws them; the sheet a line opens draws them large.
+        .controlSize(isInline ? .small : .regular)
         .listRowSeparator(.hidden)
         .onHover { isHovering = $0 }
         .task(id: applied?.change.id) {
@@ -455,7 +458,6 @@ struct PlanSuggestionSection: View {
             .buttonSizing(.flexible)
           }
         }
-        .controlSize(.large)
       } actions: {
         EmptyView()
       }

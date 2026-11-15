@@ -1,27 +1,15 @@
 import SwiftUI
 
-/// A ready plan's toolbar: "Adjust plan", and the plan's own items in the "…" options. On a phone
-/// both sit beside the page's title instead (`PlanHeaderActions`), as main's phone has them.
+/// A ready plan's own items in the "…" options, which its header draws beside its title with
+/// "Adjust plan" (`PlanHeaderActions`), as main's Plan has them at every width.
 struct PlanToolbar: ViewModifier {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
   let context: PlanContext
 
   func body(content: Content) -> some View {
     content
-      .taskAction(isShown: horizontalSizeClass == .regular) {
-        Button {
-          context.adjust(.top)
-        } label: {
-          Label {
-            adjustPlanTitle
-          } icon: {
-            Image(systemName: "slider.horizontal.3")
-          }
-        }
-      }
       .modifier(GoalOptionsToolbar(goal: context.goal, inPageHeader: true) { planItems })
   }
 
@@ -93,30 +81,23 @@ struct PlanToolbar: ViewModifier {
   }
 }
 
-/// Main's `PlanHeader` on a phone: "Adjust plan" and the "…" options after the title.
+/// Main's `PlanHeader`: "Adjust plan" and the "…" options after the title.
 struct PlanHeaderActions: View {
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.planOptions) private var options
 
   let context: PlanContext
 
   var body: some View {
-    if horizontalSizeClass == .compact {
-      HStack(spacing: 8) {
-        Button {
-          context.adjust(.top)
-        } label: {
-          adjustPlanTitle
-        }
-        .buttonStyle(.outline)
-        .controlSize(.small)
-
-        options
+    HStack(spacing: 8) {
+      Button {
+        context.adjust(.top)
+      } label: {
+        Text("Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
       }
+      .buttonStyle(.outline)
+      .controlSize(.small)
+
+      options
     }
   }
-}
-
-private var adjustPlanTitle: Text {
-  Text("Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
 }

@@ -26,6 +26,7 @@ struct PlanRouteLink<Label: View>: View {
         sheetOpen.open(route)
       } label: {
         label
+          .frame(maxWidth: .infinity, alignment: .leading)
           .disclosureChevron()
       }
       .foregroundStyle(.primary)
@@ -38,6 +39,7 @@ struct PlanRouteLink<Label: View>: View {
         router.open(route)
       } label: {
         label
+          .frame(maxWidth: .infinity, alignment: .leading)
           .disclosureChevron()
       }
       .foregroundStyle(.primary)
