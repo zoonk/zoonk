@@ -19,16 +19,20 @@ import com.zoonk.api.models.MemoryFact
 import com.zoonk.api.models.MemoryFactDeletionChange
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -67,7 +71,13 @@ private class FakeMemoryApi : MemoryApi {
         session: AuthenticatedSession,
         id: UUID,
         statement: String,
-    ): MemoryFact = throw UnsupportedOperationException()
+    ): MemoryFact {
+        gate?.await()
+        failure?.let { throw it }
+        val fact = current.facts.single { it.id == id }.copy(statement = statement)
+        current = current.copy(facts = listOf(fact))
+        return fact
+    }
 
     override suspend fun deleteFact(
         session: AuthenticatedSession,
@@ -136,6 +146,55 @@ class MemoryStoreTest {
                     .facts
                     .isEmpty(),
             )
+        }
+
+    @Test
+    fun anEditStaysOpenAndCantBeClosedWhileItsSaveIsOut() =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            try {
+                val screen = MemoryViewModel(loadedStore())
+                api.gate = CompletableDeferred()
+
+                screen.openEdit(FACT_ID)
+                screen.saveEdit("Studies before work")
+                runCurrent()
+                screen.closeEdit()
+                screen.openEdit(FACT_ID)
+
+                assertEquals(FactEdit(FACT_ID, saving = true), screen.factEdit)
+
+                api.gate!!.complete(Unit)
+                advanceUntilIdle()
+
+                assertNull(screen.factEdit)
+                assertEquals(
+                    "Studies before work",
+                    api.current.facts
+                        .single()
+                        .statement,
+                )
+            } finally {
+                Dispatchers.resetMain()
+            }
+        }
+
+    @Test
+    fun aFailedEditStaysOpenToTryAgain() =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            try {
+                val screen = MemoryViewModel(loadedStore())
+                api.failure = ApiException(ApiError.Unavailable, "INTERNAL_ERROR", 500)
+
+                screen.openEdit(FACT_ID)
+                screen.saveEdit("Studies before work")
+                advanceUntilIdle()
+
+                assertEquals(FactEdit(FACT_ID, failed = true), screen.factEdit)
+            } finally {
+                Dispatchers.resetMain()
+            }
         }
 
     @Test

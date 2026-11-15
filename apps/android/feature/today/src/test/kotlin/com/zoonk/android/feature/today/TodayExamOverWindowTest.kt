@@ -102,7 +102,7 @@ class TodayExamOverWindowTest {
         rule.onNodeWithText("That didn't save. Try again.").assertIsDisplayed()
     }
 
-    private companion object {
+    internal companion object {
         val EXAM_GOAL =
             buildJsonObject {
                 put("dateEstimated", false)

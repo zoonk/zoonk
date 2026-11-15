@@ -75,7 +75,7 @@ fun PlanEffectDiff(
 
     if (shown == null && !hasMore && !repriced) return
 
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (repriced) {
             Text(
                 text = stringResource(if (effect != null) R.string.plan_effect_numbers_different else R.string.plan_stays_as_it_is),
