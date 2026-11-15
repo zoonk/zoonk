@@ -870,24 +870,6 @@ export function readAlignment({
 
       const box = element.getBoundingClientRect();
 
-      // What the boxes clipping it leave shown, on each axis they clip.
-      const shownArea = chain(element).reduce(
-        (clipped, clipping) => {
-          const style = getComputedStyle(clipping);
-          const clip = clipping.getBoundingClientRect();
-          const across = style.overflowX !== "visible";
-          const down = style.overflowY !== "visible";
-
-          return {
-            bottom: down ? Math.min(clipped.bottom, clip.bottom) : clipped.bottom,
-            left: across ? Math.max(clipped.left, clip.left) : clipped.left,
-            right: across ? Math.min(clipped.right, clip.right) : clipped.right,
-            top: down ? Math.max(clipped.top, clip.top) : clipped.top,
-          };
-        },
-        { bottom: Infinity, left: -Infinity, right: Infinity, top: -Infinity },
-      );
-
       return (["::before", "::after"] as const).flatMap((which): Rect[] => {
         const pseudo = getComputedStyle(element, which);
         const top = strokes(pseudo, "top");
@@ -919,16 +901,44 @@ export function readAlignment({
         const width = pixels(pseudo.getPropertyValue(stroke));
         const from = top ? y : y + outer("height", ["top", "bottom"]) - width;
 
-        const rule = {
-          bottom: Math.min(from + width, shownArea.bottom),
-          left: Math.max(left, shownArea.left),
-          right: Math.min(left + outer("width", ["left", "right"]), shownArea.right),
-          top: Math.max(from, shownArea.top),
-        };
-
-        // A rule with no part shown draws nothing.
-        return rule.right > rule.left && rule.bottom > rule.top ? [rule] : [];
+        const right = left + outer("width", ["left", "right"]);
+        return [{ bottom: from + width, left, right, top: from }];
       });
+    };
+
+    /** What the boxes clipping an element (it included) leave shown, on each axis they clip. */
+    const shownArea = (element: Element): Rect =>
+      chain(element).reduce(
+        (clipped, clipping) => {
+          const style = getComputedStyle(clipping);
+          const clip = clipping.getBoundingClientRect();
+          const across = style.overflowX !== "visible";
+          const down = style.overflowY !== "visible";
+
+          return {
+            bottom: down ? Math.min(clipped.bottom, clip.bottom) : clipped.bottom,
+            left: across ? Math.max(clipped.left, clip.left) : clipped.left,
+            right: across ? Math.min(clipped.right, clip.right) : clipped.right,
+            top: down ? Math.max(clipped.top, clip.top) : clipped.top,
+          };
+        },
+        { bottom: Infinity, left: -Infinity, right: Infinity, top: -Infinity },
+      );
+
+    /** The part of `box` an area shows, or null where none of it shows. */
+    const within = (area: Rect, box: Rect | null): Rect | null => {
+      if (!box) {
+        return null;
+      }
+
+      const part = {
+        bottom: Math.min(box.bottom, area.bottom),
+        left: Math.max(box.left, area.left),
+        right: Math.min(box.right, area.right),
+        top: Math.max(box.top, area.top),
+      };
+
+      return part.right > part.left && part.bottom > part.top ? part : null;
     };
 
     /** A box's left and right strokes, where it isn't drawn on all four sides. */
@@ -972,13 +982,16 @@ export function readAlignment({
         const passes = (box: Rect) =>
           edges.left - box.left > PAST || box.right - edges.right > PAST;
 
-        const highlight = beforeFill(element);
+        // Only what shows: a strip that scrolls sideways (a calendar) clips the cells past its edge.
+        const area = shownArea(element);
+        const shows = (box: Rect | null) => within(area, box);
+        const highlight = shows(beforeFill(element));
 
         const ownBox = globalThis.zoonkPage.paints(element, ["top", "right", "bottom", "left"])
-          ? element.getBoundingClientRect()
+          ? shows(element.getBoundingClientRect())
           : null;
 
-        const line = ownBox ? null : ruleOf(element);
+        const line = ownBox ? null : shows(ruleOf(element));
 
         const current = element.matches(
           "[aria-current]:not([aria-current=false]), [data-highlighted], [aria-selected=true]",
@@ -995,13 +1008,11 @@ export function readAlignment({
           ...(ownBox && passes(ownBox)
             ? [{ box: ownBox, kind: current ? lit : kindOf(element, ownBox), passing: true }]
             : []),
-          ...[...(line ? [line] : []), ...pseudoRules(element)].map((rule) => ({
-            box: rule,
-            kind: "hairline" as const,
-            passing: passes(rule),
-          })),
+          ...[line, ...pseudoRules(element).map((rule) => shows(rule))]
+            .flatMap((rule) => (rule ? [rule] : []))
+            .map((rule) => ({ box: rule, kind: "hairline" as const, passing: passes(rule) })),
           // A tile's top stroke joins its row's line; its sides are still strokes on the page.
-          ...(ownBox ? [] : sidesOf(element))
+          ...(ownBox ? [] : sidesOf(element).flatMap((side) => shows(side) ?? []))
             .filter((side) => passes(side))
             .map((side) => ({ box: side, kind: "box" as const, passing: true })),
         ];

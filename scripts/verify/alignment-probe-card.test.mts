@@ -31,3 +31,27 @@ describe("a list inside a card (Buddy's missions)", () => {
     assert.equal(columnMisses(false).length, 1);
   });
 });
+
+/** A strip of day cells that scrolls sideways inside the column, its cells drawn past the strip. */
+function scrolledStrip(overflow: string) {
+  const cells = Array.from(
+    { length: 6 },
+    (_, index) =>
+      `<span style="background-color: rgb(30, 130, 80)" data-box="${16 + index * 100},60,90,90"></span>`,
+  ).join("");
+
+  return `<div data-slot="page" data-box="16,0,358,400">
+    <div style="overflow-x: ${overflow}" data-box="16,60,358,90">${cells}</div></div>`;
+}
+
+function stripMisses(overflow: string) {
+  document.body.innerHTML = scrolledStrip(overflow);
+  return evaluateCapture(read()).filter((finding) => finding.rule === "column");
+}
+
+describe("boxes inside a strip that scrolls sideways (the activity calendar)", () => {
+  it("are read only as far as the strip shows them, and a strip that doesn't clip still fails", () => {
+    assert.deepEqual(stripMisses("auto"), []);
+    assert.ok(stripMisses("visible").length > 0);
+  });
+});
