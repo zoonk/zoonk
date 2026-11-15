@@ -13,8 +13,15 @@ struct ReadDraftView: View {
   @Environment(OnboardingStore.self) private var onboarding
   @State private var isCreating = false
   @State private var error: GoalError?
+  /// What a created goal leads to: leaving the draft (Back to the box) opens nothing of it.
+  @State private var tasks = ScreenTasks()
 
   var body: some View {
+    outcome
+      .onDisappear { tasks.cancel() }
+  }
+
+  @ViewBuilder private var outcome: some View {
     switch draft.understanding?.value1 {
     case .case1(let understood):
       UnderstoodCard(
@@ -79,8 +86,10 @@ struct ReadDraftView: View {
     }
   }
 
-  private func create(_ run: @escaping () async throws -> String, then: @escaping (String) -> Void)
-  {
+  private func create(
+    _ run: @escaping @MainActor () async throws -> String,
+    then: @escaping @MainActor (String) -> Void
+  ) {
     guard !isCreating else {
       return
     }
@@ -88,15 +97,12 @@ struct ReadDraftView: View {
     isCreating = true
     error = nil
 
-    Task {
-      defer { isCreating = false }
-
-      do {
-        then(try await run())
-      } catch is CancellationError {
-      } catch {
-        self.error = GoalError.creating(error)
-      }
+    // The goal is created whatever happens to this screen; the next visit to the draft finds it and
+    // goes on with its setup.
+    tasks.send(run, then: then) { error in
+      self.error = GoalError.creating(error)
+    } ended: {
+      isCreating = false
     }
   }
 }

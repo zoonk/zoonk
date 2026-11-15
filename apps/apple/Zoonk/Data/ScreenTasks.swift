@@ -16,6 +16,30 @@ final class ScreenTasks {
     }
   }
 
+  /// A write the learner's tap sent, then what its answer leads to. The write isn't the screen's:
+  /// it finishes whatever happens to the screen, so what the server saved is never lost or sent
+  /// twice. What it leads to is, and a screen that went away meanwhile goes nowhere.
+  func send<Value: Sendable>(
+    _ write: @escaping @MainActor () async throws -> Value,
+    then next: @escaping @MainActor (Value) -> Void,
+    failed: @escaping @MainActor (any Error) -> Void = { _ in },
+    ended: @escaping @MainActor () -> Void = {}
+  ) {
+    let sent = Task { try await write() }
+
+    run {
+      defer { ended() }
+
+      do {
+        let value = try await sent.value
+        try await goOnUnlessLeft { next(value) }
+      } catch is CancellationError {
+      } catch {
+        failed(error)
+      }
+    }
+  }
+
   func cancel() {
     for task in running.values {
       task.cancel()
