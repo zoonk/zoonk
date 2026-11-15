@@ -326,9 +326,9 @@ Hover, focus, selected, busy and disabled never change a control's size or shift
 
 A screen that changes height or moves a neighbor when data, a picture or a font arrives after the first paint breaks it too.
 
-A loading placeholder draws only what it can place: a part whose position and size don't depend on the learner's data, stopping at the first part that does. A placeholder whose rows then jump is worse than a shorter one.
+A loading placeholder draws only what it can place: the page's own words (its title, section labels) for real, and each part whose position and size don't depend on the learner's data, stopping at the first part that does. A placeholder whose rows then jump is worse than a shorter one.
 
-- **Check.** Between two state screenshots nothing else moves (`X3 a state change moves nothing`, from a walk that types, picks, opens, hovers and presses, and from any shift while the page loads). States the walk can't reach without submitting (saving, a check that calls the server, a busy button, a lesson's result) stay with the craft read: put their screenshots side by side.
+- **Check.** Between two state screenshots nothing else moves (`X3 a state change moves nothing`, from a walk that types, picks, opens, hovers and presses, and from any shift while the page loads). A placeholder paired with its page in the [scenarios](../../verify/references/pages.md#scenarios) fails when anything it draws moves or leaves once the page arrives. States the walk can't reach without submitting (saving, a check that calls the server, a busy button, a lesson's result) stay with the craft read: put their screenshots side by side.
 - **Usual break.** A heavier weight or a thicker border on the selected item. A hint that appears and pushes the form down. A spinner larger than the icon it replaces. A picture with no reserved size.
 
 ## Behavior
