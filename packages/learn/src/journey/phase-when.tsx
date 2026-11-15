@@ -6,50 +6,21 @@ import { useExtracted } from "next-intl";
 import { usePlanScreen } from "../plan/plan-context";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 import { useShortDays } from "../plan/use-short-plan";
-import { useIsFarEstimate } from "./use-roadmap";
+import { getPhaseEnd } from "./phase-dates";
 
-type PhaseEnd = { days: string } | { estimate: boolean; isoDate: string; month: boolean };
-
-/** A phase is behind the learner on its challenge's day, which can come after its last lesson. */
-function getPhaseLastDay({ checkpoint, endDate }: PlanPhaseView): string | null {
-  const challengeDay = checkpoint?.state === "upcoming" ? checkpoint.date : null;
-  return challengeDay && endDate && challengeDay > endDate ? challengeDay : endDate;
-}
-
-/**
- * A learning phase ends when its lessons and challenge are done, so its end is an estimate while
- * it's ahead, and while it's current with its challenge (which has no booked day) still to come.
- */
 function usePhaseEnd() {
   const shortDays = useShortDays();
-  const isFar = useIsFarEstimate();
   const { plan } = usePlanScreen();
-  const lastIndex = plan.phases.findLast((phase) => phase.kind !== "afterExam")?.index;
 
-  return function phaseEnd(phase: PlanPhaseView): PhaseEnd | null {
-    const days = shortDays(phase.short);
+  return function phaseEnd(phase: PlanPhaseView) {
+    const end = getPhaseEnd({ phase, plan });
 
-    if (days) {
-      return { days };
+    if (end && "short" in end) {
+      const days = shortDays(end.short);
+      return days ? { days } : null;
     }
 
-    if (phase.state === "done" || phase.state === "unfinished" || phase.state === "leftOut") {
-      return null;
-    }
-
-    const lastDay = getPhaseLastDay(phase);
-
-    // A last phase without a day of its own ends with the plan.
-    if (!lastDay) {
-      const planEnd = phase.index === lastIndex ? plan.estimate.endDate : null;
-      return planEnd ? { estimate: true, isoDate: planEnd, month: isFar(planEnd) } : null;
-    }
-
-    const learns = phase.kind === "learn" || phase.kind === "afterExam";
-    const ahead = phase.state === "upcoming";
-    const estimate = learns && (ahead || phase.checkpoint?.state === "upcoming");
-
-    return { estimate, isoDate: lastDay, month: estimate && ahead && isFar(lastDay) };
+    return end;
   };
 }
 

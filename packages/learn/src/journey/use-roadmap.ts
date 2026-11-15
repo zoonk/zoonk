@@ -2,20 +2,15 @@
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
-import { daysBetween } from "../_utils/iso-date";
 import { getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePhaseName } from "../plan/use-phase-name";
-
-const NEAR_ESTIMATE_DAYS = 42;
-
-/** An estimate this far from the plan's week is said by its month: "~Jan", never a day. */
-export function useIsFarEstimate() {
-  const { plan } = usePlanScreen();
-
-  return (isoDate: string): boolean =>
-    daysBetween(plan.week.startDate, isoDate) > NEAR_ESTIMATE_DAYS;
-}
+import {
+  type PlanDate,
+  getAxisDatedPhases,
+  getRoadmapFinish,
+  getRoadmapPhases,
+} from "./phase-dates";
 
 export function getLessonShare(phase: PlanPhaseView): number {
   if (phase.state === "done") {
@@ -28,31 +23,22 @@ export function getLessonShare(phase: PlanPhaseView): number {
 export function useRoadmapPhases() {
   const { plan, today } = usePlanScreen();
 
-  const phases = plan.phases.filter(
-    (phase) => phase.kind !== "afterExam" && phase.state !== "leftOut",
-  );
+  const phases = getRoadmapPhases(plan.phases);
 
   const currentIndex = phases.findIndex((phase) => phase.state === "current");
 
   return { currentIndex, phases, today };
 }
 
-export function useRoadmapFinish(): { estimate: boolean; isoDate: string; month: boolean } | null {
+export function useRoadmapFinish(): PlanDate | null {
   const { goal, plan } = usePlanScreen();
-  const isFar = useIsFarEstimate();
-  const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
+  return getRoadmapFinish({ goalKind: goal.kind, plan });
+}
 
-  if (targetDate) {
-    return { estimate: targetDateEstimated, isoDate: targetDate, month: targetDateNamedMonth };
-  }
-
-  const { endDate } = plan.estimate;
-
-  if (goal.kind === "exam" || !endDate) {
-    return null;
-  }
-
-  return { estimate: true, isoDate: endDate, month: isFar(endDate) };
+/** The phases whose end the timeline's axis dates (`getAxisDatedPhases`). */
+export function useAxisDatedPhases(): Set<number> {
+  const { goal, plan, today } = usePlanScreen();
+  return getAxisDatedPhases({ goalKind: goal.kind, plan, today });
 }
 
 export function useRoadmapOverrun(): { phaseIndex: number; share: number } | null {
