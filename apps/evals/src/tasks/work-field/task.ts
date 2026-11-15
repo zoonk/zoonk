@@ -12,7 +12,7 @@ export const workFieldTask: Task<WorkFieldParams, WorkFieldResult, WorkFieldExpe
     "Sorts a work or career-change learner's role into one shareable field (nursing, retail, law) for field practice and cases, or none",
   generate: classifyWorkField,
   id: "work-field",
-  name: "Work Field",
+  name: "Work field",
   score: scoreWorkField,
   testCases: TEST_CASES,
 };

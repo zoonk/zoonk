@@ -83,7 +83,7 @@ function EntryList({
       <span className="text-muted-foreground text-xs">{SIDES[side].label}</span>
       <List
         className={cn(
-          "min-h-10 rounded-lg border py-2 pr-3 text-sm leading-6 wrap-break-word",
+          "min-h-10 flex-1 rounded-lg border py-2 pr-3 text-sm leading-6 wrap-break-word",
           isOrdered ? "list-decimal pl-8" : "list-disc pl-7",
         )}
       >

@@ -17,7 +17,7 @@ export const topicSkillNamesTask: Task<
   generate: nameTopicSkills,
   id: "topic-skill-names",
   latencyBudget: { p50: 3, p95: 6 },
-  name: "Topic Skill Names",
+  name: "Topic skill names",
   score: scoreTopicSkillNames,
   testCases: TEST_CASES,
 };

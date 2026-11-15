@@ -9,6 +9,6 @@ export const sourceChangeNoticeTask: Task<SourceChangeNoticeParams, { message: s
   description: "Write the one line learners see on Today when a source they study changed",
   generate: generateSourceChangeNotice,
   id: "source-change-notice",
-  name: "Source Change Notice",
+  name: "Source change notice",
   testCases: TEST_CASES,
 };
