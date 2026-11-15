@@ -1,8 +1,9 @@
 import SwiftUI
 
-/// `face` crops to the face's square, so a baby's face isn't a dot at icon sizes.
+/// `face` crops to the face's square, so a baby's face isn't a dot at icon sizes. `ink` crops to
+/// the buddy's own drawn outline, for a buddy that starts on its text's edge (`BuddyFigure`).
 struct BuddyArt: CharacterArt {
-  enum Crop { case whole, face }
+  enum Crop { case whole, face, ink }
 
   let look: BuddyLook
   var crop = Crop.whole
@@ -11,14 +12,41 @@ struct BuddyArt: CharacterArt {
   private static let ground = CGPoint(x: 60, y: 116)
 
   var viewBox: CGRect {
-    guard crop == .face else { return CGRect(x: 0, y: 0, width: 120, height: 120) }
+    switch crop {
+    case .whole: return CGRect(x: 0, y: 0, width: 120, height: 120)
+    case .ink: return Self.ink(kind: look.kind, stage: look.stage)
+    case .face: break
+    }
 
     let size = 96 * look.stage.scale
     let centerY = Self.ground.y - (Self.ground.y - 60) * look.stage.scale
     return CGRect(x: Self.ground.x - size / 2, y: centerY - size / 2, width: size, height: size)
   }
 
-  var overflow: CGFloat { crop == .face ? 0 : 0.25 }
+  var overflow: CGFloat { crop == .whole ? 0.25 : 0 }
+
+  /// Each kind's and stage's drawn outline over every face, pair of glasses and Energy, with 2
+  /// units clear: main's `BODY_INK`, which measuring these drawings matches. A new buddy, a stage
+  /// or anything worn means measuring again.
+  private static func ink(kind: BuddyKind, stage: BuddyStage) -> CGRect {
+    let box: (Double, Double, Double, Double) =
+      switch (kind, stage) {
+      case (.beep, .adult): (7, -16, 108, 137.5)
+      case (.beep, .young): (15, 3, 92.5, 118)
+      case (.beep, .baby): (22, 23, 77.5, 97.5)
+      case (.noodle, .adult): (7, 6, 108, 114)
+      case (.noodle, .young): (15, 22, 92.5, 97.5)
+      case (.noodle, .baby): (22.5, 38, 77, 81)
+      case (.otto, .adult): (9, 6, 106, 116)
+      case (.otto, .young): (16.5, 22, 91, 99)
+      case (.otto, .baby): (24, 38, 75.5, 83)
+      case (.zu, .adult): (7, -18, 108, 139)
+      case (.zu, .young): (15, 2, 92.5, 119)
+      case (.zu, .baby): (22.5, 22, 77, 98)
+      }
+
+    return CGRect(x: box.0, y: box.1, width: box.2, height: box.3)
+  }
 
   static func act(_ name: BuddyAct) -> CharacterAct<BuddyExpression> { name.act }
   static func poses(of expression: BuddyExpression) -> [CharacterPart: PartPose] {

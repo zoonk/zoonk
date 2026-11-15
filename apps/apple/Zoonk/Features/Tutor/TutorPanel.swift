@@ -46,9 +46,7 @@ struct TutorPanel: View {
     TutorThreadView(scope: scope, draft: draft) {
       VStack(alignment: .leading, spacing: 8) {
         if showsBuddy {
-          BuddyCharacter(look: summary.summary.value?.buddy ?? BuddyLook())
-            .frame(height: 96)
-            .frame(maxWidth: .infinity)
+          BuddyFigure(look: summary.summary.value?.buddy ?? BuddyLook())
             .padding(.bottom, 4)
             .accessibilityHidden(true)
         }
