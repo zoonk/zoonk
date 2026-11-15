@@ -20,7 +20,8 @@ data class LimitWords(
 
 /**
  * Main's limit notice, the gate's form for a cap: what ran out, when it comes back, and the way on:
- * "Create a free account" for a guest, "Subscribe" on Free, nothing when the limit only waits.
+ * "Create a free account" for a guest, "Subscribe" on Free, nothing when the limit only waits. An
+ * [action] that tries again sits beside the way on, as the lesson gate pairs them.
  */
 @Composable
 fun LimitNotice(
@@ -29,12 +30,20 @@ fun LimitNotice(
     onCreateAccount: () -> Unit,
     onSubscribe: () -> Unit,
     modifier: Modifier = Modifier,
+    action: (@Composable () -> Unit)? = null,
 ) {
     val words = limitWords(limit, subject)
+    val buttons: (@Composable () -> Unit)? =
+        if (limit.hasWayOn || action != null) {
+            {
+                LimitActions(limit, onCreateAccount, onSubscribe)
+                action?.invoke()
+            }
+        } else {
+            null
+        }
     // Its day coming while it shows changes only its line; what's under the notice doesn't move for that.
-    HeldSlot(gated = !limitLifted(limit), modifier) {
-        GateLayout(words.title, words.line, buttons = if (limit.hasWayOn) ({ LimitActions(limit, onCreateAccount, onSubscribe) }) else null)
-    }
+    HeldSlot(gated = !limitLifted(limit), modifier) { GateLayout(words.title, words.line, buttons = buttons) }
 }
 
 /** The limit's way on, for a screen that draws its own words. */

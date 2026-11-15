@@ -296,21 +296,19 @@ fun LessonNotWrittenNotice(
         ((writing as? LessonWriting.Refused)?.refusal as? LessonRefusal.Limited)?.limit
     when {
         limit != null -> {
+            val retry =
+                when {
+                    limit is Limit.SlowDown -> R.string.player_try_again
+                    freeLessonReady(limit) -> R.string.player_start_the_lesson
+                    else -> null
+                }
             LimitNotice(
                 limit = limit,
                 subject = LimitSubject.Lessons,
                 onCreateAccount = { onOpen(AppRoute.Login) },
                 onSubscribe = { onOpen(AppRoute.Subscription) },
+                action = retry?.let { { OutlinedButton(onClick = onRetry, size = ButtonSize.Small) { Text(stringResource(it)) } } },
             )
-            when {
-                limit is Limit.SlowDown -> {
-                    OutlinedButton(onClick = onRetry, size = ButtonSize.Small) { Text(stringResource(R.string.player_try_again)) }
-                }
-
-                freeLessonReady(limit) -> {
-                    OutlinedButton(onClick = onRetry, size = ButtonSize.Small) { Text(stringResource(R.string.player_start_the_lesson)) }
-                }
-            }
         }
 
         else -> {
