@@ -302,10 +302,16 @@ private fun ColumnScope.Draft(
 ) {
     val resource = store.drafts[id]
     val state by resource.collectShown()
+    // A draft not read since a create this device didn't learn the outcome of is waiting for its read again.
+    val fresh by resource.freshState.collectAsStateWithLifecycle()
 
     when (val shown = state) {
         is LoadState.Loaded -> {
-            DraftContent(vm, shown.value, hasAccount, upFront, language, actions)
+            if (fresh is LoadState.Failed) {
+                LoadFailedMessage(onRetry = vm::readDraftAgain)
+            } else {
+                DraftContent(vm, shown.value, rereading = fresh !is LoadState.Loaded, hasAccount, upFront, language, actions)
+            }
         }
 
         is LoadState.Failed -> {
@@ -339,6 +345,7 @@ private fun ColumnScope.Draft(
 private fun ColumnScope.DraftContent(
     vm: StartGoalViewModel,
     draft: OnboardingDraft,
+    rereading: Boolean,
     hasAccount: Boolean,
     upFront: GoalLimitReason?,
     language: String,
@@ -435,7 +442,7 @@ private fun ColumnScope.DraftContent(
                 timeZone = draft.timeZone,
                 material = vm.flow.attached.map { it.title },
                 hasAccount = hasAccount,
-                isCreating = vm.isCreating,
+                isCreating = vm.isCreating || rereading,
                 error = vm.creationError,
                 goalLimit = upFront,
                 onConfirm = {
@@ -463,7 +470,7 @@ private fun ColumnScope.DraftContent(
             ExplainGoal(
                 goal = draft.prompt,
                 question = understanding.value.question,
-                isStarting = vm.isOpeningExplanation(draft),
+                isStarting = vm.isOpeningExplanation(draft) || rereading,
                 error = vm.creationError,
                 onStart = { vm.create(explanationInput(draft, understanding.value.question, language), actions.toExplanation) },
                 onCreateAccount = actions.createAccount,
@@ -479,7 +486,7 @@ private fun ColumnScope.DraftContent(
             InstrumentGoal(
                 goal = draft.prompt,
                 instrument = instrument,
-                isStarting = vm.isCreating,
+                isStarting = vm.isCreating || rereading,
                 error = vm.creationError,
                 waitlist = vm.waitlist,
                 isJoining = vm.isJoining,

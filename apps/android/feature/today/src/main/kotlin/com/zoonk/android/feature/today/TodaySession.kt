@@ -400,13 +400,22 @@ private fun TodayDayStatus(
     val pastDate = model.pastDate?.toInt()
 
     if (pastDate != null) {
-        val sentence =
-            if (model.today.goal.kind == com.zoonk.api.models.TodayGoal.Kind.EXAM) {
-                pluralStringResource(R.plurals.plan_past_date_exam_sentence, pastDate, pastDate)
-            } else {
-                pluralStringResource(R.plurals.plan_past_date_goal_sentence, pastDate, pastDate)
-            }
-        TodayStatusLine(R.drawable.ic_event_upcoming, sentence, null, modifier)
+        // The exam is over, so what's left is a choice: the Plan's title, then the lessons left and the question.
+        if (model.today.goal.kind == com.zoonk.api.models.TodayGoal.Kind.EXAM) {
+            TodayStatusLine(
+                R.drawable.ic_event_upcoming,
+                stringResource(R.string.plan_past_date_exam_title),
+                pluralStringResource(R.plurals.today_past_date_exam_left, pastDate, pastDate),
+                modifier,
+            )
+        } else {
+            TodayStatusLine(
+                R.drawable.ic_event_upcoming,
+                pluralStringResource(R.plurals.plan_past_date_goal_sentence, pastDate, pastDate),
+                null,
+                modifier,
+            )
+        }
         return
     }
 

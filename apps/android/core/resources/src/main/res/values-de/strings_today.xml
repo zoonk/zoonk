@@ -67,6 +67,7 @@
   "today_notice_suggested_goal": "658949dcb87dc2875beb378f62f2ff35e51c6cdd34ac5ffa122757d0ef77bf56",
   "today_open_failed": "5b3ad7c8fe1382be26a1ffb3498acf31c8fe42469d0a7bf97d45a31424d6d9db",
   "today_pace_lessons_to_catch_up": "697e4b27ac57ccd7ae8a4c6ae3fd25e3db715b0c0fcdf03e85a39c1e9c0607a7",
+  "today_past_date_exam_left": "ab8b7f80a8ec0a4492b1e172523b5e7c77c6f4aba784e85c518b83bdb6cbe301",
   "today_paused_detail": "2075c263353f108a07329b9c3b8f4742021c1e6de2853800656f4c3491a2e82b",
   "today_paused_goal": "d37f82394d995b786410af4671aa8a1c5dd51239ea2afefa7af0050c80f621d2",
   "today_paused_this_goal": "81ca186ed6ad90e495af7380ccef703960ce4a99d28b4b432d4d234ff8da6b4a",
@@ -330,6 +331,10 @@
     <string name="today_choose_focus">Schwerpunkte wählen</string>
     <string name="today_study_everything">Alles lernen</string>
     <string name="today_keep_studying_after_exam">Nach der Prüfung weiterlernen</string>
+    <plurals name="today_past_date_exam_left">
+        <item quantity="one">Du hast noch %d Lektion übrig. Weiterlernen oder dieses Ziel archivieren?</item>
+        <item quantity="other">Du hast noch %d Lektionen übrig. Weiterlernen oder dieses Ziel archivieren?</item>
+    </plurals>
     <string name="today_missed_days_title">Du hast ein paar Tage nicht gelernt</string>
     <!-- Keeps the learner's time a day as it is. -->
     <string name="today_keep_my_time">Lernzeit beibehalten</string>

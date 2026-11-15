@@ -33,6 +33,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.bleed
@@ -197,7 +198,7 @@ private fun BasesBySubject(
         stringResource(R.string.plan_choose_by_subject),
         expanded = open,
         onExpandedChange = { open = it },
-        leading = { Icon(painterResource(R.drawable.ic_tune), contentDescription = null) },
+        leading = { MarkIcon(R.drawable.ic_tune) },
         modifier = Modifier.bleed(LIST_ITEM_INSET),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {

@@ -13,6 +13,7 @@
   "checkpoint_finishing": "2b742328441edcc3b309603163ab988ef68cb173a331a1f005afcfe3e76edb51",
   "checkpoint_held": "d3b3f0581f9949a706cf3f86486813496a00173909ee4aa2432320e11fdd6309",
   "checkpoint_lost_line": "12eec6ae0d39b9eb0af9adaf4edcc84b74f6bcc2874734a063b0e00742f0da93",
+  "checkpoint_needed_to_win": "fba2800422c6b2f238d49aa2f661c356f94a4616e65ba8b09417913e757b294d",
   "checkpoint_new_try_next": "000f590c6b0d298aca39609e7c7e72af39639c0e7840ae096a73a92724251bdc",
   "checkpoint_new_try_tomorrow": "8484dc9c0590a2c5fd0d21a47252234376c3136e8c69c55a131e17f7d192f603",
   "checkpoint_next": "277ede2a3b771a7a421ea9e9d22c3c2291fbc546688a76819450cedb2233c31c",
@@ -40,7 +41,6 @@
   "checkpoint_review": "07a127ae176d1ec834234e2ac606305c97cc9591c7f5b12af9fdd228d46f318e",
   "checkpoint_rewards": "0910641bf0b0a82bb34827febf4a498fbb58347c3bb7b6611609de3cf297c773",
   "checkpoint_right_to_win": "181a1c27692c2c1fad31489117194dc6f3bc46a559c97a28bf2bfc6705a550a3",
-  "checkpoint_right_to_win_of": "4009ed7168f447e983be1880198e3e80a9e9fb864f3fe88cfc06e4e6e3a0bd25",
   "checkpoint_see_result": "a5f3f2793443678dfc254c213b75dc8fe623a697b3c79fd43d94d7ef061e25c2",
   "checkpoint_shield": "07ca348dbf9f64d358f408fbd2f65d67194b8da4e76ed8445ef30432eca5dc02",
   "checkpoint_shield_value": "d97ef526d06b445c7384fc00dd4c864259f7cffa21b94682b8815d9323401b21",
@@ -114,10 +114,9 @@
     <string name="checkpoint_weekly_done">Wöchentliche Herausforderung abgeschlossen</string>
     <string name="checkpoint_beat">Du hast den Trickser besiegt!</string>
     <string name="checkpoint_not_this_time">Diesmal nicht</string>
-    <!-- %1$d right answers were needed out of %2$d questions. -->
-    <plurals name="checkpoint_right_to_win_of">
-        <item quantity="one">%1$d von %2$d richtig für den Sieg</item>
-        <item quantity="other">%1$d von %2$d richtig für den Sieg</item>
+    <plurals name="checkpoint_needed_to_win">
+        <item quantity="one">Du brauchtest %d richtige Antwort, um zu gewinnen.</item>
+        <item quantity="other">Du brauchtest %d richtige Antworten, um zu gewinnen.</item>
     </plurals>
     <string name="checkpoint_rewards">Belohnungen</string>
     <!-- %1$s is the phase's number. -->

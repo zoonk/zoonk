@@ -67,6 +67,7 @@
   "today_notice_suggested_goal": "cc64284cf211572c9d3b3c904bb586f005c3642ddbecb34ea8c825913c8821d6",
   "today_open_failed": "0b5eddedf0a08fa76b81354ef0891dc163c2bfd707c935f4ac35f54f9a28482f",
   "today_pace_lessons_to_catch_up": "e535a402f76cbb95e253603a782fe3ae76ab2aad9956d84d6d7a6290faf4763d",
+  "today_past_date_exam_left": "d0132f7d27e7910b1d5583b967a9be1c46cfe3ed7be4dd85dfdd63352495635c",
   "today_paused_detail": "f107a58f08382c4ed1721848bd466d5bf9c444fd73ad0c411ec76ce487235d81",
   "today_paused_goal": "d9cac2008e79b544b0f08cefe3a5b60ce035e5a08fdf41629fe8c84439a8b693",
   "today_paused_this_goal": "7dfdc30cbe422a38a7911e2d6f424dacad7694de38161ee59b0963ba01d6f3c2",
@@ -322,6 +323,9 @@
     <string name="today_choose_focus">重点的に学ぶ科目を選ぶ</string>
     <string name="today_study_everything">すべて学ぶ</string>
     <string name="today_keep_studying_after_exam">試験後も学習を続ける</string>
+    <plurals name="today_past_date_exam_left">
+        <item quantity="other">残り%dレッスンです。学習を続けますか？それとも、この目標をアーカイブしますか？</item>
+    </plurals>
     <string name="today_missed_days_title">数日間、学習をお休みしました</string>
     <!-- Keeps the learner's time a day as it is. -->
     <string name="today_keep_my_time">学習時間を変えない</string>

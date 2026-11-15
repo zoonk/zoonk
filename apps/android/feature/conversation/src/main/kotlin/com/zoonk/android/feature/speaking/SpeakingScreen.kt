@@ -73,6 +73,7 @@ import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -445,6 +446,7 @@ private fun TaskRow(
                             busy = starting,
                             onClick = { if (locked) triedLocked = true else onStart() },
                             enabled = !busy,
+                            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                         ) {
                             Text(stringResource(R.string.speaking_start_task))
                         }

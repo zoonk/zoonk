@@ -24,6 +24,7 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.api.models.StudyBlock
 import java.util.UUID
@@ -90,7 +91,7 @@ internal fun ReviewIntro(
         title = stringResource(R.string.session_review_intro_title),
         expanded = expanded,
         onExpandedChange = { expanded = it },
-        leading = { Icon(painterResource(LearnKind.Review.icon), contentDescription = null) },
+        leading = { MarkIcon(LearnKind.Review.icon) },
         modifier = modifier.bleed(LIST_ITEM_INSET),
     ) {
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
@@ -131,7 +132,7 @@ private fun IntroRow(
 ) {
     ListRow(
         headline = { Text(title) },
-        leading = { Icon(painterResource(icon), contentDescription = null) },
+        leading = { MarkIcon(icon) },
         supporting = { Text(description) },
         verticalAlignment = Alignment.Top,
     )

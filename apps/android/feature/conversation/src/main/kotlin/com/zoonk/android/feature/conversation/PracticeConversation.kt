@@ -210,27 +210,40 @@ fun PracticeCallSheet(
     state: PracticeCallState,
 ) {
     if (!state.sheetOpen) return
-    val with = call.character?.let { stringResource(R.string.conversation_practice_with, it.name, it.role) }
 
     ModalBottomSheet(onDismissRequest = { state.sheetOpen = false }) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp)
-                .padding(bottom = 24.dp)
-                .navigationBarsPadding(),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    stringResource(R.string.conversation_practice),
-                    Modifier.semantics { heading() },
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                with?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
-            }
-            CallSetup(call, chapterId, goalId, start, open, state)
+        PracticeCallSheetContent(call, chapterId, goalId, start, open, state)
+    }
+}
+
+/** What the practice call's sheet holds: its title, then the call's setup. */
+@Composable
+internal fun PracticeCallSheetContent(
+    call: LanguagePracticeCall,
+    chapterId: UUID,
+    goalId: UUID?,
+    start: CallStarter,
+    open: (AppRoute) -> Unit,
+    state: PracticeCallState,
+) {
+    val with = call.character?.let { stringResource(R.string.conversation_practice_with, it.name, it.role) }
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+            .padding(bottom = 24.dp)
+            .navigationBarsPadding(),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                stringResource(R.string.conversation_practice),
+                Modifier.semantics { heading() },
+                style = MaterialTheme.typography.titleLarge,
+            )
+            with?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
         }
+        CallSetup(call, chapterId, goalId, start, open, state)
     }
 }
 

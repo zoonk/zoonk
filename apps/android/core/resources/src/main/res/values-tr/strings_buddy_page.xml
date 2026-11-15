@@ -8,7 +8,6 @@
   "buddy_page_energy": "745dbe3482f94ec6490f2c4b42293878ae3b0aaf19760476627918217732bb31",
   "buddy_page_energy_named": "f105751a5de19889bc6b2a19fe39dfb28fed7e00201bdf66b37c14d62fe08bc7",
   "buddy_page_energy_napping": "e6cc71a49be6914f7384642d7c6a611b68af90d6c21f7436d0f94ba8eae13cf9",
-  "buddy_page_energy_share": "e2987fd9752bc732aa30002f5ac8dbba70ce2d7fafde33dfe1066847c457698b",
   "buddy_page_energy_starts": "c0f5183fc34cb95e425c92921ebe906fd543c3a2f1fecc636779dbe87090b128",
   "buddy_page_energy_study": "4368337051e15dc758790e33c33d7800fe69480eb2eea73474cf990ee7acf8d0",
   "buddy_page_first_anytime": "53753e89a2f66195487318b8ae5f3004141d9ee19449c2beeeee8a2f37eeb648",
@@ -85,8 +84,6 @@
     <string name="buddy_page_energy_study">Enerjisini korumak için bugün ders çalış.</string>
     <string name="buddy_page_not_yet">Henüz değil</string>
     <string name="buddy_page_missions">Görevler</string>
-    <!-- The buddy's Energy beside its mark, like "68% Energy"; a dash before any lesson. -->
-    <string name="buddy_page_energy_share">%1$s Enerji</string>
     <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
     <plurals name="buddy_page_missions_count">
         <item quantity="one">%1$d / %2$d görev</item>

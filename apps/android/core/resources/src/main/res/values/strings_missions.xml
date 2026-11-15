@@ -10,10 +10,9 @@
         <item quantity="one">%d mission done!</item>
         <item quantity="other">%d missions done!</item>
     </plurals>
-    <!-- %1$d is how many missions are left, %2$s the day's bonus, such as 50. -->
     <plurals name="missions_moment_more">
-        <item quantity="one">%1$d more for +%2$s Brain Power</item>
-        <item quantity="other">%1$d more for +%2$s Brain Power</item>
+        <item quantity="one">%1$d more mission for +%2$s Brain Power</item>
+        <item quantity="other">%1$d more missions for +%2$s Brain Power</item>
     </plurals>
     <string name="missions_just_done">Just done</string>
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->

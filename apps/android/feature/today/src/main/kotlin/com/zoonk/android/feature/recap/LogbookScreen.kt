@@ -49,6 +49,7 @@ import com.zoonk.android.ui.components.GoalRing
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
@@ -310,7 +311,7 @@ private fun WeekRows(recap: WeeklyRecap) {
 
 @Composable
 private fun RowIcon(id: Int) {
-    Icon(painterResource(id), contentDescription = null, modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+    MarkIcon(id, size = 16.dp, tint = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 @Composable
