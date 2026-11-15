@@ -159,6 +159,12 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
   /// loads it. A response already on its way may predate the mutation, so it's discarded, and a call
   /// waiting for it waits for a new read instead.
   func invalidate() {
+    invalidate(rereadsWhileShown: true)
+  }
+
+  /// `false` is for an answer only a screen's opening asks for: a screen already showing it waits
+  /// for its next opening, while a call waiting for a dropped read still gets a new one.
+  func invalidate(rereadsWhileShown: Bool) {
     isInvalidated = true
     refreshError = nil
     hasSettledOnFailure = false
@@ -173,7 +179,7 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
 
     cancelRequest()
 
-    guard viewers > 0, canRequest else {
+    guard rereadsWhileShown, viewers > 0, canRequest else {
       return
     }
 

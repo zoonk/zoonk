@@ -353,7 +353,8 @@ final class PlanStore {
     // them: an answer only the editor or the sheet looks at is read again when it's next shown.
     if plans[goalId]?.value.map({ PlanInputs($0.plan) }) != PlanInputs(read.plan) {
       timesToCover[goalId]?.invalidate()
-      basesAdvices[goalId]?.invalidate()
+      // Each answer costs a plan computation, so only the sheet's next opening asks again.
+      basesAdvices[goalId]?.invalidate(rereadsWhileShown: false)
     }
 
     return read

@@ -419,6 +419,31 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertEqual(calls.advice, 1)
   }
 
+  func testAChangedPlanWithThePrerequisitesSheetOpenAsksNothingUntilItsNextOpening() async throws {
+    let api = PlanAPIStub()
+    let store = makeStore(api: api)
+    let plan = store.plan(goalId: "goal")
+    let advice = store.basesAdvice(goalId: "goal")
+    await plan.load()
+    await advice.load()
+    advice.beginViewing()
+    defer { advice.endViewing() }
+
+    await api.setChanged(true)
+    await plan.refresh()
+    try await Task.sleep(for: .seconds(0.3))
+
+    var calls = await api.calls
+    XCTAssertNil(PlanBasesView.recommended(advice), "it was worked out for the plan before")
+    XCTAssertEqual(calls.advice, 1, "only an opening asks for it")
+
+    await advice.load()
+
+    calls = await api.calls
+    XCTAssertEqual(calls.advice, 2)
+    XCTAssertEqual(PlanBasesView.recommended(advice), .essential)
+  }
+
   func testAChangedPlanWithTheSameInputsKeepsItsAnswers() async {
     let api = PlanAPIStub()
     let store = makeStore(api: api)
