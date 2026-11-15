@@ -40,7 +40,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -53,7 +52,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -333,8 +331,6 @@ private fun SuggestionLine(
                                     whole -> MaterialTheme.colorScheme.onSurface
                                     else -> MaterialTheme.colorScheme.onSurfaceVariant
                                 },
-                            maxLines = if (whole || LocalDensity.current.fontScale > FULL_SUMMARY_FONT_SCALE) Int.MAX_VALUE else 2,
-                            overflow = TextOverflow.Ellipsis,
                         )
                         description?.let {
                             Text(
@@ -352,8 +348,8 @@ private fun SuggestionLine(
 }
 
 /**
- * The mark, the summary and the action side by side, the action at the end; the action goes under the summary when
- * beside it a word of the summary would have to break, as a long action at large text would leave it.
+ * The mark, the summary and the action side by side, the action at the end, or the action under the summary when that
+ * makes the line shorter (a long action or large text squeezes the words beside it) or beside it a word would break.
  */
 @Composable
 private fun LineLayout(
@@ -369,10 +365,14 @@ private fun LineLayout(
         val actionPlaced = actionPart.firstOrNull()?.measure(Constraints(maxWidth = textMax))
         val words = summaryPart.single()
         val besideWidth = textMax - (actionPlaced?.let { it.width + gap } ?: 0)
-        val beside = actionPlaced == null || besideWidth >= words.minIntrinsicWidth(constraints.maxHeight)
+        val stackGap = STACKED_ACTION_GAP.roundToPx()
+        val wholeWords = actionPlaced == null || besideWidth >= words.minIntrinsicWidth(constraints.maxHeight)
+        val shorter =
+            actionPlaced == null ||
+                words.minIntrinsicHeight(besideWidth) <= words.minIntrinsicHeight(textMax) + stackGap + actionPlaced.height
+        val beside = wholeWords && shorter
         val textWidth = if (beside) besideWidth else textMax
         val summaryPlaced = words.measure(Constraints.fixedWidth(textWidth))
-        val stackGap = STACKED_ACTION_GAP.roundToPx()
         val content =
             when {
                 actionPlaced == null -> summaryPlaced.height
@@ -460,8 +460,6 @@ private val PANEL_MARK = 18.dp
 private val LINE_GAP = 10.dp
 private val STACKED_ACTION_GAP = 8.dp
 
-/** From here two lines hold only the start of a summary, cutting off its key words. */
-private const val FULL_SUMMARY_FONT_SCALE = 1.3f
 private val SHEET_MARK = 24.dp
 
 /** The quiet disclosure's gap from its words to its chevron's ink. */
