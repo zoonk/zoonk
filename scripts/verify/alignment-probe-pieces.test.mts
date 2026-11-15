@@ -240,25 +240,25 @@ describe("a hairline the tiles of a grid draw together", () => {
 });
 
 /** RV71's page: in a tab list, a 120 px item whose `::before` reaches 10 px past the column's start. */
-function tabFill(item: string) {
+function tabFill(tag: string, attributes: string) {
   return `<style>.fill::before { content: ""; position: absolute; left: -10px; right: 0; top: 0; bottom: 0; background-color: rgb(221, 221, 221); }</style>
     <div data-slot="page" data-box="16,0,358,400"><div data-tabs data-box="16,40,358,60">
-      ${item.replace(">", ' class="fill" data-box="16,40,120,60">')}Chapters${item.replace(/^<(\w+).*$/u, "</$1>")}</div></div>`;
+      <${tag} class="fill" ${attributes} data-box="16,40,120,60">Chapters</${tag}></div></div>`;
 }
 
-function tabFillMisses(item: string) {
-  document.body.innerHTML = tabFill(item);
+function tabFillMisses(tag: string, attributes = "") {
+  document.body.innerHTML = tabFill(tag, attributes);
   return evaluateCapture(read()).filter((finding) => finding.rule === "column");
 }
 
 describe("the current tab's fill", () => {
   it("is allowed its 10 on the side it reaches, and nothing else in the tab list is (RV71, RV74)", () => {
-    assert.deepEqual(tabFillMisses('<a href="/chapters" aria-current="page">'), []);
-    assert.deepEqual(tabFillMisses('<button role="tab" aria-selected="true">'), []);
-    assert.equal(tabFillMisses("<div>").length, 1);
-    assert.equal(tabFillMisses('<div role="menuitem" data-highlighted>').length, 1);
-    assert.equal(tabFillMisses('<div aria-current="false">').length, 1);
-    assert.equal(tabFillMisses('<a href="/chapters" aria-current="false">').length, 1);
-    assert.equal(tabFillMisses('<button role="tab" aria-selected="false">').length, 1);
+    assert.deepEqual(tabFillMisses("a", 'href="/chapters" aria-current="page"'), []);
+    assert.deepEqual(tabFillMisses("button", 'role="tab" aria-selected="true"'), []);
+    assert.equal(tabFillMisses("div").length, 1);
+    assert.equal(tabFillMisses("div", 'role="menuitem" data-highlighted').length, 1);
+    assert.equal(tabFillMisses("div", 'aria-current="false"').length, 1);
+    assert.equal(tabFillMisses("a", 'href="/chapters" aria-current="false"').length, 1);
+    assert.equal(tabFillMisses("button", 'role="tab" aria-selected="false"').length, 1);
   });
 });

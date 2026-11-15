@@ -893,6 +893,7 @@ export function readAlignment({
           : null;
 
         const line = ownBox ? null : ruleOf(element);
+
         const current = element.matches(
           "[aria-current]:not([aria-current=false]), [data-highlighted], [aria-selected=true]",
         );
