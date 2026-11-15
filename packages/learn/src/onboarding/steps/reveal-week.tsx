@@ -56,7 +56,8 @@ function useItemTitle() {
 }
 
 function DayKinds({ items }: { items: readonly PlanItemView[] }) {
-  const rest = items.length - ICONS_SHOWN;
+  const t = useExtracted();
+  const hidden = items.slice(ICONS_SHOWN);
 
   return (
     <ListRowTrailing aria-hidden="true" className="row-first-line gap-1 max-sm:hidden">
@@ -64,7 +65,15 @@ function DayKinds({ items }: { items: readonly PlanItemView[] }) {
         // oxlint-disable-next-line react/no-array-index-key -- the icons are fixed for this day
         <KindMark className="size-3" key={index} kind={ITEM_KINDS[item.kind]} />
       ))}
-      {rest > 0 && <span className="text-faint">{`+${rest}`}</span>}
+      {hidden.length > 0 && (
+        <span className="text-faint whitespace-nowrap">
+          {hidden.every((item) => isTeaching(item))
+            ? t("{count, plural, one {+# more lesson} other {+# more lessons}}", {
+                count: hidden.length,
+              })
+            : t("{count, plural, other {+# more}}", { count: hidden.length })}
+        </span>
+      )}
     </ListRowTrailing>
   );
 }
