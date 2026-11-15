@@ -432,7 +432,8 @@ export function readAlignment({
         return [];
       }
 
-      const matches = [...row.querySelectorAll(selector)];
+      // `:scope` is the row itself: a top bar's action is its own label.
+      const matches = selector === ":scope" ? [row] : [...row.querySelectorAll(selector)];
 
       const found = matches.filter(
         (element) =>
@@ -536,8 +537,15 @@ export function readAlignment({
       );
 
     const rows = candidates.filter(
-      (row) => present(row) && !candidates.some((other) => other !== row && other.contains(row)),
+      (row) =>
+        present(row) &&
+        !candidates.some((other) => other !== row && other.contains(row)) &&
+        (!piece.words || firstText(row) !== null),
     );
+
+    if (piece.words && rows.length === 0) {
+      return [];
+    }
 
     const bar = piece.bar ? group.querySelector(piece.bar) : null;
     const groupInk = inkOf(group);

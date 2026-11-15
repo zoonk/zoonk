@@ -27,6 +27,8 @@ export type WebPiece = {
   parts: Partial<Record<Part, string>>;
   /** Inside the group: the drawn track whose end is the group's end edge, where it has one. */
   bar?: string;
+  /** Its rows are those that draw words, and a group with none has nothing to compare. */
+  words?: boolean;
 };
 
 /**
@@ -113,6 +115,18 @@ const PIECES: Piece[] = [
         value: "[data-slot=path-row-value]",
       },
       rows: "[data-slot=path-row]",
+    },
+  },
+  // A top bar's buttons and text links that are actions share one type. The back link is its own
+  // part, quieter by the kit's design, and an icon alone has no type to compare.
+  {
+    name: "page-top-bar",
+    relations: ["type"],
+    web: {
+      group: "[data-slot=page-top-bar]",
+      parts: { label: ":scope" },
+      rows: "[data-slot=page-top-end] :is(a, button):not(:has([data-slot=avatar]))",
+      words: true,
     },
   },
   // Android's wait screens name these; the web's wait pieces aren't marked yet.
