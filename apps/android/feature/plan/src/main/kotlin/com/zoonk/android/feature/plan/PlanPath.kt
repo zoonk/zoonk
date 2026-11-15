@@ -530,7 +530,6 @@ internal fun CheckpointRow(
                     },
                 )
             },
-            if (planItemId == null && !done) stringResource(R.string.plan_challenge_opens_after_lessons) else null,
         )
 
     ListRow(

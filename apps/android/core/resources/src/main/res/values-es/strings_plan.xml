@@ -81,7 +81,6 @@
   "plan_cancel": "113f9c511d044be0f4d68f210c2138b3669f6b3fdcacea73765c809e1f413b09",
   "plan_challenge_live_call": "313808a5b2aa9887a257598e71fc758f2825ddff61d1fcb05ab98d7228433dae",
   "plan_challenge_next_session": "d62981cd9b04a5abb80b1048ab2ac5e203343594b743c0634942bde32ae2bd03",
-  "plan_challenge_opens_after_lessons": "9cfa77dfa245626a16cf94e716dde5f92d19eaf7003c053b814d19f361a193c0",
   "plan_challenge_questions": "12a43dd8f093bac584159723d356708c8993938f0b6f2c08b5a0e9cf588556d5",
   "plan_challenge_won": "e05a81fdc3ff80ac5b6abe8bf01262965b2aef9c6d6bc1a3e4e1a7153071e7d6",
   "plan_change_about_more_lessons": "b857d87cac7b5218e53ca4c602f8353706793425906a736a6084987dcdf2b11c",
@@ -700,7 +699,6 @@
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">Ganado</string>
     <string name="plan_challenge_next_session">En tu próxima sesión</string>
-    <string name="plan_challenge_opens_after_lessons">Se abre al completar las lecciones de esta fase</string>
     <string name="plan_challenge_questions">Preguntas sobre esta fase, sin pistas</string>
     <string name="plan_challenge_live_call">Una llamada en vivo en la que te haces entender</string>
     <plurals name="plan_mock_exams_count">
