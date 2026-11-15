@@ -398,19 +398,33 @@ extension LessonAudio {
   }
 }
 
+extension EnvironmentValues {
+  /// What a check adds where the bank waits at the bottom: drawn right above the bank, in the room
+  /// the bank leaves, so the bank holds still.
+  @Entry var wordBankAbove: AnyView?
+}
+
 /// Where the stage gives the turn spare height (one column), the bank sits at its bottom, so it
 /// stays put while the answer grows.
 private struct LessonWordBank<Tiles: View>: View {
+  @Environment(\.wordBankAbove) private var above
+
   @ViewBuilder let tiles: Tiles
 
   var body: some View {
-    FlowLayout(spacing: 8) {
-      tiles
+    VStack(alignment: .leading, spacing: 24) {
+      if let above {
+        above
+      }
+
+      FlowLayout(spacing: 8) {
+        tiles
+      }
+      .accessibilityElement(children: .contain)
+      .accessibilityLabel(
+        Text("Word bank", tableName: "Player", comment: "The words to build an answer from")
+      )
     }
-    .accessibilityElement(children: .contain)
-    .accessibilityLabel(
-      Text("Word bank", tableName: "Player", comment: "The words to build an answer from")
-    )
     .frame(maxHeight: .infinity, alignment: .bottom)
   }
 }

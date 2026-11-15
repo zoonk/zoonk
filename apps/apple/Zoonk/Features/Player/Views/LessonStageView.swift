@@ -89,6 +89,13 @@ struct LessonStageView: View {
         let teachesKnowledge = store.lesson?.targetLanguage == nil
         let offersDidntGetIt = store.lesson?.offersDidntGetIt(on: step) == true
         let opensWithMap = step.opensLesson && map != nil
+        // One column gives the turn spare height and its word bank waits at the bottom; what a check
+        // adds then takes the room above the bank, so the bank holds still under the thumb.
+        let bankAtBottom = spread == nil && step.hasWordBank
+        let added = LessonCheckAdded(
+          step: step, state: state, store: store, includesSelfCorrect: bankAtBottom
+        )
+        .id(Self.verdictId)
 
         HStack(spacing: 0) {
           if let pages = spread {
@@ -124,7 +131,7 @@ struct LessonStageView: View {
 
           ScrollViewReader { scroll in
             LessonPage(
-              store: store, fillsHeight: spread == nil && (step.hasWordBank || opensWithMap)
+              store: store, fillsHeight: bankAtBottom || (spread == nil && opensWithMap)
             ) {
               if spread == nil {
                 LessonNotice(state: state, store: store)
@@ -139,6 +146,7 @@ struct LessonStageView: View {
                 // One container, so the id names the whole turn rather than each of its views.
                 VStack(alignment: .leading, spacing: 20) {
                   LessonStepView(step: step, state: state, store: store, part: .turn)
+                    .environment(\.wordBankAbove, bankAtBottom ? AnyView(added) : nil)
 
                   if offersHelp {
                     LessonScreenHelp(store: store)
@@ -151,23 +159,11 @@ struct LessonStageView: View {
                 }
               }
 
-              LessonCheckNote(state: state, isSlow: isCheckSlow)
+              LessonCheckNote(state: state, isSlow: isCheckSlow, showsSelfCorrect: !bankAtBottom)
                 .id(Self.checkNoteId)
 
-              if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
-                VStack(alignment: .leading, spacing: 24) {
-                  LessonVerdictView(
-                    step: step, answer: state.currentAnswer, result: result, store: store,
-                    willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position }
-                      ?? false,
-                    hyperdriveStreak: state.hyperdriveStreak(for: step.id)
-                  )
-
-                  if state.struggleOffer != nil {
-                    LessonAskBuddyOffer(reason: .misses, store: store)
-                  }
-                }
-                .id(Self.verdictId)
+              if !bankAtBottom {
+                added
               }
 
               if spread == nil, offersDidntGetIt {
@@ -196,7 +192,8 @@ struct LessonStageView: View {
             .onChange(of: state.notice == .selfCorrect || state.checkFailed || isCheckSlow) {
               _, hasNote in
               if hasNote {
-                scroll.scrollTo(Self.checkNoteId, anchor: .bottom)
+                let isAboveBank = bankAtBottom && state.notice == .selfCorrect
+                scroll.scrollTo(isAboveBank ? Self.verdictId : Self.checkNoteId, anchor: .bottom)
               }
             }
             // A worked example's newest step is its last. A challenge's turn is its newest
@@ -340,19 +337,54 @@ private struct LessonStepNotes: View {
   }
 }
 
+/// What a check adds: "fix it yourself" where the word bank waits at the bottom, and the verdict.
+private struct LessonCheckAdded: View {
+  let step: LessonStep
+  let state: LessonPlayerState
+  let store: LessonPlayerStore
+  let includesSelfCorrect: Bool
+
+  var body: some View {
+    if includesSelfCorrect, state.notice == .selfCorrect {
+      SelfCorrectLine()
+    }
+
+    if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
+      VStack(alignment: .leading, spacing: 24) {
+        LessonVerdictView(
+          step: step, answer: state.currentAnswer, result: result, store: store,
+          willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position } ?? false,
+          hyperdriveStreak: state.hyperdriveStreak(for: step.id)
+        )
+
+        if state.struggleOffer != nil {
+          LessonAskBuddyOffer(reason: .misses, store: store)
+        }
+      }
+    }
+  }
+}
+
+private struct SelfCorrectLine: View {
+  var body: some View {
+    Label {
+      Text(LessonPlayerState.Notice.selfCorrect.line)
+    } icon: {
+      Image(systemName: "pencil")
+    }
+    .typeStyle(.body.weight(.medium))
+    .foregroundStyle(.destructiveText)
+  }
+}
+
 private struct LessonCheckNote: View {
   let state: LessonPlayerState
   let isSlow: Bool
+  let showsSelfCorrect: Bool
 
   var body: some View {
-    if state.notice == .selfCorrect {
-      Label {
-        Text(LessonPlayerState.Notice.selfCorrect.line)
-      } icon: {
-        Image(systemName: "pencil")
-      }
-      .typeStyle(.body.weight(.medium))
-      .foregroundStyle(.destructiveText)
+    if showsSelfCorrect, state.notice == .selfCorrect {
+      SelfCorrectLine()
     }
 
     if state.checkFailed {
