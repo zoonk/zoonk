@@ -15,9 +15,10 @@ import {
 
 /**
  * One line of a row (`ROW-LINE.md`, craft E6): every part sits on the middle of the label's
- * capitals, whatever its face or size, within half a logical unit. A part read by its ink is drawn
- * in whole device pixels, so its middle is known only to half a device pixel: it's allowed that
- * much more (the lead's ruling).
+ * capitals, whatever its face or size, within half a logical unit at text ×1. The offset a reader
+ * sees is against the size of the text, so at text ×N that's N halves. A part read by its ink is
+ * drawn in whole device pixels, so its middle is known only to half a device pixel: it's allowed
+ * that much more on top.
  */
 const LINE = 0.5;
 
@@ -154,8 +155,12 @@ export function lineLeads(context: Context, read: Group): AlignmentFinding[] {
       ];
     }
 
+    const allowed = LINE * context.capture.configuration.textScale;
     const resolution = 0.5 / context.capture.scale;
-    const off = found.filter((miss) => Math.abs(miss.off) > LINE + (miss.inked ? resolution : 0));
+
+    const off = found.filter(
+      (miss) => Math.abs(miss.off) > allowed + (miss.inked ? resolution : 0),
+    );
 
     if (off.length === 0) {
       return [];
@@ -173,7 +178,7 @@ export function lineLeads(context: Context, read: Group): AlignmentFinding[] {
         detail: `${rowName(read, row.id)}: ${off.map((miss) => describe(miss)).join("; ")}${faced}`,
         level: "fail",
         measured: Math.max(...off.map((miss) => Math.abs(miss.off))),
-        message: `a row of ${groupName(read)} is off one line by more than ${LINE}`,
+        message: `a row of ${groupName(read)} is off one line by more than ${allowed}`,
         piece: group.piece,
         rule: "line",
       }),

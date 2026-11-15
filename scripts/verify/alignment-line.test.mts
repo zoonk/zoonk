@@ -229,10 +229,23 @@ function atTwoX(part: "mark" | "value", off: number) {
   };
 }
 
-describe("line's tolerance (the lead's ruling)", () => {
+/** The same capture at text ×`textScale`. */
+function atText(capture: Capture, textScale: number): Capture {
+  return { ...capture, configuration: { ...capture.configuration, textScale } };
+}
+
+describe("line's tolerance", () => {
   it("allows a part read by its ink half a device pixel more, the measurement's resolution", () => {
     assert.deepEqual(line(atTwoX("mark", 0.7)), []);
     assert.equal(line(atTwoX("mark", 0.8))[0]?.level, "fail");
     assert.equal(line(atTwoX("value", 0.6))[0]?.level, "fail");
+  });
+
+  it("grows with the text: an offset that doubles at text ×2 passes, one that more than doubles fails", () => {
+    assert.deepEqual(line(atText(atTwoX("value", 0.45), 1)), []);
+    assert.deepEqual(line(atText(atTwoX("value", 0.9), 2)), []);
+    assert.equal(line(atText(atTwoX("value", 1.1), 2))[0]?.level, "fail");
+    assert.deepEqual(line(atText(atTwoX("mark", 1.2), 2)), []);
+    assert.equal(line(atText(atTwoX("mark", 1.3), 2))[0]?.level, "fail");
   });
 });
