@@ -57,32 +57,45 @@ async function compileForMain(cache: CacheWrapper) {
 describe("the chapter lesson maps Main keeps", () => {
   it("shows a lesson the API finished writing after Main kept the chapter without it", async () => {
     const workflowRunId = `run-${randomUUID()}`;
-    const chapter = await libraryChapterFixture();
 
-    const lesson = await libraryLessonFixture({
-      contentRunId: workflowRunId,
-      contentStatus: "running",
-      summary: { ideas: [{ text: "Atoms are tiny." }] },
-    });
+    const [written, writing] = await Promise.all([
+      libraryChapterFixture(),
+      libraryChapterFixture(),
+    ]);
 
-    await chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 });
+    const [done, lesson] = await Promise.all([
+      libraryLessonFixture({ contentStatus: "completed", summary: { ideas: [{ text: "Hi." }] } }),
+      libraryLessonFixture({
+        contentRunId: workflowRunId,
+        contentStatus: "running",
+        summary: { ideas: [{ text: "Atoms are tiny." }] },
+      }),
+    ]);
+
+    await Promise.all([
+      chapterLessonFixture({ chapterId: written.id, lessonId: done.id, position: 0 }),
+      chapterLessonFixture({ chapterId: writing.id, lessonId: lesson.id, position: 0 }),
+    ]);
 
     const { cache, reads } = mainCache();
     const main = await compileForMain(cache);
 
-    const read = async () => {
-      const maps = await main.getChapterLessonMaps([chapter.id]);
-      return maps.get(chapter.id);
-    };
+    const read = async () =>
+      Object.fromEntries(await main.getChapterLessonMaps([written.id, writing.id]));
 
-    await expect(read()).resolves.toStrictEqual([]);
-    await expect(read()).resolves.toStrictEqual([]);
+    const kept = { [written.id]: [{ lessonId: done.id, position: 1 }], [writing.id]: [] };
+
+    await expect(read()).resolves.toMatchObject(kept);
+    await expect(read()).resolves.toMatchObject(kept);
     expect(reads.count).toBe(1);
 
     await completeLessonContent({ lessonId: lesson.id, workflowRunId });
 
-    await expect(read()).resolves.toMatchObject([
-      { lessonId: lesson.id, map: { ideas: [{ text: "Atoms are tiny." }] }, position: 1 },
-    ]);
+    await expect(read()).resolves.toMatchObject({
+      [written.id]: [{ lessonId: done.id, position: 1 }],
+      [writing.id]: [
+        { lessonId: lesson.id, map: { ideas: [{ text: "Atoms are tiny." }] }, position: 1 },
+      ],
+    });
   });
 });
