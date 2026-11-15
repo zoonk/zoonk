@@ -395,6 +395,49 @@ describe("asking the tutor", () => {
     await expect.element(composer(sheet)).not.toBeInTheDocument();
   });
 
+  it("keeps the notice, with no day, for a refusal whose day the device's clock already shows as past", async () => {
+    const { api, lesson } = lessonWithTutor();
+    const passedByThisClock = new Date(Date.now() - 60 * 1000);
+
+    api.next("answer", () => {
+      api.questions = api.questions.map((question) => ({ ...question, status: "failed" as const }));
+
+      return Promise.resolve(
+        Response.json(
+          {
+            error: {
+              code: LESSON_PLAYER_ERROR_CODES.usageLimitReached,
+              details: {
+                limit: {
+                  availableAt: passedByThisClock.toISOString(),
+                  limit: 100,
+                  period: "rolling30Days",
+                  resource: "tutorMessage",
+                  tier: "free",
+                },
+              },
+              message: "This plan's limit is reached",
+            },
+          },
+          { status: 402 },
+        ),
+      );
+    });
+
+    playLesson({ lesson });
+    const sheet = await openTutor();
+    await ask(sheet, "A question refused by a server behind this clock.");
+
+    await expect
+      .element(sheet.getByRole("alert").filter({ hasText: /You've used your messages/u }))
+      .toBeVisible();
+
+    await expect.element(sheet.getByRole("link", { name: "Subscribe" })).toBeVisible();
+    await expect.element(composer(sheet)).not.toBeInTheDocument();
+    await expect.element(sheet.getByText("You can try again now.")).not.toBeInTheDocument();
+    await expect.element(sheet.getByRole("button", { name: "Try again" })).not.toBeInTheDocument();
+  });
+
   it("keeps a refused question unanswered, not failed, and offers Try again once its messages come back", async () => {
     const { api, lesson } = lessonWithTutor();
     const opens = new Date(Date.now() + 1500);

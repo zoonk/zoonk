@@ -4,7 +4,7 @@ import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted, useFormatter } from "next-intl";
-import { useCallback, useSyncExternalStore } from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
 import { isoDateToUtc } from "../_utils/iso-date";
 import {
   OPENING_DATE_OPTIONS,
@@ -36,18 +36,35 @@ function watchOpening(availableAt: string | null, notify: () => void) {
   };
 }
 
-/** The day follows the clock while the screen is open, so a passed instant stops being promised. */
+function toArrival(availableAt: string | null) {
+  return { availableAt, past: availableAt !== null && Date.parse(availableAt) <= Date.now() };
+}
+
+/**
+ * The day follows the clock while the screen is open, so a passed instant stops being promised. A
+ * refusal whose instant this device already shows as past came from a server whose clock is behind
+ * it: its day can't be told here, so it stays unknown and the refusal stands until the next try.
+ */
 export function useOpeningDay(availableAt: string | null): OpeningDay | null {
+  const mounted = useIsMounted();
+  const [arrival, setArrival] = useState(() => toArrival(availableAt));
+
+  if (arrival.availableAt !== availableAt) {
+    setArrival(toArrival(availableAt));
+  }
+
   const subscribe = useCallback(
     (notify: () => void) => watchOpening(availableAt, notify),
     [availableAt],
   );
 
-  return useSyncExternalStore(
+  const day = useSyncExternalStore(
     subscribe,
     () => toOpeningDay({ availableAt, now: new Date(), timeZone: getLocalTimeZone() }),
     () => toFirstRenderDay(availableAt),
   );
+
+  return mounted && arrival.past ? null : day;
 }
 
 type DayLines = {
