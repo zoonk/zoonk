@@ -28,7 +28,6 @@
   "generation_notice_line_2": "11d340e7716f4ae1f20520386477021a62efaf89b18c0353675a9317ea5aba7a",
   "generation_phase_active": "ef8c43a6cad74b99d88668b0a059eca9e5363ee82de5544742d1864a64442e0c",
   "generation_phase_completed": "003c1702deba5d88cc1ab27485b7d4ae713b44ffb2323742009dfdeb033f83bd",
-  "generation_phase_failed": "a71aa40c5d500820bdf0048ed681eba92890b75b356676a512f7a5f94d135dce",
   "generation_phase_pending": "9320559100b8dacb06a5997c1c6d1d2d7a7e59f6f589c93b488c5d2246601a6e",
   "generation_placement": "47e2751af0b902676ab3078749b50060d79b9839b4a7edd4745b441ba3c13cb9",
   "generation_placement_questions": "2ab10e6d07d86a37841e4093e5cad80c540aaa8f7844a2dcf755215441708091",
@@ -66,7 +65,6 @@
     <string name="generation_phase_pending">아직 시작 전</string>
     <string name="generation_phase_active">진행 중</string>
     <string name="generation_phase_completed">완료</string>
-    <string name="generation_phase_failed">여기서 중단됨</string>
     <!-- A detail line while questions are written, with the question's number. -->
     <string name="generation_question_line">%1$d번 문제를 만들고 있어요…</string>
     <string name="generation_question_review">정답을 확인하고 있어요…</string>

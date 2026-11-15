@@ -14,7 +14,6 @@
     <string name="generation_phase_pending">not started yet</string>
     <string name="generation_phase_active">in progress</string>
     <string name="generation_phase_completed">done</string>
-    <string name="generation_phase_failed">stopped here</string>
     <!-- A detail line while questions are written, with the question's number. -->
     <string name="generation_question_line">Writing question %1$d…</string>
     <string name="generation_question_review">Checking the answers…</string>

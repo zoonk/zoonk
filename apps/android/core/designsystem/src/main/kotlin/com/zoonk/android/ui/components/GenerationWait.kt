@@ -122,14 +122,19 @@ fun GenerationWait(
             }
         }
 
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            progress.phases.forEach { phase ->
-                PhaseRow(
-                    phase = phase,
-                    following = following,
-                    elapsedMillis = elapsed(phase, following, now, run.clockOffsetMillis),
-                    skillName = run.skillName.takeIf { kind.steps["buildSkillGraph"] == StepPlace.Phase(phase.phase.id) },
-                )
+        // The API never names the step a run failed on, so a failed run shows its notice and no phases, as main's.
+        // A lost connection isn't a failed run: it may still finish, so its phases stay.
+        val failed = run.status == GenerationRun.Status.Failed && run.failure != GenerationFailure.Connection
+        if (!failed) {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                progress.phases.forEach { phase ->
+                    PhaseRow(
+                        phase = phase,
+                        following = following,
+                        elapsedMillis = elapsed(phase, following, now, run.clockOffsetMillis),
+                        skillName = run.skillName.takeIf { kind.steps["buildSkillGraph"] == StepPlace.Phase(phase.phase.id) },
+                    )
+                }
             }
         }
     }
@@ -313,10 +318,9 @@ private fun PhaseRow(
                 PhaseStatus.Pending -> R.string.generation_phase_pending
                 PhaseStatus.Active -> R.string.generation_phase_active
                 PhaseStatus.Completed -> R.string.generation_phase_completed
-                PhaseStatus.Failed -> R.string.generation_phase_failed
             },
         )
-    val emphasized = phase.status == PhaseStatus.Active || phase.status == PhaseStatus.Failed
+    val emphasized = phase.status == PhaseStatus.Active
 
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         PhaseIndicator(phase.status)
@@ -375,15 +379,6 @@ private fun PhaseIndicator(status: PhaseStatus) {
                     contentDescription = null,
                     modifier = Modifier.size(box * ICON_SHARE),
                     tint = MaterialTheme.colorScheme.tertiary,
-                )
-            }
-
-            PhaseStatus.Failed -> {
-                Icon(
-                    painterResource(R.drawable.ic_error),
-                    contentDescription = null,
-                    modifier = Modifier.size(box * ICON_SHARE),
-                    tint = MaterialTheme.colorScheme.error,
                 )
             }
         }

@@ -477,7 +477,7 @@ fun questionLines(count: Int) = NumberedLines(count, R.string.generation_questio
 
 enum class StepState { Started, Completed }
 
-enum class PhaseStatus { Pending, Active, Completed, Failed }
+enum class PhaseStatus { Pending, Active, Completed }
 
 data class PhaseProgress(
     val phase: GenerationPhase,
@@ -585,8 +585,7 @@ private fun status(
         index < activeIndex -> PhaseStatus.Completed
         index > activeIndex -> PhaseStatus.Pending
         isDoneAlongside -> PhaseStatus.Completed
-        run.failure == GenerationFailure.Generation -> PhaseStatus.Failed
-        run.failure == GenerationFailure.NotStarted -> PhaseStatus.Pending
+        run.failure == GenerationFailure.Generation || run.failure == GenerationFailure.NotStarted -> PhaseStatus.Pending
         else -> PhaseStatus.Active
     }
 

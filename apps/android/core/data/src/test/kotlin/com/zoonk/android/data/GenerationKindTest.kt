@@ -80,12 +80,12 @@ class GenerationKindTest {
     }
 
     @Test
-    fun aFailedRunStopsAtItsPhase() {
+    fun aFailedRunMarksNoPhaseAndStopsItsClock() {
         val progress =
             GenerationKind.Understanding.progress(
                 run("readGoal" to StepState.Started, status = GenerationRun.Status.Failed, failure = GenerationFailure.Generation),
             )
-        assertEquals(PhaseStatus.Failed, progress.phases.single().status)
+        assertEquals(PhaseStatus.Pending, progress.phases.single().status)
         assertNull(progress.activeMillis)
     }
 

@@ -28,7 +28,6 @@
   "generation_notice_line_2": "2f80792cee4c83d3d022d04f9df9176696ab451ae5b3e7ef1e4d72358dba9a23",
   "generation_phase_active": "abcee5619fdad05818e3f1ea7c894d71f51d5e1518bf625f7116f51b7788961b",
   "generation_phase_completed": "81758654b81286e6f45665a67e24271e56abe30527768b0fd2c9a09b62ebe518",
-  "generation_phase_failed": "f8ba37cc614305393ccc6bd985345df183a9223b1f0f9140b421e02f3963aa80",
   "generation_phase_pending": "8c265a6e8fe148515eaebed72e4816b4ed58329aade28e7c800fe4a20dd26bb4",
   "generation_placement": "d3f2b464eb9436b485e9eb58fbad484f3f31801a831f557e136cfd8e951066d9",
   "generation_placement_questions": "da6fb2cfaa69dd6edbef76fbb8f98f99f557012a4fe965eb0407a3ef50d25a47",
@@ -66,7 +65,6 @@
     <string name="generation_phase_pending">ainda não começou</string>
     <string name="generation_phase_active">em andamento</string>
     <string name="generation_phase_completed">concluído</string>
-    <string name="generation_phase_failed">parou aqui</string>
     <!-- A detail line while questions are written, with the question's number. -->
     <string name="generation_question_line">Criando pergunta %1$d…</string>
     <string name="generation_question_review">Conferindo as respostas…</string>
