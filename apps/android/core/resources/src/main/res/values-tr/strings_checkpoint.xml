@@ -13,6 +13,7 @@
   "checkpoint_finishing": "82c95546b48eeae2df3d607ed9aa2b89d5537f82b80f1a9481e7002108171fdd",
   "checkpoint_held": "15e7b23e860c015d88f962c566ef2e7d62813664a3d7e0623198e9d1a1fe95b1",
   "checkpoint_lost_line": "6d35cb9958b1a67b9620bf12b266c958f83bf78df491348c8af167556b24dfbb",
+  "checkpoint_needed_to_win": "df0f77f4f2a3be0d249e28e125b9c385db9963e6f5d0fb91c30c5986256fa5fc",
   "checkpoint_new_try_next": "6ff8638cf45e0d0e9b1c722ca37c546b36c022d1a03997eb5bbe9588086fc514",
   "checkpoint_new_try_tomorrow": "118c696330d7a291d465d5c4693c28c3a0354a2386cc97cdd364a73fda95f995",
   "checkpoint_next": "adc0e22fcdb224b36f1281f412299a7952df98125cdc6e43efaa82d85e8ec40e",
@@ -40,7 +41,6 @@
   "checkpoint_review": "1239b6d6c37b608755862389c43715c99a0f88338317d6785c5aea380c136ca6",
   "checkpoint_rewards": "2192af6a53970dc6bd45cf06f50042c6627f1f4d2b640a4b956740260f5e7361",
   "checkpoint_right_to_win": "7815f14d073074f2b3ab6324ecf3f028897e58b2fe3149956592ab56b8d21ca6",
-  "checkpoint_right_to_win_of": "c1f0e59bfe8e820623667218be908a55abb13501a247bd1c74c3876a11f6a360",
   "checkpoint_see_result": "631000f902521e3150f2d86a192d07ddbbc7428fe43fce73d9ca79593a94d91e",
   "checkpoint_shield": "5733f4f3474101d0e2442e0e35be543554cb8e5ca9ad32c2cab1d746c1ae00af",
   "checkpoint_shield_value": "2bfb4435800f2a64e31f38d622d98fb167d572f59e3b371f480982536debf892",
@@ -114,10 +114,9 @@
     <string name="checkpoint_weekly_done">Haftalık meydan okuma tamamlandı</string>
     <string name="checkpoint_beat">Hilebaz’ı yendin!</string>
     <string name="checkpoint_not_this_time">Bu kez olmadı</string>
-    <!-- %1$d right answers were needed out of %2$d questions. -->
-    <plurals name="checkpoint_right_to_win_of">
-        <item quantity="one">Kazanmak için %1$d doğru gerekiyordu (toplam %2$d soru)</item>
-        <item quantity="other">Kazanmak için %1$d doğru gerekiyordu (toplam %2$d soru)</item>
+    <plurals name="checkpoint_needed_to_win">
+        <item quantity="one">Kazanmak için %d doğru cevaba ihtiyacın vardı.</item>
+        <item quantity="other">Kazanmak için %d doğru cevaba ihtiyacın vardı.</item>
     </plurals>
     <string name="checkpoint_rewards">Ödüller</string>
     <!-- %1$s is the phase's number. -->

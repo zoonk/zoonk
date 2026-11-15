@@ -13,6 +13,7 @@
   "checkpoint_finishing": "dad78378039770c6d5d09dcbf379666119bc4e964076fbc66f250273762221ac",
   "checkpoint_held": "34def1691f3b5f9cca420414b478aaf28ccc94dcb1d309b75bcf3a95fec8c6a8",
   "checkpoint_lost_line": "48eff89e237c80cca7651d8df7dc6be8ec32d2f17d4733b0309c573bca3652bc",
+  "checkpoint_needed_to_win": "78a64fc29b9717dec20ef743f3199a43f69abe641d7b5b2de0bd7c29fd6d0575",
   "checkpoint_new_try_next": "05b4dd0f51f30e6b75755686d02c2c01eed839e3df1899dbfe504b3fdbb8242b",
   "checkpoint_new_try_tomorrow": "fc8b04b53e43edc850d91a32e941cc06ed638b007e380d1ac75647617dc55d80",
   "checkpoint_next": "89f185607ce7221e250191743d48f4133f05a96f1ec8ebb32b9659440b81b190",
@@ -40,7 +41,6 @@
   "checkpoint_review": "1665041ef6a964f88d635ad7c60591f6fe9850c6652e1bc9c339c3cb81a12922",
   "checkpoint_rewards": "02f04ebf1fba86fbba5e736b13d8510808cef28ed7316e6c0988073a67992303",
   "checkpoint_right_to_win": "ce40b357c66a7be0d5d5e5b54183c23d17ec206a19e104cba98d9141858f5aaf",
-  "checkpoint_right_to_win_of": "dfe0cdc3b55553eb6047b6d12fc8d58ce7411e627339d8cbe02a88dca1b53477",
   "checkpoint_see_result": "cf43e634c9cd5929b4cf7da6542b9502596649fa9fd91eaa66570bd650f55678",
   "checkpoint_shield": "252c5a33f4c4823ecc72bf42b97f3e3cd228d0bdb101709c865a31cbcfdebda3",
   "checkpoint_shield_value": "b9828d7ebe699d1bcc0767b55448e8b3df0ef7abd58cc0a574862b468734076e",
@@ -120,11 +120,10 @@
     <string name="checkpoint_weekly_done">Défi hebdomadaire terminé</string>
     <string name="checkpoint_beat">Tu as battu le Farceur !</string>
     <string name="checkpoint_not_this_time">Pas cette fois</string>
-    <!-- %1$d right answers were needed out of %2$d questions. -->
-    <plurals name="checkpoint_right_to_win_of">
-        <item quantity="one">%1$d bonne réponse sur %2$d pour gagner</item>
-        <item quantity="many">%1$d bonnes réponses sur %2$d pour gagner</item>
-        <item quantity="other">%1$d bonnes réponses sur %2$d pour gagner</item>
+    <plurals name="checkpoint_needed_to_win">
+        <item quantity="one">Il te fallait %d bonne réponse pour gagner.</item>
+        <item quantity="many">Il te fallait %d bonnes réponses pour gagner.</item>
+        <item quantity="other">Il te fallait %d bonnes réponses pour gagner.</item>
     </plurals>
     <string name="checkpoint_rewards">Récompenses</string>
     <!-- %1$s is the phase's number. -->

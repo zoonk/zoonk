@@ -94,6 +94,7 @@ import com.zoonk.android.ui.characters.TricksterAct
 import com.zoonk.android.ui.characters.TricksterActorState
 import com.zoonk.android.ui.characters.TricksterArt
 import com.zoonk.android.ui.characters.rememberTricksterActorState
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
@@ -773,7 +774,7 @@ internal fun DuelResult(
                                 facts =
                                     listOfNotNull(
                                         passMark?.takeIf { !won }?.let {
-                                            pluralStringResource(R.plurals.checkpoint_right_to_win_of, it, it, duel.read.questions.size)
+                                            pluralStringResource(R.plurals.checkpoint_needed_to_win, it, it)
                                         },
                                     ),
                             )
@@ -814,11 +815,15 @@ private fun phaseLabel(phase: CheckpointPhase): String =
 @Composable
 private fun Section(
     title: String,
-    titleStyle: TextStyle = MaterialTheme.typography.titleSmall,
+    titleStyle: TextStyle? = null,
     content: @Composable () -> Unit,
 ) {
     Column(Modifier.fillMaxWidth()) {
-        Text(title, modifier = Modifier.semantics { heading() }, style = titleStyle)
+        if (titleStyle == null) {
+            SectionHeader(title)
+        } else {
+            Text(title, modifier = Modifier.semantics { heading() }, style = titleStyle)
+        }
         content()
     }
 }
@@ -892,7 +897,7 @@ private fun Review(
     duel: Duel,
     answers: List<StudyBlockCompletionCheckpointAnswersInner>,
     app: AppContainer,
-    titleStyle: TextStyle = MaterialTheme.typography.titleSmall,
+    titleStyle: TextStyle? = null,
 ) {
     Section(stringResource(R.string.checkpoint_answers), titleStyle) {
         answers.forEachIndexed { index, answer ->
