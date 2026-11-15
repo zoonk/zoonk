@@ -47,6 +47,7 @@ import com.zoonk.android.feature.speaking.SpeakingPaperSection
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -101,6 +102,7 @@ internal fun GoalExam(
     val options by mocks.collectShown()
     val isRefreshing by exam.isRefreshing.collectAsStateWithLifecycle()
     val viewModel = viewModel(key = "exam-$goalId") { ExamViewModel(exams, plans, goalId) }
+    VisitOf(viewModel.visit)
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val refresh: () -> Unit = { listOf(exam, mocks).forEach { scope.launch { it.refresh() } } }
