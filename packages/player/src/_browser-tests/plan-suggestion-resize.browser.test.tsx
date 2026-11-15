@@ -1,6 +1,6 @@
 import { cleanup } from "@testing-library/react";
 import { planTimeToCoverSchema } from "@zoonk/core/plans/time-advice-contract";
-import { type PlanView } from "@zoonk/core/plans/view-contract";
+import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
 import { useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
@@ -370,6 +370,30 @@ describe.each([
   });
 });
 
+/** An applied change the learner can undo, as a save in the editor reports it. */
+function editorChange(id: string): PlanChangeView {
+  return {
+    behind: null,
+    canApply: false,
+    canUndo: true,
+    createdAt: "2026-11-15",
+    days: null,
+    effect: FIT_EFFECT,
+    examDocument: "notice",
+    id,
+    kind: "manual",
+    lessonsSkipped: 0,
+    officialDate: null,
+    operations: [{ kind: "setTargetDate", targetDate: "2027-04-01" }],
+    quote: "q",
+    reason: null,
+    seen: true,
+    source: "learner",
+    status: "applied",
+    todaySession: null,
+  };
+}
+
 describe("the Plan's requests belong to its screen", () => {
   afterEach(cleanup);
 
@@ -428,17 +452,24 @@ describe("the Plan's requests belong to its screen", () => {
     });
   });
 
-  it("shows a reopened editor no Undo from a save made before it closed", async () => {
+  it("keeps a reopened editor's own Undo when a save from before it closed lands", async () => {
     await atViewport(LAPTOP, async () => {
-      const saved = Promise.withResolvers<Awaited<ReturnType<PlanActions["change"]>>>();
-      const change = vi.fn<PlanActions["change"]>(() => saved.promise);
+      const earlier = Promise.withResolvers<Awaited<ReturnType<PlanActions["change"]>>>();
+      const current = Promise.withResolvers<Awaited<ReturnType<PlanActions["change"]>>>();
+
+      const change = vi
+        .fn<PlanActions["change"]>()
+        .mockImplementationOnce(() => earlier.promise)
+        .mockImplementationOnce(() => current.promise);
+
+      const decide = vi.fn<PlanActions["decide"]>(async () => true);
 
       const actions: PlanActions = {
         adviseOnBases: async () => null,
         change,
         chooseExamOption: async () => null,
         chooseTools: async () => false,
-        decide: async () => true,
+        decide,
         findTimeToCover: async () => null,
         preview: async () => null,
       };
@@ -475,40 +506,26 @@ describe("the Plan's requests belong to its screen", () => {
       await expect.poll(() => page.getByRole("dialog").elements()).toHaveLength(0);
       await press("Open editor");
       await expect.poll(isSidePanelShown).toBe(true);
-      expect(shownButton("Undo")).toBeUndefined();
+      expect(isBusy("Save")).toBe(true);
 
-      saved.resolve({
-        change: {
-          behind: null,
-          canApply: false,
-          canUndo: true,
-          createdAt: "2026-11-15",
-          days: null,
-          effect: FIT_EFFECT,
-          examDocument: "notice",
-          id: "made-before-closing",
-          kind: "manual",
-          lessonsSkipped: 0,
-          officialDate: null,
-          operations: [{ kind: "setTargetDate", targetDate: "2027-04-01" }],
-          quote: "q",
-          reason: null,
-          seen: true,
-          source: "learner",
-          status: "applied",
-          todaySession: null,
-        },
-        status: "applied",
+      await press("Mon");
+      await expect.poll(() => change).toHaveBeenCalledTimes(2);
+      // React shows a transition's updates once every running action is done, so this opening's
+      // answer only shows after the earlier one lands: answered first, it is overwritten unless
+      // the earlier one is dropped. The macrotask lets this one's answer run before.
+      current.resolve({ change: editorChange("made-in-this-opening"), status: "applied" });
+      await current.promise;
+
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
       });
 
+      earlier.resolve({ change: editorChange("made-before-closing"), status: "applied" });
       await expect.poll(() => isBusy("Save")).toBe(false);
 
-      // The save's answer renders within a few frames: its Undo must not show up in this opening.
-      await expect(
-        expect.poll(() => shownButton("Undo"), { timeout: 1000 }).toBeDefined(),
-      ).rejects.toThrow();
-
-      expect(change).toHaveBeenCalledOnce();
+      await press("Undo");
+      await expect.poll(() => decide).toHaveBeenCalledOnce();
+      expect(decide).toHaveBeenCalledWith({ changeId: "made-in-this-opening", status: "undone" });
     });
   });
 });

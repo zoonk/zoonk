@@ -13,9 +13,12 @@ type EditorChangeValue = {
 
 const EditorChangeContext = createContext<EditorChangeValue | null>(null);
 
+/** What an opening of the editor (`open`) shows: the change its own last save made. */
+type Opening = { change: EditorChange | null; count: number; open: boolean };
+
 /**
- * A change shows only in the opening of the editor (`open`) whose save made it, so a save that
- * lands after the learner closed and reopened the editor shows nothing in the new one.
+ * A save reports to the opening it was made in, so one that lands after the learner closed and
+ * reopened the editor neither shows in the new opening nor replaces what that opening shows.
  */
 export function PlanEditorChangeProvider({
   children,
@@ -24,27 +27,32 @@ export function PlanEditorChangeProvider({
   children: React.ReactNode;
   open: boolean;
 }) {
-  const [opening, setOpening] = useState({ count: 0, open });
-  const [reported, setReported] = useState<(EditorChange & { opening: number }) | null>(null);
+  const [opening, setOpening] = useState<Opening>({ change: null, count: 0, open });
 
   if (open !== opening.open) {
-    setOpening({ count: opening.count + (open ? 1 : 0), open });
+    setOpening(open ? { change: null, count: opening.count + 1, open } : { ...opening, open });
   }
 
-  const latest = reported?.opening === opening.count ? reported : null;
+  const { change: latest, count } = opening;
 
   const value = useMemo<EditorChangeValue>(
     () => ({
       latest,
       // Setting back by hand what the latest change set is its Undo: the change comes back undone.
       report: (change) =>
-        setReported({ change, opening: opening.count, undone: change.status === "undone" }),
+        setOpening((current) =>
+          current.count === count
+            ? { ...current, change: { change, undone: change.status === "undone" } }
+            : current,
+        ),
       undo: (changeId) =>
-        setReported((current) =>
-          current?.change.id === changeId ? { ...current, undone: true } : current,
+        setOpening((current) =>
+          current.change?.change.id === changeId
+            ? { ...current, change: { ...current.change, undone: true } }
+            : current,
         ),
     }),
-    [latest, opening.count],
+    [count, latest],
   );
 
   return <EditorChangeContext value={value}>{children}</EditorChangeContext>;
