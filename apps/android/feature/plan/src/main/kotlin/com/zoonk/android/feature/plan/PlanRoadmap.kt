@@ -70,6 +70,7 @@ import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRowChevron
+import com.zoonk.android.ui.components.glyphScale
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.Geist
@@ -244,8 +245,14 @@ private fun RoadmapFull(
     val position = roadmapPosition(page, phases)
     val currentIndex = phases.indexOfFirst { it.state == PlanPhase.State.CURRENT }
     val overrun = page.plan.overrun(page.goal.kind)
-    val names = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus)) }
-    val bands = bandLayout(names, phases.map { it.weight() }, width)
+    val weights = phases.map { it.weight() }
+    // Each name's parts kept whole when every band fits its widest part; otherwise the names break between words.
+    val parted = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus), keepParts = true) }
+    val loose = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus), keepParts = false) }
+    val partedBands = bandLayout(parted, weights, width)
+    val looseBands = bandLayout(loose, weights, width)
+    val names = if (partedBands.fitsWords) parted else loose
+    val bands = if (partedBands.fitsWords) partedBands else looseBands
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -304,11 +311,20 @@ private fun RoadmapLegend(
             LegendPair({ KindDot(LearnKind.Mock) }) { Text(stringResource(R.string.plan_mock_exam), style = style, color = color) }
         }
         if (hasChallenges) {
-            LegendPair({ Trickster(Modifier.size(16.dp), face = true) }) { Text(challengeName(page), style = style, color = color) }
+            LegendPair(
+                { Trickster(Modifier.size(16.dp * glyphScale()), face = true) },
+            ) { Text(challengeName(page), style = style, color = color) }
         }
         if (page.finish != null) {
             LegendPair(
-                { Icon(painterResource(R.drawable.ic_flag), contentDescription = null, modifier = Modifier.size(14.dp), tint = color) },
+                {
+                    Icon(
+                        painterResource(R.drawable.ic_flag),
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp * glyphScale()),
+                        tint = color,
+                    )
+                },
             ) {
                 Text(stringResource(if (page.isExam) R.string.plan_exam_day else R.string.plan_goal_date), style = style, color = color)
             }
@@ -350,9 +366,10 @@ private class BandName(
 private fun bandName(
     phase: PlanPhase,
     name: String,
+    keepParts: Boolean,
 ): BandName {
     // Each part keeps its words together, so a band is as wide as its widest part and breaks only between parts.
-    val shown = bandNameParts(name).joinToString(" ") { it.replace(' ', NO_BREAK_SPACE) }
+    val shown = if (keepParts) bandNameParts(name).joinToString(" ") { it.replace(' ', NO_BREAK_SPACE) } else name
     return if (phase.state == PlanPhase.State.DONE) {
         val text =
             buildAnnotatedString {
@@ -385,6 +402,8 @@ private fun bandStyle() = MaterialTheme.typography.labelMedium.copy(hyphens = Hy
 private class BandLayout(
     val widths: List<Dp>,
     val height: Dp,
+    /** Every band is at least as wide as its name's longest unbreakable run. */
+    val fitsWords: Boolean,
 )
 
 /**
@@ -413,10 +432,11 @@ private fun bandLayout(
         val gap = BAND_GAP.roundToPx()
         val total = width.roundToPx()
         val words = names.map { max(narrowest, ceil(measure(it).multiParagraph.intrinsics.minIntrinsicWidth).toInt() + padding) }
-        val minimums = if (words.sum() + gap * (names.size - 1) <= total) words else List(names.size) { narrowest }
+        val fitsWords = words.sum() + gap * (names.size - 1) <= total
+        val minimums = if (fitsWords) words else List(names.size) { narrowest }
         val widths = weightedWidths(weights, total.toFloat(), minimums.map(Int::toFloat), gap.toFloat()).map { floor(it).toInt() }
         val text = names.indices.maxOfOrNull { measure(names[it], (widths[it] - padding).coerceAtLeast(0)).size.height } ?: 0
-        return BandLayout(widths.map { it.toDp() }, max(BAND_HEIGHT.roundToPx(), text + BAND_PADDING_Y.roundToPx() * 2).toDp())
+        return BandLayout(widths.map { it.toDp() }, max(BAND_HEIGHT.roundToPx(), text + BAND_PADDING_Y.roundToPx() * 2).toDp(), fitsWords)
     }
 }
 
