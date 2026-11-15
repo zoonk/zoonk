@@ -60,7 +60,7 @@ function PageTopBar({
   return (
     <div
       className={cn(
-        "bg-background/95 supports-backdrop-filter:bg-background/80 sticky top-0 z-30 -mx-(--page-gutter) border-b px-(--page-gutter) pt-3 pb-2 backdrop-blur transition-colors motion-reduce:transition-none",
+        "bg-background sticky top-0 z-30 -mx-(--page-gutter) border-b px-(--page-gutter) pt-3 pb-2 transition-colors motion-reduce:transition-none",
         scrolled ? "border-border" : "border-transparent",
       )}
       data-slot="page-top-bar"
@@ -97,7 +97,11 @@ function PageTop({
   );
 }
 
-const TITLE_CLASS = { headline: "text-headline", title: "text-title" } as const;
+const TITLE_CLASS = {
+  headline: "text-headline",
+  title:
+    "text-title supports-[text-box:cap_alphabetic]:min-h-[2.125rem] supports-[text-box:cap_alphabetic]:py-[calc((2.125rem-1cap)/2)] supports-[text-box:cap_alphabetic]:[text-box:trim-both_cap_alphabetic]",
+} as const;
 
 /**
  * A page's title, in one of two type roles. The back link over it lines up with its first letter,

@@ -25,7 +25,7 @@ function useShortcutLines(): Record<ShortcutName, string> {
     audio: t("Play or pause the audio"),
     flag: t("Flag a question in a mock exam"),
     leave: t("Close or leave"),
-    main: t("Press the main button"),
+    main: t("Continue, Check or Start"),
     next: t("Next"),
     pick: t("Pick an answer"),
     previous: t("Back"),
@@ -33,7 +33,7 @@ function useShortcutLines(): Record<ShortcutName, string> {
     search: t("Search or ask"),
     shortcuts: t("Show this list"),
     sidebar: t("Show or hide the sidebar"),
-    tap: t("Tap the beat"),
+    tap: t("Tap the rhythm in a music question"),
   };
 }
 

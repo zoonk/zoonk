@@ -1,6 +1,12 @@
 import { BigQuantity } from "@zoonk/ui/components/big-quantity";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { Stat, StatDetail, StatIcon, StatLabel, StatValue } from "@zoonk/ui/components/stat";
+import {
+  Stat,
+  StatDetail,
+  StatIcon,
+  StatLabel,
+  StatSkeleton,
+  StatValue,
+} from "@zoonk/ui/components/stat";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MinusIcon, TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 import { type Route } from "next";
@@ -156,17 +162,6 @@ export function StatTile({
 
 export function StatTileSkeleton({ trend = false }: { trend?: boolean }) {
   return (
-    <Stat aria-hidden="true">
-      <span className="flex h-4 items-center">
-        <Skeleton className="h-3 w-24" />
-      </span>
-      <span className="flex h-7.25 items-center">
-        <Skeleton className="h-6 w-20" />
-      </span>
-      <span className="flex h-4 items-center">
-        <Skeleton className="h-3 w-28" />
-      </span>
-      {trend ? <span className="block h-9" /> : null}
-    </Stat>
+    <StatSkeleton detailLines={1}>{trend ? <span className="block h-9" /> : null}</StatSkeleton>
   );
 }

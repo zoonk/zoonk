@@ -51,9 +51,7 @@ export function ChecklistRow({
           <span className="sr-only">{done ? t(", done") : t(", not yet")}</span>
         </span>
         {description && (
-          <span className="text-muted-foreground text-xs leading-snug text-pretty">
-            {description}
-          </span>
+          <span className="text-muted-foreground text-xs text-pretty">{description}</span>
         )}
       </span>
     </li>

@@ -90,7 +90,6 @@ export function TimeAnswer({
           updating && "opacity-50",
         )}
       >
-        {/* One item of the column, so a sentence with a bold month stays one sentence. */}
         <span>
           <LineWords aim={aim} date={date} exam={exam} line={line} minutes={minutes} />
         </span>

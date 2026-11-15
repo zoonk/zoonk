@@ -34,9 +34,15 @@ export function PathRowBody({
   value?: React.ReactNode;
 }) {
   return (
-    <span className={PATH_ROW_BODY_CLASS}>
-      <span className="flex min-w-0 flex-col">{children}</span>
-      {value}
+    <span className={PATH_ROW_BODY_CLASS} data-slot="path-row-body">
+      <span className="flex min-w-0 flex-col text-pretty" data-slot="path-row-words">
+        {children}
+      </span>
+      {value && (
+        <span className="flex" data-slot="path-row-value">
+          {value}
+        </span>
+      )}
     </span>
   );
 }
@@ -63,13 +69,10 @@ function EventRow({ children, href }: { children: React.ReactNode; href: string 
   );
 }
 
-/** `brief` leaves out what a challenge is in a list of every phase's, where it would repeat. */
 export function CheckpointRow({
-  brief = false,
   checkpoint,
   links,
 }: {
-  brief?: boolean;
   checkpoint: PlanPhaseCheckpointView;
   links: JourneyPathLinks;
 }) {
@@ -100,7 +103,7 @@ export function CheckpointRow({
           {goal.kind === "language" ? t("Call") : t("The Trickster")}
         </span>
 
-        {!brief && !isDone && (
+        {!isDone && (
           <span className="text-muted-foreground text-xs text-pretty">
             {goal.kind === "language"
               ? t("A live call where you get your point across")

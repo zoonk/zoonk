@@ -147,11 +147,13 @@ function SessionNumbers() {
             goalNumber.change && (
               <span
                 className={cn(
-                  "font-mono tabular-nums",
+                  "tabular-nums",
                   dropped ? "text-muted-foreground" : "text-success-text",
                 )}
               >
-                {`${goalNumber.change.before} → ${goalNumber.change.after}`}
+                {dropped
+                  ? t("Down from {value}", { value: goalNumber.change.before })
+                  : t("Up from {value}", { value: goalNumber.change.before })}
               </span>
             )
           }
@@ -198,6 +200,8 @@ function TomorrowRow() {
           <span className="min-w-0 flex-1 font-medium text-pretty">{summary.tomorrow.title}</span>
         </StepRow>
       </StepRows>
+
+      <SummaryExtraTime />
     </section>
   );
 }
@@ -224,7 +228,7 @@ export function DoneStep() {
 
       <SessionNumbers />
       <TomorrowRow />
-      <SummaryExtraTime />
+      {!summary.tomorrow && <SummaryExtraTime />}
       <ReminderOffer actions={reminderActions} offer={reminderOffer} />
     </StepCard>
   );

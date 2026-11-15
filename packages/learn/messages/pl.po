@@ -210,6 +210,7 @@ msgstr "Dziś"
 
 #: src/_components/create-account-link.tsx
 #: src/_components/subscribe-gate.tsx
+#: src/language/unit/practice-conversation.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -339,6 +340,16 @@ msgstr "To już wszystkie pytania"
 msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "Zakończ, żeby zobaczyć, jak ci poszło."
+
+#: src/_components/finish-sentence.ts
+msgctxt "XhpWxQ"
+msgid "At {time} a day, you reach {level} around {month}."
+msgstr "Przy {time} nauki dziennie przewidywany termin osiągnięcia poziomu {level} to {month}."
+
+#: src/_components/finish-sentence.ts
+msgctxt "6Due7K"
+msgid "You finish around {month}."
+msgstr "Przewidywany termin ukończenia: {month}."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
@@ -800,16 +811,6 @@ msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your dat
 msgstr "{dateKind, select, month {Wybrany termin ({date}) już minął.} other {Wybrany termin ({date}) już minął.}}"
 
 #: src/_components/time-answer-lines.tsx
-msgctxt "qQDZCf"
-msgid "At {time} a day, you reach {level} around <date>{month}</date>."
-msgstr "Przy {time} nauki dziennie szacowany termin osiągnięcia poziomu {level} to <date>{month}</date>."
-
-#: src/_components/time-answer-lines.tsx
-msgctxt "lzWfsi"
-msgid "You finish around <date>{month}</date>."
-msgstr "Przybliżony termin ukończenia: <date>{month}</date>."
-
-#: src/_components/time-answer-lines.tsx
 msgctxt "wRhIPZ"
 msgid "We can't estimate an end date. Try more time or more study days."
 msgstr "Nie możemy oszacować daty zakończenia. Spróbuj uczyć się dłużej lub częściej."
@@ -969,6 +970,18 @@ msgstr "Dobrze, uważaj na pisownię"
 msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "Tym razem bez sprawdzania"
+
+#. Why a switch for a different study time on weekends is off: no weekend day is a study day.
+#: src/_components/weekend-time.tsx
+msgctxt "MuKIuz"
+msgid "Add Saturday or Sunday to your study days."
+msgstr "Dodaj do dni nauki sobotę lub niedzielę."
+
+#. Why a switch for a different study time on weekends is off: only weekend days are study days.
+#: src/_components/weekend-time.tsx
+msgctxt "dQytAa"
+msgid "Add a weekday to your study days."
+msgstr "Dodaj do dni nauki dowolny dzień od poniedziałku do piątku."
 
 #. A switch to study a different amount of time a day on weekends.
 #: src/_components/weekend-time.tsx
@@ -2456,6 +2469,18 @@ msgctxt "ooL306"
 msgid "The Trickster's shield"
 msgstr "Tarcza Spryciarza"
 
+#: src/checkpoints/checkpoint-duel-view.tsx
+#: src/checkpoints/trickster-shield.tsx
+msgctxt "N6ZXzw"
+msgid "You won"
+msgstr "Twoja wygrana"
+
+#: src/checkpoints/checkpoint-duel-view.tsx
+#: src/checkpoints/trickster-shield.tsx
+msgctxt "Cu4K5p"
+msgid "He won"
+msgstr "Wygrana Spryciarza"
+
 #. Right answers the learner still needs to beat the Trickster.
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/trickster-shield.tsx
@@ -2469,7 +2494,6 @@ msgid "{count, plural, =0 {No questions left} one {# question left} other {# que
 msgstr "{count, plural, =0 {Nie ma już pytań} one {Zostało # pytanie} few {Zostały # pytania} many {Zostało # pytań} other {Zostało # pytania}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-#: src/checkpoints/checkpoint-result-view.tsx
 msgctxt "qqqXC2"
 msgid "{count, plural, one {# right to win} other {# right to win}}"
 msgstr "{count, plural, one {# poprawna odpowiedź do zwycięstwa} few {# poprawne odpowiedzi do zwycięstwa} other {# poprawnych odpowiedzi do zwycięstwa}}"
@@ -2527,6 +2551,11 @@ msgctxt "1VpodI"
 msgid "Not this time"
 msgstr "Tym razem się nie udało"
 
+#: src/checkpoints/checkpoint-result-view.tsx
+msgctxt "3NtvGN"
+msgid "{count, plural, one {You needed # right to win.} other {You needed # right to win.}}"
+msgstr "{count, plural, one {Żeby wygrać, trzeba było poprawnie odpowiedzieć na # pytanie.} many {Żeby wygrać, trzeba było poprawnie odpowiedzieć na # pytań.} other {Żeby wygrać, trzeba było poprawnie odpowiedzieć na # pytania.}}"
+
 #: src/checkpoints/checkpoint-review.tsx
 #: src/mistakes/mistake-entry.tsx
 #: src/questions/right-answer-line.tsx
@@ -2557,16 +2586,6 @@ msgstr "Przejrzyj odpowiedzi"
 msgctxt "nbNiMs"
 msgid "{cracked, plural, =0 {# of {segments} broken} one {# of {segments} broken} other {# of {segments} broken}}"
 msgstr "{cracked, plural, =0 {Rozbito # z {segments} płyt} one {Rozbito # płytę z {segments}} few {Rozbito # płyty z {segments}} other {Rozbito # płyt z {segments}}}"
-
-#: src/checkpoints/trickster-shield.tsx
-msgctxt "N6ZXzw"
-msgid "You won"
-msgstr "Twoja wygrana"
-
-#: src/checkpoints/trickster-shield.tsx
-msgctxt "Cu4K5p"
-msgid "He won"
-msgstr "Wygrana Spryciarza"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "KLUSrr"
@@ -6976,9 +6995,14 @@ msgid "Nothing yet. Notes show up here as you study and chat."
 msgstr "Na razie pusto. Notatki pojawiają się tu podczas nauki i rozmów na czacie."
 
 #: src/memory/memory-screen.tsx
-msgctxt "etMoG6"
-msgid "Download my memory"
-msgstr "Pobierz zawartość pamięci"
+msgctxt "dQaH-3"
+msgid "Download your memory"
+msgstr "Pobierz zapisane informacje"
+
+#: src/memory/memory-screen.tsx
+msgctxt "U3W00j"
+msgid "A copy of your memory"
+msgstr "Kopia zapisanych informacji"
 
 #: src/memory/memory-screen.tsx
 msgctxt "GUOjcs"
@@ -7495,8 +7519,8 @@ msgid "{count, plural, one {Mission done!} other {# missions done!}}"
 msgstr "{count, plural, one {Misja wykonana!} few {# misje wykonane!} other {# misji wykonanych!}}"
 
 #: src/missions/mission-moment.tsx
-msgctxt "oKqRoi"
-msgid "{count, plural, one {# more for +{points} Brain Power} other {# more for +{points} Brain Power}}"
+msgctxt "y3EoXn"
+msgid "{count, plural, one {# more mission for +{points} Brain Power} other {# more missions for +{points} Brain Power}}"
 msgstr "{count, plural, one {Jeszcze # misja, by zdobyć +{points} pkt Mocy Umysłu} few {Jeszcze # misje, by zdobyć +{points} pkt Mocy Umysłu} other {Jeszcze # misji, by zdobyć +{points} pkt Mocy Umysłu}}"
 
 #: src/missions/mission-moment.tsx
@@ -8236,6 +8260,11 @@ msgid "By topic"
 msgstr "Według tematów"
 
 #: src/mock/mock-result-details.tsx
+msgctxt "RQfEXO"
+msgid "See details"
+msgstr "Zobacz szczegóły"
+
+#: src/mock/mock-result-details.tsx
 msgctxt "2mUitd"
 msgid "Answers"
 msgstr "Odpowiedzi"
@@ -8879,9 +8908,9 @@ msgid "Exam"
 msgstr "Egzamin"
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "rsoIT2"
-msgid "Learn a topic"
-msgstr "Poznaj temat"
+msgctxt "UdtpV7"
+msgid "Topic"
+msgstr "Temat"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "79lLl-"
@@ -9807,7 +9836,6 @@ msgid "{days, plural, one {About # day} other {About # days}}"
 msgstr "{days, plural, one {Około # dnia} other {Około # dni}}"
 
 #: src/onboarding/steps/reveal-readouts.tsx
-#: src/onboarding/steps/reveal-week.tsx
 msgctxt "UA5qaX"
 msgid "{days, plural, one {# day} other {# days}}"
 msgstr "{days, plural, one {# dzień} other {# dni}}"
@@ -9844,6 +9872,11 @@ msgstr "Dzień odpoczynku"
 msgctxt "tWAtPK"
 msgid "Your first week"
 msgstr "Twój pierwszy tydzień"
+
+#: src/onboarding/steps/reveal-week.tsx
+msgctxt "V9hgFL"
+msgid "{days, plural, one {# study day} other {# study days}}"
+msgstr "{days, plural, one {# dzień nauki} other {# dni nauki}}"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "_1P3JX"
@@ -10440,11 +10473,6 @@ msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "Dostosuj plan"
 
-#: src/plan/plan-finish.tsx
-msgctxt "6Due7K"
-msgid "You finish around {month}."
-msgstr "Przewidywany termin ukończenia: {month}."
-
 #: src/plan/plan-fit-suggestion.tsx
 msgctxt "ylM0GM"
 msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
@@ -10676,11 +10704,6 @@ msgstr "Zgodnie z planem"
 msgctxt "yDYFFn"
 msgid "Date passed"
 msgstr "Po terminie"
-
-#: src/plan/plan-status-label.tsx
-msgctxt "y7l0FJ"
-msgid "Keep studying them, or archive this goal?"
-msgstr "Chcesz dalej się uczyć czy zarchiwizować ten cel?"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "xNjzfh"
@@ -11786,6 +11809,11 @@ msgid "Past or present, finished or not. Pick up to 3."
 msgstr "Wcześniejsze lub obecne, ukończone lub nie. Wybierz maksymalnie 3."
 
 #: src/profile-questions/profile-question-copy.ts
+msgctxt "esh22C"
+msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime."
+msgstr "To opcjonalne. Twój wybór pomaga nam dopasować treści do twoich potrzeb. Możesz usunąć te informacje w każdej chwili."
+
+#: src/profile-questions/profile-question-copy.ts
 msgctxt "zJoq3-"
 msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings."
 msgstr "To opcjonalne. Na podstawie twoich wyborów dostosowujemy treści do twoich potrzeb. Możesz je usunąć w każdej chwili w Ustawieniach."
@@ -11824,6 +11852,11 @@ msgstr "Opisz własnymi słowami, co ci pomaga (opcjonalnie)"
 msgctxt "dcwrhI"
 msgid "E.g., I understand diagrams better than text"
 msgstr "Np. lepiej rozumiem schematy niż tekst"
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "HOckqc"
+msgid "We'll remember this. You can delete it anytime."
+msgstr "Zapamiętamy to. Możesz to usunąć w każdej chwili."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "mM7GRS"
@@ -12540,6 +12573,16 @@ msgstr "Gotowe w niecałą minutę"
 msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "{time} i gotowe"
+
+#: src/session/summary/summary-parts.tsx
+msgctxt "7N1uKO"
+msgid "Down from {value}"
+msgstr "Spadek z {value}"
+
+#: src/session/summary/summary-parts.tsx
+msgctxt "VngKEd"
+msgid "Up from {value}"
+msgstr "Wzrost z {value}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "YwxEGP"
@@ -13631,14 +13674,14 @@ msgid "You finished {name}."
 msgstr "Ukończono: {name}."
 
 #: src/week/logbook-sections.tsx
-msgctxt "koboTV"
-msgid "{time} more than the week before!"
-msgstr "{time} więcej niż tydzień wcześniej!"
+msgctxt "Yj-wa7"
+msgid "{time} more than the week before."
+msgstr "O {time} więcej niż w poprzednim tygodniu."
 
 #: src/week/logbook-sections.tsx
-msgctxt "mY3vs_"
-msgid "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
-msgstr "{questions, plural, one {O # pytanie więcej niż tydzień wcześniej!} many {O # pytań więcej niż tydzień wcześniej!} other {O # pytania więcej niż tydzień wcześniej!}}"
+msgctxt "d9SZZ-"
+msgid "{questions, plural, one {# more question than the week before.} other {# more questions than the week before.}}"
+msgstr "{questions, plural, one {O # pytanie więcej niż w poprzednim tygodniu.} many {O # pytań więcej niż w poprzednim tygodniu.} other {O # pytania więcej niż w poprzednim tygodniu.}}"
 
 #: src/week/logbook-sections.tsx
 msgctxt "gpv0cM"

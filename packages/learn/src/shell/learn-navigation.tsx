@@ -178,6 +178,7 @@ function TabBarSearch({ onSearch }: { onSearch: () => void }) {
 
   return (
     <BarSearch
+      className="text-muted-foreground"
       label={t({
         description: "The search button at the end of the phone's tab bar, after the tabs.",
         message: "Search",

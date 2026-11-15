@@ -42,7 +42,16 @@ function BottomBar({
       >
         {note && (
           <div className="bg-background border-border border-t">
-            <div className={cn(ROW_CLASS, "pt-2 text-sm lg:text-end", className)}>{note}</div>
+            {/* The bar's own room over its buttons, so the note sits as far from its line as the buttons sit from the note. */}
+            <div
+              className={cn(
+                ROW_CLASS,
+                "pt-[max(1rem,var(--page-gutter))] text-sm lg:text-end",
+                className,
+              )}
+            >
+              {note}
+            </div>
           </div>
         )}
       </div>

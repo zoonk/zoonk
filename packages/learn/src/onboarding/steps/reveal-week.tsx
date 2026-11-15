@@ -80,7 +80,8 @@ function DayKinds({ items }: { items: readonly PlanItemView[] }) {
 /**
  * The dates never wrap, and each row's column is as wide as the longest, so the names line up. The
  * date and the kinds sit on the first name's line, so the names start under the row's top room even
- * when a day has one line, rather than centered in it.
+ * when a day has one line, rather than centered in it. Names sit further apart than a name's own
+ * lines, so a title that wraps reads as one lesson.
  */
 function WeekDayRow({
   date,
@@ -106,7 +107,7 @@ function WeekDayRow({
         {date}
       </ListRowLeading>
 
-      <ListRowContent className="justify-start">
+      <ListRowContent className="justify-start gap-1.5">
         {day.items.length === 0 ? (
           <span className="text-muted-foreground text-sm">{t("Rest day")}</span>
         ) : (
@@ -142,7 +143,7 @@ export function RevealWeek({ reveal }: { reveal: PlanRevealDays | null }) {
       <PageSectionHeader>
         <PageSectionTitle id="reveal-week">{t("Your first week")}</PageSectionTitle>
         <PageSectionDetail>
-          {`${t("{days, plural, one {# day} other {# days}}", { days: reveal.week.days })} · ${formatDuration(reveal.week.minutes)}`}
+          {`${t("{days, plural, one {# study day} other {# study days}}", { days: reveal.week.days })} · ${formatDuration(reveal.week.minutes)}`}
         </PageSectionDetail>
       </PageSectionHeader>
 

@@ -1,12 +1,12 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { useFormatIsoDate } from "../_utils/iso-date";
+import { useFinishSentence } from "../_components/finish-sentence";
 import { usePlanScreen } from "./plan-context";
 
 export function PlanFinish({ pending }: { pending: boolean }) {
   const t = useExtracted();
-  const formatDate = useFormatIsoDate();
+  const finishSentence = useFinishSentence();
   const { plan, today } = usePlanScreen();
   const { endDate } = plan.estimate;
 
@@ -18,9 +18,7 @@ export function PlanFinish({ pending }: { pending: boolean }) {
 
   return (
     <p aria-busy={pending} aria-live="polite" className="text-muted-foreground text-sm">
-      {pending
-        ? t("Working out when you'd finish…")
-        : t("You finish around {month}.", { month: formatDate(endDate, "month") })}
+      {pending ? t("Working out when you'd finish…") : finishSentence({ endDate })}
     </p>
   );
 }

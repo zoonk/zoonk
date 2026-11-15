@@ -126,10 +126,8 @@ extension PlanContext {
   @MainActor
   func ask(_ edits: [PlanEdit], store: PlanStore) async -> PlanSlotAskedChange? {
     let goalId = goal.id
-    let result = await store.write { api, token in
+    let result = await store.ask { api, token in
       try await api.preview(token: token, goalId: goalId, edits: edits)
-    } changed: { _ in
-      false
     }
 
     guard case .done(let preview?) = result, case .changes = PlanPreviewState(preview) else {
@@ -271,14 +269,10 @@ struct PlanPastDateSlot: View {
     defer { isWorking = false }
     failed = false
 
-    let goalId = context.goal.id
-    let found = await store.write { api, token in
-      try await api.timeToCover(token: token, goalId: goalId)
-    } changed: { _ in
-      false
-    }
+    let time = store.timeToCover(goalId: context.goal.id)
+    await time.load()
 
-    guard case .done(let time) = found else {
+    guard let time = time.freshValue else {
       failed = true
       return
     }
@@ -313,7 +307,7 @@ struct PlanOtherOptions<Items: View>: View {
 struct PlanCoverageSlot: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
-  @State private var found: Found?
+  @State private var isAsked: Bool
   @State private var asked: PlanSlotAskedChange?
   @State private var isPreviewing = false
   @State private var previewFailed = false
@@ -321,10 +315,16 @@ struct PlanCoverageSlot: View {
 
   let context: PlanContext
   let title: String
-  let asksAtOnce: Bool
   let actions: PlanSlotActions
 
-  private enum Found: Equatable {
+  init(context: PlanContext, title: String, asksAtOnce: Bool, actions: PlanSlotActions) {
+    self.context = context
+    self.title = title
+    self.actions = actions
+    _isAsked = State(initialValue: asksAtOnce)
+  }
+
+  enum Found: Equatable {
     case asking
     case failed
     case time(TimeToCover)
@@ -332,7 +332,28 @@ struct PlanCoverageSlot: View {
 
   var body: some View {
     card
+      .loads(isAsked ? [time] : [], refreshable: false)
       .onDisappear { tasks.cancel() }
+  }
+
+  private var time: Resource<TimeToCover> {
+    store.timeToCover(goalId: context.goal.id)
+  }
+
+  private var found: Found? {
+    Self.found(time, isAsked: isAsked)
+  }
+
+  static func found(_ time: Resource<TimeToCover>, isAsked: Bool) -> Found? {
+    if let value = time.freshValue {
+      return .time(value)
+    }
+
+    guard isAsked else {
+      return nil
+    }
+
+    return if case .failed = time.freshState { .failed } else { .asking }
   }
 
   @ViewBuilder private var card: some View {
@@ -355,7 +376,7 @@ struct PlanCoverageSlot: View {
 
         if found == .failed {
           Button {
-            tasks.run { await find() }
+            tasks.run { await time.refresh() }
           } label: {
             Text("Try again", tableName: "Plan", comment: "Asks again after it failed")
           }
@@ -380,11 +401,6 @@ struct PlanCoverageSlot: View {
               comment: "Works out the time that covers everything and shows what it changes")
           }
           .buttonStyle(.mainAction)
-        }
-      }
-      .task {
-        if asksAtOnce, found == nil {
-          await find()
         }
       }
     }
@@ -532,26 +548,10 @@ struct PlanCoverageSlot: View {
     }
   }
 
-  private func find() async {
-    found = .asking
-
-    let goalId = context.goal.id
-    let result = await store.write { api, token in
-      try await api.timeToCover(token: token, goalId: goalId)
-    } changed: { _ in
-      false
-    }
-
-    switch result {
-    case .done(let time) where time.ready: found = .time(time)
-    case .done, .failed: found = .failed
-    case .obsolete: found = nil
-    }
-  }
-
   private func seeChanges() async {
     if found == nil {
-      await find()
+      isAsked = true
+      await time.load()
     }
 
     guard let minutes = offerMinutes else {
@@ -645,10 +645,8 @@ extension PlanStore {
     _ offer: GoalPlan.FitOffer, goalId: String, apply: ([PlanEdit]) -> Void
   ) async -> FitOfferCheck? {
     let edits = offer.operations.map { PlanEdit.operation($0) }
-    let result = await write { api, token in
+    let result = await ask { api, token in
       try await api.preview(token: token, goalId: goalId, edits: edits)
-    } changed: { _ in
-      false
     }
 
     switch result {
