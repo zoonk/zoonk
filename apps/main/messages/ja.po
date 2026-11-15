@@ -2116,11 +2116,11 @@ msgctxt "tk_pDR"
 msgid "What do I get if I subscribe?"
 msgstr "登録すると何ができますか？"
 
-#. In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem as matérias e os tópicos da sua prova. Erros são raros, mas podem acontecer. Viu algo errado? Avise a gente pela própria aula e vamos conferir.”
+#. In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem o que o seu objetivo cobre, como as matérias e os tópicos de uma prova. Erros são raros, mas podem acontecer. Viu algo errado? Avise a gente pela própria aula e vamos conferir.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "yyFZMH"
-msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
-msgstr "レッスンは最新のAIモデルで作成し、お届けする前にチェックしています。複数の評価で品質を確かめ、別のモデルでも内容を見直しています。試験の科目やトピックに沿った内容です。間違いはめったにありませんが、起こる可能性はあります。間違いを見つけたら、レッスン内からお知らせください。内容を確認します。"
+msgctxt "OhisJ3"
+msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow what your goal covers, such as an exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
+msgstr "レッスンは最新のAIモデルで作成しています。さまざまな評価で品質を確かめ、ほかのモデルでも内容を確認してからお届けします。試験の科目やトピックなど、目標に沿った内容を扱います。誤りはまれですが、起こることもあります。間違いを見つけましたか？レッスン内からお知らせいただければ、確認します。"
 
 #. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -3047,9 +3047,9 @@ msgstr "目標と期日に合わせた学習計画"
 
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-questions.tsx
-msgctxt "5ZDN6U"
-msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
-msgstr "学習の相棒となるAI：{count, plural, other {1日#通のメッセージ}}"
+msgctxt "LKY79v"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
+msgstr "学習の相棒AI：1日{count, plural, other {#件のメッセージ}}、月{month}件まで"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "72Jr7b"

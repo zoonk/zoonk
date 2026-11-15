@@ -2116,11 +2116,11 @@ msgctxt "tk_pDR"
 msgid "What do I get if I subscribe?"
 msgstr "Abone olursam nelerden yararlanırım?"
 
-#. In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem as matérias e os tópicos da sua prova. Erros são raros, mas podem acontecer. Viu algo errado? Avise a gente pela própria aula e vamos conferir.”
+#. In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem o que o seu objetivo cobre, como as matérias e os tópicos de uma prova. Erros são raros, mas podem acontecer. Viu algo errado? Avise a gente pela própria aula e vamos conferir.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "yyFZMH"
-msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
-msgstr "Dersler en yeni yapay zekâ modelleriyle hazırlanır ve sana ulaşmadan önce kontrol edilir: kalitelerini çeşitli değerlendirmelerle test eder, içeriği başka modellere de inceletiriz. Sınavının branşlarına ve konularına göre hazırlanırlar. Hatalar nadirdir ama olabilir. Bir hata mı gördün? Dersin içinden bize bildir, inceleyelim."
+msgctxt "OhisJ3"
+msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow what your goal covers, such as an exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
+msgstr "Dersleri en yeni yapay zekâ modelleriyle hazırlıyor ve sana ulaşmadan önce kontrol ediyoruz: kalitelerini çeşitli değerlendirmelerle test ediyor, içeriklerini başka modellere de inceletiyoruz. Dersler hedefinin kapsamına uygun hazırlanıyor; örneğin sınava hazırlanıyorsan o sınavın branşlarını ve konularını kapsıyor. Hatalar nadirdir ama olabilir. Yanlış bir şey mi gördün? Ders ekranından bize bildir, biz de inceleyelim."
 
 #. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -3047,9 +3047,9 @@ msgstr "Hedefine ve belirlediğin tarihe uygun bir plan"
 
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-questions.tsx
-msgctxt "5ZDN6U"
-msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
-msgstr "Yapay zekâ destekli bir ders arkadaşı: günde {count, plural, other {# mesaj}}"
+msgctxt "LKY79v"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
+msgstr "Yapay zekâ ders arkadaşı: günde {count, plural, other {# mesaj}}, ayda en fazla {month} mesaj"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "72Jr7b"
