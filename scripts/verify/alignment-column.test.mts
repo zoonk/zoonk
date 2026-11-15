@@ -56,14 +56,13 @@ function columnMisses(capture: Capture) {
 }
 
 describe("the page's column (craft E7)", () => {
-  it("fails what passed the column on the head: a current row's fill, a tab line, a tab pill", () => {
+  it("fails what passed the column on the head: a current row's fill, a tab pill as it was read", () => {
     assert.deepEqual(columnMisses(real("plan current row fill 98ae571b1b, phone")), [
       '"Functions and graphs" starts 18 inside it and ends 10 past it',
     ]);
 
-    assert.deepEqual(columnMisses(real("level tab line 98ae571b1b, laptop")), [
-      '"Statistics Across all your goals" starts 10 past it and ends 10 past it',
-    ]);
+    // A tab list's line passing by the kit's 10 on both sides stays straight with its tabs (E7).
+    assert.deepEqual(columnMisses(real("level tab line 98ae571b1b, laptop")), []);
 
     assert.equal(columnMisses(real("mind maps tab pill 98ae571b1b, phone")).length, 1);
   });
@@ -84,10 +83,23 @@ describe("the page's column (craft E7)", () => {
     assert.equal(columnMisses(fill("tab", 2, 80)).length, 1);
   });
 
+  it("lets a row's hairline pass by the kit's 10 on both sides, as its row does (craft E7)", () => {
+    assert.deepEqual(columnMisses(fill("hairline", 6, 378)), []);
+    assert.equal(columnMisses(fill("hairline", 6, 370)).length, 1);
+  });
+
+  it("judges hairlines that touch in one line as the line they draw (the catalog's tiles)", () => {
+    const tiles = [fill("hairline", 6, 189), fill("hairline", 195, 189)].flatMap(
+      ({ elements }, index) => elements.map((item) => ({ ...item, id: `tile${index}` })),
+    );
+
+    assert.deepEqual(columnMisses(fixtureCapture(tiles)), []);
+  });
+
   it("lets a hairline or a picture pass only across the frame's whole room, and never a box", () => {
     assert.deepEqual(columnMisses(fill("hairline", 0, 390)), []);
     assert.deepEqual(columnMisses(fill("picture", 0, 390)), []);
-    assert.equal(columnMisses(fill("hairline", 6, 378)).length, 1);
+    assert.equal(columnMisses(fill("hairline", 2, 386)).length, 1);
     assert.equal(columnMisses(fill("box", 6, 378)).length, 1);
   });
 
