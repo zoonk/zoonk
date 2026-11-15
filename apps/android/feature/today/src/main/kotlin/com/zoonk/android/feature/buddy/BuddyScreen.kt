@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.buddy
 
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,6 +66,8 @@ import com.zoonk.android.feature.tutor.rememberTutor
 import com.zoonk.android.feature.tutor.rememberTutorAccess
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.characters.Buddy
 import com.zoonk.android.ui.characters.BuddyAct
 import com.zoonk.android.ui.characters.BuddyActor
@@ -181,14 +181,11 @@ fun BuddyPage(
     }
     val taps = BuddyDayTaps(onMission, vm.opening, vm.openFailed)
     val earlier by app.earlierQuestions.questions.collectShown()
-    val activity = LocalActivity.current
 
-    DisposableEffect(vm, goalId) { onDispose { if (activity?.isChangingConfigurations != true) vm.endVisit() } }
-    LaunchedEffect(vm) {
-        vm.routes.collect {
-            dayOpen = false
-            navigator.open(it)
-        }
+    OnVisitEnd(vm, goalId, onEnd = vm::endVisit)
+    ActOn(vm.route) {
+        dayOpen = false
+        navigator.open(it)
     }
     LaunchedEffect(asking) {
         if (!asking) return@LaunchedEffect

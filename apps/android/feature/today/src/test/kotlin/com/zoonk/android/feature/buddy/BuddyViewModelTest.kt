@@ -132,19 +132,38 @@ class BuddyViewModelTest {
             assertEquals(emptyList<AppRoute>(), shownRoutes(vm))
         }
 
+    @Test
+    fun aMissionThatOpensWhileThePageIsRecreatedOpensOnce() =
+        runTest(dispatcher) {
+            val vm = buddy(opensALesson(), NoStatusApi)
+
+            // A recreation: no page shows while the block starts; the next one shows it.
+            vm.openMission(BuddyTap(MissionOpens.Block(blockId = BLOCK, position = null)), GOAL)
+            advanceUntilIdle()
+
+            assertEquals(1, shownRoutes(vm).size)
+        }
+
+    @Test
+    fun aMissionThatOpenedBeforeThePageActedAndThenLeftOpensNothingOnReturn() =
+        runTest(dispatcher) {
+            val vm = buddy(opensALesson(), NoStatusApi)
+
+            vm.openMission(BuddyTap(MissionOpens.Block(blockId = BLOCK, position = null)), GOAL)
+            advanceUntilIdle()
+            vm.endVisit()
+
+            assertEquals(emptyList<AppRoute>(), shownRoutes(vm))
+        }
+
     private fun opensALesson() =
         FakeStudyApi().apply {
             openings =
                 listOf(opening("lesson", "lessonId" to LESSON, "sessionId" to SESSION.toString()))
         }
 
-    /** The page collects routes only while it shows, as `BuddyScreen` does. */
-    private fun TestScope.shownRoutes(vm: BuddyViewModel): List<AppRoute> {
-        val routes = mutableListOf<AppRoute>()
-        backgroundScope.launch { vm.routes.toList(routes) }
-        runCurrent()
-        return routes
-    }
+    /** The route the page owes its visit, which `BuddyScreen` opens and then acknowledges. */
+    private fun shownRoutes(vm: BuddyViewModel): List<AppRoute> = listOfNotNull(vm.route.value)
 
     private fun TestScope.buddy(
         study: FakeStudyApi,

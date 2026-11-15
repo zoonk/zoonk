@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.buddy
 
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,8 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -48,6 +45,8 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.tutor.TutorGreeting
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.TextButton
@@ -75,10 +74,8 @@ internal fun BuddyGoalStart(
     var wearing by rememberSaveable { mutableStateOf(false) }
     val examples = rememberGoalExamples().take(EXAMPLES).map { it.label }
 
-    val activity = LocalActivity.current
-
-    DisposableEffect(vm) { onDispose { if (activity?.isChangingConfigurations != true) vm.endVisit() } }
-    LaunchedEffect(vm) { vm.routes.collect(navigator::open) }
+    OnVisitEnd(vm, onEnd = vm::endVisit)
+    ActOn(vm.route, navigator::open)
 
     PageWithSupportingPane(
         atFoldOnly = true,
