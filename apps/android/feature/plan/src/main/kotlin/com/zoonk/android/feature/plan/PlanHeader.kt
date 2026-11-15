@@ -210,7 +210,7 @@ private fun RenameGoalDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = save, enabled = trimmed.isNotEmpty() && !dialog.saving) {
+            TextButton(onClick = save, enabled = trimmed.isNotEmpty(), busy = dialog.saving) {
                 Text(stringResource(R.string.plan_save))
             }
         },
