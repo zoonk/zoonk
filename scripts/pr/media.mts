@@ -94,7 +94,7 @@ export const MANIFEST = "capture.json";
 export type AlignmentReport = {
   captures?: { elements?: unknown[]; picture?: { file?: string } }[];
   findings?: { exception?: string; level: string; message: string }[];
-  summary?: { scenariosMissing?: number | null; unresolved?: number };
+  summary?: { notMeasured?: number; scenariosMissing?: number | null; unresolved?: number };
 };
 
 const SIDE_LABEL: Record<Side, string> = { after: "After", before: "Before" };

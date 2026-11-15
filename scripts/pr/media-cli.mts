@@ -43,8 +43,9 @@ Checks that every picture a PR body shows was captured, from which build, and re
   check    fails when a picture in the body has no capture record with its bytes; when an after
            picture's build is unknown, has uncommitted changes, or is older than a later commit to
            its app or packages/; when an after picture has no read or an unresolved finding; when
-           a capture's alignment.json reports unresolved layout findings or missing scenarios;
-           and when a native picture is still pending. Picture paths are relative to --root (the
+           an after capture's alignment.json fails a layout relationship, couldn't measure
+           one, or misses a required scenario; and when a native picture is still pending.
+           Picture paths are relative to --root (the
            body's folder by default). Each picture's capture.json is looked for in its folder and
            every folder above it, and anywhere under each --manifests folder, so a
            picture copied away from its capture needs --manifests. Exits non-zero on any failure.

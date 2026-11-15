@@ -226,12 +226,28 @@ function alignmentProblems({ alignment, folder }: Manifest): Problem[] {
     return [{ detail, kind: "alignment", picture: folder }];
   }
 
+  // The evaluator's verdict: what fails and what it couldn't measure, as `verify:alignment` fails.
   const { findings = [], summary = {} } = alignment;
-  const failing = findings.filter((finding) => finding.level === "fail" && !finding.exception);
-  const messages = [...new Set(failing.map((finding) => finding.message))];
-  const unresolved = summary.unresolved ?? 0;
+
+  const messages = [
+    ...new Set(
+      findings.flatMap((finding) => {
+        if (finding.level === "fail" && !finding.exception) {
+          return [finding.message];
+        }
+
+        return finding.level === "not-measured" ? [`not measured: ${finding.message}`] : [];
+      }),
+    ),
+  ];
+
+  const counted = [
+    ...(summary.unresolved ? [`${summary.unresolved} unresolved`] : []),
+    ...(summary.notMeasured ? [`${summary.notMeasured} not measured`] : []),
+  ];
+
   const missing = summary.scenariosMissing ?? 0;
-  const details = messages.length > 0 || unresolved === 0 ? messages : [`${unresolved} unresolved`];
+  const details = messages.length > 0 ? messages : counted;
 
   const problems: Problem[] = details.map((detail) => ({
     detail,
