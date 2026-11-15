@@ -40,6 +40,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -78,7 +79,7 @@ fun MemoryScreen(
 ) {
     val memory by app.memory.memory.collectShown()
     val files = LocalContext.current.applicationContext.contentResolver
-    val screen = viewModel { MemoryViewModel(app.memory, files::openOutputStream) }
+    val screen = viewModel { MemoryViewModel(app.memory, files::openOutputStream, createSavedStateHandle()) }
     val scope = rememberCoroutineScope()
     VisitOf(screen.visit)
 

@@ -4,8 +4,11 @@ import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
+import androidx.lifecycle.viewmodel.compose.saveable
 import com.zoonk.android.data.Visit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -15,9 +18,11 @@ import java.io.OutputStream
 import java.util.UUID
 
 /** [open] gives the stream of a file the learner picked, from the application's content resolver, or null when it can't be opened. */
+@OptIn(SavedStateHandleSaveableApi::class)
 class MemoryViewModel(
     private val store: MemoryStore,
     private val open: (Uri) -> OutputStream?,
+    handle: SavedStateHandle,
 ) : ViewModel() {
     /** This visit to the page: a download that fails says so only on it. */
     val visit = Visit()
@@ -43,24 +48,37 @@ class MemoryViewModel(
 
     fun setEnabled(enabled: Boolean) = save { store.setEnabled(enabled) }
 
-    /** The fact whose edit is open; it waits while its save is out and keeps the text when the save fails. */
-    var factEdit by mutableStateOf<FactEdit?>(null)
-        private set
+    private var editedFact by handle.saveable { mutableStateOf<UUID?>(null) }
+
+    private var editSaving by mutableStateOf(false)
+
+    private var editFailed by mutableStateOf(false)
+
+    /** The fact whose edit is open, kept through a reclaimed process; it waits while its save is out and keeps the text when the save fails. */
+    val factEdit get() = editedFact?.let { FactEdit(it, editSaving, editFailed) }
 
     fun openEdit(id: UUID) {
-        if (factEdit?.saving != true) factEdit = FactEdit(id)
+        if (!editSaving) edit(id)
     }
 
     fun closeEdit() {
-        if (factEdit?.saving != true) factEdit = null
+        if (!editSaving) edit(null)
     }
 
     fun saveEdit(statement: String) {
-        val edit = factEdit?.takeUnless { it.saving } ?: return
-        factEdit = edit.copy(saving = true, failed = false)
+        val id = editedFact?.takeUnless { editSaving } ?: return
+        editSaving = true
+        editFailed = false
         viewModelScope.launch {
-            factEdit = if (store.updateFact(edit.id, statement)) null else edit.copy(failed = true)
+            val saved = store.updateFact(id, statement)
+            editSaving = false
+            if (saved) edit(null) else editFailed = true
         }
+    }
+
+    private fun edit(id: UUID?) {
+        editedFact = id
+        editFailed = false
     }
 
     fun deleteFact(id: UUID) =
