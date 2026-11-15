@@ -10586,6 +10586,11 @@ msgid "Study everything"
 msgstr "Tüm konulara çalış"
 
 #: src/plan/plan-past-date-suggestion.tsx
+msgctxt "hZ68v2"
+msgid "Keep studying, or archive this goal?"
+msgstr "Çalışmaya devam etmek mi, yoksa bu hedefi arşivlemek mi istersin?"
+
+#: src/plan/plan-past-date-suggestion.tsx
 msgctxt "PpW8Dz"
 msgid "Move your end date to {date}?"
 msgstr "Bitiş tarihini {date} olarak değiştirelim mi?"
