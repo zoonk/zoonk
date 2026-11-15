@@ -478,6 +478,37 @@ export function readAlignment({
     });
   }
 
+  /** A piece's parts outside its rows, placed in the group itself. */
+  function groupParts(read: Read): CaptureElement[] {
+    return PARTS.flatMap((part) => {
+      const selector = read.piece.groupParts?.[part];
+
+      const element = selector
+        ? [...read.group.querySelectorAll(selector)].find((found) => present(found))
+        : undefined;
+
+      if (!element) {
+        return [];
+      }
+
+      const ink = inkOf(element);
+
+      return [
+        {
+          bounds: bounds(boxOf(element)),
+          group: read.groupId,
+          id: `${read.groupId}.${part}`,
+          ink: ink ? bounds(ink) : null,
+          name: name(element),
+          part,
+          piece: read.pieceName,
+          row: null,
+          ...(part !== "mark" && part !== "end" && ink ? textMetrics(element) : {}),
+        },
+      ];
+    });
+  }
+
   function readRow(
     read: Read,
     row: Element,
@@ -673,6 +704,7 @@ export function readAlignment({
         piece: pieceName,
         row: null,
       },
+      ...groupParts(read),
       ...rows.flatMap((row, rowIndex) => readRow(read, row, rowIndex, flows)),
       // Between rows: what holds room in the group outside every row.
       ...holderElements(

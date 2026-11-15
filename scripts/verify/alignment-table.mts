@@ -15,6 +15,7 @@ export type Relation =
   | "lead-start"
   | "line"
   | "mark-axis"
+  | "room"
   | "type";
 
 /** How the web finds a piece in the page: selectors, as the pieces' `data-slot`s name them. */
@@ -27,6 +28,8 @@ export type WebPiece = {
   parts: Partial<Record<Part, string>>;
   /** Inside the group: the drawn track whose end is the group's end edge, where it has one. */
   bar?: string;
+  /** Parts the group holds outside its rows (a bar's note over its buttons), read from the group. */
+  groupParts?: Partial<Record<Part, string>>;
   /** Its rows are those that draw words, and a group with none has nothing to compare. */
   words?: boolean;
 };
@@ -127,6 +130,20 @@ const PIECES: Piece[] = [
       parts: { label: ":scope" },
       rows: "[data-slot=page-top-end] :is(a, button):not(:has([data-slot=avatar]))",
       words: true,
+    },
+  },
+  // A screen's main action: its note sits as far from its line as its buttons sit from the note.
+  {
+    name: "bottom-bar",
+    relations: ["room"],
+    web: {
+      group: "[data-slot=bottom-bar]",
+      groupParts: {
+        end: ":scope > [data-slot=bottom-bar-row] > :first-child",
+        note: ":scope > [data-slot=bottom-bar-note] > div > div",
+      },
+      parts: {},
+      rows: ":scope > [data-slot=bottom-bar-row]",
     },
   },
   // A row of marks, one a day: declared so it starts and ends on its column (`spanLeads`).

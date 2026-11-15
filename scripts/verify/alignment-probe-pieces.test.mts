@@ -111,3 +111,26 @@ describe("a row that holds a nested list (the path sheet's open phase)", () => {
     assert.equal(outer?.middle, 22);
   });
 });
+
+/** A bottom bar at 700: its note's box from 640 to the bar's line, its words `above` lower. */
+function noteBar(above: number) {
+  return `<div data-slot="bottom-bar" data-box="0,700,390,100">
+    <div data-slot="bottom-bar-note" data-box="0,640,390,60"><div data-box="0,640,390,60">
+      <div data-box="16,640,358,60"><span data-box="16,${640 + above},300,20">Start free, no account needed.</span></div>
+    </div></div>
+    <div data-slot="bottom-bar-row" data-box="0,700,390,100"><button data-box="16,716,358,48">Build my plan</button></div></div>`;
+}
+
+describe("a bottom bar's note", () => {
+  it("is read from the bar itself, and sits as far from its line as from its buttons", () => {
+    document.body.innerHTML = noteBar(16);
+
+    assert.deepEqual(
+      evaluateCapture(read()).filter((finding) => finding.rule === "room"),
+      [],
+    );
+
+    document.body.innerHTML = noteBar(16).replace("16,656,300,20", "16,648,300,20");
+    assert.equal(evaluateCapture(read()).find((finding) => finding.rule === "room")?.measured, 8);
+  });
+});
