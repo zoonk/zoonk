@@ -7,6 +7,7 @@ export const USAGE = `Usage: pnpm pr:media check <body.md> [--root <dir>] [--man
        pnpm pr:media before --platform <web|android|apple> --source <where> [--to <dir>] <file>...
        pnpm pr:media adopt <before|after> [--to <dir>] <render.json>...
        pnpm pr:media device --platform <android|apple> --device <udid|serial> --name <shot> [--to <dir>]
+       pnpm pr:media device-section <picture>...
 
 Checks that every picture a PR body shows was captured, from which build, and read.
 
@@ -15,14 +16,10 @@ Checks that every picture a PR body shows was captured, from which build, and re
            its app or packages/; when an after picture has no read or an unresolved finding; when
            an after capture's alignment.json fails a layout relationship, couldn't measure
            one, or misses a required scenario; and when a native picture is still pending.
-           A device picture goes only under the level-2 heading "## On a device (layout not
-           measured)", as a plain image line with the line the device command printed as its
-           caption (visible words after it in its paragraph, or the next block's). The body is
-           read as GitHub renders it: a heading in a comment or a code block is none, any level-1
-           or level-2 heading ends the section, a comment shows nothing, and each occurrence is
-           checked by itself. The check fails a device picture anywhere else, a picture under that
-           heading without a device record, and one there in a table or a <details> block; it
-           lists device pictures apart from the measured ones.
+           A device picture appears only in the section device-section prints for it, and the
+           body holds that text exactly once between blank lines; otherwise the check prints the
+           section to paste. Every image GitHub draws from image syntax is checked, wherever
+           it's nested; the check compares text and doesn't police what else the body says.
            Picture paths are relative to --root (the
            body's folder by default). Each picture's capture.json is looked for in its folder and
            every folder above it, and anywhere under each --manifests folder, so a
@@ -35,16 +32,19 @@ Checks that every picture a PR body shows was captured, from which build, and re
   pending  records native after pictures with neither a capture nor a device record; they keep
            failing the check as pending.
   device   takes an after picture from a booted simulator (--device its udid) or emulator (its
-           adb serial) that no capture can take, such as an Android sheet over its page. It
-           takes the picture itself and records the installed build as the device reports it: a
+           adb serial) that no capture can take, such as an Android sheet over its page, with
+           --name saying what it shows in plain words (it becomes its caption). It takes the
+           picture itself and records the installed build as the device reports it: a
            simulator's Debug build stamp must be this checkout's head, built clean, and its
            commit is recorded; an emulator's app carries no commit (a value that changes every
            commit would cost every incremental Debug build), so its version and install time are
            recorded and its caption says "build not verified". It refuses an emulator app
            installed before the head's last change to apps/android or packages/, or with that
            code uncommitted. A web page in a phone-sized browser is a web capture: take it with
-           pnpm pr:capture. Nothing measures its layout; it prints the caption the check wants.
-           --to is tmp/pr-media/device by default.
+           pnpm pr:capture. Nothing measures its layout. --to is tmp/pr-media/device by default.
+  device-section prints the PR body's section for the device pictures named, in the order the
+           body shows them: the heading "On a device (layout not measured)" and the pictures
+           three to a table, each with what it shows and what was verified. Paste it as it is.
   before   records existing before pictures and where they came from; they pass, since a before
            picture's build isn't checked. --to is tmp/pr-media/registered by default for both.
   adopt    puts Android renders into a capture folder as the check reads them: each picture

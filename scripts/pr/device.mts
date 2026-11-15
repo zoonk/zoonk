@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { z } from "zod";
+import { PLAIN_WORDS } from "./device-section.mts";
 import { type CaptureItem, fileName, registerItems } from "./media.mts";
 import { readCheckoutBuild, sha256File, sha256Text } from "./provenance.mts";
 
@@ -203,6 +204,12 @@ export async function takeDevicePicture({
   repository: string;
   to: string;
 }): Promise<CaptureItem> {
+  if (!PLAIN_WORDS.test(name)) {
+    throw new Error(
+      "--name says what the picture shows in plain words, for its caption: no |, brackets, angle brackets, backticks, asterisks, underscores, tildes, backslashes or line breaks.",
+    );
+  }
+
   const device = await bridge.describe(deviceId).catch(() => null);
 
   if (!device) {
@@ -253,6 +260,7 @@ export async function takeDevicePicture({
     scale: 1,
     scheme: "light",
     sha256: await sha256File(join(to, file)),
+    shows: name,
     side: "after",
     steps: sha256Text(`${deviceId} ${name}`),
     viewport: device,

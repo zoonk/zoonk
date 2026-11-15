@@ -1,5 +1,4 @@
 import { relative } from "node:path";
-import { DEVICE_HEADING } from "./body.mts";
 import { isRemote } from "./locate.mts";
 
 /** In the order they print: what can't be bound first, then what a retake fixes, then the read. */
@@ -32,20 +31,10 @@ const KINDS = [
     summary: "not in any capture manifest",
   },
   {
-    kind: "device-elsewhere",
-    label: `A device picture outside "## ${DEVICE_HEADING}": put it under that heading, its caption on the line under it`,
-    summary: "device pictures outside their heading",
-  },
-  {
-    kind: "not-device",
-    label: `Under "## ${DEVICE_HEADING}" with no device record: take it with pnpm pr:media device, or move it out`,
-    summary: "under the device heading with no device record",
-  },
-  {
-    kind: "caption",
+    kind: "device-section",
     label:
-      "A device picture's caption doesn't say what was verified: write this on the line under it",
-    summary: "device pictures without their caption",
+      "Device pictures appear only in the section pnpm pr:media device-section prints: put this in the body as it is, with a blank line before and after it",
+    summary: "device sections not in the body as written",
   },
   { kind: "pending", label: "Pending: no native capture record yet", summary: "pending" },
   {
@@ -128,9 +117,14 @@ export function formatCheck(
 
   const lines = groups.flatMap(([kind, list]) => [
     `${kindOf(kind).label} (${list.length})`,
-    ...list.map(({ detail, picture }) =>
-      picture ? `  ${shown(picture)}${detail ? `: ${detail}` : ""}` : `  ${detail}`,
-    ),
+    // A section to paste prints as it is.
+    ...list.map(({ detail = "", picture }) => {
+      if (picture) {
+        return `  ${shown(picture)}${detail ? `: ${detail}` : ""}`;
+      }
+
+      return detail.includes("\n") ? detail : `  ${detail}`;
+    }),
   ]);
 
   const unmeasured =

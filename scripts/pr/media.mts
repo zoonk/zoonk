@@ -55,6 +55,8 @@ export type CaptureItem = {
   build: Build | NativeStamp;
   /** The simulator or emulator a picture came from, as it describes itself: no capture behind it. */
   device?: string;
+  /** What a device picture shows, in plain words given when it was taken. */
+  shows?: string;
   file: string;
   locale: string;
   platform: Platform;

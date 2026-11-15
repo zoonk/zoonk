@@ -2,7 +2,8 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { readCaptures } from "../verify/alignment-validate.mts";
 import { evaluateFile } from "../verify/alignment.mts";
-import { type DevicePicture } from "./body.mts";
+import { type BodyImage } from "./body.mts";
+import { deviceSection, sectionStart } from "./device-section.mts";
 import { isRemote } from "./locate.mts";
 import {
   type AlignmentReport,
@@ -10,12 +11,12 @@ import {
   type Finding,
   type ManifestItem,
   buildOf,
+  deviceLine,
   isRecorded,
   readAlignment,
   readManifest,
   readOf,
 } from "./media.mts";
-import { placementProblems } from "./placement.mts";
 import { commitIncludes, latestCommitSince, sha256File } from "./provenance.mts";
 import { type CheckResult, type Problem } from "./report.mts";
 
@@ -269,21 +270,65 @@ function alignmentProblems({ alignment, folder }: Manifest): Problem[] {
     : problems;
 }
 
+/** The body the pictures came from, each image where it was written and the path it resolves to. */
+export type Body = { images: (BodyImage & { path: string })[]; markdown: string };
+
+/** A device record, where no measured capture records the same bytes. */
+function deviceItem(entries: Entry[]): CaptureItem | undefined {
+  const afters = entries.flatMap(({ item }) =>
+    item.side === "after" && isRecorded(item) ? [item] : [],
+  );
+
+  return afters.every((item) => item.device) ? afters[0] : undefined;
+}
+
+/**
+ * Device pictures appear only in the section `deviceSection` writes from their records, in the
+ * order they first appear, and the body holds that text exactly once between blank lines. The
+ * check compares text: what an author writes around the section is theirs to answer for.
+ */
+function sectionProblems(body: Body | undefined, devices: Map<string, CaptureItem>): Problem[] {
+  if (devices.size === 0) {
+    return [];
+  }
+
+  const shown = body?.images.filter(({ path }) => devices.has(path)) ?? [];
+
+  const firsts = shown.filter(
+    (image, index) => shown.findIndex(({ path }) => path === image.path) === index,
+  );
+
+  const shots = body
+    ? firsts.flatMap(({ link, path }) => {
+        const item = devices.get(path);
+        return item ? [{ item, link }] : [];
+      })
+    : [...devices].map(([path, item]) => ({ item, link: path }));
+
+  const section = deviceSection(shots);
+  const at = body ? sectionStart(body.markdown, section) : null;
+
+  const inside =
+    at !== null && shown.every(({ end, start }) => start >= at && end <= at + section.length);
+
+  return inside ? [] : [{ detail: section, kind: "device-section" }];
+}
+
 /**
  * Before pictures need only their capture record: an old before is expected. After pictures also
  * need a known, committed build no later commit to their app or the shared packages outdates, and
  * a read with no unresolved finding. A native picture without its platform's record is pending.
- * `onDevice` are the pictures under the device heading, each listed with what was verified.
+ * A device picture, which nothing measures, is held to the section the tool writes (`body`).
  */
 export async function checkPictures({
+  body,
   manifests,
-  onDevice = [],
   pictures,
   repository,
   unsupported = [],
 }: {
+  body?: Body;
   manifests: string[];
-  onDevice?: DevicePicture[];
   pictures: string[];
   repository: string;
   unsupported?: string[];
@@ -294,41 +339,21 @@ export async function checkPictures({
   const entries = loaded.flatMap(({ folder, items }) => items.map((item) => ({ folder, item })));
   const byHash = Map.groupBy(entries, (entry) => entry.item.sha256);
   const byPath = new Map(entries.map((entry) => [resolve(entry.folder, entry.item.file), entry]));
+  const unique = [...new Set(pictures)];
 
-  // Every occurrence is placed and captioned by itself; each picture's records are looked up once.
-  const shown: { caption?: string; path: string }[] = [
-    ...pictures.map((path) => ({ path })),
-    ...onDevice,
-  ];
-
-  const paths = [...new Set(shown.map(({ path }) => path))];
-
-  const lookups = new Map(
-    await Promise.all(
-      paths.map(
-        async (picture) =>
-          [picture, await pictureProblems({ byHash, byPath, git, picture })] as const,
-      ),
-    ),
+  const checked = await Promise.all(
+    unique.map(async (picture) => ({
+      picture,
+      ...(await pictureProblems({ byHash, byPath, git, picture })),
+    })),
   );
 
-  const checked = shown.map(({ caption, path: picture }) => {
-    const found = lookups.get(picture) ?? { entries: [], problems: [] };
-    const items = found.entries.map(({ item }) => item);
-    const placed = placementProblems({ caption, items, picture });
-    return { ...found, line: placed.line, picture, placed: placed.problems };
-  });
-
-  const problems = [
-    ...[...lookups.values()].flatMap((found) => found.problems),
-    ...checked.flatMap(({ placed }) => placed),
-  ];
-
-  const devices = [
-    ...new Map(
-      checked.flatMap(({ line, picture }) => (line ? [[picture, { line, picture }] as const] : [])),
-    ).values(),
-  ];
+  const devices = new Map(
+    checked.flatMap(({ entries: found, picture }) => {
+      const item = deviceItem(found);
+      return item ? [[picture, item] as const] : [];
+    }),
+  );
 
   const matched = new Set(checked.flatMap(({ entries: found }) => found));
   const after = [...matched].flatMap(({ item }) => (item.side === "after" ? [item] : []));
@@ -351,15 +376,16 @@ export async function checkPictures({
   const unreadable = unsupported.map((detail): Problem => ({ detail, kind: "unsupported" }));
 
   return {
-    checked: paths.length,
-    devices,
+    checked: unique.length,
+    devices: [...devices].map(([picture, item]) => ({ line: deviceLine(item), picture })),
     notMeasured: judgedManifests.filter((manifest) => !measured(manifest)).length,
     nothingDeclared: judgedManifests
       .flatMap(({ alignment }) => alignment.captures ?? [])
       .filter((screen) => screen.elements?.length === 0).length,
     problems: [
       ...unreadable,
-      ...new Map(problems.map((problem) => [JSON.stringify(problem), problem])).values(),
+      ...checked.flatMap(({ problems }) => problems),
+      ...sectionProblems(body, devices),
       ...fromAlignment,
     ],
     reads,

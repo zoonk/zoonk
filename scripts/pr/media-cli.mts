@@ -4,10 +4,10 @@ import { mkdir, readFile } from "node:fs/promises";
 import { dirname, extname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { adoptRenders } from "./adopt.mts";
-import { DEVICE_HEADING, bodyMedia } from "./body.mts";
-import { checkPictures } from "./check.mts";
+import { checkBody } from "./body-check.mts";
+import { deviceSection, readDeviceShots } from "./device-section.mts";
 import { DEVICE_BRIDGES, takeDevicePicture } from "./device.mts";
-import { findManifests, isRemote, manifestsAbove } from "./locate.mts";
+import { findManifests, manifestsAbove } from "./locate.mts";
 import { USAGE } from "./media-usage.mts";
 import {
   type Finding,
@@ -72,27 +72,7 @@ async function check({ positionals: [body], values }: Arguments) {
   const root = resolve(values.root ?? dirname(body));
   const markdown = await readFile(body, "utf8");
 
-  const media = bodyMedia(markdown);
-  const local = (link: string) => (isRemote(link) ? link : resolve(root, link));
-  const pictures = media.pictures.map((link) => local(link));
-  const onDevice = media.onDevice.map(({ caption, path }) => ({ caption, path: local(path) }));
-
-  const named = await Promise.all(
-    values.manifests.map(async (folder) => findManifests(resolve(folder))),
-  );
-
-  const manifests = [
-    ...manifestsAbove([...pictures, ...onDevice.map(({ path }) => path)]),
-    ...named.flat(),
-  ];
-
-  const result = await checkPictures({
-    manifests,
-    onDevice,
-    pictures,
-    repository,
-    unsupported: media.unsupported,
-  });
+  const result = await checkBody({ folders: values.manifests, markdown, repository, root });
 
   console.log(formatCheck(result, root));
   return result.problems.length === 0;
@@ -328,9 +308,18 @@ async function recordDevice({ positionals: files, values }: Arguments) {
   });
 
   console.log(
-    `${item.file} in ${displayPath(join(to, MANIFEST))}. In the PR body, put it under "## ${DEVICE_HEADING}" with this line under it:\n${deviceLine(item)}`,
+    `${item.file} in ${displayPath(join(to, MANIFEST))}: ${deviceLine(item)}. Paste what pnpm pr:media device-section ${displayPath(join(to, item.file))} prints into the PR body, naming every device picture in the order it shows them.`,
   );
 
+  return true;
+}
+
+async function printDeviceSection({ positionals: links }: Arguments) {
+  if (links.length === 0) {
+    fail("Name the device pictures, in the order the PR body shows them.");
+  }
+
+  console.log(deviceSection(await readDeviceShots(links)));
   return true;
 }
 
@@ -346,6 +335,7 @@ const COMMANDS = {
   before: recordBefore,
   check,
   device: recordDevice,
+  "device-section": printDeviceSection,
   pending: recordPending,
   read: recordRead,
   resolve: resolveFinding,
