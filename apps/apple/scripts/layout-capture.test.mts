@@ -124,6 +124,22 @@ describe(saveCapture, () => {
     assert.equal(await shot(out), "plan");
   });
 
+  it("leaves the shot when the folder's picture records can't be read", async () => {
+    const { app, out } = await folders();
+    await saveCapture({ ...(await answer(app, "plan")), out, scenario: "plan", side: "after" });
+    const before = await saved(out);
+
+    await writeFile(path.join(out, "capture.json"), "[null]");
+
+    await assert.rejects(
+      saveCapture({ ...(await answer(app, "retake")), out, scenario: "plan", side: "after" }),
+      /isn't a capture folder's/u,
+    );
+
+    assert.equal(await shot(out), "plan");
+    assert.equal(await saved(out), before);
+  });
+
   it("refuses an answer that isn't a capture before counting it", async () => {
     const { app, out } = await folders();
     const partial = await answer(app, "plan");

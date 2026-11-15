@@ -207,9 +207,10 @@ async function readFolderFile<T>(file: string, empty: T, isShape: (value: unknow
 }
 
 /**
- * Adds the app's answer and its picture to a capture folder. Everything is checked first (the
- * answer, the folder's files, the merge, the picture's hash on a staged copy); only then is the
- * picture moved in and the files written, so a refused capture leaves the folder as it was.
+ * Adds the app's answer and its picture to a capture folder. Everything is checked and both files
+ * are built first (the answer, the folder's files and their entries, the merge, the picture's hash
+ * on a staged copy); only then is the picture moved in and the files written, so a refused capture
+ * leaves the folder as it was.
  */
 export async function saveCapture({
   answer,
@@ -231,17 +232,40 @@ export async function saveCapture({
   const alignmentFile = path.join(out, "alignment.json");
   const manifestFile = path.join(out, "capture.json");
 
+  // The merge reads each capture's picture, screen and configuration, and each record's file.
   const alignment = await readFolderFile<{ captures: Capture[] }>(
     alignmentFile,
     { captures: [] },
-    (value) => isRecord(value) && Array.isArray(value.captures),
+    (value) =>
+      isRecord(value) &&
+      Array.isArray(value.captures) &&
+      value.captures.every(
+        (existing) =>
+          isRecord(existing) &&
+          isRecord(existing.picture) &&
+          typeof existing.picture.file === "string" &&
+          typeof existing.screen === "string" &&
+          isRecord(existing.configuration),
+      ),
   );
 
-  const manifest = await readFolderFile<Record<string, unknown>[]>(manifestFile, [], (value) =>
-    Array.isArray(value),
+  const manifest = await readFolderFile<Record<string, unknown>[]>(
+    manifestFile,
+    [],
+    (value) =>
+      Array.isArray(value) &&
+      value.every((existing) => isRecord(existing) && typeof existing.file === "string"),
   );
 
   alignment.captures = mergeCapture(alignment.captures, capture);
+  const alignmentText = `${JSON.stringify(alignment, null, 2)}\n`;
+
+  const manifestText = `${JSON.stringify(
+    [...manifest.filter((existing) => existing.file !== file), manifestItem(capture)],
+    null,
+    2,
+  )}\n`;
+
   await mkdir(out, { recursive: true });
 
   // The picture is the app's own drawing of the frame it measured; its hash proves it is that one.
@@ -259,33 +283,30 @@ export async function saveCapture({
     await rm(staged, { force: true });
   }
 
-  await writeFile(alignmentFile, `${JSON.stringify(alignment, null, 2)}\n`);
+  await writeFile(alignmentFile, alignmentText);
+  await writeFile(manifestFile, manifestText);
 
-  const { configuration } = capture;
+  return capture;
+}
 
-  const item = {
-    build: capture.build,
-    file,
+/** The picture's record in the folder's `capture.json`. */
+function manifestItem({ build, configuration, picture, scale, scenario, screen, side }: Capture) {
+  return {
+    build,
+    file: picture.file,
     kind: "shot",
     locale: configuration.locale,
     name: scenario,
     platform: "apple",
     pointer: configuration.pointer,
-    scale: capture.scale,
+    scale,
     scenario,
     scheme: configuration.scheme,
-    screen: capture.screen,
-    sha256: capture.picture.sha256,
+    screen,
+    sha256: picture.sha256,
     side,
     viewport: `${configuration.size} ${configuration.width}×${configuration.height}`,
   };
-
-  await writeFile(
-    manifestFile,
-    `${JSON.stringify([...manifest.filter((existing) => existing.file !== file), item], null, 2)}\n`,
-  );
-
-  return capture;
 }
 
 if (import.meta.main) {
