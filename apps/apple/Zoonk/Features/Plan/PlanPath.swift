@@ -492,15 +492,22 @@ struct PlanSyllabusSection: View {
   var body: some View {
     let isExam = goalKind == .exam
 
-    Section {
-      SharedExamsNote(exams: syllabus.sharedExams)
-      focusTest
+    // Main's order: the focus test and the plan's choices above the subjects, not among them, since
+    // neither is a subject with a preparation.
+    if focusTest != nil || choices.contains(where: { $0.followingLine != nil }) {
+      Section {
+        focusTest
 
-      ForEach(choices) { choice in
-        if let line = choice.followingLine {
-          PlanChoiceLine(line: line) { change(choice.group) }
+        ForEach(choices) { choice in
+          if let line = choice.followingLine {
+            PlanChoiceLine(line: line) { change(choice.group) }
+          }
         }
       }
+    }
+
+    Section {
+      SharedExamsNote(exams: syllabus.sharedExams)
 
       ForEach(syllabus.subjects) { subject in
         NavigationLink(value: AppRoute.subject(subjectKey: subject.key)) {
