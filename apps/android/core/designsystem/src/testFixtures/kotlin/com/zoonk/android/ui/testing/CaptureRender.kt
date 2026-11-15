@@ -12,6 +12,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.graphics.createBitmap
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.roundToInt
 
@@ -51,7 +52,7 @@ fun SemanticsNodeInteraction.captureRender(
 private fun View.dialogWindowPicture(node: SemanticsNodeInteraction): ImageBitmap? {
     val dialog = generateSequence(this as View?) { it.parent as? View }.firstNotNullOfOrNull { it as? DialogWindowProvider } ?: return null
     val root = dialog.window.decorView
-    val window = Bitmap.createBitmap(root.width, root.height, Bitmap.Config.ARGB_8888)
+    val window = createBitmap(root.width, root.height)
     root.draw(Canvas(window))
     val bounds = node.fetchSemanticsNode().boundsInWindow
     return Bitmap
