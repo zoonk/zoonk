@@ -68,9 +68,9 @@ On one line of a row, every part is level by the middle of its capitals: the lab
 
 ### E7. Bleeds are declared, equal and symmetric
 
-Only three things pass the column: a highlighted or hovered row (10px each side, `LIST_ROW_CLASS`), a bar's or a section's hairline, and a full-bleed picture. A bleed is the same on both sides. A nested row is no exception: a highlighted, current or hovered row's fill spans its page column with the same 10px on both sides, whatever the label's indent; the indent is inside the fill (`row-bleed` under `nested-rows`).
+Only three things pass the column: a highlighted or hovered row (10px each side, `LIST_ROW_CLASS`), a bar's or a section's hairline, and a full-bleed picture. A bleed is the same on both sides. A nested row is no exception: a highlighted, current or hovered row's fill spans its page column with the same 10px on both sides, whatever the label's indent; the indent is inside the fill (`row-bleed` under `nested-rows`). The current tab's fill reaches past the column the same way ([deliberate choices](#deliberate-choices)). A page's top-level list, strip or row of marks reaches its column's end; two side by side share the column between them.
 
-- **Check.** Anything wider than its column: left bleed equals right bleed, and it is one of the three.
+- **Check.** Anything wider than its column: left bleed equals right bleed, and it is one of the three. A top-level list that ends short of its column fails (`column`).
 - **Usual break.** A tinted band with a negative margin on one side only. A row under another row that bleeds 10px from its own indent, so its fill starts inside the column and ends past it.
 
 ### E8. One page top
