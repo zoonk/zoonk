@@ -1,6 +1,6 @@
 # Craft
 
-How a Zoonk screen is drawn, as rules with a number. The [taste bar](../SKILL.md#the-taste-bar) has the short form; this file has each rule, how to check it and how it usually gets broken. Rule ids (E1, H4…) are stable: findings and measured leads name them. A name in code type at the end of a Check line is a check that holds the rule; [measuring pages](../../verify/references/pages.md#what-it-judges) says what each one tests and what it leaves to the reader.
+How a Zoonk screen is drawn, as rules with a number. The [taste bar](../SKILL.md#the-taste-bar) has the short form; this file has each rule, how to check it and how it usually gets broken. Rule ids (E1, H4…) are stable: findings and measured leads name them. A name in code type at the end of a Check line is a check that holds the rule; [measuring pages](../../verify/references/pages.md#what-it-judges) says what each one tests and what it leaves to the reader, and its [alignment](../../verify/references/pages.md#alignment) section the relationships (`end-edge`, `line`…) it measures in the declared shared pieces.
 
 The design system is the reference. A fault is one of two kinds:
 
@@ -42,14 +42,14 @@ A control with a bezel lines up by its bezel. A bare one takes `Button`'s `edge`
 
 Trailing things end on the column's end edge: a header's detail, a row's value or chevron, a button's bezel, a meter. In one list, rows with and without a chevron end their values on one edge, and so do values and glyphs at a row's end: a row without a chevron keeps the chevron's room.
 
-- **Check.** Ruler down the right side: details, values, chevrons and buttons end on one line (glyph ink within 2px), and in a list every row's value ends where the others' do.
+- **Check.** Ruler down the right side: details, values, chevrons and buttons end on one line (glyph ink within 2px), and in a list every row's value ends where the others' do (`end-edge`).
 - **Usual break.** A chevron whose box is flush and whose ink stops 5px short, under a detail that ends on the edge. A date that runs to the edge on the one row with nothing to open.
 
 ### E4. One axis for marks, one edge for labels
 
 In a list, a menu or the sidebar, every leading mark (icon, avatar, dot, goal mark, logo) is centered on one vertical line and every label starts on one edge, the rows without a mark included ([E1](#e1-one-start-edge-per-column)).
 
-- **Check.** Marks' horizontal centers within 1px of each other; labels' ink lefts within 1px.
+- **Check.** Marks' horizontal centers within 1px of each other; labels' ink lefts within 1px (`mark-axis`, `label-start`).
 - **Usual break.** Marks of three sizes each given the same gap, so their labels start in three places.
 
 ### E5. An icon and its text share a line
@@ -61,10 +61,10 @@ An icon beside one line of text is centered on that line. Beside a title with on
 
 ### E6. One line, one middle
 
-On one line of a row, every part is level by the middle of its capitals: the label sets the line, and a lead, a mark, a value, a control and an end glyph put their middle on it, whatever their face or size. A small value on the label's baseline has its shorter capitals low beside the chevron, so text shares a baseline only with text of its own face and size, or inside one phrase (a readout and its unit). Geist's line is balanced on its capitals, so centering a part on the line (`items-center`, a box as tall as the line) is centering its capitals. When the row has more lines, a mark sits where [E5](#e5-an-icon-and-its-text-share-a-line) puts it, a lead that is text (a date before its day's lessons) goes with the label's first line, and a value and an end glyph sit on the row's center, level with each other. Siblings of one kind side by side (tiles, cards, buttons) share a top and a bottom. A row is aligned one way: when its text and controls are centered, its picture is too.
+On one line of a row, every part is level by the middle of its capitals: the label sets the line, and a lead, a mark, a value, a control and an end glyph put their middle on it, whatever their face or size. A small value on the label's baseline has its shorter capitals low beside the chevron, so text shares a baseline only with text of its own face and size, or inside one phrase (a readout and its unit). Geist's capitals sit about 0.04em above the middle of their line box, so centering a line centers its capitals only when the line has the right parity; each kit size takes the whole line, nearest its old one, that puts them on an even box's middle: 11.5/18, 12/16, 13/19, 14/20, 15/22, 16/23. On those lines, centering a part (`items-center`, a box as tall as the line) is centering its capitals. A new size gets its line by the same rule, never by trimming a text's box. When the row has more lines, a mark sits where [E5](#e5-an-icon-and-its-text-share-a-line) puts it, and a value and an end glyph sit on the row's center, level with each other. A row whose lead is text (a date before its day's lessons) is top-aligned as a whole: the lead, the first entry and the trailing marks sit on the first entry's line, the entries one per line under it. Siblings of one kind side by side (tiles, cards, buttons) share a top and a bottom. A row is aligned one way: when its text and controls are centered, its picture is too.
 
-- **Check.** Each part's middle within 0.5px of the label's (a text's middle is its baseline less half its font's cap height, whatever its letters; a glyph's is its ink's); baselines inside a phrase within 0.5px; siblings' visible boxes equal in top and height.
-- **Usual break.** A small value or a date set on a larger label's baseline (`items-baseline`, a first-baseline stack). A lead centered on a row taller than its one-line label, so the two part ways. A character's picture on the row's bottom beside centered text.
+- **Check.** Each part's middle within 0.5px of the label's (a text's middle is its baseline less half its font's cap height, whatever its letters; a glyph's is its ink's), and in a row with a text lead, the value, end and mark within 0.5px of the first entry's line; baselines inside a phrase within 0.5px; siblings' visible boxes equal in top and height (`line`).
+- **Usual break.** A small value or a date set on a larger label's baseline (`items-baseline`, a first-baseline stack). A lead centered on a row taller than its one-line label, so the two part ways. A character's picture on the row's bottom beside centered text. A row label on a line with a fractional height (14px at 1.375 is 19.25px): it can't be centered to 0.5px, since the browser sets it 0.6px above the line's center and every glyph beside it sits low. The kit's sizes have whole lines for this reason.
 
 ### E7. Bleeds are declared, equal and symmetric
 
@@ -99,7 +99,7 @@ Space between blocks, and a container's padding, is a multiple of 4px: 4, 8, 12,
 
 In a list, grid or stack of one kind, every gap is equal, and the same kind of pair has the same gap on every screen (`Page`'s sections 28px, tiles 8px, a bar's buttons 8px).
 
-- **Check.** Gaps between consecutive siblings of one component differ by 1px at most.
+- **Check.** Gaps between consecutive siblings of one component differ by 1px at most (`gap`).
 - **Usual break.** A margin on one child of a stack that already has a gap.
 
 ### S3. Closer means related
@@ -300,7 +300,7 @@ No rail, aside or panel is drawn with nothing in it.
 
 A screen has one filled button, its main action. What covers the page (a dialog, a sheet) asks its own question and fills its own answer. A suggestion follows from that: its answer is filled in its sheet, which covers the page, and in its panel on a page with no main action of its own; in the panel beside a page that has one (Today's "Start") it is outline, so the page keeps one filled button (`useMainActionVariant`). A notice's buttons are outline wherever the page has a main action. Around them, buttons step down: outline, then ghost.
 
-- **Check.** Count the filled buttons on the screen, leaving out what covers it: one. In what covers it: one at most.
+- **Check.** Count the filled buttons on the screen, leaving out what covers it: one. In what covers it: one at most (`one-filled`).
 
 ## States
 
