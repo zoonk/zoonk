@@ -9,9 +9,11 @@ const TRACK_CLASS: Readonly<Record<GoalRingTrack, string>> = {
   today: "stroke-foreground/25",
 };
 
+const BOX = 36;
+const CENTER = BOX / 2;
 const STROKE = 3;
 /** The stroke's outer edge on the box's, so the ring's ink lines up where its box does. */
-const RADIUS = 18 - STROKE / 2;
+const RADIUS = CENTER - STROKE / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export function GoalRing({
@@ -35,11 +37,11 @@ export function GoalRing({
       )}
       data-slot="goal-ring"
     >
-      <svg className="absolute inset-0 size-full -rotate-90" viewBox="0 0 36 36">
+      <svg className="absolute inset-0 size-full -rotate-90" viewBox={`0 0 ${BOX} ${BOX}`}>
         <circle
           className={TRACK_CLASS[track]}
-          cx="18"
-          cy="18"
+          cx={CENTER}
+          cy={CENTER}
           fill="none"
           r={RADIUS}
           strokeWidth={STROKE}
@@ -47,8 +49,8 @@ export function GoalRing({
         {share > 0 && (
           <circle
             className="stroke-success"
-            cx="18"
-            cy="18"
+            cx={CENTER}
+            cy={CENTER}
             fill="none"
             r={RADIUS}
             strokeDasharray={CIRCUMFERENCE}
