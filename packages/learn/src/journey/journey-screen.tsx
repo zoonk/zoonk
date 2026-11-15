@@ -32,7 +32,7 @@ import { type JourneyStanding, PlanNumbers } from "./journey-hero";
 import { type JourneyPathLinks, getPlanLibraryCourse } from "./journey-links";
 import { AdjustPlanButton, JourneyMenu } from "./journey-menu";
 import { NextOnPath } from "./next-on-path";
-import { PlanGoalLine, PlanHeader } from "./plan-header";
+import { PlanHeader, usePlanDaysLeft } from "./plan-header";
 import { PlanRoadmap } from "./plan-roadmap";
 import { MoreSection, PathSection, PhasesSheet } from "./plan-sections";
 import { ResumeGoalBar } from "./resume-goal-bar";
@@ -126,6 +126,7 @@ function JourneyBody({
       />
     );
 
+  const daysLeft = usePlanDaysLeft();
   const examOver = goal.kind === "exam" && plan.status?.kind === "pastDate";
   // The bottom bar is the page's own main action; without it, a suggestion's answer is the one.
   const hasMainAction = goalStatus !== null && (goalStatus.status === "paused" || examOver);
@@ -147,7 +148,8 @@ function JourneyBody({
             <PageHasMainAction value={hasMainAction}>
               <PlanSuggestionSlot className="hidden min-[72rem]:block" />
             </PageHasMainAction>
-            <NextOnPath className={structure ? undefined : IN_ASIDE_CLASS} links={links} />
+            {/* Without subjects the path is in the column beside it, already saying what's next. */}
+            {structure && <NextOnPath links={links} />}
             <MoreSection links={links} />
             <PlanProperties className={IN_ASIDE_CLASS} examHref={links.exam} onOpen={editor.open} />
           </>
@@ -157,7 +159,7 @@ function JourneyBody({
         bottomBar={goalStatus && <JourneyBottomBar examOver={examOver} goalStatus={goalStatus} />}
       >
         <Page data-slot="journey">
-          <PlanHeader subtitle={<PlanGoalLine />}>
+          <PlanHeader subtitle={daysLeft}>
             <AdjustPlanButton onAdjust={() => editor.open()} />
             <JourneyMenu courseHref={courseHref} examHref={links.exam} goal={goalMenu} />
           </PlanHeader>

@@ -62,25 +62,28 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
 }
 
 /**
- * An exam that's over: a statement, since the page's bar asks the question (`PlanExamOverBar`) and
- * a sheet over it couldn't answer.
+ * An exam that's over: no actions, since the page's bar holds the answers (`PlanExamOverBar`) and a
+ * sheet over it couldn't reach them.
  */
 function ExamOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDate" }> }) {
+  const t = useExtracted();
   const pastDateText = usePastDateText();
-  const { left, title } = pastDateText({ isExam: true, lessons: item.lessons });
+  const { title } = pastDateText({ isExam: true, lessons: item.lessons });
+  // The Schedule number beside it says how many lessons are left.
+  const ask = t("Keep studying, or archive this goal?");
 
   return (
     <Suggestion label={title} mark={<CalendarClockIcon />}>
       <SuggestionLine>
         <div>
           <SuggestionSummary>{title}</SuggestionSummary>
-          <SuggestionDescription>{left}</SuggestionDescription>
+          <SuggestionDescription>{ask}</SuggestionDescription>
         </div>
       </SuggestionLine>
 
       <SlotContent statement>
         <SuggestionHeader>{title}</SuggestionHeader>
-        <SuggestionDescription>{left}</SuggestionDescription>
+        <SuggestionDescription>{ask}</SuggestionDescription>
       </SlotContent>
     </Suggestion>
   );

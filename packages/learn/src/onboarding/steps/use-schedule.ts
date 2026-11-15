@@ -4,8 +4,8 @@ import { type GoalView } from "@zoonk/core/goals/contract";
 import { getDaySplit } from "@zoonk/core/goals/daily-budget";
 import { type LanguageAim } from "@zoonk/core/language/aims";
 import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
-import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { useState } from "react";
+import { getMissingDays } from "../../_components/weekend-time";
 import { getTimeLine } from "../../_utils/time-answer";
 import { type PollStatus } from "../../_utils/use-poll";
 import {
@@ -40,15 +40,6 @@ export type ScheduleDraft = {
   weekendOn: boolean;
   weekendPicked: number | null;
 };
-
-/** A weekend time of its own needs a weekend day to use it and a weekday whose time it differs from. */
-function getMissingDays(days: number[]): "weekdays" | "weekend" | null {
-  if (!days.some((day) => isWeekend(day))) {
-    return "weekend";
-  }
-
-  return days.some((day) => !isWeekend(day)) ? null : "weekdays";
-}
 
 /** The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'. */
 function useStudyWeek({ draft, goal }: { draft: ScheduleDraft | null; goal: GoalView }) {

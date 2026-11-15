@@ -4959,11 +4959,6 @@ msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "Answer them and we'll plan every day until you reach your goal."
 
 #: src/journey/journey-planless.tsx
-msgctxt "3X96t0"
-msgid "{goal} · Building your plan"
-msgstr "{goal} · Building your plan"
-
-#: src/journey/journey-planless.tsx
 msgctxt "vKk5P_"
 msgid "It usually takes a minute or two. Your plan opens here as soon as it's ready."
 msgstr "It usually takes a minute or two. Your plan opens here as soon as it's ready."
@@ -10589,6 +10584,11 @@ msgstr "{time} a day covers everything"
 msgctxt "tODRiS"
 msgid "Study everything"
 msgstr "Study everything"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "hZ68v2"
+msgid "Keep studying, or archive this goal?"
+msgstr "Keep studying, or archive this goal?"
 
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "PpW8Dz"

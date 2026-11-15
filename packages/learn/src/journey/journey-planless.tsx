@@ -16,17 +16,15 @@ import { ResumeGoalBar } from "./resume-goal-bar";
 function PlanlessHeader({
   goalStatus,
   goalTitle,
-  subtitle,
 }: {
   goalStatus: GoalStatusControl;
   goalTitle: string;
-  subtitle: string;
 }) {
   const goalMenu = useGoalMenu(goalStatus);
 
   return (
     <>
-      <PlanHeader subtitle={subtitle}>
+      <PlanHeader>
         <GoalOnlyMenu goal={goalMenu} />
       </PlanHeader>
 
@@ -52,7 +50,7 @@ export function JourneySetup({
 
   return (
     <Page data-slot="journey-setup">
-      <PlanlessHeader goalStatus={goalStatus} goalTitle={goalTitle} subtitle={goalTitle} />
+      <PlanlessHeader goalStatus={goalStatus} goalTitle={goalTitle} />
 
       <PageSection aria-labelledby={SETUP_TITLE_ID} className="max-w-xl items-start gap-2">
         <h2 className={SETUP_TITLE_CLASS} id={SETUP_TITLE_ID}>
@@ -97,11 +95,7 @@ export function JourneyBuilding({
 
   return (
     <Page data-slot="journey-preparing">
-      <PlanlessHeader
-        goalStatus={goalStatus}
-        goalTitle={goalTitle}
-        subtitle={t("{goal} · Building your plan", { goal: goalTitle })}
-      />
+      <PlanlessHeader goalStatus={goalStatus} goalTitle={goalTitle} />
 
       <section className="flex max-w-xl flex-col gap-8">
         <GenerationWait kind="curriculum" run={run}>

@@ -4959,11 +4959,6 @@ msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "Réponds à ces questions et nous planifierons chaque jour jusqu’à ton objectif."
 
 #: src/journey/journey-planless.tsx
-msgctxt "3X96t0"
-msgid "{goal} · Building your plan"
-msgstr "{goal} · Préparation de ton plan"
-
-#: src/journey/journey-planless.tsx
 msgctxt "vKk5P_"
 msgid "It usually takes a minute or two. Your plan opens here as soon as it's ready."
 msgstr "Cela prend généralement une ou deux minutes. Ton plan s’ouvrira ici dès qu’il sera prêt."
@@ -10589,6 +10584,11 @@ msgstr "{time} par jour pour tout étudier"
 msgctxt "tODRiS"
 msgid "Study everything"
 msgstr "Tout étudier"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "hZ68v2"
+msgid "Keep studying, or archive this goal?"
+msgstr "Continuer à étudier ou archiver cet objectif ?"
 
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "PpW8Dz"
