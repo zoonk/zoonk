@@ -62,6 +62,25 @@ final class HeldSlotTests: XCTestCase {
     }
   }
 
+  /// Its title goes when the day comes, in the room it had, so the centered screen stays still.
+  func testARefusedCallScreenKeepsItsPlaceAtTheInstant() async throws {
+    for tier in [LearnerTier.plus, .free] {
+      let limit = HelpLimit.usedUp(tier: tier, availableAt: .now.addingTimeInterval(1.5))
+      let window = try show(
+        CallProblemView(problem: .call(.limit, limit), onAction: { _ in })
+          .environment(AppRouter()))
+
+      try await Task.sleep(for: .seconds(0.5))
+      let before = try XCTUnwrap(inkTop(window))
+      XCTAssertGreaterThan(before, 100, "The render is blank or misread")
+      try await Task.sleep(for: .seconds(2))
+
+      XCTAssertNil(limit.words(.callTime).title)
+      XCTAssertEqual(try XCTUnwrap(inkTop(window)), before, "\(tier)")
+      window.isHidden = true
+    }
+  }
+
   /// The gate and a row after it, recording each place the row is drawn through the instant.
   private func nextRowAtTheInstant(_ gate: () -> some View) async throws -> [CGFloat] {
     var nextRow: [CGFloat] = []

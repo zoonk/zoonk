@@ -14,8 +14,9 @@ extension XCTestCase {
     return window
   }
 
-  /// The first drawn row from the top of the window, in points: where a centered screen's words
-  /// start, for screens whose parts a test can't measure from inside.
+  /// The first drawn row from the top of the window, in points: where a centered screen starts
+  /// (its icon, or its title when it has none), for screens whose parts a test can't measure from
+  /// inside. Grey ink counts, so a muted icon is found as well as black words.
   @MainActor
   func inkTop(_ window: UIWindow) -> CGFloat? {
     let format = UIGraphicsImageRendererFormat()
@@ -40,7 +41,7 @@ extension XCTestCase {
       for x in 0..<cgImage.width {
         let pixel = y * cgImage.bytesPerRow + x * pixelBytes
 
-        if Int(bytes[pixel]) + Int(bytes[pixel + 1]) + Int(bytes[pixel + 2]) < 300 {
+        if Int(bytes[pixel]) + Int(bytes[pixel + 1]) + Int(bytes[pixel + 2]) < 600 {
           return CGFloat(y)
         }
       }

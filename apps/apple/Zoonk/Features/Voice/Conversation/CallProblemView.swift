@@ -23,14 +23,21 @@ struct CallProblemView: View {
 
   var body: some View {
     OpeningClock(availableAt: limit?.availableAt) { now in
+      // Once a limit's day comes its title goes, and the words keep the room they had.
+      let gated = limit?.isOpen(at: now) == false
+
       ContentUnavailableView {
         Label {
-          title(now)
+          HeldSlot(gated: gated, alignment: .center) {
+            title(now)
+          }
         } icon: {
           Image(systemName: symbol)
         }
       } description: {
-        description(now)
+        HeldSlot(gated: gated, alignment: .center) {
+          description(now)
+        }
       }
       .bottomBar {
         actions(now)
@@ -57,7 +64,7 @@ struct CallProblemView: View {
     }
   }
 
-  private func title(_ now: Date) -> Text {
+  private func title(_ now: Date) -> Text? {
     switch problem {
     case .saveEnded: CallRefusal.title(.ended, limit: nil)
     case .call(let failure, let limit): CallRefusal.title(failure, limit: limit, now: now)
@@ -245,9 +252,9 @@ struct DroppedCallView: View {
   }
 
   /// Under the screen's own title.
-  private func why(_ title: Text, _ text: Text?) -> some View {
+  private func why(_ title: Text?, _ text: Text?) -> some View {
     VStack(spacing: 4) {
-      title
+      title?
         .typeStyle(.body.weight(.semibold))
         .foregroundStyle(.primary)
 
@@ -258,7 +265,8 @@ struct DroppedCallView: View {
 
 /// Each refusal's words, on its own screen or as why a dropped call can't go on.
 private enum CallRefusal {
-  static func title(_ failure: LiveCall.Failure, limit: HelpLimit?, now: Date = .now) -> Text {
+  /// None for a limit whose day has come: nothing ran out any more.
+  static func title(_ failure: LiveCall.Failure, limit: HelpLimit?, now: Date = .now) -> Text? {
     switch failure {
     case .ended:
       Text("This call has ended", tableName: "Voice", comment: "A call that can't go on")
@@ -268,7 +276,7 @@ private enum CallRefusal {
       Text("You're in another call", tableName: "Voice", comment: "Another call is open")
     case .limit:
       (limit ?? .limitReached(period: .day, tier: .plus)).words(.callTime, now: now).title
-        .map(Text.init) ?? Text(verbatim: "")
+        .map(Text.init)
     case .connect, .dropped, .plusRequired:
       Text("The call didn't connect", tableName: "Voice", comment: "A call that didn't start")
     }

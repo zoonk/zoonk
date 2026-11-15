@@ -420,7 +420,7 @@ struct LessonUnavailableView: View {
   }
 }
 
-/// Once a free learner's next lesson has opened, "Start the lesson" asks again beside "Subscribe".
+/// Once a free learner's next lesson has opened, "Start the lesson" asks again where "Subscribe" was.
 private struct LessonUnavailableBody: View {
   @Environment(\.dismiss) private var dismiss
 
@@ -440,12 +440,9 @@ private struct LessonUnavailableBody: View {
         VStack(alignment: .leading, spacing: 8) {
           GateWords(title: Text(title), line: noticeLine.map(Text.init))
 
-          HStack(spacing: 8) {
-            secondAction
-            action
-          }
-          .buttonStyle(.outline)
-          .controlSize(.small)
+          action
+            .buttonStyle(.outline)
+            .controlSize(.small)
         }
       }
     } else {
@@ -461,8 +458,6 @@ private struct LessonUnavailableBody: View {
         }
       }
       .bottomBar {
-        secondAction
-          .buttonStyle(.outline)
         action
           .buttonStyle(.mainAction)
       }
@@ -480,13 +475,6 @@ private struct LessonUnavailableBody: View {
   var said: String {
     let line = isNotice ? noticeLine.map { String(localized: $0) } : screenLine
     return ([String(localized: title)] + [line].compactMap(\.self)).joinedSentences()
-  }
-
-  @ViewBuilder
-  private var secondAction: some View {
-    if isReady {
-      SubscribeButton()
-    }
   }
 
   @ViewBuilder
