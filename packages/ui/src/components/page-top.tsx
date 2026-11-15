@@ -60,7 +60,7 @@ function PageTopBar({
   return (
     <div
       className={cn(
-        "bg-background/95 supports-backdrop-filter:bg-background/80 sticky top-0 z-30 -mx-(--page-gutter) border-b px-(--page-gutter) pt-3 pb-2 backdrop-blur transition-colors motion-reduce:transition-none",
+        "bg-background sticky top-0 z-30 -mx-(--page-gutter) border-b px-(--page-gutter) pt-3 pb-2 transition-colors motion-reduce:transition-none",
         scrolled ? "border-border" : "border-transparent",
       )}
       data-slot="page-top-bar"
