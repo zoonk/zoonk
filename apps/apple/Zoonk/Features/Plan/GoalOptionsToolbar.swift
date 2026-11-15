@@ -287,6 +287,7 @@ private struct ResumeGoalBar: ViewModifier {
 
   func body(content: Content) -> some View {
     content
+      .environment(\.barHoldsMainAction, isShown)
       .bottomBar(note: isShown ? note : nil) {
         if isShown {
           BusyButton(isBusy: resumeGoal.isBusy, action: resumeGoal.action) {
@@ -372,6 +373,7 @@ private struct ExamOverBar: ViewModifier {
 
   func body(content: Content) -> some View {
     content
+      .environment(\.barHoldsMainAction, isShown)
       .bottomBar(note: isShown && failed ? BarNote(saveFailure) : nil) {
         if isShown {
           ExamOverButtons(
