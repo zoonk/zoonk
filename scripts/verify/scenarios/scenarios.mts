@@ -10,6 +10,9 @@ export type { Prerequisites, Scenario, Step } from "./shape.mts";
  * pair. Whoever adds a branch to a screen (a gate, a limit, a notice, a wait) adds its scenario
  * here; a screen's lane fills in the rest of its own.
  */
+/** A laptop at twice the default text: large-text learners on the web, otherwise unmeasured. */
+const LAPTOP_TEXT_2X: Scenario["sizes"][number] = { pointer: "keys", size: "laptop", textScale: 2 };
+
 const PINNED_ACTION: Anchor = {
   id: "pinned-action",
   web: "[data-slot=task-action-bar], [data-slot=bottom-bar]",
@@ -35,6 +38,7 @@ export const SCENARIOS: Scenario[] = [
       { locale: "de", pointer: "touch", size: "phone" },
       { locale: "ja", pointer: "touch", size: "phone" },
       { pointer: "touch", size: "phone", textScale: 2 },
+      LAPTOP_TEXT_2X,
     ],
   },
   {
@@ -73,6 +77,16 @@ export const SCENARIOS: Scenario[] = [
     reach: [{ scroll: "end" }],
     screen: "/settings/about-you/conditions",
     sizes: PHONE_AND_LAPTOP,
+  },
+  // The catalog at a phone's text x2: its subject glyphs and chips, for a large-text learner.
+  {
+    anchors: [],
+    id: "catalog.visitor.large-text",
+    prerequisites: { persona: "visitor" },
+    proof: "Log in",
+    reach: [],
+    screen: "/courses",
+    sizes: [{ pointer: "touch", size: "phone", textScale: 2 }],
   },
   {
     anchors: [],
@@ -171,7 +185,7 @@ export const SCENARIOS: Scenario[] = [
     proof: "Today",
     reach: [],
     screen: "/today",
-    sizes: PHONE_AND_LAPTOP,
+    sizes: [...PHONE_AND_LAPTOP, LAPTOP_TEXT_2X],
   },
   {
     anchors: [PINNED_ACTION],
@@ -212,6 +226,6 @@ export const SCENARIOS: Scenario[] = [
     proof: "Other chapters",
     reach: [],
     screen: "/mind-maps",
-    sizes: PHONE_AND_LAPTOP,
+    sizes: [...PHONE_AND_LAPTOP, LAPTOP_TEXT_2X],
   },
 ];
