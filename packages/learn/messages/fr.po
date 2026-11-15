@@ -6976,9 +6976,14 @@ msgid "Nothing yet. Notes show up here as you study and chat."
 msgstr "Rien pour l’instant. Des notes s’ajoutent ici au fil de ton apprentissage et de tes discussions."
 
 #: src/memory/memory-screen.tsx
-msgctxt "etMoG6"
-msgid "Download my memory"
-msgstr "Télécharger ma mémoire"
+msgctxt "dQaH-3"
+msgid "Download your memory"
+msgstr "Télécharger les informations mémorisées"
+
+#: src/memory/memory-screen.tsx
+msgctxt "U3W00j"
+msgid "A copy of your memory"
+msgstr "Une copie des informations mémorisées"
 
 #: src/memory/memory-screen.tsx
 msgctxt "GUOjcs"
@@ -11786,6 +11791,11 @@ msgid "Past or present, finished or not. Pick up to 3."
 msgstr "Études passées ou en cours, terminées ou non. Choisis jusqu’à 3 réponses."
 
 #: src/profile-questions/profile-question-copy.ts
+msgctxt "esh22C"
+msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime."
+msgstr "Facultatif. Nous utilisons tes choix pour adapter le contenu à tes besoins. Tu peux les supprimer à tout moment."
+
+#: src/profile-questions/profile-question-copy.ts
 msgctxt "zJoq3-"
 msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings."
 msgstr "Facultatif. Tes choix nous permettent d’adapter le contenu à tes besoins. Tu peux les supprimer à tout moment dans les Paramètres."
@@ -11824,6 +11834,11 @@ msgstr "Ce qui t’aide, avec tes mots (facultatif)"
 msgctxt "dcwrhI"
 msgid "E.g., I understand diagrams better than text"
 msgstr "Par exemple, je comprends mieux avec des schémas qu’avec du texte"
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "HOckqc"
+msgid "We'll remember this. You can delete it anytime."
+msgstr "On gardera ça en mémoire. Tu peux l’effacer à tout moment."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "mM7GRS"
@@ -13631,14 +13646,14 @@ msgid "You finished {name}."
 msgstr "Tu as terminé {name}."
 
 #: src/week/logbook-sections.tsx
-msgctxt "koboTV"
-msgid "{time} more than the week before!"
-msgstr "{time} de plus que la semaine précédente !"
+msgctxt "Yj-wa7"
+msgid "{time} more than the week before."
+msgstr "{time} de plus que la semaine précédente."
 
 #: src/week/logbook-sections.tsx
-msgctxt "mY3vs_"
-msgid "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
-msgstr "{questions, plural, one {# question de plus que la semaine précédente !} other {# questions de plus que la semaine précédente !}}"
+msgctxt "d9SZZ-"
+msgid "{questions, plural, one {# more question than the week before.} other {# more questions than the week before.}}"
+msgstr "{questions, plural, one {# question de plus que la semaine précédente.} other {# questions de plus que la semaine précédente.}}"
 
 #: src/week/logbook-sections.tsx
 msgctxt "gpv0cM"

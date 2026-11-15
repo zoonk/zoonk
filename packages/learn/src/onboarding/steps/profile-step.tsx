@@ -126,7 +126,7 @@ function ProfileStep({
   const t = useExtracted();
   const exclusiveLabels = useExclusiveLabels();
   const title = useProfileQuestionTitle(question.id);
-  const description = useProfileQuestionDescription(question.id);
+  const description = useProfileQuestionDescription(question.id, "onboarding");
 
   const [draft, setDraft] = useState(() => initialDraft({ jobPrefill, precheck, question }));
   const canSend = canSendProfileDraft({ draft, from: "onboarding", question: question.id });
@@ -164,8 +164,8 @@ function ProfileStep({
       title={title}
     >
       <ProfileQuestionBody
-        declineAsSkip
         draft={draft}
+        from="onboarding"
         jobPrefill={jobPrefill}
         label={title}
         memoryEnabled={memoryEnabled}

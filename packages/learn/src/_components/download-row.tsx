@@ -14,10 +14,13 @@ import { SettingRow } from "./setting-rows";
  * toast, so the rows under it stay where they are.
  */
 export function DownloadRow({
+  actionLabel,
   fileName,
   label,
   load,
 }: {
+  /** The button's name for screen readers, which hear it apart from the row: "Download your data". */
+  actionLabel: string;
   fileName: string;
   label: string;
   load: () => Promise<unknown>;
@@ -42,7 +45,7 @@ export function DownloadRow({
     <SettingRow label={label}>
       <form action={() => download()} className="contents">
         <Button
-          aria-label={label}
+          aria-label={actionLabel}
           busy={isPending}
           icon={<DownloadIcon aria-hidden="true" />}
           size="sm"

@@ -72,12 +72,12 @@ function useGoodNews(): string | null {
   }
 
   if (minutes > 0) {
-    return t("{time} more than the week before!", { time: formatDuration(minutes) });
+    return t("{time} more than the week before.", { time: formatDuration(minutes) });
   }
 
   if (questions > 0) {
     return t(
-      "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}",
+      "{questions, plural, one {# more question than the week before.} other {# more questions than the week before.}}",
       { questions },
     );
   }
