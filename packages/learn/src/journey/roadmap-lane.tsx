@@ -79,7 +79,7 @@ export function PhaseLane({ isLast, phase }: { isLast: boolean; phase: PlanPhase
         </LaneMark>
       )}
 
-      {flag && <FlagIcon className="absolute top-0 right-0 size-3.5" />}
+      {flag && <FlagIcon className="absolute top-1/2 right-0 size-3.5 -translate-y-1/2" />}
 
       {overrunShare !== null && (
         <LaneMark share={overrunShare}>
