@@ -541,13 +541,6 @@
     <string name="plan_base_names_time">%1$s · %2$s</string>
     <string name="plan_different_choices">Mixed</string>
     <string name="plan_base_studied">Studied</string>
-    <string name="plan_get_recommendation">Get a recommendation</string>
-    <string name="plan_recommendation_failed">We couldn\'t get a recommendation.</string>
-    <string name="plan_still_building">Your plan is still being built. Try again in a moment.</string>
-    <string name="plan_recommend_deep">We recommend every lesson. Your time covers them.</string>
-    <string name="plan_recommend_essential">We recommend the first lessons only.</string>
-    <string name="plan_recommend_quick">We recommend one short lesson each, so there\'s time for the rest.</string>
-    <string name="plan_recommendation_followed">Your plan already follows it.</string>
     <string name="plan_checking_changes">Checking what changes…</string>
     <string name="plan_check_failed">We couldn\'t check what changes.</string>
     <string name="plan_stays_as_it_is">Your plan stays as it is.</string>

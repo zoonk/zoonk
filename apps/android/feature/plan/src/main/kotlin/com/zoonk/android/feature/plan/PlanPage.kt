@@ -170,6 +170,7 @@ internal fun PlanPage(
     val changes by viewModel.changes.collectAsStateWithLifecycle()
     val sheetAnswers by viewModel.sheetAnswers.collectAsStateWithLifecycle()
     val timeToCover by viewModel.timeToCover.collectAsStateWithLifecycle()
+    val basesAdvice by viewModel.basesAdvice.collectAsStateWithLifecycle()
     val preview by viewModel.preview.collectAsStateWithLifecycle()
     val slotPreview by viewModel.slotPreview.collectAsStateWithLifecycle()
     val nextLevel by viewModel.nextLevel.collectAsStateWithLifecycle()
@@ -217,7 +218,8 @@ internal fun PlanPage(
             chooseTools = viewModel::chooseTools,
             setupLessons = viewModel.setupLessons,
             preview = viewModel::preview,
-            adviseOnBases = viewModel::basesAdvice,
+            basesAdvice = basesAdvice,
+            askBasesAdvice = viewModel::askBasesAdvice,
             sheetAnswers = sheetAnswers,
             answerSheet = viewModel::answerSheet,
         )

@@ -291,7 +291,6 @@
   "plan_full_course_rule_goal_month": "e61afe883f17683a85ece12df3cb82bedc389e0d249b7905f3297de15bf28db3",
   "plan_full_course_switch": "da82071a4352f6d7588505f0a73a2640e52a1fbf673868681800a75fcdfadd33",
   "plan_gain_this_week": "9e41fae3f22e56dc1bb7c4a39deb5b6daa3f4ff5a06c3d78727a3810ea0cbccd",
-  "plan_get_recommendation": "001170cd154b0f570dffb49a1d6dff979bcd51371627dbfeff81e285c485af85",
   "plan_go_to_today": "e57c1665706b339788018cd54e6e00fc73a3ab471b55650173ddefde8c0d1b8b",
   "plan_goal_date": "621fdd06f7c1f96171ffe6de59bb85c23031f620fe24eff9ef8df1a5b6cabda0",
   "plan_goal_limit_reached": "246ae51803ae2ea2f38bf11e49230526b1ce90069a47920ca611cc88cb59e089",
@@ -382,11 +381,6 @@
   "plan_prerequisites": "d4a13e8d505d469845d07a310ace8d825e01d0836079b354cdc11b5e9345ae4f",
   "plan_preview": "2a34ae59ea5d75cb1955ad070efa6681c49093ad1300e7e2fef4e30b4ee573a5",
   "plan_progress": "66c2bcdca035ecabd65c05e68460daf6b8ce840c0ad98154d4525a962da71ad5",
-  "plan_recommend_deep": "ba543129401778bd1f73b5eb121c524c75126c62e3a4807480d0fdcb8f4f4d71",
-  "plan_recommend_essential": "dec72e495bd65ce53ca6969ede3616096559d3c60c308bd160b6032fd575be47",
-  "plan_recommend_quick": "fcb41fcc8d1656fec29f5b231a2afeeb0c32b01c4b7582038edacfb094e7403a",
-  "plan_recommendation_failed": "9d9dafce44e5fe66a93ca380ab0b1a0c27ab6c5f5142815a85f6375ad78c7712",
-  "plan_recommendation_followed": "ba1a1486cbf187b09c4884b29369335c7a268e843fb4e51d06dabbb43373356f",
   "plan_recommended": "2b16065cca2a5a8fdca9cd7dbe0fed02a3ae6bf9d36573f6d501a07f778e6499",
   "plan_remembered": "0cdf3ff8f9b20b850968510f97a80b7b4a608d9954d39bbf9e749b88c6c51059",
   "plan_remove_focus": "e149e9d6074426d14dd2b1715c9165e504ce4e51af3fac5fa5f9de93d506c3b4",
@@ -428,7 +422,6 @@
   "plan_skipped": "d6c4b3a5c7deb80a3876fe1e5262b3e108fa87aded474f0293a0ddd5b027d125",
   "plan_skipped_known": "7928674c9ad62b78afa253934c7d4b50373df7cb3c69d804da58a6a0fdceb36b",
   "plan_stays_as_it_is": "53503b25cc1394f04e130fd175f12ff255a7c32be4db61d98b58e0faba91b619",
-  "plan_still_building": "5f3b08269332c96c824f03e17e08b22f64fddfd4b76e58201cbda5ea0e9303f9",
   "plan_still_first_challenge": "56191bf91178d52a9005e21ad9f39826c9e6b4eff09a5beb69d84ba33af31910",
   "plan_still_first_mock": "191be5b6a198ffd87b80b30e6b2315625f567948cdcd1e8c72cd53130e885c28",
   "plan_study_days": "84db2e1b428de029e9b9efe7ff917c11812a924ea419cb00c9777e56cdbb6f98",
@@ -1029,13 +1022,6 @@
     <string name="plan_base_names_time">%1$s · %2$s</string>
     <string name="plan_different_choices">항목마다 다름</string>
     <string name="plan_base_studied">공부했어요</string>
-    <string name="plan_get_recommendation">추천받기</string>
-    <string name="plan_recommendation_failed">추천을 받지 못했어요.</string>
-    <string name="plan_still_building">아직 계획을 만들고 있어요. 잠시 후에 다시 시도해 보세요.</string>
-    <string name="plan_recommend_deep">모든 레슨을 추천해요. 계획한 시간 안에 끝낼 수 있어요.</string>
-    <string name="plan_recommend_essential">첫 레슨만 추천해요.</string>
-    <string name="plan_recommend_quick">나머지도 공부할 수 있게 짧은 레슨을 하나씩 추천해요.</string>
-    <string name="plan_recommendation_followed">계획에 이미 반영되어 있어요.</string>
     <string name="plan_checking_changes">변경 사항을 확인하고 있어요…</string>
     <string name="plan_check_failed">변경 사항을 확인하지 못했어요.</string>
     <string name="plan_stays_as_it_is">계획은 그대로 유지돼요.</string>

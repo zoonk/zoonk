@@ -291,7 +291,6 @@
   "plan_full_course_rule_goal_month": "f9b0a895649039145e0b66733277a0dd9e96b4fb6333b2239f8234a811d775b8",
   "plan_full_course_switch": "ea319a8fd353d162ce5f4362d729c2dacd26111d22869fe1e468d80fa07f40b6",
   "plan_gain_this_week": "a275338253efaa4b2263e78a189192c378b46d5234cf2fdae424c1af63840a66",
-  "plan_get_recommendation": "d53fe3ab8cfb0cf25069253ec59c029237a5239955e3b88bb0ca42a072950222",
   "plan_go_to_today": "35082a87c4221069b5c29ec9f2dde0d49641de667f618b4fb54d312dd711e407",
   "plan_goal_date": "a4a28bc97ac836828178ca06220aeacdf43b2c189e5b14a2a0d7c73f83f62369",
   "plan_goal_limit_reached": "056046c764319e4c73e84a5d44ec0fc746edd5d0d29ec02fc95b166ae0fea3ac",
@@ -382,11 +381,6 @@
   "plan_prerequisites": "1f381f65738722df28f2ef859cea203028c5227f5c74a7f396ceb3af6e63cbc8",
   "plan_preview": "474a11bc3ab086daff3badd38656b67c932fac2ab2e7d795190067ebd29ae892",
   "plan_progress": "44ef891c7a763cbed1f95966035dea0820cf3cff8fe94ddc7fd81a787595ffd6",
-  "plan_recommend_deep": "b042fd36f490493ca936feb3112c57be9e4e2fdfb35fa09cd9150fd75347aae7",
-  "plan_recommend_essential": "46c726065d7840d13f89ddda7540527e0e88db46bf90407acc3f7d9392789526",
-  "plan_recommend_quick": "4707c120e8c23caa6a9c82abf6bf7ed4c157ce5bc3478f1058fe38f45bee961a",
-  "plan_recommendation_failed": "1793a1f2d223a0d0f8fdbb0575ea173d99144b702045647c37ea074ec5d01d6c",
-  "plan_recommendation_followed": "0a630b16914e5d20840586d0aeeb515bf5bb9643940afc37b9b98669f6033d1b",
   "plan_recommended": "d3f8f5199be118fc42a5319728e9f069bafe4f4a088b84e4652e98e6e22ba179",
   "plan_remembered": "1285adc458093c01cebb5bc15ab5cb4995ffe309c49d215aafd3698a74fdaf4f",
   "plan_remove_focus": "657fb49af1372e32a6107017f7ea877ce035168b32a80adf21f61b963f79490f",
@@ -428,7 +422,6 @@
   "plan_skipped": "fe316707a8b15656b19010f645712b759c973e945514545987131b2e3bfbd23e",
   "plan_skipped_known": "bdf451625b160b4e5318c35346248570a5f6d288c3094669d7b05c974dc44818",
   "plan_stays_as_it_is": "732371f9627cfacd889cbb88810c9e700910f2796f7fc0188983edf6413203f5",
-  "plan_still_building": "76a01095ad6df3b172f5d4f5e3fcf407ce52f9ab9822e62baaaebdcef0444502",
   "plan_still_first_challenge": "b333032b1e820f1a5b23206bcfe8c100c10d7fe3a828c0a6d00a8d2552952844",
   "plan_still_first_mock": "206432c56a767b8a125257ec4ac0dab2be42702176f817a9ce5303a5f6f6aaec",
   "plan_study_days": "7b3b51fdbe80f996e68df1c9dc3476316f99fb370fb93ca4c791857e9259b58d",
@@ -1137,13 +1130,6 @@
     <string name="plan_base_names_time">%1$s · %2$s</string>
     <string name="plan_different_choices">Mixto</string>
     <string name="plan_base_studied">Estudiado</string>
-    <string name="plan_get_recommendation">Obtener una recomendación</string>
-    <string name="plan_recommendation_failed">No pudimos obtener una recomendación.</string>
-    <string name="plan_still_building">Aún estamos preparando tu plan. Inténtalo de nuevo en un momento.</string>
-    <string name="plan_recommend_deep">Te recomendamos todas las lecciones. Tienes tiempo para completarlas.</string>
-    <string name="plan_recommend_essential">Te recomendamos solo las primeras lecciones.</string>
-    <string name="plan_recommend_quick">Te recomendamos una lección corta de cada uno para que haya tiempo para el resto.</string>
-    <string name="plan_recommendation_followed">Tu plan ya sigue esta recomendación.</string>
     <string name="plan_checking_changes">Revisando los cambios…</string>
     <string name="plan_check_failed">No pudimos revisar los cambios.</string>
     <string name="plan_stays_as_it_is">Tu plan sigue igual.</string>

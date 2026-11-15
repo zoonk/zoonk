@@ -65,6 +65,9 @@ class FakePlanApi : PlanApi {
     var toolFailure: ApiException? = null
     var advice = PlanBasesAdvice(daysLeft = 40, ready = true, recommended = PlanBasesAdvice.Recommended.ESSENTIAL)
     var advised = 0
+
+    /** Holds the next recommendation, with the answer it had when asked, until it opens. */
+    var adviceGate: CompletableDeferred<Unit>? = null
     var studyNext: StudyNext? = null
     var studyNextReads = 0
     var continued = 0
@@ -239,7 +242,12 @@ class FakePlanApi : PlanApi {
         goalId: UUID,
     ): PlanBasesAdvice {
         advised++
-        return advice
+        val answer = advice
+        adviceGate?.let {
+            adviceGate = null
+            it.await()
+        }
+        return answer
     }
 
     override suspend fun outline(
