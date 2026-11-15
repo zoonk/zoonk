@@ -62,9 +62,7 @@ struct AdjustPlanSheet: View {
           daysSection
             .id(Section.days)
 
-          if plan.schedule.shape.canDiffer {
-            weekendSection
-          }
+          weekendSection
 
           if goal.kind == .exam, plan.feasibility?.deadline != nil {
             PlanFullCourseSection(editor: editor, plan: plan, asks: section == .everything)
@@ -194,15 +192,19 @@ struct AdjustPlanSheet: View {
     weekendChoice ?? (plan.schedule.shape.weekend != nil)
   }
 
-  /// Only for a week studied on weekdays and on the weekend.
+  /// Always there, so changing the days moves nothing: off, the time shows the weekdays' time
+  /// the weekend takes; while the week has no weekend day or no weekday, the switch can't turn on
+  /// and the time's row says which days it needs (main's `WeekendTime`).
   private var weekendSection: some View {
     let shape = plan.schedule.shape
-    let current = shape.weekend ?? shape.weekdays
+    let missing = GoalPlan.WeekendMissingDays.of(plan.schedule.weekdayMinutes)
+    let on = weekendOn && missing == nil
+    let current = on ? shape.weekend ?? shape.weekdays : shape.weekdays
 
     return SwiftUI.Section {
       Toggle(
         isOn: Binding(
-          get: { weekendOn },
+          get: { on },
           set: { on in
             weekendChoice = on
 
@@ -215,8 +217,15 @@ struct AdjustPlanSheet: View {
           "Different time on weekends", tableName: "Plan",
           comment: "Setting: Saturday and Sunday get their own study time")
       }
+      .disabled(missing != nil)
+      .accessibilityHint(Text(verbatim: missing?.reason ?? ""))
 
-      if weekendOn {
+      if let missing {
+        Text(missing.reason)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .accessibilityHidden(true)
+      } else {
         Picker(
           selection: Binding(
             get: { current },
@@ -238,6 +247,7 @@ struct AdjustPlanSheet: View {
             "Time on weekends", tableName: "Plan",
             comment: "Setting: study time on Saturday and Sunday")
         }
+        .disabled(!on)
       }
     }
     .tint(.success)

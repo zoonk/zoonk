@@ -161,19 +161,17 @@ func planPastDateTitle(isExam: Bool) -> String {
 }
 
 /// An exam whose date passed with lessons left: its answers are the Plan's bottom bar
-/// (`examOverBar`), so it only says what's left.
+/// (`examOverBar`), so it asks their question. The Schedule tile beside it says what's left.
 struct PlanExamOverSlot: View {
   let context: PlanContext
   var isLine = false
 
   var body: some View {
-    let lessons = context.plan.status?.lessons ?? 0
-
     PlanStatement(
       mark: .symbol("calendar.badge.clock"), title: Text(planPastDateTitle(isExam: true)),
       description: Text(
-        "You have \(lessons) lessons left. Keep studying them, or archive this goal?",
-        tableName: "Plan", comment: "Lessons left once the exam's date passed, and the question"),
+        "Keep studying, or archive this goal?", tableName: "Plan",
+        comment: "Under the Plan's notice once the exam's date passed: its bottom bar's question"),
       isLine: isLine)
   }
 }
