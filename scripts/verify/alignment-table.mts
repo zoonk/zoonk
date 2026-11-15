@@ -129,6 +129,12 @@ const PIECES: Piece[] = [
       words: true,
     },
   },
+  // A row of marks, one a day: declared so it starts and ends on its column (`spanLeads`).
+  {
+    name: "week-rings",
+    relations: [],
+    web: { group: "[data-slot=week-rings]", parts: {}, rows: ":scope > *" },
+  },
   // Android's wait screens name these; the web's wait pieces aren't marked yet.
   { name: "wait-content", relations: ["gap"] },
   { name: "generation-wait", relations: ["gap"] },
@@ -157,7 +163,7 @@ const SURFACES =
  * or bleeds as E7 allows. A frame's main column, the column beside an aside, the aside, and `Page`.
  */
 const COLUMNS =
-  "[data-slot=learn-shell-main], [data-slot=page-with-aside] > div, [data-slot=page-aside], [data-slot=page]";
+  "[data-slot=learn-shell-main], [data-slot=page-with-aside] > div, [data-slot=page-aside], [data-slot=page], [data-slot=task-body]";
 
 /** What `readAlignment` reads a web page by. */
 export const WEB_TABLE = {

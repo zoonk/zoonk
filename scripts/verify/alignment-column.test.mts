@@ -21,6 +21,24 @@ function fill(kind: "box" | "hairline" | "highlight" | "picture", x: number, wid
   ]);
 }
 
+/** Top-level groups, each `[x, y, width]`, in a phone column running 16 to 374. */
+function groups(...boxes: [number, number, number][]) {
+  return fixtureCapture(
+    boxes.map(([x, y, width], index) =>
+      element({
+        bounds: [x, y, width, 88],
+        column: [16, 374],
+        frame: [0, 390],
+        group: null,
+        id: `g${index}`,
+        name: `"list ${index}"`,
+        part: "group",
+        piece: "list-group",
+      }),
+    ),
+  );
+}
+
 function columnMisses(capture: Capture) {
   return evaluateCapture(capture)
     .filter((finding) => finding.rule === "column")
@@ -51,5 +69,27 @@ describe("the page's column (craft E7)", () => {
     assert.deepEqual(columnMisses(fill("picture", 0, 390)), []);
     assert.equal(columnMisses(fill("hairline", 6, 378)).length, 1);
     assert.equal(columnMisses(fill("box", 6, 378)).length, 1);
+  });
+
+  it("fails a list or a strip that stops short of its column, alone in its band (#13, #14)", () => {
+    assert.deepEqual(columnMisses(groups([16, 0, 358])), []);
+
+    assert.deepEqual(columnMisses(groups([16, 0, 175])), [
+      '"list 0" starts on it and ends 183 short of it',
+    ]);
+
+    assert.deepEqual(columnMisses(groups([20.3, 0, 310.7])), [
+      '"list 0" starts 4.3 inside it and ends 43 short of it',
+    ]);
+  });
+
+  it("passes a list set in from the start that reaches the end, beside a rail or a grid's cell", () => {
+    assert.deepEqual(columnMisses(groups([44, 0, 330])), []);
+  });
+
+  it("judges lists side by side as one band, so two halves of the column pass", () => {
+    assert.deepEqual(columnMisses(groups([16, 0, 169], [205, 20, 169])), []);
+    // Apart, the left half stops short (#13); the right half reaches the end.
+    assert.equal(columnMisses(groups([16, 0, 169], [205, 200, 169])).length, 1);
   });
 });

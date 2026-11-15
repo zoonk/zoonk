@@ -1,4 +1,4 @@
-import { bleedLeads } from "./alignment-bleed.mts";
+import { bleedLeads, spanLeads } from "./alignment-bleed.mts";
 import { type AlignmentFile, type AlignmentFinding, type Capture } from "./alignment-capture.mts";
 import { coverageLeads, isOneStack } from "./alignment-coverage.mts";
 import { axisLeads, endLeads, stackedLeads, startLeads } from "./alignment-edges.mts";
@@ -200,6 +200,7 @@ export function evaluateCapture(capture: Capture): AlignmentFinding[] {
     ...groupsOf(capture).flatMap((group) => groupLeads(context, group)),
     ...filledLeads(context),
     ...bleedLeads(context),
+    ...spanLeads(context),
   ];
 }
 

@@ -38,6 +38,7 @@ export function WeekRings() {
         { count: studied.size },
       )}
       className={RINGS_CLASS}
+      data-slot="week-rings"
       role="img"
     >
       {Array.from({ length: DAYS_PER_WEEK }, (_, index) => {

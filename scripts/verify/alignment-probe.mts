@@ -519,6 +519,85 @@ export function readAlignment({
     ];
   }
 
+  /** The closest column an element sits in, past columns that draw no box of their own. */
+  function columnOf(element: Element) {
+    let column = element.parentElement?.closest(columns) ?? null;
+
+    while (column && isContents(column)) {
+      column = column.parentElement?.closest(columns) ?? null;
+    }
+
+    return column;
+  }
+
+  // A measure is rems and pixels, so one value draws one width wherever it's set.
+  const measured = new Map<string, number | null>();
+
+  /**
+   * The width a page gives its content (`--page-measure`, a form's or a list and its pane's) at
+   * `container`, or null where it sets none: a length as written, else as a hidden box draws it.
+   */
+  function measureOf(container: Element) {
+    const value = getComputedStyle(container).getPropertyValue("--page-measure").trim();
+
+    if (!value) {
+      return null;
+    }
+
+    const length = /^(?<px>\d+(?:\.\d+)?)px$/u.exec(value)?.groups?.px;
+
+    if (length) {
+      return Number(length);
+    }
+
+    if (!measured.has(value)) {
+      const ruler = document.createElement("div");
+
+      ruler.style.cssText =
+        "position:absolute;visibility:hidden;height:0;width:var(--page-measure)";
+
+      container.append(ruler);
+      const { width } = ruler.getBoundingClientRect();
+      ruler.remove();
+      measured.set(value, width > 0 ? width : null);
+    }
+
+    return measured.get(value) ?? null;
+  }
+
+  /**
+   * A column's content edges, and its frame with the gutter. The end is the column's padding box,
+   * or the page's measure where one is set over `element` (a page may set it below the column).
+   */
+  function edgesOf(column: Element, element: Element) {
+    const frame = column.getBoundingClientRect();
+    const style = getComputedStyle(column);
+    const { pixels } = globalThis.zoonkPage;
+    const left = frame.left + pixels(style.paddingLeft);
+    const right = frame.right - pixels(style.paddingRight);
+    const measure = measureOf(element.parentElement ?? column);
+
+    return { frame, left, right: measure === null ? right : Math.min(right, left + measure) };
+  }
+
+  const declaredGroups = pieces.map(({ web: piece }) => piece.group).join(", ");
+
+  /** A group no other declared group holds starts and ends on its column's edges (`spanLeads`). */
+  function columnFields(group: Element): Pick<CaptureElement, "column" | "frame"> {
+    const column = group.parentElement?.closest(declaredGroups) ? null : columnOf(group);
+
+    if (!column) {
+      return {};
+    }
+
+    const edges = edgesOf(column, group);
+
+    return {
+      column: [edges.left + scrollX, edges.right + scrollX],
+      frame: [edges.frame.left + scrollX, edges.frame.right + scrollX],
+    };
+  }
+
   function readGroup(
     pieceName: string,
     piece: WebPiece,
@@ -567,6 +646,7 @@ export function readAlignment({
           ? { layoutScale: Math.round((drawnBox.width / group.offsetWidth) * 100) / 100 }
           : {}),
         ...(isRtl(group) ? { direction: "rtl" as const } : {}),
+        ...columnFields(group),
         endEdge: (bar ? bar.getBoundingClientRect().right : contentEnd(group)) + scrollX,
         group: null,
         id: groupId,
@@ -602,27 +682,6 @@ export function readAlignment({
     const PAST = 1;
     const HAIRLINE = 2;
     const { pixels } = globalThis.zoonkPage;
-
-    const columnOf = (element: Element) => {
-      let column = element.parentElement?.closest(columns) ?? null;
-
-      while (column && isContents(column)) {
-        column = column.parentElement?.closest(columns) ?? null;
-      }
-
-      return column;
-    };
-
-    const edgesOf = (column: Element) => {
-      const frame = column.getBoundingClientRect();
-      const style = getComputedStyle(column);
-
-      return {
-        frame,
-        left: frame.left + pixels(style.paddingLeft),
-        right: frame.right - pixels(style.paddingRight),
-      };
-    };
 
     const beforeFill = (element: Element): Rect | null => {
       const pseudo = getComputedStyle(element, "::before");
@@ -686,7 +745,7 @@ export function readAlignment({
           return [];
         }
 
-        const edges = edgesOf(column);
+        const edges = edgesOf(column, element);
 
         const passes = (box: Rect) =>
           edges.left - box.left > PAST || box.right - edges.right > PAST;

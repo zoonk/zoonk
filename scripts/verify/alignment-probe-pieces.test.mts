@@ -7,6 +7,9 @@ import { evaluateCapture } from "./alignment.mts";
 
 setUpProbeDom();
 
+const row = (label: string, y: number) =>
+  `<div data-box="0,${y},300,30"><span data-slot="list-row-title" data-box="0,${y + 5},100,20">${label}</span></div>`;
+
 /** A top bar: its back link at 13px, then its end's actions, each `[words, font size]`. */
 function topBar(...actions: [string, number][]) {
   const end = actions
@@ -33,5 +36,42 @@ describe("a top bar's word actions", () => {
   it("measure nothing in a bar whose end holds only a glyph", () => {
     document.body.innerHTML = topBar(["", 15]);
     assert.deepEqual(evaluateCapture(read()), []);
+  });
+});
+
+/**
+ * A page column 0 to 1000 whose content measure is 600, holding a list `width` wide. `slot` is the
+ * page's own name where it gives one (Mind maps'), so the column is the shell's main above it.
+ */
+function measuredPage(width: number, slot = "page") {
+  return `<main data-slot="learn-shell-main" data-box="0,0,1000,400">
+    <div data-slot="${slot}" style="--page-measure: 600px" data-box="0,0,1000,400">
+    <div data-slot="list-group" data-box="0,100,${width},60">${row("A", 100)}${row("B", 130)}</div></div></main>`;
+}
+
+describe("a list against its page's column", () => {
+  it("ends on the column's measure where the page sets one, and fails a list short of it", () => {
+    document.body.innerHTML = measuredPage(600);
+
+    assert.deepEqual(
+      evaluateCapture(read()).filter((finding) => finding.rule === "column"),
+      [],
+    );
+
+    document.body.innerHTML = measuredPage(600, "mind-maps");
+
+    assert.deepEqual(
+      evaluateCapture(read()).filter((finding) => finding.rule === "column"),
+      [],
+    );
+
+    document.body.innerHTML = measuredPage(300);
+
+    assert.deepEqual(
+      evaluateCapture(read())
+        .filter((finding) => finding.rule === "column")
+        .map((finding) => finding.detail),
+      ['"A" starts on it and ends 300 short of it'],
+    );
   });
 });
