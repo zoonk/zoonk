@@ -233,8 +233,8 @@ private struct MindMapCreateSection: View {
     let line = line(offer, stop: stop, canStart: canStart)
     let isStopped = if case .stopped = line { true } else { false }
 
-    let ready = notMade.filter { $0.lessonsToWrite == 0 && $0.status != .writingLessons }
-    let others = notMade.filter { !ready.contains($0) }
+    let ready = notMade.filter(\.canMakeNow)
+    let others = notMade.filter { !$0.canMakeNow }
 
     Section {
       ForEach(ready) { map in
@@ -750,10 +750,12 @@ enum MindMapsCreateLine: Equatable {
     tier: LearnerTier
   ) {
     let offer = maps.createOffer
-    let onTheWay = maps.chapters.count { $0.status.isOnItsWay }
+    // As main's, only the chapters under "Other chapters": the others' rows say where they stand.
+    let others = maps.chapters.filter { !$0.canMakeNow }
+    let onTheWay = others.count { $0.status.isOnItsWay }
     // Only the ones the button retries: a failed map whose lessons aren't written says so in its
     // own row.
-    let unfinished = maps.chapters.count { $0.status == .failed && $0.lessonsToWrite == 0 }
+    let unfinished = others.count { $0.status == .failed && $0.lessonsToWrite == 0 }
 
     if unreachable {
       self = .unreachable

@@ -15,6 +15,12 @@ struct ChapterMindMap: Decodable, Equatable, Identifiable, Sendable {
     }
   }
 
+  /// Main's `canMakeNow`: its lessons are written, so its map is made, or being made, without
+  /// writing any. Its row sits above "Other chapters", whose rows alone the page's line counts.
+  var canMakeNow: Bool {
+    lessonsToWrite == 0 && [.available, .drawing, .failed].contains(status)
+  }
+
   struct Image: Decodable, Equatable, Sendable {
     let height: Int
     let thumbnailUrl: String?

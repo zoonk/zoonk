@@ -899,6 +899,33 @@ final class MindMapsStoreTests: XCTestCase {
       line)
   }
 
+  /// The web's `NotMadeLine` counts only the chapters under "Other chapters": a failed map whose
+  /// lessons are written shows its own row above them, and so does a map being drawn.
+  func testTheLineCountsOnlyTheChaptersUnderOtherChapters() {
+    let failed = ChapterMindMap(
+      chapterId: "failed-1", image: nil, lessonsToWrite: 0, outline: nil, position: 1,
+      saved: false, status: .failed, subject: nil, title: "Failed")
+    let writing = ChapterMindMap(
+      chapterId: "writing-1", image: nil, lessonsToWrite: 2, outline: nil, position: 2,
+      saved: false, status: .writingLessons, subject: nil, title: "Writing")
+    let drawing = ChapterMindMap(
+      chapterId: "drawing-1", image: nil, lessonsToWrite: 0, outline: nil, position: 3,
+      saved: false, status: .drawing, subject: nil, title: "Drawing")
+    let offer = MindMapCreateOffer(eligible: 1, startable: 1, stop: nil)
+
+    func line(_ chapters: [ChapterMindMap]) -> MindMapsCreateLine? {
+      MindMapsCreateLine(
+        maps: GoalMindMaps(
+          chapters: chapters, createOffer: offer, firstTab: .chapters, lessonGroups: [], saved: []),
+        stop: nil, canStart: true, unreachable: false, tier: .free)
+    }
+
+    // The web: "1 on the way. You can leave while it's made."
+    XCTAssertEqual(line([failed, writing]), .onTheWay(1))
+    // The web prints no line: the drawing map's own row says it's being made.
+    XCTAssertNil(line([drawing]))
+  }
+
   private static let chapterKey = MindMapKey(kind: .chapter, targetId: "chapter")
   private static let chapterTarget = SaveTarget(
     key: chapterKey, title: "Chapter", chapterId: "chapter")
