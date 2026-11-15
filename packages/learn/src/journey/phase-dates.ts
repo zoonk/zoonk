@@ -32,7 +32,7 @@ export type PlanDate = { estimate: boolean; isoDate: string; month: boolean };
 export type PhaseEnd = PlanDate | { short: ShortPhaseView };
 
 /** An estimate this far from the plan's week is said by its month: "~Jan", never a day. */
-export function isFarEstimate(plan: Pick<DatedPlan, "week">, isoDate: string): boolean {
+function isFarEstimate(plan: Pick<DatedPlan, "week">, isoDate: string): boolean {
   return daysBetween(plan.week.startDate, isoDate) > NEAR_ESTIMATE_DAYS;
 }
 
