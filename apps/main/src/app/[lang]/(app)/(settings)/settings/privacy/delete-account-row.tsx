@@ -76,7 +76,7 @@ export function DeleteAccountRow({
   return (
     <>
       <AlertDialog>
-        <SettingRow label={t("Delete my account")}>
+        <SettingRow label={t("Your account")}>
           <AlertDialogTrigger aria-label={t("Delete account")} className={DELETE_BUTTON_CLASS}>
             {t("Delete…")}
           </AlertDialogTrigger>

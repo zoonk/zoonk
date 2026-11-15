@@ -1360,9 +1360,9 @@ msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
 msgstr "계정을 삭제하지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내 주세요."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
-msgctxt "Sk9SL5"
-msgid "Delete my account"
-msgstr "내 계정 삭제"
+msgctxt "95pnlV"
+msgid "Your account"
+msgstr "내 계정"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "wyxJrL"
@@ -1383,6 +1383,11 @@ msgstr "계정을 삭제할까요?"
 msgctxt "yF2UF2"
 msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
 msgstr "목표, 계획, 진도, 메모리와 업로드한 파일이 영구적으로 삭제돼요. 되돌릴 수 없어요."
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "Sk9SL5"
+msgid "Delete my account"
+msgstr "내 계정 삭제"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "huX1mW"
@@ -1408,9 +1413,14 @@ msgid "Plus from Google Play keeps charging until you cancel it there."
 msgstr "Google Play에서 구독한 Plus는 Google Play에서 해지할 때까지 요금이 계속 청구돼요."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/export-data-row.tsx
-msgctxt "RcXC-q"
-msgid "Download my data"
+msgctxt "tTFZyH"
+msgid "Download your data"
 msgstr "내 데이터 다운로드"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/export-data-row.tsx
+msgctxt "y8jK2R"
+msgid "A copy of your data"
+msgstr "내 데이터 사본"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
 msgctxt "s8-igB"
