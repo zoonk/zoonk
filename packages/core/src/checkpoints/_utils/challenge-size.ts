@@ -55,12 +55,7 @@ async function loadMockSize({
     });
 
     return {
-      estimatedMinutes: estimateMockMinutes({
-        ...mock,
-        onlyQuestions:
-          written.length === 0 && mock.sections.every((section) => section.questions > 0),
-        pace,
-      }),
+      estimatedMinutes: estimateMockMinutes({ ...mock, pace, written }),
       fullLength: mock.fullLength,
       leftOut: mock.leftOut,
       minutes: mock.minutes,
@@ -86,11 +81,10 @@ async function loadMockSize({
   return {
     estimatedMinutes: estimateMockMinutes({
       minutes: card.conditions.timeLimitMinutes,
-      onlyQuestions:
-        card.conditions.written.length === 0 &&
-        card.conditions.sections.every((section) => Boolean(section.questions)),
       pace,
       questions: card.conditions.questions,
+      sections: card.conditions.sections,
+      written: card.conditions.written,
     }),
     fullLength: card.conditions.fullLength,
     leftOut: card.conditions.leftOut,

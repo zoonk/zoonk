@@ -190,10 +190,6 @@ function toDayOption({
   const leftOut = listMockLeftOut({ asked, choices, day, kind, running, structure, typed });
   const questions = outline.sections.reduce((sum, section) => sum + section.questions, 0);
 
-  const onlyQuestions =
-    asked.length === 0 &&
-    outline.sections.every((section) => section.questions > 0 && section.essays.length === 0);
-
   return {
     area: null,
     areas: getDayAreas({ day, structure, subjects }),
@@ -201,9 +197,10 @@ function toDayOption({
     day,
     estimatedMinutes: estimateMockMinutes({
       minutes: outline.minutes,
-      onlyQuestions,
       pace,
       questions,
+      sections: outline.sections,
+      written: outline.written,
     }),
     kind,
     leftOut,
@@ -261,7 +258,13 @@ function toSubjectOption({
     areas: [subject.name, ...parts.map((part) => part.name)],
     covers: null,
     day: null,
-    estimatedMinutes: estimateMockMinutes({ minutes, onlyQuestions: true, pace, questions }),
+    estimatedMinutes: estimateMockMinutes({
+      minutes,
+      pace,
+      questions,
+      sections: [{ questions }],
+      written: [],
+    }),
     kind: "area",
     leftOut: listMockLeftOut({ asked: [], day: null, kind: "area", structure, typed }),
     minutes,
