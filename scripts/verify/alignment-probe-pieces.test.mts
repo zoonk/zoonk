@@ -97,7 +97,27 @@ const LONE_SECTION = `<div data-slot="page-aside" data-box="58,0,704,300">
       <div data-slot="list-group" data-box="58,40,332,60">${row("Completed lessons", 40)}${row("Mind maps", 70)}</div></section>
   </div></div>`;
 
+/** RV71's page: a column 16 to 374, a grid of 164 and `side` px with a gap of 20, a panel filling the side. */
+function sideGrid(side: number) {
+  return `<div data-slot="page" data-box="16,0,358,400">
+    <div style="display: grid; grid-template-columns: 164px ${side}px" data-box="16,0,358,150">
+      <div data-box="16,0,164,150">Hero</div>
+      <div data-box="200,0,${side},150">
+        <div style="background-color: rgb(204, 204, 204)" data-box="200,0,${side},150">Panel</div>
+      </div></div></div>`;
+}
+
+function sideGridMisses(side: number) {
+  document.body.innerHTML = sideGrid(side);
+  return evaluateCapture(read()).filter((finding) => finding.rule === "column");
+}
+
 describe("a box in a side column (a grid's cell beside the hero or a category list)", () => {
+  it("is still held to the page's column when its cell overflows it (RV71)", () => {
+    assert.deepEqual(sideGridMisses(174), []);
+    assert.equal(sideGridMisses(250).length, 1);
+  });
+
   it("isn't one when nothing sits beside it: a lone section stops short of its column (#13)", () => {
     document.body.innerHTML = LONE_SECTION;
 

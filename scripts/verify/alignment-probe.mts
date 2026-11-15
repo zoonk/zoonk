@@ -611,8 +611,20 @@ export function readAlignment({
       return column;
     }
 
+    // A cell is a column only inside its own: one that passes the page's column (a fixed track
+    // too wide for it) can't excuse what it holds from the page's edge.
+    const within = (cell: Element) => {
+      if (!column) {
+        return true;
+      }
+
+      const outer = edgesOf(column, cell);
+      const box = cell.getBoundingClientRect();
+      return box.left >= outer.left - 1 && box.right <= outer.right + 1;
+    };
+
     for (let cell = element.parentElement; cell && cell !== column; cell = cell.parentElement) {
-      if (isGridCell(cell) && (!column || column.contains(cell))) {
+      if (isGridCell(cell) && (!column || column.contains(cell)) && within(cell)) {
         return cell;
       }
     }
