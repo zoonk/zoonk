@@ -97,7 +97,11 @@ function PageTop({
   );
 }
 
-const TITLE_CLASS = { headline: "text-headline", title: "text-title" } as const;
+const TITLE_CLASS = {
+  headline: "text-headline",
+  title:
+    "text-title supports-[text-box:cap_alphabetic]:min-h-[2.125rem] supports-[text-box:cap_alphabetic]:py-[calc((2.125rem-1cap)/2)] supports-[text-box:cap_alphabetic]:[text-box:trim-both_cap_alphabetic]",
+} as const;
 
 /**
  * A page's title, in one of two type roles. The back link over it lines up with its first letter,
