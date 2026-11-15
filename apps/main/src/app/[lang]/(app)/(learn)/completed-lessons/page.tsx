@@ -33,9 +33,18 @@ function readShown(value: string | string[] | undefined): number {
   return Math.min(Math.max(shown, COMPLETED_LESSON_PAGE_SIZE), MAX_SHOWN);
 }
 
-async function CompletedLessonsBar() {
+/** `listed` only where the sidebar lists the page: the placeholder, which can't know, and never without a goal. */
+async function CompletedLessonsBar({ listed = false }: { listed?: boolean }) {
   const t = await getExtracted();
-  return <LearnPageBar back={{ href: "/today" }} root title={t("Completed lessons")} />;
+
+  return (
+    <LearnPageBar
+      back={{ href: "/today" }}
+      listed={listed ? "learner" : undefined}
+      root
+      title={t("Completed lessons")}
+    />
+  );
 }
 
 async function CompletedLessonsBody({ searchParams }: Pick<Props, "searchParams">) {
@@ -90,7 +99,7 @@ async function CompletedLessonsSkeleton() {
   return (
     <DetailSkeleton
       aside={false}
-      bar={<CompletedLessonsBar />}
+      bar={<CompletedLessonsBar listed />}
       measure="list"
       title={t("Completed lessons")}
     />

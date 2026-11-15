@@ -10,6 +10,7 @@
   "belt_gray": "d76245791e2511a2c437d52779fdc58070556c6c25b101b09429a432a705b02a",
   "belt_green": "346e3855871ed5a785f28a7326328f1bd60b436bedcd54b96c07e11bf3e2b58e",
   "belt_level": "a4c840be741069bee04423082511ddecc28686cfea40644c871a3580344522b4",
+  "belt_level_words": "ec525dbb89dbd8bc8402e67acd89ddc711bcfa6861ea0e4db446ff5316c332d1",
   "belt_orange": "4363c1c5d5b92ac4374d4f667d68ec2904e167a9ff36cc0d2fa4b98424a296d2",
   "belt_purple": "2fc6bc57e27b17379b1809da25a5229cd470e1a0c983055d15c9739b0e4d14b5",
   "belt_red": "f34a345b7f878b2ffd78702050e306a9b6d6967e17ca4a82ed191edb40882790",
@@ -120,6 +121,7 @@
     <string name="belt_black">黒帯</string>
     <!-- A belt and its number from 1 to 10, such as White belt 4. %1$s is the belt's name. -->
     <string name="belt_level">%1$s%2$s</string>
+    <string name="belt_level_words">レベル%1$s</string>
     <string name="answer_tag_correct">正解</string>
     <string name="answer_tag_your_answer">選んだ答え</string>
     <string name="answer_tag_your_guess">予想</string>

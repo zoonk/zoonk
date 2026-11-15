@@ -62,6 +62,7 @@
   "session_summary_done_for_now": "d8d62528a0833843beb8f2ef3dba9c2248a5df2c843cdc041317cab747ceff83",
   "session_summary_done_in": "bc73e767763a0bae9c1d78c6b904f36243efb4b3b21f70f6f32f6df0f057773f",
   "session_summary_done_under_minute": "cf0b4821c40c72aee98fc4c3ad4c3ce39e3b5038ce67ead759a7b1d64fe6cf04",
+  "session_summary_down_from": "d3ec82b545ba8a434df51e9b3fb27f8406494911a067f251e7cff42065d9f1d7",
   "session_summary_earned_today": "d0123601f1da4fa616574f00c258a12884095307a5c2f7fd706c4da24721e2b2",
   "session_summary_eyebrow": "ec6155b401a98628e6746b7222952094ff34df44daff256c7bcf51666aaef034",
   "session_summary_finish": "0c6abd0b31fa64ed8f2c7e55d2a65adad32333d569e7ee969d31e8b11cd329b3",
@@ -83,6 +84,7 @@
   "session_summary_streak": "8bea2177058aa03cdb6f6454b16477c49ca3a68c720ae27c6d6d219608e1ae31",
   "session_summary_to_review": "c554c3397f1a66731ecb5fadb7d0939e4ac9ccb3f513a4df048ca34a31716f98",
   "session_summary_tomorrow": "5845b56f33287f1a6d377cbf843784306ecf5b646d544d6e6cc69a203c040956",
+  "session_summary_up_from": "67e35b1a324a9ff3903ddb5ff01b71f2abb91f0cd932bbc3d264a18178282507",
   "session_topics_and_more": "fbffcf62379f9f6c97343928b6eec9f4e12cad49e4deb4ad6931de2242b49e6f"
 }
 -->
@@ -156,6 +158,8 @@
     <string name="session_summary_brain_power">두뇌력</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>
+    <string name="session_summary_up_from">%1$s에서 상승</string>
+    <string name="session_summary_down_from">%1$s에서 하락</string>
     <string name="session_summary_skills_rose">숙련도가 오른 스킬</string>
     <string name="session_summary_tomorrow">내일</string>
     <string name="session_summary_earned_today">오늘 얻은 보상</string>

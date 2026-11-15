@@ -184,3 +184,25 @@ private struct MinimumHitArea: Shape {
     Path(rect.insetBy(dx: -max(0, (44 - rect.width) / 2), dy: -max(0, (44 - rect.height) / 2)))
   }
 }
+
+extension EnvironmentValues {
+  /// One main action per screen: set where the screen's bar holds it, so a button that would be the
+  /// main action elsewhere (a notice's retry, a suggestion's answer) is secondary beside it. Each
+  /// presented screen starts without it: its own bar is the one on it.
+  @Entry var barHoldsMainAction = false
+}
+
+extension View {
+  /// The main action's fill, or the outline once the screen's bar holds the main action.
+  func mainActionUnlessBarHoldsOne() -> some View {
+    modifier(MainActionUnlessBarHoldsOne())
+  }
+}
+
+private struct MainActionUnlessBarHoldsOne: ViewModifier {
+  @Environment(\.barHoldsMainAction) private var barHoldsMainAction
+
+  func body(content: Content) -> some View {
+    content.buttonStyle(ZoonkButtonStyle(variant: barHoldsMainAction ? .outline : .main))
+  }
+}

@@ -62,6 +62,7 @@
   "session_summary_done_for_now": "941232505cabb4788458b8b64e89a7d4e6c7a316609f473a87178095cd27daaa",
   "session_summary_done_in": "0453552a21c87b6d63c724d9c39cdb6900db4ac01163af94b6aed0eadd46aaa9",
   "session_summary_done_under_minute": "6f58646baa8440d8424184bd638f5e90a378eddb11027b4df0b3dcd0a57d2791",
+  "session_summary_down_from": "5aa89d067001f3517b1a399c87e3702186e94488683c0fa05519bb6eb313fb22",
   "session_summary_earned_today": "19118331f44e69d7436960fc7969c00d95b885a868e6b7e6b2266039649583e1",
   "session_summary_eyebrow": "e0c315089c4159ba863d293d0f7cddf0c6669cbb1dc116d962cd3a2b2de20dab",
   "session_summary_finish": "056e38234ed2a4a0a56ad83573bc96c566dbfeea354665700866dc23f7e79228",
@@ -83,6 +84,7 @@
   "session_summary_streak": "8d2eb01f755101782f06b856b76db43af618f5bd75358617dbd6ef7d795f0847",
   "session_summary_to_review": "a8bd048d3cd1d9fb2270c9e24c027221aa30fff9fa4ae6b28c5afdc5fc80aa43",
   "session_summary_tomorrow": "9076007757c181efe94f1b57d6c5d221a14738817320dc4d3217bd9e49e7e0c2",
+  "session_summary_up_from": "ec0beb23f5c676f4119f94715dce44370f93cb6c6c0a37d987b1fe6f7bcf40da",
   "session_topics_and_more": "e6fd058f6fd737dd9c3228eff9600f99405bb7db87d00081134c632ff32f53c0"
 }
 -->
@@ -161,6 +163,8 @@
     <string name="session_summary_brain_power">Beyin Gücü</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>
+    <string name="session_summary_up_from">%1$s düzeyinden yükseldi</string>
+    <string name="session_summary_down_from">%1$s düzeyinden düştü</string>
     <string name="session_summary_skills_rose">Gelişen beceriler</string>
     <string name="session_summary_tomorrow">Yarın</string>
     <string name="session_summary_earned_today">Bugün kazandıkların</string>

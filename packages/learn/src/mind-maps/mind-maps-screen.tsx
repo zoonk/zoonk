@@ -43,7 +43,7 @@ import {
   UnavailableMapRow,
 } from "./mind-map-index-rows";
 import { useMindMapPlace } from "./mind-map-resume";
-import { NotMadeYet, canMakeNow } from "./not-made-yet";
+import { NotMadeYet, canMakeNow, useShownStop } from "./not-made-yet";
 import { type MindMapsLibrary, useMindMapsLibrary } from "./use-mind-maps-library";
 
 export type { MindMapLimit } from "../_components/help-limit-notice";
@@ -99,6 +99,8 @@ function StudyLink({ goalId, study, view }: { goalId: string; study: string; vie
 function ChaptersTab({ hrefs, library, subject, tier }: IndexTabProps & { tier: EntitlementTier }) {
   const t = useExtracted();
   const { index, notMade } = splitChapters(library.page.chapters);
+  // The map a finished chapter gets is claimed like any other, so it waits while the maps are used up.
+  const stopped = useShownStop(library) !== null;
 
   const groups = groupBySubject(index).map((group) => ({
     ...group,
@@ -114,7 +116,11 @@ function ChaptersTab({ hrefs, library, subject, tier }: IndexTabProps & { tier: 
         <MindMapIndex groups={groups} label={t("Chapter maps")} opensAt={subject} />
       ) : (
         !notMade.some((chapter) => canMakeNow(chapter)) && (
-          <EmptyTab>{t("No chapter maps yet. Every chapter you finish gets one.")}</EmptyTab>
+          <EmptyTab>
+            {stopped
+              ? t("No chapter maps yet.")
+              : t("No chapter maps yet. Every chapter you finish gets one.")}
+          </EmptyTab>
         )
       )}
 
@@ -237,6 +243,7 @@ function countDeck({ page, tab }: { page: MindMapsPage; tab: MindMapTab }): numb
 export function MindMapsScreen({
   actions,
   hrefs,
+  listed,
   mindMaps,
   subject,
   tab,
@@ -244,6 +251,8 @@ export function MindMapsScreen({
 }: {
   actions: MindMapLibraryActions;
   hrefs: MindMapsHrefs;
+  /** The learner's sidebar lists the page (`hasMindMapsPage`), so from `lg` it has no way back. */
+  listed: boolean;
   mindMaps: MindMapsPage;
   /** The subject the page was opened from, whose maps start unfolded. */
   subject: string | null;
@@ -267,7 +276,14 @@ export function MindMapsScreen({
 
   return (
     <DetailLayout
-      bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mind maps")} />}
+      bar={
+        <LearnPageBar
+          back={{ href: hrefs.back }}
+          listed={listed ? "learner" : undefined}
+          root
+          title={t("Mind maps")}
+        />
+      }
       bottomBar={
         study && (
           <BottomBar>

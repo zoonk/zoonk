@@ -21,7 +21,8 @@ import { useFormatDuration } from "../_utils/time-format";
 import { useLogbook } from "./logbook-context";
 
 const DAYS_PER_WEEK = 7;
-const RINGS_CLASS = "flex w-full max-w-80 justify-between";
+/** The week's days spread across the column, as Today's and the Plan's weeks do. */
+const RINGS_CLASS = "flex w-full justify-between";
 const DAY_CLASS = "flex flex-col items-center gap-1.5";
 const DAY_LETTER_CLASS = "text-2xs font-mono uppercase";
 

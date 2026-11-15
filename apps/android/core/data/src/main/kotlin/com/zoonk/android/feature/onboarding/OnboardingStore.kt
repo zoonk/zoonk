@@ -68,6 +68,7 @@ import java.time.Clock
 import java.time.Instant
 import java.util.TimeZone
 import java.util.UUID
+import kotlin.coroutines.cancellation.CancellationException
 
 /** What a learner's plan or the server's pace refused; any other failure is [WriteOutcome.Failed]. */
 sealed interface Refusal {
@@ -200,10 +201,29 @@ class OnboardingStore(
     /**
      * The main goal's id. From a shared plan ([planId]) the goal follows that plan; a learner who
      * owns the plan gets their own goal back.
+     *
+     * A create from a draft ([draftId]) whose outcome this device doesn't know (cancelled, or failed with no
+     * refusal) may have made the goal, so the draft read before it is no longer trusted: it's read again.
      */
     suspend fun createGoals(
         input: GoalCreateInput,
         planId: String? = null,
+        draftId: String? = null,
+    ): WriteOutcome<String> {
+        val outcome =
+            try {
+                createGoalsWrite(input, planId)
+            } catch (e: CancellationException) {
+                draftId?.let { drafts[it].invalidate() }
+                throw e
+            }
+        if (outcome == WriteOutcome.Failed) draftId?.let { drafts[it].invalidate() }
+        return outcome
+    }
+
+    private suspend fun createGoalsWrite(
+        input: GoalCreateInput,
+        planId: String?,
     ): WriteOutcome<String> =
         write(setOf(DataDomain.Goals, DataDomain.LearningProfile, DataDomain.Allowance)) { session ->
             if (planId == null) {

@@ -19,7 +19,7 @@
   "missions_mock": "9a53915c56b7230f9126bb3db70ab6bdb492f3e6d190ad958246ba15d42a9db4",
   "missions_moment_all_done": "f684f61b963c73f18e47dfea320cd1a269dba8fdaa83a938d6515f0a8a130679",
   "missions_moment_done": "974df94039e9cb7f6e41803d4d6837452719837e0d9f164bf706a485f70bad9f",
-  "missions_moment_more": "3db600e7734a4bb3db55c33af96e4332780ba4e98699980e4ef466084a7800fb",
+  "missions_moment_more": "837ef07aa21688fc769af9b3a7b9280f614986dbb75a328e341539f38ade701e",
   "missions_moment_one_done": "bf3502cfe5bdbb354a891f9a5f2b347745ba142b085b7842267e9c7c7d324d0f",
   "missions_open_buddy": "67271dd5e7d7f4f4a6df60aa4d24b8735fadfde687808f5cd5fccd9378a3d2b3",
   "missions_open_call": "df9994a115b030c8b0583cd59165c16851aedca1d2040038a4bccc8c291ddb5c",
@@ -60,12 +60,11 @@
         <item quantity="many">Ukończono %d misji!</item>
         <item quantity="other">Ukończono %d misji!</item>
     </plurals>
-    <!-- %1$d is how many missions are left, %2$s the day's bonus, such as 50. -->
     <plurals name="missions_moment_more">
-        <item quantity="one">Jeszcze %1$d misja, by zdobyć +%2$s pkt Mocy Umysłu</item>
-        <item quantity="few">Jeszcze %1$d misje, by zdobyć +%2$s pkt Mocy Umysłu</item>
-        <item quantity="many">Jeszcze %1$d misji, by zdobyć +%2$s pkt Mocy Umysłu</item>
-        <item quantity="other">Jeszcze %1$d misji, by zdobyć +%2$s pkt Mocy Umysłu</item>
+        <item quantity="one">Jeszcze %1$d misja do +%2$s pkt Mocy Umysłu</item>
+        <item quantity="few">Jeszcze %1$d misje do +%2$s pkt Mocy Umysłu</item>
+        <item quantity="many">Jeszcze %1$d misji do +%2$s pkt Mocy Umysłu</item>
+        <item quantity="other">Jeszcze %1$d misji do +%2$s pkt Mocy Umysłu</item>
     </plurals>
     <string name="missions_just_done">Właśnie ukończona</string>
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->

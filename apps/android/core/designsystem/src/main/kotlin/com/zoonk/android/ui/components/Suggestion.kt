@@ -378,7 +378,7 @@ private fun Mark(size: Dp) {
             SuggestionMark.Done -> R.drawable.ic_check to colors.tertiary
             is SuggestionMark.Symbol -> mark.icon to colors.onSurfaceVariant
         }
-    Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(size), tint = tint)
+    Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(size * glyphScale()), tint = tint)
 }
 
 @Composable
@@ -424,7 +424,12 @@ fun SuggestionMenu(options: @Composable (done: () -> Unit) -> Unit) {
         ) {
             Text(stringResource(R.string.suggestion_other_options))
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Icon(painterResource(R.drawable.ic_expand_more), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+            Icon(
+                painterResource(R.drawable.ic_expand_more),
+                contentDescription = null,
+                modifier =
+                    Modifier.size(ButtonDefaults.IconSize * glyphScale()),
+            )
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) { options { open = false } }
     }

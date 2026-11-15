@@ -13,6 +13,7 @@ import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationFollower
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.AttachedSource
 import com.zoonk.android.feature.onboarding.GoalError
@@ -353,6 +354,12 @@ class StartGoalViewModel(
         viewModelScope.launch { loadRead() }
     }
 
+    /** Reads the card's draft again after that read failed, so the card can offer its create again. */
+    fun readDraftAgain() {
+        val id = draftId ?: return
+        viewModelScope.launch { store.drafts[id].refresh() }
+    }
+
     /** A fact that couldn't be saved keeps its editor open. */
     fun revise(
         field: String,
@@ -441,15 +448,16 @@ class StartGoalViewModel(
 
     fun isOpeningExplanation(draft: OnboardingDraft) = isCreating || store.wasSentHere(draft.id.toString())
 
+    /** A card creates only from a draft read since its last create whose outcome this device didn't learn. */
     fun create(
         input: GoalCreateInput,
         onCreated: (String) -> Unit,
     ) {
-        if (isCreating) return
+        if (isCreating || draftId?.let { store.drafts[it].freshState.value !is LoadState.Loaded } == true) return
         isCreating = true
         creationError = null
         viewModelScope.launch {
-            when (val outcome = store.createGoals(input, planId)) {
+            when (val outcome = store.createGoals(input, planId, draftId)) {
                 is WriteOutcome.Done -> {
                     onCreated(outcome.value)
                 }

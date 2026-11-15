@@ -2901,15 +2901,15 @@ msgid "You can still review and practice your mistakes."
 msgstr "Você ainda pode revisar e praticar o que você errou."
 
 #: src/lesson/access/lesson-access-screen.tsx
+msgctxt "4NMpnC"
+msgid "Start the lesson"
+msgstr "Começar a aula"
+
+#: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-errors.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "Assinar"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "4NMpnC"
-msgid "Start the lesson"
-msgstr "Começar a aula"
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/tutor-dock.tsx
@@ -3449,14 +3449,14 @@ msgid "Say it instead"
 msgstr "Prefiro falar"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "QuYUAL"
-msgid "The microphone is blocked. Type your answer instead."
-msgstr "O microfone está bloqueado. Digite sua resposta."
+msgctxt "iFYEjY"
+msgid "The microphone is blocked."
+msgstr "O microfone está bloqueado."
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "2Px63n"
-msgid "We can't use your microphone. Type your answer instead."
-msgstr "A gente não consegue usar seu microfone. Digite sua resposta."
+msgctxt "NTpdCz"
+msgid "We can't use your microphone."
+msgstr "A gente não consegue usar seu microfone."
 
 #: src/lesson/steps/summary-step.tsx
 msgctxt "RrCui3"

@@ -10,6 +10,7 @@
   "belt_gray": "7d4add97dd51d05550974960df8c5766fe97b1ab4099f0974db982fc223e5361",
   "belt_green": "a5e6f4ea55b35f1d19a4006885e1d9599e797139a6c651ffa895201df287a0a1",
   "belt_level": "6f0e4cb9e617436ceba71e1324c942b510dd17066184994714cc9b82df4ea7a0",
+  "belt_level_words": "0c2a7a6a15f4d83e1dd70ded057c46197b30950f8aec5644b346b05b2a44da79",
   "belt_orange": "1f63c0d16783148e7a1a00ab1653d2fc355c3d3d84223ee6ae8cf52ccc97dd30",
   "belt_purple": "1f0ba2f0a5f52773cd09215f39dda1a707e81656f643ca12647534eef42e225b",
   "belt_red": "fe93443f09d2cc8a014820bf1db79fa2e108e040049e1cc29b6e934dd6d4a7fe",
@@ -120,6 +121,7 @@
     <string name="belt_black">Cinturón negro</string>
     <!-- A belt and its number from 1 to 10, such as White belt 4. %1$s is the belt's name. -->
     <string name="belt_level">%1$s %2$s</string>
+    <string name="belt_level_words">Nivel %1$s</string>
     <string name="answer_tag_correct">Correcta</string>
     <string name="answer_tag_your_answer">Tu respuesta</string>
     <string name="answer_tag_your_guess">Tu suposición</string>

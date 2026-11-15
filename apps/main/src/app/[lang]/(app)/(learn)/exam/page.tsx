@@ -46,7 +46,7 @@ async function ExamContent() {
 
 export default function ExamPage() {
   return (
-    <Suspense fallback={<DetailSkeleton bar={<JourneyPageBar root />} />}>
+    <Suspense fallback={<DetailSkeleton bar={<JourneyPageBar listed root />} />}>
       <ExamContent />
     </Suspense>
   );

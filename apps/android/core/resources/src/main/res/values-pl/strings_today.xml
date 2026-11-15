@@ -67,6 +67,7 @@
   "today_notice_suggested_goal": "6d62fe7b550f30ef61127e00b77a49aeeb0f65a12280a1f5446ef67bb79b17da",
   "today_open_failed": "ed51c9ed21679393fed5986b2f88a00176790e358d79336dca44662dfe902228",
   "today_pace_lessons_to_catch_up": "f2cd327b81a9177428ad81edf8bb86ca41bbe1263620e0b9944ebae3ed82836f",
+  "today_past_date_exam_left": "d5d20f204a2d3ac40743dd817cbd8a318550e50b0217c5b0e066d3c804e52605",
   "today_paused_detail": "83b104f81cb9e7b7809b052f4f28a5c865dcd2436ae66c81d30596c2afe87ac4",
   "today_paused_goal": "2c041d7e45fdaff0675c34b561819b9f184e6abca5185974783eee3b943df509",
   "today_paused_this_goal": "7c5426d3d347644ab1f0c396b7be52ae43bf83cd027d1cac9dddf83390139fcd",
@@ -346,6 +347,12 @@
     <string name="today_choose_focus">Wybierz, na czym się skupić</string>
     <string name="today_study_everything">Przerób cały materiał</string>
     <string name="today_keep_studying_after_exam">Ucz się dalej po egzaminie</string>
+    <plurals name="today_past_date_exam_left">
+        <item quantity="one">Została ci %d lekcja. Chcesz dalej się uczyć czy zarchiwizować ten cel?</item>
+        <item quantity="few">Zostały ci %d lekcje. Chcesz dalej się uczyć czy zarchiwizować ten cel?</item>
+        <item quantity="many">Zostało ci %d lekcji. Chcesz dalej się uczyć czy zarchiwizować ten cel?</item>
+        <item quantity="other">Zostało ci %d lekcji. Chcesz dalej się uczyć czy zarchiwizować ten cel?</item>
+    </plurals>
     <string name="today_missed_days_title">Kilka dni bez nauki</string>
     <!-- Keeps the learner's time a day as it is. -->
     <string name="today_keep_my_time">Zachowaj obecny czas nauki</string>

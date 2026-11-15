@@ -13,6 +13,7 @@
   "checkpoint_finishing": "d458633fa7da065e9d5638a8908ebb1ff3cccae59941a17673d8be168519f63a",
   "checkpoint_held": "0bf2bb5f773e00718f2575678c0497701e39f05085b93e6d4f461a71aededa18",
   "checkpoint_lost_line": "43d209ad801229a7ba896ed4c4298624dff1fe0f3e7ce766b7c5736f8ade0aa6",
+  "checkpoint_needed_to_win": "bcef2f3ee43cc7f4e1d02e93a0615e1d6f91fe030851cfd0b0505e39c6acdc75",
   "checkpoint_new_try_next": "543381998c9efa29b47eeb1a938a29425c0aa0b02dc96d818103860daf46d5f0",
   "checkpoint_new_try_tomorrow": "d1a27500982f2736d9258fd09b2308b36fdaab7961e2564f98ec4dd81f1dcd24",
   "checkpoint_next": "965f829ef95291739df071b5995b86d2bdbbab9f49de22927e469e551012d120",
@@ -40,7 +41,6 @@
   "checkpoint_review": "c4f0c6da627b8a4c7f7b7a2dbb9be63a057cf81594dc743de0e14a8fc1139b8a",
   "checkpoint_rewards": "3d8fdad80047dbc54b28e5fc7c6bcd1052df02fcf84b530452724022464822aa",
   "checkpoint_right_to_win": "a9defa2ce0053b9a00f82771019cb150c969086684b14320f272d14226803a97",
-  "checkpoint_right_to_win_of": "959261d64bce45de5bf45ad60df03e997e1581c9a729f9324c9379aaeea0ae2c",
   "checkpoint_see_result": "b1a363ae6ce61691576970efd5329c38f578d9dfe98195e5c7a7acba8e13bb8c",
   "checkpoint_shield": "3a56e50164fb8b973dafd1b88082c4bf2bd5354204ebafb7b1c44cb7a1bf72ee",
   "checkpoint_shield_value": "8db880d9c2d564482d9d9c46af44290d7969c612543e818e6e6cd6efc9371091",
@@ -120,11 +120,10 @@
     <string name="checkpoint_weekly_done">Desafío semanal completado</string>
     <string name="checkpoint_beat">¡Venciste al Tramposo!</string>
     <string name="checkpoint_not_this_time">Esta vez no</string>
-    <!-- %1$d right answers were needed out of %2$d questions. -->
-    <plurals name="checkpoint_right_to_win_of">
-        <item quantity="one">Acertar %1$d de %2$d para ganar</item>
-        <item quantity="many">Acertar %1$d de %2$d para ganar</item>
-        <item quantity="other">Acertar %1$d de %2$d para ganar</item>
+    <plurals name="checkpoint_needed_to_win">
+        <item quantity="one">Necesitabas %d respuesta correcta para ganar.</item>
+        <item quantity="many">Necesitabas %d respuestas correctas para ganar.</item>
+        <item quantity="other">Necesitabas %d respuestas correctas para ganar.</item>
     </plurals>
     <string name="checkpoint_rewards">Recompensas</string>
     <!-- %1$s is the phase's number. -->

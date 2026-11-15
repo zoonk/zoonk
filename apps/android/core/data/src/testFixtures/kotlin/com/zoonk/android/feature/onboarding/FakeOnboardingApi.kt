@@ -175,8 +175,14 @@ class FakeOnboardingApi : OnboardingApi {
         id: String,
     ): OnboardingDraft {
         drafts += id
+        draftGate?.await()
+        draftFailure?.let { throw it }
         return draft
     }
+
+    /** Holds each draft read until it completes; [draftFailure] fails them. */
+    var draftGate: CompletableDeferred<Unit>? = null
+    var draftFailure: ApiException? = null
 
     override suspend fun resume(session: AuthenticatedSession) = OnboardingResume(resume = null)
 

@@ -42,7 +42,9 @@ function readQuery(query: Awaited<Props["searchParams"]>) {
 async function NotebookBar() {
   const t = await getExtracted();
 
-  return <LearnPageBar back={{ href: "/today" }} root title={t("Mistakes notebook")} />;
+  return (
+    <LearnPageBar back={{ href: "/today" }} listed="learner" root title={t("Mistakes notebook")} />
+  );
 }
 
 async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {

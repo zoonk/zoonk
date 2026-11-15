@@ -19,7 +19,7 @@
   "missions_mock": "eaeff5fd60f94dfa192336fb9f123dbda945930cefd46da82f9832d0f7182758",
   "missions_moment_all_done": "63181cd32f719c385286d1960d580ed7f3f88c9eec8edfcaceed824caea39906",
   "missions_moment_done": "db8b9af0f4c83a7097255ec32e1cb45eb9c46e08e003a0dc421204b54aefc3e4",
-  "missions_moment_more": "5f02ab3a56ea6a82b913d34de90acb20347cf327c088046340814cae0cc2bd95",
+  "missions_moment_more": "52185533aa6bc47111ea72d7597063226a9b56f3d78de2b59f98d2881656dea7",
   "missions_moment_one_done": "efef143686878b7aff1101f57dc6554e7b4f8b72e8fb4f25715363d362ce7266",
   "missions_open_buddy": "2c244c9680bce637de7201e29effcf2d21f02a81de0cb5192265f579c25e7ce2",
   "missions_open_call": "90bff9dd0e09a8d94602c0d6cfb82d2479d431c4f4e1a7ddbc52bec57a25080a",
@@ -59,11 +59,10 @@
         <item quantity="many">%d missioni completate!</item>
         <item quantity="other">%d missioni completate!</item>
     </plurals>
-    <!-- %1$d is how many missions are left, %2$s the day's bonus, such as 50. -->
     <plurals name="missions_moment_more">
-        <item quantity="one">Ancora %1$d per +%2$s punti di Potenza Mentale</item>
-        <item quantity="many">Ancora %1$d per +%2$s punti di Potenza Mentale</item>
-        <item quantity="other">Ancora %1$d per +%2$s punti di Potenza Mentale</item>
+        <item quantity="one">Ancora %1$d missione per +%2$s punti di Potenza Mentale</item>
+        <item quantity="many">Ancora %1$d missioni per +%2$s punti di Potenza Mentale</item>
+        <item quantity="other">Ancora %1$d missioni per +%2$s punti di Potenza Mentale</item>
     </plurals>
     <string name="missions_just_done">Appena completata</string>
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->

@@ -111,7 +111,15 @@ export function CompletedLessonsScreen({
 
   return (
     <DetailLayout
-      bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Completed lessons")} />}
+      bar={
+        <LearnPageBar
+          back={{ href: hrefs.back }}
+          // The sidebar lists the page once a lesson is done: the same runs this list reads.
+          listed={lessons.length > 0 ? "learner" : undefined}
+          root
+          title={t("Completed lessons")}
+        />
+      }
       measure="list"
       data-slot="completed-lessons"
     >

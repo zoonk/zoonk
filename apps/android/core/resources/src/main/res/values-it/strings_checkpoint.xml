@@ -13,6 +13,7 @@
   "checkpoint_finishing": "2f0297e3cd88757eeb44a4171d93c8b3ae368dbac9aa1ce2a12fbf8a9e7078d1",
   "checkpoint_held": "47b152cd1341b00d8f79fadd2b03629ba74222977c0f99e1e495b2dfdbebdb92",
   "checkpoint_lost_line": "ab274b7e6e085a15a92260e64e3304f23ee41a87d66941b55c8bbcaa377bdbdf",
+  "checkpoint_needed_to_win": "34159bbb00ab45d75ec3927ea3539b43be3e9eef9d40a6152345dd664c942f3d",
   "checkpoint_new_try_next": "e68fcae2c56972b385e0892c817102750206487945a9f9347b885fd100eb898c",
   "checkpoint_new_try_tomorrow": "01f61a59d7b29ef9881550ce06d8ced59ae20d0e594e67de6865aa326d4e2110",
   "checkpoint_next": "3557ad0d9b916c119ba89a522682a851be945f6160950cce59df149130af3d43",
@@ -40,7 +41,6 @@
   "checkpoint_review": "724b840140d7d037e505a562d3c50d70e949cecad8d285ffa416fccc65b27b63",
   "checkpoint_rewards": "f7a96c2738363f1694b54eab6d4ec0878039898b19b21aaceb6a26018c322c85",
   "checkpoint_right_to_win": "805d0699297a1bb5c721942e0f4f2fab400c1c996fd163c5f95fd65c8c16915c",
-  "checkpoint_right_to_win_of": "4d7893eb30146fcb6660fde98c06a73e6764db6cdb2d8ce35fe3151a262dcd58",
   "checkpoint_see_result": "6eb58adc031a9b43e27d15445832424230836e84df8e2e7cd2b9390a7ed2a9af",
   "checkpoint_shield": "c569069ac9fe3776afab03ac3b9d564fe0ae5a7b7218551deb1465e6be087dff",
   "checkpoint_shield_value": "d6734d8feecd03477ad73d8b134ef57da85b3144d0a4dd0ad68fd3d5006b1c69",
@@ -120,11 +120,10 @@
     <string name="checkpoint_weekly_done">Sfida settimanale completata</string>
     <string name="checkpoint_beat">Hai battuto il Briccone!</string>
     <string name="checkpoint_not_this_time">Non questa volta</string>
-    <!-- %1$d right answers were needed out of %2$d questions. -->
-    <plurals name="checkpoint_right_to_win_of">
-        <item quantity="one">%1$d risposta giusta su %2$d per vincere</item>
-        <item quantity="many">%1$d risposte giuste su %2$d per vincere</item>
-        <item quantity="other">%1$d risposte giuste su %2$d per vincere</item>
+    <plurals name="checkpoint_needed_to_win">
+        <item quantity="one">Ti serviva %d risposta corretta per vincere.</item>
+        <item quantity="many">Ti servivano %d risposte corrette per vincere.</item>
+        <item quantity="other">Ti servivano %d risposte corrette per vincere.</item>
     </plurals>
     <string name="checkpoint_rewards">Ricompense</string>
     <!-- %1$s is the phase's number. -->

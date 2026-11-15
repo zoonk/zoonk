@@ -22,13 +22,15 @@ function GuessWorkings({ workings }: { workings: Workings }) {
   const format = useFormatNumber();
 
   return (
-    <ul className={cn(ACTIVITY_CARD_CLASS, "flex flex-col gap-1 text-sm tabular-nums")}>
+    <ul className={cn(ACTIVITY_CARD_CLASS, "grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm")}>
       {workings.map((working) => {
         const value = evaluateFormula(working.expression);
 
         return (
-          <li className="flex gap-2" key={working.label}>
-            <span className="font-medium">{value.ok ? format(value.value) : ""}</span>
+          <li className="col-span-2 grid grid-cols-subgrid" key={working.label}>
+            <span className="text-end font-mono font-medium tabular-nums">
+              {value.ok ? format(value.value) : ""}
+            </span>
             <span className="text-muted-foreground">{working.label}</span>
           </li>
         );

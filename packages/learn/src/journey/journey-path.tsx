@@ -13,7 +13,14 @@ import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
 import { CurrentPhaseMark } from "./current-phase-mark";
 import { type JourneyPathLinks } from "./journey-links";
-import { CheckpointRow, MockRow, PathRowBody, usePhaseMocksLine } from "./journey-phase-events";
+import {
+  CheckpointRow,
+  MockRow,
+  PATH_ROW_CLASS,
+  PATH_ROW_LEADING_CLASS,
+  PathRowBody,
+  usePhaseMocksLine,
+} from "./journey-phase-events";
 import { PhaseWhen } from "./phase-when";
 import { useRoadmapFinish } from "./use-roadmap";
 
@@ -23,7 +30,7 @@ function PathMarker({ state }: { state: NodeState }) {
   return (
     <span
       aria-hidden="true"
-      className="absolute inset-s-0 top-0 z-10 flex h-11 w-4 items-center justify-center"
+      className={cn(PATH_ROW_LEADING_CLASS, "relative z-10")}
       data-slot="path-row-mark"
     >
       {state === "done" && <DoneMark />}
@@ -81,11 +88,6 @@ function PhaseTitle({ note, phase }: { note?: string | null; phase: PlanPhaseVie
   );
 }
 
-const HEADER_CLASS = "flex min-h-11 items-center gap-3 py-3 text-left";
-
-const HEADER_INTERACTIVE_CLASS =
-  "focus-visible:ring-ring/50 hover:bg-muted/70 row-bleed rounded-lg outline-none transition-colors focus-visible:ring-[3px]";
-
 function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
   const { plan } = usePlanScreen();
   const mocksLine = usePhaseMocksLine();
@@ -95,51 +97,44 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
   const hasEvents = isCurrent && (checkpoint !== null || mocks.nextDate !== null);
 
   return (
-    <li
-      aria-current={isCurrent ? "step" : undefined}
-      className="nested-rows relative pb-3"
-      data-slot="path-row"
-      data-state={state}
-    >
+    <li aria-current={isCurrent ? "step" : undefined} className="relative pb-3" data-state={state}>
       <PathLine walked={state === "done"} />
-      <PathMarker state={state} />
 
-      <div className="flex min-w-0 flex-col">
-        <div className={HEADER_CLASS}>
-          <PhaseTitle
-            note={
-              state === "upcoming" && mocks.count > 0
-                ? mocksLine({
-                    count: mocks.count,
-                    forNextSitting,
-                    nextSitting: plan.schedule.nextSitting,
-                  })
-                : null
-            }
-            phase={phase}
-          />
-          <ListRowChevronSpace />
-        </div>
-
-        {hasEvents && (
-          <ul className="flex flex-col pb-1.5" data-slot="path-nested">
-            {mocks.nextDate && (
-              <li>
-                <MockRow
-                  challengeHref={links.challenge}
-                  date={mocks.nextDate}
-                  examHref={links.exam}
-                />
-              </li>
-            )}
-            {checkpoint && (
-              <li>
-                <CheckpointRow checkpoint={checkpoint} links={links} />
-              </li>
-            )}
-          </ul>
-        )}
+      <div className={PATH_ROW_CLASS} data-slot="path-row">
+        <PathMarker state={state} />
+        <PhaseTitle
+          note={
+            state === "upcoming" && mocks.count > 0
+              ? mocksLine({
+                  count: mocks.count,
+                  forNextSitting,
+                  nextSitting: plan.schedule.nextSitting,
+                })
+              : null
+          }
+          phase={phase}
+        />
+        <ListRowChevronSpace />
       </div>
+
+      {hasEvents && (
+        <ul className="nested-rows flex flex-col pb-1.5" data-slot="path-nested">
+          {mocks.nextDate && (
+            <li>
+              <MockRow
+                challengeHref={links.challenge}
+                date={mocks.nextDate}
+                examHref={links.exam}
+              />
+            </li>
+          )}
+          {checkpoint && (
+            <li>
+              <CheckpointRow checkpoint={checkpoint} links={links} />
+            </li>
+          )}
+        </ul>
+      )}
     </li>
   );
 }
@@ -170,20 +165,21 @@ function FinishNode({ continues, examHref }: { continues: boolean; examHref: str
   );
 
   return (
-    <li
-      className={cn("nested-rows relative", continues && "pb-3")}
-      data-slot="path-row"
-      data-state="finish"
-    >
+    <li className={cn("relative", continues && "pb-3")} data-state="finish">
       {continues && <PathLine walked={false} />}
-      <PathMarker state="finish" />
       {examHref ? (
-        <LearnLink className={cn(HEADER_CLASS, HEADER_INTERACTIVE_CLASS)} href={examHref}>
+        <LearnLink
+          className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}
+          data-slot="path-row"
+          href={examHref}
+        >
+          <PathMarker state="finish" />
           {content}
           <RowChevron />
         </LearnLink>
       ) : (
-        <div className={HEADER_CLASS}>
+        <div className={PATH_ROW_CLASS} data-slot="path-row">
+          <PathMarker state="finish" />
           {content}
           <ListRowChevronSpace />
         </div>

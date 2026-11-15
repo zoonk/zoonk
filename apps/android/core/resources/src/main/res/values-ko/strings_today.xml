@@ -67,6 +67,7 @@
   "today_notice_suggested_goal": "20a413c91eba60d3f2ab0362552891877b14031f5157a6ef98a81a1d3aaad124",
   "today_open_failed": "49c36bb3905fff33030eb302fb63e588769d3f35bf64846de597a0217970fe66",
   "today_pace_lessons_to_catch_up": "6a78c4a04c119cda88db30a2688b60352aa682daa1ec8cce1cf789486ecffe45",
+  "today_past_date_exam_left": "a84a5fcdcf0d54f6b615355c4a83e71cf99de3ea21bc91a599d839c282994859",
   "today_paused_detail": "ed968d56b7135a02596d525c1d5ac35bec20878f18286c8221dc375353d9b0ce",
   "today_paused_goal": "977936405b061b4785566b4cbbe22e9578a833f5457f01aa0213ecb4d1040117",
   "today_paused_this_goal": "7ea75576918fb8d3c8c953ea84027d1c48413b3d3ab57af78e76e19b72b0d4d7",
@@ -322,6 +323,9 @@
     <string name="today_choose_focus">집중할 과목 선택하기</string>
     <string name="today_study_everything">모두 공부하기</string>
     <string name="today_keep_studying_after_exam">시험 후에도 계속 공부하기</string>
+    <plurals name="today_past_date_exam_left">
+        <item quantity="other">레슨이 %d개 남았어요. 계속 공부할까요, 아니면 이 목표를 보관할까요?</item>
+    </plurals>
     <string name="today_missed_days_title">며칠 공부를 쉬었어요</string>
     <!-- Keeps the learner's time a day as it is. -->
     <string name="today_keep_my_time">학습 시간 유지하기</string>

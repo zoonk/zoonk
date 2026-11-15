@@ -19,7 +19,7 @@
   "missions_mock": "acc1fd99e69389cd5973b146285fdc1ed4a14a803afbc734725c1e64777e1a01",
   "missions_moment_all_done": "dbd505f319c1e3b982a3c26ec27c06e34d3e8eddc51a42d066ab3b51693f6072",
   "missions_moment_done": "a7e37da84d316f4f07df4449bee3a2752c04fdfd227a93c0c324c689a8ac9a8c",
-  "missions_moment_more": "56f47399383bc974539fb6a90984ea732d6e9bcc1dce10c7d5469d87b4e26ca1",
+  "missions_moment_more": "1d6299d18f364701d43b976f3ea64799aa7cfe94e0dd0db5591ef300c55c18a6",
   "missions_moment_one_done": "ce7ef18cf995e85d5b62593c278810e8e227e627ae1264b40ef6d67d2b0a8568",
   "missions_open_buddy": "1c6a361b17ca7d4a1762148d6802e6fe1eda80bcde7c4f4ca7994fb22ecd3851",
   "missions_open_call": "044e0275aaf2d17e4601436e6dbd3c36cbf8e286d724a0c5d54b3596f86464d5",
@@ -57,9 +57,8 @@
     <plurals name="missions_moment_done">
         <item quantity="other">%d個のミッションを達成しました！</item>
     </plurals>
-    <!-- %1$d is how many missions are left, %2$s the day's bonus, such as 50. -->
     <plurals name="missions_moment_more">
-        <item quantity="other">あと%1$d個で脳力+%2$s</item>
+        <item quantity="other">あと%1$dミッションで脳力+%2$s</item>
     </plurals>
     <string name="missions_just_done">たった今達成</string>
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->

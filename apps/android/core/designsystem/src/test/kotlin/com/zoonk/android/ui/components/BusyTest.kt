@@ -123,8 +123,10 @@ class BusyTest {
     @Config(qualifiers = "de-w320dp-h900dp-xhdpi", fontScale = 2f)
     fun trailingSpinnerKeepsItsSpotBesideALongLabel() {
         var busy by mutableStateOf(false)
+        var scale = 0f
         compose.setContent {
             ZoonkTheme {
+                scale = glyphScale()
                 Column {
                     for (direction in LayoutDirection.entries) {
                         CompositionLocalProvider(LocalLayoutDirection provides direction) {
@@ -146,7 +148,8 @@ class BusyTest {
         compose.waitForIdle()
 
         val widths = spinners().fetchSemanticsNodes().map { with(compose.density) { it.boundsInRoot.width.toDp() } }
-        assertEquals(listOf(ButtonDefaults.IconSize, ButtonDefaults.IconSize), widths)
+        // The glyph's slot at this text size: the spinner keeps it, in both directions.
+        assertEquals(listOf(ButtonDefaults.IconSize * scale, ButtonDefaults.IconSize * scale), widths)
     }
 
     private fun heights() = WIDTHS.associateWith { compose.onNodeWithTag("row-$it").getUnclippedBoundsInRoot().height }

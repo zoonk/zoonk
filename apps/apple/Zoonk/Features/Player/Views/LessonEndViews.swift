@@ -175,7 +175,9 @@ struct LessonCompletionView: View {
   private var upNext: some View {
     if let block, let next = block.upNext {
       VStack(alignment: .leading, spacing: 8) {
-        Chip(Text("Up next", tableName: "Session", comment: "Over the session's next block"))
+        // Titled as the day's summary titles "Tomorrow" and a lost challenge "What's next".
+        SectionTitle(
+          Text("Up next", tableName: "Session", comment: "Over the session's next block"))
 
         BlockRow(
           block: next, view: nil, isNext: true, countsTowardMission: false, showsDetail: true)

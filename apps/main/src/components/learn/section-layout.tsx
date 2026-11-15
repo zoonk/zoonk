@@ -19,7 +19,10 @@ function useSectionParent({ hub, parents }: SectionPlaces): SectionLink | undefi
   return parents?.find((parent) => pathname.startsWith(`${parent.href}/`)) ?? hub;
 }
 
-/** A `root` section's pages are in the sidebar, so from `lg` only a page under a parent links back. */
+/**
+ * A `root` section's pages under its hub are in the sidebar, so from `lg` they have no way back;
+ * the hub (the Statistics overview) and a page under another parent keep theirs.
+ */
 export function SectionBarFrame({
   end,
   root,
@@ -27,14 +30,14 @@ export function SectionBarFrame({
 }: SectionPlaces & { end?: React.ReactNode; root?: boolean }) {
   const t = useExtracted();
   const parent = useSectionParent(places);
-  const isRoot = root && (!parent || parent === places.hub);
+  const listed = root && parent === places.hub;
 
   return (
     <LearnSectionBar
       back={{ href: "/today", label: t("Today") }}
       end={end}
       parent={parent && { href: parent.href, label: parent.title, tabs: parent === places.hub }}
-      root={isRoot}
+      listed={listed ? "learner" : undefined}
       title={parent ? undefined : places.hub.title}
     />
   );
