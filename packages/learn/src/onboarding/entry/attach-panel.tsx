@@ -8,8 +8,11 @@ import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { FileTextIcon, LinkIcon, UploadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
-import { type LimitText, toCapWords, useLimitText } from "../../_components/comes-back-words";
+import { toHelpLimit } from "../../_components/comes-back-words";
+import { HelpLimitNotice } from "../../_components/help-limit-notice";
 import { SURFACE_CLASS } from "../../_components/surface";
+import { useLearnRoutes } from "../../learn-context";
+import { LearnLink } from "../../learn-link";
 import {
   type AttachOutcome,
   type AttachedSource,
@@ -23,16 +26,14 @@ const ACCEPTED_FILES =
 
 const PANEL_CLASS = cn(SURFACE_CLASS, "flex flex-col gap-3 p-4");
 
+type NotAttached = Exclude<AttachOutcome, { status: "attached" }>;
+type AttachFailure = Exclude<NotAttached, { status: "limitReached" }>;
+
 function useAttachError() {
   const t = useExtracted();
 
-  return (outcome: Exclude<AttachOutcome, { status: "attached" }>): LimitText => {
+  return (outcome: AttachFailure): string => {
     switch (outcome.status) {
-      case "limitReached":
-        return toCapWords(outcome, {
-          day: t("No more material today"),
-          rolling: t("You've used your uploads"),
-        });
       case "slowDown":
         return t("You're adding material quickly. Try again in a few minutes.");
       case "unsupported":
@@ -117,19 +118,19 @@ export function AttachControls({ attach, autoFocus, language, onAttached }: Atta
   const t = useExtracted();
   const fileId = useId();
   const errorFor = useAttachError();
+  const routes = useLearnRoutes();
   const [pasting, setPasting] = useState<"link" | "text" | null>(null);
-  const [error, setError] = useState<LimitText | null>(null);
-  const errorText = useLimitText(error);
+  const [failure, setFailure] = useState<NotAttached | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const toggle = (way: "link" | "text") => {
-    setError(null);
+    setFailure(null);
     setPasting((previous) => (previous === way ? null : way));
   };
 
   const add = (run: () => Promise<AttachOutcome>) =>
     startTransition(async () => {
-      setError(null);
+      setFailure(null);
       const outcome = await run().catch((): AttachOutcome => ({ status: "failed" }));
 
       if (outcome.status === "attached") {
@@ -138,7 +139,7 @@ export function AttachControls({ attach, autoFocus, language, onAttached }: Atta
         return;
       }
 
-      setError(errorFor(outcome));
+      setFailure(outcome);
     });
 
   return (
@@ -217,12 +218,20 @@ export function AttachControls({ attach, autoFocus, language, onAttached }: Atta
         </p>
       )}
 
-      {errorText.text && (
-        <p
-          className={cn("text-destructive-text text-sm", errorText.hidden && "invisible")}
-          role="alert"
-        >
-          {errorText.text}
+      {failure?.status === "limitReached" && (
+        <div role="alert">
+          <HelpLimitNotice
+            kind="uploads"
+            limit={toHelpLimit(failure)}
+            linkComponent={LearnLink}
+            routes={routes}
+          />
+        </div>
+      )}
+
+      {failure && failure.status !== "limitReached" && (
+        <p className="text-destructive-text text-sm" role="alert">
+          {errorFor(failure)}
         </p>
       )}
     </>
