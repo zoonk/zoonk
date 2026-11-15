@@ -34,9 +34,15 @@ export function PathRowBody({
   value?: React.ReactNode;
 }) {
   return (
-    <span className={PATH_ROW_BODY_CLASS}>
-      <span className="flex min-w-0 flex-col text-pretty">{children}</span>
-      {value}
+    <span className={PATH_ROW_BODY_CLASS} data-slot="path-row-body">
+      <span className="flex min-w-0 flex-col text-pretty" data-slot="path-row-words">
+        {children}
+      </span>
+      {value && (
+        <span className="flex" data-slot="path-row-value">
+          {value}
+        </span>
+      )}
     </span>
   );
 }
