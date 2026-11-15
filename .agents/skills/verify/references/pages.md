@@ -100,12 +100,57 @@ A **fail** is fixed, or left only with the reason in your report. A **look at** 
 | Never settled                    | Still changing or loading 10 s after it loaded (look at)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | A poll, a loop or an endless animation; the load's other numbers are partial. Find what keeps changing in the paints.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | Accessibility                    | axe-core serious or critical, or `Zoonk tap target (44 px)` with the measured size for an undersized target (not the parts of Today's day bar, a [granted exception](../../zoonk-design/references/craft.md#exceptions-the-user-granted)), on a device asking for more contrast                                                                                                                                                                                                                                                                                                                                                                                                                | The same rules the player's browser tests apply (`packages/testing/src/accessibility`).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
+## Alignment
+
+Alignment is measured, not looked at. Every load reads the shared pieces that `scripts/verify/alignment-table.mts` declares (lists and their rows, onboarding's choices, the sidebar, the Plan's roadmap and path) and checks how their parts line up. Failures come only from these declarations, never from a guess about the page. The run writes `alignment.json` beside `report.json`, lists the findings in `report.md`, and prints the verdict as its last line; a `FAIL` fails the run:
+
+```text
+### Failing: declared relationships
+
+- **end-edge**: a row of plan-roadmap "Phase 1 of 5 · The math physics " ends short of the group's end edge
+  - /plan · phone touch: "Phase 1 of 5 · The math physics " ends at 346, the edge is at 374 [28 px]; <span> (16×16) draws nothing and holds that room
+
+FAIL: 1 unresolved; scenarios not listed yet; 0 discovery leads; 0 not measured
+```
+
+`pnpm verify:alignment <file or folder>... [--write]` judges saved captures the same way, with no server: an `alignment.json`, one capture, or a folder holding them, from any platform. `--write` puts the findings and the summary back into each `alignment.json` it read. It exits 0 when nothing fails, 1 when a relationship fails or a declared part wasn't measured, and 2 when an input can't be read or isn't a capture it reads (another version, the wrong unit for its platform, a missing field).
+
+**Read a failure** by its three parts: the rule and the piece (`end-edge`, `plan-roadmap`), where it showed (screen, size and pointer, and the rows), and the number against its tolerance (`[28 px]`). Each fault prints once, with its instances under it. When something holds the room and draws nothing (an empty slot, a hidden button, an empty key cell), the finding names it: that element is usually the fault. Fix it in the piece, so every screen gets the fix.
+
+| Relationship                | Holds when                                                                                                                                                                                            | Tolerance |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| `label-start`, `lead-start` | Every label (or lead) of a group starts on one edge, read by its ink; a value stacked under its label at large text starts there too                                                                  | 1 px      |
+| `mark-axis`                 | Every mark of a group is centered on one vertical line                                                                                                                                                | 1 px      |
+| `end-edge`                  | A row's last drawn part (its end glyph, or its value when it has none) ends on the group's end edge, compared by ink, never a glyph's box                                                             | 1 px      |
+| `gap`                       | Two drawn neighbors are the gap the piece lays out apart                                                                                                                                              | 1 px      |
+| `type`                      | Every part of one role uses one type token; values compare only where they hold figures, since a word in a date's place ("Won") has its own face                                                      | exact     |
+| `line`                      | One line of a row, as craft [E5](../../zoonk-design/references/craft.md#e5-an-icon-and-its-text-share-a-line) and [E6](../../zoonk-design/references/craft.md#e6-one-line-one-middle) place each part | 0.5 px    |
+| `one-filled`                | One filled action on the surface on top (the page, or a covering dialog or sheet); a disabled one counts, since it is drawn in the main action's place                                                | 1         |
+
+**Not measured fails.** A declared piece promises its parts, so a part the read can't measure is a failing record, never a pass: a group with no rows found, a row with no measured label, a part whose ink or type token wasn't read, rows side by side (start, end and gap assume one stack), a piece the table doesn't name, a group drawn at another size than it is laid out (a transform or a zoom), and a text with no cap height to read, such as Japanese drawn by a fallback face. Make the part measurable; don't remove the declaration.
+
+**Discovery leads** print apart and never fail: an inferred group's odd one out, room outside the declared pieces that something holds and draws nothing, cut-off text and the state walk's leads. Look at each. One you confirm as a fault is fixed together with the declaration that makes it fail next time.
+
+**When you add or change a shared piece:**
+
+- Name its parts with `data-slot` (group, rows, and their mark, lead, label, note, value and end) as the table's selectors read them; on Apple, the shared row's `layoutRow` and `layoutPart` ([measuring the Apple app](apple.md#layout-capture)).
+- Declare the piece and the relationships its design holds in `PIECES`. A relationship left out is never measured, so leave one out only with the reason beside it, as `journey-path` does for `gap` and `type`.
+- Give a button its piece draws more than once the same `data-action-name`, so `one-filled` counts it once.
+- Never loosen a tolerance, drop a relationship or add an exception to pass. Each tolerance is the measured line between what nobody saw and what someone did. An exception names the rule, the piece, the scenario and the configuration in `EXCEPTIONS`, and only the user grants one.
+
+**What it can't see,** as the tool states:
+
+- It reads the states you load. A state behind a tap is measured only where a run reaches and captures it.
+- The web's read doesn't enter iframes or shadow roots, and doesn't see what only a pseudo-element (`::before`, `::after`) draws.
+- `one-filled` counts a control as filled only when the kit's button variants draw it (`--button-variant`). The same action offered again counts once only when it has the same words and the same target: a link to the same place, or a button with the same `data-action-name`. Every other filled button counts, one per row of a list included. The name is trusted: two buttons with one name count as one even when they do different things.
+- A capture with nothing declared in it passes, which proves nothing about the screen.
+
 ## What it can't tell you
 
 - **Whether the change does what it should.** It loads pages; it doesn't use them. Section 3 of the skill does.
 - **Responsiveness to a real tap (INP), re-renders and Suspense boundaries.** Blocking time is the load's share; drive the interaction, then use `agent-browser` (`vitals`, `react renders start|stop`, `react suspense`), or record a Chrome DevTools performance trace.
 - **Screens behind a tap**, such as dialogs, sheets, the lesson player and results. Reach them in the walk and screenshot them there.
-- **Taste.** It saves the screenshots and measures some of craft; you look at every screenshot with zoonk-design's taste bar, and an agent that didn't build the screen does the [craft read](../../zoonk-design/SKILL.md#the-craft-read). Craft is measured at load in the first color scheme, plus X3's walk: states it can't reach without submitting (a save, a check that calls the server, a busy button, a lesson's answer and result, a session's end), focus rings and the rules without a check here (E4, E6, E7, E9, S3, S5, H2, H4, H5, Z2, Z4, T2 to T6, I1, I5, D1 to D4, X1, X2, R1) aren't. Z3 has only the 44 px target check, the behavior rules only what the key and panel rows above list, and I4 and I6 only [lint](#checks-on-the-source).
+- **Taste.** It saves the screenshots and measures some of craft; you look at every screenshot with zoonk-design's taste bar, and an agent that didn't build the screen does the [craft read](../../zoonk-design/SKILL.md#the-craft-read). Craft is measured at load in the first color scheme, plus X3's walk: states it can't reach without submitting (a save, a check that calls the server, a busy button, a lesson's answer and result, a session's end), focus rings and the rules without a check here (E4 and E6 outside the [declared pieces](#alignment), E7, E9, S3, S5, H2, H4, H5, Z2, Z4, T2 to T6, I1, I5, D1 to D4, X1, X2, R1) aren't. Z3 has only the 44 px target check, the behavior rules only what the key and panel rows above list, and I4 and I6 only [lint](#checks-on-the-source).
 - **Field data.** These are lab numbers on this machine. Compare before and after on the same setup, and don't compare a loaded machine's run with a quiet one's.
 
 ## Compare shared roles

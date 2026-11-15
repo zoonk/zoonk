@@ -332,6 +332,7 @@
   "onboarding_reveal_save_note": "59bd2f6d256dff3187624187e27ea04529810dd16aa75133ff2b4ff0496b3da3",
   "onboarding_reveal_start": "223dae6a00723f726799c58e31d093829a1fe71f3dc85acc8c3e2beb982a8d6e",
   "onboarding_reveal_start_here": "af10573729eec6a7cb436ea1dcbf428c1f4a4e9ea19901650a4ce148455b7c9c",
+  "onboarding_reveal_study_days": "b0a3940f880087012292c4bafbbf43879dc3c58e425aa892fd5fe3d68338b3dc",
   "onboarding_reveal_today": "a5bc42c755fa3e927e80e317cc20e72029df0ed46537d4b73be2275802a73700",
   "onboarding_reveal_topics": "d7ef0a18a6d24fba04dd5742f27111a390b7db19770d0abb84d5837be7e3cc45",
   "onboarding_reveal_topics_all_planned": "e788f9c2c48d2441ddb8c79914d81e35d37d3ce84de58b052916254c907e834a",
@@ -1019,6 +1020,13 @@
         <item quantity="few">%d dni</item>
         <item quantity="many">%d dni</item>
         <item quantity="other">%d dni</item>
+    </plurals>
+    <!-- Over the plan's first week: how many of its days the learner studies, today among them. -->
+    <plurals name="onboarding_reveal_study_days">
+        <item quantity="one">%d dzień nauki</item>
+        <item quantity="few">%d dni nauki</item>
+        <item quantity="many">%d dni nauki</item>
+        <item quantity="other">%d dni nauki</item>
     </plurals>
     <string name="onboarding_schedule_title">Ile czasu dziennie możesz poświęcić na naukę?</string>
     <string name="onboarding_full_course">Uczysz się całego materiału, nawet po egzaminie</string>

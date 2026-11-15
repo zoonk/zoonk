@@ -297,24 +297,32 @@ fun specialtyChoice(subject: String? = null) =
 
 fun revealDaysOf(): String {
     val today = LocalDate.now()
-    val titles =
+    // A week as the planner writes one: a lesson most days, a busy day with more kinds than the row shows, and a rest day.
+    val days =
         listOf(
-            "Songs and calls",
-            "Pitch, rhythm and tone",
-            "Who sings, and when",
-            "The dawn chorus",
-            "Calls that warn",
-            "Listening in layers",
+            listOf("lesson" to "Songs and calls"),
+            listOf("lesson" to "Pitch, rhythm and tone"),
+            listOf(
+                "lesson" to "Who sings, and when",
+                "lesson" to "The dawn chorus",
+                "review" to "What you already know",
+                "checkpoint" to "Check what you know",
+                "review" to "Songs and calls",
+            ),
+            emptyList(),
+            listOf("lesson" to "Calls that warn"),
+            listOf("lesson" to "Listening in layers"),
         )
-    return titles
-        .mapIndexed { index, title ->
-            """{"date":"${today.plusDays(
-                index.toLong() + 1,
-            )}","items":[{"chapterId":null,"id":null,"kind":"lesson","lessonId":"${"019a482c-6a00-7000-8000-00000000002$index"}",
-          "minutes":6,"requiresPlus":false,"scheduledFor":"${today.plusDays(
-                index.toLong() + 1,
-            )}","skillId":null,"status":"todo","title":"$title","writing":false}],
-          "minutes":6,"mockFunding":null,"state":"${if (index == 0) "today" else "upcoming"}"}"""
+    return days
+        .mapIndexed { index, items ->
+            val date = today.plusDays(index.toLong() + 1)
+            val entries =
+                items.mapIndexed { position, (kind, title) ->
+                    """{"chapterId":null,"id":null,"kind":"$kind","lessonId":"019a482c-6a00-7000-8000-0000000002$index$position",
+          "minutes":6,"requiresPlus":false,"scheduledFor":"$date","skillId":null,"status":"todo","title":"$title","writing":false}"""
+                }
+            """{"date":"$date","items":${entries.joinToString(",", "[", "]")},"minutes":${items.size * 6},"mockFunding":null,
+          "state":"${if (index == 0) "today" else "upcoming"}"}"""
         }.joinToString(",", "[", "]")
 }
 

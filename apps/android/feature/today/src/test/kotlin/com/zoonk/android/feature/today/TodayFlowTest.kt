@@ -50,6 +50,7 @@ import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MistakeListAvailability
@@ -368,15 +369,14 @@ class TodayFlowTest {
             translate(params.x.toFloat(), params.y.toFloat())
             popup.draw(this)
         }
-        File(folder, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(File(folder, "$name.png"), bitmap)
     }
 
     private fun save(
         node: SemanticsNodeInteraction,
         file: File,
     ) {
-        file.parentFile?.mkdirs()
-        file.outputStream().use { node.captureRender().asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, node.captureRender().asAndroidBitmap())
     }
 
     private fun descriptionContaining(text: String) =
@@ -499,13 +499,7 @@ class TodayFlowTest {
         }
         rule.waitForIdle()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use {
-            rule
-                .onRoot()
-                .captureRender()
-                .asAndroidBitmap()
-                .compress(Bitmap.CompressFormat.PNG, 100, it)
-        }
+        writeRender(file, rule.onRoot().captureRender().asAndroidBitmap())
     }
 
     @Test

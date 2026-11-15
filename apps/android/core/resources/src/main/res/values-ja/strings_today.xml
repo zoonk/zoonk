@@ -27,8 +27,6 @@
   "today_done_day_off": "e25b2db7f9b9395f884f263e83d2d5fa3934a6617116dbf77025bc75da3072fb",
   "today_earlier_lessons": "4b017453b37a6c72db24d3d048f046078ae0eac31fdd4d0e0926e06f580c158f",
   "today_exam_choice_choose": "d9cb2efab69311bd9af3ec9931c30f4ab39f7cdf2072f2bf98a97e6e9ea81086",
-  "today_exam_choice_question": "bfb0b8f26a316c3292246b457d093632fda4423c631db0c9035ef441025e9bcd",
-  "today_exam_choice_question_several": "5f75f5d482baff7bc57de00486aea30ec495098cfaa63b9d27980343e459d082",
   "today_exam_in_days": "c0cbcb8fc4f339acca0f2d5e8dd8ee43fdb15cd1026ae99d24730f0ef028a51b",
   "today_exam_speaking": "1222d5244052de4d91d18b4a8378b8b2617138a9c47dd764d23443b07449e8c6",
   "today_exam_speaking_detail": "92c8911bb9bbd80478f50af1be515bdbbd73eb46826c5397632ed02dffc8370d",
@@ -311,10 +309,6 @@
     <string name="today_noted">わかりました。</string>
     <string name="today_undo">元に戻す</string>
     <string name="today_notice_exam_choice">試験の選択</string>
-    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
-    <string name="today_exam_choice_question">%1$sはどの科目を受験しますか？</string>
-    <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
-    <string name="today_exam_choice_question_several">%1$s：どれを受験しますか？</string>
     <string name="today_exam_choice_choose">選ぶ</string>
     <string name="today_notice_plan_change">変更の提案</string>
     <string name="today_plan_use_my_date">指定した日付を使う</string>

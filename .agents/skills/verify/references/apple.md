@@ -1,6 +1,6 @@
 # Measuring the Apple app
 
-How to measure requests, memory, leaks, CPU and hangs for the iPhone and iPad app on a simulator. Every command here was run on Xcode 27.1 with an iOS 27 simulator. Measure the screens a change touches, before and after, on the same simulator, and put the numbers in the report.
+How to measure requests, memory, leaks, CPU, hangs and layout for the iPhone and iPad app on a simulator. Every command here was run on Xcode 27.1 with an iOS 27 simulator. Measure the screens a change touches, before and after, on the same simulator, and put the numbers in the report.
 
 ## Set up
 
@@ -63,6 +63,17 @@ Repeat the same navigation loop ten times and compare footprint, leak count and 
   Time Profiler samples every millisecond, so the `time-profile` table's rows approximate CPU milliseconds; each `<row>` in `potential-hangs` (and `hang-risks`) is a hang to explain. `--no-prompt` skips a privacy prompt that otherwise blocks a scripted recording.
 
 - The SwiftUI and Animation Hitches templates fail on a simulator ("Hitches is not supported on this platform"). To see which views update and why, record the SwiftUI template on a device, or in Xcode with Product > Profile, following [Understanding and improving SwiftUI performance](https://developer.apple.com/documentation/xcode/understanding-and-improving-swiftui-performance).
+
+## Layout capture
+
+A Debug build measures what the shared pieces laid out (each part's frame in points, a text's first baseline, capitals and type role, each action's look) and the commit it was built from, so the [alignment check](pages.md#alignment) judges the app's screens by the web's rules. The shared rows name their parts with `layoutRow` and `layoutPart` (`DesignSystem/LayoutReport.swift`); a piece that draws rows of its own names them the same way, or they aren't measured.
+
+1. Commit, then build the Debug app as in [set up](#set-up). The build records its commit and whether the checkout had uncommitted changes, so a picture taken from it names its build.
+2. Launch it with the capture on: `SIMCTL_CHILD_ZOONK_LAYOUT_CAPTURE=1` on `xcrun simctl launch`, or the launch argument `-ZOONK_LAYOUT_CAPTURE 1` from a device tool. Open the screen and state, and let it settle.
+3. Capture it: `node apps/apple/scripts/layout-capture.mts --udid $UDID --scenario <id> --side <before|after> --out <folder> [--screen <path or name>]`. The app draws its window once, measures that frame and returns it as the picture, so the picture and its numbers are one frame of one build. It saves `<id>.<side>.png`, adds the capture to the folder's `alignment.json` and the picture's record to its `capture.json`, and prints how many parts it measured and couldn't, and the build's commit.
+4. `pnpm verify:alignment <folder>` judges the folder's captures. Its pictures go in the PR like the web's ([show the change](../../zoonk-commit/SKILL.md#every-picture-is-captured-current-and-read)).
+
+Capturing the same scenario, side, screen and configuration again replaces it. One process writes a folder at a time: two captures into one folder at once can leave a picture its records don't describe, which `pnpm pr:media check` refuses until you retake it.
 
 ## Report
 

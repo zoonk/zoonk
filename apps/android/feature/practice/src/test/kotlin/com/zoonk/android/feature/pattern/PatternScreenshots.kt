@@ -18,6 +18,7 @@ import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.MistakePattern
 import org.junit.Assume.assumeTrue
@@ -73,10 +74,7 @@ class PatternScreenshots {
         if (fold) rule.unfoldBook(folds)
         val root = if (sheet) rule.onNode(isDialog()) else rule.onRoot()
         val bitmap = root.captureRender().asAndroidBitmap()
-        File(
-            folder,
-            "pattern-$name.png",
-        ).apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(File(folder, "pattern-$name.png"), bitmap)
     }
 
     private fun start() = rule.onNodeWithText("Practice").performClick()

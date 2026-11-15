@@ -27,8 +27,6 @@
   "today_done_day_off": "90ae2f9851f94b96fe8cab6ccdc8553a7453941691b1e20b31b82897e8494114",
   "today_earlier_lessons": "92a54b4e53616c093ce459e7d7215dbc8bca2d4169a7f9e8c70d49ec2a9d32be",
   "today_exam_choice_choose": "0c536fce19fccccc749614c7e93b0127896988b241b0365e1dfce8eb2ca13b11",
-  "today_exam_choice_question": "4eece15e88be4cf79f57ca564e5a2edc9249664ca49cd93333d5ac9479c021be",
-  "today_exam_choice_question_several": "1e3d1ff951421915c322f563cf2c019c91471d533f00e0a20e839aeaa856f6bc",
   "today_exam_in_days": "fa1ebccc5b4eb1d0e4102985c85c42ec1ffeb077b34daa02f3f71722ae59fb71",
   "today_exam_speaking": "f3cb61cf3beee87bbdc9d232a7bc5af06ee03d3c023a89bc42deaaeab1a7e2da",
   "today_exam_speaking_detail": "5ef9f32253d5151d7a24cfdad4e53bda464c7a1fb160a38836add700e6267e5f",
@@ -327,10 +325,6 @@
     <string name="today_noted">Ne abbiamo preso nota.</string>
     <string name="today_undo">Annulla</string>
     <string name="today_notice_exam_choice">Scelta dell’esame</string>
-    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
-    <string name="today_exam_choice_question">%1$s: quale sosterrai?</string>
-    <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
-    <string name="today_exam_choice_question_several">%1$s: quali sceglierai?</string>
     <string name="today_exam_choice_choose">Scegli</string>
     <string name="today_notice_plan_change">Modifica proposta</string>
     <string name="today_plan_use_my_date">Usa la mia data</string>

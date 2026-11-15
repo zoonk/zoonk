@@ -219,7 +219,7 @@ private struct PlanPhaseRow: View {
   }
 
   private var end: PhaseEnd? {
-    context.plan.phaseEnd(phase, goalKind: context.goal.kind)
+    context.plan.phaseEnd(phase)
   }
 
   /// "You are here" on the current phase, then its end.

@@ -23,6 +23,7 @@ import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -66,7 +67,7 @@ class MusicScreenshots {
     private fun save(name: String) {
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
-        File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(File(folder, "$name.png"), bitmap)
     }
 
     private fun play(

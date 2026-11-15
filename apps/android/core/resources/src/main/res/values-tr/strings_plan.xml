@@ -167,7 +167,7 @@
   "plan_check_failed": "d65a65a8d02bc6b4db6d15601c3fdb2391f4e53aec5d0553cf64cc66f4fedd03",
   "plan_checking_changes": "8a80627345137e11ec47e6d51147325a1e2ac76832d8219433e186fc03432b00",
   "plan_choice_change": "634caa992c8bf87f6b017a857fa3542c1793c3b63ff68f9c25d2755a619c2745",
-  "plan_choice_following": "9c05bde963ca7bed186285e35eff2267d7c71c0c991fd0d4438671671d1e32ad",
+  "plan_choice_picked": "6d4374510787ae0033c374f44b58c6894cac4b4e571a87d18c2cc1c2e8ad81d6",
   "plan_choose": "df18bfcfcd2f9613d55ac8afc340c24db8f0bb06695d7ae6d4b5422c6b86f915",
   "plan_choose_by_subject": "1e1e7676fced84504e710f6ac498f34bab4676916a6c5397cd466eacbdfeb9b9",
   "plan_choose_focus": "9fbddaf16b7f76da57a775370134d46a6fc4807d7476c2029c4c4855ea66d734",
@@ -245,10 +245,6 @@
   "plan_estimated_score": "277d72459e85d2a1150feb3c32e851e46fc94cdb4e2834d801d11ae08feae49d",
   "plan_every_day": "884871734e12a40320ad81f42481bde981c746fd0906ecfb1a6541470bbbb8c2",
   "plan_everything": "55669f95986e81d8bde70ce730c9d1480b70d4819269397d96121b502a11f11a",
-  "plan_exam_choice_left_out": "0b3a8ebd8a6ffe0c07561a86c9bc8866c619b091ed5b2ba8c8a8b8fe83d57d45",
-  "plan_exam_choice_left_out_points": "7090b5937aae8bb32b131bc8e81a8f6202214fd705eb08749f08be96bdbc7ad7",
-  "plan_exam_choice_left_out_questions": "f355797dbbe965ef477afdebd126c1643823754f2daf2b8339e25fd57d8abe7a",
-  "plan_exam_choice_left_out_questions_of": "089f8d3b649e75f4761db1a8fe39ea5a801d4fad16ab8774de0697aab54a5b39",
   "plan_exam_choice_question": "8f39718d8501399865a3f1fc05e258758f87606d03dca05379d270f151ad4834",
   "plan_exam_choice_question_several": "4ca7f1ca4eb35a0feafbcf7a1df80159f02cd083e77145f8c8476cad5d62a514",
   "plan_exam_date": "af134b505098e9b769b7b9cbd7821f28aba1207d248ba0a0465c5114588b575f",
@@ -295,7 +291,6 @@
   "plan_full_course_rule_goal_month": "ea23bdfeaada730b55927df2f8d97796f26eee37aadfcc1603f87a7f9634c30a",
   "plan_full_course_switch": "3dc7482c5bf4ab7e4e13a7df333eb160509c7dfeb53e633b08ed5792df02826d",
   "plan_gain_this_week": "63d2e0bfc007e544e9918d131b333672f985b05a9248c1aaf4668744a76a4a47",
-  "plan_get_recommendation": "564ff2cd3af329fc60e18931e8ae9f52061a74a321adb3c1bcc83f4130311191",
   "plan_go_to_today": "f84146d0a318222dc7292256a3b8be6b8fcc243a4f2cfb0ed0f728ed35566cc6",
   "plan_goal_date": "1cbecdc3fc356730a16ba0c6b1e9d114715b3f2ffb1d4f58ddd0ccf8179c0075",
   "plan_goal_limit_reached": "6f6813c41802cd4017c9f24532bf7356c606ebb0f0f1fa7d0eba0c2495f65cb2",
@@ -386,11 +381,6 @@
   "plan_prerequisites": "45d24ae9ef8c86f56c610c3bac2c8b6518f6086baad5b60d966dd74cd5b5192e",
   "plan_preview": "499e4556fb98581d0df8d1d7a638b0371756432606c0b863b206961d954da92b",
   "plan_progress": "84d362e072dc9e27f8c46d908cac9f29a6646632742008183c7053be5f6799be",
-  "plan_recommend_deep": "885ea9d9b0022acb7bc66b00e1b9de09701e8c28a0b4b7a597228d16451475a0",
-  "plan_recommend_essential": "d1fea4b01387b471cb118ffbe24ef546369834b1171887ac697ecca0d0bc407c",
-  "plan_recommend_quick": "1b1cc4ef86ccf122140e17cd6743e9e99b2bcc9bfc1c9ebd7eff9deffa364fb1",
-  "plan_recommendation_failed": "079d531ca73aad0bde8a29e67ae31cb4bce61d36fd9c9156755202ea493c7a47",
-  "plan_recommendation_followed": "97eb09c91b7d737e6048adbe4acc4e51412f8af610e4815b5f94b7158548903a",
   "plan_recommended": "ce985759e2fec347864c1ac85f34c88f657434c6ff54749d68c4b33198bcf7f1",
   "plan_remembered": "237cd49a5a95ecedda4e865c4b2f5e23db914726f4c25c9dfe58950cae3b17a8",
   "plan_remove_focus": "f813dbbe1140e81abbb32f0306a355ce4d1f5db5d853840fc1a7b8fb9e77967f",
@@ -432,7 +422,6 @@
   "plan_skipped": "65c73cc6179833e0845f7072bfb46f92abaf046d71e69c2a565510c13c951ed2",
   "plan_skipped_known": "8b004075fdfb4bc428e7d62f13ea9d7984c8aa4c154b95edd576e6e195438a66",
   "plan_stays_as_it_is": "84a1e70fda784ceddc957528b94ead1000dda12273b0b52572bbecb1b6965f59",
-  "plan_still_building": "93656035d6eb6709c02c749fcd0dc6466c3a8312fffd1161c8022c344b54d930",
   "plan_still_first_challenge": "dff573a594c1197e3ae45c34efef7ae65aa1a6cb4cdd08074a91a5f545e15972",
   "plan_still_first_mock": "58505cbbad53215559e72ed5355260ce66a1b0e05396c7f9f09e01048b8d2806",
   "plan_study_days": "28fc737a7d17ed95b00aecb4dcf5b5a9649aa7626f5503f1299237e20b6ee7c8",
@@ -733,8 +722,8 @@
     <string name="plan_study_days">Çalıştığın günler</string>
     <string name="plan_mock_exams">Deneme sınavları</string>
     <string name="plan_choose">Seç</string>
-    <!-- %1$s is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it. -->
-    <string name="plan_choice_following">%1$s müfredatı takip ediliyor</string>
+    <!-- On the plan, which option of an exam's choice it follows. %1$s is the choice's group, such as Foreign language; %2$s is the option or options picked, such as Inglês. -->
+    <string name="plan_choice_picked">%1$s: %2$s</string>
     <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
     <string name="plan_choice_change">Değiştir</string>
     <string name="plan_practice">Pratik yap</string>
@@ -1049,17 +1038,6 @@
     <string name="plan_exam_choice_question">%1$s: hangisine gireceksin?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: Hangilerini seçeceksin?</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s and %3$s are points of the exam's score. -->
-    <string name="plan_exam_choice_left_out_points">Seçimini yapana kadar planında ve deneme sınavlarında %1$s dışarıda kalır: %2$s / %3$s puan.</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions; %3$s is the exam's. -->
-    <string name="plan_exam_choice_left_out_questions_of">Seçimini yapana kadar planında ve deneme sınavlarında %1$s dışarıda kalır: %2$s / %3$s soru.</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions. -->
-    <plurals name="plan_exam_choice_left_out_questions">
-        <item quantity="one">Seçimini yapana kadar planında ve deneme sınavlarında %1$s dışarıda kalır: %2$s soru.</item>
-        <item quantity="other">Seçimini yapana kadar planında ve deneme sınavlarında %1$s dışarıda kalır: %2$s soru.</item>
-    </plurals>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. -->
-    <string name="plan_exam_choice_left_out">Seçimini yapana kadar planında ve deneme sınavlarında %1$s dışarıda kalır.</string>
     <string name="plan_prerequisites">Ön bilgiler</string>
     <plurals name="plan_bases_mixed">
         <item quantity="one">%1$d ön bilgi · seçimlerin · %2$s</item>
@@ -1098,13 +1076,6 @@
     <string name="plan_base_names_time">%1$s · %2$s</string>
     <string name="plan_different_choices">Karma</string>
     <string name="plan_base_studied">Çalışıldı</string>
-    <string name="plan_get_recommendation">Öneri al</string>
-    <string name="plan_recommendation_failed">Öneri alamadık.</string>
-    <string name="plan_still_building">Planını hâlâ hazırlıyoruz. Birazdan tekrar dene.</string>
-    <string name="plan_recommend_deep">Tüm dersleri öneriyoruz. Zamanın hepsine yetiyor.</string>
-    <string name="plan_recommend_essential">Sadece ilk dersleri öneriyoruz.</string>
-    <string name="plan_recommend_quick">Diğer derslere de zaman kalsın diye her biri için kısa bir ders öneriyoruz.</string>
-    <string name="plan_recommendation_followed">Planın zaten bu öneriye uyuyor.</string>
     <string name="plan_checking_changes">Nelerin değişeceğini kontrol ediyoruz…</string>
     <string name="plan_check_failed">Nelerin değişeceğini kontrol edemedik.</string>
     <string name="plan_stays_as_it_is">Planın olduğu gibi kalıyor.</string>

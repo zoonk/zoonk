@@ -20,6 +20,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CompletedLessonList
@@ -108,9 +109,7 @@ class CompletedLessonsScreenshots {
         rule.mainClock.advanceTimeBy(1_000)
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
-        File(folder, "completed-lessons-$name.png").apply { parentFile?.mkdirs() }.outputStream().use {
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
-        }
+        writeRender(File(folder, "completed-lessons-$name.png"), bitmap)
     }
 
     @Test

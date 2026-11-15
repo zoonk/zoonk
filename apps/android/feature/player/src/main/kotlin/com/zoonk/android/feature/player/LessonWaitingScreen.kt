@@ -50,11 +50,13 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.GenerationWait
+import com.zoonk.android.ui.components.LayoutPart
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.freeLessonReady
+import com.zoonk.android.ui.components.layoutPart
 import com.zoonk.api.models.ReadyAlternative
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
@@ -274,7 +276,11 @@ fun LessonWritingProgress(
         if (note != null && run.status != GenerationRun.Status.Failed) {
             Text(
                 note,
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                modifier =
+                    Modifier.layoutPart(LayoutPart.GENERATION_WAIT, LayoutPart.Part.Note).semantics {
+                        liveRegion =
+                            LiveRegionMode.Polite
+                    },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )

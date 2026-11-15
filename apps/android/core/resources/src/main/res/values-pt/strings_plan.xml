@@ -167,7 +167,7 @@
   "plan_check_failed": "0f44ab158d55d8976414a4f9283b1d8fc826093b5f2b75faab11c0174f60269b",
   "plan_checking_changes": "ca5b49214185e62d8cf57115bdf1cf8572c5d5526531232d5471cb6c926a8e69",
   "plan_choice_change": "31f94d43fefd4d12f39b1e26155e43ac2ca386e08e04da689b4f4392ce739a3d",
-  "plan_choice_following": "59a1b82d0b32df44e714b5d92589c1321c060a0729571e1ebb5f3de862a06b6c",
+  "plan_choice_picked": "fda8a3b20542150e8a8cd38f951346c20fc4a644925a2ce4d8834335f896bd15",
   "plan_choose": "086b63242388d8930be6cf69cc7c144205c2c21a1572d46b6e7e9ce0c9132c29",
   "plan_choose_by_subject": "046ac566cab836a7e00f1549c8c0663bb7419213a6601b93b94793ad54f26ec1",
   "plan_choose_focus": "441a8484c86ea2f08c0f487c7c9287395725113a69878bdc7ab38bd771ab6f6b",
@@ -245,10 +245,6 @@
   "plan_estimated_score": "23c9cae7314afe000eec6765c33f1a1cc2a489f2677da396718968d618abe6e4",
   "plan_every_day": "218543d1c5c2c19e7dddaf7ebe21dd17dc76f4f873e8ae3c2595966403a2e653",
   "plan_everything": "4b1a86b344e110d5a16c5ebe737783960d777848840a43aa23a1f182ad243362",
-  "plan_exam_choice_left_out": "b139574720bc459a30205b84420db7c75ef23a3127eb0ffadc776b1bd7aba2e1",
-  "plan_exam_choice_left_out_points": "5615626ff0bca0f1e71b93326f88177d42573e9d11f658fc3f8db23b2367bd4c",
-  "plan_exam_choice_left_out_questions": "b4596f9b64cff417046664f291a8059fcdafea2a21e19d499b5bc0d958a34315",
-  "plan_exam_choice_left_out_questions_of": "3d26e554f81f1ab7416ab89683f7ef7f94e6a40351187f6b2576f7cdbe68e97d",
   "plan_exam_choice_question": "f7b7a436ef03aed63db9341e399bc8fc084f0f085b33e47e615a0d409225aa54",
   "plan_exam_choice_question_several": "5f4e8927cd7a559ffbbc80d166822b40e3a2091c43dd93ccffbcee582607cf3d",
   "plan_exam_date": "3a8e4929b3e01122fc6050233fe6a01195ccbf0648bb1af65108ab4df9f1667d",
@@ -295,7 +291,6 @@
   "plan_full_course_rule_goal_month": "f17502ebad56f93cdd1177f38cf3a54d75597cc15f221d7a4d6caa28f3ec898a",
   "plan_full_course_switch": "4fff36e9033f3b8a41483fd0d9a715a6d568c4b681d1384fe278c85c402aef60",
   "plan_gain_this_week": "8b928f2a91ccade6dafe77f1181e0215b3e37e8eb7f08d27ec7e7ef13d6160de",
-  "plan_get_recommendation": "5561bedfeea6335f356dba7f32fa89012798d8ab168371706bcb17e52cde5f59",
   "plan_go_to_today": "abf2646e09fb844fc1de46656d22c60abc476e11b0797016ddfa6fb423ba59dd",
   "plan_goal_date": "48914f2d960646bbfcb3d1aab53a61443583fcfed5fb3c88e7868cab5f255dd0",
   "plan_goal_limit_reached": "b59deff5fb4667f03cb66b0de6248f7f6309928b260d9be765c4655fde15aaec",
@@ -386,11 +381,6 @@
   "plan_prerequisites": "98874176f004c84c9a4e581c2b6321c74a172b32e3bc84c50abc6446935727fd",
   "plan_preview": "4c09a5b38835958ab0ddc679d28645aed037c691133663ad1180670a9e7eb0ba",
   "plan_progress": "e5e3b58fc636bcbddfcbd5c66cef7d47e466fe77ff0f2a9bb68f9324d5159c86",
-  "plan_recommend_deep": "66c387e8a629989b797a4b27513ff1e2ae7c42031f5e36e0e60b8e4e3466dd11",
-  "plan_recommend_essential": "e6d45f35a985e78eb4e2800ea2bb82b059bd7e477d83ce458ca0bbdb424b2579",
-  "plan_recommend_quick": "d151b7bbdfd49500716b3b70e2f1b5a36c016200afc02047270a31b6e596c166",
-  "plan_recommendation_failed": "18e2208e1b71633c1ad6509dcaa4f12e255708f150ffd94fb22e60b648a90fcb",
-  "plan_recommendation_followed": "c1cc566826e31f41673bd165676cc1165c05a767765034aa3c23b533578c8bb7",
   "plan_recommended": "822705cf81762a7d372d5581315b69867a3549b4394dc11694bf867cdeccfbe8",
   "plan_remembered": "54c4928111bcccad98e9071f366b76b9f67733bbd8b611626b2bdfd0bb19d6dc",
   "plan_remove_focus": "1b330fc98148246a2bea330d6743a38731cc66b70f3dda7068f8492df8f461f3",
@@ -432,7 +422,6 @@
   "plan_skipped": "57af5682488225642aa7973e204c5b397431dfb73714266e37e936201ae4296c",
   "plan_skipped_known": "0dfc2b0e46da396f01ca299576e0119558d810741bb66b8dd279bf0b7520668a",
   "plan_stays_as_it_is": "9a6f994e17a1a0d66428d3f35f158cb452c32a340fced25a698eb89455d10d9e",
-  "plan_still_building": "29ba8f89478bf8172c8f9f56ceef0eb16f8535f41a6a83164fbf613c9a7269f7",
   "plan_still_first_challenge": "765efd18633e1ebc51e8b8ac84a31208953294b5128bd7778300c5a6bff938d6",
   "plan_still_first_mock": "103f315228c277449f29ffb10b2a1157ac4b25570d2da34d899363549fe78f25",
   "plan_study_days": "4a96a21f25c8f91cb0c17566b29605abbd00d93441eda44bdf99f4bf35e72999",
@@ -746,8 +735,8 @@
     <string name="plan_study_days">Dias de estudo</string>
     <string name="plan_mock_exams">Simulados</string>
     <string name="plan_choose">Escolher</string>
-    <!-- %1$s is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it. -->
-    <string name="plan_choice_following">Seguindo o conteúdo programático de %1$s</string>
+    <!-- On the plan, which option of an exam's choice it follows. %1$s is the choice's group, such as Foreign language; %2$s is the option or options picked, such as Inglês. -->
+    <string name="plan_choice_picked">%1$s: %2$s</string>
     <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
     <string name="plan_choice_change">Mudar</string>
     <string name="plan_practice">Prática</string>
@@ -1098,18 +1087,6 @@
     <string name="plan_exam_choice_question">%1$s: qual você vai fazer?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: quais você vai fazer?</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s and %3$s are points of the exam's score. -->
-    <string name="plan_exam_choice_left_out_points">Até você escolher, seu plano e os simulados deixam %1$s de fora: %2$s dos %3$s pontos da prova.</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions; %3$s is the exam's. -->
-    <string name="plan_exam_choice_left_out_questions_of">Até você escolher, seu plano e os simulados deixam %1$s de fora: %2$s das %3$s questões da prova.</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions. -->
-    <plurals name="plan_exam_choice_left_out_questions">
-        <item quantity="one">Até você escolher, seu plano e os simulados deixam %1$s de fora: %2$s questão.</item>
-        <item quantity="many">Até você escolher, seu plano e os simulados deixam %1$s de fora: %2$s questões.</item>
-        <item quantity="other">Até você escolher, seu plano e os simulados deixam %1$s de fora: %2$s questões.</item>
-    </plurals>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. -->
-    <string name="plan_exam_choice_left_out">Até você escolher, seu plano e os simulados deixam %1$s de fora.</string>
     <string name="plan_prerequisites">Bases</string>
     <plurals name="plan_bases_mixed">
         <item quantity="one">%1$d base · suas escolhas · %2$s</item>
@@ -1153,13 +1130,6 @@
     <string name="plan_base_names_time">%1$s · %2$s</string>
     <string name="plan_different_choices">Misto</string>
     <string name="plan_base_studied">Estudada</string>
-    <string name="plan_get_recommendation">Receber uma recomendação</string>
-    <string name="plan_recommendation_failed">Não conseguimos obter uma recomendação.</string>
-    <string name="plan_still_building">Seu plano ainda está sendo criado. Tente de novo em instantes.</string>
-    <string name="plan_recommend_deep">A gente recomenda todas as aulas. Você tem tempo para todas.</string>
-    <string name="plan_recommend_essential">A gente recomenda só as primeiras aulas.</string>
-    <string name="plan_recommend_quick">A gente recomenda uma aula curta por base, para dar tempo de estudar o resto.</string>
-    <string name="plan_recommendation_followed">Seu plano já segue essa recomendação.</string>
     <string name="plan_checking_changes">Conferindo o que muda…</string>
     <string name="plan_check_failed">A gente não conseguiu conferir o que muda.</string>
     <string name="plan_stays_as_it_is">Seu plano continua como está.</string>

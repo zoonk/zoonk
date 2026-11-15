@@ -52,6 +52,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.limitLifted
+import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
@@ -234,7 +235,7 @@ internal fun MindMapRow(
                 onLongClickLabel = toggleSave?.let { stringResource(if (saved) R.string.mindmaps_unsave else R.string.mindmaps_save) },
                 onLongClick = toggleSave?.let { { menu = true } },
                 leading = { MapMark(map.image?.thumbnailUrl?.takeIf { shown == MindMapShown.Ready }, shown) },
-                supporting = supporting?.let { { Text(it) } },
+                supporting = listRowDescription(supporting),
                 meta = if (saved) ({ SavedMark() }) else null,
                 trailing = rowAction(map, place, shown, local, shownCap, retry, actions),
             )

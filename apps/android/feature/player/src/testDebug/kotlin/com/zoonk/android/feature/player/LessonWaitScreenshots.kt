@@ -27,6 +27,7 @@ import com.zoonk.android.feature.warmup.beekeepingDeck
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Generation
 import kotlinx.coroutines.CoroutineScope
@@ -241,7 +242,7 @@ class LessonWaitScreenshots {
     private fun write(name: String) {
         val bitmap = compose.onRoot().captureRender().asAndroidBitmap()
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
         println("Screenshot ${file.path}")
     }
 
