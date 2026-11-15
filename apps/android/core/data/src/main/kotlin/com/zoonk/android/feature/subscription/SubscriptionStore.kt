@@ -156,7 +156,14 @@ class SubscriptionStore(
 
     private val linking = mutableSetOf<String>()
 
-    /** A checkout still on its screen's visit, so Play's failure or cancel for it shows there; one that ended shows nothing. */
+    /**
+     * A checkout still on its screen's visit, so Play's failure or cancel for it shows there; one that ended shows
+     * nothing. Play's update doesn't say which launch it answers (Billing Library 9's PurchasesUpdatedListener carries
+     * only a result and purchases), and a launch can never answer, which the reset on return to the foreground gives up
+     * on. So a first launch's late failure that arrives during a second checkout reads as the second's: the learner
+     * sees "the purchase failed" on the checkout they're looking at, and trying again works. No count or queue of
+     * launches can tell those two answers apart.
+     */
     private var checkoutOnVisit = false
 
     init {
