@@ -80,6 +80,30 @@ final class LayoutCaptureTests: XCTestCase {
       [CGRect(x: 0, y: 100, width: 420, height: 600)])
   }
 
+  /// A row half scrolled out: its end can't be seen, so its chevron is unknown, never absent.
+  func testARowHalfOutOfItsListHasAnEndNotMeasured() {
+    let room = CGRect(x: 380, y: 90, width: 20, height: 44)
+
+    XCTAssertEqual(
+      LayoutSystemEnd.read(room: room, shown: false, ink: nil), .unreadable(clipped: true))
+  }
+
+  /// A row wholly on screen with nothing after its content has no accessory.
+  func testAWholeRowWithNothingAfterItHasNoEnd() {
+    XCTAssertEqual(
+      LayoutSystemEnd.read(
+        room: CGRect(x: 380, y: 200, width: 20, height: 44), shown: true, ink: nil),
+      .none)
+  }
+
+  func testARightToLeftRowsEndIsNotRead() {
+    XCTAssertEqual(
+      LayoutSystemEnd.read(
+        room: CGRect(x: 380, y: 200, width: 20, height: 44), shown: true, ink: nil,
+        rightToLeft: true),
+      .mirrored)
+  }
+
   @MainActor
   private func drawnLines(_ words: String) -> [DrawnLine] {
     let part = UUID()

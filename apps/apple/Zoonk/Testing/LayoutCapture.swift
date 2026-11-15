@@ -1134,8 +1134,10 @@
 
     /// What the system draws after a row's content (a link's chevron, a checkmark), read from the
     /// picture between the content's end and the cell's. SwiftUI draws it inside the cell's own
-    /// view, so the room is all that says it's there: one there that can't be read is written with
-    /// its ink "not measured".
+    /// view, so the room is all that says it's there: a row wholly on screen with nothing in it has
+    /// none; a row cut by what holds it, or one that can't be read, has its end "not measured". The
+    /// room is read on the right only, so a right-to-left row's end is "not measured" (no language
+    /// the app ships is right to left).
     private mutating func systemEnds(
       rowsByCell: [String: [Row]], cellKey: (ListCells.Cell) -> String
     ) -> [[String: Any]] {
@@ -1155,7 +1157,9 @@
           x: contentEnd + 1, y: cell.frame.minY + 1, width: cell.contentEnd - contentEnd + 1,
           height: cell.frame.height - 2)
         let read = LayoutSystemEnd.read(
-          room: room, shown: picture.shows(room, host: cell.view), ink: picture.ink(in: room))
+          room: room, shown: picture.shows(cell.frame, host: cell.view),
+          ink: picture.ink(in: room),
+          rightToLeft: cell.view.effectiveUserInterfaceLayoutDirection == .rightToLeft)
 
         let row =
           rows.first { $0.frame.minY <= cell.frame.midY && cell.frame.midY <= $0.frame.maxY }
@@ -1180,6 +1184,11 @@
           if clipped {
             element["clipped"] = true
           }
+        case .mirrored:
+          notMeasured += 1
+          element["bounds"] = Self.bounds(cell.frame)
+          element["ink"] = "not measured"
+          element["reason"] = "right to left: the room is read on the right only"
         }
 
         return element
@@ -1234,13 +1243,20 @@
     case none
     /// A glyph, such as a chevron or a checkmark.
     case glyph(CGRect)
-    /// Something is drawn there that can't be read as one glyph, or the screen's edge cuts it.
+    /// Something is drawn there that can't be read as one glyph, or the row is cut, so whether it
+    /// has one can't be told.
     case unreadable(clipped: Bool)
+    /// A right-to-left row, whose end the right-side read doesn't see.
+    case mirrored
 
-    static func read(room: CGRect, shown: Bool, ink: CGRect?) -> LayoutSystemEnd {
+    /// `shown`: the whole row is on screen.
+    static func read(room: CGRect, shown: Bool, ink: CGRect?, rightToLeft: Bool = false)
+      -> LayoutSystemEnd
+    {
+      guard !rightToLeft else { return .mirrored }
+      guard shown else { return .unreadable(clipped: true) }
       // A scroll indicator's sliver isn't an accessory.
       guard room.width > 1, let ink, ink.width >= 3 else { return .none }
-      guard shown else { return .unreadable(clipped: true) }
       // Larger than one glyph: the accessory runs into something else.
       guard ink.width <= 24, ink.height <= 24 else { return .unreadable(clipped: false) }
       return .glyph(ink)
