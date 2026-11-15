@@ -210,6 +210,7 @@ msgstr "Hoy"
 
 #: src/_components/create-account-link.tsx
 #: src/_components/subscribe-gate.tsx
+#: src/language/unit/practice-conversation.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -2456,6 +2457,18 @@ msgctxt "ooL306"
 msgid "The Trickster's shield"
 msgstr "El escudo del Tramposo"
 
+#: src/checkpoints/checkpoint-duel-view.tsx
+#: src/checkpoints/trickster-shield.tsx
+msgctxt "N6ZXzw"
+msgid "You won"
+msgstr "Ganaste"
+
+#: src/checkpoints/checkpoint-duel-view.tsx
+#: src/checkpoints/trickster-shield.tsx
+msgctxt "Cu4K5p"
+msgid "He won"
+msgstr "Él ganó"
+
 #. Right answers the learner still needs to beat the Trickster.
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/trickster-shield.tsx
@@ -2469,7 +2482,6 @@ msgid "{count, plural, =0 {No questions left} one {# question left} other {# que
 msgstr "{count, plural, =0 {No quedan preguntas} one {Queda # pregunta} other {Quedan # preguntas}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-#: src/checkpoints/checkpoint-result-view.tsx
 msgctxt "qqqXC2"
 msgid "{count, plural, one {# right to win} other {# right to win}}"
 msgstr "{count, plural, one {# acierto para ganar} other {# aciertos para ganar}}"
@@ -2527,6 +2539,11 @@ msgctxt "1VpodI"
 msgid "Not this time"
 msgstr "Esta vez no"
 
+#: src/checkpoints/checkpoint-result-view.tsx
+msgctxt "3NtvGN"
+msgid "{count, plural, one {You needed # right to win.} other {You needed # right to win.}}"
+msgstr "{count, plural, one {Necesitabas # acierto para ganar.} other {Necesitabas # aciertos para ganar.}}"
+
 #: src/checkpoints/checkpoint-review.tsx
 #: src/mistakes/mistake-entry.tsx
 #: src/questions/right-answer-line.tsx
@@ -2557,16 +2574,6 @@ msgstr "Revisar las respuestas"
 msgctxt "nbNiMs"
 msgid "{cracked, plural, =0 {# of {segments} broken} one {# of {segments} broken} other {# of {segments} broken}}"
 msgstr "{cracked, plural, =0 {Se rompieron # de {segments} placas} other {Rompiste # de {segments} placas}}"
-
-#: src/checkpoints/trickster-shield.tsx
-msgctxt "N6ZXzw"
-msgid "You won"
-msgstr "Ganaste"
-
-#: src/checkpoints/trickster-shield.tsx
-msgctxt "Cu4K5p"
-msgid "He won"
-msgstr "Él ganó"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "KLUSrr"
@@ -7500,9 +7507,9 @@ msgid "{count, plural, one {Mission done!} other {# missions done!}}"
 msgstr "{count, plural, one {¡# misión completada!} other {¡# misiones completadas!}}"
 
 #: src/missions/mission-moment.tsx
-msgctxt "oKqRoi"
-msgid "{count, plural, one {# more for +{points} Brain Power} other {# more for +{points} Brain Power}}"
-msgstr "{count, plural, one {Falta # más para ganar +{points} de Poder Mental} other {Faltan # más para ganar +{points} de Poder Mental}}"
+msgctxt "y3EoXn"
+msgid "{count, plural, one {# more mission for +{points} Brain Power} other {# more missions for +{points} Brain Power}}"
+msgstr "{count, plural, one {# misión más para +{points} de Poder Mental} other {# misiones más para +{points} de Poder Mental}}"
 
 #: src/missions/mission-moment.tsx
 msgctxt "aGylUw"
@@ -10683,11 +10690,6 @@ msgid "Date passed"
 msgstr "Fecha pasada"
 
 #: src/plan/plan-status-label.tsx
-msgctxt "y7l0FJ"
-msgid "Keep studying them, or archive this goal?"
-msgstr "¿Quieres seguir estudiándolas o archivar este objetivo?"
-
-#: src/plan/plan-status-label.tsx
 msgctxt "xNjzfh"
 msgid "{count, plural, one {You have # lesson left. Keep studying it, or archive this goal?} other {You have # lessons left. Keep studying them, or archive this goal?}}"
 msgstr "{count, plural, one {Te queda # lección. ¿Quieres seguir estudiándola o archivar este objetivo?} other {Te quedan # lecciones. ¿Quieres seguir estudiándolas o archivar este objetivo?}}"
@@ -12555,6 +12557,16 @@ msgstr "Terminaste en menos de un minuto"
 msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "Terminaste en {time}"
+
+#: src/session/summary/summary-parts.tsx
+msgctxt "7N1uKO"
+msgid "Down from {value}"
+msgstr "Bajó de {value}"
+
+#: src/session/summary/summary-parts.tsx
+msgctxt "VngKEd"
+msgid "Up from {value}"
+msgstr "Subió de {value}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "YwxEGP"

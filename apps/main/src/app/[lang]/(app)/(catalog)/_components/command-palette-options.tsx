@@ -2,6 +2,7 @@
 
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import { Link } from "@/i18n/navigation";
+import { BuddyArt } from "@zoonk/learn/buddy-art";
 import {
   CommandCollection,
   CommandGroup,
@@ -115,11 +116,17 @@ function SimpleOptionContent({
 }: {
   item: Exclude<PaletteItem, ChapterPaletteItem | CoursePaletteItem>;
 }) {
-  const { chip, count, icon: Icon, meta } = item;
+  const { buddy, chip, count, icon: Icon, meta } = item;
 
   return (
     <>
-      <Icon aria-hidden="true" />
+      {buddy ? (
+        <span className="flex size-4 shrink-0 items-center justify-center">
+          <BuddyArt buddy={buddy} className="size-5" view="face" />
+        </span>
+      ) : (
+        <Icon aria-hidden="true" />
+      )}
 
       <span className="flex min-w-0 flex-1 items-center gap-2">
         <span className="truncate">{item.label}</span>

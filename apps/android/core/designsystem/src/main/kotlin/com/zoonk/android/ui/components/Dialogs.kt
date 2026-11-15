@@ -5,6 +5,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.adaptive.separatingHorizontalHingeBounds
@@ -17,6 +19,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -54,9 +57,15 @@ fun AlertDialog(
         },
         modifier = place.width?.let { Modifier.widthIn(max = it - PAGE_MARGIN * 2) } ?: Modifier,
         dismissButton = dismissButton,
-        title = title,
+        title = title?.let { { BalancedTitle(it) } },
         text = text,
     )
+}
+
+/** A title's lines are balanced, so none ends on a word alone. */
+@Composable
+private fun BalancedTitle(title: @Composable () -> Unit) {
+    ProvideTextStyle(LocalTextStyle.current.copy(lineBreak = LineBreak.Heading), title)
 }
 
 /** Material's date picker dialog, off a foldable's fold as [AlertDialog] is. */
@@ -107,7 +116,7 @@ fun TimeOfDayDialog(
                 },
             ) { Text(confirmLabel) }
         },
-        title = { Text(title) },
+        title = { BalancedTitle { Text(title) } },
         dismissButton = { TextButton(onClick = onDismiss) { Text(dismissLabel) } },
     ) {
         WindowAt(place)

@@ -7,7 +7,7 @@ import { useExtracted } from "next-intl";
 import { EnterButton, EnterLink } from "../_components/enter-button";
 import { ListGroup } from "../_components/list-group";
 import { MomentReadouts } from "../_components/moment-readouts";
-import { PageSectionLabel } from "../_components/page";
+import { PageSectionTitle } from "../_components/page";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
 import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
@@ -35,7 +35,7 @@ function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) 
       className={cn("flex flex-col gap-2", !subject && "with-aside:hidden")}
       data-slot="study-moment-next"
     >
-      <PageSectionLabel>{t("Up next")}</PageSectionLabel>
+      <PageSectionTitle>{t("Up next")}</PageSectionTitle>
       <ListGroup role="list">
         <BlockRow block={block} state="next" />
       </ListGroup>

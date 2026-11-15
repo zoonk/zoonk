@@ -78,12 +78,12 @@ function WaitingStatus({ className }: { className?: string }) {
 function PastDateStatus({ className, lessons }: { className?: string; lessons: number }) {
   const pastDateText = usePastDateText();
   const { today } = useTodayScreen();
-  const { ask, sentence } = pastDateText({ isExam: today.goal.kind === "exam", lessons });
+  const { left, sentence, title } = pastDateText({ isExam: today.goal.kind === "exam", lessons });
 
   return (
     <TodayStatusLine className={className} icon={<CalendarClockIcon />}>
-      <TodayStatusSentence>{sentence}</TodayStatusSentence>
-      {ask && <TodayStatusClause>{ask}</TodayStatusClause>}
+      <TodayStatusSentence>{left ? title : sentence}</TodayStatusSentence>
+      {left && <TodayStatusClause>{left}</TodayStatusClause>}
     </TodayStatusLine>
   );
 }

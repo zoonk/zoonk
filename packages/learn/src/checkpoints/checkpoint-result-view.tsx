@@ -46,6 +46,7 @@ function ScoreLine() {
   const outcome = useCheckpointOutcome();
   const won = useIsWon();
   const brainPower = useEarnedBrainPower();
+  const passMark = duel.state.completion?.checkpoint?.passMark;
 
   if (!outcome) {
     return null;
@@ -55,19 +56,21 @@ function ScoreLine() {
     <MomentReadouts
       brainPower={brainPower}
       className="pt-3"
-      facts={[
-        !won &&
-          duel.state.completion?.checkpoint &&
-          t("{count, plural, one {# right to win} other {# right to win}}", {
-            count: duel.state.completion.checkpoint.passMark,
-          }),
-      ]}
       score={{
         answered: outcome.total,
         correct: outcome.correct,
         countOnly: checkpoint.kind !== "weekly",
       }}
-    />
+    >
+      {!won && passMark && (
+        <p className="text-muted-foreground text-sm" data-slot="checkpoint-pass-mark">
+          {t(
+            "{count, plural, one {You needed # right to win.} other {You needed # right to win.}}",
+            { count: passMark },
+          )}
+        </p>
+      )}
+    </MomentReadouts>
   );
 }
 

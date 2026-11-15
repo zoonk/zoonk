@@ -5,6 +5,7 @@ import {
   PendingAccountAvatar,
 } from "@/app/[lang]/(app)/(catalog)/_components/user-avatar";
 import { UserDropdownMenu } from "@/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu";
+import { useStatsPages } from "@/app/[lang]/(app)/(stats)/_components/stats-pages";
 import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { VisitorLook } from "@/components/learner/visitor-look";
 import { useBeltLabel } from "@/lib/belt-label";
@@ -32,7 +33,7 @@ function StudyLinksView({ places }: { places: LearnerSummaryPlaces | null }) {
       />
       {places?.mindMaps && <LearnSidebarLink label={t("Mind maps")} menu="mindMaps" />}
       {places?.exam && <LearnSidebarLink label={t("Mock exam")} menu="mock" />}
-      {places?.exam && <LearnSidebarLink label={t("Exam")} menu="exam" />}
+      {places?.exam && <LearnSidebarLink label={t("Your exam")} menu="exam" />}
       {places?.speaking && <LearnSidebarLink label={t("Speaking")} menu="speaking" />}
       {places?.completedLessons && (
         <LearnSidebarLink label={t("Completed lessons")} menu="completedLessons" />
@@ -44,14 +45,13 @@ function StudyLinksView({ places }: { places: LearnerSummaryPlaces | null }) {
 /** Every number on these pages covers all of the learner's goals, so the group never changes with the goal. */
 function StatsLinks() {
   const t = useExtracted();
+  const pages = useStatsPages();
 
   return (
-    <SidebarSection aria-label={t("Stats")} label={t("Stats")}>
-      <LearnSidebarLink label={t("Level")} menu="level" />
-      <LearnSidebarLink label={t("Energy")} menu="energy" />
-      <LearnSidebarLink label={t("Patterns")} menu="patterns" />
-      <LearnSidebarLink label={t("Score")} menu="score" />
-      <LearnSidebarLink label={t("Activity")} menu="activity" />
+    <SidebarSection aria-label={t("Statistics")} label={t("Statistics")}>
+      {pages.map((page) => (
+        <LearnSidebarLink key={page.menu} label={page.label} menu={page.menu} />
+      ))}
     </SidebarSection>
   );
 }
@@ -162,8 +162,12 @@ function AccountTriggerWithLevel({
 
   return (
     <AccountTrigger name={name} said={said}>
-      <span className="text-muted-foreground flex shrink-0 items-center gap-1.5 font-mono text-xs font-normal tabular-nums">
-        <BeltLevel belt={belt} color={level.color} level={levelNumber} />
+      <span className="text-muted-foreground flex shrink-0 items-center gap-1.5 text-xs font-normal tabular-nums">
+        <BeltLevel
+          belt={belt}
+          color={level.color}
+          level={t("Level {level}", { level: levelNumber })}
+        />
       </span>
     </AccountTrigger>
   );
