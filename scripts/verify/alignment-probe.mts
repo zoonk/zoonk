@@ -829,7 +829,7 @@ export function readAlignment({
         const line = ownBox ? null : ruleOf(element);
         const current = element.matches("[aria-current], [data-highlighted], [aria-selected=true]");
 
-        const lit: Kind = element.closest("[role=tablist], [data-slot=tabs-list]")
+        const lit: Kind = element.closest("[role=tablist], [data-slot=tabs-list], [data-tabs]")
           ? "tab"
           : "highlight";
 

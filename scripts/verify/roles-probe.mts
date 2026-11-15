@@ -29,7 +29,7 @@ export function readRoles({
     overlay: overlays.map(({ panel }) => `[data-slot=${panel}]`).join(", "),
     "page-top": '[data-slot="page-top"], [data-slot="page-header"]',
     "subscription-gate": '[data-slot="subscribe-gate"]',
-    tabs: '[data-slot="tabs-list"]',
+    tabs: '[data-slot="tabs-list"], [data-tabs]',
   };
 
   const { shown } = globalThis.zoonkPage;
