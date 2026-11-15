@@ -145,3 +145,35 @@ describe("pr:media check, on a native app's build stamp", () => {
     assert.deepEqual(kinds(await clean.check()), ["stale"]);
   });
 });
+
+describe("pr:media check, on an Android render's build stamp", () => {
+  const android = checkFixture();
+  const picture = { file: "plan-phone.png", platform: "android" as const, scale: 2.625 };
+  const stamp = { commit: android.current, uncommitted: "clean" };
+
+  it("fails a render from an uncommitted tree, or one whose cleanliness wasn't recorded", async () => {
+    const results = await Promise.all(
+      [sha256("draft"), "unknown"].map(async (uncommitted) =>
+        android.capture([android.shot({ ...picture, build: { ...stamp, uncommitted } })]).check(),
+      ),
+    );
+
+    assert.deepEqual(
+      results.map((result) => kinds(result)),
+      [["uncommitted"], ["uncommitted"]],
+    );
+  });
+
+  it("passes a clean render until a commit changes the Android app", async () => {
+    const clean = android.capture([android.shot({ ...picture, build: stamp })]);
+    const current = await clean.check();
+
+    mkdirSync(join(android.repository, "apps/android"), { recursive: true });
+    writeFileSync(join(android.repository, "apps/android/Plan.kt"), "changed");
+    execFileSync("git", ["add", "apps/android"], { cwd: android.repository });
+    execFileSync("git", ["commit", "-qm", "change the app"], { cwd: android.repository });
+
+    assert.deepEqual(current.problems, []);
+    assert.deepEqual(kinds(await clean.check()), ["stale"]);
+  });
+});

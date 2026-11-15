@@ -18,8 +18,16 @@ type Platform = (typeof PLATFORMS)[number];
  */
 export type Build = { app: string; changes?: string; commit: string; id: string };
 
-/** What a native Debug build stamps on itself (`apps/apple/scripts/stamp-debug-build.sh`). */
-type NativeStamp = { changesDigest?: string; commit: string; dirty?: boolean };
+/**
+ * What a native build stamps on itself: Apple's Debug build `dirty` and `changesDigest`
+ * (`apps/apple/scripts/stamp-debug-build.sh`), an Android render `uncommitted`, a digest or "clean".
+ */
+type NativeStamp = {
+  changesDigest?: string;
+  commit: string;
+  dirty?: boolean;
+  uncommitted?: string;
+};
 
 export type FindingState =
   | { state: "open" }
@@ -84,7 +92,7 @@ export const MANIFEST = "capture.json";
  * relationship lane owns its shape (unresolved means failing and not excepted).
  */
 export type AlignmentReport = {
-  captures?: { elements?: unknown[] }[];
+  captures?: { elements?: unknown[]; picture?: { file?: string } }[];
   findings?: { exception?: string; level: string; message: string }[];
   summary?: { scenariosMissing?: number | null; unresolved?: number };
 };
@@ -171,11 +179,13 @@ export function buildOf({ build, platform }: CaptureItem): Build {
     return build;
   }
 
-  const { changesDigest, commit, dirty } = build;
+  const { changesDigest, commit, dirty, uncommitted } = build;
+  const clean = uncommitted === undefined ? dirty === false : uncommitted === "clean";
+  const digest = changesDigest || (uncommitted !== "unknown" && uncommitted) || "uncommitted";
 
   return {
     app: platform,
-    changes: dirty === false ? undefined : changesDigest || "uncommitted",
+    changes: clean ? undefined : digest,
     commit,
     id: commit === "unknown" ? "unknown" : commit,
   };
