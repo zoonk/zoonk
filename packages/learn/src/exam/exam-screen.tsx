@@ -67,7 +67,7 @@ function ExamBar() {
   const { exam, hrefs } = useExamScreen();
 
   return (
-    <LearnPageBar back={{ href: hrefs.back }} root title={exam.examName}>
+    <LearnPageBar back={{ href: hrefs.back }} listed="learner" root title={exam.examName}>
       <ReportProblemMenu label={t("Exam options")} screen="exam" />
     </LearnPageBar>
   );

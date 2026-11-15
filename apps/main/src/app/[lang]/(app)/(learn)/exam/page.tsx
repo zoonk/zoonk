@@ -30,7 +30,7 @@ async function ExamContent() {
 
     return (
       <LearnNoGoal
-        bar={<JourneyPageBar root title={t("Your exam")} />}
+        bar={<JourneyPageBar listed root title={t("Your exam")} />}
         description={t("Your exam's areas, how ready you are for each, and its mock exams.")}
         next="/exam"
         title={t("Your exam")}
@@ -97,7 +97,7 @@ function ExamAsideSkeleton() {
 
 function ExamSkeleton() {
   return (
-    <DetailSkeleton aside={<ExamAsideSkeleton />} bar={<JourneyPageBar root />}>
+    <DetailSkeleton aside={<ExamAsideSkeleton />} bar={<JourneyPageBar listed root />}>
       <ListSectionSkeleton rows={2} />
       <MockProgressSkeleton />
     </DetailSkeleton>

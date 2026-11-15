@@ -34,7 +34,7 @@ export function SectionBarFrame({
       back={{ href: "/today", label: t("Today") }}
       end={end}
       parent={parent && { href: parent.href, label: parent.title, tabs: parent === places.hub }}
-      root={isRoot}
+      listed={isRoot ? "learner" : undefined}
       title={parent ? undefined : places.hub.title}
     />
   );

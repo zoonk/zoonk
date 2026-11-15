@@ -20,6 +20,7 @@ async function ChooserBar() {
   return (
     <LearnPageBar
       back={{ href: "/exam", label: t("Your exam") }}
+      listed="learner"
       root
       title={t("Take a mock exam")}
     />
