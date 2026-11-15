@@ -3,7 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { z } from "zod";
-import { MENTION, unwritablePath } from "./device-section.mts";
+import { REFERENCE, unwritablePath } from "./device-section.mts";
 import { type CaptureItem, fileName, pathWithin, registerItems } from "./media.mts";
 import { readCheckoutBuild, sha256File, sha256Text } from "./provenance.mts";
 
@@ -211,17 +211,17 @@ export async function takeDevicePicture({
     throw new Error(unwritable);
   }
 
-  if (MENTION.test(name)) {
+  if (REFERENCE.test(name)) {
     throw new Error(
-      "--name is the picture's caption, and an @name in it would notify that person on GitHub: write it without the @.",
+      "--name is the picture's caption, and GitHub links an @name, a #number or a GH-number in it, notifying that person or leaving a reference on that issue: write it without one.",
     );
   }
 
   const device = await bridge.describe(deviceId).catch(() => null);
 
-  if (device && MENTION.test(device)) {
+  if (device && REFERENCE.test(device)) {
     throw new Error(
-      `The device describes itself as "${device}", and an @name in a caption would notify that person on GitHub: rename the device.`,
+      `The device describes itself as "${device}", and GitHub links an @name, a #number or a GH-number in a caption, notifying that person or leaving a reference on that issue: rename the device.`,
     );
   }
 

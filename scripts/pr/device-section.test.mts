@@ -1,20 +1,11 @@
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import {
-  array,
-  assert as assertProperty,
-  asyncProperty,
-  constant,
-  nat,
-  record,
-  stringMatching,
-  uniqueArray,
-} from "fast-check";
+import { assert as assertProperty, asyncProperty, string } from "fast-check";
 import { describe, it } from "vitest";
 import { checkBody } from "./body-check.mts";
 import { CLEAN, checkFixture, kinds } from "./check-fixture.mts";
-import { deviceSection, readDeviceShots } from "./device-section.mts";
+import { deviceSection, readDeviceShots, unwritablePath } from "./device-section.mts";
 import { type DeviceBridge, takeDevicePicture } from "./device.mts";
 import { type CaptureItem, readManifest, writeManifest } from "./media.mts";
 import { sha256File } from "./provenance.mts";
@@ -193,7 +184,7 @@ describe("the pictures device-section names (RV79)", () => {
     assert.deepEqual(result.problems, []);
   });
 
-  it("refuses a path a body can't write as an image: a space, (, ), |, < or > (RV79 P2)", async () => {
+  it("refuses a path that holds anything but letters, digits, /, ., - and _ (RV79 P2)", async () => {
     const { repository } = checkFixture();
 
     await assert.rejects(
@@ -209,55 +200,64 @@ describe("the pictures device-section names (RV79)", () => {
     );
 
     await assert.rejects(readDeviceShots(["device/sheet(1).png"]), /"\(".*another folder/u);
+
+    const refused = await Promise.all(
+      [String.raw`a\b`, 'a"b', "a%20b", "a#b", "a&b", "a[b]", "a'b"].map(async (path) =>
+        readDeviceShots([`device/${path}/sheet.png`]).then(() => "read", String),
+      ),
+    );
+
+    assert.ok(refused.every((why) => /another folder/u.test(why)));
   });
 
-  it("prints a section that passes the check for any accepted paths, repeats included", async () => {
+  it("for any path, either refuses it or prints a section that passes the check", async () => {
     const { repository, shot } = checkFixture();
-    const folder = stringMatching(/^[a-z0-9_-]{1,8}$/u);
 
-    const pictures = uniqueArray(folder, { maxLength: 4, minLength: 1 }).chain((folders) =>
-      record({
-        folders: constant(folders),
-        order: array(nat({ max: folders.length - 1 }), { maxLength: 8, minLength: 2 }),
-      }),
+    const take = async (folder: string) => {
+      const root = mkdtempSync(join(repository, "paths-"));
+      const to = join(root, folder);
+      const link = join(to, "shot.png");
+
+      if (unwritablePath(link)) {
+        await assert.rejects(readDeviceShots([link]), /pick another folder/u);
+        return;
+      }
+
+      mkdirSync(to, { recursive: true });
+      writeFileSync(link, folder);
+
+      const item = shot({
+        build: {
+          app: "android",
+          commit: "unknown",
+          id: "installed 2026-11-15T10:00:00.000Z, app 1.0",
+        },
+        device: "Pixel 9, Android 16",
+        file: "shot.png",
+        read: CLEAN,
+        sha256: await sha256File(link),
+        shows: "Shot",
+      });
+
+      await writeManifest(to, [item]);
+
+      const section = deviceSection(await readDeviceShots([link, link]));
+      const markdown = `## Before and after\n\nSome words.\n\n${section}\n\n## Next\n\nMore words.`;
+      const result = await checkBody({ markdown, repository, root: repository });
+
+      assert.deepEqual(result.problems, []);
+    };
+
+    // Any text, where a folder can't climb out of the test's own (`..`).
+    const folder = string({ maxLength: 12, unit: "binary" }).filter(
+      (text) => !text.split("/").includes("..") && !text.includes("\0"),
     );
 
-    await assertProperty(
-      asyncProperty(pictures, async ({ folders, order }) => {
-        const root = mkdtempSync(join(repository, "paths-"));
+    await assertProperty(asyncProperty(folder, take), { numRuns: 60 });
 
-        const made = await Promise.all(
-          folders.map(async (name) => {
-            const to = join(root, name);
-            mkdirSync(to, { recursive: true });
-            writeFileSync(join(to, "shot.png"), name);
-
-            const item = shot({
-              build: {
-                app: "android",
-                commit: "unknown",
-                id: "installed 2026-11-15T10:00:00.000Z, app 1.0",
-              },
-              device: "Pixel 9, Android 16",
-              file: "shot.png",
-              read: CLEAN,
-              sha256: await sha256File(join(to, "shot.png")),
-              shows: name,
-            });
-
-            await writeManifest(to, [item]);
-            return join(to, "shot.png");
-          }),
-        );
-
-        const links = order.map((index) => made[index] ?? "");
-        const section = deviceSection(await readDeviceShots(links));
-        const markdown = `## Before and after\n\nSome words.\n\n${section}\n\n## Next\n\nMore words.`;
-        const result = await checkBody({ markdown, repository, root: repository });
-
-        assert.deepEqual(result.problems, []);
-      }),
-      { numRuns: 20 },
-    );
+    for (const plain of ["shots", "día/über", "日本/写真", "a.b-c_d"]) {
+      // oxlint-disable-next-line no-await-in-loop -- Each writes its own folder; order doesn't matter.
+      await take(plain);
+    }
   });
 });

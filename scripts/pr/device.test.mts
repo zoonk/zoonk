@@ -130,7 +130,7 @@ describe("pnpm pr:media device: a picture the tool takes from a booted device", 
     assert.match(formatCheck(result, repository), /build not verified, installed /u);
   });
 
-  it("refuses an @name in what the picture shows or in the device's own name: GitHub would notify them", async () => {
+  it("refuses what GitHub links even escaped: an @name, a #number, a GH-number, an issue's URL", async () => {
     const { repository } = checkFixture();
 
     const takeNamed = async (name: string, booted: DeviceBridge) =>
@@ -145,11 +145,22 @@ describe("pnpm pr:media device: a picture the tool takes from a booted device", 
 
     const current = bridge({ commit: head(repository), dirty: false });
 
-    await assert.rejects(takeNamed("sheet for @reviewer", current), /notify/u);
+    const names = [
+      "sheet for @reviewer",
+      "sheet from #12",
+      "sheet from gh-3",
+      "sheet from example/repo/issues/4",
+    ];
+
+    const refused = await Promise.all(
+      names.map(async (name) => takeNamed(name, current).then(() => "taken", String)),
+    );
+
+    assert.ok(refused.every((why) => /GitHub links/u.test(why)));
 
     await assert.rejects(
-      takeNamed("sheet", { ...current, describe: async () => "iPhone of @reviewer, iOS 26.1" }),
-      /notify/u,
+      takeNamed("sheet", { ...current, describe: async () => "Test phone #2, iOS 26.1" }),
+      /GitHub links/u,
     );
   });
 });

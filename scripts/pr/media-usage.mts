@@ -34,8 +34,9 @@ Checks that every picture a PR body shows was captured, from which build, and re
   device   takes an after picture from a booted simulator (--device its udid) or emulator (its
            adb serial) that no capture can take, such as an Android sheet over its page, with
            --name saying what it shows (its caption, written as literal words; an @name is
-           refused, since GitHub would notify them) and --to a folder whose path holds no space,
-           (, ), |, < or >, which a body can't write in an image's path. It takes the
+           refused, as are a #number, a GH-number and an issue's URL, which GitHub links even
+           escaped) and --to a folder whose path holds only letters and digits of any script,
+           /, ., - and _, the path a body writes for an image. It takes the
            picture itself and records the installed build as the device reports it: a
            simulator's Debug build stamp must be this checkout's head, built clean, and its
            commit is recorded; an emulator's app carries no commit (a value that changes every

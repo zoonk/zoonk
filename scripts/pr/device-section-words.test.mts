@@ -13,7 +13,7 @@ import { gfmFromMarkdown } from "mdast-util-gfm";
 import { gfm } from "micromark-extension-gfm";
 import { describe, it } from "vitest";
 import { checkFixture } from "./check-fixture.mts";
-import { deviceSection } from "./device-section.mts";
+import { REFERENCE, deviceSection } from "./device-section.mts";
 import { deviceLine } from "./media.mts";
 
 type Node = { children?: Node[]; type: string; value?: string };
@@ -38,7 +38,7 @@ const anyText = string({
     constantFrom(...PUNCTUATION),
     constantFrom("é", "ü", "日本", "🙂", "\u200F"),
   ),
-}).filter((text) => fold(text) !== "" && !/@\w/u.test(text));
+}).filter((text) => fold(text) !== "" && !REFERENCE.test(text));
 
 describe("the section's words, whatever a device or an author gives (RV79)", () => {
   it("keeps every caption whole: a device that reports a | (RV79 P1)", () => {

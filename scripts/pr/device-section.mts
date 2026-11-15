@@ -9,11 +9,15 @@ import { sha256File } from "./provenance.mts";
  */
 const DEVICE_HEADING = "On a device (layout not measured)";
 
-/** An `@name` notifies that person on GitHub even escaped, so no caption may hold one. */
-export const MENTION = /@\w/u;
+/**
+ * What GitHub links even escaped, notifying that person or leaving a cross-reference on that issue:
+ * an @name, a #number, a GH-number, an issue's, pull request's or discussion's URL. A commit's
+ * hash links too, to the commit, and is fine.
+ */
+export const REFERENCE = /@\w|#\d|\bgh-\d|\/(?:issues|pull|discussions)\/\d/iu;
 
-/** What an image's path may not hold, since a body's check reads only an unspaced path. */
-const UNWRITABLE = /[\s()<>|]/u;
+/** What an image's path may not hold: anything but a letter or a digit of any script, `/`, `.`, `-` and `_`. */
+const NOT_IN_PATH = /[^\p{L}\p{M}\p{N}/._-]/u;
 
 /**
  * Any text as literal words in a table cell or an image's description: every ASCII punctuation
@@ -28,7 +32,7 @@ function literal(text: string): string {
 
 /** Why a picture's path can't go in a PR body as an image, or null when it can. */
 export function unwritablePath(path: string): string | null {
-  const [found] = UNWRITABLE.exec(path) ?? [];
+  const [found] = NOT_IN_PATH.exec(path) ?? [];
 
   if (found === undefined) {
     return null;
