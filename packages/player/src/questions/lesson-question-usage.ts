@@ -1,4 +1,5 @@
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
+import { received } from "@zoonk/learn/help-limit";
 import { safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
 import { type LessonQuestionApiError } from "./lesson-question-api";
@@ -64,9 +65,8 @@ export async function getRefusalError(response: Response): Promise<LessonQuestio
   const { data: body } = await safeAsync<unknown>(() => response.json());
   const usage = getUsageRefusal(body);
 
-  // Received now: the moment tells a server clock behind this device's from a refusal that's over.
   if (usage?.kind === "usageLimit") {
-    return { ...usage, receivedAt: Date.now() };
+    return received(usage);
   }
 
   if (usage) {

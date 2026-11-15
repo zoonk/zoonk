@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { readRefusedLimit } from "./refused-limit";
 
 function limitReached(limit: object) {
@@ -12,6 +12,27 @@ function limitReached(limit: object) {
 }
 
 describe(readRefusedLimit, () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("stamps a refusal it reads with the moment it arrived, which tells a server clock behind this one", () => {
+    vi.useFakeTimers({ now: new Date("2026-12-02T09:00:30.000Z"), toFake: ["Date"] });
+
+    expect(
+      readRefusedLimit({
+        body: limitReached({
+          availableAt: "2026-12-02T09:00:00.000Z",
+          limit: 20,
+          period: "rolling30Days",
+          resource: "lessonStart",
+          tier: "free",
+        }),
+        status: 402,
+      }),
+    ).toMatchObject({ receivedAt: Date.parse("2026-12-02T09:00:30.000Z") });
+  });
+
   it("reads which cap it was and when more comes back", () => {
     expect(
       readRefusedLimit({
@@ -27,6 +48,7 @@ describe(readRefusedLimit, () => {
     ).toStrictEqual({
       availableAt: "2026-12-02T09:00:00.000Z",
       period: "rolling30Days",
+      receivedAt: expect.any(Number),
       status: "limitReached",
       tier: "free",
     });
@@ -45,6 +67,7 @@ describe(readRefusedLimit, () => {
     ).toStrictEqual({
       availableAt: "2026-11-20T12:00:00.000Z",
       period: "rolling30Days",
+      receivedAt: expect.any(Number),
       status: "limitReached",
       tier: "free",
     });

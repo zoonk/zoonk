@@ -19,6 +19,15 @@ import {
   SubscribeMainAction,
 } from "./subscribe-gate";
 
+/**
+ * A refusal as it arrives in answer to a request this screen just made, stamped with that moment so
+ * a server clock behind this device's can be told from a refusal that's over. A refusal restored
+ * from an address or a page is never stamped.
+ */
+export function received<Refusal extends object>(refusal: Refusal): Refusal {
+  return { ...refusal, receivedAt: Date.now() };
+}
+
 /** A refusal lasts until its instant: then the action it took the place of is back, and the server decides again. */
 export function useLiveLimit<Limit extends object>(limit: Limit | null): Limit | null {
   const availableAt =

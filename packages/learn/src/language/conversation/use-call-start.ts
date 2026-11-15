@@ -1,7 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useState } from "react";
-import { type CallLimit } from "../../_components/help-limit-notice";
+import { type CallLimit, received } from "../../_components/help-limit-notice";
 import { type ContentWriting } from "../../generation/writing-wait";
 
 /**
@@ -26,8 +26,7 @@ function settle({
   started: CallStartOutcome;
 }): CallStartState {
   if (typeof started === "object" && "limit" in started) {
-    // Received now: the moment tells a server clock behind this device's from a refusal that's over.
-    return { limit: { ...started.limit, receivedAt: Date.now() }, status: "limited" };
+    return { limit: received(started.limit), status: "limited" };
   }
 
   if (started === "paused") {

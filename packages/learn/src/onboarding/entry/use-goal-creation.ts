@@ -5,6 +5,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { type LimitText } from "../../_components/comes-back-words";
+import { received } from "../../_components/help-limit-notice";
 import { type GoalError, useGoalLimitWords } from "../goal-errors";
 import { type CreateGoalsOutcome, needsAccountFor } from "../onboarding-actions";
 
@@ -66,7 +67,7 @@ export function useGoalCreation() {
       setError({
         limit:
           outcome.status === "limitReached"
-            ? { availableAt: outcome.availableAt, reason: outcome.reason }
+            ? received({ availableAt: outcome.availableAt, reason: outcome.reason })
             : undefined,
         message: createError(outcome),
         needsAccount: outcome.status === "limitReached" && needsAccountFor(outcome.reason),
