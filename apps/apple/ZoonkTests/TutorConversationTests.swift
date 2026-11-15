@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -335,6 +336,51 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertTrue(api.requestIDs.isEmpty)
   }
 
+  /// A lesson's Ask moves between a pane and a sheet as the window crosses the spread's width: the
+  /// panel that left asks nothing, and the one drawn in its place asks the offer, once.
+  func testAnOfferAPanelDrawnAgainTakesOverIsAskedOnce() async {
+    let api = TutorAPIStub()
+    let conversation = makeConversation(api: api)
+    let simpler = TutorSuggestion(
+      id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
+    let draft = TutorDraft(suggestion: simpler, offer: UUID(), sendsAtOnce: true)
+    var left: Task<Void, Never>?
+    var drawnAgain: Task<Void, Never>?
+    api.beforeThread = {
+      api.beforeThread = nil
+      drawnAgain = Task { await conversation.ask(draft) }
+      left?.cancel()
+    }
+
+    left = Task { await conversation.ask(draft) }
+    await left?.value
+    await drawnAgain?.value
+
+    XCTAssertEqual(api.suggestions, ["simpler"])
+  }
+
+  /// Narrowed, Ask leaves the lesson's side without a sheet; widened again, it's back and asks.
+  func testAnOfferWhosePanelLeftIsAskedWhenItsPanelComesBack() async {
+    let api = TutorAPIStub()
+    let conversation = makeConversation(api: api)
+    let simpler = TutorSuggestion(
+      id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
+    let draft = TutorDraft(suggestion: simpler, offer: UUID(), sendsAtOnce: true)
+    var left: Task<Void, Never>?
+    api.beforeThread = {
+      api.beforeThread = nil
+      left?.cancel()
+    }
+
+    left = Task { await conversation.ask(draft) }
+    await left?.value
+    XCTAssertTrue(api.suggestions.isEmpty, "Nothing is asked while no panel shows")
+
+    await conversation.ask(draft)
+
+    XCTAssertEqual(api.suggestions, ["simpler"])
+  }
+
   func testAQuestionShowsAsSentAtOnceAndGoesBackToTheComposerIfItFails() async {
     let api = TutorAPIStub(askFailures: [APIError.network, APIError.network])
     let conversation = makeConversation(api: api)
@@ -604,6 +650,96 @@ final class TutorConversationTests: XCTestCase {
   private func makeConversation(api: TutorAPIStub) -> TutorConversation {
     TutorStore(api: api, cache: AppCache(session: .preview(account: .tutorTestAccount)))
       .conversation(.plan(goalId: "goal"))
+  }
+}
+
+/// RV90: a lesson's Ask in a sheet keeps its view as the lesson moves to its next step, so an
+/// offer still waiting for its step's thread is dropped, never sent for the step the learner left.
+@MainActor
+final class TutorOfferStepTests: XCTestCase {
+  func testAnOfferWaitingWhenTheLearnerMovesOnIsNeverSent() async throws {
+    let api = TutorAPIStub()
+    let held = Held()
+    api.beforeThread = { await held.wait() }
+    let session = SessionStore.preview(account: .tutorTestAccount)
+    let tutor = TutorStore(api: api, cache: AppCache(session: session))
+    let simpler = TutorSuggestion(
+      id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
+    let step = Step(
+      scope: .plan(goalId: "step-a"),
+      draft: TutorDraft(suggestion: simpler, offer: UUID(), sendsAtOnce: true))
+    let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
+
+    try show(
+      StepThread(step: step)
+        .environment(tutor)
+        .environment(session)
+        .environment(
+          LearnerSummaryStore(
+            api: LearnerSummaryAPI(clients: clients), cache: AppCache(session: session))
+        )
+        .zoonkStyles())
+    await held.waitUntilHeld()
+
+    step.scope = .plan(goalId: "step-b")
+    step.draft = nil
+    try await Task.sleep(for: .milliseconds(300))
+    held.release()
+    try await Task.sleep(for: .milliseconds(300))
+
+    XCTAssertTrue(api.requestIDs.isEmpty, "Nothing is asked for the step the learner left")
+  }
+}
+
+@MainActor
+@Observable
+private final class Step {
+  var scope: TutorScope
+  var draft: TutorDraft?
+
+  init(scope: TutorScope, draft: TutorDraft?) {
+    self.scope = scope
+    self.draft = draft
+  }
+}
+
+private struct StepThread: View {
+  let step: Step
+
+  var body: some View {
+    TutorThreadView(scope: step.scope, draft: step.draft) { EmptyView() }
+  }
+}
+
+/// A read the test lets through when it says, every read after it at once.
+@MainActor
+private final class Held {
+  private var holding: CheckedContinuation<Void, Never>?
+  private var waiter: CheckedContinuation<Void, Never>?
+  private var released = false
+
+  func wait() async {
+    guard !released, holding == nil else {
+      return
+    }
+
+    await withCheckedContinuation { continuation in
+      holding = continuation
+      waiter?.resume()
+      waiter = nil
+    }
+  }
+
+  func waitUntilHeld() async {
+    if holding == nil {
+      await withCheckedContinuation { waiter = $0 }
+    }
+  }
+
+  func release() {
+    released = true
+    holding?.resume()
+    holding = nil
   }
 }
 

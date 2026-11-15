@@ -46,6 +46,14 @@ Every read a screen shows and every write goes through `Zoonk/Data`, so screens 
 - A settings page opened from elsewhere opens the account sheet at that page with `AppSheet.account(_:)`, so back leads to the settings list.
 - Guard an iOS 27 toolbar API (`visibilityPriority`, `ToolbarOverflowMenu`) by choosing the whole `.toolbar` with `if #available` outside it, never inside its builder, as `DesignSystem/TaskToolbar.swift` does and explains.
 
+### Requests outlive a layout change
+
+Folding, unfolding, rotating and resizing draw a `PaneSplit`'s builders, a `PaneBeside` pane and anything behind a size-class switch again, while the screen stays. So:
+
+- A request a tap starts, and what follows it (opening a screen, showing its result), lives in an owner the screen keeps above anything a layout change can rebuild: the view that holds the split, an `@Observable` it keeps in `@State`, or a sheet the router presents. That owner ends it when the screen really closes.
+- A view inside a split's builder or a size-class switch never cancels a request in `onDisappear`, and never presents a sheet that holds one: its disappearance may be a resize. `scripts/request-owners.test.mts` lists every view that ends work as it disappears, with why that's its owner; a new one needs its reason there.
+- An offer or a continuation records what it was for (the step, the goal, the day) and is dropped, never redirected, once that's gone.
+
 ## Localization
 
 - Keep user-facing text in native Xcode String Catalogs in `Zoonk/Resources/Localization`, one per feature or app surface, with unique and stable basenames. Let the operating system select the app language; do not add a custom locale switcher or parallel translation store.

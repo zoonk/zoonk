@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -1005,6 +1006,112 @@ private func openedReview() throws -> OpenedStudyDay {
     opening: try opening(#"{"blockId":"b1","kind":"session","sessionId":"s1"}"#), sessionId: "s1")
 }
 
+/// A suggested goal's Start, answered while the window crosses the width where Today splits into
+/// two panes: the buttons are drawn again on the other side, and the answer is still the visit's.
+@MainActor
+final class SuggestedGoalAnswerTests: XCTestCase {
+  func testStartOpensSetupWhenTodaySplitsIntoPanesMeanwhile() async throws {
+    let api = StudyAPIStub()
+    let store = TodayStore(api: api, cache: signedInCache())
+    let router = AppRouter()
+    let suggestion = SuggestedGoal(courseId: nil, id: "s1", title: "Microeconomics")
+    let answer = SuggestedGoalAnswer()
+    await api.holdNextSuggestedAnswer()
+    try readsWhatVoiceOverReads()
+
+    let window = try show(
+      PaneSplit {
+        SuggestedGoalButtons(suggestion: suggestion, answer: answer)
+      } secondary: {
+        Color.clear
+      } single: {
+        SuggestedGoalButtons(suggestion: suggestion, answer: answer)
+      }
+      .environment(store)
+      .environment(router)
+      .zoonkStyles())
+    window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
+    try await settle()
+
+    let start = String(localized: "Start", table: "Today")
+    try activate(start, in: window)
+    await api.waitForHeldSuggestedAnswer()
+
+    window.frame = CGRect(x: 0, y: 0, width: 1376, height: 1032)
+    try await settle()
+    await api.releaseHeldSuggestedAnswer()
+    try await settle()
+
+    let accepted = await api.acceptedSuggestions
+    XCTAssertEqual(accepted, ["s1"], "The server took the answer")
+    XCTAssertEqual(router.tasks, [.startGoal(goal: "Microeconomics")], "Setup opens")
+  }
+
+  private func settle() async throws {
+    try await Task.sleep(for: .milliseconds(300))
+  }
+}
+
+/// A mission tapped in Zu's day, then the window crosses the width where the day is a pane beside
+/// the conversation: the tap is the page's, so the mission still opens.
+@MainActor
+final class BuddyMissionTapTests: XCTestCase {
+  func testAMissionOpensWhenTheDaysPaneGoes() async throws {
+    try await opensAcross(from: 1376, to: 420)
+  }
+
+  func testAMissionOpensWhenTheDaysPaneComes() async throws {
+    try await opensAcross(from: 420, to: 1376)
+  }
+
+  private func opensAcross(from: CGFloat, to: CGFloat) async throws {
+    let api = StudyAPIStub(
+      openings: [try opening(#"{"blockId":"b1","kind":"session","sessionId":"s1"}"#)],
+      holdsOpening: true)
+    let today = TodayStore(api: api, cache: signedInCache())
+    let tap = BuddyMissionTap()
+    var opened = 0
+    let places = TutorPlaces { _ in opened += 1 }
+    try readsWhatVoiceOverReads()
+
+    let window = try show(
+      PaneSplit {
+        Color.clear
+      } secondary: {
+        MissionButton(tap: tap, today: today, places: places)
+      } single: {
+        MissionButton(tap: tap, today: today, places: places)
+      }
+      .zoonkStyles())
+    window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
+    try await Task.sleep(for: .milliseconds(300))
+
+    try activate("Open the mission", in: window)
+    await api.waitForHeldCall()
+    window.frame = CGRect(x: 0, y: 0, width: to, height: 1032)
+    try await Task.sleep(for: .milliseconds(300))
+    await api.releaseHeldCall()
+    try await Task.sleep(for: .milliseconds(300))
+
+    XCTAssertEqual(opened, 1, "The mission opens")
+  }
+}
+
+/// A mission row's tap, as the day's rows start it.
+private struct MissionButton: View {
+  let tap: BuddyMissionTap
+  let today: TodayStore
+  let places: TutorPlaces
+
+  var body: some View {
+    Button {
+      tap.open("b1", today: today, places: places) {}
+    } label: {
+      Text(verbatim: "Open the mission")
+    }
+  }
+}
+
 private actor StudyAPIStub: StudyAPIClient {
   private let opened: OpenedStudyDay?
   private var openings: [StudyBlockOpening]
@@ -1035,6 +1142,10 @@ private actor StudyAPIStub: StudyAPIClient {
   private var failsTodayReads = false
   private var heldTodayRead: CheckedContinuation<Void, Never>?
   private var todayReadWaiter: CheckedContinuation<Void, Never>?
+  private var holdsSuggestedAnswer = false
+  private var heldSuggestedAnswer: CheckedContinuation<Void, Never>?
+  private var suggestedAnswerWaiter: CheckedContinuation<Void, Never>?
+  private(set) var acceptedSuggestions: [String] = []
 
   init(
     opened: OpenedStudyDay? = nil, openings: [StudyBlockOpening] = [],
@@ -1266,7 +1377,35 @@ private actor StudyAPIStub: StudyAPIClient {
   { .answered }
   func dismissUploadRequest(token: String, goalID: String) async throws {}
 
-  func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws {}
+  func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws {
+    if holdsSuggestedAnswer {
+      holdsSuggestedAnswer = false
+      await withCheckedContinuation { continuation in
+        heldSuggestedAnswer = continuation
+        suggestedAnswerWaiter?.resume()
+        suggestedAnswerWaiter = nil
+      }
+    }
+
+    if accepted {
+      acceptedSuggestions.append(suggestionID)
+    }
+  }
+
+  func holdNextSuggestedAnswer() {
+    holdsSuggestedAnswer = true
+  }
+
+  func waitForHeldSuggestedAnswer() async {
+    if heldSuggestedAnswer == nil {
+      await withCheckedContinuation { suggestedAnswerWaiter = $0 }
+    }
+  }
+
+  func releaseHeldSuggestedAnswer() {
+    heldSuggestedAnswer?.resume()
+    heldSuggestedAnswer = nil
+  }
   func markMilestoneShown(token: String, milestoneID: String) async throws {}
 
   func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap {

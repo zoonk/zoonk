@@ -69,32 +69,37 @@ final class PhaseEndTests: XCTestCase {
   }
 
   private func plan(phases: [String]) throws -> GoalPlan {
-    let json = """
-      {
-        "access": { "mocksRequirePlus": false },
-        "areas": [], "bases": null, "course": null, "end": null,
-        "estimate": { "endDate": "2027-11-14", "fullCourseEndDate": null },
-        "examChoices": [], "examDocument": "notice", "feasibility": null, "fitOffer": null,
-        "goalId": "goal", "phases": [\(phases.joined(separator: ","))], "planId": "plan",
-        "ready": true,
-        "schedule": {
-          "dailyMinutes": 30, "dailyTimes": [15, 30, 45], "fullCourse": false, "studyDays": 7,
-          "targetDate": null, "targetDateEstimated": false, "targetDateNamedMonth": false,
-          "shape": {
-            "canDiffer": true, "weekdayDays": [1, 2, 3, 4, 5], "weekdays": 30, "weekend": null,
-            "weekendDays": [0, 6]
-          },
-          "weekdayMinutes": [30, 30, 30, 30, 30, 30, 30]
-        },
-        "status": { "kind": "onTrack" },
-        "steering": {
-          "difficultyBias": "standard", "lessonsStudied": 0, "practiceBias": "balanced",
-          "skippedActivities": []
-        },
-        "tools": [], "week": { "days": [], "startDate": "2027-01-04" },
-        "weekTime": { "studiedMinutes": 0, "targetMinutes": 210 }, "writtenPractice": null
-      }
-      """
-    return try JSONDecoder().decode(GoalPlan.self, from: Data(json.utf8))
+    try goalPlanFixture(phases: phases)
   }
+}
+
+/// A plan with these phases and nothing else to say.
+func goalPlanFixture(phases: [String] = []) throws -> GoalPlan {
+  let json = """
+    {
+      "access": { "mocksRequirePlus": false },
+      "areas": [], "bases": null, "course": null, "end": null,
+      "estimate": { "endDate": "2027-11-14", "fullCourseEndDate": null },
+      "examChoices": [], "examDocument": "notice", "feasibility": null, "fitOffer": null,
+      "goalId": "goal", "phases": [\(phases.joined(separator: ","))], "planId": "plan",
+      "ready": true,
+      "schedule": {
+        "dailyMinutes": 30, "dailyTimes": [15, 30, 45], "fullCourse": false, "studyDays": 7,
+        "targetDate": null, "targetDateEstimated": false, "targetDateNamedMonth": false,
+        "shape": {
+          "canDiffer": true, "weekdayDays": [1, 2, 3, 4, 5], "weekdays": 30, "weekend": null,
+          "weekendDays": [0, 6]
+        },
+        "weekdayMinutes": [30, 30, 30, 30, 30, 30, 30]
+      },
+      "status": { "kind": "onTrack" },
+      "steering": {
+        "difficultyBias": "standard", "lessonsStudied": 0, "practiceBias": "balanced",
+        "skippedActivities": []
+      },
+      "tools": [], "week": { "days": [], "startDate": "2027-01-04" },
+      "weekTime": { "studiedMinutes": 0, "targetMinutes": 210 }, "writtenPractice": null
+    }
+    """
+  return try JSONDecoder().decode(GoalPlan.self, from: Data(json.utf8))
 }
