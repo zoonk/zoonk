@@ -11,10 +11,12 @@ import { Button } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
-import { EllipsisIcon } from "lucide-react";
+import { EllipsisIcon, FileTextIcon, Trash2Icon } from "lucide-react";
+import { useState } from "react";
 import { generateOutputsAction, runEvalAction } from "./actions";
 import { DeleteModelDataDialog } from "./delete-model-data-dialog";
 import { type OutputExportEntry, OutputsExport } from "./outputs-export";
@@ -41,9 +43,57 @@ export function TaskModelFileActions({
   taskId: string;
   taskName: string;
 }) {
-  const actions = (
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const disabled = summary.attempted === 0;
+
+  return (
     <>
-      <OutputsExport entries={exportEntries} failedRuns={failedRuns} summary={summary} />
+      <DropdownMenu>
+        <div className="contents max-sm:hidden">
+          <OutputsExport entries={exportEntries} failedRuns={failedRuns} summary={summary} />
+          <Button
+            disabled={disabled}
+            onClick={() => setReviewOpen(true)}
+            size="bar"
+            variant="outline"
+            icon={<FileTextIcon />}
+          >
+            Export review PDF
+          </Button>
+          <Button
+            disabled={disabled}
+            onClick={() => setDeleteOpen(true)}
+            size="bar"
+            variant="destructive"
+            icon={<Trash2Icon />}
+          >
+            Delete results
+          </Button>
+        </div>
+        <DropdownMenuTrigger
+          className="sm:hidden"
+          render={<Button edge="end" size="icon-bar" variant="ghost" />}
+        >
+          <EllipsisIcon />
+          <span className="sr-only">More</span>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-60 sm:hidden">
+          <OutputsExport entries={exportEntries} failedRuns={failedRuns} summary={summary} menu />
+          <DropdownMenuItem disabled={disabled} onClick={() => setReviewOpen(true)}>
+            <FileTextIcon />
+            Export review PDF
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            disabled={disabled}
+            onClick={() => setDeleteOpen(true)}
+            variant="destructive"
+          >
+            <Trash2Icon />
+            Delete results
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <ReviewPdfExport
         entries={reviewEntries}
         key={`${taskId}-${modelId}`}
@@ -51,25 +101,16 @@ export function TaskModelFileActions({
         summary={summary}
         taskId={taskId}
         taskName={taskName}
+        open={reviewOpen}
+        onOpenChange={setReviewOpen}
       />
-      <DeleteModelDataDialog disabled={summary.attempted === 0} modelId={modelId} taskId={taskId} />
+      <DeleteModelDataDialog
+        modelId={modelId}
+        taskId={taskId}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+      />
     </>
-  );
-
-  return (
-    <DropdownMenu>
-      <div className="contents max-sm:hidden">{actions}</div>
-      <DropdownMenuTrigger
-        className="sm:hidden"
-        render={<Button edge="end" size="icon-bar" variant="ghost" />}
-      >
-        <EllipsisIcon />
-        <span className="sr-only">More</span>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="flex w-60 flex-col gap-1 sm:hidden" keepMounted>
-        {actions}
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }
 

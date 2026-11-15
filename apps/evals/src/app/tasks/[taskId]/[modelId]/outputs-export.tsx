@@ -4,6 +4,7 @@ import { BAR_GLYPH_ACTION, BarActionLabel } from "@/components/bar-action";
 import { type EvalSummary, HISTORICAL_ATTEMPTS_NOTE } from "@/lib/eval-summary";
 import { type FailedRun, type KeyFlaw } from "@/lib/types";
 import { Button } from "@zoonk/ui/components/button";
+import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { downloadFile } from "@zoonk/utils/download";
 import { DownloadIcon } from "lucide-react";
 
@@ -36,7 +37,9 @@ export function OutputsExport({
   entries,
   summary,
   failedRuns,
+  menu = false,
 }: {
+  menu?: boolean;
   entries: OutputExportEntry[];
   summary: EvalSummary;
   failedRuns: FailedRun[];
@@ -59,6 +62,15 @@ export function OutputsExport({
     };
 
     downloadFile(JSON.stringify(exported, null, 2), "outputs.json", "application/json");
+  }
+
+  if (menu) {
+    return (
+      <DropdownMenuItem disabled={summary.attempted === 0} onClick={exportOutputs}>
+        <DownloadIcon />
+        Export outputs
+      </DropdownMenuItem>
+    );
   }
 
   return (
