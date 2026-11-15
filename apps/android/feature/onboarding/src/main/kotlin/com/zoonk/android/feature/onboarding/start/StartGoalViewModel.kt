@@ -448,13 +448,10 @@ class StartGoalViewModel(
         if (isCreating) return
         isCreating = true
         creationError = null
-        val from = flow.screen
         viewModelScope.launch {
             when (val outcome = store.createGoals(input, planId)) {
                 is WriteOutcome.Done -> {
-                    // A learner who went back to the text box meanwhile stays there: the goal is made, and its
-                    // draft and Today lead to its setup, but the late answer doesn't pull them out of their words.
-                    if (flow.screen == from) onCreated(outcome.value)
+                    onCreated(outcome.value)
                 }
 
                 is WriteOutcome.Refused -> {

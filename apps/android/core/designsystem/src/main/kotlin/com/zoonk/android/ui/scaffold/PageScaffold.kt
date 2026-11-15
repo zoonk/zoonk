@@ -37,6 +37,8 @@ fun PageScaffold(
     actions: @Composable RowScope.() -> Unit = {},
     bottomBar: (@Composable ColumnScope.() -> Unit)? = null,
     barWidth: Dp = Dp.Unspecified,
+    /** Off while a request that moves the learner on is out: Back waits with it. */
+    backEnabled: Boolean = true,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val focus = rememberTitleFocus()
@@ -60,7 +62,9 @@ fun PageScaffold(
                     }
                 },
                 modifier = Modifier.pageBar(focus),
-                navigationIcon = { BackButton(onClick = onBack, modifier = Modifier.offset(x = pageMargin() - BACK_INK_START)) },
+                navigationIcon = {
+                    BackButton(onClick = onBack, modifier = Modifier.offset(x = pageMargin() - BACK_INK_START), enabled = backEnabled)
+                },
                 actions = actions,
             )
         },

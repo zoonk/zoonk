@@ -1,9 +1,13 @@
 package com.zoonk.android.feature.onboarding.start
 
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -60,11 +64,13 @@ class StartGoalFlowTest {
     private var hasAccount by mutableStateOf(true)
 
     private lateinit var navigator: AppNavigator
+    private lateinit var backDispatcher: OnBackPressedDispatcher
 
     private fun show(route: AppRoute.StartGoal = AppRoute.StartGoal()) {
         cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
         rule.setContent {
+            backDispatcher = requireNotNull(LocalOnBackPressedDispatcherOwner.current).onBackPressedDispatcher
             ZoonkTheme {
                 StartGoalScreen(
                     route,
@@ -142,21 +148,33 @@ class StartGoalFlowTest {
     }
 
     @Test
-    fun aGoalCreatedAfterTheLearnerWentBackLeavesThemAtTheTextBox() {
+    fun backWaitsWhileTheGoalIsBeingMade() {
         api.draft = understoodDraft()
         val create = CompletableDeferred<Unit>()
         api.createGate = create
         show(AppRoute.StartGoal(draftId = DRAFT_ID))
         rule.onNodeWithText("Looks right").performClick()
 
-        rule.onNodeWithContentDescription("Back").performClick()
-        rule.onNodeWithText("What do you want to achieve?").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Back").assertIsNotEnabled()
+        rule.runOnUiThread { backDispatcher.onBackPressed() }
+        rule.onNodeWithText("What do you want to achieve?").assertDoesNotExist()
         create.complete(Unit)
         rule.waitForIdle()
 
-        // The write still finished: the goal exists, and only the move into its setup was dropped.
         assertEquals(1, api.created.size)
-        assertFalse(navigator.currentRoute is AppRoute.GoalSetup)
+        assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
+    }
+
+    @Test
+    fun aRefusedCreateGivesBackItsUse() {
+        api.draft = understoodDraft()
+        api.refusal = ApiException(ApiError.Network)
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+
+        rule.onNodeWithContentDescription("Back").assertIsEnabled()
+        rule.runOnUiThread { backDispatcher.onBackPressed() }
         rule.onNodeWithText("What do you want to achieve?").assertIsDisplayed()
     }
 
