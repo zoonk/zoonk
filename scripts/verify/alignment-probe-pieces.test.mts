@@ -238,3 +238,22 @@ describe("a hairline the tiles of a grid draw together", () => {
     );
   });
 });
+
+/** RV71's page: in a tab list, a 120 px box whose `::before` reaches 10 px past the column's start. */
+function tabFill(attributes: string) {
+  return `<style>.fill::before { content: ""; position: absolute; left: -10px; right: 0; top: 0; bottom: 0; background-color: rgb(221, 221, 221); }</style>
+    <div data-slot="page" data-box="16,0,358,400"><div data-tabs data-box="16,40,358,60">
+      <div class="fill" ${attributes} data-box="16,40,120,60">Chapters</div></div></div>`;
+}
+
+function tabFillMisses(attributes: string) {
+  document.body.innerHTML = tabFill(attributes);
+  return evaluateCapture(read()).filter((finding) => finding.rule === "column");
+}
+
+describe("the current tab's fill", () => {
+  it("is allowed its 10 on the side it reaches, and nothing else in the tab list is (RV71)", () => {
+    assert.deepEqual(tabFillMisses('aria-current="page"'), []);
+    assert.equal(tabFillMisses("").length, 1);
+  });
+});

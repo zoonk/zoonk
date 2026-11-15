@@ -864,9 +864,11 @@ export function readAlignment({
         const line = ownBox ? null : ruleOf(element);
         const current = element.matches("[aria-current], [data-highlighted], [aria-selected=true]");
 
-        const lit: Kind = element.closest("[role=tablist], [data-slot=tabs-list], [data-tabs]")
-          ? "tab"
-          : "highlight";
+        // The current tab's own fill, not anything a tab list holds.
+        const lit: Kind =
+          current && element.closest("[role=tablist], [data-slot=tabs-list], [data-tabs]")
+            ? "tab"
+            : "highlight";
 
         // Every rule, passing or not: a line is judged whole, so a part inside the column that
         // touches one passing it (a grid's middle tile) is part of that line.
