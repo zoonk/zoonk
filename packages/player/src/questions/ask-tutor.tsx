@@ -10,7 +10,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { createOnDemand } from "@zoonk/ui/lib/on-demand";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useMemo, useState } from "react";
+import { createContext, use, useMemo, useState } from "react";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
 import { AskTutorFace } from "./ask-tutor-face";
 import {
@@ -199,6 +199,55 @@ function AskTutorProvider({
       {children}
       <ScreenTutorDrawer identity={identity} navigation={tutor.navigation} />
     </LessonQuestionHostProvider>
+  );
+}
+
+type SharedTutor = { identity: TutorIdentity; kind: ScreenTarget["kind"] };
+
+const SharedTutorContext = createContext<SharedTutor | null>(null);
+
+/**
+ * One conversation for a screen that places the tutor's entry more than once (a bar on a phone, a
+ * row in the side column from wide screens): every `AskTutorEntry` inside opens this one, so a
+ * layout change that swaps the entry keeps what the learner asked. Keep `target` and `tutor` stable.
+ */
+export function AskTutorScope({
+  children,
+  target,
+  tutor,
+}: {
+  children: React.ReactNode;
+  target: ScreenTarget;
+  tutor: LessonTutorConfig;
+}) {
+  const identity = useTutorIdentity(tutor.buddy);
+  const shared = useMemo(() => ({ identity, kind: target.kind }), [identity, target.kind]);
+
+  return (
+    <AskTutorProvider identity={identity} target={target} tutor={tutor}>
+      <SharedTutorContext value={shared}>{children}</SharedTutorContext>
+    </AskTutorProvider>
+  );
+}
+
+/** An entry to the conversation of the `AskTutorScope` around it. */
+export function AskTutorEntry({
+  appearance = "button",
+  size = "sm",
+}: {
+  appearance?: "button" | "row";
+  size?: AskTutorSize;
+}) {
+  const shared = use(SharedTutorContext);
+
+  if (!shared) {
+    throw new Error("AskTutorEntry needs an AskTutorScope around it");
+  }
+
+  return appearance === "row" ? (
+    <AskTutorRow identity={shared.identity} kind={shared.kind} />
+  ) : (
+    <AskTutorButton identity={shared.identity} kind={shared.kind} size={size} />
   );
 }
 
