@@ -198,7 +198,6 @@ private struct PlanContent: View {
     let context = PlanContext(
       goal: goal, plan: plan, adjust: { adjusting = $0 }, report: { isReporting = true },
       show: { sheet = $0 }, claimCertificate: claimCertificate, showClaim: show,
-      certificateClaim: certificateClaim)
       certificateClaim: certificateClaim, slotChecks: slotChecks)
 
     PaneSplit(primaryShare: 0.55) {
