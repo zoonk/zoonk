@@ -116,6 +116,7 @@ function filledLeads(context: Context): AlignmentFinding[] {
     (element) =>
       element.part === "action" &&
       element.variant === "filled" &&
+      !element.disabled &&
       element.surface === capture.activeSurface,
   );
 
@@ -134,7 +135,7 @@ function filledLeads(context: Context): AlignmentFinding[] {
 
   return [
     finding(context, {
-      detail: `${actions.map((action) => `${action.name ?? action.text ?? action.id}${action.disabled ? " (disabled)" : ""}`).join(", ")} on ${capture.activeSurface}`,
+      detail: `${actions.map((action) => action.name ?? action.text ?? action.id).join(", ")} on ${capture.activeSurface}`,
       level: "fail",
       message: "more than one filled action on one surface",
       piece: "action",

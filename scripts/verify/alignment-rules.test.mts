@@ -112,16 +112,22 @@ describe("relationships with no vote", () => {
     assert.equal(evaluateCapture(fixtureCapture(filledActions("page", 2)))[0]?.rule, "one-filled");
   });
 
-  it("counts a disabled filled button, drawn in the main action's place, and says it's disabled", () => {
-    const actions = filledActions("page", 2).map((action, index) =>
-      index === 0 ? { ...action, disabled: true, name: "Send" } : { ...action, name: "Start" },
+  it("counts only enabled filled actions: a disabled one draws gray and isn't a choice yet", () => {
+    assert.deepEqual(evaluateCapture(fixtureCapture(checkAndRun(true))), []);
+
+    assert.equal(
+      evaluateCapture(fixtureCapture(checkAndRun(false)))[0]?.detail,
+      "Check, Run on page",
     );
-
-    const [found] = evaluateCapture(fixtureCapture(actions));
-
-    assert.equal(found?.detail, "Send (disabled), Start on page");
   });
 });
+
+/** A lesson's Check beside an activity's own Run, both filled. */
+function checkAndRun(disabled: boolean) {
+  return filledActions("page", 2).map((action, index) =>
+    index === 0 ? { ...action, disabled, name: "Check" } : { ...action, name: "Run" },
+  );
+}
 
 const GROUP = element({ endEdge: 358, gap: 0, group: null, id: "g", part: "group" });
 
