@@ -55,11 +55,11 @@ export function AttentionTiles({ items }: { items: AttentionItem[] }) {
               render={<Link href={item.href} prefetch />}
             >
               {/* Labeled as the week's tiles under them are; the chevron says it opens the queue. */}
-              <StatLabel>
+              <StatLabel className="min-h-[2lh] items-start">
                 <StatIcon className={item.failed ? "text-destructive" : "text-muted-foreground"}>
                   <Icon />
                 </StatIcon>
-                <span className="min-w-0 flex-1 truncate">{item.title}</span>
+                <span className="min-w-0 flex-1">{item.title}</span>
                 <ChevronRightIcon
                   aria-hidden="true"
                   className="text-faint group-hover:text-foreground size-4 shrink-0"
