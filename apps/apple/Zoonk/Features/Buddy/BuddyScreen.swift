@@ -215,6 +215,7 @@ private struct BuddyContent: View {
           .scenePadding(.horizontal)
           .padding(.vertical, 8)
       }
+      .readableColumn(720, alignment: .leading)
   }
 
   @ViewBuilder
@@ -380,7 +381,7 @@ private struct BuddyContent: View {
           }
         }
       }
-      .fixedSize()
+      .fixedSize(horizontal: false, vertical: true)
 
       Spacer(minLength: 0)
 

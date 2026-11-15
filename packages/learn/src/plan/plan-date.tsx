@@ -125,7 +125,7 @@ export function PlanDate() {
         {/* Its room is there before a date is typed, so the field doesn't narrow when it shows. */}
         <Button
           busy={isPending}
-          className={cn(!canSave && "invisible")}
+          className={cn(!canSave && !isPending && "invisible")}
           type="submit"
           variant="outline"
         >

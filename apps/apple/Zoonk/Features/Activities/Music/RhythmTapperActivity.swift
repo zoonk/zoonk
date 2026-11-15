@@ -301,7 +301,7 @@ private struct RhythmControls: View {
     .buttonStyle(.outline)
     .controlSize(.large)
 
-    Button(action: onStart) {
+    let start = Button(action: onStart) {
       if hasTried {
         Label {
           Text(
@@ -316,8 +316,13 @@ private struct RhythmControls: View {
           comment: "Counts in a bar, then times the taps")
       }
     }
-    .buttonStyle(.mainAction)
-    .controlSize(.large)
+
+    // A try is the answer, so once there is one, Check is the screen's filled action.
+    if hasTried {
+      start.buttonStyle(.outline).controlSize(.large)
+    } else {
+      start.buttonStyle(.mainAction).controlSize(.large)
+    }
   }
 }
 

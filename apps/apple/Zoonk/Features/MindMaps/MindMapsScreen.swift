@@ -15,17 +15,29 @@ struct MindMapsScreen: View {
   var body: some View {
     if let goal = learner.summary.value?.shownGoal {
       let list = store.list(goalId: goal.id)
+      let stop = store.shownStop(goalId: goal.id)
 
-      content(list: list, goal: goal)
-        .barTitleAfterHero(
-          String(localized: "Mind maps", table: "MindMaps", comment: "Title of the mind maps page")
-        )
-        .loads(list)
-        .mindMapSaveFailureAlert(goalId: goal.id)
-        // One follower for every map on its way, each at its own pace.
-        .task(id: Following(goalId: goal.id, maps: list.value)) {
-          await store.followList(goalId: goal.id)
-        }
+      // The offer's stop holds until a read lifts it; its day, by this device's clock, only says
+      // when to read the offer again, whichever tab is shown and with no chapter listed.
+      OpeningClock(availableAt: stop?.availableAt) { now in
+        let isOver = stop?.isOver(at: now) ?? false
+
+        content(list: list, goal: goal)
+          .task(id: isOver) {
+            if isOver {
+              await store.readOfferAgain(goalId: goal.id, now: now)
+            }
+          }
+      }
+      .barTitleAfterHero(
+        String(localized: "Mind maps", table: "MindMaps", comment: "Title of the mind maps page")
+      )
+      .loads(list)
+      .mindMapSaveFailureAlert(goalId: goal.id)
+      // One follower for every map on its way, each at its own pace.
+      .task(id: Following(goalId: goal.id, maps: list.value)) {
+        await store.followList(goalId: goal.id)
+      }
     }
   }
 
@@ -199,6 +211,9 @@ private struct MindMapCreateSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(MindMapsStore.self) private var store
   @State private var showsChapters = false
+  /// The fold opens once, on arrival, while one of its chapters is being made, so that chapter's
+  /// progress is in view; a learner who closes it keeps it closed.
+  @State private var arrived = false
   /// The block stays for the visit once it has shown the stop, so its held slot outlives the line.
   @State private var showedStop = false
 
@@ -206,21 +221,11 @@ private struct MindMapCreateSection: View {
   let maps: GoalMindMaps
   let notMade: [ChapterMindMap]
 
-  /// The offer's stop takes the rows' Create until a read lifts it; its day, by this device's
-  /// clock, only says when to read the offer again.
+  /// The offer's stop takes the rows' Create until a read lifts it.
   var body: some View {
     let stop = store.shownStop(goalId: goalId)
 
-    OpeningClock(availableAt: stop?.availableAt) { now in
-      let isOver = stop?.isOver(at: now) ?? false
-
-      section(stop: stop, canStart: stop == nil)
-        .task(id: isOver) {
-          if isOver {
-            await store.readOfferAgain(goalId: goalId, now: now)
-          }
-        }
-    }
+    section(stop: stop, canStart: stop == nil)
   }
 
   /// A failed map's row keeps its Try again, whose retry is free.
@@ -230,8 +235,8 @@ private struct MindMapCreateSection: View {
     let line = line(offer, stop: stop, canStart: canStart)
     let isStopped = if case .stopped = line { true } else { false }
 
-    let ready = notMade.filter { $0.lessonsToWrite == 0 && $0.status != .writingLessons }
-    let others = notMade.filter { !ready.contains($0) }
+    let ready = notMade.filter(\.canMakeNow)
+    let others = notMade.filter { !$0.canMakeNow }
 
     Section {
       ForEach(ready) { map in
@@ -273,16 +278,32 @@ private struct MindMapCreateSection: View {
 
       if !others.isEmpty {
         FoldRow(isUnfolded: $showsChapters) {
-          LabeledContent {
-            Text(verbatim: others.count.formatted())
-              .typeStyle(.data)
-              .foregroundStyle(.mutedForeground)
-          } label: {
+          // Centered, not on one baseline: a small count's capitals sit low on the label's.
+          HStack(spacing: 8) {
             Text(
               "Other chapters", tableName: "MindMaps",
               comment: "Unfolds the chapters whose maps can't be made right now"
             )
             .typeStyle(.body)
+            .layoutPart(.label)
+
+            Spacer(minLength: 8)
+
+            Text(verbatim: others.count.formatted())
+              .typeStyle(.data)
+              .foregroundStyle(.mutedForeground)
+              .layoutPart(.value)
+          }
+        }
+        .onAppear {
+          guard !arrived else {
+            return
+          }
+
+          arrived = true
+
+          if others.contains(where: \.opensItsGroupOnArrival) {
+            showsChapters = true
           }
         }
 
@@ -307,50 +328,17 @@ private struct MindMapCreateSection: View {
     }
   }
 
-  /// The one line under the button: the first of these that applies. Maps on their way and maps
-  /// that didn't finish come before the limit: the learner just started them, and the limit read
-  /// first looks like a refusal.
-  private enum Line {
-    case unreachable
-    case onTheWay(Int)
-    case unfinished(Int)
-    case stopped(MindMapLimit)
-    case fewer(Int)
-  }
-
   private func line(_ offer: MindMapCreateOffer, stop: MindMapAllowanceStop?, canStart: Bool)
-    -> Line?
+    -> MindMapsCreateLine?
   {
-    let onTheWay = maps.chapters.count { $0.status.isOnItsWay }
-    // Only the ones the button retries: a failed map whose lessons aren't written says so in its
-    // own row.
-    let unfinished = maps.chapters.count { $0.status == .failed && $0.lessonsToWrite == 0 }
-
-    if store.createAllFailures[goalId] == .unreachable {
-      return .unreachable
-    }
-
-    if onTheWay > 0 {
-      return .onTheWay(onTheWay)
-    }
-
-    if unfinished > 0 {
-      return .unfinished(unfinished)
-    }
-
-    if offer.startable == 0, !canStart, let stop {
-      return .stopped(stop.limit(tier: learner.summary.value?.tier ?? .free))
-    }
-
-    if offer.startable > 0, offer.startable < offer.eligible {
-      return .fewer(offer.startable)
-    }
-
-    return nil
+    MindMapsCreateLine(
+      maps: maps, stop: stop, canStart: canStart,
+      unreachable: store.createAllFailures[goalId] == .unreachable,
+      tier: learner.summary.value?.tier ?? .free)
   }
 
   @ViewBuilder
-  private func lineView(_ line: Line) -> some View {
+  private func lineView(_ line: MindMapsCreateLine) -> some View {
     switch line {
     case .unreachable:
       FailureLine(
@@ -359,7 +347,7 @@ private struct MindMapCreateSection: View {
           comment: "Asking for a map didn't reach the server"))
     case .stopped(let limit):
       LimitNotice(limit: limit.limit, words: limit.words(now:))
-    case .onTheWay, .unfinished, .fewer:
+    case .onTheWay, .fewer:
       Text(verbatim: note(line) ?? "")
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
@@ -367,17 +355,12 @@ private struct MindMapCreateSection: View {
   }
 
   /// The line's words, when it's a note of the block's own rather than a notice.
-  private func note(_ line: Line?) -> String? {
+  private func note(_ line: MindMapsCreateLine?) -> String? {
     switch line {
     case .onTheWay(let count):
       String(
         localized: "\(count) on the way. You can leave while they're made.", table: "MindMaps",
         comment: "How many chapter maps are being made now")
-    case .unfinished(let count):
-      String(
-        localized: "\(count) maps didn't finish. Try again.", table: "MindMaps",
-        comment:
-          "Chapter maps whose making failed; the button above makes them again, for free")
     case .fewer(let count):
       String(
         localized: "You can create \(count) more maps right now.", table: "MindMaps",
@@ -746,5 +729,37 @@ private struct MindMapIndex<Item: Identifiable, Row: View>: View {
     let key: String
     let subject: ChapterMindMap.Subject?
     var items: [Item]
+  }
+}
+
+/// The one line under "Create all": the first of these that applies. What stops the learner
+/// outranks what's in progress. Each map on its way, and each that didn't finish with its Try again,
+/// says so in its own row, and their group opens on arrival.
+enum MindMapsCreateLine: Equatable {
+  case unreachable
+  case onTheWay(Int)
+  case stopped(MindMapLimit)
+  case fewer(Int)
+
+  init?(
+    maps: GoalMindMaps, stop: MindMapAllowanceStop?, canStart: Bool, unreachable: Bool,
+    tier: LearnerTier
+  ) {
+    let offer = maps.createOffer
+    // As main's, only the chapters under "Other chapters": the others' rows say where they stand.
+    let others = maps.chapters.filter { !$0.canMakeNow }
+    let onTheWay = others.count { $0.status.isOnItsWay }
+
+    if unreachable {
+      self = .unreachable
+    } else if offer.startable == 0, !canStart, let stop {
+      self = .stopped(stop.limit(tier: tier))
+    } else if onTheWay > 0 {
+      self = .onTheWay(onTheWay)
+    } else if offer.startable > 0, offer.startable < offer.eligible {
+      self = .fewer(offer.startable)
+    } else {
+      return nil
+    }
   }
 }
