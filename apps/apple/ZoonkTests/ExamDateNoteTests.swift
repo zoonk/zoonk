@@ -1,5 +1,3 @@
-import HTTPTypes
-import OpenAPIRuntime
 import SwiftUI
 import XCTest
 
@@ -18,10 +16,7 @@ final class ExamDateNoteTests: XCTestCase {
   }
 
   private func staysOpen(from: CGFloat, to: CGFloat) async throws {
-    let dependencies = AppDependencies(
-      clients: APIClientFactory(
-        baseURL: URL(string: "https://api.zoonk.test")!, transport: OfflineTransport()),
-      session: .preview(account: Self.account), imageLoader: .live(), subscriptionStore: .live())
+    let dependencies = AppDependencies.hosted()
     let exam = try Self.exam()
     try readsWhatVoiceOverReads()
 
@@ -68,17 +63,4 @@ final class ExamDateNoteTests: XCTestCase {
     try await Task.sleep(for: .milliseconds(600))
   }
 
-  private struct OfflineTransport: ClientTransport {
-    func send(
-      _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
-    ) async throws -> (HTTPResponse, HTTPBody?) {
-      throw APIError.network
-    }
-  }
-
-  private static let account = CurrentAccount(
-    account: AccountAccess(
-      deletion: AccountDeletionRequirements(hasAppleAccount: false), subscription: nil),
-    user: AccountUser(
-      email: "learner@zoonk.test", id: "learner", image: nil, name: "Learner", username: nil))
 }

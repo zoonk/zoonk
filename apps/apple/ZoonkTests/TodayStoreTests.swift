@@ -1,5 +1,3 @@
-import HTTPTypes
-import OpenAPIRuntime
 import SwiftUI
 import XCTest
 
@@ -1165,11 +1163,7 @@ final class TodayExamSheetTests: XCTestCase {
   }
 
   private func staysOpen(from: CGFloat, to: CGFloat) async throws {
-    let dependencies = AppDependencies(
-      clients: APIClientFactory(
-        baseURL: URL(string: "https://api.zoonk.test")!, transport: OfflineTransport()),
-      session: .preview(account: .planTestAccount), imageLoader: .live(),
-      subscriptionStore: .live())
+    let dependencies = AppDependencies.hosted()
     try readsWhatVoiceOverReads()
 
     let window = try show(
@@ -1195,14 +1189,6 @@ final class TodayExamSheetTests: XCTestCase {
     XCTAssertTrue(
       selected(in: sheet).contains { $0.contains(pen) },
       "What was ticked stays ticked: \(spoken(in: sheet))")
-  }
-
-  private struct OfflineTransport: ClientTransport {
-    func send(
-      _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
-    ) async throws -> (HTTPResponse, HTTPBody?) {
-      throw APIError.network
-    }
   }
 
   private func selected(in view: Any) -> [String] {
