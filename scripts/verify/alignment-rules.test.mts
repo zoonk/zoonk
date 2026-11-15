@@ -218,6 +218,14 @@ describe("the command", () => {
   });
 });
 
+/** A declared group of one row with no label, named `name`. */
+function unlabelled(name: string) {
+  return fixtureCapture([
+    element({ endEdge: 358, gap: 0, group: null, id: "g", name, part: "group" }),
+    element({ bounds: [0, 0, 358, 44], id: "r0", name: `${name} row`, part: "row" }),
+  ]);
+}
+
 describe("printing and the summary line", () => {
   it("prints one fault once with each screen it showed on under it", () => {
     const before = real("conditions before 0387bba5c6, phone");
@@ -252,6 +260,19 @@ describe("printing and the summary line", () => {
     );
 
     assert.equal(summarize(findings.filter((item) => item.level !== "fail")).unresolved, 0);
+  });
+
+  it("prints one not-measured reason once with its count, and every group's rows under it", () => {
+    const lines = alignmentLines(
+      evaluateFile({ captures: [unlabelled("Today"), unlabelled("Plan")] }).findings,
+    );
+
+    assert.deepEqual(
+      lines.filter((line) => line.startsWith("- ")),
+      ["- **label**: list-group: a row's label wasn't found (2 groups)"],
+    );
+
+    assert.match(lines.join("\n"), /list-group Today: Today row; list-group Plan: Plan row/u);
   });
 
   it("keeps an excepted fault listed but resolved", () => {

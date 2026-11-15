@@ -150,10 +150,12 @@ export function notMeasured(
   what: string,
   detail: string,
 ) {
+  // One reason is one line however many groups show it (a sweep can show it on a hundred rows):
+  // the group goes in the detail, under the reason.
   return finding(context, {
-    detail,
+    detail: `${groupName(read)}: ${detail}`,
     level: "not-measured",
-    message: `${groupName(read)}: ${what}`,
+    message: `${read.group.piece}: ${what}`,
     piece: read.group.piece,
     rule,
   });

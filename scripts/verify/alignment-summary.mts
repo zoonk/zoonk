@@ -53,9 +53,9 @@ const LEVEL_TITLES: Record<Level, string> = {
 const LISTED = 3;
 
 /** One place's instances on one line: what each showed, the measured range, what holds the room. */
-function instanceText(items: AlignmentFinding[]) {
+function instanceText(items: AlignmentFinding[], listed = LISTED) {
   const details = [...new Set(items.map((item) => item.detail).filter(Boolean))];
-  const more = details.length > LISTED ? ` and ${details.length - LISTED} more` : "";
+  const more = details.length > listed ? ` and ${details.length - listed} more` : "";
   const measured = items.flatMap((item) => (item.measured === undefined ? [] : [item.measured]));
   const low = Math.min(...measured);
   const high = Math.max(...measured);
@@ -67,7 +67,7 @@ function instanceText(items: AlignmentFinding[]) {
 
   const holder = items.find((item) => item.holder)?.holder;
 
-  return `${details.length > 0 ? `: ${details.slice(0, LISTED).join("; ")}${more}` : ""}${range.replace(/ \]$/u, "]")}${holder ? `; ${holder}` : ""}`;
+  return `${details.length > 0 ? `: ${details.slice(0, listed).join("; ")}${more}` : ""}${range.replace(/ \]$/u, "]")}${holder ? `; ${holder}` : ""}`;
 }
 
 export function alignmentLines(findings: AlignmentFinding[]): string[] {
@@ -99,9 +99,18 @@ export function alignmentLines(findings: AlignmentFinding[]): string[] {
             `${item.screen}${item.scenario ? ` [${item.scenario}]` : ""} · ${item.configuration}`,
         );
 
+        const count =
+          level === "not-measured"
+            ? ` (${instances.length} ${instances.length === 1 ? "group" : "groups"})`
+            : "";
+
         return [
-          `- **${first.rule}**: ${first.message}${first.exception ? ` (excepted: ${first.exception})` : ""}`,
-          ...[...places].map(([place, here]) => `  - ${place}${instanceText(here)}`),
+          `- **${first.rule}**: ${first.message}${count}${first.exception ? ` (excepted: ${first.exception})` : ""}`,
+          // What wasn't measured lists every row: it is the list a platform's lane works down.
+          ...[...places].map(
+            ([place, here]) =>
+              `  - ${place}${instanceText(here, level === "not-measured" ? here.length : LISTED)}`,
+          ),
         ];
       }),
       "",
