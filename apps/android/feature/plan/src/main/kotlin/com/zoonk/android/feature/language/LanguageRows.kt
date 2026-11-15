@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.DOT_SHARE
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
@@ -76,7 +77,7 @@ fun PronunciationRow(
         modifier = modifier,
         onClick = onOpen,
         supporting = { Text(formatList(words, currentLocale()), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-        leading = { Icon(painterResource(R.drawable.ic_mic), contentDescription = null, modifier = Modifier.size(MARK)) },
+        leading = { MarkIcon(R.drawable.ic_mic, size = MARK) },
     )
 }
 

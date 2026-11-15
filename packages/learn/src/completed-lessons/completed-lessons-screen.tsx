@@ -111,7 +111,14 @@ export function CompletedLessonsScreen({
 
   return (
     <DetailLayout
-      bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Completed lessons")} />}
+      bar={
+        <LearnPageBar
+          back={{ href: hrefs.back }}
+          listed="learner"
+          root
+          title={t("Completed lessons")}
+        />
+      }
       measure="list"
       data-slot="completed-lessons"
     >

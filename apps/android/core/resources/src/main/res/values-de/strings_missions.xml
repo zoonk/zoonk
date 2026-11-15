@@ -19,7 +19,7 @@
   "missions_mock": "a210c9121f3ec28ff7184e9373be46939704272dd3465718b063c1cc311b7ce0",
   "missions_moment_all_done": "7b576056c007dd7435496e159c6029c08654a8af0dba4a2af064b8519b50e29e",
   "missions_moment_done": "2e0afd390a1ba7105ebfedd5948a503c09a4e78a441449da73ac33dfb6700b37",
-  "missions_moment_more": "0354ec4022ecadd5d4c6978205cd5333d4e292fff8fe49b434ad5bac21607ec2",
+  "missions_moment_more": "4a71249ed6b6bf4a1358ca2102796a6a9b44484ee2c2464fed2cd7bbd0594e5c",
   "missions_moment_one_done": "2cf3966f5cefa11621c636760dc296e085ec99fcad4008fa1da946a84e6be0db",
   "missions_open_buddy": "65499004d72b7656a2830792cf32dc3605c1954085b53b6ce8d8a550fd7897d1",
   "missions_open_call": "c47e614d1c9857b6e557df51ca494486dc0d06f1bca53c2943a6330ea6c0b878",
@@ -58,10 +58,9 @@
         <item quantity="one">%d Mission geschafft!</item>
         <item quantity="other">%d Missionen geschafft!</item>
     </plurals>
-    <!-- %1$d is how many missions are left, %2$s the day's bonus, such as 50. -->
     <plurals name="missions_moment_more">
-        <item quantity="one">Noch %1$d für +%2$s Brain Power</item>
-        <item quantity="other">Noch %1$d für +%2$s Brain Power</item>
+        <item quantity="one">Noch %1$d Mission für +%2$s Brain Power</item>
+        <item quantity="other">Noch %1$d Missionen für +%2$s Brain Power</item>
     </plurals>
     <string name="missions_just_done">Gerade geschafft</string>
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->

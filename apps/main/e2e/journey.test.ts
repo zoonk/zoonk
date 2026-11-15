@@ -5,6 +5,7 @@ import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { type Page, expect, test } from "./fixtures";
+import { holdActionAnswer } from "./held-action";
 import { asPersona } from "./learn-personas";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { openAs } from "./study-day";
@@ -159,6 +160,47 @@ test.describe("Journey", () => {
 
     await expect(page.getByRole("link", { name: "Continue" })).toBeVisible();
     await expect.poll(readStatus).toBe("active");
+
+    await page.context().close();
+  });
+
+  test("keeps the rename sheet open while a slow rename saves, then closes it with the new name", async ({
+    browser,
+  }) => {
+    const user = await createE2EUser(getBaseURL());
+    const goal = await goalFixture({ title: "Astronomy", userId: user.id });
+
+    await Promise.all([
+      planFixture({ goalId: goal.id }),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    ]);
+
+    const page = await openAs(browser, user);
+    await page.goto("/plan");
+
+    const options = page.getByRole("button", { name: "Plan options" });
+    await expectHydrated(options);
+    await options.click();
+    await page.getByRole("menuitem", { name: "Rename goal" }).click();
+
+    const sheet = page.getByRole("dialog", { name: "Rename goal" });
+    await sheet.getByRole("textbox", { name: "Name" }).fill("Stars and planets");
+
+    const rename = await holdActionAnswer(page, "/plan");
+    await sheet.getByRole("button", { name: "Save" }).click();
+    await rename.held;
+
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeVisible();
+    await expect(sheet.getByRole("button", { name: "Cancel" })).toBeDisabled();
+
+    await rename.release(/\/today/u);
+
+    await expect(sheet).toHaveCount(0);
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      displayName: "Stars and planets",
+    });
 
     await page.context().close();
   });

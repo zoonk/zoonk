@@ -37,9 +37,9 @@ import com.zoonk.android.ui.theme.zoonk
  *
  * Every one is `busy` while its own work runs, and a disabled one may stay `focusableWhenDisabled`, as main's do (Busy.kt).
  *
- * A button shows its words and at most one glyph. The main action ([Button]) is its words alone: busy, the spinner
- * covers them and the button keeps its size. Any other button may lead with one `leadingIcon` (a [ButtonIcon]) or end
- * with [forward]'s chevron, never both; busy, the spinner takes the glyph's place.
+ * A button shows its words and at most one glyph. Any button may lead with one `leadingIcon` (a [ButtonIcon]); any but
+ * the main action ([Button]) may instead end with [forward]'s chevron, never both. Busy, the spinner takes the glyph's
+ * place, or covers the words of a button without one, and the button keeps its size.
  */
 
 /** Main's sizes: [Large] (`lg`, 44dp) for a screen's action, [Small] (`sm`, 30dp) beside text, [Medium] elsewhere. */
@@ -54,7 +54,7 @@ fun ButtonIcon(
     @DrawableRes id: Int,
 ) = Icon(painterResource(id), contentDescription = null)
 
-/** A screen's main action: its words alone, which the spinner covers while it's [busy]. */
+/** A screen's main action: its words, after a [leadingIcon] where main's has one. */
 @Composable
 fun Button(
     onClick: () -> Unit,
@@ -62,10 +62,11 @@ fun Button(
     enabled: Boolean = true,
     busy: Boolean = false,
     focusableWhenDisabled: Boolean = false,
+    leadingIcon: (@Composable () -> Unit)? = null,
     size: ButtonSize = LocalButtonSize.current,
     shape: Shape = size.shape(),
     colors: ButtonColors = mainButtonColors(),
-    contentPadding: PaddingValues = size.contentPadding(leadingIcon = false, forward = false),
+    contentPadding: PaddingValues = size.contentPadding(leadingIcon != null, forward = false),
     interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
 ) = FilledButton(
@@ -75,7 +76,7 @@ fun Button(
     enabled = enabled,
     busy = busy,
     focusableWhenDisabled = focusableWhenDisabled,
-    leadingIcon = null,
+    leadingIcon = leadingIcon,
     forward = false,
     size = size,
     shape = shape,

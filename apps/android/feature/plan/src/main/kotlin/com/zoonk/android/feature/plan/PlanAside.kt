@@ -28,6 +28,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.country.lessonVarietyName
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
@@ -168,7 +169,7 @@ private fun LinkRow(
     ListRow(
         headline = { Text(text) },
         onClick = onClick,
-        leading = { Icon(painterResource(icon), contentDescription = null) },
+        leading = { MarkIcon(icon) },
     )
 }
 

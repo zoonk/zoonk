@@ -10,6 +10,7 @@
   "belt_gray": "f6f257bde536fa8fa5d27ab0492fcddf89b7b29aed2649da62a761bedfccac53",
   "belt_green": "cc3a28fb4beb4cce6ff2a3420251fc19492b009c15ac98a881741e24fefc1992",
   "belt_level": "e1d9baa0a7d4559e53e4ec208d35e3cd7ea80c6be704a5e75b750fb590c5ea14",
+  "belt_level_words": "4d6697af1f98fd988d33946dbc6da6e391375b2f658d26ab02f43f105fcfdf2e",
   "belt_orange": "d6a7ba96fd26ba82f065cd3215da6778eeb866fbeef0dce2151aea6d355bbf33",
   "belt_purple": "319893cbdf2763b5d49e94ec09792531a6c904dad573300f743e1bf0879b26a0",
   "belt_red": "75300a7e53b3319c5caf3e03dd7f495ed798149bd84416d74cf49b808d0b9ab2",
@@ -120,6 +121,7 @@
     <string name="belt_black">Czarny pas</string>
     <!-- A belt and its number from 1 to 10, such as White belt 4. %1$s is the belt's name. -->
     <string name="belt_level">%1$s %2$s</string>
+    <string name="belt_level_words">Poziom %1$s</string>
     <string name="answer_tag_correct">Poprawna</string>
     <string name="answer_tag_your_answer">Twoja odpowiedź</string>
     <string name="answer_tag_your_guess">Twój strzał</string>
