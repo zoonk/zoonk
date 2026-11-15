@@ -8,8 +8,16 @@ import { bindBuild, readCheckoutBuild, servedBuildId } from "./provenance.mts";
 
 const MINUTE = 60_000;
 
+/** When the sources were written and committed: the test's own time, never the real clock's. */
+const WRITTEN = Date.parse("2026-01-01T12:00:00.000Z");
+
 function git(repository: string, ...args: string[]) {
-  execFileSync("git", args, { cwd: repository });
+  const date = `${WRITTEN / 1000} +0000`;
+
+  execFileSync("git", args, {
+    cwd: repository,
+    env: { ...process.env, GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date },
+  });
 }
 
 function makeBuiltCheckout() {
@@ -22,12 +30,18 @@ function makeBuiltCheckout() {
   writeFileSync(join(repository, ".gitignore"), ".next\n");
   writeFileSync(join(repository, "apps/main/page.txt"), "page");
   writeFileSync(join(repository, "packages/ui/row.txt"), "row");
+  const written = new Date(WRITTEN);
+
+  for (const source of [".gitignore", "apps/main/page.txt", "packages/ui/row.txt"]) {
+    utimesSync(join(repository, source), written, written);
+  }
+
   git(repository, "add", ".");
   git(repository, "commit", "-qm", "start");
 
   const buildId = join(repository, "apps/main/.next/BUILD_ID");
   writeFileSync(buildId, "abc123\n");
-  const built = new Date(Date.now() + MINUTE);
+  const built = new Date(WRITTEN + MINUTE);
   utimesSync(buildId, built, built);
   return { built, repository };
 }
