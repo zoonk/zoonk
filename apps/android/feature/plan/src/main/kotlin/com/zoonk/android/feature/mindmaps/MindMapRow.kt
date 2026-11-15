@@ -168,7 +168,7 @@ internal fun ConnectedMindMapRow(
 ) {
     val maps = host.maps(goalId)
     val requests by maps.requests.collectAsStateWithLifecycle()
-    val local = requests[map.chapterId]
+    val local = rowLocal(requests[map.chapterId], place)
     val shown = shownMindMap(map.status, local)
 
     FollowWhileOnItsWay(maps, map.chapterId, shown)
@@ -191,6 +191,21 @@ internal fun ConnectedMindMapRow(
         )
     }
 }
+
+/**
+ * What a row shows of its tap's answer. Where the screen's list carries an offer (the Mind maps page), the offer owns
+ * a refusal that stops every map and its gate, the row's Create included, so the row keeps only its own reasons (its
+ * lessons, a slow-down); elsewhere the tap's answer is the row's one fact.
+ */
+internal fun rowLocal(
+    local: MindMapLocal?,
+    place: MindMapPlace,
+): MindMapLocal? =
+    local?.takeUnless {
+        place == MindMapPlace.Library && it.limit?.let { limit ->
+            stopsEveryMap(limit, it.subject)
+        } == true
+    }
 
 /**
  * One map's row, the same on the chapter's page, where a chapter ends and on the Mind maps page:

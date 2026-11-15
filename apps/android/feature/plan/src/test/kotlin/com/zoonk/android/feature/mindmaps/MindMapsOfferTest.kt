@@ -294,4 +294,59 @@ class MindMapsOfferTest {
         waitFor("No chapter maps yet.")
         compose.onNodeWithText("Every chapter you finish gets one.", substring = true).assertDoesNotExist()
     }
+
+    /** On this page the offer owns a refusal that stops every map: once a read allows again, the refused row offers Create too. */
+    @Test
+    fun anAllowingReadAfterTheCapGivesTheRefusedRowItsCreate() {
+        api.mindMaps = { fresh }
+        refuseCreate("mindMap", "rolling30Days")
+        show()
+        waitFor("Create all")
+        compose.onAllNodesWithText("Create")[0].performClick()
+
+        compose.waitUntil(10_000) { compose.onAllNodesWithText("Create").fetchSemanticsNodes().size == 2 }
+    }
+
+    @Test
+    fun aRefusalThatStopsEveryMapReadsOnce() {
+        api.mindMaps = { if (api.lists == 1) fresh else stopped(clock.opening) }
+        refuseCreate("mindMap", "rolling30Days")
+        show()
+        waitFor("Create all")
+        compose.onAllNodesWithText("Create")[0].performClick()
+        waitFor("You've used your mind maps")
+        compose.waitForIdle()
+
+        compose.onAllNodesWithText("You've used your mind maps").assertCountEquals(1)
+    }
+
+    /** The refused row's own day passing can't reopen it: the offer still stops every map until a read lifts it. */
+    @Test
+    fun theRowsOwnDayCantLiftTheOffersGate() {
+        api.mindMaps = {
+            when (api.lists) {
+                1 -> fresh
+                2 -> stopped(clock.opening)
+                else -> throw ApiException(ApiError.Network)
+            }
+        }
+        api.create = {
+            throw ApiException(
+                ApiError.Unavailable,
+                "USAGE_LIMIT_REACHED",
+                402,
+                Json.parseToJsonElement(
+                    """{"limit":{"availableAt":"${clock.opening}","period":"rolling30Days","resource":"mindMap","tier":"free"}}""",
+                ),
+            )
+        }
+        show()
+        waitFor("Create all")
+        compose.onAllNodesWithText("Create")[0].performClick()
+        waitFor("You've used your mind maps")
+
+        clock.passOpening()
+        compose.waitForIdle()
+        compose.onAllNodesWithText("Create").assertCountEquals(0)
+    }
 }

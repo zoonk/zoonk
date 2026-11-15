@@ -12,6 +12,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -20,6 +21,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -158,5 +160,73 @@ class MindMapOfferWriteTest {
 
             assertNotNull(store.offer().stop)
             assertEquals(lists, api.lists)
+        }
+
+    /** A read cancelled by the write that still answers later can't replace the offer; the read after the write does. */
+    @Test
+    fun aCancelledReadThatStillAnswersCantReplaceTheOffer() =
+        runTest(dispatcher) {
+            val old = CompletableDeferred<GoalMindMaps>()
+            val next = CompletableDeferred<GoalMindMaps>()
+            api.mindMaps = {
+                when (api.lists) {
+                    1 -> allowed
+                    2 -> withContext(NonCancellable) { old.await() }
+                    else -> next.await()
+                }
+            }
+            val store = store()
+            store.list[goalId].refresh()
+            launch { store.list[goalId].refresh() }
+            advanceUntilIdle()
+            refuse("mindMap", "rolling30Days")
+            launch { store.create(ChapterKey(goalId, UUID.fromString(mapChapter(3)))) }
+            advanceUntilIdle()
+            assertNotNull(store.offer().stop)
+
+            old.complete(allowed)
+            advanceUntilIdle()
+            assertNotNull(store.offer().stop)
+            next.complete(allowed)
+            advanceUntilIdle()
+            assertNull(store.offer().stop)
+        }
+
+    @Test
+    fun aFailedReadAfterTheWriteKeepsTheStopUntilOneComesThrough() =
+        runTest(dispatcher) {
+            api.mindMaps = { if (api.lists == 1) allowed else throw ApiException(ApiError.Network) }
+            val store = store()
+            store.list[goalId].refresh()
+            refuse("mindMap", "rolling30Days")
+            store.create(ChapterKey(goalId, UUID.fromString(mapChapter(3))))
+            assertNotNull(store.offer().stop)
+
+            api.mindMaps = { allowed }
+            store.list[goalId].refresh()
+            assertNull(store.offer().stop)
+        }
+
+    @Test
+    fun tapsWhileARowAndCreateAllWaitForTheirReadSendOneEach() =
+        runTest(dispatcher) {
+            val followUp = CompletableDeferred<GoalMindMaps>()
+            api.mindMaps = { if (api.lists == 1) allowed else followUp.await() }
+            val store = store()
+            store.list[goalId].refresh()
+            val model = MindMapViewModel(store, ana, goalId, { ana })
+            val chapter = UUID.fromString(mapChapter(3))
+            model.create(chapter)
+            model.create(chapter)
+            model.createAll()
+            model.createAll()
+            advanceUntilIdle()
+            model.create(chapter)
+            model.createAll()
+
+            assertEquals(1, api.created.size)
+            assertEquals(1, api.createdAll)
+            followUp.complete(allowed)
+            advanceUntilIdle()
         }
 }
