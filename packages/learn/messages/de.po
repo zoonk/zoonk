@@ -970,6 +970,18 @@ msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "Diesmal nicht geprüft"
 
+#. Why a switch for a different study time on weekends is off: no weekend day is a study day.
+#: src/_components/weekend-time.tsx
+msgctxt "MuKIuz"
+msgid "Add Saturday or Sunday to your study days."
+msgstr "Füg Samstag oder Sonntag zu deinen Lerntagen hinzu."
+
+#. Why a switch for a different study time on weekends is off: only weekend days are study days.
+#: src/_components/weekend-time.tsx
+msgctxt "dQytAa"
+msgid "Add a weekday to your study days."
+msgstr "Füg einen Tag von Montag bis Freitag zu deinen Lerntagen hinzu."
+
 #. A switch to study a different amount of time a day on weekends.
 #: src/_components/weekend-time.tsx
 msgctxt "f4Zmb7"

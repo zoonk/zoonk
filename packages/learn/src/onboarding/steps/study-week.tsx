@@ -76,7 +76,7 @@ export function WeekendMinutes({
     <WeekendTime
       checked={checked}
       className="text-sm font-medium"
-      disabled={disabled}
+      missing={disabled ? "weekend" : null}
       onCheckedChange={onCheckedChange}
     >
       {(on) => (
