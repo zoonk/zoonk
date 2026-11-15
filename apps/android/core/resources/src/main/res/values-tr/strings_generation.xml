@@ -28,6 +28,7 @@
   "generation_notice_line_2": "3bbc33a91b63dafb854dc9b32c8f346e2d0b9fd53d74133be064634919bf76d6",
   "generation_phase_active": "c2c051864820391499a37fb0505ac2ead02368c92b064ba68800f7f1324b77a5",
   "generation_phase_completed": "e3835fa9efd13e11e4e85df447c12a3f7485fbe41ae008d05d9f7345e023d020",
+  "generation_phase_failed": "d4fe35f009b6f7dbdc1439eaea40c06ddb84307f55626c345e7acc206729e27b",
   "generation_phase_pending": "11e3b2acbec32bdc43a4c406700381b1deda62941969056149b60df9af60b3ff",
   "generation_placement": "994e8d2e63d41915e68c1c7166654f8a576591d357c2adf17b22a24b780a527d",
   "generation_placement_questions": "d2f9c7225ba2222f59a4c600f825f7b38189d6c14ded3400dcc973a8d4726496",
@@ -65,6 +66,7 @@
     <string name="generation_phase_pending">henüz başlamadı</string>
     <string name="generation_phase_active">hazırlanıyor</string>
     <string name="generation_phase_completed">tamamlandı</string>
+    <string name="generation_phase_failed">burada kesildi</string>
     <!-- A detail line while questions are written, with the question's number. -->
     <string name="generation_question_line">%1$d. soruyu hazırlıyoruz…</string>
     <string name="generation_question_review">Cevapları kontrol ediyoruz…</string>
