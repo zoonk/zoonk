@@ -18,6 +18,7 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.country.CountryChoice
 import com.zoonk.android.feature.memory.MemoryUndo
@@ -28,14 +29,11 @@ import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.StudyMissionMoment
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -144,25 +142,23 @@ class TutorViewModel internal constructor(
     ) {
         if (isOpeningBlock) return
         isOpeningBlock = true
-        leadsWhereTapped = true
-        blockNotice = null
+        notice.clear()
+        val started = visit.number
 
         viewModelScope.launch {
             try {
-                val result = openMission(blockId)
-                if (!leadsWhereTapped) return@launch
-                when (result) {
+                when (val result = openMission(blockId)) {
                     is MutationResult.Done -> {
                         val route = result.value
                         if (route == null) {
-                            blockNotice = BlockNotice(turnId, closed = true)
+                            notice.send(started, BlockNotice(turnId, closed = true))
                         } else {
-                            openedBlocks.trySend(route)
+                            blockRoute.send(started, route)
                         }
                     }
 
                     is MutationResult.Failed -> {
-                        blockNotice = BlockNotice(turnId, closed = false)
+                        notice.send(started, BlockNotice(turnId, closed = false))
                     }
 
                     MutationResult.Obsolete -> {}
@@ -176,14 +172,16 @@ class TutorViewModel internal constructor(
     var isOpeningBlock by mutableStateOf(false)
         private set
 
-    var blockNotice by mutableStateOf<BlockNotice?>(null)
-        private set
-
-    private val openedBlocks = Channel<AppRoute>(Channel.BUFFERED)
-    private var leadsWhereTapped = false
+    /** This visit to the conversation: a step link's open leads and says something only on it. */
+    private val visit = Visit()
 
     /** Where an answer's step link leads once it opened, even after the answer scrolled away or the screen was made again. */
-    val blockRoutes: Flow<AppRoute> = openedBlocks.receiveAsFlow()
+    val blockRoute = visit.outcome<AppRoute>()
+
+    private val notice = visit.outcome<BlockNotice>()
+
+    /** Why a step link opened nothing, said under its answer on this visit. */
+    val blockNotice get() = notice.value
 
     /**
      * The learner left the conversation, so a step link's open still on its way leads and says
@@ -191,11 +189,7 @@ class TutorViewModel internal constructor(
      */
     fun leave() {
         screenAsk?.cancel()
-        leadsWhereTapped = false
-        blockNotice = null
-        do {
-            val waiting = openedBlocks.tryReceive()
-        } while (waiting.isSuccess)
+        visit.end()
     }
 
     private val mutableState = MutableStateFlow(TutorConversationState())
