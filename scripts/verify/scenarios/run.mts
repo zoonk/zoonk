@@ -13,6 +13,7 @@ import { evaluateFile } from "../alignment.mts";
 import { installPageHelpers } from "../page-helpers.mts";
 import { signIn } from "../sign-in.mts";
 import { VIEWPORTS, VIEWPORT_NAMES, type ViewportName } from "../viewports.mts";
+import { localePath, proofIn } from "./configuration.mts";
 import { type Prerequisites, SCENARIOS, type Scenario, type Step } from "./scenarios.mts";
 
 const USAGE = `Usage: pnpm verify:scenarios [id...] [--out <dir>]
@@ -104,12 +105,25 @@ async function take(page: Page, step: Step) {
   }
 }
 
+type Configuration = Omit<Scenario["sizes"][number], "size"> & { size: ViewportName };
+
+/** A run's name for one configuration, in its pictures' names and its lines. */
+function configurationLabel({ locale, size, textScale }: Configuration) {
+  return [size, locale, textScale && `text ${textScale}x`].filter(Boolean).join(" ");
+}
+
+/** Chromium's default text size, the browser setting a learner changes; the app sizes text in rem. */
+const DEFAULT_TEXT_PX = 16;
+
 async function capture(
   scenario: Scenario,
-  size: ViewportName,
+  configuration: Configuration,
   storage: Awaited<ReturnType<typeof storageFor>>,
   out: string,
 ): Promise<Capture> {
+  const { locale, size, textScale = 1 } = configuration;
+  const label = configurationLabel(configuration);
+  const path = localePath(scenario.screen, locale);
   const browser = await chromium.launch();
 
   try {
@@ -121,7 +135,13 @@ async function capture(
 
     await context.addInitScript(installPageHelpers);
     const page = await context.newPage();
-    await page.goto(scenario.screen, { waitUntil: "networkidle" });
+    const cdp = await context.newCDPSession(page);
+
+    await cdp.send("Page.setFontSizes", {
+      fontSizes: { standard: Math.round(DEFAULT_TEXT_PX * textScale) },
+    });
+
+    await page.goto(path, { waitUntil: "networkidle" });
 
     // A step that can't be taken leaves the scenario unreached, never a crash of the run.
     const stepped = await (async () => {
@@ -132,7 +152,7 @@ async function capture(
       () => true,
       (error: unknown) => {
         console.error(
-          `${scenario.id} ${size}: ${error instanceof Error ? error.message.split("\n")[0] : String(error)}`,
+          `${scenario.id} ${label}: ${error instanceof Error ? error.message.split("\n")[0] : String(error)}`,
         );
 
         return false;
@@ -145,7 +165,7 @@ async function capture(
       stepped &&
       scenario.reach !== null &&
       (await page
-        .getByText(scenario.proof)
+        .getByText(proofIn(scenario.proof, locale))
         .filter({ visible: true })
         .first()
         .isVisible()
@@ -157,10 +177,13 @@ async function capture(
 
     const read = await page.evaluate(readAlignment, { ...WEB_TABLE, anchors });
 
-    await page.screenshot({ fullPage: true, path: join(out, `${scenario.id}-${size}.png`) });
+    await page.screenshot({
+      fullPage: true,
+      path: join(out, `${scenario.id}-${label.replaceAll(" ", "-")}.png`),
+    });
 
     return {
-      ...webCapture({ page: read, path: scenario.screen, scheme: "light", viewport: size }),
+      ...webCapture({ page: read, path, scheme: "light", textScale, viewport: size }),
       reached,
       scenario: scenario.id,
     };
@@ -192,27 +215,28 @@ if (values.help) {
     const storage = scenario.reach === null ? undefined : await storageFor(scenario.prerequisites);
 
     // The web's sizes; a native size (a watch, a fold) isn't the web's to capture.
-    const sizes = scenario.sizes.flatMap(({ size }) =>
-      VIEWPORT_NAMES.filter((name) => name === size),
+    const configurations = scenario.sizes.flatMap(({ size, ...rest }) =>
+      VIEWPORT_NAMES.filter((name) => name === size).map((name) => ({ ...rest, size: name })),
     );
 
-    for (const size of sizes) {
+    for (const configuration of configurations) {
       const taken =
         scenario.reach === null
           ? {
               ...webCapture({
                 page: { activeSurface: "page", elements: [] },
-                path: scenario.screen,
+                path: localePath(scenario.screen, configuration.locale),
                 scheme: "light",
-                viewport: size,
+                textScale: configuration.textScale,
+                viewport: configuration.size,
               }),
               reached: false,
               scenario: scenario.id,
             }
-          : await capture(scenario, size, storage, out);
+          : await capture(scenario, configuration, storage, out);
 
       console.log(
-        `${scenario.id} ${size}: ${taken.reached ? "reached" : `not reached${scenario.prerequisites.seed ? ` (needs ${scenario.prerequisites.seed})` : ""}`}`,
+        `${scenario.id} ${configurationLabel(configuration)}: ${taken.reached ? "reached" : `not reached${scenario.prerequisites.seed ? ` (needs ${scenario.prerequisites.seed})` : ""}`}`,
       );
 
       captures.push(taken);

@@ -842,11 +842,13 @@ export function webCapture({
   page,
   path,
   scheme,
+  textScale = 1,
   viewport,
 }: {
   page: AlignmentPage;
   path: string;
   scheme: Scheme;
+  textScale?: number;
   viewport: ViewportName;
 }): Capture {
   const size = VIEWPORTS[viewport];
@@ -859,7 +861,7 @@ export function webCapture({
       pointer: size.hasTouch ? "touch" : "keys",
       scheme,
       size: viewport,
-      textScale: 1,
+      textScale,
       width: size.viewport?.width ?? 0,
     },
     platform: "web",

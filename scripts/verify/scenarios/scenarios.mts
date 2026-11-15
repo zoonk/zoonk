@@ -35,7 +35,12 @@ export type Scenario = {
   reach: Step[] | null;
   /** Words on the screen that prove this state is showing. */
   proof: string;
-  sizes: { pointer: Pointer; size: string }[];
+  /**
+   * Each configuration to capture. `locale` loads the screen in that language (English when
+   * absent); `textScale` sets the browser's default text size to that multiple of 16 px, as a
+   * learner's text-size setting does (Android's font scale, Apple's Dynamic Type).
+   */
+  sizes: { locale?: string; pointer: Pointer; size: string; textScale?: number }[];
   anchors: Anchor[];
   /** The scenario this one is the other half of, and the anchors allowed to change between them. */
   pair?: { change: string[]; with: string };
@@ -65,7 +70,13 @@ export const SCENARIOS: Scenario[] = [
     proof: "Your path",
     reach: [],
     screen: "/plan",
-    sizes: [...PHONE_AND_LAPTOP, { pointer: "touch", size: "tablet" }],
+    sizes: [
+      ...PHONE_AND_LAPTOP,
+      { pointer: "touch", size: "tablet" },
+      { locale: "de", pointer: "touch", size: "phone" },
+      { locale: "ja", pointer: "touch", size: "phone" },
+      { pointer: "touch", size: "phone", textScale: 2 },
+    ],
   },
   {
     anchors: [],
