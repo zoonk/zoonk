@@ -38,8 +38,6 @@ struct PlanPathSection: View {
 
 struct PlanPathRows: View {
   let context: PlanContext
-  /// The roadmap's list of every phase leaves out what a challenge is, where it would repeat.
-  var brief = false
 
   var body: some View {
     let phases = context.plan.phases
@@ -50,7 +48,7 @@ struct PlanPathRows: View {
 
     ForEach(beforeFinish) { phase in
       PlanPhaseRow(
-        context: context, phase: phase, isOpen: phase.index == open, brief: brief)
+        context: context, phase: phase, isOpen: phase.index == open)
     }
 
     PlanMarkedRow(title: Text(context.goal.displayName), when: planFinish(context)) {
@@ -60,7 +58,7 @@ struct PlanPathRows: View {
 
     ForEach(phases.filter { $0.kind == .afterExam }) { phase in
       PlanPhaseRow(
-        context: context, phase: phase, isOpen: phase.index == open, brief: brief)
+        context: context, phase: phase, isOpen: phase.index == open)
     }
   }
 }
@@ -83,7 +81,6 @@ private struct PlanPhaseRow: View {
   let context: PlanContext
   let phase: PlanPhase
   let isOpen: Bool
-  let brief: Bool
 
   private var disclosure: PlanStore.PhaseDisclosure {
     store.phaseDisclosure(goalId: context.goal.id, phase: phase.index)
@@ -165,7 +162,7 @@ private struct PlanPhaseRow: View {
   private var events: some View {
     if let checkpoint = phase.checkpoint {
       PlanCheckpointRow(
-        checkpoint: checkpoint, explains: !brief, isLanguage: context.goal.kind == .language,
+        checkpoint: checkpoint, isLanguage: context.goal.kind == .language,
         today: context.plan.today)
     }
   }
@@ -395,14 +392,13 @@ private struct PlanChapterRow: View {
 
 private struct PlanCheckpointRow: View {
   let checkpoint: PlanPhase.Checkpoint
-  let explains: Bool
   let isLanguage: Bool
   let today: String
 
   var body: some View {
     PlanRouteLink(route: .challenge(planItemId: checkpoint.planItemId)) {
       PlanChallengeLabel(
-        when: when, explains: explains && checkpoint.state != .done, isLanguage: isLanguage)
+        when: when, explains: checkpoint.state != .done, isLanguage: isLanguage)
     }
   }
 
