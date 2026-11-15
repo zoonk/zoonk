@@ -105,8 +105,8 @@ class LanguagePracticeScreenshots {
                 Surface {
                     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         LanguageLevelCard(LanguagePlanLevel("A2+", "B1"), onOpenPlan = {})
-                        AlphabetRow(alphabet(pending = true), goal, store, {})
-                        AlphabetRow(alphabet(pending = false), goal, store, {})
+                        AlphabetRow(alphabet(pending = true), goal, alphabetSkip(goal, store), {})
+                        AlphabetRow(alphabet(pending = false), goal, alphabetSkip(goal, store), {})
                         LanguagePracticeNotice(goal, pattern, words, SuggestionLayout.Line, {})
                         LanguagePracticeNotice(goal, typos, null, SuggestionLayout.Line, {})
                         LanguagePracticeNotice(goal, pattern, null, SuggestionLayout.Panel, {})

@@ -25,7 +25,6 @@ import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Visit
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkIcon
@@ -71,20 +70,26 @@ internal class AlphabetSkipModel(
     }
 }
 
-/**
- * The alphabet lesson for a script the learner's language doesn't use, above the Plan's path. While
- * the next session still opens with it, "I can already read it" takes it out.
- */
+/** [goalId]'s "I can already read it", one per page. */
 @Composable
-fun AlphabetRow(
-    alphabet: LanguageUnitsAlphabet,
+internal fun alphabetSkip(
     goalId: UUID,
     store: AlphabetStore,
+): AlphabetSkipModel = viewModel(key = "alphabet-skip:$goalId") { AlphabetSkipModel(store) }
+
+/**
+ * The alphabet lesson for a script the learner's language doesn't use, above the Plan's path. While
+ * the next session still opens with it, "I can already read it" takes it out. [model] is the page's
+ * [alphabetSkip], whose visit the page holds above the list the row scrolls in.
+ */
+@Composable
+internal fun AlphabetRow(
+    alphabet: LanguageUnitsAlphabet,
+    goalId: UUID,
+    model: AlphabetSkipModel,
     open: (AppRoute) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val model = viewModel(key = "alphabet-skip:$goalId") { AlphabetSkipModel(store) }
-    VisitOf(model.visit)
     val time = formatMinutes(alphabet.minutes.toInt(), currentLocale())
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {

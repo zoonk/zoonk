@@ -39,12 +39,15 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.CertificateCeremony
 import com.zoonk.android.feature.conversation.CallStarter
+import com.zoonk.android.feature.conversation.OpenStartedCall
 import com.zoonk.android.feature.feedback.FeedbackSheet
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.rememberReportProblem
 import com.zoonk.android.feature.goalcontent.PlanSyllabusSection
 import com.zoonk.android.feature.goalcontent.hasSubjectPages
 import com.zoonk.android.feature.language.AlphabetRow
+import com.zoonk.android.feature.language.alphabetSkip
+import com.zoonk.android.feature.speaking.speakingMockStart
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -191,6 +194,13 @@ internal fun PlanPage(
         navigator.open(codes.singleOrNull()?.let { AppRoute.Certificate(it) } ?: AppRoute.Certificates)
     }
     VisitOf(claim.visit)
+    val skip = if (isLanguage) alphabetSkip(page.goal.id, app.alphabet) else null
+    skip?.let { VisitOf(it.visit) }
+    (standing as? Standing.Language)?.takeIf { it.progress.speakingMock != null }?.let { language ->
+        OpenStartedCall(
+            speakingMockStart(language.progress.goal.id, language.startCall),
+        ) { navigator.open(AppRoute.Conversation(it.toString())) }
+    }
     ActOn(claim.opened, openCertificates)
     val focusTest = page.plan.focusTest
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME || focus == ADJUST_CHOICES) }
@@ -243,7 +253,7 @@ internal fun PlanPage(
         page = page,
         countryRebuild = countryRebuild,
         standing = standing,
-        alphabet = alphabet?.let { { AlphabetRow(it, page.goal.id, app.alphabet, navigator::open) } },
+        alphabet = alphabet?.let { shown -> skip?.let { { AlphabetRow(shown, page.goal.id, it, navigator::open) } } },
         focusTest = focusTest?.let { { PlanFocusTestRow(it, links::focusTest) } },
         structure = syllabus.value?.takeIf { it.hasSubjectPages },
         links = links,
