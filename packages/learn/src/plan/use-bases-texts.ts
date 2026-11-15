@@ -1,30 +1,13 @@
 "use client";
 
-import { type PlanBasesAdvice } from "@zoonk/core/plans/bases-advice-contract";
 import { type PlanBasesView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
 
-export type RecommendedBases = NonNullable<PlanBasesAdvice["recommended"]>;
-
 export function usePlanBases(): PlanBasesView | null {
   const { plan } = usePlanScreen();
   return plan.bases && plan.bases.items.length > 0 ? plan.bases : null;
-}
-
-export function useAdviceText() {
-  const t = useExtracted();
-
-  return (recommended: RecommendedBases): string => {
-    if (recommended === "deep") {
-      return t("We recommend every lesson. Your time covers them.");
-    }
-
-    return recommended === "quick"
-      ? t("We recommend one short lesson each, so there's time for the rest.")
-      : t("We recommend the first lessons only.");
-  };
 }
 
 function minutesOf(item: PlanBasesView["items"][number]): number {

@@ -21,9 +21,30 @@ export type RowChoice<Value extends string> = {
   value: Value;
 };
 
+function ChoiceTitle({ choice, markRoom }: { choice: RowChoice<string>; markRoom?: string }) {
+  if (!markRoom) {
+    return (
+      <ListRowTitle className={cn(choice.mark && "flex flex-wrap items-center gap-x-2 gap-y-1")}>
+        {choice.label}
+        {choice.mark && <Badge variant="outline">{choice.mark}</Badge>}
+      </ListRowTitle>
+    );
+  }
+
+  return (
+    <ListRowTitle className="flex gap-x-2">
+      <span className="min-w-0">{choice.label}</span>
+      <span className={cn("flex h-lh shrink-0 items-center", !choice.mark && "invisible")}>
+        <Badge variant="outline">{choice.mark ?? markRoom}</Badge>
+      </span>
+    </ListRowTitle>
+  );
+}
+
 export function ChoiceRows<Value extends string>({
   choices,
   label,
+  markRoom,
   onChange,
   readOnly = false,
   stackOnPhone = true,
@@ -31,6 +52,11 @@ export function ChoiceRows<Value extends string>({
 }: {
   choices: readonly RowChoice<Value>[];
   label: string;
+  /**
+   * A mark that can come after the first frame, such as a recommendation: every row keeps room for
+   * it on its first line, so it moves nothing when it comes.
+   */
+  markRoom?: string;
   onChange: (value: Value) => void;
   readOnly?: boolean;
   stackOnPhone?: boolean;
@@ -64,12 +90,7 @@ export function ChoiceRows<Value extends string>({
             )}
           >
             <ListRowContent>
-              <ListRowTitle
-                className={cn(choice.mark && "flex flex-wrap items-center gap-x-2 gap-y-1")}
-              >
-                {choice.label}
-                {choice.mark && <Badge variant="outline">{choice.mark}</Badge>}
-              </ListRowTitle>
+              <ChoiceTitle choice={choice} markRoom={markRoom} />
               {choice.description && <ListRowDescription>{choice.description}</ListRowDescription>}
             </ListRowContent>
 

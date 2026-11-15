@@ -91,9 +91,11 @@ export function AllBasesChoice({
   const choiceName = useChoiceName();
   const formatDuration = useFormatDuration();
 
+  const recommendedMark = t("Recommended");
+
   const choices = listOpenChoices(items).map((choice) => ({
     label: choiceName(choice),
-    mark: choice === recommended ? t("Recommended") : undefined,
+    mark: choice === recommended ? recommendedMark : undefined,
     trailing:
       choice === "skip"
         ? undefined
@@ -105,6 +107,7 @@ export function AllBasesChoice({
     <ChoiceRows
       choices={choices}
       label={t("All prerequisites")}
+      markRoom={recommendedMark}
       onChange={onChoose}
       readOnly={readOnly}
       stackOnPhone={false}
