@@ -36,8 +36,6 @@ export function setHit(value: Hit) {
 /** jsdom set up as a page the probe reads: boxes, fonts, a canvas, what shows at a point. */
 export function setUpProbeDom() {
   beforeEach(() => {
-    installPageHelpers();
-
     vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function measured(
       this: Element,
     ) {
@@ -85,7 +83,16 @@ export function setUpProbeDom() {
         clearRect: vi.fn(),
         fillRect: vi.fn(),
         fillStyle: "",
-        getImageData: () => ({ data: [0, 0, 0, 0] }),
+        // The pixel the color last set draws: what the helpers read a computed color by.
+        getImageData(this: { fillStyle: string }) {
+          const [red = 0, green = 0, blue = 0, alpha = 1] = (
+            /rgba?\((?<channels>[^)]+)\)/u.exec(this.fillStyle)?.groups?.channels ?? "0, 0, 0, 0"
+          )
+            .split(",")
+            .map(Number);
+
+          return { data: [red, green, blue, Math.round(alpha * 255)] };
+        },
         measureText: () => ({
           actualBoundingBoxAscent: 10,
           fontBoundingBoxAscent: 15,
@@ -101,6 +108,9 @@ export function setUpProbeDom() {
       configurable: true,
       value: (x: number, y: number) => (typeof hit === "function" ? hit(x, y) : hit),
     });
+
+    // After the mocks, so the helpers' canvas is the one that draws colors.
+    installPageHelpers();
   });
 
   afterEach(() => {

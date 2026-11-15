@@ -567,12 +567,33 @@ export function readAlignment({
     ];
   }
 
-  /** The closest column an element sits in, past columns that draw no box of their own. */
+  /** A cell of a grid laid out in two columns or more: a side column beside a hero or a list. */
+  function isGridCell(element: Element) {
+    const parent = element.parentElement;
+
+    if (!parent || isContents(element) || !getComputedStyle(parent).display.endsWith("grid")) {
+      return false;
+    }
+
+    return getComputedStyle(parent).gridTemplateColumns.trim().split(/\s+/u).length > 1;
+  }
+
+  /**
+   * The closest column an element sits in, past columns that draw no box of their own: a declared
+   * one, or a grid's cell where a grid splits the page (the course page's plan beside its hero,
+   * the catalog's courses beside their categories), which craft calls a column of its own.
+   */
   function columnOf(element: Element) {
     let column = element.parentElement?.closest(columns) ?? null;
 
     while (column && isContents(column)) {
       column = column.parentElement?.closest(columns) ?? null;
+    }
+
+    for (let cell = element.parentElement; cell && cell !== column; cell = cell.parentElement) {
+      if (isGridCell(cell) && (!column || column.contains(cell))) {
+        return cell;
+      }
     }
 
     return column;
@@ -807,6 +828,7 @@ export function readAlignment({
 
         const line = ownBox ? null : ruleOf(element);
         const current = element.matches("[aria-current], [data-highlighted], [aria-selected=true]");
+
         const lit: Kind = element.closest("[role=tablist], [data-slot=tabs-list]")
           ? "tab"
           : "highlight";

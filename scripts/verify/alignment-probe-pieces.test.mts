@@ -76,6 +76,27 @@ describe("a list against its page's column", () => {
   });
 });
 
+/** A laptop page column 280 to 1400 split by a grid into the hero (280 to 864) and a side (904 to 1400). */
+const SIDE_COLUMN = `<div data-slot="page" data-box="280,0,1120,600">
+  <div style="display: grid; grid-template-columns: 584px 496px" data-box="280,0,1120,600">
+    <div data-box="280,0,584,600">Quantum physics</div>
+    <div data-box="904,0,496,600">
+      <div data-slot="list-group" data-box="904,100,496,60">
+        <a aria-current="page" style="background-color: rgb(240, 240, 240)" data-box="894,100,516,30"><span data-slot="list-row-title" data-box="904,105,100,20">How small is an atom?</span></a>
+        ${row("Light behaves like a wave", 130)}
+      </div></div></div></div>`;
+
+describe("a box in a side column (a grid's cell beside the hero or a category list)", () => {
+  it("is judged against its cell, not the page's outer column", () => {
+    document.body.innerHTML = SIDE_COLUMN;
+
+    assert.deepEqual(
+      evaluateCapture(read()).filter((finding) => finding.rule === "column"),
+      [],
+    );
+  });
+});
+
 /** A phase row of the path sheet: its mark, its words and date, then its open events under it. */
 const SHEET = `<ol data-slot="journey-path-list" data-box="0,0,358,200">
   <li data-slot="path-row" data-box="0,0,358,150">
