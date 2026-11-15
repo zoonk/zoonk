@@ -31,7 +31,7 @@ To put renders in a PR, `pnpm pr:media adopt <before|after> <render.json>...` co
 What it can't measure, as the capture states:
 
 - A part whose parent replaced its children's semantics (`clearAndSetSemantics`, so TalkBack reads one phrase): written as an unmeasured area, which fails inside a declared group.
-- Capitals of text a fallback font drew (Japanese, Korean or Arabic in a Geist style, or a span in another family), so that row's line isn't measured.
+- The middle of text a fallback font drew with no capitals and no ideographic face (Arabic in a Geist style, or a span in another family), so that row's line isn't measured. Japanese and Korean are measured by their ideographic face.
 - Ink of text that is clipped, covered (wholly, partly or by a gradient), drawn with a brush, or dimmed by its parent so no pixel is its own color; and of a dimmed part whose faint edge doesn't reach its box, such as a disabled outline button.
 - Lazy rows that weren't composed.
 - A picture that isn't the one frame `captureRender()` copied (a copy, several windows drawn together): its file says so and holds no parts.
