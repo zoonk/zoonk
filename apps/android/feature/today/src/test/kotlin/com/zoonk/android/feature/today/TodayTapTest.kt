@@ -19,7 +19,9 @@ import com.zoonk.android.feature.session.step
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockOpeningTarget
+import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,6 +40,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
+import java.util.UUID
+
+private val COURSE: UUID = UUID.fromString("6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1c09")
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TodayTapTest {
@@ -51,9 +56,11 @@ class TodayTapTest {
     @After
     fun reset() = Dispatchers.resetMain()
 
+    private val todayApi = FakeTodayApi(emptyList())
+
     private fun today(): TodayViewModel {
         val cache = AppCache(FakeSession(AuthenticatedSession("ana", "token-a", "local-a")), CoroutineScope(SupervisorJob() + dispatcher))
-        val store = TodayStore(FakeTodayApi(emptyList()), cache, CoroutineScope(SupervisorJob() + dispatcher), timeZone = { "UTC" })
+        val store = TodayStore(todayApi, cache, CoroutineScope(SupervisorJob() + dispatcher), timeZone = { "UTC" })
         return TodayViewModel(
             StudyOpener(api, api::writeLesson, cache, timeZone = {
                 "UTC"
@@ -134,6 +141,70 @@ class TodayTapTest {
 
             assertNull(viewModel.pending)
             assertNull(viewModel.failed)
+        }
+
+    /** A suggested goal's Start, its save held until the returned call completes. */
+    private fun heldSuggestion(): Pair<SuggestedGoal, CompletableDeferred<Unit>> {
+        val held = CompletableDeferred<Unit>()
+        val suggestion = SuggestedGoal(courseId = COURSE, id = UUID.randomUUID(), status = SuggestedGoal.Status.PENDING, title = "Spanish")
+        todayApi.suggestedGoalAnswer = { _, _ ->
+            held.await()
+            suggestion.copy(status = SuggestedGoal.Status.ACCEPTED)
+        }
+        return suggestion to held
+    }
+
+    @Test
+    fun aSuggestedGoalsStartThatLandsWhileTodayIsRecreatedOpensItsCourseOnce() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            val (suggestion, held) = heldSuggestion()
+
+            viewModel.answer(suggestion, accepted = true, hasGoal = true)
+            runCurrent()
+            // A recreation: the screen collecting routes goes and another comes; the visit goes on.
+            val routes = shownRoutes(viewModel)
+            held.complete(Unit)
+            advanceUntilIdle()
+            runCurrent()
+
+            assertEquals(listOf(AppRoute.CourseStart(COURSE.toString())), routes.map { it.route })
+        }
+
+    @Test
+    fun aSuggestedGoalsStartThatLandsAfterTheLearnerLeftTodayOpensNothingOnReturn() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            val (suggestion, held) = heldSuggestion()
+
+            viewModel.answer(suggestion, accepted = true, hasGoal = true)
+            runCurrent()
+            viewModel.endVisit()
+            held.complete(Unit)
+            advanceUntilIdle()
+            val routes = shownRoutes(viewModel)
+            advanceUntilIdle()
+            runCurrent()
+
+            assertEquals(emptyList<TodayRoute>(), routes)
+            assertEquals(false, viewModel.isAnswering)
+        }
+
+    @Test
+    fun aRouteOwedToAVisitThatEndedBeforeTodayCollectedItOpensNothingOnReturn() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            val (suggestion, held) = heldSuggestion()
+
+            viewModel.answer(suggestion, accepted = true, hasGoal = true)
+            held.complete(Unit)
+            advanceUntilIdle()
+            viewModel.endVisit()
+            val routes = shownRoutes(viewModel)
+            advanceUntilIdle()
+            runCurrent()
+
+            assertEquals(emptyList<TodayRoute>(), routes)
         }
 
     @Test

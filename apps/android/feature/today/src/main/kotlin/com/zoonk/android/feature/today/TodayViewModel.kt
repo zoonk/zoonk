@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.VisitOutcomes
 import com.zoonk.android.feature.focustest.FocusTestStore
 import com.zoonk.android.feature.plan.PlanOp
 import com.zoonk.android.feature.plan.PlanStore
@@ -23,10 +24,8 @@ import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import com.zoonk.api.models.TodayFocusTest
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import java.util.UUID
@@ -62,10 +61,10 @@ class TodayViewModel(
     private val plans: PlanStore,
     private val focusTests: FocusTestStore,
 ) : ViewModel() {
-    private val opened = Channel<TodayRoute>(Channel.BUFFERED)
+    private val opened = VisitOutcomes<TodayRoute>()
 
-    /** Where a tap leads, for the screen's navigator, with the day it was made on. */
-    val routes: Flow<TodayRoute> = opened.receiveAsFlow()
+    /** Where a tap leads, for the screen's navigator, with the day it was made on, while the visit that made it lasts. */
+    val routes: Flow<TodayRoute> = opened.outcomes
 
     var pending by mutableStateOf<TodayTap?>(null)
         private set
@@ -102,7 +101,7 @@ class TodayViewModel(
         val intro = read.day.introTo(step, read.today.goal.id) ?: return false
         if (pending == null) {
             failed = null
-            opened.trySend(TodayRoute(intro, read.today.goal.id, read.day.localDate))
+            opened.send(visit, TodayRoute(intro, read.today.goal.id, read.day.localDate))
         }
         return true
     }
@@ -206,7 +205,8 @@ class TodayViewModel(
      * notice can show on return and a row's failure stays with the day it was tapped on.
      */
     fun endVisit() {
-        visit++
+        opened.endVisit()
+        answerFailed = false
         doneOpen = false
         moreOpen = false
         failed = null
@@ -219,8 +219,7 @@ class TodayViewModel(
     }
 
     /** An answer or a failed tap that comes back after the learner left Today belongs to no card or row and opens nothing. */
-    var visit = 0
-        private set
+    val visit: Int get() = opened.visit
 
     /** The queue's folds, opened for this visit only: every visit starts with the day folded. */
     var doneOpen by mutableStateOf(false)
@@ -454,6 +453,7 @@ class TodayViewModel(
         if (isAnswering) return
         isAnswering = true
         answerFailed = false
+        val started = visit
 
         viewModelScope.launch {
             when (val result = store.answer(suggestion, accepted)) {
@@ -463,17 +463,17 @@ class TodayViewModel(
                         accepted -> {
                             val route =
                                 answered.courseId?.let { AppRoute.CourseStart(it.toString()) } ?: AppRoute.StartGoal(goal = answered.title)
-                            opened.send(TodayRoute(route))
+                            opened.send(started, TodayRoute(route))
                         }
 
                         !hasGoal -> {
-                            opened.send(TodayRoute(AppRoute.StartGoal()))
+                            opened.send(started, TodayRoute(AppRoute.StartGoal()))
                         }
                     }
                 }
 
                 is MutationResult.Failed -> {
-                    answerFailed = true
+                    answerFailed = visit == started
                 }
 
                 MutationResult.Obsolete -> {}
@@ -497,9 +497,22 @@ class TodayViewModel(
 
             if (visit == started) {
                 when (result) {
-                    is MutationResult.Done -> result.value?.let { opened.send(TodayRoute(it, read.today.goal.id, read.day.localDate)) }
-                    is MutationResult.Failed -> failed = tap
-                    MutationResult.Obsolete -> Unit
+                    is MutationResult.Done -> {
+                        result.value?.let {
+                            opened.send(
+                                started,
+                                TodayRoute(it, read.today.goal.id, read.day.localDate),
+                            )
+                        }
+                    }
+
+                    is MutationResult.Failed -> {
+                        failed = tap
+                    }
+
+                    MutationResult.Obsolete -> {
+                        Unit
+                    }
                 }
             }
 
