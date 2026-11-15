@@ -439,8 +439,6 @@
   "onboarding_variety_title": "1dafe27746c7a2719048d3d3a4c91fa30cda90ff6357b76467832336658d5024",
   "onboarding_waitlist_joined": "d112481eaba6ef1e2b16f01bdc203b5b7aa97e80f5a4c59413767204bc43160a",
   "onboarding_waitlist_sign_in": "347aa36e6aec5cbca01bb72f6978a6d73832740bb58ecb2a88fd9186b2b420be",
-  "onboarding_weekend_time": "787b14698064a2d8a79aa853507649ae42c30ee8494f292e65feaed768902f77",
-  "onboarding_weekend_time_label": "9c9e484cf7f7813a548b689b2298d79a4f5da9defac5edbf75c2438065874e29",
   "onboarding_what_you_wrote": "c38a36c02377d52157060032c12868cac50a90aa8ae1188770be189b52f83d21",
   "onboarding_whats_next": "b8ca5f5784577cdcba3aec6c454553075684b8710b6bb5a36ea82971abece6ca",
   "onboarding_write_again": "0109a014ccfaae202d442e1675c93df24203f9cd0b1532a5e74423b3a42977c5",
@@ -1013,15 +1011,12 @@
     <string name="onboarding_full_course_finish">Com %1$s por dia, você termina em %2$s, depois da prova no dia %3$s.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="onboarding_full_course_finish_month">Com %1$s por dia, você termina em %2$s, depois da prova em %3$s.</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="onboarding_weekend_time">Tempo diferente nos fins de semana</string>
     <string name="onboarding_schedule_time_label">Tempo diário</string>
     <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
     <string name="onboarding_choose_date">Escolher uma data</string>
     <!-- The same link when the goal has a date. -->
     <string name="onboarding_change_date">Mudar data</string>
     <string name="onboarding_study_days">Dias de estudo</string>
-    <string name="onboarding_weekend_time_label">Tempo nos fins de semana</string>
     <string name="onboarding_answers_saved">Suas respostas estão salvas.</string>
     <!-- On a setup question when the plan's run never started. -->
     <string name="onboarding_plan_not_started">Não conseguimos começar a criar seu plano</string>

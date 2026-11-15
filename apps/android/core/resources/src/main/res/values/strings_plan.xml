@@ -496,9 +496,6 @@
     <string name="plan_pick_date">Pick a date</string>
     <string name="plan_save">Save</string>
     <string name="plan_use_this_date">Use this date</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="plan_weekend_time_differs">Different time on weekends</string>
-    <string name="plan_time_on_weekends">Time on weekends</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$s: which one will you take?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->

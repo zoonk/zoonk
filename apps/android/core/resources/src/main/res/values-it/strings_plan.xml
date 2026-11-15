@@ -462,7 +462,6 @@
   "plan_time_no_days": "10bc622646add491eac719b637f2f6d1d2dcd6f5a75735515d5d8e013c4c63b5",
   "plan_time_none": "b487e491ffe5b105f9b4c20e1866e62aae28531c960068bfccd46d4dd709190e",
   "plan_time_none_month": "2b08c3c19f2f406e23497572c59418a2057dab27b9375c286f4accca94bd25e8",
-  "plan_time_on_weekends": "cff12a5cf2d72fc5128409f943f77c3a47a5263774be1527ea560fd0a8cf00bf",
   "plan_time_past_date": "a1d2b6536ec4f1af80c074ce9cfeddcacd0bc87ff3c60aaaa151a043f4fe930b",
   "plan_time_past_date_month": "37a61b6066bd564cf3986388bc6054f0b335cf5675fbc19f8cac87ef1183a7a7",
   "plan_time_share_exam": "9f9852da2fb6a46563dfcb117f3ab4d441615cb219fd20ac81659f87d41a7e09",
@@ -530,7 +529,6 @@
   "plan_wednesdays": "a194a71e5da74fed6ea21d2d1bb0a5905b6895325996babd9d7d4ca20ab3720f",
   "plan_week_day": "fdbe4da136c3a07ef596c86d08d454b1f621c8814113587979b178f8f78c076b",
   "plan_week_time": "51d54990937ae88c6bf417ff3a2ba4cc610be9c0d2449520e8b10c45d1ebda7a",
-  "plan_weekend_time_differs": "9ae9581547b85e3a01c4db0b0f576b2ffdb02128b7363f654854c13f6f43bcbb",
   "plan_weekly_challenges": "b2c56bf735614e52c318a76b7a8f4ebbc9862cf5011c5212388bd07e1a2d875c",
   "plan_what_you_practice": "dd760574b53bfd83fd1f66e150f9b89ad01c739f31b9a0a0aca89c73c90e09f5",
   "plan_when_to_practice": "1f10d31c6e64f06575aa3969f7e2d0ea5ff982caf8293055b115e9df57772623",
@@ -1080,9 +1078,6 @@
     <string name="plan_pick_date">Scegli una data</string>
     <string name="plan_save">Salva</string>
     <string name="plan_use_this_date">Usa questa data</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="plan_weekend_time_differs">Tempo di studio diverso nel fine settimana</string>
-    <string name="plan_time_on_weekends">Tempo nel fine settimana</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$s: quale sosterrai?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->

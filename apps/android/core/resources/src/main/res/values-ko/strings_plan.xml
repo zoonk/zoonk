@@ -462,7 +462,6 @@
   "plan_time_no_days": "54b2f89145036fd6991316cf40aca121f14ac469613ead132122aaf1544ea9a4",
   "plan_time_none": "bf753a1c6218a9115a53770f543d238189aafd13718b358f98a3044c7d87df9e",
   "plan_time_none_month": "a1e6d9beecbb2fe72f32a142b55e4fba30a44c9fd9aeca7c055cdefbda638013",
-  "plan_time_on_weekends": "ff06b8ffc00cb74969363458c456d89289ec8cae6db307b4a1dd1ba8f3f5fb1a",
   "plan_time_past_date": "199f210f2b11e3523cca314279f744cfc50099dea0f845086262ba0b1edabb8e",
   "plan_time_past_date_month": "2e8d188e5ec3f71c096b991d4df25eb7ef733ef39a7f1e30d566cc9ef65a624a",
   "plan_time_share_exam": "8a434d1f4dc2b1ac0277e973d7b68785c2ca87988296d19bee53290953f223d7",
@@ -530,7 +529,6 @@
   "plan_wednesdays": "3375e98ee4bc319a614c612910babb4a6f6ea70062927df760083821c96ef70f",
   "plan_week_day": "f1f632899baaaaef4d7a0b284b9060afa66a186e206fc4129e32ad3efe2cbcec",
   "plan_week_time": "e0f5010fc55c1d5dd49b0e3a01fe63b1ea0a9083a096ebc5cbc41d6c8ab0b7f1",
-  "plan_weekend_time_differs": "fdbeb05c709ec7e94d93da6115fdb5534e592d28753610c0dbb2dda0d2faa950",
   "plan_weekly_challenges": "67f098c00dc59d821aa45767b1e8ca2ab4b0a19eacbce4b59b5a122b18d8b626",
   "plan_what_you_practice": "5046589509720517cc427b6da26d5adf77cf6c65620549e72c3252eb6ce1a9f1",
   "plan_when_to_practice": "1dedabe61bb34bb8f4076dfe8c8d19f27ba7aa60609688741c1e69500935fc18",
@@ -982,9 +980,6 @@
     <string name="plan_pick_date">날짜 선택</string>
     <string name="plan_save">저장</string>
     <string name="plan_use_this_date">이 날짜로 설정하기</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="plan_weekend_time_differs">주말 학습 시간 따로 설정</string>
-    <string name="plan_time_on_weekends">주말 학습 시간</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$s: 어떤 과목으로 시험을 볼 건가요?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->

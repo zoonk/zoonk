@@ -439,8 +439,6 @@
   "onboarding_variety_title": "79742f4c2daa7761299a32044058dccab6e6e69d287374003e10998530820b0c",
   "onboarding_waitlist_joined": "8c3392d0df1700950159472fdce1784e0ae783c030958d1a06e80110a9c89bec",
   "onboarding_waitlist_sign_in": "6dcacf3124ae10d2ef121b7514e24e827f0390ad8b88a17a6dc75ccf87562de9",
-  "onboarding_weekend_time": "0d85f49b06b7cad6a8ed21a8870205a058d829457805cff2178db1c1a78dba21",
-  "onboarding_weekend_time_label": "3bfa58d7f3ac43a8ac09d5eef15d2cb8ea8c071aea4b0dee4171992c9b8acd6e",
   "onboarding_what_you_wrote": "127c9898fabd74953f59e504d37489d0d5675013410f01582e1281fc76018edd",
   "onboarding_whats_next": "a2a79de5ba395f25786d23afb005bcb020477cf87068f623a256de1f1a5912c9",
   "onboarding_write_again": "fe7aaa75a7b0de67fa935c0ebf756841376df42b49b075740a9130673cb2d875",
@@ -967,15 +965,12 @@
     <string name="onboarding_full_course_finish">1日%1$sなら、学び終えるのは%2$sで、%3$sの試験より後になります。</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="onboarding_full_course_finish_month">1日%1$sなら、学び終えるのは%2$sで、%3$sの試験より後になります。</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="onboarding_weekend_time">週末は学習時間を変える</string>
     <string name="onboarding_schedule_time_label">1日の学習時間</string>
     <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
     <string name="onboarding_choose_date">日付を選ぶ</string>
     <!-- The same link when the goal has a date. -->
     <string name="onboarding_change_date">日付を変更する</string>
     <string name="onboarding_study_days">学習日数</string>
-    <string name="onboarding_weekend_time_label">週末の学習時間</string>
     <string name="onboarding_answers_saved">回答は保存されています。</string>
     <!-- On a setup question when the plan's run never started. -->
     <string name="onboarding_plan_not_started">学習計画の作成を開始できませんでした</string>

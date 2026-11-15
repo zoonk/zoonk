@@ -462,7 +462,6 @@
   "plan_time_no_days": "946ba6b0e8ccdedf78962d240645d344c43c01ad663894646d76b2ca05755bd0",
   "plan_time_none": "faac9fab42ee6f6a0df5d370e408feb2756a3711e8471a634b9cff3b34f37b50",
   "plan_time_none_month": "334a131f53e6b1b7943c2e35de2942c59850ebfe6848df3eb9b26d77f7c6eb2c",
-  "plan_time_on_weekends": "59dec620e3b2e76eaefdcc4c7e8b2360b16598c7e48bb685e06800b202ebb120",
   "plan_time_past_date": "2397f6db55923653e2e56564fa96d76938d6319b530771b4a6956e4dbc59b995",
   "plan_time_past_date_month": "6c5d8e88e8681ab6e47960a5ef41994dc6c2368789cc959eb719cc81e8c71f25",
   "plan_time_share_exam": "6e3384a3cfd3131d4687512c8e1fb194a700748053355672ee4b5c429d355ec0",
@@ -530,7 +529,6 @@
   "plan_wednesdays": "dd57c5210adabcb5ae4970c270132a7637b719cfa639b6073cd293a8a7d62e48",
   "plan_week_day": "337125a33fd290c0efd209198b5b1dc27c18c7fe76ea7a7c21565e0369eb1790",
   "plan_week_time": "f3cb1974ab0eea4ec74de156fdce07524398876930e7d43edafdd8f877abc730",
-  "plan_weekend_time_differs": "861293485120dafe4c1f1a553aa0af8712556f6ce1a51bd7d0638c646b3d411a",
   "plan_weekly_challenges": "01c239cd61095378b213640131e6de05e0cdc610aa99ac3517c326fcb264cc6d",
   "plan_what_you_practice": "9c8504139742c75c4ba140e37eff772d6c8943821cf112a558149953cb712ada",
   "plan_when_to_practice": "5f32195655184661b14c7e14b2da5b8f86beeedb36422494ca120616cda99d1a",
@@ -982,9 +980,6 @@
     <string name="plan_pick_date">日付を選ぶ</string>
     <string name="plan_save">保存する</string>
     <string name="plan_use_this_date">この日付にする</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="plan_weekend_time_differs">週末は学習時間を変える</string>
-    <string name="plan_time_on_weekends">週末の学習時間</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$sはどの科目を受験しますか？</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->

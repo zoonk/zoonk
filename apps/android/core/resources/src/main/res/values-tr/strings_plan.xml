@@ -462,7 +462,6 @@
   "plan_time_no_days": "472c663caa602e4c2a1e69ec83aba57e061e12ad13611e2c47721f0f2ec13864",
   "plan_time_none": "0e960584c81586c7eecedff194297b2d8060df9b21579c4b6b4528031e17146f",
   "plan_time_none_month": "f6d0cbe3b67a0295cb8cfca52bf4c13ffdc8df95bd4f0117a20e0f857cf02f2b",
-  "plan_time_on_weekends": "db0f2d7eff188a1d0f9512a3052cbcce2c6ef8a4a548cbc90b1faf8464e2ca55",
   "plan_time_past_date": "0c99bbe1a2a5f7b50dcf611abbf2f4c78056d8d0e1770c8337c6d1269ee81eed",
   "plan_time_past_date_month": "460501f695e3241f499b6000ddcf580d7eb6e0e651c47f1a2cc9468db473e1ea",
   "plan_time_share_exam": "1893d33bb0429e007a039dc001739506ababb4646d9d11970210987a571225ec",
@@ -530,7 +529,6 @@
   "plan_wednesdays": "ea6d9361b259ce9795f4f9257c6d22526240aaeaedede0974931b03dab29cf53",
   "plan_week_day": "a9da5a520f21fd98eb38a1cb44d662d6c9fb77df304490538d9c0cc747f8cb25",
   "plan_week_time": "ab4da42c128baac6053dfdfccc24e6b14ccb72163e102863d24c3fb0aac0b32a",
-  "plan_weekend_time_differs": "6ddca89a3459e12944c333528a270166723dc90a253d5567a23ef7d4939b8641",
   "plan_weekly_challenges": "8bca881cb6b3dbe5eba32f3145688f1e482134154526e783e566dbe6ab9fb8a8",
   "plan_what_you_practice": "7139e33e6bd6d9cd5a19939561aab77a1cd2acd5590c5031674e9c5a9204da5c",
   "plan_when_to_practice": "d36adeca9fae73ea2298b853124e2ea5384602580bbd0e0e4306bb1639ea3b85",
@@ -1031,9 +1029,6 @@
     <string name="plan_pick_date">Tarih seç</string>
     <string name="plan_save">Kaydet</string>
     <string name="plan_use_this_date">Bu tarihi kullan</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="plan_weekend_time_differs">Hafta sonları farklı çalışma süresi</string>
-    <string name="plan_time_on_weekends">Hafta sonu çalışma süresi</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$s: hangisine gireceksin?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->

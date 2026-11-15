@@ -462,7 +462,6 @@
   "plan_time_no_days": "e868f88387b02e9c4ca1746d062e384a81241a377df58e06e1b1b627a620347b",
   "plan_time_none": "fadc3a1a1e104d89d2110a398d0ecb4ba27fd38affb96db4f26e9e5018451348",
   "plan_time_none_month": "92c47882b838e280276ffff6000703619aca1e2623f418a4b916ec3721b96acb",
-  "plan_time_on_weekends": "448512f3ce9b605b17865484f8825f31363e5983bdff225828912c2f627af56f",
   "plan_time_past_date": "ddd26c1a6e39d35b1856f5ef7a9667897fca85268c28cd1bdf13882e1fd801b2",
   "plan_time_past_date_month": "3f26500d75fb68243a5565fe2baeaccc347634765f4a8048e7573368668bb3ed",
   "plan_time_share_exam": "b5cab8a8e616c27e1ed5f4724c4d34ef993a0ffd953f5db1e60c046488807911",
@@ -530,7 +529,6 @@
   "plan_wednesdays": "1ed89107720510cad1f16711c7271eb8b083824c6ce3d6a01cc53a730ae7213b",
   "plan_week_day": "23a45fa721a9dadae32cb60baecf274ae6e6ff0e24a9e55c1829f65746964023",
   "plan_week_time": "1f3a177f6e01c098a719c4b660d077a3a2451e8f941bbfe5bd324dc437be0079",
-  "plan_weekend_time_differs": "f32540a7847c207a10d2187ef24dbb5a5430276b01dfcf473386cff39dbabaca",
   "plan_weekly_challenges": "c21c402c53c2f4c936460717a2c47d0311c4b6e7b6da3b531a6fea828cf1123e",
   "plan_what_you_practice": "d6d07e5be32c24e3c4f219ebcb2f02cd7672350f985e68b693515debc13b09f7",
   "plan_when_to_practice": "9d773bb918a86ead74bad2ac042603f54f996823f51e43f7c2a7f8c5d1c535a9",
@@ -1080,9 +1078,6 @@
     <string name="plan_pick_date">Elegir una fecha</string>
     <string name="plan_save">Guardar</string>
     <string name="plan_use_this_date">Usar esta fecha</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="plan_weekend_time_differs">Tiempo de estudio diferente los fines de semana</string>
-    <string name="plan_time_on_weekends">Tiempo los fines de semana</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$s: ¿cuál vas a presentar?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->

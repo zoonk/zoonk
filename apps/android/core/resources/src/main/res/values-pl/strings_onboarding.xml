@@ -439,8 +439,6 @@
   "onboarding_variety_title": "746c473c184fa5b7d614ace03d631ab6e04bc2ad8d0b303ddc04f14404a3ba7b",
   "onboarding_waitlist_joined": "65c56caa00b9c203c2e5c1acdd573a497e425094d885398975e79be793249b09",
   "onboarding_waitlist_sign_in": "c75cc8fd64955bd94be1ae5110e7a031728e50c0c8709b07be8d1cf8b427f21c",
-  "onboarding_weekend_time": "152c65568439c70dc56a51978fec2f186a364fbed5a9fe624499868cd17b1613",
-  "onboarding_weekend_time_label": "b6f6075d21dfcddf4d05c5259ebe1d9787db2667117a78606c908918a75b9646",
   "onboarding_what_you_wrote": "0af93cd40af17d4c908032d9bd2a10edd9f65830557a482af0e38f62b6e82ca3",
   "onboarding_whats_next": "00851d172c75fa79c88fd64eb2e96daebfbd12c4c087b878622502ab7411e330",
   "onboarding_write_again": "c82fedac7794787e84c7aa8465b2ede50fd761995e96bbf839f25ea29703faca",
@@ -1036,15 +1034,12 @@
     <string name="onboarding_full_course_finish">Przy %1$s nauki dziennie koniec planu przypada na %2$s, już po egzaminie (%3$s).</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="onboarding_full_course_finish_month">Przy %1$s nauki dziennie koniec planu przypada na %2$s, już po egzaminie (%3$s).</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="onboarding_weekend_time">Inny czas nauki w weekendy</string>
     <string name="onboarding_schedule_time_label">Dzienny czas nauki</string>
     <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
     <string name="onboarding_choose_date">Wybierz datę</string>
     <!-- The same link when the goal has a date. -->
     <string name="onboarding_change_date">Zmień datę</string>
     <string name="onboarding_study_days">Dni nauki</string>
-    <string name="onboarding_weekend_time_label">Czas nauki w weekendy</string>
     <string name="onboarding_answers_saved">Twoje odpowiedzi są zapisane.</string>
     <!-- On a setup question when the plan's run never started. -->
     <string name="onboarding_plan_not_started">Nie udało się rozpocząć przygotowywania twojego planu</string>

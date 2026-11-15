@@ -439,8 +439,6 @@
   "onboarding_variety_title": "7adbda650c598dc76e1b91d8ef6feea1e5bdc033198a43a3a9652e58500e9c23",
   "onboarding_waitlist_joined": "3493f63bc039557a44f598290eda4ef97172426122ec762d20bc4ed9208b86f9",
   "onboarding_waitlist_sign_in": "669ea77ceed9a281f29dff02168e5cedaff364ece7d1984434cbce9231550277",
-  "onboarding_weekend_time": "382574851f2465dcff9f9c7c5c625f745871a37bbce126489303f058ee72064d",
-  "onboarding_weekend_time_label": "32aa08aa3c654d14ba0d940b7ce7f038973380cea2278370ea71392ddce92a98",
   "onboarding_what_you_wrote": "92c4a7a89ff356d21d1a80a860d843190201b8199568cf94a750e9a0b10011d4",
   "onboarding_whats_next": "3d7a4dd08e7dd8f5cb5674bd57be72a956315d56b1624336af67094617189d17",
   "onboarding_write_again": "2d30db65fd572f5a46320e40bea446f4b4108e1f923f75b2c7562057bdb038f4",
@@ -967,15 +965,12 @@
     <string name="onboarding_full_course_finish">하루 %1$s씩 공부하면 %2$s에 마쳐요. 시험일인 %3$s보다 늦어요.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="onboarding_full_course_finish_month">하루 %1$s씩 공부하면 %2$s에 마쳐요. 시험이 있는 %3$s보다 늦어요.</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="onboarding_weekend_time">주말 학습 시간 따로 설정</string>
     <string name="onboarding_schedule_time_label">하루 학습 시간</string>
     <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
     <string name="onboarding_choose_date">날짜 정하기</string>
     <!-- The same link when the goal has a date. -->
     <string name="onboarding_change_date">날짜 변경하기</string>
     <string name="onboarding_study_days">학습 일수</string>
-    <string name="onboarding_weekend_time_label">주말 학습 시간</string>
     <string name="onboarding_answers_saved">답변은 저장되어 있어요.</string>
     <!-- On a setup question when the plan's run never started. -->
     <string name="onboarding_plan_not_started">계획 만들기를 시작하지 못했어요</string>
