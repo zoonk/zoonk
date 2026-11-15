@@ -83,6 +83,8 @@ const PIECES: Piece[] = [
       group: "[data-slot=sidebar]:not([data-sidebar-collapsed] *)",
       parts: { label: ":scope > :nth-child(2)", mark: ":scope > :first-child" },
       rows: "[data-slot=sidebar-item]",
+      // A row whose name hasn't streamed in yet (Buddy's, at a first paint) only holds its room.
+      words: true,
     },
   },
   // Collapsed, the sidebar is an icon rail: its labels are for screen readers and its names show
@@ -110,7 +112,9 @@ const PIECES: Piece[] = [
     relations: ["end-edge"],
     web: {
       bar: ":scope > [data-slot=meter-parts]",
-      group: "[data-slot=plan-roadmap]:has(> [data-slot=meter-parts])",
+      // A meter that draws its line; the reveal's phone meter has none, its list dating each phase.
+      group:
+        "[data-slot=plan-roadmap]:has(> [data-slot=meter-parts]):has(> [data-slot=plan-roadmap-line])",
       parts: { end: "svg.lucide-chevron-right", value: "[data-slot=plan-roadmap-when]" },
       rows: ":scope > [data-slot=plan-roadmap-line]",
     },
@@ -125,7 +129,7 @@ const PIECES: Piece[] = [
       parts: {
         end: "svg.lucide-chevron-right, [data-slot=fold-chevron]",
         label: "[data-slot=path-row-words] > :first-child",
-        mark: "[data-slot=path-row-mark]",
+        mark: "[data-slot=path-row-mark], [data-slot=status-mark]",
         note: "[data-slot=path-row-words] > :not(:first-child)",
         value: "[data-slot=path-row-value]",
       },
