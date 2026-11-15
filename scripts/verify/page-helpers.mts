@@ -23,6 +23,8 @@ declare global {
 }
 
 export function installPageHelpers() {
+  const CLIPS = new Set(["auto", "clip", "hidden", "scroll"]);
+
   function shown(element: Element) {
     const box = element.getBoundingClientRect();
 
@@ -202,10 +204,21 @@ export function installPageHelpers() {
 
   /** What an element draws: its text, its glyphs and pictures, and the boxes it or its children paint. */
   function ink(element: Element): InkBox | null {
+    const style = getComputedStyle(element);
     // A `display: contents` wrapper has no box of its own; what it holds still draws.
-    const contents = getComputedStyle(element).display === "contents";
+    const contents = style.display === "contents";
+    const boxed = !contents && shown(element);
 
-    if (!contents && !shown(element)) {
+    // An element with no size still draws what overflows it, unless it clips it, is visually
+    // hidden, or isn't rendered (a closed `details`).
+    if (
+      !contents &&
+      !boxed &&
+      (style.clipPath === "inset(50%)" ||
+        CLIPS.has(style.overflowX) ||
+        CLIPS.has(style.overflowY) ||
+        !element.checkVisibility({ opacityProperty: true, visibilityProperty: true }))
+    ) {
       return null;
     }
 
@@ -218,7 +231,7 @@ export function installPageHelpers() {
     }
 
     const own =
-      !contents && paints(element, ["top", "right", "bottom", "left"])
+      boxed && paints(element, ["top", "right", "bottom", "left"])
         ? [element.getBoundingClientRect()]
         : [];
 

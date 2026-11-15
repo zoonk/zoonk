@@ -117,7 +117,7 @@ export function readAlignment({
         node instanceof Text &&
         node.textContent?.trim() &&
         node.parentElement &&
-        shown(node.parentElement)
+        present(node.parentElement)
       ) {
         nodes.push(node);
       }
@@ -139,7 +139,7 @@ export function readAlignment({
         node instanceof Text &&
         node.textContent?.trim() &&
         node.parentElement &&
-        shown(node.parentElement)
+        present(node.parentElement)
       ) {
         return node;
       }
@@ -231,7 +231,7 @@ export function readAlignment({
           node.nodeType === Node.TEXT_NODE &&
           node.textContent?.trim() &&
           node.parentElement &&
-          shown(node.parentElement),
+          present(node.parentElement),
       )
       .flatMap((node) => {
         const range = document.createRange();
@@ -277,12 +277,19 @@ export function readAlignment({
     return getComputedStyle(element).display === "contents";
   }
 
+  /**
+   * It, or what it holds, draws: a group with no box of its own (`display: contents`, or no height
+   * with its rows overflowing) is there by its rows. Hidden content, such as a closed `details`,
+   * draws nothing and stays out.
+   */
   function present(element: Element) {
-    return isContents(element) ? inkOf(element) !== null : shown(element);
+    return shown(element) || inkOf(element) !== null;
   }
 
+  /** Its own box, or what it draws where it has no box of its own. */
   function boxOf(element: Element): Rect {
-    return (isContents(element) ? inkOf(element) : null) ?? element.getBoundingClientRect();
+    const own = isContents(element) || !shown(element) ? inkOf(element) : null;
+    return own ?? element.getBoundingClientRect();
   }
 
   function isRtl(element: Element) {

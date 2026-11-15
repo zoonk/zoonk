@@ -106,6 +106,17 @@ describe("reading a declared piece in the page", () => {
     assert.equal(fault?.measured, 28);
   });
 
+  it("reads a group with no height of its own by the rows it draws, and leaves out one drawing nothing", () => {
+    document.body.innerHTML = `<div data-slot="list-group" data-box="0,0,300,0">
+      ${row("A", 0)}${row("B", 30, 28)}</div><div data-slot="list-group" data-box="0,100,300,0"></div>`;
+
+    const capture = read();
+    const fault = evaluateCapture(capture).find((finding) => finding.rule === "label-start");
+
+    assert.equal(fault?.measured, 28);
+    assert.equal(capture.elements.filter((element) => element.part === "group").length, 1);
+  });
+
   it("keeps a declared group whose rows carry no parts, so it reads as not measured", () => {
     document.body.innerHTML = `<div data-slot="list-group" data-box="0,0,300,60">
       <div data-box="0,0,300,30">A</div><div data-box="0,30,300,30">B</div></div>`;
