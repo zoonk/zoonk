@@ -59,6 +59,8 @@ internal fun PlanHeader(
     rename: GoalRename? = null,
     report: FeedbackSheet? = null,
     onAdjust: (() -> Unit)? = null,
+    /** Beside the aside the page has no More section, so the menu says "About the exam"; otherwise More's row does. */
+    examInMenu: Boolean = false,
 ) {
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         PageTitleRow(stringResource(R.string.plan_title), verticalAlignment = Alignment.CenterVertically) {
@@ -69,7 +71,7 @@ internal fun PlanHeader(
                     size = ButtonSize.Small,
                 ) { Text(stringResource(R.string.plan_adjust_plan)) }
             }
-            PlanMenu(page, links, resume, isSaving, onSetStatus, rename, report)
+            PlanMenu(page, links, resume, isSaving, onSetStatus, rename, report, examInMenu)
         }
         PlanSubtitle(page)
     }
@@ -123,9 +125,10 @@ private fun PlanMenu(
     onSetStatus: (LearnerSummaryGoal.Status) -> Unit,
     rename: GoalRename?,
     report: FeedbackSheet?,
+    examInMenu: Boolean,
 ) {
     GoalMenu(page.goal, resume, isSaving, onSetStatus, rename) { closing ->
-        PlanItems(page, links, report, closing)
+        PlanItems(page, links, report, examInMenu, closing)
         HorizontalDivider()
     }
 }
@@ -226,6 +229,7 @@ private fun PlanItems(
     page: PlanPageState,
     links: PlanLinks,
     report: FeedbackSheet?,
+    examInMenu: Boolean,
     closing: (() -> Unit) -> () -> Unit,
 ) {
     val context = LocalContext.current
@@ -234,7 +238,8 @@ private fun PlanItems(
     val libraryCourse = page.libraryCourse
     val buddy = page.summary.buddy
 
-    if (links.hasExam) MenuItem(R.drawable.ic_school, stringResource(R.string.plan_about_exam), closing(links::exam))
+    val exam = links.hasExam && examInMenu
+    if (exam) MenuItem(R.drawable.ic_school, stringResource(R.string.plan_about_exam), closing(links::exam))
     libraryCourse?.let { course ->
         MenuItem(
             R.drawable.ic_local_library,
@@ -242,7 +247,7 @@ private fun PlanItems(
             closing { links.course(course.courseId.toString()) },
         )
     }
-    if (links.hasExam || libraryCourse != null) HorizontalDivider()
+    if (exam || libraryCourse != null) HorizontalDivider()
 
     MenuItem(
         R.drawable.ic_share,

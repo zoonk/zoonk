@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationFirstLesson
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
@@ -133,9 +134,11 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
                 progress = shownProgress,
             )
             val course = context.course?.takeIf { !context.planReady && first?.ready != true }
+            // A run that failed waits for nothing: its Try again is the way on, never the quiz. A lost connection still waits.
+            val failed = run.status == GenerationRun.Status.Failed && run.failure != GenerationFailure.Connection
             val actionsVisible =
                 hold.holding || firstReady || course != null || skip != null ||
-                    (quiz.canShowQuiz && ((quiz.showingProgress && !beside) || quiz.hasNext))
+                    (!failed && quiz.canShowQuiz && ((quiz.showingProgress && !beside) || quiz.hasNext))
             PageActions(hold, visible = actionsVisible) {
                 when {
                     hold.holding -> {
@@ -165,7 +168,7 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
 
                     else -> {
                         if (course != null && context.onOpenCourse != null) LibraryCourseOffer(course, context.onOpenCourse)
-                        WaitQuizAction(quiz, hold, beside)
+                        if (!failed) WaitQuizAction(quiz, hold, beside)
                     }
                 }
                 if (!hold.holding) skip?.invoke()

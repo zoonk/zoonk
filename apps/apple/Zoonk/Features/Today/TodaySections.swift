@@ -403,6 +403,8 @@ struct TodayPlanChangeSection: View {
         keepTimeButton
       }
     }
+    // A notice's answers beside its words, as main's suggestion panel draws them.
+    .controlSize(.small)
     .disabled(isSaving)
 
     Menu {
