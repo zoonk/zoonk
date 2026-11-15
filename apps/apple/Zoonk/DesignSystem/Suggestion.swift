@@ -6,6 +6,8 @@ struct SuggestionMark: View {
   enum Kind {
     case sparkle
     case done
+    /// In the done mark's place on a line whose save failed.
+    case alert
     case symbol(String)
   }
 
@@ -18,6 +20,10 @@ struct SuggestionMark: View {
         .foregroundStyle(.warning)
     case .done:
       StatusMark(status: .done)
+    case .alert:
+      Image(systemName: "exclamationmark.circle")
+        .foregroundStyle(.destructiveText)
+        .accessibilityLabel(Text(SuggestionSaveError.message))
     case .symbol(let name):
       Image(systemName: name)
         .foregroundStyle(.mutedForeground)

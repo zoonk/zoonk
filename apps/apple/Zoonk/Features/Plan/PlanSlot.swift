@@ -383,6 +383,11 @@ struct PlanSuggestionSection: View {
   }
 
   /// "Beginner complete" when the claim certifies one level, else "Course complete".
+  /// A claim that didn't save takes the done mark off its line.
+  private var claimMark: SuggestionMark.Kind {
+    context.certificateClaim.failed ? .alert : .done
+  }
+
   private var completeTitle: Text {
     let unclaimed = store.planEnd(goalId: context.goal.id).value?.certificates?.unclaimed ?? []
 
@@ -474,7 +479,7 @@ struct PlanSuggestionSection: View {
     case .coverage(let text):
       PlanCoverageSlot(context: context, title: text, asksAtOnce: !isInline, actions: offers)
     case .courseComplete:
-      PlanSlotCard(title: completeTitle, mark: .done, description: nil) {
+      PlanSlotCard(title: completeTitle, mark: claimMark, description: nil) {
         CertificateClaimButton(context: context)
       }
     case .finished:
@@ -530,7 +535,7 @@ struct PlanSuggestionSection: View {
     case .coverage(let text):
       (Text(text), .sparkle)
     case .courseComplete:
-      (completeTitle, .done)
+      (completeTitle, claimMark)
     case .finished:
       (
         Text("You finished your plan", tableName: "Plan", comment: "Title once the plan is over"),
@@ -687,9 +692,7 @@ struct CertificateClaimButton: View {
     .mainActionUnlessBarHoldsOne()
 
     if claim.failed {
-      Text(CertificateClaim.failure)
-        .typeStyle(.body)
-        .foregroundStyle(.destructiveText)
+      SuggestionSaveError()
     }
   }
 }
@@ -700,10 +703,6 @@ struct CertificateClaimButton: View {
 @MainActor
 @Observable
 final class CertificateClaim {
-  static let failure = LocalizedStringResource(
-    "That didn't save. Try again.", table: "Plan",
-    comment: "The plan's certificate couldn't be written; Get your certificate tries again")
-
   private(set) var isClaiming = false
   private(set) var failed = false
   @ObservationIgnored private var sent: Task<Void, Never>?
@@ -722,8 +721,6 @@ final class CertificateClaim {
 
       if let claim {
         context.showClaim(claim)
-      } else {
-        AccessibilityNotification.Announcement(String(localized: Self.failure)).post()
       }
     }
   }
