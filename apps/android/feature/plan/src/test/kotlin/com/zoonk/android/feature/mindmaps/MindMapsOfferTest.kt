@@ -217,6 +217,8 @@ class MindMapsOfferTest {
         waitFor("You've used your mind maps")
         compose.onAllNodesWithText("Create").assertCountEquals(0)
         compose.onNodeWithText("Create all").assertDoesNotExist()
+        // The page's stop says it once; the tapped row doesn't repeat it.
+        compose.onAllNodesWithText("You've used your mind maps").assertCountEquals(1)
 
         allowanceBack = true
         scope.launch { store.list[UUID.fromString(GOAL)].refresh() }

@@ -252,7 +252,7 @@ class MindMapStore(
             }
 
             is MutationResult.Failed -> {
-                result.pageStop()?.let {
+                Limit.of(result, clock.instant())?.let(result::pageStop)?.let {
                     stopOffer(goalId, it)
                     list[goalId].reread()
                 } ?: false
@@ -338,7 +338,7 @@ class MindMapStore(
         if (result.status == UNPROCESSABLE) return readAgain(key)
         val limit = Limit.of(result, clock.instant()) ?: return MindMapCreated.Unreachable
         // What stops every map is the list's offer's to say; the row keeps its tap's answer, which other screens show alone.
-        result.pageStop()?.let {
+        result.pageStop(limit)?.let {
             stopOffer(key.goalId, it)
             readAgain(key)
         }
@@ -429,37 +429,36 @@ private class ReadWatcher(
 )
 
 /**
- * A refusal that refuses every other map too, as the offer words it: the cap on maps, the day's AI spend, a guest's
- * need for an account. A map's own lessons, or a slow-down, refuse only that one.
+ * Whether a refused Create refuses every other map too: the cap on maps, the day's AI spend, a guest's need for an
+ * account. A map's own lessons, or a slow-down, refuse only that one.
  */
-private fun MutationResult.Failed.pageStop(): MindMapAllowanceStop? {
-    val limit = (details as? JsonObject)?.get("limit") as? JsonObject
+fun stopsEveryMap(
+    limit: Limit,
+    subject: LimitSubject,
+): Boolean = limit == Limit.SignUpRequired || (limit is Limit.Reached && (subject == LimitSubject.MindMaps || subject == LimitSubject.Help))
 
-    fun field(name: String) = (limit?.get(name) as? JsonPrimitive)?.contentOrNull
-    return when (code) {
-        "SIGN_UP_REQUIRED" -> {
-            MindMapAllowanceStop(availableAt = null, period = null, reason = MindMapAllowanceStop.Reason.SIGN_UP_REQUIRED, resource = null)
-        }
-
-        "USAGE_LIMIT_REACHED" -> {
-            val resource =
-                when (field("resource")) {
-                    "aiSpend" -> MindMapAllowanceStop.Resource.AI_SPEND
-                    "chapterLessons", "lessonStart", "generatedLessons" -> return null
-                    else -> MindMapAllowanceStop.Resource.MIND_MAP
-                }
-            MindMapAllowanceStop(
-                availableAt = field("availableAt")?.let { runCatching { Instant.parse(it) }.getOrNull() },
-                period = MindMapAllowanceStop.Period.entries.firstOrNull { it.value == field("period") },
-                reason = MindMapAllowanceStop.Reason.LIMIT_REACHED,
-                resource = resource,
-            )
-        }
-
-        else -> {
-            null
-        }
+/** A refusal that stops every map ([stopsEveryMap]), as the list's offer words it. */
+private fun MutationResult.Failed.pageStop(limit: Limit): MindMapAllowanceStop? {
+    val subject = details.ranOut().limitSubject
+    if (!stopsEveryMap(limit, subject)) return null
+    if (limit == Limit.SignUpRequired) {
+        return MindMapAllowanceStop(
+            availableAt = null,
+            period = null,
+            reason = MindMapAllowanceStop.Reason.SIGN_UP_REQUIRED,
+            resource = null,
+        )
     }
+    val fields = (details as? JsonObject)?.get("limit") as? JsonObject
+
+    fun field(name: String) = (fields?.get(name) as? JsonPrimitive)?.contentOrNull
+    return MindMapAllowanceStop(
+        // The offer's day as the server sent it: on this page the offer gates, and the clock only prints its day.
+        availableAt = field("availableAt")?.let { runCatching { Instant.parse(it) }.getOrNull() },
+        period = MindMapAllowanceStop.Period.entries.firstOrNull { it.value == field("period") },
+        reason = MindMapAllowanceStop.Reason.LIMIT_REACHED,
+        resource = if (subject == LimitSubject.Help) MindMapAllowanceStop.Resource.AI_SPEND else MindMapAllowanceStop.Resource.MIND_MAP,
+    )
 }
 
 /** A refusal's `details.limit.resource`: what ran out. */

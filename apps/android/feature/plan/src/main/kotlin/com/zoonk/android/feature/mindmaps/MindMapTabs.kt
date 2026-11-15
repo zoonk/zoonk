@@ -125,7 +125,8 @@ private fun ChapterRow(
     numbered: Boolean = true,
 ) {
     val target = MindMapTarget(SavedMindMapKind.CHAPTER, map.chapterId)
-    val local = actions.state.requests[map.chapterId]
+    // A refusal that stops every map is the offer's to say on this page, so the tapped row doesn't repeat it.
+    val local = actions.state.requests[map.chapterId]?.takeUnless { it.limit?.let { limit -> stopsEveryMap(limit, it.subject) } == true }
     val shown = shownMindMap(map.status.shown, local)
     val ready = shown == MindMapShown.Ready
     val saved = ready && actions.saved(target, map.saved)
