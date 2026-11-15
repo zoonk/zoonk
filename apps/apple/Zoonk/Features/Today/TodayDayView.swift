@@ -46,36 +46,23 @@ struct TodayDayView: View {
 
   var body: some View {
     ScrollViewReader { scroller in
-      PaneSplit(primaryShare: 0.55) {
-        ZoonkList {
-          header
-          // It asks for a decision, so it leads the day where the day has room beside it.
-          notice
-          day
-        }
-        .modifier(actionBar)
-      } secondary: {
+      // The day's list keeps its sections as the aside comes and goes beside it, so a card's open
+      // sheet and what was done in it stay through a rotation, a resize or a fold.
+      PaneBeside(paneEdge: .trailing, primaryShare: 0.55) {
         ZoonkList {
           UnfinishedGoalSection()
           aside
           TodayPracticeSection(view: view, language: language)
         }
-      } single: {
+      } content: { isBeside in
         ZoonkList {
-          header
-          day
-          notice
-          UnfinishedGoalSection()
-
-          // Main's tablet column: missions beside the week, preparation beside practice.
-          if horizontalSizeClass == .regular {
-            BlockGridSection {
-              aside
-              TodayPracticeSection(view: view, language: language)
+          ForEach(TodayPart.order(isBeside: isBeside), id: \.self) { part in
+            switch part {
+            case .header: header
+            case .notice: notice
+            case .day: day
+            case .rest: rest
             }
-          } else {
-            aside
-            TodayPracticeSection(view: view, language: language)
           }
         }
         .modifier(actionBar)
@@ -134,6 +121,23 @@ struct TodayDayView: View {
       tapTask?.cancel()
       examChoice?.cancel()
       suggestedGoalAnswer.leave()
+    }
+  }
+
+  /// What the aside's pane holds where the day has no room beside it.
+  @ViewBuilder
+  private var rest: some View {
+    UnfinishedGoalSection()
+
+    // Main's tablet column: missions beside the week, preparation beside practice.
+    if horizontalSizeClass == .regular {
+      BlockGridSection {
+        aside
+        TodayPracticeSection(view: view, language: language)
+      }
+    } else {
+      aside
+      TodayPracticeSection(view: view, language: language)
     }
   }
 
@@ -705,5 +709,19 @@ private struct ShorterDayTime: View {
       .frame(idealWidth: 280)
       .presentationCompactAdaptation(.popover)
     }
+  }
+}
+
+/// The day's parts in its list. The same ids in either order, so a part keeps its identity, and its
+/// open sheet, as the aside's pane comes and goes.
+private enum TodayPart: Hashable {
+  case header
+  case notice
+  case day
+  case rest
+
+  /// A notice asks for a decision, so it leads the day where the day has room beside it.
+  static func order(isBeside: Bool) -> [TodayPart] {
+    isBeside ? [.header, .notice, .day] : [.header, .day, .notice, .rest]
   }
 }

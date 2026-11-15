@@ -1,3 +1,5 @@
+import HTTPTypes
+import OpenAPIRuntime
 import SwiftUI
 import XCTest
 
@@ -1109,6 +1111,116 @@ private struct MissionButton: View {
     } label: {
       Text(verbatim: "Open the mission")
     }
+  }
+}
+
+/// PR comment 24: Today's exam checklist, open in its sheet while the window crosses the width
+/// where Today's aside is a pane: the sheet stays open, with what the learner ticked in it.
+@MainActor
+final class TodayExamSheetTests: XCTestCase {
+  func testTheExamSheetStaysOpenWhenTodaysAsideGoes() async throws {
+    try await staysOpen(from: 1376, to: 420)
+  }
+
+  func testTheExamSheetStaysOpenWhenTodaysAsideComes() async throws {
+    try await staysOpen(from: 420, to: 1376)
+  }
+
+  private func staysOpen(from: CGFloat, to: CGFloat) async throws {
+    let dependencies = AppDependencies(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!, transport: OfflineTransport()),
+      session: .preview(account: .planTestAccount), imageLoader: .live(),
+      subscriptionStore: .live())
+    try readsWhatVoiceOverReads()
+
+    let window = try show(
+      TodayDayView(view: try examDay())
+        .appDependencies(dependencies)
+        .environment(AppRouter())
+        .zoonkStyles())
+    window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
+    try await settle()
+
+    try activate(String(localized: "See your exam", table: "Today"), in: window)
+    try await settle()
+    let pen = String(localized: "A black pen with a clear barrel", table: "Exam")
+    try activate(pen, in: window)
+    try await settle()
+
+    window.frame = CGRect(x: 0, y: 0, width: to, height: 1032)
+    try await settle()
+
+    let sheet = try XCTUnwrap(
+      window.rootViewController?.presentedViewController?.view, "The sheet stays open")
+    XCTAssertTrue(spoken(in: sheet).contains { $0.contains("ENEM is tomorrow") }, "The sheet stays")
+    XCTAssertTrue(
+      selected(in: sheet).contains { $0.contains(pen) },
+      "What was ticked stays ticked: \(spoken(in: sheet))")
+  }
+
+  private struct OfflineTransport: ClientTransport {
+    func send(
+      _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
+    ) async throws -> (HTTPResponse, HTTPBody?) {
+      throw APIError.network
+    }
+  }
+
+  private func selected(in view: Any) -> [String] {
+    guard let object = view as? NSObject else {
+      return []
+    }
+
+    var found: [String] = []
+
+    if object.accessibilityTraits.contains(.selected), let label = object.accessibilityLabel {
+      found.append(label)
+    }
+
+    if let view = object as? UIView {
+      found += view.subviews.flatMap { selected(in: $0) }
+    }
+
+    if let elements = object.accessibilityElements {
+      found += elements.flatMap { selected(in: $0) }
+    }
+
+    return found
+  }
+
+  private func examDay() throws -> TodayView {
+    func decode<Value: Decodable>(_ json: String) throws -> Value {
+      try JSONDecoder().decode(Value.self, from: Data(json.utf8))
+    }
+
+    return TodayView(
+      earlierWork: [],
+      exam: try decode(
+        #"{"checklist":["documents","blackPen"],"day":{"date":"2026-11-16","label":null,"startTime":null},"examName":"ENEM","mocksTaken":1,"prepared":true,"resultReported":false,"sessionsDone":3,"stage":"dayBefore","tools":[]}"#
+      ),
+      examChoice: nil, focusTest: nil,
+      goal: try decode(
+        #"{"dateEstimated":false,"daysLeft":1,"id":"g1","kind":"exam","title":"ENEM 2027"}"#),
+      insight: nil, lessonStatus: [:], mockFunding: nil, notice: .exam, pattern: nil,
+      planChange: nil, progress: nil,
+      session: try decode(
+        #"""
+        {"blocks":[],"brainPower":0,"catchUp":null,"current":true,"dayEndsAt":1793242800000,
+        "emptyDay":null,"examAccess":{"includesMockExams":true},"examTomorrow":true,
+        "extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},"freshStart":null,
+        "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"g1","lessonsComing":false,
+        "lessonsToPrepare":false,"localDate":"2026-11-15",
+        "minutes":{"dailyGoal":45,"done":0,"left":45,"planned":45},"missions":[],
+        "nextPosition":null,"pauseSuggested":false,"sessionBar":{"completed":0,"total":0},
+        "state":"underway","week":{"days":[],"nextStudyDate":null},"status":"unstarted"}
+        """#),
+      sourceChange: nil, studiedToday: false, suggestedGoal: nil, uploadRequest: nil,
+      weeklyChallenge: nil)
+  }
+
+  private func settle() async throws {
+    try await Task.sleep(for: .milliseconds(600))
   }
 }
 
