@@ -235,10 +235,13 @@ private struct MindMapCreateSection: View {
         MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
       }
 
-      if offer.startable > 1 || line != nil || showedStop {
+      // A stop the page holds takes "Create all" too: each map it would start is refused.
+      let offersAll = offer.startable > 1 && canStart
+
+      if offersAll || line != nil || showedStop {
         HeldSlot(gated: isStopped) {
           VStack(alignment: .leading, spacing: 12) {
-            if offer.startable > 1 {
+            if offersAll {
               BusyButton(isBusy: store.creatingAll.contains(goalId), icon: .create) {
                 Task { await store.createAll(goalId: goalId) }
               } label: {

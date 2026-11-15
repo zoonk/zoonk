@@ -220,6 +220,28 @@ struct MindMapLimit: Equatable, Sendable {
 
   let limit: HelpLimit
   let resource: Resource
+
+  /// The page's stop when this refusal stops every new map (the maps cap or the day's AI spend);
+  /// a map's own lessons or a short break stop only its row.
+  var pageStop: MindMapAllowanceStop? {
+    let ranOut: MindMapAllowanceStop.Resource
+    switch resource {
+    case .mindMap: ranOut = .mindMap
+    case .aiSpend: ranOut = .aiSpend
+    case .chapterLessons, .lessons: return nil
+    }
+
+    let period: String
+    switch limit {
+    case .usedUp: period = "rolling30Days"
+    case .limitReached(.day, _): period = "day"
+    case .limitReached(.total, _): period = "total"
+    case .slowDown, .signUpRequired: return nil
+    }
+
+    return MindMapAllowanceStop(
+      availableAt: limit.availableAt, period: period, reason: .limitReached, resource: ranOut)
+  }
 }
 
 /// What a tap or following a run got that the map's own status doesn't say. It stands for the read

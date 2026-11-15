@@ -28,8 +28,9 @@ final class MindMapsStore {
   /// Goals whose "Create all chapter maps" is on its way.
   private(set) var creatingAll: Set<String> = []
   private(set) var createAllFailures: [String: MindMapRequestFailure] = [:]
-  /// The stop "Create all" was answered with, as this device received it. It's shown ahead of the
-  /// list's own until a list read started after it comes through; then the list's offer decides.
+  /// A stop the page was answered with, as this device received it: "Create all"'s, or a row's
+  /// refusal for the maps cap. It's shown ahead of the list's own until a list read started after
+  /// it comes through; then the list's offer decides.
   private var keptStops: [String: (stop: MindMapAllowanceStop, afterRead: Int)] = [:]
 
   init(
@@ -275,6 +276,8 @@ final class MindMapsStore {
       }
     case .done(.refused(let limit)):
       fail(.refused(limit), goalId: goalId, chapterId: chapterId)
+      // Main's b09-16: every other Create would be refused for the same cap.
+      keep(limit.pageStop, goalId: goalId)
     case .failed:
       fail(.unreachable, goalId: goalId, chapterId: chapterId)
     case .obsolete:

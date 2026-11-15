@@ -496,6 +496,42 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertNil(store.shownStop(goalId: "goal"), "an allowed offer releases the kept stop")
   }
 
+  /// Main's b09-16: a row refused for the maps cap stops the page's other Creates too, since each
+  /// would be refused; a later read of the list retires it like any kept stop.
+  func testARowRefusedForTheCapBecomesThePagesStop() async {
+    let opens = Date.now.addingTimeInterval(3600)
+    let limit = MindMapLimit(limit: .usedUp(tier: .free, availableAt: opens), resource: .mindMap)
+    let api = MindMapsAPIStub(server: .available, statuses: [], request: .refused(limit))
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+
+    await store.create(goalId: "goal", chapterId: "chapter")
+
+    let stop = store.shownStop(goalId: "goal")
+    XCTAssertEqual(stop?.availableAt, opens)
+    XCTAssertFalse(stop?.isOver(at: .now) ?? true)
+
+    await list.refresh()
+    XCTAssertNil(store.shownStop(goalId: "goal"))
+  }
+
+  /// A row's own limits (its lessons, a short break) stop only that row.
+  func testARowsOwnLimitDoesntStopThePage() async {
+    for limit in [
+      MindMapLimit(limit: .usedUp(tier: .free, availableAt: nil), resource: .lessons),
+      MindMapLimit(limit: .slowDown(retryAfterSeconds: 30), resource: .mindMap),
+    ] {
+      let api = MindMapsAPIStub(server: .available, statuses: [], request: .refused(limit))
+      let store = makeStore(api: api)
+      await store.list(goalId: "goal").load()
+
+      await store.create(goalId: "goal", chapterId: "chapter")
+
+      XCTAssertNil(store.shownStop(goalId: "goal"), "\(limit)")
+    }
+  }
+
   /// A stop received before its day opens when the day comes, so Create is back then.
   func testCreatingAllThatStopsBeforeItsDayOpensWhenTheDayComes() async {
     let opens = Date.now.addingTimeInterval(60)
