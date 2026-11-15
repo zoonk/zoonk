@@ -320,16 +320,17 @@ export function useLiveWords(words: CapWords | null): LimitWords {
 /** `hidden` while its day can't be named yet: the text keeps its place without showing. */
 export function useLimitText(text: LimitText | null | undefined): {
   hidden: boolean;
+  opened: boolean;
   text: string;
 } {
   const sentence = useLimitSentence();
   const words = useLiveWords(text && typeof text === "object" ? text : null);
 
   if (!text) {
-    return { hidden: false, text: "" };
+    return { hidden: false, opened: false, text: "" };
   }
 
   return typeof text === "string"
-    ? { hidden: false, text }
-    : { hidden: words.provisional === true, text: sentence(words) };
+    ? { hidden: false, opened: false, text }
+    : { hidden: words.provisional === true, opened: words.opened === true, text: sentence(words) };
 }
