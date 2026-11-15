@@ -18,6 +18,17 @@ type Platform = (typeof PLATFORMS)[number];
  */
 export type Build = { app: string; changes?: string; commit: string; id: string };
 
+/**
+ * What a native build stamps on itself: Apple's Debug build `dirty` and `changesDigest`
+ * (`apps/apple/scripts/stamp-debug-build.sh`), an Android render `uncommitted`, a digest or "clean".
+ */
+type NativeStamp = {
+  changesDigest?: string;
+  commit: string;
+  dirty?: boolean;
+  uncommitted?: string;
+};
+
 export type FindingState =
   | { state: "open" }
   | { commit: string; state: "fixed" }
@@ -41,7 +52,7 @@ export type Read = { at: string; by: string; carriedFrom?: string; findings: Fin
  * `steps` digests what the capture ran to reach the screen.
  */
 export type CaptureItem = {
-  build: Build;
+  build: Build | NativeStamp;
   file: string;
   locale: string;
   platform: Platform;
@@ -81,7 +92,7 @@ export const MANIFEST = "capture.json";
  * relationship lane owns its shape (unresolved means failing and not excepted).
  */
 export type AlignmentReport = {
-  captures?: unknown[];
+  captures?: { elements?: unknown[]; picture?: { file?: string } }[];
   findings?: { exception?: string; level: string; message: string }[];
   summary?: { scenariosMissing?: number | null; unresolved?: number };
 };
@@ -157,6 +168,27 @@ export async function registerItems(folder: string, added: ManifestItem[]): Prom
 export function readOf(item: ManifestItem): Read | undefined {
   const read = "read" in item ? item.read : undefined;
   return read?.by.trim() ? read : undefined;
+}
+
+/**
+ * Every platform's build in one shape. A native stamp names its app by its platform, and a build
+ * not stamped clean counts as built with changes.
+ */
+export function buildOf({ build, platform }: CaptureItem): Build {
+  if ("id" in build) {
+    return build;
+  }
+
+  const { changesDigest, commit, dirty, uncommitted } = build;
+  const clean = uncommitted === undefined ? dirty === false : uncommitted === "clean";
+  const digest = changesDigest || (uncommitted !== "unknown" && uncommitted) || "uncommitted";
+
+  return {
+    app: platform,
+    changes: clean ? undefined : digest,
+    commit,
+    id: commit === "unknown" ? "unknown" : commit,
+  };
 }
 
 export function isRecorded(item: ManifestItem): item is CaptureItem {

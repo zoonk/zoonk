@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "vitest";
+import CASES from "../verify/alignment-cases.json" with { type: "json" };
 import { CLEAN, checkFixture, kinds, sha256 } from "./check-fixture.mts";
 import { checkPictures } from "./check.mts";
 import { type ManifestItem } from "./media.mts";
@@ -190,5 +191,56 @@ describe("pr:media check, when records and reports disagree or are missing", () 
       "Reads: 0 carried over from a capture with the same pixels, 0 new, 2 still to read",
       "FAIL: 1 not in any capture manifest; 2 with no read, of 3 pictures; layout not measured for 1 capture",
     ]);
+  });
+});
+
+describe("pr:media check, on a capture's measured layout", () => {
+  it("judges a before capture's layout not at all: its faults are what the change fixes", async () => {
+    const failing = { findings: [{ level: "fail", message: "wrong edge" }], summary: {} };
+
+    const before = await capture([shot({ file: "a.png", side: "before" })], {
+      alignment: failing,
+    }).check();
+
+    const unmeasured = await capture([shot({ file: "b.png", side: "before" })]).check();
+
+    assert.deepEqual([...kinds(before), ...kinds(unmeasured)], []);
+    assert.deepEqual([before.notMeasured, unmeasured.notMeasured], [0, 0]);
+  });
+
+  it("tells a screen measured with nothing declared on it from one not measured", async () => {
+    const result = await capture([shot({ file: "a.png" }), shot({ file: "b.png" })], {
+      alignment: { captures: [{ elements: [] }, { elements: [{ id: "row" }] }], findings: [] },
+    }).check();
+
+    assert.equal(result.notMeasured, 0);
+
+    assert.match(
+      formatCheck(result, fixture.repository),
+      /; layout measured with nothing declared on 1 screen$/u,
+    );
+  });
+
+  it("judges the captures a folder holds itself, as a native capture leaves them unjudged", async () => {
+    const failing = CASES["conditions before 0387bba5c6, phone"];
+    const passing = CASES["conditions after, phone"];
+
+    const judged = await Promise.all(
+      [failing, passing].map(async (screen) =>
+        capture([shot({ file: "a.png" })], { alignment: { captures: [screen] } }).check(),
+      ),
+    );
+
+    const refused = await capture([shot({ file: "b.png" })], {
+      alignment: { captures: [{ ...passing, unit: "pt" }] },
+    }).check();
+
+    assert.deepEqual(
+      judged.map((result) => kinds(result)),
+      [["alignment"], []],
+    );
+
+    assert.deepEqual(kinds(refused), ["alignment"]);
+    assert.match(refused.problems[0]?.detail ?? "", /isn't a capture the evaluator reads/u);
   });
 });

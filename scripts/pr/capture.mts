@@ -8,7 +8,7 @@ import { assertBrowserLaunchAllowed } from "../../packages/testing/src/browser-p
 import { getMailboxCaptureUrl, getServiceUrl } from "../dev/config.mts";
 import { signIn } from "../verify/sign-in.mts";
 import { SCHEMES, VIEWPORT_NAMES, pick } from "../verify/viewports.mts";
-import { SIDES } from "./media.mts";
+import { SIDES, buildOf } from "./media.mts";
 import { readCheckoutBuild, sha256Text } from "./provenance.mts";
 import { type Steps, captureSide, visitPaths } from "./record.mts";
 import { writeSection } from "./section.mts";
@@ -21,7 +21,9 @@ const USAGE = `Usage: pnpm pr:capture <before|after> <path...> [options]
 Captures an app the same way on each side of a change and writes tmp/pr-media/media.md, the PR's
 before-and-after section, once pnpm pr:media check passes on every file it links: an after
 picture needs this checkout's current build from pnpm start and a read (pnpm pr:media tiles,
-then pnpm pr:media read). zoonk-commit's "Show the change" says when and how.
+then pnpm pr:media read). Each shot's layout is measured on the page as shot, by the alignment
+checks, into the side's alignment.json; the check fails an after side on what they leave
+unresolved. zoonk-commit's "Show the change" says when and how.
 
   --email <address>   sign in as this learner, with the newest code in the dev mailbox
   --steps <file>      run the file's default export, async ({ page, shot }) => {...}, instead of
@@ -116,7 +118,7 @@ async function capture({ positionals, values }: ReturnType<typeof readArguments>
     viewports: pick(values.viewports, VIEWPORT_NAMES, "viewport"),
   }).finally(async () => browser.close());
 
-  const unbound = items.filter((item) => item.build.id === "unknown").length;
+  const unbound = items.filter((item) => buildOf(item).id === "unknown").length;
   const { report, written } = await writeSection({ out, repository });
 
   console.log(

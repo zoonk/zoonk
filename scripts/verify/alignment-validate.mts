@@ -23,6 +23,7 @@ const OPTIONAL = z
     capTop: MEASURE,
     current: z.boolean(),
     direction: z.enum(["ltr", "rtl"]),
+    disabled: z.boolean(),
     endEdge: MEASURE,
     firstLine: BOUNDS,
     flow: z.string(),
@@ -40,6 +41,7 @@ const OPTIONAL = z
     surface: z.string(),
     target: z.string(),
     text: z.string(),
+    textBox: z.enum(["capitals", "ideographic face"]),
     type: z.string(),
     variant: z.string(),
   })

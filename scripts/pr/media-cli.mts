@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { mkdir, readFile } from "node:fs/promises";
 import { dirname, extname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
+import { adoptRenders } from "./adopt.mts";
 import { checkPictures } from "./check.mts";
 import { bodyMedia, findManifests, isRemote, manifestsAbove } from "./locate.mts";
 import {
@@ -27,6 +28,7 @@ import { writeReadingSheet } from "./tiles.mts";
 
 const repository = resolve(import.meta.dirname, "../..");
 const CAPTURE = join(repository, "tmp/pr-media");
+const REGISTERED = join(CAPTURE, "registered");
 
 const USAGE = `Usage: pnpm pr:media check <body.md> [--root <dir>] [--manifests <dir>]...
        pnpm pr:media tiles [<dir>]
@@ -34,6 +36,7 @@ const USAGE = `Usage: pnpm pr:media check <body.md> [--root <dir>] [--manifests 
        pnpm pr:media resolve <finding id> (--fixed <commit> | --exception <who granted it>) [<dir>]
        pnpm pr:media pending --platform <android|apple> [--to <dir>] <file>...
        pnpm pr:media before --platform <web|android|apple> --source <where> [--to <dir>] <file>...
+       pnpm pr:media adopt <before|after> [--to <dir>] <render.json>...
 
 Checks that every picture a PR body shows was captured, from which build, and read.
 
@@ -54,6 +57,10 @@ Checks that every picture a PR body shows was captured, from which build, and re
            check as pending until their platform's capture writes the record.
   before   records existing before pictures and where they came from; they pass, since a before
            picture's build isn't checked. --to is tmp/pr-media/registered by default for both.
+  adopt    puts Android renders into a capture folder as the check reads them: each picture
+           beside its <name>.json (a JVM render with -Pzoonk.shots), its record in capture.json
+           with the build it came from, and its layout in alignment.json. --to is
+           tmp/pr-media/android/<side> by default.
 
 <dir> is tmp/pr-media by default, where pnpm pr:capture writes. After read or resolve there, the
 before-and-after section is written again once the check passes.`;
@@ -72,7 +79,7 @@ function readArguments() {
         platform: { type: "string" },
         root: { type: "string" },
         source: { type: "string" },
-        to: { default: join(CAPTURE, "registered"), type: "string" },
+        to: { type: "string" },
       },
     });
   } catch (error) {
@@ -248,7 +255,7 @@ async function recordPending({ positionals: files, values }: Arguments) {
     fail("Give --platform android or apple, and the after pictures.");
   }
 
-  const to = resolve(values.to);
+  const to = resolve(values.to ?? REGISTERED);
   await mkdir(to, { recursive: true });
   const pictures = await hashPictures(files, to);
 
@@ -274,7 +281,7 @@ async function recordBefore({ positionals: files, values }: Arguments) {
     );
   }
 
-  const to = resolve(values.to);
+  const to = resolve(values.to ?? REGISTERED);
   const afters = await capturedAsAfter(files, to);
 
   if (afters.length > 0) {
@@ -298,6 +305,23 @@ async function recordBefore({ positionals: files, values }: Arguments) {
   return true;
 }
 
+async function adopt({ positionals: [sideName, ...renders], values }: Arguments) {
+  const side = SIDES.find((name) => name === sideName);
+
+  if (!side || renders.length === 0) {
+    fail("Name a side, before or after, then the renders' <name>.json files.");
+  }
+
+  const to = resolve(values.to ?? join(CAPTURE, "android", side));
+  const items = await adoptRenders({ renders, side, to });
+
+  console.log(
+    `${items.length} Android ${side} pictures in ${displayPath(join(to, MANIFEST))}, their layout in alignment.json.`,
+  );
+
+  return true;
+}
+
 async function tiles({ positionals: [folder] }: Arguments) {
   const root = resolve(folder ?? CAPTURE);
   const { count, path } = await writeReadingSheet({ root, sheet: join(root, "read") });
@@ -306,6 +330,7 @@ async function tiles({ positionals: [folder] }: Arguments) {
 }
 
 const COMMANDS = {
+  adopt,
   before: recordBefore,
   check,
   pending: recordPending,

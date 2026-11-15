@@ -1,3 +1,4 @@
+import { bleedLeads } from "./alignment-bleed.mts";
 import { type AlignmentFile, type AlignmentFinding, type Capture } from "./alignment-capture.mts";
 import { coverageLeads, isOneStack } from "./alignment-coverage.mts";
 import { axisLeads, endLeads, stackedLeads, startLeads } from "./alignment-edges.mts";
@@ -13,6 +14,7 @@ import {
   rowName,
 } from "./alignment-geometry.mts";
 import { lineLeads } from "./alignment-line.mts";
+import { pairLeads, reconcile } from "./alignment-scenarios.mts";
 import { type Summary, summarize } from "./alignment-summary.mts";
 import {
   type AlignmentException,
@@ -129,7 +131,7 @@ function filledLeads(context: Context): AlignmentFinding[] {
 
   return [
     finding(context, {
-      detail: `${actions.map((action) => action.name ?? action.text ?? action.id).join(", ")} on ${capture.activeSurface}`,
+      detail: `${actions.map((action) => `${action.name ?? action.text ?? action.id}${action.disabled ? " (disabled)" : ""}`).join(", ")} on ${capture.activeSurface}`,
       level: "fail",
       message: "more than one filled action on one surface",
       piece: "action",
@@ -197,6 +199,7 @@ export function evaluateCapture(capture: Capture): AlignmentFinding[] {
   return [
     ...groupsOf(capture).flatMap((group) => groupLeads(context, group)),
     ...filledLeads(context),
+    ...bleedLeads(context),
   ];
 }
 
@@ -224,10 +227,14 @@ export function evaluateFile(file: AlignmentFile): {
   findings: AlignmentFinding[];
   summary: Summary;
 } {
+  const scenarios = reconcile(file);
+
   const findings = applyExceptions([
     ...file.captures.flatMap((capture) => evaluateCapture(capture)),
+    ...pairLeads(file.captures),
+    ...scenarios.findings,
     ...(file.discovery ?? []),
   ]);
 
-  return { findings, summary: summarize(findings) };
+  return { findings, summary: summarize(findings, scenarios.missing) };
 }

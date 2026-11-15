@@ -13,7 +13,7 @@ export type NotMeasured = "not measured";
 export type CaptureElement = {
   id: string;
   piece: string;
-  part: Part | "action" | "anchor" | "group" | "holder" | "row" | "unmeasured";
+  part: Part | "action" | "anchor" | "fill" | "group" | "holder" | "row" | "unmeasured";
   group: string | null;
   row: string | null;
   bounds: Bounds;
@@ -24,6 +24,13 @@ export type CaptureElement = {
   baseline?: number | NotMeasured;
   capTop?: number | NotMeasured;
   capBottom?: number | NotMeasured;
+  /**
+   * The box `capTop` and `capBottom` bound: the face's capitals, or for a script with none
+   * (Japanese, Korean) its ideographic face, read from a full-frame glyph in the same fonts.
+   */
+  textBox?: "capitals" | "ideographic face";
+  /** An action's: drawn disabled. A disabled filled button still counts toward `one-filled`. */
+  disabled?: boolean;
   /** A text's: how many lines it runs to. */
   lines?: number;
   /** A row's: a supporting line sits under its label. */
@@ -49,6 +56,14 @@ export type CaptureElement = {
   surface?: string;
   /** An action's destination, when it is a link: the same words to the same place are one action. */
   target?: string;
+  /**
+   * A fill's (a drawn box that passes the page's column): the column's start and end, the frame's
+   * (the page's whole room), and what it is: a row's "highlight", a "hairline", a "picture" or a
+   * "box" (craft E7).
+   */
+  column?: [number, number];
+  frame?: [number, number];
+  kind?: "box" | "hairline" | "highlight" | "picture";
   /** A state pair's anchor: the same id in both captures of one screen. */
   anchor?: string;
   /** A group's: its layout runs right to left, so its start edge is the right one. */
@@ -88,6 +103,8 @@ export type Capture = {
    * the page shows no dialog or sheet where they do, which fails `one-filled`.
    */
   activeSurface: string;
+  /** False when the run reached the screen but not its scenario's proof (its words never showed). */
+  reached?: boolean;
   /** A gallery of the pieces shown side by side, not a screen: one filled action isn't judged. */
   specimen?: boolean;
   elements: CaptureElement[];
@@ -121,6 +138,8 @@ export function configurationName({ locale, pointer, size, textScale }: Configur
 
 export type AlignmentFile = {
   captures: Capture[];
+  /** The scenario ids this run was asked to capture: each must be captured, once, and known. */
+  required?: string[];
   /** Leads the platform found itself (inferred groups, empty room, cut off, the state walk). */
   discovery?: AlignmentFinding[];
   findings?: AlignmentFinding[];

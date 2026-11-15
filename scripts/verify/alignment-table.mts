@@ -139,6 +139,21 @@ export const SURFACES =
   "[role=dialog][aria-modal=true], [role=alertdialog], [data-slot=dialog-content], [data-slot=sheet-content]";
 
 /**
+ * The page's columns (craft E7): a drawn box starts and ends on its closest column's content edges,
+ * or bleeds as E7 allows. A frame's main column, the column beside an aside, the aside, and `Page`.
+ */
+export const COLUMNS =
+  "[data-slot=learn-shell-main], [data-slot=page-with-aside] > div, [data-slot=page-aside], [data-slot=page]";
+
+/** What `readAlignment` reads a web page by. */
+export const WEB_TABLE = {
+  actions: ACTIONS,
+  columns: COLUMNS,
+  pieces: PIECES.flatMap((piece) => (piece.web ? [{ name: piece.name, web: piece.web }] : [])),
+  surfaces: SURFACES,
+};
+
+/**
  * Exceptions to a declared relationship. A detector's correction belongs in the read itself; an
  * exception to a craft rule is the user's alone to grant, so each names who granted it, the rule,
  * the piece, the scenario and the configuration it covers.

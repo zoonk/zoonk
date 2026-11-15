@@ -10,6 +10,8 @@ export type Moved = {
   carried: boolean;
   /** It contains what was acted on, as a form holds its field. */
   holds: boolean;
+  /** A scenario declares it an anchor (a sheet's frame, a pinned action): its size must hold. */
+  anchor: boolean;
   /** A control, panel or picture: its own size is part of the screen. */
   drawn: boolean;
   isTarget: boolean;
@@ -146,7 +148,11 @@ export function snapshotLayout() {
 
 export type Comparison = { moved: Moved[]; target: Place | null };
 
-export function compareLayout(targetId: string): Comparison {
+/** `request` is what was acted on, and with it the selectors of every declared anchor. */
+export function compareLayout(request: string | { anchors: string; targetId: string }): Comparison {
+  const { anchors, targetId } =
+    typeof request === "string" ? { anchors: "", targetId: request } : request;
+
   const LABEL_LENGTH = 40;
   const before = globalThis.zoonkLayout ?? [];
   const target = document.querySelector(`[data-zoonk-act="${targetId}"]`);
@@ -208,6 +214,7 @@ export function compareLayout(targetId: string): Comparison {
     return [
       {
         after: to,
+        anchor: anchors !== "" && element.matches(anchors),
         before: from,
         carried: delta(element.parentElement) === delta(element),
         drawn: drawn(element),

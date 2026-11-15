@@ -1,11 +1,14 @@
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
+import { readCaptures } from "../verify/alignment-validate.mts";
+import { evaluateFile } from "../verify/alignment.mts";
 import { isRemote } from "./locate.mts";
 import {
   type AlignmentReport,
   type CaptureItem,
   type Finding,
   type ManifestItem,
+  buildOf,
   isRecorded,
   readAlignment,
   readManifest,
@@ -16,14 +19,34 @@ import { type CheckResult, type Problem } from "./report.mts";
 
 type Entry = { folder: string; item: ManifestItem };
 
-type Manifest = { alignment: AlignmentReport; folder: string; items: ManifestItem[] };
+type Judged = AlignmentReport & { refused?: string };
+
+type Manifest = { alignment: Judged; folder: string; items: ManifestItem[] };
+
+/**
+ * The captures a folder holds are judged here, by the one evaluator, whatever wrote them: a native
+ * capture stores captures without findings, and stored findings could be older than the rules.
+ */
+function judge(report: AlignmentReport): Judged {
+  if (!report.captures?.length) {
+    return report;
+  }
+
+  const read = readCaptures(report);
+
+  if (read.kind !== "captures") {
+    return { ...report, refused: read.kind === "invalid" ? read.problems : "no captures" };
+  }
+
+  return { ...report, ...evaluateFile(read.file) };
+}
 
 async function loadManifests(folders: string[]): Promise<Manifest[]> {
   const unique = [...new Set(folders.map((folder) => resolve(folder)))];
 
   return Promise.all(
     unique.map(async (folder) => ({
-      alignment: await readAlignment(folder),
+      alignment: judge(await readAlignment(folder)),
       folder,
       items: (await readManifest(folder)) ?? [],
     })),
@@ -73,7 +96,7 @@ async function buildProblems({
   item: CaptureItem;
   picture: string;
 }): Promise<Problem[]> {
-  const { app, changes, commit, id } = item.build;
+  const { app, changes, commit, id } = buildOf(item);
 
   if (id === "unknown") {
     return [{ kind: "unknown-build", picture }];
@@ -108,7 +131,7 @@ async function findingProblems({
       }
 
       if (finding.state === "fixed") {
-        const shown = item && (await git.includes(item.build.commit, finding.commit));
+        const shown = item && (await git.includes(buildOf(item).commit, finding.commit));
         return shown ? undefined : { detail, kind: "fixed-not-retaken", picture };
       }
 
@@ -197,6 +220,12 @@ function measured({ alignment, items }: Manifest): boolean {
 }
 
 function alignmentProblems({ alignment, folder }: Manifest): Problem[] {
+  if (alignment.refused !== undefined) {
+    const [first = ""] = alignment.refused.split("\n");
+    const detail = `alignment.json isn't a capture the evaluator reads: ${first}`;
+    return [{ detail, kind: "alignment", picture: folder }];
+  }
+
   const { findings = [], summary = {} } = alignment;
   const failing = findings.filter((finding) => finding.level === "fail" && !finding.exception);
   const messages = [...new Set(failing.map((finding) => finding.message))];
@@ -244,8 +273,13 @@ export async function checkPictures({
   );
 
   const matched = new Set(checked.flatMap(({ entries: found }) => found));
-  const used = new Set([...matched].map(({ folder }) => folder));
   const after = [...matched].flatMap(({ item }) => (item.side === "after" ? [item] : []));
+
+  // A before's layout is the fault the change fixes, so only folders holding an after are judged.
+  const judged = new Set(
+    [...matched].flatMap(({ folder, item }) => (item.side === "after" ? [folder] : [])),
+  );
+
   const read = after.flatMap((item) => readOf(item) ?? []);
 
   const reads = {
@@ -254,13 +288,16 @@ export async function checkPictures({
     new: read.filter((record) => !record.carriedFrom).length,
   };
 
-  const usedManifests = loaded.filter(({ folder }) => used.has(folder));
-  const fromAlignment = usedManifests.flatMap((manifest) => alignmentProblems(manifest));
+  const judgedManifests = loaded.filter(({ folder }) => judged.has(folder));
+  const fromAlignment = judgedManifests.flatMap((manifest) => alignmentProblems(manifest));
   const unreadable = unsupported.map((detail): Problem => ({ detail, kind: "unsupported" }));
 
   return {
     checked: unique.length,
-    notMeasured: usedManifests.filter((manifest) => !measured(manifest)).length,
+    notMeasured: judgedManifests.filter((manifest) => !measured(manifest)).length,
+    nothingDeclared: judgedManifests
+      .flatMap(({ alignment }) => alignment.captures ?? [])
+      .filter((screen) => screen.elements?.length === 0).length,
     problems: [...unreadable, ...checked.flatMap(({ problems }) => problems), ...fromAlignment],
     reads,
   };
