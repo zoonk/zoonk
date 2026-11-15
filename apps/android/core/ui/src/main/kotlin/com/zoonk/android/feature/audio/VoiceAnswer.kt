@@ -44,8 +44,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
@@ -68,8 +70,10 @@ class VoiceAnswerModel(
     var checking by mutableStateOf(false)
         private set
 
-    var issue by mutableStateOf<VoiceIssue?>(null)
-        private set
+    /** The recorder on its screen, until it goes for real; [VoiceAnswerLine] stands for it. */
+    internal val visit = Visit()
+
+    internal val issue = visit.outcome<VoiceIssue>()
 
     /** The learner turned the microphone off for the app. */
     var microphoneOff by mutableStateOf(false)
@@ -79,19 +83,20 @@ class VoiceAnswerModel(
     var blocked by mutableStateOf(false)
 
     internal fun record() {
-        issue = null
+        issue.clear()
         recorder.start(::check)
     }
 
     internal fun check(recording: VoiceRecording) {
         checking = true
+        val started = visit.number
         viewModelScope.launch {
             try {
                 when (val outcome = grade(recording)) {
                     is GradeOutcome.Graded, GradeOutcome.Obsolete -> Unit
-                    GradeOutcome.NoSpeech -> issue = VoiceIssue.NoSpeech
-                    is GradeOutcome.Limited -> issue = VoiceIssue.Limited(outcome.limit)
-                    GradeOutcome.Failed -> issue = VoiceIssue.Failed
+                    GradeOutcome.NoSpeech -> issue.send(started, VoiceIssue.NoSpeech)
+                    is GradeOutcome.Limited -> issue.send(started, VoiceIssue.Limited(outcome.limit))
+                    GradeOutcome.Failed -> issue.send(started, VoiceIssue.Failed)
                 }
             } finally {
                 checking = false
@@ -181,7 +186,11 @@ fun VoiceAnswerButton(
     RecordButton(status = status, onStart = tapRecord, onStop = model.recorder::stop, modifier = modifier, enabled = !model.checking)
 }
 
-/** What [model]'s take is doing: listening, checking, what went wrong, or a limit with its way on. */
+/**
+ * What [model]'s take is doing: listening, checking, what went wrong, or a limit with its way on. The line is
+ * the take's visit, as the one piece shown from Record through the grading to what went wrong (a lesson's bar
+ * drops Record while the take is checked), so the take's visit ends only when the line goes for real.
+ */
 @Composable
 fun VoiceAnswerLine(
     model: VoiceAnswerModel,
@@ -189,6 +198,7 @@ fun VoiceAnswerLine(
     modifier: Modifier = Modifier,
     asksToSpeak: Boolean = true,
 ) {
+    VisitOf(model.visit)
     val status by model.recorder.state.collectAsStateWithLifecycle()
     val recording = status is VoiceRecorder.Status.Recording
     val slow by produceState(false, model.checking) {
@@ -198,7 +208,7 @@ fun VoiceAnswerLine(
             value = true
         }
     }
-    val issue = model.issue.takeUnless { recording }
+    val issue = model.issue.value.takeUnless { recording }
     val hint =
         when {
             recording -> stringResource(R.string.audio_listening)
