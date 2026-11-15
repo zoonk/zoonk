@@ -5,6 +5,10 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 
+/**
+ * The weekend's time field is always there, off until the switch is on, so turning it on or off
+ * moves nothing. Off, it shows the weekdays' time, which the weekend takes then.
+ */
 export function WeekendTime({
   checked,
   children,
@@ -14,7 +18,7 @@ export function WeekendTime({
   readOnly,
 }: {
   checked: boolean;
-  children: React.ReactNode;
+  children: (on: boolean) => React.ReactNode;
   className?: string;
   /** No weekend day is studied, or only weekend days: the row keeps its place, so a day's pick moves nothing. */
   disabled?: boolean;
@@ -45,7 +49,7 @@ export function WeekendTime({
         />
       </div>
 
-      {checked && !disabled && children}
+      {children(checked && !disabled)}
     </div>
   );
 }
