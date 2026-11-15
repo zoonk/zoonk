@@ -21,6 +21,7 @@ const OPTIONAL = z
     capBottom: MEASURE,
     capTop: MEASURE,
     column: z.tuple([z.number(), z.number()]),
+    controlParent: z.string(),
     current: z.boolean(),
     direction: z.enum(["ltr", "rtl"]),
     disabled: z.boolean(),
@@ -30,6 +31,7 @@ const OPTIONAL = z
     frame: z.tuple([z.number(), z.number()]),
     gap: MEASURE,
     gapBefore: MEASURE,
+    hangEdges: z.array(z.enum(["end", "start"])),
     kind: z.enum(["box", "hairline", "highlight", "picture", "tab"]),
     layoutScale: z.number().positive(),
     lineTexts: z.array(z.string()),
@@ -47,7 +49,7 @@ const OPTIONAL = z
     target: z.string(),
     text: z.string(),
     textBox: z.enum(["capitals", "ideographic face"]),
-    textRole: z.enum(["button", "facts", "title"]),
+    textRole: z.enum(["button", "facts", "label", "title"]),
     type: z.string(),
     variant: z.string(),
   })
@@ -103,13 +105,14 @@ const CAPTURE = z
     }),
     elements: z.array(ELEMENT),
     marketing: z.boolean().optional(),
+    measurements: z.array(z.enum(["clipping", "controls", "text-flows"])).optional(),
     platform: z.enum(["android", "apple", "web"]),
     scale: z.number().positive(),
     scenario: z.string().nullable(),
     screen: z.string(),
     specimen: z.boolean().optional(),
     unit: z.enum(["dp", "pt", "px"]),
-    version: z.literal(1),
+    version: z.union([z.literal(1), z.literal(2)]),
   })
   .superRefine((capture, context) => {
     if (UNITS[capture.platform] !== capture.unit) {

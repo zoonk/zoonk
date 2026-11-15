@@ -73,6 +73,9 @@ export type CaptureElement = {
   /** An action's: its look, and the surface it is on ("page", or a dialog's or sheet's name). */
   variant?: string;
   surface?: string;
+  controlParent?: string;
+  /** Column sides a ghost control hangs over; its content ink must meet those edges. */
+  hangEdges?: ("end" | "start")[];
   /** An action's destination, when it is a link: the same words to the same place are one action. */
   target?: string;
   /**
@@ -103,8 +106,8 @@ export type CaptureElement = {
   reason?: string;
   /** A text's: each line's words as drawn, when it wraps or ends with a separator. */
   lineTexts?: string[];
-  /** A text's: a title, a facts line or a button's label, which never leaves one short word alone. */
-  textRole?: "button" | "facts" | "title";
+  /** A text's: a title, facts line, label or button, which never leaves one word alone. */
+  textRole?: "button" | "facts" | "label" | "title";
   /** A cut's (what a box clips): how far its content passes the box, across and down. */
   overflow?: [number, number];
 };
@@ -120,7 +123,9 @@ export type Configuration = {
 };
 
 export type Capture = {
-  version: 1;
+  version: 1 | 2;
+  /** Measurements completed, including when a screen has no matching text or controls. */
+  measurements?: ("clipping" | "controls" | "text-flows")[];
   platform: "android" | "apple" | "web";
   scenario: string | null;
   screen: string;

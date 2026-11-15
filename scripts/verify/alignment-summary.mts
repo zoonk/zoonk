@@ -5,7 +5,7 @@ export const READ_LIMITS = [
   "The read doesn't enter iframes or shadow roots. Of what a pseudo-element draws it reads only a row's `::before` highlight and a top or bottom rule (for `column`); a part drawn only by `::before` or `::after` otherwise isn't checked. A rule is clipped by its ancestors' `overflow`, not by a `clip-path`, which no screen sets on one.",
   "A fill is judged as a highlight only on a row that says it's highlighted (`aria-current`, `data-highlighted`, `aria-selected`): a hover or focus fill isn't drawn while the read runs, so it isn't judged.",
   "It counts a filled action only when the kit's button variants draw it (`--button-variant`), so a control filled some other way isn't counted; a disabled one doesn't, since it isn't a choice the learner has yet. Two filled buttons with the same `data-action-name` count as one action: the name is the author's statement that they are one, and the check trusts it.",
-  "Line endings and lone words require lineTexts, control heights require control records, and clipping requires cut records from the newer probe. Older captures cannot establish those rules passed.",
+  "Line endings and lone words require lineTexts, control heights require control records, and clipping requires cut records from the newer probe. Older captures report those four relationships as not measured and fail the summary.",
   "A text in a script with no capitals (Japanese, Korean) is set on its ideographic face, the box of a full-frame glyph in the same fonts, not on its own ink. Nothing listed here isn't proof those were checked.",
 ].join(" ");
 

@@ -4,6 +4,9 @@ import { type Context, EDGE, box, finding, tenths } from "./alignment-geometry.m
 /** Controls this close side by side are one row: the kit spaces a row's controls 8 to 12 apart. */
 const ROW_GAP = 24;
 
+/** Z1 compares controls within half a CSS pixel. */
+const HEIGHT_TOLERANCE = 0.5;
+
 /** Side by side on one surface, each one's middle within the other's height, and close. */
 function beside(one: CaptureElement, other: CaptureElement) {
   const a = box(one.bounds);
@@ -13,6 +16,7 @@ function beside(one: CaptureElement, other: CaptureElement) {
 
   return (
     one.surface === other.surface &&
+    one.controlParent === other.controlParent &&
     middle(a) >= b.top &&
     middle(a) <= b.bottom &&
     middle(b) >= a.top &&
@@ -42,7 +46,7 @@ export function heightLeads(context: Context): AlignmentFinding[] {
   return rowsOf(controls).flatMap((row) => {
     const heights = row.map((control) => control.bounds[3]);
 
-    if (Math.max(...heights) - Math.min(...heights) <= EDGE) {
+    if (Math.max(...heights) - Math.min(...heights) <= HEIGHT_TOLERANCE) {
       return [];
     }
 

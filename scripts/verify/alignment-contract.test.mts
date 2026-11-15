@@ -29,8 +29,21 @@ describe("a declared relationship is measured and holds, or the run fails", () =
   });
 
   it("writes a failing record for an end edge, a type token or a gap the read couldn't give", () => {
-    assert.deepEqual(unmeasured(real("round 2 missing-end")), ["end-edge"]);
-    assert.deepEqual(unmeasured(real("round 2 explicit-missing-type")), ["type"]);
+    assert.deepEqual(unmeasured(real("round 2 missing-end")), [
+      "cut",
+      "line-end",
+      "lone-word",
+      "one-height",
+      "end-edge",
+    ]);
+
+    assert.deepEqual(unmeasured(real("round 2 explicit-missing-type")), [
+      "cut",
+      "line-end",
+      "lone-word",
+      "one-height",
+      "type",
+    ]);
 
     const untyped = real("round 2 explicit-missing-type");
 
@@ -39,13 +52,25 @@ describe("a declared relationship is measured and holds, or the run fails", () =
         ...untyped,
         elements: untyped.elements.map(({ type: _type, ...element }) => element),
       }),
-      ["type"],
+      ["cut", "line-end", "lone-word", "one-height", "type"],
     );
 
-    assert.deepEqual(unmeasured(real("round 2 missing-gap")), ["gap"]);
+    assert.deepEqual(unmeasured(real("round 2 missing-gap")), [
+      "cut",
+      "line-end",
+      "lone-word",
+      "one-height",
+      "gap",
+    ]);
 
     // A word in a value's place ("Off") isn't compared with figures, but its type is still read.
-    assert.deepEqual(unmeasured(real("round 3 missing-word-value-type")), ["type"]);
+    assert.deepEqual(unmeasured(real("round 3 missing-word-value-type")), [
+      "cut",
+      "line-end",
+      "lone-word",
+      "one-height",
+      "type",
+    ]);
   });
 
   it("writes a failing record for an area of a declared group the platform couldn't read", () => {
@@ -58,7 +83,13 @@ describe("a declared relationship is measured and holds, or the run fails", () =
   });
 
   it("writes a failing record for a row middle the capture says wasn't measured, never a pass", () => {
-    assert.deepEqual(unmeasured(real("round 3 line-unknown-middle")), ["line"]);
+    assert.deepEqual(unmeasured(real("round 3 line-unknown-middle")), [
+      "cut",
+      "line-end",
+      "lone-word",
+      "one-height",
+      "line",
+    ]);
 
     assert.equal(
       evaluateFile({ captures: [real("round 3 line-unknown-middle")] }).summary.failed,
@@ -74,7 +105,14 @@ describe("a declared relationship is measured and holds, or the run fails", () =
   });
 
   it("checks each neighbor pair's gap: a row's own gap doesn't stand in for the group's", () => {
-    assert.deepEqual(unmeasured(real("round 2 partial-gap")), ["gap"]);
+    assert.deepEqual(unmeasured(real("round 2 partial-gap")), [
+      "cut",
+      "line-end",
+      "lone-word",
+      "one-height",
+      "gap",
+    ]);
+
     assert.equal(evaluateFile({ captures: [real("round 2 partial-gap")] }).summary.failed, true);
   });
 });

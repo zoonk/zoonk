@@ -93,6 +93,23 @@ export function bleedLeads(context: Context): AlignmentFinding[] {
     const [x, , width] = fill.bounds;
     const past = { end: x + width - end, start: start - x };
 
+    if (fill.hangEdges?.length) {
+      const off = Math.max(...fill.hangEdges.map((edge) => Math.abs(past[edge])));
+
+      return off <= EDGE
+        ? []
+        : [
+            finding(context, {
+              detail: `${fill.name ?? fill.id}: its ink ${side(past.start, "starts")} and ${side(past.end, "ends")}`,
+              level: "fail",
+              measured: off,
+              message: "a hanging control's ink misses the column edge",
+              piece: "page",
+              rule: "column",
+            }),
+          ];
+    }
+
     if (allowed(fill, past, context.capture.configuration.textScale)) {
       return [];
     }

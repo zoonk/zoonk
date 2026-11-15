@@ -134,12 +134,29 @@ describe("the Plan's path and Android's captures", () => {
     // Its fallback face gave no capitals, so its line is a failing record, not a pass.
     assert.deepEqual(
       wrapped.map((finding) => `${finding.level} ${finding.rule}`),
-      ["not-measured line"],
+      [
+        "not-measured cut",
+        "not-measured line-end",
+        "not-measured lone-word",
+        "not-measured one-height",
+        "not-measured line",
+      ],
     );
 
     // Two lines, the value on the row's center; and a title with a note, the control.
-    assert.deepEqual(evaluateCapture(real("round 3 corrected-wrap-value")), []);
-    assert.deepEqual(evaluateCapture(real("round 3 corrected-note-value")), []);
+    assert.deepEqual(
+      evaluateCapture(real("round 3 corrected-wrap-value")).filter(
+        (finding) => finding.rule === "line",
+      ),
+      [],
+    );
+
+    assert.deepEqual(
+      evaluateCapture(real("round 3 corrected-note-value")).filter(
+        (finding) => finding.rule === "line",
+      ),
+      [],
+    );
   });
 
   it("reads a right-to-left group mirrored, so its start is its right edge", () => {

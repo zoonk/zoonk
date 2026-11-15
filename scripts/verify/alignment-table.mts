@@ -52,8 +52,7 @@ type Piece = { name: string; relations: Relation[]; web?: WebPiece };
 
 const LIST_PARTS = {
   end: "svg.lucide-chevron-right, [data-slot=fold-chevron], [data-slot=radio-group-item], [data-slot=checkbox], [role=switch]",
-  label:
-    "[data-slot=list-row-title], [data-slot=week-day-item], [data-slot=list-row-content]:not(:has([data-slot=list-row-title])) > :first-child",
+  label: "[data-slot=list-row-title], [data-slot=week-day-item]",
   lead: "[data-slot=week-day-date]",
   mark: "[data-slot=list-row-leading], [data-slot=list-row-icon]",
   note: "[data-slot=list-row-description]",

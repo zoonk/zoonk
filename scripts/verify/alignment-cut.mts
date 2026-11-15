@@ -18,10 +18,14 @@ export function cutLeads(context: Context): AlignmentFinding[] {
       ];
 
       return finding(context, {
-        detail: `${cut.text ?? "what it holds"} is cut by ${cut.name ?? cut.id}: ${by.join(", ")}`,
+        detail: cut.reason
+          ? `${cut.text ?? cut.name ?? cut.id}: content continues ${tenths(across)} across with no kit scroll sign`
+          : `${cut.text ?? "what it holds"} is cut by ${cut.name ?? cut.id}: ${by.join(", ")}`,
         level: "fail",
         measured: Math.max(across, down),
-        message: "a box cuts what it holds with no sign it scrolls",
+        message: cut.reason
+          ? "a horizontal scroller has no kit scroll sign"
+          : "a box cuts what it holds with no sign it scrolls",
         piece: "page",
         rule: "cut",
       });

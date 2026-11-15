@@ -34,9 +34,9 @@ describe("a line never ends with a separator: lines ending in a dot, a dash or a
     ]);
   });
 
-  it("fails a spaced dash or slash at a line's end, in any text", () => {
-    assert.equal(findings("line-end", [text(["Monday —", "Friday"])]).length, 1);
-    assert.equal(findings("line-end", [text(["3 /", "5 done"])]).length, 1);
+  it("fails a spaced dash or slash at a line's end, in a wrapped label", () => {
+    assert.equal(findings("line-end", [text(["Monday —", "Friday"], "label")]).length, 1);
+    assert.equal(findings("line-end", [text(["3 /", "5 done"], "facts")]).length, 1);
   });
 
   it("passes a hyphenated word or a path broken where it may break, and a dot that starts a line", () => {
@@ -46,16 +46,16 @@ describe("a line never ends with a separator: lines ending in a dot, a dash or a
   });
 });
 
-describe("a wrapped title, facts line or button label never leaves one short word alone", () => {
-  it('fails a last line of one word of 8 characters or fewer (C-W04\'s "dias")', () => {
+describe("a wrapped title, facts line or button label never leaves one word alone", () => {
+  it('fails a last line of one word at any length (C-W04\'s "dias")', () => {
     assert.deepEqual(findings("lone-word", [text(["Faltam 3", "dias"], "title")]), [
       '"Faltam 3 dias": "dias" alone on its last line',
     ]);
   });
 
-  it("passes two words, a longer word, one line, and running text that isn't a title", () => {
+  it("passes two words, one line, and running text that isn't a title", () => {
     assert.deepEqual(findings("lone-word", [text(["Your plan for", "the week"], "title")]), []);
-    assert.deepEqual(findings("lone-word", [text(["Uma semana", "concluídas"], "facts")]), []);
+    assert.equal(findings("lone-word", [text(["Uma semana", "concluídas"], "facts")]).length, 1);
     assert.deepEqual(findings("lone-word", [text(["Build my plan"], "button")]), []);
     assert.deepEqual(findings("lone-word", [text(["A sentence that wraps", "here"])]), []);
   });

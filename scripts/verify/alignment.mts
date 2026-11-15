@@ -227,10 +227,34 @@ function groupLeads(context: Context, group: Group): AlignmentFinding[] {
     : found;
 }
 
+function missingMeasurements(context: Context): AlignmentFinding[] {
+  const required = {
+    cut: "clipping",
+    "line-end": "text-flows",
+    "lone-word": "text-flows",
+    "one-height": "controls",
+  } as const;
+
+  return Object.entries(required).flatMap(([rule, measurement]) =>
+    context.capture.version === 2 && context.capture.measurements?.includes(measurement)
+      ? []
+      : [
+          finding(context, {
+            detail: `capture version ${context.capture.version}: ${measurement} were not recorded`,
+            level: "not-measured",
+            message: `${rule} measurements were not recorded`,
+            piece: "page",
+            rule,
+          }),
+        ],
+  );
+}
+
 export function evaluateCapture(capture: Capture): AlignmentFinding[] {
   const context = { capture, unit: capture.unit };
 
   return [
+    ...missingMeasurements(context),
     ...groupsOf(capture).flatMap((group) => groupLeads(context, group)),
     ...filledLeads(context),
     // A gallery's specimens each draw in a frame of their own, not on the page's column.

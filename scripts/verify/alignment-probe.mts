@@ -1106,8 +1106,25 @@ export function readAlignment({
         const shows = (box: Rect | null) => within(area, box);
         const highlight = shows(beforeFill(element));
 
+        const ghostInk = isGhost(element) ? contentInk(element) : null;
+        const controlBox = element.getBoundingClientRect();
+
+        const hangEdges: ("end" | "start")[] = [
+          ...(controlBox.left < edges.left - PAST ? ["start" as const] : []),
+          ...(controlBox.right > edges.right + PAST ? ["end" as const] : []),
+        ];
+
+        const ghostMiss =
+          ghostInk &&
+          hangEdges.some(
+            (edge) =>
+              Math.abs(
+                edge === "start" ? ghostInk.left - edges.left : ghostInk.right - edges.right,
+              ) > PAST,
+          );
+
         const ownBox = globalThis.zoonkPage.paints(element, ["top", "right", "bottom", "left"])
-          ? shows(isGhost(element) ? contentInk(element) : element.getBoundingClientRect())
+          ? shows(isGhost(element) ? ghostInk : controlBox)
           : null;
 
         const line = ownBox ? null : shows(ruleOf(element));
@@ -1124,7 +1141,7 @@ export function readAlignment({
         // touches one passing it (a grid's middle tile) is part of that line.
         const found: { box: Rect; kind: Kind; passing: boolean }[] = [
           ...(highlight && passes(highlight) ? [{ box: highlight, kind: lit, passing: true }] : []),
-          ...(ownBox && passes(ownBox)
+          ...(ownBox && (passes(ownBox) || ghostMiss)
             ? [{ box: ownBox, kind: current ? lit : kindOf(element, ownBox), passing: true }]
             : []),
           ...[line, ...pseudoRules(element).map((rule) => shows(rule))]
@@ -1138,6 +1155,7 @@ export function readAlignment({
 
         return found.map(({ box, kind, passing }, part) => ({
           fill: {
+            ...(box === ownBox && ghostMiss ? { hangEdges } : {}),
             bounds: bounds(box),
             column: [edges.left + scrollX, edges.right + scrollX],
             frame: [edges.frame.left + scrollX, edges.frame.right + scrollX],
@@ -1318,6 +1336,7 @@ export function readAlignment({
         !(node instanceof Text) ||
         !node.parentElement ||
         !present(node.parentElement) ||
+        textRoot(node.parentElement) !== element ||
         node.parentElement.closest("kbd")
       ) {
         return;
@@ -1333,11 +1352,14 @@ export function readAlignment({
         if (rect) {
           const line = lines.find(
             (candidate) =>
-              Math.abs(candidate.top - rect.top) < Math.min(candidate.height, rect.height) / 2,
+              candidate.top < rect.bottom && rect.top < candidate.top + candidate.height,
           );
 
           if (line) {
             line.text += `${rect.left > line.right + 1 ? " " : ""}${node.data[index] ?? ""}`;
+            const bottom = Math.max(line.top + line.height, rect.bottom);
+            line.top = Math.min(line.top, rect.top);
+            line.height = bottom - line.top;
             line.right = rect.right;
           } else {
             lines.push({
@@ -1361,7 +1383,12 @@ export function readAlignment({
       .filter(Boolean);
   }
 
-  function textRole(element: Element): CaptureElement["textRole"] {
+  function textRole(flow: Element): CaptureElement["textRole"] {
+    const element =
+      flow.closest(
+        "h1,h2,h3,h4,h5,h6,p,label,button,[role=button],[data-slot=button],[data-slot$=title],[data-slot*=facts]",
+      ) ?? flow;
+
     if (element.matches("h1,h2,h3,h4,h5,h6,[data-slot$=title]")) {
       return "title";
     }
@@ -1370,7 +1397,14 @@ export function readAlignment({
       return "button";
     }
 
-    if (element.matches("[data-slot*=facts]") || /\s·\s/u.test(element.textContent ?? "")) {
+    if (element.matches("label,[data-slot=list-row-title]")) {
+      return "label";
+    }
+
+    if (
+      element.matches("[data-slot*=facts],[data-slot=task-meta]") ||
+      /\s·\s/u.test(element.textContent ?? "")
+    ) {
       return "facts";
     }
 
@@ -1379,28 +1413,26 @@ export function readAlignment({
 
   function textRoot(parent: Element): Element {
     const semantic = parent.closest(
-      "h1,h2,h3,h4,h5,h6,p,button,[role=button],[data-slot=button],[data-slot$=title],[data-slot*=facts]",
+      "h1,h2,h3,h4,h5,h6,p,label,button,[role=button],[data-slot=button],[data-slot$=title],[data-slot*=facts]",
     );
-
-    if (semantic) {
-      return semantic;
-    }
-
-    const inline = (element: Element) =>
-      ["", "inline", "inline-block", "contents"].includes(getComputedStyle(element).display);
 
     let root = parent;
 
-    while (
-      inline(root) &&
-      root.parentElement &&
-      !root.parentElement.matches("body,html") &&
-      [...root.parentElement.children].every((child) => inline(child))
-    ) {
+    while (root !== semantic && root.parentElement && !root.parentElement.matches("body,html")) {
+      const style = getComputedStyle(root);
+      const container = getComputedStyle(root.parentElement);
+
+      if (
+        ["flex", "inline-flex", "grid", "inline-grid"].includes(container.display) ||
+        ["block", "flex", "grid", "flow-root"].includes(style.display)
+      ) {
+        return root;
+      }
+
       root = root.parentElement;
     }
 
-    return root;
+    return semantic ?? root;
   }
 
   function readPageTexts(): CaptureElement[] {
@@ -1420,27 +1452,39 @@ export function readAlignment({
       }
     }
 
-    return [...roots]
-      .filter((root) => ![...roots].some((other) => other !== root && other.contains(root)))
-      .map((element, index) => ({
-        ...pagePart(element, "text", index),
-        lineTexts: lineTexts(element),
-        ...(textRole(element) ? { textRole: textRole(element) } : {}),
-      }));
+    return [...roots].map((element, index) => ({
+      ...pagePart(element, "text", index),
+      lineTexts: lineTexts(element),
+      ...(textRole(element) ? { textRole: textRole(element) } : {}),
+    }));
   }
 
   function readPageControls(): CaptureElement[] {
-    return [
-      ...document.querySelectorAll(
-        "button,input:not([type=hidden]),select,textarea,[role=button],[data-slot=button]",
-      ),
-    ]
+    const selectors =
+      "button,input:not([type=hidden]):not([type=checkbox]):not([type=radio]),select,textarea,[role=button],[data-slot=button],[data-slot=input-group]";
+
+    const parents = new Map<Element | null, string>();
+
+    return [...document.querySelectorAll(selectors)]
       .filter(
         (element) =>
           present(element) &&
-          !element.parentElement?.closest("button,[role=button],[data-slot=button]"),
+          !element.matches(
+            "[role=checkbox],[role=radio],[role=switch],[data-slot=composer-send],[data-slot=checkbox],[data-slot=radio-group-item],[data-slot=switch]",
+          ) &&
+          !element.parentElement?.closest(
+            "button,[role=button],[data-slot=button],[data-slot=input-group],[data-slot=input-group-addon]",
+          ),
       )
-      .map((element, index) => pagePart(element, "control", index));
+      .map((element, index) => {
+        const parent = element.parentElement;
+
+        if (!parents.has(parent)) {
+          parents.set(parent, `controls.${parents.size}`);
+        }
+
+        return { ...pagePart(element, "control", index), controlParent: parents.get(parent) };
+      });
   }
 
   /** A declared clamp and a scrollable ancestor give content a deliberate way to continue. */
@@ -1455,6 +1499,35 @@ export function readAlignment({
       style.textOverflow === "ellipsis" ||
       Number(style.webkitLineClamp) > 0
     );
+  }
+
+  function readUnsignedScrollers(): CaptureElement[] {
+    return [...document.querySelectorAll("body *")].flatMap((element, index) => {
+      if (
+        !(element instanceof HTMLElement) ||
+        !present(element) ||
+        element.closest("svg,[data-slot=horizontal-scroll]")
+      ) {
+        return [];
+      }
+
+      const overflow = getComputedStyle(element).overflowX;
+      const across = element.scrollWidth - element.clientWidth;
+
+      if (!["auto", "scroll"].includes(overflow) || across <= 1) {
+        return [];
+      }
+
+      return [
+        {
+          ...pagePart(element, "cut", index),
+          id: `unsigned-scroll.${index}`,
+          overflow: [across, 0] as [number, number],
+          reason: "horizontal scroll has no kit scroll sign",
+          text: name(element),
+        },
+      ];
+    });
   }
 
   function readCuts(): CaptureElement[] {
@@ -1540,6 +1613,7 @@ export function readAlignment({
     ...readPageTexts(),
     ...readPageControls(),
     ...readCuts(),
+    ...readUnsignedScrollers(),
   ];
 
   // Null when two surfaces overlap and the document shows no declared surface where they do.
@@ -1591,11 +1665,12 @@ export function webCapture({
       textScale,
       width: size.viewport?.width ?? 0,
     },
+    measurements: ["clipping", "controls", "text-flows"],
     platform: "web",
     scale: size.deviceScaleFactor ?? 1,
     scenario: null,
     screen: path,
     unit: "px",
-    version: 1,
+    version: 2,
   };
 }

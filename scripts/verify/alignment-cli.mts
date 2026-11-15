@@ -9,7 +9,7 @@ import { evaluateFile } from "./alignment.mts";
 const USAGE = `Usage: pnpm verify:alignment <file or folder>... [--write]
 
 Evaluates alignment captures from any platform (REPORT-SHAPE.md): an alignment.json
-({ "captures": [...] }), a single capture ({ "version": 1, ... }), or a folder holding them.
+({ "captures": [...] }), a single capture ({ "version": 2, ... }), or a folder holding them.
 Prints each fault once with its instances, then one line: PASS or FAIL, unresolved findings,
 missing scenarios, discovery leads and what wasn't measured.
 
@@ -17,7 +17,7 @@ missing scenarios, discovery leads and what wasn't measured.
 
 It judges only what a capture holds. ${READ_LIMITS}
 
-Each capture is checked against the shape first (version 1, its platform's unit, every field the
+Each capture is checked against the shape first (version 1 or 2, its platform's unit, every field the
 evaluator reads, and every part's group and row present); one that doesn't match is refused.
 
 Exits 0 when nothing fails, 1 when a declared relationship fails, 2 when an input can't be read

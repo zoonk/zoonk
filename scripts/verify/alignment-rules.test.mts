@@ -250,7 +250,7 @@ describe("printing and the summary line", () => {
     const lines = alignmentLines(findings);
 
     assert.equal(lines.filter((line) => line.startsWith("- **label-start**")).length, 1);
-    assert.equal(lines.filter((line) => line.startsWith("  - ")).length, 2);
+    assert.equal(lines.filter((line) => line.startsWith("  - ")).length, 10);
   });
 
   it("counts faults, not instances, and fails on any unresolved one", () => {
@@ -272,7 +272,7 @@ describe("printing and the summary line", () => {
 
     assert.equal(
       summaryLine(summary),
-      "FAIL: 1 unresolved; scenarios not listed yet; 1 discovery leads; 0 not measured",
+      "FAIL: 1 unresolved; scenarios not listed yet; 1 discovery leads; 4 not measured",
     );
 
     assert.equal(summarize(findings.filter((item) => item.level !== "fail")).unresolved, 0);
