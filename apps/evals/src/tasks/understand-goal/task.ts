@@ -27,7 +27,7 @@ export const understandGoalTask: Task<
       dailyMinutesLimits: { max: MAX_DAILY_MINUTES, min: MIN_DAILY_MINUTES },
     }),
   id: "understand-goal",
-  name: "Understand Goal",
+  name: "Understand goal",
   score: scoreUnderstandGoal,
   testCases: [...TEST_CASES, ...PERSONA_TEST_CASES],
 };

@@ -57,7 +57,7 @@ export const warmUpCheckTask: Task<WarmUpCheckInput, WarmUpCheckOutput, WarmUpCh
     "Check warm-up guess cards as a subject expert from another model family: drop wrong keys, second right answers, myths, stale numbers, exam rules, quotes, contradicting reveals, regional usage shown as universal and cards an earlier card repeats or gives away; keep clean cards",
   generate: (input) => checkWarmUpCards({ ...input, writerModel: WRITER_MODEL }),
   id: "warm-up-check",
-  name: "Warm-Up Check",
+  name: "Warm-up check",
   score: scoreWarmUpCheck,
   testCases: TEST_CASES,
 };

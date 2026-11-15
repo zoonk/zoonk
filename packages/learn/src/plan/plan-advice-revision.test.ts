@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getTimeToCoverRevision } from "./time-to-cover-revision";
+import { getPlanAdviceRevision } from "./plan-advice-revision";
 
 function searchedPlan(planId: string) {
   return {
@@ -47,16 +47,22 @@ function searchedPlan(planId: string) {
   };
 }
 
-describe(getTimeToCoverRevision, () => {
+describe(getPlanAdviceRevision, () => {
   it("keys an answer to the plan it was found for, never to another goal's plan that looks the same", () => {
-    expect(getTimeToCoverRevision(searchedPlan("plan-a"))).not.toBe(
-      getTimeToCoverRevision(searchedPlan("plan-b")),
+    expect(getPlanAdviceRevision({ plan: searchedPlan("plan-a"), today: "2026-11-14" })).not.toBe(
+      getPlanAdviceRevision({ plan: searchedPlan("plan-b"), today: "2026-11-14" }),
     );
   });
 
   it("keeps the answer when the same plan comes back unchanged", () => {
-    expect(getTimeToCoverRevision(searchedPlan("plan-a"))).toBe(
-      getTimeToCoverRevision(searchedPlan("plan-a")),
+    expect(getPlanAdviceRevision({ plan: searchedPlan("plan-a"), today: "2026-11-14" })).toBe(
+      getPlanAdviceRevision({ plan: searchedPlan("plan-a"), today: "2026-11-14" }),
+    );
+  });
+
+  it("asks again on a new day, since the days left change the answer", () => {
+    expect(getPlanAdviceRevision({ plan: searchedPlan("plan-a"), today: "2026-11-14" })).not.toBe(
+      getPlanAdviceRevision({ plan: searchedPlan("plan-a"), today: "2026-11-15" }),
     );
   });
 });

@@ -1,55 +1,19 @@
 import SwiftUI
 
-/// Main's plan editor time: the time question's whole answer, asked when the editor opens and again
+/// Main's plan editor time: the time question's whole answer, read while the editor shows and again
 /// after each change, never when the plan page loads, since it plans the goal at many times.
 struct PlanTimeSection: View {
   @Environment(PlanStore.self) private var store
-  @State private var asked: (revision: Revision, answer: Asked)?
-  @State private var round = 0
-
   let editor: PlanEditor
   let goal: LearnerGoal
   let plan: GoalPlan
   /// The weekend has its own time: the time a day changes the weekdays alone.
   let weekendOn: Bool
 
-  private enum Asked: Equatable {
-    case building
-    case failed
-    case time(TimeToCover)
-  }
-
-  /// What the time-to-cover answer depends on: a change to any of it asks again.
-  private struct Revision: Equatable {
-    let planId: String
-    let schedule: GoalPlan.Schedule
-    let feasibility: GoalPlan.Feasibility?
-    let steering: GoalPlan.Steering
-    let areas: [GoalPlan.Area]
-    let bases: GoalPlan.Bases?
-    let examChoices: [GoalPlan.ExamChoice]
-
-    init(_ plan: GoalPlan) {
-      planId = plan.planId
-      schedule = plan.schedule
-      feasibility = plan.feasibility
-      steering = plan.steering
-      areas = plan.areas
-      bases = plan.bases
-      examChoices = plan.examChoices
-    }
-  }
-
-  private struct AskKey: Equatable {
-    let revision: Revision
-    let round: Int
-  }
-
   var body: some View {
     let current = plan.schedule.shape.weekdays
-    let revision = Revision(plan)
-    let answer = asked?.revision == revision ? asked?.answer : nil
-    let found: TimeToCover? = if case .time(let time) = answer { time } else { nil }
+    let time = store.timeToCover(goalId: goal.id)
+    let found = time.freshValue
     let marked = ScheduleTime.markedTimes(found)
 
     Section {
@@ -75,16 +39,12 @@ struct PlanTimeSection: View {
       } label: {
         Text("Time a day", tableName: "Plan", comment: "Setting: study time a day")
       }
-      .task(id: AskKey(revision: revision, round: round)) {
-        guard plan.schedule.targetDate != nil, answer == nil else {
-          return
-        }
-
-        await ask(revision)
-      }
+      .loads(
+        plan.schedule.targetDate == nil ? [] : [time], refreshable: false, retriesAFailure: true
+      )
       .announcesStatus(editor.isSaving ? nil : finish)
 
-      coverage(answer: answer, found: found, minutes: current)
+      coverage(time: time, found: found, minutes: current)
     } footer: {
       SectionFooter {
         Text(
@@ -97,7 +57,8 @@ struct PlanTimeSection: View {
   /// While a change saves, its place says the new coverage is being worked out: the old one would
   /// describe a time no longer picked.
   @ViewBuilder
-  private func coverage(answer: Asked?, found: TimeToCover?, minutes: Int) -> some View {
+  private func coverage(time: Resource<TimeToCover>, found: TimeToCover?, minutes: Int) -> some View
+  {
     if let feasibility = plan.feasibility, feasibility.deadline != nil,
       let targetDate = plan.schedule.targetDate
     {
@@ -119,16 +80,39 @@ struct PlanTimeSection: View {
           covers
             .foregroundStyle(.mutedForeground)
         } else {
-          TimeAnswer(
-            date: TimeAnswer.GoalDate(
-              isoDate: targetDate, namedMonth: plan.schedule.targetDateNamedMonth),
-            exam: goal.kind == .exam, line: line, minutes: minutes,
-            offer: ScheduleTime.offer(found: found, line: line, minutes: minutes)
-          ) {
-            asked = nil
-            round += 1
-          } onUseOffer: { minutes in
-            editor.run { await setMinutes(minutes) }
+          let offer = ScheduleTime.offer(found: found, line: line, minutes: minutes)
+          let awaitsOffer =
+            offer == nil && !line.coversEverything
+            && [.idle, .loading].contains(time.freshState)
+
+          // Short of everything, a time that covers more is offered once it's worked out. Its room,
+          // the tallest any offer's words take here, is held for the visit, so nothing under it
+          // moves when the offer comes, nor when none does.
+          HeldSlot(gated: awaitsOffer) {
+            VStack(alignment: .leading, spacing: 8) {
+              TimeAnswer(
+                date: TimeAnswer.GoalDate(
+                  isoDate: targetDate, namedMonth: plan.schedule.targetDateNamedMonth),
+                exam: goal.kind == .exam, line: line, minutes: minutes, offer: offer
+              ) {
+                Task { await time.refresh() }
+              } onUseOffer: { minutes in
+                editor.run { await setMinutes(minutes) }
+              }
+
+              if awaitsOffer {
+                ZStack(alignment: .topLeading) {
+                  ForEach([ScheduleTime.Offer.Kind.everything, .more, .suggested], id: \.self) {
+                    kind in
+                    TimeAnswer.offerLabel(
+                      ScheduleTime.Offer(kind: kind, minutes: longestOfferMinutes(minutes)))
+                  }
+                }
+                .typeStyle(.body.weight(.semibold))
+                .hidden()
+                .accessibilityHidden(true)
+              }
+            }
           }
         }
       }
@@ -175,6 +159,12 @@ struct PlanTimeSection: View {
     }
   }
 
+  private func longestOfferMinutes(_ current: Int) -> Int {
+    (plan.schedule.dailyTimes + [current]).max {
+      planDurationText(minutes: Double($0)).count < planDurationText(minutes: Double($1)).count
+    } ?? current
+  }
+
   private func setMinutes(_ minutes: Int) async {
     let shape = plan.schedule.shape
 
@@ -183,23 +173,6 @@ struct PlanTimeSection: View {
         ? .weekdayMinutes(minutes, weekdays: shape.weekdayDays) : .dailyMinutes(minutes)
     ])
   }
-
-  private func ask(_ revision: Revision) async {
-    let goalId = goal.id
-    let time = await store.write { api, token in
-      try await api.timeToCover(token: token, goalId: goalId)
-    } changed: { _ in
-      false
-    }
-
-    switch time {
-    case .done(let time) where time.ready: asked = (revision, .time(time))
-    case .done: asked = (revision, .building)
-    case .failed: asked = (revision, .failed)
-    case .obsolete: break
-    }
-  }
-
 }
 
 /// Main's `FullCourseSwitch`, at the end of the schedule settings: it shows only on an exam plan

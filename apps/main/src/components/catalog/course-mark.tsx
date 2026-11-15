@@ -31,7 +31,10 @@ export function CourseMark({
     return (
       <Image
         alt=""
-        className={cn(COURSE_MARK_CLASS, "object-cover ring-1 ring-black/5 dark:ring-white/10")}
+        className={cn(
+          COURSE_MARK_CLASS,
+          "object-cover outline-1 -outline-offset-1 outline-black/5 dark:outline-white/10",
+        )}
         height={40}
         loading={loading}
         src={course.imageUrl}

@@ -1,8 +1,10 @@
 "use client";
 
+import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { StatSkeleton } from "@zoonk/ui/components/stat";
 import { useExtracted, useFormatter } from "next-intl";
 import { useEffect } from "react";
-import { StepCard } from "../_components/step-card";
+import { StepCard, StepHeader } from "../_components/step-card";
 import { TaskActions } from "../_components/task-layout";
 import { getIsoRangeOptions, useIsoToday } from "../_utils/iso-date";
 import { useLearnAnalytics } from "../learn-context";
@@ -13,7 +15,7 @@ import {
   type WeeklyRecapView,
   useLogbook,
 } from "./logbook-context";
-import { WeekHeader, WeekRings, WeekRows, WeekTiles } from "./logbook-sections";
+import { WeekHeader, WeekRings, WeekRingsSkeleton, WeekRows, WeekTiles } from "./logbook-sections";
 
 const ISO_DAY_LENGTH = "YYYY-MM-DD".length;
 
@@ -55,6 +57,29 @@ function WeeklySummary() {
         {studied && <WeekRows />}
       </StepCard>
     </TaskFrame>
+  );
+}
+
+/** The summary's own parts with blank lines, so nothing moves when the week arrives. */
+export function LogbookSkeleton() {
+  return (
+    <StepCard aria-hidden="true">
+      <WeekRingsSkeleton />
+      <StepHeader className="w-full">
+        <Skeleton className="h-5.5 w-40 rounded-sm" data-slot="eyebrow" />
+        <Skeleton className="text-title w-2/3">{"\u00A0"}</Skeleton>
+        <Skeleton className="w-1/2">{"\u00A0"}</Skeleton>
+      </StepHeader>
+      <div className="grid w-full grid-cols-2 gap-2">
+        <StatSkeleton />
+        <StatSkeleton />
+      </div>
+      <div className="flex w-full flex-col gap-6 py-3">
+        <Skeleton className="h-5 w-full" />
+        <Skeleton className="h-5 w-full" />
+        <Skeleton className="h-5 w-full" />
+      </div>
+    </StepCard>
   );
 }
 

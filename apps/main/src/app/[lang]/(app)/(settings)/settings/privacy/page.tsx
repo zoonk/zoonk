@@ -27,7 +27,12 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     description: t("Your usage data, a copy of your data, and deleting your account."),
     robots: { follow: false, index: false },
-    title: t("Privacy"),
+    title: t({
+      description:
+        "The page inside Settings for usage data, a copy of the learner's data and deleting the account; not the privacy policy.",
+      id: "settingsPrivacy",
+      message: "Privacy",
+    }),
   };
 }
 
@@ -96,7 +101,14 @@ export default async function PrivacyPage() {
 
   return (
     <Page measure="form">
-      <SectionPageHeader title={t("Privacy")} />
+      <SectionPageHeader
+        title={t({
+          description:
+            "The page inside Settings for usage data, a copy of the learner's data and deleting the account; not the privacy policy.",
+          id: "settingsPrivacy",
+          message: "Privacy",
+        })}
+      />
 
       <Suspense fallback={<PrivacySkeleton />}>
         <PrivacyContent />

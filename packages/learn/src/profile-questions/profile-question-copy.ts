@@ -1,7 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { type ProfileQuestion } from "./profile-draft";
+import { type ProfileQuestion, type ProfileQuestionPlace } from "./profile-draft";
 
 export function useProfileQuestionTitle(question: ProfileQuestion): string {
   const t = useExtracted();
@@ -58,7 +58,10 @@ export function useProfileQuestionTitle(question: ProfileQuestion): string {
   }
 }
 
-export function useProfileQuestionDescription(question: ProfileQuestion): string | null {
+export function useProfileQuestionDescription(
+  question: ProfileQuestion,
+  from: ProfileQuestionPlace,
+): string | null {
   const t = useExtracted();
 
   switch (question) {
@@ -67,9 +70,13 @@ export function useProfileQuestionDescription(question: ProfileQuestion): string
     case "studies":
       return t("Past or present, finished or not. Pick up to 3.");
     case "conditions":
-      return t(
-        "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings.",
-      );
+      return from === "settings"
+        ? t(
+            "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime.",
+          )
+        : t(
+            "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings.",
+          );
     case "learningSupport":
       return t("Pick anything that helps.");
     case "tools":

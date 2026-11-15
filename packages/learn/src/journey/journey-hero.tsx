@@ -210,32 +210,36 @@ export function PlanNumbers({
 
   return (
     <>
-      <ul
-        className={cn(
-          "grid grid-cols-2",
-          NUMBER_ROWS_CLASS,
-          variant === "tiles" ? "gap-x-2" : "gap-x-6",
-          className,
-        )}
-        data-slot="journey-standing"
-      >
-        <li className={cn(NUMBER_ITEM_CLASS, "min-w-0", !status && "col-span-2")}>
-          <NumberButton
-            number={standingNumber}
-            onOpen={() => setOpen("standing")}
-            variant={variant}
-          />
-        </li>
-        {status && (
-          <li className={cn(NUMBER_ITEM_CLASS, "min-w-0")}>
+      {/* Side by side only where each card's value fits one line in every language. */}
+      <div className={cn("@container/standing", className)}>
+        <ul
+          className={cn(
+            "grid @2xl/standing:grid-cols-2",
+            NUMBER_ROWS_CLASS,
+            variant === "tiles"
+              ? "gap-x-2 [&>li+li]:mt-2 @2xl/standing:[&>li+li]:mt-0"
+              : "gap-x-6 [&>li+li]:mt-4 @2xl/standing:[&>li+li]:mt-0",
+          )}
+          data-slot="journey-standing"
+        >
+          <li className={cn(NUMBER_ITEM_CLASS, "min-w-0", !status && "@2xl/standing:col-span-2")}>
             <NumberButton
-              number={scheduleNumber}
-              onOpen={() => setOpen("schedule")}
+              number={standingNumber}
+              onOpen={() => setOpen("standing")}
               variant={variant}
             />
           </li>
-        )}
-      </ul>
+          {status && (
+            <li className={cn(NUMBER_ITEM_CLASS, "min-w-0")}>
+              <NumberButton
+                number={scheduleNumber}
+                onOpen={() => setOpen("schedule")}
+                variant={variant}
+              />
+            </li>
+          )}
+        </ul>
+      </div>
 
       <NumberSheet onOpenChange={sheetChange("standing")} open={open === "standing"} title={title}>
         <StandingBody examHref={examHref} number={standingNumber} standing={standing} />

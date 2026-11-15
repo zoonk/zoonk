@@ -18,6 +18,7 @@ import {
   SuggestionResult,
   SuggestionSaveError,
   SuggestionSummary,
+  useMainActionVariant,
 } from "../_components/suggestion";
 import { useLearnAnalytics } from "../learn-context";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
@@ -126,6 +127,7 @@ function InsightActions({
   onAnswer: (status: InsightAnswer) => void;
 }) {
   const choices = useInsightChoices(insight);
+  const mainVariant = useMainActionVariant();
 
   return (
     <SuggestionActions
@@ -137,7 +139,7 @@ function InsightActions({
           <SuggestionAction
             action={() => onAnswer("accepted")}
             disabled={isPending}
-            variant={choices.dismiss ? "default" : "outline"}
+            variant={choices.dismiss ? mainVariant : "outline"}
           >
             {choices.accept}
           </SuggestionAction>

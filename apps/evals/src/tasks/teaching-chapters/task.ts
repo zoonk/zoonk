@@ -17,7 +17,7 @@ export const teachingChaptersTask: Task<
     "Find the band chapter that already teaches each skill a plan asks for, so a shared course never writes a topic twice",
   generate: findTeachingChapters,
   id: "teaching-chapters",
-  name: "Teaching Chapters",
+  name: "Teaching chapters",
   score: scoreTeachingChapters,
   testCases: TEST_CASES,
 };

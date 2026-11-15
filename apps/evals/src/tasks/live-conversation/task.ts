@@ -31,7 +31,7 @@ export const liveConversationTask: Task<
     };
   },
   id: "live-conversation",
-  name: "Live Conversation",
+  name: "Live conversation",
   output: "realtime",
   score: scoreLiveConversation,
   scoreCategories: LIVE_CONVERSATION_SCORE_CATEGORIES,
