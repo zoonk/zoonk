@@ -18,6 +18,7 @@ import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.PlanFitOffer
 import com.zoonk.api.models.PlanTimeToCover
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -280,6 +281,9 @@ class PlanViewModel(
 
     private val basesAdviceState = MutableStateFlow<BasesAdviceAsk?>(null)
 
+    /** The one recommendation request out from this screen: another plan's ask, a save or an undo cancels it. */
+    private var basesAdviceJob: Job? = null
+
     /** Read it with [recommendedFor]: it's the plan revision it was asked of. */
     val basesAdvice: StateFlow<BasesAdviceAsk?> = basesAdviceState.asStateFlow()
 
@@ -293,13 +297,20 @@ class PlanViewModel(
         val asked = basesAdviceState.value?.takeIf { it.revision == revision }
         if (asked != null && asked.status != BasesAdviceAsk.Status.Unanswered) return
         val pending = BasesAdviceAsk(revision, BasesAdviceAsk.Status.Pending)
+        basesAdviceJob?.cancel()
         basesAdviceState.value = pending
-        viewModelScope.launch {
-            val advice = (store.basesAdvice(goalId) as? MutationResult.Done)?.value
-            val recommended = advice?.recommended?.takeIf { advice.ready }?.let { PlanBase.Choice.valueOf(it.name) }
-            val status = if (recommended != null) BasesAdviceAsk.Status.Answered else BasesAdviceAsk.Status.Unanswered
-            basesAdviceState.compareAndSet(pending, pending.copy(status = status, recommended = recommended))
-        }
+        basesAdviceJob =
+            viewModelScope.launch {
+                val advice = (store.basesAdvice(goalId) as? MutationResult.Done)?.value
+                val recommended = advice?.recommended?.takeIf { advice.ready }?.let { PlanBase.Choice.valueOf(it.name) }
+                val status = if (recommended != null) BasesAdviceAsk.Status.Answered else BasesAdviceAsk.Status.Unanswered
+                basesAdviceState.compareAndSet(pending, pending.copy(status = status, recommended = recommended))
+            }
+    }
+
+    private fun dropBasesAdvice() {
+        basesAdviceJob?.cancel()
+        basesAdviceState.value = null
     }
 
     /** Null when it couldn't be asked. */
@@ -326,7 +337,7 @@ class PlanViewModel(
             }
             val saved = (result as? MutationResult.Done)?.value
             // The recommendation was the plan's before this change, even when the plan can't be read again.
-            if (saved != null) basesAdviceState.value = null
+            if (saved != null) dropBasesAdvice()
             val shown = if (saved != null) store.awaitWritesShown(goalId) else null
             val sameOpening = opening == openings
             if (saved != null && shown == PlanShown.Current) {
@@ -346,7 +357,7 @@ class PlanViewModel(
         update(change.id) { copy(undoing = true, undoFailed = false) }
         viewModelScope.launch {
             val result = store.undo(goalId, change.id)
-            if (result is MutationResult.Done) basesAdviceState.value = null
+            if (result is MutationResult.Done) dropBasesAdvice()
             val shown = if (result is MutationResult.Done) store.awaitWritesShown(goalId) else null
             update(change.id) {
                 copy(

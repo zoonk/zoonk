@@ -637,6 +637,37 @@ class PlanViewModelTest {
         }
 
     @Test
+    fun anotherPlansAskCancelsTheRecommendationStillOut() =
+        runTest {
+            val gate = CompletableDeferred<Unit>()
+            api.adviceGate = gate
+            viewModel.askBasesAdvice(shown())
+
+            api.advice = api.advice.copy(recommended = PlanBasesAdvice.Recommended.QUICK)
+            val replanned = shown(coveragePlan(coreFits = false))
+            viewModel.askBasesAdvice(replanned)
+
+            assertEquals(1, api.adviceCancelled)
+            assertEquals(PlanBase.Choice.QUICK, viewModel.basesAdvice.value.recommendedFor(replanned))
+            gate.complete(Unit)
+            assertEquals(PlanBase.Choice.QUICK, viewModel.basesAdvice.value.recommendedFor(replanned))
+        }
+
+    @Test
+    fun aSavedChangeCancelsTheRecommendationStillOut() =
+        runTest {
+            val gate = CompletableDeferred<Unit>()
+            api.adviceGate = gate
+            val plan = shown()
+            viewModel.askBasesAdvice(plan)
+
+            viewModel.change(PlanPart.Schedule, listOf(PlanOp.DailyMinutes(45)))
+
+            assertEquals(1, api.adviceCancelled)
+            assertNull(viewModel.basesAdvice.value.recommendedFor(plan))
+        }
+
+    @Test
     fun aPlanStillBeingBuiltMarksNothingAndTheNextOpeningAsksAgain() =
         runTest {
             val plan = shown()
