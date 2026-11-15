@@ -1,5 +1,6 @@
 /** Run it through `pnpm dev:persona`, which passes the URLs `pnpm dev` serves. */
 import { parseArgs } from "node:util";
+import { SCENARIO_STATES } from "@zoonk/core/seed";
 import { prisma } from "@zoonk/db";
 import { SEED_LANGUAGES, type SeedLanguage } from "@zoonk/db/seed/localize";
 import { MS_PER_DAY } from "@zoonk/utils/date";
@@ -16,7 +17,7 @@ import {
 import { getTestLearnerRefusal } from "./_utils/test-learners";
 
 const USAGE = [
-  "Usage: pnpm dev:persona <name> [--day <n>] [--away <days>] [--plus|--free] [--tz <zone>] [--locale en|pt]",
+  "Usage: pnpm dev:persona <name> [--day <n>] [--away <days>] [--plus|--free] [--tz <zone>] [--locale en|pt] [--state <state>]",
   "       pnpm dev:persona --from <email> [--day <n> | --away <days>] [--plus|--free] [--tz <zone>]",
 ].join("\n");
 
@@ -63,6 +64,7 @@ function parseRequest(): ParsedRequest {
       from: { type: "string" },
       locale: { type: "string" },
       plus: { type: "boolean" },
+      state: { type: "string" },
       tz: { type: "string" },
     },
   });
@@ -80,9 +82,17 @@ function parseRequest(): ParsedRequest {
     timeZone: values.tz,
   };
 
+  const state = SCENARIO_STATES.find((known) => known === values.state);
+
+  if (values.state !== undefined && !state) {
+    throw new Error(`--state takes ${SCENARIO_STATES.join(", ")}, not "${values.state}".`);
+  }
+
   if (values.from !== undefined) {
-    if (name || values.locale !== undefined) {
-      throw new Error("--from copies a learner as they are: pass no persona name or --locale.");
+    if (name || values.locale !== undefined || state) {
+      throw new Error(
+        "--from copies a learner as they are: pass no persona name, --locale or --state.",
+      );
     }
 
     return { kind: "clone", request: { ...options, from: values.from } };
@@ -98,7 +108,7 @@ function parseRequest(): ParsedRequest {
 
   return {
     kind: "seeded",
-    request: { ...options, language: values.locale, name: name.toLowerCase() },
+    request: { ...options, language: values.locale, name: name.toLowerCase(), state },
   };
 }
 

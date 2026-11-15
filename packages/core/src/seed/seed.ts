@@ -5,6 +5,9 @@ import { buildSeededDay } from "./build-seeded-day";
 import { buildSeededPast } from "./build-seeded-past";
 import { buildSeededPastMissions } from "./build-seeded-past-missions";
 import { planSeededGoal } from "./plan-seeded-goal";
+import { type ScenarioState, writeScenarioState } from "./scenario-states";
+
+export { SCENARIO_STATES, type ScenarioState } from "./scenario-states";
 
 async function planSeededLearner({
   goalId,
@@ -41,10 +44,20 @@ export async function seed() {
 }
 
 /** Run seed first: copies reference its shared Library content. @internal */
-export async function seedPersonaCopy(
-  options: Parameters<typeof writeSeedPersonaCopy>[1],
-): Promise<{ email: string; goalId: string; userId: string }> {
+export async function seedPersonaCopy({
+  state,
+  ...options
+}: Parameters<typeof writeSeedPersonaCopy>[1] & { state?: ScenarioState }): Promise<{
+  email: string;
+  goalId: string;
+  userId: string;
+}> {
   const { now, past, today, ...copy } = await writeSeedPersonaCopy(prisma, options);
   await planSeededLearner({ goalId: copy.goalId, now, past, today });
+
+  if (state) {
+    await writeScenarioState({ goalId: copy.goalId, state, userId: copy.userId });
+  }
+
   return copy;
 }
