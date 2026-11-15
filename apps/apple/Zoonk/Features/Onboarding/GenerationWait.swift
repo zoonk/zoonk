@@ -747,6 +747,11 @@ enum GenerationFailure: Equatable, Sendable {
   case notStarted
   case connection
   case generation
+
+  /// The run won't finish, so its wait is over; a lost connection may still finish.
+  var endsWait: Bool {
+    self != .connection
+  }
 }
 
 /// A run as a wait shows it, and what it reported on the side.

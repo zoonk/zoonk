@@ -80,6 +80,11 @@ final class WaitVisit {
   func deal(_ card: Int, deckID: String) {
     dealt = Dealt(deckID: deckID, card: card)
   }
+
+  /// The run failed: the card on show goes, so a retry's wait deals the next one afresh.
+  func endQuiz() {
+    dealt = nil
+  }
 }
 
 struct WaitHolding {

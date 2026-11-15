@@ -57,6 +57,9 @@ struct WaitScreen<Status: View, Progress: View, Extra: View>: View {
   let progressTitle: Text
   var ready: WaitReady?
   var library: WaitLibraryCourse?
+  /// The run failed, so the wait is over: its quiz goes whole (the card, its question and its
+  /// answer) and the progress says what happened. A lost connection may still finish, so it isn't.
+  var ended = false
   @ViewBuilder let status: () -> Status
   /// The progress's sections: its heading, its steps.
   @ViewBuilder let progress: () -> Progress
@@ -68,7 +71,7 @@ struct WaitScreen<Status: View, Progress: View, Extra: View>: View {
   @Environment(\.onboardingAside) private var onboardingAside
 
   var body: some View {
-    let deal = WaitDeal(deck: deck, visit: visit, warmUps: warmUps)
+    let deal = WaitDeal(deck: ended ? WaitDeck() : deck, visit: visit, warmUps: warmUps)
     let page = deal.page(visit)
 
     Group {
@@ -85,6 +88,11 @@ struct WaitScreen<Status: View, Progress: View, Extra: View>: View {
     }
     .waitProgress(deal, title: progressTitle, progress: progress, bar: bar(.pushed, deal))
     .environment(\.barHoldsMainAction, ready != nil)
+    .onChange(of: ended) {
+      if ended {
+        visit.endQuiz()
+      }
+    }
   }
 
   private func list(_ deal: WaitDeal) -> some View {
@@ -434,11 +442,12 @@ extension WaitScreen where Extra == EmptyView {
     progressTitle: Text,
     ready: WaitReady? = nil,
     library: WaitLibraryCourse? = nil,
+    ended: Bool = false,
     @ViewBuilder status: @escaping () -> Status,
     @ViewBuilder progress: @escaping () -> Progress
   ) {
     self.init(
       deck: deck, goalID: goalID, progressTitle: progressTitle, ready: ready,
-      library: library, status: status, progress: progress, extra: { EmptyView() })
+      library: library, ended: ended, status: status, progress: progress, extra: { EmptyView() })
   }
 }
