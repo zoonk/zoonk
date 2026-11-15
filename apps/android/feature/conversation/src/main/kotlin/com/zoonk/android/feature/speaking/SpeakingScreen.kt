@@ -443,6 +443,7 @@ private fun TaskRow(
                             busy = starting,
                             onClick = { if (locked) triedLocked = true else onStart() },
                             enabled = !busy,
+                            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                         ) {
                             Text(stringResource(R.string.speaking_start_task))
                         }
