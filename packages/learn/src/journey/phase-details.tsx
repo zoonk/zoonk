@@ -5,27 +5,38 @@ import { DrawerContent, DrawerDescription, DrawerTitle } from "@zoonk/ui/compone
 import { useExtracted } from "next-intl";
 import { SheetHeader } from "../_components/sheet-header";
 import { usePlanScreen } from "../plan/plan-context";
-import { useFormatPlanDate } from "../plan/plan-date-text";
+import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
 import { JourneyChapters } from "./journey-chapters";
 import { type JourneyPathLinks } from "./journey-links";
 import { CheckpointRow, MockRow, usePhaseMocksLine } from "./journey-phase-events";
 import { isNamedLikeAChapter } from "./path-phases";
+import { usePhaseEnd } from "./phase-when";
 
+/** From the phase's start to the end it's named by everywhere (`usePhaseEnd`), or a short plan's days. */
 function usePhaseRange() {
   const t = useExtracted();
-  const formatPlanDate = useFormatPlanDate();
+  const phaseEnd = usePhaseEnd();
 
-  return function phaseRange(phase: PlanPhaseView): string | null {
-    if (!phase.startDate || !phase.endDate) {
+  return function phaseRange(phase: PlanPhaseView): React.ReactNode {
+    const end = phaseEnd(phase);
+    const start = phase.startDate;
+
+    if (!end) {
       return null;
     }
 
-    const month = phase.kind === "learn" && phase.state === "upcoming";
+    if ("days" in end) {
+      return end.days;
+    }
 
-    return t("{start} – {end}", {
-      end: formatPlanDate(phase.endDate, { month }),
-      start: formatPlanDate(phase.startDate, { month }),
+    if (!start) {
+      return null;
+    }
+
+    return t.rich("<start></start> – <end></end>", {
+      end: () => <PlanDateText estimate={end.estimate} isoDate={end.isoDate} month={end.month} />,
+      start: () => <PlanDateText isoDate={start} month={end.month} />,
     });
   };
 }
@@ -94,7 +105,9 @@ export function PhaseDetails({ links, phase }: { links: JourneyPathLinks; phase:
           {phaseName(phase, { byPlace, mocksRequirePlus: plan.access.mocksRequirePlus })}
         </DrawerTitle>
         <DrawerDescription className="font-mono text-xs tabular-nums">
-          {[range, phaseLessons(phase)].filter(Boolean).join(" · ")}
+          {range}
+          {range && " · "}
+          {phaseLessons(phase)}
         </DrawerDescription>
       </SheetHeader>
 

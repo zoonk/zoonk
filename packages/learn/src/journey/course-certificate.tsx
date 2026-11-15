@@ -2,7 +2,7 @@
 
 import { type FieldMapView } from "@zoonk/core/view-models/map/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { AwardIcon } from "lucide-react";
+import { AwardIcon, CircleAlertIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { DoneMark } from "../_components/status-mark";
@@ -136,7 +136,7 @@ export function CourseCompleteSuggestion({
   const title = useCompleteTitle(unclaimed);
 
   return (
-    <Suggestion label={title} mark={<DoneMark />}>
+    <Suggestion label={title} mark={failed ? <CircleAlertIcon /> : <DoneMark />}>
       <SuggestionLine>
         {failed ? (
           <SuggestionSaveError className="min-w-0 flex-1" />
