@@ -56,7 +56,7 @@ export const memoryRelevanceTask: Task<
   evaluate: route,
   generate: route,
   id: "memory-relevance",
-  name: "Memory Relevance",
+  name: "Memory relevance",
   score: scoreMemoryRelevance,
   testCases: [...TEST_CASES, ...PERSONA_TEST_CASES],
 };

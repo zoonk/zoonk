@@ -12,7 +12,7 @@ export const explainSpokenAnswerTask: Task<ExplainSpokenAnswerParams, ExplainSpo
     "Explain the words of a spoken answer that didn't match, from how the learner's own language works (stored and reused)",
   generate: explainSpokenAnswer,
   id: "explain-spoken-answer",
-  name: "Explain Spoken Answer",
+  name: "Explain spoken answer",
   scoreCategories: EXPLAIN_SPOKEN_ANSWER_SCORE_CATEGORIES,
   testCases: TEST_CASES,
 };

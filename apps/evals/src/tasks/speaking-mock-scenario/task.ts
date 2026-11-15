@@ -15,7 +15,7 @@ export const speakingMockScenarioTask: Task<
     "Write one practice mock of an exam's speaking test: the examiner, their script with the exam's parts, the opening line, objectives and hints",
   generate: generateSpeakingMockScenario,
   id: "speaking-mock-scenario",
-  name: "Speaking Mock Scenario",
+  name: "Speaking mock scenario",
   scoreCategories: SPEAKING_MOCK_SCENARIO_SCORE_CATEGORIES,
   testCases: TEST_CASES,
 };

@@ -113,7 +113,7 @@ export const compareReleaseLessonsTask: Task<
     "Compare a product release's notes with a course's lessons: the lessons it makes wrong and the What's new chapter it calls for",
   generate: compareReleaseLessons,
   id: "compare-release-lessons",
-  name: "Compare Release Lessons",
+  name: "Compare release lessons",
   score: scoreComparison,
   testCases: TEST_CASES,
 };

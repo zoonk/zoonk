@@ -68,11 +68,11 @@ function getTicks({
 /** The smallest text size (`text-2xs`), which an SVG label can't take from a class. */
 const TICK_FONT_SIZE = 11.5;
 
-/** Mono figures that end on one edge, like a column of numbers. */
-const VALUE_TICK = {
+/** Both axes in the text face; tabular figures keep the values ending on one edge. */
+const TICK = {
   fill: "var(--muted-foreground)",
-  fontFamily: "var(--font-mono)",
   fontSize: TICK_FONT_SIZE,
+  style: { fontVariantNumeric: "tabular-nums" },
 };
 
 const BAR_CORNER = 4;
@@ -132,10 +132,9 @@ export function AdminBarChart({
           <XAxis
             axisLine={false}
             dataKey="label"
-            fontSize={TICK_FONT_SIZE}
             interval={labelEvery - 1}
             padding={{ left: 8, right: 8 }}
-            stroke="var(--muted-foreground)"
+            tick={TICK}
             tickLine={false}
             tickMargin={8}
           />
@@ -143,7 +142,7 @@ export function AdminBarChart({
             allowDecimals={format === "duration" || format === "percent"}
             axisLine={false}
             domain={[0, ticks.at(-1) ?? 1]}
-            tick={VALUE_TICK}
+            tick={TICK}
             tickFormatter={(value: number) => formatChartTick({ format, value })}
             tickLine={false}
             ticks={ticks}
