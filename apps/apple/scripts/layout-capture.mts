@@ -2,14 +2,16 @@
  * Asks a Debug build running with `-ZOONK_LAYOUT_CAPTURE 1` for a capture of what's on screen. The
  * app draws its window once, measures that frame and returns it as the picture, so the picture and
  * the capture are one frame of one build. Adds the capture to a capture folder's `alignment.json`
- * and the picture's item to its `capture.json`.
+ * and the picture's item to its `capture.json`. One process writes a folder at a time: two saves
+ * into one folder at once can leave a picture its records don't describe, which `pnpm pr:media
+ * check` refuses ("changed since its capture"); a retake fixes it.
  *
  * node apps/apple/scripts/layout-capture.mts --udid <simulator> --scenario <id> --side before|after
  *   --out <folder> [--screen <path or name>]
  */
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
-import { copyFile, mkdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, readdir, rename, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { readCommand } from "./simulators.mts";
@@ -268,8 +270,20 @@ export async function saveCapture({
 
   await mkdir(out, { recursive: true });
 
+  // A save stopped before it moved its picture in left its staged copy behind, named by its process.
+  const stagedName = new RegExp(`^\\.${RegExp.escape(file)}\\.(\\d+)\\.staged$`, "u");
+
+  const names = await readdir(out);
+
+  const left = names.filter((name) => {
+    const pid = stagedName.exec(name)?.[1];
+    return pid !== undefined && !isRunning(Number(pid));
+  });
+
+  await Promise.all(left.map(async (name) => rm(path.join(out, name), { force: true })));
+
   // The picture is the app's own drawing of the frame it measured; its hash proves it is that one.
-  const staged = path.join(out, `.${file}.staged`);
+  const staged = path.join(out, `.${file}.${process.pid}.staged`);
 
   try {
     await copyFile(picture, staged);
@@ -287,6 +301,16 @@ export async function saveCapture({
   await writeFile(manifestFile, manifestText);
 
   return capture;
+}
+
+function isRunning(pid: number): boolean {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    // Running, but another user's.
+    return error instanceof Error && "code" in error && error.code === "EPERM";
+  }
 }
 
 /** The picture's record in the folder's `capture.json`. */

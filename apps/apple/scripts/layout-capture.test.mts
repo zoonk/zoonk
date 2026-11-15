@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, it } from "vitest";
+import { checkPictures } from "../../../scripts/pr/check.mts";
 import { type Capture, mergeCapture, saveCapture } from "./layout-capture.mts";
 
 function capture(overrides: Partial<Capture>): Capture {
@@ -138,6 +140,40 @@ describe(saveCapture, () => {
 
     assert.equal(await shot(out), "plan");
     assert.equal(await saved(out), before);
+  });
+
+  /**
+   * The picture, `alignment.json` and `capture.json` can't change as one, so a save killed after the
+   * picture moved in leaves a picture its records don't describe; the PR's check refuses it.
+   */
+  it("leaves a folder the PR check refuses when a save stops after the picture moved in", async () => {
+    const { app, out } = await folders();
+    await saveCapture({ ...(await answer(app, "plan")), out, scenario: "plan", side: "after" });
+
+    await writeFile(path.join(out, "plan.after.png"), "retake");
+
+    const result = await checkPictures({
+      manifests: [out],
+      pictures: [path.join(out, "plan.after.png")],
+      repository: path.resolve(import.meta.dirname, "../../.."),
+    });
+
+    assert.deepEqual(
+      result.problems.map(({ kind }) => kind),
+      ["changed"],
+    );
+  });
+
+  it("clears what a stopped save left staged", async () => {
+    const { app, out } = await folders();
+    // No process has this id.
+    const left = path.join(out, ".plan.after.png.2147483646.staged");
+
+    await mkdir(out, { recursive: true });
+    await writeFile(left, "half");
+    await saveCapture({ ...(await answer(app, "plan")), out, scenario: "plan", side: "after" });
+
+    assert.equal(existsSync(left), false);
   });
 
   it("refuses an answer that isn't a capture before counting it", async () => {
