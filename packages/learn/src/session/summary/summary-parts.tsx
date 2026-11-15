@@ -200,6 +200,8 @@ function TomorrowRow() {
           <span className="min-w-0 flex-1 font-medium text-pretty">{summary.tomorrow.title}</span>
         </StepRow>
       </StepRows>
+
+      <SummaryExtraTime />
     </section>
   );
 }
@@ -226,7 +228,7 @@ export function DoneStep() {
 
       <SessionNumbers />
       <TomorrowRow />
-      <SummaryExtraTime />
+      {!summary.tomorrow && <SummaryExtraTime />}
       <ReminderOffer actions={reminderActions} offer={reminderOffer} />
     </StepCard>
   );
