@@ -7,7 +7,7 @@
   "mindmaps_as_text": "63ec156151cc2d86d81d84d0f35b799cf0e3adc611ab4c0005a1ce13e6d0984f",
   "mindmaps_as_text_note": "c6025a56bb9fe1d43d8144a27dce6bc5bd3532fd9f2e09b888ea1db6adc020eb",
   "mindmaps_being_made": "1007f76304fa886580128f3abbdabb86a07de67f4b5d7874d2f1c87a569b91d3",
-  "mindmaps_can_make_more": "7cb76aea961a80ff7382ebbba451e7f94d965c60c0a13b3ca6c43afe90302825",
+  "mindmaps_can_make_more": "340128105cc7c0c45148018f9ae03283f3f5682293c2153a8492e86077cd1e80",
   "mindmaps_chapter_count": "659d692a8bef30000c5c6a174c862e95c05cf908aec4b595bcfb4b6fc5ef7c91",
   "mindmaps_chapter_finished": "d202febd66892a9c5161226ce876eba5ef12b9ada8c4ab027bd5ce26598f7ffd",
   "mindmaps_chapter_map": "8c6a917a3c15b123ab44c5588bfe8412ace2951ca3b1c3348fb5932e39513ed0",
@@ -190,9 +190,9 @@
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">
-        <item quantity="one">Tu peux en créer %1$s de plus dès maintenant.</item>
-        <item quantity="many">Tu peux en créer %1$s de plus dès maintenant.</item>
-        <item quantity="other">Tu peux en créer %1$s de plus dès maintenant.</item>
+        <item quantity="one">Tu peux créer %1$s carte mentale de plus dès maintenant.</item>
+        <item quantity="many">Tu peux créer %1$s cartes mentales de plus dès maintenant.</item>
+        <item quantity="other">Tu peux créer %1$s cartes mentales de plus dès maintenant.</item>
     </plurals>
     <!-- Saves a map to study again. -->
     <string name="mindmaps_save">Enregistrer</string>

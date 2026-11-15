@@ -110,8 +110,8 @@
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">
-        <item quantity="one">You can make %1$s more right now.</item>
-        <item quantity="other">You can make %1$s more right now.</item>
+        <item quantity="one">You can create %1$s more map right now.</item>
+        <item quantity="other">You can create %1$s more maps right now.</item>
     </plurals>
     <!-- Saves a map to study again. -->
     <string name="mindmaps_save">Save</string>

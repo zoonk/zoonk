@@ -7,7 +7,7 @@
   "mindmaps_as_text": "df22cfa3d091a3c3670fb3b5331483dcbfd8fae9a6d33a5712746f9b952950f4",
   "mindmaps_as_text_note": "9c97e18de39b24b735c81ba66ed6103e923d3c756558113520fc45346a473a91",
   "mindmaps_being_made": "bfb5acd34a02ab135938c28d9728de0dc9497306a56b8a10e67499b574126439",
-  "mindmaps_can_make_more": "9e840dac929f73c3eefa07854876248ab80a4a47e8660725200c7cb11ecf7416",
+  "mindmaps_can_make_more": "f35f6c4643aceb456fecb06e83ecef27441b1a5cbc44dd39e45cd0f99088436c",
   "mindmaps_chapter_count": "ff6f716cb1955b1b6665b7cbf339c6a5cedb6c9e055fcb46ef6031b20e9e50f9",
   "mindmaps_chapter_finished": "585286dd586e53cef5b0ef447e3f09bce94a08ad43af468189f1751690114eee",
   "mindmaps_chapter_map": "d3b9a3717e10688d8d38d9309eb3b9994f9eab4bf5d5c94b996bac789b9ce9ae",
@@ -183,8 +183,8 @@
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">
-        <item quantity="one">Şu an %1$s harita daha oluşturabilirsin.</item>
-        <item quantity="other">Şu an %1$s harita daha oluşturabilirsin.</item>
+        <item quantity="one">Şu anda %1$s harita daha oluşturabilirsin.</item>
+        <item quantity="other">Şu anda %1$s harita daha oluşturabilirsin.</item>
     </plurals>
     <!-- Saves a map to study again. -->
     <string name="mindmaps_save">Kaydet</string>

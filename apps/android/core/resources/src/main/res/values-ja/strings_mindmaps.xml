@@ -7,7 +7,7 @@
   "mindmaps_as_text": "c8ec3abda3b8c2348e3b51643bbd1316b753885190580bcd70d0874a3091c452",
   "mindmaps_as_text_note": "fbb2a5d0a970cd5392f8d49a3467046720a0ee8ebbbf446446079ad564b221a7",
   "mindmaps_being_made": "abea387fb2d42c4f3c23a1c5f17fc269dabd61d5e6ae0ac1b9b89464615c346b",
-  "mindmaps_can_make_more": "561762b70da6aa7ab2e9236de8ad0f68afc54234cbcfddd1f2eaefd23912153c",
+  "mindmaps_can_make_more": "a5fd830e9ae53f0d991028df5290e4025d92e75212d2bb356fb4c4baa5e57ce6",
   "mindmaps_chapter_count": "25b5778eb0f10519cf6a0e82dc049c224548f5e2aa963b55fb05251e75207ff0",
   "mindmaps_chapter_finished": "3a8b695d3ad9facf4f74aee22a64c1e9cca4a2d1f397164de47f801333cc4a50",
   "mindmaps_chapter_map": "7b18352edff230e096db58d0208b603184171973e792f502e4523d597f88d769",
@@ -176,7 +176,7 @@
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">
-        <item quantity="other">今すぐあと%1$s章分のマップを作成できます。</item>
+        <item quantity="other">今すぐ、マップをあと%1$s枚作成できます。</item>
     </plurals>
     <!-- Saves a map to study again. -->
     <string name="mindmaps_save">保存する</string>

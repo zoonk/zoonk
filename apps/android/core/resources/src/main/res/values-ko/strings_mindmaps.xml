@@ -7,7 +7,7 @@
   "mindmaps_as_text": "fc1e15be5324450aa1950fca7c46b44d191e7d9e4c4908f4f943a8d17211a73f",
   "mindmaps_as_text_note": "08cbf4a2e2967d9ce339ae3a00e05e2892c81137cc432f034b5c12c42a3ab476",
   "mindmaps_being_made": "a35ebfceeaa88b4c2b0d3f3fa4a3d0c8a40205cedfeafc35b9312a272ac2b55c",
-  "mindmaps_can_make_more": "1ecaefa1071f068d65e3c2afce99c19db4f2c7436a11714f2b7a9cd9d0e32e9f",
+  "mindmaps_can_make_more": "11d43acdcfac7996b45d948e3ea2cdf76ae1b704d7801fdec200c2bec1011ee5",
   "mindmaps_chapter_count": "42a759dd7f7ef2fc96aef5067a23edc4162a39a2ea35b35bc8b1cd48421813b8",
   "mindmaps_chapter_finished": "616586994a6641aa6234a1919f26b68184b85cb1191796f5555ade1f5e88fed2",
   "mindmaps_chapter_map": "0a753ebf5f719fddae2b9c455595b253d20274b2d26a0351e40aaf63a396e36a",
@@ -176,7 +176,7 @@
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">
-        <item quantity="other">지금 %1$s개를 더 만들 수 있어요.</item>
+        <item quantity="other">지금 마인드맵을 %1$s개 더 만들 수 있어요.</item>
     </plurals>
     <!-- Saves a map to study again. -->
     <string name="mindmaps_save">저장</string>
