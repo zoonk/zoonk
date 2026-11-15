@@ -4,6 +4,9 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -14,6 +17,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ANA
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -38,7 +43,10 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
-/** A slow explanation's Try again follows the new run though the window changes width, both ways, while it asks. */
+/**
+ * A slow explanation's Try again follows the new run though the window changes width, both ways, while it asks, and
+ * though the learner left meanwhile; one that couldn't start offers Try again again.
+ */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
 class ExplainSlowRetryWindowTest {
@@ -52,6 +60,82 @@ class ExplainSlowRetryWindowTest {
 
     @Test
     fun aTryAgainOutWhileTheWindowWidensAndNarrowsFollowsTheNewRunOnce() {
+        val (held, followed) = launchASlowExplanation()
+
+        rule.onNodeWithText("Try again").performClick()
+        RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
+        scenario.recreate()
+        RuntimeEnvironment.setQualifiers("w411dp-h891dp")
+        scenario.recreate()
+        held.complete(Unit)
+        rule.waitForIdle()
+        rule.mainClock.advanceTimeBy(SLOW_MILLIS)
+
+        assertEquals(listOf("gen-1", "gen-2"), followed)
+        rule.onNodeWithText("Still getting your explanation ready.").assertExists()
+        assertEquals(0, rule.onAllNodesWithText("Try again").fetchSemanticsNodes().size)
+    }
+
+    /**
+     * The learner's ask stands though they left: the explanation is written again and followed, and on return the
+     * wait says it's still coming, with no Try again that would ask a third time. Nothing opens.
+     */
+    @Test
+    fun aTryAgainThatLandsAfterTheLearnerLeftFollowsTheNewRunAndOpensNothing() {
+        val (held, followed) = launchASlowExplanation()
+
+        rule.onNodeWithText("Try again").performClick()
+        ExplainSlowTest.visible = false
+        rule.waitForIdle()
+        held.complete(Unit)
+        rule.waitForIdle()
+        ExplainSlowTest.visible = true
+        rule.waitForIdle()
+        rule.mainClock.advanceTimeBy(SLOW_MILLIS)
+
+        assertEquals(listOf("gen-1", "gen-2"), followed)
+        rule.onNodeWithText("Still getting your explanation ready.").assertExists()
+        assertEquals(0, rule.onAllNodesWithText("Try again").fetchSemanticsNodes().size)
+    }
+
+    /** A Try again that couldn't start offers Try again again, whether the learner stayed, the window changed or they left. */
+    @Test
+    fun aTryAgainThatFailsAfterTheLearnerLeftOffersTryAgainOnReturn() {
+        val (held, followed) = launchASlowExplanation(fails = true)
+
+        rule.onNodeWithText("Try again").performClick()
+        ExplainSlowTest.visible = false
+        rule.waitForIdle()
+        held.complete(Unit)
+        rule.waitForIdle()
+        ExplainSlowTest.visible = true
+        rule.waitForIdle()
+        rule.mainClock.advanceTimeBy(SLOW_MILLIS)
+
+        assertEquals(listOf("gen-1"), followed)
+        rule.onNodeWithText("This is taking longer than usual.").assertExists()
+        rule.onNodeWithText("Try again").assertExists()
+    }
+
+    @Test
+    fun aTryAgainThatFailsWhileTheWindowWidensAndNarrowsOffersTryAgain() {
+        val (held, followed) = launchASlowExplanation(fails = true)
+
+        rule.onNodeWithText("Try again").performClick()
+        RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
+        scenario.recreate()
+        RuntimeEnvironment.setQualifiers("w411dp-h891dp")
+        scenario.recreate()
+        held.complete(Unit)
+        rule.waitForIdle()
+        rule.mainClock.advanceTimeBy(SLOW_MILLIS)
+
+        assertEquals(listOf("gen-1"), followed)
+        rule.onNodeWithText("Try again").assertExists()
+    }
+
+    /** A slow explanation's wait, its Try again shown, the write it asks for held until completed, then failing when it [fails]. */
+    private fun launchASlowExplanation(fails: Boolean = false): Pair<CompletableDeferred<Unit>, List<String>> {
         val application = RuntimeEnvironment.getApplication()
         shadowOf(application.packageManager).addOrUpdateActivity(
             ActivityInfo().apply {
@@ -75,6 +159,7 @@ class ExplainSlowRetryWindowTest {
                     goalId: String,
                 ): String {
                     held.await()
+                    if (fails) throw ApiException(ApiError.Network)
                     return "gen-2"
                 }
             }
@@ -84,24 +169,13 @@ class ExplainSlowRetryWindowTest {
 
                 override suspend fun status(id: String) = Generation.Status.RUNNING
             }
+        ExplainSlowTest.visible = true
         ExplainSlowTest.viewModel = ExplainViewModel(GOAL, ExplainStore(api, cache), cache, session, { source })
         ExplainSlowTest.viewModel.show(SLOW_EXPLANATION)
         ExplainSlowTest.explanation = SLOW_EXPLANATION
         scenario = ActivityScenario.launch(ExplainSlowTestActivity::class.java)
         rule.mainClock.advanceTimeBy(SLOW_MILLIS)
-
-        rule.onNodeWithText("Try again").performClick()
-        RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
-        scenario.recreate()
-        RuntimeEnvironment.setQualifiers("w411dp-h891dp")
-        scenario.recreate()
-        held.complete(Unit)
-        rule.waitForIdle()
-        rule.mainClock.advanceTimeBy(SLOW_MILLIS)
-
-        assertEquals(listOf("gen-1", "gen-2"), followed)
-        rule.onNodeWithText("Still getting your explanation ready.").assertExists()
-        assertEquals(0, rule.onAllNodesWithText("Try again").fetchSemanticsNodes().size)
+        return held to followed
     }
 
     private companion object {
@@ -120,6 +194,8 @@ class ExplainSlowRetryWindowTest {
 
 /** What outlives [ExplainSlowTestActivity]'s recreations, as a navigation entry's view models do. */
 object ExplainSlowTest {
+    /** False while the learner is away from the explanation, its view model kept, as a screen over it keeps it. */
+    var visible by mutableStateOf(true)
     lateinit var viewModel: ExplainViewModel
     lateinit var explanation: Explanation
 }
@@ -135,6 +211,6 @@ class ExplainSlowTestActivity : ComponentActivity() {
                     override fun <T : ViewModel> create(modelClass: Class<T>): T = ExplainSlowTest.viewModel as T
                 },
             )["explain", ExplainViewModel::class.java]
-        setContent { ZoonkTheme { SlowWait(ExplainSlowTest.explanation, viewModel) } }
+        setContent { ZoonkTheme { if (ExplainSlowTest.visible) SlowWait(ExplainSlowTest.explanation, viewModel) } }
     }
 }
