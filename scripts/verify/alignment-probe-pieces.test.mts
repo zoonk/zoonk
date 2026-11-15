@@ -271,6 +271,33 @@ describe("a row's line a lone last tile carries on with its ::after", () => {
   });
 });
 
+/**
+ * RV77's page: a 40 px tall box that clips its overflow, 10 past the column each side, holding a
+ * positioned element whose `::after` rule sits 80 px down, wholly clipped away.
+ */
+function clippedRule(after: string) {
+  return `<style>.inner::after { ${after} }</style>
+    <div data-slot="page" data-box="16,0,358,400">
+    <div style="overflow: hidden" data-box="6,40,378,40">
+      <div class="inner" style="position: relative" data-box="6,40,378,40">Item</div>
+    </div></div>`;
+}
+
+function clippedRuleMisses(top: number) {
+  document.body.innerHTML = clippedRule(
+    `content: ""; position: absolute; left: 0; top: ${top}px; width: 120px; height: 0; border-bottom: 1px solid rgb(0, 0, 0);`,
+  );
+
+  return evaluateCapture(read()).filter((finding) => finding.rule === "column");
+}
+
+describe("a rule a ::after draws where a box clips it away", () => {
+  it("isn't read, though its column would fail it if it showed (RV77)", () => {
+    assert.deepEqual(clippedRuleMisses(80), []);
+    assert.equal(clippedRuleMisses(20).length, 1);
+  });
+});
+
 /** RV71's page: in a tab list, a 120 px item whose `::before` reaches 10 px past the column's start. */
 function tabFill(tag: string, attributes: string) {
   return `<style>.fill::before { content: ""; position: absolute; left: -10px; right: 0; top: 0; bottom: 0; background-color: rgb(221, 221, 221); }</style>

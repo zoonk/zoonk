@@ -851,8 +851,8 @@ export function readAlignment({
 
     /**
      * The rules a positioned element draws on its `::before` or `::after`, a top or a bottom border
-     * (the catalog's last tile carrying its row's line on to the grid's end), as far across as the
-     * boxes clipping it show them.
+     * (the catalog's last tile carrying its row's line on to the grid's end), as much of them as the
+     * boxes clipping it show.
      */
     const pseudoRules = (element: Element): Rect[] => {
       if (getComputedStyle(element).position === "static") {
@@ -861,16 +861,23 @@ export function readAlignment({
 
       const box = element.getBoundingClientRect();
 
-      const across = chain(element)
-        .filter((clipping) => getComputedStyle(clipping).overflowX !== "visible")
-        .map((clipping) => clipping.getBoundingClientRect())
-        .reduce(
-          (clipped, clip) => ({
-            left: Math.max(clipped.left, clip.left),
-            right: Math.min(clipped.right, clip.right),
-          }),
-          { left: -Infinity, right: Infinity },
-        );
+      // What the boxes clipping it leave shown, on each axis they clip.
+      const shownArea = chain(element).reduce(
+        (clipped, clipping) => {
+          const style = getComputedStyle(clipping);
+          const clip = clipping.getBoundingClientRect();
+          const across = style.overflowX !== "visible";
+          const down = style.overflowY !== "visible";
+
+          return {
+            bottom: down ? Math.min(clipped.bottom, clip.bottom) : clipped.bottom,
+            left: across ? Math.max(clipped.left, clip.left) : clipped.left,
+            right: across ? Math.min(clipped.right, clip.right) : clipped.right,
+            top: down ? Math.max(clipped.top, clip.top) : clipped.top,
+          };
+        },
+        { bottom: Infinity, left: -Infinity, right: Infinity, top: -Infinity },
+      );
 
       return (["::before", "::after"] as const).flatMap((which): Rect[] => {
         const pseudo = getComputedStyle(element, which);
@@ -904,13 +911,14 @@ export function readAlignment({
         const from = top ? y : y + outer("height", ["top", "bottom"]) - width;
 
         const rule = {
-          bottom: from + width,
-          left: Math.max(left, across.left),
-          right: Math.min(left + outer("width", ["left", "right"]), across.right),
-          top: from,
+          bottom: Math.min(from + width, shownArea.bottom),
+          left: Math.max(left, shownArea.left),
+          right: Math.min(left + outer("width", ["left", "right"]), shownArea.right),
+          top: Math.max(from, shownArea.top),
         };
 
-        return rule.right > rule.left ? [rule] : [];
+        // A rule with no part shown draws nothing.
+        return rule.right > rule.left && rule.bottom > rule.top ? [rule] : [];
       });
     };
 
