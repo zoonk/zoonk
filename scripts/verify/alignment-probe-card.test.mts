@@ -78,6 +78,39 @@ function oneFilled(inAside: number) {
 describe("a side panel's filled actions", () => {
   it("are counted apart from the page's: one each passes, two in the panel fail", () => {
     assert.deepEqual(oneFilled(1), []);
-    assert.match(oneFilled(2)[0]?.detail ?? "", /"Save 0", "Save 1" on .*\(side panel\)/u);
+    assert.match(oneFilled(2)[0]?.detail ?? "", /"Save 0", "Save 1" on .*\(page-aside\)/u);
+  });
+});
+
+/** A page's main action beside a card holding its own filled action, the card marked `slot`. */
+function pageWithCard(slot: string | null) {
+  const mark = slot ? ` data-slot="${slot}"` : "";
+
+  return `<div data-slot="page" data-box="16,0,358,400">${filledButton("Continue", 16)}
+    <section${mark} data-box="16,100,358,120">${filledButton("Save", 30)}</section></div>`;
+}
+
+function cardFilled(slot: string | null) {
+  document.body.innerHTML = pageWithCard(slot);
+  return evaluateCapture(read()).filter((finding) => finding.rule === "one-filled");
+}
+
+describe("a card that asks its own question (the lead's ruling)", () => {
+  it("has its own filled answer while the page keeps its own; a card that merely holds one doesn't", () => {
+    assert.deepEqual(cardFilled("suggestion"), []);
+    assert.deepEqual(cardFilled("tutor-plan-change"), []);
+    assert.equal(cardFilled(null).length, 1);
+  });
+});
+
+describe("a media control (the lead's ruling)", () => {
+  it("isn't the screen's action: the notation player's Play isn't a kit button and isn't counted", () => {
+    document.body.innerHTML = `<div data-slot="page" data-box="16,0,358,400">${filledButton("Check", 16)}
+      <button aria-label="Play the melody" style="background-color: rgb(20, 20, 20)" data-box="16,100,44,44"></button></div>`;
+
+    assert.deepEqual(
+      evaluateCapture(read()).filter((finding) => finding.rule === "one-filled"),
+      [],
+    );
   });
 });

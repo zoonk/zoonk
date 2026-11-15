@@ -113,7 +113,7 @@ describe("relationships with no vote", () => {
   });
 
   it("counts a side panel's filled actions apart from the page's, while the page is on top", () => {
-    const panel = "Your plan (side panel)";
+    const panel = "Your plan (page-aside)";
 
     const beside = (inPanel: number, top = "page") => ({
       ...fixtureCapture([...filledActions("page", 1), ...filledActions(panel, inPanel)], top),

@@ -26,7 +26,7 @@ export function readAlignment({
   pieces: { name: string; web: WebPiece }[];
   /** Bars pinned to the screen's bottom, which nothing rests under at the scroll's end. */
   pinned: string;
-  /** What sits beside the page as a surface of its own (an aside). */
+  /** What sits beside the page as a surface of its own (an aside, a card asking its own question). */
   panels: string;
   surfaces: string;
 }): AlignmentPage {
@@ -1108,11 +1108,14 @@ export function readAlignment({
   );
 
   const panels = [...document.querySelectorAll(sidePanels)].filter((panel) => present(panel));
-  const panelName = (panel: Element) => `${name(panel)} (side panel)`;
+
+  const panelName = (panel: Element) =>
+    `${name(panel)} (${panel instanceof HTMLElement ? panel.dataset.slot : "panel"})`;
 
   const surfaceOf = (element: Element) => {
     const cover = covers.findLast((surface) => surface.contains(element));
-    const panel = panels.find((beside) => beside.contains(element));
+    // The innermost: a suggestion in the aside is the suggestion's.
+    const panel = panels.findLast((beside) => beside.contains(element));
 
     if (cover) {
       return surfaceName(cover);

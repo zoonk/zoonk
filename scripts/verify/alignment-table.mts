@@ -244,7 +244,10 @@ const COLUMNS =
 export const WEB_TABLE = {
   actions: ACTIONS,
   columns: COLUMNS,
-  panels: "[data-slot=page-aside]",
+  // Surfaces of their own beside the page: a side panel, and a card that asks its own question (a
+  // suggestion, the tutor's proposed plan change), each named, so a card that only holds a button
+  // gets no filled action of its own.
+  panels: "[data-slot=page-aside], [data-slot=suggestion], [data-slot=tutor-plan-change]",
   pieces: PIECES.flatMap((piece) => (piece.web ? [{ name: piece.name, web: piece.web }] : [])),
   pinned: "[data-slot=bottom-bar]",
   surfaces: SURFACES,
