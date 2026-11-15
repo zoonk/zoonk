@@ -1,13 +1,16 @@
 import { bleedLeads } from "./alignment-bleed.mts";
 import { type AlignmentFile, type AlignmentFinding, type Capture } from "./alignment-capture.mts";
 import { coverageLeads, isOneStack } from "./alignment-coverage.mts";
-import { axisLeads, endLeads, gapLeads, stackedLeads, startLeads } from "./alignment-edges.mts";
+import { axisLeads, endLeads, stackedLeads, startLeads } from "./alignment-edges.mts";
+import { gapLeads } from "./alignment-gap.mts";
 import {
   type Context,
   type Group,
+  drawn,
   finding,
   groupName,
   groupsOf,
+  notMeasured,
   rowName,
 } from "./alignment-geometry.mts";
 import { lineLeads } from "./alignment-line.mts";
@@ -32,29 +35,44 @@ function typeLeads(context: Context, read: Group): AlignmentFinding[] {
 
   return (["label", "lead", "note", "value"] as const).flatMap((part) => {
     const current = new Set(read.rows.filter((row) => row.current).map((row) => row.id));
+    // What a learner sees: a part that draws nothing holds room, and a cut one has its own record.
+    const shown = parts.filter((element) => element.part === part && drawn(element));
+    const untyped = shown.filter((element) => !element.type || element.type === "not measured");
 
     // A current row may set its words apart, and a word in a value's place ("Won", "Today") is
     // set in the text face where figures are mono: values compare only where they hold figures.
-    const typed = parts.filter(
+    const typed = shown.filter(
       (element) =>
-        element.part === part &&
-        element.type &&
-        element.type !== "not measured" &&
+        !untyped.includes(element) &&
         !current.has(element.row ?? "") &&
         (part !== "value" || /\d/u.test(element.text ?? "")),
     );
+
+    const unread =
+      untyped.length > 0
+        ? [
+            notMeasured(
+              context,
+              read,
+              "type",
+              `a ${part}'s type token wasn't measured`,
+              untyped.map((element) => rowName(read, element.row)).join(", "),
+            ),
+          ]
+        : [];
 
     const tokens = [...Map.groupBy(typed, (element) => element.type ?? "")].toSorted(
       ([, one], [, other]) => other.length - one.length,
     );
 
     if (tokens.length < 2) {
-      return [];
+      return unread;
     }
 
     const odd = tokens.slice(1).flatMap(([, here]) => here);
 
     return [
+      ...unread,
       finding(context, {
         detail: `${tokens.map(([token, here]) => `${token} ×${here.length}`).join(", ")}; the odd ones: ${odd.map((element) => rowName(read, element.row)).join(", ")}`,
         level: "fail",
@@ -68,8 +86,8 @@ function typeLeads(context: Context, read: Group): AlignmentFinding[] {
 
 /**
  * One filled action on the active surface; a covering dialog or sheet is its own surface. The same
- * action offered again (the same words to the same destination, such as a page's start link at
- * its top and its end) counts once; actions with no destination each count.
+ * action offered again (the same words and the same `target`: a link's destination, or the action
+ * a piece names) counts once; actions with no `target` each count.
  */
 function filledLeads(context: Context): AlignmentFinding[] {
   const { capture } = context;
@@ -77,6 +95,18 @@ function filledLeads(context: Context): AlignmentFinding[] {
   // A gallery shows pieces side by side as samples; it isn't a screen a learner acts on.
   if (capture.specimen) {
     return [];
+  }
+
+  if (capture.activeSurface === "not measured") {
+    return [
+      finding(context, {
+        detail: "two surfaces overlap and the page shows no dialog or sheet where they do",
+        level: "not-measured",
+        message: "which surface is on top wasn't measured",
+        piece: "action",
+        rule: "one-filled",
+      }),
+    ];
   }
 
   const filled = capture.elements.filter(
@@ -122,6 +152,20 @@ function groupLeads(context: Context, group: Group): AlignmentFinding[] {
         piece: group.group.piece,
         rule: "piece",
       }),
+    ];
+  }
+
+  const scale = group.group.layoutScale;
+
+  if (scale !== undefined) {
+    return [
+      notMeasured(
+        context,
+        group,
+        "scale",
+        "it is drawn at another size than it is laid out (a transform or a zoom)",
+        `drawn at ×${scale}`,
+      ),
     ];
   }
 

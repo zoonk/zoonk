@@ -8,7 +8,7 @@ import { type Part } from "./alignment-table.mts";
 /** `[x, y, width, height]` in the capture's logical units. */
 export type Bounds = [number, number, number, number];
 
-type NotMeasured = "not measured";
+export type NotMeasured = "not measured";
 
 export type CaptureElement = {
   id: string;
@@ -35,8 +35,13 @@ export type CaptureElement = {
   endEdge?: number | NotMeasured;
   /** A group's: the gap its piece lays out between rows. */
   gap?: number | NotMeasured;
+  /**
+   * A group's, when it is drawn at another size than it is laid out (a transform or a zoom): its
+   * drawn width over its laid-out width. Its laid-out lengths and drawn positions don't compare.
+   */
+  layoutScale?: number;
   /** A row's: the gap its flow parent declares, which parent, and its margins before and after. */
-  gapBefore?: number;
+  gapBefore?: number | NotMeasured;
   flow?: string;
   margins?: [number, number];
   /** An action's: its look, and the surface it is on ("page", or a dialog's or sheet's name). */
@@ -61,9 +66,11 @@ export type CaptureElement = {
   /** A row's: the one the learner is on (current, picked), which may set its words apart. */
   current?: boolean;
   /** A row's: the middle of what it lays out (inside a divider's border and its padding). */
-  middle?: number;
+  middle?: number | NotMeasured;
   /** A row's: its value moved under its label (large text), as the row piece does on purpose. */
   stacked?: boolean;
+  /** An area the platform couldn't read (`"part": "unmeasured"`): why. */
+  reason?: string;
 };
 
 export type Configuration = {
@@ -84,7 +91,10 @@ export type Capture = {
   configuration: Configuration;
   unit: "dp" | "pt" | "px";
   scale: number;
-  /** The topmost dialog or sheet showing, or "page". */
+  /**
+   * The topmost dialog or sheet showing, or "page"; "not measured" when two surfaces overlap and
+   * the page shows no dialog or sheet where they do, which fails `one-filled`.
+   */
   activeSurface: string;
   /** False when the run reached the screen but not its scenario's proof (its words never showed). */
   reached?: boolean;
@@ -111,8 +121,6 @@ export type AlignmentFinding = {
   unit?: string;
   holder?: string;
   exception?: string;
-  /** A not-measured record that waits on a decision (a tolerance), not on a missing input. */
-  pending?: boolean;
 };
 
 export function configurationName({ locale, pointer, size, textScale }: Configuration) {

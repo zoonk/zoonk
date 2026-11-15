@@ -30,7 +30,7 @@ export function VocabularyStep({
         className="flex flex-col gap-6"
       >
         <PlayerReadSceneStack className="gap-2">
-          <p className="text-title lg:text-[2.5rem]">
+          <p className="text-title lg:text-[2.5rem] lg:leading-11">
             {word.word}
             {audio && (
               <span className="ms-2 inline-flex h-lh items-center align-top">

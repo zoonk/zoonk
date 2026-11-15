@@ -12,7 +12,7 @@ export const alphabetLessonFixTask: Task<AlphabetLessonFixInput, PublishedAlphab
     "Fix only the parts of an alphabet lesson a reviewer flagged (letter cards, intro screens or the lesson's words), right for the learner's language, and keep everything else as it was",
   generate: fixAlphabetLesson,
   id: "alphabet-lesson-fix",
-  name: "Alphabet Lesson Fix",
+  name: "Alphabet lesson fix",
   score: scoreAlphabetLessonFix,
   scoreCategories: ALPHABET_LESSON_FIX_SCORE_CATEGORIES,
   testCases: TEST_CASES,

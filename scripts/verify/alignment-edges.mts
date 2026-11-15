@@ -1,6 +1,5 @@
 import { type AlignmentFinding, type CaptureElement } from "./alignment-capture.mts";
 import {
-  type Box,
   type Context,
   EDGE,
   type Group,
@@ -9,6 +8,8 @@ import {
   finding,
   groupName,
   holderNamed,
+  measured,
+  notMeasured,
   rowName,
   tenths,
 } from "./alignment-geometry.mts";
@@ -122,27 +123,29 @@ export function axisLeads(context: Context, read: Group): AlignmentFinding[] {
   ];
 }
 
-/** A text's first line: as the capture gives it, or its ink's top line when it gives a line count. */
-function firstLineOf(text: CaptureElement): Box | null {
-  if (text.firstLine) {
-    return box(text.firstLine);
-  }
-
-  const ink = drawn(text);
-  return ink ? { ...ink, bottom: ink.top + (ink.bottom - ink.top) / (text.lines ?? 1) } : null;
-}
-
-/** The row's value went under its label (large text): its value no longer ends the row. */
+/**
+ * The row's value went under its label (large text): it sits under the label's last line and
+ * overlaps the label across. A value at the label's side is trailing however many lines the label
+ * wraps to, and belongs on the row's center (E5).
+ */
 export function isStacked(row: CaptureElement, own: CaptureElement[]) {
   if (row.stacked !== undefined) {
     return row.stacked;
   }
 
-  const label = own.find((element) => element.part === "label");
-  const line = label ? firstLineOf(label) : null;
-  const value = own.find((element) => element.part === "value" && drawn(element));
-  const ink = value ? drawn(value) : null;
-  return Boolean(line && ink && ink.top >= line.bottom - EDGE);
+  const inkOf = (part: string) =>
+    own.map((element) => (element.part === part ? drawn(element) : null)).find(Boolean);
+
+  const label = inkOf("label");
+  const value = inkOf("value");
+
+  return Boolean(
+    label &&
+    value &&
+    value.top >= label.bottom - EDGE &&
+    value.left < label.right &&
+    label.left < value.right,
+  );
 }
 
 /** Where a part's drawing ends: a learner sees ink, never a glyph's padding inside its box. */
@@ -160,10 +163,18 @@ function inkRight(element: CaptureElement) {
 export function endLeads(context: Context, read: Group): AlignmentFinding[] {
   const { group, holders, parts, rows } = read;
 
+  const edgeless = rows.filter((row) => {
+    const own = parts.filter((element) => element.row === row.id);
+
+    return (
+      measured(row.endEdge, measured(group.endEdge)) === null &&
+      own.some((element) => (element.part === "end" || element.part === "value") && drawn(element))
+    );
+  });
+
   const ending = rows.flatMap((row) => {
     const own = parts.filter((element) => element.row === row.id);
-    const declared = row.endEdge ?? group.endEdge;
-    const edge = typeof declared === "number" ? declared : undefined;
+    const edge = measured(row.endEdge, measured(group.endEdge));
     const ends = own.filter((element) => element.part === "end" && drawn(element));
 
     // An end whose ink wasn't measured (clipped) leaves the row to its not-measured record.
@@ -177,7 +188,7 @@ export function endLeads(context: Context, read: Group): AlignmentFinding[] {
 
     const last = [...ends, ...values].toSorted((one, other) => inkRight(other) - inkRight(one))[0];
 
-    if (!last || edge === undefined) {
+    if (!last || edge === null) {
       return [];
     }
 
@@ -233,6 +244,17 @@ export function endLeads(context: Context, read: Group): AlignmentFinding[] {
   const column = oneEdge(values, ({ valueEnd }) => valueEnd);
 
   return [
+    ...(edgeless.length > 0
+      ? [
+          notMeasured(
+            context,
+            read,
+            "end-edge",
+            "a row's end edge wasn't measured",
+            edgeless.map((row) => rowName(read, row.id)).join(", "),
+          ),
+        ]
+      : []),
     ...short,
     ...(column
       ? [
@@ -283,80 +305,4 @@ export function stackedLeads(context: Context, read: Group): AlignmentFinding[] 
       rule: "label-start",
     }),
   ];
-}
-
-/** Two drawn neighbors in one flow are the gap their layout declares apart, margins included. */
-export function gapLeads(context: Context, read: Group): AlignmentFinding[] {
-  const { group, holders } = read;
-
-  // A part placed in the group itself (a status line's note) is a neighbor as a row is.
-  const rows = [...read.rows, ...read.parts.filter((part) => part.row === null)].toSorted(
-    (one, other) => one.bounds[1] - other.bounds[1],
-  );
-
-  if (
-    group.gap === "not measured" &&
-    rows.length > 1 &&
-    rows.every((row) => row.gapBefore === undefined)
-  ) {
-    return [
-      finding(context, {
-        detail: groupName(read),
-        level: "not-measured",
-        message: `the gap of a ${group.piece} wasn't measured`,
-        piece: group.piece,
-        rule: "gap",
-      }),
-    ];
-  }
-
-  return rows.slice(1).flatMap((next, index) => {
-    const previous = rows[index];
-
-    // Rows of one flow only: the web names each row's flow; a platform that doesn't has one.
-    if (!previous || previous.flow !== next.flow) {
-      return [];
-    }
-
-    const above = box(previous.bounds);
-    const below = box(next.bounds);
-
-    if (below.top < above.bottom - EDGE) {
-      return [];
-    }
-
-    const gap = next.gapBefore ?? group.gap;
-
-    // A gap the platform couldn't read prints once as not measured, below.
-    if (typeof gap !== "number") {
-      return [];
-    }
-
-    const expected = gap + (previous.margins?.[1] ?? 0) + (next.margins?.[0] ?? 0);
-
-    const measured = below.top - above.bottom;
-
-    if (Math.abs(measured - expected) <= EDGE) {
-      return [];
-    }
-
-    const holder = holderNamed(holders, {
-      bottom: below.top,
-      left: Math.min(above.left, below.left),
-      right: Math.max(above.right, below.right),
-      top: above.bottom,
-    });
-
-    return [
-      finding(context, {
-        detail: `${rowName(read, previous.id)} and ${rowName(read, next.id)} are ${tenths(measured)} apart where the layout puts ${tenths(expected)}`,
-        level: "fail",
-        measured: measured - expected,
-        message: `two neighbors in ${groupName(read)} aren't the group's gap apart`,
-        piece: group.piece,
-        rule: "gap",
-        ...(holder ? { holder } : {}),
-      }),
-    ];
-  });
 }

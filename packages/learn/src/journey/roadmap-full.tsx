@@ -124,9 +124,27 @@ function PhaseColumn({
   );
 }
 
+function useFinishLabel() {
+  const t = useExtracted();
+  const { goal, plan } = usePlanScreen();
+
+  if (goal.kind === "exam") {
+    return t("Exam date");
+  }
+
+  return plan.schedule.targetDate
+    ? t("End date")
+    : t({
+        description:
+          "In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date.",
+        message: "You finish",
+      });
+}
+
 function RoadmapLegend() {
   const t = useExtracted();
   const { goal } = usePlanScreen();
+  const finishLabel = useFinishLabel();
   const { phases } = useRoadmapPhases();
   const finish = useRoadmapFinish();
   const hasMocks = phases.some((phase) => phase.mocks.nextDate !== null);
@@ -152,7 +170,7 @@ function RoadmapLegend() {
       {finish && (
         <span className="flex items-center gap-1.5">
           <FlagIcon className="size-3.5" />
-          {goal.kind === "exam" ? t("Exam date") : t("End date")}
+          {finishLabel}
         </span>
       )}
     </span>
@@ -166,12 +184,8 @@ function RoadmapPosition() {
     return null;
   }
 
-  return (
-    <p className="min-w-0 truncate text-xs">
-      <span className="font-medium">{position.place}</span>
-      {position.name && <span className="text-muted-foreground">{` · ${position.name}`}</span>}
-    </p>
-  );
+  // The band under it names the phase, so the line says only where the learner is.
+  return <p className="min-w-0 truncate text-xs font-medium">{position.place}</p>;
 }
 
 export function RoadmapFull({ className, links }: { className?: string; links: JourneyPathLinks }) {
@@ -185,7 +199,7 @@ export function RoadmapFull({ className, links }: { className?: string; links: J
       className={cn("@container/roadmap flex flex-col gap-2.5", className)}
       data-slot="plan-roadmap"
     >
-      <div className="flex items-baseline justify-between gap-4">
+      <div className="flex items-center justify-between gap-4">
         <h2 className="sr-only" id={ROADMAP_TITLE_ID}>
           {t("Phases")}
         </h2>

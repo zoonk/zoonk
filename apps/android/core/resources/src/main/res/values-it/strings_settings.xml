@@ -5,6 +5,7 @@
   "settings_account_deleted_title": "e2097535c23f027d97c265ed19c89b10571751f9f4d1f02aa9b0333dcc355aac",
   "settings_apple_not_revoked": "6f5dcc05153b11c2f10dfe1fe3a142efcb3a06f678329ced4eb2893eed597c11",
   "settings_cancel": "4f9a480792b656cf62c192df3549b4df7ece7be6f13942dfc57482b1fc1abb04",
+  "settings_delete_account": "6ead666d0a0798ca010c8ad3692218e6db32ecca21879790ff25559ca90f3a12",
   "settings_delete_code_description": "608c9cd687c72c77d1892c01cd9ab3bd6853de45b0f6bcb667465c41931ccbd8",
   "settings_delete_code_title": "33895d5ef27a4485199ad19a3de450aa9f4f3dbf2c9018ffeb128de7cc679a61",
   "settings_delete_confirm_description": "62917a64d8d8247ece2dd3b48896800b9190b426fff932723dde19e174fbba11",
@@ -15,8 +16,9 @@
   "settings_delete_verify": "cc999caefd788a109f1bd58514a29b7344489d316bec32587d9c86da0edbdf8e",
   "settings_done": "db41107a8ead81e2340b1745bf859a45dd39493170eacb18714f2439899ac37d",
   "settings_download": "5ecdcf3013108cbab53a99662faf0f53cec015bfda42833e84960e27a3281d7a",
-  "settings_download_data": "c3c9121ccd8cf3dad6b81e3680a7e0afe9418f02b9a47af5f4038af82d610183",
+  "settings_download_data": "847240b9ec980b820ce38b5a93ce4a2cbe3c2f9136155f4994498ad22c0a7fe7",
   "settings_download_failed": "204b2b1e7d529f0823305cd46da3ec582847fcb8f9215e60f8ead2c4f1133a88",
+  "settings_download_your_data": "d3d60913e500df3712f01030ca34a9c8afc0796f44059e1262c0003e930739b2",
   "settings_home_country": "63a05ca231d1b5a2e6018b536a8216976838998a475cdb3c72ea2e4cf473057a",
   "settings_home_country_description": "4dbbf6b325312fb784c08577c6fca570391f05edddc93592955bac114c8e25b7",
   "settings_home_country_none": "446132534bfaa3188743caae95d56523d1992040c49a2c9abdf59417aa9f0ef2",
@@ -44,12 +46,14 @@
   "settings_reminders_off": "0f87caada30cc8fefb5a15f5446f4704c4e13ad1aae6ff2b9055b2fab9e6dcfa",
   "settings_save": "ddc0ecf517ec166a0fa780faa442afebffa3f622574fe5baa604d17f8fd8f449",
   "settings_saved": "b279d24e3a09cc9f9ebb51d9cab86ed1a6a817d6827cfaade5a91582c3bd1df5",
+  "settings_your_account": "bb443a8d18405071bff35ec55f1b35ffe3aa670d3b51ea1103f53b34ec934c92",
   "settings_your_data": "33070dbac0efecf6290d27763f69332b0332e452683f452003a7e6a6bf60b01c"
 }
 -->
 <resources>
     <string name="settings_preferences">Preferenze</string>
     <string name="settings_memory">Memoria</string>
+    <!-- The page inside Settings for usage data, a copy of the learner's data and deleting the account; not the privacy policy. -->
     <string name="settings_privacy">Privacy</string>
     <!-- Beside "Reminders" in Settings when neither email nor push reminders are on. -->
     <string name="settings_reminders_off">Disattivati</string>
@@ -58,9 +62,12 @@
     <string name="settings_save">Salva</string>
     <string name="settings_saved">Salvato.</string>
     <string name="settings_your_data">I tuoi dati</string>
-    <string name="settings_download_data">Scarica i miei dati</string>
+    <string name="settings_download_data">Una copia dei tuoi dati</string>
+    <string name="settings_download_your_data">Scarica i tuoi dati</string>
     <string name="settings_download">Scarica</string>
     <string name="settings_download_failed">Non siamo riusciti a preparare il file da scaricare. Riprova.</string>
+    <string name="settings_your_account">Il tuo account</string>
+    <string name="settings_delete_account">Elimina l’account</string>
     <string name="settings_delete_my_account">Elimina il mio account</string>
     <string name="settings_delete_ellipsis">Elimina…</string>
     <string name="settings_delete_confirm_title">Vuoi eliminare il tuo account?</string>

@@ -59,7 +59,7 @@ test.describe("After an exam's date, with lessons left", () => {
         .locator('[data-slot="suggestion-line"]')
         .filter({ hasText: "Your exam date has passed", visible: true });
 
-      await expect(line).toContainText("Keep studying them, or archive this goal?");
+      await expect(line).toContainText("Keep studying, or archive this goal?");
       await expect(line.getByRole("button")).toHaveCount(0);
 
       const bar = page.locator('[data-slot="bottom-bar"]');

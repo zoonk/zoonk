@@ -10,7 +10,8 @@
   "memory_change_undone": "269260ff6ff5422aafcb745db85d41600f36950b9275aa66d1d585e6579c3666",
   "memory_delete": "d25a94c1334b5bc6935bad34e4a6588cc4d90bdc6eb2f057bd7ff819d1bf7139",
   "memory_description": "3b0fb0201d7373c6c053416f7326c98a3172378ca983a91af421f5dd2c6fde2e",
-  "memory_download": "01a0262a59353acd457a012dbe17bb18ea76fcc74b824357f3ed833939ccabf7",
+  "memory_download": "36688f7bbb0878da0a71834e3c1b0a4edaf8b5ae92a3f6292eeafb397ecaacd7",
+  "memory_download_your_memory": "2e79c341f5c9bdd93530d1833b07baad29f71c4817fee132ee37a52e8bcd7443",
   "memory_edit": "42ccdebdbae59df15a498c7c6aa4f77078f589c5927dcf5ba714d6a0d0951c99",
   "memory_edit_description": "5fbab10c1bf93d1d394c8ca6f7d8908a40859b144b635e2288f4734b4d829a81",
   "memory_edit_label": "2bf2557377937142cfd403fefc4326dc7022988a9b80e587fdc805e6343f59ab",
@@ -63,7 +64,8 @@
     <string name="memory_edit_title">メモリを編集する</string>
     <string name="memory_edit_description">実際の状況に合うように書き直してください。</string>
     <string name="memory_edit_label">Zoonkが覚えていること</string>
-    <string name="memory_download">メモリをダウンロードする</string>
+    <string name="memory_download">メモリのコピー</string>
+    <string name="memory_download_your_memory">メモリをダウンロードする</string>
     <string name="memory_sensitive_note">Zoonkは、保存を頼まれない限り、健康や宗教などのデリケートな情報を保存しません。</string>
     <string name="memory_updated">メモリを更新しました：</string>
     <plurals name="memory_updated_more">

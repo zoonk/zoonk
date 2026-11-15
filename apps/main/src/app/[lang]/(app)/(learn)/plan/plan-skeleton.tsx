@@ -1,4 +1,4 @@
-import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
+import { Page, PageHeader, PageHeaderContent, PageTitle } from "@zoonk/learn/page";
 import { PageWithAside } from "@zoonk/learn/shell";
 import { TITLE_ROW_CLASS } from "@zoonk/learn/title-row";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -28,9 +28,6 @@ function PlanHeaderSkeleton({ title }: { title: string }) {
             <Skeleton className="size-7.5 rounded-lg" />
           </div>
         </div>
-        <PageSubtitle>
-          <Skeleton className="my-1 h-3 w-48 rounded-sm" />
-        </PageSubtitle>
       </PageHeaderContent>
     </PageHeader>
   );

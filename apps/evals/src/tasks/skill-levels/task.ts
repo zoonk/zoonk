@@ -51,7 +51,7 @@ export const skillLevelsTask: Task<
   description: "Place each language skill at the lower or upper level of its CEFR band",
   generate: classifySkillLevels,
   id: "skill-levels",
-  name: "Skill Levels",
+  name: "Skill levels",
   score: scoreSkillLevels,
   testCases: TEST_CASES,
 };

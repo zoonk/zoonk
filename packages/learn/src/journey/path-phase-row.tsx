@@ -145,11 +145,8 @@ export function PhaseName({
   const state = phaseState(phase, { isNext });
 
   return (
-    <span className="flex min-w-0 flex-1 flex-col">
-      <span
-        className={cn("font-medium", phase.state === "done" && "text-muted-foreground")}
-        data-slot="path-row-title"
-      >
+    <>
+      <span className={cn("font-medium", phase.state === "done" && "text-muted-foreground")}>
         {byPlace ? (
           <>
             <span className="in-data-panel-open:hidden">{name}</span>
@@ -163,6 +160,6 @@ export function PhaseName({
         {state && <span className="sr-only">{state}</span>}
       </span>
       <PhaseMeta open={open} phase={phase} />
-    </span>
+    </>
   );
 }

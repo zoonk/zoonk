@@ -10,7 +10,8 @@
   "memory_change_undone": "4d159bd2618ede6af759817aa35f95476c3c313c29a7b608b70c11da757c8d8d",
   "memory_delete": "067ed629de0e113d4d96df6bb7cb360145d158fb7d5bb4e13c6d4171ceaed233",
   "memory_description": "798060fff142c80e27407827eb93c7a49ee422e1fb4fc2e3281ca84bc905014f",
-  "memory_download": "b0abcd5fa894ac3d6026a1216592b074bdd5ecc167560b676c39dc606e76fea7",
+  "memory_download": "5bc8ce9f4e7ea826913c729a2abb5be47a9b1e8352fd889f1cc69dc8dd3000cf",
+  "memory_download_your_memory": "76a2c9d15de5bbc424de71ef4b2885dd4867f67d8726b31dd6046cf8dc2ed13e",
   "memory_edit": "711182d54d665d69a8bba70c598566b0cd68b45bd0f733d2074d980ed530d4f0",
   "memory_edit_description": "cee7bd9a231a7d919ca0ed0409c2c2a2eacddcdf87135d6e3c284afd3a898b2a",
   "memory_edit_label": "ccf8d15d738496a95c1e289f19511be8e8c9d6c19f59221bfccae88df52b8de3",
@@ -63,7 +64,8 @@
     <string name="memory_edit_title">메모리 수정</string>
     <string name="memory_edit_description">실제 상황에 맞게 고쳐 주세요.</string>
     <string name="memory_edit_label">Zoonk가 기억하는 내용</string>
-    <string name="memory_download">내 메모리 다운로드</string>
+    <string name="memory_download">내 메모리 사본</string>
+    <string name="memory_download_your_memory">메모리 다운로드</string>
     <string name="memory_sensitive_note">따로 요청하지 않으면 Zoonk는 건강, 종교 같은 민감한 정보를 저장하지 않아요.</string>
     <string name="memory_updated">메모리 업데이트:</string>
     <plurals name="memory_updated_more">

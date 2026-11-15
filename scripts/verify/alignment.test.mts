@@ -1,7 +1,7 @@
 /* oxlint-disable no-magic-numbers -- The fixtures are measurements in pixels. */
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { element, failures, fixtureCapture, real } from "./alignment-fixtures.mts";
+import { LABEL_TYPE, element, failures, fixtureCapture, real } from "./alignment-fixtures.mts";
 import { evaluateCapture } from "./alignment.mts";
 
 describe("the declared relationships on the faults the owner caught", () => {
@@ -60,13 +60,15 @@ describe("the declared relationships on the faults the owner caught", () => {
 });
 
 describe("the Plan's path and Android's captures", () => {
-  it("prints the Trickster row's date 8.3 px above its chevron as a line miss, failing nothing yet", () => {
-    const findings = evaluateCapture(real("plan path, phone"));
-    const line = findings.find((finding) => finding.detail.includes("The Trickster"));
+  it("fails the Trickster row's date 8.3 px above its chevron", () => {
+    const [line, ...rest] = failures(real("plan path, phone"));
 
-    assert.deepEqual(failures(real("plan path, phone")), []);
-    assert.equal(line?.level, "not-measured");
-    assert.match(line?.detail ?? "", /the value 8\.25 above the row's center/u);
+    assert.equal(rest.length, 0);
+    assert.equal(line?.rule, "line");
+    assert.match(line?.detail ?? "", /The Trickster.*the value 8\.25 above the row's center/u);
+
+    // Lane C's row piece puts it 0.26 above, within the line.
+    assert.deepEqual(failures(real("plan path after 21c684874d, phone")), []);
   });
 
   it("fails Android's note 0 dp under its wait where the piece lays out 24, from the group's gap", () => {
@@ -95,13 +97,16 @@ describe("the Plan's path and Android's captures", () => {
     // b18-16: the chevron's ink ends inside its icon's box, short of where the dates end.
     assert.deepEqual(
       ends.map((finding) => finding.measured),
-      [5.7],
+      [5.67],
     );
   });
 
   it("judges a row whose value stacked under its label by what still applies", () => {
     const findings = evaluateCapture(real("android plan rows stacked at 200%, phone"));
-    const line = findings.find((finding) => finding.detail.includes("Learn Python"));
+
+    const line = findings.find(
+      (finding) => finding.rule === "line" && finding.detail.includes("Learn Python"),
+    );
 
     // The stacked value no longer ends the row: only the chevron's own 6 dp short shows.
     assert.deepEqual(
@@ -116,13 +121,45 @@ describe("the Plan's path and Android's captures", () => {
     assert.match(line?.detail ?? "", /the mark 0\.75 below the row's center/u);
   });
 
+  it("calls a value beside a title that wraps trailing, so it belongs on the row's center (E5)", () => {
+    // Three lines of a title with "12" beside its second: not a value stacked under its label.
+    const wrapped = evaluateCapture(real("round 3 wrapped-title-value"));
+
+    assert.equal(
+      wrapped.find((finding) => finding.rule === "label-start"),
+      undefined,
+    );
+
+    // Its fallback face gave no capitals, so its line is a failing record, not a pass.
+    assert.deepEqual(
+      wrapped.map((finding) => `${finding.level} ${finding.rule}`),
+      ["not-measured line"],
+    );
+
+    // Two lines, the value on the row's center; and a title with a note, the control.
+    assert.deepEqual(evaluateCapture(real("round 3 corrected-wrap-value")), []);
+    assert.deepEqual(evaluateCapture(real("round 3 corrected-note-value")), []);
+  });
+
   it("reads a right-to-left group mirrored, so its start is its right edge", () => {
     const rtl = fixtureCapture([
-      element({ direction: "rtl", endEdge: 16, group: null, id: "g", part: "group" }),
+      element({ direction: "rtl", endEdge: 16, gap: 0, group: null, id: "g", part: "group" }),
       element({ bounds: [16, 0, 358, 44], id: "r0", part: "row" }),
       element({ bounds: [16, 44, 358, 44], id: "r1", part: "row" }),
-      element({ firstLine: [200, 12, 150, 20], id: "l0", part: "label", row: "r0" }),
-      element({ firstLine: [250, 56, 100, 20], id: "l1", part: "label", row: "r1" }),
+      element({
+        firstLine: [200, 12, 150, 20],
+        id: "l0",
+        part: "label",
+        row: "r0",
+        type: LABEL_TYPE,
+      }),
+      element({
+        firstLine: [250, 56, 100, 20],
+        id: "l1",
+        part: "label",
+        row: "r1",
+        type: LABEL_TYPE,
+      }),
     ]);
 
     assert.deepEqual(evaluateCapture(rtl), []);
@@ -130,11 +167,23 @@ describe("the Plan's path and Android's captures", () => {
 
   it("makes a stack-grouped row's fault a lead, not a failure", () => {
     const stack = fixtureCapture([
-      element({ group: null, id: "g", part: "group", source: "stack" }),
+      element({ gap: 0, group: null, id: "g", part: "group", source: "stack" }),
       element({ bounds: [0, 0, 358, 44], id: "r0", part: "row" }),
       element({ bounds: [0, 44, 358, 44], id: "r1", part: "row" }),
-      element({ firstLine: [16, 12, 100, 20], id: "l0", part: "label", row: "r0" }),
-      element({ firstLine: [52, 56, 100, 20], id: "l1", part: "label", row: "r1" }),
+      element({
+        firstLine: [16, 12, 100, 20],
+        id: "l0",
+        part: "label",
+        row: "r0",
+        type: LABEL_TYPE,
+      }),
+      element({
+        firstLine: [52, 56, 100, 20],
+        id: "l1",
+        part: "label",
+        row: "r1",
+        type: LABEL_TYPE,
+      }),
     ]);
 
     assert.deepEqual(

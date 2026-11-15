@@ -4,6 +4,7 @@ import { getTargetDateBounds } from "@zoonk/core/plans/target-date-range";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { useFormatIsoDate } from "../_utils/iso-date";
@@ -111,7 +112,7 @@ export function PlanDate() {
       >
         <Input
           aria-describedby={note ? noteId : undefined}
-          className="max-w-48"
+          className="min-w-0 flex-1"
           id={inputId}
           max={bounds.max}
           min={bounds.min}
@@ -121,11 +122,15 @@ export function PlanDate() {
           type="date"
           value={value}
         />
-        {canSave && (
-          <Button busy={isPending} type="submit" variant="outline">
-            {t("Save")}
-          </Button>
-        )}
+        {/* Its room is there before a date is typed, so the field doesn't narrow when it shows. */}
+        <Button
+          busy={isPending}
+          className={cn(!canSave && "invisible")}
+          type="submit"
+          variant="outline"
+        >
+          {t("Save")}
+        </Button>
       </form>
 
       {noticeDay && (

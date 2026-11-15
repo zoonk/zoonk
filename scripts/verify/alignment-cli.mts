@@ -2,8 +2,8 @@
 import { readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { type AlignmentFile, type Capture } from "./alignment-capture.mts";
 import { alignmentLines, summarize, summaryLine } from "./alignment-summary.mts";
+import { readCaptures } from "./alignment-validate.mts";
 import { evaluateFile } from "./alignment.mts";
 
 const USAGE = `Usage: pnpm verify:alignment <file or folder>... [--write]
@@ -15,7 +15,17 @@ missing scenarios, discovery leads and what wasn't measured.
 
   --write   put the findings and the summary back into each alignment.json it read
 
-Exits 0 when nothing fails, 1 when a declared relationship fails, 2 when an input can't be read.`;
+It judges only what a capture holds. The web's read doesn't enter iframes or shadow roots, doesn't
+see what only a pseudo-element (::before, ::after) draws, and counts a filled action only when the
+kit's button variants draw it, so a capture with nothing in it isn't proof those were checked.
+Two filled buttons with the same data-action-name count as one action: the name is the author's
+statement that they are one, and the check trusts it.
+
+Each capture is checked against the shape first (version 1, its platform's unit, every field the
+evaluator reads, and every part's group and row present); one that doesn't match is refused.
+
+Exits 0 when nothing fails, 1 when a declared relationship fails, 2 when an input can't be read
+or isn't a capture this evaluator reads.`;
 
 const { positionals, values } = parseArgs({
   allowPositionals: true,
@@ -24,22 +34,6 @@ const { positionals, values } = parseArgs({
     write: { default: false, type: "boolean" },
   },
 });
-
-function isCapture(value: unknown): value is Capture {
-  return typeof value === "object" && value !== null && "version" in value && "elements" in value;
-}
-
-function isFile(value: unknown): value is AlignmentFile {
-  return typeof value === "object" && value !== null && "captures" in value;
-}
-
-function asFile(parsed: unknown): AlignmentFile | null {
-  if (isFile(parsed)) {
-    return parsed;
-  }
-
-  return isCapture(parsed) ? { captures: [parsed] } : null;
-}
 
 /** A named file must be captures; a folder's other JSON files are skipped. */
 async function jsonFiles(path: string): Promise<{ named: boolean; path: string }[]> {
@@ -57,14 +51,19 @@ async function jsonFiles(path: string): Promise<{ named: boolean; path: string }
 }
 
 async function read({ named, path }: { named: boolean; path: string }) {
-  const parsed: unknown = JSON.parse(await readFile(path, "utf8"));
-  const file = asFile(parsed);
+  const checked = readCaptures(JSON.parse(await readFile(path, "utf8")));
 
-  if (named && (!file || file.captures.length === 0)) {
+  if (checked.kind === "invalid") {
+    throw new Error(`${path} isn't a capture this evaluator reads:\n${checked.problems}`);
+  }
+
+  if (named && (checked.kind === "other" || checked.file.captures.length === 0)) {
     throw new Error(`${path} holds no captures`);
   }
 
-  return file && file.captures.length > 0 ? { file, path } : null;
+  return checked.kind === "captures" && checked.file.captures.length > 0
+    ? { file: checked.file, path, single: checked.single }
+    : null;
 }
 
 if (values.help || positionals.length === 0) {
@@ -85,7 +84,7 @@ if (values.help || positionals.length === 0) {
     if (values.write) {
       await Promise.all(
         evaluated
-          .filter(({ file }) => file.captures.length > 0 && !isCapture(file))
+          .filter(({ single }) => !single)
           .map(({ file, findings, path, summary }) =>
             writeFile(path, `${JSON.stringify({ ...file, findings, summary }, null, 2)}\n`),
           ),

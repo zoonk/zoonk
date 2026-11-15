@@ -21,16 +21,14 @@ import { JourneyChapters } from "./journey-chapters";
 import { type JourneyPathLinks } from "./journey-links";
 import {
   CheckpointRow,
-  PATH_ROW_BODY_CLASS,
   PATH_ROW_CLASS,
   PATH_ROW_LEADING_CLASS,
+  PathRowBody,
 } from "./journey-phase-events";
 import { PHASE_END_CLASS, PhaseMark, PhaseName } from "./path-phase-row";
 import { findOpenPhase, findOwnChapter, isNamedLikeAChapter } from "./path-phases";
 import { PhaseWhen } from "./phase-when";
 import { useRoadmapFinish } from "./use-roadmap";
-
-const PHASE_ROW_CLASS = cn(PATH_ROW_CLASS, "min-h-12");
 
 function PhaseColumns({
   byPlace = false,
@@ -48,15 +46,14 @@ function PhaseColumns({
       <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
         {nextChapter ? <ChapterMark chapter={nextChapter} isNext /> : <PhaseMark phase={phase} />}
       </span>
-      <span className={PATH_ROW_BODY_CLASS}>
+      <PathRowBody value={<PhaseWhen className={PHASE_END_CLASS} phase={phase} />}>
         <PhaseName byPlace={byPlace} isNext={Boolean(nextChapter)} open={open} phase={phase} />
-        <PhaseWhen className={PHASE_END_CLASS} phase={phase} />
-      </span>
+      </PathRowBody>
     </>
   );
 }
 
-const NESTED_CLASS = "flex flex-col pl-7";
+const NESTED_CLASS = "flex flex-col pb-2 pl-7";
 
 function OpenPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
   return (
@@ -84,7 +81,7 @@ function ChapterPhase({
   return (
     <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
       <LearnLink
-        className={cn(PHASE_ROW_CLASS, "hover:bg-muted/70", isNext && "bg-muted hover:bg-muted")}
+        className={cn(PATH_ROW_CLASS, "hover:bg-muted/70", isNext && "bg-muted hover:bg-muted")}
         data-slot="path-row"
         href={links.chapter(chapter.chapterId)}
       >
@@ -115,7 +112,7 @@ function ChaptersPhase({
   if (!hasContent) {
     return (
       <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
-        <div className={PHASE_ROW_CLASS} data-slot="path-row">
+        <div className={PATH_ROW_CLASS} data-slot="path-row">
           {header}
           <ListRowChevronSpace />
         </div>
@@ -129,7 +126,7 @@ function ChaptersPhase({
           hand keeps it until then. */}
       <Collapsible defaultOpen={open} key={open ? "open" : "shut"}>
         <CollapsibleTrigger
-          className={cn(PHASE_ROW_CLASS, "hover:bg-muted/70")}
+          className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}
           data-slot="path-row"
         >
           {header}
@@ -185,23 +182,24 @@ function FinishItem() {
 
   return (
     <li data-state="finish">
-      <div className={PHASE_ROW_CLASS} data-slot="path-row">
+      <div className={PATH_ROW_CLASS} data-slot="path-row">
         <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
           <FlagIcon aria-hidden="true" className="size-4" />
         </span>
-        <span className={PATH_ROW_BODY_CLASS}>
-          <span className="font-medium" data-slot="path-row-title">
-            {goal.displayName}
-          </span>
-          {finish && (
-            <PlanDateText
-              className="text-muted-foreground text-xs"
-              estimate={finish.estimate}
-              isoDate={finish.isoDate}
-              month={finish.month}
-            />
-          )}
-        </span>
+        <PathRowBody
+          value={
+            finish && (
+              <PlanDateText
+                className="text-muted-foreground text-xs"
+                estimate={finish.estimate}
+                isoDate={finish.isoDate}
+                month={finish.month}
+              />
+            )
+          }
+        >
+          <span className="font-medium">{goal.displayName}</span>
+        </PathRowBody>
         <ListRowChevronSpace />
       </div>
     </li>

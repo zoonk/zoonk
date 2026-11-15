@@ -1,5 +1,6 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
+import { toWords } from "@/lib/format";
 import {
   type StoredChange,
   contentFixChangesSchema,
@@ -75,7 +76,7 @@ async function loadVocabularyLabels(changes: readonly StoredChange[]) {
 }
 
 function screenLabel(step: { kind: string; position: number }): string {
-  return `Screen ${String(step.position + 1)} · ${step.kind}`;
+  return `Screen ${String(step.position + 1)} · ${toWords(step.kind)}`;
 }
 
 const STRUCTURE_OPS = new Set<StoredChange["op"]>([
@@ -149,7 +150,7 @@ async function loadRowLabels(changes: readonly StoredChange[]): Promise<Map<stri
     ...steps.map((step): [string, string] => [step.id, screenLabel(step)]),
     ...variants.map((variant): [string, string] => [
       variant.id,
-      `${screenLabel(variant.step)} · ${variant.kind}${variant.key ? ` ${variant.key}` : ""} version`,
+      `${screenLabel(variant.step)} · ${toWords(variant.kind)}${variant.key ? ` ${variant.key}` : ""} version`,
     ]),
     ...explanations.map((explanation): [string, string] => [
       explanation.id,

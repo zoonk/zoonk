@@ -10,6 +10,6 @@ export const translatePassMarksTask: Task<TranslatePassMarksParams, PassMarkTran
   description: "Translate an exam's pass marks into the app's languages when its notice is read",
   generate: translatePassMarks,
   id: "translate-pass-marks",
-  name: "Translate Pass Marks",
+  name: "Translate pass marks",
   testCases: TEST_CASES,
 };

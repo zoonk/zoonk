@@ -3,6 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { type Browser, type Page } from "@playwright/test";
+import { LIST_GROUP } from "./alignment-table.mts";
 import { slug } from "./measure.mts";
 import { OVERLAYS } from "./overlays.mts";
 import { redactQuery } from "./requests.mts";
@@ -100,7 +101,7 @@ export async function captureRoles(
 ): Promise<RoleCapture[]> {
   const directory = join(out, "roles", slug(path), viewport);
   await mkdir(directory, { recursive: true });
-  const samples = await page.evaluate(readRoles, OVERLAYS);
+  const samples = await page.evaluate(readRoles, { listGroup: LIST_GROUP, overlays: OVERLAYS });
   const captures: RoleCapture[] = [];
 
   for (const sample of samples.filter((entry) => state === "page" || entry.role === "overlay")) {

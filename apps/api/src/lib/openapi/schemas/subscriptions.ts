@@ -24,6 +24,10 @@ export const freePlanResponseSchema = z
     lessonsPer30Days: freePlanLimitSchema.meta({
       description: `${getFreePlanLimits().lessonsPer30Days} distinct lessons across all goals in the preceding 30 times 24 hours; admitted lessons can be replayed without another charge`,
     }),
+    tutorMessagesPer30Days: freePlanLimitSchema.meta({
+      description:
+        "Messages a free account can send its study buddy in the preceding 30 times 24 hours, beside its daily limit",
+    }),
     tutorMessagesPerDay: freePlanLimitSchema.meta({
       description: "Messages a free account can send its study buddy each day",
     }),

@@ -20,7 +20,32 @@ export const PATH_ROW_CLASS =
 
 export const PATH_ROW_LEADING_CLASS = "flex size-4 shrink-0 items-center justify-center";
 
-export const PATH_ROW_BODY_CLASS = cn(TITLE_ROW_CLASS, "min-w-0 flex-1");
+const PATH_ROW_BODY_CLASS = cn(TITLE_ROW_CLASS, "min-w-0 flex-1");
+
+/**
+ * A path row's words, in one column however many lines they take, then its value. Centered beside
+ * the column, the value sits on the row's center, level with the chevron after it (craft E6).
+ */
+export function PathRowBody({
+  children,
+  value,
+}: {
+  children: React.ReactNode;
+  value?: React.ReactNode;
+}) {
+  return (
+    <span className={PATH_ROW_BODY_CLASS} data-slot="path-row-body">
+      <span className="flex min-w-0 flex-col text-pretty" data-slot="path-row-words">
+        {children}
+      </span>
+      {value && (
+        <span className="flex" data-slot="path-row-value">
+          {value}
+        </span>
+      )}
+    </span>
+  );
+}
 
 const EVENT_ROW_CLASS = cn(PATH_ROW_CLASS, "hover:bg-muted/70");
 
@@ -44,13 +69,10 @@ function EventRow({ children, href }: { children: React.ReactNode; href: string 
   );
 }
 
-/** `brief` leaves out what a challenge is in a list of every phase's, where it would repeat. */
 export function CheckpointRow({
-  brief = false,
   checkpoint,
   links,
 }: {
-  brief?: boolean;
   checkpoint: PlanPhaseCheckpointView;
   links: JourneyPathLinks;
 }) {
@@ -66,33 +88,29 @@ export function CheckpointRow({
       <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
         <Trickster className="size-4" view="face" />
       </span>
-      <span className={PATH_ROW_BODY_CLASS}>
-        <span
-          className={cn("font-medium", isDone && "text-muted-foreground")}
-          data-slot="path-row-title"
-        >
+      <PathRowBody
+        value={
+          <span className={EVENT_DATE_CLASS}>
+            {isDone && t({ description: "The learner won this phase challenge.", message: "Won" })}
+            {!isDone &&
+              when === "nextSession" &&
+              (checkpoint.date === today ? t("Today") : t("In your next session"))}
+            {onDate && checkpoint.date && <PlanDateText estimate isoDate={checkpoint.date} />}
+          </span>
+        }
+      >
+        <span className={cn("font-medium", isDone && "text-muted-foreground")}>
           {goal.kind === "language" ? t("Call") : t("The Trickster")}
         </span>
 
-        <span className={EVENT_DATE_CLASS} data-slot="path-row-value">
-          {isDone && t({ description: "The learner won this phase challenge.", message: "Won" })}
-          {!isDone &&
-            when === "nextSession" &&
-            (checkpoint.date === today ? t("Today") : t("In your next session"))}
-          {onDate && checkpoint.date && <PlanDateText estimate isoDate={checkpoint.date} />}
-        </span>
-
-        {!brief && !isDone && (
-          <span
-            className="text-muted-foreground basis-full text-xs text-pretty"
-            data-slot="path-row-note"
-          >
+        {!isDone && (
+          <span className="text-muted-foreground text-xs text-pretty">
             {goal.kind === "language"
               ? t("A live call where you get your point across")
               : t("Questions on this phase, with no hints")}
           </span>
         )}
-      </span>
+      </PathRowBody>
     </EventRow>
   );
 }
@@ -146,19 +164,14 @@ export function MockRow({
       <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
         <KindMark kind="mock" />
       </span>
-      <span className={PATH_ROW_BODY_CLASS}>
-        <span className="flex flex-col">
-          <span className="font-medium text-pretty" data-slot="path-row-title">
-            {t("Mock exam")}
+      <PathRowBody value={<PlanDateText className={EVENT_DATE_CLASS} isoDate={date} />}>
+        <span className="font-medium text-pretty">{t("Mock exam")}</span>
+        {funded?.minutes ? (
+          <span className="text-muted-foreground font-mono text-xs tabular-nums">
+            {formatDuration(funded.minutes)}
           </span>
-          {funded?.minutes ? (
-            <span className="text-muted-foreground font-mono text-xs tabular-nums">
-              {formatDuration(funded.minutes)}
-            </span>
-          ) : null}
-        </span>
-        <PlanDateText className={EVENT_DATE_CLASS} isoDate={date} />
-      </span>
+        ) : null}
+      </PathRowBody>
     </EventRow>
   );
 }

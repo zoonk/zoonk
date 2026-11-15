@@ -7,7 +7,8 @@ export type AlignmentPage = Pick<Capture, "activeSurface" | "elements">;
 
 /**
  * Runs in the browser, so it reads nothing outside itself and its arguments. Positions are page
- * pixels, rounded to a tenth, like the craft read's, so they match a full-page screenshot.
+ * pixels as measured, so a full-page screenshot shows them; the evaluator rounds only what it
+ * prints, never what it compares.
  */
 export function readAlignment({
   actions: controls,
@@ -23,18 +24,15 @@ export function readAlignment({
   pieces: { name: string; web: WebPiece }[];
   surfaces: string;
 }): AlignmentPage {
-  const TENTH = 10;
   const LABEL_LENGTH = 32;
   const { shown } = globalThis.zoonkPage;
   const { scrollX, scrollY } = globalThis;
 
-  const round = (value: number) => Math.round(value * TENTH) / TENTH;
-
   const bounds = (rect: { bottom: number; left: number; right: number; top: number }): Bounds => [
-    round(rect.left + scrollX),
-    round(rect.top + scrollY),
-    round(rect.right - rect.left),
-    round(rect.bottom - rect.top),
+    rect.left + scrollX,
+    rect.top + scrollY,
+    rect.right - rect.left,
+    rect.bottom - rect.top,
   ];
 
   type Rect = { bottom: number; left: number; right: number; top: number };
@@ -122,7 +120,7 @@ export function readAlignment({
         node instanceof Text &&
         node.textContent?.trim() &&
         node.parentElement &&
-        shown(node.parentElement)
+        present(node.parentElement)
       ) {
         nodes.push(node);
       }
@@ -144,7 +142,7 @@ export function readAlignment({
         node instanceof Text &&
         node.textContent?.trim() &&
         node.parentElement &&
-        shown(node.parentElement)
+        present(node.parentElement)
       ) {
         return node;
       }
@@ -236,7 +234,7 @@ export function readAlignment({
           node.nodeType === Node.TEXT_NODE &&
           node.textContent?.trim() &&
           node.parentElement &&
-          shown(node.parentElement),
+          present(node.parentElement),
       )
       .flatMap((node) => {
         const range = document.createRange();
@@ -252,9 +250,9 @@ export function readAlignment({
     const cap = drawnByPrimary(first.data, style) ? capHeight(style) : null;
 
     return {
-      baseline: base === null ? "not measured" : round(base + scrollY),
-      capBottom: base === null || cap === null ? "not measured" : round(base + scrollY),
-      capTop: base === null || cap === null ? "not measured" : round(base - cap + scrollY),
+      baseline: base === null ? "not measured" : base + scrollY,
+      capBottom: base === null || cap === null ? "not measured" : base + scrollY,
+      capTop: base === null || cap === null ? "not measured" : base - cap + scrollY,
       ...(line ? { firstLine: bounds(line) } : {}),
       lines: lineCount(rects),
       text: (main.textContent ?? "").trim().slice(0, LABEL_LENGTH),
@@ -282,12 +280,19 @@ export function readAlignment({
     return getComputedStyle(element).display === "contents";
   }
 
+  /**
+   * It, or what it holds, draws: a group with no box of its own (`display: contents`, or no height
+   * with its rows overflowing) is there by its rows. Hidden content, such as a closed `details`,
+   * draws nothing and stays out.
+   */
   function present(element: Element) {
-    return isContents(element) ? inkOf(element) !== null : shown(element);
+    return shown(element) || inkOf(element) !== null;
   }
 
+  /** Its own box, or what it draws where it has no box of its own. */
   function boxOf(element: Element): Rect {
-    return (isContents(element) ? inkOf(element) : null) ?? element.getBoundingClientRect();
+    const own = isContents(element) || !shown(element) ? inkOf(element) : null;
+    return own ?? element.getBoundingClientRect();
   }
 
   function isRtl(element: Element) {
@@ -458,16 +463,14 @@ export function readAlignment({
     return [
       {
         bounds: bounds(boxOf(row)),
-        endEdge: round(
-          (read.bar ? read.bar.getBoundingClientRect().right : contentEnd(row)) + scrollX,
-        ),
+        endEdge: (read.bar ? read.bar.getBoundingClientRect().right : contentEnd(row)) + scrollX,
         flow: `${read.groupId}.${flows.indexOf(unit.parentElement)}`,
         gapBefore: unit.parentElement ? flowGap(unit.parentElement) : 0,
         group: read.groupId,
         id: rowId,
         ink: rowInk ? bounds(rowInk) : null,
         margins: [margin("marginTop"), margin("marginBottom")],
-        middle: round(contentMiddle(row) + scrollY),
+        middle: contentMiddle(row) + scrollY,
         name: name(row),
         note: note ? [...row.querySelectorAll(note)].some((element) => shown(element)) : false,
         // The row the learner is on (current, picked, highlighted) may set its words apart.
@@ -514,12 +517,23 @@ export function readAlignment({
     const groupInk = inkOf(group);
     const read = { bar, group, groupId, piece, pieceName, rows };
     const flows = [...new Set(rows.map((row) => unitIn(row, group).parentElement))];
+    const drawnBox = group.getBoundingClientRect();
+
+    // Layout sizes are whole pixels, so a drawn size more than one off is a transform or a zoom.
+    const scaled =
+      group instanceof HTMLElement &&
+      !isContents(group) &&
+      ((group.offsetWidth > 0 && Math.abs(drawnBox.width - group.offsetWidth) > 1) ||
+        (group.offsetHeight > 0 && Math.abs(drawnBox.height - group.offsetHeight) > 1));
 
     return [
       {
         bounds: bounds(boxOf(group)),
+        ...(scaled
+          ? { layoutScale: Math.round((drawnBox.width / group.offsetWidth) * 100) / 100 }
+          : {}),
         ...(isRtl(group) ? { direction: "rtl" as const } : {}),
-        endEdge: round((bar ? bar.getBoundingClientRect().right : contentEnd(group)) + scrollX),
+        endEdge: (bar ? bar.getBoundingClientRect().right : contentEnd(group)) + scrollX,
         group: null,
         id: groupId,
         ink: groupInk ? bounds(groupInk) : null,
@@ -664,8 +678,8 @@ export function readAlignment({
 
         return found.map(({ box, kind }, part) => ({
           bounds: bounds(box),
-          column: [round(edges.left + scrollX), round(edges.right + scrollX)],
-          frame: [round(edges.frame.left + scrollX), round(edges.frame.right + scrollX)],
+          column: [edges.left + scrollX, edges.right + scrollX],
+          frame: [edges.frame.left + scrollX, edges.frame.right + scrollX],
           group: null,
           id: `fill.${index}.${part}`,
           ink: bounds(box),
@@ -682,14 +696,46 @@ export function readAlignment({
   const covers = [...document.querySelectorAll(surfaces)].filter((surface) => present(surface));
   const surfaceName = (cover: Element) => `${name(cover)} #${covers.indexOf(cover) + 1}`;
 
-  /** The surface on top: the one whose own middle the document hits inside it, not the last in order. */
-  const onTop = covers.filter((cover) => {
-    const box = boxOf(cover);
-    const hit = document.elementFromPoint((box.left + box.right) / 2, (box.top + box.bottom) / 2);
+  const shows = (cover: Element, x: number, y: number) => {
+    const hit = document.elementFromPoint(x, y);
     return hit !== null && cover.contains(hit);
+  };
+
+  /** The surface on top: the one whose own middle the document hits inside it, not the last in order. */
+  const exposed = covers.filter((cover) => {
+    const box = boxOf(cover);
+    return shows(cover, (box.left + box.right) / 2, (box.top + box.bottom) / 2);
   });
 
-  const top = onTop.at(-1) ?? covers.at(-1);
+  /**
+   * Of two surfaces that partly overlap, the declared surface the document shows where they overlap
+   * (a third one over both, such as a dialog over a sheet over the page's bar, included); one inside
+   * the other is the inner one. Null when the document shows no declared surface there.
+   */
+  const upper = (one: Element, other: Element): Element | null => {
+    if (one.contains(other) || other.contains(one)) {
+      return one.contains(other) ? other : one;
+    }
+
+    const a = boxOf(one);
+    const b = boxOf(other);
+    const left = Math.max(a.left, b.left);
+    const right = Math.min(a.right, b.right);
+    const top = Math.max(a.top, b.top);
+    const bottom = Math.min(a.bottom, b.bottom);
+
+    if (left >= right || top >= bottom) {
+      return one;
+    }
+
+    const hit = document.elementFromPoint((left + right) / 2, (top + bottom) / 2);
+    return (hit && covers.findLast((cover) => cover.contains(hit))) ?? null;
+  };
+
+  const top = covers.reduce<Element | null | undefined>(
+    (current, cover) => (current && cover !== current ? upper(current, cover) : current),
+    exposed.at(-1) ?? covers.at(-1),
+  );
 
   const surfaceOf = (element: Element) => {
     const cover = covers.findLast((surface) => surface.contains(element));
@@ -702,12 +748,12 @@ export function readAlignment({
   const actions = [...document.querySelectorAll(controls)]
     .filter((action) => filled(action) && present(action))
     .map((action, index): CaptureElement => {
-      // A link's destination, or the form a submit button sends: the same words to the same place
-      // offered twice (a page's goal box at its top and its end) are one action.
-      const form =
-        action instanceof HTMLButtonElement && action.type === "submit" ? action.form : null;
-
-      const target = action instanceof HTMLAnchorElement ? action.href : (form?.action ?? null);
+      // A link's destination, or the action a piece names on its button (`data-action-name`): the
+      // same words to the same place offered twice (a page's goal box at its top and its end) are
+      // one action. A form's URL doesn't say that: every Server Action form gets the same one.
+      const declared = action instanceof HTMLElement ? action.dataset.actionName : undefined;
+      const named = declared ? `action:${declared}` : null;
+      const target = action instanceof HTMLAnchorElement ? action.href : named;
 
       return {
         bounds: bounds(boxOf(action)),
@@ -749,10 +795,14 @@ export function readAlignment({
     ];
   });
 
-  return {
-    activeSurface: top ? surfaceName(top) : "page",
-    elements: [...elements, ...actions, ...anchored, ...readBleeds()],
-  };
+  const all = [...elements, ...actions, ...anchored, ...readBleeds()];
+
+  // Null when two surfaces overlap and the document shows no declared surface where they do.
+  if (top === null) {
+    return { activeSurface: "not measured", elements: all };
+  }
+
+  return { activeSurface: top ? surfaceName(top) : "page", elements: all };
 }
 
 /** The UI's locale is the path's first segment where it names one (`/pt/plan`). */

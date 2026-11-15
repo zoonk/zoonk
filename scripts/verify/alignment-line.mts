@@ -1,4 +1,4 @@
-/* oxlint-disable no-magic-numbers -- The tolerance `ROW-LINE.md` proposes, in logical units. */
+/* oxlint-disable no-magic-numbers -- The tolerance `ROW-LINE.md` settles, in logical units. */
 import { type AlignmentFinding, type CaptureElement } from "./alignment-capture.mts";
 import { isStacked } from "./alignment-edges.mts";
 import {
@@ -7,25 +7,22 @@ import {
   drawn,
   finding,
   groupName,
+  measured,
   rowName,
 } from "./alignment-geometry.mts";
 
 /**
  * One line of a row (`ROW-LINE.md`, craft E6): every part sits on the middle of the label's
- * capitals, whatever its face or size. The tolerance (0.5, between what nobody saw and what the
- * owner saw) is pending: a one-line `ListRow` puts its chevron and mark 0.55 to 0.65 below its
- * label's capitals, and the owner is deciding whether the row moves or the tolerance does. Until
- * then the misses print as "not measured" with their numbers, and nothing fails.
+ * capitals, whatever its face or size, within half a logical unit.
  */
 const LINE = 0.5;
 
 /** A text's middle from the font's cap height, never from the string's ink: "yes" sits where "Off" would. */
 function capMiddle(element: CaptureElement): number | null {
-  const { capBottom, capTop } = element;
+  const top = measured(element.capTop);
+  const bottom = measured(element.capBottom);
 
-  return typeof capTop === "number" && typeof capBottom === "number"
-    ? (capTop + capBottom) / 2
-    : null;
+  return top === null || bottom === null ? null : (top + bottom) / 2;
 }
 
 function middleOf(element: CaptureElement): number | null {
@@ -43,8 +40,9 @@ type Miss = { off: number; part: string; to: string };
  * Each part's distance from where it belongs (craft E5 and E6). One line: on the label's middle.
  * Beside a title and one description, or a title that wraps: a mark, a value and an end glyph on
  * the row's center. Beside three lines or more (a title and two descriptions): a mark on the
- * label's first line, a value and an end glyph on the row's center. A text lead always goes with
- * the label's first line. A value stacked under its label has no line to share.
+ * label's first line, a value and an end glyph on the row's center. A row with a text lead (a date
+ * before its day's entries) is top-aligned as a whole: every part sits on its first entry's line.
+ * A value stacked under its label has no line to share.
  */
 function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
   const label = own
@@ -65,9 +63,10 @@ function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
   }
 
   const labelMiddle = capMiddle(label);
+  const rowMiddle = measured(row.middle, row.bounds[1] + row.bounds[3] / 2);
   const middles = others.map((element) => ({ element, middle: middleOf(element) }));
 
-  if (labelMiddle === null || middles.some(({ middle }) => middle === null)) {
+  if (labelMiddle === null || rowMiddle === null || middles.some(({ middle }) => middle === null)) {
     return null;
   }
 
@@ -75,8 +74,9 @@ function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
   const notes = Math.max(own.filter((element) => element.part === "note").length, row.note ? 1 : 0);
 
   const oneLine = !stacked && (label.lines ?? 1) === 1 && notes === 0;
-  const rowMiddle = row.middle ?? row.bounds[1] + row.bounds[3] / 2;
   const endMiddle = middles.find(({ element }) => element.part === "end")?.middle ?? null;
+
+  const led = others.some((element) => element.part === "lead");
 
   return middles.flatMap(({ element, middle }): Miss[] => {
     const at = middle ?? labelMiddle;
@@ -85,8 +85,8 @@ function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
       return [{ off: at - labelMiddle, part: element.part, to: "the label's middle" }];
     }
 
-    // A text lead goes with the first line; a mark does beside three lines or more.
-    if (element.part === "lead" || (element.part === "mark" && notes >= 2)) {
+    // A row with a text lead sits on its first line; a mark does beside three lines or more.
+    if (led || (element.part === "mark" && notes >= 2)) {
       return [{ off: at - labelMiddle, part: element.part, to: "the label's first line" }];
     }
 
@@ -113,7 +113,7 @@ export function lineLeads(context: Context, read: Group): AlignmentFinding[] {
     if (found === null) {
       return [
         finding(context, {
-          detail: `${rowName(read, row.id)}: a part's first baseline or cap height wasn't measured`,
+          detail: `${rowName(read, row.id)}: a part's cap height or the row's middle wasn't measured`,
           level: "not-measured",
           message: `one line of a row in ${group.piece}: a part wasn't measured`,
           piece: group.piece,
@@ -131,10 +131,9 @@ export function lineLeads(context: Context, read: Group): AlignmentFinding[] {
     return [
       finding(context, {
         detail: `${rowName(read, row.id)}: ${off.map((miss) => describe(miss)).join("; ")}`,
-        level: "not-measured",
+        level: "fail",
         measured: Math.max(...off.map((miss) => Math.abs(miss.off))),
-        message: `a row of ${groupName(read)} is off one line by more than ${LINE} (tolerance pending)`,
-        pending: true,
+        message: `a row of ${groupName(read)} is off one line by more than ${LINE}`,
         piece: group.piece,
         rule: "line",
       }),

@@ -7,6 +7,7 @@ import { join } from "node:path";
 import { describe, it } from "vitest";
 import { type Bounds, type Capture } from "./alignment-capture.mts";
 import {
+  LABEL_TYPE,
   element,
   endFindings,
   failures,
@@ -75,7 +76,7 @@ describe("relationships with no vote", () => {
   it("fails labels of one role in two type tokens", () => {
     const findings = evaluateCapture(
       fixtureCapture([
-        element({ group: null, id: "g", part: "group" }),
+        element({ gap: 0, group: null, id: "g", part: "group" }),
         ...labelledRows(2),
         element({ id: "l0", part: "label", row: "r0", type: "Geist 14px 500 19.25px" }),
         element({ id: "l1", part: "label", row: "r1", type: "Geist 14px 400 19.25px" }),
@@ -112,7 +113,7 @@ describe("relationships with no vote", () => {
   });
 });
 
-const GROUP = element({ endEdge: 358, group: null, id: "g", part: "group" });
+const GROUP = element({ endEdge: 358, gap: 0, group: null, id: "g", part: "group" });
 
 function marks(first: number, second: number) {
   return fixtureCapture([
@@ -188,87 +189,14 @@ describe("what the review found the checks could pass unmeasured", () => {
       group,
       element({ bounds: [0, 0, 150, 30], id: "r0", part: "row" }),
       element({ bounds: [152, 0, 150, 30], id: "r1", part: "row" }),
-      element({ id: "l0", ink: [8, 5, 20, 20], part: "label", row: "r0" }),
-      element({ id: "l1", ink: [160, 5, 20, 20], part: "label", row: "r1" }),
+      element({ id: "l0", ink: [8, 5, 20, 20], part: "label", row: "r0", type: LABEL_TYPE }),
+      element({ id: "l1", ink: [160, 5, 20, 20], part: "label", row: "r1", type: LABEL_TYPE }),
     ]);
 
     assert.deepEqual(
       evaluateCapture(columns).map((finding) => `${finding.level} ${finding.rule}`),
       ["not-measured stack"],
     );
-  });
-});
-
-/**
- * A row 60 tall (center 30) whose label's first line has its capitals' middle at 15, with a mark,
- * a lead, a value or an end centered at `at`, and `notes` descriptions under the label.
- */
-function lineRow(part: "end" | "lead" | "mark" | "value", at: number, notes: number) {
-  return fixtureCapture([
-    element({ group: null, id: "g", part: "group" }),
-    element({ bounds: [0, 0, 358, 60], id: "r0", part: "row" }),
-    element({
-      capBottom: 20,
-      capTop: 10,
-      id: "l0",
-      ink: [28, 8, 100, 14],
-      lines: 1,
-      part: "label",
-      row: "r0",
-    }),
-    ...Array.from({ length: notes }, (_, index) =>
-      element({ id: `n${index}`, ink: [28, 24 + index * 14, 100, 12], part: "note", row: "r0" }),
-    ),
-    part === "mark" || part === "end"
-      ? element({ id: "p", ink: [0, at - 5, 10, 10], part, row: "r0" })
-      : element({
-          capBottom: at + 4,
-          capTop: at - 4,
-          id: "p",
-          ink: [0, at - 6, 10, 12],
-          part,
-          row: "r0",
-        }),
-  ]);
-}
-
-/** The same row 30 tall, so its one line is the row. */
-function oneLine(at: number) {
-  const capture = lineRow("mark", at, 0);
-
-  return {
-    ...capture,
-    elements: capture.elements.map((item) =>
-      item.part === "row" ? { ...item, bounds: [0, 0, 358, 30] as Bounds } : item,
-    ),
-  };
-}
-
-function lineMiss(capture: Capture) {
-  return evaluateCapture(capture).find((finding) => finding.rule === "line")?.detail ?? "";
-}
-
-describe("one line of a row, as craft E5 places each part", () => {
-  it("puts a mark beside one line on that line's middle", () => {
-    assert.equal(lineMiss(oneLine(15)), "");
-    assert.match(lineMiss(oneLine(16)), /the mark 1 below the label's middle/u);
-  });
-
-  it("puts a mark beside a title and one description on the row's center", () => {
-    assert.equal(lineMiss(lineRow("mark", 30, 1)), "");
-    assert.match(lineMiss(lineRow("mark", 15, 1)), /the mark 15 above the row's center/u);
-  });
-
-  it("puts a mark beside a title and two descriptions on the first line", () => {
-    assert.equal(lineMiss(lineRow("mark", 15, 2)), "");
-    assert.match(lineMiss(lineRow("mark", 30, 2)), /the mark 15 below the label's first line/u);
-  });
-
-  it("puts a text lead on the first line however many follow, and a value on the row's center", () => {
-    assert.equal(lineMiss(lineRow("lead", 15, 1)), "");
-    assert.match(lineMiss(lineRow("lead", 30, 1)), /the lead 15 below the label's first line/u);
-    assert.equal(lineMiss(lineRow("value", 30, 2)), "");
-    assert.match(lineMiss(lineRow("value", 15, 2)), /the value 15 above the row's center/u);
   });
 });
 
@@ -289,6 +217,14 @@ describe("the command", () => {
     );
   });
 });
+
+/** A declared group of one row with no label, named `name`. */
+function unlabelled(name: string) {
+  return fixtureCapture([
+    element({ endEdge: 358, gap: 0, group: null, id: "g", name, part: "group" }),
+    element({ bounds: [0, 0, 358, 44], id: "r0", name: `${name} row`, part: "row" }),
+  ]);
+}
 
 describe("printing and the summary line", () => {
   it("prints one fault once with each screen it showed on under it", () => {
@@ -324,6 +260,19 @@ describe("printing and the summary line", () => {
     );
 
     assert.equal(summarize(findings.filter((item) => item.level !== "fail")).unresolved, 0);
+  });
+
+  it("prints one not-measured reason once with its count, and every group's rows under it", () => {
+    const lines = alignmentLines(
+      evaluateFile({ captures: [unlabelled("Today"), unlabelled("Plan")] }).findings,
+    );
+
+    assert.deepEqual(
+      lines.filter((line) => line.startsWith("- ")),
+      ["- **label**: list-group: a row's label wasn't found (2 groups)"],
+    );
+
+    assert.match(lines.join("\n"), /list-group Today: Today row; list-group Plan: Plan row/u);
   });
 
   it("keeps an excepted fault listed but resolved", () => {

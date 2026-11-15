@@ -6,8 +6,8 @@
   "recap_first_summary": "705647112a277f659cb2398c044d26f8b64612701f3bb285376709a85a93a5c2",
   "recap_fresh_week": "805d97ac568858a49b94442305895dbfc3a094dcdf50dbad6949e2ded2b46948",
   "recap_mistakes_fixed": "6de6c7b0acb5c1a66230e37e205c41330fa60a25cf2d6c5acd4ebc035ee639de",
-  "recap_more_questions": "93b2f9f7ec2d2b4a02a44540928d6c552081f1688ed80f9d0b6f3202651ac13a",
-  "recap_more_time": "0bf1c45f01d2b8e0b0a2eebc02a9e59438ee080fc13c72f95b65c1c7e2c2679a",
+  "recap_more_questions": "652d85032ffa6cbe948ef8bc233d45a88a42487bf79afaacd8db6da387fe6c56",
+  "recap_more_time": "e4aceb1238c04decb8780a27fb2428ff27aefd621632ae8b68abb7039aae3ed8",
   "recap_most_improved": "4c1a9092fd2685b7ffb778f1de3a77479bf9be361d28b8d804be05f280dda757",
   "recap_most_improved_value": "8cf6c214cf7935c1f9a9fd3f98cce0b06a81c5a838f5e086a81be171e8612065",
   "recap_new_topics": "5e31de75e30b4e8fed37d7384389197b01c7a17e0555ea44babbc9b2668f0efd",
@@ -28,11 +28,10 @@
         <item quantity="one">An %d Tag gelernt</item>
         <item quantity="other">An %d Tagen gelernt</item>
     </plurals>
-    <!-- %1$s is a duration, such as "20 min". -->
-    <string name="recap_more_time">%1$s mehr als in der Woche davor!</string>
+    <string name="recap_more_time">%1$s mehr als in der Vorwoche.</string>
     <plurals name="recap_more_questions">
-        <item quantity="one">%d Frage mehr als in der Woche davor!</item>
-        <item quantity="other">%d Fragen mehr als in der Woche davor!</item>
+        <item quantity="one">%d Frage mehr als in der Woche davor.</item>
+        <item quantity="other">%d Fragen mehr als in der Woche davor.</item>
     </plurals>
     <!-- %1$s is the name of a part of the learner's plan they finished this week, such as "Foundations". -->
     <string name="recap_phase_finished">Du hast %1$s abgeschlossen.</string>

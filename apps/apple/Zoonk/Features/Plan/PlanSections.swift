@@ -107,14 +107,9 @@ struct RoadmapPhaseRow: View {
   let today: String
 
   var body: some View {
-    PlanPathRow {
-      Label {
-        Text(phase.title)
-          .typeWeight(.medium)
-      } icon: {
-        StatusMark(status: phase.mark)
-      }
-    } value: {
+    ListRow(Text(phase.title)) {
+      StatusMark(status: phase.mark)
+    } trailing: {
       Group {
         switch when {
         case .today?:
@@ -161,12 +156,14 @@ private struct RoadmapCompact: View {
         if let currentIndex {
           let phase = phases[currentIndex]
 
-          PlanPathRow {
+          RowLayout {
+          } words: {
             position(phase: phase, number: currentIndex + 1, count: phases.count)
           } value: {
             if let end = context.plan.phaseEnd(phase, goalKind: context.goal.kind) {
               Text(verbatim: end.shown)
                 .typeStyle(.data)
+                .foregroundStyle(.mutedForeground)
                 .accessibilityLabel(Text(verbatim: end.spoken))
             }
           }
@@ -532,14 +529,8 @@ struct NextOnPathSection: View {
 
         if let chapter, let chapterId = chapter.chapterId {
           PageLink(route: chapterRoute(chapterId)) {
-            PlanPathRow {
-              Label {
-                Text(chapter.title)
-              } icon: {
-                StatusMark(status: .next)
-              }
-            } value: {
-              EmptyView()
+            ListRow(Text(chapter.title)) {
+              StatusMark(status: .next)
             }
           }
         }
@@ -567,11 +558,7 @@ struct NextOnPathSection: View {
   }
 
   private func row(title: Text, detail: PlanWhen?, kind: LearnKind) -> some View {
-    IconLabeledContent {
-      detail
-    } title: {
-      title.foregroundStyle(.primary)
-    } icon: {
+    PlanMarkedRow(title: title, when: detail) {
       KindMark(kind: kind)
     }
     .disclosureChevron()
@@ -579,11 +566,7 @@ struct NextOnPathSection: View {
 
   @ViewBuilder
   private var finishRow: some View {
-    let finish = IconLabeledContent {
-      planFinish(context)
-    } title: {
-      Text(context.goal.displayName).foregroundStyle(.primary)
-    } icon: {
+    let finish = PlanMarkedRow(title: Text(context.goal.displayName), when: planFinish(context)) {
       Image(systemName: "flag")
     }
 

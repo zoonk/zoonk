@@ -62,11 +62,11 @@ internal fun mockOptionDetail(
     }
 }
 
-/** "90 questions · 4 hr 42 min". */
+/** "90 questions · 5 hr 30 min": the time limit the mock runs on, as main's row shows it. */
 @Composable
 internal fun mockOptionSize(option: MockOption): String {
     val questions = option.questions.toInt()
-    return pluralStringResource(R.plurals.mock_chooser_option_size, questions, questions, minutesText(option.estimatedMinutes))
+    return pluralStringResource(R.plurals.mock_chooser_option_size, questions, questions, minutesText(option.minutes))
 }
 
 private const val SECONDS_PER_MINUTE = 60L

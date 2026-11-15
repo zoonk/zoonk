@@ -98,13 +98,15 @@ export function useCheckpointDuel({
     });
   }
 
+  /** The last answer stays on screen, its button busy, until the result replaces it. */
   async function next() {
-    dispatch({ type: "next" });
-    shownAt.current = Date.now();
-
     if (getDuelScore({ checkpoint, state }).done) {
       await finish();
+      return;
     }
+
+    dispatch({ type: "next" });
+    shownAt.current = Date.now();
   }
 
   async function retry() {

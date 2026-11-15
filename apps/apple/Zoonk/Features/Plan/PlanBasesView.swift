@@ -8,7 +8,6 @@ struct PlanBasesView: View {
   @State private var choices: [String: BaseChoice]
   @State private var preview: PlanPreviewState = .checking
   @State private var previewAttempt = 0
-  @State private var recommended: BaseChoice?
   @State private var saving: Task<Void, Never>?
 
   let editor: PlanEditor
@@ -140,9 +139,7 @@ struct PlanBasesView: View {
       Text("Prerequisites", tableName: "Plan", comment: "Title of the prerequisites")
     )
     .toolbarTitleDisplayMode(.inline)
-    .task {
-      await advise()
-    }
+    .loads(store.basesAdvice(goalId: goal.id), refreshable: false, retriesAFailure: true)
     .onDisappear { saving?.cancel() }
     .task(
       id: PreviewKey(
@@ -203,18 +200,14 @@ struct PlanBasesView: View {
     return picked.count == 1 ? picked.first : nil
   }
 
-  /// No recommendation shows when it can't be read: the options stand without it.
-  private func advise() async {
-    let goalId = goal.id
-    let result = await store.write { api, token in
-      try await api.basesAdvice(token: token, goalId: goalId)
-    } changed: { _ in
-      false
-    }
+  private var recommended: BaseChoice? {
+    Self.recommended(store.basesAdvice(goalId: goal.id))
+  }
 
-    if case .done(let answer) = result, answer.ready {
-      recommended = answer.recommended
-    }
+  /// No recommendation shows when it can't be read for the current plan: the options stand without
+  /// it.
+  static func recommended(_ advice: Resource<PlanBasesAdvice>) -> BaseChoice? {
+    advice.freshValue?.recommended
   }
 
   private func check(_ changed: [GoalPlan.Bases.Item]) async {
@@ -226,10 +219,8 @@ struct PlanBasesView: View {
 
     let goalId = goal.id
     let edits = [edit(changed)]
-    let answer = await store.write { api, token in
+    let answer = await store.ask { api, token in
       try await api.preview(token: token, goalId: goalId, edits: edits)
-    } changed: { _ in
-      false
     }
 
     switch answer {

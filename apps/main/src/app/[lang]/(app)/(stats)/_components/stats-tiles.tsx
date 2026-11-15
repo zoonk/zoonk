@@ -1,10 +1,19 @@
-import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { StatSkeleton } from "@zoonk/ui/components/stat";
 import { cn } from "@zoonk/ui/lib/utils";
 
 export const STAT_PAGE_TILES_CLASS =
   "gap-2 sm:grid-cols-3 sm:[&>li:last-child:nth-child(odd)]:col-span-1";
 
-export function StatTilesSkeleton({ className, count }: { className?: string; count: number }) {
+export function StatTilesSkeleton({
+  className,
+  count,
+  detailed = 0,
+}: {
+  className?: string;
+  count: number;
+  /** How many of the first tiles have a line under their number. */
+  detailed?: number;
+}) {
   return (
     <div
       aria-hidden="true"
@@ -16,7 +25,7 @@ export function StatTilesSkeleton({ className, count }: { className?: string; co
     >
       {Array.from({ length: count }, (_, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- Static placeholders.
-        <Skeleton className="h-24.5 rounded-xl" key={index} />
+        <StatSkeleton detailLines={index < detailed ? 1 : 0} key={index} />
       ))}
     </div>
   );

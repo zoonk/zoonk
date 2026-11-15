@@ -23,6 +23,7 @@ import {
   revertContentFixAction,
   startContentFixApprovalAction,
 } from "../_actions/content-fix-actions";
+import { ADD_PASSKEY, ApproveWords } from "./approve-words";
 
 type ApprovalNotice =
   | "cacheNotNotified"
@@ -278,14 +279,14 @@ export function ReviewBar({
 
         {fixIds.length > 0 && needsPasskey && (
           <EnterLink className={approveClass} href={settingsUrl} link={SettingsLink} size="xl">
-            Add a passkey to approve
+            <ApproveWords approveLabel={approveLabel} shown={ADD_PASSKEY} />
           </EnterLink>
         )}
 
         {fixIds.length > 0 && !needsPasskey && (
           <form action={approveAction} className="contents">
             <EnterButton busy={isApproving} className={approveClass} size="xl" type="submit">
-              {approveLabel}
+              <ApproveWords approveLabel={approveLabel} shown={approveLabel} />
             </EnterButton>
           </form>
         )}
@@ -302,8 +303,10 @@ export function ReviewBar({
   );
 }
 
-/** Holds the bar's height while the passkey read streams, so nothing moves when it lands. */
+/** Holds the bar's room while the page streams, so nothing in it moves when the bar lands. */
 export function ReviewBarSkeleton({ batch = false }: { batch?: boolean }) {
+  const approveLabel = batch ? "Approve all with passkey" : "Approve with passkey";
+
   const { approveClass, sharedLine } = phoneLines({
     finishing: 0,
     fixIds: [],
@@ -316,9 +319,10 @@ export function ReviewBarSkeleton({ batch = false }: { batch?: boolean }) {
         <ButtonSkeleton className={sharedLine} size="xl" variant="outline">
           {batch ? "Reject all" : "Reject"}
         </ButtonSkeleton>
-        <ButtonSkeleton className={approveClass} size="xl">
-          {batch ? "Approve all with passkey" : "Approve with passkey"}
-        </ButtonSkeleton>
+        {/* The approve control itself, busy until the page knows which words it shows. */}
+        <EnterButton busy className={approveClass} size="xl" tabIndex={-1} type="button">
+          <ApproveWords approveLabel={approveLabel} shown={approveLabel} />
+        </EnterButton>
       </BottomBarActions>
     </BottomBar>
   );

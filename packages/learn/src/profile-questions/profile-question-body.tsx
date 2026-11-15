@@ -2,23 +2,26 @@
 
 import { type BodyProps } from "./profile-body-parts";
 import { AddressFormBody, ChipBody, StudiesBody, WorkBody } from "./profile-chip-bodies";
+import { type ProfileQuestionPlace } from "./profile-draft";
 import { ConditionsBody, SupportBody } from "./profile-row-bodies";
 
 export function ProfileQuestionBody({
-  declineAsSkip = false,
+  from,
   jobPrefill = null,
   label,
   prechecked = false,
   ...props
 }: BodyProps & {
-  /** Onboarding declines through its Skip button, so no body draws a row that declines. */
-  declineAsSkip?: boolean;
+  /** Onboarding declines through its Skip button, so no body there draws a row that declines. */
+  from: ProfileQuestionPlace;
   /** The goal's current role, prefilled into the job field. */
   jobPrefill?: string | null;
   /** Names the answer area for screen readers: the screen's title. */
   label: string;
   prechecked?: boolean;
 }) {
+  const declineAsSkip = from === "onboarding";
+
   switch (props.question.id) {
     case "work":
       return (
@@ -29,7 +32,7 @@ export function ProfileQuestionBody({
     case "conditions":
       return <ConditionsBody {...props} label={label} />;
     case "learningSupport":
-      return <SupportBody {...props} label={label} prechecked={prechecked} />;
+      return <SupportBody {...props} from={from} label={label} prechecked={prechecked} />;
     case "addressForm":
       return <AddressFormBody {...props} declineAsSkip={declineAsSkip} label={label} />;
     case "tools":

@@ -129,10 +129,11 @@ function ScheduleWeek({ minutes, week }: { minutes: number; week: Schedule["week
 
       <WeekendMinutes
         checked={week.weekendOn}
-        disabled={!week.studiesOnWeekends}
+        missing={week.missingDays}
         minutes={week.weekendPicked ?? minutes}
         onChange={week.setWeekendPicked}
         onCheckedChange={week.setWeekendOn}
+        weekdayMinutes={minutes}
       />
     </div>
   );
