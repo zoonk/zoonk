@@ -72,15 +72,21 @@ final class LimitWordsTests: XCTestCase {
       "You've started all the new goals you can. More on November 22, or subscribe to keep going.")
   }
 
+  /// Once the day has come nothing ran out, so no title says it did, for any tier or kind.
   func testTheDayThatCameStopsPromisingOne() {
     let passed = Date(timeIntervalSince1970: 1_794_607_200)
 
     XCTAssertEqual(lessons(passed), ["Your next free lesson is ready"])
-    XCTAssertEqual(
-      text(
-        HelpLimit.usedUp(tier: .free, availableAt: passed)
-          .words(.messages, now: now, calendar: calendar)),
-      ["You've used your messages", "You can try again now."])
+
+    for tier in [LearnerTier.free, .plus] {
+      for kind in [HelpLimit.Kind.messages, .callTime, .uploads, nil] {
+        let words = HelpLimit.usedUp(tier: tier, availableAt: passed)
+          .words(kind, now: now, calendar: calendar)
+
+        XCTAssertNil(words.title, "\(tier) \(String(describing: kind))")
+        XCTAssertEqual(text(words), ["You can try again now."])
+      }
+    }
   }
 
   func testADaysCapComesBackTomorrow() {

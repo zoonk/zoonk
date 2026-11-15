@@ -4180,7 +4180,7 @@
         }
       }
     },
-    "You can make %lld more right now." : {
+    "You can create %lld more maps right now." : {
       "comment" : "Fewer chapter maps can start than are ready to make: as many as the allowance lets",
       "localizations" : {
         "de" : {
@@ -4207,13 +4207,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "You can make %lld more right now."
+                  "value" : "You can create %lld more map right now."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "You can make %lld more right now."
+                  "value" : "You can create %lld more maps right now."
                 }
               }
             }
@@ -4222,10 +4222,16 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Puedes crear %lld mapa más ahora mismo."
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Puedes crear %lld más ahora."
+                  "value" : "Puedes crear %lld mapas más ahora mismo."
                 }
               }
             }
@@ -4234,10 +4240,16 @@
         "fr" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tu peux créer %lld carte mentale de plus dès maintenant."
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Tu peux en créer %lld de plus dès maintenant."
+                  "value" : "Tu peux créer %lld cartes mentales de plus dès maintenant."
                 }
               }
             }
@@ -4246,10 +4258,16 @@
         "it" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Al momento puoi creare ancora %lld mappa."
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Puoi crearne ancora %lld adesso."
+                  "value" : "Al momento puoi creare ancora %lld mappe."
                 }
               }
             }
@@ -4261,7 +4279,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "今すぐあと%lld章分のマップを作成できます。"
+                  "value" : "今すぐ、マップをあと%lld枚作成できます。"
                 }
               }
             }
@@ -4273,7 +4291,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "지금 %lld개를 더 만들 수 있어요."
+                  "value" : "지금 마인드맵을 %lld개 더 만들 수 있어요."
                 }
               }
             }
@@ -4282,12 +4300,6 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Możesz teraz utworzyć jeszcze %lld mapy."
-                }
-              },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -4303,7 +4315,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Możesz teraz utworzyć jeszcze %lld map."
+                  "value" : "Możesz teraz utworzyć jeszcze %lld mapy."
                 }
               }
             }
@@ -4312,10 +4324,16 @@
         "pt" : {
           "variations" : {
             "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Você pode criar mais %lld mapa agora."
+                }
+              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Você pode criar mais %lld agora."
+                  "value" : "Você pode criar mais %lld mapas agora."
                 }
               }
             }
@@ -4327,7 +4345,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Şu an %lld harita daha oluşturabilirsin."
+                  "value" : "Şu anda %lld harita daha oluşturabilirsin."
                 }
               }
             }

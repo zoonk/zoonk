@@ -169,7 +169,7 @@ private struct ChapterContent: View {
     Section {
       PageHeader(
         Text(chapter.chapter.title),
-        supporting: Text(verbatim: facts.joinedFacts()).monospacedDigit()
+        supporting: Text(verbatim: facts.joinedFacts()), supportingIsFacts: true
       )
     }
   }
@@ -194,15 +194,8 @@ private struct ChapterContent: View {
           .currentRow(lesson.state == .next)
         }
       } header: {
-        SectionTitle(
-          Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons")
-        ) {
-          Text(
-            "\(done) of \(lessons.count)", tableName: "Plan",
-            comment: "Lessons done of the chapter's lessons"
-          )
-          .monospacedDigit()
-        }
+        // How much is done is said once, in the header's facts.
+        SectionTitle(Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons"))
       }
     }
   }

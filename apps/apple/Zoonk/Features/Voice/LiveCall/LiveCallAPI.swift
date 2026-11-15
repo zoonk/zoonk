@@ -51,8 +51,9 @@ enum CallReservation: Equatable, Sendable {
         self = .limit(
           .reached(
             period: (limit?["period"] ?? nil) as? String, tier: tier,
-            availableAt: ((limit?["availableAt"] ?? nil) as? String).flatMap(
-              Date.init(serverInstant:))))
+            availableAt: Date(
+              opening: (limit?["availableAt"] ?? nil) as? String,
+              receivedAt: refusal.receivedAt)))
       } else {
         self = .failed
       }
