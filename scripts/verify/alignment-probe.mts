@@ -1352,8 +1352,10 @@ export function readAlignment({
         if (rect) {
           const line = lines.find(
             (candidate) =>
-              (rect.top + rect.bottom) / 2 >= candidate.top &&
-              (rect.top + rect.bottom) / 2 < candidate.top + candidate.height,
+              ((rect.top + rect.bottom) / 2 >= candidate.top &&
+                (rect.top + rect.bottom) / 2 < candidate.top + candidate.height) ||
+              (candidate.top + candidate.height / 2 >= rect.top &&
+                candidate.top + candidate.height / 2 < rect.bottom),
           );
 
           if (line) {
@@ -1507,21 +1509,14 @@ export function readAlignment({
     );
   }
 
-  function hasHorizontalFade(style: CSSStyleDeclaration) {
-    const mask = [style.maskImage, style.getPropertyValue("-webkit-mask-image")].join(" ");
-
-    return (
-      /linear-gradient\(\s*(?:to (?:left|right)|(?:90|270)deg)\s*,/u.test(mask) &&
-      /transparent|rgba\([^)]*,\s*0(?:\.0+)?\s*\)/u.test(mask)
-    );
-  }
-
   function readUnsignedScrollers(): CaptureElement[] {
     return [...document.querySelectorAll("body *")].flatMap((element, index) => {
       if (
         !(element instanceof HTMLElement) ||
         !present(element) ||
-        element.closest("svg,[data-slot=horizontal-scroll]")
+        element.closest(
+          "svg,[data-slot=horizontal-scroll],[data-slot=contribution-calendar-viewport]",
+        )
       ) {
         return [];
       }
@@ -1530,7 +1525,7 @@ export function readAlignment({
       const overflow = style.overflowX;
       const across = element.scrollWidth - element.clientWidth;
 
-      if (!["auto", "scroll"].includes(overflow) || across <= 1 || hasHorizontalFade(style)) {
+      if (!["auto", "scroll"].includes(overflow) || across <= 1) {
         return [];
       }
 
@@ -1572,14 +1567,27 @@ export function readAlignment({
 
   function escapesClip(child: Element, clip: Element): boolean {
     for (let node: Element | null = child; node && node !== clip; node = node.parentElement) {
-      if (getComputedStyle(node).position === "fixed") {
+      const position = getComputedStyle(node).position;
+
+      if (["absolute", "fixed"].includes(position)) {
+        const ancestors: Element[] = [];
+
         for (let parent = node.parentElement; parent; parent = parent.parentElement) {
-          if (containsFixed(parent)) {
-            return parent !== clip && !clip.contains(parent);
-          }
+          ancestors.push(parent);
         }
 
-        return true;
+        const container = ancestors.find((parent) => {
+          const placed = getComputedStyle(parent).position;
+
+          return (
+            containsFixed(parent) ||
+            (position === "absolute" && placed !== "" && placed !== "static")
+          );
+        });
+
+        if (!container || (container !== clip && !clip.contains(container))) {
+          return true;
+        }
       }
     }
 
@@ -1610,35 +1618,16 @@ export function readAlignment({
         return [];
       }
 
-      const contents = [...element.querySelectorAll("*")].filter(
-        (child) =>
-          present(child) &&
-          !child.closest("svg") &&
-          (child.matches("button,input,select,[role=button]") ||
-            [...child.childNodes].some((node) => node instanceof Text && node.data.trim())),
-      );
+      const clipped = [...element.children].flatMap((child) => {
+        const ink = inkOf(
+          child,
+          (descendant) =>
+            !descendant.closest("svg") &&
+            !escapesClip(descendant, element) &&
+            (descendant.matches("input,textarea,select") || !allowsOverflow(descendant)),
+        );
 
-      const clipped = contents.flatMap((child) => {
-        // A nested scroller or clamp owns its content's overflow, even inside a clipped card.
-        const ancestors: Element[] = [];
-
-        for (
-          let parent: Element | null = child;
-          parent && parent !== element;
-          parent = parent.parentElement
-        ) {
-          ancestors.push(parent);
-        }
-
-        if (escapesClip(child, element) || ancestors.some((ancestor) => allowsOverflow(ancestor))) {
-          return [];
-        }
-
-        const control = child.matches("button,input,select,textarea,[role=button]")
-          ? [child.getBoundingClientRect()]
-          : [];
-
-        return [...directTextRects(child), ...control];
+        return ink ? [ink] : [];
       });
 
       const ownText = directTextRects(element);

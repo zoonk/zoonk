@@ -247,7 +247,7 @@ const ACTIONS = "a, button:not([data-slot=composer-send]), [role=button]";
 
 /** What covers the page and becomes the surface its own actions are counted on. */
 const SURFACES =
-  "[role=dialog][aria-modal=true], [role=alertdialog], [data-slot=dialog-content], [data-slot=sheet-content]";
+  "[role=dialog][aria-modal=true], [role=alertdialog], [data-slot=dialog-content], [data-slot=sheet-content], [data-slot=drawer-popup]";
 
 /**
  * The page's columns (craft E7): a drawn box starts and ends on its closest column's content edges,
