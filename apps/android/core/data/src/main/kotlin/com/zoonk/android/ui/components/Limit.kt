@@ -32,15 +32,25 @@ sealed interface Limit {
     data object SignUpRequired : Limit
 
     companion object {
-        /** The API's refusal (`SLOW_DOWN`, `USAGE_LIMIT_REACHED`, `SIGN_UP_REQUIRED`), or null for any other error. */
-        fun of(error: ApiException): Limit? = of(error.code, error.status, error.details)
+        /**
+         * The API's refusal (`SLOW_DOWN`, `USAGE_LIMIT_REACHED`, `SIGN_UP_REQUIRED`) as received at [receivedAt]
+         * ([Reached.received]), or null for any other error.
+         */
+        fun of(
+            error: ApiException,
+            receivedAt: Instant = Instant.now(),
+        ): Limit? = of(error.code, error.status, error.details, receivedAt)
 
-        fun of(failed: MutationResult.Failed): Limit? = of(failed.code, failed.status, failed.details)
+        fun of(
+            failed: MutationResult.Failed,
+            receivedAt: Instant = Instant.now(),
+        ): Limit? = of(failed.code, failed.status, failed.details, receivedAt)
 
         private fun of(
             code: String?,
             status: Int?,
             details: JsonElement?,
+            receivedAt: Instant,
         ): Limit? =
             when (code) {
                 "SIGN_UP_REQUIRED" -> {
@@ -77,7 +87,7 @@ sealed interface Limit {
                             ?.contentOrNull
                             ?.let { runCatching { Instant.parse(it) }.getOrNull() }
                     // Like main's readRefusedLimit, the status says whose cap it was when the details don't.
-                    Reached(tier ?: tierOf(status), period, availableAt).received()
+                    Reached(tier ?: tierOf(status), period, availableAt).received(receivedAt)
                 }
 
                 else -> {

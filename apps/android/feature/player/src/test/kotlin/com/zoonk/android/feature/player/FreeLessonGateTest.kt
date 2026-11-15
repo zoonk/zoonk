@@ -26,7 +26,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
-import java.time.Instant
 
 /** E 13.15: once the next free lesson opens, the gate offers it while still open, and only the learner's tap spends it. */
 @RunWith(AndroidJUnit4::class)
@@ -144,20 +143,22 @@ class FreeLessonGateTest {
     @Test
     fun aMapWhoseLessonsDontFitSaysSo() {
         rule.setContent {
-            ZoonkTheme {
-                Column {
-                    LimitNotice(
-                        Limit.Reached(LimitTier.Free, LimitPeriod.Total),
-                        LimitSubject.MapLessons,
-                        onCreateAccount = {},
-                        onSubscribe = {},
-                    )
-                    LimitNotice(
-                        Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, Instant.now().minusSeconds(60)),
-                        LimitSubject.MapLessons,
-                        onCreateAccount = {},
-                        onSubscribe = {},
-                    )
+            CompositionLocalProvider(LocalClock provides clock) {
+                ZoonkTheme {
+                    Column {
+                        LimitNotice(
+                            Limit.Reached(LimitTier.Free, LimitPeriod.Total),
+                            LimitSubject.MapLessons,
+                            onCreateAccount = {},
+                            onSubscribe = {},
+                        )
+                        LimitNotice(
+                            Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, clock.start.minusSeconds(60)),
+                            LimitSubject.MapLessons,
+                            onCreateAccount = {},
+                            onSubscribe = {},
+                        )
+                    }
                 }
             }
         }

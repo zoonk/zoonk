@@ -84,7 +84,7 @@ fun rememberTutor(
     val homeCountry = summary.value?.homeCountry
     val vm =
         viewModel(key = "tutor:${scope.thread}:$account") {
-            TutorViewModel(scope, app.tutor, createSavedStateHandle(), app.studyOpener::openMission)
+            TutorViewModel(scope, app.tutor, createSavedStateHandle(), openMission = app.studyOpener::openMission)
         }
     SideEffect {
         vm.scope = scope

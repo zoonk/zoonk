@@ -38,12 +38,13 @@ import kotlinx.serialization.json.contentOrNull
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Request
 import java.io.IOException
+import java.time.Clock
 import java.util.UUID
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.time.Clock
 import kotlin.time.Instant
+import kotlin.time.toKotlinInstant
 
 interface MindMapApi {
     suspend fun list(
@@ -167,7 +168,7 @@ sealed interface MindMapsStarted {
 }
 
 /** As this device received it: [Limit.Reached.received]. */
-fun MindMapAllowanceStop.received(now: Instant = Clock.System.now()): MindMapAllowanceStop =
+fun MindMapAllowanceStop.received(now: Instant): MindMapAllowanceStop =
     if (availableAt?.let { it > now } == false) copy(availableAt = null) else this
 
 sealed interface MindMapCreated {
@@ -188,6 +189,8 @@ sealed interface MindMapCreated {
 class MindMapStore(
     private val api: MindMapApi,
     private val cache: AppCache,
+    /** When a refusal arrives, as [Limit.Reached.received] reads it. */
+    private val clock: Clock = Clock.systemUTC(),
 ) {
     private val readsStarted = AtomicLong()
     private val watchers = CopyOnWriteArrayList<ReadWatcher>()
@@ -259,7 +262,7 @@ class MindMapStore(
                 val stop =
                     result.value.stop
                         ?.takeIf { result.value.accepted.isEmpty() }
-                        ?.received()
+                        ?.received(clock.instant().toKotlinInstant())
                 chapter.invalidate { it.goalId == goalId }
                 if (list[goalId].reread()) MindMapsStarted.Answered(stop) else MindMapsStarted.Unreachable
             }
@@ -332,7 +335,7 @@ class MindMapStore(
         result: MutationResult.Failed,
         key: ChapterKey,
     ): MindMapCreated {
-        val limit = Limit.of(result)
+        val limit = Limit.of(result, clock.instant())
         return when {
             result.status == UNPROCESSABLE -> readAgain(key)
             limit != null -> MindMapCreated.Refused(limit, result.details.ranOut().limitSubject)

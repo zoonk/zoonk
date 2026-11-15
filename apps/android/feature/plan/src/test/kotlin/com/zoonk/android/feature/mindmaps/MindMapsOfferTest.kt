@@ -68,7 +68,7 @@ class MindMapsOfferTest {
         )
 
     private fun show() {
-        val store = MindMapStore(api, AppCache(FakeSession(session), scope))
+        val store = MindMapStore(api, AppCache(FakeSession(session), scope), clock)
         val images =
             PrivateImages("https://example.test/v1/".toHttpUrl(), ImageLoader(ApplicationProvider.getApplicationContext<Context>()))
         val host = MindMapsHost(store, session, PrivatePictures(images, session), { null }, { LimitTier.Free }, { session })

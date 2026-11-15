@@ -28,7 +28,7 @@ class MaterialLimitWordsTest {
     private fun refused(
         resource: String,
         availableAt: String,
-    ) = WriteOutcome.Refused(Refusal.Limit(UsageLimit("rolling30Days", resource, "free", availableAt).received()))
+    ) = WriteOutcome.Refused(Refusal.Limit(UsageLimit("rolling30Days", resource, "free", availableAt).received(clock.start)))
 
     @Test
     fun theUploadsWordsLeaveTheTitleOnceTheDayComes() {

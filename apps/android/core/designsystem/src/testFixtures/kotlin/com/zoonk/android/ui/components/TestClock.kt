@@ -4,22 +4,19 @@ import androidx.compose.ui.test.MainTestClock
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
-import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 
 /**
  * A [LocalClock] that follows the compose test's [main] clock, so a limit's day comes when the test
- * says, whatever the machine's speed. It starts at the machine's now, which the app stamps a refusal
- * with when it arrives, in a zone where that is noon, so [opening] is "later today" at any hour.
+ * says, whatever the machine's speed or date. It starts at noon on a fixed day, so [opening] is
+ * "later today"; what stamps a refusal on arrival takes this clock too.
  */
 class TestClock(
     private val main: MainTestClock,
 ) : Clock() {
     private val origin = main.currentTime
-    val start: Instant = Instant.now()
-    private val zone: ZoneId =
-        ZoneOffset.ofTotalSeconds(LocalTime.NOON.toSecondOfDay() - start.atOffset(ZoneOffset.UTC).toLocalTime().toSecondOfDay())
+    val start: Instant = Instant.parse("2026-03-16T12:00:00Z")
 
     /** A limit's instant: far beyond the frames a test runs before it calls [passOpening]. */
     val opening: Instant = start.plus(WAIT)
@@ -29,7 +26,7 @@ class TestClock(
 
     override fun instant(): Instant = start.plusMillis(main.currentTime - origin)
 
-    override fun getZone(): ZoneId = zone
+    override fun getZone(): ZoneId = ZoneOffset.UTC
 
     override fun withZone(zone: ZoneId): Clock = this
 

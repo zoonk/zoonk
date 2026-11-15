@@ -64,6 +64,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
 import java.net.URI
 import java.net.URISyntaxException
+import java.time.Clock
 import java.time.Instant
 import java.util.TimeZone
 import java.util.UUID
@@ -121,6 +122,8 @@ class OnboardingStore(
     private val api: OnboardingApi,
     private val cache: AppCache,
     private val sessions: SessionSource,
+    /** When a refusal arrives, as [Limit.Reached.received] reads it. */
+    private val clock: Clock = Clock.systemUTC(),
     private val startGuest: suspend () -> SignInResult,
 ) {
     /**
@@ -429,7 +432,7 @@ class OnboardingStore(
                 try {
                     WriteOutcome.Done(write(session))
                 } catch (e: ApiException) {
-                    WriteOutcome.Refused(e.refusal() ?: throw e)
+                    WriteOutcome.Refused(e.refusal(clock.instant()) ?: throw e)
                 }
             }
         return when (result) {
@@ -540,7 +543,7 @@ data class UsageLimit(
             )
 
     /** As this device received it: [Limit.Reached.received]. */
-    fun received(now: Instant = Instant.now()): UsageLimit =
+    fun received(now: Instant): UsageLimit =
         if (reached.received(now).availableAt ==
             null
         ) {
@@ -556,7 +559,7 @@ private class LimitDetails(
 )
 
 /** Usage limits nest the limit under `details.limit`; goal limits send it as `details`; any other 429 asks to slow down. */
-internal fun ApiException.refusal(): Refusal? =
+internal fun ApiException.refusal(receivedAt: Instant): Refusal? =
     when (code) {
         "SIGN_UP_REQUIRED", "ACCOUNT_REQUIRED" -> {
             Refusal.SignUpRequired
@@ -578,12 +581,12 @@ internal fun ApiException.refusal(): Refusal? =
             details
                 ?.decode<LimitDetails>()
                 ?.limit
-                ?.received()
+                ?.received(receivedAt)
                 ?.let(Refusal::Limit)
         }
 
         "GOAL_LIMIT_REACHED" -> {
-            details?.decode<UsageLimit>()?.received()?.let(Refusal::Limit)
+            details?.decode<UsageLimit>()?.received(receivedAt)?.let(Refusal::Limit)
         }
 
         "DAY_TOO_SHORT" -> {

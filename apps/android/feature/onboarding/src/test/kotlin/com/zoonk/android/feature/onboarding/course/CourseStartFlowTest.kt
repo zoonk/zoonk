@@ -67,7 +67,7 @@ class CourseStartFlowTest {
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
-        val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
+        val store = OnboardingStore(api, cache, session, clock) { SignInResult.SignedIn }
         val setContent: (@Composable () -> Unit) -> Unit = restoration?.let { it::setContent } ?: rule::setContent
         setContent {
             CompositionLocalProvider(LocalClock provides clock) {
