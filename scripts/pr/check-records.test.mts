@@ -240,7 +240,12 @@ describe("pr:media check, on a capture's measured layout", () => {
       [["alignment"], []],
     );
 
+    const filled = await capture([shot({ file: "c.png" })], {
+      alignment: { captures: [CASES["plan current row fill 98ae571b1b, phone"]] },
+    }).check();
+
     assert.deepEqual(kinds(refused), ["alignment"]);
+    assert.match(filled.problems[0]?.detail ?? "", /passes the page's column/u);
     assert.match(refused.problems[0]?.detail ?? "", /isn't a capture the evaluator reads/u);
   });
 });

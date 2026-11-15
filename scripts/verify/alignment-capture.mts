@@ -13,7 +13,7 @@ export type NotMeasured = "not measured";
 export type CaptureElement = {
   id: string;
   piece: string;
-  part: Part | "action" | "anchor" | "fill" | "group" | "holder" | "row" | "unmeasured";
+  part: Part | "action" | "anchor" | "fill" | "group" | "holder" | "pinned" | "row" | "unmeasured";
   group: string | null;
   row: string | null;
   bounds: Bounds;
