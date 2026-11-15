@@ -40,8 +40,9 @@ function RevealBuddy({ buddy }: { buddy: LearnBuddy | null }) {
   return (
     <BuddyArt
       buddy={buddy}
-      className="h-23 lg:h-28"
+      className="[--buddy-height:--spacing(23)] lg:[--buddy-height:--spacing(28)]"
       expression="happy"
+      fit="ink"
       reaction={{ act: "cheer", delayMs: 3 * BEAT_MS }}
       studiedToday
     />
