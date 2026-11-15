@@ -32,6 +32,7 @@ struct ListRow<Leading: View, Trailing: View>: View {
 
   var body: some View {
     row
+      .layoutStacks(isStacked)
       .layoutRow(.listGroup)
   }
 
