@@ -5,6 +5,7 @@ import { type Capture, type CaptureElement } from "./alignment-capture.mts";
 import { fixtureCapture } from "./alignment-fixtures.mts";
 import { pairLeads, reconcile } from "./alignment-scenarios.mts";
 import { summarize, summaryLine } from "./alignment-summary.mts";
+import { readCaptures } from "./alignment-validate.mts";
 import { evaluateFile } from "./alignment.mts";
 import { SCENARIOS, type Scenario } from "./scenarios/scenarios.mts";
 
@@ -132,5 +133,26 @@ describe("state pairs", () => {
   it("can't measure a pair whose other half wasn't captured", () => {
     const [record] = pairLeads([scenarioCapture("screen.notice", [anchor("action", 760)])], PAIR);
     assert.equal(record?.level, "not-measured");
+  });
+
+  it("can't measure an anchor a platform couldn't place (Android's lazy row off screen)", () => {
+    const plain = scenarioCapture("screen.plain", [anchor("action", 760)]);
+
+    // As Android writes it: no group, row or ink, and no place for a node it couldn't find.
+    const written = {
+      ...scenarioCapture("screen.notice", []),
+      elements: [
+        { anchor: "action", bounds: "not measured", found: 0, id: "a:action", part: "anchor" },
+      ],
+      unit: "dp",
+    };
+
+    const read = readCaptures(written);
+    const unplaced = read.kind === "captures" ? read.file.captures : [];
+    const [record, ...rest] = pairLeads([plain, ...unplaced], PAIR);
+
+    assert.equal(rest.length, 0);
+    assert.equal(record?.level, "not-measured");
+    assert.match(record?.detail ?? "", /action wasn't placed/u);
   });
 });

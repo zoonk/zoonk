@@ -153,6 +153,17 @@ export function pairLeads(
         ];
       }
 
+      if (was.unplaced || now.unplaced) {
+        return [
+          record(capture, {
+            detail: `${id} wasn't placed in ${was.unplaced ? otherId : scenario.id}`,
+            level: "not-measured",
+            message: "a state pair's anchor wasn't placed",
+            rule: "pair",
+          }),
+        ];
+      }
+
       const moved = change(was, now);
       const most = Math.max(...Object.values(moved).map((value) => Math.abs(value)));
 

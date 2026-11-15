@@ -32,13 +32,13 @@ const OPTIONAL = z
     gapBefore: MEASURE,
     kind: z.enum(["box", "hairline", "highlight", "picture"]),
     layoutScale: z.number().positive(),
-    lines: z.int().positive(),
+    lines: z.union([z.int().positive(), NOT_MEASURED]),
     margins: z.tuple([z.number(), z.number()]),
     middle: MEASURE,
     name: z.string(),
     note: z.boolean(),
     reason: z.string(),
-    source: z.enum(["piece", "stack"]),
+    source: z.enum(["piece", "picture", "stack"]),
     stacked: z.boolean(),
     surface: z.string(),
     target: z.string(),
@@ -66,6 +66,23 @@ const ELEMENT = z.union([
   }),
   // An area the platform can't read (a subtree whose semantics were replaced): only its place.
   z.looseObject({ ...PLACE, part: z.literal("unmeasured") }),
+  // A state pair's anchor as Android writes it: its name and place, or no place when the node
+  // wasn't found (a lazy row off screen), which the pair can't measure.
+  z
+    .looseObject({
+      anchor: z.string(),
+      bounds: z.union([BOUNDS, NOT_MEASURED]),
+      id: z.string(),
+      part: z.literal("anchor"),
+    })
+    .transform(({ bounds, ...anchor }) => ({
+      group: null,
+      ink: null,
+      piece: "anchor",
+      row: null,
+      ...anchor,
+      ...(bounds === "not measured" ? { bounds: [0, 0, 0, 0], unplaced: true } : { bounds }),
+    })),
 ]);
 
 const CAPTURE = z

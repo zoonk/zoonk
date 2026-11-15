@@ -48,7 +48,7 @@ export type CaptureElement = {
   /** An action's: drawn disabled. A disabled filled button still counts toward `one-filled`. */
   disabled?: boolean;
   /** A text's: how many lines it runs to. */
-  lines?: number;
+  lines?: number | NotMeasured;
   /** A row's: a supporting line sits under its label. */
   note?: boolean;
   type?: string;
@@ -82,10 +82,12 @@ export type CaptureElement = {
   kind?: "box" | "hairline" | "highlight" | "picture";
   /** A state pair's anchor: the same id in both captures of one screen. */
   anchor?: string;
+  /** An anchor the platform couldn't place (a node it didn't find): the pair can't measure it. */
+  unplaced?: boolean;
   /** A group's: its layout runs right to left, so its start edge is the right one. */
   direction?: "ltr" | "rtl";
   /** A group's: "stack" when the platform grouped rows no piece frames; its findings are leads. */
-  source?: "piece" | "stack";
+  source?: "piece" | "picture" | "stack";
   /** A row's: the one the learner is on (current, picked), which may set its words apart. */
   current?: boolean;
   /** A row's: the middle of what it lays out (inside a divider's border and its padding). */

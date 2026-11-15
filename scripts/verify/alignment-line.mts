@@ -76,7 +76,13 @@ function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
   // A title counts as one line however it wraps; each description under it is another (E5).
   const notes = Math.max(own.filter((element) => element.part === "note").length, row.note ? 1 : 0);
 
-  const oneLine = !stacked && (label.lines ?? 1) === 1 && notes === 0;
+  const lines = measured(label.lines, 1);
+
+  if (lines === null) {
+    return null;
+  }
+
+  const oneLine = !stacked && lines === 1 && notes === 0;
   const endMiddle = middles.find(({ element }) => element.part === "end")?.middle ?? null;
 
   const led = others.some((element) => element.part === "lead");
