@@ -36,6 +36,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 
 /** The fit offer's card on a later day, where Add to my plan checks today's numbers first. */
@@ -142,6 +143,23 @@ class FitOfferCheckTest {
         addHeld.complete(Unit)
         compose.waitForIdle()
         assertEquals(listOf(operations), api.changes)
+    }
+
+    @Test
+    fun aFailedCheckAtLargeTextLeavesTheButtonsWhereTheyWere() {
+        RuntimeEnvironment.setFontScale(2f)
+        val held = CompletableDeferred<Unit>()
+        api.previewGate = held
+        api.preview = PlanChangePreview(finishDate = null, effect = null, feasibility = null, ready = false, unchanged = false)
+        show()
+        val before = compose.onNodeWithText("Not now").getUnclippedBoundsInRoot()
+
+        compose.onNodeWithText("Add to my plan").performClick()
+        held.complete(Unit)
+        compose.waitForIdle()
+
+        compose.onNodeWithText("Try again").assertExists()
+        assertEquals(before, compose.onNodeWithText("Not now").getUnclippedBoundsInRoot())
     }
 
     /** The card's height and where Not now sits, which a state change must leave as they are. */
