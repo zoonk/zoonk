@@ -41,6 +41,7 @@
     <string name="profile_questions_activities_placeholder">E.g., baking bread, cars, astronomy</string>
     <string name="profile_questions_conditions_title">Do any of these apply to you?</string>
     <string name="profile_questions_conditions_description">Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings.</string>
+    <string name="profile_questions_conditions_description_settings">Optional. We use what you pick to adapt the content to your needs. You can remove it anytime.</string>
     <string name="profile_questions_condition_note">What should we know?</string>
     <string name="profile_questions_support_title">What helps you learn?</string>
     <string name="profile_questions_support_description">Pick anything that helps. No label or diagnosis needed.</string>
@@ -52,6 +53,7 @@
     <string name="profile_questions_support_note">What helps you, in your words (optional)</string>
     <string name="profile_questions_support_placeholder">E.g., I understand diagrams better than text</string>
     <string name="profile_questions_support_note_help">We\'ll remember this. You can delete it anytime in Settings.</string>
+    <string name="profile_questions_support_note_help_settings">We\'ll remember this. You can delete it anytime.</string>
     <string name="profile_questions_lesson_ready">Lesson 1 is ready.</string>
     <string name="profile_questions_start_lesson">Start lesson 1</string>
     <string name="profile_questions_save_start_lesson">Save and start lesson 1</string>

@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -195,8 +196,10 @@ private fun Loaded(
     ListRow(
         headline = { Text(stringResource(R.string.memory_download)) },
         trailing = {
+            val spoken = stringResource(R.string.memory_download_your_memory)
             OutlinedButton(
                 onClick = { export.launch(EXPORT_FILE_NAME) },
+                modifier = Modifier.semantics { contentDescription = spoken },
                 busy = screen.isExporting,
                 leadingIcon = { ButtonIcon(R.drawable.ic_download) },
                 size = ButtonSize.Small,

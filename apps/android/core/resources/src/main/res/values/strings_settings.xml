@@ -2,6 +2,7 @@
 <resources>
     <string name="settings_preferences">Preferences</string>
     <string name="settings_memory">Memory</string>
+    <!-- The page inside Settings for usage data, a copy of the learner's data and deleting the account; not the privacy policy. -->
     <string name="settings_privacy">Privacy</string>
     <!-- Beside "Reminders" in Settings when neither email nor push reminders are on. -->
     <string name="settings_reminders_off">Off</string>
@@ -10,9 +11,12 @@
     <string name="settings_save">Save</string>
     <string name="settings_saved">Saved.</string>
     <string name="settings_your_data">Your data</string>
-    <string name="settings_download_data">Download my data</string>
+    <string name="settings_download_data">A copy of your data</string>
+    <string name="settings_download_your_data">Download your data</string>
     <string name="settings_download">Download</string>
     <string name="settings_download_failed">We couldn\'t prepare the download. Try again.</string>
+    <string name="settings_your_account">Your account</string>
+    <string name="settings_delete_account">Delete account</string>
     <string name="settings_delete_my_account">Delete my account</string>
     <string name="settings_delete_ellipsis">Delete…</string>
     <string name="settings_delete_confirm_title">Delete your account?</string>
