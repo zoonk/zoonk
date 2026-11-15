@@ -9,6 +9,7 @@ import { KindDot } from "../_components/kind-tile";
 import { getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
+import { PhaseWhen } from "./phase-when";
 import {
   AXIS_CLASS,
   AXIS_TEXT_CLASS,
@@ -179,7 +180,8 @@ export function PhaseAxis({
   const goalSide = goalShare === null ? null : getPointSide(goalShare);
 
   const todayLabelled = todayShare !== null && goalShare === null;
-  const startLabelled = labelled && phase.startDate !== null && goalSide !== "left";
+  // Under its end, the date the list gives it: the next phase starts there.
+  const endLabelled = labelled && !isLast && goalSide !== "right";
   const finishLabelled = isLast && goalSide !== "right";
 
   return (
@@ -189,26 +191,19 @@ export function PhaseAxis({
           <span className={cn(AXIS_TEXT_CLASS, "text-foreground")}>{t("Today")}</span>
         </AxisLabel>
       )}
-      {startLabelled && phase.startDate && (
-        <AxisLabel className={cn(isLast && "@max-[10rem]/phase:hidden")} share={0}>
-          <PlanDateText
-            className={AXIS_TEXT_CLASS}
-            estimate={phase.kind === "learn"}
-            isoDate={phase.startDate}
-            month={phase.kind === "learn"}
-          />
-        </AxisLabel>
-      )}
       {goalShare !== null && (
-        <AxisLabel after={startLabelled} share={goalShare}>
+        <AxisLabel share={goalShare}>
           <span className={cn(AXIS_TEXT_CLASS, "text-foreground")}>
             <GoalDate />
           </span>
         </AxisLabel>
       )}
-      {finishLabelled && (
-        <EndLabel after={todayLabelled || startLabelled || goalShare !== null} phase={phase} />
+      {endLabelled && (
+        <AxisLabel after={todayLabelled || goalShare !== null} share={1}>
+          <PhaseWhen className={AXIS_TEXT_CLASS} phase={phase} />
+        </AxisLabel>
       )}
+      {finishLabelled && <EndLabel after={todayLabelled || goalShare !== null} phase={phase} />}
     </span>
   );
 }

@@ -224,7 +224,7 @@ export function RoadmapFull({ className, links }: { className?: string; links: J
               focusable={position === focusIndex}
               isLast={position === phases.length - 1}
               key={phase.index}
-              labelled={currentIndex !== -1 && position > currentIndex}
+              labelled={currentIndex !== -1 && position >= currentIndex}
               links={links}
               phase={phase}
               todayShare={isCurrent ? getShareInPhase({ at: "start", date: today, phase }) : null}

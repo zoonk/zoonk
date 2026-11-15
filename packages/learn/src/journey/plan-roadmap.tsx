@@ -240,7 +240,7 @@ function RoadmapReveal() {
                 <>
                   <PhaseAxis
                     isLast={position === phases.length - 1}
-                    labelled={when === "start"}
+                    labelled={when !== null}
                     phase={phase}
                     todayShare={
                       when === "today" ? getShareInPhase({ at: "start", date: today, phase }) : null
