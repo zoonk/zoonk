@@ -820,13 +820,14 @@ export function readAlignment({
       };
     };
 
+    const strokes = (style: CSSStyleDeclaration, side: string) =>
+      pixels(style.getPropertyValue(`border-${side}-width`)) > 0 &&
+      globalThis.zoonkPage.rgba(style.getPropertyValue(`border-${side}-color`))[3] > 0;
+
     /** A border on the top or the bottom alone: a rule drawn across the element at that edge. */
     const ruleOf = (element: Element): Rect | null => {
       const style = getComputedStyle(element);
-
-      const drawn = (side: string) =>
-        pixels(style.getPropertyValue(`border-${side}-width`)) > 0 &&
-        globalThis.zoonkPage.rgba(style.getPropertyValue(`border-${side}-color`))[3] > 0;
+      const drawn = (side: string) => strokes(style, side);
 
       // A rule on the top or the bottom alone, whatever the sides draw: a grid's middle tile draws
       // its dividers too, and its part of the row's hairline is still that hairline.
@@ -843,6 +844,74 @@ export function readAlignment({
       return drawn("top")
         ? { bottom: box.top + width, left: box.left, right: box.right, top: box.top }
         : { bottom: box.bottom, left: box.left, right: box.right, top: box.bottom - width };
+    };
+
+    const chain = (element: Element): Element[] =>
+      element.parentElement ? [element, ...chain(element.parentElement)] : [element];
+
+    /**
+     * The rules a positioned element draws on its `::before` or `::after`, a top or a bottom border
+     * (the catalog's last tile carrying its row's line on to the grid's end), as far across as the
+     * boxes clipping it show them.
+     */
+    const pseudoRules = (element: Element): Rect[] => {
+      if (getComputedStyle(element).position === "static") {
+        return [];
+      }
+
+      const box = element.getBoundingClientRect();
+
+      const across = chain(element)
+        .filter((clipping) => getComputedStyle(clipping).overflowX !== "visible")
+        .map((clipping) => clipping.getBoundingClientRect())
+        .reduce(
+          (clipped, clip) => ({
+            left: Math.max(clipped.left, clip.left),
+            right: Math.min(clipped.right, clip.right),
+          }),
+          { left: -Infinity, right: Infinity },
+        );
+
+      return (["::before", "::after"] as const).flatMap((which): Rect[] => {
+        const pseudo = getComputedStyle(element, which);
+        const top = strokes(pseudo, "top");
+
+        if (
+          pseudo.content === "none" ||
+          pseudo.position !== "absolute" ||
+          top === strokes(pseudo, "bottom")
+        ) {
+          return [];
+        }
+
+        // Its whole size, borders included, however its box is sized.
+        const outer = (size: "height" | "width", sides: [string, string]) =>
+          pixels(pseudo.getPropertyValue(size)) +
+          (pseudo.boxSizing === "border-box"
+            ? 0
+            : sides.reduce(
+                (total, side) =>
+                  total +
+                  pixels(pseudo.getPropertyValue(`padding-${side}`)) +
+                  pixels(pseudo.getPropertyValue(`border-${side}-width`)),
+                0,
+              ));
+
+        const left = box.left + element.clientLeft + pixels(pseudo.left);
+        const y = box.top + element.clientTop + pixels(pseudo.top);
+        const stroke = top ? "border-top-width" : "border-bottom-width";
+        const width = pixels(pseudo.getPropertyValue(stroke));
+        const from = top ? y : y + outer("height", ["top", "bottom"]) - width;
+
+        const rule = {
+          bottom: from + width,
+          left: Math.max(left, across.left),
+          right: Math.min(left + outer("width", ["left", "right"]), across.right),
+          top: from,
+        };
+
+        return rule.right > rule.left ? [rule] : [];
+      });
     };
 
     /** A box's left and right strokes, where it isn't drawn on all four sides. */
@@ -909,7 +978,11 @@ export function readAlignment({
           ...(ownBox && passes(ownBox)
             ? [{ box: ownBox, kind: current ? lit : kindOf(element, ownBox), passing: true }]
             : []),
-          ...(line ? [{ box: line, kind: "hairline" as const, passing: passes(line) }] : []),
+          ...[...(line ? [line] : []), ...pseudoRules(element)].map((rule) => ({
+            box: rule,
+            kind: "hairline" as const,
+            passing: passes(rule),
+          })),
           // A tile's top stroke joins its row's line; its sides are still strokes on the page.
           ...(ownBox ? [] : sidesOf(element))
             .filter((side) => passes(side))

@@ -239,6 +239,38 @@ describe("a hairline the tiles of a grid draw together", () => {
   });
 });
 
+/**
+ * The catalog's grid on a laptop, 10 past the column on each side and clipping what passes it,
+ * with a lone tile in its last row whose line its `::after` carries on to the grid's end (S2).
+ */
+function loneLastTile(after: string) {
+  const line = "border-bottom: 1px solid rgb(200, 200, 200);";
+
+  return `<style>.last::after { ${after} }</style>
+    <div data-slot="page" data-box="500,0,900,600">
+    <div style="overflow-x: clip" data-box="490,100,920,360">
+      <div style="${line}" data-box="490,100,307,180">ENEM</div>
+      <div style="${line}" data-box="797,100,306,180">Economics</div>
+      <div style="${line}" data-box="1103,100,307,180">IELTS</div>
+      <div class="last" style="position: relative; ${line}" data-box="490,280,307,180">TOEFL</div>
+    </div></div>`;
+}
+
+function loneLastTileMisses(after: string) {
+  document.body.innerHTML = loneLastTile(after);
+  return evaluateCapture(read()).filter((finding) => finding.rule === "column");
+}
+
+describe("a row's line a lone last tile carries on with its ::after", () => {
+  it("is read as one line with the tile's own border, as far as the grid shows it (S2)", () => {
+    const carried =
+      'content: ""; position: absolute; left: 307px; top: 179px; width: 2000px; height: 0; border-bottom: 1px solid rgb(200, 200, 200);';
+
+    assert.deepEqual(loneLastTileMisses(carried), []);
+    assert.equal(loneLastTileMisses("").length, 1);
+  });
+});
+
 /** RV71's page: in a tab list, a 120 px item whose `::before` reaches 10 px past the column's start. */
 function tabFill(tag: string, attributes: string) {
   return `<style>.fill::before { content: ""; position: absolute; left: -10px; right: 0; top: 0; bottom: 0; background-color: rgb(221, 221, 221); }</style>
