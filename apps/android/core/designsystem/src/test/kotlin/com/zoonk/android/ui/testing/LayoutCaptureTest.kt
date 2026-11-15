@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.json.JSONArray
@@ -304,6 +305,23 @@ class LayoutCaptureTest {
 
         assertEquals(NOT_MEASURED, parts.part("label").getString("texts"))
         assertEquals(1, parts.part("note").getInt("texts"))
+    }
+
+    /** RV39: a dimmed control whose edge the picture can't show has no edge, rather than the letters' edge. */
+    @Test
+    fun aDimmedPartWhoseEdgeCantBeSeenHasNoInk() {
+        val (dimmed, shown) =
+            capture {
+                ListRow(
+                    headline = { Text("Disabled control") },
+                    trailing = { OutlinedButton(onClick = {}, enabled = false) { Text("Save") } },
+                )
+                // The control: the same button enabled shows its border, so its edge is a number.
+                ListRow(headline = { Text("Enabled control") }, trailing = { OutlinedButton(onClick = {}) { Text("Save") } })
+            }.elements().filter { it.getString("part") == "end" }
+
+        assertEquals(NOT_MEASURED, dimmed.getString("ink"))
+        assertTrue(shown.get("ink") is JSONArray)
     }
 
     private fun capture(content: @androidx.compose.runtime.Composable () -> Unit): JSONArray {

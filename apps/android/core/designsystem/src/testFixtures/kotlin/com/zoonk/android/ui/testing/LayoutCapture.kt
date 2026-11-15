@@ -279,7 +279,20 @@ internal object LayoutCapture {
             /** Partly hidden by what holds it (a scroll's edge, a bar over a list): its pixels aren't all its own. */
             private val clipped = node?.let { isClipped(it) } ?: false
 
-            private fun pixelInk(box: List<Float>?): Any? = if (clipped) NOT_MEASURED else box?.let { ink(it) }
+            /**
+             * A mark, end or action drawn at reduced alpha (disabled, it or what holds or fills it): its faint edge may
+             * not reach the threshold. A row's or group's ink is its content, inside its box anyway.
+             */
+            private val dimmed =
+                part.part != LayoutPart.Part.Row && part.part != LayoutPart.Part.Group && node?.let { isDimmed(it) } ?: false
+
+            private fun pixelInk(box: List<Float>?): Any? =
+                when {
+                    clipped -> NOT_MEASURED
+                    box == null -> null
+                    dimmed -> edgeShown(ink(box), box)
+                    else -> ink(box)
+                }
 
             /** A stack group's frame: its rows' bounds together. */
             var stack: List<Float>? = null
@@ -593,6 +606,27 @@ internal object LayoutCapture {
             }
         }
 
+        /**
+         * A dimmed part's ink is its edge only where it reaches its box's start and end: a pale border under the
+         * threshold would otherwise give the letters' edge. Nothing found isn't "draws nothing" either.
+         */
+        private fun edgeShown(
+            ink: Any?,
+            box: List<Float>,
+        ): Any? {
+            val found = (ink as? List<*>)?.filterIsInstance<Float>()?.takeIf { it.size == 4 } ?: return NOT_MEASURED
+            val reachesStart = abs(found[0] - box[0]) <= EDGE_SLACK
+            val reachesEnd = abs(found[0] + found[2] - (box[0] + box[2])) <= EDGE_SLACK
+            return if (reachesStart && reachesEnd) found else NOT_MEASURED
+        }
+
+        private fun isDimmed(node: SemanticsNode): Boolean {
+            fun disabled(each: SemanticsNode) = each.config.contains(SemanticsProperties.Disabled)
+
+            fun below(each: SemanticsNode): Boolean = each.children.any { disabled(it) || below(it) }
+            return disabled(node) || generateSequence(node.parent) { it.parent }.any(::disabled) || below(node)
+        }
+
         private fun isClipped(node: SemanticsNode): Boolean {
             val shown = node.boundsInRoot
             val whole = node.positionInRoot
@@ -781,6 +815,9 @@ internal object LayoutCapture {
     /** The most two rows of one list are apart: the hairline between them. */
     private const val ADJACENT = 2f
     private const val HALF_PIXEL = 0.5f
+
+    /** How far a dimmed part's ink may stop short of its box and still be its edge, in dp. */
+    private const val EDGE_SLACK = 1f
     private const val NOT_DECLARED = "not declared"
     private const val INK_THRESHOLD = 24
 
