@@ -277,12 +277,14 @@ private struct MindMapCreateSection: View {
             Text(verbatim: others.count.formatted())
               .typeStyle(.data)
               .foregroundStyle(.mutedForeground)
+              .layoutPart(.value)
           } label: {
             Text(
               "Other chapters", tableName: "MindMaps",
               comment: "Unfolds the chapters whose maps can't be made right now"
             )
             .typeStyle(.body)
+            .layoutPart(.label)
           }
         }
 
