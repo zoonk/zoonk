@@ -15,6 +15,10 @@ Checks that every picture a PR body shows was captured, from which build, and re
            its app or packages/; when an after picture has no read or an unresolved finding; when
            an after capture's alignment.json fails a layout relationship, couldn't measure
            one, or misses a required scenario; and when a native picture is still pending.
+           A device picture goes only under the heading "On a device (layout not measured)",
+           with the line the device command printed as its caption (the rest of its line or the
+           next line); the check fails it anywhere else, fails a picture under that heading
+           without a device record, and lists device pictures apart from the measured ones.
            Picture paths are relative to --root (the
            body's folder by default). Each picture's capture.json is looked for in its folder and
            every folder above it, and anywhere under each --manifests folder, so a
@@ -28,13 +32,15 @@ Checks that every picture a PR body shows was captured, from which build, and re
            failing the check as pending.
   device   takes an after picture from a booted simulator (--device its udid) or emulator (its
            adb serial) that no capture can take, such as an Android sheet over its page. It
-           takes the picture itself and reads the installed app's build from the device: a
-           simulator's Debug build stamp must be this checkout's head, built clean; an emulator's
-           app, which carries no commit, must have been installed after the head's last change to
-           apps/android or packages/, from a clean tree (its Debug build doesn't stamp the
-           commit: a value that changes every commit would cost every incremental build). It
-           refuses otherwise. A web page in a phone-sized browser is a web capture: take it with
-           pnpm pr:capture. Its read checks its layout. --to is tmp/pr-media/device by default.
+           takes the picture itself and records the installed build as the device reports it: a
+           simulator's Debug build stamp must be this checkout's head, built clean, and its
+           commit is recorded; an emulator's app carries no commit (a value that changes every
+           commit would cost every incremental Debug build), so its version and install time are
+           recorded and its caption says "build not verified". It refuses an emulator app
+           installed before the head's last change to apps/android or packages/, or with that
+           code uncommitted. A web page in a phone-sized browser is a web capture: take it with
+           pnpm pr:capture. Nothing measures its layout; it prints the caption the check wants.
+           --to is tmp/pr-media/device by default.
   before   records existing before pictures and where they came from; they pass, since a before
            picture's build isn't checked. --to is tmp/pr-media/registered by default for both.
   adopt    puts Android renders into a capture folder as the check reads them: each picture

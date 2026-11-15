@@ -184,9 +184,9 @@ async function refusal({
 /**
  * Takes an after picture from a booted simulator or emulator, which no capture can take (an
  * Android sheet over its page, where a JVM render draws the sheet's window alone). The command
- * takes the picture itself and reads the installed app's build from the device, so the record
- * says what the device showed; it refuses a build that isn't this checkout's head. Nothing
- * measures its layout; its read does, and the check says so.
+ * takes the picture itself and records the installed build as the device reports it; it refuses a
+ * simulator build that isn't this checkout's head and an emulator app installed before the head's
+ * last change to it. Nothing measures its layout: the PR shows it under its own heading.
  */
 export async function takeDevicePicture({
   bridge,
@@ -231,14 +231,19 @@ export async function takeDevicePicture({
   const file = `${fileName(name)}.png`;
   await bridge.screenshot(deviceId, join(to, file));
 
+  // Only what the device reported: an emulator's app names no commit, so none is recorded.
   const build =
     "commit" in installed
-      ? `build ${installed.commit.slice(0, 10)}`
-      : `app ${installed.version} installed ${installed.installedAt.toISOString()}`;
+      ? { app: platform, commit: installed.commit, id: installed.commit }
+      : {
+          app: platform,
+          commit: "unknown",
+          id: `installed ${installed.installedAt.toISOString()}, app ${installed.version}`,
+        };
 
   const item: CaptureItem = {
-    build: { app: platform, commit: checkout.commit, id: build },
-    device: `${device}; ${build}`,
+    build,
+    device,
     file,
     kind: "shot",
     locale: "unknown",

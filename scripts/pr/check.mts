@@ -2,13 +2,14 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { readCaptures } from "../verify/alignment-validate.mts";
 import { evaluateFile } from "../verify/alignment.mts";
-import { isRemote } from "./locate.mts";
+import { type DevicePicture, isRemote } from "./locate.mts";
 import {
   type AlignmentReport,
   type CaptureItem,
   type Finding,
   type ManifestItem,
   buildOf,
+  deviceLine,
   isRecorded,
   readAlignment,
   readManifest,
@@ -97,6 +98,11 @@ async function buildProblems({
   picture: string;
 }): Promise<Problem[]> {
   const { app, changes, commit, id } = buildOf(item);
+
+  // An emulator's app names no commit: its line under the device heading says so.
+  if (item.device && commit === "unknown") {
+    return [];
+  }
 
   if (id === "unknown") {
     return [{ kind: "unknown-build", picture }];
@@ -214,7 +220,7 @@ async function pictureProblems({
   return { entries, problems: [...unique.values()] };
 }
 
-/** A device picture has no capture to measure; its read checks its layout, and the check says so. */
+/** A device picture has no capture to measure: it's shown under its own heading instead. */
 function measured({ alignment, items }: Manifest): boolean {
   const { captures = [], findings = [] } = alignment;
   const captured = items.some((item) => isRecorded(item) && !item.device);
@@ -263,17 +269,52 @@ function alignmentProblems({ alignment, folder }: Manifest): Problem[] {
 }
 
 /**
+ * A picture with a device record goes under the device heading and only there, its caption saying
+ * what was verified; anything else under it isn't a device picture. A forged record can only put
+ * a picture where the reader sees nothing measured it.
+ */
+function placementProblems({
+  caption,
+  entries,
+  picture,
+}: {
+  caption?: string;
+  entries: Entry[];
+  picture: string;
+}): { line?: string; problems: Problem[] } {
+  const [line] = entries.flatMap(({ item }) =>
+    item.side === "after" && isRecorded(item) && item.device ? [deviceLine(item)] : [],
+  );
+
+  if (caption === undefined) {
+    return { problems: line ? [{ kind: "device-elsewhere", picture }] : [] };
+  }
+
+  if (!line) {
+    return { problems: entries.length > 0 ? [{ kind: "not-device", picture }] : [] };
+  }
+
+  return {
+    line,
+    problems: caption.includes(line) ? [] : [{ detail: line, kind: "caption", picture }],
+  };
+}
+
+/**
  * Before pictures need only their capture record: an old before is expected. After pictures also
  * need a known, committed build no later commit to their app or the shared packages outdates, and
  * a read with no unresolved finding. A native picture without its platform's record is pending.
+ * `onDevice` are the pictures under the device heading, each listed with what was verified.
  */
 export async function checkPictures({
   manifests,
+  onDevice = [],
   pictures,
   repository,
   unsupported = [],
 }: {
   manifests: string[];
+  onDevice?: DevicePicture[];
   pictures: string[];
   repository: string;
   unsupported?: string[];
@@ -284,10 +325,24 @@ export async function checkPictures({
   const entries = loaded.flatMap(({ folder, items }) => items.map((item) => ({ folder, item })));
   const byHash = Map.groupBy(entries, (entry) => entry.item.sha256);
   const byPath = new Map(entries.map((entry) => [resolve(entry.folder, entry.item.file), entry]));
-  const unique = [...new Set(pictures)];
+
+  const shown: { caption?: string; path: string }[] = [
+    ...[...new Set(pictures)].map((path) => ({ path })),
+    ...onDevice,
+  ];
 
   const checked = await Promise.all(
-    unique.map(async (picture) => pictureProblems({ byHash, byPath, git, picture })),
+    shown.map(async ({ caption, path: picture }) => {
+      const found = await pictureProblems({ byHash, byPath, git, picture });
+      const placed = placementProblems({ caption, entries: found.entries, picture });
+
+      return {
+        ...found,
+        line: placed.line,
+        picture,
+        problems: [...found.problems, ...placed.problems],
+      };
+    }),
   );
 
   const matched = new Set(checked.flatMap(({ entries: found }) => found));
@@ -311,8 +366,8 @@ export async function checkPictures({
   const unreadable = unsupported.map((detail): Problem => ({ detail, kind: "unsupported" }));
 
   return {
-    checked: unique.length,
-    devicePictures: after.filter((item) => isRecorded(item) && item.device).length,
+    checked: new Set(shown.map(({ path }) => path)).size,
+    devices: checked.flatMap(({ line, picture }) => (line ? [{ line, picture }] : [])),
     notMeasured: judgedManifests.filter((manifest) => !measured(manifest)).length,
     nothingDeclared: judgedManifests
       .flatMap(({ alignment }) => alignment.captures ?? [])

@@ -6,7 +6,7 @@ import { parseArgs } from "node:util";
 import { adoptRenders } from "./adopt.mts";
 import { checkPictures } from "./check.mts";
 import { DEVICE_BRIDGES, takeDevicePicture } from "./device.mts";
-import { bodyMedia, findManifests, isRemote, manifestsAbove } from "./locate.mts";
+import { DEVICE_HEADING, bodyMedia, findManifests, isRemote, manifestsAbove } from "./locate.mts";
 import { USAGE } from "./media-usage.mts";
 import {
   type Finding,
@@ -15,6 +15,7 @@ import {
   NATIVE_PLATFORMS,
   PLATFORMS,
   SIDES,
+  deviceLine,
   displayPath,
   pathWithin,
   readManifest,
@@ -71,16 +72,22 @@ async function check({ positionals: [body], values }: Arguments) {
   const markdown = await readFile(body, "utf8");
 
   const media = bodyMedia(markdown);
-  const pictures = media.pictures.map((link) => (isRemote(link) ? link : resolve(root, link)));
+  const local = (link: string) => (isRemote(link) ? link : resolve(root, link));
+  const pictures = media.pictures.map((link) => local(link));
+  const onDevice = media.onDevice.map(({ caption, path }) => ({ caption, path: local(path) }));
 
   const named = await Promise.all(
     values.manifests.map(async (folder) => findManifests(resolve(folder))),
   );
 
-  const manifests = [...manifestsAbove(pictures), ...named.flat()];
+  const manifests = [
+    ...manifestsAbove([...pictures, ...onDevice.map(({ path }) => path)]),
+    ...named.flat(),
+  ];
 
   const result = await checkPictures({
     manifests,
+    onDevice,
     pictures,
     repository,
     unsupported: media.unsupported,
@@ -319,7 +326,10 @@ async function recordDevice({ positionals: files, values }: Arguments) {
     to,
   });
 
-  console.log(`${item.file} from ${item.device} in ${displayPath(join(to, MANIFEST))}.`);
+  console.log(
+    `${item.file} in ${displayPath(join(to, MANIFEST))}. In the PR body, put it under "## ${DEVICE_HEADING}" with this line under it:\n${deviceLine(item)}`,
+  );
+
   return true;
 }
 

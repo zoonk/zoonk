@@ -1,5 +1,5 @@
 import { relative } from "node:path";
-import { isRemote } from "./locate.mts";
+import { DEVICE_HEADING, isRemote } from "./locate.mts";
 
 /** In the order they print: what can't be bound first, then what a retake fixes, then the read. */
 const KINDS = [
@@ -29,6 +29,22 @@ const KINDS = [
     kind: "unrecorded",
     label: "Not in any capture manifest: take it with pnpm pr:capture",
     summary: "not in any capture manifest",
+  },
+  {
+    kind: "device-elsewhere",
+    label: `A device picture outside "## ${DEVICE_HEADING}": put it under that heading, its caption on the line under it`,
+    summary: "device pictures outside their heading",
+  },
+  {
+    kind: "not-device",
+    label: `Under "## ${DEVICE_HEADING}" with no device record: take it with pnpm pr:media device, or move it out`,
+    summary: "under the device heading with no device record",
+  },
+  {
+    kind: "caption",
+    label:
+      "A device picture's caption doesn't say what was verified: write this on the line under it",
+    summary: "device pictures without their caption",
   },
   { kind: "pending", label: "Pending: no native capture record yet", summary: "pending" },
   {
@@ -81,8 +97,8 @@ type Reads = { carried: number; missing: number; new: number };
  */
 export type CheckResult = {
   checked: number;
-  /** After pictures from an emulator or a simulator: no capture, so only their read checks layout. */
-  devicePictures?: number;
+  /** The pictures under the device heading with a device record, and what was verified of each. */
+  devices?: { line: string; picture: string }[];
   nothingDeclared?: number;
   notMeasured: number;
   problems: Problem[];
@@ -96,7 +112,7 @@ function kindOf(kind: Kind) {
 }
 
 export function formatCheck(
-  { checked, devicePictures = 0, nothingDeclared = 0, notMeasured, problems, reads }: CheckResult,
+  { checked, devices = [], nothingDeclared = 0, notMeasured, problems, reads }: CheckResult,
   root: string,
 ): string {
   if (checked === 0 && problems.length === 0) {
@@ -126,19 +142,37 @@ export function formatCheck(
       ? `; layout measured with nothing declared on ${nothingDeclared} ${nothingDeclared === 1 ? "screen" : "screens"}`
       : "";
 
-  const devices =
-    devicePictures > 0
-      ? `; ${devicePictures} device ${devicePictures === 1 ? "picture" : "pictures"}: layout not measured, ${devicePictures === 1 ? "its read checks it" : "their reads check it"}`
-      : "";
+  const others = checked - devices.length;
+
+  const counts = [
+    ...(others > 0 || devices.length === 0
+      ? [
+          `${others} pictures, each in a capture manifest; every after picture from a current, committed build and read${unmeasured}${undeclared}`,
+        ]
+      : []),
+    ...(devices.length > 0
+      ? [
+          `${devices.length} ${devices.length === 1 ? "picture" : "pictures"} on a device, layout not measured, listed above`,
+        ]
+      : []),
+  ];
 
   const summary =
     groups.length === 0
-      ? `PASS: ${checked} pictures, each in a capture manifest; every after picture from a current, committed build and read${unmeasured}${undeclared}${devices}`
-      : `FAIL: ${groups.map(([kind, list]) => `${list.length} ${kindOf(kind).summary}`).join("; ")}, of ${checked} pictures${unmeasured}${undeclared}${devices}`;
+      ? `PASS: ${counts.join("; ")}`
+      : `FAIL: ${groups.map(([kind, list]) => `${list.length} ${kindOf(kind).summary}`).join("; ")}, of ${checked} pictures${unmeasured}${undeclared}`;
+
+  const deviceLines =
+    devices.length > 0
+      ? [
+          `On a device, layout not measured (${devices.length}):`,
+          ...devices.map(({ line, picture }) => `  ${shown(picture)}: ${line}`),
+        ]
+      : [];
 
   const readLine =
     reads.carried + reads.new + reads.missing > 0 &&
     `Reads: ${reads.carried} carried over from a capture with the same pixels, ${reads.new} new, ${reads.missing} still to read`;
 
-  return [...lines, readLine, summary].filter(Boolean).join("\n");
+  return [...lines, ...deviceLines, readLine, summary].filter(Boolean).join("\n");
 }
