@@ -205,6 +205,7 @@ private struct BuddyContent: View {
           .scenePadding(.horizontal)
           .padding(.vertical, 8)
       }
+      .readableColumn(720, alignment: .leading)
   }
 
   @ViewBuilder
