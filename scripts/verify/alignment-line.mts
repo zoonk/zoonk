@@ -3,9 +3,11 @@ import { type AlignmentFinding, type CaptureElement } from "./alignment-capture.
 import { isStacked } from "./alignment-edges.mts";
 import {
   type Context,
+  EDGE,
   type Group,
   drawn,
   finding,
+  glyphsOnly,
   groupName,
   measured,
   rowName,
@@ -13,7 +15,10 @@ import {
 
 /**
  * One line of a row (`ROW-LINE.md`, craft E6): every part sits on the middle of the label's
- * capitals, whatever its face or size, within half a logical unit.
+ * capitals, whatever its face or size, within half a logical unit at text ×1. The offset a reader
+ * sees is against the size of the text, so at text ×N that's N halves. A part read by its ink is
+ * drawn in whole device pixels, so its middle is known only to half a device pixel: it's allowed
+ * that much more on top.
  */
 const LINE = 0.5;
 
@@ -28,8 +33,9 @@ function capMiddle(element: CaptureElement): number | null {
   return top === null || bottom === null ? null : (top + bottom) / 2;
 }
 
+/** A mark's, an end glyph's or a glyphs-only part's middle is its ink's. */
 function middleOf(element: CaptureElement): number | null {
-  if (element.part !== "mark" && element.part !== "end") {
+  if (element.part !== "mark" && element.part !== "end" && !glyphsOnly(element)) {
     return capMiddle(element);
   }
 
@@ -37,7 +43,12 @@ function middleOf(element: CaptureElement): number | null {
   return ink ? (ink.top + ink.bottom) / 2 : null;
 }
 
-type Miss = { off: number; part: string; to: string };
+/** `inked`: one side of the comparison is a part read by its ink, not a text's capitals. */
+type Miss = { inked: boolean; off: number; part: string; to: string };
+
+function readByInk(element: CaptureElement) {
+  return element.part === "mark" || element.part === "end" || glyphsOnly(element);
+}
 
 /**
  * Each part's distance from where it belongs (craft E5 and E6). One line: on the label's middle.
@@ -53,12 +64,24 @@ function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
     .toSorted((one, other) => one.bounds[1] - other.bounds[1])[0];
 
   const stacked = isStacked(row, own);
+  const labelTop = label ? drawn(label)?.top : undefined;
+
+  // Stacked (large text), a value goes under the label, and Apple's stacked layout puts a mark on
+  // a line of its own above the words: neither shares the label's line. A mark beside the label
+  // still does.
+  const above = (element: CaptureElement) => {
+    const ink = drawn(element);
+
+    return (
+      element.part === "mark" && ink && labelTop !== undefined && ink.bottom <= labelTop + EDGE
+    );
+  };
 
   const others = own.filter(
     (element) =>
       ["end", "lead", "mark", "value"].includes(element.part) &&
       drawn(element) &&
-      !(stacked && element.part === "value"),
+      !(stacked && (element.part === "value" || above(element))),
   );
 
   if (!label || others.length === 0) {
@@ -89,20 +112,21 @@ function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
 
   return middles.flatMap(({ element, middle }): Miss[] => {
     const at = middle ?? labelMiddle;
+    const inked = readByInk(element);
 
     if (oneLine) {
-      return [{ off: at - labelMiddle, part: element.part, to: "the label's middle" }];
+      return [{ inked, off: at - labelMiddle, part: element.part, to: "the label's middle" }];
     }
 
     // A row with a text lead sits on its first line; a mark does beside three lines or more.
     if (led || (element.part === "mark" && notes >= 2)) {
-      return [{ off: at - labelMiddle, part: element.part, to: "the label's first line" }];
+      return [{ inked, off: at - labelMiddle, part: element.part, to: "the label's first line" }];
     }
 
     return [
-      { off: at - rowMiddle, part: element.part, to: "the row's center" },
+      { inked, off: at - rowMiddle, part: element.part, to: "the row's center" },
       ...(element.part === "value" && endMiddle !== null
-        ? [{ off: at - endMiddle, part: "value", to: "the end glyph's middle" }]
+        ? [{ inked: true, off: at - endMiddle, part: "value", to: "the end glyph's middle" }]
         : []),
     ];
   });
@@ -131,7 +155,12 @@ export function lineLeads(context: Context, read: Group): AlignmentFinding[] {
       ];
     }
 
-    const off = found.filter((miss) => Math.abs(miss.off) > LINE);
+    const allowed = LINE * context.capture.configuration.textScale;
+    const resolution = 0.5 / context.capture.scale;
+
+    const off = found.filter(
+      (miss) => Math.abs(miss.off) > allowed + (miss.inked ? resolution : 0),
+    );
 
     if (off.length === 0) {
       return [];
@@ -149,7 +178,7 @@ export function lineLeads(context: Context, read: Group): AlignmentFinding[] {
         detail: `${rowName(read, row.id)}: ${off.map((miss) => describe(miss)).join("; ")}${faced}`,
         level: "fail",
         measured: Math.max(...off.map((miss) => Math.abs(miss.off))),
-        message: `a row of ${groupName(read)} is off one line by more than ${LINE}`,
+        message: `a row of ${groupName(read)} is off one line by more than ${allowed}`,
         piece: group.piece,
         rule: "line",
       }),

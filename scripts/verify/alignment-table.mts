@@ -23,7 +23,10 @@ export type Relation =
 export type WebPiece = {
   /** The group's element. */
   group: string;
-  /** Its rows, from the group (`:scope`); a row inside another of the same group isn't one. */
+  /**
+   * Its rows, from the group; a row inside another of the same group isn't one. `:scope` alone:
+   * the group is its one row (a control holding a glyph and its words).
+   */
   rows: string;
   /** Each part, inside a row. */
   parts: Partial<Record<Part, string>>;
@@ -83,6 +86,8 @@ const PIECES: Piece[] = [
       group: "[data-slot=sidebar]:not([data-sidebar-collapsed] *)",
       parts: { label: ":scope > :nth-child(2)", mark: ":scope > :first-child" },
       rows: "[data-slot=sidebar-item]",
+      // A row whose name hasn't streamed in yet (Buddy's, at a first paint) only holds its room.
+      words: true,
     },
   },
   // Collapsed, the sidebar is an icon rail: its labels are for screen readers and its names show
@@ -110,7 +115,9 @@ const PIECES: Piece[] = [
     relations: ["end-edge"],
     web: {
       bar: ":scope > [data-slot=meter-parts]",
-      group: "[data-slot=plan-roadmap]:has(> [data-slot=meter-parts])",
+      // A meter that draws its line; the reveal's phone meter has none, its list dating each phase.
+      group:
+        "[data-slot=plan-roadmap]:has(> [data-slot=meter-parts]):has(> [data-slot=plan-roadmap-line])",
       parts: { end: "svg.lucide-chevron-right", value: "[data-slot=plan-roadmap-when]" },
       rows: ":scope > [data-slot=plan-roadmap-line]",
     },
@@ -125,7 +132,7 @@ const PIECES: Piece[] = [
       parts: {
         end: "svg.lucide-chevron-right, [data-slot=fold-chevron]",
         label: "[data-slot=path-row-words] > :first-child",
-        mark: "[data-slot=path-row-mark]",
+        mark: "[data-slot=path-row-mark], [data-slot=status-mark]",
         note: "[data-slot=path-row-words] > :not(:first-child)",
         value: "[data-slot=path-row-value]",
       },
@@ -141,6 +148,18 @@ const PIECES: Piece[] = [
       group: "[data-slot=page-top-bar]",
       parts: { label: ":scope" },
       rows: "[data-slot=page-top-end] :is(a, button):not(:has([data-slot=avatar]))",
+      words: true,
+    },
+  },
+  // A glyph and the words it goes with in one control (a chip's smiley and its label, #44): one
+  // line, the glyph on the middle of the words' capitals.
+  {
+    name: "glyph-label",
+    relations: ["line"],
+    web: {
+      group: "[data-slot=button]:has(> svg, > [data-icon])",
+      parts: { label: ":scope", mark: ":scope > :is(svg, [data-icon])" },
+      rows: ":scope",
       words: true,
     },
   },
@@ -225,6 +244,10 @@ const COLUMNS =
 export const WEB_TABLE = {
   actions: ACTIONS,
   columns: COLUMNS,
+  // Surfaces of their own beside the page: a side panel, and a card that asks its own question (a
+  // suggestion, the tutor's proposed plan change), each named, so a card that only holds a button
+  // gets no filled action of its own.
+  panels: "[data-slot=page-aside], [data-slot=suggestion], [data-slot=tutor-plan-change]",
   pieces: PIECES.flatMap((piece) => (piece.web ? [{ name: piece.name, web: piece.web }] : [])),
   pinned: "[data-slot=bottom-bar]",
   surfaces: SURFACES,
