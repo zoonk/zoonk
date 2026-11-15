@@ -13,7 +13,7 @@ import {
 } from "@zoonk/ui/components/drawer";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, CrosshairIcon } from "lucide-react";
+import { CrosshairIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { createContext, use, useId, useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
@@ -207,7 +207,6 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
           disabled={sameAreas(chosen, current) || unchanged !== null}
           focusableWhenDisabled
           form={formId}
-          icon={<CheckIcon aria-hidden="true" />}
           size="lg"
           type="submit"
         >
