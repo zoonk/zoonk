@@ -7,12 +7,12 @@ import { join } from "node:path";
 import { describe, it } from "vitest";
 import { type Bounds, type Capture } from "./alignment-capture.mts";
 import {
+  LABEL_TYPE,
   element,
   endFindings,
   failures,
   filledActions,
   fixtureCapture,
-  LABEL_TYPE,
   labelledRows,
   real,
   valueList,

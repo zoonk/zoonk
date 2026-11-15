@@ -100,6 +100,7 @@ describe("the Plan's path and Android's captures", () => {
 
   it("judges a row whose value stacked under its label by what still applies", () => {
     const findings = evaluateCapture(real("android plan rows stacked at 200%, phone"));
+
     const line = findings.find(
       (finding) => finding.rule === "line" && finding.detail.includes("Learn Python"),
     );

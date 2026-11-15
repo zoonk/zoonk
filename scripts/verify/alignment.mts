@@ -1,6 +1,7 @@
 import { type AlignmentFile, type AlignmentFinding, type Capture } from "./alignment-capture.mts";
 import { coverageLeads, isOneStack } from "./alignment-coverage.mts";
-import { axisLeads, endLeads, gapLeads, stackedLeads, startLeads } from "./alignment-edges.mts";
+import { axisLeads, endLeads, stackedLeads, startLeads } from "./alignment-edges.mts";
+import { gapLeads } from "./alignment-gap.mts";
 import {
   type Context,
   type Group,
