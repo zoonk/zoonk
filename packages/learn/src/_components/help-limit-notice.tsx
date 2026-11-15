@@ -6,6 +6,7 @@ import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import {
   isRollingCap,
+  receivedAtOf,
   useComesBackLine,
   useMapLessonsWords,
   useOpeningDay,
@@ -25,7 +26,7 @@ export function useLiveLimit<Limit extends object>(limit: Limit | null): Limit |
       ? limit.availableAt
       : null;
 
-  return useOpeningDay(availableAt) === "open" ? null : limit;
+  return useOpeningDay(availableAt, receivedAtOf(limit)) === "open" ? null : limit;
 }
 
 type SignUpRequired = { status: "signUpRequired" };
@@ -39,6 +40,8 @@ type SlowDown = { retryAfterSeconds: number; status: "slowDown" };
 type RollingCap = {
   availableAt: string | null;
   period: "rolling30Days";
+  /** When this device received the refusal, for one that answers a request just made. */
+  receivedAt?: number;
   status: "limitReached";
   tier: EntitlementTier;
 };
@@ -66,6 +69,8 @@ export type OutlineLimit = HelpLimit;
 export type CallLimit = {
   availableAt?: string | null;
   period: "day" | "rolling30Days" | "total";
+  /** When this device received the refusal, for one that answers a request just made. */
+  receivedAt?: number;
   tier: EntitlementTier;
 };
 
@@ -212,7 +217,9 @@ export function useHelpLimitWords(limit: HelpLimit, kind?: HelpKind): LimitWords
 
 /** Whether a free learner's next lesson has opened since the refusal: the server then gets asked again. */
 export function useFreeLessonReady(limit: LessonLimit): boolean {
-  return useOpeningDay(isRollingCap(limit) ? limit.availableAt : null) === "open";
+  return (
+    useOpeningDay(isRollingCap(limit) ? limit.availableAt : null, receivedAtOf(limit)) === "open"
+  );
 }
 
 export function useLessonLimitWords(limit: LessonLimit): LimitWords {

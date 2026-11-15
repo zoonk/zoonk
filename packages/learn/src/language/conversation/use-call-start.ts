@@ -26,7 +26,8 @@ function settle({
   started: CallStartOutcome;
 }): CallStartState {
   if (typeof started === "object" && "limit" in started) {
-    return { limit: started.limit, status: "limited" };
+    // Received now: the moment tells a server clock behind this device's from a refusal that's over.
+    return { limit: { ...started.limit, receivedAt: Date.now() }, status: "limited" };
   }
 
   if (started === "paused") {

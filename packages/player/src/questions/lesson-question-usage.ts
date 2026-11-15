@@ -34,7 +34,7 @@ const usageErrorSchema = z.object({
 export type LessonQuestionUsageRefusal =
   | { kind: "signUpRequired" }
   | { kind: "slowDown"; retryAfterSeconds: number }
-  | ({ kind: "usageLimit" } & z.infer<typeof usageLimitSchema>);
+  | ({ kind: "usageLimit"; receivedAt?: number } & z.infer<typeof usageLimitSchema>);
 
 export function getUsageRefusal(body: unknown): LessonQuestionUsageRefusal | null {
   const parsed = usageErrorSchema.safeParse(body);
@@ -63,6 +63,11 @@ const REFUSAL_STATUSES = new Set([
 export async function getRefusalError(response: Response): Promise<LessonQuestionApiError> {
   const { data: body } = await safeAsync<unknown>(() => response.json());
   const usage = getUsageRefusal(body);
+
+  // Received now: the moment tells a server clock behind this device's from a refusal that's over.
+  if (usage?.kind === "usageLimit") {
+    return { ...usage, receivedAt: Date.now() };
+  }
 
   if (usage) {
     return usage;

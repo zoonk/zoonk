@@ -4,7 +4,7 @@ import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted, useFormatter } from "next-intl";
-import { useCallback, useState, useSyncExternalStore } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import { isoDateToUtc } from "../_utils/iso-date";
 import {
   OPENING_DATE_OPTIONS,
@@ -36,23 +36,21 @@ function watchOpening(availableAt: string | null, notify: () => void) {
   };
 }
 
-function toArrival(availableAt: string | null) {
-  return { availableAt, past: availableAt !== null && Date.parse(availableAt) <= Date.now() };
+/** When this device received a refusal: a stored or server-rendered one has no such moment. */
+export function receivedAtOf(refusal: object | null): number | undefined {
+  return refusal && "receivedAt" in refusal && typeof refusal.receivedAt === "number"
+    ? refusal.receivedAt
+    : undefined;
 }
 
 /**
  * The day follows the clock while the screen is open, so a passed instant stops being promised. A
- * refusal whose instant this device already shows as past came from a server whose clock is behind
- * it: its day can't be told here, so it stays unknown and the refusal stands until the next try.
+ * refusal whose instant had already passed when this device received it (`receivedAt`) came from a
+ * server whose clock is behind it: its day can't be told here, so it stays unknown and the refusal
+ * stands until the next try. A refusal restored from an address or a page has no `receivedAt`: past
+ * its instant, it is simply over.
  */
-export function useOpeningDay(availableAt: string | null): OpeningDay | null {
-  const mounted = useIsMounted();
-  const [arrival, setArrival] = useState(() => toArrival(availableAt));
-
-  if (arrival.availableAt !== availableAt) {
-    setArrival(toArrival(availableAt));
-  }
-
+export function useOpeningDay(availableAt: string | null, receivedAt?: number): OpeningDay | null {
   const subscribe = useCallback(
     (notify: () => void) => watchOpening(availableAt, notify),
     [availableAt],
@@ -64,7 +62,10 @@ export function useOpeningDay(availableAt: string | null): OpeningDay | null {
     () => toFirstRenderDay(availableAt),
   );
 
-  return mounted && arrival.past ? null : day;
+  const passedOnArrival =
+    availableAt !== null && receivedAt !== undefined && Date.parse(availableAt) <= receivedAt;
+
+  return passedOnArrival ? null : day;
 }
 
 type DayLines = {
@@ -189,7 +190,10 @@ function useLineFor() {
 export function useComesBackLine(limit: HelpLimit): LimitWords {
   const lineFor = useLineFor();
   const known = useIsMounted();
-  const opensOn = useOpeningDay(isRollingCap(limit) ? limit.availableAt : null);
+  const opensOn = useOpeningDay(
+    isRollingCap(limit) ? limit.availableAt : null,
+    receivedAtOf(limit),
+  );
   const line = lineFor(limit, opensOn);
 
   return {
@@ -226,7 +230,10 @@ export function useMapLessonsWords(limit: MindMapLimit): LimitWords | null {
   const t = useExtracted();
   const dayLine = useDayLine();
   const known = useIsMounted();
-  const opensOn = useOpeningDay(isRollingCap(limit) ? limit.availableAt : null);
+  const opensOn = useOpeningDay(
+    isRollingCap(limit) ? limit.availableAt : null,
+    receivedAtOf(limit),
+  );
 
   if (limit.status !== "limitReached") {
     return null;
@@ -277,6 +284,8 @@ export function useMapLessonsWords(limit: MindMapLimit): LimitWords | null {
 export type RefusedCap = {
   availableAt?: string | null;
   period: "day" | "rolling30Days" | "total";
+  /** When this device received the refusal, for one that answers a request just made. */
+  receivedAt?: number;
   tier: EntitlementTier;
 };
 
@@ -286,9 +295,9 @@ export type CapWords = LimitWords & { cap?: RefusedCap };
 /** A message that stays on screen: plain words, or a cap's, whose line follows the clock. */
 export type LimitText = string | CapWords;
 
-function toHelpLimit({ availableAt = null, period, tier }: RefusedCap): HelpLimit {
+function toHelpLimit({ availableAt = null, period, receivedAt, tier }: RefusedCap): HelpLimit {
   return period === "rolling30Days"
-    ? { availableAt, period, status: "limitReached", tier }
+    ? { availableAt, period, receivedAt, status: "limitReached", tier }
     : { period, status: "limitReached", tier };
 }
 
@@ -300,7 +309,10 @@ export function useLiveWords(words: CapWords | null): LimitWords {
   const lineFor = useLineFor();
   const known = useIsMounted();
   const limit = words?.cap ? toHelpLimit(words.cap) : null;
-  const opensOn = useOpeningDay(limit && isRollingCap(limit) ? limit.availableAt : null);
+  const opensOn = useOpeningDay(
+    limit && isRollingCap(limit) ? limit.availableAt : null,
+    receivedAtOf(limit),
+  );
 
   if (!words) {
     return {};
