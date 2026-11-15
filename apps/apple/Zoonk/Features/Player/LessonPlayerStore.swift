@@ -72,7 +72,15 @@ final class LessonPlayerStore {
   /// What's ready to do while the lesson is written, or instead of it.
   private(set) var alternative: Components.Schemas.ReadyAlternative?
   private(set) var lesson: PlayableLesson?
-  private(set) var state: LessonPlayerState?
+  private(set) var state: LessonPlayerState? {
+    didSet {
+      // An offer is its screen's: once the learner leaves that screen it's dropped, so coming
+      // back to it asks nothing until they tap Ask again.
+      if let offer = askingOffer, offer.stepId != state?.currentStep?.id {
+        askingOffer = nil
+      }
+    }
+  }
   private(set) var soundsEnabled = true
   private(set) var challengeTeam: [String] = []
   private(set) var explanations: [String: Explanation] = [:]

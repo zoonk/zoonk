@@ -398,19 +398,55 @@ extension LessonAudio {
   }
 }
 
+/// What a check adds to a word bank's step. Where the bank waits at the bottom it goes right above
+/// the bank, in the room the bank leaves, so the bank holds still; elsewhere it goes under the bank.
+struct WordBankAdded {
+  let view: AnyView
+  let isAbove: Bool
+}
+
+extension EnvironmentValues {
+  @Entry var wordBankAdded: WordBankAdded?
+}
+
 /// Where the stage gives the turn spare height (one column), the bank sits at its bottom, so it
 /// stays put while the answer grows.
-private struct LessonWordBank<Tiles: View>: View {
+struct LessonWordBank<Tiles: View>: View {
+  @Environment(\.wordBankAdded) private var added
+
   @ViewBuilder let tiles: Tiles
 
-  var body: some View {
-    FlowLayout(spacing: 8) {
-      tiles
+  private enum Part {
+    case added, tiles
+  }
+
+  /// One keyed list, so the added part only changes place when the page changes shape (the ask
+  /// panel opening beside the lesson): what the learner did in it, such as a dismissed offer, stays.
+  private var parts: [Part] {
+    guard let added else {
+      return [.tiles]
     }
-    .accessibilityElement(children: .contain)
-    .accessibilityLabel(
-      Text("Word bank", tableName: "Player", comment: "The words to build an answer from")
-    )
+
+    return added.isAbove ? [.added, .tiles] : [.tiles, .added]
+  }
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 24) {
+      ForEach(parts, id: \.self) { part in
+        switch part {
+        case .added:
+          added?.view
+        case .tiles:
+          FlowLayout(spacing: 8) {
+            tiles
+          }
+          .accessibilityElement(children: .contain)
+          .accessibilityLabel(
+            Text("Word bank", tableName: "Player", comment: "The words to build an answer from")
+          )
+        }
+      }
+    }
     .frame(maxHeight: .infinity, alignment: .bottom)
   }
 }

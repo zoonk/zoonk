@@ -231,6 +231,8 @@ struct AppSheetView: View {
         AccountSheet(signsIn: true)
       case .subscription:
         SubscriptionScreen()
+      case .practiceCall(let call):
+        TutorPracticeCallSheet(call: call)
       }
     }
     .zoonkStyles()

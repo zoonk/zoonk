@@ -15,6 +15,18 @@ struct ChapterMindMap: Decodable, Equatable, Identifiable, Sendable {
     }
   }
 
+  /// Main's `canMakeNow`: its lessons are written, so its map is made, or being made, without
+  /// writing any. Its row sits above "Other chapters", whose rows alone the page's line counts.
+  var canMakeNow: Bool {
+    lessonsToWrite == 0 && [.available, .drawing, .failed].contains(status)
+  }
+
+  /// Main's `isOpenOnArrival`: a map on its way, or one that didn't finish with its Try again. Its
+  /// row says where it stands, so "Other chapters" opens on arrival to show it.
+  var opensItsGroupOnArrival: Bool {
+    status.isOnItsWay || status == .failed
+  }
+
   struct Image: Decodable, Equatable, Sendable {
     let height: Int
     let thumbnailUrl: String?
@@ -179,8 +191,9 @@ struct GoalMindMaps: Decodable, Equatable, Sendable {
   let saved: [SavedMindMap]
 
   /// A save that can no longer open still shows, so the learner can remove it.
+  /// A list with nothing in it but a stop is still a list: the page's empty state reads the stop.
   var isEmpty: Bool {
-    chapters.isEmpty && saved.isEmpty
+    chapters.isEmpty && saved.isEmpty && createOffer.stop == nil
   }
 
   func chapter(_ id: String) -> ChapterMindMap? {
