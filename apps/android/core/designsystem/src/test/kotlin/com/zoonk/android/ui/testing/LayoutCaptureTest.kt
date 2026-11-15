@@ -2,12 +2,15 @@ package com.zoonk.android.ui.testing
 
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -134,6 +137,32 @@ class LayoutCaptureTest {
         assertEquals("copied.png", record.getJSONObject("picture").getString("file"))
         assertEquals(NOT_MEASURED, record.getString("elements"))
         assertTrue(record.getString("reason").isNotEmpty())
+    }
+
+    @Test
+    fun textClippedInsideItsOwnPartHasNoInk() {
+        val label =
+            capture {
+                ListRow(headline = { Box(Modifier.height(10.dp).clipToBounds()) { Text("Clipped inside label") } })
+            }.part("label")
+
+        assertEquals(NOT_MEASURED, label.getString("ink"))
+        assertTrue(label.getBoolean("clipped"))
+        assertTrue(label.get("baseline") is Number)
+    }
+
+    @Test
+    fun textUnderAnOpaqueSiblingHasNoInk() {
+        val label =
+            capture {
+                Box {
+                    ListRow(headline = { Text("Covered row") })
+                    Box(Modifier.fillMaxWidth().height(60.dp).background(Color.Blue))
+                }
+            }.part("label")
+
+        assertEquals(NOT_MEASURED, label.getString("ink"))
+        assertTrue(label.get("baseline") is Number)
     }
 
     private fun capture(content: @androidx.compose.runtime.Composable () -> Unit): JSONArray {

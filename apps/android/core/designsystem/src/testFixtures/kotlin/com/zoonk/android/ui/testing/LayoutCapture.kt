@@ -376,18 +376,14 @@ internal object LayoutCapture {
                 val lines = texts.map { (each, result) -> lineBox(each, result) }
                 val left = lines.minOf { it[0] }
                 val top = lines.minOf { it[1] }
-                // A cut-off paragraph's line boxes reach past what the picture shows.
-                fields["ink"] =
-                    if (clipped) {
-                        NOT_MEASURED
-                    } else {
-                        listOf(
-                            left,
-                            top,
-                            lines.maxOf { it[0] + it[2] } - left,
-                            lines.maxOf { it[1] + it[3] } - top,
-                        )
-                    }
+                val laidOut = listOf(left, top, lines.maxOf { it[0] + it[2] } - left, lines.maxOf { it[1] + it[3] } - top)
+                // Where the paragraph's lines are laid out: real layout, whether or not anyone can see them.
+                fields["lineBounds"] = laidOut
+                // Ink only once the lines are seen: no text cut off by its part or anything inside it, and the
+                // picture shows something there (an opaque sibling over the row leaves nothing to see).
+                val textClipped = clipped || texts.any { (each, result) -> isClipped(each) || result.hasVisualOverflow }
+                if (textClipped) fields["clipped"] = true
+                fields["ink"] = if (!textClipped && ink(laidOut) is List<*>) laidOut else NOT_MEASURED
                 val y =
                     (
                         text.layoutInfo.coordinates
