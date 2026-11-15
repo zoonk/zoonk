@@ -70,6 +70,9 @@ class MindMapViewModel(
     val saves: StateFlow<Map<MindMapTarget, Boolean>> = wanted.asStateFlow()
     private val sending = mutableSetOf<MindMapTarget>()
 
+    /** The visit of the tap each wanted save came from: a write that starts later still belongs to it. */
+    private val askedOn = mutableMapOf<MindMapTarget, Int>()
+
     /**
      * Shows [saved] at once and sends it. Taps while one is on its way only change what's wanted,
      * and the last one wanted is sent after it, so the server ends on the learner's last tap. A
@@ -81,12 +84,13 @@ class MindMapViewModel(
         saved: Boolean,
     ) {
         wanted.update { it + (target to saved) }
+        askedOn[target] = visit.number
         if (!sending.add(target)) return
 
         viewModelScope.launch {
             while (true) {
                 val sent = wanted.value[target] ?: break
-                val started = visit.number
+                val started = askedOn.getValue(target)
                 val result = store.save(goalId, target, chapterId, sent)
                 if (result !is MutationResult.Done) {
                     wanted.update { it - target }
@@ -99,6 +103,7 @@ class MindMapViewModel(
                 }
             }
             sending.remove(target)
+            askedOn.remove(target)
         }
     }
 

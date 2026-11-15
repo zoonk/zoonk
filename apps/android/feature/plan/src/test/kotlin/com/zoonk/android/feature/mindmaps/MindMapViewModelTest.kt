@@ -70,6 +70,30 @@ class MindMapViewModelTest {
     fun stop() = Dispatchers.resetMain()
 
     @Test
+    fun aQueuedToggleThatFailsAfterTheLearnerLeftSaysNothingOnReturn() =
+        runTest(dispatcher) {
+            val (maps) = setUp()
+            val target = MindMapTarget(SavedMindMapKind.CHAPTER, chapterId)
+            val first = CompletableDeferred<Unit>()
+            api.save = { t, saved ->
+                if (api.saved.size == 1) {
+                    first.await()
+                    savedState(t, saved)
+                } else {
+                    throw ApiException(ApiError.Network)
+                }
+            }
+            maps.save(target, chapterId, saved = true)
+            advanceUntilIdle()
+            maps.save(target, chapterId, saved = false)
+            maps.visit.end()
+            first.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(listOf(target to true, target to false), api.saved)
+            assertNull(maps.saveFailed.value)
+        }
+
+    @Test
     fun aTapAsksForTheMapAndReadsItAgainWhereItsShown() =
         runTest(dispatcher) {
             val (maps, store) = setUp()
