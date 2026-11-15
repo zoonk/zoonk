@@ -114,7 +114,8 @@ export function CompletedLessonsScreen({
       bar={
         <LearnPageBar
           back={{ href: hrefs.back }}
-          listed="learner"
+          // The sidebar lists the page once a lesson is done: the same runs this list reads.
+          listed={lessons.length > 0 ? "learner" : undefined}
           root
           title={t("Completed lessons")}
         />

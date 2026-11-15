@@ -2,6 +2,7 @@ import { NotFoundPage } from "@/components/errors/not-found-page";
 import { JourneyPageBar } from "@/components/learn/journey-page-bar";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
+import { hasMindMapsPage } from "@zoonk/core/mind-maps/contract";
 import { listGoalMindMaps } from "@zoonk/core/mind-maps/list";
 import { toMindMapsPage } from "@zoonk/learn/mind-maps/page";
 import { MEASURED_CLASS, PAGE_COLUMN_CLASS, PageTitle, pageMeasureClass } from "@zoonk/learn/page";
@@ -28,7 +29,7 @@ async function MindMapsBody() {
 
     return (
       <LearnNoGoal
-        bar={<JourneyPageBar listed root title={t("Mind maps")} />}
+        bar={<JourneyPageBar root title={t("Mind maps")} />}
         description={t("Each chapter's ideas on one map, to review how they connect.")}
         next="/mind-maps"
         title={t("Mind maps")}
@@ -50,7 +51,11 @@ async function MindMapsBody() {
   }
 
   return (
-    <MindMapsClient mindMaps={toMindMapsPage(result.mindMaps)} tier={allowance?.tier ?? "free"} />
+    <MindMapsClient
+      listed={hasMindMapsPage(goal.kind)}
+      mindMaps={toMindMapsPage(result.mindMaps)}
+      tier={allowance?.tier ?? "free"}
+    />
   );
 }
 

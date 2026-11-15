@@ -16,11 +16,17 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Speaking practice") };
 }
 
-async function SpeakingBar() {
+/** `listed` only where the sidebar lists the page: the placeholder, which can't know, and never without a goal. */
+async function SpeakingBar({ listed = false }: { listed?: boolean }) {
   const t = await getExtracted();
 
   return (
-    <LearnPageBar back={{ href: "/today" }} listed="learner" root title={t("Speaking practice")} />
+    <LearnPageBar
+      back={{ href: "/today" }}
+      listed={listed ? "learner" : undefined}
+      root
+      title={t("Speaking practice")}
+    />
   );
 }
 
@@ -60,7 +66,7 @@ async function SpeakingContent() {
 function SpeakingSkeleton() {
   return (
     <div aria-busy="true" className="flex flex-col gap-8">
-      <SpeakingBar />
+      <SpeakingBar listed />
       <div className="flex flex-col gap-2">
         <Skeleton className="h-8 w-48 rounded-lg" />
       </div>

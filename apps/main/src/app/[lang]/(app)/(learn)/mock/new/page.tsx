@@ -14,20 +14,21 @@ export async function generateMetadata(): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: t("Take a mock exam") };
 }
 
-async function ChooserBar() {
+/** `listed` only where the sidebar lists the page: with an exam goal, and the placeholder, which can't know. */
+async function ChooserBar({ listed = false }: { listed?: boolean }) {
   const t = await getExtracted();
 
   return (
     <LearnPageBar
       back={{ href: "/exam", label: t("Your exam") }}
-      listed="learner"
+      listed={listed ? "learner" : undefined}
       root
       title={t("Take a mock exam")}
     />
   );
 }
 
-const CHOOSER_BAR = <ChooserBar />;
+const CHOOSER_BAR = <ChooserBar listed />;
 
 async function MockChooserContent() {
   // The root param, not `params`: a prefetch warms its caches with `params` still pending.
@@ -38,7 +39,7 @@ async function MockChooserContent() {
 
     return (
       <LearnNoGoal
-        bar={CHOOSER_BAR}
+        bar={<ChooserBar />}
         description={t("Mock exam, timed like the real one")}
         next="/mock/new"
         title={t("Take a mock exam")}
