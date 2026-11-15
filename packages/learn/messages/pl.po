@@ -7247,11 +7247,6 @@ msgid "Saved"
 msgstr "Zapisane"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "uSD0Jk"
-msgid "{count, plural, one {# map didn't finish. Try again.} other {# maps didn't finish. Try again.}}"
-msgstr "{count, plural, one {# mapa nie została ukończona. Spróbuj ponownie.} few {# mapy nie zostały ukończone. Spróbuj ponownie.} other {# map nie zostało ukończonych. Spróbuj ponownie.}}"
-
-#: src/mind-maps/not-made-yet.tsx
 msgctxt "ifrM2C"
 msgid "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}"
 msgstr "{count, plural, one {Przygotowujemy # mapę. Możesz w tym czasie opuścić stronę.} few {Przygotowujemy # mapy. Możesz w tym czasie opuścić stronę.} other {Przygotowujemy # map. Możesz w tym czasie opuścić stronę.}}"

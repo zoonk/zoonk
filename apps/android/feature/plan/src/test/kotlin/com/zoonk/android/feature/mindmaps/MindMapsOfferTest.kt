@@ -374,13 +374,31 @@ class MindMapsOfferTest {
         compose.onNodeWithText("on the way", substring = true).assertDoesNotExist()
     }
 
-    /** Main's order: maps that didn't finish come before the stop, whose notice comes before maps on their way. */
+    /**
+     * Main's rows for maps that didn't finish: one with its lessons written and one under Other chapters each show their own Try
+     * again on arrival, so the group opens for the second; no line counts them.
+     */
     @Test
-    fun aMapThatDidntFinishComesBeforeTheStop() {
-        val failed = chapters + mapJson(4, "Lenses", "failed", lessonsToWrite = 3)
+    fun everyMapThatDidntFinishShowsItsTryAgainOnArrival() {
         api.mindMaps = {
             goalMindMaps(
-                failed,
+                listOf(mapJson(1, "Waves", "failed"), mapJson(2, "Light", "available"), mapJson(3, "Lenses", "failed", lessonsToWrite = 3)),
+                offer = FRESH_OFFER,
+            )
+        }
+        show()
+
+        waitFor("Lenses")
+        compose.onAllNodesWithText("Try again").assertCountEquals(2)
+        compose.onNodeWithText("didn't finish", substring = true).assertDoesNotExist()
+    }
+
+    /** With a stop, the page line is the stop's notice, and a map under Other chapters that didn't finish is still in view. */
+    @Test
+    fun aStopIsThePageLineWhileAMapDidntFinish() {
+        api.mindMaps = {
+            goalMindMaps(
+                chapters + mapJson(4, "Lenses", "failed", lessonsToWrite = 3),
                 offer =
                     """
                     {"eligible":2,"needLessons":2,"startable":0,
@@ -392,8 +410,9 @@ class MindMapsOfferTest {
         }
         show()
 
-        waitFor("didn't finish", substring = true)
-        compose.onNodeWithText("You've used your mind maps").assertDoesNotExist()
+        waitFor("You've used your mind maps")
+        compose.onNodeWithText("Lenses").assertExists()
+        compose.onNodeWithText("didn't finish", substring = true).assertDoesNotExist()
     }
 
     /** A chapter under Other chapters being made opens the group on arrival, so its progress is in view; a learner's close holds. */

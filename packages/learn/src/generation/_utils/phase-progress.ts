@@ -93,16 +93,22 @@ function getActiveIndex<TPhase extends string>({
   return finished ? latest + 1 : latest;
 }
 
-/** A phase running alongside others is done once its own steps are, while they go on. */
+/**
+ * A phase running alongside others is done once its own steps are, while they go on. A failed run
+ * marks where it stopped only on a phase it reported starting: the API never names the phase that
+ * failed, so a run read as failed with nothing reported marks none.
+ */
 function getStatus({
   activeIndex,
   index,
   isDoneAlongside,
+  isReportedPhase,
   run,
 }: {
   activeIndex: number;
   index: number;
   isDoneAlongside: boolean;
+  isReportedPhase: boolean;
   run: RunState;
 }): PhaseStatus {
   if (index !== activeIndex) {
@@ -114,7 +120,7 @@ function getStatus({
   }
 
   if (run.failure === "generation") {
-    return "failed";
+    return isReportedPhase ? "failed" : "pending";
   }
 
   return run.failure === "notStarted" ? "pending" : "active";
@@ -181,6 +187,9 @@ export function getPhaseProgress<TPhase extends string>({
           index,
           isDoneAlongside:
             stage.length > 1 && getFinishedShare({ definition, phase: phase.id, run }) === 1,
+          isReportedPhase: getPhaseSteps(definition, phase.id).some((step) =>
+            isReported(run, step),
+          ),
           run,
         }),
       })),

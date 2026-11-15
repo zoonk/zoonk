@@ -51,10 +51,9 @@ function PageStopNotice({ stop, tier }: { stop: MindMapAllowanceStop; tier: Enti
 }
 
 /**
- * Only the first line that applies shows, so the block never stacks paragraphs. Maps that didn't
- * finish come before the limit, which reads as a refusal of what the learner just started. A stop
- * on new maps outranks maps on their way, whose rows each say they're being made (their group opens
- * on arrival).
+ * Only the first line that applies shows, so the block never stacks paragraphs. A stop on new maps
+ * outranks maps on their way. Each of those rows, and each map that didn't finish with its Try
+ * again, says so itself, and the group they sit in opens on arrival.
  */
 function NotMadeLine({
   chapters,
@@ -69,7 +68,7 @@ function NotMadeLine({
   const { bulk, follower, page } = library;
   const { eligible, startable } = page.createOffer;
   const shownStop = useShownStop(library);
-  const { failed, onTheWay } = countChapterMaps(chapters);
+  const { onTheWay } = countChapterMaps(chapters);
 
   if (follower.isStuck) {
     return (
@@ -85,17 +84,6 @@ function NotMadeLine({
   if (bulk.status === "unreachable") {
     return (
       <p className={LINE_CLASS}>{t("We couldn't reach the server. Check your connection.")}</p>
-    );
-  }
-
-  if (failed > 0) {
-    return (
-      <p className={LINE_CLASS}>
-        {t(
-          "{count, plural, one {# map didn't finish. Try again.} other {# maps didn't finish. Try again.}}",
-          { count: failed },
-        )}
-      </p>
     );
   }
 
@@ -126,6 +114,15 @@ function NotMadeLine({
   }
 
   return null;
+}
+
+/** A map on its way, or one that didn't finish: its row says so, and its group opens to show it. */
+function isOpenOnArrival(chapter: MindMapsPageChapter): boolean {
+  return (
+    chapter.status === "drawing" ||
+    chapter.status === "writingLessons" ||
+    chapter.status === "failed"
+  );
 }
 
 /** A chapter whose lessons are all written: its map is made, or being made, without writing any. */
@@ -212,7 +209,7 @@ export function NotMadeYet({
         <ListGroup>
           <Disclosure
             aside={<span className="font-mono text-xs tabular-nums">{later.length}</span>}
-            defaultOpen={countChapterMaps(later).onTheWay > 0}
+            defaultOpen={later.some((chapter) => isOpenOnArrival(chapter))}
             icon={null}
             title={t("Other chapters")}
           >
