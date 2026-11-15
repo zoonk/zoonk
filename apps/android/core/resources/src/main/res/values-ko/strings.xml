@@ -73,7 +73,11 @@
   "test_out_skip_chapter": "f36c9c347db1421bc4790c959c318d570a9637919c8e020e1a9c8b1afbd640d2",
   "test_out_skip_unit": "f555ce818d63ffdfec0b697b4ad97fa285ec832970e36a593a4a5ec58894ac01",
   "test_out_title": "99d0a6baeb202c06b9c436031d22cbe2cd84ecfbbbc4f4d3b79c8ad07e1be040",
-  "web_page_unavailable": "9412c97ce9e2b4e9954ffc571950465206b6af7a2e17ea4c3a50b7dcf5a5a1c2"
+  "web_page_unavailable": "9412c97ce9e2b4e9954ffc571950465206b6af7a2e17ea4c3a50b7dcf5a5a1c2",
+  "weekend_time_add_weekday": "70bc89c94416876aedef7c4bbca0fab3a81240e20c2ee9b38c1e3ad68a92029b",
+  "weekend_time_add_weekend_day": "5e8d4228a90e2c27af63c6cfecf19980a44076e3f2b2b5432b45a9c33abffa7c",
+  "weekend_time_differs": "1083582922e27d74f0b0c910453d7466b73b32126e83dcb60a43136a47a7c5a6",
+  "weekend_time_label": "0ce513a238e2e690831229fcdb408eb46a6a277fd85364b168c3a3cc57e2ed0d"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -127,6 +131,13 @@
     <string name="suggestion_other_options">다른 방법</string>
     <!-- Above the options of an exam's choice when each candidate takes several of them, such as two of a course's modules. %1$d is how many, at least 2. -->
     <string name="exam_choice_pick_up_to">최대 %1$d개까지 선택하세요.</string>
+    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
+    <string name="weekend_time_differs">주말 학습 시간 따로 설정하기</string>
+    <string name="weekend_time_label">주말 학습 시간</string>
+    <!-- Why a switch for a different study time on weekends is off: no weekend day is a study day. -->
+    <string name="weekend_time_add_weekend_day">학습 요일에 토요일이나 일요일을 추가하세요.</string>
+    <!-- Why a switch for a different study time on weekends is off: only weekend days are study days. -->
+    <string name="weekend_time_add_weekday">학습 요일에 평일 중 하루를 추가하세요.</string>
     <!-- Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options. -->
     <string name="exam_choice_left_out">계획에 포함할 항목을 하나 선택하세요.</string>
     <string name="disclosure_expanded">펼쳐짐</string>

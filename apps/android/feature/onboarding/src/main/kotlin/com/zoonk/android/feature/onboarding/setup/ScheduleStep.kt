@@ -13,6 +13,7 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -56,7 +57,9 @@ import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimeSelect
+import com.zoonk.android.ui.components.WeekendTime
 import com.zoonk.android.ui.components.labelInset
+import com.zoonk.android.ui.components.missingDays
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -303,14 +306,16 @@ private fun ColumnScope.ScheduleTime(
         // The days decide the time, and what the time covers arrives last, so nothing above it moves.
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             WeekdayToggles(days, onChange = { onChoiceChange(choice.copy(days = it)) })
+            // The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'.
             WeekendTime(
-                times = timeChoices.map { it.minutes },
                 checked = choice.weekendOn,
-                enabled = days.any(::isWeekend),
-                weekdayMinutes = minutes ?: recommendedMinutes,
+                missing = missingDays(days),
+                times = timeChoices.map { it.minutes },
                 minutes = choice.weekendPicked ?: minutes ?: recommendedMinutes,
+                weekdayMinutes = minutes ?: recommendedMinutes,
                 onCheckedChange = { onChoiceChange(choice.copy(weekendOn = it, weekendPicked = null)) },
-                onChange = { onChoiceChange(choice.copy(weekendPicked = it)) },
+                onPick = { onChoiceChange(choice.copy(weekendPicked = it)) },
+                labelStyle = LocalTextStyle.current.copy(fontWeight = FontWeight.Medium),
             )
         }
 
@@ -461,34 +466,6 @@ private fun WeekdayToggles(
     }
 }
 
-/**
- * Main's `WeekendTime`: always there, so a switch or a day's pick moves nothing. The weekend has a time of
- * its own only once one is picked; until then, or with no weekend day picked, its time is disabled and
- * shows the weekdays', which the weekend takes.
- */
-@Composable
-private fun WeekendTime(
-    times: List<Long>,
-    checked: Boolean,
-    enabled: Boolean,
-    weekdayMinutes: Int,
-    minutes: Int,
-    onCheckedChange: (Boolean) -> Unit,
-    onChange: (Int) -> Unit,
-) {
-    val on = checked && enabled
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SwitchRow(stringResource(R.string.onboarding_weekend_time), on, onCheckedChange, enabled = enabled)
-        TimeSelect(
-            stringResource(R.string.onboarding_weekend_time_label),
-            times,
-            if (on) minutes else weekdayMinutes,
-            onChange,
-            enabled = on,
-        )
-    }
-}
-
 @Composable
 private fun PlanFactChips(goal: Goal) {
     val facts = planFacts(goal).filter { it.chip }
@@ -520,29 +497,22 @@ private fun SwitchRow(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     description: String? = null,
-    enabled: Boolean = true,
 ) {
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
                 .heightIn(min = 48.dp)
-                .toggleable(checked, enabled = enabled, role = Role.Switch, onValueChange = onCheckedChange),
+                .toggleable(checked, role = Role.Switch, onValueChange = onCheckedChange),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(
-                title,
-                color = if (enabled) Color.Unspecified else MaterialTheme.colorScheme.onSurface.copy(alpha = DISABLED_ALPHA),
-                fontWeight = FontWeight.Medium,
-            )
+            Text(title, fontWeight = FontWeight.Medium)
             description?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
         }
-        Switch(checked = checked, onCheckedChange = null, enabled = enabled)
+        Switch(checked = checked, onCheckedChange = null)
     }
 }
 
 private const val UPDATING_ALPHA = 0.5f
-
-private const val DISABLED_ALPHA = 0.38f

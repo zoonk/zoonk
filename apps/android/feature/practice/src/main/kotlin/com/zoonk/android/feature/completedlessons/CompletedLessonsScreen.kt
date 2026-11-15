@@ -42,6 +42,7 @@ import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -198,7 +199,7 @@ private fun LessonRow(
         if (!first) HorizontalDivider()
         ListRow(
             headline = { Text(lesson.title) },
-            supporting = lesson.chapterTitle?.let { { Text(it) } },
+            supporting = listRowDescription(lesson.chapterTitle),
             onClick = { onOpen(lesson.lessonId) },
         )
     }

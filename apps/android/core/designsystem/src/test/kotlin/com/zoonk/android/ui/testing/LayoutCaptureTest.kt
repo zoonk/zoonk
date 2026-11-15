@@ -10,18 +10,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Text
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.components.ListRow
@@ -115,20 +118,34 @@ class LayoutCaptureTest {
         }
     }
 
+    /** Japanese and Korean have no capitals: they're set on their ideographic face, read through the font that drew them. */
     @Test
-    fun textAFallbackFontDrewHasNoCapitals() {
+    fun textWithNoCapitalsIsSetOnItsIdeographicFace() {
         val labels =
             capture {
                 ListRow(headline = { Text("日本語の練習") })
-                ListRow(headline = { Text("Kanji 漢字") })
+                ListRow(headline = { Text("한국어 연습") })
             }.elements().filter { it.getString("part") == "label" }
 
         assertEquals(2, labels.size)
         labels.forEach { label ->
-            assertEquals(NOT_MEASURED, label.getString("capTop"))
-            assertEquals(NOT_MEASURED, label.getString("capBottom"))
-            assertTrue(label.get("baseline") is Number)
+            assertEquals("ideographic face", label.getString("textBox"))
+            val top = label.getDouble("capTop")
+            val bottom = label.getDouble("capBottom")
+            val box = label.getJSONArray("bounds")
+            // The face sits about on the line box's middle (main measured within 0.4px).
+            assertEquals(box.getDouble(1) + box.getDouble(3) / 2, (top + bottom) / 2, 1.5)
         }
+    }
+
+    /** Arabic has no capitals and no ideographic face: its middle isn't measured. */
+    @Test
+    fun textAFallbackFontDrewWithNoFaceToReadHasNoCapitals() {
+        val label = capture { ListRow(headline = { Text("مرحبا بالعالم") }) }.part("label")
+
+        assertEquals(NOT_MEASURED, label.getString("capTop"))
+        assertEquals(NOT_MEASURED, label.getString("capBottom"))
+        assertTrue(label.get("baseline") is Number)
     }
 
     @Test
@@ -322,6 +339,20 @@ class LayoutCaptureTest {
 
         assertEquals(NOT_MEASURED, dimmed.getString("ink"))
         assertTrue(shown.get("ink") is JSONArray)
+    }
+
+    /** In a right-to-left layout an English label starts on the left of its box, where it's drawn. */
+    @Test
+    fun englishInARightToLeftLayoutIsMeasuredWhereItIsDrawn() {
+        val label =
+            capture {
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                    ListRow(headline = { Text("Mixed practice", Modifier.wrapContentWidth()) })
+                }
+            }.part("label")
+
+        assertEquals(label.getJSONArray("bounds").getDouble(0), label.getJSONArray("lineBounds").getDouble(0), 1.0)
+        assertTrue(label.get("ink") is JSONArray)
     }
 
     private fun capture(content: @androidx.compose.runtime.Composable () -> Unit): JSONArray {

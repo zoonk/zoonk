@@ -17,16 +17,31 @@ class PhaseEndTest {
     val compose: ComposeContentTestRule = createComposeRule()
 
     @Test
-    fun thePhaseBeforeADatedExamLeavesItsDayToTheFinishRow() {
+    fun theLastPhaseShowsItsOwnEndBesideTheFinishRow() {
         val ends = ends(exam(dated = true))
 
-        assertEquals(null, ends["Projects"])
+        assertEquals("~Jan 2027", ends["Projects"])
         assertEquals("~Mar 2027", ends["After the exam"])
     }
 
     @Test
-    fun thePhaseBeforeAnExamWithNoDateYetShowsThePlansEstimatedEnd() {
-        assertEquals("~Feb 2027", ends(exam(dated = false))["Projects"])
+    fun aLastPhaseWithNoDayOfItsOwnEndsWithThePlan() {
+        val page = exam(dated = false)
+        val plan =
+            page.plan.copy(
+                phases =
+                    page.plan.phases.map {
+                        if (it.name ==
+                            "Projects"
+                        ) {
+                            it.copy(endDate = null, checkpoint = null)
+                        } else {
+                            it
+                        }
+                    },
+            )
+
+        assertEquals("~Feb 2027", ends(page.copy(plan = plan))["Projects"])
     }
 
     @Test

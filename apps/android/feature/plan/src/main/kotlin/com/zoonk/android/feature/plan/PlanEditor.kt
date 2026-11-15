@@ -246,7 +246,10 @@ internal fun PlanEditor(
     if (drafts.datePicking) PlanDateDialog(page, edits, layer = wide, onClose = { drafts.datePicking = false })
 }
 
-/** [onClose] is the side panel's close button; the panel shows the latest change at its top, as main's does. */
+/**
+ * [onClose] is the side panel's close button. The latest change shows at the foot on every width, as main's,
+ * and the fields take the rest of the height, so a save's note moves nothing above it.
+ */
 @Composable
 internal fun ColumnScope.PlanEditorBody(
     page: PlanPageState,
@@ -296,16 +299,10 @@ internal fun ColumnScope.PlanEditorBody(
             }
         }
     }
-    if (onClose != null) {
-        edits.latest?.let {
-            LatestChange(page, it, edits.undo)
-            HorizontalDivider()
-        }
-    }
     Column(
         modifier =
             Modifier
-                .weight(1f, fill = false)
+                .weight(1f)
                 .verticalScroll(rememberScrollState())
                 .padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 16.dp, bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(28.dp),
@@ -371,11 +368,9 @@ internal fun ColumnScope.PlanEditorBody(
         PlanWrittenPractice(page, edits)
         PlanTools(page, edits, drafts)
     }
-    if (onClose == null) {
-        edits.latest?.let {
-            HorizontalDivider()
-            LatestChange(page, it, edits.undo)
-        }
+    edits.latest?.let {
+        HorizontalDivider()
+        LatestChange(page, it, edits.undo)
     }
 }
 

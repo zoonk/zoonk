@@ -119,7 +119,10 @@ internal fun PlanNumbers(
             NumberButton(standingNumber(standing), variant, Modifier.weight(1f)) { open = NumberSheet.Standing }
         }
         if (pace != null) {
-            NumberButton(paceNumber(page, pace), variant, Modifier.weight(1f)) { open = NumberSheet.Pace }
+            NumberButton(paceNumber(page, pace, timeShownBeside = variant == NumberVariant.Stats), variant, Modifier.weight(1f)) {
+                open =
+                    NumberSheet.Pace
+            }
         }
     }
 
@@ -236,11 +239,15 @@ private fun weekGain(gain: Double): String? {
 
 private const val PERCENT = 100
 
-/** The tile: the plan's state as its value, and its time a day or the lessons left as its one line. */
+/**
+ * The tile: the plan's state as its value, and its time a day or the lessons left as its one line. The
+ * side column's numbers sit above the plan's details, whose "Time a day" row already says the time.
+ */
 @Composable
 private fun paceNumber(
     page: PlanPageState,
     pace: Pace,
+    timeShownBeside: Boolean,
 ): PlanNumber {
     val resting = page.isPaused && pace !is Pace.Finished && pace !is Pace.PastDate && pace !is Pace.ChallengesLeft
     val value = if (resting) stringResource(R.string.plan_pace_value_paused) else paceText(pace)
@@ -250,7 +257,7 @@ private fun paceNumber(
                 pluralStringResource(R.plurals.plan_lessons_left, pace.lessons, pace.lessons)
             }
 
-            resting -> {
+            resting || timeShownBeside -> {
                 null
             }
 

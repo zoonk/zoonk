@@ -326,9 +326,6 @@
     <string name="onboarding_reveal_phase_light_review">Light review</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">Today</string>
-    <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
-    <string name="onboarding_reveal_phase_position">%1$d of %2$d</string>
-    <string name="onboarding_reveal_phase_place">phase %1$d of %2$d</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">The exam\'s likely date is now %1$s.</string>
     <string name="onboarding_reveal_notice_day_notice">The exam notice says %1$s.</string>
@@ -548,15 +545,12 @@
     <string name="onboarding_full_course_finish">At %1$s a day, you finish in %2$s, after the exam on %3$s.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="onboarding_full_course_finish_month">At %1$s a day, you finish in %2$s, after the exam in %3$s.</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="onboarding_weekend_time">Different time on weekends</string>
     <string name="onboarding_schedule_time_label">Time a day</string>
     <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
     <string name="onboarding_choose_date">Choose a date</string>
     <!-- The same link when the goal has a date. -->
     <string name="onboarding_change_date">Change date</string>
     <string name="onboarding_study_days">Study days</string>
-    <string name="onboarding_weekend_time_label">Time on weekends</string>
     <string name="onboarding_answers_saved">Your answers are saved.</string>
     <!-- On a setup question when the plan's run never started. -->
     <string name="onboarding_plan_not_started">We couldn\'t start building your plan</string>
