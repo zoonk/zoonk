@@ -178,7 +178,8 @@
     /// The view's frame, and with `baseline` its first text baseline: a mark of no height placed on
     /// that baseline, as the stacks place their views.
     fileprivate func probes(
-      baseline: ((CGFloat) -> Void)? = nil, frame: @escaping (CGRect) -> Void
+      baseline: ((CGFloat) -> Void)? = nil, frame: @escaping (CGRect) -> Void,
+      host: @escaping (UIView) -> Void
     ) -> some View {
       overlay(alignment: .topLeading) { FrameProbe(report: frame) }
         .overlay(alignment: Alignment(horizontal: .leading, vertical: .firstTextBaseline)) {
@@ -187,6 +188,7 @@
               .frame(width: 0, height: 0)
           }
         }
+        .background { HostProbe(report: host) }
     }
   }
 
@@ -236,6 +238,8 @@
           }
           .probes { frame in
             update { $0.frame = frame }
+          } host: { host in
+            update { $0.host = host }
           }
           .onDisappear { LayoutRegistry.shared.remove(id) }
       } else {
@@ -294,16 +298,13 @@
             update { $0.baseline = baseline }
           } frame: { frame in
             update { $0.frame = frame }
+          } host: { host in
+            update { $0.host = host }
           }
           .onGeometryChange(for: CGFloat.self) {
             $0.size.height > 0 ? $0.frame(in: .global).height / $0.size.height : 1
           } action: { scale in
             update { $0.scale = scale }
-          }
-          .background {
-            HostProbe { host in
-              update { $0.host = host }
-            }
           }
           .onDisappear {
             LayoutRegistry.shared.remove(id)
@@ -345,6 +346,8 @@
               $0.anchor = anchor
               $0.disabled = !isEnabled
             }
+          } host: { host in
+            LayoutRegistry.shared.update(id, kind: .action(variant)) { $0.host = host }
           }
           .onChange(of: isEnabled) { _, isEnabled in
             LayoutRegistry.shared.update(id, kind: .action(variant)) { $0.disabled = !isEnabled }
@@ -371,6 +374,8 @@
               $0.frame = frame
               $0.surface = surface
             }
+          } host: { host in
+            LayoutRegistry.shared.update(id, kind: .anchor(name)) { $0.host = host }
           }
           .onDisappear { LayoutRegistry.shared.remove(id) }
       } else {
@@ -389,6 +394,8 @@
           .environment(\.layoutSurfaceID, id)
           .probes { frame in
             LayoutRegistry.shared.update(id, kind: .surface) { $0.frame = frame }
+          } host: { host in
+            LayoutRegistry.shared.update(id, kind: .surface) { $0.host = host }
           }
           .onDisappear { LayoutRegistry.shared.remove(id) }
       } else {
@@ -689,6 +696,19 @@
     }
   }
 
+  enum LayoutHosts {
+    /// A record counts while its view is in the window, and under a screen that covers the window,
+    /// inside that screen. A view can leave the window, or stay under a cover, without
+    /// `onDisappear`, and one laid out and left at once, such as the tab a link leaves at launch,
+    /// never reaches the window at all.
+    @MainActor
+    static func isOnScreen(_ host: UIView?, in window: UIWindow, top: UIView) -> Bool {
+      guard let host, host.window === window else { return false }
+      let covers = top.convert(top.bounds, to: window).contains(window.bounds)
+      return !covers || host.isDescendant(of: top)
+    }
+  }
+
   /// The capture's summary: each part once, "not measured" when any of its fields is, when it is a
   /// list row no piece reports, or when no row holds it; groups, rows a piece declares and anchors
   /// aren't parts.
@@ -771,8 +791,10 @@
       self.picture = picture
       self.cells = cells
       self.window = window
+      let top = window.topScreen
       let shown = LayoutRegistry.shared.records
         .filter { !$0.value.frame.isNull && $0.value.frame.intersects(window.bounds) }
+        .filter { LayoutHosts.isOnScreen($0.value.host, in: window, top: top) }
         .map { (id: $0.key, record: $0.value) }
         .sorted { $0.record.order < $1.record.order }
       let active = shown.last { $0.record.kind == .surface }?.id

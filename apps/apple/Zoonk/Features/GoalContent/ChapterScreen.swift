@@ -403,15 +403,12 @@ private struct ChapterReferenceSection: View {
 
       LessonSummaries(summaries: chapter.summaries)
     } label: {
-      Label {
+      ListRow(
         Text(
           "Chapter summary", tableName: "Plan",
-          comment: "Folds a chapter's topics and summaries"
-        )
-        .layoutPart(.label)
-      } icon: {
+          comment: "Folds a chapter's topics and summaries")
+      ) {
         Image(systemName: "list.bullet.clipboard")
-          .layoutPart(.mark)
       }
     }
   }

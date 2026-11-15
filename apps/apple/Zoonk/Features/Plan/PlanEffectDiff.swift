@@ -36,7 +36,7 @@ struct PlanChangeConsequence: Equatable {
   let whole: Bool
 }
 
-/// A plain row behind "See all changes": a label, then "before → after" or a value.
+/// A plain row behind "All changes": a label, then "before → after" or a value.
 struct PlanChangeRow: Equatable, Identifiable {
   let key: String
   let label: String
@@ -463,7 +463,7 @@ enum PlanChangeEffect {
 }
 
 /// Main's `PlanEffectDiff`: the one consequence a learner would notice, and every other change
-/// behind "See all changes". `repriced` says the learner accepted other numbers: the ones under it
+/// behind "All changes". `repriced` says the learner accepted other numbers: the ones under it
 /// are today's, to answer again.
 struct PlanEffectDiff: View {
   let effect: PlanEffect?
@@ -492,7 +492,7 @@ struct PlanEffectDiff: View {
           Group {
             if effect != nil {
               Text(
-                "The numbers are different today.", tableName: "Plan",
+                "Your plan changed since you saw this. Here's what it does now.", tableName: "Plan",
                 comment:
                   "Over a plan change the learner accepted: its numbers changed since it was worked out, so it asks again with today's"
               )
@@ -518,7 +518,7 @@ struct PlanEffectDiff: View {
   }
 }
 
-/// "See all changes": a quiet disclosure of plain rows, a label and "before → after" or a value.
+/// "All changes": a quiet disclosure of plain rows, a label and "before → after" or a value.
 private struct PlanChangeRows: View {
   @State private var isOpen = false
 
@@ -531,7 +531,7 @@ private struct PlanChangeRows: View {
       } label: {
         HStack(spacing: 4) {
           Text(
-            "See all changes", tableName: "Plan", comment: "Shows every change a plan change makes")
+            "All changes", tableName: "Plan", comment: "Shows every change a plan change makes")
 
           Image(systemName: "chevron.down")
             .imageScale(.small)

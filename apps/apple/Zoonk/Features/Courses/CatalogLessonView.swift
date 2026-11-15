@@ -175,6 +175,7 @@ private struct CatalogLessonList: View {
 
       LessonPlanDay(lesson: lesson, chapterLessons: chapterLessons)
     }
+    .catalogGoalSwitch()
   }
 }
 

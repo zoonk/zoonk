@@ -11746,6 +11746,65 @@
         }
       }
     },
+    "All changes" : {
+      "comment" : "Shows every change a plan change makes",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Änderungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos los cambios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tous les changements"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra tutte le modifiche"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべての変更"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전체 변경 사항"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokaż wszystkie zmiany"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todas as mudanças"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm değişiklikleri gör"
+          }
+        }
+      }
+    },
     "All countries" : {
       "comment" : "Section of every country, A to Z",
       "localizations" : {
@@ -27482,65 +27541,6 @@
         }
       }
     },
-    "See all changes" : {
-      "comment" : "Shows every change a plan change makes",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle Änderungen ansehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver todos los cambios"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voir tous les changements"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vedi tutte le modifiche"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "すべての変更を見る"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모든 변경 사항 보기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zobacz wszystkie zmiany"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver todas as mudanças"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tüm değişiklikleri gör"
-          }
-        }
-      }
-    },
     "See the full course" : {
       "comment" : "Opens the Library course the plan is built from",
       "localizations" : {
@@ -30541,65 +30541,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En fazla yaklaşık %1$@ tamamlanabiliyor; bunun için günde %2$@ çalışmak gerekiyor."
-          }
-        }
-      }
-    },
-    "The numbers are different today." : {
-      "comment" : "Over a plan change the learner accepted: its numbers changed since it was worked out, so it asks again with today's",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Zahlen sind heute anders."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Los números son distintos hoy."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les chiffres ne sont plus les mêmes aujourd’hui."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oggi i numeri sono diversi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の数値は前回と異なります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘은 계산 결과가 달라졌어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś te liczby są inne."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Os números estão diferentes hoje."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün sayılar farklı."
           }
         }
       }
@@ -37961,6 +37902,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planın zaten böyle işliyor."
+          }
+        }
+      }
+    },
+    "Your plan changed since you saw this. Here's what it does now." : {
+      "comment" : "Over a plan change the learner accepted: its numbers changed since it was worked out, so it asks again with today's",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan hat sich inzwischen geändert. Hier siehst du, was die Änderung jetzt bewirkt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan cambió desde que viste esto. Así queda ahora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan a changé entre-temps. Voici ce qui change maintenant."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano è cambiato da quando hai visto questa proposta. Ecco cosa cambia ora."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前回見たときから学習計画が変わりました。今この変更をすると、次のようになります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 내용을 확인한 뒤 계획이 바뀌었어요. 지금 적용하면 이렇게 달라져요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W międzyczasie twój plan się zmienił. Oto co teraz zmienia ta propozycja."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano mudou desde que você viu isso. Veja o que muda agora."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bunu gördüğünden beri planın değişti. Şimdiki etkisi şöyle."
           }
         }
       }

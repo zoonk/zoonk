@@ -154,6 +154,9 @@ private struct GoalSteps: View {
   /// Why the last save was refused, when the answer itself was.
   @State private var refusal: OnboardingError?
   @State private var confirmingStartOver = false
+  /// Lesson 1, set once the answer saved before it lands. This screen opens it while it's there, so
+  /// a Setup closed meanwhile keeps the answer and opens nothing.
+  @State private var savedBeforeLesson: String?
   /// Start over's request, cancelled if the screen goes away first, so it never acts after.
   @State private var startingOver: Task<Void, Never>?
   @State private var conditionPicks: [String] = []
@@ -308,6 +311,12 @@ private struct GoalSteps: View {
         comment: "What starting over does")
     }
     .onDisappear { startingOver?.cancel() }
+    .onChange(of: savedBeforeLesson) { _, lesson in
+      if let lesson {
+        savedBeforeLesson = nil
+        router.open(.lesson(lessonId: lesson))
+      }
+    }
     .taskThroughPush(id: view.generationId) { await preloadDeck() }
   }
 
@@ -327,8 +336,8 @@ private struct GoalSteps: View {
   }
 
   /// One answer saves at a time; a save that fails keeps the learner on this screen with what they
-  /// picked. `then` runs once it's saved.
-  private func answer(_ input: [String: Any], then: (() -> Void)? = nil) {
+  /// picked.
+  private func answer(_ input: [String: Any], beforeLesson lesson: String? = nil) {
     guard !isSaving else {
       return
     }
@@ -341,7 +350,7 @@ private struct GoalSteps: View {
 
       do {
         try await save(input)
-        then?()
+        savedBeforeLesson = lesson
       } catch is CancellationError {
       } catch {
         failed = true
@@ -357,12 +366,10 @@ private struct GoalSteps: View {
       return
     }
 
-    let open = { router.open(.lesson(lessonId: lesson.id)) }
-
     if let input {
-      answer(input, then: open)
+      answer(input, beforeLesson: lesson.id)
     } else {
-      open()
+      router.open(.lesson(lessonId: lesson.id))
     }
   }
 

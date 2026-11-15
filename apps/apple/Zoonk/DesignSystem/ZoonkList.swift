@@ -2,18 +2,21 @@ import SwiftUI
 
 /// Main's `ListGroup` as a page's `List`: flat rows with a hairline between them, as wide as the
 /// column, and space rather than a line between sections. Where the width is regular it's
-/// one centered column at most 768pt wide, as main's tablet portrait; a pane is narrower, so it keeps
-/// its own width. The page is the system background, which a plain list's rows paint.
+/// one column at most 768pt wide, on the title's edge on a page and in the middle in a task, as
+/// `readableColumnAlignment` says; a pane is narrower, so it keeps its own width. The page is the
+/// system background, which a plain list's rows paint.
 ///
 /// Rows are main's `ListRowContent`, at least 44pt high, rather than a plain list's 52pt. A row that
 /// sets its own insets keeps them.
 struct ZoonkList<Content: View>: View {
   /// A page's own column, such as practice's narrower one, in place of the 768pt one.
   var readableWidth: CGFloat?
-  var alignment = HorizontalAlignment.center
+  /// In place of the one `readableColumnAlignment` gives.
+  var alignment: HorizontalAlignment?
   @ViewBuilder let content: Content
 
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+  @Environment(\.readableColumnAlignment) private var columnAlignment
 
   var body: some View {
     List {
@@ -29,7 +32,8 @@ struct ZoonkList<Content: View>: View {
     .listSectionSpacing(24)
     .environment(\.defaultMinListRowHeight, 44)
     .readableColumn(
-      readableWidth ?? ListColumn.width(horizontalSizeClass), alignment: alignment)
+      readableWidth ?? ListColumn.width(horizontalSizeClass),
+      alignment: alignment ?? columnAlignment)
   }
 }
 

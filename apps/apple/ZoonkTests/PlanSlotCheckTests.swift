@@ -31,6 +31,18 @@ final class PlanSlotCheckTests: XCTestCase {
     try await findsDateAcross(from: .narrow, to: .wide)
   }
 
+  /// Leaving the Plan ends the visit: what a card's check found or failed at shows nothing on the
+  /// next one.
+  func testLeavingThePlanShowsNothingOfACardsCheck() {
+    let checks = PlanSlotChecks()
+    let check = checks.check(.fitLessons, goalId: "goal")
+    check.failed = true
+
+    checks.leave()
+
+    XCTAssertFalse(checks.check(.fitLessons, goalId: "goal").failed)
+  }
+
   // MARK: Each card
 
   private func addsAcross(from: Width, to: Width) async throws {

@@ -4,6 +4,7 @@ struct CatalogStartActions: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
+  @Environment(GoalSwitch.self) private var goalSwitch
 
   let courseID: String
   /// The chapter a chapter page starts the plan from; nil for the whole course.
@@ -15,9 +16,6 @@ struct CatalogStartActions: View {
   var note: Text?
   /// Main's secondary start, where the page's main action is something else (a lesson's start).
   var isSecondary = false
-
-  @State private var switchingTo: LearnerGoal.ID?
-  @State private var switchFailed = false
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
@@ -31,28 +29,6 @@ struct CatalogStartActions: View {
         }
       }
       .controlSize(.large)
-      .task(id: switchingTo) {
-        guard let switchingTo else {
-          return
-        }
-
-        switch await learner.switchGoal(to: switchingTo) {
-        case .done where !Task.isCancelled:
-          router.showRoot(of: .today)
-        case .failed:
-          switchFailed = true
-        case .done, .obsolete:
-          break
-        }
-
-        self.switchingTo = nil
-      }
-      .alert(
-        Text(
-          "We couldn't switch goals. Try again.", tableName: "Courses",
-          comment: "Continuing the plan of a goal that follows this course didn't go through"),
-        isPresented: $switchFailed
-      ) {}
 
       if let note {
         note
@@ -73,7 +49,7 @@ struct CatalogStartActions: View {
   @ViewBuilder
   private var startButtons: some View {
     if let goal {
-      BusyButton(isBusy: switchingTo != nil) {
+      BusyButton(isBusy: goalSwitch.switchingTo != nil) {
         continuePlan(goal)
       } label: {
         Text(
@@ -119,8 +95,74 @@ struct CatalogStartActions: View {
     } else if learner.summary.value?.shownGoal?.id == goal.id {
       router.showRoot(of: .today)
     } else {
-      switchingTo = goal.id
+      goalSwitch.start(goal.id, learner: learner, router: router)
     }
+  }
+}
+
+/// Switching the goal the tabs show from a page, such as continuing a goal that follows a course:
+/// the page's, above panes a resize rebuilds, so its start, what it leads to and its failure stay
+/// with the page. Leaving the page ends it, success or failure: the next visit shows nothing of it.
+@MainActor
+@Observable
+final class GoalSwitch {
+  private(set) var switchingTo: LearnerGoal.ID?
+  var failed = false
+  @ObservationIgnored private var task: Task<Void, Never>?
+
+  func start(_ goalID: LearnerGoal.ID, learner: LearnerSummaryStore, router: AppRouter) {
+    guard switchingTo == nil else {
+      return
+    }
+
+    switchingTo = goalID
+    failed = false
+
+    task = Task {
+      let result = await learner.switchGoal(to: goalID)
+
+      guard !Task.isCancelled else {
+        return
+      }
+
+      switchingTo = nil
+
+      switch result {
+      case .done: router.showRoot(of: .today)
+      case .failed: failed = true
+      case .obsolete: break
+      }
+    }
+  }
+
+  func leave() {
+    task?.cancel()
+    task = nil
+    switchingTo = nil
+    failed = false
+  }
+}
+
+extension View {
+  /// The page's goal switch for its start actions, kept above its panes.
+  func catalogGoalSwitch() -> some View {
+    modifier(CatalogGoalSwitchOwner())
+  }
+}
+
+private struct CatalogGoalSwitchOwner: ViewModifier {
+  @State private var goalSwitch = GoalSwitch()
+
+  func body(content: Content) -> some View {
+    content
+      .environment(goalSwitch)
+      .alert(
+        Text(
+          "We couldn't switch goals. Try again.", tableName: "Courses",
+          comment: "Continuing the plan of a goal that follows this course didn't go through"),
+        isPresented: Bindable(goalSwitch).failed
+      ) {}
+      .onDisappear { goalSwitch.leave() }
   }
 }
 

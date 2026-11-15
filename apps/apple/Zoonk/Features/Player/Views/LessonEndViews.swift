@@ -772,7 +772,8 @@ struct LessonWaitingView: View {
           deck: WaitDeck(id: warmUpID), goalID: goalID, progressTitle: title,
           ready: holding.map { holding in
             WaitReady(label: Text(kind.start), action: holding.moveOn)
-          }
+          },
+          ended: writing == .failed
         ) {
           WaitStatusStrip(
             label: stripLabel(title: title), isDone: holding != nil,

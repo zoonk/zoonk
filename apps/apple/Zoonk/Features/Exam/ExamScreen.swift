@@ -65,7 +65,7 @@ private struct ExamContent: View {
   }
 }
 
-private struct ExamList: View {
+struct ExamList: View {
   @Environment(AppRouter.self) private var router
   let exam: ExamView
   let options: MockOptions?
@@ -77,22 +77,23 @@ private struct ExamList: View {
   @State private var isReporting = false
 
   var body: some View {
-    PaneSplit(primaryShare: 0.55) {
-      ZoonkList {
-        moment
-        ExamProgressSection(exam: exam)
-      }
-    } secondary: {
+    // The page's list keeps its sections as the mocks' pane comes and goes beside it, so the date
+    // note's sheet stays open through a rotation, a resize or a fold.
+    PaneBeside(paneEdge: .trailing, primaryShare: 0.55) {
       ZoonkList {
         ExamMocksSection(exam: exam, options: options)
         about
       }
-    } single: {
+    } content: { isBeside in
       ZoonkList {
-        moment
-        ExamMocksSection(exam: exam, options: options)
-        ExamProgressSection(exam: exam)
-        about
+        ForEach(ExamPart.order(isBeside: isBeside), id: \.self) { part in
+          switch part {
+          case .moment: moment
+          case .mocks: ExamMocksSection(exam: exam, options: options)
+          case .progress: ExamProgressSection(exam: exam)
+          case .about: about
+          }
+        }
       }
     }
     .bottomBar {
@@ -1177,5 +1178,18 @@ private struct ExamAreaRow: View {
       .typeStyle(.data)
     }
     .accessibilityElement(children: .combine)
+  }
+}
+
+/// The exam page's parts in its list. The same ids in either order, so a part keeps its identity,
+/// and its open sheet, as the mocks' pane comes and goes.
+private enum ExamPart: Hashable {
+  case moment
+  case mocks
+  case progress
+  case about
+
+  static func order(isBeside: Bool) -> [ExamPart] {
+    isBeside ? [.moment, .progress] : [.moment, .mocks, .progress, .about]
   }
 }

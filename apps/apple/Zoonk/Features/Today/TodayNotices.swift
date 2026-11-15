@@ -116,9 +116,12 @@ final class SuggestedGoalAnswer {
     }
   }
 
-  /// Leaving keeps the answer, which the store still saves, and opens nothing from it.
+  /// Leaving keeps the answer, which the store still saves, and shows nothing of it, whether it
+  /// worked or failed: the next visit starts clean, and its own answer is the only one it shows.
   func leave() {
     sent?.cancel()
+    answering = nil
+    failed = false
   }
 
   private func send(
@@ -128,6 +131,11 @@ final class SuggestedGoalAnswer {
     failed = false
 
     let result = await store.answer(suggestion, accepted: accepted)
+
+    guard !Task.isCancelled else {
+      return
+    }
+
     answering = nil
 
     switch result {

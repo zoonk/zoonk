@@ -262,7 +262,7 @@ struct AdjustPlanSheet: View {
 
 }
 
-/// Main's editor note: what the change did, its consequence and "See all changes", how it applies,
+/// Main's editor note: what the change did, its consequence and "All changes", how it applies,
 /// and Undo while the change is the plan's latest.
 struct PlanEditorLatestSection: View {
   let editor: PlanEditor

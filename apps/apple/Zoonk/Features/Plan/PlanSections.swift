@@ -59,8 +59,8 @@ struct PlanRoadmapSection: View {
         if listsPhases {
           RoadmapCompact(context: context, opens: false, hasLine: false)
 
-          ForEach(Array(zip(phases, PhaseWhen.of(phases))), id: \.0.id) { phase, when in
-            RoadmapPhaseRow(phase: phase, when: when, today: context.plan.today)
+          ForEach(phases) { phase in
+            RoadmapPhaseRow(phase: phase, end: context.plan.phaseEnd(phase))
           }
         } else if structure != nil {
           Button {
@@ -82,46 +82,21 @@ struct PlanRoadmapSection: View {
   }
 }
 
-/// What main's roadmap says under each phase: "Today" under the current one and the start of each
-/// one after it. Earlier phases say nothing, since one settled by placement would claim today's date.
-enum PhaseWhen: Equatable {
-  case today
-  case starts(String)
-
-  static func of(_ phases: [PlanPhase]) -> [PhaseWhen?] {
-    let current = phases.firstIndex { $0.state == .current }
-
-    return phases.enumerated().map { position, phase in
-      guard let current, position >= current, let start = phase.startDate else {
-        return nil
-      }
-
-      return position == current ? .today : .starts(start)
-    }
-  }
-}
-
+/// A phase of a new plan, named by its end as everywhere else; a phase behind the learner, or one
+/// still being planned, has no date.
 struct RoadmapPhaseRow: View {
   let phase: PlanPhase
-  let when: PhaseWhen?
-  let today: String
+  let end: PhaseEnd?
 
   var body: some View {
     ListRow(Text(phase.title)) {
       StatusMark(status: phase.mark)
     } trailing: {
-      Group {
-        switch when {
-        case .today?:
-          PlanWhen.words(
-            Text("Today", tableName: "Plan", comment: "When the learner's current phase starts"))
-        case .starts(let start)?:
-          PlanWhen.date(Text(PlanDate.text(start, today: today)))
-        case nil:
-          EmptyView()
-        }
+      if let end {
+        PlanWhen.date(Text(verbatim: end.shown))
+          .foregroundStyle(.mutedForeground)
+          .accessibilityLabel(Text(verbatim: end.spoken))
       }
-      .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(
@@ -281,6 +256,20 @@ extension GoalPlan {
 
     return PhaseEnd(
       lastDay, estimate: isEstimate, month: isEstimate && ahead && isFar(lastDay), today: today)
+  }
+
+  /// The day the plan reaches its goal: the goal's date, or the plan's own end, about, when it has
+  /// none. An exam without its date has none.
+  func roadmapFinish(isExam: Bool) -> (isoDate: String, estimate: Bool, month: Bool)? {
+    if let targetDate = schedule.targetDate {
+      return (targetDate, schedule.targetDateEstimated, schedule.targetDateNamedMonth)
+    }
+
+    guard !isExam, let endDate = estimate.endDate else {
+      return nil
+    }
+
+    return (endDate, true, isFar(endDate))
   }
 
   /// An estimate past six weeks from this week's start names only its month.
@@ -593,23 +582,19 @@ struct NextOnPathSection: View {
 
 func planFinish(_ context: PlanContext) -> PlanWhen? {
   let plan = context.plan
-  let schedule = plan.schedule
 
-  if let targetDate = schedule.targetDate {
-    let month = schedule.targetDateNamedMonth
-
-    return .date(
-      schedule.targetDateEstimated
-        ? PlanDate.estimateText(targetDate, today: plan.today, month: month)
-        : Text(PlanDate.text(targetDate, today: plan.today, month: month)))
+  guard let finish = plan.roadmapFinish(isExam: context.goal.kind == .exam) else {
+    return context.goal.kind == .exam
+      ? .words(
+        Text(
+          "Date to be confirmed", tableName: "Plan", comment: "An exam whose day isn't known yet"))
+      : nil
   }
 
-  if context.goal.kind == .exam {
-    return .words(
-      Text("Date to be confirmed", tableName: "Plan", comment: "An exam whose day isn't known yet"))
-  }
-
-  return plan.estimate.endDate.map { .date(PlanDate.estimateText($0, today: plan.today)) }
+  return .date(
+    finish.estimate
+      ? PlanDate.estimateText(finish.isoDate, today: plan.today, month: finish.month)
+      : Text(PlanDate.text(finish.isoDate, today: plan.today, month: finish.month)))
 }
 
 /// The places a phone lists nowhere else: the lessons done, the mind maps and the exam's page.

@@ -53,7 +53,8 @@ struct PlacementWaitScreen: View {
             "Continue", tableName: "Onboarding",
             comment: "Leaves placement's wait, once its questions are ready, for the questions"),
           action: holding.moveOn)
-      }
+      },
+      ended: failure?.endsWait == true
     ) {
       if let failure {
         GenerationFailureNotice(failure: failure, isActing: isActing || skip.isBusy) {

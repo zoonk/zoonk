@@ -630,8 +630,12 @@
   private struct PlanPathDates: View {
     var body: some View {
       Group {
-        RoadmapPhaseRow(phase: Self.phase(0), when: .today, today: "2026-11-14")
-        RoadmapPhaseRow(phase: Self.phase(1), when: .starts("2027-02-17"), today: "2026-11-14")
+        RoadmapPhaseRow(
+          phase: Self.phase(0),
+          end: PhaseEnd("2027-02-16", estimate: false, month: false, today: "2026-11-14"))
+        RoadmapPhaseRow(
+          phase: Self.phase(1),
+          end: PhaseEnd("2027-06-01", estimate: true, month: true, today: "2026-11-14"))
 
         // A phase with a line under its name, and a folded one, as the path draws them.
         ListRow(

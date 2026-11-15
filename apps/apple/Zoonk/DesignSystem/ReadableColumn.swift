@@ -42,6 +42,9 @@ private struct ReadableColumn: ViewModifier {
 
 extension EnvironmentValues {
   @Entry fileprivate var readableColumnWidth: CGFloat?
+  /// Where a page's list column sits: on the title's edge, as main's pages; a task, which covers
+  /// the app, sets `.center`.
+  @Entry var readableColumnAlignment = HorizontalAlignment.leading
 }
 
 /// How far a readable column sits in from each side of the room it was offered, so a bar laid

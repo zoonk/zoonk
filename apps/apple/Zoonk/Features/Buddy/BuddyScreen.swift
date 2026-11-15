@@ -177,7 +177,7 @@ private struct BuddyContent: View {
       }
     }
     .onChange(of: status.today.map { "\($0.goalId) \($0.localDate)" }) {
-      missionTap.startOver()
+      missionTap.cancel()
     }
     .onDisappear { missionTap.cancel() }
     .onChange(of: store.broughtQuestion, initial: true) { _, question in

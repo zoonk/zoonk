@@ -52,6 +52,11 @@ extension XCTestCase {
       return []
     }
 
+    // A list keeps cells it took off screen, hidden, for reuse.
+    if let view = object as? UIView, view.isHidden || view.alpha < 0.01 {
+      return []
+    }
+
     var found = [object]
 
     if let view = object as? UIView {
