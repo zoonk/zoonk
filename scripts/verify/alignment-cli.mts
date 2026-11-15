@@ -1,6 +1,6 @@
 /* oxlint-disable no-console -- This CLI prints the findings it evaluates. */
 import { readFile, readdir, stat, writeFile } from "node:fs/promises";
-import { basename, join, relative, resolve } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { parseArgs } from "node:util";
 import { READ_LIMITS, alignmentLines, summarize, summaryLine } from "./alignment-summary.mts";
 import { readCaptures } from "./alignment-validate.mts";
@@ -87,12 +87,20 @@ if (values.help || positionals.length === 0) {
       );
     }
 
-    // Several files at once (a folder that keeps an earlier run): each finding names its own, from
-    // the folder it was found under, so an earlier run's never reads as the latest's.
-    const roots = positionals.map((path) => resolve(path));
+    // Several files at once (a folder that keeps an earlier run, or files named by path): each
+    // finding names its own, by its path from the folder they all share, so an earlier run's never
+    // reads as the latest's.
+    const folders = evaluated.map(({ path }) => dirname(path).split(sep));
 
-    const sourceOf = (path: string) =>
-      relative(roots.find((root) => path.startsWith(root)) ?? "", path) || basename(path);
+    const first = folders[0] ?? [];
+
+    const differs = first.findIndex((part, index) =>
+      folders.some((folder) => folder[index] !== part),
+    );
+
+    const shared = differs === -1 ? first : first.slice(0, differs);
+
+    const sourceOf = (path: string) => relative(shared.join(sep) || sep, path);
 
     const findings = evaluated.flatMap((input) =>
       evaluated.length > 1

@@ -209,3 +209,28 @@ describe("a folder holding more than one capture file (AP1's run1/)", () => {
     assert.match(stdout, / · phone touch · run1\/alignment\.json: /u);
   });
 });
+
+describe("capture files named by path (RV97)", () => {
+  it("names each by its path from the folder they share, so old/ and new/ never merge", () => {
+    const folder = mkdtempSync(join(tmpdir(), "alignment-paths-"));
+    const capture = fixtureCapture(filledActions("page", 2));
+
+    for (const run of ["old", "new"]) {
+      mkdirSync(join(folder, run));
+      writeFileSync(join(folder, run, "alignment.json"), JSON.stringify({ captures: [capture] }));
+    }
+
+    const { stdout } = spawnSync(
+      process.execPath,
+      [
+        join(import.meta.dirname, "alignment-cli.mts"),
+        join(folder, "old", "alignment.json"),
+        join(folder, "new", "alignment.json"),
+      ],
+      { encoding: "utf8" },
+    );
+
+    assert.match(stdout, / · phone touch · old\/alignment\.json: /u);
+    assert.match(stdout, / · phone touch · new\/alignment\.json: /u);
+  });
+});
