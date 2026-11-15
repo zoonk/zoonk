@@ -18,7 +18,7 @@ const estimatedMinutesSchema = z
   .min(1)
   .meta({
     description:
-      "About how long it usually takes: learners' real pace per answer on this exam's mocks, never more than `minutes`. Equal to `minutes` when there's no estimate for the whole mock (too few answers yet, or a written or spoken part, which no answer pace measures): show it as \"usually takes\" only when it's less",
+      "About how long it usually takes: learners' real pace per answer on this exam's mocks, never more than `minutes`. Equal to `minutes` when there's no estimate for the whole mock (too few answers yet, or a written or spoken part, which no answer pace measures).",
   });
 
 const mockOptionSchema = mockShapeSchema
