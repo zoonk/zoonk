@@ -47,6 +47,7 @@ import com.zoonk.android.feature.account.AccountFailure
 import com.zoonk.android.feature.subscription.deletionPlusNotices
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
@@ -137,14 +138,15 @@ private fun YourData(
     navigator: AppNavigator,
     signedIn: SessionState.SignedIn,
 ) {
+    val files = LocalContext.current.applicationContext.contentResolver
     val data =
         viewModel(key = "your-data:${signedIn.session.localId}") {
-            YourDataViewModel(app.account, signedIn.session, signedIn.account.user.email)
+            YourDataViewModel(app.account, signedIn.session, signedIn.account.user.email, files::openOutputStream)
         }
-    val context = LocalContext.current
+    VisitOf(data.visit)
     val export =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-            if (uri != null) data.export { context.contentResolver.openOutputStream(uri) }
+            if (uri != null) data.export(uri)
         }
 
     SettingsSection(stringResource(R.string.settings_your_data)) {

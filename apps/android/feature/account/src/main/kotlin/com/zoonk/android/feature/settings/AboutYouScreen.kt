@@ -15,8 +15,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +41,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.profile.ProfileDraft
 import com.zoonk.android.feature.profile.ProfileQuestionBody
@@ -47,6 +50,8 @@ import com.zoonk.android.feature.profile.profileQuestionDescription
 import com.zoonk.android.feature.profile.profileQuestionTitle
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -202,6 +207,13 @@ fun ProfileQuestionScreen(
     val loaded = (editorState as? LoadState.Loaded)?.value
     val question = loaded?.questions?.find { it.id.value == id }
     val editor = question?.let { viewModel(key = id) { ProfileQuestionViewModel(app.profileQuestions, it, createSavedStateHandle()) } }
+    // Held from the first editor on: a save invalidates the questions, and no editor shows while they're read again.
+    var visiting by remember { mutableStateOf<ProfileQuestionViewModel?>(null) }
+    SideEffect { if (editor != null) visiting = editor }
+    visiting?.let {
+        VisitOf(it.visit)
+        ActOn(it.answered) { navigator.back() }
+    }
     val memoryEnabled = loaded?.memoryEnabled == true
     val canEdit = memoryEnabled || question?.id in HOW_YOU_LEARN
     ProfilePage(
@@ -219,7 +231,7 @@ fun ProfileQuestionScreen(
                     }
                     val empty = editor.draft.empty(question.id, memoryEnabled)
                     Button(
-                        onClick = { editor.save(question.id, memoryEnabled) { navigator.back() } },
+                        onClick = { editor.save(question.id, memoryEnabled) },
                         busy = editor.saving,
                         enabled =
                             canEdit && (empty || editor.draft.valid(question.id, memoryEnabled)) && !editor.saving &&
@@ -300,8 +312,17 @@ internal class ProfileQuestionViewModel(
     private val privateConditions = question.id == ProfileQuestion.CONDITIONS
     var saving by mutableStateOf(false)
         private set
-    var failed by mutableStateOf(false)
-        private set
+
+    /** This visit to the question: what its save leads to shows only on it. */
+    val visit = Visit()
+
+    /** The answer saved: the page goes back. */
+    val answered = visit.outcome<Unit>()
+
+    private val failure = visit.outcome<Unit>()
+
+    /** The answer didn't save, on this visit. */
+    val failed get() = failure.value != null
 
     fun read(question: ProfileQuestionView) {
         if (!edited) draft = ProfileDraft.from(question)
@@ -317,17 +338,17 @@ internal class ProfileQuestionViewModel(
     fun save(
         question: ProfileQuestion,
         memoryEnabled: Boolean,
-        onSaved: () -> Unit,
     ) {
         if (saving) return
         saving = true
-        failed = false
+        failure.clear()
         val answer = if (draft.empty(question, memoryEnabled)) draft.copy(declined = true) else draft
+        val started = visit.number
         viewModelScope.launch {
             when (store.answer(answer.input(question, memoryEnabled))) {
-                is MutationResult.Done -> onSaved()
+                is MutationResult.Done -> answered.send(started, Unit)
                 MutationResult.Obsolete -> Unit
-                is MutationResult.Failed -> failed = true
+                is MutationResult.Failed -> failure.send(started, Unit)
             }
             saving = false
         }
