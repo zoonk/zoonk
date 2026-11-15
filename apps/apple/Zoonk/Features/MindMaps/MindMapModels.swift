@@ -227,6 +227,21 @@ struct MindMapLimit: Equatable, Sendable {
 enum MindMapRequestFailure: Equatable, Sendable {
   case refused(MindMapLimit)
   case unreachable
+
+  /// A refusal while it holds; a cap's day that has come ends it, and the server decides again.
+  func holdingLimit(at now: Date) -> MindMapLimit? {
+    guard case .refused(let refusal) = self, !refusal.limit.isOpen(at: now) else {
+      return nil
+    }
+
+    return refusal
+  }
+
+  /// The refusal takes Create's place while it holds, except a short break: the learner taps
+  /// again once it passes.
+  func hidesCreate(at now: Date) -> Bool {
+    holdingLimit(at: now).map { !$0.limit.isShortBreak } ?? false
+  }
 }
 
 enum MindMapRequest: Equatable, Sendable {

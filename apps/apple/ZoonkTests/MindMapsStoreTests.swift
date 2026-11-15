@@ -278,6 +278,25 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertNil(store.failure(goalId: "goal", chapterId: "chapter"))
   }
 
+  /// As main's row: a refusal takes Create's place while it holds (a short break keeps Create, as
+  /// the learner may tap again), and once its day comes it goes and Create is back.
+  func testARowsRefusalTakesCreatesPlaceUntilItsDay() {
+    let opens = Date(timeIntervalSince1970: 1_795_339_800)
+    let monthly = MindMapRequestFailure.refused(
+      MindMapLimit(limit: .usedUp(tier: .free, availableAt: opens), resource: .mindMap))
+    let shortBreak = MindMapRequestFailure.refused(
+      MindMapLimit(limit: .slowDown(retryAfterSeconds: 30), resource: .mindMap))
+
+    XCTAssertNotNil(monthly.holdingLimit(at: opens.addingTimeInterval(-60)))
+    XCTAssertTrue(monthly.hidesCreate(at: opens.addingTimeInterval(-60)))
+    XCTAssertNil(monthly.holdingLimit(at: opens))
+    XCTAssertFalse(monthly.hidesCreate(at: opens))
+
+    XCTAssertNotNil(shortBreak.holdingLimit(at: opens))
+    XCTAssertFalse(shortBreak.hidesCreate(at: opens))
+    XCTAssertNil(MindMapRequestFailure.unreachable.holdingLimit(at: opens))
+  }
+
   func testRefusedMapSaysWhatRanOut() async {
     let limit = MindMapLimit(limit: .usedUp(tier: .free, availableAt: nil), resource: .lessons)
     let api = MindMapsAPIStub(server: .available, statuses: [], request: .refused(limit))
