@@ -84,6 +84,8 @@ struct VoiceRefusal: Error, Equatable, Sendable {
   let status: Int
   let code: String
   let details: OpenAPIValueContainer?
+  /// When this device received it, which its instant is read against.
+  var receivedAt = Date.now
 
   var isNoSpeech: Bool {
     code == "NO_SPEECH"
@@ -120,8 +122,9 @@ struct VoiceRefusal: Error, Equatable, Sendable {
 
     return .reached(
       period: (limit?["period"] ?? nil) as? String, tier: tier,
-      availableAt: ((limit?["availableAt"] ?? object?["availableAt"] ?? nil) as? String).flatMap(
-        Date.init(serverInstant:)))
+      availableAt: Date(
+        opening: (limit?["availableAt"] ?? object?["availableAt"] ?? nil) as? String,
+        receivedAt: receivedAt))
   }
 }
 
@@ -132,6 +135,17 @@ extension Date {
       let date = (try? Date(text, strategy: .iso8601))
         ?? (try? Date(text, strategy: Date.ISO8601FormatStyle(includingFractionalSeconds: true)))
     else {
+      return nil
+    }
+
+    self = date
+  }
+
+  /// Main's `useOpeningDay` with `receivedAt`: a refusal's instant as this device received it. One
+  /// already past by then came from a server whose clock is behind this device's, so its day can't
+  /// be told here: there is none, and the refusal stands until the next try.
+  init?(opening text: String?, receivedAt: Date) {
+    guard let text, let date = Date(serverInstant: text), date > receivedAt else {
       return nil
     }
 
