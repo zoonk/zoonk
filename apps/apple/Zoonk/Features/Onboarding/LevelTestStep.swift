@@ -17,6 +17,8 @@ struct LevelTestStep: View {
   @State private var levels: [LevelTest.Level] = []
   @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
+  /// The test's finish: a step left while it saves doesn't go on when it answers.
+  @State private var finishing = ScreenTasks()
   @State private var isStarting = false
   @State private var saveFailures = 0
   @State private var showsSaveReport = false
@@ -61,6 +63,7 @@ struct LevelTestStep: View {
       }
     }
     .task { await resume() }
+    .onDisappear { finishing.cancel() }
     .feedbackSheet(
       isPresented: $showsSaveReport,
       context: FeedbackContext(screen: "level-test", reportType: .saveFailure), isReport: true)
@@ -291,13 +294,13 @@ struct LevelTestStep: View {
 
     isSaving = true
 
-    Task {
+    finishing.run {
       defer { isSaving = false }
 
       do {
         try await onboarding.finishLevelTest(goalID: goalID)
         saveFailures = 0
-        try await next()
+        try await goOnUnlessLeft(next)
       } catch is CancellationError {
       } catch {
         saveFailures += 1

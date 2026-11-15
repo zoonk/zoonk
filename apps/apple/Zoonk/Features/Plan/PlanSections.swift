@@ -57,7 +57,7 @@ struct PlanRoadmapSection: View {
     if !phases.isEmpty {
       Section {
         if listsPhases {
-          RoadmapCompact(context: context, opens: false)
+          RoadmapCompact(context: context, opens: false, hasLine: false)
 
           ForEach(Array(zip(phases, PhaseWhen.of(phases))), id: \.0.id) { phase, when in
             RoadmapPhaseRow(phase: phase, when: when, today: context.plan.today)
@@ -138,6 +138,8 @@ private struct RoadmapCompact: View {
 
   let context: PlanContext
   let opens: Bool
+  /// Over a list that names each phase and its date, the line would say it again.
+  var hasLine = true
 
   var body: some View {
     let phases = context.plan.roadPhases
@@ -152,38 +154,44 @@ private struct RoadmapCompact: View {
               ? .color(.success) : phase.state == .current ? .current : .track)
         })
 
-      HStack(alignment: .firstTextBaseline, spacing: 12) {
-        if let currentIndex {
-          let phase = phases[currentIndex]
-
-          RowLayout {
-          } words: {
-            position(phase: phase, number: currentIndex + 1, count: phases.count)
-          } value: {
-            if let end = context.plan.phaseEnd(phase, goalKind: context.goal.kind) {
-              Text(verbatim: end.shown)
-                .typeStyle(.data)
-                .foregroundStyle(.mutedForeground)
-                .accessibilityLabel(Text(verbatim: end.spoken))
-            }
-          }
-        } else if opens {
-          Text(
-            "\(phases.filter { $0.state == .done }.count) of \(phases.count) phases done",
-            tableName: "Plan",
-            comment: "Under the roadmap once no phase is current, such as after the plan's date"
-          )
-          .foregroundStyle(.mutedForeground)
-          .frame(maxWidth: .infinity, alignment: .leading)
-        }
-
-        if opens {
-          DisclosureChevron()
-        }
+      if hasLine {
+        line(phases: phases, currentIndex: currentIndex)
       }
-      .typeStyle(.meta)
     }
     .accessibilityElement(children: .combine)
+  }
+
+  private func line(phases: [PlanPhase], currentIndex: Int?) -> some View {
+    HStack(alignment: .firstTextBaseline, spacing: 12) {
+      if let currentIndex {
+        let phase = phases[currentIndex]
+
+        RowLayout {
+        } words: {
+          position(phase: phase, number: currentIndex + 1, count: phases.count)
+        } value: {
+          if let end = context.plan.phaseEnd(phase) {
+            Text(verbatim: end.shown)
+              .typeStyle(.data)
+              .foregroundStyle(.mutedForeground)
+              .accessibilityLabel(Text(verbatim: end.spoken))
+          }
+        }
+      } else if opens {
+        Text(
+          "\(phases.filter { $0.state == .done }.count) of \(phases.count) phases done",
+          tableName: "Plan",
+          comment: "Under the roadmap once no phase is current, such as after the plan's date"
+        )
+        .foregroundStyle(.mutedForeground)
+        .frame(maxWidth: .infinity, alignment: .leading)
+      }
+
+      if opens {
+        DisclosureChevron()
+      }
+    }
+    .typeStyle(.meta)
   }
 
   private func position(phase: PlanPhase, number: Int, count: Int) -> Text {
@@ -247,21 +255,20 @@ extension GoalPlan {
   /// the goal's date already says the end. A learning phase's end is an estimate while it's ahead,
   /// and while it's current with its challenge, which has no booked day, still to come; an exam's
   /// phases end on booked days.
-  func phaseEnd(_ phase: PlanPhase, goalKind: LearnerGoal.Kind) -> PhaseEnd? {
+  func phaseEnd(_ phase: PlanPhase) -> PhaseEnd? {
     guard phase.state == .current || phase.state == .upcoming else {
       return nil
     }
 
-    if phase.index == phases.last(where: { $0.kind != .afterExam })?.index {
-      guard goalKind == .exam, schedule.targetDate == nil, let endDate = estimate.endDate else {
+    // A last phase without a day of its own ends with the plan.
+    guard let lastDay = phase.untilDate else {
+      guard phase.index == phases.last(where: { $0.kind != .afterExam })?.index,
+        let endDate = estimate.endDate
+      else {
         return nil
       }
 
       return PhaseEnd(endDate, estimate: true, month: isFar(endDate), today: today)
-    }
-
-    guard let lastDay = phase.untilDate else {
-      return nil
     }
 
     let learns = phase.kind == .learn || phase.kind == .afterExam
@@ -404,8 +411,8 @@ struct PlanNumbersSection: View {
         comment: "Under the plan's progress percent, in a small tile: the lessons studied")
   }
 
-  /// The plan's state, and one quiet line: the time a day while it keeps a pace, the lessons left
-  /// once its date passed.
+  /// The plan's state, and the lessons left once its date passed. The time a day has its own row
+  /// on the Plan, so the tile doesn't say it again.
   private var scheduleNumber: PlanNumber? {
     guard let status = context.plan.status else {
       return nil
@@ -413,19 +420,11 @@ struct PlanNumbersSection: View {
 
     let paused = planIsResting(status, isPaused: context.isPaused)
     let detail: String? =
-      switch status.kind {
-      case .onTrack, .ahead, .behind:
-        String(
-          localized:
-            "\(planDurationText(minutes: Double(context.plan.schedule.dailyMinutes))) a day",
-          table: "Plan", comment: "The plan's time a day, under its state")
-      case .pastDate:
-        String(
-          localized: "\(status.lessons ?? 0) lessons left", table: "Plan",
-          comment: "Lessons left in a plan whose date passed")
-      default:
-        nil
-      }
+      status.kind == .pastDate
+      ? String(
+        localized: "\(status.lessons ?? 0) lessons left", table: "Plan",
+        comment: "Lessons left in a plan whose date passed")
+      : nil
 
     return PlanNumber(
       label: String(

@@ -1082,33 +1082,31 @@ struct GenerationFailureNotice: View {
     .padding(.horizontal, 14)
     .padding(.vertical, 12)
     .panel()
-    .announcesAlert(description ?? String(localized: title))
+    .announcesAlert([title, description].compactMap(\.self).joinedSentences())
   }
 
-  private var title: LocalizedStringResource {
+  /// A run that failed and one that never started read the same: the learner's way on is the same.
+  private var title: String {
     switch failure {
     case .connection:
-      LocalizedStringResource(
-        "Connection lost", table: "Onboarding", comment: "A wait that stopped getting updates")
+      String(
+        localized: "Connection lost", table: "Onboarding",
+        comment: "A wait that stopped getting updates")
     case .generation, .notStarted:
-      LocalizedStringResource(
-        "Something went wrong on our side", table: "Onboarding",
+      String(
+        localized: "Something went wrong on our side", table: "Onboarding",
         comment:
           "The title of a notice over something being prepared for the learner (a lesson, a list, a map) that failed or never started. A Try again button follows."
       )
     }
   }
 
-  /// Only a lost connection has more to say than its title.
   private var description: String? {
-    switch failure {
-    case .connection:
-      String(
+    failure == .connection
+      ? String(
         localized: "We stopped getting updates. It may still be working.", table: "Onboarding",
         comment: "Why a wait stopped getting updates")
-    case .generation, .notStarted:
-      nil
-    }
+      : nil
   }
 
   private var action: Text {

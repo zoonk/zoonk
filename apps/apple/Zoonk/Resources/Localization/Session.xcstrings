@@ -475,6 +475,64 @@
         }
       }
     },
+    "%@ more than the week before!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ mehr als in der Vorwoche!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡%@ más que la semana anterior!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ de plus que la semaine précédente !"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ in più rispetto alla settimana precedente!"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前の週より%@増えました！"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전주보다 %@ 늘었어요!"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O %@ więcej niż tydzień wcześniej!"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ a mais que na semana anterior!"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önceki haftaya göre %@ daha fazla!"
+          }
+        }
+      }
+    },
     "%@ more than the week before." : {
       "localizations" : {
         "de" : {
@@ -1484,6 +1542,65 @@
         }
       }
     },
+    "%lld more questions than the week before!" : {
+      "comment" : "More questions than last week",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Fragen mehr als in der Vorwoche!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡%lld preguntas más que la semana anterior!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld questions de plus que la semaine précédente !"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld domande in più rispetto alla settimana precedente!"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前の週より%lld問増えました！"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전주보다 문제를 %lld개 더 풀었어요!"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O %lld więcej pytań niż tydzień wcześniej!"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld perguntas a mais que na semana anterior!"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önceki haftaya göre %lld daha fazla soru!"
+          }
+        }
+      }
+    },
     "%lld more questions than the week before." : {
       "localizations" : {
         "de" : {
@@ -1603,16 +1720,16 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "O %lld pytanie więcej niż w poprzednim tygodniu."
-                }
-              },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "O %lld pytań więcej niż w poprzednim tygodniu."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "O %lld pytanie więcej niż w poprzednim tygodniu."
                 }
               },
               "other" : {

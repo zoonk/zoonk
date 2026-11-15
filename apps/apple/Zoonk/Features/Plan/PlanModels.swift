@@ -161,6 +161,42 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     let weekdayMinutes: [Int]
   }
 
+  /// What a weekend time of its own still needs: a weekend day to use it and a weekday whose time
+  /// it differs from (main's `getMissingDays`).
+  enum WeekendMissingDays: Equatable {
+    case weekend
+    case weekdays
+
+    /// From each weekday's minutes, Sunday first; nil when the week has both.
+    static func of(_ weekdayMinutes: [Int]) -> WeekendMissingDays? {
+      let studied = weekdayMinutes.indices.filter { weekdayMinutes[$0] > 0 }
+      let isWeekend = { (day: Int) in day == 0 || day == 6 }
+
+      if !studied.contains(where: isWeekend) {
+        return .weekend
+      }
+
+      return studied.contains { !isWeekend($0) } ? nil : .weekdays
+    }
+
+    var reason: String {
+      switch self {
+      case .weekend:
+        String(
+          localized: "Add Saturday or Sunday to your study days.", table: "Plan",
+          comment:
+            "Why a switch for a different study time on weekends is off: no weekend day is a study day."
+        )
+      case .weekdays:
+        String(
+          localized: "Add a weekday to your study days.", table: "Plan",
+          comment:
+            "Why a switch for a different study time on weekends is off: only weekend days are study days."
+        )
+      }
+    }
+  }
+
   /// Sunday counted 0.
   struct WeekShape: Decodable, Equatable, Sendable {
     let canDiffer: Bool

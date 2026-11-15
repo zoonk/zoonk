@@ -65,6 +65,7 @@
           GallerySection(id: "fields", title: "Fields") { Fields() }
           GallerySection(id: "mindMaps", title: "Mind map rows") { MindMapRows() }
           GallerySection(id: "planDates", title: "Plan path dates") { PlanPathDates() }
+          FirstWeek()
           GallerySection(id: "charts", title: "Lesson charts") { LessonCharts() }
         }
         .navigationTitle(Text(verbatim: "Design system"))
@@ -581,6 +582,44 @@
       ChapterMindMap(
         chapterId: "debug-\(id)", image: nil, lessonsToWrite: lessons, outline: nil, position: 3,
         saved: false, status: status, subject: nil, title: "Porcentagem e descontos")
+    }
+  }
+
+  /// The plan reveal's first week: dates of different lengths, a title that wraps, a day of
+  /// several lessons and a rest day.
+  private struct FirstWeek: View {
+    private static let days: [RevealDay] = {
+      let lesson = #"{"kind": "lesson", "lessonId": "l", "status": "pending", "title": "%@"}"#
+      let review = #"{"kind": "review", "lessonId": null, "status": "pending", "title": ""}"#
+      let day = { (date: String, items: [String]) in
+        #"{"date": "\#(date)", "minutes": 30, "items": [\#(items.joined(separator: ","))]}"#
+      }
+      let json =
+        "["
+        + [
+          day("2026-11-28", []),
+          day(
+            "2026-11-30",
+            [
+              lesson.replacingOccurrences(
+                of: "%@", with: "Percentages and discounts in everyday shopping receipts"),
+              lesson.replacingOccurrences(of: "%@", with: "A raise, then a discount"),
+            ]),
+          day(
+            "2026-12-01",
+            [
+              lesson.replacingOccurrences(of: "%@", with: "Reading charts"),
+              lesson.replacingOccurrences(of: "%@", with: "The five competencies"), review,
+            ]),
+          day("2026-12-02", [lesson.replacingOccurrences(of: "%@", with: "Ratios")]),
+        ].joined(separator: ",") + "]"
+
+      return try! JSONDecoder().decode([RevealDay].self, from: Data(json.utf8))
+    }()
+
+    var body: some View {
+      RevealWeek(days: Self.days, week: PlanRevealRead.Week(days: 3, minutes: 90))
+        .id("firstWeek")
     }
   }
 
