@@ -1,5 +1,5 @@
 /* oxlint-disable no-await-in-loop -- One screen at a time: steps may change the learner's state. */
-import { mkdir, rename, rm } from "node:fs/promises";
+import { mkdir, rename, rm, writeFile } from "node:fs/promises";
 import { join, posix } from "node:path";
 import {
   type Browser,
@@ -7,6 +7,10 @@ import {
   type Page,
   type PageScreenshotOptions,
 } from "@playwright/test";
+import { type Capture } from "../verify/alignment-capture.mts";
+import { readAlignment, webCapture } from "../verify/alignment-probe.mts";
+import { WEB_TABLE } from "../verify/alignment-table.mts";
+import { evaluateFile } from "../verify/alignment.mts";
 import { openPage, waitForQuiet } from "../verify/browser.mts";
 import { type Scheme, VIEWPORTS, type ViewportName } from "../verify/viewports.mts";
 import { carryReads } from "./carry.mts";
@@ -64,6 +68,7 @@ type Scene = {
 
 type WithoutHash<T> = T extends unknown ? Omit<T, "sha256"> : never;
 type Unhashed = WithoutHash<CaptureItem>;
+type Screen = { captures: Capture[]; items: Unhashed[] };
 
 /**
  * The HTML of the newest full page load, which names the build that served it; the page itself
@@ -96,7 +101,7 @@ async function captureScreen({
   storageState,
   video,
   viewport,
-}: Scene & { folder: string; scheme: Scheme; viewport: ViewportName }): Promise<Unhashed[]> {
+}: Scene & { folder: string; scheme: Scheme; viewport: ViewportName }): Promise<Screen> {
   const { context, page, traffic } = await openPage({
     actions: new Map(),
     baseUrl,
@@ -109,6 +114,7 @@ async function captureScreen({
 
   const screen = posix.join(viewport, scheme);
   const items: Unhashed[] = [];
+  const captures: Capture[] = [];
   const { deviceScaleFactor = 1, hasTouch = false } = VIEWPORTS[viewport];
 
   const lastDocument = watchDocuments(page);
@@ -166,6 +172,15 @@ async function captureScreen({
       await page.screencast.showActions();
     }
 
+    // The layout of the state just shot, read before a step can change it.
+    const layout = await page.evaluate(readAlignment, WEB_TABLE);
+    const path = new URL(page.url()).pathname;
+
+    captures.push({
+      ...webCapture({ page: layout, path, scheme, viewport }),
+      scenario: scenario ?? null,
+    });
+
     items.push({ ...(await describe()), file, kind: "shot", name, scenario });
   };
 
@@ -183,7 +198,7 @@ async function captureScreen({
     await context.close();
   }
 
-  return items;
+  return { captures, items };
 }
 
 async function hashItems({
@@ -214,12 +229,19 @@ export async function captureSide({
   await mkdir(scratch, { recursive: true });
 
   const unhashed: Unhashed[] = [];
+  const captures: Capture[] = [];
 
   for (const viewport of viewports) {
     for (const scheme of schemes) {
-      unhashed.push(...(await captureScreen({ ...scene, folder: scratch, scheme, viewport })));
+      const screen = await captureScreen({ ...scene, folder: scratch, scheme, viewport });
+      unhashed.push(...screen.items);
+      captures.push(...screen.captures);
     }
   }
+
+  // `pr:media check` fails an after folder on what this leaves unresolved.
+  const alignment = { captures, ...evaluateFile({ captures }) };
+  await writeFile(join(scratch, "alignment.json"), `${JSON.stringify(alignment, null, 2)}\n`);
 
   const items = await carryReads({
     folder: scratch,

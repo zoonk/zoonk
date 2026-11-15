@@ -2,7 +2,7 @@ import { DayList, type DayListStep } from "@/components/public/day-list";
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import { getMinutesFormatter } from "@/lib/public/public-labels";
 import { type UndatedEstimate } from "@zoonk/core/catalog/course-plan-example-contract";
-import { RouteMark, RouteTitle } from "@zoonk/learn/route-line";
+import { ROUTE_ROWS_CLASS, RouteMark, RouteTitle } from "@zoonk/learn/route-line";
 import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
@@ -48,7 +48,8 @@ async function FirstDay({
   const foldedMinutes = folded.reduce((sum, step) => sum + step.minutes, 0);
 
   return (
-    <div className="flex min-w-0 flex-col">
+    // From `@3xl` it's the plan's second column, off the route's edge.
+    <div className="flex min-w-0 flex-col @3xl:[--row-indent:0px]">
       <p className="mb-2 flex items-baseline justify-between gap-3">
         <span className="text-reading font-semibold">
           {t({
@@ -107,7 +108,13 @@ export async function CoursePlanWindow({
 
   return (
     <div
-      className={cn("@container flex min-w-0 flex-col gap-7", className)}
+      className={cn(
+        "@container flex min-w-0 flex-col gap-7",
+        ROUTE_ROWS_CLASS,
+        // From `xl` it sits beside the hero, off the route, in a column of its own.
+        !onRoute && "xl:[--row-indent:0px]",
+        className,
+      )}
       data-slot="course-plan"
     >
       {onRoute ? (

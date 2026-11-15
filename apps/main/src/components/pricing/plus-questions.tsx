@@ -12,6 +12,7 @@ import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import { ForViewer } from "./for-viewer";
 import { type PlusViewerState } from "./plus-plan";
+import { getStudyBuddyAllowance } from "./study-buddy-allowance";
 
 const PLUS_QUESTIONS_ID = "plus-questions";
 
@@ -54,10 +55,10 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
       "{month, plural, one {# lesson} other {# lessons}} a month, across all your goals, exams included",
       { month: limits.lessonsPer30Days ?? 0 },
     ),
-    t(
-      "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month",
-      { count: limits.tutorMessagesPerDay ?? 0, month: String(limits.tutorMessagesPer30Days ?? 0) },
-    ),
+    await getStudyBuddyAllowance({
+      per30Days: limits.tutorMessagesPer30Days,
+      perDay: limits.tutorMessagesPerDay,
+    }),
     t({
       description:
         "What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. {count} is how many a day.",

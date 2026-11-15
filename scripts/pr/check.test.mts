@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "vitest";
 import { CLEAN, checkFixture, kinds, sha256 } from "./check-fixture.mts";
@@ -116,5 +117,63 @@ describe("pr:media check", () => {
     const result = await capture([registered]).check();
 
     assert.deepEqual(result.problems, []);
+  });
+});
+
+describe("pr:media check, on a native app's build stamp", () => {
+  const apple = checkFixture();
+  const stamp = { changesDigest: "", commit: apple.current, dirty: false };
+  const picture = { file: "settings.png", platform: "apple" as const, scale: 3 };
+
+  it("fails an Apple picture built with uncommitted changes", async () => {
+    const dirty = { ...stamp, changesDigest: sha256("draft"), dirty: true };
+    const result = await apple.capture([apple.shot({ ...picture, build: dirty })]).check();
+
+    assert.deepEqual(kinds(result), ["uncommitted"]);
+  });
+
+  it("passes a clean Apple picture until a commit changes the Apple app", async () => {
+    const clean = apple.capture([apple.shot({ ...picture, build: stamp })]);
+    const current = await clean.check();
+
+    mkdirSync(join(apple.repository, "apps/apple"), { recursive: true });
+    writeFileSync(join(apple.repository, "apps/apple/App.swift"), "changed");
+    execFileSync("git", ["add", "apps/apple"], { cwd: apple.repository });
+    execFileSync("git", ["commit", "-qm", "change the app"], { cwd: apple.repository });
+
+    assert.deepEqual(current.problems, []);
+    assert.deepEqual(kinds(await clean.check()), ["stale"]);
+  });
+});
+
+describe("pr:media check, on an Android render's build stamp", () => {
+  const android = checkFixture();
+  const picture = { file: "plan-phone.png", platform: "android" as const, scale: 2.625 };
+  const stamp = { commit: android.current, uncommitted: "clean" };
+
+  it("fails a render from an uncommitted tree, or one whose cleanliness wasn't recorded", async () => {
+    const results = await Promise.all(
+      [sha256("draft"), "unknown"].map(async (uncommitted) =>
+        android.capture([android.shot({ ...picture, build: { ...stamp, uncommitted } })]).check(),
+      ),
+    );
+
+    assert.deepEqual(
+      results.map((result) => kinds(result)),
+      [["uncommitted"], ["uncommitted"]],
+    );
+  });
+
+  it("passes a clean render until a commit changes the Android app", async () => {
+    const clean = android.capture([android.shot({ ...picture, build: stamp })]);
+    const current = await clean.check();
+
+    mkdirSync(join(android.repository, "apps/android"), { recursive: true });
+    writeFileSync(join(android.repository, "apps/android/Plan.kt"), "changed");
+    execFileSync("git", ["add", "apps/android"], { cwd: android.repository });
+    execFileSync("git", ["commit", "-qm", "change the app"], { cwd: android.repository });
+
+    assert.deepEqual(current.problems, []);
+    assert.deepEqual(kinds(await clean.check()), ["stale"]);
   });
 });

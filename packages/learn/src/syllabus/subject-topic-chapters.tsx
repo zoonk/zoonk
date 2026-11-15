@@ -15,7 +15,7 @@ const TOPIC_CHAPTER_ROW_CLASS = "text-muted-foreground flex min-h-11 items-cente
 
 const TOPIC_CHAPTER_CLASS = cn(
   TOPIC_CHAPTER_ROW_CLASS,
-  "hover:text-foreground focus-visible:ring-ring/50 -mx-2.5 rounded-lg px-2.5 transition-colors outline-none focus-visible:ring-[3px]",
+  "hover:text-foreground focus-visible:ring-ring/50 row-bleed rounded-lg transition-colors outline-none focus-visible:ring-[3px]",
 );
 
 function TopicChapterLink({
@@ -53,12 +53,7 @@ function TopicChapterLink({
           nextDate={chapter.nextDate}
           skillId={chapter.skillId}
           title={chapter.title}
-          trigger={
-            <button
-              className={cn(TOPIC_CHAPTER_CLASS, "w-[calc(100%+1.25rem)] text-left")}
-              type="submit"
-            />
-          }
+          trigger={<button className={cn(TOPIC_CHAPTER_CLASS, "text-left")} type="submit" />}
         >
           {content}
           {line}

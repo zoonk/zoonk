@@ -200,7 +200,7 @@ export function MindMapRowView({
         </div>
       )}
 
-      <StatusRegion>
+      <StatusRegion className="pb-4">
         {limit && !isPending && (
           <MindMapLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
         )}

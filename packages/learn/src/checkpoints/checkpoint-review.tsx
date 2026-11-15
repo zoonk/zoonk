@@ -60,7 +60,7 @@ function ReviewAnswer({
           <AnswerOption
             disabled
             key={option.index}
-            marker={option.index + 1}
+            marker={option.result === "right" ? <CheckIcon /> : <XIcon />}
             picked={option.picked}
             result={option.result}
           >

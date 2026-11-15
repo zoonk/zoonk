@@ -73,15 +73,12 @@ export function CourseStartFailureNote({
   failure,
   onRetry,
   secondaryActionClassName,
-  withAction = true,
 }: {
   actionClassName?: string;
   className?: string;
   failure: CourseStartFailure | null;
   onRetry: () => void;
   secondaryActionClassName?: string;
-  /** False where the screen's bar shows `CourseStartBlockedAction` in its main action's place. */
-  withAction?: boolean;
 }) {
   const t = useExtracted();
   const limitText = useGoalLimitText(failure?.status === "limitReached" ? failure : null);
@@ -102,14 +99,12 @@ export function CourseStartFailureNote({
         {failure.status === "limitReached" ? limitText.text : t("We couldn't start this course.")}
       </p>
 
-      {withAction && (
-        <FailureAction
-          className={actionClassName ?? buttonVariants({ variant: "outline" })}
-          failure={failure}
-          onRetry={onRetry}
-          secondaryClassName={secondaryActionClassName ?? buttonVariants({ variant: "outline" })}
-        />
-      )}
+      <FailureAction
+        className={actionClassName ?? buttonVariants({ variant: "outline" })}
+        failure={failure}
+        onRetry={onRetry}
+        secondaryClassName={secondaryActionClassName ?? buttonVariants({ variant: "outline" })}
+      />
     </div>
   );
 }

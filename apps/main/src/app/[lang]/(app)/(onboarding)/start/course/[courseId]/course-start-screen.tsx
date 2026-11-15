@@ -8,7 +8,7 @@ import {
 import { isStartBlocked } from "@/components/public/course-start-remedy";
 import { type CourseStartFailure, useCourseStart } from "@/components/public/use-course-start";
 import { CHAPTER_PARAM, MINUTES_PARAM } from "@/lib/public/public-hrefs";
-import { useLiveLimit } from "@zoonk/learn/help-limit";
+import { type LimitWords, useLiveLimit } from "@zoonk/learn/help-limit";
 import {
   ONBOARDING_ACTION_LINK_CLASS,
   OnboardingBottomBar,
@@ -20,6 +20,7 @@ import {
   OnboardingSubject,
   OnboardingTitle,
 } from "@zoonk/learn/onboarding/frame";
+import { useGoalLimitGateWords } from "@zoonk/learn/onboarding/goal-errors";
 import {
   type LevelChoice,
   LevelChoiceList,
@@ -27,6 +28,7 @@ import {
 } from "@zoonk/learn/onboarding/level-choices";
 import { TaskActions } from "@zoonk/learn/task-layout";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 
@@ -85,8 +87,25 @@ function StartHeading({
   asksLevel,
   chapter,
   course,
-}: Omit<StartTarget, "dailyMinutes"> & { asksLevel: boolean }) {
+  gate,
+}: Omit<StartTarget, "dailyMinutes"> & { asksLevel: boolean; gate: LimitWords | null }) {
   const t = useExtracted();
+
+  if (gate) {
+    return (
+      <div role="status">
+        <OnboardingHeading>
+          <OnboardingSubject>{chapter?.title ?? course.title}</OnboardingSubject>
+          <OnboardingTitle>{gate.title ?? course.title}</OnboardingTitle>
+          {gate.line && (
+            <OnboardingDescription className={cn(gate.provisional && "invisible")}>
+              {gate.line}
+            </OnboardingDescription>
+          )}
+        </OnboardingHeading>
+      </div>
+    );
+  }
 
   if (chapter) {
     return (
@@ -151,25 +170,24 @@ function CourseStartForm({
   const blocked = isStartBlocked(failure);
   const blockedOnOpen = isStartBlocked(useLiveLimit(initialFailure));
 
+  const gate = useGoalLimitGateWords(
+    blocked && failure?.status === "limitReached" ? failure : null,
+  );
+
+  const barNote = failure && !blocked && (
+    <CourseStartFailureNote
+      actionClassName={ONBOARDING_ACTION_LINK_CLASS.other}
+      className="w-full max-w-none items-stretch lg:items-end"
+      failure={failure}
+      onRetry={startHere}
+      secondaryActionClassName={ONBOARDING_ACTION_LINK_CLASS.other}
+    />
+  );
+
   return (
     <OnboardingColumn
       bar={
-        <OnboardingBottomBar
-          note={
-            failure ? (
-              <CourseStartFailureNote
-                actionClassName={ONBOARDING_ACTION_LINK_CLASS.other}
-                className="w-full max-w-none items-stretch lg:items-end"
-                failure={failure}
-                onRetry={startHere}
-                secondaryActionClassName={ONBOARDING_ACTION_LINK_CLASS.other}
-                withAction={!blocked}
-              />
-            ) : (
-              note
-            )
-          }
-        >
+        <OnboardingBottomBar note={failure ? barNote : note}>
           {blocked && failure ? (
             <CourseStartBlockedAction failure={failure} />
           ) : (
@@ -191,7 +209,12 @@ function CourseStartForm({
         </OnboardingBottomBar>
       }
     >
-      <StartHeading asksLevel={!blockedOnOpen} chapter={chapter} course={course} />
+      <StartHeading
+        asksLevel={!blockedOnOpen}
+        chapter={chapter}
+        course={course}
+        gate={blocked ? gate : null}
+      />
 
       <form action={startCourseFormAction} className="flex flex-1 flex-col gap-6" id={formId}>
         <input name="courseId" type="hidden" value={course.id} />

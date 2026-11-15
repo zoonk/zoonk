@@ -38,12 +38,15 @@ export function TestProgress({ value }: { value: number }) {
   );
 }
 
-function BackButton({ onBack }: { onBack: () => void }) {
+function BackButton({ disabled, onBack }: { disabled?: boolean; onBack: () => void }) {
   const t = useExtracted();
   const ref = useEscapeClick<HTMLButtonElement>();
 
   return (
-    <BackLink aria-label={t("Back")} render={<button onClick={onBack} ref={ref} type="button" />}>
+    <BackLink
+      aria-label={t("Back")}
+      render={<button disabled={disabled} onClick={onBack} ref={ref} type="button" />}
+    >
       {t("Back")}
     </BackLink>
   );
@@ -57,7 +60,9 @@ export function OnboardingBarRow({ bar, className }: { bar: OnboardingBar; class
         className,
       )}
     >
-      <div className="justify-self-start">{bar.onBack && <BackButton onBack={bar.onBack} />}</div>
+      <div className="justify-self-start">
+        {bar.onBack && <BackButton disabled={bar.backDisabled} onBack={bar.onBack} />}
+      </div>
       {bar.middle ?? <span />}
       <div className="justify-self-end">{bar.end}</div>
     </div>
@@ -86,7 +91,7 @@ export function OnboardingPageBar({
           {/* `data-onboarding-bar` keeps the frame's first paint from drawing the tab bar under onboarding. */}
           <span className="contents" data-onboarding-bar="" />
           {bar.onBack ? (
-            <BackButton onBack={bar.onBack} />
+            <BackButton disabled={bar.backDisabled} onBack={bar.onBack} />
           ) : (
             <TaskClose className={LISTED_IN_SIDEBAR_CLASS} href={backHref} toApp />
           )}

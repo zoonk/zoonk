@@ -83,5 +83,5 @@ Hand back with:
 
 - the PR link and its head commit
 - the preview's URLs, when it has one
-- the check results, `pnpm pr:media check`'s last line included, and any picture it still fails (such as a pending Android picture)
+- the check results, `pnpm pr:media check`'s last line included, and any picture it still fails (such as a pending emulator picture)
 - each review comment and what you did: fixed (with the commit), declined (with the reason) or left for the user to decide

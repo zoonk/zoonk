@@ -298,7 +298,12 @@ export type CapWords = LimitWords & { cap?: RefusedCap };
 /** A message that stays on screen: plain words, or a cap's, whose line follows the clock. */
 export type LimitText = string | CapWords;
 
-function toHelpLimit({ availableAt = null, period, receivedAt, tier }: RefusedCap): HelpLimit {
+export function toHelpLimit({
+  availableAt = null,
+  period,
+  receivedAt,
+  tier,
+}: RefusedCap): HelpLimit {
   return period === "rolling30Days"
     ? { availableAt, period, receivedAt, status: "limitReached", tier }
     : { period, status: "limitReached", tier };

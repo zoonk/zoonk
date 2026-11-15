@@ -182,7 +182,11 @@ export function AnswerOption({
     >
       <LineMarker
         aria-hidden="true"
-        className={cn(layout === "stacked" && "absolute top-3 left-3 z-10")}
+        className={cn(
+          // A number is the row's key, so a touch screen gives up its room (craft E1, B2).
+          typeof marker === "number" && "hidden pointer-fine:flex",
+          layout === "stacked" && "absolute top-3 left-3 z-10",
+        )}
       >
         <Kbd className="[&_svg]:size-3">{marker}</Kbd>
       </LineMarker>

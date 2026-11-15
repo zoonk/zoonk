@@ -1,6 +1,5 @@
 import { z } from "zod";
-import { type AlignmentFile } from "./alignment-capture.mts";
-import { PART_NAMES } from "./alignment-table.mts";
+import { type AlignmentFile, ELEMENT_PARTS } from "./alignment-capture.mts";
 
 /**
  * What a capture must hold before the evaluator reads it (`REPORT-SHAPE.md`): a file from another
@@ -21,25 +20,30 @@ const OPTIONAL = z
     baseline: MEASURE,
     capBottom: MEASURE,
     capTop: MEASURE,
+    column: z.tuple([z.number(), z.number()]),
     current: z.boolean(),
     direction: z.enum(["ltr", "rtl"]),
+    disabled: z.boolean(),
     endEdge: MEASURE,
     firstLine: BOUNDS,
     flow: z.string(),
+    frame: z.tuple([z.number(), z.number()]),
     gap: MEASURE,
     gapBefore: MEASURE,
+    kind: z.enum(["box", "hairline", "highlight", "picture"]),
     layoutScale: z.number().positive(),
-    lines: z.int().positive(),
+    lines: z.union([z.int().positive(), NOT_MEASURED]),
     margins: z.tuple([z.number(), z.number()]),
     middle: MEASURE,
     name: z.string(),
     note: z.boolean(),
     reason: z.string(),
-    source: z.enum(["piece", "stack"]),
+    source: z.enum(["piece", "picture", "stack"]),
     stacked: z.boolean(),
     surface: z.string(),
     target: z.string(),
     text: z.string(),
+    textBox: z.enum(["capitals", "ideographic face"]),
     type: z.string(),
     variant: z.string(),
   })
@@ -57,11 +61,28 @@ const ELEMENT = z.union([
   z.looseObject({
     ...PLACE,
     ink: z.union([BOUNDS, NOT_MEASURED, z.null()]),
-    part: z.enum([...PART_NAMES, "action", "anchor", "group", "holder", "row"]),
+    part: z.enum(ELEMENT_PARTS),
     piece: z.string(),
   }),
   // An area the platform can't read (a subtree whose semantics were replaced): only its place.
   z.looseObject({ ...PLACE, part: z.literal("unmeasured") }),
+  // A state pair's anchor as Android writes it: its name and place, or no place when the node
+  // wasn't found (a lazy row off screen), which the pair can't measure.
+  z
+    .looseObject({
+      anchor: z.string(),
+      bounds: z.union([BOUNDS, NOT_MEASURED]),
+      id: z.string(),
+      part: z.literal("anchor"),
+    })
+    .transform(({ bounds, ...anchor }) => ({
+      group: null,
+      ink: null,
+      piece: "anchor",
+      row: null,
+      ...anchor,
+      ...(bounds === "not measured" ? { bounds: [0, 0, 0, 0], unplaced: true } : { bounds }),
+    })),
 ]);
 
 const CAPTURE = z

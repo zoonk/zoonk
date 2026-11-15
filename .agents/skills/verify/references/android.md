@@ -24,6 +24,10 @@ The capture reads the unmerged semantics tree of the frame `captureRender()` cop
 
 A shared piece names its parts with `Modifier.layoutPart(piece, part)` (`LayoutParts.kt`, debug builds only), with the piece's name from the table (`LayoutPart.LIST`, `CHOICES`, `NAVIGATION`, `WAIT`, `GENERATION_WAIT`), and gives the group's `gap`, a row's `endInset` and `firstLine` (a row with a text lead) where its layout has them. `ListRow`, the choice list, the navigation, the wait pieces and the buttons already do. A new piece is declared in `alignment-table.mts` first (a piece with no `web` when the web has no twin). Rows no piece frames are grouped by the stack that holds them, and their findings are discovery leads, never failures: frame them with the list piece to make them count.
 
+A dialog or a sheet is a window of its own: with one open, `onRoot()` fails on two roots, so capture `onNode(isDialog())` or the last root (`onAllNodes(isRoot()).onLast()`). The picture is that window alone, without the page and the dim behind it, and its capture counts filled actions on its own surface. A picture that must show the sheet over its page comes from an emulator.
+
+To put renders in a PR, `pnpm pr:media adopt <before|after> <render.json>...` copies each picture into a capture folder (`tmp/pr-media/android/<side>` by default, `--to <dir>` for another) with its record in `capture.json` and its layout in `alignment.json`. It refuses a render whose picture changed after it was measured. The [picture gate](../../zoonk-commit/SKILL.md#every-picture-is-captured-current-and-read) then judges it like any other.
+
 What it can't measure, as the capture states:
 
 - A part whose parent replaced its children's semantics (`clearAndSetSemantics`, so TalkBack reads one phrase): written as an unmeasured area, which fails inside a declared group.

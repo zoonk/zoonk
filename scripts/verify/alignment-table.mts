@@ -33,7 +33,7 @@ export type WebPiece = {
  * A piece every platform names the same in its captures. A native-only piece has no `web`; its
  * relations still come from here, since this table is the one place they're declared.
  */
-export type Piece = { name: string; relations: Relation[]; web?: WebPiece };
+type Piece = { name: string; relations: Relation[]; web?: WebPiece };
 
 const LIST_PARTS = {
   end: "svg.lucide-chevron-right, [data-slot=fold-chevron], [data-slot=radio-group-item], [data-slot=checkbox], [role=switch]",
@@ -54,7 +54,7 @@ export const LIST_GROUP = {
   rows: ":scope > :not(ol, ul), :scope > :is(ol, ul) > *",
 };
 
-export const PIECES: Piece[] = [
+const PIECES: Piece[] = [
   {
     name: "list-group",
     relations: ["label-start", "lead-start", "mark-axis", "end-edge", "gap", "type", "line"],
@@ -132,11 +132,26 @@ export const DECLARATIONS = new Map(
  * whose piece names its action (`data-action-name`, a goal box drawn at a page's top and its end),
  * offered again counts once; every other action counts, each submit button included.
  */
-export const ACTIONS = "a, button, [role=button]";
+const ACTIONS = "a, button, [role=button]";
 
 /** What covers the page and becomes the surface its own actions are counted on. */
-export const SURFACES =
+const SURFACES =
   "[role=dialog][aria-modal=true], [role=alertdialog], [data-slot=dialog-content], [data-slot=sheet-content]";
+
+/**
+ * The page's columns (craft E7): a drawn box starts and ends on its closest column's content edges,
+ * or bleeds as E7 allows. A frame's main column, the column beside an aside, the aside, and `Page`.
+ */
+const COLUMNS =
+  "[data-slot=learn-shell-main], [data-slot=page-with-aside] > div, [data-slot=page-aside], [data-slot=page]";
+
+/** What `readAlignment` reads a web page by. */
+export const WEB_TABLE = {
+  actions: ACTIONS,
+  columns: COLUMNS,
+  pieces: PIECES.flatMap((piece) => (piece.web ? [{ name: piece.name, web: piece.web }] : [])),
+  surfaces: SURFACES,
+};
 
 /**
  * Exceptions to a declared relationship. A detector's correction belongs in the read itself; an

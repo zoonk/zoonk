@@ -9,7 +9,6 @@ import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { getExamView } from "@zoonk/core/exams/view/get";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { StatSkeleton } from "@zoonk/ui/components/stat";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -64,12 +63,15 @@ function SubjectRowSkeleton() {
   );
 }
 
+/** Drawn as the section looks after a first mock exam, the most common; later ones add a card and a chart. */
 function MockProgressSkeleton() {
   return (
     <div className="flex flex-col gap-3">
-      <SectionLabelSkeleton />
-      <StatSkeleton detailLines={2} />
-      <div className="mt-1 flex flex-col [&>*+*]:border-t">
+      <div className="flex flex-col gap-1">
+        <SectionLabelSkeleton />
+        <Skeleton className="text-compact w-40 max-w-full rounded-sm">{"\u00A0"}</Skeleton>
+      </div>
+      <div className="flex flex-col [&>*+*]:border-t">
         <SubjectRowSkeleton />
         <SubjectRowSkeleton />
       </div>
