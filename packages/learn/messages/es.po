@@ -5002,20 +5002,14 @@ msgid ", up next"
 msgstr ", a continuación"
 
 #: src/journey/phase-details.tsx
-msgctxt "kxXCJy"
-msgid "{start} – {end}"
-msgstr "{start} – {end}"
+msgctxt "sFnTpp"
+msgid "<start></start> – <end></end>"
+msgstr "<start></start> – <end></end>"
 
 #: src/journey/phase-details.tsx
 msgctxt "yYQBka"
 msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of # lesson} other {{done, number} of # lessons}}"
 msgstr "{total, plural, =0 {{done, number} de # lecciones} one {{done, number} de # lección} other {{done, number} de # lecciones}}"
-
-#: src/journey/phase-when.tsx
-#: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "~{date}"
 
 #. In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".
 #: src/journey/phase-when.tsx
@@ -5028,6 +5022,12 @@ msgstr "{dateKind, select, month {Termina aproximadamente en {date}} other {Term
 msgctxt "JQlKi_"
 msgid "Ends {date}"
 msgstr "Termina el {date}"
+
+#: src/journey/phase-when.tsx
+#: src/plan/plan-date-text.tsx
+msgctxt "7KwTGn"
+msgid "~{date}"
+msgstr "~{date}"
 
 #: src/journey/plan-header.tsx
 msgctxt "8PP61v"

@@ -142,10 +142,10 @@ function EndLabel({ after, phase }: { after: boolean; phase: PlanPhaseView }) {
   const finish = useRoadmapFinish();
   const overrun = useRoadmapOverrun();
 
-  if (overrun && phase.endDate) {
+  if (overrun) {
     return (
       <AxisLabel after={after} share={1}>
-        <PlanDateText className={AXIS_TEXT_CLASS} isoDate={phase.endDate} />
+        <PhaseWhen className={AXIS_TEXT_CLASS} phase={phase} />
       </AxisLabel>
     );
   }

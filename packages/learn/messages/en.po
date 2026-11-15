@@ -5002,20 +5002,14 @@ msgid ", up next"
 msgstr ", up next"
 
 #: src/journey/phase-details.tsx
-msgctxt "kxXCJy"
-msgid "{start} – {end}"
-msgstr "{start} – {end}"
+msgctxt "sFnTpp"
+msgid "<start></start> – <end></end>"
+msgstr "<start></start> – <end></end>"
 
 #: src/journey/phase-details.tsx
 msgctxt "yYQBka"
 msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of # lesson} other {{done, number} of # lessons}}"
 msgstr "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of # lesson} other {{done, number} of # lessons}}"
-
-#: src/journey/phase-when.tsx
-#: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "~{date}"
 
 #. In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".
 #: src/journey/phase-when.tsx
@@ -5028,6 +5022,12 @@ msgstr "{dateKind, select, month {Ends about {date}} other {Ends about {date}}}"
 msgctxt "JQlKi_"
 msgid "Ends {date}"
 msgstr "Ends {date}"
+
+#: src/journey/phase-when.tsx
+#: src/plan/plan-date-text.tsx
+msgctxt "7KwTGn"
+msgid "~{date}"
+msgstr "~{date}"
 
 #: src/journey/plan-header.tsx
 msgctxt "8PP61v"
