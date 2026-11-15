@@ -782,7 +782,9 @@ export function readAlignment({
         pixels(style.getPropertyValue(`border-${side}-width`)) > 0 &&
         globalThis.zoonkPage.rgba(style.getPropertyValue(`border-${side}-color`))[3] > 0;
 
-      if (drawn("left") || drawn("right") || drawn("top") === drawn("bottom")) {
+      // A rule on the top or the bottom alone, whatever the sides draw: a grid's middle tile draws
+      // its dividers too, and its part of the row's hairline is still that hairline.
+      if (drawn("top") === drawn("bottom")) {
         return null;
       }
 
@@ -807,8 +809,8 @@ export function readAlignment({
       return Math.min(box.right - box.left, box.bottom - box.top) <= HAIRLINE ? "hairline" : "box";
     };
 
-    return [...document.querySelectorAll(`:is(${columns}) *`)].flatMap(
-      (element, index): CaptureElement[] => {
+    const read = [...document.querySelectorAll(`:is(${columns}) *`)].flatMap(
+      (element, index): { fill: CaptureElement; passing: boolean }[] => {
         const column = columnOf(element);
 
         if (!column || !shown(element) || element.closest("[data-slot=bottom-bar]")) {
@@ -833,29 +835,54 @@ export function readAlignment({
           ? "tab"
           : "highlight";
 
-        const found: { box: Rect; kind: Kind }[] = [
-          ...(highlight && passes(highlight) ? [{ box: highlight, kind: lit }] : []),
+        // Every rule, passing or not: a line is judged whole, so a part inside the column that
+        // touches one passing it (a grid's middle tile) is part of that line.
+        const found: { box: Rect; kind: Kind; passing: boolean }[] = [
+          ...(highlight && passes(highlight) ? [{ box: highlight, kind: lit, passing: true }] : []),
           ...(ownBox && passes(ownBox)
-            ? [{ box: ownBox, kind: current ? lit : kindOf(element, ownBox) }]
+            ? [{ box: ownBox, kind: current ? lit : kindOf(element, ownBox), passing: true }]
             : []),
-          ...(line && passes(line) ? [{ box: line, kind: "hairline" as const }] : []),
+          ...(line ? [{ box: line, kind: "hairline" as const, passing: passes(line) }] : []),
         ];
 
-        return found.map(({ box, kind }, part) => ({
-          bounds: bounds(box),
-          column: [edges.left + scrollX, edges.right + scrollX],
-          frame: [edges.frame.left + scrollX, edges.frame.right + scrollX],
-          group: null,
-          id: `fill.${index}.${part}`,
-          ink: bounds(box),
-          kind,
-          name: name(element),
-          part: "fill",
-          piece: "page",
-          row: null,
+        return found.map(({ box, kind, passing }, part) => ({
+          fill: {
+            bounds: bounds(box),
+            column: [edges.left + scrollX, edges.right + scrollX],
+            frame: [edges.frame.left + scrollX, edges.frame.right + scrollX],
+            group: null,
+            id: `fill.${index}.${part}`,
+            ink: bounds(box),
+            kind,
+            name: name(element),
+            part: "fill",
+            piece: "page",
+            row: null,
+          },
+          passing,
         }));
       },
     );
+
+    const kept = read.filter(({ passing }) => passing).map(({ fill }) => fill);
+    let rest = read.filter(({ passing }) => !passing).map(({ fill }) => fill);
+
+    const touches = (one: CaptureElement, other: CaptureElement) =>
+      Math.abs(one.bounds[1] - other.bounds[1]) <= PAST &&
+      one.bounds[0] <= other.bounds[0] + other.bounds[2] + PAST &&
+      other.bounds[0] <= one.bounds[0] + one.bounds[2] + PAST;
+
+    for (let joined = true; joined;) {
+      const joining = rest.filter((line) =>
+        kept.some((fill) => fill.kind === "hairline" && touches(fill, line)),
+      );
+
+      joined = joining.length > 0;
+      kept.push(...joining);
+      rest = rest.filter((line) => !joining.includes(line));
+    }
+
+    return kept;
   }
 
   const covers = [...document.querySelectorAll(surfaces)].filter((surface) => present(surface));

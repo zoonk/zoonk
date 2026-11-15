@@ -175,3 +175,29 @@ describe("a collapsed sidebar, an icon rail", () => {
     assert.equal(evaluateCapture(read())[0]?.rule, "mark-axis");
   });
 });
+
+/** The catalog's course grid on a laptop: three tiles whose top rules draw one hairline. */
+function tiles(middleSides: string) {
+  const rule = "border-top: 1px solid rgb(200, 200, 200);";
+
+  return `<div data-slot="page" data-box="500,0,900,400">
+    <div data-box="490,100,920,180">
+      <div style="${rule}" data-box="490,100,307,180">ENEM</div>
+      <div style="${rule} ${middleSides}" data-box="797,100,306,180">Economics</div>
+      <div style="${rule}" data-box="1103,100,307,180">IELTS</div>
+    </div></div>`;
+}
+
+describe("a hairline the tiles of a grid draw together", () => {
+  it("is read whole, the middle tile's part included though it also draws its sides", () => {
+    const sides =
+      "border-left: 1px solid rgb(200, 200, 200); border-right: 1px solid rgb(200, 200, 200);";
+
+    document.body.innerHTML = tiles(sides);
+
+    assert.deepEqual(
+      evaluateCapture(read()).filter((finding) => finding.rule === "column"),
+      [],
+    );
+  });
+});
