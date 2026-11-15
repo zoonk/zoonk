@@ -21,9 +21,9 @@ import { JourneyChapters } from "./journey-chapters";
 import { type JourneyPathLinks } from "./journey-links";
 import {
   CheckpointRow,
-  PATH_ROW_BODY_CLASS,
   PATH_ROW_CLASS,
   PATH_ROW_LEADING_CLASS,
+  PathRowBody,
 } from "./journey-phase-events";
 import { PHASE_END_CLASS, PhaseMark, PhaseName } from "./path-phase-row";
 import { findOpenPhase, findOwnChapter, isNamedLikeAChapter } from "./path-phases";
@@ -48,10 +48,9 @@ function PhaseColumns({
       <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
         {nextChapter ? <ChapterMark chapter={nextChapter} isNext /> : <PhaseMark phase={phase} />}
       </span>
-      <span className={PATH_ROW_BODY_CLASS}>
+      <PathRowBody value={<PhaseWhen className={PHASE_END_CLASS} phase={phase} />}>
         <PhaseName byPlace={byPlace} isNext={Boolean(nextChapter)} open={open} phase={phase} />
-        <PhaseWhen className={PHASE_END_CLASS} phase={phase} />
-      </span>
+      </PathRowBody>
     </>
   );
 }
@@ -189,19 +188,20 @@ function FinishItem() {
         <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
           <FlagIcon aria-hidden="true" className="size-4" />
         </span>
-        <span className={PATH_ROW_BODY_CLASS}>
-          <span className="font-medium" data-slot="path-row-title">
-            {goal.displayName}
-          </span>
-          {finish && (
-            <PlanDateText
-              className="text-muted-foreground text-xs"
-              estimate={finish.estimate}
-              isoDate={finish.isoDate}
-              month={finish.month}
-            />
-          )}
-        </span>
+        <PathRowBody
+          value={
+            finish && (
+              <PlanDateText
+                className="text-muted-foreground text-xs"
+                estimate={finish.estimate}
+                isoDate={finish.isoDate}
+                month={finish.month}
+              />
+            )
+          }
+        >
+          <span className="font-medium">{goal.displayName}</span>
+        </PathRowBody>
         <ListRowChevronSpace />
       </div>
     </li>

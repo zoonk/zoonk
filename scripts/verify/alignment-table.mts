@@ -100,10 +100,10 @@ export const PIECES: Piece[] = [
       group: "[data-slot=journey-path-list], [data-slot=path-nested]",
       parts: {
         end: "svg.lucide-chevron-right, [data-slot=fold-chevron]",
-        label: "[data-slot=path-row-title]",
+        label: "[data-slot=path-row-words] > :first-child",
         mark: "[data-slot=path-row-mark]",
-        note: "[data-slot=path-row-note]",
-        value: "[data-slot=path-row-value], [data-slot=phase-when], [data-slot=plan-date]",
+        note: "[data-slot=path-row-words] > :not(:first-child)",
+        value: "[data-slot=path-row-body] > :not([data-slot=path-row-words])",
       },
       rows: "[data-slot=path-row]",
     },

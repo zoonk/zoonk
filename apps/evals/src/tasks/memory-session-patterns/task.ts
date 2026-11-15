@@ -73,7 +73,7 @@ export const memorySessionPatternsTask: Task<
   description: "Notice lasting patterns in how a learner learns from their sessions' numbers",
   generate: findSessionPatterns,
   id: "memory-session-patterns",
-  name: "Memory Session Patterns",
+  name: "Memory session patterns",
   score: scoreSessionPatterns,
   testCases: TEST_CASES,
 };

@@ -12,7 +12,7 @@ export const generateItemsTask: Task<
     "Write practice and exam items for a skill and format: code checks (one right answer, distinct options, a misconception per wrong option, math recomputed), then a judge on correctness and exam realism",
   generate: (input) => generateItems({ ...input, country: input.country ?? null }),
   id: "generate-items",
-  name: "Generate Items",
+  name: "Generate items",
   score: scoreGeneratedItems,
   scoreCategories: GENERATE_ITEMS_SCORE_CATEGORIES,
   testCases: TEST_CASES,

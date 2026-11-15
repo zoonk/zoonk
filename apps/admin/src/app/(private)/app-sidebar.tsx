@@ -79,8 +79,9 @@ function AdminSidebarContent({
     <>
       <AdminNav counts={counts} onNavigate={onNavigate} />
 
-      {/* Pinned: on a short window the navigation scrolls under it. */}
-      <SidebarFooter className="bg-background sticky bottom-0 -mb-3 pb-3">
+      {/* Pinned: on a short window the navigation scrolls under it. Its hairline keeps the account
+          apart from the last group, which runs down to it on a full sidebar. */}
+      <SidebarFooter className="bg-background sticky bottom-0 -mb-3 border-t pb-3">
         <AdminAccountMenu account={account} />
       </SidebarFooter>
     </>

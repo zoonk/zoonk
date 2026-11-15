@@ -18,9 +18,9 @@ import { getChapterWindow } from "./chapter-window";
 import { type JourneyPathLinks } from "./journey-links";
 import {
   CheckpointRow,
-  PATH_ROW_BODY_CLASS,
   PATH_ROW_CLASS,
   PATH_ROW_LEADING_CLASS,
+  PathRowBody,
 } from "./journey-phase-events";
 
 export function getChapterKey(chapter: PlanChapterView): string {
@@ -81,24 +81,17 @@ function ChapterRow({
       <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
         <ChapterMark chapter={chapter} isNext={isNext} skipped={isSkipped(chapter)} />
       </span>
-      <span className={PATH_ROW_BODY_CLASS}>
-        <span className="flex flex-col">
-          <span
-            className={cn(
-              "line-clamp-2 font-medium",
-              chapter.state === "done" && "text-muted-foreground",
-            )}
-            data-slot="path-row-title"
-          >
-            {title(chapter)}
-          </span>
-          {line && (
-            <span className="text-muted-foreground text-xs" data-slot="path-row-note">
-              {line}
-            </span>
+      <PathRowBody>
+        <span
+          className={cn(
+            "line-clamp-2 font-medium",
+            chapter.state === "done" && "text-muted-foreground",
           )}
+        >
+          {title(chapter)}
         </span>
-      </span>
+        {line && <span className="text-muted-foreground text-xs">{line}</span>}
+      </PathRowBody>
     </>
   );
 
@@ -183,13 +176,15 @@ export function JourneyChapters({
             <span aria-hidden="true" className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
               {showAll ? <MinusIcon className="size-3.5" /> : <PlusIcon className="size-3.5" />}
             </span>
-            <span data-slot="path-row-title">
-              {showAll
-                ? t("Show fewer chapters")
-                : t("{count, plural, one {# more chapter} other {# more chapters}}", {
-                    count: hidden,
-                  })}
-            </span>
+            <PathRowBody>
+              <span>
+                {showAll
+                  ? t("Show fewer chapters")
+                  : t("{count, plural, one {# more chapter} other {# more chapters}}", {
+                      count: hidden,
+                    })}
+              </span>
+            </PathRowBody>
           </button>
         </li>
       )}

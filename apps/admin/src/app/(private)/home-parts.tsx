@@ -3,7 +3,7 @@ import { STAT_TILES_CLASS, StatTile, StatTileSkeleton } from "@/components/stat-
 import { formatDollars } from "@/lib/ai-format";
 import { formatDuration } from "@/lib/format-duration";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { Stat } from "@zoonk/ui/components/stat";
+import { Stat, StatIcon, StatLabel } from "@zoonk/ui/components/stat";
 import { cn } from "@zoonk/ui/lib/utils";
 import {
   CheckIcon,
@@ -54,20 +54,17 @@ export function AttentionTiles({ items }: { items: AttentionItem[] }) {
               className="group hover:bg-muted/50 h-full gap-2 transition-colors"
               render={<Link href={item.href} prefetch />}
             >
-              <span className="flex items-center gap-2 text-sm font-medium">
-                <Icon
-                  aria-hidden="true"
-                  className={cn(
-                    "size-4 shrink-0",
-                    item.failed ? "text-destructive" : "text-muted-foreground",
-                  )}
-                />
+              {/* Labeled as the week's tiles under them are; the chevron says it opens the queue. */}
+              <StatLabel>
+                <StatIcon className={item.failed ? "text-destructive" : "text-muted-foreground"}>
+                  <Icon />
+                </StatIcon>
                 <span className="min-w-0 flex-1 truncate">{item.title}</span>
                 <ChevronRightIcon
                   aria-hidden="true"
                   className="text-faint group-hover:text-foreground size-4 shrink-0"
                 />
-              </span>
+              </StatLabel>
               <span className={cn("text-readout text-3xl", item.failed && "text-destructive-text")}>
                 {formatNumber(item.count)}
               </span>
@@ -88,8 +85,8 @@ export function AttentionTilesSkeleton() {
     <div aria-hidden="true" className={ATTENTION_GRID_CLASS}>
       {Array.from({ length: SKELETON_TILES }, (_, index) => (
         <Stat className="gap-2" key={index}>
-          <span className="flex h-5 items-center">
-            <Skeleton className="h-3.5 w-28" />
+          <span className="flex h-4 items-center">
+            <Skeleton className="h-3 w-28" />
           </span>
           <span className="flex h-7.5 items-center">
             <Skeleton className="h-7 w-10" />

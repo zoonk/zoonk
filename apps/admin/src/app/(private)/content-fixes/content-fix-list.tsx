@@ -73,7 +73,11 @@ function BatchCell({ fixes }: { fixes: readonly ContentFixListItem[] }) {
   return (
     <AdminNameCell
       href={`/content-fixes/batches/${first?.batchId ?? ""}`}
-      note={`${String(fixes.length)} fixes · ${place || "Several places"}`}
+      note={
+        place
+          ? `${String(fixes.length)} fixes · ${place}`
+          : `${String(fixes.length)} fixes in ${String(new Set(fixes.map((fix) => fix.location.trail.join(" › "))).size)} places`
+      }
       title={fixes.every((fix) => fix.revertsId) ? `Undo: ${reason}` : reason}
     />
   );

@@ -42,7 +42,7 @@ export const languageSentenceOrdersTask: Task<
     "Generate other word orders for a lesson's sentences and their translations, keep the buildable ones and review them, so learners building them from tiles aren't marked wrong for a correct order",
   generate: generateCheckedOrders,
   id: "language-sentence-orders",
-  name: "Language Sentence Orders",
+  name: "Language sentence orders",
   score: scoreLanguageSentenceOrders,
   scoreCategories: SENTENCE_ORDERS_SCORE_CATEGORIES,
   testCases: TEST_CASES,
