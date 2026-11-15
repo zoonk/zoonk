@@ -3,6 +3,7 @@ package com.zoonk.android.feature.mindmaps
 import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
@@ -21,7 +22,9 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.PrivateImages
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.LocalClock
 import com.zoonk.android.ui.components.PrivatePictures
+import com.zoonk.android.ui.components.TestClock
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.GoalMindMaps
 import kotlinx.coroutines.CoroutineScope
@@ -67,6 +70,7 @@ class MindMapsGateWidthTest {
                 """.trimIndent(),
         )
 
+    private val clock by lazy { TestClock(compose.mainClock) }
     private val width = mutableStateOf(240.dp)
     private val visit = mutableStateOf(0)
 
@@ -76,10 +80,12 @@ class MindMapsGateWidthTest {
             PrivateImages("https://example.test/v1/".toHttpUrl(), ImageLoader(ApplicationProvider.getApplicationContext<Context>()))
         val host = MindMapsHost(store, session, PrivatePictures(images, session), { null }, { LimitTier.Free }, { session })
         compose.setContent {
-            ZoonkTheme {
-                Box(
-                    Modifier.width(width.value),
-                ) { key(visit.value) { MindMapsContent(UUID.fromString(GOAL), host, rememberAppNavigator()) } }
+            CompositionLocalProvider(LocalClock provides clock) {
+                ZoonkTheme {
+                    Box(
+                        Modifier.width(width.value),
+                    ) { key(visit.value) { MindMapsContent(UUID.fromString(GOAL), host, rememberAppNavigator()) } }
+                }
             }
         }
     }
@@ -88,7 +94,7 @@ class MindMapsGateWidthTest {
 
     @Test
     fun aWiderGateUsesTheHeightForItsNewWidth() {
-        api.mindMaps = { stopped(Instant.now().plusSeconds(3600)) }
+        api.mindMaps = { stopped(clock.start.plusSeconds(3600)) }
         show()
         waitFor("You've used your mind maps")
         compose.waitForIdle()
@@ -100,5 +106,22 @@ class MindMapsGateWidthTest {
         compose.waitForIdle()
         val freshWide = compose.onNodeWithText("Other chapters").getBoundsInRoot().top
         assertEquals("A held slot must not retain another width's height", freshWide, widened)
+    }
+
+    /** After its day came, the slot still holds the gate's height, but only at the width it was measured at. */
+    @Test
+    fun aLiftedSlotLetsGoOfItsHeightWhenTheWidthChanges() {
+        api.mindMaps = { if (api.lists == 1) stopped(clock.opening) else fresh }
+        show()
+        waitFor("You've used your mind maps")
+        clock.passOpening()
+        waitFor("Create all")
+        compose.runOnIdle { width.value = 700.dp }
+        compose.waitForIdle()
+        val widened = compose.onNodeWithText("Other chapters").getBoundsInRoot().top
+        compose.runOnIdle { visit.value++ }
+        compose.waitForIdle()
+        val freshWide = compose.onNodeWithText("Other chapters").getBoundsInRoot().top
+        assertEquals("A lifted slot must not keep another width's height", freshWide, widened)
     }
 }

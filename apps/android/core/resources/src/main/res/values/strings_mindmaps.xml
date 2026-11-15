@@ -7,6 +7,7 @@
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">Chapter %1$s</string>
     <string name="mindmaps_empty">No chapter maps yet. Every chapter you finish gets one.</string>
+    <string name="mindmaps_empty_stopped">No chapter maps yet.</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">Mind map of %1$s</string>
     <!-- A mind map's description for screen readers: its title, then its central idea. -->
@@ -110,8 +111,8 @@
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">
-        <item quantity="one">You can make %1$s more right now.</item>
-        <item quantity="other">You can make %1$s more right now.</item>
+        <item quantity="one">You can create %1$s more map right now.</item>
+        <item quantity="other">You can create %1$s more maps right now.</item>
     </plurals>
     <!-- Saves a map to study again. -->
     <string name="mindmaps_save">Save</string>

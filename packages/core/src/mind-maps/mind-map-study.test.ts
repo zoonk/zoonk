@@ -557,6 +557,15 @@ async function guestCourseGoal() {
   return { ...fixture, guest };
 }
 
+function spendGuestDay() {
+  return prisma.guestSpendDay.create({
+    data: {
+      day: getUsagePeriodStarts(new Date()).day,
+      spentMicros: GUEST_DAILY_SPEND_BUDGET_MICROS,
+    },
+  });
+}
+
 function readGuestSpend() {
   return prisma.guestSpendDay.findUnique({ where: { day: getUsagePeriodStarts(new Date()).day } });
 }
@@ -586,6 +595,35 @@ describe("a guest making all chapter maps", () => {
     await expect(readGuestSpend()).resolves.toMatchObject({
       spentMicros: getEstimatedCostMicros({ generated: true, kind: "mindMap" }),
     });
+  });
+
+  it("offers no new map once the day all guests share is spent, as the claim would refuse", async () => {
+    await spendGuestDay();
+    const { goal } = await guestCourseGoal();
+
+    await expect(readyList(goal.id)).resolves.toMatchObject({
+      createOffer: {
+        startable: 0,
+        stop: { availableAt: null, period: null, reason: "signUpRequired", resource: null },
+      },
+    });
+  });
+
+  it("offers a guest's own maps while the day all guests share has room", async () => {
+    const { goal } = await guestCourseGoal();
+
+    await expect(readyList(goal.id)).resolves.toMatchObject({
+      createOffer: { startable: 1, stop: null },
+    });
+  });
+
+  it("never reads a signed-in learner's offer against the day all guests share", async () => {
+    await spendGuestDay();
+    const { goal } = await writtenCourseGoal();
+    const { createOffer } = await readyList(goal.id);
+
+    expect(createOffer.stop).toBeNull();
+    expect(createOffer.startable).toBe(createOffer.eligible);
   });
 
   it("starts nothing once the day all guests share is spent", async () => {

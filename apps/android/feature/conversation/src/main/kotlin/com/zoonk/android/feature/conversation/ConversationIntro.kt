@@ -177,6 +177,7 @@ internal fun StartCallButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     label: String = stringResource(R.string.conversation_start),
+    enabled: Boolean = true,
 ) {
-    Button(busy = starting, onClick = onClick, modifier = modifier) { Text(label) }
+    Button(busy = starting, onClick = onClick, modifier = modifier, enabled = enabled) { Text(label) }
 }

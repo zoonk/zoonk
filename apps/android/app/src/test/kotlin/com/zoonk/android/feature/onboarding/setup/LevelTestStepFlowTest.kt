@@ -200,7 +200,7 @@ class LevelTestStepFlowTest {
         api.levelTestGate = CompletableDeferred<Unit>().apply { completeExceptionally(ApiException(ApiError.Network)) }
         tap("Start")
 
-        rule.onNodeWithText("This didn't start").assertIsDisplayed()
+        rule.onNodeWithText("Something went wrong on our side").assertIsDisplayed()
         assertEquals(0, api.prepared)
 
         api.levelTestGate = null
@@ -216,7 +216,7 @@ class LevelTestStepFlowTest {
         api.levelTestGate = CompletableDeferred<Unit>().apply { completeExceptionally(ApiException(ApiError.Network)) }
         tap("Start")
 
-        rule.onNodeWithText("This didn't start").assertIsDisplayed()
+        rule.onNodeWithText("Something went wrong on our side").assertIsDisplayed()
         rule.onNodeWithText("When does Marco go to the market?").assertDoesNotExist()
 
         api.levelTestGate = null

@@ -51,7 +51,19 @@ class UploadRequestFlowTest {
                 AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
                 session,
             ) { SignInResult.SignedIn }
-        rule.setContent { ZoonkTheme { UploadRequestNotice(goalId, request, store, visit = 0, layout) } }
+        rule.setContent {
+            ZoonkTheme {
+                UploadRequestNotice(
+                    goalId,
+                    request,
+                    store,
+                    visit = 0,
+                    layout,
+                    onCreateAccount = {},
+                    onSubscribe = {},
+                )
+            }
+        }
     }
 
     private fun openPasteText() {

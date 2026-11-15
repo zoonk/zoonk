@@ -1,5 +1,6 @@
 import "server-only";
 import { readEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
+import { readGuestSpentMicros } from "../entitlements/_utils/guest-spend-budget";
 import { readUsageLedger } from "../entitlements/bundle-claims";
 import { getRequestInstant } from "../learner/facts/request-instant";
 import { readSavedMindMaps } from "../learner/facts/saved-mind-maps";
@@ -126,7 +127,7 @@ export async function listGoalMindMaps(
   const chapters = listed.map((row) => row.view);
   const bulk = sortBulkChapters(chapters);
 
-  const [scopeLessonMaps, ledger] = await Promise.all([
+  const [scopeLessonMaps, ledger, guestSpent] = await Promise.all([
     loadScopeLessonMaps({ chapters: listed.map((row) => row.facts), userId: goal.userId }),
     viewer &&
       readUsageLedger({
@@ -136,6 +137,7 @@ export async function listGoalMindMaps(
         now,
         viewer,
       }),
+    viewer?.isGuest ? readGuestSpentMicros(now) : null,
   ]);
 
   const lessonMaps = listEachLessonOnce(scopeLessonMaps);
@@ -144,7 +146,7 @@ export async function listGoalMindMaps(
   return {
     mindMaps: {
       chapters,
-      createOffer: offerChapterMaps({ chapters, ledger }),
+      createOffer: offerChapterMaps({ chapters, guestSpent, ledger }),
       firstTab: chooseFirstTab({ chapters, lessonGroups }),
       goal: { displayName: goal.displayName, id: goal.id, title: goal.title },
       lessonGroups,

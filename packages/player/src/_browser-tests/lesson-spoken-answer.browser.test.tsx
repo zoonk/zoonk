@@ -292,9 +292,7 @@ describe("spoken answers", () => {
 
     await page.getByRole("button", { name: "Record" }).click();
 
-    await expect
-      .element(page.getByText("The microphone is blocked. Type your answer instead."))
-      .toBeVisible();
+    await expect.element(page.getByText("The microphone is blocked.")).toBeVisible();
 
     const field = page.getByRole("textbox", { name: "Pergunte quanto é o aluguel." });
     await expect.element(field).toHaveFocus();

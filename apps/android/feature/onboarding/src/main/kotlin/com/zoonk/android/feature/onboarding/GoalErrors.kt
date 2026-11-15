@@ -8,6 +8,7 @@ import com.zoonk.android.feature.mindmaps.item
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.LimitWords
 import com.zoonk.android.ui.components.comesBackLine
 import com.zoonk.android.ui.components.gateSentence
 import com.zoonk.android.ui.components.limitLifted
@@ -215,12 +216,36 @@ fun goalLimitMessage(reason: GoalLimitReason): String =
         }
     }
 
-/** A cap used up over the last 30 days in one sentence: what ran out, then when more comes. */
+/** A goal limit's title and line, for a screen that says them in its own heading (main's `useGoalLimitGateWords`). */
+@Composable
+fun goalLimitGateWords(reason: GoalLimitReason): LimitWords =
+    when (reason) {
+        GoalLimitReason.ActiveGoals -> {
+            LimitWords(stringResource(R.string.onboarding_goals_at_once_title), stringResource(R.string.onboarding_goals_at_once_line))
+        }
+
+        is GoalLimitReason.MonthlyGoals -> {
+            LimitWords(stringResource(R.string.limit_goals_used), comesBackLine(reason.limit))
+        }
+
+        is GoalLimitReason.MonthlyExplanations -> {
+            LimitWords(stringResource(R.string.limit_quick_explanations_used), comesBackLine(reason.limit))
+        }
+
+        else -> {
+            LimitWords(title = null, line = goalLimitMessage(reason))
+        }
+    }
+
+/** A cap used up over the last 30 days in one sentence: what ran out, then when more comes; once its day comes, only that it has. */
 @Composable
 fun usedSentence(
     @StringRes title: Int,
     limit: Limit.Reached,
-): String = gateSentence(stringResource(title), comesBackLine(limit))
+): String {
+    val line = comesBackLine(limit)
+    return if (limitLifted(limit) && line != null) line else gateSentence(stringResource(title), line)
+}
 
 @Composable
 fun goalErrorMessage(error: GoalError): String =

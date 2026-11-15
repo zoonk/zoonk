@@ -8,14 +8,12 @@
   "subscription_already_plus_website": "3c00e8be11ea5ad143a167493dc7e4d31405b53fc45be30306cebd2f7a3b1a43",
   "subscription_answer_cancel": "70c1ab43274608bf1efef20022bad075974ca2021dcb2854122c3cb298c694eb",
   "subscription_answer_fair_use": "13ae49f8d5d74a90547f787ae90bbd80faacd5af98ab6c407c049a0d8d08968b",
-  "subscription_answer_free_buddy": "7f1936dfbcce0178e97c74f19f9ab6a21f4b6b986fee8de46d80e4bacc472bdf",
-  "subscription_answer_free_buddy_uploads": "a4a6f1e5b88ac43cdd9470b13e42ac06efdb518323eb31de29851dbc16055039",
   "subscription_answer_free_calls": "74406928e3178f2758e22ef046e42fa3d51a7bda6c8511502181716aa455c02d",
   "subscription_answer_free_goals": "404e216b6f4f33b8644ccb939b679d93b209a40f141e0c5a045a1b884bbf4b57",
   "subscription_answer_free_guest_lead": "5522bdc1a877880c25f7f7e0618aeb989e6554621655b1d8e8d7a2b9e9adfdcf",
   "subscription_answer_free_lead": "1d2bbe4465bd1e36db66ab6ee6071d3e6e10d0baa1860a5fd5f9d45da1107f07",
   "subscription_answer_free_lessons": "093befcd84dd9543fd460ce646fcbd02710eee8f97776de805c251b57152d827",
-  "subscription_answer_free_uploads": "fff35a81ad2d54531a15746e5e23d70a491886fb5cea21bd03149abc053e1937",
+  "subscription_answer_free_material": "aef5f73c212bb647dc1c59776e557008ec5b9a8e233d35a1862b56093ee4056c",
   "subscription_answer_refund": "8a3d390e17572bfc9d5ec36b58ab94f63856e9a6412707abba4a2ede8956c734",
   "subscription_answer_unlimited": "2543e51d805fbeac4f2fdd6780d78b9cbe0c8f1838fcb35f2d7ad4e4b850781a",
   "subscription_benefit_buddy": "02fe0c9b222a68f7af8816efb57d1b436030bfdcf783db1ac748b57df7bb05a2",
@@ -42,6 +40,7 @@
   "subscription_ends_on": "aae6ae9dc74c62b9a69049e2d1fbd4e8ed99fed7bd6887c313ede2f24f6b2066",
   "subscription_free": "6430c9ff058610b9cc2e62334400b88550249fce68abe8ee9baacbc699b26227",
   "subscription_free_buddy": "49dec0e5581fddfc390f5c9e2c2bf4f01d618fe98572cf018096c1e07028a724",
+  "subscription_free_buddy_monthly": "99a86ca097326548ddefcb19f5dee2e2ecc28277d78edec836bbc60d5a1ef7c5",
   "subscription_free_calls": "33eec90b709df841c11419e58a834e54d3dfba1de4bf44e187c9addff79901bd",
   "subscription_free_goals": "ac42274fce93d94ac3026d18384afb0cbe09302103478cdccff87e96c1ad693a",
   "subscription_free_lessons_a_month": "5fed4d3ae499fc85d0da04c90522a24c59d4520748a8e08e04195750a80dd5ed",
@@ -193,16 +192,6 @@
         <item quantity="one">Sınavlar dahil tüm hedeflerin için ayda %d ders</item>
         <item quantity="other">Sınavlar dahil tüm hedeflerin için ayda %d ders</item>
     </plurals>
-    <!-- %1$s is the buddy messages ("10 messages"), %2$s the uploads ("3 uploads"). -->
-    <string name="subscription_answer_free_buddy_uploads">Yapay zekâ ders arkadaşı: günde %1$s ve %2$s</string>
-    <plurals name="subscription_answer_free_buddy">
-        <item quantity="one">%d mesaj</item>
-        <item quantity="other">%d mesaj</item>
-    </plurals>
-    <plurals name="subscription_answer_free_uploads">
-        <item quantity="one">%d yükleme</item>
-        <item quantity="other">%d yükleme</item>
-    </plurals>
     <string name="subscription_answer_free_calls">Konuşma pratiği için Plus’tan daha az sohbet (sınavların konuşma bölümleri Plus’a dahildir)</string>
     <string name="subscription_question_unlimited">Plus gerçekten sınırsız mı?</string>
     <string name="subscription_answer_unlimited">Neredeyse. Dersler, hedefler ve ders arkadaşın için sınırlar yalnızca botları ve otomatik araçları engellemek için var, öğrenmeni kısıtlamak için değil. Konuşma pratiği sohbetlerinin günlük ve aylık sınırları var; Plus’ta bu sınırlar daha yüksek.</string>
@@ -212,4 +201,14 @@
     <string name="subscription_answer_cancel">Ödemesini yaptığın dönem bitene kadar Plus’ı kullanmaya devam edersin. Ardından Ücretsiz pakete dönersin; hedeflerin ve ilerlemen korunur.</string>
     <string name="subscription_question_refund">Ücret iadesi alabilir miyim?</string>
     <string name="subscription_answer_refund">Google Play’den alınan Plus aboneliklerinin iade işlemlerini Google Play yürütür: iade talebini Google Play üzerinden ilet. Web sitemizden abone olduysan hello@zoonk.com adresine yaz, durumu inceleyelim.</string>
+    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
+    <plurals name="subscription_free_buddy_monthly">
+        <item quantity="one">Yapay zekâ ders arkadaşı: günde %1$d mesaj, ayda en fazla %2$s mesaj</item>
+        <item quantity="other">Yapay zekâ ders arkadaşı: günde %1$d mesaj, ayda en fazla %2$s mesaj</item>
+    </plurals>
+    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
+    <plurals name="subscription_answer_free_material">
+        <item quantity="one">Kendi çalışma materyallerin: günde %d dosya</item>
+        <item quantity="other">Kendi çalışma materyallerin: günde %d dosya</item>
+    </plurals>
 </resources>

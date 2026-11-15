@@ -140,7 +140,11 @@ class LiveCallEventsTest {
         fun refused(
             code: String,
             details: String? = null,
-        ) = CallReservation.refused(code, details?.let(Json::parseToJsonElement))
+        ) = CallReservation.refused(
+            code,
+            details?.let(Json::parseToJsonElement),
+            receivedAt = java.time.Instant.parse("2026-11-15T12:00:00Z"),
+        )
 
         assertEquals(CallReservation.CallsPaused, refused("CALLS_PAUSED"))
         assertEquals(CallReservation.CallInProgress, refused("CALL_IN_PROGRESS"))
@@ -152,6 +156,10 @@ class LiveCallEventsTest {
                 Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, java.time.Instant.parse("2026-12-20T12:00:00Z")),
             ),
             refused("CONVERSATION_LIMIT_REACHED", """{"availableAt":"2026-12-20T12:00:00.000Z","period":"rolling30Days","tier":"free"}"""),
+        )
+        assertEquals(
+            CallReservation.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days)),
+            refused("CONVERSATION_LIMIT_REACHED", """{"availableAt":"2026-11-15T11:59:59.000Z","period":"rolling30Days","tier":"free"}"""),
         )
         assertEquals(CallReservation.Failed, refused("CONVERSATION_LIMIT_REACHED", """{"period":"week","tier":"free"}"""))
         assertEquals(CallReservation.Ended, refused("CONNECTION_LIMIT_REACHED", """{"period":"conversation"}"""))

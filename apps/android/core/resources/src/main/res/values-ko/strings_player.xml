@@ -100,7 +100,7 @@
   "player_lesson_of": "f2e3f32fe7f41ea048e072aa5be6c39c5b4c618baa05a8e4b9b95d6999aee175",
   "player_lesson_ready": "15974cea53a7d6aecba26a37f4a8731a472e446b003ba19c9db942edc32d6a13",
   "player_listen": "3840fbf9176a031dc18f83778aef41d73981c0be9f655fa2db608e3950db06c8",
-  "player_microphone_blocked": "121eeff15f157528639dfe3185e4550f8dd5beeb3cca11a54f30c8a4cff14cc3",
+  "player_microphone_is_blocked": "96f35d86a81b2d8aad0eb2394a43227a46916e8205c9e315767d45bccf39f45c",
   "player_next_lesson": "b5d9524a893ec8ebab4fc49d1f0bb49ddbd9024df72f534454f7a57f097fb3dc",
   "player_next_step_failed": "56042968d7471d3d94379487efa5ed4a37345ebc8ba8b62ceee1b54820f29480",
   "player_not_found_title": "d6e87de68c4066695e211eb4c9485578244688289171a15b76d105bab45aef8f",
@@ -343,7 +343,7 @@
     <string name="player_can_talk_now">이제 말할 수 있어요</string>
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">소리 내어 말하기</string>
-    <string name="player_microphone_blocked">마이크 사용이 차단되어 있어요. 대신 답을 입력하세요.</string>
+    <string name="player_microphone_is_blocked">마이크 사용이 차단됐어요.</string>
     <string name="player_what_we_heard">이렇게 들렸어요</string>
     <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
     <string name="player_word_not_heard">%1$s (들리지 않음)</string>

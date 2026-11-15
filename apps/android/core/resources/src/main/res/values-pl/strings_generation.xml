@@ -8,8 +8,8 @@
   "generation_curriculum_plan_line_1": "4f5be8fe8095bb8ae42e641daf5360c176eb67c9ba4b1978ca60da908bbc3822",
   "generation_curriculum_plan_line_2": "f6cf90c5dad0dccf39cf0900d5cf1a830eb0101bf6b46f2d7fd1299ca44b921d",
   "generation_curriculum_plan_line_3": "fe19b9b284de9fbd374d79df26a5b9b5cc4185ecd13f5b839683ed59844eb635",
-  "generation_failed": "68dc6e920aaabe8d7f0e8a6137f710d218301f18fc819af9920da9e114180b54",
   "generation_failed_description": "c9db9dc9374e6ff7d84f34c5687c149f516700a05c59d971422b1b9489bca90b",
+  "generation_failed_ours": "7e1ef90cfc03c25d61a5fe605932430830cfe5d8d4038d5420095a4ce3ca5ba3",
   "generation_first_lesson": "357eed3cb2e924b112d1df749f6c26bf1257514ad4c478e8e844937cc4a77417",
   "generation_first_lesson_day": "8381b699fb61db1e1fd34172d523d1543d7f3145107daa89631c3fc2dd94cee9",
   "generation_first_lesson_day_line_1": "d05ac973e34ca285ed005949ac1b1b957b48b280cf0a8b9051c3b93ea49687f9",
@@ -23,8 +23,6 @@
   "generation_level_test_bank_line_2": "45be3d0bb9705ee4976197ff63bff3e91fadbb6caff1ee6ebc7c11aaa9c59e6f",
   "generation_level_test_bank_line_3": "110724772de07f24423085e77ab6476a13cd3443e5232f04cc0f0ed93f0caecc",
   "generation_level_test_bank_line_4": "55ae9b73e9e940dcf9d43ffe183c36cf1f3c0fb1567a0a56cca5a1dad3002de8",
-  "generation_not_started": "6cba8363381e480fe25adcfb22f4b858c9f3e141534b3bd05c4bb71347559005",
-  "generation_not_started_description": "96e9e74e2fe4dfe695648c033945c23bffe42e4a0e61a50b34859f01541537c0",
   "generation_notice": "134a46cae5dcdf17b7be024bb886bb16779724f8925bc7ec5a8f99c6dc2dfd7d",
   "generation_notice_line_1": "01c3e9ea71a5a20be4158abf2dce6a0674456fc0e5d867f71f0b5196281e58b4",
   "generation_notice_line_2": "dfb8d5f3875e2d99ea22569d1e27b91ddb4ace5e14e86f8411c4cef109bdd1e4",
@@ -59,12 +57,9 @@
     <string name="generation_connection_lost_description">Nie otrzymujemy już informacji o postępie. Przygotowywanie może nadal trwać.</string>
     <!-- Follows a run again after its updates stopped. -->
     <string name="generation_reconnect">Połącz ponownie</string>
-    <!-- Title when something being written failed. -->
-    <string name="generation_failed">Nie udało się dokończyć</string>
+    <string name="generation_failed_ours">Coś poszło nie tak po naszej stronie</string>
+    <!-- A stopped lesson's line in a list. -->
     <string name="generation_failed_description">Coś poszło nie tak po naszej stronie.</string>
-    <!-- Title when something to be written never started. -->
-    <string name="generation_not_started">Nie udało się rozpocząć</string>
-    <string name="generation_not_started_description">Nie udało nam się tego uruchomić.</string>
     <!-- Starts something that failed or never started again. -->
     <string name="generation_try_again">Spróbuj ponownie</string>
     <!-- Screen reader state of a step of a wait. -->
