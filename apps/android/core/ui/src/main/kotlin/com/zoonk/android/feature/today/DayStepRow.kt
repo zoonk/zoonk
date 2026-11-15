@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.today
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -82,13 +81,11 @@ fun DayStepRow(
                 null
             } else {
                 {
-                    Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                        if (openFailed) StepOpenFailed()
-                        if (!finished) {
-                            tag?.invoke()
-                            StepLines(lessonStatus, writingStalled, step)
-                            testOut?.invoke()
-                        }
+                    if (openFailed) StepOpenFailed()
+                    if (!finished) {
+                        tag?.invoke()
+                        StepLines(lessonStatus, writingStalled, step)
+                        testOut?.invoke()
                     }
                 }
             },
@@ -146,8 +143,8 @@ private fun SubLine(text: String) {
 }
 
 /**
- * A row of the day on main's `ListRow`: the next block on `muted`, its mark on the title's first line
- * (main's `items-start`), the others over a hairline, except right above the next block.
+ * A row of the day on main's `ListRow`: the next block on `muted` with its words at the top (main's
+ * `items-start`), the others over a hairline, except right above the next block.
  */
 @Composable
 fun DayQueueRow(

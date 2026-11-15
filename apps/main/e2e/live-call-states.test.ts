@@ -801,6 +801,8 @@ test.describe("Live call server states", () => {
 
       await expect(tryAgain).toBeVisible({ timeout: 30_000 });
       await expect(page.getByRole("link", { name: "Subscribe" })).toBeHidden();
+      await expect(page.getByText("You can try again now.")).toBeVisible();
+      await expect(page.getByText("You've used your call time")).toBeHidden();
       await tryAgain.click();
       await expectLive(page);
     } finally {

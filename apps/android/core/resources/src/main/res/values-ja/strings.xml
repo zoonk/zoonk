@@ -27,6 +27,7 @@
   "diff_line_spoken": "1c8d908c8cf2552355e1372675ab709208b248c486a30b2fb3dba671244fa8f8",
   "disclosure_collapsed": "69eb18d3fbabcae2dd4089681ce0dcc4ce73368a37fe39c54a4b04b62854765c",
   "disclosure_expanded": "084df3e97163a1eaae7f83fdecbd1bfd67674e710856dbe017de9ea80755f8f4",
+  "exam_choice_left_out": "a9232464e5a16bcd3d707733e14fa71fd6d3a318fc37f4edf80fe913d8e83607",
   "exam_choice_pick_up_to": "328c9012dad7162e2cf2979b50e7fe35b2b46b93b4a4f4db7a9ba08479ac089c",
   "gate_build_plan": "aa48c9e36ad10e422e1dc44519f8ebf3ce6be9fedd25683ca6261c4a4d38c4cb",
   "gate_log_in": "2b82847e0bd18e2fb23b070b8f116e61f0fbc79c98332a3b0164be3f7189fe53",
@@ -126,6 +127,8 @@
     <string name="suggestion_other_options">ほかの選択肢</string>
     <!-- Above the options of an exam's choice when each candidate takes several of them, such as two of a course's modules. %1$d is how many, at least 2. -->
     <string name="exam_choice_pick_up_to">最大%1$d個まで選んでください。</string>
+    <!-- Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options. -->
+    <string name="exam_choice_left_out">学習計画に入れるには、1つ選んでください。</string>
     <string name="disclosure_expanded">展開済み</string>
     <string name="disclosure_collapsed">折りたたみ済み</string>
     <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->

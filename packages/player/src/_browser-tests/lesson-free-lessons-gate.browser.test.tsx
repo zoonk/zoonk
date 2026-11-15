@@ -16,7 +16,7 @@ function freeLessonsUsed(opensInMs: number): LessonStartOutcome {
 }
 
 describe("the free lessons gate", () => {
-  it("offers to start the lesson once its free lesson opens, and asks the server again", async () => {
+  it("offers only to start the lesson once its free lesson opens, and asks the server again", async () => {
     const lesson = buildLesson([teachingStep("check")]);
 
     const startLesson = vi
@@ -36,7 +36,7 @@ describe("the free lessons gate", () => {
       .element(page.getByRole("heading", { name: "Your next free lesson is ready" }))
       .toBeVisible();
 
-    await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
+    expect(page.getByRole("link", { name: "Subscribe" }).query()).toBeNull();
     await page.getByRole("button", { name: /^Start the lesson/u }).click();
 
     await expect.poll(() => startLesson.mock.calls).toHaveLength(2);

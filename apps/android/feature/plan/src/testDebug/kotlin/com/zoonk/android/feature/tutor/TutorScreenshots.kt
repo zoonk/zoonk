@@ -24,6 +24,7 @@ import com.zoonk.android.feature.plan.effect
 import com.zoonk.android.feature.plan.planChange
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.TutorToolOffer
@@ -190,13 +191,7 @@ class TutorScreenshots {
         compose.waitForIdle()
 
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use {
-            compose
-                .onRoot()
-                .captureRender()
-                .asAndroidBitmap()
-                .compress(Bitmap.CompressFormat.PNG, 100, it)
-        }
+        writeRender(file, compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     private fun offer(json: String) = ApiJson.decodeFromString<TutorToolOffer>(json)

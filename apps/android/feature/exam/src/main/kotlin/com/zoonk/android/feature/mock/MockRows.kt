@@ -1,7 +1,5 @@
 package com.zoonk.android.feature.mock
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,7 +8,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
@@ -69,11 +66,9 @@ fun MockListRow(
         stateDescription = if (current) stringResource(R.string.exam_current) else null,
         leading = leading,
         supporting = {
-            Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                Text(supporting)
-                // Under the line, the fact is the row's quietest words.
-                if (trailing != null && stacked) Text(trailing, style = factStyle())
-            }
+            Text(supporting)
+            // Under the line, the fact is the row's quietest words.
+            if (trailing != null && stacked) Text(trailing, style = factStyle())
         },
         meta = if (trailing != null && !stacked) ({ Text(trailing) }) else null,
     )

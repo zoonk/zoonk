@@ -4172,6 +4172,12 @@ msgctxt "vNw6Rg"
 msgid "Writing each card's instructions…"
 msgstr "各カードの指示文を作成しています…"
 
+#. The title of a notice over something being prepared for the learner (a lesson, a list, a map) that failed or never started. A Try again button follows.
+#: src/generation/generation-failure-notice.tsx
+msgctxt "Yc1thK"
+msgid "Something went wrong on our side"
+msgstr "システム側で問題が発生しました"
+
 #: src/generation/generation-failure-notice.tsx
 msgctxt "Eg11ZY"
 msgid "Reconnect"
@@ -4186,29 +4192,6 @@ msgstr "進捗状況が届かなくなりました。準備は続いているか
 msgctxt "CN_B_k"
 msgid "Connection lost"
 msgstr "接続が切れました"
-
-#: src/generation/generation-failure-notice.tsx
-#: src/onboarding/steps/step-parts.tsx
-#: src/wait/first-lesson-row.tsx
-msgctxt "YXnM-X"
-msgid "Something went wrong on our side."
-msgstr "こちら側で問題が発生しました。"
-
-#. Preparing this content failed. It is not still running.
-#: src/generation/generation-failure-notice.tsx
-msgctxt "0fLHBg"
-msgid "This didn't finish"
-msgstr "準備を完了できませんでした"
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "iKz0K6"
-msgid "We couldn't get this started."
-msgstr "準備を開始できませんでした。"
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "q8l1Sf"
-msgid "This didn't start"
-msgstr "準備を開始できませんでした"
 
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
@@ -9952,6 +9935,12 @@ msgstr "1日にどれくらい学習時間を取れますか？"
 msgctxt "jNPr7M"
 msgid "This didn't open"
 msgstr "画面を開けませんでした"
+
+#: src/onboarding/steps/step-parts.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "YXnM-X"
+msgid "Something went wrong on our side."
+msgstr "こちら側で問題が発生しました。"
 
 #: src/onboarding/steps/study-week.tsx
 #: src/plan/plan-properties.tsx

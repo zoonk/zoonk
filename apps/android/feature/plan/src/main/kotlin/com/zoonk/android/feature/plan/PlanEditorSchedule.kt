@@ -209,6 +209,11 @@ private fun dayName(
     locale: Locale,
 ) = day.getDisplayName(style, locale).replaceFirstChar { it.titlecase(locale) }
 
+/**
+ * Main's `WeekendTime`: always there, so turning it on or off moves nothing in the sheet. Off, or with no
+ * weekend day to differ (every study day a weekday, or every one a weekend day), its time is disabled and
+ * shows the weekdays', which the weekend takes then.
+ */
 @Composable
 private fun WeekendMinutes(
     edits: PlanEdits,
@@ -217,8 +222,8 @@ private fun WeekendMinutes(
     weekendOn: Boolean,
     onWeekendOn: (Boolean) -> Unit,
 ) {
-    if (!shape.canDiffer) return
     val pending = edits.isPending(PlanPart.Schedule)
+    val on = weekendOn && shape.canDiffer
     val weekendDays = shape.weekendDays.map(Long::toInt)
     val shown = askedMinutes(edits.asked(PlanPart.Schedule), weekendDays) ?: (shape.weekend ?: shape.weekdays).toInt()
 
@@ -231,7 +236,8 @@ private fun WeekendMinutes(
                     .fillMaxWidth()
                     .heightIn(min = 48.dp)
                     .toggleable(
-                        value = weekendOn,
+                        value = on,
+                        enabled = shape.canDiffer,
                         role = Role.Switch,
                         onValueChange = { next ->
                             // Switched off, the weekend takes the weekdays' time, so it waits for a change still setting it.
@@ -244,12 +250,21 @@ private fun WeekendMinutes(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Text(stringResource(R.string.plan_weekend_time_differs), Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-            Switch(checked = weekendOn, onCheckedChange = null)
+            Text(
+                stringResource(R.string.plan_weekend_time_differs),
+                Modifier.weight(1f),
+                color = if (shape.canDiffer) Color.Unspecified else MaterialTheme.colorScheme.onSurface.copy(alpha = DISABLED_ALPHA),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Switch(checked = on, onCheckedChange = null, enabled = shape.canDiffer)
         }
-        if (weekendOn) {
-            TimeSelect(label = stringResource(R.string.plan_time_on_weekends), times = times, value = shown, onPick = ::setWeekend)
-        }
+        TimeSelect(
+            label = stringResource(R.string.plan_time_on_weekends),
+            times = times,
+            value = if (on) shown else shape.weekdays.toInt(),
+            onPick = ::setWeekend,
+            enabled = on && !pending,
+        )
     }
 }
 

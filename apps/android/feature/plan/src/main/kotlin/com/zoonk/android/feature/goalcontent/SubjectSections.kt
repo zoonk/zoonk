@@ -44,6 +44,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.ChapterMark
+import com.zoonk.android.feature.plan.MoreChaptersRow
 import com.zoonk.android.feature.plan.WrittenCadenceChoice
 import com.zoonk.android.feature.plan.farTopicLine
 import com.zoonk.android.feature.plan.formatPlanDate
@@ -57,6 +58,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
@@ -370,23 +372,7 @@ internal fun LazyListScope.subjectChapters(
             }
             if (hidden > 0) {
                 HorizontalDivider()
-                ListRow(
-                    headline = {
-                        Text(
-                            pluralStringResource(R.plurals.goalcontent_more_chapters, hidden, hidden),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    },
-                    onClick = { showAll = true },
-                    leading = {
-                        Icon(
-                            painterResource(R.drawable.ic_add),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    },
-                    chevron = false,
-                )
+                MoreChaptersRow(pluralStringResource(R.plurals.goalcontent_more_chapters, hidden, hidden)) { showAll = true }
             }
         }
     }
@@ -464,7 +450,7 @@ internal fun SyllabusChapterRow(
                 lessonsTotal = chapter.lessonsTotal,
             )
         },
-        supporting = line?.let { { Text(it) } },
+        supporting = listRowDescription(line),
         meta = nextDate?.let { { Text(formatPlanDate(it.toJavaLocalDate(), today, locale)) } },
     )
 }
@@ -849,13 +835,6 @@ internal fun LazyListScope.subjectMatrix(matrix: List<String>) {
                         )
                     },
                     onClick = { showAll = true },
-                    leading = {
-                        Icon(
-                            painterResource(R.drawable.ic_add),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    },
                     chevron = false,
                 )
             }

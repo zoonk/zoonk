@@ -4,7 +4,7 @@ description: Design, implement, or review Zoonk interfaces on the web, iOS and A
 license: MIT
 metadata:
   author: zoonk
-  version: "6.4.2"
+  version: "6.4.3"
 ---
 
 # Zoonk design
@@ -77,7 +77,7 @@ A learner gives a screen about two seconds and knows only what earlier screens s
 - **What they get, not how it works.** Say what the learner gets and what to do. How Zoonk picks, counts, saves, schedules or estimates goes behind a tap (a number's sheet, "How this works"), for the few who ask. A question says what we'll use the answer for ("We'll adapt lessons to your needs"), never the list of what the system does with each answer.
 - **Say it when it happens.** A caveat, limit or exception appears where and when it applies (the day a lesson moves, the question a test can't ask), not on the screen where the learner decides to start. Being true doesn't earn a line its place. Being needed now, to decide or to act, does.
 - **Buttons are verbs they already know.** "Start", "Continue", "Skip", "Save", "Try again": one to three words. A label never names the next screen, a term from a later screen, a duration or a consequence ("Continue to daily time", "Start the 20-minute test", "Archive and hide this goal"). If the consequence matters, the screen says it once, above the button. The one label that says its consequence is a test's way out, "Stop and use my answers" ([exceptions](references/craft.md#exceptions-the-user-granted)).
-- **Once.** Each fact appears once per screen. A line that would repeat on every row goes to the list's header, or goes.
+- **Once.** On one screen a fact is said once, unless a sentence needs it as its subject or it is a setting's own row: the Plan's header doesn't name the goal the top bar already names, and its Schedule number doesn't say "45 min a day" beside a "Time a day" row that says "45 min". A line that would repeat on every row goes to the list's header, or goes.
 - **No bookkeeping.** Counts and system states ("Questions on 2 of 18 subjects", "lessons aren't written yet") appear only when they change what the learner does next.
 - **A fallback is the next step.** When we can't do the usual thing and the learner loses nothing, say what happens instead ("We'll find your level in your first days"), never what we couldn't do: that reads as an error.
 - **Examples travel.** A placeholder or an example is one a learner in any country knows, or it's written per market.

@@ -209,6 +209,7 @@ class HardcodedComposeTextDetectorTest : LintDetectorTest() {
                 var SemanticsPropertyReceiver.testTag: String
                     get() = ""
                     set(value) {}
+                class SemanticsPropertyKey<T>(val name: String)
                 """,
                 ).indented(),
                 kotlin(
@@ -222,10 +223,12 @@ class HardcodedComposeTextDetectorTest : LintDetectorTest() {
                 kotlin(
                     """
                 package test.pkg
+                import androidx.compose.ui.semantics.SemanticsPropertyKey
                 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
                 import androidx.compose.ui.semantics.contentDescription
                 import androidx.compose.ui.semantics.testTag
                 import androidx.compose.ui.text.AnnotatedString
+                val part = SemanticsPropertyKey<String>("ZoonkLayoutPart")
                 fun SemanticsPropertyReceiver.label() {
                     contentDescription = "Close"
                     testTag = "internal_id"

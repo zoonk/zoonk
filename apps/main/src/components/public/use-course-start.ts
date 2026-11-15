@@ -10,7 +10,7 @@ import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
 import { getCourseStartHref } from "@/lib/public/public-hrefs";
 import { answerHere, openingAsGuest } from "@/lib/session/tap-answer";
 import { type OnboardingOwnLevel } from "@zoonk/core/view-models/onboarding/contract";
-import { useLiveLimit } from "@zoonk/learn/help-limit";
+import { received, useLiveLimit } from "@zoonk/learn/help-limit";
 import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useState, useTransition } from "react";
@@ -74,7 +74,7 @@ export function useCourseStart({
       };
 
       if (outcome.status !== "started") {
-        setFailure(outcome);
+        setFailure(outcome.status === "limitReached" ? received(outcome) : outcome);
         return;
       }
 

@@ -4172,6 +4172,12 @@ msgctxt "vNw6Rg"
 msgid "Writing each card's instructions…"
 msgstr "Stiamo preparando le istruzioni per ogni scheda…"
 
+#. The title of a notice over something being prepared for the learner (a lesson, a list, a map) that failed or never started. A Try again button follows.
+#: src/generation/generation-failure-notice.tsx
+msgctxt "Yc1thK"
+msgid "Something went wrong on our side"
+msgstr "C’è stato un problema da parte nostra"
+
 #: src/generation/generation-failure-notice.tsx
 msgctxt "Eg11ZY"
 msgid "Reconnect"
@@ -4186,29 +4192,6 @@ msgstr "Non riceviamo più aggiornamenti. La preparazione potrebbe essere ancora
 msgctxt "CN_B_k"
 msgid "Connection lost"
 msgstr "Connessione persa"
-
-#: src/generation/generation-failure-notice.tsx
-#: src/onboarding/steps/step-parts.tsx
-#: src/wait/first-lesson-row.tsx
-msgctxt "YXnM-X"
-msgid "Something went wrong on our side."
-msgstr "Abbiamo avuto un problema."
-
-#. Preparing this content failed. It is not still running.
-#: src/generation/generation-failure-notice.tsx
-msgctxt "0fLHBg"
-msgid "This didn't finish"
-msgstr "La preparazione si è interrotta"
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "iKz0K6"
-msgid "We couldn't get this started."
-msgstr "Non siamo riusciti ad avviare la preparazione."
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "q8l1Sf"
-msgid "This didn't start"
-msgstr "La preparazione non è iniziata"
 
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
@@ -9952,6 +9935,12 @@ msgstr "Quanto tempo puoi dedicare allo studio ogni giorno?"
 msgctxt "jNPr7M"
 msgid "This didn't open"
 msgstr "La pagina non si è aperta"
+
+#: src/onboarding/steps/step-parts.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "YXnM-X"
+msgid "Something went wrong on our side."
+msgstr "Abbiamo avuto un problema."
 
 #: src/onboarding/steps/study-week.tsx
 #: src/plan/plan-properties.tsx

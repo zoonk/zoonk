@@ -12,7 +12,7 @@
   "goal_box_kind_language": "58d8b8fbca8ffbebc3063f08d86f84411bc33af4702fb65c8a629224493a863f",
   "goal_box_kind_music": "680dfba32252a0eaae70b38a1141b779bb83d487e1f9dbb88f91abbab1e17e97",
   "goal_box_kind_quick_explanation": "459cac53da09af8b4c879008e4174d4ce7f371cb55499842fda65ba585cded74",
-  "goal_box_kind_topic": "1812bd24563c83bba302b37177ea0e52d18ee14161bd377a0ad495bda1368eca",
+  "goal_box_kind_topic": "2c9ba810ee9004feb6b699fbfc6181640adc0225eeeccd29d9f682b2011f83e1",
   "goal_box_label": "a9bd967f71fb9ca99ebd2cd570067c2117c69d021ef585e3668995065470fc68",
   "goal_box_placeholder": "c24bae641aa66409e542af9a9c77aff9c3d86828a37ad687b837c4d478bee139",
   "goal_box_submit": "95008618e8a86fa9342107fd4e4d9fdca5d9f0e4822540766787eef34265791e",
@@ -37,7 +37,7 @@
     <string name="goal_box_example_explanation">Wie funktioniert Inflation?</string>
     <string name="goal_box_kind_exam">Prüfung</string>
     <string name="goal_box_kind_language">Sprache</string>
-    <string name="goal_box_kind_topic">Ein Thema lernen</string>
+    <string name="goal_box_kind_topic">Thema</string>
     <string name="goal_box_kind_music">Musik</string>
     <!-- %1$s is a duration, like "5 min". -->
     <string name="goal_box_kind_quick_explanation">Kurze Erklärung · %1$s</string>

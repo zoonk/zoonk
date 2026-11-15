@@ -19,6 +19,7 @@ import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineGeneration
 import com.zoonk.api.models.StudyNext
 import com.zoonk.api.models.Syllabus
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import java.util.UUID
 import kotlin.time.Instant
@@ -65,6 +66,12 @@ class FakePlanApi : PlanApi {
     var toolFailure: ApiException? = null
     var advice = PlanBasesAdvice(daysLeft = 40, ready = true, recommended = PlanBasesAdvice.Recommended.ESSENTIAL)
     var advised = 0
+
+    /** Holds the next recommendation, with the answer it had when asked, until it opens. */
+    var adviceGate: CompletableDeferred<Unit>? = null
+
+    /** Recommendations whose caller stopped waiting for them. */
+    var adviceCancelled = 0
     var studyNext: StudyNext? = null
     var studyNextReads = 0
     var continued = 0
@@ -239,7 +246,17 @@ class FakePlanApi : PlanApi {
         goalId: UUID,
     ): PlanBasesAdvice {
         advised++
-        return advice
+        val answer = advice
+        adviceGate?.let {
+            adviceGate = null
+            try {
+                it.await()
+            } catch (e: CancellationException) {
+                adviceCancelled++
+                throw e
+            }
+        }
+        return answer
     }
 
     override suspend fun outline(

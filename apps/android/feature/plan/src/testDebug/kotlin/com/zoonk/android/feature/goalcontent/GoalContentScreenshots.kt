@@ -43,6 +43,7 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.AreaPractice
 import com.zoonk.api.models.AreaPracticeInput
@@ -129,7 +130,7 @@ class GoalContentScreenshots {
         bitmap: Bitmap,
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
         println("Screenshot ${file.path}")
     }
 

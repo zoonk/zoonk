@@ -80,8 +80,14 @@ fun GenerationWait(
     val following = run.status == GenerationRun.Status.Waiting || run.status == GenerationRun.Status.Following
     val now by ticking(following)
 
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(24.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(
+        modifier = modifier.layoutPart(LayoutPart.GENERATION_WAIT, LayoutPart.Part.Row).fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+    ) {
+        Column(
+            Modifier.layoutPart(LayoutPart.GENERATION_WAIT, LayoutPart.Part.Group, gap = HEADER_GAP),
+            verticalArrangement = Arrangement.spacedBy(HEADER_GAP),
+        ) {
             header()
 
             val failure = run.failure.takeIf { run.status == GenerationRun.Status.Failed }
@@ -242,7 +248,7 @@ private fun WaitProgress(
 
     Row(
         modifier =
-            Modifier.clearAndSetSemantics {
+            Modifier.layoutPart(LayoutPart.GENERATION_WAIT, LayoutPart.Part.Bar).clearAndSetSemantics {
                 contentDescription = name
                 progressBarRangeInfo = ProgressBarRangeInfo(shown, 0f..1f)
             },
@@ -502,3 +508,5 @@ private const val DETAIL_MAX_MILLIS = 3600L
 private const val DRIFT_CAP = 0.97f
 private const val DEFAULT_ESTIMATE_MILLIS = 30_000L
 private const val FAINT_ALPHA = 0.35f
+
+private val HEADER_GAP = 16.dp

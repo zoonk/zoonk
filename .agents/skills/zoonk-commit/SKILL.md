@@ -94,14 +94,14 @@ A reviewer looks at every picture, and a long page of them hides the one that ma
 
 ### Screenshots and videos
 
-`pnpm pr:capture` captures Main (`--app api` or `--app admin` another app) the same way on both sides and writes the PR's before-and-after section. Run it on `pnpm start`: `pnpm dev` adds its own overlay and loading states learners never see.
+`pnpm pr:capture` captures Main (`--app api` or `--app admin` another app) the same way on both sides and records each picture's bytes, build and screen in `capture.json` beside it. Run it on `pnpm start` serving this checkout, after you commit: `pnpm dev` adds its own overlay and loading states learners never see, and an after picture from it, from another checkout's server or from uncommitted changes can't pass the [picture gate](#every-picture-is-captured-current-and-read).
 
 ```sh
 pnpm pr:capture before /today /plan --email <learner>@zoonk.test   # before you edit
 pnpm pr:capture after /today /plan --email <learner>@zoonk.test    # after the change
 ```
 
-Each run shoots every path on a phone and a laptop in light mode (`--viewports`; `--schemes light,dark` when colors change), replaces `tmp/pr-media/<side>/` and rewrites `tmp/pr-media/media.md`: a collapsed panel per screen pairing each screenshot with its other side, then a panel per video. For a screen behind taps, or a video (`--video`), write the steps once and pass them to both runs, such as `pnpm pr:capture after --steps tmp/pr-media/steps.mts --video --viewports phone`:
+Each run shoots every path on a phone and a laptop in light mode (`--viewports`; `--schemes light,dark` when colors change), replaces `tmp/pr-media/<side>/` and, once the gate passes, rewrites `tmp/pr-media/media.md`: a collapsed panel per screen pairing each screenshot with its other side, then a panel per video. For a screen behind taps, or a video (`--video`), write the steps once and pass them to both runs, such as `pnpm pr:capture after --steps tmp/pr-media/steps.mts --video --viewports phone`:
 
 ```ts
 // tmp/pr-media/steps.mts
@@ -118,9 +118,21 @@ export default async function steps({ page, shot }) {
 - If you already changed the code, capture the before side on the base the way [measuring pages](../verify/references/pages.md) measures a `--baseline`.
 - Look at every shot and video before you attach it: a path that fails stops the run, but a step that lands on the wrong screen still makes a picture of it.
 - Attached files are public, like the repository: show seeded and `dev:persona` learners only, never a real learner's data or a secret.
-- For the Apple or Android app, take the same shots and recordings in the simulator or emulator (`agent-device screenshot` and `record`, or `xcrun simctl io <device> screenshot` and `recordVideo`, `adb exec-out screencap -p` and `adb shell screenrecord`), and put them in the same panels.
+- For the Apple app, take each screenshot with its [layout capture](../verify/references/apple.md#layout-capture), which records it as `pr:capture` does. For Android, take them in the emulator (`agent-device screenshot`, or `adb exec-out screencap -p`). Record videos with `agent-device record`, `xcrun simctl io <device> recordVideo` or `adb shell screenrecord`. Put them in the same panels.
 
 [zoonk-pull-request](../zoonk-pull-request/SKILL.md) uploads them when it opens the PR.
+
+### Every picture is captured, current and read
+
+The PR's pictures pass `pnpm pr:media check` before the body goes up ([when](../zoonk-pull-request/SKILL.md#1-open-it)). It holds every picture to its capture record, so a reviewer sees the build the PR ships, read by someone who didn't make it:
+
+- **Captured.** Each picture in the body has a record with its bytes: from `pnpm pr:capture`, an Apple layout capture, or a registration. Register an existing before picture (taken on the base, or kept from an earlier capture) with `pnpm pr:media before --platform <web|android|apple> --source "<where it came from>" <files>`; it passes, since an old before is expected. It refuses an after. An Android after picture has no capture record yet: register it with `pnpm pr:media pending --platform android <files>`. It fails the check as pending, and the handoff names it as unverified.
+- **Current.** An after picture fails when its build is unknown, has uncommitted changes, or is older than a later commit to its app or `packages/`. Commit, rebuild and capture again. After each push, capture again: a picture whose pixels didn't change keeps its read, so only changed pictures need a new one.
+- **Read.** `pnpm pr:media tiles` cuts each after picture into original-size tiles and writes `tmp/pr-media/read/READ.md`, the reader's sheet. Give it to an agent that built none of the screens, never the one that made them, on a design model ([pick the model](../../guides/orchestration.md#pick-the-model)). It looks at each whole screen, then every tile, and writes down what's off before it looks at any numbers (edges that don't line up, uneven gaps, empty room, text cut off or crowded, two filled buttons on one surface, words someone new wouldn't know), then reconciles that with the measurements. It also lists a page's questions together, and each wait or notice state's words from every platform side by side. Record the read with `pnpm pr:media read --by "<who read>" --findings <file.json>`, a JSON array of `{ "file", "text" }` with each file as READ.md lists it, or without `--findings` for a clean read.
+- **Resolved.** A finding stays open until `pnpm pr:media resolve <id> --fixed <commit>` and a picture retaken from that commit, or `--exception "<who granted it>"` for an exception the user granted.
+- **Measured.** A capture folder whose `alignment.json` holds an unresolved finding fails too. The summary's `layout not measured for N captures` names captures with no alignment report: the read alone checked their layout.
+
+Right after `pnpm pr:capture after`, the check fails on "no read" and `media.md` isn't written: that's expected. It appears once the read is recorded and the check passes. The check can't see a hand-edited `capture.json`, a picture uploaded outside these commands, whether a before came from where its `--source` says, or a picture that measures right and looks wrong, and CI doesn't run it; the read is what catches the last.
 
 ## New commits on an open PR
 

@@ -7,6 +7,7 @@ import {
   toCapWords,
   useLimitText,
 } from "../_components/comes-back-words";
+import { received } from "../_components/help-limit-notice";
 import {
   type GoalLimit,
   type StartUnderstandingOutcome,
@@ -36,8 +37,8 @@ export function useGoalLimitWords() {
   const t = useExtracted("goalErrors");
   const newGoals = useNewGoalTitles();
 
-  return ({ availableAt = null, reason }: GoalLimit): CapWords => {
-    const rolling = { availableAt, period: "rolling30Days", tier: "free" } as const;
+  return ({ availableAt = null, reason, receivedAt }: GoalLimit): CapWords => {
+    const rolling = { availableAt, period: "rolling30Days", receivedAt, tier: "free" } as const;
 
     switch (reason) {
       case "activeGoals":
@@ -94,7 +95,7 @@ export function useStartError() {
     outcome: Exclude<StartUnderstandingOutcome, { status: "started" | "startFailed" }>,
   ): GoalError => {
     if (outcome.status === "limitReached") {
-      return limitError(outcome);
+      return limitError(received(outcome));
     }
 
     if (outcome.status === "needsAccount") {

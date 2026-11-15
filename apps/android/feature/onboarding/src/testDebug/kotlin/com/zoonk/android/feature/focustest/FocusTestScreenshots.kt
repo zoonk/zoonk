@@ -52,6 +52,7 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.questions.NotToday
 import com.zoonk.android.feature.questions.PlacementNote
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.FocusTest
@@ -299,7 +300,7 @@ class FocusTestScreenshots(
                 .captureRender()
                 .asAndroidBitmap()
         val file = File(folder, "$name-$theme.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(file, bitmap)
         println("Screenshot ${file.path}")
     }
 
