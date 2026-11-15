@@ -1,10 +1,10 @@
 import SwiftUI
 
 extension View {
-  /// A task's title in its bar, centered between the close and the bar's buttons and on up to two
-  /// lines there, so an ordinary chapter or lesson title shows whole and every title of a deck
-  /// keeps one center. The system still has it as the screen's title
-  /// (VoiceOver, the window, Back's menu), and a vertical bar (iPhone Duo) has no room for it.
+  /// A task's title in its bar, on the screen's middle whatever the bar holds beside it, as the
+  /// system's own title is, and on up to two lines there, so an ordinary chapter or lesson title
+  /// shows whole. The system still has it as the screen's title (VoiceOver, the window, Back's
+  /// menu), and a vertical bar (iPhone Duo) has no room for it.
   func taskTitle(_ title: Text) -> some View {
     modifier(TaskTitleToolbar(title: title))
   }
@@ -34,11 +34,32 @@ extension View {
 
 private struct TaskTitleToolbar: ViewModifier {
   @Environment(\.isToolbarVertical) private var isToolbarVertical
+  /// The screen's edges and the room the bar gives the title, both across the window.
+  @State private var screen: ClosedRange<CGFloat>?
+  @State private var room: ClosedRange<CGFloat>?
 
   let title: Text
 
+  /// Takes from the side nearer the screen's edge what the other side lacks, so the title's room is
+  /// as wide on each side of the screen's middle.
+  private var inset: (leading: CGFloat, trailing: CGFloat) {
+    guard let screen, let room else {
+      return (0, 0)
+    }
+
+    let leading = room.lowerBound - screen.lowerBound
+    let trailing = screen.upperBound - room.upperBound
+    return (max(0, trailing - leading), max(0, leading - trailing))
+  }
+
   func body(content: Content) -> some View {
     content
+      .onGeometryChange(for: ClosedRange<CGFloat>.self) { proxy in
+        let frame = proxy.frame(in: .global)
+        return frame.minX...frame.maxX
+      } action: {
+        screen = $0
+      }
       .navigationTitle(title)
       .toolbarTitleDisplayMode(.inline)
       .toolbar {
@@ -53,10 +74,18 @@ private struct TaskTitleToolbar: ViewModifier {
             .multilineTextAlignment(.center)
             .minimumScaleFactor(0.85)
             .fixedSize(horizontal: false, vertical: true)
+            .padding(.leading, inset.leading)
+            .padding(.trailing, inset.trailing)
             // The bar sizes a title to its ideal width when it first lays it out, and then puts a
             // short one on the screen's middle or after the close. Asking for every width gets it
-            // the whole room between the buttons on every layout, so each title centers there.
+            // the whole room between the buttons on every layout, which the inset then evens out.
             .frame(idealWidth: UIView.layoutFittingExpandedSize.width, maxWidth: .infinity)
+            .onGeometryChange(for: ClosedRange<CGFloat>.self) { proxy in
+              let frame = proxy.frame(in: .global)
+              return frame.minX...frame.maxX
+            } action: {
+              room = $0
+            }
             .accessibilityAddTraits(.isHeader)
         }
       }
