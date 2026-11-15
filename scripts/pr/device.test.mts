@@ -130,19 +130,26 @@ describe("pnpm pr:media device: a picture the tool takes from a booted device", 
     assert.match(formatCheck(result, repository), /build not verified, installed /u);
   });
 
-  it("takes what the picture shows in plain words only, since it becomes the caption", async () => {
+  it("refuses an @name in what the picture shows or in the device's own name: GitHub would notify them", async () => {
     const { repository } = checkFixture();
 
-    await assert.rejects(
+    const takeNamed = async (name: string, booted: DeviceBridge) =>
       takeDevicePicture({
-        bridge: bridge({ commit: head(repository), dirty: false }),
+        bridge: booted,
         deviceId: "booted-device",
-        name: "sheet | measured on the current build",
+        name,
         platform: "apple",
         repository,
         to: mkdtempSync(join(repository, "device-")),
-      }),
-      /plain words/u,
+      });
+
+    const current = bridge({ commit: head(repository), dirty: false });
+
+    await assert.rejects(takeNamed("sheet for @reviewer", current), /notify/u);
+
+    await assert.rejects(
+      takeNamed("sheet", { ...current, describe: async () => "iPhone of @reviewer, iOS 26.1" }),
+      /notify/u,
     );
   });
 });

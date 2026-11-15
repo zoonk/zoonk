@@ -341,6 +341,9 @@ importers:
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:packages/tsconfig
+      fast-check:
+        specifier: 'catalog:'
+        version: 4.10.2
       jsdom:
         specifier: 'catalog:'
         version: 31.0.1(@napi-rs/canvas@1.1.1)(@noble/hashes@2.4.0)

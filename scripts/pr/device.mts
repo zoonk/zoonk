@@ -3,8 +3,8 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { z } from "zod";
-import { PLAIN_WORDS } from "./device-section.mts";
-import { type CaptureItem, fileName, registerItems } from "./media.mts";
+import { MENTION, unwritablePath } from "./device-section.mts";
+import { type CaptureItem, fileName, pathWithin, registerItems } from "./media.mts";
 import { readCheckoutBuild, sha256File, sha256Text } from "./provenance.mts";
 
 const run = promisify(execFile);
@@ -204,13 +204,26 @@ export async function takeDevicePicture({
   repository: string;
   to: string;
 }): Promise<CaptureItem> {
-  if (!PLAIN_WORDS.test(name)) {
+  // The path as a body writes it, from the repository's root.
+  const unwritable = unwritablePath(pathWithin(repository, join(to, `${fileName(name)}.png`)));
+
+  if (unwritable) {
+    throw new Error(unwritable);
+  }
+
+  if (MENTION.test(name)) {
     throw new Error(
-      "--name says what the picture shows in plain words, for its caption: no |, brackets, angle brackets, backticks, asterisks, underscores, tildes, backslashes or line breaks.",
+      "--name is the picture's caption, and an @name in it would notify that person on GitHub: write it without the @.",
     );
   }
 
   const device = await bridge.describe(deviceId).catch(() => null);
+
+  if (device && MENTION.test(device)) {
+    throw new Error(
+      `The device describes itself as "${device}", and an @name in a caption would notify that person on GitHub: rename the device.`,
+    );
+  }
 
   if (!device) {
     throw new Error(

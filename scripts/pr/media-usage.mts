@@ -33,7 +33,9 @@ Checks that every picture a PR body shows was captured, from which build, and re
            failing the check as pending.
   device   takes an after picture from a booted simulator (--device its udid) or emulator (its
            adb serial) that no capture can take, such as an Android sheet over its page, with
-           --name saying what it shows in plain words (it becomes its caption). It takes the
+           --name saying what it shows (its caption, written as literal words; an @name is
+           refused, since GitHub would notify them) and --to a folder whose path holds no space,
+           (, ), |, < or >, which a body can't write in an image's path. It takes the
            picture itself and records the installed build as the device reports it: a
            simulator's Debug build stamp must be this checkout's head, built clean, and its
            commit is recorded; an emulator's app carries no commit (a value that changes every
@@ -42,8 +44,8 @@ Checks that every picture a PR body shows was captured, from which build, and re
            installed before the head's last change to apps/android or packages/, or with that
            code uncommitted. A web page in a phone-sized browser is a web capture: take it with
            pnpm pr:capture. Nothing measures its layout. --to is tmp/pr-media/device by default.
-  device-section prints the PR body's section for the device pictures named, in the order the
-           body shows them: the heading "On a device (layout not measured)" and the pictures
+  device-section prints the PR body's section for the device pictures named, each once, in the
+           order the body shows them: the heading "On a device (layout not measured)" and the pictures
            three to a table, each with what it shows and what was verified. Paste it as it is.
   before   records existing before pictures and where they came from; they pass, since a before
            picture's build isn't checked. --to is tmp/pr-media/registered by default for both.

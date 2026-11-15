@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { readCaptures } from "../verify/alignment-validate.mts";
 import { evaluateFile } from "../verify/alignment.mts";
 import { type BodyImage } from "./body.mts";
-import { deviceSection, sectionStart } from "./device-section.mts";
+import { deviceSection, firstOfEach, sectionStart } from "./device-section.mts";
 import { isRemote } from "./locate.mts";
 import {
   type AlignmentReport,
@@ -294,9 +294,7 @@ function sectionProblems(body: Body | undefined, devices: Map<string, CaptureIte
 
   const shown = body?.images.filter(({ path }) => devices.has(path)) ?? [];
 
-  const firsts = shown.filter(
-    (image, index) => shown.findIndex(({ path }) => path === image.path) === index,
-  );
+  const firsts = firstOfEach(shown);
 
   const shots = body
     ? firsts.flatMap(({ link, path }) => {

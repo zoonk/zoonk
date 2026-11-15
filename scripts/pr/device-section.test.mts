@@ -1,15 +1,29 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import {
+  array,
+  assert as assertProperty,
+  asyncProperty,
+  constant,
+  nat,
+  record,
+  stringMatching,
+  uniqueArray,
+} from "fast-check";
 import { describe, it } from "vitest";
 import { checkBody } from "./body-check.mts";
 import { CLEAN, checkFixture, kinds } from "./check-fixture.mts";
-import { deviceSection } from "./device-section.mts";
+import { deviceSection, readDeviceShots } from "./device-section.mts";
 import { type DeviceBridge, takeDevicePicture } from "./device.mts";
 import { type CaptureItem, readManifest, writeManifest } from "./media.mts";
+import { sha256File } from "./provenance.mts";
 import { formatCheck } from "./report.mts";
 
 const LINE = "Pixel 9, Android 16; build not verified, installed 2026-11-15T10:00:00.000Z, app 1.0";
+
+/** The same line as the section writes it: its punctuation escaped, so it stays words. */
+const WRITTEN_LINE = String.raw`Pixel 9\, Android 16\; build not verified\, installed 2026\-11\-15T10\:00\:00\.000Z\, app 1\.0`;
 const HEADING = "## On a device (layout not measured)";
 
 const emulator: DeviceBridge = {
@@ -125,12 +139,12 @@ describe("the section pnpm pr:media device-section prints", () => {
         "| Shot 1 | Shot 2 | Shot 3 |",
         "| --- | --- | --- |",
         "| ![Shot 1](device/shot-1.png) | ![Shot 2](device/shot-2.png) | ![Shot 3](device/shot-3.png) |",
-        `| ${LINE} | ${LINE} | ${LINE} |`,
+        `| ${WRITTEN_LINE} | ${WRITTEN_LINE} | ${WRITTEN_LINE} |`,
         "",
         "| Shot 4 |",
         "| --- |",
         "| ![Shot 4](device/shot-4.png) |",
-        `| ${LINE} |`,
+        `| ${WRITTEN_LINE} |`,
       ].join("\n"),
     );
   });
@@ -166,5 +180,84 @@ describe("the section pnpm pr:media device-section prints", () => {
     const printed = formatCheck(await check(`${HEADING}\n\n![](${device})`), repository);
 
     assert.ok(printed.includes(`\n${section}\n`));
+  });
+});
+
+describe("the pictures device-section names (RV79)", () => {
+  it("prints a picture named twice once, which then passes its own check (RV79 P2)", async () => {
+    const { check, device } = await fixture();
+    const section = deviceSection(await readDeviceShots([device, device]));
+
+    const result = await check(`Intro\n\n${section}\n`);
+
+    assert.deepEqual(result.problems, []);
+  });
+
+  it("refuses a path a body can't write as an image: a space, (, ), |, < or > (RV79 P2)", async () => {
+    const { repository } = checkFixture();
+
+    await assert.rejects(
+      takeDevicePicture({
+        bridge: emulator,
+        deviceId: "emulator-5554",
+        name: "sheet",
+        platform: "android",
+        repository,
+        to: join(repository, "device with spaces"),
+      }),
+      /a space.*another folder/u,
+    );
+
+    await assert.rejects(readDeviceShots(["device/sheet(1).png"]), /"\(".*another folder/u);
+  });
+
+  it("prints a section that passes the check for any accepted paths, repeats included", async () => {
+    const { repository, shot } = checkFixture();
+    const folder = stringMatching(/^[a-z0-9_-]{1,8}$/u);
+
+    const pictures = uniqueArray(folder, { maxLength: 4, minLength: 1 }).chain((folders) =>
+      record({
+        folders: constant(folders),
+        order: array(nat({ max: folders.length - 1 }), { maxLength: 8, minLength: 2 }),
+      }),
+    );
+
+    await assertProperty(
+      asyncProperty(pictures, async ({ folders, order }) => {
+        const root = mkdtempSync(join(repository, "paths-"));
+
+        const made = await Promise.all(
+          folders.map(async (name) => {
+            const to = join(root, name);
+            mkdirSync(to, { recursive: true });
+            writeFileSync(join(to, "shot.png"), name);
+
+            const item = shot({
+              build: {
+                app: "android",
+                commit: "unknown",
+                id: "installed 2026-11-15T10:00:00.000Z, app 1.0",
+              },
+              device: "Pixel 9, Android 16",
+              file: "shot.png",
+              read: CLEAN,
+              sha256: await sha256File(join(to, "shot.png")),
+              shows: name,
+            });
+
+            await writeManifest(to, [item]);
+            return join(to, "shot.png");
+          }),
+        );
+
+        const links = order.map((index) => made[index] ?? "");
+        const section = deviceSection(await readDeviceShots(links));
+        const markdown = `## Before and after\n\nSome words.\n\n${section}\n\n## Next\n\nMore words.`;
+        const result = await checkBody({ markdown, repository, root: repository });
+
+        assert.deepEqual(result.problems, []);
+      }),
+      { numRuns: 20 },
+    );
   });
 });

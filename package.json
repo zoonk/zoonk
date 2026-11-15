@@ -75,6 +75,7 @@
     "@types/mdast": "4.0.4",
     "@types/node": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
+    "fast-check": "catalog:",
     "jsdom": "catalog:",
     "knip": "6.45.1",
     "mdast-util-from-markdown": "2.1.0",

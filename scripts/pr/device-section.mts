@@ -9,8 +9,39 @@ import { sha256File } from "./provenance.mts";
  */
 const DEVICE_HEADING = "On a device (layout not measured)";
 
-/** Words that stay words in a table cell and an image's description: no markup, one line. */
-export const PLAIN_WORDS = /^[^\n\r*<>[\\\]_`|~]+$/u;
+/** An `@name` notifies that person on GitHub even escaped, so no caption may hold one. */
+export const MENTION = /@\w/u;
+
+/** What an image's path may not hold, since a body's check reads only an unspaced path. */
+const UNWRITABLE = /[\s()<>|]/u;
+
+/**
+ * Any text as literal words in a table cell or an image's description: every ASCII punctuation
+ * character escaped, as CommonMark allows, and line breaks folded into a space.
+ */
+function literal(text: string): string {
+  return text
+    .replaceAll(/\s+/gu, " ")
+    .trim()
+    .replaceAll(/[!-/:-@[-`{-~]/gu, (mark) => `\\${mark}`);
+}
+
+/** Why a picture's path can't go in a PR body as an image, or null when it can. */
+export function unwritablePath(path: string): string | null {
+  const [found] = UNWRITABLE.exec(path) ?? [];
+
+  if (found === undefined) {
+    return null;
+  }
+
+  const what = /\s/u.test(found) ? "a space" : `"${found}"`;
+  return `${path} has ${what}, which a PR body can't hold in an image's path: pick another folder.`;
+}
+
+/** The first of each picture, by the path it resolves to, in order. */
+export function firstOfEach<Shown extends { path: string }>(shown: Shown[]): Shown[] {
+  return shown.filter((item, index) => shown.findIndex(({ path }) => path === item.path) === index);
+}
 
 /** A phone's picture three to a row reads at about 280 px wide in a PR's column. */
 const COLUMNS = 3;
@@ -28,10 +59,10 @@ function row(cells: string[]): string {
 
 function table(shots: DeviceShot[]): string {
   return [
-    row(shots.map(({ item }) => showsOf(item))),
+    row(shots.map(({ item }) => literal(showsOf(item)))),
     row(shots.map(() => "---")),
-    row(shots.map(({ item, link }) => `![${showsOf(item)}](${link})`)),
-    row(shots.map(({ item }) => deviceLine(item))),
+    row(shots.map(({ item, link }) => `![${literal(showsOf(item))}](${link})`)),
+    row(shots.map(({ item }) => literal(deviceLine(item)))),
   ].join("\n");
 }
 
@@ -58,11 +89,21 @@ export function sectionStart(markdown: string, section: string): number | null {
   return first !== -1 && !padded.includes(fenced, first + 1) ? first : null;
 }
 
-/** The device pictures named, by their links from the working directory, with their records. */
+/**
+ * The device pictures named, by their links from the working directory, each once, with their
+ * records. A link a body can't hold is refused.
+ */
 export async function readDeviceShots(links: string[]): Promise<DeviceShot[]> {
+  const unwritable = links.map((link) => unwritablePath(link)).find((why) => why !== null);
+
+  if (unwritable) {
+    throw new Error(unwritable);
+  }
+
+  const named = firstOfEach(links.map((link) => ({ link, path: resolve(link) })));
+
   return Promise.all(
-    links.map(async (link) => {
-      const path = resolve(link);
+    named.map(async ({ link, path }) => {
       const sha256 = await sha256File(path);
       const folders = manifestsAbove([path]);
       const items = await Promise.all(folders.map(async (folder) => readManifest(folder)));
