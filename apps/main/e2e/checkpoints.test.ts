@@ -113,9 +113,10 @@ test.describe("A checkpoint from today's session", () => {
   });
 
   test("keeps the last question on screen while its result loads", async ({ browser }) => {
-    const { block, user } = await createCheckpointLearner();
+    const { block, boss, user } = await createCheckpointLearner();
     const page = await openAs(browser, user);
-    await page.goto(`/checkpoint/${block.id}`);
+    await page.goto(`/challenge/${boss.id}`);
+    await page.getByRole("button", { name: "Start" }).click();
 
     for (let number = 1; number < CHECKPOINT_PASS_MARK; number += 1) {
       // oxlint-disable-next-line no-await-in-loop -- A duel is answered one question at a time.
@@ -138,10 +139,8 @@ test.describe("A checkpoint from today's session", () => {
     ).toBeAttached();
 
     await finish.release(/\/session/u);
-
-    await expect(
-      page.getByRole("heading", { level: 1, name: "You beat the Trickster!" }),
-    ).toBeVisible();
+    // The plan's last challenge finishes the course, so its certificate plays first.
+    await expect(page.getByRole("dialog", { name: "Course complete!" })).toBeVisible();
 
     await page.context().close();
   });
