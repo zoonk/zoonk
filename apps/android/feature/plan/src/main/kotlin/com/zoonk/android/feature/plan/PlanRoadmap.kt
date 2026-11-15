@@ -190,7 +190,7 @@ private fun RoadmapMeter(phases: List<PlanPhase>) {
     Canvas(
         Modifier
             .fillMaxWidth()
-            .height(8.dp)
+            .height(6.dp)
             .clearAndSetSemantics {},
     ) {
         val gap = 2.dp.toPx()

@@ -49,6 +49,8 @@ fun Meter(
                 .meterSemantics(contentDescription),
         color = color,
         trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+        // Main's meter is one track with its fill in it, no gap between them as Material draws.
+        gapSize = 0.dp,
         drawStopIndicator = {},
     )
 }
