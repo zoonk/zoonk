@@ -15,6 +15,7 @@ export function readAlignment({
   anchors = [],
   columns,
   pieces,
+  pinned: pinnedBars,
   surfaces,
 }: {
   actions: string;
@@ -22,6 +23,8 @@ export function readAlignment({
   anchors?: { id: string; web: string }[];
   columns: string;
   pieces: { name: string; web: WebPiece }[];
+  /** Bars pinned to the screen's bottom, which nothing rests under at the scroll's end. */
+  pinned: string;
   surfaces: string;
 }): AlignmentPage {
   const LABEL_LENGTH = 32;
@@ -346,6 +349,18 @@ export function readAlignment({
     return (top + bottom) / 2;
   }
 
+  /** A row that holds a nested group (a phase and its open events) is its own line above it. */
+  function rowMiddle(row: Element, groups: string) {
+    const nested = [...row.querySelectorAll(groups)].find((group) => present(group));
+
+    if (!nested) {
+      return contentMiddle(row);
+    }
+
+    const top = boxOf(row).top + globalThis.zoonkPage.pixels(getComputedStyle(row).paddingTop);
+    return (top + boxOf(nested).top) / 2;
+  }
+
   /** A row wrapped in `display: contents` is its children. */
   function expandRows(element: Element): Element[] {
     return isContents(element)
@@ -432,11 +447,14 @@ export function readAlignment({
         return [];
       }
 
-      const matches = [...row.querySelectorAll(selector)];
+      // `:scope` is the row itself: a top bar's action is its own label.
+      const matches = selector === ":scope" ? [row] : [...row.querySelectorAll(selector)];
 
+      // A part inside a nested group (a phase's open events) is that group's, not this row's.
       const found = matches.filter(
         (element) =>
           ownerRow(element, read.rows) === row &&
+          element.closest(read.piece.group) === read.group &&
           present(element) &&
           !matches.some((other) => other !== element && other.contains(element)),
       );
@@ -457,6 +475,37 @@ export function readAlignment({
           ...(isText && ink ? textMetrics(element) : {}),
         };
       });
+    });
+  }
+
+  /** A piece's parts outside its rows, placed in the group itself. */
+  function groupParts(read: Read): CaptureElement[] {
+    return PARTS.flatMap((part) => {
+      const selector = read.piece.groupParts?.[part];
+
+      const element = selector
+        ? [...read.group.querySelectorAll(selector)].find((found) => present(found))
+        : undefined;
+
+      if (!element) {
+        return [];
+      }
+
+      const ink = inkOf(element);
+
+      return [
+        {
+          bounds: bounds(boxOf(element)),
+          group: read.groupId,
+          id: `${read.groupId}.${part}`,
+          ink: ink ? bounds(ink) : null,
+          name: name(element),
+          part,
+          piece: read.pieceName,
+          row: null,
+          ...(part !== "mark" && part !== "end" && ink ? textMetrics(element) : {}),
+        },
+      ];
     });
   }
 
@@ -496,7 +545,7 @@ export function readAlignment({
         id: rowId,
         ink: rowInk ? bounds(rowInk) : null,
         margins: [margin("marginTop"), margin("marginBottom")],
-        middle: contentMiddle(row) + scrollY,
+        middle: rowMiddle(row, read.piece.group) + scrollY,
         name: name(row),
         note: note ? [...row.querySelectorAll(note)].some((element) => shown(element)) : false,
         // The row the learner is on (current, picked, highlighted) may set its words apart.
@@ -518,6 +567,139 @@ export function readAlignment({
     ];
   }
 
+  /**
+   * A cell of a grid laid out in two columns or more with something beside it: a side column
+   * beside a hero or a list. A lone cell in such a grid (#13's "More") leaves the rest empty, so
+   * it isn't a column of its own.
+   */
+  function isGridCell(element: Element) {
+    const parent = element.parentElement;
+
+    if (!parent || isContents(element) || !getComputedStyle(parent).display.endsWith("grid")) {
+      return false;
+    }
+
+    const box = element.getBoundingClientRect();
+
+    return (
+      getComputedStyle(parent).gridTemplateColumns.trim().split(/\s+/u).length > 1 &&
+      [...parent.children].some((other) => {
+        const beside = other.getBoundingClientRect();
+
+        return (
+          other !== element && shown(other) && beside.top < box.bottom && box.top < beside.bottom
+        );
+      })
+    );
+  }
+
+  /**
+   * The closest column an element sits in, past columns that draw no box of their own: a declared
+   * one, or a grid's cell where a grid splits the page (the course page's plan beside its hero,
+   * the catalog's courses beside their categories), which craft calls a column of its own.
+   */
+  function columnOf(element: Element) {
+    let column = element.parentElement?.closest(columns) ?? null;
+
+    while (column && isContents(column)) {
+      column = column.parentElement?.closest(columns) ?? null;
+    }
+
+    // A cell holds what it lays out; what is positioned (the course page's route rail) is drawn
+    // on the page, so it keeps the page's column.
+    if (["absolute", "fixed"].includes(getComputedStyle(element).position)) {
+      return column;
+    }
+
+    // A cell is a column only inside its own: one that passes the page's column (a fixed track
+    // too wide for it) can't excuse what it holds from the page's edge.
+    const within = (cell: Element) => {
+      if (!column) {
+        return true;
+      }
+
+      const outer = edgesOf(column, cell);
+      const box = cell.getBoundingClientRect();
+      return box.left >= outer.left - 1 && box.right <= outer.right + 1;
+    };
+
+    for (let cell = element.parentElement; cell && cell !== column; cell = cell.parentElement) {
+      if (isGridCell(cell) && (!column || column.contains(cell)) && within(cell)) {
+        return cell;
+      }
+    }
+
+    return column;
+  }
+
+  // A measure is rems and pixels, so one value draws one width wherever it's set.
+  const measured = new Map<string, number | null>();
+
+  /**
+   * The width a page gives its content (`--page-measure`, a form's or a list and its pane's) at
+   * `container`, or null where it sets none: a length as written, else as a hidden box draws it.
+   */
+  function measureOf(container: Element) {
+    const value = getComputedStyle(container).getPropertyValue("--page-measure").trim();
+
+    if (!value) {
+      return null;
+    }
+
+    const length = /^(?<px>\d+(?:\.\d+)?)px$/u.exec(value)?.groups?.px;
+
+    if (length) {
+      return Number(length);
+    }
+
+    if (!measured.has(value)) {
+      const ruler = document.createElement("div");
+
+      ruler.style.cssText =
+        "position:absolute;visibility:hidden;height:0;width:var(--page-measure)";
+
+      container.append(ruler);
+      const { width } = ruler.getBoundingClientRect();
+      ruler.remove();
+      measured.set(value, width > 0 ? width : null);
+    }
+
+    return measured.get(value) ?? null;
+  }
+
+  /**
+   * A column's content edges, and its frame with the gutter. The end is the column's padding box,
+   * or the page's measure where one is set over `element` (a page may set it below the column).
+   */
+  function edgesOf(column: Element, element: Element) {
+    const frame = column.getBoundingClientRect();
+    const style = getComputedStyle(column);
+    const { pixels } = globalThis.zoonkPage;
+    const left = frame.left + pixels(style.paddingLeft);
+    const right = frame.right - pixels(style.paddingRight);
+    const measure = measureOf(element.parentElement ?? column);
+
+    return { frame, left, right: measure === null ? right : Math.min(right, left + measure) };
+  }
+
+  const declaredGroups = pieces.map(({ web: piece }) => piece.group).join(", ");
+
+  /** A group no other declared group holds starts and ends on its column's edges (`spanLeads`). */
+  function columnFields(group: Element): Pick<CaptureElement, "column" | "frame"> {
+    const column = group.parentElement?.closest(declaredGroups) ? null : columnOf(group);
+
+    if (!column) {
+      return {};
+    }
+
+    const edges = edgesOf(column, group);
+
+    return {
+      column: [edges.left + scrollX, edges.right + scrollX],
+      frame: [edges.frame.left + scrollX, edges.frame.right + scrollX],
+    };
+  }
+
   function readGroup(
     pieceName: string,
     piece: WebPiece,
@@ -536,8 +718,15 @@ export function readAlignment({
       );
 
     const rows = candidates.filter(
-      (row) => present(row) && !candidates.some((other) => other !== row && other.contains(row)),
+      (row) =>
+        present(row) &&
+        !candidates.some((other) => other !== row && other.contains(row)) &&
+        (!piece.words || firstText(row) !== null),
     );
+
+    if (piece.words && rows.length === 0) {
+      return [];
+    }
 
     const bar = piece.bar ? group.querySelector(piece.bar) : null;
     const groupInk = inkOf(group);
@@ -559,6 +748,7 @@ export function readAlignment({
           ? { layoutScale: Math.round((drawnBox.width / group.offsetWidth) * 100) / 100 }
           : {}),
         ...(isRtl(group) ? { direction: "rtl" as const } : {}),
+        ...columnFields(group),
         endEdge: (bar ? bar.getBoundingClientRect().right : contentEnd(group)) + scrollX,
         group: null,
         id: groupId,
@@ -568,6 +758,7 @@ export function readAlignment({
         piece: pieceName,
         row: null,
       },
+      ...groupParts(read),
       ...rows.flatMap((row, rowIndex) => readRow(read, row, rowIndex, flows)),
       // Between rows: what holds room in the group outside every row.
       ...holderElements(
@@ -595,25 +786,17 @@ export function readAlignment({
     const HAIRLINE = 2;
     const { pixels } = globalThis.zoonkPage;
 
-    const columnOf = (element: Element) => {
-      let column = element.parentElement?.closest(columns) ?? null;
+    const currentTab = (element: Element): boolean => {
+      const parent = element.parentElement;
+      const list = parent?.matches("li") ? parent.parentElement : parent;
 
-      while (column && isContents(column)) {
-        column = column.parentElement?.closest(columns) ?? null;
+      if (!list?.matches("[role=tablist], [data-slot=tabs-list], [data-tabs]")) {
+        return false;
       }
 
-      return column;
-    };
-
-    const edgesOf = (column: Element) => {
-      const frame = column.getBoundingClientRect();
-      const style = getComputedStyle(column);
-
-      return {
-        frame,
-        left: frame.left + pixels(style.paddingLeft),
-        right: frame.right - pixels(style.paddingRight),
-      };
+      return element.matches("[role=tab]")
+        ? element.getAttribute("aria-selected") === "true"
+        : element.matches("a[href][aria-current]:not([aria-current=false])");
     };
 
     const beforeFill = (element: Element): Rect | null => {
@@ -637,15 +820,18 @@ export function readAlignment({
       };
     };
 
+    const strokes = (style: CSSStyleDeclaration, side: string) =>
+      pixels(style.getPropertyValue(`border-${side}-width`)) > 0 &&
+      globalThis.zoonkPage.rgba(style.getPropertyValue(`border-${side}-color`))[3] > 0;
+
     /** A border on the top or the bottom alone: a rule drawn across the element at that edge. */
     const ruleOf = (element: Element): Rect | null => {
       const style = getComputedStyle(element);
+      const drawn = (side: string) => strokes(style, side);
 
-      const drawn = (side: string) =>
-        pixels(style.getPropertyValue(`border-${side}-width`)) > 0 &&
-        globalThis.zoonkPage.rgba(style.getPropertyValue(`border-${side}-color`))[3] > 0;
-
-      if (drawn("left") || drawn("right") || drawn("top") === drawn("bottom")) {
+      // A rule on the top or the bottom alone, whatever the sides draw: a grid's middle tile draws
+      // its dividers too, and its part of the row's hairline is still that hairline.
+      if (drawn("top") === drawn("bottom")) {
         return null;
       }
 
@@ -660,6 +846,100 @@ export function readAlignment({
         : { bottom: box.bottom, left: box.left, right: box.right, top: box.bottom - width };
     };
 
+    const chain = (element: Element): Element[] =>
+      element.parentElement ? [element, ...chain(element.parentElement)] : [element];
+
+    /**
+     * The rules a positioned element draws on its `::before` or `::after`, a top or a bottom border
+     * (the catalog's last tile carrying its row's line on to the grid's end), as much of them as the
+     * boxes clipping it show.
+     */
+    const pseudoRules = (element: Element): Rect[] => {
+      if (getComputedStyle(element).position === "static") {
+        return [];
+      }
+
+      const box = element.getBoundingClientRect();
+
+      // What the boxes clipping it leave shown, on each axis they clip.
+      const shownArea = chain(element).reduce(
+        (clipped, clipping) => {
+          const style = getComputedStyle(clipping);
+          const clip = clipping.getBoundingClientRect();
+          const across = style.overflowX !== "visible";
+          const down = style.overflowY !== "visible";
+
+          return {
+            bottom: down ? Math.min(clipped.bottom, clip.bottom) : clipped.bottom,
+            left: across ? Math.max(clipped.left, clip.left) : clipped.left,
+            right: across ? Math.min(clipped.right, clip.right) : clipped.right,
+            top: down ? Math.max(clipped.top, clip.top) : clipped.top,
+          };
+        },
+        { bottom: Infinity, left: -Infinity, right: Infinity, top: -Infinity },
+      );
+
+      return (["::before", "::after"] as const).flatMap((which): Rect[] => {
+        const pseudo = getComputedStyle(element, which);
+        const top = strokes(pseudo, "top");
+
+        if (
+          pseudo.content === "none" ||
+          pseudo.position !== "absolute" ||
+          top === strokes(pseudo, "bottom")
+        ) {
+          return [];
+        }
+
+        // Its whole size, borders included, however its box is sized.
+        const outer = (size: "height" | "width", sides: [string, string]) =>
+          pixels(pseudo.getPropertyValue(size)) +
+          (pseudo.boxSizing === "border-box"
+            ? 0
+            : sides.reduce(
+                (total, side) =>
+                  total +
+                  pixels(pseudo.getPropertyValue(`padding-${side}`)) +
+                  pixels(pseudo.getPropertyValue(`border-${side}-width`)),
+                0,
+              ));
+
+        const left = box.left + element.clientLeft + pixels(pseudo.left);
+        const y = box.top + element.clientTop + pixels(pseudo.top);
+        const stroke = top ? "border-top-width" : "border-bottom-width";
+        const width = pixels(pseudo.getPropertyValue(stroke));
+        const from = top ? y : y + outer("height", ["top", "bottom"]) - width;
+
+        const rule = {
+          bottom: Math.min(from + width, shownArea.bottom),
+          left: Math.max(left, shownArea.left),
+          right: Math.min(left + outer("width", ["left", "right"]), shownArea.right),
+          top: Math.max(from, shownArea.top),
+        };
+
+        // A rule with no part shown draws nothing.
+        return rule.right > rule.left && rule.bottom > rule.top ? [rule] : [];
+      });
+    };
+
+    /** A box's left and right strokes, where it isn't drawn on all four sides. */
+    const sidesOf = (element: Element): Rect[] => {
+      const style = getComputedStyle(element);
+      const box = element.getBoundingClientRect();
+
+      return (["left", "right"] as const).flatMap((side): Rect[] => {
+        const width = pixels(style.getPropertyValue(`border-${side}-width`));
+        const color = globalThis.zoonkPage.rgba(style.getPropertyValue(`border-${side}-color`));
+
+        if (width <= 0 || color[3] === 0) {
+          return [];
+        }
+
+        const left = side === "left" ? box.left : box.right - width;
+        return [{ bottom: box.bottom, left, right: left + width, top: box.top }];
+      });
+    };
+
     type Kind = NonNullable<CaptureElement["kind"]>;
 
     const kindOf = (element: Element, box: Rect): Kind => {
@@ -670,15 +950,15 @@ export function readAlignment({
       return Math.min(box.right - box.left, box.bottom - box.top) <= HAIRLINE ? "hairline" : "box";
     };
 
-    return [...document.querySelectorAll(`:is(${columns}) *`)].flatMap(
-      (element, index): CaptureElement[] => {
+    const read = [...document.querySelectorAll(`:is(${columns}) *`)].flatMap(
+      (element, index): { fill: CaptureElement; passing: boolean }[] => {
         const column = columnOf(element);
 
         if (!column || !shown(element) || element.closest("[data-slot=bottom-bar]")) {
           return [];
         }
 
-        const edges = edgesOf(column);
+        const edges = edgesOf(column, element);
 
         const passes = (box: Rect) =>
           edges.left - box.left > PAST || box.right - edges.right > PAST;
@@ -690,33 +970,71 @@ export function readAlignment({
           : null;
 
         const line = ownBox ? null : ruleOf(element);
-        const current = element.matches("[aria-current], [data-highlighted], [aria-selected=true]");
 
-        const found: { box: Rect; kind: Kind }[] = [
-          ...(highlight && passes(highlight)
-            ? [{ box: highlight, kind: "highlight" as const }]
-            : []),
+        const current = element.matches(
+          "[aria-current]:not([aria-current=false]), [data-highlighted], [aria-selected=true]",
+        );
+
+        // The current tab's own fill: a selected tab, or the current page's link, as an item of
+        // the tab list. A hovered menu item or anything else a tab list holds is a highlight.
+        const lit: Kind = currentTab(element) ? "tab" : "highlight";
+
+        // Every rule, passing or not: a line is judged whole, so a part inside the column that
+        // touches one passing it (a grid's middle tile) is part of that line.
+        const found: { box: Rect; kind: Kind; passing: boolean }[] = [
+          ...(highlight && passes(highlight) ? [{ box: highlight, kind: lit, passing: true }] : []),
           ...(ownBox && passes(ownBox)
-            ? [{ box: ownBox, kind: current ? ("highlight" as const) : kindOf(element, ownBox) }]
+            ? [{ box: ownBox, kind: current ? lit : kindOf(element, ownBox), passing: true }]
             : []),
-          ...(line && passes(line) ? [{ box: line, kind: "hairline" as const }] : []),
+          ...[...(line ? [line] : []), ...pseudoRules(element)].map((rule) => ({
+            box: rule,
+            kind: "hairline" as const,
+            passing: passes(rule),
+          })),
+          // A tile's top stroke joins its row's line; its sides are still strokes on the page.
+          ...(ownBox ? [] : sidesOf(element))
+            .filter((side) => passes(side))
+            .map((side) => ({ box: side, kind: "box" as const, passing: true })),
         ];
 
-        return found.map(({ box, kind }, part) => ({
-          bounds: bounds(box),
-          column: [edges.left + scrollX, edges.right + scrollX],
-          frame: [edges.frame.left + scrollX, edges.frame.right + scrollX],
-          group: null,
-          id: `fill.${index}.${part}`,
-          ink: bounds(box),
-          kind,
-          name: name(element),
-          part: "fill",
-          piece: "page",
-          row: null,
+        return found.map(({ box, kind, passing }, part) => ({
+          fill: {
+            bounds: bounds(box),
+            column: [edges.left + scrollX, edges.right + scrollX],
+            frame: [edges.frame.left + scrollX, edges.frame.right + scrollX],
+            group: null,
+            id: `fill.${index}.${part}`,
+            ink: bounds(box),
+            kind,
+            name: name(element),
+            part: "fill",
+            piece: "page",
+            row: null,
+          },
+          passing,
         }));
       },
     );
+
+    const kept = read.filter(({ passing }) => passing).map(({ fill }) => fill);
+    let rest = read.filter(({ passing }) => !passing).map(({ fill }) => fill);
+
+    const touches = (one: CaptureElement, other: CaptureElement) =>
+      Math.abs(one.bounds[1] - other.bounds[1]) <= PAST &&
+      one.bounds[0] <= other.bounds[0] + other.bounds[2] + PAST &&
+      other.bounds[0] <= one.bounds[0] + one.bounds[2] + PAST;
+
+    for (let joined = true; joined;) {
+      const joining = rest.filter((line) =>
+        kept.some((fill) => fill.kind === "hairline" && touches(fill, line)),
+      );
+
+      joined = joining.length > 0;
+      kept.push(...joining);
+      rest = rest.filter((line) => !joining.includes(line));
+    }
+
+    return kept;
   }
 
   const covers = [...document.querySelectorAll(surfaces)].filter((surface) => present(surface));
@@ -822,7 +1140,23 @@ export function readAlignment({
     ];
   });
 
-  const all = [...elements, ...actions, ...anchored, ...readBleeds()];
+  // Only at the scroll's end can the page be judged for what it leaves under a pinned bar.
+  const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 1;
+
+  const pinned = (atEnd ? [...document.querySelectorAll(pinnedBars)] : [])
+    .filter((bar) => present(bar) && ["fixed", "sticky"].includes(getComputedStyle(bar).position))
+    .map((bar, index): CaptureElement => ({
+      bounds: bounds(boxOf(bar)),
+      group: null,
+      id: `pinned.${index}`,
+      ink: null,
+      name: name(bar),
+      part: "pinned",
+      piece: "page",
+      row: null,
+    }));
+
+  const all = [...elements, ...actions, ...anchored, ...pinned, ...readBleeds()];
 
   // Null when two surfaces overlap and the document shows no declared surface where they do.
   if (top === null) {
