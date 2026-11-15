@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.goalcontent.ChapterKey
+import com.zoonk.api.models.MindMapAllowanceStop
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -21,7 +22,16 @@ import java.util.UUID
 enum class PictureSave { Saved, Failed }
 
 /** What making every chapter map at once got: on its way, or a server out of reach. */
-enum class CreateAll { Pending, Unreachable }
+sealed interface CreateAll {
+    data object Pending : CreateAll
+
+    data object Unreachable : CreateAll
+
+    /** None started: the answer's own reason, kept over the offer the list reads after it (main's `bulk.stop`). */
+    data class Stopped(
+        val stop: MindMapAllowanceStop,
+    ) : CreateAll
+}
 
 /**
  * A screen's mind maps for one session: making one, or all of them, only from a tap, following one
@@ -95,9 +105,14 @@ class MindMapViewModel(
         if (all.value == CreateAll.Pending) return
         all.value = CreateAll.Pending
         viewModelScope.launch {
-            val failed = store.createAll(goalId) == false
-            if (failed) createAllFailedSince = store.readMark()
-            all.value = if (failed) CreateAll.Unreachable else null
+            val started = store.createAll(goalId)
+            if (started == MindMapsStarted.Unreachable) createAllFailedSince = store.readMark()
+            all.value =
+                when (started) {
+                    MindMapsStarted.Unreachable -> CreateAll.Unreachable
+                    is MindMapsStarted.Answered -> started.stop?.let(CreateAll::Stopped)
+                    null -> null
+                }
         }
     }
 

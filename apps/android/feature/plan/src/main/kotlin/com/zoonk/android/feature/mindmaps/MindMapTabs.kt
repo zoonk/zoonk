@@ -167,7 +167,7 @@ private fun LazyListScope.notMadeBlock(
 ) {
     val now = notMade.filter { it.canMakeNow() }
     val later = notMade.filterNot { it.canMakeNow() }
-    val stop = mindMaps.createOffer.stop?.limit(actions.state.tier)
+    val stop = actions.shownStop(mindMaps)?.limit(actions.state.tier)
 
     items(now, key = { "now-${it.chapterId}" }, contentType = { "map" }) { map ->
         Divided(map != now.first()) { ChapterRow(map, actions, stop = stop, numbered = false) }
@@ -210,9 +210,9 @@ private fun NotMadeSummary(
 ) {
     val offer = mindMaps.createOffer
     // What stops a new map also takes the rows' Create away, so it shows whether or not a chapter is ready to make.
+    val stop = actions.bulkStop ?: offer.stop?.takeIf { offer.startable == 0L }
     val limit =
-        offer.stop
-            ?.takeIf { offer.startable == 0L }
+        stop
             ?.limit(actions.state.tier)
             ?.takeUnless { limitLifted(it) }
     HeldSlot(gated = limit != null, Modifier.padding(top = 16.dp)) {
@@ -225,7 +225,9 @@ private fun NotMadeSummary(
                 ) { Text(stringResource(R.string.mindmaps_create_all)) }
             }
 
-            Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) { NotMadeLine(mindMaps, later, limit, actions) }
+            Box(
+                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            ) { NotMadeLine(mindMaps, later, limit, stop.limitSubject, actions) }
         }
     }
 }
@@ -240,6 +242,7 @@ private fun NotMadeLine(
     mindMaps: GoalMindMaps,
     later: List<GoalMindMap>,
     limit: Limit?,
+    subject: LimitSubject,
     actions: TabActions,
 ) {
     val offer = mindMaps.createOffer
@@ -263,7 +266,7 @@ private fun NotMadeLine(
             }
 
             limit != null -> {
-                MindMapLimit(limit, offer.stop.limitSubject, actions.page.navigate)
+                MindMapLimit(limit, subject, actions.page.navigate)
                 return
             }
 
@@ -277,6 +280,13 @@ private fun NotMadeLine(
         }
     Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }
+
+/** Create all's own answer when it started none, as this device received it. */
+private val TabActions.bulkStop: MindMapAllowanceStop?
+    get() = (state.createAll as? CreateAll.Stopped)?.stop
+
+/** What keeps a new map from starting: [bulkStop], or the offer the list read. */
+internal fun TabActions.shownStop(mindMaps: GoalMindMaps): MindMapAllowanceStop? = bulkStop ?: mindMaps.createOffer.stop
 
 /** The server's reason nothing more can start, as the app's limits word it; [tier] is the learner's plan. */
 internal fun MindMapAllowanceStop.limit(tier: LimitTier): Limit =

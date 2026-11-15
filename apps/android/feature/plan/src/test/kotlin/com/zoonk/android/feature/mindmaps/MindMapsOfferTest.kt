@@ -2,11 +2,13 @@ package com.zoonk.android.feature.mindmaps
 
 import android.content.Context
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import coil3.ImageLoader
@@ -20,6 +22,7 @@ import com.zoonk.android.ui.components.LocalClock
 import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.components.TestClock
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.GoalMindMaps
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -104,5 +107,28 @@ class MindMapsOfferTest {
         assertEquals(2, api.lists)
         // The gate's slot holds its height for this visit, so nothing below it moves without a tap.
         assertEquals(below, compose.onNodeWithText("Other chapters").getBoundsInRoot().top)
+    }
+
+    /** The device's clock is ahead of the server's: Create all's own stop, already past here, keeps its gate through the list read after it. */
+    @Test
+    fun createAllsStopPastOnArrivalKeepsItsGate() {
+        val past = Instant.parse("2020-01-01T00:00:00Z")
+        api.mindMaps = { if (api.lists == 1) fresh else stopped(past) }
+        api.createAll = {
+            ApiJson.decodeFromString(
+                """
+                {"accepted":[],"joined":[],"unstarted":[],
+                "stop":{"reason":"limitReached","resource":"mindMap","period":"rolling30Days","availableAt":"$past"}}
+                """.trimIndent(),
+            )
+        }
+        show()
+
+        waitFor("Create all")
+        compose.onNodeWithText("Create all").performClick()
+        waitFor("You've used your mind maps")
+        compose.onNodeWithText("You can try again now.").assertDoesNotExist()
+        compose.onNodeWithText("Create all").assertDoesNotExist()
+        compose.onAllNodesWithText("Create").assertCountEquals(0)
     }
 }

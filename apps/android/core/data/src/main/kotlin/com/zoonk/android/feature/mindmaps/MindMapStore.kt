@@ -24,6 +24,7 @@ import com.zoonk.api.models.ChapterMindMapStatus
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMapGenerations
 import com.zoonk.api.models.GoalMindMaps
+import com.zoonk.api.models.MindMapAllowanceStop
 import com.zoonk.api.models.MindMapGeneration
 import com.zoonk.api.models.SaveMindMap
 import com.zoonk.api.models.SavedMindMapKind
@@ -41,6 +42,8 @@ import java.util.UUID
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 interface MindMapApi {
     suspend fun list(
@@ -153,6 +156,20 @@ data class MindMapTarget(
     val id: UUID,
 )
 
+sealed interface MindMapsStarted {
+    /** [stop]: why none started, as the answer gave it and this device received it; the list read again says the rest. */
+    data class Answered(
+        val stop: MindMapAllowanceStop?,
+    ) : MindMapsStarted
+
+    /** The request, or the read after it, didn't come through. */
+    data object Unreachable : MindMapsStarted
+}
+
+/** As this device received it: [Limit.Reached.received]. */
+fun MindMapAllowanceStop.received(now: Instant = Clock.System.now()): MindMapAllowanceStop =
+    if (availableAt?.let { it > now } == false) copy(availableAt = null) else this
+
 sealed interface MindMapCreated {
     /** Started, joined, already drawn, locked for Plus or without a map: the reads, read again, say which. */
     data object Read : MindMapCreated
@@ -236,15 +253,19 @@ class MindMapStore(
      * The list, read again, says what came of it, and so does each of the goal's chapters read
      * earlier, once it shows again; null when the session changed meanwhile.
      */
-    suspend fun createAll(goalId: UUID): Boolean? =
-        when (cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.createAll(it, goalId) }) {
+    suspend fun createAll(goalId: UUID): MindMapsStarted? =
+        when (val result = cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.createAll(it, goalId) }) {
             is MutationResult.Done -> {
+                val stop =
+                    result.value.stop
+                        ?.takeIf { result.value.accepted.isEmpty() }
+                        ?.received()
                 chapter.invalidate { it.goalId == goalId }
-                list[goalId].reread()
+                if (list[goalId].reread()) MindMapsStarted.Answered(stop) else MindMapsStarted.Unreachable
             }
 
             is MutationResult.Failed -> {
-                false
+                MindMapsStarted.Unreachable
             }
 
             MutationResult.Obsolete -> {

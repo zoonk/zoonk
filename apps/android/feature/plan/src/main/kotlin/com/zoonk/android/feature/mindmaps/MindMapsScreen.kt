@@ -117,7 +117,7 @@ internal fun MindMapsContent(
             val createAll by maps.createAll.collectAsStateWithLifecycle()
 
             FollowListWhileOnItsWay(resource, shown.value.chapters, requests)
-            RereadWhenOfferOpens(resource, shown.value.createOffer.stop)
+            RereadWhenOfferOpens(resource, (createAll as? CreateAll.Stopped)?.stop ?: shown.value.createOffer.stop)
 
             CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
                 MindMapsPage(
