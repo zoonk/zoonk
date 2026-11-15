@@ -9,8 +9,12 @@ import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 
 @Composable
-fun BackButton(onClick: () -> Unit) {
-    IconButton(onClick = onClick) {
+fun BackButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    IconButton(onClick = onClick, modifier = modifier, enabled = enabled) {
         Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.navigation_back))
     }
 }

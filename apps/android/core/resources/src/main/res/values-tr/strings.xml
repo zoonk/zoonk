@@ -73,7 +73,11 @@
   "test_out_skip_chapter": "c53b3ae1a6e4defb2e7482fc000b74b38d7bc9521e8f0e3de2437cc8b21e3ffe",
   "test_out_skip_unit": "643c966a0099226a3e95bc25023c03e8d3bcd0cfa352954e08271e49619b945b",
   "test_out_title": "acd9c1387dbb5f920ae66bf94e42347cde96e4f41098db48833df29e841708e3",
-  "web_page_unavailable": "7c4d75c731c0849ec88c59e9103a52474d2c95f774610ce218f0d8170fdeb41a"
+  "web_page_unavailable": "7c4d75c731c0849ec88c59e9103a52474d2c95f774610ce218f0d8170fdeb41a",
+  "weekend_time_add_weekday": "6416ed4f971f69831e6a5ed42741d6282d196f566e6052655efbd66a13826bdd",
+  "weekend_time_add_weekend_day": "c9fb65df935fa9d56b39cba5b27f059eeb593c0b2ef07b7aab1f29d5547e1b47",
+  "weekend_time_differs": "83090315fe8b4e2a6020fe327122858e22e6992d22520fd5fc74b1f169ce3923",
+  "weekend_time_label": "ff58b5e35f2829c5039972c96eff3b82de17143f250e191a0f9606057b7bef16"
 }
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
@@ -127,6 +131,13 @@
     <string name="suggestion_other_options">Diğer seçenekleri gör</string>
     <!-- Above the options of an exam's choice when each candidate takes several of them, such as two of a course's modules. %1$d is how many, at least 2. -->
     <string name="exam_choice_pick_up_to">En fazla %1$d seçenek seç.</string>
+    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
+    <string name="weekend_time_differs">Hafta sonları farklı çalışma süresi</string>
+    <string name="weekend_time_label">Hafta sonu çalışma süresi</string>
+    <!-- Why a switch for a different study time on weekends is off: no weekend day is a study day. -->
+    <string name="weekend_time_add_weekend_day">Çalışma günlerine cumartesi veya pazar gününü ekle.</string>
+    <!-- Why a switch for a different study time on weekends is off: only weekend days are study days. -->
+    <string name="weekend_time_add_weekday">Çalışma günlerine hafta içinden bir gün ekle.</string>
     <!-- Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options. -->
     <string name="exam_choice_left_out">Planında yer alması için birini seç.</string>
     <string name="disclosure_expanded">Genişletildi</string>

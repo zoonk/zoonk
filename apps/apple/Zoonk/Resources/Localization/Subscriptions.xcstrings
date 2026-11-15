@@ -63,15 +63,15 @@
     "%@. %@" : {
       "comment" : "A notice that something the learner uses ran out, as one line: {title} says what ran out, such as \"You've used your uploads\", and {line} when more comes back, such as \"More on November 22, or subscribe to keep going.\"",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@. %2$@"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "%1$@. %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
             "value" : "%1$@. %2$@"
           }
         },
@@ -1213,6 +1213,70 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "An AI study buddy: %lld messages a day, up to %lld a month" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein KI-Lernkumpel: %1$lld Nachrichten am Tag, bis zu %2$lld im Monat"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "An AI study buddy: %1$lld messages a day, up to %2$lld a month"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un compañero de estudio con IA: %1$lld mensajes al día, hasta %2$lld al mes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un compagnon d’étude IA : %1$lld messages par jour, jusqu’à %2$lld par mois"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un compagno di studio con l’IA: %1$lld messaggi al giorno, fino a %2$lld al mese"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習の相棒AI：メッセージは1日%1$lld通、月%2$lld通まで"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 공부 짝꿍: 하루 메시지 %1$lld개, 한 달 최대 %2$lld개"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kumpel do nauki z AI: %1$lld wiadomości dziennie, do %2$lld miesięcznie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um parceiro de estudos com IA: %1$lld mensagens por dia, até %2$lld por mês"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yapay zekâ ders arkadaşı: günde %1$lld mesaj, ayda en fazla %2$lld mesaj"
           }
         }
       }
