@@ -7255,9 +7255,9 @@ msgid "{count, plural, one {# map didn't finish. Try again.} other {# maps didn'
 msgstr "{count, plural, one {# mappa non è stata completata. Riprova.} other {# mappe non sono state completate. Riprova.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "CHNbiu"
-msgid "{count, plural, one {You can make # more right now.} other {You can make # more right now.}}"
-msgstr "{count, plural, other {Puoi crearne ancora # adesso.}}"
+msgctxt "VSfWXI"
+msgid "{count, plural, one {You can create # more map right now.} other {You can create # more maps right now.}}"
+msgstr "{count, plural, one {Al momento puoi creare ancora # mappa.} other {Al momento puoi creare ancora # mappe.}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "BekXxP"

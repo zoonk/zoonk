@@ -23,12 +23,16 @@ import {
 } from "../exam/exam-moment-card";
 import { useTodayScreen } from "./today-context";
 
-function ExamMomentAction({ afterExam, href }: { afterExam: boolean; href: string }) {
+/** The card's one action, which also names the folded line's opener on a phone. */
+function useExamMomentActionLabel(moment: ExamMomentView): string {
   const t = useExtracted();
+  return moment.stage === "afterExam" ? t("Add your result") : t("See your exam");
+}
 
+function ExamMomentAction({ href, label }: { href: string; label: string }) {
   return (
     <SuggestionLinkAction href={href} variant={useMainActionVariant()}>
-      {afterExam ? t("Add your result") : t("See your exam")}
+      {label}
     </SuggestionLinkAction>
   );
 }
@@ -36,6 +40,7 @@ function ExamMomentAction({ afterExam, href }: { afterExam: boolean; href: strin
 function ExamMomentSuggestion({ href, moment }: { href: string; moment: ExamMomentView }) {
   const t = useExtracted();
   const copy = useExamMomentCopy(moment);
+  const actionLabel = useExamMomentActionLabel(moment);
 
   if (!copy) {
     return null;
@@ -47,7 +52,7 @@ function ExamMomentSuggestion({ href, moment }: { href: string; moment: ExamMome
     <Suggestion data-slot="today-exam-moment" label={t("Your exam")} mark={<Icon />}>
       <SuggestionLine>
         <SuggestionSummary>{copy.title}</SuggestionSummary>
-        <SuggestionOpen />
+        <SuggestionOpen>{actionLabel}</SuggestionOpen>
       </SuggestionLine>
 
       <SuggestionContent>
@@ -58,7 +63,7 @@ function ExamMomentSuggestion({ href, moment }: { href: string; moment: ExamMome
         </SuggestionDescription>
         <ExamChecklist items={moment.checklist} tools={moment.tools} />
         <SuggestionActions>
-          <ExamMomentAction afterExam={moment.stage === "afterExam"} href={href} />
+          <ExamMomentAction href={href} label={actionLabel} />
         </SuggestionActions>
       </SuggestionContent>
     </Suggestion>
