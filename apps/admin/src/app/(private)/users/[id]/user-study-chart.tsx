@@ -1,16 +1,10 @@
 import { AdminBarChart } from "@/components/admin-bar-chart";
 import { AdminSection } from "@/components/admin-section";
 import { listUserActivity } from "@/data/users/list-user-activity";
-import { formatCount } from "@/lib/format";
+import { formatCount, formatDay } from "@/lib/format";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 
 const DAYS = 30;
-
-const DAY_LABEL = new Intl.DateTimeFormat("en", {
-  day: "numeric",
-  month: "short",
-  timeZone: "UTC",
-});
 
 /** The last 30 days, a bar a day: whether they are studying now, and when they stopped. */
 export async function UserStudyChart({ userId }: { userId: string }) {
@@ -25,7 +19,7 @@ export async function UserStudyChart({ userId }: { userId: string }) {
     const day = new Date(start.getTime() + index * MS_PER_DAY);
 
     return {
-      label: DAY_LABEL.format(day),
+      label: formatDay(day),
       value: byDay.get(day.toISOString().slice(0, 10))?.timeSpentSeconds ?? 0,
     };
   });

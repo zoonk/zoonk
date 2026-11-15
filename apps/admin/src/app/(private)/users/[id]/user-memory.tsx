@@ -2,6 +2,7 @@ import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
 import { type UserMemory, listUserMemory } from "@/data/users/list-user-memory";
 import { formatDate, toWords } from "@/lib/format";
 import { type MemoryCategory } from "@zoonk/db/enums";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import {
   CalendarClockIcon,
   EarIcon,
@@ -63,7 +64,7 @@ function FactRow({ fact, userId }: { fact: MemoryFactRow; userId: string }) {
             fact.expiresAt && `expires ${formatDate(fact.expiresAt)}`,
           ]
             .filter(Boolean)
-            .join(" · ")}
+            .join(FACT_SEPARATOR)}
         </span>
       </span>
       <EraseMemoryFactButton factId={fact.id} userId={userId} />
@@ -128,7 +129,7 @@ export async function UserMemorySection({ userId }: { userId: string }) {
                   <span className="text-muted-foreground text-xs">
                     {[formatDate(insight.localDate), insight.kind, insight.status]
                       .flatMap((value) => (value ? [toWords(value)] : []))
-                      .join(" · ")}
+                      .join(FACT_SEPARATOR)}
                   </span>
                 </span>
               </li>

@@ -10,6 +10,7 @@ import {
   type MissingAudioResource,
   listMissingAudio,
 } from "@/data/media/list-missing-audio";
+import { languageName } from "@/lib/language-filter";
 import { TableCell } from "@zoonk/ui/components/table";
 import Link from "next/link";
 import { type MissingAudioResourceKind } from "./_actions/upload-missing-audio";
@@ -77,7 +78,7 @@ function MissingAudioTable({
           <TableCell className="max-w-80 min-w-48 font-medium whitespace-normal">
             {resource.text}
           </TableCell>
-          <TableCell className="uppercase">{resource.targetLanguage}</TableCell>
+          <TableCell>{languageName(resource.targetLanguage)}</TableCell>
           <TableCell className="max-w-80 min-w-48 whitespace-normal">
             <MissingAudioLessons resource={resource} />
           </TableCell>

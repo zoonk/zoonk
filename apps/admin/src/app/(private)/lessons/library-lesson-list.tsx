@@ -13,6 +13,7 @@ import { formatCount, formatDate, toWords } from "@/lib/format";
 import { languageName } from "@/lib/language-filter";
 import { type LibraryLessonStatus, libraryLessonStatusLabels } from "@/lib/library-lesson-filters";
 import { TableCell } from "@zoonk/ui/components/table";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 
 const columns: AdminTableColumn[] = [
   { label: "Lesson", twoLines: true },
@@ -47,7 +48,7 @@ function LessonRow({ lesson }: { lesson: ListedLibraryLesson }) {
           lesson.visibility === "private" && "Private",
         ]
           .filter(Boolean)
-          .join(" · ")}
+          .join(FACT_SEPARATOR)}
         title={lesson.title}
       />
       <TableCell>

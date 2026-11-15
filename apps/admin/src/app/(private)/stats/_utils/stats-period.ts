@@ -1,3 +1,4 @@
+import { formatDayRange } from "@/lib/format";
 import {
   type HistoryPeriod,
   calculateDateRanges,
@@ -117,7 +118,7 @@ export async function getStatsPeriod(params: StatsSearchParams) {
       comparisonLabel: "vs previous period",
       offset: 0,
       period: requestedPeriod,
-      periodLabel: formatCustomRange(customRange),
+      periodLabel: formatDayRange(customRange),
     };
   }
 
@@ -135,15 +136,6 @@ export async function getStatsPeriod(params: StatsSearchParams) {
     periodLabel: formatPeriodLabel(current.start, current.end, period, "en"),
     previous,
   };
-}
-
-function formatCustomRange({ end, start }: { end: Date; start: Date }): string {
-  return new Intl.DateTimeFormat("en", {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-    year: "numeric",
-  }).formatRange(start, end);
 }
 
 function getComparisonLabel(period: HistoryPeriod): string {

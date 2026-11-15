@@ -1,6 +1,6 @@
 import { AdminSection } from "@/components/admin-section";
 import { listUserActivity } from "@/data/users/list-user-activity";
-import { formatCount, formatDate } from "@/lib/format";
+import { formatCount, formatDate, formatMonth } from "@/lib/format";
 import { formatDuration } from "@/lib/format-duration";
 import { type ChartPointDetail } from "@zoonk/ui/components/chart-inspector";
 import {
@@ -44,8 +44,6 @@ function intensityClass({ longest, seconds }: { longest: number; seconds: number
   return INTENSITY_CLASSES[Math.max(1, Math.ceil((seconds / longest) * LEVELS))] ?? "";
 }
 
-const MONTH = new Intl.DateTimeFormat("en", { month: "short", timeZone: "UTC" });
-
 type ActivityDay = { date: Date; index: number; row?: { timeSpentSeconds: number } };
 
 function ActivityWeek({ longest, week }: { longest: number; week: ActivityDay[] }) {
@@ -53,9 +51,7 @@ function ActivityWeek({ longest, week }: { longest: number; week: ActivityDay[] 
 
   return (
     <ContributionCalendarWeek>
-      {month ? (
-        <ContributionCalendarPeriod>{MONTH.format(month)}</ContributionCalendarPeriod>
-      ) : null}
+      {month ? <ContributionCalendarPeriod>{formatMonth(month)}</ContributionCalendarPeriod> : null}
       {week.map((day) => (
         <ContributionCalendarDay
           className={intensityClass({ longest, seconds: day.row?.timeSpentSeconds ?? 0 })}

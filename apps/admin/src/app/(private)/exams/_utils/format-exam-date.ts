@@ -1,11 +1,5 @@
-/** Dates are calendar days stored as UTC midnight, so UTC keeps "Nov 15" from showing as "Nov 14". */
+import { formatDay } from "@/lib/format";
+
 export function formatExamDate(date: Date | null): string {
-  return date
-    ? date.toLocaleDateString("en", {
-        day: "numeric",
-        month: "short",
-        timeZone: "UTC",
-        year: "numeric",
-      })
-    : "—";
+  return date ? formatDay(date, { year: true }) : "—";
 }

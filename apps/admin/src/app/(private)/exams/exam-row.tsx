@@ -6,6 +6,7 @@ import { countryName } from "@/lib/country-name";
 import { formatDate } from "@/lib/format";
 import { languageName } from "@/lib/language-filter";
 import { TableCell } from "@zoonk/ui/components/table";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { formatExamDate } from "./_utils/format-exam-date";
 
 export function ExamRow({ exam }: { exam: ListedExam }) {
@@ -13,7 +14,9 @@ export function ExamRow({ exam }: { exam: ListedExam }) {
     <AdminTableRow>
       <AdminNameCell
         href={`/exams/${exam.id}`}
-        note={[exam.board, exam.role, languageName(exam.language)].filter(Boolean).join(" · ")}
+        note={[exam.board, exam.role, languageName(exam.language)]
+          .filter(Boolean)
+          .join(FACT_SEPARATOR)}
         title={exam.name}
       />
       <TableCell>{countryName(exam.country)}</TableCell>

@@ -1,13 +1,12 @@
 import { AdminTableRow } from "@/components/admin-table-row";
 import { type SignupRetentionRow, getSignupRetention } from "@/data/stats/get-signup-retention";
-import { formatPercent } from "@/lib/format";
+import { formatDay, formatPercent } from "@/lib/format";
 import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
 import { AdminAnalysisTable } from "../_components/admin-analysis-table";
 import { toPercent } from "../_utils/metric-trend";
 import { type StatsPeriod } from "../_utils/stats-period";
 
 /** Signup weeks are UTC dates, so they're shown in UTC to name the same Monday everywhere. */
-const weekFormat = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" });
 
 export async function RetentionAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const rows = await getSignupRetention(statsPeriod.current.start, statsPeriod.current.end);
@@ -44,7 +43,9 @@ export async function RetentionAnalysis({ statsPeriod }: { statsPeriod: StatsPer
 function RetentionRow({ row }: { row: SignupRetentionRow }) {
   return (
     <AdminTableRow>
-      <TableCell className="font-medium">Week of {weekFormat.format(row.signupWeek)}</TableCell>
+      <TableCell className="font-medium">
+        Week of {formatDay(row.signupWeek, { year: true })}
+      </TableCell>
       <TableCell numeric>{row.signups.toLocaleString()}</TableCell>
       <RetentionCell eligible={row.d1Eligible} retained={row.d1Retained} />
       <RetentionCell eligible={row.d7Eligible} retained={row.d7Retained} />

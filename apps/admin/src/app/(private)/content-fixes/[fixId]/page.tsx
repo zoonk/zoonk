@@ -12,6 +12,7 @@ import { getContentFix, rowKeyOf } from "@/data/content-fixes/get-content-fix";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { languagePairName } from "@/lib/language-filter";
 import { LINK_CLASS } from "@/lib/link-class";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { getMainPageUrl } from "@zoonk/utils/url";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
@@ -214,7 +215,7 @@ function Outcome({ fix, viewer }: { fix: ContentFixDetail; viewer: ContentFixVie
             fix.decidedAt ? formatDateTime(fix.decidedAt) : null,
           ]
             .filter(Boolean)
-            .join(" · ")}
+            .join(FACT_SEPARATOR)}
         </p>
       </div>
 

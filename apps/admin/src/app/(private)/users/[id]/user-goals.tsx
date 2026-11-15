@@ -5,6 +5,7 @@ import { type UserGoal, listUserGoals } from "@/data/users/list-user-goals";
 import { formatDate, toWords } from "@/lib/format";
 import { languagePairName } from "@/lib/language-filter";
 import { Meter, MeterFill } from "@zoonk/ui/components/meter";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import {
   CalendarXIcon,
   FastForwardIcon,
@@ -21,7 +22,7 @@ import Link from "next/link";
 function goalFacts(goal: UserGoal): string {
   return [toWords(goal.kind), languagePairName(goal), goal.examBlueprint?.name]
     .filter(Boolean)
-    .join(" · ");
+    .join(FACT_SEPARATOR);
 }
 
 /** A goal as the learner's plan shows it: how much of it is done, drawn, then its pace and date. */

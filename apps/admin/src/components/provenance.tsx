@@ -1,4 +1,5 @@
 import { formatDateTime } from "@/lib/format";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { DetailField, DetailFields } from "./detail-field";
 
 const RUN_ID_PREFIX_LENGTH = 8;
@@ -21,7 +22,7 @@ export function ProvenanceLine({ provenance }: { provenance: ProvenanceValue }) 
       <span className="text-muted-foreground font-mono">
         {[provenance.promptVersion, provenance.runId?.slice(0, RUN_ID_PREFIX_LENGTH)]
           .filter(Boolean)
-          .join(" · ")}
+          .join(FACT_SEPARATOR)}
       </span>
     </span>
   );

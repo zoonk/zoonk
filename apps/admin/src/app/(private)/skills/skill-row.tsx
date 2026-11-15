@@ -4,6 +4,7 @@ import { type ListedSkill } from "@/data/skills/list-skills";
 import { toWords } from "@/lib/format";
 import { languageName } from "@/lib/language-filter";
 import { TableCell } from "@zoonk/ui/components/table";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 
 export function SkillRow({ skill }: { skill: ListedSkill }) {
   return (
@@ -16,7 +17,7 @@ export function SkillRow({ skill }: { skill: ListedSkill }) {
           skill.mergedIntoId && "Merged into another skill",
         ]
           .filter(Boolean)
-          .join(" · ")}
+          .join(FACT_SEPARATOR)}
         title={skill.name}
       />
       <TableCell>{skill.level ? toWords(skill.level) : null}</TableCell>

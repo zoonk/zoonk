@@ -2,6 +2,7 @@ import { AdminSection, AdminSectionEmpty, AdminSectionSkeleton } from "@/compone
 import { type AdminReviewFlag, listOpenReviewFlags } from "@/data/review-flags/list-review-flags";
 import { formatDate, toWords } from "@/lib/format";
 import { getItemLabel } from "@/lib/item-label";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import Link from "next/link";
 import { ReviewFlagActions } from "./review-flag-actions";
 
@@ -31,7 +32,7 @@ function FlaggedContent({ flag }: { flag: AdminReviewFlag }) {
           {getItemLabel(flag.item)}
         </Link>
         <span className="text-muted-foreground block text-xs">
-          {["Practice question", flag.item.sourceCitation].filter(Boolean).join(" · ")}
+          {["Practice question", flag.item.sourceCitation].filter(Boolean).join(FACT_SEPARATOR)}
         </span>
       </>
     );
