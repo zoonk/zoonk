@@ -16,7 +16,8 @@ import { useLocalExamGoal, useLocalGoalExample } from "./use-local-goal-example"
 
 type GoalExample = { kind: string; label: string };
 
-function useGoalExamples(): GoalExample[] {
+/** The one set of example goals, a learner's own exam and language first. */
+export function useGoalExamples(): GoalExample[] {
   const t = useExtracted();
   const quickExplanation = useQuickExplanationLabel();
   const { language } = useLocalGoalExample();

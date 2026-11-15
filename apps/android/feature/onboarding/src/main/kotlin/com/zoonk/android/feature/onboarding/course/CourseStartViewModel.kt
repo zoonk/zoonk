@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.serialization.saved
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.onboarding.CourseStarted
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -28,6 +29,9 @@ internal class CourseStartViewModel(
     private val store: OnboardingStore,
     handle: SavedStateHandle,
 ) : ViewModel() {
+    /** The page's visit: a start that didn't save says so only on it. */
+    val visit = Visit()
+
     private var savedLevel by handle.saved { "" }
 
     var level by mutableStateOf(levelOf(savedLevel))
@@ -37,8 +41,10 @@ internal class CourseStartViewModel(
     var isStarting by mutableStateOf(false)
         private set
 
-    var failure by mutableStateOf<CourseStartFailure?>(null)
-        private set
+    private val startFailure = visit.outcome<CourseStartFailure>()
+
+    /** Why the start didn't go through, on this visit: leaving for a refusal's remedy lets the allowance say again what's left. */
+    val failure get() = startFailure.value
 
     /** The screen showing now leads there, since this outlives the one that tapped. */
     var started by mutableStateOf<CourseStarted?>(null)
@@ -49,11 +55,6 @@ internal class CourseStartViewModel(
         savedLevel = next.key()
     }
 
-    /** Leaving for a refusal's remedy (an account, Plus, the Plan) lets the allowance say again what's left. */
-    fun clearFailure() {
-        failure = null
-    }
-
     /** A chapter's start skips the level: the plan starts at that chapter. */
     fun start(
         courseId: String,
@@ -62,7 +63,8 @@ internal class CourseStartViewModel(
     ) {
         if (isStarting) return
         isStarting = true
-        failure = null
+        startFailure.clear()
+        val asked = visit.number
         viewModelScope.launch {
             when (val outcome = store.startCourse(courseId, chapterId, dailyMinutes, level.takeIf { chapterId == null })) {
                 is WriteOutcome.Done -> {
@@ -71,11 +73,11 @@ internal class CourseStartViewModel(
                 }
 
                 is WriteOutcome.Refused -> {
-                    failure = CourseStartFailure.Limit(outcome.refusal.goalLimitReason())
+                    startFailure.send(asked, CourseStartFailure.Limit(outcome.refusal.goalLimitReason()))
                 }
 
                 WriteOutcome.Failed -> {
-                    failure = CourseStartFailure.Failed
+                    startFailure.send(asked, CourseStartFailure.Failed)
                 }
 
                 WriteOutcome.Obsolete -> {}

@@ -1,4 +1,5 @@
 import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
+import { getNotFoundWords } from "@/components/public/not-found-message";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
@@ -11,7 +12,7 @@ const EXAMPLE_LINK = "zoonk.com/c/K7QF\u20112M9X\u2011HD4P";
  * stays on the page instead of `notFound()`, which would swap in the site's generic message.
  */
 export async function CertificateNotFound() {
-  const t = await getExtracted();
+  const [t, { home }] = await Promise.all([getExtracted(), getNotFoundWords()]);
 
   return (
     <section className="bg-ground">
@@ -23,10 +24,14 @@ export async function CertificateNotFound() {
           </p>
           {/* oxlint-disable-next-line next/no-html-link-for-pages -- A full load of the home page also resets whatever broke the route. */}
           <a
-            className={buttonVariants({ className: "mt-6 w-full sm:w-auto", size: "lg" })}
+            className={buttonVariants({
+              className: "mt-6 w-full sm:w-auto",
+              size: "lg",
+              variant: "outline",
+            })}
             href="/"
           >
-            {t("Go to Zoonk")}
+            {home}
           </a>
         </div>
       </div>

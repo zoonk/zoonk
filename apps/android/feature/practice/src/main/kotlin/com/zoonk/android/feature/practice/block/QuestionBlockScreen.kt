@@ -51,6 +51,7 @@ import com.zoonk.android.feature.session.toDayStep
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.MomentReadouts
@@ -120,6 +121,7 @@ internal fun QuestionBlockContent(
     val close = viewModel::close
 
     BackHandler(onBack = close)
+    VisitOf(viewModel.visit)
     LaunchedEffect(closed) { if (closed) onClose() }
     LaunchedEffect(move.leaving) { move.leaving?.let(onLeave) }
 

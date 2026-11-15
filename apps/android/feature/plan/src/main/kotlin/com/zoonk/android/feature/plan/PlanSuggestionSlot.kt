@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.Visit
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
@@ -152,15 +153,25 @@ internal class SlotState(
     position: Int = 0,
     dismissed: List<String> = emptyList(),
     intent: CoverageIntent = CoverageIntent.Time,
+    private val visit: Visit = Visit(),
 ) {
+    private val shownResult = visit.outcome<SlotResult>()
+    private val failure = visit.outcome<String>()
+
     var position by mutableIntStateOf(position)
 
     /** Keys put off with Not now until the Plan is opened again. */
     var dismissed by mutableStateOf(dismissed)
-    var result by mutableStateOf<SlotResult?>(null)
 
-    /** The key of the item whose change didn't save. */
-    var failed by mutableStateOf<String?>(null)
+    /** What the slot's save did, on the Plan's visit that asked. */
+    var result: SlotResult?
+        get() = shownResult.value
+        set(value) = if (value == null) shownResult.clear() else shownResult.send(visit.number, value)
+
+    /** The key of the item whose change didn't save, on the Plan's visit that asked. */
+    var failed: String?
+        get() = failure.value
+        set(value) = if (value == null) failure.clear() else failure.send(visit.number, value)
     var intent by mutableStateOf(intent)
     var dateSearch by mutableStateOf<DateSearch?>(null)
 

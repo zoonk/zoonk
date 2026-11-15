@@ -2,6 +2,7 @@ import { type Bounds, type Capture, type CaptureElement } from "./alignment-capt
 /* oxlint-disable max-lines, max-lines-per-function, max-statements, complexity, unicorn/consistent-function-scoping -- `readAlignment` is sent to the page as one function, so its helpers live inside it (`probe.mts`). */
 import { type Part, type WebPiece } from "./alignment-table.mts";
 import { type Scheme, VIEWPORTS, type ViewportName } from "./viewports.mts";
+import { pageKind } from "./words.mts";
 
 export type AlignmentPage = Pick<Capture, "activeSurface" | "elements">;
 
@@ -190,7 +191,31 @@ export function readAlignment({
       });
   }
 
+  /**
+   * A system face (the auth pages' `ui-sans-serif`) has no `@font-face` of its own: the platform's
+   * face draws Latin, Greek and Cyrillic, capitals included, and the canvas resolves the same face.
+   */
+  const SYSTEM_FACES = new Set([
+    "-apple-system",
+    "blinkmacsystemfont",
+    "sans-serif",
+    "serif",
+    "system-ui",
+    "ui-monospace",
+    "ui-sans-serif",
+    "ui-serif",
+  ]);
+
+  const CAPITAL_SCRIPTS =
+    /^[\p{Script=Latin}\p{Script=Greek}\p{Script=Cyrillic}\p{Script=Common}\p{Script=Inherited}]*$/u;
+
   function drawnByPrimary(text: string, style: CSSStyleDeclaration) {
+    const family = style.fontFamily.split(",")[0]?.replaceAll(/["']/gu, "").trim() ?? "";
+
+    if (SYSTEM_FACES.has(family.toLowerCase())) {
+      return CAPITAL_SCRIPTS.test(text);
+    }
+
     const ranges = primaryRanges(style);
 
     const codes: number[] = [];
@@ -634,11 +659,42 @@ export function readAlignment({
         (!column || column.contains(cell)) &&
         within(cell)
       ) {
-        return cell;
+        return isCard(cell) ? (paddedSection(element, cell) ?? cell) : cell;
       }
     }
 
     return column;
+  }
+
+  /**
+   * A card with no side padding of its own lays out its content in sections that pad it (the
+   * example plans' head and day, a sheet's body): the outermost one across the card is the column.
+   */
+  function paddedSection(element: Element, card: Element) {
+    const { pixels } = globalThis.zoonkPage;
+    const style = getComputedStyle(card);
+
+    if (pixels(style.paddingLeft) > 0 || pixels(style.paddingRight) > 0) {
+      return null;
+    }
+
+    const inner = card.getBoundingClientRect();
+    let section: Element | null = null;
+
+    for (let cell = element.parentElement; cell && cell !== card; cell = cell.parentElement) {
+      const box = cell.getBoundingClientRect();
+      const own = getComputedStyle(cell);
+
+      if (
+        box.left <= inner.left + pixels(style.borderLeftWidth) + 1 &&
+        box.right >= inner.right - pixels(style.borderRightWidth) - 1 &&
+        (pixels(own.paddingLeft) > 0 || pixels(own.paddingRight) > 0)
+      ) {
+        section = cell;
+      }
+    }
+
+    return section;
   }
 
   // A measure is rems and pixels, so one value draws one width wherever it's set.
@@ -693,6 +749,12 @@ export function readAlignment({
 
   const declaredGroups = pieces.map(({ web: piece }) => piece.group).join(", ");
 
+  /** The pinned bar a group is drawn in, which carries it over the page (`pinned.N`). */
+  function pinnedIn(group: Element): Pick<CaptureElement, "pinnedIn"> {
+    const index = pinnedShown.findIndex((bar) => bar.contains(group));
+    return index === -1 ? {} : { pinnedIn: `pinned.${index}` };
+  }
+
   /** A group no other declared group holds starts and ends on its column's edges (`spanLeads`). */
   function columnFields(group: Element): Pick<CaptureElement, "column" | "frame"> {
     const column = group.parentElement?.closest(declaredGroups) ? null : columnOf(group);
@@ -724,6 +786,10 @@ export function readAlignment({
 
     const candidates = listed
       .flatMap((row) => expandRows(row))
+      .flatMap((row) => {
+        const inner = piece.nested ? [...row.querySelectorAll(piece.nested)] : [];
+        return inner.length > 0 ? inner : [row];
+      })
       .filter(
         (row) => isRowOf(row) && !["absolute", "fixed"].includes(getComputedStyle(row).position),
       );
@@ -764,6 +830,7 @@ export function readAlignment({
         endEdge: (bar ? bar.getBoundingClientRect().right : contentEnd(group)) + scrollX,
         group: null,
         id: groupId,
+        ...pinnedIn(group),
         ink: groupInk ? bounds(groupInk) : null,
         name: name(group.getAttribute("aria-label") ? group : (rows[0] ?? group)),
         part: "group",
@@ -780,6 +847,13 @@ export function readAlignment({
       ),
     ];
   }
+
+  // Only at the scroll's end can the page be judged for what it leaves under a pinned bar.
+  const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 1;
+
+  const pinnedShown = (atEnd ? [...document.querySelectorAll(pinnedBars)] : []).filter(
+    (bar) => present(bar) && ["fixed", "sticky"].includes(getComputedStyle(bar).position),
+  );
 
   const elements = pieces.flatMap(({ name: pieceName, web: piece }) =>
     [...document.querySelectorAll(piece.group)]
@@ -962,6 +1036,48 @@ export function readAlignment({
       });
     };
 
+    /** What a control draws inside its box: its glyph's and its words' ink. */
+    const contentInk = (element: Element): Rect | null => {
+      const texts = [...element.childNodes]
+        .filter((node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
+        .flatMap((node) => {
+          const range = document.createRange();
+          range.selectNodeContents(node);
+          return [...range.getClientRects()].filter((rect) => rect.width > 0);
+        });
+
+      return union([...texts, ...[...element.children].flatMap((child) => inkOf(child) ?? [])]);
+    };
+
+    /**
+     * A control with no outline hangs its hover box past the column so its glyph's ink sits on the
+     * edge (craft's deliberate choices): its box, filled while hovered or open, is read by that ink.
+     */
+    const isGhost = (element: Element) =>
+      element.matches("a, button, [role=button]") &&
+      getComputedStyle(element).getPropertyValue("--button-variant").trim() === "ghost";
+
+    /**
+     * Where a strip that scrolls sideways (`HorizontalScroll`) continues, it fades past the column,
+     * the sign that it scrolls: what passes the column on that side is under the fade.
+     */
+    const unfaded = (element: Element, area: Rect, edges: { left: number; right: number }) => {
+      const scroller = element.closest("[data-slot=horizontal-scroll] > *");
+
+      if (!(scroller instanceof HTMLElement)) {
+        return area;
+      }
+
+      const left = scroller.scrollLeft > 1;
+      const right = scroller.scrollLeft < scroller.scrollWidth - scroller.clientWidth - 1;
+
+      return {
+        ...area,
+        left: left ? Math.max(area.left, edges.left) : area.left,
+        right: right ? Math.min(area.right, edges.right) : area.right,
+      };
+    };
+
     type Kind = NonNullable<CaptureElement["kind"]>;
 
     const kindOf = (element: Element, box: Rect): Kind => {
@@ -986,12 +1102,29 @@ export function readAlignment({
           edges.left - box.left > PAST || box.right - edges.right > PAST;
 
         // Only what shows: a strip that scrolls sideways (a calendar) clips the cells past its edge.
-        const area = shownArea(element);
+        const area = unfaded(element, shownArea(element), edges);
         const shows = (box: Rect | null) => within(area, box);
         const highlight = shows(beforeFill(element));
 
+        const ghostInk = isGhost(element) ? contentInk(element) : null;
+        const controlBox = element.getBoundingClientRect();
+
+        const hangEdges: ("end" | "start")[] = [
+          ...(controlBox.left < edges.left - PAST ? ["start" as const] : []),
+          ...(controlBox.right > edges.right + PAST ? ["end" as const] : []),
+        ];
+
+        const ghostMiss =
+          ghostInk &&
+          hangEdges.some(
+            (edge) =>
+              Math.abs(
+                edge === "start" ? ghostInk.left - edges.left : ghostInk.right - edges.right,
+              ) > PAST,
+          );
+
         const ownBox = globalThis.zoonkPage.paints(element, ["top", "right", "bottom", "left"])
-          ? shows(element.getBoundingClientRect())
+          ? shows(isGhost(element) ? ghostInk : controlBox)
           : null;
 
         const line = ownBox ? null : shows(ruleOf(element));
@@ -1008,7 +1141,7 @@ export function readAlignment({
         // touches one passing it (a grid's middle tile) is part of that line.
         const found: { box: Rect; kind: Kind; passing: boolean }[] = [
           ...(highlight && passes(highlight) ? [{ box: highlight, kind: lit, passing: true }] : []),
-          ...(ownBox && passes(ownBox)
+          ...(ownBox && (passes(ownBox) || ghostMiss)
             ? [{ box: ownBox, kind: current ? lit : kindOf(element, ownBox), passing: true }]
             : []),
           ...[line, ...pseudoRules(element).map((rule) => shows(rule))]
@@ -1022,6 +1155,7 @@ export function readAlignment({
 
         return found.map(({ box, kind, passing }, part) => ({
           fill: {
+            ...(box === ownBox && ghostMiss ? { hangEdges } : {}),
             bounds: bounds(box),
             column: [edges.left + scrollX, edges.right + scrollX],
             frame: [edges.frame.left + scrollX, edges.frame.right + scrollX],
@@ -1163,23 +1297,376 @@ export function readAlignment({
     ];
   });
 
-  // Only at the scroll's end can the page be judged for what it leaves under a pinned bar.
-  const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 1;
+  const pinned = pinnedShown.map((bar, index): CaptureElement => ({
+    bounds: bounds(boxOf(bar)),
+    group: null,
+    id: `pinned.${index}`,
+    ink: null,
+    name: name(bar),
+    part: "pinned",
+    piece: "page",
+    row: null,
+  }));
 
-  const pinned = (atEnd ? [...document.querySelectorAll(pinnedBars)] : [])
-    .filter((bar) => present(bar) && ["fixed", "sticky"].includes(getComputedStyle(bar).position))
-    .map((bar, index): CaptureElement => ({
-      bounds: bounds(boxOf(bar)),
+  function pagePart(
+    element: Element,
+    part: "text" | "control" | "cut",
+    index: number,
+  ): CaptureElement {
+    return {
+      bounds: bounds(boxOf(element)),
       group: null,
-      id: `pinned.${index}`,
+      id: `${part}.${index}`,
       ink: null,
-      name: name(bar),
-      part: "pinned",
+      name: name(element),
+      part,
       piece: "page",
       row: null,
-    }));
+      surface: surfaceOf(element),
+    };
+  }
 
-  const all = [...elements, ...actions, ...anchored, ...pinned, ...readBleeds()];
+  /** Character ranges preserve the browser's actual line breaks, including breaks inside a text node. */
+  function lineTexts(element: Element): string[] {
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+    const lines: { top: number; height: number; right: number; text: string }[] = [];
+
+    function readNode(node: Node) {
+      if (
+        !(node instanceof Text) ||
+        !node.parentElement ||
+        !present(node.parentElement) ||
+        textRoot(node.parentElement) !== element ||
+        node.parentElement.closest("kbd")
+      ) {
+        return;
+      }
+
+      const range = document.createRange();
+
+      for (let index = 0; index < node.length; index += 1) {
+        range.setStart(node, index);
+        range.setEnd(node, index + 1);
+        const rect = [...range.getClientRects()].find((box) => box.width > 0 && box.height > 0);
+
+        if (rect) {
+          const line = lines.find(
+            (candidate) =>
+              ((rect.top + rect.bottom) / 2 >= candidate.top &&
+                (rect.top + rect.bottom) / 2 < candidate.top + candidate.height) ||
+              (candidate.top + candidate.height / 2 >= rect.top &&
+                candidate.top + candidate.height / 2 < rect.bottom),
+          );
+
+          if (line) {
+            line.text += `${rect.left > line.right + 1 ? " " : ""}${node.data[index] ?? ""}`;
+            line.right = rect.right;
+          } else {
+            lines.push({
+              height: rect.height,
+              right: rect.right,
+              text: node.data[index] ?? "",
+              top: rect.top,
+            });
+          }
+        }
+      }
+    }
+
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      readNode(node);
+    }
+
+    return lines
+      .toSorted((a, b) => a.top - b.top)
+      .map((line) => line.text.trim())
+      .filter(Boolean);
+  }
+
+  function textRole(flow: Element): CaptureElement["textRole"] {
+    if (flow.closest("[data-slot=list-row-description]")) {
+      return undefined;
+    }
+
+    const element =
+      flow.closest(
+        "h1,h2,h3,h4,h5,h6,p,label,[data-slot=list-row-description],button,[role=button],[data-slot=button],[data-slot$=title],[data-slot*=facts]",
+      ) ?? flow;
+
+    if (element.matches("h1,h2,h3,h4,h5,h6,[data-slot$=title]")) {
+      return "title";
+    }
+
+    if (element.matches("button,[role=button],[data-slot=button]")) {
+      return "button";
+    }
+
+    if (element.matches("label,[data-slot=list-row-title]")) {
+      return "label";
+    }
+
+    if (
+      element.matches("[data-slot*=facts],[data-slot=task-meta]") ||
+      /\s·\s/u.test(element.textContent ?? "")
+    ) {
+      return "facts";
+    }
+
+    return undefined;
+  }
+
+  function textRoot(parent: Element): Element {
+    const semantic = parent.closest(
+      "h1,h2,h3,h4,h5,h6,p,label,[data-slot=list-row-description],button,[role=button],[data-slot=button],[data-slot$=title],[data-slot*=facts]",
+    );
+
+    let root = parent;
+
+    while (root !== semantic && root.parentElement && !root.parentElement.matches("body,html")) {
+      const style = getComputedStyle(root);
+      const container = getComputedStyle(root.parentElement);
+
+      if (
+        ["flex", "inline-flex", "grid", "inline-grid"].includes(container.display) ||
+        ["block", "flex", "grid", "flow-root"].includes(style.display)
+      ) {
+        return root;
+      }
+
+      root = root.parentElement;
+    }
+
+    return semantic ?? root;
+  }
+
+  function readPageTexts(): CaptureElement[] {
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const roots = new Set<Element>();
+
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const parent = node.parentElement;
+
+      if (
+        node.textContent?.trim() &&
+        parent &&
+        present(parent) &&
+        !parent.closest("script,style,svg,kbd")
+      ) {
+        roots.add(textRoot(parent));
+      }
+    }
+
+    return [...roots].map((element, index) => ({
+      ...pagePart(element, "text", index),
+      lineTexts: lineTexts(element),
+      ...(textRole(element) ? { textRole: textRole(element) } : {}),
+    }));
+  }
+
+  function readPageControls(): CaptureElement[] {
+    const selectors =
+      "button,input:not([type=hidden]):not([type=checkbox]):not([type=radio]),select,textarea,[role=button],[data-slot=button],[data-slot=input-group]";
+
+    const parents = new Map<Element | null, string>();
+
+    return [...document.querySelectorAll(selectors)]
+      .filter(
+        (element) =>
+          present(element) &&
+          !element.matches(
+            "[role=checkbox],[role=radio],[role=switch],[data-slot=composer-send],[data-slot=checkbox],[data-slot=radio-group-item],[data-slot=switch]",
+          ) &&
+          !element.parentElement?.closest(
+            "button,[role=button],[data-slot=button],[data-slot=input-group],[data-slot=input-group-addon]",
+          ),
+      )
+      .map((element, index) => {
+        let parent = element.parentElement;
+
+        while (parent && getComputedStyle(parent).display === "contents") {
+          parent = parent.parentElement;
+        }
+
+        if (!parents.has(parent)) {
+          parents.set(parent, `controls.${parents.size}`);
+        }
+
+        return { ...pagePart(element, "control", index), controlParent: parents.get(parent) };
+      });
+  }
+
+  /** A declared clamp and a scrollable ancestor give content a deliberate way to continue. */
+  function allowsOverflow(element: Element): boolean {
+    const style = getComputedStyle(element);
+
+    return (
+      element.matches("input,textarea,select,[data-slot=horizontal-scroll]") ||
+      [style.overflowX, style.overflowY].some((overflow) =>
+        ["auto", "scroll"].includes(overflow),
+      ) ||
+      style.textOverflow === "ellipsis" ||
+      Number(style.webkitLineClamp) > 0
+    );
+  }
+
+  function readUnsignedScrollers(): CaptureElement[] {
+    return [...document.querySelectorAll("body *")].flatMap((element, index) => {
+      if (
+        !(element instanceof HTMLElement) ||
+        !present(element) ||
+        element.closest(
+          "svg,[data-slot=horizontal-scroll],[data-slot=contribution-calendar-viewport]",
+        )
+      ) {
+        return [];
+      }
+
+      const style = getComputedStyle(element);
+      const overflow = style.overflowX;
+      const across = element.scrollWidth - element.clientWidth;
+
+      if (!["auto", "scroll"].includes(overflow) || across <= 1) {
+        return [];
+      }
+
+      return [
+        {
+          ...pagePart(element, "cut", index),
+          id: `unsigned-scroll.${index}`,
+          overflow: [across, 0] as [number, number],
+          reason: "horizontal scroll has no kit scroll sign",
+          text: name(element),
+        },
+      ];
+    });
+  }
+
+  /** An ancestor between fixed content and its containing block does not clip it (https://www.w3.org/TR/CSS22/visufx.html#overflow-clipping). */
+  function containsFixed(element: Element) {
+    const style = getComputedStyle(element);
+
+    const transforms = [
+      style.transform,
+      style.translate,
+      style.rotate,
+      style.scale,
+      style.perspective,
+      style.filter,
+      style.backdropFilter,
+    ];
+
+    return (
+      transforms.some((value) => value && value !== "none") ||
+      /(?:^|\s)(?:layout|paint|strict|content)(?:\s|$)/u.test(style.contain) ||
+      /(?:^|,|\s)(?:transform|translate|rotate|scale|perspective|filter|backdrop-filter|contain)(?:,|\s|$)/u.test(
+        style.willChange,
+      ) ||
+      style.contentVisibility === "auto"
+    );
+  }
+
+  function escapesClip(child: Element, clip: Element): boolean {
+    for (let node: Element | null = child; node && node !== clip; node = node.parentElement) {
+      const position = getComputedStyle(node).position;
+
+      if (["absolute", "fixed"].includes(position)) {
+        const ancestors: Element[] = [];
+
+        for (let parent = node.parentElement; parent; parent = parent.parentElement) {
+          ancestors.push(parent);
+        }
+
+        const container = ancestors.find((parent) => {
+          const placed = getComputedStyle(parent).position;
+
+          return (
+            containsFixed(parent) ||
+            (position === "absolute" && placed !== "" && placed !== "static")
+          );
+        });
+
+        if (!container || (container !== clip && !clip.contains(container))) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  function directTextRects(element: Element) {
+    return [...element.childNodes]
+      .filter((node) => node instanceof Text && node.data.trim())
+      .flatMap((node) => {
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        return [...range.getClientRects()];
+      });
+  }
+
+  function readCuts(): CaptureElement[] {
+    return [...document.querySelectorAll("body *")].flatMap((element, index) => {
+      if (!present(element) || allowsOverflow(element)) {
+        return [];
+      }
+
+      const style = getComputedStyle(element);
+      const across = ["hidden", "clip"].includes(style.overflowX);
+      const down = ["hidden", "clip"].includes(style.overflowY);
+
+      if (!across && !down) {
+        return [];
+      }
+
+      const clipped = [...element.children].flatMap((child) => {
+        const ink = inkOf(
+          child,
+          (descendant) =>
+            !descendant.closest("svg") &&
+            !escapesClip(descendant, element) &&
+            (descendant.matches("input,textarea,select") || !allowsOverflow(descendant)),
+        );
+
+        return ink ? [ink] : [];
+      });
+
+      const ownText = directTextRects(element);
+
+      const ink = union([...clipped, ...ownText]);
+
+      if (!ink) {
+        return [];
+      }
+
+      const box = element.getBoundingClientRect();
+      const x = across ? Math.max(0, box.left - ink.left, ink.right - box.right) : 0;
+      const y = down ? Math.max(0, box.top - ink.top, ink.bottom - box.bottom) : 0;
+
+      if (Math.max(x, y) <= 1) {
+        return [];
+      }
+
+      return [
+        {
+          ...pagePart(element, "cut", index),
+          overflow: [x, y] as [number, number],
+          text: name(element),
+        },
+      ];
+    });
+  }
+
+  const all = [
+    ...elements,
+    ...actions,
+    ...anchored,
+    ...pinned,
+    ...readBleeds(),
+    ...readPageTexts(),
+    ...readPageControls(),
+    ...readCuts(),
+    ...readUnsignedScrollers(),
+  ];
 
   // Null when two surfaces overlap and the document shows no declared surface where they do.
   if (top === null) {
@@ -1194,14 +1681,20 @@ function localeOf(path: string) {
   return /^\/(?<locale>[a-z]{2})(?:\/|$)/u.exec(path)?.groups?.locale ?? "en";
 }
 
+/** The design site (`/design/*` in the playground) shows pieces as specimens: its own surface. */
+const DESIGN_SITE = /^\/design(?:[/?#]|$)/u;
+
 /** A load's capture, in the shape every platform writes. */
 export function webCapture({
+  app,
   page,
   path,
   scheme,
   textScale = 1,
   viewport,
 }: {
+  /** The app that served it, which with the path says what kind of page it is. */
+  app: string;
   page: AlignmentPage;
   path: string;
   scheme: Scheme;
@@ -1209,9 +1702,12 @@ export function webCapture({
   viewport: ViewportName;
 }): Capture {
   const size = VIEWPORTS[viewport];
+  const specimen = app === "playground" && DESIGN_SITE.test(path);
 
   return {
     ...page,
+    ...(specimen ? { specimen } : {}),
+    ...(!specimen && pageKind(app, path) === "marketing" ? { marketing: true } : {}),
     configuration: {
       height: size.viewport?.height ?? 0,
       locale: localeOf(path),
@@ -1221,11 +1717,12 @@ export function webCapture({
       textScale,
       width: size.viewport?.width ?? 0,
     },
+    measurements: ["clipping", "controls", "text-flows"],
     platform: "web",
     scale: size.deviceScaleFactor ?? 1,
     scenario: null,
     screen: path,
     unit: "px",
-    version: 1,
+    version: 2,
   };
 }

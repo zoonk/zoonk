@@ -59,6 +59,7 @@ import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -107,6 +108,7 @@ internal fun CourseStartScreen(
     navigator: AppNavigator,
 ) {
     val vm = viewModel { CourseStartViewModel(store, createSavedStateHandle()) }
+    VisitOf(vm.visit)
     val resource = catalog.course[route.courseId]
     val state by resource.collectShown()
     val caps by allowance.collectShown()
@@ -182,10 +184,7 @@ private fun CourseStartForm(
     val blocked = limit != null && (limit.needsAccount || limit.isPlusLimit)
     val minutes = route.dailyMinutes?.takeIf { it in MIN_DAILY_MINUTES..MAX_DAILY_MINUTES }
     val start = { vm.start(course.id.toString(), chapter?.id?.toString(), minutes) }
-    val remedy = { to: AppRoute ->
-        vm.clearFailure()
-        navigator.open(to)
-    }
+    val remedy = { to: AppRoute -> navigator.open(to) }
 
     SetupColumn {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

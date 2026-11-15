@@ -36,9 +36,10 @@ class MemoryViewModel(
     var lastUndo by mutableStateOf(MemoryUndo.Offered)
         private set
 
-    /** A change didn't save: it was put back. */
-    var saveFailed by mutableStateOf(false)
-        private set
+    private val saveFailure = visit.outcome<Unit>()
+
+    /** A change didn't save on this visit: it was put back. */
+    val saveFailed get() = saveFailure.value != null
 
     var isExporting by mutableStateOf(false)
         private set
@@ -122,8 +123,9 @@ class MemoryViewModel(
     }
 
     private fun save(write: suspend () -> Boolean) {
-        saveFailed = false
-        viewModelScope.launch { saveFailed = !write() }
+        saveFailure.clear()
+        val started = visit.number
+        viewModelScope.launch { if (!write()) saveFailure.send(started, Unit) }
     }
 
     private fun write(

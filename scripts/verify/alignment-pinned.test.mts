@@ -71,4 +71,44 @@ describe("nothing rests under a pinned bar at the scroll's end", () => {
       [],
     );
   });
+
+  it("leaves a control the bar holds alone: Skip beside Continue rides with the bar (C-L04)", () => {
+    const capture = lastRow(752);
+
+    const skip = (pinnedIn?: string) => ({
+      ...capture,
+      elements: [
+        ...capture.elements,
+        element({
+          bounds: [16, 784, 95, 44],
+          group: null,
+          id: "skip",
+          part: "group",
+          piece: "glyph-label",
+          ...(pinnedIn ? { pinnedIn } : {}),
+        }),
+        element({
+          bounds: [16, 784, 95, 44],
+          group: "skip",
+          id: "skip.0",
+          name: '"Skip"',
+          part: "row",
+          piece: "glyph-label",
+        }),
+      ],
+    });
+
+    assert.deepEqual(
+      evaluateCapture(skip("pinned.0")).filter((finding) => finding.rule === "pinned"),
+      [],
+    );
+
+    // A page's own control the bar covers still fails: only what the bar holds rides with it.
+    assert.deepEqual(
+      evaluateCapture(skip())
+        .filter((finding) => finding.rule === "pinned")
+        .map((finding) => finding.detail),
+      ['"Save" covers 68 of "Skip"'],
+    );
+  });
 });

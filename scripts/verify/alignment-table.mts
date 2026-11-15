@@ -12,6 +12,7 @@ export type Relation =
   | "end-edge"
   | "even"
   | "gap"
+  | "helper"
   | "label-start"
   | "lead-start"
   | "line"
@@ -36,6 +37,11 @@ export type WebPiece = {
   groupParts?: Partial<Record<Part, string>>;
   /** Its rows are those that draw words, and a group with none has nothing to compare. */
   words?: boolean;
+  /**
+   * Inside a row, rows of its own the group divides with its others (a radio group's choices
+   * above a list's last row): the row is read as them.
+   */
+  nested?: string;
 };
 
 /**
@@ -66,12 +72,21 @@ export const LIST_GROUP = {
 const PIECES: Piece[] = [
   {
     name: "list-group",
-    relations: ["label-start", "lead-start", "mark-axis", "end-edge", "gap", "type", "line"],
-    web: { ...LIST_GROUP, parts: LIST_PARTS },
+    relations: [
+      "label-start",
+      "lead-start",
+      "mark-axis",
+      "end-edge",
+      "gap",
+      "type",
+      "line",
+      "helper",
+    ],
+    web: { ...LIST_GROUP, nested: ":scope > [data-slot=choice-row]", parts: LIST_PARTS },
   },
   {
     name: "choice-list",
-    relations: ["label-start", "mark-axis", "end-edge", "gap", "type"],
+    relations: ["label-start", "mark-axis", "end-edge", "gap", "type", "helper"],
     web: {
       group:
         "[data-slot=radio-group]:has(> [data-slot=choice-row]), [data-slot=choice-list]:has(> [data-slot=choice-row])",
@@ -126,7 +141,7 @@ const PIECES: Piece[] = [
     name: "journey-path",
     // No gap: a phase row holds its open chapters under it. No type: a word stands in a date's
     // place on purpose ("Won", "Today", "Date to be confirmed").
-    relations: ["label-start", "mark-axis", "end-edge", "line"],
+    relations: ["label-start", "mark-axis", "end-edge", "line", "helper"],
     web: {
       group: "[data-slot=journey-path-list], [data-slot=path-nested]",
       parts: {
@@ -232,14 +247,15 @@ const ACTIONS = "a, button:not([data-slot=composer-send]), [role=button]";
 
 /** What covers the page and becomes the surface its own actions are counted on. */
 const SURFACES =
-  "[role=dialog][aria-modal=true], [role=alertdialog], [data-slot=dialog-content], [data-slot=sheet-content]";
+  "[role=dialog][aria-modal=true], [role=alertdialog], [data-slot=dialog-content], [data-slot=sheet-content], [data-slot=drawer-popup]";
 
 /**
  * The page's columns (craft E7): a drawn box starts and ends on its closest column's content edges,
- * or bleeds as E7 allows. A frame's main column, the column beside an aside, the aside, and `Page`.
+ * or bleeds as E7 allows. A frame's main column, the column beside an aside, the aside, `Page`, and
+ * a task's body and its side pane.
  */
 const COLUMNS =
-  "[data-slot=learn-shell-main], [data-slot=page-with-aside] > div, [data-slot=page-aside], [data-slot=page], [data-slot=task-body]";
+  "[data-slot=learn-shell-main], [data-slot=page-with-aside] > div, [data-slot=page-aside], [data-slot=page], [data-slot=task-body], [data-slot=task-aside-body], [data-slot=task-aside-content]";
 
 /** What `readAlignment` reads a web page by. */
 export const WEB_TABLE = {

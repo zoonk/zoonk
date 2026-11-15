@@ -75,6 +75,7 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByText("Spanish (Argentina)", { exact: true })).toBeVisible();
 
     await page.getByRole("button", { name: "Edit Language" }).click();
+    await expect(page.getByRole("button", { name: "Looks right" })).toBeDisabled();
     await page.getByLabel("Country", { exact: true }).selectOption("ES");
     await page.getByRole("button", { exact: true, name: "Save" }).click();
     await expect(page.getByText("Spanish (Spain)", { exact: true })).toBeVisible();

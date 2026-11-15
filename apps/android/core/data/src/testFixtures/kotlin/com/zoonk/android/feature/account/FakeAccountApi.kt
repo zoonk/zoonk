@@ -6,6 +6,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.account
 import com.zoonk.api.models.AccountDataExport
 import com.zoonk.api.models.MeResponse
+import kotlinx.coroutines.CompletableDeferred
 
 class FakeAccountApi : AccountApi {
     val codesSent = mutableListOf<String>()
@@ -13,6 +14,7 @@ class FakeAccountApi : AccountApi {
     var codeFailure: ApiException? = null
     var takenUsernames = setOf<String>()
     var saveFailure: ApiException? = null
+    var saveGate: CompletableDeferred<Unit>? = null
     val saved = mutableListOf<Pair<String?, String?>>()
     val deletionCodesSent = mutableListOf<String>()
     val deletions = mutableListOf<String?>()
@@ -52,6 +54,7 @@ class FakeAccountApi : AccountApi {
         name: String?,
         username: String?,
     ): MeResponse {
+        saveGate?.await()
         saveFailure?.let { throw it }
         saved += name to username
         return account(session.accountId).let {

@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
@@ -19,7 +20,11 @@ import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanApi
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.session.FakeStudyApi
+import com.zoonk.android.feature.session.StudySessionStore
 import com.zoonk.android.feature.session.decodeFixture
+import com.zoonk.api.ApiJson
+import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.FocusTestFocus
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlanChange
@@ -35,6 +40,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -137,6 +143,84 @@ class FocusTestViewModelTest {
             restored(api, handle)
 
             assertEquals(2, api.sittingsStarted)
+        }
+
+    @Test
+    fun aDecisionThatFailsAfterTheLearnerLeftSaysNothingOnReturn() = decisionFailure(leaveFirst = true)
+
+    @Test
+    fun aDecisionFailureShownBeforeTheLearnerLeftIsGoneOnReturn() = decisionFailure(leaveFirst = false)
+
+    private fun decisionFailure(leaveFirst: Boolean) =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            val api = FakeOnboardingApi().apply { placement = placementOf(next = null, focusTest = focusTestOf()) }
+            val held = CompletableDeferred<Unit>()
+            val plans =
+                object : PlanApi by FakePlanApi() {
+                    override suspend fun decide(
+                        session: AuthenticatedSession,
+                        goalId: UUID,
+                        changeId: UUID,
+                        status: PlanChangeDecisionInput.Status,
+                        quote: String?,
+                    ): PlanChange {
+                        held.await()
+                        throw ApiException(ApiError.Network)
+                    }
+                }
+            val vm = viewModel(api, SavedStateHandle(), plans)
+            val proposal = decodeFixture<PlanChange>("plan-change").copy(source = "focusTest", canApply = true)
+
+            vm.decide(proposal, PlanChangeDecisionInput.Status.APPLIED)
+            runCurrent()
+            if (leaveFirst) vm.visit.end()
+            held.complete(Unit)
+            runCurrent()
+            if (!leaveFirst) {
+                assertTrue(vm.decisionFailed)
+                vm.visit.end()
+            }
+
+            assertFalse(vm.decisionFailed)
+        }
+
+    @Test
+    fun aQuestionsSwitchThatFailsAfterTheLearnerLeftSaysNothingOnReturn() = questionsFailure(leaveFirst = true)
+
+    @Test
+    fun aQuestionsSwitchFailureShownBeforeTheLearnerLeftIsGoneOnReturn() = questionsFailure(leaveFirst = false)
+
+    private fun questionsFailure(leaveFirst: Boolean) =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            val held = CompletableDeferred<Unit>()
+            val cache = AppCache(FakeSession(ana), backgroundScope)
+            val store =
+                FocusTestStore(
+                    api = { _, _, _ ->
+                        held.await()
+                        throw ApiException(ApiError.Network)
+                    },
+                    cache = cache,
+                    sessions = StudySessionStore(FakeStudyApi(), cache) { "UTC" },
+                    summary = cache.resource(Audience.SignedIn, emptySet()) { null },
+                    timeZone = { "UTC" },
+                )
+            val questions = SessionQuestionsModel(store, UUID.fromString(GOAL_ID)).also { models.put("$it", it) }
+            val result = ApiJson.decodeFromString<FocusTest>(focusTestOf())
+
+            questions.set(result, on = false)
+            runCurrent()
+            if (leaveFirst) questions.visit.end()
+            held.complete(Unit)
+            runCurrent()
+            if (!leaveFirst) {
+                assertTrue(questions.failed(result))
+                questions.visit.end()
+            }
+
+            assertFalse(questions.failed(result))
         }
 
     @Test
