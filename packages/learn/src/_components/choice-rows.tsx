@@ -3,7 +3,6 @@
 import { Badge } from "@zoonk/ui/components/badge";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon } from "lucide-react";
 import { CHOICE_ROW_CLASS } from "../onboarding/choice-list";
 import {
   LIST_GROUP_CLASS,
@@ -77,11 +76,7 @@ export function ChoiceRows<Value extends string>({
             {choice.trailing && <ListRowTrailing>{choice.trailing}</ListRowTrailing>}
           </ListRowBody>
 
-          <span aria-hidden="true" className="flex size-4 shrink-0 self-center">
-            <CheckIcon className="text-selected hidden size-4 group-has-data-checked/choice:block" />
-          </span>
-          {/* `absolute` replaces the item's own `relative`, which outranks `sr-only` and kept it in the row. */}
-          <RadioGroupItem className="sr-only absolute" value={choice.value} />
+          <RadioGroupItem className="self-center" value={choice.value} />
         </RadioGroupOption>
       ))}
     </RadioGroup>
