@@ -3055,9 +3055,9 @@ msgstr "目標と期日に合わせた学習計画"
 
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-questions.tsx
-msgctxt "5ZDN6U"
-msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
-msgstr "学習の相棒となるAI：{count, plural, other {1日#通のメッセージ}}"
+msgctxt "LKY79v"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
+msgstr "学習の相棒AI：1日{count, plural, other {#件のメッセージ}}、月{month}件まで"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "72Jr7b"

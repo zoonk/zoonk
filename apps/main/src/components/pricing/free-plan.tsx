@@ -2,7 +2,10 @@ import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import { PageStartMark } from "@/components/public/page-start";
 import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
-import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
+import {
+  getFreePlanLimits,
+  getFreeTutorMessagesPer30Days,
+} from "@zoonk/core/entitlements/plan-limits";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -113,8 +116,11 @@ export async function FreePlan({
             {
               id: "buddy",
               text: t(
-                "An AI study buddy: {count, plural, one {# message} other {# messages}} a day",
-                { count: limits.tutorMessagesPerDay ?? 0 },
+                "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month",
+                {
+                  count: limits.tutorMessagesPerDay ?? 0,
+                  month: String(getFreeTutorMessagesPer30Days() ?? 0),
+                },
               ),
             },
             { id: "calls", text: t("Speaking practice calls") },

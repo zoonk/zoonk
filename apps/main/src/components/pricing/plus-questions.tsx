@@ -6,7 +6,10 @@ import {
   renderHelpLink,
 } from "@/components/public/public-disclosure";
 import { Link } from "@/i18n/navigation";
-import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
+import {
+  getFreePlanLimits,
+  getFreeTutorMessagesPer30Days,
+} from "@zoonk/core/entitlements/plan-limits";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
@@ -54,9 +57,13 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
       "{month, plural, one {# lesson} other {# lessons}} a month, across all your goals, exams included",
       { month: limits.lessonsPer30Days ?? 0 },
     ),
-    t("An AI study buddy: {count, plural, one {# message} other {# messages}} a day", {
-      count: limits.tutorMessagesPerDay ?? 0,
-    }),
+    t(
+      "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month",
+      {
+        count: limits.tutorMessagesPerDay ?? 0,
+        month: String(getFreeTutorMessagesPer30Days() ?? 0),
+      },
+    ),
     t({
       description:
         "What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. {count} is how many a day.",

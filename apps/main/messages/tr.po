@@ -3055,9 +3055,9 @@ msgstr "Hedefine ve belirlediğin tarihe uygun bir plan"
 
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-questions.tsx
-msgctxt "5ZDN6U"
-msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
-msgstr "Yapay zekâ destekli bir ders arkadaşı: günde {count, plural, other {# mesaj}}"
+msgctxt "LKY79v"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
+msgstr "Yapay zekâ ders arkadaşı: günde {count, plural, other {# mesaj}}, ayda en fazla {month} mesaj"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "72Jr7b"

@@ -3055,9 +3055,9 @@ msgstr "A plan for your goal and your date"
 
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-questions.tsx
-msgctxt "5ZDN6U"
-msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
-msgstr "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
+msgctxt "LKY79v"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
+msgstr "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "72Jr7b"

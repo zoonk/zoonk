@@ -11,3 +11,8 @@ export function getFreePlanLimits() {
     uploadsPerDay: getUsageRule({ kind: "upload", tier: "free" }).day ?? null,
   };
 }
+
+/** Free messages to the study buddy in any 30 days, beside its daily limit. */
+export function getFreeTutorMessagesPer30Days(): number | null {
+  return getUsageRule({ kind: "tutorMessage", tier: "free" }).rolling30Days ?? null;
+}

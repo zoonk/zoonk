@@ -3055,9 +3055,9 @@ msgstr "목표와 목표일에 맞춘 계획"
 
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-questions.tsx
-msgctxt "5ZDN6U"
-msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
-msgstr "AI 공부 짝꿍: 하루 {count, plural, other {메시지 #개}}"
+msgctxt "LKY79v"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
+msgstr "AI 공부 짝꿍: 하루 {count, plural, other {메시지 #개}}, 한 달 최대 {month}개"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "72Jr7b"
