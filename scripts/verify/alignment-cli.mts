@@ -92,7 +92,16 @@ if (values.help || positionals.length === 0) {
     }
 
     const findings = evaluated.flatMap((input) => input.findings);
-    const summary = summarize(findings);
+
+    // Each file's own list of required scenarios: "not listed" only when no file lists any.
+    const listed = evaluated.flatMap(({ summary: { scenariosMissing } }) =>
+      scenariosMissing === null ? [] : [scenariosMissing],
+    );
+
+    const summary = summarize(
+      findings,
+      listed.length > 0 ? listed.reduce((total, missing) => total + missing, 0) : null,
+    );
 
     console.log([...alignmentLines(findings), summaryLine(summary)].join("\n"));
     process.exitCode = summary.failed ? 1 : 0;

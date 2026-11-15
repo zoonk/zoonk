@@ -151,3 +151,23 @@ describe("what the command accepts", () => {
     assert.equal(exitFor({ elements: [], version: 99 }), 2);
   });
 });
+
+describe("what the command prints of a scenarios file", () => {
+  it("counts the missing ones from the file's own list, as verify:scenarios does", () => {
+    const capture = { ...fixtureCapture([]), scenario: "plan.path" };
+    const path = join(mkdtempSync(join(tmpdir(), "alignment-")), "alignment.json");
+
+    writeFileSync(
+      path,
+      JSON.stringify({ captures: [capture], required: ["plan.path", "plan.adjust"] }),
+    );
+
+    const { stdout } = spawnSync(
+      process.execPath,
+      [join(import.meta.dirname, "alignment-cli.mts"), path],
+      { encoding: "utf8" },
+    );
+
+    assert.match(stdout, /; 1 required scenario missing;/u);
+  });
+});
