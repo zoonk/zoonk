@@ -70,6 +70,7 @@ import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRowChevron
+import com.zoonk.android.ui.components.glyphScale
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.Geist
@@ -162,7 +163,7 @@ private fun RoadmapCompact(
                             listOf(position.name),
                         ),
                     modifier = Modifier.weight(1f),
-                    style = small,
+                    style = small.copy(lineBreak = LineBreak.Heading),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -189,7 +190,7 @@ private fun RoadmapMeter(phases: List<PlanPhase>) {
     Canvas(
         Modifier
             .fillMaxWidth()
-            .height(8.dp)
+            .height(6.dp)
             .clearAndSetSemantics {},
     ) {
         val gap = 2.dp.toPx()
@@ -244,8 +245,14 @@ private fun RoadmapFull(
     val position = roadmapPosition(page, phases)
     val currentIndex = phases.indexOfFirst { it.state == PlanPhase.State.CURRENT }
     val overrun = page.plan.overrun(page.goal.kind)
-    val names = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus)) }
-    val bands = bandLayout(names, phases.map { it.weight() }, width)
+    val weights = phases.map { it.weight() }
+    // Each name's parts kept whole when every band fits its widest part; otherwise the names break between words.
+    val parted = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus), keepParts = true) }
+    val loose = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus), keepParts = false) }
+    val partedBands = bandLayout(parted, weights, width)
+    val looseBands = bandLayout(loose, weights, width)
+    val names = if (partedBands.fitsWords) parted else loose
+    val bands = if (partedBands.fitsWords) partedBands else looseBands
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -294,23 +301,45 @@ private fun RoadmapLegend(
     val style = MaterialTheme.typography.labelSmall
     val color = MaterialTheme.colorScheme.onSurfaceVariant
 
+    // Main's legend: each mark 6dp from its words, the pairs 12dp apart, so a mark reads with its own words.
     Row(
         modifier = Modifier.clearAndSetSemantics {},
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (hasMocks) {
-            KindDot(LearnKind.Mock)
-            Text(stringResource(R.string.plan_mock_exam), style = style, color = color)
+            LegendPair({ KindDot(LearnKind.Mock) }) { Text(stringResource(R.string.plan_mock_exam), style = style, color = color) }
         }
         if (hasChallenges) {
-            Trickster(Modifier.size(14.dp))
-            Text(challengeName(page), style = style, color = color)
+            LegendPair(
+                { Trickster(Modifier.size(16.dp * glyphScale()), face = true) },
+            ) { Text(challengeName(page), style = style, color = color) }
         }
         if (page.finish != null) {
-            Icon(painterResource(R.drawable.ic_flag), contentDescription = null, modifier = Modifier.size(14.dp), tint = color)
-            Text(stringResource(if (page.isExam) R.string.plan_exam_day else R.string.plan_goal_date), style = style, color = color)
+            LegendPair(
+                {
+                    Icon(
+                        painterResource(R.drawable.ic_flag),
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp * glyphScale()),
+                        tint = color,
+                    )
+                },
+            ) {
+                Text(stringResource(if (page.isExam) R.string.plan_exam_day else R.string.plan_goal_date), style = style, color = color)
+            }
         }
+    }
+}
+
+@Composable
+private fun LegendPair(
+    mark: @Composable () -> Unit,
+    words: @Composable () -> Unit,
+) {
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        mark()
+        words()
     }
 }
 
@@ -337,17 +366,34 @@ private class BandName(
 private fun bandName(
     phase: PlanPhase,
     name: String,
-): BandName =
-    if (phase.state == PlanPhase.State.DONE) {
+    keepParts: Boolean,
+): BandName {
+    // Each part keeps its words together, so a band is as wide as its widest part and breaks only between parts.
+    val shown = if (keepParts) bandNameParts(name).joinToString(" ") { it.replace(' ', NO_BREAK_SPACE) } else name
+    return if (phase.state == PlanPhase.State.DONE) {
         val text =
             buildAnnotatedString {
                 appendInlineContent(CHECK, "✓")
-                append(name)
+                append(WORD_JOINER)
+                append(shown)
             }
         BandName(name, text, listOf(AnnotatedString.Range(CHECK_MARK, 0, 1)))
     } else {
-        BandName(name, AnnotatedString(name), emptyList())
+        BandName(name, AnnotatedString(shown), emptyList())
     }
+}
+
+/** Main's `splitBandName`: a short name is one part; a longer one is cut between words where its longer part is shortest. */
+internal fun bandNameParts(name: String): List<String> {
+    val words = name.split(" ")
+    if (name.length <= ONE_LINE_NAME_LENGTH || words.size == 1) return listOf(name)
+    val cut = (1 until words.size).minBy { maxOf(words.take(it).joinToString(" ").length, words.drop(it).joinToString(" ").length) }
+    return listOf(words.take(cut).joinToString(" "), words.drop(cut).joinToString(" "))
+}
+
+private const val ONE_LINE_NAME_LENGTH = 16
+private const val NO_BREAK_SPACE = '\u00A0'
+private const val WORD_JOINER = "\u2060"
 
 /** Names wrap and hyphenate rather than being cut. */
 @Composable
@@ -356,6 +402,8 @@ private fun bandStyle() = MaterialTheme.typography.labelMedium.copy(hyphens = Hy
 private class BandLayout(
     val widths: List<Dp>,
     val height: Dp,
+    /** Every band is at least as wide as its name's longest unbreakable run. */
+    val fitsWords: Boolean,
 )
 
 /**
@@ -384,10 +432,11 @@ private fun bandLayout(
         val gap = BAND_GAP.roundToPx()
         val total = width.roundToPx()
         val words = names.map { max(narrowest, ceil(measure(it).multiParagraph.intrinsics.minIntrinsicWidth).toInt() + padding) }
-        val minimums = if (words.sum() + gap * (names.size - 1) <= total) words else List(names.size) { narrowest }
+        val fitsWords = words.sum() + gap * (names.size - 1) <= total
+        val minimums = if (fitsWords) words else List(names.size) { narrowest }
         val widths = weightedWidths(weights, total.toFloat(), minimums.map(Int::toFloat), gap.toFloat()).map { floor(it).toInt() }
         val text = names.indices.maxOfOrNull { measure(names[it], (widths[it] - padding).coerceAtLeast(0)).size.height } ?: 0
-        return BandLayout(widths.map { it.toDp() }, max(BAND_HEIGHT.roundToPx(), text + BAND_PADDING_Y.roundToPx() * 2).toDp())
+        return BandLayout(widths.map { it.toDp() }, max(BAND_HEIGHT.roundToPx(), text + BAND_PADDING_Y.roundToPx() * 2).toDp(), fitsWords)
     }
 }
 
@@ -532,7 +581,18 @@ private fun PhaseLane(
     ) {
         FractionRow(Modifier.fillMaxSize(), endRoom = FLAG_ROOM.takeIf { flag }) {
             mockShare?.let { At(it, Anchor.Center) { KindDot(LearnKind.Mock) } }
-            challengeShare?.let { At(it, if (it > PHASE_END_SHARE) Anchor.End else Anchor.Center) { Trickster(Modifier.size(14.dp)) } }
+            challengeShare?.let {
+                At(
+                    it,
+                    if (it >
+                        PHASE_END_SHARE
+                    ) {
+                        Anchor.End
+                    } else {
+                        Anchor.Center
+                    },
+                ) { Trickster(Modifier.size(16.dp), face = true) }
+            }
             overrun?.let {
                 At(
                     it.share,
@@ -581,8 +641,10 @@ private fun PhaseAxis(
         listOfNotNull(
             todayShare?.takeIf { overrun == null }?.let { AxisLabel(AnnotatedString(stringResource(R.string.plan_today)), ink, it) },
             start?.let {
-                val date = formatPlanDate(it, page.today, currentLocale(), month = phase.kind == PlanPhase.Kind.LEARN)
-                AxisLabel(withData(date, date), faint, 0f)
+                // A learn phase's start is an estimate, marked as the list marks it; an exam phase's is booked.
+                val learn = phase.kind == PlanPhase.Kind.LEARN
+                val date = planDate(it, page.today, estimate = learn, month = learn)
+                AxisLabel(withData(date.text, date.text), faint, 0f)
             },
             overrun?.let { at -> examFinish?.let { AxisLabel(it, ink, at.share) } },
             when {

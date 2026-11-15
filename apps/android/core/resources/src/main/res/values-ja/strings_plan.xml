@@ -81,7 +81,6 @@
   "plan_cancel": "824454a3774b06d69b4fe4d10b0dec13e6588bbfef88fb57ff02164d4bcba937",
   "plan_challenge_live_call": "5d4553e44800a8febf240326085026dcefd62e00b829449fa000920a2282a3d5",
   "plan_challenge_next_session": "4b999c4c9c694f66ff0824999ec15c1ef268b72d3b2239e184d10e40484ca01a",
-  "plan_challenge_opens_after_lessons": "c220e63e0596c748e19b0a9332695c8d594fbf98d07151a722b15d9096715171",
   "plan_challenge_questions": "697373dd0ab873f5e7ed00387007524cff6076c7c0edc7b1fc815c4fb0cde093",
   "plan_challenge_won": "bb37edba31a08ae97e260409dc3bdadba2af929245f84e6164cac8f0f9a62a4e",
   "plan_change_about_more_lessons": "9cf11cae4f94cc0acad9f0207843d9e8c48bd6b485d4e74c3df6a17235db097a",
@@ -680,7 +679,6 @@
     <!-- Status beside a phase challenge the learner has won. -->
     <string name="plan_challenge_won">勝利</string>
     <string name="plan_challenge_next_session">次の学習で</string>
-    <string name="plan_challenge_opens_after_lessons">このフェーズのレッスンを終えると挑戦できます</string>
     <string name="plan_challenge_questions">このフェーズの問題（ヒントなし）</string>
     <string name="plan_challenge_live_call">言いたいことをその場で伝える会話</string>
     <plurals name="plan_mock_exams_count">

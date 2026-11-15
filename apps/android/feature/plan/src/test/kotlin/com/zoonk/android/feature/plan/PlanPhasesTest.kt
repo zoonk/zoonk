@@ -15,6 +15,14 @@ class PlanPhasesTest {
     private val plan = learnPlan()
 
     @Test
+    fun aShortBandNameIsOnePartAndALongerOneIsCutWhereItsLongerPartIsShortest() {
+        assertEquals(listOf("Python basics"), bandNameParts("Python basics"))
+        assertEquals(listOf("Introductions"), bandNameParts("Introductions"))
+        assertEquals(listOf("Ordering food", "at a restaurant"), bandNameParts("Ordering food at a restaurant"))
+        assertEquals(listOf("Supercalifragilistic"), bandNameParts("Supercalifragilistic"))
+    }
+
+    @Test
     fun aPhaseIsWeighedByItsDaysCountingBothEnds() {
         assertEquals(14f, plan.phases[0].weight())
         assertEquals(27f, plan.phases[1].weight())

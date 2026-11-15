@@ -75,6 +75,10 @@ class TodayScreenshots {
     fun phone() = capture("phone")
 
     @Test
+    @Config(qualifiers = "w360dp-h800dp-xxhdpi")
+    fun narrowestPhone() = capture("phone-narrow")
+
+    @Test
     @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
     fun phoneDarkMoreContrast() = capture("phone-dark-more-contrast", dark = true, moreContrast = true)
 
