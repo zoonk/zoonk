@@ -7,6 +7,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -41,7 +44,10 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
-/** Subscribe opens Play's sheet once, on the window then shown, though it changes width both ways while the checkout reads. */
+/**
+ * Subscribe opens Play's sheet once, on the window then shown, though it changes width both ways while the checkout
+ * reads; a checkout whose reads land after the learner left opens no sheet.
+ */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
 class CheckoutWindowTest {
@@ -58,6 +64,39 @@ class CheckoutWindowTest {
 
     @Test
     fun aCheckoutReadingWhileTheWindowWidensAndNarrowsOpensPlaysSheetOnceOnTheCurrentWindow() {
+        val (planRead, billing) = launchACheckout()
+
+        rule.onNodeWithText("Subscribe").performClick()
+        RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
+        scenario.recreate()
+        RuntimeEnvironment.setQualifiers("w411dp-h891dp")
+        scenario.recreate()
+        planRead.complete(account(ANA))
+        rule.waitForIdle()
+
+        assertEquals(listOf(BillingPeriod.Yearly to ANA), billing.bought)
+        scenario.onActivity { current -> assertEquals(current, billing.hosts.single()) }
+        assertFalse(billing.hosts.single().isDestroyed)
+    }
+
+    @Test
+    fun aCheckoutWhoseReadsLandAfterTheLearnerLeftOpensNoSheetOnTheirReturn() {
+        val (planRead, billing) = launchACheckout()
+
+        rule.onNodeWithText("Subscribe").performClick()
+        CheckoutTest.visible = false
+        rule.waitForIdle()
+        planRead.complete(account(ANA))
+        rule.waitForIdle()
+        CheckoutTest.visible = true
+        rule.waitForIdle()
+
+        assertEquals(emptyList<Pair<BillingPeriod, String>>(), billing.bought)
+        assertEquals(PurchaseState.Idle, CheckoutTest.store.purchase.value)
+    }
+
+    /** The plan offer, signed in, with the checkout's plan read held until the returned read completes. */
+    private fun launchACheckout(): Pair<CompletableDeferred<MeResponse>, HostRecordingBilling> {
         val application = RuntimeEnvironment.getApplication()
         shadowOf(application.packageManager).addOrUpdateActivity(
             ActivityInfo().apply {
@@ -79,20 +118,10 @@ class CheckoutWindowTest {
         val planRead = CompletableDeferred<MeResponse>()
         val api = FakeSubscriptionApi().apply { accountRead = { planRead.await() } }
         val billing = HostRecordingBilling()
+        CheckoutTest.visible = true
         CheckoutTest.store = SubscriptionStore(api, billing, sessions, AppCache(sessions, main), main, MutableStateFlow(false))
         scenario = ActivityScenario.launch(CheckoutTestActivity::class.java)
-
-        rule.onNodeWithText("Subscribe").performClick()
-        RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
-        scenario.recreate()
-        RuntimeEnvironment.setQualifiers("w411dp-h891dp")
-        scenario.recreate()
-        planRead.complete(account(ANA))
-        rule.waitForIdle()
-
-        assertEquals(listOf(BillingPeriod.Yearly to ANA), billing.bought)
-        scenario.onActivity { current -> assertEquals(current, billing.hosts.single()) }
-        assertFalse(billing.hosts.single().isDestroyed)
+        return planRead to billing
     }
 
     /** Play's sheet, recording the window each purchase opened on. */
@@ -116,6 +145,8 @@ class CheckoutWindowTest {
 
 /** What outlives [CheckoutTestActivity]'s recreations, as the app's container does. */
 object CheckoutTest {
+    /** False while the learner is away from the offer, its view models kept, as another tab keeps them. */
+    var visible by mutableStateOf(true)
     lateinit var store: SubscriptionStore
 }
 
@@ -124,8 +155,10 @@ class CheckoutTestActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ZoonkTheme {
-                val checkout = rememberCheckout(CheckoutTest.store)
-                Button(onClick = { checkout?.invoke(BillingPeriod.Yearly) }) { Text("Subscribe") }
+                if (CheckoutTest.visible) {
+                    val checkout = rememberCheckout(CheckoutTest.store)
+                    Button(onClick = { checkout?.invoke(BillingPeriod.Yearly) }) { Text("Subscribe") }
+                }
             }
         }
     }

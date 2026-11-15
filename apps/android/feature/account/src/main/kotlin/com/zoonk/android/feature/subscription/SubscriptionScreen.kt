@@ -67,6 +67,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
@@ -79,6 +80,7 @@ import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.StripeSubscriptionCancellation
 import com.zoonk.api.models.StripeSubscriptionCancellation.State
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -721,17 +723,19 @@ internal fun rememberCheckout(subscriptions: SubscriptionStore): ((BillingPeriod
     val activity = LocalActivity.current ?: return null
     val checkout = viewModel { Checkout(subscriptions) }
     DisposableEffect(checkout, activity) { onDispose(checkout.show(activity)) }
+    OnVisitEnd(checkout, onEnd = checkout::endVisit)
     return checkout::buy
 }
 
 /**
- * A Plus checkout outlives the window that started it: a width change, a fold or a rotation while it reads fresh
- * offers recreates the screen, and Play's sheet opens on the window shown then.
+ * A Plus checkout belongs to the visit that started it: a width change, a fold or a rotation while it reads fresh
+ * offers is the same visit, and Play's sheet opens on the window shown then; leaving before it opens ends the checkout.
  */
 internal class Checkout(
     private val subscriptions: SubscriptionStore,
 ) : ViewModel() {
     private val host = MutableStateFlow<Activity?>(null)
+    private var buying: Job? = null
 
     /** [activity] hosts Play's sheet until the returned call, when its screen goes. */
     fun show(activity: Activity): () -> Unit {
@@ -740,6 +744,12 @@ internal class Checkout(
     }
 
     fun buy(period: BillingPeriod) {
-        viewModelScope.launch { subscriptions.buy({ host.filterNotNull().first() }, period) }
+        buying = viewModelScope.launch { subscriptions.buy({ host.filterNotNull().first() }, period) }
+    }
+
+    /** The learner left before Play's sheet opened: no sheet opens on their return. One that opened is Play's. */
+    fun endVisit() {
+        buying?.cancel()
+        buying = null
     }
 }
