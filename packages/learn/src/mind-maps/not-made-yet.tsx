@@ -1,6 +1,7 @@
 "use client";
 
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
+import { type MindMapAllowanceStop } from "@zoonk/core/mind-maps/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { PlusIcon } from "lucide-react";
@@ -24,9 +25,29 @@ import { type MindMapsLibrary } from "./use-mind-maps-library";
 
 const LINE_CLASS = "text-muted-foreground max-w-prose text-sm text-pretty";
 
-/** What stops a new map on this page, as it reads now; null once its day comes. */
-export function useShownStop({ bulk, page }: MindMapsLibrary) {
-  return useLiveLimit(bulk.stop ?? (startsNoMap(page.createOffer) ? page.createOffer.stop : null));
+/** What stops a new map on this page: a refusal while the list is read again, then the list's offer. */
+export function useShownStop({ page, refusal }: MindMapsLibrary) {
+  return refusal ?? (startsNoMap(page.createOffer) ? page.createOffer.stop : null);
+}
+
+/** The gate holds until a read lifts it; the clock only decides whether its day still prints. */
+function useNoticeStop(stop: MindMapAllowanceStop): MindMapAllowanceStop {
+  const comingDay = useLiveLimit(stop);
+  return comingDay ?? { ...stop, availableAt: null };
+}
+
+function PageStopNotice({ stop, tier }: { stop: MindMapAllowanceStop; tier: EntitlementTier }) {
+  const routes = useLearnRoutes();
+  const mountedAt = useMountTime();
+  const shown = useNoticeStop(stop);
+
+  return (
+    <MindMapLimitNotice
+      limit={toMindMapLimit({ now: mountedAt.getTime(), stop: shown, tier })}
+      linkComponent={LearnLink}
+      routes={routes}
+    />
+  );
 }
 
 /**
@@ -44,8 +65,6 @@ function NotMadeLine({
   tier: EntitlementTier;
 }) {
   const t = useExtracted();
-  const routes = useLearnRoutes();
-  const mountedAt = useMountTime();
   const { bulk, follower, page } = library;
   const { eligible, startable } = page.createOffer;
   const shownStop = useShownStop(library);
@@ -91,13 +110,7 @@ function NotMadeLine({
   }
 
   if (shownStop && bulk.status !== "sending") {
-    return (
-      <MindMapLimitNotice
-        limit={toMindMapLimit({ now: mountedAt.getTime(), stop: shownStop, tier })}
-        linkComponent={LearnLink}
-        routes={routes}
-      />
-    );
+    return <PageStopNotice stop={shownStop} tier={tier} />;
   }
 
   if (startable > 0 && startable < eligible) {
@@ -176,7 +189,7 @@ export function NotMadeYet({
         className="flex flex-col gap-3 [&:not([data-held]):not(:has(>:not(:empty)))]:contents"
         ref={slot}
       >
-        {startable > 1 && !bulk.stop && (
+        {startable > 1 && !library.refusal && (
           <Button
             busy={bulk.status === "sending"}
             className="self-start"

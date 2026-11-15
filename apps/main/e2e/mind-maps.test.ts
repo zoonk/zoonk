@@ -655,57 +655,22 @@ test.describe("Mind maps", () => {
     }
   });
 
-  test("Create all refused with a day this device already shows as past keeps its gate, without a day", async ({
+  test("a newer read of the list that allows maps wins over Create all's older refusal and its own read", async ({
     browser,
   }) => {
-    const { first, second, third, user } = await createLearner({ chapters: 3 });
+    const { first, user } = await createLearner({ chapters: 3 });
     const page = await openAs(browser, user);
     const notMade = page.getByRole("region", { name: "Other chapters" });
-
-    try {
-      await page.route("**/v1/goals/*/mind-maps/generations", (route) =>
-        route.fulfill({
-          json: {
-            accepted: [],
-            joined: [],
-            stop: {
-              availableAt: new Date(Date.now() - 60_000).toISOString(),
-              period: "rolling30Days",
-              reason: "limitReached",
-              resource: "mindMap",
-            },
-            unstarted: [first, second, third].map((made) => ({
-              chapterId: made?.chapter.id,
-              reason: "allowance",
-            })),
-          },
-        }),
-      );
-
-      await page.goto("/mind-maps");
-      await notMade.getByRole("button", { name: "Create all" }).click();
-
-      await expect(notMade.getByText("You've used your mind maps")).toBeVisible();
-      await expect(notMade.getByRole("link", { name: "Subscribe" })).toBeVisible();
-      await expect(notMade.getByText(/^More /u)).toBeHidden();
-    } finally {
-      await page.context().close();
-    }
-  });
-
-  test("a later read of the list retires Create all's stop that has no day, and the list's offer decides", async ({
-    browser,
-  }) => {
-    const { first, second, third, user } = await createLearner({ chapters: 3 });
-    const page = await openAs(browser, user);
-    const notMade = page.getByRole("region", { name: "Other chapters" });
+    const held = Promise.withResolvers<null>();
 
     try {
       await page.goto("/mind-maps");
 
       // A map on its way keeps the page reading its list.
       const firstRow = page.getByRole("listitem").filter({ hasText: first.chapter.title });
-      await firstRow.getByRole("button", { name: "Create" }).click();
+      const firstRead = page.waitForResponse(isListRead);
+      await firstRow.getByRole("button", { exact: true, name: "Create" }).click();
+      await firstRead;
       await expect(firstRow.getByText("Drawing the mind map…")).toBeVisible();
 
       await page.route("**/v1/goals/*/mind-maps/generations", (route) =>
@@ -713,80 +678,89 @@ test.describe("Mind maps", () => {
           json: {
             accepted: [],
             joined: [],
-            // A day this device's clock already shows as past: the stop never lifts by a timer.
             stop: {
               availableAt: new Date(Date.now() - 60_000).toISOString(),
               period: "rolling30Days",
               reason: "limitReached",
               resource: "mindMap",
             },
-            unstarted: [second, third].map((made) => ({
-              chapterId: made?.chapter.id,
-              reason: "allowance",
-            })),
+            unstarted: [],
           },
         }),
       );
 
+      // Create all's own read of the list is held until a newer read has come back.
+      let holding = true;
+      const heldRead = Promise.withResolvers<null>();
+
+      await page.route("**/v1/goals/*/mind-maps", async (route) => {
+        if (!holding) {
+          await route.continue();
+          return;
+        }
+
+        holding = false;
+        const response = await route.fetch();
+        heldRead.resolve(null);
+        await held.promise;
+        await route.fulfill({ response });
+      });
+
       await notMade.getByRole("button", { name: "Create all" }).click();
+      await heldRead.promise;
       await expect(notMade.getByText("You've used your mind maps")).toBeVisible();
 
-      // Its own follow-up read keeps it; the next read the page makes decides from the list.
-      await page.waitForResponse(isListRead);
-      await page.waitForResponse(isListRead);
+      await drawMap(first.chapter.id);
+
+      await expect(
+        page.getByRole("link", { name: new RegExp(first.chapter.title, "u") }),
+      ).toBeVisible({ timeout: 20_000 });
+
+      const olderRead = page.waitForResponse(isListRead);
+      held.resolve(null);
+      await olderRead;
 
       await expect(notMade.getByText("You've used your mind maps")).toBeHidden();
       await expect(notMade.getByRole("button", { name: "Create all" })).toBeVisible();
     } finally {
+      held.resolve(null);
       await page.context().close();
     }
   });
 
-  test("a row refused for the maps stops the whole page until its day comes, as Create all's stop does", async ({
+  test("a row refused once the maps run out reads the list, and its offer stops every Create on the page", async ({
     browser,
   }) => {
     const { first, user } = await createLearner({ chapters: 3 });
     const page = await openAs(browser, user);
     const notMade = page.getByRole("region", { name: "Other chapters" });
-    const availableAt = new Date(Date.now() + 8000).toISOString();
 
     try {
-      await page.route("**/chapters/*/mind-map/generations", (route) =>
-        route.fulfill({
-          json: {
-            error: {
-              code: "USAGE_LIMIT_REACHED",
-              details: {
-                limit: {
-                  availableAt,
-                  limit: 10,
-                  period: "rolling30Days",
-                  resource: "mindMap",
-                  tier: "free",
-                },
-              },
-            },
-          },
-          status: 402,
-        }),
-      );
-
       await page.goto("/mind-maps");
       await expect(notMade.getByRole("button", { name: "Create all" })).toBeVisible();
+
+      // The maps run out after the page was drawn, so it still offers Create.
+      await usageRecordsFixture({
+        count: 3,
+        createdAt: new Date(),
+        kind: "mindMap",
+        userId: user.id,
+      });
+
+      const reread = page.waitForResponse(isListRead);
 
       await notMade
         .getByRole("listitem")
         .filter({ hasText: first.chapter.title })
-        .getByRole("button", { name: "Create" })
+        .getByRole("button", { exact: true, name: "Create" })
         .click();
 
-      await expect(notMade.getByText("You've used your mind maps")).toHaveCount(1);
+      await reread;
+
+      await expect(notMade.getByText("No more new mind maps today")).toHaveCount(1);
       await expect(notMade.getByRole("link", { name: "Subscribe" })).toHaveCount(1);
       await expect(notMade.getByRole("button", { exact: true, name: "Create" })).toHaveCount(0);
       await expect(notMade.getByRole("button", { name: "Create all" })).toBeHidden();
-
-      await expect(notMade.getByText("You've used your mind maps")).toBeHidden({ timeout: 20_000 });
-      await expect(notMade.getByRole("button", { name: "Create all" })).toBeVisible();
     } finally {
       await page.context().close();
     }
