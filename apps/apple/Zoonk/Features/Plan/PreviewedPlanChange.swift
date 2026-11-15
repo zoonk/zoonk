@@ -77,10 +77,8 @@ struct PreviewedPlanChange<Control: View>: View {
 
     let goalId = plan.goalId
     let edits = edits
-    let result = await store.write { api, token in
+    let result = await store.ask { api, token in
       try await api.preview(token: token, goalId: goalId, edits: edits)
-    } changed: { _ in
-      false
     }
 
     switch result {

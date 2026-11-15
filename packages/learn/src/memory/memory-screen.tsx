@@ -212,8 +212,9 @@ export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memo
         {groups.length > 0 && (
           <ListGroup>
             <DownloadRow
+              actionLabel={t("Download your memory")}
               fileName="zoonk-memory.json"
-              label={t("Download my memory")}
+              label={t("A copy of your memory")}
               load={actions.exportMemory}
             />
           </ListGroup>

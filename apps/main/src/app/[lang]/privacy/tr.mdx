@@ -79,7 +79,7 @@ Reklam göstermeyiz; verilerini asla satmayız ve reklam amacıyla paylaşmayız
 - Zoonk’un nasıl kullanıldığını anlamak, sorunları gidermek ve Zoonk’u geliştirmek için PostHog (kullanım analizi ve oturum kayıtları) ve Vercel Web Analytics kullanırız. Oturum kaydı, ekranların nasıl görüntülendiğini ve kullanıldığını gösterir. Yazdıkların veya yüklediklerin ekrandaysa bir kayıtta görünebilir. Analiz verilerini yalnızca Zoonk’u işletmek için bunlara ihtiyacı olan kişiler görebilir.
 - **Ne zaman başlar:** AB, AEA, Birleşik Krallık, İsviçre ve Türkiye’de, kullanım verileriyle ilgili bildirimimizde “Kabul et” seçeneğini seçene kadar başlamazlar. Diğer yerlerde sen kapatmadıkça açıktırlar. Giriş sayfalarımız bunları yüklemez.
 - **Uygulamalarımızda:** iOS ve Android uygulamalarımız da PostHog’u aynı kurallarla ve aynı ayarla kullanır. Yukarıdaki ülkelerde, “Kullanım verilerini paylaş” seçeneğini açana kadar başlamazlar. Oturum kaydı yapmaz, çerez kullanmaz ve yalnızca uygulamayı açmak veya bir görüşmeyi bitirmek gibi olayları gönderirler.
-- **Kapatma:** Web’de veya uygulamalarımızda Ayarlar › Tercihler bölümündeki “Kullanım verilerini paylaş” seçeneğini kullan. Kapatmak, tarayıcındaki ve uygulamalarımızdaki kullanım analizini ve sunucularımızın hesabınla ilgili kaydettiği olayları durdurur. Cihazlarından herhangi birinde oradan kapatırsan, hesabın için her yerde kapanır.
+- **Kapatma:** Web’de veya uygulamalarımızda Ayarlar › Gizlilik bölümündeki “Kullanım verilerini paylaş” seçeneğini kullan. Kapatmak, tarayıcındaki ve uygulamalarımızdaki kullanım analizini ve sunucularımızın hesabınla ilgili kaydettiği olayları durdurur. Cihazlarından herhangi birinde oradan kapatırsan, hesabın için her yerde kapanır.
 - **Sunucularımızdan gelen olaylar:** Sunucularımız da Zoonk’un nasıl kullanıldığını anlamak için bir dersi bitirmen veya nasıl giriş yaptığın gibi bazı olayları kaydeder. Bunlar çerez kullanmaz ve meşru menfaatimize dayanır. “Kullanım verilerini paylaş” seçeneğini kapatmak bunları da durdurur.
 - **Ülken:** Her ziyarette fiyatları göstermek ve ülkenin kurallarını uygulamak için ülkeni IP adresinden, bu mümkün olmadığında tarayıcının dilinden belirleriz. Bunu hesabına kaydetmeyiz.
 
@@ -160,7 +160,7 @@ Zoonk’u hesap oluşturmadan deneyebilirsin. Tarayıcındaki bir çerez veya uy
 ## 12. Hakların
 
 - Verilerine erişmeyi, onları düzeltmeyi, indirmeyi veya silmeyi, kimlerle paylaştığımızı öğrenmeyi, kullanımlarına itiraz etmeyi veya kullanımlarını sınırlamayı, verdiğin her türlü rızayı geri çekmeyi ve otomatik kararların yeniden incelenmesini talep edebilirsin.
-- Profil sayfandaki “Verilerimi indir” seçeneğiyle verilerini, Ayarlar’dan belleğini indirebilir; Ayarlar › Tercihler bölümündeki “Kullanım verilerini paylaş” seçeneğiyle kullanım analizini kapatabilir; profil sayfandaki “Hesabı sil” seçeneğiyle hesabını silebilirsin.
+- Ayarlar’daki Gizlilik bölümünden verilerinin bir kopyasını indirebilir, kullanım analizini kapatabilir veya hesabını silebilirsin. Belleğini Ayarlar’daki Bellek bölümünden indirebilirsin.
 - Diğer her şey için hesabının e-posta adresinden [hello@zoonk.com](mailto:hello@zoonk.com) adresine yaz. Kimliğini doğrulamanı isteyebiliriz. 10 gün içinde, ücretsiz olarak yanıt veririz.
 - Ebeveynin, vasin veya yetkilendirdiğin biri bu talepleri senin adına yapabilir.
 - Yaşadığın yerdeki veri koruma kurumuna da şikâyette bulunabilirsin. Bölüm 16, bazı ülkeler için bu kurumu belirtir.
@@ -169,7 +169,7 @@ Zoonk’u hesap oluşturmadan deneyebilirsin. Tarayıcındaki bir çerez veya uy
 
 ## 13. Hesabını silme
 
-- Profil sayfandaki “Hesabı sil” seçeneğiyle hesabını istediğin zaman silebilirsin.
+- Ayarlar’daki Gizlilik bölümünden hesabını istediğin zaman silebilirsin.
 - Bunun ardından hesabını, öğrenme verilerini, belleğini, yüklediğin dosyaları ve özel dosyalarından oluşturulan her şeyi sileriz ve web sitemizdeki aboneliğini, [Koşulların](/terms) 13. bölümünde anlatıldığı gibi hemen sona erdiririz. App Store veya Google Play’den yapılan bir abonelik Apple’da veya Google’da kalır: onu oradaki hesabından iptal et.
 - Bir sorunun ilk denemede doğru cevaplanıp cevaplanmadığı ve bir dersin ne kadar sürdüğü gibi bazı çalışma istatistikleri, herkes için dersleri iyileştirmek amacıyla, seninle bağlantı kuracak hiçbir şey olmadan saklanır.
 - 30 gün içinde PostHog profilini de olay kayıtları ve oturum kayıtlarıyla birlikte sileriz.
@@ -208,7 +208,7 @@ LGPD (Brezilya’nın veri koruma kanunu) kapsamındaki haklara, bölüm 12’de
 ### AB, AEA, Birleşik Krallık ve İsviçre
 
 - Bölüm 2 verilerinin her kullanımının hukuki dayanağını, bölüm 9 ülkenin dışına gönderilen verileri nasıl koruduğumuzu, bölüm 10 da bunları ne kadar süre sakladığımızı açıklar.
-- Tarayıcındaki kullanım analizi rızana dayanır. Rızanı Ayarlar › Tercihler bölümündeki “Kullanım verilerini paylaş” seçeneğiyle istediğin zaman geri çekebilirsin.
+- Tarayıcındaki kullanım analizi rızana dayanır. Rızanı Ayarlar › Gizlilik bölümündeki “Kullanım verilerini paylaş” seçeneğiyle istediğin zaman geri çekebilirsin.
 - Meşru menfaatlerimize dayandığımızda itiraz edebilirsin; menfaatlerinden üstün tutulması gereken zorlayıcı nedenlerimiz yoksa işlemeyi durdururuz.
 - Yaşadığın veya çalıştığın ülkenin veri koruma kurumuna şikâyette bulunabilirsin; örneğin Birleşik Krallık’ta Information Commissioner’s Office (ICO) veya İsviçre’de Federal Veri Koruma ve Bilgi Edinme Komiseri (FDPIC).
 

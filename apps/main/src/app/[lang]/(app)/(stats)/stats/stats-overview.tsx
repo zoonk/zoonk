@@ -186,7 +186,7 @@ export async function StatsOverviewSkeleton() {
 
   return (
     <div className="flex flex-col gap-8">
-      <StatTilesSkeleton className="sm:grid-cols-4" count={4} />
+      <StatTilesSkeleton className="sm:grid-cols-4" count={4} detailed={1} />
       <StatsCalendarSkeleton />
       <div className={DETAILS_CLASS}>
         <PageSection>

@@ -126,6 +126,7 @@ private val LIMITS =
         activeGoals = 1,
         guestLessons = 3,
         lessonsPer30Days = 20,
+        tutorMessagesPer30Days = 100,
         tutorMessagesPerDay = 10,
         uploadsPerDay = 1,
     )

@@ -142,7 +142,8 @@ function ExplanationOption({ goal, href }: { goal: SwitcherGoal; href: string })
 
 /** The bar's trigger hangs 10px into the gutter like a highlighted row, so it may be that much wider than its slot. */
 const TRIGGER_CLASS = {
-  bar: "hover:bg-muted aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative -ml-2.5 flex h-9 max-w-[calc(100%+0.625rem)] min-w-0 items-center gap-3 rounded-lg px-2.5 text-reading font-semibold outline-none focus-visible:ring-[3px]",
+  // The end's padding plus the chevron's blank side match the start's padding, so the fill is even by ink.
+  bar: "hover:bg-muted aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative -ml-2.5 flex h-9 max-w-[calc(100%+0.625rem)] min-w-0 items-center gap-3 rounded-lg ps-2.5 pe-1.5 text-reading font-semibold outline-none focus-visible:ring-[3px]",
   sidebar:
     "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-8 w-full min-w-0 items-center gap-2.5 rounded-md px-2 text-compact font-semibold outline-none focus-visible:ring-[3px]",
 } as const;
@@ -234,7 +235,8 @@ export function GoalSwitcher({
           title={selected?.displayName}
         >
           {selected ? <GoalMark goal={selected} /> : <NoGoalMark />}
-          <span className="min-w-0 flex-1 truncate text-left">
+          {/* Trimmed to its capitals so `items-center` puts them on the mark's and the chevron's middle; clipped sideways only, so accents and descenders still show. */}
+          <span className="min-w-0 flex-1 overflow-x-clip text-left text-ellipsis whitespace-nowrap [text-box:trim-both_cap_alphabetic]">
             {selected?.displayName ?? t("Start a goal")}
           </span>
           {/* After the title, so the trigger's name starts with the words on screen. */}
