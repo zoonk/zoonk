@@ -4172,6 +4172,12 @@ msgctxt "vNw6Rg"
 msgid "Writing each card's instructions…"
 msgstr "Przygotowujemy polecenia do każdej karty…"
 
+#. The title of a notice over something being prepared for the learner (a lesson, a list, a map) that failed or never started. A Try again button follows.
+#: src/generation/generation-failure-notice.tsx
+msgctxt "Yc1thK"
+msgid "Something went wrong on our side"
+msgstr "Coś poszło nie tak po naszej stronie"
+
 #: src/generation/generation-failure-notice.tsx
 msgctxt "Eg11ZY"
 msgid "Reconnect"
@@ -4186,29 +4192,6 @@ msgstr "Nie otrzymujemy już informacji o postępie. Przygotowywanie może nadal
 msgctxt "CN_B_k"
 msgid "Connection lost"
 msgstr "Utracono połączenie"
-
-#: src/generation/generation-failure-notice.tsx
-#: src/onboarding/steps/step-parts.tsx
-#: src/wait/first-lesson-row.tsx
-msgctxt "YXnM-X"
-msgid "Something went wrong on our side."
-msgstr "Coś poszło nie tak po naszej stronie."
-
-#. Preparing this content failed. It is not still running.
-#: src/generation/generation-failure-notice.tsx
-msgctxt "0fLHBg"
-msgid "This didn't finish"
-msgstr "Nie udało się dokończyć przygotowania"
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "iKz0K6"
-msgid "We couldn't get this started."
-msgstr "Nie udało nam się tego uruchomić."
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "q8l1Sf"
-msgid "This didn't start"
-msgstr "Nie udało się rozpocząć"
 
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
@@ -4957,11 +4940,6 @@ msgstr "Najpierw kilka pytań, potem twój plan"
 msgctxt "mMlLhC"
 msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "Odpowiedz na nie, a zaplanujemy naukę na każdy dzień, aż osiągniesz cel."
-
-#: src/journey/journey-planless.tsx
-msgctxt "3X96t0"
-msgid "{goal} · Building your plan"
-msgstr "{goal} · Przygotowujemy twój plan"
 
 #: src/journey/journey-planless.tsx
 msgctxt "vKk5P_"
@@ -7260,9 +7238,9 @@ msgid "{count, plural, one {# map didn't finish. Try again.} other {# maps didn'
 msgstr "{count, plural, one {# mapa nie została ukończona. Spróbuj ponownie.} few {# mapy nie zostały ukończone. Spróbuj ponownie.} other {# map nie zostało ukończonych. Spróbuj ponownie.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "CHNbiu"
-msgid "{count, plural, one {You can make # more right now.} other {You can make # more right now.}}"
-msgstr "{count, plural, one {Możesz teraz utworzyć jeszcze # mapę.} few {Możesz teraz utworzyć jeszcze # mapy.} other {Możesz teraz utworzyć jeszcze # map.}}"
+msgctxt "VSfWXI"
+msgid "{count, plural, one {You can create # more map right now.} other {You can create # more maps right now.}}"
+msgstr "{count, plural, one {Możesz teraz utworzyć jeszcze # mapę.} many {Możesz teraz utworzyć jeszcze # map.} other {Możesz teraz utworzyć jeszcze # mapy.}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "BekXxP"
@@ -9958,6 +9936,12 @@ msgctxt "jNPr7M"
 msgid "This didn't open"
 msgstr "Nie udało się otworzyć ekranu"
 
+#: src/onboarding/steps/step-parts.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "YXnM-X"
+msgid "Something went wrong on our side."
+msgstr "Coś poszło nie tak po naszej stronie."
+
 #: src/onboarding/steps/study-week.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/plan-schedule.tsx
@@ -10589,6 +10573,11 @@ msgstr "Przy {time} dziennie plan obejmuje cały materiał"
 msgctxt "tODRiS"
 msgid "Study everything"
 msgstr "Przerób cały materiał"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "hZ68v2"
+msgid "Keep studying, or archive this goal?"
+msgstr "Uczyć się dalej czy zarchiwizować ten cel?"
 
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "PpW8Dz"

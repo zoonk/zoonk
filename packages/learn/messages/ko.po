@@ -4172,6 +4172,12 @@ msgctxt "vNw6Rg"
 msgid "Writing each card's instructions…"
 msgstr "각 카드의 안내문을 만들고 있어요…"
 
+#. The title of a notice over something being prepared for the learner (a lesson, a list, a map) that failed or never started. A Try again button follows.
+#: src/generation/generation-failure-notice.tsx
+msgctxt "Yc1thK"
+msgid "Something went wrong on our side"
+msgstr "저희 쪽에 문제가 생겼어요"
+
 #: src/generation/generation-failure-notice.tsx
 msgctxt "Eg11ZY"
 msgid "Reconnect"
@@ -4186,29 +4192,6 @@ msgstr "진행 상황을 더 이상 확인할 수 없어요. 작업은 계속 �
 msgctxt "CN_B_k"
 msgid "Connection lost"
 msgstr "연결이 끊겼어요"
-
-#: src/generation/generation-failure-notice.tsx
-#: src/onboarding/steps/step-parts.tsx
-#: src/wait/first-lesson-row.tsx
-msgctxt "YXnM-X"
-msgid "Something went wrong on our side."
-msgstr "저희 쪽에 문제가 생겼어요."
-
-#. Preparing this content failed. It is not still running.
-#: src/generation/generation-failure-notice.tsx
-msgctxt "0fLHBg"
-msgid "This didn't finish"
-msgstr "준비를 마치지 못했어요"
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "iKz0K6"
-msgid "We couldn't get this started."
-msgstr "준비를 시작하지 못했어요."
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "q8l1Sf"
-msgid "This didn't start"
-msgstr "준비가 시작되지 않았어요"
 
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
@@ -4957,11 +4940,6 @@ msgstr "몇 가지 질문에 답하면 계획이 준비돼요"
 msgctxt "mMlLhC"
 msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "답해 주시면 목표를 이룰 때까지 매일의 학습 계획을 세워 드려요."
-
-#: src/journey/journey-planless.tsx
-msgctxt "3X96t0"
-msgid "{goal} · Building your plan"
-msgstr "{goal} · 계획을 만들고 있어요"
 
 #: src/journey/journey-planless.tsx
 msgctxt "vKk5P_"
@@ -7260,9 +7238,9 @@ msgid "{count, plural, one {# map didn't finish. Try again.} other {# maps didn'
 msgstr "{count, plural, other {마인드맵 #개를 완성하지 못했어요. 다시 시도해 보세요.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "CHNbiu"
-msgid "{count, plural, one {You can make # more right now.} other {You can make # more right now.}}"
-msgstr "{count, plural, other {지금 #개를 더 만들 수 있어요.}}"
+msgctxt "VSfWXI"
+msgid "{count, plural, one {You can create # more map right now.} other {You can create # more maps right now.}}"
+msgstr "{count, plural, other {지금 마인드맵을 #개 더 만들 수 있어요.}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "BekXxP"
@@ -9958,6 +9936,12 @@ msgctxt "jNPr7M"
 msgid "This didn't open"
 msgstr "화면을 불러오지 못했어요"
 
+#: src/onboarding/steps/step-parts.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "YXnM-X"
+msgid "Something went wrong on our side."
+msgstr "저희 쪽에 문제가 생겼어요."
+
 #: src/onboarding/steps/study-week.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/plan-schedule.tsx
@@ -10589,6 +10573,11 @@ msgstr "하루 {time}이면 모두 공부할 수 있어요"
 msgctxt "tODRiS"
 msgid "Study everything"
 msgstr "모두 공부하기"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "hZ68v2"
+msgid "Keep studying, or archive this goal?"
+msgstr "계속 공부할까요, 아니면 이 목표를 보관할까요?"
 
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "PpW8Dz"

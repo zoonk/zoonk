@@ -203,7 +203,12 @@ export function PlanNumbers({
   const [open, setOpen] = useState<"schedule" | "standing" | null>(null);
   const title = useStandingTitle(standing);
   const standingNumber = useStandingNumber(standing);
-  const scheduleNumber = useScheduleNumber({ paused, status: status ?? { kind: "onTrack" } });
+  // The side column's numbers sit above the plan's details, whose "Time a day" row says it.
+  const scheduleNumber = useScheduleNumber({
+    paused,
+    status: status ?? { kind: "onTrack" },
+    timeShownBeside: variant === "stats",
+  });
 
   const sheetChange = (sheet: "schedule" | "standing") => (next: boolean) =>
     setOpen(next ? sheet : null);

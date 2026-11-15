@@ -70,7 +70,14 @@ export function readRefusedLimit({
   const period = pick(getString(limit, "period"), USAGE_PERIODS) ?? "day";
   const tier = readTier({ limit, status });
 
+  // Read from a response just received: the moment tells a server clock behind this device's.
   return period === "rolling30Days"
-    ? { availableAt: getString(limit, "availableAt"), period, status: "limitReached", tier }
+    ? {
+        availableAt: getString(limit, "availableAt"),
+        period,
+        receivedAt: Date.now(),
+        status: "limitReached",
+        tier,
+      }
     : { period, status: "limitReached", tier };
 }

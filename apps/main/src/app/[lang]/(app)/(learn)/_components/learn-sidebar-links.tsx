@@ -39,6 +39,7 @@ export function LearnSidebarFeedback() {
       <button
         aria-haspopup="dialog"
         className={SIDEBAR_ITEM_CLASS}
+        data-slot="sidebar-item"
         onClick={() =>
           feedback?.openFeedbackForm({ context: { screen: "sidebar" }, isReport: false })
         }
@@ -89,6 +90,7 @@ function SidebarLinkView({ count, current, label, menu }: SidebarLinkProps & { c
       <Link
         aria-current={current ? "page" : undefined}
         className={SIDEBAR_ITEM_CLASS}
+        data-slot="sidebar-item"
         href={href}
         prefetch
       >

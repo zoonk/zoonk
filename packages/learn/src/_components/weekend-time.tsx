@@ -1,14 +1,26 @@
 "use client";
 
+import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { Switch } from "@zoonk/ui/components/switch";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 
+type MissingDays = "weekdays" | "weekend";
+
+/** A weekend time of its own needs a weekend day to use it and a weekday whose time it differs from. */
+export function getMissingDays(days: readonly number[]): MissingDays | null {
+  if (!days.some((day) => isWeekend(day))) {
+    return "weekend";
+  }
+
+  return days.some((day) => !isWeekend(day)) ? null : "weekdays";
+}
+
 function useMissingDayReason() {
   const t = useExtracted();
 
-  return (missing: "weekdays" | "weekend") =>
+  return (missing: MissingDays) =>
     missing === "weekend"
       ? t({
           description:
@@ -38,7 +50,7 @@ export function WeekendTime({
   checked: boolean;
   children: (on: boolean) => React.ReactNode;
   className?: string;
-  missing?: "weekdays" | "weekend" | null;
+  missing?: MissingDays | null;
   onCheckedChange: (checked: boolean) => void;
   readOnly?: boolean;
 }) {

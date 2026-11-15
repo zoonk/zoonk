@@ -57,15 +57,15 @@ export function WeekdayToggles({
 
 export function WeekendMinutes({
   checked,
-  disabled,
   minutes,
+  missing,
   onChange,
   onCheckedChange,
   weekdayMinutes,
 }: {
   checked: boolean;
-  disabled: boolean;
   minutes: number;
+  missing: React.ComponentProps<typeof WeekendTime>["missing"];
   onChange: (minutes: number) => void;
   onCheckedChange: (checked: boolean) => void;
   weekdayMinutes: number;
@@ -76,7 +76,7 @@ export function WeekendMinutes({
     <WeekendTime
       checked={checked}
       className="text-sm font-medium"
-      missing={disabled ? "weekend" : null}
+      missing={missing}
       onCheckedChange={onCheckedChange}
     >
       {(on) => (

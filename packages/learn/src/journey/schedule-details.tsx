@@ -124,7 +124,15 @@ function PlanWeek() {
   );
 }
 
-export function useScheduleNumber({ paused, status }: { paused: boolean; status: PlanStatus }) {
+export function useScheduleNumber({
+  paused,
+  status,
+  timeShownBeside,
+}: {
+  paused: boolean;
+  status: PlanStatus;
+  timeShownBeside: boolean;
+}) {
   const t = useExtracted();
   const statusText = usePlanStatusText();
   const formatDuration = useFormatDuration();
@@ -151,7 +159,7 @@ export function useScheduleNumber({ paused, status }: { paused: boolean; status:
   }
 
   return {
-    detail: status.kind === "needsAdjusting" ? null : timeADay,
+    detail: status.kind === "needsAdjusting" || timeShownBeside ? null : timeADay,
     label,
     value: statusText(status),
   };

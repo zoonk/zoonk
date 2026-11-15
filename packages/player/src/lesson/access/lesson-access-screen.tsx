@@ -2,7 +2,6 @@
 
 import { EnterButton, EnterLink } from "@zoonk/learn/enter-button";
 import { type LessonLimit, useFreeLessonReady, useLessonLimitWords } from "@zoonk/learn/help-limit";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import { CircleAlertIcon, HourglassIcon, SparklesIcon, UserRoundPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect } from "react";
@@ -33,21 +32,10 @@ function useStillFreeLine(limit: ReachedLimit): string {
 function FreeLessonReady({ title }: { title: string }) {
   const t = useExtracted();
   const { actions } = useLessonPlayer();
-  const { linkComponent: LinkComponent, routes } = useLessonPlayerConfig();
 
   return (
     <AccessLayout
-      actions={
-        <>
-          <LinkComponent
-            className={buttonVariants({ className: "shrink-0", size: "xl", variant: "outline" })}
-            href={routes.upgrade}
-          >
-            {t("Subscribe")}
-          </LinkComponent>
-          <EnterButton onClick={actions.retryStart}>{t("Start the lesson")}</EnterButton>
-        </>
-      }
+      actions={<EnterButton onClick={actions.retryStart}>{t("Start the lesson")}</EnterButton>}
       icon={<SparklesIcon aria-hidden="true" />}
       title={title}
     />

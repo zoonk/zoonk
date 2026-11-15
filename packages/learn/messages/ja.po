@@ -4172,6 +4172,12 @@ msgctxt "vNw6Rg"
 msgid "Writing each card's instructions…"
 msgstr "各カードの指示文を作成しています…"
 
+#. The title of a notice over something being prepared for the learner (a lesson, a list, a map) that failed or never started. A Try again button follows.
+#: src/generation/generation-failure-notice.tsx
+msgctxt "Yc1thK"
+msgid "Something went wrong on our side"
+msgstr "システム側で問題が発生しました"
+
 #: src/generation/generation-failure-notice.tsx
 msgctxt "Eg11ZY"
 msgid "Reconnect"
@@ -4186,29 +4192,6 @@ msgstr "進捗状況が届かなくなりました。準備は続いているか
 msgctxt "CN_B_k"
 msgid "Connection lost"
 msgstr "接続が切れました"
-
-#: src/generation/generation-failure-notice.tsx
-#: src/onboarding/steps/step-parts.tsx
-#: src/wait/first-lesson-row.tsx
-msgctxt "YXnM-X"
-msgid "Something went wrong on our side."
-msgstr "こちら側で問題が発生しました。"
-
-#. Preparing this content failed. It is not still running.
-#: src/generation/generation-failure-notice.tsx
-msgctxt "0fLHBg"
-msgid "This didn't finish"
-msgstr "準備を完了できませんでした"
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "iKz0K6"
-msgid "We couldn't get this started."
-msgstr "準備を開始できませんでした。"
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "q8l1Sf"
-msgid "This didn't start"
-msgstr "準備を開始できませんでした"
 
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
@@ -4957,11 +4940,6 @@ msgstr "学習計画を作る前に、いくつか質問があります"
 msgctxt "mMlLhC"
 msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "質問への回答をもとに、目標達成までの毎日の学習計画を立てます。"
-
-#: src/journey/journey-planless.tsx
-msgctxt "3X96t0"
-msgid "{goal} · Building your plan"
-msgstr "{goal} · 学習計画を作成しています"
 
 #: src/journey/journey-planless.tsx
 msgctxt "vKk5P_"
@@ -7260,9 +7238,9 @@ msgid "{count, plural, one {# map didn't finish. Try again.} other {# maps didn'
 msgstr "{count, plural, other {マップ#件の作成が完了しませんでした。もう一度お試しください。}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "CHNbiu"
-msgid "{count, plural, one {You can make # more right now.} other {You can make # more right now.}}"
-msgstr "{count, plural, other {今すぐあと#章分のマップを作成できます。}}"
+msgctxt "VSfWXI"
+msgid "{count, plural, one {You can create # more map right now.} other {You can create # more maps right now.}}"
+msgstr "{count, plural, other {今すぐ、マップをあと#枚作成できます。}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "BekXxP"
@@ -9958,6 +9936,12 @@ msgctxt "jNPr7M"
 msgid "This didn't open"
 msgstr "画面を開けませんでした"
 
+#: src/onboarding/steps/step-parts.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "YXnM-X"
+msgid "Something went wrong on our side."
+msgstr "こちら側で問題が発生しました。"
+
 #: src/onboarding/steps/study-week.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/plan-schedule.tsx
@@ -10589,6 +10573,11 @@ msgstr "1日{time}ですべて学べます"
 msgctxt "tODRiS"
 msgid "Study everything"
 msgstr "すべて学ぶ"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "hZ68v2"
+msgid "Keep studying, or archive this goal?"
+msgstr "学習を続けますか？それとも、この目標をアーカイブしますか？"
 
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "PpW8Dz"
