@@ -33,9 +33,8 @@ Checks that every picture a PR body shows was captured, from which build, and re
            app, which carries no commit, must have been installed after the head's last change to
            apps/android or packages/, from a clean tree (its Debug build doesn't stamp the
            commit: a value that changes every commit would cost every incremental build). It
-           refuses otherwise. A web page in a
-           phone-sized browser is a web capture: take it with pnpm pr:capture. Its read checks its
-           layout. --to is tmp/pr-media/device by default.
+           refuses otherwise. A web page in a phone-sized browser is a web capture: take it with
+           pnpm pr:capture. Its read checks its layout. --to is tmp/pr-media/device by default.
   before   records existing before pictures and where they came from; they pass, since a before
            picture's build isn't checked. --to is tmp/pr-media/registered by default for both.
   adopt    puts Android renders into a capture folder as the check reads them: each picture
