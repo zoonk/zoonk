@@ -5,7 +5,9 @@ import {
   type Capture,
   type CaptureElement,
 } from "./alignment-capture.mts";
+import { heightLeads } from "./alignment-controls.mts";
 import { coverageLeads, isOneStack } from "./alignment-coverage.mts";
+import { cutLeads } from "./alignment-cut.mts";
 import { axisLeads, endLeads, stackedLeads, startLeads } from "./alignment-edges.mts";
 import { evenLeads } from "./alignment-even.mts";
 import { gapLeads } from "./alignment-gap.mts";
@@ -20,6 +22,7 @@ import {
   notMeasured,
   rowName,
 } from "./alignment-geometry.mts";
+import { helperLeads } from "./alignment-helper.mts";
 import { lineLeads } from "./alignment-line.mts";
 import { pinnedLeads } from "./alignment-pinned.mts";
 import { roomLeads } from "./alignment-room.mts";
@@ -31,6 +34,7 @@ import {
   EXCEPTIONS,
   type Relation,
 } from "./alignment-table.mts";
+import { lineEndLeads, loneWordLeads } from "./alignment-wrap.mts";
 
 /**
  * The one evaluator of the declared relationships. It reads captures, from the web page or from the
@@ -214,6 +218,7 @@ function groupLeads(context: Context, group: Group): AlignmentFinding[] {
     ...(has("line") ? lineLeads(context, group) : []),
     ...(has("room") ? roomLeads(context, group) : []),
     ...(has("even") ? evenLeads(context, group) : []),
+    ...(has("helper") ? helperLeads(context, group) : []),
   ];
 
   // Rows a platform grouped by the stack holding them, with no piece framing them: leads only.
@@ -231,6 +236,10 @@ export function evaluateCapture(capture: Capture): AlignmentFinding[] {
     // A gallery's specimens each draw in a frame of their own, not on the page's column.
     ...(capture.specimen ? [] : [...bleedLeads(context), ...spanLeads(context)]),
     ...pinnedLeads(context),
+    ...lineEndLeads(context),
+    ...loneWordLeads(context),
+    ...heightLeads(context),
+    ...cutLeads(context),
   ];
 }
 

@@ -190,3 +190,20 @@ describe("a card that pads its content in sections (C-L10: the example plans, a 
     assert.equal(exampleCard(0).length, 1);
   });
 });
+
+describe("a list's untagged content (C-L08: numbered rows and certificate fields)", () => {
+  it("finds the first text in the content wrapper without treating the number as the title", () => {
+    document.body.innerHTML = `<div data-slot="list-group" data-box="16,0,358,120">
+      <div data-slot="list-row" data-box="16,0,358,60">
+        <span data-slot="list-row-content" data-box="16,0,320,60">
+          <span data-box="16,0,200,20"><span data-box="16,0,12,20">1.</span><span data-box="32,0,184,20">Calculus</span></span>
+          <span data-box="16,25,200,20">Derivatives and integrals</span>
+        </span>
+      </div></div>`;
+
+    const labels = read().elements.filter((part) => part.part === "label");
+    assert.equal(labels.length, 1);
+    assert.equal(labels[0]?.text, "Calculus");
+    assert.deepEqual(rule("label"), []);
+  });
+});

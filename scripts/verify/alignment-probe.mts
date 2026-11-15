@@ -1290,7 +1290,257 @@ export function readAlignment({
     row: null,
   }));
 
-  const all = [...elements, ...actions, ...anchored, ...pinned, ...readBleeds()];
+  function pagePart(
+    element: Element,
+    part: "text" | "control" | "cut",
+    index: number,
+  ): CaptureElement {
+    return {
+      bounds: bounds(boxOf(element)),
+      group: null,
+      id: `${part}.${index}`,
+      ink: null,
+      name: name(element),
+      part,
+      piece: "page",
+      row: null,
+      surface: surfaceOf(element),
+    };
+  }
+
+  /** Character ranges preserve the browser's actual line breaks, including breaks inside a text node. */
+  function lineTexts(element: Element): string[] {
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+    const lines: { top: number; height: number; right: number; text: string }[] = [];
+
+    function readNode(node: Node) {
+      if (
+        !(node instanceof Text) ||
+        !node.parentElement ||
+        !present(node.parentElement) ||
+        node.parentElement.closest("kbd")
+      ) {
+        return;
+      }
+
+      const range = document.createRange();
+
+      for (let index = 0; index < node.length; index += 1) {
+        range.setStart(node, index);
+        range.setEnd(node, index + 1);
+        const rect = [...range.getClientRects()].find((box) => box.width > 0 && box.height > 0);
+
+        if (rect) {
+          const line = lines.find(
+            (candidate) =>
+              Math.abs(candidate.top - rect.top) < Math.min(candidate.height, rect.height) / 2,
+          );
+
+          if (line) {
+            line.text += `${rect.left > line.right + 1 ? " " : ""}${node.data[index] ?? ""}`;
+            line.right = rect.right;
+          } else {
+            lines.push({
+              height: rect.height,
+              right: rect.right,
+              text: node.data[index] ?? "",
+              top: rect.top,
+            });
+          }
+        }
+      }
+    }
+
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      readNode(node);
+    }
+
+    return lines
+      .toSorted((a, b) => a.top - b.top)
+      .map((line) => line.text.trim())
+      .filter(Boolean);
+  }
+
+  function textRole(element: Element): CaptureElement["textRole"] {
+    if (element.matches("h1,h2,h3,h4,h5,h6,[data-slot$=title]")) {
+      return "title";
+    }
+
+    if (element.matches("button,[role=button],[data-slot=button]")) {
+      return "button";
+    }
+
+    if (element.matches("[data-slot*=facts]") || /\s·\s/u.test(element.textContent ?? "")) {
+      return "facts";
+    }
+
+    return undefined;
+  }
+
+  function textRoot(parent: Element): Element {
+    const semantic = parent.closest(
+      "h1,h2,h3,h4,h5,h6,p,button,[role=button],[data-slot=button],[data-slot$=title],[data-slot*=facts]",
+    );
+
+    if (semantic) {
+      return semantic;
+    }
+
+    const inline = (element: Element) =>
+      ["", "inline", "inline-block", "contents"].includes(getComputedStyle(element).display);
+
+    let root = parent;
+
+    while (
+      inline(root) &&
+      root.parentElement &&
+      !root.parentElement.matches("body,html") &&
+      [...root.parentElement.children].every((child) => inline(child))
+    ) {
+      root = root.parentElement;
+    }
+
+    return root;
+  }
+
+  function readPageTexts(): CaptureElement[] {
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const roots = new Set<Element>();
+
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const parent = node.parentElement;
+
+      if (
+        node.textContent?.trim() &&
+        parent &&
+        present(parent) &&
+        !parent.closest("script,style,svg,kbd")
+      ) {
+        roots.add(textRoot(parent));
+      }
+    }
+
+    return [...roots]
+      .filter((root) => ![...roots].some((other) => other !== root && other.contains(root)))
+      .map((element, index) => ({
+        ...pagePart(element, "text", index),
+        lineTexts: lineTexts(element),
+        ...(textRole(element) ? { textRole: textRole(element) } : {}),
+      }));
+  }
+
+  function readPageControls(): CaptureElement[] {
+    return [
+      ...document.querySelectorAll(
+        "button,input:not([type=hidden]),select,textarea,[role=button],[data-slot=button]",
+      ),
+    ]
+      .filter(
+        (element) =>
+          present(element) &&
+          !element.parentElement?.closest("button,[role=button],[data-slot=button]"),
+      )
+      .map((element, index) => pagePart(element, "control", index));
+  }
+
+  /** A declared clamp and a scrollable ancestor give content a deliberate way to continue. */
+  function allowsOverflow(element: Element): boolean {
+    const style = getComputedStyle(element);
+
+    return (
+      element.matches("input,textarea,select,[data-slot=horizontal-scroll]") ||
+      [style.overflowX, style.overflowY].some((overflow) =>
+        ["auto", "scroll"].includes(overflow),
+      ) ||
+      style.textOverflow === "ellipsis" ||
+      Number(style.webkitLineClamp) > 0
+    );
+  }
+
+  function readCuts(): CaptureElement[] {
+    return [...document.querySelectorAll("body *")].flatMap((element, index) => {
+      if (!present(element) || allowsOverflow(element)) {
+        return [];
+      }
+
+      const style = getComputedStyle(element);
+      const across = ["hidden", "clip"].includes(style.overflowX);
+      const down = ["hidden", "clip"].includes(style.overflowY);
+
+      if (!across && !down) {
+        return [];
+      }
+
+      const contents = [...element.querySelectorAll("*")].filter(
+        (child) =>
+          present(child) &&
+          !child.closest("svg") &&
+          (child.matches("button,input,select,[role=button]") ||
+            [...child.childNodes].some((node) => node instanceof Text && node.data.trim())),
+      );
+
+      const clipped = contents.flatMap((child) => {
+        // A nested scroller or clamp owns its content's overflow, even inside a clipped card.
+        const ancestors: Element[] = [];
+
+        for (
+          let parent: Element | null = child;
+          parent && parent !== element;
+          parent = parent.parentElement
+        ) {
+          ancestors.push(parent);
+        }
+
+        if (ancestors.some((ancestor) => allowsOverflow(ancestor))) {
+          return [];
+        }
+
+        const ink = inkOf(child);
+        return ink ? [ink] : [];
+      });
+
+      const ownText = [...element.childNodes]
+        .filter((node) => node instanceof Text && node.data.trim())
+        .flatMap((node) => {
+          const range = document.createRange();
+          range.selectNodeContents(node);
+          return [...range.getClientRects()];
+        });
+
+      const ink = union([...clipped, ...ownText]);
+
+      if (!ink) {
+        return [];
+      }
+
+      const box = element.getBoundingClientRect();
+      const x = across ? Math.max(0, box.left - ink.left, ink.right - box.right) : 0;
+      const y = down ? Math.max(0, box.top - ink.top, ink.bottom - box.bottom) : 0;
+
+      if (Math.max(x, y) <= 1) {
+        return [];
+      }
+
+      return [
+        {
+          ...pagePart(element, "cut", index),
+          overflow: [x, y] as [number, number],
+          text: name(element),
+        },
+      ];
+    });
+  }
+
+  const all = [
+    ...elements,
+    ...actions,
+    ...anchored,
+    ...pinned,
+    ...readBleeds(),
+    ...readPageTexts(),
+    ...readPageControls(),
+    ...readCuts(),
+  ];
 
   // Null when two surfaces overlap and the document shows no declared surface where they do.
   if (top === null) {

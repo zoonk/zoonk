@@ -19,11 +19,14 @@ export const ELEMENT_PARTS = [
   "action",
   "anchor",
   "bar",
+  "control",
+  "cut",
   "fill",
   "group",
   "holder",
   "pinned",
   "row",
+  "text",
 ] as const;
 
 export type CaptureElement = {
@@ -98,6 +101,12 @@ export type CaptureElement = {
   stacked?: boolean;
   /** An area the platform couldn't read (`"part": "unmeasured"`): why. */
   reason?: string;
+  /** A text's: each line's words as drawn, when it wraps or ends with a separator. */
+  lineTexts?: string[];
+  /** A text's: a title, a facts line or a button's label, which never leaves one short word alone. */
+  textRole?: "button" | "facts" | "title";
+  /** A cut's (what a box clips): how far its content passes the box, across and down. */
+  overflow?: [number, number];
 };
 
 export type Configuration = {

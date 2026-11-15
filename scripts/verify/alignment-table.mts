@@ -12,6 +12,7 @@ export type Relation =
   | "end-edge"
   | "even"
   | "gap"
+  | "helper"
   | "label-start"
   | "lead-start"
   | "line"
@@ -51,7 +52,8 @@ type Piece = { name: string; relations: Relation[]; web?: WebPiece };
 
 const LIST_PARTS = {
   end: "svg.lucide-chevron-right, [data-slot=fold-chevron], [data-slot=radio-group-item], [data-slot=checkbox], [role=switch]",
-  label: "[data-slot=list-row-title], [data-slot=week-day-item]",
+  label:
+    "[data-slot=list-row-title], [data-slot=week-day-item], [data-slot=list-row-content]:not(:has([data-slot=list-row-title])) > :first-child",
   lead: "[data-slot=week-day-date]",
   mark: "[data-slot=list-row-leading], [data-slot=list-row-icon]",
   note: "[data-slot=list-row-description]",
@@ -71,12 +73,21 @@ export const LIST_GROUP = {
 const PIECES: Piece[] = [
   {
     name: "list-group",
-    relations: ["label-start", "lead-start", "mark-axis", "end-edge", "gap", "type", "line"],
+    relations: [
+      "label-start",
+      "lead-start",
+      "mark-axis",
+      "end-edge",
+      "gap",
+      "type",
+      "line",
+      "helper",
+    ],
     web: { ...LIST_GROUP, nested: ":scope > [data-slot=choice-row]", parts: LIST_PARTS },
   },
   {
     name: "choice-list",
-    relations: ["label-start", "mark-axis", "end-edge", "gap", "type"],
+    relations: ["label-start", "mark-axis", "end-edge", "gap", "type", "helper"],
     web: {
       group:
         "[data-slot=radio-group]:has(> [data-slot=choice-row]), [data-slot=choice-list]:has(> [data-slot=choice-row])",
@@ -131,7 +142,7 @@ const PIECES: Piece[] = [
     name: "journey-path",
     // No gap: a phase row holds its open chapters under it. No type: a word stands in a date's
     // place on purpose ("Won", "Today", "Date to be confirmed").
-    relations: ["label-start", "mark-axis", "end-edge", "line"],
+    relations: ["label-start", "mark-axis", "end-edge", "line", "helper"],
     web: {
       group: "[data-slot=journey-path-list], [data-slot=path-nested]",
       parts: {

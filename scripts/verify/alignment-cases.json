@@ -5800,8 +5800,8 @@
         "piece": "list-group",
         "group": "g",
         "row": "r0",
-        "capTop": 5,
-        "capBottom": 15,
+        "capTop": 6,
+        "capBottom": 14,
         "type": "font",
         "lines": 1
       }
@@ -5880,8 +5880,8 @@
         "piece": "list-group",
         "group": "g",
         "row": "r0",
-        "capTop": 5,
-        "capBottom": 15,
+        "capTop": 6,
+        "capBottom": 14,
         "type": "font",
         "lines": 1
       }
@@ -6259,8 +6259,8 @@
         "piece": "list-group",
         "group": "g",
         "row": "r0",
-        "capTop": 5,
-        "capBottom": 15,
+        "capTop": 6,
+        "capBottom": 14,
         "type": "font",
         "lines": 1
       }
