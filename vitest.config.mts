@@ -12,6 +12,7 @@ export default defineConfig({
   test: {
     environment: "node",
     include: [
+      "apps/apple/scripts/*.test.mts",
       "apps/evals/src/**/*.test.ts",
       "scripts/deploy/*.test.mts",
       "scripts/dev/*.test.mts",

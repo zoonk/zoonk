@@ -268,8 +268,10 @@ struct ChoiceRows<Value: Hashable>: View {
             VStack(alignment: .leading, spacing: 2) {
               Text(choice.label)
                 .foregroundStyle(.primary)
+                .layoutPart(.label, text: Text(verbatim: choice.label))
               if let detail = choice.detail {
                 detail
+                  .layoutPart(.note, text: detail)
                   .typeStyle(.note)
                   .foregroundStyle(.mutedForeground)
               }
@@ -280,9 +282,11 @@ struct ChoiceRows<Value: Hashable>: View {
               Image(systemName: "checkmark")
                 .fontWeight(.semibold)
                 .foregroundStyle(.tint)
+                .layoutPart(.end)
             }
           }
           .contentShape(.rect)
+          .layoutRow(.choiceList)
         }
         .accessibilityAddTraits(picked == choice.value ? .isSelected : [])
       }
