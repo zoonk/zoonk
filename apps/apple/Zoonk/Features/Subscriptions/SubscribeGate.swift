@@ -210,6 +210,9 @@ extension HelpLimit {
       LimitWords(title: Self.guestTitle(kind))
     case .usedUp where kind == .lessons && isOpen(at: now):
       Self.freeLessonReady
+    // Once the day has come nothing ran out, so no title says it did.
+    case .usedUp where isOpen(at: now):
+      LimitWords(line: Self.tryAgainNow)
     case .usedUp(let tier, let availableAt):
       LimitWords(
         title: Self.usedUpTitle(kind),
@@ -230,6 +233,12 @@ extension HelpLimit {
 
   static let freeLessonReady = LimitWords(
     title: LocalizedStringResource("Your next free lesson is ready", table: "Subscriptions"))
+
+  private static let tryAgainNow = LocalizedStringResource(
+    "You can try again now.", table: "Subscriptions",
+    comment:
+      "The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back."
+  )
 
   private static func usedUpTitle(_ kind: Kind?) -> LocalizedStringResource {
     switch kind {
@@ -333,11 +342,7 @@ extension HelpLimit {
 
     switch day {
     case .open:
-      return LocalizedStringResource(
-        "You can try again now.", table: "Subscriptions",
-        comment:
-          "The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back."
-      )
+      return tryAgainNow
     case .today:
       return isPlus
         ? LocalizedStringResource(

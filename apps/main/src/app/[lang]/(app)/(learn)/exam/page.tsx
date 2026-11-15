@@ -1,15 +1,8 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
-import {
-  DetailSkeleton,
-  ListSectionSkeleton,
-  SectionLabelSkeleton,
-} from "@/components/learn/detail-skeleton";
+import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { JourneyPageBar } from "@/components/learn/journey-page-bar";
 import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { getExamView } from "@zoonk/core/exams/view/get";
-import { SURFACE_CLASS } from "@zoonk/learn/surface";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -51,62 +44,9 @@ async function ExamContent() {
   );
 }
 
-function SubjectRowSkeleton() {
-  return (
-    <div className="flex h-11 items-center gap-3">
-      <span className="flex-1">
-        <Skeleton className="h-3.5 w-32 max-w-full rounded-sm" />
-      </span>
-      <Skeleton className="h-1 w-20 rounded-xs sm:w-36" />
-      <Skeleton className="h-3 w-8 rounded-sm" />
-    </div>
-  );
-}
-
-/** Drawn as the section looks after a first mock exam, the most common; later ones add a card and a chart. */
-function MockProgressSkeleton() {
-  return (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-col gap-1">
-        <SectionLabelSkeleton />
-        <Skeleton className="text-compact w-40 max-w-full rounded-sm">{"\u00A0"}</Skeleton>
-      </div>
-      <div className="flex flex-col [&>*+*]:border-t">
-        <SubjectRowSkeleton />
-        <SubjectRowSkeleton />
-      </div>
-    </div>
-  );
-}
-
-function ExamAsideSkeleton() {
-  return (
-    <div className="hidden flex-col gap-8 min-[72rem]:flex">
-      <ListSectionSkeleton rows={2} />
-      <div className="flex flex-col gap-3">
-        <SectionLabelSkeleton />
-        <div className={cn(SURFACE_CLASS, "flex flex-col gap-2 p-4")}>
-          <Skeleton className="h-3.5 w-40 max-w-full rounded-sm" />
-          <Skeleton className="h-3 w-full rounded-sm" />
-          <Skeleton className="h-3 w-2/3 rounded-sm" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ExamSkeleton() {
-  return (
-    <DetailSkeleton aside={<ExamAsideSkeleton />} bar={<JourneyPageBar listed root />}>
-      <ListSectionSkeleton rows={2} />
-      <MockProgressSkeleton />
-    </DetailSkeleton>
-  );
-}
-
 export default function ExamPage() {
   return (
-    <Suspense fallback={<ExamSkeleton />}>
+    <Suspense fallback={<DetailSkeleton bar={<JourneyPageBar listed root />} />}>
       <ExamContent />
     </Suspense>
   );

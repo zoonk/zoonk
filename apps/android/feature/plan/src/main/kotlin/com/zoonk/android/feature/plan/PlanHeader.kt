@@ -75,7 +75,10 @@ internal fun PlanHeader(
     }
 }
 
-/** The goal and its days left, the page's one line under its title. */
+/**
+ * The days left to the goal's date, the one line under the Plan's title. The top bar's goal switcher
+ * names the goal, so the line doesn't; a goal without a date still to come has none.
+ */
 @Composable
 private fun PlanSubtitle(page: PlanPageState) {
     val target = page.plan.schedule.targetDate
@@ -101,12 +104,11 @@ private fun PlanSubtitle(page: PlanPageState) {
                 pluralStringResource(R.plurals.plan_days_left, days, days).let { PlanDateWords(it, it) }
             }
         }
-    val text = left?.let { stringResource(R.string.plan_eyebrow, page.goal.displayName, it.text) } ?: page.goal.displayName
-    val spoken = left?.let { stringResource(R.string.plan_eyebrow, page.goal.displayName, it.spoken) } ?: page.goal.displayName
+            ?: return
 
     Text(
-        text,
-        Modifier.semantics { contentDescription = spoken },
+        left.text,
+        Modifier.semantics { contentDescription = left.spoken },
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodyMedium,
     )

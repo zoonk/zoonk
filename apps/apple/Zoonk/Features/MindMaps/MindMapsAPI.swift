@@ -12,7 +12,8 @@ protocol MindMapsAPIClient: Sendable {
   /// Desired state: saving twice keeps one save. Answers whether it's saved now.
   func save(token: String, goalId: String, key: MindMapKey, saved: Bool) async throws -> Bool
   /// What started and what didn't shows in the list read again.
-  func createAll(token: String, goalId: String) async throws
+  /// The allowance's stop when it started nothing.
+  func createAll(token: String, goalId: String) async throws -> MindMapAllowanceStop?
 }
 
 struct MindMapsAPI: MindMapsAPIClient {
@@ -105,15 +106,22 @@ struct MindMapsAPI: MindMapsAPIClient {
     }
   }
 
-  func createAll(token: String, goalId: String) async throws {
+  func createAll(token: String, goalId: String) async throws -> MindMapAllowanceStop? {
     try await clients.perform(token: token) { client in
       switch try await client.createGoalMindMapGenerations(path: .init(goalId: goalId)) {
-      case .accepted: return
+      case .accepted(let response):
+        let started: MindMapGenerations = try PracticeJSON.recode(try response.body.json)
+        return started.accepted.isEmpty ? started.stop : nil
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
       }
     }
+  }
+
+  private struct MindMapGenerations: Decodable {
+    let accepted: [String]
+    let stop: MindMapAllowanceStop?
   }
 
   /// A limit names what ran out in `details.limit.resource`.

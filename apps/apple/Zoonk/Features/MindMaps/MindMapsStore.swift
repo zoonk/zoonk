@@ -43,11 +43,15 @@ final class MindMapsStore {
   /// A read only: once the page's stop is over, its offer is read again, so its counts and Create
   /// all are today's answer.
   func readOfferAgain(goalId: String, now: Date) async {
-    let list = list(goalId: goalId)
-
-    if list.value?.createOffer.stop?.isOver(at: now) == true {
-      await list.refresh()
+    if shownStop(goalId: goalId)?.isOver(at: now) == true {
+      await list(goalId: goalId).refresh()
     }
+  }
+
+  /// What stops a new map on the page: the list's offer, which a refusal writes into as the newest
+  /// answer and the next read replaces.
+  func shownStop(goalId: String) -> MindMapAllowanceStop? {
+    lists[goalId]?.value?.createOffer.stop
   }
 
   func list(goalId: String) -> Resource<GoalMindMaps> {
@@ -208,7 +212,11 @@ final class MindMapsStore {
     }
 
     switch started {
-    case .done:
+    case .done(let stop):
+      if let stop {
+        stopOffer(stop, goalId: goalId)
+      }
+
       if await !Self.reread(lists[goalId]) {
         failCreateAll(.unreachable, goalId: goalId)
       }
@@ -263,6 +271,10 @@ final class MindMapsStore {
       }
     case .done(.refused(let limit)):
       fail(.refused(limit), goalId: goalId, chapterId: chapterId)
+      // Main's b09-16: every other Create would be refused for the same cap.
+      if let stop = limit.pageStop {
+        stopOffer(stop, goalId: goalId)
+      }
     case .failed:
       fail(.unreachable, goalId: goalId, chapterId: chapterId)
     case .obsolete:
@@ -436,6 +448,12 @@ final class MindMapsStore {
         lessons["\(goalId):\(group.chapterId)"]?.invalidate()
       }
     }
+  }
+
+  /// A refusal is the newest answer about the offer: a read already on its way predates it and is
+  /// dropped, and the next read replaces it.
+  private func stopOffer(_ stop: MindMapAllowanceStop, goalId: String) {
+    lists[goalId]?.update { $0.stopped(by: stop) }
   }
 
   private func readStarted() -> Int {

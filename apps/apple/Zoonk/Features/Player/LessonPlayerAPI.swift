@@ -522,9 +522,9 @@ struct LessonPlayerAPI: Sendable {
         case "total": .total
         case "rolling30Days":
           .last30Days(
-            availableAt: ((limit?["availableAt"] ?? details?["availableAt"] ?? nil) as? String)
-              .flatMap(
-                Date.init(serverInstant:)))
+            availableAt: Date(
+              opening: (limit?["availableAt"] ?? details?["availableAt"] ?? nil) as? String,
+              receivedAt: .now))
         default: .day
         }
       return .limitReached(tier: tier, period: period)

@@ -15,10 +15,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.LocalButtonSize
@@ -298,15 +295,14 @@ private fun lineWords(
 
             is TimeLine.Finish -> {
                 val month = formatDate(line.endDate.toJavaLocalDate(), locale, DateStyle.Month)
-                return (
-                    if (aim ==
-                        null
-                    ) {
-                        stringResource(R.string.plan_finish_around, month)
-                    } else {
-                        stringResource(R.string.onboarding_aim_finish, time, aim, month)
-                    }
-                ).emphasizing(month, SpanStyle(fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface))
+                // One quiet sentence, the month not singled out, as the Plan's own finish line.
+                if (aim ==
+                    null
+                ) {
+                    stringResource(R.string.plan_finish_around, month)
+                } else {
+                    stringResource(R.string.onboarding_aim_finish, time, aim, month)
+                }
             }
 
             TimeLine.NoFinish -> {
@@ -334,22 +330,6 @@ private fun lineWords(
             }
         }
     return AnnotatedString(text)
-}
-
-private fun String.emphasizing(
-    part: String,
-    style: SpanStyle,
-): AnnotatedString {
-    val start = indexOf(part)
-    return buildAnnotatedString {
-        if (start < 0) {
-            append(this@emphasizing)
-        } else {
-            append(substring(0, start))
-            withStyle(style) { append(part) }
-            append(substring(start + part.length))
-        }
-    }
 }
 
 private const val UPDATING_ALPHA = 0.5f

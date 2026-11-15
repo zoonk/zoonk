@@ -32,7 +32,6 @@ data class LayoutPart(
         Note("note"),
         Value("value"),
         End("end"),
-        Bar("bar"),
         Action("action"),
     }
 

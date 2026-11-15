@@ -209,13 +209,17 @@ internal fun phaseEnd(
         return null
     }
     val plan = page.plan
-    if (phase.index == plan.phases.lastOrNull { it.kind != PlanPhase.Kind.AFTER_EXAM }?.index) {
-        val end = plan.estimate.endDate?.toJavaLocalDate()
-        if (plan.schedule.targetDate != null || !page.isExam || end == null) return null
-        val month = plan.estimateNamesMonth(end)
-        return endWords(formatPlanDate(end, page.today, currentLocale(), month = month), estimate = true, month = month)
-    }
-    val end = phase.lastDay() ?: return null
+    // Every phase shows its end, the last one too: a last phase without a day of its own ends with the plan.
+    val end =
+        phase.lastDay() ?: run {
+            val planEnd =
+                plan.estimate.endDate
+                    ?.toJavaLocalDate()
+                    ?.takeIf { phase.index == plan.phases.lastOrNull { it.kind != PlanPhase.Kind.AFTER_EXAM }?.index }
+                    ?: return null
+            val month = plan.estimateNamesMonth(planEnd)
+            return endWords(formatPlanDate(planEnd, page.today, currentLocale(), month = month), estimate = true, month = month)
+        }
     val learns = phase.kind == PlanPhase.Kind.LEARN || phase.kind == PlanPhase.Kind.AFTER_EXAM
     val ahead = phase.state == PlanPhase.State.UPCOMING
     val estimate = learns && (ahead || phase.checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING)

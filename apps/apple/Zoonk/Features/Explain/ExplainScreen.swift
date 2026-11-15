@@ -185,8 +185,10 @@ private struct ExplanationView: View {
         if retryFailed {
           FailureLine(
             message: LocalizedStringResource(
-              "We couldn't get this started.", table: "Explain",
-              comment: "A slow explanation couldn't be asked again"))
+              "Something went wrong on our side", table: "Explain",
+              comment:
+                "The title of a notice over something being prepared for the learner (a lesson, a list, a map) that failed or never started. A Try again button follows."
+            ))
         } else {
           Text(stillWriting)
         }

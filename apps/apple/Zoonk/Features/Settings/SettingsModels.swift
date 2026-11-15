@@ -130,7 +130,24 @@ struct FreePlan: Decodable, Equatable, Sendable {
   let guestLessons: Int?
   let lessonsPer30Days: Int?
   let tutorMessagesPerDay: Int?
+  let tutorMessagesPer30Days: Int?
   let uploadsPerDay: Int?
+
+  /// The buddy's free messages, with the monthly cap when the plan has one.
+  var buddyLine: LocalizedStringResource? {
+    guard let day = tutorMessagesPerDay else {
+      return nil
+    }
+
+    guard let month = tutorMessagesPer30Days else {
+      return LocalizedStringResource(
+        "An AI study buddy: \(day) messages a day", table: "Subscriptions",
+        comment: "Free plan: the study buddy's daily messages")
+    }
+
+    return LocalizedStringResource(
+      "An AI study buddy: \(day) messages a day, up to \(month) a month", table: "Subscriptions")
+  }
 }
 
 struct PlanAllowance: Equatable, Sendable {

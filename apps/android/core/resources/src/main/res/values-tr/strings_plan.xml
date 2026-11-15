@@ -250,8 +250,7 @@
   "plan_exam_date": "af134b505098e9b769b7b9cbd7821f28aba1207d248ba0a0465c5114588b575f",
   "plan_exam_date_label": "11e415c382b7f53954aeff15163eac39ffeedc49666ee2519b2b7e195419bc6b",
   "plan_exam_day": "fdd0d94b54b6c5284830c835138d39c4226d372a6d82d7ed69ab9183aab2a9a6",
-  "plan_exam_over_left": "19252c8a57dc913999d8e7f196e450ffada276a1f8e97af3aa3f55043f78477c",
-  "plan_eyebrow": "c1a6514e612bee1ff6087941a76de8b60d8a571b0c31436c8b19367427eeb528",
+  "plan_exam_over_ask": "30c13fc0e6269aa90901cbb0c044f57b72e199f2596a51d2d7053d67f898d98d",
   "plan_far_count_from": "2170998188c14d820f1d33baf352bc54a1594c49567e2264b46322dddd19c766",
   "plan_far_count_from_month": "6e6bc69cbfbe62e63b12f7b5aacde8986cc44aa130f3170bda46b3dcf2515eec",
   "plan_far_explain": "a99e595fe1f0d15041b581129b0adedd7c11e11a240bf42e6362ce598cf84589",
@@ -396,7 +395,6 @@
   "plan_right_answers": "995ba18212bacb8027af0340c4b045594d55ec3a27e14b72ed2ccf3cb03024b9",
   "plan_roadmap_from": "25d30045cd448e4f99d77918c51b5cd8a30a87b358ef8eed99182be10f9063f7",
   "plan_roadmap_phase_number": "7a723dd397ece5c3d5cb0e8df01eda62188a3c300a106c4c8623811961608608",
-  "plan_roadmap_phase_of": "55bc7350bc33fd3b8a28e5df6ea54e0cbc2122f03517b910b9dc6d95baaa7d12",
   "plan_saturdays": "e7637bde72e1e3ea23ab7d5e29e0b86f6557ef97b07b9be20f321cade2f05561",
   "plan_save": "22325f6a3e515eed577e2199ee85be063ed8b6b7134cf0f21205c65d9de4c9ff",
   "plan_save_failed": "f1e5a42d6a44689dd16ef9af30c02b0fdf4958f5d0de2a4bbb740b84cf0fcc4c",
@@ -462,7 +460,6 @@
   "plan_time_no_days": "472c663caa602e4c2a1e69ec83aba57e061e12ad13611e2c47721f0f2ec13864",
   "plan_time_none": "0e960584c81586c7eecedff194297b2d8060df9b21579c4b6b4528031e17146f",
   "plan_time_none_month": "f6d0cbe3b67a0295cb8cfca52bf4c13ffdc8df95bd4f0117a20e0f857cf02f2b",
-  "plan_time_on_weekends": "db0f2d7eff188a1d0f9512a3052cbcce2c6ef8a4a548cbc90b1faf8464e2ca55",
   "plan_time_past_date": "0c99bbe1a2a5f7b50dcf611abbf2f4c78056d8d0e1770c8337c6d1269ee81eed",
   "plan_time_past_date_month": "460501f695e3241f499b6000ddcf580d7eb6e0e651c47f1a2cc9468db473e1ea",
   "plan_time_share_exam": "1893d33bb0429e007a039dc001739506ababb4646d9d11970210987a571225ec",
@@ -530,7 +527,6 @@
   "plan_wednesdays": "ea6d9361b259ce9795f4f9257c6d22526240aaeaedede0974931b03dab29cf53",
   "plan_week_day": "a9da5a520f21fd98eb38a1cb44d662d6c9fb77df304490538d9c0cc747f8cb25",
   "plan_week_time": "ab4da42c128baac6053dfdfccc24e6b14ccb72163e102863d24c3fb0aac0b32a",
-  "plan_weekend_time_differs": "6ddca89a3459e12944c333528a270166723dc90a253d5567a23ef7d4939b8641",
   "plan_weekly_challenges": "8bca881cb6b3dbe5eba32f3145688f1e482134154526e783e566dbe6ab9fb8a8",
   "plan_what_you_practice": "7139e33e6bd6d9cd5a19939561aab77a1cd2acd5590c5031674e9c5a9204da5c",
   "plan_when_to_practice": "d36adeca9fae73ea2298b853124e2ea5384602580bbd0e0e4306bb1639ea3b85",
@@ -551,7 +547,6 @@
 -->
 <resources>
     <string name="plan_title">Plan</string>
-    <string name="plan_eyebrow">%1$s · %2$s</string>
     <string name="plan_day_is_here">Beklenen gün geldi</string>
     <plurals name="plan_days_left">
         <item quantity="one">%d gün kaldı</item>
@@ -610,7 +605,6 @@
         <item quantity="one">%1$d / %2$d aşama tamamlandı</item>
         <item quantity="other">%1$d / %2$d aşama tamamlandı</item>
     </plurals>
-    <string name="plan_roadmap_phase_of">%1$d. aşama / %2$d</string>
     <string name="plan_roadmap_from">%1$s itibarıyla</string>
     <string name="plan_today">Bugün</string>
     <string name="plan_mock_exam">Deneme sınavı</string>
@@ -1031,9 +1025,6 @@
     <string name="plan_pick_date">Tarih seç</string>
     <string name="plan_save">Kaydet</string>
     <string name="plan_use_this_date">Bu tarihi kullan</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="plan_weekend_time_differs">Hafta sonları farklı çalışma süresi</string>
-    <string name="plan_time_on_weekends">Hafta sonu çalışma süresi</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$s: hangisine gireceksin?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
@@ -1263,10 +1254,8 @@
     </plurals>
     <string name="plan_past_date_goal_title">Bitiş tarihin geçti</string>
     <string name="plan_past_date_exam_title">Sınav tarihin geçti</string>
-    <plurals name="plan_exam_over_left">
-        <item quantity="one">%d dersin kaldı. Çalışmaya devam etmek mi istersin, yoksa bu hedefi arşivlemek mi?</item>
-        <item quantity="other">%d dersin kaldı. Çalışmaya devam etmek mi istersin, yoksa bu hedefi arşivlemek mi?</item>
-    </plurals>
+    <!-- Under "Your exam date has passed" on the Plan, whose bottom bar holds the two answers and whose Schedule number says the lessons left. -->
+    <string name="plan_exam_over_ask">Çalışmaya devam etmek mi istersin, yoksa bu hedefi arşivlemek mi?</string>
     <plurals name="plan_past_date_offer">
         <item quantity="one">%d dersin kaldı. Bitiş tarihini ertelersen tamamlayabilirsin.</item>
         <item quantity="other">%d dersin kaldı. Bitiş tarihini ertelersen tamamlayabilirsin.</item>
