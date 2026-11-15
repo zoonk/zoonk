@@ -30,7 +30,9 @@ export function AccessLayout({
         <div className="flex flex-col gap-2" role="status">
           <h2 className="text-title">{title}</h2>
           {description && (
-            <p className="text-muted-foreground text-base leading-relaxed">{description}</p>
+            <p className="text-muted-foreground text-base leading-relaxed text-pretty">
+              {description}
+            </p>
           )}
         </div>
       </PlayerContentFrame>
