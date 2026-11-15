@@ -108,7 +108,7 @@ export function alignmentLines(findings: AlignmentFinding[]): string[] {
         const places = Map.groupBy(
           instances,
           (item) =>
-            `${item.screen}${item.scenario ? ` [${item.scenario}]` : ""} · ${item.configuration}`,
+            `${item.screen}${item.scenario ? ` [${item.scenario}]` : ""} · ${item.configuration}${item.source ? ` · ${item.source}` : ""}`,
         );
 
         const count =

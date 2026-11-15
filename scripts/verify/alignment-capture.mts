@@ -148,6 +148,8 @@ export type AlignmentFinding = {
   unit?: string;
   holder?: string;
   exception?: string;
+  /** The capture file it came from, when one run reads several (a folder that keeps an earlier run). */
+  source?: string;
 };
 
 export function configurationName({ locale, pointer, size, textScale }: Configuration) {
