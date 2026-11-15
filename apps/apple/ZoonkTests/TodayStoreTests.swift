@@ -1075,6 +1075,35 @@ final class SuggestedGoalAnswerTests: XCTestCase {
     try await settle()
     XCTAssertFalse(answer.failed, "A failure after leaving")
   }
+
+  /// Start, leave Today and come back while it saves, Start again: the first answer finishing
+  /// belongs to the visit that left, so the second stays busy and opens Setup once.
+  func testAnAnswerFromAVisitThatLeftLeavesTheNextVisitsAnswerAlone() async throws {
+    let api = StudyAPIStub()
+    let store = TodayStore(api: api, cache: signedInCache())
+    let router = AppRouter()
+    let suggestion = SuggestedGoal(courseId: nil, id: "s1", title: "Microeconomics")
+    let answer = SuggestedGoalAnswer()
+
+    await api.holdNextSuggestedAnswer()
+    answer.respond(to: suggestion, accepted: true, store: store, router: router)
+    await api.waitForHeldSuggestedAnswer()
+    answer.leave()
+
+    answer.respond(to: suggestion, accepted: true, store: store, router: router)
+    await api.holdNextSuggestedAnswer()
+    await api.releaseHeldSuggestedAnswer()
+    await api.waitForHeldSuggestedAnswer()
+    try await settle()
+    XCTAssertEqual(answer.answering, true, "The next visit's answer is still saving")
+    XCTAssertEqual(router.tasks, [], "The first visit's answer opens nothing")
+
+    await api.releaseHeldSuggestedAnswer()
+    try await settle()
+    XCTAssertNil(answer.answering)
+    XCTAssertEqual(
+      router.tasks, [.startGoal(goal: "Microeconomics")], "The next visit's opens Setup")
+  }
 }
 
 /// A mission tapped in Zu's day, then the window crosses the width where the day is a pane beside
@@ -1132,6 +1161,39 @@ final class BuddyMissionTapTests: XCTestCase {
 
     tap.cancel()
     XCTAssertNil(tap.failed)
+  }
+
+  /// A tap, Zu's page left and back while it opens, a tap again: the first tap finishing belongs
+  /// to the visit that left, so the next visit's stays busy and opens its mission once.
+  func testATapFromAVisitThatLeftLeavesTheNextVisitsTapAlone() async throws {
+    let opening = try opening(#"{"blockId":"b1","kind":"session","sessionId":"s1"}"#)
+    let api = StudyAPIStub(openings: [opening, opening], holdsOpening: true)
+    let today = TodayStore(api: api, cache: signedInCache())
+    let tap = BuddyMissionTap()
+    var opened = 0
+    let places = TutorPlaces { _ in opened += 1 }
+
+    tap.open("b1", today: today, places: places) {}
+    await api.waitForHeldCall()
+    tap.cancel()
+    let cleared = tap.opening == nil
+    XCTAssertTrue(cleared, "The next visit starts with no tap")
+
+    guard cleared else {
+      return
+    }
+
+    tap.open("b1", today: today, places: places) {}
+    await api.waitForHeldCall(count: 2)
+    await api.releaseHeldCall()
+    try await Task.sleep(for: .milliseconds(300))
+    XCTAssertEqual(tap.opening, "b1", "The next visit's tap is still opening")
+    XCTAssertEqual(opened, 0, "The first visit's tap opens nothing")
+
+    await api.releaseHeldCall()
+    try await Task.sleep(for: .milliseconds(300))
+    XCTAssertNil(tap.opening)
+    XCTAssertEqual(opened, 1, "The next visit's tap opens its mission")
   }
 }
 
@@ -1260,8 +1322,9 @@ private actor StudyAPIStub: StudyAPIClient {
   private(set) var sentQuotes: [PlanChangeQuote?] = []
   private let holdsOpening: Bool
   private let holdsStop: Bool
-  private var heldCall: CheckedContinuation<Void, Never>?
-  private var heldCallWaiter: CheckedContinuation<Void, Never>?
+  /// Held calls, released in the order they came.
+  private var heldCalls: [CheckedContinuation<Void, Never>] = []
+  private var heldCallWaiter: (count: Int, continuation: CheckedContinuation<Void, Never>)?
   private let holdsReadiness: Bool
   private var heldReadiness: CheckedContinuation<Void, Never>?
   private var readinessWaiter: CheckedContinuation<Void, Never>?
@@ -1318,17 +1381,22 @@ private actor StudyAPIStub: StudyAPIClient {
     decided = change
   }
 
-  func waitForHeldCall() async {
-    guard heldCall == nil else {
+  /// Until `count` calls are held.
+  func waitForHeldCall(count: Int = 1) async {
+    guard heldCalls.count < count else {
       return
     }
 
-    await withCheckedContinuation { heldCallWaiter = $0 }
+    await withCheckedContinuation { heldCallWaiter = (count, $0) }
   }
 
+  /// The first call still held goes on.
   func releaseHeldCall() {
-    heldCall?.resume()
-    heldCall = nil
+    guard !heldCalls.isEmpty else {
+      return
+    }
+
+    heldCalls.removeFirst().resume()
   }
 
   private func holdIfAsked() async {
@@ -1340,9 +1408,12 @@ private actor StudyAPIStub: StudyAPIClient {
   /// One call waits here until `releaseHeldCall()`.
   private func hold() async {
     await withCheckedContinuation { continuation in
-      heldCall = continuation
-      heldCallWaiter?.resume()
-      heldCallWaiter = nil
+      heldCalls.append(continuation)
+
+      if let waiter = heldCallWaiter, heldCalls.count >= waiter.count {
+        waiter.continuation.resume()
+        heldCallWaiter = nil
+      }
     }
   }
 
