@@ -1057,13 +1057,15 @@ struct GenerationFailureNotice: View {
       .accessibilityHidden(true)
 
       VStack(alignment: .leading, spacing: 2) {
-        title
+        Text(title)
           .typeStyle(.rowTitle)
           .foregroundStyle(Color(.foreground))
 
-        Text(description)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        if let description {
+          Text(description)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
 
         if let act {
           Button(action: act) {
@@ -1080,35 +1082,32 @@ struct GenerationFailureNotice: View {
     .padding(.horizontal, 14)
     .padding(.vertical, 12)
     .panel()
-    .announcesAlert(description)
+    .announcesAlert(description ?? String(localized: title))
   }
 
-  private var title: Text {
+  private var title: LocalizedStringResource {
     switch failure {
     case .connection:
-      Text(
-        "Connection lost", tableName: "Onboarding", comment: "A wait that stopped getting updates")
-    case .generation:
-      Text("This didn't finish", tableName: "Onboarding", comment: "A run that failed")
-    case .notStarted:
-      Text("This didn't start", tableName: "Onboarding", comment: "A run that never started")
+      LocalizedStringResource(
+        "Connection lost", table: "Onboarding", comment: "A wait that stopped getting updates")
+    case .generation, .notStarted:
+      LocalizedStringResource(
+        "Something went wrong on our side", table: "Onboarding",
+        comment:
+          "The title of a notice over something being prepared for the learner (a lesson, a list, a map) that failed or never started. A Try again button follows."
+      )
     }
   }
 
-  private var description: String {
+  /// Only a lost connection has more to say than its title.
+  private var description: String? {
     switch failure {
     case .connection:
       String(
         localized: "We stopped getting updates. It may still be working.", table: "Onboarding",
         comment: "Why a wait stopped getting updates")
-    case .generation:
-      String(
-        localized: "Something went wrong on our side.", table: "Onboarding",
-        comment: "Why a run failed")
-    case .notStarted:
-      String(
-        localized: "We couldn't get this started.", table: "Onboarding",
-        comment: "Why a run never started")
+    case .generation, .notStarted:
+      nil
     }
   }
 
