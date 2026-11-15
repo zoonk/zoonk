@@ -261,6 +261,9 @@ struct RevealWeek: View {
   let week: PlanRevealRead.Week
 
   @Environment(\.horizontalSizeClass) private var sizeClass
+  @Environment(\.stacksContent) private var isStacked
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibility
 
   private static let marksShown = 4
 
@@ -288,46 +291,91 @@ struct RevealWeek: View {
     }
   }
 
+  private func dateText(_ day: RevealDay) -> String {
+    PlanDate.text(day.date, today: PlanDate.today(), weekday: true)
+  }
+
+  /// One column for the dates, as wide as the longest, so every day's lessons start on one edge.
+  private var dateWidth: CGFloat {
+    days.map {
+      TypeStyle.data.width(
+        of: dateText($0), dynamicTypeSize: dynamicTypeSize, legibility: legibility)
+    }.max() ?? 0
+  }
+
+  /// A row is read from its first lesson's line: the date and the kinds sit centered on it.
+  private var firstLine: CGFloat {
+    TypeStyle.body.uiFont(dynamicTypeSize, legibility: legibility).lineHeight
+  }
+
+  @ViewBuilder
   private func row(_ day: RevealDay) -> some View {
-    let teaching = day.items.filter(\.isTeaching)
-    let names = (teaching.isEmpty ? day.items : teaching).map(\.revealTitle)
-    let rest = day.items.count - Self.marksShown
+    let date = Text(dateText(day))
+      .layoutPart(.lead)
+      .typeStyle(.data)
+      .foregroundStyle(.mutedForeground)
 
-    return HStack(alignment: .firstTextBaseline, spacing: 12) {
-      Text(PlanDate.text(day.date, today: PlanDate.today(), weekday: true))
-        .typeStyle(.data)
-        .foregroundStyle(.mutedForeground)
-        .frame(minWidth: 56, alignment: .leading)
+    Group {
+      if isStacked {
+        VStack(alignment: .leading, spacing: 2) {
+          date
+          names(day)
+        }
+      } else {
+        HStack(alignment: .top, spacing: 12) {
+          date
+            .frame(width: dateWidth, height: firstLine, alignment: .leading)
 
-      VStack(alignment: .leading, spacing: 2) {
-        if day.items.isEmpty {
-          Text("Rest day", tableName: "Onboarding", comment: "A day of the plan with no lessons")
-            .foregroundStyle(.mutedForeground)
-        } else {
-          ForEach(Array(names.enumerated()), id: \.offset) { _, name in
-            Text(name)
+          names(day)
+
+          if !day.items.isEmpty, sizeClass != .compact {
+            marks(day)
+              .frame(height: firstLine)
           }
         }
-      }
-      .typeStyle(.body)
-      .frame(maxWidth: .infinity, alignment: .leading)
-
-      if !day.items.isEmpty, sizeClass != .compact {
-        HStack(spacing: 4) {
-          ForEach(Array(day.items.prefix(Self.marksShown).enumerated()), id: \.offset) { _, item in
-            KindMark(kind: item.kind.learnKind)
-          }
-
-          if rest > 0 {
-            Text(verbatim: "+\(rest)")
-              .foregroundStyle(.faint)
-          }
-        }
-        .typeStyle(.small)
-        .accessibilityHidden(true)
       }
     }
+    .layoutRow(.listGroup)
     .accessibilityElement(children: .combine)
+  }
+
+  /// A wrapped title steps a line; the next lesson steps further, so a wrap doesn't read as one.
+  private func names(_ day: RevealDay) -> some View {
+    let teaching = day.items.filter(\.isTeaching)
+    let names = (teaching.isEmpty ? day.items : teaching).map(\.revealTitle)
+
+    return VStack(alignment: .leading, spacing: 6) {
+      if day.items.isEmpty {
+        Text("Rest day", tableName: "Onboarding", comment: "A day of the plan with no lessons")
+          .foregroundStyle(.mutedForeground)
+          .layoutPart(.label)
+      } else {
+        ForEach(Array(names.enumerated()), id: \.offset) { _, name in
+          Text(name)
+            .layoutPart(.label, text: Text(verbatim: name))
+        }
+      }
+    }
+    .typeStyle(.body)
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  private func marks(_ day: RevealDay) -> some View {
+    let rest = day.items.count - Self.marksShown
+
+    return HStack(spacing: 4) {
+      ForEach(Array(day.items.prefix(Self.marksShown).enumerated()), id: \.offset) { _, item in
+        KindMark(kind: item.kind.learnKind)
+      }
+
+      if rest > 0 {
+        Text(verbatim: "+\(rest)")
+          .foregroundStyle(.faint)
+      }
+    }
+    .typeStyle(.small)
+    .accessibilityHidden(true)
+    .layoutPart(.end)
   }
 }
 
