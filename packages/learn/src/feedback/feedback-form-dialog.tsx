@@ -10,7 +10,7 @@ import {
 } from "@zoonk/ui/components/drawer";
 import { showSuccessToast } from "@zoonk/ui/components/toast";
 import { useExtracted } from "next-intl";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { type FeedbackFormRequest } from "./feedback-contract";
 import { FeedbackForm } from "./feedback-form";
 
@@ -35,6 +35,17 @@ function FeedbackFormHeader({ isReport }: { isReport: boolean }) {
   );
 }
 
+/** Kept past the close, which clears the request before focus goes back. */
+function useLastOpener(request: FeedbackFormRequest | null): HTMLElement | undefined {
+  const [opener, setOpener] = useState(request?.opener);
+
+  if (request && request.opener !== opener) {
+    setOpener(request.opener);
+  }
+
+  return opener;
+}
+
 export function FeedbackFormDialog({
   onClose,
   request,
@@ -44,6 +55,7 @@ export function FeedbackFormDialog({
 }) {
   const t = useExtracted("feedback");
   const dialogRef = useRef<HTMLDivElement>(null);
+  const opener = useLastOpener(request);
 
   return (
     <Drawer
@@ -55,6 +67,7 @@ export function FeedbackFormDialog({
       open={request !== null}
     >
       <DrawerPopup
+        finalFocus={opener && (() => (opener.isConnected ? opener : true))}
         initialFocus={request?.context.reportType === "saveFailure" ? dialogRef : undefined}
         ref={dialogRef}
       >
