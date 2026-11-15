@@ -344,6 +344,7 @@ private fun MindMapsTabs(
                     FlowRow(
                         Modifier.clearAndSetSemantics { contentDescription = spoken },
                         horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
+                        itemVerticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         Text(
