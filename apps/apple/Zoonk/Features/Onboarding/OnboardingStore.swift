@@ -196,11 +196,13 @@ final class OnboardingStore {
   /// In the draft's `timeZone`, which counted the learner's today for the card's dates.
   func createGoals(
     _ goals: [Components.Schemas.GoalDraftOutput],
+    from draftID: String,
     schedule: Components.Schemas.GoalUnderstanding.Case1Payload.SchedulePayload,
     sourceIDs: [String],
     timeZone: String
   ) async throws -> String {
     try await create(
+      from: draftID,
       .init(
         dailyMinutes: schedule.dailyMinutes,
         goals: try goals.map { try PracticeJSON.recode($0) },
@@ -222,6 +224,7 @@ final class OnboardingStore {
 
   func createExplanation(draft: OnboardingDraft, question: String) async throws -> String {
     try await create(
+      from: draft.id,
       .init(
         dailyMinutes: Self.explanationMinutes,
         goals: [
@@ -238,6 +241,7 @@ final class OnboardingStore {
 
   func createMusicianship(draft: OnboardingDraft, instrument: String) async throws -> String {
     try await create(
+      from: draft.id,
       .init(
         dailyMinutes: Self.musicianshipMinutes,
         goals: [
@@ -529,6 +533,16 @@ final class OnboardingStore {
 
     // The finish writes the tested level into the goal, which the plan so far shows beside the result.
     onboarding(goalID: goalID).invalidate()
+  }
+
+  /// A goal made from a draft's card: from the moment it's sent, this device can't know what the
+  /// server made of the draft (the screen can go, the answer can be lost, the app can be restored),
+  /// so the draft is stale until it's read again, and its card offers no create until then.
+  private func create(
+    from draftID: String, _ input: Components.Schemas.GoalCreateInput
+  ) async throws -> String {
+    draft(id: draftID).invalidate()
+    return try await create(input)
   }
 
   private func create(

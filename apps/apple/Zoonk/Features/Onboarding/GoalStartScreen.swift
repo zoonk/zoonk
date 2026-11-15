@@ -312,9 +312,13 @@ private struct DraftView: View {
 
   var body: some View {
     Group {
-      switch card.state {
+      // A draft read again after a create keeps its card, its controls waiting; a read that fails
+      // then offers to read it again.
+      switch card.freshState {
       case .loaded(let draft):
         page(draft)
+      case .loading where card.value != nil:
+        card.value.map(page)
       case .failed:
         GoalLoadFailure {
           await card.refresh()

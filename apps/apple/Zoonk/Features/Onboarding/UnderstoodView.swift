@@ -10,10 +10,10 @@ final class DraftCreation {
 
   var canLeave: Bool { !isCreating }
 
-  /// A draft read again since a goal changed (one may be made from it by now) offers no create until
-  /// the read says what the server has.
+  /// Only a draft read since its last create was sent (the store marks it stale then) and that names
+  /// no goal: one made from it goes on with that goal's setup.
   static func canCreate(from card: Resource<OnboardingDraft>) -> Bool {
-    card.freshValue != nil
+    card.freshValue.map { $0.goalId == nil } ?? false
   }
 
   /// The goal's id, or nil when it wasn't made (`error` says why) or can't be made now.
@@ -90,7 +90,8 @@ struct ReadDraftView: View {
         create {
           try await onboarding.createGoals(
             understood.startableGoals(left: draft.activeGoalsLeft).map(\.draft.value1),
-            schedule: understood.schedule, sourceIDs: sourceIDs, timeZone: draft.timeZone)
+            from: draft.id, schedule: understood.schedule, sourceIDs: sourceIDs,
+            timeZone: draft.timeZone)
         } then: {
           onCreated($0)
         }

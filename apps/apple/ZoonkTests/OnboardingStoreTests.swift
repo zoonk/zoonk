@@ -151,6 +151,61 @@ final class OnboardingStoreTests: XCTestCase {
     XCTAssertEqual(creates, 1)
   }
 
+  /// The screen is made again while its create is out (a link left it, or the app was restored):
+  /// the draft it was made from is stale, so the new card offers no second create until a read
+  /// after the create answers.
+  func testANewCardWhileTheCreateIsOutOffersNoSecondCreate() async throws {
+    let server = DraftServer(Self.draft(prompt: "Why is the sky blue?", goalsLeft: 2))
+    let store = makeStore(transport: server)
+    let card = store.draft(id: Self.draftID)
+    await card.load()
+    let shown = try XCTUnwrap(card.value)
+    await server.holdNextCreate()
+
+    let first = Task {
+      await DraftCreation().create(from: card) {
+        try await store.createExplanation(draft: shown, question: "Why?")
+      }
+    }
+    await server.waitForHeldCreate()
+
+    let second = await DraftCreation().create(from: card) {
+      try await store.createExplanation(draft: shown, question: "Why?")
+    }
+    let creates = await server.creates
+
+    XCTAssertNil(second, "the new card offers no create")
+    XCTAssertEqual(creates, 1)
+
+    await server.releaseHeldCreate()
+    _ = await first.value
+  }
+
+  /// A read after the create that names its goal leads to the goal's setup, and offers no create.
+  func testADraftReadThatNamesItsGoalOffersNoCreate() async throws {
+    let server = DraftServer(Self.draft(prompt: "Why is the sky blue?", goalsLeft: 2))
+    let store = makeStore(transport: server)
+    let card = store.draft(id: Self.draftID)
+    await card.load()
+    let shown = try XCTUnwrap(card.value)
+
+    _ = await DraftCreation().create(from: card) {
+      try await store.createExplanation(draft: shown, question: "Why?")
+    }
+    await server.serve(
+      Self.draft(prompt: "Why is the sky blue?", goalsLeft: 1, goalID: Self.goalID))
+    await card.load()
+
+    let again = await DraftCreation().create(from: card) {
+      try await store.createExplanation(draft: shown, question: "Why?")
+    }
+    let creates = await server.creates
+
+    XCTAssertEqual(card.freshValue?.goalId, Self.goalID, "the card goes on with the goal's setup")
+    XCTAssertNil(again)
+    XCTAssertEqual(creates, 1)
+  }
+
   private func makeStore(transport: some ClientTransport) -> OnboardingStore {
     let session = SessionStore.preview(account: .onboardingStoreTest)
     return OnboardingStore(
@@ -161,9 +216,13 @@ final class OnboardingStoreTests: XCTestCase {
 
   private static let draftID = "00000000-0000-4000-8000-0000000000d1"
 
-  private static func draft(prompt: String, goalsLeft: Int) -> OnboardingDraft {
+  private static let goalID = "00000000-0000-4000-8000-0000000000a1"
+
+  private static func draft(prompt: String, goalsLeft: Int, goalID: String? = nil)
+    -> OnboardingDraft
+  {
     OnboardingDraft(
-      activeGoalsLeft: goalsLeft, generationId: nil, goalId: nil, id: draftID, prompt: prompt,
+      activeGoalsLeft: goalsLeft, generationId: nil, goalId: goalID, id: draftID, prompt: prompt,
       status: .failed, timeZone: "America/Sao_Paulo", understanding: nil)
   }
 
@@ -221,6 +280,8 @@ private actor DraftServer: ClientTransport {
   private var editAnswered = false
   private var readsAfterEdit = 0
   private(set) var creates = 0
+  private var holdsCreate = false
+  private var heldCreate: CheckedContinuation<Void, Never>?
 
   init(_ draft: OnboardingDraft) {
     served = draft
@@ -244,6 +305,11 @@ private actor DraftServer: ClientTransport {
 
     if operationID == "createGoals" {
       creates += 1
+
+      if holdsCreate {
+        holdsCreate = false
+        await withCheckedContinuation { heldCreate = $0 }
+      }
 
       return (
         HTTPResponse(status: .created, headerFields: [.contentType: "application/json"]),
@@ -287,6 +353,21 @@ private actor DraftServer: ClientTransport {
     editAnswered = true
     heldEdit?.resume()
     heldEdit = nil
+  }
+
+  func holdNextCreate() {
+    holdsCreate = true
+  }
+
+  func waitForHeldCreate() async {
+    while heldCreate == nil {
+      await Task.yield()
+    }
+  }
+
+  func releaseHeldCreate() {
+    heldCreate?.resume()
+    heldCreate = nil
   }
 
   func holdNextRead() {
