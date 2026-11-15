@@ -322,6 +322,8 @@ internal fun FitLessonsSuggestion(slot: Slot) {
     val room = remember(offer) { HeldRoom() }
 
     PlanChangeSuggestion(SlotItem.FitLessons, title, slot) {
+        // The sheet or panel asks: its check adds only while this opening lasts, so one a recreated layout no longer shows adds nothing.
+        VisitOf(slot.edits.outcomes.suggestion)
         CancelCheckWhenGone(slot, offer)
         // While it checks, the card stays as it was with its Add busy: the same numbers add from there. In the room a
         // check's answer takes, so its buttons stay put when the answer is a failure.
@@ -353,8 +355,8 @@ internal fun FitLessonsSuggestion(slot: Slot) {
 }
 
 /**
- * Closing the suggestion's sheet, or leaving the Plan, drops the offer's check, as Not now does, so
- * its late answer adds and says nothing, whatever plan the page shows by then. A recreated window keeps it.
+ * Closing the suggestion's sheet, or leaving the Plan, drops the offer's check at once, as Not now does, so the card
+ * opens fresh. A recreated window keeps it; one that no longer shows the card ends its opening, and the answer then adds nothing.
  */
 @Composable
 private fun CancelCheckWhenGone(
