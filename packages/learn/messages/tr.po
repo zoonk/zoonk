@@ -4160,6 +4160,12 @@ msgctxt "vNw6Rg"
 msgid "Writing each card's instructions…"
 msgstr "Her kartın yönergelerini hazırlıyoruz…"
 
+#. The title of a notice over something being prepared for the learner (a lesson, a list, a map) that failed or never started. A Try again button follows.
+#: src/generation/generation-failure-notice.tsx
+msgctxt "Yc1thK"
+msgid "Something went wrong on our side"
+msgstr "Bizim tarafta bir sorun oluştu"
+
 #: src/generation/generation-failure-notice.tsx
 msgctxt "Eg11ZY"
 msgid "Reconnect"
@@ -4174,29 +4180,6 @@ msgstr "Güncellemeleri alamıyoruz. İşlem hâlâ sürüyor olabilir."
 msgctxt "CN_B_k"
 msgid "Connection lost"
 msgstr "Bağlantı kesildi"
-
-#: src/generation/generation-failure-notice.tsx
-#: src/onboarding/steps/step-parts.tsx
-#: src/wait/first-lesson-row.tsx
-msgctxt "YXnM-X"
-msgid "Something went wrong on our side."
-msgstr "Bizim tarafımızda bir sorun oluştu."
-
-#. Preparing this content failed. It is not still running.
-#: src/generation/generation-failure-notice.tsx
-msgctxt "0fLHBg"
-msgid "This didn't finish"
-msgstr "Tamamlanamadı"
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "iKz0K6"
-msgid "We couldn't get this started."
-msgstr "İşlemi başlatamadık."
-
-#: src/generation/generation-failure-notice.tsx
-msgctxt "q8l1Sf"
-msgid "This didn't start"
-msgstr "Başlatılamadı"
 
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
@@ -9936,6 +9919,12 @@ msgstr "Her gün ne kadar süre ders çalışabilirsin?"
 msgctxt "jNPr7M"
 msgid "This didn't open"
 msgstr "Ekran açılamadı"
+
+#: src/onboarding/steps/step-parts.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "YXnM-X"
+msgid "Something went wrong on our side."
+msgstr "Bizim tarafımızda bir sorun oluştu."
 
 #: src/onboarding/steps/study-week.tsx
 #: src/plan/plan-properties.tsx

@@ -389,7 +389,7 @@ test.describe("Today's session", () => {
     await page.clock.install();
     await page.goto("/session");
     const retry = page.getByRole("button", { name: "Try again" });
-    await expect(page.getByText("This didn't finish")).toBeVisible();
+    await expect(page.getByText("Something went wrong on our side")).toBeVisible();
     await expectHydrated(retry);
 
     // Each check sets its next one once its read answers, so the clock moves until two have run.
