@@ -84,10 +84,14 @@ function RevealActions({
     <OnboardingActions
       failed={failure === "save"}
       note={
-        <>
-          {failure === "open" && <StepOpenFailed />}
-          {isGuest && <SavePlanNote className="text-left lg:text-right" signUpHref={signUpHref} />}
-        </>
+        (failure === "open" || isGuest) && (
+          <>
+            {failure === "open" && <StepOpenFailed />}
+            {isGuest && (
+              <SavePlanNote className="text-left lg:text-right" signUpHref={signUpHref} />
+            )}
+          </>
+        )
       }
     >
       <OnboardingSecondaryButton aria-haspopup="dialog" onClick={onAdjust}>
