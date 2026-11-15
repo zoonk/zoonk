@@ -1352,14 +1352,12 @@ export function readAlignment({
         if (rect) {
           const line = lines.find(
             (candidate) =>
-              candidate.top < rect.bottom && rect.top < candidate.top + candidate.height,
+              (rect.top + rect.bottom) / 2 >= candidate.top &&
+              (rect.top + rect.bottom) / 2 < candidate.top + candidate.height,
           );
 
           if (line) {
             line.text += `${rect.left > line.right + 1 ? " " : ""}${node.data[index] ?? ""}`;
-            const bottom = Math.max(line.top + line.height, rect.bottom);
-            line.top = Math.min(line.top, rect.top);
-            line.height = bottom - line.top;
             line.right = rect.right;
           } else {
             lines.push({
@@ -1384,9 +1382,13 @@ export function readAlignment({
   }
 
   function textRole(flow: Element): CaptureElement["textRole"] {
+    if (flow.closest("[data-slot=list-row-description]")) {
+      return undefined;
+    }
+
     const element =
       flow.closest(
-        "h1,h2,h3,h4,h5,h6,p,label,button,[role=button],[data-slot=button],[data-slot$=title],[data-slot*=facts]",
+        "h1,h2,h3,h4,h5,h6,p,label,[data-slot=list-row-description],button,[role=button],[data-slot=button],[data-slot$=title],[data-slot*=facts]",
       ) ?? flow;
 
     if (element.matches("h1,h2,h3,h4,h5,h6,[data-slot$=title]")) {
@@ -1413,7 +1415,7 @@ export function readAlignment({
 
   function textRoot(parent: Element): Element {
     const semantic = parent.closest(
-      "h1,h2,h3,h4,h5,h6,p,label,button,[role=button],[data-slot=button],[data-slot$=title],[data-slot*=facts]",
+      "h1,h2,h3,h4,h5,h6,p,label,[data-slot=list-row-description],button,[role=button],[data-slot=button],[data-slot$=title],[data-slot*=facts]",
     );
 
     let root = parent;
@@ -1477,7 +1479,11 @@ export function readAlignment({
           ),
       )
       .map((element, index) => {
-        const parent = element.parentElement;
+        let parent = element.parentElement;
+
+        while (parent && getComputedStyle(parent).display === "contents") {
+          parent = parent.parentElement;
+        }
 
         if (!parents.has(parent)) {
           parents.set(parent, `controls.${parents.size}`);
@@ -1506,7 +1512,9 @@ export function readAlignment({
       if (
         !(element instanceof HTMLElement) ||
         !present(element) ||
-        element.closest("svg,[data-slot=horizontal-scroll]")
+        element.closest(
+          "svg,[data-slot=horizontal-scroll],[data-slot=contribution-calendar-viewport]",
+        )
       ) {
         return [];
       }
@@ -1528,6 +1536,56 @@ export function readAlignment({
         },
       ];
     });
+  }
+
+  /** An ancestor between fixed content and its containing block does not clip it (https://www.w3.org/TR/CSS22/visufx.html#overflow-clipping). */
+  function containsFixed(element: Element) {
+    const style = getComputedStyle(element);
+
+    const transforms = [
+      style.transform,
+      style.translate,
+      style.rotate,
+      style.scale,
+      style.perspective,
+      style.filter,
+      style.backdropFilter,
+    ];
+
+    return (
+      transforms.some((value) => value && value !== "none") ||
+      /(?:^|\s)(?:layout|paint|strict|content)(?:\s|$)/u.test(style.contain) ||
+      /(?:^|,|\s)(?:transform|translate|rotate|scale|perspective|filter|backdrop-filter|contain)(?:,|\s|$)/u.test(
+        style.willChange,
+      ) ||
+      style.contentVisibility === "auto"
+    );
+  }
+
+  function escapesClip(child: Element, clip: Element): boolean {
+    for (let node: Element | null = child; node && node !== clip; node = node.parentElement) {
+      if (getComputedStyle(node).position === "fixed") {
+        for (let parent = node.parentElement; parent; parent = parent.parentElement) {
+          if (containsFixed(parent)) {
+            return parent !== clip && !clip.contains(parent);
+          }
+        }
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function directTextRects(element: Element) {
+    return [...element.childNodes]
+      .filter((node) => node instanceof Text && node.data.trim())
+      .flatMap((node) => {
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        return [...range.getClientRects()];
+      });
   }
 
   function readCuts(): CaptureElement[] {
@@ -1564,21 +1622,18 @@ export function readAlignment({
           ancestors.push(parent);
         }
 
-        if (ancestors.some((ancestor) => allowsOverflow(ancestor))) {
+        if (escapesClip(child, element) || ancestors.some((ancestor) => allowsOverflow(ancestor))) {
           return [];
         }
 
-        const ink = inkOf(child);
-        return ink ? [ink] : [];
+        const control = child.matches("button,input,select,textarea,[role=button]")
+          ? [child.getBoundingClientRect()]
+          : [];
+
+        return [...directTextRects(child), ...control];
       });
 
-      const ownText = [...element.childNodes]
-        .filter((node) => node instanceof Text && node.data.trim())
-        .flatMap((node) => {
-          const range = document.createRange();
-          range.selectNodeContents(node);
-          return [...range.getClientRects()];
-        });
+      const ownText = directTextRects(element);
 
       const ink = union([...clipped, ...ownText]);
 
