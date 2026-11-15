@@ -28,6 +28,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -67,8 +68,9 @@ class MindMapsOfferTest {
                 """.trimIndent(),
         )
 
+    private val store by lazy { MindMapStore(api, AppCache(FakeSession(session), scope), clock) }
+
     private fun show() {
-        val store = MindMapStore(api, AppCache(FakeSession(session), scope), clock)
         val images =
             PrivateImages("https://example.test/v1/".toHttpUrl(), ImageLoader(ApplicationProvider.getApplicationContext<Context>()))
         val host = MindMapsHost(store, session, PrivatePictures(images, session), { null }, { LimitTier.Free }, { session })
@@ -130,5 +132,37 @@ class MindMapsOfferTest {
         compose.onNodeWithText("You can try again now.").assertDoesNotExist()
         compose.onNodeWithText("Create all").assertDoesNotExist()
         compose.onAllNodesWithText("Create").assertCountEquals(0)
+    }
+
+    /** Create all's stop holds through its own read only: a later read that lets a map start brings the rows' Create back. */
+    @Test
+    fun aLaterReadThatLetsAMapStartRetiresCreateAllsStop() {
+        val past = Instant.parse("2020-01-01T00:00:00Z")
+        val oneMore = goalMindMaps(chapters, offer = """{"eligible":2,"needLessons":2,"startable":1,"stop":null}""")
+        var allowanceBack = false
+        api.mindMaps = {
+            when {
+                api.lists == 1 -> fresh
+                allowanceBack -> oneMore
+                else -> stopped(past)
+            }
+        }
+        api.createAll = {
+            ApiJson.decodeFromString(
+                """
+                {"accepted":[],"joined":[],"unstarted":[],
+                "stop":{"reason":"limitReached","resource":"mindMap","period":"rolling30Days","availableAt":"$past"}}
+                """.trimIndent(),
+            )
+        }
+        show()
+        waitFor("Create all")
+        compose.onNodeWithText("Create all").performClick()
+        waitFor("You've used your mind maps")
+
+        allowanceBack = true
+        scope.launch { store.list[UUID.fromString(GOAL)].refresh() }
+        compose.waitUntil(10_000) { compose.onAllNodesWithText("Create").fetchSemanticsNodes().size == 2 }
+        compose.onNodeWithText("You've used your mind maps").assertDoesNotExist()
     }
 }

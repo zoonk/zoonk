@@ -6,6 +6,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.api.models.MindMapAllowanceStop
+import com.zoonk.api.models.MindMapCreateOffer
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -18,19 +19,27 @@ import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.io.OutputStream
 import java.util.UUID
+import kotlin.time.toJavaInstant
 
 enum class PictureSave { Saved, Failed }
 
 /** What making every chapter map at once got: on its way, or a server out of reach. */
-sealed interface CreateAll {
-    data object Pending : CreateAll
+enum class CreateAll { Pending, Unreachable }
 
-    data object Unreachable : CreateAll
+/**
+ * What a tap's answer said keeps any new map from starting, shown over the offer the list reads
+ * (main's `bulk.stop`): it holds through the read its tap started, and a later list read that says
+ * a map can start retires it.
+ */
+sealed interface PageStop {
+    /** The read mark when it was kept: reads started after it are later. */
+    val since: Long
 
-    /** None started: the answer's own reason, kept over the offer the list reads after it (main's `bulk.stop`). */
-    data class Stopped(
+    /** Create all started none: its answer's stop, as received. */
+    data class Answered(
         val stop: MindMapAllowanceStop,
-    ) : CreateAll
+        override val since: Long,
+    ) : PageStop
 }
 
 /**
@@ -54,13 +63,17 @@ class MindMapViewModel(
     private val all = MutableStateFlow<CreateAll?>(null)
     val createAll: StateFlow<CreateAll?> = all.asStateFlow()
 
+    private val kept = MutableStateFlow<PageStop?>(null)
+    val pageStop: StateFlow<PageStop?> = kept.asStateFlow()
+
     /** The read mark when Create all last failed: a list read started after it clears the failure. */
     @Volatile private var createAllFailedSince = Long.MAX_VALUE
 
     private val stopWatching =
-        store.watchReads(goalId) { chapterIds, started, wholeList ->
+        store.watchReads(goalId) { chapterIds, started, offer ->
             locals.update { current -> current.filterNot { (id, local) -> id in chapterIds && !local.pending && local.since < started } }
-            if (wholeList && createAllFailedSince < started) all.compareAndSet(CreateAll.Unreachable, null)
+            if (offer != null && createAllFailedSince < started) all.compareAndSet(CreateAll.Unreachable, null)
+            if (offer != null && offer.letsOneStart()) kept.update { stop -> stop?.takeUnless { it.since < started } }
         }
 
     private val wanted = MutableStateFlow<Map<MindMapTarget, Boolean>>(emptyMap())
@@ -107,12 +120,8 @@ class MindMapViewModel(
         viewModelScope.launch {
             val started = store.createAll(goalId)
             if (started == MindMapsStarted.Unreachable) createAllFailedSince = store.readMark()
-            all.value =
-                when (started) {
-                    MindMapsStarted.Unreachable -> CreateAll.Unreachable
-                    is MindMapsStarted.Answered -> started.stop?.let(CreateAll::Stopped)
-                    null -> null
-                }
+            (started as? MindMapsStarted.Answered)?.stop?.let { kept.value = PageStop.Answered(it, store.readMark()) }
+            all.value = if (started == MindMapsStarted.Unreachable) CreateAll.Unreachable else null
         }
     }
 
@@ -195,3 +204,13 @@ class MindMapViewModel(
         const val MAX_MISSES = 3
     }
 }
+
+/** When the page's stop gave its day, as received; null without one. */
+internal val PageStop.availableAt: java.time.Instant?
+    get() =
+        when (this) {
+            is PageStop.Answered -> stop.availableAt?.toJavaInstant()
+        }
+
+/** Main's `startsNoMap`, turned: at least one map can start, or nothing stops one. */
+private fun MindMapCreateOffer.letsOneStart(): Boolean = startable > 0 || stop == null

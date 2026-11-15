@@ -71,9 +71,9 @@ import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMaps
-import com.zoonk.api.models.MindMapAllowanceStop
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.Instant
 import java.util.UUID
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -115,14 +115,26 @@ internal fun MindMapsContent(
             val requests by maps.requests.collectAsStateWithLifecycle()
             val saves by maps.saves.collectAsStateWithLifecycle()
             val createAll by maps.createAll.collectAsStateWithLifecycle()
+            val pageStop by maps.pageStop.collectAsStateWithLifecycle()
 
             FollowListWhileOnItsWay(resource, shown.value.chapters, requests)
-            RereadWhenOfferOpens(resource, (createAll as? CreateAll.Stopped)?.stop ?: shown.value.createOffer.stop)
+            RereadWhenOfferOpens(
+                resource,
+                pageStop.let {
+                    if (it != null) {
+                        it.availableAt
+                    } else {
+                        shown.value.createOffer.stop
+                            ?.availableAt
+                            ?.toJavaInstant()
+                    }
+                },
+            )
 
             CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
                 MindMapsPage(
                     mindMaps = shown.value,
-                    state = MindMapsState(requests, saves, createAll, host.plus(), host.tier()),
+                    state = MindMapsState(requests, saves, createAll, pageStop, host.plus(), host.tier()),
                     actions =
                         MindMapsActions(
                             back = back,
@@ -179,13 +191,12 @@ private fun FollowListWhileOnItsWay(
     }
 }
 
-/** The day the offer's stop gave comes, even before the page opened: the page reads its offer again, so its counts and Create all are today's. */
+/** The day the page's stop gave comes, even before the page opened: the page reads its offer again, so its counts and Create all are today's. */
 @Composable
 private fun RereadWhenOfferOpens(
     resource: Resource<GoalMindMaps>,
-    stop: MindMapAllowanceStop?,
+    at: Instant?,
 ) {
-    val at = stop?.availableAt?.toJavaInstant()
     if (rememberOpeningDay(at) != OpeningDay.Open) return
     LaunchedEffect(resource, at) { resource.refresh() }
 }
@@ -206,6 +217,7 @@ internal data class MindMapsState(
     val requests: Map<UUID, MindMapLocal> = emptyMap(),
     val saves: Map<MindMapTarget, Boolean> = emptyMap(),
     val createAll: CreateAll? = null,
+    val pageStop: PageStop? = null,
     val plus: Boolean = false,
     val tier: LimitTier = LimitTier.Free,
 )
