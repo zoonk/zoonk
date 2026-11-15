@@ -3,6 +3,7 @@ import { BarList } from "@/components/bar-list";
 import { listUserLessonKinds } from "@/data/users/get-user-learning-stats";
 import { formatDuration } from "@/lib/format-duration";
 import { getAdminLessonKindLabel } from "@/lib/lesson-label";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 
 /** Which kinds of lesson they finish, most first, with the time each takes them. */
 export async function UserLessonKinds({ userId }: { userId: string }) {
@@ -28,7 +29,7 @@ export async function UserLessonKinds({ userId }: { userId: string }) {
             `${formatDuration(row.totalDurationSeconds)} in all`,
           ]
             .filter(Boolean)
-            .join(" · "),
+            .join(FACT_SEPARATOR),
           value: row.completedLessons,
         }))}
       />

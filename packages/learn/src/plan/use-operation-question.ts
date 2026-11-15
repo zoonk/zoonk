@@ -2,9 +2,8 @@
 
 import { type PlanOperation } from "@zoonk/core/plans/contract";
 import { useExtracted, useFormatter } from "next-intl";
-import { useFormatIsoDate } from "../_utils/iso-date";
+import { useFormatIsoDate, useFormatWeekday } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
-import { useFormatWeekday } from "../_utils/use-format-weekday";
 import { type GoalDateKind } from "./goal-date-kind";
 import { useActivityNames, useAreaNames } from "./use-operation-names";
 import { useShortList } from "./use-short-list";
@@ -79,12 +78,12 @@ function useTimeQuestion() {
 
     if (operation.kind === "addLightWeek") {
       return t("Take a lighter week from {date}, at half the time?", {
-        date: formatDate(operation.startDate, "long"),
+        date: formatDate(operation.startDate, "sentence"),
       });
     }
 
     return operation.kind === "moveWeeklyEvent"
-      ? t("Move this week's challenge to {date}?", { date: formatDate(operation.to, "long") })
+      ? t("Move this week's challenge to {date}?", { date: formatDate(operation.to, "sentence") })
       : null;
   };
 }
@@ -98,7 +97,7 @@ function useDateQuestion() {
       return operation.targetDate
         ? t(
             "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}",
-            { date: formatDate(operation.targetDate, "long"), dateKind },
+            { date: formatDate(operation.targetDate, "sentence"), dateKind },
           )
         : t("Study without an end date?");
     }

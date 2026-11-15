@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { addIsoDays, daysBetweenIsoDays, getIsoDay, isInAnotherYear } from "./calendar-day";
+import {
+  WEEKDAYS_FROM_MONDAY,
+  addIsoDays,
+  daysBetweenIsoDays,
+  getIsoDay,
+  isInAnotherYear,
+} from "./calendar-day";
 
 const LATE_IN_BRAZIL = new Date("2026-10-14T01:30:00Z");
 
@@ -34,5 +40,21 @@ describe(isInAnotherYear, () => {
 
   it("leaves it out for a day later this year", () => {
     expect(isInAnotherYear({ isoDate: "2026-12-14", today })).toBe(false);
+  });
+});
+
+describe("the week a learner sees", () => {
+  it("runs Monday to Sunday, as the plan's week does, with Sunday still numbered 0", () => {
+    expect(WEEKDAYS_FROM_MONDAY).toStrictEqual([1, 2, 3, 4, 5, 6, 0]);
+  });
+
+  it("puts a week's days where the plan's week has them", () => {
+    const monday = new Date("2026-11-09T00:00:00Z");
+
+    const weekdays = WEEKDAYS_FROM_MONDAY.map((_, index) =>
+      new Date(monday.getTime() + index * 86_400_000).getUTCDay(),
+    );
+
+    expect(weekdays).toStrictEqual([...WEEKDAYS_FROM_MONDAY]);
   });
 });

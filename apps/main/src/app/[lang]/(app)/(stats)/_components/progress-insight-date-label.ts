@@ -1,5 +1,4 @@
-import { isInAnotherYear } from "@zoonk/utils/calendar-day";
-import { getFormattingLocale } from "@zoonk/utils/locale";
+import { formatIsoDate } from "@zoonk/utils/date-format";
 
 const ISO_DAY_LENGTH = "YYYY-MM-DD".length;
 
@@ -18,27 +17,13 @@ export function getProgressDayFormatter({
   locale: string;
   newest: Date | undefined;
 }): (date: Date) => string {
-  const sameYear = new Intl.DateTimeFormat(getFormattingLocale(locale), {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-  });
-
-  const otherYear = new Intl.DateTimeFormat(getFormattingLocale(locale), {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-    year: "numeric",
-  });
-
-  if (!newest) {
-    return (date) => otherYear.format(date);
-  }
-
-  const latest = toIsoDay(newest);
+  const latest = newest ? toIsoDay(newest) : null;
 
   return (date: Date) =>
-    (isInAnotherYear({ isoDate: toIsoDay(date), today: latest }) ? otherYear : sameYear).format(
-      date,
-    );
+    formatIsoDate({
+      isoDate: toIsoDay(date),
+      locale,
+      today: latest ?? toIsoDay(date),
+      ...(!latest && { year: "always" as const }),
+    });
 }

@@ -1,17 +1,19 @@
 "use client";
 
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { getIsoDay, isInAnotherYear } from "@zoonk/utils/calendar-day";
+import { getIsoDay } from "@zoonk/utils/calendar-day";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import {
+  type DateFormat,
+  type DateRole,
+  getIsoDateOptions,
+  getIsoRangeOptions,
+  isoDateToUtc,
+} from "@zoonk/utils/date-format";
 import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
-import { type DateTimeFormatOptions, useFormatter, useTimeZone } from "next-intl";
+import { useFormatter, useTimeZone } from "next-intl";
 import { use } from "react";
 import { PlanScreenContext } from "../plan/plan-context";
-
-/** UTC midnight, formatted in UTC, so the day never shifts in the viewer's timezone. */
-export function isoDateToUtc(isoDate: string): Date {
-  return new Date(`${isoDate}T00:00:00Z`);
-}
 
 /** Core counts a goal's or draft's days in its zone, UTC without one, so date pickers do too. */
 export function getTodayInZone({ now, timeZone }: { now: Date; timeZone: string | null }): string {
@@ -39,50 +41,14 @@ export function daysBetween(from: string, to: string): number {
   return Math.round((isoDateToUtc(to).getTime() - isoDateToUtc(from).getTime()) / MS_PER_DAY);
 }
 
-export type DateStyle =
-  | "day"
-  | "dayMonth"
-  | "long"
-  | "longYear"
-  | "month"
-  | "monthName"
-  | "monthShort"
-  | "short"
-  | "weekday"
-  | "weekdayDay"
-  | "weekdayLongYear";
-
-const DATE_STYLES: Record<DateStyle, DateTimeFormatOptions> = {
-  day: { day: "numeric", month: "short" },
-  dayMonth: { day: "numeric", month: "long" },
-  long: { day: "numeric", month: "long" },
-  longYear: { day: "numeric", month: "long", year: "numeric" },
-  month: { month: "long", year: "numeric" },
-  monthName: { month: "long" },
-  monthShort: { month: "short", year: "numeric" },
-  short: { day: "numeric", month: "short", year: "numeric" },
-  weekday: { weekday: "long" },
-  weekdayDay: { day: "numeric", month: "long", weekday: "long" },
-  weekdayLongYear: { day: "numeric", month: "long", weekday: "long", year: "numeric" },
-};
-
-const YEAR_WHEN_ANOTHER_YEAR = new Set<DateStyle>(["day", "long", "monthName", "weekdayDay"]);
-
-function getStyleOptions({
-  isoDate,
-  style,
-  today,
-}: {
-  isoDate: string;
-  style: DateStyle;
-  today: string;
-}): DateTimeFormatOptions {
-  const options = DATE_STYLES[style];
-
-  return YEAR_WHEN_ANOTHER_YEAR.has(style) && isInAnotherYear({ isoDate, today })
-    ? { ...options, year: "numeric" }
-    : options;
+/** A day the server sends as UTC midnight, as its calendar day. */
+export function toIsoDay(date: Date): string {
+  return date.toISOString().slice(0, "YYYY-MM-DD".length);
 }
+
+type DateOptions = Omit<DateFormat, "role">;
+
+const REFERENCE_SUNDAY = Date.parse("2023-01-01T00:00:00Z");
 
 /**
  * The zone every date is drawn in: the provider's, which Main sets to the server's, so the server's
@@ -101,40 +67,42 @@ export function useIsoToday(): string {
   return plan?.today ?? getIsoDay({ now: mountedAt, timeZone });
 }
 
-/** A calendar day from the server ("2027-11-14"), drawn as that day at UTC midnight. */
-export function getIsoDateOptions({
-  isoDate,
-  style,
-  today,
-}: {
-  isoDate: string;
-  style: DateStyle;
-  today: string;
-}): DateTimeFormatOptions {
-  return { ...getStyleOptions({ isoDate, style, today }), timeZone: "UTC" };
-}
-
-/** A range of calendar days, such as a week: both ends carry the year when either is in another year. */
-export function getIsoRangeOptions({
-  end,
-  start,
-  today,
-}: {
-  end: string;
-  start: string;
-  today: string;
-}): DateTimeFormatOptions {
-  const anotherYear = [start, end].some((isoDate) => isInAnotherYear({ isoDate, today }));
-
-  return { ...DATE_STYLES.day, timeZone: "UTC", ...(anotherYear && { year: "numeric" }) };
-}
-
+/** A calendar day from the server ("2027-11-14"), written for the place it has on the screen. */
 export function useFormatIsoDate() {
   const format = useFormatter();
   const today = useIsoToday();
 
-  return (isoDate: string, style: DateStyle = "day") =>
-    format.dateTime(isoDateToUtc(isoDate), getIsoDateOptions({ isoDate, style, today }));
+  return (isoDate: string, role: DateRole = "row", options: DateOptions = {}): string =>
+    format.dateTime(isoDateToUtc(isoDate), getIsoDateOptions({ ...options, isoDate, role, today }));
+}
+
+/**
+ * A run of calendar days, such as a week: "Nov 9 – 15". Node's ICU puts thin spaces around the dash
+ * and browsers plain ones, so the spaces are normalized to hydrate cleanly.
+ */
+export function useFormatIsoRange() {
+  const format = useFormatter();
+  const today = useIsoToday();
+
+  return ({ end, start }: { end: string; start: string }): string =>
+    format
+      .dateTimeRange(
+        isoDateToUtc(start),
+        isoDateToUtc(end),
+        getIsoRangeOptions({ end, start, today }),
+      )
+      .replaceAll("\u2009", " ");
+}
+
+/** A weekday's name from its day or its number (Sunday is 0): "Tuesday", "Tue" or "T". */
+export function useFormatWeekday() {
+  const format = useFormatter();
+
+  return (day: Date | number, width: "long" | "narrow" | "short" = "long"): string =>
+    format.dateTime(typeof day === "number" ? new Date(REFERENCE_SUNDAY + day * MS_PER_DAY) : day, {
+      timeZone: "UTC",
+      weekday: width,
+    });
 }
 
 /** An instant's calendar day and today's, in the zone it's drawn in, for "Today" and "Yesterday". */
@@ -157,9 +125,9 @@ export function useFormatMomentDate() {
   const timeZone = useDrawingTimeZone();
   const { dayOf, today } = useMomentDays();
 
-  return (moment: Date | string, style: DateStyle = "day"): string =>
+  return (moment: Date | string, role: DateRole = "row", options: DateOptions = {}): string =>
     format.dateTime(new Date(moment), {
-      ...getStyleOptions({ isoDate: dayOf(moment), style, today }),
+      ...getIsoDateOptions({ ...options, isoDate: dayOf(moment), role, today }),
       timeZone,
     });
 }
@@ -174,13 +142,14 @@ export function useGoalDateValues() {
   return ({
     isoDate,
     namedMonth,
-    style = "day",
   }: {
     isoDate: string;
     namedMonth: boolean;
-    style?: DateStyle;
   }): { date: string; dateKind: "day" | "month" } => ({
-    date: formatDate(isoDate, namedMonth ? "month" : style).replaceAll(" ", "\u00A0"),
+    date: (namedMonth
+      ? formatDate(isoDate, "sentenceMonth", { year: "always" })
+      : formatDate(isoDate, "sentence")
+    ).replaceAll(" ", "\u00A0"),
     dateKind: namedMonth ? "month" : "day",
   });
 }

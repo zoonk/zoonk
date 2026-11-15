@@ -3,11 +3,11 @@
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useCallback, useSyncExternalStore } from "react";
-import { isoDateToUtc } from "../_utils/iso-date";
+import { useFormatIsoDate } from "../_utils/iso-date";
 import {
-  OPENING_DATE_OPTIONS,
+  OPENING_DATE,
   type OpeningDay,
   toFirstRenderDay,
   toOpeningDay,
@@ -78,8 +78,8 @@ type DayLines = {
 /** The sentence for the day something opens, with no sentence once it's open or unreadable. */
 /** A cap's day as the learner reads it: "November 22", from its ISO day alone. */
 export function useFormatOpeningDate() {
-  const format = useFormatter();
-  return (isoDay: string) => format.dateTime(isoDateToUtc(isoDay), OPENING_DATE_OPTIONS);
+  const formatDate = useFormatIsoDate();
+  return (isoDay: string) => formatDate(isoDay, "sentence", OPENING_DATE);
 }
 
 function useDayLine() {

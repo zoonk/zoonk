@@ -5,7 +5,7 @@ import { STAT_TILES_CLASS, StatTile } from "@/components/stat-tile";
 import { StateMark } from "@/components/state-mark";
 import { type AdminExam } from "@/data/exams/get-exam";
 import { countryName } from "@/lib/country-name";
-import { formatCount, formatDate, formatDateTime } from "@/lib/format";
+import { formatCount, formatDate, formatDateTime, formatDay } from "@/lib/format";
 import { languageName } from "@/lib/language-filter";
 import { LINK_CLASS } from "@/lib/link-class";
 import { examEditionSchema } from "@zoonk/core/library/exams/blueprint-contract";
@@ -58,15 +58,7 @@ export function ExamTotals({ exam }: { exam: AdminExam }) {
         detail={exam.examDate ? daysAway(exam.examDate) : "The notice gives no date"}
         icon={<CalendarIcon />}
         title="Exam date"
-        value={
-          exam.examDate
-            ? exam.examDate.toLocaleDateString("en", {
-                day: "numeric",
-                month: "short",
-                timeZone: "UTC",
-              })
-            : "—"
-        }
+        value={exam.examDate ? formatDay(exam.examDate) : "—"}
       />
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { type PlanDayView, type PlanItemView } from "@zoonk/core/plans/view-contract";
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { KindMark, type LearnKind } from "../../_components/kind-tile";
 import {
   ListGroup,
@@ -17,7 +17,7 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../../_components/page";
-import { isoDateToUtc } from "../../_utils/iso-date";
+import { useFormatIsoDate } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
 
 const ITEM_KINDS: Record<PlanItemView["kind"], LearnKind> = {
@@ -53,14 +53,6 @@ function useItemTitle() {
 
     return item.title || t("More lessons");
   };
-}
-
-/** The week is the next six days, so a day carries no month. */
-function useFormatWeekDay() {
-  const format = useFormatter();
-
-  return (date: Date) =>
-    format.dateTime(date, { day: "numeric", timeZone: "UTC", weekday: "short" });
 }
 
 function DayKinds({ items }: { items: readonly PlanItemView[] }) {
@@ -132,9 +124,9 @@ function WeekDayRow({
 export function RevealWeek({ reveal }: { reveal: PlanRevealDays | null }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const formatDay = useFormatWeekDay();
+  const formatDate = useFormatIsoDate();
   const ahead = reveal?.nextDays ?? [];
-  const dates = ahead.map((day) => formatDay(isoDateToUtc(day.date)));
+  const dates = ahead.map((day) => formatDate(day.date, "row", { weekday: true }));
   const dateWidth = Math.max(0, ...dates.map((date) => date.length));
 
   if (!reveal || !ahead.some((day) => day.items.length > 0)) {

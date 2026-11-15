@@ -135,7 +135,7 @@ export function usePhaseMocksLine() {
     return nextSitting
       ? t(
           "{count, plural, one {# mock exam before your next exam date, {date}} other {# mock exams before your next exam date, {date}}}",
-          { count, date: formatDate(nextSitting, "day") },
+          { count, date: formatDate(nextSitting, "row") },
         )
       : t(
           "{count, plural, one {# mock exam before your next exam date} other {# mock exams before your next exam date}}",

@@ -5,7 +5,8 @@ import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import { useExtracted, useFormatter } from "next-intl";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
+import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import {
   ListGroup,
@@ -24,6 +25,7 @@ import {
   PageSectionTitle,
 } from "../../_components/page";
 import { StepOpenFailed } from "../../_components/step-open-failed";
+import { toIsoDay, useFormatIsoDate } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
 import { BlockMark } from "../../session/block-mark";
 import { DayStepOpener } from "../../session/day-step-opener";
@@ -83,7 +85,7 @@ function TodayRow({
         <ListRowDescription>
           {block.status === "completed" && `${t("Done")} · `}
           {tag && <NextTag>{tag}</NextTag>}
-          {details.join(" · ")}
+          {details.join(FACT_SEPARATOR)}
         </ListRowDescription>
       </ListRowContent>
     </>
@@ -120,13 +122,6 @@ function TodayRow({
       {failed && <StepOpenFailed className="-mt-0.5 pb-2.75 pl-7" />}
     </>
   );
-}
-
-function useFormatDay() {
-  const format = useFormatter();
-
-  return (date: Date) =>
-    format.dateTime(date, { day: "numeric", month: "short", timeZone: "UTC", weekday: "short" });
 }
 
 function opensFromReveal(block: DayStep): boolean {
@@ -181,7 +176,7 @@ export function RevealToday({
 }) {
   const t = useExtracted();
   const session = reveal?.today;
-  const formatDay = useFormatDay();
+  const formatDate = useFormatIsoDate();
   const formatDuration = useFormatDuration();
   const label = useStepLabel();
   const next = session?.blocks.find((block) => block.position === session.nextPosition);
@@ -201,7 +196,7 @@ export function RevealToday({
       <PageSectionHeader>
         <PageSectionTitle id="reveal-today">{t("Today")}</PageSectionTitle>
         <PageSectionDetail>
-          {`${formatDay(session.localDate)} · ${formatDuration(reveal.minutes)}`}
+          {`${formatDate(toIsoDay(session.localDate), "row", { weekday: true })} · ${formatDuration(reveal.minutes)}`}
         </PageSectionDetail>
       </PageSectionHeader>
 

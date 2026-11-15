@@ -17,6 +17,7 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
+import { FactSegments } from "../_components/task-meta";
 import { ReportProblemMenu } from "../feedback/content-feedback-menu";
 import { LearnPageBar } from "../shell/learn-bar";
 import { useAlsoIn } from "./shared-exams";
@@ -112,7 +113,11 @@ function SubjectFacts({
 
   return (
     <>
-      {facts.length > 0 && <DetailFacts>{facts.join(" · ")}</DetailFacts>}
+      {facts.length > 0 && (
+        <DetailFacts>
+          <FactSegments facts={facts} />
+        </DetailFacts>
+      )}
       {known && <DetailFacts className="pt-0 font-sans">{known}</DetailFacts>}
       {alsoIn && <DetailFacts className="pt-0 font-sans">{alsoIn}</DetailFacts>}
     </>

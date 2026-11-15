@@ -4,6 +4,7 @@ import { type LanguageConversationView } from "@zoonk/core/language/conversation
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { PageSectionTitle } from "../../_components/page";
+import { useCountOf } from "../../_utils/count-of";
 import { ChecklistRow, ChecklistRows } from "../checklist-rows";
 import { SpeakingCard } from "../exam-speaking/speaking-card";
 
@@ -21,6 +22,7 @@ export function CallObjectives({
   titled?: boolean;
 }) {
   const t = useExtracted();
+  const countOf = useCountOf();
   const titleId = useId();
   const { objectives } = conversation;
 
@@ -45,10 +47,9 @@ export function CallObjectives({
       {titled && (
         <div className="flex items-center justify-between gap-3">
           <PageSectionTitle id={titleId}>{t("Goals of the call")}</PageSectionTitle>
-          <span
-            aria-hidden="true"
-            className="text-muted-foreground font-mono text-xs tabular-nums"
-          >{`${done}/${objectives.length}`}</span>
+          <span className="text-muted-foreground font-mono text-xs tabular-nums">
+            {countOf(done, objectives.length)}
+          </span>
         </div>
       )}
       <ChecklistRows>

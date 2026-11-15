@@ -1,8 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { useFormatIsoDate } from "../_utils/iso-date";
-import { useFormatWeekday } from "../_utils/use-format-weekday";
+import { useFormatIsoDate, useFormatWeekday } from "../_utils/iso-date";
 import { type GoalDateKind } from "../plan/goal-date-kind";
 import {
   type ChangeOptions,
@@ -137,8 +136,8 @@ function useEndConsequence() {
             description: '{after} and {before} are days, like "May 5".',
             message: "Your plan will end on {after} instead of {before}.",
             values: {
-              after: formatDate(end.after, "long"),
-              before: formatDate(end.before, "long"),
+              after: formatDate(end.after, "sentence"),
+              before: formatDate(end.before, "sentence"),
             },
           }),
           whole: true,
@@ -163,8 +162,8 @@ function useEventConsequence() {
           description: '{after} and {before} are days, like "May 5".',
           message: "{phase} will end on {after} instead of {before}.",
           values: {
-            after: formatDate(phase.after, "long"),
-            before: formatDate(phase.before, "long"),
+            after: formatDate(phase.after, "sentence"),
+            before: formatDate(phase.before, "sentence"),
             phase: phase.name,
           },
         }),
@@ -178,7 +177,7 @@ function useEventConsequence() {
         text: t({
           description: '{date} is a weekday and day, like "Monday, May 5".',
           message: "Your next mock exam will be on {date}.",
-          values: { date: formatDate(effect.nextMock.after, "weekdayDay") },
+          values: { date: formatDate(effect.nextMock.after, "sentence", { weekday: true }) },
         }),
         whole: true,
       };

@@ -7,6 +7,7 @@ import {
   FoldChevron,
 } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import {
@@ -51,7 +52,7 @@ function MatrixGroupRow({ group }: { group: MatrixGroup }) {
       ? t("{count, plural, one {# topic} other {# topics}}", { count: group.children.length })
       : null;
 
-  const line = [label, skills].filter(Boolean).join(" · ");
+  const line = [label, skills].filter(Boolean).join(FACT_SEPARATOR);
 
   const content = (
     <ListRowContent>

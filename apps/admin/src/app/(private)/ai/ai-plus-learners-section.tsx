@@ -5,6 +5,7 @@ import { AdminUserCell } from "@/components/admin-user-cell";
 import { STAT_TILES_CLASS, StatTile } from "@/components/stat-tile";
 import { type PlusBilling, listPlusLearnerCosts } from "@/data/ai/list-plus-learner-costs";
 import { formatDollars, formatUsd } from "@/lib/ai-format";
+import { formatDay } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CpuIcon, CrownIcon, TrendingUpIcon, TriangleAlertIcon } from "lucide-react";
@@ -206,11 +207,7 @@ export async function AiPlusLearnersSection() {
   const { learners, prices, since } = await listPlusLearnerCosts();
   const spenders = learners.filter((learner) => learner.calls > 0).slice(0, LEARNER_ROWS);
 
-  const sinceLabel = since.toLocaleDateString("en", {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-  });
+  const sinceLabel = formatDay(since);
 
   return (
     <>

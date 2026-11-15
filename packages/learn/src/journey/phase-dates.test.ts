@@ -3,6 +3,7 @@ import {
   getAxisDatedPhases,
   getAxisFinish,
   getPhaseEnd,
+  getPhaseStart,
   getRoadmapFinish,
   getRoadmapPhases,
 } from "./phase-dates";
@@ -33,6 +34,7 @@ function phase(index: number, attrs: Partial<Phase> = {}): Phase {
     index,
     kind: "learn",
     short: null,
+    startDate: null,
     state: "upcoming",
     ...attrs,
   };
@@ -97,6 +99,18 @@ describe(getPhaseEnd, () => {
 
   it("ends a phase on its challenge's day when that comes after its last lesson", () => {
     const current = phase(0, { checkpoint: CHALLENGE, endDate: "2026-11-20", state: "current" });
+    const end = getPhaseEnd({ phase: current, plan: plan([current]) });
+    expect(end).toStrictEqual({ estimate: true, isoDate: "2026-11-22", month: false });
+  });
+
+  it("ends any phase on its challenge's day as an estimate, as the challenge's own row says it", () => {
+    const current = phase(0, {
+      checkpoint: CHALLENGE,
+      endDate: "2026-11-20",
+      kind: "foundations",
+      state: "current",
+    });
+
     const end = getPhaseEnd({ phase: current, plan: plan([current]) });
     expect(end).toStrictEqual({ estimate: true, isoDate: "2026-11-22", month: false });
   });
@@ -182,6 +196,44 @@ describe(getPhaseEnd, () => {
   it("gives a phase still being planned no date", () => {
     const building = phase(0);
     expect(getPhaseEnd({ phase: building, plan: plan([building, phase(1)]) })).toBeNull();
+  });
+});
+
+describe(getPhaseStart, () => {
+  it("is an estimate for a phase ahead whose end is one, so a range marks both ends", () => {
+    const ahead = phase(1, { endDate: "2027-01-16", startDate: "2026-12-13" });
+    const end = getPhaseEnd({ phase: ahead, plan: plan([phase(0), ahead]) });
+
+    expect(end).toStrictEqual({ estimate: true, isoDate: "2027-01-16", month: true });
+
+    expect(
+      getPhaseStart({ end: { estimate: true, isoDate: "2027-01-16", month: true }, phase: ahead }),
+    ).toStrictEqual({ estimate: true, isoDate: "2026-12-13", month: true });
+  });
+
+  it("is the day the learner began a phase under way, even while its end is an estimate", () => {
+    const current = phase(0, {
+      checkpoint: CHALLENGE,
+      endDate: "2026-11-20",
+      startDate: "2026-11-02",
+      state: "current",
+    });
+
+    expect(
+      getPhaseStart({
+        end: { estimate: true, isoDate: "2026-11-22", month: false },
+        phase: current,
+      }),
+    ).toStrictEqual({ estimate: false, isoDate: "2026-11-02", month: false });
+  });
+
+  it("is none for a phase with no start yet", () => {
+    expect(
+      getPhaseStart({
+        end: { estimate: true, isoDate: "2026-12-01", month: false },
+        phase: phase(1),
+      }),
+    ).toBeNull();
   });
 });
 

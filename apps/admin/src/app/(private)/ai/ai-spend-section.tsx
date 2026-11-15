@@ -21,7 +21,7 @@ import {
   formatTokens,
   formatUsd,
 } from "@/lib/ai-format";
-import { formatCount, toWords } from "@/lib/format";
+import { formatCount, formatDay, toWords } from "@/lib/format";
 import { readEnumQueryParam } from "@/lib/query-param";
 import { TableCell } from "@zoonk/ui/components/table";
 import { CpuIcon, DatabaseZapIcon, HashIcon, ReceiptIcon } from "lucide-react";
@@ -38,12 +38,6 @@ export function parseSpendBy(value: string | string[] | undefined): SpendBy {
 /** A ranking opens on its first rows: the most expensive few are what the page is asked for. */
 const TOP_ROWS = 8;
 const MS_PER_SECOND = 1000;
-
-const DAY_LABEL = new Intl.DateTimeFormat("en", {
-  day: "numeric",
-  month: "short",
-  timeZone: "UTC",
-});
 
 type View = { by: SpendBy; days: number; showAll: boolean };
 
@@ -105,7 +99,7 @@ async function DailySpend({ days }: { days: number }) {
         className="h-52 w-full"
         format="usd"
         label={`AI spend a day, the last ${days} days`}
-        points={daily.map((row) => ({ label: DAY_LABEL.format(row.day), value: row.costUsd }))}
+        points={daily.map((row) => ({ label: formatDay(row.day), value: row.costUsd }))}
       />
     </AdminSection>
   );

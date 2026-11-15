@@ -23,8 +23,8 @@ export const ja: ExampleSet = {
     goal: (month) => `${month}の共通テストに備える`,
     headline: "共通テスト対策",
     mock: {
-      details: "70分",
       firm: ["図形と計量", "データの分析"],
+      minutes: 70,
       mistakes: 3,
       name: "数学Ⅰ・A",
       review: ["2次関数", "場合の数と確率"],

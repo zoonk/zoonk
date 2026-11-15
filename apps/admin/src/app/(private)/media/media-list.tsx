@@ -5,6 +5,7 @@ import { languageName } from "@/lib/language-filter";
 import { parseSearchParams } from "@/lib/parse-search-params";
 import { type LibraryVisibility, type MediaKind } from "@zoonk/db";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import Link from "next/link";
 import { formatMediaUsage } from "./_utils/media-format";
 import { parseMediaListFilters } from "./_utils/media-list-params";
@@ -93,7 +94,7 @@ function MediaCard({ asset }: { asset: ListedMediaAsset }) {
             formatMediaUsage(asset._count.steps),
           ]
             .filter(Boolean)
-            .join(" · ")}
+            .join(FACT_SEPARATOR)}
         </span>
       </span>
     </Link>

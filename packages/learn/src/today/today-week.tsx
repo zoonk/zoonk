@@ -1,7 +1,9 @@
 "use client";
 
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { WEEK_ROW_CLASS } from "../_components/week-row";
 import { moveFocusWithArrows } from "../_utils/arrow-focus";
 import { useTodayScreen } from "./today-context";
 import { ChallengeRow, isSameDay } from "./today-week-challenge";
@@ -33,7 +35,7 @@ export function TodayWeek({ className }: { className?: string }) {
 
       <div className="flex flex-col">
         {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The arrow keys move between the buttons inside. */}
-        <ol className="flex justify-between py-1" onKeyDown={moveBetweenDays}>
+        <ol className={cn(WEEK_ROW_CLASS, "py-1")} onKeyDown={moveBetweenDays}>
           {days.map((day, index) => (
             <li key={day.date.toISOString()}>
               <WeekDayCell

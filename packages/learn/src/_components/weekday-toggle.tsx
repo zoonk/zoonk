@@ -1,7 +1,7 @@
 "use client";
 
 import { Toggle } from "@zoonk/ui/components/toggle";
-import { useFormatWeekday } from "../_utils/use-format-weekday";
+import { useFormatWeekday } from "../_utils/iso-date";
 
 export const WEEKDAY_GRID_CLASS = "grid max-w-sm grid-cols-7 gap-1";
 

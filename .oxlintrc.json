@@ -338,6 +338,25 @@
       "rules": { "zoonk/no-hand-made-fold": "off" }
     },
     {
+      "files": [
+        "apps/main/src/**",
+        "apps/admin/src/**",
+        "packages/learn/src/**",
+        "packages/player/src/**",
+        "packages/ui/src/**"
+      ],
+      "rules": { "zoonk/no-hand-made-format": "error" }
+    },
+    {
+      "files": [
+        "apps/main/src/lib/dates.ts",
+        "apps/admin/src/lib/format.ts",
+        "packages/learn/src/_utils/iso-date.ts",
+        "packages/learn/src/_utils/time-format.ts"
+      ],
+      "rules": { "zoonk/no-hand-made-format": "off" }
+    },
+    {
       "files": ["packages/ui/src/components/button.tsx"],
       "rules": { "zoonk/no-hand-placed-icon-button": "off" }
     },

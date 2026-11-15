@@ -4,7 +4,7 @@ import { DetailField, DetailFields } from "@/components/detail-field";
 import { STAT_TILES_CLASS, StatTile } from "@/components/stat-tile";
 import { StateMark } from "@/components/state-mark";
 import { type AdminPublicSource } from "@/data/sources/get-source";
-import { formatDate, formatDateTime } from "@/lib/format";
+import { formatDate, formatDateTime, formatShortDate } from "@/lib/format";
 import { LINK_CLASS } from "@/lib/link-class";
 import { CalendarClockIcon, GraduationCapIcon, ListChecksIcon, UsersIcon } from "lucide-react";
 
@@ -39,11 +39,7 @@ export function SourceTotals({ source }: { source: AdminPublicSource }) {
         detail={source.validUntil ? `Good until ${formatDate(source.validUntil)}` : "No end date"}
         icon={<CalendarClockIcon />}
         title="Last checked"
-        value={
-          source.fetchedAt
-            ? source.fetchedAt.toLocaleDateString("en", { day: "numeric", month: "short" })
-            : "Never"
-        }
+        value={source.fetchedAt ? formatShortDate(source.fetchedAt) : "Never"}
       />
     </div>
   );

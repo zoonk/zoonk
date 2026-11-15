@@ -64,6 +64,29 @@ const FIXTURES = [
     rule: "no-hand-made-fold",
   },
   {
+    bad: [
+      'export const A = new Intl.DateTimeFormat("en", { month: "short" }).format(date);',
+      'export const B = date.toLocaleDateString("en", { dateStyle: "medium" });',
+      "export const C = date.toLocaleTimeString();",
+      'export const D = date.toLocaleString("en", { dateStyle: "medium", timeStyle: "short" });',
+      'export const E = format.dateTime(date, { day: "numeric", month: "long" });',
+      "export const F = format.dateTimeRange(start, end, options);",
+      'export const G = { details: "98 questions · 2 h 14 min" };',
+      "export const H = <p>40 min</p>;",
+      "export const I = `5 min left`;",
+    ],
+    good: [
+      'export const A = formatDate(isoDate, "row");',
+      'export const B = count.toLocaleString("en");',
+      'export const C = t({ description: "A duration, such as “15 min”.", message: "{time} a day" });',
+      'export const D = <div className="size-4 h-4 min-h-0 p-2 min-w-0" />;',
+      "export const E = formatDuration({ locale, totalSeconds });",
+      'export const F = t("{minutes} min a day", { minutes });',
+    ],
+    rule: "no-hand-made-format",
+    skipped: { "fixture.test.tsx": "export const A = date.toLocaleDateString();" },
+  },
+  {
     bad: ['export const ANSWER_OPTION_CLASS = "rounded-lg";'],
     good: ['const ANSWER_OPTION_CLASS = "rounded-lg"; export const A = ANSWER_OPTION_CLASS;'],
     rule: "one-answer-option",
@@ -144,7 +167,7 @@ function lint() {
     writeFileSync(join(here, "good.tsx"), good.join("\n"));
 
     if ("skipped" in fixture) {
-      for (const [name, content] of Object.entries(fixture.skipped ?? {})) {
+      for (const [name, content] of Object.entries<string>(fixture.skipped ?? {})) {
         const path = join(here, name);
         mkdirSync(dirname(path), { recursive: true });
         writeFileSync(path, content);

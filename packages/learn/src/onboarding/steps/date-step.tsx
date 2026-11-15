@@ -84,7 +84,7 @@ export function DateStep({
     gone && initialDate
       ? t(
           "{when, select, today {Your date is today, so there are no days left to plan.} other {Your date, {date}, has passed.}}",
-          { date: formatDate(initialDate, "long"), when: dateProblem.kind },
+          { date: formatDate(initialDate, "sentence"), when: dateProblem.kind },
         )
       : null;
 

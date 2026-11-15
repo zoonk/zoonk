@@ -15,6 +15,7 @@ import {
   renderStepNumber,
 } from "../_components/step-card";
 import { type StepsItem } from "../_components/steps";
+import { useFormatRange } from "../_utils/range";
 import { LearnLink } from "../learn-link";
 import { useMockScreen } from "./mock-context";
 
@@ -45,7 +46,7 @@ function hasPoints(estimate: Estimate): estimate is Estimate & { high: number; l
 }
 
 function useEstimateRange(estimate: Estimate): string | null {
-  const t = useExtracted();
+  const formatRange = useFormatRange();
   const format = useFormatter();
   const number = (value: number) => format.number(value, { maximumFractionDigits: 1 });
 
@@ -53,9 +54,7 @@ function useEstimateRange(estimate: Estimate): string | null {
     return null;
   }
 
-  return estimate.low === estimate.high
-    ? number(estimate.low)
-    : t("{low}–{high}", { high: number(estimate.high), low: number(estimate.low) });
+  return formatRange(number(estimate.low), number(estimate.high));
 }
 
 /** Why a paper has no estimate. */

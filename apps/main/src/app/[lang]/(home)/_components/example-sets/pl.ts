@@ -23,8 +23,8 @@ export const pl: ExampleSet = {
     goal: () => "przygotować się do matury w maju",
     headline: "Zdać maturę",
     mock: {
-      details: "180 min",
       firm: ["Planimetria", "Prawdopodobieństwo"],
+      minutes: 180,
       mistakes: 3,
       name: "Matematyka",
       review: ["Funkcja kwadratowa", "Ciągi"],

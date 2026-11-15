@@ -14,6 +14,7 @@ import {
 } from "../_components/list-group";
 import { StatusMark } from "../_components/status-mark";
 import { TaskAsideSection } from "../_components/task-layout";
+import { useCountOf } from "../_utils/count-of";
 import { useMockScreen } from "./mock-context";
 import { useSectionCounts } from "./mock-section-counts";
 
@@ -24,6 +25,7 @@ const SECTION_MARK = { current: "next", done: "done", upcoming: "todo" } as cons
 
 function SectionTrailing({ section }: { section: MockSectionView }) {
   const t = useExtracted();
+  const countOf = useCountOf();
   const counts = useSectionCounts();
 
   if (section.status === "done") {
@@ -38,7 +40,7 @@ function SectionTrailing({ section }: { section: MockSectionView }) {
   }
 
   const answered = section.status === "current" ? counts.answered : 0;
-  return `${answered}/${section.questions + section.essays}`;
+  return countOf(answered, section.questions + section.essays);
 }
 
 function SectionRow({ section }: { section: MockSectionView }) {

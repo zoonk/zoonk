@@ -6,6 +6,7 @@ import { readEnumQueryParam } from "@/lib/query-param";
 import { type GoalUnderstandingView } from "@zoonk/core/view-models/onboarding/contract";
 import { goalUnderstandingViewSchema } from "@zoonk/core/view-models/onboarding/view-schemas";
 import { type GoalKind } from "@zoonk/db/enums";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 
 export function parsePromptOutcome(params: Partial<Record<string, string | string[]>>) {
   return readEnumQueryParam({ allowed: PROMPT_OUTCOMES, value: params.outcome });
@@ -45,8 +46,8 @@ export function getReadingSummary(reading: GoalUnderstandingView | null): Readin
   if (reading?.status === "goals") {
     return {
       kind: reading.goals[0]?.draft.kind ?? null,
-      label: reading.goals.map((goal) => toWords(goal.draft.kind)).join(" · "),
-      text: reading.goals.map((goal) => goal.draft.title).join(" · "),
+      label: reading.goals.map((goal) => toWords(goal.draft.kind)).join(FACT_SEPARATOR),
+      text: reading.goals.map((goal) => goal.draft.title).join(FACT_SEPARATOR),
     };
   }
 

@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
 import {
   ListRow,
   ListRowBody,
@@ -14,20 +13,12 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { StepOpenFailed } from "../_components/step-open-failed";
+import { useCountOf } from "../_utils/count-of";
 import { type useMissionOpen } from "./mission-links";
 
 export function ProgressCount({ done, total }: { done: number; total: number }) {
-  const t = useExtracted();
-  const complete = String(done);
-
-  return (
-    <>
-      <span aria-hidden="true">{`${complete}/${total}`}</span>
-      <span className="sr-only">
-        {t("{complete} of {total}", { complete, total: String(total) })}
-      </span>
-    </>
-  );
+  const countOf = useCountOf();
+  return countOf(done, total);
 }
 
 /**

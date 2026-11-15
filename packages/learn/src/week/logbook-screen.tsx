@@ -2,11 +2,11 @@
 
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { StatSkeleton } from "@zoonk/ui/components/stat";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useEffect } from "react";
 import { StepCard, StepHeader } from "../_components/step-card";
 import { TaskActions } from "../_components/task-layout";
-import { getIsoRangeOptions, useIsoToday } from "../_utils/iso-date";
+import { toIsoDay, useFormatIsoRange } from "../_utils/iso-date";
 import { useLearnAnalytics } from "../learn-context";
 import { TaskFrame, TaskMainLink } from "../shell/task-frame";
 import {
@@ -17,22 +17,10 @@ import {
 } from "./logbook-context";
 import { WeekHeader, WeekRings, WeekRingsSkeleton, WeekRows, WeekTiles } from "./logbook-sections";
 
-const ISO_DAY_LENGTH = "YYYY-MM-DD".length;
-
-/**
- * Node's ICU puts thin spaces around the dash and browsers plain ones, so the spaces are normalized
- * to hydrate cleanly.
- */
 function useWeekRange(): string {
-  const format = useFormatter();
-  const today = useIsoToday();
+  const formatRange = useFormatIsoRange();
   const { recap } = useLogbook();
-  const start = recap.weekStart.toISOString().slice(0, ISO_DAY_LENGTH);
-  const end = recap.weekEnd.toISOString().slice(0, ISO_DAY_LENGTH);
-
-  return format
-    .dateTimeRange(recap.weekStart, recap.weekEnd, getIsoRangeOptions({ end, start, today }))
-    .replaceAll("\u2009", " ");
+  return formatRange({ end: toIsoDay(recap.weekEnd), start: toIsoDay(recap.weekStart) });
 }
 
 function WeeklySummary() {

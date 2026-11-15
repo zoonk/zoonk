@@ -1,5 +1,7 @@
+import { getMinutesFormatter } from "@/lib/public/public-labels";
 import { KindMark } from "@zoonk/learn/kind-tile";
 import { DoneMark } from "@zoonk/learn/status-mark";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { ExampleCard, ExampleCardHead } from "./example-card";
 import { GoalSection } from "./goal-section";
@@ -26,12 +28,20 @@ async function MockResult() {
   const format = await getFormatter();
   const { exam } = await getExampleSet();
   const { mock } = exam;
+  const formatMinutes = await getMinutesFormatter();
   const list = (topics: readonly string[]) => format.list(topics, { type: "conjunction" });
+
+  const details = [
+    mock.questions && keepNumbersWithUnits(mock.questions),
+    mock.minutes !== undefined && formatMinutes(mock.minutes),
+  ]
+    .filter(Boolean)
+    .join(FACT_SEPARATOR);
 
   return (
     <ExampleCard>
       <ExampleCardHead
-        detail={mock.details && keepNumbersWithUnits(mock.details)}
+        detail={details}
         title={t("Mock exam {number, number} · {name}", { name: mock.name, number: 2 })}
       />
 

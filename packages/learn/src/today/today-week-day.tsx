@@ -10,10 +10,11 @@ import {
 } from "@zoonk/ui/components/popover";
 import { cn } from "@zoonk/ui/lib/utils";
 import { GraduationCapIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { GoalRing, type GoalRingTrack } from "../_components/goal-ring";
 import { KindIcon } from "../_components/kind-tile";
 import { DoneMark } from "../_components/status-mark";
+import { WEEK_DAY_CLASS, WeekDayLetter } from "../_components/week-row";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";
 import { type StudySession } from "../session/session-types";
@@ -30,7 +31,7 @@ type WeekDay = StudySession["week"]["days"][number];
 export const WEEK_DAY_SLOT = "today-week-day";
 
 const DAY_BUTTON_CLASS =
-  "hit-area relative -mx-1 flex min-h-11 cursor-pointer flex-col items-center gap-1.5 rounded-md px-1 py-1 outline-none transition-colors hover:bg-muted/70 focus-visible:ring-[3px] focus-visible:ring-ring/50";
+  "hit-area relative -mx-1 min-h-11 cursor-pointer rounded-md px-1 py-1 outline-none transition-colors hover:bg-muted/70 focus-visible:ring-[3px] focus-visible:ring-ring/50";
 
 const RING_CLASS = "size-7.5";
 
@@ -106,22 +107,6 @@ function ChallengeDot({ challenge, day }: { challenge: Challenge; day: WeekDay }
   );
 }
 
-function DayLetter({ day }: { day: WeekDay }) {
-  const format = useFormatter();
-
-  return (
-    <span
-      aria-hidden="true"
-      className={cn(
-        "text-faint text-2xs font-mono uppercase",
-        day.isToday && "text-foreground font-medium",
-      )}
-    >
-      {format.dateTime(day.date, { timeZone: "UTC", weekday: "narrow" })}
-    </span>
-  );
-}
-
 function useDayStatus() {
   const t = useExtracted();
   const localDate = useWeekDate();
@@ -178,7 +163,7 @@ function ChallengeDay({ challenge, day }: { challenge: Challenge; day: WeekDay }
   return (
     <>
       <ChallengeDot challenge={challenge} day={day} />
-      <DayLetter day={day} />
+      <WeekDayLetter date={day.date} isToday={day.isToday} />
       <span className="sr-only">
         {ahead
           ? t("{day}: {name}", { day: weekday, name })
@@ -196,7 +181,7 @@ function PlainDay({ day }: { day: WeekDay }) {
   return (
     <>
       <DayRing day={day} />
-      <DayLetter day={day} />
+      <WeekDayLetter date={day.date} isToday={day.isToday} />
       <span className="sr-only">
         {t("{day}: {status}", { day: weekdayLabel(day.date), status: dayStatus(day) })}
       </span>
@@ -258,7 +243,7 @@ export function WeekDayCell({
   return (
     <Popover>
       <PopoverTrigger
-        className={DAY_BUTTON_CLASS}
+        className={cn(WEEK_DAY_CLASS, DAY_BUTTON_CLASS)}
         data-slot={WEEK_DAY_SLOT}
         tabIndex={focusable ? 0 : -1}
       >

@@ -1,4 +1,5 @@
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
+import { FactSegments } from "@zoonk/learn/facts";
 import { getVarietyName } from "@zoonk/utils/language-regions";
 import { getExtracted } from "next-intl/server";
 
@@ -38,5 +39,9 @@ export async function ContentCountryLine({
       }),
   ].filter(Boolean);
 
-  return <p className="text-muted-foreground mt-3 text-sm text-pretty">{parts.join(" · ")}</p>;
+  return (
+    <p className="text-muted-foreground mt-3 text-sm text-pretty">
+      <FactSegments facts={parts} />
+    </p>
+  );
 }

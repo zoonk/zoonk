@@ -11,13 +11,14 @@ import {
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
 import { BookOpenCheckIcon, ExternalLinkIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useFormatMomentDate } from "../_utils/iso-date";
 
 export function SourcesChip({ citation }: { citation: SourceCitation }) {
   const t = useExtracted();
-  const format = useFormatter();
-  const month = format.dateTime(citation.checkedAt, { month: "short", year: "numeric" });
-  const day = format.dateTime(citation.checkedAt, { dateStyle: "medium" });
+  const formatDate = useFormatMomentDate();
+  const month = formatDate(citation.checkedAt, "rowMonth", { year: "always" });
+  const day = formatDate(citation.checkedAt, "row", { year: "always" });
 
   return (
     <Popover>

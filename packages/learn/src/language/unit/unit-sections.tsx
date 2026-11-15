@@ -1,6 +1,7 @@
 "use client";
 
 import { type LanguageUnitView } from "@zoonk/core/view-models/language/contract";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import {
   LIST_GROUP_CLASS,
@@ -71,7 +72,7 @@ export function UnitWords({ words }: { words: LanguageUnitView["words"] }) {
 
   return (
     <p className="text-muted-foreground text-sm">
-      {words.sample.join(" · ")}
+      {words.sample.join(FACT_SEPARATOR)}
       {more > 0 && ` ${t("and {count, number} more", { count: more })}`}
     </p>
   );

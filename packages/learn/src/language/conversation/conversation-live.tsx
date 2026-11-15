@@ -19,6 +19,7 @@ import { useEffect, useRef, useState } from "react";
 import { TaskHeaderTitle, useTaskAsideShown } from "../../_components/task-header";
 import { TaskBody } from "../../_components/task-layout";
 import { formatClock } from "../../_utils/clock";
+import { useCountOf } from "../../_utils/count-of";
 import { TaskFrame } from "../../shell/task-frame";
 import { useTaskRoleNoun } from "../exam-speaking/exam-speaking-labels";
 import { CallAnnouncer, CallControls, CallTurn } from "./call-control";
@@ -222,6 +223,7 @@ export function ConversationLive({
   onEnd: () => void;
 }) {
   const t = useExtracted();
+  const countOf = useCountOf();
   const asideShown = useTaskAsideShown();
   const [phrasesOpen, setPhrasesOpen] = useState(false);
   const progress = useCallProgress({ call, conversation });
@@ -249,7 +251,7 @@ export function ConversationLive({
           label: t("Call goals and phrases"),
           meta: examTask
             ? undefined
-            : `${countMetGoals(conversation, call.metLabels)}/${conversation.objectives.length}`,
+            : countOf(countMetGoals(conversation, call.metLabels), conversation.objectives.length),
           title: examTask ? undefined : t("Goals of the call"),
         }}
         exitHref={null}

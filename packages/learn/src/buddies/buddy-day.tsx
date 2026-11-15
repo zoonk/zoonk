@@ -14,6 +14,7 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { PAGE_SECTION_TITLE_CLASS, PageSectionTitle } from "../_components/page";
+import { useCountOf } from "../_utils/count-of";
 import { FirstStepsSection } from "../missions/first-steps";
 import { type MissionLinks } from "../missions/mission-links";
 import { MissionsCard } from "../missions/missions-card";
@@ -24,16 +25,8 @@ import { type LearnBuddy } from "./use-buddy-name";
 export type BuddyDayHrefs = { energy: string; logbook: string; memory: string };
 
 function GlassesCount({ status }: { status: BuddyStatusView }) {
-  const t = useExtracted();
-  const earned = String(status.glasses.filter((item) => item.earned).length);
-  const total = String(status.glasses.length);
-
-  return (
-    <>
-      <span aria-hidden="true">{`${earned}/${total}`}</span>
-      <span className="sr-only">{t("{earned} of {total}", { earned, total })}</span>
-    </>
-  );
+  const countOf = useCountOf();
+  return countOf(status.glasses.filter((item) => item.earned).length, status.glasses.length);
 }
 
 function BuddyRows({

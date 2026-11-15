@@ -1266,8 +1266,8 @@ msgid "{username} is already taken"
 msgstr "{username}은(는) 이미 사용 중이에요"
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "wubfpa"
-msgid "3-30 characters. Letters a–z, numbers, and underscores only."
+msgctxt "dJOFyo"
+msgid "3–30 characters. Letters a–z, numbers, and underscores only."
 msgstr "3~30자. 영문 소문자(a–z), 숫자, 밑줄만 사용할 수 있어요."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -2903,14 +2903,14 @@ msgid "After this chapter"
 msgstr "이 챕터 다음"
 
 #: src/components/catalog/course-exam-date.tsx
-msgctxt "U-M99k"
-msgid "Exam around {dates} · {days, plural, =0 {today} one {about # day left} other {about # days left}}"
-msgstr "시험일 {dates}쯤 · {days, plural, =0 {오늘} other {약 #일 남음}}"
+msgctxt "-fjjUM"
+msgid "Exam around {dates}"
+msgstr "시험일 {dates}쯤"
 
 #: src/components/catalog/course-exam-date.tsx
-msgctxt "_of7g2"
-msgid "Exam on {dates} · {days, plural, =0 {today} one {# day left} other {# days left}}"
-msgstr "시험일 {dates} · {days, plural, =0 {오늘} other {#일 남음}}"
+msgctxt "xaLkUA"
+msgid "Exam on {dates}"
+msgstr "시험일 {dates}"
 
 #. Heading over the lessons a new learner would study on the first day of this course.
 #: src/components/catalog/course-plan-window.tsx

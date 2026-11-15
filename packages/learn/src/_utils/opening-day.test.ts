@@ -1,11 +1,7 @@
+import { formatIsoDate } from "@zoonk/utils/date-format";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import {
-  OPENING_DATE_OPTIONS,
-  toFirstRenderDay,
-  toOpeningDay,
-  watchOpeningClock,
-} from "./opening-day";
+import { OPENING_DATE, toFirstRenderDay, toOpeningDay, watchOpeningClock } from "./opening-day";
 
 describe(toOpeningDay, () => {
   const now = new Date("2026-11-13T23:30:00.000Z");
@@ -63,21 +59,28 @@ describe(toFirstRenderDay, () => {
   });
 });
 
+function formatCapDay(): string {
+  return formatIsoDate({
+    ...OPENING_DATE,
+    isoDate: "2027-01-10",
+    locale: "en",
+    role: "sentence",
+    today: new Date().toISOString().slice(0, "YYYY-MM-DD".length),
+  });
+}
+
 describe("the day a cap comes back", () => {
   afterEach(() => {
     vi.useRealTimers();
   });
 
   it("names a cap's day the same on either side of New Year, with no year and no clock", () => {
-    const opensOn = new Date("2027-01-10T00:00:00.000Z");
-    const format = () => new Intl.DateTimeFormat("en-US", OPENING_DATE_OPTIONS).format(opensOn);
-
     vi.useFakeTimers({ now: new Date("2026-12-31T23:59:00.000Z") });
-    const beforeNewYear = format();
+    const beforeNewYear = formatCapDay();
     vi.setSystemTime(new Date("2027-01-01T00:01:00.000Z"));
 
     expect(beforeNewYear).toBe("January 10");
-    expect(format()).toBe("January 10");
+    expect(formatCapDay()).toBe("January 10");
   });
 });
 
