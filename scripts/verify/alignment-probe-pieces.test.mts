@@ -155,3 +155,23 @@ describe("a bottom bar's note", () => {
     assert.equal(evaluateCapture(read()).find((finding) => finding.rule === "room")?.measured, 8);
   });
 });
+
+/** A rail's row: its icon (a glyph) at `x`, its label only for screen readers. */
+const railItem = (label: string, y: number, x: number) =>
+  `<a data-slot="sidebar-item" data-box="8,${y},48,40"><span data-box="${x},${y + 12},16,16">◆</span><span style="clip-path: inset(50%)" data-box="0,0,1,1">${label}</span></a>`;
+
+/** A collapsed sidebar: an icon rail whose labels are only for screen readers. */
+function rail(secondIconX: number) {
+  return `<div data-sidebar-collapsed><div data-slot="sidebar" data-box="0,0,64,800">
+    ${railItem("Courses", 100, 24)}${railItem("Pricing", 140, secondIconX)}</div></div>`;
+}
+
+describe("a collapsed sidebar, an icon rail", () => {
+  it("expects no drawn label, and holds its icons on one axis", () => {
+    document.body.innerHTML = rail(24);
+    assert.deepEqual(evaluateCapture(read()), []);
+
+    document.body.innerHTML = rail(27);
+    assert.equal(evaluateCapture(read())[0]?.rule, "mark-axis");
+  });
+});

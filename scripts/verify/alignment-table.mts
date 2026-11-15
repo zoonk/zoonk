@@ -79,8 +79,19 @@ const PIECES: Piece[] = [
     name: "sidebar",
     relations: ["label-start", "mark-axis"],
     web: {
-      group: "[data-slot=sidebar]",
+      group: "[data-slot=sidebar]:not([data-sidebar-collapsed] *)",
       parts: { label: ":scope > :nth-child(2)", mark: ":scope > :first-child" },
+      rows: "[data-slot=sidebar-item]",
+    },
+  },
+  // Collapsed, the sidebar is an icon rail: its labels are for screen readers and its names show
+  // in tooltips, so only its icons' axis is compared.
+  {
+    name: "sidebar-rail",
+    relations: ["mark-axis"],
+    web: {
+      group: "[data-sidebar-collapsed] [data-slot=sidebar]",
+      parts: { mark: ":scope > :first-child" },
       rows: "[data-slot=sidebar-item]",
     },
   },
