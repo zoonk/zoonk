@@ -215,12 +215,15 @@ fun goalLimitMessage(reason: GoalLimitReason): String =
         }
     }
 
-/** A cap used up over the last 30 days in one sentence: what ran out, then when more comes. */
+/** A cap used up over the last 30 days in one sentence: what ran out, then when more comes; once its day comes, only that it has. */
 @Composable
 fun usedSentence(
     @StringRes title: Int,
     limit: Limit.Reached,
-): String = gateSentence(stringResource(title), comesBackLine(limit))
+): String {
+    val line = comesBackLine(limit)
+    return if (limitLifted(limit) && line != null) line else gateSentence(stringResource(title), line)
+}
 
 @Composable
 fun goalErrorMessage(error: GoalError): String =
