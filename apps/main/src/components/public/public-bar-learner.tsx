@@ -1,7 +1,10 @@
 "use client";
 
 import { UserAvatarMenu } from "@/app/[lang]/(app)/(catalog)/_components/user-avatar-menu";
-import { LearnGoalMenu } from "@/app/[lang]/(app)/(learn)/_components/learn-goal-menu";
+import {
+  LearnGoalMenu,
+  PendingGoalMenu,
+} from "@/app/[lang]/(app)/(learn)/_components/learn-goal-menu";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { LearnAvatarBelt } from "@zoonk/learn/avatar-belt";
@@ -11,8 +14,12 @@ import { type ReactNode } from "react";
 export function PublicBarStart({ visitor }: { visitor: ReactNode }) {
   const learner = useLearnerSummary();
 
-  if (learner.status !== "ready") {
+  if (learner.status === "visitor") {
     return visitor;
+  }
+
+  if (learner.status !== "ready") {
+    return <PendingGoalMenu visitor={visitor} />;
   }
 
   return (

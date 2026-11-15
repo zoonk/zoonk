@@ -34,6 +34,9 @@ type SuggestionValue = {
 const SuggestionContext = createContext<SuggestionValue | null>(null);
 const PresentationContext = createContext<Presentation>("panel");
 
+/** Whether the page shows its own main action beside a suggestion's panel; a page whose action comes and goes says so. */
+export const PageHasMainAction = createContext(true);
+
 function useSuggestion(): SuggestionValue {
   const value = use(SuggestionContext);
 
@@ -136,12 +139,7 @@ export function SuggestionLine({ children, className, ...props }: React.Componen
   return (
     <PresentationContext value="line">
       <div
-        className={cn(
-          FRAME_CLASS,
-          "flex min-h-12 items-center gap-3 py-2 pr-2 pl-4",
-          LINE_CLASS,
-          className,
-        )}
+        className={cn(FRAME_CLASS, "flex min-h-12 items-center gap-3 p-2", LINE_CLASS, className)}
         data-slot="suggestion-line"
         {...props}
       >
@@ -163,11 +161,14 @@ export function SuggestionSummary({ className, ...props }: React.ComponentProps<
 }
 
 /**
- * A suggestion's main action on a page that has its own main action: filled in the sheet, which
- * covers the page, and outline in the panel beside it, so the page keeps one filled button.
+ * A suggestion's main action: filled in the sheet, which covers the page, and in a panel on a page
+ * with no main action of its own; outline in the panel beside one, so the page keeps one filled button.
  */
 export function useMainActionVariant(): "default" | "outline" {
-  return use(PresentationContext) === "panel" ? "outline" : "default";
+  const inPanel = use(PresentationContext) === "panel";
+  const pageHasMainAction = use(PageHasMainAction);
+
+  return inPanel && pageHasMainAction ? "outline" : "default";
 }
 
 export function useCloseSuggestionSheet(): () => void {

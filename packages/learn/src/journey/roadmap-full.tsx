@@ -124,9 +124,27 @@ function PhaseColumn({
   );
 }
 
+function useFinishLabel() {
+  const t = useExtracted();
+  const { goal, plan } = usePlanScreen();
+
+  if (goal.kind === "exam") {
+    return t("Exam date");
+  }
+
+  return plan.schedule.targetDate
+    ? t("End date")
+    : t({
+        description:
+          "In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date.",
+        message: "You finish",
+      });
+}
+
 function RoadmapLegend() {
   const t = useExtracted();
   const { goal } = usePlanScreen();
+  const finishLabel = useFinishLabel();
   const { phases } = useRoadmapPhases();
   const finish = useRoadmapFinish();
   const hasMocks = phases.some((phase) => phase.mocks.nextDate !== null);
@@ -152,7 +170,7 @@ function RoadmapLegend() {
       {finish && (
         <span className="flex items-center gap-1.5">
           <FlagIcon className="size-3.5" />
-          {goal.kind === "exam" ? t("Exam date") : t("End date")}
+          {finishLabel}
         </span>
       )}
     </span>

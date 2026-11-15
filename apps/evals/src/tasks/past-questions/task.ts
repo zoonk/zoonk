@@ -15,7 +15,7 @@ export const pastQuestionsTask: Task<
     "Copy real past exam questions where the organizer allows it: code checks every quoted part against the paper and the citation, then a judge on keys, which questions, feedback and credit",
   generate: extractPastQuestions,
   id: "past-questions",
-  name: "Past Questions",
+  name: "Past questions",
   score: scorePastQuestions,
   scoreCategories: PAST_QUESTIONS_SCORE_CATEGORIES,
   testCases: TEST_CASES,

@@ -80,7 +80,7 @@ export const courseIconTask: Task<CourseIconInput, CourseIconOutput> = {
   description: "Draw a course's icon: one matte 3D object on white that stands for the subject",
   generate,
   id: TASK_ID,
-  name: "Course Icon",
+  name: "Course icon",
   output: "image",
   score: scoreCourseIcon,
   scoreCategories,

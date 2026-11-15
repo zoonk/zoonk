@@ -10,8 +10,9 @@ export function ExportDataRow() {
 
   return (
     <DownloadRow
+      actionLabel={t("Download your data")}
       fileName="zoonk-data.json"
-      label={t("Download my data")}
+      label={t("A copy of your data")}
       load={exportAccountDataAction}
     />
   );

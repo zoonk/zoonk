@@ -13,6 +13,6 @@ export const imageInputSafetyRewriteTask: Task<
   description: "Rewrite safety-rejected image inputs so image generation can retry safely",
   generate: rewriteImageInputForSafetyRetry,
   id: "image-input-safety-rewrite",
-  name: "Image Input Safety Rewrite",
+  name: "Image input safety rewrite",
   testCases: TEST_CASES,
 };

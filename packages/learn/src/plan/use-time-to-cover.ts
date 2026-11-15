@@ -1,13 +1,10 @@
 "use client";
 
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
-import { safeAsync } from "@zoonk/utils/error";
-import { settleWithin } from "@zoonk/utils/timeout";
 import { useExtracted } from "next-intl";
 import { type FullTime, getFullTime } from "../_utils/time-answer";
 import { usePlanScreen } from "./plan-context";
-
-const ASK_TIMEOUT_MS = 45_000;
+import { requestWithin } from "./request-within";
 
 export type TimeToCoverAnswer =
   | { kind: "covers"; minutes: number }
@@ -29,13 +26,6 @@ export function readTimeToCover(time: PlanTimeToCover): TimeToCoverAnswer {
         kind: "focus",
         minutes: suggested.minutes,
       };
-}
-
-export async function requestWithin<Answer>(
-  request: () => Promise<Answer | null>,
-): Promise<Answer | null> {
-  const { data } = await safeAsync(() => settleWithin({ ms: ASK_TIMEOUT_MS, request }));
-  return data?.status === "settled" ? data.value : null;
 }
 
 export function useTimeToCover() {

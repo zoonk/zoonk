@@ -15,6 +15,7 @@ import { useLimitText } from "../../_components/comes-back-words";
 import { useLiveLimit } from "../../_components/help-limit-notice";
 import { ChangeSaveError } from "../../_components/save-error";
 import { useSentenceSpace } from "../../_utils/locale";
+import { useHeldSlot } from "../../_utils/use-held-slot";
 import { type GoalError } from "../goal-errors";
 import { type WaitlistOutcome } from "../onboarding-actions";
 import {
@@ -82,8 +83,10 @@ export function GoalErrorAlert({
   error: GoalError | null;
   signUpHref: string;
 }) {
+  const slot = useHeldSlot<HTMLDivElement>(useLiveLimit(error?.limit ?? null) !== null);
+
   return (
-    <div className="flex flex-col gap-4 empty:hidden">
+    <div className="flex flex-col gap-4 [&:not([data-held]):empty]:hidden" ref={slot}>
       <GoalErrorMessage error={error} />
       {error?.needsAccount && <SignUpLink href={signUpHref} />}
     </div>

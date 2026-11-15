@@ -58,7 +58,7 @@ export function AboutYouQuestionScreen({
 }) {
   const t = useExtracted();
   const title = useProfileQuestionTitle(question.id);
-  const description = useProfileQuestionDescription(question.id);
+  const description = useProfileQuestionDescription(question.id, "settings");
   const [draft, setDraft] = useState(() => toProfileDraft(question));
   const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
@@ -98,6 +98,7 @@ export function AboutYouQuestionScreen({
 
         <ProfileQuestionBody
           draft={draft}
+          from="settings"
           label={title}
           memoryEnabled={memoryEnabled}
           onChange={setDraft}

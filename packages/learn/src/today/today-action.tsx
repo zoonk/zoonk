@@ -5,6 +5,7 @@ import { createContext, use } from "react";
 import { EnterButton, EnterLink } from "../_components/enter-button";
 import { OpeningWaitLine } from "../_components/opening-wait-line";
 import { ChangeSaveError } from "../_components/save-error";
+import { PageHasMainAction } from "../_components/suggestion";
 import { usePendingSender } from "../_utils/use-pending-sender";
 import { useSlowWait } from "../_utils/use-slow-wait";
 import { type WaitState } from "../_utils/wait-state";
@@ -38,6 +39,7 @@ export function TodayContinueProvider({ children }: { children: React.ReactNode 
   const { actions } = useTodayScreen();
   const underway = useDayState() === "underway";
   const keepLearning = useUpNextLessons().length > 0;
+  const hasAction = useTodayActionKind() !== null;
   const session = useContinueSession({ enterKey: underway });
   const wait = useSlowWait(session.isPending);
   const keep = useSessionAction({ action: actions.addExtraTime, enterKey: keepLearning });
@@ -53,7 +55,7 @@ export function TodayContinueProvider({ children }: { children: React.ReactNode 
 
   return (
     <TodayContinueContext value={{ ...session, keep: keepAction, wait }}>
-      {children}
+      <PageHasMainAction value={hasAction}>{children}</PageHasMainAction>
     </TodayContinueContext>
   );
 }
@@ -243,38 +245,53 @@ function SeePlanLink() {
   );
 }
 
-/** Pinned at the page's bottom on a phone and a computer (rule 4); a day with nothing to start has none. */
-export function TodayAction() {
+const TODAY_ACTIONS = {
+  continue: <ContinueButton />,
+  examOver: <TodayExamOver />,
+  keepLearning: <KeepLearning />,
+  practice: <PracticeTime />,
+  prepare: <PrepareLessons />,
+  seePlan: <SeePlanLink />,
+  summary: <SummaryLink />,
+} as const;
+
+function useTodayActionKind(): keyof typeof TODAY_ACTIONS | null {
   const { today } = useTodayScreen();
   const state = useDayState();
   const pastDate = useTodayPastDate();
   const keepLearning = useUpNextLessons().length > 0;
 
   if (pastDate) {
-    return today.goal.kind === "exam" ? <TodayExamOver /> : <SeePlanLink />;
+    return today.goal.kind === "exam" ? "examOver" : "seePlan";
   }
 
   if (state === "prepare") {
-    return <PrepareLessons />;
+    return "prepare";
   }
 
   if (keepLearning) {
-    return <KeepLearning />;
+    return "keepLearning";
   }
 
   if (state === "underway") {
-    return <ContinueButton />;
+    return "continue";
   }
 
   if (state === "done") {
-    return <SummaryLink />;
+    return "summary";
   }
 
   // With nothing new on the list, practice is the day's one action; once the day is done it is
   // only an extra, so it stays in the page.
   if (state === "ahead" || state === "rest") {
-    return <PracticeTime />;
+    return "practice";
   }
 
   return null;
+}
+
+/** Pinned at the page's bottom on a phone and a computer (rule 4); a day with nothing to start has none. */
+export function TodayAction() {
+  const kind = useTodayActionKind();
+  return kind ? TODAY_ACTIONS[kind] : null;
 }
