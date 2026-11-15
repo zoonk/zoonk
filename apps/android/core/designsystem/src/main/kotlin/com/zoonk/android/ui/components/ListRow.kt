@@ -233,7 +233,7 @@ fun ListRow(
 
 /** On a top-aligned row, what ends it centered in a box as tall as the lead's, on the first entry's line. */
 @Composable
-private fun OnFirstLine(
+internal fun OnFirstLine(
     box: Dp?,
     content: @Composable () -> Unit,
 ) {
@@ -242,7 +242,7 @@ private fun OnFirstLine(
 
 /** A line of [style] as the text lays it out at this text size, nonlinear scaling included. */
 @Composable
-private fun lineHeight(style: TextStyle): Dp {
+internal fun lineHeight(style: TextStyle): Dp {
     val measurer = rememberTextMeasurer()
     val height = remember(style, measurer) { measurer.measure("A", style, maxLines = 1).size.height }
     return with(LocalDensity.current) { height.toDp() }

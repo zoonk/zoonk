@@ -24,6 +24,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -181,7 +182,7 @@ private fun Loaded(
                     if (index > 0) ListDivider()
                     FactRow(
                         fact,
-                        onEdit = { screen.updateFact(fact.id, it) },
+                        onEdit = { screen.openEdit(fact.id) },
                         onDelete = { screen.deleteFact(fact.id) },
                         onEditProfile =
                             fact.source?.takeIf { it.kind == MemorySource.Kind.PROFILE }?.id?.let { id ->
@@ -190,6 +191,12 @@ private fun Loaded(
                     )
                 }
             }
+        }
+    }
+
+    screen.factEdit?.let { edit ->
+        memory.facts.find { it.id == edit.id }?.let { fact ->
+            key(edit.id) { EditFactDialog(fact, edit, onClose = screen::closeEdit, onSave = screen::saveEdit) }
         }
     }
 
@@ -228,12 +235,11 @@ private fun Loaded(
 @Composable
 private fun FactRow(
     fact: MemoryFact,
-    onEdit: (String) -> Unit,
+    onEdit: () -> Unit,
     onDelete: () -> Unit,
     onEditProfile: (() -> Unit)? = null,
 ) {
     var isMenuOpen by rememberSaveable { mutableStateOf(false) }
-    var isEditing by rememberSaveable { mutableStateOf(false) }
 
     ListRow(
         headline = { Text(fact.statement) },
@@ -255,7 +261,7 @@ private fun FactRow(
                         leadingIcon = { Icon(painterResource(R.drawable.ic_edit), contentDescription = null) },
                         onClick = {
                             isMenuOpen = false
-                            if (onEditProfile != null) onEditProfile() else isEditing = true
+                            if (onEditProfile != null) onEditProfile() else onEdit()
                         },
                     )
                     DropdownMenuItem(
@@ -275,27 +281,19 @@ private fun FactRow(
             }
         },
     )
-
-    if (isEditing) {
-        EditFactDialog(
-            fact = fact,
-            onClose = { isEditing = false },
-            onSave = {
-                isEditing = false
-                onEdit(it)
-            },
-        )
-    }
 }
 
 @Composable
 private fun EditFactDialog(
     fact: MemoryFact,
+    edit: FactEdit,
     onClose: () -> Unit,
     onSave: (String) -> Unit,
 ) {
     var statement by rememberSaveable { mutableStateOf(fact.statement) }
+    val original = rememberSaveable { fact.statement }
     val trimmed = statement.trim()
+    val changed = trimmed.isNotEmpty() && trimmed != original
 
     AlertDialog(
         onDismissRequest = onClose,
@@ -307,15 +305,17 @@ private fun EditFactDialog(
                     value = statement,
                     onValueChange = { statement = it.take(MAX_STATEMENT_LENGTH) },
                     label = stringResource(R.string.memory_edit_label),
+                    supportingText = if (edit.failed) ({ Text(stringResource(R.string.memory_save_failed)) }) else null,
+                    isError = edit.failed,
                 )
             }
         },
         confirmButton = {
-            TextButton(onClick = { onSave(trimmed) }, enabled = trimmed.isNotEmpty() && trimmed != fact.statement) {
+            TextButton(onClick = { onSave(trimmed) }, enabled = changed, busy = edit.saving) {
                 Text(stringResource(R.string.settings_save))
             }
         },
-        dismissButton = { TextButton(onClick = onClose) { Text(stringResource(R.string.settings_cancel)) } },
+        dismissButton = { TextButton(onClick = onClose, enabled = !edit.saving) { Text(stringResource(R.string.settings_cancel)) } },
     )
 }
 
