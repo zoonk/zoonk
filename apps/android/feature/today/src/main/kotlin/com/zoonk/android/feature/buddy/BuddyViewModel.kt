@@ -28,10 +28,6 @@ class BuddyViewModel internal constructor(
     /** Search's question goes in the composer once: the tab keeps its route, so the page would put it back on each return. */
     var askPlaced = false
 
-    /** A change didn't save: the buddy is shown as it was. */
-    var saveFailed by mutableStateOf(false)
-        private set
-
     /** The row whose block is opening, and the one whose block couldn't, so only that row says so. */
     var opening by mutableStateOf<BuddyTap?>(null)
         private set
@@ -47,32 +43,36 @@ class BuddyViewModel internal constructor(
     /** The row whose mission failed to open on this visit. */
     val openFailed get() = openFailure.value
 
-    /** [onSaved] runs only once it saved, so an editor closes then. */
+    /** A change saved on this visit, so an open editor closes. */
+    val saved = visit.outcome<Unit>()
+
+    private val saveFailure = visit.outcome<Unit>()
+
+    /** A change didn't save on this visit: the buddy is shown as it was. */
+    val saveFailed get() = saveFailure.value != null
+
     fun save(
         kind: BuddyKind,
         glasses: BuddyGlasses,
         name: String?,
-        onSaved: () -> Unit = {},
     ) {
         if (isSaving) return
         isSaving = true
-        saveFailed = false
+        saveFailure.clear()
+        val started = visit.number
         viewModelScope.launch {
-            val saved =
+            val done =
                 profile.setBuddy(
                     Buddy.Kind.entries.first { it.value == kind.key },
                     Buddy.Glasses.entries.first { it.value == glasses.key },
                     name?.trim()?.ifEmpty { null },
                 )
             isSaving = false
-            saveFailed = !saved
-            if (saved) onSaved()
+            (if (done) saved else saveFailure).send(started, Unit)
         }
     }
 
-    fun dismissSaveFailure() {
-        saveFailed = false
-    }
+    fun dismissSaveFailure() = saveFailure.clear()
 
     fun openMission(
         tap: BuddyTap,

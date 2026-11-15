@@ -16,6 +16,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.theme.ZoonkTheme
+import kotlinx.coroutines.CompletableDeferred
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -33,9 +34,7 @@ class VoiceAnswerRecorderTest {
         var shown by mutableStateOf(true)
         rule.setContent {
             ZoonkTheme {
-                if (shown) {
-                    VoiceAnswerRecorder<Unit>(grade = { GradeOutcome.Failed }, onGraded = {}, navigator = rememberAppNavigator())
-                }
+                if (shown) VoiceAnswerRecorder(voiceAnswerModel(KEY) { GradeOutcome.Failed }, rememberAppNavigator())
             }
         }
         val record = rule.onNodeWithText("Record").fetchSemanticsNode().id
@@ -57,8 +56,8 @@ class VoiceAnswerRecorderTest {
         lateinit var model: VoiceAnswerModel
         rule.setContent {
             ZoonkTheme {
-                model = voiceAnswerModel(KEY)
-                VoiceAnswerRecorder<Unit>(grade = { GradeOutcome.Failed }, onGraded = {}, navigator = rememberAppNavigator(), key = KEY)
+                model = voiceAnswerModel(KEY) { GradeOutcome.Failed }
+                VoiceAnswerRecorder(model, rememberAppNavigator())
             }
         }
         rule.runOnIdle { model.microphoneOff = true }
@@ -71,6 +70,36 @@ class VoiceAnswerRecorderTest {
 
         rule.onNodeWithText("Record").assertIsDisplayed()
         rule.onNodeWithText("The microphone is off").assertDoesNotExist()
+    }
+
+    /** The take is graded by the model's own grading, so the recorder shown after a recreation says how it went. */
+    @Test
+    fun aTakeGradedWhileTheRecorderIsRecreatedIsGradedOnceAndShowsInTheNextOne() {
+        val graded = CompletableDeferred<GradeOutcome<Unit>>()
+        val gradings = mutableListOf<String>()
+        var frame by mutableStateOf("first")
+        lateinit var model: VoiceAnswerModel
+        rule.setContent {
+            ZoonkTheme {
+                val shownFrame = frame
+                model =
+                    voiceAnswerModel(KEY) {
+                        gradings += shownFrame
+                        graded.await()
+                    }
+                if (shownFrame.isNotEmpty()) VoiceAnswerRecorder(model, rememberAppNavigator())
+            }
+        }
+        rule.runOnIdle { model.check(VoiceRecording(ByteArray(8), 1_200)) }
+
+        frame = ""
+        rule.waitForIdle()
+        frame = "second"
+        rule.waitForIdle()
+        graded.complete(GradeOutcome.Failed)
+
+        rule.onNodeWithText("We couldn't check your answer this time. Try again.").assertIsDisplayed()
+        assertEquals(listOf("first"), gradings)
     }
 
     @Test

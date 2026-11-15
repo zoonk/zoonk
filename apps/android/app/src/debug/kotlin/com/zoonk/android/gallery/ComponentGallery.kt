@@ -62,6 +62,7 @@ import com.zoonk.android.feature.audio.VoiceAnswerRecorder
 import com.zoonk.android.feature.audio.VoiceRecorder
 import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
+import com.zoonk.android.feature.audio.voiceAnswerModel
 import com.zoonk.android.feature.missions.BrainPowerReward
 import com.zoonk.android.navigation.PlaceIcon
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -858,12 +859,11 @@ private fun Audio() {
             RecordButton(VoiceRecorder.Status.Recording(SystemClock.elapsedRealtime() - 7_000), onStart = {}, onStop = {})
         }
         VoiceAnswerRecorder(
-            grade = { recording ->
+            voiceAnswerModel("voice-answer") { recording ->
                 delay(800)
                 if (recording.durationMs < 2_000) GradeOutcome.NoSpeech else GradeOutcome.Failed
             },
-            onGraded = { _: Unit -> },
-            navigator = navigator,
+            navigator,
         )
         SpeechFailedNote(language = "it", limit = null, onRetry = {}, navigator = navigator, text = "Vorrei un caffè, per favore.")
         SpeechFailedNote(language = "it", limit = Limit.SignUpRequired, onRetry = {}, navigator = navigator)

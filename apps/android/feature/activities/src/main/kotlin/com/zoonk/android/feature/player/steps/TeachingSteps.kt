@@ -75,6 +75,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.audio.VoiceAnswerButton
 import com.zoonk.android.feature.audio.VoiceAnswerLine
+import com.zoonk.android.feature.audio.VoiceAnswerModel
 import com.zoonk.android.feature.audio.voiceAnswerModel
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
@@ -639,8 +640,7 @@ internal fun SpokenAnswerView(
 ) {
     val spoken = content.content
     val locked = state.phase != LessonPhase.Playing
-    val voiceKey = spokenVoiceKey(step)
-    val voice = voiceAnswerModel(voiceKey)
+    val voice = spokenVoice(step, actions)
     val types = if (locked) answer is LessonAnswer.Spoken else actions.cantTalk || voice.blocked
     val switchTo = { cantTalk: Boolean ->
         actions.select(null)
@@ -683,7 +683,7 @@ internal fun SpokenAnswerView(
                 }
 
                 !locked || state.phase == LessonPhase.Checking -> {
-                    VoiceAnswerLine(navigator, key = voiceKey)
+                    VoiceAnswerLine(voice, navigator)
                 }
             }
 
@@ -703,7 +703,11 @@ internal fun SpokenAnswerView(
 }
 
 /** The spoken screen's take, shared by its line here and its Record in the lesson's bottom bar. */
-fun spokenVoiceKey(step: LessonStep): String = "spoken:${step.id}"
+@Composable
+private fun spokenVoice(
+    step: LessonStep,
+    actions: StepActions,
+): VoiceAnswerModel = voiceAnswerModel("spoken:${step.id}") { recording -> actions.gradeSpoken(step.id, recording) }
 
 /**
  * A spoken screen's Record and Stop, the bar's main action while the learner answers out loud;
@@ -715,14 +719,8 @@ fun SpokenRecordAction(
     actions: StepActions,
     modifier: Modifier = Modifier,
 ) {
-    val voice = voiceAnswerModel(spokenVoiceKey(step))
-    VoiceAnswerButton(
-        grade = { recording -> actions.gradeSpoken(step.id, recording) },
-        onGraded = {},
-        key = spokenVoiceKey(step),
-        modifier = modifier,
-        onBlocked = { voice.blocked = true },
-    )
+    val voice = spokenVoice(step, actions)
+    VoiceAnswerButton(voice, modifier, onBlocked = { voice.blocked = true })
 }
 
 /** Whether a written answer offers "I don't know yet" in the bar; one with its explanation ahead offers that first instead. */
@@ -739,7 +737,7 @@ fun offersDontKnow(
 fun recordsInBar(
     step: LessonStep?,
     actions: StepActions,
-): Boolean = step?.content is StepContent.SpokenAnswer && !actions.cantTalk && !voiceAnswerModel(spokenVoiceKey(step)).blocked
+): Boolean = step?.content is StepContent.SpokenAnswer && !actions.cantTalk && !spokenVoice(step, actions).blocked
 
 @Composable
 private fun TargetText(spoken: SpokenAnswerStepContent) {
