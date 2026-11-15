@@ -13,6 +13,19 @@ struct LanguageUnit: Decodable, Equatable, Sendable {
     let minutes: [Int]
     let paused: Bool
     let plusMinutes: [Int]
+    /// When no call time is left; the server then sends no lengths.
+    let limit: CallTimeLimit?
+  }
+
+  /// Which call time is used up, and when it comes back.
+  struct CallTimeLimit: Decodable, Equatable, Sendable {
+    let availableAt: Date?
+    let period: String
+    let tier: LearnerTier
+
+    var helpLimit: HelpLimit {
+      .reached(period: period, tier: tier, availableAt: availableAt)
+    }
   }
 
   struct Lesson: Decodable, Equatable, Identifiable, Sendable {
@@ -494,9 +507,14 @@ private struct LanguageUnitContent: View {
 }
 
 /// A unit's practice call: its length, and Start. Shared by the unit page and the buddy's offer.
+/// A limit keeps the section's shape: its words take the line under the lengths, and the place
+/// Start holds has the way on until the limit's day comes, then Start again.
 struct PracticeCallSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(VoiceServices.self) private var voice
+  @Environment(AppRouter.self) private var router
+  /// The line shows a limit on this visit, so its room is kept once the limit lifts.
+  @State private var showedLimit = false
 
   let conversation: LanguageUnit.Conversation
   let chapterId: String
@@ -506,9 +524,9 @@ struct PracticeCallSection: View {
   let onStarted: (String) -> Void
 
   var body: some View {
-    let isPlus = learner.summary.value?.tier == .plus
-    let picked = minutes ?? conversation.defaultMinutes
     let outcome = start.refusal
+    let refused: HelpLimit? = if case .limit(let limit) = outcome { limit } else { nil }
+    let limit = refused ?? conversation.limit?.helpLimit
 
     Section {
       if conversation.paused || outcome == .callsPaused {
@@ -524,39 +542,11 @@ struct PracticeCallSection: View {
           .foregroundStyle(.mutedForeground)
         }
       } else {
-        Picker(selection: Binding(get: { picked }, set: { minutes = $0 })) {
-          ForEach(conversation.minutes + (isPlus ? [] : conversation.plusMinutes), id: \.self) {
-            length in
-            Text(planDurationText(minutes: Double(length))).tag(length)
-          }
-        } label: {
-          Text("Call length", tableName: "Plan", comment: "Picks the practice call's length")
+        OpeningClock(availableAt: limit?.availableAt) { now in
+          setup(limit: limit.flatMap { $0.isOpen(at: now) ? nil : $0 }, refused: refused)
         }
 
-        if !isPlus && conversation.plusMinutes.contains(picked) || outcome == .plusRequired {
-          SubscribeGate(
-            title: Text(
-              "Longer calls need a subscription", tableName: "Plan",
-              comment: "A free learner picked a practice call length their plan doesn't include"))
-        } else if start.isWriting {
-          WritingWait(
-            title: Text(
-              "Writing your call", tableName: "Plan", comment: "A practice call is being written"),
-            hint: Text(
-              "Your call opens as soon as it's ready.", tableName: "Plan",
-              comment: "A practice call opens by itself once it's written"))
-        } else {
-          BusyButton(isBusy: start.isStarting, isRow: true) {
-            startCall(minutes: picked)
-          } label: {
-            Text("Start the call", tableName: "Plan", comment: "Starts the practice call")
-          }
-        }
-
-        if case .limit(let limit) = outcome {
-          LimitNotice(limit: limit, kind: .callTime)
-            .announcesAlert(limit.words(.callTime).said)
-        } else if outcome == .failed || outcome == .callInProgress
+        if outcome == .failed || outcome == .callInProgress
           || outcome == .previousConnectionClosing || outcome == .ended
         {
           FailureLine(
@@ -582,6 +572,75 @@ struct PracticeCallSection: View {
     }
   }
 
+  @ViewBuilder
+  private func setup(limit: HelpLimit?, refused: HelpLimit?) -> some View {
+    let isPlus = learner.summary.value?.tier == .plus
+    let picked = minutes ?? conversation.defaultMinutes
+    let lengths = conversation.minutes + (isPlus ? [] : conversation.plusMinutes)
+    let isLocked = !isPlus && conversation.plusMinutes.contains(picked)
+
+    // With no call time left the server sends no lengths, and there's nothing to pick.
+    if !lengths.isEmpty {
+      Picker(selection: Binding(get: { picked }, set: { minutes = $0 })) {
+        ForEach(lengths, id: \.self) { length in
+          Text(planDurationText(minutes: Double(length))).tag(length)
+        }
+      } label: {
+        Text("Call length", tableName: "Plan", comment: "Picks the practice call's length")
+      }
+    }
+
+    if limit != nil || showedLimit {
+      HeldSlot(gated: limit != nil) {
+        VStack(alignment: .leading) {
+          if let limit {
+            let words = limit.words(.callTime)
+            GateWords(title: words.title.map(Text.init), line: words.line.map(Text.init))
+          }
+        }
+      }
+      .announcesAlert(refused?.words(.callTime).said)
+      .onChange(of: limit != nil, initial: true) { _, limited in
+        if limited {
+          showedLimit = true
+        }
+      }
+    }
+
+    switch PracticeCallAction(limit: limit, isLocked: isLocked, isWriting: start.isWriting) {
+    case .signUp:
+      Button {
+        router.present(.signIn)
+      } label: {
+        Text(
+          "Create a free account", tableName: "Subscriptions",
+          comment: "Opens sign-up for a guest who reached what they can try without an account")
+      }
+    case .subscribe where limit != nil:
+      // In Start's row, as Start: the row keeps its height when Start comes back.
+      SubscribeButton()
+    case .subscribe:
+      SubscribeGate(
+        title: Text(
+          "Longer calls need a subscription", tableName: "Plan",
+          comment: "A free learner picked a practice call length their plan doesn't include"))
+    case .writing:
+      WritingWait(
+        title: Text(
+          "Writing your call", tableName: "Plan", comment: "A practice call is being written"),
+        hint: Text(
+          "Your call opens as soon as it's ready.", tableName: "Plan",
+          comment: "A practice call opens by itself once it's written"))
+    case .start(let isEnabled):
+      BusyButton(isBusy: start.isStarting, isRow: true) {
+        startCall(minutes: picked)
+      } label: {
+        Text("Start the call", tableName: "Plan", comment: "Starts the practice call")
+      }
+      .disabled(!isEnabled)
+    }
+  }
+
   private func startCall(minutes: Int) {
     guard
       let input: Components.Schemas.LanguageConversationStartInput = try? PracticeJSON.recode(
@@ -599,4 +658,25 @@ private struct PracticeCallRequest: Encodable {
   let goalId: String?
   let kind = "practice"
   let minutes: Int
+}
+
+/// What the practice call's one action place holds. A limit's way on takes Start's place until its
+/// day comes: a guest signs up, a free learner subscribes, a subscriber waits on a disabled Start.
+enum PracticeCallAction: Equatable {
+  case signUp
+  case subscribe
+  case writing
+  case start(isEnabled: Bool)
+
+  init(limit: HelpLimit?, isLocked: Bool, isWriting: Bool) {
+    if let limit, limit.needsAccount {
+      self = .signUp
+    } else if limit?.offersSubscription == true || isLocked {
+      self = .subscribe
+    } else if isWriting {
+      self = .writing
+    } else {
+      self = .start(isEnabled: limit == nil)
+    }
+  }
 }
