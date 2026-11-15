@@ -192,7 +192,6 @@ msgstr "Estudado"
 #: src/challenge/challenge-labels.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/journey-phase-events.tsx
-#: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-header.tsx
@@ -5003,20 +5002,14 @@ msgid ", up next"
 msgstr ", próxima fase"
 
 #: src/journey/phase-details.tsx
-msgctxt "kxXCJy"
-msgid "{start} – {end}"
-msgstr "{start} – {end}"
+msgctxt "sFnTpp"
+msgid "<start></start> – <end></end>"
+msgstr "<start></start> a <end></end>"
 
 #: src/journey/phase-details.tsx
 msgctxt "yYQBka"
 msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of # lesson} other {{done, number} of # lessons}}"
 msgstr "{total, plural, =0 {{done, number} de # aulas} one {{done, number} de # aula} other {{done, number} de # aulas}}"
-
-#: src/journey/phase-when.tsx
-#: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "~{date}"
 
 #. In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".
 #: src/journey/phase-when.tsx
@@ -5029,6 +5022,12 @@ msgstr "{dateKind, select, month {Termina por volta de {date}} other {Termina po
 msgctxt "JQlKi_"
 msgid "Ends {date}"
 msgstr "Termina em {date}"
+
+#: src/journey/phase-when.tsx
+#: src/plan/plan-date-text.tsx
+msgctxt "7KwTGn"
+msgid "~{date}"
+msgstr "~{date}"
 
 #: src/journey/plan-header.tsx
 msgctxt "8PP61v"
@@ -5049,11 +5048,6 @@ msgstr "{days, plural, one {Falta cerca de # dia} other {Faltam cerca de # dias}
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
 msgstr "{done, number} de {total, plural, one {# fase concluída} other {# fases concluídas}}"
-
-#: src/journey/plan-roadmap.tsx
-msgctxt "dM-p3_"
-msgid "From"
-msgstr "De"
 
 #: src/journey/plan-roadmap.tsx
 msgctxt "mElWfu"
@@ -7256,11 +7250,6 @@ msgstr "Salvos"
 msgctxt "ifrM2C"
 msgid "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}"
 msgstr "{count, plural, one {# a caminho. Você pode sair enquanto ele é criado.} other {# a caminho. Você pode sair enquanto eles são criados.}}"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "uSD0Jk"
-msgid "{count, plural, one {# map didn't finish. Try again.} other {# maps didn't finish. Try again.}}"
-msgstr "{count, plural, one {# mapa não foi concluído. Tente de novo.} other {# mapas não foram concluídos. Tente de novo.}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "VSfWXI"
@@ -10163,14 +10152,14 @@ msgid "{names} and more"
 msgstr "{names} e outras"
 
 #: src/plan-diff/plan-effect-diff.tsx
-msgctxt "61Vs84"
-msgid "The numbers are different today."
-msgstr "Os números estão diferentes hoje."
+msgctxt "SBr2Ck"
+msgid "Your plan changed since you saw this. Here's what it does now."
+msgstr "Seu plano mudou desde que você viu isso. Veja o que muda agora."
 
 #: src/plan-diff/plan-effect-diff.tsx
-msgctxt "3vidCV"
-msgid "See all changes"
-msgstr "Ver todas as mudanças"
+msgctxt "7FvDSg"
+msgid "All changes"
+msgstr "Todas as mudanças"
 
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "oGZanC"
@@ -12291,9 +12280,9 @@ msgid "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught
 msgstr "{done, plural, one {<gain># colocada em dia hoje</gain>} other {<gain># colocadas em dia hoje</gain>}} · {left, plural, one {falta #} other {faltam #}}"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "v8WYcE"
-msgid "It takes a few minutes."
-msgstr "Leva alguns minutos."
+msgctxt "y1FyTB"
+msgid "Your lesson is usually ready in a few minutes."
+msgstr "Sua aula costuma ficar pronta em poucos minutos."
 
 #. {title} is the name of one of the day's challenges, such as "Weekly challenge", never a course.
 #: src/session/next-stop-wait.tsx

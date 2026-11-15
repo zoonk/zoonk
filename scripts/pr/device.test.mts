@@ -82,13 +82,14 @@ describe("pnpm pr:media device: a picture the tool takes from a booted device", 
   });
 
   it("holds an emulator's app to being installed after the head's last change to it", async () => {
-    const { repository } = checkFixture();
-    const fresh = await take(repository, { installedAt: new Date(), version: "1.0" }, "android");
+    const { changedAt, repository } = checkFixture();
+    const at = (seconds: number) => new Date(changedAt.getTime() + seconds * 1000);
+    const after = await take(repository, { installedAt: at(1), version: "1.0" }, "android");
 
-    assert.deepEqual(fresh.result.problems, []);
+    assert.deepEqual(after.result.problems, []);
 
     await assert.rejects(
-      take(repository, { installedAt: new Date("2020-01-01"), version: "1.0" }, "android"),
+      take(repository, { installedAt: at(-1), version: "1.0" }, "android"),
       /installed .* before this checkout's last change/u,
     );
   });
@@ -110,8 +111,8 @@ describe("pnpm pr:media device: a picture the tool takes from a booted device", 
   });
 
   it("records what an emulator reports, never the checkout's commit (RV74 androidOlderInstalledNow)", async () => {
-    const { repository } = checkFixture();
-    const installedAt = new Date();
+    const { changedAt, repository } = checkFixture();
+    const installedAt = new Date(changedAt.getTime() + 1000);
 
     const { item, result } = await take(
       repository,
@@ -165,12 +166,12 @@ describe("pnpm pr:media device: a picture the tool takes from a booted device", 
   });
 
   it("refuses what GitHub links in the build the device reports, too (RV82)", async () => {
-    const { repository } = checkFixture();
+    const { changedAt, repository } = checkFixture();
 
     const versions = await Promise.all(
       ["1.0-@octocat", "1.0-#123"].map(async (version) =>
         takeDevicePicture({
-          bridge: bridge({ installedAt: new Date(), version }),
+          bridge: bridge({ installedAt: new Date(changedAt.getTime() + 1000), version }),
           deviceId: "booted-device",
           name: "sheet",
           platform: "android",

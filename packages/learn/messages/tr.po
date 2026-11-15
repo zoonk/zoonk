@@ -192,7 +192,6 @@ msgstr "Çalışıldı"
 #: src/challenge/challenge-labels.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
 #: src/journey/journey-phase-events.tsx
-#: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-header.tsx
@@ -5003,20 +5002,14 @@ msgid ", up next"
 msgstr ", sıradaki"
 
 #: src/journey/phase-details.tsx
-msgctxt "kxXCJy"
-msgid "{start} – {end}"
-msgstr "{start} – {end}"
+msgctxt "sFnTpp"
+msgid "<start></start> – <end></end>"
+msgstr "<start></start> – <end></end>"
 
 #: src/journey/phase-details.tsx
 msgctxt "yYQBka"
 msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of # lesson} other {{done, number} of # lessons}}"
 msgstr "{total, plural, =0 {{done, number} / # ders} other {{done, number} / # ders}}"
-
-#: src/journey/phase-when.tsx
-#: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "~{date}"
 
 #. In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".
 #: src/journey/phase-when.tsx
@@ -5029,6 +5022,12 @@ msgstr "{dateKind, select, month {{date} ayı civarında biter} other {{date} ci
 msgctxt "JQlKi_"
 msgid "Ends {date}"
 msgstr "{date} tarihinde biter"
+
+#: src/journey/phase-when.tsx
+#: src/plan/plan-date-text.tsx
+msgctxt "7KwTGn"
+msgid "~{date}"
+msgstr "~{date}"
 
 #: src/journey/plan-header.tsx
 msgctxt "8PP61v"
@@ -5049,11 +5048,6 @@ msgstr "{days, plural, other {Yaklaşık # gün kaldı}}"
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
 msgstr "{done, number} / {total, plural, other {# aşama}} tamamlandı"
-
-#: src/journey/plan-roadmap.tsx
-msgctxt "dM-p3_"
-msgid "From"
-msgstr "Başlangıç"
 
 #: src/journey/plan-roadmap.tsx
 msgctxt "mElWfu"
@@ -7256,11 +7250,6 @@ msgstr "Kaydedilenler"
 msgctxt "ifrM2C"
 msgid "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}"
 msgstr "{count, plural, other {# harita hazırlıyoruz. Bu sırada buradan ayrılabilirsin.}}"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "uSD0Jk"
-msgid "{count, plural, one {# map didn't finish. Try again.} other {# maps didn't finish. Try again.}}"
-msgstr "{count, plural, other {# harita tamamlanamadı. Tekrar dene.}}"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "VSfWXI"
@@ -10163,13 +10152,13 @@ msgid "{names} and more"
 msgstr "{names} ve diğerleri"
 
 #: src/plan-diff/plan-effect-diff.tsx
-msgctxt "61Vs84"
-msgid "The numbers are different today."
-msgstr "Bugün sayılar farklı."
+msgctxt "SBr2Ck"
+msgid "Your plan changed since you saw this. Here's what it does now."
+msgstr "Bunu gördüğünden beri planın değişti. Şimdiki etkisi şöyle."
 
 #: src/plan-diff/plan-effect-diff.tsx
-msgctxt "3vidCV"
-msgid "See all changes"
+msgctxt "7FvDSg"
+msgid "All changes"
 msgstr "Tüm değişiklikleri gör"
 
 #: src/plan-diff/use-change-consequence.ts
@@ -12291,9 +12280,9 @@ msgid "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught
 msgstr "{done, plural, other {<gain>Bugün # ders telafi edildi</gain>}} · {left, plural, other {# ders kaldı}}"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "v8WYcE"
-msgid "It takes a few minutes."
-msgstr "Birkaç dakika sürer."
+msgctxt "y1FyTB"
+msgid "Your lesson is usually ready in a few minutes."
+msgstr "Dersin genellikle birkaç dakika içinde hazır olur."
 
 #. {title} is the name of one of the day's challenges, such as "Weekly challenge", never a course.
 #: src/session/next-stop-wait.tsx

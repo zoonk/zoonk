@@ -12,6 +12,8 @@ import { type PlanSuggestionHost } from "../../../learn/src/plan/plan-suggestion
 import { atViewport } from "../_test-utils/browser-viewport";
 import { render } from "../_test-utils/render";
 
+const REPRICED = "Your plan changed since you saw this. Here's what it does now.";
+
 const PHONE = { height: 844, width: 390 };
 
 const FIT_EFFECT = {
@@ -234,7 +236,7 @@ describe("the Plan's offer to fit more lessons", () => {
       held.release();
 
       await expect.poll(() => held.change).toHaveBeenCalledWith([{ kind: "fitLessons" }]);
-      expect(page.getByText("The numbers are different today.").query()).toBeNull();
+      expect(page.getByText(REPRICED).query()).toBeNull();
       held.releaseChange();
       held.screen.unmount();
     });
@@ -280,7 +282,7 @@ describe("the fit offer's Try again after a failed check", () => {
       held.releasePreview();
 
       await expect.poll(() => held.change).toHaveBeenCalledOnce();
-      expect(page.getByText("The numbers are different today.").query()).toBeNull();
+      expect(page.getByText(REPRICED).query()).toBeNull();
       held.releaseChange();
       await settle();
 
@@ -300,7 +302,7 @@ describe("the fit offer's Try again after a failed check", () => {
       held.releasePreview({ ...TODAY_PREVIEW, effect: { ...FIT_EFFECT, lessonsAdded: 2 } });
 
       const sheet = page.getByRole("dialog");
-      await expect.element(sheet.getByText("The numbers are different today.")).toBeVisible();
+      await expect.element(sheet.getByText(REPRICED)).toBeVisible();
       await expect.element(sheet.getByRole("button", { name: "Change my plan" })).toBeVisible();
       expect(held.change).not.toHaveBeenCalled();
       held.screen.unmount();

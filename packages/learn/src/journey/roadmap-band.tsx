@@ -29,12 +29,14 @@ export function BandFace({ isLast, phase }: { isLast: boolean; phase: PlanPhaseV
       {phase.state === "current" && <span className="sr-only">{t(", you are here")}</span>}
       {phase.state === "done" && <span className="sr-only">{t(", done")}</span>}
       {phase.state === "current" && (
+        // A tint over the part already covered, under the name: a line at the band's edge read as
+        // a thicker ring.
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]"
+          className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[inherit]"
         >
           <span
-            className="bg-success absolute bottom-0 left-0 h-0.5"
+            className="bg-success/30 absolute inset-y-0 left-0"
             style={{ width: `${getLessonShare(phase) * PERCENT}%` }}
           />
         </span>

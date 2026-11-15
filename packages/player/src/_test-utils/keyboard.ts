@@ -4,8 +4,15 @@ import { press } from "./activity-player";
 
 const MAX_TABS = 40;
 
-function isFocused(target: Locator) {
-  const element = target.query();
+/** A locator, or the element itself where nothing but its text could name it (a formula's scroller). */
+type TabTarget = HTMLElement | Locator;
+
+function find(target: TabTarget): Element | null {
+  return target instanceof HTMLElement ? target : target.query();
+}
+
+function isFocused(target: TabTarget) {
+  const element = find(target);
   return element !== null && element === document.activeElement;
 }
 
@@ -21,8 +28,12 @@ function showsFocus(element: Element | null) {
 }
 
 /** A scroller that fades its edges draws its ring on its parent, which the fade's mask doesn't clip. */
-function expectVisibleFocus(target: Locator) {
-  const element = target.element();
+function expectVisibleFocus(target: TabTarget) {
+  const element = find(target);
+
+  if (!element) {
+    throw new Error("The focused target left the page");
+  }
 
   expect(
     showsFocus(element) || showsFocus(element.parentElement),
@@ -30,7 +41,7 @@ function expectVisibleFocus(target: Locator) {
   ).toBe(true);
 }
 
-export async function tabTo(target: Locator) {
+export async function tabTo(target: TabTarget) {
   await expect.element(target).toBeVisible();
 
   if (isFocused(target)) {
@@ -47,5 +58,8 @@ export async function tabTo(target: Locator) {
     }
   }
 
-  throw new Error(`Tab never reached ${target.selector}`);
+  const name =
+    target instanceof HTMLElement ? `the <${target.localName}> it was given` : target.selector;
+
+  throw new Error(`Tab never reached ${name}`);
 }

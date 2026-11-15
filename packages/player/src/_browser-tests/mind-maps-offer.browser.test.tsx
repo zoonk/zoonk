@@ -67,6 +67,24 @@ function writingView(stop: MindMapAllowanceStop | null): GoalMindMapsView {
   };
 }
 
+/** Atoms' map failed with its lessons written; Reactions' failed while writing its lessons. */
+function failedView(which: "both" | "underFold" | "written"): GoalMindMapsView {
+  const served = view(null);
+  const written = which !== "underFold";
+  const underFold = which !== "written";
+
+  return {
+    ...served,
+    chapters: served.chapters.map((row, index) => {
+      if (index === 0 && written) {
+        return { ...row, status: "failed" };
+      }
+
+      return index === 2 && underFold ? { ...row, lessonsToWrite: 1, status: "failed" } : row;
+    }),
+  };
+}
+
 function actionsWith(overrides: Partial<MindMapLibraryActions>): MindMapLibraryActions {
   return {
     list: vi.fn(async () => view(null)),
@@ -266,6 +284,31 @@ describe("the Mind maps page's gate is the list's offer", () => {
       await expect.element(writingRow()).toBeVisible();
       await expect.element(line()).toBeVisible();
       await expect.element(hidden()).not.toBeInTheDocument();
+    },
+  );
+
+  it.each([
+    { titles: ["Atoms"], which: "written" },
+    { titles: ["Reactions"], which: "underFold" },
+    { titles: ["Atoms", "Reactions"], which: "both" },
+  ] as const)(
+    "shows every map that didn't finish as a row with its own Try again, on arrival: $which",
+    async ({ titles, which }) => {
+      render(<Screen actions={actionsWith({})} served={failedView(which)} />);
+
+      await expect.element(notMade().getByText(/didn't finish/u)).not.toBeInTheDocument();
+
+      for (const title of titles) {
+        // oxlint-disable-next-line no-await-in-loop -- One row after the other.
+        await expect
+          .element(
+            notMade()
+              .getByRole("listitem")
+              .filter({ hasText: title })
+              .getByRole("button", { name: "Try again" }),
+          )
+          .toBeVisible();
+      }
     },
   );
 
