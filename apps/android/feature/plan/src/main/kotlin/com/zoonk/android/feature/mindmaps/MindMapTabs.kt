@@ -152,6 +152,14 @@ private fun ChapterRow(
     }
 }
 
+/** A chapter folded under Other chapters is being made, so the group opens on arrival with its progress in view. */
+internal val GoalMindMaps.foldedMapOnItsWay: Boolean
+    get() =
+        chapters.any {
+            it.status in NOT_MADE && !it.canMakeNow() &&
+                (it.status == GoalMindMap.Status.DRAWING || it.status == GoalMindMap.Status.WRITING_LESSONS)
+        }
+
 /** A chapter whose lessons are all written: its map is made, or being made, without writing any. */
 private fun GoalMindMap.canMakeNow(): Boolean =
     lessonsToWrite == 0L &&
@@ -233,9 +241,9 @@ private fun NotMadeSummary(
 }
 
 /**
- * The block's one line about [later], the first that applies: the tap didn't reach the server, maps
- * on their way, maps that didn't finish, what stops every map from starting, or how many more fit
- * now. Maps the learner just started come before the limit, which read first looks like a refusal.
+ * The block's one line about [later], the first that applies (main's order): the tap didn't reach the
+ * server, maps that didn't finish, what stops every map from starting, maps on their way, or how many more
+ * fit now. What stops the learner outranks what's in progress; each map on its way shows that on its own row.
  */
 @Composable
 private fun NotMadeLine(
@@ -256,10 +264,6 @@ private fun NotMadeLine(
                 stringResource(R.string.mindmaps_unreachable)
             }
 
-            onTheWay > 0 -> {
-                counted(R.plurals.mindmaps_being_made, onTheWay.toLong())
-            }
-
             failed > 0 -> {
                 counted(R.plurals.mindmaps_didnt_finish, failed.toLong())
             }
@@ -267,6 +271,10 @@ private fun NotMadeLine(
             limit != null -> {
                 MindMapLimit(limit, offer.stop.limitSubject, actions.page.navigate)
                 return
+            }
+
+            onTheWay > 0 -> {
+                counted(R.plurals.mindmaps_being_made, onTheWay.toLong())
             }
 
             offer.startable in 1..<offer.eligible -> {

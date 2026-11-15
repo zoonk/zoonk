@@ -245,7 +245,8 @@ internal fun MindMapsPage(
     val tab = StudyTab.of(picked) ?: mindMaps.firstTab.tab
     var opened by rememberSaveable { mutableStateOf(listOfNotNull(subject)) }
     var showAll by rememberSaveable { mutableStateOf(emptyList<String>()) }
-    var notMadeOpen by rememberSaveable { mutableStateOf(notMadeShown) }
+    // Only on arrival: a learner who closes it keeps it closed.
+    var notMadeOpen by rememberSaveable { mutableStateOf(notMadeShown || mindMaps.foldedMapOnItsWay) }
     val decks = StudyTab.entries.associateWith { mindMaps.deck(it).size }
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = mindMaps.subjectItem(tab, subject) ?: 0)
     val title = stringResource(R.string.navigation_mind_maps)

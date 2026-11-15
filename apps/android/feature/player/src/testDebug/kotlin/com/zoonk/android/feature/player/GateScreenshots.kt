@@ -124,9 +124,19 @@ class GateScreenshots {
                     LimitNotice(limit, subject, onCreateAccount = {}, onSubscribe = {})
                     HorizontalDivider()
                 }
-                RecordButton(VoiceRecorder.Status.Idle, onStart = {}, onStop = {})
-                RecordButton(VoiceRecorder.Status.Recording(SystemClock.elapsedRealtime() - 7_000), onStart = {}, onStop = {})
             }
+        }
+
+    // One record button per picture, as a spoken step shows one.
+    @Test
+    @Config(qualifiers = PHONE, fontScale = 2f)
+    fun recordIdle() = capture("gate-record-idle-phone-font200") { RecordButton(VoiceRecorder.Status.Idle, onStart = {}, onStop = {}) }
+
+    @Test
+    @Config(qualifiers = PHONE, fontScale = 2f)
+    fun recording() =
+        capture("gate-recording-phone-font200") {
+            RecordButton(VoiceRecorder.Status.Recording(SystemClock.elapsedRealtime() - 7_000), onStart = {}, onStop = {})
         }
 
     @Test
