@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceIssue
 import com.zoonk.android.feature.audio.VoiceRecorder
@@ -23,7 +24,6 @@ sealed interface RoundStep {
     data class Word(
         val index: Int,
         val grade: PronunciationAnswerGrade? = null,
-        val issue: VoiceIssue? = null,
     ) : RoundStep
 
     data class Result(
@@ -59,6 +59,18 @@ class PronunciationRound(
 
     private var hasAnswers = false
 
+    /**
+     * The round's screen, the take's asker, as `VoiceAnswerModel`'s line is: a take that couldn't be graded says why
+     * ([issue]) only on the visit that recorded it, through a recreation but not after Login or another screen opened
+     * over the round.
+     */
+    val visit = Visit()
+
+    private val takeIssue = visit.outcome<VoiceIssue>()
+
+    /** Why the take in view couldn't be graded. */
+    val issue: VoiceIssue? get() = takeIssue.value
+
     val index: Int get() = (step as? RoundStep.Word)?.index ?: words.size
 
     val segments: List<TaskSegment>
@@ -79,32 +91,36 @@ class PronunciationRound(
         val word = step as? RoundStep.Word ?: return
         if (attempt != this.attempt || word.grade != null || pending) return
         val index = word.index
+        val started = visit.number
         pending = true
         try {
-            step =
+            val issue =
                 when (val outcome = answer(words[index].id.toString(), roundId, recording)) {
                     is GradeOutcome.Graded -> {
                         hasAnswers = true
                         outcomes = outcomes + (index to if (outcome.value.isCorrect) TaskSegment.Right else TaskSegment.Wrong)
-                        RoundStep.Word(index, grade = outcome.value)
+                        step = RoundStep.Word(index, grade = outcome.value)
+                        takeIssue.clear()
+                        null
                     }
 
                     GradeOutcome.NoSpeech -> {
-                        RoundStep.Word(index, issue = VoiceIssue.NoSpeech)
+                        VoiceIssue.NoSpeech
                     }
 
                     is GradeOutcome.Limited -> {
-                        RoundStep.Word(index, issue = VoiceIssue.Limited(outcome.limit))
+                        VoiceIssue.Limited(outcome.limit)
                     }
 
                     GradeOutcome.Failed -> {
-                        RoundStep.Word(index, issue = VoiceIssue.Failed)
+                        VoiceIssue.Failed
                     }
 
                     GradeOutcome.Obsolete -> {
                         return
                     }
                 }
+            issue?.let { takeIssue.send(started, it) }
         } finally {
             pending = false
         }
@@ -114,6 +130,7 @@ class PronunciationRound(
         val index = (step as? RoundStep.Word)?.index ?: return
         attempt++
         outcomes = outcomes - index
+        takeIssue.clear()
         step = RoundStep.Word(index)
     }
 
@@ -121,6 +138,7 @@ class PronunciationRound(
         val index = (step as? RoundStep.Word)?.index ?: return
         if (index !in outcomes) outcomes = outcomes + (index to TaskSegment.Read)
         attempt++
+        takeIssue.clear()
         if (index + 1 < words.size) {
             step = RoundStep.Word(index + 1)
             return
