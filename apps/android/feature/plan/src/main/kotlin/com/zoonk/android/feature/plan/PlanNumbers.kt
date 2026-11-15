@@ -65,6 +65,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.QuietDisclosure
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.WeekDaysRow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.markSize
@@ -453,13 +454,13 @@ private fun PlanWeek(page: PlanPageState) {
                 )
             }
         }
-        Row(Modifier.fillMaxWidth()) {
+        WeekDaysRow {
             days.forEach { day ->
                 val date = day.date.toJavaLocalDate()
                 val spoken =
                     stringResource(R.string.plan_week_day, weekdayNames(locale).full.getValue(date.dayOfWeek), dayStatus(day.state))
                 Column(
-                    modifier = Modifier.weight(1f).padding(vertical = 4.dp).clearAndSetSemantics { contentDescription = spoken },
+                    modifier = Modifier.padding(vertical = 4.dp).clearAndSetSemantics { contentDescription = spoken },
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
