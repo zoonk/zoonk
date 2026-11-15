@@ -40,8 +40,9 @@ type Miss = { off: number; part: string; to: string };
  * Each part's distance from where it belongs (craft E5 and E6). One line: on the label's middle.
  * Beside a title and one description, or a title that wraps: a mark, a value and an end glyph on
  * the row's center. Beside three lines or more (a title and two descriptions): a mark on the
- * label's first line, a value and an end glyph on the row's center. A text lead always goes with
- * the label's first line. A value stacked under its label has no line to share.
+ * label's first line, a value and an end glyph on the row's center. A row with a text lead (a date
+ * before its day's entries) is top-aligned as a whole: every part sits on its first entry's line.
+ * A value stacked under its label has no line to share.
  */
 function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
   const label = own
@@ -75,6 +76,8 @@ function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
   const rowMiddle = row.middle ?? row.bounds[1] + row.bounds[3] / 2;
   const endMiddle = middles.find(({ element }) => element.part === "end")?.middle ?? null;
 
+  const led = others.some((element) => element.part === "lead");
+
   return middles.flatMap(({ element, middle }): Miss[] => {
     const at = middle ?? labelMiddle;
 
@@ -82,8 +85,8 @@ function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
       return [{ off: at - labelMiddle, part: element.part, to: "the label's middle" }];
     }
 
-    // A text lead goes with the first line; a mark does beside three lines or more.
-    if (element.part === "lead" || (element.part === "mark" && notes >= 2)) {
+    // A row with a text lead sits on its first line; a mark does beside three lines or more.
+    if (led || (element.part === "mark" && notes >= 2)) {
       return [{ off: at - labelMiddle, part: element.part, to: "the label's first line" }];
     }
 
