@@ -164,7 +164,9 @@ private struct PlanPathSheet: View {
         }
       }
     }
-    .presentationDetents([.medium, .large])
+    // The whole path at once; the grabber still says it closes with a swipe down.
+    .presentationDetents([.large])
+    .presentationDragIndicator(.visible)
     .sheet(item: $outline, onDismiss: openPendingRoute) { sheet in
       if case .farTopic(let skillId, let title) = sheet {
         FarTopicSheet(goal: context.goal, skillId: skillId, title: title)
