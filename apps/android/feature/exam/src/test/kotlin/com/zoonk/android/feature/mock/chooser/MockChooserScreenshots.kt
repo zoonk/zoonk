@@ -74,9 +74,23 @@ class MockChooserScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
-    fun phoneShort() {
+    fun phoneShort() = captureShort("chooser-phone-short")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun tabletShort() = captureShort("chooser-tablet-short")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun phoneShortAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureShort("chooser-phone-short-font200")
+    }
+
+    /** The shorter mock's dialog, offered when the full mock can't start. */
+    private fun captureShort(name: String) {
         starts.starts = listOf { short() }
-        capture("chooser-phone-short") {
+        capture(name) {
             compose.onNodeWithText("Day 1").performClick()
             compose.onNodeWithText("Start").performClick()
         }

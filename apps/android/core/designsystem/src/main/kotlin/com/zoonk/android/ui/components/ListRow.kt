@@ -405,7 +405,10 @@ private fun Descriptions(
 }
 
 /** A row's description from a string that may say nothing: none at all when it's null or blank, so the row stays one line. */
-fun listRowDescription(text: String?): (@Composable () -> Unit)? = text?.takeUnless(::isBlankWords)?.let { { Text(it) } }
+fun listRowDescription(
+    text: String?,
+    color: Color = Color.Unspecified,
+): (@Composable () -> Unit)? = text?.takeUnless(::isBlankWords)?.let { { Text(it, color = color) } }
 
 /** Says nothing: empty, or only spaces and invisible characters (a zero-width space, a joiner). */
 fun isBlankWords(text: String): Boolean =

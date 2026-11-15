@@ -203,9 +203,13 @@ class FakeOnboardingApi : OnboardingApi {
         input: GoalCreateInput,
     ): GoalCreateResponse {
         created += input
+        createGate?.await()
         refusal?.let { throw it }
         return goalCreated()
     }
+
+    /** Holds goal creation until it completes. */
+    var createGate: CompletableDeferred<Unit>? = null
 
     override suspend fun planLink(
         session: AuthenticatedSession?,

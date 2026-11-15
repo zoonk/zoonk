@@ -6,6 +6,7 @@ import android.provider.OpenableColumns
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -52,10 +53,10 @@ import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.feature.onboarding.PickedFile
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
-import com.zoonk.android.feature.onboarding.usedSentence
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
-import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitNotice
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.materialCitationLabel
@@ -75,38 +76,30 @@ private val ACCEPTED_TYPES =
         "image/webp",
     )
 
+/** A refused or failed attempt: a cap is the shared dated notice (its day, Subscribe); anything else is a line. */
 @Composable
-fun attachErrorMessage(outcome: WriteOutcome<*>): String {
-    val refusal = (outcome as? WriteOutcome.Refused)?.refusal
-    if (refusal is Refusal.Limit && refusal.limit.reached.period != LimitPeriod.Day) {
-        return usedSentence(R.string.limit_uploads_used, refusal.limit.reached)
+private fun AttachFailure(
+    failure: WriteOutcome<*>,
+    onCreateAccount: () -> Unit,
+    onSubscribe: () -> Unit,
+) {
+    val refusal = (failure as? WriteOutcome.Refused)?.refusal
+    if (refusal is Refusal.Limit) {
+        LimitNotice(refusal.limit.reached, LimitSubject.Uploads, onCreateAccount, onSubscribe)
+        return
     }
-    return stringResource(
-        when (refusal) {
-            is Refusal.Limit -> {
-                if (refusal.limit.tier == "plus") R.string.onboarding_attach_limit_plus else R.string.onboarding_attach_limit_day
-            }
-
-            Refusal.SlowDown -> {
-                R.string.onboarding_attach_slow_down
-            }
-
-            Refusal.Unsupported -> {
-                R.string.onboarding_attach_unsupported
-            }
-
-            Refusal.SignUpRequired -> {
-                R.string.onboarding_attach_sign_in
-            }
-
-            Refusal.AlreadyRead -> {
-                R.string.onboarding_attach_already_read
-            }
-
-            is Refusal.DayTooShort, null -> {
-                R.string.onboarding_attach_failed
-            }
-        },
+    Text(
+        stringResource(
+            when (refusal) {
+                Refusal.SlowDown -> R.string.onboarding_attach_slow_down
+                Refusal.Unsupported -> R.string.onboarding_attach_unsupported
+                Refusal.SignUpRequired -> R.string.onboarding_attach_sign_in
+                Refusal.AlreadyRead -> R.string.onboarding_attach_already_read
+                else -> R.string.onboarding_attach_failed
+            },
+        ),
+        color = MaterialTheme.colorScheme.error,
+        style = MaterialTheme.typography.bodyMedium,
     )
 }
 
@@ -141,14 +134,16 @@ class AttachDraft(
 @Composable
 fun rememberAttachDraft() = rememberSaveable(saver = AttachDraft.Saver) { AttachDraft() }
 
-/** Shared with Today's research ask. [error] is the last attempt's, in words; [pendingText] says what [pending] waits for. */
+/** Shared with Today's research ask. [failure] is the last attempt's; [pendingText] says what [pending] waits for. */
 @Composable
 fun AttachControls(
     pending: Boolean,
-    error: String?,
+    failure: WriteOutcome<*>?,
     onFile: (PickedFile) -> Unit,
     onText: (String) -> Unit,
     onLink: (String) -> Unit,
+    onCreateAccount: () -> Unit,
+    onSubscribe: () -> Unit,
     pendingText: String? = null,
     draft: AttachDraft = rememberAttachDraft(),
 ) {
@@ -229,13 +224,8 @@ fun AttachControls(
             }
         }
 
-        if (error != null) {
-            Text(
-                error,
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
-            )
+        if (failure != null) {
+            Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) { AttachFailure(failure, onCreateAccount, onSubscribe) }
         }
     }
 }
@@ -270,10 +260,12 @@ private fun PasteField(
 @Composable
 internal fun AttachPanel(
     pending: Boolean,
-    error: String?,
+    failure: WriteOutcome<*>?,
     onFile: (PickedFile) -> Unit,
     onText: (String) -> Unit,
     onLink: (String) -> Unit,
+    onCreateAccount: () -> Unit,
+    onSubscribe: () -> Unit,
 ) {
     PanelCard {
         Text(stringResource(R.string.onboarding_study_material), fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyLarge)
@@ -282,7 +274,7 @@ internal fun AttachPanel(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-        AttachControls(pending, error, onFile, onText, onLink)
+        AttachControls(pending, failure, onFile, onText, onLink, onCreateAccount, onSubscribe)
     }
 }
 
@@ -384,42 +376,26 @@ data class MaterialTurn(
 )
 
 @Composable
-internal fun MaterialAnswer(outcome: WriteOutcome<com.zoonk.api.models.MaterialQuestionAnswer>) {
+internal fun MaterialAnswer(
+    outcome: WriteOutcome<com.zoonk.api.models.MaterialQuestionAnswer>,
+    onCreateAccount: () -> Unit,
+    onSubscribe: () -> Unit,
+) {
     val answer = (outcome as? WriteOutcome.Done)?.value
     if (answer == null) {
         val refusal = (outcome as? WriteOutcome.Refused)?.refusal
-        val used = (refusal as? Refusal.Limit)?.limit?.reached?.takeIf { it.period != LimitPeriod.Day }
+        if (refusal is Refusal.Limit) {
+            LimitNotice(refusal.limit.reached, LimitSubject.Questions, onCreateAccount, onSubscribe)
+            return
+        }
         Text(
-            text =
-                if (used != null) {
-                    usedSentence(R.string.limit_questions_used, used)
-                } else {
-                    stringResource(
-                        when (refusal) {
-                            is Refusal.Limit -> {
-                                if (refusal.limit.tier ==
-                                    "plus"
-                                ) {
-                                    R.string.onboarding_question_limit_plus
-                                } else {
-                                    R.string.onboarding_question_limit_day
-                                }
-                            }
-
-                            Refusal.SignUpRequired -> {
-                                R.string.onboarding_question_sign_in
-                            }
-
-                            Refusal.SlowDown -> {
-                                R.string.onboarding_question_slow_down
-                            }
-
-                            else -> {
-                                R.string.onboarding_question_failed
-                            }
-                        },
-                    )
+            stringResource(
+                when (refusal) {
+                    Refusal.SignUpRequired -> R.string.onboarding_question_sign_in
+                    Refusal.SlowDown -> R.string.onboarding_question_slow_down
+                    else -> R.string.onboarding_question_failed
                 },
+            ),
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium,
         )

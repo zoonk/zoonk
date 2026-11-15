@@ -123,7 +123,9 @@ internal fun TodayNotice(
                     it,
                     viewModel.visit,
                     layout,
-                    modifier,
+                    onCreateAccount = { state.navigate(AppRoute.Login) },
+                    onSubscribe = { state.navigate(AppRoute.Subscription) },
+                    modifier = modifier,
                     onAnswering = { viewModel.holdNotice(read, Today.Notice.UPLOAD_REQUEST, opens = true) },
                 )
             }
@@ -144,6 +146,8 @@ private fun ExamMomentNotice(
     val words = examMomentWords(moment) ?: return
     val title = examMomentTitle(moment)
     val afterExam = moment.stage == ExamMoment.Stage.AFTER_EXAM
+    // The card's one action also names the folded line's opener on a phone.
+    val action = stringResource(if (afterExam) R.string.exam_add_result else R.string.exam_see_exam)
 
     Suggestion(
         label = stringResource(R.string.today_notice_exam),
@@ -151,6 +155,7 @@ private fun ExamMomentNotice(
         layout = layout,
         modifier = modifier,
         mark = SuggestionMark.Symbol(moment.stage.icon),
+        lineAction = { SuggestionOpen(action) },
     ) {
         SuggestionHeader(title)
         moment.day?.takeUnless { afterExam }?.let {
@@ -159,7 +164,7 @@ private fun ExamMomentNotice(
         SuggestionDescription(words)
         ExamChecklist(moment.checklist, moment.tools)
         SuggestionActions {
-            SuggestionMainAction(stringResource(if (afterExam) R.string.exam_add_result else R.string.exam_see_exam), {
+            SuggestionMainAction(action, {
                 close()
                 state.navigate(AppRoute.Exam)
             })

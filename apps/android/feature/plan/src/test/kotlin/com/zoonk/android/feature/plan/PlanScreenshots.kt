@@ -249,7 +249,20 @@ class PlanScreenshots {
     /** A far topic's sheet in each state, driven through its view model as the sheet is. */
     @Test
     @Config(qualifiers = "w411dp-h900dp-xxhdpi")
-    fun farTopic() {
+    fun farTopic() = captureFarTopic("")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun farTopicTablet() = captureFarTopic("-tablet")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun farTopicAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureFarTopic("-font200")
+    }
+
+    private fun captureFarTopic(suffix: String) {
         val api = FakePlanApi()
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val store = PlanStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)))
@@ -275,7 +288,7 @@ class PlanScreenshots {
                 setUp()
             }
             compose.waitForIdle()
-            write("far-topic-$name", compose.onRoot().captureRender().asAndroidBitmap())
+            write("far-topic-$name$suffix", compose.onRoot().captureRender().asAndroidBitmap())
         }
 
         shot("available") { topics.open(flask) }

@@ -8,8 +8,8 @@
   "generation_curriculum_plan_line_1": "77f6fea17d692ece98d3a4670081051772956894c060c83671071618151b863a",
   "generation_curriculum_plan_line_2": "b5367bb0bd2dadcdde1d627a8e24ee14040c106d482a882ab9abf4d6cb864194",
   "generation_curriculum_plan_line_3": "0035f127cb544f326d1bca115f602aa9be7cf2419f9ceb8c862a1347e7774f2d",
-  "generation_failed": "e30b152a62e351dbdbc60873e3602cffcd72e968be7c2591240a3db93d6580ba",
   "generation_failed_description": "ae74d8534a222eb66b1f1a7135778595fce6bfe7ff28dab353c45e3d5af1c023",
+  "generation_failed_ours": "d79efc62bc5a737ddcd99133f9f6773d7e2294bc95362faa97daeba25243a780",
   "generation_first_lesson": "cdadbc52729c4cf4667be0760814b1c377c6927597b682ab42367e57d36a5323",
   "generation_first_lesson_day": "e44045057e2a6b57d4308306a9d9df5454c3490895f5b8a90c747bf2b834435b",
   "generation_first_lesson_day_line_1": "a16b0ef5ce5da243198f6642ac59d9b18ce5bb5a2dcb243cd425eb84b80e8ab8",
@@ -23,8 +23,6 @@
   "generation_level_test_bank_line_2": "88b250a34584a84cb1386c467097fd18a933c9eb456f8258d3939551ae5ad00e",
   "generation_level_test_bank_line_3": "9b9cbb04153889b12bad3b54e663a72b553065fdabd3f666ddf9a9ef04a6fabb",
   "generation_level_test_bank_line_4": "b157ffe2a9a283e880bf40d93f30b52480998e37e5b0ebc2351447e4406e21f5",
-  "generation_not_started": "7383ff7e9cc880a40231063cb92e4dd7b3f822a63681de2388f2588e7a099caf",
-  "generation_not_started_description": "12efed0141637766432fb92ea39aaefcc46b533c2905df699d1f4fb5930adbea",
   "generation_notice": "a6840d26f71a35b62afb01902c491c0bd81643570aa5a82f479a2f3cce7af372",
   "generation_notice_line_1": "1875d82345dbc50ea8cd1b295786f0d4d8a51d178e0d823cd4eee0b9c6c03b10",
   "generation_notice_line_2": "11d340e7716f4ae1f20520386477021a62efaf89b18c0353675a9317ea5aba7a",
@@ -59,12 +57,9 @@
     <string name="generation_connection_lost_description">진행 상황을 더 이상 확인할 수 없어요. 작업은 계속 진행 중일 수 있어요.</string>
     <!-- Follows a run again after its updates stopped. -->
     <string name="generation_reconnect">다시 연결하기</string>
-    <!-- Title when something being written failed. -->
-    <string name="generation_failed">완료하지 못했어요</string>
+    <string name="generation_failed_ours">저희 쪽에 문제가 생겼어요</string>
+    <!-- A stopped lesson's line in a list. -->
     <string name="generation_failed_description">저희 쪽에 문제가 생겼어요.</string>
-    <!-- Title when something to be written never started. -->
-    <string name="generation_not_started">시작하지 못했어요</string>
-    <string name="generation_not_started_description">준비를 시작하지 못했어요.</string>
     <!-- Starts something that failed or never started again. -->
     <string name="generation_try_again">다시 시도</string>
     <!-- Screen reader state of a step of a wait. -->

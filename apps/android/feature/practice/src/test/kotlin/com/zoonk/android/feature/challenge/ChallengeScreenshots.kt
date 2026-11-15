@@ -14,6 +14,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.ANA
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -78,6 +80,7 @@ class ChallengeScreenshots {
         fold: Boolean = false,
         dark: Boolean = false,
         rightToLeft: Boolean = false,
+        refused: Boolean = false,
     ) {
         val challenge: Challenge = decodeFixture("challenge", *fields)
         val api =
@@ -92,12 +95,28 @@ class ChallengeScreenshots {
                     session: AuthenticatedSession,
                     planItemId: UUID,
                     input: StudyBlockStart,
-                ): ChallengeStart = error("Not used")
+                ): ChallengeStart =
+                    if (refused) throw ApiException(ApiError.Unavailable, "QUESTIONS_NEEDED", status = 409) else error("Not used")
 
+                // The questions it needs would go past the month's cap, so the start is refused with the day more come back.
                 override suspend fun writeQuestions(
                     session: AuthenticatedSession,
                     planItemId: UUID,
-                ): ChallengeGeneration = error("Not used")
+                ): ChallengeGeneration =
+                    if (refused) {
+                        throw ApiException(
+                            ApiError.Unavailable,
+                            "USAGE_LIMIT_REACHED",
+                            402,
+                            com.zoonk.api.ApiJson.parseToJsonElement(
+                                """{"limit":{"availableAt":"${java.time.Instant.now().plus(
+                                    java.time.Duration.ofDays(9),
+                                )}","period":"rolling30Days","resource":"mockExam","tier":"free"}}""",
+                            ),
+                        )
+                    } else {
+                        error("Not used")
+                    }
 
                 override suspend fun move(
                     session: AuthenticatedSession,
@@ -140,6 +159,7 @@ class ChallengeScreenshots {
             }
         }
         if (fold) rule.unfoldBook(folds)
+        if (refused) viewModel.start()
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
         writeRender(File(folder, "$name.png"), bitmap)
@@ -195,6 +215,21 @@ class ChallengeScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phonePlusRequired() = show("phone-plus", "status" to "plusRequired")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneStartRefused() = show("phone-start-refused", *mock, refused = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tabletStartRefused() = show("tablet-start-refused", *mock, refused = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun phoneStartRefusedAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("phone-start-refused-font200", *mock, refused = true)
+    }
 
     @Test
     @Config(qualifiers = "w891dp-h411dp-land-xxhdpi")

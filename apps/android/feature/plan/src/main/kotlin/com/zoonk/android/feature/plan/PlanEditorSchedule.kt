@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.TimeSelect
+import com.zoonk.android.ui.components.WeekendTime
+import com.zoonk.android.ui.components.missingDays
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlanWeekShape
@@ -209,11 +211,7 @@ private fun dayName(
     locale: Locale,
 ) = day.getDisplayName(style, locale).replaceFirstChar { it.titlecase(locale) }
 
-/**
- * Main's `WeekendTime`: always there, so turning it on or off moves nothing in the sheet. Off, or with no
- * weekend day to differ (every study day a weekday, or every one a weekend day), its time is disabled and
- * shows the weekdays', which the weekend takes then.
- */
+/** Main's plan `WeekendMinutes`: switched off, the weekend takes the weekdays' time, so it waits for a change still setting it. */
 @Composable
 private fun WeekendMinutes(
     edits: PlanEdits,
@@ -223,49 +221,26 @@ private fun WeekendMinutes(
     onWeekendOn: (Boolean) -> Unit,
 ) {
     val pending = edits.isPending(PlanPart.Schedule)
-    val on = weekendOn && shape.canDiffer
     val weekendDays = shape.weekendDays.map(Long::toInt)
     val shown = askedMinutes(edits.asked(PlanPart.Schedule), weekendDays) ?: (shape.weekend ?: shape.weekdays).toInt()
 
     fun setWeekend(minutes: Int) = edits.change(PlanPart.Schedule, listOf(PlanOp.WeekdayMinutes(weekendDays, minutes))) {}
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 48.dp)
-                    .toggleable(
-                        value = on,
-                        enabled = shape.canDiffer,
-                        role = Role.Switch,
-                        onValueChange = { next ->
-                            // Switched off, the weekend takes the weekdays' time, so it waits for a change still setting it.
-                            if (!pending) {
-                                onWeekendOn(next)
-                                if (!next && shape.weekend != null) setWeekend(shape.weekdays.toInt())
-                            }
-                        },
-                    ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Text(
-                stringResource(R.string.plan_weekend_time_differs),
-                Modifier.weight(1f),
-                color = if (shape.canDiffer) Color.Unspecified else MaterialTheme.colorScheme.onSurface.copy(alpha = DISABLED_ALPHA),
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Switch(checked = on, onCheckedChange = null, enabled = shape.canDiffer)
-        }
-        TimeSelect(
-            label = stringResource(R.string.plan_time_on_weekends),
-            times = times,
-            value = if (on) shown else shape.weekdays.toInt(),
-            onPick = ::setWeekend,
-            enabled = on && !pending,
-        )
-    }
+    WeekendTime(
+        checked = weekendOn,
+        missing = missingDays((shape.weekdayDays + shape.weekendDays).map(Long::toInt)),
+        times = times,
+        minutes = shown,
+        weekdayMinutes = shape.weekdays.toInt(),
+        onCheckedChange = { next ->
+            if (!pending) {
+                onWeekendOn(next)
+                if (!next && shape.weekend != null) setWeekend(shape.weekdays.toInt())
+            }
+        },
+        onPick = ::setWeekend,
+        timeEnabled = !pending,
+    )
 }
 
 /** The time a change saving asks [days] to take, or every study day. */

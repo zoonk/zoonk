@@ -28,8 +28,6 @@
   "onboarding_ask": "55421c4321b4674fbdff0e99a19ff598fa3251c208f74958352b780fd16e5a29",
   "onboarding_attach_already_read": "2e945f941f1f00e618ef7d5e798651fac9381df8800a878b5c3c1c8c487294e6",
   "onboarding_attach_failed": "a70d3a4f84e37976d07eb4c465b0bb0d7998cef5233dd7084e4f44b4102afb2a",
-  "onboarding_attach_limit_day": "2e6517d8e82c8dab92efc56b4eaffc32e524382d4899d45f1a4a28bbe54a061c",
-  "onboarding_attach_limit_plus": "dcca6d92b046eddea81d5ea4be776a62fc4e34eb94c866d73ccc9c8186cdd85a",
   "onboarding_attach_sign_in": "2ae869d49a25bed32515ad46692e10a989ceb625743d82e92d9e8ddce36557d1",
   "onboarding_attach_slow_down": "1f5e56f2958a3865dd96652143f5472e06adca98912505944a2ef33d4aa95cb7",
   "onboarding_attach_unsupported": "adb62181655f11144c35cd995c22ab267c3923b9df4d25fb019ead6089f61f13",
@@ -50,7 +48,6 @@
   "onboarding_course_chapters": "619c3526b4600d49c982c2ce4660215efefa7be19aec5b1e35ea31e441196025",
   "onboarding_course_daily_minutes": "25b4138bac76e99dfbd0d7e862110be60fdaa185f49cba69f5cb7d2bcb5a1b2b",
   "onboarding_course_failed": "284ece8531908b8fc75ceda1efe9127be78a66271716365dcf0cd01d4e4e61d1",
-  "onboarding_course_follows": "ff037775ad43aa0afa4dc0e39da0fe48679ddb4cd78bbb10f9c0a6a0eca95eb6",
   "onboarding_course_lessons": "9a6880679023de6c93705a9dbcce81f47e275d9a1c777af92950ecef0151c3db",
   "onboarding_course_more_chapters": "db6faf6122cd92016b282c175ae639790f86c6aa6a36cbd8deda33d2311d2b5d",
   "onboarding_course_start_free": "6f8edfa7dd7a851dcb5aff5dc1cb8ec773a38e06f804dbb305a6bd1fe2d484d4",
@@ -226,8 +223,6 @@
   "onboarding_purpose_work": "590aae04d2701a2f5610927b093549661ed3f4154e1c61352409bb92e52be849",
   "onboarding_purpose_work_description": "271ebcd2b2696b6a3513b450949493ee12c1562da10cefa7372a24def2c8cc4a",
   "onboarding_question_failed": "2cf1bce7491e62ffdcc3830d21c7754fc0501a3df623674483ff2dbda9167a45",
-  "onboarding_question_limit_day": "022b9d66ea016c009157b09e8e3aea818cce9de3397b96be441d57d28fca3e8c",
-  "onboarding_question_limit_plus": "d51b7ce16f4831b84b02850a0bb4801c07735fd8c8599f9076ce7cfac4959ab3",
   "onboarding_question_placeholder": "e939f308d923090975684ec0cda65c9dbcb6fd9422e0f96d7b71ed79ac393bf5",
   "onboarding_question_sign_in": "81b000f326a68427a27c8f114ad9bbf0f664af89031086e777785b00aa0cbf32",
   "onboarding_question_slow_down": "1c91e3ad5383eda4384a5c1b66515e1067e69261ae7d6711cb5f469707004111",
@@ -311,8 +306,6 @@
   "onboarding_reveal_phase_map_and_gaps": "f0ab874ea1099677b013fc304b4cfe9827d1fa784237a7bdc15fd4f9173b2d5d",
   "onboarding_reveal_phase_mock_and_practice": "3981de5745b1dcfbc88bb6e5b175ab90678ff0721d91267c52dabc51e4f61acb",
   "onboarding_reveal_phase_number": "4653b06f0c7307b025cc9064ebd83dcfabe2ce92041910836c13c13078b222d5",
-  "onboarding_reveal_phase_place": "2d9fb1884c6445db986651aac5f6c50ed6163e5c09022412639ab60b47b6e712",
-  "onboarding_reveal_phase_position": "72fba72aa98c787f7ecb849a2fd8415c662d6b533ee1912bf42ea14cfb263b48",
   "onboarding_reveal_phase_practice": "c3ddbf1744d1d210acc8b7b3320564c01ca520e07eb52185d7eb7094cbc2298a",
   "onboarding_reveal_phase_short_mock": "8e38359945cafbaea432637647340092ad21823d6bc2bbce257321a08462bce7",
   "onboarding_reveal_phases": "5dc62c4b86d89d342521c46411081ca0d8b0efc14e9c4fc3a69ec6afd2987ba2",
@@ -439,8 +432,6 @@
   "onboarding_variety_title": "9f59e72ff7df66bdf6504c017abc1b832e3b364fe4a24c28534806883f1e4eb0",
   "onboarding_waitlist_joined": "fe147b16a5ed805821d33d01a6697e46b9cb90d1ac8f33cd0a7fba6af6a14e84",
   "onboarding_waitlist_sign_in": "d94706508e24947285f3ea31093d2cb6f723c7ab4cb97daeef4917d3c2ecca17",
-  "onboarding_weekend_time": "62df25d5c83ae7b7316d87bd5bbc5941444f89b2d896ef6635a06dae10686fb7",
-  "onboarding_weekend_time_label": "abf3de6a0dc278b6e93e7b7f0e1a41e8259e841652493ccd60aaac4e64c0b988",
   "onboarding_what_you_wrote": "4814c52cb430bbeef74a56c6fccc9ef765f07a3c006b13cd9e2f256c0f458832",
   "onboarding_whats_next": "6176229fc85be40e15d5d102c016b6608e2e69ecbce89f5aeff2f40122058a45",
   "onboarding_write_again": "938deffad3c6e7c12b6d90b37ffe6767d1d72e40dad2834e4e9e430d4f0baa55",
@@ -614,8 +605,6 @@
     <string name="onboarding_adding_material">Agregando tu material…</string>
     <!-- Removes an attached file or text. %1$s is its title. -->
     <string name="onboarding_remove_material">Quitar %1$s</string>
-    <string name="onboarding_attach_limit_plus">No puedes subir más material hoy. Mañana podrás subir más.</string>
-    <string name="onboarding_attach_limit_day">No puedes subir más material hoy. Mañana podrás subir más, o suscríbete para seguir.</string>
     <string name="onboarding_attach_slow_down">Estás agregando material muy rápido. Inténtalo de nuevo en unos minutos.</string>
     <string name="onboarding_attach_unsupported">No podemos leer este archivo. Prueba con un PDF, una foto, un archivo de Word o PowerPoint, o texto.</string>
     <string name="onboarding_attach_sign_in">Crea una cuenta para agregar tu propio material.</string>
@@ -639,8 +628,6 @@
     <string name="onboarding_question_failed">No pudimos responder esa pregunta. Inténtalo de nuevo en un momento.</string>
     <string name="onboarding_question_sign_in">Crea una cuenta para hacer preguntas sobre tu material.</string>
     <string name="onboarding_question_slow_down">Estás haciendo muchas preguntas seguidas. Inténtalo de nuevo en unos minutos.</string>
-    <string name="onboarding_question_limit_plus">No puedes hacer más preguntas hoy. Mañana podrás hacer más.</string>
-    <string name="onboarding_question_limit_day">No puedes hacer más preguntas hoy. Mañana podrás hacer más, o suscríbete para seguir.</string>
     <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_title">Veamos lo que ya sabes</string>
     <!-- %d is how many areas of the goal the questions cover. -->
@@ -774,9 +761,6 @@
     <string name="onboarding_reveal_phase_light_review">Repaso ligero</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">Hoy</string>
-    <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
-    <string name="onboarding_reveal_phase_position">%1$d de %2$d</string>
-    <string name="onboarding_reveal_phase_place">fase %1$d de %2$d</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">La fecha probable del examen ahora es el %1$s.</string>
     <string name="onboarding_reveal_notice_day_notice">La convocatoria del examen indica el %1$s.</string>
@@ -873,7 +857,6 @@
     <!-- Screen reader, as a one-answer question moves on: the answer picked. -->
     <string name="onboarding_you_picked">Elegiste %1$s</string>
     <string name="onboarding_course_chapter_description">Tu plan sigue el curso desde este capítulo y se adapta al tiempo que tienes cada día.</string>
-    <string name="onboarding_course_follows">Tu plan sigue este curso y se adapta al tiempo que tienes cada día.</string>
     <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->
     <plurals name="onboarding_course_chapters">
         <item quantity="one">%d capítulo</item>
@@ -1013,15 +996,12 @@
     <string name="onboarding_full_course_finish">Con %1$s al día, terminas en %2$s, después del examen del %3$s.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="onboarding_full_course_finish_month">Con %1$s al día, terminas en %2$s, después del examen de %3$s.</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="onboarding_weekend_time">Tiempo de estudio diferente los fines de semana</string>
     <string name="onboarding_schedule_time_label">Tiempo diario</string>
     <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
     <string name="onboarding_choose_date">Elegir una fecha</string>
     <!-- The same link when the goal has a date. -->
     <string name="onboarding_change_date">Cambiar fecha</string>
     <string name="onboarding_study_days">Días de estudio</string>
-    <string name="onboarding_weekend_time_label">Tiempo los fines de semana</string>
     <string name="onboarding_answers_saved">Tus respuestas están guardadas.</string>
     <!-- On a setup question when the plan's run never started. -->
     <string name="onboarding_plan_not_started">No pudimos empezar a preparar tu plan</string>

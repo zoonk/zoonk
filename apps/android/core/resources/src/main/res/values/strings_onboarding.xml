@@ -166,8 +166,6 @@
     <string name="onboarding_adding_material">Adding your material…</string>
     <!-- Removes an attached file or text. %1$s is its title. -->
     <string name="onboarding_remove_material">Remove %1$s</string>
-    <string name="onboarding_attach_limit_plus">No more material today. More tomorrow.</string>
-    <string name="onboarding_attach_limit_day">No more material today. More tomorrow, or subscribe to keep going.</string>
     <string name="onboarding_attach_slow_down">You\'re adding material quickly. Try again in a few minutes.</string>
     <string name="onboarding_attach_unsupported">We can\'t read this file. Try a PDF, a photo, Word, PowerPoint or text.</string>
     <string name="onboarding_attach_sign_in">Create an account to add your own material.</string>
@@ -192,8 +190,6 @@
     <string name="onboarding_question_failed">We couldn\'t answer that. Try again in a moment.</string>
     <string name="onboarding_question_sign_in">Create an account to ask about your material.</string>
     <string name="onboarding_question_slow_down">You\'re asking quickly. Try again in a few minutes.</string>
-    <string name="onboarding_question_limit_plus">No more questions today. More tomorrow.</string>
-    <string name="onboarding_question_limit_day">No more questions today. More tomorrow, or subscribe to keep going.</string>
 
     <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_title">Let\'s see what you already know</string>
@@ -326,9 +322,6 @@
     <string name="onboarding_reveal_phase_light_review">Light review</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">Today</string>
-    <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
-    <string name="onboarding_reveal_phase_position">%1$d of %2$d</string>
-    <string name="onboarding_reveal_phase_place">phase %1$d of %2$d</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">The exam\'s likely date is now %1$s.</string>
     <string name="onboarding_reveal_notice_day_notice">The exam notice says %1$s.</string>
@@ -417,7 +410,6 @@
     <!-- Screen reader, as a one-answer question moves on: the answer picked. -->
     <string name="onboarding_you_picked">You picked %1$s</string>
     <string name="onboarding_course_chapter_description">Your plan starts at this chapter and follows the course from there, in the time you have each day.</string>
-    <string name="onboarding_course_follows">Your plan follows this course, in the time you have each day.</string>
     <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->
     <plurals name="onboarding_course_chapters">
         <item quantity="one">%d chapter</item>
@@ -548,15 +540,12 @@
     <string name="onboarding_full_course_finish">At %1$s a day, you finish in %2$s, after the exam on %3$s.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="onboarding_full_course_finish_month">At %1$s a day, you finish in %2$s, after the exam in %3$s.</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="onboarding_weekend_time">Different time on weekends</string>
     <string name="onboarding_schedule_time_label">Time a day</string>
     <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
     <string name="onboarding_choose_date">Choose a date</string>
     <!-- The same link when the goal has a date. -->
     <string name="onboarding_change_date">Change date</string>
     <string name="onboarding_study_days">Study days</string>
-    <string name="onboarding_weekend_time_label">Time on weekends</string>
     <string name="onboarding_answers_saved">Your answers are saved.</string>
     <!-- On a setup question when the plan's run never started. -->
     <string name="onboarding_plan_not_started">We couldn\'t start building your plan</string>

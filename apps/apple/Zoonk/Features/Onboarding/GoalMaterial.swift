@@ -194,7 +194,7 @@ struct MaterialDraft {
   var pasting: Pasting?
   var value = ""
   var isAdding = false
-  var error: LocalizedStringResource?
+  var error: MaterialFailure?
   var showsSignUp = false
 
   static var adding: String {
@@ -333,7 +333,7 @@ struct MaterialAttachProgress: View {
     }
 
     if let error = draft.error {
-      FailureLine(message: error)
+      MaterialFailureView(failure: error, kind: .uploads)
     }
   }
 }
@@ -356,7 +356,7 @@ extension Binding<MaterialDraft> {
         wrappedValue = MaterialDraft()
       } catch is CancellationError {
       } catch {
-        wrappedValue.error = MaterialDraft.message(for: error)
+        wrappedValue.error = MaterialFailure(error) { MaterialDraft.message(for: $0) }
       }
     }
   }
@@ -365,8 +365,6 @@ extension Binding<MaterialDraft> {
 extension MaterialDraft {
   fileprivate static func message(for error: Error) -> LocalizedStringResource {
     switch error as? OnboardingError {
-    case .limit(let limit) where limit.help.isMonthly:
-      limit.help.sentence(.uploads)
     case .limit(let limit) where limit.tier == "plus":
       LocalizedStringResource(
         "No more material today. More tomorrow.",
@@ -516,7 +514,8 @@ struct MaterialQuestionsView: View {
               .foregroundStyle(.mutedForeground)
             }
           case .failure(let error):
-            FailureLine(message: Self.message(for: error))
+            MaterialFailureView(
+              failure: MaterialFailure(error) { Self.message(for: $0) }, kind: .questions)
           }
         }
       }
@@ -630,8 +629,6 @@ struct MaterialQuestionsView: View {
 
   private static func message(for error: Error) -> LocalizedStringResource {
     switch error as? OnboardingError {
-    case .limit(let limit) where limit.help.isMonthly:
-      limit.help.sentence(.questions)
     case .limit(let limit) where limit.tier == "plus":
       LocalizedStringResource(
         "No more questions today. More tomorrow.", table: "Onboarding",
@@ -653,6 +650,35 @@ struct MaterialQuestionsView: View {
       LocalizedStringResource(
         "We couldn't answer that. Try again in a moment.", table: "Onboarding",
         comment: "Answering a material question failed")
+    }
+  }
+}
+
+/// Why material couldn't be added or asked about. A monthly cap is the shared notice, which follows
+/// its day while the screen is open; anything else is one line.
+enum MaterialFailure: Equatable {
+  case notice(HelpLimit)
+  case line(LocalizedStringResource)
+
+  init(_ error: Error, line: (Error) -> LocalizedStringResource) {
+    if case .limit(let limit) = error as? OnboardingError, limit.help.isMonthly {
+      self = .notice(limit.help)
+    } else {
+      self = .line(line(error))
+    }
+  }
+}
+
+struct MaterialFailureView: View {
+  let failure: MaterialFailure
+  let kind: HelpLimit.Kind
+
+  var body: some View {
+    switch failure {
+    case .notice(let limit):
+      LimitNotice(limit: limit, kind: kind)
+    case .line(let message):
+      FailureLine(message: message)
     }
   }
 }

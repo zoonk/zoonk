@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="plan_title">Plan</string>
-    <string name="plan_eyebrow">%1$s · %2$s</string>
     <string name="plan_day_is_here">The day is here</string>
     <plurals name="plan_days_left">
         <item quantity="one">%d day left</item>
@@ -63,7 +62,6 @@
         <item quantity="one">%1$d of %2$d phase done</item>
         <item quantity="other">%1$d of %2$d phases done</item>
     </plurals>
-    <string name="plan_roadmap_phase_of">phase %1$d of %2$d</string>
     <string name="plan_roadmap_from">From %1$s</string>
     <string name="plan_today">Today</string>
     <string name="plan_mock_exam">Mock exam</string>
@@ -496,9 +494,6 @@
     <string name="plan_pick_date">Pick a date</string>
     <string name="plan_save">Save</string>
     <string name="plan_use_this_date">Use this date</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="plan_weekend_time_differs">Different time on weekends</string>
-    <string name="plan_time_on_weekends">Time on weekends</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="plan_exam_choice_question">%1$s: which one will you take?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
@@ -729,10 +724,8 @@
     </plurals>
     <string name="plan_past_date_goal_title">Your end date has passed</string>
     <string name="plan_past_date_exam_title">Your exam date has passed</string>
-    <plurals name="plan_exam_over_left">
-        <item quantity="one">You have %d lesson left. Keep studying it, or archive this goal?</item>
-        <item quantity="other">You have %d lessons left. Keep studying them, or archive this goal?</item>
-    </plurals>
+    <!-- Under "Your exam date has passed" on the Plan, whose bottom bar holds the two answers and whose Schedule number says the lessons left. -->
+    <string name="plan_exam_over_ask">Keep studying, or archive this goal?</string>
     <plurals name="plan_past_date_offer">
         <item quantity="one">You have %d lesson left. A later end date fits it.</item>
         <item quantity="other">You have %d lessons left. A later end date fits them.</item>

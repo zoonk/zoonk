@@ -5,12 +5,9 @@
     <string name="generation_connection_lost_description">We stopped getting updates. It may still be working.</string>
     <!-- Follows a run again after its updates stopped. -->
     <string name="generation_reconnect">Reconnect</string>
-    <!-- Title when something being written failed. -->
-    <string name="generation_failed">This didn\'t finish</string>
+    <string name="generation_failed_ours">Something went wrong on our side</string>
+    <!-- A stopped lesson's line in a list. -->
     <string name="generation_failed_description">Something went wrong on our side.</string>
-    <!-- Title when something to be written never started. -->
-    <string name="generation_not_started">This didn\'t start</string>
-    <string name="generation_not_started_description">We couldn\'t get this started.</string>
     <!-- Starts something that failed or never started again. -->
     <string name="generation_try_again">Try again</string>
     <!-- Screen reader state of a step of a wait. -->

@@ -46,13 +46,16 @@ import com.zoonk.android.feature.catalog.goalOnCourse
 import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.goalLimitGateWords
 import com.zoonk.android.feature.onboarding.goalStartLimit
 import com.zoonk.android.feature.onboarding.lifted
 import com.zoonk.android.feature.onboarding.setup.LevelChoiceList
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.setup.StepHeading
+import com.zoonk.android.feature.onboarding.start.CreateAccountButton
 import com.zoonk.android.feature.onboarding.start.GoalFooter
-import com.zoonk.android.feature.onboarding.start.GoalLimitWall
+import com.zoonk.android.feature.onboarding.start.GoalLimitButtons
+import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -186,7 +189,7 @@ private fun CourseStartForm(
 
     SetupColumn {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            CourseStartHeading(course.title, chapter?.title, blocked)
+            CourseStartHeading(course.title, chapter?.title, gate = limit?.takeIf { blocked })
             if (!blocked) {
                 minutes?.let {
                     Text(
@@ -202,8 +205,15 @@ private fun CourseStartForm(
             if (chapter != null) PlanPreview(planned) else LevelChoiceList(vm.level, course.quickTestMinutes.toInt(), onChange = vm::pick)
         }
 
-        if (limit?.isPlusLimit == true) {
-            GoalLimitWall(limit, onSubscribe = { remedy(AppRoute.Subscription) }, onOpenPlan = { remedy(AppRoute.Plan()) })
+        // The heading says why; the bar holds only the way on (main's `CourseStartBlockedAction`).
+        if (blocked) {
+            OnboardingActions {
+                if (limit.needsAccount) {
+                    CreateAccountButton { remedy(AppRoute.Login) }
+                } else {
+                    GoalLimitButtons(limit, onSubscribe = { remedy(AppRoute.Subscription) }, onOpenPlan = { remedy(AppRoute.Plan()) })
+                }
+            }
             return@SetupColumn
         }
 
@@ -251,15 +261,19 @@ private fun CourseStartForm(
 private fun CourseStartHeading(
     course: String,
     chapter: String?,
-    blocked: Boolean,
+    gate: GoalLimitReason?,
 ) {
     when {
-        chapter != null -> {
-            StepHeading(chapter, stringResource(R.string.onboarding_course_chapter_description), subject = course)
+        // A start that stops says why in its heading, with the course as its subject (main's `StartHeading`).
+        gate != null -> {
+            val words = goalLimitGateWords(gate)
+            Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
+                StepHeading(words.title ?: course, words.line, subject = chapter ?: course)
+            }
         }
 
-        blocked -> {
-            StepHeading(course, stringResource(R.string.onboarding_course_follows))
+        chapter != null -> {
+            StepHeading(chapter, stringResource(R.string.onboarding_course_chapter_description), subject = course)
         }
 
         else -> {
