@@ -12,6 +12,6 @@ export const goalOpeningTask: Task<GoalOpeningParams, GoalOpeningOutput> = {
     "Pick a learn goal's first skill, the course that teaches it and that skill's first chapter, so the first lesson is written before the plan",
   generate: generateGoalOpening,
   id: "goal-opening",
-  name: "Goal Opening",
+  name: "Goal opening",
   testCases: TEST_CASES,
 };

@@ -72,6 +72,9 @@ function TaskRow({ showDescription, task }: { showDescription: boolean; task: Ta
   );
 }
 
+/** The tasks' columns; the search box takes the first, so it ends where that column's rows end. */
+const TASK_COLUMNS_CLASS = "grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3";
+
 export function TaskFinder({ groups }: { groups: TaskFinderGroup[] }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -90,12 +93,13 @@ export function TaskFinder({ groups }: { groups: TaskFinderGroup[] }) {
             router.push(`/tasks/${found[0].id}`);
           }
         }}
+        className={TASK_COLUMNS_CLASS}
         role="search"
       >
         <Input
           aria-label="Find a task"
           autoFocus
-          className="max-w-md [&::-webkit-search-cancel-button]:appearance-none"
+          className="[&::-webkit-search-cancel-button]:appearance-none"
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Find a task…"
           type="search"
@@ -120,7 +124,7 @@ export function TaskFinder({ groups }: { groups: TaskFinderGroup[] }) {
           <section className="flex flex-col gap-1" key={group.name}>
             <h2 className="text-muted-foreground text-xs font-medium">{group.name}</h2>
 
-            <ul className="grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className={TASK_COLUMNS_CLASS}>
               {group.tasks.map((task) => (
                 <TaskRow key={task.id} showDescription={false} task={task} />
               ))}
