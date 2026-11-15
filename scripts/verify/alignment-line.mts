@@ -15,7 +15,9 @@ import {
 
 /**
  * One line of a row (`ROW-LINE.md`, craft E6): every part sits on the middle of the label's
- * capitals, whatever its face or size, within half a logical unit.
+ * capitals, whatever its face or size, within half a logical unit. A part read by its ink is drawn
+ * in whole device pixels, so its middle is known only to half a device pixel: it's allowed that
+ * much more (the lead's ruling).
  */
 const LINE = 0.5;
 
@@ -40,7 +42,12 @@ function middleOf(element: CaptureElement): number | null {
   return ink ? (ink.top + ink.bottom) / 2 : null;
 }
 
-type Miss = { off: number; part: string; to: string };
+/** `inked`: one side of the comparison is a part read by its ink, not a text's capitals. */
+type Miss = { inked: boolean; off: number; part: string; to: string };
+
+function readByInk(element: CaptureElement) {
+  return element.part === "mark" || element.part === "end" || glyphsOnly(element);
+}
 
 /**
  * Each part's distance from where it belongs (craft E5 and E6). One line: on the label's middle.
@@ -104,20 +111,21 @@ function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
 
   return middles.flatMap(({ element, middle }): Miss[] => {
     const at = middle ?? labelMiddle;
+    const inked = readByInk(element);
 
     if (oneLine) {
-      return [{ off: at - labelMiddle, part: element.part, to: "the label's middle" }];
+      return [{ inked, off: at - labelMiddle, part: element.part, to: "the label's middle" }];
     }
 
     // A row with a text lead sits on its first line; a mark does beside three lines or more.
     if (led || (element.part === "mark" && notes >= 2)) {
-      return [{ off: at - labelMiddle, part: element.part, to: "the label's first line" }];
+      return [{ inked, off: at - labelMiddle, part: element.part, to: "the label's first line" }];
     }
 
     return [
-      { off: at - rowMiddle, part: element.part, to: "the row's center" },
+      { inked, off: at - rowMiddle, part: element.part, to: "the row's center" },
       ...(element.part === "value" && endMiddle !== null
-        ? [{ off: at - endMiddle, part: "value", to: "the end glyph's middle" }]
+        ? [{ inked: true, off: at - endMiddle, part: "value", to: "the end glyph's middle" }]
         : []),
     ];
   });
@@ -146,7 +154,8 @@ export function lineLeads(context: Context, read: Group): AlignmentFinding[] {
       ];
     }
 
-    const off = found.filter((miss) => Math.abs(miss.off) > LINE);
+    const resolution = 0.5 / context.capture.scale;
+    const off = found.filter((miss) => Math.abs(miss.off) > LINE + (miss.inked ? resolution : 0));
 
     if (off.length === 0) {
       return [];

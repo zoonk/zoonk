@@ -117,8 +117,9 @@ describe("the Plan's path and Android's captures", () => {
     );
 
     // E5: beside a title that wraps, the mark is centered on the row, as Android draws it: it is
-    // 0.75 dp off the row's center, not 16.73 off the first line.
-    assert.match(line?.detail ?? "", /the mark 0\.75 below the row's center/u);
+    // 0.75 dp off the row's center, within its ink's resolution at 2x (0.5 + 0.25), not 16.73 off
+    // the first line.
+    assert.equal(line, undefined);
   });
 
   it("calls a value beside a title that wraps trailing, so it belongs on the row's center (E5)", () => {

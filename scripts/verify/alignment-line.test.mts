@@ -213,3 +213,26 @@ describe("a stacked row's mark (AP1's C4)", () => {
     assert.equal(line(stackedRow(44))[0]?.level, "fail");
   });
 });
+
+/** A one-line row at a 2x scale, its `part` off the label's middle by `off`. */
+function atTwoX(part: "mark" | "value", off: number) {
+  const capture = oneLine(15 + off);
+
+  return {
+    ...capture,
+    elements: capture.elements.map((item) =>
+      item.id === "p" && part === "value"
+        ? { ...item, capBottom: 19 + off, capTop: 11 + off, part: "value" as const }
+        : item,
+    ),
+    scale: 2,
+  };
+}
+
+describe("line's tolerance (the lead's ruling)", () => {
+  it("allows a part read by its ink half a device pixel more, the measurement's resolution", () => {
+    assert.deepEqual(line(atTwoX("mark", 0.7)), []);
+    assert.equal(line(atTwoX("mark", 0.8))[0]?.level, "fail");
+    assert.equal(line(atTwoX("value", 0.6))[0]?.level, "fail");
+  });
+});
