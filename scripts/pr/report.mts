@@ -1,5 +1,6 @@
 import { relative } from "node:path";
-import { DEVICE_HEADING, isRemote } from "./locate.mts";
+import { DEVICE_HEADING } from "./body.mts";
+import { isRemote } from "./locate.mts";
 
 /** In the order they print: what can't be bound first, then what a retake fixes, then the read. */
 const KINDS = [

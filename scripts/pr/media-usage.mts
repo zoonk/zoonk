@@ -15,10 +15,14 @@ Checks that every picture a PR body shows was captured, from which build, and re
            its app or packages/; when an after picture has no read or an unresolved finding; when
            an after capture's alignment.json fails a layout relationship, couldn't measure
            one, or misses a required scenario; and when a native picture is still pending.
-           A device picture goes only under the heading "On a device (layout not measured)",
-           with the line the device command printed as its caption (the rest of its line or the
-           next line); the check fails it anywhere else, fails a picture under that heading
-           without a device record, and lists device pictures apart from the measured ones.
+           A device picture goes only under the level-2 heading "## On a device (layout not
+           measured)", as a plain image line with the line the device command printed as its
+           caption (visible words after it in its paragraph, or the next block's). The body is
+           read as GitHub renders it: a heading in a comment or a code block is none, any level-1
+           or level-2 heading ends the section, a comment shows nothing, and each occurrence is
+           checked by itself. The check fails a device picture anywhere else, a picture under that
+           heading without a device record, and one there in a table or a <details> block; it
+           lists device pictures apart from the measured ones.
            Picture paths are relative to --root (the
            body's folder by default). Each picture's capture.json is looked for in its folder and
            every folder above it, and anywhere under each --manifests folder, so a

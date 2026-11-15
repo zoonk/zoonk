@@ -4,9 +4,10 @@ import { mkdir, readFile } from "node:fs/promises";
 import { dirname, extname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { adoptRenders } from "./adopt.mts";
+import { DEVICE_HEADING, bodyMedia } from "./body.mts";
 import { checkPictures } from "./check.mts";
 import { DEVICE_BRIDGES, takeDevicePicture } from "./device.mts";
-import { DEVICE_HEADING, bodyMedia, findManifests, isRemote, manifestsAbove } from "./locate.mts";
+import { findManifests, isRemote, manifestsAbove } from "./locate.mts";
 import { USAGE } from "./media-usage.mts";
 import {
   type Finding,

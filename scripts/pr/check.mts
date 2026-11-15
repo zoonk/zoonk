@@ -2,19 +2,20 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { readCaptures } from "../verify/alignment-validate.mts";
 import { evaluateFile } from "../verify/alignment.mts";
-import { type DevicePicture, isRemote } from "./locate.mts";
+import { type DevicePicture } from "./body.mts";
+import { isRemote } from "./locate.mts";
 import {
   type AlignmentReport,
   type CaptureItem,
   type Finding,
   type ManifestItem,
   buildOf,
-  deviceLine,
   isRecorded,
   readAlignment,
   readManifest,
   readOf,
 } from "./media.mts";
+import { placementProblems } from "./placement.mts";
 import { commitIncludes, latestCommitSince, sha256File } from "./provenance.mts";
 import { type CheckResult, type Problem } from "./report.mts";
 
@@ -269,38 +270,6 @@ function alignmentProblems({ alignment, folder }: Manifest): Problem[] {
 }
 
 /**
- * A picture with a device record goes under the device heading and only there, its caption saying
- * what was verified; anything else under it isn't a device picture. A forged record can only put
- * a picture where the reader sees nothing measured it.
- */
-function placementProblems({
-  caption,
-  entries,
-  picture,
-}: {
-  caption?: string;
-  entries: Entry[];
-  picture: string;
-}): { line?: string; problems: Problem[] } {
-  const [line] = entries.flatMap(({ item }) =>
-    item.side === "after" && isRecorded(item) && item.device ? [deviceLine(item)] : [],
-  );
-
-  if (caption === undefined) {
-    return { problems: line ? [{ kind: "device-elsewhere", picture }] : [] };
-  }
-
-  if (!line) {
-    return { problems: entries.length > 0 ? [{ kind: "not-device", picture }] : [] };
-  }
-
-  return {
-    line,
-    problems: caption.includes(line) ? [] : [{ detail: line, kind: "caption", picture }],
-  };
-}
-
-/**
  * Before pictures need only their capture record: an old before is expected. After pictures also
  * need a known, committed build no later commit to their app or the shared packages outdates, and
  * a read with no unresolved finding. A native picture without its platform's record is pending.
@@ -326,24 +295,40 @@ export async function checkPictures({
   const byHash = Map.groupBy(entries, (entry) => entry.item.sha256);
   const byPath = new Map(entries.map((entry) => [resolve(entry.folder, entry.item.file), entry]));
 
+  // Every occurrence is placed and captioned by itself; each picture's records are looked up once.
   const shown: { caption?: string; path: string }[] = [
-    ...[...new Set(pictures)].map((path) => ({ path })),
+    ...pictures.map((path) => ({ path })),
     ...onDevice,
   ];
 
-  const checked = await Promise.all(
-    shown.map(async ({ caption, path: picture }) => {
-      const found = await pictureProblems({ byHash, byPath, git, picture });
-      const placed = placementProblems({ caption, entries: found.entries, picture });
+  const paths = [...new Set(shown.map(({ path }) => path))];
 
-      return {
-        ...found,
-        line: placed.line,
-        picture,
-        problems: [...found.problems, ...placed.problems],
-      };
-    }),
+  const lookups = new Map(
+    await Promise.all(
+      paths.map(
+        async (picture) =>
+          [picture, await pictureProblems({ byHash, byPath, git, picture })] as const,
+      ),
+    ),
   );
+
+  const checked = shown.map(({ caption, path: picture }) => {
+    const found = lookups.get(picture) ?? { entries: [], problems: [] };
+    const items = found.entries.map(({ item }) => item);
+    const placed = placementProblems({ caption, items, picture });
+    return { ...found, line: placed.line, picture, placed: placed.problems };
+  });
+
+  const problems = [
+    ...[...lookups.values()].flatMap((found) => found.problems),
+    ...checked.flatMap(({ placed }) => placed),
+  ];
+
+  const devices = [
+    ...new Map(
+      checked.flatMap(({ line, picture }) => (line ? [[picture, { line, picture }] as const] : [])),
+    ).values(),
+  ];
 
   const matched = new Set(checked.flatMap(({ entries: found }) => found));
   const after = [...matched].flatMap(({ item }) => (item.side === "after" ? [item] : []));
@@ -366,13 +351,17 @@ export async function checkPictures({
   const unreadable = unsupported.map((detail): Problem => ({ detail, kind: "unsupported" }));
 
   return {
-    checked: new Set(shown.map(({ path }) => path)).size,
-    devices: checked.flatMap(({ line, picture }) => (line ? [{ line, picture }] : [])),
+    checked: paths.length,
+    devices,
     notMeasured: judgedManifests.filter((manifest) => !measured(manifest)).length,
     nothingDeclared: judgedManifests
       .flatMap(({ alignment }) => alignment.captures ?? [])
       .filter((screen) => screen.elements?.length === 0).length,
-    problems: [...unreadable, ...checked.flatMap(({ problems }) => problems), ...fromAlignment],
+    problems: [
+      ...unreadable,
+      ...new Map(problems.map((problem) => [JSON.stringify(problem), problem])).values(),
+      ...fromAlignment,
+    ],
     reads,
   };
 }

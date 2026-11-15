@@ -3,6 +3,7 @@ import { execFileSync } from "node:child_process";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "vitest";
+import { DEVICE_HEADING, bodyMedia } from "./body.mts";
 import { CLEAN, checkFixture, kinds } from "./check-fixture.mts";
 import { checkPictures } from "./check.mts";
 import { type DeviceBridge, type Installed, takeDevicePicture } from "./device.mts";
@@ -190,5 +191,102 @@ describe("a device picture in the PR body", () => {
     });
 
     assert.deepEqual(kinds(result), ["not-device"]);
+  });
+});
+
+/**
+ * An emulator's picture with its read, and a measured web picture, checked as the CLI checks a body
+ * that shows them.
+ */
+async function emulatorBody() {
+  const { capture, repository, shot } = checkFixture();
+  const measured = capture([shot({ file: "today.png" })]);
+  const to = mkdtempSync(join(repository, "device-"));
+
+  await takeDevicePicture({
+    bridge: bridge({ installedAt: new Date(), version: "1.0" }),
+    deviceId: "booted-device",
+    name: "sheet",
+    platform: "android",
+    repository,
+    to,
+  });
+
+  const items = (await readManifest(to)) ?? [];
+
+  await writeManifest(
+    to,
+    items.map((item) => ({ ...item, read: CLEAN })),
+  );
+
+  const path = join(to, "sheet.png");
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The command records one capture.
+  const caption = deviceLine(items[0] as CaptureItem);
+  const today = join(measured.folder, "today.png");
+
+  const check = async (markdown: (picture: string, caption: string, today: string) => string) => {
+    const { onDevice, pictures, unsupported } = bodyMedia(markdown(path, caption, today));
+    const manifests = [to, measured.folder];
+    return checkPictures({ manifests, onDevice, pictures, repository, unsupported });
+  };
+
+  return { check };
+}
+
+describe("a body's device section as a reader sees it (RV77)", () => {
+  it("passes a plain image line under the heading with its caption, measured pictures above it", async () => {
+    const { check } = await emulatorBody();
+
+    const result = await check(
+      (path, caption, today) =>
+        `## Before and after\n\n![Today](${today})\n\n## ${DEVICE_HEADING}\n\n![Sheet](${path})\n${caption}\n`,
+    );
+
+    assert.equal(result.checked, 2);
+
+    assert.deepEqual(result.problems, []);
+  });
+
+  it("fails a picture under a heading hidden in a comment or a code block", async () => {
+    const { check } = await emulatorBody();
+
+    const comment = await check(
+      (path, caption) => `<!--\n## ${DEVICE_HEADING}\n-->\n![](${path})\n${caption}`,
+    );
+
+    const fenced = await check(
+      (path, caption) => `\`\`\`md\n## ${DEVICE_HEADING}\n\`\`\`\n![](${path})\n${caption}`,
+    );
+
+    assert.deepEqual(kinds(comment), ["device-elsewhere"]);
+    assert.deepEqual(kinds(fenced), ["device-elsewhere"]);
+  });
+
+  it("fails a picture past an underlined level-2 heading", async () => {
+    const { check } = await emulatorBody();
+
+    const result = await check(
+      (path, caption) =>
+        `## ${DEVICE_HEADING}\n![](${path})\n${caption}\n\nMeasured current build\n----------------------\n![](${path})\n${caption}`,
+    );
+
+    assert.deepEqual(kinds(result), ["device-elsewhere"]);
+  });
+
+  it("fails an occurrence whose own caption is wrong, or hidden in a comment", async () => {
+    const { check } = await emulatorBody();
+
+    const repeated = await check(
+      (path, caption) =>
+        `## ${DEVICE_HEADING}\n![](${path})\n${caption}\n\n![](${path})\nMeasured from current build d41415e8c4`,
+    );
+
+    const hidden = await check(
+      (path, caption) =>
+        `## ${DEVICE_HEADING}\n![](${path})\n<!-- ${caption} --> Current build d41415e8c4`,
+    );
+
+    assert.deepEqual(kinds(repeated), ["caption"]);
+    assert.deepEqual(kinds(hidden), ["caption"]);
   });
 });
