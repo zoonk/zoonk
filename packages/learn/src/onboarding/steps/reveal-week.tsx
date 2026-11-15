@@ -98,9 +98,10 @@ function WeekDayRow({
   const names = (teaching.length > 0 ? teaching : day.items).map((item) => itemTitle(item));
 
   return (
-    <ListRow>
+    <ListRow data-slot="week-day">
       <ListRowLeading
         className="text-muted-foreground font-mono text-xs whitespace-nowrap tabular-nums"
+        data-slot="week-day-date"
         firstLine
         style={{ minWidth: `${dateWidth}ch` }}
       >
@@ -109,11 +110,13 @@ function WeekDayRow({
 
       <ListRowContent className="justify-start gap-1.5">
         {day.items.length === 0 ? (
-          <span className="text-muted-foreground text-sm">{t("Rest day")}</span>
+          <span className="text-muted-foreground text-sm" data-slot="week-day-item">
+            {t("Rest day")}
+          </span>
         ) : (
           names.map((name, index) => (
             // oxlint-disable-next-line react/no-array-index-key -- two lessons can share a title
-            <span className="text-sm text-pretty" key={index}>
+            <span className="text-sm text-pretty" data-slot="week-day-item" key={index}>
               {name}
             </span>
           ))
