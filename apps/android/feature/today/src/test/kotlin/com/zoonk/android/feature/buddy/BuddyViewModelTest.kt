@@ -162,12 +162,12 @@ class BuddyViewModelTest {
             val vm = buddy(FakeStudyApi(), NoStatusApi)
 
             // A recreation: no page acts while the change saves; the next one closes its editor.
-            vm.save(BuddyKind.Noodle, BuddyGlasses.Star, "Nox")
+            vm.saveEdit(BuddyKind.Noodle, BuddyGlasses.Star, "Nox")
             advanceUntilIdle()
 
-            assertEquals(Unit, vm.saved.value)
-            vm.saved.acted(Unit)
-            assertNull(vm.saved.value)
+            assertEquals(Unit, vm.editorSaved.value)
+            vm.editorSaved.acted(Unit)
+            assertNull(vm.editorSaved.value)
         }
 
     @Test
@@ -175,11 +175,11 @@ class BuddyViewModelTest {
         runTest(dispatcher) {
             val vm = buddy(FakeStudyApi(), NoStatusApi)
 
-            vm.save(BuddyKind.Noodle, BuddyGlasses.Star, "Nox")
+            vm.saveEdit(BuddyKind.Noodle, BuddyGlasses.Star, "Nox")
             vm.endVisit()
             advanceUntilIdle()
 
-            assertNull(vm.saved.value)
+            assertNull(vm.editorSaved.value)
         }
 
     @Test
@@ -187,11 +187,11 @@ class BuddyViewModelTest {
         runTest(dispatcher) {
             val vm = buddy(FakeStudyApi(), NoStatusApi, profileFails = true)
 
-            vm.save(BuddyKind.Noodle, BuddyGlasses.Star, "Nox")
+            vm.saveEdit(BuddyKind.Noodle, BuddyGlasses.Star, "Nox")
             vm.endVisit()
             advanceUntilIdle()
 
-            assertEquals(false, vm.saveFailed)
+            assertEquals(false, vm.editorSaveFailed)
         }
 
     private fun opensALesson() =

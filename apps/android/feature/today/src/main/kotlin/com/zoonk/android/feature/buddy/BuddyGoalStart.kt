@@ -131,11 +131,14 @@ internal fun BuddyGoalStart(
         }
     }
 
-    if (wearing) {
-        GlassesSheet(status, look, saveFailed = vm.saveFailed, onDismiss = { wearing = false }) { glasses ->
-            vm.save(look.kind, glasses, status.buddy.name)
-        }
-    }
+    BuddyChanges(
+        vm,
+        status,
+        look,
+        BuddyChangesOpen(glasses = wearing, editor = false),
+        closeGlasses = { wearing = false },
+        closeEditor = {},
+    )
 }
 
 private const val EXAMPLES = 3

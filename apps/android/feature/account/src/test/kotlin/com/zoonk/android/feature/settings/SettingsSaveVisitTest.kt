@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.settings
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelStore
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
@@ -90,7 +91,7 @@ class SettingsSaveVisitTest {
     @Test
     fun aPreferenceThatFailsAfterTheLearnerLeftSaysNothingAnywhere() =
         check { store, models ->
-            val preferences = PreferencesViewModel(store).also { models.put("preferences", it) }
+            val preferences = PreferencesViewModel(store, SavedStateHandle()).also { models.put("preferences", it) }
 
             preferences.setSoundsEnabled(false)
             runCurrent()
@@ -104,7 +105,7 @@ class SettingsSaveVisitTest {
     @Test
     fun aPreferenceThatFailsWhileThePageIsRecreatedSaysSoOnce() =
         check { store, models ->
-            val preferences = PreferencesViewModel(store).also { models.put("preferences", it) }
+            val preferences = PreferencesViewModel(store, SavedStateHandle()).also { models.put("preferences", it) }
 
             preferences.setSoundsEnabled(false)
             held.complete(Unit)

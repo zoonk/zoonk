@@ -194,11 +194,12 @@ class PlanViewModel(
     }
 
     /** A language goal's country: the plan stays as it is, so its picker closes once the server has it. */
-    fun setRegion(region: String?) = saveGoal(PlanPart.Region, outcomes.editor, outcomes.regionSaved) { store.setRegion(goalId, region) }
+    fun setRegion(region: String?) =
+        saveGoal(PlanPart.Region, outcomes.varietyPicker, outcomes.regionSaved) { store.setRegion(goalId, region) }
 
     /** A learn goal's content country: the plan stays until its rebuild saves the new one; its question closes once the server has it. */
     fun setContentCountry(country: String) =
-        saveGoal(PlanPart.Country, outcomes.editor, outcomes.countrySaved) { store.setContentCountry(goalId, country) }
+        saveGoal(PlanPart.Country, outcomes.countryPicker, outcomes.countrySaved) { store.setContentCountry(goalId, country) }
 
     /** Prepares the new country's plan again after that failed; a retry that doesn't start says so in a snackbar. */
     fun retryCountryRebuild() =
@@ -341,7 +342,7 @@ class PlanViewModel(
     ) {
         if (part in savingParts.value) return
         val opening = openings
-        val opened = outcomes.editor.number
+        val opened = (if (asker == PlanAsker.AimPicker) outcomes.aimPicker else outcomes.editor).number
         savingParts.update { it + part }
         failedParts.update { it - part }
         askedOperations.update { it + (part to operations) }
@@ -388,7 +389,7 @@ class PlanViewModel(
 
     /**
      * What the save [asker] asked for does once [result] (null: it didn't save) is in; a visit that ended shows nothing of
-     * it, nor does an editor opening that closed since [opened].
+     * it, nor does an editor or picker opening that closed since [opened].
      */
     private fun answer(
         asker: PlanAsker?,

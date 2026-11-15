@@ -233,8 +233,11 @@ internal fun PlanEditor(
     val wide = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val drafts = rememberSaveable(saver = EditorDrafts.Saver) { EditorDrafts() }
 
-    // This opening is the pickers' and Move date's asker: closing the editor drops what they're owed.
+    // The editor is Move date's asker, and each picker its own inside it: closing one drops what it's owed.
     VisitOf(edits.outcomes.editor)
+    if (drafts.picking == PlanPicker.Aim) VisitOf(edits.outcomes.aimPicker)
+    if (drafts.picking == PlanPicker.Variety) VisitOf(edits.outcomes.varietyPicker)
+    if (drafts.picking == PlanPicker.Country) VisitOf(edits.outcomes.countryPicker)
     ActOn(edits.outcomes.aimPicked) { drafts.picking = null }
     ActOn(edits.outcomes.regionSaved) { drafts.picking = null }
     ActOn(edits.outcomes.countrySaved) {

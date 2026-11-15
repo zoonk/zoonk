@@ -937,6 +937,35 @@ class PlanViewModelTest {
         }
 
     @Test
+    fun anAimFromAPickerTheLearnerClosedClosesNoOtherPicker() =
+        runTest {
+            val aim = PlanOp.Aim("conversation")
+            val held = CompletableDeferred<Unit>().also { api.gates[aim] = it }
+
+            viewModel.change(PlanPart.Aim, listOf(aim), PlanAsker.AimPicker)
+            viewModel.outcomes.aimPicker.end()
+            held.complete(Unit)
+
+            assertEquals(listOf(listOf<PlanOp>(aim)), api.changes)
+            assertNull(viewModel.outcomes.aimPicked.value)
+        }
+
+    @Test
+    fun aCountryFromAPickerTheLearnerClosedClosesNoOtherPicker() =
+        runTest {
+            val held = CompletableDeferred<Unit>().also { api.goalGate = it }
+
+            viewModel.setRegion("MX")
+            viewModel.outcomes.varietyPicker.end()
+            viewModel.setContentCountry("PT")
+            viewModel.outcomes.countryPicker.end()
+            held.complete(Unit)
+
+            assertNull(viewModel.outcomes.regionSaved.value)
+            assertNull(viewModel.outcomes.countrySaved.value)
+        }
+
+    @Test
     fun aDateMovedFromAnEarlierEditorOpeningMovesNoFocusInTheNext() =
         runTest {
             val plan = shown()
