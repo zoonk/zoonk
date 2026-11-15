@@ -146,6 +146,19 @@ class GoalSwitcherViewModelTest {
         }
 
     @Test
+    fun aMakeRoomFromAnEarlierSheetOpeningSaysNothingInTheNext() =
+        check(fails = true) { vm ->
+            vm.start(WAITING, pauseGoalId = paused)
+            runCurrent()
+            // The learner closed the sheet while it saved, then opened it again.
+            vm.makeRoomSheet.end()
+            gate.complete(Unit)
+            runCurrent()
+
+            assertFalse(vm.makeRoomFailed)
+        }
+
+    @Test
     fun aMakeRoomThatFailsWhileTheTabIsRecreatedSaysSo() =
         check(fails = true) { vm ->
             recreateWhile { vm.start(WAITING, pauseGoalId = paused) }

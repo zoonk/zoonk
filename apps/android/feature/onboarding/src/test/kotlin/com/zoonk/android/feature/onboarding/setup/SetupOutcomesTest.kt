@@ -116,6 +116,20 @@ class SetupOutcomesTest {
         }
 
     @Test
+    fun anAimFromAnEarlierSheetOpeningClosesNothingInTheNext() =
+        check { store, cache ->
+            val vm = setup(store)
+            vm.changeAim(aimPlans(cache), "B1")
+            runCurrent()
+            // The learner closed the sheet while it saved, then opened it again.
+            vm.aimSheet.end()
+            gate.complete(Unit)
+            runCurrent()
+
+            assertNull(vm.aimSaved.value)
+        }
+
+    @Test
     fun anAimSavedWhileTheSetupIsRecreatedClosesItsSheetOnce() =
         check { store, cache ->
             val vm = setup(store)

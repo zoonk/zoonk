@@ -130,6 +130,7 @@ fun GoalSwitcher(
     }
 
     learner.waitingGoals.firstOrNull { it.id == makingRoomFor && it.locked }?.let { waiting ->
+        VisitOf(viewModel.makeRoomSheet)
         val close = {
             makingRoomFor = null
             viewModel.forgetMakeRoomFailure()
@@ -297,7 +298,10 @@ class GoalSwitcherViewModel(
 
     val started = visit.outcome<StartedGoal>()
 
-    private val makeRoomFailure = visit.outcome<Unit>()
+    /** The Make room sheet's opening: a start asked from an earlier one says nothing in a later one. */
+    val makeRoomSheet = visit.opening()
+
+    private val makeRoomFailure = makeRoomSheet.outcome<Unit>()
 
     /** A switch or a start that failed on this visit, which the tab's frame says in the app's snackbars. */
     val failed = visit.outcome<SwitcherFailure>()
@@ -335,6 +339,7 @@ class GoalSwitcherViewModel(
         pausing = pauseGoalId
         makeRoomFailure.clear()
         val asked = visit.number
+        val sheet = makeRoomSheet.number
         viewModelScope.launch {
             when (val outcome = onboarding.createGoals(waiting.input.toGoalCreateInput(pauseGoalId))) {
                 is WriteOutcome.Done -> {
@@ -344,7 +349,7 @@ class GoalSwitcherViewModel(
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    if (pauseGoalId == null) failed.send(asked, SwitcherFailure.Start) else makeRoomFailure.send(asked, Unit)
+                    if (pauseGoalId == null) failed.send(asked, SwitcherFailure.Start) else makeRoomFailure.send(sheet, Unit)
                 }
             }
             pausing = null

@@ -368,6 +368,7 @@ private fun ColumnScope.SetupStep(
                 vm.saveFailed,
                 { aim -> vm.changeAim(plans, aim) },
                 vm.aimSaved,
+                vm.aimSheet,
             ),
         LocalSetupWait provides
             SetupWaitContext(

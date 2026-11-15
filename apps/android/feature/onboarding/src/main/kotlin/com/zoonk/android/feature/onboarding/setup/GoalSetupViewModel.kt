@@ -142,8 +142,11 @@ internal class GoalSetupViewModel(
 
     fun takeRevealMoment(): Boolean = (handle.get<Boolean>("revealMoment") == true).also { handle["revealMoment"] = false }
 
-    /** The aim the learner picked saved: its sheet closes. */
-    val aimSaved = visit.outcome<Unit>()
+    /** The aim sheet's opening: a save asked from an earlier opening closes nothing in a later one. */
+    val aimSheet = visit.opening()
+
+    /** The aim the learner picked saved: the sheet that asked closes. */
+    val aimSaved = aimSheet.outcome<Unit>()
 
     fun changeAim(
         plans: com.zoonk.android.feature.plan.PlanStore,
@@ -153,6 +156,7 @@ internal class GoalSetupViewModel(
         isSaving = true
         clearFailure()
         val started = visit.number
+        val sheet = aimSheet.number
         viewModelScope.launch {
             when (
                 val result =
@@ -167,7 +171,7 @@ internal class GoalSetupViewModel(
                 is com.zoonk.android.data.MutationResult.Done -> {
                     if (result.value.status == com.zoonk.api.models.PlanChangeResult.Status.APPLIED) {
                         store.onboardings[goalId].refresh()
-                        aimSaved.send(started, Unit)
+                        aimSaved.send(sheet, Unit)
                     } else {
                         failure.send(started, SaveFailure())
                     }
