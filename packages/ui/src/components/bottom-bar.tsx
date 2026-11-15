@@ -71,14 +71,15 @@ function BottomBar({
 }
 
 /**
- * A row of the bar's buttons, 8px apart, the main action last. The main action (the one Enter
- * presses) takes what the row has left on a phone and its own width at the row's end on a computer.
+ * A row of the bar's buttons, 8px apart, the main action last: on a phone each fills the line it has
+ * alone and the main action (the one Enter presses) takes what a line it shares has left
+ * (`bar-actions`); on a computer they keep their own width at the row's end.
  */
 function BottomBarActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "flex w-full flex-wrap items-center gap-2 *:data-enter:grow lg:justify-end lg:*:data-enter:grow-0",
+        "bar-actions flex w-full flex-wrap items-center gap-2 lg:justify-end",
         className,
       )}
       data-slot="bottom-bar-actions"
