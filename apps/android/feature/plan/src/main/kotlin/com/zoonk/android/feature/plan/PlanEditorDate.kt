@@ -53,7 +53,7 @@ internal fun PlanDateSection(
     val shown = if (asked != null) asked.date else target.takeUnless { namedMonth }
     val locale = currentLocale()
 
-    fun setDate(date: LocalDate) = edits.change(PlanPart.Date, listOf(PlanOp.TargetDate(date))) {}
+    fun setDate(date: LocalDate) = edits.change(PlanPart.Date, listOf(PlanOp.TargetDate(date)), null)
 
     val note =
         when {
@@ -123,7 +123,7 @@ internal fun PlanDateDialog(
         canPick = { namedMonth || it != target },
         onPick = {
             onClose()
-            edits.change(PlanPart.Date, listOf(PlanOp.TargetDate(it))) {}
+            edits.change(PlanPart.Date, listOf(PlanOp.TargetDate(it)), null)
         },
         onDismiss = onClose,
         layer = layer,

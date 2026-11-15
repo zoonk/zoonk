@@ -52,7 +52,7 @@ class PlanEditorResizeTest {
         showEditor {
             PlanEdits(
                 failed = if (failed) setOf(PlanPart.Country) else emptySet(),
-                setContentCountry = { _, _ -> failed = true },
+                setContentCountry = { failed = true },
             )
         }
 

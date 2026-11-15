@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import com.zoonk.android.R
+import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.OnVisitEnd
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
@@ -183,20 +184,11 @@ internal fun CoverageSuggestion(slot: Slot) {
         }
     val preview = slot.host.preview.of(offer?.operations.orEmpty(), plan)
 
-    /** [focus] moves to the suggestion once the search answers, as the control that asked gives way. */
-    fun ask(
-        next: CoverageIntent,
-        focus: () -> Unit,
-    ) {
+    fun ask(next: CoverageIntent) {
         state.asking = next
         state.intent = next
         slot.host.clearPreview()
-        edits.findTimeToCover(plan) { outcome ->
-            if (state.asking == next) focus()
-            val time = (outcome as? TimeToCoverOutcome.Answered)?.time ?: return@findTimeToCover
-            val change = coverageChange(page.isExam, next, time, plan.schedule.dailyMinutes.toInt()) ?: return@findTimeToCover
-            if (coverage != null && state.asking == next) slot.host.requestPreview(change.operations)
-        }
+        edits.findTimeToCover(plan, TimeAsker.Coverage(next))
     }
 
     fun stopAsking() {
@@ -205,6 +197,13 @@ internal fun CoverageSuggestion(slot: Slot) {
     }
 
     PlanChangeSuggestion(SlotItem.Coverage, title, slot) {
+        // Focus moves to the suggestion once the search answers, as the control that asked gives way.
+        ActOn(edits.outcomes.coverageFound) { (next, outcome) ->
+            if (state.asking == next) focus()
+            val time = (outcome as? TimeToCoverOutcome.Answered)?.time ?: return@ActOn
+            val change = coverageChange(page.isExam, next, time, plan.schedule.dailyMinutes.toInt()) ?: return@ActOn
+            if (coverage != null && state.asking == next) slot.host.requestPreview(change.operations)
+        }
         offer?.description?.filter { it != title }?.forEach { SuggestionDescription(it) }
         status?.let { StatusDescription(it) }
 
@@ -234,7 +233,7 @@ internal fun CoverageSuggestion(slot: Slot) {
                         )
                     }
                     if (offer == null && found == null) {
-                        FindAction(pending, retry) { ask(if (retry) state.intent else CoverageIntent.Time, focus) }
+                        FindAction(pending, retry) { ask(if (retry) state.intent else CoverageIntent.Time) }
                     }
                     if (studiesEverything) {
                         SuggestionAction(stringResource(R.string.plan_study_everything_after_exam), onClick = {
@@ -254,7 +253,7 @@ internal fun CoverageSuggestion(slot: Slot) {
                                 SuggestionMenuItem(
                                     stringResource(R.string.plan_move_date),
                                     done,
-                                ) { ask(CoverageIntent.Date, focus) }
+                                ) { ask(CoverageIntent.Date) }
                             }
                             if (canChooseFocus(plan)) {
                                 SuggestionMenuItem(stringResource(R.string.plan_choose_focus), done) {
@@ -406,23 +405,25 @@ private fun DateOverSuggestion(
     val search = state.dateSearch
     val retry = search == DateSearch.Failed || search == DateSearch.Building
 
+    ActOn(slot.edits.outcomes.pastDateFound) { (request, found) ->
+        if (state.waiting != request) return@ActOn
+        state.waiting = 0
+        val date = (found as? TimeToCoverOutcome.Answered)?.time?.fittingDate?.toJavaLocalDate()
+        date?.let { slot.host.requestPreview(CoverageChange.Date(it).operations) }
+        state.dateSearch =
+            when (found) {
+                is TimeToCoverOutcome.Answered -> if (date == null) DateSearch.NoDate else null
+                TimeToCoverOutcome.Building -> DateSearch.Building
+                TimeToCoverOutcome.Failed -> DateSearch.Failed
+                TimeToCoverOutcome.Stale -> null
+            }
+    }
+
     fun findDate() {
         val request = ++state.searches
         state.waiting = request
         state.dateSearch = DateSearch.Finding
-        slot.edits.findTimeToCover(page.plan) { found ->
-            if (state.waiting != request) return@findTimeToCover
-            state.waiting = 0
-            val date = (found as? TimeToCoverOutcome.Answered)?.time?.fittingDate?.toJavaLocalDate()
-            date?.let { slot.host.requestPreview(CoverageChange.Date(it).operations) }
-            state.dateSearch =
-                when (found) {
-                    is TimeToCoverOutcome.Answered -> if (date == null) DateSearch.NoDate else null
-                    TimeToCoverOutcome.Building -> DateSearch.Building
-                    TimeToCoverOutcome.Failed -> DateSearch.Failed
-                    TimeToCoverOutcome.Stale -> null
-                }
-        }
+        slot.edits.findTimeToCover(page.plan, TimeAsker.PastDate(request))
     }
 
     fun stopWaiting() {

@@ -67,6 +67,7 @@ import androidx.compose.ui.window.DialogWindowProvider
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.ContentWritingWait
+import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FullScreenDialog
@@ -101,25 +102,25 @@ internal data class PlanEdits(
     val failed: Set<PlanPart> = emptySet(),
     val latest: EditorChange? = null,
     val changes: Map<UUID, EditorChange> = emptyMap(),
-    val change: (PlanPart, List<PlanOp>, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
+    /** Saves a part's operations; what its answer does is the asker's (null: nothing besides the plan). */
+    val change: (PlanPart, List<PlanOp>, PlanAsker?) -> Unit = { _, _, _ -> },
     val undo: (PlanChange) -> Unit = {},
-    val setRegion: (String?, () -> Unit) -> Unit = { _, _ -> },
-    val setContentCountry: (String, () -> Unit) -> Unit = { _, _ -> },
+    val setRegion: (String?) -> Unit = {},
+    val setContentCountry: (String) -> Unit = {},
     val retryCountryRebuild: () -> Unit = {},
     val timeToCover: TimeToCoverState = TimeToCoverState.Idle,
-    val findTimeToCover: (Plan, (TimeToCoverOutcome) -> Unit) -> Unit = { _, _ -> },
+    val findTimeToCover: (Plan, TimeAsker?) -> Unit = { _, _ -> },
     val chooseFocus: () -> Unit = {},
     val studyEverything: () -> Unit = {},
-    val chooseExamOption: (group: String, subjects: List<String>, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
-    val chooseTools: (ToolAnswer, (PlanChangeResult?) -> Unit) -> Unit = { _, _ -> },
+    val chooseExamOption: (group: String, subjects: List<String>, PlanAsker?) -> Unit = { _, _, _ -> },
+    val chooseTools: (ToolAnswer, PlanAsker?) -> Unit = { _, _ -> },
     val setupLessons: ContentWritingWait? = null,
     val preview: suspend (List<PlanOp>) -> PlanChangePreview? = { null },
     val basesAdvice: BasesAdviceAsk? = null,
     val askBasesAdvice: (Plan) -> Unit = {},
     val sheetAnswers: Map<UUID, PlanChangeResult?> = emptyMap(),
-    val answerSheet: (opening: UUID, PlanChangeResult?) -> Unit = { _, _ -> },
-    /** Said in the app's snackbars, since the save it reports can end after a recreated window took this one's place. */
-    val saveFailed: () -> Unit = {},
+    /** What the saves and searches asked from here lead to, which the screen acts on. */
+    val outcomes: PlanOutcomes = PlanOutcomes(),
 ) {
     fun isPending(part: PlanPart) = part in pending
 
@@ -231,6 +232,13 @@ internal fun PlanEditor(
     val wide = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val drafts = rememberSaveable(saver = EditorDrafts.Saver) { EditorDrafts() }
 
+    ActOn(edits.outcomes.aimPicked) { drafts.picking = null }
+    ActOn(edits.outcomes.regionSaved) { drafts.picking = null }
+    ActOn(edits.outcomes.countrySaved) {
+        drafts.countryAsked = null
+        drafts.picking = null
+    }
+
     if (wide) {
         SidePanel(onDismiss) { PlanEditorBody(page, edits, section, onClose = onDismiss, drafts = drafts) }
     } else {
@@ -315,15 +323,8 @@ internal fun ColumnScope.PlanEditorBody(
                     languageAim.choices,
                     open = drafts.picking == PlanPicker.Aim,
                     onOpenChange = { open -> drafts.picking = if (open) PlanPicker.Aim else null },
-                    onPick = { next, done ->
-                        edits.change(PlanPart.Aim, listOf(PlanOp.Aim(next))) {
-                            if (it?.status ==
-                                PlanChangeResult.Status.APPLIED
-                            ) {
-                                done()
-                            }
-                        }
-                    },
+                    // Its picker closes once the aim applied, through the editor's outcomes.
+                    onPick = { next, _ -> edits.change(PlanPart.Aim, listOf(PlanOp.Aim(next)), PlanAsker.AimPicker) },
                     pending = edits.isPending(PlanPart.Aim),
                     failed = edits.hasFailed(PlanPart.Aim),
                     note = stringResource(R.string.onboarding_aim_description),

@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.DateStyle
@@ -148,7 +149,7 @@ internal fun DailyCoverage(
                     noteStatus = noteStatus(search),
                     offer = timeOffer(found, line, minutes),
                     offerAsButton = true,
-                    onRetry = { edits.findTimeToCover(plan) {} },
+                    onRetry = { edits.findTimeToCover(plan, null) },
                     onUseOffer = {
                         onUseTime(it)
                         // The button goes once its time is the plan's, so the keyboard waits on the picker.
@@ -249,25 +250,28 @@ internal fun MoveDateSwitch(
     val date = (edits.timeToCover.forPlan(page.plan) as? TimeToCoverState.Answered)?.time?.fittingDate?.toJavaLocalDate()
     val pending = finding || edits.isPending(PlanPart.Schedule)
 
+    ActOn(edits.outcomes.moveDateFound) { found ->
+        finding = false
+        outcome =
+            when (found) {
+                is TimeToCoverOutcome.Answered -> if (found.time.fittingDate == null) MoveOutcome.NoDate else null
+                TimeToCoverOutcome.Building -> MoveOutcome.Building
+                TimeToCoverOutcome.Failed -> MoveOutcome.Failed
+                TimeToCoverOutcome.Stale -> null
+            }
+    }
+
     fun move() {
         // Another change saving (a date picked, an Undo) is the learner's newer word.
         if (pending || edits.pending.isNotEmpty() || edits.latest?.undoing == true) return
         outcome = null
         if (date == null) {
             finding = true
-            edits.findTimeToCover(page.plan) { found ->
-                finding = false
-                outcome =
-                    when (found) {
-                        is TimeToCoverOutcome.Answered -> if (found.time.fittingDate == null) MoveOutcome.NoDate else null
-                        TimeToCoverOutcome.Building -> MoveOutcome.Building
-                        TimeToCoverOutcome.Failed -> MoveOutcome.Failed
-                        TimeToCoverOutcome.Stale -> null
-                    }
-            }
+            edits.findTimeToCover(page.plan, TimeAsker.MoveDate)
             return
         }
-        edits.change(PlanPart.Schedule, listOf(PlanOp.TargetDate(date))) { if (it != null) focus.pickedTime.requestFocus() }
+        // Once saved, the keyboard goes to the time picked (DailyMinutes acts on it).
+        edits.change(PlanPart.Schedule, listOf(PlanOp.TargetDate(date)), PlanAsker.MoveDate)
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

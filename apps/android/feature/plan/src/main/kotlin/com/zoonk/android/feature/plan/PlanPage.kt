@@ -213,7 +213,6 @@ internal fun PlanPage(
             latest = latest,
             changes = changes,
             change = viewModel::change,
-            saveFailed = { app.snackbars.show(R.string.plan_save_failed) },
             undo = viewModel::undo,
             setRegion = viewModel::setRegion,
             setContentCountry = viewModel::setContentCountry,
@@ -229,7 +228,7 @@ internal fun PlanPage(
             basesAdvice = basesAdvice,
             askBasesAdvice = viewModel::askBasesAdvice,
             sheetAnswers = sheetAnswers,
-            answerSheet = viewModel::answerSheet,
+            outcomes = viewModel.outcomes,
         )
     val report =
         rememberReportProblem(
@@ -626,9 +625,7 @@ private fun ExamOverBar(
             keeping = edits.isPending(PlanPart.FullCourse),
             archiving = archiving,
             onArchive = onArchive,
-            onKeepStudying = {
-                edits.change(PlanPart.FullCourse, STUDY_AFTER_EXAM) { answer -> if (answer == null) edits.saveFailed() }
-            },
+            onKeepStudying = { edits.change(PlanPart.FullCourse, STUDY_AFTER_EXAM, PlanAsker.SaysFailure) },
         )
     }
 }

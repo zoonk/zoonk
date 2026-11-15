@@ -49,7 +49,7 @@ internal fun PlanActivities(
                     onClick = {
                         val activities = listOf(activity.value)
                         val operation = if (isOn) PlanOp.SkipActivities(activities) else PlanOp.RestoreActivities(activities)
-                        edits.change(PlanPart.Activities, listOf(operation)) {}
+                        edits.change(PlanPart.Activities, listOf(operation), null)
                     },
                 )
             }
@@ -71,7 +71,7 @@ internal fun PlanWrittenPractice(
         asked = WrittenPractice.Cadence.entries.firstOrNull { it.value == asked?.cadence },
         pending = edits.isPending(PlanPart.Writing),
         failed = edits.hasFailed(PlanPart.Writing),
-        onChange = { edits.change(PlanPart.Writing, listOf(PlanOp.WrittenCadence(it.value))) {} },
+        onChange = { edits.change(PlanPart.Writing, listOf(PlanOp.WrittenCadence(it.value)), null) },
     )
 }
 

@@ -108,7 +108,7 @@ internal fun FullCourseSwitch(
                     .toggleable(
                         value = on,
                         role = Role.Switch,
-                        onValueChange = { edits.change(PlanPart.FullCourse, course.operations(it)) {} },
+                        onValueChange = { edits.change(PlanPart.FullCourse, course.operations(it), null) },
                     ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -204,7 +204,7 @@ internal fun ColumnScope.StudyEverythingBody(
     fun choose() {
         val id = UUID.randomUUID()
         saved = id
-        edits.change(PlanPart.FullCourse, operations) { edits.answerSheet(id, it) }
+        edits.change(PlanPart.FullCourse, operations, PlanAsker.Sheet(id))
     }
 
     PlanSheetContent(

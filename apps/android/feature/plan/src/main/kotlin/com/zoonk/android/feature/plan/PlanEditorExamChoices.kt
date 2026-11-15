@@ -60,7 +60,7 @@ private fun ExamChoiceOptions(
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionLabel(choice.group)
         if (choice.take > 1) {
-            ExamChoicePicks(choice, saving = false, enabled = !pending, onSave = { edits.chooseExamOption(choice.group, it) {} })
+            ExamChoicePicks(choice, saving = false, enabled = !pending, onSave = { edits.chooseExamOption(choice.group, it, null) })
         } else {
             val shown =
                 edits
@@ -73,7 +73,7 @@ private fun ExamChoiceOptions(
                     SelectionChip(
                         text = option.shortName ?: option.name,
                         selected = option.name in shown,
-                        onClick = { if (option.name !in shown) edits.chooseExamOption(choice.group, listOf(option.name)) {} },
+                        onClick = { if (option.name !in shown) edits.chooseExamOption(choice.group, listOf(option.name), null) },
                         role = Role.RadioButton,
                         enabled = !pending,
                     )

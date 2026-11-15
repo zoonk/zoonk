@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.components.DailyTimePicker
 import com.zoonk.android.ui.components.TimeSelect
 import com.zoonk.android.ui.components.WeekendTime
@@ -84,14 +85,15 @@ private fun DailyMinutes(
 
     // Asked when the editor opens, never on loading the page: it plans the goal at many times.
     LaunchedEffect(dated, search == TimeToCoverState.Idle) {
-        if (dated && search == TimeToCoverState.Idle) edits.findTimeToCover(page.plan) {}
+        if (dated && search == TimeToCoverState.Idle) edits.findTimeToCover(page.plan, null)
     }
+    ActOn(edits.outcomes.dateMoved) { focus.pickedTime.requestFocus() }
 
     fun setMinutes(minutes: Int) {
         if (pending || minutes == shown) return
         val operation =
             if (weekendOn && shape.canDiffer) PlanOp.WeekdayMinutes(weekdayDays, minutes) else PlanOp.DailyMinutes(minutes)
-        edits.change(PlanPart.Schedule, listOf(operation)) {}
+        edits.change(PlanPart.Schedule, listOf(operation), null)
     }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -145,7 +147,7 @@ private fun StudyDays(
                         enabled = !(studies[weekday] && studies.count { it } == 1),
                         onToggle = { pressed ->
                             val minutes = if (pressed) minutesFor(weekday) else 0
-                            edits.change(PlanPart.Schedule, listOf(PlanOp.WeekdayMinutes(listOf(weekday), minutes))) {}
+                            edits.change(PlanPart.Schedule, listOf(PlanOp.WeekdayMinutes(listOf(weekday), minutes)), null)
                         },
                         modifier = Modifier.weight(1f),
                     )
@@ -224,7 +226,7 @@ private fun WeekendMinutes(
     val weekendDays = shape.weekendDays.map(Long::toInt)
     val shown = askedMinutes(edits.asked(PlanPart.Schedule), weekendDays) ?: (shape.weekend ?: shape.weekdays).toInt()
 
-    fun setWeekend(minutes: Int) = edits.change(PlanPart.Schedule, listOf(PlanOp.WeekdayMinutes(weekendDays, minutes))) {}
+    fun setWeekend(minutes: Int) = edits.change(PlanPart.Schedule, listOf(PlanOp.WeekdayMinutes(weekendDays, minutes)), null)
 
     WeekendTime(
         checked = weekendOn,

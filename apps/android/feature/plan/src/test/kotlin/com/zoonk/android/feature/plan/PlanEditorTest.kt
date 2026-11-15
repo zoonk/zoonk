@@ -28,7 +28,7 @@ class PlanEditorTest {
 
     private var asked by mutableStateOf(emptyMap<PlanPart, List<PlanOp>>())
     private var sheetAnswers by mutableStateOf(emptyMap<UUID, PlanChangeResult?>())
-    private val toolAnswered = mutableListOf<(PlanChangeResult?) -> Unit>()
+    private val toolAskers = mutableListOf<PlanAsker?>()
 
     private fun show(extra: String) {
         val summary = learnerSummary()
@@ -37,12 +37,11 @@ class PlanEditorTest {
             val edits =
                 PlanEdits(
                     asked = asked,
-                    chooseTools = { answer, answered ->
-                        toolAnswered += answered
+                    chooseTools = { answer, asker ->
+                        toolAskers += asker
                         asked = asked + (PlanPart.Tools to listOf(answer.operation))
                     },
                     sheetAnswers = sheetAnswers,
-                    answerSheet = { opening, result -> sheetAnswers = sheetAnswers + (opening to result) },
                 )
             ZoonkTheme { Column { PlanEditorBody(page, edits) } }
         }
@@ -58,7 +57,10 @@ class PlanEditorTest {
         compose.onNodeWithText("More later: Spreadsheet").performScrollTo().performClick()
         compose.onNodeWithContentDescription("Choose how you'll use Spreadsheet (Google Sheets or Excel)").performScrollTo().performClick()
 
-        compose.runOnIdle { toolAnswered.single()(PlanChangeResult(change = planChange(), status = PlanChangeResult.Status.APPLIED)) }
+        compose.runOnIdle {
+            val opening = (toolAskers.single() as PlanAsker.Sheet).opening
+            sheetAnswers = sheetAnswers + (opening to PlanChangeResult(change = planChange(), status = PlanChangeResult.Status.APPLIED))
+        }
 
         compose.onNodeWithText("How will you use it?").assertIsDisplayed()
     }

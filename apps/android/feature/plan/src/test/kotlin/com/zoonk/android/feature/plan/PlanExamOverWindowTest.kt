@@ -16,6 +16,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.app.rememberWindowSnackbars
@@ -71,7 +72,12 @@ class PlanExamOverWindowTest {
         val page = PlanPageState(summary.goals.first(), plan(""""status":{"kind":"pastDate","lessons":4}"""), summary)
         PlanExamOverTest.app = AppContainer.preview(application)
         PlanExamOverTest.page = page
-        PlanExamOverTest.viewModel = PlanViewModel(store, page.goal.id, PlanExamOverTest.app.writingWaits)
+        PlanExamOverTest.viewModel =
+            PlanViewModel(
+                store,
+                page.goal.id,
+                PlanExamOverTest.app.writingWaits,
+            ) { PlanExamOverTest.app.snackbars.show(R.string.plan_save_failed) }
         PlanExamOverTest.farTopics = FarTopicViewModel(store, page.goal.id)
         scenario = ActivityScenario.launch(PlanExamOverTestActivity::class.java)
 

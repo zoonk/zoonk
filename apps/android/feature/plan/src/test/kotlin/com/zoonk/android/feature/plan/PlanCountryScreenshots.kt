@@ -241,11 +241,7 @@ class PlanCountryScreenshots {
                 ),
             )
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            ContentCountryRow(goal, goal.contentCountry!!, remember { EditorDrafts() }, onPick = {
-                _,
-                _,
-                ->
-            }, pending = false, failed = false)
+            ContentCountryRow(goal, goal.contentCountry!!, remember { EditorDrafts() }, onPick = {}, pending = false, failed = false)
             CountryFacts(general)
             TutorOffer(offer(TutorToolOfferOneOf9.Kind.CONTENT_COUNTRY), routes, null, {})
             TutorOffer(offer(TutorToolOfferOneOf9.Kind.CONTENT_COUNTRY), routes, OfferSave.Saved, {})
