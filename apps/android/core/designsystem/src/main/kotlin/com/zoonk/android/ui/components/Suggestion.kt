@@ -306,7 +306,16 @@ private fun SuggestionLine(
         CompositionLocalProvider(LocalPresentation provides Presentation.Line) {
             LineLayout(
                 modifier = Modifier.heightIn(min = 56.dp).padding(8.dp),
-                mark = { Mark(PANEL_MARK) },
+                // A line that failed to save shows no done mark beside its error; the slot stays, so the words don't move.
+                mark = {
+                    if (failed &&
+                        LocalFrame.current.mark == SuggestionMark.Done
+                    ) {
+                        Spacer(Modifier.size(PANEL_MARK * glyphScale()))
+                    } else {
+                        Mark(PANEL_MARK)
+                    }
+                },
                 summary = {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
