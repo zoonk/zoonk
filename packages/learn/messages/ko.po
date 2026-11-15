@@ -8248,6 +8248,11 @@ msgid "By topic"
 msgstr "주제별"
 
 #: src/mock/mock-result-details.tsx
+msgctxt "RQfEXO"
+msgid "See details"
+msgstr "자세히 보기"
+
+#: src/mock/mock-result-details.tsx
 msgctxt "2mUitd"
 msgid "Answers"
 msgstr "답변 수"

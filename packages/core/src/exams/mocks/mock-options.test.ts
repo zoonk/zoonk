@@ -199,6 +199,26 @@ describe(listMockOptions, () => {
     expect(half).toMatchObject({ day: 1, kind: "half", objectiveOnly: true, written: [] });
   });
 
+  it("estimates a day of questions by learners' pace and a day with its essay by its time limit", () => {
+    const essays = [{ area: "Redação", itemId: "redacao" }];
+
+    const options = listMockOptions({
+      essays,
+      goalAreas: GOAL_AREAS,
+      pace: 2,
+      structure: TWO_DAYS,
+    });
+
+    const days = options
+      .filter((option) => option.kind === "full")
+      .map(({ day, estimatedMinutes, minutes }) => ({ day, estimatedMinutes, minutes }));
+
+    expect(days).toStrictEqual([
+      { day: 1, estimatedMinutes: 330, minutes: 330 },
+      { day: 2, estimatedMinutes: 180, minutes: 300 },
+    ]);
+  });
+
   it("offers a day that is all written as a full mock when the exam has its essays", () => {
     const writtenOnly: ExamStructure = {
       ...OAB,
