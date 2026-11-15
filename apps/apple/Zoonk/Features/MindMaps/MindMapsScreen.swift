@@ -15,17 +15,29 @@ struct MindMapsScreen: View {
   var body: some View {
     if let goal = learner.summary.value?.shownGoal {
       let list = store.list(goalId: goal.id)
+      let stop = store.shownStop(goalId: goal.id)
 
-      content(list: list, goal: goal)
-        .barTitleAfterHero(
-          String(localized: "Mind maps", table: "MindMaps", comment: "Title of the mind maps page")
-        )
-        .loads(list)
-        .mindMapSaveFailureAlert(goalId: goal.id)
-        // One follower for every map on its way, each at its own pace.
-        .task(id: Following(goalId: goal.id, maps: list.value)) {
-          await store.followList(goalId: goal.id)
-        }
+      // The offer's stop holds until a read lifts it; its day, by this device's clock, only says
+      // when to read the offer again, whichever tab is shown and with no chapter listed.
+      OpeningClock(availableAt: stop?.availableAt) { now in
+        let isOver = stop?.isOver(at: now) ?? false
+
+        content(list: list, goal: goal)
+          .task(id: isOver) {
+            if isOver {
+              await store.readOfferAgain(goalId: goal.id, now: now)
+            }
+          }
+      }
+      .barTitleAfterHero(
+        String(localized: "Mind maps", table: "MindMaps", comment: "Title of the mind maps page")
+      )
+      .loads(list)
+      .mindMapSaveFailureAlert(goalId: goal.id)
+      // One follower for every map on its way, each at its own pace.
+      .task(id: Following(goalId: goal.id, maps: list.value)) {
+        await store.followList(goalId: goal.id)
+      }
     }
   }
 
@@ -209,21 +221,11 @@ private struct MindMapCreateSection: View {
   let maps: GoalMindMaps
   let notMade: [ChapterMindMap]
 
-  /// The offer's stop takes the rows' Create until a read lifts it; its day, by this device's
-  /// clock, only says when to read the offer again.
+  /// The offer's stop takes the rows' Create until a read lifts it.
   var body: some View {
     let stop = store.shownStop(goalId: goalId)
 
-    OpeningClock(availableAt: stop?.availableAt) { now in
-      let isOver = stop?.isOver(at: now) ?? false
-
-      section(stop: stop, canStart: stop == nil)
-        .task(id: isOver) {
-          if isOver {
-            await store.readOfferAgain(goalId: goalId, now: now)
-          }
-        }
-    }
+    section(stop: stop, canStart: stop == nil)
   }
 
   /// A failed map's row keeps its Try again, whose retry is free.

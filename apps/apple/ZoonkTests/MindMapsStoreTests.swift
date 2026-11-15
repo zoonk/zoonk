@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -926,6 +927,36 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertNil(line([drawing]))
   }
 
+  /// RV81: a list with no chapters keeps its stop, so the page itself reads it again at the stop's
+  /// day, whichever tab is shown, as main's `useReadWhenOfferOpens` does.
+  func testAnEmptyStoppedListReadsAgainAtItsStop() async throws {
+    let stop = MindMapAllowanceStop(
+      availableAt: .now.addingTimeInterval(1), period: "rolling30Days", reason: .limitReached,
+      resource: .mindMap)
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    await api.answerLists(chapters: [], saved: [])
+    await api.stopNewMaps(stop)
+    let session = SessionStore.preview(account: .mindMapsTestAccount)
+    let cache = AppCache(session: session)
+    let store = MindMapsStore(api: api, cache: cache, drawingPoll: .zero, writingPoll: .zero)
+    let learner = LearnerSummaryStore(api: OneGoalSummaryStub(), cache: cache)
+    await learner.summary.load()
+    await store.list(goalId: "goal").load()
+
+    try show(
+      MindMapsScreen()
+        .environment(store)
+        .environment(learner)
+        .environment(session)
+        .environment(AppRouter())
+        .zoonkStyles())
+
+    try await Task.sleep(for: .seconds(2.5))
+
+    let calls = await api.calls
+    XCTAssertEqual(calls.list, 2, "The page reads the list again once, at the stop's day")
+  }
+
   private static let chapterKey = MindMapKey(kind: .chapter, targetId: "chapter")
   private static let chapterTarget = SaveTarget(
     key: chapterKey, title: "Chapter", chapterId: "chapter")
@@ -1229,3 +1260,37 @@ extension CurrentAccount {
 
 private let emptyLessonMap = try! JSONDecoder().decode(
   LessonSummary.self, from: Data(#"{"shape":"hub","ideas":[]}"#.utf8))
+
+/// One goal, "goal", which the Mind maps page shows.
+private struct OneGoalSummaryStub: LearnerSummaryAPIClient {
+  func getSummary(token: String) async throws -> LearnerSummary {
+    LearnerSummary(
+      activeGoalID: "goal",
+      analytics: LearnerAnalytics(
+        disabled: false, goalKind: nil, plan: "free", planPhase: nil, usageDataSharing: nil,
+        username: nil),
+      buddy: BuddyLook(), buddyName: nil,
+      goals: [
+        LearnerGoal(
+          dailyMinutes: 15, id: "goal", kind: .learn, language: "en", status: .active,
+          targetDate: nil, displayName: "Finance", title: "Finance")
+      ],
+      identity: LearnerIdentity(isAnonymous: false, signedInAt: .now, userID: "learner"),
+      level: nil, nextChangeAt: .distantFuture,
+      places: LearnerPlaces(
+        certificates: false, completedLessons: false, exam: false, mindMaps: true,
+        readyMistakes: 0, speaking: false),
+      readAt: .now, tier: .free, timeZone: "America/Sao_Paulo", todayBlocksLeft: nil)
+  }
+
+  func switchGoal(token: String, goalID: String) async throws {}
+  func setTargetRegion(token: String, goalID: String, region: String?) async throws -> Bool {
+    true
+  }
+  func setContentCountry(token: String, goalID: String, country: String?) async throws
+    -> ContentCountryChange
+  {
+    .notOffered
+  }
+  func retryRebuild(token: String, goalID: String) async throws {}
+}
