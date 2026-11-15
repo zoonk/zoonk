@@ -86,9 +86,10 @@ function useTabName(href: string): string | undefined {
 
 /**
  * From `lg` the sidebar is the way between the pages it lists, so a page it lists has no way back
- * there. A learner's sidebar lists their own pages, a visitor's the catalog. Which sidebar this is
- * comes from `data-signed-in`, which a script sets before the first paint, never from the
- * sidebar's current mark, which streams in after it: the bar draws no way back it then hides.
+ * there. A page says so (`listed`) only in the state this learner's sidebar lists it, from the
+ * sidebar's own source, and the bar reads whose sidebar this is from `data-signed-in`, which a
+ * script sets before the first paint, never from the sidebar's current mark, which streams in
+ * after it: the bar draws no way back it then hides.
  */
 const LISTED_IN_SIDEBAR_CLASS = {
   learner: "lg:[[data-signed-in]_&]:hidden",
