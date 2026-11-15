@@ -77,15 +77,9 @@ internal fun DroppedCallScreen(
     title: String,
     actions: DroppedCallActions,
 ) {
-    // Once the day the cap gave comes, it's a plain dropped call that can be called again.
-    val shown =
-        if (dropped.reason == DroppedReason.Limit &&
-            limitLifted(limit)
-        ) {
-            DroppedCall(reason = null, DroppedRetry.CallAgain)
-        } else {
-            dropped
-        }
+    // Once the day the cap gave comes, nothing ran out: no title says it did, and the call can be made again.
+    val opened = dropped.reason == DroppedReason.Limit && limitLifted(limit)
+    val shown = if (opened) DroppedCall(reason = null, DroppedRetry.CallAgain) else dropped
     // Leaving a dropped call ends it, so what was said still gets its feedback.
     BackHandler(onBack = actions.onEnd)
     CallFrame(
@@ -95,8 +89,14 @@ internal fun DroppedCallScreen(
         lonePage = true,
     ) {
         item(key = "dropped") {
-            CallOffMessage(stringResource(R.string.conversation_dropped_title), Modifier.callItem()) {
-                DroppedReasonText(shown.reason, limit, characterName, actions)
+            CallOffMessage(if (opened) null else stringResource(R.string.conversation_dropped_title), Modifier.callItem()) {
+                if (opened) {
+                    Muted(
+                        stringResource(R.string.limit_try_again_now),
+                    )
+                } else {
+                    DroppedReasonText(shown.reason, limit, characterName, actions)
+                }
             }
         }
     }
@@ -128,7 +128,7 @@ private fun DroppedReasonText(
 
         DroppedReason.Limit -> {
             val reached = limit ?: Limit.Reached(LimitTier.Plus, LimitPeriod.Day)
-            Reason(callLimitTitle(reached)) {
+            Reason(callLimitTitle(reached).orEmpty()) {
                 comesBackLine(reached)?.let { Muted(it) }
                 LimitActions(reached, actions.onCreateAccount, actions.onSubscribe)
             }

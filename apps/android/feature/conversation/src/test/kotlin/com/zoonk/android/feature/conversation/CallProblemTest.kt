@@ -28,7 +28,10 @@ class CallProblemTest {
 
     private val clock by lazy { TestClock(compose.mainClock) }
 
-    /** A call refused for the month's cap: once the day comes on the open screen, the bar offers Try again, which starts the call again. */
+    /**
+     * A call refused for the month's cap: once the day comes on the open screen, nothing ran out, so no title
+     * says it did, and the bar offers Try again, which starts the call again.
+     */
     @Test
     fun aRefusedCallOffersTryAgainOnceItsDayComes() {
         var retries = 0
@@ -51,6 +54,8 @@ class CallProblemTest {
         clock.passOpening()
         compose.waitUntil(10_000) { compose.onAllNodesWithText("Try again").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("You can try again now.").assertExists()
+        compose.onNodeWithText("You've used your call time").assertDoesNotExist()
+        compose.onNodeWithText("Subscribe").assertDoesNotExist()
         compose.onNodeWithText("Try again").performClick()
 
         assertEquals(1, retries)

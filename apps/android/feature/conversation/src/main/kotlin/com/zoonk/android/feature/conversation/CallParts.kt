@@ -321,7 +321,7 @@ internal fun CallNote(
 /** A call that can't go on: what happened, as a headline and a line. */
 @Composable
 internal fun CallOffMessage(
-    title: String,
+    title: String?,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -331,7 +331,7 @@ internal fun CallOffMessage(
         },
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+        title?.let { Text(it, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall) }
         content()
     }
 }

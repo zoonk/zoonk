@@ -27,7 +27,7 @@ class DroppedCallScreenTest {
 
     private val clock by lazy { TestClock(compose.mainClock) }
 
-    /** A call the month's cap cut off: once the day comes, the cap's words go and it's a dropped call that can be called again. */
+    /** A call the month's cap cut off: once the day comes, it's the one sentence "You can try again now." with no title, and Call again. */
     @Test
     fun aCallTheCapCutOffCanBeCalledAgainOnceItsDayComes() {
         var retries = 0
@@ -52,7 +52,8 @@ class DroppedCallScreenTest {
         clock.passOpening()
         compose.waitUntil(10_000) { compose.onAllNodesWithText("Call again").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("You've used your call time").assertDoesNotExist()
-        compose.onNodeWithText("Call again, or end the call to get feedback on what you said.").assertExists()
+        compose.onNodeWithText("The call dropped").assertDoesNotExist()
+        compose.onNodeWithText("You can try again now.").assertExists()
         compose.onNodeWithText("Call again").performClick()
 
         assertEquals(1, retries)

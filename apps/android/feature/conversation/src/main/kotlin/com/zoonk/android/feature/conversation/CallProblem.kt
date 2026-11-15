@@ -162,8 +162,9 @@ internal fun ChallengeCallGate(onSubscribe: () -> Unit) {
     )
 }
 
+/** What ran out, or none once its day has come. */
 @Composable
-internal fun callLimitTitle(limit: Limit.Reached) = limitWords(limit, LimitSubject.Calls).title.orEmpty()
+internal fun callLimitTitle(limit: Limit.Reached): String? = limitWords(limit, LimitSubject.Calls).title
 
 @Composable
 private fun ProblemMessage(
