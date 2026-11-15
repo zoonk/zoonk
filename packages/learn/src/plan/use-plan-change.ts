@@ -5,6 +5,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useTransition } from "react";
 import { useChangeSaveFailed } from "../_components/save-error";
 import { useStillMounted } from "../_utils/use-still-mounted";
+import { useSharedRequest } from "./layout-shared";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
 
@@ -16,6 +17,7 @@ export function usePlanChange() {
   const [isPending, startTransition] = useTransition();
   const saveFailed = useChangeSaveFailed();
   const isMounted = useStillMounted();
+  const request = useSharedRequest("change", isPending);
 
   /**
    * `answer` runs in the change's transition, so what it shows arrives with the re-planned page,
@@ -50,8 +52,8 @@ export function usePlanChange() {
       done.resolve(outcome ?? null);
     });
 
-    return done.promise;
+    return request.track(done.promise);
   };
 
-  return { change, isPending };
+  return { change, isPending: request.busy };
 }

@@ -13,8 +13,24 @@ type EditorChangeValue = {
 
 const EditorChangeContext = createContext<EditorChangeValue | null>(null);
 
-export function PlanEditorChangeProvider({ children }: { children: React.ReactNode }) {
+/** Each opening of the editor starts with no change shown (`open`). */
+export function PlanEditorChangeProvider({
+  children,
+  open,
+}: {
+  children: React.ReactNode;
+  open: boolean;
+}) {
   const [latest, setLatest] = useState<EditorChange | null>(null);
+  const [wasOpen, setWasOpen] = useState(open);
+
+  if (open !== wasOpen) {
+    setWasOpen(open);
+
+    if (open) {
+      setLatest(null);
+    }
+  }
 
   const value = useMemo<EditorChangeValue>(
     () => ({

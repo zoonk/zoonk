@@ -4,7 +4,6 @@ import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { CalendarClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useRef, useState } from "react";
 import {
   Suggestion,
   SuggestionAction,
@@ -16,6 +15,7 @@ import {
 } from "../_components/suggestion";
 import { SuggestionMenu } from "../_components/suggestion-menu";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { useSharedMark, useSharedState } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
 import {
   CheckingChange,
@@ -44,6 +44,8 @@ function OtherOptions({ item }: { item: SlotItem }) {
     </SuggestionMenu>
   );
 }
+
+type Operations = LearnerPlanOperation[] | null;
 
 type DateSearch = "building" | "failed" | "finding" | "noDate" | null;
 
@@ -98,26 +100,26 @@ function DateOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDat
   const { plan } = usePlanScreen();
   const { dismiss, host, preview: storedPreview, requestPreview } = usePlanSuggestionSlot();
   const { apply, isPending } = useApplyPreview(item);
-  const [operations, setOperations] = useState<LearnerPlanOperation[] | null>(null);
-  const [search, setSearch] = useState<DateSearch>(null);
+  const [operations, setOperations] = useSharedState<Operations>("operations", null);
+  const [search, setSearch] = useSharedState<DateSearch>("search", null);
   // The search the learner waits for (0 for none), so one put off or superseded shows nothing.
-  const waiting = useRef(0);
-  const asked = useRef(0);
+  const waiting = useSharedMark("waiting", 0);
+  const asked = useSharedMark("asked", 0);
   const { title } = pastDateText({ isExam: false, lessons: item.lessons });
   const preview = currentPlanPreview({ operations: operations ?? [], plan, state: storedPreview });
 
   const showChange = async () => {
-    asked.current += 1;
-    const request = asked.current;
-    waiting.current = request;
+    asked.write(asked.read() + 1);
+    const request = asked.read();
+    waiting.write(request);
     setSearch("finding");
     const found = await finder.find();
 
-    if (waiting.current !== request) {
+    if (waiting.read() !== request) {
       return;
     }
 
-    waiting.current = 0;
+    waiting.write(0);
 
     if (found.status !== "answered") {
       setSearch(found.status === "stale" ? null : found.status);
@@ -139,7 +141,7 @@ function DateOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDat
   };
 
   const stopWaiting = () => {
-    waiting.current = 0;
+    waiting.write(0);
     setSearch(null);
   };
 

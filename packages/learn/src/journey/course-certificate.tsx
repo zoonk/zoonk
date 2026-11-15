@@ -4,7 +4,7 @@ import { type FieldMapView } from "@zoonk/core/view-models/map/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { AwardIcon, CircleAlertIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { DoneMark } from "../_components/status-mark";
 import {
   Suggestion,
@@ -17,6 +17,7 @@ import {
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useLevelName } from "../course/use-level-name";
+import { useSharedRequest, useSharedState } from "../plan/layout-shared";
 import { SlotContent } from "../plan/plan-suggestion-context";
 
 /**
@@ -30,17 +31,18 @@ export type PlanCertificates = {
 };
 
 function useCertificateClaim(onClaim: PlanCertificates["onClaim"]) {
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useSharedState("claimFailed", false);
   const [isPending, startTransition] = useTransition();
+  const request = useSharedRequest("claim", isPending);
 
   const claim = () => {
     startTransition(async () => {
-      const { data: claimed } = await safeAsync(onClaim);
+      const { data: claimed } = await safeAsync(() => request.track(onClaim()));
       setFailed(!claimed);
     });
   };
 
-  return { claim, failed, isPending };
+  return { claim, failed, isPending: request.busy };
 }
 
 function ClaimAction({

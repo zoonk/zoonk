@@ -20,6 +20,7 @@ import {
 import { useStillMounted } from "../_utils/use-still-mounted";
 import { ExamChoicePicks } from "./exam-choice-picks";
 import { ExamChoiceAnswers, useExamChoiceQuestion } from "./exam-choice-question";
+import { useSharedRequest } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
 import { PLAN_OPTION_CLASS } from "./plan-option-styles";
@@ -39,12 +40,15 @@ function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => vo
   const [isPending, startTransition] = useTransition();
   const saveFailed = useChangeSaveFailed();
   const isMounted = useStillMounted();
+  const request = useSharedRequest("choose", isPending);
 
   const choose = (input: { group: string; subjects: string[] }, answer?: () => void) => {
     keepFocus();
 
     startTransition(async () => {
-      const { data: outcome } = await safeAsync(() => actions.chooseExamOption(input));
+      const { data: outcome } = await safeAsync(() =>
+        request.track(actions.chooseExamOption(input)),
+      );
 
       // Updates after an `await` join the transition only when started in one again.
       startTransition(() => {
@@ -67,7 +71,7 @@ function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => vo
     });
   };
 
-  return { choose, isPending };
+  return { choose, isPending: request.busy };
 }
 
 function OneOptionChoice({
