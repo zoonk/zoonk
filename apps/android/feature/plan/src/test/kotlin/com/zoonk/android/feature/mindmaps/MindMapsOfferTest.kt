@@ -56,7 +56,7 @@ class MindMapsOfferTest {
     private val clock by lazy { TestClock(compose.mainClock) }
     private val chapters =
         listOf(mapJson(1, "Waves", "available"), mapJson(2, "Light", "available"), mapJson(3, "Optics", "available", lessonsToWrite = 2))
-    private val fresh = goalMindMaps(chapters, offer = """{"eligible":2,"needLessons":2,"startable":2,"stop":null}""")
+    private val fresh = goalMindMaps(chapters, offer = FRESH_OFFER)
 
     @After
     fun stop() = scope.cancel()
@@ -84,7 +84,10 @@ class MindMapsOfferTest {
         }
     }
 
-    private fun waitFor(text: String) = compose.waitUntil(10_000) { compose.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty() }
+    private fun waitFor(
+        text: String,
+        substring: Boolean = false,
+    ) = compose.waitUntil(10_000) { compose.onAllNodesWithText(text, substring = substring).fetchSemanticsNodes().isNotEmpty() }
 
     /** A stop already past when the page opens still gates it, and asks for no read: only a day still to come arms one. */
     @Test
@@ -370,4 +373,49 @@ class MindMapsOfferTest {
         waitFor("You've used your mind maps")
         compose.onNodeWithText("on the way", substring = true).assertDoesNotExist()
     }
+
+    /** Main's order: maps that didn't finish come before the stop, whose notice comes before maps on their way. */
+    @Test
+    fun aMapThatDidntFinishComesBeforeTheStop() {
+        val failed = chapters + mapJson(4, "Lenses", "failed", lessonsToWrite = 3)
+        api.mindMaps = {
+            goalMindMaps(
+                failed,
+                offer =
+                    """
+                    {"eligible":2,"needLessons":2,"startable":0,
+                    "stop":{"reason":"limitReached","resource":"mindMap","period":"rolling30Days","availableAt":"${clock.start.plus(
+                        Duration.ofDays(3),
+                    )}"}}
+                    """.trimIndent(),
+            )
+        }
+        show()
+
+        waitFor("didn't finish", substring = true)
+        compose.onNodeWithText("You've used your mind maps").assertDoesNotExist()
+    }
+
+    /** A chapter under Other chapters being made opens the group on arrival, so its progress is in view; a learner's close holds. */
+    @Test
+    fun otherChaptersOpenOnArrivalWhileOneIsBeingMade() {
+        api.mindMaps = { goalMindMaps(chapters + mapJson(4, "Lenses", "writingLessons", lessonsToWrite = 3), offer = FRESH_OFFER) }
+        show()
+
+        waitFor("Lenses")
+        compose.onNodeWithText("Other chapters").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("Lenses").assertDoesNotExist()
+    }
+
+    @Test
+    fun otherChaptersStayFoldedWithNothingBeingMade() {
+        api.mindMaps = { fresh }
+        show()
+
+        waitFor("Other chapters")
+        compose.onNodeWithText("Optics").assertDoesNotExist()
+    }
 }
+
+private const val FRESH_OFFER = """{"eligible":2,"needLessons":2,"startable":2,"stop":null}"""
