@@ -13,6 +13,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
   @State private var failure: GoalStatusOutcome?
   @State private var resumeFailure: GoalStatusOutcome?
   @State private var isSaving = false
+  @State private var statusChange: Task<Void, Never>?
   @State private var isRenaming = false
   @State private var name = ""
   @State private var renameFailed = false
@@ -93,6 +94,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
           "Check your connection and try again.", tableName: "Plan",
           comment: "Explains a failed save")
       }
+      .onDisappear { statusChange?.cancel() }
   }
 
   private var label: Text {
@@ -229,7 +231,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
   }
 
   private func set(_ status: GoalStatusChange) {
-    Task {
+    statusChange = Task {
       isSaving = true
       let outcome = await store.setStatus(status, goalId: goal.id)
       isSaving = false

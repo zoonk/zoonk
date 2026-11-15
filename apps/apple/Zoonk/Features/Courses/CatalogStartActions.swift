@@ -4,7 +4,7 @@ struct CatalogStartActions: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
-  @Environment(CatalogGoalSwitch.self) private var goalSwitch
+  @Environment(GoalSwitch.self) private var goalSwitch
 
   let courseID: String
   /// The chapter a chapter page starts the plan from; nil for the whole course.
@@ -100,12 +100,12 @@ struct CatalogStartActions: View {
   }
 }
 
-/// Continuing a goal that follows the course: the page's, above panes a resize rebuilds, so its
-/// start, what it leads to and its failure stay with the page. Leaving the page ends it, success
-/// or failure: the next visit shows nothing of it.
+/// Switching the goal the tabs show from a page, such as continuing a goal that follows a course:
+/// the page's, above panes a resize rebuilds, so its start, what it leads to and its failure stay
+/// with the page. Leaving the page ends it, success or failure: the next visit shows nothing of it.
 @MainActor
 @Observable
-final class CatalogGoalSwitch {
+final class GoalSwitch {
   private(set) var switchingTo: LearnerGoal.ID?
   var failed = false
   @ObservationIgnored private var task: Task<Void, Never>?
@@ -151,7 +151,7 @@ extension View {
 }
 
 private struct CatalogGoalSwitchOwner: ViewModifier {
-  @State private var goalSwitch = CatalogGoalSwitch()
+  @State private var goalSwitch = GoalSwitch()
 
   func body(content: Content) -> some View {
     content
