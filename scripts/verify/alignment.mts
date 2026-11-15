@@ -14,6 +14,7 @@ import {
   rowName,
 } from "./alignment-geometry.mts";
 import { lineLeads } from "./alignment-line.mts";
+import { pinnedLeads } from "./alignment-pinned.mts";
 import { pairLeads, reconcile } from "./alignment-scenarios.mts";
 import { type Summary, summarize } from "./alignment-summary.mts";
 import {
@@ -201,6 +202,7 @@ export function evaluateCapture(capture: Capture): AlignmentFinding[] {
     ...filledLeads(context),
     ...bleedLeads(context),
     ...spanLeads(context),
+    ...pinnedLeads(context),
   ];
 }
 

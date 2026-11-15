@@ -15,6 +15,7 @@ export function readAlignment({
   anchors = [],
   columns,
   pieces,
+  pinned: pinnedBars,
   surfaces,
 }: {
   actions: string;
@@ -22,6 +23,8 @@ export function readAlignment({
   anchors?: { id: string; web: string }[];
   columns: string;
   pieces: { name: string; web: WebPiece }[];
+  /** Bars pinned to the screen's bottom, which nothing rests under at the scroll's end. */
+  pinned: string;
   surfaces: string;
 }): AlignmentPage {
   const LABEL_LENGTH = 32;
@@ -903,7 +906,23 @@ export function readAlignment({
     ];
   });
 
-  const all = [...elements, ...actions, ...anchored, ...readBleeds()];
+  // Only at the scroll's end can the page be judged for what it leaves under a pinned bar.
+  const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 1;
+
+  const pinned = (atEnd ? [...document.querySelectorAll(pinnedBars)] : [])
+    .filter((bar) => present(bar) && ["fixed", "sticky"].includes(getComputedStyle(bar).position))
+    .map((bar, index): CaptureElement => ({
+      bounds: bounds(boxOf(bar)),
+      group: null,
+      id: `pinned.${index}`,
+      ink: null,
+      name: name(bar),
+      part: "pinned",
+      piece: "page",
+      row: null,
+    }));
+
+  const all = [...elements, ...actions, ...anchored, ...pinned, ...readBleeds()];
 
   // Null when two surfaces overlap and the document shows no declared surface where they do.
   if (top === null) {

@@ -170,6 +170,7 @@ export const WEB_TABLE = {
   actions: ACTIONS,
   columns: COLUMNS,
   pieces: PIECES.flatMap((piece) => (piece.web ? [{ name: piece.name, web: piece.web }] : [])),
+  pinned: "[data-slot=bottom-bar]",
   surfaces: SURFACES,
 };
 
