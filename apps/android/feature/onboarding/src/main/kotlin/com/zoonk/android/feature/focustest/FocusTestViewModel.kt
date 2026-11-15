@@ -9,6 +9,7 @@ import androidx.lifecycle.serialization.saved
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.setup.SetupDrafts
@@ -32,12 +33,13 @@ internal data class ProposalAnswer(
     val change: PlanChange,
 )
 
-/** The host's way out of the test: onboarding saves its step, a plan goes back to it. */
+/** What the host saves when the learner leaves the test: onboarding its step; a plan nothing. */
 internal typealias LeaveTest = suspend () -> WriteOutcome<*>
 
 /**
  * An exam goal's Focus test, in onboarding or opened from the plan. Starting, answering and closing
- * are POSTs from the learner's taps; opening it only reads.
+ * are POSTs from the learner's taps; opening it only reads. Leaving saves [hostSave], then publishes
+ * [left] for the host's screen to act on.
  */
 internal class FocusTestViewModel(
     private val goalId: String,
@@ -45,7 +47,17 @@ internal class FocusTestViewModel(
     private val plans: PlanStore,
     private val drafts: SetupDrafts?,
     handle: SavedStateHandle,
+    private val hostSave: LeaveTest = { WriteOutcome.Done(Unit) },
 ) : ViewModel() {
+    /** This visit to the test: leaving it, and a save that fails, show only on it. */
+    val visit = Visit()
+
+    /** The learner left the test and the host saved it: the host goes on. */
+    val left = visit.outcome<Unit>()
+
+    private val failure = visit.outcome<Unit>()
+    private val saveFailure = visit.outcome<Int>()
+
     private var savedEntered by handle.saved { false }
 
     /** The learner started or resumed a sitting in this visit, so its questions show instead of its resume screen. */
@@ -59,15 +71,13 @@ internal class FocusTestViewModel(
     var pressed by mutableStateOf<Pressed?>(null)
         private set
 
-    var failed by mutableStateOf(false)
-        private set
+    val failed get() = failure.value != null
 
     var answering by mutableStateOf(false)
         private set
 
-    /** Answers or a stop that didn't save, said on the question they came from. */
-    var saveFailures by mutableStateOf(0)
-        private set
+    /** Answers or a stop that didn't save on this visit, said on the question they came from. */
+    val saveFailures get() = saveFailure.value ?: 0
 
     /** The proposal accepted after its numbers moved, as it now stands: the result asks again with today's. */
     var repricedProposal by mutableStateOf<PlanChange?>(null)
@@ -89,12 +99,12 @@ internal class FocusTestViewModel(
     /** One of the wait's reads: true when it came back. */
     suspend fun check(): Boolean = store.placements[goalId].refreshed()
 
-    fun start(onDone: LeaveTest) =
-        save(Pressed.Main) {
+    fun start() =
+        save(Pressed.Main) { asked ->
             when (val started = store.startPlacementSitting(goalId)) {
                 is WriteOutcome.Done -> {
                     enter()
-                    started.value.sittingOver()?.let { close(onDone) } ?: true
+                    started.value.sittingOver()?.let { close(asked) } ?: true
                 }
 
                 WriteOutcome.Obsolete -> {
@@ -121,25 +131,25 @@ internal class FocusTestViewModel(
         question: FocusTestPhase.Question,
         answer: PlacementAnswer,
         durationMs: Long,
-        onDone: LeaveTest,
     ) {
         if (busy) return
         answering = true
-        failed = false
+        failure.clear()
+        val asked = visit.number
         val draft = drafts?.sending(goalId, typedDraftStep(question.item.itemId))
         viewModelScope.launch {
             when (val sent = store.answerPlacement(goalId, question.item.itemId, answer, durationMs)) {
                 is WriteOutcome.Done -> {
-                    saveFailures = 0
+                    saveFailure.clear()
                     draft?.remove()
                     // A sitting that's over closes in the same save; if that fails, its screen holds the retry.
-                    if (sent.value.placement.sittingOver() != null) failed = !close(onDone)
+                    if (sent.value.placement.sittingOver() != null && !close(asked)) failure.send(asked, Unit)
                 }
 
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    saveFailures++
+                    saveFailure.send(asked, saveFailures + 1)
                 }
             }
             answering = false
@@ -147,25 +157,23 @@ internal class FocusTestViewModel(
     }
 
     /** "Stop and use my answers": closes the sitting with what it has. */
-    fun stop(onDone: LeaveTest) {
+    fun stop() {
         if (busy) return
         answering = true
+        val asked = visit.number
         viewModelScope.launch {
-            if (!close(onDone)) saveFailures++
+            if (!close(asked)) saveFailure.send(asked, saveFailures + 1)
             answering = false
         }
     }
 
     /** "See my result" on a sitting that's over. */
-    fun finish(onDone: LeaveTest) = save(Pressed.Main) { close(onDone) }
+    fun finish() = save(Pressed.Main) { close(it) }
 
     /** A learner who never started has nothing to close on a plan that's already theirs. */
-    fun leave(
-        closes: Boolean,
-        onDone: LeaveTest,
-    ) = save(Pressed.Other) { if (closes) close(onDone) else handBack(onDone) }
+    fun leave(closes: Boolean) = save(Pressed.Other) { if (closes) close(it) else handBack(it) }
 
-    fun done(onDone: LeaveTest) = save(Pressed.Main) { handBack(onDone) }
+    fun done() = save(Pressed.Main) { handBack(it) }
 
     fun decide(
         change: PlanChange,
@@ -209,27 +217,34 @@ internal class FocusTestViewModel(
     }
 
     /** Closing applies the answers; a test that still has none is only skipped, and the host moves on. */
-    private suspend fun close(onDone: LeaveTest): Boolean {
+    private suspend fun close(asked: Int): Boolean {
         val finished = store.finishPlacement(goalId, fromScratch = false)
         if (finished !is WriteOutcome.Done) return finished == WriteOutcome.Obsolete
-        val test = finished.value.focusTest?.takeIf { it.checkpoint != null } ?: return handBack(onDone)
+        val test = finished.value.focusTest?.takeIf { it.checkpoint != null } ?: return handBack(asked)
         entered = false
         savedEntered = false
         closed = test
         return true
     }
 
-    private suspend fun handBack(onDone: LeaveTest): Boolean = onDone().let { it is WriteOutcome.Done || it == WriteOutcome.Obsolete }
+    /** The host saves the test left, then goes on while the visit that [asked] lasts. */
+    private suspend fun handBack(asked: Int): Boolean {
+        val saved = hostSave()
+        if (saved is WriteOutcome.Done) left.send(asked, Unit)
+        return saved is WriteOutcome.Done || saved == WriteOutcome.Obsolete
+    }
 
+    /** [action] gets the visit it was asked on, and says whether it saved. */
     private fun save(
         button: Pressed,
-        action: suspend () -> Boolean,
+        action: suspend (asked: Int) -> Boolean,
     ) {
         if (busy) return
         pressed = button
-        failed = false
+        failure.clear()
+        val asked = visit.number
         viewModelScope.launch {
-            failed = !action()
+            if (!action(asked)) failure.send(asked, Unit)
             pressed = null
         }
     }

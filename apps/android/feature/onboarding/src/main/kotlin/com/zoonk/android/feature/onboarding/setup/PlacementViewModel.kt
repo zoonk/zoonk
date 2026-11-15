@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.serialization.saved
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.api.models.Placement
@@ -20,13 +21,20 @@ private class SentAnswer(
     val durationMs: Long,
 )
 
-/** Answering and finishing are POSTs from the learner's taps; opening it only reads. */
+/**
+ * Answering and finishing are POSTs from the learner's taps; opening it only reads. [saveStep] saves
+ * the setup's placement step once the test is finished.
+ */
 internal class PlacementViewModel(
     private val goalId: String,
     private val store: OnboardingStore,
     private val drafts: SetupDrafts?,
     handle: SavedStateHandle,
+    private val saveStep: suspend () -> WriteOutcome<*>,
 ) : ViewModel() {
+    /** This visit to the test: a save that fails says so only on it. */
+    val visit = Visit()
+
     private var savedStarted by handle.saved { false }
 
     var started by mutableStateOf(savedStarted)
@@ -35,11 +43,13 @@ internal class PlacementViewModel(
     var isSaving by mutableStateOf(false)
         private set
 
-    var saveFailures by mutableStateOf(0)
-        private set
+    private val saveFailure = visit.outcome<Int>()
+    private val finishFailure = visit.outcome<Unit>()
 
-    var finishFailed by mutableStateOf(false)
-        private set
+    /** Answers or a stop that didn't save on this visit, said on the question they came from. */
+    val saveFailures get() = saveFailure.value ?: 0
+
+    val finishFailed get() = finishFailure.value != null
 
     var isStarting by mutableStateOf(false)
         private set
@@ -63,7 +73,7 @@ internal class PlacementViewModel(
     /** Reads first, so ready questions open at once instead of flashing their wait. */
     fun start() {
         if (isStarting) return
-        finishFailed = false
+        finishFailure.clear()
         isStarting = true
         viewModelScope.launch {
             awaitingRead = !check()
@@ -86,36 +96,37 @@ internal class PlacementViewModel(
         durationMs: Long,
     ) {
         if (isSaving) return
-        finishFailed = false
+        finishFailure.clear()
         val previous = sent
         val duration = previous?.takeIf { it.question.item.itemId == question.item.itemId && it.answer == answer }?.durationMs ?: durationMs
         sent = SentAnswer(question, answer, duration)
         send()
     }
 
+    /** Finishes the test, then saves the setup's step; a stop ([fromQuestion]) says a failure on its question. */
     fun finish(
         fromScratch: Boolean,
         fromQuestion: Boolean = false,
-        onDone: suspend () -> WriteOutcome<*>,
     ) {
         if (isSaving) return
         isSaving = true
-        finishFailed = false
+        finishFailure.clear()
+        val asked = visit.number
         viewModelScope.launch {
             val outcome = store.finishPlacement(goalId, fromScratch)
-            val completed = if (outcome is WriteOutcome.Done) onDone() else outcome
+            val completed = if (outcome is WriteOutcome.Done) saveStep() else outcome
             when (completed) {
                 is WriteOutcome.Done -> {
-                    if (fromQuestion) saveFailures = 0
+                    if (fromQuestion) saveFailure.clear()
                 }
 
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
                     if (fromQuestion) {
-                        saveFailures++
+                        saveFailure.send(asked, saveFailures + 1)
                     } else {
-                        finishFailed = true
+                        finishFailure.send(asked, Unit)
                     }
                 }
             }
@@ -128,11 +139,12 @@ internal class PlacementViewModel(
         val draft = drafts?.sending(goalId, typedDraftStep(answer.question.item.itemId))
         markStarted()
         isSaving = true
+        val asked = visit.number
         viewModelScope.launch {
             when (store.answerPlacement(goalId, answer.question.item.itemId, answer.answer, answer.durationMs)) {
                 is WriteOutcome.Done -> {
-                    saveFailures = 0
-                    finishFailed = false
+                    saveFailure.clear()
+                    finishFailure.clear()
                     shown = shown.copy(answered = maxOf(shown.answered, answer.question.number))
                     sent = null
                     draft?.remove()
@@ -141,7 +153,7 @@ internal class PlacementViewModel(
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    saveFailures++
+                    saveFailure.send(asked, saveFailures + 1)
                 }
             }
             isSaving = false

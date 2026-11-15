@@ -14,7 +14,6 @@ import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.focusTestOf
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.plan.FakePlanApi
@@ -86,7 +85,7 @@ class FocusTestViewModelTest {
         val saved = handle.savedStateProvider().saveState()
         models.clear()
         return viewModel(api, SavedStateHandle.createHandle(saved, null)).also {
-            it.start { WriteOutcome.Done(Unit) }
+            it.start()
             runCurrent()
         }
     }
@@ -109,7 +108,7 @@ class FocusTestViewModelTest {
                     }
                 }
             val handle = SavedStateHandle()
-            viewModel(api, handle).start { WriteOutcome.Done(Unit) }
+            viewModel(api, handle).start()
             runCurrent()
 
             val back = restored(api, handle)
@@ -130,7 +129,7 @@ class FocusTestViewModelTest {
                 }
             val handle = SavedStateHandle()
             val first = viewModel(api, handle)
-            first.start { WriteOutcome.Done(Unit) }
+            first.start()
             runCurrent()
             assertTrue(first.failed)
             api.writeFailure = null

@@ -55,6 +55,7 @@ import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.Button
@@ -100,7 +101,8 @@ internal fun ColumnScope.PlacementStep(
     onReportSaveFailure: () -> Unit = {},
 ) {
     val drafts = LocalSetupDrafts.current
-    val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, drafts, createSavedStateHandle()) }
+    val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, drafts, createSavedStateHandle(), onDone) }
+    VisitOf(vm.visit)
     val resource = store.placements[goalId]
     val placement by resource.collectShown()
     val phase = vm.phase(placement)
@@ -108,7 +110,7 @@ internal fun ColumnScope.PlacementStep(
     val poll = rememberPoll(active = phase == PlacementPhase.Waiting && !run.isStopped) { vm.check() }
     val hold = rememberReadyHold(ready = phase != PlacementPhase.Waiting)
     val shown = if (hold.over) phase else PlacementPhase.Waiting
-    val finish = { fromScratch: Boolean -> vm.finish(fromScratch, onDone = onDone) }
+    val finish = { fromScratch: Boolean -> vm.finish(fromScratch) }
     val progress = (shown as? PlacementPhase.Question)?.spent?.toFloat()
     LaunchedEffect(progress) { onProgress(progress) }
     DisposableEffect(Unit) { onDispose { onProgress(null) } }
@@ -168,7 +170,7 @@ internal fun ColumnScope.PlacementStep(
                         saveFailures = vm.saveFailures,
                         onReportSaveFailure = onReportSaveFailure,
                         onAnswer = { answer, durationMs -> vm.answer(shown, answer, durationMs) },
-                        onStop = { vm.finish(fromScratch = false, fromQuestion = true, onDone = onDone) },
+                        onStop = { vm.finish(fromScratch = false, fromQuestion = true) },
                     )
                 }
             }

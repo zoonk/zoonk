@@ -142,10 +142,12 @@ internal class GoalSetupViewModel(
 
     fun takeRevealMoment(): Boolean = (handle.get<Boolean>("revealMoment") == true).also { handle["revealMoment"] = false }
 
+    /** The aim the learner picked saved: its sheet closes. */
+    val aimSaved = visit.outcome<Unit>()
+
     fun changeAim(
         plans: com.zoonk.android.feature.plan.PlanStore,
         aim: String,
-        onSaved: () -> Unit,
     ) {
         if (isSaving) return
         isSaving = true
@@ -165,7 +167,7 @@ internal class GoalSetupViewModel(
                 is com.zoonk.android.data.MutationResult.Done -> {
                     if (result.value.status == com.zoonk.api.models.PlanChangeResult.Status.APPLIED) {
                         store.onboardings[goalId].refresh()
-                        onSaved()
+                        aimSaved.send(started, Unit)
                     } else {
                         failure.send(started, SaveFailure())
                     }
@@ -408,15 +410,15 @@ internal class GoalSetupViewModel(
         update(flow.opening(OnboardingStep.TARGET_DATE))
     }
 
-    fun startOver(
-        goalIds: List<String>,
-        onDone: () -> Unit,
-    ) {
+    /** Start over archived what this setup made: the learner starts again from their words. */
+    val startedOver = visit.outcome<Unit>()
+
+    fun startOver(goalIds: List<String>) {
         if (isStartingOver) return
         isStartingOver = true
         val started = visit.number
         viewModelScope.launch {
-            if (store.startOver(goalIds) is WriteOutcome.Done) onDone() else failure.send(started, SaveFailure())
+            if (store.startOver(goalIds) is WriteOutcome.Done) startedOver.send(started, Unit) else failure.send(started, SaveFailure())
             isStartingOver = false
         }
     }
