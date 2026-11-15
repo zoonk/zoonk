@@ -10,11 +10,12 @@ import { useExtracted } from "next-intl";
 import { useLayoutEffect } from "react";
 import { SCREEN_TURN_CLASS, type ScreenTurn } from "../components/screen-turn";
 import { FILL_SCREEN_CLASS, PlayerContentFrame } from "../components/step-layouts";
+import { WordBankCheckContext } from "../components/word-bank";
 import { LessonCitation } from "./_components/lesson-citation";
 import { UpcomingPictures } from "./_components/lesson-pictures";
 import { OrientationStrip } from "./_components/orientation-strip";
 import { LESSON_CONTENT_ID, focusLessonAfterTurn } from "./_utils/lesson-focus";
-import { getAnsweredStep, isLanguageStep } from "./_utils/lesson-steps";
+import { canSelfCorrect, getAnsweredStep, isLanguageStep } from "./_utils/lesson-steps";
 import { AskBuddyOffer } from "./controls/ask-buddy-offer";
 import { LessonResultNotes } from "./feedback/lesson-result-notes";
 import { LessonStepResultView } from "./feedback/lesson-step-result";
@@ -87,11 +88,8 @@ function LessonNotice() {
 
   switch (state.notice) {
     case "selfCorrect":
-      return (
-        <NoticeLine icon={<PencilIcon aria-hidden="true" className="size-4" />}>
-          {t("Not quite. Look again and fix it yourself, then check.")}
-        </NoticeLine>
-      );
+      // Drawn with what the check adds (`CheckAdditions`), so nothing above the answer moves.
+      return null;
     case "answerNotSaved":
       return (
         <NoticeLine icon={<CloudOffIcon aria-hidden="true" className="size-4" />}>
@@ -149,6 +147,76 @@ function LessonCheckNote() {
   );
 }
 
+type CheckAdditions = { feedback: boolean; selfCorrect: boolean };
+
+/** What a check adds to the screen: "fix it yourself", its feedback, or both on a screen revisited. */
+function getCheckAdditions({
+  isShown,
+  state,
+  step,
+}: {
+  isShown: boolean;
+  state: LessonPlayerState;
+  step: PlayableLibraryStep;
+}): CheckAdditions | null {
+  const selfCorrect = isShown && state.notice === "selfCorrect";
+  const feedback = isShown && state.phase === "feedback" && step.id in state.results;
+  return selfCorrect || feedback ? { feedback, selfCorrect } : null;
+}
+
+function SelfCorrectLine() {
+  const t = useExtracted();
+
+  return (
+    <p className="text-muted-foreground flex items-start gap-2 text-sm" role="status">
+      <LineMarker>
+        <PencilIcon aria-hidden="true" className="size-4" />
+      </LineMarker>
+      {t("Not quite. Look again and fix it yourself, then check.")}
+    </p>
+  );
+}
+
+function CheckFeedback({ step }: { step: PlayableLibraryStep }) {
+  const { screen, state } = useLessonPlayer();
+  const result = state.results[step.id];
+
+  if (!result) {
+    return null;
+  }
+
+  const next = {
+    savedMistake: result.savedMistake && !result.isCorrect,
+    willReturn: !result.isCorrect && state.queue.includes(step.id, state.position + 1),
+  };
+
+  return (
+    <>
+      {showsOwnResult(step) ? (
+        <LessonResultNotes hyperdriveStreak={screen.hyperdriveStreak} {...next} />
+      ) : (
+        <LessonStepResultView
+          hyperdriveStreak={screen.hyperdriveStreak}
+          next={next}
+          result={result}
+          step={getAnsweredStep({ answer: state.answers[step.id], step })}
+        />
+      )}
+
+      {screen.struggleOffer && <AskBuddyOffer reason="misses" />}
+    </>
+  );
+}
+
+function CheckAdded({ additions, step }: { additions: CheckAdditions; step: PlayableLibraryStep }) {
+  return (
+    <div className="flex flex-col gap-3">
+      {additions.selfCorrect && <SelfCorrectLine />}
+      {additions.feedback && <CheckFeedback step={step} />}
+    </div>
+  );
+}
+
 const PICTURES_AHEAD = 2;
 
 export function LessonScreenFrame({
@@ -188,13 +256,14 @@ export function LessonStage({
   step: PlayableLibraryStep;
   turn: ScreenTurn | null;
 }) {
-  const { actions, screen, state } = useLessonPlayer();
+  const { actions, state } = useLessonPlayer();
   const result = state.results[step.id];
+  const answered = getAnsweredStep({ answer: state.answers[step.id], step });
+  const additions = getCheckAdditions({ isShown, state, step });
+  const added = additions && <CheckAdded additions={additions} step={step} />;
 
-  const next = result && {
-    savedMistake: result.savedMistake && !result.isCorrect,
-    willReturn: !result.isCorrect && state.queue.includes(step.id, state.position + 1),
-  };
+  // A word bank places what a check adds itself, so it holds still; everywhere else it follows the screen.
+  const inBank = canSelfCorrect(answered);
 
   return (
     <div className={cn("flex w-full flex-col", FILL_SCREEN_CLASS)} data-slot="lesson-stage">
@@ -202,34 +271,21 @@ export function LessonStage({
       {isShown && <LessonNotice />}
 
       <LessonScreenFrame turn={turn}>
-        <LessonStepView
-          answer={state.answers[step.id]}
-          isLocked={isShown && state.phase !== "playing"}
-          onAnswer={(answer) => actions.selectAnswer(step.id, answer)}
-          result={result}
-          step={step}
-        />
+        <WordBankCheckContext value={inBank ? added : null}>
+          <LessonStepView
+            answer={state.answers[step.id]}
+            isLocked={isShown && state.phase !== "playing"}
+            onAnswer={(answer) => actions.selectAnswer(step.id, answer)}
+            result={result}
+            step={step}
+          />
+        </WordBankCheckContext>
       </LessonScreenFrame>
 
       {isShown && <LessonCheckNote />}
       {isShown && !isLanguageStep(step) && <LessonCitation citation={step.citation} />}
 
-      {isShown && state.phase === "feedback" && result && next && (
-        <PlayerContentFrame className="flex flex-col gap-3 pb-6">
-          {showsOwnResult(step) ? (
-            <LessonResultNotes hyperdriveStreak={screen.hyperdriveStreak} {...next} />
-          ) : (
-            <LessonStepResultView
-              hyperdriveStreak={screen.hyperdriveStreak}
-              next={next}
-              result={result}
-              step={getAnsweredStep({ answer: state.answers[step.id], step })}
-            />
-          )}
-
-          {screen.struggleOffer && <AskBuddyOffer reason="misses" />}
-        </PlayerContentFrame>
-      )}
+      {added && !inBank && <PlayerContentFrame className="pb-6">{added}</PlayerContentFrame>}
 
       {isShown && <LessonRecapRow />}
       {isShown && <UpcomingPictures steps={getUpcomingSteps(state)} />}

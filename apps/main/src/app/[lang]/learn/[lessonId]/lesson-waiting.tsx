@@ -8,7 +8,7 @@ import { trackEvent } from "@zoonk/core/analytics/client";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { GenerationFailureNotice, GenerationWait } from "@zoonk/learn/generation";
 import { type LessonKind } from "@zoonk/learn/generation/kinds";
-import { type GenerationRun, toHeldRun } from "@zoonk/learn/generation/run";
+import { type GenerationRun, hasStopped, toHeldRun } from "@zoonk/learn/generation/run";
 import { useVisibleWait } from "@zoonk/learn/generation/wait-clock";
 import { LessonNotWrittenNotice } from "@zoonk/learn/lesson-not-written";
 import { TaskMainButton } from "@zoonk/learn/task-frame";
@@ -204,7 +204,7 @@ function waitState({
     return "ready";
   }
 
-  if (run.status === "failed" && run.failure !== "connection") {
+  if (hasStopped(run)) {
     return "stopped";
   }
 

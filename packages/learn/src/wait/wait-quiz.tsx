@@ -80,6 +80,12 @@ export function useWaitQuiz({
   const moved = useRef(false);
   const mounted = useIsMounted();
   const [dealt, setDealt] = useState<Dealt | null>(null);
+
+  // A quiz taken away (its run stopped, its lesson ready) goes whole: one that comes back is fresh.
+  if (!deck && dealt) {
+    setDealt(null);
+  }
+
   const stored = deck && mounted ? { pickedId: null, position: readPosition(deck.id) } : null;
   const shown = deck && (dealt ?? stored);
   const card = shown ? deck.cards[shown.position] : undefined;

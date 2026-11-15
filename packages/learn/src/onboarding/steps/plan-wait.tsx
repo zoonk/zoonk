@@ -60,7 +60,7 @@ function useShownScreen(wait: PlanWaitScreen | null): PlanWaitScreen {
   return noticeShown ? "notice" : "building";
 }
 
-/** A failure takes the strip's place, so the quiz below it stays playable. */
+/** A failure takes the strip's place; a stopped run takes the quiz away too (`useDeck`). */
 function getStop({ notice, run }: { notice: Notice | null; run: GenerationRun }): WaitStop | null {
   if (notice) {
     return notice.stopped;

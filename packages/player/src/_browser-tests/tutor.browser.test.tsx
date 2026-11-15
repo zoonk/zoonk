@@ -439,8 +439,12 @@ describe("asking the tutor", () => {
   });
 
   it("keeps a refused question unanswered, not failed, and offers Try again once its messages come back", async () => {
+    // The day's clock is driven: on a real one, a slow machine passes the opening before the refusal
+    // arrives, and a refusal already past on arrival rightly keeps the composer away.
+    freezeClock();
     const { api, lesson } = lessonWithTutor();
-    const opens = new Date(Date.now() + 1500);
+    const reopensInMs = 60_000;
+    const opens = new Date(Date.now() + reopensInMs);
 
     api.next("answer", () => {
       api.questions = api.questions.map((question) => ({ ...question, status: "failed" as const }));
@@ -469,10 +473,14 @@ describe("asking the tutor", () => {
 
     playLesson({ lesson });
     const sheet = await openTutor();
-    await ask(sheet, "A question just past the month's messages.");
+    await composer(sheet).fill("A question just past the month's messages.");
+    await pressKeepingClock(sendButton(sheet));
 
     await expect.element(sheet.getByText("This one wasn't answered.")).toBeVisible();
     await expect.element(sheet.getByRole("button", { name: "Try again" })).not.toBeInTheDocument();
+    await expect.element(composer(sheet)).not.toBeInTheDocument();
+
+    await vi.advanceTimersByTimeAsync(reopensInMs);
 
     await expect.element(composer(sheet)).toBeInTheDocument();
     await expect.element(sheet.getByRole("button", { name: "Try again" })).toBeVisible();

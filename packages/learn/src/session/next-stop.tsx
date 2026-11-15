@@ -27,7 +27,7 @@ import {
   NotWritten,
   Waiting,
   useKeptDeck,
-  useWritingFailed,
+  useWaitFailed,
   useWrittenWhileWaiting,
 } from "./next-stop-wait";
 import { ReviewIntro, noteReviewStart, useReviewLine } from "./review-intro";
@@ -249,7 +249,7 @@ export function NextStop({
   const aside = useSessionQueueAside({ left: minutesLeft, rows });
 
   const written = useWrittenWhileWaiting({ block, lesson });
-  const failed = useWritingFailed(lesson);
+  const failed = useWaitFailed({ generationId, lesson });
   const deck = useKeptDeck(warmUp);
   const hold = useReadyHold(isReady);
   const { track } = useLearnAnalytics();
@@ -261,7 +261,8 @@ export function NextStop({
 
   return (
     <WaitScreen
-      deck={hold.status === "go" ? null : deck}
+      // A failed run has nothing to wait for, so it offers Try again and no quiz.
+      deck={hold.status === "go" || failed.failed ? null : deck}
       goalId={goalId}
       hold={hold}
       surface="lessonWait"
