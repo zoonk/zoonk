@@ -431,13 +431,15 @@ internal fun NextStop(
             modifier = Modifier.onFocusChanged { screenFocused = it.hasFocus }.then(guessing),
             title = { Text(stringResource(R.string.session_summary_eyebrow), maxLines = 1, style = MaterialTheme.typography.titleSmall) },
             bottomBar =
-                if ((waiting && quiz.hasQuiz && (quiz.showingProgress || quiz.hasNext)) || startsFor != null || instead != null ||
+                if ((waiting && failure == null && quiz.hasQuiz && (quiz.showingProgress || quiz.hasNext)) || startsFor != null ||
+                    instead != null ||
                     onStop != null ||
                     viewModel.failed != null
                 ) {
                     {
                         TaskActionBar {
-                            if (!ready) WaitQuizAction(quiz, hold)
+                            // A failed run waits for nothing: Try again and the way back are its only ways on.
+                            if (!ready && failure == null) WaitQuizAction(quiz, hold)
                             when (viewModel.failed) {
                                 SessionAction.Start -> ErrorLine(stringResource(R.string.today_open_failed))
                                 SessionAction.Stop -> ErrorLine(stringResource(R.string.session_next_stop_failed))

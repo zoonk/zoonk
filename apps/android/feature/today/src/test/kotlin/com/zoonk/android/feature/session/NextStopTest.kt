@@ -271,6 +271,21 @@ class NextStopTest {
     }
 
     @Test
+    fun aRunThatFailsOffersTryAgainAndNoQuiz() {
+        warmUpId = UUID.fromString(WARM_UP_ID)
+        settled = LessonReadiness.Status.FAILED
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("Try again").assertExists()
+        rule.onNodeWithText("Play a quiz while you wait").assertDoesNotExist()
+        rule.onNodeWithText("Back to the quiz").assertDoesNotExist()
+        rule.onNodeWithText("Next guess").assertDoesNotExist()
+    }
+
+    @Test
     fun aLessonItsChecksSetAsideSaysSoInsteadOfOfferingToTryAgain() {
         settled = LessonReadiness.Status.FAILED
         setAside = true
