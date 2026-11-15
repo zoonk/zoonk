@@ -121,6 +121,8 @@ fun MindMapStudyScreen(
         TaskNotFound(navigator)
         return
     }
+    val viewModel = host.maps(goalId)
+    host.SavesSaid(viewModel)
 
     val store = host.store
     val list by store.list[goalId].collectShown()
@@ -170,7 +172,6 @@ fun MindMapStudyScreen(
         return
     }
 
-    val viewModel = host.maps(goalId)
     val saves by viewModel.saves.collectAsStateWithLifecycle()
 
     CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {

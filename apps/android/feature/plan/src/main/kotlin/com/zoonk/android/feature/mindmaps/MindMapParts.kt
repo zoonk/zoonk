@@ -40,10 +40,13 @@ import coil3.compose.AsyncImage
 import coil3.size.Size
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
@@ -286,7 +289,7 @@ internal fun FollowWhileOnItsWay(
  * What a screen's mind maps need from the app: the store, the session it shows (for its pictures
  * and the polls), the plan's cap on new maps (read only where a map could still be made), the
  * learner's plan (on Plus, rows say a chapter's lessons get written first without counting),
- * where a failed save says so, and the files a picture is saved to.
+ * the app's snackbars, where a save says how it went, and the files a picture is saved to.
  */
 internal class MindMapsHost(
     val store: MindMapStore,
@@ -295,8 +298,7 @@ internal class MindMapsHost(
     val cap: @Composable () -> Limit?,
     val tier: @Composable () -> LimitTier,
     private val currentSession: () -> AuthenticatedSession?,
-    private val saveFailed: () -> Unit = {},
-    private val pictureSaved: (PictureSave) -> Unit = {},
+    private val snackbars: AppSnackbars = AppSnackbars(),
     private val files: (Uri) -> OutputStream? = { null },
 ) {
     @Composable
@@ -304,9 +306,15 @@ internal class MindMapsHost(
 
     @Composable
     fun maps(goalId: UUID): MindMapViewModel =
-        viewModel(key = "mindmaps-$goalId-${session.localId}") {
-            MindMapViewModel(store, session, goalId, currentSession, saveFailed, pictureSaved, files)
-        }
+        viewModel(key = "mindmaps-$goalId-${session.localId}") { MindMapViewModel(store, session, goalId, currentSession, files) }
+
+    /** A screen that saves maps or pictures is [maps]' visit: what those saves lead to is said while it lasts. */
+    @Composable
+    fun SavesSaid(maps: MindMapViewModel) {
+        VisitOf(maps.visit)
+        ActOn(maps.saveFailed) { snackbars.show(R.string.mindmaps_save_map_failed) }
+        ActOn(maps.pictureSaved) { snackbars.show(if (it == PictureSave.Saved) R.string.mindmaps_saved else R.string.mindmaps_save_failed) }
+    }
 }
 
 @Composable
@@ -330,8 +338,7 @@ internal fun mindMapsHost(app: AppContainer): MindMapsHost? {
             }
         },
         currentSession = { app.sessions.current },
-        saveFailed = { app.snackbars.show(R.string.mindmaps_save_map_failed) },
-        pictureSaved = { app.snackbars.show(if (it == PictureSave.Saved) R.string.mindmaps_saved else R.string.mindmaps_save_failed) },
+        snackbars = app.snackbars,
         files = files::openOutputStream,
     )
 }

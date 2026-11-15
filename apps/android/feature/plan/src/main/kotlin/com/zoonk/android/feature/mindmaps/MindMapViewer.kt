@@ -113,6 +113,8 @@ fun MindMapScreen(
         TaskNotFound(navigator)
         return
     }
+    val maps = host.maps(goalId)
+    host.SavesSaid(maps)
 
     val listed by app.mindMaps.list[goalId]
         .state
@@ -134,7 +136,6 @@ fun MindMapScreen(
         }
 
         is Viewed.Shown -> {
-            val maps = host.maps(goalId)
             val saves by maps.saves.collectAsStateWithLifecycle()
             val target = MindMapTarget(SavedMindMapKind.CHAPTER, chapterId)
             val saved = saves[target] ?: viewed.map.saved

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -36,11 +37,18 @@ class MindMapViewModel(
     private val session: AuthenticatedSession,
     private val goalId: UUID,
     private val currentSession: () -> AuthenticatedSession?,
-    private val saveFailed: () -> Unit = {},
-    private val pictureSaved: (PictureSave) -> Unit = {},
     private val files: (Uri) -> OutputStream? = { null },
     private val io: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
+    /** This visit to the screen that saves: what its saves lead to is said only on it. */
+    val visit = Visit()
+
+    /** A map's save that didn't, which the screen says in the app's snackbars. */
+    val saveFailed = visit.outcome<Unit>()
+
+    /** Whether a picture was written where the learner chose, which the screen says in the app's snackbars. */
+    val pictureSaved = visit.outcome<PictureSave>()
+
     private val locals = MutableStateFlow<Map<UUID, MindMapLocal>>(emptyMap())
     val requests: StateFlow<Map<UUID, MindMapLocal>> = locals.asStateFlow()
 
@@ -78,10 +86,11 @@ class MindMapViewModel(
         viewModelScope.launch {
             while (true) {
                 val sent = wanted.value[target] ?: break
+                val started = visit.number
                 val result = store.save(goalId, target, chapterId, sent)
                 if (result !is MutationResult.Done) {
                     wanted.update { it - target }
-                    if (result is MutationResult.Failed) saveFailed()
+                    if (result is MutationResult.Failed) saveFailed.send(started, Unit)
                     break
                 }
                 if (wanted.value[target] == sent) {
@@ -150,16 +159,20 @@ class MindMapViewModel(
         }
     }
 
-    /** Writes to the file the learner picked at [to] only for the session that asked, and says nothing once it ended. */
+    /**
+     * Writes to the file the learner picked at [to] only for the session that asked, and says nothing once it ended; what
+     * it wrote is said only on the visit that asked, though the file is written after the screen went too.
+     */
     fun savePicture(
         url: String,
         to: Uri,
     ) {
+        val started = visit.number
         viewModelScope.launch {
             val bytes = store.picture(session, url)
             if (!isCurrent) return@launch
             val written = bytes != null && withContext(io) { isCurrent && write(to, bytes) }
-            if (isCurrent) pictureSaved(if (written) PictureSave.Saved else PictureSave.Failed)
+            if (isCurrent) pictureSaved.send(started, if (written) PictureSave.Saved else PictureSave.Failed)
         }
     }
 
