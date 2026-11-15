@@ -23,7 +23,11 @@ export async function CertificateNotFound() {
           </p>
           {/* oxlint-disable-next-line next/no-html-link-for-pages -- A full load of the home page also resets whatever broke the route. */}
           <a
-            className={buttonVariants({ className: "mt-6 w-full sm:w-auto", size: "lg" })}
+            className={buttonVariants({
+              className: "mt-6 w-full sm:w-auto",
+              size: "lg",
+              variant: "outline",
+            })}
             href="/"
           >
             {t("Go to Zoonk")}
