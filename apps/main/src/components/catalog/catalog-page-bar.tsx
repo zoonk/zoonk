@@ -16,9 +16,9 @@ export function CatalogPageBar({
       {/* On a phone a visitor's links follow the options, which then aren't the bar's last thing. */}
       <div className="contents max-lg:not-last:*:me-0">{options}</div>
 
-      {/* On a phone the way back names the course or the chapter, so it gets the room: only "Log in" stays, and it gives way to the page's name once that's in the bar. */}
+      {/* On a phone the way back names the course or the chapter, so it gets the room: only "Log in" stays, at every scroll, since a visitor has no other way in. */}
       <NoAccountNote>
-        <VisitorBarLinks className="max-sm:*:not-last:hidden max-sm:group-data-title-away/page-bar:hidden lg:hidden" />
+        <VisitorBarLinks className="max-sm:*:not-last:hidden lg:hidden" />
       </NoAccountNote>
     </LearnPageBar>
   );
