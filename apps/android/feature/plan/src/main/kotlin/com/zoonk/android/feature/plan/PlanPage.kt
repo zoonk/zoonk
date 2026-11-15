@@ -58,6 +58,7 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.scaffold.BarError
 import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.pageMargin
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.LanguageProgress
@@ -374,6 +375,8 @@ internal fun PlanContent(
     countryRebuild: CountryRebuild? = null,
 ) {
     val adjust = onAdjust?.let { { it(null) } }
+    // The app's page margin, which its bottom bar keeps too, so the bar's buttons line up with the page.
+    val margin = pageMargin()
     val numbers = @Composable { variant: NumberVariant -> PlanNumbers(page, standing, variant, links, onAdjust = adjust) }
     val suggestion =
         @Composable { layout: SuggestionLayout ->
@@ -402,7 +405,7 @@ internal fun PlanContent(
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                     state = list,
-                    contentPadding = PaddingValues(start = PAGE_MARGIN, end = PAGE_MARGIN, top = 8.dp, bottom = 32.dp),
+                    contentPadding = PaddingValues(start = margin, end = margin, top = 8.dp, bottom = 32.dp),
                     verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
                     item(key = "header", contentType = "header") {
@@ -446,7 +449,7 @@ internal fun PlanContent(
                     }
                     if (structure != null) {
                         item(key = "structure", contentType = "structure") {
-                            PlanSyllabusSection(structure, onOpenSubject = links::subject, modifier = Modifier.bleed(PAGE_MARGIN)) {
+                            PlanSyllabusSection(structure, onOpenSubject = links::subject, modifier = Modifier.bleed(margin)) {
                                 // Unpicked choices are the suggestion's; beside the aside, its properties name the pick.
                                 if (!asideBeside) {
                                     PlanChoiceLines(
@@ -481,7 +484,7 @@ internal fun PlanContent(
             Row {
                 VerticalDivider()
                 Column(
-                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(PAGE_MARGIN),
+                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(margin),
                     verticalArrangement = Arrangement.spacedBy(32.dp),
                 ) {
                     numbers(NumberVariant.Stats)
@@ -516,8 +519,6 @@ private fun PathSheet(
         )
     }
 }
-
-internal val PAGE_MARGIN = 16.dp
 
 /** A place the drawer lists on wide windows: Completed lessons, then Mind maps. */
 @Composable
