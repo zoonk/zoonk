@@ -94,7 +94,7 @@ describe("the Plan's path and Android's captures", () => {
     // b18-16: the chevron's ink ends inside its icon's box, short of where the dates end.
     assert.deepEqual(
       ends.map((finding) => finding.measured),
-      [5.7],
+      [5.67],
     );
   });
 

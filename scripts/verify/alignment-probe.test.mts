@@ -163,6 +163,16 @@ describe("reading a declared piece in the page", () => {
     );
   });
 
+  it("keeps what it measured, so labels 1.04 apart fail the 1 px edge", () => {
+    document.body.innerHTML = `<div data-slot="list-group" data-box="0,0,300,60">
+      ${row("A", 0, 8)}${row("B", 30, 9.04)}</div>`;
+
+    const fault = evaluateCapture(read()).find((finding) => finding.rule === "label-start");
+
+    assert.match(fault?.detail ?? "", /"B" at 9 where 1 of 2 start at 8/u);
+    assert.equal(fault?.measured, 1.04);
+  });
+
   it("keeps a declared group whose rows carry no parts, so it reads as not measured", () => {
     document.body.innerHTML = `<div data-slot="list-group" data-box="0,0,300,60">
       <div data-box="0,0,300,30">A</div><div data-box="0,30,300,30">B</div></div>`;

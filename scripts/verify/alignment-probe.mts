@@ -7,7 +7,8 @@ export type AlignmentPage = Pick<Capture, "activeSurface" | "elements">;
 
 /**
  * Runs in the browser, so it reads nothing outside itself and its arguments. Positions are page
- * pixels, rounded to a tenth, like the craft read's, so they match a full-page screenshot.
+ * pixels as measured, so a full-page screenshot shows them; the evaluator rounds only what it
+ * prints, never what it compares.
  */
 export function readAlignment({
   actions: controls,
@@ -18,18 +19,15 @@ export function readAlignment({
   pieces: { name: string; web: WebPiece }[];
   surfaces: string;
 }): AlignmentPage {
-  const TENTH = 10;
   const LABEL_LENGTH = 32;
   const { shown } = globalThis.zoonkPage;
   const { scrollX, scrollY } = globalThis;
 
-  const round = (value: number) => Math.round(value * TENTH) / TENTH;
-
   const bounds = (rect: { bottom: number; left: number; right: number; top: number }): Bounds => [
-    round(rect.left + scrollX),
-    round(rect.top + scrollY),
-    round(rect.right - rect.left),
-    round(rect.bottom - rect.top),
+    rect.left + scrollX,
+    rect.top + scrollY,
+    rect.right - rect.left,
+    rect.bottom - rect.top,
   ];
 
   type Rect = { bottom: number; left: number; right: number; top: number };
@@ -247,9 +245,9 @@ export function readAlignment({
     const cap = drawnByPrimary(first.data, style) ? capHeight(style) : null;
 
     return {
-      baseline: base === null ? "not measured" : round(base + scrollY),
-      capBottom: base === null || cap === null ? "not measured" : round(base + scrollY),
-      capTop: base === null || cap === null ? "not measured" : round(base - cap + scrollY),
+      baseline: base === null ? "not measured" : base + scrollY,
+      capBottom: base === null || cap === null ? "not measured" : base + scrollY,
+      capTop: base === null || cap === null ? "not measured" : base - cap + scrollY,
       ...(line ? { firstLine: bounds(line) } : {}),
       lines: lineCount(rects),
       text: (main.textContent ?? "").trim().slice(0, LABEL_LENGTH),
@@ -460,16 +458,14 @@ export function readAlignment({
     return [
       {
         bounds: bounds(boxOf(row)),
-        endEdge: round(
-          (read.bar ? read.bar.getBoundingClientRect().right : contentEnd(row)) + scrollX,
-        ),
+        endEdge: (read.bar ? read.bar.getBoundingClientRect().right : contentEnd(row)) + scrollX,
         flow: `${read.groupId}.${flows.indexOf(unit.parentElement)}`,
         gapBefore: unit.parentElement ? flowGap(unit.parentElement) : 0,
         group: read.groupId,
         id: rowId,
         ink: rowInk ? bounds(rowInk) : null,
         margins: [margin("marginTop"), margin("marginBottom")],
-        middle: round(contentMiddle(row) + scrollY),
+        middle: contentMiddle(row) + scrollY,
         name: name(row),
         note: note ? [...row.querySelectorAll(note)].some((element) => shown(element)) : false,
         // The row the learner is on (current, picked, highlighted) may set its words apart.
@@ -532,7 +528,7 @@ export function readAlignment({
           ? { layoutScale: Math.round((drawnBox.width / group.offsetWidth) * 100) / 100 }
           : {}),
         ...(isRtl(group) ? { direction: "rtl" as const } : {}),
-        endEdge: round((bar ? bar.getBoundingClientRect().right : contentEnd(group)) + scrollX),
+        endEdge: (bar ? bar.getBoundingClientRect().right : contentEnd(group)) + scrollX,
         group: null,
         id: groupId,
         ink: groupInk ? bounds(groupInk) : null,

@@ -19,8 +19,14 @@ export function drawn(element: CaptureElement): Box | null {
   return Array.isArray(element.ink) ? box(element.ink) : null;
 }
 
+/** For printing a position: comparisons use what was measured. */
 export function tenths(value: number) {
   return Math.round(value * 10) / 10;
+}
+
+/** A finding's size, fine enough that a miss just past a 1-unit tolerance doesn't print as 1. */
+function hundredths(value: number) {
+  return Math.round(value * 100) / 100;
 }
 
 export type Context = { capture: Capture; unit: string };
@@ -35,7 +41,7 @@ export function finding(
     scenario: capture.scenario,
     screen: capture.screen,
     unit,
-    ...(fields.measured === undefined ? {} : { measured: tenths(fields.measured) }),
+    ...(fields.measured === undefined ? {} : { measured: hundredths(fields.measured) }),
   };
 }
 
