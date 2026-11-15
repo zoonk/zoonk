@@ -6032,5 +6032,253 @@
     "screen": "/fixture",
     "unit": "px",
     "version": 1
+  },
+  "round 3 wrapped-title-value": {
+    "activeSurface": "page",
+    "elements": [
+      {
+        "bounds": [8, 8, 300, 60],
+        "endEdge": 308,
+        "group": null,
+        "id": "list-group.0",
+        "ink": [8, 10, 300, 56],
+        "name": "\"One line Second line Third line \"",
+        "part": "group",
+        "piece": "list-group",
+        "row": null
+      },
+      {
+        "bounds": [8, 8, 300, 60],
+        "endEdge": 308,
+        "flow": "list-group.0.0",
+        "gapBefore": 0,
+        "group": "list-group.0",
+        "id": "list-group.0.0",
+        "ink": [8, 10, 300, 56],
+        "margins": [0, 0],
+        "middle": 38,
+        "name": "\"One line Second line Third line \"",
+        "note": false,
+        "part": "row",
+        "piece": "list-group",
+        "row": null
+      },
+      {
+        "bounds": [8, 8, 73.171875, 60],
+        "group": "list-group.0",
+        "id": "list-group.0.0.label0",
+        "ink": [8, 10, 73.171875, 56],
+        "name": "\"One line Second line Third line\"",
+        "part": "label",
+        "piece": "list-group",
+        "row": "list-group.0.0",
+        "baseline": 23,
+        "capBottom": "not measured",
+        "capTop": "not measured",
+        "firstLine": [8, 10, 52.15625, 16],
+        "lines": 3,
+        "text": "Second line",
+        "type": "Arial 14px 400 20px"
+      },
+      {
+        "bounds": [292.421875, 28, 15.578125, 20],
+        "group": "list-group.0",
+        "id": "list-group.0.0.value0",
+        "ink": [292.421875, 30, 15.578125, 16],
+        "name": "\"12\"",
+        "part": "value",
+        "piece": "list-group",
+        "row": "list-group.0.0",
+        "baseline": 43,
+        "capBottom": "not measured",
+        "capTop": "not measured",
+        "firstLine": [292.421875, 30, 15.578125, 16],
+        "lines": 1,
+        "text": "12",
+        "type": "Arial 14px 400 20px"
+      },
+      {
+        "bounds": [60.15625, 10, 0, 16],
+        "group": "list-group.0",
+        "id": "list-group.0.0.holder0",
+        "ink": null,
+        "name": "<br>",
+        "part": "holder",
+        "piece": "list-group",
+        "row": "list-group.0.0"
+      },
+      {
+        "bounds": [81.171875, 30, 0, 16],
+        "group": "list-group.0",
+        "id": "list-group.0.0.holder1",
+        "ink": null,
+        "name": "<br>",
+        "part": "holder",
+        "piece": "list-group",
+        "row": "list-group.0.0"
+      }
+    ],
+    "configuration": {
+      "height": 844,
+      "locale": "en",
+      "pointer": "touch",
+      "scheme": "light",
+      "size": "phone",
+      "textScale": 1,
+      "width": 390
+    },
+    "platform": "web",
+    "scale": 3,
+    "scenario": null,
+    "screen": "/fixture",
+    "unit": "px",
+    "version": 1
+  },
+  "round 3 corrected-wrap-value": {
+    "activeSurface": "page",
+    "elements": [
+      {
+        "id": "g",
+        "part": "group",
+        "bounds": [0, 0, 100, 100],
+        "ink": [0, 0, 100, 100],
+        "piece": "list-group",
+        "group": null,
+        "row": null,
+        "endEdge": 100,
+        "gap": 0
+      },
+      {
+        "id": "r0",
+        "part": "row",
+        "bounds": [0, 0, 100, 60],
+        "ink": [0, 0, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null,
+        "middle": 30
+      },
+      {
+        "id": "l0",
+        "part": "label",
+        "bounds": [0, 0, 20, 40],
+        "ink": [0, 0, 20, 40],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 5,
+        "capBottom": 15,
+        "type": "font",
+        "lines": 2
+      },
+      {
+        "id": "v",
+        "part": "value",
+        "bounds": [80, 25, 20, 10],
+        "ink": [80, 25, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 26,
+        "capBottom": 34,
+        "type": "small",
+        "text": "1"
+      }
+    ],
+    "configuration": {
+      "height": 844,
+      "locale": "en",
+      "pointer": "touch",
+      "scheme": "light",
+      "size": "phone",
+      "textScale": 1,
+      "width": 390
+    },
+    "platform": "web",
+    "scale": 3,
+    "scenario": null,
+    "screen": "/fixture",
+    "unit": "px",
+    "version": 1
+  },
+  "round 3 corrected-note-value": {
+    "activeSurface": "page",
+    "elements": [
+      {
+        "id": "g",
+        "part": "group",
+        "bounds": [0, 0, 100, 100],
+        "ink": [0, 0, 100, 100],
+        "piece": "list-group",
+        "group": null,
+        "row": null,
+        "endEdge": 100,
+        "gap": 0
+      },
+      {
+        "id": "r0",
+        "part": "row",
+        "bounds": [0, 0, 100, 60],
+        "ink": [0, 0, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null,
+        "middle": 30
+      },
+      {
+        "id": "l0",
+        "part": "label",
+        "bounds": [0, 0, 20, 40],
+        "ink": [0, 0, 20, 40],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 5,
+        "capBottom": 15,
+        "type": "font",
+        "lines": 1
+      },
+      {
+        "id": "v",
+        "part": "value",
+        "bounds": [80, 25, 20, 10],
+        "ink": [80, 25, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 26,
+        "capBottom": 34,
+        "type": "small",
+        "text": "1"
+      },
+      {
+        "id": "n0",
+        "part": "note",
+        "bounds": [0, 0, 20, 10],
+        "ink": [0, 20, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 5,
+        "capBottom": 15,
+        "type": "font",
+        "lines": 1
+      }
+    ],
+    "configuration": {
+      "height": 844,
+      "locale": "en",
+      "pointer": "touch",
+      "scheme": "light",
+      "size": "phone",
+      "textScale": 1,
+      "width": 390
+    },
+    "platform": "web",
+    "scale": 3,
+    "scenario": null,
+    "screen": "/fixture",
+    "unit": "px",
+    "version": 1
   }
 }

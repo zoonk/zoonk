@@ -1,6 +1,5 @@
 import { type AlignmentFinding, type CaptureElement } from "./alignment-capture.mts";
 import {
-  type Box,
   type Context,
   EDGE,
   type Group,
@@ -124,27 +123,29 @@ export function axisLeads(context: Context, read: Group): AlignmentFinding[] {
   ];
 }
 
-/** A text's first line: as the capture gives it, or its ink's top line when it gives a line count. */
-function firstLineOf(text: CaptureElement): Box | null {
-  if (text.firstLine) {
-    return box(text.firstLine);
-  }
-
-  const ink = drawn(text);
-  return ink ? { ...ink, bottom: ink.top + (ink.bottom - ink.top) / (text.lines ?? 1) } : null;
-}
-
-/** The row's value went under its label (large text): its value no longer ends the row. */
+/**
+ * The row's value went under its label (large text): it sits under the label's last line and
+ * overlaps the label across. A value at the label's side is trailing however many lines the label
+ * wraps to, and belongs on the row's center (E5).
+ */
 export function isStacked(row: CaptureElement, own: CaptureElement[]) {
   if (row.stacked !== undefined) {
     return row.stacked;
   }
 
-  const label = own.find((element) => element.part === "label");
-  const line = label ? firstLineOf(label) : null;
-  const value = own.find((element) => element.part === "value" && drawn(element));
-  const ink = value ? drawn(value) : null;
-  return Boolean(line && ink && ink.top >= line.bottom - EDGE);
+  const inkOf = (part: string) =>
+    own.map((element) => (element.part === part ? drawn(element) : null)).find(Boolean);
+
+  const label = inkOf("label");
+  const value = inkOf("value");
+
+  return Boolean(
+    label &&
+    value &&
+    value.top >= label.bottom - EDGE &&
+    value.left < label.right &&
+    label.left < value.right,
+  );
 }
 
 /** Where a part's drawing ends: a learner sees ink, never a glyph's padding inside its box. */

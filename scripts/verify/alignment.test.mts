@@ -121,6 +121,26 @@ describe("the Plan's path and Android's captures", () => {
     assert.match(line?.detail ?? "", /the mark 0\.75 below the row's center/u);
   });
 
+  it("calls a value beside a title that wraps trailing, so it belongs on the row's center (E5)", () => {
+    // Three lines of a title with "12" beside its second: not a value stacked under its label.
+    const wrapped = evaluateCapture(real("round 3 wrapped-title-value"));
+
+    assert.equal(
+      wrapped.find((finding) => finding.rule === "label-start"),
+      undefined,
+    );
+
+    // Its fallback face gave no capitals, so its line is a failing record, not a pass.
+    assert.deepEqual(
+      wrapped.map((finding) => `${finding.level} ${finding.rule}`),
+      ["not-measured line"],
+    );
+
+    // Two lines, the value on the row's center; and a title with a note, the control.
+    assert.deepEqual(evaluateCapture(real("round 3 corrected-wrap-value")), []);
+    assert.deepEqual(evaluateCapture(real("round 3 corrected-note-value")), []);
+  });
+
   it("reads a right-to-left group mirrored, so its start is its right edge", () => {
     const rtl = fixtureCapture([
       element({ direction: "rtl", endEdge: 16, gap: 0, group: null, id: "g", part: "group" }),
