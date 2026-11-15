@@ -147,11 +147,13 @@ function SessionNumbers() {
             goalNumber.change && (
               <span
                 className={cn(
-                  "font-mono tabular-nums",
+                  "tabular-nums",
                   dropped ? "text-muted-foreground" : "text-success-text",
                 )}
               >
-                {`${goalNumber.change.before} → ${goalNumber.change.after}`}
+                {dropped
+                  ? t("Down from {value}", { value: goalNumber.change.before })
+                  : t("Up from {value}", { value: goalNumber.change.before })}
               </span>
             )
           }
