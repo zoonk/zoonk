@@ -47,6 +47,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.LearningProfileStore
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.country.CountryChoice
@@ -54,6 +55,8 @@ import com.zoonk.android.feature.country.CountrySheet
 import com.zoonk.android.feature.country.choices
 import com.zoonk.android.feature.country.shownLanguage
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.characters.Buddy
 import com.zoonk.android.ui.characters.BuddyCrop
 import com.zoonk.android.ui.characters.BuddyGlasses
@@ -78,11 +81,15 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 import com.zoonk.api.models.Buddy as ProfileBuddy
 
-/** A change that didn't save is put back, and says so in the app's snackbars, which a recreated window still shows. */
+/** A change that didn't save is put back, and the page says so in the app's snackbars, on the visit that changed it. */
 class PreferencesViewModel(
     private val profile: LearningProfileStore,
-    private val snackbars: AppSnackbars,
 ) : ViewModel() {
+    val visit = Visit()
+
+    /** A change that didn't save on this visit. */
+    val saveFailed = visit.outcome<Unit>()
+
     var isEditingBuddy by mutableStateOf(false)
         private set
 
@@ -122,7 +129,8 @@ class PreferencesViewModel(
     }
 
     private fun save(write: suspend () -> Boolean) {
-        viewModelScope.launch { if (!write()) snackbars.show(R.string.settings_preferences_save_failed) }
+        val started = visit.number
+        viewModelScope.launch { if (!write()) saveFailed.send(started, Unit) }
     }
 }
 
@@ -137,7 +145,9 @@ fun PreferencesScreen(
 ) {
     val profile by app.learningProfile.profile.collectShown()
     val summary by app.learnerSummary.summary.collectShown()
-    val preferences = viewModel { PreferencesViewModel(app.learningProfile, app.snackbars) }
+    val preferences = viewModel { PreferencesViewModel(app.learningProfile) }
+    VisitOf(preferences.visit)
+    ActOn(preferences.saveFailed) { app.snackbars.show(R.string.settings_preferences_save_failed) }
     val scope = rememberCoroutineScope()
 
     PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.settings_preferences)) }) { padding ->

@@ -38,6 +38,7 @@ import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.reminders.StudyReminderStore
 import com.zoonk.android.feature.reminders.nearestQuarterHour
@@ -49,6 +50,8 @@ import com.zoonk.android.feature.reminders.reminderZone
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
@@ -68,8 +71,12 @@ import java.time.ZoneId
 /** A switch shows what it was flipped to while the change saves, and turns back if it doesn't. */
 class RemindersViewModel(
     private val reminders: StudyReminderStore,
-    private val snackbars: AppSnackbars,
 ) : ViewModel() {
+    val visit = Visit()
+
+    /** A change that didn't save on this visit, which the page says in the app's snackbars. */
+    val saveFailed = visit.outcome<Unit>()
+
     var email by mutableStateOf<Boolean?>(null)
         private set
 
@@ -123,8 +130,9 @@ class RemindersViewModel(
         settle: () -> Unit,
         write: suspend () -> MutationResult<*>,
     ) {
+        val started = visit.number
         viewModelScope.launch {
-            if (write() is MutationResult.Failed) snackbars.show(R.string.reminders_save_failed)
+            if (write() is MutationResult.Failed) saveFailed.send(started, Unit)
             settle()
         }
     }
@@ -140,7 +148,9 @@ fun RemindersScreen(
     navigator: AppNavigator,
 ) {
     val state by app.reminders.reminder.collectShown()
-    val viewModel = viewModel { RemindersViewModel(app.reminders, app.snackbars) }
+    val viewModel = viewModel { RemindersViewModel(app.reminders) }
+    VisitOf(viewModel.visit)
+    ActOn(viewModel.saveFailed) { app.snackbars.show(R.string.reminders_save_failed) }
     val scope = rememberCoroutineScope()
 
     PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.reminders_title)) }) { padding ->
