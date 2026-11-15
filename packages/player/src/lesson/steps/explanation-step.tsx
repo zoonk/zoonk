@@ -16,6 +16,10 @@ import { ExplainingScreenHelp } from "../controls/ask-buddy-offer";
 import { ExampleLine } from "./example-line";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
+/** A heading is the size of the text it heads, set apart by its weight, never smaller. */
+const STEP_HEADING_CLASS =
+  "text-foreground mb-2 text-lg leading-snug font-semibold text-pretty sm:mb-3 md:text-xl";
+
 export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explanation">>) {
   const { content, marks } = step;
   const cornerIcon = hasExampleFrame({ marks, text: content.text }) ? null : marks?.icon;
@@ -30,7 +34,7 @@ export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explan
       <div className="flow-root w-full lg:max-w-xl" data-slot="lesson-text">
         {cornerIcon && <CornerIcon className="-me-2 -mt-1 mb-2" icon={cornerIcon} />}
         {content.title && (
-          <h2 className="text-foreground text-reading mb-2 leading-snug font-semibold sm:mb-3">
+          <h2 className={STEP_HEADING_CLASS}>
             <SpokenMath>
               <LessonRichText text={content.title} />
             </SpokenMath>
