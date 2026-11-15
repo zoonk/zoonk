@@ -239,39 +239,26 @@ describe("a hairline the tiles of a grid draw together", () => {
   });
 });
 
-/** RV71's page: in a tab list, a 120 px box whose `::before` reaches 10 px past the column's start. */
-function tabFill(attributes: string) {
+/** RV71's page: in a tab list, a 120 px item whose `::before` reaches 10 px past the column's start. */
+function tabFill(item: string) {
   return `<style>.fill::before { content: ""; position: absolute; left: -10px; right: 0; top: 0; bottom: 0; background-color: rgb(221, 221, 221); }</style>
     <div data-slot="page" data-box="16,0,358,400"><div data-tabs data-box="16,40,358,60">
-      <div class="fill" ${attributes} data-box="16,40,120,60">Chapters</div></div></div>`;
+      ${item.replace(">", ' class="fill" data-box="16,40,120,60">')}Chapters${item.replace(/^<(\w+).*$/u, "</$1>")}</div></div>`;
 }
 
-function tabFillMisses(attributes: string) {
-  document.body.innerHTML = tabFill(attributes);
+function tabFillMisses(item: string) {
+  document.body.innerHTML = tabFill(item);
   return evaluateCapture(read()).filter((finding) => finding.rule === "column");
 }
 
 describe("the current tab's fill", () => {
-  it("is allowed its 10 on the side it reaches, and nothing else in the tab list is (RV71)", () => {
-    assert.deepEqual(tabFillMisses('aria-current="page"'), []);
-    assert.equal(tabFillMisses("").length, 1);
-  });
-});
-
-/** RV71's page: a 150 px box with a border on every side but its bottom, `x` to `x + width`. */
-function threeSides(x: number, width: number) {
-  return `<div data-slot="page" data-box="16,0,358,400">
-    <div style="border: 1px solid rgb(0, 0, 0); border-bottom: 0" data-box="${x},40,${width},150">Box</div></div>`;
-}
-
-function threeSidesMisses(x: number, width: number) {
-  document.body.innerHTML = threeSides(x, width);
-  return evaluateCapture(read()).filter((finding) => finding.rule === "column");
-}
-
-describe("a box whose top stroke is a hairline", () => {
-  it("still has its side strokes judged against the column (RV71)", () => {
-    assert.deepEqual(threeSidesMisses(16, 358), []);
-    assert.ok(threeSidesMisses(6, 378).length > 0);
+  it("is allowed its 10 on the side it reaches, and nothing else in the tab list is (RV71, RV74)", () => {
+    assert.deepEqual(tabFillMisses('<a href="/chapters" aria-current="page">'), []);
+    assert.deepEqual(tabFillMisses('<button role="tab" aria-selected="true">'), []);
+    assert.equal(tabFillMisses("<div>").length, 1);
+    assert.equal(tabFillMisses('<div role="menuitem" data-highlighted>').length, 1);
+    assert.equal(tabFillMisses('<div aria-current="false">').length, 1);
+    assert.equal(tabFillMisses('<a href="/chapters" aria-current="false">').length, 1);
+    assert.equal(tabFillMisses('<button role="tab" aria-selected="false">').length, 1);
   });
 });

@@ -786,6 +786,19 @@ export function readAlignment({
     const HAIRLINE = 2;
     const { pixels } = globalThis.zoonkPage;
 
+    const currentTab = (element: Element): boolean => {
+      const parent = element.parentElement;
+      const list = parent?.matches("li") ? parent.parentElement : parent;
+
+      if (!list?.matches("[role=tablist], [data-slot=tabs-list], [data-tabs]")) {
+        return false;
+      }
+
+      return element.matches("[role=tab]")
+        ? element.getAttribute("aria-selected") === "true"
+        : element.matches("a[href][aria-current]:not([aria-current=false])");
+    };
+
     const beforeFill = (element: Element): Rect | null => {
       const pseudo = getComputedStyle(element, "::before");
 
@@ -880,13 +893,13 @@ export function readAlignment({
           : null;
 
         const line = ownBox ? null : ruleOf(element);
-        const current = element.matches("[aria-current], [data-highlighted], [aria-selected=true]");
+        const current = element.matches(
+          "[aria-current]:not([aria-current=false]), [data-highlighted], [aria-selected=true]",
+        );
 
-        // The current tab's own fill, not anything a tab list holds.
-        const lit: Kind =
-          current && element.closest("[role=tablist], [data-slot=tabs-list], [data-tabs]")
-            ? "tab"
-            : "highlight";
+        // The current tab's own fill: a selected tab, or the current page's link, as an item of
+        // the tab list. A hovered menu item or anything else a tab list holds is a highlight.
+        const lit: Kind = currentTab(element) ? "tab" : "highlight";
 
         // Every rule, passing or not: a line is judged whole, so a part inside the column that
         // touches one passing it (a grid's middle tile) is part of that line.
