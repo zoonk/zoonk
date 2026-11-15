@@ -574,20 +574,15 @@ struct TodayExamMomentSection: View {
         } summary: {
           Text(words.title)
         } action: {
-          SuggestionOpen(isOpen: $isOpen) {
+          // Its opener says what the card leads to, the words of the sheet's main action.
+          SuggestionOpen(isOpen: $isOpen, label: openLabel) {
             details(words)
           } actions: {
             Button {
               isOpen = false
               router.open(.exam)
             } label: {
-              if moment.stage == .afterExam {
-                Text(
-                  "Add your result", tableName: "Today",
-                  comment: "Opens the exam to add the official result")
-              } else {
-                Text("See your exam", tableName: "Today", comment: "Opens the exam")
-              }
+              openLabel
             }
             .buttonStyle(.mainAction)
           }
@@ -595,6 +590,14 @@ struct TodayExamMomentSection: View {
         .listRowSeparator(.hidden)
       }
     }
+  }
+
+  private var openLabel: Text {
+    moment.stage == .afterExam
+      ? Text(
+        "Add your result", tableName: "Today",
+        comment: "Opens the exam to add the official result")
+      : Text("See your exam", tableName: "Today", comment: "Opens the exam")
   }
 
   @ViewBuilder

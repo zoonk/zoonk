@@ -3051,12 +3051,6 @@ msgid "A plan for your goal and your date"
 msgstr "目標と期日に合わせた学習計画"
 
 #: src/components/pricing/free-plan.tsx
-#: src/components/pricing/plus-questions.tsx
-msgctxt "LKY79v"
-msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
-msgstr "学習の相棒AI：1日{count, plural, other {#件のメッセージ}}、月{month}件まで"
-
-#: src/components/pricing/free-plan.tsx
 msgctxt "72Jr7b"
 msgid "Speaking practice calls"
 msgstr "会話練習"
@@ -3295,6 +3289,26 @@ msgstr "返金は受けられますか？"
 msgctxt "C0JMHR"
 msgid "<link>Write to us</link> and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
 msgstr "<link>お問い合わせ</link>いただければ、内容を確認します。App StoreまたはGoogle Playでの購入には、AppleまたはGoogleの返金規定が適用されます。"
+
+#: src/components/pricing/study-buddy-allowance.ts
+msgctxt "LKY79v"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
+msgstr "学習の相棒AI：1日{count, plural, other {#件のメッセージ}}、月{month}件まで"
+
+#: src/components/pricing/study-buddy-allowance.ts
+msgctxt "5ZDN6U"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
+msgstr "学習の相棒AI：1日{count, plural, other {#メッセージ}}"
+
+#: src/components/pricing/study-buddy-allowance.ts
+msgctxt "K2QNT9"
+msgid "An AI study buddy: up to {month, plural, one {# message} other {# messages}} a month"
+msgstr "学習の相棒AI：月に最大{month, plural, other {#メッセージ}}"
+
+#: src/components/pricing/study-buddy-allowance.ts
+msgctxt "y1mZxN"
+msgid "An AI study buddy"
+msgstr "学習の相棒AI"
 
 #: src/components/pricing/subscribe-button.tsx
 msgctxt "iB3ixY"

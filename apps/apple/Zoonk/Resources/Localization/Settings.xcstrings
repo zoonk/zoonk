@@ -1365,6 +1365,64 @@
         }
       }
     },
+    "Download my memory" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meine Erinnerungen herunterladen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descargar mi memoria"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Télécharger ma mémoire"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scarica la mia memoria"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メモリをダウンロードする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 메모리 다운로드"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pobierz zawartość pamięci"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Baixar minha memória"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belleğimi indir"
+          }
+        }
+      }
+    },
     "Download your memory" : {
       "localizations" : {
         "de" : {
@@ -1537,6 +1595,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bellek kaydını düzenle"
+          }
+        }
+      }
+    },
+    "Everything in your memory, as one file" : {
+      "comment" : "What the memory download contains",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle deine Erinnerungen in einer Datei"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todo el contenido de tu memoria en un solo archivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout le contenu de ta mémoire dans un seul fichier"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutto il contenuto della tua memoria, in un unico file"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メモリの内容をすべて1つのファイルに"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "메모리의 모든 내용을 파일 하나로"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cała zawartość pamięci w jednym pliku"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toda a sua memória em um só arquivo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belleğindeki her şey tek bir dosyada"
           }
         }
       }

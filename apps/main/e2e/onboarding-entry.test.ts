@@ -57,6 +57,36 @@ test.describe("Sending a goal", () => {
       )
       .toBe(0);
   });
+
+  test("Back waits while the goal is being made, so its setup never opens over the box", async ({
+    page,
+  }) => {
+    const goal = uniqueWords("understand quantum physics, made once");
+    await goalUnderstandingFixture({ goal, result: QUANTUM, userId: await ensureGuest(page) });
+    await sendGoal(page, goal);
+    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+
+    const release = Promise.withResolvers<null>();
+
+    await page.route(
+      (url) => url.pathname.endsWith("/start"),
+      async (route) => {
+        if (route.request().method() === "POST") {
+          await release.promise;
+        }
+
+        await route.fallback();
+      },
+    );
+
+    await page.getByRole("button", { name: /^Looks right/u }).click();
+    await expect(page.getByRole("button", { exact: true, name: "Back" })).toBeDisabled();
+
+    release.resolve(null);
+
+    await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
+    await expect(prisma.goal.count({ where: { prompt: goal } })).resolves.toBe(1);
+  });
 });
 
 test.describe("Sending a goal from another page", () => {

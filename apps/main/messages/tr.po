@@ -3051,12 +3051,6 @@ msgid "A plan for your goal and your date"
 msgstr "Hedefine ve belirlediğin tarihe uygun bir plan"
 
 #: src/components/pricing/free-plan.tsx
-#: src/components/pricing/plus-questions.tsx
-msgctxt "LKY79v"
-msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
-msgstr "Yapay zekâ ders arkadaşı: günde {count, plural, other {# mesaj}}, ayda en fazla {month} mesaj"
-
-#: src/components/pricing/free-plan.tsx
 msgctxt "72Jr7b"
 msgid "Speaking practice calls"
 msgstr "Konuşma pratiği için sohbetler"
@@ -3295,6 +3289,26 @@ msgstr "Ücret iadesi alabilir miyim?"
 msgctxt "C0JMHR"
 msgid "<link>Write to us</link> and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
 msgstr "<link>Bize yaz</link>, inceleyelim. App Store veya Google Play üzerinden yapılan satın alımlarda Apple’ın ya da Google’ın iade kuralları geçerli."
+
+#: src/components/pricing/study-buddy-allowance.ts
+msgctxt "LKY79v"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
+msgstr "Yapay zekâ ders arkadaşı: günde {count, plural, other {# mesaj}}, ayda en fazla {month} mesaj"
+
+#: src/components/pricing/study-buddy-allowance.ts
+msgctxt "5ZDN6U"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
+msgstr "Yapay zekâ destekli bir ders arkadaşı: günde {count, plural, other {# mesaj}}"
+
+#: src/components/pricing/study-buddy-allowance.ts
+msgctxt "K2QNT9"
+msgid "An AI study buddy: up to {month, plural, one {# message} other {# messages}} a month"
+msgstr "Yapay zekâ destekli bir ders arkadaşı: ayda en fazla {month, plural, other {# mesaj}}"
+
+#: src/components/pricing/study-buddy-allowance.ts
+msgctxt "y1mZxN"
+msgid "An AI study buddy"
+msgstr "Yapay zekâ destekli bir ders arkadaşı"
 
 #: src/components/pricing/subscribe-button.tsx
 msgctxt "iB3ixY"

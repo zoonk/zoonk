@@ -41,7 +41,7 @@ private struct GoalPlanView: View {
       }
     }
     .navigationTitle(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"))
-    .navigationSubtitle(daysLeft(plan.value?.plan) ?? "")
+    .navigationSubtitle(goal.isSettingUp ? "" : daysLeft(plan.value?.plan) ?? "")
     .task(id: goal.contentCountry?.rebuild) {
       await learner.followRebuild(goalID: goal.id)
     }
@@ -87,8 +87,10 @@ private struct GoalPlanView: View {
   }
 }
 
+/// The days left to a date still to come; nothing while the plan is set up or built, as main's.
 private func daysLeft(_ plan: GoalPlan?) -> String? {
-  guard let plan, let targetDate = plan.schedule.targetDate, targetDate >= plan.today else {
+  guard let plan, plan.ready, let targetDate = plan.schedule.targetDate, targetDate >= plan.today
+  else {
     return nil
   }
 
@@ -206,7 +208,11 @@ private struct PlanContent: View {
       ZoonkList {
         PlanNumbersSection(context: context, syllabus: syllabus)
         PlanSuggestionSection(context: context, answer: $slotAnswer, isInline: true)
-        NextOnPathSection(context: context)
+
+        if structure != nil {
+          NextOnPathSection(context: context)
+        }
+
         PlanMoreSection(goal: goal)
         PlanSettingsSection(context: context)
       }
@@ -219,15 +225,18 @@ private struct PlanContent: View {
         PlanSuggestionSection(context: context, answer: $slotAnswer)
         structureSections(context: context, structure: structure, namesChoices: true)
 
-        // Main's tablet column: what's next beside the other places. On a phone only an exam's
-        // page lists it: a path already shows those rows above.
+        // What's next shows only where no path does: a path's next row is already its highlighted
+        // one. Main's tablet column puts it beside the other places.
         if horizontalSizeClass == .regular {
           BlockGridSection {
-            NextOnPathSection(context: context)
+            if structure != nil {
+              NextOnPathSection(context: context)
+            }
+
             PlanMoreSection(goal: goal)
           }
         } else {
-          if goal.kind == .exam {
+          if structure != nil {
             NextOnPathSection(context: context)
           }
 

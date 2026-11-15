@@ -316,3 +316,33 @@ export function TaskSkeleton({
     </main>
   );
 }
+
+/**
+ * What stopped a task, in the screen's own words: its mark, the title and at most one line. Its way
+ * on is the task's bar.
+ */
+export function TaskStopMessage({
+  description,
+  heading: Heading = "h2",
+  icon,
+  title,
+}: {
+  description?: string;
+  heading?: "h1" | "h2";
+  icon: React.ReactNode;
+  title: string;
+}) {
+  return (
+    <>
+      <span className="text-muted-foreground flex [&_svg]:size-6">{icon}</span>
+      <div className="flex flex-col gap-2" role="status">
+        <Heading className="text-title">{title}</Heading>
+        {description && (
+          <p className="text-muted-foreground text-base leading-relaxed text-pretty">
+            {description}
+          </p>
+        )}
+      </div>
+    </>
+  );
+}

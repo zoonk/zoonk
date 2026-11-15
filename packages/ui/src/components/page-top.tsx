@@ -43,6 +43,8 @@ function BackLink({
  * under it (`PAGE_HEADER_CLASS`) it owns all the room above the title, so every page's title sits at one height, on a phone and a
  * computer, whether or not the bar holds anything. It sticks while the page scrolls and reaches the
  * frame's edges by the frame's own side padding (`--page-gutter`); the frame has no top padding.
+ * A bar whose start must stay readable sets `--bar-start-min`: when large text leaves the start less
+ * than that, the actions move to a line of their own under it.
  */
 function PageTopBar({
   actions,
@@ -66,12 +68,18 @@ function PageTopBar({
       data-slot="page-top-bar"
       ref={ref}
     >
-      <div className="flex min-h-11 items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3" data-slot="page-top-start">
+      <div className="flex min-h-11 flex-wrap items-center gap-x-3 gap-y-2">
+        <div
+          className="flex min-w-(--bar-start-min,0px) grow basis-0 items-center gap-3"
+          data-slot="page-top-start"
+        >
           {back}
         </div>
 
-        <div className="flex shrink-0 items-center justify-end gap-2" data-slot="page-top-end">
+        <div
+          className="ms-auto flex shrink-0 items-center justify-end gap-2"
+          data-slot="page-top-end"
+        >
           {actions}
         </div>
       </div>
