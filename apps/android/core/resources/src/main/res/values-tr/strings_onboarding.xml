@@ -311,8 +311,6 @@
   "onboarding_reveal_phase_map_and_gaps": "6aee95d908e4e58a9ed82570b6a921c3ff9791e3f641af455cd1822a0acd1339",
   "onboarding_reveal_phase_mock_and_practice": "2c346fdb66dcb24935aedce608dc8ffe16ee7b8fb0a96607ea6f772a20d31392",
   "onboarding_reveal_phase_number": "9d6d7701382f50907ff721d518cd7a1720cd7669acc3ea615998df23672a04ad",
-  "onboarding_reveal_phase_place": "947d635860ea10a49264cca8839ca217757cc28b2408ff55531ae33c1e1ddd4b",
-  "onboarding_reveal_phase_position": "32e6a187c3674f47bcc6868eaa1e0c2ba4239fc455bed615174b6a5803718fbf",
   "onboarding_reveal_phase_practice": "51394c5c849d51ffc26b9e48a7d0fcded85cf5546be117dd506feb24c9d53899",
   "onboarding_reveal_phase_short_mock": "55d29c32aacce4e2f077ada8da5157dfa788658fd1497f1eed72620a279dcd52",
   "onboarding_reveal_phases": "4587c32456aa037173244995b9fa1ab8942afd8a7a070415f42ad6035d4e5662",
@@ -766,9 +764,6 @@
     <string name="onboarding_reveal_phase_light_review">Hafif tekrar</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">Bugün</string>
-    <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
-    <string name="onboarding_reveal_phase_position">%1$d / %2$d</string>
-    <string name="onboarding_reveal_phase_place">%1$d. aşama / %2$d aşama</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">Sınavın tahmini tarihi artık %1$s.</string>
     <string name="onboarding_reveal_notice_day_notice">İlanda sınav tarihi %1$s olarak belirtiliyor.</string>

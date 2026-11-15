@@ -250,8 +250,7 @@
   "plan_exam_date": "be27cc6bbb76f7ac14aed161fbca88c6b68999909d958fe448bbf55a46b01ed9",
   "plan_exam_date_label": "caea26dfa6fa36c007b3812992075aca6905b815cead875eedefff25c646dc17",
   "plan_exam_day": "acf946054bb780e369a63070aa177cdf27c0a15450b0b5ca98e28296cd9c63c7",
-  "plan_exam_over_left": "aabee5a399eb58ff144b7c2a3a53ae40309aa2b850c6949d9f010e3435898536",
-  "plan_eyebrow": "6cad505ddd282cdfdcf5c61f2d80009da444abe9ca35345d63b1e3d7edbaca13",
+  "plan_exam_over_ask": "69c5b28bacc4ba827e6e287acfcbba7d9337cd295be7f24155ca28b5dd513a3c",
   "plan_far_count_from": "0417dfa25c1b41740e8285f1efb04325cb0e86aa31d7ff24c8989e70c46e6d53",
   "plan_far_count_from_month": "84b50220152e4acfab6425db56f8d931f0d1b1c243820195991e17cb87327d29",
   "plan_far_explain": "06c6776b1199e560a75bee288f37fbdb95980093e1088737d8e3e7c7e4d6bf40",
@@ -396,7 +395,6 @@
   "plan_right_answers": "85602fc3f72225a49f78ef3de7f4b4c8b40eac33a6b367c5a9ae021707b25456",
   "plan_roadmap_from": "9843c4b4a0d02a5b743a719ed28450d748c37ec4e9025f00726f18f6d3e7c8d9",
   "plan_roadmap_phase_number": "aaf281bb9a1726b60582d14e85307eed82607d1f461baf26354dd9712c52083f",
-  "plan_roadmap_phase_of": "c2933d9affb0f9b34c565bf0b79465afc8f07e4b23aa3ac4cad006d69b4c9594",
   "plan_saturdays": "de8b08cd92a24039187dbf7b339c71283f3418b3c7d398c7ba298c14a326a0db",
   "plan_save": "7909f950b5d1fbf8b94cb3f8743393a2d71edfdeadf2f53847828fe6068ef6bc",
   "plan_save_failed": "5b262125c979a7c35ff379768bf0991e6bf64dea213d20b42fe975feeaa91f08",
@@ -549,7 +547,6 @@
 -->
 <resources>
     <string name="plan_title">계획</string>
-    <string name="plan_eyebrow">%1$s · %2$s</string>
     <string name="plan_day_is_here">드디어 오늘이에요</string>
     <plurals name="plan_days_left">
         <item quantity="other">%d일 남음</item>
@@ -604,7 +601,6 @@
     <plurals name="plan_phases_done">
         <item quantity="other">단계 %1$d개 완료(총 %2$d개)</item>
     </plurals>
-    <string name="plan_roadmap_phase_of">%1$d단계(총 %2$d단계)</string>
     <string name="plan_roadmap_from">%1$s부터</string>
     <string name="plan_today">오늘</string>
     <string name="plan_mock_exam">모의고사</string>
@@ -1203,9 +1199,8 @@
     </plurals>
     <string name="plan_past_date_goal_title">종료일이 지났어요</string>
     <string name="plan_past_date_exam_title">시험 날짜가 지났어요</string>
-    <plurals name="plan_exam_over_left">
-        <item quantity="other">레슨이 %d개 남았어요. 계속 공부할까요, 아니면 이 목표를 보관할까요?</item>
-    </plurals>
+    <!-- Under "Your exam date has passed" on the Plan, whose bottom bar holds the two answers and whose Schedule number says the lessons left. -->
+    <string name="plan_exam_over_ask">계속 공부할까요, 아니면 이 목표를 보관할까요?</string>
     <plurals name="plan_past_date_offer">
         <item quantity="other">레슨이 %d개 남았어요. 종료일을 늦추면 모두 공부할 수 있어요.</item>
     </plurals>

@@ -462,7 +462,7 @@ internal fun PlanContent(
                         }
                     }
                     if (!asideBeside) {
-                        item(key = "next", contentType = "next") { NextAndMore(page, links) }
+                        item(key = "next", contentType = "next") { NextAndMore(page, links, next = structure != null) }
                     }
                 }
                 if (page.isPaused) {
@@ -486,7 +486,8 @@ internal fun PlanContent(
                 ) {
                     numbers(NumberVariant.Stats)
                     suggestion(SuggestionLayout.Panel)
-                    NextOnPath(page, links)
+                    // Without subjects the path is on the page, its highlighted row already saying what's next.
+                    if (structure != null) NextOnPath(page, links)
                     PlanProperties(page, links, onOpen = onAdjust)
                 }
             }
@@ -537,9 +538,12 @@ private fun PlaceRow(
 private fun NextAndMore(
     page: PlanPageState,
     links: PlanLinks,
+    next: Boolean,
 ) {
     BoxWithConstraints {
-        if (maxWidth >= SIDE_BY_SIDE_WIDTH) {
+        if (!next) {
+            MoreSection(links)
+        } else if (maxWidth >= SIDE_BY_SIDE_WIDTH) {
             Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
                 NextOnPath(page, links, Modifier.weight(1f))
                 MoreSection(links, Modifier.weight(1f))

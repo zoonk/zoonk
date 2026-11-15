@@ -250,8 +250,7 @@
   "plan_exam_date": "c5711827dcfe7af649409c795ba6f776b9fb376b0594db29bf5e393671bf8ac7",
   "plan_exam_date_label": "dc2242ff6e25e8702d7df8f1a88c458921ceb67b30668213e99acd6551677f7d",
   "plan_exam_day": "98c5fcab7fc79810f39106060b3ef3c9c784fb654f8291ef3da0fa92c9f4e34e",
-  "plan_exam_over_left": "0a43e9ae2181732129e07c2462f661f9a73f94a7a1658b0241db20d1c4a5b334",
-  "plan_eyebrow": "5ad77f73e20d2e27a61114b18878189c721782186081eac6eb34ee2a54d404d0",
+  "plan_exam_over_ask": "c4655322404d2feb063c8390546fb0775a5de88814a64eaa2e5fd3555ef5edd0",
   "plan_far_count_from": "fa4968a8c50f43078a70f2b1996476f71d9169ab9b322874b9a0f6e96004a2bb",
   "plan_far_count_from_month": "345db0f799c15d827459cf92df48d5544fdd3b19b4ba195d4182aba7e48cfe8f",
   "plan_far_explain": "cee2c0e4e571d8e4d3e897948bc075f1110519833fd259d9b867c29ef1f8a11b",
@@ -396,7 +395,6 @@
   "plan_right_answers": "a1d7ff4b4d52ba71233d70d00f57803c2d6aff128f682fa4cb2ee9567a2e50f8",
   "plan_roadmap_from": "6e9a0b2bb1689856969465cfd0310d9c1eb85f5605da0155f4d5640f6f638fef",
   "plan_roadmap_phase_number": "92af56a51ba841093d8bea712ef235ba1589da2ae0f5a5ba101a1ac6595d3d8c",
-  "plan_roadmap_phase_of": "28f1b5fab3615d39ba482dcee31aa05b172e8118b0ee409cbae2d357db83117f",
   "plan_saturdays": "559f2c993c220c0436ba114094fbf9639fb3ad5df7ad78322d48a8d5451d5210",
   "plan_save": "86b23fd6fd36897c925d44abafbcbda79ca9c05864f390c4df7d9a3e53ee4564",
   "plan_save_failed": "c9ca9a36d9ab7b1437658292c5ef715c8dcac4f283a0cb3d07108a50ab0f9516",
@@ -549,7 +547,6 @@
 -->
 <resources>
     <string name="plan_title">Plan</string>
-    <string name="plan_eyebrow">%1$s · %2$s</string>
     <string name="plan_day_is_here">To już dziś</string>
     <plurals name="plan_days_left">
         <item quantity="one">Został %d dzień</item>
@@ -616,7 +613,6 @@
         <item quantity="many">Ukończono %1$d z %2$d etapów</item>
         <item quantity="other">Ukończono %1$d z %2$d etapów</item>
     </plurals>
-    <string name="plan_roadmap_phase_of">etap %1$d z %2$d</string>
     <string name="plan_roadmap_from">Od %1$s</string>
     <string name="plan_today">Dziś</string>
     <string name="plan_mock_exam">Egzamin próbny</string>
@@ -1368,12 +1364,8 @@
     </plurals>
     <string name="plan_past_date_goal_title">Termin zakończenia minął</string>
     <string name="plan_past_date_exam_title">Termin egzaminu minął</string>
-    <plurals name="plan_exam_over_left">
-        <item quantity="one">Została ci %d lekcja. Chcesz kontynuować naukę czy zarchiwizować ten cel?</item>
-        <item quantity="few">Zostały ci %d lekcje. Chcesz kontynuować naukę czy zarchiwizować ten cel?</item>
-        <item quantity="many">Zostało ci %d lekcji. Chcesz kontynuować naukę czy zarchiwizować ten cel?</item>
-        <item quantity="other">Zostało ci %d lekcji. Chcesz kontynuować naukę czy zarchiwizować ten cel?</item>
-    </plurals>
+    <!-- Under "Your exam date has passed" on the Plan, whose bottom bar holds the two answers and whose Schedule number says the lessons left. -->
+    <string name="plan_exam_over_ask">Uczyć się dalej czy zarchiwizować ten cel?</string>
     <plurals name="plan_past_date_offer">
         <item quantity="one">Masz jeszcze %d lekcję. Późniejszy termin zakończenia daje na nią czas.</item>
         <item quantity="few">Masz jeszcze %d lekcje. Późniejszy termin zakończenia daje na nie czas.</item>

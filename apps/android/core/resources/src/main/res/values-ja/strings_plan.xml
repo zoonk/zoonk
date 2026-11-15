@@ -250,8 +250,7 @@
   "plan_exam_date": "a0a39f1220465490a59bb9abcf23f3f4d0497a51b4250ed1919d38d807d29a6f",
   "plan_exam_date_label": "7400ea190140d2f000dfa90e05e38a0d465076e9f5995125d82e29af8f471179",
   "plan_exam_day": "e87a3293748f5cb374674d1894a10c979288bb78b305a55f7b9a826d0e011fe1",
-  "plan_exam_over_left": "7478738d1bba54aeafd1e1def91ff7d257dc4000a84cd5e9cf417a2e829dab8e",
-  "plan_eyebrow": "bb217dc8202f97cb94bcf80d8833e031c533fff6856535412f987282f23207f8",
+  "plan_exam_over_ask": "b9a751a78fb96c253ec4dd5bba73b58b63a6eae3672223f0b4dd0841379dc636",
   "plan_far_count_from": "ea665a3e2be7546e220f5db5d99ab987292a51c92abaf75dfa698c30ed136f93",
   "plan_far_count_from_month": "d64af830fc724503213d9f5b3c45510a471b86b0eca6ca44ac28e2df6e104edd",
   "plan_far_explain": "76d98e6d665c8083956231581eb6e46aafbf536fef8222179b25622e0c3bc136",
@@ -396,7 +395,6 @@
   "plan_right_answers": "45a1cd5a233951800051ee9b8c77c86769732f7ad63e5d8271d22f29beec7a7f",
   "plan_roadmap_from": "6b2bc61bafc3e18ab8b76c962221aaaf18c739f97be720993343149d174d42f6",
   "plan_roadmap_phase_number": "11b818d73fdb9df54721c6f9b09adfd8bbc2839d8c5ee7fe5e0da96d3ae12ec6",
-  "plan_roadmap_phase_of": "8179e7c4c2da6379b172e56e1d9e8a27a1d577086a900d7c0ca4595b37f90ea4",
   "plan_saturdays": "3e4fb0f470718dacdeb455b7014ee0e442ac3583011c859009634d7a3281e166",
   "plan_save": "b65f16ae80661a87ecfaef5f76d4a7f8bb556a1e254e3521950adcea0d16a399",
   "plan_save_failed": "9b54e71281970e5230b4034f6259e6b3f5beb6baf159acf9f0a2a7ebf8c515aa",
@@ -549,7 +547,6 @@
 -->
 <resources>
     <string name="plan_title">学習計画</string>
-    <string name="plan_eyebrow">%1$s · %2$s</string>
     <string name="plan_day_is_here">いよいよ当日</string>
     <plurals name="plan_days_left">
         <item quantity="other">あと%d日</item>
@@ -604,7 +601,6 @@
     <plurals name="plan_phases_done">
         <item quantity="other">%1$d / %2$dフェーズ完了</item>
     </plurals>
-    <string name="plan_roadmap_phase_of">フェーズ%1$d / %2$d</string>
     <string name="plan_roadmap_from">%1$sから</string>
     <string name="plan_today">今日</string>
     <string name="plan_mock_exam">模試</string>
@@ -1203,9 +1199,8 @@
     </plurals>
     <string name="plan_past_date_goal_title">終了予定日を過ぎました</string>
     <string name="plan_past_date_exam_title">試験日を過ぎました</string>
-    <plurals name="plan_exam_over_left">
-        <item quantity="other">残りは%dレッスンです。学習を続けますか、それともこの目標をアーカイブしますか？</item>
-    </plurals>
+    <!-- Under "Your exam date has passed" on the Plan, whose bottom bar holds the two answers and whose Schedule number says the lessons left. -->
+    <string name="plan_exam_over_ask">学習を続けますか、それともこの目標をアーカイブしますか？</string>
     <plurals name="plan_past_date_offer">
         <item quantity="other">あと%dレッスン残っています。終了日を延ばせば、学習計画に収まります。</item>
     </plurals>

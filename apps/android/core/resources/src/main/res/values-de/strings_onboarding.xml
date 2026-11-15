@@ -311,8 +311,6 @@
   "onboarding_reveal_phase_map_and_gaps": "fcb3b1fb705677cfe2d5cd9a7ff18bdfe66aa25b6e290363744660e9c8481b21",
   "onboarding_reveal_phase_mock_and_practice": "24a3376a9bdd29949b828e473128e4a789c7b6ffe9c6b880d9c6b89bc7c4e3f6",
   "onboarding_reveal_phase_number": "66b0d0bfaeac84bbfd2551caba5406dd9c47412c547838f42ade7d8476c1526a",
-  "onboarding_reveal_phase_place": "02d6dc1e831725de4f2355ee5d4e743d5b2e34f0b07073d01bd1e0b7c69c389a",
-  "onboarding_reveal_phase_position": "81d8d9fe5722ec3b2036d7a7e679633ca70cd6019c8d4e166ed530c2d5ba023a",
   "onboarding_reveal_phase_practice": "fc659ffafea24a7508560434c235ebdedf91f785f2f4f8cab753395bec4058c5",
   "onboarding_reveal_phase_short_mock": "45bd2a7d7500f4f66d25b8cd4fd7825a7e62be1c9436253186c6ec5fe41c9701",
   "onboarding_reveal_phases": "1dccb767c944c3e16839f13accaa118c0dc92db34b6eb3182bd048a90bd83e69",
@@ -766,9 +764,6 @@
     <string name="onboarding_reveal_phase_light_review">Kurze Wiederholung</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">Heute</string>
-    <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
-    <string name="onboarding_reveal_phase_position">%1$d von %2$d</string>
-    <string name="onboarding_reveal_phase_place">Phase %1$d von %2$d</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">Die Prüfung findet jetzt voraussichtlich am %1$s statt.</string>
     <string name="onboarding_reveal_notice_day_notice">Laut Prüfungsausschreibung ist der Termin am %1$s.</string>
