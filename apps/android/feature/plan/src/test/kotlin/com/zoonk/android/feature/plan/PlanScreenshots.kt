@@ -408,7 +408,7 @@ class PlanScreenshots {
         val pagedPlan = fitPlan.copy(status = learnPlan().status)
         val laterFitPlan = fitPlan.copy(fitOffer = fitPlan.fitOffer?.copy(canApply = false))
         val fitOperations = laterFitPlan.fitOffer!!.operations.map { it.op }
-        val pastDate = plan(""""status":{"kind":"pastDate","lessons":4}""")
+        val pastDate = pastDatePlan()
         val found = TimeToCoverState.Answered(planAdviceRevision(goalPlan), timeToCover(recommended = 75))
         val moved = listOf<PlanOp>(PlanOp.TargetDate(java.time.LocalDate.parse("2027-04-18")))
         val change = planChange(operations = """[{"kind":"setDailyMinutes","minutes":75}]""", effect = effect(""""lessonsAdded":14"""))
@@ -856,7 +856,7 @@ class PlanScreenshots {
 
                 examOver -> {
                     learnerSummary(kind = "exam", title = "ENEM").let {
-                        PlanPageState(it.goals.first(), plan(""""status":{"kind":"pastDate","lessons":4}"""), it)
+                        PlanPageState(it.goals.first(), pastDatePlan(), it)
                     }
                 }
 
@@ -931,3 +931,9 @@ private val PAUSED = CHECKED.replace(""""sessionQuestions":"on"""", """"sessionQ
 private fun focusTest(json: String) = ApiJson.decodeFromString<com.zoonk.api.models.FocusTestSummary>(json)
 
 private fun com.zoonk.api.models.Plan.withFocusTest(json: String) = copy(focusTest = focusTest(json))
+
+/** A plan whose date passed, which a plan only is with a date in the past. */
+private fun pastDatePlan() =
+    plan(""""status":{"kind":"pastDate","lessons":4}""").let {
+        it.copy(schedule = it.schedule.copy(targetDate = LocalDate(2026, 10, 20)))
+    }
