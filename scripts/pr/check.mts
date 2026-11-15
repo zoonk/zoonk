@@ -2,6 +2,8 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { readCaptures } from "../verify/alignment-validate.mts";
 import { evaluateFile } from "../verify/alignment.mts";
+import { type BodyImage } from "./body.mts";
+import { deviceSection, firstOfEach, sectionStart } from "./device-section.mts";
 import { isRemote } from "./locate.mts";
 import {
   type AlignmentReport,
@@ -9,6 +11,7 @@ import {
   type Finding,
   type ManifestItem,
   buildOf,
+  deviceLine,
   isRecorded,
   readAlignment,
   readManifest,
@@ -97,6 +100,11 @@ async function buildProblems({
   picture: string;
 }): Promise<Problem[]> {
   const { app, changes, commit, id } = buildOf(item);
+
+  // An emulator's app names no commit: its line under the device heading says so.
+  if (item.device && commit === "unknown") {
+    return [];
+  }
 
   if (id === "unknown") {
     return [{ kind: "unknown-build", picture }];
@@ -214,9 +222,11 @@ async function pictureProblems({
   return { entries, problems: [...unique.values()] };
 }
 
+/** A device picture has no capture to measure: it's shown under its own heading instead. */
 function measured({ alignment, items }: Manifest): boolean {
   const { captures = [], findings = [] } = alignment;
-  return !items.some((item) => isRecorded(item)) || captures.length + findings.length > 0;
+  const captured = items.some((item) => isRecorded(item) && !item.device);
+  return !captured || captures.length + findings.length > 0;
 }
 
 function alignmentProblems({ alignment, folder }: Manifest): Problem[] {
@@ -260,17 +270,62 @@ function alignmentProblems({ alignment, folder }: Manifest): Problem[] {
     : problems;
 }
 
+/** The body the pictures came from, each image where it was written and the path it resolves to. */
+export type Body = { images: (BodyImage & { path: string })[]; markdown: string };
+
+/** A device record, where no measured capture records the same bytes. */
+function deviceItem(entries: Entry[]): CaptureItem | undefined {
+  const afters = entries.flatMap(({ item }) =>
+    item.side === "after" && isRecorded(item) ? [item] : [],
+  );
+
+  return afters.every((item) => item.device) ? afters[0] : undefined;
+}
+
+/**
+ * Device pictures appear only in the section `deviceSection` writes from their records, in the
+ * order they first appear, and the body holds that text exactly once between blank lines. The
+ * check compares text: what an author writes around the section is theirs to answer for.
+ */
+function sectionProblems(body: Body | undefined, devices: Map<string, CaptureItem>): Problem[] {
+  if (devices.size === 0) {
+    return [];
+  }
+
+  const shown = body?.images.filter(({ path }) => devices.has(path)) ?? [];
+
+  const firsts = firstOfEach(shown);
+
+  const shots = body
+    ? firsts.flatMap(({ link, path }) => {
+        const item = devices.get(path);
+        return item ? [{ item, link }] : [];
+      })
+    : [...devices].map(([path, item]) => ({ item, link: path }));
+
+  const section = deviceSection(shots);
+  const at = body ? sectionStart(body.markdown, section) : null;
+
+  const inside =
+    at !== null && shown.every(({ end, start }) => start >= at && end <= at + section.length);
+
+  return inside ? [] : [{ detail: section, kind: "device-section" }];
+}
+
 /**
  * Before pictures need only their capture record: an old before is expected. After pictures also
  * need a known, committed build no later commit to their app or the shared packages outdates, and
  * a read with no unresolved finding. A native picture without its platform's record is pending.
+ * A device picture, which nothing measures, is held to the section the tool writes (`body`).
  */
 export async function checkPictures({
+  body,
   manifests,
   pictures,
   repository,
   unsupported = [],
 }: {
+  body?: Body;
   manifests: string[];
   pictures: string[];
   repository: string;
@@ -285,7 +340,17 @@ export async function checkPictures({
   const unique = [...new Set(pictures)];
 
   const checked = await Promise.all(
-    unique.map(async (picture) => pictureProblems({ byHash, byPath, git, picture })),
+    unique.map(async (picture) => ({
+      picture,
+      ...(await pictureProblems({ byHash, byPath, git, picture })),
+    })),
+  );
+
+  const devices = new Map(
+    checked.flatMap(({ entries: found, picture }) => {
+      const item = deviceItem(found);
+      return item ? [[picture, item] as const] : [];
+    }),
   );
 
   const matched = new Set(checked.flatMap(({ entries: found }) => found));
@@ -310,11 +375,17 @@ export async function checkPictures({
 
   return {
     checked: unique.length,
+    devices: [...devices].map(([picture, item]) => ({ line: deviceLine(item), picture })),
     notMeasured: judgedManifests.filter((manifest) => !measured(manifest)).length,
     nothingDeclared: judgedManifests
       .flatMap(({ alignment }) => alignment.captures ?? [])
       .filter((screen) => screen.elements?.length === 0).length,
-    problems: [...unreadable, ...checked.flatMap(({ problems }) => problems), ...fromAlignment],
+    problems: [
+      ...unreadable,
+      ...checked.flatMap(({ problems }) => problems),
+      ...sectionProblems(body, devices),
+      ...fromAlignment,
+    ],
     reads,
   };
 }

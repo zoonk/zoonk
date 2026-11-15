@@ -332,18 +332,33 @@ importers:
       '@playwright/test':
         specifier: 'catalog:'
         version: 1.65.1
+      '@types/mdast':
+        specifier: 4.0.4
+        version: 4.0.4
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:packages/tsconfig
+      fast-check:
+        specifier: 'catalog:'
+        version: 4.10.2
       jsdom:
         specifier: 'catalog:'
         version: 31.0.1(@napi-rs/canvas@1.1.1)(@noble/hashes@2.4.0)
       knip:
         specifier: 6.45.1
         version: 6.45.1
+      mdast-util-from-markdown:
+        specifier: 2.1.0
+        version: 2.1.0(supports-color@10.2.2)
+      mdast-util-gfm:
+        specifier: 3.1.0
+        version: 3.1.0(supports-color@10.2.2)
+      micromark-extension-gfm:
+        specifier: 3.0.0
+        version: 3.0.0
       neon:
         specifier: 9.5.0
         version: 9.5.0(hono@4.13.18)(rollup@4.68.3)(supports-color@10.2.2)

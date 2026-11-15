@@ -55,3 +55,11 @@ test("measures a list's last three rows by what a list row is, whatever slot a r
     ["Wed Thu Fri", "Email Language Theme"],
   );
 });
+
+test("records the type a role's words are drawn in, so a back link is compared across pages", () => {
+  document.body.innerHTML = `<a data-slot="back-link"><svg></svg><span style="font-family: Geist; font-size: 13px; font-weight: 500; color: rgb(100, 100, 100)">Courses</span></a>`;
+
+  const [link] = readRoles({ listGroup: LIST_GROUP, overlays: OVERLAYS });
+
+  assert.equal(link?.type, "Geist 13px 500 rgb(100, 100, 100)");
+});
