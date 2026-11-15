@@ -181,6 +181,7 @@ private fun Paper(
     actions: SpeakingActions,
 ) {
     val hero: @Composable () -> Unit = { PaperHero(paper) }
+    OpenStartedCall(speakingStart(goalId, actions.start) { actions.refused(goalId) }) { actions.open(AppRoute.Conversation(it.toString())) }
     PageWithSupportingPane(supportingPane = { Column(Modifier.padding(24.dp)) { hero() } }) { beside ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -226,9 +227,18 @@ private fun Modifier.pageItem(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWid
 
 private val PAGE_WIDTH = 720.dp
 
+/** [goalId]'s speaking task start, which the page holding the paper opens with [OpenStartedCall], above the list the paper scrolls in. */
+@Composable
+fun speakingStart(
+    goalId: UUID,
+    start: CallStarter,
+    refused: suspend () -> Unit,
+): CallStartModel = viewModel(key = "speaking-start:$goalId") { CallStartModel(start, GenerationKind.ExamSpeaking, refused) }
+
 /**
  * Main's `SpeakingPaperSection`, for the speaking page and the exam page: the paper's tasks, each
- * opening to its criteria and its Start, with the card written on the learner's tap. [title] null
+ * opening to its criteria and its Start, with the card written on the learner's tap and the call opened by the page's
+ * [OpenStartedCall] on [speakingStart]. [title] null
  * names it Speaking with the paper's title beside it; [from] is the conversation route's `from`.
  * The task [openTask] names starts open and scrolled into view.
  */
@@ -246,7 +256,7 @@ fun SpeakingPaperSection(
     from: String? = null,
 ) {
     val locked = paper.access == SpeakingPaper.Access.PLUS_REQUIRED
-    val model = viewModel(key = "speaking-start:$goalId") { CallStartModel(start, GenerationKind.ExamSpeaking, onRefused) }
+    val model = speakingStart(goalId, start, onRefused)
     val paused = paper.access == SpeakingPaper.Access.CALLS_PAUSED
     var started by rememberSaveable { mutableStateOf<String?>(null) }
     val writing by model.writing.generationId.collectAsStateWithLifecycle()
@@ -257,7 +267,6 @@ fun SpeakingPaperSection(
         model.start(CallRequest.ExamSpeaking(goalId, key))
     }
     val actions = SpeakingActions(start, open, openWeb) { onRefused() }
-    OpenStartedCall(model, openCall)
 
     Column(modifier) {
         Column(Modifier.padding(bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {

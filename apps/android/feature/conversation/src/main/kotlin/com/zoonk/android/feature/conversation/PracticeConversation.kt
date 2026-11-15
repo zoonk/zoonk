@@ -46,9 +46,12 @@ import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.TrackShown
+import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.subscription.GateWords
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.HeldSlot
 import com.zoonk.android.ui.components.KindDot
@@ -79,36 +82,49 @@ class CallStartModel(
     kind: GenerationKind,
     private val refused: suspend () -> Unit = {},
 ) : ViewModel() {
+    /** The visit of the screen that asked: the call it started opens, or its failure shows, only on it. */
+    val visit = Visit()
+
     enum class State { Idle, Starting, Failed, Paused, PlusRequired }
 
-    var state by mutableStateOf(State.Idle)
-        private set
+    private class Failure(
+        val limit: Limit.Reached?,
+    )
 
-    /** The plan's call time a refused start ran into. */
-    var limit by mutableStateOf<Limit.Reached?>(null)
-        private set
+    private var phase by mutableStateOf(State.Idle)
+    private val failure = visit.outcome<Failure>()
 
-    /** The call a start opened, until a screen showing then opens it with [OpenStartedCall]. */
-    var started by mutableStateOf<UUID?>(null)
-        private set
+    /** Failed only on the visit that asked. */
+    val state get() = if (failure.value != null) State.Failed else phase
+
+    /** The plan's call time a refused start ran into, on the visit that asked. */
+    val limit get() = failure.value?.limit
+
+    /** The call a start opened, for the screen that asked to open with [OpenStartedCall]. */
+    val started = visit.outcome<UUID>()
 
     val writing = starter.writingWaits.create(kind, viewModelScope)
 
-    fun start(request: CallRequest) {
-        state = State.Starting
-        limit = null
+    fun start(request: CallRequest) = start(request, visit.number)
+
+    /** [asked] is the tap's visit, which the request sent again once its call is written still answers. */
+    private fun start(
+        request: CallRequest,
+        asked: Int,
+    ) {
+        phase = State.Starting
+        failure.clear()
         viewModelScope.launch {
             val started = starter.start(request)
-            val answer = writing.answered((started as? CallStart.Writing)?.generationId) { start(request) }
-            limit = (started as? CallStart.Limited)?.limit
-            state =
+            val answer = writing.answered((started as? CallStart.Writing)?.generationId) { start(request, asked) }
+            phase =
                 when {
                     answer == ContentWritingWait.Answer.Waiting -> {
                         State.Idle
                     }
 
                     started is CallStart.Started && answer == ContentWritingWait.Answer.Proceed -> {
-                        this@CallStartModel.started = started.conversationId
+                        this@CallStartModel.started.send(asked, started.conversationId)
                         State.Idle
                     }
 
@@ -121,32 +137,26 @@ class CallStartModel(
                     }
 
                     else -> {
-                        State.Failed
+                        failure.send(asked, Failure((started as? CallStart.Limited)?.limit))
+                        State.Idle
                     }
                 }
             if (started == CallStart.PlusRequired) refused()
         }
     }
-
-    fun opened() {
-        started = null
-    }
 }
 
 /**
- * Opens the call [model] started from the screen showing when it does, so a start that answers
- * after the device turns still opens it; the sheet is ready for a fresh start when the learner is back.
+ * The screen that starts [model]'s call: it opens the call that start opened, after the device turns too,
+ * and leaving it ends the visit, so a start that answers later opens nothing.
  */
 @Composable
 fun OpenStartedCall(
     model: CallStartModel,
     open: (UUID) -> Unit,
 ) {
-    val id = model.started ?: return
-    LaunchedEffect(id) {
-        model.opened()
-        open(id)
-    }
+    VisitOf(model.visit)
+    ActOn(model.started, open)
 }
 
 /** Hoist it above a layout that moves the row, as between a page and its aside, so the open sheet and its length stay. */

@@ -38,6 +38,7 @@ class FakePlanApi : PlanApi {
 
     /** Holds a goal's status change until completed. */
     var statusGate: CompletableDeferred<Unit>? = null
+    var continueGate: CompletableDeferred<Unit>? = null
 
     /** Holds a goal's language country or content country change until completed. */
     var goalGate: CompletableDeferred<Unit>? = null
@@ -311,6 +312,7 @@ class FakePlanApi : PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
     ) {
+        continueGate?.await()
         continueFailure?.let { throw it }
         continued++
     }

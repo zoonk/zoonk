@@ -34,6 +34,7 @@ import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -106,7 +107,32 @@ class PlanViewModelTest {
 
             viewModel.setStatus(LearnerSummaryGoal.Status.ACTIVE)
 
-            assertEquals(ResumeFailure.GoalLimit, viewModel.resumeFailure.value)
+            assertEquals(ResumeFailure.GoalLimit, viewModel.resumeFailure)
+        }
+
+    @Test
+    fun aResumeThatFailsAfterTheLearnerLeftSaysNothingOnReturn() =
+        runTest {
+            val held = CompletableDeferred<Unit>().also { api.statusGate = it }
+            api.statusFailure = ApiException(ApiError.Network)
+
+            viewModel.setStatus(LearnerSummaryGoal.Status.ACTIVE)
+            viewModel.visit.end()
+            held.complete(Unit)
+
+            assertNull(viewModel.resumeFailure)
+        }
+
+    @Test
+    fun aResumeFailureShownBeforeTheLearnerLeftIsGoneOnReturn() =
+        runTest {
+            api.statusFailure = ApiException(ApiError.Network)
+
+            viewModel.setStatus(LearnerSummaryGoal.Status.ACTIVE)
+            assertEquals(ResumeFailure.Failed, viewModel.resumeFailure)
+            viewModel.visit.end()
+
+            assertNull(viewModel.resumeFailure)
         }
 
     @Test
@@ -220,7 +246,7 @@ class PlanViewModelTest {
             viewModel.change(PlanPart.Steering, listOf(PlanOp.DifficultyBias("harder")), PlanAsker.Sheet(opening))
 
             assertEquals(mapOf(opening to null), viewModel.sheetAnswers.value)
-            assertEquals(setOf(PlanPart.Steering), viewModel.failed.value)
+            assertEquals(setOf(PlanPart.Steering), viewModel.failed)
             assertNull(viewModel.latest.value)
             assertEquals(0, api.plans)
         }
@@ -274,7 +300,7 @@ class PlanViewModelTest {
 
             viewModel.change(PlanPart.Writing, listOf(PlanOp.WrittenCadence("biweekly")), PlanAsker.Sheet(opening))
 
-            assertEquals(setOf(PlanPart.Writing), viewModel.failed.value)
+            assertEquals(setOf(PlanPart.Writing), viewModel.failed)
             assertEquals(mapOf(opening to null), viewModel.sheetAnswers.value)
             assertEquals(emptyMap<PlanPart, List<PlanOp>>(), viewModel.asked.value)
             assertEquals(emptySet<PlanPart>(), viewModel.pending.value)
@@ -476,7 +502,66 @@ class PlanViewModelTest {
             viewModel.continueAtNextLevel()
 
             assertEquals(1, api.continued)
-            assertEquals(NextLevelStart.Started, viewModel.nextLevel.value)
+            assertEquals(NextLevelStart.Started, viewModel.nextLevel)
+        }
+
+    @Test
+    fun aNextLevelThatFailsAfterTheLearnerLeftSaysNothingOnReturn() =
+        runTest {
+            val held = CompletableDeferred<Unit>().also { api.continueGate = it }
+            api.continueFailure = ApiException(ApiError.Network)
+
+            viewModel.continueAtNextLevel()
+            viewModel.visit.end()
+            held.complete(Unit)
+
+            assertEquals(NextLevelStart.Idle, viewModel.nextLevel)
+        }
+
+    @Test
+    fun aNextLevelFailureShownBeforeTheLearnerLeftIsGoneOnReturn() =
+        runTest {
+            api.continueFailure = ApiException(ApiError.Network)
+
+            viewModel.continueAtNextLevel()
+            assertEquals(NextLevelStart.Failed, viewModel.nextLevel)
+            viewModel.visit.end()
+
+            assertEquals(NextLevelStart.Idle, viewModel.nextLevel)
+        }
+
+    @Test
+    fun anEditorFailureShownBeforeTheLearnerLeftIsGoneOnReturn() =
+        runTest {
+            api.changeFailure = ApiException(ApiError.Network)
+
+            viewModel.change(PlanPart.Schedule, listOf(PlanOp.DailyMinutes(45)))
+            assertEquals(setOf(PlanPart.Schedule), viewModel.failed)
+            viewModel.visit.end()
+
+            assertEquals(emptySet<PlanPart>(), viewModel.failed)
+        }
+
+    @Test
+    fun aSuggestionFailureShownBeforeTheLearnerLeftIsGoneOnReturn() =
+        runTest {
+            api.changeFailure = ApiException(ApiError.Network)
+
+            viewModel.change(PlanPart.Suggestion, listOf(PlanOp.DailyMinutes(45)), PlanAsker.Suggestion(SlotItem.Coverage))
+            assertEquals(SlotItem.Coverage.key, viewModel.slotState.failed)
+            viewModel.visit.end()
+
+            assertNull(viewModel.slotState.failed)
+        }
+
+    @Test
+    fun aSuggestionAnswerShownBeforeTheLearnerLeftIsGoneOnReturn() =
+        runTest {
+            viewModel.change(PlanPart.Suggestion, listOf(PlanOp.DailyMinutes(45)), PlanAsker.Suggestion(SlotItem.Coverage))
+            assertNotNull(viewModel.slotState.result)
+            viewModel.visit.end()
+
+            assertNull(viewModel.slotState.result)
         }
 
     @Test
@@ -485,11 +570,11 @@ class PlanViewModelTest {
             api.continueFailure = ApiException(ApiError.Unavailable, status = 409)
 
             viewModel.continueAtNextLevel()
-            assertEquals(NextLevelStart.Failed, viewModel.nextLevel.value)
+            assertEquals(NextLevelStart.Failed, viewModel.nextLevel)
 
             api.continueFailure = null
             viewModel.continueAtNextLevel()
-            assertEquals(NextLevelStart.Started, viewModel.nextLevel.value)
+            assertEquals(NextLevelStart.Started, viewModel.nextLevel)
         }
 
     private suspend fun shown(plan: Plan = coveragePlan()): Plan {
@@ -617,7 +702,7 @@ class PlanViewModelTest {
 
             assertEquals(2, api.toolAnswers.size)
             assertEquals(mapOf(opening to null), viewModel.sheetAnswers.value)
-            assertEquals(setOf(PlanPart.Tools), viewModel.failed.value)
+            assertEquals(setOf(PlanPart.Tools), viewModel.failed)
             assertNull(viewModel.setupLessons.generationId.value)
         }
 
@@ -634,7 +719,7 @@ class PlanViewModelTest {
 
             assertNull(viewModel.setupLessons.generationId.value)
             assertEquals(mapOf(opening to null), viewModel.sheetAnswers.value)
-            assertEquals(setOf(PlanPart.Tools), viewModel.failed.value)
+            assertEquals(setOf(PlanPart.Tools), viewModel.failed)
         }
 
     @Test
@@ -645,7 +730,7 @@ class PlanViewModelTest {
             viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS), PlanAsker.Sheet(opening))
 
             assertEquals(mapOf(opening to null), viewModel.sheetAnswers.value)
-            assertEquals(setOf(PlanPart.Tools), viewModel.failed.value)
+            assertEquals(setOf(PlanPart.Tools), viewModel.failed)
             assertEquals(emptySet<PlanPart>(), viewModel.pending.value)
             assertNull(viewModel.latest.value)
         }
@@ -849,7 +934,7 @@ class PlanViewModelTest {
             viewModel.visit.end()
             held.complete(Unit)
 
-            assertEquals(emptySet<PlanPart>(), viewModel.failed.value)
+            assertEquals(emptySet<PlanPart>(), viewModel.failed)
             assertEquals(emptyMap<UUID, PlanChangeResult?>(), viewModel.sheetAnswers.value)
         }
 
@@ -902,7 +987,7 @@ class PlanViewModelTest {
             viewModel.visit.end()
             held.complete(Unit)
 
-            assertEquals(emptySet<PlanPart>(), viewModel.failed.value)
+            assertEquals(emptySet<PlanPart>(), viewModel.failed)
         }
 
     /** What the frame acts on, then acknowledges, as `ActOn` does. */
@@ -1053,7 +1138,7 @@ class PlanViewModelTest {
             viewModel.setRegion("MX")
             reopenEditor()
             held.complete(Unit)
-            assertFalse(viewModel.failed.value.contains(PlanPart.Region))
+            assertFalse(viewModel.failed.contains(PlanPart.Region))
         }
 
     private companion object {

@@ -39,12 +39,15 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.ceremonies.CertificateCeremony
 import com.zoonk.android.feature.conversation.CallStarter
+import com.zoonk.android.feature.conversation.OpenStartedCall
 import com.zoonk.android.feature.feedback.FeedbackSheet
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.rememberReportProblem
 import com.zoonk.android.feature.goalcontent.PlanSyllabusSection
 import com.zoonk.android.feature.goalcontent.hasSubjectPages
 import com.zoonk.android.feature.language.AlphabetRow
+import com.zoonk.android.feature.language.alphabetSkip
+import com.zoonk.android.feature.speaking.speakingMockStart
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -169,7 +172,7 @@ internal fun PlanPage(
     val renameDialog by viewModel.rename.collectAsStateWithLifecycle()
     val pending by viewModel.pending.collectAsStateWithLifecycle()
     val asked by viewModel.asked.collectAsStateWithLifecycle()
-    val failed by viewModel.failed.collectAsStateWithLifecycle()
+    val failed = viewModel.failed
     val latest by viewModel.latest.collectAsStateWithLifecycle()
     val changes by viewModel.changes.collectAsStateWithLifecycle()
     val sheetAnswers by viewModel.sheetAnswers.collectAsStateWithLifecycle()
@@ -177,7 +180,7 @@ internal fun PlanPage(
     val basesAdvice by viewModel.basesAdvice.collectAsStateWithLifecycle()
     val preview by viewModel.preview.collectAsStateWithLifecycle()
     val slotPreview by viewModel.slotPreview.collectAsStateWithLifecycle()
-    val nextLevel by viewModel.nextLevel.collectAsStateWithLifecycle()
+    val nextLevel = viewModel.nextLevel
     val end =
         if (page.plan.end != null || page.isExam) {
             app.plans.end[page.goal.id]
@@ -191,6 +194,13 @@ internal fun PlanPage(
         navigator.open(codes.singleOrNull()?.let { AppRoute.Certificate(it) } ?: AppRoute.Certificates)
     }
     VisitOf(claim.visit)
+    val skip = if (isLanguage) alphabetSkip(page.goal.id, app.alphabet) else null
+    skip?.let { VisitOf(it.visit) }
+    (standing as? Standing.Language)?.takeIf { it.progress.speakingMock != null }?.let { language ->
+        OpenStartedCall(
+            speakingMockStart(language.progress.goal.id, language.startCall),
+        ) { navigator.open(AppRoute.Conversation(it.toString())) }
+    }
     ActOn(claim.opened, openCertificates)
     val focusTest = page.plan.focusTest
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME || focus == ADJUST_CHOICES) }
@@ -243,7 +253,7 @@ internal fun PlanPage(
         page = page,
         countryRebuild = countryRebuild,
         standing = standing,
-        alphabet = alphabet?.let { { AlphabetRow(it, page.goal.id, app.alphabet, navigator::open) } },
+        alphabet = alphabet?.let { shown -> skip?.let { { AlphabetRow(shown, page.goal.id, it, navigator::open) } } },
         focusTest = focusTest?.let { { PlanFocusTestRow(it, links::focusTest) } },
         structure = syllabus.value?.takeIf { it.hasSubjectPages },
         links = links,
@@ -259,7 +269,7 @@ internal fun PlanPage(
             },
         isSaving = isSaving,
         onSetStatus = viewModel::setStatus,
-        resumeFailure = viewModel.resumeFailure.collectAsStateWithLifecycle().value,
+        resumeFailure = viewModel.resumeFailure,
         rename = GoalRename(renameDialog, viewModel::openRename, viewModel::closeRename, viewModel::rename),
         report = report,
         onAdjust = { section ->

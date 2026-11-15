@@ -1,5 +1,8 @@
 package com.zoonk.android.feature.plan
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.ApiError
@@ -78,10 +81,8 @@ class PlanViewModel(
     writingWaits: WritingWaits,
 ) : ViewModel() {
     private val saving = MutableStateFlow(false)
-    private val resumeFailureState = MutableStateFlow<ResumeFailure?>(null)
     private val savingParts = MutableStateFlow(emptySet<PlanPart>())
     private val askedOperations = MutableStateFlow(emptyMap<PlanPart, List<PlanOp>>())
-    private val failedParts = MutableStateFlow(emptySet<PlanPart>())
     private val trackedChanges = MutableStateFlow(emptyMap<UUID, EditorChange>())
     private val editorChangeIds = MutableStateFlow(emptySet<UUID>())
     private val sheetAnswersState = MutableStateFlow(emptyMap<UUID, PlanChangeResult?>())
@@ -89,7 +90,6 @@ class PlanViewModel(
     private var search: TimeToCoverSearch? = null
     private val previewState = MutableStateFlow<PlanPreviewState>(PlanPreviewState.Idle)
     private val slotPreviewState = MutableStateFlow<PlanPreviewState>(PlanPreviewState.Idle)
-    private val nextLevelStart = MutableStateFlow(NextLevelStart.Idle)
     private val renameDialog = MutableStateFlow<RenameDialog?>(null)
 
     /** Counts the editor's openings, so a change saved in one doesn't show its answer in the next. */
@@ -97,11 +97,13 @@ class PlanViewModel(
 
     val isSaving: StateFlow<Boolean> = saving.asStateFlow()
 
-    /** Why the bar's Resume didn't save, said over the bar until the next try. */
-    val resumeFailure: StateFlow<ResumeFailure?> = resumeFailureState.asStateFlow()
-
     /** This visit to the Plan: what its writes lead to shows only on it. */
     val visit = Visit()
+
+    private val resumeFailed = visit.outcome<ResumeFailure>()
+
+    /** Why the bar's Resume didn't save on this visit, said over the bar until the next try. */
+    val resumeFailure: ResumeFailure? get() = resumeFailed.value
 
     /** What a write did that the screen acts on, while the visit that made it lasts. */
     val event = visit.outcome<PlanEvent>()
@@ -115,7 +117,8 @@ class PlanViewModel(
     /** What each saving part asked for, shown over the plan meanwhile: a tap shows at once and survives turning the device. */
     val asked: StateFlow<Map<PlanPart, List<PlanOp>>> = askedOperations.asStateFlow()
 
-    val failed: StateFlow<Set<PlanPart>> = failedParts.asStateFlow()
+    /** The editor's parts whose change didn't save, while the editor opening that asked lasts. */
+    val failed: Set<PlanPart> get() = outcomes.failedParts.value.orEmpty()
 
     /** Every change made here, so a sheet or the slot keeps its own, with its Undo, after a newer one or the editor reopening. */
     val changes: StateFlow<Map<UUID, EditorChange>> = trackedChanges.asStateFlow()
@@ -132,7 +135,7 @@ class PlanViewModel(
             .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /** The suggestion slot's state, kept here so a save's answer, with its Undo, survives turning the device. */
-    internal val slotState = SlotState()
+    internal val slotState = SlotState(visit = visit)
 
     /** Read it with [forPlan]: it's the plan revision it was asked of. */
     val timeToCover: StateFlow<TimeToCoverState> = timeToCoverState.asStateFlow()
@@ -143,7 +146,12 @@ class PlanViewModel(
     /** The suggestion slot's own, as main's: Study everything's preview never replaces what the slot shows. */
     val slotPreview: StateFlow<PlanPreviewState> = slotPreviewState.asStateFlow()
 
-    val nextLevel: StateFlow<NextLevelStart> = nextLevelStart.asStateFlow()
+    private var nextLevelStart by mutableStateOf(NextLevelStart.Idle)
+
+    private val nextLevelFailure = visit.outcome<Unit>()
+
+    /** Failed only on the visit that asked. */
+    val nextLevel: NextLevelStart get() = if (nextLevelFailure.value != null) NextLevelStart.Failed else nextLevelStart
 
     val rename: StateFlow<RenameDialog?> = renameDialog.asStateFlow()
 
@@ -171,7 +179,7 @@ class PlanViewModel(
         if (saving.value) return
         saving.value = true
         val resuming = status == LearnerSummaryGoal.Status.ACTIVE
-        if (resuming) resumeFailureState.value = null
+        if (resuming) resumeFailed.clear()
         val started = visit.number
         viewModelScope.launch {
             when (val result = store.setStatus(goalId, status)) {
@@ -181,7 +189,16 @@ class PlanViewModel(
 
                 is MutationResult.Failed -> {
                     if (resuming) {
-                        resumeFailureState.value = if (result.status == TOO_MANY_REQUESTS) ResumeFailure.GoalLimit else ResumeFailure.Failed
+                        resumeFailed.send(
+                            started,
+                            if (result.status ==
+                                TOO_MANY_REQUESTS
+                            ) {
+                                ResumeFailure.GoalLimit
+                            } else {
+                                ResumeFailure.Failed
+                            },
+                        )
                     } else {
                         outcomes.saveFailed.send(started, Unit)
                     }
@@ -218,8 +235,9 @@ class PlanViewModel(
     ) {
         if (part in savingParts.value) return
         savingParts.update { it + part }
-        failedParts.update { it - part }
+        retried(part)
         val asked = asker.number
+        val editorOpened = outcomes.editor.number
         viewModelScope.launch {
             when (write()) {
                 is MutationResult.Done -> {
@@ -227,7 +245,7 @@ class PlanViewModel(
                 }
 
                 is MutationResult.Failed -> {
-                    if (asked == asker.number) failedParts.update { it + part }
+                    if (asked == asker.number) markFailed(part, editorOpened)
                     failed?.send(asked, Unit)
                 }
 
@@ -343,8 +361,9 @@ class PlanViewModel(
         if (part in savingParts.value) return
         val opening = openings
         val opened = (if (asker == PlanAsker.AimPicker) outcomes.aimPicker else outcomes.editor).number
+        val editorOpened = outcomes.editor.number
         savingParts.update { it + part }
-        failedParts.update { it - part }
+        retried(part)
         askedOperations.update { it + (part to operations) }
         viewModelScope.launch {
             val result = write()
@@ -362,7 +381,7 @@ class PlanViewModel(
                 if (saved.status == PlanChangeResult.Status.APPLIED) saved.change?.let { report(it, editor = sameOpening) }
                 answer(asker, started, opened, saved)
             } else if (result is MutationResult.Failed || shown == PlanShown.Stale) {
-                if (sameOpening && started == visit.number) failedParts.update { it + part }
+                if (sameOpening) markFailed(part, editorOpened)
                 answer(asker, started, opened, null)
             }
             askedOperations.update { it - part }
@@ -585,16 +604,24 @@ class PlanViewModel(
     }
 
     fun continueAtNextLevel() {
-        if (nextLevelStart.value == NextLevelStart.Starting || nextLevelStart.value == NextLevelStart.Started) return
-        nextLevelStart.value = NextLevelStart.Starting
+        if (nextLevelStart == NextLevelStart.Starting || nextLevelStart == NextLevelStart.Started) return
+        nextLevelStart = NextLevelStart.Starting
+        nextLevelFailure.clear()
+        val started = visit.number
         viewModelScope.launch {
-            nextLevelStart.value =
-                when (store.continueAtNextLevel(goalId)) {
-                    is MutationResult.Done -> NextLevelStart.Started
-                    is MutationResult.Failed -> NextLevelStart.Failed
-                    MutationResult.Obsolete -> NextLevelStart.Idle
-                }
+            val result = store.continueAtNextLevel(goalId)
+            nextLevelStart = if (result is MutationResult.Done) NextLevelStart.Started else NextLevelStart.Idle
+            if (result is MutationResult.Failed) nextLevelFailure.send(started, Unit)
         }
+    }
+
+    private fun markFailed(
+        part: PlanPart,
+        editorOpened: Int,
+    ) = outcomes.failedParts.send(editorOpened, failed + part)
+
+    private fun retried(part: PlanPart) {
+        outcomes.failedParts.value?.let { outcomes.failedParts.send(outcomes.editor.number, it - part) }
     }
 
     /** The editor opens without the change it showed last time, as main's does. */
@@ -602,7 +629,7 @@ class PlanViewModel(
         openings++
         editorChangeIds.value = emptySet()
         sheetAnswersState.value = emptyMap()
-        failedParts.value = emptySet()
+        outcomes.failedParts.clear()
     }
 
     private companion object {

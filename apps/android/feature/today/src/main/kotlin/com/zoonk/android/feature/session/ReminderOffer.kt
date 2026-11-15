@@ -36,6 +36,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
+import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.reminders.StudyReminderStore
 import com.zoonk.android.feature.reminders.nearestQuarterHour
 import com.zoonk.android.feature.reminders.openNotificationSettings
@@ -43,6 +44,7 @@ import com.zoonk.android.feature.reminders.rememberCanShowReminders
 import com.zoonk.android.feature.reminders.rememberReminderPermission
 import com.zoonk.android.feature.reminders.reminderTime
 import com.zoonk.android.feature.reminders.reminderZone
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
@@ -59,6 +61,9 @@ class ReminderOfferViewModel(
     private val reminders: StudyReminderStore,
     time: String,
 ) : ViewModel() {
+    /** The summary's visit: a choice that didn't save says so only on it. */
+    val visit = Visit()
+
     var time by mutableStateOf(LocalTime.parse(time).nearestQuarterHour().toString())
         private set
 
@@ -68,8 +73,10 @@ class ReminderOfferViewModel(
     var saving by mutableStateOf(false)
         private set
 
-    var failed by mutableStateOf(false)
-        private set
+    private val failure = visit.outcome<Unit>()
+
+    /** The learner's choice didn't save, on this visit. */
+    val failed get() = failure.value != null
 
     private var claimed = false
 
@@ -119,7 +126,8 @@ class ReminderOfferViewModel(
     ) {
         if (saving) return
         saving = true
-        failed = false
+        failure.clear()
+        val started = visit.number
         viewModelScope.launch {
             when (write()) {
                 is MutationResult.Done -> {
@@ -127,7 +135,7 @@ class ReminderOfferViewModel(
                 }
 
                 is MutationResult.Failed -> {
-                    failed = true
+                    failure.send(started, Unit)
                 }
 
                 MutationResult.Obsolete -> {}
@@ -148,6 +156,7 @@ fun ReminderOfferCard(
     offer: StudyReminderOffer,
 ) {
     val viewModel = viewModel(key = "reminder-offer") { ReminderOfferViewModel(app.reminders, offer.time) }
+    VisitOf(viewModel.visit)
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val hasAccount = (session as? SessionState.SignedIn)?.isGuest == false
     val canShow = rememberCanShowReminders()
