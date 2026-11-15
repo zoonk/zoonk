@@ -232,6 +232,39 @@ describe("reading a declared piece in the page", () => {
     assert.equal(record?.rule, "one-filled");
   });
 
+  it("resolves three stacked surfaces to the one the document shows where two of them overlap", () => {
+    // The reviewer's fixture: in DOM order bottom (z 10), top (z 30), middle (z 20); where the
+    // bottom and the middle overlap, the document shows the top one.
+    const byZ = [
+      ["top", 120, 0, 100, 150],
+      ["middle", 0, 0, 200, 100],
+      ["bottom", 100, 0, 400, 300],
+    ] as const;
+
+    document.body.innerHTML = [byZ[2], byZ[0], byZ[1]]
+      .map(
+        ([name, x, y, width, height]) =>
+          `<div role="dialog" aria-modal="true" aria-label="${name}" data-box="${x},${y},${width},${height}">
+            <button style="--button-variant: default" data-box="${x},${y},50,40">${name}</button></div>`,
+      )
+      .join("");
+
+    hit = (x, y) => {
+      const [name] =
+        byZ.find(
+          ([, left, top, width, height]) =>
+            x >= left && x < left + width && y >= top && y < top + height,
+        ) ?? [];
+
+      return name ? document.querySelector(`[aria-label=${name}]`) : document.body;
+    };
+
+    const capture = read();
+
+    assert.match(capture.activeSurface, /^"top"/u);
+    assert.deepEqual(evaluateCapture(capture), []);
+  });
+
   it("counts each submit button, unless its piece names one action drawn twice", () => {
     // Two destinations from one form, and two forms that send the same place different records.
     document.body.innerHTML = `<form action="/same">${save('formaction="/approve"')}${save('formaction="/reject"')}</form>`;

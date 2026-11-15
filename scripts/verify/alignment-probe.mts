@@ -568,8 +568,9 @@ export function readAlignment({
   });
 
   /**
-   * Of two surfaces that partly overlap, the one the document shows where they overlap; one inside
-   * the other is the inner one. Null when the document shows neither there.
+   * Of two surfaces that partly overlap, the declared surface the document shows where they overlap
+   * (a third one over both, such as a dialog over a sheet over the page's bar, included); one inside
+   * the other is the inner one. Null when the document shows no declared surface there.
    */
   const upper = (one: Element, other: Element): Element | null => {
     if (one.contains(other) || other.contains(one)) {
@@ -587,14 +588,8 @@ export function readAlignment({
       return one;
     }
 
-    const x = (left + right) / 2;
-    const y = (top + bottom) / 2;
-
-    if (shows(one, x, y)) {
-      return one;
-    }
-
-    return shows(other, x, y) ? other : null;
+    const hit = document.elementFromPoint((left + right) / 2, (top + bottom) / 2);
+    return (hit && covers.findLast((cover) => cover.contains(hit))) ?? null;
   };
 
   const top = covers.reduce<Element | null | undefined>(
@@ -636,7 +631,7 @@ export function readAlignment({
       };
     });
 
-  // Null when two surfaces overlap and the document shows neither where they do.
+  // Null when two surfaces overlap and the document shows no declared surface where they do.
   if (top === null) {
     return { activeSurface: "not measured", elements: [...elements, ...actions] };
   }

@@ -85,7 +85,7 @@ export type Capture = {
   scale: number;
   /**
    * The topmost dialog or sheet showing, or "page"; "not measured" when two surfaces overlap and
-   * the page shows neither where they do, which fails `one-filled`.
+   * the page shows no dialog or sheet where they do, which fails `one-filled`.
    */
   activeSurface: string;
   /** A gallery of the pieces shown side by side, not a screen: one filled action isn't judged. */
