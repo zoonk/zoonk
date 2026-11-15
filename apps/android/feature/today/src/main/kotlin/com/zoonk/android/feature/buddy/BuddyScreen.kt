@@ -68,6 +68,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.OnVisitEnd
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.characters.Buddy
 import com.zoonk.android.ui.characters.BuddyAct
 import com.zoonk.android.ui.characters.BuddyActor
@@ -187,7 +188,6 @@ fun BuddyPage(
         dayOpen = false
         navigator.open(it)
     }
-    ActOn(vm.saved) { editing = false }
     LaunchedEffect(asking) {
         if (!asking) return@LaunchedEffect
         composer.requestFocus()
@@ -241,28 +241,46 @@ fun BuddyPage(
                         )
                     },
                 )
-                if (vm.saveFailed && !editing) SaveFailed(Modifier.padding(horizontal = 16.dp))
                 TutorPanel(tutor, access, TutorIdentity(name, look), routes, Modifier.weight(1f), page = page)
             }
         }
     }
 
-    if (wearing) {
-        GlassesSheet(status, look, saveFailed = vm.saveFailed, onDismiss = { wearing = false }) { glasses ->
-            vm.save(look.kind, glasses, status.buddy.name)
+    BuddyChanges(vm, status, look, BuddyChangesOpen(wearing, editing), closeGlasses = { wearing = false }, closeEditor = { editing = false })
+}
+
+/** Which of the buddy's change sheets show. */
+internal data class BuddyChangesOpen(
+    val glasses: Boolean,
+    val editor: Boolean,
+)
+
+/** The glasses sheet and the name editor, each its own asker: a save closes or marks only the one that asked. */
+@Composable
+internal fun BuddyChanges(
+    vm: BuddyViewModel,
+    status: BuddyStatus,
+    look: BuddyLook,
+    open: BuddyChangesOpen,
+    closeGlasses: () -> Unit,
+    closeEditor: () -> Unit,
+) {
+    if (open.glasses) {
+        VisitOf(vm.glassesSheet)
+        GlassesSheet(status, look, saveFailed = vm.glassesSaveFailed, onDismiss = closeGlasses) { glasses ->
+            vm.saveGlasses(look.kind, glasses, status.buddy.name)
         }
     }
-    if (editing) {
+    if (open.editor) {
+        VisitOf(vm.editor)
+        ActOn(vm.editorSaved) { closeEditor() }
         BuddyEditor(
             look = look,
             name = status.buddy.name.orEmpty(),
             isSaving = vm.isSaving,
-            saveFailed = vm.saveFailed,
-            onClose = {
-                editing = false
-                vm.dismissSaveFailure()
-            },
-            onSave = vm::save,
+            saveFailed = vm.editorSaveFailed,
+            onClose = closeEditor,
+            onSave = vm::saveEdit,
         )
     }
 }
@@ -494,10 +512,10 @@ internal fun GlassesSheet(
 }
 
 @Composable
-private fun SaveFailed(modifier: Modifier = Modifier) {
+private fun SaveFailed() {
     Text(
         stringResource(R.string.buddy_page_save_failed),
-        modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,
     )

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.LearningProfileStore
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Visit
+import com.zoonk.android.data.VisitOutcome
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.page
@@ -43,23 +44,50 @@ class BuddyViewModel internal constructor(
     /** The row whose mission failed to open on this visit. */
     val openFailed get() = openFailure.value
 
-    /** A change saved on this visit, so an open editor closes. */
-    val saved = visit.outcome<Unit>()
+    /** The glasses sheet while it shows: a pick that didn't save says so on it, and closing it ends it. */
+    val glassesSheet = visit.opening()
 
-    private val saveFailure = visit.outcome<Unit>()
+    /** The name editor while it shows: its save closes it or says it didn't, and closing it ends it. */
+    val editor = visit.opening()
 
-    /** A change didn't save on this visit: the buddy is shown as it was. */
-    val saveFailed get() = saveFailure.value != null
+    /** The editor's change saved, so it closes. */
+    val editorSaved = editor.outcome<Unit>()
 
-    fun save(
+    private val glassesFailure = glassesSheet.outcome<Unit>()
+
+    private val editorFailure = editor.outcome<Unit>()
+
+    /** The glasses picked in the open sheet didn't save: the buddy is shown as it was. */
+    val glassesSaveFailed get() = glassesFailure.value != null
+
+    /** The open editor's change didn't save. */
+    val editorSaveFailed get() = editorFailure.value != null
+
+    fun saveGlasses(
+        kind: BuddyKind,
+        glasses: BuddyGlasses,
+        name: String?,
+    ) = save(glassesSheet, saved = null, glassesFailure, kind, glasses, name)
+
+    fun saveEdit(
+        kind: BuddyKind,
+        glasses: BuddyGlasses,
+        name: String?,
+    ) = save(editor, editorSaved, editorFailure, kind, glasses, name)
+
+    /** [asker]'s save: its success and its failure go to the opening that asked, while it's still open. */
+    private fun save(
+        asker: Visit,
+        saved: VisitOutcome<Unit>?,
+        failure: VisitOutcome<Unit>,
         kind: BuddyKind,
         glasses: BuddyGlasses,
         name: String?,
     ) {
         if (isSaving) return
         isSaving = true
-        saveFailure.clear()
-        val started = visit.number
+        failure.clear()
+        val started = asker.number
         viewModelScope.launch {
             val done =
                 profile.setBuddy(
@@ -68,11 +96,9 @@ class BuddyViewModel internal constructor(
                     name?.trim()?.ifEmpty { null },
                 )
             isSaving = false
-            (if (done) saved else saveFailure).send(started, Unit)
+            (if (done) saved else failure)?.send(started, Unit)
         }
     }
-
-    fun dismissSaveFailure() = saveFailure.clear()
 
     fun openMission(
         tap: BuddyTap,
