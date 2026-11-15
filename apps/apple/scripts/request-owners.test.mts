@@ -40,8 +40,8 @@ const OWNERS: Record<string, string> = {
     "A sheet of the Adjust plan sheet, presented above the Plan's split.",
   "Features/Plan/AdjustPlanSheet.swift: editor":
     "The Adjust plan sheet, presented above the Plan's split.",
-  "Features/Plan/GoalOptionsToolbar.swift: saving": "The Plan's bar, outside its split.",
   "Features/Plan/GoalOptionsToolbar.swift: changes": "The Plan's options, applied above its split.",
+  "Features/Plan/GoalOptionsToolbar.swift: saving": "The Plan's bar, outside its split.",
   "Features/Plan/PlanBasesView.swift: saving":
     "In the Adjust plan sheet, presented above the Plan's split.",
   "Features/Plan/PlanScreen.swift: certificateClaim, slotAnswer?.editor, slotChecks":
