@@ -523,6 +523,8 @@ struct PlanSyllabusSection: View {
         }
         // Main's legend for the bars is quiet words, not a mono fact.
         .typeStyle(.small)
+        // Over the values' column: the rows keep the chevron's room after their values.
+        .chevronSlot()
       }
     } footer: {
       SectionFooter {
@@ -571,7 +573,7 @@ private struct PlanChoiceLine: View {
 }
 
 /// Phones list the study places nowhere else, so the Plan's "More" leads to the lessons already
-/// done and to the chapters' mind maps.
+/// done and to the chapters' mind maps, drawn as its other places are.
 struct PlanStudyPlaceRows: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(\.tabBarPlacement) private var tabBarPlacement
@@ -580,18 +582,22 @@ struct PlanStudyPlaceRows: View {
     if tabBarPlacement?.listsStudyPlaces != true, let places = learner.summary.value?.places {
       if places.completedLessons {
         NavigationLink(value: AppRoute.completedLessons) {
-          PlanPathLink(systemImage: "clock.arrow.circlepath") {
+          Label {
             Text(
               "Completed lessons", tableName: "Plan",
               comment: "Opens the page of the lessons the learner finished")
+          } icon: {
+            Image(systemName: "clock.arrow.circlepath")
           }
         }
       }
 
       if places.mindMaps {
         NavigationLink(value: AppRoute.mindMaps()) {
-          PlanPathLink(systemImage: LearnKind.mindMap.systemImage) {
+          Label {
             Text("Mind maps", tableName: "Plan", comment: "Opens the goal's mind maps")
+          } icon: {
+            Image(systemName: LearnKind.mindMap.systemImage)
           }
         }
       }
