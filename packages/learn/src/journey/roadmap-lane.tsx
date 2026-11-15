@@ -6,6 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
+import { FactSegments } from "../_components/task-meta";
 import { getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
@@ -111,7 +112,15 @@ function GoalDate() {
   return (
     <>
       <span className="@max-[8rem]/phase:hidden">
-        {t.rich("<date></date> · exam", { date: () => date })}
+        <FactSegments
+          facts={[
+            t({
+              description: "After a date on the plan's timeline, naming what happens that day.",
+              message: "exam",
+            }),
+          ]}
+          lead={date}
+        />
       </span>
       <span className="hidden @max-[8rem]/phase:inline">{date}</span>
     </>

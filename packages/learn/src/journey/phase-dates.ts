@@ -46,8 +46,9 @@ function getLaterChallengeDay({ checkpoint, endDate }: DatedPhase): string | nul
  * The one date a phase is named by, wherever it shows: when it ends. A learning phase ends when
  * its lessons and challenge are done, so its end is an estimate while it's ahead, and while it's
  * current with its challenge (which has no booked day) still to come. Any phase that ends on its
- * challenge's day is an estimate too, as that day is wherever the challenge shows. A phase behind
- * the learner has none: its check says it.
+ * challenge's day is an estimate too, as that day is wherever the challenge shows, and so is every
+ * phase of a plan whose own date is one, since its phases are laid out back from that date. A
+ * phase behind the learner has none: its check says it.
  */
 export function getPhaseEnd({
   phase,
@@ -82,7 +83,9 @@ export function getPhaseEnd({
   const ahead = phase.state === "upcoming";
 
   const estimate =
-    challengeDay !== null || (learns && (ahead || phase.checkpoint?.state === "upcoming"));
+    challengeDay !== null ||
+    plan.schedule.targetDateEstimated ||
+    (learns && (ahead || phase.checkpoint?.state === "upcoming"));
 
   return { estimate, isoDate: lastDay, month: estimate && ahead && isFarEstimate(plan, lastDay) };
 }

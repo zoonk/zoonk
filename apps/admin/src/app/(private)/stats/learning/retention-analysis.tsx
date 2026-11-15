@@ -43,9 +43,7 @@ export async function RetentionAnalysis({ statsPeriod }: { statsPeriod: StatsPer
 function RetentionRow({ row }: { row: SignupRetentionRow }) {
   return (
     <AdminTableRow>
-      <TableCell className="font-medium">
-        Week of {formatDay(row.signupWeek, { year: true })}
-      </TableCell>
+      <TableCell className="font-medium">Week of {formatDay(row.signupWeek)}</TableCell>
       <TableCell numeric>{row.signups.toLocaleString()}</TableCell>
       <RetentionCell eligible={row.d1Eligible} retained={row.d1Retained} />
       <RetentionCell eligible={row.d7Eligible} retained={row.d7Retained} />

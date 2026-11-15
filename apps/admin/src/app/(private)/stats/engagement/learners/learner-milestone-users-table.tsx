@@ -53,5 +53,5 @@ function LearnerMilestoneUserRow({ user }: { user: LearnerMilestoneUser }) {
 }
 
 function formatLearnerDate(date: Date) {
-  return formatDay(new Date(date), { year: true });
+  return formatDay(new Date(date));
 }

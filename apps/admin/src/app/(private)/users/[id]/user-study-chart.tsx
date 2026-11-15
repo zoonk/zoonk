@@ -19,7 +19,7 @@ export async function UserStudyChart({ userId }: { userId: string }) {
     const day = new Date(start.getTime() + index * MS_PER_DAY);
 
     return {
-      label: formatDay(day),
+      label: formatDay(day, { year: false }),
       value: byDay.get(day.toISOString().slice(0, 10))?.timeSpentSeconds ?? 0,
     };
   });

@@ -9,6 +9,9 @@ import { afterAll, beforeAll, describe, it } from "vitest";
 const repository = resolve(import.meta.dirname, "../..");
 const folder = mkdtempSync(join(tmpdir(), "zoonk-lint-"));
 
+/** A template's placeholder, written so this file's own strings hold none. */
+const VALUE = ["$", "{value}"].join("");
+
 const FIXTURES = [
   {
     bad: [
@@ -74,6 +77,10 @@ const FIXTURES = [
       'export const G = { details: "98 questions · 2 h 14 min" };',
       "export const H = <p>40 min</p>;",
       "export const I = `5 min left`;",
+      'export const J = Intl.DateTimeFormat("en", { month: "long" }).format(date);',
+      `export const K = (minutes: number) => \`${VALUE} min\`;`,
+      'export const L = new Intl.DurationFormat("en").format({ hours: 2 });',
+      'export const M = new Intl.RelativeTimeFormat("en").format(-1, "day");',
     ],
     good: [
       'export const A = formatDate(isoDate, "row");',
@@ -82,6 +89,8 @@ const FIXTURES = [
       'export const D = <div className="size-4 h-4 min-h-0 p-2 min-w-0" />;',
       "export const E = formatDuration({ locale, totalSeconds });",
       'export const F = t("{minutes} min a day", { minutes });',
+      `export const G = \`${VALUE} min-h-0 h-4\`;`,
+      "export const H = new Intl.NumberFormat(locale).format(count);",
     ],
     rule: "no-hand-made-format",
     skipped: { "fixture.test.tsx": "export const A = date.toLocaleDateString();" },

@@ -18,8 +18,11 @@ function toIsoDay(date: Date): string {
   return date.toISOString().slice(0, "YYYY-MM-DD".length);
 }
 
-/** A calendar day, stored as UTC midnight so UTC keeps "Nov 15" from showing as "Nov 14". */
-export function formatDay(date: Date, { year = false }: { year?: boolean } = {}): string {
+/**
+ * A calendar day, stored as UTC midnight so UTC keeps "Nov 15" from showing as "Nov 14". A record's
+ * day names its year; a chart's label, whose axis says the period, leaves it out.
+ */
+export function formatDay(date: Date, { year = true }: { year?: boolean } = {}): string {
   const isoDate = toIsoDay(date);
 
   return formatIsoDate({ isoDate, locale: "en", today: isoDate, year: year ? "always" : "never" });

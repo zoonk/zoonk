@@ -5217,10 +5217,11 @@ msgctxt "P7djTu"
 msgid "Phases"
 msgstr "Aşamalar"
 
+#. After a date on the plan's timeline, naming what happens that day.
 #: src/journey/roadmap-lane.tsx
-msgctxt "yXPFJy"
-msgid "<date></date> · exam"
-msgstr "<date></date> · sınav"
+msgctxt "pwcc1H"
+msgid "exam"
+msgstr "sınav"
 
 #: src/journey/schedule-details.tsx
 #: src/today/today-week-day.tsx
@@ -9763,6 +9764,11 @@ msgstr "sınava kadar"
 msgctxt "RokfZv"
 msgid "until your date"
 msgstr "hedef tarihine kadar"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "aio5sH"
+msgid "{days, plural, one {~# day} other {~# days}}"
+msgstr "{days, plural, other {~# gün}}"
 
 #: src/onboarding/steps/reveal-readouts.tsx
 msgctxt "4OjqDe"

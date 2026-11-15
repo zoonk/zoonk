@@ -19,7 +19,12 @@ const DATE_OPTIONS = new Set([
   "year",
 ]);
 
+const INTL_FORMATTERS = new Set(["DateTimeFormat", "DurationFormat", "RelativeTimeFormat"]);
+
 const DURATION = /(?<![\w.#/-])\d+(?:[.,]\d+)?[ \u00A0]?(?:h|hr|hrs|min|mins)(?![\w-]|\.\d)/u;
+
+/** The unit right after a value the code puts in: `${minutes} min`. */
+const UNIT_AFTER_VALUE = /^[ \u00A0]?(?:h|hr|hrs|min|mins)(?![\w-]|\.\d)/u;
 
 function isTest(context) {
   return /\.(?:test|spec)\.[cm]?[jt]sx?$/u.test(context.filename);
@@ -33,6 +38,15 @@ function hasDateOptions(call) {
   );
 }
 
+/** `Intl.DateTimeFormat`, with `new` or called as a function. */
+function isIntlFormatter(callee) {
+  return (
+    callee.type === "MemberExpression" &&
+    callee.object.name === "Intl" &&
+    INTL_FORMATTERS.has(callee.property.name)
+  );
+}
+
 function isDateCall(node) {
   const { callee } = node;
 
@@ -41,7 +55,17 @@ function isDateCall(node) {
   }
 
   const method = callee.property.name;
-  return DATE_METHODS.has(method) || (method === "toLocaleString" && hasDateOptions(node));
+
+  return (
+    isIntlFormatter(callee) ||
+    DATE_METHODS.has(method) ||
+    (method === "toLocaleString" && hasDateOptions(node))
+  );
+}
+
+/** A template's text that follows one of its values, not the text it opens with. */
+function followsValue(node) {
+  return node.parent.quasis?.indexOf(node) > 0;
 }
 
 /** A translator's note quotes an example ("such as “15 min”"); nobody reads it on a screen. */
@@ -75,19 +99,21 @@ export default defineRule({
       NewExpression(node) {
         const { callee } = node;
 
-        if (
-          callee.type === "MemberExpression" &&
-          callee.object.name === "Intl" &&
-          callee.property.name === "DateTimeFormat" &&
-          !isTest(context)
-        ) {
+        if (isIntlFormatter(callee) && !isTest(context)) {
           context.report({ messageId: "date", node: callee });
         }
       },
       TemplateElement(node) {
-        if (!isTranslatorNote(node.parent)) {
-          checkText(node, node.value.cooked);
+        if (isTranslatorNote(node.parent) || isTest(context)) {
+          return;
         }
+
+        if (followsValue(node) && UNIT_AFTER_VALUE.test(node.value.cooked ?? "")) {
+          context.report({ messageId: "duration", node });
+          return;
+        }
+
+        checkText(node, node.value.cooked);
       },
     };
   },

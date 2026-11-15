@@ -6,7 +6,7 @@ import {
   type UserStudySession,
   listUserStudySessions,
 } from "@/data/users/list-user-study-sessions";
-import { formatDate, toWords } from "@/lib/format";
+import { formatDay, toWords } from "@/lib/format";
 import { type DayMeterPart, DaySegment } from "@zoonk/learn/day-segments";
 import { MeterParts } from "@zoonk/ui/components/meter";
 import { TableCell } from "@zoonk/ui/components/table";
@@ -62,7 +62,7 @@ function SessionRow({
 
   return (
     <AdminTableRow>
-      <TableCell className="text-foreground">{formatDate(session.localDate)}</TableCell>
+      <TableCell className="text-foreground">{formatDay(session.localDate)}</TableCell>
       {showGoal ? <TableCell className="min-w-40">{session.goal?.title ?? "—"}</TableCell> : null}
       <TableCell>
         <StateMark state={session.status} />

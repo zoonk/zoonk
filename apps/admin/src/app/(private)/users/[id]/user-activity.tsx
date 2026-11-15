@@ -1,6 +1,6 @@
 import { AdminSection } from "@/components/admin-section";
 import { listUserActivity } from "@/data/users/list-user-activity";
-import { formatCount, formatDate, formatMonth } from "@/lib/format";
+import { formatCount, formatDay, formatMonth } from "@/lib/format";
 import { formatDuration } from "@/lib/format-duration";
 import { type ChartPointDetail } from "@zoonk/ui/components/chart-inspector";
 import {
@@ -82,7 +82,7 @@ export async function UserActivity({ userId }: { userId: string }) {
   }));
 
   const details = days.map(({ date, row }): ChartPointDetail => [
-    formatDate(date),
+    formatDay(date),
     row ? formatDuration(row.timeSpentSeconds) : "No study",
     row && row.lessonsCompleted > 0 ? formatCount(row.lessonsCompleted, "lesson") : undefined,
   ]);
