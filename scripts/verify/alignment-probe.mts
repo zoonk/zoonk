@@ -346,6 +346,18 @@ export function readAlignment({
     return (top + bottom) / 2;
   }
 
+  /** A row that holds a nested group (a phase and its open events) is its own line above it. */
+  function rowMiddle(row: Element, groups: string) {
+    const nested = [...row.querySelectorAll(groups)].find((group) => present(group));
+
+    if (!nested) {
+      return contentMiddle(row);
+    }
+
+    const top = boxOf(row).top + globalThis.zoonkPage.pixels(getComputedStyle(row).paddingTop);
+    return (top + boxOf(nested).top) / 2;
+  }
+
   /** A row wrapped in `display: contents` is its children. */
   function expandRows(element: Element): Element[] {
     return isContents(element)
@@ -435,9 +447,11 @@ export function readAlignment({
       // `:scope` is the row itself: a top bar's action is its own label.
       const matches = selector === ":scope" ? [row] : [...row.querySelectorAll(selector)];
 
+      // A part inside a nested group (a phase's open events) is that group's, not this row's.
       const found = matches.filter(
         (element) =>
           ownerRow(element, read.rows) === row &&
+          element.closest(read.piece.group) === read.group &&
           present(element) &&
           !matches.some((other) => other !== element && other.contains(element)),
       );
@@ -497,7 +511,7 @@ export function readAlignment({
         id: rowId,
         ink: rowInk ? bounds(rowInk) : null,
         margins: [margin("marginTop"), margin("marginBottom")],
-        middle: contentMiddle(row) + scrollY,
+        middle: rowMiddle(row, read.piece.group) + scrollY,
         name: name(row),
         note: note ? [...row.querySelectorAll(note)].some((element) => shown(element)) : false,
         // The row the learner is on (current, picked, highlighted) may set its words apart.

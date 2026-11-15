@@ -75,3 +75,39 @@ describe("a list against its page's column", () => {
     );
   });
 });
+
+/** A phase row of the path sheet: its mark, its words and date, then its open events under it. */
+const SHEET = `<ol data-slot="journey-path-list" data-box="0,0,358,200">
+  <li data-slot="path-row" data-box="0,0,358,150">
+    <span data-slot="path-row-mark" data-box="0,0,16,44"><svg data-box="3,16,10,10"></svg></span>
+    <span data-slot="path-row-words" data-box="28,12,200,20"><span data-box="28,12,200,20">Foundations</span></span>
+    <span data-slot="path-row-value" data-box="300,12,58,20">Feb 18</span>
+    <ul data-slot="path-nested" data-box="28,44,330,100">
+      <div data-slot="path-row" data-box="28,44,330,44">
+        <span data-slot="path-row-words" data-box="56,56,200,20"><span data-box="56,56,200,20">Mock exam</span></span>
+        <span data-slot="path-row-value" data-box="300,56,58,20">Jan 30</span>
+      </div>
+    </ul>
+  </li></ol>`;
+
+describe("a row that holds a nested list (the path sheet's open phase)", () => {
+  it("keeps the nested rows' parts in their own group and is its own line above them", () => {
+    document.body.innerHTML = SHEET;
+    const { elements } = read();
+
+    const outer = elements.find(
+      (element) => element.part === "row" && element.group === "journey-path.0",
+    );
+
+    const values = elements.filter(
+      (element) => element.part === "value" && element.row === outer?.id,
+    );
+
+    assert.deepEqual(
+      values.map((value) => value.name),
+      ['"Feb 18"'],
+    );
+
+    assert.equal(outer?.middle, 22);
+  });
+});

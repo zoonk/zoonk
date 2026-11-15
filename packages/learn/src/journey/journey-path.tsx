@@ -24,6 +24,7 @@ function PathMarker({ state }: { state: NodeState }) {
     <span
       aria-hidden="true"
       className="relative z-10 flex h-11 w-4 shrink-0 items-center justify-center"
+      data-slot="path-row-mark"
     >
       {state === "done" && <DoneMark />}
       {state === "current" && <CurrentPhaseMark />}
@@ -97,6 +98,7 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
     <li
       aria-current={isCurrent ? "step" : undefined}
       className="relative flex gap-3 pb-3"
+      data-slot="path-row"
       data-state={state}
     >
       <PathLine walked={state === "done"} />
@@ -120,7 +122,7 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
         </div>
 
         {hasEvents && (
-          <ul className="flex flex-col pb-1.5">
+          <ul className="flex flex-col pb-1.5" data-slot="path-nested">
             {mocks.nextDate && (
               <li>
                 <MockRow
@@ -168,7 +170,11 @@ function FinishNode({ continues, examHref }: { continues: boolean; examHref: str
   );
 
   return (
-    <li className={cn("relative flex gap-3", continues && "pb-3")} data-state="finish">
+    <li
+      className={cn("relative flex gap-3", continues && "pb-3")}
+      data-slot="path-row"
+      data-state="finish"
+    >
       {continues && <PathLine walked={false} />}
       <PathMarker state="finish" />
       {examHref ? (
@@ -199,6 +205,7 @@ export function JourneyPath({ links }: { links: JourneyPathLinks }) {
     <ol
       aria-label={t("Your path")}
       className="flex flex-col [&>li:last-child>[data-slot=path-line]]:hidden"
+      data-slot="journey-path-list"
     >
       {plan.phases.filter((phase) => phase.kind !== "afterExam").map((phase) => toNode(phase))}
       <FinishNode continues={afterExam.length > 0} examHref={links.exam} />
