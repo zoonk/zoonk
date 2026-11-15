@@ -9,6 +9,7 @@ import {
   finding,
   groupName,
   holderNamed,
+  measured,
   notMeasured,
   rowName,
   tenths,
@@ -165,15 +166,14 @@ export function endLeads(context: Context, read: Group): AlignmentFinding[] {
     const own = parts.filter((element) => element.row === row.id);
 
     return (
-      typeof (row.endEdge ?? group.endEdge) !== "number" &&
+      measured(row.endEdge, measured(group.endEdge)) === null &&
       own.some((element) => (element.part === "end" || element.part === "value") && drawn(element))
     );
   });
 
   const ending = rows.flatMap((row) => {
     const own = parts.filter((element) => element.row === row.id);
-    const declared = row.endEdge ?? group.endEdge;
-    const edge = typeof declared === "number" ? declared : undefined;
+    const edge = measured(row.endEdge, measured(group.endEdge));
     const ends = own.filter((element) => element.part === "end" && drawn(element));
 
     // An end whose ink wasn't measured (clipped) leaves the row to its not-measured record.
@@ -187,7 +187,7 @@ export function endLeads(context: Context, read: Group): AlignmentFinding[] {
 
     const last = [...ends, ...values].toSorted((one, other) => inkRight(other) - inkRight(one))[0];
 
-    if (!last || edge === undefined) {
+    if (!last || edge === null) {
       return [];
     }
 

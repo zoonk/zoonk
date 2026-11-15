@@ -5741,5 +5741,208 @@
     "screen": "/plan",
     "unit": "px",
     "version": 1
+  },
+  "round 3 line-unknown-middle": {
+    "activeSurface": "page",
+    "elements": [
+      {
+        "id": "g",
+        "part": "group",
+        "bounds": [0, 0, 100, 100],
+        "ink": [0, 0, 100, 100],
+        "piece": "list-group",
+        "group": null,
+        "row": null,
+        "endEdge": 100,
+        "gap": 0
+      },
+      {
+        "id": "r0",
+        "part": "row",
+        "bounds": [0, 0, 100, 60],
+        "ink": [0, 0, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null,
+        "middle": "not measured"
+      },
+      {
+        "id": "l0",
+        "part": "label",
+        "bounds": [0, 0, 20, 10],
+        "ink": [0, 0, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 5,
+        "capBottom": 15,
+        "type": "font",
+        "lines": 1
+      },
+      {
+        "id": "v",
+        "part": "value",
+        "bounds": [80, 5, 20, 10],
+        "ink": [80, 5, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 6,
+        "capBottom": 14,
+        "type": "small",
+        "text": "1"
+      },
+      {
+        "id": "n0",
+        "part": "note",
+        "bounds": [0, 0, 20, 10],
+        "ink": [0, 20, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 5,
+        "capBottom": 15,
+        "type": "font",
+        "lines": 1
+      }
+    ],
+    "configuration": {
+      "height": 844,
+      "locale": "en",
+      "pointer": "touch",
+      "scheme": "light",
+      "size": "phone",
+      "textScale": 1,
+      "width": 390
+    },
+    "platform": "web",
+    "scale": 3,
+    "scenario": null,
+    "screen": "/fixture",
+    "unit": "px",
+    "version": 1
+  },
+  "round 3 known-middle": {
+    "activeSurface": "page",
+    "elements": [
+      {
+        "id": "g",
+        "part": "group",
+        "bounds": [0, 0, 100, 100],
+        "ink": [0, 0, 100, 100],
+        "piece": "list-group",
+        "group": null,
+        "row": null,
+        "endEdge": 100,
+        "gap": 0
+      },
+      {
+        "id": "r0",
+        "part": "row",
+        "bounds": [0, 0, 100, 60],
+        "ink": [0, 0, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null,
+        "middle": 30
+      },
+      {
+        "id": "l0",
+        "part": "label",
+        "bounds": [0, 0, 20, 10],
+        "ink": [0, 0, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 5,
+        "capBottom": 15,
+        "type": "font",
+        "lines": 1
+      },
+      {
+        "id": "v",
+        "part": "value",
+        "bounds": [80, 5, 20, 10],
+        "ink": [80, 5, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 6,
+        "capBottom": 14,
+        "type": "small",
+        "text": "1"
+      },
+      {
+        "id": "n0",
+        "part": "note",
+        "bounds": [0, 0, 20, 10],
+        "ink": [0, 20, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 5,
+        "capBottom": 15,
+        "type": "font",
+        "lines": 1
+      }
+    ],
+    "configuration": {
+      "height": 844,
+      "locale": "en",
+      "pointer": "touch",
+      "scheme": "light",
+      "size": "phone",
+      "textScale": 1,
+      "width": 390
+    },
+    "platform": "web",
+    "scale": 3,
+    "scenario": null,
+    "screen": "/fixture",
+    "unit": "px",
+    "version": 1
+  },
+  "round 3 bad-specimen": {
+    "activeSurface": "page",
+    "elements": [
+      {
+        "id": "a0",
+        "piece": "action",
+        "part": "action",
+        "group": null,
+        "row": null,
+        "bounds": [0, 0, 10, 10],
+        "ink": [0, 0, 10, 10],
+        "variant": "filled",
+        "surface": "page"
+      },
+      {
+        "id": "a1",
+        "piece": "action",
+        "part": "action",
+        "group": null,
+        "row": null,
+        "bounds": [0, 0, 10, 10],
+        "ink": [0, 0, 10, 10],
+        "variant": "filled",
+        "surface": "page"
+      }
+    ],
+    "configuration": {
+      "height": 844,
+      "locale": "en",
+      "pointer": "touch",
+      "scheme": "light",
+      "size": "phone",
+      "textScale": 1,
+      "width": 390
+    },
+    "platform": "web",
+    "scale": 3,
+    "scenario": null,
+    "screen": "/fixture",
+    "unit": "px",
+    "version": 1,
+    "specimen": "false"
   }
 }

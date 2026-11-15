@@ -4,6 +4,7 @@ import {
   type Bounds,
   type Capture,
   type CaptureElement,
+  type NotMeasured,
   configurationName,
 } from "./alignment-capture.mts";
 import { PART_NAMES } from "./alignment-table.mts";
@@ -14,6 +15,18 @@ export type Box = { bottom: number; left: number; right: number; top: number };
 
 export function box([x, y, width, height]: Bounds): Box {
   return { bottom: y + height, left: x, right: x + width, top: y };
+}
+
+/**
+ * A number from the capture, for arithmetic: what was measured, its `fallback` when the capture
+ * gives none, or null when it says it wasn't measured, for which the caller writes a failing
+ * not-measured record. "not measured" never enters arithmetic, where NaN would pass every tolerance.
+ */
+export function measured(
+  value: number | NotMeasured | undefined,
+  fallback: number | null = null,
+): number | null {
+  return value === "not measured" ? null : (value ?? fallback);
 }
 
 export function drawn(element: CaptureElement): Box | null {
@@ -87,12 +100,14 @@ function mirrorBounds([x, y, width, height]: Bounds): Bounds {
  * reads both directions. Positions in its findings are mirrored too; distances are not.
  */
 function mirrored(element: CaptureElement): CaptureElement {
+  const endEdge = measured(element.endEdge);
+
   return {
     ...element,
     bounds: mirrorBounds(element.bounds),
     ...(Array.isArray(element.ink) ? { ink: mirrorBounds(element.ink) } : {}),
     ...(element.firstLine ? { firstLine: mirrorBounds(element.firstLine) } : {}),
-    ...(typeof element.endEdge === "number" ? { endEdge: -element.endEdge } : {}),
+    ...(endEdge === null ? {} : { endEdge: -endEdge }),
   };
 }
 

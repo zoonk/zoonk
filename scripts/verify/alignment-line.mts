@@ -7,6 +7,7 @@ import {
   drawn,
   finding,
   groupName,
+  measured,
   rowName,
 } from "./alignment-geometry.mts";
 
@@ -18,11 +19,10 @@ const LINE = 0.5;
 
 /** A text's middle from the font's cap height, never from the string's ink: "yes" sits where "Off" would. */
 function capMiddle(element: CaptureElement): number | null {
-  const { capBottom, capTop } = element;
+  const top = measured(element.capTop);
+  const bottom = measured(element.capBottom);
 
-  return typeof capTop === "number" && typeof capBottom === "number"
-    ? (capTop + capBottom) / 2
-    : null;
+  return top === null || bottom === null ? null : (top + bottom) / 2;
 }
 
 function middleOf(element: CaptureElement): number | null {
@@ -63,9 +63,10 @@ function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
   }
 
   const labelMiddle = capMiddle(label);
+  const rowMiddle = measured(row.middle, row.bounds[1] + row.bounds[3] / 2);
   const middles = others.map((element) => ({ element, middle: middleOf(element) }));
 
-  if (labelMiddle === null || middles.some(({ middle }) => middle === null)) {
+  if (labelMiddle === null || rowMiddle === null || middles.some(({ middle }) => middle === null)) {
     return null;
   }
 
@@ -73,7 +74,6 @@ function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
   const notes = Math.max(own.filter((element) => element.part === "note").length, row.note ? 1 : 0);
 
   const oneLine = !stacked && (label.lines ?? 1) === 1 && notes === 0;
-  const rowMiddle = row.middle ?? row.bounds[1] + row.bounds[3] / 2;
   const endMiddle = middles.find(({ element }) => element.part === "end")?.middle ?? null;
 
   const led = others.some((element) => element.part === "lead");
@@ -113,7 +113,7 @@ export function lineLeads(context: Context, read: Group): AlignmentFinding[] {
     if (found === null) {
       return [
         finding(context, {
-          detail: `${rowName(read, row.id)}: a part's first baseline or cap height wasn't measured`,
+          detail: `${rowName(read, row.id)}: a part's cap height or the row's middle wasn't measured`,
           level: "not-measured",
           message: `one line of a row in ${group.piece}: a part wasn't measured`,
           piece: group.piece,

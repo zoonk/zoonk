@@ -7,6 +7,7 @@ import {
   finding,
   groupName,
   holderNamed,
+  measured,
   notMeasured,
   rowName,
   tenths,
@@ -33,13 +34,13 @@ export function gapLeads(context: Context, read: Group): AlignmentFinding[] {
       return [];
     }
 
-    return [{ gap: next.gapBefore ?? group.gap, next, previous }];
+    return [{ gap: measured(next.gapBefore, measured(group.gap)), next, previous }];
   });
 
-  const unread = pairs.filter(({ gap }) => typeof gap !== "number");
+  const unread = pairs.filter(({ gap }) => gap === null);
 
   const off = pairs.flatMap(({ gap, next, previous }) => {
-    if (typeof gap !== "number") {
+    if (gap === null) {
       return [];
     }
 
@@ -47,9 +48,9 @@ export function gapLeads(context: Context, read: Group): AlignmentFinding[] {
     const below = box(next.bounds);
     const expected = gap + (previous.margins?.[1] ?? 0) + (next.margins?.[0] ?? 0);
 
-    const measured = below.top - above.bottom;
+    const apart = below.top - above.bottom;
 
-    if (Math.abs(measured - expected) <= EDGE) {
+    if (Math.abs(apart - expected) <= EDGE) {
       return [];
     }
 
@@ -62,9 +63,9 @@ export function gapLeads(context: Context, read: Group): AlignmentFinding[] {
 
     return [
       finding(context, {
-        detail: `${rowName(read, previous.id)} and ${rowName(read, next.id)} are ${tenths(measured)} apart where the layout puts ${tenths(expected)}`,
+        detail: `${rowName(read, previous.id)} and ${rowName(read, next.id)} are ${tenths(apart)} apart where the layout puts ${tenths(expected)}`,
         level: "fail",
-        measured: measured - expected,
+        measured: apart - expected,
         message: `two neighbors in ${groupName(read)} aren't the group's gap apart`,
         piece: group.piece,
         rule: "gap",

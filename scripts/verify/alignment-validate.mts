@@ -12,7 +12,41 @@ const BOUNDS = z.tuple([z.number(), z.number(), z.number(), z.number()]);
 /** Each platform's logical unit. */
 const UNITS = { android: "dp", apple: "pt", web: "px" } as const;
 
+const MEASURE = z.union([z.number(), NOT_MEASURED]);
+
+/** The optional fields the evaluator reads, with their types: a string where it reads a flag or a number is refused. */
+const OPTIONAL = z
+  .object({
+    anchor: z.string(),
+    baseline: MEASURE,
+    capBottom: MEASURE,
+    capTop: MEASURE,
+    current: z.boolean(),
+    direction: z.enum(["ltr", "rtl"]),
+    endEdge: MEASURE,
+    firstLine: BOUNDS,
+    flow: z.string(),
+    gap: MEASURE,
+    gapBefore: MEASURE,
+    layoutScale: z.number().positive(),
+    lines: z.int().positive(),
+    margins: z.tuple([z.number(), z.number()]),
+    middle: MEASURE,
+    name: z.string(),
+    note: z.boolean(),
+    reason: z.string(),
+    source: z.enum(["piece", "stack"]),
+    stacked: z.boolean(),
+    surface: z.string(),
+    target: z.string(),
+    text: z.string(),
+    type: z.string(),
+    variant: z.string(),
+  })
+  .partial().shape;
+
 const PLACE = {
+  ...OPTIONAL,
   bounds: BOUNDS,
   group: z.string().nullable(),
   id: z.string(),
@@ -47,6 +81,7 @@ const CAPTURE = z
     scale: z.number().positive(),
     scenario: z.string().nullable(),
     screen: z.string(),
+    specimen: z.boolean().optional(),
     unit: z.enum(["dp", "pt", "px"]),
     version: z.literal(1),
   })

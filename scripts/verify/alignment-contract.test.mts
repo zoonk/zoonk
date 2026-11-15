@@ -53,6 +53,22 @@ describe("a declared relationship is measured and holds, or the run fails", () =
     assert.match(record?.detail ?? "", /4 areas: a parent replaced its children's semantics/u);
   });
 
+  it("writes a failing record for a row middle the capture says wasn't measured, never a pass", () => {
+    assert.deepEqual(unmeasured(real("round 3 line-unknown-middle")), ["line"]);
+
+    assert.equal(
+      evaluateFile({ captures: [real("round 3 line-unknown-middle")] }).summary.failed,
+      true,
+    );
+
+    // The same row with its middle measured: its value is 20 above the row's center.
+    assert.match(
+      evaluateCapture(real("round 3 known-middle")).find((finding) => finding.rule === "line")
+        ?.detail ?? "",
+      /the value 20 above the row's center/u,
+    );
+  });
+
   it("checks each neighbor pair's gap: a row's own gap doesn't stand in for the group's", () => {
     assert.deepEqual(unmeasured(real("round 2 partial-gap")), ["gap"]);
     assert.equal(evaluateFile({ captures: [real("round 2 partial-gap")] }).summary.failed, true);
@@ -100,6 +116,32 @@ describe("what the command accepts", () => {
     );
 
     assert.equal(kindOf(valid), "captures");
+  });
+
+  it("refuses an optional field the evaluator reads when it has another type", () => {
+    assert.equal(kindOf(real("round 3 bad-specimen")), "invalid");
+
+    const row = real("round 3 known-middle");
+
+    for (const [field, value] of [
+      ["middle", "30"],
+      ["lines", "2"],
+      ["stacked", "false"],
+      ["current", 1],
+      ["margins", ["0", 0]],
+      ["type", 42],
+    ] as const) {
+      assert.equal(
+        kindOf({
+          ...row,
+          elements: row.elements.map((item) =>
+            item.part === "row" || item.part === "label" ? { ...item, [field]: value } : item,
+          ),
+        }),
+        "invalid",
+        field,
+      );
+    }
   });
 
   it("exits 2 for a capture it refuses", () => {

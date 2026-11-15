@@ -8,7 +8,7 @@ import { type Part } from "./alignment-table.mts";
 /** `[x, y, width, height]` in the capture's logical units. */
 export type Bounds = [number, number, number, number];
 
-type NotMeasured = "not measured";
+export type NotMeasured = "not measured";
 
 export type CaptureElement = {
   id: string;
@@ -41,7 +41,7 @@ export type CaptureElement = {
    */
   layoutScale?: number;
   /** A row's: the gap its flow parent declares, which parent, and its margins before and after. */
-  gapBefore?: number;
+  gapBefore?: number | NotMeasured;
   flow?: string;
   margins?: [number, number];
   /** An action's: its look, and the surface it is on ("page", or a dialog's or sheet's name). */
@@ -58,7 +58,7 @@ export type CaptureElement = {
   /** A row's: the one the learner is on (current, picked), which may set its words apart. */
   current?: boolean;
   /** A row's: the middle of what it lays out (inside a divider's border and its padding). */
-  middle?: number;
+  middle?: number | NotMeasured;
   /** A row's: its value moved under its label (large text), as the row piece does on purpose. */
   stacked?: boolean;
   /** An area the platform couldn't read (`"part": "unmeasured"`): why. */
