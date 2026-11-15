@@ -3276,11 +3276,6 @@ msgid "Quick check · {current} of {total}"
 msgstr "理解度チェック · {current}/{total}"
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "wIdPyY"
-msgid "Not quite. Look again and fix it yourself, then check."
-msgstr "惜しいです。もう一度見直して、自分で直してから答え合わせをしてください。"
-
-#: src/lesson/lesson-stage.tsx
 msgctxt "KC15MC"
 msgid "Your answer here didn't save. Answer it again to finish the lesson."
 msgstr "この問題の回答が保存されませんでした。レッスンを完了するには、もう一度答えてください。"
@@ -3304,6 +3299,11 @@ msgstr "今回は答え合わせができませんでした。もう一度試し
 msgctxt "dw3XKv"
 msgid "Still checking. This is taking longer than usual."
 msgstr "答え合わせを続けています。いつもより時間がかかっています。"
+
+#: src/lesson/lesson-stage.tsx
+msgctxt "wIdPyY"
+msgid "Not quite. Look again and fix it yourself, then check."
+msgstr "惜しいです。もう一度見直して、自分で直してから答え合わせをしてください。"
 
 #: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "bbucHz"

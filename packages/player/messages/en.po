@@ -3276,11 +3276,6 @@ msgid "Quick check · {current} of {total}"
 msgstr "Quick check · {current} of {total}"
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "wIdPyY"
-msgid "Not quite. Look again and fix it yourself, then check."
-msgstr "Not quite. Look again and fix it yourself, then check."
-
-#: src/lesson/lesson-stage.tsx
 msgctxt "KC15MC"
 msgid "Your answer here didn't save. Answer it again to finish the lesson."
 msgstr "Your answer here didn't save. Answer it again to finish the lesson."
@@ -3304,6 +3299,11 @@ msgstr "We couldn't check your answer this time. Try again."
 msgctxt "dw3XKv"
 msgid "Still checking. This is taking longer than usual."
 msgstr "Still checking. This is taking longer than usual."
+
+#: src/lesson/lesson-stage.tsx
+msgctxt "wIdPyY"
+msgid "Not quite. Look again and fix it yourself, then check."
+msgstr "Not quite. Look again and fix it yourself, then check."
 
 #: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "bbucHz"
