@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.serialization.saved
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
@@ -19,6 +20,14 @@ internal class PlanLinkViewModel(
     private val store: OnboardingStore,
     handle: SavedStateHandle,
 ) : ViewModel() {
+    /** This visit to the shared plan: the goal it started opens, or its failure shows, only on it. */
+    val visit = Visit()
+
+    /** The learner's own goal from the plan started: their Plan opens. */
+    val started = visit.outcome<Unit>()
+
+    private val startFailure = visit.outcome<StartFailure>()
+
     private var savedMinutes by handle.saved { DEFAULT_MINUTES }
 
     var minutes by mutableStateOf(savedMinutes)
@@ -27,33 +36,30 @@ internal class PlanLinkViewModel(
     var isStarting by mutableStateOf(false)
         private set
 
-    var failure by mutableStateOf<StartFailure?>(null)
-        private set
+    val failure get() = startFailure.value
 
     fun pick(next: Int) {
         minutes = next
         savedMinutes = next
     }
 
-    fun start(
-        planId: String,
-        onStarted: () -> Unit,
-    ) {
+    fun start(planId: String) {
         if (isStarting) return
         isStarting = true
-        failure = null
+        startFailure.clear()
+        val asked = visit.number
         viewModelScope.launch {
             when (val outcome = store.startFromPlanLink(planId, minutes)) {
                 is WriteOutcome.Done -> {
-                    onStarted()
+                    started.send(asked, Unit)
                 }
 
                 is WriteOutcome.Refused -> {
-                    failure = if (outcome.refusal.isGoalCap()) StartFailure.Refused else StartFailure.Failed
+                    startFailure.send(asked, if (outcome.refusal.isGoalCap()) StartFailure.Refused else StartFailure.Failed)
                 }
 
                 WriteOutcome.Failed -> {
-                    failure = StartFailure.Failed
+                    startFailure.send(asked, StartFailure.Failed)
                 }
 
                 WriteOutcome.Obsolete -> {}
