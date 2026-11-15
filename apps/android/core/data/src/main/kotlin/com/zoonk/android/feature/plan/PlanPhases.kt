@@ -5,6 +5,7 @@ import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanPhase
 import com.zoonk.api.models.PlanPhaseChaptersInner
 import com.zoonk.api.models.PlanPhaseCheckpoint
+import com.zoonk.api.models.PlanPhaseShort
 import kotlinx.datetime.toJavaLocalDate
 import java.text.Normalizer
 import java.time.LocalDate
@@ -55,24 +56,95 @@ fun PlanPhase.shareAt(
     return ((ChronoUnit.DAYS.between(start, date) + at.offset) / days).coerceIn(0.0, 1.0).toFloat()
 }
 
-/** When the goal ends on the roadmap: its date, or the estimate for a goal without one (never an exam's). */
-data class PlanFinish(
+/** A day a phase or the goal ends: "~" while it's an [estimate], said by its month when [month]. */
+data class PlanEnd(
     val date: LocalDate,
     val estimate: Boolean,
     val month: Boolean,
-)
+) : PhaseEnd
 
-fun Plan.finish(goalKind: LearnerSummaryGoal.Kind): PlanFinish? {
+/** Main's `PhaseEnd`: a short plan names a phase by its days ("Days 1–3"), every other plan by the day it ends ([PlanEnd]). */
+sealed interface PhaseEnd {
+    data class Days(
+        val short: PlanPhaseShort,
+    ) : PhaseEnd
+}
+
+/** Main's `getRoadmapFinish`: the day the plan reaches its goal, the goal's date or the plan's own end (never an exam's). */
+fun Plan.finish(goalKind: LearnerSummaryGoal.Kind): PlanEnd? {
     schedule.targetDate?.let {
-        return PlanFinish(it.toJavaLocalDate(), schedule.targetDateEstimated, schedule.targetDateNamedMonth)
+        return PlanEnd(it.toJavaLocalDate(), schedule.targetDateEstimated, schedule.targetDateNamedMonth)
     }
     val end = estimate.endDate?.toJavaLocalDate() ?: return null
     if (goalKind == LearnerSummaryGoal.Kind.EXAM) return null
-    return PlanFinish(end, estimate = true, month = estimateNamesMonth(end))
+    return PlanEnd(end, estimate = true, month = estimateNamesMonth(end))
 }
 
 /** An estimated end more than six weeks past this week's start is written as its month (main's `NEAR_ESTIMATE_DAYS`). */
 fun Plan.estimateNamesMonth(end: LocalDate): Boolean = ChronoUnit.DAYS.between(week.startDate.toJavaLocalDate(), end) > NEAR_ESTIMATE_DAYS
+
+/**
+ * Main's `getPhaseEnd`: the one date a phase is named by, wherever it shows: when it ends. A learning phase ends
+ * when its lessons and challenge are done, so its end is an estimate while it's ahead, and while it's current with
+ * its challenge (which has no booked day) still to come. A phase behind the learner has none: its check says it.
+ */
+fun Plan.phaseEnd(phase: PlanPhase): PhaseEnd? {
+    val short = phase.short
+    if (short != null && shortPlan != null) return PhaseEnd.Days(short)
+    if (phase.state == PlanPhase.State.DONE || phase.state == PlanPhase.State.UNFINISHED || phase.state == PlanPhase.State.LEFT_OUT) {
+        return null
+    }
+    val lastDay =
+        phase.lastDay() ?: run {
+            // A last phase without a day of its own ends with the plan.
+            val last = phases.lastOrNull { it.kind != PlanPhase.Kind.AFTER_EXAM }?.index
+            val planEnd = estimate.endDate?.toJavaLocalDate()?.takeIf { phase.index == last } ?: return null
+            return PlanEnd(planEnd, estimate = true, month = estimateNamesMonth(planEnd))
+        }
+    val learns = phase.kind == PlanPhase.Kind.LEARN || phase.kind == PlanPhase.Kind.AFTER_EXAM
+    val ahead = phase.state == PlanPhase.State.UPCOMING
+    val estimate = learns && (ahead || phase.checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING)
+    return PlanEnd(lastDay, estimate, month = estimate && ahead && estimateNamesMonth(lastDay))
+}
+
+/** A phase is behind the learner on its challenge's day, which can come after its last lesson. */
+private fun PlanPhase.lastDay(): LocalDate? {
+    val challengeDay = checkpoint?.takeIf { it.state == PlanPhaseCheckpoint.State.UPCOMING }?.date?.toJavaLocalDate()
+    return if (challengeDay != null && end != null && challengeDay.isAfter(end)) challengeDay else end
+}
+
+/**
+ * Main's `getAxisDatedPhases`: the phases whose end the roadmap's axis dates, under the phase's end edge: the current
+ * one and each after it, but not the last, whose place is the goal's date. A date says once where it falls: when
+ * phases end on the same day only the last of them is dated, one that ends on the goal's day leaves it to the goal,
+ * and any ending on the learner's [today] leaves it to "Today".
+ */
+fun Plan.axisDatedPhases(
+    goalKind: LearnerSummaryGoal.Kind,
+    today: LocalDate,
+): Set<Long> {
+    val drawn = roadmapPhases
+    val current = drawn.indexOfFirst { it.state == PlanPhase.State.CURRENT }
+    if (current == -1) return emptySet()
+    val finish = finish(goalKind)?.date
+    val dated =
+        drawn.subList(current, maxOf(current, drawn.lastIndex)).mapNotNull { phase ->
+            phaseEnd(phase)?.let { end -> phase.index to (if (end is PlanEnd) end.date else end) }
+        }
+    return dated
+        .filterIndexed { position, (_, day) -> day != dated.getOrNull(position + 1)?.second && day != finish && day != today }
+        .map { it.first }
+        .toSet()
+}
+
+/**
+ * Main's `getAxisFinish`: the goal's date under the axis. On the learner's [today], while a phase is under way,
+ * "Today" already marks that day there, so the axis doesn't date it again; the list and the finish row still name it.
+ */
+fun Plan.axisFinish(
+    goalKind: LearnerSummaryGoal.Kind,
+    today: LocalDate,
+): PlanEnd? = finish(goalKind)?.takeUnless { it.date == today && roadmapPhases.any { phase -> phase.state == PlanPhase.State.CURRENT } }
 
 data class PlanOverrun(
     val phaseIndex: Long,

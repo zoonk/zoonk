@@ -392,7 +392,6 @@
   "plan_reviews_done": "71eb7d909ec584fa4b3ec6b371a028d1737c590f32b7243258920e1ffa975240",
   "plan_reviews_of_every_topic": "86529545c0f9201ef2bdb7bfdaa67625df58b5bb6625181242de5240020b797a",
   "plan_right_answers": "c4698720f3e4684e4b74cf4e29ca86fed81371b9ef774e201fcabadd5cc92053",
-  "plan_roadmap_from": "b529b66d0597f15a6621063dd1a2903b31e8caf9f9c14f7e930f7a1217e1b02e",
   "plan_roadmap_phase_number": "9c546b52c23a6900f791623109b8e6715d3b18c7349ede5eb34c12774a3154f3",
   "plan_saturdays": "9b10d47ca38fd7c243a38ce4a1aec01d2bb35ca54f22144e1bc587c8bb2ae578",
   "plan_save": "803d34012863967f21e1c50fa0a9cb2c6d8e1209cb0c6970b2c24fe84512b39f",
@@ -608,7 +607,6 @@
         <item quantity="many">%1$d fasi completate su %2$d</item>
         <item quantity="other">%1$d fasi completate su %2$d</item>
     </plurals>
-    <string name="plan_roadmap_from">Da %1$s</string>
     <string name="plan_today">Oggi</string>
     <string name="plan_mock_exam">Simulazione d’esame</string>
     <string name="plan_exam_day">Giorno dell’esame</string>

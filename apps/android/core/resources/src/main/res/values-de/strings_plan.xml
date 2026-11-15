@@ -392,7 +392,6 @@
   "plan_reviews_done": "e78b44adb81a9398a27179eba76fc67d110e7304e7e320768cc79d1ebd7aed1b",
   "plan_reviews_of_every_topic": "0a8852a8b1e8291a2258f4c9cf2189ec52e86996394868a4ad572f697e48901e",
   "plan_right_answers": "b82d3b2a187464ba36bf3ab14ec4bb2e0c5b8ecd379cd779b406cc51ffa1904f",
-  "plan_roadmap_from": "efecfffd85f0c55e38dd4e9487bedca9570729f8e5234fab519a30fd4c1fe215",
   "plan_roadmap_phase_number": "764060ca5c10f36408cda1058c8a57f3aeacbc158795d89a8adf58684ca18df7",
   "plan_saturdays": "e8e95e642c523bd600584dd986683563d404a127c436da904d71a8c1c1f1536d",
   "plan_save": "bfe7bd58174f2064ae04ec29e778dab8a0b5175dc11ecf9c7fb864b66c286e9b",
@@ -604,7 +603,6 @@
         <item quantity="one">%1$d von %2$d Phase abgeschlossen</item>
         <item quantity="other">%1$d von %2$d Phasen abgeschlossen</item>
     </plurals>
-    <string name="plan_roadmap_from">Ab %1$s</string>
     <string name="plan_today">Heute</string>
     <string name="plan_mock_exam">Probeprüfung</string>
     <string name="plan_exam_day">Prüfungstag</string>

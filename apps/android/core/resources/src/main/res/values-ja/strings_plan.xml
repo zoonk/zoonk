@@ -392,7 +392,6 @@
   "plan_reviews_done": "e45696246ff1e207f668a75949d6d802ea3bc87706c7888883a2fbc86b636b92",
   "plan_reviews_of_every_topic": "e888f38b69a2bdf28d2833a5fbd46c1feb9e8e6a474a0f2e74fa21e08436b5bb",
   "plan_right_answers": "45a1cd5a233951800051ee9b8c77c86769732f7ad63e5d8271d22f29beec7a7f",
-  "plan_roadmap_from": "6b2bc61bafc3e18ab8b76c962221aaaf18c739f97be720993343149d174d42f6",
   "plan_roadmap_phase_number": "11b818d73fdb9df54721c6f9b09adfd8bbc2839d8c5ee7fe5e0da96d3ae12ec6",
   "plan_saturdays": "3e4fb0f470718dacdeb455b7014ee0e442ac3583011c859009634d7a3281e166",
   "plan_save": "b65f16ae80661a87ecfaef5f76d4a7f8bb556a1e254e3521950adcea0d16a399",
@@ -600,7 +599,6 @@
     <plurals name="plan_phases_done">
         <item quantity="other">%1$d / %2$dフェーズ完了</item>
     </plurals>
-    <string name="plan_roadmap_from">%1$sから</string>
     <string name="plan_today">今日</string>
     <string name="plan_mock_exam">模試</string>
     <string name="plan_exam_day">試験当日</string>

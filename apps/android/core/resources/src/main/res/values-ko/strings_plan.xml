@@ -392,7 +392,6 @@
   "plan_reviews_done": "c5f783b59ad14199146e19b94c17e541b4dd6d1d68b722e8dcd14d7e0d7f2cd6",
   "plan_reviews_of_every_topic": "87be429796eea7f9b9712cf5ccbde49e2cd640d7ff8a88274d35d369cc2d81e4",
   "plan_right_answers": "85602fc3f72225a49f78ef3de7f4b4c8b40eac33a6b367c5a9ae021707b25456",
-  "plan_roadmap_from": "9843c4b4a0d02a5b743a719ed28450d748c37ec4e9025f00726f18f6d3e7c8d9",
   "plan_roadmap_phase_number": "aaf281bb9a1726b60582d14e85307eed82607d1f461baf26354dd9712c52083f",
   "plan_saturdays": "de8b08cd92a24039187dbf7b339c71283f3418b3c7d398c7ba298c14a326a0db",
   "plan_save": "7909f950b5d1fbf8b94cb3f8743393a2d71edfdeadf2f53847828fe6068ef6bc",
@@ -600,7 +599,6 @@
     <plurals name="plan_phases_done">
         <item quantity="other">단계 %1$d개 완료(총 %2$d개)</item>
     </plurals>
-    <string name="plan_roadmap_from">%1$s부터</string>
     <string name="plan_today">오늘</string>
     <string name="plan_mock_exam">모의고사</string>
     <string name="plan_exam_day">시험 당일</string>

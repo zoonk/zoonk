@@ -392,7 +392,6 @@
   "plan_reviews_done": "6b59e5da3de7f330305e5f9ab99b3e83ae305c7c814a6f874467bb33d25547b6",
   "plan_reviews_of_every_topic": "73dbcdeae2c447738b00798c5d82c0c14c6b381dfd944ab4fdf17ceffea9f0e9",
   "plan_right_answers": "995ba18212bacb8027af0340c4b045594d55ec3a27e14b72ed2ccf3cb03024b9",
-  "plan_roadmap_from": "25d30045cd448e4f99d77918c51b5cd8a30a87b358ef8eed99182be10f9063f7",
   "plan_roadmap_phase_number": "7a723dd397ece5c3d5cb0e8df01eda62188a3c300a106c4c8623811961608608",
   "plan_saturdays": "e7637bde72e1e3ea23ab7d5e29e0b86f6557ef97b07b9be20f321cade2f05561",
   "plan_save": "22325f6a3e515eed577e2199ee85be063ed8b6b7134cf0f21205c65d9de4c9ff",
@@ -604,7 +603,6 @@
         <item quantity="one">%1$d / %2$d aşama tamamlandı</item>
         <item quantity="other">%1$d / %2$d aşama tamamlandı</item>
     </plurals>
-    <string name="plan_roadmap_from">%1$s itibarıyla</string>
     <string name="plan_today">Bugün</string>
     <string name="plan_mock_exam">Deneme sınavı</string>
     <string name="plan_exam_day">Sınav günü</string>

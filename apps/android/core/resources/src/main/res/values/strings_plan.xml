@@ -62,7 +62,6 @@
         <item quantity="one">%1$d of %2$d phase done</item>
         <item quantity="other">%1$d of %2$d phases done</item>
     </plurals>
-    <string name="plan_roadmap_from">From %1$s</string>
     <string name="plan_today">Today</string>
     <string name="plan_mock_exam">Mock exam</string>
     <string name="plan_exam_day">Exam day</string>

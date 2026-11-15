@@ -392,7 +392,6 @@
   "plan_reviews_done": "9269d3c90055223dd2598e645fce864759ef08fe9f191a0665cef4271ab62464",
   "plan_reviews_of_every_topic": "90c1cfca2373d2f3cd7fe2f6205f97b1b65c52c98cb4b68c7ef972f1c2eb4a88",
   "plan_right_answers": "c63b0a08528d99d3a6221eff3bbb2c96e0a8a0308b8e722e2dad49a670fd9712",
-  "plan_roadmap_from": "75526b7a2d8fb593d79a16d125a8bd16d56e21f465cf2bcaf8cef5e870b8e361",
   "plan_roadmap_phase_number": "bba5d4ff1de237b87235f2b0e797490e688e1f2015e4a8c8bd7be70c1fece36c",
   "plan_saturdays": "9a3f9ad1cad52efab4f17a1fea3102da45bb474e42d576c7e29e597dcf6993fe",
   "plan_save": "81c0d1d1d4445de88d065a12e0ee82ca4b6b1cca12f2394c6ea3642ce9bd7c67",
@@ -608,7 +607,6 @@
         <item quantity="many">Phases terminées : %1$d sur %2$d</item>
         <item quantity="other">Phases terminées : %1$d sur %2$d</item>
     </plurals>
-    <string name="plan_roadmap_from">À partir du %1$s</string>
     <string name="plan_today">Aujourd’hui</string>
     <string name="plan_mock_exam">Examen blanc</string>
     <string name="plan_exam_day">Jour de l’examen</string>

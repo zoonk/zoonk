@@ -392,7 +392,6 @@
   "plan_reviews_done": "779f09f4441961fa92e8ccfb22bce2956d7a73e0b045c7e48c907fccad9572ce",
   "plan_reviews_of_every_topic": "7606099131e2a4ef41239e96705d79aa4b995b3291c891b08488f57a5b722f0c",
   "plan_right_answers": "a1d7ff4b4d52ba71233d70d00f57803c2d6aff128f682fa4cb2ee9567a2e50f8",
-  "plan_roadmap_from": "6e9a0b2bb1689856969465cfd0310d9c1eb85f5605da0155f4d5640f6f638fef",
   "plan_roadmap_phase_number": "92af56a51ba841093d8bea712ef235ba1589da2ae0f5a5ba101a1ac6595d3d8c",
   "plan_saturdays": "559f2c993c220c0436ba114094fbf9639fb3ad5df7ad78322d48a8d5451d5210",
   "plan_save": "86b23fd6fd36897c925d44abafbcbda79ca9c05864f390c4df7d9a3e53ee4564",
@@ -612,7 +611,6 @@
         <item quantity="many">Ukończono %1$d z %2$d etapów</item>
         <item quantity="other">Ukończono %1$d z %2$d etapów</item>
     </plurals>
-    <string name="plan_roadmap_from">Od %1$s</string>
     <string name="plan_today">Dziś</string>
     <string name="plan_mock_exam">Egzamin próbny</string>
     <string name="plan_exam_day">Dzień egzaminu</string>

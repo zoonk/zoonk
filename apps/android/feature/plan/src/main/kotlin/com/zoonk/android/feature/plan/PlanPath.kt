@@ -53,6 +53,7 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LearnerSummaryGoal
+import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanCourse
 import com.zoonk.api.models.PlanPhase
 import com.zoonk.api.models.PlanPhaseChaptersInner
@@ -191,52 +192,28 @@ private fun PhaseRow(
     )
 }
 
-/**
- * Main's `usePhaseEnd`: when a phase ends, the same on its path row and on the line under the
- * roadmap: a short plan's days, its last day, or the plan's estimate ("~Nov 10", "~Jan"), which a
- * learning phase's end is while it's ahead or its challenge, with no booked day, is still to come.
- * The last phase before the finish shows nothing when the finish row shows that day; an exam with
- * no date yet shows the plan's estimated end there instead.
- */
+/** Main's `usePhaseEnd`: when a phase ends ([phaseEnd]'s rule), the same wherever it shows: a short plan's days or its end ("~Nov 10", "~Jan"). */
 @Composable
 internal fun phaseEnd(
     page: PlanPageState,
     phase: PlanPhase,
-): PlanDateWords? {
-    shortDays(page.plan, phase)?.let { return sameWords(it) }
-    if (phase.state == PlanPhase.State.DONE || phase.state == PlanPhase.State.UNFINISHED ||
-        phase.state == PlanPhase.State.LEFT_OUT
-    ) {
-        return null
-    }
-    val plan = page.plan
-    // Every phase shows its end, the last one too: a last phase without a day of its own ends with the plan.
-    val end =
-        phase.lastDay() ?: run {
-            val planEnd =
-                plan.estimate.endDate
-                    ?.toJavaLocalDate()
-                    ?.takeIf { phase.index == plan.phases.lastOrNull { it.kind != PlanPhase.Kind.AFTER_EXAM }?.index }
-                    ?: return null
-            val month = plan.estimateNamesMonth(planEnd)
-            return endWords(formatPlanDate(planEnd, page.today, currentLocale(), month = month), estimate = true, month = month)
-        }
-    val learns = phase.kind == PlanPhase.Kind.LEARN || phase.kind == PlanPhase.Kind.AFTER_EXAM
-    val ahead = phase.state == PlanPhase.State.UPCOMING
-    val estimate = learns && (ahead || phase.checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING)
-    val month = estimate && ahead && plan.estimateNamesMonth(end)
-    return endWords(formatPlanDate(end, page.today, currentLocale(), month = month), estimate, month)
-}
+): PlanDateWords? = phaseEnd(page.plan, phase, page.today)
 
-/** A phase is behind the learner on its challenge's day, which can come after its last lesson. */
-private fun PlanPhase.lastDay(): LocalDate? {
-    val challengeDay = checkpoint?.takeIf { it.state == PlanPhaseCheckpoint.State.UPCOMING }?.date?.toJavaLocalDate()
-    return if (challengeDay != null && end != null && challengeDay.isAfter(end)) challengeDay else end
-}
+@Composable
+fun phaseEnd(
+    plan: Plan,
+    phase: PlanPhase,
+    today: LocalDate,
+): PlanDateWords? =
+    when (val end = plan.phaseEnd(phase)) {
+        null -> null
+        is PhaseEnd.Days -> shortDays(plan, phase)?.let(::sameWords)
+        is PlanEnd -> endWords(formatPlanDate(end.date, today, currentLocale(), month = end.month), end.estimate, end.month)
+    }
 
 /** A phase's or the goal's end as it's shown ("Nov 10", "~Nov 10") and as TalkBack says it ("Ends about Nov 10"). */
 @Composable
-internal fun endWords(
+fun endWords(
     date: String,
     estimate: Boolean,
     month: Boolean,
@@ -655,15 +632,25 @@ internal fun ColumnScope.PhaseDetails(
     val learn = phase.kind == PlanPhase.Kind.LEARN
     val name = phaseName(phase, page.mocksRequirePlus)
     val byPlace = learn && phase.isNamedLikeAChapter(name)
+    // From the phase's start to the end it's named by everywhere, or a short plan's days.
     val range =
-        phase.start?.let { start ->
-            phase.end?.let { end ->
-                val month = learn && phase.state == PlanPhase.State.UPCOMING
-                stringResource(
-                    R.string.plan_date_range,
-                    formatPlanDate(start, page.today, currentLocale(), month),
-                    formatPlanDate(end, page.today, currentLocale(), month),
-                )
+        when (val end = page.plan.phaseEnd(phase)) {
+            null -> {
+                null
+            }
+
+            is PhaseEnd.Days -> {
+                phaseEnd(page, phase)?.text
+            }
+
+            is PlanEnd -> {
+                phase.start?.let { start ->
+                    stringResource(
+                        R.string.plan_date_range,
+                        formatPlanDate(start, page.today, currentLocale(), end.month),
+                        planDate(end.date, page.today, end.estimate, end.month).text,
+                    )
+                }
             }
         }
     val lessons =

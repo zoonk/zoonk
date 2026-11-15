@@ -72,7 +72,6 @@ import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.glyphScale
 import com.zoonk.android.ui.format.FACT_SEPARATOR
-import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.Geist
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.PlanPhase
@@ -245,6 +244,7 @@ private fun RoadmapFull(
     val position = roadmapPosition(page, phases)
     val currentIndex = phases.indexOfFirst { it.state == PlanPhase.State.CURRENT }
     val overrun = page.plan.overrun(page.goal.kind)
+    val axisDated = page.plan.axisDatedPhases(page.goal.kind, page.today)
     val weights = phases.map { it.weight() }
     // Each name's parts kept whole when every band fits its widest part; otherwise the names break between words.
     val parted = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus), keepParts = true) }
@@ -277,7 +277,7 @@ private fun RoadmapFull(
                     width = bands.widths[index],
                     bandHeight = bands.height,
                     isLast = index == phases.lastIndex,
-                    shownWhen = phaseWhen(index, currentIndex),
+                    dated = phase.index in axisDated,
                     overrun = overrun?.takeIf { it.phaseIndex == phase.index },
                     hasOverrun = overrun != null,
                     onOpen = { opened = phase.index },
@@ -342,19 +342,6 @@ private fun LegendPair(
         words()
     }
 }
-
-/** Main's `getPhaseWhen`: what the axis says under a phase, "Today" under the current one and the start of each after it. */
-private enum class PhaseWhen { Today, Start }
-
-private fun phaseWhen(
-    position: Int,
-    currentIndex: Int,
-): PhaseWhen? =
-    when {
-        position == currentIndex -> PhaseWhen.Today
-        currentIndex != -1 && position > currentIndex -> PhaseWhen.Start
-        else -> null
-    }
 
 /** A band's name; a done phase's check sits in its first line, so a narrow band's lines get its whole width. */
 private class BandName(
@@ -448,7 +435,7 @@ private fun PhaseColumn(
     width: Dp,
     bandHeight: Dp,
     isLast: Boolean,
-    shownWhen: PhaseWhen?,
+    dated: Boolean,
     overrun: PlanOverrun?,
     hasOverrun: Boolean,
     onOpen: () -> Unit,
@@ -456,9 +443,9 @@ private fun PhaseColumn(
     val todayShare = if (phase.state == PlanPhase.State.CURRENT) phase.shareAt(page.today, DayPart.Start) else null
 
     Column(Modifier.width(width)) {
-        PhaseBand(page, phase, name, bandHeight, isLast, shownWhen, todayShare, onOpen)
+        PhaseBand(page, phase, name, bandHeight, todayShare, onOpen)
         PhaseLane(page, phase, isLast, overrun, hasOverrun)
-        PhaseAxis(page, phase, isLast, shownWhen == PhaseWhen.Start, todayShare, overrun, hasOverrun, width)
+        PhaseAxis(page, phase, isLast, dated, todayShare, overrun, hasOverrun, width)
     }
 }
 
@@ -476,26 +463,12 @@ private fun PhaseBand(
     phase: PlanPhase,
     name: BandName,
     height: Dp,
-    isLast: Boolean,
-    shownWhen: PhaseWhen?,
     todayShare: Float?,
     onOpen: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
-    val whenWords =
-        phase.start?.let { start ->
-            when (shownWhen) {
-                PhaseWhen.Today -> stringResource(R.string.plan_today)
-                PhaseWhen.Start -> stringResource(R.string.plan_roadmap_from, formatPlanDate(start, page.today, currentLocale()))
-                null -> null
-            }
-        }
-    val ends =
-        page.finish
-            ?.takeIf {
-                isLast
-            }?.let { endWords(formatPlanDate(it.date, page.today, currentLocale(), it.month), it.estimate, it.month).spoken }
-    val label = listOfNotNull(name.plain + phaseStateWords(phase.state), whenWords, ends).joinToString(". ")
+    // "Foundations, you are here, Ends Feb 16, 2027": the end every other place names the phase by.
+    val label = listOfNotNull(name.plain + phaseStateWords(phase.state), phaseEnd(page, phase)?.spoken).joinToString(", ")
     val (container, content) =
         when (phase.state) {
             PlanPhase.State.CURRENT -> colors.surfaceContainerHighest to colors.onSurface
@@ -622,11 +595,11 @@ private fun PhaseAxis(
     val style = MaterialTheme.zoonkType.data.copy(fontFamily = Geist, lineBreak = LineBreak.Heading)
     val faint = MaterialTheme.colorScheme.onSurfaceVariant
     val ink = MaterialTheme.colorScheme.onSurface
-    val overrunSide = overrun?.let { if (it.share < MIDDLE_SHARE) Anchor.Start else Anchor.End }
-    val start = phase.start?.takeIf { labelled && overrunSide != Anchor.Start && (!isLast || width >= 160.dp) }
-    val finishShown = isLast && overrunSide != Anchor.End
+    val axisFinish = page.plan.axisFinish(page.goal.kind, page.today)
+    val goalShare = overrun?.share?.takeIf { axisFinish != null }
+    val goalAtEnd = goalShare != null && goalShare >= MIDDLE_SHARE
     val finishWords = page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
-    val examFinish =
+    val goalDate =
         finishWords?.let {
             if (page.isExam &&
                 width >= 128.dp
@@ -636,21 +609,16 @@ private fun PhaseAxis(
                 withData(it.text, it.text)
             }
         }
-    val overrunEnd = phase.end?.takeIf { hasOverrun }
+    val end = phaseEnd(page, phase)?.let { if (it.date) withData(it.text, it.text) else AnnotatedString(it.text) }
     val labels =
         listOfNotNull(
-            todayShare?.takeIf { overrun == null }?.let { AxisLabel(AnnotatedString(stringResource(R.string.plan_today)), ink, it) },
-            start?.let {
-                // A learn phase's start is an estimate, marked as the list marks it; an exam phase's is booked.
-                val learn = phase.kind == PlanPhase.Kind.LEARN
-                val date = planDate(it, page.today, estimate = learn, month = learn)
-                AxisLabel(withData(date.text, date.text), faint, 0f)
-            },
-            overrun?.let { at -> examFinish?.let { AxisLabel(it, ink, at.share) } },
+            todayShare?.takeIf { goalShare == null }?.let { AxisLabel(AnnotatedString(stringResource(R.string.plan_today)), ink, it) },
+            goalShare?.let { at -> goalDate?.let { AxisLabel(it, ink, at) } },
+            end?.takeIf { labelled && !goalAtEnd }?.let { AxisLabel(it, faint, 1f) },
             when {
-                !finishShown -> null
-                overrunEnd != null -> formatPlanDate(overrunEnd, page.today, currentLocale()).let { AxisLabel(withData(it, it), faint, 1f) }
-                examFinish != null -> AxisLabel(examFinish, ink, 1f)
+                !isLast || goalAtEnd -> null
+                hasOverrun -> end?.let { AxisLabel(it, faint, 1f) }
+                axisFinish != null -> goalDate?.let { AxisLabel(it, ink, 1f) }
                 else -> null
             },
         )

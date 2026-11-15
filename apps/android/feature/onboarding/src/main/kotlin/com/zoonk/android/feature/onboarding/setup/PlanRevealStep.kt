@@ -52,7 +52,10 @@ import com.zoonk.android.feature.plan.PlanChoiceLines
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.canChooseFocus
 import com.zoonk.android.feature.plan.focusTestOffer
+import com.zoonk.android.feature.plan.phaseEnd
+import com.zoonk.android.feature.plan.roadmapPhases
 import com.zoonk.android.feature.plan.studyDaysWords
+import com.zoonk.android.feature.plan.weight
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.session.toDayView
@@ -100,7 +103,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
-import java.util.Locale
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -526,19 +528,6 @@ private fun NoticeDayLine(plan: Plan) {
     Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }
 
-/** What the roadmap's axis shows: "Today" for the current phase, a start for each one after it, nothing before. */
-@Composable
-private fun phaseWhen(
-    phase: PlanPhase,
-    locale: Locale,
-    today: LocalDate,
-): String? =
-    when (phase.state) {
-        PlanPhase.State.CURRENT -> stringResource(R.string.onboarding_reveal_today)
-        PlanPhase.State.UPCOMING -> phase.startDate?.let { formatDate(it.toJavaLocalDate(), locale, DateStyle.Day, today) }
-        else -> null
-    }
-
 @Composable
 private fun PlanPhases(
     plan: Plan,
@@ -546,7 +535,6 @@ private fun PlanPhases(
 ) {
     val phases = plan.roadmapPhases
     val mocksRequirePlus = plan.access.mocksRequirePlus
-    val locale = currentLocale()
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.onboarding_reveal_phases))
@@ -579,9 +567,11 @@ private fun PlanPhases(
                         fontWeight = FontWeight.Medium,
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                    phaseWhen(phase, locale, today)?.let {
+                    // Each phase by its end, as the Plan names it: "~Dec 1", read "Ends about Dec 1".
+                    phaseEnd(plan, phase, today)?.let {
                         Text(
-                            text = it,
+                            text = it.text,
+                            modifier = Modifier.semantics { contentDescription = it.spoken },
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.labelMedium.withTabularFigures(),
                         )
