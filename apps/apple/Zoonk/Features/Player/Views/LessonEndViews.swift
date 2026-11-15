@@ -446,13 +446,8 @@ private struct LessonUnavailableBody: View {
         }
       }
     } else {
-      ContentUnavailableView {
-        Label {
-          Text(title)
-        } icon: {
-          Image(systemName: symbol)
-        }
-      } description: {
+      GateScreen(title: Text(title), symbol: symbol, held: refusal.limit?.isOpen(at: now) == false)
+      {
         if let line = screenLine {
           Text(line)
         }
@@ -1013,14 +1008,7 @@ struct LessonGuestGateView: View {
   let reload: () -> Void
 
   var body: some View {
-    ContentUnavailableView {
-      Label {
-        Text(outline.title)
-      } icon: {
-        Image(systemName: "book")
-          .accessibilityHidden(true)
-      }
-    } description: {
+    GateScreen(title: Text(outline.title), symbol: "book") {
       Text(outline.description)
     } actions: {
       if let start = guestStart.start {

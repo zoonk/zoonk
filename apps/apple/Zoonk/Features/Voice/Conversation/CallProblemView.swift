@@ -24,20 +24,8 @@ struct CallProblemView: View {
   var body: some View {
     OpeningClock(availableAt: limit?.availableAt) { now in
       // Once a limit's day comes its title goes, and the words keep the room they had.
-      let gated = limit?.isOpen(at: now) == false
-
-      ContentUnavailableView {
-        Label {
-          HeldSlot(gated: gated, alignment: .center) {
-            title(now)
-          }
-        } icon: {
-          Image(systemName: symbol)
-        }
-      } description: {
-        HeldSlot(gated: gated, alignment: .center) {
-          description(now)
-        }
+      GateScreen(title: title(now), symbol: symbol, held: limit?.isOpen(at: now) == false) {
+        description(now)
       }
       .bottomBar {
         actions(now)
@@ -126,17 +114,13 @@ struct DroppedCallView: View {
 
   var body: some View {
     OpeningClock(availableAt: limit?.availableAt) { now in
-      ContentUnavailableView {
-        Label {
-          Text("The call dropped", tableName: "Voice", comment: "A live call lost its connection")
-        } icon: {
-          Image(systemName: "phone.down")
-        }
-      } description: {
-        // A limit's words change when its day comes, in the room they had.
-        HeldSlot(gated: limit?.isOpen(at: now) == false, alignment: .center) {
-          reason(now)
-        }
+      // A limit's words change when its day comes, in the room they had.
+      GateScreen(
+        title: Text(
+          "The call dropped", tableName: "Voice", comment: "A live call lost its connection"),
+        symbol: "phone.down", held: limit?.isOpen(at: now) == false
+      ) {
+        reason(now)
       } actions: {
         actions(now)
       }
@@ -255,8 +239,8 @@ struct DroppedCallView: View {
   private func why(_ title: Text?, _ text: Text?) -> some View {
     VStack(spacing: 4) {
       title?
-        .typeStyle(.body.weight(.semibold))
-        .foregroundStyle(.primary)
+        .typeStyle(.reading.weight(.semibold))
+        .foregroundStyle(Color(.foreground))
 
       text
     }

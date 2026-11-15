@@ -81,6 +81,24 @@ final class HeldSlotTests: XCTestCase {
     }
   }
 
+  /// The lesson's own gate turns ready in the room its words had, so its icon stays put.
+  func testALessonGateScreenKeepsItsPlaceAtTheInstant() async throws {
+    let refusal = LessonRunRefusal.limitReached(
+      tier: .free, period: .last30Days(availableAt: .now.addingTimeInterval(1.5)))
+    let window = try show(
+      NavigationStack {
+        LessonUnavailableView(refusal: refusal, retry: {})
+      }
+      .environment(AppRouter()))
+
+    try await Task.sleep(for: .seconds(0.5))
+    let before = try XCTUnwrap(inkTop(window))
+    XCTAssertGreaterThan(before, 100, "The render is blank or misread")
+    try await Task.sleep(for: .seconds(2))
+
+    XCTAssertEqual(try XCTUnwrap(inkTop(window)), before)
+  }
+
   /// The gate and a row after it, recording each place the row is drawn through the instant.
   private func nextRowAtTheInstant(_ gate: () -> some View) async throws -> [CGFloat] {
     var nextRow: [CGFloat] = []
