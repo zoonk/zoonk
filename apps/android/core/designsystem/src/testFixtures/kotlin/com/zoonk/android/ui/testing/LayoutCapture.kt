@@ -355,6 +355,8 @@ internal object LayoutCapture {
                 fields["endEdge"] =
                     if (inset != null && box != null) (if (rtl) box[0] + inset else box[0] + box[2] - inset) else NOT_MEASURED
                 fields["note"] = written.any { it.row === this && it.part.part == LayoutPart.Part.Note }
+                // A row with a text lead is top-aligned as a whole: its end goes with the first line.
+                if (part.firstLine) fields["aligned"] = "first-line"
             }
 
             private fun textFields(fields: MutableMap<String, Any?>) {
@@ -514,7 +516,8 @@ internal object LayoutCapture {
          * ellipsizes. (`hasVisualOverflow` also counts a short ellipsizing title drawn whole, so it isn't the test.)
          */
         private fun isCut(layout: TextLayoutResult): Boolean =
-            layout.didOverflowHeight || (layout.didOverflowWidth && layout.layoutInput.overflow == TextOverflow.Clip && !layout.layoutInput.softWrap)
+            layout.didOverflowHeight ||
+                (layout.didOverflowWidth && layout.layoutInput.overflow == TextOverflow.Clip && !layout.layoutInput.softWrap)
 
         private fun isClipped(node: SemanticsNode): Boolean {
             val shown = node.boundsInRoot

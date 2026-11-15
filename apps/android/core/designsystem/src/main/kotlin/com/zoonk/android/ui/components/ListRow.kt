@@ -32,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.collapse
@@ -111,6 +112,7 @@ fun ListRow(
                     LayoutPart.Part.Row,
                     // A row keeping an empty end slot ends its value where the slot starts.
                     endInset = if (keepsSlot) LIST_ITEM_INSET + END_SLOT + LEADING_GAP else LIST_ITEM_INSET,
+                    firstLine = leadOnFirstLine,
                 ).fillMaxWidth()
                 .heightIn(min = MIN_HEIGHT)
                 // The whole row takes the tap; its ripple stays inside the highlight's rounded shape.
@@ -145,8 +147,10 @@ fun ListRow(
                 .alpha(if (onClick != null && !enabled && !busy) DISABLED_ALPHA else 1f)
                 .padding(start = HIGHLIGHT_OUTSET + indent, end = HIGHLIGHT_OUTSET, top = WORDS_PADDING, bottom = WORDS_PADDING),
         horizontalArrangement = Arrangement.spacedBy(LEADING_GAP),
-        verticalAlignment = verticalAlignment,
+        // A row with a text lead reads as a table row: top-aligned as a whole, its end on the first entry's line.
+        verticalAlignment = if (leadOnFirstLine) Alignment.Top else verticalAlignment,
     ) {
+        val firstLineBox = if (leadOnFirstLine) maxOf(markSize(), lineHeight(MaterialTheme.typography.titleSmall)) else null
         val parts = remember { RowParts() }
         RowContent(
             parts = parts,
@@ -206,15 +210,36 @@ fun ListRow(
                 },
         )
 
-        expanded?.let { open -> EndGlyph(if (open) R.drawable.ic_row_fold_open else R.drawable.ic_row_fold, quiet) }
+        expanded?.let { open ->
+            OnFirstLine(
+                firstLineBox,
+            ) { EndGlyph(if (open) R.drawable.ic_row_fold_open else R.drawable.ic_row_fold, quiet) }
+        }
 
-        trailing?.let { Box(Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.End)) { it() } }
+        trailing?.let { end -> OnFirstLine(firstLineBox) { Box(Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.End)) { end() } } }
 
         when {
-            chevron -> BusyContent(busy) { ListRowChevron() }
+            chevron -> OnFirstLine(firstLineBox) { BusyContent(busy) { ListRowChevron() } }
             keepsSlot -> Spacer(Modifier.width(END_SLOT))
         }
     }
+}
+
+/** On a top-aligned row, what ends it centered in a box as tall as the lead's, on the first entry's line. */
+@Composable
+private fun OnFirstLine(
+    box: Dp?,
+    content: @Composable () -> Unit,
+) {
+    if (box == null) content() else Box(Modifier.heightIn(min = box), contentAlignment = Alignment.Center) { content() }
+}
+
+/** A line of [style] as the text lays it out at this text size, nonlinear scaling included. */
+@Composable
+private fun lineHeight(style: TextStyle): Dp {
+    val measurer = rememberTextMeasurer()
+    val height = remember(style, measurer) { measurer.measure("A", style, maxLines = 1).size.height }
+    return with(LocalDensity.current) { height.toDp() }
 }
 
 /** Main's `RowChevron`: what a row that opens a page ends with, quieter than its words, its ink on the end edge. */

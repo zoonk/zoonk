@@ -19,6 +19,8 @@ data class LayoutPart(
     val gap: Dp? = null,
     /** On a row: how far its content ends before its own end edge. */
     val endInset: Dp? = null,
+    /** On a row: top-aligned as a whole (a text lead), so its end goes with its first line, not its center. */
+    val firstLine: Boolean = false,
 ) {
     enum class Part(
         val id: String,
@@ -63,6 +65,7 @@ fun Modifier.layoutPart(
     variant: LayoutPart.Variant? = null,
     gap: Dp? = null,
     endInset: Dp? = null,
+    firstLine: Boolean = false,
 ): Modifier =
     // A constant in a release build, so R8 drops the marker and a learner's app never builds one.
-    if (BuildConfig.DEBUG) semantics { this[LayoutPartKey] = LayoutPart(piece, part, variant, gap, endInset) } else this
+    if (BuildConfig.DEBUG) semantics { this[LayoutPartKey] = LayoutPart(piece, part, variant, gap, endInset, firstLine) } else this

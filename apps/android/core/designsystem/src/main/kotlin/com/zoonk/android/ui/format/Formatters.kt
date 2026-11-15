@@ -227,8 +227,11 @@ enum class DateStyle(
     /** "Sunday, November 14, 2027": an exam's day, whose edition may be years ahead. */
     WeekdayDayYear("yMMMMEEEEd"),
 
-    /** "Wed, Oct 28": Today's date line, and the days of a plan's first week. */
+    /** "Wed, Oct 28": Today's date line. */
     WeekdayDayShort("MMMEEEd", yearWhenAnotherYear = true),
+
+    /** "Wed 28": a day of a plan's first week, which never needs its month (main's weekday and day). */
+    WeekdayDayOfMonth("EEEd"),
 }
 
 fun formatDate(

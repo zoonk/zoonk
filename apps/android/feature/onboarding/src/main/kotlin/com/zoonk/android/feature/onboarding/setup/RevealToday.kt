@@ -3,11 +3,13 @@ package com.zoonk.android.feature.onboarding.setup
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,11 +17,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.MotionDurationScale
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.ceremonies.MomentBuddy
@@ -46,6 +52,8 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanItem
@@ -215,56 +223,89 @@ internal fun RevealToday(
     }
 }
 
+/**
+ * Main's `RevealWeek`: the six days after today. Each row reads as a table row: the date is a lead as
+ * wide as the week's longest, never wrapping, and it, the first name and the kinds share the first line;
+ * the names follow one per line. The kinds show only where there's room for them (main's `max-sm:hidden`).
+ */
 @Composable
 internal fun RevealWeek(reveal: com.zoonk.api.models.PlanRevealToday) {
     val days = reveal.nextDays
     if (days.none { it.items.isNotEmpty() }) return
+    val locale = currentLocale()
+    val dateStyle = MaterialTheme.zoonkType.data.copy(fontSize = MaterialTheme.typography.bodySmall.fontSize)
+    val dates = days.map { formatDate(it.date.toJavaLocalDate(), locale, DateStyle.WeekdayDayOfMonth) }
+    val measurer = rememberTextMeasurer()
+    val dateWidth = with(LocalDensity.current) { dates.maxOf { measurer.measure(it, dateStyle, softWrap = false).size.width }.toDp() }
     Column {
         SectionHeader(
             stringResource(R.string.onboarding_reveal_first_week),
             detail =
                 listOf(
                     pluralStringResource(R.plurals.onboarding_days, reveal.week.days.toInt(), reveal.week.days.toInt()),
-                    formatMinutes(reveal.week.minutes.toInt(), currentLocale()),
+                    formatMinutes(reveal.week.minutes.toInt(), locale),
                 ).factsLine(),
         )
-        days.forEach { day ->
-            ListRow(
-                verticalAlignment = androidx.compose.ui.Alignment.Top,
-                headline = {
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(
-                            formatDate(day.date.toJavaLocalDate(), currentLocale(), DateStyle.WeekdayDayShort),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodySmall.withTabularFigures(),
-                        )
-                        if (day.items.isEmpty()) {
-                            Text(stringResource(R.string.onboarding_reveal_rest_day))
-                        } else {
-                            day.items.forEach { Text(revealItemTitle(it)) }
-                        }
-                    }
-                },
-                trailing = {
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        day.items.take(4).forEach { KindMark(it.revealKind()) }
-                        if (day.items.size >
-                            4
-                        ) {
+        BoxWithConstraints {
+            val kinds = maxWidth >= KINDS_WIDTH
+            Column {
+                days.forEachIndexed { index, day ->
+                    val teaching = day.items.filter { it.kind == PlanItem.Kind.LESSON || it.kind == PlanItem.Kind.CHAPTER }
+                    val names = teaching.ifEmpty { day.items }
+                    ListRow(
+                        leading = {
                             Text(
-                                stringResource(
-                                    R.string.onboarding_reveal_more_kinds,
-                                    formatNumber((day.items.size - 4).toDouble(), currentLocale()),
-                                ),
+                                dates[index],
+                                Modifier.widthIn(min = dateWidth),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = dateStyle,
+                                maxLines = 1,
+                                softWrap = false,
                             )
-                        }
-                    }
-                },
-            )
-            ListDivider()
+                        },
+                        leadOnFirstLine = true,
+                        headline = {
+                            if (day.items.isEmpty()) {
+                                Text(
+                                    stringResource(R.string.onboarding_reveal_rest_day),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            } else {
+                                names.forEach { Text(revealItemTitle(it)) }
+                            }
+                        },
+                        trailing = if (kinds && day.items.isNotEmpty()) ({ DayKinds(day.items) }) else null,
+                    )
+                    ListDivider()
+                }
+            }
         }
     }
 }
+
+/** Main's `DayKinds`: up to four kinds, then "+N", which TalkBack skips: the names already say them. */
+@Composable
+private fun DayKinds(items: List<PlanItem>) {
+    Row(
+        Modifier.clearAndSetSemantics {},
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        items.take(KINDS_SHOWN).forEach { KindMark(it.revealKind(), Modifier.size(12.dp)) }
+        if (items.size > KINDS_SHOWN) {
+            Text(
+                stringResource(R.string.onboarding_reveal_more_kinds, formatNumber((items.size - KINDS_SHOWN).toDouble(), currentLocale())),
+                color = MaterialTheme.zoonk.faint,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+}
+
+private const val KINDS_SHOWN = 4
+
+/** Main's `sm` (640px): narrower, the week shows the dates and names only. */
+private val KINDS_WIDTH = 640.dp
 
 @Composable
 private fun revealItemTitle(item: PlanItem): String =
