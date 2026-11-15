@@ -161,8 +161,8 @@ internal fun CheckingChange(onCancel: () -> Unit) {
 }
 
 /**
- * Main's `EFFECT_ROOM_CLASS`: room for a consequence of two lines and its "See all changes", which
- * a check's note and its answer both take, so the actions under them stay put.
+ * Main's `EFFECT_ROOM_CLASS`: room for a one-line consequence and its "See all changes", which a
+ * check's note and its answer both take, so the actions under them stay put; a longer answer grows it.
  */
 @Composable
 internal fun EffectRoom(content: @Composable () -> Unit) {
@@ -171,7 +171,7 @@ internal fun EffectRoom(content: @Composable () -> Unit) {
             MaterialTheme.typography.bodyMedium.lineHeight
                 .toDp()
         }
-    Column(Modifier.heightIn(min = line * 2 + 6.dp + 48.dp)) { content() }
+    Column(Modifier.heightIn(min = line + 6.dp + 48.dp)) { content() }
 }
 
 @Composable
