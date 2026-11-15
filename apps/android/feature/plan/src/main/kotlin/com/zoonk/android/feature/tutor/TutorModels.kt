@@ -41,9 +41,10 @@ sealed interface TutorFailure {
 internal val TutorFailure.helpLimit: Limit?
     get() = (this as? TutorFailure.Refused)?.limit?.takeUnless { it is Limit.SlowDown }
 
-internal fun ApiException.toTutorFailure(): TutorFailure = failure(Limit.of(this), error, status)
+internal fun ApiException.toTutorFailure(receivedAt: java.time.Instant): TutorFailure = failure(Limit.of(this, receivedAt), error, status)
 
-internal fun MutationResult.Failed.toTutorFailure(): TutorFailure = failure(Limit.of(this), error, status)
+internal fun MutationResult.Failed.toTutorFailure(receivedAt: java.time.Instant): TutorFailure =
+    failure(Limit.of(this, receivedAt), error, status)
 
 private fun failure(
     limit: Limit?,

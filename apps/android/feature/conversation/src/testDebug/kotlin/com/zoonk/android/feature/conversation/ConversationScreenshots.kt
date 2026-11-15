@@ -2,10 +2,11 @@ package com.zoonk.android.feature.conversation
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
@@ -231,6 +232,14 @@ class ConversationScreenshots {
 
     private fun shot(name: String) {
         if (folded) compose.unfoldBook(folds) else compose.waitForIdle()
-        writeRender(File(folder, "$name.png"), compose.onRoot().captureRender().asAndroidBitmap())
+        // The top window: a sheet (the call's help) opens in its own.
+        writeRender(
+            File(folder, "$name.png"),
+            compose
+                .onAllNodes(isRoot())
+                .onLast()
+                .captureRender()
+                .asAndroidBitmap(),
+        )
     }
 }

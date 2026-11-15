@@ -35,6 +35,7 @@
   "limit_outlines_day": "bfa34b7b86cbd79c38201a78f0dc9f88fa5edcc0ed2a7ec92498dbeff2d151e1",
   "limit_outlines_guest": "6c051b63023c6497db4f2a8fb1d75ac6fbc0be1194f11b2e2ce2f8e335641331",
   "limit_outlines_used": "8554e19a8d2f3bfd8b1a3ccdbbfc8284dd362764ec6e154f41e10d34fa6ed71e",
+  "limit_questions_day": "e458c5a439f790524a44259f77660c2d1f24347cedc439ea8bedf6e746c9d5fc",
   "limit_questions_used": "8ad748bed5048d78d42447408ea74ad6a621a701921721133036d09bbd7a6dc4",
   "limit_quick_explanations_used": "0bfd2cb50c58900b78ce0de337431641c32a0486c22604850f021a985ce271b8",
   "limit_sentence": "d1f077669c7a7f752de86e3c9818c0adbbdadf0db60a5b339125522bf83343c7",
@@ -42,6 +43,7 @@
   "limit_slow_down": "a6c85326a8e993a5760ab7d2ca8d58229d822ea2508489220dcaa30e86177864",
   "limit_still_review": "9f5c4a7e808f83fb04c3bf76cd61418c8f57636374905bf358b1cd1c76385ea3",
   "limit_try_again_now": "2c0ddc6cab1e3f0adff7381774daeeb9bcd50f393275b8b617fbfdc669fa5a18",
+  "limit_uploads_day": "fbde84ea5c04ee3d5166c1d1a421162603fc52546bff5e05d43f42515f38087d",
   "limit_uploads_used": "01536ef08ecedb88423c2c26ec81a8cbe82f05b81dde959652d70f618dc872da"
 }
 -->
@@ -75,6 +77,8 @@
     <string name="limit_goals_used">시작할 수 있는 새 목표를 다 시작했어요</string>
     <string name="limit_uploads_used">업로드 한도를 다 썼어요</string>
     <string name="limit_questions_used">질문 한도를 다 썼어요</string>
+    <string name="limit_uploads_day">오늘은 자료를 더 올릴 수 없어요</string>
+    <string name="limit_questions_day">오늘은 질문을 더 할 수 없어요</string>
     <string name="limit_call_time_used">대화 시간을 다 썼어요</string>
     <string name="limit_mock_exams_used">모의고사 이용 한도를 다 썼어요</string>
     <string name="limit_lessons_guest">레슨을 더 보려면 계정이 필요해요</string>

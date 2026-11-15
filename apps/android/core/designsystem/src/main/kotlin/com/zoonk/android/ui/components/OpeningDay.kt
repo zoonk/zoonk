@@ -16,8 +16,17 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
-/** The time an opening day is read against; a test provides a clock that follows its own. */
-val LocalClock = staticCompositionLocalOf<Clock> { Clock.systemUTC() }
+/** The time and zone an opening day is read against; a test provides a clock that follows its own. */
+val LocalClock = staticCompositionLocalOf<Clock> { DeviceClock }
+
+/** The zone is read on each look, so a learner who travels gets their new calendar. */
+private object DeviceClock : Clock() {
+    override fun instant(): Instant = Instant.now()
+
+    override fun getZone(): ZoneId = ZoneId.systemDefault()
+
+    override fun withZone(zone: ZoneId): Clock = system(zone)
+}
 
 /** When the next free lesson opens, in the learner's own calendar (main's `toOpeningDay`). */
 sealed interface OpeningDay {
@@ -77,9 +86,9 @@ fun rememberOpeningDay(at: Instant?): OpeningDay? {
     LaunchedEffect(at) {
         while (at != null && at.isAfter(clock.instant())) {
             val now = clock.instant()
-            delay(Duration.between(now, nextLook(at, now)).toMillis().coerceAtLeast(1))
+            delay(Duration.between(now, nextLook(at, now, clock.zone)).toMillis().coerceAtLeast(1))
             looks++
         }
     }
-    return remember(at, looks) { at?.let { openingDay(it, clock.instant()) } }
+    return remember(at, looks) { at?.let { openingDay(it, clock.instant(), clock.zone) } }
 }

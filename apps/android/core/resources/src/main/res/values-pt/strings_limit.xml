@@ -35,6 +35,7 @@
   "limit_outlines_day": "ad183da2165e1d718b4912499834ebdc67196baae557e2bcfc3d40b5f835dbd9",
   "limit_outlines_guest": "6fe4d32f7c032cbf2ada119aa83acdc650183ebbd5ffad7139278a6e7ed64a41",
   "limit_outlines_used": "958e127d420ac542beac27ca1dea38a61eb48df6665151665b3afdcc935e1737",
+  "limit_questions_day": "6ff1ade4daa408a02dbc9ff2b0fcc0beff105f77018e480955ea678d1a503595",
   "limit_questions_used": "e23ac0c8c7e2c76eeffe1953022bd3b9a28055892ec9574304c333a86f291a40",
   "limit_quick_explanations_used": "9ae36640a58801c2b964f89da8800ca6d596ca446f96079d21e61e04542dcacb",
   "limit_sentence": "c6bb79f104338d21507dfe5720114f9a8ddddab7105f8c1607c83eec63a42dd1",
@@ -42,6 +43,7 @@
   "limit_slow_down": "7af94c1fc078a29b60f35b87a1accb32ebbbf7703b86ad99863ad4b1b8e74813",
   "limit_still_review": "ad345509d64f54386a731580ca3b656614f3d10d8d5cf23ae5838d219c1d061d",
   "limit_try_again_now": "a980e414860bcdc38ed57a08da5b0f55acbda04313ff11acedfe2048ef7bf5bc",
+  "limit_uploads_day": "63ec48d1026e1dd581b40c6f4ebe5cc8cd78fa851b402cf4680665a88e0063c9",
   "limit_uploads_used": "a836af50069ac06d32e504924f9a213edf3bbc32e1ee5d9f77db9eb2dd326aae"
 }
 -->
@@ -75,6 +77,8 @@
     <string name="limit_goals_used">Você atingiu o limite de novos objetivos</string>
     <string name="limit_uploads_used">Você atingiu o limite de envios</string>
     <string name="limit_questions_used">Você atingiu o limite de perguntas</string>
+    <string name="limit_uploads_day">Você já enviou o máximo de material por hoje</string>
+    <string name="limit_questions_day">Você atingiu o limite diário de perguntas</string>
     <string name="limit_call_time_used">Você usou todo o seu tempo de conversa</string>
     <string name="limit_mock_exams_used">Você atingiu o limite de simulados</string>
     <string name="limit_lessons_guest">Mais aulas só com uma conta</string>

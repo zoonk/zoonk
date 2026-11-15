@@ -100,7 +100,7 @@
   "player_lesson_of": "6539d9b65191c384be9cc6f50580aff7127221e52e8129079b908f338a360cb8",
   "player_lesson_ready": "fabfaa5934fc98685e64c6bffb34256085a24767d4fb0a50fce41041baecd62f",
   "player_listen": "55366525747555dbe28edbbf4c740748fd29815e1a225256313115f12c1869ff",
-  "player_microphone_blocked": "ca049b0457f384fca6be6193d3363588a36cf8212bd066c0d949b5a0d0df03ef",
+  "player_microphone_is_blocked": "70076cb0471c78d209c2247e8117d1252531bdb6fa2545ffef79574860eb8ebb",
   "player_next_lesson": "7bd9f0b726aa2ab49cfdc4a88c62413f30f4973f992cc7a798f4b160a34f1a5d",
   "player_next_step_failed": "a82775aee2a392c8118db0ff54834c69f573fb55878db7abe040f08281e4dec5",
   "player_not_found_title": "c410d66a0be15e537d42313d897cb93d2c39c15298abdd7000ce2ac07faeb091",
@@ -349,7 +349,7 @@
     <string name="player_can_talk_now">Posso falar agora</string>
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">Responder falando</string>
-    <string name="player_microphone_blocked">O microfone está bloqueado. Digite sua resposta.</string>
+    <string name="player_microphone_is_blocked">O microfone está bloqueado.</string>
     <string name="player_what_we_heard">O que ouvimos</string>
     <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
     <string name="player_word_not_heard">%1$s (não ouvimos)</string>

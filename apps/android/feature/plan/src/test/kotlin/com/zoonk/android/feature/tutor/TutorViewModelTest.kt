@@ -82,7 +82,7 @@ class TutorViewModelTest {
                 setHomeCountry,
             ) { _, _, status -> decision(status) },
             saved,
-            openMission,
+            openMission = openMission,
         ).also { it.thread.load() }
 
     private val TutorViewModel.turns get() =

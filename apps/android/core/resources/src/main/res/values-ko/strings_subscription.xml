@@ -8,14 +8,12 @@
   "subscription_already_plus_website": "3861b672cd9ea3e2f7ba85a2b0cb3c1e3c6577021ee40ea284ec4cc9ffeb72bf",
   "subscription_answer_cancel": "555c18332b7c94c53e343921785b29880f14e2bdd148d2ed7dca07e1f576382f",
   "subscription_answer_fair_use": "c9896a888cf5c9381e65de9b79f6a3ed5155624b70b58b4b42d53cad7a30cd0b",
-  "subscription_answer_free_buddy": "03a17afdb0d9f54c026b8ff1b947ee2babc2908d9f2ba5e85b2669b7c647f7ee",
-  "subscription_answer_free_buddy_uploads": "48f0ed4775e985d79377ed6e8a8eb66c12e948db2758c7e943f972c93f3affb4",
   "subscription_answer_free_calls": "5a810ecf58dfdb150777dabf14f02298c6407fe6fa1fa13ac52c7e44efe96088",
   "subscription_answer_free_goals": "bb94bb143e5651ff7681e91696f9c8dea884444702444d2a2eb717ab9efcf4e1",
   "subscription_answer_free_guest_lead": "8f39c8a124c3155b74b57cee7055ff8aa5ece572d930373e3714578e2b9f8b87",
   "subscription_answer_free_lead": "90d3eee90e02874ace165513cd00249bd884ba227077cba2b78b412f68de9316",
   "subscription_answer_free_lessons": "d9c357c4ce65df493352e66c7632cffa13088ae3a1588a7eb5e64da85cecd498",
-  "subscription_answer_free_uploads": "eaca287e620ac4da0562e74d6d1e0c30b989598f725f7d392b035a0663b6e142",
+  "subscription_answer_free_material": "1cd68bb5d21baa2966605fad1f61ad94c7439037e765c7482b057c0d77b46d0d",
   "subscription_answer_refund": "a7bb6d6ea44d9e9a98dd113c3deca48590694a1270ba0fa5d72c82f9f6640a9e",
   "subscription_answer_unlimited": "66a2ff5e83d88810aafccd30bf470f46ce2c26e0061d5f331bd385023fde4644",
   "subscription_benefit_buddy": "e1a8ad62e48d21334ec73705af9636ed31f1223f7199df68631d548233fcbc4b",
@@ -42,6 +40,7 @@
   "subscription_ends_on": "068e31a435e74e1ef448da19cc3a9201792492900f2c18a658dd06549990e764",
   "subscription_free": "9eb4482557dba47bf2978949fe9ac21d2c7ad622d3148f1a90626bf3b8778648",
   "subscription_free_buddy": "0eb2fcd7ec673561301fbd31929abc876da1ed6d6b4237e057c834db6077fd86",
+  "subscription_free_buddy_monthly": "399943ce1a4433da45a43716d07ad89c4d838c54e718cb667145d5290a5d125c",
   "subscription_free_calls": "79599cfb9e33e0ec67b63cb1ecf986de631effabdac52263347e7cad656672ad",
   "subscription_free_goals": "7872962832fcc10e4bbccf5a87319dac4430c9044903fe09217e740b3a269c00",
   "subscription_free_lessons_a_month": "39f0c6500c60d2da08e6d34124025ddd6ace0b459f525a9e64249997794c6ed6",
@@ -187,14 +186,6 @@
     <plurals name="subscription_answer_free_lessons">
         <item quantity="other">시험을 포함한 모든 목표를 합쳐 매달 레슨 %d개</item>
     </plurals>
-    <!-- %1$s is the buddy messages ("10 messages"), %2$s the uploads ("3 uploads"). -->
-    <string name="subscription_answer_free_buddy_uploads">AI 공부 짝꿍: 하루 %1$s, %2$s</string>
-    <plurals name="subscription_answer_free_buddy">
-        <item quantity="other">메시지 %d개</item>
-    </plurals>
-    <plurals name="subscription_answer_free_uploads">
-        <item quantity="other">업로드 %d회</item>
-    </plurals>
     <string name="subscription_answer_free_calls">말하기 연습 대화는 Plus보다 횟수가 적어요(시험 말하기 과제는 Plus에 포함돼요)</string>
     <string name="subscription_question_unlimited">Plus는 정말 무제한인가요?</string>
     <string name="subscription_answer_unlimited">거의 무제한이에요. 레슨, 목표, 짝꿍에는 봇과 자동화 도구를 막기 위한 제한만 있고, 사람이 공부하는 데는 제한을 두지 않아요. 말하기 연습 대화에는 하루와 한 달 이용 한도가 있지만, Plus 없이 이용할 때보다 높아요.</string>
@@ -204,4 +195,12 @@
     <string name="subscription_answer_cancel">이미 결제한 기간이 끝날 때까지 Plus를 계속 이용할 수 있어요. 그 후에는 무료 요금제로 돌아가고, 목표와 진도는 그대로 유지돼요.</string>
     <string name="subscription_question_refund">환불받을 수 있나요?</string>
     <string name="subscription_answer_refund">Google Play에서 구매한 Plus의 환불은 Google Play에서 처리해요. Google Play에서 환불을 요청해 주세요. 저희 웹사이트에서 구독했다면 hello@zoonk.com으로 이메일을 보내 주세요. 확인해 드릴게요.</string>
+    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
+    <plurals name="subscription_free_buddy_monthly">
+        <item quantity="other">AI 공부 짝꿍: 하루 메시지 %1$d개, 한 달 최대 %2$s개</item>
+    </plurals>
+    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
+    <plurals name="subscription_answer_free_material">
+        <item quantity="other">내 학습 자료 추가: 하루에 파일 %d개</item>
+    </plurals>
 </resources>

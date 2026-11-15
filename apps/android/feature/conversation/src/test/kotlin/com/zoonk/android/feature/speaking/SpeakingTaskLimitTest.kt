@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.speaking
 
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -13,6 +14,8 @@ import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.LocalClock
+import com.zoonk.android.ui.components.TestClock
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -21,7 +24,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import java.time.Duration
-import java.time.Instant
 import java.util.UUID
 
 /** The answer to the last Start tapped shows under that task only; the server decides again on every tap. */
@@ -31,6 +33,7 @@ class SpeakingTaskLimitTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
+    private val clock by lazy { TestClock(rule.mainClock) }
     private val notice = "You've used your call time"
     private val failed = "The task didn't start. Try again in a moment."
 
@@ -55,19 +58,21 @@ class SpeakingTaskLimitTest {
 
     @Test
     fun theLastStartsAnswerShowsUnderItsTaskOnly() {
-        val limited = CallStart.Limited(Limit.Reached(LimitTier.Plus, LimitPeriod.Rolling30Days, Instant.now().plus(Duration.ofDays(5))))
+        val limited = CallStart.Limited(Limit.Reached(LimitTier.Plus, LimitPeriod.Rolling30Days, clock.start.plus(Duration.ofDays(5))))
         val answers = ArrayDeque(listOf(limited, limited, CallStart.Failed))
         rule.setContent {
-            ZoonkTheme {
-                SpeakingPaperSection(
-                    paper = speakingPaper(),
-                    goalId = UUID.randomUUID(),
-                    openTask = "1",
-                    start = callStarter { answers.removeFirst() },
-                    open = {},
-                    openWeb = {},
-                    onRefused = {},
-                )
+            CompositionLocalProvider(LocalClock provides clock) {
+                ZoonkTheme {
+                    SpeakingPaperSection(
+                        paper = speakingPaper(),
+                        goalId = UUID.randomUUID(),
+                        openTask = "1",
+                        start = callStarter { answers.removeFirst() },
+                        open = {},
+                        openWeb = {},
+                        onRefused = {},
+                    )
+                }
             }
         }
         rule.onNodeWithText("Describir una situación").performClick()

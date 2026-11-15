@@ -162,7 +162,7 @@
     <string name="player_can_talk_now">I can talk now</string>
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">Say it instead</string>
-    <string name="player_microphone_blocked">The microphone is blocked. Type your answer instead.</string>
+    <string name="player_microphone_is_blocked">The microphone is blocked.</string>
     <string name="player_what_we_heard">What we heard</string>
     <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
     <string name="player_word_not_heard">%1$s (not heard)</string>

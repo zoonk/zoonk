@@ -15,6 +15,7 @@ import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -42,6 +43,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
@@ -71,7 +73,6 @@ import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -82,6 +83,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.WritingWait
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.android.ui.format.currentLocale
@@ -404,8 +406,8 @@ private fun TaskRow(
             }
         }
     ListRow(
-        headline = { Text(inLanguage(task.name, paper.language)) },
-        modifier = Modifier.bringIntoViewRequester(requester),
+        headline = { Text(inLanguage(task.name, paper.language), style = LocalTextStyle.current.copy(lineBreak = LineBreak.Heading)) },
+        modifier = Modifier.bringIntoViewRequester(requester).bleed(LIST_ITEM_INSET),
         onClick = { open = !open },
         expanded = open,
         leading = { Text(formatNumber(index + 1.0, locale), style = MaterialTheme.zoonkType.data) },
@@ -417,7 +419,7 @@ private fun TaskRow(
     )
     if (open) {
         Column(
-            Modifier.padding(start = listRowWordsStart(), end = LIST_ITEM_INSET, bottom = 16.dp),
+            Modifier.padding(start = listRowWordsStart() - LIST_ITEM_INSET, bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
