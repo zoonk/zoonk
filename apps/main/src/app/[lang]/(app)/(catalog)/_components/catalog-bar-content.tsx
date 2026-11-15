@@ -1,11 +1,9 @@
 "use client";
 
-import { VisitorLook } from "@/components/learner/visitor-look";
+import { LevelLink, PendingBarEnd } from "@/app/[lang]/(app)/(learn)/_components/learn-bar-end";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
-import { LearnAvatarBelt } from "@zoonk/learn/avatar-belt";
 import { LearnSectionBar } from "@zoonk/learn/bar";
 import { useExtracted } from "next-intl";
-import { PendingAccountAvatar } from "./user-avatar";
 import { UserAvatarMenu } from "./user-avatar-menu";
 
 /** From `lg` the sidebar holds the way in and the account, so the bar's end is a phone's. */
@@ -34,14 +32,12 @@ export function CatalogBarContent({ visitor }: { visitor: React.ReactNode }) {
       end={
         <PhoneEnd>
           {learner.status === "ready" ? (
-            <LearnAvatarBelt color={learner.summary.level?.color ?? null}>
-              <UserAvatarMenu />
-            </LearnAvatarBelt>
-          ) : (
             <>
-              <VisitorLook>{visitor}</VisitorLook>
-              <PendingAccountAvatar className="size-7" />
+              {learner.summary.level && <LevelLink level={learner.summary.level} />}
+              <UserAvatarMenu />
             </>
+          ) : (
+            <PendingBarEnd visitor={visitor} />
           )}
         </PhoneEnd>
       }

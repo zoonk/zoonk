@@ -2,16 +2,9 @@
 
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
-import { EnterButton } from "@zoonk/learn/enter-button";
+import { EnterButton, EnterLink } from "@zoonk/learn/enter-button";
+import { TaskStopMessage } from "@zoonk/learn/task-layout";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
-import { buttonVariants } from "@zoonk/ui/components/button";
-import {
-  Empty,
-  EmptyContent,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@zoonk/ui/components/empty";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { safeAsync } from "@zoonk/utils/error";
 import { BellOffIcon, MailCheckIcon, MailXIcon } from "lucide-react";
@@ -21,17 +14,12 @@ import { turnOffStudyReminderEmailAction } from "./actions";
 
 type Result = Awaited<ReturnType<typeof turnOffStudyReminderEmailAction>>;
 
-function ManageRemindersLink() {
-  const t = useExtracted();
-
+/** The page's one message, at the top of its column; its action is the bottom bar's. */
+function Message({ icon, title }: { icon: React.ReactNode; title: string }) {
   return (
-    <Link
-      className={buttonVariants({ size: "lg", variant: "outline" })}
-      href={getMenu("reminders").url}
-      prefetch={false}
-    >
-      {t("Manage reminders")}
-    </Link>
+    <div className="flex flex-1 flex-col gap-6">
+      <TaskStopMessage heading="h1" icon={icon} title={title} />
+    </div>
   );
 }
 
@@ -40,19 +28,20 @@ function UnsubscribeResult({ result }: { result: Result }) {
   const off = result === "off";
 
   return (
-    <Empty>
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          {off ? <MailCheckIcon aria-hidden="true" /> : <MailXIcon aria-hidden="true" />}
-        </EmptyMedia>
-        <EmptyTitle>
-          <h1>{off ? t("Email reminders are off") : t("This link is no longer active")}</h1>
-        </EmptyTitle>
-      </EmptyHeader>
-      <EmptyContent>
-        <ManageRemindersLink />
-      </EmptyContent>
-    </Empty>
+    <>
+      <Message
+        icon={off ? <MailCheckIcon aria-hidden="true" /> : <MailXIcon aria-hidden="true" />}
+        title={off ? t("Email reminders are off") : t("This link is no longer active")}
+      />
+
+      <BottomBar>
+        <BottomBarActions>
+          <EnterLink href={getMenu("reminders").url} link={Link} prefetch={false}>
+            {t("Manage reminders")}
+          </EnterLink>
+        </BottomBarActions>
+      </BottomBar>
+    </>
   );
 }
 
@@ -78,16 +67,7 @@ export function UnsubscribeForm({ token }: { token: string | null }) {
 
   return (
     <>
-      <Empty className="flex-1">
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <BellOffIcon aria-hidden="true" />
-          </EmptyMedia>
-          <EmptyTitle>
-            <h1>{t("Turn off email reminders?")}</h1>
-          </EmptyTitle>
-        </EmptyHeader>
-      </Empty>
+      <Message icon={<BellOffIcon aria-hidden="true" />} title={t("Turn off email reminders")} />
 
       <form action={() => turnOff()} className="contents">
         <BottomBar>

@@ -99,12 +99,14 @@ export function CourseStartFailureNote({
         {failure.status === "limitReached" ? limitText.text : t("We couldn't start this course.")}
       </p>
 
-      <FailureAction
-        className={actionClassName ?? buttonVariants({ variant: "outline" })}
-        failure={failure}
-        onRetry={onRetry}
-        secondaryClassName={secondaryActionClassName ?? buttonVariants({ variant: "outline" })}
-      />
+      <div className="flex flex-wrap gap-2 empty:hidden">
+        <FailureAction
+          className={actionClassName ?? buttonVariants({ variant: "outline" })}
+          failure={failure}
+          onRetry={onRetry}
+          secondaryClassName={secondaryActionClassName ?? buttonVariants({ variant: "outline" })}
+        />
+      </div>
     </div>
   );
 }

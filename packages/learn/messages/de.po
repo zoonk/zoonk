@@ -210,7 +210,10 @@ msgstr "Heute"
 #: src/_components/create-account-link.tsx
 #: src/_components/subscribe-gate.tsx
 #: src/language/unit/practice-conversation.tsx
+#: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
+#: src/onboarding/save-plan-note.tsx
+#: src/reminders/reminders-screen.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
 msgstr "Kostenloses Konto erstellen"
@@ -1299,18 +1302,6 @@ msgstr "Such dir eine Brille aus, die du dir verdient hast."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "MhhJ4B"
-msgid "Speak {language} for a job interview"
-msgstr "{language} für ein Vorstellungsgespräch sprechen"
-
-#: src/buddies/buddy-goal-start.tsx
-#: src/onboarding/entry/goal-examples.tsx
-msgctxt "Zqp_hg"
-msgid "Understand quantum physics"
-msgstr "Quantenphysik verstehen"
-
-#: src/buddies/buddy-goal-start.tsx
-#: src/onboarding/entry/goal-examples.tsx
 msgctxt "3GLH-d"
 msgid "Examples"
 msgstr "Beispiele"
@@ -1325,16 +1316,6 @@ msgstr "Hallo! Ich bin {name}, dein KI-Lernkumpel. Sag mir, was du lernen möcht
 msgctxt "ijwVvk"
 msgid "Earlier questions"
 msgstr "Frühere Fragen"
-
-#: src/buddies/buddy-goal-start.tsx
-msgctxt "BUxbAO"
-msgid "Your goal"
-msgstr "Dein Ziel"
-
-#: src/buddies/buddy-goal-start.tsx
-msgctxt "u94YzK"
-msgid "What you want to learn"
-msgstr "Was du lernen möchtest"
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-entry.tsx
@@ -8741,15 +8722,6 @@ msgid "Create a free account to add a PDF, a photo of your notes or any text to 
 msgstr "Erstelle ein kostenloses Konto, um deinem Ziel eine PDF-Datei, ein Foto deiner Notizen oder einen beliebigen Text hinzuzufügen."
 
 #: src/onboarding/entry/attach-panel.tsx
-#: src/onboarding/entry/goal-outcomes.tsx
-#: src/onboarding/save-plan-note.tsx
-#: src/reminders/reminder-offer.tsx
-#: src/reminders/reminders-screen.tsx
-msgctxt "0vL5u1"
-msgid "Create an account"
-msgstr "Konto erstellen"
-
-#: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-attachments.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "Uby0eW"
@@ -8818,6 +8790,17 @@ msgctxt "B7hTRC"
 msgid "Added to your material: {title}"
 msgstr "Deinem Material hinzugefügt: {title}"
 
+#: src/onboarding/entry/goal-box.tsx
+msgctxt "lnZvgd"
+msgid "I want to"
+msgstr "Ich möchte"
+
+#. Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.
+#: src/onboarding/entry/goal-box.tsx
+msgctxt "MBg8CD"
+msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
+msgstr "{exam, select, abitur {Abitur bestehen, {language} sprechen…} bac {Bac bestehen, {language} sprechen…} enem {ENEM bestehen, {language} sprechen…} exani {EXANI-II bestehen, {language} sprechen…} kyotsu {beim Common Test gut abschneiden, {language} sprechen…} matura {Matura bestehen, {language} sprechen…} maturita {Maturità bestehen, {language} sprechen…} suneung {beim CSAT gut abschneiden, {language} sprechen…} yks {beim YKS gut abschneiden, {language} sprechen…} other {SAT bestehen, {language} sprechen…}}"
+
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "ng8fsM"
 msgid "Start a goal"
@@ -8840,26 +8823,25 @@ msgctxt "oOAMKL"
 msgid "Tell us in your own words. We'll build the plan."
 msgstr "Beschreib es mit deinen eigenen Worten. Wir erstellen den Plan."
 
-#: src/onboarding/entry/goal-entry.tsx
-msgctxt "lnZvgd"
-msgid "I want to"
-msgstr "Ich möchte"
-
-#. Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.
-#: src/onboarding/entry/goal-entry.tsx
-msgctxt "MBg8CD"
-msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
-msgstr "{exam, select, abitur {Abitur bestehen, {language} sprechen…} bac {Bac bestehen, {language} sprechen…} enem {ENEM bestehen, {language} sprechen…} exani {EXANI-II bestehen, {language} sprechen…} kyotsu {beim Common Test gut abschneiden, {language} sprechen…} matura {Matura bestehen, {language} sprechen…} maturita {Maturità bestehen, {language} sprechen…} suneung {beim CSAT gut abschneiden, {language} sprechen…} yks {beim YKS gut abschneiden, {language} sprechen…} other {SAT bestehen, {language} sprechen…}}"
-
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
 msgstr "Prüfung"
 
 #: src/onboarding/entry/goal-examples.tsx
+msgctxt "MhhJ4B"
+msgid "Speak {language} for a job interview"
+msgstr "{language} für ein Vorstellungsgespräch sprechen"
+
+#: src/onboarding/entry/goal-examples.tsx
 msgctxt "UdtpV7"
 msgid "Topic"
 msgstr "Thema"
+
+#: src/onboarding/entry/goal-examples.tsx
+msgctxt "Zqp_hg"
+msgid "Understand quantum physics"
+msgstr "Quantenphysik verstehen"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "79lLl-"
@@ -9543,15 +9525,16 @@ msgctxt "zCKNAZ"
 msgid "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two."
 msgstr "Wir wählen aus, was du zuerst lernst, und verteilen es auf deine Tage. Bei einem neuen Thema kann das ein bis zwei Minuten dauern."
 
-#: src/onboarding/steps/plan-start-notice.tsx
-msgctxt "rXkqB0"
-msgid "Your plan didn't start"
-msgstr "Dein Plan ist nicht gestartet"
-
+#: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "Die Erstellung deines Plans wurde unterbrochen"
+
+#: src/onboarding/steps/plan-start-notice.tsx
+msgctxt "rXkqB0"
+msgid "Your plan didn't start"
+msgstr "Dein Plan ist nicht gestartet"
 
 #: src/onboarding/steps/plan-wait.tsx
 #: src/today/today-action.tsx

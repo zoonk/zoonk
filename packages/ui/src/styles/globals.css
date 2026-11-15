@@ -740,6 +740,26 @@
   }
 }
 
+/*
+ * A bar's buttons below `lg` (`BottomBarActions`): buttons that don't fit on one line each take
+ * their own, and a button fills the line it has alone, so a stack is full width. On a line it
+ * shares, the main action (the one Enter presses) takes the room left: its share is so much larger
+ * that the button beside it keeps its own width. An icon button keeps its square, and a form that
+ * only wraps a button (`contents`) is looked through.
+ */
+@utility bar-actions {
+  @variant max-lg {
+    & > :not([data-size^="icon"], .contents),
+    & > .contents > :not([data-size^="icon"]) {
+      flex-grow: 1;
+
+      &[data-enter] {
+        flex-grow: 99999;
+      }
+    }
+  }
+}
+
 @utility press {
   transition-property:
     color, background-color, border-color, text-decoration-color, fill, stroke, opacity, scale;

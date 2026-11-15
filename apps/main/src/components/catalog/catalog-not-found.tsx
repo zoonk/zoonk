@@ -1,7 +1,5 @@
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
-import { NotFoundMessage } from "@/components/public/not-found-message";
-import { Link } from "@/i18n/navigation";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { PageNotFound } from "@/components/public/not-found-message";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 
@@ -16,12 +14,7 @@ export async function CatalogNotFound() {
   return (
     <>
       <CatalogPageBar back={{ href: "/courses", label: t("Explore courses") }} />
-
-      <NotFoundMessage>
-        <Link className={buttonVariants({ size: "lg" })} href="/courses" prefetch>
-          {t("Explore courses")}
-        </Link>
-      </NotFoundMessage>
+      <PageNotFound />
     </>
   );
 }

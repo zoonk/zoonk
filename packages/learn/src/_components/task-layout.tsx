@@ -54,13 +54,10 @@ export function TaskActionLabel({ children }: { children: React.ReactNode }) {
   return <span className="min-w-0 wrap-break-word">{children}</span>;
 }
 
-/**
- * Its longest word decides when it takes a line of its own. Not `basis-0`, which would squeeze a
- * wrapped label's height to one line in a column.
- */
+/** Its label wraps only when it's wider than a whole line: beside another button it takes its own line first. */
 export const TASK_MAIN_ACTION_CLASS = cn(
   TASK_WRAPPING_ACTION_CLASS,
-  "grow basis-[min-content] lg:min-w-40 lg:shrink-0 lg:grow-0 lg:basis-auto",
+  "grow lg:min-w-40 lg:shrink-0 lg:grow-0",
 );
 
 export const TASK_OPTION_CLASS = "w-full lg:w-auto";

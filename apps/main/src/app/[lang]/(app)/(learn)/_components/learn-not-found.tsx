@@ -1,5 +1,5 @@
 import { JourneyPageBar } from "@/components/learn/journey-page-bar";
-import { NotFoundMessage } from "@/components/public/not-found-message";
+import { PageNotFound } from "@/components/public/not-found-message";
 
 const PLAN_PAGE_BAR = <JourneyPageBar />;
 
@@ -11,7 +11,7 @@ export function LearnNotFound({ bar = PLAN_PAGE_BAR }: { bar?: React.ReactNode }
   return (
     <>
       {bar}
-      <NotFoundMessage />
+      <PageNotFound />
     </>
   );
 }

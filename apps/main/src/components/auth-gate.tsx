@@ -1,5 +1,5 @@
-import { AuthGateAction } from "@/components/auth-gate-action";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { MainDocumentLink } from "@/components/main-document-link";
 import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
@@ -140,7 +140,7 @@ export async function AuthGate({
           href={gate.login}
           icon={<UserPlusIcon aria-hidden="true" />}
         >
-          {t("Create an account")}
+          {t("Create a free account")}
         </PendingLink>
       ) : (
         <div className="flex flex-wrap gap-2">
@@ -228,9 +228,9 @@ async function GateActions({ gate }: { gate: Gate }) {
         </Link>
       )}
 
-      <AuthGateAction href={gate.login}>
-        {gate.kind === "account" ? t("Create an account") : t("Log in")}
-      </AuthGateAction>
+      <MainDocumentLink href={gate.login}>
+        {gate.kind === "account" ? t("Create a free account") : t("Log in")}
+      </MainDocumentLink>
     </BottomBarActions>
   );
 }

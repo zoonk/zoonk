@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -61,7 +61,7 @@ export function SignUpPrompt({ signUpHref }: { signUpHref: string }) {
         className="text-foreground self-start text-sm font-medium underline underline-offset-4"
         href={signUpHref}
       >
-        {t("Create an account")}
+        {t("Create a free account")}
       </PendingLink>
     </div>
   );
@@ -144,12 +144,15 @@ export function AttachControls({ attach, autoFocus, language, onAttached }: Atta
 
   return (
     <>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <label
-          className="border-border hover:bg-muted/60 has-focus-visible:ring-ring/50 inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border px-3 text-sm font-medium has-focus-visible:ring-[3px]"
+          className={cn(
+            buttonVariants({ variant: "outline" }),
+            "has-focus-visible:border-ring has-focus-visible:ring-ring/50 cursor-pointer has-focus-visible:ring-[3px]",
+          )}
           htmlFor={fileId}
         >
-          <UploadIcon aria-hidden="true" className="size-4" />
+          <UploadIcon aria-hidden="true" data-icon="inline-start" />
           {t("Upload a file")}
           <input
             accept={ACCEPTED_FILES}
@@ -177,25 +180,21 @@ export function AttachControls({ attach, autoFocus, language, onAttached }: Atta
 
         <Button
           aria-pressed={pasting === "text"}
-          className="rounded-full"
           disabled={isPending}
+          icon={<FileTextIcon aria-hidden="true" />}
           onClick={() => toggle("text")}
-          size="sm"
           variant="outline"
         >
-          <FileTextIcon aria-hidden="true" />
           {t("Paste text")}
         </Button>
 
         <Button
           aria-pressed={pasting === "link"}
-          className="rounded-full"
           disabled={isPending}
+          icon={<LinkIcon aria-hidden="true" />}
           onClick={() => toggle("link")}
-          size="sm"
           variant="outline"
         >
-          <LinkIcon aria-hidden="true" />
           {t("Paste a link")}
         </Button>
       </div>

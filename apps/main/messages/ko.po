@@ -21,7 +21,6 @@ msgstr "로그인"
 
 #: src/app/[lang]/(app)/(catalog)/_components/account-dropdown-item.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
-#: src/components/auth-gate.tsx
 msgctxt "0vL5u1"
 msgid "Create an account"
 msgstr "계정 만들기"
@@ -743,6 +742,12 @@ msgid "Online courses with a study plan for each day"
 msgstr "하루하루 학습 계획을 세워 주는 온라인 코스"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "bzSrZ6"
+msgid "Level {level}"
+msgstr "레벨 {level}"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
 msgctxt "yAw6p8"
 msgid "{belt}, level {level}. Statistics"
 msgstr "{belt}, 레벨 {level}. 통계"
@@ -784,11 +789,6 @@ msgstr "메뉴"
 msgctxt "vj_mVz"
 msgid "{belt}, level {level}"
 msgstr "{belt}, 레벨 {level}"
-
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-msgctxt "bzSrZ6"
-msgid "Level {level}"
-msgstr "레벨 {level}"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "zF7Cth"
@@ -923,6 +923,21 @@ msgctxt "R6T7P_"
 msgid "What you'll study each day until your goal, and what it covers."
 msgstr "목표를 이룰 때까지 매일 무엇을 공부할지, 어떤 내용을 다룰지 확인해요."
 
+#: src/app/[lang]/(app)/(learn)/plan/plan-goal-start.tsx
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+#: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
+#: src/components/auth-gate.tsx
+#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/plus-pricing.tsx
+#: src/components/public/goal-form.tsx
+#: src/components/public/public-start-bar.tsx
+#: src/components/public/public-visitor-actions.tsx
+#: src/components/public/start-plan-link.tsx
+#: src/components/public/visitor-start.tsx
+msgctxt "UTU-oM"
+msgid "Build my plan"
+msgstr "내 계획 만들기"
+
 #: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
 msgctxt "wRaHK-"
 msgid "Your plan at a glance"
@@ -1053,20 +1068,6 @@ msgstr "이미 어느 정도 알고 있나요?"
 msgctxt "C1D9a4"
 msgid "Your plan follows this course, in the time you have each day."
 msgstr "하루에 공부할 수 있는 시간에 맞춰 이 코스 순서대로 계획을 세워요."
-
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
-#: src/components/auth-gate.tsx
-#: src/components/pricing/free-plan.tsx
-#: src/components/pricing/plus-pricing.tsx
-#: src/components/public/goal-form.tsx
-#: src/components/public/public-start-bar.tsx
-#: src/components/public/public-visitor-actions.tsx
-#: src/components/public/start-plan-link.tsx
-#: src/components/public/visitor-start.tsx
-msgctxt "UTU-oM"
-msgid "Build my plan"
-msgstr "내 계획 만들기"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "54WyfN"
@@ -1306,11 +1307,6 @@ msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "내 생활에 맞는 예시와 계획을 제공하기 위해 Zoonk가 기억하는 내용이에요."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
-msgctxt "OR6zpA"
-msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
-msgstr "계정을 삭제하지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내 주세요."
-
-#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "95pnlV"
 msgid "Your account"
 msgstr "내 계정"
@@ -1334,6 +1330,11 @@ msgstr "계정을 삭제할까요?"
 msgctxt "yF2UF2"
 msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
 msgstr "목표, 계획, 진도, 메모리와 업로드한 파일이 영구적으로 삭제돼요. 되돌릴 수 없어요."
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "OR6zpA"
+msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
+msgstr "계정을 삭제하지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내 주세요."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "Sk9SL5"
@@ -2725,11 +2726,6 @@ msgctxt "3aNmDX"
 msgid "How much time a day?"
 msgstr "하루에 얼마나 공부할까요?"
 
-#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "W97xmd"
-msgid "You can't start another goal right now. Finish or pause one first."
-msgstr "지금은 새 목표를 시작할 수 없어요. 먼저 목표 하나를 완료하거나 일시 중지하세요."
-
 #: src/app/[lang]/privacy/page.tsx
 msgctxt "afKQHy"
 msgid "Read Zoonk's privacy policy to understand how we use and protect your personal information."
@@ -2751,11 +2747,6 @@ msgid "Email reminders"
 msgstr "이메일 학습 알림"
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
-msgctxt "DekliR"
-msgid "Manage reminders"
-msgstr "학습 알림 관리"
-
-#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
 msgctxt "22mt47"
 msgid "Email reminders are off"
 msgstr "이메일 학습 알림이 꺼져 있어요"
@@ -2766,14 +2757,19 @@ msgid "This link is no longer active"
 msgstr "이 링크는 더 이상 사용할 수 없어요"
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "DekliR"
+msgid "Manage reminders"
+msgstr "학습 알림 관리"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
 msgctxt "DxPDlc"
 msgid "That didn't save. Try again."
 msgstr "저장하지 못했어요. 다시 시도해 보세요."
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
-msgctxt "c5ajtI"
-msgid "Turn off email reminders?"
-msgstr "이메일 학습 알림을 끌까요?"
+msgctxt "YvVUvF"
+msgid "Turn off email reminders"
+msgstr "이메일 알림 끄기"
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
 msgctxt "XZ-Fx6"
@@ -2870,6 +2866,13 @@ msgstr "로그아웃됐어요"
 msgctxt "acWSVG"
 msgid "Log in to continue"
 msgstr "계속하려면 로그인하세요"
+
+#: src/components/auth-gate.tsx
+#: src/components/pricing/free-plan.tsx
+#: src/components/public/course-start-failure.tsx
+msgctxt "d82w2J"
+msgid "Create a free account"
+msgstr "무료 계정 만들기"
 
 #: src/components/catalog/catalog-back-to-top.tsx
 msgctxt "Gs9Kfp"
@@ -3015,12 +3018,6 @@ msgstr "고마워요. 지금 문서를 읽고 있어요. 몇 분 안에 계획�
 msgctxt "p4N05H"
 msgid "Upload"
 msgstr "업로드"
-
-#: src/components/pricing/free-plan.tsx
-#: src/components/public/course-start-failure.tsx
-msgctxt "d82w2J"
-msgid "Create a free account"
-msgstr "무료 계정 만들기"
 
 #. On the Free card, in the button's place, for a learner who doesn't have Plus: it tells them this card is what they have today. Don't call it a “plan” or use your language's word for the learner's study plan.
 #: src/components/pricing/free-plan.tsx
