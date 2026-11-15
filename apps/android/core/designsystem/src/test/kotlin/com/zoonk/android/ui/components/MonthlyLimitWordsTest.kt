@@ -105,12 +105,22 @@ class MonthlyLimitWordsTest {
         rule.onNodeWithText("More later today.").assertExists()
     }
 
+    /** Once the day comes, the title and the offer to subscribe go with the refusal. */
     @Test
     fun theDayHasComeWhileTheGateIsOpen() {
         show(free(Duration.ofSeconds(-1)), LimitSubject.Messages)
 
-        rule.onNodeWithText("You've used your messages").assertExists()
+        rule.onNodeWithText("You've used your messages").assertDoesNotExist()
         rule.onNodeWithText("You can try again now.").assertExists()
+    }
+
+    /** The device's clock is ahead of the server's: a day already past when the refusal arrived keeps the gate, with no day. */
+    @Test
+    fun aDayPastOnArrivalKeepsTheGate() {
+        show(free(Duration.ofSeconds(-1)).received(now), LimitSubject.Messages)
+
+        rule.onNodeWithText("You've used your messages").assertExists()
+        rule.onNodeWithText("You can try again now.").assertDoesNotExist()
     }
 
     /** Daily caps are unchanged. */

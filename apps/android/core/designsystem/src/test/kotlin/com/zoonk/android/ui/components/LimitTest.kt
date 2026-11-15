@@ -20,11 +20,11 @@ class LimitTest {
         assertEquals(Limit.SignUpRequired, Limit.of(refusal("SIGN_UP_REQUIRED")))
         assertEquals(Limit.SlowDown(30), Limit.of(refusal("SLOW_DOWN", """{"retryAfterSeconds":30}""")))
         assertEquals(
-            Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, Instant.parse("2026-12-29T12:00:00Z")),
+            Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, Instant.parse("2099-12-29T12:00:00Z")),
             Limit.of(
                 refusal(
                     "USAGE_LIMIT_REACHED",
-                    """{"limit":{"availableAt":"2026-12-29T12:00:00.000Z","limit":10,"period":"rolling30Days","resource":"mindMap","tier":"free"}}""",
+                    """{"limit":{"availableAt":"2099-12-29T12:00:00.000Z","limit":10,"period":"rolling30Days","resource":"mindMap","tier":"free"}}""",
                 ),
             ),
         )
@@ -34,11 +34,31 @@ class LimitTest {
     @Test
     fun aFreeLessonRefusalSaysWhenTheNextOneOpens() {
         assertEquals(
-            Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, Instant.parse("2026-12-02T09:15:00Z")),
+            Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, Instant.parse("2099-12-02T09:15:00Z")),
             Limit.of(
                 refusal(
                     "USAGE_LIMIT_REACHED",
-                    """{"limit":{"availableAt":"2026-12-02T09:15:00Z","limit":20,"period":"rolling30Days","resource":"lessonStart","tier":"free"}}""",
+                    """{"limit":{"availableAt":"2099-12-02T09:15:00Z","limit":20,"period":"rolling30Days","resource":"lessonStart","tier":"free"}}""",
+                    402,
+                ),
+            ),
+        )
+    }
+
+    /** The device's clock is ahead of the server's: a day already past when the refusal arrives isn't kept, so its gate stands. */
+    @Test
+    fun aDayPastOnArrivalIsDropped() {
+        val arrived = Instant.parse("2099-12-02T09:15:00Z")
+        val refused = Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, arrived)
+
+        assertEquals(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days), refused.received(arrived))
+        assertEquals(refused, refused.received(arrived.minusMillis(1)))
+        assertEquals(
+            Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days),
+            Limit.of(
+                refusal(
+                    "USAGE_LIMIT_REACHED",
+                    """{"limit":{"availableAt":"2000-01-01T00:00:00Z","period":"rolling30Days","tier":"free"}}""",
                     402,
                 ),
             ),

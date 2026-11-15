@@ -19,6 +19,7 @@ import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.received
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CreateUploadRequest
 import com.zoonk.api.models.CreateUploadRequestOneOf
@@ -537,6 +538,16 @@ data class UsageLimit(
                 LimitPeriod.entries.firstOrNull { it.name.equals(period, ignoreCase = true) },
                 availableAt?.let { runCatching { Instant.parse(it) }.getOrNull() },
             )
+
+    /** As this device received it: [Limit.Reached.received]. */
+    fun received(now: Instant = Instant.now()): UsageLimit =
+        if (reached.received(now).availableAt ==
+            null
+        ) {
+            copy(availableAt = null)
+        } else {
+            this
+        }
 }
 
 @Serializable
@@ -547,14 +558,41 @@ private class LimitDetails(
 /** Usage limits nest the limit under `details.limit`; goal limits send it as `details`; any other 429 asks to slow down. */
 internal fun ApiException.refusal(): Refusal? =
     when (code) {
-        "SIGN_UP_REQUIRED", "ACCOUNT_REQUIRED" -> Refusal.SignUpRequired
-        "SLOW_DOWN", "RATE_LIMIT_EXCEEDED" -> Refusal.SlowDown
-        "UNPROCESSABLE_ENTITY" -> Refusal.Unsupported
-        "UPLOAD_ALREADY_READ" -> Refusal.AlreadyRead
-        "USAGE_LIMIT_REACHED" -> details?.decode<LimitDetails>()?.limit?.let(Refusal::Limit)
-        "GOAL_LIMIT_REACHED" -> details?.decode<UsageLimit>()?.let(Refusal::Limit)
-        "DAY_TOO_SHORT" -> details?.decode<Refusal.DayTooShort>()
-        else -> Refusal.SlowDown.takeIf { status == TOO_MANY_REQUESTS }
+        "SIGN_UP_REQUIRED", "ACCOUNT_REQUIRED" -> {
+            Refusal.SignUpRequired
+        }
+
+        "SLOW_DOWN", "RATE_LIMIT_EXCEEDED" -> {
+            Refusal.SlowDown
+        }
+
+        "UNPROCESSABLE_ENTITY" -> {
+            Refusal.Unsupported
+        }
+
+        "UPLOAD_ALREADY_READ" -> {
+            Refusal.AlreadyRead
+        }
+
+        "USAGE_LIMIT_REACHED" -> {
+            details
+                ?.decode<LimitDetails>()
+                ?.limit
+                ?.received()
+                ?.let(Refusal::Limit)
+        }
+
+        "GOAL_LIMIT_REACHED" -> {
+            details?.decode<UsageLimit>()?.received()?.let(Refusal::Limit)
+        }
+
+        "DAY_TOO_SHORT" -> {
+            details?.decode<Refusal.DayTooShort>()
+        }
+
+        else -> {
+            Refusal.SlowDown.takeIf { status == TOO_MANY_REQUESTS }
+        }
     }
 
 private const val TOO_MANY_REQUESTS = 429

@@ -77,7 +77,7 @@ sealed interface Limit {
                             ?.contentOrNull
                             ?.let { runCatching { Instant.parse(it) }.getOrNull() }
                     // Like main's readRefusedLimit, the status says whose cap it was when the details don't.
-                    Reached(tier ?: tierOf(status), period, availableAt)
+                    Reached(tier ?: tierOf(status), period, availableAt).received()
                 }
 
                 else -> {
@@ -86,6 +86,13 @@ sealed interface Limit {
             }
     }
 }
+
+/**
+ * As this device received it (main's `receivedAt`): a day already past on arrival comes from a clock that
+ * disagrees with the server's, so the refusal keeps no day and its gate stands until the next try.
+ */
+fun Limit.Reached.received(now: Instant = Instant.now()): Limit.Reached =
+    if (availableAt?.isAfter(now) == false) copy(availableAt = null) else this
 
 private const val DEFAULT_RETRY_SECONDS = 60
 

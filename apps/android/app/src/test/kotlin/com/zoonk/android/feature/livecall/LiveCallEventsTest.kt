@@ -149,9 +149,13 @@ class LiveCallEventsTest {
         assertEquals(CallReservation.Ended, refused("CONVERSATION_ENDED"))
         assertEquals(
             CallReservation.Limited(
-                Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, java.time.Instant.parse("2026-12-20T12:00:00Z")),
+                Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, java.time.Instant.parse("2099-12-20T12:00:00Z")),
             ),
-            refused("CONVERSATION_LIMIT_REACHED", """{"availableAt":"2026-12-20T12:00:00.000Z","period":"rolling30Days","tier":"free"}"""),
+            refused("CONVERSATION_LIMIT_REACHED", """{"availableAt":"2099-12-20T12:00:00.000Z","period":"rolling30Days","tier":"free"}"""),
+        )
+        assertEquals(
+            CallReservation.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days)),
+            refused("CONVERSATION_LIMIT_REACHED", """{"availableAt":"2000-01-01T00:00:00.000Z","period":"rolling30Days","tier":"free"}"""),
         )
         assertEquals(CallReservation.Failed, refused("CONVERSATION_LIMIT_REACHED", """{"period":"week","tier":"free"}"""))
         assertEquals(CallReservation.Ended, refused("CONNECTION_LIMIT_REACHED", """{"period":"conversation"}"""))
