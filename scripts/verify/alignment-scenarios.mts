@@ -94,7 +94,8 @@ function change(before: CaptureElement, after: CaptureElement) {
 
 /**
  * Two scenarios of one screen at one configuration: every anchor they name keeps its place and
- * size, except the ones named as the change. A missing or an added anchor is a finding too.
+ * size, except the ones named as the change. A missing or an added anchor is a finding too, but a
+ * page may add what its placeholder didn't draw.
  */
 export function pairLeads(
   captures: Capture[],
@@ -109,7 +110,7 @@ export function pairLeads(
       return [];
     }
 
-    const { change: changing, with: otherId } = scenario.pair;
+    const { change: changing, placeholder = false, with: otherId } = scenario.pair;
 
     const other = captures.find(
       (candidate) =>
@@ -141,6 +142,11 @@ export function pairLeads(
     return named.flatMap((id) => {
       const was = before.get(id);
       const now = after.get(id);
+
+      // A placeholder draws less than its page: the page may add an anchor, never drop one.
+      if (placeholder && !was) {
+        return [];
+      }
 
       if (!was || !now) {
         return [

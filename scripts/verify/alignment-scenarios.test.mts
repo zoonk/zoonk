@@ -155,4 +155,53 @@ describe("state pairs", () => {
     assert.equal(record?.level, "not-measured");
     assert.match(record?.detail ?? "", /action wasn't placed/u);
   });
+
+  it("holds what a placeholder draws to the loaded page, and lets the page add what it didn't", () => {
+    const LOADING: Scenario[] = [
+      {
+        anchors: [{ id: "back-link" }, { id: "title" }, { id: "action" }],
+        id: "detail",
+        pair: { change: [], placeholder: true, with: "detail.placeholder" },
+        prerequisites: { persona: "visitor" },
+        proof: "Exam",
+        reach: [],
+        screen: "/screen",
+        sizes: [{ pointer: "touch", size: "phone" }],
+      },
+      {
+        anchors: [],
+        id: "detail.placeholder",
+        prerequisites: { persona: "visitor" },
+        proof: "Exam",
+        reach: [],
+        screen: "/screen",
+        sizes: [{ pointer: "touch", size: "phone" }],
+      },
+    ];
+
+    const loaded = scenarioCapture("detail", [
+      anchor("back-link", 12),
+      anchor("title", 64),
+      anchor("action", 760),
+    ]);
+
+    const waiting = (title: number, backLink = true) =>
+      scenarioCapture("detail.placeholder", [
+        ...(backLink ? [anchor("back-link", 12)] : []),
+        anchor("title", title),
+      ]);
+
+    assert.deepEqual(pairLeads([waiting(64), loaded], LOADING), []);
+
+    assert.match(pairLeads([waiting(80), loaded], LOADING)[0]?.detail ?? "", /^title: down -16/u);
+
+    const hidden = scenarioCapture("detail", [anchor("title", 64), anchor("action", 760)]);
+
+    assert.match(
+      pairLeads([waiting(64), hidden], LOADING)[0]?.detail ?? "",
+      /back-link is missing/u,
+    );
+
+    assert.deepEqual(pairLeads([waiting(64, false), hidden], LOADING), []);
+  });
 });
