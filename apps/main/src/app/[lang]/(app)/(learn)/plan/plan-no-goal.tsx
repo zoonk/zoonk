@@ -1,14 +1,8 @@
-import { getGoalExample } from "@/components/public/goal-example";
-import { GoalForm } from "@/components/public/goal-form";
-import { getPathname } from "@/i18n/navigation";
 import { getSession } from "@zoonk/core/users/session";
 import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
-import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
-import { lang } from "next/root-params";
 import { LearnNoGoal } from "../_components/learn-no-goal";
-
-const PLAN_GOAL_ID = "plan-goal";
+import { PlanGoalStart } from "./plan-goal-start";
 
 export async function PlanNoGoal() {
   const t = await getExtracted();
@@ -24,9 +18,6 @@ export async function PlanNoGoal() {
     );
   }
 
-  const locale = getSupportedLocaleFromLanguage(await lang());
-  const example = await getGoalExample();
-
   return (
     <Page data-slot="journey-no-goal">
       <PageHeader>
@@ -38,12 +29,8 @@ export async function PlanNoGoal() {
         </PageHeaderContent>
       </PageHeader>
 
-      <div className="max-w-2xl">
-        <GoalForm
-          action={getPathname({ href: "/start", locale })}
-          example={example}
-          id={PLAN_GOAL_ID}
-        />
+      <div className="max-w-column">
+        <PlanGoalStart />
       </div>
     </Page>
   );
