@@ -544,8 +544,6 @@ private fun PlanPhases(
     today: LocalDate,
 ) {
     val phases = plan.roadmapPhases
-    val currentIndex = phases.indexOfFirst { it.state == PlanPhase.State.CURRENT }
-    val current = phases.getOrNull(currentIndex)
     val mocksRequirePlus = plan.access.mocksRequirePlus
     val locale = currentLocale()
 
@@ -562,23 +560,6 @@ private fun PlanPhases(
                 MeterPart(fill, phase.weight())
             },
         )
-        if (current != null) {
-            val name = phaseName(current, mocksRequirePlus)
-            val place = stringResource(R.string.onboarding_reveal_phase_place, currentIndex + 1, phases.size)
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(
-                    text = name,
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.labelMedium,
-                )
-                Text(
-                    text = stringResource(R.string.onboarding_reveal_phase_position, currentIndex + 1, phases.size),
-                    modifier = Modifier.clearAndSetSemantics { contentDescription = place },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                )
-            }
-        }
         Column {
             phases.forEachIndexed { index, phase ->
                 if (index > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)

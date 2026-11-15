@@ -69,6 +69,7 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageTitleRow
+import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -239,7 +240,7 @@ internal fun SwitchRow(
 ) {
     ListRow(
         headline = { Text(title) },
-        supporting = description?.let { { Text(it) } },
+        supporting = listRowDescription(description),
         trailing = { Switch(checked = checked, onCheckedChange = null) },
         modifier = Modifier.toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange),
     )

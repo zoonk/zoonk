@@ -111,7 +111,7 @@ struct LearnerIdentity: Equatable, Sendable {
   let userID: String
 }
 
-enum LearnerTier: String, Equatable, Sendable {
+enum LearnerTier: String, Decodable, Equatable, Sendable {
   case free
   case guest
   case plus

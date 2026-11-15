@@ -378,9 +378,10 @@ internal fun PastDateSuggestion(
     onAdjust: (PlanSection?) -> Unit,
 ) {
     if (slot.page.isExam) {
-        // A statement: the page's bar asks and answers it (ExamOverActions), which a sheet over it would cover.
+        // No actions: the page's bar holds the answers (ExamOverActions), which a sheet over it would cover. The
+        // Schedule number beside it says how many lessons are left.
         val title = stringResource(R.string.plan_past_date_exam_title)
-        val left = pluralStringResource(R.plurals.plan_exam_over_left, item.lessons, item.lessons)
+        val left = stringResource(R.string.plan_exam_over_ask)
         Suggestion(
             label = title,
             summary = title,

@@ -889,6 +889,28 @@ final class LessonPlayerLoadingTests: XCTestCase {
       "You've used your explanations. More on December 20, or subscribe to keep going.")
   }
 
+  /// A refusal whose day this device already shows as past keeps its gate, with no day to promise.
+  func testALessonRefusalPastOnArrivalHasNoDay() async throws {
+    let api = LessonPlayerAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: JSONTransport(
+          body: #"""
+            {"error": {"code": "USAGE_LIMIT_REACHED", "message": "Limit reached",
+             "details": {"limit": {"period": "rolling30Days", "tier": "free",
+             "resource": "explanation", "availableAt": "2026-01-01T00:00:00.000Z"}}}}
+            """#,
+          status: .init(code: 402))))
+
+    let outcome = try await api.explainAnswer(stepId: "step", answer: "answer", token: "token")
+
+    guard case .refused(let refusal) = outcome else {
+      return XCTFail("Expected a refusal, got \(outcome)")
+    }
+
+    XCTAssertEqual(refusal.limit, .usedUp(tier: .free, availableAt: nil))
+  }
+
   func testASavedLessonKeepsAFractionalDailyBudget() async throws {
     let response =
       sessionLessonCompletion

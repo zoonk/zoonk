@@ -147,10 +147,14 @@ fun StartGoalScreen(
             }
         }
 
-    BackHandler(enabled = backInFlow != null) { backInFlow?.invoke() }
+    // While a goal is being made from the card, Back waits with the card's other controls (system, bar and
+    // predictive back alike), so the goal is made once and its setup opens from the card the learner confirmed.
+    val creating = vm.isCreating
+    BackHandler(enabled = backInFlow != null || creating) { if (!creating) backInFlow?.invoke() }
 
     PageScaffold(
-        onBack = { backInFlow?.invoke() ?: navigator.back() },
+        onBack = { if (!creating) backInFlow?.invoke() ?: navigator.back() },
+        backEnabled = !creating,
         actions = {
             if (!hasSession) TextButton(onClick = { navigator.open(AppRoute.Login) }) { Text(stringResource(R.string.gate_log_in)) }
         },

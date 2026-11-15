@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
@@ -36,6 +37,8 @@ fun PageScaffold(
     actions: @Composable RowScope.() -> Unit = {},
     bottomBar: (@Composable ColumnScope.() -> Unit)? = null,
     barWidth: Dp = Dp.Unspecified,
+    /** Off while a request that moves the learner on is out: Back waits with it. */
+    backEnabled: Boolean = true,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val focus = rememberTitleFocus()
@@ -59,7 +62,9 @@ fun PageScaffold(
                     }
                 },
                 modifier = Modifier.pageBar(focus),
-                navigationIcon = { BackButton(onClick = onBack) },
+                navigationIcon = {
+                    BackButton(onClick = onBack, modifier = Modifier.offset(x = pageMargin() - BACK_INK_START), enabled = backEnabled)
+                },
                 actions = actions,
             )
         },
@@ -83,6 +88,13 @@ fun pagePadding(): PaddingValues {
 @Composable
 fun pageMargin(): Dp =
     if (windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) 24.dp else 16.dp
+
+/**
+ * Where the back arrow's ink starts unpulled: Material's bar insets its navigation icon 4dp, the button centers
+ * the 24dp glyph in its 48dp, and `ic_arrow_back` leaves 4dp blank before its ink. Pulled by the rest, the arrow
+ * lines up by its ink with the page's margin, as the task bar's close button does.
+ */
+private val BACK_INK_START = 4.dp + (48.dp - 24.dp) / 2 + 4.dp
 
 private val PAGE_TOP = 8.dp
 private val PAGE_BOTTOM = 24.dp

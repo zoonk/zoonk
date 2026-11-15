@@ -34,6 +34,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
@@ -74,7 +75,7 @@ fun GenerationWait(
     /** When the wait began ([System.currentTimeMillis]), so a screen that takes over another's wait goes on from its bar. */
     since: Long? = null,
     share: Float? = null,
-    header: @Composable ColumnScope.() -> Unit = {},
+    header: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     val progress = kind.progress(run)
     val following = run.status == GenerationRun.Status.Waiting || run.status == GenerationRun.Status.Following
@@ -84,30 +85,40 @@ fun GenerationWait(
         modifier = modifier.layoutPart(LayoutPart.GENERATION_WAIT, LayoutPart.Part.Row).fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        Column(
-            Modifier.layoutPart(LayoutPart.GENERATION_WAIT, LayoutPart.Part.Group, gap = HEADER_GAP),
-            verticalArrangement = Arrangement.spacedBy(HEADER_GAP),
-        ) {
-            header()
-
-            val failure = run.failure.takeIf { run.status == GenerationRun.Status.Failed }
-            if (failure != null) {
-                GenerationFailureNotice(failure, onRetry)
-            } else {
-                WaitProgress(
-                    name = stringResource(kind.label),
-                    share =
-                        share
-                            ?: driftedShare(
-                                progress.share,
-                                progress.target,
-                                progress.activeMillis,
-                                following,
-                                now,
-                                progress.activeSince ?: since,
-                            ),
-                    weights = progress.phases.map { it.phase.seconds },
-                )
+        // The wait's state: its failure, or its progress toward its name.
+        val state =
+            @Composable { stateModifier: Modifier ->
+                val failure = run.failure.takeIf { run.status == GenerationRun.Status.Failed }
+                if (failure != null) {
+                    GenerationFailureNotice(failure, onRetry, stateModifier)
+                } else {
+                    WaitProgress(
+                        modifier = stateModifier,
+                        name = stringResource(kind.label),
+                        share =
+                            share
+                                ?: driftedShare(
+                                    progress.share,
+                                    progress.target,
+                                    progress.activeMillis,
+                                    following,
+                                    now,
+                                    progress.activeSince ?: since,
+                                ),
+                        weights = progress.phases.map { it.phase.seconds },
+                    )
+                }
+            }
+        if (header == null) {
+            state(Modifier)
+        } else {
+            // A header over the wait's state: the group's two rows, 16dp apart.
+            Column(
+                Modifier.layoutPart(LayoutPart.GENERATION_WAIT, LayoutPart.Part.Group, gap = HEADER_GAP),
+                verticalArrangement = Arrangement.spacedBy(HEADER_GAP),
+            ) {
+                Column(Modifier.layoutPart(LayoutPart.GENERATION_WAIT, LayoutPart.Part.Row), content = header)
+                state(Modifier.layoutPart(LayoutPart.GENERATION_WAIT, LayoutPart.Part.Row))
             }
         }
 
@@ -151,18 +162,34 @@ fun WritingWait(
     wait: ContentWritingWait,
     hint: String?,
     modifier: Modifier = Modifier,
-    header: @Composable ColumnScope.() -> Unit = {},
+    header: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     val run by wait.run.collectAsStateWithLifecycle()
     val generationId by wait.generationId.collectAsStateWithLifecycle()
     // GenerationWait remembers its bar's drift, which belongs to one run (main keys it by generationId too).
     key(generationId) {
-        GenerationWait(wait.kind, run, onRetry = wait::retry, modifier = modifier) {
-            header()
-            if (hint != null && run.status != GenerationRun.Status.Failed) {
-                Text(hint, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-            }
-        }
+        val shownHint = hint?.takeIf { run.status != GenerationRun.Status.Failed }
+        GenerationWait(
+            wait.kind,
+            run,
+            onRetry = wait::retry,
+            modifier = modifier,
+            header =
+                if (header == null && shownHint == null) {
+                    null
+                } else {
+                    {
+                        header?.invoke(this)
+                        shownHint?.let {
+                            Text(
+                                it,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+                    }
+                },
+        )
     }
 }
 
@@ -241,6 +268,7 @@ private fun WaitProgress(
     name: String,
     share: Float,
     weights: List<Int>,
+    modifier: Modifier = Modifier,
 ) {
     val shown by animateFloatAsState(share, label = "generation progress")
     val percent = formatPercent(shown.toDouble(), currentLocale())
@@ -248,7 +276,7 @@ private fun WaitProgress(
 
     Row(
         modifier =
-            Modifier.layoutPart(LayoutPart.GENERATION_WAIT, LayoutPart.Part.Bar).clearAndSetSemantics {
+            modifier.clearAndSetSemantics {
                 contentDescription = name
                 progressBarRangeInfo = ProgressBarRangeInfo(shown, 0f..1f)
             },
@@ -295,8 +323,9 @@ private fun PhaseRow(
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
                 text = label,
+                // Said as its phase and state; the words stay readable to the layout capture.
                 modifier =
-                    Modifier.clearAndSetSemantics {
+                    Modifier.semantics {
                         contentDescription = label
                         stateDescription = state
                         liveRegion = LiveRegionMode.Polite
@@ -310,7 +339,7 @@ private fun PhaseRow(
         if (elapsedMillis != null) {
             Text(
                 text = formatClock(elapsedMillis),
-                modifier = Modifier.clearAndSetSemantics {},
+                modifier = Modifier.semantics { hideFromAccessibility() },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.zoonkType.data.copy(lineHeight = MaterialTheme.typography.bodyMedium.lineHeight),
             )

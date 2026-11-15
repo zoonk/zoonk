@@ -181,7 +181,8 @@ private struct SubjectContent: View {
     Section {
       PageHeader(
         Text(subject.name),
-        supporting: facts.isEmpty ? nil : Text(verbatim: facts.joinedFacts()).monospacedDigit())
+        supporting: facts.isEmpty ? nil : Text(verbatim: facts.joinedFacts()),
+        supportingIsFacts: true)
 
       if !sharedExams.isEmpty {
         AlsoInExams(exams: sharedExams)

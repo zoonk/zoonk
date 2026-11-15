@@ -3,6 +3,24 @@ import XCTest
 @testable import Zoonk
 
 final class SubscriptionPageTests: XCTestCase {
+  /// The buddy's line names the monthly cap when the plan has one, and ends after "a day" when not.
+  func testTheFreePlansBuddyLineNamesItsMonthlyCap() throws {
+    let plan = { (month: Int?) in
+      try JSONDecoder().decode(
+        FreePlan.self,
+        from: Data(
+          #"{"tutorMessagesPerDay":10,"tutorMessagesPer30Days":\#(month.map(String.init) ?? "null")}"#
+            .utf8))
+    }
+
+    XCTAssertEqual(
+      try plan(100).buddyLine.map { String(localized: $0) },
+      "An AI study buddy: 10 messages a day, up to 100 a month")
+    XCTAssertEqual(
+      try plan(nil).buddyLine.map { String(localized: $0) },
+      "An AI study buddy: 10 messages a day")
+  }
+
   func testLearnerWithoutPlusGetsTheOffer() {
     XCTAssertEqual(SubscriptionPage(current: nil, openedPlan: nil, boughtHere: false), .offer)
   }

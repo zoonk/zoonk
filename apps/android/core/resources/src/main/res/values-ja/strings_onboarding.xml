@@ -306,8 +306,6 @@
   "onboarding_reveal_phase_map_and_gaps": "b78c7c615ca518246292e8a6e89dd14c62770e54807d683641d1d196aec10a62",
   "onboarding_reveal_phase_mock_and_practice": "20a689340e0a7968ebd4eb90a9ca032cd52247568350011ae8d414e6472f11d4",
   "onboarding_reveal_phase_number": "b19bc7a8884c1be1fb228583090eaccaa8e97b671e38f50129907c7f95eeedca",
-  "onboarding_reveal_phase_place": "8df0b40607b1bdac809f100807b59a473ef84c2a15f0d81a74d46e419ba74349",
-  "onboarding_reveal_phase_position": "e795c877030c6353c8770fb7adbab99c16c517bb343a8262678f0447d6c37727",
   "onboarding_reveal_phase_practice": "c77b735980e71272d8412e1ef11a4530d2a72de7598f4accf1317a1a00ebafdb",
   "onboarding_reveal_phase_short_mock": "3f22a343df5a3a34efed64bd5d4a6cdf6e7e0586bd44ab8151074d49c2d780dc",
   "onboarding_reveal_phases": "b374427a7abad062fedca9933688f806feccb6d9f772cdcb402f37970ad269fa",
@@ -434,8 +432,6 @@
   "onboarding_variety_title": "79742f4c2daa7761299a32044058dccab6e6e69d287374003e10998530820b0c",
   "onboarding_waitlist_joined": "8c3392d0df1700950159472fdce1784e0ae783c030958d1a06e80110a9c89bec",
   "onboarding_waitlist_sign_in": "6dcacf3124ae10d2ef121b7514e24e827f0390ad8b88a17a6dc75ccf87562de9",
-  "onboarding_weekend_time": "0d85f49b06b7cad6a8ed21a8870205a058d829457805cff2178db1c1a78dba21",
-  "onboarding_weekend_time_label": "3bfa58d7f3ac43a8ac09d5eef15d2cb8ea8c071aea4b0dee4171992c9b8acd6e",
   "onboarding_what_you_wrote": "127c9898fabd74953f59e504d37489d0d5675013410f01582e1281fc76018edd",
   "onboarding_whats_next": "a2a79de5ba395f25786d23afb005bcb020477cf87068f623a256de1f1a5912c9",
   "onboarding_write_again": "fe7aaa75a7b0de67fa935c0ebf756841376df42b49b075740a9130673cb2d875",
@@ -753,9 +749,6 @@
     <string name="onboarding_reveal_phase_light_review">軽めの復習</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">今日</string>
-    <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
-    <string name="onboarding_reveal_phase_position">%1$d / %2$d</string>
-    <string name="onboarding_reveal_phase_place">フェーズ%1$d（全%2$dフェーズ）</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_reveal_notice_day_estimated">試験日は現在、%1$sの見込みです。</string>
     <string name="onboarding_reveal_notice_day_notice">要項に記載されている試験日は%1$sです。</string>
@@ -957,15 +950,12 @@
     <string name="onboarding_full_course_finish">1日%1$sなら、学び終えるのは%2$sで、%3$sの試験より後になります。</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
     <string name="onboarding_full_course_finish_month">1日%1$sなら、学び終えるのは%2$sで、%3$sの試験より後になります。</string>
-    <!-- Switch to study a different amount of time a day on weekends, not at a different time of day. -->
-    <string name="onboarding_weekend_time">週末は学習時間を変える</string>
     <string name="onboarding_schedule_time_label">1日の学習時間</string>
     <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
     <string name="onboarding_choose_date">日付を選ぶ</string>
     <!-- The same link when the goal has a date. -->
     <string name="onboarding_change_date">日付を変更する</string>
     <string name="onboarding_study_days">学習日数</string>
-    <string name="onboarding_weekend_time_label">週末の学習時間</string>
     <string name="onboarding_answers_saved">回答は保存されています。</string>
     <!-- On a setup question when the plan's run never started. -->
     <string name="onboarding_plan_not_started">学習計画の作成を開始できませんでした</string>

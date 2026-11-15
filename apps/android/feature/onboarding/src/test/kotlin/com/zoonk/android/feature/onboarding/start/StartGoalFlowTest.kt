@@ -1,9 +1,13 @@
 package com.zoonk.android.feature.onboarding.start
 
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -21,12 +25,14 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.onboarding.DRAFT_ID
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
+import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.failedDraft
 import com.zoonk.android.feature.onboarding.goalsUnderstanding
 import com.zoonk.android.feature.onboarding.noAllowance
 import com.zoonk.android.feature.onboarding.readingDraft
 import com.zoonk.android.feature.onboarding.understoodDraft
+import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -57,10 +63,14 @@ class StartGoalFlowTest {
     private var sessionKey by mutableStateOf<String?>("local-a")
     private var hasAccount by mutableStateOf(true)
 
+    private lateinit var navigator: AppNavigator
+    private lateinit var backDispatcher: OnBackPressedDispatcher
+
     private fun show(route: AppRoute.StartGoal = AppRoute.StartGoal()) {
         cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
         rule.setContent {
+            backDispatcher = requireNotNull(LocalOnBackPressedDispatcherOwner.current).onBackPressedDispatcher
             ZoonkTheme {
                 StartGoalScreen(
                     route,
@@ -68,7 +78,7 @@ class StartGoalFlowTest {
                     cache.noAllowance(),
                     sessionKey = sessionKey,
                     canAttach = sessionKey != null && hasAccount,
-                    rememberAppNavigator(),
+                    rememberAppNavigator().also { navigator = it },
                 )
             }
         }
@@ -135,6 +145,47 @@ class StartGoalFlowTest {
 
         rule.onNodeWithText("What do you want to achieve?").assertIsDisplayed()
         assertFalse(store.wasSentHere(DRAFT_ID))
+    }
+
+    @Test
+    fun backWaitsWhileTheGoalIsBeingMade() {
+        api.draft = understoodDraft()
+        val create = CompletableDeferred<Unit>()
+        api.createGate = create
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("Looks right").performClick()
+
+        rule.onNodeWithContentDescription("Back").assertIsNotEnabled()
+        rule.runOnUiThread { backDispatcher.onBackPressed() }
+        rule.onNodeWithText("What do you want to achieve?").assertDoesNotExist()
+        create.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(1, api.created.size)
+        assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
+    }
+
+    @Test
+    fun aRefusedCreateGivesBackItsUse() {
+        api.draft = understoodDraft()
+        api.refusal = ApiException(ApiError.Network)
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.onNodeWithText("Looks right").performClick()
+        rule.waitForIdle()
+
+        rule.onNodeWithContentDescription("Back").assertIsEnabled()
+        rule.runOnUiThread { backDispatcher.onBackPressed() }
+        rule.onNodeWithText("What do you want to achieve?").assertIsDisplayed()
+    }
+
+    @Test
+    fun aDraftWhoseGoalWasCreatedOpensItsSetupInsteadOfCreatingItAgain() {
+        api.draft = understoodDraft().copy(goalId = java.util.UUID.fromString(GOAL_ID))
+        show(AppRoute.StartGoal(draftId = DRAFT_ID))
+        rule.waitForIdle()
+
+        assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
+        assertTrue(api.created.isEmpty())
     }
 
     @Test
