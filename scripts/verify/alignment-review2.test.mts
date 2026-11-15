@@ -60,16 +60,32 @@ describe("second alignment review", () => {
     );
   });
 
-  it("recognizes the calendar's kit viewport by slot, not by fade class (b08)", () => {
+  it("requires the calendar's computed fade instead of its slot or class (b08)", () => {
     document.body.innerHTML =
       '<div data-slot="contribution-calendar-viewport" style="overflow-x:auto" data-box="16,0,200,100"><div data-box="16,0,600,100">Calendar</div></div>';
 
     const viewport = document.querySelector("div");
     assert.ok(viewport);
     Object.defineProperties(viewport, { clientWidth: { value: 200 }, scrollWidth: { value: 600 } });
+    assert.equal(hits("cut").length, 1);
+    viewport.style.maskImage = "linear-gradient(to right, transparent, black 16px)";
     assert.deepEqual(hits("cut"), []);
-    delete viewport.dataset.slot;
+    viewport.style.maskImage = "none";
     viewport.className = "scroll-fade-x";
+    assert.equal(hits("cut").length, 1);
+  });
+
+  it("recognizes a horizontal transparent fade without a kit slot", () => {
+    document.body.innerHTML =
+      '<div style="overflow-x:auto;mask-image:linear-gradient(to left, rgba(0, 0, 0, 0), black 16px)" data-box="16,0,200,100"><div data-box="16,0,600,100">Calendar</div></div>';
+
+    const viewport = document.querySelector("div");
+    assert.ok(viewport);
+    Object.defineProperties(viewport, { clientWidth: { value: 200 }, scrollWidth: { value: 600 } });
+    assert.deepEqual(hits("cut"), []);
+    viewport.style.maskImage = "linear-gradient(to right, black, black 16px)";
+    assert.equal(hits("cut").length, 1);
+    viewport.style.maskImage = "linear-gradient(to bottom, transparent, black 16px)";
     assert.equal(hits("cut").length, 1);
   });
 

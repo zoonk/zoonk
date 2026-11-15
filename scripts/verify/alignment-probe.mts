@@ -1507,22 +1507,30 @@ export function readAlignment({
     );
   }
 
+  function hasHorizontalFade(style: CSSStyleDeclaration) {
+    const mask = [style.maskImage, style.getPropertyValue("-webkit-mask-image")].join(" ");
+
+    return (
+      /linear-gradient\(\s*(?:to (?:left|right)|(?:90|270)deg)\s*,/u.test(mask) &&
+      /transparent|rgba\([^)]*,\s*0(?:\.0+)?\s*\)/u.test(mask)
+    );
+  }
+
   function readUnsignedScrollers(): CaptureElement[] {
     return [...document.querySelectorAll("body *")].flatMap((element, index) => {
       if (
         !(element instanceof HTMLElement) ||
         !present(element) ||
-        element.closest(
-          "svg,[data-slot=horizontal-scroll],[data-slot=contribution-calendar-viewport]",
-        )
+        element.closest("svg,[data-slot=horizontal-scroll]")
       ) {
         return [];
       }
 
-      const overflow = getComputedStyle(element).overflowX;
+      const style = getComputedStyle(element);
+      const overflow = style.overflowX;
       const across = element.scrollWidth - element.clientWidth;
 
-      if (!["auto", "scroll"].includes(overflow) || across <= 1) {
+      if (!["auto", "scroll"].includes(overflow) || across <= 1 || hasHorizontalFade(style)) {
         return [];
       }
 
