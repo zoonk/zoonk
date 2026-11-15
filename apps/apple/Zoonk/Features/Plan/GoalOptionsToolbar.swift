@@ -8,45 +8,34 @@ import SwiftUI
 struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
-  @State private var confirming: Confirmation?
+  @State private var changes = GoalChanges()
   @State private var isArchiving = false
-  @State private var failure: GoalStatusOutcome?
-  @State private var resumeFailure: GoalStatusOutcome?
-  @State private var isSaving = false
-  @State private var statusChange: Task<Void, Never>?
-  @State private var isRenaming = false
   @State private var name = ""
-  @State private var renameFailed = false
 
   let goal: LearnerGoal
   var inPageHeader = false
   @ViewBuilder let planItems: PlanItems
-
-  private enum Confirmation: Identifiable {
-    case resume
-
-    var id: Self { self }
-  }
 
   func body(content: Content) -> some View {
     content
       .taskOptions(isShown: !inPageHeader, label: label) { items }
       .environment(\.planOptions, inPageHeader ? AnyView(headerMenu) : nil)
       .environment(
-        \.resumeGoal, ResumeGoal(isBusy: isSaving, failure: resumeFailure, action: resume)
+        \.resumeGoal,
+        ResumeGoal(isBusy: changes.isSaving, failure: changes.resumeFailure, action: resume)
       )
       .confirmationDialog(
         Text(
           "Resume your \(goal.displayName) goal?", tableName: "Plan",
           comment: "Asks before resuming the paused goal named here"),
-        isPresented: isConfirming, titleVisibility: .visible, presenting: confirming
-      ) { _ in
+        isPresented: Bindable(changes).confirmsResume, titleVisibility: .visible
+      ) {
         Button {
           set(.active)
         } label: {
           Text("Resume", tableName: "Plan", comment: "Confirms resuming the paused goal")
         }
-      } message: { _ in
+      } message: {
         Text(
           "Your plan picks up from today, starting with the lessons planned for the days you paused.",
           tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
@@ -57,7 +46,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
       .alert(
         Text(
           "Rename goal", tableName: "Plan", comment: "Title of the dialog that renames the goal"),
-        isPresented: $isRenaming
+        isPresented: Bindable(changes).isRenaming
       ) {
         TextField(text: $name) {
           Text("Name", tableName: "Plan", comment: "Field holding the goal's name")
@@ -75,7 +64,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
         }
         .disabled(trimmedName.isEmpty)
       } message: {
-        if renameFailed {
+        if changes.renameFailed {
           Text(
             "Check your connection and try again.", tableName: "Plan",
             comment: "Explains a failed save")
@@ -87,14 +76,14 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
       }
       .alert(
         Text("Couldn't save", tableName: "Plan", comment: "Title of an error saving the goal"),
-        isPresented: hasFailed, presenting: failure
+        isPresented: hasFailed, presenting: changes.failure
       ) { _ in
       } message: { _ in
         Text(
           "Check your connection and try again.", tableName: "Plan",
           comment: "Explains a failed save")
       }
-      .onDisappear { statusChange?.cancel() }
+      .onDisappear { changes.leave() }
   }
 
   private var label: Text {
@@ -108,7 +97,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
     Section {
       statusItems
     }
-    .disabled(isSaving)
+    .disabled(changes.isSaving)
   }
 
   /// Main's phone header: a quiet icon button after "Adjust plan".
@@ -132,8 +121,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
     if goal.kind != .explain {
       Button {
         name = goal.displayName
-        renameFailed = false
-        isRenaming = true
+        changes.startRenaming()
       } label: {
         Label {
           Text("Rename goal", tableName: "Plan", comment: "Opens the dialog that renames the goal")
@@ -183,29 +171,12 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
     name.trimmingCharacters(in: .whitespacesAndNewlines)
   }
 
-  private var isConfirming: Binding<Bool> {
-    Binding(get: { confirming != nil }, set: { if !$0 { confirming = nil } })
-  }
-
   private var hasFailed: Binding<Bool> {
-    Binding(get: { failure != nil }, set: { if !$0 { failure = nil } })
+    Binding(get: { changes.failure != nil }, set: { if !$0 { changes.failure = nil } })
   }
 
-  /// Resuming asks first only when it changes the plan (the pause left lessons behind).
   private func resume() {
-    Task {
-      resumeFailure = nil
-      isSaving = true
-      let preview = store.resumeChangesPlan(goalId: goal.id)
-      await preview.load()
-      isSaving = false
-
-      if preview.value == true {
-        confirming = .resume
-      } else {
-        set(.active)
-      }
-    }
+    changes.resume(goalId: goal.id, store: store, router: router)
   }
 
   private func rename() {
@@ -215,44 +186,122 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
       return
     }
 
-    Task {
-      isSaving = true
-      let result = await store.rename(goalId: goal.id, displayName: displayName)
-      isSaving = false
+    changes.rename(displayName, goalId: goal.id, store: store)
+  }
+
+  private func set(_ status: GoalStatusChange) {
+    changes.set(status, goalId: goal.id, store: store, router: router)
+  }
+}
+
+/// The Plan's changes to the goal itself (rename, pause, resume, archive): the visit's, not its
+/// bar's or menu's. The Plan calls `leave()` as it closes: a change still out saves and shows
+/// nothing, and a failure said before is gone on the next visit.
+@MainActor
+@Observable
+final class GoalChanges {
+  private(set) var isSaving = false
+  /// Said in an alert.
+  var failure: GoalStatusOutcome?
+  /// Said over the paused page's bar, where its Resume is.
+  private(set) var resumeFailure: GoalStatusOutcome?
+  /// Resuming changes the plan, so it asks first.
+  var confirmsResume = false
+  var isRenaming = false
+  private(set) var renameFailed = false
+  @ObservationIgnored private let tasks = ScreenTasks()
+
+  /// Resuming asks first only when it changes the plan (the pause left lessons behind).
+  func resume(goalId: String, store: PlanStore, router: AppRouter) {
+    resumeFailure = nil
+    isSaving = true
+
+    tasks.run {
+      let preview = store.resumeChangesPlan(goalId: goalId)
+      await preview.load()
+
+      guard !Task.isCancelled else {
+        return
+      }
+
+      if preview.value == true {
+        self.isSaving = false
+        self.confirmsResume = true
+      } else {
+        await self.change(.active, goalId: goalId, store: store, router: router)
+      }
+    }
+  }
+
+  func set(_ status: GoalStatusChange, goalId: String, store: PlanStore, router: AppRouter) {
+    tasks.run {
+      await self.change(status, goalId: goalId, store: store, router: router)
+    }
+  }
+
+  func startRenaming() {
+    renameFailed = false
+    isRenaming = true
+  }
+
+  func rename(_ displayName: String, goalId: String, store: PlanStore) {
+    isSaving = true
+
+    tasks.run {
+      let result = await store.rename(goalId: goalId, displayName: displayName)
+
+      guard !Task.isCancelled else {
+        return
+      }
+
+      self.isSaving = false
 
       switch result {
       case .done(true), .obsolete:
         break
       case .done(false), .failed:
-        renameFailed = true
-        isRenaming = true
+        self.renameFailed = true
+        self.isRenaming = true
       }
     }
   }
 
-  private func set(_ status: GoalStatusChange) {
-    statusChange = Task {
-      isSaving = true
-      let outcome = await store.setStatus(status, goalId: goal.id)
-      isSaving = false
+  func leave() {
+    tasks.cancel()
+    isSaving = false
+    failure = nil
+    resumeFailure = nil
+    confirmsResume = false
+    renameFailed = false
+  }
 
-      switch outcome {
-      case .done(.saved):
-        if status == .archived {
-          router.showRoot(of: .today)
-        }
-      // A failed resume is said over the paused page's bar, where its Resume is.
-      case .done(let refused) where status == .active:
-        resumeFailure = refused
-      case .failed where status == .active:
-        resumeFailure = .failed
-      case .done(let refused):
-        failure = refused
-      case .failed:
-        failure = .failed
-      case .obsolete:
-        break
+  private func change(
+    _ status: GoalStatusChange, goalId: String, store: PlanStore, router: AppRouter
+  ) async {
+    isSaving = true
+    let outcome = await store.setStatus(status, goalId: goalId)
+
+    guard !Task.isCancelled else {
+      return
+    }
+
+    isSaving = false
+
+    switch outcome {
+    case .done(.saved):
+      if status == .archived {
+        router.showRoot(of: .today)
       }
+    case .done(let refused) where status == .active:
+      resumeFailure = refused
+    case .failed where status == .active:
+      resumeFailure = .failed
+    case .done(let refused):
+      failure = refused
+    case .failed:
+      failure = .failed
+    case .obsolete:
+      break
     }
   }
 }
