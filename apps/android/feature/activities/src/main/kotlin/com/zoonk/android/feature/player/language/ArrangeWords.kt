@@ -350,7 +350,7 @@ internal fun ReadingPrompt(
     val style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold, color = questionColor())
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Eyebrow(stringResource(R.string.player_language_translate))
+        Eyebrow(stringResource(R.string.player_language_translate), icon = R.drawable.ic_translate)
         FlowRow(
             // One stop reads the whole sentence; each word or phrase with a translation is its own stop after it.
             Modifier.semantics(mergeDescendants = true) {

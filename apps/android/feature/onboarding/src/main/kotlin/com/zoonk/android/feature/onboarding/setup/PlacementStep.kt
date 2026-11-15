@@ -409,7 +409,6 @@ internal fun ColumnScope.PlacementQuestion(
                     busy = pending && sender == PlacementSender.DontKnow,
                     enabled = !pending,
                     focusableWhenDisabled = pending,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_help) },
                 ) {
                     Text(dontKnowLabel)
                 }

@@ -275,7 +275,6 @@ fun CodeEntry(
                 busy = work == SignInWork.Resend,
                 onClick = signIn::resendCode,
                 enabled = work == null,
-                leadingIcon = { ButtonIcon(R.drawable.ic_send) },
             ) { Text(stringResource(R.string.account_send_again)) }
         }
         TextButton(onClick = signIn::changeEmail, enabled = work != SignInWork.CheckCode) {

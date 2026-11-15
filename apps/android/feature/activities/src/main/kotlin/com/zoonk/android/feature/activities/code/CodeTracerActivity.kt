@@ -257,8 +257,8 @@ private fun TracerPanel(
                 color = colors.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium,
             )
-            StepButton(stringResource(R.string.activities_code_step_back), R.drawable.ic_skip_previous, canGoBack, onBack)
-            StepButton(stringResource(R.string.activities_code_step_forward), R.drawable.ic_skip_next, canGoForward, onForward)
+            StepButton(stringResource(R.string.activities_code_step_back), R.drawable.ic_arrow_back, canGoBack, onBack)
+            StepButton(stringResource(R.string.activities_code_step_forward), R.drawable.ic_arrow_forward, canGoForward, onForward)
         }
         CodeListing(code, language, stringResource(R.string.activities_code_code), currentLine = currentLine)
     }

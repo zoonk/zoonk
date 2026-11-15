@@ -282,7 +282,6 @@ fun NotSureButton(
         modifier = modifier,
         enabled = enabled,
         focusableWhenDisabled = focusableWhenDisabled,
-        leadingIcon = { ButtonIcon(R.drawable.ic_help) },
     ) {
         Text(stringResource(if (dontKnowYet) R.string.questions_dont_know_yet else R.string.questions_drill_not_sure))
     }
