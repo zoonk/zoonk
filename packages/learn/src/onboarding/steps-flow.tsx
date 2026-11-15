@@ -75,14 +75,8 @@ function useShownBuddy(buddy: LearnBuddy | null) {
   };
 }
 
-function StepSaveError({ current, failed }: { current: OnboardingStep; failed: Failed | null }) {
-  return (
-    failed?.step === current && (
-      <ChangeSaveError>
-        {failed.dayTooShort && <DayTooShortWords {...failed.dayTooShort} />}
-      </ChangeSaveError>
-    )
-  );
+function StepSaveError({ dayTooShort }: Pick<Failed, "dayTooShort">) {
+  return <ChangeSaveError>{dayTooShort && <DayTooShortWords {...dayTooShort} />}</ChangeSaveError>;
 }
 
 type StepsFlowProps = {
@@ -317,7 +311,9 @@ export function StepsFlow({
           // Answers change in "Adjust" now, not by going back through the questions.
           onBack: state.history.length > 0 && !isPlan ? back : undefined,
         }}
-        failure={<StepSaveError current={state.current} failed={failed} />}
+        failure={
+          failed?.step === state.current && <StepSaveError dayTooShort={failed.dayTooShort} />
+        }
       >
         {/* Placement follows the run itself, so only the questions say it stopped. */}
         <PlanStartNoticeProvider

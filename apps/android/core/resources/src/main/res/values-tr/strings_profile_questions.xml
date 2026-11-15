@@ -10,6 +10,7 @@
   "profile_questions_cap": "8a9fb1ca1e5b0404ad8b1c9a2afbe6603f8fb338197bcc8b208902c938e64b14",
   "profile_questions_condition_note": "e2afcfb8dc366b8d5242621ff58d9f10e105e50a2641c356ae45916ff1a11747",
   "profile_questions_conditions_description": "624689c00ff76a75f543fb53ce9f25e18db4490010d4915390f82e31a8dd1fd7",
+  "profile_questions_conditions_description_settings": "8922208c59406c12e480d7034a6d0b4c151e2cf9511d91a1103d54d2434702dc",
   "profile_questions_conditions_saved": "d02301ea727807ab8ab8bcdebe5f53d7a4664a334020b076280acde3e3310489",
   "profile_questions_conditions_title": "cadb145425011809388e2f2954eeae01a2623c2f822159185a52edce89777602",
   "profile_questions_description": "e4dd3264821529a6cf32dfbefe7576c1b99cbdde5c277f5127b5ba2738090cd4",
@@ -61,6 +62,7 @@
   "profile_questions_support_description": "43bee5205d202d89cb777a70ce9f323fa50174bd4d524f7e1750685c80e5a29b",
   "profile_questions_support_note": "d79babdbb0b05ab43c11f38e677b63c29c3a12435b92657ef5d607b56e3253f6",
   "profile_questions_support_note_help": "490094cf8e0badf8594511c3d7fb0e09b0c343174ce94ab300e701dee9fb380c",
+  "profile_questions_support_note_help_settings": "05935a90c908e7d483a62d8c0a29bae779d177efe93ae2c835d0036197eeb54d",
   "profile_questions_support_placeholder": "3cd2038085f57512e8b9f67839b9ec62264b8f400cc7d8b2f24738b623a8c1b5",
   "profile_questions_support_title": "6488b1e8816c173042d4c824c2d76c0c80eff315e3bef1c14a1fbfd3bbe7856c",
   "profile_questions_title": "abda59ef7fe3ccced5a0ac2d892f5c575b09136e1805b3262110c13cec4e7dfc",
@@ -120,6 +122,7 @@
     <string name="profile_questions_activities_placeholder">Örn. ekmek yapmak, arabalar, astronomi</string>
     <string name="profile_questions_conditions_title">Bunlardan biri senin için geçerli mi?</string>
     <string name="profile_questions_conditions_description">İsteğe bağlı. Seçimlerini içeriği ihtiyaçlarına göre uyarlamak için kullanıyoruz. İstediğin zaman Ayarlar’dan kaldırabilirsin.</string>
+    <string name="profile_questions_conditions_description_settings">İsteğe bağlı. İçeriği ihtiyaçlarına göre uyarlamak için seçimlerini kullanırız. İstediğin zaman kaldırabilirsin.</string>
     <string name="profile_questions_condition_note">Bilmemiz gereken neler var?</string>
     <string name="profile_questions_support_title">Öğrenmeni neler kolaylaştırır?</string>
     <string name="profile_questions_support_description">Sana yardımcı olan her şeyi seç. Herhangi bir durum belirtmen ya da tanı almış olman gerekmez.</string>
@@ -131,6 +134,7 @@
     <string name="profile_questions_support_note">Sana neyin yardımcı olduğunu kendi sözlerinle anlat (isteğe bağlı)</string>
     <string name="profile_questions_support_placeholder">Örneğin, şemaları metinlerden daha iyi anlıyorum</string>
     <string name="profile_questions_support_note_help">Bunu aklımızda tutacağız. İstediğin zaman Ayarlar’dan silebilirsin.</string>
+    <string name="profile_questions_support_note_help_settings">Bunu hatırlayacağız. İstediğin zaman silebilirsin.</string>
     <string name="profile_questions_lesson_ready">1. ders hazır.</string>
     <string name="profile_questions_start_lesson">1. derse başla</string>
     <string name="profile_questions_save_start_lesson">Kaydet ve 1. derse başla</string>

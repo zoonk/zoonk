@@ -23,6 +23,7 @@ struct AccessibilityStack<Content: View>: View {
       : AnyLayout(HStackLayout(alignment: alignment, spacing: spacing))
 
     layout { content }
+      .layoutStacks(isStacked)
   }
 }
 
@@ -39,26 +40,29 @@ struct MarkedRow<Mark: View, Content: View, End: View>: View {
   @ViewBuilder let end: End
 
   var body: some View {
-    if isStacked {
-      VStack(alignment: .leading, spacing: stackedSpacing) {
-        HStack(spacing: 12) {
+    Group {
+      if isStacked {
+        VStack(alignment: .leading, spacing: stackedSpacing) {
+          HStack(spacing: 12) {
+            mark
+            Spacer(minLength: 8)
+            end
+          }
+
+          content
+        }
+      } else {
+        HStack(alignment: alignment, spacing: 12) {
           mark
-          Spacer(minLength: 8)
+
+          content
+            .frame(maxWidth: .infinity, alignment: .leading)
+
           end
         }
-
-        content
-      }
-    } else {
-      HStack(alignment: alignment, spacing: 12) {
-        mark
-
-        content
-          .frame(maxWidth: .infinity, alignment: .leading)
-
-        end
       }
     }
+    .layoutStacks(isStacked)
   }
 }
 
@@ -91,6 +95,7 @@ extension View {
       .groupBoxStyle(.panel)
       .disclosureGroupStyle(.fold)
       .typeStyle(.body)
+      .layoutSurface()
   }
 }
 
@@ -207,25 +212,24 @@ private struct StackingLabelLayout: Layout {
   }
 }
 
-/// A list row's `LabeledContent` whose label has an icon. In a list, a `LabeledContent` lays out a
-/// `Label` in its label itself, and stacked it flows the icon into the title's first line. This
-/// puts a `Label` around the `LabeledContent` instead: side by side the row looks the same, and
-/// stacked the icon follows `StackingLabelStyle` like every other label's.
+/// A list row whose label has an icon and a value at its end, drawn as `ListRow` draws its (one
+/// layout, `RowLayout`), and read as one label and its value.
 struct IconLabeledContent<Content: View, Title: View, Icon: View>: View {
   @ViewBuilder let content: Content
   @ViewBuilder let title: Title
   @ViewBuilder let icon: Icon
 
   var body: some View {
-    Label {
-      LabeledContent {
-        content
-      } label: {
-        title
-      }
-    } icon: {
+    RowLayout {
       icon
+    } words: {
+      title
+        .layoutPart(.label)
+    } value: {
+      content
+        .foregroundStyle(.mutedForeground)
     }
+    .accessibilityElement(children: .combine)
   }
 }
 

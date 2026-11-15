@@ -131,6 +131,64 @@
         }
       }
     },
+    "A copy of your memory" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Kopie deiner Erinnerungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una copia de tu memoria"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une copie des informations mémorisées"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una copia della tua memoria"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メモリのコピー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 메모리 사본"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopia zapisanych informacji"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma cópia da sua memória"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belleğinin bir kopyası"
+          }
+        }
+      }
+    },
     "A monocle" : {
       "comment" : "What the buddy wears: a monocle",
       "localizations" : {
@@ -1307,30 +1365,30 @@
         }
       }
     },
-    "Download my memory" : {
+    "Download your memory" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meine Erinnerungen herunterladen"
+            "value" : "Deine Erinnerungen herunterladen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descargar mi memoria"
+            "value" : "Descargar tu memoria"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Télécharger ma mémoire"
+            "value" : "Télécharger les informations mémorisées"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scarica la mia memoria"
+            "value" : "Scarica la tua memoria"
           }
         },
         "ja" : {
@@ -1342,25 +1400,25 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "내 메모리 다운로드"
+            "value" : "메모리 다운로드"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pobierz zawartość pamięci"
+            "value" : "Pobierz zapisane informacje"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Baixar minha memória"
+            "value" : "Baixar sua memória"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Belleğimi indir"
+            "value" : "Belleğini indir"
           }
         }
       }
@@ -1479,65 +1537,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bellek kaydını düzenle"
-          }
-        }
-      }
-    },
-    "Everything in your memory, as one file" : {
-      "comment" : "What the memory download contains",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle deine Erinnerungen in einer Datei"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toda tu memoria en un solo archivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tout le contenu de ta mémoire dans un seul fichier"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tutto il contenuto della tua memoria, in un unico file"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "メモリのすべての内容を1つのファイルに"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "메모리에 있는 모든 내용을 파일 하나로"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cała zawartość pamięci w jednym pliku"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tudo o que está na sua memória em um só arquivo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Belleğindeki her şey tek dosyada"
           }
         }
       }

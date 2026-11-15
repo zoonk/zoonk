@@ -9,7 +9,6 @@ import {
   ListRowContent,
   ListRowTitle,
 } from "../../_components/list-group";
-import { StatusRegion } from "../../_components/status-region";
 import {
   type CountryChoice,
   type CountryName,
@@ -42,12 +41,6 @@ function getRows({
     : listed;
 }
 
-function CountryNotice({ picked }: { picked: CountryChoice | null }) {
-  const lessonLanguage = useLessonLanguageLine()(picked?.lessonVariety ?? null);
-
-  return <StatusRegion className="text-muted-foreground text-sm">{lessonLanguage}</StatusRegion>;
-}
-
 /**
  * Picking doesn't move on, unlike the other one-answer steps: a mis-tap would start a course about
  * the wrong country. Skip uses the language's own country and is never asked again.
@@ -75,6 +68,7 @@ export function CountryStep({
   const pickedInPicker = useRef(false);
   const rows = getRows({ defaultCountry, other, suggested });
   const picked = rows.find((country) => country.code === code) ?? null;
+  const lessonLanguage = useLessonLanguageLine()(picked?.lessonVariety ?? null);
 
   const choices: Choice<string>[] = rows.map((country) => ({
     label: country.name,
@@ -84,7 +78,7 @@ export function CountryStep({
   return (
     <StepForm
       canContinue={picked !== null}
-      notice={<CountryNotice picked={picked} />}
+      notice={lessonLanguage && <p className="text-muted-foreground text-sm">{lessonLanguage}</p>}
       onContinue={() => picked && onAnswer({ country: picked.code, question: "contentCountry" })}
       onSkip={() => onAnswer({ country: null, question: "contentCountry" })}
       pending={pending}

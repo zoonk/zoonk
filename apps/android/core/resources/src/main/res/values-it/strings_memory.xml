@@ -10,7 +10,8 @@
   "memory_change_undone": "289db0ad5eed66dc1ca9d141b72a33edd2d1e63f4bb4252c548821c23b88daa7",
   "memory_delete": "81f8f970d2b5b954b1e1f458c198f050d09e8b4d6b57361466b969297594412c",
   "memory_description": "d82dde851d14288ef3819d8be304ca56f5a7c35668d087cf676b2f26154aa084",
-  "memory_download": "694fd8c96a47db3c0b52c99336c6047793ebd8f1a800de4574a4b41895cd1b7f",
+  "memory_download": "fa443b4c8362ec9455c15142f4e039b47735304dda6e35625a8dcf8acd923d4b",
+  "memory_download_your_memory": "39250d90ec76b19b1cc9e56cbdfc418e54ee9fed6c4ed46ea5e7c547e48f8598",
   "memory_edit": "dccf129e295adcef9a89d60c339dd5ce44308ebba581b9818e86b4992557bb46",
   "memory_edit_description": "c9c855a40787057a7c181ea663667e7c5ba3b91d4c3d08e42947a0cedb9a63d6",
   "memory_edit_label": "f2edcb9da4347d7b693c74978a73dec1d63ab3ecfbe298cbee076b25674771b6",
@@ -63,7 +64,8 @@
     <string name="memory_edit_title">Modifica l’informazione</string>
     <string name="memory_edit_description">Scrivila in modo che ti rispecchi.</string>
     <string name="memory_edit_label">Cosa ricorda Zoonk</string>
-    <string name="memory_download">Scarica la mia memoria</string>
+    <string name="memory_download">Una copia della tua memoria</string>
+    <string name="memory_download_your_memory">Scarica la tua memoria</string>
     <string name="memory_sensitive_note">Zoonk non conserva dati sulla salute, sulla religione o altre informazioni sensibili, a meno che tu non lo chieda.</string>
     <string name="memory_updated">Memoria aggiornata:</string>
     <plurals name="memory_updated_more">

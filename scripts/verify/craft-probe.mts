@@ -11,6 +11,8 @@ type InkKind = "box" | "icon" | "picture" | "text";
 export type Ink = {
   /** An icon alone in a button or a link with no fill or border: a bare glyph (E2). */
   bare?: boolean;
+  /** Inside a shared piece whose alignment is declared (`alignment-table.mts`): no edge is an indent there. */
+  declared?: boolean;
   bottom: number;
   context: number;
   /** For a box: the context its own contents are in, and whether it's a control's. */
@@ -79,7 +81,7 @@ type Box = { bottom: number; left: number; right: number; top: number };
  * Runs in the browser, so it reads nothing outside itself. Positions are rounded to a tenth of a
  * pixel and relative to the page, so they match the full-page screenshot.
  */
-export function readCraft(): CraftPage {
+export function readCraft(declaredGroups = ""): CraftPage {
   const LABEL_LENGTH = 32;
   const ICON_MAX = 32;
   const SMALLEST_CONTROL = 24;
@@ -90,94 +92,16 @@ export function readCraft(): CraftPage {
   /** Room a parent leaves beyond its children's gaps when it pushes the last one to its end. */
   const PUSH_ROOM = 16;
   const MIN_SIBLINGS = 3;
-  const MIN_FILL_DIFFERENCE = 6;
-  const OPAQUE = 255;
   const HALF = 0.5;
   const TENTH = 10;
   const viewportWidth = document.documentElement.clientWidth;
   const { scrollX, scrollY } = globalThis;
 
-  const canvas = document.createElement("canvas");
-  canvas.width = 1;
-  canvas.height = 1;
-  const paint = canvas.getContext("2d", { willReadFrequently: true });
-
   function round(value: number) {
     return Math.round(value * TENTH) / TENTH;
   }
 
-  /** Any CSS color (`oklch`, `lab`, …) as the RGBA the screen draws, through a canvas. */
-  function rgba(color: string): [number, number, number, number] {
-    if (!paint) {
-      return [0, 0, 0, 0];
-    }
-
-    paint.clearRect(0, 0, 1, 1);
-    paint.fillStyle = color;
-    paint.fillRect(0, 0, 1, 1);
-    const [red = 0, green = 0, blue = 0, alpha = 0] = paint.getImageData(0, 0, 1, 1).data;
-    return [red, green, blue, alpha];
-  }
-
-  const { pixels, shown } = globalThis.zoonkPage;
-
-  function behind(element: Element) {
-    for (let parent = element.parentElement; parent; parent = parent.parentElement) {
-      const color = rgba(getComputedStyle(parent).backgroundColor);
-
-      if (color[3] > 0) {
-        return color;
-      }
-    }
-
-    return rgba(getComputedStyle(document.body).backgroundColor);
-  }
-
-  function filled(element: Element) {
-    const fill = rgba(getComputedStyle(element).backgroundColor);
-    const under = behind(element);
-    const alpha = fill[3] / OPAQUE;
-
-    const difference = under
-      .slice(0, 3)
-      .reduce(
-        (total, channel, index) => total + Math.abs(((fill[index] ?? 0) - channel) * alpha),
-        0,
-      );
-
-    return alpha > 0 && difference > MIN_FILL_DIFFERENCE;
-  }
-
-  /** The rings it draws (`ring-*`: a box shadow with no offset or blur), as their spread outside it. */
-  function rings(element: Element) {
-    return getComputedStyle(element)
-      .boxShadow.split(/,(?![^(]*\))/u)
-      .flatMap((shadow) => {
-        const color = /^(?:[a-z]+\([^)]*\)|#\w+|[a-z]+)/iu.exec(shadow.trim())?.[0] ?? "";
-        const rest = shadow.trim().slice(color.length).trim();
-        const [x, y, blur, spread = 0] = rest.split(/\s+/u).map((part) => pixels(part));
-        const ring = x === 0 && y === 0 && blur === 0 && spread > 0 && rgba(color)[3] > 0;
-
-        if (!ring) {
-          return [];
-        }
-
-        return [rest.endsWith("inset") ? 0 : spread];
-      });
-  }
-
-  function bordered(element: Element, sides: ("bottom" | "left" | "right" | "top")[]) {
-    const style = getComputedStyle(element);
-
-    return (
-      rings(element).length > 0 ||
-      sides.every(
-        (side) =>
-          pixels(style.getPropertyValue(`border-${side}-width`)) > 0 &&
-          rgba(style.getPropertyValue(`border-${side}-color`))[3] > 0,
-      )
-    );
-  }
+  const { paints, pixels, rgba, rings, shown } = globalThis.zoonkPage;
 
   function drawn(element: Element) {
     const box = element.getBoundingClientRect();
@@ -188,7 +112,7 @@ export function readCraft(): CraftPage {
       box.width < viewportWidth - 2 &&
       box.width >= HAIRLINE &&
       box.height >= HAIRLINE &&
-      (filled(element) || bordered(element, ["left", "right"]))
+      paints(element)
     );
   }
 
@@ -208,6 +132,10 @@ export function readCraft(): CraftPage {
 
   const all = [...document.body.querySelectorAll("*")].filter((element) => shown(element));
   const contexts = all.filter((element) => drawn(element));
+
+  function inDeclared(element: Element) {
+    return declaredGroups !== "" && element.closest(declaredGroups) !== null;
+  }
 
   function contextOf(element: Element, start: Element | null = element.parentElement) {
     for (let parent = start; parent; parent = parent.parentElement) {
@@ -400,6 +328,7 @@ export function readCraft(): CraftPage {
         ink: {
           ...place(box),
           context: contextOf(element, element),
+          declared: inDeclared(element),
           inkLeft: round(box.left + scrollX + letters.start),
           inkRight: round(box.right + scrollX - letters.end),
           kind: "text" as const,
@@ -456,8 +385,7 @@ export function readCraft(): CraftPage {
         ![holder, ...holder.querySelectorAll("*")].some(
           (element) => ownText(element).length > 0 && shown(element),
         ) &&
-        !filled(holder) &&
-        !bordered(holder, ["left", "right"]);
+        !paints(holder);
 
       return [
         {
@@ -472,6 +400,7 @@ export function readCraft(): CraftPage {
             ...place(icon ? glyph : frame),
             bare,
             context: contextOf(svg),
+            declared: inDeclared(svg),
             kind: icon ? ("icon" as const) : ("picture" as const),
             label: label(svg),
             leftCounts: !middle,
@@ -491,6 +420,7 @@ export function readCraft(): CraftPage {
       return {
         ...place(box),
         context: contextOf(element),
+        declared: inDeclared(element),
         kind: "picture" as const,
         label: label(element),
         leftCounts: !middle,
@@ -558,7 +488,7 @@ export function readCraft(): CraftPage {
       box.width < SMALLEST_CONTROL ||
       box.height < SMALLEST_CONTROL ||
       element.matches(TOGGLE) ||
-      !(filled(element) || bordered(element, ["top", "right", "bottom", "left"]))
+      !paints(element, ["top", "right", "bottom", "left"])
     ) {
       return [];
     }

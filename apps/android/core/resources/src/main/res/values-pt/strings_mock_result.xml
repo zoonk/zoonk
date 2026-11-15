@@ -94,6 +94,7 @@
   "mock_result_scale_score": "0f5f455c9adc744cc3ea0c7c75f855d22787b81ec38a2dfc9d2cf30046e0b18f",
   "mock_result_scale_score_named": "3035719bb7a9f56f4d668fbacbd2ef508c3ad598ad0280c7092bd844868fb6f2",
   "mock_result_see_answers": "42f87be1aba293f1d4546769fb6631a84fb790a5a591ba7778231257307fff89",
+  "mock_result_see_details": "313eabf23967637c7a20f05f45b8efbea51653a0c0aa57676289e01f951baa41",
   "mock_result_see_feedback": "d79eafeb8e7fa5f0c0de7a1811a7d770b4b67a2a6feb00fe68339321ceba04d2",
   "mock_result_short_points": "4ad8b05b6eba491dffa622c121fd86917cddc20e7b339ed537c07de2823cd206",
   "mock_result_short_points_decimal": "baa1e353865683f1a17c1a974f534f2eb2382d5904a8a0f03d28c579d2a211f6",
@@ -144,8 +145,9 @@
     <string name="mock_result_every_minimum">Você atingiu todas as pontuações mínimas neste simulado.</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
     <string name="mock_result_strongest">Melhor desempenho em %1$s. Pratique %2$s.</string>
-    <!-- A small button under the result that opens its details. -->
+    <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">Detalhes</string>
+    <string name="mock_result_see_details">Ver detalhes</string>
     <!-- A small button under the result that opens the questions to review. -->
     <string name="mock_result_see_answers">Ver respostas</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->

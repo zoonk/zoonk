@@ -54,6 +54,16 @@
   }
 }
 
+/*
+ * The shared button's variant, which each variant of `buttonVariants` declares, so a link drawn as a
+ * button says it is filled exactly as a Button does (the verify tooling counts filled actions by
+ * it). It doesn't inherit, so only the control itself carries it.
+ */
+@property --button-variant {
+  syntax: "*";
+  inherits: false;
+}
+
 @theme inline {
   --font-sans:
     var(--font-geist-sans, ui-sans-serif), ui-sans-serif, system-ui, sans-serif,
@@ -74,7 +84,8 @@
   --text-compact: 0.8125rem;
   --text-compact--line-height: 1.1875rem;
   --text-reading: 0.9375rem;
-  --text-reading--line-height: 1.4375rem;
+  --text-reading--line-height: 1.375rem;
+  --text-base--line-height: 1.4375rem;
   /* The web draws options at `rounded-xl`; the native apps still generate their option radius from this. */
   --radius-option: calc(var(--radius) + 2px);
   --radius-2xl: calc(var(--radius) + 8px);

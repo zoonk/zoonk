@@ -6,8 +6,8 @@
   "recap_first_summary": "b2abbe895f2f6b5a0745de786ff782145e95110aba085d6f004e07ebe6659ae8",
   "recap_fresh_week": "64aed0074085ba11910d7a9e685f1cc1af778d7ca2d841e1b5d5b78936b8a3c8",
   "recap_mistakes_fixed": "3330850671c8c0b4194aa861b36b2343e56eab71d9ced4b5aab07bf6fd89a940",
-  "recap_more_questions": "58cddebf911f7d9e0257129abb279829f474cf0301156172580dfc1ee37f26fb",
-  "recap_more_time": "37536a5e0e6ad196dad58ebd3cfc25a227d37bb41893e7490bc05984385eeb11",
+  "recap_more_questions": "136b648ec3a589c896720793e861c4b27f5bde34d9f473c15bdfbcaad18fe6ae",
+  "recap_more_time": "9d619bfd6553414bea9b86141654cf0cea8241873de6a8f2b71f4c205a9d6480",
   "recap_most_improved": "11604a9cc37439d3a62a61b595e874c309e2850c1e261069f4d18ea3662856ba",
   "recap_most_improved_value": "68026241c7f4c02a29c74783b6d9e9b819be030291534e654d311465cac5e054",
   "recap_new_topics": "c79e5f85d3c60fa29a0e5f995acffe7b987a10b4f321d35905c78de9edb070be",
@@ -29,12 +29,11 @@
         <item quantity="many">%d jours d’étude</item>
         <item quantity="other">%d jours d’étude</item>
     </plurals>
-    <!-- %1$s is a duration, such as "20 min". -->
-    <string name="recap_more_time">%1$s de plus que la semaine précédente !</string>
+    <string name="recap_more_time">%1$s de plus que la semaine précédente.</string>
     <plurals name="recap_more_questions">
-        <item quantity="one">%d question de plus que la semaine précédente !</item>
-        <item quantity="many">%d questions de plus que la semaine précédente !</item>
-        <item quantity="other">%d questions de plus que la semaine précédente !</item>
+        <item quantity="one">%d question de plus que la semaine précédente.</item>
+        <item quantity="many">%d questions de plus que la semaine précédente.</item>
+        <item quantity="other">%d questions de plus que la semaine précédente.</item>
     </plurals>
     <!-- %1$s is the name of a part of the learner's plan they finished this week, such as "Foundations". -->
     <string name="recap_phase_finished">Tu as terminé %1$s.</string>

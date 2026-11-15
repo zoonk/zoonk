@@ -19,6 +19,8 @@
               DebugLessonGate(opensIn: section == "lessonGate" ? 20 : 5 * 86_400)
             } else if section == "limits" {
               DebugLimits()
+            } else if section == "rowStack" {
+              DebugRowStack()
             } else if let writing = DebugLessonWait.writing(section) {
               DebugLessonWait(
                 writing: writing, kind: section.hasPrefix("challenge") ? .challenge : .lesson)
@@ -590,18 +592,40 @@
         RoadmapPhaseRow(phase: Self.phase(0), when: .today, today: "2026-11-14")
         RoadmapPhaseRow(phase: Self.phase(1), when: .starts("2027-02-17"), today: "2026-11-14")
 
+        // A phase with a line under its name, and a folded one, as the path draws them.
+        ListRow(
+          Text(verbatim: "Foundations").fontWeight(.semibold),
+          description: Text(verbatim: "Continues Nov 16")
+        ) {
+          StatusMark(status: .next)
+        } trailing: {
+          PlanWhen.date(Text(verbatim: "18 Feb 2027"))
+        }
+        .disclosureChevron()
+
+        DisclosureGroup(isExpanded: .constant(true)) {
+          EmptyView()
+        } label: {
+          ListRow(Text(verbatim: "Fill the gaps")) {
+            StatusMark(status: .todo)
+          } trailing: {
+            PlanWhen.date(Text(verbatim: "14 Jul 2027"))
+          }
+        }
+
         ForEach(Array(Self.challengeDays.enumerated()), id: \.offset) { _, when in
           PlanChallengeLabel(when: when, explains: false, isLanguage: false)
         }
 
         ForEach(Array(Self.finishDays.enumerated()), id: \.offset) { _, when in
-          IconLabeledContent {
-            when
-          } title: {
-            Text(verbatim: "ENEM 2027")
-          } icon: {
+          PlanMarkedRow(title: Text(verbatim: "ENEM 2027"), when: when) {
             Image(systemName: "flag")
           }
+        }
+
+        // A goal named in a script and an emoji Geist doesn't draw.
+        PlanMarkedRow(title: Text(verbatim: "日本語の練習 🎯"), when: .words(Text(verbatim: "Today"))) {
+          Image(systemName: "flag")
         }
       }
     }
@@ -626,6 +650,29 @@
           "startDate": "2027-02-17", "state": "\(index == 0 ? "current" : "upcoming")" }
         """
       return try! JSONDecoder().decode(PlanPhase.self, from: Data(json.utf8))
+    }
+  }
+
+  /// `ZOONK_DEBUG_GALLERY=rowStack` draws rows in a scroll's stack with hairlines between them, as
+  /// a lesson's end and a challenge's topics do, outside any list.
+  private struct DebugRowStack: View {
+    var body: some View {
+      ScrollView {
+        VStack(spacing: 0) {
+          ForEach(["Percentages", "Ratios and proportions", "Brazil's Republic"], id: \.self) {
+            title in
+            ListRow(Text(verbatim: title), description: Text(verbatim: "3 questions")) {
+              KindMark(kind: .lesson)
+            } trailing: {
+              Text(verbatim: "12 min")
+            }
+            .padding(.vertical, 12)
+
+            Divider()
+          }
+        }
+        .padding(.horizontal, 20)
+      }
     }
   }
 

@@ -194,7 +194,8 @@ function sideLeads(ink: Ink[], items: Ink[], side: Side): Finding[] {
     const line = linesNear(item, edge(item, side))
       .filter(
         ({ off, on }) =>
-          Math.abs(off) > tolerance(item, on[0] ?? item) && Math.abs(off) <= CRAFT_LINES.nearMiss,
+          Math.abs(off) > tolerance(item, on[0] ?? item) &&
+          (item.declared === true || Math.abs(off) <= CRAFT_LINES.nearMiss),
       )
       .toSorted((one, other) => other.on.length - one.on.length)[0];
 

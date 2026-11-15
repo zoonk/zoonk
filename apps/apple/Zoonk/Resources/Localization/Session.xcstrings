@@ -475,60 +475,60 @@
         }
       }
     },
-    "%@ more than the week before!" : {
+    "%@ more than the week before." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ mehr als in der Woche davor!"
+            "value" : "%@ mehr als in der Vorwoche."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡%@ más que la semana anterior!"
+            "value" : "%@ más que la semana anterior."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ de plus que la semaine précédente !"
+            "value" : "%@ de plus que la semaine précédente."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ in più rispetto alla settimana prima!"
+            "value" : "%@ in più rispetto alla settimana precedente."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "前の週より%@長く学習しました！"
+            "value" : "前の週より%@長く学習しました。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "전주보다 %@ 더 공부했어요!"
+            "value" : "전주보다 %@ 더 공부했어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ więcej niż tydzień wcześniej!"
+            "value" : "O %@ więcej niż w poprzednim tygodniu."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ a mais que na semana anterior!"
+            "value" : "%@ a mais que na semana anterior."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Önceki haftaya göre %@ daha fazla!"
+            "value" : "Bir önceki haftaya göre %@ daha fazla."
           }
         }
       }
@@ -1484,8 +1484,7 @@
         }
       }
     },
-    "%lld more questions than the week before!" : {
-      "comment" : "More questions than last week",
+    "%lld more questions than the week before." : {
       "localizations" : {
         "de" : {
           "variations" : {
@@ -1493,13 +1492,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Frage mehr als in der Woche davor!"
+                  "value" : "%lld Frage mehr als in der Vorwoche."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Fragen mehr als in der Woche davor!"
+                  "value" : "%lld Fragen mehr als in der Vorwoche."
                 }
               }
             }
@@ -1511,13 +1510,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "%lld more question than the week before!"
+                  "value" : "%lld more question than the week before."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "new",
-                  "value" : "%lld more questions than the week before!"
+                  "value" : "%lld more questions than the week before."
                 }
               }
             }
@@ -1529,13 +1528,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "¡%lld pregunta más que la semana anterior!"
+                  "value" : "%lld pregunta más que la semana anterior."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "¡%lld preguntas más que la semana anterior!"
+                  "value" : "%lld preguntas más que la semana anterior."
                 }
               }
             }
@@ -1547,13 +1546,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld question de plus que la semaine précédente !"
+                  "value" : "%lld question de plus que la semaine précédente."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld questions de plus que la semaine précédente !"
+                  "value" : "%lld questions de plus que la semaine précédente."
                 }
               }
             }
@@ -1565,13 +1564,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld domanda in più rispetto alla settimana precedente!"
+                  "value" : "%lld domanda in più rispetto alla settimana precedente."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld domande in più rispetto alla settimana precedente!"
+                  "value" : "%lld domande in più rispetto alla settimana precedente."
                 }
               }
             }
@@ -1583,7 +1582,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "先週より%lld問多く解きました！"
+                  "value" : "前の週より%lld問多く解きました。"
                 }
               }
             }
@@ -1595,7 +1594,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "지난주보다 %lld문제 더 풀었어요!"
+                  "value" : "전주보다 문제를 %lld개 더 풀었어요."
                 }
               }
             }
@@ -1604,22 +1603,22 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld pytań więcej niż w poprzednim tygodniu!"
-                }
-              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pytanie więcej niż w poprzednim tygodniu!"
+                  "value" : "O %lld pytanie więcej niż w poprzednim tygodniu."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "O %lld pytań więcej niż w poprzednim tygodniu."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pytania więcej niż w poprzednim tygodniu!"
+                  "value" : "O %lld pytania więcej niż w poprzednim tygodniu."
                 }
               }
             }
@@ -1631,13 +1630,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pergunta a mais que na semana anterior!"
+                  "value" : "%lld pergunta a mais que na semana anterior."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld perguntas a mais que na semana anterior!"
+                  "value" : "%lld perguntas a mais que na semana anterior."
                 }
               }
             }
@@ -1649,7 +1648,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Önceki haftaya göre %lld soru daha fazla!"
+                  "value" : "Bir önceki haftaya göre %lld soru daha fazla."
                 }
               }
             }
@@ -7949,64 +7948,6 @@
         }
       }
     },
-    "Your first weekly summary comes this Sunday" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diesen Sonntag bekommst du deinen ersten Wochenrückblick"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu primer resumen semanal llega este domingo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton premier bilan de la semaine sera prêt ce dimanche"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo primo riepilogo settimanale arriva questa domenica"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "初めての週間まとめは今度の日曜日に届きます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "첫 주간 요약은 이번 일요일에 나와요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pierwsze podsumowanie tygodnia zobaczysz w tę niedzielę"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu primeiro resumo semanal chega neste domingo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "İlk haftalık özetin bu pazar gelecek"
-          }
-        }
-      }
-    },
     "Your Brain Power helped %@ grow." : {
       "comment" : "The buddy's next stage",
       "localizations" : {
@@ -8062,6 +8003,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Beyin Gücün sayesinde %@ büyüdü."
+          }
+        }
+      }
+    },
+    "Your first weekly summary comes this Sunday" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Sonntag bekommst du deinen ersten Wochenrückblick"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu primer resumen semanal llega este domingo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton premier bilan de la semaine sera prêt ce dimanche"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo primo riepilogo settimanale arriva questa domenica"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "初めての週間まとめは今度の日曜日に届きます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "첫 주간 요약은 이번 일요일에 나와요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pierwsze podsumowanie tygodnia zobaczysz w tę niedzielę"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu primeiro resumo semanal chega neste domingo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlk haftalık özetin bu pazar gelecek"
           }
         }
       }

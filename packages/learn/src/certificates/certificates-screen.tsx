@@ -86,7 +86,7 @@ function CertificateItem({ facts, links }: ListedCertificate) {
         <span className="group-hover:decoration-input text-sm leading-snug font-medium tracking-[-0.01em] text-pretty group-hover:underline group-hover:underline-offset-4">
           {name}
         </span>
-        <span className="text-muted-foreground text-xs leading-snug">
+        <span className="text-muted-foreground text-xs">
           {level && `${level} · `}
           <span className="tabular-nums">{date.short(facts.completedOn)}</span>
         </span>

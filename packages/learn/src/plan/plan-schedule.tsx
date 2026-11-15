@@ -7,7 +7,7 @@ import { useEffect, useEffectEvent, useState } from "react";
 import { DailyTimePicker, TimeSelect } from "../_components/daily-time-picker";
 import { TimeAnswer } from "../_components/time-answer";
 import { WEEKDAY_GRID_CLASS, WeekdayToggle } from "../_components/weekday-toggle";
-import { WeekendTime } from "../_components/weekend-time";
+import { WeekendTime, getMissingDays } from "../_components/weekend-time";
 import { useGoalDateValues } from "../_utils/iso-date";
 import { getMarkedTimes, getOffer, getTimeLine } from "../_utils/time-answer";
 import { usePlanScreen } from "./plan-context";
@@ -265,7 +265,7 @@ function WeekendMinutes({
     <WeekendTime
       checked={checked}
       className="text-sm font-medium"
-      disabled={!shape.canDiffer}
+      missing={getMissingDays([...shape.weekdayDays, ...shape.weekendDays])}
       // Switched off, the weekend takes the weekdays' time: wait for a change still saving, so it
       // takes the time that change sets rather than the one before it.
       readOnly={isPending}

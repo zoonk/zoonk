@@ -23,9 +23,8 @@ function getPhaseLastDay({ checkpoint, endDate }: PlanPhaseView): string | null 
 function usePhaseEnd() {
   const shortDays = useShortDays();
   const isFar = useIsFarEstimate();
-  const { goal, plan } = usePlanScreen();
+  const { plan } = usePlanScreen();
   const lastIndex = plan.phases.findLast((phase) => phase.kind !== "afterExam")?.index;
-  const finishShowsEnd = plan.schedule.targetDate !== null || goal.kind !== "exam";
 
   return function phaseEnd(phase: PlanPhaseView): PhaseEnd | null {
     const days = shortDays(phase.short);
@@ -38,18 +37,12 @@ function usePhaseEnd() {
       return null;
     }
 
-    if (phase.index === lastIndex) {
-      const { endDate } = plan.estimate;
-
-      return finishShowsEnd || !endDate
-        ? null
-        : { estimate: true, isoDate: endDate, month: isFar(endDate) };
-    }
-
     const lastDay = getPhaseLastDay(phase);
 
+    // A last phase without a day of its own ends with the plan.
     if (!lastDay) {
-      return null;
+      const planEnd = phase.index === lastIndex ? plan.estimate.endDate : null;
+      return planEnd ? { estimate: true, isoDate: planEnd, month: isFar(planEnd) } : null;
     }
 
     const learns = phase.kind === "learn" || phase.kind === "afterExam";
@@ -75,13 +68,17 @@ export function PhaseWhen({ className, phase }: { className?: string; phase: Pla
   }
 
   if ("days" in end) {
-    return <span className={cn(className, "font-sans")}>{end.days}</span>;
+    return (
+      <span className={cn(className, "font-sans")} data-slot="phase-when">
+        {end.days}
+      </span>
+    );
   }
 
   const date = formatPlanDate(end.isoDate, { month: end.month });
 
   return (
-    <span className={cn("font-mono tabular-nums", className)}>
+    <span className={cn("font-mono tabular-nums", className)} data-slot="phase-when">
       <span aria-hidden="true">{end.estimate ? t("~{date}", { date }) : date}</span>
       <span className="sr-only">
         {end.estimate

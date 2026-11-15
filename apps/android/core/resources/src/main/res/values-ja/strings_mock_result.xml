@@ -94,6 +94,7 @@
   "mock_result_scale_score": "6b80f0fafd0d3fe539f2dfc1c2452c2ac21802f4df5030e52243b5db0acb7fe8",
   "mock_result_scale_score_named": "80917c57a253ad553fd50a994f5ae74e992fa4ee135c8d262695fe41881f869b",
   "mock_result_see_answers": "50aa5ac9cd3f8944eb6655ebe7491c3d3460e9dcd089bc4947c1dfd046b83db0",
+  "mock_result_see_details": "0760208e5e2926c3a3e8899632ab654e7997c3083fcc5e44b5b48181034c642e",
   "mock_result_see_feedback": "c7bfac73db08170b9bdc26a8b8972961f5a3618b8b8a1da68e96b4fda06af0f7",
   "mock_result_short_points": "b46b15d7a777333d9414d082b38f286f01939f6859c3e833a42b2f60da2d4c20",
   "mock_result_short_points_decimal": "d34261c33a0f531f4bb8a6d86129993fc676f1c2eca202c389f3a49f5849a03e",
@@ -144,8 +145,9 @@
     <string name="mock_result_every_minimum">この模試では、すべての最低基準を満たしました。</string>
     <!-- %1$s is the subject the learner did best in, %2$s the one they did worst in. -->
     <string name="mock_result_strongest">いちばんよくできたのは%1$sです。%2$sの学習に力を入れてください。</string>
-    <!-- A small button under the result that opens its details. -->
+    <!-- The title of the sheet with a mock result's details. -->
     <string name="mock_result_details">詳細</string>
+    <string name="mock_result_see_details">詳細を見る</string>
     <!-- A small button under the result that opens the questions to review. -->
     <string name="mock_result_see_answers">解答を見る</string>
     <!-- A section in the result's details: how many answers were right, wrong and blank. -->

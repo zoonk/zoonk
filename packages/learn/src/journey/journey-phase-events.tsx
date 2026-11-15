@@ -34,9 +34,15 @@ export function PathRowBody({
   value?: React.ReactNode;
 }) {
   return (
-    <span className={PATH_ROW_BODY_CLASS}>
-      <span className="flex min-w-0 flex-col">{children}</span>
-      {value}
+    <span className={PATH_ROW_BODY_CLASS} data-slot="path-row-body">
+      <span className="flex min-w-0 flex-col text-pretty" data-slot="path-row-words">
+        {children}
+      </span>
+      {value && (
+        <span className="flex" data-slot="path-row-value">
+          {value}
+        </span>
+      )}
     </span>
   );
 }
@@ -48,7 +54,7 @@ const EVENT_DATE_CLASS = "text-muted-foreground text-xs";
 function EventRow({ children, href }: { children: React.ReactNode; href: string | null }) {
   if (!href) {
     return (
-      <div className={PATH_ROW_CLASS}>
+      <div className={PATH_ROW_CLASS} data-slot="path-row">
         {children}
         <ListRowChevronSpace />
       </div>
@@ -56,20 +62,17 @@ function EventRow({ children, href }: { children: React.ReactNode; href: string 
   }
 
   return (
-    <LearnLink className={EVENT_ROW_CLASS} href={href}>
+    <LearnLink className={EVENT_ROW_CLASS} data-slot="path-row" href={href}>
       {children}
       <RowChevron />
     </LearnLink>
   );
 }
 
-/** `brief` leaves out what a challenge is in a list of every phase's, where it would repeat. */
 export function CheckpointRow({
-  brief = false,
   checkpoint,
   links,
 }: {
-  brief?: boolean;
   checkpoint: PlanPhaseCheckpointView;
   links: JourneyPathLinks;
 }) {
@@ -82,7 +85,7 @@ export function CheckpointRow({
 
   return (
     <EventRow href={checkpoint.planItemId ? links.challenge(checkpoint.planItemId) : null}>
-      <span className={PATH_ROW_LEADING_CLASS}>
+      <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
         <Trickster className="size-4" view="face" />
       </span>
       <PathRowBody
@@ -100,7 +103,7 @@ export function CheckpointRow({
           {goal.kind === "language" ? t("Call") : t("The Trickster")}
         </span>
 
-        {!brief && !isDone && (
+        {!isDone && (
           <span className="text-muted-foreground text-xs text-pretty">
             {goal.kind === "language"
               ? t("A live call where you get your point across")
@@ -158,7 +161,7 @@ export function MockRow({
 
   return (
     <EventRow href={href}>
-      <span className={PATH_ROW_LEADING_CLASS}>
+      <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
         <KindMark kind="mock" />
       </span>
       <PathRowBody value={<PlanDateText className={EVENT_DATE_CLASS} isoDate={date} />}>

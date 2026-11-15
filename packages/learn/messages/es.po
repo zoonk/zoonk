@@ -341,6 +341,16 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "Termina para ver cómo te fue."
 
+#: src/_components/finish-sentence.ts
+msgctxt "XhpWxQ"
+msgid "At {time} a day, you reach {level} around {month}."
+msgstr "Con {time} al día, alcanzas el nivel {level} hacia {month}."
+
+#: src/_components/finish-sentence.ts
+msgctxt "6Due7K"
+msgid "You finish around {month}."
+msgstr "Terminas aproximadamente en {month}."
+
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
 msgid "Take a short break, then try again."
@@ -801,16 +811,6 @@ msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your dat
 msgstr "{dateKind, select, month {El mes que elegiste, {date}, ya pasó.} other {La fecha que elegiste, {date}, ya pasó.}}"
 
 #: src/_components/time-answer-lines.tsx
-msgctxt "qQDZCf"
-msgid "At {time} a day, you reach {level} around <date>{month}</date>."
-msgstr "Con {time} al día, llegas a {level} hacia <date>{month}</date>."
-
-#: src/_components/time-answer-lines.tsx
-msgctxt "lzWfsi"
-msgid "You finish around <date>{month}</date>."
-msgstr "Terminas alrededor de <date>{month}</date>."
-
-#: src/_components/time-answer-lines.tsx
 msgctxt "wRhIPZ"
 msgid "We can't estimate an end date. Try more time or more study days."
 msgstr "No podemos estimar cuándo terminarás. Prueba con más tiempo o más días de estudio."
@@ -970,6 +970,18 @@ msgstr "Correcto, revisa la ortografía"
 msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "Esta vez no comprobamos tu respuesta"
+
+#. Why a switch for a different study time on weekends is off: no weekend day is a study day.
+#: src/_components/weekend-time.tsx
+msgctxt "MuKIuz"
+msgid "Add Saturday or Sunday to your study days."
+msgstr "Agrega el sábado o el domingo a tus días de estudio."
+
+#. Why a switch for a different study time on weekends is off: only weekend days are study days.
+#: src/_components/weekend-time.tsx
+msgctxt "dQytAa"
+msgid "Add a weekday to your study days."
+msgstr "Agrega un día entre semana a tus días de estudio."
 
 #. A switch to study a different amount of time a day on weekends.
 #: src/_components/weekend-time.tsx
@@ -4947,11 +4959,6 @@ msgid "Answer them and we'll plan every day until you reach your goal."
 msgstr "Respóndelas y planearemos cada día hasta que alcances tu objetivo."
 
 #: src/journey/journey-planless.tsx
-msgctxt "3X96t0"
-msgid "{goal} · Building your plan"
-msgstr "{goal} · Preparando tu plan"
-
-#: src/journey/journey-planless.tsx
 msgctxt "vKk5P_"
 msgid "It usually takes a minute or two. Your plan opens here as soon as it's ready."
 msgstr "Suele tardar uno o dos minutos. Tu plan se abrirá aquí en cuanto esté listo."
@@ -8248,6 +8255,11 @@ msgid "By topic"
 msgstr "Por tema"
 
 #: src/mock/mock-result-details.tsx
+msgctxt "RQfEXO"
+msgid "See details"
+msgstr "Ver detalles"
+
+#: src/mock/mock-result-details.tsx
 msgctxt "2mUitd"
 msgid "Answers"
 msgstr "Respuestas"
@@ -8891,9 +8903,9 @@ msgid "Exam"
 msgstr "Examen"
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "rsoIT2"
-msgid "Learn a topic"
-msgstr "Aprender sobre un tema"
+msgctxt "UdtpV7"
+msgid "Topic"
+msgstr "Tema"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "79lLl-"
@@ -9819,7 +9831,6 @@ msgid "{days, plural, one {About # day} other {About # days}}"
 msgstr "{days, plural, one {Aproximadamente # día} other {Aproximadamente # días}}"
 
 #: src/onboarding/steps/reveal-readouts.tsx
-#: src/onboarding/steps/reveal-week.tsx
 msgctxt "UA5qaX"
 msgid "{days, plural, one {# day} other {# days}}"
 msgstr "{days, plural, one {# día} other {# días}}"
@@ -9856,6 +9867,11 @@ msgstr "Día de descanso"
 msgctxt "tWAtPK"
 msgid "Your first week"
 msgstr "Tu primera semana"
+
+#: src/onboarding/steps/reveal-week.tsx
+msgctxt "V9hgFL"
+msgid "{days, plural, one {# study day} other {# study days}}"
+msgstr "{days, plural, one {# día de estudio} other {# días de estudio}}"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "_1P3JX"
@@ -10452,11 +10468,6 @@ msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "Ajustar tu plan"
 
-#: src/plan/plan-finish.tsx
-msgctxt "6Due7K"
-msgid "You finish around {month}."
-msgstr "Terminas aproximadamente en {month}."
-
 #: src/plan/plan-fit-suggestion.tsx
 msgctxt "ylM0GM"
 msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
@@ -10573,6 +10584,11 @@ msgstr "Con {time} al día cubres todo"
 msgctxt "tODRiS"
 msgid "Study everything"
 msgstr "Estudiar todo"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "hZ68v2"
+msgid "Keep studying, or archive this goal?"
+msgstr "¿Seguir estudiando o archivar este objetivo?"
 
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "PpW8Dz"
