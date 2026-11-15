@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="4.933dp"
+    android:height="16dp"
+    android:viewportWidth="296"
+    android:viewportHeight="960"
+    android:autoMirrored="true">
+  <!-- Material Symbols' chevron_right cut to its ink (320 to 616 of 960), so a row's end slot puts the ink on its edge. -->
+  <group android:translateX="-320">
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M504,480L320,296L376,240L616,480L376,720L320,664L504,480Z"/>
+  </group>
+</vector>

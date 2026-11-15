@@ -103,6 +103,7 @@ private fun FinishRow(
     ListRow(
         headline = { Text(page.goal.displayName, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         onClick = if (links.hasExam) links::exam else null,
+        chevronSpace = true,
         leading = { FlagMark() },
         supporting = if (finish == null && page.isExam) ({ Text(stringResource(R.string.plan_date_to_be_confirmed)) }) else null,
         meta = finish?.let { { TrailingText(it) } },
@@ -118,6 +119,7 @@ private fun AfterExamRow(
     val count = phase.mocks.count.toInt()
 
     ListRow(
+        chevronSpace = true,
         headline = { Text(phaseName(phase, page.mocksRequirePlus)) },
         leading = { StatusMark(MarkStatus.Todo) },
         supporting = if (count > 0) ({ Text(mocksBeforeNextExam(page, count)) }) else null,

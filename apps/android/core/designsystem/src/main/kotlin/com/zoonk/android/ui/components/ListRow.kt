@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -7,11 +8,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -21,13 +24,11 @@ import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
@@ -62,7 +63,8 @@ import kotlin.math.roundToInt
  * spans the list. [verticalAlignment] `Top` puts the words and the row's end at its top (main's
  * `items-start`). A row that opens a page ends with main's chevron; one
  * that acts in place (a "Show more", logging out) passes [chevron] `false`, and one whose [trailing]
- * is a value rather than a control passes `true`. [onLongClick] opens what else a tappable row offers,
+ * is a value rather than a control passes `true`; a row that can't open in a list whose other rows end with
+ * a glyph passes [chevronSpace], so its value ends where theirs do (main's `ListRowChevronSpace`). [onLongClick] opens what else a tappable row offers,
  * such as a menu, which TalkBack names with [onLongClickLabel]. The mark is centered on the words beside one
  * or two lines (the title however it wraps, a value moved under it, each description) and on the first line
  * beside three or more (E5); a lead that is text ([leadOnFirstLine], a number or a date) is always on the first.
@@ -88,6 +90,7 @@ fun ListRow(
     trailing: (@Composable () -> Unit)? = null,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     chevron: Boolean = onClick != null && expanded == null && trailing == null,
+    chevronSpace: Boolean = false,
 ) {
     val openWords = expanded?.let { stringResource(if (it) R.string.disclosure_expanded else R.string.disclosure_collapsed) }
     val state =
@@ -95,6 +98,7 @@ fun ListRow(
             stateDescription != null && openWords != null -> stringResource(R.string.list_row_states, stateDescription, openWords)
             else -> stateDescription ?: openWords
         }
+    val keepsSlot = chevronSpace && !chevron && expanded == null && trailing == null
     val ink = MaterialTheme.colorScheme.onSurface
     val quiet = MaterialTheme.colorScheme.onSurfaceVariant
     val interaction = remember { MutableInteractionSource() }
@@ -102,8 +106,12 @@ fun ListRow(
     Row(
         modifier =
             modifier
-                .layoutPart(LayoutPart.LIST, LayoutPart.Part.Row, endInset = LIST_ITEM_INSET)
-                .fillMaxWidth()
+                .layoutPart(
+                    LayoutPart.LIST,
+                    LayoutPart.Part.Row,
+                    // A row keeping an empty end slot ends its value where the slot starts.
+                    endInset = if (keepsSlot) LIST_ITEM_INSET + END_SLOT + LEADING_GAP else LIST_ITEM_INSET,
+                ).fillMaxWidth()
                 .heightIn(min = MIN_HEIGHT)
                 // The whole row takes the tap; its ripple stays inside the highlight's rounded shape.
                 .then(
@@ -140,11 +148,10 @@ fun ListRow(
         verticalAlignment = verticalAlignment,
     ) {
         val parts = remember { RowParts() }
-        if (meta == null) SideEffect { parts.stacked = false }
-        if (supporting == null) SideEffect { parts.descriptions = 0 }
-        FirstLineMark(
+        RowContent(
+            parts = parts,
             firstLine = MaterialTheme.typography.titleSmall,
-            onFirstLine = { leadOnFirstLine || parts.lines >= THREE_LINES },
+            leadOnFirstLine = leadOnFirstLine,
             modifier = Modifier.weight(1f),
             mark =
                 leading?.let { mark ->
@@ -161,66 +168,78 @@ fun ListRow(
                         }
                     }
                 },
-        ) {
-            Column {
+            title = {
                 CompositionLocalProvider(LocalContentColor provides ink) {
                     ProvideTextStyle(MaterialTheme.typography.titleSmall) {
-                        if (meta == null) {
-                            Column(
-                                Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Label),
-                                verticalArrangement = Arrangement.spacedBy(1.dp),
-                            ) {
-                                headline()
-                            }
-                        } else {
-                            TitleAndMeta(
-                                parts = parts,
-                                metaBusy = busy && !chevron,
-                                meta = {
-                                    CompositionLocalProvider(LocalContentColor provides quiet) {
-                                        ProvideTextStyle(MaterialTheme.zoonkType.data, meta)
-                                    }
-                                },
-                            ) {
-                                headline()
+                        Column(
+                            Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Label),
+                            verticalArrangement = Arrangement.spacedBy(1.dp),
+                        ) { headline() }
+                    }
+                }
+            },
+            value =
+                meta?.let { value ->
+                    {
+                        BusyContent(busy && !chevron) {
+                            CompositionLocalProvider(LocalContentColor provides quiet) {
+                                ProvideTextStyle(MaterialTheme.zoonkType.data) {
+                                    Row(
+                                        Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Value),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) { value() }
+                                }
                             }
                         }
                     }
-                }
-                supporting?.let {
-                    CompositionLocalProvider(LocalContentColor provides quiet) {
-                        ProvideTextStyle(MaterialTheme.typography.bodySmall) {
-                            Descriptions(parts, Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Note), it)
+                },
+            descriptions =
+                supporting?.let { lines ->
+                    {
+                        CompositionLocalProvider(LocalContentColor provides quiet) {
+                            ProvideTextStyle(MaterialTheme.typography.bodySmall) {
+                                Descriptions(parts, Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Note), lines)
+                            }
                         }
                     }
-                }
-            }
-        }
+                },
+        )
 
-        expanded?.let {
-            Icon(
-                painterResource(R.drawable.ic_expand_more),
-                contentDescription = null,
-                modifier = Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.End).rotate(if (it) 180f else 0f),
-                tint = quiet,
-            )
-        }
+        expanded?.let { open -> EndGlyph(if (open) R.drawable.ic_row_fold_open else R.drawable.ic_row_fold, quiet) }
 
         trailing?.let { Box(Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.End)) { it() } }
 
-        if (chevron) BusyContent(busy) { ListRowChevron() }
+        when {
+            chevron -> BusyContent(busy) { ListRowChevron() }
+            keepsSlot -> Spacer(Modifier.width(END_SLOT))
+        }
     }
 }
 
-/** Main's `ListRowChevron`: what a row that opens a page ends with, quieter than its words. */
+/** Main's `RowChevron`: what a row that opens a page ends with, quieter than its words, its ink on the end edge. */
 @Composable
 fun ListRowChevron() {
-    Icon(
-        painterResource(R.drawable.ic_chevron_right),
-        contentDescription = null,
-        modifier = Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.End).size(16.dp),
-        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-    )
+    EndGlyph(R.drawable.ic_row_chevron, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
+}
+
+/**
+ * A row's end glyph in main's 16dp slot, its ink on the slot's end: the drawables are cut to their ink, so
+ * the value before a chevron ends where the value before a fold arrow, or before an empty slot, does.
+ */
+@Composable
+private fun EndGlyph(
+    @DrawableRes glyph: Int,
+    tint: Color,
+) {
+    Box(Modifier.width(END_SLOT), contentAlignment = Alignment.CenterEnd) {
+        Icon(
+            painterResource(glyph),
+            contentDescription = null,
+            modifier = Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.End),
+            tint = tint,
+        )
+    }
 }
 
 /** Where a row's words start, past its mark, for what opens under a row to line up with them. */
@@ -238,52 +257,78 @@ fun MarkedLine(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    FirstLineMark(
+    RowContent(
+        parts = remember { RowParts() },
         firstLine = firstLine,
-        onFirstLine = { true },
+        leadOnFirstLine = true,
         modifier = modifier,
         mark = { Box(Modifier.widthIn(min = markSize()), contentAlignment = Alignment.Center) { mark() } },
-        content = content,
+        title = content,
     )
 }
 
 /**
- * A mark beside words, where E5 puts it: centered on the words, or, when [onFirstLine] says so (a list row of
- * three lines or more, a lead), centered on their first line, a line as tall as [firstLine]'s at this text
- * size. The words start [LEADING_GAP] past the mark.
+ * A row's mark, title, value and descriptions, placed as E5 and E6 say. The value sits at the end, past
+ * [VALUE_GAP], or moves under the title when the title would get too little room (half the width, or what
+ * it needs). Beside one or two lines (the title however it wraps, a value moved under it, each description)
+ * the mark is centered on the words; beside three or more, or as a text lead ([leadOnFirstLine]), it is
+ * centered on the first line, a line as tall as [firstLine]'s at this text size. A value beside the words
+ * sits on the row's center.
  */
 @Composable
-private fun FirstLineMark(
+private fun RowContent(
+    parts: RowParts,
     firstLine: TextStyle,
-    onFirstLine: () -> Boolean,
-    modifier: Modifier = Modifier,
+    leadOnFirstLine: Boolean,
+    modifier: Modifier,
     mark: (@Composable () -> Unit)?,
-    content: @Composable () -> Unit,
+    title: @Composable () -> Unit,
+    value: (@Composable () -> Unit)? = null,
+    descriptions: (@Composable () -> Unit)? = null,
 ) {
-    if (mark == null) {
-        Box(modifier) { content() }
-        return
-    }
     val measurer = rememberTextMeasurer()
     // As the words' own style lays a line out at this text size, nonlinear scaling included.
     val line = remember(firstLine, measurer) { measurer.measure("A", firstLine, maxLines = 1).size.height }
-    Layout(contents = listOf(mark, content), modifier = modifier) { (marks, words), constraints ->
-        val gap = LEADING_GAP.roundToPx()
-        val markPlaceable = marks.first().measure(constraints.copy(minWidth = 0, minHeight = 0))
-        val wordsWidth = (constraints.maxWidth - markPlaceable.width - gap).coerceAtLeast(0)
-        val wordsPlaceable = words.first().measure(constraints.copy(minWidth = wordsWidth, maxWidth = wordsWidth, minHeight = 0))
+    Layout(
+        contents = listOf(mark ?: {}, title, value ?: {}, descriptions ?: {}),
+        modifier = modifier,
+    ) { (marks, titles, values, notes), constraints ->
+        val loose = Constraints(maxWidth = constraints.maxWidth)
+        val markPlaceable = marks.firstOrNull()?.measure(loose)
+        val wordsStart = markPlaceable?.let { it.width + LEADING_GAP.roundToPx() } ?: 0
+        val width = (constraints.maxWidth - wordsStart).coerceAtLeast(0)
+        val valuePlaceable = values.firstOrNull()?.measure(Constraints(maxWidth = width))?.takeIf { it.width > 0 }
+        val titleMeasurable = titles.first()
+        val room = width - (valuePlaceable?.let { it.width + VALUE_GAP.roundToPx() } ?: 0)
+        val beside = valuePlaceable == null || room >= minOf(titleMeasurable.maxIntrinsicWidth(Constraints.Infinity), width / 2)
+        val textWidth = if (beside) room.coerceAtLeast(0) else width
+        val titlePlaceable = titleMeasurable.measure(Constraints(maxWidth = textWidth))
+        val notesPlaceable = notes.firstOrNull()?.measure(Constraints(maxWidth = textWidth))
+        if (notesPlaceable == null) parts.descriptions = 0
+        val under = if (beside) null else valuePlaceable
+        parts.stacked = under != null
+        val wordsHeight = titlePlaceable.height + (under?.height ?: 0) + (notesPlaceable?.height ?: 0)
+        val markHeight = markPlaceable?.height ?: 0
         // The words' measuring has just counted their lines.
-        val middle = if (onFirstLine()) line else wordsPlaceable.height
+        val middle = if (markPlaceable != null && (leadOnFirstLine || parts.lines >= THREE_LINES)) line else wordsHeight
         // Whichever reaches higher above the middle sets the top.
-        val markTop = ((middle - markPlaceable.height) / 2f).coerceAtLeast(0f).roundToInt()
-        val wordsTop = ((markPlaceable.height - middle) / 2f).coerceAtLeast(0f).roundToInt()
-        val drawn = maxOf(markTop + markPlaceable.height, wordsTop + wordsPlaceable.height)
+        val markTop = ((middle - markHeight) / 2f).coerceAtLeast(0f).roundToInt()
+        val wordsTop = ((markHeight - middle) / 2f).coerceAtLeast(0f).roundToInt()
+        val drawn = maxOf(markTop + markHeight, wordsTop + wordsHeight, if (beside) valuePlaceable?.height ?: 0 else 0)
         // Taller than what it draws (the row's touch height): the mark and words stay together in the middle.
         val height = maxOf(drawn, constraints.minHeight)
         val inset = (height - drawn) / 2
         layout(constraints.maxWidth, height) {
-            markPlaceable.placeRelative(0, inset + markTop)
-            wordsPlaceable.placeRelative(markPlaceable.width + gap, inset + wordsTop)
+            markPlaceable?.placeRelative(0, inset + markTop)
+            var y = inset + wordsTop
+            titlePlaceable.placeRelative(wordsStart, y)
+            y += titlePlaceable.height
+            under?.let {
+                it.placeRelative(wordsStart, y)
+                y += it.height
+            }
+            notesPlaceable?.placeRelative(wordsStart, y)
+            if (beside) valuePlaceable?.let { it.placeRelative(constraints.maxWidth - it.width, (height - it.height) / 2) }
         }
     }
 }
@@ -321,53 +366,6 @@ private fun Descriptions(
     }
 }
 
-@Composable
-private fun TitleAndMeta(
-    parts: RowParts,
-    metaBusy: Boolean,
-    meta: @Composable () -> Unit,
-    title: @Composable () -> Unit,
-) {
-    Layout(
-        contents =
-            listOf({
-                Column(Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Label)) {
-                    title()
-                }
-            }, {
-                BusyContent(metaBusy) {
-                    Row(
-                        Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Value),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) { meta() }
-                }
-            }),
-    ) { (titles, metas), constraints ->
-        val width = constraints.maxWidth
-        val gap = 12.dp.roundToPx()
-        val metaPlaceable = metas.first().measure(Constraints(maxWidth = width))
-        val titleMeasurable = titles.first()
-        val room = width - metaPlaceable.width - if (metaPlaceable.width > 0) gap else 0
-        val beside = metaPlaceable.width == 0 || room >= minOf(titleMeasurable.maxIntrinsicWidth(Constraints.Infinity), width / 2)
-        parts.stacked = !beside
-        if (beside) {
-            val titlePlaceable = titleMeasurable.measure(Constraints(maxWidth = room.coerceAtLeast(0)))
-            val height = maxOf(titlePlaceable.height, metaPlaceable.height)
-            layout(width, height) {
-                titlePlaceable.placeRelative(0, (height - titlePlaceable.height) / 2)
-                metaPlaceable.placeRelative(width - metaPlaceable.width, (height - metaPlaceable.height) / 2)
-            }
-        } else {
-            val titlePlaceable = titleMeasurable.measure(Constraints(maxWidth = width))
-            layout(width, titlePlaceable.height + metaPlaceable.height) {
-                titlePlaceable.placeRelative(0, 0)
-                metaPlaceable.placeRelative(0, titlePlaceable.height)
-            }
-        }
-    }
-}
-
 /** Rows reach past their column's margin by [amount] on each side, so their words line up with the headings above them. */
 fun Modifier.bleed(amount: Dp): Modifier =
     layout { measurable, constraints ->
@@ -381,6 +379,12 @@ fun Modifier.bleed(amount: Dp): Modifier =
         val placeable = measurable.measure(wide)
         layout(placeable.width - extra, placeable.height) { placeable.placeRelative(-amount.roundToPx(), 0) }
     }
+
+/** Main's 16dp slot for a row's end glyph, empty on a row that keeps the column ([chevronSpace]). */
+private val END_SLOT = 16.dp
+
+/** Main's `gap-3` between a row's title and the value at its end. */
+private val VALUE_GAP = 12.dp
 
 /** E5: beside three lines or more, a row's mark goes with the first. */
 private const val THREE_LINES = 3

@@ -1,0 +1,12 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="8dp"
+    android:height="16dp"
+    android:viewportWidth="480"
+    android:viewportHeight="960">
+  <!-- Material Symbols' expand_more cut to its ink (240 to 720 of 960), so a row's end slot puts the ink on its edge. -->
+  <group android:translateX="-240">
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M480,615L240,375L296,319L480,503L664,319L720,375L480,615Z"/>
+  </group>
+</vector>

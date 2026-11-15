@@ -172,6 +172,7 @@ private fun PhaseRow(
     val color = if (phase.state == PlanPhase.State.DONE) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
 
     ListRow(
+        chevronSpace = true,
         headline = {
             Text(
                 text = name,
@@ -527,6 +528,7 @@ internal fun CheckpointRow(
         )
 
     ListRow(
+        chevronSpace = true,
         headline = {
             Text(
                 text = challengeName(page),
@@ -567,6 +569,7 @@ internal fun MockRow(
     val minutes = funded?.minutes?.takeIf { it > 0 }
 
     ListRow(
+        chevronSpace = true,
         headline = { Text(stringResource(R.string.plan_mock_exam)) },
         onClick = onClick,
         leading = { KindMark(LearnKind.Mock) },
@@ -585,6 +588,7 @@ private fun FinishItem(
             ?: if (page.isExam) sameWords(stringResource(R.string.plan_date_to_be_confirmed)) else null
 
     ListRow(
+        chevronSpace = true,
         headline = { Text(page.goal.displayName) },
         onClick = if (links.hasExam) links::exam else null,
         leading = { FlagMark() },
