@@ -5,6 +5,7 @@ import { type UndatedEstimate } from "@zoonk/core/catalog/course-plan-example-co
 import { ROUTE_ROWS_CLASS, RouteMark, RouteTitle } from "@zoonk/learn/route-line";
 import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { cn } from "@zoonk/ui/lib/utils";
+import { roundToTotal } from "@zoonk/utils/apportion";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 
@@ -22,7 +23,7 @@ function renderBig(chunks: ReactNode) {
   );
 }
 
-/** Minutes stay exact until they're written, so the totals are the day's own time, never a sum of rounded rows. */
+/** The total is the day's own time, and each row its share of it, so the rows add up to the total over them. */
 async function FirstDay({
   chapterTitles,
   estimate,
@@ -33,11 +34,13 @@ async function FirstDay({
   const t = await getExtracted();
   const minutesText = await getMinutesFormatter();
 
+  const rowMinutes = roundToTotal(estimate.firstDay.map((lesson) => lesson.dayMinutes));
+
   const steps: DayListStep[] = estimate.firstDay.map((lesson, index) => ({
     detail: lesson.chapterId ? chapterTitles.get(lesson.chapterId) : undefined,
     id: lesson.lessonId,
     kind: "lesson",
-    minutes: lesson.dayMinutes,
+    minutes: rowMinutes[index] ?? 0,
     state: index === 0 ? "current" : "ahead",
     title: lesson.title,
   }));

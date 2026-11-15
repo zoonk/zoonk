@@ -140,7 +140,7 @@ function MoveDateLabel({ move }: { move: ReturnType<typeof useMoveDate> }) {
   const formatDate = useFormatIsoDate();
 
   return move.date
-    ? t("Move your date to {date}", { date: formatDate(move.date, "long") })
+    ? t("Move your date to {date}", { date: formatDate(move.date, "sentence") })
     : t("Move your date to cover everything");
 }
 

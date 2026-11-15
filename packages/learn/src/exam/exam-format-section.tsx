@@ -2,6 +2,7 @@
 
 import { type ExamFormatDay } from "@zoonk/core/exams/view/contract";
 import { cn } from "@zoonk/ui/lib/utils";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted, useFormatter } from "next-intl";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import {
@@ -43,7 +44,7 @@ function useFormatDetail(format: readonly ExamFormatDay[]): string | null {
       ? t("{count, plural, one {# question} other {# questions}}", { count: questions })
       : null;
 
-  return [count, ...written].filter(Boolean).join(" · ") || null;
+  return [count, ...written].filter(Boolean).join(FACT_SEPARATOR) || null;
 }
 
 function useDayParts() {

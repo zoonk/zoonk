@@ -38,10 +38,11 @@ export const pt: ExampleSet = {
     goal: "passar no concurso do INSS",
     headline: "Passar no concurso",
     mock: {
-      details: "120 questões · 3 h 30 min",
       firm: ["Concordância verbal", "Direitos fundamentais", "Raciocínio lógico"],
+      minutes: 210,
       mistakes: 9,
       name: "Técnico do INSS",
+      questions: "120 questões",
       review: ["Direito Previdenciário", "Atos administrativos"],
       scores: [
         { label: "Conhecimentos básicos", range: "68–76%" },

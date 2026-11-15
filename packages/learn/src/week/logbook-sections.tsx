@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@zoonk/ui/lib/utils";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import {
   ArrowRightIcon,
@@ -16,19 +15,22 @@ import { KindMark, type LearnKind } from "../_components/kind-tile";
 import { StatTile, StatTiles } from "../_components/stat-tile";
 import { DoneMark } from "../_components/status-mark";
 import { StepDetail, StepHeader, StepRow, StepRows, StepTitle } from "../_components/step-card";
+import {
+  WEEK_DAY_CLASS,
+  WEEK_ROW_CLASS,
+  WeekDayLetter,
+  WeekDayLetterSkeleton,
+} from "../_components/week-row";
+import { toIsoDay, useMomentDays } from "../_utils/iso-date";
 import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
 import { useLogbook } from "./logbook-context";
 
 const DAYS_PER_WEEK = 7;
-/** The week's days spread across the column, as Today's and the Plan's weeks do. */
-const RINGS_CLASS = "flex w-full justify-between";
-const DAY_CLASS = "flex flex-col items-center gap-1.5";
-const DAY_LETTER_CLASS = "text-2xs font-mono uppercase";
 
 export function WeekRings() {
   const t = useExtracted();
-  const format = useFormatter();
+  const { today } = useMomentDays();
   const { recap } = useLogbook();
   const studied = new Set(recap.week.daysStudied.map((day) => day.getTime()));
 
@@ -38,7 +40,7 @@ export function WeekRings() {
         "{count, plural, =0 {# days studied} one {# day studied} other {# days studied}}",
         { count: studied.size },
       )}
-      className={RINGS_CLASS}
+      className={WEEK_ROW_CLASS}
       data-slot="week-rings"
       role="img"
     >
@@ -47,11 +49,9 @@ export function WeekRings() {
         const isStudied = studied.has(day.getTime());
 
         return (
-          <span className={DAY_CLASS} key={day.toISOString()}>
+          <span className={WEEK_DAY_CLASS} key={day.toISOString()}>
             <GoalRing share={isStudied ? 1 : 0}>{isStudied && <DoneMark />}</GoalRing>
-            <span className={cn(DAY_LETTER_CLASS, isStudied ? "text-foreground" : "text-faint")}>
-              {format.dateTime(day, { timeZone: "UTC", weekday: "narrow" })}
-            </span>
+            <WeekDayLetter date={day} isToday={toIsoDay(day) === today} />
           </span>
         );
       })}
@@ -62,12 +62,12 @@ export function WeekRings() {
 /** The week's empty rings with a blank line under each, at the loaded row's size. */
 export function WeekRingsSkeleton() {
   return (
-    <div aria-hidden="true" className={RINGS_CLASS}>
+    <div aria-hidden="true" className={WEEK_ROW_CLASS}>
       {Array.from({ length: DAYS_PER_WEEK }, (_, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- Static placeholders.
-        <span className={DAY_CLASS} key={index}>
+        <span className={WEEK_DAY_CLASS} key={index}>
           <GoalRing share={0} />
-          <span className={DAY_LETTER_CLASS}>{"\u00A0"}</span>
+          <WeekDayLetterSkeleton />
         </span>
       ))}
     </div>

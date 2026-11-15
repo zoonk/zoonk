@@ -2,6 +2,7 @@ import { ChapterLessonRows } from "@/components/public/chapter-lesson-rows";
 import { type LibraryChapterRoute } from "@/data/catalog/resolve-catalog-route";
 import { getTotalDurationLabel } from "@/lib/public/public-labels";
 import { PageSection } from "@zoonk/learn/page";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { getExtracted } from "next-intl/server";
 
 export async function ChapterLessons({
@@ -33,7 +34,7 @@ export async function ChapterLessons({
           {t("Lessons")}
         </h2>
         <span className="text-muted-foreground font-mono text-xs tabular-nums">
-          {facts.join(" · ")}
+          {facts.join(FACT_SEPARATOR)}
         </span>
       </div>
 

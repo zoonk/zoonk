@@ -22,8 +22,8 @@ export function useNoticeDayText() {
 
   return ({ date, estimated }: NoticeDay): string =>
     estimated
-      ? t("The exam's likely date is now {date}.", { date: formatDate(date, "long") })
-      : t("The exam is on {date}.", { date: formatDate(date, "long") });
+      ? t("The exam's likely date is now {date}.", { date: formatDate(date, "sentence") })
+      : t("The exam is on {date}.", { date: formatDate(date, "sentence") });
 }
 
 export function NoSittingWords({
@@ -40,7 +40,11 @@ export function NoSittingWords({
 
   return (
     <>
-      <span>{t("No exam date in {month}", { month: formatDate(noSitting.month, "month") })}</span>
+      <span>
+        {t("No exam date in {month}", {
+          month: formatDate(noSitting.month, "sentenceMonth", { year: "always" }),
+        })}
+      </span>
       {noSitting.closest.map((date) => (
         <Fragment key={date}>
           <span aria-hidden="true">{" · "}</span>
@@ -51,7 +55,7 @@ export function NoSittingWords({
             type="button"
             variant="link"
           >
-            {t("Use {date}", { date: formatDate(date, "long") })}
+            {t("Use {date}", { date: formatDate(date, "sentence") })}
           </Button>
         </Fragment>
       ))}
@@ -155,7 +159,9 @@ function NoSittingCard({
 
       <NoticeCardContent>
         <NoticeCardTitle>
-          {t("No exam date in {month}", { month: formatDate(noSitting.month, "month") })}
+          {t("No exam date in {month}", {
+            month: formatDate(noSitting.month, "sentenceMonth", { year: "always" }),
+          })}
         </NoticeCardTitle>
         <form className="contents">
           <NoticeCardActions>
@@ -169,7 +175,7 @@ function NoSittingCard({
                 type="submit"
                 variant="secondary"
               >
-                {t("Use {date}", { date: formatDate(date, "long") })}
+                {t("Use {date}", { date: formatDate(date, "sentence") })}
               </Button>
             ))}
           </NoticeCardActions>

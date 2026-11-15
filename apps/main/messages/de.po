@@ -1266,8 +1266,8 @@ msgid "{username} is already taken"
 msgstr "{username} ist bereits vergeben"
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "wubfpa"
-msgid "3-30 characters. Letters a–z, numbers, and underscores only."
+msgctxt "dJOFyo"
+msgid "3–30 characters. Letters a–z, numbers, and underscores only."
 msgstr "3–30 Zeichen. Nur Buchstaben a–z, Ziffern und Unterstriche."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -2903,14 +2903,14 @@ msgid "After this chapter"
 msgstr "Nach diesem Kapitel"
 
 #: src/components/catalog/course-exam-date.tsx
-msgctxt "U-M99k"
-msgid "Exam around {dates} · {days, plural, =0 {today} one {about # day left} other {about # days left}}"
-msgstr "Prüfung etwa am {dates} · {days, plural, =0 {heute} one {noch etwa # Tag} other {noch etwa # Tage}}"
+msgctxt "-fjjUM"
+msgid "Exam around {dates}"
+msgstr "Prüfung etwa am {dates}"
 
 #: src/components/catalog/course-exam-date.tsx
-msgctxt "_of7g2"
-msgid "Exam on {dates} · {days, plural, =0 {today} one {# day left} other {# days left}}"
-msgstr "Prüfung am {dates} · {days, plural, =0 {heute} one {noch # Tag} other {noch # Tage}}"
+msgctxt "xaLkUA"
+msgid "Exam on {dates}"
+msgstr "Prüfung am {dates}"
 
 #. Heading over the lessons a new learner would study on the first day of this course.
 #: src/components/catalog/course-plan-window.tsx

@@ -29,9 +29,12 @@ type ExamExample = (DatedExamGoal | UndatedExamGoal) & {
   headline: string;
   mock: {
     firm: readonly string[];
-    details?: string;
+    /** How long the real exam runs, when the country's exam has one length. */
+    minutes?: number;
     mistakes: number;
     name: string;
+    /** How many questions it has, in the page's own words: "98 questions". */
+    questions?: string;
     review: readonly string[];
     scores: readonly [MockScore, ...MockScore[]];
   };

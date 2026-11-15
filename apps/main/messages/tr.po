@@ -1266,9 +1266,9 @@ msgid "{username} is already taken"
 msgstr "{username} zaten kullanılıyor"
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "wubfpa"
-msgid "3-30 characters. Letters a–z, numbers, and underscores only."
-msgstr "3-30 karakter. Yalnızca a–z harfleri, rakamlar ve alt çizgi kullanılabilir."
+msgctxt "dJOFyo"
+msgid "3–30 characters. Letters a–z, numbers, and underscores only."
+msgstr "3–30 karakter. Yalnızca a–z harfleri, rakamlar ve alt çizgi kullanılabilir."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "GrnZDN"
@@ -2903,14 +2903,14 @@ msgid "After this chapter"
 msgstr "Bu üniteden sonra"
 
 #: src/components/catalog/course-exam-date.tsx
-msgctxt "U-M99k"
-msgid "Exam around {dates} · {days, plural, =0 {today} one {about # day left} other {about # days left}}"
-msgstr "Sınav {dates} civarında · {days, plural, =0 {bugün} other {yaklaşık # gün kaldı}}"
+msgctxt "-fjjUM"
+msgid "Exam around {dates}"
+msgstr "Sınav {dates} civarında"
 
 #: src/components/catalog/course-exam-date.tsx
-msgctxt "_of7g2"
-msgid "Exam on {dates} · {days, plural, =0 {today} one {# day left} other {# days left}}"
-msgstr "Sınav {dates} tarihinde · {days, plural, =0 {bugün} other {# gün kaldı}}"
+msgctxt "xaLkUA"
+msgid "Exam on {dates}"
+msgstr "Sınav {dates} tarihinde"
 
 #. Heading over the lessons a new learner would study on the first day of this course.
 #: src/components/catalog/course-plan-window.tsx

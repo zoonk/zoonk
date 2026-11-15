@@ -3,6 +3,7 @@
 import { type SavedMindMapView } from "@zoonk/core/mind-maps/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindIcon } from "../_components/kind-tile";
@@ -76,7 +77,7 @@ export function LessonGroupRow({ group, study }: { group: LessonGroupRowData; st
     >
       <ListRowContent>
         <ListRowTitle>{group.title}</ListRowTitle>
-        <ListRowDescription>{facts.join(" · ")}</ListRowDescription>
+        <ListRowDescription>{facts.join(FACT_SEPARATOR)}</ListRowDescription>
       </ListRowContent>
     </ListRowLink>
   );

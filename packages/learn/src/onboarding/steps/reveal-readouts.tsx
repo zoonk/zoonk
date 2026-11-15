@@ -2,8 +2,9 @@
 
 import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
+import { getIsoDateParts } from "@zoonk/utils/date-format";
 import { useExtracted } from "next-intl";
-import { daysUntilIsoDate, isoDateToUtc, useFormatIsoDate } from "../../_utils/iso-date";
+import { daysUntilIsoDate, useFormatIsoDate, useIsoToday } from "../../_utils/iso-date";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";
 import { usePlanScreen } from "../../plan/plan-context";
@@ -53,12 +54,8 @@ function TimeReadout() {
 /** The month reads first and big, its year small, in the locale's order. */
 function MonthYear({ isoDate }: { isoDate: string }) {
   const locale = useAppLocale();
-
-  const parts = new Intl.DateTimeFormat(locale, {
-    month: "short",
-    timeZone: "UTC",
-    year: "numeric",
-  }).formatToParts(isoDateToUtc(isoDate));
+  const today = useIsoToday();
+  const parts = getIsoDateParts({ isoDate, locale, role: "rowMonth", today, year: "always" });
 
   return parts.map((part, index) =>
     part.type === "year" ? (
@@ -106,7 +103,7 @@ function FinishReadout() {
         description:
           'Under the level a language plan reaches: when. {month} is a month and year, like "Nov 2027".',
         message: "by {month}",
-        values: { month: formatDate(plan.estimate.endDate, "month") },
+        values: { month: formatDate(plan.estimate.endDate, "sentenceMonth", { year: "always" }) },
       })}
     >
       {aim}

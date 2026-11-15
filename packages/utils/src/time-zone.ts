@@ -91,3 +91,18 @@ export function isValidTimeZone(timeZone: string): boolean {
 export function getLocalTimeZone(): string {
   return new Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 }
+
+/** A zone as people call it ("Brasilia Time"), or its id when the language has no name for it. */
+export function getTimeZoneName({
+  locale,
+  timeZone,
+}: {
+  locale: string;
+  timeZone: string;
+}): string {
+  const name = new Intl.DateTimeFormat(locale, { timeZone, timeZoneName: "longGeneric" })
+    .formatToParts()
+    .find((part) => part.type === "timeZoneName");
+
+  return name?.value ?? timeZone;
+}

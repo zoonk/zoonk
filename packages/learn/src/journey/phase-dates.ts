@@ -12,7 +12,7 @@ type GoalKind = GoalView["kind"];
 
 type DatedPhase = Pick<
   PlanPhaseView,
-  "checkpoint" | "endDate" | "index" | "kind" | "short" | "state"
+  "checkpoint" | "endDate" | "index" | "kind" | "short" | "startDate" | "state"
 >;
 
 type DatedPlan = {
@@ -36,17 +36,18 @@ function isFarEstimate(plan: Pick<DatedPlan, "week">, isoDate: string): boolean 
   return daysBetween(plan.week.startDate, isoDate) > NEAR_ESTIMATE_DAYS;
 }
 
-/** A phase is behind the learner on its challenge's day, which can come after its last lesson. */
-function getPhaseLastDay({ checkpoint, endDate }: DatedPhase): string | null {
+/** The day of a challenge still ahead that comes after the phase's last lesson. */
+function getLaterChallengeDay({ checkpoint, endDate }: DatedPhase): string | null {
   const challengeDay = checkpoint?.state === "upcoming" ? checkpoint.date : null;
-  return challengeDay && endDate && challengeDay > endDate ? challengeDay : endDate;
+  return challengeDay && endDate && challengeDay > endDate ? challengeDay : null;
 }
 
 /**
  * The one date a phase is named by, wherever it shows: when it ends. A learning phase ends when
  * its lessons and challenge are done, so its end is an estimate while it's ahead, and while it's
- * current with its challenge (which has no booked day) still to come. A phase behind the learner
- * has none: its check says it.
+ * current with its challenge (which has no booked day) still to come. Any phase that ends on its
+ * challenge's day is an estimate too, as that day is wherever the challenge shows. A phase behind
+ * the learner has none: its check says it.
  */
 export function getPhaseEnd({
   phase,
@@ -63,7 +64,9 @@ export function getPhaseEnd({
     return null;
   }
 
-  const lastDay = getPhaseLastDay(phase);
+  const challengeDay = getLaterChallengeDay(phase);
+  // A phase is behind the learner on its challenge's day, which can come after its last lesson.
+  const lastDay = challengeDay ?? phase.endDate;
 
   if (!lastDay) {
     // A last phase without a day of its own ends with the plan.
@@ -77,9 +80,33 @@ export function getPhaseEnd({
 
   const learns = phase.kind === "learn" || phase.kind === "afterExam";
   const ahead = phase.state === "upcoming";
-  const estimate = learns && (ahead || phase.checkpoint?.state === "upcoming");
+
+  const estimate =
+    challengeDay !== null || (learns && (ahead || phase.checkpoint?.state === "upcoming"));
 
   return { estimate, isoDate: lastDay, month: estimate && ahead && isFarEstimate(plan, lastDay) };
+}
+
+/**
+ * When a phase starts, beside its end in a range. A phase ahead starts where the one before it
+ * ends, so its start is an estimate whenever its end is, and both ends of the range say so.
+ */
+export function getPhaseStart({
+  end,
+  phase,
+}: {
+  end: PlanDate;
+  phase: Pick<DatedPhase, "startDate" | "state">;
+}): PlanDate | null {
+  if (!phase.startDate) {
+    return null;
+  }
+
+  return {
+    estimate: end.estimate && phase.state === "upcoming",
+    isoDate: phase.startDate,
+    month: end.month,
+  };
 }
 
 /** The day the plan reaches its goal: the goal's date, or the plan's own end when it has none. */

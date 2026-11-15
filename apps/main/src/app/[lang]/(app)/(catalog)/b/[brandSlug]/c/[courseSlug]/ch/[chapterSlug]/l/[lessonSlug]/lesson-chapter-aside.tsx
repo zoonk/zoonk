@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { getChapterHref } from "@/lib/public/public-hrefs";
 import { getTotalDurationLabel } from "@/lib/public/public-labels";
 import { getSubject } from "@zoonk/learn/subject-label";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { getExtracted } from "next-intl/server";
 
 export async function LessonChapterAside({
@@ -44,7 +45,9 @@ export async function LessonChapterAside({
           </Link>
         </h2>
 
-        <p className="text-muted-foreground font-mono text-xs tabular-nums">{facts.join(" · ")}</p>
+        <p className="text-muted-foreground font-mono text-xs tabular-nums">
+          {facts.join(FACT_SEPARATOR)}
+        </p>
       </div>
 
       <ChapterLessonRows chapter={chapter} currentLessonId={lesson.id} params={params} />

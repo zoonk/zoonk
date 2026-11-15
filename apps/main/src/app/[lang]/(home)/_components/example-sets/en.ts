@@ -33,10 +33,11 @@ export const en: ExampleSet = {
     goal: (month) => `get ready for the SAT in ${month}`,
     headline: "Prep for the SAT",
     mock: {
-      details: "98 questions · 2 h 14 min",
       firm: ["Linear equations", "Words in context", "Percentages"],
+      minutes: 134,
       mistakes: 9,
       name: "SAT",
+      questions: "98 questions",
       review: ["Quadratics", "Transitions"],
       scores: [
         { label: "Reading and Writing", range: "580–630" },

@@ -7,6 +7,7 @@ import { type CourseFormat } from "@zoonk/db/enums";
 import { RouteStop, RouteTitle } from "@zoonk/learn/route-line";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { AreaOutline } from "./outline-areas";
@@ -71,7 +72,7 @@ export async function LibraryCourseOutline({
                   }),
               ]
                 .filter(Boolean)
-                .join(" · ")}
+                .join(FACT_SEPARATOR)}
             </span>
           )}
         </div>

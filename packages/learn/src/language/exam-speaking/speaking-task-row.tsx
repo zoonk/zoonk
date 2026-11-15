@@ -11,6 +11,7 @@ import {
   CollapsibleTrigger,
   FoldChevron,
 } from "@zoonk/ui/components/collapsible";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { PlayIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
@@ -74,7 +75,7 @@ function useTaskFacts() {
   return (task: SpeakingTaskView) =>
     [roleLabel(task.role), minutes(task.minutes), prepFact(task)]
       .filter((fact) => fact !== null)
-      .join(" · ");
+      .join(FACT_SEPARATOR);
 }
 
 function useLastTryText() {

@@ -11,8 +11,8 @@ function useStartWords() {
 
   return (isoDate: string) =>
     isoDate.slice(0, MONTH_LENGTH) === today.slice(0, MONTH_LENGTH)
-      ? { dateKind: "day", start: formatDate(isoDate, "day") }
-      : { dateKind: "month", start: formatDate(isoDate, "monthName") };
+      ? { dateKind: "day", start: formatDate(isoDate, "row") }
+      : { dateKind: "month", start: formatDate(isoDate, "sentenceMonth") };
 }
 
 export function useFarTopicLine() {
