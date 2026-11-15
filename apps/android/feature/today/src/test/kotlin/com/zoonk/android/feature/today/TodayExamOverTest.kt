@@ -29,7 +29,10 @@ import org.junit.Before
 import org.junit.Test
 import java.util.UUID
 
-/** After the exam's date, Today's bar answers as the Plan's does: keep studying applies at once, archiving saves the status. */
+/**
+ * After the exam's date, Today's bar answers as the Plan's does: keep studying applies at once, archiving saves the status.
+ * A saved answer keeps its button busy until Today's next read, which shows what it did.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class TodayExamOverTest {
     private val dispatcher = StandardTestDispatcher()
@@ -42,12 +45,15 @@ class TodayExamOverTest {
     @After
     fun reset() = Dispatchers.resetMain()
 
+    private val cache =
+        AppCache(FakeSession(AuthenticatedSession("ana", "token-a", "local-a")), CoroutineScope(SupervisorJob() + dispatcher))
+    private val store = TodayStore(FakeTodayApi(emptyList()), cache, CoroutineScope(SupervisorJob() + dispatcher), timeZone = { "UTC" })
+
     private fun today(): TodayViewModel {
-        val cache = AppCache(FakeSession(AuthenticatedSession("ana", "token-a", "local-a")), CoroutineScope(SupervisorJob() + dispatcher))
         val study = FakeStudyApi()
         return TodayViewModel(
             StudyOpener(study, study::writeLesson, cache, timeZone = { "UTC" }),
-            TodayStore(FakeTodayApi(emptyList()), cache, CoroutineScope(SupervisorJob() + dispatcher), timeZone = { "UTC" }),
+            store,
             PlanStore(plans, cache),
             unusedFocusTests(cache),
         )
@@ -65,6 +71,41 @@ class TodayExamOverTest {
             assertEquals(listOf(listOf<PlanOp>(PlanOp.FullCourse(true))), plans.changes)
             assertEquals(ExamOverAnswer(goalId, archive = false), viewModel.examOverAnswer)
             assertEquals(false, failed)
+        }
+
+    @Test
+    fun bothAnswersWorkAgainOnceTodayHasReadTheSavedAnswer() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            store.today.load()
+            advanceUntilIdle()
+
+            viewModel.keepStudying(goalId) {}
+            advanceUntilIdle()
+            store.today.refresh()
+            advanceUntilIdle()
+
+            assertNull(viewModel.examOverAnswer)
+
+            viewModel.archiveGoal(goalId) {}
+            advanceUntilIdle()
+
+            assertTrue(LearnerSummaryGoal.Status.ARCHIVED in plans.statuses)
+        }
+
+    @Test
+    fun aResumedGoalCanBeResumedAgainOnceTodayHasReadTheResume() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            store.today.load()
+            advanceUntilIdle()
+
+            viewModel.resume(goalId)
+            advanceUntilIdle()
+            store.today.refresh()
+            advanceUntilIdle()
+
+            assertNull(viewModel.resuming)
         }
 
     @Test

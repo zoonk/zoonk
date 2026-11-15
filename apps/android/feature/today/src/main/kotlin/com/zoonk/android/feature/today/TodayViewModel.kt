@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.focustest.FocusTestStore
 import com.zoonk.android.feature.plan.PlanOp
@@ -24,6 +25,7 @@ import com.zoonk.api.models.Today
 import com.zoonk.api.models.TodayFocusTest
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -141,7 +143,7 @@ class TodayViewModel(
     var resumeFailure by mutableStateOf<ResumeFailure?>(null)
         private set
 
-    /** The goal being resumed; it stays busy once saved, until Today shows its day ([resumed]). */
+    /** The goal being resumed; it stays busy once saved, until Today's next read shows its day. */
     var resuming by mutableStateOf<UUID?>(null)
         private set
 
@@ -153,10 +155,8 @@ class TodayViewModel(
         viewModelScope.launch {
             when (val result = store.resume(goalId)) {
                 is MutationResult.Done -> {
-                    if (!result.value) {
-                        resumeFailure = ResumeFailure.GoalLimit
-                        resuming = null
-                    }
+                    if (result.value) todayReadAgain() else resumeFailure = ResumeFailure.GoalLimit
+                    resuming = null
                 }
 
                 is MutationResult.Failed -> {
@@ -171,11 +171,13 @@ class TodayViewModel(
         }
     }
 
-    /** Today no longer shows a paused goal, so a later pause can be resumed again. */
+    /** Today no longer shows a paused goal, so a resume that failed says nothing about a later pause. */
     fun resumed() {
-        resuming = null
         resumeFailure = null
     }
+
+    /** Returns once Today has read the server since the last write, so a saved answer stays busy only until its result shows. */
+    private suspend fun todayReadAgain() = store.today.freshState.first { it !is LoadState.Idle && it !is LoadState.Loading }
 
     var isAnswering by mutableStateOf(false)
         private set
@@ -318,7 +320,7 @@ class TodayViewModel(
     var examChoiceFailedOn by mutableStateOf<NoticeVisit?>(null)
         private set
 
-    /** The answer saving after a goal's exam date passed; it stays once saved, until Today shows the goal's new day. */
+    /** The answer saving after a goal's exam date passed; it stays once saved, until Today's next read shows what it did. */
     var examOverAnswer by mutableStateOf<ExamOverAnswer?>(null)
         private set
 
@@ -342,7 +344,8 @@ class TodayViewModel(
 
         viewModelScope.launch {
             val result = write()
-            if (result !is MutationResult.Done) examOverAnswer = null
+            if (result is MutationResult.Done) todayReadAgain()
+            examOverAnswer = null
             if (result is MutationResult.Failed) failed()
         }
     }
