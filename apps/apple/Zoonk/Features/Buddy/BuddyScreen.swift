@@ -371,7 +371,7 @@ private struct BuddyContent: View {
           }
         }
       }
-      .fixedSize()
+      .fixedSize(horizontal: false, vertical: true)
 
       Spacer(minLength: 0)
 
