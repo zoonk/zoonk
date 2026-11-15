@@ -216,7 +216,7 @@ test.describe("Mocks whenever the learner wants", () => {
 
     await page.getByRole("button", { name: "Start" }).click();
     await start.held;
-    await page.getByRole("link", { exact: true, name: "Exam" }).click();
+    await page.getByRole("link", { exact: true, name: "Your exam" }).click();
     await expect(page).toHaveURL(/\/exam$/u);
 
     expect(await start.release(/\/mock\/[\da-f-]{36}$/u)).toBe(false);

@@ -195,52 +195,6 @@ msgctxt "u82Vi2"
 msgid "Continue today's session"
 msgstr "Heutige Lerneinheit fortsetzen"
 
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Level"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-#: src/app/[lang]/(app)/(stats)/energy/page.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "Energie"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "BCauSf"
-msgid "Patterns"
-msgstr "Muster"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/score/page.tsx
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "oLkLww"
-msgid "Score"
-msgstr "Score"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/activity/page.tsx
-msgctxt "ZmlNQ3"
-msgid "Activity"
-msgstr "Aktivität"
-
 #. The sizes of mock exam the learner can take: the full exam, half of it, or one subject.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "Zu-MTq"
@@ -307,10 +261,11 @@ msgstr "Zertifikate"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/exam/page.tsx
 #: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
-msgctxt "Xy7a7A"
-msgid "Exam"
-msgstr "Prüfung"
+msgctxt "9HjIgh"
+msgid "Your exam"
+msgstr "Deine Prüfung"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
@@ -334,6 +289,7 @@ msgstr "Wochenübersicht"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/app/[lang]/(app)/(stats)/layout.tsx
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
 msgctxt "H3eDAS"
@@ -814,11 +770,6 @@ msgid "Mock exam"
 msgstr "Probeprüfung"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-msgctxt "U86B6w"
-msgid "Stats"
-msgstr "Statistiken"
-
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "UTFsoN"
 msgid "Study"
 msgstr "Lernen"
@@ -833,6 +784,11 @@ msgstr "Menü"
 msgctxt "vj_mVz"
 msgid "{belt}, level {level}"
 msgstr "{belt}, Level {level}"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "bzSrZ6"
+msgid "Level {level}"
+msgstr "Level {level}"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "zF7Cth"
@@ -939,11 +895,6 @@ msgstr "Einheit"
 msgctxt "9dC4eV"
 msgid "A unit of your language plan, with its lessons and how far you are."
 msgstr "Eine Einheit deines Sprachplans mit ihren Lektionen und deinem Fortschritt."
-
-#: src/app/[lang]/(app)/(learn)/exam/page.tsx
-msgctxt "9HjIgh"
-msgid "Your exam"
-msgstr "Deine Prüfung"
 
 #: src/app/[lang]/(app)/(learn)/exam/page.tsx
 msgctxt "KixPd0"
@@ -1156,10 +1107,10 @@ msgctxt "G4ZsrK"
 msgid "Start with your goal"
 msgstr "Starte mit deinem Ziel"
 
+#. The page inside Settings for usage data, a copy of the learner's data and deleting the account; not the privacy policy.
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
-#: src/components/public/public-footer.tsx
-msgctxt "cXBJ7U"
+msgctxt "settingsPrivacy"
 msgid "Privacy"
 msgstr "Datenschutz"
 
@@ -1642,6 +1593,42 @@ msgstr "Überblick"
 msgctxt "QbGIBZ"
 msgid "Your stats"
 msgstr "Deine Statistiken"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Level"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+#: src/app/[lang]/(app)/(stats)/energy/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "cVpmV7"
+msgid "Energy"
+msgstr "Energie"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/activity/page.tsx
+msgctxt "ZmlNQ3"
+msgid "Activity"
+msgstr "Aktivität"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/score/page.tsx
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "oLkLww"
+msgid "Score"
+msgstr "Score"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-pages.ts
+#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "BCauSf"
+msgid "Patterns"
+msgstr "Muster"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 msgctxt "cMaydB"
@@ -2134,11 +2121,11 @@ msgctxt "tk_pDR"
 msgid "What do I get if I subscribe?"
 msgstr "Was bekomme ich mit einem Abo?"
 
-#. In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem as matérias e os tópicos da sua prova. Erros são raros, mas podem acontecer. Viu algo errado? Avise a gente pela própria aula e vamos conferir.”
+#. In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem o que o seu objetivo cobre, como as matérias e os tópicos de uma prova. Erros são raros, mas podem acontecer. Viu algo errado? Avise a gente pela própria aula e vamos conferir.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "yyFZMH"
-msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
-msgstr "Wir erstellen die Lektionen mit den neuesten KI-Modellen und prüfen sie, bevor du sie bekommst: Wir testen ihre Qualität mit mehreren Tests, und andere Modelle überprüfen die Inhalte. Sie richten sich nach den Fächern und Themen deiner Prüfung. Fehler sind selten, können aber vorkommen. Stimmt etwas nicht? Sag uns direkt in der Lektion Bescheid und wir schauen es uns an."
+msgctxt "OhisJ3"
+msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow what your goal covers, such as an exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
+msgstr "Wir erstellen die Lektionen mit den neuesten KI-Modellen und prüfen sie, bevor du sie siehst: Wir bewerten ihre Qualität mit mehreren Tests, und andere Modelle prüfen die Inhalte. Die Lektionen richten sich nach den Inhalten deines Ziels, zum Beispiel den Fächern und Themen einer Prüfung. Fehler sind selten, können aber vorkommen. Stimmt etwas nicht? Sag uns direkt in der Lektion Bescheid und wir schauen es uns an."
 
 #. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2379,9 +2366,9 @@ msgid "Close or leave"
 msgstr "Schließen oder verlassen"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "ofKpWV"
-msgid "Press the main button"
-msgstr "Hauptschaltfläche drücken"
+msgctxt "GENWbK"
+msgid "Continue, Check or Start"
+msgstr "Fortfahren, prüfen oder starten"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "9-Ddtu"
@@ -2414,9 +2401,9 @@ msgid "Show or hide the sidebar"
 msgstr "Seitenleiste ein- oder ausblenden"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "GvB3Jb"
-msgid "Tap the beat"
-msgstr "Im Takt tippen"
+msgctxt "DOENlK"
+msgid "Tap the rhythm in a music question"
+msgstr "Bei einer Musikfrage den Rhythmus mittippen"
 
 #: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "FVLl2T"
@@ -3065,9 +3052,9 @@ msgstr "Ein Plan für dein Ziel und dein Zieldatum"
 
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-questions.tsx
-msgctxt "5ZDN6U"
-msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
-msgstr "Ein KI-Lernkumpel: {count, plural, one {# Nachricht} other {# Nachrichten}} pro Tag"
+msgctxt "LKY79v"
+msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month"
+msgstr "Ein KI-Kumpel zum Lernen: {count, plural, one {# Nachricht} other {# Nachrichten}} pro Tag, bis zu {month} pro Monat"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "72Jr7b"
@@ -3389,6 +3376,11 @@ msgstr "Wir konnten diese Seite nicht finden"
 msgctxt "Vge-RX"
 msgid "Footer"
 msgstr "Fußzeile"
+
+#: src/components/public/public-footer.tsx
+msgctxt "cXBJ7U"
+msgid "Privacy"
+msgstr "Datenschutz"
 
 #: src/components/public/public-footer.tsx
 msgctxt "xkr-zo"

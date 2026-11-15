@@ -80302,6 +80302,13 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
+          "tutorMessagesPer30Days": {
+            "nullable": true,
+            "description": "Messages a free account can send its study buddy in the preceding 30 times 24 hours, beside its daily limit",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
           "tutorMessagesPerDay": {
             "nullable": true,
             "description": "Messages a free account can send its study buddy each day",
@@ -80321,6 +80328,7 @@
           "activeGoals",
           "guestLessons",
           "lessonsPer30Days",
+          "tutorMessagesPer30Days",
           "tutorMessagesPerDay",
           "uploadsPerDay"
         ],

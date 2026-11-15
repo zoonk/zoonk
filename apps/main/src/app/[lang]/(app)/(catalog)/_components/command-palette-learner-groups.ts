@@ -1,6 +1,7 @@
 "use client";
 
 import { switchGoal } from "@/app/[lang]/(app)/(learn)/_components/switch-goal";
+import { useStatsPages } from "@/app/[lang]/(app)/(stats)/_components/stats-pages";
 import { getMenu } from "@/lib/menu";
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { type LearnBuddy, useBuddyName } from "@zoonk/learn/buddy-name";
@@ -19,7 +20,7 @@ import {
 /** Until the learner is read the buddy is `null`: its row waits for its name, as its tab does. */
 export type LearnerPalette = {
   activeGoalId: string | null;
-  buddy: Pick<LearnBuddy, "kind" | "name"> | null;
+  buddy: LearnBuddy | null;
   canAskBuddy: boolean;
   explanations: { id: string; title: string }[];
   goals: { displayName: string; id: string; kind: string; title: string }[];
@@ -70,29 +71,17 @@ function useContinueItem(today: LearnerSummary["today"]): PaletteItem | null {
   });
 }
 
-/** The sidebar's Stats group, which a phone has no room for: search finds each page by name. */
-function useStatsPages({ searching }: { searching: boolean }): PaletteItem[] {
-  const t = useExtracted();
+/** The sidebar's statistics pages, which a phone has no room for: search finds each page by name. */
+function useStatsPaletteItems({ searching }: { searching: boolean }): PaletteItem[] {
+  const pages = useStatsPages();
 
   if (!searching) {
     return [];
   }
 
-  return [
-    createNavigationPaletteItem({ id: "level", label: t("Level"), menu: getMenu("level") }),
-    createNavigationPaletteItem({ id: "energy", label: t("Energy"), menu: getMenu("energy") }),
-    createNavigationPaletteItem({
-      id: "patterns",
-      label: t("Patterns"),
-      menu: getMenu("patterns"),
-    }),
-    createNavigationPaletteItem({ id: "score", label: t("Score"), menu: getMenu("score") }),
-    createNavigationPaletteItem({
-      id: "activity",
-      label: t("Activity"),
-      menu: getMenu("activity"),
-    }),
-  ];
+  return pages.map((page) =>
+    createNavigationPaletteItem({ id: page.menu, label: page.label, menu: getMenu(page.menu) }),
+  );
 }
 
 export function useLearnerPaletteGroups({
@@ -105,7 +94,7 @@ export function useLearnerPaletteGroups({
   const t = useExtracted();
   const continueItem = useContinueItem(learner?.today ?? null);
   const buddy = useBuddyName(learner?.buddy ?? null);
-  const statsPages = useStatsPages({ searching });
+  const statsPages = useStatsPaletteItems({ searching });
 
   if (!learner) {
     return null;
@@ -152,6 +141,7 @@ export function useLearnerPaletteGroups({
     createNavigationPaletteItem({ id: "journey", label: t("Plan"), menu: getMenu("journey") }),
     learner.buddy &&
       createNavigationPaletteItem({
+        buddy: learner.buddy,
         id: "buddy",
         keywords: t("Buddy"),
         label: buddy,
@@ -175,7 +165,7 @@ export function useLearnerPaletteGroups({
       menu: getMenu("certificates"),
     }),
     places.exam &&
-      createNavigationPaletteItem({ id: "exam", label: t("Exam"), menu: getMenu("exam") }),
+      createNavigationPaletteItem({ id: "exam", label: t("Your exam"), menu: getMenu("exam") }),
     places.speaking &&
       createNavigationPaletteItem({
         id: "speaking",

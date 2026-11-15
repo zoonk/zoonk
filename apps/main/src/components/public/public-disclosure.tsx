@@ -19,7 +19,10 @@ export function renderHelpLink(chunks: ReactNode) {
   );
 }
 
-/** A native `<details>`, so what it holds stays in the HTML for search engines and works before scripts. */
+/**
+ * A native `<details>`, so what it holds stays in the HTML for search engines and works before scripts.
+ * Its question sits on a whole-pixel line, so stacked rows keep whole-pixel hairlines.
+ */
 export function PublicDisclosure({
   aside,
   children,
@@ -35,7 +38,7 @@ export function PublicDisclosure({
 }) {
   return (
     <details className={cn("group not-first:border-t", className)} open={open}>
-      <summary className="hover:text-foreground focus-visible:ring-ring/50 text-reading flex cursor-pointer list-none gap-4 rounded-md py-4 leading-snug font-medium outline-none select-none focus-visible:ring-[3px] sm:text-base [&::-webkit-details-marker]:hidden">
+      <summary className="hover:text-foreground focus-visible:ring-ring/50 text-reading flex cursor-pointer list-none gap-4 rounded-md py-4 leading-5.5 font-medium outline-none select-none focus-visible:ring-[3px] sm:text-base sm:leading-6 [&::-webkit-details-marker]:hidden">
         <span className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
           <span className="text-pretty">{summary}</span>
 
