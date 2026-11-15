@@ -3,7 +3,6 @@ package com.zoonk.android.feature.onboarding.setup
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -27,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.feature.ceremonies.MomentBuddy
 import com.zoonk.android.feature.session.DayStep
@@ -50,6 +50,7 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -226,7 +227,7 @@ internal fun RevealToday(
 /**
  * Main's `RevealWeek`: the six days after today. Each row reads as a table row: the date is a lead as
  * wide as the week's longest, never wrapping, and it, the first name and the kinds share the first line;
- * the names follow one per line. The kinds show only where there's room for them (main's `max-sm:hidden`).
+ * the names follow one per line. The kinds show only in a window wider than a phone's (main's `max-sm:hidden`).
  */
 @Composable
 internal fun RevealWeek(reveal: com.zoonk.api.models.PlanRevealToday) {
@@ -246,39 +247,35 @@ internal fun RevealWeek(reveal: com.zoonk.api.models.PlanRevealToday) {
                     formatMinutes(reveal.week.minutes.toInt(), locale),
                 ).factsLine(),
         )
-        BoxWithConstraints {
-            val kinds = maxWidth >= KINDS_WIDTH
-            Column {
-                days.forEachIndexed { index, day ->
-                    val teaching = day.items.filter { it.kind == PlanItem.Kind.LESSON || it.kind == PlanItem.Kind.CHAPTER }
-                    val names = teaching.ifEmpty { day.items }
-                    ListRow(
-                        leading = {
-                            Text(
-                                dates[index],
-                                Modifier.widthIn(min = dateWidth),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = dateStyle,
-                                maxLines = 1,
-                                softWrap = false,
-                            )
-                        },
-                        leadOnFirstLine = true,
-                        headline = {
-                            if (day.items.isEmpty()) {
-                                Text(
-                                    stringResource(R.string.onboarding_reveal_rest_day),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            } else {
-                                names.forEach { Text(revealItemTitle(it)) }
-                            }
-                        },
-                        trailing = if (kinds && day.items.isNotEmpty()) ({ DayKinds(day.items) }) else null,
+        val kinds = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+        days.forEachIndexed { index, day ->
+            val teaching = day.items.filter { it.kind == PlanItem.Kind.LESSON || it.kind == PlanItem.Kind.CHAPTER }
+            val names = teaching.ifEmpty { day.items }
+            ListRow(
+                leading = {
+                    Text(
+                        dates[index],
+                        Modifier.widthIn(min = dateWidth),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = dateStyle,
+                        maxLines = 1,
+                        softWrap = false,
                     )
-                    ListDivider()
-                }
-            }
+                },
+                leadOnFirstLine = true,
+                headline = {
+                    if (day.items.isEmpty()) {
+                        Text(
+                            stringResource(R.string.onboarding_reveal_rest_day),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    } else {
+                        names.forEach { Text(revealItemTitle(it)) }
+                    }
+                },
+                trailing = if (kinds && day.items.isNotEmpty()) ({ DayKinds(day.items) }) else null,
+            )
+            ListDivider()
         }
     }
 }
@@ -303,9 +300,6 @@ private fun DayKinds(items: List<PlanItem>) {
 }
 
 private const val KINDS_SHOWN = 4
-
-/** Main's `sm` (640px): narrower, the week shows the dates and names only. */
-private val KINDS_WIDTH = 640.dp
 
 @Composable
 private fun revealItemTitle(item: PlanItem): String =
