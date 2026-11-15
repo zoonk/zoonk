@@ -1,13 +1,10 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
-import { ListSectionSkeleton } from "@/components/learn/detail-skeleton";
+import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getReadAt } from "@/lib/learn/read-at";
 import { COMPLETED_LESSON_PAGE_SIZE } from "@zoonk/core/completed-lessons/contract";
 import { listCurrentUserCompletedLessons } from "@zoonk/core/completed-lessons/list-current-user";
 import { LearnPageBar } from "@zoonk/learn/bar";
-import { MEASURED_CLASS, PAGE_COLUMN_CLASS, PageTitle, pageMeasureClass } from "@zoonk/learn/page";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { cn } from "@zoonk/ui/lib/utils";
 import { getIsoDay } from "@zoonk/utils/calendar-day";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -91,25 +88,12 @@ async function CompletedLessonsSkeleton() {
   const t = await getExtracted();
 
   return (
-    <div aria-busy="true" className="flex flex-col gap-8">
-      <CompletedLessonsBar />
-      <div
-        className={cn(
-          PAGE_COLUMN_CLASS,
-          pageMeasureClass("list"),
-          MEASURED_CLASS,
-          "flex flex-col gap-8",
-        )}
-      >
-        <div className="flex flex-col gap-1">
-          <PageTitle>{t("Completed lessons")}</PageTitle>
-          <span className="flex h-6 items-center pt-1">
-            <Skeleton className="h-3.5 w-32 rounded-sm" />
-          </span>
-        </div>
-        <ListSectionSkeleton rows={6} />
-      </div>
-    </div>
+    <DetailSkeleton
+      aside={false}
+      bar={<CompletedLessonsBar />}
+      measure="list"
+      title={t("Completed lessons")}
+    />
   );
 }
 
