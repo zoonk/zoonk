@@ -655,6 +655,44 @@ test.describe("Mind maps", () => {
     }
   });
 
+  test("Create all refused with a day this device already shows as past keeps its gate, without a day", async ({
+    browser,
+  }) => {
+    const { first, second, third, user } = await createLearner({ chapters: 3 });
+    const page = await openAs(browser, user);
+    const notMade = page.getByRole("region", { name: "Other chapters" });
+
+    try {
+      await page.route("**/v1/goals/*/mind-maps/generations", (route) =>
+        route.fulfill({
+          json: {
+            accepted: [],
+            joined: [],
+            stop: {
+              availableAt: new Date(Date.now() - 60_000).toISOString(),
+              period: "rolling30Days",
+              reason: "limitReached",
+              resource: "mindMap",
+            },
+            unstarted: [first, second, third].map((made) => ({
+              chapterId: made?.chapter.id,
+              reason: "allowance",
+            })),
+          },
+        }),
+      );
+
+      await page.goto("/mind-maps");
+      await notMade.getByRole("button", { name: "Create all" }).click();
+
+      await expect(notMade.getByText("You've used your mind maps")).toBeVisible();
+      await expect(notMade.getByRole("link", { name: "Subscribe" })).toBeVisible();
+      await expect(notMade.getByText(/^More /u)).toBeHidden();
+    } finally {
+      await page.context().close();
+    }
+  });
+
   test("a free learner out of maps for the day sees why, and no chapter offers to create one", async ({
     browser,
   }) => {

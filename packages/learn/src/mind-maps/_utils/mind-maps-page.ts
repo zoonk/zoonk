@@ -4,6 +4,7 @@ import {
   type MindMapAllowanceStop,
   type MindMapCreateOffer,
 } from "@zoonk/core/mind-maps/contract";
+import { receivedAtOf } from "../../_components/comes-back-words";
 import { type MindMapLimit } from "../../_components/help-limit-notice";
 import { type MindMapTab } from "./mind-map-urls";
 
@@ -132,6 +133,13 @@ export function toMindMapLimit({
   const resource = stop.resource ?? undefined;
 
   return stop.period === "rolling30Days"
-    ? { availableAt: stop.availableAt, period: stop.period, resource, status: "limitReached", tier }
+    ? {
+        availableAt: stop.availableAt,
+        period: stop.period,
+        receivedAt: receivedAtOf(stop),
+        resource,
+        status: "limitReached",
+        tier,
+      }
     : { period: stop.period ?? "day", resource, status: "limitReached", tier };
 }

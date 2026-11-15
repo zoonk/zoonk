@@ -272,7 +272,10 @@ test("a skip that doesn't save says so on the wait for questions, and the same b
   await page.goto(`/start/${goal.id}`);
   await page.getByRole("button", { exact: true, name: "Start" }).click();
 
-  await expect(page.getByRole("alert").filter({ hasText: "This didn't finish" })).toBeVisible();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "Something went wrong on our side" }),
+  ).toBeVisible();
+
   const skip = page.getByRole("button", { name: "Skip for now" });
   await skip.click();
 

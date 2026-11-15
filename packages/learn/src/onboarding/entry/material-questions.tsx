@@ -68,7 +68,15 @@ function TurnAnswer({
 
     return (
       <TutorMessage identity={identity}>
-        <p className={cn("text-destructive-text text-sm", limit.hidden && "invisible")}>
+        <p
+          className={cn(
+            "text-sm",
+            outcome.status === "limitReached" && limit.opened
+              ? "text-muted-foreground"
+              : "text-destructive-text",
+            limit.hidden && "invisible",
+          )}
+        >
           {messages[outcome.status]}
         </p>
       </TutorMessage>

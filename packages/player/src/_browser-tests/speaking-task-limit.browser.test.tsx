@@ -79,4 +79,36 @@ describe("a speaking task refused for call time", () => {
     expect(onStart).toHaveBeenCalledWith("t2");
     await expect.element(first.getByRole("alert")).not.toBeInTheDocument();
   });
+
+  it("says only that the learner can try again once the call time comes back, under the Start that stayed", async () => {
+    const onStart = vi.fn(async () => ({
+      limit: {
+        availableAt: new Date(Date.now() + 1500).toISOString(),
+        period: "rolling30Days" as const,
+        tier: "free" as const,
+      },
+    }));
+
+    render(
+      <LearnProvider adapters={ADAPTERS}>
+        <SpeakingPracticeScreen
+          backHref="/plan"
+          onStart={onStart}
+          openTask="t1"
+          paper={PAPER}
+          resultHref={(id) => `/conversation/${id}`}
+        />
+      </LearnProvider>,
+    );
+
+    const task = page.getByRole("listitem").filter({ hasText: "Tarea 1" });
+    await task.getByRole("button", { name: "Start" }).click();
+    await expect.element(task.getByText("You've used your call time")).toBeVisible();
+    await expect.element(task.getByRole("link", { name: "Subscribe" })).toBeVisible();
+
+    await expect.element(task.getByText("You can try again now.")).toBeVisible();
+    await expect.element(task.getByText("You've used your call time")).not.toBeInTheDocument();
+    await expect.element(task.getByRole("link", { name: "Subscribe" })).not.toBeInTheDocument();
+    await expect.element(task.getByRole("button", { name: "Start" })).toBeVisible();
+  });
 });
