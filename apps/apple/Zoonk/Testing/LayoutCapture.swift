@@ -55,6 +55,9 @@
       var scale: CGFloat = 1
       /// A row whose layout put its value under its title (`layoutStacks(_:)`).
       var stacked = false
+      /// A view of UIKit's inside this one, whose superviews are the views that really hold it: the
+      /// scroll views and other clipping views that can cut it.
+      weak var host: UIView?
     }
 
     private(set) var records: [UUID: Record] = [:]
@@ -185,6 +188,32 @@
     }
   }
 
+  /// A view of UIKit's of no size, placed in the view, so its superviews say what holds the view.
+  private struct HostProbe: UIViewRepresentable {
+    let report: (UIView) -> Void
+
+    func makeUIView(context: Context) -> ProbeView {
+      let view = ProbeView()
+      view.isUserInteractionEnabled = false
+      view.isAccessibilityElement = false
+      view.report = report
+      return view
+    }
+
+    func updateUIView(_ view: ProbeView, context: Context) {}
+
+    final class ProbeView: UIView {
+      var report: ((UIView) -> Void)?
+
+      override func didMoveToWindow() {
+        super.didMoveToWindow()
+        if window != nil {
+          report?(self)
+        }
+      }
+    }
+  }
+
   struct LayoutRowReporter: ViewModifier {
     let piece: LayoutPiece
 
@@ -268,6 +297,11 @@
             $0.size.height > 0 ? $0.frame(in: .global).height / $0.size.height : 1
           } action: { scale in
             update { $0.scale = scale }
+          }
+          .background {
+            HostProbe { host in
+              update { $0.host = host }
+            }
           }
           .onDisappear {
             LayoutRegistry.shared.remove(id)
@@ -494,49 +528,35 @@
   }
 
   /// Where content shows: the window less its safe area (the status bar, the home indicator), and
-  /// inside each scroll view, what its bars and the screen's bottom bar leave uncovered.
+  /// inside each view that really holds a part and clips it (a list, a scroll view, a clipped
+  /// box), what that view shows, less its bars.
   struct LayoutViewports {
-    struct Viewport {
-      /// Where the scroll view sits in the window.
-      let frame: CGRect
-      /// The part of it its bars leave uncovered.
-      let visible: CGRect
-    }
-
     let window: CGRect
-    let scrolls: [Viewport]
 
-    init(window: CGRect, scrolls: [Viewport]) {
+    init(window: CGRect) {
       self.window = window
-      self.scrolls = scrolls
     }
 
     @MainActor
     init(window: UIWindow) {
-      var scrolls: [Viewport] = []
-
-      func visit(_ view: UIView) {
-        if let scroll = view as? UIScrollView, !scroll.isHidden, scroll.alpha > 0 {
-          let frame = scroll.convert(scroll.bounds, to: window)
-          scrolls.append(
-            Viewport(
-              frame: frame,
-              visible: scroll.convert(scroll.bounds.inset(by: scroll.safeAreaInsets), to: window)))
-        }
-
-        view.subviews.forEach(visit)
-      }
-
-      visit(window.topScreen)
-      self.init(window: window.bounds.inset(by: window.safeAreaInsets), scrolls: scrolls)
+      self.init(window: window.bounds.inset(by: window.safeAreaInsets))
     }
 
-    /// All of `rect` shows: inside the window's safe area and every scroll view it sits in.
-    func shows(_ rect: CGRect) -> Bool {
-      let center = CGPoint(x: rect.midX, y: rect.midY)
-      let inside = scrolls.filter { $0.frame.contains(center) }.map(\.visible)
+    /// What clips `view`: each of its superviews that clips, by what it shows in the window.
+    @MainActor
+    static func clips(of view: UIView?, in window: UIWindow) -> [CGRect] {
+      sequence(first: view?.superview) { $0?.superview }.compactMap { $0 }
+        .filter { $0.clipsToBounds || $0 is UIScrollView }
+        .map { holder in
+          let shown =
+            holder is UIScrollView ? holder.bounds.inset(by: holder.safeAreaInsets) : holder.bounds
+          return holder.convert(shown, to: window)
+        }
+    }
 
-      return ([window] + inside).allSatisfy { $0.insetBy(dx: -0.5, dy: -0.5).contains(rect) }
+    /// All of `rect` shows: inside the window's safe area and every view that clips it.
+    func shows(_ rect: CGRect, clips: [CGRect]) -> Bool {
+      ([window] + clips).allSatisfy { $0.insetBy(dx: -0.5, dy: -0.5).contains(rect) }
     }
   }
 
@@ -549,6 +569,7 @@
     let scale: CGFloat
     let png: Data?
     private let viewports: LayoutViewports
+    private let window: UIWindow
     private let width: Int
     private let height: Int
     private let pixels: [UInt8]
@@ -566,6 +587,7 @@
       scale = format.scale
       png = image.pngData()
       viewports = LayoutViewports(window: window)
+      self.window = window
 
       guard let cgImage = image.cgImage else {
         width = 0
@@ -588,9 +610,10 @@
       pixels = buffer
     }
 
-    /// Whether all of `rect` is on the screen, so its pixels are all of its ink.
-    func shows(_ rect: CGRect) -> Bool {
-      viewports.shows(rect)
+    /// Whether all of `rect` is on the screen, so its pixels are all of its ink: `host` is a view
+    /// inside it, whose superviews are what can cut it.
+    func shows(_ rect: CGRect, host: UIView?) -> Bool {
+      viewports.shows(rect, clips: LayoutViewports.clips(of: host, in: window))
     }
 
     /// What differs from the region's most common color, in points; nil when nothing does.
@@ -665,6 +688,8 @@
       let frame: CGRect
       /// Where the cell's content ends: its frame less its trailing layout margin.
       let contentEnd: CGFloat
+      /// The cell itself: its superviews are its list and what holds the list.
+      let view: UIView
     }
 
     let cells: [Cell]
@@ -683,7 +708,8 @@
             found.append(
               Cell(
                 section: "list\(listIndex).section\(path.section)", frame: frame,
-                contentEnd: frame.maxX - cell.layoutMargins.right))
+                contentEnd: frame.maxX - cell.layoutMargins.right,
+                view: cell))
           }
         }
 
@@ -1005,7 +1031,7 @@
       var element: [String: Any] = ["part": part.rawValue, "bounds": Self.bounds(record.frame)]
 
       if part == .mark {
-        guard picture.shows(record.frame) else { return clipped(element) }
+        guard picture.shows(record.frame, host: record.host) else { return clipped(element) }
         measured += 1
         element["ink"] = picture.ink(in: record.frame).map(Self.bounds) ?? NSNull()
         return element
@@ -1015,7 +1041,7 @@
       element["text"] = record.text.flatMap(Self.words)
 
       // The layout's baseline and capitals hold off screen too; what was drawn there doesn't show.
-      if picture.shows(record.frame) {
+      if picture.shows(record.frame, host: record.host) {
         element["ink"] = Self.bounds(record.frame)
       } else {
         element["ink"] = "not measured"
@@ -1080,7 +1106,7 @@
 
     /// An end the piece draws: its ink, or a holder when it keeps the room and draws nothing.
     private mutating func endElement(_ record: LayoutRegistry.Record) -> [String: Any] {
-      guard picture.shows(record.frame) else {
+      guard picture.shows(record.frame, host: record.host) else {
         return clipped(["part": "end", "bounds": Self.bounds(record.frame)])
       }
 
@@ -1129,7 +1155,7 @@
           x: contentEnd + 1, y: cell.frame.minY + 1, width: cell.contentEnd - contentEnd + 1,
           height: cell.frame.height - 2)
         let read = LayoutSystemEnd.read(
-          room: room, shown: picture.shows(room), ink: picture.ink(in: room))
+          room: room, shown: picture.shows(room, host: cell.view), ink: picture.ink(in: room))
 
         let row =
           rows.first { $0.frame.minY <= cell.frame.midY && cell.frame.midY <= $0.frame.maxY }

@@ -43,40 +43,41 @@ final class LayoutCaptureTests: XCTestCase {
   }
 
   func testAPartUnderABarOrPastTheScreenDoesNotShow() {
-    let list = LayoutViewports.Viewport(
-      frame: CGRect(x: 0, y: 0, width: 420, height: 912),
-      visible: CGRect(x: 0, y: 100, width: 420, height: 700))
-    let viewports = LayoutViewports(
-      window: CGRect(x: 0, y: 60, width: 420, height: 820), scrolls: [list])
+    let viewports = LayoutViewports(window: CGRect(x: 0, y: 60, width: 420, height: 820))
+    // A list's visible bounds less its bar.
+    let list = CGRect(x: 0, y: 100, width: 420, height: 700)
 
-    XCTAssertTrue(viewports.shows(CGRect(x: 20, y: 400, width: 100, height: 20)))
-    XCTAssertFalse(viewports.shows(CGRect(x: 20, y: 90, width: 100, height: 20)), "under the bar")
+    XCTAssertTrue(viewports.shows(CGRect(x: 20, y: 400, width: 100, height: 20), clips: [list]))
     XCTAssertFalse(
-      viewports.shows(CGRect(x: 20, y: 910, width: 100, height: 33)), "past the screen")
+      viewports.shows(CGRect(x: 20, y: 90, width: 100, height: 20), clips: [list]),
+      "under the bar")
+    XCTAssertFalse(
+      viewports.shows(CGRect(x: 20, y: 910, width: 100, height: 33), clips: []),
+      "past the screen")
   }
 
-  /// A chevron the system draws after a row is read, and one that can't be read is still written.
-  func testReadsTheRoomAfterARow() {
-    let room = CGRect(x: 380, y: 100, width: 20, height: 44)
-    let chevron = CGRect(x: 390, y: 116, width: 7, height: 12)
+  /// A text half scrolled out of its list: its center has left the scroll, ten points still show.
+  func testAPartHalfOutOfItsScrollDoesNotShow() {
+    let viewports = LayoutViewports(window: CGRect(x: 0, y: 0, width: 420, height: 912))
+    let list = CGRect(x: 0, y: 100, width: 420, height: 600)
 
-    XCTAssertEqual(LayoutSystemEnd.read(room: room, shown: true, ink: chevron), .glyph(chevron))
-    XCTAssertEqual(LayoutSystemEnd.read(room: room, shown: true, ink: nil), .none)
+    XCTAssertFalse(viewports.shows(CGRect(x: 20, y: 80, width: 200, height: 30), clips: [list]))
+  }
+
+  /// What clips a view is read from the views that hold it, whatever its position.
+  @MainActor
+  func testFindsTheScrollViewsThatHoldAView() {
+    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 420, height: 912))
+    let scroll = UIScrollView(frame: CGRect(x: 0, y: 100, width: 420, height: 600))
+    let other = UIScrollView(frame: CGRect(x: 0, y: 0, width: 420, height: 912))
+    let part = UIView(frame: CGRect(x: 20, y: -20, width: 200, height: 30))
+    window.addSubview(other)
+    window.addSubview(scroll)
+    scroll.addSubview(part)
+
     XCTAssertEqual(
-      LayoutSystemEnd.read(
-        room: CGRect(x: 400, y: 100, width: 1, height: 44), shown: true, ink: nil),
-      .none, "no room for one")
-    XCTAssertEqual(
-      LayoutSystemEnd.read(
-        room: room, shown: true, ink: CGRect(x: 398, y: 102, width: 2, height: 40)),
-      .none, "a scroll indicator")
-    XCTAssertEqual(
-      LayoutSystemEnd.read(
-        room: room, shown: true, ink: CGRect(x: 382, y: 104, width: 18, height: 36)),
-      .unreadable(clipped: false), "an accessory at an accessibility size, or one content runs into"
-    )
-    XCTAssertEqual(
-      LayoutSystemEnd.read(room: room, shown: false, ink: chevron), .unreadable(clipped: true))
+      LayoutViewports.clips(of: part, in: window),
+      [CGRect(x: 0, y: 100, width: 420, height: 600)])
   }
 
   @MainActor
