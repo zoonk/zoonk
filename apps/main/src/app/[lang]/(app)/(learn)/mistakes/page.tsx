@@ -107,6 +107,7 @@ async function NotebookSkeleton() {
       bar={<NotebookBar />}
       measure="list"
       rows={3}
+      subtitle
       tabs
       title={t("Mistakes notebook")}
     />

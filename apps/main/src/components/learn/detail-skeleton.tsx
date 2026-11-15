@@ -14,19 +14,16 @@ import { JourneyPageBar } from "./journey-page-bar";
 
 const DEFAULT_ROWS = 5;
 
-function HeroSkeleton({ title }: { title?: string }) {
+function HeroSkeleton({ subtitle, title }: { subtitle: boolean; title?: string }) {
   return (
     <DetailHero>
       <DetailHeroText>
-        <span className="flex h-4 items-center">
-          <Skeleton className="h-3 w-36 rounded-sm" />
-        </span>
         {title ? (
           <PageTitle>{title}</PageTitle>
         ) : (
-          <Skeleton className="my-0.5 h-8 w-72 max-w-full rounded-md" />
+          <Skeleton className="text-title w-72 max-w-full rounded-md">{"\u00A0"}</Skeleton>
         )}
-        <span className="flex h-5 items-end">
+        <span className={cn("flex items-end", subtitle ? "h-6" : "h-5")}>
           <Skeleton className="h-3 w-48 rounded-sm" />
         </span>
       </DetailHeroText>
@@ -72,17 +69,19 @@ function DetailColumnSkeleton({
   bar,
   children,
   measure,
+  subtitle,
   tabs,
   title,
 }: {
   bar: React.ReactNode;
   children: React.ReactNode;
   measure?: PageMeasure;
+  subtitle: boolean;
   tabs: boolean;
   title?: string;
 }) {
   return (
-    <div aria-busy="true" className="flex flex-col gap-8">
+    <div aria-busy="true" className="flex flex-col">
       {bar}
       <div
         className={cn(
@@ -91,18 +90,19 @@ function DetailColumnSkeleton({
           measure && [pageMeasureClass(measure), MEASURED_CLASS],
         )}
       >
-        <div className="flex flex-col gap-5">
-          <HeroSkeleton title={title} />
+        <HeroSkeleton subtitle={subtitle} title={title} />
 
-          {tabs && (
+        {tabs ? (
+          <div className="flex flex-col gap-6">
             <div className="flex gap-1">
               <Skeleton className="h-8 w-20 rounded-md" />
               <Skeleton className="h-8 w-20 rounded-md" />
             </div>
-          )}
-        </div>
-
-        {children}
+            {children}
+          </div>
+        ) : (
+          children
+        )}
       </div>
     </div>
   );
@@ -125,6 +125,7 @@ export async function DetailSkeleton({
   children,
   measure,
   rows = DEFAULT_ROWS,
+  subtitle = false,
   tabs = false,
   title,
 }: {
@@ -133,6 +134,8 @@ export async function DetailSkeleton({
   children?: React.ReactNode;
   measure?: PageMeasure;
   rows?: number;
+  /** The line under the title is a sentence (`PageSubtitle`), not the page's facts. */
+  subtitle?: boolean;
   tabs?: boolean;
   title?: string;
 }) {
@@ -140,6 +143,7 @@ export async function DetailSkeleton({
     <DetailColumnSkeleton
       bar={bar ?? <JourneyPageBar />}
       measure={measure}
+      subtitle={subtitle}
       tabs={tabs}
       title={title}
     >
