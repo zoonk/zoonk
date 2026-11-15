@@ -595,8 +595,9 @@ export function readAlignment({
 
   /**
    * The closest column an element sits in, past columns that draw no box of their own: a declared
-   * one, or a grid's cell where a grid splits the page (the course page's plan beside its hero,
-   * the catalog's courses beside their categories), which craft calls a column of its own.
+   * one, a grid's cell where a grid splits the page (the course page's plan beside its hero, the
+   * catalog's courses beside their categories), which craft calls a column of its own, or a card
+   * that holds it (Buddy's missions).
    */
   function columnOf(element: Element) {
     let column = element.parentElement?.closest(columns) ?? null;
@@ -623,8 +624,16 @@ export function readAlignment({
       return box.left >= outer.left - 1 && box.right <= outer.right + 1;
     };
 
+    // A card (a box drawn on all four sides) lays out what it holds inside its own padding.
+    const isCard = (cell: Element) =>
+      globalThis.zoonkPage.paints(cell, ["top", "right", "bottom", "left"]);
+
     for (let cell = element.parentElement; cell && cell !== column; cell = cell.parentElement) {
-      if (isGridCell(cell) && (!column || column.contains(cell)) && within(cell)) {
+      if (
+        (isGridCell(cell) || isCard(cell)) &&
+        (!column || column.contains(cell)) &&
+        within(cell)
+      ) {
         return cell;
       }
     }
