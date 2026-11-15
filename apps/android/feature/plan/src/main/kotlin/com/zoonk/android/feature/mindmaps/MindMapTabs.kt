@@ -152,12 +152,19 @@ private fun ChapterRow(
     }
 }
 
-/** A chapter folded under Other chapters is being made, so the group opens on arrival with its progress in view. */
-internal val GoalMindMaps.foldedMapOnItsWay: Boolean
+/**
+ * A chapter folded under Other chapters is being made or didn't finish, so the group opens on arrival with its
+ * progress, or its row's Try again, in view.
+ */
+internal val GoalMindMaps.foldedMapToShow: Boolean
     get() =
         chapters.any {
             it.status in NOT_MADE && !it.canMakeNow() &&
-                (it.status == GoalMindMap.Status.DRAWING || it.status == GoalMindMap.Status.WRITING_LESSONS)
+                (
+                    it.status == GoalMindMap.Status.DRAWING ||
+                        it.status == GoalMindMap.Status.WRITING_LESSONS ||
+                        it.status == GoalMindMap.Status.FAILED
+                )
         }
 
 /** A chapter whose lessons are all written: its map is made, or being made, without writing any. */
@@ -242,8 +249,8 @@ private fun NotMadeSummary(
 
 /**
  * The block's one line about [later], the first that applies (main's order): the tap didn't reach the
- * server, maps that didn't finish, what stops every map from starting, maps on their way, or how many more
- * fit now. What stops the learner outranks what's in progress; each map on its way shows that on its own row.
+ * server, what stops every map from starting, maps on their way, or how many more fit now. What stops the
+ * learner outranks what's in progress; each map on its way, and each that didn't finish, says so on its own row.
  */
 @Composable
 private fun NotMadeLine(
@@ -255,17 +262,12 @@ private fun NotMadeLine(
     val offer = mindMaps.createOffer
     val locale = currentLocale()
     val onTheWay = later.count { it.status == GoalMindMap.Status.DRAWING || it.status == GoalMindMap.Status.WRITING_LESSONS }
-    val failed = later.count { it.status == GoalMindMap.Status.FAILED }
     val counted = @Composable { id: Int, count: Long -> pluralStringResource(id, count.toInt(), formatNumber(count.toDouble(), locale)) }
 
     val text =
         when {
             actions.state.createAll == CreateAll.Unreachable -> {
                 stringResource(R.string.mindmaps_unreachable)
-            }
-
-            failed > 0 -> {
-                counted(R.plurals.mindmaps_didnt_finish, failed.toLong())
             }
 
             limit != null -> {

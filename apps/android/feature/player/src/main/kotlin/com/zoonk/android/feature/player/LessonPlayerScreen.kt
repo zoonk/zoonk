@@ -96,6 +96,7 @@ import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.PrimaryLabel
 import com.zoonk.android.feature.player.engine.asAnswered
+import com.zoonk.android.feature.player.engine.canSelfCorrect
 import com.zoonk.android.feature.player.engine.isNumberAnswer
 import com.zoonk.android.feature.player.engine.isReadStep
 import com.zoonk.android.feature.player.engine.lessonMap
@@ -117,6 +118,7 @@ import com.zoonk.android.feature.player.steps.LocalAskSimpler
 import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
 import com.zoonk.android.feature.player.steps.LocalScreenWork
 import com.zoonk.android.feature.player.steps.LocalStepViewHeight
+import com.zoonk.android.feature.player.steps.LocalWordBankCheck
 import com.zoonk.android.feature.player.steps.SpokenRecordAction
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepPart
@@ -692,7 +694,15 @@ private fun Content(
                         align = if (fold == null) Alignment.CenterHorizontally else Alignment.Start,
                     ) {
                         Notice(state, screen, viewModel, part)
-                        CompositionLocalProvider(LocalStepViewHeight provides if (fold == null) maxHeight - STEP_PADDING * 2 else null) {
+                        val result = @Composable {
+                            Result(state, screen, if (fold == null) scroll else turnScroll, reveal, viewModel, exits, offer)
+                        }
+                        // A word bank places what a check adds itself, so it holds still; everywhere else it follows the screen.
+                        val inBank = step.canSelfCorrect
+                        CompositionLocalProvider(
+                            LocalStepViewHeight provides if (fold == null) maxHeight - STEP_PADDING * 2 else null,
+                            LocalWordBankCheck provides if (inBank) ({ CheckAdded(state, result) }) else null,
+                        ) {
                             work.Page(turn = true) { StepView(step, state, screen, actions, navigator, language, part) }
                         }
                         // Beside a teaching screen's text, the buddy's help stays in view, so it never also pops up after a pause;
@@ -702,7 +712,7 @@ private fun Content(
                         } else if (offer != null && screen.quickCheck == null && language.languages.isLanguageLesson) {
                             StrugglePause(step, state.position, touches) { offer(BuddyOfferReason.Pause) }
                         }
-                        Result(state, screen, if (fold == null) scroll else turnScroll, reveal, viewModel, exits, offer)
+                        if (!inBank) result()
                         if (fold == null) recap()
                     }
 
@@ -757,10 +767,8 @@ private fun Notice(
     part: StepPart,
 ) {
     val quickCheck = screen.quickCheck
-    // Asking to fix a wrong answer is part of the learner's turn, beside the answer.
-    val shown = if (quickCheck == null && state.notice == LessonNotice.SelfCorrect) part.showsTurn else part.showsScreen
 
-    if (!shown) return
+    if (!part.showsScreen) return
 
     if (quickCheck != null) {
         Eyebrow(
@@ -772,13 +780,29 @@ private fun Notice(
 
     val (icon, text) =
         when (state.notice) {
-            LessonNotice.SelfCorrect -> R.drawable.ic_edit to R.string.player_notice_self_correct
+            // Drawn with what the check adds ([CheckAdded]), so nothing above the answer moves.
+            LessonNotice.SelfCorrect, null -> return
+
             LessonNotice.AnswerNotSaved -> R.drawable.ic_cloud_off to R.string.player_notice_answer_not_saved
+
             LessonNotice.PictureReady -> R.drawable.ic_image to R.string.player_notice_picture_ready
+
             LessonNotice.WritingSkipped -> R.drawable.ic_edit_off to R.string.player_notice_writing_skipped
-            null -> return
         }
 
+    NoticeLine(icon, text) {
+        if (state.notice == LessonNotice.WritingSkipped && state.writingRestore != null && state.phase == LessonPhase.Playing) {
+            TextButton(onClick = viewModel::restoreWriting) { Text(stringResource(R.string.player_write_again)) }
+        }
+    }
+}
+
+@Composable
+private fun NoticeLine(
+    icon: Int,
+    text: Int,
+    trailing: @Composable () -> Unit = {},
+) {
     Row(
         modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -791,9 +815,19 @@ private fun Notice(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-        if (state.notice == LessonNotice.WritingSkipped && state.writingRestore != null && state.phase == LessonPhase.Playing) {
-            TextButton(onClick = viewModel::restoreWriting) { Text(stringResource(R.string.player_write_again)) }
-        }
+        trailing()
+    }
+}
+
+/** What a check adds to a word bank's screen: "fix it yourself", its feedback, or both on a screen revisited. */
+@Composable
+private fun CheckAdded(
+    state: LessonPlayerState,
+    result: @Composable () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        if (state.notice == LessonNotice.SelfCorrect) NoticeLine(R.drawable.ic_edit, R.string.player_notice_self_correct)
+        result()
     }
 }
 
