@@ -33,10 +33,25 @@ class MemoryViewModel(
 
     fun setEnabled(enabled: Boolean) = save { store.setEnabled(enabled) }
 
-    fun updateFact(
-        id: UUID,
-        statement: String,
-    ) = save { store.updateFact(id, statement) }
+    /** The fact whose edit is open; it waits while its save is out and keeps the text when the save fails. */
+    var factEdit by mutableStateOf<FactEdit?>(null)
+        private set
+
+    fun openEdit(id: UUID) {
+        if (factEdit?.saving != true) factEdit = FactEdit(id)
+    }
+
+    fun closeEdit() {
+        if (factEdit?.saving != true) factEdit = null
+    }
+
+    fun saveEdit(statement: String) {
+        val edit = factEdit?.takeUnless { it.saving } ?: return
+        factEdit = edit.copy(saving = true, failed = false)
+        viewModelScope.launch {
+            factEdit = if (store.updateFact(edit.id, statement)) null else edit.copy(failed = true)
+        }
+    }
 
     fun deleteFact(id: UUID) =
         save {
@@ -93,3 +108,9 @@ class MemoryViewModel(
             false
         }
 }
+
+data class FactEdit(
+    val id: UUID,
+    val saving: Boolean = false,
+    val failed: Boolean = false,
+)

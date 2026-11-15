@@ -5,10 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -17,15 +21,19 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
@@ -355,6 +363,34 @@ class LayoutCaptureTest {
         assertTrue(label.get("ink") is JSONArray)
     }
 
+    @Test
+    fun aDialogsRenderIsTheDialogNotThePageBehindIt() {
+        compose.setContent {
+            ZoonkTheme {
+                Box(Modifier.fillMaxSize().background(PAGE))
+                Dialog(onDismissRequest = {}) {
+                    Surface(shape = MaterialTheme.shapes.large) {
+                        Column(Modifier.padding(24.dp)) { ListRow(headline = { Text("Take the shorter mock") }) }
+                    }
+                }
+            }
+        }
+        compose.waitForIdle()
+        val picture =
+            compose
+                .onAllNodes(isRoot())
+                .onLast()
+                .captureRender()
+                .asAndroidBitmap()
+        writeRender(File(folder.root, "dialog.png"), picture)
+        val label = JSONObject(File(folder.root, "dialog.json").readText()).getJSONArray("elements").part("label")
+
+        assertEquals("Take the shorter mock", label.getString("text"))
+        // Ink is written only where the picture shows the words in their own color: a copy of the page has none.
+        assertTrue(label.get("ink") is JSONArray)
+        assertTrue((0 until picture.width).none { x -> picture.getPixel(x, picture.height / 2) == PAGE.toArgb() })
+    }
+
     private fun capture(content: @androidx.compose.runtime.Composable () -> Unit): JSONArray {
         compose.setContent { ZoonkTheme { Column { content() } } }
         val file = File(folder.root, "row.png")
@@ -370,3 +406,6 @@ class LayoutCaptureTest {
 }
 
 private const val NOT_MEASURED = "not measured"
+
+/** A page color no dialog draws, so a picture of the page behind it is told from the dialog. */
+private val PAGE = Color(0xFFFF00FF)

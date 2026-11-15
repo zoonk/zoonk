@@ -319,9 +319,10 @@ internal fun FitLessonsSuggestion(slot: Slot) {
 
     PlanChangeSuggestion(SlotItem.FitLessons, title, slot) {
         CancelCheckWhenGone(slot, offer)
-        // While it checks, the card stays as it was with its Add busy: the same numbers add from there.
+        // While it checks, the card stays as it was with its Add busy: the same numbers add from there. In the room a
+        // check's answer takes, so its buttons stay put when the answer is a failure.
         if (preview == PlanPreviewState.Idle || checking) {
-            PlanEffectDiff(offer.effect, dateKind = page.dateKind, said = EffectSaid.LessonsAdded)
+            EffectRoom(FIT_ROOM_LINES) { PlanEffectDiff(offer.effect, dateKind = page.dateKind, said = EffectSaid.LessonsAdded) }
             SuggestionActions {
                 SuggestionAction(
                     onClick = add,
@@ -340,6 +341,7 @@ internal fun FitLessonsSuggestion(slot: Slot) {
                 pending = pending,
                 dateKind = page.dateKind,
                 repriced = true,
+                roomLines = FIT_ROOM_LINES,
             )
         }
     }
@@ -347,7 +349,7 @@ internal fun FitLessonsSuggestion(slot: Slot) {
 
 /**
  * Closing the suggestion's sheet, or leaving the Plan, drops the offer's check, as Not now does, so
- * its late answer adds nothing. A recreated window keeps it.
+ * its late answer adds nothing, whatever plan the page shows by then. A recreated window keeps it.
  */
 @Composable
 private fun CancelCheckWhenGone(
@@ -361,7 +363,7 @@ private fun CancelCheckWhenGone(
         onDispose {
             val host = current.host
             if (activity?.isChangingConfigurations != true &&
-                host.preview.of(offer.operations.map { it.op }, current.page.plan) != PlanPreviewState.Idle
+                (host.preview as? PlanPreviewState.Asked)?.operations == offer.operations.map { it.op }
             ) {
                 host.clearPreview()
             }
@@ -370,6 +372,9 @@ private fun CancelCheckWhenGone(
 }
 
 private const val NAMED_TOPICS = 2
+
+/** The fit card names what it adds in a line, and a failed check says so in one. */
+private const val FIT_ROOM_LINES = 1
 
 @Composable
 internal fun PastDateSuggestion(
