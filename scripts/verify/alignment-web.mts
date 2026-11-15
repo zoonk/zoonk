@@ -291,7 +291,7 @@ export function alignmentSection(findings: AlignmentFinding[]): string[] {
     "",
     "The shared pieces' declared relationships (`scripts/verify/alignment-table.mts`): what fails, then discovery leads, which never fail, then what wasn't measured. Each fault is listed once with every screen and row it showed on.",
     "",
-    "The read doesn't enter iframes or shadow roots and doesn't see what only a pseudo-element (`::before`, `::after`) draws, so a piece inside one or drawn only that way isn't checked. It counts a filled action only when the kit's button variants draw it (`--button-variant`), so a control filled some other way isn't counted. Two filled buttons with the same `data-action-name` count as one action: the name is the author's statement that they are one, and the check trusts it. Nothing listed here isn't proof those were checked.",
+    "The read doesn't enter iframes or shadow roots and doesn't see what only a pseudo-element (`::before`, `::after`) draws, so a piece inside one or drawn only that way isn't checked. It counts a filled action only when the kit's button variants draw it (`--button-variant`), so a control filled some other way isn't counted. Two filled buttons with the same `data-action-name` count as one action: the name is the author's statement that they are one, and the check trusts it. Nothing listed here isn't proof those were checked. A text in a script with no capitals (Japanese, Korean) is set on its ideographic face, the box of a full-frame glyph in the same fonts, not on its own ink.",
     "",
     ...alignmentLines(findings),
   ];

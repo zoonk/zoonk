@@ -19,6 +19,7 @@ import {
 import { formatPlanPrice } from "./plan-price";
 import { PLAN_ACTION_NOTE_CLASS, PLUS_CTA_CLASS } from "./plus-cta";
 import { type PlusViewerState } from "./plus-plan";
+import { getStudyBuddyAllowance } from "./study-buddy-allowance";
 
 const FREE_PLAN_ID = "free-plan";
 
@@ -73,6 +74,11 @@ export async function FreePlan({
   const locale = await getAppLocale();
   const limits = getFreePlanLimits();
 
+  const studyBuddy = await getStudyBuddyAllowance({
+    per30Days: limits.tutorMessagesPer30Days,
+    perDay: limits.tutorMessagesPerDay,
+  });
+
   return (
     <section
       aria-labelledby={FREE_PLAN_ID}
@@ -110,16 +116,7 @@ export async function FreePlan({
         <PlanIncludes
           items={[
             { id: "plan", text: t("A plan for your goal and your date") },
-            {
-              id: "buddy",
-              text: t(
-                "An AI study buddy: {count, plural, one {# message} other {# messages}} a day, up to {month} a month",
-                {
-                  count: limits.tutorMessagesPerDay ?? 0,
-                  month: String(limits.tutorMessagesPer30Days ?? 0),
-                },
-              ),
-            },
+            { id: "buddy", text: studyBuddy },
             { id: "calls", text: t("Speaking practice calls") },
           ]}
           summary={t(

@@ -58,7 +58,10 @@ export function FeedbackVerdict({
         )}
         data-slot="feedback-verdict"
       >
-        <LineMarker>{icon ?? <ToneGlyph tone={tone} />}</LineMarker>
+        {/* A bare glyph at the column's start lines up by its ink (craft E2). */}
+        <LineMarker className="edge -ms-(--edge-start)">
+          {icon ?? <ToneGlyph tone={tone} />}
+        </LineMarker>
         {children}
       </p>
 
@@ -74,7 +77,7 @@ export function FeedbackVerdict({
 export function FeedbackExplanation({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("text-foreground text-sm leading-relaxed", className)}
+      className={cn("text-foreground text-sm leading-relaxed text-pretty", className)}
       data-slot="feedback-explanation"
       {...props}
     />

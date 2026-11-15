@@ -8,7 +8,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, FileTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
-import { toCapWords, useLimitText } from "../../_components/comes-back-words";
+import { toHelpLimit } from "../../_components/comes-back-words";
+import { HelpLimitNotice } from "../../_components/help-limit-notice";
 import { SURFACE_CLASS } from "../../_components/surface";
 import { useAppLocale } from "../../_utils/locale";
 import { useCitationLabel } from "../../_utils/use-citation-label";
@@ -18,6 +19,8 @@ import {
   TutorMessage,
   useTutorIdentity,
 } from "../../conversation/tutor-identity";
+import { useLearnRoutes } from "../../learn-context";
+import { LearnLink } from "../../learn-link";
 import {
   type AttachedSource,
   type MaterialQuestionOutcome,
@@ -34,19 +37,6 @@ import { TypedGoal } from "./goal-outcomes";
 
 type Turn = { id: string; outcome: MaterialQuestionOutcome; question: string };
 
-function useQuestionLimitText(outcome: MaterialQuestionOutcome) {
-  const t = useExtracted();
-
-  return useLimitText(
-    outcome.status === "limitReached"
-      ? toCapWords(outcome, {
-          day: t("No more questions today"),
-          rolling: t("You've used your questions"),
-        })
-      : null,
-  );
-}
-
 function TurnAnswer({
   identity,
   outcome,
@@ -56,29 +46,34 @@ function TurnAnswer({
 }) {
   const t = useExtracted();
   const toLabel = useCitationLabel();
-  const limit = useQuestionLimitText(outcome);
+  const routes = useLearnRoutes();
+
+  if (outcome.status === "limitReached") {
+    return (
+      <TutorMessage identity={identity}>
+        <HelpLimitNotice
+          kind="questions"
+          limit={toHelpLimit(outcome)}
+          linkComponent={LearnLink}
+          routes={routes}
+        />
+      </TutorMessage>
+    );
+  }
 
   if (outcome.status !== "answered") {
-    const messages: Record<Exclude<MaterialQuestionOutcome["status"], "answered">, string> = {
+    const messages: Record<
+      Exclude<MaterialQuestionOutcome["status"], "answered" | "limitReached">,
+      string
+    > = {
       failed: t("We couldn't answer that. Try again in a moment."),
-      limitReached: limit.text,
       signInRequired: t("Create an account to ask about your material."),
       slowDown: t("You're asking quickly. Try again in a few minutes."),
     };
 
     return (
       <TutorMessage identity={identity}>
-        <p
-          className={cn(
-            "text-sm",
-            outcome.status === "limitReached" && limit.opened
-              ? "text-muted-foreground"
-              : "text-destructive-text",
-            limit.hidden && "invisible",
-          )}
-        >
-          {messages[outcome.status]}
-        </p>
+        <p className="text-destructive-text text-sm">{messages[outcome.status]}</p>
       </TutorMessage>
     );
   }

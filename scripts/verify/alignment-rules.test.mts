@@ -111,6 +111,16 @@ describe("relationships with no vote", () => {
 
     assert.equal(evaluateCapture(fixtureCapture(filledActions("page", 2)))[0]?.rule, "one-filled");
   });
+
+  it("counts a disabled filled button, drawn in the main action's place, and says it's disabled", () => {
+    const actions = filledActions("page", 2).map((action, index) =>
+      index === 0 ? { ...action, disabled: true, name: "Send" } : { ...action, name: "Start" },
+    );
+
+    const [found] = evaluateCapture(fixtureCapture(actions));
+
+    assert.equal(found?.detail, "Send (disabled), Start on page");
+  });
 });
 
 const GROUP = element({ endEdge: 358, gap: 0, group: null, id: "g", part: "group" });

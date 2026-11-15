@@ -12,6 +12,7 @@ function at(top: number, overrides: Partial<Place> = {}): Place {
 function change(label: string, before: Place, after: Place, overrides: Partial<Moved> = {}): Moved {
   return {
     after,
+    anchor: false,
     before,
     carried: false,
     drawn: true,
@@ -68,6 +69,17 @@ describe("what a step moved", () => {
     const form = change("form", at(0, { height: 200 }), at(0, { height: 216 }), { holds: true });
 
     assert.deepEqual(stateLeads([step("field", [form])]), []);
+  });
+
+  it("leads to a sheet's frame that grows with what appeared in it when a scenario anchors it", () => {
+    const sheet = change(
+      "div[data-slot=drawer-popup]",
+      at(400, { height: 259 }),
+      at(372, { height: 287 }),
+      { anchor: true, carried: true, holds: true },
+    );
+
+    assert.equal(stateLeads([step("pick", [sheet])]).length, 1);
   });
 
   it("lets a fold push what's under it straight down, but not what's beside or above it", () => {

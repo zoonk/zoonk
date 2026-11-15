@@ -69,6 +69,8 @@ struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
 struct SuggestionOpen<Content: View, Actions: View>: View {
   var isOpen: Binding<Bool>?
   var note: BarNote?
+  /// What opening it leads to, where "View" would say less, such as the exam card's.
+  var label: Text?
   @ViewBuilder let content: Content
   @ViewBuilder let actions: Actions
 
@@ -77,7 +79,7 @@ struct SuggestionOpen<Content: View, Actions: View>: View {
   private var shown: Binding<Bool> { isOpen ?? $isOpenHere }
 
   var body: some View {
-    SuggestionViewButton {
+    SuggestionViewButton(label: label) {
       shown.wrappedValue = true
     }
     .sheet(isPresented: shown) {
@@ -96,11 +98,12 @@ struct SuggestionOpen<Content: View, Actions: View>: View {
 /// `SuggestionOpen`'s "View", for a screen that presents the sheet itself, above panes that a
 /// resize or a fold rebuilds.
 struct SuggestionViewButton: View {
+  var label: Text?
   let action: () -> Void
 
   var body: some View {
     Button(action: action) {
-      Text("View", tableName: "Plan", comment: "Opens the Plan's suggestion in full")
+      label ?? Text("View", tableName: "Plan", comment: "Opens the Plan's suggestion in full")
     }
     .buttonStyle(.outline)
     .controlSize(.small)
