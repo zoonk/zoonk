@@ -12,12 +12,14 @@ export type AlignmentPage = Pick<Capture, "activeSurface" | "elements">;
 export function readAlignment({
   actions: controls,
   anchors = [],
+  columns,
   pieces,
   surfaces,
 }: {
   actions: string;
   /** A scenario's anchors: the first showing match of each is written for its state pair. */
   anchors?: { id: string; web: string }[];
+  columns: string;
   pieces: { name: string; web: WebPiece }[];
   surfaces: string;
 }): AlignmentPage {
@@ -542,6 +544,141 @@ export function readAlignment({
       .flatMap((group, groupIndex) => readGroup(pieceName, piece, group, groupIndex)),
   );
 
+  /**
+   * Every drawn box that passes its column (craft E7): a row's highlight (its `::before` fill, or a
+   * fill on a current or highlighted row), a hairline, a picture, or any other box, with the
+   * column's content edges and its frame (the column with its gutter). The closest column that
+   * draws a box is the box's own; the bottom bar reaches the frame by design and isn't read.
+   */
+  function readBleeds(): CaptureElement[] {
+    const PAST = 1;
+    const HAIRLINE = 2;
+    const { pixels } = globalThis.zoonkPage;
+
+    const columnOf = (element: Element) => {
+      let column = element.parentElement?.closest(columns) ?? null;
+
+      while (column && isContents(column)) {
+        column = column.parentElement?.closest(columns) ?? null;
+      }
+
+      return column;
+    };
+
+    const edgesOf = (column: Element) => {
+      const frame = column.getBoundingClientRect();
+      const style = getComputedStyle(column);
+
+      return {
+        frame,
+        left: frame.left + pixels(style.paddingLeft),
+        right: frame.right - pixels(style.paddingRight),
+      };
+    };
+
+    const beforeFill = (element: Element): Rect | null => {
+      const pseudo = getComputedStyle(element, "::before");
+
+      if (
+        pseudo.content === "none" ||
+        pseudo.position !== "absolute" ||
+        globalThis.zoonkPage.rgba(pseudo.backgroundColor)[3] === 0
+      ) {
+        return null;
+      }
+
+      const box = element.getBoundingClientRect();
+
+      return {
+        bottom: box.bottom - pixels(pseudo.bottom),
+        left: box.left + pixels(pseudo.left),
+        right: box.right - pixels(pseudo.right),
+        top: box.top + pixels(pseudo.top),
+      };
+    };
+
+    /** A border on the top or the bottom alone: a rule drawn across the element at that edge. */
+    const ruleOf = (element: Element): Rect | null => {
+      const style = getComputedStyle(element);
+
+      const drawn = (side: string) =>
+        pixels(style.getPropertyValue(`border-${side}-width`)) > 0 &&
+        globalThis.zoonkPage.rgba(style.getPropertyValue(`border-${side}-color`))[3] > 0;
+
+      if (drawn("left") || drawn("right") || drawn("top") === drawn("bottom")) {
+        return null;
+      }
+
+      const box = element.getBoundingClientRect();
+
+      const width = pixels(
+        style.getPropertyValue(drawn("top") ? "border-top-width" : "border-bottom-width"),
+      );
+
+      return drawn("top")
+        ? { bottom: box.top + width, left: box.left, right: box.right, top: box.top }
+        : { bottom: box.bottom, left: box.left, right: box.right, top: box.bottom - width };
+    };
+
+    type Kind = NonNullable<CaptureElement["kind"]>;
+
+    const kindOf = (element: Element, box: Rect): Kind => {
+      if (element.matches("img, video, canvas, picture")) {
+        return "picture";
+      }
+
+      return Math.min(box.right - box.left, box.bottom - box.top) <= HAIRLINE ? "hairline" : "box";
+    };
+
+    return [...document.querySelectorAll(`:is(${columns}) *`)].flatMap(
+      (element, index): CaptureElement[] => {
+        const column = columnOf(element);
+
+        if (!column || !shown(element) || element.closest("[data-slot=bottom-bar]")) {
+          return [];
+        }
+
+        const edges = edgesOf(column);
+
+        const passes = (box: Rect) =>
+          edges.left - box.left > PAST || box.right - edges.right > PAST;
+
+        const highlight = beforeFill(element);
+
+        const ownBox = globalThis.zoonkPage.paints(element, ["top", "right", "bottom", "left"])
+          ? element.getBoundingClientRect()
+          : null;
+
+        const line = ownBox ? null : ruleOf(element);
+        const current = element.matches("[aria-current], [data-highlighted], [aria-selected=true]");
+
+        const found: { box: Rect; kind: Kind }[] = [
+          ...(highlight && passes(highlight)
+            ? [{ box: highlight, kind: "highlight" as const }]
+            : []),
+          ...(ownBox && passes(ownBox)
+            ? [{ box: ownBox, kind: current ? ("highlight" as const) : kindOf(element, ownBox) }]
+            : []),
+          ...(line && passes(line) ? [{ box: line, kind: "hairline" as const }] : []),
+        ];
+
+        return found.map(({ box, kind }, part) => ({
+          bounds: bounds(box),
+          column: [round(edges.left + scrollX), round(edges.right + scrollX)],
+          frame: [round(edges.frame.left + scrollX), round(edges.frame.right + scrollX)],
+          group: null,
+          id: `fill.${index}.${part}`,
+          ink: bounds(box),
+          kind,
+          name: name(element),
+          part: "fill",
+          piece: "page",
+          row: null,
+        }));
+      },
+    );
+  }
+
   const covers = [...document.querySelectorAll(surfaces)].filter((surface) => present(surface));
   const surfaceName = (cover: Element) => `${name(cover)} #${covers.indexOf(cover) + 1}`;
 
@@ -614,7 +751,7 @@ export function readAlignment({
 
   return {
     activeSurface: top ? surfaceName(top) : "page",
-    elements: [...elements, ...actions, ...anchored],
+    elements: [...elements, ...actions, ...anchored, ...readBleeds()],
   };
 }
 

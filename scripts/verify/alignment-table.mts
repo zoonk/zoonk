@@ -100,10 +100,12 @@ export const PIECES: Piece[] = [
       group: "[data-slot=journey-path-list], [data-slot=path-nested]",
       parts: {
         end: "svg.lucide-chevron-right, [data-slot=fold-chevron]",
-        label: "[data-slot=path-row-title]",
+        // `PathRowBody` names its words and value once (lane C); the per-row slots until it lands.
+        label: "[data-slot=path-row-title], [data-slot=path-row-words] > :first-child",
         mark: "[data-slot=path-row-mark]",
-        note: "[data-slot=path-row-note]",
-        value: "[data-slot=path-row-value], [data-slot=phase-when], [data-slot=plan-date]",
+        note: "[data-slot=path-row-note], [data-slot=path-row-words] > :not(:first-child)",
+        value:
+          "[data-slot=path-row-value], [data-slot=phase-when], [data-slot=plan-date], [data-slot=path-row-body] > :last-child:not([data-slot=path-row-words])",
       },
       rows: "[data-slot=path-row]",
     },
@@ -130,6 +132,21 @@ export const ACTIONS = "a, button, [role=button]";
 /** What covers the page and becomes the surface its own actions are counted on. */
 export const SURFACES =
   "[role=dialog][aria-modal=true], [role=alertdialog], [data-slot=dialog-content], [data-slot=sheet-content]";
+
+/**
+ * The page's columns (craft E7): a drawn box starts and ends on its closest column's content edges,
+ * or bleeds as E7 allows. A frame's main column, the column beside an aside, the aside, and `Page`.
+ */
+export const COLUMNS =
+  "[data-slot=learn-shell-main], [data-slot=page-with-aside] > div, [data-slot=page-aside], [data-slot=page]";
+
+/** What `readAlignment` reads a web page by. */
+export const WEB_TABLE = {
+  actions: ACTIONS,
+  columns: COLUMNS,
+  pieces: PIECES.flatMap((piece) => (piece.web ? [{ name: piece.name, web: piece.web }] : [])),
+  surfaces: SURFACES,
+};
 
 /**
  * Exceptions to a declared relationship. A detector's correction belongs in the read itself; an

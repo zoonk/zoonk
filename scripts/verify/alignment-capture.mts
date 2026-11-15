@@ -13,7 +13,7 @@ type NotMeasured = "not measured";
 export type CaptureElement = {
   id: string;
   piece: string;
-  part: Part | "action" | "anchor" | "group" | "holder" | "row" | "unmeasured";
+  part: Part | "action" | "anchor" | "fill" | "group" | "holder" | "row" | "unmeasured";
   group: string | null;
   row: string | null;
   bounds: Bounds;
@@ -44,6 +44,14 @@ export type CaptureElement = {
   surface?: string;
   /** An action's destination, when it is a link: the same words to the same place are one action. */
   target?: string;
+  /**
+   * A fill's (a drawn box that passes the page's column): the column's start and end, the frame's
+   * (the page's whole room), and what it is: a row's "highlight", a "hairline", a "picture" or a
+   * "box" (craft E7).
+   */
+  column?: [number, number];
+  frame?: [number, number];
+  kind?: "box" | "hairline" | "highlight" | "picture";
   /** A state pair's anchor: the same id in both captures of one screen. */
   anchor?: string;
   /** A group's: its layout runs right to left, so its start edge is the right one. */

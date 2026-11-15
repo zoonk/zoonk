@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import { readAlignment, webCapture } from "./alignment-probe.mts";
-import { ACTIONS, PIECES, SURFACES } from "./alignment-table.mts";
+import { WEB_TABLE } from "./alignment-table.mts";
 import { evaluateCapture } from "./alignment.mts";
 import { installPageHelpers } from "./page-helpers.mts";
 
@@ -18,13 +18,9 @@ function box(element: Element) {
   return new DOMRect(left, top, width, height);
 }
 
-const PIECE_SELECTORS = PIECES.flatMap((piece) =>
-  piece.web ? [{ name: piece.name, web: piece.web }] : [],
-);
-
 function read() {
   return webCapture({
-    page: readAlignment({ actions: ACTIONS, pieces: PIECE_SELECTORS, surfaces: SURFACES }),
+    page: readAlignment(WEB_TABLE),
     path: "/fixture",
     scheme: "light",
     viewport: "phone",

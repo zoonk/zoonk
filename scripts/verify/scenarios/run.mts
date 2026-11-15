@@ -8,7 +8,7 @@ import { getMailboxCaptureUrl, getServiceUrl } from "../../dev/config.mts";
 import { type Capture } from "../alignment-capture.mts";
 import { readAlignment, webCapture } from "../alignment-probe.mts";
 import { alignmentLines, summaryLine } from "../alignment-summary.mts";
-import { ACTIONS, PIECES, SURFACES } from "../alignment-table.mts";
+import { WEB_TABLE } from "../alignment-table.mts";
 import { evaluateFile } from "../alignment.mts";
 import { installPageHelpers } from "../page-helpers.mts";
 import { signIn } from "../sign-in.mts";
@@ -34,10 +34,6 @@ const baseUrl = getServiceUrl({ currentDirectory: repository, serviceName: "main
 
 const mailboxUrl = getMailboxCaptureUrl(
   getServiceUrl({ currentDirectory: repository, serviceName: "mailbox" }),
-);
-
-const PIECE_SELECTORS = PIECES.flatMap((piece) =>
-  piece.web ? [{ name: piece.name, web: piece.web }] : [],
 );
 
 const STEP_TIMEOUT_MS = 15_000;
@@ -158,12 +154,7 @@ async function capture(
       anchor.web ? [{ id: anchor.id, web: anchor.web }] : [],
     );
 
-    const read = await page.evaluate(readAlignment, {
-      actions: ACTIONS,
-      anchors,
-      pieces: PIECE_SELECTORS,
-      surfaces: SURFACES,
-    });
+    const read = await page.evaluate(readAlignment, { ...WEB_TABLE, anchors });
 
     await page.screenshot({ fullPage: true, path: join(out, `${scenario.id}-${size}.png`) });
 
