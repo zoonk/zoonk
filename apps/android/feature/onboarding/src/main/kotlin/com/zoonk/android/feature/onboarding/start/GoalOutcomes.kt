@@ -32,6 +32,7 @@ import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.goalErrorMessage
 import com.zoonk.android.feature.onboarding.goalLimitMessage
 import com.zoonk.android.feature.onboarding.setup.PageActions
+import com.zoonk.android.feature.subscription.GateWords
 import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
@@ -165,8 +166,18 @@ internal fun GoalLimitNotice(
 
     if (reason is GoalLimitReason.MonthlyGoals) {
         // Its day coming while it shows changes only its line; what's under the notice doesn't move for that.
-        HeldSlot(gated = !limitLifted(reason.limit), modifier) {
-            SubscribeGate(title = stringResource(R.string.limit_goals_used), onSubscribe = onSubscribe, line = comesBackLine(reason.limit))
+        val lifted = limitLifted(reason.limit)
+        HeldSlot(gated = !lifted, modifier) {
+            // Once its day comes nothing ran out: no title says it did and nothing is offered to buy.
+            if (lifted) {
+                GateWords(title = null, line = comesBackLine(reason.limit))
+            } else {
+                SubscribeGate(
+                    title = stringResource(R.string.limit_goals_used),
+                    onSubscribe = onSubscribe,
+                    line = comesBackLine(reason.limit),
+                )
+            }
         }
         return
     }
