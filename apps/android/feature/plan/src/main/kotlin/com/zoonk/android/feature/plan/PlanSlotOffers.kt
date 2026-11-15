@@ -349,7 +349,7 @@ internal fun FitLessonsSuggestion(slot: Slot) {
 
 /**
  * Closing the suggestion's sheet, or leaving the Plan, drops the offer's check, as Not now does, so
- * its late answer adds nothing. A recreated window keeps it.
+ * its late answer adds nothing, whatever plan the page shows by then. A recreated window keeps it.
  */
 @Composable
 private fun CancelCheckWhenGone(
@@ -363,7 +363,7 @@ private fun CancelCheckWhenGone(
         onDispose {
             val host = current.host
             if (activity?.isChangingConfigurations != true &&
-                host.preview.of(offer.operations.map { it.op }, current.page.plan) != PlanPreviewState.Idle
+                (host.preview as? PlanPreviewState.Asked)?.operations == offer.operations.map { it.op }
             ) {
                 host.clearPreview()
             }
