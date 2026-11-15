@@ -41,7 +41,7 @@ function PathLine({ walked }: { walked: boolean }) {
       aria-hidden="true"
       data-slot="path-line"
       className={cn(
-        "absolute top-9 -bottom-2 left-[7.5px] w-px",
+        "absolute top-9 -bottom-2 left-2 w-px -translate-x-1/2",
         walked ? "bg-success/60" : "bg-border",
       )}
     />
@@ -120,7 +120,7 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
         </div>
 
         {hasEvents && (
-          <ul className="flex flex-col pb-1">
+          <ul className="flex flex-col pb-1.5">
             {mocks.nextDate && (
               <li>
                 <MockRow
@@ -132,7 +132,7 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
             )}
             {checkpoint && (
               <li>
-                <CheckpointRow brief checkpoint={checkpoint} links={links} />
+                <CheckpointRow checkpoint={checkpoint} links={links} />
               </li>
             )}
           </ul>

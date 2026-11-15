@@ -184,12 +184,8 @@ function RoadmapPosition() {
     return null;
   }
 
-  return (
-    <p className="min-w-0 truncate text-xs">
-      <span className="font-medium">{position.place}</span>
-      {position.name && <span className="text-muted-foreground">{` · ${position.name}`}</span>}
-    </p>
-  );
+  // The band under it names the phase, so the line says only where the learner is.
+  return <p className="min-w-0 truncate text-xs font-medium">{position.place}</p>;
 }
 
 export function RoadmapFull({ className, links }: { className?: string; links: JourneyPathLinks }) {
@@ -203,7 +199,7 @@ export function RoadmapFull({ className, links }: { className?: string; links: J
       className={cn("@container/roadmap flex flex-col gap-2.5", className)}
       data-slot="plan-roadmap"
     >
-      <div className="flex items-baseline justify-between gap-4">
+      <div className="flex items-center justify-between gap-4">
         <h2 className="sr-only" id={ROADMAP_TITLE_ID}>
           {t("Phases")}
         </h2>

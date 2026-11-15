@@ -1682,7 +1682,6 @@
       }
     },
     "%lld questions · %@" : {
-      "comment" : "A mock exam's number of questions and how long it takes",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -9545,6 +9544,64 @@
         }
       }
     },
+    "See details" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Details ansehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver detalles"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voir les détails"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vedi i dettagli"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "詳細を見る"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자세히 보기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zobacz szczegóły"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver detalhes"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayrıntıları gör"
+          }
+        }
+      }
+    },
     "See feedback" : {
       "comment" : "Opens a speaking task's result",
       "localizations" : {
@@ -12355,16 +12412,16 @@
     "Today this one has %lld of its %lld questions, about %@. You can take the full one later today." : {
       "comment" : "In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now.",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Today this one has %1$lld of its %2$lld questions, about %3$@. You can take the full one later today."
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Diese Probeprüfung hat heute %1$lld von %2$lld Fragen und dauert etwa %3$@ Die vollständige kannst du später am Tag machen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Today this one has %1$lld of its %2$lld questions, about %3$@. You can take the full one later today."
           }
         },
         "es" : {
@@ -12420,16 +12477,16 @@
     "Today this one has %lld of its %lld questions, about %@. You can take the full one on %@." : {
       "comment" : "In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as \"November 22\" in English.",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Today this one has %1$lld of its %2$lld questions, about %3$@. You can take the full one on %4$@."
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Diese Probeprüfung hat heute %1$lld von %2$lld Fragen und dauert etwa %3$@ Die vollständige kannst du am %4$@ machen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Today this one has %1$lld of its %2$lld questions, about %3$@. You can take the full one on %4$@."
           }
         },
         "es" : {

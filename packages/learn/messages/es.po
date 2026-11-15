@@ -341,6 +341,16 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "Termina para ver cómo te fue."
 
+#: src/_components/finish-sentence.ts
+msgctxt "XhpWxQ"
+msgid "At {time} a day, you reach {level} around {month}."
+msgstr "Con {time} al día, alcanzas el nivel {level} hacia {month}."
+
+#: src/_components/finish-sentence.ts
+msgctxt "6Due7K"
+msgid "You finish around {month}."
+msgstr "Terminas aproximadamente en {month}."
+
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
 msgid "Take a short break, then try again."
@@ -801,16 +811,6 @@ msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your dat
 msgstr "{dateKind, select, month {El mes que elegiste, {date}, ya pasó.} other {La fecha que elegiste, {date}, ya pasó.}}"
 
 #: src/_components/time-answer-lines.tsx
-msgctxt "qQDZCf"
-msgid "At {time} a day, you reach {level} around <date>{month}</date>."
-msgstr "Con {time} al día, llegas a {level} hacia <date>{month}</date>."
-
-#: src/_components/time-answer-lines.tsx
-msgctxt "lzWfsi"
-msgid "You finish around <date>{month}</date>."
-msgstr "Terminas alrededor de <date>{month}</date>."
-
-#: src/_components/time-answer-lines.tsx
 msgctxt "wRhIPZ"
 msgid "We can't estimate an end date. Try more time or more study days."
 msgstr "No podemos estimar cuándo terminarás. Prueba con más tiempo o más días de estudio."
@@ -970,6 +970,18 @@ msgstr "Correcto, revisa la ortografía"
 msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "Esta vez no comprobamos tu respuesta"
+
+#. Why a switch for a different study time on weekends is off: no weekend day is a study day.
+#: src/_components/weekend-time.tsx
+msgctxt "MuKIuz"
+msgid "Add Saturday or Sunday to your study days."
+msgstr "Agrega el sábado o el domingo a tus días de estudio."
+
+#. Why a switch for a different study time on weekends is off: only weekend days are study days.
+#: src/_components/weekend-time.tsx
+msgctxt "dQytAa"
+msgid "Add a weekday to your study days."
+msgstr "Agrega un día entre semana a tus días de estudio."
 
 #. A switch to study a different amount of time a day on weekends.
 #: src/_components/weekend-time.tsx
@@ -10460,11 +10472,6 @@ msgstr "Por ahora, {month}. Elige el día cuando lo sepas."
 msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "Ajustar tu plan"
-
-#: src/plan/plan-finish.tsx
-msgctxt "6Due7K"
-msgid "You finish around {month}."
-msgstr "Terminas aproximadamente en {month}."
 
 #: src/plan/plan-fit-suggestion.tsx
 msgctxt "ylM0GM"
