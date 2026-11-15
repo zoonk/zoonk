@@ -5,7 +5,7 @@ import { dirname, extname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { adoptRenders } from "./adopt.mts";
 import { checkPictures } from "./check.mts";
-import { registerDevicePictures } from "./device.mts";
+import { DEVICE_BRIDGES, takeDevicePicture } from "./device.mts";
 import { bodyMedia, findManifests, isRemote, manifestsAbove } from "./locate.mts";
 import { USAGE } from "./media-usage.mts";
 import {
@@ -44,6 +44,7 @@ function readArguments() {
         fixed: { type: "string" },
         help: { default: false, short: "h", type: "boolean" },
         manifests: { default: [], multiple: true, type: "string" },
+        name: { type: "string" },
         platform: { type: "string" },
         root: { type: "string" },
         source: { type: "string" },
@@ -292,19 +293,33 @@ async function adopt({ positionals: [sideName, ...renders], values }: Arguments)
 
 async function recordDevice({ positionals: files, values }: Arguments) {
   const platform = NATIVE_PLATFORMS.find((name) => name === values.platform);
-  const device = values.device?.trim();
+  const deviceId = values.device?.trim();
+  const name = values.name?.trim();
 
-  if (!platform || !device || files.length === 0) {
-    fail('Give --platform android or apple, --device "<the device>", and the after pictures.');
+  if (files.length > 0) {
+    fail(
+      "A device picture is taken by this command from a booted simulator or emulator, never given as a file. A web page in a phone-sized browser is a web capture: take it with pnpm pr:capture.",
+    );
+  }
+
+  if (!platform || !deviceId || !name) {
+    fail(
+      "Give --platform android or apple, --device <simulator udid or emulator serial> and --name <the shot>.",
+    );
   }
 
   const to = resolve(values.to ?? join(CAPTURE, "device"));
-  const items = await registerDevicePictures({ device, files, platform, repository, to });
 
-  console.log(
-    `${items.length} ${platform} pictures from ${device} in ${displayPath(join(to, MANIFEST))}.`,
-  );
+  const item = await takeDevicePicture({
+    bridge: DEVICE_BRIDGES[platform],
+    deviceId,
+    name,
+    platform,
+    repository,
+    to,
+  });
 
+  console.log(`${item.file} from ${item.device} in ${displayPath(join(to, MANIFEST))}.`);
   return true;
 }
 

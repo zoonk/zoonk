@@ -6,7 +6,7 @@ export const USAGE = `Usage: pnpm pr:media check <body.md> [--root <dir>] [--man
        pnpm pr:media pending --platform <android|apple> [--to <dir>] <file>...
        pnpm pr:media before --platform <web|android|apple> --source <where> [--to <dir>] <file>...
        pnpm pr:media adopt <before|after> [--to <dir>] <render.json>...
-       pnpm pr:media device --platform <android|apple> --device <name> [--to <dir>] <file>...
+       pnpm pr:media device --platform <android|apple> --device <udid|serial> --name <shot> [--to <dir>]
 
 Checks that every picture a PR body shows was captured, from which build, and read.
 
@@ -26,11 +26,14 @@ Checks that every picture a PR body shows was captured, from which build, and re
   resolve  marks a finding fixed in a commit, or an exception the user granted.
   pending  records native after pictures with neither a capture nor a device record; they keep
            failing the check as pending.
-  device   records after pictures taken on an emulator or a simulator, which no capture can
-           take (an Android sheet over its page): --device names it, such as "Pixel 9 emulator,
-           API 36". Each is stamped with this checkout's commit and uncommitted changes, so it
-           fails as uncommitted or stale as a capture would, and still needs its read; the check
-           says its layout wasn't measured. --to is tmp/pr-media/device by default.
+  device   takes an after picture from a booted simulator (--device its udid) or emulator (its
+           adb serial) that no capture can take, such as an Android sheet over its page. It
+           takes the picture itself and reads the installed app's build from the device: a
+           simulator's Debug build stamp must be this checkout's head, built clean; an emulator's
+           app, which carries no commit, must have been installed after the head's last change to
+           apps/android or packages/, from a clean tree. It refuses otherwise. A web page in a
+           phone-sized browser is a web capture: take it with pnpm pr:capture. Its read checks its
+           layout. --to is tmp/pr-media/device by default.
   before   records existing before pictures and where they came from; they pass, since a before
            picture's build isn't checked. --to is tmp/pr-media/registered by default for both.
   adopt    puts Android renders into a capture folder as the check reads them: each picture
