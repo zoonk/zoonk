@@ -17,6 +17,7 @@ import { OutlineLimitNotice, useLiveLimit } from "../_components/help-limit-noti
 import { ListGroup, ListRowContent, ListRowLink, ListRowTitle } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
 import { StatusRegion } from "../_components/status-region";
+import { useHeldSlot } from "../_utils/use-held-slot";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { type TopicOutlineActions } from "./topic-outline-actions";
@@ -88,6 +89,7 @@ function FarTopicBody({
 
   const { chapters, isPending, request, retry, shown } = outline;
   const limit = useLiveLimit(outline.limit);
+  const slot = useHeldSlot<HTMLDivElement>(limit !== null && !isPending);
   const copy = useStateCopy(shown);
 
   if (shown === "loading") {
@@ -102,7 +104,7 @@ function FarTopicBody({
   const isFailure = shown === "unreachable";
 
   return (
-    <div className="flex flex-col gap-4" data-slot="far-topic">
+    <div className="flex flex-col gap-4" data-slot="far-topic" ref={slot}>
       <div className="flex items-start gap-3" role={shown === "writing" ? "status" : undefined}>
         {shown === "writing" && (
           <Spinner aria-hidden="true" className="text-muted-foreground mt-0.5 size-4 shrink-0" />
@@ -182,7 +184,7 @@ export function FarTopicSheet({
       <DrawerPopup>
         <SheetHeader>
           <div className="flex min-w-0 flex-col gap-1">
-            <DrawerTitle className="text-balance">{title}</DrawerTitle>
+            <DrawerTitle>{title}</DrawerTitle>
             <DrawerDescription>{line({ lessons, nextDate })}</DrawerDescription>
           </div>
         </SheetHeader>

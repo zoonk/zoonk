@@ -179,8 +179,12 @@ export function LearnPageBar({
       }
       back={
         <>
+          {/* With the page's name in the bar, the way back is its chevron; its words stay its name. */}
           <LearnBackLink
-            className={root ? LISTED_IN_SIDEBAR_CLASS : undefined}
+            className={cn(
+              root && LISTED_IN_SIDEBAR_CLASS,
+              title && titleAway && "[&]:shrink-0 [&>span]:sr-only",
+            )}
             href={back.href}
             label={back.label}
             toApp={toApp}

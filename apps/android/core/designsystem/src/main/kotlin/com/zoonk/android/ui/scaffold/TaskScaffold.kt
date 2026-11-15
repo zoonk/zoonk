@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -49,6 +50,7 @@ import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.SnackbarHost
+import com.zoonk.android.ui.components.TASK_MARGIN
 import com.zoonk.android.ui.components.TextButton
 
 /** What leaving a task asks first when it would leave unsent work behind, in the screen's own words. */
@@ -95,10 +97,10 @@ private fun TaskTopBar(
             title = { if (fold == null) Box(Modifier.titleTarget(focus)) { title() } },
             navigationIcon = {
                 if (fold == null) {
-                    CloseButton(onClick = onClose, label = closeLabel)
+                    CloseButton(onClick = onClose, label = closeLabel, modifier = Modifier.offset(x = CLOSE_PULL))
                 } else {
                     Row(Modifier.width(fold.start), verticalAlignment = Alignment.CenterVertically) {
-                        CloseButton(onClick = onClose, label = closeLabel)
+                        CloseButton(onClick = onClose, label = closeLabel, modifier = Modifier.offset(x = CLOSE_PULL))
                         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                             Box(Modifier.titleTarget(focus)) { ProvideTextStyle(MaterialTheme.typography.titleLarge) { title() } }
                         }
@@ -113,6 +115,12 @@ private fun TaskTopBar(
 
 /** Material's icon button, which the way out is: the space that keeps the title centered over its page. */
 private val CLOSE_WIDTH = 48.dp
+
+/**
+ * The ✕ lines up by its ink with the task column's edge (main's `edge="start"`): Material's bar insets its
+ * navigation icon 4dp, the button centers the 24dp glyph in its width, and `ic_close` leaves 5dp blank before its ink.
+ */
+private val CLOSE_PULL = TASK_MARGIN - (4.dp + (CLOSE_WIDTH - 24.dp) / 2 + 5.dp)
 
 /** In a [TaskScaffold]'s slots, whether its aside shows beside the task; where it doesn't, the screen shows that content its own way. */
 @Composable

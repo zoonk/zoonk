@@ -30,10 +30,16 @@ export async function LoginBarLink({
 const NARROW_BAR_CLASS = "max-sm:group-data-title-away/page-bar:hidden max-[20rem]:hidden";
 
 /** What someone without a session can use from a bar: the catalog, the prices and the way in. */
-export function VisitorBarLinks({ className }: { className?: string }) {
+export function VisitorBarLinks({
+  className,
+  current,
+}: {
+  className?: string;
+  current?: "courses";
+}) {
   return (
     <div className={cn("flex items-center gap-1", className)}>
-      <CoursesBarLink className={NARROW_BAR_CLASS} />
+      <CoursesBarLink className={NARROW_BAR_CLASS} current={current === "courses"} />
       <PricingBarLink className={NARROW_BAR_CLASS} />
       <LoginBarLink edge="end" />
     </div>
