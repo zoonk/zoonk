@@ -723,7 +723,9 @@ export function readAlignment({
     const isRowOf = (row: Element) =>
       row.closest(piece.group) === group || row.parentElement?.closest(piece.group) === group;
 
-    const candidates = [...group.querySelectorAll(piece.rows)]
+    const listed = piece.rows === ":scope" ? [group] : [...group.querySelectorAll(piece.rows)];
+
+    const candidates = listed
       .flatMap((row) => expandRows(row))
       .filter(
         (row) => isRowOf(row) && !["absolute", "fixed"].includes(getComputedStyle(row).position),
@@ -760,7 +762,8 @@ export function readAlignment({
           ? { layoutScale: Math.round((drawnBox.width / group.offsetWidth) * 100) / 100 }
           : {}),
         ...(isRtl(group) ? { direction: "rtl" as const } : {}),
-        ...columnFields(group),
+        // A control holding a glyph and its words isn't a list that reaches its column's end.
+        ...(piece.rows === ":scope" ? {} : columnFields(group)),
         endEdge: (bar ? bar.getBoundingClientRect().right : contentEnd(group)) + scrollX,
         group: null,
         id: groupId,

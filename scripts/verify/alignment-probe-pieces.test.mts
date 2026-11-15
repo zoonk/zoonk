@@ -321,3 +321,32 @@ describe("the current tab's fill", () => {
     assert.equal(tabFillMisses("button", 'role="tab" aria-selected="false"').length, 1);
   });
 });
+
+/** A button with a glyph beside one line of words (#44's chip), or the words alone. */
+function glyphButton(glyph: boolean) {
+  const mark = glyph ? '<span data-icon="inline-start" data-box="28,52,16,16">◆</span>' : "";
+
+  return `<div data-slot="page" data-box="16,0,358,400">
+    <button data-slot="button" data-box="16,40,120,40">${mark}<span data-box="52,50,60,20">Explain</span></button></div>`;
+}
+
+describe("a glyph and the words it goes with (addition 2)", () => {
+  it("are one row of their control, held to one line", () => {
+    document.body.innerHTML = glyphButton(true);
+
+    const parts = read()
+      .elements.filter((element) => element.piece === "glyph-label")
+      .map((element) => element.part);
+
+    assert.deepEqual(parts, ["group", "row", "mark", "label"]);
+
+    // A control isn't a list: it needn't reach its column's end.
+    assert.deepEqual(
+      evaluateCapture(read()).filter((finding) => finding.rule === "column"),
+      [],
+    );
+
+    document.body.innerHTML = glyphButton(false);
+    assert.ok(read().elements.every((element) => element.piece !== "glyph-label"));
+  });
+});

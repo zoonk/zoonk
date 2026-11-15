@@ -23,7 +23,10 @@ export type Relation =
 export type WebPiece = {
   /** The group's element. */
   group: string;
-  /** Its rows, from the group (`:scope`); a row inside another of the same group isn't one. */
+  /**
+   * Its rows, from the group; a row inside another of the same group isn't one. `:scope` alone:
+   * the group is its one row (a control holding a glyph and its words).
+   */
   rows: string;
   /** Each part, inside a row. */
   parts: Partial<Record<Part, string>>;
@@ -145,6 +148,18 @@ const PIECES: Piece[] = [
       group: "[data-slot=page-top-bar]",
       parts: { label: ":scope" },
       rows: "[data-slot=page-top-end] :is(a, button):not(:has([data-slot=avatar]))",
+      words: true,
+    },
+  },
+  // A glyph and the words it goes with in one control (a chip's smiley and its label, #44): one
+  // line, the glyph on the middle of the words' capitals.
+  {
+    name: "glyph-label",
+    relations: ["line"],
+    web: {
+      group: "[data-slot=button]:has(> svg, > [data-icon])",
+      parts: { label: ":scope", mark: ":scope > :is(svg, [data-icon])" },
+      rows: ":scope",
       words: true,
     },
   },
