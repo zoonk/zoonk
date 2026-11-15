@@ -100,10 +100,10 @@ export function RouteTitle({
   );
 }
 
-/* The band hangs past the column as far as a highlighted row does, so what it holds stays on the column's edges. */
+/* A band is a box, so it sits on the page's column (craft E7) with the route running through its start; what it holds starts on the route's edge and ends its padding inside. */
 const ZONE_CLASS = cn(
   "group/zone bg-ground relative rounded-xl [--route-fill:var(--ground)]",
-  "-mr-2.5 ml-[calc(-1*var(--route-inset)-0.625rem)] pr-2.5 pl-[calc(var(--route-inset)+0.625rem)]",
+  "-ml-(--route-inset) pr-4 pl-(--route-inset)",
 );
 
 const ZONE_ROW_CLASS = "relative flex gap-4 py-4 text-base leading-snug font-semibold";
