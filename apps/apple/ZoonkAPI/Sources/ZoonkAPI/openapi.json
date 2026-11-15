@@ -89298,7 +89298,7 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 9007199254740991,
-            "description": "About how long it takes: learners' real pace on this exam's mocks, or the exam's own pace until there's enough of it; never more than `minutes`"
+            "description": "About how long it usually takes: learners' real pace per answer on this exam's mocks, never more than `minutes`. Equal to `minutes` when there's no estimate for the whole mock (too few answers yet, or a written or spoken part, which no answer pace measures): show it as \"usually takes\" only when it's less"
           },
           "leftOut": {
             "type": "array",

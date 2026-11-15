@@ -52,13 +52,14 @@ export function useMockOptionDetail() {
   };
 }
 
+/** The time limit the mock runs on, as the exam page and the plan show it. */
 export function useMockOptionSize() {
   const t = useExtracted();
   const duration = useFormatDuration();
 
-  return (option: Pick<MockOptionView, "estimatedMinutes" | "questions">): string =>
+  return (option: Pick<MockOptionView, "minutes" | "questions">): string =>
     t("{count, plural, one {# question} other {# questions}} · {time}", {
       count: option.questions,
-      time: duration(option.estimatedMinutes),
+      time: duration(option.minutes),
     });
 }
