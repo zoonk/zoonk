@@ -8,7 +8,7 @@ import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionSource
-import com.zoonk.android.data.VisitOutcomes
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.WritingWaits
 import com.zoonk.android.data.Written
 import com.zoonk.android.data.recode
@@ -205,8 +205,11 @@ class MockRunnerViewModel(
 
     private var leavingOn: Int? = null
 
+    /** This visit to the mock: [leave]'s close shows only on it. */
+    val visit = Visit()
+
     /** [leave]'s close, once its answers went out, while the visit that asked lasts. */
-    val closed = VisitOutcomes<Unit>()
+    val closed = visit.outcome<Unit>()
 
     /**
      * Leaving waits at most a few seconds for answers going out, so the close action always leaves, even offline.
@@ -214,15 +217,15 @@ class MockRunnerViewModel(
      * nothing, and the next one can leave again.
      */
     fun leave() {
-        val visit = closed.visit
-        if (leavingOn == visit) return
-        leavingOn = visit
+        val started = visit.number
+        if (leavingOn == started) return
+        leavingOn = started
         viewModelScope.launch {
             run.value.question?.let { leaveQuestion(it.itemId) }
             saveText()
             queue.retryNow()
             withTimeoutOrNull(LEAVE_WAIT) { queue.idle() }
-            closed.send(visit, Unit)
+            closed.send(started, Unit)
         }
     }
 

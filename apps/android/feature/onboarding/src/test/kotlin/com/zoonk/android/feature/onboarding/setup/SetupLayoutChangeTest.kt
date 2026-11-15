@@ -11,8 +11,11 @@ import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.lifecycle.ViewModelProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -88,8 +91,43 @@ class SetupLayoutChangeTest {
         assertEquals(AppRoute.Today, SetupTest.navigator.currentRoute)
     }
 
-    /** The setup's profile step, its form answered and "Save and start lesson 1" tapped, the save held until completed. */
-    private fun startSaving(): CompletableDeferred<Unit> {
+    @Test
+    fun saveAndStartThatFailsWhileTheWindowWidensAndNarrowsSaysSo() {
+        val held = startSaving(fails = true)
+
+        RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
+        scenario.recreate()
+        RuntimeEnvironment.setQualifiers("w411dp-h891dp")
+        scenario.recreate()
+        held.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(true, setupModel().saveFailed)
+        assertEquals(AppRoute.Today, SetupTest.navigator.currentRoute)
+    }
+
+    @Test
+    fun saveAndStartThatFailsAfterTheLearnerLeftSaysNothingOnTheirReturn() {
+        val held = startSaving(fails = true)
+
+        SetupTest.visible = false
+        rule.waitForIdle()
+        held.complete(Unit)
+        rule.waitForIdle()
+        SetupTest.visible = true
+        rule.waitForIdle()
+
+        assertEquals(false, setupModel().saveFailed)
+    }
+
+    private fun setupModel(): GoalSetupViewModel {
+        lateinit var model: GoalSetupViewModel
+        scenario.onActivity { model = ViewModelProvider(it)[GoalSetupViewModel::class.java] }
+        return model
+    }
+
+    /** The setup's profile step, its form answered and "Save and start lesson 1" tapped, the save held until completed, then failing when it [fails]. */
+    private fun startSaving(fails: Boolean = false): CompletableDeferred<Unit> {
         val application = RuntimeEnvironment.getApplication()
         shadowOf(application.packageManager).addOrUpdateActivity(
             ActivityInfo().apply {
@@ -111,6 +149,7 @@ class SetupLayoutChangeTest {
         val lesson = """{"id":"$LESSON","status":"ready","title":"Dawn songs"}"""
         val api =
             FakeOnboardingApi().apply {
+                if (fails) refusal = ApiException(ApiError.Network)
                 setup = {
                     setupView(listOf("addressForm", "plan"), firstLesson = lesson).let {
                         it.copy(profile = it.profile.copy(questions = listOf(form)))

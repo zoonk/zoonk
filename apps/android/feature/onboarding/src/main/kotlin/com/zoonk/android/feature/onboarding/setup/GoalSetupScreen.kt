@@ -69,7 +69,8 @@ import com.zoonk.android.feature.warmup.rememberWaitQuiz
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.CollectForVisit
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -347,7 +348,8 @@ private fun ColumnScope.SetupStep(
     }
     val firstLesson = run.firstLesson.withRead(view.firstLesson, view.generationId, run.id)
     val startFirstLesson = firstLesson?.let { first -> { navigator.open(AppRoute.Lesson(first.id)) } }
-    CollectForVisit(vm.startLesson) { startFirstLesson?.invoke() }
+    VisitOf(vm.visit)
+    ActOn(vm.startLesson) { startFirstLesson?.invoke() }
     // Placement follows the run itself, so only the questions say it stopped.
     val planStart = PlanStart(run, onRetryRun).takeIf { step != OnboardingStep.PLACEMENT && step != OnboardingStep.PLAN }
 

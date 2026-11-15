@@ -6,20 +6,26 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
-import com.zoonk.android.data.VisitOutcomes
+import com.zoonk.android.data.Visit
+import com.zoonk.android.data.VisitOutcome
 
-/**
- * Runs [onOutcome] for each outcome owed to this visit, with this screen's navigator or sheet, and ends the
- * visit when the screen goes for real; a recreation keeps it.
- */
+/** This screen is [visit]: it ends when the screen goes for real (another tab, a task over it, back), not when a recreation replaces it. */
 @Composable
-fun <T> CollectForVisit(
-    outcomes: VisitOutcomes<T>,
-    onOutcome: (T) -> Unit,
+fun VisitOf(visit: Visit) = OnVisitEnd(visit) { visit.end() }
+
+/** Acts on [outcome] with this screen's navigator or sheet once it's owed, then says so, so a recreation before then acts on it instead. */
+@Composable
+fun <T : Any> ActOn(
+    outcome: VisitOutcome<T>,
+    act: (T) -> Unit,
 ) {
-    val current by rememberUpdatedState(onOutcome)
-    LaunchedEffect(outcomes) { outcomes.outcomes.collect { current(it) } }
-    OnVisitEnd(outcomes) { outcomes.endVisit() }
+    val owed = outcome.value
+    val current by rememberUpdatedState(act)
+    LaunchedEffect(owed) {
+        owed ?: return@LaunchedEffect
+        current(owed)
+        outcome.acted(owed)
+    }
 }
 
 /** Runs [onEnd] when this screen goes for real (another tab, a task over it, back), not when a recreation replaces it. */

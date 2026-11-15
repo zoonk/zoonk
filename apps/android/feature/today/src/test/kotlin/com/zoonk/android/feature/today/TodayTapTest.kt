@@ -77,13 +77,8 @@ class TodayTapTest {
         api.openings = listOf(opening("lesson", "lessonId" to step(1).lessonId.toString(), "sessionId" to SESSION.toString()))
     }
 
-    /** Today's screen collects routes only while it shows, as `TodayScreen` does. */
-    private fun TestScope.shownRoutes(viewModel: TodayViewModel): List<TodayRoute> {
-        val routes = mutableListOf<TodayRoute>()
-        backgroundScope.launch { viewModel.routes.toList(routes) }
-        runCurrent()
-        return routes
-    }
+    /** The route Today owes the visit, which its screen opens and then acknowledges. */
+    private fun owed(viewModel: TodayViewModel): List<TodayRoute> = listOfNotNull(viewModel.route.value)
 
     /** Main shows a mission row's wait and failure on that row, not on the queue row of the same block. */
     @Test
@@ -143,12 +138,13 @@ class TodayTapTest {
             assertNull(viewModel.failed)
         }
 
-    /** A suggested goal's Start, its save held until the returned call completes. */
-    private fun heldSuggestion(): Pair<SuggestedGoal, CompletableDeferred<Unit>> {
+    /** A suggested goal's Start, its save held until the returned call completes, then failing when it [fails]. */
+    private fun heldSuggestion(fails: Boolean = false): Pair<SuggestedGoal, CompletableDeferred<Unit>> {
         val held = CompletableDeferred<Unit>()
         val suggestion = SuggestedGoal(courseId = COURSE, id = UUID.randomUUID(), status = SuggestedGoal.Status.PENDING, title = "Spanish")
         todayApi.suggestedGoalAnswer = { _, _ ->
             held.await()
+            if (fails) throw offline
             suggestion.copy(status = SuggestedGoal.Status.ACCEPTED)
         }
         return suggestion to held
@@ -162,13 +158,12 @@ class TodayTapTest {
 
             viewModel.answer(suggestion, accepted = true, hasGoal = true)
             runCurrent()
-            // A recreation: the screen collecting routes goes and another comes; the visit goes on.
-            val routes = shownRoutes(viewModel)
+            // A recreation: the screen goes before acting and another comes; the visit goes on.
             held.complete(Unit)
             advanceUntilIdle()
             runCurrent()
 
-            assertEquals(listOf(AppRoute.CourseStart(COURSE.toString())), routes.map { it.route })
+            assertEquals(listOf(AppRoute.CourseStart(COURSE.toString())), owed(viewModel).map { it.route })
         }
 
     @Test
@@ -182,11 +177,10 @@ class TodayTapTest {
             viewModel.endVisit()
             held.complete(Unit)
             advanceUntilIdle()
-            val routes = shownRoutes(viewModel)
             advanceUntilIdle()
             runCurrent()
 
-            assertEquals(emptyList<TodayRoute>(), routes)
+            assertEquals(emptyList<TodayRoute>(), owed(viewModel))
             assertEquals(false, viewModel.isAnswering)
         }
 
@@ -200,11 +194,53 @@ class TodayTapTest {
             held.complete(Unit)
             advanceUntilIdle()
             viewModel.endVisit()
-            val routes = shownRoutes(viewModel)
             advanceUntilIdle()
             runCurrent()
 
-            assertEquals(emptyList<TodayRoute>(), routes)
+            assertEquals(emptyList<TodayRoute>(), owed(viewModel))
+        }
+
+    @Test
+    fun aSuggestedGoalsStartThatFailsWhileTodayIsRecreatedSaysSo() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            val (suggestion, held) = heldSuggestion(fails = true)
+
+            viewModel.answer(suggestion, accepted = true, hasGoal = true)
+            runCurrent()
+            held.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(true, viewModel.answerFailed)
+        }
+
+    @Test
+    fun aSuggestedGoalsStartThatFailsAfterTheLearnerLeftTodaySaysNothingOnReturn() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            val (suggestion, held) = heldSuggestion(fails = true)
+
+            viewModel.answer(suggestion, accepted = true, hasGoal = true)
+            runCurrent()
+            viewModel.endVisit()
+            held.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(false, viewModel.answerFailed)
+        }
+
+    @Test
+    fun aSuggestedGoalsFailureShownBeforeTheLearnerLeftTodayIsGoneOnReturn() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            val (suggestion, held) = heldSuggestion(fails = true)
+
+            viewModel.answer(suggestion, accepted = true, hasGoal = true)
+            held.complete(Unit)
+            advanceUntilIdle()
+            viewModel.endVisit()
+
+            assertEquals(false, viewModel.answerFailed)
         }
 
     @Test
@@ -216,7 +252,7 @@ class TodayTapTest {
             viewModel.open(read, read.day.steps[1], next = false)
             advanceUntilIdle()
 
-            assertEquals(1, shownRoutes(viewModel).size)
+            assertEquals(1, owed(viewModel).size)
         }
 
     /** Opening a block starts it, so the intro's reading time would count as study and coming back would skip the intro. */
@@ -229,14 +265,13 @@ class TodayTapTest {
             }
             val pending = TodayRead.Day(read.today, day(listOf(review(StudyBlock.Status.PENDING), step(1))))
             val active = TodayRead.Day(read.today, day(listOf(review(StudyBlock.Status.ACTIVE), step(1))))
-            val routes = shownRoutes(viewModel)
 
             viewModel.open(pending, pending.day.steps[0], next = true)
             advanceUntilIdle()
             runCurrent()
 
             assertEquals(emptyList<StudyBlockOpeningTarget>(), api.targets)
-            assertEquals(AppRoute.Session(blockId = blockId(0).toString(), sessionId = SESSION.toString()), routes.single().route)
+            assertEquals(AppRoute.Session(blockId = blockId(0).toString(), sessionId = SESSION.toString()), owed(viewModel).single().route)
 
             viewModel.open(active, active.day.steps[0], next = true)
             advanceUntilIdle()
@@ -250,14 +285,13 @@ class TodayTapTest {
             val viewModel = today()
             val review = step(0, StudyBlock.Status.PENDING, StudyBlock.Kind.REVIEW, StudyBlock.Screen.SESSION, lessonId = null)
             val pending = TodayRead.Day(read.today, day(listOf(review, step(1))))
-            val routes = shownRoutes(viewModel)
 
             viewModel.openMission(pending, pending.day.steps[0])
             advanceUntilIdle()
             runCurrent()
 
             assertEquals(emptyList<StudyBlockOpeningTarget>(), api.targets)
-            assertEquals(AppRoute.Session(blockId = blockId(0).toString(), sessionId = SESSION.toString()), routes.single().route)
+            assertEquals(AppRoute.Session(blockId = blockId(0).toString(), sessionId = SESSION.toString()), owed(viewModel).single().route)
         }
 
     @Test
@@ -270,6 +304,6 @@ class TodayTapTest {
             viewModel.endVisit()
             advanceUntilIdle()
 
-            assertEquals(emptyList<TodayRoute>(), shownRoutes(viewModel))
+            assertEquals(emptyList<TodayRoute>(), owed(viewModel))
         }
 }

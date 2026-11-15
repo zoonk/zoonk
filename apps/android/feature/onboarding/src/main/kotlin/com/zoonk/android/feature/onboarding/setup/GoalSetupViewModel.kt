@@ -11,7 +11,7 @@ import com.zoonk.android.data.GenerationFollower
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
-import com.zoonk.android.data.VisitOutcomes
+import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
@@ -114,6 +114,9 @@ internal class GoalSetupViewModel(
     goalId: String,
     revealMoment: Boolean = false,
 ) : ViewModel() {
+    /** This visit to the setup: what its saves lead to (a failure, lesson 1) shows only on it. */
+    val visit = Visit()
+
     private var saved by handle.saved { SetupFlow(goalId) }
     private var savedProfiles by handle.saved { emptyMap<ProfileQuestion, ProfileDraft>() }
     private var profileDrafts by mutableStateOf(savedProfiles)
@@ -147,6 +150,7 @@ internal class GoalSetupViewModel(
         if (isSaving) return
         isSaving = true
         clearFailure()
+        val started = visit.number
         viewModelScope.launch {
             when (
                 val result =
@@ -163,14 +167,14 @@ internal class GoalSetupViewModel(
                         store.onboardings[goalId].refresh()
                         onSaved()
                     } else {
-                        saveFailed = true
+                        failure.send(started, SaveFailure())
                     }
                 }
 
                 com.zoonk.android.data.MutationResult.Obsolete -> {}
 
                 else -> {
-                    saveFailed = true
+                    failure.send(started, SaveFailure())
                 }
             }
             isSaving = false
@@ -186,11 +190,12 @@ internal class GoalSetupViewModel(
     var openingStep by mutableStateOf<Long?>(null)
         private set
 
-    var failedStep by mutableStateOf<Long?>(null)
-        private set
+    private val stepFailure = visit.outcome<Long>()
+    private val startStepFailure = visit.outcome<Unit>()
 
-    var startStepFailed by mutableStateOf(false)
-        private set
+    /** The reveal's step whose opening failed on this visit. */
+    val failedStep get() = stepFailure.value
+    val startStepFailed get() = startStepFailure.value != null
 
     fun openRevealStep(
         day: DayView,
@@ -228,22 +233,23 @@ internal class GoalSetupViewModel(
         if (isSaving) return
         isSaving = true
         openingStep = position.takeUnless { fromStart }
-        failedStep = null
-        startStepFailed = false
+        stepFailure.clear()
+        startStepFailure.clear()
         clearFailure()
+        val started = visit.number
         val revealingGoal = goalId
         viewModelScope.launch {
             when (store.markPlanRevealed(revealingGoal)) {
                 is WriteOutcome.Done -> {
                     if (!onSaved()) {
-                        if (fromStart) startStepFailed = true else failedStep = position
+                        if (fromStart) startStepFailure.send(started, Unit) else position?.let { stepFailure.send(started, it) }
                     }
                 }
 
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    if (position == null || fromStart) saveFailed = true else failedStep = position
+                    if (position == null || fromStart) failure.send(started, SaveFailure()) else stepFailure.send(started, position)
                 }
             }
             openingStep = null
@@ -257,11 +263,10 @@ internal class GoalSetupViewModel(
     var isSaving by mutableStateOf(false)
         private set
 
-    var saveFailed by mutableStateOf(false)
-        private set
+    private val failure = visit.outcome<SaveFailure>()
 
-    var dayTooShort by mutableStateOf<Refusal.DayTooShort?>(null)
-        private set
+    val saveFailed get() = failure.value != null
+    val dayTooShort get() = failure.value?.dayTooShort
 
     var isStartingOver by mutableStateOf(false)
         private set
@@ -297,15 +302,15 @@ internal class GoalSetupViewModel(
     }
 
     /** "Save and start lesson 1": the save, then the start once it saved, while the visit that tapped it lasts. */
-    val startLesson = VisitOutcomes<Unit>()
+    val startLesson = visit.outcome<Unit>()
 
     fun answerThenStartLesson(
         input: OnboardingAnswerInput,
         profileAnswer: ProfileDraft,
     ) {
+        val started = visit.number
         val saving = answer(input, profileAnswer = profileAnswer) ?: return
-        val visit = startLesson.visit
-        viewModelScope.launch { if (saving.await() is WriteOutcome.Done) startLesson.send(visit, Unit) }
+        viewModelScope.launch { if (saving.await() is WriteOutcome.Done) startLesson.send(started, Unit) }
     }
 
     /**
@@ -322,6 +327,7 @@ internal class GoalSetupViewModel(
         if (isSaving) return null
         isSaving = true
         clearFailure()
+        val started = visit.number
         val answeredGoal = goalId
         val draft = drafts?.sending(answeredGoal, step.value)
         return viewModelScope.async {
@@ -361,8 +367,7 @@ internal class GoalSetupViewModel(
                 else -> {
                     // Only the screen that saved shows its failure: the learner may have gone Back while it saved.
                     if (showFailure && flow.current == step) {
-                        saveFailed = true
-                        dayTooShort = (outcome as? WriteOutcome.Refused)?.refusal as? Refusal.DayTooShort
+                        failure.send(started, SaveFailure((outcome as? WriteOutcome.Refused)?.refusal as? Refusal.DayTooShort))
                     }
                 }
             }
@@ -401,8 +406,9 @@ internal class GoalSetupViewModel(
     ) {
         if (isStartingOver) return
         isStartingOver = true
+        val started = visit.number
         viewModelScope.launch {
-            if (store.startOver(goalIds) is WriteOutcome.Done) onDone() else saveFailed = true
+            if (store.startOver(goalIds) is WriteOutcome.Done) onDone() else failure.send(started, SaveFailure())
             isStartingOver = false
         }
     }
@@ -433,10 +439,7 @@ internal class GoalSetupViewModel(
         viewModelScope.launch { store.onboardings[goalId].refresh() }
     }
 
-    private fun clearFailure() {
-        saveFailed = false
-        dayTooShort = null
-    }
+    private fun clearFailure() = failure.clear()
 
     private fun update(next: SetupFlow) {
         flow = next
@@ -449,3 +452,8 @@ internal fun answeredScreens(view: Onboarding): List<OnboardingStep> =
         .orEmpty()
         .mapNotNull { answer -> OnboardingStep.entries.find { it.value == (answer as? JsonPrimitive)?.contentOrNull } }
         .filter { it in QUESTION_SCREENS || it.profileQuestion != null }
+
+/** A save that failed on the setup's visit, and the day's minimum it fell short of when that was why. */
+internal data class SaveFailure(
+    val dayTooShort: Refusal.DayTooShort? = null,
+)

@@ -49,7 +49,8 @@ import com.zoonk.android.feature.mock.result.MockResult
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
-import com.zoonk.android.ui.CollectForVisit
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
@@ -150,7 +151,8 @@ private fun MockRunScreen(
 ) {
     val run by viewModel.state.collectAsStateWithLifecycle()
     val leave: () -> Unit = viewModel::leave
-    CollectForVisit(viewModel.closed) { navigator.closeTask() }
+    VisitOf(viewModel.visit)
+    ActOn(viewModel.closed) { navigator.closeTask() }
     val view = run.view
     val current = view.current
 
