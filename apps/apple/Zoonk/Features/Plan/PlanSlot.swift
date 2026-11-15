@@ -725,10 +725,12 @@ final class CertificateClaim {
     }
   }
 
+  /// What it earned, or that it failed, shows nothing on the next visit.
   func leave() {
     sent?.cancel()
     sent = nil
     isClaiming = false
+    failed = false
   }
 }
 

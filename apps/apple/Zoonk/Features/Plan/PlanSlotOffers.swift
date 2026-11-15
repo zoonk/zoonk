@@ -715,11 +715,14 @@ final class PlanSlotChecks {
     return check
   }
 
-  /// What a check was waiting for shows nothing; what it found already stays.
+  /// Leaving the Plan ends its checks: what one was waiting for, found or failed at shows
+  /// nothing on the next visit.
   func leave() {
     for check in checks.values {
       check.leave()
     }
+
+    checks = [:]
   }
 }
 

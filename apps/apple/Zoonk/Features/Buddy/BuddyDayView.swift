@@ -222,8 +222,11 @@ final class BuddyMissionTap {
     }
   }
 
+  /// The page left or a task covers it: the tap ends, and a mission that didn't open says so no
+  /// more.
   func cancel() {
     task?.cancel()
+    failed = nil
   }
 
   /// Another goal's or day's missions start without the last one's tap.

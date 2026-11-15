@@ -45,6 +45,36 @@ final class PlanCertificateClaimTests: XCTestCase {
   private func settle() async throws {
     try await Task.sleep(for: .milliseconds(300))
   }
+
+  /// Leaving the Plan ends the visit: a claim that failed before shows nothing on the next one, and
+  /// neither does one that fails after.
+  func testLeavingThePlanShowsNothingOfAClaimThatFailed() async throws {
+    let claim = HeldClaim()
+    let context = PlanContext(
+      goal: LearnerGoal(
+        dailyMinutes: 30, id: "goal", kind: .exam, language: "en", status: .active,
+        targetDate: "2026-01-04", displayName: "ENEM", title: "ENEM"),
+      plan: try goalPlanFixture(), adjust: { _ in }, show: { _ in },
+      claimCertificate: { await claim.answer() }, showClaim: { _ in },
+      certificateClaim: CertificateClaim())
+    let owner = context.certificateClaim
+
+    owner.claim(context)
+    await claim.waitUntilAsked()
+    claim.release(nil)
+    try await settle()
+    XCTAssertTrue(owner.failed)
+
+    owner.leave()
+    XCTAssertFalse(owner.failed, "A failure before leaving")
+
+    owner.claim(context)
+    await claim.waitUntilAsked()
+    owner.leave()
+    claim.release(nil)
+    try await settle()
+    XCTAssertFalse(owner.failed, "A failure after leaving")
+  }
 }
 
 /// A claim the server answers when the test says.
@@ -67,7 +97,8 @@ private final class HeldClaim {
     }
   }
 
-  func release(_ claim: PlanClaim) {
+  /// Nil when it didn't save.
+  func release(_ claim: PlanClaim?) {
     held?.resume(returning: claim)
     held = nil
   }

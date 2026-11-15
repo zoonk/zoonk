@@ -1052,6 +1052,31 @@ final class SuggestedGoalAnswerTests: XCTestCase {
   private func settle() async throws {
     try await Task.sleep(for: .milliseconds(300))
   }
+
+  /// Leaving Today ends the visit: an answer that failed before shows nothing on the next one, and
+  /// neither does one that fails after.
+  func testLeavingTodayShowsNothingOfAnAnswerThatFailed() async throws {
+    let api = StudyAPIStub()
+    await api.failSuggestedAnswers()
+    let store = TodayStore(api: api, cache: signedInCache())
+    let suggestion = SuggestedGoal(courseId: nil, id: "s1", title: "Microeconomics")
+    let answer = SuggestedGoalAnswer()
+
+    answer.respond(to: suggestion, accepted: true, store: store, router: AppRouter())
+    try await settle()
+    XCTAssertTrue(answer.failed)
+
+    answer.leave()
+    XCTAssertFalse(answer.failed, "A failure before leaving")
+
+    await api.holdNextSuggestedAnswer()
+    answer.respond(to: suggestion, accepted: true, store: store, router: AppRouter())
+    await api.waitForHeldSuggestedAnswer()
+    answer.leave()
+    await api.releaseHeldSuggestedAnswer()
+    try await settle()
+    XCTAssertFalse(answer.failed, "A failure after leaving")
+  }
 }
 
 /// A mission tapped in Zu's day, then the window crosses the width where the day is a pane beside
@@ -1096,6 +1121,19 @@ final class BuddyMissionTapTests: XCTestCase {
     try await Task.sleep(for: .milliseconds(300))
 
     XCTAssertEqual(opened, 1, "The mission opens")
+  }
+
+  /// Zu's page left ends its tap: a mission that didn't open shows nothing on the next visit.
+  func testLeavingZuShowsNothingOfAMissionThatDidntOpen() async throws {
+    let tap = BuddyMissionTap()
+    let today = TodayStore(api: StudyAPIStub(openError: .network), cache: signedInCache())
+
+    tap.open("b1", today: today, places: .unavailable) {}
+    try await Task.sleep(for: .milliseconds(300))
+    XCTAssertEqual(tap.failed, "b1")
+
+    tap.cancel()
+    XCTAssertNil(tap.failed)
   }
 }
 
@@ -1255,6 +1293,7 @@ private actor StudyAPIStub: StudyAPIClient {
   private var heldTodayRead: CheckedContinuation<Void, Never>?
   private var todayReadWaiter: CheckedContinuation<Void, Never>?
   private var holdsSuggestedAnswer = false
+  private var failsSuggestedAnswer = false
   private var heldSuggestedAnswer: CheckedContinuation<Void, Never>?
   private var suggestedAnswerWaiter: CheckedContinuation<Void, Never>?
   private(set) var acceptedSuggestions: [String] = []
@@ -1499,9 +1538,17 @@ private actor StudyAPIStub: StudyAPIClient {
       }
     }
 
+    if failsSuggestedAnswer {
+      throw APIError.network
+    }
+
     if accepted {
       acceptedSuggestions.append(suggestionID)
     }
+  }
+
+  func failSuggestedAnswers() {
+    failsSuggestedAnswer = true
   }
 
   func holdNextSuggestedAnswer() {
