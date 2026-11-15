@@ -3,16 +3,18 @@ import { Link } from "@/i18n/navigation";
 import { getLessonHref } from "@/lib/public/public-hrefs";
 import { getMinutesFormatter } from "@/lib/public/public-labels";
 import { CURRENT_ROW_CLASS, LIST_ROW_INTERACTIVE_CLASS } from "@zoonk/learn/list";
-import { ROUTE_CLASS, RouteMark } from "@zoonk/learn/route-line";
+import { ROUTE_CLASS, ROUTE_ROWS_CLASS, RouteMark } from "@zoonk/learn/route-line";
 import { cn } from "@zoonk/ui/lib/utils";
 
-/* The band starts after the route's line, which stays on the page's ground. */
-const ROW_CLASS = cn(
-  LIST_ROW_INTERACTIVE_CLASS,
-  "items-start py-3 pl-(--route-inset) before:left-[calc(var(--route-inset)-0.625rem)]",
-);
+const ROW_CLASS = cn(LIST_ROW_INTERACTIVE_CLASS, "items-start py-3");
 
-const STATION_CLASS = "top-[1.375rem] left-(--route-x)";
+const STATION_CLASS = "top-[1.375rem]";
+
+/** A station sits on its row's band, so its hollow takes the band's color. */
+const ITEM_CLASS = cn(
+  "relative overflow-y-clip",
+  "has-[>a:hover:not([aria-current])]:[--route-fill:color-mix(in_srgb,var(--muted)_70%,var(--background))] has-[>a[aria-current]]:[--route-fill:var(--muted)]",
+);
 
 export async function ChapterLessonRows({
   chapter,
@@ -29,12 +31,14 @@ export async function ChapterLessonRows({
   const last = chapter.lessons.length - 1;
 
   return (
-    <ol className={cn(ROUTE_CLASS, "flex flex-col", className)}>
+    <ol
+      className={cn(ROUTE_CLASS, ROUTE_ROWS_CLASS, "flex flex-col ps-(--route-inset)", className)}
+    >
       {chapter.lessons.map((lesson, index) => {
         const isCurrent = lesson.id === currentLessonId;
 
         return (
-          <li className="relative overflow-y-clip" key={lesson.id}>
+          <li className={ITEM_CLASS} key={lesson.id}>
             <RouteMark
               className={STATION_CLASS}
               down={index < last}

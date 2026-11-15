@@ -30,9 +30,10 @@ export function ListGroup({
   );
 }
 
+/** A row under an indent (`nested-rows`, a route) reaches back to the column with its fill (craft E7). */
 export const LIST_ROW_CLASS = cn(
   "relative isolate flex w-full min-w-0 items-stretch gap-3 text-left",
-  "aria-[current]:before:bg-muted data-highlighted:before:bg-muted before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors",
+  "aria-[current]:before:bg-muted data-highlighted:before:bg-muted before:pointer-events-none before:absolute before:inset-y-0.5 before:-inset-s-[(--spacing(2.5)+var(--row-indent,0px))] before:-inset-e-2.5 before:-z-10 before:rounded-lg before:transition-colors",
   "in-data-[list=panel]:px-4 in-data-[list=panel]:before:inset-0 in-data-[list=panel]:before:rounded-none",
 );
 
