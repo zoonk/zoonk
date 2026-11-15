@@ -110,6 +110,13 @@ describe(getPhaseProgress, () => {
     ).toStrictEqual(["read:completed", "find:failed", "write:pending"]);
   });
 
+  it("marks no phase for a failed run that reported none, such as one read as failed on arrival", () => {
+    const statuses = statusesOf("placement", { failure: "generation", status: "failed" });
+
+    expect(statuses.length).toBeGreaterThan(0);
+    expect(statuses).toStrictEqual(statuses.map((status) => status.replace(/:.+$/u, ":pending")));
+  });
+
   it("keeps the running phase as it was when only the connection dropped", () => {
     expect(
       statusesOf("lesson", {
