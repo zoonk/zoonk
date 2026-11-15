@@ -6976,9 +6976,14 @@ msgid "Nothing yet. Notes show up here as you study and chat."
 msgstr "まだメモはありません。学習やチャットをすると、ここにメモが表示されます。"
 
 #: src/memory/memory-screen.tsx
-msgctxt "etMoG6"
-msgid "Download my memory"
+msgctxt "dQaH-3"
+msgid "Download your memory"
 msgstr "メモリをダウンロードする"
+
+#: src/memory/memory-screen.tsx
+msgctxt "U3W00j"
+msgid "A copy of your memory"
+msgstr "メモリのコピー"
 
 #: src/memory/memory-screen.tsx
 msgctxt "GUOjcs"
@@ -11786,6 +11791,11 @@ msgid "Past or present, finished or not. Pick up to 3."
 msgstr "以前学んだことも、今学んでいることも、修了していなくても選べます。3つまで選んでください。"
 
 #: src/profile-questions/profile-question-copy.ts
+msgctxt "esh22C"
+msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime."
+msgstr "回答は任意です。選んだ内容に応じて、学習内容を調整します。いつでも削除できます。"
+
+#: src/profile-questions/profile-question-copy.ts
 msgctxt "zJoq3-"
 msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings."
 msgstr "任意です。選んだ内容に合わせて、学習内容を調整します。設定からいつでも削除できます。"
@@ -11824,6 +11834,11 @@ msgstr "学びやすくなる工夫を自分の言葉で（任意）"
 msgctxt "dcwrhI"
 msgid "E.g., I understand diagrams better than text"
 msgstr "例：文章より図のほうがわかりやすいです"
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "HOckqc"
+msgid "We'll remember this. You can delete it anytime."
+msgstr "この内容を覚えておきます。いつでも削除できます。"
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "mM7GRS"
@@ -13631,14 +13646,14 @@ msgid "You finished {name}."
 msgstr "{name}を終えました。"
 
 #: src/week/logbook-sections.tsx
-msgctxt "koboTV"
-msgid "{time} more than the week before!"
-msgstr "前の週より{time}長く学習しました！"
+msgctxt "Yj-wa7"
+msgid "{time} more than the week before."
+msgstr "前の週より{time}長く学習しました。"
 
 #: src/week/logbook-sections.tsx
-msgctxt "mY3vs_"
-msgid "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
-msgstr "{questions, plural, other {前の週より#問多く解きました！}}"
+msgctxt "d9SZZ-"
+msgid "{questions, plural, one {# more question than the week before.} other {# more questions than the week before.}}"
+msgstr "{questions, plural, other {前の週より#問多く解きました。}}"
 
 #: src/week/logbook-sections.tsx
 msgctxt "gpv0cM"

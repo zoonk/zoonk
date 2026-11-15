@@ -6976,9 +6976,14 @@ msgid "Nothing yet. Notes show up here as you study and chat."
 msgstr "아직 메모가 없어요. 공부하고 채팅하다 보면 여기에 메모가 생겨요."
 
 #: src/memory/memory-screen.tsx
-msgctxt "etMoG6"
-msgid "Download my memory"
-msgstr "내 메모리 다운로드"
+msgctxt "dQaH-3"
+msgid "Download your memory"
+msgstr "메모리 다운로드"
+
+#: src/memory/memory-screen.tsx
+msgctxt "U3W00j"
+msgid "A copy of your memory"
+msgstr "내 메모리 사본"
 
 #: src/memory/memory-screen.tsx
 msgctxt "GUOjcs"
@@ -11786,6 +11791,11 @@ msgid "Past or present, finished or not. Pick up to 3."
 msgstr "예전에 했든 지금 하고 있든, 마쳤든 아니든 괜찮아요. 최대 3개까지 고르세요."
 
 #: src/profile-questions/profile-question-copy.ts
+msgctxt "esh22C"
+msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime."
+msgstr "선택 사항이에요. 선택한 내용을 바탕으로 필요에 맞게 학습 내용을 조정해요. 언제든 삭제할 수 있어요."
+
+#: src/profile-questions/profile-question-copy.ts
 msgctxt "zJoq3-"
 msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings."
 msgstr "선택 사항이에요. 선택한 내용을 바탕으로 필요에 맞게 학습 내용을 조정해요. 언제든 설정에서 삭제할 수 있어요."
@@ -11824,6 +11834,11 @@ msgstr "도움이 되는 방법을 자유롭게 적어 주세요 (선택)"
 msgctxt "dcwrhI"
 msgid "E.g., I understand diagrams better than text"
 msgstr "예: 글보다 도표로 보면 더 잘 이해해요"
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "HOckqc"
+msgid "We'll remember this. You can delete it anytime."
+msgstr "이 내용을 기억해 둘게요. 언제든 삭제할 수 있어요."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "mM7GRS"
@@ -13631,14 +13646,14 @@ msgid "You finished {name}."
 msgstr "{name}을(를) 마쳤어요."
 
 #: src/week/logbook-sections.tsx
-msgctxt "koboTV"
-msgid "{time} more than the week before!"
-msgstr "전주보다 {time} 더 공부했어요!"
+msgctxt "Yj-wa7"
+msgid "{time} more than the week before."
+msgstr "전주보다 {time} 더 공부했어요."
 
 #: src/week/logbook-sections.tsx
-msgctxt "mY3vs_"
-msgid "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
-msgstr "{questions, plural, other {전주보다 #문제 더 풀었어요!}}"
+msgctxt "d9SZZ-"
+msgid "{questions, plural, one {# more question than the week before.} other {# more questions than the week before.}}"
+msgstr "{questions, plural, other {전주보다 문제를 #개 더 풀었어요.}}"
 
 #: src/week/logbook-sections.tsx
 msgctxt "gpv0cM"
