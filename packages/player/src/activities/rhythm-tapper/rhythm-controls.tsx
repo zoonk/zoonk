@@ -52,7 +52,13 @@ export function RhythmControls({
           {t("Listen first")}
         </Button>
 
-        <Button onClick={onStart} size="lg" type="button">
+        {/* A try is an answer, so Check is the screen's filled action once there is one. */}
+        <Button
+          onClick={onStart}
+          size="lg"
+          type="button"
+          variant={hasTried ? "outline" : "default"}
+        >
           {hasTried && <RotateCcw aria-hidden="true" data-icon="inline-start" />}
           {hasTried ? t("Try again") : t("Start tapping")}
         </Button>
