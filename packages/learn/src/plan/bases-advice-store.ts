@@ -1,8 +1,8 @@
 "use client";
 
 import { type PlanBasesAdvice } from "@zoonk/core/plans/bases-advice-contract";
+import { safeAsync } from "@zoonk/utils/error";
 import { useState } from "react";
-import { requestWithin } from "./request-within";
 
 type RecommendedBases = NonNullable<PlanBasesAdvice["recommended"]>;
 
@@ -36,7 +36,9 @@ export function useBasesAdviceStore({
 
     setAsked({ recommended: null, revision, status: "pending" });
 
-    void requestWithin(advise).then((data) => {
+    // It shows nothing while it waits, so it waits for the request itself: a reopen meanwhile never
+    // sends a second one.
+    void safeAsync(advise).then(({ data }) => {
       setAsked((now) =>
         now?.revision === revision && now.status === "pending"
           ? {

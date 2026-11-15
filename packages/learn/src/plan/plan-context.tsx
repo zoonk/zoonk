@@ -233,7 +233,12 @@ export function PlanScreenProvider({
     value.plan.week.days.find((day) => day.state === "today")?.date ?? value.plan.week.startDate;
 
   const keepFocus = useKeepFocus(value.plan, findPlanTitle);
-  const revision = useMemo(() => getPlanAdviceRevision(value.plan), [value.plan]);
+
+  const revision = useMemo(
+    () => getPlanAdviceRevision({ plan: value.plan, today }),
+    [today, value.plan],
+  );
+
   const timeToCover = useTimeToCoverStore(revision);
   const basesAdvice = useBasesAdviceStore({ advise: value.actions.adviseOnBases, revision });
   const { actions, changes } = useCountedChanges(value.actions);

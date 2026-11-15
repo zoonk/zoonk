@@ -1,9 +1,8 @@
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { type PlanBasesView, type PlanView } from "@zoonk/core/plans/view-contract";
-import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
-import { PlanBasesSheet } from "../../../learn/src/plan/plan-bases-sheet";
+import { PlanBasesSheet, useBasesSheet } from "../../../learn/src/plan/plan-bases-sheet";
 import { type PlanActions, PlanScreenProvider } from "../../../learn/src/plan/plan-context";
 import {
   PlanSuggestionProvider,
@@ -132,7 +131,10 @@ const TODAY_PREVIEW: PlanChangePreview = {
 };
 
 /** The Plan's answers wait until the test releases them. */
-function renderPlan(children: React.ReactNode) {
+function renderPlan(
+  children: React.ReactNode,
+  { adviseOnBases = async () => null }: { adviseOnBases?: PlanActions["adviseOnBases"] } = {},
+) {
   const heldChange = Promise.withResolvers<Awaited<ReturnType<PlanActions["change"]>>>();
   const change = vi.fn<PlanActions["change"]>(() => heldChange.promise);
   const previewAnswers: PromiseWithResolvers<PlanChangePreview | null>[] = [];
@@ -144,7 +146,7 @@ function renderPlan(children: React.ReactNode) {
   });
 
   const actions: PlanActions = {
-    adviseOnBases: async () => null,
+    adviseOnBases,
     change,
     chooseExamOption: async () => null,
     chooseTools: async () => false,
@@ -153,18 +155,20 @@ function renderPlan(children: React.ReactNode) {
     preview,
   };
 
-  const screen = render(
+  const screenFor = (plan: PlanView) => (
     <PlanScreenProvider
       value={{
         actions,
         goal: { displayName: "Learn Spanish", kind: "learn" },
-        plan: PLAN,
+        plan,
         shareHref: "/plan",
       }}
     >
       {children}
-    </PlanScreenProvider>,
+    </PlanScreenProvider>
   );
+
+  const screen = render(screenFor(PLAN));
 
   return {
     change,
@@ -174,6 +178,8 @@ function renderPlan(children: React.ReactNode) {
     releasePreview: (answer: PlanChangePreview | null = TODAY_PREVIEW) =>
       previewAnswers.shift()?.resolve(answer),
     screen,
+    /** The page read again, such as on the next day. */
+    showPlan: (plan: PlanView) => screen.rerender(screenFor(plan)),
   };
 }
 
@@ -200,11 +206,11 @@ async function tryAgain() {
 }
 
 function BasesSheetHost() {
-  const [open, setOpen] = useState(false);
+  const { open, setOpen, show } = useBasesSheet();
 
   return (
     <>
-      <button onClick={() => setOpen(true)} type="button">
+      <button onClick={show} type="button">
         Open prerequisites
       </button>
       <output>{open ? "Sheet open" : "Sheet closed"}</output>
@@ -321,6 +327,66 @@ describe("the Plan's prerequisites sheet", () => {
       await settle();
 
       expect(page.getByText("Sheet closed").query()).toBeNull();
+      held.screen.unmount();
+    });
+  });
+});
+
+const NEXT_DAY_PLAN: PlanView = {
+  ...PLAN,
+  week: {
+    ...PLAN.week,
+    days: [{ date: "2026-11-17", items: [], minutes: 30, mockFunding: null, state: "today" }],
+  },
+};
+
+function recommended(label: string) {
+  return page.getByRole("radio", { name: new RegExp(`${label}.*Recommended`, "u") });
+}
+
+async function reopenBases() {
+  await page.getByRole("button", { name: "Close" }).click();
+  await expect.element(page.getByText("Sheet closed")).toBeInTheDocument();
+  await page.getByRole("button", { name: "Open prerequisites" }).click();
+}
+
+describe("the prerequisites recommendation", () => {
+  it("asks again on the first opening of a new day, when its answer can change", async () => {
+    await atViewport(PHONE, async () => {
+      const adviseOnBases = vi
+        .fn<PlanActions["adviseOnBases"]>()
+        .mockResolvedValueOnce({ daysLeft: 61, ready: true, recommended: "essential" })
+        .mockResolvedValueOnce({ daysLeft: 60, ready: true, recommended: "quick" });
+
+      const held = renderPlan(<BasesSheetHost />, { adviseOnBases });
+      await page.getByRole("button", { name: "Open prerequisites" }).click();
+      await expect.element(recommended("First lessons only")).toBeVisible();
+
+      held.showPlan(NEXT_DAY_PLAN);
+      await reopenBases();
+
+      await expect.element(recommended("One short lesson each")).toBeVisible();
+      expect(adviseOnBases).toHaveBeenCalledTimes(2);
+      held.screen.unmount();
+    });
+  });
+
+  it("sends no second request on a reopen while the first is still out, however long", async () => {
+    await atViewport(PHONE, async () => {
+      const adviseOnBases = vi.fn<PlanActions["adviseOnBases"]>(() => new Promise(() => {}));
+      const held = renderPlan(<BasesSheetHost />, { adviseOnBases });
+
+      vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+      await page.getByRole("button", { name: "Open prerequisites" }).click();
+      await expect.poll(() => adviseOnBases).toHaveBeenCalledOnce();
+      await vi.advanceTimersByTimeAsync(60_000);
+      vi.useRealTimers();
+
+      await reopenBases();
+      await expect.element(page.getByText("Sheet open")).toBeInTheDocument();
+      await settle();
+
+      expect(adviseOnBases).toHaveBeenCalledOnce();
       held.screen.unmount();
     });
   });

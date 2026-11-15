@@ -79,5 +79,9 @@ test("opening the prerequisites sheet asks once for the recommendation, and the 
     sheet.getByRole("radio", { name: /One short lesson each.*Recommended/u }),
   ).toBeVisible();
 
+  // The sheet's own check of a pick goes out after anything its opening started, so once it answers
+  // a second ask would already have been sent.
+  await sheet.getByText("Every lesson").click();
+  await expect(sheet.getByRole("button", { name: "Save" })).toBeEnabled();
   expect(asked).toStrictEqual(["POST"]);
 });

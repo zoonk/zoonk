@@ -49,14 +49,20 @@ function searchedPlan(planId: string) {
 
 describe(getPlanAdviceRevision, () => {
   it("keys an answer to the plan it was found for, never to another goal's plan that looks the same", () => {
-    expect(getPlanAdviceRevision(searchedPlan("plan-a"))).not.toBe(
-      getPlanAdviceRevision(searchedPlan("plan-b")),
+    expect(getPlanAdviceRevision({ plan: searchedPlan("plan-a"), today: "2026-11-14" })).not.toBe(
+      getPlanAdviceRevision({ plan: searchedPlan("plan-b"), today: "2026-11-14" }),
     );
   });
 
   it("keeps the answer when the same plan comes back unchanged", () => {
-    expect(getPlanAdviceRevision(searchedPlan("plan-a"))).toBe(
-      getPlanAdviceRevision(searchedPlan("plan-a")),
+    expect(getPlanAdviceRevision({ plan: searchedPlan("plan-a"), today: "2026-11-14" })).toBe(
+      getPlanAdviceRevision({ plan: searchedPlan("plan-a"), today: "2026-11-14" }),
+    );
+  });
+
+  it("asks again on a new day, since the days left change the answer", () => {
+    expect(getPlanAdviceRevision({ plan: searchedPlan("plan-a"), today: "2026-11-14" })).not.toBe(
+      getPlanAdviceRevision({ plan: searchedPlan("plan-a"), today: "2026-11-15" }),
     );
   });
 });
