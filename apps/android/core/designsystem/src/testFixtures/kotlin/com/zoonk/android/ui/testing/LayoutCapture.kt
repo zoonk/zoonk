@@ -18,6 +18,7 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.ResolvedTextDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import com.zoonk.android.R
@@ -185,6 +186,8 @@ internal object LayoutCapture {
                     else -> {}
                 }
             }
+            // A part that replaced its children's semantics (a bar read as one phrase) is measured whole; nothing under it is.
+            if (part != null && node.config.isClearingSemantics) return
             node.children.forEach { walk(it, nextGroup, nextRow) }
         }
 
@@ -327,6 +330,8 @@ internal object LayoutCapture {
                         fields["variant"] = part.variant?.id
                         fields["surface"] = surface
                         node?.let { fields["text"] = text(it) }
+                        // So the filled-action count can say a disabled one is disabled.
+                        if (node?.config?.contains(SemanticsProperties.Disabled) == true) fields["disabled"] = true
                     }
 
                     else -> {
@@ -391,7 +396,8 @@ internal object LayoutCapture {
                 val (text, layout) =
                     texts.firstOrNull() ?: run {
                         fields["ink"] = pixelInk(bounds(node))
-                        listOf("baseline", "capTop", "capBottom", "lines", "type").forEach { fields[it] = NOT_MEASURED }
+                        // The shape takes no "not measured" line count: an unknown one is left out.
+                        listOf("baseline", "capTop", "capBottom", "type").forEach { fields[it] = NOT_MEASURED }
                         // Zero only when it's known: texts laid out with no words. Semantics that hide a text's layout
                         // (clearAndSetSemantics) leave the count unknown.
                         fields["texts"] = drawnDescriptions(node) ?: if (laidOutTexts.isEmpty()) NOT_MEASURED else 0
@@ -443,7 +449,8 @@ internal object LayoutCapture {
          */
         private fun alignmentShift(layout: TextLayoutResult): Float {
             val extra = layout.size.width - layout.multiParagraph.width
-            val rtl = layout.layoutInput.layoutDirection == LayoutDirection.Rtl
+            // Start and end follow the paragraph's own direction: English in a right-to-left layout still starts on the left.
+            val rtl = layout.multiParagraph.getParagraphDirection(0) == ResolvedTextDirection.Rtl
             return when (layout.layoutInput.style.textAlign) {
                 TextAlign.Center -> extra / 2
                 TextAlign.Right -> extra

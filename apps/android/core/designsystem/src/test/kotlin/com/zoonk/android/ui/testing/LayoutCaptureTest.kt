@@ -10,18 +10,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Text
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.components.ListRow
@@ -322,6 +325,20 @@ class LayoutCaptureTest {
 
         assertEquals(NOT_MEASURED, dimmed.getString("ink"))
         assertTrue(shown.get("ink") is JSONArray)
+    }
+
+    /** In a right-to-left layout an English label starts on the left of its box, where it's drawn. */
+    @Test
+    fun englishInARightToLeftLayoutIsMeasuredWhereItIsDrawn() {
+        val label =
+            capture {
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                    ListRow(headline = { Text("Mixed practice", Modifier.wrapContentWidth()) })
+                }
+            }.part("label")
+
+        assertEquals(label.getJSONArray("bounds").getDouble(0), label.getJSONArray("lineBounds").getDouble(0), 1.0)
+        assertTrue(label.get("ink") is JSONArray)
     }
 
     private fun capture(content: @androidx.compose.runtime.Composable () -> Unit): JSONArray {
