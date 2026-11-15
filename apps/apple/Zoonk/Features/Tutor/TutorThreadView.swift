@@ -77,7 +77,11 @@ private struct TutorConversationView<Header: View>: View {
         suggestions: suggestions, placeholder: placeholder)
     }
     .modifier(LoadsThread(thread: conversation.thread, isActive: canTalk))
+    // An offer is its step's: once the learner moves on, the draft goes or changes, and an offer
+    // still waiting for the thread is dropped, never sent for the step they're on now.
     .onChange(of: draft, initial: true) { _, draft in
+      pendingAsk?.cancel()
+
       guard let draft else {
         return
       }
