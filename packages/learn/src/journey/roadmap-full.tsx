@@ -13,6 +13,7 @@ import { usePlanScreen } from "../plan/plan-context";
 import { type JourneyPathLinks } from "./journey-links";
 import { usePhaseLabel } from "./path-phase-row";
 import { PhaseDetails } from "./phase-details";
+import { usePhaseEndSpoken } from "./phase-when";
 import { BandFace } from "./roadmap-band";
 import { PhaseAxis, PhaseLane } from "./roadmap-lane";
 import {
@@ -68,6 +69,7 @@ function PhaseBand({
   todayShare: number | null;
 }) {
   const label = usePhaseLabel();
+  const endSpoken = usePhaseEndSpoken();
 
   return (
     <Drawer>
@@ -75,7 +77,7 @@ function PhaseBand({
         render={
           <button
             aria-current={phase.state === "current" ? "step" : undefined}
-            aria-label={label(phase)}
+            aria-label={[label(phase), endSpoken(phase)].filter(Boolean).join(", ")}
             className={cn(
               BAND_CLASS,
               BAND_STATE_CLASS[phase.state],
