@@ -3,7 +3,6 @@
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
-import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted, useFormatter } from "next-intl";
 import {
   DetailAside,
@@ -18,6 +17,7 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
+import { FactSegments } from "../_components/task-meta";
 import { ReportProblemMenu } from "../feedback/content-feedback-menu";
 import { LearnPageBar } from "../shell/learn-bar";
 import { useAlsoIn } from "./shared-exams";
@@ -113,7 +113,11 @@ function SubjectFacts({
 
   return (
     <>
-      {facts.length > 0 && <DetailFacts>{facts.join(FACT_SEPARATOR)}</DetailFacts>}
+      {facts.length > 0 && (
+        <DetailFacts>
+          <FactSegments facts={facts} />
+        </DetailFacts>
+      )}
       {known && <DetailFacts className="pt-0 font-sans">{known}</DetailFacts>}
       {alsoIn && <DetailFacts className="pt-0 font-sans">{alsoIn}</DetailFacts>}
     </>

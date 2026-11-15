@@ -47,11 +47,14 @@ export function WeekRings() {
       {Array.from({ length: DAYS_PER_WEEK }, (_, index) => {
         const day = new Date(recap.weekStart.getTime() + index * MS_PER_DAY);
         const isStudied = studied.has(day.getTime());
+        const isToday = toIsoDay(day) === today;
 
         return (
           <span className={WEEK_DAY_CLASS} key={day.toISOString()}>
-            <GoalRing share={isStudied ? 1 : 0}>{isStudied && <DoneMark />}</GoalRing>
-            <WeekDayLetter date={day} isToday={toIsoDay(day) === today} />
+            <GoalRing share={isStudied ? 1 : 0} track={isToday ? "today" : "default"}>
+              {isStudied && <DoneMark />}
+            </GoalRing>
+            <WeekDayLetter date={day} isToday={isToday} />
           </span>
         );
       })}

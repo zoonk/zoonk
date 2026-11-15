@@ -2,6 +2,7 @@ import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
 import { type UserMemory, listUserMemory } from "@/data/users/list-user-memory";
 import { formatDate, toWords } from "@/lib/format";
 import { type MemoryCategory } from "@zoonk/db/enums";
+import { FactSegments } from "@zoonk/learn/facts";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import {
   CalendarClockIcon,
@@ -57,14 +58,14 @@ function FactRow({ fact, userId }: { fact: MemoryFactRow; userId: string }) {
         <FactStatement fact={fact} />
         <span className="text-muted-foreground flex flex-wrap items-center gap-x-1.5 text-xs">
           <origin.icon aria-hidden="true" className="size-3.5" />
-          {[
-            origin.label,
-            fact.status !== "active" && toWords(fact.status),
-            formatDate(fact.createdAt),
-            fact.expiresAt && `expires ${formatDate(fact.expiresAt)}`,
-          ]
-            .filter(Boolean)
-            .join(FACT_SEPARATOR)}
+          <FactSegments
+            facts={[
+              origin.label,
+              fact.status !== "active" && toWords(fact.status),
+              formatDate(fact.createdAt),
+              fact.expiresAt && `expires ${formatDate(fact.expiresAt)}`,
+            ]}
+          />
         </span>
       </span>
       <EraseMemoryFactButton factId={fact.id} userId={userId} />

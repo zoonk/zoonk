@@ -3,7 +3,6 @@
 import { type SavedMindMapView } from "@zoonk/core/mind-maps/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindIcon } from "../_components/kind-tile";
@@ -17,6 +16,7 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
+import { FactSegments } from "../_components/task-meta";
 import { LearnLink } from "../learn-link";
 import { buildStudyHref } from "./_utils/mind-map-urls";
 import { type MindMapsPage, type MindMapsPageChapter } from "./_utils/mind-maps-page";
@@ -77,7 +77,9 @@ export function LessonGroupRow({ group, study }: { group: LessonGroupRowData; st
     >
       <ListRowContent>
         <ListRowTitle>{group.title}</ListRowTitle>
-        <ListRowDescription>{facts.join(FACT_SEPARATOR)}</ListRowDescription>
+        <ListRowDescription>
+          <FactSegments facts={facts} />
+        </ListRowDescription>
       </ListRowContent>
     </ListRowLink>
   );

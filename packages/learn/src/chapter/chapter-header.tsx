@@ -2,9 +2,9 @@
 
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
-import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import { DetailContinueLink, useDoneShare } from "../_components/detail-page";
+import { FactSegments } from "../_components/task-meta";
 import { useFormatDuration } from "../_utils/time-format";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { LearnPageBar } from "../shell/learn-bar";
@@ -27,7 +27,11 @@ function ChapterFacts() {
     lessons.length > 0 && doneShare(done / lessons.length),
   ].filter(Boolean);
 
-  return <DetailFacts>{facts.join(FACT_SEPARATOR)}</DetailFacts>;
+  return (
+    <DetailFacts>
+      <FactSegments facts={facts} />
+    </DetailFacts>
+  );
 }
 
 export function ChapterHeader() {
