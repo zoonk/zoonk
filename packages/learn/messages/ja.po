@@ -8236,6 +8236,11 @@ msgid "By topic"
 msgstr "トピック別"
 
 #: src/mock/mock-result-details.tsx
+msgctxt "RQfEXO"
+msgid "See details"
+msgstr "詳細を見る"
+
+#: src/mock/mock-result-details.tsx
 msgctxt "2mUitd"
 msgid "Answers"
 msgstr "回答数"
