@@ -105,11 +105,12 @@ private fun statusLine(
     }
 
 /**
- * The one plan change a conversation still asks about: its newest proposal. An older one still waiting keeps its
- * words and says a newer one came, so a long chat never holds several "Change my plan".
+ * The one plan change a conversation still asks about: its newest change, while it's still a proposal. An older one
+ * still waiting keeps its words and says a newer one came, and answering the newest never brings an older one back,
+ * so a long chat never holds several "Change my plan".
  */
 internal fun liveProposal(turns: List<TutorTurn>): PlanChange? =
-    turns.lastOrNull { it.planChange?.status == PlanChange.Status.PROPOSED }?.planChange
+    turns.lastOrNull { it.planChange != null }?.planChange?.takeIf { it.status == PlanChange.Status.PROPOSED }
 
 /** A change that would replace the exam's official date asks whether to keep it instead, in longer words stacked. */
 @Composable

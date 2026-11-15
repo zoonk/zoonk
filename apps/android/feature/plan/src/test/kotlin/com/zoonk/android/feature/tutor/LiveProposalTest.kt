@@ -21,10 +21,19 @@ class LiveProposalTest {
     }
 
     @Test
-    fun anAnsweredChangeAfterAProposalLeavesThatProposalAsked() {
-        val turns = listOf(proposing("t1", OLDER), proposing("t2", NEWER, status = "applied"))
+    fun answeringTheNewestProposalLeavesNothingAsked() {
+        val declined = listOf(proposing("t1", OLDER), proposing("t2", NEWER, status = "declined"))
+        val applied = listOf(proposing("t1", OLDER), proposing("t2", NEWER, status = "applied"))
 
-        assertEquals(OLDER, liveProposal(turns)?.id.toString())
+        assertNull(liveProposal(declined))
+        assertNull(liveProposal(applied))
+    }
+
+    @Test
+    fun earlierTurnsLoadedAboveLeaveTheNewestAsked() {
+        val turns = listOf(proposing("t0", EARLIEST), proposing("t1", OLDER), proposing("t2", NEWER))
+
+        assertEquals(NEWER, liveProposal(turns)?.id.toString())
     }
 
     @Test
@@ -33,6 +42,7 @@ class LiveProposalTest {
     }
 
     private companion object {
+        const val EARLIEST = "00000000-0000-4000-8000-000000000000"
         const val OLDER = "11111111-1111-4111-8111-111111111111"
         const val NEWER = "22222222-2222-4222-8222-222222222222"
     }
