@@ -8896,9 +8896,9 @@ msgid "Exam"
 msgstr "Prova"
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "rsoIT2"
-msgid "Learn a topic"
-msgstr "Aprender um tópico"
+msgctxt "UdtpV7"
+msgid "Topic"
+msgstr "Tópico"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "79lLl-"
@@ -9824,7 +9824,6 @@ msgid "{days, plural, one {About # day} other {About # days}}"
 msgstr "{days, plural, one {Cerca de # dia} other {Cerca de # dias}}"
 
 #: src/onboarding/steps/reveal-readouts.tsx
-#: src/onboarding/steps/reveal-week.tsx
 msgctxt "UA5qaX"
 msgid "{days, plural, one {# day} other {# days}}"
 msgstr "{days, plural, one {# dia} other {# dias}}"
@@ -9861,6 +9860,11 @@ msgstr "Dia de descanso"
 msgctxt "tWAtPK"
 msgid "Your first week"
 msgstr "Sua primeira semana"
+
+#: src/onboarding/steps/reveal-week.tsx
+msgctxt "V9hgFL"
+msgid "{days, plural, one {# study day} other {# study days}}"
+msgstr "{days, plural, one {# dia de estudo} other {# dias de estudo}}"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "_1P3JX"

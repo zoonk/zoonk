@@ -8896,9 +8896,9 @@ msgid "Exam"
 msgstr "Exam"
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "rsoIT2"
-msgid "Learn a topic"
-msgstr "Learn a topic"
+msgctxt "UdtpV7"
+msgid "Topic"
+msgstr "Topic"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "79lLl-"
@@ -9824,7 +9824,6 @@ msgid "{days, plural, one {About # day} other {About # days}}"
 msgstr "{days, plural, one {About # day} other {About # days}}"
 
 #: src/onboarding/steps/reveal-readouts.tsx
-#: src/onboarding/steps/reveal-week.tsx
 msgctxt "UA5qaX"
 msgid "{days, plural, one {# day} other {# days}}"
 msgstr "{days, plural, one {# day} other {# days}}"
@@ -9861,6 +9860,11 @@ msgstr "Rest day"
 msgctxt "tWAtPK"
 msgid "Your first week"
 msgstr "Your first week"
+
+#: src/onboarding/steps/reveal-week.tsx
+msgctxt "V9hgFL"
+msgid "{days, plural, one {# study day} other {# study days}}"
+msgstr "{days, plural, one {# study day} other {# study days}}"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "_1P3JX"
