@@ -2920,6 +2920,7 @@ msgstr "Zurück"
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-panel.tsx
 #: src/questions/tutor-conversation.tsx
+#: src/questions/tutor-dock.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
 msgstr "Kostenloses Konto erstellen"
@@ -3806,9 +3807,10 @@ msgid "{name} is an AI study buddy and can make mistakes."
 msgstr "{name} ist ein KI-Lernkumpel und kann Fehler machen."
 
 #: src/questions/lesson-question-thread.tsx
-msgctxt "8vWw5H"
-msgid "This needs a free account"
-msgstr "Dafür brauchst du ein kostenloses Konto"
+#: src/questions/tutor-dock.tsx
+msgctxt "uTM1IU"
+msgid "Questions need a free account"
+msgstr "Für Fragen brauchst du ein kostenloses Konto"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"
@@ -3915,11 +3917,6 @@ msgstr "Frag {name} etwas zu dieser Frage"
 msgctxt "_Kuebo"
 msgid "Ask {name} about this screen"
 msgstr "Frag {name} etwas zu dieser Seite"
-
-#: src/questions/tutor-dock.tsx
-msgctxt "OK6Mb4"
-msgid "Create a free account to ask questions"
-msgstr "Erstell ein kostenloses Konto, um Fragen zu stellen"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "LxqaIF"

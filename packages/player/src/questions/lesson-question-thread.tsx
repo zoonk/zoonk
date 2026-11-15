@@ -121,7 +121,7 @@ function GuestThread() {
         <EmptyMedia variant="icon">
           <MessageSquareTextIcon />
         </EmptyMedia>
-        <EmptyTitle className="text-base">{t("This needs a free account")}</EmptyTitle>
+        <EmptyTitle className="text-base">{t("Questions need a free account")}</EmptyTitle>
       </EmptyHeader>
     </Empty>
   );

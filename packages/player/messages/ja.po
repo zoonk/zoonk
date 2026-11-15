@@ -2920,6 +2920,7 @@ msgstr "戻る"
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-panel.tsx
 #: src/questions/tutor-conversation.tsx
+#: src/questions/tutor-dock.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
 msgstr "無料アカウントを作成する"
@@ -3806,9 +3807,10 @@ msgid "{name} is an AI study buddy and can make mistakes."
 msgstr "{name}は学習の相棒となるAIです。間違えることもあります。"
 
 #: src/questions/lesson-question-thread.tsx
-msgctxt "8vWw5H"
-msgid "This needs a free account"
-msgstr "無料アカウントが必要です"
+#: src/questions/tutor-dock.tsx
+msgctxt "uTM1IU"
+msgid "Questions need a free account"
+msgstr "質問するには無料アカウントが必要です"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"
@@ -3915,11 +3917,6 @@ msgstr "この問題について{name}に質問する"
 msgctxt "_Kuebo"
 msgid "Ask {name} about this screen"
 msgstr "この画面について{name}に質問する"
-
-#: src/questions/tutor-dock.tsx
-msgctxt "OK6Mb4"
-msgid "Create a free account to ask questions"
-msgstr "無料アカウントを作成して質問する"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "LxqaIF"

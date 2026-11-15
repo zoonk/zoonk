@@ -2920,6 +2920,7 @@ msgstr "Geri dön"
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-panel.tsx
 #: src/questions/tutor-conversation.tsx
+#: src/questions/tutor-dock.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
 msgstr "Ücretsiz hesap oluştur"
@@ -3806,9 +3807,10 @@ msgid "{name} is an AI study buddy and can make mistakes."
 msgstr "{name} yapay zekâ destekli bir ders arkadaşıdır ve hata yapabilir."
 
 #: src/questions/lesson-question-thread.tsx
-msgctxt "8vWw5H"
-msgid "This needs a free account"
-msgstr "Bunun için ücretsiz bir hesap gerekiyor"
+#: src/questions/tutor-dock.tsx
+msgctxt "uTM1IU"
+msgid "Questions need a free account"
+msgstr "Soru sormak için ücretsiz bir hesap gerekiyor"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"
@@ -3915,11 +3917,6 @@ msgstr "{name} ile bu soru hakkında konuş"
 msgctxt "_Kuebo"
 msgid "Ask {name} about this screen"
 msgstr "{name} ile bu ekran hakkında konuş"
-
-#: src/questions/tutor-dock.tsx
-msgctxt "OK6Mb4"
-msgid "Create a free account to ask questions"
-msgstr "Soru sormak için ücretsiz bir hesap oluştur"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "LxqaIF"

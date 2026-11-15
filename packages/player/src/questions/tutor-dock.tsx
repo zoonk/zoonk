@@ -2,9 +2,10 @@
 
 import { useTaskFootHeight } from "@zoonk/learn/task-foot-height";
 import { BAR_PADDING_CLASS, TASK_ASIDE_PLACE_CLASS } from "@zoonk/learn/task-layout";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { cn } from "@zoonk/ui/lib/utils";
+import { DocumentLink } from "@zoonk/ui/patterns/links/pending";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useMemo, useRef } from "react";
@@ -85,18 +86,15 @@ function DockSignUp({ buddy }: { buddy: TutorBuddy }) {
   const { loginHref } = buddy.navigation;
 
   return (
-    <a
-      className="bg-card ring-input text-muted-foreground hover:text-foreground flex min-h-11 items-center gap-2.5 rounded-xl px-2.5 text-sm ring-1 transition-colors ring-inset"
-      href={loginHref}
-    >
-      <span
-        aria-hidden="true"
-        className="flex size-5.5 shrink-0 items-center justify-center *:size-5.5!"
+    <div className="flex flex-col gap-2">
+      <p className="text-muted-foreground text-sm">{t("Questions need a free account")}</p>
+      <DocumentLink
+        className={cn(buttonVariants({ variant: "outline" }), "w-full")}
+        href={loginHref}
       >
-        {buddy.identity.avatar}
-      </span>
-      {t("Create a free account to ask questions")}
-    </a>
+        {t("Create a free account")}
+      </DocumentLink>
+    </div>
   );
 }
 
