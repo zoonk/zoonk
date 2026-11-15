@@ -136,13 +136,15 @@ final class TutorConversation {
   }
 
   /// While an earlier question still needs its answer, the suggestion waits in the composer, unless
-  /// the learner typed there while the thread loaded. A learner who left meanwhile isn't asked for.
+  /// the learner typed there while the thread loaded. A learner who left meanwhile isn't asked for;
+  /// the offer is taken only once the thread is read, so a panel drawn again in the left one's place
+  /// (a pane turned sheet) still asks it, once.
   func ask(_ draft: TutorDraft) async {
-    guard preparedOffers.insert(draft.offer).inserted else { return }
+    guard !preparedOffers.contains(draft.offer) else { return }
     let typed = self.draft
     await thread.load()
 
-    if Task.isCancelled {
+    guard !Task.isCancelled, preparedOffers.insert(draft.offer).inserted else {
       return
     }
 

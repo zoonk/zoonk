@@ -179,31 +179,29 @@ struct PlanExamOverSlot: View {
 /// The end date passed with lessons left: it finds the end date that fits them.
 struct PlanPastDateSlot: View {
   @Environment(PlanStore.self) private var store
-  @State private var asked: PlanSlotAskedChange?
-  @State private var isWorking = false
-  @State private var failed = false
-  @State private var noDate = false
-  @State private var tasks = ScreenTasks()
 
   let context: PlanContext
   let actions: PlanSlotActions
 
   var body: some View {
     card
-      .onDisappear { tasks.cancel() }
+  }
+
+  private var check: PlanSlotCheck {
+    context.slotChecks.check(.pastDate, goalId: context.goal.id)
   }
 
   @ViewBuilder private var card: some View {
     let lessons = context.plan.status?.lessons ?? 0
 
-    if let asked {
+    if let asked = check.asked {
       PlanSlotAskedCard(asked: asked, context: context, actions: actions)
     } else {
       PlanSlotCard(
         title: Text(planPastDateTitle(isExam: false)), mark: .symbol("calendar.badge.clock"),
         description: Text(description(lessons: lessons))
       ) {
-        if failed {
+        if check.failed {
           FailureLine(
             message: LocalizedStringResource(
               "We couldn't check what changes.", table: "Plan",
@@ -212,7 +210,7 @@ struct PlanPastDateSlot: View {
           .typeStyle(.note)
         }
       } actions: {
-        if noDate {
+        if check.noDate {
           Button(action: actions.notNow) {
             Text("Not now", tableName: "Plan", comment: "Puts a suggestion off")
           }
@@ -239,8 +237,8 @@ struct PlanPastDateSlot: View {
             }
           }
 
-          BusyButton(isBusy: isWorking) {
-            tasks.run { await findDate() }
+          BusyButton(isBusy: check.isWorking) {
+            check.run { await findDate() }
           } label: {
             Text(
               "Find a date", tableName: "Plan",
@@ -253,7 +251,7 @@ struct PlanPastDateSlot: View {
   }
 
   private func description(lessons: Int) -> String {
-    noDate
+    check.noDate
       ? String(
         localized: "No date fits all your lessons.", table: "Plan",
         comment: "No later end date fits the lessons left")
@@ -263,25 +261,36 @@ struct PlanPastDateSlot: View {
   }
 
   private func findDate() async {
-    isWorking = true
-    defer { isWorking = false }
-    failed = false
+    let check = check
+    check.isWorking = true
+    defer { check.isWorking = false }
+    check.failed = false
 
     let time = store.timeToCover(goalId: context.goal.id)
     await time.load()
 
+    guard !Task.isCancelled else {
+      return
+    }
+
     guard let time = time.freshValue else {
-      failed = true
+      check.failed = true
       return
     }
 
     guard let date = time.fittingDate else {
-      noDate = true
+      check.noDate = true
       return
     }
 
-    asked = await context.ask([.targetDate(date)], store: store)
-    failed = asked == nil
+    let asked = await context.ask([.targetDate(date)], store: store)
+
+    guard !Task.isCancelled else {
+      return
+    }
+
+    check.asked = asked
+    check.failed = asked == nil
   }
 
 }
@@ -305,21 +314,18 @@ struct PlanOtherOptions<Items: View>: View {
 struct PlanCoverageSlot: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
-  @State private var isAsked: Bool
-  @State private var asked: PlanSlotAskedChange?
-  @State private var isPreviewing = false
-  @State private var previewFailed = false
-  @State private var tasks = ScreenTasks()
 
   let context: PlanContext
   let title: String
+  let asksAtOnce: Bool
   let actions: PlanSlotActions
 
-  init(context: PlanContext, title: String, asksAtOnce: Bool, actions: PlanSlotActions) {
-    self.context = context
-    self.title = title
-    self.actions = actions
-    _isAsked = State(initialValue: asksAtOnce)
+  private var check: PlanSlotCheck {
+    context.slotChecks.check(.coverage(title), goalId: context.goal.id)
+  }
+
+  private var isAsked: Bool {
+    asksAtOnce || check.isAsked
   }
 
   enum Found: Equatable {
@@ -331,7 +337,6 @@ struct PlanCoverageSlot: View {
   var body: some View {
     card
       .loads(isAsked ? [time] : [], refreshable: false)
-      .onDisappear { tasks.cancel() }
   }
 
   private var time: Resource<TimeToCover> {
@@ -355,13 +360,13 @@ struct PlanCoverageSlot: View {
   }
 
   @ViewBuilder private var card: some View {
-    if let asked {
+    if let asked = check.asked {
       PlanSlotAskedCard(asked: asked, context: context, actions: actions)
     } else {
       let offer = offerMinutes
 
       PlanSlotCard(title: Text(heading), mark: .sparkle, description: line.map(Text.init)) {
-        if previewFailed {
+        if check.failed {
           FailureLine(
             message: LocalizedStringResource(
               "We couldn't check what changes.", table: "Plan",
@@ -374,7 +379,7 @@ struct PlanCoverageSlot: View {
 
         if found == .failed {
           Button {
-            tasks.run { await time.refresh() }
+            check.run { await time.refresh() }
           } label: {
             Text("Try again", tableName: "Plan", comment: "Asks again after it failed")
           }
@@ -391,8 +396,8 @@ struct PlanCoverageSlot: View {
             .mainActionUnlessBarHoldsOne()
           }
         } else {
-          BusyButton(isBusy: found == .asking || isPreviewing) {
-            tasks.run { await seeChanges() }
+          BusyButton(isBusy: found == .asking || check.isWorking) {
+            check.run { await seeChanges() }
           } label: {
             Text(
               "See what changes", tableName: "Plan",
@@ -547,20 +552,28 @@ struct PlanCoverageSlot: View {
   }
 
   private func seeChanges() async {
+    let check = check
+
     if found == nil {
-      isAsked = true
+      check.isAsked = true
       await time.load()
     }
 
-    guard let minutes = offerMinutes else {
+    guard !Task.isCancelled, let minutes = offerMinutes else {
       return
     }
 
-    isPreviewing = true
-    defer { isPreviewing = false }
+    check.isWorking = true
+    defer { check.isWorking = false }
 
-    asked = await context.ask([.dailyMinutes(minutes)], store: store)
-    previewFailed = asked == nil
+    let asked = await context.ask([.dailyMinutes(minutes)], store: store)
+
+    guard !Task.isCancelled else {
+      return
+    }
+
+    check.asked = asked
+    check.failed = asked == nil
   }
 }
 
@@ -569,17 +582,18 @@ struct PlanCoverageSlot: View {
 /// applies them.
 struct PlanFitSlot: View {
   @Environment(PlanStore.self) private var store
-  @State private var repriced: PlanChangePreview?
-  @State private var isChecking = false
-  @State private var failed = false
-  @State private var tasks = ScreenTasks()
 
   let context: PlanContext
   let offer: GoalPlan.FitOffer
   let title: Text
   let actions: PlanSlotActions
 
+  private var check: PlanSlotCheck {
+    context.slotChecks.check(.fitLessons, goalId: context.goal.id)
+  }
+
   var body: some View {
+    let repriced = check.repriced
     let unchanged = repriced?.unchanged == true
 
     PlanSlotCard(title: title, mark: .sparkle, description: nil) {
@@ -587,7 +601,7 @@ struct PlanFitSlot: View {
         effect: unchanged ? nil : repriced?.effect ?? offer.effect, today: context.plan.today,
         options: context.changeOptions, repriced: repriced != nil, saysLessonsAdded: true)
 
-      if failed {
+      if check.failed {
         SuggestionSaveError()
       }
     } actions: {
@@ -596,8 +610,8 @@ struct PlanFitSlot: View {
       }
 
       if !unchanged {
-        BusyButton(isBusy: isChecking) {
-          tasks.run { await add() }
+        BusyButton(isBusy: check.isWorking) {
+          check.run { await add() }
         } label: {
           Text(
             "Add to my plan", tableName: "Plan",
@@ -606,22 +620,23 @@ struct PlanFitSlot: View {
         .mainActionUnlessBarHoldsOne()
       }
     }
-    .onDisappear { tasks.cancel() }
   }
 
   private func add() async {
-    guard repriced == nil else {
+    let check = check
+
+    guard check.repriced == nil else {
       actions.apply(offer.operations.map { PlanEdit.operation($0) })
       return
     }
 
-    isChecking = true
-    defer { isChecking = false }
-    failed = false
+    check.isWorking = true
+    defer { check.isWorking = false }
+    check.failed = false
 
     switch await store.addFitOffer(offer, goalId: context.goal.id, apply: actions.apply) {
-    case .repriced(let preview): repriced = preview
-    case .failed: failed = true
+    case .repriced(let preview): check.repriced = preview
+    case .failed: check.failed = true
     case .applied, nil: break
     }
   }
@@ -674,4 +689,59 @@ func planCoverageLine(minutes: Int, share: Double, exam: Bool) -> String {
     : String(
       localized: "\(time) a day covers about \(percent) of your goal", table: "Plan",
       comment: "The share of a goal a time a day covers; the first argument is a duration")
+}
+
+/// What the Plan's suggestion cards are checking and what they found, kept by the Plan above its
+/// panes: a card is drawn again as the Plan splits into panes or joins them, and its check goes on
+/// and shows there, or in the sheet the line opens. The Plan calls `leave()` as it closes.
+@MainActor
+final class PlanSlotChecks {
+  private struct Key: Hashable {
+    let goalId: String
+    let item: PlanSlotItem
+  }
+
+  private var checks: [Key: PlanSlotCheck] = [:]
+
+  func check(_ item: PlanSlotItem, goalId: String) -> PlanSlotCheck {
+    let key = Key(goalId: goalId, item: item)
+
+    if let check = checks[key] {
+      return check
+    }
+
+    let check = PlanSlotCheck()
+    checks[key] = check
+    return check
+  }
+
+  /// What a check was waiting for shows nothing; what it found already stays.
+  func leave() {
+    for check in checks.values {
+      check.leave()
+    }
+  }
+}
+
+@MainActor
+@Observable
+final class PlanSlotCheck {
+  /// The change a tap worked out, asked before it applies.
+  var asked: PlanSlotAskedChange?
+  /// The fit offer's numbers today, when they aren't the offer's.
+  var repriced: PlanChangePreview?
+  var isAsked = false
+  var isWorking = false
+  var failed = false
+  var noDate = false
+  @ObservationIgnored private let tasks = ScreenTasks()
+
+  func run(_ work: @escaping @MainActor () async -> Void) {
+    tasks.run(work)
+  }
+
+  fileprivate func leave() {
+    tasks.cancel()
+    isWorking = false
+  }
 }

@@ -335,6 +335,51 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertTrue(api.requestIDs.isEmpty)
   }
 
+  /// A lesson's Ask moves between a pane and a sheet as the window crosses the spread's width: the
+  /// panel that left asks nothing, and the one drawn in its place asks the offer, once.
+  func testAnOfferAPanelDrawnAgainTakesOverIsAskedOnce() async {
+    let api = TutorAPIStub()
+    let conversation = makeConversation(api: api)
+    let simpler = TutorSuggestion(
+      id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
+    let draft = TutorDraft(suggestion: simpler, offer: UUID(), sendsAtOnce: true)
+    var left: Task<Void, Never>?
+    var drawnAgain: Task<Void, Never>?
+    api.beforeThread = {
+      api.beforeThread = nil
+      drawnAgain = Task { await conversation.ask(draft) }
+      left?.cancel()
+    }
+
+    left = Task { await conversation.ask(draft) }
+    await left?.value
+    await drawnAgain?.value
+
+    XCTAssertEqual(api.suggestions, ["simpler"])
+  }
+
+  /// Narrowed, Ask leaves the lesson's side without a sheet; widened again, it's back and asks.
+  func testAnOfferWhosePanelLeftIsAskedWhenItsPanelComesBack() async {
+    let api = TutorAPIStub()
+    let conversation = makeConversation(api: api)
+    let simpler = TutorSuggestion(
+      id: "simpler", label: "Explain it more simply", lessonSuggestionID: "simpler")
+    let draft = TutorDraft(suggestion: simpler, offer: UUID(), sendsAtOnce: true)
+    var left: Task<Void, Never>?
+    api.beforeThread = {
+      api.beforeThread = nil
+      left?.cancel()
+    }
+
+    left = Task { await conversation.ask(draft) }
+    await left?.value
+    XCTAssertTrue(api.suggestions.isEmpty, "Nothing is asked while no panel shows")
+
+    await conversation.ask(draft)
+
+    XCTAssertEqual(api.suggestions, ["simpler"])
+  }
+
   func testAQuestionShowsAsSentAtOnceAndGoesBackToTheComposerIfItFails() async {
     let api = TutorAPIStub(askFailures: [APIError.network, APIError.network])
     let conversation = makeConversation(api: api)

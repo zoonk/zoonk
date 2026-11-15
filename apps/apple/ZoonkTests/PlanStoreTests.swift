@@ -1065,7 +1065,7 @@ extension GoalPlan {
 }
 
 extension CurrentAccount {
-  fileprivate static let planTestAccount = CurrentAccount(
+  static let planTestAccount = CurrentAccount(
     account: AccountAccess(
       deletion: AccountDeletionRequirements(hasAppleAccount: false),
       subscription: nil),
