@@ -424,7 +424,12 @@ fun SuggestionMenu(options: @Composable (done: () -> Unit) -> Unit) {
         ) {
             Text(stringResource(R.string.suggestion_other_options))
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Icon(painterResource(R.drawable.ic_expand_more), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize * glyphScale()))
+            Icon(
+                painterResource(R.drawable.ic_expand_more),
+                contentDescription = null,
+                modifier =
+                    Modifier.size(ButtonDefaults.IconSize * glyphScale()),
+            )
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) { options { open = false } }
     }
