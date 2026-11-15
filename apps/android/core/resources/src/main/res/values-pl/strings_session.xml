@@ -62,6 +62,7 @@
   "session_summary_done_for_now": "e05b022245ddb866875a08addf699075afec9ce22be9969eead051af27842f7c",
   "session_summary_done_in": "6941fcf929fbe1db6ce964d801255b952b3403c0159fb6411054c7f2986e26a6",
   "session_summary_done_under_minute": "9fe75db1dbb4469013fb36d1a892a9b95706f2e36c93ff0732f13e1328c6ba14",
+  "session_summary_down_from": "72943f476efd064c063fd10a45a62413bab45813261d6c20393c65586cf7edde",
   "session_summary_earned_today": "e8e170f8299b699192df07262d5c2e45e0b6fda32fe23ad4fda03e2a66df56b1",
   "session_summary_eyebrow": "c95bc714a16af6d7ae8c957dc97641cd765d804e7aaa2de01e7d6c35ba495e68",
   "session_summary_finish": "3b778dd5efa1edd6adc0c047c346b88c77bfe30adc40efa6a2910c0bf5ac7380",
@@ -83,6 +84,7 @@
   "session_summary_streak": "011c1c7f966134719a1fdeaabb73ae52dcc0328a3a77d1489936ef52b51d5d8e",
   "session_summary_to_review": "705253c227578faa833fa371ae350cb88ad8fc0442f57bf918a16edf2b2523a1",
   "session_summary_tomorrow": "b752699625aa2c12b3eec620e42fe786e4661fdb21a6c96d4a29a1ca6aaa9111",
+  "session_summary_up_from": "d4d255ac0275235ae5687fc753ee302b51d2da8a1d01de3c55c25d661b8fb58c",
   "session_topics_and_more": "153dbdd7f95010889661766877e3f9bc9739d52c8e5a9d61cc3a0ba35fcd4036"
 }
 -->
@@ -171,6 +173,8 @@
     <string name="session_summary_brain_power">Moc Umysłu</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>
+    <string name="session_summary_up_from">Wzrost z %1$s</string>
+    <string name="session_summary_down_from">Spadek z %1$s</string>
     <string name="session_summary_skills_rose">Umiejętności na wyższym poziomie</string>
     <string name="session_summary_tomorrow">Jutro</string>
     <string name="session_summary_earned_today">Zdobyte dziś</string>

@@ -55,6 +55,7 @@ import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
@@ -318,8 +319,11 @@ private fun SessionNumbers(
                         modifier = modifier,
                         detail =
                             goalNumber.before?.let { before ->
-                                val change = "$before → ${goalNumber.after}"
-                                if (goalNumber.dropped) change else successText(change)
+                                if (goalNumber.dropped) {
+                                    stringResource(R.string.session_summary_down_from, before)
+                                } else {
+                                    successText(stringResource(R.string.session_summary_up_from, before))
+                                }
                             },
                         tone = if (goalNumber.dropped) StatTone.Neutral else StatTone.Success,
                         icon = summaryIcon(if (goalNumber.dropped) R.drawable.ic_trending_down else R.drawable.ic_trending_up),
@@ -532,7 +536,7 @@ private fun SummaryList(
     rows: @Composable () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        title?.let { SectionLabel(it) }
+        title?.let { SectionHeader(it) }
         OutlinedCard(Modifier.fillMaxWidth()) { rows() }
     }
 }

@@ -62,6 +62,7 @@
   "session_summary_done_for_now": "0b3de700727ab75971ab9c8e4f75e23e245e944e1032587c1ab4f932e6987cf2",
   "session_summary_done_in": "31f16d3a98d7dce5f5a6f5f5dc2663e4af503c43394915a5fa2f04dcd64d89a0",
   "session_summary_done_under_minute": "ae5b9edf69857f8fbf8aba03ac0e25983cdf8c626627b262e2d11c0aae518f3d",
+  "session_summary_down_from": "2c2e023868050ec0f70d3ab7cbf21ee14683a36ef70c8e1db86180afd3f2a4dc",
   "session_summary_earned_today": "a2a69e434aae02193d87fbb381df63e8e098dc4b8c69cc3b8a7d7e9a78b36d86",
   "session_summary_eyebrow": "bb7dd1aab6ccb5aa30f1057b50d321147813b520d138d5712fca0fe07353fbd6",
   "session_summary_finish": "4c12239fe1bdfcbf67e8ab34485fcf8193b45137f974464586339570ac4e151f",
@@ -83,6 +84,7 @@
   "session_summary_streak": "f1b82d1eccfabe812b157dd815cbc4a53822d662b28d6b310f8fd15ad7cd4135",
   "session_summary_to_review": "73e987f0f6ad779868078b5f9ee34c29d4bac1cd42f8d7aa720bd60c1b08d127",
   "session_summary_tomorrow": "c4dacf00d17c9a6e5bb5538509b5007380e9ee5ca3acda5e93579866217812fc",
+  "session_summary_up_from": "fa808d9097b5028966a880a26ddfdffcc50991ea35f7d7fbb7446c97baa08f03",
   "session_topics_and_more": "2206b15e59e14adeacac18bcfb104487f78fcc8835bc82442753cf8d34ff7eef"
 }
 -->
@@ -166,6 +168,8 @@
     <string name="session_summary_brain_power">Puissance Mentale</string>
     <!-- Points earned, such as "+120". -->
     <string name="session_summary_plus">+%1$s</string>
+    <string name="session_summary_up_from">En hausse par rapport à %1$s</string>
+    <string name="session_summary_down_from">En baisse par rapport à %1$s</string>
     <string name="session_summary_skills_rose">Compétences en progrès</string>
     <string name="session_summary_tomorrow">Demain</string>
     <string name="session_summary_earned_today">Gagné aujourd’hui</string>
