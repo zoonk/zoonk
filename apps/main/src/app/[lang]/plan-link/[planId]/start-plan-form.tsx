@@ -1,5 +1,6 @@
 "use client";
 
+import { CourseStartFailureNote } from "@/components/public/course-start-failure";
 import { useRouter } from "@/i18n/navigation";
 import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { DailyTimeField } from "@zoonk/learn/daily-time-picker";
@@ -7,7 +8,7 @@ import { EnterButton } from "@zoonk/learn/enter-button";
 import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
-import { useActionState, useId } from "react";
+import { useActionState, useId, useRef } from "react";
 import { type StartPlanState } from "./start-plan-action";
 
 const DEFAULT_MINUTES = 30;
@@ -19,6 +20,7 @@ export function StartPlanForm({
 }) {
   const t = useExtracted();
   const minutesId = useId();
+  const form = useRef<HTMLFormElement>(null);
 
   const router = useRouter();
 
@@ -34,7 +36,8 @@ export function StartPlanForm({
         return previous;
       }
 
-      const result: StartPlanState = answered === "failed" ? { error: "failed" } : answered.answer;
+      const result: StartPlanState =
+        answered === "failed" ? { failure: { status: "failed" } } : answered.answer;
 
       if (result && "started" in result) {
         router.push("/plan");
@@ -45,8 +48,15 @@ export function StartPlanForm({
     null,
   );
 
+  const failure = state && "failure" in state ? state.failure : null;
+
   return (
-    <form action={formAction} aria-labelledby={minutesId} className="flex flex-col gap-3">
+    <form
+      action={formAction}
+      aria-labelledby={minutesId}
+      className="flex flex-col gap-3"
+      ref={form}
+    >
       <p className="text-sm font-medium" id={minutesId}>
         {t("How much time a day?")}
       </p>
@@ -58,12 +68,10 @@ export function StartPlanForm({
           message: "Start my own plan",
         })}
       </EnterButton>
-      {state && "error" in state && state.error === "refused" && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {t("You can't start another goal right now. Finish or pause one first.")}
-        </p>
+      {failure?.status === "limitReached" && (
+        <CourseStartFailureNote failure={failure} onRetry={() => form.current?.requestSubmit()} />
       )}
-      {state && "error" in state && state.error === "failed" && (
+      {failure && failure.status !== "limitReached" && (
         <p className="text-destructive-text text-sm" role="alert">
           {t("That didn't work. Try again in a moment.")}
         </p>
