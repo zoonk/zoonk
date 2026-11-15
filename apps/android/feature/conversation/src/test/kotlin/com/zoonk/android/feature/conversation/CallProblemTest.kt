@@ -3,6 +3,7 @@ package com.zoonk.android.feature.conversation
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -50,10 +51,12 @@ class CallProblemTest {
 
         compose.onNodeWithText("You've used your call time").assertExists()
         compose.onNodeWithText("Subscribe").assertExists()
+        val line = compose.onNodeWithText("More later today, or subscribe to keep going.").getBoundsInRoot().top
 
         clock.passOpening()
         compose.waitUntil(10_000) { compose.onAllNodesWithText("Try again").fetchSemanticsNodes().isNotEmpty() }
-        compose.onNodeWithText("You can try again now.").assertExists()
+        // The title's room stays, so the line under it doesn't move.
+        assertEquals(line, compose.onNodeWithText("You can try again now.").getBoundsInRoot().top)
         compose.onNodeWithText("You've used your call time").assertDoesNotExist()
         compose.onNodeWithText("Subscribe").assertDoesNotExist()
         compose.onNodeWithText("Try again").performClick()

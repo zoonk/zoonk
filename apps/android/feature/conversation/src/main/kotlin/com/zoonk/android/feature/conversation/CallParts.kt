@@ -50,6 +50,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.HeldSlot
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.isWideLayout
@@ -318,20 +319,22 @@ internal fun CallNote(
     }
 }
 
-/** A call that can't go on: what happened, as a headline and a line. */
+/**
+ * A call that can't go on: what happened, as a headline and a line. A headline that goes while the
+ * screen shows (a limit's day came) leaves its room, so the words under it stay where they were.
+ */
 @Composable
 internal fun CallOffMessage(
     title: String?,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(
-        modifier.padding(vertical = 24.dp).semantics {
-            liveRegion = LiveRegionMode.Polite
-        },
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        title?.let { Text(it, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall) }
-        content()
+    Column(modifier.padding(vertical = 24.dp).semantics { liveRegion = LiveRegionMode.Polite }) {
+        HeldSlot(gated = title != null) {
+            title?.let {
+                Text(it, Modifier.padding(bottom = 8.dp).semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+            }
+        }
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp), content = content)
     }
 }

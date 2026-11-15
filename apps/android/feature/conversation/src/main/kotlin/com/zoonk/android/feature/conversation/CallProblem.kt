@@ -54,37 +54,19 @@ internal fun CallProblem(
     when {
         failure == LiveCallFailure.Limit -> {
             val limit = kind.limit ?: Limit.Reached(LimitTier.Plus, LimitPeriod.Day)
-            val words: @Composable () -> Unit = { CallLimitMessage(limit, actions.onCreateAccount, actions.onSubscribe, inBar = true) }
-            when {
-                limitLifted(limit) -> {
-                    Problem(title, actions.onClose, actions = {
-                        Button(onClick = actions.onRetry, modifier = Modifier.barAction()) {
-                            Text(stringResource(R.string.conversation_try_again))
-                        }
-                    }, content = words)
+            val lifted = limitLifted(limit)
+            val (label, onClick) =
+                when {
+                    lifted -> R.string.conversation_try_again to actions.onRetry
+                    limit.needsAccount -> R.string.limit_create_account to actions.onCreateAccount
+                    limit.hasWayOn -> R.string.subscription_subscribe to actions.onSubscribe
+                    else -> R.string.navigation_back to actions.onClose
                 }
-
-                limit.needsAccount -> {
-                    Problem(title, actions.onClose, actions = {
-                        Button(onClick = actions.onCreateAccount, modifier = Modifier.barAction()) {
-                            Text(stringResource(R.string.limit_create_account))
-                        }
-                    }, content = words)
-                }
-
-                limit.hasWayOn -> {
-                    Problem(title, actions.onClose, actions = {
-                        TrackShown(AnalyticsEvent.SubscriptionGateShown)
-                        Button(onClick = actions.onSubscribe, modifier = Modifier.barAction()) {
-                            Text(stringResource(R.string.subscription_subscribe))
-                        }
-                    }, content = words)
-                }
-
-                else -> {
-                    ProblemWithBack(title, actions.onClose, words)
-                }
-            }
+            // One call site whatever the action, so the message keeps its held title room when the day comes.
+            Problem(title, actions.onClose, actions = {
+                if (!lifted && limit.hasWayOn && !limit.needsAccount) TrackShown(AnalyticsEvent.SubscriptionGateShown)
+                Button(onClick = onClick, modifier = Modifier.barAction()) { Text(stringResource(label)) }
+            }) { CallLimitMessage(limit, actions.onCreateAccount, actions.onSubscribe, inBar = true) }
         }
 
         kind == CallProblemKind.TakenOver || kind == CallProblemKind.SaveEnded || failure == LiveCallFailure.Ended -> {

@@ -57,9 +57,12 @@ class FreeLessonGateTest {
 
         rule.onNodeWithText("You've used your free lessons").assertExists()
         rule.onNodeWithText("Start the lesson").assertDoesNotExist()
+        val title = rule.onNodeWithText("You've used your free lessons").getBoundsInRoot().top
 
         clock.passOpening()
         waitForReady()
+        // The gate sits at the top of its page, so its icon and title stay where they were.
+        assertEquals(title, rule.onNodeWithText("Your next free lesson is ready").getBoundsInRoot().top)
         rule.onNodeWithText("Subscribe").assertDoesNotExist()
         assertEquals(0, starts)
 

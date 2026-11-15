@@ -3,6 +3,7 @@ package com.zoonk.android.feature.conversation
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -48,9 +49,12 @@ class DroppedCallScreenTest {
 
         compose.onNodeWithText("You've used your call time").assertExists()
         compose.onNodeWithText("Call again").assertDoesNotExist()
+        val reason = compose.onNodeWithText("You've used your call time").getBoundsInRoot().top
 
         clock.passOpening()
         compose.waitUntil(10_000) { compose.onAllNodesWithText("Call again").fetchSemanticsNodes().isNotEmpty() }
+        // The title's room stays, so the sentence takes the reason's place.
+        assertEquals(reason, compose.onNodeWithText("You can try again now.").getBoundsInRoot().top)
         compose.onNodeWithText("You've used your call time").assertDoesNotExist()
         compose.onNodeWithText("The call dropped").assertDoesNotExist()
         compose.onNodeWithText("You can try again now.").assertExists()
