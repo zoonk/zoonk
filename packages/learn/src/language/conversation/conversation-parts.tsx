@@ -81,11 +81,11 @@ export function CallReason({
   children: React.ReactNode;
   className?: string;
   role?: "alert";
-  title: string;
+  title?: string;
 }) {
   return (
     <div className={cn("flex flex-col gap-1", className)} role={role}>
-      <p className="font-medium">{title}</p>
+      {title && <p className="font-medium">{title}</p>}
       {children}
     </div>
   );

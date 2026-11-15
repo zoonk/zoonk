@@ -63,8 +63,12 @@ describe("a limit whose day has come", () => {
     );
 
     await expect.element(page.getByText("You've used your call time")).toBeVisible();
+    const line = page.getByText(/subscribe to keep going\.$/u).element();
+
     await expect.element(page.getByRole("button", { name: "Call again" })).toBeVisible();
     await expect.element(page.getByText("You can try again now.")).toBeVisible();
+    // The same notice says it: a new one in its place would be read out as a new refusal.
+    expect(page.getByText("You can try again now.").element()).toBe(line);
     await expect.element(page.getByRole("link", { name: "Subscribe" })).not.toBeInTheDocument();
     await expect.element(page.getByText("You've used your call time")).not.toBeInTheDocument();
   });

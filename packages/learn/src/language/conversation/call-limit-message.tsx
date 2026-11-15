@@ -43,20 +43,12 @@ export function CallLimitReason({
   const routes = useLearnRoutes();
   const title = useCallLimitTitle(limit);
   const opened = useLiveLimit(limit) === null;
-  const notice = <CallLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />;
 
-  // Once its day has come nothing ran out, so no title says it did.
-  if (opened) {
-    return (
-      <div className={className} role={role}>
-        {notice}
-      </div>
-    );
-  }
-
+  // Once its day has come nothing ran out, so no title says it did. The notice stays the same one,
+  // so it isn't read out again as a new refusal.
   return (
-    <CallReason className={className} role={role} title={title}>
-      {notice}
+    <CallReason className={className} role={role} title={opened ? undefined : title}>
+      <CallLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
     </CallReason>
   );
 }
