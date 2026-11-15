@@ -84,6 +84,11 @@
         <item quantity="one">An AI study buddy: %d message a day</item>
         <item quantity="other">An AI study buddy: %d messages a day</item>
     </plurals>
+    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
+    <plurals name="subscription_free_buddy_monthly">
+        <item quantity="one">An AI study buddy: %1$d message a day, up to %2$s a month</item>
+        <item quantity="other">An AI study buddy: %1$d messages a day, up to %2$s a month</item>
+    </plurals>
     <!-- Calls are spoken practice conversations with an AI partner. -->
     <string name="subscription_free_calls">Speaking practice calls</string>
     <string name="subscription_questions_title">Common questions</string>
@@ -107,15 +112,10 @@
         <item quantity="one">%d lesson a month, across all your goals, exams included</item>
         <item quantity="other">%d lessons a month, across all your goals, exams included</item>
     </plurals>
-    <!-- %1$s is the buddy messages ("10 messages"), %2$s the uploads ("3 uploads"). -->
-    <string name="subscription_answer_free_buddy_uploads">An AI study buddy: %1$s and %2$s a day</string>
-    <plurals name="subscription_answer_free_buddy">
-        <item quantity="one">%d message</item>
-        <item quantity="other">%d messages</item>
-    </plurals>
-    <plurals name="subscription_answer_free_uploads">
-        <item quantity="one">%d upload</item>
-        <item quantity="other">%d uploads</item>
+    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
+    <plurals name="subscription_answer_free_material">
+        <item quantity="one">Your own study material: %d file a day</item>
+        <item quantity="other">Your own study material: %d files a day</item>
     </plurals>
     <string name="subscription_answer_free_calls">Speaking practice calls, fewer than with Plus (exam speaking tasks come with Plus)</string>
     <string name="subscription_question_unlimited">Is Plus really unlimited?</string>
