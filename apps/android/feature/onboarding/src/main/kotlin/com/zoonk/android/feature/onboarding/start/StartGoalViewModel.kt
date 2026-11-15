@@ -14,6 +14,7 @@ import com.zoonk.android.data.GenerationFollower
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.AttachedSource
 import com.zoonk.android.feature.onboarding.GoalError
@@ -68,6 +69,14 @@ data class StartFlowState(
 
 enum class WaitlistOutcome { Joined, SignInRequired, Failed }
 
+/** What a goal made from the card opens: its setup, or the explanation a question asks for. */
+enum class GoalOpens { Setup, Explanation }
+
+data class CreatedGoal(
+    val id: String,
+    val opens: GoalOpens,
+)
+
 /** Reading words, reading them again and creating goals are POSTs from the learner's taps; opening a draft only reads it. */
 class StartGoalViewModel(
     private val store: OnboardingStore,
@@ -77,6 +86,14 @@ class StartGoalViewModel(
     private val planId: String?,
     private val analytics: EventTracker = EventTracker {},
 ) : ViewModel() {
+    /** This visit to the start screen: the goal it made opens, or its failure shows, only on it. */
+    val visit = Visit()
+
+    /** The goal the card made, for the screen to open. */
+    val created = visit.outcome<CreatedGoal>()
+
+    private val creationFailure = visit.outcome<GoalError>()
+
     private var saved by handle.saved {
         StartFlowState(
             screen = draftId?.let(StartScreen::Draft) ?: StartScreen.Entry,
@@ -106,8 +123,7 @@ class StartGoalViewModel(
     var isCreating by mutableStateOf(false)
         private set
 
-    var creationError by mutableStateOf<GoalError?>(null)
-        private set
+    val creationError get() = creationFailure.value
 
     var waitlist by mutableStateOf<WaitlistOutcome?>(null)
         private set
@@ -298,7 +314,7 @@ class StartGoalViewModel(
         if (previous == null || previous == key) return
         if (upgradesGuest) {
             entryError = null
-            creationError = null
+            creationFailure.clear()
             draftLimit = null
             waitlist = null
             return
@@ -390,10 +406,7 @@ class StartGoalViewModel(
         language: String,
     ) = send(words, language)
 
-    fun confirm(
-        input: GoalCreateInput,
-        onCreated: (String) -> Unit,
-    ) = create(input, onCreated)
+    fun confirm(input: GoalCreateInput) = create(input, GoalOpens.Setup)
 
     fun joinWaitlist(
         instrument: String,
@@ -432,18 +445,17 @@ class StartGoalViewModel(
     fun settle(
         draft: OnboardingDraft,
         explanation: (OnboardingDraft, String) -> GoalCreateInput,
-        onCreated: (String) -> Unit,
     ) {
         val id = draft.id.toString()
         val read = (draft.understanding as? GoalUnderstanding.GoalUnderstandingOneOf1Value)?.value
         if (draft.status != OnboardingDraft.Status.UNDERSTOOD || !store.wasSentHere(id)) return
         store.forgetSent(id)
-        if (read != null) create(explanation(draft, read.question), onCreated)
+        if (read != null) create(explanation(draft, read.question), GoalOpens.Explanation)
     }
 
     /** A refusal for the goals the plan follows lasts until a draft read after it has room again. */
     fun readRoom(activeGoalsLeft: Long?) {
-        if (activeGoalsLeft != 0L && (creationError as? GoalError.Limit)?.reason == GoalLimitReason.ActiveGoals) creationError = null
+        if (activeGoalsLeft != 0L && (creationError as? GoalError.Limit)?.reason == GoalLimitReason.ActiveGoals) creationFailure.clear()
     }
 
     fun isOpeningExplanation(draft: OnboardingDraft) = isCreating || store.wasSentHere(draft.id.toString())
@@ -451,26 +463,27 @@ class StartGoalViewModel(
     /** A card creates only from a draft read since its last create whose outcome this device didn't learn. */
     fun create(
         input: GoalCreateInput,
-        onCreated: (String) -> Unit,
+        opens: GoalOpens,
     ) {
         if (isCreating || draftId?.let { store.drafts[it].freshState.value !is LoadState.Loaded } == true) return
         isCreating = true
-        creationError = null
+        creationFailure.clear()
+        val asked = visit.number
         viewModelScope.launch {
             when (val outcome = store.createGoals(input, planId, draftId)) {
                 is WriteOutcome.Done -> {
-                    onCreated(outcome.value)
+                    created.send(asked, CreatedGoal(outcome.value, opens))
                 }
 
                 is WriteOutcome.Refused -> {
                     val reason = outcome.refusal.goalLimitReason()
-                    creationError = GoalError.Limit(reason)
+                    creationFailure.send(asked, GoalError.Limit(reason))
                     // The draft's room was read before this refusal; read it again so the card counts the goals followed now.
                     if (reason == GoalLimitReason.ActiveGoals) draftId?.let { store.drafts[it].refresh() }
                 }
 
                 WriteOutcome.Failed -> {
-                    creationError = GoalError.CouldNotSave
+                    creationFailure.send(asked, GoalError.CouldNotSave)
                 }
 
                 WriteOutcome.Obsolete -> {}
@@ -532,7 +545,7 @@ class StartGoalViewModel(
         draftLimit = null
         waitlist = null
         editing = null
-        creationError = null
+        creationFailure.clear()
         entryError = error
         update { it.copy(screen = StartScreen.Entry, words = words) }
     }

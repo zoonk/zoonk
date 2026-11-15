@@ -45,6 +45,8 @@ import com.zoonk.android.feature.plan.phaseKindName
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DailyTimePicker
@@ -86,6 +88,8 @@ internal fun PlanLinkScreen(
     navigator: AppNavigator,
 ) {
     val vm = viewModel { PlanLinkViewModel(store, createSavedStateHandle()) }
+    VisitOf(vm.visit)
+    ActOn(vm.started) { navigator.showRoot(AppTab.Plan) }
     val resource = store.planLinks[route.planId]
     val state by resource.collectShown()
     val link = (state as? LoadState.Loaded)?.value
@@ -108,7 +112,7 @@ internal fun PlanLinkScreen(
                     ) {
                         Heading(shown.value)
                         if (signedIn) {
-                            StartForm(vm, shown.value.dailyTimes, onStart = { vm.start(route.planId) { navigator.showRoot(AppTab.Plan) } })
+                            StartForm(vm, shown.value.dailyTimes, onStart = { vm.start(route.planId) })
                         } else {
                             val title =
                                 shown.value.outline.subject

@@ -158,6 +158,11 @@ fun GoalSetupScreen(
                 RevealDoors(prepareToday, openRevealStep),
             )
         }
+    VisitOf(vm.visit)
+    ActOn(vm.startedOver) {
+        navigator.closeSection()
+        navigator.open(AppRoute.StartGoal())
+    }
     val state by store.onboardings[vm.goalId].collectShown()
     val run by vm.follower.run.collectAsStateWithLifecycle()
     val first = run.firstLesson.withRead(state.value?.firstLesson, state.value?.generationId, run.id)
@@ -251,12 +256,7 @@ fun GoalSetupScreen(
                             vm.skipProfiles(true)
                         }.takeIf { step.profileQuestion != null },
                     onFinishLater = { navigator.showRoot(AppTab.Today) },
-                    onStartOver = {
-                        vm.startOver(view.goalIds.map { it.toString() }) {
-                            navigator.closeSection()
-                            navigator.open(AppRoute.StartGoal())
-                        }
-                    },
+                    onStartOver = { vm.startOver(view.goalIds.map { it.toString() }) },
                 )
             }
         },
@@ -354,7 +354,6 @@ private fun ColumnScope.SetupStep(
     }
     val firstLesson = run.firstLesson.withRead(view.firstLesson, view.generationId, run.id)
     val startFirstLesson = firstLesson?.let { first -> { navigator.open(AppRoute.Lesson(first.id)) } }
-    VisitOf(vm.visit)
     ActOn(vm.startLesson) { startFirstLesson?.invoke() }
     ActOn(vm.revealed) { leadToRevealed(navigator, it) }
     // Placement follows the run itself, so only the questions say it stopped.
@@ -367,7 +366,8 @@ private fun ColumnScope.SetupStep(
                 view.languageAim,
                 vm.isSaving,
                 vm.saveFailed,
-                { aim, done -> vm.changeAim(plans, aim, done) },
+                { aim -> vm.changeAim(plans, aim) },
+                vm.aimSaved,
             ),
         LocalSetupWait provides
             SetupWaitContext(
@@ -546,7 +546,7 @@ private fun ColumnScope.QuestionStep(
                     run = run,
                     onRetryRun = onRetryRun,
                     onProgress = { vm.placementProgress = it },
-                    onDone = placed,
+                    handBack = placed,
                     onReportSaveFailure = onReportPlacement,
                 )
             } else {

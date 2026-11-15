@@ -39,7 +39,6 @@ import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.completionOf
 import com.zoonk.android.feature.onboarding.focusCheckpointOf
 import com.zoonk.android.feature.onboarding.focusOf
@@ -278,7 +277,6 @@ class FocusTestScreenshots(
                             GenerationRun(),
                             onRetryRun = null,
                             onProgress = {},
-                            onDone = { WriteOutcome.Done(Unit) },
                             plan = if (onPlan) OnPlan(onChangeFocus = {}, questions = questions, startOnOpen = false) else null,
                         )
                     }

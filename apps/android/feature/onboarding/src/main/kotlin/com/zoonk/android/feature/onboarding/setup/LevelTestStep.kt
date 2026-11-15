@@ -68,6 +68,7 @@ import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
@@ -102,7 +103,8 @@ fun ColumnScope.LanguageLevelTestStep(
     onDone: suspend () -> WriteOutcome<*>,
     onReportSaveFailure: () -> Unit = {},
 ) {
-    val vm = viewModel(key = "level-test:$goalId") { LevelTestViewModel(goalId, store, createSavedStateHandle()) }
+    val vm = viewModel(key = "level-test:$goalId") { LevelTestViewModel(goalId, store, createSavedStateHandle(), onDone) }
+    VisitOf(vm.visit)
     val test by store.levelTests[goalId].collectShown()
     val phase = vm.phase(test)
     val hold =
@@ -120,7 +122,7 @@ fun ColumnScope.LanguageLevelTestStep(
         }
     LaunchedEffect(progress) { onProgress(progress) }
     DisposableEffect(Unit) { onDispose { onProgress(null) } }
-    val finish = { vm.finish(onDone = onDone) }
+    val finish = { vm.finish() }
 
     when (shown) {
         LevelTestPhase.Loading -> {
