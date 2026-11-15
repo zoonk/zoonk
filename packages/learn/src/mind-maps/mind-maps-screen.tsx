@@ -273,7 +273,9 @@ export function MindMapsScreen({
 
   return (
     <DetailLayout
-      bar={<LearnPageBar back={{ href: hrefs.back }} listed="learner" root title={t("Mind maps")} />}
+      bar={
+        <LearnPageBar back={{ href: hrefs.back }} listed="learner" root title={t("Mind maps")} />
+      }
       bottomBar={
         study && (
           <BottomBar>

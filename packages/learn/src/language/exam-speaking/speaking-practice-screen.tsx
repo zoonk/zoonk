@@ -63,7 +63,12 @@ export function SpeakingPracticeScreen({
 
   return (
     <div className="flex flex-col gap-8">
-      <LearnPageBar back={{ href: backHref }} listed="learner" root title={t("Speaking practice")} />
+      <LearnPageBar
+        back={{ href: backHref }}
+        listed="learner"
+        root
+        title={t("Speaking practice")}
+      />
 
       <DetailLayout>
         <DetailAside>
