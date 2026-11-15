@@ -448,7 +448,7 @@ internal fun PlanContent(
                                 // Unpicked choices are the suggestion's; beside the aside, its properties name the pick.
                                 if (!asideBeside) {
                                     PlanChoiceLines(
-                                        choices = page.plan.examChoices.filter { it.subjects.isNotEmpty() },
+                                        choices = page.plan.examChoices,
                                         onChange = { onAdjust?.invoke(PlanSection.Choices) },
                                     )
                                 }

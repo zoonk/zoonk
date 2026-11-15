@@ -49,7 +49,6 @@ import com.zoonk.android.feature.onboarding.CheckList
 import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
-import com.zoonk.android.feature.plan.examChoiceLeftOut
 import com.zoonk.android.feature.plan.toggled
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyPicker
@@ -866,11 +865,6 @@ internal fun ColumnScope.ExamChoiceStep(
                         readOnly = pending,
                     )
                 }
-                Text(
-                    examChoiceLeftOut(choice),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
             }
         }
     }

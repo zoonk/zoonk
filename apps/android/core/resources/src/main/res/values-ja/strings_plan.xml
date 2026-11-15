@@ -167,7 +167,7 @@
   "plan_check_failed": "6887bd97151682cea6e353e39af5a0dbbff4636040339d400e386ce8a9dc9ca7",
   "plan_checking_changes": "921586e6316add192f0bd30b8d9b562399db50678aab8f805bb98a74d3ce497b",
   "plan_choice_change": "c6333de4cf1f76c2720cf4de8a1c76b0a88a7c7585c5e4ed3bf0f632826ab81e",
-  "plan_choice_following": "184eea71e7cd0b8273de9acd1e6f232899c763c78e49568ea4b816b31ad4a2a3",
+  "plan_choice_picked": "c30162ad41f2906fc60d95c5df1e0ad7c998a5d7877cbeff519dbf1cd3f8f5d0",
   "plan_choose": "14ded916e745a67d61f1a77e3058d65e4d854092429d048a4cfe14012488c94d",
   "plan_choose_by_subject": "084aeb6ac1b4adf1210cf630c78134a45a3977d562b738abbd347f5e2dbd420b",
   "plan_choose_focus": "0cb3a8617d4dcf67f939fb9b0600d887a7dfcb368672f73cdfac92b0a7c356a4",
@@ -245,10 +245,6 @@
   "plan_estimated_score": "41e09ef965330d4d179bd902b8b980b051904fe3bd7990dc691097721347cef6",
   "plan_every_day": "b902c43428c856c4ffd4dbde80b5be1a9bf462864418a649c6862b89588464ff",
   "plan_everything": "4d872a38a947c57fefa3169c8f96a8afb399c8001d2c6abf5a7813c9365cfc97",
-  "plan_exam_choice_left_out": "268836361f9317fcda7f8c0bebab3cb14f6ced96712d0c32f29d1d961b9dc33e",
-  "plan_exam_choice_left_out_points": "a12b4863f478bad046d32384210ab41c06f5976a4ec97715886b833f23f3b5f8",
-  "plan_exam_choice_left_out_questions": "87b7a1c19990dcaf14b4674359423f171b122203386d8b00e79c98ee53c81d6b",
-  "plan_exam_choice_left_out_questions_of": "b4e943efc997329db9e0995cb486621116ee6c0b3c2dda17d7ae09501de53afa",
   "plan_exam_choice_question": "5e92a161dc0b636007d121e9da390d2c31b776156156e809c5ac83fbc6bbd323",
   "plan_exam_choice_question_several": "f3d2e851620c6fa034804d7d57a21a63a7885c1e90a23cde85403f6e2c066f77",
   "plan_exam_date": "a0a39f1220465490a59bb9abcf23f3f4d0497a51b4250ed1919d38d807d29a6f",
@@ -720,8 +716,8 @@
     <string name="plan_study_days">学習日数</string>
     <string name="plan_mock_exams">模試</string>
     <string name="plan_choose">選ぶ</string>
-    <!-- %1$s is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it. -->
-    <string name="plan_choice_following">%1$sの出題範囲に沿っています</string>
+    <!-- On the plan, which option of an exam's choice it follows. %1$s is the choice's group, such as Foreign language; %2$s is the option or options picked, such as Inglês. -->
+    <string name="plan_choice_picked">%1$s：%2$s</string>
     <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
     <string name="plan_choice_change">変更する</string>
     <string name="plan_practice">演習</string>
@@ -1000,16 +996,6 @@
     <string name="plan_exam_choice_question">%1$sはどの科目を受験しますか？</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s：どれを受験しますか？</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s and %3$s are points of the exam's score. -->
-    <string name="plan_exam_choice_left_out_points">選ぶまでは、学習計画と模試に%1$sは含まれません（配点は%2$s点、試験全体は%3$s点満点）。</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions; %3$s is the exam's. -->
-    <string name="plan_exam_choice_left_out_questions_of">選ぶまでは、学習計画と模試に%1$sは含まれません（%2$s問分、試験全体は%3$s問）。</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions. -->
-    <plurals name="plan_exam_choice_left_out_questions">
-        <item quantity="other">選ぶまでは、学習計画と模試に%1$sの%2$s問は含まれません。</item>
-    </plurals>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. -->
-    <string name="plan_exam_choice_left_out">選ぶまでは、学習計画と模試に%1$sは含まれません。</string>
     <string name="plan_prerequisites">前提知識</string>
     <plurals name="plan_bases_mixed">
         <item quantity="other">前提知識%1$d項目・選んだ学び方・%2$s</item>

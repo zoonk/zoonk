@@ -20,7 +20,7 @@ import com.zoonk.android.feature.language.LanguagePracticeNotice
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.plan.ExamChoicePicks
 import com.zoonk.android.feature.plan.PlanEffectDiff
-import com.zoonk.android.feature.plan.examChoiceLeftOut
+import com.zoonk.android.feature.plan.examChoiceQuestion
 import com.zoonk.android.feature.plan.planChangeAppliedLine
 import com.zoonk.android.feature.plan.planChangeSentence
 import com.zoonk.android.feature.research.SourceChangeNotice
@@ -216,17 +216,7 @@ private fun ExamChoiceNotice(
     }
 
     val choice = state.read.today.examChoice ?: return
-    val question =
-        stringResource(
-            if (choice.take >
-                1
-            ) {
-                R.string.today_exam_choice_question_several
-            } else {
-                R.string.today_exam_choice_question
-            },
-            choice.group,
-        )
+    val question = examChoiceQuestion(choice)
     val choose = { subjects: List<String> -> viewModel.chooseExamOption(state.read, choice.group, subjects) }
 
     Suggestion(
@@ -238,7 +228,7 @@ private fun ExamChoiceNotice(
         lineAction = { SuggestionOpen(stringResource(R.string.today_exam_choice_choose)) },
     ) {
         SuggestionHeader(question)
-        SuggestionDescription(examChoiceLeftOut(choice))
+        SuggestionDescription(stringResource(R.string.exam_choice_left_out))
         if (choice.take > 1) {
             ExamChoicePicks(choice, saving, onSave = choose) { save, enabled ->
                 SuggestionMainAction(stringResource(R.string.plan_save), save, enabled, busy = saving)

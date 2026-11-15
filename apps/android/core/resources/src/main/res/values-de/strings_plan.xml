@@ -167,7 +167,7 @@
   "plan_check_failed": "1c6af437a5a06f9eb6e3d844c2d660f72a8890e31b84dc60626f260d898fcafd",
   "plan_checking_changes": "27de2c4b5ec229e9e61d4b1902535766eb60d2a4b8646b2e963d19ab9351d359",
   "plan_choice_change": "12efc37f2824830ec4d0c269a5348f1abb70314c7916c4e9a62a7b66f1dfda0c",
-  "plan_choice_following": "13aca0cc3d2810a745e2f990e07ecbc696b5b2e3b0b2c9989e3ab2013a123f17",
+  "plan_choice_picked": "b9b62996373fadcfc5322b6120dcb317f489769da16f15ece057d70350d8e2c5",
   "plan_choose": "a35d7987b869a9eee1483537c185e625ba0877a409e0b349a133b3f74d377cf1",
   "plan_choose_by_subject": "14329f231424a3f22eefb193179f9ee882ab9497a70ce8d6bcfe165585e3d5e5",
   "plan_choose_focus": "5b9bb26c95a07e56d2f5b238cfef36045455207f8089e782b3a9e62f1b4534f4",
@@ -245,10 +245,6 @@
   "plan_estimated_score": "7945c81279e5e3cceee7d6444fac1882bf0b5d514ce94fee80924050bd9c73c2",
   "plan_every_day": "dff76e68074267fac608ca3548d475c2b38a68853e7de1fbc8c1bf6ffaf92e45",
   "plan_everything": "1b2cfc1c8ce6b801ab5288f66dbed792c53328d6dd2984ed0b14c766d415fbde",
-  "plan_exam_choice_left_out": "348abb97c6ac23a112c47afad673e425f505bab58fbdfb731e4e217f876c647d",
-  "plan_exam_choice_left_out_points": "6381ff9a860b5ff354e3a367308b1a72317c68e569a96b60844f998195047388",
-  "plan_exam_choice_left_out_questions": "2703030e246c5919b8ffaa4cd9637e08379def2950042e75f55cd7803f0af8f4",
-  "plan_exam_choice_left_out_questions_of": "cbbfeec84fdf76b363172d7b784eed0f2bef29b9fe3f2804f5e2c5ba42dfd564",
   "plan_exam_choice_question": "e6f6a84003dc02c9643fab75454bf8c0fd9db98059451fbd9066d9910c34c2f6",
   "plan_exam_choice_question_several": "7effe10d651c6898e8e1009e5960e1adf7ae53700c3b6aa58957c373f74f6148",
   "plan_exam_date": "41a05252c5d853f8537f4ee8b40bfe29e2d2e6e6e4ee696a5ad46f2dd843f02c",
@@ -733,8 +729,8 @@
     <string name="plan_study_days">Lerntage</string>
     <string name="plan_mock_exams">Probeprüfungen</string>
     <string name="plan_choose">Auswählen</string>
-    <!-- %1$s is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it. -->
-    <string name="plan_choice_following">Folgt dem Lehrplan für %1$s</string>
+    <!-- On the plan, which option of an exam's choice it follows. %1$s is the choice's group, such as Foreign language; %2$s is the option or options picked, such as Inglês. -->
+    <string name="plan_choice_picked">%1$s: %2$s</string>
     <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
     <string name="plan_choice_change">Ändern</string>
     <string name="plan_practice">Üben</string>
@@ -1049,17 +1045,6 @@
     <string name="plan_exam_choice_question">%1$s: Welches Fach wählst du für die Prüfung?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: Welche wählst du?</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s and %3$s are points of the exam's score. -->
-    <string name="plan_exam_choice_left_out_points">Bis du eine Auswahl triffst, lassen dein Plan und deine Probeprüfungen %1$s aus: %2$s von insgesamt %3$s Punkten in der Prüfung.</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions; %3$s is the exam's. -->
-    <string name="plan_exam_choice_left_out_questions_of">Bis du eine Auswahl triffst, lassen dein Plan und deine Probeprüfungen %1$s aus: %2$s von insgesamt %3$s Fragen der Prüfung.</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions. -->
-    <plurals name="plan_exam_choice_left_out_questions">
-        <item quantity="one">Bis du eine Auswahl triffst, lassen dein Plan und deine Probeprüfungen %1$s mit %2$s Frage aus.</item>
-        <item quantity="other">Bis du eine Auswahl triffst, lassen dein Plan und deine Probeprüfungen %1$s mit %2$s Fragen aus.</item>
-    </plurals>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. -->
-    <string name="plan_exam_choice_left_out">Bis du eine Auswahl triffst, lassen dein Plan und deine Probeprüfungen %1$s aus.</string>
     <string name="plan_prerequisites">Voraussetzungen</string>
     <plurals name="plan_bases_mixed">
         <item quantity="one">%1$d Grundlage · deine Auswahl · %2$s</item>

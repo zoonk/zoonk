@@ -167,7 +167,7 @@
   "plan_check_failed": "12e1025d58b67b07192851512b0164c4a64cb03d2b925f9b136cda9c24a6aa40",
   "plan_checking_changes": "73e9346daf5b3d3aa72b4c00fa4762052f215e921fd8a489d86dcc7cfde7c808",
   "plan_choice_change": "c1fec1e78a53fc158e92df1f6820f2a412874fe5817835602948495b3391ae15",
-  "plan_choice_following": "8088b651441485969f5078ba8433c964684be9bd9eee90f917a2df3b32f8aa94",
+  "plan_choice_picked": "f29df0500b28a299569ae8c4e8dc2280cef54856f9d08829e3117386acbdd238",
   "plan_choose": "e65c0c6222d79b2acd514ca38a76f52e827e68a681bc01d5a7a187747fb89c49",
   "plan_choose_by_subject": "506206c8ebf4574b1ebca124f5f17e415b8fb3b08572f176cecdfeb1b55d5167",
   "plan_choose_focus": "01672685a1ddc5d0bae13d738d01fed837dc87b7886d97bb19e7d9106e78b83d",
@@ -245,10 +245,6 @@
   "plan_estimated_score": "f90fb5ba50c8f45f8991e390e36776ef59a920eb9690eb92a1ccff97659f94e9",
   "plan_every_day": "c23e7c3fe92da6e8043c7c59c08f7ea4f82da8e59b7b130e17eb5532437d32e2",
   "plan_everything": "86fc959e46220580cc0979bffb6eb63c5ce2abc50de2627797b59e315df25c42",
-  "plan_exam_choice_left_out": "cbc749876318b1398bafb32a259ea465c4ccda52cff408b64cc6c040e017c318",
-  "plan_exam_choice_left_out_points": "ec3181ca997eb346c16a6de935116e0b18acc42a1edff984430470573908a76a",
-  "plan_exam_choice_left_out_questions": "542eb3b963fb938bc2e8f5b0b8fa1b3393f80588722a4c7319b3f2e16ead7d58",
-  "plan_exam_choice_left_out_questions_of": "b1afe457d9738df4f0c3721f101de7811468f74ca1db94d9c055ca0de732d770",
   "plan_exam_choice_question": "5bf0d612f41c6edee011d9f92f0e56670c461ef6b4a1219ded876924709d184e",
   "plan_exam_choice_question_several": "ac44007e387bc1e9941b9641aa774e747d29336d9fc59c7f69d9ce85c405e551",
   "plan_exam_date": "c5711827dcfe7af649409c795ba6f776b9fb376b0594db29bf5e393671bf8ac7",
@@ -759,8 +755,8 @@
     <string name="plan_study_days">Dni nauki</string>
     <string name="plan_mock_exams">Egzaminy próbne</string>
     <string name="plan_choose">Wybierz</string>
-    <!-- %1$s is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it. -->
-    <string name="plan_choice_following">Zgodnie z programem: %1$s</string>
+    <!-- On the plan, which option of an exam's choice it follows. %1$s is the choice's group, such as Foreign language; %2$s is the option or options picked, such as Inglês. -->
+    <string name="plan_choice_picked">%1$s: %2$s</string>
     <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
     <string name="plan_choice_change">Zmień</string>
     <string name="plan_practice">Poćwicz</string>
@@ -1147,19 +1143,6 @@
     <string name="plan_exam_choice_question">%1$s: który przedmiot będziesz zdawać?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: które opcje wybierzesz?</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s and %3$s are points of the exam's score. -->
-    <string name="plan_exam_choice_left_out_points">Dopóki nie wybierzesz opcji, twój plan i egzaminy próbne nie obejmują części: %1$s (%2$s z %3$s punktów egzaminu).</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions; %3$s is the exam's. -->
-    <string name="plan_exam_choice_left_out_questions_of">Dopóki nie wybierzesz opcji, twój plan i egzaminy próbne nie obejmują części: %1$s (%2$s z %3$s pytań egzaminu).</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions. -->
-    <plurals name="plan_exam_choice_left_out_questions">
-        <item quantity="one">Dopóki nie wybierzesz opcji, twój plan i egzaminy próbne nie obejmują części: %1$s (%2$s pytanie).</item>
-        <item quantity="few">Dopóki nie wybierzesz opcji, twój plan i egzaminy próbne nie obejmują części: %1$s (%2$s pytania).</item>
-        <item quantity="many">Dopóki nie wybierzesz opcji, twój plan i egzaminy próbne nie obejmują części: %1$s (%2$s pytań).</item>
-        <item quantity="other">Dopóki nie wybierzesz opcji, twój plan i egzaminy próbne nie obejmują części: %1$s (%2$s pytania).</item>
-    </plurals>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. -->
-    <string name="plan_exam_choice_left_out">Dopóki nie wybierzesz opcji, twój plan i egzaminy próbne nie obejmują części: %1$s.</string>
     <string name="plan_prerequisites">Podstawy</string>
     <plurals name="plan_bases_mixed">
         <item quantity="one">%1$d podstawa · twoje wybory · %2$s</item>

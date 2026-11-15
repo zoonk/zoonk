@@ -167,7 +167,7 @@
   "plan_check_failed": "d65a65a8d02bc6b4db6d15601c3fdb2391f4e53aec5d0553cf64cc66f4fedd03",
   "plan_checking_changes": "8a80627345137e11ec47e6d51147325a1e2ac76832d8219433e186fc03432b00",
   "plan_choice_change": "634caa992c8bf87f6b017a857fa3542c1793c3b63ff68f9c25d2755a619c2745",
-  "plan_choice_following": "9c05bde963ca7bed186285e35eff2267d7c71c0c991fd0d4438671671d1e32ad",
+  "plan_choice_picked": "6d4374510787ae0033c374f44b58c6894cac4b4e571a87d18c2cc1c2e8ad81d6",
   "plan_choose": "df18bfcfcd2f9613d55ac8afc340c24db8f0bb06695d7ae6d4b5422c6b86f915",
   "plan_choose_by_subject": "1e1e7676fced84504e710f6ac498f34bab4676916a6c5397cd466eacbdfeb9b9",
   "plan_choose_focus": "9fbddaf16b7f76da57a775370134d46a6fc4807d7476c2029c4c4855ea66d734",
@@ -245,10 +245,6 @@
   "plan_estimated_score": "277d72459e85d2a1150feb3c32e851e46fc94cdb4e2834d801d11ae08feae49d",
   "plan_every_day": "884871734e12a40320ad81f42481bde981c746fd0906ecfb1a6541470bbbb8c2",
   "plan_everything": "55669f95986e81d8bde70ce730c9d1480b70d4819269397d96121b502a11f11a",
-  "plan_exam_choice_left_out": "0b3a8ebd8a6ffe0c07561a86c9bc8866c619b091ed5b2ba8c8a8b8fe83d57d45",
-  "plan_exam_choice_left_out_points": "7090b5937aae8bb32b131bc8e81a8f6202214fd705eb08749f08be96bdbc7ad7",
-  "plan_exam_choice_left_out_questions": "f355797dbbe965ef477afdebd126c1643823754f2daf2b8339e25fd57d8abe7a",
-  "plan_exam_choice_left_out_questions_of": "089f8d3b649e75f4761db1a8fe39ea5a801d4fad16ab8774de0697aab54a5b39",
   "plan_exam_choice_question": "8f39718d8501399865a3f1fc05e258758f87606d03dca05379d270f151ad4834",
   "plan_exam_choice_question_several": "4ca7f1ca4eb35a0feafbcf7a1df80159f02cd083e77145f8c8476cad5d62a514",
   "plan_exam_date": "af134b505098e9b769b7b9cbd7821f28aba1207d248ba0a0465c5114588b575f",
@@ -733,8 +729,8 @@
     <string name="plan_study_days">Çalıştığın günler</string>
     <string name="plan_mock_exams">Deneme sınavları</string>
     <string name="plan_choose">Seç</string>
-    <!-- %1$s is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it. -->
-    <string name="plan_choice_following">%1$s müfredatı takip ediliyor</string>
+    <!-- On the plan, which option of an exam's choice it follows. %1$s is the choice's group, such as Foreign language; %2$s is the option or options picked, such as Inglês. -->
+    <string name="plan_choice_picked">%1$s: %2$s</string>
     <!-- Opens the plan's settings to change the option of an exam's choice it follows. -->
     <string name="plan_choice_change">Değiştir</string>
     <string name="plan_practice">Pratik yap</string>
@@ -1049,17 +1045,6 @@
     <string name="plan_exam_choice_question">%1$s: hangisine gireceksin?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: Hangilerini seçeceksin?</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s and %3$s are points of the exam's score. -->
-    <string name="plan_exam_choice_left_out_points">Seçimini yapana kadar planında ve deneme sınavlarında %1$s dışarıda kalır: %2$s / %3$s puan.</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions; %3$s is the exam's. -->
-    <string name="plan_exam_choice_left_out_questions_of">Seçimini yapana kadar planında ve deneme sınavlarında %1$s dışarıda kalır: %2$s / %3$s soru.</string>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. %2$s is its number of questions. -->
-    <plurals name="plan_exam_choice_left_out_questions">
-        <item quantity="one">Seçimini yapana kadar planında ve deneme sınavlarında %1$s dışarıda kalır: %2$s soru.</item>
-        <item quantity="other">Seçimini yapana kadar planında ve deneme sınavlarında %1$s dışarıda kalır: %2$s soru.</item>
-    </plurals>
-    <!-- %1$s is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. -->
-    <string name="plan_exam_choice_left_out">Seçimini yapana kadar planında ve deneme sınavlarında %1$s dışarıda kalır.</string>
     <string name="plan_prerequisites">Ön bilgiler</string>
     <plurals name="plan_bases_mixed">
         <item quantity="one">%1$d ön bilgi · seçimlerin · %2$s</item>

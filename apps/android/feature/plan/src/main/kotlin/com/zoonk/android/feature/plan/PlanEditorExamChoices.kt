@@ -13,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
@@ -34,11 +33,9 @@ import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.android.ui.components.statusLink
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.ExamChoice
 
-/** Main's `PlanExamChoices`: until the learner picks the options of a choice, the plan and mocks leave it out. */
+/** Main's `PlanExamChoices`: each choice's options under its group's name, saved as they're picked. */
 @Composable
 internal fun PlanExamChoices(
     page: PlanPageState,
@@ -82,13 +79,6 @@ private fun ExamChoiceOptions(
                     )
                 }
             }
-        }
-        if (choice.subjects.isEmpty()) {
-            Text(
-                text = examChoiceLeftOut(choice),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
         }
     }
 }
@@ -149,34 +139,27 @@ internal fun ExamChoice.canSave(draft: List<String>) = draft.isNotEmpty() && dra
 
 internal fun ExamChoice.pickedNames(): List<String> = options.filter { it.name in subjects }.map { it.shortName ?: it.name }
 
-/** Main's `PlanChoiceLines`: which options of each exam choice the plan follows, or what it leaves out until they're picked. */
+/** Main's `PlanChoiceLines`: which options of each exam choice the plan follows, with Change; an unpicked choice is the suggestion's. */
 @Composable
 fun PlanChoiceLines(
     choices: List<ExamChoice>,
     onChange: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (choices.isEmpty()) return
+    val picked = choices.filter { it.subjects.isNotEmpty() }
+    if (picked.isEmpty()) return
     Column(modifier) {
-        choices.forEach { choice ->
+        picked.forEach { choice ->
             key(choice.group) {
-                val picked = choice.pickedNames()
-                val line =
-                    if (picked.isEmpty()) {
-                        examChoiceLeftOut(
-                            choice,
-                        )
-                    } else {
-                        stringResource(R.string.plan_choice_following, joinList(picked))
-                    }
-                val link = statusLink(stringResource(if (picked.isEmpty()) R.string.plan_choose else R.string.plan_choice_change), onChange)
+                val line = stringResource(R.string.plan_choice_picked, choice.group, joinList(choice.pickedNames()))
+                val link = statusLink(stringResource(R.string.plan_choice_change), onChange)
                 val ink = MaterialTheme.colorScheme.onSurface
-                // One sentence with the change inline, as main's: "Following the Inglês syllabus · Change".
+                // One sentence with the change inline, as main's: "Foreign language: Inglês · Change".
                 Text(
                     text =
                         buildAnnotatedString {
                             append(line)
-                            append(if (picked.isEmpty()) " " else "\u00A0·\u00A0")
+                            append("\u00A0·\u00A0")
                             withStyle(SpanStyle(color = ink)) { append(link) }
                         },
                     style = MaterialTheme.typography.bodyMedium,
@@ -187,35 +170,13 @@ fun PlanChoiceLines(
     }
 }
 
-/** Main's `useChoiceLeftOutLine`: what the plan and mocks leave out until the learner picks an option. */
+/** Main's `useExamChoiceQuestion`: the question an exam choice asks, on the Plan and on Today alike. */
 @Composable
-fun examChoiceLeftOut(choice: ExamChoice): String {
-    val leftOut = choice.leftOut
-    val locale = currentLocale()
-    val number = { value: Long -> formatNumber(value.toDouble(), locale) }
-    val points = leftOut.points
-    val examPoints = leftOut.examPoints
-    val questions = leftOut.questions
-    val examQuestions = leftOut.examQuestions
-
-    return when {
-        points != null && examPoints != null -> {
-            stringResource(R.string.plan_exam_choice_left_out_points, leftOut.name, number(points), number(examPoints))
-        }
-
-        questions != null && examQuestions != null -> {
-            stringResource(R.string.plan_exam_choice_left_out_questions_of, leftOut.name, number(questions), number(examQuestions))
-        }
-
-        questions != null -> {
-            pluralStringResource(R.plurals.plan_exam_choice_left_out_questions, questions.toInt(), leftOut.name, number(questions))
-        }
-
-        else -> {
-            stringResource(R.string.plan_exam_choice_left_out, leftOut.name)
-        }
-    }
-}
+fun examChoiceQuestion(choice: ExamChoice): String =
+    stringResource(
+        if (choice.take > 1) R.string.plan_exam_choice_question_several else R.string.plan_exam_choice_question,
+        choice.group,
+    )
 
 /**
  * Main's `ExamChoiceSuggestion`, for the plan's suggestion slot: each option saves at once, or the
@@ -231,17 +192,7 @@ internal fun ExamChoiceSuggestion(
     onChoose: (subjects: List<String>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val title =
-        stringResource(
-            if (choice.take >
-                1
-            ) {
-                R.string.plan_exam_choice_question_several
-            } else {
-                R.string.plan_exam_choice_question
-            },
-            choice.group,
-        )
+    val title = examChoiceQuestion(choice)
 
     Suggestion(
         label = title,
@@ -257,7 +208,7 @@ internal fun ExamChoiceSuggestion(
             answer.Result()
             return@Suggestion
         }
-        SuggestionDescription(examChoiceLeftOut(choice))
+        SuggestionDescription(stringResource(R.string.exam_choice_left_out))
         if (choice.take > 1) {
             ExamChoicePicks(choice, saving = false, enabled = !pending, onSave = onChoose)
         } else {
