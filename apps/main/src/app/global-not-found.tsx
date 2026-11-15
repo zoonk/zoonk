@@ -1,5 +1,6 @@
 import { NotFoundMessage } from "@/components/public/not-found-message";
 import { routing } from "@/i18n/routing";
+import { FONT_VARIABLES } from "@zoonk/ui/fonts";
 import { type Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { getExtracted } from "next-intl/server";
@@ -29,7 +30,7 @@ async function LocalizedMessage() {
 /** It can't tell a visitor from a learner, so it shows no bar rather than the wrong one. */
 export default async function GlobalNotFound() {
   return (
-    <html lang={routing.defaultLocale}>
+    <html className={FONT_VARIABLES} lang={routing.defaultLocale}>
       <body className="font-sans antialiased">
         <div className="flex min-h-dvh flex-col">
           <Suspense fallback={<main className="flex-1" />}>

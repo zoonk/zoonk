@@ -46,10 +46,10 @@ export async function NotFoundMessage({
 }
 
 /**
- * In the app's frame, under the page's bar: the page's title and its one line, with the way on as
- * the bottom bar's main action (the home page unless the page names its own).
+ * In the app's frame, under the page's bar: the page's title and its one line, with the home page
+ * as the bottom bar's main action.
  */
-export async function PageNotFound({ action }: { action?: React.ReactNode }) {
+export async function PageNotFound() {
   const words = await getNotFoundWords();
 
   return (
@@ -63,7 +63,7 @@ export async function PageNotFound({ action }: { action?: React.ReactNode }) {
 
       <BottomBar>
         <BottomBarActions>
-          {action ?? <MainDocumentLink href="/">{words.home}</MainDocumentLink>}
+          <MainDocumentLink href="/">{words.home}</MainDocumentLink>
         </BottomBarActions>
       </BottomBar>
     </Page>
