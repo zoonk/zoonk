@@ -107,13 +107,9 @@ struct RoadmapPhaseRow: View {
   let today: String
 
   var body: some View {
-    PlanPathRow {
-      Text(phase.title)
-        .typeWeight(.medium)
-        .layoutPart(.label, text: Text(phase.title))
-    } mark: {
+    ListRow(Text(phase.title)) {
       StatusMark(status: phase.mark)
-    } value: {
+    } trailing: {
       Group {
         switch when {
         case .today?:
@@ -160,12 +156,14 @@ private struct RoadmapCompact: View {
         if let currentIndex {
           let phase = phases[currentIndex]
 
-          PlanPathRow {
+          RowLayout {
+          } words: {
             position(phase: phase, number: currentIndex + 1, count: phases.count)
           } value: {
             if let end = context.plan.phaseEnd(phase, goalKind: context.goal.kind) {
               Text(verbatim: end.shown)
                 .typeStyle(.data)
+                .foregroundStyle(.mutedForeground)
                 .accessibilityLabel(Text(verbatim: end.spoken))
             }
           }
@@ -531,12 +529,8 @@ struct NextOnPathSection: View {
 
         if let chapter, let chapterId = chapter.chapterId {
           PageLink(route: chapterRoute(chapterId)) {
-            PlanPathRow {
-              Text(chapter.title)
-            } mark: {
+            ListRow(Text(chapter.title)) {
               StatusMark(status: .next)
-            } value: {
-              EmptyView()
             }
           }
         }

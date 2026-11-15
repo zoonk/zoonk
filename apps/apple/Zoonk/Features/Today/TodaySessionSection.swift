@@ -398,49 +398,53 @@ struct BlockRow: View {
   var tag: Text?
 
   var body: some View {
-    HStack(alignment: .firstTextBaseline, spacing: 12) {
+    RowLayout(alignment: lineCount >= 3 ? .firstTextBaseline : .center) {
       mark
-        .layoutPart(.mark)
+    } words: {
+      VStack(alignment: .leading, spacing: 2) {
+        Text(block.displayTitle)
+          .layoutPart(.label, text: Text(verbatim: block.displayTitle))
+          .typeStyle(.rowTitle)
+          .foregroundStyle(block.isFinished ? .mutedForeground : .primary)
 
-      AccessibilityStack(alignment: .firstTextBaseline, spacing: 12, stackedSpacing: 2) {
-        VStack(alignment: .leading, spacing: 2) {
-          Text(block.displayTitle)
-            .layoutPart(.label, text: Text(verbatim: block.displayTitle))
-            .typeStyle(.rowTitle)
-            .foregroundStyle(block.isFinished ? .mutedForeground : .primary)
-
-          if let tag {
-            tag
-              .typeStyle(.meta.weight(.medium))
-              .foregroundStyle(.successText)
-              .settles(delay: 2 * .beat)
-          }
-
-          if failed {
-            FailureLine(
-              message: LocalizedStringResource(
-                "We couldn't open this step. Try again.", table: "Today",
-                comment: "Under a step of the day, or a mission, that didn't open")
-            )
-            .typeStyle(.note)
-          }
-
-          if !block.isFinished, let line {
-            Text(line)
-              .layoutPart(.note)
-              .typeStyle(.meta)
-              .foregroundStyle(.mutedForeground)
-          }
+        if let tag {
+          tag
+            .typeStyle(.meta.weight(.medium))
+            .foregroundStyle(.successText)
+            .settles(delay: 2 * .beat)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
 
-        trailing
+        if failed {
+          FailureLine(
+            message: LocalizedStringResource(
+              "We couldn't open this step. Try again.", table: "Today",
+              comment: "Under a step of the day, or a mission, that didn't open")
+          )
+          .typeStyle(.note)
+        }
+
+        if let shownLine {
+          Text(shownLine)
+            .layoutPart(.note)
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
+        }
       }
       .alignmentGuide(.blockTitle) { $0[.leading] }
+    } value: {
+      trailing
     }
-    .layoutRow(.listGroup)
     .accessibilityElement(children: .combine)
     .accessibilityValue(status)
+  }
+
+  private var shownLine: String? {
+    block.isFinished ? nil : line
+  }
+
+  /// The title and the lines under it, for where the mark sits (craft E5).
+  private var lineCount: Int {
+    1 + (tag == nil ? 0 : 1) + (failed ? 1 : 0) + (shownLine == nil ? 0 : 1)
   }
 
   @ViewBuilder

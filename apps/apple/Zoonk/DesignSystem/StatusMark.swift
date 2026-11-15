@@ -54,6 +54,6 @@ private struct MarkColumn: ViewModifier {
   @ScaledMetric(relativeTo: .body) private var width = 20.0
 
   func body(content: Content) -> some View {
-    content.frame(width: width)
+    content.frame(minWidth: width)
   }
 }

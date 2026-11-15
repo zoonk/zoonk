@@ -593,20 +593,12 @@
         RoadmapPhaseRow(phase: Self.phase(1), when: .starts("2027-02-17"), today: "2026-11-14")
 
         // A phase with a line under its name, and a folded one, as the path draws them.
-        PlanPathRow {
-          VStack(alignment: .leading, spacing: 2) {
-            Text(verbatim: "Foundations")
-              .typeWeight(.semibold)
-              .layoutPart(.label)
-
-            Text(verbatim: "Continues Nov 16")
-              .layoutPart(.note)
-              .typeStyle(.meta)
-              .foregroundStyle(.mutedForeground)
-          }
-        } mark: {
+        ListRow(
+          Text(verbatim: "Foundations").fontWeight(.semibold),
+          description: Text(verbatim: "Continues Nov 16")
+        ) {
           StatusMark(status: .next)
-        } value: {
+        } trailing: {
           PlanWhen.date(Text(verbatim: "18 Feb 2027"))
         }
         .disclosureChevron()
@@ -614,12 +606,9 @@
         DisclosureGroup(isExpanded: .constant(true)) {
           EmptyView()
         } label: {
-          PlanPathRow {
-            Text(verbatim: "Fill the gaps")
-              .layoutPart(.label)
-          } mark: {
+          ListRow(Text(verbatim: "Fill the gaps")) {
             StatusMark(status: .todo)
-          } value: {
+          } trailing: {
             PlanWhen.date(Text(verbatim: "14 Jul 2027"))
           }
         }

@@ -1037,7 +1037,7 @@
         return element
       }
 
-      let font = style.layoutFont(record.dynamicTypeSize, legibility: record.legibility)
+      let font = style.uiFont(record.dynamicTypeSize, legibility: record.legibility)
       let drawn = LayoutRuns.shared.lines(of: id)
       element["baseline"] = Self.round(baseline)
       element["type"] = style.layoutName
@@ -1086,7 +1086,8 @@
 
       measured += 1
 
-      guard let ink = picture.ink(in: record.frame) else {
+      // A turned glyph draws past its frame.
+      guard let ink = picture.ink(in: record.frame.insetBy(dx: -2, dy: -2)) else {
         return [
           "part": "holder", "bounds": Self.bounds(record.frame), "ink": NSNull(),
           "name": "the chevron's kept slot",

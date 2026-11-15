@@ -21,7 +21,7 @@ final class LayoutCaptureTests: XCTestCase {
   /// be Japanese or end in an emoji, which other faces draw.
   @MainActor
   func testTakesTheFontsCapitalsOnlyForTextItsFaceDrew() {
-    let font = TypeStyle.body.layoutFont(.large, legibility: nil)
+    let font = TypeStyle.body.uiFont(.large, legibility: nil)
 
     XCTAssertTrue(LayoutFaces.drewOnly(font, drawnLines("Reading comprehension")))
     XCTAssertFalse(LayoutFaces.drewOnly(font, drawnLines("日本語の練習")))

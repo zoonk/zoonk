@@ -212,29 +212,24 @@ private struct StackingLabelLayout: Layout {
   }
 }
 
-/// A list row's `LabeledContent` whose label has an icon. In a list, a `LabeledContent` lays out a
-/// `Label` in its label itself, and stacked it flows the icon into the title's first line. This
-/// puts a `Label` around the `LabeledContent` instead: side by side the row looks the same, and
-/// stacked the icon follows `StackingLabelStyle` like every other label's.
+/// A list row whose label has an icon and a value at its end, drawn as `ListRow` draws its (one
+/// layout, `RowLayout`), and read as one label and its value.
 struct IconLabeledContent<Content: View, Title: View, Icon: View>: View {
   @ViewBuilder let content: Content
   @ViewBuilder let title: Title
   @ViewBuilder let icon: Icon
 
   var body: some View {
-    Label {
-      LabeledContent {
-        content
-          .layoutPart(.value)
-      } label: {
-        title
-          .layoutPart(.label)
-      }
-    } icon: {
+    RowLayout {
       icon
-        .layoutPart(.mark)
+    } words: {
+      title
+        .layoutPart(.label)
+    } value: {
+      content
+        .foregroundStyle(.mutedForeground)
     }
-    .layoutRow(.listGroup)
+    .accessibilityElement(children: .combine)
   }
 }
 
