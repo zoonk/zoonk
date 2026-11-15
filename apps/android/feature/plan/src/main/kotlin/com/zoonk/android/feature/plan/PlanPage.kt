@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -185,6 +186,12 @@ internal fun PlanPage(
             null
         }
     val claim = viewModel(key = "certificate-claim-${page.goal.id}") { CertificateClaimModel(app.certificates, page.goal.id) }
+    val openCertificates = { codes: List<String> ->
+        navigator.open(codes.singleOrNull()?.let { AppRoute.Certificate(it) } ?: AppRoute.Certificates)
+    }
+    // The claim's result reaches the screen shown when it lands, though a layout change composed it anew meanwhile.
+    val currentOpen by rememberUpdatedState(openCertificates)
+    LaunchedEffect(claim) { claim.opened.collect { currentOpen(it) } }
     val focusTest = page.plan.focusTest
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME || focus == ADJUST_CHOICES) }
     var editingAt by rememberSaveable {
@@ -276,19 +283,16 @@ internal fun PlanPage(
                 claimingCertificate = claim.claiming,
                 claimFailed = claim.failed,
                 onCertificate = {
-                    val open = { codes: List<String> ->
-                        navigator.open(codes.singleOrNull()?.let { AppRoute.Certificate(it) } ?: AppRoute.Certificates)
-                    }
                     val certificates = end?.certificates
                     when {
                         certificates == null -> {}
 
                         certificates.unclaimed.isNotEmpty() -> {
-                            claim.claim { shown -> open(shown.map { it.code }) }
+                            claim.claim()
                         }
 
                         else -> {
-                            open(certificates.earned.map { it.code })
+                            openCertificates(certificates.earned.map { it.code })
                         }
                     }
                 },
