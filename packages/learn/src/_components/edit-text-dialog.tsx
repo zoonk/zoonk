@@ -20,9 +20,9 @@ import { SheetHeader } from "./sheet-header";
 /**
  * A sheet that edits one text: a title, an optional line, one field, Cancel and Save. Save stays
  * off until the text is there and differs from `value`. `onSave` resolves to whether the text was
- * saved: the sheet stays busy until then, closes when it was, and otherwise keeps the text to try
- * again. A caller that resolves false has said what went wrong; a save that throws gets the shared
- * "didn't save" toast.
+ * saved: until then the sheet stays busy and can't be dismissed, then it closes when it was and
+ * otherwise keeps the text to try again. A caller that resolves false has said what went wrong; a
+ * save that throws gets the shared "didn't save" toast.
  */
 export function EditTextDialog({
   description,
@@ -57,7 +57,7 @@ export function EditTextDialog({
   return (
     <Drawer
       onOpenChange={(open) => {
-        if (!open) {
+        if (!open && !isPending) {
           onClose();
         }
       }}
@@ -100,7 +100,13 @@ export function EditTextDialog({
           </DrawerContent>
 
           <DrawerFooter>
-            <Button onClick={onClose} size="lg" type="button" variant="outline">
+            <Button
+              disabled={isPending}
+              onClick={onClose}
+              size="lg"
+              type="button"
+              variant="outline"
+            >
               {t("Cancel")}
             </Button>
             <Button

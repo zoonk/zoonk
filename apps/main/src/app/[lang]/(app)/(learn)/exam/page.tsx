@@ -23,7 +23,7 @@ async function ExamContent() {
 
     return (
       <LearnNoGoal
-        bar={<JourneyPageBar root title={t("Your exam")} />}
+        bar={<JourneyPageBar listed root title={t("Your exam")} />}
         description={t("Your exam's areas, how ready you are for each, and its mock exams.")}
         next="/exam"
         title={t("Your exam")}
@@ -46,7 +46,7 @@ async function ExamContent() {
 
 export default function ExamPage() {
   return (
-    <Suspense fallback={<DetailSkeleton bar={<JourneyPageBar root />} />}>
+    <Suspense fallback={<DetailSkeleton bar={<JourneyPageBar listed root />} />}>
       <ExamContent />
     </Suspense>
   );
