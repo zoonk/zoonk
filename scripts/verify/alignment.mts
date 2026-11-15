@@ -83,8 +83,8 @@ function typeLeads(context: Context, read: Group): AlignmentFinding[] {
 
 /**
  * One filled action on the active surface; a covering dialog or sheet is its own surface. The same
- * action offered again (the same words to the same destination, such as a page's start link at
- * its top and its end) counts once; actions with no destination each count.
+ * action offered again (the same words and the same `target`: a link's destination, or the action
+ * a piece names) counts once; actions with no `target` each count.
  */
 function filledLeads(context: Context): AlignmentFinding[] {
   const { capture } = context;

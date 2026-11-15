@@ -111,6 +111,10 @@ afterEach(() => {
 const row = (label: string, y: number, x = 0) =>
   `<div data-box="0,${y},300,30"><span data-slot="list-row-title" data-box="${x},${y + 5},100,20">${label}</span></div>`;
 
+function save(attributes: string) {
+  return `<button type="submit" style="--button-variant: default" data-box="0,0,100,40" ${attributes}>Save</button>`;
+}
+
 function link(text: string, href: string, y: number) {
   return `<a href="${href}" style="--button-variant: default" data-box="0,${y},100,40">${text}</a>`;
 }
@@ -216,6 +220,21 @@ describe("reading a declared piece in the page", () => {
 
     assert.equal(record?.level, "not-measured");
     assert.equal(record?.rule, "one-filled");
+  });
+
+  it("counts each submit button, unless its piece names one action drawn twice", () => {
+    // Two destinations from one form, and two forms that send the same place different records.
+    document.body.innerHTML = `<form action="/same">${save('formaction="/approve"')}${save('formaction="/reject"')}</form>`;
+    assert.equal(evaluateCapture(read())[0]?.rule, "one-filled");
+
+    document.body.innerHTML = `<form action="/update">${save("")}</form><form action="/update">${save("")}</form>`;
+    assert.equal(evaluateCapture(read())[0]?.rule, "one-filled");
+
+    // The landing page's goal box, drawn at its top and its end.
+    document.body.innerHTML = `<form action="/start">${save('data-action-name="build-plan"')}</form>
+      <form action="/start">${save('data-action-name="build-plan"')}</form>`;
+
+    assert.deepEqual(evaluateCapture(read()), []);
   });
 
   it("counts a link to the same place with the same words once, and two different ones twice", () => {

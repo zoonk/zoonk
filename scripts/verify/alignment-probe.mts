@@ -617,12 +617,12 @@ export function readAlignment({
   const actions = [...document.querySelectorAll(controls)]
     .filter((action) => filled(action) && present(action))
     .map((action, index): CaptureElement => {
-      // A link's destination, or the form a submit button sends: the same words to the same place
-      // offered twice (a page's goal box at its top and its end) are one action.
-      const form =
-        action instanceof HTMLButtonElement && action.type === "submit" ? action.form : null;
-
-      const target = action instanceof HTMLAnchorElement ? action.href : (form?.action ?? null);
+      // A link's destination, or the action a piece names on its button (`data-action-name`): the
+      // same words to the same place offered twice (a page's goal box at its top and its end) are
+      // one action. A form's URL doesn't say that: every Server Action form gets the same one.
+      const declared = action instanceof HTMLElement ? action.dataset.actionName : undefined;
+      const named = declared ? `action:${declared}` : null;
+      const target = action instanceof HTMLAnchorElement ? action.href : named;
 
       return {
         bounds: bounds(boxOf(action)),

@@ -121,9 +121,9 @@ export const DECLARATIONS = new Map(
 /**
  * Controls that can be a main action. One is filled when the shared button's variant says so: each
  * variant of `buttonVariants` declares `--button-variant`, on a `Button` and on a link drawn as one
- * alike. One filled action per surface; the same words to the same destination offered again
- * (a page's start link at its top and its end) count once, and each action without a destination
- * counts.
+ * alike. One filled action per surface. A link with the same words to the same place, or a button
+ * whose piece names its action (`data-action-name`, a goal box drawn at a page's top and its end),
+ * offered again counts once; every other action counts, each submit button included.
  */
 export const ACTIONS = "a, button, [role=button]";
 

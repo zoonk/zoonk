@@ -107,7 +107,7 @@ export function GoalForm({
           </div>
         </div>
 
-        <GoalFieldSubmit busy={sending} className="self-end">
+        <GoalFieldSubmit busy={sending} className="self-end" data-action-name="build-plan">
           {t("Build my plan")}
         </GoalFieldSubmit>
       </GoalField>
