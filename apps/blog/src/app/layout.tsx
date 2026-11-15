@@ -1,3 +1,4 @@
+import { START } from "@/components/cta";
 import { Logo } from "@/components/logo";
 import { SocialLinks } from "@/components/social-links";
 import { Analytics } from "@vercel/analytics/next";
@@ -15,8 +16,6 @@ export const metadata: Metadata = {
   title: { default: "Zoonk Blog", template: "%s | Zoonk Blog" },
 };
 
-const TRY_ZOONK = { href: "https://www.zoonk.com", label: "Try Zoonk" };
-
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html className={FONT_VARIABLES} lang="en">
@@ -25,8 +24,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <header className="mb-10 flex items-center justify-between">
             <Logo />
 
-            <a href={TRY_ZOONK.href} className={buttonVariants({ size: "bar" })}>
-              {TRY_ZOONK.label}
+            <a href={START.href} className={buttonVariants({ size: "bar" })}>
+              {START.label}
             </a>
           </header>
 
