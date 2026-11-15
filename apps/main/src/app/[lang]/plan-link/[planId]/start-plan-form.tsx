@@ -61,15 +61,16 @@ export function StartPlanForm({
         {t("How much time a day?")}
       </p>
       <DailyTimeField defaultMinutes={DEFAULT_MINUTES} name="dailyMinutes" />
-      <EnterButton busy={isPending} className="mt-1" size="lg" type="submit">
-        {t({
-          description:
-            "Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.",
-          message: "Start my own plan",
-        })}
-      </EnterButton>
-      {failure?.status === "limitReached" && (
+      {failure?.status === "limitReached" ? (
         <CourseStartFailureNote failure={failure} onRetry={() => form.current?.requestSubmit()} />
+      ) : (
+        <EnterButton busy={isPending} className="mt-1" size="lg" type="submit">
+          {t({
+            description:
+              "Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.",
+            message: "Start my own plan",
+          })}
+        </EnterButton>
       )}
       {failure && failure.status !== "limitReached" && (
         <p className="text-destructive-text text-sm" role="alert">
