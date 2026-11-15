@@ -13,6 +13,7 @@ import androidx.compose.ui.semantics.stateDescription
 import com.zoonk.android.R
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.OnVisitEnd
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
@@ -197,6 +198,8 @@ internal fun CoverageSuggestion(slot: Slot) {
     }
 
     PlanChangeSuggestion(SlotItem.Coverage, title, slot) {
+        // The sheet or panel asks: closing it drops what the search owes it, so a later opening only shows what was found.
+        VisitOf(edits.outcomes.suggestion)
         // Focus moves to the suggestion once the search answers, as the control that asked gives way.
         ActOn(edits.outcomes.coverageFound) { (next, outcome) ->
             if (state.asking == next) focus()
@@ -405,20 +408,6 @@ private fun DateOverSuggestion(
     val search = state.dateSearch
     val retry = search == DateSearch.Failed || search == DateSearch.Building
 
-    ActOn(slot.edits.outcomes.pastDateFound) { (request, found) ->
-        if (state.waiting != request) return@ActOn
-        state.waiting = 0
-        val date = (found as? TimeToCoverOutcome.Answered)?.time?.fittingDate?.toJavaLocalDate()
-        date?.let { slot.host.requestPreview(CoverageChange.Date(it).operations) }
-        state.dateSearch =
-            when (found) {
-                is TimeToCoverOutcome.Answered -> if (date == null) DateSearch.NoDate else null
-                TimeToCoverOutcome.Building -> DateSearch.Building
-                TimeToCoverOutcome.Failed -> DateSearch.Failed
-                TimeToCoverOutcome.Stale -> null
-            }
-    }
-
     fun findDate() {
         val request = ++state.searches
         state.waiting = request
@@ -437,6 +426,22 @@ private fun DateOverSuggestion(
         slot,
         mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
     ) {
+        // The sheet or panel asks: closing it while the date is found stops the wait, and its answer does nothing.
+        VisitOf(slot.edits.outcomes.suggestion)
+        OnVisitEnd(Unit) { if (state.dateSearch == DateSearch.Finding) stopWaiting() }
+        ActOn(slot.edits.outcomes.pastDateFound) { (request, found) ->
+            if (state.waiting != request) return@ActOn
+            state.waiting = 0
+            val date = (found as? TimeToCoverOutcome.Answered)?.time?.fittingDate?.toJavaLocalDate()
+            date?.let { slot.host.requestPreview(CoverageChange.Date(it).operations) }
+            state.dateSearch =
+                when (found) {
+                    is TimeToCoverOutcome.Answered -> if (date == null) DateSearch.NoDate else null
+                    TimeToCoverOutcome.Building -> DateSearch.Building
+                    TimeToCoverOutcome.Failed -> DateSearch.Failed
+                    TimeToCoverOutcome.Stale -> null
+                }
+        }
         val adjust = {
             close()
             onAdjust(PlanSection.Date)

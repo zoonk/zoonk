@@ -42,4 +42,20 @@ class VisitTest {
 
         assertEquals("second", opened.value)
     }
+
+    @Test
+    fun anOpeningEndsOnItsOwnAndWithTheScreensVisit() {
+        val editor = visit.opening()
+        val picked = editor.outcome<Unit>()
+        val first = editor.number
+
+        editor.end()
+        picked.send(first, Unit)
+        assertNull(picked.value)
+        assertEquals(0, visit.number)
+
+        picked.send(editor.number, Unit)
+        visit.end()
+        assertNull(picked.value)
+    }
 }

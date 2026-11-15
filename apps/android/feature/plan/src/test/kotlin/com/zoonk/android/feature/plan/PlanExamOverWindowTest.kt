@@ -16,7 +16,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.app.rememberWindowSnackbars
@@ -26,6 +25,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -72,12 +72,7 @@ class PlanExamOverWindowTest {
         val page = PlanPageState(summary.goals.first(), plan(""""status":{"kind":"pastDate","lessons":4}"""), summary)
         PlanExamOverTest.app = AppContainer.preview(application)
         PlanExamOverTest.page = page
-        PlanExamOverTest.viewModel =
-            PlanViewModel(
-                store,
-                page.goal.id,
-                PlanExamOverTest.app.writingWaits,
-            ) { PlanExamOverTest.app.snackbars.show(R.string.plan_save_failed) }
+        PlanExamOverTest.viewModel = PlanViewModel(store, page.goal.id, PlanExamOverTest.app.writingWaits)
         PlanExamOverTest.farTopics = FarTopicViewModel(store, page.goal.id)
         scenario = ActivityScenario.launch(PlanExamOverTestActivity::class.java)
 
@@ -104,13 +99,17 @@ class PlanExamOverTestActivity : ComponentActivity() {
         setContent {
             ZoonkTheme {
                 val snackbars = rememberWindowSnackbars(PlanExamOverTest.app)
+                val navigator = rememberAppNavigator()
 
                 CompositionLocalProvider(LocalSnackbarHostState provides snackbars) {
                     Box {
+                        // As the Plan screen does around its page.
+                        VisitOf(PlanExamOverTest.viewModel.visit)
+                        PlanEvents(PlanExamOverTest.viewModel, navigator, PlanExamOverTest.app.snackbars)
                         PlanPage(
                             PlanExamOverTest.page,
                             PlanExamOverTest.app,
-                            rememberAppNavigator(),
+                            navigator,
                             PlanExamOverTest.viewModel,
                             PlanExamOverTest.farTopics,
                             focus = null,

@@ -20,12 +20,20 @@ class Visit {
         private set
 
     private val outcomes = mutableListOf<VisitOutcome<*>>()
+    private val openings = mutableListOf<Visit>()
 
     fun <T : Any> outcome(): VisitOutcome<T> = VisitOutcome<T>(this).also { outcomes += it }
+
+    /**
+     * A narrower asker inside this visit (an editor, a sheet, a picker): it ends on its own when it closes
+     * (a `VisitOf` where it's composed), and with this visit when the screen goes.
+     */
+    fun opening(): Visit = Visit().also { openings += it }
 
     fun end() {
         number++
         outcomes.forEach { it.clear() }
+        openings.forEach { it.end() }
     }
 }
 

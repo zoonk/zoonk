@@ -118,7 +118,7 @@ private fun GoalPlan(
 
     // One visit to this goal's Plan, whichever of its states shows: switching between them is the same visit.
     VisitOf(viewModel.visit)
-    PlanEvents(viewModel, navigator)
+    PlanEvents(viewModel, navigator, app.snackbars)
 
     when {
         // A plan is built while the questions are still answered, on a time the learner hasn't chosen yet.
@@ -236,9 +236,7 @@ private fun PlanWithoutPlan(
 private fun planViewModel(
     app: AppContainer,
     goalId: UUID,
-) = viewModel(key = "plan-$goalId") {
-    PlanViewModel(app.plans, goalId, app.writingWaits) { app.snackbars.show(R.string.plan_save_failed) }
-}
+) = viewModel(key = "plan-$goalId") { PlanViewModel(app.plans, goalId, app.writingWaits) }
 
 /**
  * The Plan's title before its plan shows, with the goal's menu at its end as on the ready Plan: an

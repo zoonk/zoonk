@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.app.LocalNavigationSuiteType
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
@@ -573,12 +574,14 @@ private val SIDE_BY_SIDE_WIDTH = 600.dp
 internal fun PlanEvents(
     viewModel: PlanViewModel,
     navigator: AppNavigator,
+    snackbars: AppSnackbars,
 ) {
     ActOn(viewModel.event) { event ->
         when (event) {
             PlanEvent.Archived -> navigator.select(AppTab.Today)
         }
     }
+    ActOn(viewModel.outcomes.saveFailed) { snackbars.show(R.string.plan_save_failed) }
 }
 
 internal sealed interface Standing {

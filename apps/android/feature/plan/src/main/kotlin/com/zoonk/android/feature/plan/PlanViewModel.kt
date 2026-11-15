@@ -32,10 +32,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-/**
- * What a write did that the screen acts on: a refusal said in a snackbar (the menu that started it
- * has closed by then), or an archived goal, which leaves the Plan.
- */
+/** What a write did that the screen acts on: an archived goal, which leaves the Plan. */
 enum class PlanEvent { Archived, }
 
 enum class ResumeFailure { GoalLimit, Failed }
@@ -79,7 +76,6 @@ class PlanViewModel(
     private val store: PlanStore,
     private val goalId: UUID,
     writingWaits: WritingWaits,
-    private val saveFailed: () -> Unit = {},
 ) : ViewModel() {
     private val saving = MutableStateFlow(false)
     private val resumeFailureState = MutableStateFlow<ResumeFailure?>(null)
@@ -187,7 +183,7 @@ class PlanViewModel(
                     if (resuming) {
                         resumeFailureState.value = if (result.status == TOO_MANY_REQUESTS) ResumeFailure.GoalLimit else ResumeFailure.Failed
                     } else {
-                        saveFailed()
+                        outcomes.saveFailed.send(started, Unit)
                     }
                 }
 
@@ -205,28 +201,29 @@ class PlanViewModel(
 
     /** Prepares the new country's plan again after that failed; a retry that doesn't start says so in a snackbar. */
     fun retryCountryRebuild() =
-        saveGoal(PlanPart.CountryRebuild, saved = null) {
-            store.retryCountryRebuild(goalId).also { if (it is MutationResult.Failed) saveFailed() }
-        }
+        saveGoal(PlanPart.CountryRebuild, saved = null, failed = outcomes.saveFailed) { store.retryCountryRebuild(goalId) }
 
-    /** What [write] did shows only on the visit that started it. */
+    /** What [write] did shows only on the visit that started it: [saved] is the editor opening's, [failed] the Plan's. */
     private fun saveGoal(
         part: PlanPart,
         saved: VisitOutcome<Unit>?,
+        failed: VisitOutcome<Unit>? = null,
         write: suspend () -> MutationResult<Unit>,
     ) {
         if (part in savingParts.value) return
         savingParts.update { it + part }
         failedParts.update { it - part }
         val started = visit.number
+        val opened = outcomes.editor.number
         viewModelScope.launch {
             when (write()) {
                 is MutationResult.Done -> {
-                    saved?.send(started, Unit)
+                    saved?.send(opened, Unit)
                 }
 
                 is MutationResult.Failed -> {
                     if (started == visit.number) failedParts.update { it + part }
+                    failed?.send(started, Unit)
                 }
 
                 MutationResult.Obsolete -> {}
@@ -340,6 +337,7 @@ class PlanViewModel(
     ) {
         if (part in savingParts.value) return
         val opening = openings
+        val opened = outcomes.editor.number
         savingParts.update { it + part }
         failedParts.update { it - part }
         askedOperations.update { it + (part to operations) }
@@ -357,10 +355,10 @@ class PlanViewModel(
             val sameOpening = opening == openings
             if (saved != null && shown == PlanShown.Current) {
                 if (saved.status == PlanChangeResult.Status.APPLIED) saved.change?.let { report(it, editor = sameOpening) }
-                answer(asker, started, saved)
+                answer(asker, started, opened, saved)
             } else if (result is MutationResult.Failed || shown == PlanShown.Stale) {
                 if (sameOpening && started == visit.number) failedParts.update { it + part }
-                answer(asker, started, null)
+                answer(asker, started, opened, null)
             }
             askedOperations.update { it - part }
             savingParts.update { it - part }
@@ -384,17 +382,24 @@ class PlanViewModel(
         }
     }
 
-    /** What the save [asker] asked for does once [result] (null: it didn't save) is in; a visit that ended shows nothing of it. */
+    /**
+     * What the save [asker] asked for does once [result] (null: it didn't save) is in; a visit that ended shows nothing of
+     * it, nor does an editor opening that closed since [opened].
+     */
     private fun answer(
         asker: PlanAsker?,
         started: Int,
+        opened: Int,
         result: PlanChangeResult?,
     ) {
         val applied = result?.takeIf { it.status == PlanChangeResult.Status.APPLIED }
-        if (result == null && (asker == PlanAsker.SaysFailure || asker == PlanAsker.FitLessons)) saveFailed()
         if (started != visit.number) return
         when (asker) {
-            null, PlanAsker.SaysFailure -> {}
+            null -> {}
+
+            PlanAsker.SaysFailure -> {
+                if (result == null) outcomes.saveFailed.send(started, Unit)
+            }
 
             is PlanAsker.Sheet -> {
                 sheetAnswersState.update { it + (asker.opening to result) }
@@ -406,6 +411,7 @@ class PlanViewModel(
             }
 
             PlanAsker.FitLessons -> {
+                if (result == null) outcomes.saveFailed.send(started, Unit)
                 applied?.let { showInSlot(SlotItem.FitLessons, it.change) }
             }
 
@@ -414,11 +420,11 @@ class PlanViewModel(
             }
 
             PlanAsker.AimPicker -> {
-                if (applied != null) outcomes.aimPicked.send(started, Unit)
+                if (applied != null) outcomes.aimPicked.send(opened, Unit)
             }
 
             PlanAsker.MoveDate -> {
-                if (result != null) outcomes.dateMoved.send(started, Unit)
+                if (result != null) outcomes.dateMoved.send(opened, Unit)
             }
         }
     }
@@ -447,23 +453,23 @@ class PlanViewModel(
     /**
      * Main's time-to-cover store: one search per plan revision, which [asker] joins while it runs,
      * and an answer stays only for the plan it was found for. Only from the learner's tap: it plans
-     * the goal at each daily time. What it found goes to [asker] on the visit that asked.
+     * the goal at each daily time. What it found goes to [asker] while the opening that asked lasts.
      */
     internal fun findTimeToCover(
         plan: Plan,
         asker: TimeAsker? = null,
     ) {
         val revision = planAdviceRevision(plan)
-        val started = visit.number
+        val ask = asker?.let(outcomes::ask)
         (timeToCoverState.value as? TimeToCoverState.Answered)?.takeIf { it.revision == revision }?.let { answered ->
-            asker?.let { outcomes.found(started, it, TimeToCoverOutcome.Answered(answered.time)) }
+            ask?.let { outcomes.found(it, TimeToCoverOutcome.Answered(answered.time)) }
             return
         }
         val running = search?.takeIf { it.revision == revision } ?: startSearch(revision)
-        asker ?: return
+        ask ?: return
         viewModelScope.launch {
             val result = running.result.await()
-            outcomes.found(started, asker, if (shownRevision() != revision) TimeToCoverOutcome.Stale else result.outcome())
+            outcomes.found(ask, if (shownRevision() != revision) TimeToCoverOutcome.Stale else result.outcome())
         }
     }
 

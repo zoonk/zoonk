@@ -68,6 +68,7 @@ import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FullScreenDialog
@@ -232,6 +233,8 @@ internal fun PlanEditor(
     val wide = windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val drafts = rememberSaveable(saver = EditorDrafts.Saver) { EditorDrafts() }
 
+    // This opening is the pickers' and Move date's asker: closing the editor drops what they're owed.
+    VisitOf(edits.outcomes.editor)
     ActOn(edits.outcomes.aimPicked) { drafts.picking = null }
     ActOn(edits.outcomes.regionSaved) { drafts.picking = null }
     ActOn(edits.outcomes.countrySaved) {

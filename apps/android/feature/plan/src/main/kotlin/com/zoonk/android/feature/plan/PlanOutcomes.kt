@@ -27,10 +27,10 @@ internal sealed interface PlanAsker {
     /** A save whose failure the app's snackbar says. */
     data object SaysFailure : PlanAsker
 
-    /** The aim's picker, which closes once the aim applied. */
+    /** The aim's picker, which closes once the aim applied, while the editor opening that asked lasts. */
     data object AimPicker : PlanAsker
 
-    /** Move date, after which the keyboard goes to the time picked. */
+    /** Move date, after which the keyboard goes to the time picked, while the editor opening that asked lasts. */
     data object MoveDate : PlanAsker
 }
 
@@ -54,36 +54,62 @@ internal data class TimeFound<A : Any>(
     val outcome: TimeToCoverOutcome,
 )
 
-/** What a plan save or search leads to on the screen that asked, held for the visit that asked. */
+/** [asker]'s search, asked while its opening's visit was the one numbered [started]. */
+internal class TimeAsk(
+    val asker: TimeAsker,
+    val started: Int,
+)
+
+/**
+ * What a plan save or search leads to on whatever asked, held for that asker's visit: the Plan's, or an
+ * opening inside it, which ends when it closes, so what it asked never reaches a later opening.
+ */
 @Stable
 internal class PlanOutcomes(
     visit: Visit = Visit(),
 ) {
+    /** The Adjust plan editor's opening, whose pickers and Move date ask: it ends when the editor closes. */
+    val editor = visit.opening()
+
+    /** The suggestion slot's item while its sheet or panel shows, whose searches ask: it ends when that goes. */
+    val suggestion = visit.opening()
+
+    /** A save that didn't, said in the app's snackbars, since the bar or menu that asked can be gone by then. */
+    val saveFailed = visit.outcome<Unit>()
+
     /** The aim's pick applied: its picker closes. */
-    val aimPicked = visit.outcome<Unit>()
+    val aimPicked = editor.outcome<Unit>()
 
     /** The language's country saved: its picker closes. */
-    val regionSaved = visit.outcome<Unit>()
+    val regionSaved = editor.outcome<Unit>()
 
     /** The content country saved: its question and picker close. */
-    val countrySaved = visit.outcome<Unit>()
+    val countrySaved = editor.outcome<Unit>()
 
     /** Move date saved the date: the keyboard goes to the time picked. */
-    val dateMoved = visit.outcome<Unit>()
+    val dateMoved = editor.outcome<Unit>()
 
-    val moveDateFound = visit.outcome<TimeToCoverOutcome>()
+    val moveDateFound = editor.outcome<TimeToCoverOutcome>()
 
-    val coverageFound = visit.outcome<TimeFound<CoverageIntent>>()
+    val coverageFound = suggestion.outcome<TimeFound<CoverageIntent>>()
 
-    val pastDateFound = visit.outcome<TimeFound<Int>>()
+    val pastDateFound = suggestion.outcome<TimeFound<Int>>()
+
+    fun ask(asker: TimeAsker) =
+        TimeAsk(
+            asker,
+            when (asker) {
+                TimeAsker.MoveDate -> editor.number
+                is TimeAsker.Coverage, is TimeAsker.PastDate -> suggestion.number
+            },
+        )
 
     fun found(
-        started: Int,
-        asker: TimeAsker,
+        ask: TimeAsk,
         outcome: TimeToCoverOutcome,
-    ) = when (asker) {
-        TimeAsker.MoveDate -> moveDateFound.send(started, outcome)
-        is TimeAsker.Coverage -> coverageFound.send(started, TimeFound(asker.intent, outcome))
-        is TimeAsker.PastDate -> pastDateFound.send(started, TimeFound(asker.request, outcome))
+    ) = when (val asker = ask.asker) {
+        TimeAsker.MoveDate -> moveDateFound.send(ask.started, outcome)
+        is TimeAsker.Coverage -> coverageFound.send(ask.started, TimeFound(asker.intent, outcome))
+        is TimeAsker.PastDate -> pastDateFound.send(ask.started, TimeFound(asker.request, outcome))
     }
 }

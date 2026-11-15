@@ -112,13 +112,11 @@ class PlanViewModelTest {
     @Test
     fun anyOtherFailureSaysItDidntSave() =
         runTest {
-            var failures = 0
-            val viewModel = PlanViewModel(store, goalId, writingWaits(runs)) { failures++ }
             api.statusFailure = ApiException(ApiError.Network)
 
             viewModel.setStatus(LearnerSummaryGoal.Status.PAUSED)
 
-            assertEquals(1, failures)
+            assertEquals(Unit, viewModel.outcomes.saveFailed.value)
         }
 
     @Test
@@ -181,14 +179,12 @@ class PlanViewModelTest {
     @Test
     fun aFitOfferThatDidntSaveSaysSoInTheAppsSnackbars() =
         runTest {
-            var failures = 0
-            val viewModel = PlanViewModel(store, goalId, writingWaits(runs)) { failures++ }
             api.changeFailure = ApiException(ApiError.Network)
             val offer = FIT_PLAN.fitOffer!!.copy(canApply = true)
 
             viewModel.addFitOffer(FIT_PLAN, offer)
 
-            assertEquals(1, failures)
+            assertEquals(Unit, viewModel.outcomes.saveFailed.value)
         }
 
     private fun checked(effect: PlanEffect) =
@@ -911,6 +907,114 @@ class PlanViewModelTest {
 
     /** What the frame acts on, then acknowledges, as `ActOn` does. */
     private fun <T : Any> actOn(outcome: VisitOutcome<T>) = outcome.value?.also(outcome::acted)
+
+    @Test
+    fun anAimFromAnEarlierEditorOpeningClosesNoPickerInTheNext() =
+        runTest {
+            val aim = PlanOp.Aim("conversation")
+            val held = CompletableDeferred<Unit>().also { api.gates[aim] = it }
+
+            viewModel.change(PlanPart.Aim, listOf(aim), PlanAsker.AimPicker)
+            reopenEditor()
+            held.complete(Unit)
+
+            assertEquals(listOf(listOf<PlanOp>(aim)), api.changes)
+            assertNull(viewModel.outcomes.aimPicked.value)
+        }
+
+    @Test
+    fun aCountryFromAnEarlierEditorOpeningClosesNoPickerInTheNext() =
+        runTest {
+            val held = CompletableDeferred<Unit>().also { api.goalGate = it }
+
+            viewModel.setRegion("MX")
+            viewModel.setContentCountry("PT")
+            reopenEditor()
+            held.complete(Unit)
+
+            assertNull(viewModel.outcomes.regionSaved.value)
+            assertNull(viewModel.outcomes.countrySaved.value)
+        }
+
+    @Test
+    fun aDateMovedFromAnEarlierEditorOpeningMovesNoFocusInTheNext() =
+        runTest {
+            val plan = shown()
+            val date = PlanOp.TargetDate(LocalDate.parse("2027-06-12"))
+            val held = CompletableDeferred<Unit>().also { api.gates[date] = it }
+            api.timeToCoverGate = CompletableDeferred()
+
+            viewModel.change(PlanPart.Schedule, listOf(date), PlanAsker.MoveDate)
+            viewModel.findTimeToCover(plan, TimeAsker.MoveDate)
+            reopenEditor()
+            held.complete(Unit)
+            api.timeToCoverGate?.complete(Unit)
+
+            assertNull(viewModel.outcomes.dateMoved.value)
+            assertNull(viewModel.outcomes.moveDateFound.value)
+        }
+
+    /** The learner closes the editor, which ends its opening's visit (its `VisitOf`), and opens it again. */
+    private fun reopenEditor() {
+        viewModel.outcomes.editor.end()
+        viewModel.forgetLatest()
+    }
+
+    @Test
+    fun aFailureWhileThePlanIsRecreatedIsSaidOnce() =
+        runTest {
+            api.changeFailure = ApiException(ApiError.Network)
+
+            // No frame acts while the save is out, as when the window is recreated.
+            viewModel.change(PlanPart.FullCourse, listOf(PlanOp.FullCourse(true)), PlanAsker.SaysFailure)
+
+            assertEquals(Unit, actOn(viewModel.outcomes.saveFailed))
+            assertNull(actOn(viewModel.outcomes.saveFailed))
+        }
+
+    @Test
+    fun aFailureAfterThePlanLeftIsSaidNowhere() =
+        runTest {
+            val time = PlanOp.DailyMinutes(45)
+            val held = CompletableDeferred<Unit>().also { api.gates[time] = it }
+            api.changeFailure = ApiException(ApiError.Network)
+
+            viewModel.change(PlanPart.Schedule, listOf(time), PlanAsker.SaysFailure)
+            viewModel.visit.end()
+            held.complete(Unit)
+
+            assertNull(viewModel.outcomes.saveFailed.value)
+        }
+
+    @Test
+    fun aStatusThatFailsAfterThePlanLeftIsSaidNowhere() =
+        runTest {
+            val held = CompletableDeferred<Unit>()
+            api.statusGate = held
+            api.statusFailure = ApiException(ApiError.Network)
+
+            viewModel.setStatus(LearnerSummaryGoal.Status.PAUSED)
+            viewModel.visit.end()
+            held.complete(Unit)
+
+            assertNull(viewModel.outcomes.saveFailed.value)
+        }
+
+    @Test
+    fun aSearchWhoseSuggestionClosedBeforeItAnsweredOwesItNothing() =
+        runTest {
+            val plan = shown()
+            api.timeToCoverGate = CompletableDeferred()
+
+            viewModel.findTimeToCover(plan, TimeAsker.Coverage(CoverageIntent.Time))
+            viewModel.findTimeToCover(plan, TimeAsker.PastDate(request = 1))
+            viewModel.outcomes.suggestion.end()
+            api.timeToCoverGate?.complete(Unit)
+
+            assertNull(viewModel.outcomes.coverageFound.value)
+            assertNull(viewModel.outcomes.pastDateFound.value)
+            assertEquals(TimeToCoverState.Answered(planAdviceRevision(plan), api.timeToCover), viewModel.timeToCover.value)
+        }
 
     private companion object {
         /** A later day's fit offer: its numbers are the last plan write's, so the tap checks today's first. */
