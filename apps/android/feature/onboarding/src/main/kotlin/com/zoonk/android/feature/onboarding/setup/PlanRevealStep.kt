@@ -21,9 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -99,12 +97,9 @@ import com.zoonk.api.models.PlanSchedule
 import com.zoonk.api.models.PlanWeekShape
 import com.zoonk.api.models.ShortExamFocus
 import com.zoonk.api.models.Syllabus
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 
 /** Reading the plan starts no work; opening a step is a learner tap. */
 @Composable
@@ -115,9 +110,7 @@ internal fun ColumnScope.PlanRevealStep(
     onRetryRun: (() -> Unit)?,
     plans: PlanStore,
     navigator: AppNavigator,
-    here: AppRoute,
-    prepareToday: suspend () -> Unit = {},
-    onReveal: (((() -> Unit)) -> Unit)? = null,
+    onReveal: () -> Unit = {},
     saving: Boolean = false,
     saveFailed: Boolean = false,
     playMoment: () -> Boolean = { false },
@@ -139,24 +132,6 @@ internal fun ColumnScope.PlanRevealStep(
     val polls = (plan?.ready != true && !run.isStopped) || readingNotice
     val poll = rememberPoll(active = polls, timeout = Duration.INFINITE) { resource.refreshed() }
     LaunchedEffect(run.planMade) { if (run.planMade && polls) poll.restart() }
-    var opening by rememberSaveable { mutableStateOf(false) }
-    var starting by remember { mutableStateOf(false) }
-    LaunchedEffect(opening) {
-        if (!opening) return@LaunchedEffect
-        val progress =
-            launch {
-                delay(TODAY_PROGRESS_DELAY)
-                starting = true
-            }
-        try {
-            openRevealedPlan(navigator, here, prepareToday)
-        } finally {
-            progress.cancel()
-            starting = false
-        }
-        opening = false
-    }
-
     when {
         plan == null && polls && !poll.stopped -> {
             StepLoading()
@@ -194,7 +169,7 @@ internal fun ColumnScope.PlanRevealStep(
                     reveal = preview,
                     studyDay = day,
                     onOpenStep =
-                        onOpenStep?.takeUnless { opening || (saving && openingStep == null) }?.let { open ->
+                        onOpenStep?.takeUnless { saving && openingStep == null }?.let { open ->
                             { rowDay, rowStep ->
                                 open(rowDay, rowStep, false)
                             }
@@ -205,7 +180,7 @@ internal fun ColumnScope.PlanRevealStep(
                     syllabus = syllabus.value,
                     isGuest = isGuest,
                     starting =
-                        starting || (saving && openingStep == null) ||
+                        (saving && openingStep == null) ||
                             todayState == LoadState.Idle || todayState == LoadState.Loading,
                     startError =
                         when {
@@ -219,7 +194,7 @@ internal fun ColumnScope.PlanRevealStep(
                         if (day != null && step != null && onOpenStep != null) {
                             onOpenStep(day, step, true)
                         } else {
-                            if (onReveal != null) onReveal { opening = true } else opening = true
+                            onReveal()
                         }
                     },
                     // Adjust opens the Plan tab until the plan editor (F16) can open here.
@@ -249,18 +224,14 @@ internal fun ColumnScope.PlanRevealStep(
 /** Where the learner goes once the plan is ready: the time question, or the plan itself. */
 internal enum class PlanNext { TimeQuestion, Plan }
 
-internal suspend fun openRevealedPlan(
+/** Where a reveal leads once the setup's visit acts on it: Today, and the step it opened over it. */
+internal fun leadToRevealed(
     navigator: AppNavigator,
-    here: AppRoute,
-    prepareToday: suspend () -> Unit,
-    destination: AppRoute? = null,
+    revealed: Revealed,
 ) {
-    prepareToday()
-    if (navigator.currentRoute == here) {
-        navigator.closeSection()
-        navigator.open(AppRoute.Today)
-        destination?.let(navigator::open)
-    }
+    navigator.closeSection()
+    navigator.open(AppRoute.Today)
+    revealed.step?.let(navigator::open)
 }
 
 @Composable
@@ -933,8 +904,6 @@ private const val METER_WEIGHT = 0.5f
 
 /** Below half a percent, the share would read "0%". */
 private const val MIN_SHOWN_SHARE = 0.005
-
-private val TODAY_PROGRESS_DELAY = 400.milliseconds
 
 /** The plan's `?focus=choose`: its focus sheet open. */
 private const val CHOOSE_FOCUS = "choose"

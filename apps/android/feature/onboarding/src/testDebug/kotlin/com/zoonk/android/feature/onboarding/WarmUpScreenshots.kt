@@ -149,7 +149,6 @@ class WarmUpScreenshots {
                                             onRetryRun = {},
                                             plans = plans,
                                             navigator = rememberAppNavigator(),
-                                            here = AppRoute.GoalSetup(GOAL_ID),
                                         )
                                     }
 
@@ -167,7 +166,6 @@ class WarmUpScreenshots {
                                                 onRetryRun = {},
                                                 plans = readingPlans,
                                                 navigator = rememberAppNavigator(),
-                                                here = AppRoute.GoalSetup(GOAL_ID),
                                             )
                                         }
                                     }

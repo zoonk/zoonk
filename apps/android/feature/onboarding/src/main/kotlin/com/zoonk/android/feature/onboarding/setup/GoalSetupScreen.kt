@@ -147,7 +147,17 @@ fun GoalSetupScreen(
 ) {
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     val drafts = LocalSetupDrafts.current
-    val vm = viewModel { GoalSetupViewModel(store, drafts, createSavedStateHandle(), route.goalId, route.revealMoment) }
+    val vm =
+        viewModel {
+            GoalSetupViewModel(
+                store,
+                drafts,
+                createSavedStateHandle(),
+                route.goalId,
+                route.revealMoment,
+                RevealDoors(prepareToday, openRevealStep),
+            )
+        }
     val state by store.onboardings[vm.goalId].collectShown()
     val run by vm.follower.run.collectAsStateWithLifecycle()
     val first = run.firstLesson.withRead(state.value?.firstLesson, state.value?.generationId, run.id)
@@ -288,8 +298,6 @@ fun GoalSetupScreen(
                                         plans,
                                         isGuest,
                                         navigator,
-                                        route,
-                                        prepareToday,
                                         openRevealStep,
                                         announce,
                                         run,
@@ -329,8 +337,6 @@ private fun ColumnScope.SetupStep(
     plans: PlanStore,
     isGuest: Boolean,
     navigator: AppNavigator,
-    route: AppRoute.GoalSetup,
-    prepareToday: suspend () -> Unit,
     openRevealStep: (suspend (DayView, DayStep, UUID) -> MutationResult<AppRoute?>)?,
     announce: (String) -> Unit,
     run: GenerationRun,
@@ -350,6 +356,7 @@ private fun ColumnScope.SetupStep(
     val startFirstLesson = firstLesson?.let { first -> { navigator.open(AppRoute.Lesson(first.id)) } }
     VisitOf(vm.visit)
     ActOn(vm.startLesson) { startFirstLesson?.invoke() }
+    ActOn(vm.revealed) { leadToRevealed(navigator, it) }
     // Placement follows the run itself, so only the questions say it stopped.
     val planStart = PlanStart(run, onRetryRun).takeIf { step != OnboardingStep.PLACEMENT && step != OnboardingStep.PLAN }
 
@@ -382,12 +389,10 @@ private fun ColumnScope.SetupStep(
             plans,
             isGuest,
             navigator,
-            route,
             subject,
             pending,
             run,
             onRetryRun,
-            prepareToday,
             openRevealStep,
             onReportPlacement,
             onReportLevelTest,
@@ -404,12 +409,10 @@ private fun ColumnScope.QuestionStep(
     plans: PlanStore,
     isGuest: Boolean,
     navigator: AppNavigator,
-    route: AppRoute.GoalSetup,
     subject: String,
     pending: Boolean,
     run: GenerationRun,
     onRetryRun: (() -> Unit)?,
-    prepareToday: suspend () -> Unit,
     openRevealStep: (suspend (DayView, DayStep, UUID) -> MutationResult<AppRoute?>)?,
     onReportPlacement: () -> Unit,
     onReportLevelTest: () -> Unit,
@@ -569,26 +572,11 @@ private fun ColumnScope.QuestionStep(
                 onRetryRun,
                 plans,
                 navigator,
-                route,
-                prepareToday,
                 onReveal = vm::reveal,
                 openingStep = vm.openingStep,
                 failedStep = vm.failedStep,
                 startStepFailed = vm.startStepFailed,
-                onOpenStep =
-                    openRevealStep?.let { open ->
-                        { day, step, fromStart ->
-                            vm.openRevealStep(
-                                day,
-                                step,
-                                open,
-                                fromStart = fromStart,
-                                isCurrent = { navigator.currentRoute == route },
-                            ) { destination ->
-                                openRevealedPlan(navigator, route, prepareToday, destination)
-                            }
-                        }
-                    },
+                onOpenStep = openRevealStep?.let { { day, step, fromStart -> vm.openRevealStep(day, step, fromStart) } },
                 saving = vm.isSaving,
                 saveFailed = vm.saveFailed,
                 playMoment = vm::takeRevealMoment,

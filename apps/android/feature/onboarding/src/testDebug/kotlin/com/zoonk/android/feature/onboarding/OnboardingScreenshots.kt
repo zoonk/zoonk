@@ -729,7 +729,6 @@ class OnboardingScreenshots {
                     onRetryRun = {},
                     rememberPlans(api),
                     rememberAppNavigator(),
-                    AppRoute.GoalSetup(GOAL_ID),
                     today = preview,
                 )
             }

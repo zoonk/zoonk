@@ -29,7 +29,6 @@ import com.zoonk.api.models.ProfileQuestion
 import com.zoonk.api.models.ProfileQuestionView
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonArray
@@ -113,6 +112,7 @@ internal class GoalSetupViewModel(
     private val handle: SavedStateHandle,
     goalId: String,
     revealMoment: Boolean = false,
+    private val doors: RevealDoors = RevealDoors(),
 ) : ViewModel() {
     /** This visit to the setup: what its saves lead to (a failure, lesson 1) shows only on it. */
     val visit = Visit()
@@ -181,9 +181,14 @@ internal class GoalSetupViewModel(
         }
     }
 
-    fun reveal(onSaved: () -> Unit) =
-        reveal(null) {
-            onSaved()
+    /** Where the reveal leads once its plan is marked seen and Today is read again: Today, and the step it opened. */
+    val revealed = visit.outcome<Revealed>()
+
+    /** "Start": marks the plan seen, reads Today again, then leads there. */
+    fun reveal() =
+        reveal(null) { started ->
+            doors.prepareToday()
+            revealed.send(started, Revealed())
             true
         }
 
@@ -197,20 +202,21 @@ internal class GoalSetupViewModel(
     val failedStep get() = stepFailure.value
     val startStepFailed get() = startStepFailure.value != null
 
+    /** A step of the revealed day: marks the plan seen, opens the step, reads Today again, then leads to it. */
     fun openRevealStep(
         day: DayView,
         step: DayStep,
-        open: suspend (DayView, DayStep, java.util.UUID) -> MutationResult<AppRoute?>,
         fromStart: Boolean = false,
-        isCurrent: () -> Boolean = { true },
-        onOpened: suspend (AppRoute) -> Unit,
     ) {
+        val open = doors.openRow ?: return
         val tappedGoal = java.util.UUID.fromString(goalId)
-        reveal(step.position, fromStart) {
-            if (!isCurrent()) return@reveal true
+        reveal(step.position, fromStart) { started ->
             when (val result = open(day, step, tappedGoal)) {
                 is MutationResult.Done -> {
-                    result.value?.let { onOpened(it) }
+                    result.value?.let {
+                        doors.prepareToday()
+                        revealed.send(started, Revealed(it))
+                    }
                     true
                 }
 
@@ -225,10 +231,11 @@ internal class GoalSetupViewModel(
         }
     }
 
+    /** Marks the plan seen, then runs [opened] with the visit that asked, only while that visit lasts. */
     private fun reveal(
         position: Long?,
         fromStart: Boolean = false,
-        onSaved: suspend () -> Boolean,
+        opened: suspend (started: Int) -> Boolean,
     ) {
         if (isSaving) return
         isSaving = true
@@ -241,7 +248,8 @@ internal class GoalSetupViewModel(
         viewModelScope.launch {
             when (store.markPlanRevealed(revealingGoal)) {
                 is WriteOutcome.Done -> {
-                    if (!onSaved()) {
+                    // A visit that ended while it marked opens no step and leads nowhere.
+                    if (visit.number == started && !opened(started)) {
                         if (fromStart) startStepFailure.send(started, Unit) else position?.let { stepFailure.send(started, it) }
                     }
                 }
@@ -456,4 +464,18 @@ internal fun answeredScreens(view: Onboarding): List<OnboardingStep> =
 /** A save that failed on the setup's visit, and the day's minimum it fell short of when that was why. */
 internal data class SaveFailure(
     val dayTooShort: Refusal.DayTooShort? = null,
+)
+
+/** Where a reveal leads: Today, and [step] over it when the learner opened one of its steps. */
+internal data class Revealed(
+    val step: AppRoute? = null,
+)
+
+/**
+ * What the reveal reaches outside the setup, from the app's container: Today read again before it's shown, and a
+ * step of the revealed day opened. Without [openRow] (a host with no study opener) the day's steps don't open.
+ */
+internal class RevealDoors(
+    val prepareToday: suspend () -> Unit = {},
+    val openRow: (suspend (DayView, DayStep, java.util.UUID) -> MutationResult<AppRoute?>)? = null,
 )

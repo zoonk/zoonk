@@ -74,7 +74,6 @@ class PlanRevealReadsTest {
                             null,
                             plans,
                             rememberAppNavigator(),
-                            AppRoute.GoalSetup(goal.id.toString()),
                         )
                     }
                 }
