@@ -27,7 +27,7 @@ internal sealed interface PlanAsker {
     /** A save whose failure the app's snackbar says. */
     data object SaysFailure : PlanAsker
 
-    /** The aim's picker, which closes once the aim applied, while the editor opening that asked lasts. */
+    /** The aim's picker, which closes once the aim applied, while the picker that asked still shows. */
     data object AimPicker : PlanAsker
 
     /** Move date, after which the keyboard goes to the time picked, while the editor opening that asked lasts. */
@@ -68,23 +68,32 @@ internal class TimeAsk(
 internal class PlanOutcomes(
     visit: Visit = Visit(),
 ) {
-    /** The Adjust plan editor's opening, whose pickers and Move date ask: it ends when the editor closes. */
+    /** The Adjust plan editor's opening, whose Move date asks and whose pickers open inside it: it ends when the editor closes. */
     val editor = visit.opening()
 
     /** The suggestion slot's item while its sheet or panel shows, whose searches ask: it ends when that goes. */
     val suggestion = visit.opening()
 
+    /** The aim's picker inside the editor while it shows: an aim it applied closes it, and closing it ends it. */
+    val aimPicker = editor.opening()
+
+    /** The language's country picker inside the editor while it shows. */
+    val varietyPicker = editor.opening()
+
+    /** The content country's picker, with its question, inside the editor while it shows. */
+    val countryPicker = editor.opening()
+
     /** A save that didn't, said in the app's snackbars, since the bar or menu that asked can be gone by then. */
     val saveFailed = visit.outcome<Unit>()
 
     /** The aim's pick applied: its picker closes. */
-    val aimPicked = editor.outcome<Unit>()
+    val aimPicked = aimPicker.outcome<Unit>()
 
     /** The language's country saved: its picker closes. */
-    val regionSaved = editor.outcome<Unit>()
+    val regionSaved = varietyPicker.outcome<Unit>()
 
     /** The content country saved: its question and picker close. */
-    val countrySaved = editor.outcome<Unit>()
+    val countrySaved = countryPicker.outcome<Unit>()
 
     /** Move date saved the date: the keyboard goes to the time picked. */
     val dateMoved = editor.outcome<Unit>()
