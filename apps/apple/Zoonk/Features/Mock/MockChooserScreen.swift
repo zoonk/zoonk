@@ -403,12 +403,16 @@ private struct MockChooser: View {
         Text("Time limit", tableName: "Mock", comment: "The time a picked mock allows")
       }
 
-      LabeledContent {
-        Text(
-          "About \(MockLabels.duration(minutes: estimatedMinutes))", tableName: "Mock",
-          comment: "How long a picked mock usually takes")
-      } label: {
-        Text("Usually takes", tableName: "Mock", comment: "How long a picked mock usually takes")
+      // The API gives the limit when no estimate covers the whole mock (an essay, too few answers).
+      if estimatedMinutes < minutes {
+        LabeledContent {
+          Text(
+            "About \(MockLabels.duration(minutes: estimatedMinutes))", tableName: "Mock",
+            comment: "How long a picked mock usually takes")
+        } label: {
+          Text(
+            "Usually takes", tableName: "Mock", comment: "How long a picked mock usually takes")
+        }
       }
     } header: {
       SectionTitle(Text(title))
@@ -443,8 +447,8 @@ private struct MockChooser: View {
       detail: optionDetail(option),
       trailing: String(
         localized:
-          "\(option.questions) questions\u{00A0}· \(MockLabels.duration(minutes: option.estimatedMinutes))",
-        table: "Mock", comment: "A mock exam's number of questions and how long it takes")
+          "\(option.questions) questions\u{00A0}· \(MockLabels.duration(minutes: option.minutes))",
+        table: "Mock")
     ) {
       picked = option.id
     }
