@@ -138,16 +138,13 @@ describe("the Mind maps page's gate is the list's offer", () => {
     },
   );
 
-  it("holds the gate for a stop in the offer whose day this device already shows as past, with no day, until a read allows", async () => {
+  it("holds the gate for a stop in the offer whose day this device already shows as past, with no day and no read of its own, until a read allows", async () => {
     const read = Promise.withResolvers<GoalMindMapsView>();
     const list = vi.fn(() => read.promise);
+    const actions = actionsWith({ list });
+    const past = view(rollingStop(new Date(Date.now() - 60_000).toISOString()));
 
-    render(
-      <Screen
-        actions={actionsWith({ list })}
-        served={view(rollingStop(new Date(Date.now() - 60_000).toISOString()))}
-      />,
-    );
+    const screen = render(<Screen actions={actions} served={past} />);
 
     await expect.element(usedUp()).toBeVisible();
     await expect.element(notMade().getByRole("link", { name: "Subscribe" })).toBeVisible();
@@ -155,6 +152,14 @@ describe("the Mind maps page's gate is the list's offer", () => {
     await expect.element(notMade().getByText("You can try again now.")).not.toBeInTheDocument();
     expect(rowCreate("Atoms").query()).toBeNull();
 
+    await new Promise((resolve) => {
+      setTimeout(resolve, 300);
+    });
+
+    expect(list).not.toHaveBeenCalled();
+
+    // A newer copy of the page reads the list, and that read lifts the gate.
+    screen.rerender(<Screen actions={actions} served={{ ...past }} />);
     read.resolve(view(null));
 
     await expect.element(usedUp()).not.toBeInTheDocument();

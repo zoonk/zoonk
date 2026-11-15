@@ -1,7 +1,7 @@
 "use client";
 
 import { type MindMapAllowanceStop } from "@zoonk/core/mind-maps/contract";
-import { useEffect, useEffectEvent, useOptimistic, useState, useTransition } from "react";
+import { useEffect, useEffectEvent, useOptimistic, useRef, useState, useTransition } from "react";
 import { type MindMapLimit, useLiveLimit } from "../_components/help-limit-notice";
 import { usePoll } from "../_utils/use-poll";
 import { useReadOrder } from "../_utils/use-read-order";
@@ -57,6 +57,30 @@ function withoutSaved(page: MindMapsPage, { kind, targetId }: SavedMapTarget): M
  * The Mind maps page's state: what the server sent, kept current by one read of the list while
  * any map is on its way, with the learner's own taps (create one, create all, remove a save).
  */
+/**
+ * The clock asks the list again once, when the offer's day comes during the visit; that read lifts
+ * the gate. A day already past when the page gets it arms nothing: the offer still gates, and the
+ * page's next read decides.
+ */
+function useReadWhenOfferOpens(stop: MindMapAllowanceStop | null, read: () => void) {
+  const live = useLiveLimit(stop);
+  const passed = stop !== null && live === null;
+  const opensAt = stop?.availableAt ?? null;
+  const armed = useRef<string | null>(null);
+  const readOnce = useEffectEvent(read);
+
+  useEffect(() => {
+    armed.current = opensAt !== null && Date.parse(opensAt) > Date.now() ? opensAt : null;
+  }, [opensAt]);
+
+  useEffect(() => {
+    if (passed && armed.current !== null && armed.current === opensAt) {
+      armed.current = null;
+      readOnce();
+    }
+  }, [passed, opensAt]);
+}
+
 export function useMindMapsLibrary({
   actions,
   served,
@@ -129,16 +153,7 @@ export function useMindMapsLibrary({
   useRereadServed(served, () => void refresh().catch(() => null));
 
   const offerStop = page.createOffer.stop;
-  // The clock only asks the list again when the offer's day comes; the read lifts the gate.
-  const liveOfferStop = useLiveLimit(offerStop);
-  const stopPassed = offerStop !== null && liveOfferStop === null;
-  const readAgain = useEffectEvent(() => void refresh().catch(() => null));
-
-  useEffect(() => {
-    if (stopPassed) {
-      readAgain();
-    }
-  }, [stopPassed]);
+  useReadWhenOfferOpens(offerStop, () => void refresh().catch(() => null));
 
   const isDrawing = page.chapters.some((chapter) => chapter.status === "drawing");
   const isWriting = page.chapters.some((chapter) => chapter.status === "writingLessons");
