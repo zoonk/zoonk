@@ -184,6 +184,7 @@ private struct PlanContent: View {
   @State private var isReporting = false
   @State private var claimed: [CertificateFacts] = []
   @State private var slotAnswer: PlanSlotAnswer?
+  @State private var certificateClaim = CertificateClaim()
   /// The new plan arrived while the learner watched; gone on the next visit.
   @State private var rebuildReady = false
 
@@ -195,7 +196,8 @@ private struct PlanContent: View {
     let structure = syllabus.flatMap { $0.hasSubjectPages ? $0 : nil }
     let context = PlanContext(
       goal: goal, plan: plan, adjust: { adjusting = $0 }, report: { isReporting = true },
-      show: { sheet = $0 }, claimCertificate: claimCertificate, showClaim: show)
+      show: { sheet = $0 }, claimCertificate: claimCertificate, showClaim: show,
+      certificateClaim: certificateClaim)
 
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
@@ -268,7 +270,10 @@ private struct PlanContent: View {
       isPresented: $isReporting,
       context: FeedbackContext(contentID: plan.planId, contentKind: .plan), isReport: true
     )
-    .onDisappear { slotAnswer?.editor.cancel() }
+    .onDisappear {
+      slotAnswer?.editor.cancel()
+      certificateClaim.leave()
+    }
   }
 
   @ViewBuilder private var rebuildNotice: some View {
@@ -376,6 +381,7 @@ enum PlanClaim {
   case unchanged
 }
 
+@MainActor
 struct PlanContext {
   let goal: LearnerGoal
   let plan: GoalPlan
@@ -385,6 +391,8 @@ struct PlanContext {
   /// Nil when it didn't save; `showClaim` shows what it earned.
   var claimCertificate: () async -> PlanClaim? = { nil }
   var showClaim: (PlanClaim) -> Void = { _ in }
+  /// The screen's, above its panes.
+  var certificateClaim = CertificateClaim()
 
   var isPaused: Bool { goal.status == .paused }
 }
