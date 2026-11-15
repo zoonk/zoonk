@@ -474,6 +474,28 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertFalse(shown?.isOver(at: .now.addingTimeInterval(3600)) ?? true)
   }
 
+  /// RV58's reproduction: a kept stop lives through its own follow-up read only. A later read of
+  /// the list that allows a map again retires it, and the list's own offer decides.
+  func testALaterListReadRetiresTheStopCreatingAllKept() async {
+    let behind = MindMapAllowanceStop(
+      availableAt: .now.addingTimeInterval(-60), period: "rolling30Days", reason: .limitReached,
+      resource: .mindMap)
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    await api.stopNewMaps(behind)
+    await api.stopCreatingAll(behind)
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    await store.createAll(goalId: "goal")
+    XCTAssertNotNil(store.shownStop(goalId: "goal"))
+
+    await api.stopNewMaps(nil)
+    await list.refresh()
+
+    XCTAssertNil(list.value?.createOffer.stop)
+    XCTAssertNil(store.shownStop(goalId: "goal"), "an allowed offer releases the kept stop")
+  }
+
   /// A stop received before its day opens when the day comes, so Create is back then.
   func testCreatingAllThatStopsBeforeItsDayOpensWhenTheDayComes() async {
     let opens = Date.now.addingTimeInterval(60)

@@ -28,9 +28,9 @@ final class MindMapsStore {
   /// Goals whose "Create all chapter maps" is on its way.
   private(set) var creatingAll: Set<String> = []
   private(set) var createAllFailures: [String: MindMapRequestFailure] = [:]
-  /// The stop "Create all" answered with, as this device received it. A list read's stop is a fact
-  /// the page holds, so this one is shown ahead of it.
-  private(set) var createAllStops: [String: MindMapAllowanceStop] = [:]
+  /// The stop "Create all" was answered with, as this device received it. It's shown ahead of the
+  /// list's own until a list read started after it comes through; then the list's offer decides.
+  private var keptStops: [String: (stop: MindMapAllowanceStop, afterRead: Int)] = [:]
 
   init(
     api: any MindMapsAPIClient, cache: AppCache, drawingPoll: Duration = .seconds(4),
@@ -53,7 +53,7 @@ final class MindMapsStore {
 
   /// What stops a new map on the page: the one "Create all" answered with, or the list's own.
   func shownStop(goalId: String) -> MindMapAllowanceStop? {
-    createAllStops[goalId] ?? lists[goalId]?.value?.createOffer.stop
+    keptStops[goalId]?.stop ?? lists[goalId]?.value?.createOffer.stop
   }
 
   func list(goalId: String) -> Resource<GoalMindMaps> {
@@ -74,6 +74,7 @@ final class MindMapsStore {
       let read = try await api.list(token: session.bearerToken, goalId: goalId)
       self?.readCameThrough(
         started, keys: [goalId] + read.chapters.map { "\(goalId):\($0.chapterId)" })
+      self?.retireKeptStop(goalId: goalId, readStarted: started)
       self?.listed(read, goalId: goalId)
       return read
     }
@@ -207,7 +208,7 @@ final class MindMapsStore {
     creatingAll.insert(goalId)
     defer { creatingAll.remove(goalId) }
     failCreateAll(nil, goalId: goalId)
-    createAllStops[goalId] = nil
+    keptStops[goalId] = nil
 
     let api = api
     let started = await cache.mutate { identity in
@@ -216,9 +217,11 @@ final class MindMapsStore {
 
     switch started {
     case .done(let stop):
-      createAllStops[goalId] = stop
+      let reached = await Self.reread(lists[goalId])
+      // Kept through its own read, which can't yet tell that nothing started.
+      keep(stop, goalId: goalId)
 
-      if await !Self.reread(lists[goalId]) {
+      if !reached {
         failCreateAll(.unreachable, goalId: goalId)
       }
     case .failed:
@@ -444,6 +447,16 @@ final class MindMapsStore {
       if !Set(shown).isSuperset(of: group.lessonIds) {
         lessons["\(goalId):\(group.chapterId)"]?.invalidate()
       }
+    }
+  }
+
+  private func keep(_ stop: MindMapAllowanceStop?, goalId: String) {
+    keptStops[goalId] = stop.map { ($0, reads) }
+  }
+
+  private func retireKeptStop(goalId: String, readStarted: Int?) {
+    if let readStarted, let kept = keptStops[goalId], readStarted > kept.afterRead {
+      keptStops[goalId] = nil
     }
   }
 
