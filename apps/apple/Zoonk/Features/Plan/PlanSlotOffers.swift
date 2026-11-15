@@ -346,7 +346,7 @@ struct PlanCoverageSlot: View {
 
   static func found(_ time: Resource<TimeToCover>, isAsked: Bool) -> Found? {
     if let value = time.freshValue {
-      return value.ready ? .time(value) : .failed
+      return .time(value)
     }
 
     guard isAsked else {

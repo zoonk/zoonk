@@ -13,7 +13,7 @@ struct PlanTimeSection: View {
   var body: some View {
     let current = plan.schedule.shape.weekdays
     let time = store.timeToCover(goalId: goal.id)
-    let found = time.freshValue.flatMap { $0.ready ? $0 : nil }
+    let found = time.freshValue
     let marked = ScheduleTime.markedTimes(found)
 
     Section {
@@ -39,7 +39,9 @@ struct PlanTimeSection: View {
       } label: {
         Text("Time a day", tableName: "Plan", comment: "Setting: study time a day")
       }
-      .loads(plan.schedule.targetDate == nil ? [] : [time], refreshable: false)
+      .loads(
+        plan.schedule.targetDate == nil ? [] : [time], refreshable: false, retriesAFailure: true
+      )
       .announcesStatus(editor.isSaving ? nil : finish)
 
       coverage(time: time, found: found, minutes: current)
@@ -79,25 +81,37 @@ struct PlanTimeSection: View {
             .foregroundStyle(.mutedForeground)
         } else {
           let offer = ScheduleTime.offer(found: found, line: line, minutes: minutes)
+          let awaitsOffer =
+            offer == nil && !line.coversEverything
+            && [.idle, .loading].contains(time.freshState)
 
-          VStack(alignment: .leading, spacing: 8) {
-            TimeAnswer(
-              date: TimeAnswer.GoalDate(
-                isoDate: targetDate, namedMonth: plan.schedule.targetDateNamedMonth),
-              exam: goal.kind == .exam, line: line, minutes: minutes, offer: offer
-            ) {
-              Task { await time.refresh() }
-            } onUseOffer: { minutes in
-              editor.run { await setMinutes(minutes) }
-            }
+          // Short of everything, a time that covers more is offered once it's worked out. Its room,
+          // the tallest any offer's words take here, is held for the visit, so nothing under it
+          // moves when the offer comes, nor when none does.
+          HeldSlot(gated: awaitsOffer) {
+            VStack(alignment: .leading, spacing: 8) {
+              TimeAnswer(
+                date: TimeAnswer.GoalDate(
+                  isoDate: targetDate, namedMonth: plan.schedule.targetDateNamedMonth),
+                exam: goal.kind == .exam, line: line, minutes: minutes, offer: offer
+              ) {
+                Task { await time.refresh() }
+              } onUseOffer: { minutes in
+                editor.run { await setMinutes(minutes) }
+              }
 
-            // Short of everything, a time that covers more is offered once it's worked out: its
-            // line is held until then so nothing under it moves.
-            if offer == nil, !line.coversEverything, time.freshState == .loading {
-              TimeAnswer.offerLabel(ScheduleTime.Offer(kind: .everything, minutes: minutes))
+              if awaitsOffer {
+                ZStack(alignment: .topLeading) {
+                  ForEach([ScheduleTime.Offer.Kind.everything, .more, .suggested], id: \.self) {
+                    kind in
+                    TimeAnswer.offerLabel(
+                      ScheduleTime.Offer(kind: kind, minutes: longestOfferMinutes(minutes)))
+                  }
+                }
                 .typeStyle(.body.weight(.semibold))
                 .hidden()
                 .accessibilityHidden(true)
+              }
             }
           }
         }
@@ -143,6 +157,12 @@ struct PlanTimeSection: View {
           "Moves the goal's date to the day its time covers everything; the argument is a date like 'May 5'"
       )
     }
+  }
+
+  private func longestOfferMinutes(_ current: Int) -> Int {
+    (plan.schedule.dailyTimes + [current]).max {
+      planDurationText(minutes: Double($0)).count < planDurationText(minutes: Double($1)).count
+    } ?? current
   }
 
   private func setMinutes(_ minutes: Int) async {

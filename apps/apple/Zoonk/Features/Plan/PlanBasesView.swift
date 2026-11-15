@@ -139,7 +139,7 @@ struct PlanBasesView: View {
       Text("Prerequisites", tableName: "Plan", comment: "Title of the prerequisites")
     )
     .toolbarTitleDisplayMode(.inline)
-    .loads(store.basesAdvice(goalId: goal.id), refreshable: false)
+    .loads(store.basesAdvice(goalId: goal.id), refreshable: false, retriesAFailure: true)
     .onDisappear { saving?.cancel() }
     .task(
       id: PreviewKey(
@@ -200,9 +200,14 @@ struct PlanBasesView: View {
     return picked.count == 1 ? picked.first : nil
   }
 
-  /// No recommendation shows when it can't be read: the options stand without it.
   private var recommended: BaseChoice? {
-    store.basesAdvice(goalId: goal.id).value.flatMap { $0.ready ? $0.recommended : nil }
+    Self.recommended(store.basesAdvice(goalId: goal.id))
+  }
+
+  /// No recommendation shows when it can't be read for the current plan: the options stand without
+  /// it.
+  static func recommended(_ advice: Resource<PlanBasesAdvice>) -> BaseChoice? {
+    advice.freshValue?.recommended
   }
 
   private func check(_ changed: [GoalPlan.Bases.Item]) async {

@@ -102,10 +102,12 @@ final class PlanStore {
   }
 
   /// The server plans the goal with every prerequisite in depth to answer, so only the prerequisites
-  /// sheet reads it, and a reopen shows the answer it already has.
+  /// sheet reads it, and a reopen shows the answer it already has. Read `freshValue`, as for
+  /// `timeToCover`.
   func basesAdvice(goalId: String) -> Resource<PlanBasesAdvice> {
     resource(&basesAdvices, goalId) { api, token in
-      try await api.basesAdvice(token: token, goalId: goalId)
+      let advice = try await api.basesAdvice(token: token, goalId: goalId)
+      return try Self.ready(advice, advice.ready)
     }
   }
 
@@ -114,8 +116,18 @@ final class PlanStore {
   /// since the answer it had describes the plan before that change.
   func timeToCover(goalId: String) -> Resource<TimeToCover> {
     resource(&timesToCover, goalId) { api, token in
-      try await api.timeToCover(token: token, goalId: goalId)
+      let time = try await api.timeToCover(token: token, goalId: goalId)
+      return try Self.ready(time, time.ready)
     }
+  }
+
+  /// An answer the server hasn't worked out yet reads as a failure, so the next visit asks again.
+  nonisolated private static func ready<Answer>(_ answer: Answer, _ ready: Bool) throws -> Answer {
+    guard ready else {
+      throw APIError.unavailable
+    }
+
+    return answer
   }
 
   func syllabus(goalId: String) -> Resource<GoalSyllabus> {
@@ -335,6 +347,39 @@ final class PlanStore {
     }
 
     let readAt = now().addingTimeInterval(-Self.clockMargin)
-    return PlanRead(plan: try await api.plan(token: token, goalId: goalId), readAt: readAt)
+    let read = PlanRead(plan: try await api.plan(token: token, goalId: goalId), readAt: readAt)
+
+    // Changed elsewhere (another device, a rebuild, a new day) with no write here to invalidate
+    // them: an answer only the editor or the sheet looks at is read again when it's next shown.
+    if plans[goalId]?.value.map({ PlanInputs($0.plan) }) != PlanInputs(read.plan) {
+      timesToCover[goalId]?.invalidate()
+      basesAdvices[goalId]?.invalidate()
+    }
+
+    return read
+  }
+}
+
+/// What the plan's answers (time to cover, the prerequisites advice) are worked out from, the day
+/// included: the days left change them.
+private struct PlanInputs: Equatable {
+  let today: String
+  let planId: String
+  let schedule: GoalPlan.Schedule
+  let feasibility: GoalPlan.Feasibility?
+  let steering: GoalPlan.Steering
+  let areas: [GoalPlan.Area]
+  let bases: GoalPlan.Bases?
+  let examChoices: [GoalPlan.ExamChoice]
+
+  init(_ plan: GoalPlan) {
+    today = plan.today
+    planId = plan.planId
+    schedule = plan.schedule
+    feasibility = plan.feasibility
+    steering = plan.steering
+    areas = plan.areas
+    bases = plan.bases
+    examChoices = plan.examChoices
   }
 }
