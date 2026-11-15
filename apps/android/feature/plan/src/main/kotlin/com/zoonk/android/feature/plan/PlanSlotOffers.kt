@@ -319,9 +319,10 @@ internal fun FitLessonsSuggestion(slot: Slot) {
 
     PlanChangeSuggestion(SlotItem.FitLessons, title, slot) {
         CancelCheckWhenGone(slot, offer)
-        // While it checks, the card stays as it was with its Add busy: the same numbers add from there.
+        // While it checks, the card stays as it was with its Add busy: the same numbers add from there. In the room a
+        // check's answer takes, so its buttons stay put when the answer is a failure.
         if (preview == PlanPreviewState.Idle || checking) {
-            PlanEffectDiff(offer.effect, dateKind = page.dateKind, said = EffectSaid.LessonsAdded)
+            EffectRoom { PlanEffectDiff(offer.effect, dateKind = page.dateKind, said = EffectSaid.LessonsAdded) }
             SuggestionActions {
                 SuggestionAction(
                     onClick = add,

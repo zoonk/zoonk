@@ -165,13 +165,13 @@ internal fun CheckingChange(onCancel: () -> Unit) {
  * a check's note and its answer both take, so the actions under them stay put.
  */
 @Composable
-private fun EffectRoom(content: @Composable () -> Unit) {
+internal fun EffectRoom(content: @Composable () -> Unit) {
     val line =
         with(LocalDensity.current) {
             MaterialTheme.typography.bodyMedium.lineHeight
                 .toDp()
         }
-    Column(Modifier.heightIn(min = line * 2 + 4.dp + 48.dp)) { content() }
+    Column(Modifier.heightIn(min = line * 2 + 6.dp + 48.dp)) { content() }
 }
 
 @Composable

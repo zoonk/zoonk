@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -52,6 +51,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -173,16 +173,21 @@ fun SuggestionOpen(text: String = stringResource(R.string.suggestion_view)) {
 fun SuggestionHeader(text: String) {
     val sheet = LocalPresentation.current == Presentation.Sheet
     val frame = LocalFrame.current
-    Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
-        Mark(if (sheet) SHEET_MARK else PANEL_MARK)
+    val style = if (sheet) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleSmall
+    val mark = (if (sheet) SHEET_MARK else PANEL_MARK) * glyphScale()
+    val line = lineHeight(style)
+    // On the title's first line, however it wraps; a mark taller than the line centers the line on itself.
+    Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
+        OnFirstLine(maxOf(line, mark)) { Mark(if (sheet) SHEET_MARK else PANEL_MARK) }
         Text(
             text = text,
             modifier =
                 Modifier
                     .focusRequester(if (sheet) frame.sheetFocus else frame.focus)
                     .focusable()
-                    .semantics { heading() },
-            style = if (sheet) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleSmall,
+                    .semantics { heading() }
+                    .padding(top = (mark - line).coerceAtLeast(0.dp) / 2),
+            style = style.copy(lineBreak = LineBreak.Heading),
         )
     }
 }
@@ -226,7 +231,7 @@ fun SuggestionActions(content: @Composable () -> Unit) {
     if (LocalPresentation.current == Presentation.Sheet) {
         Column(Modifier.fillMaxWidth().padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { content() }
     } else {
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { content() }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { content() }
     }
 }
 
@@ -300,7 +305,7 @@ private fun SuggestionLine(
     Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large, border = frameBorder()) {
         CompositionLocalProvider(LocalPresentation provides Presentation.Line) {
             Row(
-                modifier = Modifier.heightIn(min = 56.dp).padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+                modifier = Modifier.heightIn(min = 56.dp).padding(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -320,7 +325,7 @@ private fun SuggestionLine(
                                         else -> Modifier
                                     },
                                 ),
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyMedium.copy(lineBreak = LineBreak.Heading),
                         fontWeight = if (answered) FontWeight.Medium else null,
                         color =
                             when {
@@ -411,6 +416,9 @@ private val PANEL_MARK = 18.dp
 private const val FULL_SUMMARY_FONT_SCALE = 1.3f
 private val SHEET_MARK = 24.dp
 
+/** The quiet disclosure's gap from its words to its chevron's ink. */
+private val MENU_CHEVRON_GAP = 8.dp
+
 /** Main's `SuggestionMenu`: "Other options", a quiet button for a suggestion's other ways on; each [SuggestionMenuItem] closes it with done before acting. */
 @Composable
 fun SuggestionMenu(options: @Composable (done: () -> Unit) -> Unit) {
@@ -423,12 +431,11 @@ fun SuggestionMenu(options: @Composable (done: () -> Unit) -> Unit) {
             secondary = true,
         ) {
             Text(stringResource(R.string.suggestion_other_options))
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Spacer(Modifier.size(MENU_CHEVRON_GAP))
             Icon(
-                painterResource(R.drawable.ic_expand_more),
+                painterResource(R.drawable.ic_row_fold),
                 contentDescription = null,
-                modifier =
-                    Modifier.size(ButtonDefaults.IconSize * glyphScale()),
+                modifier = Modifier.size(width = 8.dp * glyphScale(), height = 16.dp * glyphScale()),
             )
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) { options { open = false } }
