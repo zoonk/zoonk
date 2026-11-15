@@ -149,3 +149,23 @@ export function getAxisDatedPhases({
       .map((entry) => entry.index),
   );
 }
+
+/**
+ * The goal's date under the axis. On the learner's today, while a phase is under way, "Today"
+ * already marks that day there, so the axis doesn't date it again; the list and the finish row
+ * still name it.
+ */
+export function getAxisFinish({
+  goalKind,
+  plan,
+  today,
+}: {
+  goalKind: GoalKind;
+  plan: DatedPlan;
+  today: string;
+}): PlanDate | null {
+  const finish = getRoadmapFinish({ goalKind, plan });
+  const underWay = getRoadmapPhases(plan.phases).some((phase) => phase.state === "current");
+
+  return finish?.isoDate === today && underWay ? null : finish;
+}

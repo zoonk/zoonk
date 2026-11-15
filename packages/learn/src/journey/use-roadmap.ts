@@ -8,6 +8,7 @@ import { usePhaseName } from "../plan/use-phase-name";
 import {
   type PlanDate,
   getAxisDatedPhases,
+  getAxisFinish,
   getRoadmapFinish,
   getRoadmapPhases,
 } from "./phase-dates";
@@ -33,6 +34,12 @@ export function useRoadmapPhases() {
 export function useRoadmapFinish(): PlanDate | null {
   const { goal, plan } = usePlanScreen();
   return getRoadmapFinish({ goalKind: goal.kind, plan });
+}
+
+/** The goal's date under the timeline's axis (`getAxisFinish`). */
+export function useAxisFinish(): PlanDate | null {
+  const { goal, plan, today } = usePlanScreen();
+  return getAxisFinish({ goalKind: goal.kind, plan, today });
 }
 
 /** The phases whose end the timeline's axis dates (`getAxisDatedPhases`). */

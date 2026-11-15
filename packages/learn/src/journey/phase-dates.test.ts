@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { getAxisDatedPhases, getPhaseEnd, getRoadmapFinish, getRoadmapPhases } from "./phase-dates";
+import {
+  getAxisDatedPhases,
+  getAxisFinish,
+  getPhaseEnd,
+  getRoadmapFinish,
+  getRoadmapPhases,
+} from "./phase-dates";
 
 type Phase = Parameters<typeof getPhaseEnd>[0]["phase"];
 type Plan = Parameters<typeof getPhaseEnd>[0]["plan"];
@@ -286,5 +292,42 @@ describe(getAxisDatedPhases, () => {
   it("dates nothing while no phase is under way", () => {
     const shaped = threePhases(["2026-11-20", "2026-12-01", "2026-12-10"], ["upcoming"]);
     expect(axis(shaped)).toStrictEqual([]);
+  });
+});
+
+describe(getAxisFinish, () => {
+  // The reviewer's plan: the last phase under way ends today, the goal's day.
+  const endsToday = plan(
+    [
+      phase(0, { endDate: "2026-11-10", state: "done" }),
+      phase(1, { endDate: TODAY, state: "current" }),
+    ],
+    { schedule: { targetDate: TODAY, targetDateEstimated: false, targetDateNamedMonth: false } },
+  );
+
+  it("leaves the goal's day to Today when it's the learner's today", () => {
+    expect(getAxisFinish({ goalKind: "learn", plan: endsToday, today: TODAY })).toBeNull();
+  });
+
+  it("still names the goal's day and the phase's end everywhere else", () => {
+    const finish = getRoadmapFinish({ goalKind: "learn", plan: endsToday });
+    const end = getPhaseEnd({ phase: endsToday.phases[1] ?? phase(1), plan: endsToday });
+    expect(finish).toStrictEqual({ estimate: false, isoDate: TODAY, month: false });
+    expect(end).toStrictEqual({ estimate: false, isoDate: TODAY, month: false });
+  });
+
+  it("dates the goal's day when it's another day", () => {
+    const later = getAxisFinish({ goalKind: "learn", plan: endsToday, today: "2026-11-14" });
+    expect(later).toStrictEqual({ estimate: false, isoDate: TODAY, month: false });
+  });
+
+  it("dates the goal's day while no phase is under way, with no Today to say it", () => {
+    const notStarted = plan([phase(0, { endDate: TODAY })], {
+      schedule: { targetDate: TODAY, targetDateEstimated: false, targetDateNamedMonth: false },
+    });
+
+    expect(getAxisFinish({ goalKind: "learn", plan: notStarted, today: TODAY })).toMatchObject({
+      isoDate: TODAY,
+    });
   });
 });

@@ -17,7 +17,7 @@ import {
   BAND_SIZER_CLASS,
   getPointSide,
 } from "./roadmap-styles";
-import { useRoadmapFinish, useRoadmapOverrun } from "./use-roadmap";
+import { useAxisFinish, useRoadmapFinish, useRoadmapOverrun } from "./use-roadmap";
 
 const PERCENT = 100;
 
@@ -139,7 +139,7 @@ export function EndDateSizer() {
 }
 
 function EndLabel({ after, phase }: { after: boolean; phase: PlanPhaseView }) {
-  const finish = useRoadmapFinish();
+  const finish = useAxisFinish();
   const overrun = useRoadmapOverrun();
 
   if (overrun) {
@@ -176,7 +176,8 @@ export function PhaseAxis({
 }) {
   const t = useExtracted();
   const overrun = useRoadmapOverrun();
-  const goalShare = overrun?.phaseIndex === phase.index ? overrun.share : null;
+  const axisFinish = useAxisFinish();
+  const goalShare = overrun?.phaseIndex === phase.index && axisFinish ? overrun.share : null;
   const goalSide = goalShare === null ? null : getPointSide(goalShare);
 
   const todayLabelled = todayShare !== null && goalShare === null;
