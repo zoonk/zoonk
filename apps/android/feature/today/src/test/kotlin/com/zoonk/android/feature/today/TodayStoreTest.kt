@@ -64,6 +64,22 @@ class TodayStoreTest {
         }
     }
 
+    @Test
+    fun automaticPlanChangesDoNotAskForADecisionOnToday() =
+        runTest {
+            val today = decodeFixture<Today>("today").copy(notice = Today.Notice.PLAN_CHANGE)
+            val shown = read(api { today }, ana, "UTC") as TodayRead.Day
+            assertNull(shown.today.notice)
+        }
+
+    @Test
+    fun aNoticeThatNeedsADecisionStillShowsOnToday() =
+        runTest {
+            val today = decodeFixture<Today>("today").copy(notice = Today.Notice.EXAM_CHOICE)
+            val shown = read(api { today }, ana, "UTC") as TodayRead.Day
+            assertEquals(Today.Notice.EXAM_CHOICE, shown.today.notice)
+        }
+
     private fun api(answer: suspend () -> Today) =
         object : TodayApi {
             override suspend fun today(

@@ -21,7 +21,7 @@ class DroppedCallTest {
         assertEquals(DroppedCall(DroppedReason.CallsPaused, DroppedRetry.CallAgain), reconnect(LiveCallFailure.CallsPaused))
         assertEquals(DroppedCall(DroppedReason.CallInProgress, DroppedRetry.Takeover), reconnect(LiveCallFailure.CallInProgress))
         assertEquals(DroppedCall(DroppedReason.Limit, retry = null), reconnect(LiveCallFailure.Limit))
-        assertEquals(DroppedCall(DroppedReason.PlusRequired, retry = null), reconnect(LiveCallFailure.PlusRequired))
+        assertNull(reconnect(LiveCallFailure.PlusRequired))
         assertEquals(DroppedCall(DroppedReason.Ended, retry = null), reconnect(LiveCallFailure.Ended))
     }
 

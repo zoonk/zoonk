@@ -23,6 +23,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.PickedFile
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.android.feature.onboarding.canAttachMaterial
 import com.zoonk.android.feature.onboarding.goalLimitReason
 import com.zoonk.android.feature.onboarding.startError
 import com.zoonk.api.models.GoalCreateInput
@@ -193,7 +194,7 @@ class StartGoalViewModel(
 
     fun toggleAttach() {
         isAttachOpen = !isAttachOpen
-        attachFailed.clear()
+        if (canAttach) attachFailed.clear()
     }
 
     fun removeAttached(id: String) = update { it.copy(attached = it.attached.filterNot { source -> source.id == id }) }
@@ -226,8 +227,10 @@ class StartGoalViewModel(
         }
     }
 
+    val canAttach: Boolean get() = !isAttaching && attachFailure.canAttachMaterial(java.time.Instant.now())
+
     private fun attach(add: suspend () -> WriteOutcome<AttachedSource>) {
-        if (isAttaching) return
+        if (!canAttach) return
         isAttaching = true
         attachFailed.clear()
         val started = visit.number
