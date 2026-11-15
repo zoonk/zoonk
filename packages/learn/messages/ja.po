@@ -210,7 +210,10 @@ msgstr "今日"
 #: src/_components/create-account-link.tsx
 #: src/_components/subscribe-gate.tsx
 #: src/language/unit/practice-conversation.tsx
+#: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
+#: src/onboarding/save-plan-note.tsx
+#: src/reminders/reminders-screen.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
 msgstr "無料アカウントを作成する"
@@ -1299,18 +1302,6 @@ msgstr "手に入れたメガネから選んでください。"
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "MhhJ4B"
-msgid "Speak {language} for a job interview"
-msgstr "就職面接で{language}を話す"
-
-#: src/buddies/buddy-goal-start.tsx
-#: src/onboarding/entry/goal-examples.tsx
-msgctxt "Zqp_hg"
-msgid "Understand quantum physics"
-msgstr "量子物理学を理解する"
-
-#: src/buddies/buddy-goal-start.tsx
-#: src/onboarding/entry/goal-examples.tsx
 msgctxt "3GLH-d"
 msgid "Examples"
 msgstr "例"
@@ -1325,16 +1316,6 @@ msgstr "こんにちは！学習の相棒としてお手伝いするAIの{name}�
 msgctxt "ijwVvk"
 msgid "Earlier questions"
 msgstr "以前の質問"
-
-#: src/buddies/buddy-goal-start.tsx
-msgctxt "BUxbAO"
-msgid "Your goal"
-msgstr "目標"
-
-#: src/buddies/buddy-goal-start.tsx
-msgctxt "u94YzK"
-msgid "What you want to learn"
-msgstr "学びたいこと"
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-entry.tsx
@@ -8774,15 +8755,6 @@ msgid "Create a free account to add a PDF, a photo of your notes or any text to 
 msgstr "無料アカウントを作成すると、PDFやノートの写真、テキストを目標に追加できます。"
 
 #: src/onboarding/entry/attach-panel.tsx
-#: src/onboarding/entry/goal-outcomes.tsx
-#: src/onboarding/save-plan-note.tsx
-#: src/reminders/reminder-offer.tsx
-#: src/reminders/reminders-screen.tsx
-msgctxt "0vL5u1"
-msgid "Create an account"
-msgstr "アカウントを作成する"
-
-#: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-attachments.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "Uby0eW"
@@ -8851,6 +8823,17 @@ msgctxt "B7hTRC"
 msgid "Added to your material: {title}"
 msgstr "資料に追加しました：{title}"
 
+#: src/onboarding/entry/goal-box.tsx
+msgctxt "lnZvgd"
+msgid "I want to"
+msgstr "やりたいこと"
+
+#. Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.
+#: src/onboarding/entry/goal-box.tsx
+msgctxt "MBg8CD"
+msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
+msgstr "{exam, select, abitur {Abiturに合格する、{language}を話せるようになる…} bac {bacに合格する、{language}を話せるようになる…} enem {ENEMに合格する、{language}を話せるようになる…} exani {EXANI-IIに合格する、{language}を話せるようになる…} kyotsu {共通テストでいい点を取る、{language}を話せるようになる…} matura {maturaに合格する、{language}を話せるようになる…} maturita {maturitàに合格する、{language}を話せるようになる…} suneung {수능でいい点を取る、{language}を話せるようになる…} yks {YKSでいい点を取る、{language}を話せるようになる…} other {SATに合格する、{language}を話せるようになる…}}"
+
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "ng8fsM"
 msgid "Start a goal"
@@ -8873,26 +8856,25 @@ msgctxt "oOAMKL"
 msgid "Tell us in your own words. We'll build the plan."
 msgstr "自分の言葉で教えてください。学習計画を作成します。"
 
-#: src/onboarding/entry/goal-entry.tsx
-msgctxt "lnZvgd"
-msgid "I want to"
-msgstr "やりたいこと"
-
-#. Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.
-#: src/onboarding/entry/goal-entry.tsx
-msgctxt "MBg8CD"
-msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
-msgstr "{exam, select, abitur {Abiturに合格する、{language}を話せるようになる…} bac {bacに合格する、{language}を話せるようになる…} enem {ENEMに合格する、{language}を話せるようになる…} exani {EXANI-IIに合格する、{language}を話せるようになる…} kyotsu {共通テストでいい点を取る、{language}を話せるようになる…} matura {maturaに合格する、{language}を話せるようになる…} maturita {maturitàに合格する、{language}を話せるようになる…} suneung {수능でいい点を取る、{language}を話せるようになる…} yks {YKSでいい点を取る、{language}を話せるようになる…} other {SATに合格する、{language}を話せるようになる…}}"
-
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
 msgstr "試験"
 
 #: src/onboarding/entry/goal-examples.tsx
+msgctxt "MhhJ4B"
+msgid "Speak {language} for a job interview"
+msgstr "就職面接で{language}を話す"
+
+#: src/onboarding/entry/goal-examples.tsx
 msgctxt "UdtpV7"
 msgid "Topic"
 msgstr "トピック"
+
+#: src/onboarding/entry/goal-examples.tsx
+msgctxt "Zqp_hg"
+msgid "Understand quantum physics"
+msgstr "量子物理学を理解する"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "79lLl-"
@@ -9581,15 +9563,16 @@ msgctxt "zCKNAZ"
 msgid "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two."
 msgstr "最初に学ぶ内容を選び、毎日の予定に合わせて調整しています。新しい科目の場合は1〜2分かかることがあります。"
 
-#: src/onboarding/steps/plan-start-notice.tsx
-msgctxt "rXkqB0"
-msgid "Your plan didn't start"
-msgstr "学習計画の作成を始められませんでした"
-
+#: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "学習計画の作成が途中で止まりました"
+
+#: src/onboarding/steps/plan-start-notice.tsx
+msgctxt "rXkqB0"
+msgid "Your plan didn't start"
+msgstr "学習計画の作成を始められませんでした"
 
 #: src/onboarding/steps/plan-wait.tsx
 #: src/today/today-action.tsx

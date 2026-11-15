@@ -21,7 +21,6 @@ msgstr "Zaloguj się"
 
 #: src/app/[lang]/(app)/(catalog)/_components/account-dropdown-item.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-account-button.tsx
-#: src/components/auth-gate.tsx
 msgctxt "0vL5u1"
 msgid "Create an account"
 msgstr "Utwórz konto"
@@ -743,6 +742,12 @@ msgid "Online courses with a study plan for each day"
 msgstr "Kursy online z planem nauki na każdy dzień"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "bzSrZ6"
+msgid "Level {level}"
+msgstr "Poziom {level}"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
 msgctxt "yAw6p8"
 msgid "{belt}, level {level}. Statistics"
 msgstr "{belt}, poziom {level}. Statystyki"
@@ -784,11 +789,6 @@ msgstr "Menu"
 msgctxt "vj_mVz"
 msgid "{belt}, level {level}"
 msgstr "{belt}, poziom {level}"
-
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-msgctxt "bzSrZ6"
-msgid "Level {level}"
-msgstr "Poziom {level}"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "zF7Cth"
@@ -923,6 +923,21 @@ msgctxt "R6T7P_"
 msgid "What you'll study each day until your goal, and what it covers."
 msgstr "Czego będziesz się uczyć każdego dnia aż do osiągnięcia celu i co obejmuje twój plan."
 
+#: src/app/[lang]/(app)/(learn)/plan/plan-goal-start.tsx
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+#: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
+#: src/components/auth-gate.tsx
+#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/plus-pricing.tsx
+#: src/components/public/goal-form.tsx
+#: src/components/public/public-start-bar.tsx
+#: src/components/public/public-visitor-actions.tsx
+#: src/components/public/start-plan-link.tsx
+#: src/components/public/visitor-start.tsx
+msgctxt "UTU-oM"
+msgid "Build my plan"
+msgstr "Ułóż mój plan"
+
 #: src/app/[lang]/(app)/(learn)/plan/plan-skeleton.tsx
 msgctxt "wRaHK-"
 msgid "Your plan at a glance"
@@ -1053,20 +1068,6 @@ msgstr "Ile już wiesz?"
 msgctxt "C1D9a4"
 msgid "Your plan follows this course, in the time you have each day."
 msgstr "Twój plan obejmuje ten kurs i jest dopasowany do czasu, który masz każdego dnia."
-
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
-#: src/components/auth-gate.tsx
-#: src/components/pricing/free-plan.tsx
-#: src/components/pricing/plus-pricing.tsx
-#: src/components/public/goal-form.tsx
-#: src/components/public/public-start-bar.tsx
-#: src/components/public/public-visitor-actions.tsx
-#: src/components/public/start-plan-link.tsx
-#: src/components/public/visitor-start.tsx
-msgctxt "UTU-oM"
-msgid "Build my plan"
-msgstr "Ułóż mój plan"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "54WyfN"
@@ -1306,11 +1307,6 @@ msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "To, co Zoonk pamięta, by dopasować przykłady i plany do twojego życia."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
-msgctxt "OR6zpA"
-msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
-msgstr "Nie udało się usunąć twojego konta. Spróbuj ponownie lub napisz na hello@zoonk.com."
-
-#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "95pnlV"
 msgid "Your account"
 msgstr "Twoje konto"
@@ -1334,6 +1330,11 @@ msgstr "Usunąć konto?"
 msgctxt "yF2UF2"
 msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
 msgstr "Twoje cele, plany, postępy, zapamiętane informacje i przesłane pliki zostaną usunięte na zawsze. Nie można tego cofnąć."
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "OR6zpA"
+msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
+msgstr "Nie udało się usunąć twojego konta. Spróbuj ponownie lub napisz na hello@zoonk.com."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "Sk9SL5"
@@ -2725,11 +2726,6 @@ msgctxt "3aNmDX"
 msgid "How much time a day?"
 msgstr "Ile czasu dziennie?"
 
-#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "W97xmd"
-msgid "You can't start another goal right now. Finish or pause one first."
-msgstr "Nie możesz teraz zacząć pracy nad kolejnym celem. Najpierw zrealizuj jeden z obecnych lub go wstrzymaj."
-
 #: src/app/[lang]/privacy/page.tsx
 msgctxt "afKQHy"
 msgid "Read Zoonk's privacy policy to understand how we use and protect your personal information."
@@ -2751,11 +2747,6 @@ msgid "Email reminders"
 msgstr "Przypomnienia mailowe"
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
-msgctxt "DekliR"
-msgid "Manage reminders"
-msgstr "Zarządzaj przypomnieniami"
-
-#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
 msgctxt "22mt47"
 msgid "Email reminders are off"
 msgstr "Przypomnienia mailowe są wyłączone"
@@ -2766,14 +2757,19 @@ msgid "This link is no longer active"
 msgstr "Ten link nie jest już aktywny"
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "DekliR"
+msgid "Manage reminders"
+msgstr "Zarządzaj przypomnieniami"
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
 msgctxt "DxPDlc"
 msgid "That didn't save. Try again."
 msgstr "Nie udało się zapisać. Spróbuj ponownie."
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
-msgctxt "c5ajtI"
-msgid "Turn off email reminders?"
-msgstr "Wyłączyć przypomnienia mailowe?"
+msgctxt "YvVUvF"
+msgid "Turn off email reminders"
+msgstr "Wyłącz przypomnienia e-mail"
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
 msgctxt "XZ-Fx6"
@@ -2870,6 +2866,13 @@ msgstr "Wylogowano cię"
 msgctxt "acWSVG"
 msgid "Log in to continue"
 msgstr "Zaloguj się, aby kontynuować"
+
+#: src/components/auth-gate.tsx
+#: src/components/pricing/free-plan.tsx
+#: src/components/public/course-start-failure.tsx
+msgctxt "d82w2J"
+msgid "Create a free account"
+msgstr "Utwórz bezpłatne konto"
 
 #: src/components/catalog/catalog-back-to-top.tsx
 msgctxt "Gs9Kfp"
@@ -3015,12 +3018,6 @@ msgstr "Dziękujemy. Właśnie go czytamy, a twój plan zaktualizuje się za kil
 msgctxt "p4N05H"
 msgid "Upload"
 msgstr "Prześlij"
-
-#: src/components/pricing/free-plan.tsx
-#: src/components/public/course-start-failure.tsx
-msgctxt "d82w2J"
-msgid "Create a free account"
-msgstr "Utwórz bezpłatne konto"
 
 #. On the Free card, in the button's place, for a learner who doesn't have Plus: it tells them this card is what they have today. Don't call it a “plan” or use your language's word for the learner's study plan.
 #: src/components/pricing/free-plan.tsx

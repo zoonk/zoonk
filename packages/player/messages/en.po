@@ -2918,7 +2918,7 @@ msgid "Back"
 msgstr "Back"
 
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/questions/lesson-question-thread.tsx
+#: src/questions/lesson-question-panel.tsx
 #: src/questions/tutor-conversation.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -2939,6 +2939,11 @@ msgstr "We couldn't open this lesson"
 msgctxt "odXlk8"
 msgid "Log in"
 msgstr "Log in"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "EdX_cR"
+msgid "The link may be old or mistyped."
+msgstr "The link may be old or mistyped."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "bBaQAY"
@@ -3801,10 +3806,9 @@ msgid "{name} is an AI study buddy and can make mistakes."
 msgstr "{name} is an AI study buddy and can make mistakes."
 
 #: src/questions/lesson-question-thread.tsx
-#: src/questions/tutor-dock.tsx
-msgctxt "OK6Mb4"
-msgid "Create a free account to ask questions"
-msgstr "Create a free account to ask questions"
+msgctxt "8vWw5H"
+msgid "This needs a free account"
+msgstr "This needs a free account"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"
@@ -3911,6 +3915,11 @@ msgstr "Ask {name} about this question"
 msgctxt "_Kuebo"
 msgid "Ask {name} about this screen"
 msgstr "Ask {name} about this screen"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "OK6Mb4"
+msgid "Create a free account to ask questions"
+msgstr "Create a free account to ask questions"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "LxqaIF"

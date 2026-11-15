@@ -2918,7 +2918,7 @@ msgid "Back"
 msgstr "Wróć"
 
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/questions/lesson-question-thread.tsx
+#: src/questions/lesson-question-panel.tsx
 #: src/questions/tutor-conversation.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -2939,6 +2939,11 @@ msgstr "Nie udało nam się otworzyć tej lekcji"
 msgctxt "odXlk8"
 msgid "Log in"
 msgstr "Zaloguj się"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "EdX_cR"
+msgid "The link may be old or mistyped."
+msgstr "Link może być nieaktualny lub zawierać literówkę."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "bBaQAY"
@@ -3801,10 +3806,9 @@ msgid "{name} is an AI study buddy and can make mistakes."
 msgstr "{name} to kumpel do nauki z AI i może popełniać błędy."
 
 #: src/questions/lesson-question-thread.tsx
-#: src/questions/tutor-dock.tsx
-msgctxt "OK6Mb4"
-msgid "Create a free account to ask questions"
-msgstr "Załóż bezpłatne konto, aby zadawać pytania"
+msgctxt "8vWw5H"
+msgid "This needs a free account"
+msgstr "Potrzebujesz bezpłatnego konta"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"
@@ -3911,6 +3915,11 @@ msgstr "Zapytaj o to pytanie. Odpowie {name}"
 msgctxt "_Kuebo"
 msgid "Ask {name} about this screen"
 msgstr "Zapytaj o ten ekran. Odpowie {name}"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "OK6Mb4"
+msgid "Create a free account to ask questions"
+msgstr "Załóż bezpłatne konto, aby zadawać pytania"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "LxqaIF"

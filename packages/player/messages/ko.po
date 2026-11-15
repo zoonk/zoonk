@@ -2918,7 +2918,7 @@ msgid "Back"
 msgstr "뒤로"
 
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/questions/lesson-question-thread.tsx
+#: src/questions/lesson-question-panel.tsx
 #: src/questions/tutor-conversation.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -2939,6 +2939,11 @@ msgstr "이 레슨을 열지 못했어요"
 msgctxt "odXlk8"
 msgid "Log in"
 msgstr "로그인"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "EdX_cR"
+msgid "The link may be old or mistyped."
+msgstr "오래된 링크이거나 주소가 잘못 입력되었을 수 있어요."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "bBaQAY"
@@ -3801,10 +3806,9 @@ msgid "{name} is an AI study buddy and can make mistakes."
 msgstr "AI 공부 짝꿍 {name}도 실수할 수 있어요."
 
 #: src/questions/lesson-question-thread.tsx
-#: src/questions/tutor-dock.tsx
-msgctxt "OK6Mb4"
-msgid "Create a free account to ask questions"
-msgstr "무료 계정 만들고 질문하기"
+msgctxt "8vWw5H"
+msgid "This needs a free account"
+msgstr "무료 계정이 필요해요"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"
@@ -3911,6 +3915,11 @@ msgstr "{name}에게 이 문제에 대해 물어보기"
 msgctxt "_Kuebo"
 msgid "Ask {name} about this screen"
 msgstr "{name}에게 이 화면에 대해 물어보기"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "OK6Mb4"
+msgid "Create a free account to ask questions"
+msgstr "무료 계정 만들고 질문하기"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "LxqaIF"
