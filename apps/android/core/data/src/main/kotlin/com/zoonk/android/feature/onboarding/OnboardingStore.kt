@@ -19,6 +19,7 @@ import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.received
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CreateUploadRequest
 import com.zoonk.api.models.CreateUploadRequestOneOf
@@ -63,6 +64,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
 import java.net.URI
 import java.net.URISyntaxException
+import java.time.Clock
 import java.time.Instant
 import java.util.TimeZone
 import java.util.UUID
@@ -121,6 +123,8 @@ class OnboardingStore(
     private val api: OnboardingApi,
     private val cache: AppCache,
     private val sessions: SessionSource,
+    /** When a refusal arrives, as [Limit.Reached.received] reads it. */
+    private val clock: Clock = Clock.systemUTC(),
     private val startGuest: suspend () -> SignInResult,
 ) {
     /**
@@ -448,7 +452,7 @@ class OnboardingStore(
                 try {
                     WriteOutcome.Done(write(session))
                 } catch (e: ApiException) {
-                    WriteOutcome.Refused(e.refusal() ?: throw e)
+                    WriteOutcome.Refused(e.refusal(clock.instant()) ?: throw e)
                 }
             }
         return when (result) {
@@ -557,6 +561,16 @@ data class UsageLimit(
                 LimitPeriod.entries.firstOrNull { it.name.equals(period, ignoreCase = true) },
                 availableAt?.let { runCatching { Instant.parse(it) }.getOrNull() },
             )
+
+    /** As this device received it: [Limit.Reached.received]. */
+    fun received(now: Instant): UsageLimit =
+        if (reached.received(now).availableAt ==
+            null
+        ) {
+            copy(availableAt = null)
+        } else {
+            this
+        }
 }
 
 @Serializable
@@ -565,16 +579,43 @@ private class LimitDetails(
 )
 
 /** Usage limits nest the limit under `details.limit`; goal limits send it as `details`; any other 429 asks to slow down. */
-internal fun ApiException.refusal(): Refusal? =
+internal fun ApiException.refusal(receivedAt: Instant): Refusal? =
     when (code) {
-        "SIGN_UP_REQUIRED", "ACCOUNT_REQUIRED" -> Refusal.SignUpRequired
-        "SLOW_DOWN", "RATE_LIMIT_EXCEEDED" -> Refusal.SlowDown
-        "UNPROCESSABLE_ENTITY" -> Refusal.Unsupported
-        "UPLOAD_ALREADY_READ" -> Refusal.AlreadyRead
-        "USAGE_LIMIT_REACHED" -> details?.decode<LimitDetails>()?.limit?.let(Refusal::Limit)
-        "GOAL_LIMIT_REACHED" -> details?.decode<UsageLimit>()?.let(Refusal::Limit)
-        "DAY_TOO_SHORT" -> details?.decode<Refusal.DayTooShort>()
-        else -> Refusal.SlowDown.takeIf { status == TOO_MANY_REQUESTS }
+        "SIGN_UP_REQUIRED", "ACCOUNT_REQUIRED" -> {
+            Refusal.SignUpRequired
+        }
+
+        "SLOW_DOWN", "RATE_LIMIT_EXCEEDED" -> {
+            Refusal.SlowDown
+        }
+
+        "UNPROCESSABLE_ENTITY" -> {
+            Refusal.Unsupported
+        }
+
+        "UPLOAD_ALREADY_READ" -> {
+            Refusal.AlreadyRead
+        }
+
+        "USAGE_LIMIT_REACHED" -> {
+            details
+                ?.decode<LimitDetails>()
+                ?.limit
+                ?.received(receivedAt)
+                ?.let(Refusal::Limit)
+        }
+
+        "GOAL_LIMIT_REACHED" -> {
+            details?.decode<UsageLimit>()?.received(receivedAt)?.let(Refusal::Limit)
+        }
+
+        "DAY_TOO_SHORT" -> {
+            details?.decode<Refusal.DayTooShort>()
+        }
+
+        else -> {
+            Refusal.SlowDown.takeIf { status == TOO_MANY_REQUESTS }
+        }
     }
 
 private const val TOO_MANY_REQUESTS = 429

@@ -8,14 +8,12 @@
   "subscription_already_plus_website": "8cd0a46fa31bff3a8c7bfe30bb59a603b85f2d1dd7b6ce022d62633e1010519a",
   "subscription_answer_cancel": "f6f297bddd39ec4385de726ff0c40ae2589c58c6adb10a0175de66dd3a03198a",
   "subscription_answer_fair_use": "491ea654357621d1d304a0bac96dc5cb1c1aaf06603b8f645a5a86c211039640",
-  "subscription_answer_free_buddy": "c94fd813ad1bf382291701867a97c849c3659ef66c7afa283be53c21e4776752",
-  "subscription_answer_free_buddy_uploads": "ccdaf7bc33af28366f46c4db253a234ae6bd1939533a606f96d99cd05826145d",
   "subscription_answer_free_calls": "0b47b2552a1ce773facac45a10591e28108818109772a401a39c80cfd5fb2ec5",
   "subscription_answer_free_goals": "febdd784b0d1d3b36309fa10cbcaca53219bbbd5ff2d6f252d9364fbeaf12928",
   "subscription_answer_free_guest_lead": "8ec24bcdfe93710f70a856d27e99c51f907ed4dd267e029a69be271b325a532e",
   "subscription_answer_free_lead": "f20564b0ff8c8af398d0a6d52a81ecf7d0f1c5109d1e3507ddec2074a40b3a04",
   "subscription_answer_free_lessons": "e37aaa503502bdd91ca0a33d65c185ef276be33bb9278da53526fe41826b47a1",
-  "subscription_answer_free_uploads": "8ac12b9893c6772af5d91e4e7030a8c0d9051d6ef08e77de84f297e895b92284",
+  "subscription_answer_free_material": "133300fae2a62da0a1831036867b0f9314d914132e624c2486710b41d1486c86",
   "subscription_answer_refund": "b707676bc39338154dea938882340dd611b747a64496f56d7479d25f23327ee3",
   "subscription_answer_unlimited": "35150ebae58b18f6f7c0e3fe24a760a6d373d1b2fa16b56b2ffecf215db52b15",
   "subscription_benefit_buddy": "e0508362a1b5b3e7bc13d6e098853079e1748b4773ed4dc9841959073113deca",
@@ -42,6 +40,7 @@
   "subscription_ends_on": "49fb6308ca748df2ab67e487c35bf25188ec2d9b6b6fd599dafac5ce107f9dad",
   "subscription_free": "8f059e3c68f5e778ad0b39582eeeb22851991fdba71e018d5a61d621efd80517",
   "subscription_free_buddy": "0f15fe6016861dbc1b1e1e953e7e45094b1a44fc10f1596c732ce0b0c5ce8337",
+  "subscription_free_buddy_monthly": "8f364ccaf64a0dc30af528beffb9e657703512445bfcdc9a81f9853e016d4b3b",
   "subscription_free_calls": "feabb63c17939e6707e833cebb081c77e2d1228062df78e652ff50efbdbaf552",
   "subscription_free_goals": "2c0bee87e269da8609a9c257a1d846e4ec5757275343dc4e3dc31139f5420624",
   "subscription_free_lessons_a_month": "7a99d147af021c7221aca71dea77a667bec1095c404f15b0204b0f8ed528b968",
@@ -187,14 +186,6 @@
     <plurals name="subscription_answer_free_lessons">
         <item quantity="other">試験対策を含むすべての目標で、月に合計%dレッスン</item>
     </plurals>
-    <!-- %1$s is the buddy messages ("10 messages"), %2$s the uploads ("3 uploads"). -->
-    <string name="subscription_answer_free_buddy_uploads">学習の相棒となるAI：1日%1$sと%2$s</string>
-    <plurals name="subscription_answer_free_buddy">
-        <item quantity="other">%d通のメッセージ</item>
-    </plurals>
-    <plurals name="subscription_answer_free_uploads">
-        <item quantity="other">%d回のアップロード</item>
-    </plurals>
     <string name="subscription_answer_free_calls">会話でのスピーキング練習はPlusより回数が少なくなります（試験のスピーキングタスクはPlusで利用できます）</string>
     <string name="subscription_question_unlimited">Plusは本当に無制限ですか？</string>
     <string name="subscription_answer_unlimited">ほぼ無制限です。レッスン、目標、相棒の制限は、ボットや自動化ツールによる利用を防ぐためだけのものです。学習する人の利用を制限するものではありません。会話練習には1日ごとと1か月ごとの上限がありますが、無料プランより多く利用できます。</string>
@@ -204,4 +195,12 @@
     <string name="subscription_answer_cancel">支払い済みの期間が終わるまではPlusを使えます。その後は無料プランに戻りますが、目標と学習の進捗はそのまま残ります。</string>
     <string name="subscription_question_refund">返金は受けられますか？</string>
     <string name="subscription_answer_refund">Google Playで購入したPlusの払い戻しは、Google Playが対応します。Google Playから申請してください。Zoonkのウェブサイトで登録した場合は、hello@zoonk.comまでメールでご連絡ください。こちらで確認します。</string>
+    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
+    <plurals name="subscription_free_buddy_monthly">
+        <item quantity="other">学習の相棒AI：1日%1$d件のメッセージ、月%2$s件まで</item>
+    </plurals>
+    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
+    <plurals name="subscription_answer_free_material">
+        <item quantity="other">自分の資料を追加：1日%dファイル</item>
+    </plurals>
 </resources>

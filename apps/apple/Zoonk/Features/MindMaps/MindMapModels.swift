@@ -127,7 +127,8 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
   let reason: Reason
   let resource: Resource?
 
-  /// Its instant has passed, so a map's Create asks the server again.
+  /// Its instant has passed by this device's clock, so the page reads the list again; the stop
+  /// holds until a read says it's gone.
   func isOver(at now: Date) -> Bool {
     availableAt.map { $0 <= now } ?? false
   }
@@ -138,7 +139,10 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
       case .signUpRequired: .signUpRequired
       case .slowDown:
         .slowDown(retryAfterSeconds: max(1, Int((availableAt ?? now).timeIntervalSince(now))))
-      case .limitReached: .reached(period: period, tier: tier, availableAt: availableAt)
+      // A day already past here can't be told: the stop shows no day until a read lifts it.
+      case .limitReached:
+        .reached(
+          period: period, tier: tier, availableAt: availableAt.flatMap { $0 > now ? $0 : nil })
       }
 
     let ranOut: MindMapLimit.Resource =
@@ -152,6 +156,14 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
 }
 
 struct GoalMindMaps: Decodable, Equatable, Sendable {
+  /// The list as a refusal answered it: nothing starts until a read says otherwise.
+  func stopped(by stop: MindMapAllowanceStop) -> GoalMindMaps {
+    GoalMindMaps(
+      chapters: chapters,
+      createOffer: MindMapCreateOffer(eligible: createOffer.eligible, startable: 0, stop: stop),
+      firstTab: firstTab, lessonGroups: lessonGroups, saved: saved)
+  }
+
   enum Tab: String, Decodable, Hashable, Sendable, CaseIterable {
     case chapters, lessons, saved
   }
@@ -212,6 +224,31 @@ struct MindMapLimit: Equatable, Sendable {
 
   let limit: HelpLimit
   let resource: Resource
+
+  /// The page's stop when this refusal stops every new map (the maps cap, the day's AI spend, a
+  /// guest's account); a map's own lessons or a short break stop only its row.
+  var pageStop: MindMapAllowanceStop? {
+    let ranOut: MindMapAllowanceStop.Resource
+    switch resource {
+    case .mindMap: ranOut = .mindMap
+    case .aiSpend: ranOut = .aiSpend
+    case .chapterLessons, .lessons: return nil
+    }
+
+    let period: String
+    switch limit {
+    case .usedUp: period = "rolling30Days"
+    case .limitReached(.day, _): period = "day"
+    case .limitReached(.total, _): period = "total"
+    case .signUpRequired:
+      return MindMapAllowanceStop(
+        availableAt: nil, period: nil, reason: .signUpRequired, resource: ranOut)
+    case .slowDown: return nil
+    }
+
+    return MindMapAllowanceStop(
+      availableAt: limit.availableAt, period: period, reason: .limitReached, resource: ranOut)
+  }
 }
 
 /// What a tap or following a run got that the map's own status doesn't say. It stands for the read
@@ -219,6 +256,21 @@ struct MindMapLimit: Equatable, Sendable {
 enum MindMapRequestFailure: Equatable, Sendable {
   case refused(MindMapLimit)
   case unreachable
+
+  /// A refusal while it holds; a cap's day that has come ends it, and the server decides again.
+  func holdingLimit(at now: Date) -> MindMapLimit? {
+    guard case .refused(let refusal) = self, !refusal.limit.isOpen(at: now) else {
+      return nil
+    }
+
+    return refusal
+  }
+
+  /// The refusal takes Create's place while it holds, except a short break: the learner taps
+  /// again once it passes.
+  func hidesCreate(at now: Date) -> Bool {
+    holdingLimit(at: now).map { !$0.limit.isShortBreak } ?? false
+  }
 }
 
 enum MindMapRequest: Equatable, Sendable {

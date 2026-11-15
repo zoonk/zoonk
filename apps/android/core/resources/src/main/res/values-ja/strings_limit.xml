@@ -35,6 +35,7 @@
   "limit_outlines_day": "51ac03b7f3312bf3d36bdd12db64cc3131160d28abfd779f269c831c5f09dcaa",
   "limit_outlines_guest": "a2931b57099e81347877ec162e67865e62ea2b7e96aca81ff48cfb5620067be8",
   "limit_outlines_used": "28af71ec9bdc1b0069ae978a6df34c8ed6e2761fb904a954c79cef9846ac716d",
+  "limit_questions_day": "7d193e23a908131f43c64622f89c97d26891dafa086ecd700544f34ced72548c",
   "limit_questions_used": "2b6b14c001a4beaeb8d93f11b7d21e84f5f93e1047880e0eed7ac76c1bfd9eb6",
   "limit_quick_explanations_used": "d19b9456b360c5d4e85d44786f338aa1880ad5a6d0c776430907b4e567b45e2a",
   "limit_sentence": "80406619a4b014f9f5aeebf41a9616ffb200a05163747b5f44b9d2f7801c289d",
@@ -42,6 +43,7 @@
   "limit_slow_down": "0b916baa542b56e4c7f48b082275700757352993aa19155fa8a6975226bca236",
   "limit_still_review": "14d1703f06ebe41f6efafd16b438c54f5d6f60f49a7b1cb0524b61ff4e32d95d",
   "limit_try_again_now": "9538a179fb175d014e88ffcaf1411c0fc36861c1c495507eb9919d33c0970d76",
+  "limit_uploads_day": "1ce1222dc728668f069b935bd81b43b6f9dbaf0313a7e0408704434a92d11fae",
   "limit_uploads_used": "fed6e51b152e63cfbc5ce70d2936470028b22177d3aaf7040dd2e8e663a4dee7"
 }
 -->
@@ -75,6 +77,8 @@
     <string name="limit_goals_used">新しく始められる目標の上限に達しました</string>
     <string name="limit_uploads_used">アップロードの上限に達しました</string>
     <string name="limit_questions_used">問題数の上限に達しました</string>
+    <string name="limit_uploads_day">今日はこれ以上資料を追加できません</string>
+    <string name="limit_questions_day">今日の問題数の上限に達しました</string>
     <string name="limit_call_time_used">会話の利用時間が上限に達しました</string>
     <string name="limit_mock_exams_used">模試の利用上限に達しました</string>
     <string name="limit_lessons_guest">アカウントなしで受けられるレッスンはここまでです</string>

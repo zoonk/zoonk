@@ -7,7 +7,7 @@
   "mindmaps_as_text": "1d92eee63774100f80ea61371b7c43800ec9f0a15f1e3fa57e33b681c26d5b66",
   "mindmaps_as_text_note": "192dab3a88513934a02d51658e62c195d1fe68d71be3c9ac2c88353a213e7ec4",
   "mindmaps_being_made": "105e0993cbc4ba70e31b61933ef2b2d00290bfe9e5be012b691b2eff3d35d0db",
-  "mindmaps_can_make_more": "c2d7272243df7969519521105987463a014d45c6da85998dcab0a79fbd8e14cf",
+  "mindmaps_can_make_more": "22fb57d30110180a5edfea6dbcc4e10a23a7f0a98649849aea8f0a2d1f9fa6cb",
   "mindmaps_chapter_count": "ea4643ee4b1157c3c4dfbb5289dbddc58bc39ddcb2b79342e6eaf004d32a56fc",
   "mindmaps_chapter_finished": "46d684658fcc4f9551c1fffdf238a59f0ed3ccfbb6d07dfb97549b6555e2e47e",
   "mindmaps_chapter_map": "6e9168e531e859502fdf735ae8d1f41e6464889045ac828078072fe40e94dfdb",
@@ -21,6 +21,7 @@
   "mindmaps_drawing": "fdd016d2b8712e8d3583ed68e1de4aa7457baaaabdcbeb31e7ad98252d7bc522",
   "mindmaps_drawing_wait": "e9ceca374d5a6d39b5de6e90a4755fe848100fad50e33d79442dcd0be64956c0",
   "mindmaps_empty": "7f4f802e6bcf72f7e580d0416c434a8983c33a2bcc1a4b4a96469ecefeda5e15",
+  "mindmaps_empty_stopped": "c23cd3b59afd3b7d26edf85309b711fc654383641f1a48b5a6e10cc393c85806",
   "mindmaps_failed": "393da92b6de70d4987b2d16cc5891552c8edb1175ad6ae304ae1b53086dcd2c5",
   "mindmaps_fit": "9bafcd2ee6f025fc1bc83c1def2764565640c2141003976cd91abff8206150b4",
   "mindmaps_free_lessons_note": "84636880b18fa75961b34ef7e85ef5ffbe4d9d20cb184b5c6d51a62d530b30f3",
@@ -82,6 +83,7 @@
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">Rozdział %1$s</string>
     <string name="mindmaps_empty">Nie ma jeszcze map rozdziałów. Każdy ukończony rozdział ma swoją mapę.</string>
+    <string name="mindmaps_empty_stopped">Nie ma jeszcze map rozdziałów.</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">Mapa myśli: %1$s</string>
     <!-- A mind map's description for screen readers: its title, then its central idea. -->
@@ -200,7 +202,7 @@
         <item quantity="one">Możesz teraz utworzyć jeszcze %1$s mapę.</item>
         <item quantity="few">Możesz teraz utworzyć jeszcze %1$s mapy.</item>
         <item quantity="many">Możesz teraz utworzyć jeszcze %1$s map.</item>
-        <item quantity="other">Możesz teraz utworzyć jeszcze %1$s map.</item>
+        <item quantity="other">Możesz teraz utworzyć jeszcze %1$s mapy.</item>
     </plurals>
     <!-- Saves a map to study again. -->
     <string name="mindmaps_save">Zapisz</string>

@@ -420,7 +420,7 @@ struct LessonUnavailableView: View {
   }
 }
 
-/// Once a free learner's next lesson has opened, "Start the lesson" asks again beside "Subscribe".
+/// Once a free learner's next lesson has opened, "Start the lesson" asks again where "Subscribe" was.
 private struct LessonUnavailableBody: View {
   @Environment(\.dismiss) private var dismiss
 
@@ -435,32 +435,24 @@ private struct LessonUnavailableBody: View {
 
   var body: some View {
     if isNotice {
-      VStack(alignment: .leading, spacing: 8) {
-        GateWords(title: Text(title), line: noticeLine.map(Text.init))
+      // Once a dated limit opens, the words that go keep their room.
+      HeldSlot(gated: refusal.limit?.isOpen(at: now) == false) {
+        VStack(alignment: .leading, spacing: 8) {
+          GateWords(title: Text(title), line: noticeLine.map(Text.init))
 
-        HStack(spacing: 8) {
-          secondAction
           action
+            .buttonStyle(.outline)
+            .controlSize(.small)
         }
-        .buttonStyle(.outline)
-        .controlSize(.small)
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
     } else {
-      ContentUnavailableView {
-        Label {
-          Text(title)
-        } icon: {
-          Image(systemName: symbol)
-        }
-      } description: {
+      GateScreen(title: Text(title), symbol: symbol, held: refusal.limit?.isOpen(at: now) == false)
+      {
         if let line = screenLine {
           Text(line)
         }
       }
       .bottomBar {
-        secondAction
-          .buttonStyle(.outline)
         action
           .buttonStyle(.mainAction)
       }
@@ -478,13 +470,6 @@ private struct LessonUnavailableBody: View {
   var said: String {
     let line = isNotice ? noticeLine.map { String(localized: $0) } : screenLine
     return ([String(localized: title)] + [line].compactMap(\.self)).joinedSentences()
-  }
-
-  @ViewBuilder
-  private var secondAction: some View {
-    if isReady {
-      SubscribeButton()
-    }
   }
 
   @ViewBuilder
@@ -1023,14 +1008,7 @@ struct LessonGuestGateView: View {
   let reload: () -> Void
 
   var body: some View {
-    ContentUnavailableView {
-      Label {
-        Text(outline.title)
-      } icon: {
-        Image(systemName: "book")
-          .accessibilityHidden(true)
-      }
-    } description: {
+    GateScreen(title: Text(outline.title), symbol: "book") {
       Text(outline.description)
     } actions: {
       if let start = guestStart.start {

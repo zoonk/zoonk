@@ -1014,12 +1014,16 @@ struct OnboardingAPI: Sendable {
       let limit: OnboardingLimit
     }
 
-    guard let details, let data = try? JSONEncoder().encode(details) else {
+    guard let details, let data = try? JSONEncoder().encode(details),
+      var limit = nested
+        ? try? JSONDecoder().decode(Details.self, from: data).limit
+        : try? JSONDecoder().decode(OnboardingLimit.self, from: data)
+    else {
       return nil
     }
 
-    return nested
-      ? try? JSONDecoder().decode(Details.self, from: data).limit
-      : try? JSONDecoder().decode(OnboardingLimit.self, from: data)
+    // Read as this device received it, as every refusal is.
+    limit.availableAt = Date(opening: limit.availableAt, receivedAt: .now)?.ISO8601Format()
+    return limit
   }
 }

@@ -103,7 +103,7 @@ class TutorRefusedQuestionTest {
                 { _, _ -> MutationResult.Done(Unit) },
                 { true },
             ) { _, _, _ -> MutationResult.Obsolete }
-        val vm = TutorViewModel(TutorScope.Plan("goal"), store, SavedStateHandle()) { MutationResult.Obsolete }
+        val vm = TutorViewModel(TutorScope.Plan("goal"), store, SavedStateHandle(), clock) { MutationResult.Obsolete }
         val routes = TutorRoutes(createAccount = {}, signIn = {}, subscribe = {}, open = {}, startCall = callStarter { CallStart.Failed })
 
         compose.setContent {

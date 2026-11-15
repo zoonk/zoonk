@@ -8,8 +8,8 @@
   "generation_curriculum_plan_line_1": "1ad61ca50dd510be818002ab58d3c5eaad6011d596c50d27487acf42ee48a291",
   "generation_curriculum_plan_line_2": "bb04aee62776571579b2e118045d52a0ab7b4d9887ef1f1ebcf1e7c67a5c5ab5",
   "generation_curriculum_plan_line_3": "2948a8e70e30804818557b16ac2c3e5a4d0edb4935f5e114addfda4f6e70c296",
-  "generation_failed": "c428fe19a6a8c62fa4b447b3538dd6edf928f70efb29c1f7b0ba044df480ae4e",
   "generation_failed_description": "0f8539aff560ee4804682468b76aec10fe4e9391676b733b04c54fc8e602bf7c",
+  "generation_failed_ours": "66f4eeaff3163accad5b6c3e12e0b10314ed7e28516e720e87dbd5d76faed4e8",
   "generation_first_lesson": "c934c60b0fb399ecb69328a121bbc3c314ac8301328939bd9ddf135a97f24b43",
   "generation_first_lesson_day": "66e2b323f83b759677bdc421a490ba683b7ea5d6996236400ba67a79d3bb6000",
   "generation_first_lesson_day_line_1": "cd6426a6660d87d58c8e6253308e0aad1d1671c9602d4414f3250f6444e94f11",
@@ -23,8 +23,6 @@
   "generation_level_test_bank_line_2": "4d0d36e89292c5478186ab25444789ad3d58a5c979192056e786313e48b657c7",
   "generation_level_test_bank_line_3": "8f0cf38fa0534a198238819860089baa65ebb2bab108ba77a443afc2e1084ddd",
   "generation_level_test_bank_line_4": "8a494fcb16a66145eb53c852e06435e251bf2095c1092860d194928c2617a2f9",
-  "generation_not_started": "bc0cf1a51bbca41ef8c578b7e410b3cd41a7aa57b62b8de423430ae4ba238653",
-  "generation_not_started_description": "408dc87b49441a5a724e229391a96f4037dd87db25e6f531e7ccf38ccbadf698",
   "generation_notice": "a25fc2fd0ab0376381b8627dd9d6f5abb225eec4bcbf359ef63525267162e0a1",
   "generation_notice_line_1": "ed3374ffff9baff29b814cc970ecfa208db4362260fcd21651d63eff93656feb",
   "generation_notice_line_2": "f9011a494ad58d9ad42b50fea7c91556dc94b5f13697de01dfbb242d5402b6ed",
@@ -59,12 +57,9 @@
     <string name="generation_connection_lost_description">Dejamos de recibir actualizaciones. Puede que aún se esté preparando el contenido.</string>
     <!-- Follows a run again after its updates stopped. -->
     <string name="generation_reconnect">Volver a conectar</string>
-    <!-- Title when something being written failed. -->
-    <string name="generation_failed">No se completó</string>
+    <string name="generation_failed_ours">Tuvimos un problema</string>
+    <!-- A stopped lesson's line in a list. -->
     <string name="generation_failed_description">Algo salió mal de nuestro lado.</string>
-    <!-- Title when something to be written never started. -->
-    <string name="generation_not_started">No se inició</string>
-    <string name="generation_not_started_description">No pudimos iniciar la preparación.</string>
     <!-- Starts something that failed or never started again. -->
     <string name="generation_try_again">Volver a intentar</string>
     <!-- Screen reader state of a step of a wait. -->

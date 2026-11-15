@@ -8,8 +8,8 @@
   "generation_curriculum_plan_line_1": "dfd360c2a1f311e78a74efffe11c60c9f40d53f619d73b7c4cce8b007f19e545",
   "generation_curriculum_plan_line_2": "d379bdba5b2b7893831a0a441e82189ca0259f9e03069bc7b33f6237888597d1",
   "generation_curriculum_plan_line_3": "9b342ff7dfcbb237bc438e4567fc3a0ded28417ff49afca423ace7613e4cdc6f",
-  "generation_failed": "d168bcbbee3098ad066ddfcf1b6bd507c39eee3f3e584bd039bbd2acd07fe079",
   "generation_failed_description": "69e41428882a91a403b193986503084d07b7402af5df7b491c4ea0ee32a723a8",
+  "generation_failed_ours": "89190f57639aab50c633b44c9b4ad6057bb6f2fe0337afd1afe27e59a594c3f5",
   "generation_first_lesson": "913f8c3de029a8bed43e5f4bbc0a3662a81173272165329ffde947d5b2c3f7da",
   "generation_first_lesson_day": "2ad82e8bf3e3cc1db3503d0c135ac14654877151862ced594599477780815ddb",
   "generation_first_lesson_day_line_1": "ca5c1575ad988e22c9432bb54ab188579a15146a2ee3c669362c83c9335b51e6",
@@ -23,8 +23,6 @@
   "generation_level_test_bank_line_2": "63d73f03548da3c8150b733362338f164a267c7b9a748ba1f9b11148a5494936",
   "generation_level_test_bank_line_3": "639c7c1d1f070b676885c4642ed9b0c88e766b2500911af61f1f03ea1a9364f7",
   "generation_level_test_bank_line_4": "d707bb6f6a24b91520d7f06f00d37fa77f4569ed0d700abbffddd4897365206c",
-  "generation_not_started": "f89940f85a485c8fa09532b3ebf2167c804c4752dd6b1bab24a6728195dfdabc",
-  "generation_not_started_description": "3248d9bbd6a6222b8ab968820a2c59e89ef291e0cf0d1428c8ebd9b0f50bf11b",
   "generation_notice": "fee1455259216ce3de6e34462d0e51119be2597e9282910a65837549e8289d5c",
   "generation_notice_line_1": "7bd0074d06f7e01a682d8b05e6e03d71e9b79b5b1c423595c0f6a79607d19954",
   "generation_notice_line_2": "e674659f4a56a270861e4beab79f4f9e97b1a29f87d91a5192f40c91c16561f6",
@@ -59,12 +57,9 @@
     <string name="generation_connection_lost_description">Non riceviamo più aggiornamenti. La preparazione potrebbe essere ancora in corso.</string>
     <!-- Follows a run again after its updates stopped. -->
     <string name="generation_reconnect">Riconnettiti</string>
-    <!-- Title when something being written failed. -->
-    <string name="generation_failed">Non siamo riusciti a finire</string>
+    <string name="generation_failed_ours">C’è stato un problema da parte nostra</string>
+    <!-- A stopped lesson's line in a list. -->
     <string name="generation_failed_description">Abbiamo avuto un problema.</string>
-    <!-- Title when something to be written never started. -->
-    <string name="generation_not_started">Non siamo riusciti a iniziare</string>
-    <string name="generation_not_started_description">Non siamo riusciti ad avviare la preparazione.</string>
     <!-- Starts something that failed or never started again. -->
     <string name="generation_try_again">Riprova</string>
     <!-- Screen reader state of a step of a wait. -->

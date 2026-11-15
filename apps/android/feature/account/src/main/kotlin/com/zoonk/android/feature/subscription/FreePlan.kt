@@ -42,6 +42,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.api.models.FreePlan
 
@@ -78,11 +79,7 @@ internal fun FreePlanCard(
                 items =
                     listOfNotNull(
                         stringResource(R.string.subscription_free_plan),
-                        pluralStringResource(
-                            R.plurals.subscription_free_buddy,
-                            count(limits.tutorMessagesPerDay),
-                            count(limits.tutorMessagesPerDay),
-                        ),
+                        buddySentence(limits),
                         stringResource(R.string.subscription_free_calls),
                     ),
             )
@@ -181,15 +178,8 @@ private fun FreePlanAnswer(
                 count(limits.lessonsPer30Days),
                 count(limits.lessonsPer30Days),
             ),
-            stringResource(
-                R.string.subscription_answer_free_buddy_uploads,
-                pluralStringResource(
-                    R.plurals.subscription_answer_free_buddy,
-                    count(limits.tutorMessagesPerDay),
-                    count(limits.tutorMessagesPerDay),
-                ),
-                pluralStringResource(R.plurals.subscription_answer_free_uploads, count(limits.uploadsPerDay), count(limits.uploadsPerDay)),
-            ),
+            buddySentence(limits),
+            pluralStringResource(R.plurals.subscription_answer_free_material, count(limits.uploadsPerDay), count(limits.uploadsPerDay)),
             stringResource(R.string.subscription_answer_free_calls),
         )
 
@@ -259,3 +249,11 @@ private fun goals(
 ): String = pluralStringResource(plural, count(activeGoals), count(activeGoals))
 
 private fun count(limit: Long?): Int = limit?.toInt() ?: 0
+
+/** Main's buddy line: messages a day, and the most over 30 days where the plan has a monthly cap. */
+@Composable
+private fun buddySentence(limits: FreePlan): String {
+    val day = count(limits.tutorMessagesPerDay)
+    val month = limits.tutorMessagesPer30Days ?: return pluralStringResource(R.plurals.subscription_free_buddy, day, day)
+    return pluralStringResource(R.plurals.subscription_free_buddy_monthly, day, day, formatNumber(month.toDouble(), currentLocale()))
+}

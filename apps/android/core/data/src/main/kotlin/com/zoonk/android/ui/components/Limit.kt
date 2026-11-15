@@ -15,7 +15,7 @@ enum class LimitTier { Guest, Free, Plus }
 enum class LimitPeriod { Day, Rolling30Days, Total }
 
 /** What ran out: [Help] is anything else the day's AI budget stops (a spoken answer's check, a clip). */
-enum class LimitSubject { Help, Messages, Explanations, Lessons, MapLessons, MindMaps, Outlines, Calls, MockExams }
+enum class LimitSubject { Help, Messages, Explanations, Lessons, MapLessons, MindMaps, Outlines, Calls, MockExams, Uploads, Questions }
 
 sealed interface Limit {
     data class SlowDown(
@@ -32,15 +32,25 @@ sealed interface Limit {
     data object SignUpRequired : Limit
 
     companion object {
-        /** The API's refusal (`SLOW_DOWN`, `USAGE_LIMIT_REACHED`, `SIGN_UP_REQUIRED`), or null for any other error. */
-        fun of(error: ApiException): Limit? = of(error.code, error.status, error.details)
+        /**
+         * The API's refusal (`SLOW_DOWN`, `USAGE_LIMIT_REACHED`, `SIGN_UP_REQUIRED`) as received at [receivedAt]
+         * ([Reached.received]), or null for any other error.
+         */
+        fun of(
+            error: ApiException,
+            receivedAt: Instant = Instant.now(),
+        ): Limit? = of(error.code, error.status, error.details, receivedAt)
 
-        fun of(failed: MutationResult.Failed): Limit? = of(failed.code, failed.status, failed.details)
+        fun of(
+            failed: MutationResult.Failed,
+            receivedAt: Instant = Instant.now(),
+        ): Limit? = of(failed.code, failed.status, failed.details, receivedAt)
 
         private fun of(
             code: String?,
             status: Int?,
             details: JsonElement?,
+            receivedAt: Instant,
         ): Limit? =
             when (code) {
                 "SIGN_UP_REQUIRED" -> {
@@ -77,7 +87,7 @@ sealed interface Limit {
                             ?.contentOrNull
                             ?.let { runCatching { Instant.parse(it) }.getOrNull() }
                     // Like main's readRefusedLimit, the status says whose cap it was when the details don't.
-                    Reached(tier ?: tierOf(status), period, availableAt)
+                    Reached(tier ?: tierOf(status), period, availableAt).received(receivedAt)
                 }
 
                 else -> {
@@ -86,6 +96,13 @@ sealed interface Limit {
             }
     }
 }
+
+/**
+ * As this device received it (main's `receivedAt`): a day already past on arrival comes from a clock that
+ * disagrees with the server's, so the refusal keeps no day and its gate stands until the next try.
+ */
+fun Limit.Reached.received(now: Instant = Instant.now()): Limit.Reached =
+    if (availableAt?.isAfter(now) == false) copy(availableAt = null) else this
 
 private const val DEFAULT_RETRY_SECONDS = 60
 

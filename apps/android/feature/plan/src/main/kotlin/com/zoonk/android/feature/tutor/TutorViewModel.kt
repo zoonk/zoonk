@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Clock
 import java.util.UUID
 import kotlin.math.min
 import kotlin.math.pow
@@ -96,6 +97,8 @@ class TutorViewModel internal constructor(
     scope: TutorScope,
     private val store: TutorStore,
     private val saved: SavedStateHandle,
+    /** When a refusal arrives, as [com.zoonk.android.ui.components.Limit.Reached.received] reads it. */
+    private val clock: Clock = Clock.systemUTC(),
     /** Null when the step isn't free to start anymore. */
     private val openMission: suspend (UUID) -> MutationResult<AppRoute?>,
 ) : ViewModel() {
@@ -430,7 +433,7 @@ class TutorViewModel internal constructor(
                 } catch (e: ApiException) {
                     if (e.error == ApiError.Network || e.error == ApiError.Unavailable) continue
                     if (e.error == ApiError.Unauthorized) sessions.expire(session)
-                    fail(id, e.toTutorFailure())
+                    fail(id, e.toTutorFailure(clock.instant()))
                     return
                 }
             if (sessions.current != session) return
@@ -500,7 +503,7 @@ class TutorViewModel internal constructor(
                         thread.refresh()
                         return@launch
                     }
-                    val failure = result.toTutorFailure()
+                    val failure = result.toTutorFailure(clock.instant())
                     // The question may have been saved: only then is it sent again with the same request.
                     if (failure != TutorFailure.Failed) unresolved = null
                     mutableState.update { it.copy(askFailure = failure, unresolvedQuestion = unresolved?.question) }
@@ -577,7 +580,7 @@ class TutorViewModel internal constructor(
             if (!saved) update(id) { it.copy(status = TutorTurn.Status.Completed) }
         } catch (e: ApiException) {
             if (e.error == ApiError.Unauthorized) sessions.expire(session)
-            if (!saved && sessions.current == session) reconcile(id, e.toTutorFailure(), session)
+            if (!saved && sessions.current == session) reconcile(id, e.toTutorFailure(clock.instant()), session)
         } finally {
             mutableState.update { if (it.answeringId == id) it.copy(answeringId = null) else it }
             // Core claims the tutor message when the answer starts, not when the question is asked.
@@ -633,7 +636,7 @@ class TutorViewModel internal constructor(
             api.question(id, session).takeIf { sessions.current == session }
         } catch (e: ApiException) {
             if (e.error == ApiError.Unauthorized) sessions.expire(session)
-            if (e.error != ApiError.Network && e.error != ApiError.Unavailable) fail(id, e.toTutorFailure())
+            if (e.error != ApiError.Network && e.error != ApiError.Unavailable) fail(id, e.toTutorFailure(clock.instant()))
             null
         }
 

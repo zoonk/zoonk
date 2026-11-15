@@ -37,18 +37,23 @@ struct MindMapRow: View {
   let place: Place
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 12) {
-      if place.isMindMapsPage, shown == .ready {
-        Button(action: open) {
-          row.disclosureChevron()
+    // A refusal takes Create's place until its day comes; then it goes, in the room it had.
+    OpeningClock(availableAt: refusedLimit?.availableAt) { now in
+      VStack(alignment: .leading, spacing: 12) {
+        if place.isMindMapsPage, shown == .ready {
+          Button(action: open) {
+            row(now).disclosureChevron()
+          }
+        } else {
+          row(now)
         }
-      } else {
-        row
-      }
 
-      if case .refused(let refusal) = failure {
-        LimitNotice(limit: refusal.limit, words: refusal.words(now:))
-          .controlSize(.small)
+        HeldSlot(gated: failure?.holdingLimit(at: now) != nil) {
+          if let refusal = failure?.holdingLimit(at: now) {
+            LimitNotice(limit: refusal.limit, words: refusal.words(now:))
+              .controlSize(.small)
+          }
+        }
       }
     }
     .announcesStatus(waitLine)
@@ -71,7 +76,15 @@ struct MindMapRow: View {
     store.failure(goalId: goalId, chapterId: map.chapterId)
   }
 
-  private var row: some View {
+  private var refusedLimit: HelpLimit? {
+    if case .refused(let refusal) = failure {
+      return refusal.limit
+    }
+
+    return nil
+  }
+
+  private func row(_ now: Date) -> some View {
     MarkedRow(alignment: .center) {
       slot
     } content: {
@@ -84,7 +97,9 @@ struct MindMapRow: View {
           SavedMark()
         }
 
-        action
+        if !(failure?.hidesCreate(at: now) ?? false) || shown != .create {
+          action
+        }
       }
     }
   }
