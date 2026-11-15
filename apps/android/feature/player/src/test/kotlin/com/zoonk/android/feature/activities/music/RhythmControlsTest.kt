@@ -30,9 +30,14 @@ class RhythmControlsTest {
 
     @Before
     fun soundChecked() {
-        ApplicationProvider.getApplicationContext<Context>().getSharedPreferences(DeviceDelayStore.FILE, Context.MODE_PRIVATE).edit(commit = true) {
-            putString(DeviceDelayStore.KEY, "skipped")
-        }
+        ApplicationProvider
+            .getApplicationContext<Context>()
+            .getSharedPreferences(
+                DeviceDelayStore.FILE,
+                Context.MODE_PRIVATE,
+            ).edit(commit = true) {
+                putString(DeviceDelayStore.KEY, "skipped")
+            }
     }
 
     private fun show(taps: List<Double>?) {
