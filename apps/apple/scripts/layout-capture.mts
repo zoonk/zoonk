@@ -9,7 +9,7 @@
  */
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
-import { copyFile, mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { readCommand } from "./simulators.mts";
@@ -19,6 +19,10 @@ const WAIT_MS = 15_000;
 const POLL_MS = 200;
 
 export type Capture = {
+  version: 1;
+  platform: "apple";
+  unit: "pt";
+  elements: unknown[];
   scenario: string;
   screen: string;
   side?: string;
@@ -27,7 +31,6 @@ export type Capture = {
   build: { commit: string; dirty?: boolean; changesDigest?: string };
   picture: { file: string; sha256: string; pixels?: number[] };
   measured?: { parts: number; notMeasured: number };
-  error?: string;
 };
 
 /**
@@ -63,12 +66,11 @@ async function appFolder(udid: string): Promise<string> {
 }
 
 /** The app checks for a request a few times a second and writes its answer whole. */
-async function answerOf(answer: string, deadline: number): Promise<Capture> {
+async function answerOf(answer: string, deadline: number): Promise<unknown> {
   const written = existsSync(answer) ? await stat(answer) : null;
 
   if (written && written.size > 0) {
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The app's own capture.
-    return JSON.parse(await readFile(answer, "utf8")) as Capture;
+    return JSON.parse(await readFile(answer, "utf8"));
   }
 
   if (Date.now() > deadline) {
@@ -84,18 +86,13 @@ async function answerOf(answer: string, deadline: number): Promise<Capture> {
   return answerOf(answer, deadline);
 }
 
-async function requestCapture(folder: string, scenario: string, screen: string): Promise<Capture> {
+async function requestCapture(folder: string, scenario: string, screen: string): Promise<unknown> {
   const answer = path.join(folder, `${scenario}.json`);
   await rm(answer, { force: true });
   await rm(path.join(folder, `${scenario}.png`), { force: true });
   await writeFile(path.join(folder, "request.json"), JSON.stringify({ scenario, screen }));
 
   return answerOf(answer, Date.now() + WAIT_MS);
-}
-
-async function readJson<T>(file: string, empty: T): Promise<T> {
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- This script's own files.
-  return existsSync(file) ? (JSON.parse(await readFile(file, "utf8")) as T) : empty;
 }
 
 const sha256 = async (file: string) =>
@@ -123,29 +120,147 @@ async function main() {
   }
 
   const folder = await appFolder(udid);
-  const answer = await requestCapture(folder, scenario, values.screen ?? scenario);
+  const answered = await requestCapture(folder, scenario, values.screen ?? scenario);
 
-  if (answer.error) {
-    throw new Error(`The app couldn't capture the screen: ${answer.error}`);
+  if (isRecord(answered) && typeof answered.error === "string") {
+    throw new Error(`The app couldn't capture the screen: ${answered.error}`);
   }
+
+  const answer = parseCapture(answered);
+
+  const capture = await saveCapture({
+    answer,
+    out,
+    picture: path.join(folder, answer.picture.file),
+    scenario,
+    side,
+  });
+
+  const { measured } = capture;
+  const dirty = capture.build.dirty ? ", uncommitted changes" : "";
+
+  process.stdout.write(
+    `${scenario} (${side}): ${measured?.parts ?? 0} parts measured, ${measured?.notMeasured ?? 0} not measured; build ${capture.build.commit.slice(0, 10)}${dirty}\n`,
+  );
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/** What the app answered, checked before anything counts it or lands in a capture folder. */
+const missing = (what: string) => new Error(`The app's answer isn't a capture: ${what}.`);
+
+export function parseCapture(value: unknown): Capture {
+  if (!isRecord(value)) {
+    throw missing("not an object");
+  }
+
+  const { build, configuration, elements, picture, platform, scale, scenario, screen } = value;
+
+  if (value.version !== 1 || platform !== "apple" || value.unit !== "pt") {
+    throw missing("its version, platform or unit isn't 1, apple and pt");
+  }
+
+  if (!Array.isArray(elements) || typeof scenario !== "string" || typeof screen !== "string") {
+    throw missing("no elements, scenario or screen");
+  }
+
+  if (
+    !isRecord(configuration) ||
+    typeof configuration.size !== "string" ||
+    typeof configuration.width !== "number" ||
+    typeof configuration.height !== "number" ||
+    typeof scale !== "number"
+  ) {
+    throw missing("no configuration or scale");
+  }
+
+  if (
+    !isRecord(build) ||
+    typeof build.commit !== "string" ||
+    !isRecord(picture) ||
+    typeof picture.file !== "string" ||
+    typeof picture.sha256 !== "string"
+  ) {
+    throw missing("no build or picture");
+  }
+
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Its fields are checked above.
+  return value as Capture;
+}
+
+/** A capture folder's file, or `empty` when there's none; one that isn't its shape is refused. */
+async function readFolderFile<T>(file: string, empty: T, isShape: (value: unknown) => boolean) {
+  if (!existsSync(file)) {
+    return empty;
+  }
+
+  const value: unknown = JSON.parse(await readFile(file, "utf8"));
+
+  if (!isShape(value)) {
+    throw new Error(`${file} isn't a capture folder's; move it aside or pick another --out.`);
+  }
+
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Its shape is checked above.
+  return value as T;
+}
+
+/**
+ * Adds the app's answer and its picture to a capture folder. Everything is checked first (the
+ * answer, the folder's files, the merge, the picture's hash on a staged copy); only then is the
+ * picture moved in and the files written, so a refused capture leaves the folder as it was.
+ */
+export async function saveCapture({
+  answer,
+  out,
+  picture,
+  scenario,
+  side,
+}: {
+  answer: unknown;
+  out: string;
+  picture: string;
+  scenario: string;
+  side: string;
+}): Promise<Capture> {
+  const checked = parseCapture(answer);
+  const file = `${scenario}.${side}.png`;
+  const capture: Capture = { ...checked, picture: { ...checked.picture, file }, side };
+
+  const alignmentFile = path.join(out, "alignment.json");
+  const manifestFile = path.join(out, "capture.json");
+
+  const alignment = await readFolderFile<{ captures: Capture[] }>(
+    alignmentFile,
+    { captures: [] },
+    (value) => isRecord(value) && Array.isArray(value.captures),
+  );
+
+  const manifest = await readFolderFile<Record<string, unknown>[]>(manifestFile, [], (value) =>
+    Array.isArray(value),
+  );
+
+  alignment.captures = mergeCapture(alignment.captures, capture);
+  await mkdir(out, { recursive: true });
 
   // The picture is the app's own drawing of the frame it measured; its hash proves it is that one.
-  const file = `${scenario}.${side}.png`;
-  await mkdir(out, { recursive: true });
-  await copyFile(path.join(folder, answer.picture.file), path.join(out, file));
+  const staged = path.join(out, `.${file}.staged`);
 
-  if ((await sha256(path.join(out, file))) !== answer.picture.sha256) {
-    throw new Error(`${file} isn't the frame the capture measured; capture it again.`);
+  try {
+    await copyFile(picture, staged);
+
+    if ((await sha256(staged)) !== checked.picture.sha256) {
+      throw new Error(`${file} isn't the frame the capture measured; capture it again.`);
+    }
+
+    await rename(staged, path.join(out, file));
+  } finally {
+    await rm(staged, { force: true });
   }
 
-  const capture: Capture = { ...answer, picture: { ...answer.picture, file }, side };
-  const alignmentFile = path.join(out, "alignment.json");
-  const alignment = await readJson<{ captures: Capture[] }>(alignmentFile, { captures: [] });
-  alignment.captures = mergeCapture(alignment.captures, capture);
   await writeFile(alignmentFile, `${JSON.stringify(alignment, null, 2)}\n`);
 
-  const manifestFile = path.join(out, "capture.json");
-  const manifest = await readJson<Record<string, unknown>[]>(manifestFile, []);
   const { configuration } = capture;
 
   const item = {
@@ -170,12 +285,7 @@ async function main() {
     `${JSON.stringify([...manifest.filter((existing) => existing.file !== file), item], null, 2)}\n`,
   );
 
-  const { measured } = capture;
-  const dirty = capture.build.dirty ? ", uncommitted changes" : "";
-
-  process.stdout.write(
-    `${scenario} (${side}): ${measured?.parts ?? 0} parts measured, ${measured?.notMeasured ?? 0} not measured; build ${capture.build.commit.slice(0, 10)}${dirty}\n`,
-  );
+  return capture;
 }
 
 if (import.meta.main) {
