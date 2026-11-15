@@ -243,7 +243,7 @@ class NextStopTest {
         rule.waitForIdle()
         shot("next-stop-writing-failed-phone")
 
-        rule.onNodeWithText("This didn't finish").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
         rule.onNodeWithText("Practice now").assertExists()
     }
 
@@ -267,7 +267,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This didn't finish").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
         rule.onNodeWithText("Try again").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
         rule.onNodeWithText("Your lesson is ready.").assertDoesNotExist()
@@ -283,7 +283,7 @@ class NextStopTest {
         rule.waitForIdle()
 
         rule.onNodeWithText("This lesson isn't available").assertExists()
-        rule.onNodeWithText("This didn't finish").assertDoesNotExist()
+        rule.onNodeWithText("Something went wrong on our side").assertDoesNotExist()
         rule.onNodeWithText("Try again").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(10_000)
@@ -300,7 +300,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(601_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This didn't finish").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
         rule.onNodeWithText("Try again").assertExists()
     }
 
@@ -312,7 +312,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(1_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This didn't finish").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
 
         rule.mainClock.advanceTimeBy(5_000)
         rule.waitForIdle()
@@ -334,7 +334,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This didn't start").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
     }
 
     @Test
@@ -347,7 +347,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(1_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This didn't start").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
     }
 
     @Test
@@ -357,7 +357,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(21_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This didn't start").assertExists()
+        rule.onNodeWithText("Something went wrong on our side").assertExists()
         rule.onNodeWithText("Try again").assertExists()
     }
 

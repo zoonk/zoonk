@@ -8,8 +8,8 @@
   "generation_curriculum_plan_line_1": "70a76e1af4723e0c56624fbf6b5621dd6d1c7323cf5abeb197f81c682c0d5ba6",
   "generation_curriculum_plan_line_2": "eef943eea04dda77a755647adabc228b8ed20863084dcf747333470e8b7ffa4f",
   "generation_curriculum_plan_line_3": "6a00457d75c76c358aebd4a6b10c744aa8390c4f4432b3e64edc6a1c4958f8c9",
-  "generation_failed": "c659b6e11aa722f0358641944337c2972898e001c2450879ed3109cd9ad69f2b",
   "generation_failed_description": "113611f70e50d67c7f5f60a156f8481dc40d0e653f3777eb013fbaa46de8453b",
+  "generation_failed_ours": "34711d67eecbf8a8f3a2051f719059338b86f95a3bdde23de720101cb49e9191",
   "generation_first_lesson": "444b276a598e707a5fdfadc72defc8fc008eb16202588d50762a69547bc27ce2",
   "generation_first_lesson_day": "f5b69594c2add9b51468515a5bc5e07e853190fae199a813a8aab6e0c1b868de",
   "generation_first_lesson_day_line_1": "0e9f57ce5c2368deffbce11d56b9cd9b8134f69bf5dc72566ea0b3921fb79834",
@@ -23,8 +23,6 @@
   "generation_level_test_bank_line_2": "c0c7156cc092a9d73871d76c6fd03b974c86809911941c1d6981143038bc6a06",
   "generation_level_test_bank_line_3": "456e8e8b4f459ef62c71bb87ca87e48ae381acf5eeedd119299c84950c5cc9c7",
   "generation_level_test_bank_line_4": "2955bae9731566f2e9cbb4c12efdbb7279e43be86247bb09bc3997b518395994",
-  "generation_not_started": "2fb9c290f8f405da5a301d133f7f117dcaf32f25ef0d51fa37f00479f97fbe4a",
-  "generation_not_started_description": "bc266a58d6215c404b08787d56e3a8e553471e1f4270e3a2204e98bc646ad258",
   "generation_notice": "e7d22059f37252cfbbb608ce9415c5334d465676c965fea3f3e3014bea6b6a64",
   "generation_notice_line_1": "65e5d94142e1c36f640ed7f5f7ebd7190b41c1473abfb857e31d355fb61da4b6",
   "generation_notice_line_2": "2f80792cee4c83d3d022d04f9df9176696ab451ae5b3e7ef1e4d72358dba9a23",
@@ -59,12 +57,9 @@
     <string name="generation_connection_lost_description">A gente parou de receber atualizações. O processo ainda pode estar em andamento.</string>
     <!-- Follows a run again after its updates stopped. -->
     <string name="generation_reconnect">Reconectar</string>
-    <!-- Title when something being written failed. -->
-    <string name="generation_failed">Não foi possível concluir</string>
+    <string name="generation_failed_ours">Algo deu errado por aqui</string>
+    <!-- A stopped lesson's line in a list. -->
     <string name="generation_failed_description">Algo deu errado do nosso lado.</string>
-    <!-- Title when something to be written never started. -->
-    <string name="generation_not_started">Não foi possível começar</string>
-    <string name="generation_not_started_description">A gente não conseguiu iniciar o processo.</string>
     <!-- Starts something that failed or never started again. -->
     <string name="generation_try_again">Tente de novo</string>
     <!-- Screen reader state of a step of a wait. -->

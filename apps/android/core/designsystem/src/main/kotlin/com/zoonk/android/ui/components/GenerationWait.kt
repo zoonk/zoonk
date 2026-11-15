@@ -175,18 +175,15 @@ fun GenerationFailureNotice(
     description: String? = null,
     mainActionInBar: Boolean = LocalMainActionInBar.current,
 ) {
+    // Main's two failures read as one: the failure was ours, and Try again is the way on.
     val (icon, titleRes, descriptionRes) =
         when (failure) {
             GenerationFailure.Connection -> {
                 Triple(R.drawable.ic_wifi_off, R.string.generation_connection_lost, R.string.generation_connection_lost_description)
             }
 
-            GenerationFailure.Generation -> {
-                Triple(R.drawable.ic_error, R.string.generation_failed, R.string.generation_failed_description)
-            }
-
-            GenerationFailure.NotStarted -> {
-                Triple(R.drawable.ic_error, R.string.generation_not_started, R.string.generation_not_started_description)
+            GenerationFailure.Generation, GenerationFailure.NotStarted -> {
+                Triple(R.drawable.ic_error, R.string.generation_failed_ours, null)
             }
         }
 
@@ -204,11 +201,9 @@ fun GenerationFailureNotice(
             }
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(title ?: stringResource(titleRes), style = titleStyle)
-                Text(
-                    description ?: stringResource(descriptionRes),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+                (description ?: descriptionRes?.let { stringResource(it) })?.let {
+                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                }
                 if (onRetry != null) {
                     val label =
                         stringResource(
