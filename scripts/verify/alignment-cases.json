@@ -5944,5 +5944,93 @@
     "unit": "px",
     "version": 1,
     "specimen": "false"
+  },
+  "round 3 missing-word-value-type": {
+    "activeSurface": "page",
+    "elements": [
+      {
+        "id": "g",
+        "part": "group",
+        "bounds": [0, 0, 100, 100],
+        "ink": [0, 0, 100, 100],
+        "piece": "list-group",
+        "group": null,
+        "row": null,
+        "endEdge": 100,
+        "gap": 0
+      },
+      {
+        "id": "r0",
+        "part": "row",
+        "bounds": [0, 0, 100, 20],
+        "ink": [0, 0, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null
+      },
+      {
+        "id": "l0",
+        "part": "label",
+        "bounds": [0, 0, 20, 10],
+        "ink": [0, 0, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 0,
+        "capBottom": 10,
+        "type": "font",
+        "lines": 1
+      },
+      {
+        "id": "r1",
+        "part": "row",
+        "bounds": [0, 20, 100, 20],
+        "ink": [0, 20, 100, 20],
+        "piece": "list-group",
+        "group": "g",
+        "row": null
+      },
+      {
+        "id": "l1",
+        "part": "label",
+        "bounds": [0, 20, 20, 10],
+        "ink": [0, 20, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r1",
+        "capTop": 20,
+        "capBottom": 30,
+        "type": "font",
+        "lines": 1
+      },
+      {
+        "id": "v",
+        "part": "value",
+        "bounds": [80, 0, 20, 10],
+        "ink": [80, 0, 20, 10],
+        "piece": "list-group",
+        "group": "g",
+        "row": "r0",
+        "capTop": 0,
+        "capBottom": 10,
+        "type": "not measured",
+        "text": "Off"
+      }
+    ],
+    "configuration": {
+      "height": 844,
+      "locale": "en",
+      "pointer": "touch",
+      "scheme": "light",
+      "size": "phone",
+      "textScale": 1,
+      "width": 390
+    },
+    "platform": "web",
+    "scale": 3,
+    "scenario": null,
+    "screen": "/fixture",
+    "unit": "px",
+    "version": 1
   }
 }

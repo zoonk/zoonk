@@ -5,6 +5,7 @@ import { gapLeads } from "./alignment-gap.mts";
 import {
   type Context,
   type Group,
+  drawn,
   finding,
   groupName,
   groupsOf,
@@ -32,18 +33,18 @@ function typeLeads(context: Context, read: Group): AlignmentFinding[] {
 
   return (["label", "lead", "note", "value"] as const).flatMap((part) => {
     const current = new Set(read.rows.filter((row) => row.current).map((row) => row.id));
+    // What a learner sees: a part that draws nothing holds room, and a cut one has its own record.
+    const shown = parts.filter((element) => element.part === part && drawn(element));
+    const untyped = shown.filter((element) => !element.type || element.type === "not measured");
 
     // A current row may set its words apart, and a word in a value's place ("Won", "Today") is
     // set in the text face where figures are mono: values compare only where they hold figures.
-    const compared = parts.filter(
+    const typed = shown.filter(
       (element) =>
-        element.part === part &&
+        !untyped.includes(element) &&
         !current.has(element.row ?? "") &&
         (part !== "value" || /\d/u.test(element.text ?? "")),
     );
-
-    const typed = compared.filter((element) => element.type && element.type !== "not measured");
-    const untyped = compared.filter((element) => !typed.includes(element));
 
     const unread =
       untyped.length > 0

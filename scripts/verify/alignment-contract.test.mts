@@ -42,6 +42,9 @@ describe("a declared relationship is measured and holds, or the run fails", () =
     );
 
     assert.deepEqual(unmeasured(real("round 2 missing-gap")), ["gap"]);
+
+    // A word in a value's place ("Off") isn't compared with figures, but its type is still read.
+    assert.deepEqual(unmeasured(real("round 3 missing-word-value-type")), ["type"]);
   });
 
   it("writes a failing record for an area of a declared group the platform couldn't read", () => {
