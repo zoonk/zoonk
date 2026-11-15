@@ -165,7 +165,7 @@ export const mayaHugeGoal: SeedLearner = {
     {
       category: "routine",
       origin: "said",
-      statement: "Studies at 7:30 am, right after a night shift",
+      statement: "Studies at 7:30 AM, right after a night shift",
     },
     {
       category: "learning",
