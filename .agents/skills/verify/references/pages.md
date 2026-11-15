@@ -125,7 +125,7 @@ FAIL: 1 unresolved; scenarios not listed yet; 0 discovery leads; 0 not measured
 | `gap`                       | Two drawn neighbors are the gap the piece lays out apart                                                                                                                                              | 1 px      |
 | `type`                      | Every part of one role uses one type token; values compare only where they hold figures, since a word in a date's place ("Won") has its own face                                                      | exact     |
 | `line`                      | One line of a row, as craft [E5](../../zoonk-design/references/craft.md#e5-an-icon-and-its-text-share-a-line) and [E6](../../zoonk-design/references/craft.md#e6-one-line-one-middle) place each part | 0.5 px    |
-| `one-filled`                | One filled action on the surface on top (the page, or a covering dialog or sheet)                                                                                                                     | 1         |
+| `one-filled`                | One filled action on the surface on top (the page, or a covering dialog or sheet); a disabled one counts, since it is drawn in the main action's place                                                | 1         |
 
 **Not measured fails.** A declared piece promises its parts, so a part the read can't measure is a failing record, never a pass: a group with no rows found, a row with no measured label, a part whose ink or type token wasn't read, rows side by side (start, end and gap assume one stack), a piece the table doesn't name, a group drawn at another size than it is laid out (a transform or a zoom), and a text with no cap height to read, such as Japanese drawn by a fallback face. Make the part measurable; don't remove the declaration.
 
@@ -142,7 +142,7 @@ FAIL: 1 unresolved; scenarios not listed yet; 0 discovery leads; 0 not measured
 
 - It reads the states you load. A state behind a tap is measured only where a run reaches and captures it.
 - The web's read doesn't enter iframes or shadow roots, and doesn't see what only a pseudo-element (`::before`, `::after`) draws.
-- `one-filled` counts a control as filled only when the kit's button variants draw it (`--button-variant`), a disabled one included. The same action offered again counts once only when it has the same words and the same target: a link to the same place, or a button with the same `data-action-name`. Every other filled button counts, one per row of a list included. The name is trusted: two buttons with one name count as one even when they do different things.
+- `one-filled` counts a control as filled only when the kit's button variants draw it (`--button-variant`). The same action offered again counts once only when it has the same words and the same target: a link to the same place, or a button with the same `data-action-name`. Every other filled button counts, one per row of a list included. The name is trusted: two buttons with one name count as one even when they do different things.
 - A capture with nothing declared in it passes, which proves nothing about the screen.
 
 ## What it can't tell you
