@@ -18,9 +18,9 @@ import { getChapterWindow } from "./chapter-window";
 import { type JourneyPathLinks } from "./journey-links";
 import {
   CheckpointRow,
-  PATH_ROW_BODY_CLASS,
   PATH_ROW_CLASS,
   PATH_ROW_LEADING_CLASS,
+  PathRowBody,
 } from "./journey-phase-events";
 
 export function getChapterKey(chapter: PlanChapterView): string {
@@ -81,19 +81,17 @@ function ChapterRow({
       <span className={PATH_ROW_LEADING_CLASS}>
         <ChapterMark chapter={chapter} isNext={isNext} skipped={isSkipped(chapter)} />
       </span>
-      <span className={PATH_ROW_BODY_CLASS}>
-        <span className="flex flex-col">
-          <span
-            className={cn(
-              "line-clamp-2 font-medium",
-              chapter.state === "done" && "text-muted-foreground",
-            )}
-          >
-            {title(chapter)}
-          </span>
-          {line && <span className="text-muted-foreground text-xs">{line}</span>}
+      <PathRowBody>
+        <span
+          className={cn(
+            "line-clamp-2 font-medium",
+            chapter.state === "done" && "text-muted-foreground",
+          )}
+        >
+          {title(chapter)}
         </span>
-      </span>
+        {line && <span className="text-muted-foreground text-xs">{line}</span>}
+      </PathRowBody>
     </>
   );
 

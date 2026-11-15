@@ -1360,9 +1360,9 @@ msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
 msgstr "Wir konnten dein Konto nicht löschen. Versuch es noch einmal oder schreib an hello@zoonk.com."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
-msgctxt "Sk9SL5"
-msgid "Delete my account"
-msgstr "Mein Konto löschen"
+msgctxt "95pnlV"
+msgid "Your account"
+msgstr "Dein Konto"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "wyxJrL"
@@ -1383,6 +1383,11 @@ msgstr "Dein Konto löschen?"
 msgctxt "yF2UF2"
 msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
 msgstr "Deine Ziele, Pläne, dein Fortschritt, deine Erinnerungen und Uploads werden endgültig gelöscht. Das lässt sich nicht rückgängig machen."
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "Sk9SL5"
+msgid "Delete my account"
+msgstr "Mein Konto löschen"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "huX1mW"
@@ -1408,9 +1413,14 @@ msgid "Plus from Google Play keeps charging until you cancel it there."
 msgstr "Für Plus von Google Play zahlst du weiter, bis du es dort kündigst."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/export-data-row.tsx
-msgctxt "RcXC-q"
-msgid "Download my data"
-msgstr "Meine Daten herunterladen"
+msgctxt "tTFZyH"
+msgid "Download your data"
+msgstr "Deine Daten herunterladen"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/export-data-row.tsx
+msgctxt "y8jK2R"
+msgid "A copy of your data"
+msgstr "Eine Kopie deiner Daten"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
 msgctxt "s8-igB"

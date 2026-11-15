@@ -70,7 +70,7 @@ export const checkLevelTestQuestionsTask: Task<
     "Answer a language placement test's questions without their keys and say how each is answered, so code drops wrong or ambiguous keys, answers a non-reader could pick, questions not in the learner's language and B2 or C1 questions a face-value reading answers, and keeps good questions",
   generate: checkLevelTestQuestions,
   id: "check-level-test-questions",
-  name: "Check Level Test Questions",
+  name: "Check level test questions",
   score: scoreCheckLevelTestQuestions,
   testCases: TEST_CASES,
 };

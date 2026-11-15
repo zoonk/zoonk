@@ -85,7 +85,7 @@ export const lessonImageTask: Task<LessonImageInput, LessonImageOutput> = {
   description: "Draw one lesson picture from a structured scene in the house style",
   generate,
   id: TASK_ID,
-  name: "Lesson Image",
+  name: "Lesson image",
   output: "image",
   score: scoreLessonImage,
   scoreCategories,

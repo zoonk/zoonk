@@ -2,15 +2,14 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
-import { PlanBasesSheet } from "./plan-bases-sheet";
+import { PlanBasesSheet, useBasesSheet } from "./plan-bases-sheet";
 import { usePlanBases, useSummaryText } from "./use-bases-texts";
 
 export function PlanBases() {
   const t = useExtracted();
   const bases = usePlanBases();
   const summaryText = useSummaryText();
-  const [open, setOpen] = useState(false);
+  const sheet = useBasesSheet();
 
   if (!bases) {
     return null;
@@ -25,13 +24,13 @@ export function PlanBases() {
       <Button
         aria-haspopup="dialog"
         className="self-start"
-        onClick={() => setOpen(true)}
+        onClick={sheet.show}
         size="sm"
         variant="outline"
       >
         {t("Change")}
       </Button>
-      <PlanBasesSheet bases={bases} onOpenChange={setOpen} open={open} />
+      <PlanBasesSheet bases={bases} onOpenChange={sheet.setOpen} open={sheet.open} />
     </section>
   );
 }

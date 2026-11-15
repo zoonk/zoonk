@@ -1360,9 +1360,9 @@ msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
 msgstr "Hesabını silemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
-msgctxt "Sk9SL5"
-msgid "Delete my account"
-msgstr "Hesabımı sil"
+msgctxt "95pnlV"
+msgid "Your account"
+msgstr "Hesabın"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "wyxJrL"
@@ -1383,6 +1383,11 @@ msgstr "Hesabın silinsin mi?"
 msgctxt "yF2UF2"
 msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
 msgstr "Hedeflerin, planların, ilerlemen, bellekteki bilgilerin ve yüklediğin dosyalar kalıcı olarak silinir. Bu işlem geri alınamaz."
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "Sk9SL5"
+msgid "Delete my account"
+msgstr "Hesabımı sil"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "huX1mW"
@@ -1408,9 +1413,14 @@ msgid "Plus from Google Play keeps charging until you cancel it there."
 msgstr "Google Play’den aldığın Plus için oradan iptal edene kadar ücret alınmaya devam eder."
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/export-data-row.tsx
-msgctxt "RcXC-q"
-msgid "Download my data"
-msgstr "Verilerimi indir"
+msgctxt "tTFZyH"
+msgid "Download your data"
+msgstr "Verilerini indir"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/export-data-row.tsx
+msgctxt "y8jK2R"
+msgid "A copy of your data"
+msgstr "Verilerinin bir kopyası"
 
 #: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
 msgctxt "s8-igB"

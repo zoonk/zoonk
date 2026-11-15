@@ -32,7 +32,7 @@ export async function ScoreContent() {
 export function ScoreContentSkeleton() {
   return (
     <ProgressContent>
-      <StatTilesSkeleton count={1} />
+      <StatTilesSkeleton count={1} detailed={1} />
       <ScoreChartSkeleton />
     </ProgressContent>
   );

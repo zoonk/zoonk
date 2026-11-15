@@ -493,7 +493,6 @@ msgstr "Commencer la leçon"
 #: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
-#: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
@@ -4875,15 +4874,6 @@ msgctxt "8sxDix"
 msgid "Date to be confirmed"
 msgstr "Date à confirmer"
 
-#. The name of a study step: a live voice call in the language being learned.
-#: src/journey/journey-phase-events.tsx
-#: src/journey/roadmap-full.tsx
-#: src/language/conversation/conversation-live.tsx
-#: src/session/use-block-copy.ts
-msgctxt "f-GKc4"
-msgid "Call"
-msgstr "Appel"
-
 #. The learner won this phase challenge.
 #: src/journey/journey-phase-events.tsx
 msgctxt "J15Qzq"
@@ -4894,6 +4884,15 @@ msgstr "Remporté"
 msgctxt "f0UFlY"
 msgid "In your next session"
 msgstr "Lors de ta prochaine séance"
+
+#. The name of a study step: a live voice call in the language being learned.
+#: src/journey/journey-phase-events.tsx
+#: src/journey/roadmap-full.tsx
+#: src/language/conversation/conversation-live.tsx
+#: src/session/use-block-copy.ts
+msgctxt "f-GKc4"
+msgid "Call"
+msgstr "Appel"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
@@ -5222,6 +5221,12 @@ msgstr "Date de l’examen"
 msgctxt "Humfno"
 msgid "End date"
 msgstr "Date de fin"
+
+#. In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date.
+#: src/journey/roadmap-full.tsx
+msgctxt "VnP0TP"
+msgid "You finish"
+msgstr "Tu termines"
 
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/steps/plan-shape.tsx
@@ -6971,9 +6976,14 @@ msgid "Nothing yet. Notes show up here as you study and chat."
 msgstr "Rien pour l’instant. Des notes s’ajoutent ici au fil de ton apprentissage et de tes discussions."
 
 #: src/memory/memory-screen.tsx
-msgctxt "etMoG6"
-msgid "Download my memory"
-msgstr "Télécharger ma mémoire"
+msgctxt "dQaH-3"
+msgid "Download your memory"
+msgstr "Télécharger les informations mémorisées"
+
+#: src/memory/memory-screen.tsx
+msgctxt "U3W00j"
+msgid "A copy of your memory"
+msgstr "Une copie des informations mémorisées"
 
 #: src/memory/memory-screen.tsx
 msgctxt "GUOjcs"
@@ -10317,32 +10327,6 @@ msgctxt "p2OROv"
 msgid "What you practice"
 msgstr "Ce que tu pratiques"
 
-#: src/plan/plan-bases-advice.tsx
-#: src/plan/use-time-to-cover.ts
-msgctxt "ZBKOXO"
-msgid "Your plan is still being built. Try again in a moment."
-msgstr "Ton plan est encore en cours de préparation. Réessaie dans un instant."
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "R0UlFt"
-msgid "We couldn't get a recommendation."
-msgstr "Nous n’avons pas pu obtenir de recommandation."
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "lBDux5"
-msgid "Getting a recommendation…"
-msgstr "Recherche d’une recommandation…"
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "EgPIKi"
-msgid "Your plan already follows it."
-msgstr "Ton plan suit déjà cette recommandation."
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "IdA8la"
-msgid "Get a recommendation"
-msgstr "Obtenir une recommandation"
-
 #. Choice to study a prerequisite with all its lessons.
 #: src/plan/plan-bases-choices.tsx
 msgctxt "beOzyz"
@@ -10865,21 +10849,6 @@ msgstr "Tu étudies tous les sujets. Ce que tu n’as pas le temps de voir avant
 msgctxt "x7ZSzV"
 msgid "Every part of your goal, with no end date."
 msgstr "Tout le contenu de ton objectif, sans date de fin."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "wkUyCk"
-msgid "We recommend every lesson. Your time covers them."
-msgstr "Nous te conseillons de faire toutes les leçons. Tu as le temps."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "5yF3ST"
-msgid "We recommend one short lesson each, so there's time for the rest."
-msgstr "Nous te conseillons une courte leçon par prérequis pour garder du temps pour le reste."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "jCiV53"
-msgid "We recommend the first lessons only."
-msgstr "Nous te conseillons de faire seulement les premières leçons."
 
 #: src/plan/use-bases-texts.ts
 msgctxt "c28kAC"
@@ -11466,6 +11435,11 @@ msgid "Windows"
 msgstr "Windows"
 
 #: src/plan/use-time-to-cover.ts
+msgctxt "ZBKOXO"
+msgid "Your plan is still being built. Try again in a moment."
+msgstr "Ton plan est encore en cours de préparation. Réessaie dans un instant."
+
+#: src/plan/use-time-to-cover.ts
 msgctxt "g7wBHi"
 msgid "We couldn't work out the time needed."
 msgstr "Nous n’avons pas pu calculer le temps nécessaire."
@@ -11817,6 +11791,11 @@ msgid "Past or present, finished or not. Pick up to 3."
 msgstr "Études passées ou en cours, terminées ou non. Choisis jusqu’à 3 réponses."
 
 #: src/profile-questions/profile-question-copy.ts
+msgctxt "esh22C"
+msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime."
+msgstr "Facultatif. Nous utilisons tes choix pour adapter le contenu à tes besoins. Tu peux les supprimer à tout moment."
+
+#: src/profile-questions/profile-question-copy.ts
 msgctxt "zJoq3-"
 msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings."
 msgstr "Facultatif. Tes choix nous permettent d’adapter le contenu à tes besoins. Tu peux les supprimer à tout moment dans les Paramètres."
@@ -11855,6 +11834,11 @@ msgstr "Ce qui t’aide, avec tes mots (facultatif)"
 msgctxt "dcwrhI"
 msgid "E.g., I understand diagrams better than text"
 msgstr "Par exemple, je comprends mieux avec des schémas qu’avec du texte"
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "HOckqc"
+msgid "We'll remember this. You can delete it anytime."
+msgstr "On gardera ça en mémoire. Tu peux l’effacer à tout moment."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "mM7GRS"
@@ -13662,14 +13646,14 @@ msgid "You finished {name}."
 msgstr "Tu as terminé {name}."
 
 #: src/week/logbook-sections.tsx
-msgctxt "koboTV"
-msgid "{time} more than the week before!"
-msgstr "{time} de plus que la semaine précédente !"
+msgctxt "Yj-wa7"
+msgid "{time} more than the week before."
+msgstr "{time} de plus que la semaine précédente."
 
 #: src/week/logbook-sections.tsx
-msgctxt "mY3vs_"
-msgid "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
-msgstr "{questions, plural, one {# question de plus que la semaine précédente !} other {# questions de plus que la semaine précédente !}}"
+msgctxt "d9SZZ-"
+msgid "{questions, plural, one {# more question than the week before.} other {# more questions than the week before.}}"
+msgstr "{questions, plural, one {# question de plus que la semaine précédente.} other {# questions de plus que la semaine précédente.}}"
 
 #: src/week/logbook-sections.tsx
 msgctxt "gpv0cM"

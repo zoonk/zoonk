@@ -53,7 +53,7 @@ export const challengeCaseTask: Task<OptionalCountry<ChallengeCaseParams>, Writt
     "Write the challenge that closes a chapter: a work case with a team and decisions that change the state, or a light What if for overview courses. Code checks the decision graph, then a judge",
   generate: (input) => generateFirstChallengeDraft({ ...input, country: input.country ?? null }),
   id: "challenge-case",
-  name: "Challenge Case",
+  name: "Challenge case",
   score: ({ output, testCase }) =>
     scoreWithCodeChecks({
       check: (text) => checkOutput(text, (testCase.userInput as ChallengeCaseParams).variant),

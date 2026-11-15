@@ -71,7 +71,7 @@ export const findCourseWeightsTask: Task<
   generate: findCourseWeights,
   id: "find-course-weights",
   latencyBudget: { p50: 25, p95: 40 },
-  name: "Find Course Weights",
+  name: "Find course weights",
   score: scoreCourseWeights,
   testCases: TEST_CASES,
 };

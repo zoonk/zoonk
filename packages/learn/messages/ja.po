@@ -493,7 +493,6 @@ msgstr "レッスンを始める"
 #: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
-#: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
@@ -4875,15 +4874,6 @@ msgctxt "8sxDix"
 msgid "Date to be confirmed"
 msgstr "日程未定"
 
-#. The name of a study step: a live voice call in the language being learned.
-#: src/journey/journey-phase-events.tsx
-#: src/journey/roadmap-full.tsx
-#: src/language/conversation/conversation-live.tsx
-#: src/session/use-block-copy.ts
-msgctxt "f-GKc4"
-msgid "Call"
-msgstr "会話"
-
 #. The learner won this phase challenge.
 #: src/journey/journey-phase-events.tsx
 msgctxt "J15Qzq"
@@ -4894,6 +4884,15 @@ msgstr "勝利"
 msgctxt "f0UFlY"
 msgid "In your next session"
 msgstr "次の学習で"
+
+#. The name of a study step: a live voice call in the language being learned.
+#: src/journey/journey-phase-events.tsx
+#: src/journey/roadmap-full.tsx
+#: src/language/conversation/conversation-live.tsx
+#: src/session/use-block-copy.ts
+msgctxt "f-GKc4"
+msgid "Call"
+msgstr "会話"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
@@ -5222,6 +5221,12 @@ msgstr "試験日"
 msgctxt "Humfno"
 msgid "End date"
 msgstr "終了日"
+
+#. In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date.
+#: src/journey/roadmap-full.tsx
+msgctxt "VnP0TP"
+msgid "You finish"
+msgstr "完了予定日"
 
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/steps/plan-shape.tsx
@@ -6971,9 +6976,14 @@ msgid "Nothing yet. Notes show up here as you study and chat."
 msgstr "まだメモはありません。学習やチャットをすると、ここにメモが表示されます。"
 
 #: src/memory/memory-screen.tsx
-msgctxt "etMoG6"
-msgid "Download my memory"
+msgctxt "dQaH-3"
+msgid "Download your memory"
 msgstr "メモリをダウンロードする"
+
+#: src/memory/memory-screen.tsx
+msgctxt "U3W00j"
+msgid "A copy of your memory"
+msgstr "メモリのコピー"
 
 #: src/memory/memory-screen.tsx
 msgctxt "GUOjcs"
@@ -10317,32 +10327,6 @@ msgctxt "p2OROv"
 msgid "What you practice"
 msgstr "練習内容"
 
-#: src/plan/plan-bases-advice.tsx
-#: src/plan/use-time-to-cover.ts
-msgctxt "ZBKOXO"
-msgid "Your plan is still being built. Try again in a moment."
-msgstr "学習計画を作成しています。もう少し待ってから再度お試しください。"
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "R0UlFt"
-msgid "We couldn't get a recommendation."
-msgstr "おすすめを確認できませんでした。"
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "lBDux5"
-msgid "Getting a recommendation…"
-msgstr "おすすめを確認しています…"
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "EgPIKi"
-msgid "Your plan already follows it."
-msgstr "学習計画にはすでにおすすめの内容が反映されています。"
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "IdA8la"
-msgid "Get a recommendation"
-msgstr "おすすめを確認する"
-
 #. Choice to study a prerequisite with all its lessons.
 #: src/plan/plan-bases-choices.tsx
 msgctxt "beOzyz"
@@ -10865,21 +10849,6 @@ msgstr "すべてのトピックを学びます。試験前の計画に入りき
 msgctxt "x7ZSzV"
 msgid "Every part of your goal, with no end date."
 msgstr "終了日を決めずに、目標の内容をすべて学びます。"
-
-#: src/plan/use-bases-texts.ts
-msgctxt "wkUyCk"
-msgid "We recommend every lesson. Your time covers them."
-msgstr "すべてのレッスンをおすすめします。学習時間は十分にあります。"
-
-#: src/plan/use-bases-texts.ts
-msgctxt "5yF3ST"
-msgid "We recommend one short lesson each, so there's time for the rest."
-msgstr "ほかの学習にも時間を使えるよう、前提知識はそれぞれ短い1レッスンがおすすめです。"
-
-#: src/plan/use-bases-texts.ts
-msgctxt "jCiV53"
-msgid "We recommend the first lessons only."
-msgstr "最初のレッスンだけ学ぶのがおすすめです。"
 
 #: src/plan/use-bases-texts.ts
 msgctxt "c28kAC"
@@ -11466,6 +11435,11 @@ msgid "Windows"
 msgstr "Windows"
 
 #: src/plan/use-time-to-cover.ts
+msgctxt "ZBKOXO"
+msgid "Your plan is still being built. Try again in a moment."
+msgstr "学習計画を作成しています。もう少し待ってから再度お試しください。"
+
+#: src/plan/use-time-to-cover.ts
 msgctxt "g7wBHi"
 msgid "We couldn't work out the time needed."
 msgstr "必要な学習時間を計算できませんでした。"
@@ -11817,6 +11791,11 @@ msgid "Past or present, finished or not. Pick up to 3."
 msgstr "以前学んだことも、今学んでいることも、修了していなくても選べます。3つまで選んでください。"
 
 #: src/profile-questions/profile-question-copy.ts
+msgctxt "esh22C"
+msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime."
+msgstr "回答は任意です。選んだ内容に応じて、学習内容を調整します。いつでも削除できます。"
+
+#: src/profile-questions/profile-question-copy.ts
 msgctxt "zJoq3-"
 msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings."
 msgstr "任意です。選んだ内容に合わせて、学習内容を調整します。設定からいつでも削除できます。"
@@ -11855,6 +11834,11 @@ msgstr "学びやすくなる工夫を自分の言葉で（任意）"
 msgctxt "dcwrhI"
 msgid "E.g., I understand diagrams better than text"
 msgstr "例：文章より図のほうがわかりやすいです"
+
+#: src/profile-questions/profile-row-bodies.tsx
+msgctxt "HOckqc"
+msgid "We'll remember this. You can delete it anytime."
+msgstr "この内容を覚えておきます。いつでも削除できます。"
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "mM7GRS"
@@ -13662,14 +13646,14 @@ msgid "You finished {name}."
 msgstr "{name}を終えました。"
 
 #: src/week/logbook-sections.tsx
-msgctxt "koboTV"
-msgid "{time} more than the week before!"
-msgstr "前の週より{time}長く学習しました！"
+msgctxt "Yj-wa7"
+msgid "{time} more than the week before."
+msgstr "前の週より{time}長く学習しました。"
 
 #: src/week/logbook-sections.tsx
-msgctxt "mY3vs_"
-msgid "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
-msgstr "{questions, plural, other {前の週より#問多く解きました！}}"
+msgctxt "d9SZZ-"
+msgid "{questions, plural, one {# more question than the week before.} other {# more questions than the week before.}}"
+msgstr "{questions, plural, other {前の週より#問多く解きました。}}"
 
 #: src/week/logbook-sections.tsx
 msgctxt "gpv0cM"
