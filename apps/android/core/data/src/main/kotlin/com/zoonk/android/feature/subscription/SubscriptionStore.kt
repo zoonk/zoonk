@@ -199,10 +199,11 @@ class SubscriptionStore(
 
     /**
      * Only an account can buy: a guest creates one first, as main asks. A plan that can't be read
-     * keeps Play's sheet closed, since the cached one may predate a Plus bought elsewhere.
+     * keeps Play's sheet closed, since the cached one may predate a Plus bought elsewhere. [host] is the window
+     * Play's sheet opens on, asked for only then, since the one shown when the checkout started may be gone.
      */
     suspend fun buy(
-        activity: Activity,
+        host: suspend () -> Activity,
         period: BillingPeriod,
     ) {
         val session = fullAccount() ?: return
@@ -229,7 +230,7 @@ class SubscriptionStore(
                 mutablePurchase.value = PurchaseState.AlreadyPlus
                 return
             }
-            val opened = offers != null && offer != null && billing.buy(activity, offers, offer, session.accountId)
+            val opened = offers != null && offer != null && billing.buy(host(), offers, offer, session.accountId)
             if (!opened && fullAccount() == session) mutablePurchase.value = PurchaseState.PlayFailed
         } catch (e: CancellationException) {
             if (fullAccount() == session && mutablePurchase.value == PurchaseState.Buying) mutablePurchase.value = PurchaseState.Idle

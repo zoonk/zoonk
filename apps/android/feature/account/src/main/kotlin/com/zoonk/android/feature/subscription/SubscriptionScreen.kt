@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.subscription
 
+import android.app.Activity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -50,7 +52,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -75,6 +79,9 @@ import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.StripeSubscriptionCancellation
 import com.zoonk.api.models.StripeSubscriptionCancellation.State
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.time.ZoneId
@@ -368,14 +375,14 @@ private fun Offer(
     val offers by app.subscriptions.offers.collectShown()
     val freePlan by app.subscriptions.freePlan.collectShown()
     val purchase by app.subscriptions.purchase.collectAsStateWithLifecycle()
-    val activity = LocalActivity.current
     val analytics = LocalEventTracker.current
     val scope = rememberCoroutineScope()
+    val checkout = rememberCheckout(app.subscriptions)
     val onSubscribe: ((PlusOffer) -> Unit)? =
-        activity?.let { host ->
+        checkout?.let { buy ->
             { offer ->
                 analytics.track(AnalyticsEvent.SubscriptionCheckoutStarted(offer.period))
-                scope.launch { app.subscriptions.buy(host, offer.period) }
+                buy(offer.period)
             }
         }
 
@@ -707,3 +714,32 @@ private val TWO_PLANS_WIDTH = 1024.dp
 /** The narrowest a plan card keeps Plus's billing switch readable, at 100% text. */
 private val PLAN_MIN_WIDTH = 360.dp
 private val PLAN_GAP = 16.dp
+
+/** Starts a Plus checkout for [period] on Play's sheet; null where no activity can host it. */
+@Composable
+internal fun rememberCheckout(subscriptions: SubscriptionStore): ((BillingPeriod) -> Unit)? {
+    val activity = LocalActivity.current ?: return null
+    val checkout = viewModel { Checkout(subscriptions) }
+    DisposableEffect(checkout, activity) { onDispose(checkout.show(activity)) }
+    return checkout::buy
+}
+
+/**
+ * A Plus checkout outlives the window that started it: a width change, a fold or a rotation while it reads fresh
+ * offers recreates the screen, and Play's sheet opens on the window shown then.
+ */
+internal class Checkout(
+    private val subscriptions: SubscriptionStore,
+) : ViewModel() {
+    private val host = MutableStateFlow<Activity?>(null)
+
+    /** [activity] hosts Play's sheet until the returned call, when its screen goes. */
+    fun show(activity: Activity): () -> Unit {
+        host.value = activity
+        return { host.compareAndSet(activity, null) }
+    }
+
+    fun buy(period: BillingPeriod) {
+        viewModelScope.launch { subscriptions.buy({ host.filterNotNull().first() }, period) }
+    }
+}
