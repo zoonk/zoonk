@@ -32,10 +32,10 @@ function EditorChangeNote({ change }: { change: PlanChangeView }) {
 }
 
 /**
- * What the editor's last change did, with its Undo: the sheet's foot on a phone, a band under the
- * title in the side panel.
+ * What the editor's last change did, with its Undo, at the foot of the sheet or the side panel:
+ * under what the learner just tapped, so it moves nothing there when it comes.
  */
-export function PlanEditorChange({ placement }: { placement: "foot" | "top" }) {
+export function PlanEditorChange({ placement }: { placement: "foot" | "panel" }) {
   const t = useExtracted();
   const latest = useEditorChange();
 
@@ -55,5 +55,5 @@ export function PlanEditorChange({ placement }: { placement: "foot" | "top" }) {
     return <DrawerFooter note={note} />;
   }
 
-  return <div className="flex flex-col gap-3 border-b px-6 pb-4">{note}</div>;
+  return <div className="flex flex-col gap-3 border-t px-6 pt-4 pb-6">{note}</div>;
 }

@@ -104,7 +104,7 @@ function FinishRow({ examHref }: { examHref: string | null }) {
           )
         }
       >
-        <span className="truncate font-medium">{goal.displayName}</span>
+        <span className="line-clamp-2 font-medium">{goal.displayName}</span>
       </PathRowBody>
     </>
   );

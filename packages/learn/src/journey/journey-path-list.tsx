@@ -30,8 +30,6 @@ import { findOpenPhase, findOwnChapter, isNamedLikeAChapter } from "./path-phase
 import { PhaseWhen } from "./phase-when";
 import { useRoadmapFinish } from "./use-roadmap";
 
-const PHASE_ROW_CLASS = cn(PATH_ROW_CLASS, "min-h-12");
-
 function PhaseColumns({
   byPlace = false,
   nextChapter,
@@ -55,7 +53,7 @@ function PhaseColumns({
   );
 }
 
-const NESTED_CLASS = "flex flex-col pl-7";
+const NESTED_CLASS = "flex flex-col pb-2 pl-7";
 
 function OpenPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
   return (
@@ -83,7 +81,7 @@ function ChapterPhase({
   return (
     <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
       <LearnLink
-        className={cn(PHASE_ROW_CLASS, "hover:bg-muted/70", isNext && "bg-muted hover:bg-muted")}
+        className={cn(PATH_ROW_CLASS, "hover:bg-muted/70", isNext && "bg-muted hover:bg-muted")}
         href={links.chapter(chapter.chapterId)}
       >
         <PhaseColumns nextChapter={isNext ? chapter : undefined} open={open} phase={phase} />
@@ -113,7 +111,7 @@ function ChaptersPhase({
   if (!hasContent) {
     return (
       <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
-        <div className={PHASE_ROW_CLASS}>
+        <div className={PATH_ROW_CLASS}>
           {header}
           <ListRowChevronSpace />
         </div>
@@ -126,7 +124,7 @@ function ChaptersPhase({
       {/* The key remounts the phase when the plan goes on elsewhere, so one opened or shut by
           hand keeps it until then. */}
       <Collapsible defaultOpen={open} key={open ? "open" : "shut"}>
-        <CollapsibleTrigger className={cn(PHASE_ROW_CLASS, "hover:bg-muted/70")}>
+        <CollapsibleTrigger className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}>
           {header}
           <FoldChevron />
         </CollapsibleTrigger>
@@ -180,7 +178,7 @@ function FinishItem() {
 
   return (
     <li data-state="finish">
-      <div className={PHASE_ROW_CLASS}>
+      <div className={PATH_ROW_CLASS}>
         <span className={PATH_ROW_LEADING_CLASS}>
           <FlagIcon aria-hidden="true" className="size-4" />
         </span>
