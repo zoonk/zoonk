@@ -12,7 +12,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChapterMark } from "../_components/chapter-mark";
-import { ListRowChevronSpace } from "../_components/list-group";
+import { ListRowChevronSpace, ROW_FOLD_CLASS } from "../_components/list-group";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
@@ -53,7 +53,7 @@ function PhaseColumns({
   );
 }
 
-const NESTED_CLASS = "flex flex-col pb-2 pl-7";
+const NESTED_CLASS = "nested-rows flex flex-col pb-2";
 
 function OpenPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
   return (
@@ -81,7 +81,8 @@ function ChapterPhase({
   return (
     <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
       <LearnLink
-        className={cn(PATH_ROW_CLASS, "hover:bg-muted/70", isNext && "bg-muted hover:bg-muted")}
+        className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}
+        data-highlighted={isNext || undefined}
         data-slot="path-row"
         href={links.chapter(chapter.chapterId)}
       >
@@ -133,8 +134,7 @@ function ChaptersPhase({
           <FoldChevron />
         </CollapsibleTrigger>
 
-        {/* The panel clips what it folds, so it reaches as far as an open row's highlight does. */}
-        <CollapsibleContent className="-mx-2.5 px-2.5">
+        <CollapsibleContent className={ROW_FOLD_CLASS}>
           <div className={NESTED_CLASS} data-slot="path-nested">
             <JourneyChapters
               chapters={phase.chapters}
