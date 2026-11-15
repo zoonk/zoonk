@@ -37,10 +37,12 @@ internal fun TutorPlanChange(
     deciding: Boolean,
     failed: Boolean,
     repriced: Boolean,
+    live: Boolean,
     onDecide: (Decision) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val proposed = change.status == PlanChange.Status.PROPOSED
+    val waiting = change.status == PlanChange.Status.PROPOSED
+    val proposed = waiting && live
     val applied = change.status == PlanChange.Status.APPLIED
     val words = planChangeWords(change)
 
@@ -66,7 +68,7 @@ internal fun TutorPlanChange(
                 change,
             )?.let { Text(it, fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyMedium) }
 
-            statusLine(change)?.let {
+            statusLine(change, live)?.let {
                 Text(
                     it,
                     Modifier.semantics { liveRegion = LiveRegionMode.Polite },
@@ -75,7 +77,7 @@ internal fun TutorPlanChange(
                 )
             }
 
-            Decisions(change, deciding, onDecide)
+            if (!waiting || live) Decisions(change, deciding, onDecide)
 
             if (failed) {
                 Text(
@@ -90,14 +92,24 @@ internal fun TutorPlanChange(
 }
 
 @Composable
-private fun statusLine(change: PlanChange): String? =
+private fun statusLine(
+    change: PlanChange,
+    live: Boolean,
+): String? =
     when (change.status) {
         PlanChange.Status.APPLIED -> planChangeAppliedLine(change.todaySession)
         PlanChange.Status.DECLINED -> stringResource(R.string.tutor_plan_change_declined)
         PlanChange.Status.UNDONE -> stringResource(R.string.plan_change_undone)
         PlanChange.Status.REPLACED -> stringResource(R.string.tutor_plan_change_replaced)
-        PlanChange.Status.PROPOSED -> null
+        PlanChange.Status.PROPOSED -> if (live) null else stringResource(R.string.tutor_plan_change_replaced)
     }
+
+/**
+ * The one plan change a conversation still asks about: its newest proposal. An older one still waiting keeps its
+ * words and says a newer one came, so a long chat never holds several "Change my plan".
+ */
+internal fun liveProposal(turns: List<TutorTurn>): PlanChange? =
+    turns.lastOrNull { it.planChange?.status == PlanChange.Status.PROPOSED }?.planChange
 
 /** A change that would replace the exam's official date asks whether to keep it instead, in longer words stacked. */
 @Composable
