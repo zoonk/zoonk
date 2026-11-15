@@ -1,7 +1,72 @@
 import SwiftUI
 
+/// A goal made from a draft's card, owned by the visit to the draft's page. While it's made, the
+/// card's controls wait, Back included, as main's do, so the goal is made once and its setup opens
+/// from the card the learner confirmed.
+@MainActor
+@Observable
+final class DraftCreation {
+  private(set) var isCreating = false
+  var error: GoalError?
+  @ObservationIgnored private var leadsOn: Task<Void, Never>?
+
+  var canLeave: Bool { !isCreating }
+
+  /// Only a draft read since a create from it that this device can't vouch for (the store or the
+  /// visit marks it stale then) and that names no goal: one made from it opens that goal's setup.
+  static func canCreate(from card: Resource<OnboardingDraft>) -> Bool {
+    card.freshValue.map { $0.goalId == nil } ?? false
+  }
+
+  /// The write is the learner's, not the visit's: it finishes whatever happens to the screen. What
+  /// its answer leads to (`then`, or the error it shows) is the visit's, and ends when it leaves.
+  @discardableResult
+  func create(
+    from card: Resource<OnboardingDraft>, _ write: @escaping @MainActor () async throws -> String,
+    then: @escaping @MainActor (String) -> Void
+  ) -> Task<Void, Never>? {
+    guard !isCreating, Self.canCreate(from: card) else {
+      return nil
+    }
+
+    isCreating = true
+    error = nil
+    let sent = Task { try await write() }
+
+    leadsOn = Task {
+      defer { isCreating = false }
+
+      do {
+        let goalID = try await sent.value
+        try Task.checkCancellation()
+        then(goalID)
+      } catch is CancellationError {
+      } catch {
+        if !Task.isCancelled {
+          self.error = GoalError.creating(error)
+        }
+      }
+    }
+
+    return leadsOn
+  }
+
+  /// The visit left while its goal was being made: its answer opens nothing, and since this device
+  /// no longer waits for it, the draft is read again on the next visit.
+  func leave(_ card: Resource<OnboardingDraft>) {
+    guard isCreating else {
+      return
+    }
+
+    leadsOn?.cancel()
+    card.invalidate(rereadsWhileShown: false)
+  }
+}
+
 struct ReadDraftView: View {
+  let card: Resource<OnboardingDraft>
   let draft: OnboardingDraft
+  let creation: DraftCreation
   /// Sent in this flow just now: a question opens its explanation by itself.
   let sentHere: Bool
   let onRewrite: (String) -> Void
@@ -11,20 +76,29 @@ struct ReadDraftView: View {
 
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
-  @State private var isCreating = false
-  @State private var error: GoalError?
+
+  /// The card's controls wait while its goal is made, and while a draft read again since may
+  /// already have one.
+  private var isWaiting: Bool {
+    creation.isCreating || !DraftCreation.canCreate(from: card)
+  }
 
   var body: some View {
+    outcome
+  }
+
+  @ViewBuilder private var outcome: some View {
     switch draft.understanding?.value1 {
     case .case1(let understood):
       UnderstoodCard(
-        draft: draft, understood: understood, isCreating: isCreating, error: error,
+        draft: draft, understood: understood, isCreating: isWaiting, error: creation.error,
         onRewrite: onRewrite
       ) {
         create {
           try await onboarding.createGoals(
             understood.startableGoals(left: draft.activeGoalsLeft).map(\.draft.value1),
-            schedule: understood.schedule, sourceIDs: sourceIDs, timeZone: draft.timeZone)
+            from: draft.id, schedule: understood.schedule, sourceIDs: sourceIDs,
+            timeZone: draft.timeZone)
         } then: {
           onCreated($0)
         }
@@ -32,25 +106,27 @@ struct ReadDraftView: View {
       .onChange(of: draft) {
         // The draft is read again when the learner's goals or plan change, and it may have room by
         // then, such as after getting Plus; nil is no cap.
-        if error?.limit == .activeGoals, draft.activeGoalsLeft != 0 {
-          error = nil
+        if creation.error?.limit == .activeGoals, draft.activeGoalsLeft != 0 {
+          creation.error = nil
         }
       }
     case .case2(let explain):
       ExplainOutcome(
-        goal: draft.prompt, question: explain.question, isStarting: isCreating, error: error
+        goal: draft.prompt, question: explain.question, isStarting: isWaiting,
+        error: creation.error
       ) {
         startExplanation(question: explain.question)
       }
       .task {
         // Right after sending, a question opens its explanation by itself; coming back, it waits for a tap.
-        if sentHere, error == nil, !isCreating {
+        if sentHere, creation.error == nil, !isWaiting {
           startExplanation(question: explain.question)
         }
       }
     case .case3(let instrument):
       InstrumentOutcome(
-        goal: draft.prompt, instrument: instrument.instrument, isStarting: isCreating, error: error
+        goal: draft.prompt, instrument: instrument.instrument, isStarting: isWaiting,
+        error: creation.error
       ) {
         create {
           try await onboarding.createMusicianship(draft: draft, instrument: instrument.instrument)
@@ -66,38 +142,19 @@ struct ReadDraftView: View {
   }
 
   private func startExplanation(question: String) {
-    create {
+    creation.create(from: card) {
       try await onboarding.createExplanation(draft: draft, question: question)
     } then: { goalID in
-      // Only while the start flow that asked is still on screen.
-      guard case .startGoal = router.tasks.last else {
-        return
-      }
-
       router.dismissTask()
       router.open(.explain(goalId: goalID))
     }
   }
 
-  private func create(_ run: @escaping () async throws -> String, then: @escaping (String) -> Void)
-  {
-    guard !isCreating else {
-      return
-    }
-
-    isCreating = true
-    error = nil
-
-    Task {
-      defer { isCreating = false }
-
-      do {
-        then(try await run())
-      } catch is CancellationError {
-      } catch {
-        self.error = GoalError.creating(error)
-      }
-    }
+  private func create(
+    _ write: @escaping @MainActor () async throws -> String,
+    then: @escaping @MainActor (String) -> Void
+  ) {
+    creation.create(from: card, write, then: then)
   }
 }
 

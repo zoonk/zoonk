@@ -1,27 +1,28 @@
 import SwiftUI
 
-/// A ready plan's toolbar: "Adjust plan", and the plan's own items in the "…" options.
+/// A ready plan's toolbar: "Adjust plan", and the plan's own items in the "…" options. On a phone
+/// both sit beside the page's title instead (`PlanHeaderActions`), as main's phone has them.
 struct PlanToolbar: ViewModifier {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
   let context: PlanContext
 
   func body(content: Content) -> some View {
     content
-      .taskAction {
+      .taskAction(isShown: horizontalSizeClass == .regular) {
         Button {
           context.adjust(.top)
         } label: {
           Label {
-            Text(
-              "Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
+            adjustPlanTitle
           } icon: {
             Image(systemName: "slider.horizontal.3")
           }
         }
       }
-      .modifier(GoalOptionsToolbar(goal: context.goal) { planItems })
+      .modifier(GoalOptionsToolbar(goal: context.goal, inPageHeader: true) { planItems })
   }
 
   @ViewBuilder
@@ -90,4 +91,32 @@ struct PlanToolbar: ViewModifier {
   private var shareURL: URL {
     URL(string: "https://www.zoonk.com/plan-link/\(context.plan.planId)")!
   }
+}
+
+/// Main's `PlanHeader` on a phone: "Adjust plan" and the "…" options after the title.
+struct PlanHeaderActions: View {
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+  @Environment(\.planOptions) private var options
+
+  let context: PlanContext
+
+  var body: some View {
+    if horizontalSizeClass == .compact {
+      HStack(spacing: 8) {
+        Button {
+          context.adjust(.top)
+        } label: {
+          adjustPlanTitle
+        }
+        .buttonStyle(.outline)
+        .controlSize(.small)
+
+        options
+      }
+    }
+  }
+}
+
+private var adjustPlanTitle: Text {
+  Text("Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
 }

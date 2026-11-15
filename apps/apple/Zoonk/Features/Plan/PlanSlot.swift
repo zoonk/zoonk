@@ -437,7 +437,7 @@ struct PlanSuggestionSection: View {
           Text(
             "Save", tableName: "Plan", comment: "Saves the options picked for an exam's choice")
         }
-        .buttonStyle(.mainAction)
+        .mainActionUnlessBarHoldsOne()
         .disabled(draft(choice).isEmpty)
       }
     case .choice(let choice):
@@ -490,7 +490,7 @@ struct PlanSuggestionSection: View {
           Text(
             "Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
         }
-        .buttonStyle(.mainAction)
+        .mainActionUnlessBarHoldsOne()
       }
     }
   }
@@ -704,7 +704,7 @@ private struct CertificateClaimButton: View {
         "Get your certificate", tableName: "Plan",
         comment: "Writes the certificate of the plan's finished course or level and shows it")
     }
-    .buttonStyle(.mainAction)
+    .mainActionUnlessBarHoldsOne()
     .onDisappear {
       claiming?.cancel()
       claiming = nil

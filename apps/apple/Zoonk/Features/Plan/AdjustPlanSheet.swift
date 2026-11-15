@@ -40,8 +40,6 @@ struct AdjustPlanSheet: View {
     NavigationStack {
       ScrollViewReader { proxy in
         ZoonkList {
-          PlanEditorLatestSection(editor: editor, plan: plan, dateKind: dateKind)
-
           PlanDateSection(
             editor: editor, goal: goal, plan: plan, asksStudyEverything: section == .everything
           )
@@ -70,6 +68,9 @@ struct AdjustPlanSheet: View {
           }
 
           AdjustPlanSections(editor: editor, goal: goal, plan: plan)
+
+          // At the foot, as main's: over the settings, every save pushed them down under the finger.
+          PlanEditorLatestSection(editor: editor, plan: plan, dateKind: dateKind)
         }
         .disabled(editor.isSaving)
         .announcesStatus(

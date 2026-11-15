@@ -110,7 +110,7 @@ private struct PlanSlotAskedCard: View {
       } label: {
         Text("Change my plan", tableName: "Plan", comment: "Applies a proposed plan change")
       }
-      .buttonStyle(.mainAction)
+      .mainActionUnlessBarHoldsOne()
     }
   }
 }
@@ -223,7 +223,7 @@ struct PlanPastDateSlot: View {
             Text(
               "Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
           }
-          .buttonStyle(.mainAction)
+          .mainActionUnlessBarHoldsOne()
         } else {
           PlanOtherOptions {
             Button {
@@ -246,7 +246,7 @@ struct PlanPastDateSlot: View {
               "Find a date", tableName: "Plan",
               comment: "Works out the later end date that fits the lessons left")
           }
-          .buttonStyle(.mainAction)
+          .mainActionUnlessBarHoldsOne()
         }
       }
     }
@@ -378,7 +378,7 @@ struct PlanCoverageSlot: View {
           } label: {
             Text("Try again", tableName: "Plan", comment: "Asks again after it failed")
           }
-          .buttonStyle(.mainAction)
+          .mainActionUnlessBarHoldsOne()
         } else if case .time? = found, offer == nil {
           if context.goal.kind == .exam, !context.plan.schedule.fullCourse {
             Button {
@@ -388,7 +388,7 @@ struct PlanCoverageSlot: View {
                 "Keep studying after the exam", tableName: "Plan",
                 comment: "Opens studying what's left after the exam")
             }
-            .buttonStyle(.mainAction)
+            .mainActionUnlessBarHoldsOne()
           }
         } else {
           BusyButton(isBusy: found == .asking || isPreviewing) {
@@ -398,7 +398,7 @@ struct PlanCoverageSlot: View {
               "See what changes", tableName: "Plan",
               comment: "Works out the time that covers everything and shows what it changes")
           }
-          .buttonStyle(.mainAction)
+          .mainActionUnlessBarHoldsOne()
         }
       }
     }
@@ -603,7 +603,7 @@ struct PlanFitSlot: View {
             "Add to my plan", tableName: "Plan",
             comment: "Brings into the plan the lessons the learner's time fits")
         }
-        .buttonStyle(.mainAction)
+        .mainActionUnlessBarHoldsOne()
       }
     }
     .onDisappear { tasks.cancel() }
