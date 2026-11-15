@@ -22,6 +22,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -53,6 +54,7 @@ import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.LocalClock
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.OpeningDay
@@ -179,14 +181,19 @@ private fun FollowListWhileOnItsWay(
     }
 }
 
-/** The day the offer's stop gave comes, even before the page opened: the page reads its offer again, so its counts and Create all are today's. */
+/**
+ * The day the offer's stop gave comes while the page shows: the page reads its offer once, so its counts and Create
+ * all are today's. Only a day still to come when the page saw it arms that read; one already past asks for nothing.
+ */
 @Composable
 private fun RereadWhenOfferOpens(
     resource: Resource<GoalMindMaps>,
     stop: MindMapAllowanceStop?,
 ) {
+    val clock = LocalClock.current
     val at = stop?.availableAt?.toJavaInstant()
-    if (rememberOpeningDay(at) != OpeningDay.Open) return
+    val ahead = remember(resource, at) { at?.isAfter(clock.instant()) == true }
+    if (!ahead || rememberOpeningDay(at) != OpeningDay.Open) return
     LaunchedEffect(resource, at) { resource.refresh() }
 }
 

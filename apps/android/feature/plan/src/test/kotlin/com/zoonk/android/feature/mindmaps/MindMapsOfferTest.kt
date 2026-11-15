@@ -86,14 +86,14 @@ class MindMapsOfferTest {
 
     private fun waitFor(text: String) = compose.waitUntil(10_000) { compose.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty() }
 
+    /** A stop already past when the page opens still gates it, and asks for no read: only a day still to come arms one. */
     @Test
-    fun aStopThatEndedBeforeThePageOpenedIsReadAgainAtOnce() {
-        api.mindMaps = { if (api.lists == 1) stopped(Instant.parse("2020-01-01T00:00:00Z")) else fresh }
+    fun aStopPastOnArrivalReadsNothingMore() {
+        api.mindMaps = { stopped(clock.start.minusSeconds(60)) }
         show()
-
-        waitFor("Create all")
-        assertEquals(2, api.lists)
-        compose.onNodeWithText("You've used your mind maps").assertDoesNotExist()
+        waitFor("You've used your mind maps")
+        compose.waitForIdle()
+        assertEquals(1, api.lists)
     }
 
     /** With a correct clock, the instant passing makes one read of the list and nothing else; the read lifts the gate. */
@@ -128,7 +128,6 @@ class MindMapsOfferTest {
         show()
 
         waitFor("You've used your mind maps")
-        compose.waitUntil(10_000) { api.lists >= 2 }
         compose.onNodeWithText("You can try again now.").assertDoesNotExist()
         compose.onNodeWithText("More", substring = true).assertDoesNotExist()
         compose.onAllNodesWithText("Create").assertCountEquals(0)
