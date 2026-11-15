@@ -163,6 +163,13 @@ function inkRight(element: CaptureElement) {
 export function endLeads(context: Context, read: Group): AlignmentFinding[] {
   const { group, holders, parts, rows } = read;
 
+  // Apple's system chevron insets its ink in its own box; its column is that box (the lead's
+  // ruling), and `DisclosureChevron` draws where the system puts its own.
+  const reach = (element: CaptureElement) =>
+    element.part === "end" && context.capture.platform === "apple"
+      ? element.bounds[0] + element.bounds[2]
+      : inkRight(element);
+
   const edgeless = rows.filter((row) => {
     const own = parts.filter((element) => element.row === row.id);
 
@@ -186,7 +193,7 @@ export function endLeads(context: Context, read: Group): AlignmentFinding[] {
       ? []
       : own.filter((element) => element.part === "value" && drawn(element));
 
-    const last = [...ends, ...values].toSorted((one, other) => inkRight(other) - inkRight(one))[0];
+    const last = [...ends, ...values].toSorted((one, other) => reach(other) - reach(one))[0];
 
     if (!last || edge === null) {
       return [];
@@ -196,7 +203,7 @@ export function endLeads(context: Context, read: Group): AlignmentFinding[] {
       .map((element) => inkRight(element))
       .toSorted((one, other) => other - one)[0];
 
-    return [{ edge, hasEnd: ends.length > 0, last: inkRight(last), row, valueEnd }];
+    return [{ edge, hasEnd: ends.length > 0, last: reach(last), row, valueEnd }];
   });
 
   const valueColumns = ending.flatMap(({ hasEnd, valueEnd }) =>
