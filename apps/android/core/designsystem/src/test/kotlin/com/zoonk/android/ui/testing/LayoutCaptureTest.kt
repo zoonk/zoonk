@@ -165,6 +165,36 @@ class LayoutCaptureTest {
         assertTrue(label.get("baseline") is Number)
     }
 
+    @Test
+    fun anEmptyDescriptionIsNeitherDrawnNorCounted() {
+        val rows =
+            capture {
+                ListRow(headline = { Text("Empty first") }, leading = { Text("A") }, supporting = {
+                    Text("")
+                    Text("Only description")
+                })
+                ListRow(headline = { Text("One only") }, leading = { Text("A") }, supporting = { Text("Only description") })
+            }.elements()
+        val (withEmpty, alone) = rows.filter { it.getString("part") == "row" }.map { it.getJSONArray("bounds").getDouble(3) }
+        val marks = rows.filter { it.getString("part") == "mark" }
+        val rowTops = rows.filter { it.getString("part") == "row" }.map { it.getJSONArray("bounds").getDouble(1) }
+
+        assertEquals(alone, withEmpty, 0.01)
+        assertEquals(
+            marks[1].getJSONArray("bounds").getDouble(1) - rowTops[1],
+            marks[0].getJSONArray("bounds").getDouble(1) - rowTops[0],
+            0.01,
+        )
+        rows.filter { it.getString("part") == "note" }.forEach { assertEquals(1, it.getInt("texts")) }
+    }
+
+    @Test
+    fun aPartWithNoWordsCountsNoTexts() {
+        val label = capture { ListRow(headline = { Text("") }) }.part("label")
+
+        assertEquals(0, label.getInt("texts"))
+    }
+
     private fun capture(content: @androidx.compose.runtime.Composable () -> Unit): JSONArray {
         compose.setContent { ZoonkTheme { Column { content() } } }
         val file = File(folder.root, "row.png")

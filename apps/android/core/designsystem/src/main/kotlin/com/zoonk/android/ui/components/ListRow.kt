@@ -352,8 +352,12 @@ private fun Descriptions(
 ) {
     Layout(content, modifier) { measurables, constraints ->
         val gap = 1.dp.roundToPx()
-        // A slot child that draws nothing is no description.
-        val placeables = measurables.map { it.measure(constraints.copy(minHeight = 0)) }.filter { it.height > 0 }
+        // A slot child that draws nothing (an empty text measures no width) is no description: not placed, not counted.
+        val placeables =
+            measurables.map { it.measure(constraints.copy(minWidth = 0, minHeight = 0)) }.filter {
+                it.width > 0 &&
+                    it.height > 0
+            }
         parts.descriptions = placeables.size
         val height = placeables.sumOf { it.height + gap }
         layout(placeables.maxOfOrNull { it.width } ?: 0, height) {

@@ -371,6 +371,8 @@ internal object LayoutCapture {
                     texts.firstOrNull() ?: run {
                         fields["ink"] = pixelInk(bounds(node))
                         listOf("baseline", "capTop", "capBottom", "lines", "type").forEach { fields[it] = NOT_MEASURED }
+                        // Known: no text with words, so no description a row counts.
+                        fields["texts"] = 0
                         return
                     }
                 val lines = texts.map { (each, result) -> lineBox(each, result) }
