@@ -23,12 +23,14 @@ describe(getLessonCells, () => {
     const cells = getLessonCells({ known: 4, studied: 10, today: 3, total: 227 });
 
     expect(cells).toHaveLength(29);
+
     expect(cells.slice(0, 4)).toStrictEqual([
       { known: 0, planned: false, studied: 1 },
       { known: 1, planned: false, studied: 0 },
       { known: 0, planned: true, studied: 0 },
       { known: 0, planned: false, studied: 0 },
     ]);
+
     expect(cells.every((cell) => cell.studied % 1 === 0 && cell.known % 1 === 0)).toBe(true);
   });
 

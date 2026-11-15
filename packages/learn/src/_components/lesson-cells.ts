@@ -19,6 +19,7 @@ export function getLessonCells({ known, studied, today, total }: LessonCounts): 
   const studiedCells = cellsFor({ lessons: studied, size });
   const doneCells = Math.max(studiedCells, cellsFor({ lessons: studied + known, size }));
   const knownCells = known > 0 ? Math.max(1, doneCells - studiedCells) : 0;
+
   const todayCells = Math.min(
     cellsFor({ lessons: today, size }),
     count - studiedCells - knownCells,
