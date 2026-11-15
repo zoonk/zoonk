@@ -22,7 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -50,6 +49,7 @@ import com.zoonk.android.feature.mock.result.MockResult
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
+import com.zoonk.android.ui.CollectForVisit
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
@@ -150,8 +150,7 @@ private fun MockRunScreen(
 ) {
     val run by viewModel.state.collectAsStateWithLifecycle()
     val leave: () -> Unit = viewModel::leave
-    val currentNavigator by rememberUpdatedState(navigator)
-    LaunchedEffect(viewModel) { viewModel.closed.collect { currentNavigator.closeTask() } }
+    CollectForVisit(viewModel.closed) { navigator.closeTask() }
     val view = run.view
     val current = view.current
 

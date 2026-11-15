@@ -5,6 +5,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -34,7 +37,10 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
-/** Closing a mock closes it, once, though the window changes width, both ways, while its answers go out. */
+/**
+ * Closing a mock closes it, once, though the window changes width, both ways, while its answers go out; a close
+ * whose answers go out after the learner left the mock closes nothing.
+ */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
 class MockLeaveWindowTest {
@@ -51,23 +57,7 @@ class MockLeaveWindowTest {
 
     @Test
     fun closingWhileAnswersGoOutAndTheWindowWidensAndNarrowsClosesTheMockOnce() {
-        val application = RuntimeEnvironment.getApplication()
-        shadowOf(application.packageManager).addOrUpdateActivity(
-            ActivityInfo().apply {
-                name = MockLeaveTestActivity::class.java.name
-                packageName = application.packageName
-            },
-        )
-        val held = CompletableDeferred<Unit>()
-        val api = FakeMockRunApi().apply { saveGate = held }
-        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-        MockLeaveTest.app = AppContainer.preview(application)
-        MockLeaveTest.store =
-            MockRunStore(api, AppCache(FakeSession(AuthenticatedSession("ana", "token", "local")), scope), DraftStore(folder.root, scope)) {
-                "UTC"
-            }
-        scenario = ActivityScenario.launch(MockLeaveTestActivity::class.java)
-        rule.onNodeWithText("What is 1 + 1?").assertExists()
+        val held = launchAMock()
 
         scenario.onActivity { it.onBackPressedDispatcher.onBackPressed() }
         RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
@@ -80,10 +70,53 @@ class MockLeaveWindowTest {
         assertFalse(MockLeaveTest.navigator.isTaskOpen)
         assertEquals(AppRoute.Today, MockLeaveTest.navigator.currentRoute)
     }
+
+    @Test
+    fun aCloseWhoseAnswersWentOutAfterTheLearnerLeftTheMockLeavesItOpenAndClosableOnReturn() {
+        val held = launchAMock()
+
+        scenario.onActivity { it.onBackPressedDispatcher.onBackPressed() }
+        MockLeaveTest.visible = false
+        rule.waitForIdle()
+        held.complete(Unit)
+        rule.waitForIdle()
+        MockLeaveTest.visible = true
+        rule.waitForIdle()
+
+        assertEquals(AppRoute.Mock(RUN_BLOCK), MockLeaveTest.navigator.currentRoute)
+        scenario.onActivity { it.onBackPressedDispatcher.onBackPressed() }
+        rule.waitForIdle()
+        assertFalse(MockLeaveTest.navigator.isTaskOpen)
+    }
+
+    /** A running mock on its first question, its answers held until the returned call completes. */
+    private fun launchAMock(): CompletableDeferred<Unit> {
+        val application = RuntimeEnvironment.getApplication()
+        shadowOf(application.packageManager).addOrUpdateActivity(
+            ActivityInfo().apply {
+                name = MockLeaveTestActivity::class.java.name
+                packageName = application.packageName
+            },
+        )
+        val held = CompletableDeferred<Unit>()
+        val api = FakeMockRunApi().apply { saveGate = held }
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        MockLeaveTest.visible = true
+        MockLeaveTest.app = AppContainer.preview(application)
+        MockLeaveTest.store =
+            MockRunStore(api, AppCache(FakeSession(AuthenticatedSession("ana", "token", "local")), scope), DraftStore(folder.root, scope)) {
+                "UTC"
+            }
+        scenario = ActivityScenario.launch(MockLeaveTestActivity::class.java)
+        rule.onNodeWithText("What is 1 + 1?").assertExists()
+        return held
+    }
 }
 
 /** What outlives [MockLeaveTestActivity]'s recreations, as the app's container does. */
 object MockLeaveTest {
+    /** False while the learner is away from the mock, its entry and view models kept, as a task over it keeps them. */
+    var visible by mutableStateOf(true)
     lateinit var app: AppContainer
     lateinit var store: MockRunStore
     lateinit var navigator: AppNavigator
@@ -98,7 +131,11 @@ class MockLeaveTestActivity : ComponentActivity() {
                 val navigator = rememberAppNavigator()
                 MockLeaveTest.navigator = navigator
                 LaunchedEffect(Unit) { if (first) navigator.open(AppRoute.Mock(RUN_BLOCK)) }
-                if (navigator.isTaskOpen) MockScreen(AppRoute.Mock(RUN_BLOCK), MockLeaveTest.app, navigator, MockLeaveTest.store)
+                if (navigator.isTaskOpen &&
+                    MockLeaveTest.visible
+                ) {
+                    MockScreen(AppRoute.Mock(RUN_BLOCK), MockLeaveTest.app, navigator, MockLeaveTest.store)
+                }
             }
         }
     }

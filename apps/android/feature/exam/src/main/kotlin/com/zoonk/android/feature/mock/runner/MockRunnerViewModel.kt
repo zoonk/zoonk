@@ -8,6 +8,7 @@ import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionSource
+import com.zoonk.android.data.VisitOutcomes
 import com.zoonk.android.data.WritingWaits
 import com.zoonk.android.data.Written
 import com.zoonk.android.data.recode
@@ -25,13 +26,11 @@ import com.zoonk.api.models.MockExamSectionsInner
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
@@ -204,25 +203,26 @@ class MockRunnerViewModel(
 
     fun retrySaves() = queue.retryNow()
 
-    private var leaving = false
-    private val closes = Channel<Unit>(Channel.CONFLATED)
+    private var leavingOn: Int? = null
 
-    /** [leave]'s close, for whichever screen shows the mock once its answers went out. */
-    val closed: Flow<Unit> = closes.receiveAsFlow()
+    /** [leave]'s close, once its answers went out, while the visit that asked lasts. */
+    val closed = VisitOutcomes<Unit>()
 
     /**
      * Leaving waits at most a few seconds for answers going out, so the close action always leaves, even offline.
-     * Pressed again while they go out, it still closes only the mock.
+     * Pressed again while they go out, it still closes only the mock; a visit that ended before they went out closes
+     * nothing, and the next one can leave again.
      */
     fun leave() {
-        if (leaving) return
-        leaving = true
+        val visit = closed.visit
+        if (leavingOn == visit) return
+        leavingOn = visit
         viewModelScope.launch {
             run.value.question?.let { leaveQuestion(it.itemId) }
             saveText()
             queue.retryNow()
             withTimeoutOrNull(LEAVE_WAIT) { queue.idle() }
-            closes.send(Unit)
+            closed.send(visit, Unit)
         }
     }
 
