@@ -267,7 +267,7 @@ private struct PlanWeekRings: View {
   let plan: GoalPlan
 
   var body: some View {
-    HStack {
+    WeekDaysRow {
       ForEach(plan.week.days) { day in
         VStack(spacing: 6) {
           Text(PlanDate.weekday(day.date))
@@ -277,8 +277,9 @@ private struct PlanWeekRings: View {
 
           ring(day)
             .frame(width: ringSize, height: ringSize)
+            .layoutAnchor("week-ring")
         }
-        .frame(maxWidth: .infinity)
+        .weekDayMark(width: ringSize)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(PlanDate.text(day.date, today: plan.today)))
         .accessibilityValue(status(day))

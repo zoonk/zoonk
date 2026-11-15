@@ -800,6 +800,26 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertNil(store.startingOffer(about: "second"), "moving on with Ask open never asks again")
   }
 
+  /// RV93: an offer is dropped once the learner leaves its screen; coming back asks nothing, and
+  /// the learner taps Ask again if they still want it.
+  func testAnOfferLeftWithItsScreenStaysDroppedWhenTheLearnerComesBack() async throws {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      .ready(try twoScreenLesson())
+    }
+    let store = player(
+      cache: cache, content: content, transport: HeldAnswersTransport(runAnswers: "[]"))
+    await store.load()
+    store.ask(suggestionId: "simpler", sendsAtOnce: true)
+
+    store.continueLesson()
+    XCTAssertEqual(store.state?.currentStep?.id, "second")
+    store.goBack()
+    XCTAssertEqual(store.state?.currentStep?.id, "first")
+
+    XCTAssertNil(store.startingOffer(about: "first"))
+  }
+
   /// Loading the lesson again (a session renewed for the same learner) starts every answer over,
   /// so what was done on a canvas starts over with it.
   func testALessonLoadedAgainStartsItsCanvasWorkOver() async throws {
@@ -1309,6 +1329,25 @@ private func markedLesson() throws -> PlayableLesson {
          "marks": {"ideaIndex": \(index)}}
         """.utf8))
   }
+
+  return PlayableLesson(
+    id: "lesson", title: "A lesson", language: "en", targetLanguage: nil, chapterTitle: nil,
+    steps: steps, summary: nil,
+    tutorSuggestions: [.init(id: .simpler, label: "Explain it more simply")])
+}
+
+/// Two screens to read, one after the other.
+private func twoScreenLesson() throws -> PlayableLesson {
+  let steps = try [("first", "Cells make up living things."), ("second", "Each cell has a wall.")]
+    .enumerated().map { index, step in
+      try JSONDecoder().decode(
+        LessonStep.self,
+        from: Data(
+          """
+          {"id": "\(step.0)", "position": \(index), "pictureWaitStartedAt": 0,
+           "kind": "explanation", "content": {"title": null, "text": "\(step.1)"}}
+          """.utf8))
+    }
 
   return PlayableLesson(
     id: "lesson", title: "A lesson", language: "en", targetLanguage: nil, chapterTitle: nil,

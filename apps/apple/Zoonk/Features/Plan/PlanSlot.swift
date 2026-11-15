@@ -670,53 +670,68 @@ struct PlanStatement: View {
   }
 }
 
-/// Writes the certificates of the plan's finished levels or plan; the Plan plays their moment. The
-/// button owns its claim: once it leaves with its sheet or page, the claim shows nothing, and what
-/// it earned plays with the learner's next result.
-private struct CertificateClaimButton: View {
-  @State private var claiming: Task<Void, Never>?
-  @State private var failed = false
-
+/// Writes the certificates of the plan's finished levels or plan; the Plan plays their moment.
+struct CertificateClaimButton: View {
   let context: PlanContext
 
   var body: some View {
-    let failure = String(
-      localized: "That didn't save. Try again.", table: "Plan",
-      comment: "The plan's certificate couldn't be written; Get your certificate tries again")
+    let claim = context.certificateClaim
 
-    BusyButton(isBusy: claiming != nil, icon: .certificate) {
-      claiming = Task {
-        let claim = await context.claimCertificate()
-
-        guard !Task.isCancelled else {
-          return
-        }
-
-        claiming = nil
-        failed = claim == nil
-
-        if let claim {
-          context.showClaim(claim)
-        } else {
-          AccessibilityNotification.Announcement(failure).post()
-        }
-      }
+    BusyButton(isBusy: claim.isClaiming, icon: .certificate) {
+      claim.claim(context)
     } label: {
       Text(
         "Get your certificate", tableName: "Plan",
         comment: "Writes the certificate of the plan's finished course or level and shows it")
     }
     .mainActionUnlessBarHoldsOne()
-    .onDisappear {
-      claiming?.cancel()
-      claiming = nil
-    }
 
-    if failed {
-      Text(failure)
+    if claim.failed {
+      Text(CertificateClaim.failure)
         .typeStyle(.body)
         .foregroundStyle(.destructiveText)
     }
+  }
+}
+
+/// The Plan's claim, not its button's: the button is drawn again as the Plan splits into panes or
+/// joins them, and what the claim earned still plays. The Plan calls `leave()` as it closes; then
+/// the claim shows nothing, and what it earned plays with the learner's next result.
+@MainActor
+@Observable
+final class CertificateClaim {
+  static let failure = LocalizedStringResource(
+    "That didn't save. Try again.", table: "Plan",
+    comment: "The plan's certificate couldn't be written; Get your certificate tries again")
+
+  private(set) var isClaiming = false
+  private(set) var failed = false
+  @ObservationIgnored private var sent: Task<Void, Never>?
+
+  func claim(_ context: PlanContext) {
+    isClaiming = true
+    sent = Task {
+      let claim = await context.claimCertificate()
+
+      guard !Task.isCancelled else {
+        return
+      }
+
+      isClaiming = false
+      failed = claim == nil
+
+      if let claim {
+        context.showClaim(claim)
+      } else {
+        AccessibilityNotification.Announcement(String(localized: Self.failure)).post()
+      }
+    }
+  }
+
+  func leave() {
+    sent?.cancel()
+    sent = nil
+    isClaiming = false
   }
 }
 

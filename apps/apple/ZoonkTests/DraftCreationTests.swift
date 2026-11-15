@@ -76,8 +76,8 @@ final class DraftCreationTests: XCTestCase {
 
     let failure = String(
       localized: "We couldn't save your goal. Try again in a moment.", table: "Onboarding")
-    let saysWhy = try await waitUntil { Self.spoken(in: window).contains { $0.contains(failure) } }
-    XCTAssertTrue(saysWhy, "The failure shows on the card: \(Self.spoken(in: window))")
+    let saysWhy = try await waitUntil { spoken(in: window).contains { $0.contains(failure) } }
+    XCTAssertTrue(saysWhy, "The failure shows on the card: \(spoken(in: window))")
   }
 
   /// The learner leaves while an explanation is made and opens another draft: the first one's
@@ -184,41 +184,6 @@ final class DraftCreationTests: XCTestCase {
     }
 
     return controller.children.lazy.compactMap { navigationController(in: $0) }.first
-  }
-
-  /// SwiftUI builds what VoiceOver reads only while the simulator has app accessibility on, which
-  /// a simulator an automation tool has driven keeps and a new one lacks, so the test turns it on
-  /// for itself through the system's accessibility library, as accessibility snapshot tests do.
-  private func readsWhatVoiceOverReads() throws {
-    typealias Enabled = @convention(c) () -> Bool
-    typealias SetEnabled = @convention(c) (Bool) -> Void
-    let library = try XCTUnwrap(dlopen("/usr/lib/libAccessibility.dylib", RTLD_NOW))
-    let enabled = unsafeBitCast(
-      try XCTUnwrap(dlsym(library, "_AXSApplicationAccessibilityEnabled")), to: Enabled.self)
-    let setEnabled = unsafeBitCast(
-      try XCTUnwrap(dlsym(library, "_AXSApplicationAccessibilitySetEnabled")), to: SetEnabled.self)
-    let wasOn = enabled()
-    setEnabled(true)
-    addTeardownBlock { setEnabled(wasOn) }
-  }
-
-  /// What VoiceOver can read on the screen.
-  private static func spoken(in element: Any) -> [String] {
-    guard let object = element as? NSObject else {
-      return []
-    }
-
-    var texts = [object.accessibilityLabel].compactMap { $0 }.filter { !$0.isEmpty }
-
-    if let view = object as? UIView {
-      texts += view.subviews.flatMap { spoken(in: $0) }
-    }
-
-    if let elements = object.accessibilityElements {
-      texts += elements.flatMap { spoken(in: $0) }
-    }
-
-    return texts
   }
 }
 

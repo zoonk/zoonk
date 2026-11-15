@@ -75,6 +75,7 @@ private struct BuddyContent: View {
   @Environment(PracticeStore.self) private var practice
   @Environment(TutorStore.self) private var tutor
   @Environment(\.tutorPlaces) private var places
+  @Environment(\.isCoveredByTask) private var isCovered
 
   let status: BuddyStatus
   let goalId: String?
@@ -84,6 +85,7 @@ private struct BuddyContent: View {
   @State private var isWearing = false
   @State private var goalDraft = ""
   @State private var faceCue: ActCue<BuddyAct>?
+  @State private var missionTap = BuddyMissionTap()
 
   private var name: String {
     buddyName(kind: status.buddy.kind, name: status.buddy.name)
@@ -105,15 +107,14 @@ private struct BuddyContent: View {
 
   var body: some View {
     // A pane rather than an inspector: a hidden tab's inspector turns into a sheet over the shown
-    // tab when the width turns compact.
-    PaneSplit(primaryShare: 0.55) {
-      thread(opensDay: false)
-    } secondary: {
+    // tab when the width turns compact. The conversation keeps its identity as the pane comes and
+    // goes, so what it's asking or opening goes on.
+    PaneBeside(paneEdge: .trailing, primaryShare: 0.55) {
       dayView(showsTitle: true)
         // A day opened in a sheet before iPhone Duo unfolded gives way to the pane.
         .onAppear { isDayShown = false }
-    } single: {
-      thread(opensDay: true)
+    } content: { isBeside in
+      thread(opensDay: !isBeside)
     }
     .navigationTitle(Text(name))
     .taskOptions(
@@ -170,6 +171,15 @@ private struct BuddyContent: View {
         react(.smile)
       }
     }
+    .onChange(of: isCovered) {
+      if isCovered {
+        missionTap.cancel()
+      }
+    }
+    .onChange(of: status.today.map { "\($0.goalId) \($0.localDate)" }) {
+      missionTap.startOver()
+    }
+    .onDisappear { missionTap.cancel() }
     .onChange(of: store.broughtQuestion, initial: true) { _, question in
       guard let question else {
         return
@@ -187,7 +197,7 @@ private struct BuddyContent: View {
 
   private func dayView(showsTitle: Bool) -> BuddyDayView {
     BuddyDayView(
-      status: status, name: name,
+      status: status, name: name, tap: missionTap,
       onGlasses: {
         // A phone's day is a sheet: it gives way to the glasses' own sheet.
         if !showsTitle {

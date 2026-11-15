@@ -292,7 +292,7 @@ private struct WeekRings: View {
   var body: some View {
     let start = studyDate(recap.weekStart)
 
-    HStack {
+    WeekDaysRow {
       ForEach(0..<7, id: \.self) { offset in
         let date = start.map { $0.addingTimeInterval(Double(offset) * 86_400) }
         let key = date?.formatted(.iso8601.year().month().day()) ?? ""
@@ -305,12 +305,13 @@ private struct WeekRings: View {
                 .foregroundStyle(.success)
             }
           }
+          .layoutAnchor("week-ring")
 
           Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
             .typeStyle(.small.monospaced())
             .foregroundStyle(studied ? Color(.foreground) : .faint)
         }
-        .frame(maxWidth: .infinity)
+        .weekDayMark(width: ringSize)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(date?.formatted(.studyDay.weekday(.wide)) ?? ""))
         .accessibilityValue(

@@ -583,7 +583,7 @@ struct TodayWeekSection: View {
     let localDate = week.days.first(where: \.isToday)?.date ?? view.session.localDate
 
     PageSection {
-      HStack {
+      WeekDaysRow(target: 44) {
         ForEach(week.days, id: \.date) { day in
           WeekDayMark(
             day: day, localDate: localDate,
@@ -697,15 +697,18 @@ private struct WeekDayMark: View {
       VStack(spacing: 4) {
         ring
           .frame(width: ringSize, height: ringSize)
+          .layoutAnchor("week-ring")
 
         Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
           .typeStyle(.small.weight(day.isToday ? .bold : .regular))
           .foregroundStyle(day.isToday ? Color(.foreground) : .mutedForeground)
       }
-      .frame(maxWidth: .infinity)
+      // The whole day is the target, so its tap reaches past the ring.
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
       .contentShape(.rect)
     }
     .buttonStyle(.plain)
+    .weekDayMark(width: ringSize)
     .accessibilityLabel(label(weekday: weekday))
     .popover(isPresented: $isShown, arrowEdge: .top) {
       TodayFactsPopover(
