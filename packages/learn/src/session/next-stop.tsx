@@ -261,7 +261,8 @@ export function NextStop({
 
   return (
     <WaitScreen
-      deck={hold.status === "go" ? null : deck}
+      // A failed run has nothing to wait for, so it offers Try again and no quiz.
+      deck={hold.status === "go" || failed ? null : deck}
       goalId={goalId}
       hold={hold}
       surface="lessonWait"
