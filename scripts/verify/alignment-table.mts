@@ -229,6 +229,7 @@ const COLUMNS =
 export const WEB_TABLE = {
   actions: ACTIONS,
   columns: COLUMNS,
+  panels: "[data-slot=page-aside]",
   pieces: PIECES.flatMap((piece) => (piece.web ? [{ name: piece.name, web: piece.web }] : [])),
   pinned: "[data-slot=bottom-bar]",
   surfaces: SURFACES,

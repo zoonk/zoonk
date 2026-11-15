@@ -112,6 +112,19 @@ describe("relationships with no vote", () => {
     assert.equal(evaluateCapture(fixtureCapture(filledActions("page", 2)))[0]?.rule, "one-filled");
   });
 
+  it("counts a side panel's filled actions apart from the page's, while the page is on top", () => {
+    const panel = "Your plan (side panel)";
+
+    const beside = (inPanel: number, top = "page") => ({
+      ...fixtureCapture([...filledActions("page", 1), ...filledActions(panel, inPanel)], top),
+      panels: [panel],
+    });
+
+    assert.deepEqual(evaluateCapture(beside(1)), []);
+    assert.equal(evaluateCapture(beside(2))[0]?.detail, `${panel}0, ${panel}1 on ${panel}`);
+    assert.deepEqual(evaluateCapture(beside(2, "Rename")), []);
+  });
+
   it("counts only enabled filled actions: a disabled one draws gray and isn't a choice yet", () => {
     assert.deepEqual(evaluateCapture(fixtureCapture(checkAndRun(true))), []);
 

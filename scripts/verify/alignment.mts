@@ -116,36 +116,44 @@ function filledLeads(context: Context): AlignmentFinding[] {
     ];
   }
 
+  // The surface on top, and while that's the page, each side panel beside it on its own.
+  const judged = new Set([
+    capture.activeSurface,
+    ...(capture.activeSurface === "page" ? (capture.panels ?? []) : []),
+  ]);
+
   const filled = capture.elements.filter(
     (element) =>
       element.part === "action" &&
       element.variant === "filled" &&
       !element.disabled &&
-      element.surface === capture.activeSurface,
+      judged.has(element.surface ?? ""),
   );
 
-  const actions = [
-    ...new Map(
-      filled.map((action) => [
-        action.target ? `${action.text ?? action.name ?? ""} ${action.target}` : action.id,
-        action,
-      ]),
-    ).values(),
-  ];
+  return [...Map.groupBy(filled, (action) => action.surface ?? "")].flatMap(([surface, found]) => {
+    const actions = [
+      ...new Map(
+        found.map((action) => [
+          action.target ? `${action.text ?? action.name ?? ""} ${action.target}` : action.id,
+          action,
+        ]),
+      ).values(),
+    ];
 
-  if (actions.length < 2) {
-    return [];
-  }
+    if (actions.length < 2) {
+      return [];
+    }
 
-  return [
-    finding(context, {
-      detail: `${actions.map((action) => action.name ?? action.text ?? action.id).join(", ")} on ${capture.activeSurface}`,
-      level: "fail",
-      message: "more than one filled action on one surface",
-      piece: "action",
-      rule: "one-filled",
-    }),
-  ];
+    return [
+      finding(context, {
+        detail: `${actions.map((action) => action.name ?? action.text ?? action.id).join(", ")} on ${surface}`,
+        level: "fail",
+        message: "more than one filled action on one surface",
+        piece: "action",
+        rule: "one-filled",
+      }),
+    ];
+  });
 }
 
 function groupLeads(context: Context, group: Group): AlignmentFinding[] {
