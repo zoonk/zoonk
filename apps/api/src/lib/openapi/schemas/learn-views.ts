@@ -117,7 +117,7 @@ export const goalContentResponseSchema = z
       )
       .meta({
         description:
-          "Every skill of the goal as a card, grouped by chapter in plan order, with each section's chapters together (show a section header when there are two or more)",
+          "Every skill of the goal as a card, grouped by chapter in plan order, with each section's chapters together",
       }),
   })
   .meta({ id: "GoalContent" }) satisfies z.ZodType<ContentView>;

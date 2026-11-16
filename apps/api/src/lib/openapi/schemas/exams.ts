@@ -194,7 +194,7 @@ export const examViewResponseSchema = z
       .boolean()
       .meta({
         description:
-          "The one day is the start of the month the learner named, standing for that month: show the month, not the day",
+          "The one day is the start of the month the learner named, standing for that month, not that day",
       }),
     nextMock: z
       .object({
@@ -230,7 +230,7 @@ export const examViewResponseSchema = z
       .nullable()
       .meta({
         description:
-          "How the learner's mocks went over time: each one's score (the latest twenty, oldest first), each subject's trend, what got better and what still needs work. Null before the first finished mock, and when mocks need Plus (`mocksRequirePlus`): show it locked, never hidden",
+          "How the learner's mocks went over time: each one's score (the latest twenty, oldest first), each subject's trend, what got better and what still needs work. Null before the first finished mock, and when mocks need Plus (`mocksRequirePlus`)",
       }),
     result: examResultResponseSchema.nullable(),
     runningMocks: z
@@ -282,7 +282,7 @@ export const examViewResponseSchema = z
       .nullable()
       .meta({
         description:
-          "DELE, DELF or DALF, Goethe-Zertifikat and Cambridge English goals: the exam's speaking paper, each task started with POST /v1/language-conversations (kind examSpeaking) and run as a live call with the AI as examiner or partner. Tasks come with Plus (`access`); show them locked, never hidden. Null for other exams",
+          "DELE, DELF or DALF, Goethe-Zertifikat and Cambridge English goals: the exam's speaking paper, each task started with POST /v1/language-conversations (kind examSpeaking) and run as a live call with the AI as examiner or partner. Tasks come with Plus (`access`). Null for other exams",
       }),
     speakingMock: speakingMockExamSchema
       .nullable()

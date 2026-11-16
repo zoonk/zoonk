@@ -5,7 +5,7 @@ export const catchUpSchema = z
   .object({
     blockIds: z
       .array(uuidSchema())
-      .meta({ description: "The day's blocks that catch up: label them so" }),
+      .meta({ description: "The day's blocks that catch up on lessons earlier days left" }),
     later: z
       .object({
         lessons: z.number().int().min(0),
@@ -14,7 +14,7 @@ export const catchUpSchema = z
           .boolean()
           .meta({
             description:
-              "They take about one more day's time at most: offer adding them to today (POST catch-up-blocks). Otherwise say only that they come first on the next days",
+              "They take about one more day's time at most, so POST catch-up-blocks can add them to today. Otherwise they come first on the next days",
           }),
       })
       .meta({

@@ -38,7 +38,7 @@ export const studyWeekDaySchema = z
       .enum(["afterEnd", "beforeStart", "deadline", "exam", "rest", "study"])
       .meta({
         description:
-          "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended",
+          "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). An `afterEnd` day is after the goal's date; a plan whose date came with lessons left continues once the learner moves its date",
       }),
     minutes: z
       .number()
@@ -138,7 +138,7 @@ export const studySessionResponseSchema = z
           .nullable()
           .meta({
             description:
-              "This goal's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+              "This goal's next scheduled study day after today, within a week and past the week's end; null when the coming week has none",
           }),
       })
       .meta({
@@ -174,7 +174,7 @@ export const studyAnswerFeedbackResponseSchema = z
       .boolean()
       .meta({
         description:
-          "A statement left blank (`{ dontKnow: true }`) where a wrong answer cancels a right one: neither right nor a mistake, so show it as left blank, not as an error. It isn't saved as a mistake",
+          "A statement left blank (`{ dontKnow: true }`) where a wrong answer cancels a right one: neither right nor a mistake, and it isn't saved as a mistake",
       }),
     correctAnswer: questionAnswerSchema
       .nullable()

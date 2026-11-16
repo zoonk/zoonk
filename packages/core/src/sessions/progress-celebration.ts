@@ -17,7 +17,7 @@ export const progressCelebrationShape = {
     .nullable()
     .meta({
       description:
-        "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null when there's none",
+        "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses), until it's marked as shown; null when there's none",
     }),
   certificates: unshownCertificatesSchema,
   reached: reachedSchema.meta({

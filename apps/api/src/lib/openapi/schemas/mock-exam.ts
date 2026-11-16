@@ -198,7 +198,7 @@ export const mockViewResponseSchema = z
       .nullable()
       .meta({
         description:
-          "The exam's questions for what a mock taken any time sits, when it asks fewer (the bank had too few new ones, and a full mock never repeats answered ones): say how many of them it asks. Null when it asks them all",
+          "The exam's questions for what a mock taken any time sits, when it asks fewer (the bank had too few new ones, and a full mock never repeats answered ones). Null when it asks them all",
       }),
     fullLength: z.boolean(),
     goalId: uuidSchema().nullable(),
@@ -284,7 +284,7 @@ export const mockViewResponseSchema = z
       .enum(["ready", "running", "finished", "expired"])
       .meta({
         description:
-          "`expired`: its time ran out while the learner was away with most of it unanswered (the clock ran out over ten minutes before anything handed it in, under half of its questions answered), so it isn't scored or counted toward preparation: say so calmly and offer a new one (its challenge for the plan's mock, the goal's mocks for one taken any time). One mostly answered is graded as it stands; a placement mock never expires",
+          "`expired`: its time ran out while the learner was away with most of it unanswered (the clock ran out over ten minutes before anything handed it in, under half of its questions answered), so it isn't scored or counted toward preparation; a new one starts from its challenge for the plan's mock, or from the goal's mocks for one taken any time. One mostly answered is graded as it stands; a placement mock never expires",
       }),
     timeZone: z.string().nullable(),
     trueFalseLabels: trueFalseLabelsSchema,

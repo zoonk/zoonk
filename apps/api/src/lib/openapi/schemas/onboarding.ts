@@ -37,7 +37,7 @@ const dateProblemSchema = z
   .nullable()
   .meta({
     description:
-      "Why the goal's date can't be planned as it stands, so the `targetDate` screen asks again: always for `passed` and `today`, which no plan can be made for (start the screen empty, saying the date passed or is today), and for `noSitting` until the learner answers (offer each of `closest` with one tap). Null when the date can be planned",
+      "Why the goal's date can't be planned as it stands, so the `targetDate` screen asks again: always for `passed` and `today`, which no plan can be made for, and for `noSitting` until the learner answers (`closest` holds the nearest dates to pick). Null when the date can be planned",
   });
 
 export const onboardingResponseSchema = z
@@ -91,7 +91,7 @@ export const onboardingResponseSchema = z
           .enum(["done", "ready", "stopped", "writing"])
           .meta({
             description:
-              "`stopped` when the lesson failed or was set aside; `writing` while its content is pending or being written until every screen, mark, icon and picture is in; `ready` once the learner can start it; `done` once they finished it. `done` outranks the run's `firstLessonReady`, which a reconnected stream replays: don't offer it again",
+              "`stopped` when the lesson failed or was set aside; `writing` while its content is pending or being written until every screen, mark, icon and picture is in; `ready` once the learner can start it; `done` once they finished it. `done` outranks the run's `firstLessonReady`, which a reconnected stream replays after the lesson is done",
           }),
         title: z.string(),
       })

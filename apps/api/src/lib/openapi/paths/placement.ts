@@ -189,7 +189,7 @@ export const placementPaths = {
   "/goals/{goalId}/placement/answers": {
     post: {
       description:
-        'Grades one placement answer, including "I don\'t know yet", and returns the updated placement with the next question. Placement answers never go to the mistakes notebook. For an exam goal (its Focus test) never show `isCorrect`; an item the learner already answered in the test is not recorded again, so a retry is safe; once the returned `status` is `done`, the open sitting asks nothing more: close it with POST /goals/{goalId}/placement/completion.',
+        "Grades one placement answer, including \"I don't know yet\", and returns the updated placement with the next question. Placement answers never go to the mistakes notebook. An exam goal's Focus test gives no feedback on answers (`isCorrect` is still returned); an item the learner already answered in the test is not recorded again, so a retry is safe; once the returned `status` is `done`, the open sitting asks nothing more: close it with POST /goals/{goalId}/placement/completion.",
       operationId: "createPlacementAnswer",
       requestBody: {
         content: { "application/json": { schema: placementAnswerInputSchema } },
