@@ -49,6 +49,18 @@ export function App() {
   const { emails, status } = useEmailInbox();
   const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
   const selectedEmail = getSelectedEmail({ emails, selectedEmailId });
+  const previewRef = useRef<HTMLElement>(null);
+
+  // On a phone the message opens under the whole list, out of view.
+  const handleSelect = (emailId: string) => {
+    setSelectedEmailId(emailId);
+
+    requestAnimationFrame(() => {
+      if (globalThis.matchMedia("(width < 48rem)").matches) {
+        previewRef.current?.scrollIntoView({ block: "start" });
+      }
+    });
+  };
 
   const handleClear = () => {
     setSelectedEmailId(null);
@@ -86,13 +98,13 @@ export function App() {
                   email={email}
                   isSelected={email.id === selectedEmail.id}
                   key={email.id}
-                  onSelect={setSelectedEmailId}
+                  onSelect={handleSelect}
                 />
               ))}
             </MailboxList>
           </MailboxInbox>
 
-          <EmailPreview email={selectedEmail} key={selectedEmail.id} />
+          <EmailPreview email={selectedEmail} key={selectedEmail.id} ref={previewRef} />
         </MailboxBody>
       ) : (
         <EmptyInbox status={status} />
@@ -178,11 +190,11 @@ function SignInCode({ code }: { code: string }) {
   );
 }
 
-function EmailPreview({ email }: { email: CapturedEmail }) {
+function EmailPreview({ email, ref }: { email: CapturedEmail; ref: React.Ref<HTMLElement> }) {
   const code = findSignInCode(email);
 
   return (
-    <MailboxPreview>
+    <MailboxPreview ref={ref}>
       <header className="border-border flex flex-col gap-4 border-b px-4 py-5 md:px-6">
         {code && <SignInCode code={code} />}
 
@@ -225,6 +237,7 @@ function EmailBody({ email }: { email: CapturedEmail }) {
     const observer = new ResizeObserver(() => {
       if (element.contentDocument?.body) {
         element.style.height = `${element.contentDocument.body.scrollHeight}px`;
+        element.style.minHeight = "0";
       }
     });
 
@@ -248,7 +261,7 @@ function EmailBody({ email }: { email: CapturedEmail }) {
   return (
     <div className="border-border rounded-xl border bg-white p-5">
       <iframe
-        className="block w-full border-0 bg-white"
+        className="block min-h-95 w-full border-0 bg-white md:min-h-105"
         ref={frame}
         referrerPolicy="no-referrer"
         sandbox="allow-same-origin"
