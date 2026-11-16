@@ -12,8 +12,9 @@ export type SideCuts = { cuts: number[]; step: number; total: number };
 
 const GAP = 2;
 const EDGE_LABEL_GAP = 10;
-const PILL_LONG = 26;
-const PILL_SHORT = 12;
+const PILL_LONG = 32;
+const PILL_SHORT = 16;
+const GRIP_HALF_LENGTH = 4;
 const MIN_LABEL_CELL = 20;
 const DIGIT_WIDTH = 9;
 const LABEL_INSET = 4;
@@ -90,10 +91,21 @@ export function CutHandle({
       <rect
         className={cn("fill-background stroke-muted-foreground", disabled && "opacity-0")}
         height={height}
-        rx={PILL_SHORT / 2}
+        rx={4}
         width={width}
         x={cx - width / 2}
         y={cy - height / 2}
+      />
+      <path
+        aria-hidden="true"
+        className={cn("stroke-muted-foreground", disabled && "opacity-0")}
+        d={
+          orientation === "horizontal"
+            ? `M${cx - 2} ${cy - GRIP_HALF_LENGTH} v8 M${cx + 2} ${cy - GRIP_HALF_LENGTH} v8`
+            : `M${cx - GRIP_HALF_LENGTH} ${cy - 2} h8 M${cx - GRIP_HALF_LENGTH} ${cy + 2} h8`
+        }
+        strokeWidth={1.5}
+        strokeLinecap="round"
       />
     </ActivityPlaceHandle>
   );
