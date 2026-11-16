@@ -357,23 +357,3 @@ describe(listCertificateUnits, () => {
     expect(units({ goal: { ...GOAL, kind: "explain" } })).toStrictEqual([]);
   });
 });
-
-describe("certificate study progress", () => {
-  it("gives no certificate credit for a fully tested-out plan", () => {
-    const result = units({ items: [lesson({ chapterId: "b1", status: "testedOut" })] });
-    expect(result.every((unit) => !unit.finished)).toBe(true);
-    expect(result.map((unit) => unit.progress)).toStrictEqual([0, 0]);
-  });
-
-  it("measures studied lessons against the whole certificate scope, including lessons cut from a dated plan", () => {
-    const studied = lesson({ chapterId: "b1" });
-
-    const result = units({
-      goal: { ...GOAL, targetDate: AFTER },
-      items: [studied],
-      missing: [{ lessons: 3, skillId: studied.skillId ?? "" }],
-    });
-
-    expect(result.map((unit) => unit.progress)).toStrictEqual([0.25, 0.25]);
-  });
-});

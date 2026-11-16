@@ -184,7 +184,6 @@ filter:
     - joinInstrumentWaitlist
     - leaveInstrumentWaitlist
     - listCertificates
-    - listCertificateProgress
     - listChapterLessonMaps
     - listChapterLessons
     - listCountries

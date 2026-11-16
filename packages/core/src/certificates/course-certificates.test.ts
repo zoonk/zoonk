@@ -41,7 +41,6 @@ import { reconcileAppleSubscription } from "../subscriptions/reconcile-apple-sub
 import { getFieldMapView } from "../view-models/map/get-field-map-view";
 import { claimCourseCertificate } from "./claim-course-certificate";
 import { getPublicCertificate } from "./get-public-certificate";
-import { listCurrentUserCertificateProgress } from "./list-certificate-progress";
 import { listCurrentUserCertificates } from "./list-certificates";
 import { markCertificateShown } from "./mark-certificate-shown";
 import type * as PlanScope from "../plans/_utils/plan-scope";
@@ -600,38 +599,6 @@ describe("level and plan certificates", () => {
     await expect(listCertificates(first.user.id)).resolves.toMatchObject([
       { goalId: first.goal.id },
     ]);
-  });
-
-  it("targets the plan certificate when the plan began partway through a level", async () => {
-    const fixture = await courseGoal({
-      chapters: [
-        { level: "beginner", title: "Skipped" },
-        { level: "beginner", title: "Included" },
-        { level: "intermediate", title: "Other" },
-      ],
-      items: [
-        { chapter: 1, status: "done" },
-        { chapter: 1, status: "todo" },
-        { chapter: 2, status: "done" },
-        { chapter: 2, status: "done" },
-        WON_CHALLENGE,
-      ],
-    });
-
-    const [skipped, skill] = await Promise.all([libraryLessonFixture(), skillFixture()]);
-
-    await Promise.all([
-      chapterLessonFixture({ chapterId: fixture.chapters[0]?.id ?? "", lessonId: skipped.id }),
-      lessonSkillFixture({ lessonId: skipped.id, skillId: skill.id }),
-      prisma.courseChapter.deleteMany({
-        where: { chapterId: fixture.chapters[2]?.id, courseId: fixture.course.id },
-      }),
-    ]);
-
-    await expect(listCurrentUserCertificateProgress()).resolves.toMatchObject({
-      status: "ready",
-      upNext: [{ id: fixture.goal.id, progress: 0.75 }],
-    });
   });
 
   it("certifies a plan that skipped part of a level as the plan, whatever its details say", async () => {

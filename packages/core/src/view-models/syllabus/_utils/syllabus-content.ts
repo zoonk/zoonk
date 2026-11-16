@@ -117,25 +117,24 @@ function getCandidates({
 }
 
 /** Missing item skills prefer a taught skill in the plan graph, falling back to the content's first skill. */
-export async function withSkills<Item extends SyllabusItem>({
+export async function withSkills({
   from,
   graphSkillIds,
   items,
 }: {
   from: LibrarySource;
-  graphSkillIds: ReadonlySet<string> | ((item: Item) => ReadonlySet<string>);
-  items: readonly Item[];
-}): Promise<Item[]> {
+  graphSkillIds: ReadonlySet<string>;
+  items: readonly SyllabusItem[];
+}): Promise<SyllabusItem[]> {
   if (items.every((item) => item.skillId)) {
     return [...items];
   }
 
   const skills = await loadContentSkills(items, from);
 
-  const pickSkill = (item: Item): string | null => {
+  const pickSkill = (item: SyllabusItem): string | null => {
     const candidates = getCandidates({ item, skills });
-    const own = typeof graphSkillIds === "function" ? graphSkillIds(item) : graphSkillIds;
-    return candidates.find((skillId) => own.has(skillId)) ?? candidates[0] ?? null;
+    return candidates.find((skillId) => graphSkillIds.has(skillId)) ?? candidates[0] ?? null;
   };
 
   return items.map((item) => (item.skillId ? item : { ...item, skillId: pickSkill(item) }));
