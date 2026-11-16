@@ -32,7 +32,8 @@ import {
 type ChartLine = Line & { id: string; label: string };
 
 const PLOT_HEIGHT = 248;
-const PADDING = { bottom: 30, left: 22, right: 18, top: 26 };
+// The axis's stroke starts on the card's text edge and the plot runs to its far edge.
+const PADDING = { bottom: 30, left: 1, right: 0, top: 26 };
 const LINE_CLASSES = ["stroke-viz-highlight", "stroke-viz-secondary"] as const;
 const LINE_TEXT_CLASSES = ["text-viz-highlight", "text-viz-secondary"] as const;
 
