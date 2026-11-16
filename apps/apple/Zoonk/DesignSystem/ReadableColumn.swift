@@ -31,7 +31,7 @@ private struct ReadableColumn: ViewModifier {
           .environment(\.readableColumnMargin, margin)
           // Under a bottom bar UIKit puts a list's rows only 8pt inside padding an ancestor gave,
           // so a list in this column keeps the system's margin itself, the one the bar takes.
-          .environment(\.listRowMargin, margin > 0 ? regularMargin : nil)
+          .environment(\.listRowMargin, margin > 0 ? regularListMargin : nil)
           .safeAreaPadding(.horizontal, margin)
           .preference(
             key: ColumnMarginsKey.self, value: [ColumnMargins(leading: margin, trailing: margin)]
@@ -64,8 +64,9 @@ struct ColumnMargins: Equatable {
   let trailing: CGFloat
 }
 
-/// The system's minimum margin where an outer column leaves room on both sides: the width is regular.
-private let regularMargin: CGFloat = 20
+/// The system's minimum margin for a regular width, which a list keeps itself where the system
+/// wouldn't give it: inside an outer column, and in a pane.
+let regularListMargin: CGFloat = 20
 
 /// Every readable column inside a view: one for a page, two for panes side by side.
 struct ColumnMarginsKey: PreferenceKey {

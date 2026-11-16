@@ -238,6 +238,12 @@ extension View {
   /// the screen (`taskSegmentsBar(_:)`), which then spans both.
   func paneSplit(_ isSplit: Bool) -> some View {
     environment(\.isPaneSplit, isSplit)
+      // A list that isn't the screen's root gets UIKit's 8pt margin, not the screen's.
+      .transformEnvironment(\.listRowMargin) { margin in
+        if isSplit {
+          margin = regularListMargin
+        }
+      }
       .preference(key: PaneSplitKey.self, value: isSplit)
   }
 }
