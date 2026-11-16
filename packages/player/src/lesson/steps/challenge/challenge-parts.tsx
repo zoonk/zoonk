@@ -59,7 +59,7 @@ export function ChallengePanelView({
         {panel.metrics.map((metric) => (
           <div className="flex min-w-0 flex-col gap-0.5" key={metric.label}>
             <dt className="text-muted-foreground text-xs">{fill(metric.label)}</dt>
-            <dd className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+            <dd className="flex flex-col gap-0.5">
               <span className="text-foreground text-2xl font-semibold text-balance tabular-nums">
                 {metric.value}
               </span>

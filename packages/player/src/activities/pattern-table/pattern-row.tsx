@@ -33,7 +33,7 @@ function CheckedBlank({
   const isRight = chosen !== null && chosen === expected;
 
   return (
-    <span className="flex flex-wrap items-baseline gap-x-2">
+    <span className="flex w-0 min-w-full flex-wrap items-baseline gap-x-2">
       <span className={cn(isRight ? "text-success-text" : "text-destructive-text line-through")}>
         {stem}
         <b className="font-semibold">{chosen ?? ""}</b>

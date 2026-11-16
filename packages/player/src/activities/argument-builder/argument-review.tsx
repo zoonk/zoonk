@@ -25,10 +25,16 @@ export function ArgumentReview({
   const pickedReasoning = reasoning.find((item) => item.id === picks.reasoning);
   const strongQuote = evidence.find((item) => strongIds.includes(item.id));
   const strongReasoning = reasoning.find((item) => strongIds.includes(item.id));
+  const showsQuote = strongQuote && strongQuote.id !== pickedQuote?.id;
+  const showsReasoning = strongReasoning && strongReasoning.id !== pickedReasoning?.id;
+
+  if (!showsQuote && !showsReasoning) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col gap-3" data-slot="argument-review">
-      {strongQuote && strongQuote.id !== pickedQuote?.id && (
+      {showsQuote && (
         <section className={cn(ACTIVITY_CARD_CLASS, "flex flex-col gap-1.5")}>
           <p className="text-success-text text-xs font-semibold">{t("Stronger evidence")}</p>
           <ArgumentText citation={strongQuote.citation} text={strongQuote.quote} />
@@ -36,7 +42,7 @@ export function ArgumentReview({
         </section>
       )}
 
-      {strongReasoning && strongReasoning.id !== pickedReasoning?.id && (
+      {showsReasoning && (
         <section className={cn(ACTIVITY_CARD_CLASS, "flex flex-col gap-1.5")}>
           <p className="text-success-text text-xs font-semibold">{t("Stronger reasoning")}</p>
           <ArgumentText text={strongReasoning.text} />

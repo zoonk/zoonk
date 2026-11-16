@@ -19,9 +19,12 @@ describe(yearLabel, () => {
 });
 
 describe(yearTicks, () => {
-  it("gives round years and skips year 0", () => {
-    expect(yearTicks(-3000, 2000)).toStrictEqual([-3000, -2000, -1000, 1000, 2000]);
+  it("gives round years", () => {
     expect(yearTicks(1900, 2000)).toStrictEqual([1900, 1920, 1940, 1960, 1980, 2000]);
+  });
+
+  it("labels the turn of the era as 1 CE, since there is no year 0, so no step is missing", () => {
+    expect(yearTicks(-3000, 2000)).toStrictEqual([-3000, -2000, -1000, 1, 1000, 2000]);
   });
 });
 

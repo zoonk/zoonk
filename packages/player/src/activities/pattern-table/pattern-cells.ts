@@ -35,3 +35,16 @@ export function nextOpenBlank({
 
   return ordered.find((row) => filled[String(row)] === undefined) ?? null;
 }
+
+/** Every word a blank can end up showing: its stem with each ending the learner can pick. */
+export function blankForms(fields: {
+  choices: readonly string[];
+  rows: readonly { answer: string; blank?: boolean }[];
+}): string[] {
+  const forms = fields.rows.flatMap((row) => {
+    const stem = blankStem(fields.choices, row.answer);
+    return row.blank ? fields.choices.map((choice) => `${stem}${choice}`) : [];
+  });
+
+  return [...new Set(forms)];
+}

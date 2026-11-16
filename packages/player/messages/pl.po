@@ -128,6 +128,16 @@ msgctxt "8RsqoE"
 msgid "No guess yet"
 msgstr "Nie ma jeszcze strzału"
 
+#: src/activities/_components/activity-horizontal-scroll.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "Przewiń w lewo"
+
+#: src/activities/_components/activity-horizontal-scroll.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "Przewiń w prawo"
+
 #: src/activities/_components/activity-model-sliders.tsx
 msgctxt "9uS9GA"
 msgid "{input}. {output}: {value}"
@@ -604,11 +614,6 @@ msgid "{cause} picked. Now pick what it led to."
 msgstr "Wybrano przyczynę: {cause}. Teraz wybierz jej skutek."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
-msgctxt "M2FAHj"
-msgid "Pick a cause, then pick what it led to."
-msgstr "Wybierz przyczynę, a potem jej skutek."
-
-#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "m4T6j3"
 msgid "{count} of {total, plural, one {# link} other {# links}}"
 msgstr "{count} z {total, plural, one {# związku} other {# związków}}"
@@ -617,6 +622,11 @@ msgstr "{count} z {total, plural, one {# związku} other {# związków}}"
 msgctxt "qbRyCu"
 msgid "Causes and effects"
 msgstr "Przyczyny i skutki"
+
+#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
+msgctxt "M2FAHj"
+msgid "Pick a cause, then pick what it led to."
+msgstr "Wybierz przyczynę, a potem jej skutek."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "WHQHly"
@@ -745,6 +755,11 @@ msgstr "Oczekiwany wynik"
 msgctxt "d8Wy56"
 msgid "You changed the code. Run it again to see the new output."
 msgstr "W kodzie są zmiany. Uruchom go ponownie, aby zobaczyć nowy wynik."
+
+#: src/activities/code-runner/code-runner-output.tsx
+msgctxt "KN7zKn"
+msgid "Error"
+msgstr "Błąd"
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "DhXJyL"
@@ -1236,14 +1251,19 @@ msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "Klawiatura fortepianu od C do H. Naciśnięte klawisze: {notes}."
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "0kfXGd"
+msgid "{count, plural, one {# note} other {# notes}}"
+msgstr "{count, plural, one {# dźwięk} few {# dźwięki} many {# dźwięków} other {# dźwięku}}"
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "S7Oawr"
 msgid "By ear"
 msgstr "Ze słuchu"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "0kfXGd"
-msgid "{count, plural, one {# note} other {# notes}}"
-msgstr "{count, plural, one {# dźwięk} few {# dźwięki} many {# dźwięków} other {# dźwięku}}"
+msgctxt "nfwiHT"
+msgid "Your notes"
+msgstr "Twoje nuty"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "uHVyhO"
@@ -1999,6 +2019,11 @@ msgstr "Twoja odpowiedź na osi liczbowej"
 msgctxt "mgXw7n"
 msgid "{person}: {word}, choose the ending"
 msgstr "{person}: {word}, wybierz końcówkę"
+
+#: src/activities/pattern-table/pattern-table-activity.tsx
+msgctxt "dlL374"
+msgid "Forms of {model} and {word}"
+msgstr "Formy słów: {model} i {word}"
 
 #: src/activities/pattern-table/pattern-table-activity.tsx
 msgctxt "om_2Uq"

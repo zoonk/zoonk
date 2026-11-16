@@ -67,7 +67,7 @@ function Passage({
       aria-checked={isChecked}
       aria-disabled={disabled || undefined}
       className={cn(
-        "focus-visible:ring-ring/50 rounded-sm [box-decoration-break:clone] px-0.5 py-0.5 outline-none focus-visible:ring-[3px] motion-safe:transition-colors",
+        "focus-visible:ring-ring/50 rounded-sm [box-decoration-break:clone] py-0.5 outline-none focus-visible:ring-[3px] motion-safe:transition-colors",
         !disabled && "cursor-pointer",
         PASSAGE_CLASS[state],
       )}
@@ -120,7 +120,7 @@ function SourceCard({
         </div>
       </header>
 
-      <blockquote className="text-reading leading-8">
+      <blockquote className="text-reading">
         {splitExcerpt(source.excerpt, source.passages).map((segment, segmentIndex) => {
           const passage = source.passages.find((item) => item.id === segment.passageId);
 
@@ -203,6 +203,8 @@ export function SourceComparisonActivity({
   const missed = passages.some((passage) => passage.isTarget && !marked.includes(passage.id));
   const wrong = passages.some((passage) => !passage.isTarget && marked.includes(passage.id));
 
+  const showsFound = found && (learnerMarks === null || missed || wrong);
+
   function describeMarks() {
     if (learnerMarks === null) {
       return t("What to mark: {passages}.", { passages: markedTexts.join("; ") });
@@ -232,13 +234,13 @@ export function SourceComparisonActivity({
         ))}
       </div>
 
-      {isChecked && (
+      {/* With nothing missed or wrong the learner's marks are the answer, so no legend is needed. */}
+      {isChecked && (showsFound || missed || wrong) && (
         <div
           aria-hidden="true"
           className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs"
         >
-          {/* With nothing missed or wrong the learner's marks are the answer, so no legend is needed. */}
-          {found && (learnerMarks === null || missed || wrong) && (
+          {showsFound && (
             <span className="flex items-center gap-1.5">
               <span className="bg-success/25 h-3 w-4 rounded-sm" />
               {t("What to mark")}
