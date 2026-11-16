@@ -27,6 +27,7 @@ describe("activity label clearance", () => {
     {
       content: {
         ...base,
+        check: { ...base.check, answer: 30 },
         fields: { ...base.fields, distribution: { kind: "uniform", max: 200, min: 0 } as const },
       },
       name: "flat across its top",
@@ -64,6 +65,7 @@ describe("activity label clearance", () => {
       openActivity({
         content: {
           ...balance,
+          check: { ...balance.check, answer: 6 },
           fields: {
             ...balance.fields,
             equation: { left: "4*x + 15", right: "2*x + 27" },
