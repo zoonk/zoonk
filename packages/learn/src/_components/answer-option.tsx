@@ -92,6 +92,19 @@ export function AnswerOptionGroup({
   );
 }
 
+function useResultLabels() {
+  const t = useExtracted();
+
+  return {
+    correct: t("Correct"),
+    yourAnswer: t("Your answer"),
+    yourGuess: t({
+      description: "Tags the learner's pick when it counts as neither right nor wrong.",
+      message: "Your guess",
+    }),
+  };
+}
+
 /** A right pick says whose it is, so it isn't called correct twice under its verdict. */
 function ResultTag({
   guessed,
@@ -102,24 +115,45 @@ function ResultTag({
   picked: boolean;
   result: AnswerOptionResult;
 }) {
-  const t = useExtracted();
-
-  const yourGuess = t({
-    description: "Tags the learner's pick when it counts as neither right nor wrong.",
-    message: "Your guess",
-  });
-
-  const yourPick = guessed ? yourGuess : t("Your answer");
+  const { correct, yourAnswer, yourGuess } = useResultLabels();
+  const yourPick = guessed ? yourGuess : yourAnswer;
 
   const labels: Record<AnswerOptionResult, string> = {
     guess: yourGuess,
-    right: picked ? yourPick : t("Correct"),
-    wrong: t("Your answer"),
+    right: picked ? yourPick : correct,
+    wrong: yourAnswer,
   };
 
   return (
     <span className={cn(ANSWER_TAG_CLASS, ANSWER_TAG_TONE[result])} data-slot="answer-option-tag">
       {labels[result]}
+    </span>
+  );
+}
+
+/**
+ * Before Check, the room of the widest tag a verdict can bring, unseen and the same on every
+ * option, so the tag fills it later and the answer's words never move. The labels are CSS content,
+ * not text, so nothing reads or finds the unseen ones.
+ */
+function ReservedTag({ children }: { children: React.ReactNode }) {
+  const labels = Object.entries(useResultLabels());
+
+  return (
+    <span className="grid min-w-0 text-end">
+      {labels.map(([key, label]) => (
+        <span
+          aria-hidden="true"
+          className={cn(
+            ANSWER_TAG_CLASS,
+            "invisible col-start-1 row-start-1 before:content-[attr(data-label)]",
+          )}
+          data-label={label}
+          key={key}
+        />
+      ))}
+
+      {children && <span className="col-start-1 row-start-1 min-w-0">{children}</span>}
     </span>
   );
 }
@@ -211,7 +245,7 @@ export function AnswerOption({
     >
       <OptionMarker isChecked={Boolean(result)} layout={layout} marker={marker} />
 
-      <TagBesideOrUnder layout={layout} tag={shownTag}>
+      <TagBesideOrUnder layout={layout} reservesTag={picks && tag === undefined} tag={shownTag}>
         <SpokenMath>{children}</SpokenMath>
       </TagBesideOrUnder>
     </button>
@@ -226,18 +260,20 @@ const ROW_FORMULA_CLASS =
   "has-data-[slot=inline-math]:@container [&_[data-slot=inline-math]]:max-w-[100cqi]";
 
 /**
- * The tag ends the answer's last line, or a line of its own when the last line has no room for it,
- * so a tag that comes with a verdict never rewraps the words above it: the row wraps line by line,
- * since balanced wrapping would reflow earlier lines around the tag. A row's answer flows as text:
- * a caller whose answer has several lines makes each one a block or breaks them with `<br>`.
+ * The tag ends the answer's last line, or a line of its own when the last line has no room for it.
+ * `reservesTag` holds its room from the start for a tag that comes with a verdict. A row's answer
+ * flows as text: a caller whose answer has several lines makes each one a block or breaks them
+ * with `<br>`.
  */
 export function TagBesideOrUnder({
   children,
   layout = "row",
+  reservesTag = false,
   tag,
 }: {
   children: React.ReactNode;
   layout?: "row" | "stacked";
+  reservesTag?: boolean;
   tag: React.ReactNode;
 }) {
   if (layout === "stacked") {
@@ -256,9 +292,14 @@ export function TagBesideOrUnder({
   }
 
   return (
-    <span className={cn("flow-root w-full grow basis-1/2 text-wrap", ROW_FORMULA_CLASS)}>
+    <span className={cn("flow-root w-full grow basis-1/2", ROW_FORMULA_CLASS)}>
       {children}
-      {tag && <LineMarker className="float-end ms-3 h-auto min-h-lh max-w-full">{tag}</LineMarker>}
+
+      {(tag || reservesTag) && (
+        <LineMarker className="float-end ms-3 h-auto min-h-lh max-w-full">
+          {reservesTag ? <ReservedTag>{tag}</ReservedTag> : tag}
+        </LineMarker>
+      )}
     </span>
   );
 }
