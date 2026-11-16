@@ -18,14 +18,14 @@ type SearchParams = PageProps<"/content-fixes">["searchParams"];
 const WAITING_COLUMNS: AdminTableColumn[] = [
   { label: "Fix", twoLines: true },
   { label: "Proposed by", size: "wide" },
-  { label: "Proposed" },
+  { align: "right", label: "Proposed" },
 ];
 
 const DECIDED_COLUMNS: AdminTableColumn[] = [
   { label: "Fix", twoLines: true },
   { label: "Decision", size: "wide" },
   { label: "Decided by", size: "wide" },
-  { label: "Decided" },
+  { align: "right", label: "Decided" },
 ];
 
 async function readView(searchParams: SearchParams): Promise<"decided" | "waiting"> {

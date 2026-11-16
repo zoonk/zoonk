@@ -59,6 +59,9 @@ const FIXED_TABLE_CLASS =
 const CONTROL_CELL_CLASS =
   "[&_td:not([data-stacked]):has(button,input,select)]:py-0 [&_td:not([data-stacked]):has(button,input,select)]:align-top [&_td:not([data-stacked]):has(button):not(:has(input:not([type=hidden],[type=file]),select))]:pt-[0.5625rem]";
 
+/** A row's last value ends on the row's end edge, whoever draws its cell. */
+const LAST_COLUMN_END_CLASS = "[&_td:last-child]:text-right";
+
 function fillIndexOf(columns: AdminTableColumn[]) {
   return Math.max(
     0,
@@ -92,7 +95,11 @@ function AdminTable({
   return (
     <Table
       scrollLabels={SCROLL_LABELS}
-      className={cn(CONTROL_CELL_CLASS, !unsized && FIXED_TABLE_CLASS)}
+      className={cn(
+        CONTROL_CELL_CLASS,
+        !unsized && FIXED_TABLE_CLASS,
+        columns.at(-1)?.align === "right" && LAST_COLUMN_END_CLASS,
+      )}
       style={unsized ? undefined : factsStyle}
     >
       <AdminTableColumnsHeader columns={columns} unsized={unsized} />

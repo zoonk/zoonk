@@ -11,7 +11,7 @@ import Link from "next/link";
 const columns: AdminTableColumn[] = [
   { label: "Goal", twoLines: true },
   { label: "State" },
-  { label: "Created", size: "text" },
+  { align: "right", label: "Created", size: "text" },
 ];
 
 export function PromptGoals({ prompt }: { prompt: AdminPrompt }) {

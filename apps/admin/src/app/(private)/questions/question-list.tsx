@@ -13,7 +13,7 @@ const QUESTION_COLUMNS: AdminTableColumn[] = [
   { label: "Question", twoLines: true },
   { label: "Who", size: "text", twoLines: true },
   { label: "Where", size: "long", twoLines: true },
-  { label: "Asked" },
+  { align: "right", label: "Asked" },
 ];
 
 export async function QuestionList({

@@ -109,7 +109,13 @@ async function TaskModelHeader({ params }: TaskModelRouteProps) {
         />
       }
       parent={{ href: `/tasks/${taskId}`, label: taskName }}
-      title={`${getModelDisplayName(model)} on ${taskName}`}
+      title={
+        <>
+          {/* One block, so the name breaks at its own hyphens only when it's wider than a line. */}
+          <span className="inline-block max-w-full">{getModelDisplayName(model)}</span> on{" "}
+          {taskName}
+        </>
+      }
     >
       <p className="text-muted-foreground font-mono text-xs">
         {outputStatus.completedOutputs} of {outputStatus.totalOutputs} outputs written ·{" "}
