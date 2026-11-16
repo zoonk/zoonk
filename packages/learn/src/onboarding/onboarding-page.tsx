@@ -53,8 +53,8 @@ const SCREEN_MEASURE_CLASS = "lg:mx-auto lg:max-w-column";
  * its edges, the buttons ending where it ends.
  */
 const BAR_AT_MEASURE_CLASS = cn(
-  "lg:**:data-[slot=page-top-bar]:*:mx-auto lg:**:data-[slot=page-top-bar]:*:max-w-column",
-  "lg:**:data-[slot=bar-lead]:mx-auto lg:**:data-[slot=bar-lead]:w-full lg:**:data-[slot=bar-lead]:max-w-column",
+  "lg:**:data-[slot=page-top-bar]:*:max-w-column lg:**:data-[slot=page-top-bar]:*:mx-auto",
+  "lg:**:data-[slot=bar-lead]:max-w-column lg:**:data-[slot=bar-lead]:mx-auto lg:**:data-[slot=bar-lead]:w-full",
   "lg:**:data-[slot=bottom-bar-row]:mx-auto lg:**:data-[slot=bottom-bar-row]:max-w-[calc(var(--container-column)+2*var(--page-gutter))]",
   "lg:**:data-[slot=bottom-bar-note]:*:*:mx-auto lg:**:data-[slot=bottom-bar-note]:*:*:max-w-[calc(var(--container-column)+2*var(--page-gutter))]",
 );

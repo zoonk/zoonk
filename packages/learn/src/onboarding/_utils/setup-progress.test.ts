@@ -44,7 +44,9 @@ describe(getSetupProgress, () => {
   it("shows no dashes while a question that can add another is current or ahead", () => {
     const steps = ["contentCountry", "purpose", "level", "targetDate", "schedule", "plan"] as const;
 
-    expect(getSetupProgress({ current: "contentCountry", history: [], view: { steps } })).toBeNull();
+    expect(
+      getSetupProgress({ current: "contentCountry", history: [], view: { steps } }),
+    ).toBeNull();
 
     expect(
       getSetupProgress({

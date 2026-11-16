@@ -1,12 +1,14 @@
 import { BackLink } from "@zoonk/ui/components/page-top";
 import Link from "next/link";
 
+const BLOG_NAME = "Zoonk blog";
+
 export default function PostLayout({ children }: LayoutProps<"/">) {
   return (
     <>
       <nav aria-label="Blog" className="mb-6">
-        <BackLink aria-label="Back to Zoonk blog" render={<Link href="/" />}>
-          Zoonk blog
+        <BackLink aria-label={`Back to ${BLOG_NAME}`} render={<Link href="/" />}>
+          {BLOG_NAME}
         </BackLink>
       </nav>
 

@@ -251,7 +251,10 @@ export async function LibraryCoursePage({
     <CourseProgressScope courseId={course.id} lessonId={tryLesson?.lessonId ?? null}>
       {/* The way back starts where the title does, past the route's line. */}
       <div
-        className={cn(ROUTE_CLASS, "flex flex-col **:data-[slot=page-top-start]:ps-(--route-inset)")}
+        className={cn(
+          ROUTE_CLASS,
+          "flex flex-col **:data-[slot=page-top-start]:ps-(--route-inset)",
+        )}
         data-subject={subject}
       >
         <CatalogPageBar
