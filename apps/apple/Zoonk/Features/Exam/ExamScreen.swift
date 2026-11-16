@@ -46,21 +46,15 @@ private struct ExamContent: View {
       }
       .lonePage()
     case .failed:
-      StateMessage {
+      PageLoadFailure {
         Label {
           Text("Your exam didn't load", tableName: "Exam", comment: "Loading the exam failed")
         } icon: {
           Image(systemName: "wifi.exclamationmark")
         }
-      } actions: {
-        Button {
-          Task { await exam.refresh() }
-        } label: {
-          Text("Try again", tableName: "Exam", comment: "Button to retry loading")
-        }
-        .buttonStyle(.outline)
+      } retry: {
+        await exam.refresh()
       }
-      .lonePage()
     case .loaded(let view):
       ExamList(exam: view, options: options.value)
     }

@@ -65,7 +65,8 @@ private struct TutorConversationView<Header: View>: View {
       }
       .frame(maxWidth: 720, alignment: .leading)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .scenePadding()
+      .listRowEdges()
+      .scenePadding(.vertical)
       .scrollTargetLayout()
     }
     .scrollPosition($position)

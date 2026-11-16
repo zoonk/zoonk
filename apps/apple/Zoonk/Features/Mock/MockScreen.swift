@@ -72,21 +72,15 @@ private struct MockStage: View {
       NotFoundView()
         .navigationTitle(untitledMock)
     case .failed:
-      StateMessage {
+      PageLoadFailure {
         Label {
           Text("The mock exam didn't load", tableName: "Mock", comment: "Loading a mock failed")
         } icon: {
           Image(systemName: "wifi.exclamationmark")
         }
-      } actions: {
-        Button {
-          Task { await run.mock.refresh() }
-        } label: {
-          Text("Try again", tableName: "Mock", comment: "Button to retry loading")
-        }
-        .buttonStyle(.outline)
+      } retry: {
+        await run.mock.refresh()
       }
-      .lonePage()
       .navigationTitle(untitledMock)
     case .loaded(let view):
       stage(view)

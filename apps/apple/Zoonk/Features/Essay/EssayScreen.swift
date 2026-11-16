@@ -19,21 +19,15 @@ struct EssayScreen: View {
         case .empty, .failed(.notFound):
           NotFoundView()
         case .failed:
-          StateMessage {
+          PageLoadFailure {
             Label {
               Text("The essay didn't load", tableName: "Essay", comment: "Loading failed")
             } icon: {
               Image(systemName: "wifi.exclamationmark")
             }
-          } actions: {
-            Button {
-              Task { await essay.refresh() }
-            } label: {
-              Text("Try again", tableName: "Essay", comment: "Button to retry loading")
-            }
-            .buttonStyle(.outline)
+          } retry: {
+            await essay.refresh()
           }
-          .lonePage()
         case .loaded(let view):
           EssayContent(store: store, essay: view)
         }

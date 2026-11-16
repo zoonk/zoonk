@@ -62,21 +62,15 @@ private struct SpeakingPaperView: View {
       // Main's: a goal with no speaking format has no such page.
       NotFoundView()
     case .failed:
-      StateMessage {
+      PageLoadFailure {
         Label {
           Text("Speaking practice didn't load", tableName: "Voice", comment: "Loading failed")
         } icon: {
           Image(systemName: "wifi.exclamationmark")
         }
-      } actions: {
-        Button {
-          Task { await paper.refresh() }
-        } label: {
-          Text("Try again", tableName: "Voice", comment: "Button to retry loading")
-        }
-        .buttonStyle(.outline)
+      } retry: {
+        await paper.refresh()
       }
-      .lonePage()
     case .loaded(let value):
       list(value)
     }

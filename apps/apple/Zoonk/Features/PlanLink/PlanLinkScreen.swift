@@ -41,18 +41,13 @@ struct PlanLinkScreen: View {
             }
             .lonePage()
           case .failed:
-            StateMessage {
+            PageLoadFailure {
               Text(
                 "We couldn't load this plan", tableName: "PlanLink",
                 comment: "A shared plan failed to load")
-            } actions: {
-              Button {
-                Task { await resource.refresh() }
-              } label: {
-                Text("Try again", tableName: "PlanLink", comment: "Loads the shared plan again")
-              }
+            } retry: {
+              await resource.refresh()
             }
-            .lonePage()
           case .idle, .loading, .empty:
             ProgressView()
           }

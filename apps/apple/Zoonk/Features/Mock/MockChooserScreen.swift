@@ -42,21 +42,15 @@ private struct MockChooserContent: View {
       }
       .lonePage()
     case .failed:
-      StateMessage {
+      PageLoadFailure {
         Label {
           Text("Mock exams didn't load", tableName: "Mock", comment: "Loading failed")
         } icon: {
           Image(systemName: "wifi.exclamationmark")
         }
-      } actions: {
-        Button {
-          Task { await options.refresh() }
-        } label: {
-          Text("Try again", tableName: "Mock", comment: "Button to retry loading")
-        }
-        .buttonStyle(.outline)
+      } retry: {
+        await options.refresh()
       }
-      .lonePage()
     case .loaded(let view):
       MockChooser(goalId: goalId, view: view) { id in
         router.open(.mock(blockId: id))

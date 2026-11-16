@@ -60,7 +60,7 @@ private struct GoalPlanView: View {
       .lonePage()
       .modifier(GoalOptionsToolbar(goal: goal))
     case .failed:
-      StateMessage {
+      PageLoadFailure {
         Label {
           Text(
             "Couldn't load your plan", tableName: "Plan",
@@ -72,15 +72,9 @@ private struct GoalPlanView: View {
         Text(
           "Check your connection and try again.", tableName: "Plan",
           comment: "Explains a failed load of the plan")
-      } actions: {
-        Button {
-          Task { await plan.refresh() }
-        } label: {
-          Text("Try again", tableName: "Plan", comment: "Retries loading the plan")
-        }
-        .buttonStyle(.outline)
+      } retry: {
+        await plan.refresh()
       }
-      .lonePage()
     case .idle, .loading:
       ProgressView()
         .lonePage()

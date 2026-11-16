@@ -71,7 +71,7 @@ struct TodayScreen: View {
           .lonePage()
       }
     case .failed(let error) where error != .unauthorized:
-      StateMessage {
+      PageLoadFailure {
         Label {
           Text("Today didn't load", tableName: "Today", comment: "Today failed to load")
         } icon: {
@@ -81,15 +81,9 @@ struct TodayScreen: View {
         Text(
           "Check your connection and try again.", tableName: "Today",
           comment: "Today failed to load")
-      } actions: {
-        Button {
-          Task { await store.today.refresh() }
-        } label: {
-          Text("Try again", tableName: "Today", comment: "Retries loading Today")
-        }
-        .buttonStyle(.outline)
+      } retry: {
+        await store.today.refresh()
       }
-      .lonePage()
     default:
       ProgressView()
         .frame(maxWidth: .infinity, maxHeight: .infinity)

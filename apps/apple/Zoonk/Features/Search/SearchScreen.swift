@@ -18,6 +18,7 @@ struct SearchScreen: View {
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
+        header
         groupSections(leadingGroups)
       }
     } secondary: {
@@ -28,12 +29,13 @@ struct SearchScreen: View {
       }
     } single: {
       ZoonkList {
+        header
         groupSections(groups)
         catalogSection
         groupSections(fallback.map { [$0] } ?? [])
       }
     }
-    .navigationTitle(Text(AppTab.search.title))
+    .barTitleAfterHero(String(localized: AppTab.search.title))
     // On a phone the tab bar doesn't turn the search tab into a field, so it stays under the
     // title; wider windows keep the system's place in the bar, which leaves the tabs reachable.
     .searchable(
@@ -76,6 +78,12 @@ struct SearchScreen: View {
 
   private var trailingFallback: [SearchGroup] {
     groups.isEmpty ? [] : fallback.map { [$0] } ?? []
+  }
+
+  private var header: some View {
+    Section {
+      PageHeader(Text(AppTab.search.title))
+    }
   }
 
   private func groupSections(_ groups: [SearchGroup]) -> some View {

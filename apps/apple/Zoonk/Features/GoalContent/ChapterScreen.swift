@@ -23,7 +23,7 @@ struct ChapterScreen: View {
         case .failed(.notFound), .empty:
           notInPlan
         case .failed:
-          StateMessage {
+          PageLoadFailure {
             Label {
               Text(
                 "Couldn't load this chapter", tableName: "Plan",
@@ -31,15 +31,9 @@ struct ChapterScreen: View {
             } icon: {
               Image(systemName: "wifi.exclamationmark")
             }
-          } actions: {
-            Button {
-              Task { await chapter.refresh() }
-            } label: {
-              Text("Try again", tableName: "Plan", comment: "Retries loading the plan")
-            }
-            .buttonStyle(.outline)
+          } retry: {
+            await chapter.refresh()
           }
-          .lonePage()
         case .idle, .loading:
           ProgressView()
         }

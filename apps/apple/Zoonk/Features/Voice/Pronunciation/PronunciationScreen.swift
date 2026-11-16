@@ -60,7 +60,7 @@ struct PronunciationScreen: View {
       }
       .lonePage()
     case .failed:
-      StateMessage {
+      PageLoadFailure {
         Label {
           Text(
             "The words didn't load", tableName: "Voice",
@@ -68,15 +68,9 @@ struct PronunciationScreen: View {
         } icon: {
           Image(systemName: "wifi.exclamationmark")
         }
-      } actions: {
-        Button {
-          Task { await reviews.refresh() }
-        } label: {
-          Text("Try again", tableName: "Voice", comment: "Button to retry loading")
-        }
-        .buttonStyle(.outline)
+      } retry: {
+        await reviews.refresh()
       }
-      .lonePage()
     case .loaded(let value):
       PronunciationRoundView(reviews: value)
         .id(value.goalId)

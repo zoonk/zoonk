@@ -125,21 +125,15 @@ private struct SessionContent: View {
             moment: playback.moment)
         }
       } else if case .failed(let error) = session.state, error != .unauthorized {
-        StateMessage {
+        PageLoadFailure {
           Label {
             Text("The session didn't load", tableName: "Session", comment: "Load failed")
           } icon: {
             Image(systemName: "wifi.exclamationmark")
           }
-        } actions: {
-          Button {
-            Task { await session.refresh() }
-          } label: {
-            Text("Try again", tableName: "Session", comment: "Retries loading the session")
-          }
-          .buttonStyle(.outline)
+        } retry: {
+          await session.refresh()
         }
-        .lonePage()
       } else if let moment = playback.moment {
         ZoonkList {
           Section {

@@ -18,7 +18,7 @@ struct ExplainScreen: View {
         case .failed(.notFound):
           NotFoundView()
         case .failed:
-          StateMessage {
+          PageLoadFailure {
             Label {
               Text(
                 "We couldn't load this explanation", tableName: "Explain",
@@ -26,15 +26,9 @@ struct ExplainScreen: View {
             } icon: {
               Image(systemName: "wifi.exclamationmark")
             }
-          } actions: {
-            Button {
-              Task { await resource.refresh() }
-            } label: {
-              Text("Try again", tableName: "Explain", comment: "Loads the explanation again")
-            }
-            .buttonStyle(.outline)
+          } retry: {
+            await resource.refresh()
           }
-          .lonePage()
         case .idle, .loading, .empty:
           ProgressView()
         }

@@ -36,7 +36,7 @@ struct BuddyScreen: View {
   }
 
   private func failure(retry: @escaping () async -> Void) -> some View {
-    StateMessage {
+    PageLoadFailure {
       Label {
         Text("Your buddy", tableName: "Buddy", comment: "Title of the Buddy tab")
       } icon: {
@@ -46,15 +46,9 @@ struct BuddyScreen: View {
       Text(
         "Something went wrong. Try again.", tableName: "Buddy",
         comment: "The buddy's day couldn't be read")
-    } actions: {
-      Button {
-        Task { await retry() }
-      } label: {
-        Text("Try again", tableName: "Buddy", comment: "Reads the buddy's day again")
-      }
-      .buttonStyle(.outline)
+    } retry: {
+      await retry()
     }
-    .lonePage()
     .barTitleAfterHero(summary.buddyDisplayName)
   }
 
@@ -215,7 +209,7 @@ private struct BuddyContent: View {
 
           dayLine(opensDay: opensDay)
         }
-        .scenePadding(.horizontal)
+        .listRowEdges()
         // A list's first row sits this far under the bar, so the title is where every page's is.
         .padding(.top, 12)
         .padding(.bottom, 8)

@@ -66,21 +66,15 @@ struct LogbookScreen: View {
               UsageAnalytics.track(.logbookViewed)
             }
         case .failed(let error) where error != .unauthorized:
-          StateMessage {
+          PageLoadFailure {
             Label {
               Text("The summary didn't load", tableName: "Session", comment: "Load failed")
             } icon: {
               Image(systemName: "wifi.exclamationmark")
             }
-          } actions: {
-            Button {
-              Task { await recap.refresh() }
-            } label: {
-              Text("Try again", tableName: "Session", comment: "Retries loading")
-            }
-            .buttonStyle(.outline)
+          } retry: {
+            await recap.refresh()
           }
-          .lonePage()
         default:
           ProgressView()
             .frame(maxWidth: .infinity, maxHeight: .infinity)

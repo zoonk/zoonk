@@ -20,7 +20,7 @@ struct SubjectScreen: View {
           case .idle, .loading:
             ProgressView()
           case .failed(let error) where error != .notFound:
-            StateMessage {
+            PageLoadFailure {
               Label {
                 Text(
                   "Couldn't load this subject", tableName: "Plan",
@@ -28,15 +28,9 @@ struct SubjectScreen: View {
               } icon: {
                 Image(systemName: "wifi.exclamationmark")
               }
-            } actions: {
-              Button {
-                Task { await syllabus.refresh() }
-              } label: {
-                Text("Try again", tableName: "Plan", comment: "Retries loading the plan")
-              }
-              .buttonStyle(.outline)
+            } retry: {
+              await syllabus.refresh()
             }
-            .lonePage()
           default:
             StateMessage {
               Label {

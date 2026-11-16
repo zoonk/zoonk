@@ -15,10 +15,12 @@ struct StatsPage<Content: View>: View {
         content
       }
       .frame(maxWidth: .infinity, alignment: .leading)
-      .scenePadding()
-      .frame(maxWidth: 1_100)
-      .frame(maxWidth: .infinity)
+      .listRowEdges()
+      // A list's first row sits this far under the bar, so the title is where every page's is.
+      .padding(.top, 12)
+      .scenePadding(.bottom)
     }
+    .pageColumn()
     .background(Color(.systemBackground))
     .inspectsCharts()
   }
@@ -93,7 +95,7 @@ struct StatsFailure: View {
   let retry: @MainActor () async -> Void
 
   var body: some View {
-    StateMessage {
+    PageLoadFailure {
       Label {
         Text(
           "This page didn't load", tableName: "Progress")
@@ -103,17 +105,9 @@ struct StatsFailure: View {
     } description: {
       Text(
         "Check your connection and try again.", tableName: "Progress")
-    } actions: {
-      Button {
-        Task {
-          await retry()
-        }
-      } label: {
-        Text("Try again", tableName: "Progress", comment: "Retries loading a Statistics page")
-      }
-      .buttonStyle(.mainAction)
+    } retry: {
+      await retry()
     }
-    .lonePage()
     .background(Color(.systemBackground))
   }
 }

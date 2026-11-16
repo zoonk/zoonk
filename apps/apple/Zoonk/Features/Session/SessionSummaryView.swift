@@ -27,21 +27,15 @@ struct SessionSummaryView: View {
       if let value = summary.value {
         content(value)
       } else if case .failed = summary.state {
-        StateMessage {
+        PageLoadFailure {
           Label {
             Text("The summary didn't load", tableName: "Session", comment: "Load failed")
           } icon: {
             Image(systemName: "wifi.exclamationmark")
           }
-        } actions: {
-          Button {
-            Task { await summary.refresh() }
-          } label: {
-            Text("Try again", tableName: "Session", comment: "Retries loading the summary")
-          }
-          .buttonStyle(.outline)
+        } retry: {
+          await summary.refresh()
         }
-        .lonePage()
       } else {
         ProgressView()
           .frame(maxWidth: .infinity, maxHeight: .infinity)
