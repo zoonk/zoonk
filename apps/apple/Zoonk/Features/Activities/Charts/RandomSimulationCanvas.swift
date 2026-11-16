@@ -68,6 +68,7 @@ private struct ChanceSimulationView: View {
   @ActivityState("runIndex") private var runIndex = 0
   @ActivityState("revealed") private var revealed = 0
   @ActivityState("simulated") private var simulated: ChanceRun? = nil
+  @State private var plotWidth: CGFloat = 0
 
   /// The runs play once there's nothing left to guess: after the check, or explored.
   private var isRunning: Bool { context.phase != .answering }
@@ -230,7 +231,8 @@ private struct ChanceSimulationView: View {
     .chartYAxis(.hidden)
     .chartXAxis {
       AxisMarks(values: ticks) { value in
-        AxisValueLabel {
+        // Under its bar's middle.
+        AxisValueLabel(anchor: .top) {
           if let outcome = value.as(Int.self) {
             if isBinary {
               ChanceModel.isHit(fields.model, outcome)
@@ -265,31 +267,28 @@ private struct ChanceSimulationView: View {
       }
 
       ForEach(ChanceModel.runningShare(hits, points: 200), id: \.x) { point in
-        LineMark(x: .value(verbatim: "run", point.x), y: .value(verbatim: "share", point.y))
-          .foregroundStyle(.vizAccent)
+        LineMark(
+          x: .value(verbatim: "run", Double(point.x)), y: .value(verbatim: "share", point.y)
+        )
+        .foregroundStyle(.vizAccent)
       }
     }
-    .chartXScale(domain: 0...fields.runs)
+    .chartXScale(domain: 0...Double(fields.runs))
     .chartYScale(domain: 0...1)
     .chartYAxis {
-      AxisMarks(values: [0, 0.5, 1]) { value in
-        AxisGridLine().foregroundStyle(.vizGrid)
-        AxisValueLabel {
-          if let share = value.as(Double.self) {
-            Text(verbatim: ActivityNumberFormat.format(share * 100, unit: "%", digits: 0))
-          }
-        }
+      ChartsAxis.values(ticks: [0, 0.5, 1]) {
+        ActivityNumberFormat.format($0 * 100, unit: "%", digits: 0)
       }
     }
     .chartXAxis {
-      AxisMarks(values: [0, fields.runs]) { value in
-        AxisValueLabel {
-          if let run = value.as(Int.self) {
-            Text(verbatim: ActivityNumberFormat.format(Double(run)))
-          }
-        }
+      ChartsAxis.bottom(
+        ticks: [0, Double(fields.runs)], domain: 0...Double(fields.runs), plotWidth: plotWidth,
+        showsGrid: false
+      ) {
+        ActivityNumberFormat.format($0)
       }
     }
+    .chartsPlotWidth($plotWidth)
     .frame(minHeight: 160)
     .chartsMarksHidden()
     .chartsPlotText()
@@ -325,6 +324,7 @@ private struct SamplingSimulationView: View {
   @ActivityState("runIndex") private var runIndex = 0
   @ActivityState("revealed") private var revealed = 0
   @ActivityState("simulated") private var simulated: SamplingRun? = nil
+  @State private var plotWidth: CGFloat = 0
 
   init(context: ActivityCanvasContext, fields: RandomSimulationFields.Sampling, fieldsJSON: String)
   {
@@ -404,8 +404,11 @@ private struct SamplingSimulationView: View {
       ?? String(localized: "Sample size", table: "ActivitiesCharts", comment: "A slider's label")
 
     ChartsCanvas {
+      // The population first, so the margin's sentence ends on its own number.
+      ChartsCaption(fields.populationLabel)
+
       ViewThatFits(in: .horizontal) {
-        HStack(alignment: .top) {
+        HStack(alignment: .firstTextBaseline) {
           marginHeader
           Spacer()
           if run != nil {
@@ -463,15 +466,11 @@ private struct SamplingSimulationView: View {
       .chartYScale(domain: 0...peak)
       .chartYAxis(.hidden)
       .chartXAxis {
-        AxisMarks(values: .automatic(desiredCount: 4)) { value in
-          AxisGridLine().foregroundStyle(.vizGrid)
-          AxisValueLabel {
-            if let x = value.as(Double.self) {
-              Text(verbatim: valueText(x, digits: digits))
-            }
-          }
+        ChartsAxis.bottom(ticks: ChartsAxis.ticks(domain), domain: domain, plotWidth: plotWidth) {
+          valueText($0, digits: digits)
         }
       }
+      .chartsPlotWidth($plotWidth)
       .frame(minHeight: 180)
       .padding(.top, 16)
       .chartsMarksHidden()
@@ -497,27 +496,24 @@ private struct SamplingSimulationView: View {
         }
         .accessibilityHidden(true)
 
+        // Snapped here rather than with a step, which would draw an unlabeled tick under the track.
         Slider(
           value: Binding(
             get: { Double(sizeIndex) },
             set: { sizeIndex = Int($0.rounded()) }),
-          in: 0...Double(max(fields.sampleSizes.count - 1, 1)), step: 1
+          in: 0...Double(max(fields.sampleSizes.count - 1, 1))
         ) {
           Text(verbatim: sizeLabel)
-        } minimumValueLabel: {
-          Text(verbatim: ActivityNumberFormat.format(Double(smallest)))
-            .typeStyle(.meta)
-            .accessibilityHidden(true)
-        } maximumValueLabel: {
-          Text(verbatim: ActivityNumberFormat.format(Double(fields.sampleSizes.last ?? smallest)))
-            .typeStyle(.meta)
-            .accessibilityHidden(true)
         }
         .disabled(isChecked)
         .accessibilityValue(
           Text(
             "\(ActivityNumberFormat.format(Double(size))). 95% of samples within \(marginText(margin)).",
             tableName: "ActivitiesCharts", comment: "A sample size slider's spoken value"))
+
+        ChartsSliderScale(
+          min: ActivityNumberFormat.format(Double(smallest)),
+          max: ActivityNumberFormat.format(Double(fields.sampleSizes.last ?? smallest)))
       }
 
       ViewThatFits(in: .horizontal) {
@@ -573,15 +569,12 @@ private struct SamplingSimulationView: View {
   }
 
   private var marginHeader: some View {
-    VStack(alignment: .leading, spacing: 2) {
-      Text(
-        "95% of samples land within", tableName: "ActivitiesCharts",
-        comment: "Above a sampling simulation's margin of error"
-      )
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
-      ChartsCaption(fields.populationLabel)
-    }
+    Text(
+      "95% of samples land within", tableName: "ActivitiesCharts",
+      comment: "Above a sampling simulation's margin of error"
+    )
+    .typeStyle(.note)
+    .foregroundStyle(.mutedForeground)
   }
 
   /// The margin turns soft blue once the sample is big enough: done, which is never green.

@@ -138,6 +138,23 @@ struct ChartsHandle: View {
   }
 }
 
+/// A slider's ends, under its track, so every track in a card starts and ends on the same edges.
+struct ChartsSliderScale: View {
+  let min: String
+  let max: String
+
+  var body: some View {
+    HStack {
+      Text(verbatim: min)
+      Spacer()
+      Text(verbatim: max)
+    }
+    .typeStyle(.meta.monospacedDigit())
+    .foregroundStyle(.mutedForeground)
+    .accessibilityHidden(true)
+  }
+}
+
 struct ChartsCaption: View {
   let text: String
 

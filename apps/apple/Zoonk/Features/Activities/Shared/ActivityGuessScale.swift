@@ -32,6 +32,16 @@ struct GuessScale: Hashable, Sendable {
     return Swift.min(Swift.max(share, 0), 1)
   }
 
+  /// The scale's ends as main writes its ticks: money on each, any other unit once, at the end.
+  func endLabels(unit: String?, locale: Locale = .courseLanguage) -> (min: String, max: String) {
+    let isMoney = unit.map(ActivityNumberFormat.isMoney) ?? false
+
+    return (
+      ActivityNumberFormat.format(min, unit: isMoney ? unit : nil, locale: locale),
+      ActivityNumberFormat.format(max, unit: unit, locale: locale)
+    )
+  }
+
   static func roundGuess(_ value: Double) -> Double {
     FactChange.twoDigits(value)
   }
@@ -82,30 +92,31 @@ struct ActivityGuessScaleView: View {
             comment: "Before the learner guesses on a scale")
         }
       }
-      .typeStyle(.readout)
+      .typeStyle(.body.weight(.medium).monospacedDigit())
+      .foregroundStyle(.mutedForeground)
 
       if let actual {
         revealed(actual: actual)
       } else {
+        // Positions snap here rather than with a step, which would draw a row of ticks under the
+        // track.
         Slider(
           value: Binding(
             get: { (guess.map(scale.share(of:)) ?? 0.5) * GuessScale.positions },
-            set: { onGuess(GuessScale.roundGuess(scale.value(atPosition: $0))) }),
-          in: 0...GuessScale.positions, step: 1
+            set: { onGuess(GuessScale.roundGuess(scale.value(atPosition: $0.rounded()))) }),
+          in: 0...GuessScale.positions
         ) {
           Text(
             "Your guess", tableName: "Activities",
             comment: "VoiceOver: the slider the learner guesses with")
-        } minimumValueLabel: {
-          Text(format(scale.min)).typeStyle(.data)
-        } maximumValueLabel: {
-          Text(format(scale.max)).typeStyle(.data)
         }
         .accessibilityValue(
           guess.map { Text(verbatim: format($0)) }
             ?? Text(
               "No guess yet", tableName: "Activities",
               comment: "VoiceOver: a guess slider not moved yet"))
+
+        ends
       }
     }
   }
@@ -117,14 +128,7 @@ struct ActivityGuessScaleView: View {
       )
       .accessibilityHidden(true)
 
-      HStack {
-        Text(format(scale.min))
-        Spacer()
-        Text(format(scale.max))
-      }
-      .typeStyle(.data)
-      .foregroundStyle(.mutedForeground)
-      .accessibilityHidden(true)
+      ends
 
       Text(
         "Real value: \(format(actual))", tableName: "Activities",
@@ -133,6 +137,12 @@ struct ActivityGuessScaleView: View {
       .typeStyle(.body.weight(.semibold).monospaced())
       .foregroundStyle(Color.successText)
     }
+  }
+
+  private var ends: some View {
+    let labels = scale.endLabels(unit: unit)
+
+    return ChartsSliderScale(min: labels.min, max: labels.max)
   }
 
   private func format(_ value: Double) -> String {

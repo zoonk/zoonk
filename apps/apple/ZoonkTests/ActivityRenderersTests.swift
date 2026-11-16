@@ -474,6 +474,25 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertNil(fields.mixUpFeedback(correct: "Right atrium", placed: "Pulmonary valve"))
   }
 
+  /// Main's `answersOnCanvas`: a guess is made on its scale, so the step asks no second question
+  /// with a field of its own for the same number.
+  func testAGuessIsAnsweredOnItsScaleWithNoSecondField() {
+    XCTAssertEqual(ActivityRendererRegistry.app.renderer(for: "guessReveal")?.answersOnCanvas, true)
+    XCTAssertEqual(
+      ActivityRendererRegistry.app.renderer(for: "chartReader")?.answersOnCanvas, false)
+  }
+
+  /// The scale says what it counts once, at its end, as main's does, so its start never reads
+  /// "1 days".
+  func testAGuessScaleNamesItsUnitOnceAtItsEnd() {
+    let english = Locale(identifier: "en_US")
+    let scale = GuessScale(min: 1, max: 3650, kind: .log)
+
+    XCTAssertEqual(scale.endLabels(unit: "days", locale: english).min, "1")
+    XCTAssertEqual(scale.endLabels(unit: "days", locale: english).max, "3,650\u{00A0}days")
+    XCTAssertEqual(scale.endLabels(unit: "$", locale: english).min, "$1")
+  }
+
   func testDescribesChangesAndGuessesLikeMain() {
     XCTAssertEqual(FactChange(ratio: 1.5 / 12.5), .less(8.3))
     XCTAssertEqual(FactChange(ratio: 3), .more(3))

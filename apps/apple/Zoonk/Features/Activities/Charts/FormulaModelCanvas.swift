@@ -8,6 +8,7 @@ struct FormulaModelCanvas: View {
 
   @ActivityState private var sliders: [String: Double]
   @ActivityState private var events: [String: Double]
+  @State private var plotWidth: CGFloat = 0
 
   init(context: ActivityCanvasContext, fields: FormulaModelFields) {
     self.context = context
@@ -82,6 +83,8 @@ struct FormulaModelCanvas: View {
         )
         .typeStyle(.data)
         .foregroundStyle(.vizHighlight)
+        // At the compared input it would repeat the readout, so it keeps its room and says nothing.
+        .opacity(compared.x == view.x ? 0 : 1)
         .accessibilityHidden(true)
       }
 
@@ -207,25 +210,23 @@ struct FormulaModelCanvas: View {
     .chartXScale(domain: view.axis.min...view.axis.max)
     .chartYScale(domain: domain)
     .chartXAxis {
-      AxisMarks(values: .automatic(desiredCount: 4)) { value in
-        AxisGridLine().foregroundStyle(.vizGrid)
-        AxisValueLabel {
-          if let x = value.as(Double.self) {
-            Text(verbatim: ActivityNumberFormat.format(x, unit: view.axis.unit))
-          }
-        }
+      ChartsAxis.bottom(
+        ticks: [view.axis.min, view.axis.max], domain: view.axis.min...view.axis.max,
+        plotWidth: plotWidth, showsGrid: false
+      ) {
+        ActivityNumberFormat.format($0, unit: view.axis.unit)
       }
     }
     .chartYAxis {
-      AxisMarks(values: .automatic(desiredCount: 4)) { value in
-        AxisGridLine().foregroundStyle(.vizGrid)
-        AxisValueLabel {
-          if let y = value.as(Double.self) {
-            Text(verbatim: ActivityNumberFormat.format(y, unit: view.charted.unit, compact: true))
-          }
-        }
+      let ticks = ChartsAxis.ticks(domain, count: 3)
+      let format = { (value: Double, isShort: Bool) in
+        ActivityNumberFormat.format(value, unit: view.charted.unit, compact: isShort)
       }
+      let isShort = ChartsAxis.isShort(ticks, format: format)
+
+      ChartsAxis.values(ticks: ticks) { format($0, isShort) }
     }
+    .chartsPlotWidth($plotWidth)
     .frame(minHeight: 200)
     .chartsMarksHidden()
     .chartsPlotText()
@@ -301,16 +302,6 @@ struct FormulaModelCanvas: View {
         in: variable.min...variable.max
       ) {
         Text(verbatim: variable.label)
-      } minimumValueLabel: {
-        Text(verbatim: ActivityNumberFormat.format(variable.min, unit: variable.unit))
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
-          .accessibilityHidden(true)
-      } maximumValueLabel: {
-        Text(verbatim: ActivityNumberFormat.format(variable.max, unit: variable.unit))
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
-          .accessibilityHidden(true)
       }
       .disabled(isChecked)
       .accessibilityValue(
@@ -318,6 +309,13 @@ struct FormulaModelCanvas: View {
           "\(ActivityNumberFormat.format(value, unit: variable.unit)). \(view.charted.label): \(output)",
           tableName: "ActivitiesCharts",
           comment: "A model slider's spoken value with the output it drives"))
+
+      // A lone slider for the chart's input is scaled by the chart's axis right above it.
+      if fields.variables.count > 1 || variable.name != view.axis.name {
+        ChartsSliderScale(
+          min: ActivityNumberFormat.format(variable.min, unit: variable.unit),
+          max: ActivityNumberFormat.format(variable.max, unit: variable.unit))
+      }
     }
   }
 

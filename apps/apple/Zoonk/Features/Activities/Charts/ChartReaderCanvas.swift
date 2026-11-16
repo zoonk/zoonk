@@ -59,6 +59,7 @@ struct ChartReaderCanvas: View {
 
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @ActivityState("selected") private var selected: [String] = []
+  @State private var plotWidth: CGFloat = 0
 
   private var isChecked: Bool {
     if case .checked = context.phase { return true }
@@ -160,30 +161,31 @@ struct ChartReaderCanvas: View {
         }
       }
     }
-    .chartXScale(domain: (fields.points.first?.x ?? 0)...(fields.points.last?.x ?? 1))
-    .chartYScale(domain: .automatic(includesZero: false))
+    .chartXScale(domain: xDomain)
+    .chartYScale(domain: yDomain)
     .chartXAxis {
-      AxisMarks(values: .automatic(desiredCount: 4)) { value in
-        AxisGridLine().foregroundStyle(.vizGrid)
-        AxisValueLabel {
-          if let x = value.as(Double.self) {
-            Text(verbatim: ActivityNumberFormat.format(x, grouping: !fields.hasPlainX))
-          }
-        }
+      ChartsAxis.bottom(
+        ticks: ChartsAxis.ticks(xDomain, count: 3), domain: xDomain, plotWidth: plotWidth
+      ) {
+        ActivityNumberFormat.format($0, grouping: !fields.hasPlainX)
       }
     }
     .chartYAxis {
-      AxisMarks(values: .automatic(desiredCount: 4)) { value in
-        AxisGridLine().foregroundStyle(.vizGrid)
-        AxisValueLabel {
-          if let y = value.as(Double.self) {
-            Text(verbatim: ActivityNumberFormat.format(y, compact: true))
-          }
-        }
+      ChartsAxis.values(ticks: ChartsAxis.ticks(yDomain, count: 3)) {
+        ActivityNumberFormat.format($0, compact: true)
       }
     }
+    .chartsPlotWidth($plotWidth)
     .chartsPlotText()
     .frame(minHeight: 184)
+  }
+
+  private var xDomain: ClosedRange<Double> {
+    (fields.points.first?.x ?? 0)...(fields.points.last?.x ?? 1)
+  }
+
+  private var yDomain: ClosedRange<Double> {
+    ChartsMath.niceDomain(fields.points.map(\.y), includesZero: false)
   }
 
   private func state(of span: ChartReaderFields.Span) -> ChartsChoiceStyle.State {
