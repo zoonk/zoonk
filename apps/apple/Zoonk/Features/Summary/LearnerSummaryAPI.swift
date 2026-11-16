@@ -42,6 +42,7 @@ struct LearnerGoal: Equatable, Identifiable, Sendable {
   let status: Status
   /// `YYYY-MM-DD`, a calendar day.
   let targetDate: String?
+  var targetDateEstimated: Bool = false
   let displayName: String
   /// What the goal is about, which search also matches; screens show `displayName`.
   let title: String
@@ -240,6 +241,7 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
         languageFlag: goal.languageFlag,
         status: LearnerGoal.Status(rawValue: goal.status.rawValue) ?? .active,
         targetDate: goal.targetDate,
+        targetDateEstimated: goal.targetDateEstimated,
         displayName: goal.displayName, title: goal.title,
         variety: LanguageVariety(
           language: goal.targetLanguage, region: goal.targetRegion, choices: goal.regionChoices),

@@ -33,6 +33,7 @@ struct WeeklyRecap: Decodable, Equatable, Sendable {
     let to: Double
   }
 
+  let days: [StudyWeek.Day]
   let badges: [Milestone]
   let buddyAte: BuddyAte
   let comparison: Comparison
