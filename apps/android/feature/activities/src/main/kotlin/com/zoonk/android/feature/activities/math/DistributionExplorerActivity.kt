@@ -41,8 +41,10 @@ import com.zoonk.android.feature.activities.SnapRange
 import com.zoonk.android.feature.activities.activityCanvasColor
 import com.zoonk.android.feature.activities.measureLine
 import com.zoonk.android.feature.activities.numericAnswer
+import com.zoonk.android.feature.player.steps.allowed
 import com.zoonk.android.ui.components.LinearScale
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.exactFractionDigitsFor
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -121,12 +123,14 @@ private fun DistributionExplorerActivity(props: ActivityProps) {
             stringResource(R.string.activities_math_distribution_handle_value, withUnit(it), percent(between))
         }
 
+    // The checked share reads to the check's precision, as the answer and its feedback do.
+    val checkDigits = (content.check as? NumericCheckValue)?.value?.let { exactFractionDigitsFor(it.answer, it.allowed, it.answer) }
     val targetLabel =
         stringResource(
             R.string.activities_math_distribution_target,
             format(fields.target.from),
             format(fields.target.to),
-            percent(percentBetween(distribution, fields.target)),
+            formatAmount(percentBetween(distribution, fields.target), locale, "%", maximumFractionDigits = checkDigits ?: PERCENT_DIGITS),
         )
 
     ActivityCanvas(description = listOfNotNull(shape, shares, targetLabel.takeIf { props.isChecked }).joinSentences()) {

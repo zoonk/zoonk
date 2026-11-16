@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "limit_call_time_back": "1fe87bc454b4f65e699a783edf62e571dd422967d97460e973af3168e53fdd7d",
   "limit_call_time_used": "9affda514069cbacd6417a3dc807412ac047f47d488730bea4b486bb950c5337",
   "limit_create_account": "c554dd10688178a5f5e0e1214c0c3905c614a477e3ee465ae3dbda5849cb409f",
   "limit_explanations_day": "a5f83b33fe11c46d1e0c48ebfbebb3860d8282a78f25129bebd360fd7c658e31",
@@ -80,6 +81,8 @@
     <string name="limit_uploads_day">Bugünkü materyal yükleme hakkın bitti</string>
     <string name="limit_questions_day">Bugünkü soru hakkın bitti</string>
     <string name="limit_call_time_used">Sohbet süren doldu</string>
+    <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
+    <string name="limit_call_time_back">Sohbet süren yenilendi</string>
     <string name="limit_mock_exams_used">Deneme sınavı hakkın bitti</string>
     <string name="limit_lessons_guest">Daha fazla ders için bir hesap gerekiyor</string>
     <string name="limit_lessons_free">Ücretsiz derslerini kullandın</string>

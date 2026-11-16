@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "limit_call_time_back": "16b9a0ad48acd8a4b14658c97d1029703efe0438b8e328f45ed7ced3cd409e0a",
   "limit_call_time_used": "9c51deef26576d3db9e5616d8e36664d6768714bffef98e579fe05855d5a235d",
   "limit_create_account": "265d60bd193345c318a8be0d6b5e447aad4a2a95bf0d6ac03aaacfb937cc6952",
   "limit_explanations_day": "6c8cff0db133199278cc51a976ca54c3381a5c43fb0d78742b293571b9ada84c",
@@ -80,6 +81,8 @@
     <string name="limit_uploads_day">Wykorzystano dzienny limit materiałów</string>
     <string name="limit_questions_day">Wykorzystano dzienny limit pytań</string>
     <string name="limit_call_time_used">Twój czas na rozmowy się skończył</string>
+    <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
+    <string name="limit_call_time_back">Możesz znów rozmawiać</string>
     <string name="limit_mock_exams_used">Wykorzystano limit egzaminów próbnych</string>
     <string name="limit_lessons_guest">Do kolejnych lekcji potrzebujesz konta</string>
     <string name="limit_lessons_free">Wykorzystano wszystkie bezpłatne lekcje</string>

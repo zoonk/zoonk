@@ -126,7 +126,7 @@ internal fun CallLimitMessage(
         LimitNotice(limit, LimitSubject.Calls, onCreateAccount, onSubscribe, modifier)
         return
     }
-    CallOffMessage(callLimitTitle(limit), modifier) {
+    CallOffMessage(callLimitTitle(limit) ?: stringResource(R.string.limit_call_time_back), modifier) {
         comesBackLine(limit)?.let {
             Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
         }

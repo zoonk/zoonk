@@ -116,7 +116,7 @@ private fun FormulaModelBoard(
     val view = remember(sliders, events) { modelView(fields, axis, charted, sliders, events) }
     // Once checked, the asked output reads to the check's precision everywhere it shows, as the answer does.
     val checked = numeric?.takeIf { props.isChecked }
-    val checkedOutput = checked?.output
+    val checkedOutput = checked?.let { askedOutputId(fields, it.output) }
     val checkedDigits = checked?.let { exactFractionDigitsFor(it.answer, it.allowed, props.answer.numericValue ?: it.answer) }
     val formatOutput = { output: ModelOutput, value: Double? ->
         val digits = checkedDigits.takeIf { output.id == checkedOutput }
