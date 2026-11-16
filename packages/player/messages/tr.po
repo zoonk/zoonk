@@ -143,6 +143,19 @@ msgctxt "9uS9GA"
 msgid "{input}. {output}: {value}"
 msgstr "{input}. {output}: {value}"
 
+#: src/activities/_components/activity-numeric-check.tsx
+msgctxt "nTOnUh"
+msgid "Round to {digits, plural, =0 {# decimal places} one {# decimal place} other {# decimal places}}."
+msgstr "Virgülden sonra {digits, plural, =0 {# basamağa} other {# basamağa}} yuvarla."
+
+#: src/activities/_components/activity-numeric-check.tsx
+#: src/components/arrange-words-answer-area.tsx
+#: src/lesson/feedback/lesson-step-result.tsx
+#: src/lesson/steps/lesson-answer-field.tsx
+msgctxt "1nJY2_"
+msgid "Your answer"
+msgstr "Cevabın"
+
 #: src/activities/_components/activity-output-readouts.tsx
 msgctxt "4fjyo8"
 msgid "{output}: {value}, {note}."
@@ -182,6 +195,16 @@ msgstr "Bir öğeyi taşımak için Boşluk veya Enter tuşuna bas, ok tuşları
 msgctxt "ZmADei"
 msgid "The sound couldn't load. You can still see every note."
 msgstr "Ses yüklenemedi. Yine de tüm notaları görebilirsin."
+
+#: src/activities/_components/guitar-fretboard.tsx
+msgctxt "MgBNC_"
+msgid "Play without pressing a fret"
+msgstr "Perdeye basmadan çal"
+
+#: src/activities/_components/guitar-fretboard.tsx
+msgctxt "hKgOZu"
+msgid "Don't play this string"
+msgstr "Bu teli çalma"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
@@ -326,9 +349,9 @@ msgid "Take the quote out"
 msgstr "Alıntıyı çıkar"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "fnHca8"
-msgid "Pick the quote that best supports the claim"
-msgstr "İddiayı en iyi destekleyen alıntıyı seç"
+msgctxt "tNI8yF"
+msgid "Tap or drag the quote that best supports the claim"
+msgstr "İddiayı en iyi destekleyen alıntıya dokun veya alıntıyı sürükle"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "6g7-6N"
@@ -341,9 +364,9 @@ msgid "Take the reasoning out"
 msgstr "Gerekçeyi çıkar"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "X3GSpA"
-msgid "Pick how the quote proves the claim"
-msgstr "Alıntının iddiayı nasıl kanıtladığını seç"
+msgctxt "x197fZ"
+msgid "Tap or drag how the quote proves the claim"
+msgstr "Alıntının iddiayı nasıl kanıtladığını açıklayan seçeneğe dokun veya seçeneği sürükle"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "HmrHXg"
@@ -614,6 +637,11 @@ msgid "{cause} picked. Now pick what it led to."
 msgstr "{cause} seçildi. Şimdi yol açtığı sonucu seç."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
+msgctxt "M2FAHj"
+msgid "Pick a cause, then pick what it led to."
+msgstr "Önce bir neden, sonra yol açtığı sonucu seç."
+
+#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "m4T6j3"
 msgid "{count} of {total, plural, one {# link} other {# links}}"
 msgstr "{count} / {total, plural, other {# ilişki}}"
@@ -622,11 +650,6 @@ msgstr "{count} / {total, plural, other {# ilişki}}"
 msgctxt "qbRyCu"
 msgid "Causes and effects"
 msgstr "Nedenler ve sonuçlar"
-
-#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
-msgctxt "M2FAHj"
-msgid "Pick a cause, then pick what it led to."
-msgstr "Önce bir neden, sonra yol açtığı sonucu seç."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "WHQHly"
@@ -691,9 +714,9 @@ msgid "{span}: {change}."
 msgstr "{span}: {change}."
 
 #: src/activities/code-runner/code-runner-activity.tsx
-msgctxt "ydcluT"
-msgid "{count, plural, one {Line {lines} is yours} other {Lines {lines} are yours}}"
-msgstr "{count, plural, one {Düzenleyeceğin satır: {lines}} other {Düzenleyeceğin satırlar: {lines}}}"
+msgctxt "KheRTj"
+msgid "{count, plural, one {Edit line {lines}} other {Edit lines {lines}}}"
+msgstr "{count, plural, one {Şu satırı düzenle: {lines}} other {Şu satırları düzenle: {lines}}}"
 
 #: src/activities/code-runner/code-runner-activity.tsx
 #: src/activities/code-tracer/tracer-parts.tsx
@@ -883,9 +906,14 @@ msgid "Square {number}, {row} and {column}:"
 msgstr "{number}. kare, {row} ve {column}:"
 
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "nyV23o"
-msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
-msgstr "{what}: {count} / {total, plural, =0 {# kare} other {# kare}}"
+msgctxt "hyp4AH"
+msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
+msgstr "{dominant}: {dominantCount} / {total} · {recessive}: {recessiveCount} / {total}"
+
+#: src/activities/combination-grid/grid-caption.tsx
+msgctxt "k5aotC"
+msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} show {what}"
+msgstr "{count} / {total, plural, =0 {# karede} other {# karede}} {what} görülüyor"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
@@ -896,11 +924,6 @@ msgstr "{count} / {total, plural, =0 {# kare} other {# kare}} doğru"
 msgctxt "7Pftj-"
 msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} filled"
 msgstr "{count} / {total, plural, =0 {# kare} other {# kare}} dolu"
-
-#: src/activities/combination-grid/grid-caption.tsx
-msgctxt "hyp4AH"
-msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
-msgstr "{dominant}: {dominantCount} / {total} · {recessive}: {recessiveCount} / {total}"
 
 #: src/activities/combination-grid/grid-palette.tsx
 msgctxt "fewxxc"
@@ -1246,6 +1269,11 @@ msgid "Piano keys"
 msgstr "Piyano tuşları"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
+msgctxt "r2N9bw"
+msgid "A half step is the distance to the next key, counting black keys."
+msgstr "Yarım ses, siyah tuşlar da sayıldığında bir sonraki tuşa olan uzaklıktır."
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
 msgctxt "FWhw7d"
 msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "Do’dan Si’ye uzanan bir piyano klavyesi. Basılan tuşlar: {notes}."
@@ -1254,11 +1282,6 @@ msgstr "Do’dan Si’ye uzanan bir piyano klavyesi. Basılan tuşlar: {notes}."
 msgctxt "0kfXGd"
 msgid "{count, plural, one {# note} other {# notes}}"
 msgstr "{count, plural, other {# nota}}"
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "S7Oawr"
-msgid "By ear"
-msgstr "Kulaktan"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "nfwiHT"
@@ -1936,9 +1959,9 @@ msgid "Staff"
 msgstr "Porte"
 
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "1xqT9N"
-msgid "Tab"
-msgstr "Tablatür"
+msgctxt "RpejPq"
+msgid "Guitar frets"
+msgstr "Gitar perdeleri"
 
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "yYzCD2"
@@ -1951,9 +1974,9 @@ msgid "Tempo"
 msgstr "Tempo"
 
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "F2244X"
-msgid "{tempo} bpm"
-msgstr "{tempo} vuruş/dakika"
+msgctxt "m5IhOG"
+msgid "{tempo} beats/min"
+msgstr "Dakikada {tempo} vuruş"
 
 #: src/activities/notation-player/notation-player-activity.tsx
 msgctxt "ZLkshx"
@@ -2721,9 +2744,9 @@ msgid "Place {event} on the timeline"
 msgstr "{event} olayını zaman çizelgesine yerleştir"
 
 #: src/activities/timeline/timeline-tray.tsx
-msgctxt "Mz-N9C"
-msgid "Drag onto the timeline"
-msgstr "Zaman çizelgesine sürükle"
+msgctxt "VvAPB9"
+msgid "Drag onto the timeline."
+msgstr "Zaman çizelgesine sürükle."
 
 #: src/activities/unit-circle/unit-circle-activity.tsx
 msgctxt "Btkcyy"
@@ -2801,13 +2824,6 @@ msgstr "{item}. {result}."
 msgctxt "vPyO9S"
 msgid "Position {position}: {item}. Tap to remove."
 msgstr "{position}. sıra: {item}. Kaldırmak için dokun."
-
-#: src/components/arrange-words-answer-area.tsx
-#: src/lesson/feedback/lesson-step-result.tsx
-#: src/lesson/steps/lesson-answer-field.tsx
-msgctxt "1nJY2_"
-msgid "Your answer"
-msgstr "Cevabın"
 
 #: src/components/arrange-words-answer-area.tsx
 msgctxt "PKEwrP"
@@ -3430,11 +3446,6 @@ msgstr "Ekibin"
 msgctxt "YTtnhN"
 msgid "What if · {setting}"
 msgstr "Ya şöyle olsaydı · {setting}"
-
-#: src/lesson/steps/challenge/challenge-intro.tsx
-msgctxt "YVTWsk"
-msgid "Challenge · {setting}"
-msgstr "Meydan okuma · {setting}"
 
 #: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "KV-6ml"

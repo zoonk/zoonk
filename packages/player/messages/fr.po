@@ -143,6 +143,19 @@ msgctxt "9uS9GA"
 msgid "{input}. {output}: {value}"
 msgstr "{input}. {output} : {value}"
 
+#: src/activities/_components/activity-numeric-check.tsx
+msgctxt "nTOnUh"
+msgid "Round to {digits, plural, =0 {# decimal places} one {# decimal place} other {# decimal places}}."
+msgstr "Arrondis à {digits, plural, =0 {# décimale} one {# décimale} other {# décimales}}."
+
+#: src/activities/_components/activity-numeric-check.tsx
+#: src/components/arrange-words-answer-area.tsx
+#: src/lesson/feedback/lesson-step-result.tsx
+#: src/lesson/steps/lesson-answer-field.tsx
+msgctxt "1nJY2_"
+msgid "Your answer"
+msgstr "Ta réponse"
+
 #: src/activities/_components/activity-output-readouts.tsx
 msgctxt "4fjyo8"
 msgid "{output}: {value}, {note}."
@@ -182,6 +195,16 @@ msgstr "Pour déplacer un élément, appuie sur Espace ou Entrée, utilise les t
 msgctxt "ZmADei"
 msgid "The sound couldn't load. You can still see every note."
 msgstr "Le son n’a pas pu se charger. Tu peux quand même voir toutes les notes."
+
+#: src/activities/_components/guitar-fretboard.tsx
+msgctxt "MgBNC_"
+msgid "Play without pressing a fret"
+msgstr "Joue la corde à vide"
+
+#: src/activities/_components/guitar-fretboard.tsx
+msgctxt "hKgOZu"
+msgid "Don't play this string"
+msgstr "Ne joue pas cette corde"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
@@ -326,9 +349,9 @@ msgid "Take the quote out"
 msgstr "Retirer la citation"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "fnHca8"
-msgid "Pick the quote that best supports the claim"
-msgstr "Choisis la citation qui appuie le mieux l’affirmation"
+msgctxt "tNI8yF"
+msgid "Tap or drag the quote that best supports the claim"
+msgstr "Appuie sur la citation qui soutient le mieux l’affirmation ou fais-la glisser"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "6g7-6N"
@@ -341,9 +364,9 @@ msgid "Take the reasoning out"
 msgstr "Retirer le raisonnement"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "X3GSpA"
-msgid "Pick how the quote proves the claim"
-msgstr "Choisis l’explication qui montre comment la citation prouve l’affirmation"
+msgctxt "x197fZ"
+msgid "Tap or drag how the quote proves the claim"
+msgstr "Appuie sur l’explication qui montre en quoi la citation prouve l’affirmation ou fais-la glisser"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "HmrHXg"
@@ -614,6 +637,11 @@ msgid "{cause} picked. Now pick what it led to."
 msgstr "{cause} sélectionné. Choisis maintenant ce qui en a découlé."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
+msgctxt "M2FAHj"
+msgid "Pick a cause, then pick what it led to."
+msgstr "Choisis une cause, puis ce qui en a découlé."
+
+#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "m4T6j3"
 msgid "{count} of {total, plural, one {# link} other {# links}}"
 msgstr "{count} sur {total, plural, one {# lien} other {# liens}}"
@@ -622,11 +650,6 @@ msgstr "{count} sur {total, plural, one {# lien} other {# liens}}"
 msgctxt "qbRyCu"
 msgid "Causes and effects"
 msgstr "Causes et effets"
-
-#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
-msgctxt "M2FAHj"
-msgid "Pick a cause, then pick what it led to."
-msgstr "Choisis une cause, puis ce qui en a découlé."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "WHQHly"
@@ -691,9 +714,9 @@ msgid "{span}: {change}."
 msgstr "{span} : {change}."
 
 #: src/activities/code-runner/code-runner-activity.tsx
-msgctxt "ydcluT"
-msgid "{count, plural, one {Line {lines} is yours} other {Lines {lines} are yours}}"
-msgstr "{count, plural, one {La ligne {lines} est à toi} other {Les lignes {lines} sont à toi}}"
+msgctxt "KheRTj"
+msgid "{count, plural, one {Edit line {lines}} other {Edit lines {lines}}}"
+msgstr "{count, plural, one {Modifie la ligne {lines}} other {Modifie les lignes {lines}}}"
 
 #: src/activities/code-runner/code-runner-activity.tsx
 #: src/activities/code-tracer/tracer-parts.tsx
@@ -883,9 +906,14 @@ msgid "Square {number}, {row} and {column}:"
 msgstr "Case {number}, {row} et {column} :"
 
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "nyV23o"
-msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
-msgstr "{what} : {count} sur {total, plural, =0 {# case} one {# case} other {# cases}}"
+msgctxt "hyp4AH"
+msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
+msgstr "{dominant} : {dominantCount} sur {total} · {recessive} : {recessiveCount} sur {total}"
+
+#: src/activities/combination-grid/grid-caption.tsx
+msgctxt "k5aotC"
+msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} show {what}"
+msgstr "{count} sur {total, plural, =0 {# case} one {# case} other {# cases}} pour le résultat {what}"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
@@ -896,11 +924,6 @@ msgstr "{count} sur {total, plural, =0 {# case correcte} one {# case correcte} o
 msgctxt "7Pftj-"
 msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} filled"
 msgstr "{count} sur {total, plural, =0 {# case remplie} one {# case remplie} other {# cases remplies}}"
-
-#: src/activities/combination-grid/grid-caption.tsx
-msgctxt "hyp4AH"
-msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
-msgstr "{dominant} : {dominantCount} sur {total} · {recessive} : {recessiveCount} sur {total}"
 
 #: src/activities/combination-grid/grid-palette.tsx
 msgctxt "fewxxc"
@@ -1246,6 +1269,11 @@ msgid "Piano keys"
 msgstr "Touches de piano"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
+msgctxt "r2N9bw"
+msgid "A half step is the distance to the next key, counting black keys."
+msgstr "Un demi-ton sépare deux touches voisines, touches noires comprises."
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
 msgctxt "FWhw7d"
 msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "Un clavier de piano de do à si. Touches enfoncées : {notes}."
@@ -1254,11 +1282,6 @@ msgstr "Un clavier de piano de do à si. Touches enfoncées : {notes}."
 msgctxt "0kfXGd"
 msgid "{count, plural, one {# note} other {# notes}}"
 msgstr "{count, plural, one {# note} other {# notes}}"
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "S7Oawr"
-msgid "By ear"
-msgstr "À l’oreille"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "nfwiHT"
@@ -1936,9 +1959,9 @@ msgid "Staff"
 msgstr "Portée"
 
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "1xqT9N"
-msgid "Tab"
-msgstr "Tablature"
+msgctxt "RpejPq"
+msgid "Guitar frets"
+msgstr "Frettes de guitare"
 
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "yYzCD2"
@@ -1951,9 +1974,9 @@ msgid "Tempo"
 msgstr "Tempo"
 
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "F2244X"
-msgid "{tempo} bpm"
-msgstr "{tempo} bpm"
+msgctxt "m5IhOG"
+msgid "{tempo} beats/min"
+msgstr "{tempo} battements/min"
 
 #: src/activities/notation-player/notation-player-activity.tsx
 msgctxt "ZLkshx"
@@ -2721,9 +2744,9 @@ msgid "Place {event} on the timeline"
 msgstr "Placer {event} sur la frise chronologique"
 
 #: src/activities/timeline/timeline-tray.tsx
-msgctxt "Mz-N9C"
-msgid "Drag onto the timeline"
-msgstr "Fais glisser sur la frise chronologique"
+msgctxt "VvAPB9"
+msgid "Drag onto the timeline."
+msgstr "Fais glisser l’élément sur la frise chronologique."
 
 #: src/activities/unit-circle/unit-circle-activity.tsx
 msgctxt "Btkcyy"
@@ -2801,13 +2824,6 @@ msgstr "{item}. {result}."
 msgctxt "vPyO9S"
 msgid "Position {position}: {item}. Tap to remove."
 msgstr "Position {position} : {item}. Appuie pour retirer."
-
-#: src/components/arrange-words-answer-area.tsx
-#: src/lesson/feedback/lesson-step-result.tsx
-#: src/lesson/steps/lesson-answer-field.tsx
-msgctxt "1nJY2_"
-msgid "Your answer"
-msgstr "Ta réponse"
 
 #: src/components/arrange-words-answer-area.tsx
 msgctxt "PKEwrP"
@@ -3430,11 +3446,6 @@ msgstr "Ton équipe"
 msgctxt "YTtnhN"
 msgid "What if · {setting}"
 msgstr "Et si · {setting}"
-
-#: src/lesson/steps/challenge/challenge-intro.tsx
-msgctxt "YVTWsk"
-msgid "Challenge · {setting}"
-msgstr "Défi · {setting}"
 
 #: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "KV-6ml"
