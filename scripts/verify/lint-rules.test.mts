@@ -12,7 +12,17 @@ const folder = mkdtempSync(join(tmpdir(), "zoonk-lint-"));
 /** A template's placeholder, written so this file's own strings hold none. */
 const VALUE = ["$", "{value}"].join("");
 
-const FIXTURES = [
+type Fixture = {
+  bad: string[];
+  good: string[];
+  /** The reported lines of `bad.tsx`, when they aren't one per line in order. */
+  lines?: number[];
+  rule: string;
+  /** Files the rule leaves alone, by their path under the fixture's folder. */
+  skipped?: Record<string, string>;
+};
+
+const FIXTURES: Fixture[] = [
   {
     bad: [
       'export const A = <div role="dialog" />;',
@@ -175,12 +185,10 @@ function lint() {
     writeFileSync(join(here, "bad.tsx"), bad.join("\n"));
     writeFileSync(join(here, "good.tsx"), good.join("\n"));
 
-    if ("skipped" in fixture) {
-      for (const [name, content] of Object.entries<string>(fixture.skipped ?? {})) {
-        const path = join(here, name);
-        mkdirSync(dirname(path), { recursive: true });
-        writeFileSync(path, content);
-      }
+    for (const [name, content] of Object.entries(fixture.skipped ?? {})) {
+      const path = join(here, name);
+      mkdirSync(dirname(path), { recursive: true });
+      writeFileSync(path, content);
     }
   }
 
