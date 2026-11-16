@@ -74,13 +74,12 @@ export function ActivityCodeLine({
   tone = "plain",
   ...props
 }: React.ComponentProps<"div"> & { number: number; tone?: CodeLineTone }) {
-  // The current line's bar is a shadow inside the line, so marking it moves none of its code.
   return (
     <div
       className={cn(
-        "col-span-full grid grid-cols-subgrid items-center rounded-lg pr-2 pl-1.5 whitespace-pre",
+        "col-span-full grid grid-cols-subgrid items-center rounded-lg pr-2 whitespace-pre",
         tone === "current" &&
-          "bg-viz-highlight-soft rounded-l-none shadow-[inset_3px_0_0_var(--color-viz-highlight)]",
+          "bg-viz-highlight-soft rounded-l-none shadow-[-3px_0_0_var(--color-viz-highlight)]",
         tone === "editable" &&
           "bg-background ring-viz-accent/40 contrast-more:ring-viz-accent ring-1 ring-inset",
         tone === "error" && "bg-destructive/10",
