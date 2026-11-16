@@ -9,6 +9,7 @@ import { buildCheckpoint } from "./phase-checkpoint";
 import { getPhaseStates } from "./phase-states";
 import { hasPlanDeadline, withinLessonScope } from "./plan-end";
 import { type PlanReadItem, getPlanReadItemKey } from "./plan-read-projection";
+import { countPlannedLessonProgress } from "./planned-lesson-progress";
 import { type ShortPlanShape, toShortPhaseView } from "./short-plan-view";
 import {
   countItemLessons,
@@ -16,7 +17,7 @@ import {
   isFarTopic,
   sumPlannedLessons,
 } from "./stand-in-lessons";
-import { countLessonProgress, getWorkProgress, isWorkFinished } from "./work-progress";
+import { getWorkProgress, isWorkFinished } from "./work-progress";
 
 const MINUTES_PER_HOUR = 60;
 
@@ -241,6 +242,8 @@ export function buildPhaseViews({
   shortPlan = null,
   skillAreas,
   skillPhases = new Map(),
+  progressSkillAreas = skillAreas,
+  skippedAreas = [],
   studiesPastTarget = false,
   targetDate = null,
   taughtSkillIds = new Set(),
@@ -262,6 +265,8 @@ export function buildPhaseViews({
   shortPlan?: ShortPlanShape | null;
   skillAreas: SkillAreas;
   skillPhases?: ReadonlyMap<string, number>;
+  progressSkillAreas?: SkillAreas;
+  skippedAreas?: readonly string[];
   studiesPastTarget?: boolean;
   targetDate?: Date | null;
   taughtSkillIds?: ReadonlySet<string>;
@@ -287,7 +292,15 @@ export function buildPhaseViews({
   return phases.map((phase, index) => {
     const inPhase = items.filter((item) => item.phase === index);
     const lessons = inPhase.filter((item) => item.kind === "lesson");
-    const progress = countLessonProgress(lessons);
+
+    const progress = countPlannedLessonProgress({
+      deadline,
+      items: planItems.map((item) => ({ ...item, id: item.id ?? getPlanReadItemKey(item) })),
+      phase: index,
+      skillAreas: progressSkillAreas,
+      skippedAreas,
+    });
+
     const minutes = getPhaseMinutes({ estimateMinutes, index, items, phase });
 
     return {

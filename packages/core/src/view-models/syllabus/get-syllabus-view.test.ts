@@ -797,7 +797,7 @@ describe(getSyllabusView, () => {
 });
 
 describe("shared plan progress", () => {
-  it("counts known lessons in the certificate and goal summaries exactly as in the Plan", async () => {
+  it("counts known lessons in goal summaries exactly as in the Plan", async () => {
     const user = await userFixture();
 
     const { goal, plan, planItems, skills } = await learnerGoalFixture({
