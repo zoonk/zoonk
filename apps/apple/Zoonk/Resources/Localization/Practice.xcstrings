@@ -15949,120 +15949,118 @@
         }
       }
     },
-    "Your recent mistakes were slips while typing, not a rule you're missing. There's nothing to practice." : {
-      "comment" : "Why a typos pattern has nothing to practice.",
+    "Your recent mistakes were typos, not a rule to learn." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine letzten Fehler waren Tippfehler. Du musst dafür keine Regel lernen und nichts üben."
+            "value" : "Deine letzten Fehler waren Tippfehler, keine Regel zum Lernen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus errores recientes fueron descuidos al escribir y no se deben a una regla que desconozcas. No hay nada que practicar."
+            "value" : "Tus errores recientes fueron de tecleo, no una regla que aprender."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes erreurs récentes sont des fautes de frappe, pas une règle que tu ne connais pas. Il n’y a rien à réviser."
+            "value" : "Tes erreurs récentes étaient des fautes de frappe, pas une règle à apprendre."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I tuoi ultimi errori erano solo di battitura, non dovuti a una regola che non conosci. Non c’è nulla su cui esercitarti."
+            "value" : "I tuoi errori recenti erano di battitura, non una regola da imparare."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "最近の間違いは入力ミスで、ルールは理解できています。練習が必要な内容はありません。"
+            "value" : "最近のミスは入力ミスで、覚えるべきルールではありません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "최근에 틀린 건 규칙을 몰라서가 아니라 오타 때문이었어요. 따로 연습할 내용은 없어요."
+            "value" : "최근 실수는 오타였어요. 새로 배울 규칙은 없어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twoje ostatnie błędy to literówki, a zasady już znasz. Nie ma tu nic do przećwiczenia."
+            "value" : "Twoje ostatnie błędy to literówki, a nie reguła do nauczenia."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seus erros recentes foram de digitação, não de uma regra que você precisa aprender. Não há nada para praticar."
+            "value" : "Seus erros recentes foram de digitação, não uma regra para aprender."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Son yanlışların, bilmediğin bir kuraldan değil, yazarken yaptığın küçük hatalardan kaynaklanıyordu. Alıştırma yapman gereken bir şey yok."
+            "value" : "Son hataların yazım hatasıydı, öğrenilecek bir kural değil."
           }
         }
       }
     },
-    "Your recent mistakes were slips, not a rule to learn." : {
-      "comment" : "Notebook row for a typos-only pattern.",
+    "Your recent mistakes were typos, not a rule you're missing. There's nothing to practice." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine letzten Fehler waren Tippfehler. Du musst dafür keine Regel lernen."
+            "value" : "Deine letzten Fehler waren Tippfehler. Die Regeln kennst du schon. Es gibt nichts zu üben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus errores recientes fueron descuidos y no se deben a una regla que necesites aprender."
+            "value" : "Tus últimos errores fueron al teclear, no por desconocer una regla. No hay nada que practicar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes erreurs récentes sont des fautes de frappe, pas une règle à apprendre."
+            "value" : "Tes dernières erreurs venaient de fautes de frappe, pas d’une règle mal comprise. Tu n’as rien à travailler."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I tuoi ultimi errori erano solo sviste: non c’è una regola da imparare."
+            "value" : "I tuoi ultimi errori erano refusi: non ci sono regole da imparare. Non c’è nulla su cui esercitarti."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "最近の間違いは入力ミスで、ルールは理解できています。"
+            "value" : "最近の間違いは入力ミスで、ルールの理解不足ではありません。練習が必要な項目はありません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "최근에 틀린 건 규칙을 몰라서가 아니라 오타 때문이었어요."
+            "value" : "최근 실수는 규칙을 몰라서가 아니라 오타 때문이었어요. 따로 연습할 내용은 없어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twoje ostatnie błędy to literówki, a zasady już znasz."
+            "value" : "Ostatnie błędy to literówki. Zasady już znasz, więc nie ma tu nic do ćwiczenia."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seus erros recentes foram de digitação, não de uma regra que você precisa aprender."
+            "value" : "Seus erros recentes foram só de digitação. Não há nenhuma regra para aprender nem nada para praticar."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Son hataların ufak yazım yanlışlarıydı, öğrenmen gereken bir kural yok."
+            "value" : "Son yaptığın hatalar bilmediğin bir kuraldan değil, yazım yanlışlarından kaynaklanıyordu. Alıştırma yapmana gerek yok."
           }
         }
       }

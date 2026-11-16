@@ -373,10 +373,7 @@ struct PlanNumbersSection: View {
         return nil
       }
 
-      return PlanNumber(
-        label: String(
-          localized: "Level", table: "Plan", comment: "Label of a language goal's level"),
-        value: language.levelText)
+      return PlanNumber(label: language.levelTitle, value: language.levelText)
     }
 
     guard context.goal.kind == .learn, let lessons = syllabus?.lessons else {

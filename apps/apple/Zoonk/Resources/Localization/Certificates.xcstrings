@@ -609,60 +609,60 @@
         }
       }
     },
-    "A certificate for every level and plan you finish." : {
+    "A certificate for every course level, language level and plan you finish." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Zertifikat für jedes abgeschlossene Level und jeden abgeschlossenen Plan."
+            "value" : "Ein Zertifikat für jedes abgeschlossene Kurs- und Sprachlevel und jeden abgeschlossenen Plan."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un certificado por cada nivel y plan que completes."
+            "value" : "Un certificado por cada nivel de curso, nivel de idioma y plan que completes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un certificat pour chaque niveau et chaque plan que tu termines."
+            "value" : "Un certificat pour chaque niveau de cours, niveau de langue et plan que tu termines."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un certificato per ogni livello e ogni piano che completi."
+            "value" : "Un certificato per ogni livello di corso, livello linguistico e piano che completi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "レベルや学習計画を完了するたびに、証明書がもらえます。"
+            "value" : "コースや言語の各レベル、学習計画を終えるたびに証明書がもらえます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "레벨이나 계획을 완료할 때마다 인증서를 받아요."
+            "value" : "코스 레벨, 언어 레벨, 계획을 마칠 때마다 인증서를 받아요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Certyfikat za każdy ukończony poziom i plan."
+            "value" : "Certyfikat za każdy ukończony poziom kursu, poziom językowy i plan."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um certificado para cada nível e plano que você concluir."
+            "value" : "Um certificado para cada nível de curso, nível de idioma e plano que você concluir."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tamamladığın her seviye ve plan için bir sertifika."
+            "value" : "Tamamladığın her kurs seviyesi, dil seviyesi ve plan için bir sertifika."
           }
         }
       }

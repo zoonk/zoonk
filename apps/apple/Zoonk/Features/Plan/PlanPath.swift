@@ -143,18 +143,29 @@ private struct PlanPhaseRow: View {
         }
       } label: {
         Label {
-          showsAll
-            ? Text(
-              "Show fewer chapters", tableName: "Plan",
-              comment: "Folds a phase's chapters back to the ones around the next")
-            : Text(
-              "\(hidden) more chapters", tableName: "Plan",
-              comment: "Shows the phase's chapters left out around the next one")
+          foldLabel(hidden: hidden, showsAll: showsAll)
         } icon: {
           Image(systemName: showsAll ? "minus" : "plus")
         }
       }
       .foregroundStyle(.mutedForeground)
+    }
+  }
+
+  private func foldLabel(hidden: Int, showsAll: Bool) -> Text {
+    switch (context.goal.kind == .language, showsAll) {
+    case (true, true):
+      Text("Show fewer units", tableName: "Plan")
+    case (true, false):
+      Text("\(hidden) more units", tableName: "Plan")
+    case (false, true):
+      Text(
+        "Show fewer chapters", tableName: "Plan",
+        comment: "Folds a phase's chapters back to the ones around the next")
+    case (false, false):
+      Text(
+        "\(hidden) more chapters", tableName: "Plan",
+        comment: "Shows the phase's chapters left out around the next one")
     }
   }
 

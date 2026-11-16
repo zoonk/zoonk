@@ -999,7 +999,7 @@
       }
     },
     "%lld questions" : {
-      "comment" : "A part's questions\nA subject's questions\nNext mock size",
+      "comment" : "The number of questions in an exam or a mock exam.",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -1145,13 +1145,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pergunta"
+                  "value" : "%lld questão"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld perguntas"
+                  "value" : "%lld questões"
                 }
               }
             }

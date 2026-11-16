@@ -5573,6 +5573,65 @@
         }
       }
     },
+    "Update your payment on the website, where you subscribed." : {
+      "comment" : "Follows \"Your last renewal payment failed.\" for a subscription bought on the website, which the app can't update.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktualisiere deine Zahlung auf der Website, wo du abonniert hast."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualiza tu pago en el sitio web, donde te suscribiste."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mets à jour ton paiement sur le site web, là où tu as pris ton abonnement."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiorna il pagamento sul sito web, dove hai fatto l'abbonamento."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登録したウェブサイトでお支払い方法を更新してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "구독한 웹사이트에서 결제 정보를 업데이트하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaktualizuj płatność na stronie internetowej, gdzie masz subskrypcję."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atualize seu pagamento no site, onde você assinou."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ödemeni, abone olduğun web sitesinden güncelle."
+          }
+        }
+      }
+    },
     "We couldn't cancel Plus. Try again or email %@." : {
       "localizations" : {
         "de" : {

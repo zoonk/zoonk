@@ -85,7 +85,8 @@ private struct CertificatesHeader: View {
       PageHeader(
         Self.title,
         supporting: Text(
-          "A certificate for every level and plan you finish.", tableName: "Certificates")
+          "A certificate for every course level, language level and plan you finish.",
+          tableName: "Certificates")
       )
     }
   }

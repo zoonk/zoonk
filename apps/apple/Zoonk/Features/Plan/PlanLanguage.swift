@@ -10,6 +10,17 @@ func languageSkillName(_ skill: String) -> String {
 }
 
 extension LanguageStanding {
+  /// "English level": "Level" alone is the game's.
+  var levelTitle: String {
+    String(
+      localized: "\(Locale.current.languageName(goal.targetLanguage)) level", table: "Plan")
+  }
+
+  var sheetTitle: String {
+    String(
+      localized: "Your \(Locale.current.languageName(goal.targetLanguage)) level", table: "Plan")
+  }
+
   var levelText: String {
     guard let level else {
       return String(
@@ -54,7 +65,7 @@ struct LanguageLevelSheet: View {
         LabeledContent {
           Text(standing.levelText)
         } label: {
-          Text("Level", tableName: "Plan", comment: "Label of a language goal's level")
+          Text(standing.levelTitle)
         }
       }
 
@@ -69,9 +80,7 @@ struct LanguageLevelSheet: View {
         }
       }
     }
-    .navigationTitle(
-      Text("Your level", tableName: "Plan", comment: "Title of the language level sheet")
-    )
+    .navigationTitle(Text(standing.sheetTitle))
     .toolbarTitleDisplayMode(.inline)
     .toolbar {
       ToolbarItem(placement: .confirmationAction) {

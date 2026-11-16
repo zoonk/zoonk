@@ -1851,7 +1851,8 @@
             }
           }
         }
-      }
+      },
+      "comment" : "A mock exam's size: its number of questions, then its time limit."
     },
     "%lld questions are blank." : {
       "comment" : "Blank questions when handing in",
@@ -8713,7 +8714,7 @@
       }
     },
     "Questions" : {
-      "comment" : "The answer sheet's questions",
+      "comment" : "Labels the number of questions in an exam or a mock exam.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8760,7 +8761,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perguntas"
+            "value" : "Questões"
           }
         },
         "tr" : {

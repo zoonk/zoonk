@@ -435,8 +435,7 @@ private struct LanguageUnitContent: View {
               practiceRow(
                 title: Text("Just typos", tableName: "Plan", comment: "Recent mistakes were slips"),
                 detail: Text(
-                  "Your recent mistakes were slips, not a rule to learn.", tableName: "Plan",
-                  comment: "Explains a pattern of typos"),
+                  "Your recent mistakes were typos, not a rule to learn.", tableName: "Plan"),
                 systemImage: "keyboard")
             } else {
               practiceRow(

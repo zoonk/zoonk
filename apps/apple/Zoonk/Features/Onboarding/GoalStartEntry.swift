@@ -15,6 +15,7 @@ struct GoalStartEntry: View {
   }
 
   var part = Part.whole
+  var showsFreeNote = false
   /// Kept by the screen, so folding or unfolding iPhone Duo keeps what the learner typed.
   @Binding var goal: SentGoal
   /// The screen's, which leaves it as its visit ends; the box offers material only with it.
@@ -32,6 +33,7 @@ struct GoalStartEntry: View {
     } else {
       GoalEntrySections(
         words: $goal.words, isSection: part != .box, showsExamples: part == .whole,
+        showsFreeNote: showsFreeNote,
         canSubmitEmpty: !goal.material.isEmpty && goal.intent != nil,
         onSubmit: send,
         attach: {
@@ -97,6 +99,7 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
   @Binding var words: String
   var isSection = false
   var showsExamples = true
+  var showsFreeNote = false
   var error: GoalError?
   var limit: GoalLimitReason?
   /// With material and what to do with it, the box may stay empty.
@@ -182,6 +185,14 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
           Text(
             "Start a goal", tableName: "Onboarding",
             comment: "Title of the section where a learner types a new goal"))
+      }
+    } footer: {
+      if showsFreeNote {
+        SectionFooter {
+          Text(
+            "Start free, no account needed.", tableName: "Onboarding",
+            comment: "Under onboarding's steps for a visitor or a guest")
+        }
       }
     }
 

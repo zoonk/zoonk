@@ -491,9 +491,8 @@ private struct PatternRow: View {
           Text(
             pattern.isTypos
               ? String(
-                localized: "Your recent mistakes were slips, not a rule to learn.",
-                table: "Practice",
-                comment: "Notebook row for a typos-only pattern.")
+                localized: "Your recent mistakes were typos, not a rule to learn.",
+                table: "Practice")
               : pattern.title
           )
           .typeStyle(.note)

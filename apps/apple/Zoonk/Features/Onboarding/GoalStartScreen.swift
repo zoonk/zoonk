@@ -193,6 +193,8 @@ private struct GoalStartFlow: View {
             }
           }
           .onboardingColumn()
+          // Its steps are a plan's, so an explanation offer goes without them.
+          .environment(\.onboardingAside, page == .draft && offersExplanation ? nil : .howItWorks)
           .closesTask()
           .barName(title)
         }
@@ -233,6 +235,16 @@ private struct GoalStartFlow: View {
     Text(
       "Start with your goal", tableName: "Onboarding",
       comment: "Names the start flow's screens, whose own titles head them")
+  }
+
+  private var offersExplanation: Bool {
+    guard case .draft(let id, _) = draft,
+      case .case2? = onboarding.draft(id: id).value?.understanding?.value1
+    else {
+      return false
+    }
+
+    return true
   }
 
   @ViewBuilder

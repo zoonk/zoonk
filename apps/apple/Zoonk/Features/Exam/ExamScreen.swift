@@ -614,7 +614,8 @@ private struct ExamMocksSection: View {
                 MockLabels.title(number: exam.mocks.count + exam.runningMocks.count + 1),
                 isNext: exam.runningMocks.isEmpty),
               description: Text(
-                "\(next.questions) questions", tableName: "Exam", comment: "Next mock size")
+                "\(next.questions) questions", tableName: "Exam",
+                comment: "The number of questions in an exam or a mock exam.")
             ) {
               StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
             } trailing: {
@@ -850,7 +851,9 @@ private struct ExamFormatSection: View {
       return Text(verbatim: names)
     }
 
-    let count = Text("\(questions) questions", tableName: "Exam", comment: "A part's questions")
+    let count = Text(
+      "\(questions) questions", tableName: "Exam",
+      comment: "The number of questions in an exam or a mock exam.")
     return Text(
       "\(names)\u{00A0}· \(count)", tableName: "Exam",
       comment: "An exam day's parts, then how many questions they have")
@@ -881,7 +884,9 @@ private struct ExamMapSection: View {
                 "\(share.formatted(.percent.precision(.fractionLength(0)))) of the exam",
                 tableName: "Exam", comment: "A subject's weight")
             } else if let questions = subject.questions {
-              Text("\(questions) questions", tableName: "Exam", comment: "A subject's questions")
+              Text(
+                "\(questions) questions", tableName: "Exam",
+                comment: "The number of questions in an exam or a mock exam.")
             }
           } label: {
             Text(subject.name)
