@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
@@ -141,7 +142,7 @@ fun QuestionText(text: String) {
             text = question,
             modifier = Modifier.semantics { heading() }.revealPart(LocalFeedbackReveal.current, RevealPart.Question),
             style =
-                MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+                MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold, lineBreak = LineBreak.Heading),
         )
     }
 }
