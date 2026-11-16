@@ -142,7 +142,9 @@ describe.each([390, 1440])("distribution tail placement at %ipx", (width) => {
           target: setup.target,
         };
 
-        const answer = computeActivityValue({ ...base, fields, template: "distributionExplorer" })!;
+        const answer = Number(
+          computeActivityValue({ ...base, fields, template: "distributionExplorer" })!.toFixed(2),
+        );
 
         openActivity({
           content: { ...base, check: { ...base.check, answer }, fields },
