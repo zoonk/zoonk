@@ -17,6 +17,7 @@ import { describe, expect, it, vi } from "vitest";
 import { type readCatchUpItems } from "../../learner/facts/catch-up-items";
 import { type readOtherExamGoals } from "../../learner/facts/other-exam-goals";
 import { type readOwnedGoal } from "../../learner/facts/owned-goal";
+import { type readPlanLessonItems } from "../../learner/facts/plan-lesson-items";
 import { type readSavedPlan } from "../../learner/facts/saved-plan";
 import { type readActiveSubscription } from "../../learner/facts/subscription";
 import { type readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
@@ -24,6 +25,8 @@ import { type readTodayPlanSession } from "../../learner/facts/today-plan-sessio
 import { listGoalMindMaps } from "../../mind-maps/list-goal-mind-maps";
 import { signedInCourseGoal } from "../_test-utils/course-goal";
 import { getProgressView } from "../progress/get-progress-view";
+import * as syllabusContent from "../syllabus/_utils/syllabus-content";
+import * as syllabusKnown from "../syllabus/_utils/syllabus-known-skills";
 import { getSyllabusView } from "../syllabus/get-syllabus-view";
 import { getPlanTabView } from "./get-plan-view";
 
@@ -90,7 +93,44 @@ vi.mock("../../learner/facts/today-plan-session", async (importOriginal) => {
   return { ...actual, readTodayPlanSession: keepRequestReads(actual.readTodayPlanSession) };
 });
 
+vi.mock("../../learner/facts/plan-lesson-items", async (importOriginal) => {
+  const [actual, { keepRequestReads }] = await Promise.all([
+    importOriginal<{ readPlanLessonItems: typeof readPlanLessonItems }>(),
+    import("../../_test-utils/keep-request-reads"),
+  ]);
+
+  return { ...actual, readPlanLessonItems: keepRequestReads(actual.readPlanLessonItems) };
+});
+
 describe("the Plan's render reads", () => {
+  it("fills lesson skills once for concurrent Plan page readers", async () => {
+    const { goal } = await signedInCourseGoal({ statuses: ["done", "testedOut", "todo", "todo"] });
+    const fill = vi.spyOn(syllabusContent, "withSkills");
+    const known = vi.spyOn(syllabusKnown, "withTestedOutSkills");
+
+    const measured = await countDatabaseStatements(() =>
+      Promise.all([
+        getPlanTabView({ goalId: goal.id }),
+        getSyllabusView({ goalId: goal.id }),
+        getProgressView({ goalId: goal.id }),
+      ]),
+    );
+
+    process.stderr.write(
+      `Plan read measurement: ${measured.statements} queries, ${fill.mock.calls.length} skill fills, ${known.mock.calls.length} test-out fills\n`,
+    );
+
+    expect(measured.result.map((result) => result.status)).toStrictEqual([
+      "ready",
+      "ready",
+      "ready",
+    ]);
+
+    expect(measured.writes).toBe(0);
+    expect(fill).toHaveBeenCalledOnce();
+    expect(known).toHaveBeenCalledOnce();
+  });
+
   it("reads other exams' saved lessons once across subjects and concurrent syllabus readers without writing", async () => {
     const { goal, items, lessons, plan, skills, user } = await signedInCourseGoal();
     const other = await goalFixture({ kind: "exam", userId: user.id });

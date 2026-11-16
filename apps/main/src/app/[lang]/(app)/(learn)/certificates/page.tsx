@@ -22,10 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 async function CertificatesContent() {
-  const [result, certificateProgress] = await Promise.all([
-    listCurrentUserCertificates(),
-    listCurrentUserCertificateProgress(),
-  ]);
+  const result = await listCurrentUserCertificates();
 
   if (result.status !== "ready") {
     const t = await getExtracted();
@@ -42,6 +39,9 @@ async function CertificatesContent() {
     );
   }
 
+  const certificateProgress =
+    result.certificates.length === 0 ? await listCurrentUserCertificateProgress() : null;
+
   const origin = getBaseUrl();
 
   return (
@@ -53,7 +53,7 @@ async function CertificatesContent() {
       }))}
       continueHref={BACK_HREF}
       upNext={
-        result.certificates.length === 0 && certificateProgress.status === "ready"
+        certificateProgress?.status === "ready"
           ? certificateProgress.upNext.map(({ id, progress, ...goal }) => ({ goal, id, progress }))
           : []
       }

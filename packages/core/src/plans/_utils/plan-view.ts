@@ -9,6 +9,7 @@ import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { getExamDocument } from "../../exams/exam-document";
 import { toLanguageAimView } from "../../language/aims/language-aims";
 import { readChallengeResults } from "../../learner/facts/challenge-results";
+import { readPlanLessonItems } from "../../learner/facts/plan-lesson-items";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
 import { readFocusTestSummary } from "../../learner/placement/focus-test-summary";
@@ -31,7 +32,7 @@ import { loadPlanCourse } from "./plan-course";
 import { isPlanFinished } from "./plan-end";
 import { MINUTES_PER_HOUR, buildEstimateView } from "./plan-estimate-view";
 import { buildSavedPlanNumbersView } from "./plan-numbers-view";
-import { buildPlanPath, readPlanProgressItems, readPlanToday } from "./plan-path-view";
+import { buildPlanPath, readPlanToday } from "./plan-path-view";
 import { getSkillAreas } from "./plan-phase-views";
 import { type PlanReadContext } from "./plan-read-projection";
 import { buildScheduleView } from "./plan-schedule-view";
@@ -215,7 +216,7 @@ export async function buildPlanView({
         item.kind === "boss" && item.id && item.status === "todo" ? [item.id] : [],
       ),
     ),
-    readPlanProgressItems(context),
+    readPlanLessonItems(goal.userId, goal.id),
   ]);
 
   const skillAreas = getSkillAreas({
