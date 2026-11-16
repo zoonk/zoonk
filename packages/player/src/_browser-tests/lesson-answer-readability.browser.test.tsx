@@ -186,11 +186,13 @@ describe("checked answer readability", () => {
     },
   );
 
-  it.each([390, 420, 440])(
-    "keeps two words on the answer's last line and moves none when Check adds the tag at %i px",
-    async (width) => {
-      const answer = "Their water didn't come from the Broad Street pump";
-
+  it.each([
+    { answer: "Their water didn't come from the Broad Street pump", width: 420 },
+    { answer: "Their water didn't come from the Broad Street pump", width: 440 },
+    { answer: ANSWER, width: 450 },
+  ])(
+    "keeps two words on the last line of $answer and moves none when Check adds the tag at $width px",
+    async ({ answer, width }) => {
       await atViewport({ height: 844, width }, async () => {
         renderLessonPlayer({ lesson: lessonWithAnswer(answer) });
 
