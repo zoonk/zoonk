@@ -44,12 +44,12 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.VisitOf
+import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.ResourceScaffold
@@ -265,10 +265,7 @@ private fun SubjectHero(
             style = MaterialTheme.typography.headlineMedium,
         )
 
-        listOfNotNull(subjectLead(syllabus, subject), subjectFacts(subject))
-            .factsLine()
-            .ifEmpty { null }
-            ?.let { Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle()) }
+        (subjectLead(syllabus, subject) + subjectFacts(subject)).takeIf { it.isNotEmpty() }?.let { Facts(it) }
         listOfNotNull(knownLine(subject), alsoInLine(syllabus.sharedExams, subject.sharedWith)).forEach {
             Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         }
@@ -283,7 +280,7 @@ internal fun factsStyle() = MaterialTheme.zoonkType.data
 private fun subjectLead(
     syllabus: Syllabus,
     subject: SyllabusSubject,
-): String? {
+): List<String> {
     val kind =
         when {
             subject.group != null -> subject.group
@@ -307,7 +304,7 @@ private fun subjectLead(
                 null
             }
         }
-    return listOfNotNull(kind, weight).factsLine().ifEmpty { null }
+    return listOfNotNull(kind, weight)
 }
 
 /** The group a plan adds outside the learner's material or the exam's own documents. */
@@ -322,19 +319,17 @@ internal fun beyondGroupName(syllabus: Syllabus): String =
     )
 
 @Composable
-private fun subjectFacts(subject: SyllabusSubject): String? {
+private fun subjectFacts(subject: SyllabusSubject): List<String> {
     val inLessons = subject.notPlannedReason == null && subject.preparation == null
-    val facts =
-        listOfNotNull(
-            subject.topics.size
-                .takeIf { it > 0 }
-                ?.let { pluralStringResource(R.plurals.goalcontent_topic_count, it, it) },
-            subject.chapters.size
-                .takeIf { it > 0 }
-                ?.let { pluralStringResource(R.plurals.goalcontent_chapter_count, it, it) },
-            if (inLessons) percentDone(subject.bar.share) else null,
-        )
-    return facts.takeIf { it.isNotEmpty() }?.factsLine()
+    return listOfNotNull(
+        subject.topics.size
+            .takeIf { it > 0 }
+            ?.let { pluralStringResource(R.plurals.goalcontent_topic_count, it, it) },
+        subject.chapters.size
+            .takeIf { it > 0 }
+            ?.let { pluralStringResource(R.plurals.goalcontent_chapter_count, it, it) },
+        if (inLessons) percentDone(subject.bar.share) else null,
+    )
 }
 
 @Composable

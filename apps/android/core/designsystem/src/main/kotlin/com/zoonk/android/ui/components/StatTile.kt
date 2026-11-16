@@ -3,11 +3,8 @@ package com.zoonk.android.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LocalContentColor
@@ -21,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -32,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.toUpperCase
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -145,18 +144,39 @@ fun StatTiles(
     tiles: List<@Composable (Modifier) -> Unit>,
     modifier: Modifier = Modifier,
 ) {
+    if (tiles.isEmpty()) return
     BoxWithConstraints(modifier.fillMaxWidth()) {
         val narrowest = MIN_TILE_WIDTH * LocalDensity.current.fontScale
         val fitting = ((maxWidth + TILE_GAP) / (narrowest + TILE_GAP)).toInt().coerceIn(1, columns)
 
-        Column(verticalArrangement = Arrangement.spacedBy(TILE_GAP)) {
-            tiles.chunked(fitting).forEach { row ->
-                Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(TILE_GAP)) {
-                    row.forEach { tile -> tile(Modifier.weight(1f).fillMaxHeight()) }
+        // Every row as tall as the tallest tile (main's `auto-rows-fr`), so a tile's second line gives no row a height of its own.
+        Layout(content = { tiles.forEach { it(Modifier) } }) { measurables, constraints ->
+            val gap = TILE_GAP.roundToPx()
+            val width = constraints.maxWidth
+            val rows = measurables.chunked(fitting).map { row -> row.zip(cellWidths(width, row.size, gap)) }
+            val height = rows.maxOf { row -> row.maxOf { (tile, cell) -> tile.maxIntrinsicHeight(cell) } }
+            val placed = rows.map { row -> row.map { (tile, cell) -> tile.measure(Constraints.fixed(cell, height)) } }
+            layout(width, rows.size * height + (rows.size - 1) * gap) {
+                placed.forEachIndexed { index, row ->
+                    var x = 0
+                    row.forEach { tile ->
+                        tile.placeRelative(x, index * (height + gap))
+                        x += tile.width + gap
+                    }
                 }
             }
         }
     }
+}
+
+/** [count] cells sharing [width] less the gaps between them, the odd pixels to the first. */
+private fun cellWidths(
+    width: Int,
+    count: Int,
+    gap: Int,
+): List<Int> {
+    val room = width - gap * (count - 1)
+    return List(count) { room / count + if (it < room % count) 1 else 0 }
 }
 
 private val MIN_TILE_WIDTH = 120.dp

@@ -214,9 +214,8 @@ fun richText(
     marksTerms: Boolean = false,
 ): SpokenText {
     val words = rememberMathWords()
-    val codeBackground = MaterialTheme.colorScheme.surfaceContainerHigh
 
-    return remember(segments, words, codeBackground, marksTerms) {
+    return remember(segments, words, marksTerms) {
         var hasMath = false
         val spoken = StringBuilder()
         var markFrom: Int? = null
@@ -245,9 +244,8 @@ fun richText(
                         }
 
                         SegmentKind.Code -> {
-                            withStyle(SpanStyle(fontFamily = GeistMono, fontSize = CODE_SIZE.em, background = codeBackground)) {
-                                append(segment.text)
-                            }
+                            withStyle(SpanStyle(fontFamily = GeistMono, fontSize = CODE_SIZE.em)) { append(segment.text) }
+                            addStringAnnotation(TextMarkKind.Code.tag, "", start, length)
                         }
 
                         SegmentKind.Text -> {
@@ -354,12 +352,29 @@ fun RichTextLine(
     var layout by remember { mutableStateOf<TextLayoutResult?>(null) }
     val highlight = MaterialTheme.zoonk.warning.copy(alpha = MARK_ALPHA)
     val ink = MaterialTheme.zoonk.warning
+    val code = MaterialTheme.colorScheme.surfaceContainerHigh
 
     Text(
         text = text.text,
         modifier =
             (if (spoken == null) modifier else modifier.semantics { contentDescription = spoken })
-                .then(if (marks.isEmpty()) Modifier else Modifier.drawBehind { layout?.let { drawTextMarks(it, marks, highlight, ink) } }),
+                .then(
+                    if (marks.isEmpty()) {
+                        Modifier
+                    } else {
+                        Modifier.drawBehind {
+                            layout?.let {
+                                drawTextMarks(
+                                    it,
+                                    marks,
+                                    highlight,
+                                    ink,
+                                    code,
+                                )
+                            }
+                        }
+                    },
+                ),
         style = style,
         overflow = if (maxLines == Int.MAX_VALUE) TextOverflow.Clip else TextOverflow.Ellipsis,
         maxLines = maxLines,

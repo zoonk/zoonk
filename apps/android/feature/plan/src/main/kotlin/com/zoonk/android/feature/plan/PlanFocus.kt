@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.controlInk
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.FocusTestSummary
 import com.zoonk.api.models.Plan
@@ -239,7 +240,7 @@ private fun AreaChoice(
                     )
                 }
             }
-            Checkbox(checked = checked, onCheckedChange = null)
+            Checkbox(checked = checked, onCheckedChange = null, modifier = Modifier.controlInk())
         }
     }
 }

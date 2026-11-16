@@ -271,6 +271,7 @@ fun SuggestionAction(
 ) {
     val presentation = LocalPresentation.current
     val width = if (presentation == Presentation.Sheet) Modifier.fillMaxWidth() else Modifier
+    val size = if (presentation == Presentation.Sheet) ButtonSize.Large else ButtonSize.Small
 
     if (secondary || presentation == Presentation.Line) {
         OutlinedButton(
@@ -278,6 +279,7 @@ fun SuggestionAction(
             modifier = modifier.then(width),
             enabled = enabled,
             busy = busy,
+            size = size,
             leadingIcon = leadingIcon,
             content = content,
         )
@@ -287,6 +289,7 @@ fun SuggestionAction(
             modifier = modifier.then(width),
             enabled = enabled,
             busy = busy,
+            size = size,
             content = content,
         )
     }

@@ -70,7 +70,9 @@ import com.zoonk.android.ui.components.OpeningDay
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.controlInk
 import com.zoonk.android.ui.components.rememberOpeningDay
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -143,7 +145,7 @@ internal fun PracticeChooser(
                 shown is ChooserStatus.Failed -> ({ StartFailed(shown) })
                 else -> null
             },
-        bar = { action(Modifier.fillMaxWidth()) },
+        bar = { TaskActions { main -> action(main) } },
         aside = {
             // What a pick shows comes last, so picking moves nothing above it.
             view.lastMock?.let { last ->
@@ -427,7 +429,7 @@ private fun ChoiceRowContent(
         if (!stacked) ChoiceSize(choice, MaterialTheme.typography.labelMedium, Modifier.alignByBaseline())
         // The radio stands at the row's end, beside the label's first line however many lines follow.
         Box(Modifier.height(with(LocalDensity.current) { labelStyle.lineHeight.toDp() }), contentAlignment = Alignment.Center) {
-            RadioButton(selected = selected, onClick = null)
+            RadioButton(selected = selected, onClick = null, modifier = Modifier.controlInk())
         }
     }
 }

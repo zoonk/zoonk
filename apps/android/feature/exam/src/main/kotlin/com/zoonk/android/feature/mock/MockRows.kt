@@ -20,7 +20,11 @@ import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.ExamMockSummary
 import com.zoonk.api.models.MockOptions
 
-/** A finished mock exam: its number, when (and its subject when it had one), and how it went; [onOpen] opens its result. [stacked] puts how it went under the line. */
+/**
+ * A finished mock exam: its number, when (and its subject when it had one), and how it went; [onOpen] opens its result.
+ * [stacked] puts how it went under the line; [chevronSpace] keeps a chevron's room on a row that can't open in a list
+ * whose other rows can.
+ */
 @Composable
 fun MockSummaryRow(
     mock: ExamMockSummary,
@@ -28,6 +32,7 @@ fun MockSummaryRow(
     stacked: Boolean,
     modifier: Modifier = Modifier,
     points: Boolean = mock.hasPartMarks,
+    chevronSpace: Boolean = false,
 ) {
     val subject = mockSubject(mock.shape)
     val date = mockDate(mock.finishedAt)
@@ -40,6 +45,7 @@ fun MockSummaryRow(
         onClick = onOpen,
         modifier = modifier,
         stacked = stacked,
+        chevronSpace = chevronSpace,
     )
 }
 
@@ -58,6 +64,7 @@ fun MockListRow(
     stacked: Boolean,
     modifier: Modifier = Modifier,
     current: Boolean = false,
+    chevronSpace: Boolean = false,
 ) {
     ListRow(
         headline = headline,
@@ -72,6 +79,7 @@ fun MockListRow(
             if (trailing != null && stacked) Text(trailing, style = factStyle())
         },
         meta = if (trailing != null && !stacked) ({ Text(trailing) }) else null,
+        chevronSpace = chevronSpace,
     )
 }
 

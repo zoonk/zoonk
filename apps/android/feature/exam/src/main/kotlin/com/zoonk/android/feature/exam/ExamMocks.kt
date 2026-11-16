@@ -58,6 +58,7 @@ internal fun ExamMocksSection(
         BoxWithConstraints {
             val points = exam.mocks.any { it.hasPartMarks }
             val stacked = factsUnderLines(clocks + listOfNotNull(nextDate) + exam.mocks.map { mockMeasure(it, points) }, maxWidth)
+            val anyOpens = running || next != null || exam.mocks.any { it.blockId != null }
             // The row the learner is on stands on its fill, with no hairline touching it.
             val rows =
                 buildList<Pair<Boolean, @Composable () -> Unit>> {
@@ -70,7 +71,7 @@ internal fun ExamMocksSection(
                     }
                     exam.mocks.forEach { mock ->
                         val open = mock.blockId?.let { { navigator.open(AppRoute.Mock(it.toString())) } }
-                        add(false to { MockSummaryRow(mock, onOpen = open, stacked = stacked, points = points) })
+                        add(false to { MockSummaryRow(mock, onOpen = open, stacked = stacked, points = points, chevronSpace = anyOpens) })
                     }
                 }
             Column {

@@ -13,13 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -48,10 +46,10 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.Subject
-import com.zoonk.android.ui.components.SubjectGlyph
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.colors
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -209,8 +207,6 @@ private fun chapterBlocks(
         add(
             CatalogBlock("closing", trailing = true) {
                 Column(Modifier.widthIn(max = COLUMN_WIDTH).padding(bottom = 24.dp)) {
-                    HorizontalDivider()
-                    Spacer(Modifier.size(48.dp))
                     SectionTitle(
                         stringResource(
                             if (startChapterId !=
@@ -273,32 +269,21 @@ private fun ChapterStart(
     )
 }
 
-/** The subject's glyph and the course's name, which opens the course. */
+/** The course's name over the chapter's title, as its chip, which opens the course. */
 @Composable
 internal fun CourseEyebrow(
     navigator: AppNavigator,
     detail: CourseDetail,
 ) {
-    val subject =
-        Subject.of(
-            detail.course.categories
-                .firstOrNull()
-                ?.value,
-        )
-
-    Row(
+    Eyebrow(
+        text = detail.course.title,
         modifier =
             Modifier
                 .minimumInteractiveComponentSize()
                 .clickable(onClickLabel = stringResource(R.string.catalog_open_course)) {
                     navigator.open(AppRoute.CatalogCourse(detail.course.id.toString()))
                 },
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        SubjectGlyph(subject)
-        Text(detail.course.title, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-    }
+    )
 }
 
 /** Main's `ChapterStrip`: where the chapter sits among the course's levels, and the chapters after it on the course's route. */

@@ -42,6 +42,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -177,7 +178,7 @@ fun ListRow(
                 },
             title = {
                 CompositionLocalProvider(LocalContentColor provides ink) {
-                    ProvideTextStyle(MaterialTheme.typography.titleSmall) {
+                    ProvideTextStyle(MaterialTheme.typography.titleSmall.copy(lineBreak = LineBreak.Heading)) {
                         Column(
                             Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Label),
                             verticalArrangement = Arrangement.spacedBy(1.dp),
