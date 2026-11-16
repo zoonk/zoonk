@@ -9,6 +9,7 @@ import {
 } from "@zoonk/ui/components/collapsible";
 import { useExtracted } from "next-intl";
 import { StepRow, StepRows } from "../_components/step-card";
+import { useFormatRange } from "../_utils/range";
 import { useMockNumber } from "./mock-labels";
 import { ResultSection } from "./mock-result-section";
 
@@ -28,10 +29,8 @@ function useRightOf() {
 }
 
 export function useMockRange() {
-  const t = useExtracted();
-
-  return ({ high, low }: { high: number; low: number }) =>
-    t("{low}–{high}", { high: String(high), low: String(low) });
+  const formatRange = useFormatRange();
+  return ({ high, low }: { high: number; low: number }) => formatRange(String(low), String(high));
 }
 
 const TOPICS_SHOWN = 5;

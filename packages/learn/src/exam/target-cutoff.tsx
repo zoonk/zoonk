@@ -1,6 +1,7 @@
 "use client";
 
 import { type TargetCutoff } from "@zoonk/core/exams/cutoffs/contract";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { TargetIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import {
@@ -32,7 +33,7 @@ export function useCutoffWords() {
         cutoff.quota,
       ]
         .filter((part) => part !== null && part.trim() !== "")
-        .join(" · "),
+        .join(FACT_SEPARATOR),
     score: (cutoff: TargetCutoff) =>
       t("{score} out of {max}", { max: number(cutoff.maxScore), score: number(cutoff.score) }),
   };

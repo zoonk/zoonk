@@ -23,6 +23,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.PickedFile
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.android.feature.onboarding.canAttachMaterial
 import com.zoonk.android.feature.onboarding.goalLimitReason
 import com.zoonk.android.feature.onboarding.startError
 import com.zoonk.api.models.GoalCreateInput
@@ -137,9 +138,10 @@ class StartGoalViewModel(
     var isAttaching by mutableStateOf(false)
         private set
 
-    /** The last attach attempt that didn't add anything. */
-    var attachFailure by mutableStateOf<WriteOutcome<*>?>(null)
-        private set
+    private val attachFailed = visit.outcome<WriteOutcome<*>>()
+
+    /** The last attach attempt that didn't add anything, on this visit. */
+    val attachFailure get() = attachFailed.value
 
     var turns by mutableStateOf(emptyList<MaterialTurn>())
         private set
@@ -157,8 +159,9 @@ class StartGoalViewModel(
     var savingEdit by mutableStateOf<String?>(null)
         private set
 
-    var failedEdit by mutableStateOf<String?>(null)
-        private set
+    private val editFailure = visit.outcome<String>()
+
+    val failedEdit get() = editFailure.value
 
     private var isSending = false
 
@@ -191,7 +194,7 @@ class StartGoalViewModel(
 
     fun toggleAttach() {
         isAttachOpen = !isAttachOpen
-        attachFailure = null
+        if (canAttach) attachFailed.clear()
     }
 
     fun removeAttached(id: String) = update { it.copy(attached = it.attached.filterNot { source -> source.id == id }) }
@@ -224,10 +227,13 @@ class StartGoalViewModel(
         }
     }
 
+    val canAttach: Boolean get() = !isAttaching && attachFailure.canAttachMaterial(java.time.Instant.now())
+
     private fun attach(add: suspend () -> WriteOutcome<AttachedSource>) {
-        if (isAttaching) return
+        if (!canAttach) return
         isAttaching = true
-        attachFailure = null
+        attachFailed.clear()
+        val started = visit.number
         viewModelScope.launch {
             when (val outcome = add()) {
                 is WriteOutcome.Done -> {
@@ -238,7 +244,7 @@ class StartGoalViewModel(
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    attachFailure = outcome
+                    attachFailed.send(started, outcome)
                 }
             }
             isAttaching = false
@@ -327,7 +333,7 @@ class StartGoalViewModel(
 
     fun edit(field: String?) {
         editing = field
-        failedEdit = null
+        editFailure.clear()
     }
 
     /** Follows the draft the screen shows while it's read; a draft read before needs nothing. */
@@ -384,7 +390,8 @@ class StartGoalViewModel(
         val id = draftId ?: return
         if (savingEdit != null) return
         savingEdit = field
-        failedEdit = null
+        editFailure.clear()
+        val started = visit.number
         viewModelScope.launch {
             when (store.revise(id, edit)) {
                 is WriteOutcome.Done -> {
@@ -394,7 +401,7 @@ class StartGoalViewModel(
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    failedEdit = field
+                    editFailure.send(started, field)
                 }
             }
             savingEdit = null

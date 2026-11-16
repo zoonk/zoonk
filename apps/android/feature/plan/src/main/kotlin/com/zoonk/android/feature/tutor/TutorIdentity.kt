@@ -20,7 +20,9 @@ import com.zoonk.api.models.LearnerSummary
 data class TutorIdentity(
     val name: String,
     val look: BuddyLook?,
-)
+) {
+    val prompt: TutorPrompt get() = TutorPrompt(name.takeIf { look != null })
+}
 
 @Composable
 fun tutorIdentity(summary: LearnerSummary?): TutorIdentity {

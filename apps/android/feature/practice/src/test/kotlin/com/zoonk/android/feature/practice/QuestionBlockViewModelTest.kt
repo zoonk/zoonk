@@ -4,15 +4,21 @@ import com.zoonk.android.data.ANA
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.focustest.FocusTestStore
 import com.zoonk.android.feature.focustest.unusedFocusTests
+import com.zoonk.android.feature.plan.learnerSummary
 import com.zoonk.android.feature.practice.block.BlockKey
 import com.zoonk.android.feature.practice.block.QuestionBlockApi
 import com.zoonk.android.feature.practice.block.QuestionBlockStore
 import com.zoonk.android.feature.practice.block.QuestionBlockViewModel
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Drill
+import com.zoonk.android.feature.session.FakeStudyApi
+import com.zoonk.android.feature.session.StudySessionStore
+import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.StudyAnswerFeedback
@@ -48,6 +54,7 @@ class QuestionBlockViewModelTest {
     private val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
     private val key = BlockKey(UUID.fromString(SESSION), UUID.fromString(BLOCK))
     private val sent = mutableListOf<StudyAnswerInput>()
+    private var placement = false
     private var answered = setOf<String>()
     private var status = "active"
     private var answer: () -> StudyAnswerFeedback = { feedback(isCorrect = true) }
@@ -71,6 +78,7 @@ class QuestionBlockViewModelTest {
         "itemId" to id,
         "answered" to if (id in answered) JsonObject(mapOf("blank" to JsonPrimitive(false), "isCorrect" to JsonPrimitive(true))) else null,
         "drill" to drill,
+        "placement" to placement,
     )
 
     private fun detail(drill: JsonObject? = null): StudyBlockDetail =
@@ -87,6 +95,7 @@ class QuestionBlockViewModelTest {
 
     private fun TestScope.viewModel(
         drill: JsonObject? = null,
+        focusTests: (AppCache) -> FocusTestStore = ::unusedFocusTests,
         clock: () -> Long = { 0L },
     ): QuestionBlockViewModel {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
@@ -112,7 +121,7 @@ class QuestionBlockViewModelTest {
                     timeZone: String,
                 ) = finish()
             }
-        return QuestionBlockViewModel(key, QuestionBlockStore(api, cache) { "UTC" }, UnusedSessionSteps, unusedFocusTests(cache), clock)
+        return QuestionBlockViewModel(key, QuestionBlockStore(api, cache) { "UTC" }, UnusedSessionSteps, focusTests(cache), clock)
     }
 
     private suspend fun TestScope.started(viewModel: QuestionBlockViewModel) =
@@ -127,6 +136,59 @@ class QuestionBlockViewModelTest {
                 )
             viewModel.begin(read.questions)
             read
+        }
+
+    @Test
+    fun aNotTodayThatFailsAfterTheLearnerLeftSaysNothingOnReturn() = notToday(leaveFirst = true)
+
+    @Test
+    fun aNotTodayFailureShownBeforeTheLearnerLeftIsGoneOnReturn() = notToday(leaveFirst = false)
+
+    /** An exam's placement questions in a session can be put off with "Not today", which here waits and then fails. */
+    private fun notToday(leaveFirst: Boolean) =
+        runTest(dispatcher) {
+            placement = true
+            val held = CompletableDeferred<Unit>()
+            val exam = learnerSummary(kind = "exam")
+            val day =
+                FakeStudyApi().apply {
+                    session =
+                        decodeFixture(
+                            "study-session",
+                            "goalId" to
+                                exam.goals
+                                    .first()
+                                    .id
+                                    .toString(),
+                        )
+                }
+            val viewModel =
+                viewModel(focusTests = { cache ->
+                    FocusTestStore(
+                        api = { _, _, _ ->
+                            held.await()
+                            throw ApiException(ApiError.Network)
+                        },
+                        cache = cache,
+                        sessions = StudySessionStore(day, cache) { "UTC" },
+                        summary = cache.resource(Audience.SignedIn, emptySet()) { exam },
+                        timeZone = { "UTC" },
+                    )
+                })
+            started(viewModel)
+            advanceUntilIdle()
+
+            requireNotNull(viewModel.notToday).onSkip()
+            runCurrent()
+            if (leaveFirst) viewModel.visit.end()
+            held.complete(Unit)
+            advanceUntilIdle()
+            if (!leaveFirst) {
+                assertTrue(viewModel.notToday?.failed == true)
+                viewModel.visit.end()
+            }
+
+            assertEquals(false, viewModel.notToday?.failed)
         }
 
     @Test

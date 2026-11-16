@@ -188,6 +188,7 @@ function Button({
     <ButtonPrimitive
       aria-busy={busy || undefined}
       className={cn(buttonVariants({ className, edge, size, variant }), canBeBusy && "group/busy")}
+      data-size={size}
       data-slot="button"
       disabled={busy || disabled}
       focusableWhenDisabled={busy || focusableWhenDisabled}

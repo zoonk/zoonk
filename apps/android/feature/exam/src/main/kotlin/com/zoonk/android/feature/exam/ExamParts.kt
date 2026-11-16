@@ -185,7 +185,7 @@ internal fun NoticeDatesCard(
     exam: ExamView,
     viewModel: ExamViewModel,
 ) {
-    val status by viewModel.date.collectAsStateWithLifecycle()
+    val status = viewModel.date
     val locale = currentLocale()
     val noticeDay = exam.noticeDay
     val noSitting = exam.noSitting
@@ -248,7 +248,7 @@ internal fun ExamResultSection(
     exam: ExamView,
     viewModel: ExamViewModel,
 ) {
-    val status by viewModel.report.collectAsStateWithLifecycle()
+    val status = viewModel.report
     val locale = currentLocale()
     val scale = exam.resultScale
     val field = scoreField(scale)

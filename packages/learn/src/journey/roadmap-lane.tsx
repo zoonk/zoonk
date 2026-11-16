@@ -3,6 +3,7 @@
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
@@ -108,13 +109,18 @@ function GoalDate() {
     return date;
   }
 
+  const exam = t({
+    description: "After a date on the plan's timeline, naming what happens that day.",
+    message: "exam",
+  });
+
+  // The word takes no height, so a row it wraps to has none and is cut with its dot: it shows only
+  // beside the date, and a second line never starts on the dot. The date keeps every line it needs.
   return (
-    <>
-      <span className="@max-[8rem]/phase:hidden">
-        {t.rich("<date></date> · exam", { date: () => date })}
-      </span>
-      <span className="hidden @max-[8rem]/phase:inline">{date}</span>
-    </>
+    <span className="flex flex-wrap items-start justify-end overflow-hidden">
+      {date}
+      <span className="h-0 whitespace-pre">{`${FACT_SEPARATOR}${exam}`}</span>
+    </span>
   );
 }
 

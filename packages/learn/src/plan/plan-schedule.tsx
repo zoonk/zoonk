@@ -2,6 +2,7 @@
 
 import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { cn } from "@zoonk/ui/lib/utils";
+import { WEEKDAYS_FROM_MONDAY } from "@zoonk/utils/calendar-day";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
 import { DailyTimePicker, TimeSelect } from "../_components/daily-time-picker";
@@ -19,8 +20,6 @@ import { FullCourseSwitch } from "./plan-full-course";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
 import { useTimeToCover } from "./use-time-to-cover";
-
-const DAYS_PER_WEEK = 7;
 
 function hasFindFailed(status: FindStatus): boolean {
   return status === "failed" || status === "building";
@@ -100,7 +99,7 @@ function DailyCoverage({
                 'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
               message:
                 "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}",
-              values: goalDate({ ...date, style: "long" }),
+              values: goalDate(date),
             })}
           </p>
         ) : (
@@ -202,8 +201,7 @@ function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChan
   const minutesFor = (weekday: number) =>
     shape.weekend !== null && isWeekend(weekday) ? shape.weekend : shape.weekdays;
 
-  // Sunday first, as the plan counts weekdays.
-  const weekdays = Array.from({ length: DAYS_PER_WEEK }, (_, weekday) => ({
+  const weekdays = WEEKDAYS_FROM_MONDAY.map((weekday) => ({
     studies: (weekdayMinutes[weekday] ?? 0) > 0,
     weekday,
   }));

@@ -16,6 +16,7 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
+import { FactSegments } from "../_components/task-meta";
 import { LearnLink } from "../learn-link";
 import { buildStudyHref } from "./_utils/mind-map-urls";
 import { type MindMapsPage, type MindMapsPageChapter } from "./_utils/mind-maps-page";
@@ -76,7 +77,9 @@ export function LessonGroupRow({ group, study }: { group: LessonGroupRowData; st
     >
       <ListRowContent>
         <ListRowTitle>{group.title}</ListRowTitle>
-        <ListRowDescription>{facts.join(" · ")}</ListRowDescription>
+        <ListRowDescription>
+          <FactSegments facts={facts} />
+        </ListRowDescription>
       </ListRowContent>
     </ListRowLink>
   );

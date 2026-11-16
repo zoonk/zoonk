@@ -36,6 +36,7 @@ data class LessonScreen(
     val quickCheck: Pair<Int, Int>?,
     val struggleOffer: LessonStep?,
     val unsentAnswer: Boolean,
+    val showProgress: Boolean,
 )
 
 private fun LessonAnswer?.isReady(): Boolean = this != null && (writtenText?.isNotBlank() ?: true)
@@ -132,6 +133,7 @@ fun LessonPlayerState.screen(): LessonScreen {
         hyperdriveStreak = if (phase == LessonPhase.Feedback && step != null) hyperdriveStreak(step.id) else null,
         quickCheck = quickCheck?.let { position to queue.size },
         struggleOffer = struggleOffer(),
+        showProgress = phase != LessonPhase.Completed,
         unsentAnswer = awaitingCheck && step != null && answers[step.id]?.writtenText?.isNotBlank() == true,
     )
 }

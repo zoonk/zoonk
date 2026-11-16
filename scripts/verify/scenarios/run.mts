@@ -14,6 +14,8 @@ import { installPageHelpers } from "../page-helpers.mts";
 import { signIn } from "../sign-in.mts";
 import { VIEWPORTS, VIEWPORT_NAMES, type ViewportName } from "../viewports.mts";
 import { localePath, proofIn } from "./configuration.mts";
+import { hasEvidence } from "./evidence.mts";
+import { installFailure } from "./failures.mts";
 import { type Prerequisites, SCENARIOS, type Scenario, type Step } from "./scenarios.mts";
 
 const USAGE = `Usage: pnpm verify:scenarios [id...] [--out <dir>]
@@ -62,27 +64,64 @@ function makePersona(
 }
 
 async function storageFor(prerequisites: Prerequisites) {
+  const email =
+    prerequisites.persona === "visitor"
+      ? null
+      : makePersona(prerequisites.persona, prerequisites.state);
+
+  const seeded: unknown =
+    prerequisites.fixture && email
+      ? JSON.parse(
+          execFileSync(
+            "pnpm",
+            [
+              "--filter",
+              "api",
+              "exec",
+              "tsx",
+              "--conditions=react-server",
+              "--env-file-if-exists=.env",
+              resolve(repository, "scripts/verify/scenarios/seed.mts"),
+              prerequisites.fixture,
+              email,
+            ],
+            {
+              cwd: repository,
+              encoding: "utf8",
+              env: { ...process.env, VERCEL_ENV: "development" },
+            },
+          )
+            .trim()
+            .split("\n")
+            .at(-1) ?? "{}",
+        )
+      : null;
+
   const signedIn =
     prerequisites.persona === "visitor"
       ? null
-      : await signIn({
-          app: "main",
-          baseUrl,
-          email: makePersona(prerequisites.persona, prerequisites.state),
-          mailboxUrl,
-        });
+      : await signIn({ app: "main", baseUrl, email: email ?? "", mailboxUrl });
 
   const local = Object.entries(prerequisites.storage ?? {}).map(([name, value]) => ({
     name,
     value,
   }));
 
-  return local.length > 0
-    ? {
-        cookies: signedIn?.storageState.cookies ?? [],
-        origins: [{ localStorage: local, origin: new URL(baseUrl).origin }],
-      }
-    : signedIn?.storageState;
+  const storageState =
+    local.length > 0
+      ? {
+          cookies: signedIn?.storageState.cookies ?? [],
+          origins: [{ localStorage: local, origin: new URL(baseUrl).origin }],
+        }
+      : signedIn?.storageState;
+
+  return {
+    path:
+      seeded && typeof seeded === "object" && "path" in seeded && typeof seeded.path === "string"
+        ? seeded.path
+        : undefined,
+    storageState,
+  };
 }
 
 async function take(page: Page, step: Step) {
@@ -149,14 +188,14 @@ async function capture(
 ): Promise<Capture> {
   const { locale, size, textScale = 1 } = configuration;
   const label = configurationLabel(configuration);
-  const path = localePath(scenario.from ?? scenario.screen, locale);
+  const path = localePath(storage.path ?? scenario.from ?? scenario.screen, locale);
   const browser = await chromium.launch();
 
   try {
     const context = await browser.newContext({
       ...VIEWPORTS[size],
       baseURL: scenario.app === "playground" ? playgroundUrl : baseUrl,
-      storageState: storage,
+      storageState: storage.storageState,
     });
 
     await context.addInitScript(installPageHelpers);
@@ -171,6 +210,8 @@ async function capture(
     await cdp.send("Page.setFontSizes", {
       fontSizes: { standard: Math.round(DEFAULT_TEXT_PX * textScale) },
     });
+
+    await installFailure({ failure: scenario.failure, page });
 
     await page.goto(path, { waitUntil: "networkidle" });
 
@@ -205,7 +246,10 @@ async function capture(
           proofIn(scenario.proof, locale),
         );
 
+    const evidence = await hasEvidence(page, scenario.evidence ?? []);
+
     const reached =
+      evidence &&
       stepped &&
       scenario.reach !== null &&
       ((await proof
@@ -229,6 +273,7 @@ async function capture(
     return {
       // The page a step reached (a placeholder's), not only the one the scenario opened.
       ...webCapture({
+        app: scenario.app ?? "main",
         page: read,
         path: new URL(page.url()).pathname,
         scheme: "light",
@@ -278,6 +323,7 @@ if (values.help) {
         scenario.reach === null
           ? {
               ...webCapture({
+                app: scenario.app ?? "main",
                 page: { activeSurface: "page", elements: [] },
                 path: localePath(scenario.screen, configuration.locale),
                 scheme: "light",

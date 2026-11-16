@@ -23,7 +23,7 @@ export function SavePlanNote({
         className="text-foreground font-medium text-nowrap underline underline-offset-4"
         href={signUpHref}
       >
-        {t("Create an account")}
+        {t("Create a free account")}
       </PendingLink>
     </p>
   );

@@ -1,4 +1,5 @@
 import { formatDateTime } from "@/lib/format";
+import { FactSegments } from "@zoonk/learn/facts";
 import { DetailField, DetailFields } from "./detail-field";
 
 const RUN_ID_PREFIX_LENGTH = 8;
@@ -19,9 +20,9 @@ export function ProvenanceLine({ provenance }: { provenance: ProvenanceValue }) 
     <span className="flex flex-col gap-0.5 text-xs">
       <span className="font-mono">{provenance.model}</span>
       <span className="text-muted-foreground font-mono">
-        {[provenance.promptVersion, provenance.runId?.slice(0, RUN_ID_PREFIX_LENGTH)]
-          .filter(Boolean)
-          .join(" · ")}
+        <FactSegments
+          facts={[provenance.promptVersion, provenance.runId?.slice(0, RUN_ID_PREFIX_LENGTH)]}
+        />
       </span>
     </span>
   );

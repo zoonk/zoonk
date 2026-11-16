@@ -98,9 +98,9 @@ export function useCertificateDate() {
   const formatDate = useFormatIsoDate();
 
   return {
-    long: (isoDate: string) => formatDate(isoDate, "longYear"),
-    month: (isoDate: string) => formatDate(isoDate, "month"),
-    short: (isoDate: string) => formatDate(isoDate, "short"),
+    long: (isoDate: string) => formatDate(isoDate, "sentence", { year: "always" }),
+    month: (isoDate: string) => formatDate(isoDate, "sentenceMonth", { year: "always" }),
+    short: (isoDate: string) => formatDate(isoDate, "row", { year: "always" }),
   };
 }
 

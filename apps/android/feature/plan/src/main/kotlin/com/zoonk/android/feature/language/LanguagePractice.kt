@@ -23,6 +23,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ListRow
@@ -47,35 +48,48 @@ import java.util.UUID
 internal class AlphabetSkipModel(
     private val store: AlphabetStore,
 ) : ViewModel() {
+    /** The row's visit: a skip that didn't save says so only on it. */
+    val visit = Visit()
+
     var skipping by mutableStateOf(false)
         private set
 
-    var failed by mutableStateOf(false)
-        private set
+    private val failure = visit.outcome<Unit>()
+
+    /** The skip didn't save, on this visit. */
+    val failed get() = failure.value != null
 
     fun skip(goalId: UUID) {
+        skipping = true
+        failure.clear()
+        val started = visit.number
         viewModelScope.launch {
-            skipping = true
-            failed = false
-            failed = store.skipAlphabet(goalId) is MutationResult.Failed
+            if (store.skipAlphabet(goalId) is MutationResult.Failed) failure.send(started, Unit)
             skipping = false
         }
     }
 }
 
-/**
- * The alphabet lesson for a script the learner's language doesn't use, above the Plan's path. While
- * the next session still opens with it, "I can already read it" takes it out.
- */
+/** [goalId]'s "I can already read it", one per page. */
 @Composable
-fun AlphabetRow(
-    alphabet: LanguageUnitsAlphabet,
+internal fun alphabetSkip(
     goalId: UUID,
     store: AlphabetStore,
+): AlphabetSkipModel = viewModel(key = "alphabet-skip:$goalId") { AlphabetSkipModel(store) }
+
+/**
+ * The alphabet lesson for a script the learner's language doesn't use, above the Plan's path. While
+ * the next session still opens with it, "I can already read it" takes it out. [model] is the page's
+ * [alphabetSkip], whose visit the page holds above the list the row scrolls in.
+ */
+@Composable
+internal fun AlphabetRow(
+    alphabet: LanguageUnitsAlphabet,
+    goalId: UUID,
+    model: AlphabetSkipModel,
     open: (AppRoute) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val model = viewModel(key = "alphabet-skip:$goalId") { AlphabetSkipModel(store) }
     val time = formatMinutes(alphabet.minutes.toInt(), currentLocale())
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {

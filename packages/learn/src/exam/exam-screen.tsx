@@ -4,6 +4,7 @@ import { type ExamView } from "@zoonk/core/exams/view/contract";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted, useFormatter } from "next-intl";
+import { useDaysLeftText } from "../_components/days-left";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { FactSegments } from "../_components/task-meta";
@@ -45,7 +46,9 @@ function useExamDays(): string[] {
   const timePerDay = startTimes.size > 1;
 
   if (exam.namedMonth) {
-    return exam.days.map((day) => toLabelCase(formatDate(day.date, "month")));
+    return exam.days.map((day) =>
+      toLabelCase(formatDate(day.date, "sentenceMonth", { year: "always" })),
+    );
   }
 
   const days = exam.days.map((day) => {
@@ -124,7 +127,7 @@ function ExamNoticeDay() {
 
 /** The day before, the card under the title says "tomorrow": the count would say it twice. */
 function useDaysLeft(): string | null {
-  const t = useExtracted();
+  const daysLeftText = useDaysLeftText();
   const { exam } = useExamScreen();
   const days = exam.daysLeft;
 
@@ -132,7 +135,7 @@ function useDaysLeft(): string | null {
     return null;
   }
 
-  return t("{days, plural, one {# day left} other {# days left}}", { days });
+  return daysLeftText(days, { estimated: exam.daysEstimated });
 }
 
 function ExamFacts() {

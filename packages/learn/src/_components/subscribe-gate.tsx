@@ -2,6 +2,7 @@
 
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { DocumentLink } from "@zoonk/ui/patterns/links/pending";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { useLearnRoutes } from "../learn-context";
@@ -96,20 +97,22 @@ export function SubscribeMainAction({ action }: { action?: ReactNode }) {
   );
 }
 
-/** Sign-up leaves the app's router, so it's a full page load. */
-function PageLink({ children, ...props }: React.ComponentProps<"a">) {
-  return <a {...props}>{children}</a>;
-}
-
-export function SignUpMainAction() {
+/** The sign-up gate's one action, as a bar's main action. `href` comes back to where the guest was. */
+export function SignUpMainLink({ href }: { href?: string }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
 
   return (
+    <EnterLink href={href ?? routes.signUp} link={DocumentLink}>
+      {t("Create a free account")}
+    </EnterLink>
+  );
+}
+
+export function SignUpMainAction() {
+  return (
     <TaskActions>
-      <EnterLink href={routes.signUp} link={PageLink}>
-        {t("Create a free account")}
-      </EnterLink>
+      <SignUpMainLink />
     </TaskActions>
   );
 }

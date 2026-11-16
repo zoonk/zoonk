@@ -2,6 +2,7 @@
 
 import { BUDDY_NAME_CLASS, BuddyIdentityRow } from "@zoonk/learn/buddy-identity-row";
 import { type TutorIdentity } from "@zoonk/learn/tutor-identity";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
@@ -11,6 +12,7 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
+import { DocumentLink } from "@zoonk/ui/patterns/links/pending";
 import { useExtracted } from "next-intl";
 import { getLessonFocusTarget } from "../lesson/_utils/lesson-focus";
 import { QuestionComposer } from "./lesson-question-composer";
@@ -102,6 +104,9 @@ function keepThreadInView(body: HTMLDivElement | null) {
   return () => observer.disconnect();
 }
 
+/** Where the composer goes, and a guest's way to an account in its place. */
+const FOOT_CLASS = cn(THREAD_SIDE_CLASS, "pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]");
+
 export function LessonQuestionDrawer({
   identity,
   navigation,
@@ -113,6 +118,7 @@ export function LessonQuestionDrawer({
   open: boolean;
   quote?: React.ReactNode;
 }) {
+  const t = useExtracted();
   const controller = useLessonQuestionController();
   const { canAskQuestions } = controller;
 
@@ -138,11 +144,17 @@ export function LessonQuestionDrawer({
             </DrawerContent>
           </div>
 
-          {canAskQuestions && (
-            <QuestionComposer
-              className={cn(THREAD_SIDE_CLASS, "pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]")}
-              controller={controller}
-            />
+          {canAskQuestions ? (
+            <QuestionComposer className={FOOT_CLASS} controller={controller} />
+          ) : (
+            <div className={FOOT_CLASS}>
+              <DocumentLink
+                className={cn(buttonVariants({ size: "lg" }), "w-full")}
+                href={navigation.loginHref}
+              >
+                {t("Create a free account")}
+              </DocumentLink>
+            </div>
           )}
         </DrawerPopup>
       </Drawer>

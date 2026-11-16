@@ -3,6 +3,7 @@
 import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { VisitorLook } from "@/components/learner/visitor-look";
 import { usePathname } from "@/i18n/navigation";
+import { getActiveTab } from "@/lib/learn/active-tab";
 import { useTabMissions } from "@/lib/learn/tab-missions-provider";
 import { type LearnerSummaryState } from "@/lib/learner/learner-snapshot";
 import { markAppEntry, nameAppEntry } from "@zoonk/learn/bar";
@@ -22,36 +23,18 @@ import { useSelectedLayoutSegments } from "next/navigation";
 import { Suspense, useLayoutEffect } from "react";
 import { VisitorSideLinks } from "./learn-sidebar-learner";
 
-const TAB_PATHS: Record<string, LearnTab> = {
-  buddy: "buddy",
-  content: "journey",
-  exam: "journey",
-  "mind-maps": "journey",
-  mistakes: "today",
-  mock: "journey",
-  plan: "journey",
-  speaking: "today",
-  today: "today",
-};
-
 const TAB_ROOTS = new Set<string>(["buddy", "plan", "today"]);
-
-const SIDEBAR_PATHS = new Set<string>(["exam", "mind-maps", "mistakes", "mock", "speaking"]);
 
 function useIsOnboarding(): boolean {
   return useSelectedLayoutSegments().includes("(onboarding)");
 }
 
 /** By the path, not the layout's segment: a pushed page belongs to the tab it opens from. */
-function useActiveTab({ sidebar = false }: { sidebar?: boolean } = {}): LearnTab | null {
-  const [, first = ""] = usePathname().split("/");
+function useActiveTab(): LearnTab | null {
+  const pathname = usePathname();
   const onboarding = useIsOnboarding();
 
-  if (onboarding || (sidebar && SIDEBAR_PATHS.has(first))) {
-    return null;
-  }
-
-  return TAB_PATHS[first] ?? null;
+  return onboarding ? null : getActiveTab(pathname);
 }
 
 type TabsProps = { buddy?: LearnBuddy | null; missions?: LearnTabMissions };
@@ -77,13 +60,7 @@ function useFrameTabs(learner: LearnerSummaryState): TabsProps {
 const UNREAD: LearnerSummaryState = { status: "not-loaded" };
 
 function CurrentSideTabs({ buddy, missions }: TabsProps) {
-  return (
-    <LearnSideNavigation
-      activeTab={useActiveTab({ sidebar: true })}
-      buddy={buddy}
-      missions={missions}
-    />
-  );
+  return <LearnSideNavigation activeTab={useActiveTab()} buddy={buddy} missions={missions} />;
 }
 
 /** Onboarding has no tab bar: until the plan exists the tabs would only lead to a half-made one. */

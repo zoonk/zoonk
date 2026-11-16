@@ -24,7 +24,7 @@ function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line:
   const t = useExtracted();
   const texts = useTimeAnswerTexts();
   const goalDate = useGoalDateValues();
-  const shown = goalDate({ ...date, style: "long" });
+  const shown = goalDate(date);
 
   switch (line.kind) {
     case "everything":

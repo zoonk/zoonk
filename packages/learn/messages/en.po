@@ -210,7 +210,10 @@ msgstr "Today"
 #: src/_components/create-account-link.tsx
 #: src/_components/subscribe-gate.tsx
 #: src/language/unit/practice-conversation.tsx
+#: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
+#: src/onboarding/save-plan-note.tsx
+#: src/reminders/reminders-screen.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
 msgstr "Create a free account"
@@ -228,6 +231,21 @@ msgstr "{time} (suggested)"
 msgctxt "8W4rYY"
 msgid "Time a day"
 msgstr "Time a day"
+
+#: src/_components/days-left.tsx
+msgctxt "daysLeft.vjhiy6"
+msgid "{days, plural, one {~# day left} other {~# days left}}"
+msgstr "{days, plural, one {~# day left} other {~# days left}}"
+
+#: src/_components/days-left.tsx
+msgctxt "daysLeft.8PP61v"
+msgid "{days, plural, =0 {The day is here} one {# day left} other {# days left}}"
+msgstr "{days, plural, =0 {The day is here} one {# day left} other {# days left}}"
+
+#: src/_components/days-left.tsx
+msgctxt "daysLeft.qYeHQe"
+msgid "{days, plural, one {About # day left} other {About # days left}}"
+msgstr "{days, plural, one {About # day left} other {About # days left}}"
 
 #: src/_components/detail-page.tsx
 #: src/_components/question-actions.tsx
@@ -490,6 +508,7 @@ msgid "Lessons"
 msgstr "Lessons"
 
 #: src/_components/lesson-list.tsx
+#: src/_utils/count-of.ts
 #: src/chapter/chapter-screen.tsx
 #: src/journey/preparation/use-preparation-parts.ts
 #: src/language/conversation/call-stars-step.tsx
@@ -1008,6 +1027,11 @@ msgctxt "f4Zmb7"
 msgid "Different time on weekends"
 msgstr "Different time on weekends"
 
+#: src/_utils/range.ts
+msgctxt "kV-RMr"
+msgid "{low}–{high}"
+msgstr "{low}–{high}"
+
 #: src/_utils/time-format.ts
 #: src/today/today-day-progress.tsx
 #: src/today/today-week-day.tsx
@@ -1107,24 +1131,9 @@ msgid "{score}%"
 msgstr "{score}%"
 
 #: src/_utils/use-score-range.ts
-msgctxt "V3-s4p"
-msgid "{low}% to {high}%"
-msgstr "{low}% to {high}%"
-
-#: src/_utils/use-score-range.ts
 msgctxt "FxEDDu"
 msgid "Band {score}"
 msgstr "Band {score}"
-
-#: src/_utils/use-score-range.ts
-msgctxt "G_2OC9"
-msgid "Band {low} to {high}"
-msgstr "Band {low} to {high}"
-
-#: src/_utils/use-score-range.ts
-msgctxt "zi1f8F"
-msgid "{low} to {high}"
-msgstr "{low} to {high}"
 
 #: src/_utils/use-state-label.ts
 msgctxt "BkpBqH"
@@ -1251,12 +1260,6 @@ msgid "It starts with your first lesson."
 msgstr "It starts with your first lesson."
 
 #: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-screen.tsx
-msgctxt "7vqUaI"
-msgid "{earned} of {total}"
-msgstr "{earned} of {total}"
-
-#: src/buddies/buddy-day.tsx
 msgctxt "16z6WC"
 msgid "What {buddy} remembers"
 msgstr "What {buddy} remembers"
@@ -1299,18 +1302,6 @@ msgstr "Pick a pair you've earned."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "MhhJ4B"
-msgid "Speak {language} for a job interview"
-msgstr "Speak {language} for a job interview"
-
-#: src/buddies/buddy-goal-start.tsx
-#: src/onboarding/entry/goal-examples.tsx
-msgctxt "Zqp_hg"
-msgid "Understand quantum physics"
-msgstr "Understand quantum physics"
-
-#: src/buddies/buddy-goal-start.tsx
-#: src/onboarding/entry/goal-examples.tsx
 msgctxt "3GLH-d"
 msgid "Examples"
 msgstr "Examples"
@@ -1325,16 +1316,6 @@ msgstr "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and
 msgctxt "ijwVvk"
 msgid "Earlier questions"
 msgstr "Earlier questions"
-
-#: src/buddies/buddy-goal-start.tsx
-msgctxt "BUxbAO"
-msgid "Your goal"
-msgstr "Your goal"
-
-#: src/buddies/buddy-goal-start.tsx
-msgctxt "u94YzK"
-msgid "What you want to learn"
-msgstr "What you want to learn"
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-entry.tsx
@@ -3061,13 +3042,6 @@ msgid "Write the whole essay, then send it again."
 msgstr "Write the whole essay, then send it again."
 
 #: src/essay/essay-feedback.tsx
-#: src/mock/mock-result-breakdown.tsx
-#: src/mock/mock-result-speaking.tsx
-msgctxt "kV-RMr"
-msgid "{low}–{high}"
-msgstr "{low}–{high}"
-
-#: src/essay/essay-feedback.tsx
 #: src/mock/mock-result-speaking.tsx
 msgctxt "T735yK"
 msgid "Estimated score, from <mono>0</mono> to <mono>{max}</mono>"
@@ -3732,12 +3706,6 @@ msgstr "Estimated dates"
 msgctxt "TEnkdT"
 msgid "From past editions. We'll tell you when the official dates are out."
 msgstr "From past editions. We'll tell you when the official dates are out."
-
-#: src/exam/exam-screen.tsx
-#: src/onboarding/understood/understood-date-row.ts
-msgctxt "m4QgXr"
-msgid "{days, plural, one {# day left} other {# days left}}"
-msgstr "{days, plural, one {# day left} other {# days left}}"
 
 #: src/exam/exam-screen.tsx
 #: src/journey/journey-menu.tsx
@@ -5029,21 +4997,6 @@ msgctxt "7KwTGn"
 msgid "~{date}"
 msgstr "~{date}"
 
-#: src/journey/plan-header.tsx
-msgctxt "8PP61v"
-msgid "{days, plural, =0 {The day is here} one {# day left} other {# days left}}"
-msgstr "{days, plural, =0 {The day is here} one {# day left} other {# days left}}"
-
-#: src/journey/plan-header.tsx
-msgctxt "vjhiy6"
-msgid "{days, plural, one {~# day left} other {~# days left}}"
-msgstr "{days, plural, one {~# day left} other {~# days left}}"
-
-#: src/journey/plan-header.tsx
-msgctxt "qYeHQe"
-msgid "{days, plural, one {About # day left} other {About # days left}}"
-msgstr "{days, plural, one {About # day left} other {About # days left}}"
-
 #: src/journey/plan-roadmap.tsx
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
@@ -5245,10 +5198,11 @@ msgctxt "P7djTu"
 msgid "Phases"
 msgstr "Phases"
 
+#. After a date on the plan's timeline, naming what happens that day.
 #: src/journey/roadmap-lane.tsx
-msgctxt "yXPFJy"
-msgid "<date></date> · exam"
-msgstr "<date></date> · exam"
+msgctxt "pwcc1H"
+msgid "exam"
+msgstr "exam"
 
 #: src/journey/schedule-details.tsx
 #: src/today/today-week-day.tsx
@@ -5297,7 +5251,7 @@ msgid "Schedule"
 msgstr "Schedule"
 
 #: src/journey/schedule-details.tsx
-#: src/onboarding/understood/use-understood-rows.ts
+#: src/onboarding/understood/use-schedule-row.ts
 msgctxt "aefUZL"
 msgid "{time} a day"
 msgstr "{time} a day"
@@ -7495,11 +7449,6 @@ msgctxt "J8WnXZ"
 msgid ", after today's lessons"
 msgstr ", after today's lessons"
 
-#: src/missions/mission-list.tsx
-msgctxt "l8GXmx"
-msgid "{complete} of {total}"
-msgstr "{complete} of {total}"
-
 #: src/missions/mission-moment.tsx
 msgctxt "BQGCP4"
 msgid "Today's missions done!"
@@ -8774,15 +8723,6 @@ msgid "Create a free account to add a PDF, a photo of your notes or any text to 
 msgstr "Create a free account to add a PDF, a photo of your notes or any text to your goal."
 
 #: src/onboarding/entry/attach-panel.tsx
-#: src/onboarding/entry/goal-outcomes.tsx
-#: src/onboarding/save-plan-note.tsx
-#: src/reminders/reminder-offer.tsx
-#: src/reminders/reminders-screen.tsx
-msgctxt "0vL5u1"
-msgid "Create an account"
-msgstr "Create an account"
-
-#: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-attachments.tsx
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "Uby0eW"
@@ -8851,6 +8791,17 @@ msgctxt "B7hTRC"
 msgid "Added to your material: {title}"
 msgstr "Added to your material: {title}"
 
+#: src/onboarding/entry/goal-box.tsx
+msgctxt "lnZvgd"
+msgid "I want to"
+msgstr "I want to"
+
+#. Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.
+#: src/onboarding/entry/goal-box.tsx
+msgctxt "MBg8CD"
+msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
+msgstr "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
+
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "ng8fsM"
 msgid "Start a goal"
@@ -8873,26 +8824,25 @@ msgctxt "oOAMKL"
 msgid "Tell us in your own words. We'll build the plan."
 msgstr "Tell us in your own words. We'll build the plan."
 
-#: src/onboarding/entry/goal-entry.tsx
-msgctxt "lnZvgd"
-msgid "I want to"
-msgstr "I want to"
-
-#. Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.
-#: src/onboarding/entry/goal-entry.tsx
-msgctxt "MBg8CD"
-msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
-msgstr "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
-
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
 msgstr "Exam"
 
 #: src/onboarding/entry/goal-examples.tsx
+msgctxt "MhhJ4B"
+msgid "Speak {language} for a job interview"
+msgstr "Speak {language} for a job interview"
+
+#: src/onboarding/entry/goal-examples.tsx
 msgctxt "UdtpV7"
 msgid "Topic"
 msgstr "Topic"
+
+#: src/onboarding/entry/goal-examples.tsx
+msgctxt "Zqp_hg"
+msgid "Understand quantum physics"
+msgstr "Understand quantum physics"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "79lLl-"
@@ -9252,11 +9202,6 @@ msgid "Getting started"
 msgstr "Getting started"
 
 #: src/onboarding/plan-receipt.tsx
-msgctxt "qHAnd4"
-msgid "{days, plural, =0 {# days} one {# day} other {# days}}"
-msgstr "{days, plural, =0 {# days} one {# day} other {# days}}"
-
-#: src/onboarding/plan-receipt.tsx
 #: src/plan/plan-properties.tsx
 msgctxt "065UXh"
 msgid "No date"
@@ -9581,15 +9526,16 @@ msgctxt "zCKNAZ"
 msgid "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two."
 msgstr "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two."
 
-#: src/onboarding/steps/plan-start-notice.tsx
-msgctxt "rXkqB0"
-msgid "Your plan didn't start"
-msgstr "Your plan didn't start"
-
+#: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "Building your plan stopped"
+
+#: src/onboarding/steps/plan-start-notice.tsx
+msgctxt "rXkqB0"
+msgid "Your plan didn't start"
+msgstr "Your plan didn't start"
 
 #: src/onboarding/steps/plan-wait.tsx
 #: src/today/today-action.tsx
@@ -9801,6 +9747,11 @@ msgstr "until the exam"
 msgctxt "RokfZv"
 msgid "until your date"
 msgstr "until your date"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "aio5sH"
+msgid "{days, plural, one {~# day} other {~# days}}"
+msgstr "{days, plural, one {~# day} other {~# days}}"
 
 #: src/onboarding/steps/reveal-readouts.tsx
 msgctxt "4OjqDe"
@@ -10105,6 +10056,11 @@ msgctxt "lbfh2z"
 msgid "Exam country"
 msgstr "Exam country"
 
+#: src/onboarding/understood/use-schedule-row.ts
+msgctxt "0l2vvH"
+msgid "When you study"
+msgstr "When you study"
+
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "A3FR2N"
 msgid "You speak"
@@ -10134,11 +10090,6 @@ msgstr "Where"
 msgctxt "AkCxS_"
 msgid "Reason"
 msgstr "Reason"
-
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "0l2vvH"
-msgid "When you study"
-msgstr "When you study"
 
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "d68iA8"
@@ -12701,11 +12652,6 @@ msgstr "Ready to start"
 msgctxt "goalSwitcher.aefUZL"
 msgid "{time} a day"
 msgstr "{time} a day"
-
-#: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.8PP61v"
-msgid "{days, plural, =0 {The day is here} one {# day left} other {# days left}}"
-msgstr "{days, plural, =0 {The day is here} one {# day left} other {# days left}}"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.EQpfkS"

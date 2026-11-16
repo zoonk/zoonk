@@ -23,8 +23,8 @@ export const fr: ExampleSet = {
     goal: (month) => `me préparer au bac en ${month}`,
     headline: "Réussir le bac",
     mock: {
-      details: "4 h",
       firm: ["Probabilités", "Fonction exponentielle"],
+      minutes: 240,
       mistakes: 3,
       name: "Mathématiques",
       review: ["Dérivation", "Suites"],

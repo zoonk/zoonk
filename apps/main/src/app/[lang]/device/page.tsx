@@ -1,4 +1,4 @@
-import { AuthGateAction } from "@/components/auth-gate-action";
+import { MainDocumentLink } from "@/components/main-document-link";
 import { ColumnScreen } from "@/components/public/column-screen";
 import { getAppLocale } from "@/i18n/locale";
 import { getPathname } from "@/i18n/navigation";
@@ -63,11 +63,11 @@ async function CliLoginBody({ searchParams }: Pick<Props, "searchParams">) {
         </p>
         <BottomBar>
           <BottomBarActions>
-            <AuthGateAction
+            <MainDocumentLink
               href={`${getPathname({ href: "/login", locale })}?next=${encodeURIComponent(back)}`}
             >
               {t("Log in")}
-            </AuthGateAction>
+            </MainDocumentLink>
           </BottomBarActions>
         </BottomBar>
       </>

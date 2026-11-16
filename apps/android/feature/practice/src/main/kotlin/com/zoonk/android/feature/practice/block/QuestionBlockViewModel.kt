@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.focustest.FocusTestStore
 import com.zoonk.android.feature.player.SessionMove
@@ -56,6 +57,9 @@ class QuestionBlockViewModel(
     private val now: () -> Long = SystemClock::elapsedRealtime,
 ) : ViewModel(),
     RunControls {
+    /** The block's visit: "Not today" that didn't save says so only on it. */
+    val visit = Visit()
+
     private val run = MutableStateFlow<QuestionRun?>(null)
     val state: StateFlow<QuestionRun?> = run.asStateFlow()
 
@@ -190,15 +194,16 @@ class QuestionBlockViewModel(
     /** Only an exam's placement questions are its Focus test's, which "Not today" can skip. */
     private var examGoal by mutableStateOf<UUID?>(null)
     private var skipping = false
-    private var skipFailed by mutableStateOf(false)
+    private val skipFailure = visit.outcome<Unit>()
 
-    override val notToday get() = examGoal?.let { NotToday(skipFailed) { skipTestQuestions(it) } }
+    override val notToday get() = examGoal?.let { NotToday(skipFailure.value != null) { skipTestQuestions(it) } }
 
     /** Today's test questions leave the session; the block read again goes on without them, or closes once it has none. */
     private fun skipTestQuestions(goalId: UUID) {
         if (skipping) return
         skipping = true
-        skipFailed = false
+        skipFailure.clear()
+        val started = visit.number
         viewModelScope.launch {
             when (focusTests.setSessionQuestions(goalId, FocusTestControlsInput.SessionQuestions.SKIPPED_TODAY)) {
                 is MutationResult.Done -> {
@@ -206,7 +211,7 @@ class QuestionBlockViewModel(
                 }
 
                 is MutationResult.Failed -> {
-                    skipFailed = true
+                    skipFailure.send(started, Unit)
                 }
 
                 MutationResult.Obsolete -> {}

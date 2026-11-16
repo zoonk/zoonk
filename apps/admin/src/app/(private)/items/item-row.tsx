@@ -6,13 +6,16 @@ import { formatPercent } from "@/lib/format";
 import { ITEM_FORMAT_LABELS, getItemLabel } from "@/lib/item-label";
 import { languageName } from "@/lib/language-filter";
 import { TableCell } from "@zoonk/ui/components/table";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 
 export function ItemRow({ answerStats, item }: { answerStats: ItemAnswerStats; item: ListedItem }) {
   return (
     <AdminTableRow>
       <AdminNameCell
         href={`/items/${item.id}`}
-        note={[languageName(item.language), item.examBlueprint?.name].filter(Boolean).join(" · ")}
+        note={[languageName(item.language), item.examBlueprint?.name]
+          .filter(Boolean)
+          .join(FACT_SEPARATOR)}
         title={getItemLabel(item)}
       />
       <TableCell className="whitespace-normal">

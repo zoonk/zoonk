@@ -13,6 +13,7 @@ import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
 import { STUDY_SESSION_INCLUDE } from "../_utils/study-session-access";
 import { toBlockPayload } from "../block-payload";
 import { getDayMissions } from "./get-day-missions";
+import { settleMissions } from "./settle-missions";
 
 async function readMissions(sessionId: string) {
   return getDayMissions({
@@ -215,11 +216,64 @@ describe("progress of saved plan-anchored missions", () => {
     await expect(read()).resolves.toMatchObject([{ done: 0, kind, status: "todo", total: 1 }]);
 
     await prisma.studySessionBlock.update({
-      data: { completedAt: new Date(), status: "completed" },
+      data: {
+        completedAt: new Date(),
+        payload: toBlockPayload({
+          milestoneReward: { bossWon: kind === "challenge", brainPower: { after: 10, before: 0 } },
+          planItemId,
+        }),
+        status: "completed",
+      },
       where: { id: block.id },
     });
 
     await expect(read()).resolves.toMatchObject([{ done: 1, kind, status: "done", total: 1 }]);
+  });
+
+  it.each([false, true])("settles a challenge only for a win: %s", async (bossWon) => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+    const planItemId = crypto.randomUUID();
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      missions: {
+        picks: [{ anchor: { blockKind: "checkpoint", planItemId }, kind: "challenge", total: 1 }],
+        version: 1,
+      },
+      userId: user.id,
+    });
+
+    const block = await studySessionBlockFixture({
+      kind: "checkpoint",
+      payload: toBlockPayload({
+        milestoneReward: { bossWon, brainPower: { after: 10, before: 0 } },
+        planItemId,
+      }),
+      sessionId: session.id,
+      status: "completed",
+    });
+
+    await expect(readMissions(session.id)).resolves.toMatchObject([
+      { done: bossWon ? 1 : 0, kind: "challenge", status: bossWon ? "done" : "todo", total: 1 },
+    ]);
+
+    await expect(
+      settleMissions({
+        blockId: block.id,
+        revalidation: "skip",
+        sessionId: session.id,
+        timeZone: "UTC",
+        userId: user.id,
+      }),
+    ).resolves.toMatchObject({
+      fullMealPaid: bossWon,
+      newlyDone: bossWon ? [{ kind: "challenge" }] : [],
+    });
+
+    await expect(readMissions(session.id)).resolves.toMatchObject([
+      { done: bossWon ? 1 : 0, status: bossWon ? "done" : "todo" },
+    ]);
   });
 
   it("finishes a chapter only after every captured remaining lesson is done", async () => {

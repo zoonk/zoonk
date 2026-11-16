@@ -83,6 +83,9 @@ internal class PlanOutcomes(
     /** The content country's picker, with its question, inside the editor while it shows. */
     val countryPicker = editor.opening()
 
+    /** The editor's parts whose change didn't save, while the editor opening that asked lasts. */
+    val failedParts = editor.outcome<Set<PlanPart>>()
+
     /** A save that didn't, said in the app's snackbars, since the bar or menu that asked can be gone by then. */
     val saveFailed = visit.outcome<Unit>()
 
