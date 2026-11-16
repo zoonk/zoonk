@@ -347,8 +347,11 @@ private struct KeyboardFretboardHeader: View {
         action: onPlayTarget)
     }
 
+    // While the sound is a mystery there are two sounds to hear, so each button names its own.
     MusicSoundButton(
-      title: Text("Hear it", tableName: "ActivitiesMusic", comment: "Plays the notes on the keys"),
+      title: fields.isByEar && !isRevealed
+        ? Text("Hear your notes", tableName: "ActivitiesMusic")
+        : Text("Hear it", tableName: "ActivitiesMusic", comment: "Plays the notes on the keys"),
       isDisabled: notes.isEmpty, action: onHear)
   }
 

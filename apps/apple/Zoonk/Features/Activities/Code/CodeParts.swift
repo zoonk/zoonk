@@ -3,8 +3,12 @@ import SwiftUI
 /// Long lines wrap under their own text, so the numbers stay in one column.
 struct CodeLine<Content: View>: View {
   enum Tone {
-    case plain, current, error
+    /// `editable` marks the learner's line around its code, never by moving it: in Python, a moved
+    /// line reads as indented.
+    case plain, current, editable, error
   }
+
+  @Environment(\.colorSchemeContrast) private var contrast
 
   let number: Int
   /// How many digits the program's last line number has, so every number takes the same width.
@@ -31,12 +35,19 @@ struct CodeLine<Content: View>: View {
         Rectangle().fill(.vizHighlight).frame(width: 3)
       }
     }
+    .overlay {
+      if tone == .editable {
+        RoundedRectangle(cornerRadius: Radius.sm)
+          .strokeBorder(Color.vizAccent.opacity(contrast == .increased ? 1 : 0.4))
+      }
+    }
   }
 
   private var background: Color {
     switch tone {
     case .plain: .clear
     case .current: .vizHighlight.opacity(0.15)
+    case .editable: Color(.background)
     case .error: Color.destructive.opacity(0.12)
     }
   }

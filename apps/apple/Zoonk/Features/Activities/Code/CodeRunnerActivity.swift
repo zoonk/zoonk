@@ -199,8 +199,13 @@ private struct CodeRunnerCanvas: View {
       ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
         let number = index + 1
 
-        CodeLine(number: number, digits: digits, tone: errorLine == number ? .error : .plain) {
-          if fields.editableLines.contains(number) && !isChecked {
+        let isEditable = fields.editableLines.contains(number) && !isChecked
+
+        CodeLine(
+          number: number, digits: digits,
+          tone: errorLine == number ? .error : isEditable ? .editable : .plain
+        ) {
+          if isEditable {
             TextField(
               text: Binding(get: { line }, set: { edit(number, $0) }),
               prompt: nil
@@ -210,7 +215,6 @@ private struct CodeRunnerCanvas: View {
                 comment: "VoiceOver: a line of a program the learner edits")
             }
             .textFieldStyle(.plain)
-            .fieldBorder()
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
             .keyboardType(.asciiCapable)
@@ -356,10 +360,9 @@ private struct CodeRunnerOutput: View {
         .typeStyle(.meta.weight(.medium))
         .foregroundStyle(.mutedForeground)
 
-      ScrollView(.horizontal) {
+      ActivityHorizontalScroll {
         content()
       }
-      .scrollBounceBehavior(.basedOnSize)
     }
     .padding(.horizontal, 14)
     .padding(.vertical, 10)

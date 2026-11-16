@@ -83,6 +83,7 @@
       PaneSplit {
         ScrollView {
           VStack(alignment: .leading, spacing: 16) {
+            title
             modePicker
             part(.screen)
           }
@@ -101,6 +102,7 @@
       } single: {
         ScrollView {
           VStack(alignment: .leading, spacing: 16) {
+            title
             modePicker
             part(.screen)
             part(.turn)
@@ -111,7 +113,8 @@
         }
       }
       .environment(work)
-      .navigationTitle(Text(verbatim: content.template))
+      // The page's own title, on the column's edge as every page's is, not the bar's large title.
+      .navigationBarTitleDisplayMode(.inline)
       .onAppear {
         if answer != nil, result == nil {
           check()
@@ -143,6 +146,10 @@
           .disabled(answer == nil || result != nil)
         }
       }
+    }
+
+    private var title: some View {
+      PageHeader(Text(verbatim: content.template))
     }
 
     private var modePicker: some View {

@@ -50,12 +50,17 @@ struct MoleculeBuilderCanvas: View {
     let selectedName: String? = build.atoms.first { $0.id == state.selectedId }.map { name($0) }
 
     header(build)
+
+    // The elements to tap come first, so the first screen shows what to do before an empty board.
+    if !isChecked {
+      palette(selectedName: selectedName)
+    }
+
     drawing(build)
     status(build, selectedName: selectedName)
 
     if !isChecked {
       tools(selectedName: selectedName)
-      palette(selectedName: selectedName)
     }
 
     if isChecked, !isRightInteraction {
@@ -235,7 +240,7 @@ struct MoleculeBuilderCanvas: View {
       }
       .disabled(history.isEmpty)
 
-      Button(role: .destructive, action: remove) {
+      Button(action: remove) {
         Label {
           Text("Remove", tableName: "ActivitiesCharts", comment: "Removes the selected atom")
         } icon: {

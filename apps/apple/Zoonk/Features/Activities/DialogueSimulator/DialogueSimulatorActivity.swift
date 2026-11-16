@@ -99,7 +99,8 @@ private struct DialogueCanvas: View {
   private func bubble(_ line: DialogueFields.Line) -> some View {
     let isThem = line.speaker == "them"
 
-    return HStack(alignment: .bottom, spacing: 8) {
+    // The avatar and the speaker sit level with the line's first words, not under the bubble.
+    return HStack(alignment: .firstTextBaseline, spacing: 8) {
       if isThem {
         Image(systemName: "person.crop.circle.fill")
           .typeStyle(.section.weight(.regular))
