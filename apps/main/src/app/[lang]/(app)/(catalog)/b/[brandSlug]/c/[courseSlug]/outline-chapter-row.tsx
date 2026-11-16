@@ -41,8 +41,9 @@ const ROW_STATION_CLASS = "top-[1.6875rem]";
 const CHAPTER_LINK_CLASS =
   "focus-visible:ring-ring/50 relative inline-block rounded-md outline-none before:absolute before:inset-x-0 before:-top-4 before:-bottom-1.5 before:min-w-11 hover:underline hover:underline-offset-4 focus-visible:ring-[3px]";
 
+/** Inset: a link at a line's start sits on FactSegments' clip edge, which would cut an outer ring. */
 const LESSON_LINK_CLASS =
-  "hover:text-foreground focus-visible:ring-ring/50 rounded-sm outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px]";
+  "hover:text-foreground focus-visible:ring-ring/50 rounded-sm outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px] focus-visible:ring-inset";
 
 const LONE_LESSON_LINK_CLASS =
   "relative inline-block before:absolute before:inset-x-0 before:top-0 before:-bottom-5.5 before:min-w-11";
