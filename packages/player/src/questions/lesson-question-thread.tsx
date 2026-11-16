@@ -99,7 +99,6 @@ function EmptyThread({
     <Empty className="min-h-full">
       <EmptyHeader>
         <EmptyMedia aria-hidden="true">{identity.figure}</EmptyMedia>
-        <EmptyTitle className="text-base">{t("What would you like help with?")}</EmptyTitle>
         <EmptyDescription>
           {t("{name} is an AI study buddy and can make mistakes.", { name: identity.name })}
         </EmptyDescription>

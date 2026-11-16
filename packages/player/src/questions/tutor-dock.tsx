@@ -233,7 +233,7 @@ function ConversationLink({ buddy, fallback }: { buddy: TutorBuddy; fallback: Re
   );
 }
 
-export function TutorConversationLink({ fallback }: { fallback: React.ReactNode }) {
+export function TutorConversationLink({ fallback = null }: { fallback?: React.ReactNode }) {
   const buddy = useTutorBuddy();
   return buddy ? <ConversationLink buddy={buddy} fallback={fallback} /> : fallback;
 }

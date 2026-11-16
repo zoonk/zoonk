@@ -1196,7 +1196,6 @@ describe("tutor history", () => {
 
     await releasePreload();
     await expect.element(loading).not.toBeInTheDocument();
-    await expect.element(sheet.getByText("What would you like help with?")).toBeVisible();
 
     await expect
       .element(sheet.getByText(/is an AI study buddy and can make mistakes\./u))
@@ -1442,7 +1441,7 @@ describe("the learner's buddy", () => {
 
     const sheet = await openTutor();
     await expect.element(sheet.getByText("Ask about this screen")).toBeVisible();
-    await expect.element(sheet.getByText("What would you like help with?")).toBeVisible();
+    await expect.element(sheet.getByPlaceholder(/^Ask /u)).toBeVisible();
   });
 
   it("answers as the default buddy before the learner picks one", async () => {

@@ -70,30 +70,6 @@ const TEXTAREA_CLASS = cn(
   ONE_LINE_PLACEHOLDER_CLASS,
 );
 
-function useComposerPlaceholder(contextKind: LessonQuestionController["state"]["context"]["kind"]) {
-  const t = useExtracted();
-
-  switch (contextKind) {
-    case "chapter":
-      return t("Ask about this chapter…");
-    case "mock":
-      return t("Ask about this mock exam…");
-    case "plan":
-      return t("Ask about your plan…");
-    case "subject":
-      return t("Ask about this subject…");
-    case "item":
-      return t("Ask about this question…");
-    case "answer":
-      return t("Ask about your answer…");
-    case "lesson":
-    case "step":
-      return t("Ask about the lesson content…");
-    default:
-      return contextKind satisfies never;
-  }
-}
-
 function getComposerAvailability({
   isResolvingPreviousQuestion,
   state,
@@ -151,7 +127,7 @@ export function QuestionComposer({
   controller,
   inputRef,
   label,
-  placeholder: hostPlaceholder,
+  placeholder,
   variant = "compact",
 }: {
   avatar?: React.ReactNode;
@@ -159,7 +135,7 @@ export function QuestionComposer({
   controller: LessonQuestionController;
   inputRef?: Ref<HTMLTextAreaElement>;
   label?: string;
-  placeholder?: string;
+  placeholder: string;
   variant?: ComposerVariant;
 }) {
   const t = useExtracted();
@@ -175,8 +151,6 @@ export function QuestionComposer({
 
   const limit = useLiveLimit(getQuestionLimit(state));
   const submitLabel = isResolvingPreviousQuestion ? t("Retry last question") : t("Send");
-  const contextPlaceholder = useComposerPlaceholder(state.context.kind);
-  const placeholder = hostPlaceholder ?? contextPlaceholder;
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing || !canSend) {

@@ -145,7 +145,11 @@ export function LessonQuestionDrawer({
           </div>
 
           {canAskQuestions ? (
-            <QuestionComposer className={FOOT_CLASS} controller={controller} />
+            <QuestionComposer
+              className={FOOT_CLASS}
+              controller={controller}
+              placeholder={t("Ask {name}", { name: identity.name })}
+            />
           ) : (
             <div className={FOOT_CLASS}>
               <DocumentLink
