@@ -36,8 +36,8 @@ function nextFrame() {
 }
 
 describe("feedback after a check", () => {
-  it.each([836, 844, 900])(
-    "keeps a reopened map caption whole at phone height %i",
+  it.each([640, 704, 712, 836, 844, 900])(
+    "keeps map captions and marker buttons whole on first check and reopen at phone height %i",
     async (height) => {
       await onDevice({ reducedMotion: "reduce" }, () =>
         atViewport({ height, width: 390 }, async () => {
@@ -50,24 +50,37 @@ describe("feedback after a check", () => {
 
           await checkActivity();
           await expectVerdict("Correct!");
-          await reopenSaved();
-          await expectVerdict("Correct!");
-          await nextFrame();
-          await nextFrame();
 
-          const top = page
-            .getByRole("main", { name: "Lesson content" })
-            .element()
-            .getBoundingClientRect().top;
+          for (const phase of ["first check", "reopened"]) {
+            if (phase === "reopened") {
+              // oxlint-disable-next-line no-await-in-loop -- The second phase uses the saved first attempt.
+              await reopenSaved();
+              // oxlint-disable-next-line no-await-in-loop -- The reopened screen must finish showing its result.
+              await expectVerdict("Correct!");
+            }
+            // oxlint-disable-next-line no-await-in-loop -- Measure each phase after its reveal settles.
+            await nextFrame();
+            // oxlint-disable-next-line no-await-in-loop -- The resize observer runs after the first frame.
+            await nextFrame();
 
-          const sliced = [...document.querySelectorAll('[data-slot="activity-canvas"] p')]
-            .filter((element) => {
-              const box = element.getBoundingClientRect();
-              return box.top < top - 1 && box.bottom > top + 1;
-            })
-            .map((element) => element.textContent);
+            const top = page
+              .getByRole("main", { name: "Lesson content" })
+              .element()
+              .getBoundingClientRect().top;
 
-          expect(sliced).toStrictEqual([]);
+            const sliced = [
+              ...document.querySelectorAll(
+                '[data-slot="activity-canvas"] p, [data-slot="activity-canvas"] button',
+              ),
+            ]
+              .filter((element) => {
+                const box = element.getBoundingClientRect();
+                return box.height > 0 && box.top < top - 1 && box.bottom > top + 1;
+              })
+              .map((element) => element.getAttribute("aria-label") ?? element.textContent);
+
+            expect({ phase, sliced }).toStrictEqual({ phase, sliced: [] });
+          }
         }),
       );
     },
