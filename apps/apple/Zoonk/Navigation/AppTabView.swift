@@ -126,6 +126,9 @@ struct AppTabView: View {
         } icon: {
           Image(systemName: "bubble.left")
         }
+        // The sidebar's rows start their icons 38pt in (iOS 27.2), where its bottom bar starts at
+        // its edge.
+        .padding(.leading, 36)
         .frame(maxWidth: .infinity, alignment: .leading)
       }
     }
