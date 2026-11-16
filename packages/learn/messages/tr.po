@@ -2018,11 +2018,6 @@ msgid "No certificates yet"
 msgstr "Henüz sertifikan yok"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "MJxPJK"
-msgid "They show up here when you earn them."
-msgstr "Kazandığın sertifikalar burada görünür."
-
-#: src/certificates/certificates-screen.tsx
 msgctxt "GTvW0W"
 msgid "Your next certificate"
 msgstr "Sıradaki sertifikan"

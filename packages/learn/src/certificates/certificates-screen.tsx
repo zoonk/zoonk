@@ -3,13 +3,7 @@
 import { type OwnedCertificateFacts } from "@zoonk/core/certificates/contract";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@zoonk/ui/components/empty";
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from "@zoonk/ui/components/empty";
 import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { type CertificateLinks, getCertificatePath } from "@zoonk/utils/certificate-links";
@@ -164,7 +158,6 @@ function EmptyCertificates({ upNext }: { upNext: CertificateUpNext[] }) {
             <AwardIcon aria-hidden="true" />
           </EmptyMedia>
           <EmptyTitle>{t("No certificates yet")}</EmptyTitle>
-          <EmptyDescription>{t("They show up here when you earn them.")}</EmptyDescription>
         </EmptyHeader>
       </Empty>
 

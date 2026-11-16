@@ -2018,11 +2018,6 @@ msgid "No certificates yet"
 msgstr "아직 인증서가 없어요"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "MJxPJK"
-msgid "They show up here when you earn them."
-msgstr "인증서를 받으면 여기에 표시돼요."
-
-#: src/certificates/certificates-screen.tsx
 msgctxt "GTvW0W"
 msgid "Your next certificate"
 msgstr "다음에 받을 인증서"

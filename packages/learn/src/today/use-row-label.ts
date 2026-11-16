@@ -18,9 +18,9 @@ export function useStepLabel() {
       return t("After today's lessons");
     }
 
-    // The title names a practice's first topic, so one topic alone would only repeat it.
+    // The title names a practice's first topic, so the line names the others.
     if (practisesTopics(block) && block.topics.length > 1) {
-      return shortList(block.topics, "topics", { named: 1 });
+      return shortList(block.topics.slice(1), "topics", { named: 1 });
     }
 
     if (block.checkpoint) {

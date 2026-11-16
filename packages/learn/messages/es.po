@@ -2018,11 +2018,6 @@ msgid "No certificates yet"
 msgstr "Aún no tienes certificados"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "MJxPJK"
-msgid "They show up here when you earn them."
-msgstr "Aparecerán aquí cuando los obtengas."
-
-#: src/certificates/certificates-screen.tsx
 msgctxt "GTvW0W"
 msgid "Your next certificate"
 msgstr "Tu próximo certificado"
