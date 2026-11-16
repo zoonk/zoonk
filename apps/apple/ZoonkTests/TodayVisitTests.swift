@@ -128,6 +128,22 @@ final class TodayVisitTests: XCTestCase {
     visit.assertSaysNothingOf(Self.suggestionFailure)
   }
 
+  func testClosingFocusTestWhileNotNowSavesStillShowsItsSuccessOnToday() async throws {
+    let visit = try await todayVisit(try day(notice: .focusTest), holding: "updateGoalFocusTest")
+    await visit.server.setFocusTestResult(
+      #"{"offer":null,"sessionQuestions":"paused","state":"notStarted","suggestsFocus":false}"#)
+    try await visit.settle()
+    try await openFocusTest(visit)
+    try await visit.activate(String(localized: FocusTestCopy.notNow))
+    await visit.server.waitForHeldRequest()
+    try closeRequestSheet(in: visit.window)
+    try await visit.settle()
+    await visit.server.release()
+    try await visit.settle()
+    visit.assertSays(String(localized: "You can take the test from your plan.", table: "Today"))
+    XCTAssertNil(visit.window.rootViewController?.presentedViewController)
+  }
+
   func testClosingFocusTestBeforeNotNowFailsLeavesTheNextOpeningClean() async throws {
     let visit = try await todayVisit(try day(notice: .focusTest), holding: "updateGoalFocusTest")
     try await visit.settle()

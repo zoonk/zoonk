@@ -525,8 +525,8 @@ struct TodayFocusTestSection: View {
       .onAppear { kept = offer ?? kept }
       .onChange(of: offer) { kept = offer ?? kept }
       .onChange(of: isOpen) {
-        if !isOpen && !dismissed {
-          dismissal.leave()
+        if !isOpen && dismissal.outcome == false {
+          dismissal.outcome = nil
         }
       }
     }
@@ -569,6 +569,8 @@ struct TodayFocusTestSection: View {
     } then: { dismissed in
       if dismissed == true {
         isOpen = false
+      } else if !isOpen {
+        dismissal.outcome = nil
       }
     }
   }

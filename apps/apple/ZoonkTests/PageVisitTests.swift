@@ -232,17 +232,20 @@ private struct VisitHost<Page: View>: View {
   }
 }
 
-/// The API behind the pages: their reads answer, and every write fails, the one named `holding`
-/// only once `release()` lets it.
+/// The API behind the pages: reads answer, and writes fail unless their result is set. The one
+/// named `holding` waits until `release()` lets it.
 actor PageServer: ClientTransport {
   static let goalID = "00000000-0000-4000-8000-000000000001"
   static let chapterID = "00000000-0000-4000-8000-0000000000c1"
   static let subjectKey = "biology"
   static let speakingTask = "t1"
 
+  private var focusTestResult: String?
   private var mockStartResult: String?
 
   func setMockStartResult(_ result: String) { mockStartResult = result }
+
+  func setFocusTestResult(_ result: String) { focusTestResult = result }
 
   private(set) var writes: [String] = []
   private var holding: String?
@@ -273,6 +276,12 @@ actor PageServer: ClientTransport {
       }
     }
 
+    if operationID == "updateGoalFocusTest", let focusTestResult {
+      return (
+        HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
+        HTTPBody(focusTestResult)
+      )
+    }
     if operationID == "startAnytimeMock", let mockStartResult {
       return (
         HTTPResponse(
