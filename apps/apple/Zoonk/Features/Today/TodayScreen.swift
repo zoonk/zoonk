@@ -2,6 +2,7 @@ import SwiftUI
 
 /// One job: start or continue today's session.
 struct TodayScreen: View {
+  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(OnboardingStore.self) private var onboarding
   @Environment(SessionStore.self) private var session
   @Environment(TodayStore.self) private var store
@@ -53,11 +54,22 @@ struct TodayScreen: View {
       TodayPreparing(goalID: goalID, displayName: displayName)
         .lonePage()
     case .loaded(.goalNotActive):
-      VStack(spacing: 0) {
-        UnfinishedGoalPanel()
-        TodayGoalPaused()
+      if let summary = learner.summary.value {
+        switch TodayRest(activeGoalID: summary.activeGoalID, goals: summary.goals) {
+        case .startGoal:
+          TodayStartGoal()
+        case .finished(let goal), .paused(let goal):
+          VStack(spacing: 0) {
+            UnfinishedGoalPanel()
+            TodayGoalPaused(goal: goal)
+          }
+          .lonePage()
+        }
+      } else {
+        ProgressView()
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .lonePage()
       }
-      .lonePage()
     case .failed(let error) where error != .unauthorized:
       StateMessage {
         Label {
@@ -364,18 +376,14 @@ private struct TodayPreparing: View {
 /// Resuming a paused goal says first when it moves lessons the pause left behind.
 private struct TodayGoalPaused: View {
   @Environment(AppRouter.self) private var router
-  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(PlanStore.self) private var plans
   /// Saved: the button stays busy until the day replaces this screen.
   @State private var resuming = VisitRequest<GoalStatusOutcome>()
 
-  private var goal: LearnerGoal? {
-    let summary = learner.summary.value
-    return summary?.goals.first { $0.id == summary?.activeGoalID }
-  }
+  let goal: LearnerGoal
 
   var body: some View {
-    if let goal, goal.status == .completed {
+    if goal.status == .completed {
       StateMessage {
         Label {
           Text(
@@ -396,14 +404,9 @@ private struct TodayGoalPaused: View {
   private var paused: some View {
     StateMessage {
       Label {
-        if let goal {
-          Text(
-            "Your \(goal.displayName) goal is paused", tableName: "Today",
-            comment: "Today for a paused goal"
-          )
-        } else {
-          Text("This goal is paused", tableName: "Today", comment: "Today for a paused goal")
-        }
+        Text(
+          "Your \(goal.displayName) goal is paused", tableName: "Today",
+          comment: "Today for a paused goal")
       } icon: {
         Image(systemName: "pause.circle")
       }
@@ -413,7 +416,7 @@ private struct TodayGoalPaused: View {
           "Nothing is planned until you resume it.", tableName: "Today",
           comment: "Today for a paused goal")
 
-        if let goal, plans.resumeChangesPlan(goalId: goal.id).value == true {
+        if plans.resumeChangesPlan(goalId: goal.id).value == true {
           Text(
             "Your plan picks up from today, starting with the lessons planned for the days you paused.",
             tableName: "Today", comment: "What resuming the paused goal moves")
@@ -421,19 +424,17 @@ private struct TodayGoalPaused: View {
       }
     }
     .bottomBar(note: failureNote) {
-      newGoal(prominent: goal == nil)
+      newGoal(prominent: false)
 
-      if let goal {
-        BusyButton(isBusy: resuming.isRunning || resuming.outcome == .saved) {
-          resume(goal)
-        } label: {
-          Text("Resume", tableName: "Today", comment: "Resumes the paused goal")
-        }
-        .buttonStyle(.mainAction)
-        .keyboardShortcut(.defaultAction)
+      BusyButton(isBusy: resuming.isRunning || resuming.outcome == .saved) {
+        resume(goal)
+      } label: {
+        Text("Resume", tableName: "Today", comment: "Resumes the paused goal")
       }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
     }
-    .modifier(ResumePreviewLoading(goalID: goal?.id))
+    .loads(plans.resumeChangesPlan(goalId: goal.id), refreshable: false)
     .onDisappear {
       resuming.leave()
     }
@@ -479,16 +480,22 @@ private struct TodayGoalPaused: View {
   }
 }
 
-private struct ResumePreviewLoading: ViewModifier {
-  @Environment(PlanStore.self) private var plans
+/// What Today offers when core says its goal isn't active (main's `TodayGoalPaused`).
+enum TodayRest: Equatable {
+  case finished(LearnerGoal)
+  case paused(LearnerGoal)
+  /// Today's goal is no longer among the learner's goals (archived): nothing is left to resume, so
+  /// Today starts a goal as it does without one.
+  case startGoal
 
-  let goalID: String?
-
-  func body(content: Content) -> some View {
-    if let goalID {
-      content.loads(plans.resumeChangesPlan(goalId: goalID), refreshable: false)
-    } else {
-      content
+  init(activeGoalID: String?, goals: [LearnerGoal]) {
+    switch goals.first(where: { $0.id == activeGoalID }) {
+    case .some(let goal) where goal.status == .completed:
+      self = .finished(goal)
+    case .some(let goal):
+      self = .paused(goal)
+    case nil:
+      self = .startGoal
     }
   }
 }
