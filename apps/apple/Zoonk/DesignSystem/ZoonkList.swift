@@ -11,6 +11,8 @@ import SwiftUI
 struct ZoonkList<Content: View>: View {
   @ViewBuilder let content: Content
 
+  @Environment(\.listRowMargin) private var rowMargin
+
   var body: some View {
     List {
       // Row and section traits reach a list's rows only from inside it. A separator tint set here
@@ -18,8 +20,14 @@ struct ZoonkList<Content: View>: View {
       // Main's 11pt sits outside a 20pt line, which centers Geist's own 18pt line at 14pt.
       content
         .listRowInsets(.vertical, 12)
+        .listRowInsets(.horizontal, rowMargin)
         .listSectionSeparator(.hidden)
         .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+        // With a margin of its own, a row's hairline ends where its content does, not at the
+        // system's.
+        .alignmentGuide(.listRowSeparatorTrailing) {
+          rowMargin == nil ? $0[.listRowSeparatorTrailing] : $0.width
+        }
         .rowLabelColumn()
     }
     .listStyle(.plain)

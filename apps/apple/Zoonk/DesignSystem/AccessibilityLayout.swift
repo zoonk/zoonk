@@ -96,6 +96,7 @@ extension View {
       .disclosureGroupStyle(.fold)
       .typeStyle(.body)
       .environment(\.barHoldsMainAction, false)
+      .outsideReadableColumns()
       .layoutSurface()
   }
 }

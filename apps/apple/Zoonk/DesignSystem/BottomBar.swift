@@ -187,8 +187,8 @@ extension View {
       // A list's rows sit in the system's margins inside its column (20pt on a wide phone), not
       // the scene's padding (16pt).
       if let listMargins {
-        padding(.leading, column.leading + column.rowInset(listMargins.leading))
-          .padding(.trailing, column.trailing + column.rowInset(listMargins.trailing))
+        padding(.leading, column.leading + listMargins.leading)
+          .padding(.trailing, column.trailing + listMargins.trailing)
           .scenePadding(.vertical)
       } else {
         padding(.leading, column.leading)

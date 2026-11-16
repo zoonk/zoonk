@@ -19,9 +19,7 @@ private struct ReadableColumn: ViewModifier {
     // Inside a column at most as wide, the outer column's padding already holds it.
     if let outerWidth, outerWidth <= width {
       content
-        .preference(
-          key: ColumnMarginsKey.self,
-          value: [ColumnMargins(leading: 0, trailing: 0, outerPadding: outerMargin)])
+        .preference(key: ColumnMarginsKey.self, value: [ColumnMargins(leading: 0, trailing: 0)])
     } else {
       // The room it's offered, read as it's laid out: a column that measured its own width and
       // padded by it laid an iPad's lesson out again every frame.
@@ -31,6 +29,9 @@ private struct ReadableColumn: ViewModifier {
         content
           .environment(\.readableColumnWidth, width)
           .environment(\.readableColumnMargin, margin)
+          // Under a bottom bar UIKit puts a list's rows only 8pt inside padding an ancestor gave,
+          // so a list in this column keeps the system's margin itself, the one the bar takes.
+          .environment(\.listRowMargin, margin > 0 ? regularMargin : nil)
           .safeAreaPadding(.horizontal, margin)
           .preference(
             key: ColumnMarginsKey.self, value: [ColumnMargins(leading: margin, trailing: margin)]
@@ -43,6 +44,17 @@ private struct ReadableColumn: ViewModifier {
 extension EnvironmentValues {
   @Entry fileprivate var readableColumnWidth: CGFloat?
   @Entry fileprivate var readableColumnMargin: CGFloat = 0
+  /// The margin a list's rows keep inside an outer column, where the system's isn't kept for them.
+  @Entry var listRowMargin: CGFloat?
+}
+
+extension View {
+  /// For a presented screen's root: it isn't inside the column of the page it covers.
+  func outsideReadableColumns() -> some View {
+    environment(\.readableColumnWidth, nil)
+      .environment(\.readableColumnMargin, 0)
+      .environment(\.listRowMargin, nil)
+  }
 }
 
 /// How far a readable column sits in from each side of the room it was offered, so a bar laid
@@ -50,19 +62,10 @@ extension EnvironmentValues {
 struct ColumnMargins: Equatable {
   let leading: CGFloat
   let trailing: CGFloat
-  /// Padding an outer column gave the room, for a column that sits inside one.
-  var outerPadding: CGFloat?
-
-  /// Where a list's rows start inside this column, given the system's margin. A list takes that
-  /// margin inside padding given to it, but inside an outer column's padding UIKit puts its rows
-  /// the system's margin from the window's edge and at least a view's default 8pt inside the
-  /// padding, as `layoutMargins` measures from the safe area.
-  func rowInset(_ systemMargin: CGFloat) -> CGFloat {
-    guard let outerPadding else { return systemMargin }
-
-    return max(systemMargin, outerPadding + 8) - outerPadding
-  }
 }
+
+/// The system's minimum margin where an outer column leaves room on both sides: the width is regular.
+private let regularMargin: CGFloat = 20
 
 /// Every readable column inside a view: one for a page, two for panes side by side.
 struct ColumnMarginsKey: PreferenceKey {
