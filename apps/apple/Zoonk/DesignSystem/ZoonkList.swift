@@ -51,6 +51,12 @@ extension View {
   func sheetColumn() -> some View {
     environment(\.pageColumnFillsRoom, true)
   }
+
+  /// As wide as the page's column, for what lines up with a page from outside a list, such as the
+  /// bar under a page's empty state.
+  func pageColumnFrame() -> some View {
+    modifier(PageColumnFrame())
+  }
 }
 
 extension EnvironmentValues {
@@ -62,8 +68,23 @@ private struct PageColumn: ViewModifier {
   @Environment(\.pageColumnFillsRoom) private var fillsRoom
 
   func body(content: Content) -> some View {
-    content.readableColumn(horizontalSizeClass == .regular && !fillsRoom ? 768 : .infinity)
+    content.readableColumn(pageColumnWidth(horizontalSizeClass, fillsRoom: fillsRoom))
   }
+}
+
+private struct PageColumnFrame: ViewModifier {
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+  @Environment(\.pageColumnFillsRoom) private var fillsRoom
+
+  func body(content: Content) -> some View {
+    content
+      .frame(maxWidth: pageColumnWidth(horizontalSizeClass, fillsRoom: fillsRoom))
+      .frame(maxWidth: .infinity)
+  }
+}
+
+private func pageColumnWidth(_ sizeClass: UserInterfaceSizeClass?, fillsRoom: Bool) -> CGFloat {
+  sizeClass == .regular && !fillsRoom ? 768 : .infinity
 }
 
 extension View {

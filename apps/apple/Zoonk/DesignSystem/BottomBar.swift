@@ -39,6 +39,7 @@ private struct BottomBar<Actions: View>: View {
   let actions: Actions
 
   @Environment(\.barColumn) private var column
+  @Environment(\.isTaskScreen) private var isTask
 
   @Environment(\.stacksContent) private var isStacked
   /// The bar's own width: a page beside another (an iPad's lesson spread) is as narrow as a phone,
@@ -93,7 +94,7 @@ private struct BottomBar<Actions: View>: View {
     } action: {
       width = $0
     }
-    .barColumn(column, listMargins: listMargins)
+    .barColumn(column, listMargins: listMargins, isTask: isTask)
     .background(ListMarginsReader { listMargins = $0 })
     .keepsOffFold()
     .overlay(alignment: .top) {
@@ -180,9 +181,9 @@ extension View {
   /// The bar lines up with the screen's one readable column, such as a list's 768pt one on iPad,
   /// so its buttons end where the rows do; without one it keeps main's 680pt task column.
   @ViewBuilder
-  fileprivate func barColumn(_ column: ColumnMargins?, listMargins: NSDirectionalEdgeInsets?)
-    -> some View
-  {
+  fileprivate func barColumn(
+    _ column: ColumnMargins?, listMargins: NSDirectionalEdgeInsets?, isTask: Bool
+  ) -> some View {
     if let column {
       // A list's rows sit in the system's margins inside its column (20pt on a wide phone), not
       // the scene's padding (16pt).
@@ -195,8 +196,15 @@ extension View {
           .padding(.trailing, column.trailing)
           .scenePadding()
       }
-    } else {
+    } else if isTask {
       taskColumn()
+    } else {
+      // A page without a list, such as an empty state, keeps the page's column, where its list
+      // would end.
+      padding(.leading, listMargins?.leading ?? 16)
+        .padding(.trailing, listMargins?.trailing ?? 16)
+        .pageColumnFrame()
+        .scenePadding(.vertical)
     }
   }
 
@@ -209,7 +217,7 @@ extension View {
 }
 
 /// The system's least margins for a screen's content, the ones a list lays its rows in, read from
-/// the window's root controller as they change with the width.
+/// the controller that holds the bar as they change with the width.
 private struct ListMarginsReader: UIViewRepresentable {
   let report: (NSDirectionalEdgeInsets) -> Void
 
@@ -231,7 +239,14 @@ private struct ListMarginsReader: UIViewRepresentable {
     override func layoutSubviews() {
       super.layoutSubviews()
 
-      guard let margins = window?.rootViewController?.systemMinimumLayoutMargins,
+      // The controller that holds the bar, such as a sheet's, whose margins can be narrower than the
+      // window's.
+      var responder: UIResponder? = self
+      while let next = responder, !(next is UIViewController) { responder = next.next }
+
+      guard
+        let margins = (responder as? UIViewController ?? window?.rootViewController)?
+          .systemMinimumLayoutMargins,
         margins != reported
       else { return }
 

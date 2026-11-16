@@ -97,6 +97,7 @@ extension View {
       .typeStyle(.body)
       .environment(\.barHoldsMainAction, false)
       .outsideReadableColumns()
+      .environment(\.isTaskScreen, false)
       .layoutSurface()
   }
 }

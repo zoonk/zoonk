@@ -205,6 +205,7 @@ struct PresentedTask: View {
     let isHidden = router.isHidden(taskAt: depth)
 
     route.destination
+      .environment(\.isTaskScreen, true)
       .zoonkStyles()
       .landsActsOnInput()
       .opacity(isHidden ? 0 : 1)
