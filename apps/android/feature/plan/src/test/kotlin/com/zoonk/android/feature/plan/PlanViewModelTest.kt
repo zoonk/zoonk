@@ -661,6 +661,23 @@ class PlanViewModelTest {
         }
 
     @Test
+    fun aToolChoiceAppliedAfterItsSheetClosesStillShowsItsChangeWithUndo() =
+        runTest {
+            val gate = CompletableDeferred<Unit>().also { api.toolGate = it }
+            viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.HAVE), PlanAsker.Sheet(opening))
+            viewModel.outcomes.tools.end()
+            gate.complete(Unit)
+            assertEquals(
+                CHANGE_ID,
+                viewModel.latest.value
+                    ?.change
+                    ?.id
+                    .toString(),
+            )
+            assertEquals(emptySet<PlanPart>(), viewModel.pending.value)
+        }
+
+    @Test
     fun aSetupLessonBeingWrittenIsWaitedOnThenTheSameChoiceIsSentAgain() =
         runTest {
             val held = HeldRuns(first = "writeSetupLessons", ready = "setupLessonsReady")
@@ -696,8 +713,37 @@ class PlanViewModelTest {
             viewModel.visit.end()
             held.write()
 
-            assertEquals(listOf(answer, answer), api.toolAnswers)
+            assertEquals(listOf(answer), api.toolAnswers)
+            assertNull(viewModel.setupLessons.generationId.value)
             assertEquals(emptyMap<UUID, PlanChangeResult?>(), viewModel.sheetAnswers.value)
+        }
+
+    @Test
+    fun aSetupWaitEndsWithTheToolOpening() =
+        runTest {
+            val held = HeldRuns(first = "writeSetupLessons", ready = "setupLessonsReady")
+            viewModel = PlanViewModel(store, goalId, writingWaits(held), navigation)
+            api.setupWritings += "run-1"
+            val answer = ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS)
+            viewModel.chooseTools(answer, PlanAsker.Sheet(opening))
+            viewModel.outcomes.tools.end()
+            held.write()
+            assertNull(viewModel.setupLessons.generationId.value)
+            assertEquals(listOf(answer), api.toolAnswers)
+            viewModel.chooseTools(answer, PlanAsker.Sheet(UUID.randomUUID()))
+            assertEquals(listOf(answer, answer), api.toolAnswers)
+        }
+
+    @Test
+    fun aLateSetupAnswerCannotInstallAWaitAfterTheToolOpeningEnds() =
+        runTest {
+            val gate = CompletableDeferred<Unit>().also { api.toolGate = it }
+            api.setupWritings += "run-1"
+            viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS), PlanAsker.Sheet(opening))
+            viewModel.outcomes.tools.end()
+            gate.complete(Unit)
+            assertNull(viewModel.setupLessons.generationId.value)
+            assertEquals(1, api.toolAnswers.size)
         }
 
     @Test

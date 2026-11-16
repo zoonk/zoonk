@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { type AlignmentFile, ELEMENT_PARTS } from "./alignment-capture.mts";
+import {
+  type AlignmentFile,
+  ELEMENT_PARTS,
+  PAGE_RULES,
+  PLATFORM_LIMITS,
+} from "./alignment-capture.mts";
 
 /**
  * What a capture must hold before the evaluator reads it (`REPORT-SHAPE.md`): a file from another
@@ -105,7 +110,8 @@ const CAPTURE = z
     }),
     elements: z.array(ELEMENT),
     marketing: z.boolean().optional(),
-    measurements: z.array(z.enum(["clipping", "controls", "text-flows"])).optional(),
+    measuredRules: z.array(z.enum(PAGE_RULES)).optional(),
+    notMeasurable: z.partialRecord(z.enum(PAGE_RULES), z.string().trim().min(1)).optional(),
     platform: z.enum(["android", "apple", "web"]),
     scale: z.number().positive(),
     scenario: z.string().nullable(),
@@ -115,6 +121,26 @@ const CAPTURE = z
     version: z.union([z.literal(1), z.literal(2)]),
   })
   .superRefine((capture, context) => {
+    for (const rule of PAGE_RULES) {
+      if (capture.notMeasurable?.[rule] && !PLATFORM_LIMITS[capture.platform].includes(rule)) {
+        context.addIssue({
+          code: "custom",
+          message: `${capture.platform} cannot declare ${rule} not measurable`,
+          path: ["notMeasurable", rule],
+        });
+      }
+    }
+
+    for (const rule of capture.measuredRules ?? []) {
+      if (capture.notMeasurable?.[rule]) {
+        context.addIssue({
+          code: "custom",
+          message: `${rule} cannot be both measured and not measurable`,
+          path: ["measuredRules"],
+        });
+      }
+    }
+
     if (UNITS[capture.platform] !== capture.unit) {
       context.addIssue({
         code: "custom",

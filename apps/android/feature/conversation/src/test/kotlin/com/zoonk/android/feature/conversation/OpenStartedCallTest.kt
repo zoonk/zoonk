@@ -7,8 +7,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.GenerationKind
+import com.zoonk.android.data.HeldRuns
 import kotlinx.coroutines.CompletableDeferred
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,6 +22,71 @@ class OpenStartedCallTest {
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val call = UUID.fromString("00000000-0000-4000-8000-0000000000c2")
+
+    @Test
+    fun aRefusedStartStopsSpinningBeforeItsPaperRefreshFinishes() {
+        val refresh = CompletableDeferred<Unit>()
+        var refreshing = false
+        val model =
+            CallStartModel(callStarter { CallStart.PlusRequired }, GenerationKind.ExamSpeaking) {
+                refreshing = true
+                refresh.await()
+            }
+        compose.runOnIdle { model.start(CallRequest.ExamSpeaking(UUID.randomUUID(), "task-1")) }
+        compose.waitForIdle()
+        try {
+            assertEquals(true, refreshing)
+            assertEquals(CallStartModel.State.PlusRequired, model.state)
+        } finally {
+            refresh.complete(Unit)
+            compose.waitForIdle()
+        }
+    }
+
+    @Test
+    fun aPracticeWaitEndsWithItsSheetAndTheNextOpeningCanStart() = practiceWait(late = false)
+
+    @Test
+    fun aLatePracticeGenerationAnswerCannotInstallAWaitOnTheNextOpening() = practiceWait(late = true)
+
+    private fun practiceWait(late: Boolean) {
+        val runs = HeldRuns()
+        val answer = CompletableDeferred<CallStart>()
+        var starts = 0
+        val model =
+            CallStartModel(
+                callStarter(runs) {
+                    starts++
+                    if (starts == 1) answer.await() else CallStart.Started(call)
+                },
+                GenerationKind.ConversationCall,
+            )
+        val opened = mutableListOf<UUID>()
+        var shown by mutableStateOf(true)
+        compose.setContent { if (shown) OpenStartedCall(model) { opened += it } }
+        val request = CallRequest.Practice(UUID.randomUUID(), null, 5)
+        compose.runOnIdle { model.start(request) }
+        if (!late) {
+            answer.complete(CallStart.Writing("run-1"))
+            compose.waitForIdle()
+            assertEquals("run-1", model.writing.generationId.value)
+        }
+        shown = false
+        compose.waitForIdle()
+        shown = true
+        compose.waitForIdle()
+        if (late) answer.complete(CallStart.Writing("run-1"))
+        compose.waitForIdle()
+        assertNull(model.writing.generationId.value)
+        assertEquals(CallStartModel.State.Idle, model.state)
+        runs.write()
+        compose.waitForIdle()
+        assertEquals(1, starts)
+        assertEquals(emptyList<UUID>(), opened)
+        compose.runOnIdle { model.start(request) }
+        compose.waitForIdle()
+        assertEquals(listOf(call), opened)
+    }
 
     @Test
     fun aCallThatStartsAfterTheLearnerLeftOpensNothingOnReturn() {

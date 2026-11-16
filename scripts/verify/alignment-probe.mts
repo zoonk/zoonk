@@ -1,4 +1,9 @@
-import { type Bounds, type Capture, type CaptureElement } from "./alignment-capture.mts";
+import {
+  type Bounds,
+  type Capture,
+  type CaptureElement,
+  PAGE_RULES,
+} from "./alignment-capture.mts";
 /* oxlint-disable max-lines, max-lines-per-function, max-statements, complexity, unicorn/consistent-function-scoping -- `readAlignment` is sent to the page as one function, so its helpers live inside it (`probe.mts`). */
 import { type Part, type WebPiece } from "./alignment-table.mts";
 import { type Scheme, VIEWPORTS, type ViewportName } from "./viewports.mts";
@@ -1773,7 +1778,7 @@ export function webCapture({
       textScale,
       width: size.viewport?.width ?? 0,
     },
-    measurements: ["clipping", "controls", "text-flows"],
+    measuredRules: [...PAGE_RULES],
     platform: "web",
     scale: size.deviceScaleFactor ?? 1,
     scenario: null,

@@ -22,6 +22,7 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguagePracticeCall
+import kotlinx.coroutines.CompletableDeferred
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -76,6 +77,43 @@ class PracticeConversationTest {
         compose.waitForIdle()
         assertEquals(2, requests.size)
         assertEquals(listOf<AppRoute>(AppRoute.Conversation(started.toString())), opened)
+    }
+
+    @Test
+    fun aCallWrittenAfterItsSheetWasReopenedStartsInTheNewOpening() {
+        val runs = HeldRuns()
+        val late = CompletableDeferred<CallStart>()
+        val state = PracticeCallState(sheetOpen = true, minutes = 3)
+        val starter =
+            callStarter(runs) { request ->
+                requests += request
+                when (requests.size) {
+                    1 -> CallStart.Writing("run-1")
+                    2 -> late.await()
+                    else -> CallStart.Started(started)
+                }
+            }
+        compose.setContent {
+            ZoonkTheme {
+                PracticeConversation(practiceCall(), chapter, null, starter, { opened += it }, state = state)
+            }
+        }
+        compose.onNodeWithText("Start the call").performClick()
+        compose.waitForIdle()
+        runs.write()
+        compose.waitForIdle()
+        assertEquals(2, requests.size)
+        compose.runOnIdle { state.sheetOpen = false }
+        compose.waitForIdle()
+        compose.runOnIdle { state.sheetOpen = true }
+        compose.waitForIdle()
+        compose.onNodeWithText("Start the call").performClick()
+        compose.waitForIdle()
+        late.complete(CallStart.Writing("run-2"))
+        compose.waitForIdle()
+        assertEquals(3, requests.size)
+        assertEquals(listOf<AppRoute>(AppRoute.Conversation(started.toString())), opened)
+        assertEquals(false, state.sheetOpen)
     }
 
     /** The refusal's day comes while the sheet is open: Start is back, and tapping it asks the server again. */

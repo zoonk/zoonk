@@ -5,7 +5,7 @@ export const READ_LIMITS = [
   "The read doesn't enter iframes or shadow roots. Of what a pseudo-element draws it reads only a row's `::before` highlight and a top or bottom rule (for `column`); a part drawn only by `::before` or `::after` otherwise isn't checked. A rule is clipped by its ancestors' `overflow`, not by a `clip-path`, which no screen sets on one.",
   "A fill is judged as a highlight only on a row that says it's highlighted (`aria-current`, `data-highlighted`, `aria-selected`): a hover or focus fill isn't drawn while the read runs, so it isn't judged.",
   "It counts a filled action only when the kit's button variants draw it (`--button-variant`), so a control filled some other way isn't counted; a disabled one doesn't, since it isn't a choice the learner has yet. Two filled buttons with the same `data-action-name` count as one action: the name is the author's statement that they are one, and the check trusts it.",
-  "Line endings and lone words require lineTexts, control heights require control records, and clipping requires cut records from the newer probe. Older captures report those four relationships as not measured and fail the summary.",
+  "Line endings and lone words require lineTexts, control heights require control records, and clipping requires cut records from the newer probe. Recorders declare measuredRules and notMeasurable with reasons. Declared platform limits stay visible without failing; older captures or missing required records report not measured and fail the summary.",
   "A text in a script with no capitals (Japanese, Korean) is set on its ideographic face, the box of a full-frame glyph in the same fonts, not on its own ink. Nothing listed here isn't proof those were checked.",
 ].join(" ");
 
@@ -17,6 +17,7 @@ export type Summary = {
   /** What a declared piece promised and the read couldn't measure: it fails, never passes. */
   notMeasured: number;
   failed: boolean;
+  notMeasurable?: string[];
 };
 
 /** One fault is one line, however many screens and rows it showed on. */
@@ -36,12 +37,21 @@ export function summarize(
     (item) => item.level === "fail" && !item.exception && item.rule !== "scenario",
   );
 
+  const limits = [
+    ...new Set(
+      findings
+        .filter((item) => item.level === "not-measurable")
+        .map((item) => `${item.rule} ${item.message}`),
+    ),
+  ];
+
   const notMeasured = faults((item) => item.level === "not-measured");
 
   return {
     discovery: faults((item) => item.level === "discovery"),
     failed: unresolved > 0 || notMeasured > 0 || (scenariosMissing ?? 0) > 0,
     notMeasured,
+    ...(limits.length > 0 ? { notMeasurable: limits } : {}),
     scenariosMissing,
     unresolved,
   };
@@ -53,12 +63,13 @@ export function summaryLine(summary: Summary) {
       ? "scenarios not listed yet"
       : `${summary.scenariosMissing} required scenario${summary.scenariosMissing === 1 ? "" : "s"} missing`;
 
-  return `${summary.failed ? "FAIL" : "PASS"}: ${summary.unresolved} unresolved; ${scenarios}; ${summary.discovery} discovery leads; ${summary.notMeasured} not measured`;
+  return `${summary.failed ? "FAIL" : "PASS"}: ${summary.unresolved} unresolved; ${scenarios}; ${summary.discovery} discovery leads; ${summary.notMeasured} not measured${summary.notMeasurable?.length ? `; ${summary.notMeasurable.join("; ")}` : ""}`;
 }
 
 const LEVEL_TITLES: Record<Level, string> = {
   discovery: "Discovery leads (never failing)",
   fail: "Failing: declared relationships",
+  "not-measurable": "Declared platform limits (never failing)",
   "not-measured": "Not measured",
 };
 
@@ -84,7 +95,7 @@ function instanceText(items: AlignmentFinding[], listed = LISTED) {
 }
 
 export function alignmentLines(findings: AlignmentFinding[]): string[] {
-  return (["fail", "discovery", "not-measured"] as const).flatMap((level) => {
+  return (["fail", "discovery", "not-measured", "not-measurable"] as const).flatMap((level) => {
     const faults = [
       ...Map.groupBy(
         findings.filter((item) => item.level === level),
