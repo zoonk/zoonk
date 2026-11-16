@@ -2,7 +2,6 @@
 
 import { useAppLocale } from "@zoonk/learn/locale";
 import { cn } from "@zoonk/ui/lib/utils";
-import { Pencil } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
@@ -118,9 +117,8 @@ export function CodeRunnerActivity({
             {fields.fileName ?? DEFAULT_FILE_NAMES[fields.language]}
           </p>
           {!isExploring && (
-            <p className="text-muted-foreground flex items-center gap-1 text-xs">
-              <Pencil aria-hidden="true" className="size-3" />
-              {t("{count, plural, one {Line {lines} is yours} other {Lines {lines} are yours}}", {
+            <p className="text-muted-foreground flex items-center gap-1 text-xs in-data-[phase=feedback]:invisible">
+              {t("{count, plural, one {Edit line {lines}} other {Edit lines {lines}}}", {
                 count: fields.editableLines.length,
                 lines: yours,
               })}
