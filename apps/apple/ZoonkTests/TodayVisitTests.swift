@@ -13,7 +13,7 @@ final class TodayVisitTests: XCTestCase {
     let visit = try await todayVisit(try day(catchUp: true))
     try await visit.settle()
 
-    try visit.activate(String(localized: "Add to today", table: "Today"))
+    try await visit.activate(String(localized: "Add to today", table: "Today"))
     try await visit.settle()
     visit.assertSays(Self.todayFailure)
 
@@ -27,7 +27,7 @@ final class TodayVisitTests: XCTestCase {
     let visit = try await todayVisit(try day(notice: .insight))
     try await visit.settle()
 
-    try visit.activate(String(localized: "Got it", table: "Buddy"))
+    try await visit.activate(String(localized: "Got it", table: "Buddy"))
     try await visit.settle()
     visit.assertSays(Self.insightFailure)
 
@@ -39,7 +39,7 @@ final class TodayVisitTests: XCTestCase {
     let visit = try await todayVisit(try day(notice: .insight), holding: "answerMemoryInsight")
     try await visit.settle()
 
-    try visit.activate(String(localized: "Got it", table: "Buddy"))
+    try await visit.activate(String(localized: "Got it", table: "Buddy"))
     try await visit.failAfterLeaving()
     visit.assertSaysNothingOf(Self.insightFailure)
   }
@@ -50,7 +50,7 @@ final class TodayVisitTests: XCTestCase {
     let visit = try await todayVisit(try day(notice: .uploadRequest))
     try await visit.settle()
 
-    try visit.activate(String(localized: "Not now", table: "Today"))
+    try await visit.activate(String(localized: "Not now", table: "Today"))
     try await visit.settle()
     visit.assertSays(Self.todayFailure)
 
@@ -63,7 +63,7 @@ final class TodayVisitTests: XCTestCase {
       try day(notice: .uploadRequest), holding: "dismissGoalUploadRequest")
     try await visit.settle()
 
-    try visit.activate(String(localized: "Not now", table: "Today"))
+    try await visit.activate(String(localized: "Not now", table: "Today"))
     try await visit.failAfterLeaving()
     visit.assertSaysNothingOf(Self.todayFailure)
   }
@@ -75,7 +75,7 @@ final class TodayVisitTests: XCTestCase {
     try await visit.settle()
 
     try await openFocusTest(visit)
-    try visit.activate(String(localized: FocusTestCopy.notNow))
+    try await visit.activate(String(localized: FocusTestCopy.notNow))
     try await visit.settle()
     visit.assertSays(Self.suggestionFailure)
 
@@ -89,7 +89,7 @@ final class TodayVisitTests: XCTestCase {
     try await visit.settle()
 
     try await openFocusTest(visit)
-    try visit.activate(String(localized: FocusTestCopy.notNow))
+    try await visit.activate(String(localized: FocusTestCopy.notNow))
     try await visit.failAfterLeaving()
     try await openFocusTest(visit)
     visit.assertSaysNothingOf(Self.suggestionFailure)
@@ -164,7 +164,7 @@ final class TodayVisitTests: XCTestCase {
       return
     }
 
-    try visit.activate(String(localized: "View", table: "Plan"))
+    try await visit.activate(String(localized: "View", table: "Plan"))
     try await visit.settle()
     XCTAssertNotNil(
       visit.window.rootViewController?.presentedViewController, "The Focus test's sheet opens")

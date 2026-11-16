@@ -19,7 +19,7 @@ final class PageVisitTests: XCTestCase {
     }
     try await visit.settle()
 
-    try visit.activate(String(localized: "Practice this chapter", table: "Plan"))
+    try await visit.activate(String(localized: "Practice this chapter", table: "Plan"))
     try await visit.settle()
     visit.assertSays(Self.chapterFailure)
 
@@ -35,7 +35,7 @@ final class PageVisitTests: XCTestCase {
     }
     try await visit.settle()
 
-    try visit.activate(String(localized: "Add it back", table: "Plan"))
+    try await visit.activate(String(localized: "Add it back", table: "Plan"))
     try await visit.settle()
     visit.assertSays(Self.subjectFailure)
 
@@ -49,7 +49,7 @@ final class PageVisitTests: XCTestCase {
     }
     try await visit.settle()
 
-    try visit.activate(String(localized: "Add it back", table: "Plan"))
+    try await visit.activate(String(localized: "Add it back", table: "Plan"))
     try await visit.failAfterLeaving()
     visit.assertSaysNothingOf(Self.subjectFailure)
   }
@@ -63,7 +63,7 @@ final class PageVisitTests: XCTestCase {
     }
     try await visit.settle()
 
-    try visit.activate(String(localized: "Use this date", table: "Exam"))
+    try await visit.activate(String(localized: "Use this date", table: "Exam"))
     try await visit.settle()
     visit.assertSays(Self.examFailure)
 
@@ -78,7 +78,7 @@ final class PageVisitTests: XCTestCase {
     }
     try await visit.settle()
 
-    try visit.activate(String(localized: "Use this date", table: "Exam"))
+    try await visit.activate(String(localized: "Use this date", table: "Exam"))
     try await visit.failAfterLeaving()
     visit.assertSaysNothingOf(Self.examFailure)
   }
@@ -92,7 +92,7 @@ final class PageVisitTests: XCTestCase {
     }
     try await visit.settle()
 
-    try visit.activate(String(localized: "Start", table: "Exam"))
+    try await visit.activate(String(localized: "Start", table: "Exam"))
     try await visit.settle()
     visit.assertSays(Self.mockFailure)
 
@@ -108,7 +108,7 @@ final class PageVisitTests: XCTestCase {
     }
     try await visit.settle()
 
-    try visit.activate(String(localized: "Start", table: "Voice"))
+    try await visit.activate(String(localized: "Start", table: "Voice"))
     try await visit.settle()
     visit.assertSays(Self.taskFailure)
 
@@ -167,7 +167,13 @@ struct PageVisit {
     try await Task.sleep(for: .milliseconds(600))
   }
 
-  func activate(_ label: String) throws {
+  /// Taps what reads `label` once the page has drawn it: a cold simulator under load reads the
+  /// page later than a settle.
+  func activate(_ label: String) async throws {
+    for _ in 0..<50 where !test.spoken(in: window).contains(label) {
+      try await Task.sleep(for: .milliseconds(100))
+    }
+
     try test.activate(label, in: window)
   }
 
