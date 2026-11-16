@@ -198,7 +198,7 @@ function ChoiceDates({
 }
 
 const FACT_ROW_CLASS =
-  "group/fact flex items-start gap-3 py-3 sm:grid sm:grid-cols-[9rem_minmax(0,1fr)_auto]";
+  "group/fact flex items-center gap-3 py-3 sm:grid sm:grid-cols-[9rem_minmax(0,1fr)_auto] sm:items-start";
 
 const LABEL_CLASS = "text-muted-foreground text-compact sm:pt-px";
 
