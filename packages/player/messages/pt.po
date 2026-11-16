@@ -1952,11 +1952,11 @@ msgctxt "iHeHi6"
 msgid "Silicon"
 msgstr "Silício"
 
-#. Shows the notes on the five-line music staff (not sheet music) instead of guitar tab.
+#. Shows the melody as music notes on five lines, rather than numbered guitar frets.
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "gFJ4sU"
-msgid "Staff"
-msgstr "Pentagrama"
+msgctxt "7-Domh"
+msgid "Notes"
+msgstr "Notas"
 
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "RpejPq"

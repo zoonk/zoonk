@@ -21,8 +21,8 @@ export function ViewToggle({
     {
       label: t({
         description:
-          "Shows the notes on the five-line music staff (not sheet music) instead of guitar tab.",
-        message: "Staff",
+          "Shows the melody as music notes on five lines, rather than numbered guitar frets.",
+        message: "Notes",
       }),
       value: "staff",
     },
