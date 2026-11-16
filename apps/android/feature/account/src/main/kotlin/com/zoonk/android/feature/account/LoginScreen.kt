@@ -71,6 +71,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
@@ -274,7 +275,6 @@ fun CodeEntry(
                 busy = work == SignInWork.Resend,
                 onClick = signIn::resendCode,
                 enabled = work == null,
-                leadingIcon = { ButtonIcon(R.drawable.ic_send) },
             ) { Text(stringResource(R.string.account_send_again)) }
         }
         TextButton(onClick = signIn::changeEmail, enabled = work != SignInWork.CheckCode) {
@@ -324,8 +324,8 @@ fun AuthColumn(
                 modifier =
                     Modifier
                         .widthIn(max = 480.dp)
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
+                        .taskColumn()
+                        .padding(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 content = content,
             )

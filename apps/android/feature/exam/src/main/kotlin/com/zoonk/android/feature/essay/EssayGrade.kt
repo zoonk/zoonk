@@ -30,6 +30,8 @@ import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.Measure
+import com.zoonk.android.ui.components.MeasureRows
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.stepHeading
@@ -86,37 +88,16 @@ internal fun CriteriaRows(
     rubric: EssayRubric,
 ) {
     val locale = currentLocale()
-    val valueStyle = MaterialTheme.typography.labelMedium.withTabularFigures()
-    val values =
+    MeasureRows(
         grade.criteria.map { criterion ->
             val shown = shownScore(criterion, rubric, grade)
-            stringResource(R.string.essay_score_of, formatNumber(shown.first, locale), formatNumber(shown.second, locale))
-        }
-    // Every value takes the widest one's room, so the meters line up.
-    val measurer = rememberTextMeasurer()
-    val valueWidth = with(LocalDensity.current) { values.maxOfOrNull { measurer.measure(it, valueStyle).size.width }?.toDp() ?: 0.dp }
-    Column {
-        grade.criteria.forEachIndexed { index, criterion ->
-            if (index > 0) HorizontalDivider()
-            Row(
-                Modifier.fillMaxWidth().height(IntrinsicSize.Min).semantics(mergeDescendants = true) {},
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    criterionName(criterion),
-                    Modifier.weight(1f).padding(vertical = 12.dp),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                Meter(
-                    share = if (criterion.maxScore > 0) (criterion.score / criterion.maxScore).toFloat() else 0f,
-                    modifier = Modifier.width(METER_WIDTH),
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                Text(values[index], Modifier.width(valueWidth), style = valueStyle, textAlign = TextAlign.End)
-            }
-        }
-    }
+            Measure(
+                name = criterionName(criterion),
+                share = if (criterion.maxScore > 0) (criterion.score / criterion.maxScore).toFloat() else 0f,
+                value = stringResource(R.string.essay_score_of, formatNumber(shown.first, locale), formatNumber(shown.second, locale)),
+            )
+        },
+    )
 }
 
 /** A custom rubric's criteria each read on the total's scale, so three read "10 of 10", never "3.34 · 3.33 · 3.33". */
@@ -187,5 +168,3 @@ internal fun criterionName(criterion: EssayGradeCriteriaInner): String =
         "closing-and-form" -> stringResource(R.string.essay_criterion_closing)
         else -> criterion.name
     }
-
-private val METER_WIDTH = 72.dp

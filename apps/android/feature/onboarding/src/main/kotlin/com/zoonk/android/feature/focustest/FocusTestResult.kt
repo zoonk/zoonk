@@ -10,7 +10,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,15 +31,16 @@ import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.plan.GoalDateKind
 import com.zoonk.android.feature.plan.PlanEffectDiff
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.SuccessEyebrow
+import com.zoonk.android.ui.components.Switch
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
-import com.zoonk.android.ui.components.labelInset
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.FocusTestFocus
@@ -149,7 +149,7 @@ private fun resultLine(
 private fun FocusRows(rows: List<FocusTestFocusRow>) {
     Column(Modifier.bleed(LIST_ITEM_INSET)) {
         rows.forEachIndexed { index, row ->
-            if (index > 0) HorizontalDivider()
+            if (index > 0) ListDivider()
             ListRow(
                 headline = { Text(displayName(row.subject.name, row.subject.shortName)) },
                 leading = {
@@ -217,7 +217,7 @@ private fun Undo(
     if (answer.status != PlanChangeDecisionInput.Status.APPLIED || !answer.change.canUndo) return
     TextButton(
         onClick = { plan.onDecide(answer.change, PlanChangeDecisionInput.Status.UNDONE) },
-        modifier = Modifier.bleed(LocalButtonSize.current.labelInset),
+        edge = ButtonEdge.Start,
         busy = plan.deciding == PlanChangeDecisionInput.Status.UNDONE,
         leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
     ) {
@@ -239,12 +239,12 @@ private fun PlanRows(
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
             if (changesFocus) {
                 ListRow(headline = { Text(stringResource(R.string.focustest_change_focus)) }, onClick = plan.onChangeFocus)
-                HorizontalDivider()
+                ListDivider()
             }
             ListRow(headline = { Text(stringResource(R.string.focustest_see_all_subjects)) }, onClick = { subjects = true })
             if (questions != FocusTestSessionQuestions.OFF) {
                 val on = questions != FocusTestSessionQuestions.PAUSED
-                HorizontalDivider()
+                ListDivider()
                 ListRow(
                     headline = { Text(stringResource(R.string.focustest_session_questions)) },
                     modifier =
@@ -272,7 +272,7 @@ private fun PlanRows(
 internal fun HowItWorks(suggestsFocus: Boolean) {
     var open by rememberSaveable { mutableStateOf(false) }
     val title = stringResource(R.string.focustest_how_it_works)
-    TextButton(onClick = { open = true }, modifier = Modifier.bleed(LocalButtonSize.current.labelInset)) { Text(title) }
+    TextButton(onClick = { open = true }, edge = ButtonEdge.Start) { Text(title) }
     if (open) FocusTestSheet(title, onDismiss = { open = false }) { HowItWorksRows(suggestsFocus) }
 }
 
@@ -288,7 +288,7 @@ internal fun HowItWorksRows(suggestsFocus: Boolean) {
         )
     Column(Modifier.bleed(LIST_ITEM_INSET)) {
         rows.forEachIndexed { index, (title, line) ->
-            if (index > 0) HorizontalDivider()
+            if (index > 0) ListDivider()
             ListRow(headline = { Text(stringResource(title)) }, supporting = { Text(stringResource(line)) })
         }
     }
@@ -347,7 +347,7 @@ private fun subjectState(subject: FocusTestSubject): String =
 internal fun SubjectsList(subjects: List<FocusTestSubject>) {
     Column(Modifier.bleed(LIST_ITEM_INSET)) {
         subjects.forEachIndexed { index, subject ->
-            if (index > 0) HorizontalDivider()
+            if (index > 0) ListDivider()
             ListRow(
                 headline = { Text(displayName(subject.name, subject.shortName)) },
                 meta = { Text(subjectState(subject), color = MaterialTheme.colorScheme.onSurfaceVariant) },

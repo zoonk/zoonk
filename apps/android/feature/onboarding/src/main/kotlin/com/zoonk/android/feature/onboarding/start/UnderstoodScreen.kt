@@ -58,6 +58,7 @@ import com.zoonk.android.feature.plan.VarietySheet
 import com.zoonk.android.feature.subscription.GateWords
 import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.MAX_GOAL_LENGTH
@@ -65,6 +66,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimeOfDayDialog
+import com.zoonk.android.ui.components.iconButtonEdge
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
@@ -365,7 +367,7 @@ private fun FactRow(
         }
 
         if (row.editable != null && !(editing && editor == EditorKind.Text)) {
-            IconButton(onClick = { onEdit(true) }) {
+            IconButton(onClick = { onEdit(true) }, modifier = Modifier.iconButtonEdge(ButtonEdge.End)) {
                 Icon(
                     painterResource(R.drawable.ic_edit),
                     contentDescription = stringResource(R.string.onboarding_edit_fact, row.label),

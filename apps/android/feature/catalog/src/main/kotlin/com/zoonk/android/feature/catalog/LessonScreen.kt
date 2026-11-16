@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -40,6 +41,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.FACT_SEPARATOR
@@ -102,7 +104,7 @@ private fun lessonBlocks(
     return buildList {
         add(
             CatalogBlock("lesson") {
-                Row(horizontalArrangement = Arrangement.spacedBy(48.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(ASIDE_GAP)) {
                     Column(Modifier.weight(1f).widthIn(max = COLUMN_WIDTH)) {
                         CourseEyebrow(navigator, detail)
                         Spacer(Modifier.size(8.dp))
@@ -159,7 +161,7 @@ private fun lessonBlocks(
                             courseId,
                             place,
                             lessonId,
-                            Modifier.weight(1f).widthIn(max = ASIDE_WIDTH),
+                            Modifier.width(ASIDE_WIDTH),
                         )
                     }
                 }
@@ -170,7 +172,14 @@ private fun lessonBlocks(
             add(CatalogBlock("chapter", trailing = true) { LessonChapterAside(navigator, courseId, place, lessonId) })
         }
 
-        add(CatalogBlock("plan-day", trailing = true) { LessonPlanDay(app, navigator, detail, place, lessonId) })
+        add(
+            CatalogBlock("plan-day", trailing = true) {
+                // Beside the chapter's aside, the day ends where the lesson's column above it does.
+                Box(if (layout.beside) Modifier.padding(end = ASIDE_WIDTH + ASIDE_GAP) else Modifier) {
+                    LessonPlanDay(app, navigator, detail, place, lessonId)
+                }
+            },
+        )
     }
 }
 
@@ -267,7 +276,11 @@ private fun LessonMore(
             ) {
                 Column(Modifier.padding(bottom = 16.dp)) {
                     ChapterLessonRows(navigator, courseId, place, currentLessonId = lessonId)
-                    TextButton(onClick = { navigator.open(AppRoute.CatalogChapter(chapter.id.toString(), courseId)) }, forward = true) {
+                    TextButton(
+                        onClick = { navigator.open(AppRoute.CatalogChapter(chapter.id.toString(), courseId)) },
+                        forward = true,
+                        edge = ButtonEdge.Start,
+                    ) {
                         Text(stringResource(R.string.catalog_go_to_chapter))
                     }
                 }
@@ -366,3 +379,4 @@ private fun LessonPlanDay(
 
 private const val DAY_LESSONS = 3
 private val ASIDE_WIDTH = 360.dp
+private val ASIDE_GAP = 48.dp
