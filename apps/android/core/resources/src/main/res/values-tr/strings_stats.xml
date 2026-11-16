@@ -31,6 +31,7 @@
   "stats_energy_line": "edffd19c7adffe1dcba0470aa26a7e25d1a542969dfcb8a26005469a062a475b",
   "stats_evening": "3673cc394ffc60e6d19ee53990973d095a6acee28d1ea69eb38cdf20d8360c43",
   "stats_every_belt": "3dab0c06d72eb08253063ad48a6d92709bcfcc1af342197e8107754c4b6bde08",
+  "stats_few_answers_legend": "b31deda86d6cf1f11d1e3222b86d5d3a0790510847293dc1ceee8c273d3b29bd",
   "stats_go_to_today": "8a5eccb48d7b3776f21ff61f02dea2e52848e5bb98179c0bd01f4f1f0004cc99",
   "stats_high": "5c2d93c624e6fdaeab652bcb0faef963c2770e8e1759b141ea2455c557f31513",
   "stats_less": "55fd827ebfb57ed7290d23bd345b6c2b6e81273b4e4dd6ad7ec3472b71c362f4",
@@ -48,6 +49,7 @@
   "stats_open": "5bf7730acf12eb1eb66e49667f1bc9b3fb0de7d13ebfe973318558f3edf31915",
   "stats_overview": "f27afc28473f6042c82fe3ab032bb7bcdcaeac8bfb96b9090da8ef0b80aa221c",
   "stats_part_failed": "a8f3ccc7646186fa41386b7aae753f32161eea3b67bee75be6e5587058f94ed2",
+  "stats_past_6_months": "92482f8b07e7f6050a9dfac4a6524b63c15b3e318792e07a38742d41ade58d73",
   "stats_past_year": "97d58686f2b9b25987315cbd1378a370ab1c38e487d062a60862b3d670cb0405",
   "stats_patterns": "80aff82d785203b325a0ccb5281eb8dc9960d8635112c4388ebb1db89a530f31",
   "stats_patterns_90": "8aa9700fd386fc9428f8ff9ab420b176a75e158aa13faa8f52cb41e159c0a73d",
@@ -109,6 +111,10 @@
     <string name="stats_lessons">Dersler</string>
     <string name="stats_time">Süre</string>
     <string name="stats_past_year">Son 12 ay</string>
+    <!-- Title over a calendar of days on a phone, which shows only its last 26 weeks. -->
+    <string name="stats_past_6_months">Son 6 ay</string>
+    <!-- Under a chart of bars: what a hollow dashed bar means. -->
+    <string name="stats_few_answers_legend">Kesik çizgili çubukta henüz hesaplamaya yetecek kadar cevap yok.</string>
     <string name="stats_less">Az</string>
     <string name="stats_more">Çok</string>
     <plurals name="stats_calendar_activity_summary">

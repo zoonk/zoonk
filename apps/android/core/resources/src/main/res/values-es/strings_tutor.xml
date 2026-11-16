@@ -13,6 +13,7 @@
   "tutor_ask": "59535619a20b04f59e18d7ebeaad5657a6a1cb16e5c80cef157140047f9d36a2",
   "tutor_ask_answer": "6f35e9b1597406d492791a90803c494f4f85492288d4c720e9d71c2ff58199e5",
   "tutor_ask_chapter": "2c0b225f97aae02a088a8fab2ea66ecd934df3264be3585f605d8b271b1c9652",
+  "tutor_ask_for_help": "67369a362951ef6cad291865dca17b78b3e96d601cdf749b41574bb8abd95c97",
   "tutor_ask_mock": "4421028a0a2f9023361aa5a025d5d85a2a3bf2583b668ae403b2dff2762d3973",
   "tutor_ask_plan": "31e376549564968038e9943694373051e347c9081b1064963d2f02f425d3e99d",
   "tutor_ask_question": "3ae2f5bd4fac07614e0bbd90b774613d63ae46243481c5ba122f8b752517c40b",
@@ -131,6 +132,8 @@
     <!-- Before the buddy is known. -->
     <string name="tutor_your_buddy">Tu compañero</string>
     <string name="tutor_ask">Preguntar a %1$s</string>
+    <!-- The button that opens the buddy's chat before the buddy's name is known. -->
+    <string name="tutor_ask_for_help">Pedir ayuda</string>
     <string name="tutor_ask_chapter">Preguntar a %1$s sobre este capítulo</string>
     <string name="tutor_ask_mock">Preguntar a %1$s sobre este simulacro</string>
     <string name="tutor_ask_plan">Preguntar a %1$s sobre tu plan</string>

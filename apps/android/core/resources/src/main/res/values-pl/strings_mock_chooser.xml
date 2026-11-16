@@ -18,7 +18,7 @@
   "mock_chooser_parts": "622378beeb5b0b07221f38b6adab0ab2353a4b0660235025f46e7e80d0f7a894",
   "mock_chooser_pick_another": "72d6f73e7ae0b9be4c9ee5a0d5cd2a79c8f1f78d8e6fb9cc827591fb4eb986e6",
   "mock_chooser_picked": "90b608bff9681d853c489724b038f06a792422d8dab754f875918196604ed1c4",
-  "mock_chooser_preparing": "d9a43caf5a88352c0ed390cf21cfbc5be205bfb30e2c037961de9dab57bb196a",
+  "mock_chooser_preparing": "d94a35a5644dced0cd014157c4fcae7b781464903b65039fc3ad24b9a1bbadc4",
   "mock_chooser_preparing_detail": "eab9db4249c33a374766bbb01604cd66f7cb76eee9f94e3a07494f1040a6f95e",
   "mock_chooser_questions": "4fac9353111e615edf7c100bf5df480248e9e87538bf8aaadb3bb3ba0288bc6d",
   "mock_chooser_short_day": "ee4c52bfa145e03e35c0d6c09f4aba0ef4602c5a417fc80efc8cfbbfc4812608",
@@ -79,7 +79,7 @@
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">Ten egzamin ma dziś %1$s z %2$s pytań, czyli około %3$s na rozwiązanie.</string>
     <string name="mock_chooser_pick_another">Wybierz inny</string>
-    <string name="mock_chooser_preparing">Przygotowujemy twój egzamin próbny…</string>
+    <string name="mock_chooser_preparing">Przygotowujemy twój egzamin próbny</string>
     <string name="mock_chooser_preparing_detail">Przygotowujemy dla ciebie pytania podobne do tych na egzaminie. Egzamin próbny rozpocznie się tutaj, gdy tylko będą gotowe.</string>
     <string name="mock_chooser_writing">Przygotowujemy twój egzamin próbny</string>
     <string name="mock_chooser_writing_questions">Przygotowujemy pytania takie jak na egzaminie</string>

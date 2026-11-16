@@ -11,8 +11,8 @@
   "focustest_change_focus": "18ed0e3a7515be49ec375a13c08ea1bbaae90d0d202f95301c2fb315c12711b4",
   "focustest_continue": "f1c510b61ce95099d80789ca27e9d141ac99ac5ed1cd20deda1bf09154c47bdb",
   "focustest_done": "8a26606a547003eccd44f955ee77e5e86571376e16f059a7a476b518b7281c41",
-  "focustest_find_focus": "f26bb9b17b7e9542655ff443023c8d1663303ca70328e5b8f4d09b64a3dfe189",
-  "focustest_find_start": "4388b055d2dbe8faa9cfc5bfc56a5ae1431990c9dc90489f8aacb16c798e46d6",
+  "focustest_find_focus": "1b8decab7b6ddbad53f8bf37b939b51fac53ffc96d3ba1fdf0a8b5f407f4be45",
+  "focustest_find_start": "f225b659917ca7eb038bcf2a1a12eb6f6cb4ce487dda886a989a0288016e93cd",
   "focustest_from_basics": "e5a6ad627f6e72e8bb71bfff658ab810a567e4cd16f8f3b9d83be1e4595ecb42",
   "focustest_how_grade": "79ed22f40c3230a15f30d9f8eee8abafada6ad8386618ba285b609b946b8b88c",
   "focustest_how_grade_title": "1937a7829c78637eca97108859597e76158d5e5f0bb795b3823b3128c470e4cb",
@@ -27,9 +27,8 @@
   "focustest_how_weight_title": "f90f466e422cef4c5ee17cb9e9f56a08b85ab3f57a39eebead373cfe83db81c0",
   "focustest_in_progress": "a4ef6f1343e20c5f636f41a5351b6b11790c69b72b206200e43624f3bf877343",
   "focustest_lessons_skipped": "560ca5ba34c162eb1c657c8fcf9aa9fb45d1af2344f9357fec930613aa8c9565",
-  "focustest_listening_not_checked": "8e5711317238c078749e5dce9c7e78ac84568b76401317be1bf5fe91f0010556",
+  "focustest_listening_not_checked": "87a49dc8d7fbbe05491d0c92032fd995d00099fbe6c669a0d63d5a120abf1b80",
   "focustest_many_unknown": "2e5d52524c746d4dde359fe3da8478851cd1d78498c0edb519d1e87831e8c26a",
-  "focustest_not_asked_yet": "d30a2926fa2638d69195e5e6471fa03e8deec33c1a2e12c63f255b7d799ae6ec",
   "focustest_not_known_yet": "1b6525239d4953d7b11bf8852c8bf920781a86b92ae847e84f8aadfe53d344eb",
   "focustest_not_now": "3afdfb59d213354fea1c2d983369693f807ce0cf6346fb05e7fef04bd7dd6528",
   "focustest_not_today": "89561209651687d9195eb5feeae19f7ce0c3b6d23024e491d2cbdd1784eb950c",
@@ -37,7 +36,7 @@
   "focustest_offer_description": "d80d9293fd81249a6811405638da9f5d22a09227724cc43bcbd0ac4abc9cc1b0",
   "focustest_offer_description_focus": "b8ce835a209ac55ff5ed577c2bffa3970e4b0bf288814a10d3098aa327b3a56e",
   "focustest_paused_in_sessions": "ac089beac2069d7426d9e0b24da032ab2fcdde4c6cb72ca51f3838f2b512dd89",
-  "focustest_practical_not_checked": "aa002f448894873b01bd8c972dc9ed2296b6c42fe1e217a6fc3587b56637d360",
+  "focustest_practical_not_checked": "58ec21c9f0a1025d6b94554ebcdc563cec00f3612ba30ad88455838bd5e1af82",
   "focustest_proposal_applied": "3b1bccff0c77b154ba74062b003e9006d4f4214d2b934175d455a600b18bcfc4",
   "focustest_proposal_declined": "b5f1cfe0a99b24d145626388727d4f198be53de5e5b9d0adffd5ef21922e81e5",
   "focustest_proposal_description": "0b8967a87d7aa534253bff77aaca3409d52c2bf5f7981b5a1c60c6d93442885a",
@@ -59,7 +58,7 @@
   "focustest_session_questions_when": "d04b2f8187491bd23804f92eca3c7f4cea634db55bc3d2bc6ca3ad73e050974e",
   "focustest_skip_for_now": "86140ba0d15cdc9ecb69f497f673a946e6bc88d23310a2ad2012813514452e78",
   "focustest_skip_note": "78a74cbb501335879145dde71c4ef8106a97e0f9d68a5154e20d8e67c564e0d9",
-  "focustest_speaking_not_checked": "c53299fd9859e10ce27aaf63f88edc71fad7fcef55d2450cf31aa68b554b79c7",
+  "focustest_speaking_not_checked": "fef00e3e9c47ecc8c8f82aa9bfb6b8d266d389e6f34b6934b67b679dccc84bdd",
   "focustest_start": "0308074ec88cd75391ee099fe3ebffb26aab0a219c9e6aeaef32d6b8e439dc7e",
   "focustest_starting_point_title": "e4c3b569a66d398550089102cd29ba04cab6851efe7a43ed5b77e94ba6d5ff33",
   "focustest_stop": "6d6f087ae7a44e3df57e22cbd81e797a43399f486bb273aa17e5ca9f61511f86",
@@ -73,7 +72,7 @@
   "focustest_undo": "0e2d31e1fd086c2ac5cd4aea25078ad68ea166d983643635c714043158cc192b",
   "focustest_update_plan": "cb2ef9e0885cecbf6f0f74eae0df59e1cfbc94f1c61e4d10d2dd4615925c2c41",
   "focustest_what_test_changed": "0c7a84a64f82fdbc1bef4a4fe4a31aca3b13a0470ddfce7cf614f80c09ecf065",
-  "focustest_written_not_checked": "6008feab3dcae10ed3786e3ab53ba9eacaac9fa313a94d09c6c6160835c82616"
+  "focustest_written_not_checked": "9d0f7ca64a1f8359671ce7c86fae3a5aedcbf405829f2fed6577b485f497f92c"
 }
 -->
 <resources>
@@ -84,9 +83,9 @@
     <!-- What's left of a test the learner started; %1$s is a duration, such as "13 min". -->
     <string name="focustest_about_left">약 %1$s 남음</string>
     <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
-    <string name="focustest_find_focus">집중할 과목을 알아보세요</string>
+    <string name="focustest_find_focus">집중해서 공부할 과목 찾기</string>
     <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
-    <string name="focustest_find_start">어디부터 시작할지 알아보세요</string>
+    <string name="focustest_find_start">이미 아는 내용이 있나요?</string>
     <string name="focustest_offer_description_focus">시험 과목별로 간단한 문제를 풀어요. 이미 아는 내용은 계획에서 건너뛰어 가장 필요한 공부에 시간을 쓸 수 있어요.</string>
     <string name="focustest_offer_description">시험 과목별로 간단한 문제를 풀어요. 이미 아는 내용은 계획에서 건너뛰어요.</string>
     <string name="focustest_how_it_works">이용 방법</string>
@@ -157,11 +156,11 @@
     <plurals name="focustest_subject_right">
         <item quantity="other">정답 %1$d개 / 총 %2$d문제</item>
     </plurals>
-    <!-- Parts of the exam the test's quick questions can't check, such as the essay. -->
-    <string name="focustest_written_not_checked">쓰기: 여기서는 확인하지 않음</string>
-    <string name="focustest_listening_not_checked">듣기: 여기서는 확인하지 않음</string>
-    <string name="focustest_speaking_not_checked">말하기: 여기서는 확인하지 않음</string>
-    <string name="focustest_practical_not_checked">실기: 여기서는 확인하지 않음</string>
+    <!-- Parts of the exam the Focus test's questions can't ask about, such as the essay. -->
+    <string name="focustest_written_not_checked">서술형: 이 진단에 포함되지 않음</string>
+    <string name="focustest_listening_not_checked">듣기: 이 진단에 포함되지 않음</string>
+    <string name="focustest_speaking_not_checked">말하기: 이 진단에 포함되지 않음</string>
+    <string name="focustest_practical_not_checked">실기: 이 진단에 포함되지 않음</string>
     <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">진행 중</string>
     <string name="focustest_see_your_result">결과 보기</string>

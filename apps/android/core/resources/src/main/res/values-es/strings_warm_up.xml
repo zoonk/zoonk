@@ -16,12 +16,15 @@
   "warm_up_questions_ready": "696a304fc85fb10dd82f48eb20e8e73d71a6f41a2e9d1a6f1bf0932dc7ae791f",
   "warm_up_ready_to_start": "ee7d33cfe6e8965d9f427e6151e311d41658c84e67aa6838a54d01eb5b1cb199",
   "warm_up_start_first_lesson": "01dd58ee031445f799e5ef3e74bd6813fcd58557a700ade0826d5c55b9622458",
-  "warm_up_title": "6589f3a0fddd5bcb9351d87fb4dc6678f4af1fc5804b759912997fea3d0a7335"
+  "warm_up_title": "6589f3a0fddd5bcb9351d87fb4dc6678f4af1fc5804b759912997fea3d0a7335",
+  "warm_up_title_ready": "3293a394131cfe52dab654a5895d752e3868651272a9e92760a6b0d63ed3249c"
 }
 -->
 <resources>
     <!-- Heading of a card of quick guessing questions about the learner's subject, shown while their plan or lesson is being written. -->
     <string name="warm_up_title">Preguntas mientras esperas</string>
+    <!-- The same card's heading once the plan or lesson is ready and the learner is still reading their last guess. -->
+    <string name="warm_up_title_ready">Cuestionario</string>
     <!-- Button under a guessed question's answer: shows the next question. -->
     <string name="warm_up_next">Seguir adivinando</string>
     <!-- Under the last question's answer: there are no more questions to guess. -->

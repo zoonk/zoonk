@@ -18,7 +18,7 @@
   "mock_chooser_parts": "a7e3a047916e7e8688f1e057bac0c484dc140db5d981b6d23a837c1bcdfcb410",
   "mock_chooser_pick_another": "1b07e4c5d78ae1e865eed6b23316f57545cf0789fd956322fdff568f00924ed2",
   "mock_chooser_picked": "29a96967af8a95932a76905061225b30ada65babb323fbf0ff60c628f6b2775c",
-  "mock_chooser_preparing": "281278cc1d528ae1e6c005e374b8b254926e1ebe1eeb0cb2eeaff82c6b91fbe0",
+  "mock_chooser_preparing": "fe66cdd08244d6497fd9a68075e40bb4b257fd3b06ca9b66b31dbbc3326e7311",
   "mock_chooser_preparing_detail": "c0b638db76ebb51afe9e50227c647d8f8c5d0a98f8a1e5ad2160032025c14aa8",
   "mock_chooser_questions": "35ffae49d790325ceaa22a24bbc87a338de571ffd63801fe5cb36da6abcc91ac",
   "mock_chooser_short_day": "70ca231af2714413b0f620d9d0d504559e3aa03543638c1a29002a24b2a0e8a6",
@@ -78,7 +78,7 @@
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">Aujourd’hui, cet examen blanc compte %1$s questions sur %2$s, soit environ %3$s.</string>
     <string name="mock_chooser_pick_another">En choisir un autre</string>
-    <string name="mock_chooser_preparing">Préparation de ton examen blanc…</string>
+    <string name="mock_chooser_preparing">Préparation de ton examen blanc</string>
     <string name="mock_chooser_preparing_detail">Nous préparons des questions semblables à celles de l’examen. Ton examen blanc commencera ici dès qu’elles seront prêtes.</string>
     <string name="mock_chooser_writing">Préparation de ton examen blanc</string>
     <string name="mock_chooser_writing_questions">Préparation de questions semblables à celles de l’examen</string>

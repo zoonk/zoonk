@@ -18,7 +18,7 @@
   "mock_chooser_parts": "fead1da7833b29ef9fb87bef4a6ba22e763ccdb15d7955a981046354ee74f7ec",
   "mock_chooser_pick_another": "9476d7b0f2faf51d50af0628eec9b6000006138eb6c43a0031d2f45d4a4cc7fd",
   "mock_chooser_picked": "fa0a54c4f2659d1a5319b86ccb5101730e0e8309a426c40509cfe55df404a443",
-  "mock_chooser_preparing": "b3911dc1d7ef3975aaad19a35186295ba9c5505e2cd3536a08aaee4ac8c6fc57",
+  "mock_chooser_preparing": "7fd017436bc7d1a6fde2e56251d3dc2f8dd6d3fe58558c8e5c4d5e6936d63cc4",
   "mock_chooser_preparing_detail": "797d22ff795817ff9e41a8c52fc961246a96e52f49f092f94a912f50407615fe",
   "mock_chooser_questions": "534a01ceeabd74444a6d4a3b10313b1639925592cac764ae6b19339380e97d30",
   "mock_chooser_short_day": "388d73a5b6fc6fb02d74facb364cc6123c7c1804e768c8be236c71a0950eef94",
@@ -76,7 +76,7 @@
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">今日は%1$s問（全%2$s問中）で、所要時間は約%3$sです。</string>
     <string name="mock_chooser_pick_another">別の模試を選ぶ</string>
-    <string name="mock_chooser_preparing">模試を準備しています…</string>
+    <string name="mock_chooser_preparing">模試を準備しています</string>
     <string name="mock_chooser_preparing_detail">本番に近い問題を作成しています。準備ができ次第、ここで模試が始まります。</string>
     <string name="mock_chooser_writing">模試を作成しています</string>
     <string name="mock_chooser_writing_questions">本番の試験に近い問題を作成しています</string>
