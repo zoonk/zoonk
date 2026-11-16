@@ -28,9 +28,17 @@ struct StateMessage<Label: View, Line: View, Actions: View>: View {
         .foregroundStyle(.mutedForeground)
         .frame(maxWidth: 384)
     } actions: {
-      // The system sets its actions small; a state's way on is a screen's action, as main's.
-      actions
-        .controlSize(.large)
+      // The system sets its actions small and about 6pt under the words; a state's way on is a
+      // screen's action, 16pt under them, as main's `Empty`.
+      Group(subviews: actions) { buttons in
+        if !buttons.isEmpty {
+          VStack(spacing: 12) {
+            buttons
+          }
+          .controlSize(.large)
+          .padding(.top, 10)
+        }
+      }
     }
   }
 }
