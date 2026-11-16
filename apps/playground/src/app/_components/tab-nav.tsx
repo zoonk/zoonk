@@ -6,7 +6,7 @@ import Link from "next/link";
 
 /** A row that scrolls sideways opens with its current tab in view. */
 function revealTab(tab: HTMLAnchorElement | null) {
-  tab?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  tab?.scrollIntoView({ block: "nearest", inline: "center" });
 }
 
 /**
