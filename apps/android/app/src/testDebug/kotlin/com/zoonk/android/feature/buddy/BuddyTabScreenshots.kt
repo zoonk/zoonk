@@ -175,7 +175,12 @@ class BuddyTabScreenshots {
                                 ).copy(question = "Why does salt dissolve in water but not in oil?"),
                                 earlierQuestion(2, answer = null, courseTitle = null, lessonTitle = "Covalent bonds")
                                     .copy(question = "Is a covalent bond stronger?"),
-                                earlierQuestion(3, courseTitle = null, lessonTitle = null).copy(question = "What's an electron shell?"),
+                                earlierQuestion(
+                                    3,
+                                    answer = "An electron shell is a group of orbitals with the same main energy level.",
+                                    courseTitle = null,
+                                    lessonTitle = null,
+                                ).copy(question = "What's an electron shell?"),
                             ),
                     )
                 setUp()

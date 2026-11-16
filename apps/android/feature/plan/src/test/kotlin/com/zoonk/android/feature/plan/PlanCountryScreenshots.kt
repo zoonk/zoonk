@@ -95,7 +95,7 @@ class PlanCountryScreenshots {
     @Config(qualifiers = "w1280dp-h900dp-land-night-xhdpi")
     fun expandedDark() = capture("expanded-dark", dark = true, interactive = false)
 
-    private val brasil = LearningProfileSuggestedInner("BR", "Brasil", null, null)
+    private val brasil = LearningProfileSuggestedInner("BR", "Brazil", null, null)
     private val portugal =
         LearningProfileSuggestedInner(
             "PT",
@@ -120,7 +120,7 @@ class PlanCountryScreenshots {
         dark: Boolean = false,
         interactive: Boolean = true,
     ) {
-        val summary = learnerSummary(title = "Organizar as finanças pessoais")
+        val summary = learnerSummary(title = "Manage personal finances")
 
         fun goal(rebuild: GoalContentCountry.Rebuild) =
             summary.goals.first().copy(contentCountry = country(rebuild), countryDependent = true, suggested = listOf(portugal, brasil))
@@ -164,10 +164,10 @@ class PlanCountryScreenshots {
                 {
                     listOf(
                         CountryChoice("AR", "Argentina"),
-                        CountryChoice("BR", "Brasil"),
-                        CountryChoice("US", "Estados Unidos"),
-                        CountryChoice("AE", "Emirados Árabes Unidos"),
-                        CountryChoice("GB", "Reino Unido"),
+                        CountryChoice("BR", "Brazil"),
+                        CountryChoice("US", "United States"),
+                        CountryChoice("AE", "United Arab Emirates"),
+                        CountryChoice("GB", "United Kingdom"),
                     )
                 },
                 cache,
@@ -217,7 +217,7 @@ class PlanCountryScreenshots {
         compose.onNode(hasSetTextAction()).performTextInput("uni")
         compose.waitForIdle()
         write("plan-country-picker-search-$suffix", compose.onNode(isDialog()).captureRender().asAndroidBitmap())
-        compose.onAllNodesWithText("Reino Unido").onFirst().performClick()
+        compose.onAllNodesWithText("United Kingdom").onFirst().performClick()
         compose.waitForIdle()
         write("plan-country-confirm-$suffix", compose.onAllNodes(isDialog())[1].captureRender().asAndroidBitmap())
     }

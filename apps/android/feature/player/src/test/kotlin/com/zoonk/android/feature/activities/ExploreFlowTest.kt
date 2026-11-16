@@ -32,7 +32,7 @@ class ExploreFlowTest {
 
         names.forEach { name ->
             assertTrue("$name has no canvas", name.substringBefore('.') in activityRenderers)
-            rule.onNodeWithText("Explore $name.").assertIsDisplayed()
+            rule.onNodeWithText(name).assertIsDisplayed()
             rule.onNodeWithText("Check").assertDoesNotExist()
             harness.tap("Next")
         }
