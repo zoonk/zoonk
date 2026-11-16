@@ -13,6 +13,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.richtext.RichSegment
 import com.zoonk.android.ui.richtext.RichTable
 import com.zoonk.android.ui.richtext.RichText
@@ -23,6 +24,7 @@ import com.zoonk.android.ui.richtext.TableAlign
 import com.zoonk.android.ui.richtext.parseRichInline
 import com.zoonk.android.ui.richtext.readMarkdownTable
 import com.zoonk.android.ui.richtext.richText
+import com.zoonk.android.ui.richtext.typeset
 
 internal sealed interface ItemBlock {
     data class Paragraph(
@@ -47,7 +49,25 @@ fun ItemText(
     modifier: Modifier = Modifier,
     style: TextStyle = LocalTextStyle.current,
 ) {
-    val blocks = remember(text) { parseItemText(text) }
+    val locale = currentLocale()
+    // Numbers set as the readouts and answers beside them are, so money and units read one way on the screen.
+    val blocks =
+        remember(text, locale) {
+            parseItemText(text).map { block ->
+                when (block) {
+                    is ItemBlock.Paragraph -> {
+                        block.copy(segments = typeset(block.segments, locale))
+                    }
+
+                    is ItemBlock.Table -> {
+                        block.copy(
+                            header = block.header.map { typeset(it, locale) },
+                            rows = block.rows.map { row -> row.map { typeset(it, locale) } },
+                        )
+                    }
+                }
+            }
+        }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         blocks.forEach { block ->

@@ -85,7 +85,8 @@ private val NUMBER_THEN_UNIT =
         "(?<=[0-9]) (?=(?:${UNITS.sortedByDescending { it.length }.joinToString("|") { Regex.escape(it) }})(?![\\p{L}0-9]))",
     )
 
-private val CURRENCY_THEN_NUMBER = Regex("(\\p{Lu}{0,2}\\p{Sc}) (?=[0-9])")
+/** A sign and its amount, apart by a space or by the no-break space a question's text already keeps them with. */
+private val CURRENCY_THEN_NUMBER = Regex("(\\p{Lu}{0,2}\\p{Sc})[ \\u00A0](?=[0-9])")
 
 private val CURRENCY_SYMBOLS =
     mapOf(

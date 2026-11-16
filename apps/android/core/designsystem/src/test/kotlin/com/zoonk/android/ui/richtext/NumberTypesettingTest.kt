@@ -47,6 +47,12 @@ class NumberTypesettingTest {
     }
 
     @Test
+    fun setsMoneyAlreadyKeptTogetherTheSameWay() {
+        assertEquals("15% of R$80 is R$12", typesetNumbers(english, "15% of R$${NBSP}80 is R$${NBSP}12"))
+        assertEquals("R$${NBSP}80", typesetNumbers(portuguese, "R$${NBSP}80"))
+    }
+
+    @Test
     fun leavesDecimalsCodesYearsAndNumbersBeforeLongerWordsAlone() {
         val text = "1,5 mais 12345,67 no CEP 01310-100 em 2026 com 5 pessoas e ID 123456789a"
         assertEquals(text, typesetNumbers(portuguese, text))

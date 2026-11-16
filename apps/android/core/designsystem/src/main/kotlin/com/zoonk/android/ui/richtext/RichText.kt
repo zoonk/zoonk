@@ -157,7 +157,8 @@ data class SpokenText(
     val spoken: String? = null,
 )
 
-private fun typeset(
+/** [segments]' numbers as the learner's language prints them ([typesetNumbers]); math and code keep theirs. */
+fun typeset(
     segments: List<RichSegment>,
     locale: Locale,
 ): List<RichSegment> =
