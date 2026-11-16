@@ -33,7 +33,7 @@ function CheckedBlank({
   const isRight = chosen !== null && chosen === expected;
 
   return (
-    <span className="flex w-0 min-w-full flex-wrap items-baseline gap-x-2">
+    <span className="flex w-0 min-w-full flex-wrap items-baseline gap-x-2 leading-5">
       <span className={cn(isRight ? "text-success-text" : "text-destructive-text line-through")}>
         {stem}
         <b className="font-semibold">{chosen ?? ""}</b>
@@ -138,7 +138,7 @@ export function PatternRow({
       <td className={cn("px-2 align-middle", row.blank ? "py-1" : "py-2")}>
         {!row.blank && <Form form={row.answer} stem={newStem} />}
 
-        {/* The checked word keeps the open blank's height, so Check moves no row. */}
+        {/* The checked pair, on one line or two, keeps the open blank's height, so Check moves no row. */}
         {row.blank && isChecked && (
           <div className="flex min-h-11 items-center">
             <CheckedBlank chosen={chosen} expected={expected} stem={stem} />
