@@ -13,12 +13,10 @@ extension View {
     }
   }
 
-  /// Every sheet's root; a popover keeps `zoonkStyles()` and the system's glass. A sheet is the
-  /// page's background at every height and width: at a partial height the system's glass shows
-  /// the page behind through a form, and on an iPad it grays the sheet between a list's rows.
+  /// Every sheet's root; a popover keeps `zoonkStyles()` alone. The sheet's background stays the
+  /// system's: a sheet is chrome, and its Liquid Glass is the platform's, never repainted.
   func zoonkSheet() -> some View {
     zoonkStyles()
       .sheetColumn()
-      .presentationBackground(.background)
   }
 }
