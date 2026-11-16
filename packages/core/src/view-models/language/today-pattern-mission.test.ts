@@ -9,13 +9,21 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
 import { getTodayView } from "../today/get-today-view";
 
-function createPattern({ goalId, userId }: { goalId: string; userId: string }) {
+function createPattern({
+  goalId,
+  kind = "pattern",
+  userId,
+}: {
+  goalId: string;
+  kind?: "pattern" | "typos";
+  userId: string;
+}) {
   return prisma.mistakePattern.create({
     data: {
       content: { contrast: [], drill: [], examples: [], rule: "Use for with durations." },
       createdAt: new Date(SESSION_NOW.getTime() - MS_PER_DAY),
       goalId,
-      kind: "pattern",
+      kind,
       language: "en",
       model: "test",
       promptVersion: "test",
@@ -112,6 +120,17 @@ describe("Today's pattern card", () => {
     const otherGoal = await goalFixture({ userId: user.id });
     await studySessionFixture({ fullMealAt: new Date(), goalId: otherGoal.id, userId: user.id });
     await expect(readTodayPattern(goal.id)).resolves.toBeNull();
+  });
+
+  it("offers a rule to practice, never a finding of typos, which leaves nothing to do", async () => {
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    await createPattern({ goalId: goal.id, kind: "typos", userId: user.id });
+    await expect(readTodayPattern(goal.id)).resolves.toBeNull();
+
+    const rule = await createPattern({ goalId: goal.id, userId: user.id });
+    await expect(readTodayPattern(goal.id)).resolves.toMatchObject({ id: rule.id });
   });
 
   it("keeps a suggestion for a different pattern", async () => {

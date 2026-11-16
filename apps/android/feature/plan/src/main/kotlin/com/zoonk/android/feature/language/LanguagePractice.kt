@@ -142,23 +142,11 @@ fun LanguagePracticeNotice(
                 label = title,
                 summary = title,
                 description = formatList(pronunciation.words, currentLocale()),
+                action = stringResource(R.string.language_say_them),
                 mark = SuggestionMark.Symbol(R.drawable.ic_mic),
                 layout = layout,
                 modifier = modifier,
-                link = NoticeLink(stringResource(R.string.language_say_them)) { open(AppRoute.Pronunciation(goalId.toString())) },
-            )
-        }
-
-        pattern?.kind == TodayPattern.Kind.TYPOS -> {
-            val typos = stringResource(R.string.language_pattern_typos_description)
-            PracticeNotice(
-                label = stringResource(R.string.language_pattern_typos),
-                summary = typos,
-                description = typos,
-                mark = SuggestionMark.Symbol(R.drawable.ic_keyboard),
-                layout = layout,
-                modifier = modifier,
-            )
+            ) { open(AppRoute.Pronunciation(goalId.toString())) }
         }
 
         pattern != null -> {
@@ -166,29 +154,25 @@ fun LanguagePracticeNotice(
                 label = stringResource(R.string.language_pattern_noticed),
                 summary = stringResource(R.string.language_pattern_noticed_summary, pattern.title),
                 description = pattern.title,
+                action = stringResource(R.string.language_pattern_practice),
                 mark = SuggestionMark.New,
                 layout = layout,
                 modifier = modifier,
-                link = NoticeLink(stringResource(R.string.language_pattern_practice)) { open(AppRoute.Pattern(pattern.id.toString())) },
-            )
+            ) { open(AppRoute.Pattern(pattern.id.toString())) }
         }
     }
 }
-
-private class NoticeLink(
-    val action: String,
-    val onOpen: () -> Unit,
-)
 
 @Composable
 private fun PracticeNotice(
     label: String,
     summary: String,
     description: String,
+    action: String,
     mark: SuggestionMark,
     layout: SuggestionLayout,
     modifier: Modifier,
-    link: NoticeLink? = null,
+    onOpen: () -> Unit,
 ) {
     Suggestion(
         label = label,
@@ -196,21 +180,19 @@ private fun PracticeNotice(
         layout = layout,
         modifier = modifier,
         mark = mark,
-        lineAction = link?.let { { SuggestionAction(it.action, it.onOpen, secondary = true) } },
+        lineAction = { SuggestionAction(action, onOpen, secondary = true) },
     ) {
         SuggestionHeader(label)
         SuggestionDescription(description)
-        link?.let {
-            SuggestionActions {
-                SuggestionAction(
-                    it.action,
-                    {
-                        close()
-                        it.onOpen()
-                    },
-                    secondary = true,
-                )
-            }
+        SuggestionActions {
+            SuggestionAction(
+                action,
+                {
+                    close()
+                    onOpen()
+                },
+                secondary = true,
+            )
         }
     }
 }

@@ -14,11 +14,13 @@ export function offeredToGoal(goalId: string) {
 
 export function findFreshMistakePattern({
   goalId,
+  kind,
   language,
   mistakeIds,
   userId,
 }: {
   goalId?: string;
+  kind?: "pattern";
   language: string;
   mistakeIds?: readonly string[];
   userId: string;
@@ -30,6 +32,7 @@ export function findFreshMistakePattern({
       createdAt: { gte: new Date(Date.now() - FRESH_DAYS * MS_PER_DAY) },
       dismissedAt: null,
       ...(goalId ? offeredToGoal(goalId) : {}),
+      ...(kind ? { kind } : {}),
       language,
       practicedAt: null,
       userId,

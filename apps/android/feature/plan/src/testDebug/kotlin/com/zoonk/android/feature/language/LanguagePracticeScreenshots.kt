@@ -97,7 +97,6 @@ class LanguagePracticeScreenshots {
 
         fun alphabet(pending: Boolean) = LanguageUnitsAlphabet(null, UUID.randomUUID(), 10, pending, "Hiragana")
         val pattern = TodayPattern(UUID.randomUUID(), TodayPattern.Kind.PATTERN, "Ser and estar")
-        val typos = TodayPattern(UUID.randomUUID(), TodayPattern.Kind.TYPOS, "")
         val words = LanguageTodayPronunciation(3, listOf("hola", "gracias", "perro"))
 
         compose.setContent {
@@ -108,7 +107,6 @@ class LanguagePracticeScreenshots {
                         AlphabetRow(alphabet(pending = true), goal, alphabetSkip(goal, store), {})
                         AlphabetRow(alphabet(pending = false), goal, alphabetSkip(goal, store), {})
                         LanguagePracticeNotice(goal, pattern, words, SuggestionLayout.Line, {})
-                        LanguagePracticeNotice(goal, typos, null, SuggestionLayout.Line, {})
                         LanguagePracticeNotice(goal, pattern, null, SuggestionLayout.Panel, {})
                     }
                 }
