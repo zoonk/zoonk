@@ -58,6 +58,8 @@ const REAL_TIME_TEST_TIMEOUT_MS = 30_000;
 const PHONE = { height: 812, width: 375 };
 const PHONE_LANDSCAPE = { height: 375, width: 812 };
 const HALF_TAP_TARGET_PX = 21;
+// Above a white key's rounded bottom corners, where its whole width takes a tap.
+const KEY_CORNER_PX = 12;
 const SUBPIXEL_PX = 1;
 
 const { byEar, byEarChoice } = engineModeFixtures.keyboardFretboard;
@@ -84,13 +86,11 @@ function exploredStep(id: string) {
 }
 
 function cutOffKeys(names: string[]) {
-  const shown = document
-    .querySelector("[data-slot='piano-keyboard-scroll']")
-    ?.getBoundingClientRect();
+  const shown = page.getByRole("group", { name: "Piano keys" }).element().getBoundingClientRect();
 
   return names.filter((name) => {
     const key = pianoKey(name).element().getBoundingClientRect();
-    return !shown || key.left < shown.left - SUBPIXEL_PX || key.right > shown.right + SUBPIXEL_PX;
+    return key.left < shown.left - SUBPIXEL_PX || key.right > shown.right + SUBPIXEL_PX;
   });
 }
 
@@ -100,7 +100,7 @@ function tapsLandOn(key: Element) {
   const center = left + width / 2;
 
   return [center - HALF_TAP_TARGET_PX, center + HALF_TAP_TARGET_PX].every(
-    (x) => document.elementFromPoint(x, bottom - 4)?.closest("button") === key,
+    (x) => document.elementFromPoint(x, bottom - KEY_CORNER_PX)?.closest("button") === key,
   );
 }
 
@@ -127,13 +127,16 @@ describe("music activities", () => {
 
   it("keyboard: changing one note turns C major into C minor", async () => {
     openActivity({ template: "keyboardFretboard" });
-    await expect.element(page.getByText("C minor", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("C major", { exact: true })).toBeVisible();
     await expect.element(pianoKey("E")).toHaveAttribute("aria-pressed", "true");
     await expect.element(page.getByText("Same chord on guitar")).toBeVisible();
     await pianoKey("E").click();
     await pianoKey("E flat").click();
+    await expect.element(page.getByText("Your notes", { exact: true })).toBeVisible();
+    await expectCount(page.getByText("C minor", { exact: true }), 0);
     await checkActivity();
     await expectVerdict("Correct!");
+    await expect.element(page.getByText("C minor", { exact: true })).toBeVisible();
     await expect.element(page.getByText("C, E♭, G")).toBeVisible();
   });
 
@@ -337,7 +340,7 @@ describe("music activities", () => {
 describe("music activities with a keyboard only", () => {
   it("keyboard: changing one note turns C major into C minor", async () => {
     openActivity({ template: "keyboardFretboard" });
-    await expect.element(page.getByText("C minor", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("C major", { exact: true })).toBeVisible();
     await expect.element(pianoKey("E")).toHaveAttribute("aria-pressed", "true");
     await expect.element(page.getByText("Same chord on guitar")).toBeVisible();
 
