@@ -71,18 +71,15 @@ export function WorkedExampleContent({
   const [openedWith] = useState(revealed);
 
   return (
-    <div
-      className={cn(highlighter, "flex w-full flex-col gap-5 lg:max-w-xl")}
-      data-slot="worked-example"
-    >
+    <div className={cn(highlighter, "flex w-full flex-col gap-5")} data-slot="worked-example">
       {/* The title heads the problem as an explanation's heads its text. */}
-      <div>
+      <div className="lg:max-w-xl">
         {content.title && <LessonStepHeading>{content.title}</LessonStepHeading>}
         <MarkedText className={LESSON_BODY_CLASS} marks={marks} text={content.problem} />
       </div>
       {figure}
 
-      <ol aria-label={t("Steps")} aria-live="polite" className="flex flex-col gap-3">
+      <ol aria-label={t("Steps")} aria-live="polite" className="flex flex-col gap-3 lg:max-w-xl">
         {content.steps.slice(0, revealed).map((step, index) => {
           const key = `step-${index}`;
 
