@@ -231,6 +231,7 @@ export function UnitCircleDial({
           formatValue={formatValue}
           names={names}
           point={point}
+          radius={radius}
           show={show}
           target={target ? onCircle(center, radius, target.degrees) : null}
           values={values}

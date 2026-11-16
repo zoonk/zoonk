@@ -4,6 +4,7 @@ import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type LinearScale, type NumericDomain, createLinearScale } from "@zoonk/utils/plot-scale";
 import { createContext, use } from "react";
+import { edgeAnchor, estimatedLabelWidth } from "../_utils/drawing-label";
 import { PLOT_TICK_ROOM } from "../_utils/plot-ticks";
 import { type PlotPoint, linePath } from "../_utils/sample-formula";
 
@@ -114,23 +115,24 @@ export function ActivityPlotAxisX({
   format: (value: number) => string;
   ticks: readonly number[];
 }) {
-  const { width, x, y } = usePlotScales();
+  const { x, y } = usePlotScales();
   const [bottom] = y.range;
 
   return (
     <g aria-hidden="true">
       {ticks.map((tick) => {
-        const atEnd = x.toPixel(tick) >= width - PLOT_LINE_WIDTH;
+        const label = format(tick);
+        const at = x.toPixel(tick);
 
         return (
           <text
             className="fill-muted-foreground"
             key={tick}
-            textAnchor={atEnd ? "end" : "middle"}
-            x={atEnd ? width : x.toPixel(tick)}
+            textAnchor={edgeAnchor({ at, range: x.range, width: estimatedLabelWidth(label) })}
+            x={at}
             y={bottom + X_LABEL_OFFSET}
           >
-            {format(tick)}
+            {label}
           </text>
         );
       })}

@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useLayoutEffect, useRef, useState } from "react";
 import { DRAWING_LABEL_HALO } from "../_utils/drawing-label";
+import { type LabelBaseline, sinLabelPlacement } from "./unit-circle-label";
 import { type TrigName } from "./use-unit-circle-format";
 
 type Vector = { x: number; y: number };
@@ -12,8 +13,6 @@ type DrawnSizes = Record<"angle" | "cos" | "sin", Size>;
 const HALF_TURN = 180;
 const LABEL_GAP = 8;
 const SEGMENT_WIDTH = 4;
-const SIN_LABEL_GAP = 26;
-const SIN_LABEL_PAST_POINT = 25;
 const ANGLE_LABEL_STEP = 2;
 const ANGLE_LABEL_STEPS = 30;
 const NOTHING: Size = { height: 0, width: 0 };
@@ -36,8 +35,6 @@ export function arcPath(center: Vector, radius: number, degrees: number): string
 
   return `M${center.x + radius} ${center.y} A${radius} ${radius} 0 ${large} 0 ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
 }
-
-type LabelBaseline = "middle" | "text-after-edge" | "text-before-edge";
 
 export function DialLabel({
   anchor,
@@ -116,51 +113,6 @@ export function TangentMark({
   );
 }
 
-function sinLabelPlacement({
-  canvas,
-  foot,
-  isAbove,
-  isLeft,
-  labelWidth,
-  point,
-  target,
-}: {
-  canvas: { width: number };
-  foot: Vector;
-  isAbove: boolean;
-  isLeft: boolean;
-  labelWidth: number;
-  point: Vector;
-  target: Vector | null;
-}): { anchor: "end" | "middle" | "start"; baseline: LabelBaseline; point: Vector } {
-  const beside = foot.x + (isLeft ? -1 : 1) * SIN_LABEL_GAP;
-  const fits = isLeft ? beside - labelWidth >= 0 : beside + labelWidth <= canvas.width;
-
-  if (fits) {
-    return {
-      anchor: isLeft ? "end" : "start",
-      baseline: "middle",
-      point: { x: beside, y: (foot.y + point.y) / 2 },
-    };
-  }
-
-  const isTargetPast =
-    target !== null &&
-    Math.abs(target.x - point.x) < labelWidth &&
-    (isAbove ? target.y < point.y : target.y > point.y);
-
-  const outermost = isTargetPast ? target.y : point.y;
-
-  return {
-    anchor: "middle",
-    baseline: isAbove ? "text-after-edge" : "text-before-edge",
-    point: {
-      x: Math.min(Math.max(foot.x, labelWidth / 2), canvas.width - labelWidth / 2),
-      y: outermost + (isAbove ? -1 : 1) * SIN_LABEL_PAST_POINT,
-    },
-  };
-}
-
 function sizeOf(node: SVGTextElement | null): Size {
   const box = node?.getBBox();
   return box ? { height: box.height, width: box.width } : NOTHING;
@@ -203,6 +155,7 @@ export function TrigLegsAndAngle({
   formatValue,
   names,
   point,
+  radius,
   show,
   target,
   values,
@@ -213,12 +166,12 @@ export function TrigLegsAndAngle({
   formatValue: (value: number | null) => string;
   names: Record<TrigName, string>;
   point: Vector;
+  radius: number;
   show: readonly TrigName[];
   target: Vector | null;
   values: Partial<Record<TrigName, number | null>>;
 }) {
   const foot = { x: point.x, y: center.y };
-  const isLeft = point.x < center.x;
   const isAbove = point.y <= center.y;
   const sinLabel = `${names.sin} = ${formatValue(values.sin ?? null)}`;
   const cosLabel = `${names.cos} = ${formatValue(values.cos ?? null)}`;
@@ -255,11 +208,10 @@ export function TrigLegsAndAngle({
 
   const sinPlacement = sinLabelPlacement({
     canvas,
-    foot,
-    isAbove,
-    isLeft,
-    labelWidth: sizes.sin.width,
+    center,
+    label: sizes.sin,
     point,
+    radius,
     target,
   });
 

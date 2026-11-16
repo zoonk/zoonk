@@ -1,10 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { type LabelBox, placeLineLabels } from "./line-crossing-labels";
+import {
+  ARROW_HEAD,
+  ARROW_STROKE,
+  type LabelBox,
+  changeArrows,
+  placeLineLabels,
+} from "./line-crossing-labels";
 import { type Point } from "./line-crossing-model";
 
 const area = { bottom: 222, left: 22, right: 311, top: 26 };
 const size = { height: 12, width: 50 };
-const noMarks = { arrows: [], circles: [], lines: [] };
+const noMarks = { boxes: [], circles: [], lines: [] };
 
 function gapToSegment(box: LabelBox, { from, to }: { from: Point; to: Point }): number {
   const samples = Array.from({ length: 201 }, (_, index) => ({
@@ -43,7 +49,7 @@ describe(placeLineLabels, () => {
     expect(box && gapToSegment(box, segment)).toBeLessThan(20);
   });
 
-  it("puts a lower end's name under its line", () => {
+  it("puts a dashed copy's name under its line, at the end where the line names sit", () => {
     const segment = { from: { x: 22, y: 150 }, to: { x: 293, y: 90 } };
 
     const [box] = placeLineLabels({
@@ -52,8 +58,39 @@ describe(placeLineLabels, () => {
       marks: noMarks,
     });
 
-    expect(box?.top).toBeGreaterThan(150);
+    expect(box?.right).toBeGreaterThan(250);
+    expect(box?.top).toBeGreaterThan(150 + ((90 - 150) * ((box?.right ?? 0) - 22)) / (293 - 22));
     expect(box && gapToSegment(box, segment)).toBeGreaterThanOrEqual(3);
+  });
+
+  it("keeps a name nearer its own line than any other line", () => {
+    const revenue = { from: { x: 22, y: 218 }, to: { x: 558, y: 27 } };
+    const cost = { from: { x: 22, y: 150 }, to: { x: 558, y: 86 } };
+    const answer = { from: { x: 22, y: 133 }, to: { x: 554, y: 70 } };
+    const wide = { height: 12, width: 88 };
+
+    const boxes = placeLineLabels({
+      area: { bottom: 218, left: 22, right: 558, top: 26 },
+      labels: [
+        { isUpper: true, segment: revenue, size: { height: 12, width: 50 } },
+        { isUpper: true, segment: cost, size: { height: 12, width: 28 } },
+        { isUpper: false, segment: answer, size: wide },
+      ],
+      marks: {
+        boxes: [],
+        circles: [
+          { cx: 461, cy: 62, radius: 15 },
+          { cx: 461, cy: 98, radius: 15 },
+          { cx: 308, cy: 116, radius: 7 },
+        ],
+        lines: [revenue, cost, answer],
+      },
+    });
+
+    const box = boxes[2];
+
+    expect(box && gapToSegment(box, answer)).toBeLessThan(box ? gapToSegment(box, cost) : 0);
+    expect(box && gapToSegment(box, answer)).toBeLessThan(box ? gapToSegment(box, revenue) : 0);
   });
 
   it("moves a name off a drag handle in its way", () => {
@@ -146,7 +183,7 @@ describe(placeLineLabels, () => {
     const [box] = placeLineLabels({
       area,
       labels: [{ isUpper: true, segment, size }],
-      marks: { ...noMarks, arrows: [arrow], circles: [everywhere] },
+      marks: { ...noMarks, boxes: [arrow], circles: [everywhere] },
     });
 
     expect(box && gapToBox(box, arrow)).toBeGreaterThanOrEqual(3);
@@ -168,5 +205,36 @@ describe(placeLineLabels, () => {
 
     expect(name).not.toBeNull();
     expect(optional).toBeNull();
+  });
+});
+
+describe(changeArrows, () => {
+  const corner = { bottom: 218, left: 22 };
+  const head = (ARROW_HEAD * ARROW_STROKE) / 2;
+
+  it("draws each arrow between the guides it spans, its head clear of the axis", () => {
+    const [up, along] = changeArrows({
+      after: { x: 260, y: 80 },
+      before: { x: 300, y: 120 },
+      ...corner,
+    });
+
+    expect(up?.from.y).toBeLessThan(120);
+    expect(up?.to.y).toBeGreaterThan(80);
+    expect((up?.from.x ?? 0) - head - corner.left).toBeGreaterThanOrEqual(6);
+    expect(along?.from.x).toBeLessThan(300);
+    expect(along?.to.x).toBeGreaterThan(260);
+    expect(corner.bottom - (along?.from.y ?? 0) - head).toBeGreaterThanOrEqual(6);
+  });
+
+  it("leaves out an arrow too short to show more than its head", () => {
+    const arrows = changeArrows({
+      after: { x: 260, y: 110 },
+      before: { x: 300, y: 120 },
+      ...corner,
+    });
+
+    expect(arrows).toHaveLength(1);
+    expect(arrows[0]?.from.y).toBe(arrows[0]?.to.y);
   });
 });

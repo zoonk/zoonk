@@ -4,7 +4,7 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ActivityPlot, usePlotScales } from "../_components/activity-plot";
 import { HANDLE_RADIUS, HANDLE_STROKE, LineHandle } from "./line-crossing-handle";
-import { type LabelSize, placeLineLabels } from "./line-crossing-labels";
+import { type LabelSize, changeArrowBoxes, placeLineLabels } from "./line-crossing-labels";
 import {
   Axes,
   CROSSING_RADIUS,
@@ -14,7 +14,7 @@ import {
   CrossingGuide,
   LineLabel,
   LineMark,
-  changeArrowBoxes,
+  yTitleBox,
 } from "./line-crossing-marks";
 import {
   type ChartDomain,
@@ -55,6 +55,7 @@ function LineLabels({
   lines,
   offsets,
   slides,
+  yLabel,
 }: {
   answerLine: Line | null;
   axis: ShiftAxis;
@@ -63,6 +64,7 @@ function LineLabels({
   lines: readonly [ChartLine, ChartLine];
   offsets: LineOffsets;
   slides: readonly LineAndSlide[];
+  yLabel: string;
 }) {
   const t = useExtracted();
   const scales = usePlotScales();
@@ -70,11 +72,12 @@ function LineLabels({
   const offsetOf = (line: ChartLine) => offsets[line.id] ?? 0;
   const pixel = (point: Point) => ({ x: scales.x.toPixel(point.x), y: scales.y.toPixel(point.y) });
 
+  // A line that leaves through the chart's top keeps its name over its end, in the room above the chart.
   const area = {
     bottom: scales.y.range[0],
     left: scales.x.range[0],
-    right: scales.width,
-    top: scales.y.range[1],
+    right: scales.x.range[1],
+    top: 0,
   };
 
   const handles = slides.map(({ line, slide }) => {
@@ -89,9 +92,17 @@ function LineLabels({
   );
 
   const marks = {
-    arrows: crossings.before
-      ? changeArrowBoxes({ after: crossings.after, before: crossings.before, ...scales })
-      : [],
+    boxes: [
+      yTitleBox({ left: scales.x.range[0], title: yLabel, top: scales.y.range[1] }),
+      ...(crossings.before
+        ? changeArrowBoxes({
+            after: pixel(crossings.after),
+            before: pixel(crossings.before),
+            bottom: scales.y.range[0],
+            left: scales.x.range[0],
+          })
+        : []),
+    ],
     circles: [...handles, ...dots],
   };
 
@@ -239,6 +250,7 @@ export function LineCrossingChart({
         lines={lines}
         offsets={offsets}
         slides={slides}
+        yLabel={yLabel}
       />
 
       {moved.length > 0 && (
