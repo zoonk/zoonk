@@ -32,6 +32,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -232,10 +233,14 @@ class FitOfferWindowTest {
                 CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
             )
         FitOfferTest.visible = true
+        api.shownPlan = plan
+        val store = PlanStore(api, cache)
+        runBlocking(Dispatchers.Main.immediate) { store.plan[page.goal.id].refresh() }
+        FitOfferTest.store = store
         FitOfferTest.page = page
         FitOfferTest.viewModel =
             PlanViewModel(
-                PlanStore(api, cache),
+                store,
                 page.goal.id,
                 writingWaits(WritingRuns(write = "writeSetupLessons", ready = "setupLessonsReady")),
                 PlanNavigationModel(GoalSwitch { true }),
@@ -249,7 +254,14 @@ class FitOfferWindowTest {
 object FitOfferTest {
     /** False while the learner is away from the Plan, its view models kept, as another tab keeps them. */
     var visible by mutableStateOf(true)
-    var page by mutableStateOf<PlanPageState?>(null)
+    private var shownPage by mutableStateOf<PlanPageState?>(null)
+    lateinit var store: PlanStore
+    var page: PlanPageState?
+        get() = shownPage
+        set(value) {
+            value?.let { page -> store.plan[page.goal.id].update { it.copy(plan = page.plan) } }
+            shownPage = value
+        }
     lateinit var viewModel: PlanViewModel
 }
 

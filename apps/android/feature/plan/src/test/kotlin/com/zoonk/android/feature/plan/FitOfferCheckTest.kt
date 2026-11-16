@@ -34,6 +34,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -57,15 +58,17 @@ class FitOfferCheckTest {
             """"lessonsRemoved":0,"topicsAdded":[{"area":"Web apps","topics":["Flask","Django","FastAPI"]}]}}"""
     private val plan = plan(offer)
     private var page by mutableStateOf(PlanPageState(summary.goals.first(), plan, summary))
+    private val store =
+        PlanStore(
+            api,
+            AppCache(
+                FakeSession(AuthenticatedSession("ana", "token-a", "local-a")),
+                CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
+            ),
+        )
     private val viewModel =
         PlanViewModel(
-            PlanStore(
-                api,
-                AppCache(
-                    FakeSession(AuthenticatedSession("ana", "token-a", "local-a")),
-                    CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
-                ),
-            ),
+            store,
             page.goal.id,
             writingWaits(WritingRuns(write = "writeSetupLessons", ready = "setupLessonsReady")),
             PlanNavigationModel(GoalSwitch { true }),
@@ -100,6 +103,7 @@ class FitOfferCheckTest {
 
         compose.onNodeWithText("Add to my plan").performClick()
         page = page.copy(plan = plan(""""estimate":{"remainingHours":9,"totalHours":12},$offer"""))
+        store.plan[page.goal.id].update { it.copy(plan = page.plan) }
         compose.waitForIdle()
         shown = false
         compose.waitForIdle()
@@ -204,6 +208,8 @@ class FitOfferCheckTest {
         PlanChangePreview(finishDate = null, effect = effect, feasibility = null, ready = true, unchanged = false)
 
     private fun show() {
+        api.shownPlan = page.plan
+        runBlocking(Dispatchers.Main.immediate) { store.plan[page.goal.id].refresh() }
         compose.setContent {
             ZoonkTheme {
                 val preview by viewModel.slotPreview.collectAsState()

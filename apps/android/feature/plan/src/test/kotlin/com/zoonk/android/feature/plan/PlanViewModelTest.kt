@@ -20,6 +20,7 @@ import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.PlanDay
 import com.zoonk.api.models.PlanEffect
+import com.zoonk.api.models.PlanItem
 import com.zoonk.api.models.PlanTool
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -159,7 +160,7 @@ class PlanViewModelTest {
             api.previewGate = held
             api.preview = checked(FIT_PLAN.fitOffer!!.effect)
 
-            viewModel.addFitOffer(FIT_PLAN, FIT_PLAN.fitOffer!!)
+            viewModel.addFitOffer(shown(FIT_PLAN), FIT_PLAN.fitOffer!!)
 
             assertTrue(viewModel.slotPreview.value is PlanPreviewState.Loading)
             assertEquals(emptyList<List<PlanOp>>(), api.changes)
@@ -168,13 +169,316 @@ class PlanViewModelTest {
         }
 
     @Test
+    fun aFitCheckForAChangedPlanAddsNothing() =
+        runTest {
+            val plan = shown(FIT_PLAN)
+            val held = CompletableDeferred<Unit>().also { api.previewGate = it }
+            api.preview = checked(plan.fitOffer!!.effect)
+            viewModel.addFitOffer(plan, plan.fitOffer!!)
+            shown(plan.copy(schedule = plan.schedule.copy(dailyMinutes = 30)))
+            held.complete(Unit)
+            assertTrue(api.changes.isEmpty())
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+        }
+
+    @Test
+    fun anUnchangedRefreshKeepsTheFitWait() =
+        runTest {
+            val plan = shown(FIT_PLAN)
+            val held = CompletableDeferred<Unit>().also { api.previewGate = it }
+            api.preview = checked(plan.fitOffer!!.effect)
+            viewModel.addFitOffer(plan, plan.fitOffer!!)
+            shown(plan.copy())
+            assertTrue(viewModel.slotPreview.value is PlanPreviewState.Loading)
+            held.complete(Unit)
+            assertEquals(listOf(FIT_OPERATIONS), api.changes)
+        }
+
+    @Test
+    fun aPastDatePreviewEndsWithANewDay() =
+        runTest {
+            val plan = shown(onDay("2026-10-27"))
+            val held = CompletableDeferred<Unit>().also { api.previewGate = it }
+            viewModel.requestSlotPreview(plan, listOf(PlanOp.TargetDate(LocalDate.parse("2027-06-12"))))
+            shown(onDay("2026-10-28", plan))
+            held.complete(Unit)
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+        }
+
+    @Test
+    fun aPastDatePreviewEndsWithLessWorkLeft() =
+        runTest {
+            val plan = shown(onDay("2026-10-27"))
+            val held = CompletableDeferred<Unit>().also { api.previewGate = it }
+            viewModel.requestSlotPreview(plan, listOf(PlanOp.TargetDate(LocalDate.parse("2027-06-12"))))
+            shown(plan.copy(steering = plan.steering.copy(lessonsStudied = 1)))
+            held.complete(Unit)
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+        }
+
+    @Test
+    fun aCoveragePreviewEndsWithANewDay() =
+        runTest {
+            val plan = shown(onDay("2026-10-27"))
+            val held = CompletableDeferred<Unit>().also { api.previewGate = it }
+            viewModel.requestSlotPreview(plan, listOf(PlanOp.DailyMinutes(45)))
+            shown(onDay("2026-10-28", plan))
+            held.complete(Unit)
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+        }
+
+    @Test
+    fun aCoveragePreviewEndsWithLessWorkLeft() =
+        runTest {
+            val plan = shown(onDay("2026-10-27"))
+            val held = CompletableDeferred<Unit>().also { api.previewGate = it }
+            viewModel.requestSlotPreview(plan, listOf(PlanOp.DailyMinutes(45)))
+            shown(plan.copy(steering = plan.steering.copy(lessonsStudied = 1)))
+            held.complete(Unit)
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+        }
+
+    @Test
+    fun aPastDatePreviewSurvivesAFocusTestRefresh() =
+        runTest {
+            val plan = shown()
+            val held = CompletableDeferred<Unit>().also { api.previewGate = it }
+            val operations = listOf(PlanOp.TargetDate(LocalDate.parse("2027-06-12")))
+            viewModel.requestSlotPreview(plan, operations)
+            val refreshed =
+                shown(
+                    plan.copy(
+                        focusTest =
+                            ApiJson.decodeFromString(
+                                """{"offer":null,"sessionQuestions":"on","state":"checked","suggestsFocus":true}""",
+                            ),
+                    ),
+                )
+            assertTrue(viewModel.slotPreview.value.of(operations, refreshed) is PlanPreviewState.Loading)
+            held.complete(Unit)
+            assertTrue(viewModel.slotPreview.value.of(operations, refreshed) is PlanPreviewState.Ready)
+        }
+
+    @Test
+    fun aCoveragePreviewSurvivesAFocusTestRefresh() =
+        runTest {
+            val plan = shown()
+            val held = CompletableDeferred<Unit>().also { api.previewGate = it }
+            val operations = listOf(PlanOp.DailyMinutes(45))
+            viewModel.requestSlotPreview(plan, operations)
+            val refreshed =
+                shown(
+                    plan.copy(
+                        focusTest =
+                            ApiJson.decodeFromString(
+                                """{"offer":null,"sessionQuestions":"on","state":"checked","suggestsFocus":true}""",
+                            ),
+                    ),
+                )
+            assertTrue(viewModel.slotPreview.value.of(operations, refreshed) is PlanPreviewState.Loading)
+            held.complete(Unit)
+            assertTrue(viewModel.slotPreview.value.of(operations, refreshed) is PlanPreviewState.Ready)
+        }
+
+    @Test
+    fun aPastDateSearchEndsWithANewDay() =
+        runTest {
+            val plan = shown(onDay("2026-10-27"))
+            val held = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
+            viewModel.findTimeToCover(plan, TimeAsker.PastDate(request = 1))
+            shown(onDay("2026-10-28", plan))
+            held.complete(Unit)
+            assertEquals(
+                TimeToCoverOutcome.Stale,
+                viewModel.outcomes.pastDateFound.value
+                    ?.outcome,
+            )
+            assertEquals(TimeToCoverState.Idle, viewModel.timeToCover.value)
+        }
+
+    @Test
+    fun aPastDateSearchEndsWithLessWorkLeft() =
+        runTest {
+            val plan = shown(onDay("2026-10-27"))
+            val held = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
+            viewModel.findTimeToCover(plan, TimeAsker.PastDate(request = 1))
+            shown(plan.copy(steering = plan.steering.copy(lessonsStudied = 1)))
+            held.complete(Unit)
+            assertEquals(
+                TimeToCoverOutcome.Stale,
+                viewModel.outcomes.pastDateFound.value
+                    ?.outcome,
+            )
+            assertEquals(TimeToCoverState.Idle, viewModel.timeToCover.value)
+        }
+
+    @Test
+    fun aCoverageSearchEndsWithANewDay() =
+        runTest {
+            val plan = shown(onDay("2026-10-27"))
+            val held = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
+            viewModel.findTimeToCover(plan, TimeAsker.Coverage(CoverageIntent.Time))
+            shown(onDay("2026-10-28", plan))
+            held.complete(Unit)
+            assertEquals(
+                TimeToCoverOutcome.Stale,
+                viewModel.outcomes.coverageFound.value
+                    ?.outcome,
+            )
+            assertEquals(TimeToCoverState.Idle, viewModel.timeToCover.value)
+        }
+
+    @Test
+    fun aCoverageSearchEndsWithLessWorkLeft() =
+        runTest {
+            val plan = shown(onDay("2026-10-27"))
+            val held = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
+            viewModel.findTimeToCover(plan, TimeAsker.Coverage(CoverageIntent.Time))
+            shown(plan.copy(steering = plan.steering.copy(lessonsStudied = 1)))
+            held.complete(Unit)
+            assertEquals(
+                TimeToCoverOutcome.Stale,
+                viewModel.outcomes.coverageFound.value
+                    ?.outcome,
+            )
+            assertEquals(TimeToCoverState.Idle, viewModel.timeToCover.value)
+        }
+
+    @Test
+    fun aPastDateSearchSurvivesAFocusTestRefresh() =
+        runTest {
+            val plan = shown()
+            val held = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
+            viewModel.findTimeToCover(plan, TimeAsker.PastDate(request = 1))
+            shown(
+                plan.copy(
+                    focusTest =
+                        ApiJson.decodeFromString(
+                            """{"offer":null,"sessionQuestions":"on","state":"checked","suggestsFocus":true}""",
+                        ),
+                ),
+            )
+            assertTrue(viewModel.timeToCover.value is TimeToCoverState.Pending)
+            held.complete(Unit)
+            assertEquals(
+                TimeToCoverOutcome.Answered(api.timeToCover),
+                viewModel.outcomes.pastDateFound.value
+                    ?.outcome,
+            )
+        }
+
+    @Test
+    fun aCoverageSearchSurvivesAFocusTestRefresh() =
+        runTest {
+            val plan = shown()
+            val held = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
+            viewModel.findTimeToCover(plan, TimeAsker.Coverage(CoverageIntent.Time))
+            shown(
+                plan.copy(
+                    focusTest =
+                        ApiJson.decodeFromString(
+                            """{"offer":null,"sessionQuestions":"on","state":"checked","suggestsFocus":true}""",
+                        ),
+                ),
+            )
+            assertTrue(viewModel.timeToCover.value is TimeToCoverState.Pending)
+            held.complete(Unit)
+            assertEquals(
+                TimeToCoverOutcome.Answered(api.timeToCover),
+                viewModel.outcomes.coverageFound.value
+                    ?.outcome,
+            )
+        }
+
+    @Test
+    fun aCoveragePreviewSurvivesALessonFinishingWriting() =
+        runTest {
+            val plan = shown(withWritingLesson())
+            val held = CompletableDeferred<Unit>().also { api.previewGate = it }
+            val operations = listOf(PlanOp.DailyMinutes(45))
+            viewModel.requestSlotPreview(plan, operations)
+            val refreshed =
+                shown(
+                    plan.copy(
+                        week =
+                            plan.week.copy(
+                                days =
+                                    plan.week.days.map { day ->
+                                        day.copy(items = day.items.map { it.copy(writing = false) })
+                                    },
+                            ),
+                    ),
+                )
+            assertEquals(planAdviceRevision(plan), planAdviceRevision(refreshed))
+            assertTrue(viewModel.slotPreview.value.of(operations, refreshed) is PlanPreviewState.Loading)
+            held.complete(Unit)
+            assertTrue(viewModel.slotPreview.value is PlanPreviewState.Ready)
+            assertTrue(viewModel.slotPreview.value.of(operations, refreshed) is PlanPreviewState.Ready)
+        }
+
+    @Test
+    fun aPastDatePreviewSurvivesALessonFinishingWriting() =
+        runTest {
+            val plan = shown(withWritingLesson())
+            val held = CompletableDeferred<Unit>().also { api.previewGate = it }
+            val operations = listOf(PlanOp.TargetDate(LocalDate.parse("2027-06-12")))
+            viewModel.requestSlotPreview(plan, operations)
+            val refreshed =
+                shown(
+                    plan.copy(
+                        week =
+                            plan.week.copy(
+                                days =
+                                    plan.week.days.map { day ->
+                                        day.copy(items = day.items.map { it.copy(writing = false) })
+                                    },
+                            ),
+                    ),
+                )
+            assertEquals(planAdviceRevision(plan), planAdviceRevision(refreshed))
+            assertTrue(viewModel.slotPreview.value.of(operations, refreshed) is PlanPreviewState.Loading)
+            held.complete(Unit)
+            assertTrue(viewModel.slotPreview.value is PlanPreviewState.Ready)
+            assertTrue(viewModel.slotPreview.value.of(operations, refreshed) is PlanPreviewState.Ready)
+        }
+
+    @Test
+    fun aPrerequisiteRecommendationSurvivesAnEstimateOnlyRefresh() =
+        runTest {
+            val plan = shown()
+            viewModel.askBasesAdvice(plan)
+            val refreshed = shown(plan.copy(estimate = plan.estimate.copy(remainingHours = 5.0)))
+            assertEquals(PlanBase.Choice.ESSENTIAL, viewModel.basesAdvice.value.recommendedFor(refreshed))
+            assertEquals(planAdviceRevision(plan), planAdviceRevision(refreshed))
+        }
+
+    private fun withWritingLesson(): Plan {
+        val plan = onDay("2026-10-27")
+        val lesson =
+            PlanItem(
+                chapterId = null,
+                id = null,
+                kind = PlanItem.Kind.LESSON,
+                lessonId = null,
+                minutes = 20.0,
+                requiresPlus = false,
+                scheduledFor = null,
+                skillId = null,
+                status = PlanItem.Status.TODO,
+                title = "Lists",
+                writing = true,
+            )
+        return plan.copy(week = plan.week.copy(days = plan.week.days.map { it.copy(items = listOf(lesson)) }))
+    }
+
+    @Test
     fun aFitCheckPutOffWithNotNowOrAClosedSuggestionAddsNothing() =
         runTest {
             val held = CompletableDeferred<Unit>()
             api.previewGate = held
             api.preview = checked(FIT_PLAN.fitOffer!!.effect)
 
-            viewModel.addFitOffer(FIT_PLAN, FIT_PLAN.fitOffer!!)
+            viewModel.addFitOffer(shown(FIT_PLAN), FIT_PLAN.fitOffer!!)
             viewModel.clearSlotPreview()
             held.complete(Unit)
 
@@ -188,12 +492,12 @@ class PlanViewModelTest {
             val today = ApiJson.decodeFromString<PlanEffect>(effect(""""lessonsAdded":4"""))
             api.preview = checked(today)
 
-            viewModel.addFitOffer(FIT_PLAN, FIT_PLAN.fitOffer!!)
+            viewModel.addFitOffer(shown(FIT_PLAN), FIT_PLAN.fitOffer!!)
 
             assertEquals(emptyList<List<PlanOp>>(), api.changes)
             assertEquals(today, (viewModel.slotPreview.value as PlanPreviewState.Ready).preview.effect)
 
-            viewModel.addFitOffer(FIT_PLAN, FIT_PLAN.fitOffer!!)
+            viewModel.addFitOffer(shown(FIT_PLAN), FIT_PLAN.fitOffer!!)
 
             assertEquals(listOf(FIT_OPERATIONS), api.changes)
         }
@@ -203,7 +507,7 @@ class PlanViewModelTest {
         runTest {
             api.preview = PlanChangePreview(finishDate = null, effect = null, feasibility = null, ready = false, unchanged = false)
 
-            viewModel.addFitOffer(FIT_PLAN, FIT_PLAN.fitOffer!!)
+            viewModel.addFitOffer(shown(FIT_PLAN), FIT_PLAN.fitOffer!!)
 
             assertTrue(viewModel.slotPreview.value is PlanPreviewState.Failed)
             assertEquals(emptyList<List<PlanOp>>(), api.changes)
@@ -215,7 +519,7 @@ class PlanViewModelTest {
             api.changeFailure = ApiException(ApiError.Network)
             val offer = FIT_PLAN.fitOffer!!.copy(canApply = true)
 
-            viewModel.addFitOffer(FIT_PLAN, offer)
+            viewModel.addFitOffer(shown(FIT_PLAN), offer)
 
             assertEquals(Unit, viewModel.outcomes.saveFailed.value)
         }

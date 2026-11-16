@@ -12,7 +12,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -311,10 +310,6 @@ internal fun PlanSuggestionSlot(
     host: SlotHost = SlotHost(),
     state: SlotState = remember { SlotState() },
 ) {
-    SideEffect {
-        val preview = host.preview
-        if (preview is PlanPreviewState.Asked && preview.plan != page.plan) host.clearPreview()
-    }
     val items = slotItemsLeft(page, host, state)
     val focus = remember { SlotFocus() }
     val slot = Slot(page, edits, links, host, state, layout, focus)

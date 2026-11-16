@@ -517,16 +517,23 @@ class PlanViewModel(
         viewModelScope.launch {
             val result = started.result.await()
             if (search === started) search = null
-            timeToCoverState.update { if (it == TimeToCoverState.Pending(revision)) result.state(revision) else it }
+            timeToCoverState.update {
+                when {
+                    it != TimeToCoverState.Pending(revision) -> it
+                    shownRevision() != revision -> TimeToCoverState.Idle
+                    else -> result.state(revision)
+                }
+            }
         }
         return started
     }
 
-    private fun shownRevision() =
+    private fun shownPlan() =
         store.plan[goalId]
             .state.value.value
             ?.plan
-            ?.let(::planAdviceRevision)
+
+    private fun shownRevision() = shownPlan()?.let(::planAdviceRevision)
 
     private class TimeToCoverSearch(
         val revision: List<Any?>,
@@ -596,9 +603,9 @@ class PlanViewModel(
             val asking = opened == outcomes.suggestion.number
             var wanted = false
             slotPreviewState.update { current ->
-                wanted = current === request && asking
+                wanted = current === request && asking && request.matchesPlan(shownPlan())
                 when {
-                    current === request && !asking -> PlanPreviewState.Idle
+                    current === request && !wanted -> PlanPreviewState.Idle
                     wanted && same -> PlanPreviewState.Idle
                     else -> current.resolve(request, today)
                 }
@@ -619,7 +626,13 @@ class PlanViewModel(
         viewModelScope.launch {
             val result = store.preview(goalId, operations)
             if (result is MutationResult.Obsolete) return@launch
-            state.update { it.resolve(request, (result as? MutationResult.Done)?.value) }
+            state.update {
+                when {
+                    it !== request -> it
+                    !request.matchesPlan(shownPlan()) -> PlanPreviewState.Idle
+                    else -> it.resolve(request, (result as? MutationResult.Done)?.value)
+                }
+            }
         }
     }
 

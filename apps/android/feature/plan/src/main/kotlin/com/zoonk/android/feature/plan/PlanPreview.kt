@@ -57,12 +57,21 @@ sealed class PlanPreviewState {
     ) : Asked(operations, plan)
 }
 
+/** Fit checks use the whole plan; date and coverage previews depend only on its advice inputs. */
+internal fun PlanPreviewState.Asked.matchesPlan(other: Plan?): Boolean =
+    other != null &&
+        if (PlanOp.FitLessons in operations) {
+            plan.copy(focusTest = null) == other.copy(focusTest = null)
+        } else {
+            planAdviceRevision(plan) == planAdviceRevision(other)
+        }
+
 /** Idle unless it previews [operations] on [plan]; a refresh that reads the same plan again keeps it. */
 internal fun PlanPreviewState.of(
     operations: List<PlanOp>,
     plan: Plan,
 ): PlanPreviewState =
-    if (this is PlanPreviewState.Asked && this.plan == plan &&
+    if (this is PlanPreviewState.Asked && matchesPlan(plan) &&
         this.operations == operations
     ) {
         this
