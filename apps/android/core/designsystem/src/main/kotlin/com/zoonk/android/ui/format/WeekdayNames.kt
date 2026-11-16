@@ -28,6 +28,9 @@ class WeekdayNames internal constructor(
 
     val shortInSentence: Map<DayOfWeek, String> = DayOfWeek.entries.associateWith { it.getDisplayName(TextStyle.SHORT, locale) }
 
+    /** A day picker's "Mon": Java's short names are lowercase in Portuguese, Spanish and French, and main capitalizes them. */
+    val picker: Map<DayOfWeek, String> = shortInSentence.mapValues { (_, name) -> name.replaceFirstChar { it.titlecase(locale) } }
+
     val narrow: Map<DayOfWeek, String> =
         DayOfWeek.entries.associateWith { it.getDisplayName(TextStyle.NARROW_STANDALONE, locale).uppercase(locale) }
 }
