@@ -388,9 +388,12 @@ private struct CountryQuestion: View {
   }
 }
 
+/// A pick moves on at once; Continue in the bar says a pick is what goes on, as main's step does.
 private struct PurposeQuestion: View {
   let subject: String
   let onAnswer: ([String: Any]) -> Void
+
+  @State private var picked: String?
 
   var body: some View {
     QuestionForm {
@@ -447,12 +450,22 @@ private struct PurposeQuestion: View {
               "Tell us later, in your own words", tableName: "Onboarding",
               comment: "Purpose choice detail")),
         ],
+        picked: picked,
         movesOn: true
       ) { purpose in
-        onAnswer(["purpose": purpose, "question": "purpose"])
+        picked = purpose
+        answer(purpose)
       }
       .locksWhileSaving()
+    } buttons: {
+      StepButtons(canContinue: picked != nil) {
+        picked.map(answer)
+      }
     }
+  }
+
+  private func answer(_ purpose: String) {
+    onAnswer(["purpose": purpose, "question": "purpose"])
   }
 }
 
@@ -1177,6 +1190,8 @@ private struct LevelQuestion: View {
   let testMinutes: Int
   let onAnswer: ([String: Any]) -> Void
 
+  @State private var picked: String?
+
   var body: some View {
     QuestionForm {
       StepHeader(
@@ -1185,11 +1200,22 @@ private struct LevelQuestion: View {
           "How much do you already know?", tableName: "Onboarding", comment: "Onboarding question"),
         description: nil)
 
-      ChoiceRows(choices: LevelChoices.all(testMinutes: testMinutes), movesOn: true) { level in
-        onAnswer(["level": LevelChoices.answer(level) ?? NSNull(), "question": "level"])
+      ChoiceRows(
+        choices: LevelChoices.all(testMinutes: testMinutes), picked: picked, movesOn: true
+      ) { level in
+        picked = level
+        answer(level)
       }
       .locksWhileSaving()
+    } buttons: {
+      StepButtons(canContinue: picked != nil) {
+        picked.map(answer)
+      }
     }
+  }
+
+  private func answer(_ level: String) {
+    onAnswer(["level": LevelChoices.answer(level) ?? NSNull(), "question": "level"])
   }
 }
 
