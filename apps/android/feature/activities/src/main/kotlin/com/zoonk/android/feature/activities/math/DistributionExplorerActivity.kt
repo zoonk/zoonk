@@ -78,7 +78,9 @@ private fun DistributionExplorerActivity(props: ActivityProps) {
     val between = percentBetween(distribution, Interval(low, high))
     val below = percentBetween(distribution, Interval(ends.from, low))
     val above = percentBetween(distribution, Interval(high, ends.to))
-    val percent = { value: Double -> formatAmount(value, locale, "%", maximumFractionDigits = PERCENT_DIGITS) }
+    // Every share reads to the check's precision, as the answer and its feedback do.
+    val checkDigits = (content.check as? NumericCheckValue)?.value?.let { exactFractionDigitsFor(it.answer, it.allowed, it.answer) }
+    val percent = { value: Double -> formatAmount(value, locale, "%", maximumFractionDigits = checkDigits ?: PERCENT_DIGITS) }
     val format = { value: Double -> formatAmount(value, locale) }
     val withUnit = { value: Double -> formatAmount(value, locale, fields.unit) }
     val change = { next: Pair<Double, Double> ->
@@ -123,14 +125,12 @@ private fun DistributionExplorerActivity(props: ActivityProps) {
             stringResource(R.string.activities_math_distribution_handle_value, withUnit(it), percent(between))
         }
 
-    // The checked share reads to the check's precision, as the answer and its feedback do.
-    val checkDigits = (content.check as? NumericCheckValue)?.value?.let { exactFractionDigitsFor(it.answer, it.allowed, it.answer) }
     val targetLabel =
         stringResource(
             R.string.activities_math_distribution_target,
             format(fields.target.from),
             format(fields.target.to),
-            formatAmount(percentBetween(distribution, fields.target), locale, "%", maximumFractionDigits = checkDigits ?: PERCENT_DIGITS),
+            percent(percentBetween(distribution, fields.target)),
         )
 
     ActivityCanvas(description = listOfNotNull(shape, shares, targetLabel.takeIf { props.isChecked }).joinSentences()) {
