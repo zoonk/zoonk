@@ -7,6 +7,7 @@ import { usePlotScales } from "../_components/activity-plot";
 import { DRAWING_LABEL_HALO, type LabelBox } from "../_utils/drawing-label";
 import { type PlotPoint } from "../_utils/sample-formula";
 import { type SnapRange } from "../_utils/snap-value";
+import { distributionTailBottom } from "./distribution-tail-label";
 
 const PILL_HEIGHT = 26;
 const PILL_PADDING = 10;
@@ -98,7 +99,7 @@ export function DistributionTicks({
   );
 
   return (
-    <g aria-hidden="true">
+    <g aria-hidden="true" data-slot="distribution-ticks">
       <path className="stroke-viz-grid" d={`M${left} ${bottom} H${right}`} strokeWidth={1.5} />
       {visible.map((tick) => (
         <text
@@ -131,23 +132,43 @@ export function DistributionLabels({
   const { x, y } = usePlotScales();
   const [bottom, top] = y.range;
   const [left, right] = x.range;
+  const [from, to] = [x.toPixel(handles[0]), x.toPixel(handles[1])];
   const targetRef = useRef<SVGTextElement>(null);
   const belowRef = useRef<SVGTextElement>(null);
   const aboveRef = useRef<SVGTextElement>(null);
 
-  const layout = [above, below, target?.label, target?.from, target?.to, left, right, top].join(
-    "\n",
-  );
+  const layout = [
+    above,
+    below,
+    target?.label,
+    target?.from,
+    target?.to,
+    from,
+    to,
+    left,
+    right,
+    top,
+    bottom,
+  ].join("\n");
 
   const [drawn, setDrawn] = useState<{
     layout: string;
     target?: LabelBox;
+    obstacles: LabelBox[];
     below: { width: number; height: number };
     above: { width: number; height: number };
-  }>({ above: { height: 0, width: 0 }, below: { height: 0, width: 0 }, layout: "" });
+  }>({ above: { height: 0, width: 0 }, below: { height: 0, width: 0 }, layout: "", obstacles: [] });
 
   useLayoutEffect(() => {
-    const nodes = [targetRef.current, belowRef.current, aboveRef.current];
+    const svg = belowRef.current?.ownerSVGElement ?? aboveRef.current?.ownerSVGElement;
+
+    const obstacles = [
+      ...(svg?.querySelectorAll<SVGGraphicsElement>(
+        '[data-slot="distribution-ticks"] text, [data-slot="activity-place-handle"] rect, [data-slot="activity-place-handle"] text',
+      ) ?? []),
+    ];
+
+    const nodes = [targetRef.current, belowRef.current, aboveRef.current, ...obstacles];
 
     const measure = () => {
       const [targetBox, belowBox, aboveBox] = nodes.map((node) => node?.getBBox());
@@ -156,6 +177,10 @@ export function DistributionLabels({
         above: { height: aboveBox?.height ?? 0, width: aboveBox?.width ?? 0 },
         below: { height: belowBox?.height ?? 0, width: belowBox?.width ?? 0 },
         layout,
+        obstacles: obstacles.map((node) => {
+          const box = node.getBBox();
+          return { bottom: box.y + box.height, left: box.x, right: box.x + box.width, top: box.y };
+        }),
         target: targetBox
           ? {
               bottom: targetBox.y + targetBox.height,
@@ -179,7 +204,7 @@ export function DistributionLabels({
     return () => resizes.disconnect();
   }, [layout]);
 
-  const [from, to] = [x.toPixel(handles[0]), x.toPixel(handles[1])];
+  const line = curve.map((point) => ({ x: x.toPixel(point.x), y: y.toPixel(point.y) }));
 
   const belowY = Math.min(
     bottom,
@@ -191,36 +216,33 @@ export function DistributionLabels({
     ...curve.filter((point) => point.x >= handles[1]).map((point) => y.toPixel(point.y)),
   );
 
-  function labelBottom(
-    at: number,
-    preferred: number,
-    size: { width: number; height: number },
-    anchor: "start" | "end",
-  ) {
-    const labelLeft = anchor === "start" ? at : at - size.width;
-    const labelRight = labelLeft + size.width;
-    const box = drawn.layout === layout ? drawn.target : undefined;
+  const placement = {
+    curve: line,
+    obstacles: drawn.target ? [...drawn.obstacles, drawn.target] : drawn.obstacles,
+    plot: { bottom, left, right, top },
+  };
 
-    if (
-      !box ||
-      labelRight + TAIL_GAP <= box.left ||
-      labelLeft - TAIL_GAP >= box.right ||
-      preferred + TAIL_GAP <= box.top ||
-      preferred - size.height - TAIL_GAP >= box.bottom
-    ) {
-      return preferred;
-    }
+  const belowBottom =
+    drawn.layout === layout
+      ? distributionTailBottom({
+          ...placement,
+          anchor: "end",
+          at: from - TAIL_GAP,
+          preferred: belowY - TAIL_GAP,
+          size: drawn.below,
+        })
+      : undefined;
 
-    const line = curve.map((point) => ({ x: x.toPixel(point.x), y: y.toPixel(point.y) }));
-
-    const underLabel = line.filter(
-      (point, index) =>
-        (line[index - 1]?.x ?? point.x) <= labelRight + TAIL_GAP &&
-        (line[index + 1]?.x ?? point.x) >= labelLeft - TAIL_GAP,
-    );
-
-    return Math.max(box.bottom, ...underLabel.map((point) => point.y)) + TAIL_GAP + size.height;
-  }
+  const aboveBottom =
+    drawn.layout === layout
+      ? distributionTailBottom({
+          ...placement,
+          anchor: "start",
+          at: to + TAIL_GAP,
+          preferred: aboveY - TAIL_GAP,
+          size: drawn.above,
+        })
+      : undefined;
 
   return (
     <>
@@ -232,7 +254,8 @@ export function DistributionLabels({
             ref={belowRef}
             textAnchor="end"
             x={from - TAIL_GAP}
-            y={labelBottom(from - TAIL_GAP, belowY - TAIL_GAP, drawn.below, "end")}
+            visibility={belowBottom === undefined ? "hidden" : undefined}
+            y={belowBottom ?? 0}
           >
             {below}
           </text>
@@ -243,7 +266,8 @@ export function DistributionLabels({
             ref={aboveRef}
             textAnchor="start"
             x={to + TAIL_GAP}
-            y={labelBottom(to + TAIL_GAP, aboveY - TAIL_GAP, drawn.above, "start")}
+            visibility={aboveBottom === undefined ? "hidden" : undefined}
+            y={aboveBottom ?? 0}
           >
             {above}
           </text>
