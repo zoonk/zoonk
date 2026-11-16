@@ -182,6 +182,29 @@ class PlanViewModelTest {
         }
 
     @Test
+    fun aFitCheckEndsWhenALessonFinishesWriting() =
+        runTest {
+            val plan = shown(withWritingLesson(onDay("2026-10-27", FIT_PLAN)))
+            val held = CompletableDeferred<Unit>().also { api.previewGate = it }
+            api.preview = checked(plan.fitOffer!!.effect)
+            viewModel.addFitOffer(plan, plan.fitOffer!!)
+            shown(
+                plan.copy(
+                    week =
+                        plan.week.copy(
+                            days =
+                                plan.week.days.map { day ->
+                                    day.copy(items = day.items.map { it.copy(writing = false) })
+                                },
+                        ),
+                ),
+            )
+            held.complete(Unit)
+            assertTrue(api.changes.isEmpty())
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+        }
+
+    @Test
     fun anUnchangedRefreshKeepsTheFitWait() =
         runTest {
             val plan = shown(FIT_PLAN)
@@ -452,8 +475,7 @@ class PlanViewModelTest {
             assertEquals(planAdviceRevision(plan), planAdviceRevision(refreshed))
         }
 
-    private fun withWritingLesson(): Plan {
-        val plan = onDay("2026-10-27")
+    private fun withWritingLesson(plan: Plan = onDay("2026-10-27")): Plan {
         val lesson =
             PlanItem(
                 chapterId = null,
