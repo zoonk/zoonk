@@ -874,7 +874,7 @@ msgstr "今日の学習"
 #: src/app/[lang]/(app)/(learn)/certificates/page.tsx
 msgctxt "xQ7ze5"
 msgid "A certificate for every course level, language level and plan you finish."
-msgstr "コースや言語の各レベル、学習計画を終えるたびに証明書がもらえます。"
+msgstr "コースの各レベル、言語の各レベル、学習計画を終えるたびに証明書がもらえます。"
 
 #: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
 msgctxt "1ZQwwl"
