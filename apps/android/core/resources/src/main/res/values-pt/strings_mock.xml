@@ -30,11 +30,11 @@
   "mock_label": "6878493ff4134b6f502ff7f07d043700c1a79a8ce819e5f8efd264ca72cf281d",
   "mock_label_shape": "1bd31fc51f88c96117f58a05d3e22bf762158cd43e0f7d10d107c6a311b7be15",
   "mock_last_not_saved": "2d7d1bbc7efe8c6cdca197babc3ec80ebd4526073db65f7f9cede545e022ac0c",
-  "mock_left_blank": "171d700c0120f6fa790964768f7f70ab0f6565d0ce4fb8650b87ae617d341624",
+  "mock_left_blank": "faef7f7d326ee9695b84517dd898692e29f185affc662e95270c06f077d6d526",
   "mock_left_blank_and_flagged": "091ff6560bc4cfa86106cdd57b28534e89851e1f62c15e724ecf00f485d57c31",
-  "mock_left_blank_only": "5a5dacb9498a57721000da2a14f54792718eae04062dadfd435d9566d888fd1a",
+  "mock_left_blank_only": "9e0a834ef9e48935965da623c1e759f580c064355e9ce1a0465b1a1e6febafcd",
   "mock_left_flagged": "7348ec63134b3fd92b157932ef2dc6f40b2c0f132e114d8393f987a0bc61152e",
-  "mock_left_flagged_only": "293585ec0fbc44a18fc125968313d33cb8f6c600c7572530b7ea2561b9b11c2a",
+  "mock_left_flagged_only": "c163ce4d0dad94b88be698638dc7e4fe5619c94c405a7cdc99b2daa5e9ce010c",
   "mock_moves_forward": "acbc515bcb980cc6cbac47ce172c57723637ad055d68946c180a391a3599b894",
   "mock_moves_forward_must": "f7016cf8ca0010a0e353a4de491a0513737d0363e19af2496f192a0d504464c5",
   "mock_moves_must": "b1f4229e74544983b1da6f8e3510054082199cc69576c221e478e2e6fa84a239",
@@ -150,9 +150,9 @@
     <string name="mock_hand_in_section_title">Entregar esta seção?</string>
     <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
     <plurals name="mock_left_blank">
-        <item quantity="one">%d pergunta está em branco</item>
-        <item quantity="many">%d perguntas estão em branco</item>
-        <item quantity="other">%d perguntas estão em branco</item>
+        <item quantity="one">%d questão está em branco</item>
+        <item quantity="many">%d questões estão em branco</item>
+        <item quantity="other">%d questões estão em branco</item>
     </plurals>
     <plurals name="mock_left_flagged">
         <item quantity="one">%d está marcada</item>
@@ -162,14 +162,14 @@
     <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
     <string name="mock_left_blank_and_flagged">%1$s e %2$s.</string>
     <plurals name="mock_left_blank_only">
-        <item quantity="one">%d pergunta está em branco.</item>
-        <item quantity="many">%d perguntas estão em branco.</item>
-        <item quantity="other">%d perguntas estão em branco.</item>
+        <item quantity="one">%d questão está em branco.</item>
+        <item quantity="many">%d questões estão em branco.</item>
+        <item quantity="other">%d questões estão em branco.</item>
     </plurals>
     <plurals name="mock_left_flagged_only">
-        <item quantity="one">%d pergunta está marcada.</item>
-        <item quantity="many">%d perguntas estão marcadas.</item>
-        <item quantity="other">%d perguntas estão marcadas.</item>
+        <item quantity="one">%d questão está marcada.</item>
+        <item quantity="many">%d questões estão marcadas.</item>
+        <item quantity="other">%d questões estão marcadas.</item>
     </plurals>
     <string name="mock_every_answered">Todas as perguntas foram respondidas.</string>
     <string name="mock_essay_blank">A redação está em branco.</string>
