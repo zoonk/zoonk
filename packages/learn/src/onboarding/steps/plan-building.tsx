@@ -67,7 +67,7 @@ export function PlanBuilding({
                     "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
                   )
             }
-            title={t("Building your plan")}
+            title={isRunStopped(run) ? t("Building your plan stopped") : t("Building your plan")}
           />
         )}
       </GenerationWait>

@@ -3,6 +3,7 @@ import { ContentWords } from "@/components/content-words";
 import { type LibraryLessonStep } from "@/data/lessons/get-library-lesson";
 import { formatCount, formatPercent, toWords } from "@/lib/format";
 import { LINK_CLASS } from "@/lib/link-class";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { isJsonObject } from "@zoonk/utils/json";
 import Link from "next/link";
 
@@ -18,7 +19,7 @@ function screenKind(step: LibraryLessonStep): string {
   return [step.kind, typeof variant === "string" && variant !== "text" ? variant : null]
     .filter((part) => part !== null)
     .map((part) => toWords(part))
-    .join(" · ");
+    .join(FACT_SEPARATOR);
 }
 
 function answersLabel(answers?: StepAnswers): string | null {

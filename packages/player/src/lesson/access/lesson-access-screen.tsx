@@ -155,6 +155,9 @@ function Unavailable({
           </EnterLink>
         )
       }
+      description={
+        refusal.reason === "unauthorized" ? undefined : t("The link may be old or mistyped.")
+      }
       icon={<CircleAlertIcon aria-hidden="true" />}
       title={
         refusal.reason === "unauthorized"

@@ -12,6 +12,7 @@ import com.zoonk.api.models.StudyReminder
 import com.zoonk.api.models.StudyReminderOfferClaim
 import com.zoonk.api.models.StudyReminderPhone
 import com.zoonk.api.models.StudyReminderUpdate
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,10 +20,13 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -37,7 +41,10 @@ class ReminderOfferViewModelTest {
     @After
     fun reset() = Dispatchers.resetMain()
 
-    private fun offer(claim: suspend () -> Boolean): ReminderOfferViewModel {
+    private fun offer(
+        update: suspend () -> StudyReminder = { error("Not used") },
+        claim: suspend () -> Boolean,
+    ): ReminderOfferViewModel {
         val api =
             object : StudyReminderApi {
                 override suspend fun claimOffer(
@@ -50,7 +57,7 @@ class ReminderOfferViewModelTest {
                 override suspend fun update(
                     session: AuthenticatedSession,
                     update: StudyReminderUpdate,
-                ): StudyReminder = error("Not used")
+                ): StudyReminder = update()
 
                 override suspend fun selectPhone(
                     session: AuthenticatedSession,
@@ -69,6 +76,34 @@ class ReminderOfferViewModelTest {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
         return ReminderOfferViewModel(StudyReminderStore(api, cache, push, session) { "en" }, "19:00")
     }
+
+    @Test
+    fun aChoiceThatFailsAfterTheLearnerLeftSaysNothingOnReturn() = emailFailure(leaveFirst = true)
+
+    @Test
+    fun aChoiceFailureShownBeforeTheLearnerLeftIsGoneOnReturn() = emailFailure(leaveFirst = false)
+
+    private fun emailFailure(leaveFirst: Boolean) =
+        runTest(dispatcher) {
+            val held = CompletableDeferred<Unit>()
+            val offer =
+                offer(update = {
+                    held.await()
+                    throw ApiException(ApiError.Network)
+                }) { true }
+
+            offer.email()
+            runCurrent()
+            if (leaveFirst) offer.visit.end()
+            held.complete(Unit)
+            advanceUntilIdle()
+            if (!leaveFirst) {
+                assertTrue(offer.failed)
+                offer.visit.end()
+            }
+
+            assertFalse(offer.failed)
+        }
 
     @Test
     fun theChoicesShowOnlyOnceThisShowingClaimedTheOffer() =

@@ -35,8 +35,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.account.AccountStore
 import com.zoonk.android.feature.account.isNameChangeTooLong
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -52,6 +54,9 @@ class CertificateNameModel(
     private val account: AccountStore,
     private val saved: SavedStateHandle,
 ) : ViewModel() {
+    /** The field's visit: a name that didn't save says so only on it. */
+    val visit = Visit()
+
     var name by mutableStateOf(saved.get<String>(NAME).orEmpty())
         private set
 
@@ -61,8 +66,10 @@ class CertificateNameModel(
     var isSaving by mutableStateOf(false)
         private set
 
-    var failed by mutableStateOf(false)
-        private set
+    private val failure = visit.outcome<Unit>()
+
+    /** The name didn't save, on this visit to the field. */
+    val failed get() = failure.value != null
 
     fun type(text: String) {
         name = text
@@ -89,11 +96,12 @@ class CertificateNameModel(
             return
         }
         isSaving = true
-        failed = false
+        failure.clear()
+        val started = visit.number
         viewModelScope.launch {
-            val failure = account.saveProfile(trimmed)
+            val saved = account.saveProfile(trimmed) == null
             isSaving = false
-            if (failure == null) stop() else failed = true
+            if (saved) stop() else failure.send(started, Unit)
         }
     }
 
@@ -124,6 +132,7 @@ fun CertificateNameField(
     val name = model.name
     val isTooLong = isNameChangeTooLong(name, current.orEmpty())
     val save = { model.save(current) }
+    VisitOf(model.visit)
 
     BackHandler(enabled = current != null, onBack = model::stop)
     LaunchedEffect(Unit) { if (current != null) focus.requestFocus() }

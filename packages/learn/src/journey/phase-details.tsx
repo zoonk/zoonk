@@ -11,6 +11,7 @@ import { JourneyChapters } from "./journey-chapters";
 import { type JourneyPathLinks } from "./journey-links";
 import { CheckpointRow, MockRow, usePhaseMocksLine } from "./journey-phase-events";
 import { isNamedLikeAChapter } from "./path-phases";
+import { getPhaseStart } from "./phase-dates";
 import { usePhaseEnd } from "./phase-when";
 
 /** From the phase's start to the end it's named by everywhere (`usePhaseEnd`), or a short plan's days. */
@@ -20,7 +21,6 @@ function usePhaseRange() {
 
   return function phaseRange(phase: PlanPhaseView): React.ReactNode {
     const end = phaseEnd(phase);
-    const start = phase.startDate;
 
     if (!end) {
       return null;
@@ -30,13 +30,17 @@ function usePhaseRange() {
       return end.days;
     }
 
+    const start = getPhaseStart({ end, phase });
+
     if (!start) {
       return null;
     }
 
     return t.rich("<start></start> – <end></end>", {
       end: () => <PlanDateText estimate={end.estimate} isoDate={end.isoDate} month={end.month} />,
-      start: () => <PlanDateText isoDate={start} month={end.month} />,
+      start: () => (
+        <PlanDateText estimate={start.estimate} isoDate={start.isoDate} month={start.month} />
+      ),
     });
   };
 }

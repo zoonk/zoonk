@@ -42,6 +42,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
@@ -55,6 +56,8 @@ import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.ActOn
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -170,19 +173,12 @@ internal fun ChapterContent(
         onGoHome = { navigator.showRoot(AppTab.Today) },
     ) { value ->
         val practice = viewModel(key = "chapter-${key.goalId}-${key.chapterId}") { ChapterViewModel(store, key) }
-        val practiceState by practice.state.collectAsStateWithLifecycle()
-        val opened = (practiceState.outcome as? PracticeOutcome.Opened)?.route
-
-        LaunchedEffect(opened) {
-            if (opened != null) {
-                practice.consumeOpened()
-                navigator.open(opened)
-            }
-        }
+        VisitOf(practice.visit)
+        ActOn(practice.opened, navigator::open)
 
         ChapterPage(
             chapter = value,
-            practice = practiceState,
+            practice = practice.state,
             menu = menu,
             ask = ask,
             mindMap = mindMap(),
@@ -213,17 +209,38 @@ internal class ChapterViewModel(
     private val store: GoalContentStore,
     private val key: ChapterKey,
 ) : ViewModel() {
-    private val practiceState = MutableStateFlow(PracticeState())
-    val state: StateFlow<PracticeState> = practiceState.asStateFlow()
+    /** The chapter's visit: a practice opens, or says it can't, only on it. */
+    val visit = Visit()
+
+    /** Where the practice opens, for the chapter's frame to open. */
+    val opened = visit.outcome<AppRoute>()
+
+    private val said = visit.outcome<PracticeOutcome>()
+
+    private var running by mutableStateOf(false)
+
+    /** Running, or what the practice said on this visit (nothing to practice, or a failure). */
+    val state get() = PracticeState(running, said.value)
 
     fun practice() {
-        if (practiceState.value.running) return
-        practiceState.value = PracticeState(running = true)
-        viewModelScope.launch { practiceState.value = PracticeState(outcome = store.practice(key)) }
-    }
+        if (running) return
+        running = true
+        said.clear()
+        val started = visit.number
+        viewModelScope.launch {
+            when (val outcome = store.practice(key)) {
+                is PracticeOutcome.Opened -> {
+                    opened.send(started, outcome.route)
+                }
 
-    fun consumeOpened() {
-        practiceState.update { it.copy(outcome = null) }
+                PracticeOutcome.NothingToPractice, PracticeOutcome.Failed -> {
+                    said.send(started, outcome)
+                }
+
+                null -> {}
+            }
+            running = false
+        }
     }
 }
 

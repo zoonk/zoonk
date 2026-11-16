@@ -81,7 +81,7 @@ function GuestEmailSetting({ signUpHref }: { signUpHref: string }) {
         href={signUpHref}
         icon={<UserPlusIcon aria-hidden="true" />}
       >
-        {t("Create an account")}
+        {t("Create a free account")}
       </PendingLink>
       <AccountAskMark />
     </SettingRow>

@@ -2,7 +2,6 @@
 
 import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { type TutorIdentity } from "@zoonk/learn/tutor-identity";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
   EmptyContent,
@@ -112,9 +111,9 @@ function EmptyThread({
   );
 }
 
+/** The sign-up gate's words; its one action is where the composer goes (`LessonQuestionDrawer`). */
 function GuestThread() {
   const t = useExtracted();
-  const { loginHref } = useLessonQuestionNavigation();
 
   return (
     <Empty className="min-h-full">
@@ -122,13 +121,8 @@ function GuestThread() {
         <EmptyMedia variant="icon">
           <MessageSquareTextIcon />
         </EmptyMedia>
-        <EmptyTitle className="text-base">{t("Create a free account to ask questions")}</EmptyTitle>
+        <EmptyTitle className="text-base">{t("Questions need a free account")}</EmptyTitle>
       </EmptyHeader>
-      <EmptyContent>
-        <a className={buttonVariants()} href={loginHref}>
-          {t("Create a free account")}
-        </a>
-      </EmptyContent>
     </Empty>
   );
 }

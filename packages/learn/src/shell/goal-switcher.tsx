@@ -19,6 +19,8 @@ import { safeAsync } from "@zoonk/utils/error";
 import { ChevronDownIcon, LayoutGridIcon, LightbulbIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useOptimistic, useSyncExternalStore, useTransition } from "react";
+import { useDaysLeftText } from "../_components/days-left";
+import { FactSegments } from "../_components/task-meta";
 import { daysUntilIsoDate, hasIsoDatePassed } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
@@ -90,6 +92,7 @@ function GoalLine({ goal }: { goal: SwitcherGoal }) {
   const t = useExtracted("goalSwitcher");
   const today = useMountTime();
   const formatDuration = useFormatDuration();
+  const daysLeftText = useDaysLeftText();
 
   const days =
     goal.targetDate && !hasIsoDatePassed({ isoDate: goal.targetDate, today })
@@ -98,15 +101,16 @@ function GoalLine({ goal }: { goal: SwitcherGoal }) {
 
   const active = [
     t("{time} a day", { time: formatDuration(goal.dailyMinutes) }),
-    days !== null &&
-      t("{days, plural, =0 {The day is here} one {# day left} other {# days left}}", { days }),
-  ]
-    .filter(Boolean)
-    .join(" · ");
+    days !== null && daysLeftText(days),
+  ].filter((fact): fact is string => Boolean(fact));
 
-  const line = { active, completed: t("Finished"), paused: t("Paused") }[goal.status];
+  const facts = { active, completed: [t("Finished")], paused: [t("Paused")] }[goal.status];
 
-  return <span className="text-muted-foreground text-2xs font-mono tabular-nums">{line}</span>;
+  return (
+    <span className="text-muted-foreground text-2xs font-mono tabular-nums">
+      <FactSegments facts={facts} />
+    </span>
+  );
 }
 
 const MENU_LABEL_CLASS = "text-faint px-2 pt-1.5 pb-1 text-2xs font-medium";

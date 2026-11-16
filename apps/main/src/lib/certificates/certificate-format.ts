@@ -1,8 +1,8 @@
 import { getTotalDuration } from "@/lib/public/total-duration";
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
 import { parseCefrScore } from "@zoonk/utils/cefr";
+import { formatIsoDate } from "@zoonk/utils/date-format";
 import { formatDuration } from "@zoonk/utils/duration";
-import { getFormattingLocale } from "@zoonk/utils/locale";
 import { getNumberFormatter } from "@zoonk/utils/localized-number";
 
 const SECONDS_PER_MINUTE = 60;
@@ -17,10 +17,7 @@ export function formatCertificateDate({
   isoDate: string;
   locale: string;
 }): string {
-  return new Intl.DateTimeFormat(getFormattingLocale(locale), {
-    dateStyle: "long",
-    timeZone: "UTC",
-  }).format(new Date(`${isoDate}T00:00:00Z`));
+  return formatIsoDate({ isoDate, locale, role: "sentence", today: isoDate, year: "always" });
 }
 
 /** The plan's estimate, rounded the way the catalog rounds course lengths: whole hours past one. */

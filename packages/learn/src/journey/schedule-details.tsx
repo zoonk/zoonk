@@ -3,12 +3,14 @@
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted, useFormatter } from "next-intl";
+import { isoDateToUtc } from "@zoonk/utils/date-format";
+import { useExtracted } from "next-intl";
 import { GoalRing, type GoalRingTrack } from "../_components/goal-ring";
 import { ListGroup, ListRowContent, ListRowLink, ListRowTitle } from "../_components/list-group";
 import { SectionLabel } from "../_components/section-label";
 import { DoneMark } from "../_components/status-mark";
-import { isoDateToUtc } from "../_utils/iso-date";
+import { WEEK_DAY_CLASS, WEEK_ROW_CLASS, WeekDayLetter } from "../_components/week-row";
+import { useFormatWeekday } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -80,7 +82,7 @@ function useWeekTime(): string | null {
 
 function PlanWeek() {
   const t = useExtracted();
-  const format = useFormatter();
+  const formatWeekday = useFormatWeekday();
   const dayStatus = useDayStatus();
   const { plan } = usePlanScreen();
   const { days } = plan.week;
@@ -95,26 +97,18 @@ function PlanWeek() {
         )}
       </div>
 
-      <ol className="flex justify-between">
+      <ol className={WEEK_ROW_CLASS}>
         {days.map((day) => {
           const date = isoDateToUtc(day.date);
 
           return (
-            <li className="flex flex-col items-center gap-1.5 py-1" key={day.date}>
-              <span
-                aria-hidden="true"
-                className="text-muted-foreground text-2xs font-mono font-medium uppercase"
-              >
-                {format.dateTime(date, { timeZone: "UTC", weekday: "narrow" })}
-              </span>
+            <li className={cn(WEEK_DAY_CLASS, "py-1")} key={day.date}>
               <GoalRing share={getDayShare(day)} track={DAY_TRACK[day.state]}>
                 {day.state === "done" && <DoneMark />}
               </GoalRing>
+              <WeekDayLetter date={date} isToday={day.state === "today"} />
               <span className="sr-only">
-                {t("{day}: {status}", {
-                  day: format.dateTime(date, { timeZone: "UTC", weekday: "long" }),
-                  status: dayStatus(day),
-                })}
+                {t("{day}: {status}", { day: formatWeekday(date), status: dayStatus(day) })}
               </span>
             </li>
           );

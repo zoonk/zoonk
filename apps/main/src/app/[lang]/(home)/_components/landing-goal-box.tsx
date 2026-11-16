@@ -1,9 +1,11 @@
 import { GoalForm } from "@/components/public/goal-form";
-import { getExtracted, getFormatter } from "next-intl/server";
+import { getAppLocale } from "@/i18n/locale";
+import { formatIsoDate } from "@zoonk/utils/date-format";
+import { getExtracted } from "next-intl/server";
 import { getExampleExamDay, getExampleSet } from "./landing-examples";
 
 async function getExamGoal(): Promise<string> {
-  const format = await getFormatter();
+  const locale = await getAppLocale();
   const { exam } = await getExampleSet();
 
   if (!("sittings" in exam)) {
@@ -12,7 +14,11 @@ async function getExamGoal(): Promise<string> {
 
   const examDay = await getExampleExamDay(exam);
 
-  return exam.goal(format.dateTime(examDay, { month: "long", timeZone: "UTC" }));
+  const isoDate = examDay.toISOString().slice(0, "YYYY-MM-DD".length);
+
+  return exam.goal(
+    formatIsoDate({ isoDate, locale, role: "sentenceMonth", today: isoDate, year: "never" }),
+  );
 }
 
 async function getLanguageGoal(): Promise<string> {

@@ -23,7 +23,7 @@ import {
   getContributionCalendarWeekKey,
   groupContributionCalendarDaysByWeek,
 } from "@zoonk/utils/contribution-calendar";
-import { getFormattingLocale } from "@zoonk/utils/locale";
+import { formatIsoDate } from "@zoonk/utils/date-format";
 import { getExtracted } from "next-intl/server";
 
 export type StatsCalendarDay = {
@@ -63,10 +63,10 @@ export async function StatsCalendar({
   const t = await getExtracted();
   const locale = await getAppLocale();
 
-  const monthFormatter = new Intl.DateTimeFormat(getFormattingLocale(locale), {
-    month: "short",
-    timeZone: "UTC",
-  });
+  const formatMonth = (month: Date) => {
+    const isoDate = month.toISOString().slice(0, "YYYY-MM-DD".length);
+    return formatIsoDate({ isoDate, locale, role: "rowMonth", today: isoDate });
+  };
 
   const keyboardStartDate = getContributionCalendarKeyboardStartDate({
     days,
@@ -83,7 +83,7 @@ export async function StatsCalendar({
     return {
       days: week,
       key: getContributionCalendarWeekKey(week),
-      periodLabel: monthDate ? monthFormatter.format(monthDate) : null,
+      periodLabel: monthDate ? formatMonth(monthDate) : null,
     };
   });
 

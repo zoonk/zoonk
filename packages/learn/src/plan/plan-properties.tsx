@@ -4,6 +4,7 @@ import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "@zoonk/core/language/activities";
 import { type MockScheduleView } from "@zoonk/core/plans/view-contract";
 import { cn } from "@zoonk/ui/lib/utils";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
@@ -258,7 +259,7 @@ export function PlanProperties({
           <PropertyRow label={t("Practice")} onOpen={() => onOpen("practice")}>
             {practiced.length === LANGUAGE_ACTIVITY_TYPES.length
               ? t("Everything")
-              : practiced.map((activity) => activityName(activity)).join(" · ")}
+              : practiced.map((activity) => activityName(activity)).join(FACT_SEPARATOR)}
           </PropertyRow>
         )}
       </ul>

@@ -89,8 +89,10 @@ internal class FocusTestViewModel(
     var deciding by mutableStateOf<PlanChangeDecisionInput.Status?>(null)
         private set
 
-    var decisionFailed by mutableStateOf(false)
-        private set
+    private val decisionFailure = visit.outcome<Unit>()
+
+    /** The answer to the result's proposal didn't save, on this visit. */
+    val decisionFailed get() = decisionFailure.value != null
 
     val busy get() = pressed != null || answering
 
@@ -182,7 +184,8 @@ internal class FocusTestViewModel(
         if (deciding != null) return
         val on = sittings
         deciding = status
-        decisionFailed = false
+        decisionFailure.clear()
+        val started = visit.number
         viewModelScope.launch {
             val result = plans.decideChange(UUID.fromString(goalId), change, status)
             if (on != sittings) return@launch
@@ -195,7 +198,7 @@ internal class FocusTestViewModel(
                 }
 
                 is MutationResult.Failed -> {
-                    decisionFailed = true
+                    decisionFailure.send(started, Unit)
                 }
 
                 MutationResult.Obsolete -> {}
@@ -213,7 +216,7 @@ internal class FocusTestViewModel(
         proposalAnswer = null
         repricedProposal = null
         deciding = null
-        decisionFailed = false
+        decisionFailure.clear()
     }
 
     /** Closing applies the answers; a test that still has none is only skipped, and the host moves on. */

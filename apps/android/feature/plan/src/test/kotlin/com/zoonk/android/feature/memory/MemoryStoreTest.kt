@@ -210,6 +210,36 @@ class MemoryStoreTest {
         }
 
     @Test
+    fun aChangeThatFailsAfterTheLearnerLeftSaysNothingOnReturn() = leave(first = true)
+
+    @Test
+    fun aChangeFailureShownBeforeTheLearnerLeftIsGoneOnReturn() = leave(first = false)
+
+    private fun leave(first: Boolean) =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            try {
+                val screen = MemoryViewModel(loadedStore(), { null }, SavedStateHandle())
+                api.gate = CompletableDeferred()
+                api.failure = ApiException(ApiError.Unavailable, "INTERNAL_ERROR", 500)
+
+                screen.setEnabled(false)
+                runCurrent()
+                if (first) screen.visit.end()
+                api.gate!!.complete(Unit)
+                advanceUntilIdle()
+                if (!first) {
+                    assertTrue(screen.saveFailed)
+                    screen.visit.end()
+                }
+
+                assertFalse(screen.saveFailed)
+            } finally {
+                Dispatchers.resetMain()
+            }
+        }
+
+    @Test
     fun aFailedEditStaysOpenToTryAgain() =
         runTest {
             Dispatchers.setMain(StandardTestDispatcher(testScheduler))

@@ -20,7 +20,7 @@ export function useTimeAnswerTexts() {
           'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
         message:
           "{dateKind, select, month {No time a day covers everything by {date}.} other {No time a day covers everything by {date}.}}",
-        values: goalDate({ ...date, style: "long" }),
+        values: goalDate(date),
       });
     }
 
@@ -36,7 +36,7 @@ export function useTimeAnswerTexts() {
 
   /** Under a time picker, whose number is the sentence's subject. */
   const share = ({ date, exam, value }: { date: GoalDate; exam: boolean; value: number }) => {
-    const shareValues = { ...goalDate({ ...date, style: "long" }), share: formatShare(value) };
+    const shareValues = { ...goalDate(date), share: formatShare(value) };
 
     return exam
       ? t({

@@ -41,7 +41,10 @@ function TargetLabel({
             description:
               '{level} is a language level, like "B2". {date} is a month, like "May 2027".',
             message: "Goal {level} by {date}",
-            values: { date: formatDate(targetDate, "month"), level: target.label },
+            values: {
+              date: formatDate(targetDate, "sentenceMonth", { year: "always" }),
+              level: target.label,
+            },
           })
         : t("Goal {level}", { level: target.label })}
     </p>

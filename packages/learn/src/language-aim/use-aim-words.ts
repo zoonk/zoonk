@@ -18,7 +18,9 @@ export function useAimWords() {
   return {
     /** When the plan reaches that level at the learner's time; nothing while it isn't known. */
     around: (endDate: string | null): string | undefined =>
-      endDate ? t("Around {month}", { month: formatDate(endDate, "month") }) : undefined,
+      endDate
+        ? t("Around {month}", { month: formatDate(endDate, "sentenceMonth", { year: "always" }) })
+        : undefined,
     label: (aim: string | null): string | null => (isLanguageAim(aim) ? labels[aim] : null),
     title: t("Level to reach"),
   };
