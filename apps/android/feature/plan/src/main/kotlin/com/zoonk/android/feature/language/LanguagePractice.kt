@@ -46,7 +46,6 @@ import com.zoonk.api.models.LanguageUnitsAlphabet
 import com.zoonk.api.models.TodayPattern
 import kotlinx.coroutines.launch
 import java.util.UUID
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 internal class AlphabetSkipModel(
     private val store: AlphabetStore,
@@ -99,7 +98,7 @@ internal fun AlphabetRow(
         ListRow(
             headline = { Text(alphabet.title) },
             supporting = {
-                FactSegments(
+                Text(
                     stringResource(
                         if (alphabet.pending) R.string.language_alphabet_first_next_session else R.string.language_alphabet_anytime,
                         time,

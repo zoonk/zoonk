@@ -102,7 +102,6 @@ import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayGoal
 import kotlinx.coroutines.delay
 import java.util.UUID
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 /**
  * Main's session page: a day's summary once nothing is left or the learner stopped, else its next
@@ -664,7 +663,7 @@ private fun StepFacts(step: DayStep) {
             formatMinutes(step.estimatedMinutes.toInt(), currentLocale()),
             stringResource(R.string.today_step_often_tested).takeIf { step.oftenTested },
         )
-    FactSegments(
+    Text(
         facts.factsLine(),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.zoonkType.data,

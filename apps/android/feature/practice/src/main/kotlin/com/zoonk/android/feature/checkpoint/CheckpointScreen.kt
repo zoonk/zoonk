@@ -133,7 +133,6 @@ import com.zoonk.api.models.StudyBlockCompletionCheckpointAnswersInner
 import com.zoonk.api.models.StudyQuestionAnswer
 import kotlinx.coroutines.launch
 import java.util.UUID
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 /** `/checkpoint/{blockId}` when it isn't a language call: the duel or the week's challenge. */
 @Composable
@@ -611,7 +610,7 @@ private fun DuelAside(
                     }
                 ).takeIf { score.decision == null },
             )
-        FactSegments(facts, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+        Text(facts.factsLine(), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }
     Text(note, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     if (score.decision != DuelDecision.Lost) Prize(read)

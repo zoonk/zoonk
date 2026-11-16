@@ -49,7 +49,6 @@ import com.zoonk.api.models.StudyWeekDay
 import com.zoonk.api.models.TodayWeeklyChallenge
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 private typealias WeekDay = StudyWeekDay
 
@@ -345,7 +344,7 @@ private fun ChallengeRow(
             modifier = Modifier.bleed(LIST_ITEM_INSET),
             onClick = open,
             leading = { KindDot(challenge.kind()) },
-            supporting = { FactSegments(facts, style = androidx.compose.material3.LocalTextStyle.current) },
+            supporting = { Text(facts.factsLine()) },
         )
     }
 }

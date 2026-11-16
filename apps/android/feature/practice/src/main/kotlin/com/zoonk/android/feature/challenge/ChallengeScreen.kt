@@ -103,7 +103,6 @@ import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import java.util.UUID
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 /** `/challenge/{planItemId}`: a challenge before and on its day, and its move to Monday. */
 @Composable
@@ -555,7 +554,7 @@ private fun Facts(
 ) {
     if (facts.isEmpty() && prize == null) return
     val brain = MaterialTheme.zoonk.brainText
-    FactSegments(
+    Text(
         buildAnnotatedString {
             append(facts.factsLine())
             prize?.let {

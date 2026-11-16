@@ -33,7 +33,6 @@ import com.zoonk.android.ui.components.controlInk
 import com.zoonk.android.ui.components.layoutPart
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.theme.zoonk
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 data class Choice<T>(
     val value: T,
@@ -86,7 +85,7 @@ fun <T> ChoiceList(
             if (index > 0) HorizontalDivider(Modifier.padding(horizontal = LIST_ITEM_INSET))
             val selected = choice.value == value
             ListRow(
-                headline = { FactSegments(choice.label) },
+                headline = { Text(choice.label) },
                 busy = busyValue != null && choice.value == busyValue,
                 meta = choice.meta?.let { { Text(it) } },
                 modifier =
@@ -138,7 +137,7 @@ fun <T> CheckList(
             // draws stays its words' color, and the box takes Material's disabled look.
             val dim = { color: Color -> if (open) Color.Unspecified else color.copy(alpha = color.alpha * DISABLED_ALPHA) }
             ListRow(
-                headline = { FactSegments(choice.label, color = dim(MaterialTheme.colorScheme.onSurface)) },
+                headline = { Text(choice.label, color = dim(MaterialTheme.colorScheme.onSurface)) },
                 modifier =
                     Modifier
                         .background(if (checked) MaterialTheme.zoonk.selectedTint else Color.Transparent)

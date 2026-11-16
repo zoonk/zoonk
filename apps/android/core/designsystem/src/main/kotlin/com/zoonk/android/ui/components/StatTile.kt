@@ -106,7 +106,7 @@ fun StatTile(
                 Text(value, spoken, style = style.withTabularFigures().copy(fontWeight = FontWeight.SemiBold))
             }
             detail?.let {
-                Facts(
+                Text(
                     it as? AnnotatedString ?: AnnotatedString(it.toString()),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodySmall,

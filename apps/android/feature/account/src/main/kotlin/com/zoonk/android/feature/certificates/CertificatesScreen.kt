@@ -69,7 +69,6 @@ import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.OwnedCertificate
 import kotlinx.coroutines.launch
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 /**
  * Main's `/certificates`: every certificate the learner earned, newest first, each opening its page,
@@ -170,7 +169,7 @@ private fun CertificateRow(
     ListRow(
         headline = { Text(name.rowName()) },
         onClick = onOpen,
-        supporting = { FactSegments(name.rowLine()) },
+        supporting = { Text(name.rowLine()) },
         leading = {
             if (name.locked) {
                 BlankCertificate(name, Modifier.width(THUMB_WIDTH), corner = THUMB_CORNER, compact = true)

@@ -55,7 +55,6 @@ import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.CatalogLesson
 import com.zoonk.api.models.CatalogLessonFirstScreen
 import kotlinx.coroutines.launch
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 /** A lesson's public page: its first screen to answer, what it teaches, its chapter and the day of a plan it's in. */
 @Composable
@@ -309,7 +308,7 @@ private fun LessonChapterAside(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        FactSegments(chapterFacts(place), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
+        Text(chapterFacts(place), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
         TextButton(
             onClick = { navigator.open(AppRoute.CatalogChapter(place.chapter.id.toString(), courseId)) },
             contentPadding = PaddingValues(0.dp),

@@ -49,7 +49,6 @@ import com.zoonk.api.models.TargetCutoff
 import kotlinx.datetime.toJavaLocalDate
 import java.net.URI
 import java.time.LocalDate
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 /** What main's aside says about the exam, beside the page or after it. */
 internal enum class AboutSection { Format, Scoring }
@@ -126,8 +125,9 @@ private fun FormatDayRow(
             .sumOf { it.questions ?: 0L }
             .toInt()
     val names = ListFormatter.getInstance(locale).format(day.parts.map { it.name })
+    // Unbroken from " ·" on, so a wrapped line never starts or ends on the dot.
     val count = questions.takeIf { it > 0 }?.let { pluralStringResource(R.plurals.exam_questions, it, it) }
-    val parts = if (count != null) listOf(names, count).factsLine() else names
+    val parts = if (count != null) listOf(names, count.replace(' ', NO_BREAK_SPACE)).factsLine() else names
     val numbers = MaterialTheme.typography.labelMedium.withTabularFigures()
 
     Column(
@@ -135,7 +135,7 @@ private fun FormatDayRow(
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            FactSegments(title, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
+            Text(title, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
             day.minutes
                 ?.takeIf { it > 0 }
                 ?.let {
@@ -146,7 +146,7 @@ private fun FormatDayRow(
                     )
                 }
         }
-        FactSegments(parts, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+        Text(parts, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }
 }
 
@@ -345,3 +345,4 @@ private fun Line(text: AnnotatedString) {
 }
 
 private const val SECONDS_PER_MINUTE = 60L
+private const val NO_BREAK_SPACE = '\u00A0'

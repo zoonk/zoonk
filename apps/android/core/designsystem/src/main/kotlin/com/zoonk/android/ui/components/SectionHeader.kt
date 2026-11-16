@@ -9,7 +9,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.zoonkType
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 /** The page margin a row insets its content by; a header or line above rows takes it to share their edge. */
 val LIST_ITEM_INSET = 16.dp
@@ -30,7 +29,7 @@ fun SectionHeader(
     }
 
     SectionHeader(title, modifier) {
-        FactSegments(
+        Text(
             detail,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.zoonkType.data,

@@ -33,7 +33,6 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.languageName
 import com.zoonk.api.models.LanguageAimChoicesInner
 import java.time.LocalDate
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 @Composable
 fun languageAimName(aim: String): String? = languageAimNameResource(aim)?.let { stringResource(it) }
@@ -81,7 +80,7 @@ fun LanguageAimRow(
     ListRow(
         headline = { Text(stringResource(R.string.onboarding_aim_title, languageName(targetLanguage.orEmpty(), currentLocale()))) },
         supporting = {
-            FactSegments(listOfNotNull(label ?: aim, languageAimName(aim)).factsLine())
+            Text(listOfNotNull(label ?: aim, languageAimName(aim)).factsLine())
             note?.let { Text(it) }
         },
         trailing = { Text(stringResource(R.string.onboarding_aim_change)) },

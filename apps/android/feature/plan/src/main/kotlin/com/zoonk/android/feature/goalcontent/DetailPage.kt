@@ -41,7 +41,6 @@ import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.pageListMargin
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 /**
  * Main's detail page: [hero] heads it, its title marked with `pageTitle()`, which the top app bar
@@ -191,7 +190,7 @@ internal fun PropertyRow(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-        FactSegments(text = value, style = MaterialTheme.typography.bodyMedium.copy(fontFeatureSettings = "tnum"))
+        Text(text = value, style = MaterialTheme.typography.bodyMedium.copy(fontFeatureSettings = "tnum"))
     }
 }
 

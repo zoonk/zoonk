@@ -80,7 +80,6 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.roundToInt
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 /**
  * The phases in time (main's `PlanRoadmap`): on a narrow pane one meter with where the learner is,
@@ -156,7 +155,7 @@ private fun RoadmapCompact(
         RoadmapMeter(phases)
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             if (position != null) {
-                FactSegments(
+                Text(
                     text =
                         positionWords(
                             stringResource(R.string.plan_roadmap_phase_number, position.number, position.total),
@@ -164,6 +163,8 @@ private fun RoadmapCompact(
                         ),
                     modifier = Modifier.weight(1f),
                     style = small.copy(lineBreak = LineBreak.Heading),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 position.end?.let { TrailingText(it) }
             } else {

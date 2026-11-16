@@ -62,7 +62,6 @@ import com.zoonk.api.models.PlanPhaseCheckpoint
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import kotlin.math.roundToInt
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 @Composable
 internal fun PathSection(
@@ -683,7 +682,7 @@ internal fun ColumnScope.PhaseDetails(
             modifier = Modifier.semantics { heading() },
             style = MaterialTheme.typography.titleLarge,
         )
-        FactSegments(
+        Text(
             text = listOfNotNull(range, lessons).factsLine(),
             style = MaterialTheme.zoonkType.data,
             color = MaterialTheme.colorScheme.onSurfaceVariant,

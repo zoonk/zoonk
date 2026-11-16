@@ -48,7 +48,6 @@ import com.zoonk.api.models.CourseResource
 import com.zoonk.api.models.FeedbackSubmissionContext
 import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDate
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 @Composable
 fun CourseScreen(
@@ -249,11 +248,7 @@ private fun CourseHero(
 
         course.contentCountry?.let {
             Spacer(Modifier.size(8.dp))
-            FactSegments(
-                countryDisclosure(it),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            Text(countryDisclosure(it), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         }
 
         Spacer(Modifier.size(16.dp))

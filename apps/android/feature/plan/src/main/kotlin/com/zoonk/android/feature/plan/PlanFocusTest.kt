@@ -18,7 +18,6 @@ import com.zoonk.api.models.FocusTestOffer
 import com.zoonk.api.models.FocusTestSessionQuestions
 import com.zoonk.api.models.FocusTestSummary
 import com.zoonk.api.models.Plan
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 /** The test's first sitting, for a learner who hasn't started it and whose time doesn't cover everything: where a focus would help most. */
 fun focusTestOffer(plan: Plan): FocusTestOffer? =
@@ -65,6 +64,6 @@ internal fun PlanFocusTestRow(
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         onClick = onOpen,
         leading = { MarkIcon(R.drawable.ic_my_location) },
-        supporting = { FactSegments(focusTestLine(summary)) },
+        supporting = { Text(focusTestLine(summary)) },
     )
 }

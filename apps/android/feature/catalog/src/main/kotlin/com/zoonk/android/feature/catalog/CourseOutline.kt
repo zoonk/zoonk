@@ -44,7 +44,6 @@ import com.zoonk.api.models.CoursePlanExample
 import com.zoonk.api.models.CourseResourceLevelsInner
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 @Composable
 internal fun CourseChapter.Level.label(): String = courseLevelName(value)
@@ -236,11 +235,7 @@ internal fun OutlineZone(
                     )
                 }
                 if (closedSummary != null && !open) {
-                    FactSegments(
-                        closedSummary,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodySmall,
-                    )
+                    Text(closedSummary, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
                 }
             }
             Icon(
@@ -337,7 +332,7 @@ private fun OutlineChapterRow(
             if (isHere) HereMark()
 
             if (chapter.lessons.isNotEmpty()) {
-                FactSegments(
+                Text(
                     chapter.lessons.map { it.title }.factsLine(),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,

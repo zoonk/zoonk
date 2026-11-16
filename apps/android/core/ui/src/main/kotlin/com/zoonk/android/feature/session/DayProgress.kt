@@ -43,7 +43,6 @@ import com.zoonk.api.models.StudyBlockCompletion
 import com.zoonk.api.models.StudyDayProgress
 import com.zoonk.api.models.StudyDayProgressCatchUp
 import java.util.UUID
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 /** One counted block's part of today's meter. [share] (0 to 1) is how far the current block is answered. */
 @Immutable
@@ -142,7 +141,7 @@ fun CatchUpLine(
         else -> {
             val gained = pluralStringResource(R.plurals.session_caught_up_today, today, formatNumber(today.toDouble(), locale))
             val rest = pluralStringResource(R.plurals.session_catch_up_to_go, left, formatNumber(left.toDouble(), locale))
-            FactSegments(
+            Text(
                 buildAnnotatedString {
                     withStyle(SpanStyle(color = ink)) { append(gained) }
                     append(FACT_SEPARATOR)

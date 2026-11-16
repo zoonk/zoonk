@@ -34,7 +34,6 @@ import com.zoonk.api.models.CoursePlanEstimate
 import com.zoonk.api.models.CoursePlanEstimateAnyOf
 import com.zoonk.api.models.CoursePlanEstimateAnyOf1
 import com.zoonk.api.models.CoursePlanExample
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 internal val CoursePlanEstimate.undated: CoursePlanEstimateAnyOf?
     get() = (this as? CoursePlanEstimate.CoursePlanEstimateAnyOfValue)?.value
@@ -161,7 +160,7 @@ private fun FirstDay(
 
         if (folded.isNotEmpty()) {
             HorizontalDivider()
-            FactSegments(
+            Text(
                 pluralStringResource(R.plurals.catalog_plan_more_lessons, folded.size, folded.size) + FACT_SEPARATOR +
                     formatTotalDuration(folded.sumOf { it.minutes }, locale),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -181,7 +180,7 @@ internal fun FactsRow(
     FlowRow(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, itemVerticalAlignment = Alignment.Bottom) {
         Text(title, modifier = Modifier.padding(end = 12.dp), style = MaterialTheme.typography.titleSmall)
         if (facts != null) {
-            FactSegments(
+            Text(
                 facts,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),

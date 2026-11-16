@@ -65,7 +65,6 @@ import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import kotlinx.coroutines.launch
 import java.net.URI
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 internal val PAGE_PADDING = 16.dp
 
@@ -77,7 +76,7 @@ internal fun SectionNote(
     text: AnnotatedString,
     modifier: Modifier = Modifier,
 ) {
-    FactSegments(
+    Text(
         text = text,
         modifier = modifier.padding(horizontal = PAGE_PADDING),
         color = MaterialTheme.colorScheme.onSurfaceVariant,

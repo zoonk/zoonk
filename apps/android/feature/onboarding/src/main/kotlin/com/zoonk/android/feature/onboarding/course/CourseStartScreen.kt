@@ -72,7 +72,6 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.CourseChapter
 import kotlinx.coroutines.launch
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 @Composable
 fun CourseStartScreen(
@@ -294,7 +293,7 @@ private fun PlanPreview(chapters: List<CourseChapter>) {
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
 
     Column {
-        FactSegments(
+        Text(
             pluralStringResource(R.plurals.onboarding_course_chapters, chapters.size, chapters.size) + FACT_SEPARATOR +
                 pluralStringResource(R.plurals.onboarding_course_lessons, lessons, lessons),
             modifier = Modifier.semantics { heading() },

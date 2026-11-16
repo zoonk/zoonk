@@ -26,7 +26,6 @@ import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import kotlin.math.ceil
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 data class MomentScore(
     val answered: Int,
@@ -58,7 +57,7 @@ fun MomentReadouts(
             }
         }
         if (facts.isNotEmpty()) {
-            FactSegments(facts, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+            Text(facts.factsLine(), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

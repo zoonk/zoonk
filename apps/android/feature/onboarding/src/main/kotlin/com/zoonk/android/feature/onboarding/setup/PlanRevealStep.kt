@@ -100,7 +100,6 @@ import com.zoonk.api.models.Syllabus
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import kotlin.time.Duration
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 /** Reading the plan starts no work; opening a step is a learner tap. */
 @Composable
@@ -497,7 +496,7 @@ private fun NoticeDayLine(plan: Plan) {
                 return
             }
         }
-    FactSegments(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+    Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }
 
 @Composable
@@ -752,7 +751,7 @@ private fun CoverageWords(
             }
         }
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        FactSegments(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         // A learner who skipped the test, short on time, gets no focus: the test is what would suggest one.
         if (focusTestOffer(plan) != null) RevealLink(stringResource(R.string.focustest_take_test), focus.onTest)
     }
@@ -781,7 +780,7 @@ private fun FocusTradeOff(
 ) {
     val tested = plan.focusTest?.let { it.state != FocusTestSummary.State.NOT_STARTED } == true
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        FactSegments(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         FlowRow {
             if (canChooseFocus(plan)) RevealLink(stringResource(R.string.focustest_change_focus), focus.onChange)
             if (tested) RevealLink(stringResource(R.string.focustest_what_test_changed), focus.onTest)

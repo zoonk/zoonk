@@ -44,7 +44,6 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.PageScaffold
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import com.zoonk.android.ui.components.Facts as FactSegments
 
 /** Every library the build ships and its license, from the list AboutLibraries' Gradle plugin writes. */
 @Composable
@@ -68,7 +67,7 @@ fun LicensesScreen(navigator: AppNavigator) {
                         ListRow(
                             headline = { Text(library.name) },
                             supporting = {
-                                FactSegments(
+                                Text(
                                     listOfNotNull(library.artifactVersion, library.licenses.joinToString { it.name }).factsLine(),
                                 )
                             },

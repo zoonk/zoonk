@@ -58,7 +58,6 @@ import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.withTabularFigures
-import com.zoonk.android.ui.components.Facts as FactSegments
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepAnyOfContentOneOf27Value as MatchPairsContent
 
 val matchPairsRenderer =
@@ -156,7 +155,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
     Box {
         ActivityCanvas(gap = 16.dp) {
             val traps = fields.distractors.size
-            FactSegments(
+            Text(
                 listOfNotNull(
                     pluralStringResource(
                         R.plurals.activities_sorting_pairs_matched,
