@@ -2,9 +2,11 @@ import { type LessonVisual as LessonVisualData } from "@zoonk/core/library/steps
 import { cn } from "@zoonk/ui/lib/utils";
 import { Fragment } from "react";
 import { RichTable } from "../_components/rich-table";
+import { useAppLocale } from "../_utils/locale";
 import { type RichInlineSegment, RichInlineSegments } from "../rich-text/rich-inline-segments";
 import { RichTextBlocks } from "../rich-text/rich-text-blocks";
 import { speakSegments } from "../rich-text/rich-text-speech";
+import { typesetMoney, typesetProse } from "../rich-text/rich-text-typography";
 import { SpokenMath } from "../rich-text/spoken-math";
 import { useMathWords } from "../rich-text/use-spoken-text";
 import { LessonVisual } from "../visuals/lesson-visual";
@@ -13,7 +15,17 @@ import { ItemPicture, type ItemPictureData } from "./item-picture";
 
 type ItemTable = Extract<ItemTextBlock, { kind: "table" }>;
 
+/** A question's money as its answer writes it ("R$80" in English); its other digits stay as written. */
+function useMoneyTypesetting() {
+  const locale = useAppLocale();
+
+  return (segments: RichInlineSegment[]) =>
+    typesetProse({ locale, segments, typeset: (text) => typesetMoney({ locale, text }) });
+}
+
 function ItemParagraph({ lines }: { lines: RichInlineSegment[][] }) {
+  const money = useMoneyTypesetting();
+
   return (
     <p>
       {lines.map((line, index) => {
@@ -22,7 +34,7 @@ function ItemParagraph({ lines }: { lines: RichInlineSegment[][] }) {
         return (
           <Fragment key={key}>
             {index > 0 && <br />}
-            <RichInlineSegments segments={line} />
+            <RichInlineSegments segments={money(line)} />
           </Fragment>
         );
       })}
@@ -32,13 +44,14 @@ function ItemParagraph({ lines }: { lines: RichInlineSegment[][] }) {
 
 function ItemTableView({ table }: { table: ItemTable }) {
   const words = useMathWords();
+  const money = useMoneyTypesetting();
 
   return (
     <RichTable
       align={table.align}
       header={table.header}
       label={table.header.map((cell) => speakSegments({ segments: cell, words })).join(", ")}
-      renderCell={(cell) => <RichInlineSegments segments={cell} />}
+      renderCell={(cell) => <RichInlineSegments segments={money(cell)} />}
       rows={table.rows}
     />
   );
@@ -66,9 +79,11 @@ export function ItemText({ className, text }: { className?: string; text: string
  * read in words.
  */
 export function ItemLine({ text }: { text: string }) {
+  const money = useMoneyTypesetting();
+
   return (
     <SpokenMath>
-      <RichInlineSegments segments={parseItemLine(text)} />
+      <RichInlineSegments segments={money(parseItemLine(text))} />
     </SpokenMath>
   );
 }

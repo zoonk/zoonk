@@ -6,7 +6,6 @@ import { ListOrderedIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlayerReadScene } from "../../components/player-read-scene";
 import { LessonStepPicture } from "../_components/lesson-pictures";
-import { LessonQuestion } from "../_components/lesson-step-text";
 import { ScreenSupport } from "../_components/screen-support";
 import { ExplainingScreenHelp } from "../controls/ask-buddy-offer";
 import { useLessonPlayer } from "../lesson-player-context";
@@ -20,10 +19,7 @@ export function WorkedExampleStepView({ step }: LessonStepViewProps<StepOf<"work
 
   return (
     <PlayerReadScene className="gap-5 sm:gap-6">
-      <div className="flex flex-col gap-3">
-        <Eyebrow icon={<ListOrderedIcon aria-hidden="true" />}>{t("Worked example")}</Eyebrow>
-        {step.content.title && <LessonQuestion>{step.content.title}</LessonQuestion>}
-      </div>
+      <Eyebrow icon={<ListOrderedIcon aria-hidden="true" />}>{t("Worked example")}</Eyebrow>
 
       <WorkedExampleContent
         content={step.content}
