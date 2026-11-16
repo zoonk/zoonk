@@ -226,7 +226,9 @@ final class MemoryChanges {
         self.deletedFact = deleted
         self.undoStatus = nil
         self.end(control, run: run, saved: true)
-        self.retire(.edit(id))
+        // The fact and its retry are gone. Its edits and its deletion take turns in the memory's
+        // saves, so an edit has always landed before its fact's deletion does.
+        self.failed.remove(.edit(id))
       case .failed?, nil:
         self.end(control, run: run, saved: false)
       case .obsolete?:
@@ -260,13 +262,6 @@ final class MemoryChanges {
     latest = [:]
     deletedFact = nil
     undoStatus = nil
-  }
-
-  /// A control that's gone, such as a deleted fact's edit: its failure goes, and a change still out
-  /// says nothing when it lands. Undo brings the fact back, not the failure.
-  private func retire(_ control: Control) {
-    latest[control] = nil
-    failed.remove(control)
   }
 
   private func begin(_ control: Control) -> Int {

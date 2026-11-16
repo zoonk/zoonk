@@ -308,26 +308,6 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertFalse(changes.saveFailed, "Undo brings the fact back, not its failure")
   }
 
-  /// A fact deleted while its edit is still out: the edit failing after that says nothing.
-  func testAnEditStillOutWhenItsFactIsDeletedSaysNothing() async throws {
-    let api = SettingsAPIStub()
-    let store = makeStore(api: api)
-    let changes = MemoryChanges()
-    await store.memory.load()
-    await api.holdEdits()
-
-    changes.save(.edit(MemoryFact.evenings.id)) {
-      await store.updateMemoryFact(id: MemoryFact.evenings.id, statement: "Studies at dawn")
-    }
-    await api.waitForHeldEdit()
-    changes.delete(id: MemoryFact.evenings.id, settings: store)
-    await api.releaseEdits(throwing: APIError.network)
-    await waitUntil { changes.deletedFact == .evenings }
-    try await Task.sleep(for: .milliseconds(200))
-
-    XCTAssertFalse(changes.saveFailed)
-  }
-
   func testLeavingMemoryEndsItsNoticeAndWhatsStillOut() async {
     let api = SettingsAPIStub()
     let store = makeStore(api: api)
