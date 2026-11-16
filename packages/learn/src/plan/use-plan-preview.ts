@@ -33,7 +33,7 @@ export function usePreviewBase(): object {
 export function usePlanPreview(opening?: string) {
   const { actions, plan } = usePlanScreen();
   const [preview, setPreview] = useState<PlanPreviewState>({ status: "idle" });
-  const requests = useRef(createPreviewRequests());
+  const requests = useRef(createPreviewRequests(() => setPreview({ status: "idle" })));
 
   useLayoutEffect(() => {
     requests.current.showOpening(opening);
@@ -70,9 +70,6 @@ export function usePlanPreview(opening?: string) {
         ? ({ status: "idle" } as const)
         : preview,
     requestPreview,
-    setPreview: () => {
-      requests.current.cancel();
-      setPreview({ status: "idle" });
-    },
+    setPreview: () => requests.current.cancel(),
   };
 }

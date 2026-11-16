@@ -4,14 +4,17 @@
  * still settles the state, which ignores it, but resolves to `null` for whoever awaited it, so a
  * caller that acts on the answer acts only on a wanted one.
  */
-export function createPreviewRequests() {
+export function createPreviewRequests(onDrop: () => void) {
   let active: object | null = null;
   let opening: string | undefined;
 
+  const cancel = () => {
+    active = null;
+    onDrop();
+  };
+
   return {
-    cancel: () => {
-      active = null;
-    },
+    cancel,
     run: async <T>(request: object, load: () => Promise<T>): Promise<T | null> => {
       active = request;
       const result = await load();
@@ -19,8 +22,8 @@ export function createPreviewRequests() {
     },
     showOpening: (shown: string | undefined) => {
       if (opening !== shown) {
-        active = null;
         opening = shown;
+        cancel();
       }
     },
   };

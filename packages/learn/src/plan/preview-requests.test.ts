@@ -1,11 +1,13 @@
+import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { describe, expect, it } from "vitest";
+import { type PlanPreviewState, resolvePlanPreview } from "./plan-preview-state";
 import { createPreviewRequests } from "./preview-requests";
 
 const answer = { effect: "the card's numbers" };
 
 describe(createPreviewRequests, () => {
   it("gives a wanted request its answer through refreshes of the same opening", async () => {
-    const requests = createPreviewRequests();
+    const requests = createPreviewRequests(() => {});
     const late = Promise.withResolvers<typeof answer>();
     requests.showOpening("fitLessons");
     const pending = requests.run({}, () => late.promise);
@@ -17,7 +19,7 @@ describe(createPreviewRequests, () => {
   });
 
   it("gives nothing to a request cancelled while its answer was on the way", async () => {
-    const requests = createPreviewRequests();
+    const requests = createPreviewRequests(() => {});
     const late = Promise.withResolvers<typeof answer>();
     const pending = requests.run({}, () => late.promise);
 
@@ -28,7 +30,7 @@ describe(createPreviewRequests, () => {
   });
 
   it("gives nothing to a request a newer one replaced", async () => {
-    const requests = createPreviewRequests();
+    const requests = createPreviewRequests(() => {});
     const late = Promise.withResolvers<typeof answer>();
     const earlier = requests.run({}, () => late.promise);
     const later = requests.run({}, async () => answer);
@@ -42,7 +44,7 @@ describe(createPreviewRequests, () => {
 
 describe("suggestion opening", () => {
   it("does not add a held fit answer after a refresh replaces the selected suggestion", async () => {
-    const requests = createPreviewRequests();
+    const requests = createPreviewRequests(() => {});
     const late = Promise.withResolvers<typeof answer>();
     const changes: object[] = [];
     requests.showOpening("fitLessons");
@@ -61,4 +63,37 @@ describe("suggestion opening", () => {
 
     expect(changes).toStrictEqual([]);
   });
+
+  it.each([
+    null,
+    { effect: null, feasibility: null, finishDate: null, ready: true, unchanged: true },
+  ])(
+    "reopens a replaced fit suggestion idle before and after its late answer (%j)",
+    async (lateAnswer: PlanChangePreview | null) => {
+      const request = { operations: [], plan: {}, status: "loading" as const };
+      const shown: { preview: PlanPreviewState } = { preview: request };
+
+      const requests = createPreviewRequests(() => {
+        shown.preview = { status: "idle" };
+      });
+
+      const late = Promise.withResolvers<PlanChangePreview | null>();
+      requests.showOpening("fitLessons");
+      shown.preview = request;
+
+      const pending = requests.run(request, async () => {
+        const preview = await late.promise;
+        shown.preview = resolvePlanPreview({ current: shown.preview, preview, request });
+        return preview;
+      });
+
+      requests.showOpening("paused");
+      requests.showOpening("fitLessons");
+      expect(shown.preview.status).toBe("idle");
+
+      late.resolve(lateAnswer);
+      await expect(pending).resolves.toBeNull();
+      expect(shown.preview.status).toBe("idle");
+    },
+  );
 });
