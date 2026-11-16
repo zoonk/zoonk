@@ -96,7 +96,7 @@ private struct ExplanationView: View {
           Text(explanation.title),
           chip: Chip(
             Text(
-              "Quick explanation\u{00A0}· \(Duration.seconds(300), format: .units(allowed: [.minutes], width: .abbreviated))",
+              "Quick explanation\u{00A0}· \(studyDuration(minutes: 5))",
               tableName: "Explain",
               comment: "Chip over a quick explanation's title: its kind and length"))
         )

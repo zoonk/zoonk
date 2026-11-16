@@ -90,7 +90,7 @@ enum MockLabels {
   }
 
   static func duration(minutes: Int) -> String {
-    Duration.seconds(minutes * 60).formatted(.units(allowed: [.hours, .minutes], width: .narrow))
+    studyDuration(minutes: minutes)
   }
 
   static func number(_ value: Double, locale: Locale = .autoupdatingCurrent) -> String {

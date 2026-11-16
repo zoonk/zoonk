@@ -413,7 +413,7 @@ enum UnderstoodRows {
     // A language certificate's dates come from its official guide, any other exam's from its notice.
     let isGuide = facts.kind == "exam" && facts.targetLanguage != nil
 
-    if let targetDate = facts.targetDate, let date = day(targetDate) {
+    if let targetDate = facts.targetDate, day(targetDate) != nil {
       let official = examDates.first {
         $0.source != nil && !$0.estimated && $0.date == targetDate
       }
@@ -433,7 +433,7 @@ enum UnderstoodRows {
           ? examDateLabel
           : LocalizedStringResource(
             "End date", table: "Onboarding", comment: "Row with the date a goal aims for"),
-        value: date.formatted(.dateTime.day().month(.wide).year()),
+        value: PlanDate.format(targetDate, .row, today: from),
         note: official.flatMap { day($0.date) }.map { daysLeft(until: $0, today: today) }
           ?? suggested.map { noticeDayText($0.date, isGuide: isGuide) },
         source: (official ?? suggested)?.source.flatMap(source),
@@ -506,13 +506,13 @@ enum UnderstoodRows {
       }
       ?? ExamSittings.namedMonthStart(month: month, year: year, from: from)
 
-    guard let kept, let start = day(kept) else {
+    guard let kept, day(kept) != nil else {
       return nil
     }
 
     return UnderstoodRow(
       id: "targetDate", label: examDateLabel,
-      value: start.formatted(.dateTime.month(.wide).year()).localizedCapitalized,
+      value: PlanDate.format(kept, .rowMonth, today: from),
       note: noticeDay.map { noticeDayText($0.date, isGuide: isGuide) },
       source: noticeDay?.source.flatMap(source),
       field: .targetDate, editValue: kept, suggestedDate: noticeDay?.date)
@@ -567,7 +567,7 @@ enum UnderstoodRows {
   }
 
   private static func noticeDayText(_ isoDate: String, isGuide: Bool) -> String {
-    let date = day(isoDate)?.formatted(.dateTime.day().month(.wide).year()) ?? isoDate
+    let date = PlanDate.format(isoDate, .sentence, today: PlanDate.today())
 
     return isGuide
       ? String(
@@ -586,13 +586,13 @@ enum UnderstoodRows {
     let sameYear = Set(days.map { yearOf($0.date) }).count == 1
 
     return days.indices.compactMap { index -> String? in
-      guard let date = day(days[index].date) else {
+      guard day(days[index].date) != nil else {
         return nil
       }
 
-      return sameYear && index < days.count - 1
-        ? date.formatted(.dateTime.day().month(.wide))
-        : date.formatted(.dateTime.day().month(.wide).year())
+      return PlanDate.format(
+        days[index].date, .row, today: days[index].date,
+        year: sameYear && index < days.count - 1 ? .never : .always)
     }
     .formatted(.list(type: .and))
   }
@@ -608,9 +608,7 @@ enum UnderstoodRows {
           "To be confirmed", table: "Onboarding", comment: "An exam date that isn't out yet"))
     }
 
-    guard let month,
-      let date = Calendar.isoLocal.date(from: DateComponents(year: year, month: month))
-    else {
+    guard let month, let start = PlanDate.date("\(year)-\(month)-1") else {
       return String(
         localized: LocalizedStringResource(
           "\(String(year)), to be confirmed", table: "Onboarding",
@@ -619,7 +617,8 @@ enum UnderstoodRows {
 
     return String(
       localized: LocalizedStringResource(
-        "\(date.formatted(.dateTime.month(.wide).year())), to be confirmed", table: "Onboarding",
+        "\(PlanDate.format(PlanDate.isoDate(start), .rowMonth, today: "", year: .always)), to be confirmed",
+        table: "Onboarding",
         comment: "An exam date that isn't out yet, with the month the learner named"))
   }
 
@@ -652,15 +651,13 @@ enum UnderstoodRows {
   private static func timeOfDay(_ value: String) -> String? {
     let parts = value.split(separator: ":").compactMap { Int($0) }
 
-    guard parts.count >= 2,
-      let date = Calendar.current.date(
-        bySettingHour: parts[0], minute: parts[1], second: 0, of: .now)
-    else {
+    guard parts.count >= 2, (0..<24).contains(parts[0]), (0..<60).contains(parts[1]) else {
       return nil
     }
 
-    return date.formatted(date: .omitted, time: .shortened)
+    return PlanDate.timeOfDay(minutes: parts[0] * 60 + parts[1])
   }
+
 }
 
 extension Date {

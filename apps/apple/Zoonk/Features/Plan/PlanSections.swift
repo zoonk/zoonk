@@ -771,7 +771,7 @@ func studyDaysText(_ weekdayMinutes: [Int]) -> String {
   let days = ScheduleTime.mondayFirst.filter {
     weekdayMinutes.indices.contains($0) && weekdayMinutes[$0] > 0
   }
-  let symbols = Calendar.current.shortWeekdaySymbols
+  let symbol = { PlanDate.weekdayName(number: $0, short: true) }
 
   if days.count == 7 {
     return String(localized: "Every day", table: "Plan", comment: "Study days: all seven")
@@ -784,9 +784,9 @@ func studyDaysText(_ weekdayMinutes: [Int]) -> String {
 
   if let first = days.first, let last = days.last, days.count >= 3, isOneRun {
     return String(
-      localized: "\(symbols[first]) – \(symbols[last])", table: "Plan",
+      localized: "\(symbol(first)) – \(symbol(last))", table: "Plan",
       comment: "Study days as a run, from its first weekday to its last")
   }
 
-  return days.map { symbols[$0] }.formatted(.list(type: .and, width: .narrow))
+  return days.map(symbol).formatted(.list(type: .and, width: .narrow))
 }

@@ -893,7 +893,7 @@ private struct DateQuestion: View {
 
   /// Why the date shown before can't be planned; the screen then starts without it.
   private var passedNote: String? {
-    guard let initialDate, let day = studyDate(initialDate) else {
+    guard let initialDate, studyDate(initialDate) != nil else {
       return nil
     }
 
@@ -901,7 +901,7 @@ private struct DateQuestion: View {
     case .passed:
       return String(
         localized: LocalizedStringResource(
-          "Your date, \(day.formatted(.studyDay.day().month(.wide).year())), has passed.",
+          "Your date, \(PlanDate.format(initialDate, .sentence, today: PlanDate.today())), has passed.",
           table: "Onboarding", comment: "Above the date question when the goal's date has passed"))
     case .today:
       return String(
@@ -925,12 +925,13 @@ private struct DateQuestion: View {
         comment: "An exam with no sitting in the learner's month")
 
       ForEach(closest, id: \.self) { sitting in
-        if let day = studyDate(sitting) {
+        if studyDate(sitting) != nil {
           Button {
             onAnswer(["question": "targetDate", "targetDate": sitting])
           } label: {
             Text(
-              "Use \(day.formatted(.studyDay.month(.wide).day().year()))", tableName: "Exam",
+              "Use \(PlanDate.format(sitting, .sentence, today: PlanDate.today()))",
+              tableName: "Exam",
               comment: "Moves the plan to one of the closest sittings")
           }
         }
@@ -944,8 +945,11 @@ private struct DateQuestion: View {
     first: String,
     firstDay: Date
   ) -> some View {
-    let second = examDays.days.dropFirst().first.flatMap(UnderstoodRows.day)
-    let date = firstDay.formatted(.dateTime.day().month(.wide).year())
+    let today = PlanDate.today()
+    let second = examDays.days.dropFirst().first.map {
+      PlanDate.format($0, .sentence, today: today, year: .never)
+    }
+    let date = PlanDate.format(first, .sentence, today: today)
     let estimated =
       examDays.estimated
       ? String(
@@ -960,7 +964,7 @@ private struct DateQuestion: View {
         subject: subject,
         title: second.map {
           Text(
-            "Your exam is on \(date) (and \($0.formatted(.dateTime.day().month(.wide))))",
+            "Your exam is on \(date) (and \($0))",
             tableName: "Onboarding",
             comment: "An exam held over two days")
         } ?? Text("Your exam is on \(date)", tableName: "Onboarding", comment: "An exam's date"),

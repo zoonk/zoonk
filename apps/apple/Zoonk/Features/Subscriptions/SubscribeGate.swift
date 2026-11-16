@@ -406,10 +406,9 @@ extension HelpLimit {
     case 1: return .tomorrow
     default:
       return .on(
-        availableAt.formatted(
-          Date.FormatStyle(
-            locale: calendar.locale ?? .current, calendar: calendar, timeZone: calendar.timeZone
-          ).month(.wide).day()))
+        PlanDate.moment(
+          availableAt, .sentence, year: .never, timeZone: calendar.timeZone,
+          locale: calendar.locale ?? .current))
     }
   }
 

@@ -789,8 +789,9 @@ extension WebPlus {
   }
 }
 
+/// A subscription's day always names its year, as main's.
 private func day(_ date: Date) -> String {
-  date.formatted(date: .abbreviated, time: .omitted)
+  PlanDate.moment(date, .row, year: .always)
 }
 
 private func plusEnds(on date: Date) -> Text {

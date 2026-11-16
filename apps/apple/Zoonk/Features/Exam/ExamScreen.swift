@@ -265,12 +265,13 @@ private struct ExamHero: View {
         }
 
         ForEach(noSitting.closest, id: \.self) { closest in
-          if let date = studyDate(closest) {
+          if studyDate(closest) != nil {
             Button {
               useDate(closest)
             } label: {
               Text(
-                "Use \(date.formatted(.studyDay.month(.wide).day().year()))", tableName: "Exam",
+                "Use \(PlanDate.format(closest, .sentence, today: PlanDate.today()))",
+                tableName: "Exam",
                 comment:
                   "Moves the plan to one of the closest sittings; the argument is its date, like 'May 5, 2027'"
               )
@@ -303,7 +304,7 @@ private struct ExamHero: View {
     let dates = exam.days.compactMap { day in studyDate(day.date).map { (day, $0) } }
 
     if exam.namedMonth {
-      return dates.map { $0.1.formatted(.studyDay.month(.wide).year()) }
+      return dates.map { PlanDate.format($0.0.date, .rowMonth, today: PlanDate.today()) }
         + [daysLeft].compactMap(\.self)
     }
 
@@ -587,7 +588,7 @@ private struct ExamMocksSection: View {
               StatusMark(status: isNext ? .next : .todo)
             } trailing: {
               if let deadline = mock.deadline, deadline > .now {
-                Text(timerInterval: Date.now...deadline, countsDown: true)
+                PlanDate.countdown(to: deadline)
               } else if mock.deadline == nil {
                 Text(
                   "All parts handed in", tableName: "Exam",

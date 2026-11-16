@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// Every date is a calendar day.
 struct GoalPlan: Decodable, Equatable, Sendable {
@@ -755,51 +756,65 @@ enum PlanDate {
     return calendar.dateComponents([.day], from: start, to: end).day ?? 0
   }
 
-  /// "Nov 20", with the year when it isn't this year's, as main's plan dates.
-  static func text(
-    _ isoDate: String, today: String, month: Bool = false, weekday: Bool = false
+  /// A calendar day by its place on the screen (main's `getIsoDateOptions`): a data row's "Nov 20",
+  /// a sentence's "November 20", a month, or a weekday's name; with its weekday before it when
+  /// asked, and its year in another year than `today`'s, or as `year` says.
+  static func format(
+    _ isoDate: String, _ role: DateRole = .row, today: String, weekday: Bool = false,
+    year: DateYear = .inAnotherYear
   ) -> String {
     guard let date = date(isoDate) else {
       return isoDate
     }
 
-    var style = Date.FormatStyle(timeZone: .gmt)
+    var style = role.style(weekday: weekday)
 
-    if month {
-      return date.formatted(style.month(.wide).year())
-    }
-
-    style = style.month(.abbreviated).day()
-
-    if weekday {
-      style = style.weekday(.abbreviated)
-    }
-
-    if inAnotherYear(isoDate, today: today) {
+    if role != .weekday,
+      year == .always || (year == .inAnotherYear && inAnotherYear(isoDate, today: today))
+    {
       style = style.year()
     }
 
     return date.formatted(style)
   }
 
-  /// Main's "long" date: "May 5", with the year when it isn't this year's.
-  static func longDay(_ isoDate: String, today: String) -> String {
-    guard let date = date(isoDate) else {
-      return isoDate
+  /// An instant's day in the learner's zone, by role, with its year when that day isn't in this
+  /// year (main's `useFormatMomentDate`).
+  static func moment(
+    _ moment: Date, _ role: DateRole = .row, weekday: Bool = false,
+    year: DateYear = .inAnotherYear, now: Date = .now, timeZone: TimeZone = .current,
+    locale: Locale = .autoupdatingCurrent
+  ) -> String {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = timeZone
+    let anotherYear =
+      calendar.component(.year, from: moment) != calendar.component(.year, from: now)
+    var style = role.style(weekday: weekday, timeZone: timeZone, locale: locale)
+
+    if role != .weekday, year == .always || (year == .inAnotherYear && anotherYear) {
+      style = style.year()
     }
 
-    let style = Date.FormatStyle(timeZone: .gmt).month(.wide).day()
-    return date.formatted(inAnotherYear(isoDate, today: today) ? style.year() : style)
+    return moment.formatted(style)
+  }
+
+  /// "Nov 20", with the year when it isn't this year's, as main's plan dates.
+  static func text(
+    _ isoDate: String, today: String, month: Bool = false, weekday: Bool = false
+  ) -> String {
+    month
+      ? format(isoDate, .sentenceMonth, today: today, year: .always)
+      : format(isoDate, .row, today: today, weekday: weekday)
+  }
+
+  /// Main's "long" date: "May 5", with the year when it isn't this year's.
+  static func longDay(_ isoDate: String, today: String) -> String {
+    format(isoDate, .sentence, today: today)
   }
 
   /// "Monday, May 5", with the year when it isn't this year's.
   static func weekdayDay(_ isoDate: String, today: String) -> String {
-    guard let date = date(isoDate) else {
-      return isoDate
-    }
-
-    let style = Date.FormatStyle(timeZone: .gmt).weekday(.wide).month(.wide).day()
-    return date.formatted(inAnotherYear(isoDate, today: today) ? style.year() : style)
+    format(isoDate, .sentence, today: today, weekday: true)
   }
 
   /// "Nov 3 – 9", with the year when either end isn't in this year.
@@ -830,12 +845,7 @@ enum PlanDate {
 
   /// "Nov", or "November" when `wide`, with the year when it isn't this year's.
   static func monthText(_ isoDate: String, today: String, wide: Bool = false) -> String {
-    guard let date = date(isoDate) else {
-      return isoDate
-    }
-
-    let style = Date.FormatStyle(timeZone: .gmt).month(wide ? .wide : .abbreviated)
-    return date.formatted(inAnotherYear(isoDate, today: today) ? style.year() : style)
+    format(isoDate, wide ? .sentenceMonth : .rowMonth, today: today)
   }
 
   private static func inAnotherYear(_ isoDate: String, today: String) -> Bool {
@@ -849,20 +859,171 @@ enum PlanDate {
   }
 
   static func longText(_ isoDate: String, month: Bool = false) -> String {
-    guard let date = date(isoDate) else {
-      return isoDate
-    }
+    format(isoDate, month ? .sentenceMonth : .sentence, today: isoDate, year: .always)
+  }
 
-    let style = Date.FormatStyle(timeZone: .gmt)
-    return date.formatted(month ? style.month(.wide).year() : style.month(.wide).day().year())
+  /// A time of day in the device's own clock, 12- or 24-hour: "7:30 AM", "19:05".
+  static func timeOfDay(minutes: Int, locale: Locale = .current) -> String {
+    let time = calendar.date(
+      from: DateComponents(year: 2000, month: 1, day: 1, hour: minutes / 60, minute: minutes % 60))
+
+    return (time ?? .distantPast).formatted(
+      Date.FormatStyle(date: .omitted, time: .shortened, locale: locale, timeZone: .gmt))
+  }
+
+  /// An instant's time of day in the learner's zone, in the device's clock.
+  static func timeOfDay(_ moment: Date, in timeZone: TimeZone = .current) -> String {
+    moment.formatted(Date.FormatStyle(date: .omitted, time: .shortened, timeZone: timeZone))
+  }
+
+  /// "07:30": a time of day as the server reads and writes it, never shown.
+  static func wireTime(minutes: Int) -> String {
+    String(format: "%02d:%02d", minutes / 60, minutes % 60)
+  }
+
+  /// A zone named the system's way, as in "Brasília Time".
+  static func zoneName(_ identifier: String) -> String? {
+    TimeZone(identifier: identifier)?.localizedName(for: .generic, locale: .current)
+  }
+
+  /// "0:52", or "1:02:05" from an hour: a clock of minutes and seconds (main's `formatClock`).
+  static func clock(seconds: Int) -> String {
+    let seconds = max(seconds, 0)
+    return Duration.seconds(seconds).formatted(
+      .time(pattern: seconds >= 3600 ? .hourMinuteSecond : .minuteSecond))
+  }
+
+  /// A month and its year in parts, for a screen that sets the year apart: "Jul 2027".
+  static func monthAndYear(_ date: Date) -> AttributedString {
+    date.formatted(DateRole.rowMonth.style(weekday: false).year().attributedStyle)
+  }
+
+  /// A clock counting down to `deadline`, which the system keeps current.
+  static func countdown(to deadline: Date, from start: Date = .now) -> Text {
+    Text(timerInterval: start...max(deadline, start), countsDown: true)
+  }
+
+  /// A clock counting up from `start`, which the system keeps current, stopping at `end`.
+  static func stopwatch(from start: Date, to end: Date) -> Text {
+    Text(timerInterval: start...max(end, start), countsDown: false)
+  }
+
+  /// A length to the second, where a rounded one would be wrong, such as an exam's preparation
+  /// time: "1 min, 30 sec".
+  static func exactDuration(seconds: Int) -> String {
+    Duration.seconds(max(seconds, 0)).formatted(
+      .units(allowed: [.hours, .minutes, .seconds], width: .abbreviated))
   }
 
   /// "Monday".
   static func weekdayName(_ isoDate: String) -> String {
-    date(isoDate)?.formatted(Date.FormatStyle(timeZone: .gmt).weekday(.wide)) ?? ""
+    format(isoDate, .weekday, today: isoDate)
+  }
+
+  /// A weekday's name from its number, Sunday 0: "Tuesday", or "Tue" when `short` (main's
+  /// `formatWeekdayName`). A `label` starts with a capital, as a control's name does in every
+  /// language; inside a sentence it's written as the language writes it there.
+  static func weekdayName(
+    number: Int, short: Bool = false, label: Bool = false,
+    locale: Locale = .autoupdatingCurrent
+  ) -> String {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.locale = locale
+    let symbols =
+      label
+      ? (short ? calendar.shortStandaloneWeekdaySymbols : calendar.standaloneWeekdaySymbols)
+      : (short ? calendar.shortWeekdaySymbols : calendar.weekdaySymbols)
+    let name = symbols[((number % 7) + 7) % 7]
+    return label ? name.labelCased(locale) : name
+  }
+
+  /// A span of whole hours in the locale's clock: "6–12 AM" or "06–12".
+  static func hourRange(from start: Int, to end: Int, locale: Locale = .autoupdatingCurrent)
+    -> String
+  {
+    let clockFormat = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: locale) ?? "H"
+
+    guard clockFormat.contains("a") else {
+      return String(format: "%02d–%02d", start, end)
+    }
+
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.locale = locale
+
+    func clock(_ hour: Int) -> (hour: String, period: String) {
+      let twelveHour = hour % 12 == 0 ? 12 : hour % 12
+      return (
+        twelveHour.formatted(.number.locale(locale)),
+        hour % 24 < 12 ? calendar.amSymbol : calendar.pmSymbol
+      )
+    }
+
+    let (from, to) = (clock(start), clock(end))
+
+    return from.period == to.period
+      ? "\(from.hour)–\(to.hour) \(to.period)"
+      : "\(from.hour) \(from.period)–\(to.hour) \(to.period)"
+  }
+
+  /// "M": a weekday's letter, as a week row draws it.
+  static func weekdayLetter(_ isoDate: String) -> String {
+    date(isoDate)?.formatted(Date.FormatStyle(timeZone: .gmt).weekday(.narrow)) ?? ""
   }
 
   static func weekday(_ isoDate: String) -> String {
     date(isoDate)?.formatted(Date.FormatStyle(timeZone: .gmt).weekday(.abbreviated)) ?? ""
+  }
+}
+
+/// Where a date sits on the screen (main's `DateRole`), so a screen asks by role and every screen
+/// writes the date one way.
+enum DateRole {
+  /// A data row or a facts line: "Nov 20".
+  case row
+  /// A month in a row: "Nov".
+  case rowMonth
+  /// A date inside a sentence: "November 20".
+  case sentence
+  /// A month inside a sentence: "November".
+  case sentenceMonth
+  /// A weekday's name: "Friday".
+  case weekday
+
+  /// A calendar day is read in UTC, so it never moves with the device's zone; an instant in the
+  /// learner's.
+  fileprivate func style(
+    weekday: Bool, timeZone: TimeZone = .gmt, locale: Locale = .autoupdatingCurrent
+  ) -> Date.FormatStyle {
+    let style = Date.FormatStyle(locale: locale, timeZone: timeZone)
+
+    switch self {
+    case .row:
+      return weekday
+        ? style.weekday(.abbreviated).month(.abbreviated).day() : style.month(.abbreviated).day()
+    case .rowMonth:
+      return style.month(.abbreviated)
+    case .sentence:
+      return weekday ? style.weekday(.wide).month(.wide).day() : style.month(.wide).day()
+    case .sentenceMonth:
+      return style.month(.wide)
+    case .weekday:
+      return style.weekday(.wide)
+    }
+  }
+}
+
+/// Whether a date names its year: by default only in another year than today's (main's rule).
+enum DateYear {
+  case always
+  case inAnotherYear
+  case never
+}
+
+extension FormatStyle where Self == Date.FormatStyle {
+  /// A calendar day read in UTC, so it never shifts a day.
+  static var studyDay: Date.FormatStyle {
+    var style = Date.FormatStyle(timeZone: .gmt)
+    style.calendar.timeZone = .gmt
+    return style
   }
 }

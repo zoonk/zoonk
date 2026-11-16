@@ -297,7 +297,7 @@ private struct SpeakingPaperView: View {
       facts.append(
         String(
           localized:
-            "\(Duration.seconds(Int(task.prepMinutes.rounded()) * 60).formatted(.units(allowed: [.minutes], width: .abbreviated))) to prepare",
+            "\(ExamPrepTimer.duration(minutes: task.prepMinutes)) to prepare",
           table: "Voice", comment: "How long the exam gives to prepare"))
     }
 

@@ -335,7 +335,7 @@ struct GoalExamplesSection: View {
           "How does inflation work?", table: "Onboarding",
           comment: "An example question for a quick explanation"),
         LocalizedStringResource(
-          "Quick explanation\u{00A0}· \(Duration.seconds(300), format: .units(allowed: [.minutes], width: .abbreviated))",
+          "Quick explanation\u{00A0}· \(studyDuration(minutes: 5))",
           table: "Onboarding",
           comment:
             "The kind of an example goal: a short explanation of one question, and its length")

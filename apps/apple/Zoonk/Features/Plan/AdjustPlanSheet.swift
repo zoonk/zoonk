@@ -155,14 +155,13 @@ struct AdjustPlanSheet: View {
   private var daysSection: some View {
     let weekdayMinutes = plan.schedule.weekdayMinutes
     let studyCount = weekdayMinutes.filter { $0 > 0 }.count
-    let symbols = Calendar.current.weekdaySymbols
 
     return SwiftUI.Section {
       ForEach(ScheduleTime.mondayFirst, id: \.self) { weekday in
         let studies = weekdayMinutes.indices.contains(weekday) && weekdayMinutes[weekday] > 0
 
         Toggle(
-          symbols[weekday],
+          PlanDate.weekdayName(number: weekday, label: true),
           isOn: Binding(
             get: { studies },
             set: { on in

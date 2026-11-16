@@ -170,9 +170,9 @@ struct TodayChallengeRow: View {
   var body: some View {
     if let challenge = view.weeklyChallenge, let planItemID = challenge.planItemId,
       let dateText = challenge.date, dateText >= view.session.localDate,
-      let date = studyDate(dateText)
+      studyDate(dateText) != nil
     {
-      let day = date.formatted(.studyDay.weekday(.wide))
+      let day = PlanDate.weekdayName(dateText)
 
       Button {
         router.open(.challenge(planItemId: planItemID))
@@ -615,7 +615,7 @@ private struct WeekChallengeRow: View {
   let challenge: TodayView.WeeklyChallenge
   let date: Date
 
-  private var day: String { date.formatted(.studyDay.weekday(.wide)) }
+  private var day: String { PlanDate.weekdayName(PlanDate.isoDate(date)) }
 
   var body: some View {
     if challenge.kind == "mock" && challenge.requiresPlus {
@@ -688,8 +688,7 @@ private struct WeekDayMark: View {
   @State private var isShown = false
 
   var body: some View {
-    let date = studyDate(day.date)
-    let weekday = date?.formatted(.studyDay.weekday(.wide)) ?? day.date
+    let weekday = PlanDate.weekdayName(day.date)
 
     Button {
       isShown = true
@@ -699,7 +698,7 @@ private struct WeekDayMark: View {
           .frame(width: ringSize, height: ringSize)
           .layoutAnchor("week-ring")
 
-        Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
+        Text(PlanDate.weekdayLetter(day.date))
           .typeStyle(.small.weight(day.isToday ? .bold : .regular))
           .foregroundStyle(day.isToday ? Color(.foreground) : .mutedForeground)
       }

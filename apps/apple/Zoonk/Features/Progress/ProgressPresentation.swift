@@ -186,29 +186,7 @@ extension ProgressDaypart {
   }
 
   func localizedTimeRange(locale: Locale = .autoupdatingCurrent) -> String {
-    let (start, end) = hours
-    let clockFormat = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: locale) ?? "H"
-
-    guard clockFormat.contains("a") else {
-      return String(format: "%02d–%02d", start, end)
-    }
-
-    var calendar = Calendar(identifier: .gregorian)
-    calendar.locale = locale
-
-    func clock(_ hour: Int) -> (hour: String, period: String) {
-      let twelveHour = hour % 12 == 0 ? 12 : hour % 12
-      return (
-        twelveHour.formatted(.number.locale(locale)),
-        hour % 24 < 12 ? calendar.amSymbol : calendar.pmSymbol
-      )
-    }
-
-    let (from, to) = (clock(start), clock(end))
-
-    return from.period == to.period
-      ? "\(from.hour)–\(to.hour) \(to.period)"
-      : "\(from.hour) \(from.period)–\(to.hour) \(to.period)"
+    PlanDate.hourRange(from: hours.start, to: hours.end, locale: locale)
   }
 
   private var hours: (start: Int, end: Int) {
@@ -228,18 +206,12 @@ extension ProgressDaypart {
 extension ProgressWeekday {
   /// Capitalized, as a name on its own reads ("Quinta-feira").
   func localizedTitle(locale: Locale = .autoupdatingCurrent) -> String {
-    capitalized(\.standaloneWeekdaySymbols, locale: locale)
+    PlanDate.weekdayName(number: sundayIndex, label: true, locale: locale)
   }
 
   /// Under a chart's column ("Qui.").
   func localizedShortTitle(locale: Locale = .autoupdatingCurrent) -> String {
-    capitalized(\.shortStandaloneWeekdaySymbols, locale: locale)
-  }
-
-  private func capitalized(_ symbols: KeyPath<Calendar, [String]>, locale: Locale) -> String {
-    var calendar = Calendar(identifier: .gregorian)
-    calendar.locale = locale
-    return calendar[keyPath: symbols][sundayIndex].labelCased(locale)
+    PlanDate.weekdayName(number: sundayIndex, short: true, label: true, locale: locale)
   }
 
   private var sundayIndex: Int {

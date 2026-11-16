@@ -447,7 +447,7 @@ private struct ItemClock: ViewModifier {
           if let deadline {
             HStack {
               Spacer()
-              Text(timerInterval: Date.now...max(deadline, .now), countsDown: true)
+              PlanDate.countdown(to: deadline)
                 .typeStyle(.data)
                 .foregroundStyle(.mutedForeground)
                 .accessibilityLabel(

@@ -158,12 +158,12 @@ extension CertificateFacts {
 
   /// "Nov 3, 2026".
   var completedOnDay: String {
-    completedOnText(.studyDay.year().month(.abbreviated).day())
+    completedOnText(.row)
   }
 
   /// LinkedIn's issue date: "November 2026".
   var issueMonth: String {
-    completedOnText(.studyDay.year().month(.wide))
+    completedOnText(.sentenceMonth)
   }
 
   /// "K7QF-2M9X-HD4P", as the certificate prints it.
@@ -203,7 +203,7 @@ extension CertificateFacts {
 
   /// "October 28, 2026".
   var completedOnLong: String {
-    completedOnText(.studyDay.year().month(.wide).day())
+    completedOnText(.sentence)
   }
 
   /// What the page's heading says with its date, for VoiceOver on the picture.
@@ -219,8 +219,8 @@ extension CertificateFacts {
     targetLanguage.map { Locale.current.languageTitle($0) } ?? ""
   }
 
-  /// The day it was earned is a calendar day, so it's formatted in UTC.
-  private func completedOnText(_ style: Date.FormatStyle) -> String {
-    studyDate(completedOn)?.formatted(style) ?? completedOn
+  /// A certificate always names the year it was earned.
+  private func completedOnText(_ role: DateRole) -> String {
+    PlanDate.format(completedOn, role, today: completedOn, year: .always)
   }
 }

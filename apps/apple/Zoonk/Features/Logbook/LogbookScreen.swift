@@ -308,13 +308,13 @@ private struct WeekRings: View {
           }
           .layoutAnchor("week-ring")
 
-          Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
+          Text(PlanDate.weekdayLetter(key))
             .typeStyle(.small.monospaced())
             .foregroundStyle(studied ? Color(.foreground) : .faint)
         }
         .weekDayMark(width: ringSize)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(date?.formatted(.studyDay.weekday(.wide)) ?? ""))
+        .accessibilityLabel(Text(PlanDate.weekdayName(key)))
         .accessibilityValue(
           studied
             ? Text("Studied", tableName: "Session", comment: "A day studied this week")

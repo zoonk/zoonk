@@ -245,11 +245,3 @@ func studyDuration(minutes: Double) -> String {
 func studyDate(_ localDate: String) -> Date? {
   try? Date(localDate, strategy: .iso8601.year().month().day())
 }
-
-extension FormatStyle where Self == Date.FormatStyle {
-  static var studyDay: Date.FormatStyle {
-    var style = Date.FormatStyle(timeZone: TimeZone(identifier: "UTC") ?? .gmt)
-    style.calendar.timeZone = TimeZone(identifier: "UTC") ?? .gmt
-    return style
-  }
-}

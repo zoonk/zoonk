@@ -109,10 +109,11 @@ test("the CLI reports warnings but fails for errors and allows the shared module
     const rules = path.join(temporary, "scripts/formatting-rules.mts");
     const source = readFileSync(new URL("formatting-rules.mts", import.meta.url), "utf8");
     writeFileSync(checker, readFileSync(new URL("check-formatting.mts", import.meta.url)));
-    writeFileSync(rules, source);
+    const severity = /[=] "(?:warning|error)";/u;
+    writeFileSync(rules, source.replace(severity, '= "warning";'));
     writeFileSync(path.join(temporary, "Zoonk/Screen.swift"), "DateFormatter()");
     expect(spawnSync(process.execPath, [checker]).status).toBe(0);
-    writeFileSync(rules, source.replace('= "warning";', '= "error";'));
+    writeFileSync(rules, source.replace(severity, '= "error";'));
     expect(spawnSync(process.execPath, [checker]).status).toBe(1);
     rmSync(path.join(temporary, "Zoonk/Screen.swift"));
     writeFileSync(path.join(temporary, "Zoonk", FORMATTING_MODULE), "DateFormatter()");

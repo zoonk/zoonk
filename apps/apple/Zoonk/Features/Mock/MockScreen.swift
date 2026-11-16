@@ -134,7 +134,7 @@ struct MockClock: View {
 
   var body: some View {
     VStack(spacing: 0) {
-      Text(timerInterval: Date.now...max(deadline, .now), countsDown: true)
+      PlanDate.countdown(to: deadline)
         .typeStyle(.body.weight(.semibold).monospaced())
       Text("time left", tableName: "Mock", comment: "Under the mock's clock")
         .typeStyle(.small)
@@ -321,7 +321,7 @@ private struct MockBreakView: View {
     ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 8) {
-          Text(timerInterval: Date.now...max(until, .now), countsDown: true)
+          PlanDate.countdown(to: until)
             .typeStyle(.momentReadout)
             .accessibilityLabel(
               Text("Break time left", tableName: "Mock", comment: "The break's clock"))

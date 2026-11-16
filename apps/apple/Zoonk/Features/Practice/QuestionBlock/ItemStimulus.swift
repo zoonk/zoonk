@@ -271,7 +271,7 @@ private struct RecordingProgress: View {
   }
 
   private func clock(_ seconds: TimeInterval) -> String {
-    Duration.seconds(Int(seconds.rounded())).formatted(.time(pattern: .minuteSecond))
+    PlanDate.clock(seconds: Int(seconds.rounded()))
   }
 }
 

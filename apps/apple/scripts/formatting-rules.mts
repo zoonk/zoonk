@@ -2,7 +2,7 @@ import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 
 export const FORMATTING_MODULE = "Features/Plan/PlanModels.swift";
-export const FORMATTING_SEVERITY: "warning" | "error" = "warning";
+export const FORMATTING_SEVERITY: "warning" | "error" = "error";
 
 const STYLE = "(?:dateTime|studyDay|relative|units|time|interval|components)";
 

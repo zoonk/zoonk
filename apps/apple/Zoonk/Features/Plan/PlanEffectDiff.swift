@@ -642,5 +642,5 @@ func planTopicWords(_ name: String) -> String {
 
 /// Sunday counted 0.
 func planWeekdayName(_ weekday: Int) -> String {
-  Calendar.current.weekdaySymbols[((weekday % 7) + 7) % 7]
+  PlanDate.weekdayName(number: weekday)
 }
