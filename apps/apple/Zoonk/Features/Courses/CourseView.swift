@@ -143,17 +143,8 @@ private struct CourseHeroSection: View {
       VStack(alignment: .leading, spacing: 12) {
         CourseMark(detail.course)
 
-        if detail.course.subject != nil || exam != nil {
-          // Main's wrapping row: the eyebrow takes its own line once both don't fit.
-          FlowLayout(spacing: 12, rowSpacing: 8) {
-            if let subject = detail.course.subject {
-              CourseSubjectLabel(subject: subject)
-            }
-
-            if let exam {
-              CourseExamEyebrow(exam: exam)
-            }
-          }
+        if let subject = detail.course.subject {
+          CourseSubjectLabel(subject: subject)
         }
 
         Text(detail.course.title)
@@ -161,6 +152,10 @@ private struct CourseHeroSection: View {
           .fixedSize(horizontal: false, vertical: true)
           .accessibilityAddTraits(.isHeader)
           .heroTitle()
+
+        if let exam {
+          CourseExamDates(exam: exam)
+        }
 
         if let promise {
           Text(promise)
@@ -215,7 +210,7 @@ private struct ContentCountryFacts: View {
   }
 }
 
-private struct CourseExamEyebrow: View {
+private struct CourseExamDates: View {
   let exam: CoursePlanExample.Exam
 
   var body: some View {
@@ -230,7 +225,7 @@ private struct CourseExamEyebrow: View {
           comment: "An exam course's next sitting: its days, then how long until it")
       }
     }
-    .typeStyle(.eyebrow)
+    .typeStyle(.body)
     .foregroundStyle(.mutedForeground)
   }
 
