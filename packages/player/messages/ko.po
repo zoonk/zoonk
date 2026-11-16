@@ -893,24 +893,24 @@ msgid "Square {number}, {row} and {column}:"
 msgstr "{number}번 칸, {row} 및 {column}:"
 
 #: src/activities/combination-grid/grid-caption.tsx
+msgctxt "nyV23o"
+msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
+msgstr "{what}: {count} / {total, plural, =0 {#칸} other {#칸}}"
+
+#: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
 msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} right"
 msgstr "정답 {count}칸 / {total, plural, =0 {전체 #칸} other {총 #칸}}"
 
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "hyp4AH"
-msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
-msgstr "{dominant}: {dominantCount}/{total} · {recessive}: {recessiveCount}/{total}"
-
-#: src/activities/combination-grid/grid-caption.tsx
-msgctxt "k5aotC"
-msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} show {what}"
-msgstr "{count}칸이 {total, plural, =0 {전체 #칸 중} other {전체 #칸 중}} {what}에 해당해요"
-
-#: src/activities/combination-grid/grid-caption.tsx
 msgctxt "7Pftj-"
 msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} filled"
 msgstr "{count}칸 채움 / {total, plural, =0 {전체 #칸} other {총 #칸}}"
+
+#: src/activities/combination-grid/grid-caption.tsx
+msgctxt "hyp4AH"
+msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
+msgstr "{dominant}: {dominantCount}/{total} · {recessive}: {recessiveCount}/{total}"
 
 #: src/activities/combination-grid/grid-palette.tsx
 msgctxt "fewxxc"

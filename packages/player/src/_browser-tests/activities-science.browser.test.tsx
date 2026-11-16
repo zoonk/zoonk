@@ -301,6 +301,7 @@ describe("science activities", () => {
     await fillSquare(["Pp", "pp", "pp", "pp"]);
     await checkActivity();
     await expectVerdict("Not quite");
+    await expect.element(page.getByText("3 of 4 squares right", { exact: true })).toBeVisible();
   });
 
   it("times table grid: filling every product is right", async () => {

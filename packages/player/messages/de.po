@@ -893,24 +893,24 @@ msgid "Square {number}, {row} and {column}:"
 msgstr "Feld {number}, {row} und {column}:"
 
 #: src/activities/combination-grid/grid-caption.tsx
+msgctxt "nyV23o"
+msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
+msgstr "{what}: {count} von {total, plural, =0 {# Quadraten} one {# Quadrat} other {# Quadraten}}"
+
+#: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
 msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} right"
 msgstr "{count} von {total, plural, =0 {# Feldern} one {# Feld} other {# Feldern}} richtig"
 
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "hyp4AH"
-msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
-msgstr "{dominant}: {dominantCount} von {total} · {recessive}: {recessiveCount} von {total}"
-
-#: src/activities/combination-grid/grid-caption.tsx
-msgctxt "k5aotC"
-msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} show {what}"
-msgstr "In {count} von {total, plural, =0 {# Feldern} one {# Feld} other {# Feldern}} siehst du {what}"
-
-#: src/activities/combination-grid/grid-caption.tsx
 msgctxt "7Pftj-"
 msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} filled"
 msgstr "{count} von {total, plural, =0 {# Feldern} one {# Feld} other {# Feldern}} ausgefüllt"
+
+#: src/activities/combination-grid/grid-caption.tsx
+msgctxt "hyp4AH"
+msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
+msgstr "{dominant}: {dominantCount} von {total} · {recessive}: {recessiveCount} von {total}"
 
 #: src/activities/combination-grid/grid-palette.tsx
 msgctxt "fewxxc"

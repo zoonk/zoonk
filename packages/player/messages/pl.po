@@ -893,24 +893,24 @@ msgid "Square {number}, {row} and {column}:"
 msgstr "Pole {number}, {row} i {column}:"
 
 #: src/activities/combination-grid/grid-caption.tsx
+msgctxt "nyV23o"
+msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
+msgstr "{what}: {count} z {total, plural, =0 {# pól} one {# pola} other {# pól}}"
+
+#: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
 msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} right"
 msgstr "Poprawnie wypełniono {count} z {total, plural, =0 {# pól} one {# pola} other {# pól}}"
 
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "hyp4AH"
-msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
-msgstr "{dominant}: {dominantCount} z {total} · {recessive}: {recessiveCount} z {total}"
-
-#: src/activities/combination-grid/grid-caption.tsx
-msgctxt "k5aotC"
-msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} show {what}"
-msgstr "Na {count} z {total, plural, =0 {# pól} one {# pola} other {# pól}} widać: {what}"
-
-#: src/activities/combination-grid/grid-caption.tsx
 msgctxt "7Pftj-"
 msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} filled"
 msgstr "Wypełniono {count} z {total, plural, =0 {# pól} one {# pola} other {# pól}}"
+
+#: src/activities/combination-grid/grid-caption.tsx
+msgctxt "hyp4AH"
+msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
+msgstr "{dominant}: {dominantCount} z {total} · {recessive}: {recessiveCount} z {total}"
 
 #: src/activities/combination-grid/grid-palette.tsx
 msgctxt "fewxxc"

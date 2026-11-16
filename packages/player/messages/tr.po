@@ -893,24 +893,24 @@ msgid "Square {number}, {row} and {column}:"
 msgstr "{number}. kare, {row} ve {column}:"
 
 #: src/activities/combination-grid/grid-caption.tsx
+msgctxt "nyV23o"
+msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
+msgstr "{what}: {count} / {total, plural, =0 {# kare} other {# kare}}"
+
+#: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
 msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} right"
 msgstr "{count} / {total, plural, =0 {# kare} other {# kare}} doğru"
 
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "hyp4AH"
-msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
-msgstr "{dominant}: {dominantCount} / {total} · {recessive}: {recessiveCount} / {total}"
-
-#: src/activities/combination-grid/grid-caption.tsx
-msgctxt "k5aotC"
-msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} show {what}"
-msgstr "{count} / {total, plural, =0 {# karede} other {# karede}} {what} görülüyor"
-
-#: src/activities/combination-grid/grid-caption.tsx
 msgctxt "7Pftj-"
 msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} filled"
 msgstr "{count} / {total, plural, =0 {# kare} other {# kare}} dolu"
+
+#: src/activities/combination-grid/grid-caption.tsx
+msgctxt "hyp4AH"
+msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
+msgstr "{dominant}: {dominantCount} / {total} · {recessive}: {recessiveCount} / {total}"
 
 #: src/activities/combination-grid/grid-palette.tsx
 msgctxt "fewxxc"
