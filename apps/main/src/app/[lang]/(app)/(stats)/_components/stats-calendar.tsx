@@ -92,6 +92,7 @@ export async function StatsCalendar({
       aria-labelledby={titleId}
       defaultIndex={Math.max(0, startIndex)}
       details={details}
+      recentOnPhone
       weeks={weeks.length}
     >
       <ContributionCalendarCaption>

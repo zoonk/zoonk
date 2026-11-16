@@ -123,7 +123,7 @@ export function ChartInspectorPoints({
   const inspectIndex = (group: Element, index: number) => {
     const anchor = group.querySelector(`[${POINT_ATTRIBUTE}="${index}"]`);
 
-    if (anchor) {
+    if (anchor?.checkVisibility()) {
       anchor.scrollIntoView({ block: "nearest", inline: "nearest" });
       inspect({ anchor, index });
     }

@@ -27,13 +27,10 @@ const DAY_RING_CLASS = cn(
   "focus-visible:**:data-current:inset-ring-foreground focus-visible:**:data-current:ring-background focus-visible:**:data-current:ring-3 focus-visible:**:data-current:inset-ring-2 focus-visible:**:data-current:ring-inset",
 );
 
-/**
- * Whole weeks fill the column. On a phone it shows its last 26 weeks, so a year never has to scroll;
- * its title says so.
- */
+/** Whole weeks fill the column; `recentOnPhone` keeps a phone to the last 26 weeks. */
 const CALENDAR_SIZE_CLASS = cn(
   "@container/calendar [--calendar-gap:round(down,clamp(0.125rem,0.25cqw,0.375rem),1px)]",
-  "[--calendar-shown:var(--calendar-weeks,53)] max-sm:[--calendar-shown:min(var(--calendar-weeks,53),26)]",
+  "[--calendar-shown:var(--calendar-weeks,53)] max-sm:data-recent-on-phone:[--calendar-shown:min(var(--calendar-weeks,53),26)]",
   "[--calendar-cell:clamp(0.5rem,round(down,calc((100cqw-(var(--calendar-shown)-1)*var(--calendar-gap))/var(--calendar-shown)),1px),2.5rem)]",
 );
 
@@ -46,12 +43,15 @@ export function ContributionCalendar({
   className,
   defaultIndex = 0,
   details = NO_DETAILS,
+  recentOnPhone = false,
   style,
   weeks,
   ...props
 }: ComponentProps<"figure"> & {
   defaultIndex?: number;
   details?: readonly ChartPointDetail[];
+  /** On a phone, only the last 26 weeks, fitted to the column: its title must say so. */
+  recentOnPhone?: boolean;
   weeks?: number;
 }) {
   const weeksStyle: CSSPropertiesWithVariables = weeks ? { "--calendar-weeks": weeks } : {};
@@ -60,6 +60,7 @@ export function ContributionCalendar({
     <ChartInspector defaultIndex={defaultIndex} details={details}>
       <figure
         className={cn("flex min-w-0 flex-col gap-3", CALENDAR_SIZE_CLASS, className)}
+        data-recent-on-phone={recentOnPhone || undefined}
         data-slot="contribution-calendar"
         style={{ ...weeksStyle, ...style }}
         {...props}
@@ -151,7 +152,7 @@ export function ContributionCalendarGrid({
     <ChartInspectorPoints
       className={cn(
         "flex w-max min-w-full justify-between gap-(--calendar-gap) focus-visible:ring-0 [&>:last-child_[data-slot=contribution-calendar-period]]:right-0 [&>:last-child_[data-slot=contribution-calendar-period]]:left-auto [&>:nth-child(-n+2)_[data-slot=contribution-calendar-period]]:hidden",
-        "max-sm:[&>:nth-last-child(-n+26):nth-last-child(n+25)_[data-slot=contribution-calendar-period]]:hidden max-sm:[&>:nth-last-child(n+27)]:hidden",
+        "max-sm:in-data-recent-on-phone:[&>:nth-last-child(-n+26):nth-last-child(n+25)_[data-slot=contribution-calendar-period]]:hidden max-sm:in-data-recent-on-phone:[&>:nth-last-child(n+27)]:hidden",
         DAY_RING_CLASS,
         className,
       )}
