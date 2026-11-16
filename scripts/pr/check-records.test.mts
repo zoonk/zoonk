@@ -304,4 +304,18 @@ describe("pr:media check with declared platform limits", () => {
 
     assert.doesNotMatch(printed, /stored claim/u);
   });
+
+  it("prints no limits from a refused capture", async () => {
+    const refused = capture([shot({ file: "a.png" })], {
+      alignment: {
+        captures: [{ ...APPLE, version: 999 }],
+        summary: { notMeasurable: ["one-height not measurable on android: stored claim"] },
+      },
+    });
+
+    const printed = formatCheck(await refused.check(), fixture.repository);
+
+    assert.match(printed, /isn't a capture the evaluator reads/u);
+    assert.doesNotMatch(printed, /stored claim/u);
+  });
 });
