@@ -45,6 +45,7 @@ function getScrollDelta({
       bottom: Math.max(...boxes.map((box) => box.bottom)),
       top: Math.min(...boxes.map((box) => box.top)),
     },
+    room: scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop,
     title: stage.querySelector(TITLE_SELECTOR)?.getBoundingClientRect() ?? null,
     visible: getVisibleArea(scroller),
   });

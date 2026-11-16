@@ -4,7 +4,7 @@ import { numericCheck, reasonedChoice } from "./activity-checks";
 export const musicAnySubjectActivities = {
   beforeAfter: {
     check: numericCheck(0.12, {
-      explanation: "1.5 ÷ 12.5 = 0.12: in 1914 a car took about an eighth of the 1912 time.",
+      explanation: "1.5 hours ÷ 12.5 hours = 0.12.",
       output: "hours",
       question: "Divide the 1914 time by the 1912 time. What do you get?",
     }),

@@ -2,12 +2,14 @@ import { describe, expect, it } from "vitest";
 import { getRevealDelta } from "./reveal-feedback";
 
 const visible = { bottom: 700, top: 100 };
+const room = 2000;
 
 describe(getRevealDelta, () => {
   it("stays put when the feedback is already in sight", () => {
     const delta = getRevealDelta({
       chip: null,
       feedback: { bottom: 600, top: 500 },
+      room,
       title: { bottom: 144, top: 116 },
       visible,
     });
@@ -19,6 +21,7 @@ describe(getRevealDelta, () => {
     const delta = getRevealDelta({
       chip: null,
       feedback: { bottom: 760, top: 660 },
+      room,
       title: { bottom: 244, top: 216 },
       visible,
     });
@@ -30,6 +33,7 @@ describe(getRevealDelta, () => {
     const delta = getRevealDelta({
       chip: null,
       feedback: { bottom: 900, top: 700 },
+      room,
       title: { bottom: 184, top: 156 },
       visible,
     });
@@ -43,6 +47,7 @@ describe(getRevealDelta, () => {
     const delta = getRevealDelta({
       chip: null,
       feedback: { bottom: 740, top: 600 },
+      room,
       title,
       visible,
     });
@@ -57,6 +62,7 @@ describe(getRevealDelta, () => {
     const delta = getRevealDelta({
       chip,
       feedback: { bottom: 714, top: 600 },
+      room,
       title: { bottom: 178, top: 150 },
       visible,
     });
@@ -69,6 +75,7 @@ describe(getRevealDelta, () => {
     const delta = getRevealDelta({
       chip: { bottom: 162, top: 140 },
       feedback: { bottom: 710, top: 600 },
+      room,
       title: { bottom: 202, top: 174 },
       visible,
     });
@@ -82,6 +89,7 @@ describe(getRevealDelta, () => {
     const delta = getRevealDelta({
       chip: null,
       feedback,
+      room,
       title: { bottom: 144, top: 116 },
       visible,
     });
@@ -90,10 +98,39 @@ describe(getRevealDelta, () => {
     expect(feedback.top - delta).toBeGreaterThanOrEqual(visible.top);
   });
 
+  it("keeps a title whole when the scroll only takes the chip over it", () => {
+    const chip = { bottom: 107, top: 85 };
+    const title = { bottom: 146, top: 119 };
+    const area = { bottom: 767, top: 69 };
+
+    const delta = getRevealDelta({
+      chip,
+      feedback: { bottom: 799, top: 688 },
+      room: 56,
+      title,
+      visible: area,
+    });
+
+    expect(delta).toBe(48);
+    expect(chip.bottom - delta).toBeLessThan(area.top);
+    expect(title.top - delta).toBeGreaterThanOrEqual(area.top);
+  });
+
+  it("keeps a title whole when the screen can't scroll it out and the feedback still shows whole", () => {
+    const feedback = { bottom: 710, top: 600 };
+    const title = { bottom: 172, top: 116 };
+
+    const delta = getRevealDelta({ chip: null, feedback, room: 30, title, visible });
+
+    expect(title.top - delta).toBeGreaterThanOrEqual(visible.top);
+    expect(feedback.bottom - delta).toBeLessThanOrEqual(visible.bottom);
+  });
+
   it("stops at the top of a feedback taller than the screen", () => {
     const delta = getRevealDelta({
       chip: null,
       feedback: { bottom: 1600, top: 800 },
+      room,
       title: { bottom: 144, top: 116 },
       visible,
     });

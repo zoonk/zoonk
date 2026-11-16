@@ -29,32 +29,39 @@ function getWholeFeedbackDelta(feedback: Span, visible: Span): number {
  * and never past the feedback's own top. Why an answer was right or wrong matters more than the
  * title the learner just read, so the title may scroll away. What scrolls away leaves whole: a
  * chip or a title the scroll would cut is scrolled out, never left as a sliver under the top bar.
+ * When the screen can't scroll that far (`room`), it stays whole in sight instead, as long as the
+ * whole feedback still shows.
  */
 export function getRevealDelta({
   chip,
   feedback,
+  room,
   title,
   visible,
 }: {
   chip: Span | null;
   feedback: Span;
+  room: number;
   title: Span | null;
   visible: Span;
 }): number {
   const whole = getWholeFeedbackDelta(feedback, visible);
 
-  if (!title) {
-    return whole;
+  function leaveWhole(span: Span, clear: number): number | null {
+    const top = span.top - visible.top;
+    const out = Math.ceil(span.bottom - visible.top) + clear;
+
+    if (whole <= top || whole >= out) {
+      return null;
+    }
+
+    if (out <= room) {
+      return out;
+    }
+
+    const kept = Math.floor(top);
+    return feedback.bottom - visible.bottom <= kept ? kept : whole;
   }
 
-  const headingTop = (chip ?? title).top - visible.top;
-  const cutsHeading = whole > headingTop && whole < title.bottom - visible.top;
-
-  if (!cutsHeading) {
-    return whole;
-  }
-
-  const chipOut = chip ? Math.ceil(chip.bottom - visible.top) + CLEAR : 0;
-
-  return chip && whole <= chipOut ? chipOut : title.bottom - visible.top;
+  return (title && leaveWhole(title, 0)) ?? (chip && leaveWhole(chip, CLEAR)) ?? whole;
 }
