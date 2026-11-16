@@ -89,7 +89,7 @@
   "plan_change_adds": "7b09a4fd45fc3d4bb2e66ce680be169d3acd7df85aeb22d89f2f1aff3f5a7015",
   "plan_change_adds_about": "0428db0436b27e8084a7ef3260a9c33ceaaf633ef9478985734bd99998e8e565",
   "plan_change_adds_and_leaves_out": "cb5ff6a0568c049671263cfd88c1e999ea25e96bbfd4d86467c7cf68bc555374",
-  "plan_change_aim": "c7846921e55f66024999fa2608d0dbff61caf1b96f26af9a0c4ffa67f94eeab1",
+  "plan_change_aim": "3811605f935335481c47d212c830ff8ec68c12efc1efd9d72203763cba257bab",
   "plan_change_area_from_basics": "36af2f0050d547392bc2789200ab51e8487f3ee0bfb8b9496df762ba8c83cc3b",
   "plan_change_area_left_out": "34dc9474a07e0873f1b8fdbba8709c1617c16e5652f8e98bf699961194bcb24f",
   "plan_change_areas_from_basics": "df7de38510ebde70abfebc96012af60459793a5cc050402e00c3547bed22247b",
@@ -1484,7 +1484,7 @@
     <string name="plan_effect_row_review_on">Powtórka: %1$s</string>
     <string name="plan_effect_row_starts_with">Na początek: %1$s</string>
     <string name="plan_effect_row_new_lessons_start">Początek nowych lekcji</string>
-    <string name="plan_change_aim">Docelowy poziom: %1$s.</string>
+    <string name="plan_change_aim">Uczysz się teraz do poziomu %1$s.</string>
     <string name="plan_change_topics_added">Dodano do twojego planu: %1$s.</string>
     <!-- %1$s is one subject. -->
     <string name="plan_change_area_left_out">%1$s nie mieści się w twoim planie.</string>

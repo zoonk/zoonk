@@ -271,13 +271,11 @@ class UnderstoodRows(
                 UnderstoodRow(
                     id = "targetScore",
                     label =
-                        text(
-                            if (draft.isLanguage) {
-                                R.string.onboarding_row_level_aiming
-                            } else {
-                                R.string.onboarding_row_target_score
-                            },
-                        ),
+                        if (draft.isLanguage) {
+                            text(R.string.onboarding_aim_title, languageName(draft.targetLanguage.orEmpty(), locale))
+                        } else {
+                            text(R.string.onboarding_row_target_score)
+                        },
                     value =
                         if (aim ==
                             null

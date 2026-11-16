@@ -817,7 +817,7 @@
     <string name="plan_effect_row_review_on">Review on %1$s</string>
     <string name="plan_effect_row_starts_with">Starts with %1$s</string>
     <string name="plan_effect_row_new_lessons_start">New lessons start</string>
-    <string name="plan_change_aim">Level to reach: %1$s.</string>
+    <string name="plan_change_aim">You now study up to %1$s.</string>
     <string name="plan_change_topics_added">%1$s added to your plan.</string>
     <!-- %1$s is one subject. -->
     <string name="plan_change_area_left_out">%1$s isn\'t in your plan.</string>

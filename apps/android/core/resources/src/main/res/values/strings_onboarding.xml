@@ -91,7 +91,6 @@
     <!-- For someone changing careers. -->
     <string name="onboarding_row_role_you_want">The role you want</string>
     <string name="onboarding_row_position">Position</string>
-    <string name="onboarding_row_level_aiming">Level you\'re aiming for</string>
     <string name="onboarding_row_target_score">Target score</string>
     <string name="onboarding_row_last_cutoff">Last cut-off</string>
     <!-- A score on an exam's scale, like "712 out of 1,000". -->
@@ -588,7 +587,8 @@
     <string name="onboarding_aim_talk">Everyday conversations</string>
     <string name="onboarding_aim_work">Work or study in it</string>
     <string name="onboarding_aim_fluent">Speak it fluently</string>
-    <string name="onboarding_your_aim">Your aim</string>
+    <!-- Titles the language level a learner picks to reach, like "B2". {language} is a language name as in a sentence, like "English". -->
+    <string name="onboarding_aim_title">%1$s level to reach</string>
     <string name="onboarding_aim_change">Change</string>
     <string name="onboarding_aim_picker_title">How far do you want to go?</string>
     <!-- %1$s is hours of study, such as "190 hr". -->
