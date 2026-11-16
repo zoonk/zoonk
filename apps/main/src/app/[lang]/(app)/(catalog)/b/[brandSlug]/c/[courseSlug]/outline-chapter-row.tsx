@@ -2,26 +2,27 @@ import { CourseChapterFold, CourseHere } from "@/components/catalog/course-progr
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
 import { Link } from "@/i18n/navigation";
 import { getChapterHref, getLessonHref } from "@/lib/public/public-hrefs";
+import { FactSegments } from "@zoonk/learn/facts";
 import { RouteMark } from "@zoonk/learn/route-line";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
-import { Fragment, type ReactNode } from "react";
+import { type ReactNode } from "react";
 
 export type OutlineParams = { brandSlug: string; courseSlug: string };
 export type OutlineBand = LibraryOutline["levels"][number];
 export type OutlineChapter = OutlineBand["chapters"][number];
 
-/** A no-break space keeps each dot at the end of a line, never at the start of the next. */
-const OUTLINE_SEPARATOR = "\u00A0· ";
-
 const CHAPTERS_NAMED = 3;
 
 /** A closed level or subject says what it holds; open, its rows do. */
-export function getZoneChapterNames(chapters: OutlineChapter[]): string {
-  return chapters
-    .slice(0, CHAPTERS_NAMED)
-    .map((chapter) => chapter.title)
-    .join(OUTLINE_SEPARATOR);
+export function ZoneChapterNames({ chapters }: { chapters: OutlineChapter[] }) {
+  return (
+    <FactSegments
+      facts={chapters
+        .slice(0, CHAPTERS_NAMED)
+        .map((chapter) => ({ content: chapter.title, key: chapter.id }))}
+    />
+  );
 }
 
 const CHAPTERS_SHOWN = 6;
@@ -57,18 +58,24 @@ function ChapterLessonLinks({
 
   return (
     <p className="text-muted-foreground mt-1.5 max-w-140 text-sm leading-relaxed text-pretty">
-      {chapter.lessons.map((lesson, index) => (
-        <Fragment key={lesson.id}>
-          {index > 0 && OUTLINE_SEPARATOR}
-          <Link
-            className={cn(LESSON_LINK_CLASS, hasLoneLesson && LONE_LESSON_LINK_CLASS)}
-            href={getLessonHref({ ...params, chapterSlug: chapter.slug, lessonSlug: lesson.slug })}
-            prefetch
-          >
-            {lesson.title}
-          </Link>
-        </Fragment>
-      ))}
+      <FactSegments
+        facts={chapter.lessons.map((lesson) => ({
+          content: (
+            <Link
+              className={cn(LESSON_LINK_CLASS, hasLoneLesson && LONE_LESSON_LINK_CLASS)}
+              href={getLessonHref({
+                ...params,
+                chapterSlug: chapter.slug,
+                lessonSlug: lesson.slug,
+              })}
+              prefetch
+            >
+              {lesson.title}
+            </Link>
+          ),
+          key: lesson.id,
+        }))}
+      />
     </p>
   );
 }
