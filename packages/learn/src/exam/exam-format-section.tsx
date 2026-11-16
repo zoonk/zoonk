@@ -11,6 +11,7 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
+import { FactSegments } from "../_components/task-meta";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
 import { useExamScreen } from "./exam-context";
@@ -76,7 +77,13 @@ function useDayTitle() {
   const dayDate = useExamDayDate();
   const { exam } = useExamScreen();
 
-  return ({ day, numbered }: { day: ExamFormatDay; numbered: boolean }): string => {
+  return function dayTitle({
+    day,
+    numbered,
+  }: {
+    day: ExamFormatDay;
+    numbered: boolean;
+  }): React.ReactNode {
     const number = t("Day {number, number}", { number: day.day });
 
     if (!day.date) {
@@ -84,7 +91,7 @@ function useDayTitle() {
     }
 
     const date = dayDate(day.date, { estimated: exam.daysEstimated });
-    return numbered ? `${number} · ${date}` : date;
+    return numbered ? <FactSegments facts={[date]} lead={number} /> : date;
   };
 }
 
@@ -97,7 +104,7 @@ function DayRow({ day, numbered }: { day: ExamFormatDay; numbered: boolean }) {
   return (
     <li className="py-2.5">
       <span className={cn(TITLE_ROW_CLASS, "items-baseline")}>
-        <span className="text-compact font-medium">{dayTitle({ day, numbered })}</span>
+        <span className="text-compact min-w-0 font-medium">{dayTitle({ day, numbered })}</span>
         <span className="text-muted-foreground font-mono text-xs tabular-nums empty:hidden">
           {day.minutes !== null && day.minutes > 0 ? formatDuration(day.minutes) : null}
         </span>
