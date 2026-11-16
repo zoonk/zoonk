@@ -7,6 +7,7 @@ import {
   renamePasskey,
 } from "@zoonk/auth/passkey-client";
 import { type PasskeyView } from "@zoonk/core/users/passkeys";
+import { useFormatMomentDate } from "@zoonk/learn/dates";
 import { findRowMenu, useKeepFocus } from "@zoonk/learn/keep-focus";
 import {
   ListGroup,
@@ -26,7 +27,7 @@ import {
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { safeAsync } from "@zoonk/utils/error";
 import { EllipsisIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { SignInAgainDialog } from "../_components/sign-in-again-dialog";
 import { DeleteDialog, RenameDialog, usePasskeyName } from "./passkey-dialogs";
@@ -56,7 +57,7 @@ function PasskeyRow({
   passkey: PasskeyView;
 }) {
   const t = useExtracted();
-  const format = useFormatter();
+  const formatDate = useFormatMomentDate();
   const name = usePasskeyName(passkey);
 
   return (
@@ -65,9 +66,7 @@ function PasskeyRow({
         <ListRowTitle>{name}</ListRowTitle>
         {passkey.createdAt && (
           <ListRowDescription>
-            {t("Added {date}", {
-              date: format.dateTime(passkey.createdAt, { dateStyle: "medium" }),
-            })}
+            {t("Added {date}", { date: formatDate(passkey.createdAt, "row", { year: "always" }) })}
           </ListRowDescription>
         )}
       </ListRowContent>

@@ -2,6 +2,7 @@
 
 import { type ChallengeView } from "@zoonk/core/checkpoints/challenge-contract";
 import { getBreakEven } from "@zoonk/core/exams/net-score";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { EyeOffIcon, ScaleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Callout } from "../_components/callout";
@@ -121,7 +122,7 @@ function WeeklyIntro() {
 function describeTasks(tasks: ChallengeView["written"][number]["tasks"]): string {
   return tasks
     .map((task) => (task.count === null ? task.description : `${task.count} × ${task.description}`))
-    .join(" · ");
+    .join(FACT_SEPARATOR);
 }
 
 function MockSections() {

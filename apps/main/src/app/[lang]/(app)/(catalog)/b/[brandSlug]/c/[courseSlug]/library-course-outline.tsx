@@ -4,6 +4,7 @@ import { getLevelLabels } from "@/lib/public/public-labels";
 import { type DatedEstimate } from "@zoonk/core/catalog/course-plan-example-contract";
 import { listCourseLevels } from "@zoonk/core/library/courses/levels";
 import { type CourseFormat } from "@zoonk/db/enums";
+import { FactSegments } from "@zoonk/learn/facts";
 import { RouteStop, RouteTitle } from "@zoonk/learn/route-line";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -61,17 +62,17 @@ export async function LibraryCourseOutline({
 
           {stats.chapterCount > 0 && (
             <span className="text-muted-foreground font-mono text-xs tabular-nums">
-              {[
-                t("{count, plural, one {# chapter} other {# chapters}}", {
-                  count: stats.chapterCount,
-                }),
-                stats.lessonCount > 0 &&
-                  t("{count, plural, one {# short lesson} other {# short lessons}}", {
-                    count: stats.lessonCount,
+              <FactSegments
+                facts={[
+                  t("{count, plural, one {# chapter} other {# chapters}}", {
+                    count: stats.chapterCount,
                   }),
-              ]
-                .filter(Boolean)
-                .join(" · ")}
+                  stats.lessonCount > 0 &&
+                    t("{count, plural, one {# short lesson} other {# short lessons}}", {
+                      count: stats.lessonCount,
+                    }),
+                ]}
+              />
             </span>
           )}
         </div>

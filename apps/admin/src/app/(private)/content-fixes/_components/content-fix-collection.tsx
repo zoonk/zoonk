@@ -1,4 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { isJsonObject } from "@zoonk/utils/json";
 import { diffArrays } from "diff";
 import { type FieldChange, type Names, SIDES, type Side } from "./content-fix-values";
@@ -16,7 +17,10 @@ function toEntries(value: unknown): Entry[] {
 
     if (isJsonObject(entry) && typeof entry.chapterId === "string") {
       const detail = [entry.level, entry.area].filter((part) => typeof part === "string");
-      return [{ detail: detail.join(" · "), id: entry.chapterId, key: JSON.stringify(entry) }];
+
+      return [
+        { detail: detail.join(FACT_SEPARATOR), id: entry.chapterId, key: JSON.stringify(entry) },
+      ];
     }
 
     return [];

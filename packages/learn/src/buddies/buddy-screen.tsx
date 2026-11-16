@@ -32,6 +32,7 @@ import {
   useTransition,
 } from "react";
 import { useChangeSaveErrorMessage } from "../_components/save-error";
+import { useCountOf } from "../_utils/count-of";
 import { type AppearanceBuddy, BuddyEditor } from "../appearance/buddy-settings";
 import {
   type TutorConversationContent,
@@ -209,9 +210,8 @@ function useChatFace(buddy: LearnBuddy) {
 }
 
 function useGlassesCount(status: BuddyStatusView): string {
-  const t = useExtracted();
-  const earned = status.glasses.filter((item) => item.earned).length;
-  return t("{earned} of {total}", { earned: String(earned), total: String(status.glasses.length) });
+  const countOf = useCountOf();
+  return countOf(status.glasses.filter((item) => item.earned).length, status.glasses.length);
 }
 
 export function BuddyScreen({

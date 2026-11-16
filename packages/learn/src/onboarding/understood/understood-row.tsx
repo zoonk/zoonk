@@ -188,7 +188,7 @@ function ChoiceDates({
           type="submit"
           variant="outline"
         >
-          {formatDate(date, "short")}
+          {formatDate(date, "row", { year: "always" })}
         </Button>
       ))}
       {failed && <ChangeSaveError />}

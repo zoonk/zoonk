@@ -5,6 +5,7 @@ import {
   type ProfileQuestionsView,
 } from "@zoonk/core/profile/questions/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { useExtracted } from "next-intl";
 import {
   ListGroup,
@@ -151,7 +152,7 @@ function useSavedSummary(question: ProfileQuestionView): string | null {
     case "play":
     case "read":
     case "activities":
-      return [labelsOf(question, picks).join(", "), text].filter(Boolean).join(" · ");
+      return [labelsOf(question, picks).join(", "), text].filter(Boolean).join(FACT_SEPARATOR);
     default:
       return question.id satisfies never;
   }

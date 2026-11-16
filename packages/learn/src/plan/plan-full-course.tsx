@@ -53,7 +53,10 @@ function useFinishText() {
   const formatDate = useFormatIsoDate();
 
   return (endDate: string | null): string | null =>
-    endDate && t("You finish in {month}.", { month: formatDate(endDate, "month") });
+    endDate &&
+    t("You finish in {month}.", {
+      month: formatDate(endDate, "sentenceMonth", { year: "always" }),
+    });
 }
 
 export function useFullCourseText() {

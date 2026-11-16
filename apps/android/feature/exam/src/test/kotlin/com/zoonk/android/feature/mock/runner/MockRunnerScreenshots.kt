@@ -238,7 +238,12 @@ class MockRunnerScreenshots {
     private fun speakingSection(paper: String = SPEAKING.replaceFirst("\"completed\"}]}", "\"ready\"}]}")) =
         runningMock(
             current = currentSection(questions = "", kind = "\"speaking\""),
-            extra = """"speaking":$paper""",
+            extra =
+                """
+                "speaking":$paper,
+                "sections":[{"breakAfterMinutes":null,"essays":0,"index":0,"minutes":60,"name":"Spanish speaking",
+                  "navigation":null,"questions":0,"status":"current","tools":null}]
+                """.trimIndent(),
         )
 
     private fun onBreak() = runningMock(current = "null", extra = """"breakUntil":"${Clock.System.now() + 9.minutes}"""")

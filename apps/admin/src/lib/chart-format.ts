@@ -3,9 +3,6 @@ import { formatDuration } from "@/lib/format-duration";
 
 export type ChartValueFormat = "duration" | "number" | "percent" | "usd";
 
-const SECONDS_PER_HOUR = 3600;
-const SECONDS_PER_MINUTE = 60;
-
 export function formatChartValue({
   format,
   value,
@@ -43,16 +40,8 @@ export function formatChartTick({
     return "0";
   }
 
-  if (format === "duration" && value < SECONDS_PER_MINUTE) {
-    return `${Math.round(value)}s`;
-  }
-
-  if (format === "duration" && value < SECONDS_PER_HOUR) {
-    return `${(value / SECONDS_PER_MINUTE).toLocaleString("en", { maximumFractionDigits: 1 })}m`;
-  }
-
   if (format === "duration") {
-    return `${(value / SECONDS_PER_HOUR).toLocaleString("en", { maximumFractionDigits: 1 })}h`;
+    return formatDuration(value);
   }
 
   if (format === "percent") {

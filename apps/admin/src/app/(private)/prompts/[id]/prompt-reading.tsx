@@ -3,7 +3,9 @@ import { AdminSectionEmpty } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { type PromptOutcome } from "@/data/prompts/_utils/prompt-outcomes";
 import { type AdminPrompt } from "@/data/prompts/get-prompt";
+import { formatMinutes } from "@/lib/format-duration";
 import { type GoalUnderstandingView } from "@zoonk/core/view-models/onboarding/contract";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { parsePromptReading } from "../_utils/prompt-labels";
 
 type GoalsReading = Extract<GoalUnderstandingView, { status: "goals" }>;
@@ -15,13 +17,17 @@ function getGoalFacts(draft: GoalsReading["goals"][number]["draft"]) {
     draft.targetDate && `by ${draft.targetDate}`,
   ]
     .filter(Boolean)
-    .join(" · ");
+    .join(FACT_SEPARATOR);
 }
 
 function getScheduleFacts(schedule: GoalsReading["schedule"]) {
-  return [`${schedule.dailyMinutes} min a day`, schedule.studyTime, schedule.studyTimeNote]
+  return [
+    `${formatMinutes(schedule.dailyMinutes)} a day`,
+    schedule.studyTime,
+    schedule.studyTimeNote,
+  ]
     .filter(Boolean)
-    .join(" · ");
+    .join(FACT_SEPARATOR);
 }
 
 function UnderstoodGoals({ reading }: { reading: GoalsReading }) {

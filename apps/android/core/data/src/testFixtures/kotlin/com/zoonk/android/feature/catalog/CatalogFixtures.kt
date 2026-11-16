@@ -69,7 +69,7 @@ fun chapter(
     lessons: List<Pair<String, String>>,
 ): CourseChapter =
     ApiJson.decodeFromString(
-        """{"courseId":"$COURSE","description":"What $title covers.","generationStatus":"completed","id":"$id","language":"en",
+        """{"courseId":"$COURSE","description":"${if (title == "Bonds") "How atoms share or transfer electrons to form bonds." else "The nucleus, electrons, and how they make up an atom."}","generationStatus":"completed","id":"$id","language":"en",
             "level":"$level","objectives":["Name the parts"],"position":$position,"slug":"c","title":"$title","lessonCount":${lessons.size},
             "lessons":[${lessons.joinToString(
             ",",

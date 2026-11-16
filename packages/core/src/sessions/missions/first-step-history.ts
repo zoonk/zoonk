@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { PASS_SHARE } from "../../checkpoints/checkpoint-rules";
 import { type FirstStepKind } from "./catalog";
 
 type DoneAt = Partial<Record<FirstStepKind, Date>>;
@@ -30,7 +31,7 @@ export async function loadFirstStepHistory(userId: string) {
       WHERE user_id = ${userId}::uuid
       ORDER BY created_at ASC LIMIT 1
     ), events AS (
-      SELECT kind, lesson_kind, ended_at FROM learning_events
+      SELECT kind, lesson_kind, ended_at, correct_answers, incorrect_answers FROM learning_events
       WHERE user_id = ${userId}::uuid AND ended_at IS NOT NULL
     )
     SELECT
@@ -41,7 +42,9 @@ export async function loadFirstStepHistory(userId: string) {
       (SELECT count(*)::int FROM daily_progress
         WHERE user_id = ${userId}::uuid AND time_spent_seconds > 0) AS "studyDays",
       (SELECT min(ended_at) FROM events WHERE kind = 'lesson') AS "lessonAt",
-      (SELECT min(ended_at) FROM events WHERE kind = 'checkpoint') AS "challengeAt",
+      (SELECT min(ended_at) FROM events WHERE kind = 'checkpoint'
+        AND lesson_kind IN ('boss', 'finalBoss') AND correct_answers > 0
+        AND correct_answers >= ceil((correct_answers + incorrect_answers) * ${PASS_SHARE}::numeric)) AS "challengeAt",
       (SELECT min(fixed_at) FROM mistakes WHERE user_id = ${userId}::uuid) AS "fixedAt",
       (SELECT min(q.created_at) FROM lesson_questions q
         JOIN lesson_question_threads t ON t.id = q.thread_id

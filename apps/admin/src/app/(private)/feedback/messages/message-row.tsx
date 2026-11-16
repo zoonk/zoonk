@@ -1,3 +1,4 @@
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { AdminNameCell } from "@/components/admin-name-cell";
 import { AdminTableRow } from "@/components/admin-table-row";
 import { StateMark } from "@/components/state-mark";
@@ -14,7 +15,7 @@ import {
 /** Who wrote: their name and the address a reply goes to. */
 function sender({ email, user }: ListedFeedbackMessage): string {
   return (
-    [user ? getFeedbackLearnerLabel(user) : null, email].filter(Boolean).join(" · ") ||
+    [user ? getFeedbackLearnerLabel(user) : null, email].filter(Boolean).join(FACT_SEPARATOR) ||
     "Unknown sender"
   );
 }

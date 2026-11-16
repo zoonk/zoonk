@@ -14,8 +14,18 @@ import {
   skillPrerequisiteFixture,
 } from "@zoonk/testing/fixtures/skills";
 
-const SHORT_ID_LENGTH = 8;
-const SKILLS_PER_PHASE = [3, 2];
+const PHASES = [
+  {
+    name: "Expressions and first equations",
+    skills: ["Adding like terms", "Solving one-step equations", "Using parentheses"],
+    summary: "Simplify expressions and solve one-step equations.",
+  },
+  {
+    name: "Solving and checking",
+    skills: ["Solving two-step equations", "Checking solutions"],
+    summary: "Solve two-step equations and check your answers.",
+  },
+];
 
 /** The questions about the learner count as skipped, so these goals open past them. */
 export const ANSWERED = [
@@ -28,14 +38,12 @@ export const ANSWERED = [
 ];
 
 export async function createMappedGoal(userId: string) {
-  const id = randomUUID().slice(0, SHORT_ID_LENGTH);
-
   const goal = await goalFixture({
     dailyMinutes: 30,
     details: { answered: ANSWERED, subject: "algebra" },
     planRevealedAt: null,
-    prompt: `learn algebra ${id}`,
-    title: `Learn algebra ${id}`,
+    prompt: "learn algebra",
+    title: "Learn algebra",
     userId,
   });
 
@@ -45,28 +53,24 @@ export async function createMappedGoal(userId: string) {
 
 /** Replaces the empty plan a goal the app started has, as its build would. */
 export async function mapGoalSkills({ goalId }: { goalId: string }) {
-  const id = randomUUID().slice(0, SHORT_ID_LENGTH);
   await prisma.plan.deleteMany({ where: { goalId } });
 
-  const total = SKILLS_PER_PHASE.reduce((sum, count) => sum + count, 0);
+  const suffix = randomUUID();
 
   const skills = await Promise.all(
-    Array.from({ length: total }, (_, index) => skillFixture({ name: `Skill ${index + 1} ${id}` })),
+    PHASES.flatMap((phase) =>
+      phase.skills.map((name) => skillFixture({ name: `${name} ${suffix}` })),
+    ),
   );
 
-  const phaseOf = SKILLS_PER_PHASE.flatMap((count, phase) =>
-    Array.from({ length: count }, () => phase),
-  );
+  const phaseOf = PHASES.flatMap((phase, index) => phase.skills.map(() => index));
 
   const plan = await planFixture({
     goalId,
     graph: {
       skills: plannedSkills(skills.map((skill, index) => ({ ...skill, phase: phaseOf[index] }))),
     },
-    phases: SKILLS_PER_PHASE.map((_, index) => ({
-      name: `Stage ${index + 1} ${id}`,
-      summary: "Test",
-    })),
+    phases: PHASES.map(({ name, summary }) => ({ name, summary })),
   });
 
   await Promise.all([
@@ -88,7 +92,23 @@ export async function mapGoalSkills({ goalId }: { goalId: string }) {
     ...skills.flatMap((skill, index) =>
       [1, 2].map((copy) =>
         itemFixture({
-          content: choiceItemContent(`Question ${index + 1}.${copy} ${id}?`),
+          content: {
+            ...choiceItemContent(`Solve x + ${copy} = ${index + copy + 1}. What is x?`),
+            options: [
+              {
+                isCorrect: true,
+                misconception: null,
+                reason: `Subtract ${copy} from both sides to get ${index + 1}.`,
+                text: String(index + 1),
+              },
+              {
+                isCorrect: false,
+                misconception: "Adds instead of subtracting",
+                reason: `Subtract ${copy} from both sides rather than adding it.`,
+                text: String(index + copy * 2 + 1),
+              },
+            ],
+          },
           skillId: skill.id,
         }),
       ),
