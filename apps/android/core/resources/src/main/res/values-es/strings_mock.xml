@@ -47,6 +47,7 @@
   "mock_next_section": "b5db20232403377ed300a790a1f6c31254537dae31f6558ef55540fb54b867fd",
   "mock_not_saved_retrying": "2416c58a2756729a04309eba3fe9fbe7b7c123f19e53ac2e52f7a227c3b3690a",
   "mock_place": "3c62648fa7cdc44e34015b2293ac8325bfbb48b1e822a7c6586aed1ebcb86a22",
+  "mock_points_of": "f6d4efe6c4a7c9b41ca0da4c83f1721b6b46f7626122e49127f08f0ffb121e0b",
   "mock_progress_label": "b6cbf22d9e1486fb12a7c99ef358f520323098370a3a5c6ccc1f448e686390b3",
   "mock_question_number": "c78e2fa2c0f46cb62149d040166d180c44c4ff312e1e007e40d2dab0ec851e92",
   "mock_question_place": "335e66a79cf088e0e6922f5b250ba141ee92915987c10a96789b4fc8beaf6550",
@@ -65,7 +66,7 @@
   "mock_speaking_hand_in_done": "ab98b7cc403c4de4cd08063f5cff84831495e31770b08bb3ea0b082bf99b1af0",
   "mock_speaking_hand_in_left": "b7fa9a6e49c93a15fe1604a165a2d11882c591e33ace3bf371e18ecb13d70791",
   "mock_speaking_intro": "12b29d0d71643269e52a7da5e4254ef769254e6ecb2d628d733dafcfacebd90d",
-  "mock_speaking_left": "58448f5420f91d19d6e3050ed07fa4b98ad1bbfc244acb476b11555b67d6fa47",
+  "mock_speaking_left": "176d6f0a49278f33d4fd54bb0960526c4800429d09c71f0769924a24b58cc659",
   "mock_speaking_paper_opens": "e966c3760578415c5d1545409a09686d616981f546fdca711f1ac4a99a27ffa0",
   "mock_speaking_start": "16774c6b53473089d443db174d70dd5688ffa1987649d957b7d4e48572ccd7ef",
   "mock_speaking_start_task": "16a06da803aae3092e310d26f60d21768e3d0e6159647955aec6e3393a920d6a",
@@ -99,11 +100,17 @@
     <string name="mock_title">Simulacro %1$d</string>
     <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
     <string name="mock_net_score">%1$s de %2$d</string>
-    <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60 right". -->
+    <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="one">%1$s acierto de %2$d</item>
         <item quantity="many">%1$s aciertos de %2$d</item>
         <item quantity="other">%1$s aciertos de %2$d</item>
+    </plurals>
+    <!-- A mock exam's result where some questions gave part of a point: "36.5 of 90 points". -->
+    <plurals name="mock_points_of">
+        <item quantity="one">%1$s de %2$d punto</item>
+        <item quantity="many">%1$s de %2$d puntos</item>
+        <item quantity="other">%1$s de %2$d puntos</item>
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
@@ -236,7 +243,8 @@
     <string name="mock_speaking_writing_paper_line_2">Preparando las instrucciones de cada tarjeta…</string>
     <string name="mock_speaking_writing_paper_line_3">Preparando lo que dirá el examinador…</string>
     <string name="mock_speaking_writing_paper_line_4">Agregando frases de apoyo…</string>
-    <string name="mock_speaking_left">Haz las tareas en orden. Cada una es una llamada.</string>
+    <!-- Over a mock exam's speaking tasks: each task is a short voice call where the learner speaks with the examiner. -->
+    <string name="mock_speaking_left">Haz las tareas en orden. En cada una hablas en voz alta con el examinador.</string>
     <string name="mock_speaking_all_done">Completaste todas las tareas. Entrega esta sección para seguir.</string>
     <!-- %2$s is how long the task lasts, such as "4–5 min". -->
     <string name="mock_speaking_task">Tarea %1$d · %2$s</string>

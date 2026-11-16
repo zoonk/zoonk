@@ -23,8 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
@@ -313,11 +311,7 @@ private fun CourseClosing(
     val follows = followsCourse(app, courseId)
 
     Column(Modifier.widthIn(max = COLUMN_WIDTH).padding(bottom = 24.dp)) {
-        Text(
-            stringResource(if (follows) R.string.catalog_closing_follows else R.string.catalog_closing_start),
-            modifier = Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleLarge,
-        )
+        SectionTitle(stringResource(if (follows) R.string.catalog_closing_follows else R.string.catalog_closing_start))
 
         if (!follows) {
             Spacer(Modifier.size(8.dp))

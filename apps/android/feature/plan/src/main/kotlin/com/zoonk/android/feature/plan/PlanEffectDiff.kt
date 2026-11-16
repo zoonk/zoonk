@@ -191,7 +191,7 @@ private fun consequence(
     dateKind: GoalDateKind,
     goalDate: GoalDateMove?,
 ): Consequence? {
-    val lessons = lessonConsequence(effect, byDate, dateKind)
+    val lessons = lessonConsequence(effect, byDate, dateKind, goalDate?.after)
     if (lessons?.key == NOT_IN_PLAN) return lessons
     return endConsequence(effect, goalDate) ?: lessons ?: eventConsequence(effect)
 }
@@ -201,6 +201,7 @@ private fun lessonConsequence(
     effect: PlanEffect,
     byDate: Boolean,
     dateKind: GoalDateKind,
+    newDate: LocalDate?,
 ): Consequence? {
     val topicsOut = topicNames(effect.topicsLeftOut)
     val topicsIn = topicNames(effect.topicsAdded)
@@ -216,7 +217,7 @@ private fun lessonConsequence(
     }
     if (byDate && removed > 0) {
         val named = effect.lessonsLeftOut.orEmpty().size + effect.unwrittenLeftOut.orEmpty().size
-        return Consequence(NOT_IN_PLAN, lessonCount(removed, dateKind, fewer = true), whole = named == 0)
+        return Consequence(NOT_IN_PLAN, lessonCount(removed, dateKind, fewer = true, newDate), whole = named == 0)
     }
     if (topicsIn.isNotEmpty()) {
         val named = names(ListKind.Topics, NAMED_IN_SENTENCE, topicsIn)
@@ -226,16 +227,25 @@ private fun lessonConsequence(
             whole = topicsIn.size <= NAMED_IN_SENTENCE && added == 0,
         )
     }
-    return if (byDate && added > 0) Consequence(ADDED, lessonCount(added, dateKind, fewer = false), whole = true) else null
+    return if (byDate && added > 0) Consequence(ADDED, lessonCount(added, dateKind, fewer = false, newDate), whole = true) else null
 }
 
-/** What a learner studies before their date, said for them and never for the lessons. */
+/** What a learner studies before their date, said for them and never for the lessons; a change that moves the date names the new one. */
 @Composable
 private fun lessonCount(
     count: Int,
     dateKind: GoalDateKind,
     fewer: Boolean,
+    newDate: LocalDate?,
 ): String {
+    if (newDate != null) {
+        return pluralStringResource(
+            if (fewer) R.plurals.plan_effect_fewer_by else R.plurals.plan_effect_more_by,
+            count,
+            count,
+            longDate(newDate),
+        )
+    }
     val plural =
         when (dateKind) {
             GoalDateKind.Exam -> if (fewer) R.plurals.plan_effect_fewer_before_exam else R.plurals.plan_effect_more_before_exam

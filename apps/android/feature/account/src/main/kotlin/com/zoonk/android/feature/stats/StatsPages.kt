@@ -55,6 +55,7 @@ import com.zoonk.android.ui.format.formatHourRange
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.CurrentUserActivityResponseActivity
@@ -66,7 +67,6 @@ import com.zoonk.api.models.ScorePatternVerdict
 import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDate
 import java.time.DayOfWeek
-import java.time.format.TextStyle
 import java.util.Locale
 
 /** Whole, as main shows Energy now and the patterns. */
@@ -457,7 +457,8 @@ internal fun EnergyPage(context: StatsContext) {
             }
 
         YearCalendar(
-            title = stringResource(R.string.stats_past_year),
+            yearTitle = stringResource(R.string.stats_past_year),
+            recentTitle = stringResource(R.string.stats_past_6_months),
             days = days,
             shades = ENERGY_SHADES,
             color = MaterialTheme.zoonk.energy,
@@ -544,7 +545,8 @@ private fun ActivityCalendar(
         }
 
     YearCalendar(
-        title = stringResource(R.string.stats_past_year),
+        yearTitle = stringResource(R.string.stats_past_year),
+        recentTitle = stringResource(R.string.stats_past_6_months),
         days = days,
         shades = ACTIVITY_SHADES,
         color = MaterialTheme.colorScheme.tertiary,
@@ -612,7 +614,7 @@ internal fun PatternsPage(context: StatsContext) {
                         name = weekdayName(it.dayOfWeek.value, locale),
                         pattern = Pattern(it.score, it.totalAnswers, best = it.dayOfWeek.value == bestDay),
                         minimumAnswers = patterns.minimumAnswers,
-                        label = weekdayName(it.dayOfWeek.value, locale, TextStyle.SHORT_STANDALONE),
+                        label = weekdayName(it.dayOfWeek.value, locale, short = true),
                     )
                 },
             fullBar = fullBar,
@@ -788,8 +790,11 @@ private fun bestTimeName(verdict: Verdict): String? =
 private fun weekdayName(
     key: String,
     locale: Locale,
-    style: TextStyle = TextStyle.FULL_STANDALONE,
-): String = DayOfWeek.valueOf(key.uppercase()).getDisplayName(style, locale).replaceFirstChar { it.titlecase(locale) }
+    short: Boolean = false,
+): String {
+    val names = weekdayNames(locale)
+    return (if (short) names.short else names.full).getValue(DayOfWeek.valueOf(key.uppercase(Locale.ROOT)))
+}
 
 @Composable
 private fun timeName(key: String): String =

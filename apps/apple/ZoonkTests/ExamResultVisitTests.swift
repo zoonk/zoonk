@@ -43,7 +43,7 @@ final class ExamResultVisitTests: XCTestCase {
     field.becomeFirstResponder()
     field.insertText("700")
     try await visit.settle()
-    try visit.activate(String(localized: "Save my result", table: "Exam"))
+    try await visit.activate(String(localized: "Save my result", table: "Exam"))
   }
 
   private func textField(in view: UIView) -> UITextField? {

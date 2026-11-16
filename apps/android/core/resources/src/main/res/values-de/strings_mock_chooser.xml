@@ -18,7 +18,7 @@
   "mock_chooser_parts": "152d7c0e2406bdad0ec975b50079c6e970a9903dc4ff3ee9202625cee738a54b",
   "mock_chooser_pick_another": "16ae796177b7c83a27d9a5e9798b898fd83b2c5c7725c4124729059c9a417140",
   "mock_chooser_picked": "550e7a85d31bd2479d18fe0acd4d00c9d2c45e1c8caf0454c36cfa100cab7654",
-  "mock_chooser_preparing": "79be5bd6d0e634ca38ec02a37b5dfaaf7a3704562aaf53f31226049a85c0d74c",
+  "mock_chooser_preparing": "10aa4fbd27a0e4c3d82ce08649ba3bbe7beecb4ae01ac0ed9fc03d7e30c67019",
   "mock_chooser_preparing_detail": "2cb577d6bbebfc8e5c85edb71136fc654c9eea31a474fa7ff5e257f31717fe60",
   "mock_chooser_questions": "bf852472dd68e5942093e6599899824fb3426bf4d1b40cfad6d807e6b322a47c",
   "mock_chooser_short_day": "821dc377090b61b91f1c21c2fbe33ef488640a82a27e84b9238d78ac9f895d1a",
@@ -77,7 +77,7 @@
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">Diese Probeprüfung hat heute %1$s von %2$s Fragen und dauert etwa %3$s</string>
     <string name="mock_chooser_pick_another">Andere Probeprüfung wählen</string>
-    <string name="mock_chooser_preparing">Wir bereiten deine Probeprüfung vor…</string>
+    <string name="mock_chooser_preparing">Wir bereiten deine Probeprüfung vor</string>
     <string name="mock_chooser_preparing_detail">Wir erstellen für dich Fragen wie in der Prüfung. Sobald sie bereit sind, beginnt deine Probeprüfung hier.</string>
     <string name="mock_chooser_writing">Wir erstellen deine Probeprüfung</string>
     <string name="mock_chooser_writing_questions">Wir erstellen Fragen wie in der Prüfung</string>

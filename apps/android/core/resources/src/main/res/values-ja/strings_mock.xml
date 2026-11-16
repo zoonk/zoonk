@@ -47,6 +47,7 @@
   "mock_next_section": "ff464d8b7c8aca10ff628a7398007c2a954ebc76be2822af58d952a59eec34ed",
   "mock_not_saved_retrying": "f15eaac2c004dd987d936fac8e8a3528db817a9de23de4defe7c69b6e1813358",
   "mock_place": "71872615f909946fca7e9bc741ed97b205f02213e846f068751e1c13029998cd",
+  "mock_points_of": "7ee7c2b96463f0b561165232cbccfaee0f65d1c4533122e72340302edb835f49",
   "mock_progress_label": "c3413be759f5d2a12f80514f416b944e202146657e7baf520faaf16d9f9b9559",
   "mock_question_number": "58d4a557aa0f5a4ab6506d4d6698c352f46ac03d3dde7bda9769a7fde95fe9e2",
   "mock_question_place": "9b274eb7f18137333cf9330d67782fb224a28958851a3766f0cee5db9983a631",
@@ -65,7 +66,7 @@
   "mock_speaking_hand_in_done": "766e3361c63b9cc2575149d5393cfc1a8b4087157019bb41deb4738a22b1818e",
   "mock_speaking_hand_in_left": "98470ce46adc92c021b58bb380a3e840207e3fa00d6b953f09ea37dab99d40aa",
   "mock_speaking_intro": "4fe0253d13627aac3339162b61c8284103402f4e5cb8fc91f0a9b0cfc30acbe0",
-  "mock_speaking_left": "18ed546c34fa69f0ba60a3fca6a2959c9e280cfd553a85039db8a4ec91333a85",
+  "mock_speaking_left": "f19766f3b70fcd881414bdd0891be0fbd7da9ac5ef8734a4bdab7f19baf37e50",
   "mock_speaking_paper_opens": "26c0cd19a2c43727344f9320459722163e1f260588867be4589f62a93e990d8a",
   "mock_speaking_start": "74af07b479b9d2503e217904c95534b84ba089f6074fa4be9fd0161a00cf2dc0",
   "mock_speaking_start_task": "ba9b56b7c9b640c57c7d9c2130daa69d5c104fc8b16b115a9fb9d69ad19c58f8",
@@ -99,9 +100,13 @@
     <string name="mock_title">模試%1$d</string>
     <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
     <string name="mock_net_score">%1$s／%2$d</string>
-    <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60 right". -->
+    <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="other">%1$s問正解（全%2$d問）</item>
+    </plurals>
+    <!-- A mock exam's result where some questions gave part of a point: "36.5 of 90 points". -->
+    <plurals name="mock_points_of">
+        <item quantity="other">%1$s点（%2$d点満点）</item>
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
@@ -216,7 +221,8 @@
     <string name="mock_speaking_writing_paper_line_2">各カードの指示文を作成しています…</string>
     <string name="mock_speaking_writing_paper_line_3">試験官が話す内容を準備しています…</string>
     <string name="mock_speaking_writing_paper_line_4">役立つフレーズを追加しています…</string>
-    <string name="mock_speaking_left">順番にタスクに取り組んでください。タスクごとに会話をします。</string>
+    <!-- Over a mock exam's speaking tasks: each task is a short voice call where the learner speaks with the examiner. -->
+    <string name="mock_speaking_left">タスクに順番に取り組んでください。各タスクでは、試験官と声に出して話します。</string>
     <string name="mock_speaking_all_done">すべてのタスクが終わりました。このセクションを提出して次に進んでください。</string>
     <!-- %2$s is how long the task lasts, such as "4–5 min". -->
     <string name="mock_speaking_task">タスク%1$d · %2$s</string>

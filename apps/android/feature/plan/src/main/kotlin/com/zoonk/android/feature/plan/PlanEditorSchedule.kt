@@ -41,9 +41,6 @@ import com.zoonk.android.ui.components.missingDays
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlanWeekShape
-import java.time.DayOfWeek
-import java.time.format.TextStyle
-import java.time.temporal.WeekFields
 import java.util.Locale
 
 /** Main's `PlanSchedule`: its parts save one change at a time. [modifier] is the time a day's, [daysModifier] the study days'. */

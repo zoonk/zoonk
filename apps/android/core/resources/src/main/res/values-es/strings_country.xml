@@ -2,9 +2,9 @@
 <!-- eloqnt-fingerprints-v1
 {
   "country_all": "0885e77c9d600da572645d9bf475a50b1288447c7f75dfbb53341194e9690f3c",
-  "country_change_body": "68132c84052a440e1f82ba3ea2882d0d556c3b49aca56e1713a3fd128926da54",
-  "country_change_confirm": "d6cb94d1154aa6c65ea054b08031e98fbe228f38e25a627e1bf85499d847eebc",
-  "country_change_title": "2fb1b83fd3c667d0ca43cd5eab9d634d62a0e623efdb0d5f5d8ddaf5daf833ed",
+  "country_change_body": "11da6489df5f2d5ddb404e4db748d07eed32d7c551c6bc7448b1a5b5bc01242c",
+  "country_change_confirm": "9da7d43c9c5834c6bfcb0f316737ca5f58f806d77e05c1dc3b5f7cb0f487dc19",
+  "country_change_title": "e1a05ca20a6976f9826f4fa8465b3efd79be0394843109cf4361b0ca22ccf48e",
   "country_content_label": "a26d525bca9f81ead51679db230f38aa29385264658a0ed834e3877eaf3b3bb8",
   "country_content_value": "78b043f51d28e891d78ea6d687ec5dc649c356212954becea429d6024db0f8f0",
   "country_exam_label": "190428363d1c28aa257ff12924627b80c90994578ab946f20b64df53cc35677a",
@@ -56,11 +56,11 @@
     <!-- A label in the plan: the country whose examples a general course uses, which is where the learner lives. The country's name follows it as a value. -->
     <string name="country_lesson_examples_label">Ejemplos de las lecciones</string>
     <!-- The title of a dialog confirming a new content country for a started plan. -->
-    <string name="country_change_title">¿Cambiar el país del contenido?</string>
+    <string name="country_change_title">¿Cambiar tu país?</string>
     <!-- The body of that dialog; %1$s is the new country's name in the reader's language, after the colon so it needs no article or case. -->
-    <string name="country_change_body">Nuevo país: %1$s. Reharemos tu plan para ese país. Las lecciones que terminaste seguirán completadas y podrás seguir estudiando con tu plan actual hasta que el nuevo esté listo.</string>
+    <string name="country_change_body">Nuevo país: %1$s. Crearemos un nuevo plan para ese país. Las lecciones que terminaste seguirán marcadas como completadas.</string>
     <!-- The dialog's button that saves the new country and rebuilds the plan for it. -->
-    <string name="country_change_confirm">Rehacer el plan</string>
+    <string name="country_change_confirm">Cambiar país</string>
     <!-- A notice at the top of the plan while a new plan is prepared for the new content country. -->
     <string name="country_rebuild_title">Preparando tu nuevo plan</string>
     <!-- Under that notice's title. -->

@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "planlink_about": "ff7f7d82b9426ee2cfaae98eb9ac836751ffab680d70c4afcc842a9e50927c2a",
-  "planlink_eyebrow": "5b480a0f22368f74fe80a2bdd6046b17608cf02048a57e0a04232637cfe6cdec",
+  "planlink_eyebrow": "ef844ed930655dc19eabadbaf01045abf9cff71a7acbb168c2a5537075296609",
   "planlink_facts": "f8aa4fd3a7e63ad81f81ba1810131c3fb8ba6d8f0076d8f3ffa0ed3fa87d7311",
   "planlink_failed": "4d20816c815e7cefea7dd0844e00d8056f54d686db69c317cb710c77d0bcaf0a",
   "planlink_make_it_yours": "ad4248338eae6743106ac879ba13ef57cc71985078dfdc211a1cdcca16849fc9",
@@ -18,7 +18,7 @@
 -->
 <resources>
     <!-- Above a shared plan's subject. -->
-    <string name="planlink_eyebrow">Udostępniony ci plan nauki</string>
+    <string name="planlink_eyebrow">Ktoś udostępnił ci swój plan nauki</string>
     <!-- A shared plan without a subject, and the title over its phases. -->
     <string name="planlink_study_plan">Plan nauki</string>
     <string name="planlink_minutes_label">Ile czasu dziennie?</string>

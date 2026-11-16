@@ -37,7 +37,6 @@ import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.steps.WordBankScene
-import com.zoonk.android.feature.player.steps.questionColor
 
 private const val BLANK = "[BLANK]"
 
@@ -88,7 +87,6 @@ internal fun FillBlankView(
         question = {
             question()
 
-            val words = style.copy(color = questionColor())
             TargetDirection(language) {
                 // Words read as one stop with the empty blanks in it; a filled blank is its own stop.
                 FlowRow(
@@ -100,7 +98,7 @@ internal fun FillBlankView(
                         if (segment.startsWith(' ') && index > 0) Spacer(Modifier.width(WORD_SPACE))
                         WORD.findAll(segment).forEach { word ->
                             // The blank's word sits 4dp up on its line, so plain words sit there too.
-                            Text(word.value, style = words, modifier = Modifier.padding(bottom = 4.dp))
+                            Text(word.value, style = style, modifier = Modifier.padding(bottom = 4.dp))
                         }
                         if (index < segments.lastIndex) {
                             BlankSlot(

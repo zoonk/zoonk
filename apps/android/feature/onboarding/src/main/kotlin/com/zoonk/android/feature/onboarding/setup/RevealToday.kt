@@ -143,7 +143,11 @@ internal fun RevealHero(
 
                 facts.days != null -> {
                     RevealReadout(
-                        formatNumber(facts.days.toDouble(), currentLocale()),
+                        pluralStringResource(
+                            if (facts.daysEstimated) R.plurals.onboarding_reveal_days_estimated else R.plurals.onboarding_reveal_days,
+                            facts.days,
+                            formatNumber(facts.days.toDouble(), currentLocale()),
+                        ),
                         stringResource(
                             if (goal.kind ==
                                 Goal.Kind.EXAM

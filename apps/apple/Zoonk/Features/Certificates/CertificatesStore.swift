@@ -11,6 +11,7 @@ final class CertificatesStore {
 
   @ObservationIgnored private let api: any CertificatesAPIClient
   @ObservationIgnored private let cache: AppCache
+  @ObservationIgnored private let saves: LearnerSaves
   /// Moments the learner closed here, so a certificate that a result and its retry both carry
   /// plays once. One left through See Plus isn't, so it plays again after the next task.
   @ObservationIgnored private var closedMoments: Set<String> = []
@@ -18,6 +19,7 @@ final class CertificatesStore {
   init(api: any CertificatesAPIClient, cache: AppCache) {
     self.api = api
     self.cache = cache
+    saves = LearnerSaves(cache: cache)
     list = cache.resource(
       audience: .signedIn, domains: [.certificates, .userSession, .userSubscription],
       isEmpty: \.isEmpty
@@ -65,10 +67,13 @@ final class CertificatesStore {
     }
   }
 
-  /// `.done([])` while nothing of the goal is finished.
+  /// `.done([])` while nothing of the goal is finished. Claimed even when the screen that asked
+  /// goes away first, which then gets `.obsolete`.
   func claim(goalID: String) async -> MutationResult<[ClaimedCertificate]> {
-    await cache.mutate(invalidating: [.certificates, .goals]) { identity in
-      try await api.claim(token: identity.bearerToken, goalID: goalID)
+    await saves.save { [api, cache] in
+      await cache.mutate(invalidating: [.certificates, .goals]) { identity in
+        try await api.claim(token: identity.bearerToken, goalID: goalID)
+      }
     }
   }
 

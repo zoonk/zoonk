@@ -27,14 +27,12 @@ type CountedLesson = Pick<
 
 export function countLessonProgress(lessons: readonly CountedLesson[]): {
   lessonsDone: number;
-  lessonsKnown: number;
   lessonsTotal: number;
 } {
   return {
     lessonsDone: countLessons(lessons.filter((item) => getWorkProgress(item.status) === "studied")),
-    lessonsKnown: countLessons(
-      lessons.filter((item) => getWorkProgress(item.status) === "testedOut"),
+    lessonsTotal: countLessons(
+      lessons.filter((item) => getWorkProgress(item.status) !== "testedOut"),
     ),
-    lessonsTotal: countLessons(lessons),
   };
 }

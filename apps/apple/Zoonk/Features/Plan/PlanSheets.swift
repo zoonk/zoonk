@@ -13,6 +13,10 @@ enum PlanSheet: Identifiable, Hashable {
   case country
 
   var id: Self { self }
+
+  var isSuggestion: Bool {
+    if case .suggestion = self { true } else { false }
+  }
 }
 
 extension View {

@@ -16,12 +16,15 @@
   "warm_up_questions_ready": "6887754276ed34810197007789fe8a12fec87239190e56132248931ea6ad9cda",
   "warm_up_ready_to_start": "baa4a9d641c619169b48e94ed892bdca136f465d837bbed8e39aa4e13f4fd832",
   "warm_up_start_first_lesson": "955873a36e73a7beebd359ed1e16dee6c6fa98634458352426b0fe01881767bb",
-  "warm_up_title": "ed07f6720ec9ea020a2c86f86356dff8d7800d7864b31bead4e0ca895a3598bc"
+  "warm_up_title": "ed07f6720ec9ea020a2c86f86356dff8d7800d7864b31bead4e0ca895a3598bc",
+  "warm_up_title_ready": "cd92060ed62790ffafb54e6495b39f717fefe9659e5a10fdcbadbf1121a07b32"
 }
 -->
 <resources>
     <!-- Heading of a card of quick guessing questions about the learner's subject, shown while their plan or lesson is being written. -->
     <string name="warm_up_title">Quiz für die Wartezeit</string>
+    <!-- The same card's heading once the plan or lesson is ready and the learner is still reading their last guess. -->
+    <string name="warm_up_title_ready">Quiz</string>
     <!-- Button under a guessed question's answer: shows the next question. -->
     <string name="warm_up_next">Weiter raten</string>
     <!-- Under the last question's answer: there are no more questions to guess. -->

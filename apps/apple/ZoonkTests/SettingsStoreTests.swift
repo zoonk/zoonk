@@ -265,6 +265,49 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertEqual(restoreCount, 2)
   }
 
+  /// A later change doesn't hide an earlier one that failed: the deletion fails while the switch,
+  /// made after it, saves, and the page still says so (review of `697b994fb2`).
+  func testAFailedDeletionStillSaysSoWhenALaterChangeSaves() async throws {
+    let api = SettingsAPIStub()
+    let store = makeStore(api: api)
+    let changes = MemoryChanges()
+    await store.memory.load()
+    await api.holdDeletes()
+
+    changes.delete(id: MemoryFact.evenings.id, settings: store)
+    await api.waitForHeldDelete()
+    changes.save(.memorySwitch) { await store.setMemoryEnabled(false) }
+    await api.releaseDeletes(throwing: APIError.network)
+    try await Task.sleep(for: .milliseconds(300))
+
+    XCTAssertTrue(changes.saveFailed)
+  }
+
+  /// A fact's edit failed, then the fact was deleted: its failure went with it, and Undo bringing
+  /// the fact back doesn't bring the failure back (review of `5667281d3c`).
+  func testDeletingAFactRetiresItsFailedEdit() async throws {
+    let api = SettingsAPIStub()
+    let store = makeStore(api: api)
+    let changes = MemoryChanges()
+    await store.memory.load()
+    await api.holdEdits()
+
+    changes.save(.edit(MemoryFact.evenings.id)) {
+      await store.updateMemoryFact(id: MemoryFact.evenings.id, statement: "Studies at dawn")
+    }
+    await api.waitForHeldEdit()
+    await api.releaseEdits(throwing: APIError.network)
+    await waitUntil { changes.saveFailed }
+
+    changes.delete(id: MemoryFact.evenings.id, settings: store)
+    await waitUntil { changes.deletedFact == .evenings }
+    XCTAssertFalse(changes.saveFailed, "the deleted fact's failed edit goes with it")
+
+    changes.undo(settings: store)
+    await waitUntil { changes.undoStatus == .undone }
+    XCTAssertFalse(changes.saveFailed, "Undo brings the fact back, not its failure")
+  }
+
   func testLeavingMemoryEndsItsNoticeAndWhatsStillOut() async {
     let api = SettingsAPIStub()
     let store = makeStore(api: api)

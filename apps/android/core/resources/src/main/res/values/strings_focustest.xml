@@ -7,9 +7,9 @@
     <!-- What's left of a test the learner started; %1$s is a duration, such as "13 min". -->
     <string name="focustest_about_left">About %1$s left</string>
     <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
-    <string name="focustest_find_focus">Find out where to focus</string>
+    <string name="focustest_find_focus">Find what to study most</string>
     <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
-    <string name="focustest_find_start">Find out where to start</string>
+    <string name="focustest_find_start">Already know some of this?</string>
     <string name="focustest_offer_description_focus">Quick questions on your exam\'s subjects. Your plan skips what you already know, so your time goes where you need it most.</string>
     <string name="focustest_offer_description">Quick questions on your exam\'s subjects. Your plan skips what you already know.</string>
     <string name="focustest_how_it_works">How it works</string>
@@ -84,13 +84,11 @@
         <item quantity="one">%1$d of %2$d right</item>
         <item quantity="other">%1$d of %2$d right</item>
     </plurals>
-    <!-- A subject the test hasn't asked a question about yet. -->
-    <string name="focustest_not_asked_yet">Not asked yet</string>
-    <!-- Parts of the exam the test's quick questions can't check, such as the essay. -->
-    <string name="focustest_written_not_checked">Writing: not checked here</string>
-    <string name="focustest_listening_not_checked">Listening: not checked here</string>
-    <string name="focustest_speaking_not_checked">Speaking: not checked here</string>
-    <string name="focustest_practical_not_checked">Practical part: not checked here</string>
+    <!-- Parts of the exam the Focus test's questions can't ask about, such as the essay. -->
+    <string name="focustest_written_not_checked">Writing: not in this test</string>
+    <string name="focustest_listening_not_checked">Listening: not in this test</string>
+    <string name="focustest_speaking_not_checked">Speaking: not in this test</string>
+    <string name="focustest_practical_not_checked">Practical part: not in this test</string>
     <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">In progress</string>
     <string name="focustest_see_your_result">See your result</string>

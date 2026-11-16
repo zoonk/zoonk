@@ -55,7 +55,6 @@
     "./catalog/try-lesson": "./src/catalog/try-lesson.ts",
     "./certificates/claim": "./src/certificates/claim-course-certificate.ts",
     "./certificates/contract": "./src/certificates/certificate-contract.ts",
-    "./certificates/progress": "./src/certificates/list-certificate-progress.ts",
     "./certificates/list": "./src/certificates/list-certificates.ts",
     "./certificates/mark-shown": "./src/certificates/mark-certificate-shown.ts",
     "./certificates/public": "./src/certificates/get-public-certificate.ts",

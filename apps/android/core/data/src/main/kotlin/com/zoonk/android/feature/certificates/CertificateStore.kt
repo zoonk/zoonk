@@ -8,7 +8,7 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.value
-import com.zoonk.api.models.CertificateProgress
+import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OwnedCertificate
 import java.util.UUID
 
@@ -25,7 +25,7 @@ interface CertificatesApi {
         goalId: UUID,
     ): List<OwnedCertificate>
 
-    suspend fun goals(session: AuthenticatedSession): List<CertificateProgress>
+    suspend fun goals(session: AuthenticatedSession): List<Goal>
 }
 
 class LiveCertificatesApi(
@@ -43,17 +43,36 @@ class LiveCertificatesApi(
         goalId: UUID,
     ) = perform { api.clients(session).certificates.claimCourseCertificate(goalId) }.certificates
 
-    override suspend fun goals(session: AuthenticatedSession) =
-        perform { api.clients(session).certificates.listCertificateProgress() }.upNext
+    override suspend fun goals(session: AuthenticatedSession) = perform { api.clients(session).goals.listGoals() }.goals
 }
 
-/** The certificate's studied share of its full lesson coverage, read from core. */
+/** Main's "Up next" on an empty certificates page: an active goal and its plan's share of lessons done, null for a language. */
 data class CertificateUpNext(
-    val goal: CertificateProgress,
+    val goal: Goal,
     val progress: Double?,
 )
 
-fun certificateUpNext(goals: List<CertificateProgress>): List<CertificateUpNext> = goals.map { CertificateUpNext(it, it.progress) }
+/** Main's rule: active learn and exam goals whose plan has lessons, and active language goals. */
+fun certificateUpNext(goals: List<Goal>): List<CertificateUpNext> =
+    goals
+        .filter { it.status == Goal.Status.ACTIVE }
+        .mapNotNull { goal ->
+            when (goal.kind) {
+                Goal.Kind.LANGUAGE -> {
+                    CertificateUpNext(goal, progress = null)
+                }
+
+                Goal.Kind.LEARN, Goal.Kind.EXAM -> {
+                    goal.plan
+                        ?.takeIf { it.lessonsTotal > 0 }
+                        ?.let { CertificateUpNext(goal, it.lessonsDone.toDouble() / it.lessonsTotal) }
+                }
+
+                Goal.Kind.EXPLAIN -> {
+                    null
+                }
+            }
+        }
 
 class CertificateStore(
     private val api: CertificatesApi,
@@ -67,12 +86,12 @@ class CertificateStore(
             isEmpty = List<OwnedCertificate>::isEmpty,
         ) { session -> session?.let { api.list(it) } }
 
-    /** The certificate coverage core measured for the empty page's Up next. */
+    /** The goals and their plans' lesson counts, which only the empty page's "Up next" reads, as main's does. */
     val goals =
-        cache.resource<List<CertificateProgress>>(
+        cache.resource<List<Goal>>(
             Audience.SignedIn,
             setOf(DataDomain.Goals, DataDomain.UserProgress),
-            isEmpty = List<CertificateProgress>::isEmpty,
+            isEmpty = List<Goal>::isEmpty,
         ) { session -> session?.let { api.goals(it) } }
 
     /** A completion that earned [codes] leaves the list stale only while it doesn't hold them yet. */

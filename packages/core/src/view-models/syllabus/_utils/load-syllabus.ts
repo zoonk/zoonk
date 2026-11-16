@@ -19,12 +19,7 @@ import {
   parsePlanSettings,
 } from "../../../plans/planner/plan-state";
 import { loadAreaCourses, loadChapterTitles, withSkills } from "./syllabus-content";
-import {
-  type SyllabusInput,
-  type SyllabusItem,
-  type SyllabusSkill,
-  toSyllabusItem,
-} from "./syllabus-input";
+import { type SyllabusInput, type SyllabusItem, type SyllabusSkill } from "./syllabus-input";
 import { getPastBasicsSkillIds, withTestedOutSkills } from "./syllabus-known-skills";
 import { loadNotice } from "./syllabus-notice";
 import { getSkillSubjects } from "./syllabus-subjects";
@@ -41,6 +36,22 @@ const itemSelect = {
   status: true,
   titleSnapshot: true,
 } as const;
+
+/** Copies only these fields: saved items carry more, and every reader of the cached input decodes all of it. */
+function toSyllabusItem(item: SyllabusItem): SyllabusItem {
+  return {
+    chapterId: item.chapterId,
+    id: item.id,
+    kind: item.kind,
+    lessonId: item.lessonId,
+    lessons: item.lessons,
+    phase: item.phase,
+    scheduledFor: item.scheduledFor,
+    skillId: item.skillId,
+    status: item.status,
+    titleSnapshot: item.titleSnapshot,
+  };
+}
 
 function toSkills(graph: PlanGraph): SyllabusSkill[] {
   return graph.skills.map((skill) => ({
@@ -99,13 +110,11 @@ export async function loadSyllabusInput(
     readClaims,
     savedPlan,
     taughtStandIns,
-    lessonItems,
   }: {
     blueprint?: ExamBlueprint | null | Promise<ExamBlueprint | null>;
     readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
     savedPlan?: SavedPlan | null;
     taughtStandIns?: Promise<Set<string>>;
-    lessonItems?: Promise<SyllabusItem[]>;
   } = {},
 ): Promise<SyllabusInput | null> {
   const [plan, notice] = await Promise.all([
@@ -124,10 +133,9 @@ export async function loadSyllabusInput(
 
   const [items, areaCourses, chapterTitles, claimEvents, prerequisites, taughtSkillIds] =
     await Promise.all([
-      lessonItems ??
-        withSkills({ from, graphSkillIds, items: plan.items }).then((withOwn) =>
-          withTestedOutSkills({ graphSkillIds, items: withOwn }),
-        ),
+      withSkills({ from, graphSkillIds, items: plan.items }).then((withOwn) =>
+        withTestedOutSkills({ graphSkillIds, items: withOwn }),
+      ),
       loadAreaCourses(graph, from),
       loadChapterTitles(plan.items, from),
       readClaims

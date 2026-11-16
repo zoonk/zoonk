@@ -47,6 +47,7 @@
   "mock_next_section": "8d0ee175d3c18aaa18fc664741aa013a3f619deca2ac859aa064aaabc61d7770",
   "mock_not_saved_retrying": "16335e8d43882ac27ace6d79045baf63c4cb20c9460260087e431e0a50860159",
   "mock_place": "e9eb53d1a8f80f75c0aff53b6fff21a0aa6b92046162912249e65e7c46c24be9",
+  "mock_points_of": "1aa58bf2af61be9fe59464bc294e6e57a013a10c70094b514347408e4fe544a5",
   "mock_progress_label": "20e066bfe67d7fe655e19a34d7e7e62286a6a323a07662fc095e5c239844d21b",
   "mock_question_number": "aeff24fec0851bc72170a5231efab68d55e3004c76b9249fb72b219294fd1bfa",
   "mock_question_place": "1ea39b4f97f0536e4dd86281e952799c14a2ac6f8382309ca68cd9bfa0afc733",
@@ -65,7 +66,7 @@
   "mock_speaking_hand_in_done": "478da16002933dca9b5524ff850bb9f429d1214751f199ff8c1d322c77c5bdba",
   "mock_speaking_hand_in_left": "fa6154dfcdeaeca77d97180d68df4f000c3e7d3964c7cae8be8ab156a5c75e28",
   "mock_speaking_intro": "c3e84232f7ece83cb93d63ba8bedc38dd5c1f9a8e2c6c025c8cd607c320354e8",
-  "mock_speaking_left": "c5ddefa2c843c229927c85135df4b398ca1c1b2f7b936860d78bf8c0366bec22",
+  "mock_speaking_left": "255f82109ec8c59230db07911fb0cfc759f3571f76ce0f53dc9a54afa2132ca6",
   "mock_speaking_paper_opens": "e648d73e311a0c6502985e0fff70a9c1cd3866cb7468150ce953fd583f5ec8c8",
   "mock_speaking_start": "3331ffceec60cac9c8cd7d05b9fab76e31f14109c680f9b35798c4101916eafe",
   "mock_speaking_start_task": "49c13bafc670b6638bbe53769ef9c05b41dbd0078d3e3436564d7dcbfabda82e",
@@ -99,9 +100,13 @@
     <string name="mock_title">모의고사 %1$d</string>
     <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
     <string name="mock_net_score">%1$s / %2$d</string>
-    <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60 right". -->
+    <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="other">%1$s/%2$d개 정답</item>
+    </plurals>
+    <!-- A mock exam's result where some questions gave part of a point: "36.5 of 90 points". -->
+    <plurals name="mock_points_of">
+        <item quantity="other">%1$s점 / %2$d점</item>
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
@@ -216,7 +221,8 @@
     <string name="mock_speaking_writing_paper_line_2">각 카드의 안내문을 만들고 있어요…</string>
     <string name="mock_speaking_writing_paper_line_3">면접관이 할 말을 준비하고 있어요…</string>
     <string name="mock_speaking_writing_paper_line_4">도움이 될 표현을 더하고 있어요…</string>
-    <string name="mock_speaking_left">과제를 순서대로 하세요. 과제마다 대화를 한 번씩 해요.</string>
+    <!-- Over a mock exam's speaking tasks: each task is a short voice call where the learner speaks with the examiner. -->
+    <string name="mock_speaking_left">과제를 순서대로 진행하세요. 각 과제에서 면접관과 소리 내어 대화해요.</string>
     <string name="mock_speaking_all_done">모든 과제를 마쳤어요. 계속하려면 이 파트를 제출하세요.</string>
     <!-- %2$s is how long the task lasts, such as "4–5 min". -->
     <string name="mock_speaking_task">과제 %1$d · %2$s</string>

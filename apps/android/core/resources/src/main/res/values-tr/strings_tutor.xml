@@ -13,6 +13,7 @@
   "tutor_ask": "409b6d27868c89adfdf58e8d9d85000d760d246771514abf4bd021d2d354ad0e",
   "tutor_ask_answer": "546a6123da9d21296d5488f0215ff4061125bf94e11ad4afafd8d5ec287a91bb",
   "tutor_ask_chapter": "85432b2752d39a40c98f3096599f22d420797a742717e27cbbad3e7d7f4402b2",
+  "tutor_ask_for_help": "e7af862e89c0004b52eed3498c1786348f8f87609961f04f7c1748cf66c92502",
   "tutor_ask_mock": "862fe818609f21dfe0d750b35e60299b611428eab0731805b962f671513e55bf",
   "tutor_ask_plan": "d57eaa40f4d0e9ff6ec29264575aed4b7c8d77d562398b4e84a8fead7b2529e7",
   "tutor_ask_question": "a17287f3733a9989167efc2a89ec445871618f8a2e2e1f697421d17da9eb64d5",
@@ -131,6 +132,8 @@
     <!-- Before the buddy is known. -->
     <string name="tutor_your_buddy">Arkadaşın</string>
     <string name="tutor_ask">%1$s ile konuş</string>
+    <!-- The button that opens the buddy's chat before the buddy's name is known. -->
+    <string name="tutor_ask_for_help">Yardım iste</string>
     <string name="tutor_ask_chapter">Bu ünite hakkında %1$s ile konuş</string>
     <string name="tutor_ask_mock">Bu deneme sınavı hakkında %1$s ile konuş</string>
     <string name="tutor_ask_plan">Planın hakkında %1$s ile konuş</string>

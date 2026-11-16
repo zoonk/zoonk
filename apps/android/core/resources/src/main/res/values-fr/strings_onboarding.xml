@@ -16,9 +16,8 @@
   "onboarding_aim_from_intermediate": "d298ace1c9e6717fec04325a144e6833adfab5546ecd2d92e3b0d77b6364f819",
   "onboarding_aim_from_level": "db37fe3a75478fb84b4b4374d618b73700c38500e4f05d026113abd884330550",
   "onboarding_aim_from_none": "6cfe9c13527c50d847c9203b91cb15ad3467c87c758e17080f9cfc0a6bd74a0e",
-  "onboarding_aim_hours": "a05c0aa93ce794cd58d5dc709151cdd62d8b01192d4e7b26f3ebdf8d18cff8b6",
-  "onboarding_aim_hours_month": "1b568459a49006cc8758e8c05c5cd838b4772f2a01b574134785e080b95fd803",
-  "onboarding_aim_hours_more": "62f46b7488b479a198f0e8fb4c1dff5373517be428ce2145f78e0d3e201d84aa",
+  "onboarding_aim_hours_month": "6cc81e467ef18e56b6dc7e02517d1ce2ea32c40fc6bd4f069fe7e85c4d8fc92f",
+  "onboarding_aim_hours_more": "3a8d974ba71c77722da306f10417b76726aa7fb48647d53346e039a008f7629d",
   "onboarding_aim_picker_title": "b7bb8cc26f1626210a15311a6d8a6032f567fa8ad7003999b7d459512269dacc",
   "onboarding_aim_talk": "bdd113fd3eea1b1312521ee6f31a0e91d914afe01e68c88d0b27e3361eba3e70",
   "onboarding_aim_travel": "182a827b2a1ff18f0b7845e1bbffef29eeb669555fa913c5208acc8a9173c6c8",
@@ -53,7 +52,6 @@
   "onboarding_course_start_free": "6c0e26112b69c84fd9c13ebe77911bddfc7e26680c5d2a5f55b2380001ca1632",
   "onboarding_course_starting": "0eef03f88f003aef3dfa9666844ed283b8072d04b48e9d8445dfbb098cc01a86",
   "onboarding_create_account": "e156329ca281c90dc90348e9aa9bf992f5667a4810cd559f16049104cd38d519",
-  "onboarding_create_account_short": "ee492c0efad78a304cc1c43399d677e2aaea92f5f76466299d8fffa3cc4b3325",
   "onboarding_date_continue_without": "d504f1596a3fc729386b5fb442d49a886f7e8016ed7507f070409d8e50d73b93",
   "onboarding_date_description": "8e27bb954bc82d438fb53ac21277baa6db15f4caf8e8a616d4572b464986a12d",
   "onboarding_date_is_today": "8378ce5b9c6b9b9db244a8372319cce7d95209e5ffcd09cdb33d2813dd55b106",
@@ -80,7 +78,7 @@
   "onboarding_exam_on_two": "ea75f059b14b21853fbd0f80e066876f9f02a1cfc068a2a4ddfc7e47d4fef8ad",
   "onboarding_exam_ready": "aaf348c741a1ecf69e96d5d9a328f84046ca1041afb1eeb84c58ebcf976d3f7d",
   "onboarding_exam_ready_first_day": "37873f102e85e0ef7ba3a80725c58f1a5d19a5bc83fd32efcfc0cbeb35b7ae51",
-  "onboarding_explain_description": "42b826e584701ac14eb797c7b3d4d0c45e30c8596003fa8960d32553d05241fd",
+  "onboarding_explain_description": "9059c1b5795621352d59a07184854565e5e78d5dd79f43a4aece5b3f93cee314",
   "onboarding_explain_it": "0a380006f96473d5e817cb187fd5102c0698896f935a38f287612a113fe419bb",
   "onboarding_finish_later": "5252cd1b1e50dd66862986664fcf2881e1bb0e599ffb3450837d74f28d4d5587",
   "onboarding_finish_later_description": "abddf07131cba39f1adafd033c04cba6df70ea08cceb3b9bc7c1ede315d7c97d",
@@ -185,12 +183,12 @@
   "onboarding_placement_question_number": "5e0f14885271be05b2970453e0f1bbb5a9a2fc8f3dfe55642d1f7eb4b20aeb41",
   "onboarding_placement_ready": "e866adb992b37db720d6beec66b1a024fd2b5e9c5fd2e29b89bd205e87996d0e",
   "onboarding_placement_right": "904da1fbf7403dceb412c2c92ff9624041d84227b68bf7a232a8d4c6827f6660",
-  "onboarding_placement_see_plan": "2057baf0f07e73965fb3d05b8288336216965ce18e60b9a4b33eff2608ea938e",
+  "onboarding_placement_see_plan": "a30900a1a6358a9096e5f3a60292990a01896b7190fae45691bd517a251d4b30",
   "onboarding_placement_set_description": "81c057ad75c1052fc9bd9d64437ff8dc73d19c414d13d0c6e5ed366b4d7cd70f",
   "onboarding_placement_set_title": "80278518a0d984afe30a6893017e4d7c9d2f4192bcb70bee7f9d1a954e6524f5",
   "onboarding_placement_skip_basics": "fb60cb1b3ea886c19703477bc5d6c1ef44483535ca864f759927bfbcfdd7908e",
   "onboarding_placement_start": "75ca2af1f84fdffc5690fb6c41d338ae6344789e4cd3b9510ec63e35309c98c5",
-  "onboarding_placement_stop": "d322c25441b98d9c665ba24e9e2ed886e17e0497d44c82084e3cedb0cf40268b",
+  "onboarding_placement_stop": "827afd6644b168eead0a6d2d658a9f1f20bba442a632d85c4d819fb10e09ac5f",
   "onboarding_placement_title": "7aacb3e39346c16f692b66ace2bf170bcd143ed96d6a5b5771f87af9b48e2309",
   "onboarding_placement_true": "c03569b504568c13acbf4a0da565e6510a1f323c7a393434200160fa993c2a8f",
   "onboarding_placement_unavailable_description": "539be697336e58cb3f38e6606b7d72849820f85ec950384a23f6de74d771630b",
@@ -237,12 +235,10 @@
   "onboarding_reason_certificate_description": "9e522025abdaca61181bc061aea722f95c53e81341f5dd0e322b211ab5faf893",
   "onboarding_reason_choices": "670dbf8a5f2c180eaa541ad70272a20fe7e57ec14f947c312c9ef5101b9b9d94",
   "onboarding_reason_description": "12a1095702fd6a01746f12b6f6f179cc434198d91c798a00b5f7254a0f6236eb",
-  "onboarding_reason_exam": "3161c8bb13ddfa7d9589e808beaf070f1d77b8718719b1611147bfc239067096",
   "onboarding_reason_exam_plan": "7a0036d96dc37565e3a7f016921a0ce257bbf74b9cafb9690637c143d7b3a882",
   "onboarding_reason_fluent": "fbdb794dc24e0d1242b7b12829aa7b677de5eec7698c3a0f744a0786e0679f86",
   "onboarding_reason_fluent_description": "ed675787c987a4764deae85d90f64ab77046c09f4cc375282308105e4c36699d",
-  "onboarding_reason_hours_note": "4fc6274bf90f21bb7970cbdb2f7b923dabf87a2d5a20390165baaab7c433274a",
-  "onboarding_reason_other_description": "18e3592565bc46890b6a23436c7f51dcb31debef06119caaabd6bca52cbb8f1f",
+  "onboarding_reason_other_description": "d0e2131470e2e7fed54da67f3c658f110c9f0ea48ec8b1d5e94cbf38866e8fdc",
   "onboarding_reason_talk": "01a9e01f43bfc3bf94fe1537019cdfff22391ec530e55643faccdcf8481d2272",
   "onboarding_reason_talk_description": "e8643c90646d5350e4bb9f2c25237852031007605a3de7c01aaf7e97cbe0cd39",
   "onboarding_reason_title": "8c63a682ddff9c62803448435db87a1003a1022573e664b09d7f876a9c122bf1",
@@ -267,6 +263,8 @@
   "onboarding_reveal_covers_goal_left_out": "c9b7af99b68274f040b1d03130008b74cb8ce897b9dccd912b28029a5c97ff7d",
   "onboarding_reveal_covers_nothing": "61fdb99fe4e81a7dc5c5186828072cc384cc66acbc964a298d238b08198c8bcf",
   "onboarding_reveal_created": "55fcbcb8577c074e8868bf789d49e4dafb01942f16a7649a3857058112ec506e",
+  "onboarding_reveal_days": "d72dfc155249e4c1fd9853b2f132699e26f8ca18a1dc1489bc419ed1104c0ee2",
+  "onboarding_reveal_days_estimated": "50babd1e8c4ad8487c395195c832ce5cd4e0ffd65b386279620dd7345163e2c2",
   "onboarding_reveal_estimated_finish": "6eb371e4de88f6371b001ca72e23b876186b867dcb5dcff02775615cb2540e55",
   "onboarding_reveal_estimated_guide_area": "f90b1eeb79f30cf1a7f0b1ee22daf8672019d4ba71c7dd425ef0a393f0fb73b5",
   "onboarding_reveal_estimated_guide_areas": "76ebcdaff4bd18c0aa6d498feccaf3d39fd9f3959b39f7c4a1604cde10f6aee9",
@@ -422,7 +420,7 @@
   "onboarding_understood_locked_line_more": "f26e8fc75537c49d5e2193eaa79d5f386b5f85ded4f12aff93b742778e8288a6",
   "onboarding_understood_locked_line_one": "9289d0d7ed147819617719ff97c9f89b936e5f216adf603c6909ce1afb36561a",
   "onboarding_understood_locked_title": "7cd725a06a0d54404b0549640607f2ccb0577c0c0e94f86a0bcb7ed0757487c3",
-  "onboarding_understood_title": "93e2d7c143748642272b202aef59238adb3449b6a30dc18defa3deaa7dd02077",
+  "onboarding_understood_title": "20ee9b743cf1e19a3184660b91421189895c02a2bb4deb57bcf2124f7d10814e",
   "onboarding_upload_file": "d01541b890e3c3db306109368d4de283145a716cdbae09068ef1c63876f0ed88",
   "onboarding_use_this_date": "c57b07288d3ebef892e18c179571414728695298cc90d8543a351b7f2940b495",
   "onboarding_variety_description": "e57b6c6542faab3984316c013755b6cb9b78538b20154c4c794e9dbcca7392c5",
@@ -487,14 +485,13 @@
     <string name="onboarding_goals_at_once_title">Tu as atteint ta limite d’objectifs en cours</string>
     <string name="onboarding_goals_at_once_line">Mets-en un en pause dans ton Plan ou abonne-toi pour travailler sur plus d’objectifs à la fois.</string>
     <string name="onboarding_create_account">Créer un compte gratuit</string>
-    <string name="onboarding_create_account_short">Créer un compte</string>
     <string name="onboarding_guest_gate_title">Crée un compte gratuit pour commencer un autre objectif</string>
     <string name="onboarding_guest_gate_description">Sans compte, tu peux suivre un seul objectif. Si tu crées un compte, tu gardes ton plan et tes progrès.</string>
     <string name="onboarding_back_to_today">Retour à Aujourd’hui</string>
     <!-- The wait while a typed goal is read. -->
     <string name="onboarding_understanding_title">Compréhension de ton objectif</string>
     <string name="onboarding_understanding_description">Ensuite, tu vérifieras ce que nous avons compris.</string>
-    <string name="onboarding_understood_title">Voici ce que j’ai compris</string>
+    <string name="onboarding_understood_title">Voici ce qu’on a compris</string>
     <string name="onboarding_understood_description">Tu pourras tout modifier plus tard.</string>
     <!-- When the learner's words became more than one goal. -->
     <string name="onboarding_understood_description_shared">Ces objectifs se partagent ta durée quotidienne. Tu pourras tout modifier plus tard.</string>
@@ -568,8 +565,8 @@
     <string name="onboarding_row_notice_says">L’avis d’examen indique le %1$s.</string>
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="onboarding_row_guide_says">Le calendrier officiel de l’examen indique le %1$s.</string>
-    <!-- After a goal the learner typed turned out to be a question. -->
-    <string name="onboarding_explain_description">Une courte explication préparée pour toi, en 5 minutes environ.</string>
+    <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
+    <string name="onboarding_explain_description">Une courte explication préparée pour toi, à lire en %1$s environ.</string>
     <string name="onboarding_explain_it">Explique-moi</string>
     <string name="onboarding_declined_title">Nous ne pouvons pas t’aider avec cet objectif</string>
     <string name="onboarding_declined_description">Zoonk n’enseigne rien qui puisse te faire du mal ou en faire aux autres, ni les jeux d’argent ni les moyens de tricher. Y a-t-il autre chose que tu aimerais apprendre ?</string>
@@ -648,7 +645,7 @@
     <string name="onboarding_placement_your_answer">Ta réponse, avec tes propres mots</string>
     <string name="onboarding_placement_dont_know">Je ne sais pas encore</string>
     <string name="onboarding_placement_confirm">Confirmer</string>
-    <string name="onboarding_placement_stop">M’arrêter ici et voir mon plan</string>
+    <string name="onboarding_placement_stop">Arrêter et utiliser mes réponses</string>
     <string name="onboarding_placement_answer_failed">Ça n’a pas marché. Tes réponses sont conservées.</string>
     <!-- The two answers to a statement judged true or false. -->
     <string name="onboarding_placement_true">Vrai</string>
@@ -657,7 +654,7 @@
     <string name="onboarding_placement_right">Vrai</string>
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">Faux</string>
-    <string name="onboarding_placement_see_plan">Voir mon plan</string>
+    <string name="onboarding_placement_see_plan">Voir ton plan</string>
     <plurals name="onboarding_placement_answered">
         <item quantity="one">%d question répondue</item>
         <item quantity="many">%d questions répondues</item>
@@ -1022,6 +1019,18 @@
     <string name="onboarding_reveal_a_day">par jour</string>
     <string name="onboarding_reveal_weekends">%1$s le week-end</string>
     <string name="onboarding_reveal_until_exam">avant l’examen</string>
+    <!-- A big number of days over "until the exam" or "until your date". -->
+    <plurals name="onboarding_reveal_days">
+        <item quantity="one">%1$s jour</item>
+        <item quantity="many">%1$s jours</item>
+        <item quantity="other">%1$s jours</item>
+    </plurals>
+    <!-- The same days while the date is an estimate. -->
+    <plurals name="onboarding_reveal_days_estimated">
+        <item quantity="one">~%1$s jour</item>
+        <item quantity="many">~%1$s jours</item>
+        <item quantity="other">~%1$s jours</item>
+    </plurals>
     <string name="onboarding_reveal_until_date">avant la date prévue</string>
     <string name="onboarding_reveal_estimated_finish">fin estimée</string>
     <string name="onboarding_whats_next">La suite</string>
@@ -1034,9 +1043,10 @@
     <string name="onboarding_your_aim">Ton objectif</string>
     <string name="onboarding_aim_change">Modifier</string>
     <string name="onboarding_aim_picker_title">Jusqu’où veux-tu aller ?</string>
-    <string name="onboarding_aim_hours_more">Encore environ %1$s h</string>
-    <string name="onboarding_aim_hours_month">Encore environ %1$s h · vers %2$s</string>
-    <string name="onboarding_aim_hours">%1$s h</string>
+    <!-- %1$s is hours of study, such as "190 hr". -->
+    <string name="onboarding_aim_hours_more">Environ %1$s de plus</string>
+    <!-- %1$s is hours of study, such as "190 hr"; %2$s a month, such as "Mar 2027". -->
+    <string name="onboarding_aim_hours_month">Environ %1$s de plus · vers %2$s</string>
     <string name="onboarding_aim_by_month">d’ici %1$s</string>
     <string name="onboarding_aim_finish">Avec %1$s par jour, tu atteins %2$s vers %3$s.</string>
     <string name="onboarding_reason_travel">Voyager</string>
@@ -1049,12 +1059,10 @@
     <string name="onboarding_reason_fluent_description">Parler de presque tout avec aisance</string>
     <string name="onboarding_reason_certificate">Obtenir une certification</string>
     <string name="onboarding_reason_certificate_description">IELTS, DELE, CELI et autres</string>
-    <string name="onboarding_reason_other_description">Avec tes propres mots. Objectif B1</string>
-    <string name="onboarding_reason_exam">Examen</string>
+    <string name="onboarding_reason_other_description">Avec tes propres mots</string>
     <string name="onboarding_reason_which_exam">Laquelle ?</string>
     <string name="onboarding_reason_exam_plan">Ton plan s’adapte aux épreuves et au Score de cet examen.</string>
     <string name="onboarding_reason_your_words">Avec tes propres mots</string>
-    <string name="onboarding_reason_hours_note">Heures d’étude en partant de zéro, entraînement compris. Moins si tu as déjà des bases.</string>
     <string name="onboarding_aim_from_none">En partant de zéro, avec %1$s par jour.</string>
     <string name="onboarding_aim_from_basic">En partant des bases, avec %1$s par jour.</string>
     <string name="onboarding_aim_from_intermediate">En partant d’un niveau intermédiaire, avec %1$s par jour.</string>
@@ -1089,6 +1097,6 @@
     <string name="onboarding_country_other">Un autre pays</string>
     <!-- Above that question's buttons before a country is picked: %1$s is the country Skip uses, in the reader's language, after the colon so it needs no article or case. -->
     <string name="onboarding_country_skip_default">Si tu sautes cette étape : %1$s</string>
-    <!-- A badge beside the content country in "Here's what I understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
+    <!-- A badge beside the content country in "Here's what we understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
     <string name="onboarding_country_from_home">là où tu vis</string>
 </resources>

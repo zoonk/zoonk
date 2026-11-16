@@ -407,7 +407,7 @@ class UnderstoodRows(
                         R.string.onboarding_row_deadline
                     },
                 ),
-            value = formatDate(targetDate, locale, DateStyle.LongYear, today),
+            value = formatDate(targetDate, locale, DateStyle.Short, today),
             note = note,
             source = (official ?: suggested)?.source?.let { RowSource(it.title, it.url) },
             editable = EditableField.TargetDate,
@@ -507,7 +507,7 @@ class UnderstoodRows(
         val sameYear = days.map { it.day.year }.distinct().size == 1
         return ListFormatter.getInstance(locale).format(
             days.mapIndexed { index, day ->
-                val style = if (sameYear && index < days.lastIndex) DateStyle.DayMonth else DateStyle.LongYear
+                val style = if (sameYear && index < days.lastIndex) DateStyle.DayNoYear else DateStyle.Short
                 formatDate(day.day, locale, style, today).replace(' ', NO_BREAK_SPACE)
             },
         )

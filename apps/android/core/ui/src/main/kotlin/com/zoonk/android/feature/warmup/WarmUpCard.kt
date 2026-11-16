@@ -294,7 +294,7 @@ fun WaitContent(
                         .semantics { contentDescription = title },
                 ) { progress() }
             } else if (!progressShown) {
-                QuizCard(quiz, surface, hold, goalId)
+                QuizCard(quiz, surface, hold, WaitPresentation(ready = run.status == GenerationRun.Status.Ready), goalId)
             }
         }
     }
@@ -380,11 +380,12 @@ private fun QuizCard(
     quiz: WaitQuizState,
     surface: AnalyticsEvent.WarmUpSurface,
     hold: ReadyHold,
+    wait: WaitPresentation,
     goalId: String? = null,
 ) {
     val card = quiz.card
     if (card == null) {
-        if (quiz.coming) QuizSkeleton()
+        if (quiz.coming) QuizSkeleton(wait)
         return
     }
     val tracker = LocalEventTracker.current
@@ -397,7 +398,7 @@ private fun QuizCard(
     val reveal = remember { BringIntoViewRequester() }
     val firstAnswer = remember { FocusRequester() }
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Title()
+        Title(wait)
         Guess(card, quiz.picked, reveal, firstAnswer) { option ->
             quiz.pick(option, hold)
             tracker.track(AnalyticsEvent.WarmUpAnswered(surface, card.id, quiz.index + 1, option.correct))
@@ -406,9 +407,9 @@ private fun QuizCard(
 }
 
 @Composable
-private fun QuizSkeleton() {
+private fun QuizSkeleton(wait: WaitPresentation) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Title()
+        Title(wait)
         MediaPending(
             Modifier.fillMaxWidth().heightIn(min = 80.dp).semantics { progressBarRangeInfo = ProgressBarRangeInfo.Indeterminate },
         ) {}
@@ -422,7 +423,7 @@ private fun QuizSkeleton() {
 }
 
 @Composable
-private fun Title() {
+private fun Title(wait: WaitPresentation) {
     Row(
         Modifier.semantics(mergeDescendants = true) { heading() },
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -435,7 +436,7 @@ private fun Title() {
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
-            stringResource(R.string.warm_up_title),
+            stringResource(wait.quizTitle),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelLarge,
         )

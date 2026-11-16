@@ -13,6 +13,7 @@
   "tutor_ask": "03c7eb043ecb7fa940943a12956f44e715dfddff43b0f99ea52fe5de679613fe",
   "tutor_ask_answer": "207cfc9be0c05764002dcec3228746689cd6d09e2917a240c4cfc158a583f156",
   "tutor_ask_chapter": "4dc55bb774c73b47d36d8cf975590b2a026802a398bb1e591dd11c9fd9fb9075",
+  "tutor_ask_for_help": "6b1a5484ba1fc43c74137bf0bd4f700c65442507fd2619e1bf6075e7acfbcb0f",
   "tutor_ask_mock": "e2a04a76adc0ec9649cae621ff24f5328e9eb5b791ca5589d73aaeb8078c0231",
   "tutor_ask_plan": "29c8d1dafdf1587193a6d5d7496a1938c9dba12da55b7f3f8db37a8ea0dc3f7b",
   "tutor_ask_question": "36434844cf5a30a101568b5acc93b5b96382c2b8b06c1555139b7487b0b49684",
@@ -131,6 +132,8 @@
     <!-- Before the buddy is known. -->
     <string name="tutor_your_buddy">내 짝꿍</string>
     <string name="tutor_ask">%1$s에게 물어보기</string>
+    <!-- The button that opens the buddy's chat before the buddy's name is known. -->
+    <string name="tutor_ask_for_help">도움 요청하기</string>
     <string name="tutor_ask_chapter">%1$s에게 이 단원에 대해 질문하기</string>
     <string name="tutor_ask_mock">%1$s에게 이 모의고사에 대해 질문하기</string>
     <string name="tutor_ask_plan">%1$s에게 내 계획에 대해 질문하기</string>

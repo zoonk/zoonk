@@ -20,8 +20,6 @@
   "today_continue_mock": "f7c84985aae748e364b5fd21a50e6647f662a2d800f4ca28ba8abcd5b571e61c",
   "today_continue_mock_detail": "9f3166dafd67d58664c7b5097447df33be430193016cd49ea4c4f8d170ca28c1",
   "today_continue_session": "ddd70deddfe7494883de070e30897335b180eb04acafbeb0b4420bcab32d5f38",
-  "today_day_is_here": "24af1e75bf6b6bdcb894985141f15100bc7720d309b198798c8d6570d40b2cdd",
-  "today_days_left": "63c44bc12e6755901a9435c06c8bad24857297eb83a2797801c1e8ac216d94df",
   "today_done": "d85abe6586cd98f5a33227c8fdb2abd3b95d9242c5e63a086164d39ab231c122",
   "today_done_count": "456f78ab972b2bafbdc565a50260af263893a16973a63eef53db0adf98a6f299",
   "today_done_day_off": "9b5c406e533641cf0a499b9ab635899fcd4295796f839676df38652a8a980a72",
@@ -175,10 +173,6 @@
     </plurals>
     <string name="today_shorter_day">오늘은 학습 시간이 짧아요</string>
     <string name="today_shorter_day_note">계획에 %1$s 모의고사를 볼 시간을 따로 남겨 두었어요.</string>
-    <string name="today_day_is_here">목표일이 왔어요</string>
-    <plurals name="today_days_left">
-        <item quantity="other">%d일 남음</item>
-    </plurals>
     <plurals name="today_pace_lessons_to_catch_up">
         <item quantity="other">따라잡을 레슨 %d개</item>
     </plurals>

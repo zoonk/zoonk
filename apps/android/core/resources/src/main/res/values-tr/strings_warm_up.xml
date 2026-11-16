@@ -16,12 +16,15 @@
   "warm_up_questions_ready": "80d27f79fd20716358b60a96ef3ff0c95bf0a248c70f08c70adfcc2054fc9b6f",
   "warm_up_ready_to_start": "4d143375a0a56066db3c6eeb701a611b02ed34c8dca03a981336e1637dca1ca1",
   "warm_up_start_first_lesson": "2ee233688ce01d1255eeafb1f71275ba458eef2e1b06230202114ee7a78e8d75",
-  "warm_up_title": "d38f89a062deeb279ecec4bb1c632d228c727bfcf358992e46ee6daf06880b81"
+  "warm_up_title": "d38f89a062deeb279ecec4bb1c632d228c727bfcf358992e46ee6daf06880b81",
+  "warm_up_title_ready": "f1fefdb18569bd27d4319ecc9811c9bfdee39b7f297820992b107c82df023e7a"
 }
 -->
 <resources>
     <!-- Heading of a card of quick guessing questions about the learner's subject, shown while their plan or lesson is being written. -->
     <string name="warm_up_title">Beklerken kendini dene</string>
+    <!-- The same card's heading once the plan or lesson is ready and the learner is still reading their last guess. -->
+    <string name="warm_up_title_ready">Test</string>
     <!-- Button under a guessed question's answer: shows the next question. -->
     <string name="warm_up_next">Bir tahmin daha yap</string>
     <!-- Under the last question's answer: there are no more questions to guess. -->

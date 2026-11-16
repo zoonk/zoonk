@@ -291,7 +291,7 @@ internal fun SignUpPrompt(onCreateAccount: () -> Unit) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-        TextButton(onClick = onCreateAccount) { Text(stringResource(R.string.onboarding_create_account_short)) }
+        TextButton(onClick = onCreateAccount) { Text(stringResource(R.string.onboarding_create_account)) }
     }
 }
 

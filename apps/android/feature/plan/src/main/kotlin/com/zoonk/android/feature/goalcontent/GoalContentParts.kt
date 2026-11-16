@@ -60,6 +60,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import kotlinx.coroutines.launch
@@ -83,19 +84,26 @@ internal fun SectionNote(
     )
 }
 
-/** "4. Title": a row's number quiet before its words. */
+/** "4. Title": a row's number quiet before its words, as the lesson list numbers its rows. */
 @Composable
 internal fun numberedTitle(
     number: Long,
     title: String,
+): AnnotatedString = numberedTitle(formatNumber(number.toDouble(), currentLocale(), grouping = false), title)
+
+/** [number] as it's written ("4", or a notice's "1.2"), in the lesson list's quiet data face with its period. */
+@Composable
+internal fun numberedTitle(
+    number: String,
+    title: String,
 ): AnnotatedString {
-    val quiet = MaterialTheme.colorScheme.onSurfaceVariant
-    val locale = currentLocale()
+    val style =
+        MaterialTheme.zoonkType.data
+            .toSpanStyle()
+            .copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+    val written = if (number.endsWith(".")) number else stringResource(R.string.lessons_position, number)
     return buildAnnotatedString {
-        withStyle(SpanStyle(color = quiet, fontFeatureSettings = "tnum")) {
-            append(formatNumber(number.toDouble(), locale, grouping = false))
-            append(". ")
-        }
+        withStyle(style) { append("$written ") }
         append(title)
     }
 }

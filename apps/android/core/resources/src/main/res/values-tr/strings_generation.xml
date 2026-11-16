@@ -5,14 +5,14 @@
   "generation_connection_lost_description": "0ab176b8ba6dfb5f00c74b6a65f949f4976561b8113027cfc4488f1b7286c6da",
   "generation_curriculum": "565d25ccd86b76948051731d664b8c5d45440f2db2e0f4b8c7cc6a9bd1f4bd47",
   "generation_curriculum_plan": "d7e97f737fdde93c5c90b1c4fa6be395113d04cd4f2e06fba7bf0dac2d2a5522",
-  "generation_curriculum_plan_line_1": "e3fa4a81db5847b2bc654b4860d3676df63d67928e00f26e316496630ad81039",
+  "generation_curriculum_plan_line_1": "f67b5154330be9d0be1c5e494821305c78bdff15ecf620d165f824f8adca6818",
   "generation_curriculum_plan_line_2": "522cc114d104248c055cb2966d61d55c97ebca5db89b83236ca42df3af29ec3b",
   "generation_curriculum_plan_line_3": "bf34330cf6d21f5b81d1fcf9bf9324430f39aa33bd5a00d08ad2643aef82437c",
   "generation_failed_description": "d21d9a30bdbd024210ef88467174d1470c972a6ed2aaba9f742c4e83413873d5",
   "generation_failed_ours": "f52b314da90894d660846706ade1a7455449a2d9f6e175425a93e2fc93fdb3c0",
   "generation_first_lesson": "01391a7a647084301230c1f44ca8a4e8b2404ff814022b6ec1bfc3b82550c21e",
   "generation_first_lesson_day": "352dc57424e5c7d3027fe69b11841886bd765586590bcfbb9c1d9fb43b9adbff",
-  "generation_first_lesson_day_line_1": "869f924a072d9ef1f3a09b8afc54bbeafabc4bc79ea9dc36069b2959e9fb537e",
+  "generation_first_lesson_day_line_1": "e9ed9ab692e1a02f82078a508381423b94a9d5137667de425424f798e3022845",
   "generation_first_lesson_day_line_2": "84b194a811f31389a031aeb9f2afe4e94e0d36861fbbf22b017581ad39cfbf80",
   "generation_goal": "7495ff612fa1a62016861b00c72e81e8f90a58b80f887af50c24648b64c26d82",
   "generation_goal_line_1": "1bbd6da69b9ed31ca6fcf88a64d0cd13c188cd7d8377cede828464b62b283d15",
@@ -94,7 +94,7 @@
     <!-- The wait while a plan is built. -->
     <string name="generation_curriculum">Planını oluşturuyoruz</string>
     <string name="generation_curriculum_plan">Planını çalışma günlerine göre düzenliyoruz</string>
-    <string name="generation_curriculum_plan_line_1">Kütüphane’de ders arıyoruz…</string>
+    <string name="generation_curriculum_plan_line_1">Hedefine uygun dersleri buluyoruz…</string>
     <string name="generation_curriculum_plan_line_2">Becerileri çalışma günlerine dağıtıyoruz…</string>
     <string name="generation_curriculum_plan_line_3">Planını kaydediyoruz…</string>
     <!-- The wait while placement questions are written. -->
@@ -104,7 +104,7 @@
     <!-- The wait while the first day of a plan is prepared. -->
     <string name="generation_first_lesson">İlk gününü hazırlıyoruz</string>
     <string name="generation_first_lesson_day">İlk gününü planlıyoruz</string>
-    <string name="generation_first_lesson_day_line_1">Kütüphane’de ders arıyoruz…</string>
+    <string name="generation_first_lesson_day_line_1">Hedefine uygun dersleri buluyoruz…</string>
     <string name="generation_first_lesson_day_line_2">Nereden başlayacağını seçiyoruz…</string>
     <!-- The wait while a language's level test questions are written. -->
     <string name="generation_level_test">Seviye tespit testini hazırlıyoruz</string>

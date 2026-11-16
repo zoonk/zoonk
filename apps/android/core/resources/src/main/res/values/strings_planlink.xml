@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Above a shared plan's subject. -->
-    <string name="planlink_eyebrow">A study plan someone shared with you</string>
+    <string name="planlink_eyebrow">Someone shared their study plan with you</string>
     <!-- A shared plan without a subject, and the title over its phases. -->
     <string name="planlink_study_plan">A study plan</string>
     <string name="planlink_minutes_label">How much time a day?</string>

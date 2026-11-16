@@ -112,6 +112,48 @@ final class VisitOutcomeTests: XCTestCase {
     XCTAssertFalse(shows(Self.didntSave, in: window), "Nothing of it: \(spoken(in: window))")
   }
 
+  /// A later change on the same page doesn't hide an earlier one that failed: the time's save fails
+  /// while the email's, made after it, saves, and the page still says so (review of `697b994fb2`).
+  func testATimeThatDidntSaveSaysSoWhenTheEmailSavedMeanwhile() async throws {
+    let api = VisitRemindersAPI(fails: { $0.time != nil })
+    await api.holdUpdates()
+    let tabs = VisitTabs()
+    let window = try await host(RemindersView {}, reminders: api, tabs: tabs)
+
+    let picker = try XCTUnwrap(views(UIDatePicker.self, in: window).first, "The time's picker")
+    picker.date = picker.date.addingTimeInterval(3_600)
+    picker.sendActions(for: .valueChanged)
+    await api.waitForHeldUpdate()
+    try activate(where: { $0.hasPrefix(Self.email) }, in: window)
+    try await settle()
+    await api.releaseUpdate()
+    try await settle()
+
+    XCTAssertTrue(
+      shows(Self.didntSave, in: window), "The time's failure shows: \(spoken(in: window))")
+  }
+
+  /// Push met blocked notifications: the notice that says so was that visit's.
+  func testABlockedPushNoticeIsGoneOnReturn() async throws {
+    let tabs = VisitTabs()
+    let dependencies = AppDependencies.hosted()
+    let window = try await host(
+      RemindersView {}.environment(
+        StudyRemindersStore(
+          api: VisitRemindersAPI(), cache: dependencies.cache, push: BlockedPush())),
+      dependencies: dependencies, tabs: tabs)
+    let blocked = String(localized: "Notifications are off for Zoonk.", table: "Reminders")
+
+    try activate(
+      where: { $0.hasPrefix(String(localized: "Push notifications", table: "Reminders")) },
+      in: window)
+    try await settle()
+    XCTAssertTrue(shows(blocked, in: window), "The notice shows: \(spoken(in: window))")
+
+    try await leaveAndComeBack(tabs)
+    XCTAssertFalse(shows(blocked, in: window), "Gone on return: \(spoken(in: window))")
+  }
+
   /// The failure is the editor's, not a line every account page shares.
   func testAProfileThatDidntSaveIsGoneOnReturn() async throws {
     let accounts = SwitchingAccountAPI()
@@ -280,7 +322,11 @@ final class VisitOutcomeTests: XCTestCase {
   }
 
   private func textFields(in view: UIView) -> [UITextField] {
-    ((view as? UITextField).map { [$0] } ?? []) + view.subviews.flatMap { textFields(in: $0) }
+    views(UITextField.self, in: view)
+  }
+
+  private func views<Kind: UIView>(_ kind: Kind.Type, in view: UIView) -> [Kind] {
+    ((view as? Kind).map { [$0] } ?? []) + view.subviews.flatMap { views(kind, in: $0) }
   }
 
   private func shows(_ line: String, in window: UIWindow) -> Bool {
@@ -438,11 +484,21 @@ private actor VisitSettingsAPI: SettingsAPIClient {
   }
 }
 
-/// A reminder with email off, whose changes fail, after they're released when held.
+/// A reminder with email off, whose changes fail (those `fails` names) after they're released when
+/// held.
 private actor VisitRemindersAPI: StudyRemindersAPIClient {
+  private static let reminder = StudyReminder(
+    time: "20:00", timeZone: "America/Sao_Paulo", emailOn: false,
+    emailAddress: "learner@zoonk.test", pushOn: false, phone: nil, quiet: false)
+
+  private let fails: @Sendable (StudyReminderChange) -> Bool
   private var holds = false
   private var held: CheckedContinuation<Void, Never>?
   private var heldWaiter: CheckedContinuation<Void, Never>?
+
+  init(fails: @escaping @Sendable (StudyReminderChange) -> Bool = { _ in true }) {
+    self.fails = fails
+  }
 
   func holdUpdates() { holds = true }
 
@@ -460,9 +516,7 @@ private actor VisitRemindersAPI: StudyRemindersAPIClient {
   }
 
   func getReminder(token: String) async throws -> StudyReminder {
-    StudyReminder(
-      time: "20:00", timeZone: "America/Sao_Paulo", emailOn: false,
-      emailAddress: "learner@zoonk.test", pushOn: false, phone: nil, quiet: false)
+    Self.reminder
   }
 
   func updateReminder(token: String, _ change: StudyReminderChange) async throws -> StudyReminder {
@@ -475,7 +529,11 @@ private actor VisitRemindersAPI: StudyRemindersAPIClient {
       }
     }
 
-    throw APIError.unavailable
+    guard !fails(change) else {
+      throw APIError.unavailable
+    }
+
+    return change.applied(to: Self.reminder)
   }
 
   func claimOffer(token: String) async throws -> Bool { false }
@@ -512,6 +570,14 @@ private actor VisitCertificatesAPI: CertificatesAPIClient {
   func upNext(token: String) async throws -> [CertificateUpNext] {
     []
   }
+}
+
+/// Notifications the learner blocked in the system's Settings.
+private final class BlockedPush: PushAccess {
+  func requestAuthorization() async -> Bool { false }
+  func deviceToken() async -> String? { nil }
+  func isAuthorized() async -> Bool { false }
+  func isDenied() async -> Bool { true }
 }
 
 /// A buddy with two pairs of glasses earned, whose saves fail.

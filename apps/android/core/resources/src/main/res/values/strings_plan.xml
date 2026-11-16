@@ -139,7 +139,8 @@
     <!-- Write the duration out in words, not as "30 s". -->
     <string name="plan_far_writing">Preparing the lessons… It takes about half a minute.</string>
     <string name="plan_far_unreachable">We couldn\'t reach the server. Check your connection.</string>
-    <string name="plan_far_nothing_left">There\'s nothing left to prepare for this topic.</string>
+    <!-- A far topic's sheet when its lessons can't be prepared early: they're still prepared on time, before the learner gets to it. -->
+    <string name="plan_far_nothing_left">These lessons can\'t be prepared early. They\'ll be ready before you get to this topic.</string>
     <plurals name="plan_more_chapters">
         <item quantity="one">%d more chapter</item>
         <item quantity="other">%d more chapters</item>
@@ -486,6 +487,8 @@
     <string name="plan_editor_title">Adjust your plan</string>
     <string name="plan_editor_close">Close</string>
     <string name="plan_undo">Undo</string>
+    <!-- Under a plan change that was made, when undoing it failed; its button tries the undo again. -->
+    <string name="plan_undo_failed">Couldn\'t undo this change.</string>
     <string name="plan_deadline">Deadline</string>
     <string name="plan_named_month_note">%1$s for now. Pick the day when you know it.</string>
     <string name="plan_no_deadline_note">No deadline: you study everything at your own pace. With a deadline, your plan fits what matters most by then.</string>
@@ -652,6 +655,10 @@
     <string name="plan_time_covers_everything_by">Your time covers everything by %1$s</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_everything_by_month">Your time covers everything by %1$s</string>
+    <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
+    <string name="plan_time_covers_share_exam">%1$s a day covers about %2$s of your exam topics</string>
+    <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
+    <string name="plan_time_covers_share_goal">%1$s a day covers about %2$s of your goal</string>
     <string name="plan_covered_not_enough">%1$s a day isn\'t enough time to cover your goal.</string>
     <!-- A button that works out the daily time that covers the whole goal. Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything". -->
     <string name="plan_find">Find the time</string>
@@ -767,6 +774,16 @@
     <plurals name="plan_effect_more_before_end_date">
         <item quantity="one">You\'ll study %d more lesson before your end date.</item>
         <item quantity="other">You\'ll study %d more lessons before your end date.</item>
+    </plurals>
+    <!-- A change that moves the learner's end date: %1$d lessons studied by the new date, %2$s, such as "March 3". -->
+    <plurals name="plan_effect_more_by">
+        <item quantity="one">You\'ll study %1$d more lesson by %2$s.</item>
+        <item quantity="other">You\'ll study %1$d more lessons by %2$s.</item>
+    </plurals>
+    <!-- A change that moves the learner's end date: %1$d fewer lessons by the new date, %2$s, such as "March 3". -->
+    <plurals name="plan_effect_fewer_by">
+        <item quantity="one">You\'ll study %1$d fewer lesson by %2$s.</item>
+        <item quantity="other">You\'ll study %1$d fewer lessons by %2$s.</item>
     </plurals>
     <plurals name="plan_effect_more">
         <item quantity="one">You\'ll study %d more lesson.</item>

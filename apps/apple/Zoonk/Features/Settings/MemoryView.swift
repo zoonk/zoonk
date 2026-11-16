@@ -131,7 +131,9 @@ struct MemoryView: View {
           return
         }
 
-        changes.save { await settings.updateMemoryFact(id: fact.id, statement: trimmed) }
+        changes.save(.edit(fact.id)) {
+          await settings.updateMemoryFact(id: fact.id, statement: trimmed)
+        }
       }
     } message: { _ in
       Text(
@@ -164,7 +166,7 @@ struct MemoryView: View {
     Binding(
       get: { enabled },
       set: { next in
-        changes.save { await settings.setMemoryEnabled(next) }
+        changes.save(.memorySwitch) { await settings.setMemoryEnabled(next) }
       })
   }
 }
@@ -175,15 +177,27 @@ struct MemoryView: View {
 @MainActor
 @Observable
 final class MemoryChanges {
-  private(set) var saveFailed = false
+  /// What a change was made with. Each keeps its own latest result, so a change to one never hides
+  /// another's failure.
+  enum Control: Hashable {
+    case memorySwitch
+    case edit(String)
+    case deletion(String)
+  }
+
   /// "Memory updated", with its Undo.
   private(set) var deletedFact: MemoryFact?
   private(set) var undoStatus: MemoryUndo?
+  private var failed: Set<Control> = []
+  @ObservationIgnored private var latest: [Control: Int] = [:]
+  @ObservationIgnored private var lastRun = 0
   @ObservationIgnored private let tasks = ScreenTasks()
 
+  var saveFailed: Bool { !failed.isEmpty }
+
   /// A change to the memory, false when it didn't save.
-  func save(_ write: @escaping @MainActor () async -> Bool) {
-    saveFailed = false
+  func save(_ control: Control, _ write: @escaping @MainActor () async -> Bool) {
+    let run = begin(control)
 
     tasks.run {
       let saved = await write()
@@ -192,12 +206,13 @@ final class MemoryChanges {
         return
       }
 
-      self.saveFailed = !saved
+      self.end(control, run: run, saved: saved)
     }
   }
 
   func delete(id: String, settings: SettingsStore) {
-    saveFailed = false
+    let control = Control.deletion(id)
+    let run = begin(control)
 
     tasks.run {
       let result = await settings.deleteMemoryFact(id: id)
@@ -210,8 +225,12 @@ final class MemoryChanges {
       case .done(let deleted):
         self.deletedFact = deleted
         self.undoStatus = nil
+        self.end(control, run: run, saved: true)
+        // The fact and its retry are gone. Its edits and its deletion take turns in the memory's
+        // saves, so an edit has always landed before its fact's deletion does.
+        self.failed.remove(.edit(id))
       case .failed?, nil:
-        self.saveFailed = true
+        self.end(control, run: run, saved: false)
       case .obsolete?:
         break
       }
@@ -239,9 +258,30 @@ final class MemoryChanges {
 
   func leave() {
     tasks.cancel()
-    saveFailed = false
+    failed = []
+    latest = [:]
     deletedFact = nil
     undoStatus = nil
+  }
+
+  private func begin(_ control: Control) -> Int {
+    lastRun += 1
+    latest[control] = lastRun
+    failed.remove(control)
+    return lastRun
+  }
+
+  /// Only the control's latest change says how it went.
+  private func end(_ control: Control, run: Int, saved: Bool) {
+    guard latest[control] == run else {
+      return
+    }
+
+    if saved {
+      failed.remove(control)
+    } else {
+      failed.insert(control)
+    }
   }
 }
 

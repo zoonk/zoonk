@@ -3,7 +3,6 @@ package com.zoonk.android.feature.onboarding.setup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -52,7 +51,6 @@ import com.zoonk.android.feature.plan.timeOffer
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.DailyTimePicker
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Switch
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimeSelect
@@ -75,8 +73,6 @@ import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeToCover
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
-import java.time.DayOfWeek
-import java.time.format.TextStyle
 import java.util.TimeZone
 
 @Composable
@@ -280,6 +276,7 @@ private fun ColumnScope.ScheduleTime(
         .TrackOnboardingQuestion(goal.id.toString(), "schedule", goal.details.text("onboardingId"))
     StepForm(
         title = stringResource(R.string.onboarding_schedule_title),
+        chips = if (factsBeside) emptyList() else planFactChips(goal),
         continueLabel = stringResource(R.string.onboarding_see_plan),
         canContinue = hasDays && minutes != null,
         pending = pending || waitsToSave(line, picked),
@@ -299,7 +296,6 @@ private fun ColumnScope.ScheduleTime(
             )
         },
     ) {
-        if (!factsBeside) PlanFactChips(goal)
         ScheduleAim(advice?.endDate?.toJavaLocalDate(), minutes, goal, store, asked.adviceInput(minutes ?: recommendedMinutes))
 
         // The days decide the time, and what the time covers arrives last, so nothing above it moves.
@@ -398,7 +394,7 @@ private fun DateLink(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    TextButton(onClick = onClick, enabled = enabled, edge = ButtonEdge.Start) {
+    TextButton(onClick = onClick, enabled = enabled, forward = true, edge = ButtonEdge.Start) {
         Text(stringResource(if (dated) R.string.onboarding_change_date else R.string.onboarding_choose_date))
     }
 }
@@ -456,13 +452,8 @@ private fun WeekdayToggles(
 }
 
 @Composable
-private fun PlanFactChips(goal: Goal) {
-    val facts = planFacts(goal).filter { it.chip }
-    if (facts.isEmpty()) return
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        facts.flatMap { listOfNotNull(it.count ?: it.value, it.note) }.forEach { Eyebrow(text = it) }
-    }
-}
+private fun planFactChips(goal: Goal): List<String> =
+    planFacts(goal).filter { it.chip }.flatMap { listOfNotNull(it.count ?: it.value, it.note) }
 
 /** A goal's date as the learner gave it: a named month reads as the month, not its first day. */
 @Composable

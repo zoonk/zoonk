@@ -77,7 +77,7 @@ sealed interface SuggestionMark {
  * and [lineAction], by default "View", which opens [content] in a bottom sheet titled [label]; as a
  * [SuggestionLayout.Panel] it shows [content] in full. Once [answered], [summary] is the answer's
  * result, read out when it shows, an open sheet closes, and a keyboard's or screen reader's focus
- * moves to it, as the control they used is gone. While [failed], a line reads the save error in
+ * moves to it, as the control they used is gone. While [failed], a line reads [failure] in
  * place of [summary], as main's does when its [lineAction] didn't save. [lineDescription] goes under the
  * line's summary, for a suggestion whose line says all there is (main's `SuggestionLine` with a description).
  */
@@ -92,6 +92,7 @@ fun Suggestion(
     failed: Boolean = false,
     lineAction: (@Composable () -> Unit)? = { SuggestionOpen() },
     lineDescription: String? = null,
+    failure: String = stringResource(R.string.suggestion_save_failed),
     content: @Composable SuggestionContentScope.() -> Unit,
 ) {
     var open by rememberSaveable { mutableStateOf(false) }
@@ -110,7 +111,7 @@ fun Suggestion(
     CompositionLocalProvider(LocalFrame provides frame) {
         when (layout) {
             SuggestionLayout.Line -> {
-                SuggestionLine(summary, answered, failed, modifier, lineAction, lineDescription)
+                SuggestionLine(summary, answered, failure.takeIf { failed }, modifier, lineAction, lineDescription)
                 if (open) SuggestionSheet(label, onClose = { open = false }, onFocus = { moveFocus(sheetFocus) }, content)
             }
 
@@ -216,9 +217,9 @@ fun SuggestionResult(text: String) {
 }
 
 @Composable
-fun SuggestionSaveError() {
+fun SuggestionSaveError(text: String = stringResource(R.string.suggestion_save_failed)) {
     Text(
-        text = stringResource(R.string.suggestion_save_failed),
+        text = text,
         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.error,
@@ -295,11 +296,12 @@ fun SuggestionAction(
 private fun SuggestionLine(
     summary: String,
     answered: Boolean,
-    failed: Boolean,
+    failure: String?,
     modifier: Modifier,
     action: (@Composable () -> Unit)?,
     description: String?,
 ) {
+    val failed = failure != null
     // With nothing to open, the line is all there is to read.
     val whole = answered || action == null
     Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large, border = frameBorder()) {
@@ -314,7 +316,7 @@ private fun SuggestionLine(
                             painterResource(R.drawable.ic_error),
                             contentDescription = null,
                             modifier = Modifier.size(PANEL_MARK * glyphScale()),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = MaterialTheme.colorScheme.error,
                         )
                     } else {
                         Mark(PANEL_MARK)
@@ -323,7 +325,7 @@ private fun SuggestionLine(
                 summary = {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
-                            text = if (failed) stringResource(R.string.suggestion_save_failed) else summary,
+                            text = failure ?: summary,
                             modifier =
                                 Modifier
                                     .focusRequester(LocalFrame.current.focus)

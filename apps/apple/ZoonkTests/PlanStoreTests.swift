@@ -827,6 +827,7 @@ actor PlanAPIStub: PlanAPIClient {
   private var previewed: PlanChangePreview?
   private var holds: HeldCall?
   private var shownPlan: GoalPlan?
+  private var fittingDate: String?
   private var end = PlanEnd(certificates: nil, next: nil)
   private var languageUnitsRead: LanguageUnitsOverview?
   private var heldCall: CheckedContinuation<Void, Never>?
@@ -847,6 +848,8 @@ actor PlanAPIStub: PlanAPIClient {
   /// Every read answers this plan instead of the stub's.
   func setPlan(_ plan: GoalPlan) { shownPlan = plan }
   func setPlanEnd(_ end: PlanEnd) { self.end = end }
+  /// The later end date the time to cover finds for a passed one.
+  func setFittingDate(_ date: String) { fittingDate = date }
   func setLanguageUnits(_ units: LanguageUnitsOverview) { languageUnitsRead = units }
   /// Every read answers the same plan, as a read after progress that changed nothing it plans does.
   func setPlanId(_ id: String) { planId = id }
@@ -1010,7 +1013,8 @@ actor PlanAPIStub: PlanAPIClient {
     }
 
     return TimeToCover(
-      fittingDate: nil, most: nil, pastDate: false, readingNotice: false, ready: answersReady,
+      fittingDate: fittingDate, most: nil, pastDate: false, readingNotice: false,
+      ready: answersReady,
       recommendedMinutes: 45, suggested: suggested, targetDate: "2027-11-14",
       targetDateNamedMonth: false)
   }

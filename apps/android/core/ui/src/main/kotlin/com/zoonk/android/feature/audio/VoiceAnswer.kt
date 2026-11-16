@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.SystemClock
 import android.provider.Settings
-import android.text.format.DateUtils
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -57,6 +56,7 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.format.formatClock
 import com.zoonk.android.ui.theme.GeistMono
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -321,7 +321,7 @@ private fun RecordingClock(startedAt: Long) {
         }
     }
     Text(
-        text = DateUtils.formatElapsedTime(seconds),
+        text = formatClock(seconds * MILLIS_PER_SECOND),
         modifier = Modifier.clearAndSetSemantics {},
         color = LocalContentColor.current.copy(alpha = CLOCK_ALPHA),
         style = MaterialTheme.typography.labelLarge.copy(fontFamily = GeistMono),
@@ -362,3 +362,5 @@ fun MicrophoneOff(
         }
     }
 }
+
+private const val MILLIS_PER_SECOND = 1_000L

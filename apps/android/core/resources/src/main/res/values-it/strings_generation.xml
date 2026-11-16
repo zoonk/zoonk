@@ -5,14 +5,14 @@
   "generation_connection_lost_description": "96e04e7522b6c17eb00b623cbb09020f916575420b51ae8e81d1b8cbd84b5a03",
   "generation_curriculum": "52a2f2cfa1933aaf6d74a851682dbb08e6560cc1017bd80ec81532bcaa06e914",
   "generation_curriculum_plan": "7e1eba51e6f531cb832f80e39141717ee3a6d05fee5b17d853184e94694e8019",
-  "generation_curriculum_plan_line_1": "dfd360c2a1f311e78a74efffe11c60c9f40d53f619d73b7c4cce8b007f19e545",
+  "generation_curriculum_plan_line_1": "7b0c7500d99db70763d8f9a450c0fd48808aa49e370ade9a988b7a392aff37f7",
   "generation_curriculum_plan_line_2": "d379bdba5b2b7893831a0a441e82189ca0259f9e03069bc7b33f6237888597d1",
   "generation_curriculum_plan_line_3": "9b342ff7dfcbb237bc438e4567fc3a0ded28417ff49afca423ace7613e4cdc6f",
   "generation_failed_description": "69e41428882a91a403b193986503084d07b7402af5df7b491c4ea0ee32a723a8",
   "generation_failed_ours": "89190f57639aab50c633b44c9b4ad6057bb6f2fe0337afd1afe27e59a594c3f5",
   "generation_first_lesson": "913f8c3de029a8bed43e5f4bbc0a3662a81173272165329ffde947d5b2c3f7da",
   "generation_first_lesson_day": "2ad82e8bf3e3cc1db3503d0c135ac14654877151862ced594599477780815ddb",
-  "generation_first_lesson_day_line_1": "ca5c1575ad988e22c9432bb54ab188579a15146a2ee3c669362c83c9335b51e6",
+  "generation_first_lesson_day_line_1": "1f66e3e1118ed827d4b15ab7b9a3c90faff04dc80bb70c5457527d5d661c77ce",
   "generation_first_lesson_day_line_2": "00ba41140ec4d94973dbec797ee20fbf3fc55271bf691368866c331b52efa738",
   "generation_goal": "19f9c04ec430aa4806ea6731fc7a28c853dfb5c7c435321a1f78e06335d42477",
   "generation_goal_line_1": "a7294898a398412992449e02912e390afc5d0c9defb3a6e5525c8e4bf17db392",
@@ -94,7 +94,7 @@
     <!-- The wait while a plan is built. -->
     <string name="generation_curriculum">Stiamo creando il tuo piano</string>
     <string name="generation_curriculum_plan">Stiamo adattando il piano alle tue giornate</string>
-    <string name="generation_curriculum_plan_line_1">Stiamo cercando lezioni nella Biblioteca…</string>
+    <string name="generation_curriculum_plan_line_1">Stiamo cercando le lezioni per il tuo obiettivo…</string>
     <string name="generation_curriculum_plan_line_2">Stiamo distribuendo le abilità nei tuoi giorni di studio…</string>
     <string name="generation_curriculum_plan_line_3">Stiamo salvando il tuo piano…</string>
     <!-- The wait while placement questions are written. -->
@@ -104,7 +104,7 @@
     <!-- The wait while the first day of a plan is prepared. -->
     <string name="generation_first_lesson">Stiamo preparando il tuo primo giorno</string>
     <string name="generation_first_lesson_day">Stiamo organizzando il tuo primo giorno</string>
-    <string name="generation_first_lesson_day_line_1">Stiamo cercando lezioni nella Biblioteca…</string>
+    <string name="generation_first_lesson_day_line_1">Stiamo cercando le lezioni per il tuo obiettivo…</string>
     <string name="generation_first_lesson_day_line_2">Stiamo scegliendo da dove iniziare…</string>
     <!-- The wait while a language's level test questions are written. -->
     <string name="generation_level_test">Stiamo preparando il tuo test di livello</string>

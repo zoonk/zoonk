@@ -87,19 +87,3 @@ export type SyllabusInput = {
   todayBlocks?: readonly TodayLearnBlock[];
   writtenPractice?: WrittenPractice | null;
 };
-
-/** Copies only these fields: saved items carry more, and every reader of the cached input decodes all of it. */
-export function toSyllabusItem(item: SyllabusItem): SyllabusItem {
-  return {
-    chapterId: item.chapterId,
-    id: item.id,
-    kind: item.kind,
-    lessonId: item.lessonId,
-    lessons: item.lessons,
-    phase: item.phase,
-    scheduledFor: item.scheduledFor,
-    skillId: item.skillId,
-    status: item.status,
-    titleSnapshot: item.titleSnapshot,
-  };
-}

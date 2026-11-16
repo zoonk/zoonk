@@ -58,7 +58,7 @@
   "session_review_intro_weakest_title": "249b0a957378035a5fcfc031b6878c0d9f9b2175e8a3ad21fb6ae6bc46ba47d7",
   "session_summary_brain_power": "c1d8e46385b589e71b286f613db1cc5098aaf44aa6b9f69fcc6aca050679b234",
   "session_summary_buddy_happy": "0129dc14348409bd3c9bf9c3793443bb4cbd3fb6fc992a9d49ab3210ec32f7f7",
-  "session_summary_create_account": "a1e834d6b8801e4aae2edeafe7d2c9a976f6b027a2159f273f77ed5db79cbcfe",
+  "session_summary_create_account": "34364680ead35cfaf859e68104fe1f0a76310233b2869c0c4ee59c8c9c85f1da",
   "session_summary_done_for_now": "9e65d68d045d5acd6e23683d422a96795ff7516307bde988f71a62897a9953f9",
   "session_summary_done_in": "742c8767dff1b805e619ffb50b6303a40f70f4892b972ce20f767edb2cf56c81",
   "session_summary_done_under_minute": "3b4d7c1924f05af1e4399a8110f2f6f35b3729160d7ca0a5bec0a575a897fa48",
@@ -180,7 +180,7 @@
     <string name="session_summary_keep_going">続ける</string>
     <string name="session_summary_finish">終える</string>
     <string name="session_summary_save_note">次回も見られるように、学習計画を保存しましょう。</string>
-    <string name="session_summary_create_account">アカウントを作成する</string>
+    <string name="session_summary_create_account">無料アカウントを作成する</string>
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">次は</string>
     <string name="session_next_start">始める</string>

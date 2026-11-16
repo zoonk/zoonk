@@ -648,13 +648,7 @@ private fun MistakeEntry(
                     ) { Text(stringResource(R.string.mistakes_practice_topic)) }
                 }
                 mistake.lesson?.let { lesson ->
-                    val open = @Composable { Text(stringResource(R.string.mistakes_open_lesson)) }
-                    // The entry always ends in a button: alone, Open the lesson is the outline one.
-                    if (skillId == null) {
-                        OutlinedButton(onClick = { actions.onLesson(lesson.id) }) { open() }
-                    } else {
-                        TextButton(onClick = { actions.onLesson(lesson.id) }) { open() }
-                    }
+                    TextButton(onClick = { actions.onLesson(lesson.id) }) { Text(stringResource(R.string.mistakes_open_lesson)) }
                 }
             }
         }

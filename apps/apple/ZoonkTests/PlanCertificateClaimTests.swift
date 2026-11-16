@@ -15,17 +15,16 @@ final class PlanCertificateClaimTests: XCTestCase {
         dailyMinutes: 30, id: "goal", kind: .exam, language: "en", status: .active,
         targetDate: "2026-01-04", displayName: "ENEM", title: "ENEM"),
       plan: try goalPlanFixture(), adjust: { _ in }, show: { _ in },
-      claimCertificate: { await claim.answer() }, showClaim: { shown.append($0) },
-      certificateClaim: CertificateClaim())
+      claimCertificate: { await claim.answer() }, showClaim: { shown.append($0) })
     try readsWhatVoiceOverReads()
 
     let window = try show(
       PaneSplit {
-        CertificateClaimButton(context: context)
+        CertificateClaimButton(context: context, item: .finished)
       } secondary: {
         Color.clear
       } single: {
-        CertificateClaimButton(context: context)
+        CertificateClaimButton(context: context, item: .finished)
       }
       .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
@@ -55,25 +54,25 @@ final class PlanCertificateClaimTests: XCTestCase {
         dailyMinutes: 30, id: "goal", kind: .exam, language: "en", status: .active,
         targetDate: "2026-01-04", displayName: "ENEM", title: "ENEM"),
       plan: try goalPlanFixture(), adjust: { _ in }, show: { _ in },
-      claimCertificate: { await claim.answer() }, showClaim: { _ in },
-      certificateClaim: CertificateClaim())
-    let owner = context.certificateClaim
+      claimCertificate: { await claim.answer() }, showClaim: { _ in })
+    let owner = context.slotChecks
+    var check: PlanSlotCheck { context.slotCheck(.finished, request: .claim) }
 
-    owner.claim(context)
+    check.claim(context)
     await claim.waitUntilAsked()
     claim.release(nil)
     try await settle()
-    XCTAssertTrue(owner.failed)
+    XCTAssertTrue(check.failed)
 
     owner.leave()
-    XCTAssertFalse(owner.failed, "A failure before leaving")
+    XCTAssertFalse(check.failed, "A failure before leaving")
 
-    owner.claim(context)
+    check.claim(context)
     await claim.waitUntilAsked()
     owner.leave()
     claim.release(nil)
     try await settle()
-    XCTAssertFalse(owner.failed, "A failure after leaving")
+    XCTAssertFalse(check.failed, "A failure after leaving")
   }
 }
 

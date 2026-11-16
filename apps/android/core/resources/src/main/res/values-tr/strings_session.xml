@@ -58,7 +58,7 @@
   "session_review_intro_weakest_title": "cc72dc05c79a58472724d2f24f347ba967f88c22f303e409c56a68c9ae1b19ad",
   "session_summary_brain_power": "2beab43192169abbf19c318bc112b0773471261a551b4aa9a1195ebe6be6abe5",
   "session_summary_buddy_happy": "f2e4a19a6742402f8f1a3c7688c7de674aeb68875601ba60b8ebc8d00d678819",
-  "session_summary_create_account": "0a0ee76d7742ad1742155a655f0f0bea082b37b572d94285b0581480e75adb8f",
+  "session_summary_create_account": "ed0c5d1c350bcc2eca5e4c88c52f28f58bb02a7146b3806d02ba14e1a5480b46",
   "session_summary_done_for_now": "941232505cabb4788458b8b64e89a7d4e6c7a316609f473a87178095cd27daaa",
   "session_summary_done_in": "0453552a21c87b6d63c724d9c39cdb6900db4ac01163af94b6aed0eadd46aaa9",
   "session_summary_done_under_minute": "6f58646baa8440d8424184bd638f5e90a378eddb11027b4df0b3dcd0a57d2791",
@@ -187,7 +187,7 @@
     <string name="session_summary_keep_going">Devam et</string>
     <string name="session_summary_finish">Bitir</string>
     <string name="session_summary_save_note">Planını kaydet, bir dahaki gelişinde de burada olsun.</string>
-    <string name="session_summary_create_account">Hesap oluştur</string>
+    <string name="session_summary_create_account">Ücretsiz hesap oluştur</string>
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">Sıradaki</string>
     <string name="session_next_start">Başla</string>

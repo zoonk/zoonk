@@ -178,7 +178,7 @@ internal fun MindMapOutlineText(
 
         outline.comparison?.let { comparison ->
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(comparison.title, color = quiet, style = MaterialTheme.typography.labelLarge)
+                Text(comparison.title, style = MaterialTheme.typography.titleMedium)
                 comparison.columns.forEach { column ->
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(column.name, style = MaterialTheme.typography.titleSmall)

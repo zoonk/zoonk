@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "planlink_about": "8af3961fbba7d76cbe209b45073add1e77296be335c24786fed729d69bf6cbbd",
-  "planlink_eyebrow": "a5f89fc8acc078d57b5fbdfbbebc0010e38aa0c2ed6e4b2c73b3de945fb47eb8",
+  "planlink_eyebrow": "27dc18ae507d1534d926e7da8fe169b4f5781f1393182237d92af3d01d2441a9",
   "planlink_facts": "4be239daad8bccaf9d48fc01521e6609a2573c72c3bd1dc69cdab3161202c5b4",
   "planlink_failed": "b8ffa7ffe3d73abe7048080f7487f84da85403d1e7576768ecdb3136ae115a78",
   "planlink_make_it_yours": "b7450799b0ed867a6bbaf6f26bbecb3f10051ef4239fd0c071bbb25f04e0432a",
@@ -18,7 +18,7 @@
 -->
 <resources>
     <!-- Above a shared plan's subject. -->
-    <string name="planlink_eyebrow">共有された学習計画</string>
+    <string name="planlink_eyebrow">学習計画が共有されました</string>
     <!-- A shared plan without a subject, and the title over its phases. -->
     <string name="planlink_study_plan">学習計画</string>
     <string name="planlink_minutes_label">1日にどのくらい学習しますか？</string>

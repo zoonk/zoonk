@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "limit_call_time_back": "7234e0ac2da3dd032af20715de3fe111650a7039171faefe14814cf9ab35509d",
   "limit_call_time_used": "f6507838d56d42f0701b74073fd88a80de5fb2dd3ffa4d92f88d9a026859dcba",
   "limit_create_account": "82041771321814443de9d477f8f23565ab21112f568f7e11b0ee54b7f31fb4f5",
   "limit_explanations_day": "98d29715e150449c9007e5d4c2c46d0d754ceb319c8e937238b78a8d04019133",
@@ -80,6 +81,8 @@
     <string name="limit_uploads_day">Oggi non puoi caricare altro materiale</string>
     <string name="limit_questions_day">Hai esaurito le domande di oggi</string>
     <string name="limit_call_time_used">Hai esaurito il tempo per le conversazioni</string>
+    <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
+    <string name="limit_call_time_back">Hai di nuovo tempo per le conversazioni</string>
     <string name="limit_mock_exams_used">Hai esaurito le simulazioni</string>
     <string name="limit_lessons_guest">Per altre lezioni serve un account</string>
     <string name="limit_lessons_free">Hai esaurito le tue lezioni gratuite</string>

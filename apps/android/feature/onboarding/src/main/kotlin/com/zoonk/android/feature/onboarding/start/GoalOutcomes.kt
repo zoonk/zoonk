@@ -39,11 +39,14 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.HeldSlot
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.QUICK_EXPLANATION_MINUTES
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.comesBackLine
 import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.components.taskOption
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.ZoonkRadius
 
@@ -264,7 +267,10 @@ internal fun ColumnScope.ExplainGoal(
 ) {
     TypedGoal(goal)
     OutcomeIcon(R.drawable.ic_lightbulb)
-    OnboardingHeading(question, stringResource(R.string.onboarding_explain_description))
+    OnboardingHeading(
+        question,
+        stringResource(R.string.onboarding_explain_description, formatMinutes(QUICK_EXPLANATION_MINUTES, currentLocale())),
+    )
     GoalFooter(error, onCreateAccount, onOpenPlan, onSubscribe) {
         Button(
             busy = isStarting,
@@ -345,7 +351,7 @@ internal fun ColumnScope.InstrumentGoal(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                TextButton(onClick = onCreateAccount) { Text(stringResource(R.string.onboarding_create_account_short)) }
+                TextButton(onClick = onCreateAccount) { Text(stringResource(R.string.onboarding_create_account)) }
             }
         }
 

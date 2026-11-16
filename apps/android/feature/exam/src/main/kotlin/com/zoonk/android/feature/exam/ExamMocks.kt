@@ -14,6 +14,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.mock.MockListRow
 import com.zoonk.android.feature.mock.MockSummaryRow
 import com.zoonk.android.feature.mock.factsUnderLines
+import com.zoonk.android.feature.mock.hasPartMarks
 import com.zoonk.android.feature.mock.mockMeasure
 import com.zoonk.android.feature.mock.mockSubject
 import com.zoonk.android.feature.mock.mockTitle
@@ -55,7 +56,8 @@ internal fun ExamMocksSection(
         val nextDate = next?.date?.let { examDayDate(it.toJavaLocalDate(), LocalDate.now(), currentLocale()) }
 
         BoxWithConstraints {
-            val stacked = factsUnderLines(clocks + listOfNotNull(nextDate) + exam.mocks.map { mockMeasure(it) }, maxWidth)
+            val points = exam.mocks.any { it.hasPartMarks }
+            val stacked = factsUnderLines(clocks + listOfNotNull(nextDate) + exam.mocks.map { mockMeasure(it, points) }, maxWidth)
             // The row the learner is on stands on its fill, with no hairline touching it.
             val rows =
                 buildList<Pair<Boolean, @Composable () -> Unit>> {
@@ -68,7 +70,7 @@ internal fun ExamMocksSection(
                     }
                     exam.mocks.forEach { mock ->
                         val open = mock.blockId?.let { { navigator.open(AppRoute.Mock(it.toString())) } }
-                        add(false to { MockSummaryRow(mock, onOpen = open, stacked = stacked) })
+                        add(false to { MockSummaryRow(mock, onOpen = open, stacked = stacked, points = points) })
                     }
                 }
             Column {

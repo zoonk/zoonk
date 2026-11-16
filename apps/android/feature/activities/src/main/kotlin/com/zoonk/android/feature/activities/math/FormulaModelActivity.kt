@@ -114,7 +114,14 @@ private fun FormulaModelBoard(
     }
     var events by rememberSaveable { mutableStateOf(eventsOff(fields).mapValues { (name, off) -> answered[name] ?: off }) }
     val view = remember(sliders, events) { modelView(fields, axis, charted, sliders, events) }
-    val formatOutput = { output: ModelOutput, value: Double? -> value?.let { formatAmount(it, locale, output.unit) }.orEmpty() }
+    // Once checked, the asked output reads to the check's precision everywhere it shows, as the answer does.
+    val checked = numeric?.takeIf { props.isChecked }
+    val checkedOutput = checked?.let { askedOutputId(fields, it.output) }
+    val checkedDigits = checked?.let { exactFractionDigitsFor(it.answer, it.allowed, props.answer.numericValue ?: it.answer) }
+    val formatOutput = { output: ModelOutput, value: Double? ->
+        val digits = checkedDigits.takeIf { output.id == checkedOutput }
+        value?.let { formatAmount(it, locale, output.unit, maximumFractionDigits = digits) }.orEmpty()
+    }
     val formatX = { value: Double -> formatAmount(value, locale, axis.unit) }
     val readouts = readouts(charted, view, formatOutput)
     val update = { nextSliders: ModelValues, nextEvents: ModelValues ->
@@ -151,7 +158,7 @@ private fun FormulaModelBoard(
                         AnswerPoint(
                             x = answerX(check.inputs, axis),
                             y = y,
-                            label = formatAmount(y, locale, check.unit, maximumFractionDigits = digits),
+                            label = formatAmount(y, locale, check.unit ?: charted.unit, maximumFractionDigits = digits),
                         )
                     }
                 },

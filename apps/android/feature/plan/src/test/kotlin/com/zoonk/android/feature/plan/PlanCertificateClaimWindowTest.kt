@@ -29,7 +29,7 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CertificateImageUrls
-import com.zoonk.api.models.CertificateProgress
+import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OwnedCertificate
 import com.zoonk.api.models.PlanCertificates
 import kotlinx.coroutines.CompletableDeferred
@@ -187,7 +187,7 @@ class PlanCertificateClaimWindowTest {
             return listOf(shown())
         }
 
-        override suspend fun goals(session: AuthenticatedSession) = emptyList<CertificateProgress>()
+        override suspend fun goals(session: AuthenticatedSession) = emptyList<Goal>()
     }
 }
 

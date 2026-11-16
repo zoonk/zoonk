@@ -284,8 +284,10 @@ export async function loadCertificateUnits(
 
   const unitKeys = new Set(units.map((unit) => unit.key));
 
-  const earnable = await nameUnits(db, { course, units: units.filter((unit) => unit.canEarn) });
-  const due = earnable.filter((unit) => unit.finished && !heldKeys.has(unit.key));
+  const due = await nameUnits(db, {
+    course,
+    units: units.filter((unit) => unit.finished && !heldKeys.has(unit.key)),
+  });
 
-  return { due, earnable, held: held.filter((row) => unitKeys.has(row.key)), units };
+  return { due, held: held.filter((row) => unitKeys.has(row.key)), units };
 }

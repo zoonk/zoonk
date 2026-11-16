@@ -36,7 +36,7 @@
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">Today this one has %1$s of its %2$s questions, about %3$s.</string>
     <string name="mock_chooser_pick_another">Pick another</string>
-    <string name="mock_chooser_preparing">Getting your mock exam ready…</string>
+    <string name="mock_chooser_preparing">Getting your mock exam ready</string>
     <string name="mock_chooser_preparing_detail">We\'re writing questions like the exam\'s for you. It starts here as soon as they\'re ready.</string>
     <string name="mock_chooser_writing">Writing your mock exam</string>
     <string name="mock_chooser_writing_questions">Writing questions like the exam\'s</string>

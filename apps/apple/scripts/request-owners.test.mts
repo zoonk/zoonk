@@ -40,7 +40,8 @@ const OWNERS: Record<string, string> = {
   "Features/Onboarding/GoalSetupScreen.swift: startingOver": "Goal setup's steps have no split.",
   "Features/Onboarding/GoalStartScreen.swift: creation":
     "The draft's visit (DraftCreation): leaving it is the end its create waits for.",
-  "Features/Onboarding/GoalStartScreen.swift: sending": "The start flow has no split.",
+  "Features/Onboarding/GoalStartScreen.swift: materialDraft, sending":
+    "The start flow has no split.",
   "Features/Onboarding/LevelTestStep.swift: finishing": "The level test has no split.",
   "Features/Onboarding/PlacementStep.swift: tasks":
     "Placement is the onboarding aside's PaneBeside content, which keeps its identity.",
@@ -53,7 +54,7 @@ const OWNERS: Record<string, string> = {
   "Features/Plan/GoalOptionsToolbar.swift: saving": "The Plan's bar, outside its split.",
   "Features/Plan/PlanBasesView.swift: saving":
     "In the Adjust plan sheet, presented above the Plan's split.",
-  "Features/Plan/PlanScreen.swift: alphabetSkip, certificateClaim, nextLevel, rebuildRetry, slotAnswer?.editor, slotChecks":
+  "Features/Plan/PlanScreen.swift: alphabetSkip, rebuildRetry, slotAnswer?.editor, slotChecks":
     "The Plan, which holds its PaneSplit.",
   "Features/PlanLink/PlanLinkScreen.swift: startTask": "A shared plan's page has no split.",
   "Features/Player/Views/LessonEndViews.swift: starting":
@@ -68,7 +69,7 @@ const OWNERS: Record<string, string> = {
     "The challenge's action, owned above its layout.",
   "Features/Practice/QuestionBlock/QuestionBlockScreen.swift: stopping":
     "The question block, above the question's split.",
-  "Features/Reminders/RemindersView.swift: pushSetup, saving":
+  "Features/Reminders/RemindersView.swift: emailSave, pushSetup, timeSave":
     "Reminders, a page of the account sheet's stack, which keeps its identity beside the list or alone.",
   "Features/Search/SearchScreen.swift: goalSwitch": "Search, which holds its PaneSplit.",
   "Features/Session/SessionScreen.swift: action":
@@ -78,7 +79,7 @@ const OWNERS: Record<string, string> = {
     "The session's summary, which holds its PaneSplit.",
   "Features/Settings/MemoryView.swift: changes":
     "Memory, a page of the account sheet's stack, which keeps its identity beside the list or alone.",
-  "Features/Settings/PreferencesView.swift: saving":
+  "Features/Settings/PreferencesView.swift: buddySave, homeSave, soundsSave":
     "Preferences, a page of the account sheet's stack, which keeps its identity beside the list or alone.",
   "Features/Settings/PrivacyView.swift: saving":
     "Privacy, a page of the account sheet's stack, which keeps its identity beside the list or alone.",

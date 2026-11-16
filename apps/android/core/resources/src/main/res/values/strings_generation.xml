@@ -42,7 +42,7 @@
     <!-- The wait while a plan is built. -->
     <string name="generation_curriculum">Building your plan</string>
     <string name="generation_curriculum_plan">Fitting the plan into your days</string>
-    <string name="generation_curriculum_plan_line_1">Finding lessons in the Library…</string>
+    <string name="generation_curriculum_plan_line_1">Finding lessons for your goal…</string>
     <string name="generation_curriculum_plan_line_2">Spreading the skills over your days…</string>
     <string name="generation_curriculum_plan_line_3">Saving your plan…</string>
     <!-- The wait while placement questions are written. -->
@@ -52,7 +52,7 @@
     <!-- The wait while the first day of a plan is prepared. -->
     <string name="generation_first_lesson">Getting your first day ready</string>
     <string name="generation_first_lesson_day">Planning your first day</string>
-    <string name="generation_first_lesson_day_line_1">Finding lessons in the Library…</string>
+    <string name="generation_first_lesson_day_line_1">Finding lessons for your goal…</string>
     <string name="generation_first_lesson_day_line_2">Choosing where to start…</string>
     <!-- The wait while a language's level test questions are written. -->
     <string name="generation_level_test">Preparing your level test</string>
