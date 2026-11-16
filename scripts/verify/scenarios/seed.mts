@@ -31,6 +31,7 @@ import { usageRecordsFixture } from "../../../packages/testing/src/fixtures/usag
 import { userFixture } from "../../../packages/testing/src/fixtures/users.ts";
 import { MS_PER_DAY } from "../../../packages/utils/src/date.ts";
 import { isJsonObject } from "../../../packages/utils/src/json.ts";
+import { seedClock } from "./seed-clock.mts";
 
 async function seed(state: string, email: string) {
   const refusal = getTestLearnerRefusal();
@@ -58,10 +59,14 @@ async function seed(state: string, email: string) {
     throw new Error(`Unknown scenario fixture: ${state}`);
   }
 
-  return write({ goal, state, userId });
+  return write({ ...seedClock(goal.timezone ?? "UTC"), goal, state, userId });
 }
 
-type SeedContext = { goal: Goal & { plan: Plan | null }; state: string; userId: string };
+type SeedContext = ReturnType<typeof seedClock> & {
+  goal: Goal & { plan: Plan | null };
+  state: string;
+  userId: string;
+};
 
 async function seedUnderstood({ userId }: SeedContext) {
   const draft = await onboardingDraftFixture({ userId });
@@ -146,11 +151,12 @@ async function seedUploads({ userId }: SeedContext) {
   return "/start";
 }
 
-async function seedTwoPractice({ goal, userId }: SeedContext) {
+async function seedTwoPractice({ goal, localDate, userId }: SeedContext) {
   await prisma.studySession.deleteMany({ where: { userId } });
 
   const session = await studySessionFixture({
     goalId: goal.id,
+    localDate,
     planVersion: goal.plan?.version,
     userId,
   });
@@ -192,7 +198,7 @@ async function seedUnit({ state, userId }: SeedContext) {
       chapterId: language.renting.id,
       goalId: language.goal.id,
       kind: "practice",
-      language: "en",
+      language: language.goal.language,
       level: "A2",
       minutes: 2,
       scenario: RENTING_SCENARIO,
@@ -205,7 +211,7 @@ async function seedUnit({ state, userId }: SeedContext) {
   return `/conversation/${conversation.id}`;
 }
 
-async function seedChallenge({ goal, state, userId }: SeedContext) {
+async function seedChallenge({ goal, localDate, now, state, userId }: SeedContext) {
   const boss = await prisma.planItem.findFirstOrThrow({
     orderBy: { position: "asc" },
     where: { kind: "boss", plan: { goalId: goal.id } },
@@ -216,6 +222,7 @@ async function seedChallenge({ goal, state, userId }: SeedContext) {
 
     const session = await studySessionFixture({
       goalId: goal.id,
+      localDate,
       planVersion: goal.plan?.version,
       userId,
     });
@@ -243,9 +250,12 @@ async function seedChallenge({ goal, state, userId }: SeedContext) {
         studySessionId: session.id,
       },
       correctAnswers: 0,
+      endedAt: now,
       incorrectAnswers: 10,
       kind: "checkpoint",
+      localDate,
       userId,
+      weekday: localDate.getUTCDay(),
     });
   }
 

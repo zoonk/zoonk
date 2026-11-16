@@ -8,6 +8,7 @@ function seeded({
   reach = [],
   evidence = [],
   free = false,
+  locale,
 }: {
   id: string;
   fixture: string;
@@ -16,16 +17,23 @@ function seeded({
   reach?: Scenario["reach"];
   evidence?: string[];
   free?: boolean;
+  locale?: string;
 }): Scenario {
   return {
     anchors: [],
     evidence,
     id,
-    prerequisites: { fixture, persona: { flags: free ? ["--free"] : [], name: "maya" } },
+    prerequisites: {
+      fixture,
+      persona: {
+        flags: [...(free ? ["--free"] : []), ...(locale ? ["--locale", locale] : [])],
+        name: "maya",
+      },
+    },
     proof,
     reach,
     screen,
-    sizes: PHONE_AND_LAPTOP,
+    sizes: PHONE_AND_LAPTOP.map((size) => ({ ...size, locale })),
   };
 }
 
@@ -60,6 +68,7 @@ export const SWEEP_SCENARIOS: Scenario[] = [
   seeded({
     fixture: "unit",
     id: "unit.finished",
+    locale: "pt",
     proof: "I can already…",
     screen: "/content/units/[unit]",
   }),
@@ -131,10 +140,11 @@ export const SWEEP_SCENARIOS: Scenario[] = [
       evidence: ['[data-slot="task-aside"]'],
       fixture: "call",
       id: "call.aside",
-      proof: "Ligar para marcar uma visita",
+      locale: "pt",
+      proof: "Practice call",
       screen: "/conversation/[conversation]",
     }),
-    sizes: [{ pointer: "keys", size: "laptop" }],
+    sizes: [{ locale: "pt", pointer: "keys", size: "laptop" }],
   },
   seeded({
     evidence: [
