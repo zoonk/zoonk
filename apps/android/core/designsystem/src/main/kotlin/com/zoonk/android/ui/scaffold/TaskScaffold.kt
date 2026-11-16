@@ -52,6 +52,7 @@ import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.SnackbarHost
 import com.zoonk.android.ui.components.TASK_MARGIN
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.WithLoadFailureBar
 
 /** What leaving a task asks first when it would leave unsent work behind, in the screen's own words. */
 data class TaskExitConfirmation(
@@ -162,12 +163,14 @@ fun TaskScaffold(
     BackHandler(enabled = exitConfirmation != null) { isConfirmingExit = true }
 
     val frame: @Composable (snackbars: Boolean) -> Unit = { snackbars ->
-        Scaffold(
-            topBar = { Box(Modifier.pageBar(focus)) { TaskTopBar(title, actions, onClose = leave, closeLabel, focus.bar) } },
-            bottomBar = { if (bottomBar != null) TaskBottomBar(bottomBar) },
-            snackbarHost = { if (snackbars) SnackbarHost(LocalSnackbarHostState.current) },
-            content = { padding -> CompositionLocalProvider(LocalTitleFocus provides focus) { content(padding) } },
-        )
+        WithLoadFailureBar(enabled = bottomBar == null) { retry ->
+            Scaffold(
+                topBar = { Box(Modifier.pageBar(focus)) { TaskTopBar(title, actions, onClose = leave, closeLabel, focus.bar) } },
+                bottomBar = { (bottomBar ?: retry)?.let { TaskBottomBar(it) } },
+                snackbarHost = { if (snackbars) SnackbarHost(LocalSnackbarHostState.current) },
+                content = { padding -> CompositionLocalProvider(LocalTitleFocus provides focus) { content(padding) } },
+            )
+        }
     }
 
     // The screen's modifier (focus, keys) and its frame stay in one place when an aside comes or goes, as it does across a fold.

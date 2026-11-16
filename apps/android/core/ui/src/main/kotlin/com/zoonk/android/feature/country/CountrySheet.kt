@@ -52,6 +52,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.LoadFailureRetry
 import com.zoonk.android.ui.components.MediaPending
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -162,9 +163,7 @@ private fun LazyListScope.unloaded(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                TextButton(onClick = onRetry, edge = ButtonEdge.Start) {
-                    Text(stringResource(R.string.load_failed_try_again))
-                }
+                LoadFailureRetry(onRetry = onRetry, inBar = false)
             }
         }
     } else {

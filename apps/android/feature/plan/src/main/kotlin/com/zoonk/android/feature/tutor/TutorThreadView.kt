@@ -68,6 +68,7 @@ import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.StandingBuddy
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.LoadFailureRetry
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
@@ -154,7 +155,11 @@ private fun LoadFailure(
 
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(failureMessage(failure), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-        FailureAction(failure, routes, onRetry = { coroutines.launch { vm.thread.refresh() } })
+        if (failure == TutorFailure.Failed) {
+            LoadFailureRetry(onRetry = { coroutines.launch { vm.thread.refresh() } }, inBar = false)
+        } else {
+            FailureAction(failure, routes, onRetry = { coroutines.launch { vm.thread.refresh() } })
+        }
     }
 }
 

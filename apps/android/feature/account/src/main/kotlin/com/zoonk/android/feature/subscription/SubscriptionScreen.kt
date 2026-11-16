@@ -204,7 +204,7 @@ internal fun AccountPlans(
                 }
 
                 is LoadState.Failed -> {
-                    LoadFailedMessage(onRetry = onRetryWebsite)
+                    LoadFailedMessage(onRetry = onRetryWebsite, inBar = false)
                 }
 
                 LoadState.Idle, LoadState.Loading -> {
@@ -436,7 +436,7 @@ internal fun PlanOffer(
                         }
 
                         freePlan is LoadState.Failed -> {
-                            LoadFailedMessage(onRetry = onRetryFreePlan)
+                            LoadFailedMessage(onRetry = onRetryFreePlan, inBar = false)
                         }
                     }
                 }

@@ -77,10 +77,11 @@ fun StatTile(
                 }
                 Text(
                     label.toUpperCase(LocaleList.current),
-                    Modifier.clearAndSetSemantics { text = AnnotatedString(label) },
+                    Modifier.weight(1f).clearAndSetSemantics { text = AnnotatedString(label) },
                     color = MaterialTheme.zoonk.faint,
                     style = labelStyle,
                 )
+                if (onClick != null) ListRowChevron()
             }
             val style =
                 MaterialTheme.typography.headlineSmall.copy(

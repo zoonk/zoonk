@@ -446,7 +446,7 @@ private fun LazyListScope.notebookBody(
         Box(Modifier.padding(top = ITEM_GAP)) {
             when {
                 page.list == null && page.failed -> {
-                    LoadFailedMessage(onRetry = actions.onRetry)
+                    LoadFailedMessage(onRetry = actions.onRetry, inBar = false)
                 }
 
                 page.list == null -> {

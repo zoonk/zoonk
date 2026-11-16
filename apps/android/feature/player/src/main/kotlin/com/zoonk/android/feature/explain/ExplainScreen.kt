@@ -64,6 +64,7 @@ import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.LoadFailureRetry
 import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
@@ -124,7 +125,7 @@ fun ExplainScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(stringResource(R.string.explain_load_failed), style = MaterialTheme.typography.titleMedium)
-                        Button(onClick = { scope.launch { resource.refresh() } }) { Text(stringResource(R.string.explain_try_again)) }
+                        LoadFailureRetry(onRetry = { scope.launch { resource.refresh() } })
                     }
                 }
             }
