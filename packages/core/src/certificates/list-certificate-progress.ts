@@ -45,7 +45,7 @@ export async function listCurrentUserCertificateProgress(): Promise<CertificateP
           : null;
 
       const held = new Set(loaded?.held.map((unit) => unit.key));
-      const unit = loaded?.units.find((entry) => !held.has(entry.key));
+      const unit = loaded?.earnable.find((entry) => !held.has(entry.key));
 
       if (goal.kind !== "language" && !unit) {
         return null;

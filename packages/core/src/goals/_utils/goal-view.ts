@@ -97,6 +97,7 @@ async function loadPlanProgress(
     prisma.planItem
       .findMany({
         omit: { facts: true },
+        orderBy: { position: "asc" },
         where: { kind: { in: [...LEARN_KINDS] }, planId: { in: planIds } },
       })
       .then(async (items) => {

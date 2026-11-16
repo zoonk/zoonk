@@ -1,6 +1,7 @@
 import { goalSchema } from "@/lib/openapi/schemas/goals";
 import { planResponseSchema } from "@/lib/openapi/schemas/plans";
 import { syllabusViewSchema } from "@zoonk/core/view-models/syllabus/contract";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -19,8 +20,12 @@ describe("goal progress serialization", () => {
   it.each([0, 1])(
     "serializes Plan credit separately from %i studied certificate lessons",
     async (studied) => {
-      const user = await userFixture();
-      const [goal, skill] = await Promise.all([goalFixture({ userId: user.id }), skillFixture()]);
+      const [user, course] = await Promise.all([userFixture(), courseFixture()]);
+
+      const [goal, skill] = await Promise.all([
+        goalFixture({ primaryCourseId: course.id, userId: user.id }),
+        skillFixture(),
+      ]);
 
       const plan = await planFixture({
         goalId: goal.id,

@@ -3,8 +3,11 @@ import { type CheckpointResult } from "../../checkpoints/_utils/checkpoint-resul
 import { listTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { readTodayPlanSession } from "../../learner/facts/today-plan-session";
 import { previewTodayBlocks } from "../../sessions/_utils/read-study-day";
+import { withSkills } from "../../view-models/syllabus/_utils/syllabus-content";
+import { withTestedOutSkills } from "../../view-models/syllabus/_utils/syllabus-known-skills";
 import { type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
+import { LEARN_KINDS } from "../planner/plan-item-rules";
 import { buildPhaseViews } from "./plan-phase-views";
 import { type PlanReadContext, getPlanReadItemKey } from "./plan-read-projection";
 import { getOutlinedUntil } from "./stand-in-lessons";
@@ -23,8 +26,23 @@ export async function readPlanToday({ context }: { context: PlanReadContext }) {
   return { blocks, session };
 }
 
+export async function readPlanProgressItems(context: PlanReadContext) {
+  const graphSkillIds = new Set(context.state.graph.skills.map((skill) => skill.skillId));
+
+  const items = await withSkills({
+    from: "shared",
+    graphSkillIds,
+    items: context.items
+      .filter((item) => LEARN_KINDS.has(item.kind))
+      .map((item) => ({ ...item, id: item.id ?? getPlanReadItemKey(item) })),
+  });
+
+  return withTestedOutSkills({ graphSkillIds, items });
+}
+
 type PathInput = Pick<
   Parameters<typeof buildPhaseViews>[0],
+  | "progressItems"
   | "chapterTitles"
   | "currentPhase"
   | "estimateMinutes"

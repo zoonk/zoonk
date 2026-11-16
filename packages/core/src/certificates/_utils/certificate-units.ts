@@ -36,6 +36,7 @@ export type CertificateUnit = {
   chapterIds: string[];
   courseLevel: CourseLevel | null;
   finished: boolean;
+  canEarn: boolean;
   progress: number | null;
   /** Its learn items and the challenges of their phases. */
   items: CertifiableItem[];
@@ -197,8 +198,10 @@ export function listCertificateUnits({
           ),
         });
 
+        const canEarn = holdsWholeLevel({ chapterIds, level, levelChapters, planCreatedAt });
+
         const finished =
-          holdsWholeLevel({ chapterIds, level, levelChapters, planCreatedAt }) &&
+          canEarn &&
           isUnitDone({
             challenges: unitChallenges,
             dates,
@@ -209,6 +212,7 @@ export function listCertificateUnits({
 
         return [
           {
+            canEarn,
             chapterIds,
             courseLevel: level,
             finished,
@@ -231,6 +235,7 @@ export function listCertificateUnits({
   });
 
   const planUnit: CertificateUnit = {
+    canEarn: true,
     chapterIds: listChapterIds(learn),
     courseLevel: null,
     finished:

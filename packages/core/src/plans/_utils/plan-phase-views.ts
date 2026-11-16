@@ -236,6 +236,7 @@ export function buildPhaseViews({
   estimateMinutes = null,
   goalKind,
   items: planItems,
+  progressItems = planItems.map((item) => ({ ...item, id: item.id ?? getPlanReadItemKey(item) })),
   mocksRequirePlus = false,
   outlinedUntil = null,
   phases,
@@ -259,6 +260,7 @@ export function buildPhaseViews({
   estimateMinutes?: number | null;
   goalKind: Goal["kind"];
   items: readonly PlanReadItem[];
+  progressItems?: Parameters<typeof countPlannedLessonProgress>[0]["items"];
   mocksRequirePlus?: boolean;
   outlinedUntil?: string | null;
   phases: readonly PlanPhase[];
@@ -295,7 +297,7 @@ export function buildPhaseViews({
 
     const progress = countPlannedLessonProgress({
       deadline,
-      items: planItems.map((item) => ({ ...item, id: item.id ?? getPlanReadItemKey(item) })),
+      items: progressItems,
       phase: index,
       skillAreas: progressSkillAreas,
       skippedAreas,

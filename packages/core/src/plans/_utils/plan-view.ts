@@ -31,7 +31,7 @@ import { loadPlanCourse } from "./plan-course";
 import { isPlanFinished } from "./plan-end";
 import { MINUTES_PER_HOUR, buildEstimateView } from "./plan-estimate-view";
 import { buildSavedPlanNumbersView } from "./plan-numbers-view";
-import { buildPlanPath, readPlanToday } from "./plan-path-view";
+import { buildPlanPath, readPlanProgressItems, readPlanToday } from "./plan-path-view";
 import { getSkillAreas } from "./plan-phase-views";
 import { type PlanReadContext } from "./plan-read-projection";
 import { buildScheduleView } from "./plan-schedule-view";
@@ -189,6 +189,7 @@ export async function buildPlanView({
     partAreas,
     taughtSkillIds,
     challengeResults,
+    progressItems,
   ] = await Promise.all([
     loadPlanChangeViews({ goal, now, planId: context.plan.id, planVersion: context.plan.version }),
     getAccess(context),
@@ -214,6 +215,7 @@ export async function buildPlanView({
         item.kind === "boss" && item.id && item.status === "todo" ? [item.id] : [],
       ),
     ),
+    readPlanProgressItems(context),
   ]);
 
   const skillAreas = getSkillAreas({
@@ -286,6 +288,7 @@ export async function buildPlanView({
       estimateMinutes:
         summary?.selected.totalMinutes ?? (context.plan.estimateHours ?? 0) * MINUTES_PER_HOUR,
       phaseChallengesRequired,
+      progressItems,
       shortPlan,
       skillAreas,
       taughtSkillIds,
