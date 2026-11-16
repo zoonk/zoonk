@@ -1,5 +1,4 @@
 import { PublicNotFound } from "@/components/public/public-not-found";
-import { PublicPageSkeleton } from "@/components/public/public-page";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { LOCALE_HEADER, routing } from "@/i18n/routing";
 import { FONT_VARIABLES } from "@zoonk/ui/fonts";
@@ -40,7 +39,7 @@ export default function GlobalNotFound() {
         <UsageNoticeScript />
       </head>
       <body className="font-sans antialiased">
-        <Suspense fallback={<PublicPageSkeleton />}>
+        <Suspense fallback={<div className="min-h-dvh" />}>
           <LocalizedNotFound />
         </Suspense>
         <LearnerSummarySync />
