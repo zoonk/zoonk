@@ -42983,12 +42983,17 @@
               "title"
             ],
             "additionalProperties": false
+          },
+          "targetLanguage": {
+            "type": "string",
+            "description": "The language the goal learns, which names its level (\"English level\")"
           }
         },
         "required": [
           "level",
           "pronunciation",
-          "speaking"
+          "speaking",
+          "targetLanguage"
         ],
         "additionalProperties": false
       },

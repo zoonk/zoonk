@@ -227,6 +227,11 @@ export const languageTodayViewSchema = z
         description:
           "The speaking paper of the exam the goal names in its language (DELE, DELF or DALF, Goethe-Zertifikat, Cambridge English), to practice any time at its target level; null when it names none of them",
       }),
+    targetLanguage: z
+      .string()
+      .meta({
+        description: 'The language the goal learns, which names its level ("English level")',
+      }),
   })
   .meta({ id: "LanguageToday" });
 
