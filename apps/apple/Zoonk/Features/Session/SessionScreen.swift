@@ -207,13 +207,13 @@ private struct NextStopView: View {
   let goalID: String?
   let moment: BlockMoment?
 
-  @State private var action: Task<Void, Never>?
+  @State private var action = VisitRequest<(failed: Bool, stopFailed: Bool)>()
   /// Taps that left a lesson waiting here, so a retry the same run answers follows it again.
   @State private var waits = 0
   @State private var isOpening = false
   @State private var isStopping = false
-  @State private var failed = false
-  @State private var stopFailed = false
+  private var failed: Bool { action.outcome?.failed ?? false }
+  private var stopFailed: Bool { action.outcome?.stopFailed ?? false }
   @State private var lessonStatus: String?
   @State private var lessonKind = GenerationWait.Kind.lesson
   /// The block whose lesson this screen showed being written.
@@ -261,7 +261,9 @@ private struct NextStopView: View {
     }
     .announcesStatus(notWrittenLine)
     .onDisappear {
-      action?.cancel()
+      action.leave()
+      isOpening = false
+      isStopping = false
     }
   }
 
@@ -541,11 +543,11 @@ private struct NextStopView: View {
   private func open(_ block: StudyBlock) {
     ReviewIntro.noteStart(of: block, goalID: goalID)
     isOpening = true
-    failed = false
-    stopFailed = false
+    action.run {
+      var outcome: (failed: Bool, stopFailed: Bool) = (failed: false, stopFailed: false)
 
-    action = Task {
       let result = await opening(block)
+      guard !Task.isCancelled else { return nil }
       isOpening = false
 
       switch result {
@@ -559,10 +561,12 @@ private struct NextStopView: View {
       case .done:
         break
       case .failed:
-        failed = true
+        outcome.failed = true
       case .obsolete:
         break
       }
+
+      return outcome
     }
   }
 
@@ -594,15 +598,18 @@ private struct NextStopView: View {
 
   private func stop(sessionID: String) {
     isStopping = true
-    failed = false
-    stopFailed = false
+    action.run {
+      var outcome: (failed: Bool, stopFailed: Bool) = (failed: false, stopFailed: false)
 
-    action = Task {
-      if case .failed = await store.stop(sessionID: sessionID, in: router.playback) {
-        stopFailed = true
+      let result = await store.stop(sessionID: sessionID, in: router.playback)
+      guard !Task.isCancelled else { return nil }
+      if case .failed = result {
+        outcome.stopFailed = true
       }
 
       isStopping = false
+
+      return outcome
     }
   }
 

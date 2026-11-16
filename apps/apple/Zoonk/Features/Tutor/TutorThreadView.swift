@@ -14,6 +14,7 @@ struct TutorThreadView<Header: View>: View {
   var draft: TutorDraft?
   /// The page's own conversation (the Buddy tab): no "About…" above each question.
   var isPage = false
+  var answerLinks = TutorAnswerLinks()
   @ViewBuilder var header: Header
 
   var body: some View {
@@ -27,7 +28,7 @@ struct TutorThreadView<Header: View>: View {
       placeholder: placeholder ?? scope.placeholder,
       draft: draft,
       isPage: isPage,
-      header: header)
+      header: header, answerLinks: answerLinks)
   }
 }
 
@@ -48,6 +49,7 @@ private struct TutorConversationView<Header: View>: View {
   let header: Header
 
   @State private var position = ScrollPosition(idType: String.self)
+  @State var answerLinks = TutorAnswerLinks()
   @State private var pendingAsk: Task<Void, Never>?
 
   var body: some View {
@@ -165,7 +167,8 @@ private struct TutorConversationView<Header: View>: View {
           }
 
           TutorTurnView(
-            turn: turn, conversation: conversation, buddyName: buddyName, isPage: isPage)
+            turn: turn, conversation: conversation, buddyName: buddyName, isPage: isPage,
+            answerLink: answerLinks.request(turn.id))
         }
         .id(turn.id)
       }
@@ -224,4 +227,17 @@ private struct TutorDayLabel: View {
       .frame(maxWidth: .infinity)
       .accessibilityAddTraits(.isHeader)
   }
+}
+
+@MainActor
+final class TutorAnswerLinks {
+  private var requests: [String: VisitRequest<TutorLinkOutcome>] = [:]
+
+  func request(_ turnID: String) -> VisitRequest<TutorLinkOutcome> {
+    if let request = requests[turnID] { return request }
+    let request = VisitRequest<TutorLinkOutcome>()
+    requests[turnID] = request
+    return request
+  }
+
 }

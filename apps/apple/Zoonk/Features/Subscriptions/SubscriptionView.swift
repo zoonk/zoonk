@@ -671,8 +671,8 @@ private struct UnpaidPlusView: View {
 private struct WebPlusSection: View {
   @Environment(SettingsStore.self) private var settings
   @State private var isConfirmingCancel = false
-  @State private var failed = false
-  @State private var change: Task<Void, Never>?
+  private var failed: Bool { change.outcome ?? false }
+  @State private var change = VisitRequest<Bool>()
 
   let web: WebPlus
   let beside: Bool
@@ -690,7 +690,7 @@ private struct WebPlusSection: View {
         )
         .foregroundStyle(.mutedForeground)
 
-        BusyButton(isBusy: change != nil, isRow: true) {
+        BusyButton(isBusy: change.isRunning, isRow: true) {
           run { await settings.keepWebPlus() }
         } label: {
           Text(
@@ -699,8 +699,8 @@ private struct WebPlusSection: View {
               "Turns the stopped renewal of Plus bought on the web back on, so it renews as before")
         }
       } else {
-        BusyButton(isBusy: change != nil, isRow: true) {
-          failed = false
+        BusyButton(isBusy: change.isRunning, isRow: true) {
+          change.outcome = nil
           isConfirmingCancel = true
         } label: {
           Text(
@@ -775,11 +775,7 @@ private struct WebPlusSection: View {
   }
 
   private func run(_ write: @escaping () async -> Bool) {
-    failed = false
-    change = Task {
-      failed = !(await write())
-      change = nil
-    }
+    change.run { !(await write()) }
   }
 }
 

@@ -412,8 +412,9 @@ private struct PlanToolChoiceSheet: View {
   @State private var choice: ToolChoice
   @State private var system: String
   @State private var isWriting = false
-  @State private var failed = false
-  @State private var saving: Task<Void, Never>?
+  @State private var saving = VisitRequest<Bool>()
+
+  private var failed: Bool { saving.outcome == true }
 
   let editor: PlanEditor
   let goal: LearnerGoal
@@ -464,11 +465,12 @@ private struct PlanToolChoiceSheet: View {
 
         ToolbarItem(placement: .confirmationAction) {
           BusyButton(isBusy: editor.isSaving, role: .confirm, icon: .check) {
-            saving = Task {
+            saving.run {
               // Saved even when the sheet closed first; then there's nothing left to close.
-              if await save(), !Task.isCancelled {
-                dismiss()
-              }
+              let saved = await save()
+              guard !Task.isCancelled else { return nil }
+              if saved { dismiss() }
+              return !saved
             }
           } label: {
             Text("Save", tableName: "Plan", comment: "Saves the tool choice")
@@ -477,7 +479,7 @@ private struct PlanToolChoiceSheet: View {
       }
     }
     .presentationDetents([.medium, .large])
-    .onDisappear { saving?.cancel() }
+    .onDisappear { saving.leave() }
   }
 
   @ViewBuilder
@@ -532,7 +534,6 @@ private struct PlanToolChoiceSheet: View {
 
   /// False when it didn't save: the sheet stays with the learner's choice for Save to try again.
   private func save() async -> Bool {
-    failed = false
     let goalId = goal.id
     let tools = [tool.name]
     let choice = choice
@@ -571,7 +572,6 @@ private struct PlanToolChoiceSheet: View {
     }
 
     editor.failed = false
-    failed = true
     return false
   }
 }

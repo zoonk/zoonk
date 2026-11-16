@@ -5,6 +5,7 @@ struct TutorTurnView: View {
   let conversation: TutorConversation
   let buddyName: String
   let isPage: Bool
+  let answerLink: VisitRequest<TutorLinkOutcome>
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
@@ -153,8 +154,8 @@ struct TutorTurnView: View {
       if let text = turn.answer {
         VStack(alignment: .leading, spacing: 12) {
           TutorAnswerText(
-            text: text, linksEnabled: turn.linksVerified && turn.status == .completed,
-            buddyName: buddyName
+            blockOpen: answerLink, text: text,
+            linksEnabled: turn.linksVerified && turn.status == .completed, buddyName: buddyName
           )
           .typeStyle(words)
 
@@ -231,9 +232,9 @@ struct TutorAnswerText: View {
   @Environment(AppRouter.self) private var router
   @Environment(\.legibilityWeight) private var legibilityWeight
   @ScaledMetric private var listIndent = 20.0
-  @State private var blockOpen: Task<Void, Never>?
-  @State private var blockOpenFailed = false
-  @State private var isBlockClosed = false
+  var blockOpen = VisitRequest<TutorLinkOutcome>()
+  private var blockOpenFailed: Bool { blockOpen.outcome?.blockOpenFailed ?? false }
+  private var isBlockClosed: Bool { blockOpen.outcome?.isBlockClosed ?? false }
 
   let text: String
   let linksEnabled: Bool
@@ -328,26 +329,27 @@ struct TutorAnswerText: View {
   /// One at a time, so two opens never race. The open outlives the answer's view, which a resize or
   /// a scroll can take away; the opener opens and says nothing once the learner went elsewhere.
   private func open(blockID: String) {
-    guard blockOpen == nil else {
+    guard !blockOpen.isRunning else {
       return
     }
 
-    blockOpenFailed = false
-    isBlockClosed = false
+    blockOpen.run {
+      var outcome = TutorLinkOutcome()
 
-    blockOpen = Task {
       let result = await router.openAnswerLink(blockID: blockID)
-      blockOpen = nil
+      guard !Task.isCancelled else { return nil }
 
       switch result {
       case .failed:
-        blockOpenFailed = true
+        outcome.blockOpenFailed = true
       case .done(.changed):
-        isBlockClosed = true
+        outcome.isBlockClosed = true
         announcePolitely(String(localized: .blockClosed))
       case .done, .obsolete:
         break
       }
+
+      return outcome
     }
   }
 
@@ -503,4 +505,9 @@ struct TutorAnswerBlock: Identifiable {
     endLine()
     return pieces
   }
+}
+
+struct TutorLinkOutcome {
+  var blockOpenFailed = false
+  var isBlockClosed = false
 }

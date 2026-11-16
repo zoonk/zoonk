@@ -1,3 +1,6 @@
+import HTTPTypes
+import OpenAPIRuntime
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -54,5 +57,64 @@ final class SubscriptionPageTests: XCTestCase {
 
   private func makeSubscription(provider: String) -> AccountSubscription {
     AccountSubscription(plan: "plus", provider: provider, status: "active")
+  }
+}
+
+@MainActor
+final class WebPlusVisitTests: XCTestCase {
+  func testScrollingAwayWhileRenewalFailsKeepsTheFailureForReturn() async throws {
+    let server = RenewalFailure()
+    let dependencies = AppDependencies.hosted(transport: server)
+    let window = try show(
+      PlusStatusView(
+        subscription: AccountSubscription(plan: "plus", provider: "stripe", status: "active")
+      )
+      .appDependencies(dependencies).environment(AppRouter()).zoonkStyles())
+    window.frame = CGRect(x: 0, y: 0, width: 420, height: 250)
+    try readsWhatVoiceOverReads()
+    try await Task.sleep(for: .milliseconds(600))
+    let scroll = try XCTUnwrap(requestViews(UIScrollView.self, in: window).first)
+    scroll.setContentOffset(
+      CGPoint(x: 0, y: max(0, scroll.contentSize.height - scroll.bounds.height)), animated: false)
+    try await Task.sleep(for: .milliseconds(600))
+    try activate(String(localized: "Keep Plus", table: "Subscriptions"), in: window)
+    await server.waitForRequest()
+    scroll.setContentOffset(.zero, animated: false)
+    try await Task.sleep(for: .milliseconds(600))
+    await server.release()
+    try await Task.sleep(for: .milliseconds(600))
+    scroll.setContentOffset(
+      CGPoint(x: 0, y: max(0, scroll.contentSize.height - scroll.bounds.height)), animated: false)
+    try await Task.sleep(for: .milliseconds(600))
+    XCTAssertTrue(
+      spoken(in: window).contains { $0.contains("We couldn't keep Plus") }, "\(spoken(in: window))")
+  }
+}
+
+private actor RenewalFailure: ClientTransport {
+  private var held: CheckedContinuation<Void, Never>?
+  private var waiter: CheckedContinuation<Void, Never>?
+  func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String) async throws
+    -> (HTTPResponse, HTTPBody?)
+  {
+    if operationID == "getStripeSubscriptionCancellation" {
+      return (
+        HTTPResponse(status: .ok, headerFields: [.contentType: "application/json"]),
+        HTTPBody(#"{"state":"ending","periodEnd":"2027-01-01T00:00:00.000Z"}"#)
+      )
+    }
+    if operationID == "resumeStripeSubscription" {
+      await withCheckedContinuation {
+        held = $0
+        waiter?.resume()
+        waiter = nil
+      }
+    }
+    throw APIError.network
+  }
+  func waitForRequest() async { if held == nil { await withCheckedContinuation { waiter = $0 } } }
+  func release() {
+    held?.resume()
+    held = nil
   }
 }

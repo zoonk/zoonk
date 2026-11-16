@@ -647,6 +647,46 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertEqual(api.undoCount, 1)
   }
 
+  func testAnAnswerLinkStillOpensWhenItsPaneIsRecreated() async throws {
+    let api = TutorAPIStub(
+      thread: TutorThreadPage(
+        turns: [
+          TutorTurn(
+            id: "turn", question: "What next?", answer: "[Study it](/session?block=b1)",
+            status: .completed, createdAt: .now, about: .plan)
+        ], hasMore: false))
+    let session = SessionStore.preview(account: .tutorTestAccount)
+    let cache = AppCache(session: session)
+    let tutor = TutorStore(api: api, cache: cache)
+    await tutor.conversation(.plan(goalId: "goal")).thread.load()
+    let held = Held()
+    var opened = false
+    let router = AppRouter(openBlock: { _, _ in
+      await held.wait()
+      guard !Task.isCancelled else { return .obsolete }
+      opened = true
+      return .done(.changed)
+    })
+    let layout = LinkPaneLayout()
+    let links = TutorAnswerLinks()
+    let dependencies = AppDependencies.hosted()
+    try show(
+      LinkPane(layout: layout, links: links)
+        .environment(tutor).environment(session).environment(router).appDependencies(dependencies)
+        .zoonkStyles())
+    try await Task.sleep(for: .milliseconds(500))
+    links.request("turn").run {
+      _ = await router.openAnswerLink(blockID: "b1")
+      return nil
+    }
+    await held.waitUntilHeld()
+    layout.wide = false
+    try await Task.sleep(for: .milliseconds(400))
+    held.release()
+    try await Task.sleep(for: .milliseconds(400))
+    XCTAssertTrue(opened)
+  }
+
   private func makeConversation(api: TutorAPIStub) -> TutorConversation {
     TutorStore(api: api, cache: AppCache(session: .preview(account: .tutorTestAccount)))
       .conversation(.plan(goalId: "goal"))
@@ -887,4 +927,22 @@ extension CurrentAccount {
       image: nil,
       name: "Learner",
       username: "learner"))
+}
+
+@MainActor @Observable
+private final class LinkPaneLayout { var wide = true }
+
+private struct LinkPane: View {
+  let layout: LinkPaneLayout
+  let links: TutorAnswerLinks
+  var body: some View {
+    if layout.wide {
+      HStack {
+        Text("Lesson")
+        TutorThreadView(scope: .plan(goalId: "goal"), answerLinks: links) { EmptyView() }
+      }
+    } else {
+      TutorThreadView(scope: .plan(goalId: "goal"), answerLinks: links) { EmptyView() }
+    }
+  }
 }
