@@ -464,7 +464,7 @@ private struct PasteMaterialRow: View {
             ? Text("Add link", tableName: "Onboarding", comment: "Adds the pasted link")
             : Text("Add text", tableName: "Onboarding", comment: "Adds the pasted text")
         }
-        .buttonStyle(.mainAction)
+        .buttonStyle(.outline)
         .disabled(trimmed.isEmpty)
 
         Button(role: .cancel, action: onCancel) {
