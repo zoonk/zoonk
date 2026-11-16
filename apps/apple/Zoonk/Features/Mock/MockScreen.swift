@@ -72,21 +72,15 @@ private struct MockStage: View {
       NotFoundView()
         .navigationTitle(untitledMock)
     case .failed:
-      StateMessage {
+      PageLoadFailure {
         Label {
           Text("The mock exam didn't load", tableName: "Mock", comment: "Loading a mock failed")
         } icon: {
           Image(systemName: "wifi.exclamationmark")
         }
-      } actions: {
-        Button {
-          Task { await run.mock.refresh() }
-        } label: {
-          Text("Try again", tableName: "Mock", comment: "Button to retry loading")
-        }
-        .buttonStyle(.outline)
+      } retry: {
+        await run.mock.refresh()
       }
-      .lonePage()
       .navigationTitle(untitledMock)
     case .loaded(let view):
       stage(view)
@@ -134,7 +128,7 @@ struct MockClock: View {
 
   var body: some View {
     VStack(spacing: 0) {
-      Text(timerInterval: Date.now...max(deadline, .now), countsDown: true)
+      PlanDate.countdown(to: deadline)
         .typeStyle(.body.weight(.semibold).monospaced())
       Text("time left", tableName: "Mock", comment: "Under the mock's clock")
         .typeStyle(.small)
@@ -321,7 +315,7 @@ private struct MockBreakView: View {
     ZoonkList {
       Section {
         VStack(alignment: .leading, spacing: 8) {
-          Text(timerInterval: Date.now...max(until, .now), countsDown: true)
+          PlanDate.countdown(to: until)
             .typeStyle(.momentReadout)
             .accessibilityLabel(
               Text("Break time left", tableName: "Mock", comment: "The break's clock"))

@@ -106,7 +106,7 @@ struct MindMapsScreen: View {
           Text(
             "No mind maps yet", tableName: "MindMaps", comment: "Title when no chapter has a map")
         } icon: {
-          KindMark(kind: .mindMap)
+          Image(systemName: LearnKind.mindMap.systemImage)
         }
       } description: {
         Text(

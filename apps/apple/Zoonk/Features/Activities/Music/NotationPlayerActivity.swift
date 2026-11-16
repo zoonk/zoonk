@@ -4,7 +4,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let notationPlayer = ActivityRenderer(
-    template: "notationPlayer", badge: .always(.readAndListen)
+    template: "notationPlayer"
   ) { context in
     if let fields = try? context.fields(as: NotationPlayerFields.self) {
       NotationPlayerCanvas(fields: fields)

@@ -1406,8 +1406,6 @@ private struct GenerationPhaseDetail: View {
 enum GenerationClock {
   /// Main's `formatClock`: whole seconds rounded up, as "0:18" or "1:02:05".
   static func text(_ seconds: TimeInterval) -> String {
-    let duration = Duration.seconds(max(0, seconds.rounded(.up)))
-    return duration.formatted(
-      .time(pattern: seconds >= 3600 ? .hourMinuteSecond : .minuteSecond))
+    PlanDate.clock(seconds: Int(max(0, seconds.rounded(.up))))
   }
 }

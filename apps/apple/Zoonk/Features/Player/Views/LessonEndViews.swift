@@ -538,7 +538,7 @@ private struct LessonUnavailableBody: View {
     case .slowDown(let seconds):
       return String(
         localized:
-          "You opened a lot of lessons quickly. This one opens on its own in \(Duration.seconds(seconds).formatted(.units(allowed: [.minutes, .seconds], width: .wide))).",
+          "You opened a lot of lessons quickly. This one opens on its own in \(progressLearningTime(seconds)).",
         table: "Player", comment: "How long until the next lesson opens; the argument is a duration"
       )
     case .limitReached where isReady:
@@ -584,7 +584,7 @@ private struct LessonGuestEndingView: View {
                   Text(course.title)
                     .typeStyle(.body.weight(.semibold))
                   Text(
-                    "\(course.chapterCount) chapters\u{00A0}· about \(Duration.seconds(max(1, (course.minutes + 30) / 60) * 3600).formatted(.units(allowed: [.hours], width: .wide))) at your pace",
+                    "\(course.chapterCount) chapters\u{00A0}· about \(studyDuration(minutes: max(1, (course.minutes + 30) / 60) * 60)) at your pace",
                     tableName: "Player", comment: "A course's size at the end of a guest's lesson"
                   )
                   .typeStyle(.note)

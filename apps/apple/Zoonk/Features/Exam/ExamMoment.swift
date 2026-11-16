@@ -110,12 +110,12 @@ struct ExamChecklistRows: View {
 extension ExamMoment {
   /// The exam's date and start time, until it's over.
   var dayLine: String? {
-    guard stage != .afterExam, let day, let date = studyDate(day.date) else {
+    guard stage != .afterExam, let day, studyDate(day.date) != nil else {
       return nil
     }
 
     return [
-      date.formatted(.studyDay.weekday(.wide).month(.wide).day().year()),
+      PlanDate.format(day.date, .sentence, today: PlanDate.today(), weekday: true),
       day.startTime.flatMap(examTimeOfDay),
     ].compactMap(\.self).joinedFacts()
   }
@@ -226,20 +226,15 @@ extension ExamMoment {
   }
 }
 
-/// An exam's start time, as its notice gives it.
+/// An exam's start time, as its notice gives it ("13:30"), in the device's clock.
 func examTimeOfDay(_ text: String) -> String? {
   let parts = text.split(separator: ":").compactMap { Int($0) }
-  guard parts.count >= 2,
-    let date = Calendar(identifier: .gregorian).date(
-      from: DateComponents(
-        timeZone: .gmt, year: 2000, month: 1, day: 1, hour: parts[0], minute: parts[1]))
-  else {
+
+  guard parts.count >= 2, (0..<24).contains(parts[0]), (0..<60).contains(parts[1]) else {
     return nil
   }
 
-  var style = Date.FormatStyle(timeZone: .gmt).hour().minute()
-  style.calendar.timeZone = .gmt
-  return date.formatted(style)
+  return PlanDate.timeOfDay(minutes: parts[0] * 60 + parts[1])
 }
 
 /// Main's `ExamMomentBody`: the lead in the text color, then what the learner did, muted, as one

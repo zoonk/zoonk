@@ -199,7 +199,7 @@ private struct MistakeListSections: View {
         }
       }
     } else if case .failed(let error) = resource.state {
-      PracticeLoadFailureView(error: error) { Task { await resource.refresh() } }
+      PracticeLoadFailureView(error: error, inBar: false) { Task { await resource.refresh() } }
         .listRowBackground(Color.clear)
     } else {
       ProgressView().frame(maxWidth: .infinity).listRowBackground(Color.clear)
@@ -369,8 +369,7 @@ private struct MistakeEntryView: View {
               "Open the lesson", tableName: "Practice",
               comment: "Opens the lesson that teaches a mistake's idea.")
           }
-          // The entry always ends in a button: outlined when it's the only one.
-          .buttonStyle(skillId == nil ? .outline : .ghost)
+          .buttonStyle(.ghost)
         }
       }
       .controlSize(.small)

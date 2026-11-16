@@ -407,15 +407,11 @@ struct ChallengeScreen: View {
 
   private func clockTime(_ text: String) -> String? {
     let parts = text.split(separator: ":").compactMap { Int($0) }
-    guard parts.count >= 2,
-      let date = Calendar(identifier: .gregorian).date(
-        from: DateComponents(
-          timeZone: .gmt, year: 2000, month: 1, day: 1, hour: parts[0], minute: parts[1]))
-    else {
+    guard parts.count >= 2, (0..<24).contains(parts[0]), (0..<60).contains(parts[1]) else {
       return nil
     }
 
-    return date.formatted(Date.FormatStyle(timeZone: .gmt).hour().minute())
+    return PlanDate.timeOfDay(minutes: parts[0] * 60 + parts[1])
   }
 
   private func titleString(_ challenge: Components.Schemas.Challenge) -> String {

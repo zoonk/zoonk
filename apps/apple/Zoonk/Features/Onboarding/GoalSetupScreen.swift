@@ -53,18 +53,13 @@ struct GoalLoadFailure: View {
   let retry: () async -> Void
 
   var body: some View {
-    StateMessage {
+    PageLoadFailure {
       Text(
         "We couldn't load your goal", tableName: "Onboarding",
         comment: "A goal's onboarding failed to load")
-    } actions: {
-      Button {
-        Task { await retry() }
-      } label: {
-        Text("Try again", tableName: "Onboarding", comment: "Loads the goal's onboarding again")
-      }
+    } retry: {
+      await retry()
     }
-    .lonePage()
   }
 }
 

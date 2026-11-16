@@ -4,7 +4,7 @@ import SwiftUI
 /// together, so this draws both.
 struct LessonScreenText: View {
   let title: String?
-  /// An explanation's title is main's small heading over its text; a worked example's is its
+  /// An explanation's title is main's heading over its text; a worked example's is its
   /// problem, asked as a question.
   var titleIsHeading = false
   let text: String
@@ -31,7 +31,7 @@ struct LessonScreenText: View {
   private func titleText(_ title: String) -> some View {
     if titleIsHeading {
       LessonRichText(title)
-        .typeStyle(.screenTitle)
+        .typeStyle(.stepHeading)
         .foregroundStyle(Color(.foreground))
         .fixedSize(horizontal: false, vertical: true)
         .accessibilityAddTraits(.isHeader)

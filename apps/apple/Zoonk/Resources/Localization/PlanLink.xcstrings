@@ -893,65 +893,6 @@
         }
       }
     },
-    "Try again" : {
-      "comment" : "Loads the shared plan again",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch einmal versuchen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reintentar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réessayer"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Riprova"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "もう一度試す"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다시 시도"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spróbuj ponownie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tentar de novo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tekrar dene"
-          }
-        }
-      }
-    },
     "We couldn't load this plan" : {
       "comment" : "A shared plan failed to load",
       "localizations" : {
@@ -1007,65 +948,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu planı yükleyemedik"
-          }
-        }
-      }
-    },
-    "You can't start another goal right now. Finish or pause one first." : {
-      "comment" : "A goal limit refused starting from a shared plan",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du kannst gerade kein weiteres Ziel starten. Schließe zuerst eines ab oder pausiere es."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No puedes crear otro objetivo ahora. Primero completa o pausa uno."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu ne peux pas commencer un autre objectif pour le moment. Termine ou mets en pause un objectif d’abord."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Al momento non puoi iniziare un altro obiettivo. Prima completane uno o mettilo in pausa."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今は新しい目標を始められません。先に取り組み中の目標を1つ終えるか、一時停止してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지금은 새 목표를 시작할 수 없어요. 먼저 기존 목표 하나를 완료하거나 일시 중지해 주세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie możesz teraz dodać kolejnego celu. Najpierw zrealizuj lub wstrzymaj jeden z obecnych."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você não pode começar outro objetivo agora. Primeiro, conclua ou pause um deles."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Şu anda başka bir hedefe başlayamazsın. Önce hedeflerinden birini tamamla veya duraklat."
           }
         }
       }

@@ -43,7 +43,7 @@ struct TutorComposerBar: View {
         composer
       }
     }
-    .scenePadding(.horizontal)
+    .listRowEdges()
     .padding(.vertical, 8)
   }
 

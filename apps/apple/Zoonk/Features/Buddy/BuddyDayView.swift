@@ -55,12 +55,6 @@ struct BuddyDayView: View {
               }
             }
           }
-        } header: {
-          if !earned {
-            SectionTitle(
-              Text("Today's missions", tableName: "Buddy", comment: "Section of the day's missions")
-            )
-          }
         }
       }
 

@@ -376,12 +376,13 @@ private struct RevealNoticeDay: View {
             comment: "An exam with no sitting in the learner's month")
 
           ForEach(noSitting.closest, id: \.self) { closest in
-            if let date = studyDate(closest) {
+            if studyDate(closest) != nil {
               Button {
                 use(closest)
               } label: {
                 Text(
-                  "Use \(date.formatted(.studyDay.month(.wide).day().year()))", tableName: "Exam",
+                  "Use \(PlanDate.format(closest, .sentence, today: PlanDate.today()))",
+                  tableName: "Exam",
                   comment: "Moves the plan to one of the closest sittings")
               }
             }

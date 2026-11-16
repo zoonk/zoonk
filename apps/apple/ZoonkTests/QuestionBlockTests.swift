@@ -355,9 +355,9 @@ private func makeDetail(_ ids: [String]) -> QuestionBlockDetail {
 private func makeDetail(questions: [PracticeQuestion]) -> QuestionBlockDetail {
   QuestionBlockDetail(
     block: PracticeBlock(
-      capsules: [], checkpoint: nil, estimatedMinutes: 5, extra: false, fullReview: false,
-      id: "block",
-      kind: .practice, mistakesOnly: false, netScored: false, status: .active, title: nil),
+      areas: [], capsules: [], checkpoint: nil, estimatedMinutes: 5, extra: false,
+      fullReview: false, id: "block", kind: .practice, mistakesOnly: false, netScored: false,
+      questions: 3, status: .active, title: nil, topics: []),
     hints: true, questions: questions, trueFalseLabels: .trueFalse)
 }
 

@@ -145,10 +145,7 @@ struct PlanDateSection: View {
 
 /// The exam's day as its notice or official calendar gives it, or its likely day.
 func planNoticeDayText(_ noticeDay: GoalPlan.Schedule.NoticeDay, document: ExamDocument) -> Text {
-  let date =
-    PlanDate.date(noticeDay.date).map {
-      $0.formatted(Date.FormatStyle(date: .long, time: .omitted, timeZone: .gmt))
-    } ?? noticeDay.date
+  let date = PlanDate.format(noticeDay.date, .sentence, today: PlanDate.today())
 
   if noticeDay.estimated {
     return Text(

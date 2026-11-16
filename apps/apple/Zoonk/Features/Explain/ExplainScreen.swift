@@ -18,7 +18,7 @@ struct ExplainScreen: View {
         case .failed(.notFound):
           NotFoundView()
         case .failed:
-          StateMessage {
+          PageLoadFailure {
             Label {
               Text(
                 "We couldn't load this explanation", tableName: "Explain",
@@ -26,15 +26,9 @@ struct ExplainScreen: View {
             } icon: {
               Image(systemName: "wifi.exclamationmark")
             }
-          } actions: {
-            Button {
-              Task { await resource.refresh() }
-            } label: {
-              Text("Try again", tableName: "Explain", comment: "Loads the explanation again")
-            }
-            .buttonStyle(.outline)
+          } retry: {
+            await resource.refresh()
           }
-          .lonePage()
         case .idle, .loading, .empty:
           ProgressView()
         }
@@ -96,7 +90,7 @@ private struct ExplanationView: View {
           Text(explanation.title),
           chip: Chip(
             Text(
-              "Quick explanation\u{00A0}· \(Duration.seconds(300), format: .units(allowed: [.minutes], width: .abbreviated))",
+              "Quick explanation\u{00A0}· \(studyDuration(minutes: 5))",
               tableName: "Explain",
               comment: "Chip over a quick explanation's title: its kind and length"))
         )

@@ -5,7 +5,7 @@ extension ActivityRenderer {
     template: "keyboardFretboard",
     badge: .by { content in
       (try? content.fields(as: KeyboardFretboardFields.self))?.isByEar == true
-        ? .earTraining : .playIt
+        ? .earTraining : nil
     }, grade: KeyboardFretboard.grade
   ) { context in
     if let fields = try? context.fields(as: KeyboardFretboardFields.self) {

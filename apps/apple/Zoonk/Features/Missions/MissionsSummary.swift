@@ -66,9 +66,12 @@ struct MissionsSummary: View {
         }
       }
 
+      // Its own key: other counts share the English, but Portuguese agrees with "missões".
       Text(
-        "\(done) of \(missions.count) done", tableName: "Today",
-        comment: "How many of today's missions are done"
+        String(
+          localized: "missionsDone", defaultValue: "\(done) of \(missions.count) done",
+          table: "Today",
+          comment: "Under the title Today's missions: how many of today's missions are done.")
       )
       .typeStyle(.meta)
       .foregroundStyle(.mutedForeground)

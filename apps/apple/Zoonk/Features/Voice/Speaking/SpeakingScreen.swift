@@ -59,32 +59,18 @@ private struct SpeakingPaperView: View {
     case .idle, .loading:
       ProgressView()
     case .empty, .failed(.notFound):
-      StateMessage {
-        Label {
-          Text(
-            "No speaking practice for this goal", tableName: "Voice",
-            comment: "No exam format fits the goal")
-        } icon: {
-          Image(systemName: "mic.slash")
-        }
-      }
-      .lonePage()
+      // Main's: a goal with no speaking format has no such page.
+      NotFoundView()
     case .failed:
-      StateMessage {
+      PageLoadFailure {
         Label {
           Text("Speaking practice didn't load", tableName: "Voice", comment: "Loading failed")
         } icon: {
           Image(systemName: "wifi.exclamationmark")
         }
-      } actions: {
-        Button {
-          Task { await paper.refresh() }
-        } label: {
-          Text("Try again", tableName: "Voice", comment: "Button to retry loading")
-        }
-        .buttonStyle(.outline)
+      } retry: {
+        await paper.refresh()
       }
-      .lonePage()
     case .loaded(let value):
       list(value)
     }
@@ -305,7 +291,7 @@ private struct SpeakingPaperView: View {
       facts.append(
         String(
           localized:
-            "\(Duration.seconds(Int(task.prepMinutes.rounded()) * 60).formatted(.units(allowed: [.minutes], width: .abbreviated))) to prepare",
+            "\(ExamPrepTimer.duration(minutes: task.prepMinutes)) to prepare",
           table: "Voice", comment: "How long the exam gives to prepare"))
     }
 

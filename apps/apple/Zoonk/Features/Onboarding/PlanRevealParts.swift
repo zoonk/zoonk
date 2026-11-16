@@ -148,8 +148,7 @@ private struct MonthYear: View {
   let date: Date
 
   var body: some View {
-    let parts = date.formatted(
-      Date.FormatStyle(timeZone: .gmt).month(.abbreviated).year().attributedStyle)
+    let parts = PlanDate.monthAndYear(date)
 
     HStack(alignment: .firstTextBaseline, spacing: 0) {
       ForEach(Array(parts.runs.enumerated()), id: \.offset) { _, run in

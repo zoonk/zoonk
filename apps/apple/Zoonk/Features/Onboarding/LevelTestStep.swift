@@ -371,7 +371,7 @@ private struct LevelTestIntro: View {
           tableName: "Onboarding",
           comment: "Title of a language goal's level test"),
         description: Text(
-          "About \(Duration.seconds(minutes * 60), format: .units(allowed: [.minutes], width: .wide)) of reading, listening and one sentence out loud, so your plan starts at your level.",
+          "About \(studyDuration(minutes: minutes)) of reading, listening and one sentence out loud, so your plan starts at your level.",
           tableName: "Onboarding",
           comment: "What the level test is; %@ is about how long it takes, such as \"3 minutes\""))
 

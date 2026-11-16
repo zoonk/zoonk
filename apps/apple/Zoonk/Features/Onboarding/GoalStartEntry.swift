@@ -98,7 +98,6 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
   var isSection = false
   var showsExamples = true
   var error: GoalError?
-  var limit: GoalLimitReason?
   /// With material and what to do with it, the box may stay empty.
   var canSubmitEmpty = false
   let onSubmit: (String) -> Void
@@ -112,17 +111,7 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
   /// The same limit core applies to a typed goal.
   private var maxLength: Int { 2000 }
 
-  /// At the goal limit the page is only the gate; a month's new goals used up shows after a try.
   var body: some View {
-    if limit == .activeGoals {
-      GoalLimitNoticeSection(reason: .activeGoals)
-    } else {
-      entry
-    }
-  }
-
-  @ViewBuilder
-  private var entry: some View {
     Section {
       VStack(spacing: 0) {
         // Tops rather than first baselines: a vertical `TextField` reports its baseline above its
@@ -346,7 +335,7 @@ struct GoalExamplesSection: View {
           "How does inflation work?", table: "Onboarding",
           comment: "An example question for a quick explanation"),
         LocalizedStringResource(
-          "Quick explanation\u{00A0}· \(Duration.seconds(300), format: .units(allowed: [.minutes], width: .abbreviated))",
+          "Quick explanation\u{00A0}· \(studyDuration(minutes: 5))",
           table: "Onboarding",
           comment:
             "The kind of an example goal: a short explanation of one question, and its length")

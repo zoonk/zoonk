@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let categorize = ActivityRenderer(
-    template: "categorize", badge: .always(.sortGroups),
+    template: "categorize",
     grade: ActivityExpectedAnswer.grader(CategorizeFields.self) { $0.expected }
   ) { context in
     if let fields = try? context.fields(as: CategorizeFields.self) {

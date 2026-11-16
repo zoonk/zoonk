@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let sqlPlayground = ActivityRenderer(
-    template: "sqlPlayground", badge: .always(.queryData),
+    template: "sqlPlayground",
     grade: SQLPlaygroundFields.grade
   ) { context in
     if let fields = try? context.fields(as: SQLPlaygroundFields.self) {

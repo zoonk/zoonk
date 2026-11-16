@@ -104,11 +104,15 @@ struct PlanTimeSection: View {
                 ZStack(alignment: .topLeading) {
                   ForEach([ScheduleTime.Offer.Kind.everything, .more, .suggested], id: \.self) {
                     kind in
-                    TimeAnswer.offerLabel(
-                      ScheduleTime.Offer(kind: kind, minutes: longestOfferMinutes(minutes)))
+                    Button {
+                    } label: {
+                      TimeAnswer.offerLabel(
+                        ScheduleTime.Offer(kind: kind, minutes: longestOfferMinutes(minutes)))
+                    }
                   }
                 }
-                .typeStyle(.body.weight(.semibold))
+                .buttonStyle(.outline)
+                .controlSize(.small)
                 .hidden()
                 .accessibilityHidden(true)
               }
@@ -157,6 +161,8 @@ struct PlanTimeSection: View {
           "Moves the goal's date to the day its time covers everything; the argument is a date like 'May 5'"
       )
     }
+    .buttonStyle(.outline)
+    .controlSize(.small)
   }
 
   private func longestOfferMinutes(_ current: Int) -> Int {

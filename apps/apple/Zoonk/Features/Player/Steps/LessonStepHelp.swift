@@ -67,7 +67,7 @@ struct LessonScreenHelp: View {
       .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
 
-      FlowLayout {
+      TapChips {
         ForEach(store.suggestionsBeside.prefix(2), id: \.id) { suggestion in
           Button {
             store.ask(suggestionId: suggestion.id.rawValue)
@@ -84,7 +84,6 @@ struct LessonScreenHelp: View {
             comment: "Opens the buddy to ask about the screen in the learner's own words")
         }
       }
-      .buttonStyle(.outline)
     }
     .accessibilityElement(children: .contain)
   }

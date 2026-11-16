@@ -229,7 +229,7 @@ struct ProfileEditorView: View {
 
   private var usernameRules: Text {
     Text(
-      "3-30 characters. Letters a–z, numbers, and underscores only.",
+      "3–30 characters. Letters a–z, numbers, and underscores only.",
       tableName: "Account")
   }
 

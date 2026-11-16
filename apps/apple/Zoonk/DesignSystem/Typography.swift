@@ -44,6 +44,9 @@ extension TypeStyle {
   /// An explanation's heading over its running text.
   static let screenTitle = TypeStyle(
     size: 15, relativeTo: .subheadline, weight: .semibold, lineHeight: 1.375)
+  /// A lesson step's heading: the size of the text it heads, set apart by weight.
+  static let stepHeading = TypeStyle(
+    size: 18, relativeTo: .body, weight: .semibold, lineHeight: 1.375)
   /// A lesson's running text.
   static let lessonText = TypeStyle(
     size: 18, relativeTo: .body, weight: .regular, lineHeight: 1.625)

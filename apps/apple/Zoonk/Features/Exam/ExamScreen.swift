@@ -46,21 +46,15 @@ private struct ExamContent: View {
       }
       .lonePage()
     case .failed:
-      StateMessage {
+      PageLoadFailure {
         Label {
           Text("Your exam didn't load", tableName: "Exam", comment: "Loading the exam failed")
         } icon: {
           Image(systemName: "wifi.exclamationmark")
         }
-      } actions: {
-        Button {
-          Task { await exam.refresh() }
-        } label: {
-          Text("Try again", tableName: "Exam", comment: "Button to retry loading")
-        }
-        .buttonStyle(.outline)
+      } retry: {
+        await exam.refresh()
       }
-      .lonePage()
     case .loaded(let view):
       ExamList(exam: view, options: options.value)
     }
@@ -265,12 +259,13 @@ private struct ExamHero: View {
         }
 
         ForEach(noSitting.closest, id: \.self) { closest in
-          if let date = studyDate(closest) {
+          if studyDate(closest) != nil {
             Button {
               useDate(closest)
             } label: {
               Text(
-                "Use \(date.formatted(.studyDay.month(.wide).day().year()))", tableName: "Exam",
+                "Use \(PlanDate.format(closest, .sentence, today: PlanDate.today()))",
+                tableName: "Exam",
                 comment:
                   "Moves the plan to one of the closest sittings; the argument is its date, like 'May 5, 2027'"
               )
@@ -303,7 +298,7 @@ private struct ExamHero: View {
     let dates = exam.days.compactMap { day in studyDate(day.date).map { (day, $0) } }
 
     if exam.namedMonth {
-      return dates.map { $0.1.formatted(.studyDay.month(.wide).year()) }
+      return dates.map { PlanDate.format($0.0.date, .rowMonth, today: PlanDate.today()) }
         + [daysLeft].compactMap(\.self)
     }
 
@@ -311,7 +306,10 @@ private struct ExamHero: View {
     let shared = times.count == 1 ? exam.days.first?.startTime : nil
     let today = PlanDate.today()
     let days = dates.map { day, _ in
-      let text = PlanDate.text(day.date, today: today, weekday: dates.count == 1)
+      // An estimated day reads "~", as the Plan writes it, and has no weekday anyone knows yet.
+      let date = PlanDate.text(
+        day.date, today: today, weekday: dates.count == 1 && !exam.daysEstimated)
+      let text = exam.daysEstimated ? "~" + date : date
       let time = shared == nil ? day.startTime.flatMap(examTimeOfDay) : nil
       return time.map { "\(text)\u{00A0}· \($0)" } ?? text
     }
@@ -587,7 +585,7 @@ private struct ExamMocksSection: View {
               StatusMark(status: isNext ? .next : .todo)
             } trailing: {
               if let deadline = mock.deadline, deadline > .now {
-                Text(timerInterval: Date.now...deadline, countsDown: true)
+                PlanDate.countdown(to: deadline)
               } else if mock.deadline == nil {
                 Text(
                   "All parts handed in", tableName: "Exam",

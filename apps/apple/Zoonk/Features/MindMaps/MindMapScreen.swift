@@ -61,7 +61,7 @@ struct MindMapScreen: View {
                 "The mind map couldn't be made this time.", tableName: "MindMaps",
                 comment: "Shown when a chapter has no map to show")
             } icon: {
-              KindMark(kind: .mindMap)
+              Image(systemName: LearnKind.mindMap.systemImage)
             }
           }
           .lonePage()
@@ -108,7 +108,7 @@ struct MindMapUnreachable: View {
   let retry: () -> Void
 
   var body: some View {
-    StateMessage {
+    PageLoadFailure(inBar: false) {
       Label {
         Text(
           "We couldn't reach the server.", tableName: "MindMaps",
@@ -120,13 +120,9 @@ struct MindMapUnreachable: View {
       Text(
         "Check your connection.", tableName: "MindMaps",
         comment: "Under a map that failed to load: what the learner can check")
-    } actions: {
-      Button(action: retry) {
-        Text("Try again", tableName: "MindMaps", comment: "Retries")
-      }
-      .buttonStyle(.outline)
+    } retry: {
+      retry()
     }
-    .lonePage()
   }
 }
 

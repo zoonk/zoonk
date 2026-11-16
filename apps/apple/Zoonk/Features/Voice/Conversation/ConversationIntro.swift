@@ -92,7 +92,7 @@ struct ConversationIntro<Footer: View>: View {
   }
 
   private var length: String {
-    Duration.seconds(intro.minutes * 60).formatted(.units(allowed: [.minutes], width: .abbreviated))
+    studyDuration(minutes: intro.minutes)
   }
 
   @ViewBuilder

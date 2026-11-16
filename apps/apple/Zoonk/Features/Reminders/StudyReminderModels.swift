@@ -62,8 +62,7 @@ enum ReminderTime {
   static func string(_ date: Date) -> String {
     let components = calendar.dateComponents([.hour, .minute], from: date)
     let quarters = ((components.hour ?? 19) * 60 + (components.minute ?? 0) + 7) / 15
-    let minutes = min(quarters * 15, 23 * 60 + 45)
-    return String(format: "%02d:%02d", minutes / 60, minutes % 60)
+    return PlanDate.wireTime(minutes: min(quarters * 15, 23 * 60 + 45))
   }
 
   static func rounded(_ time: String) -> String {
@@ -77,12 +76,12 @@ enum ReminderTime {
       return nil
     }
 
-    return TimeZone(identifier: identifier)?.localizedName(for: .generic, locale: .current)
-      ?? identifier
+    return PlanDate.zoneName(identifier) ?? identifier
   }
 
   static func formatted(_ time: String) -> String {
-    date(time).formatted(Date.FormatStyle(date: .omitted, time: .shortened, timeZone: .gmt))
+    let components = calendar.dateComponents([.hour, .minute], from: date(time))
+    return PlanDate.timeOfDay(minutes: (components.hour ?? 19) * 60 + (components.minute ?? 0))
   }
 }
 

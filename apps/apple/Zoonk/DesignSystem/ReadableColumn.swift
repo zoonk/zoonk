@@ -76,3 +76,20 @@ struct ColumnMarginsKey: PreferenceKey {
     value += nextValue()
   }
 }
+
+extension View {
+  /// A list's row margin, for what lines up with a page's rows from outside a list, such as a
+  /// thread's header or a page drawn in a scroll view.
+  func listRowEdges() -> some View {
+    modifier(ListRowEdges())
+  }
+}
+
+private struct ListRowEdges: ViewModifier {
+  @Environment(\.listRowMargin) private var margin
+  @Environment(\.horizontalSizeClass) private var sizeClass
+
+  func body(content: Content) -> some View {
+    content.padding(.horizontal, margin ?? (sizeClass == .regular ? regularListMargin : 16))
+  }
+}

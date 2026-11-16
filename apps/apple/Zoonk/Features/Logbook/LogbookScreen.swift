@@ -66,21 +66,15 @@ struct LogbookScreen: View {
               UsageAnalytics.track(.logbookViewed)
             }
         case .failed(let error) where error != .unauthorized:
-          StateMessage {
+          PageLoadFailure {
             Label {
               Text("The summary didn't load", tableName: "Session", comment: "Load failed")
             } icon: {
               Image(systemName: "wifi.exclamationmark")
             }
-          } actions: {
-            Button {
-              Task { await recap.refresh() }
-            } label: {
-              Text("Try again", tableName: "Session", comment: "Retries loading")
-            }
-            .buttonStyle(.outline)
+          } retry: {
+            await recap.refresh()
           }
-          .lonePage()
         default:
           ProgressView()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -308,13 +302,13 @@ private struct WeekRings: View {
           }
           .layoutAnchor("week-ring")
 
-          Text(date?.formatted(.studyDay.weekday(.narrow)) ?? "")
+          Text(PlanDate.weekdayLetter(key))
             .typeStyle(.small.monospaced())
             .foregroundStyle(studied ? Color(.foreground) : .faint)
         }
         .weekDayMark(width: ringSize)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(date?.formatted(.studyDay.weekday(.wide)) ?? ""))
+        .accessibilityLabel(Text(PlanDate.weekdayName(key)))
         .accessibilityValue(
           studied
             ? Text("Studied", tableName: "Session", comment: "A day studied this week")

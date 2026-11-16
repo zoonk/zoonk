@@ -5,7 +5,6 @@ struct CourseStartScreen: View {
   let courseId: String
   var chapterId: String? = nil
 
-  @Environment(AppRouter.self) private var router
   @Environment(CourseCatalogStore.self) private var catalog
   @Environment(OnboardingStore.self) private var onboarding
   @Environment(SessionStore.self) private var session
@@ -45,7 +44,7 @@ struct CourseStartScreen: View {
 
     return ZoonkList {
       OpeningClock(availableAt: error?.limit?.availableAt) { now in
-        if let gate = gate(at: now) {
+        if let gate = GoalLimitGate(error?.limit, at: now, subject: subject) {
           // Main's: the course stays the subject, the limit is the heading, and the bar holds the
           // way on, so nothing is left to choose.
           StepHeader(subject: subject, title: gate.title, description: gate.line)
@@ -57,8 +56,8 @@ struct CourseStartScreen: View {
     }
     .bottomBar {
       OpeningClock(availableAt: error?.limit?.availableAt) { now in
-        if gate(at: now) != nil {
-          gateActions
+        if let limit = error?.limit, GoalLimitGate(limit, at: now) != nil {
+          GoalLimitActions(limit: limit)
         } else if error?.needsAccount != true {
           StepButtons(
             canContinue: chapterId != nil || level != nil,
@@ -123,49 +122,6 @@ struct CourseStartScreen: View {
       ?? course?.course.title
   }
 
-  /// A limit only subscribing lifts takes the start's place while it holds: its words head the
-  /// screen.
-  private func gate(at now: Date) -> CourseStartGate? {
-    guard let limit = error?.limit, limit.holdsStart(at: now) else {
-      return nil
-    }
-
-    if case .monthlyGoals(let help) = limit {
-      let words = help.words(.goals, now: now)
-
-      return CourseStartGate(
-        title: words.title.map { Text($0) } ?? Text(verbatim: subject ?? ""),
-        line: words.line.map { Text($0) }, said: words.said)
-    }
-
-    return CourseStartGate(
-      title: Text(
-        "That's all the goals you can study at once", tableName: "Onboarding",
-        comment:
-          "A free learner studies as many goals at once as their plan allows; it's about goals at the same time, not new goals started per day or month"
-      ),
-      line: Text(
-        "Pause one in your Plan, or subscribe to study more at once.", tableName: "Onboarding",
-        comment: "Pausing a goal keeps its progress"),
-      said: String(localized: limit.message))
-  }
-
-  @ViewBuilder private var gateActions: some View {
-    if error?.limit == .activeGoals {
-      Button {
-        router.showRoot(of: .plan)
-      } label: {
-        Text(
-          "Go to your Plan", tableName: "Onboarding",
-          comment: "Opens the Plan, whose menu pauses a goal and keeps its progress")
-      }
-      .buttonStyle(.outline)
-    }
-
-    SubscribeButton()
-      .buttonStyle(.mainAction)
-  }
-
   private func start() {
     guard chapterId != nil || level != nil, !isStarting else {
       return
@@ -186,10 +142,4 @@ struct CourseStartScreen: View {
       }
     }
   }
-}
-
-private struct CourseStartGate {
-  let title: Text
-  let line: Text?
-  let said: String
 }

@@ -248,3 +248,59 @@ struct GoalLimitNoticeSection: View {
     }
   }
 }
+
+/// Main's `GoalLimitScreen`: a limit only subscribing lifts takes the start's place while it holds.
+/// Its words head the screen and `GoalLimitActions` in the bar is the way on, so nothing is left to
+/// choose. Nil while the start is open.
+struct GoalLimitGate {
+  let title: Text
+  let line: Text?
+  let said: String
+
+  init?(_ limit: GoalLimitReason?, at now: Date, subject: String? = nil) {
+    guard let limit, limit.holdsStart(at: now) else {
+      return nil
+    }
+
+    if case .monthlyGoals(let help) = limit {
+      let words = help.words(.goals, now: now)
+      title = words.title.map { Text($0) } ?? Text(verbatim: subject ?? "")
+      line = words.line.map { Text($0) }
+      said = words.said
+      return
+    }
+
+    title = Text(
+      "That's all the goals you can study at once", tableName: "Onboarding",
+      comment:
+        "A free learner studies as many goals at once as their plan allows; it's about goals at the same time, not new goals started per day or month"
+    )
+    line = Text(
+      "Pause one in your Plan, or subscribe to study more at once.", tableName: "Onboarding",
+      comment: "Pausing a goal keeps its progress")
+    said = String(localized: limit.message)
+  }
+}
+
+/// Main's `GoalLimitBar`: their Plan, where a goal can be paused, then Subscribe as the main action.
+struct GoalLimitActions: View {
+  let limit: GoalLimitReason
+
+  @Environment(AppRouter.self) private var router
+
+  var body: some View {
+    if limit == .activeGoals {
+      Button {
+        router.showRoot(of: .plan)
+      } label: {
+        Text(
+          "Go to your Plan", tableName: "Onboarding",
+          comment: "Opens the Plan, whose menu pauses a goal and keeps its progress")
+      }
+      .buttonStyle(.outline)
+    }
+
+    SubscribeButton()
+      .buttonStyle(.mainAction)
+  }
+}

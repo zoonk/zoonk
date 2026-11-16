@@ -1,7 +1,7 @@
 import SwiftUI
 
 extension ActivityRenderer {
-  static let mapExplorer = ActivityRenderer(template: "mapExplorer", badge: .always(.exploreMap)) {
+  static let mapExplorer = ActivityRenderer(template: "mapExplorer") {
     context in
     if let fields = try? context.fields(as: MapExplorerFields.self) {
       if let map = context.baseMap {

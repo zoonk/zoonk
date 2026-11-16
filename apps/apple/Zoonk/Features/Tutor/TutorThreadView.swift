@@ -24,7 +24,7 @@ struct TutorThreadView<Header: View>: View {
       canTalk: session.authenticatedSession != nil && learner?.identity.isAnonymous != true,
       buddyName: summary.buddyDisplayName,
       suggestions: suggestions ?? scope.suggestions,
-      placeholder: placeholder ?? scope.placeholder,
+      placeholder: placeholder ?? Text("Ask \(summary.buddyDisplayName)", tableName: "Tutor"),
       draft: draft,
       isPage: isPage,
       header: header)
@@ -65,7 +65,8 @@ private struct TutorConversationView<Header: View>: View {
       }
       .frame(maxWidth: 720, alignment: .leading)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .scenePadding()
+      .listRowEdges()
+      .scenePadding(.vertical)
       .scrollTargetLayout()
     }
     .scrollPosition($position)

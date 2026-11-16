@@ -690,8 +690,14 @@ private struct ShorterDayTime: View {
     Button {
       isExplaining = true
     } label: {
+      // One line under the whole readout: an underline follows each run's size.
       BigQuantity(time)
-        .underline(pattern: .dot)
+        .padding(.bottom, 4)
+        .overlay(alignment: .bottom) {
+          DottedRule()
+            .stroke(style: StrokeStyle(lineWidth: 1.5, lineCap: .round, dash: [0, 4]))
+            .frame(height: 1.5)
+        }
     }
     .buttonStyle(.plain)
     .popover(isPresented: $isExplaining) {
@@ -726,5 +732,14 @@ private enum TodayPart: Hashable {
   /// A notice asks for a decision, so it leads the day where the day has room beside it.
   static func order(isBeside: Bool) -> [TodayPart] {
     isBeside ? [.header, .notice, .day] : [.header, .day, .notice, .rest]
+  }
+}
+
+private struct DottedRule: Shape {
+  func path(in rect: CGRect) -> Path {
+    Path { path in
+      path.move(to: CGPoint(x: rect.minX, y: rect.midY))
+      path.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
+    }
   }
 }

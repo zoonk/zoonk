@@ -375,7 +375,7 @@ private struct CallHeader: View {
   }
 
   private func clock(_ seconds: TimeInterval) -> String {
-    Duration.seconds(Int(seconds)).formatted(.time(pattern: .minuteSecond))
+    PlanDate.clock(seconds: Int(seconds))
   }
 }
 

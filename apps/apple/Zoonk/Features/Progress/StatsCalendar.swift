@@ -293,9 +293,10 @@ struct StatsCalendar: View {
         return nil
       }
 
-      var format = Date.FormatStyle.dateTime.month(.abbreviated)
-      format.timeZone = .gmt
-      return (week, date.formatted(format), week == weeks - 1)
+      return (
+        week, PlanDate.format(PlanDate.isoDate(date), .rowMonth, today: "", year: .never),
+        week == weeks - 1
+      )
     }
   }
 

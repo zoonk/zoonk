@@ -2,6 +2,8 @@ import SwiftUI
 
 /// Every number covers all of the learner's goals.
 struct StatisticsScreen: View {
+  @Environment(AppRouter.self) private var router
+
   /// A sidebar's statistic: in one column it's its own page, with no overview behind it.
   private let routed: StatsSection?
   /// The one pick: beside the overview in two columns (Level when none), on top of it in one,
@@ -16,7 +18,7 @@ struct StatisticsScreen: View {
   var body: some View {
     PaneSplit {
       overview
-        .environment(\.statsSectionOpen, StatsSectionOpen(shown: picked ?? .level) { picked = $0 })
+        .environment(\.statsSectionOpen, StatsSectionOpen(shown: picked ?? .level, open: pick))
         // Each pane is about a phone wide, so the overview and the stat take their phone layouts.
         .environment(\.horizontalSizeClass, .compact)
     } secondary: {
@@ -27,11 +29,20 @@ struct StatisticsScreen: View {
         pushed(routed)
       } else {
         overview
-          .environment(\.statsSectionOpen, StatsSectionOpen(shown: nil) { picked = $0 })
+          .environment(\.statsSectionOpen, StatsSectionOpen(shown: nil, open: pick))
           .navigationDestination(item: $picked) { section in
             pushed(section)
           }
       }
+    }
+  }
+
+  /// A statistic the sidebar lists opens at its own row, so the row marked is the one shown.
+  private func pick(_ section: StatsSection) {
+    if router.sidebarTabs.contains(.stats(section)) {
+      router.open(.statistics(section: section))
+    } else {
+      picked = section
     }
   }
 
@@ -188,6 +199,7 @@ private struct TileLink<Tile: View>: View {
 
     StatsSectionLink(section: section) {
       tile
+        .environment(\.statTileOpens, true)
         .contentShape([.interaction, .hoverEffect], shape)
         .hoverEffect(.highlight)
         .modifier(StatsSelection(section: section, shape: shape))

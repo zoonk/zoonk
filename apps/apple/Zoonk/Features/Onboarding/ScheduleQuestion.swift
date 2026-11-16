@@ -471,7 +471,7 @@ struct ScheduleQuestion: View {
     Section {
       ForEach(ScheduleTime.mondayFirst, id: \.self) { day in
         Toggle(
-          Calendar.current.standaloneWeekdaySymbols[day],
+          PlanDate.weekdayName(number: day, label: true),
           isOn: Binding(
             get: { days.contains(day) },
             set: { on in

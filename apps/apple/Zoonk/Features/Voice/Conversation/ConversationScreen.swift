@@ -153,19 +153,15 @@ struct CallLoadFailed: View {
   let retry: () -> Void
 
   var body: some View {
-    StateMessage {
+    PageLoadFailure {
       Label {
         Text("The call didn't load", tableName: "Voice", comment: "Loading a conversation failed")
       } icon: {
         Image(systemName: "wifi.exclamationmark")
       }
-    } actions: {
-      Button(action: retry) {
-        Text("Try again", tableName: "Voice", comment: "Button to retry loading")
-      }
-      .buttonStyle(.outline)
+    } retry: {
+      retry()
     }
-    .lonePage()
   }
 }
 

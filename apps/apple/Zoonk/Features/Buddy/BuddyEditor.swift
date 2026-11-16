@@ -77,6 +77,8 @@ struct BuddyPickerSections: View {
   @Binding var name: String
   var glasses: BuddyGlasses = .round
 
+  @FocusState private var isNameFocused: Bool
+
   var body: some View {
     Section {
       ForEach(buddyKinds, id: \.self) { option in
@@ -93,18 +95,22 @@ struct BuddyPickerSections: View {
     }
 
     Section {
-      TextField(text: $name, prompt: Text(buddyName(kind: kind, name: nil))) {
-        Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
-      }
-      .textInputAutocapitalization(.words)
-      .autocorrectionDisabled()
-      .onChange(of: name) { _, newName in
-        if newName.count > buddyNameMaxLength {
-          name = String(newName.prefix(buddyNameMaxLength))
+      FormField(
+        title: Text("Name", tableName: "Buddy", comment: "The buddy's custom name"),
+        isFocused: isNameFocused
+      ) {
+        TextField(text: $name, prompt: Text(buddyName(kind: kind, name: nil))) {
+          Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
+        }
+        .textInputAutocapitalization(.words)
+        .autocorrectionDisabled()
+        .focused($isNameFocused)
+        .onChange(of: name) { _, newName in
+          if newName.count > buddyNameMaxLength {
+            name = String(newName.prefix(buddyNameMaxLength))
+          }
         }
       }
-    } header: {
-      SectionTitle(Text("Name", tableName: "Buddy", comment: "The buddy's custom name"))
     }
   }
 }

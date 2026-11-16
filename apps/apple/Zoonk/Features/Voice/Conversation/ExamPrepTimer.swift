@@ -66,7 +66,7 @@ struct ExamPrepTimer: View {
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
       } else {
-        Text(timerInterval: start...deadline, countsDown: true)
+        PlanDate.countdown(to: deadline, from: start)
           .typeStyle(.readout)
           .accessibilityAddTraits(.updatesFrequently)
       }
@@ -79,8 +79,7 @@ struct ExamPrepTimer: View {
       comment: "How long the exam gives to prepare this task, such as \"1 minute, as in the exam\"")
   }
 
-  private static func duration(minutes: Double) -> String {
-    Duration.seconds((minutes * 60).rounded())
-      .formatted(.units(allowed: [.minutes, .seconds], width: .wide))
+  static func duration(minutes: Double) -> String {
+    PlanDate.exactDuration(seconds: Int((minutes * 60).rounded()))
   }
 }

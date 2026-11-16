@@ -19,6 +19,9 @@ enum AppSheet: Hashable, Identifiable {
 @Observable
 final class AppRouter {
   var selectedTab = AppTab.today
+  /// The places the window's sidebar lists, where opening one marks its own row (main's
+  /// `getActiveTab`); none where the window has no sidebar.
+  var sidebarTabs: Set<AppTab> = []
   var sheet: AppSheet?
   /// The speaking paper's open task in this window, as main's `/speaking?task=`.
   var speakingTask: String?
@@ -76,9 +79,9 @@ final class AppRouter {
     selectedTab = tab
   }
 
-  /// A push closes any task first. A Study place already selected in the sidebar goes back to its
-  /// root, and a route already on the stack, or a task already open, is gone back to, instead of
-  /// stacking itself again.
+  /// A push closes any task first. A place the sidebar lists opens at its own row's root, and a
+  /// route already on the stack, or a task already open, is gone back to, instead of stacking
+  /// itself again.
   func open(_ route: AppRoute) {
     switch route.presentation {
     case .task:
@@ -88,6 +91,11 @@ final class AppRouter {
         tasks.append(route)
       }
     case .push:
+      if let tab = route.sidebarTab, sidebarTabs.contains(tab) {
+        showRoot(of: tab)
+        return
+      }
+
       tasks = []
 
       var path = paths[selectedTab] ?? NavigationPath()

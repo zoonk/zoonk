@@ -90,7 +90,8 @@ struct LoginView: View {
         .multilineTextAlignment(.center)
       }
       .frame(maxWidth: 480)
-      .padding(24)
+      .listRowEdges()
+      .padding(.vertical, 24)
       .frame(maxWidth: .infinity)
     }
     .barTitleAfterHero(title)

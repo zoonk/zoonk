@@ -138,7 +138,7 @@ struct LanguageUnitScreen: View {
           }
           .lonePage()
         case .failed:
-          StateMessage {
+          PageLoadFailure {
             Label {
               Text(
                 "Couldn't load this unit", tableName: "Plan",
@@ -146,15 +146,9 @@ struct LanguageUnitScreen: View {
             } icon: {
               Image(systemName: "wifi.exclamationmark")
             }
-          } actions: {
-            Button {
-              Task { await unit.refresh() }
-            } label: {
-              Text("Try again", tableName: "Plan", comment: "Retries loading the plan")
-            }
-            .buttonStyle(.outline)
+          } retry: {
+            await unit.refresh()
           }
-          .lonePage()
         case .idle, .loading:
           ProgressView()
         }

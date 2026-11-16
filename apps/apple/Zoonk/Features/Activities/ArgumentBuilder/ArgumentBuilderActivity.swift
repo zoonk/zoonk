@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ActivityRenderer {
   static let argumentBuilder = ActivityRenderer(
-    template: "argumentBuilder", badge: .always(.buildArgument),
+    template: "argumentBuilder",
     grade: ActivityExpectedAnswer.grader(ArgumentFields.self) { .selection($0.strongIds) }
   ) { context in
     if let fields = try? context.fields(as: ArgumentFields.self) {

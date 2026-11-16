@@ -17,9 +17,8 @@ struct RecordButton: View {
           HStack(spacing: 8) {
             Text("Stop", tableName: "Voice", comment: "Button that stops recording the learner")
             // The clock moves every second, so it stays out of the button's name.
-            Text(
-              timerInterval: startedAt...startedAt.addingTimeInterval(VoiceRecorder.maxDuration),
-              countsDown: false
+            PlanDate.stopwatch(
+              from: startedAt, to: startedAt.addingTimeInterval(VoiceRecorder.maxDuration)
             )
             .monospacedDigit()
             .opacity(0.7)

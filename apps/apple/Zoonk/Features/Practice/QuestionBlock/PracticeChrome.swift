@@ -234,12 +234,12 @@ struct PracticeActionRow<Content: View>: View {
 
   var body: some View {
     ViewThatFits(in: .horizontal) {
-      HStack(spacing: 12) {
+      HStack(spacing: 8) {
         content
       }
       .environment(\.practiceActionsSideBySide, true)
 
-      VStack(spacing: 10) {
+      VStack(spacing: 8) {
         content
       }
     }
@@ -474,13 +474,15 @@ struct PracticeRedirect: View {
 
 struct PracticeLoadFailureView: View {
   let error: APIError
+  /// False inside a screen whose own main action stays, such as the notebook's list.
+  var inBar = true
   let retry: () -> Void
 
   var body: some View {
     if error == .notFound {
       NotFoundView()
     } else {
-      StateMessage {
+      PageLoadFailure(inBar: inBar) {
         Label {
           if error == .network {
             Text(
@@ -498,13 +500,9 @@ struct PracticeLoadFailureView: View {
         Text(
           "Check your connection and try again.", tableName: "Practice",
           comment: "Description when a practice screen can't load.")
-      } actions: {
-        Button(action: retry) {
-          Text("Try again", tableName: "Practice", comment: "Loads a practice screen again.")
-        }
-        .buttonStyle(.outline)
+      } retry: {
+        retry()
       }
-      .lonePage()
     }
   }
 }

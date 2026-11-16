@@ -20,7 +20,7 @@ struct SubjectScreen: View {
           case .idle, .loading:
             ProgressView()
           case .failed(let error) where error != .notFound:
-            StateMessage {
+            PageLoadFailure {
               Label {
                 Text(
                   "Couldn't load this subject", tableName: "Plan",
@@ -28,15 +28,9 @@ struct SubjectScreen: View {
               } icon: {
                 Image(systemName: "wifi.exclamationmark")
               }
-            } actions: {
-              Button {
-                Task { await syllabus.refresh() }
-              } label: {
-                Text("Try again", tableName: "Plan", comment: "Retries loading the plan")
-              }
-              .buttonStyle(.outline)
+            } retry: {
+              await syllabus.refresh()
             }
-            .lonePage()
           default:
             StateMessage {
               Label {
@@ -420,6 +414,14 @@ private struct SubjectPreparation: View {
           .foregroundStyle(.mutedForeground)
         }
         .typeStyle(.meta)
+      }
+
+      // The page's topics and chapters count lessons, so a number they don't explain says what it
+      // counts.
+      if share > 0 {
+        Text("Counts your answers in lessons, practice and tests.", tableName: "Plan")
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
       }
     }
     .padding(.vertical, 4)

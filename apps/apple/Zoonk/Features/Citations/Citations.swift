@@ -68,7 +68,7 @@ struct SourcesChip: View {
     } label: {
       Label {
         Text(
-          "Sources\u{00A0}· Checked \(checkedAt.formatted(.dateTime.month(.abbreviated).year()))",
+          "Sources\u{00A0}· Checked \(PlanDate.moment(checkedAt, .rowMonth, year: .always))",
           tableName: "Citations",
           comment:
             "Opens a source. \"Checked\" agrees with plural \"Sources\". Date like \"May 2026\".")
@@ -133,7 +133,7 @@ private struct SourceDetails: View {
   }
 
   private var checked: Text {
-    let day = checkedAt.formatted(date: .abbreviated, time: .omitted)
+    let day = PlanDate.moment(checkedAt, .row, year: .always)
 
     if let publisher, !publisher.isEmpty {
       return Text(
