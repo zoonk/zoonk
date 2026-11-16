@@ -5,6 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowRight, Check, CircleDashed, X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { ACTIVITY_CARD_CLASS, ACTIVITY_LINE_CLASS } from "../_components/activity-canvas";
 import { type Link, type LinkResult, sameLink } from "./cause-effect-links";
 
 type ListedLink = Link & { state: LinkResult["state"] | "made" };
@@ -83,13 +84,14 @@ export function CauseEffectLinkList({
         return (
           <li
             className={cn(
-              "flex items-start gap-2 rounded-xl border px-3 py-2 text-sm",
+              ACTIVITY_CARD_CLASS,
+              "flex items-start gap-2 text-sm",
+              link.state === "correct" && cn(ACTIVITY_LINE_CLASS.right, "bg-success/10"),
+              link.state === "incorrect" && cn(ACTIVITY_LINE_CLASS.wrong, "bg-destructive/10"),
               link.state === "missed" && "border-dashed",
             )}
             key={`${link.from}-${link.to}`}
           >
-            <StateIcon state={link.state} />
-
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">
               <p className="flex flex-wrap items-center gap-x-1.5 font-medium">
                 <span>{labelOf(link.from)}</span>
@@ -111,6 +113,8 @@ export function CauseEffectLinkList({
                 </p>
               )}
             </div>
+
+            <StateIcon state={link.state} />
 
             {canRemove && (
               <Button

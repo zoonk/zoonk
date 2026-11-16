@@ -23,7 +23,7 @@ const ARC_STATES: readonly ArcState[] = ["correct", "incorrect", "made", "missed
 const ARC_CLASS: Record<ArcState, string> = {
   correct: "text-success-text",
   incorrect: "text-destructive-text",
-  made: "text-viz-highlight",
+  made: "text-foreground",
   missed: "text-success-text/70",
   pending: "text-viz-highlight/70",
 };

@@ -1,10 +1,16 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
-import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
+import {
+  ACTIVITY_CARD_CLASS,
+  ACTIVITY_LINE_CLASS,
+  ActivityCanvas,
+  ActivityTextAlternative,
+} from "../_components/activity-canvas";
 import { ActivitySortableList } from "../_components/activity-sortable-list";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { type StepResult, shuffleSteps, stepResults } from "./process-order-model";
@@ -72,11 +78,12 @@ function OrderedStep({
   return (
     <li
       className={cn(
-        "flex gap-3 rounded-xl border px-3 py-2.5 text-sm leading-snug",
+        ACTIVITY_CARD_CLASS,
+        "flex gap-3 text-sm leading-snug",
         // Two lines, their gap, the text's top room, the padding and the border.
         keepsRoom && "min-h-[calc(2lh+2rem)]",
-        state === "correct" && "border-success/50 bg-success/5",
-        state === "incorrect" && "border-destructive/50 bg-destructive/5",
+        state === "correct" && cn(ACTIVITY_LINE_CLASS.right, "bg-success/10"),
+        state === "incorrect" && cn(ACTIVITY_LINE_CLASS.wrong, "bg-destructive/10"),
       )}
     >
       <StepMarks icon={step.icon} position={position} state={state ?? null} />
@@ -94,6 +101,12 @@ function OrderedStep({
           </p>
         )}
       </div>
+      {state === "correct" && (
+        <Check aria-hidden="true" className="text-success-text size-4 shrink-0 self-center" />
+      )}
+      {state === "incorrect" && (
+        <X aria-hidden="true" className="text-destructive-text size-4 shrink-0 self-center" />
+      )}
     </li>
   );
 }
