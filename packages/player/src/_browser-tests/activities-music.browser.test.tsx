@@ -112,6 +112,17 @@ async function pickFret({ position, string }: { position: string; string: string
     .click();
 }
 
+/** The middle of what a key shows at its foot: its note's mark, or its letter. */
+function noteCenter(name: string) {
+  const box = pianoKey(name).element().querySelector("span")?.getBoundingClientRect();
+
+  if (!box) {
+    return null;
+  }
+
+  return { x: Math.round(box.left + box.width / 2), y: Math.round(box.top + box.height / 2) };
+}
+
 function keySpans() {
   return [...document.querySelectorAll("[data-slot='piano-key']")].map((key) => {
     const { left, width } = key.getBoundingClientRect();
@@ -156,6 +167,16 @@ describe("music activities", () => {
     await expectVerdict("Correct!");
     await expect.element(page.getByText("C minor", { exact: true })).toBeVisible();
     await expect.element(page.getByText("C, E♭, G")).toBeVisible();
+  });
+
+  it("keyboard: pressing C puts its mark where its letter was, so nothing moves", async () => {
+    openActivity({ content: byEar, template: "keyboardFretboard" });
+    await expect.element(pianoKey("C")).toHaveAttribute("aria-pressed", "false");
+    const letter = noteCenter("C");
+
+    await pianoKey("C").click();
+    await expect.element(pianoKey("C")).toHaveAttribute("aria-pressed", "true");
+    expect(noteCenter("C")).toStrictEqual(letter);
   });
 
   it("keyboard: adding a note without taking one away isn't minor", async () => {

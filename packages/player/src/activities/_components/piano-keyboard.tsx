@@ -11,6 +11,8 @@ const PERCENT = 100;
 const BLACK_KEY_SHARE = 0.62;
 // A key keeps room for its note's mark, which grows with the text size.
 const NARROWEST_WHITE_KEY_REM = 2.25;
+// A note's mark, ring included, fits inside its key, and an unmarked key's letter sits where its mark would.
+const MARK_BOX_CLASS = "size-[min(--spacing(7),calc(100cqw-4px))]";
 
 type PianoKey = { isBlack: boolean; midi: number; whiteIndex: number };
 
@@ -110,13 +112,19 @@ export function PianoKeyboard({
               {/* Keys keep their shade in dark mode, so a ring in the page's color sets a mark off a key of its shade. */}
               {mark && (
                 <NoteMark
-                  className="ring-background size-[min(--spacing(7),100cqw)] ring-2"
+                  className={cn("ring-background ring-2", MARK_BOX_CLASS)}
                   kind={mark}
                   label={nameOf(key.midi)}
                 />
               )}
               {!mark && key.midi % OCTAVE === 0 && (
-                <span aria-hidden="true" className="text-xs font-medium text-neutral-600">
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "flex items-center justify-center text-xs font-medium text-neutral-600",
+                    MARK_BOX_CLASS,
+                  )}
+                >
                   {nameOf(key.midi)}
                 </span>
               )}
