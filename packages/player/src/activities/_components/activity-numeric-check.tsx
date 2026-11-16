@@ -44,7 +44,9 @@ function numericTone(isCorrect: boolean | null) {
     return null;
   }
 
-  return isCorrect ? ANSWER_TONE.right : ANSWER_TONE.wrong;
+  return isCorrect
+    ? cn(ANSWER_TONE.right, "border-success")
+    : cn(ANSWER_TONE.wrong, "border-destructive");
 }
 
 export function ActivityNumericCheck({
