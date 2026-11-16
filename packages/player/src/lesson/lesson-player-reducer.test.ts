@@ -1701,12 +1701,12 @@ describe(lessonPlayerReducer, () => {
 
     const confirmed = lessonPlayerReducer(state, {
       attemptId: "quiz-attempt",
-      result: { ...stepResult(false), savedMistake: true },
+      savedMistake: true,
       stepId: "quiz",
       type: "checkConfirmed",
     });
 
-    expect(confirmed.results.quiz?.savedMistake).toBe(true);
+    expect(confirmed.results.quiz).toMatchObject({ savePending: false, savedMistake: true });
   });
 
   it("keeps a newer answer's verdict when the server's word on an earlier answer comes late", () => {
@@ -1719,7 +1719,7 @@ describe(lessonPlayerReducer, () => {
 
     const late = lessonPlayerReducer(again, {
       attemptId: "first",
-      result: { ...stepResult(false), savedMistake: true },
+      savedMistake: true,
       stepId: "quiz",
       type: "checkConfirmed",
     });

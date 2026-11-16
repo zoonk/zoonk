@@ -31,6 +31,8 @@ export type LessonStepResult = LessonStepCheckResult & {
   answerText: string | null;
   attemptId?: string;
   heard: SpokenAnswerHeard | null;
+  /** A verdict given on the device whose save the server hasn't answered yet. */
+  savePending?: boolean;
 };
 
 type LessonPlayerTier = "free" | "guest" | "plus";

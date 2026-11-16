@@ -4,14 +4,21 @@ import { FeedbackNote } from "@zoonk/learn/feedback-panel";
 import { useExtracted } from "next-intl";
 import { createContext } from "react";
 
-export type LessonResultNext = { savedMistake: boolean; willReturn: boolean };
+/**
+ * `savePending`: the server hasn't said yet whether it saved this miss, so the note keeps the saved
+ * line's room, unseen, and its arrival moves nothing.
+ */
+export type LessonResultNext = { savePending: boolean; savedMistake: boolean; willReturn: boolean };
 
 /** What a lesson adds to the feedback card of a step that draws its own (an activity). */
 export const OwnResultNotesContext = createContext<
   (LessonResultNext & { hyperdriveStreak: number | null }) | null
 >(null);
 
-function ResultNextText({ savedMistake, willReturn }: LessonResultNext) {
+function ResultNextText({
+  savedMistake,
+  willReturn,
+}: Pick<LessonResultNext, "savedMistake" | "willReturn">) {
   const t = useExtracted();
 
   if (savedMistake && willReturn) {
@@ -43,24 +50,39 @@ export function HyperdriveStreak({ count }: { count: number }) {
   );
 }
 
-export function LessonResultNote({ savedMistake, willReturn }: LessonResultNext) {
-  if (!savedMistake && !willReturn) {
+function ResultNext({ savePending, savedMistake, willReturn }: LessonResultNext) {
+  if (savePending) {
+    return (
+      <span className="invisible">
+        <ResultNextText savedMistake willReturn={willReturn} />
+      </span>
+    );
+  }
+
+  return <ResultNextText savedMistake={savedMistake} willReturn={willReturn} />;
+}
+
+function hasResultNext({ savePending, savedMistake, willReturn }: LessonResultNext): boolean {
+  return savePending || savedMistake || willReturn;
+}
+
+export function LessonResultNote(next: LessonResultNext) {
+  if (!hasResultNext(next)) {
     return null;
   }
 
   return (
     <FeedbackNote>
-      <ResultNextText savedMistake={savedMistake} willReturn={willReturn} />
+      <ResultNext {...next} />
     </FeedbackNote>
   );
 }
 
 export function LessonResultNotes({
   hyperdriveStreak,
-  savedMistake,
-  willReturn,
+  ...next
 }: LessonResultNext & { hyperdriveStreak: number | null }) {
-  const hasNext = savedMistake || willReturn;
+  const hasNext = hasResultNext(next);
 
   if (hyperdriveStreak === null && !hasNext) {
     return null;
@@ -69,8 +91,8 @@ export function LessonResultNotes({
   return (
     <FeedbackNote data-slot="lesson-result-notes">
       {hyperdriveStreak !== null && <HyperdriveStreak count={hyperdriveStreak} />}
-      {hyperdriveStreak !== null && hasNext && " · "}
-      {hasNext && <ResultNextText savedMistake={savedMistake} willReturn={willReturn} />}
+      {hyperdriveStreak !== null && hasNext && !next.savePending && " · "}
+      {hasNext && <ResultNext {...next} />}
     </FeedbackNote>
   );
 }

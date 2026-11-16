@@ -83,7 +83,7 @@ function confirmCheck(
     ...state,
     results: {
       ...state.results,
-      [action.stepId]: { ...current, savedMistake: action.result.savedMistake },
+      [action.stepId]: { ...current, savePending: false, savedMistake: action.savedMistake },
     },
   };
 }
