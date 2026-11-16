@@ -57,6 +57,15 @@ function useChartInspector(): ChartInspectorContextValue {
   return context;
 }
 
+/** A chart may hide some of its points (a phone's shorter calendar); one that isn't drawn gives way to the first that is. */
+function getFirstShownPoint(group: Element): InspectedPoint | null {
+  const shown = [...group.querySelectorAll(`[${POINT_ATTRIBUTE}]`)].find((point) =>
+    point.checkVisibility(),
+  );
+
+  return shown ? getEventPoint(shown) : null;
+}
+
 function getEventPoint(target: EventTarget | null): InspectedPoint | null {
   if (!(target instanceof Element)) {
     return null;
@@ -121,11 +130,17 @@ export function ChartInspectorPoints({
   const { activeIndex, close, details, groupRef, inspect, liveRegionId } = useChartInspector();
 
   const inspectIndex = (group: Element, index: number) => {
-    const anchor = group.querySelector(`[${POINT_ATTRIBUTE}="${index}"]`);
+    const target = group.querySelector(`[${POINT_ATTRIBUTE}="${index}"]`);
 
-    if (anchor?.checkVisibility()) {
-      anchor.scrollIntoView({ block: "nearest", inline: "nearest" });
-      inspect({ anchor, index });
+    if (!target) {
+      return;
+    }
+
+    const point = target.checkVisibility() ? getEventPoint(target) : getFirstShownPoint(group);
+
+    if (point) {
+      point.anchor.scrollIntoView({ block: "nearest", inline: "nearest" });
+      inspect(point);
     }
   };
 
