@@ -836,9 +836,9 @@ msgid "No answer was saved."
 msgstr "Cevap kaydedilmedi."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "aqjWQg"
-msgid "Questions you asked in lessons that have since changed."
-msgstr "Sonradan değişen derslerde sorduğun sorular."
+msgctxt "yfq070"
+msgid "Lessons you asked about were updated since. Your questions and their answers are kept here."
+msgstr "Hakkında soru sorduğun dersler daha sonra güncellendi. Soruların ve cevapları burada saklanıyor."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"

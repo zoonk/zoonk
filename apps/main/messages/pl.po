@@ -836,9 +836,9 @@ msgid "No answer was saved."
 msgstr "Nie zapisano odpowiedzi."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "aqjWQg"
-msgid "Questions you asked in lessons that have since changed."
-msgstr "Twoje pytania z lekcji, które później się zmieniły."
+msgctxt "yfq070"
+msgid "Lessons you asked about were updated since. Your questions and their answers are kept here."
+msgstr "Od czasu zadania tych pytań lekcje zostały zaktualizowane. Tutaj znajdziesz swoje pytania i odpowiedzi na nie."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
