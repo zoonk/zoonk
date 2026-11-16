@@ -157,8 +157,7 @@ data class SpokenText(
     val spoken: String? = null,
 )
 
-/** [segments]' numbers as the learner's language prints them ([typesetNumbers]); math and code keep theirs. */
-fun typeset(
+private fun typeset(
     segments: List<RichSegment>,
     locale: Locale,
 ): List<RichSegment> =
@@ -166,6 +165,18 @@ fun typeset(
         when (it.kind) {
             SegmentKind.Math, SegmentKind.DisplayMath, SegmentKind.Code -> it
             else -> it.copy(text = typesetNumbers(locale, it.text))
+        }
+    }
+
+/** [segments]' money as the learner's money format writes it ([typesetMoney]); math and code keep theirs. */
+fun typesetMoney(
+    segments: List<RichSegment>,
+    locale: Locale,
+): List<RichSegment> =
+    segments.map {
+        when (it.kind) {
+            SegmentKind.Math, SegmentKind.DisplayMath, SegmentKind.Code -> it
+            else -> it.copy(text = typesetMoney(locale, it.text))
         }
     }
 

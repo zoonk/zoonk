@@ -24,7 +24,7 @@ import com.zoonk.android.ui.richtext.TableAlign
 import com.zoonk.android.ui.richtext.parseRichInline
 import com.zoonk.android.ui.richtext.readMarkdownTable
 import com.zoonk.android.ui.richtext.richText
-import com.zoonk.android.ui.richtext.typeset
+import com.zoonk.android.ui.richtext.typesetMoney
 
 internal sealed interface ItemBlock {
     data class Paragraph(
@@ -50,19 +50,19 @@ fun ItemText(
     style: TextStyle = LocalTextStyle.current,
 ) {
     val locale = currentLocale()
-    // Numbers set as the readouts and answers beside them are, so money and units read one way on the screen.
+    // Money set as the answers beside it are, so it reads one way on the screen; a question's other digits stay as written.
     val blocks =
         remember(text, locale) {
             parseItemText(text).map { block ->
                 when (block) {
                     is ItemBlock.Paragraph -> {
-                        block.copy(segments = typeset(block.segments, locale))
+                        block.copy(segments = typesetMoney(block.segments, locale))
                     }
 
                     is ItemBlock.Table -> {
                         block.copy(
-                            header = block.header.map { typeset(it, locale) },
-                            rows = block.rows.map { row -> row.map { typeset(it, locale) } },
+                            header = block.header.map { typesetMoney(it, locale) },
+                            rows = block.rows.map { row -> row.map { typesetMoney(it, locale) } },
                         )
                     }
                 }

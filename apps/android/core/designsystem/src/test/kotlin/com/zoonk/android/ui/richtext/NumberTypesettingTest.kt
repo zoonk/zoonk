@@ -53,6 +53,13 @@ class NumberTypesettingTest {
     }
 
     @Test
+    fun aQuestionsMoneyIsSetWhileItsCodesAndCountsKeepTheirDigits() {
+        assertEquals("ZIP 94103, ID 123456789: R$80", typesetMoney(english, "ZIP 94103, ID 123456789: R$${NBSP}80"))
+        assertEquals("94103", typesetMoney(english, "94103"))
+        assertEquals("R$${NBSP}80", typesetMoney(portuguese, "R$ 80"))
+    }
+
+    @Test
     fun leavesDecimalsCodesYearsAndNumbersBeforeLongerWordsAlone() {
         val text = "1,5 mais 12345,67 no CEP 01310-100 em 2026 com 5 pessoas e ID 123456789a"
         assertEquals(text, typesetNumbers(portuguese, text))

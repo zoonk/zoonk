@@ -141,12 +141,24 @@ internal fun typesetNumbers(
 ): String {
     val grouping = NumberFormat.getIntegerInstance(locale).apply { isGroupingUsed = true }
 
-    return text
-        .replace(LONG_NUMBER) { number ->
-            if (isPostalCode(text.substring(0, number.range.first))) number.value else grouping.format(number.value.toBigInteger())
-        }.replace(NUMBER_THEN_UNIT, NBSP)
-        .replace(CURRENCY_THEN_NUMBER) { match ->
-            val sign = match.groupValues[1]
-            sign + (moneySignGap(locale, sign) ?: NBSP)
-        }
+    return typesetMoney(
+        locale,
+        text
+            .replace(LONG_NUMBER) { number ->
+                if (isPostalCode(text.substring(0, number.range.first))) number.value else grouping.format(number.value.toBigInteger())
+            }.replace(NUMBER_THEN_UNIT, NBSP),
+    )
 }
+
+/**
+ * Only money set the way the learner's money format writes it, for a question's own text, whose other digits
+ * (a code in a table, an ID, a count it asks about) stay as written.
+ */
+fun typesetMoney(
+    locale: Locale,
+    text: String,
+): String =
+    text.replace(CURRENCY_THEN_NUMBER) { match ->
+        val sign = match.groupValues[1]
+        sign + (moneySignGap(locale, sign) ?: NBSP)
+    }
