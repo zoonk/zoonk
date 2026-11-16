@@ -105,7 +105,7 @@ class PlanExamOverTestActivity : ComponentActivity() {
                     Box {
                         // As the Plan screen does around its page.
                         VisitOf(PlanExamOverTest.viewModel.visit)
-                        PlanEvents(PlanExamOverTest.viewModel, navigator, PlanExamOverTest.app.snackbars)
+                        PlanEvents(PlanExamOverTest.viewModel, PlanExamOverTest.app.snackbars)
                         PlanPage(
                             PlanExamOverTest.page,
                             PlanExamOverTest.app,
