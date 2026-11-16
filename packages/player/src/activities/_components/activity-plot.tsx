@@ -75,7 +75,7 @@ export function ActivityPlot({
       {xLabel && (
         <p
           className="text-muted-foreground text-right text-xs text-balance"
-          style={{ marginInlineEnd: inset.right, marginInlineStart: inset.left }}
+          style={{ marginLeft: inset.left, marginRight: inset.right }}
         >
           {xLabel}
         </p>
