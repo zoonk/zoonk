@@ -35,6 +35,14 @@ msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "Poprawna odpowiedź"
 
+#: src/_components/brain-power-amount.tsx
+#: src/language/conversation/call-stars-step.tsx
+#: src/missions/brain-power-reward.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "Moc Umysłu"
+
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/onboarding/steps/reveal-days.tsx
@@ -500,7 +508,6 @@ msgstr "Wkrótce"
 
 #: src/_components/lesson-list.tsx
 #: src/appearance/appearance-screen.tsx
-#: src/journey/preparation/use-preparation-parts.ts
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/plan-diff/use-change-rows.ts
 msgctxt "iqLF8D"
@@ -511,7 +518,6 @@ msgstr "Lekcje"
 #: src/_utils/count-of.ts
 #: src/chapter/chapter-screen.tsx
 #: src/journey/preparation/use-preparation-parts.ts
-#: src/language/conversation/call-stars-step.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/syllabus/subject-aside.tsx
 #: src/syllabus/subject-chapters.tsx
@@ -1613,6 +1619,7 @@ msgid "Completed"
 msgstr "Data ukończenia"
 
 #: src/certificates/certificate-details.tsx
+#: src/journey/preparation/use-preparation-parts.ts
 msgctxt "mrBiB2"
 msgid "Lessons studied"
 msgstr "Przerobione lekcje"
@@ -2011,6 +2018,11 @@ msgid "No certificates yet"
 msgstr "Nie masz jeszcze certyfikatów"
 
 #: src/certificates/certificates-screen.tsx
+msgctxt "MJxPJK"
+msgid "They show up here when you earn them."
+msgstr "Pojawią się tutaj, gdy je zdobędziesz."
+
+#: src/certificates/certificates-screen.tsx
 msgctxt "GTvW0W"
 msgid "Your next certificate"
 msgstr "Twój kolejny certyfikat"
@@ -2141,11 +2153,6 @@ msgstr "{lessons, plural, =0 {Rewanż jutro.} one {Rewanż jutro, po # krótkiej
 msgctxt "UIUcbm"
 msgid "{count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, one {# pytanie} many {# pytań} other {# pytania}}"
-
-#: src/challenge/challenge-intro-parts.tsx
-msgctxt "moNgIg"
-msgid "+{points} Brain Power"
-msgstr "+{points} pkt Mocy Umysłu"
 
 #. The name of a study step: a second go at the Trickster's questions.
 #: src/challenge/challenge-intro-parts.tsx
@@ -2336,13 +2343,6 @@ msgctxt "i2YWkq"
 msgid "What he'll ask"
 msgstr "O co zapyta"
 
-#: src/challenge/challenge-topics.tsx
-#: src/syllabus/subject-matrix.tsx
-#: src/syllabus/subject-screen.tsx
-msgctxt "eNbJHf"
-msgid "{count, plural, one {# topic} other {# topics}}"
-msgstr "{count, plural, one {# temat} few {# tematy} many {# tematów} other {# tematu}}"
-
 #: src/chapter/chapter-header.tsx
 #: src/mind-maps/mind-map-index-rows.tsx
 msgctxt "sIR8OK"
@@ -2402,7 +2402,6 @@ msgid "Topics"
 msgstr "Tematy"
 
 #: src/chapter/chapter-screen.tsx
-#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/use-short-plan.ts
@@ -3215,6 +3214,11 @@ msgctxt "rUq4jt"
 msgid "The case"
 msgstr "Opis sprawy"
 
+#: src/essay/essay-prompt.tsx
+msgctxt "2rkYNm"
+msgid "What to write"
+msgstr "Temat wypracowania"
+
 #. The grade of the learner's last essay draft.
 #: src/essay/essay-rewrite-guide.tsx
 #: src/essay/essay-screen.tsx
@@ -3368,6 +3372,14 @@ msgstr "Przybory dozwolone przez nauczyciela, np. długopis lub kalkulator"
 msgctxt "SI6y4w"
 msgid "{date} · {time}"
 msgstr "{date} · {time}"
+
+#: src/exam/exam-labels.tsx
+#: src/exam/exam-screen.tsx
+#: src/journey/phase-when.tsx
+#: src/plan/plan-date-text.tsx
+msgctxt "7KwTGn"
+msgid "~{date}"
+msgstr "~{date}"
 
 #: src/exam/exam-map-section.tsx
 msgctxt "lIEwYT"
@@ -3681,6 +3693,16 @@ msgstr "Aby zdać: {score} lub więcej."
 msgctxt "XffT_n"
 msgid "How the score works"
 msgstr "Jak oblicza się wynik"
+
+#: src/exam/exam-screen.tsx
+msgctxt "QGnOZU"
+msgid "{date} at {time}"
+msgstr "{date} o {time}"
+
+#: src/exam/exam-screen.tsx
+msgctxt "yft85U"
+msgid "Starts at {time}"
+msgstr "Początek o {time}"
 
 #: src/exam/exam-screen.tsx
 msgctxt "Akn-bs"
@@ -4263,10 +4285,14 @@ msgid "Writing the lesson"
 msgstr "Przygotowujemy lekcję"
 
 #: src/generation/lesson-generation-copy.ts
-#: src/generation/use-generation-copy.ts
-msgctxt "gGJukf"
-msgid "Writing screen {number}…"
-msgstr "Przygotowujemy ekran {number}…"
+msgctxt "EVqGhj"
+msgid "Writing the explanations…"
+msgstr "Przygotowujemy wyjaśnienia…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "GHfGPv"
+msgid "Writing the questions…"
+msgstr "Przygotowujemy pytania…"
 
 #: src/generation/lesson-generation-copy.ts
 #: src/generation/use-generation-copy.ts
@@ -4419,9 +4445,9 @@ msgid "Fitting the plan into your days"
 msgstr "Dopasowujemy plan do twoich dni nauki"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "0EAw5g"
-msgid "Finding lessons in the Library…"
-msgstr "Szukamy lekcji w Bibliotece…"
+msgctxt "YSOHV2"
+msgid "Finding lessons for your goal…"
+msgstr "Dobieramy lekcje do twojego celu…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "eO1ana"
@@ -4491,9 +4517,9 @@ msgid "Choosing your courses"
 msgstr "Dobieramy dla ciebie kursy"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "JRrpUO"
-msgid "Finding courses in the Library…"
-msgstr "Szukamy kursów w Bibliotece…"
+msgctxt "tHDEoY"
+msgid "Finding courses for your goal…"
+msgstr "Dobieramy kursy do twojego celu…"
 
 #: src/generation/use-generation-copy.ts
 #: src/language/level-test/level-test-preparing.tsx
@@ -4556,6 +4582,16 @@ msgstr "Czytamy twoje pytanie…"
 msgctxt "H2ZUHF"
 msgid "Writing about 5 short screens"
 msgstr "Przygotowujemy krótkie treści na około 5 ekranów"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "RyrI0Q"
+msgid "Writing the explanation…"
+msgstr "Przygotowujemy wyjaśnienie…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "xTdhld"
+msgid "Adding an example…"
+msgstr "Dodajemy przykład…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "hSi5Cg"
@@ -4661,9 +4697,9 @@ msgid "Archive this goal"
 msgstr "Przenieś ten cel do archiwum"
 
 #: src/journey/goal-actions.tsx
-msgctxt "rhh0AT"
-msgid "Resume your {goal} goal?"
-msgstr "Wznowić realizację celu: {goal}?"
+msgctxt "tzm8m7"
+msgid "Resume this goal?"
+msgstr "Wrócić do tego celu?"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/resume-goal-bar.tsx
@@ -4672,14 +4708,14 @@ msgid "Resume"
 msgstr "Wznów"
 
 #: src/journey/goal-actions.tsx
-msgctxt "9DL2qt"
-msgid "Archive your {goal} goal?"
-msgstr "Zarchiwizować cel: {goal}?"
+msgctxt "cenJlY"
+msgid "Archive this goal?"
+msgstr "Zarchiwizować ten cel?"
 
 #: src/journey/goal-actions.tsx
-msgctxt "jrD9B8"
-msgid "It leaves your goals and its plan stops. What you learned stays in your progress."
-msgstr "Cel znika z twojej listy celów, a jego plan zostaje zatrzymany. Twoje postępy w nauce zostają zachowane."
+msgctxt "T4r1Wn"
+msgid "Archived goals leave Today and the Plan. What you learned stays in your progress."
+msgstr "Zarchiwizowane cele znikają z zakładek Dziś i Plan. Zachowujesz postępy w nauce."
 
 #: src/journey/goal-actions.tsx
 msgctxt "hrgo-E"
@@ -4688,9 +4724,9 @@ msgstr "Przenieś do archiwum"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/journey-planless.tsx
-msgctxt "T4rFKd"
-msgid "Your {goal} goal is paused"
-msgstr "Twój cel jest wstrzymany: {goal}"
+msgctxt "98OHZH"
+msgid "This goal is paused"
+msgstr "Ten cel jest wstrzymany"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/journey-planless.tsx
@@ -4991,12 +5027,6 @@ msgctxt "JQlKi_"
 msgid "Ends {date}"
 msgstr "Koniec: {date}"
 
-#: src/journey/phase-when.tsx
-#: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "~{date}"
-
 #: src/journey/plan-roadmap.tsx
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
@@ -5074,9 +5104,19 @@ msgid "How it's calculated"
 msgstr "Zobacz, jak to obliczamy"
 
 #: src/journey/preparation/use-preparation-parts.ts
+msgctxt "m_Rw4I"
+msgid "Lessons you already knew"
+msgstr "Lekcje znane wcześniej"
+
+#: src/journey/preparation/use-preparation-parts.ts
 msgctxt "DVOdy2"
 msgid "Topics studied"
 msgstr "Przerobione tematy"
+
+#: src/journey/preparation/use-preparation-parts.ts
+msgctxt "6dJGDZ"
+msgid "Topics you already knew"
+msgstr "Tematy znane wcześniej"
 
 #: src/journey/preparation/use-preparation-parts.ts
 #: src/mock/mock-result-view.tsx
@@ -5268,6 +5308,7 @@ msgid "Paused"
 msgstr "Wstrzymany"
 
 #: src/journey/schedule-details.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "4IVFWL"
 msgid "Go to Today"
 msgstr "Przejdź do zakładki Dziś"
@@ -5713,13 +5754,6 @@ msgstr "{stars, plural, =0 {# z 3 gwiazdek} other {# z 3 gwiazdek}}"
 msgctxt "XHLYdJ"
 msgid "Goals"
 msgstr "Cele"
-
-#: src/language/conversation/call-stars-step.tsx
-#: src/missions/brain-power-reward.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
-msgstr "Moc Umysłu"
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"
@@ -6561,9 +6595,14 @@ msgid "Say it again"
 msgstr "Powiedz to jeszcze raz"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "FLqp3G"
-msgid "No words to say again today."
-msgstr "Dziś nie ma słów do powtórzenia na głos."
+msgctxt "O6SjzK"
+msgid "No words to say again today"
+msgstr "Dziś nie ma słów do powtórki"
+
+#: src/language/pronunciation/pronunciation-review-screen.tsx
+msgctxt "E-Uxmi"
+msgid "Words that were hard to say come back here to practice."
+msgstr "Słowa, które trudno było powiedzieć, wracają tu do powtórki."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "c3Fawv"
@@ -7469,6 +7508,7 @@ msgctxt "aGylUw"
 msgid "You earned +{points} Brain Power."
 msgstr "Udało ci się zdobyć +{points} pkt Mocy Umysłu."
 
+#. Under the title Today's missions: how many of today's missions are done.
 #: src/missions/missions-card.tsx
 msgctxt "deISVW"
 msgid "{done} of {total} done"
@@ -7913,9 +7953,9 @@ msgid "This one doesn't count."
 msgstr "Ten egzamin się nie liczy."
 
 #: src/mock/mock-frame.tsx
-msgctxt "UIkt52"
-msgid "Not saved yet · retrying"
-msgstr "Jeszcze nie zapisano · próbujemy ponownie"
+msgctxt "g2F3WK"
+msgid "Your answer isn't saved yet"
+msgstr "Twoja odpowiedź nie jest jeszcze zapisana"
 
 #: src/mock/mock-frame.tsx
 msgctxt "gOsgur"
@@ -8559,6 +8599,11 @@ msgstr "{number} z {total}"
 msgctxt "bSCV9J"
 msgid "Flag"
 msgstr "Oznacz"
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "sflabU"
+msgid "Remove flag"
+msgstr "Usuń oznaczenie"
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -12569,6 +12614,18 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "Nowa lekcja"
 
+#. Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts".
+#: src/session/use-block-copy.ts
+msgctxt "60PbK5"
+msgid "Bonus practice: {topic}"
+msgstr "Dodatkowe ćwiczenia: {topic}"
+
+#. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
+#: src/session/use-block-copy.ts
+msgctxt "YGPuF7"
+msgid "Practice: {topic}"
+msgstr "Ćwiczenia: {topic}"
+
 #. Extra practice the learner added. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
 #: src/session/use-block-copy.ts
 msgctxt "7zIxxl"
@@ -12809,6 +12866,11 @@ msgid "{count, plural, one {Also in # exam} other {Also in # exams}}"
 msgstr "{count, plural, one {Także na # egzaminie} other {Także na # egzaminach}}"
 
 #: src/syllabus/subject-aside.tsx
+msgctxt "wGdj4O"
+msgid "Counts your answers in lessons, practice and tests."
+msgstr "Uwzględnia twoje odpowiedzi z lekcji, ćwiczeń i testów."
+
+#: src/syllabus/subject-aside.tsx
 msgctxt "_7RyZo"
 msgid "Next date"
 msgstr "Najbliższy termin"
@@ -12837,6 +12899,12 @@ msgstr "{count, plural, one {Znasz już # rozdział} few {Znasz już # rozdział
 msgctxt "oUXyHJ"
 msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
 msgstr "{done, plural, one {# rozdział ukończony} few {# rozdziały ukończone} other {# rozdziałów ukończonych}}, {known, plural, other {# już znasz}}"
+
+#: src/syllabus/subject-matrix.tsx
+#: src/syllabus/subject-screen.tsx
+msgctxt "eNbJHf"
+msgid "{count, plural, one {# topic} other {# topics}}"
+msgstr "{count, plural, one {# temat} few {# tematy} many {# tematów} other {# tematu}}"
 
 #: src/syllabus/subject-matrix.tsx
 msgctxt "f1GnB3"

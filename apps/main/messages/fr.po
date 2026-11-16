@@ -994,11 +994,6 @@ msgid "Nothing is planned until you resume it."
 msgstr "Rien n’est prévu tant que tu ne reprends pas cet objectif."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "lEE47Z"
-msgid "Your {goal} goal is paused."
-msgstr "Ton objectif {goal} est en pause."
-
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "ND345k"
 msgid "This goal is paused."
 msgstr "Cet objectif est en pause."
@@ -2652,6 +2647,11 @@ msgstr "Ta leçon est prête"
 msgctxt "_LfrbS"
 msgid "We couldn't get this lesson ready"
 msgstr "Nous n’avons pas pu préparer cette leçon"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "UjSkiv"
+msgid "Getting it ready takes a few minutes."
+msgstr "La préparation prend quelques minutes."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "3x95yN"
