@@ -132,7 +132,7 @@ function EmailListMessage({
   return (
     <MailboxListItem>
       <MailboxMessageButton aria-pressed={isSelected} onClick={() => onSelect(email.id)}>
-        <span className="line-clamp-2 text-sm font-semibold tracking-[-0.01em]">
+        <span className="line-clamp-2 text-sm font-semibold tracking-[-0.01em] text-balance">
           {email.subject}
         </span>
         <time
