@@ -142,7 +142,7 @@ export const fieldMapViewSchema = z
       .object({
         emphasized: z
           .boolean()
-          .meta({ description: "The goal is to refresh what the learner knew: lead with this" }),
+          .meta({ description: "The goal is to refresh what the learner knew" }),
         skills: z
           .array(
             z.object({

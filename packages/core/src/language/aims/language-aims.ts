@@ -112,7 +112,7 @@ export type LanguageAimView = {
   aim: CefrLevel | null;
   /** The aim as the rest of the plan names it, half bands included ("B1+"). */
   label: string | null;
-  /** The language the aim is a level of, which names it ("English level to reach"). */
+  /** The language the aim is a level of. */
   targetLanguage: string | null;
   /** The aims above the learner's level, lowest first. */
   choices: LanguageAimChoice[];

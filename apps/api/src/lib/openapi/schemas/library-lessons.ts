@@ -44,9 +44,7 @@ const stepCitationSchema = z
     z.object({
       checkedAt: z.iso
         .datetime()
-        .meta({
-          description: 'When the document was last fetched and found current ("Checked Sep 2026")',
-        }),
+        .meta({ description: "When the document was last fetched and found current" }),
       kind: z.literal("source"),
       publisher: z.string().nullable(),
       title: z.string(),
@@ -57,7 +55,7 @@ const stepCitationSchema = z
   .nullable()
   .meta({
     description:
-      "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+      "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
   });
 
 const screenPictureSchema = z
@@ -201,7 +199,7 @@ export const playableLibraryLessonResponseSchema = z
           .nullable()
           .meta({
             description:
-              "The lesson map, shown as its own screen after the last one (except after testing out) and from the lesson's menu once it ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
+              "The lesson map, which comes after the last screen (except after testing out) and stays in the lesson's menu once the lesson ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
           }),
         targetLanguage: z.string().nullable(),
       }),

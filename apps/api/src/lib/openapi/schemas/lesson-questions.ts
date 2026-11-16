@@ -90,7 +90,7 @@ const earlierQuestionSchema = z
   })
   .meta({
     description:
-      "A question the learner asked about a lesson from an earlier version of a course, which no longer exists: shown as read-only history, with no link",
+      "A question the learner asked about a lesson from an earlier version of a course, which no longer exists: history that can't be continued, with no link",
     id: "EarlierQuestion",
   });
 

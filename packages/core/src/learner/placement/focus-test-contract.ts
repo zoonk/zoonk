@@ -16,7 +16,9 @@ const uncheckedPartSchema = z
 export type UncheckedPart = z.infer<typeof uncheckedPartSchema>;
 
 const subjectNameShape = {
-  key: z.string().meta({ description: "Identifies the subject in lists; never shown" }),
+  key: z
+    .string()
+    .meta({ description: "Identifies the subject in lists; `name` is what the subject is called" }),
   name: z.string().meta({ description: "The subject as the exam's notice names it" }),
   shortName: z
     .string()

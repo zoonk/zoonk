@@ -37,7 +37,7 @@ export const languageAimViewSchema = z
       .nullable()
       .meta({
         description:
-          'The aim as the rest of the plan names it, half bands included ("B1+"), where `aim` holds a whole band; a picked choice is named the same way; null when none is set yet',
+          'The aim as the rest of the plan names it, half bands included ("B1+"), where `aim` holds a whole band; null when none is set yet',
       }),
     targetLanguage: z
       .string()

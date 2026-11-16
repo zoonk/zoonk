@@ -230,7 +230,7 @@ export const examViewResponseSchema = z
       .nullable()
       .meta({
         description:
-          "How the learner's mocks went over time: each one's score (the latest twenty, oldest first), each subject's trend, what got better and what still needs work. Null before the first finished mock, and when mocks need Plus (`mocksRequirePlus`)",
+          "How the learner's mocks went over time: each one's score (the latest twenty, oldest first), each subject's trend, what got better and what still needs work. Null before the first finished mock, and null when mocks need Plus and the learner's plan doesn't include them (`mocksRequirePlus`)",
       }),
     result: examResultResponseSchema.nullable(),
     runningMocks: z
@@ -274,7 +274,7 @@ export const examViewResponseSchema = z
       )
       .meta({
         description:
-          "The mocks the learner started and hasn't finished: the one taken any time first (GET /v1/goals/{goalId}/mocks `running` continues it), then the plan's weekly one, which can run beside it. Lead the exam's mocks with them, with what's answered and the time left, each opening its own sitting. Empty when none is running; one whose time ran out while the learner was away isn't",
+          "The mocks the learner started and hasn't finished: the one taken any time first (GET /v1/goals/{goalId}/mocks `running` continues it), then the plan's weekly one, which can run beside it, each with what's answered, the time left and its own sitting. Empty when none is running; one whose time ran out while the learner was away isn't",
       }),
     scoring: examScoringSchema,
     sessionsDone: z.number().int().min(0),
@@ -282,7 +282,7 @@ export const examViewResponseSchema = z
       .nullable()
       .meta({
         description:
-          "DELE, DELF or DALF, Goethe-Zertifikat and Cambridge English goals: the exam's speaking paper, each task started with POST /v1/language-conversations (kind examSpeaking) and run as a live call with the AI as examiner or partner. Tasks come with Plus (`access`). Null for other exams",
+          "DELE, DELF or DALF, Goethe-Zertifikat and Cambridge English goals: the exam's speaking paper, each task started with POST /v1/language-conversations (kind examSpeaking) and run as a live call with the AI as examiner or partner. The tasks are returned whatever the learner's plan; `access` says whether they can start one, as tasks come with Plus. Null for other exams",
       }),
     speakingMock: speakingMockExamSchema
       .nullable()

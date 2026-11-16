@@ -14,7 +14,7 @@ export const mockScoreNotesSchema = z
       .boolean()
       .meta({
         description:
-          "The real result depends on everyone in the sitting (a percentile, a standardized score), so the mock's result counts right answers only",
+          "The real result depends on everyone in the sitting (a percentile, a standardized score), as the notice says",
       }),
     scale: z
       .object({

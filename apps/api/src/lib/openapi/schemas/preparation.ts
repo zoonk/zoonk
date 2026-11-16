@@ -177,7 +177,7 @@ export const goalPreparationResponseSchema = z
       .nullable()
       .meta({
         description:
-          "Only for an exam goal once its last three mock exams hold at least 30 questions and not one subject alone, always a range labeled Estimated. Null before that: after a mock (components.mocks.taken > 0), say that more mocks of the whole exam or half of it bring the estimate",
+          "Only for an exam goal once its last three mock exams hold at least 30 questions and not one subject alone, always a range and always an estimate. Null before that, including after a mock (components.mocks.taken > 0): more mocks of the whole exam or half of it bring the estimate",
       }),
     goalId: uuidSchema(),
     sections: z

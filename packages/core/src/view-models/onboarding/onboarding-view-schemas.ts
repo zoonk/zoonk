@@ -119,7 +119,7 @@ export const onboardingDraftViewSchema = z
       .nullable()
       .meta({
         description:
-          "How many more goals the learner's plan follows now: its cap less the active goals they follow, read with this response; null on Plus. Send only this many of the card's first goals; the rest need Plus, and stay on the draft to start from the learner's goals once one of the card's goals has started and another fits. At 0, the plan follows no more goals. When `goalId` is set, the draft already started that goal.",
+          "How many more goals the learner's plan follows now: its cap less the active goals they follow, read with this response; null on Plus. Only this many of the card's first goals can start now, so send only those; the card still returns the rest, which need Plus, and they stay on the draft to start from the learner's goals once one of the card's goals has started and another fits. At 0, the plan follows no more goals. When `goalId` is set, the draft already started that goal.",
       }),
     generationId: z
       .string()

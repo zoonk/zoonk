@@ -1276,7 +1276,7 @@
     },
     "/goals/{goalId}/certificates": {
       "post": {
-        "description": "Writes the goal's finished level and plan certificates the learner doesn't hold yet, and returns all of them. A learn or exam goal on a Library course earns one per course level its plan holds whole (every chapter the level had when the plan began), once every lesson of it is studied or tested out, at least one studied, and the challenges of its phases are won; an exam's mocks don't count. The plan earns one of its own once it's all finished with studied lessons no certified level covers: a plan without levels, a partial level, other courses' lessons. Use it while the goal map lists `certificates.unclaimed`. A returned certificate whose `shownAt` is null hasn't had its award moment yet (POST /me/certificates/{code}/views closes it).",
+        "description": "Writes the goal's finished level and plan certificates the learner doesn't hold yet, and returns all of them. A learn or exam goal on a Library course earns one per course level its plan holds whole (every chapter the level had when the plan began), once every lesson of it is studied or tested out, at least one studied, and the challenges of its phases are won; an exam's mocks don't count. The plan earns one of its own once it's all finished with studied lessons no certified level covers: a plan without levels, a partial level, other courses' lessons. Use it while the goal map lists `certificates.unclaimed`; after a claim, the map read before it has a stale `certificates.unclaimed`, and a new read lists none of the claimed ones. A returned certificate whose `shownAt` is null hasn't had its award moment yet (POST /me/certificates/{code}/views closes it).",
         "operationId": "claimCourseCertificate",
         "security": [
           {
@@ -25226,7 +25226,7 @@
             }
           },
           "409": {
-            "description": "The goal is paused, completed or archived (GOAL_NOT_ACTIVE), or its plan isn't ready (PLAN_NOT_READY, with the goal in `details`): the goal's onboarding isn't over, because questions are left (a plan built before they're answered isn't the learner's yet) or its plan reveal isn't seen yet (`planRevealed` false on `GET /goals/{goalId}/onboarding`); otherwise the plan is still being built, and a later request gets it.",
+            "description": "The goal is paused, completed or archived (GOAL_NOT_ACTIVE), or its plan isn't ready (PLAN_NOT_READY, with the goal in `details`): either the goal's onboarding isn't over (questions are left, since a plan built before they're answered isn't the learner's yet, or its plan reveal isn't seen yet: `planRevealed` false on `GET /goals/{goalId}/onboarding`), or the plan is still being built and a later request gets it.",
             "content": {
               "application/json": {
                 "schema": {
@@ -36932,7 +36932,7 @@
                     "description": "Why the change was refused. moveBeforeNextMonday means the requested destination is before next Monday in the learner's time zone: pick a day on or after next Monday. This date refusal takes precedence over collision and funding checks. mockCollision means two weekly events would share a day: the requested day already holds a weekly challenge or mock, another move in the plan or the request takes an event there, or the event already moved once. Preserve the prior plan and pick another day. baseChoiceClosed means a setBaseChoices choice isn't in that base's choices (a studied base is open only to deep study). Preserve unknown reasons."
                   },
                   "unfundedMove": {
-                    "description": "Present for reason unfundedMove: the requested calendar day and the mock's real duration. The prior plan is preserved. Ask the learner to pick a later day.",
+                    "description": "Present for reason unfundedMove: the requested calendar day and the mock's real duration. The prior plan is preserved, and the move needs a later day.",
                     "allOf": [
                       {
                         "$ref": "#/components/schemas/UnfundedMove"
@@ -40118,7 +40118,7 @@
           },
           "progress": {
             "nullable": true,
-            "description": "How the learner's mocks went over time: each one's score (the latest twenty, oldest first), each subject's trend, what got better and what still needs work. Null before the first finished mock, and when mocks need Plus (`mocksRequirePlus`)",
+            "description": "How the learner's mocks went over time: each one's score (the latest twenty, oldest first), each subject's trend, what got better and what still needs work. Null before the first finished mock, and null when mocks need Plus and the learner's plan doesn't include them (`mocksRequirePlus`)",
             "allOf": [
               {
                 "$ref": "#/components/schemas/ExamMockProgress"
@@ -40199,7 +40199,7 @@
               ],
               "additionalProperties": false
             },
-            "description": "The mocks the learner started and hasn't finished: the one taken any time first (GET /v1/goals/{goalId}/mocks `running` continues it), then the plan's weekly one, which can run beside it. Lead the exam's mocks with them, with what's answered and the time left, each opening its own sitting. Empty when none is running; one whose time ran out while the learner was away isn't"
+            "description": "The mocks the learner started and hasn't finished: the one taken any time first (GET /v1/goals/{goalId}/mocks `running` continues it), then the plan's weekly one, which can run beside it, each with what's answered, the time left and its own sitting. Empty when none is running; one whose time ran out while the learner was away isn't"
           },
           "scoring": {
             "type": "object",
@@ -40294,7 +40294,7 @@
           },
           "speaking": {
             "nullable": true,
-            "description": "DELE, DELF or DALF, Goethe-Zertifikat and Cambridge English goals: the exam's speaking paper, each task started with POST /v1/language-conversations (kind examSpeaking) and run as a live call with the AI as examiner or partner. Tasks come with Plus (`access`). Null for other exams",
+            "description": "DELE, DELF or DALF, Goethe-Zertifikat and Cambridge English goals: the exam's speaking paper, each task started with POST /v1/language-conversations (kind examSpeaking) and run as a live call with the AI as examiner or partner. The tasks are returned whatever the learner's plan; `access` says whether they can start one, as tasks come with Plus. Null for other exams",
             "allOf": [
               {
                 "$ref": "#/components/schemas/SpeakingPaper"
@@ -47227,7 +47227,7 @@
                   },
                   "summary": {
                     "nullable": true,
-                    "description": "The lesson map, shown as its own screen after the last one (except after testing out) and from the lesson's menu once it ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
+                    "description": "The lesson map, which comes after the last screen (except after testing out) and stays in the lesson's menu once the lesson ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
                     "allOf": [
                       {
                         "$ref": "#/components/schemas/LessonMap"
@@ -47400,7 +47400,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -47445,7 +47445,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -61541,7 +61541,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -61586,7 +61586,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -62236,7 +62236,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -62281,7 +62281,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -62737,7 +62737,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -62782,7 +62782,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -67684,7 +67684,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -67729,7 +67729,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -68343,7 +68343,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -68388,7 +68388,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -71586,7 +71586,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -71631,7 +71631,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -71845,7 +71845,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -71890,7 +71890,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -72285,7 +72285,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -72330,7 +72330,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -78997,7 +78997,7 @@
           "question"
         ],
         "additionalProperties": false,
-        "description": "A question the learner asked about a lesson from an earlier version of a course, which no longer exists: shown as read-only history, with no link"
+        "description": "A question the learner asked about a lesson from an earlier version of a course, which no longer exists: history that can't be continued, with no link"
       },
       "CurrentUserProgressResponse": {
         "type": "object",
@@ -80448,7 +80448,7 @@
           },
           "estimatedScore": {
             "nullable": true,
-            "description": "Only for an exam goal once its last three mock exams hold at least 30 questions and not one subject alone, always a range labeled Estimated. Null before that: after a mock (components.mocks.taken > 0), say that more mocks of the whole exam or half of it bring the estimate",
+            "description": "Only for an exam goal once its last three mock exams hold at least 30 questions and not one subject alone, always a range and always an estimate. Null before that, including after a mock (components.mocks.taken > 0): more mocks of the whole exam or half of it bring the estimate",
             "allOf": [
               {
                 "$ref": "#/components/schemas/EstimatedScore"
@@ -82141,7 +82141,7 @@
             "properties": {
               "key": {
                 "type": "string",
-                "description": "Identifies the subject in lists; never shown"
+                "description": "Identifies the subject in lists; `name` is what the subject is called"
               },
               "name": {
                 "type": "string",
@@ -82228,7 +82228,7 @@
             "properties": {
               "key": {
                 "type": "string",
-                "description": "Identifies the subject in lists; never shown"
+                "description": "Identifies the subject in lists; `name` is what the subject is called"
               },
               "name": {
                 "type": "string",
@@ -82262,7 +82262,7 @@
         "properties": {
           "key": {
             "type": "string",
-            "description": "Identifies the subject in lists; never shown"
+            "description": "Identifies the subject in lists; `name` is what the subject is called"
           },
           "name": {
             "type": "string",
@@ -83336,7 +83336,7 @@
             "properties": {
               "emphasized": {
                 "type": "boolean",
-                "description": "The goal is to refresh what the learner knew: lead with this"
+                "description": "The goal is to refresh what the learner knew"
               },
               "skills": {
                 "type": "array",
@@ -85427,7 +85427,7 @@
           },
           "label": {
             "nullable": true,
-            "description": "The aim as the rest of the plan names it, half bands included (\"B1+\"), where `aim` holds a whole band; a picked choice is named the same way; null when none is set yet",
+            "description": "The aim as the rest of the plan names it, half bands included (\"B1+\"), where `aim` holds a whole band; null when none is set yet",
             "type": "string"
           },
           "targetLanguage": {
@@ -85561,7 +85561,7 @@
             "properties": {
               "date": {
                 "nullable": true,
-                "description": "The approximate phase-challenge date in the Plan, shown as around this date. Never earlier than tomorrow unless today's day holds the challenge (`when` is `nextSession`); weekly challenges and mocks retain their calendar dates.",
+                "description": "The approximate phase-challenge date in the Plan, an estimate rather than a fixed day. Never earlier than tomorrow unless today's day holds the challenge (`when` is `nextSession`); weekly challenges and mocks retain their calendar dates.",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
@@ -91024,7 +91024,7 @@
           },
           "relative": {
             "type": "boolean",
-            "description": "The real result depends on everyone in the sitting (a percentile, a standardized score), so the mock's result counts right answers only"
+            "description": "The real result depends on everyone in the sitting (a percentile, a standardized score), as the notice says"
           },
           "scale": {
             "nullable": true,
@@ -91463,7 +91463,7 @@
         "properties": {
           "activeGoalsLeft": {
             "nullable": true,
-            "description": "How many more goals the learner's plan follows now: its cap less the active goals they follow, read with this response; null on Plus. Send only this many of the card's first goals; the rest need Plus, and stay on the draft to start from the learner's goals once one of the card's goals has started and another fits. At 0, the plan follows no more goals. When `goalId` is set, the draft already started that goal.",
+            "description": "How many more goals the learner's plan follows now: its cap less the active goals they follow, read with this response; null on Plus. Only this many of the card's first goals can start now, so send only those; the card still returns the rest, which need Plus, and they stay on the draft to start from the learner's goals once one of the card's goals has started and another fits. At 0, the plan follows no more goals. When `goalId` is set, the draft already started that goal.",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
@@ -91970,7 +91970,7 @@
               },
               "summary": {
                 "nullable": true,
-                "description": "The lesson map, shown as its own screen after the last one (except after testing out) and from the lesson's menu once it ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
+                "description": "The lesson map, which comes after the last screen (except after testing out) and stays in the lesson's menu once the lesson ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/LessonMap"
@@ -92350,7 +92350,7 @@
               },
               "label": {
                 "nullable": true,
-                "description": "The aim as the rest of the plan names it, half bands included (\"B1+\"), where `aim` holds a whole band; a picked choice is named the same way; null when none is set yet",
+                "description": "The aim as the rest of the plan names it, half bands included (\"B1+\"), where `aim` holds a whole band; null when none is set yet",
                 "type": "string"
               },
               "targetLanguage": {
