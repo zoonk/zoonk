@@ -54,10 +54,10 @@ import com.zoonk.android.feature.onboarding.PickedFile
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.uploadLimit
-import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.limitLifted
@@ -257,7 +257,7 @@ private fun PasteField(
             maxLines = 10,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         )
-        Button(onClick = { onAdd(value.trim()) }, enabled = enabled && value.isNotBlank()) { Text(action) }
+        OutlinedButton(onClick = { onAdd(value.trim()) }, enabled = enabled && value.isNotBlank()) { Text(action) }
     }
 }
 
