@@ -175,15 +175,15 @@ describe(getReveal, () => {
 describe("whole canvas controls", () => {
   it("resolves overlapping protected parts as one interval", () => {
     const parts = [
-      { bottom: 420, top: 300 },
-      { bottom: 500, top: 400 },
+      { bottom: 450, top: 400 },
+      { bottom: 500, top: 430 },
     ];
 
     const reveal = getReveal({
       chip: null,
-      feedback: { bottom: 750, top: 600 },
+      feedback: { bottom: 1010, top: 600 },
       parts,
-      room: 300,
+      room: 360,
       title: null,
       visible,
     });
