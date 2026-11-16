@@ -37,7 +37,7 @@ export function KeyboardFretboardHeader({
 
   function title() {
     if (heading === "byEar") {
-      return t("By ear");
+      return t("Your notes");
     }
 
     if (heading === "yours") {

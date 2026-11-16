@@ -26,7 +26,7 @@ export function ViewToggle({
       }),
       value: "staff",
     },
-    { label: t("Tab"), value: "tab" },
+    { label: t("Guitar frets"), value: "tab" },
   ];
 
   return (
@@ -71,7 +71,7 @@ export function TempoSelect({
     >
       {tempos.map((option) => (
         <NativeSelectOption key={option} value={option}>
-          {t("{tempo} bpm", { tempo: String(option) })}
+          {t("{tempo} beats/min", { tempo: String(option) })}
         </NativeSelectOption>
       ))}
     </NativeSelect>

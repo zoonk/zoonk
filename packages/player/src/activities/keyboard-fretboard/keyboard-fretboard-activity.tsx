@@ -123,6 +123,9 @@ function PianoBoard(props: KeyboardFretboardProps) {
           />
         )}
 
+        <p className="text-muted-foreground text-sm text-pretty">
+          {t("A half step is the distance to the next key, counting black keys.")}
+        </p>
         <ActivitySoundNote status={piano.status} />
 
         <ActivityTextAlternative>

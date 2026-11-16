@@ -192,7 +192,7 @@ describe("music activities", () => {
     await expect.element(page.getByText("Ode to Joy")).toBeVisible();
     await expect.element(page.getByText("Beethoven, 1824")).toBeVisible();
     await expect.element(page.getByText(/Bar 1: E, E, F, G\./u)).toBeInTheDocument();
-    await page.getByRole("radio", { name: "Tab" }).click();
+    await page.getByRole("radio", { name: "Guitar frets" }).click();
     await expect.element(page.getByRole("img", { name: "Ode to Joy" })).toBeVisible();
 
     await expect
@@ -229,7 +229,7 @@ describe("music activities", () => {
   it("notation: on a phone the tab wraps two bars a line, each line with its fret numbers", async () => {
     await atViewport(PHONE, async () => {
       openActivity({ template: "notationPlayer" });
-      await page.getByRole("radio", { name: "Tab" }).click();
+      await page.getByRole("radio", { name: "Guitar frets" }).click();
 
       await expect
         .poll(() => document.querySelectorAll(".abcjs-l1 .abcjs-tab-number").length)
@@ -239,7 +239,7 @@ describe("music activities", () => {
 
   it("keyboard by ear: the sound isn't named until the notes heard are found", async () => {
     openActivity({ content: byEar, template: "keyboardFretboard" });
-    await expect.element(page.getByText("By ear", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Your notes", { exact: true })).toBeVisible();
     await expect.element(page.getByText("2 notes", { exact: true })).not.toBeInTheDocument();
     await expect.element(pianoKey("C")).toHaveAttribute("aria-pressed", "false");
     await page.getByRole("button", { name: "Play the sound" }).click();
