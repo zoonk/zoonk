@@ -113,7 +113,7 @@ struct TodayView: Decodable, Equatable, Sendable {
 
   struct Pattern: Decodable, Equatable, Sendable {
     let id: String
-    /// `pattern`, or `typos` when the recent mistakes were slips.
+    /// Always `pattern`: Today takes no typos finding.
     let kind: String
     let title: String
   }

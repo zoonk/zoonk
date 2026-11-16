@@ -1115,27 +1115,19 @@ struct TodayLanguagePracticeSection: View {
         router.open(.pronunciation(goalId: view.goal.id))
       }
     } else if let pattern = view.pattern {
-      if pattern.kind == "typos" {
-        // Nothing behind it is left to do, so it has no button.
-        notice(
-          summary: Text(
-            "Your recent mistakes were typos, not a rule to learn.", tableName: "Today"),
-          mark: .symbol("keyboard"))
-      } else {
-        notice(
-          summary: Text("We noticed a pattern: \(pattern.title)", tableName: "Today"),
-          mark: .sparkle,
-          action: Text("Practice it", tableName: "Today", comment: "Opens the noticed pattern")
-        ) {
-          router.open(.pattern(patternId: pattern.id))
-        }
+      notice(
+        summary: Text("We noticed a pattern: \(pattern.title)", tableName: "Today"),
+        mark: .sparkle,
+        action: Text("Practice it", tableName: "Today", comment: "Opens the noticed pattern")
+      ) {
+        router.open(.pattern(patternId: pattern.id))
       }
     }
   }
 
-  /// Main's `PracticeNotice`: one line with its action, when it has one, at the end.
+  /// Main's `PracticeNotice`: one line with its action at the end.
   private func notice(
-    summary: Text, mark: SuggestionMark.Kind, action: Text? = nil, open: (() -> Void)? = nil
+    summary: Text, mark: SuggestionMark.Kind, action: Text, open: @escaping () -> Void
   ) -> some View {
     Section {
       SuggestionLine {
@@ -1143,13 +1135,11 @@ struct TodayLanguagePracticeSection: View {
       } summary: {
         summary
       } action: {
-        if let action, let open {
-          Button(action: open) {
-            action
-          }
-          .buttonStyle(.outline)
-          .controlSize(.small)
+        Button(action: open) {
+          action
         }
+        .buttonStyle(.outline)
+        .controlSize(.small)
       }
       .listRowSeparator(.hidden)
     }
