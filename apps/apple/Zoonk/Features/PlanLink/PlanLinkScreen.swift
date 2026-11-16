@@ -30,7 +30,7 @@ struct PlanLinkScreen: View {
                 }
               }
           case .failed(.notFound):
-            ContentUnavailableView {
+            StateMessage {
               Label {
                 Text(
                   "This plan isn't available", tableName: "PlanLink",
@@ -41,7 +41,7 @@ struct PlanLinkScreen: View {
             }
             .lonePage()
           case .failed:
-            ContentUnavailableView {
+            StateMessage {
               Text(
                 "We couldn't load this plan", tableName: "PlanLink",
                 comment: "A shared plan failed to load")

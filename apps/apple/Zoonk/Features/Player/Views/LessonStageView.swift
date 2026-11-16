@@ -243,7 +243,7 @@ struct LessonStageView: View {
             LessonPaper()
           }
         }
-        .environment(\.isPaneSplit, spread != nil)
+        .paneSplit(spread != nil)
         .environment(\.isLessonStepChecked, state.phase == .feedback)
         .environment(
           \.lessonScreenHeight,
@@ -529,15 +529,9 @@ struct LessonActionBar: View {
         store.ask()
       }
     } label: {
-      Label {
-        Text("Ask", tableName: "Player", comment: "Opens the panel to ask about the lesson")
-      } icon: {
-        Image(systemName: "questionmark.bubble")
-      }
-      .labelStyle(.iconOnly)
+      TutorAskLabel()
     }
-    .buttonStyle(.outline.icon)
-    .controlSize(.large)
+    .tutorAskIcon()
   }
 
   /// A written answer's way to see a good answer, left of Check, when "Explain first" isn't offered.

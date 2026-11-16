@@ -63,12 +63,12 @@ struct CertificateCeremony: View {
     .loads(store.list, refreshable: false)
     .sheet(isPresented: $isOpened) {
       CertificateSheet(code: top.code)
-        .zoonkStyles()
+        .zoonkSheet()
     }
     .sheet(isPresented: $isLinkedInShown) {
       if let certificate {
         CertificateLinkedInSheet(certificate: certificate)
-          .zoonkStyles()
+          .zoonkSheet()
       }
     }
   }

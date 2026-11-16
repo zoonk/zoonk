@@ -47,10 +47,19 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   }
 
   var body: some View {
+    // A top bar around nothing takes the page's free height, so a screen without segments gets none.
+    if let segmentsBar {
+      layout.taskSegmentsBar(segmentsBar)
+    } else {
+      layout
+    }
+  }
+
+  private var layout: some View {
     Group {
       if kind == .oneDecision {
         QuestionColumn(readableWidth: PracticeLayout.readableWidth, spacing: 20) {
-          segmentsBar
+          EmptyView()
         } content: {
           stimulus()
         } actions: {
@@ -61,7 +70,7 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
         QuestionSpread(
           readableWidth: PracticeLayout.readableWidth, spacing: 20, isSpread: kind == .spread
         ) {
-          segmentsBar
+          EmptyView()
         } stimulus: {
           stimulus()
         } response: {
@@ -74,20 +83,15 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
     .background(Color(.systemBackground))
   }
 
-  @ViewBuilder private var segmentsBar: some View {
-    if let segments, !segments.isEmpty {
-      TaskSegments(
-        segments: segments,
-        label: Text(
-          "Question \(min(index + 1, segments.count)) of \(segments.count)", tableName: "Practice",
-          comment:
-            "VoiceOver label of a run's progress: the question in view and how many there are.")
-      )
-      .frame(maxWidth: PracticeLayout.readableWidth)
-      .padding(.horizontal)
-      .padding(.vertical, 8)
-      .frame(maxWidth: .infinity)
-    }
+  private var segmentsBar: TaskSegments? {
+    guard let segments, !segments.isEmpty else { return nil }
+
+    return TaskSegments(
+      segments: segments,
+      label: Text(
+        "Question \(min(index + 1, segments.count)) of \(segments.count)", tableName: "Practice",
+        comment:
+          "VoiceOver label of a run's progress: the question in view and how many there are."))
   }
 
   @ViewBuilder private var actionsBar: some View {
@@ -96,8 +100,8 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
         actions()
       }
       .frame(maxWidth: PracticeLayout.readableWidth)
-      .padding(.horizontal)
-      .padding(.vertical, 12)
+      // The bottom bar's inset, so a run's actions sit where every screen's do.
+      .scenePadding()
       .frame(maxWidth: .infinity)
     }
   }
@@ -476,7 +480,7 @@ struct PracticeLoadFailureView: View {
     if error == .notFound {
       NotFoundView()
     } else {
-      ContentUnavailableView {
+      StateMessage {
         Label {
           if error == .network {
             Text(

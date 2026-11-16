@@ -89,7 +89,7 @@ struct TutorComposerBar: View {
   }
 
   private var suggestionChips: some View {
-    FlowLayout(spacing: 8) {
+    TapChips {
       ForEach(suggestions) { suggestion in
         Button {
           Task { await conversation.send(suggestion) }
@@ -97,8 +97,6 @@ struct TutorComposerBar: View {
           Text(suggestion.label)
             .multilineTextAlignment(.leading)
         }
-        .buttonStyle(.outline)
-        .controlSize(.regular)
         .disabled(!conversation.canAsk)
       }
     }

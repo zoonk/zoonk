@@ -17,6 +17,7 @@ struct AdjustPlanSheet: View {
     var id: Self { self }
   }
 
+  @Environment(\.dismiss) private var dismiss
   @State private var editor: PlanEditor
   /// The weekend switch answers at once, while the plan it changed is read again; until it's
   /// touched, it shows whether the plan's weekend has its own time.
@@ -89,11 +90,8 @@ struct AdjustPlanSheet: View {
         Text("Adjust your plan", tableName: "Plan", comment: "Navigation title of the plan editor")
       )
       .toolbarTitleDisplayMode(.inline)
+      .sheetClose { dismiss() }
       .toolbar {
-        ToolbarItem(placement: .confirmationAction) {
-          PlanSheetDoneButton()
-        }
-
         if editor.isSaving {
           ToolbarItem(placement: .status) {
             ProgressView()
@@ -133,13 +131,13 @@ struct AdjustPlanSheet: View {
   private func aimRow(_ choice: LanguageAimView.Choice, isPicked: Bool) -> some View {
     let detail = aimChoiceDetail(end: aimEnds[choice.aim])
 
-    return Button {
+    return ChoiceRow(isPicked: isPicked) {
       guard !isPicked else {
         return
       }
 
       editor.run { await editor.change([.aim(choice.aim)]) }
-    } label: {
+    } words: {
       VStack(alignment: .leading, spacing: 2) {
         AimName(aim: choice.aim)
           .typeStyle(.rowTitle)
@@ -151,11 +149,7 @@ struct AdjustPlanSheet: View {
             .foregroundStyle(.mutedForeground)
         }
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .contentShape(.rect)
     }
-    .pickedRow(isPicked)
-    .accessibilityAddTraits(isPicked ? .isSelected : [])
   }
 
   private var daysSection: some View {

@@ -37,7 +37,7 @@ private struct FeedbackSheetPresenter: ViewModifier {
 
   private func form(_ store: FeedbackFormStore) -> some View {
     FeedbackForm(store: store, isReport: isReport)
-      .zoonkStyles()
+      .zoonkSheet()
   }
 }
 
@@ -265,7 +265,7 @@ private struct FeedbackForm: View {
   }
 
   private var confirmation: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(thanks)
       } icon: {

@@ -96,7 +96,7 @@ private struct CourseCatalogEmptyView: View {
   let startGoal: () -> Void
 
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text("No courses", tableName: "Courses", comment: "Title when the catalog has no courses")
       } icon: {

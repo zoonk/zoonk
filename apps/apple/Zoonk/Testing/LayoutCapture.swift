@@ -1356,7 +1356,7 @@
         (lead, "lead"), (reading, "reading"), (message, "message"), (writing, "writing"),
         (button, "button"), (body, "body"), (rowTitle, "rowTitle"), (sectionTitle, "sectionTitle"),
         (smallButton, "smallButton"), (note, "note"), (meta, "meta"), (data, "data"),
-        (eyebrow, "eyebrow"), (label, "label"), (verdict, "verdict"), (tag, "tag"),
+        (label, "label"), (verdict, "verdict"), (tag, "tag"),
         (chip, "chip"), (small, "small"), (readout, "readout"), (momentReadout, "momentReadout"),
         (letterReadout, "letterReadout"),
       ], uniquingKeysWith: { first, _ in first })

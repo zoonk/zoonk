@@ -32,11 +32,11 @@ struct BuddyScreen: View {
     ProgressView()
       .frame(maxWidth: .infinity, maxHeight: .infinity)
       .lonePage()
-      .navigationTitle(Text(summary.buddyDisplayName))
+      .barTitleAfterHero(summary.buddyDisplayName)
   }
 
   private func failure(retry: @escaping () async -> Void) -> some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text("Your buddy", tableName: "Buddy", comment: "Title of the Buddy tab")
       } icon: {
@@ -55,7 +55,7 @@ struct BuddyScreen: View {
       .buttonStyle(.outline)
     }
     .lonePage()
-    .navigationTitle(Text(summary.buddyDisplayName))
+    .barTitleAfterHero(summary.buddyDisplayName)
   }
 
   private var tutoredGoalId: String? {
@@ -118,7 +118,7 @@ private struct BuddyContent: View {
     } content: { isBeside in
       thread(opensDay: !isBeside)
     }
-    .navigationTitle(Text(name))
+    .barTitleAfterHero(name)
     .taskOptions(
       label: Text(
         "More about \(name)", tableName: "Buddy",
@@ -134,17 +134,11 @@ private struct BuddyContent: View {
           .navigationTitle(day.title)
           .navigationSubtitle(day.subtitle)
           .navigationBarTitleDisplayMode(.inline)
-          .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-              Button(role: .close) {
-                isDayShown = false
-              }
-            }
-          }
+          .sheetClose { isDayShown = false }
       }
       .presentationDetents([.medium, .large])
       .closesOnNavigation()
-      .zoonkStyles()
+      .zoonkSheet()
     }
     .sheet(isPresented: $isEditing) {
       BuddyEditor(
@@ -154,11 +148,11 @@ private struct BuddyContent: View {
         },
         save: { choice in saving.run { [store] in await store.save(choice) } }
       )
-      .zoonkStyles()
+      .zoonkSheet()
     }
     .sheet(isPresented: $isWearing) {
       BuddyGlassesPicker(status: status)
-        .zoonkStyles()
+        .zoonkSheet()
     }
     .onChange(of: goalId.map { tutor.conversation(.plan(goalId: $0)).isAsking } ?? false) {
       _, isAsking in
@@ -216,11 +210,17 @@ private struct BuddyContent: View {
   private func thread(opensDay: Bool) -> some View {
     conversation
       .safeAreaBar(edge: .top) {
-        dayLine(opensDay: opensDay)
-          .scenePadding(.horizontal)
-          .padding(.vertical, 8)
+        VStack(alignment: .leading, spacing: 0) {
+          PageHeader(Text(name))
+
+          dayLine(opensDay: opensDay)
+        }
+        .scenePadding(.horizontal)
+        // A list's first row sits this far under the bar, so the title is where every page's is.
+        .padding(.top, 12)
+        .padding(.bottom, 8)
       }
-      .readableColumn(720, alignment: .leading)
+      .pageColumn()
   }
 
   @ViewBuilder

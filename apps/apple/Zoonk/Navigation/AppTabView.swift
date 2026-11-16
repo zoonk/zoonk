@@ -237,6 +237,6 @@ struct AppSheetView: View {
         TutorPanel(scope: scope, quote: quote)
       }
     }
-    .zoonkStyles()
+    .zoonkSheet()
   }
 }

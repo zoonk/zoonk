@@ -205,13 +205,13 @@ struct PresentedTask: View {
     let isHidden = router.isHidden(taskAt: depth)
 
     route.destination
+      .environment(\.isTaskScreen, true)
       .zoonkStyles()
       .landsActsOnInput()
       .opacity(isHidden ? 0 : 1)
       .accessibilityHidden(isHidden)
       .presentationBackground(isHidden ? AnyShapeStyle(.clear) : AnyShapeStyle(.background))
       .environment(\.isCoveredByTask, router.tasks.count > depth + 1)
-      .environment(\.readableColumnAlignment, .center)
       .fullScreenCover(item: router.task(at: depth + 1)) { next in
         PresentedTask(route: next, depth: depth + 1)
       }

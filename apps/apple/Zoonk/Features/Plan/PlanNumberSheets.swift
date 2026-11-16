@@ -2,6 +2,7 @@ import SwiftUI
 
 /// "Your preparation" / "Your progress": the number tapped, with its meter, and what it's made of.
 struct PlanStandingSheet: View {
+  @Environment(\.dismiss) private var dismiss
   @Environment(PlanStore.self) private var store
 
   let context: PlanContext
@@ -80,11 +81,7 @@ struct PlanStandingSheet: View {
     }
     .navigationTitle(title)
     .toolbarTitleDisplayMode(.inline)
-    .toolbar {
-      ToolbarItem(placement: .confirmationAction) {
-        PlanSheetDoneButton()
-      }
-    }
+    .sheetClose { dismiss() }
   }
 
   private func readout(share: Double, text: String, line: Text) -> some View {
@@ -203,11 +200,7 @@ struct PlanScheduleSheet: View {
       Text("Your schedule", tableName: "Plan", comment: "Title of the sheet about the plan's state")
     )
     .toolbarTitleDisplayMode(.inline)
-    .toolbar {
-      ToolbarItem(placement: .confirmationAction) {
-        PlanSheetDoneButton()
-      }
-    }
+    .sheetClose { dismiss() }
   }
 
   private func sentence(_ status: GoalPlan.Status, resting: Bool) -> String? {

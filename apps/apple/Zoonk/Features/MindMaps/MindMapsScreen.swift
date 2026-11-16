@@ -101,7 +101,7 @@ struct MindMapsScreen: View {
         }
       }
     case .empty:
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
             "No mind maps yet", tableName: "MindMaps", comment: "Title when no chapter has a map")

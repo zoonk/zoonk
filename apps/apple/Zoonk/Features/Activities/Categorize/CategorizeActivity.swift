@@ -127,7 +127,8 @@ private struct CategorizeCanvas: View {
             .accessibilityHidden(item.id != card.id)
         }
       }
-      .typeStyle(.section.weight(.medium))
+      // Main's card: one step under the question it sorts for.
+      .typeStyle(.lessonText.weight(.medium))
     }
     .multilineTextAlignment(.leading)
     .padding()
