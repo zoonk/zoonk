@@ -168,6 +168,7 @@ export function DistributionExplorerActivity({
         <DistributionTails
           above={percent(above)}
           below={percent(below)}
+          curve={curve}
           handles={[handles.from, handles.to]}
         />
 

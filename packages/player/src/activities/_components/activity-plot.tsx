@@ -16,6 +16,7 @@ const FALLBACK_WIDTH = 318;
 export const PLOT_LINE_WIDTH = 3;
 const DEFAULT_PADDING: PlotPadding = { bottom: 24, left: PLOT_TICK_ROOM, right: 12, top: 12 };
 const X_LABEL_OFFSET = 18;
+export const PLOT_AXIS_NAME_ROOM = 24;
 const GUIDE_STROKE = 1.5;
 
 const PlotContext = createContext<PlotScales | null>(null);
@@ -107,9 +108,11 @@ export function ActivityPlotGridY({
 
 export function ActivityPlotAxisX({
   format,
+  name,
   ticks,
 }: {
   format: (value: number) => string;
+  name?: string;
   ticks: readonly number[];
 }) {
   const { x, y } = usePlotScales();
@@ -133,6 +136,16 @@ export function ActivityPlotAxisX({
           </text>
         );
       })}
+      {name && (
+        <text
+          className="fill-muted-foreground"
+          textAnchor="end"
+          x={x.range[1]}
+          y={bottom + X_LABEL_OFFSET + PLOT_AXIS_NAME_ROOM}
+        >
+          {name}
+        </text>
+      )}
     </g>
   );
 }

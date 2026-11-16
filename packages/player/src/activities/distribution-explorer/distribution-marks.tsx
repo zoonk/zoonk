@@ -4,6 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ActivityPlaceHandle } from "../_components/activity-place-handle";
 import { usePlotScales } from "../_components/activity-plot";
 import { DRAWING_LABEL_HALO } from "../_utils/drawing-label";
+import { type PlotPoint } from "../_utils/sample-formula";
 import { type SnapRange } from "../_utils/snap-value";
 
 const PILL_HEIGHT = 26;
@@ -15,7 +16,6 @@ const TICK_DROP = 4;
 const TARGET_LABEL_RISE = 4;
 const TICK_CLEARANCE = 28;
 const TAIL_GAP = 6;
-const TAIL_RISE = 14;
 const MIN_TAIL_ROOM = 34;
 
 function pillWidth(label: string): number {
@@ -117,10 +117,12 @@ export function DistributionTicks({
 export function DistributionTails({
   below,
   above,
+  curve,
   handles,
 }: {
   above: string;
   below: string;
+  curve: readonly PlotPoint[];
   handles: readonly [number, number];
 }) {
   const { x, y } = usePlotScales();
@@ -128,15 +130,25 @@ export function DistributionTails({
   const [left, right] = x.range;
   const [from, to] = [x.toPixel(handles[0]), x.toPixel(handles[1])];
 
+  const belowY = Math.min(
+    bottom,
+    ...curve.filter((point) => point.x <= handles[0]).map((point) => y.toPixel(point.y)),
+  );
+
+  const aboveY = Math.min(
+    bottom,
+    ...curve.filter((point) => point.x >= handles[1]).map((point) => y.toPixel(point.y)),
+  );
+
   return (
     <g aria-hidden="true" className={cn("fill-muted-foreground", DRAWING_LABEL_HALO)}>
       {from - left >= MIN_TAIL_ROOM && (
-        <text textAnchor="end" x={from - TAIL_GAP} y={bottom - TAIL_RISE}>
+        <text textAnchor="end" x={from - TAIL_GAP} y={belowY - TAIL_GAP}>
           {below}
         </text>
       )}
       {right - to >= MIN_TAIL_ROOM && (
-        <text textAnchor="start" x={to + TAIL_GAP} y={bottom - TAIL_RISE}>
+        <text textAnchor="start" x={to + TAIL_GAP} y={aboveY - TAIL_GAP}>
           {above}
         </text>
       )}

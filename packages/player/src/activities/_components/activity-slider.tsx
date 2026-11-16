@@ -53,7 +53,7 @@ export function ActivitySlider({
       </div>
 
       <SliderControl>
-        <SliderTrack>
+        <SliderTrack className="bg-muted-foreground/70 contrast-more:bg-muted-foreground">
           <SliderIndicator className="bg-viz-accent" />
           <SliderThumb aria-valuetext={valueText} />
         </SliderTrack>

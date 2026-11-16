@@ -221,6 +221,13 @@ export function TrigLegsAndAngle({
             strokeLinecap="round"
             strokeWidth={SEGMENT_WIDTH}
           />
+          {sinPlacement.baseline !== "middle" && (
+            <path
+              className="stroke-viz-highlight/60 fill-none"
+              d={`M${foot.x} ${(foot.y + point.y) / 2} H${foot.x + (foot.x < center.x ? -1 : 1) * LABEL_GAP * 3} V${sinPlacement.point.y + (isAbove ? LABEL_GAP : -LABEL_GAP)} H${sinPlacement.point.x}`}
+              strokeWidth={1.5}
+            />
+          )}
           <DialLabel
             anchor={sinPlacement.anchor}
             baseline={sinPlacement.baseline}

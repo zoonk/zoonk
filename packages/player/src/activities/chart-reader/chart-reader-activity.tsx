@@ -18,6 +18,7 @@ import {
   ActivityPlotGridY,
   ActivityPlotLabel,
   ActivityPlotLine,
+  PLOT_AXIS_NAME_ROOM,
 } from "../_components/activity-plot";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { computeActivityValue } from "../_utils/compute-activity-value";
@@ -108,13 +109,19 @@ export function ChartReaderActivity({
         {fields.yLabel}
       </ActivityCanvasLabel>
 
-      <ActivityPlot height={PLOT_HEIGHT} xDomain={xDomain} yDomain={yDomain}>
+      <ActivityPlot
+        height={PLOT_HEIGHT + PLOT_AXIS_NAME_ROOM}
+        padding={{ bottom: 24 + PLOT_AXIS_NAME_ROOM }}
+        xDomain={xDomain}
+        yDomain={yDomain}
+      >
         <ActivityPlotGridY
           format={(value) => format(value, { compact: true })}
           ticks={niceTicks(yDomain, 3)}
         />
         <ActivityPlotAxisX
           format={(value) => format(value, { grouping: !plainX })}
+          name={fields.xLabel}
           ticks={niceTicks(xDomain, 3)}
         />
 
@@ -156,8 +163,6 @@ export function ChartReaderActivity({
           );
         })}
       </ActivityPlot>
-
-      <ActivityCanvasLabel>{fields.xLabel}</ActivityCanvasLabel>
 
       <ActivityCanvasLabel className="text-sm">{t("Tap a span to measure it")}</ActivityCanvasLabel>
 

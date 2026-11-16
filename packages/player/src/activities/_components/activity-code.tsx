@@ -85,7 +85,7 @@ export function ActivityCodeLine({
     >
       <span
         aria-hidden="true"
-        className="text-muted-foreground w-8 shrink-0 pr-3 text-right tabular-nums select-none"
+        className="text-muted-foreground w-8 shrink-0 pr-3 text-left tabular-nums select-none"
       >
         {number}
       </span>

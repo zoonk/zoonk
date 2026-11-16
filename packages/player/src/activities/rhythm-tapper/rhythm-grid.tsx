@@ -98,7 +98,7 @@ export function RhythmGrid({
         {Array.from({ length: beats }, (_, beat) => (
           <span
             className={cn(
-              "text-muted-foreground flex-1 text-xs tabular-nums",
+              "text-muted-foreground flex-1 text-center text-xs tabular-nums",
               beat > 0 && "ml-1.5",
             )}
             key={beat}
