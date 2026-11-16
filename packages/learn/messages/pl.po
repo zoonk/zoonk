@@ -5391,7 +5391,7 @@ msgstr "Orientacyjnie: {month}"
 #: src/language-aim/use-aim-words.ts
 msgctxt "hFWAQd"
 msgid "{language} level to reach"
-msgstr "{language}: poziom docelowy"
+msgstr "Docelowy poziom: {language}"
 
 #: src/language-aim/use-reason-copy.ts
 msgctxt "IZU_K4"
