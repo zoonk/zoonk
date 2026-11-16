@@ -87362,59 +87362,7 @@
           "days": {
             "type": "array",
             "items": {
-              "type": "object",
-              "properties": {
-                "date": {
-                  "type": "string",
-                  "format": "date",
-                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-                  "description": "Learner-local calendar date"
-                },
-                "goalMinutes": {
-                  "type": "number",
-                  "minimum": 0,
-                  "description": "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
-                  "example": 15
-                },
-                "hitGoal": {
-                  "type": "boolean"
-                },
-                "isToday": {
-                  "type": "boolean"
-                },
-                "kind": {
-                  "type": "string",
-                  "enum": [
-                    "afterEnd",
-                    "beforeStart",
-                    "deadline",
-                    "exam",
-                    "rest",
-                    "study"
-                  ],
-                  "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
-                },
-                "minutes": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991,
-                  "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
-                },
-                "studied": {
-                  "type": "boolean",
-                  "description": "Any study of this goal counts, partial days included"
-                }
-              },
-              "required": [
-                "date",
-                "goalMinutes",
-                "hitGoal",
-                "isToday",
-                "kind",
-                "minutes",
-                "studied"
-              ],
-              "additionalProperties": false
+              "$ref": "#/components/schemas/StudyWeekDay"
             }
           },
           "lastWeek": {
@@ -87639,6 +87587,61 @@
           "week",
           "weekEnd",
           "weekStart"
+        ],
+        "additionalProperties": false
+      },
+      "StudyWeekDay": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "Learner-local calendar date"
+          },
+          "goalMinutes": {
+            "type": "number",
+            "minimum": 0,
+            "description": "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
+            "example": 15
+          },
+          "hitGoal": {
+            "type": "boolean"
+          },
+          "isToday": {
+            "type": "boolean"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "afterEnd",
+              "beforeStart",
+              "deadline",
+              "exam",
+              "rest",
+              "study"
+            ],
+            "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
+          },
+          "minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
+          },
+          "studied": {
+            "type": "boolean",
+            "description": "Any study of this goal counts, partial days included"
+          }
+        },
+        "required": [
+          "date",
+          "goalMinutes",
+          "hitGoal",
+          "isToday",
+          "kind",
+          "minutes",
+          "studied"
         ],
         "additionalProperties": false
       },
@@ -92938,59 +92941,7 @@
               "days": {
                 "type": "array",
                 "items": {
-                  "type": "object",
-                  "properties": {
-                    "date": {
-                      "type": "string",
-                      "format": "date",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-                      "description": "Learner-local calendar date"
-                    },
-                    "goalMinutes": {
-                      "type": "number",
-                      "minimum": 0,
-                      "description": "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
-                      "example": 15
-                    },
-                    "hitGoal": {
-                      "type": "boolean"
-                    },
-                    "isToday": {
-                      "type": "boolean"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "enum": [
-                        "afterEnd",
-                        "beforeStart",
-                        "deadline",
-                        "exam",
-                        "rest",
-                        "study"
-                      ],
-                      "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
-                    },
-                    "minutes": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991,
-                      "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
-                    },
-                    "studied": {
-                      "type": "boolean",
-                      "description": "Any study of this goal counts, partial days included"
-                    }
-                  },
-                  "required": [
-                    "date",
-                    "goalMinutes",
-                    "hitGoal",
-                    "isToday",
-                    "kind",
-                    "minutes",
-                    "studied"
-                  ],
-                  "additionalProperties": false
+                  "$ref": "#/components/schemas/StudyWeekDay"
                 }
               },
               "nextStudyDate": {
@@ -93262,59 +93213,7 @@
               "days": {
                 "type": "array",
                 "items": {
-                  "type": "object",
-                  "properties": {
-                    "date": {
-                      "type": "string",
-                      "format": "date",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-                      "description": "Learner-local calendar date"
-                    },
-                    "goalMinutes": {
-                      "type": "number",
-                      "minimum": 0,
-                      "description": "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
-                      "example": 15
-                    },
-                    "hitGoal": {
-                      "type": "boolean"
-                    },
-                    "isToday": {
-                      "type": "boolean"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "enum": [
-                        "afterEnd",
-                        "beforeStart",
-                        "deadline",
-                        "exam",
-                        "rest",
-                        "study"
-                      ],
-                      "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
-                    },
-                    "minutes": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991,
-                      "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
-                    },
-                    "studied": {
-                      "type": "boolean",
-                      "description": "Any study of this goal counts, partial days included"
-                    }
-                  },
-                  "required": [
-                    "date",
-                    "goalMinutes",
-                    "hitGoal",
-                    "isToday",
-                    "kind",
-                    "minutes",
-                    "studied"
-                  ],
-                  "additionalProperties": false
+                  "$ref": "#/components/schemas/StudyWeekDay"
                 }
               },
               "nextStudyDate": {

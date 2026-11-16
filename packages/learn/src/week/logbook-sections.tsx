@@ -31,13 +31,13 @@ export function WeekRings() {
   const t = useExtracted();
   const { today } = useMomentDays();
   const { recap } = useLogbook();
-  const studied = new Set(recap.week.daysStudied.map((day) => day.getTime()));
+  const studied = recap.days.filter((day) => day.studied).length;
 
   return (
     <div
       aria-label={t(
         "{count, plural, =0 {# days studied} one {# day studied} other {# days studied}}",
-        { count: studied.size },
+        { count: studied },
       )}
       className={WEEK_ROW_CLASS}
       data-slot="week-rings"

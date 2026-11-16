@@ -19,7 +19,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { ChevronDownIcon, LayoutGridIcon, LightbulbIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useOptimistic, useSyncExternalStore, useTransition } from "react";
-import { useDaysLeftText } from "../_components/days-left";
+import { DaysLeft } from "../_components/days-left";
 import { FactSegments } from "../_components/task-meta";
 import { daysUntilIsoDate, hasIsoDatePassed } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
@@ -93,23 +93,27 @@ function GoalLine({ goal }: { goal: SwitcherGoal }) {
   const t = useExtracted("goalSwitcher");
   const today = useMountTime();
   const formatDuration = useFormatDuration();
-  const daysLeftText = useDaysLeftText();
 
   const days =
     goal.targetDate && !hasIsoDatePassed({ isoDate: goal.targetDate, today })
       ? daysUntilIsoDate({ isoDate: goal.targetDate, today })
       : null;
 
-  const active = [
-    t("{time} a day", { time: formatDuration(goal.dailyMinutes) }),
-    days !== null && daysLeftText(days, { estimated: goal.targetDateEstimated }),
-  ].filter((fact): fact is string => Boolean(fact));
-
-  const facts = { active, completed: [t("Finished")], paused: [t("Paused")] }[goal.status];
+  const facts = {
+    active: [t("{time} a day", { time: formatDuration(goal.dailyMinutes) })],
+    completed: [t("Finished")],
+    paused: [t("Paused")],
+  }[goal.status];
 
   return (
     <span className="text-muted-foreground text-2xs font-mono tabular-nums">
-      <FactSegments facts={facts} />
+      <FactSegments
+        extra={
+          goal.status === "active" &&
+          days !== null && <DaysLeft days={days} estimated={goal.targetDateEstimated} />
+        }
+        facts={facts}
+      />
     </span>
   );
 }

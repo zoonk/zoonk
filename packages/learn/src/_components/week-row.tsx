@@ -89,13 +89,14 @@ export function WeekDayRing({
     );
   }
 
+  const done = day.hitGoal || (day.studied && day.goalMinutes === 0);
   const isTarget = !day.studied && (day.kind === "exam" || day.kind === "deadline");
 
   return (
     <GoalRing className={className} share={getDayShare(day)} track={getTrack(day, localDate)}>
-      {day.hitGoal && <DoneMark />}
+      {done && <DoneMark />}
       {isTarget && <GraduationCapIcon className="text-foreground" />}
-      {!day.hitGoal && !isTarget && children}
+      {!done && !isTarget && children}
     </GoalRing>
   );
 }

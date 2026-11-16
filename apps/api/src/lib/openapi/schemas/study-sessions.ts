@@ -21,36 +21,38 @@ const EXAMPLE_DAILY_MINUTES = 15;
 
 export const logicalDateSchema = z.iso.date().meta({ description: "Learner-local calendar date" });
 
-export const studyWeekDaySchema = z.object({
-  date: logicalDateSchema,
-  goalMinutes: z
-    .number()
-    .min(0)
-    .meta({
-      description:
-        "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
-      examples: [EXAMPLE_DAILY_MINUTES],
-    }),
-  hitGoal: z.boolean(),
-  isToday: z.boolean(),
-  kind: z
-    .enum(["afterEnd", "beforeStart", "deadline", "exam", "rest", "study"])
-    .meta({
-      description:
-        "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended",
-    }),
-  minutes: z
-    .number()
-    .int()
-    .min(0)
-    .meta({
-      description:
-        "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it",
-    }),
-  studied: z
-    .boolean()
-    .meta({ description: "Any study of this goal counts, partial days included" }),
-});
+export const studyWeekDaySchema = z
+  .object({
+    date: logicalDateSchema,
+    goalMinutes: z
+      .number()
+      .min(0)
+      .meta({
+        description:
+          "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
+        examples: [EXAMPLE_DAILY_MINUTES],
+      }),
+    hitGoal: z.boolean(),
+    isToday: z.boolean(),
+    kind: z
+      .enum(["afterEnd", "beforeStart", "deadline", "exam", "rest", "study"])
+      .meta({
+        description:
+          "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended",
+      }),
+    minutes: z
+      .number()
+      .int()
+      .min(0)
+      .meta({
+        description:
+          "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it",
+      }),
+    studied: z
+      .boolean()
+      .meta({ description: "Any study of this goal counts, partial days included" }),
+  })
+  .meta({ id: "StudyWeekDay" });
 
 const idSchema = uuidSchema();
 

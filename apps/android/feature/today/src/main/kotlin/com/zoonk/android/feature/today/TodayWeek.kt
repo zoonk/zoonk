@@ -43,12 +43,12 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.weekdayNames
+import com.zoonk.api.models.StudyWeekDay
 import com.zoonk.api.models.TodayWeeklyChallenge
-import com.zoonk.api.models.WeeklyRecapDaysInner
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
 
-private typealias WeekDay = WeeklyRecapDaysInner
+private typealias WeekDay = StudyWeekDay
 
 @Composable
 internal fun TodayWeek(
@@ -171,7 +171,7 @@ private fun dayNote(
     val locale = currentLocale()
     val saidByTime =
         !day.hitGoal &&
-            (day.minutes > 0 || (day.goalMinutes > 0 && day.kind == WeeklyRecapDaysInner.Kind.STUDY && !day.isMissed(weekDate)))
+            (day.minutes > 0 || (day.goalMinutes > 0 && day.kind == StudyWeekDay.Kind.STUDY && !day.isMissed(weekDate)))
 
     return if (saidByTime) null else status.replaceFirstChar { it.titlecase(locale) }
 }
@@ -198,12 +198,12 @@ private fun DayRing(
         return
     }
 
-    val isTarget = !day.studied && (day.kind == WeeklyRecapDaysInner.Kind.EXAM || day.kind == WeeklyRecapDaysInner.Kind.DEADLINE)
+    val isTarget = !day.studied && (day.kind == StudyWeekDay.Kind.EXAM || day.kind == StudyWeekDay.Kind.DEADLINE)
     val track =
         when {
             day.isToday -> GoalRingTrack.Today
             day.isMissed(weekDate) -> GoalRingTrack.Missed
-            day.kind == WeeklyRecapDaysInner.Kind.REST -> GoalRingTrack.Rest
+            day.kind == StudyWeekDay.Kind.REST -> GoalRingTrack.Rest
             else -> GoalRingTrack.Default
         }
 
@@ -225,11 +225,11 @@ private val WeekDay.share: Float
             else -> (minutes / goalMinutes).toFloat().coerceAtMost(1f)
         }
 
-private fun WeekDay.isMissed(weekDate: LocalDate) = kind == WeeklyRecapDaysInner.Kind.STUDY && !studied && !isToday && date < weekDate
+private fun WeekDay.isMissed(weekDate: LocalDate) = kind == StudyWeekDay.Kind.STUDY && !studied && !isToday && date < weekDate
 
 private val WeekDay.isOutsidePlan get() =
     !studied &&
-        (kind == WeeklyRecapDaysInner.Kind.BEFORE_START || kind == WeeklyRecapDaysInner.Kind.AFTER_END)
+        (kind == StudyWeekDay.Kind.BEFORE_START || kind == StudyWeekDay.Kind.AFTER_END)
 
 @Composable
 private fun dayStatus(
@@ -247,23 +247,23 @@ private fun dayStatus(
                 R.string.today_week_studied
             }
 
-            day.kind == WeeklyRecapDaysInner.Kind.EXAM -> {
+            day.kind == StudyWeekDay.Kind.EXAM -> {
                 R.string.today_week_exam_day
             }
 
-            day.kind == WeeklyRecapDaysInner.Kind.DEADLINE -> {
+            day.kind == StudyWeekDay.Kind.DEADLINE -> {
                 R.string.today_week_deadline
             }
 
-            day.kind == WeeklyRecapDaysInner.Kind.BEFORE_START -> {
+            day.kind == StudyWeekDay.Kind.BEFORE_START -> {
                 R.string.today_week_before_plan
             }
 
-            day.kind == WeeklyRecapDaysInner.Kind.AFTER_END -> {
+            day.kind == StudyWeekDay.Kind.AFTER_END -> {
                 if (exam) R.string.today_week_after_exam else R.string.today_week_after_date
             }
 
-            day.kind == WeeklyRecapDaysInner.Kind.REST -> {
+            day.kind == StudyWeekDay.Kind.REST -> {
                 R.string.today_week_rest_day
             }
 

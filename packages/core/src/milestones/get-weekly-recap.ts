@@ -125,7 +125,7 @@ async function loadWeeks({
     comparison: compareWeeks({ current: week, previous: lastWeek }),
     days: getWeekDays({
       days: recapDays,
-      getPlanDay: () => ({ goalMinutes: 0, kind: "study" }),
+      getPlanDay: () => ({ goalMinutes: 0, kind: "rest" }),
       today,
       weekStart,
     }),
