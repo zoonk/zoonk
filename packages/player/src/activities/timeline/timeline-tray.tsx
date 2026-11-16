@@ -42,7 +42,7 @@ export function TimelineTray({
         className={cn(
           ACTIVITY_BOX_CLASS,
           ACTIVITY_PRESS_CLASS,
-          "border-viz-accent hover:bg-accent flex w-full cursor-grab touch-none items-center gap-3 border-dashed px-3 py-2 active:cursor-grabbing",
+          "hover:bg-accent flex w-full cursor-grab touch-none items-center gap-3 px-3 py-2 active:cursor-grabbing",
         )}
         onClick={() => {
           if (!hasDragged.current) {
