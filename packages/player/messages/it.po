@@ -3102,6 +3102,7 @@ msgstr "Ti serve più tempo? {name} può spiegartela in un altro modo."
 
 #: src/lesson/controls/ask-buddy-offer.tsx
 #: src/questions/ask-tutor.tsx
+#: src/questions/lesson-question-panel.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "bH47Z4"
 msgid "Ask {name}"
@@ -3279,11 +3280,6 @@ msgstr ", lettura completata"
 msgctxt "k8sSVy"
 msgid "{count, plural, one {# quick question at the end} other {# quick questions at the end}}"
 msgstr "{count, plural, one {# domanda veloce alla fine} other {# domande veloci alla fine}}"
-
-#: src/lesson/lesson-aside.tsx
-msgctxt "fl3kLl"
-msgid "screen {number}"
-msgstr "schermata {number}"
 
 #: src/lesson/lesson-aside.tsx
 msgctxt "chnAWh"
@@ -3696,41 +3692,6 @@ msgid "We couldn't send your last question. Try again."
 msgstr "Non siamo riusciti a inviare la tua ultima domanda. Riprova."
 
 #: src/questions/lesson-question-composer.tsx
-msgctxt "v9luVQ"
-msgid "Ask about this chapter…"
-msgstr "Fai una domanda su questo capitolo…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "CVtLex"
-msgid "Ask about this mock exam…"
-msgstr "Fai una domanda su questa simulazione…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "X_H9F0"
-msgid "Ask about your plan…"
-msgstr "Fai una domanda sul tuo piano…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "uDwgZF"
-msgid "Ask about this subject…"
-msgstr "Fai una domanda su questa materia…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "TCh0B4"
-msgid "Ask about this question…"
-msgstr "Fai una domanda su questo quesito…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "wBr6ON"
-msgid "Ask about your answer…"
-msgstr "Fai una domanda sulla tua risposta…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "6sIYgs"
-msgid "Ask about the lesson content…"
-msgstr "Fai una domanda sui contenuti della lezione…"
-
-#: src/questions/lesson-question-composer.tsx
 msgctxt "zMPwOt"
 msgid "Retry last question"
 msgstr "Reinvia l’ultima domanda"
@@ -3859,11 +3820,6 @@ msgstr "Domande su questo quesito"
 msgctxt "jJ8jWo"
 msgid "Questions about this lesson"
 msgstr "Domande su questa lezione"
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "BOsQu3"
-msgid "What would you like help with?"
-msgstr "Su cosa vorresti una mano?"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"

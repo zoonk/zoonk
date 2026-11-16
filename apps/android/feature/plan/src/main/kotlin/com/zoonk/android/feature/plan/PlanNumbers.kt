@@ -49,6 +49,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.offset
 import com.zoonk.android.R
 import com.zoonk.android.feature.language.CanDoList
 import com.zoonk.android.feature.language.LevelValue
@@ -67,6 +68,8 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.QuietDisclosure
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.WEEK_RING
+import com.zoonk.android.ui.components.WeekDayCell
 import com.zoonk.android.ui.components.WeekDaysRow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.listRowDescription
@@ -195,7 +198,7 @@ internal fun PlanNumbers(
 }
 
 @Composable
-private fun standingTitle(standing: Standing) =
+internal fun standingTitle(standing: Standing) =
     stringResource(
         when (standing) {
             is Standing.Preparation -> R.string.plan_your_preparation
@@ -381,13 +384,24 @@ private fun DetailsSheet(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState()).padding(start = SHEET_MARGIN, end = SHEET_MARGIN, bottom = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(28.dp),
-        ) {
-            Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
-            content()
-        }
+        DetailsSheetBody(
+            title,
+            Modifier.verticalScroll(rememberScrollState()).padding(start = SHEET_MARGIN, end = SHEET_MARGIN, bottom = 32.dp),
+            content,
+        )
+    }
+}
+
+/** A number's details sheet below its handle: its title over its content. */
+@Composable
+internal fun DetailsSheetBody(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(28.dp)) {
+        Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+        content()
     }
 }
 
@@ -441,8 +455,7 @@ private fun PlanWeek(page: PlanPageState) {
             Text(
                 text = stringResource(R.string.plan_this_week),
                 modifier = Modifier.weight(1f).semantics { heading() },
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.titleMedium,
             )
             if (time.targetMinutes > 0) {
                 Text(
@@ -462,18 +475,11 @@ private fun PlanWeek(page: PlanPageState) {
                 val date = day.date.toJavaLocalDate()
                 val spoken =
                     stringResource(R.string.plan_week_day, weekdayNames(locale).full.getValue(date.dayOfWeek), dayStatus(day.state))
-                Column(
+                WeekDayCell(
+                    letter = weekdayNames(locale).narrow.getValue(date.dayOfWeek),
+                    today = day.state == PlanDay.State.TODAY,
                     modifier = Modifier.padding(vertical = 4.dp).clearAndSetSemantics { contentDescription = spoken },
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    Text(
-                        text = weekdayNames(locale).narrow.getValue(date.dayOfWeek),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    DayRing(day)
-                }
+                ) { DayRing(day) }
             }
         }
     }
@@ -510,7 +516,7 @@ private fun DayRing(day: PlanDay) {
             else -> 0.1f
         }
 
-    val ring = markSize() * DAY_RING_SHARE
+    val ring = WEEK_RING
     Box(Modifier.size(ring), contentAlignment = Alignment.Center) {
         Canvas(Modifier.size(ring)) {
             val width = 3.dp.toPx()
@@ -814,14 +820,14 @@ private const val MAX_STEPS_SHOWN = 2
 
 /** Core keeps a subject under this share until the learner takes their first test of it. */
 private const val TEST_THRESHOLD = 0.75
-private const val DAY_RING_SHARE = 1.5f
 
 /** A stat's touch room past its words, which takes no room in the column (main's `-m-2 p-2`). */
 private val STAT_PADDING = 8.dp
 
 private fun Modifier.bleedVertically(amount: Dp): Modifier =
     layout { measurable, constraints ->
-        val placeable = measurable.measure(constraints)
         val extra = amount.roundToPx()
+        // The content gets the room it bleeds into, so a height the layout fixed never cuts it.
+        val placeable = measurable.measure(constraints.offset(vertical = extra * 2))
         layout(placeable.width, (placeable.height - extra * 2).coerceAtLeast(0)) { placeable.place(0, -extra) }
     }

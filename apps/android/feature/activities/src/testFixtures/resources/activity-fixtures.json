@@ -284,8 +284,9 @@
             ],
             "expression": "60 * (1 - 0.25)",
             "id": "discount",
-            "math": "60 − 15 = 45",
+            "math": "$60 − $15 = $45",
             "prompt": "What comes first?",
+            "unit": "$",
             "value": 45
           },
           {
@@ -305,8 +306,9 @@
             ],
             "expression": "45 * 0.08",
             "id": "tax",
-            "math": "8% of 45 = 3.6",
+            "math": "8% of $45 = $3.60",
             "prompt": "8% of which price?",
+            "unit": "$",
             "value": 3.6
           }
         ]
@@ -2410,13 +2412,13 @@
           {
             "id": "o0",
             "isCorrect": false,
-            "reason": "A major has C♯ in the middle, which sounds brighter.",
+            "reason": "A major has C♯ where A minor has C, which sounds brighter.",
             "text": "A major chord"
           },
           {
             "id": "o1",
             "isCorrect": true,
-            "reason": "The middle note is C, a half step lower than in A major. That gives the darker sound.",
+            "reason": "A minor has C where A major has C♯, a half step lower. That gives the darker sound.",
             "text": "A minor chord"
           }
         ],

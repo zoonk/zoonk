@@ -20,7 +20,7 @@ const columns: AdminTableColumn[] = [
   { label: "Course and chapter", size: "text", twoLines: true },
   { label: "State", size: "wide" },
   { align: "right", label: "Screens" },
-  { label: "Updated" },
+  { align: "right", label: "Updated" },
 ];
 
 function LessonState({ lesson }: { lesson: ListedLibraryLesson }) {

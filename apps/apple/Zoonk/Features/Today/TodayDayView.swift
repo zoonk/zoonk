@@ -18,16 +18,20 @@ struct TodayDayView: View {
   /// answer did; the next waits for the next visit. Today opens on its first settled read, not on
   /// the stored one shown while a newer read loads.
   @State private var shownNotice: TodayView.Notice?
-  /// The learner said Not now to the Focus test on this visit.
-  @State private var focusTestNoted = false
+  /// The Focus test's Not now; true once it saved.
+  @State private var focusTestDismissal = VisitRequest<Bool>()
   @State private var examChecklist: Set<ExamView.ChecklistItem> = []
   @State private var examChoice: PlanEditor?
   @State private var examChoiceDraft: [String] = []
   @State private var adjusting: AdjustPlanSheet.Section?
   @State private var answeredUpload: TodayView.UploadRequest?
+  /// The upload request's Not now; true once it saved.
+  @State private var uploadDismissal = VisitRequest<Bool>()
   /// Today stops carrying an insight once it's answered, so its card keeps it to show the answer.
   @State private var answeredInsight: MemoryInsight?
   @State private var insightAnswers: [String: Bool] = [:]
+  @State private var repricedInsights: [String: MemoryInsight] = [:]
+  @State private var insightAnswer = VisitRequest<InsightAnswer>()
   @State private var uploadDraft = MaterialDraft()
   @State private var suggestedGoalAnswer = SuggestedGoalAnswer()
 
@@ -120,7 +124,11 @@ struct TodayDayView: View {
     .onDisappear {
       tapTask?.cancel()
       examChoice?.cancel()
+      focusTestDismissal.leave()
+      insightAnswer.leave()
       suggestedGoalAnswer.leave()
+      uploadDismissal.leave()
+      uploadDraft.leave()
     }
   }
 
@@ -308,7 +316,10 @@ struct TodayDayView: View {
           MemoryInsightCard(
             insight: insight,
             answer: Binding(
-              get: { insightAnswers[insight.id] }, set: { insightAnswers[insight.id] = $0 })
+              get: { insightAnswers[insight.id] }, set: { insightAnswers[insight.id] = $0 }),
+            repriced: Binding(
+              get: { repricedInsights[insight.id] }, set: { repricedInsights[insight.id] = $0 }),
+            saving: insightAnswer
           ) {
             holdShownNotice()
             answeredInsight = insight
@@ -333,7 +344,7 @@ struct TodayDayView: View {
         draft: $examChoiceDraft)
     case .focusTest:
       TodayFocusTestSection(
-        goalID: view.goal.id, offer: view.focusTest, dismissed: $focusTestNoted,
+        goalID: view.goal.id, offer: view.focusTest, dismissal: focusTestDismissal,
         onAnswer: holdShownNotice)
     case .suggestedGoal:
       if let suggestion = view.suggestedGoal {
@@ -342,7 +353,8 @@ struct TodayDayView: View {
     case .uploadRequest:
       if let request = answeredUpload ?? view.uploadRequest {
         TodayUploadRequestSection(
-          request: request, answered: answeredUpload != nil, draft: $uploadDraft
+          request: request, answered: answeredUpload != nil, draft: $uploadDraft,
+          dismissal: uploadDismissal
         ) {
           holdShownNotice()
           answeredUpload = request
@@ -536,10 +548,11 @@ struct TodayDayView: View {
     disclosures.showsMore = false
     examChoice = nil
     examChoiceDraft = []
+    failed = nil
     answeredUpload = nil
     answeredInsight = nil
     insightAnswers = [:]
-    focusTestNoted = false
+    repricedInsights = [:]
     store.dropAnsweredPlanChange()
     UsageAnalytics.track(.todayViewed)
     countNotice()

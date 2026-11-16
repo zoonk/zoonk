@@ -1,10 +1,10 @@
 "use client";
 
 import { type WrittenPractice } from "@zoonk/core/plans/written-practice-contract";
-import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { useExtracted, useFormatter } from "next-intl";
+import { useId } from "react";
+import { ChoiceList } from "../onboarding/choice-list";
 import { usePlanScreen } from "./plan-context";
-import { PLAN_OPTION_CLASS } from "./plan-option-styles";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
 
@@ -33,10 +33,6 @@ export function useWrittenCadenceWords() {
   };
 }
 
-function isCadence(value: unknown): value is WrittenCadence {
-  return CADENCES.some((cadence) => cadence === value);
-}
-
 export function WrittenCadenceChoice({
   onChange,
   pending,
@@ -47,6 +43,7 @@ export function WrittenCadenceChoice({
   practice: WrittenPractice;
 }) {
   const t = useExtracted();
+  const labelId = useId();
   const format = useFormatter();
   const words = useWrittenCadenceWords();
   const choice = useTappedChoice(practice.cadence);
@@ -56,30 +53,30 @@ export function WrittenCadenceChoice({
     (cadence) => cadence !== "finalWeeks" || practice.finalWeeksFrom !== null,
   );
 
-  return (
-    <fieldset className="flex flex-col gap-2">
-      <legend className="mb-2 text-sm font-medium">
-        {t("When to practice {parts}", { parts })}
-      </legend>
+  const title = t("When to practice {parts}", { parts });
 
-      <RadioGroup
-        className="flex flex-col gap-2"
-        disabled={pending}
-        onValueChange={(value) => {
-          if (isCadence(value) && value !== practice.cadence) {
-            onChange(value, choice.pick(value));
+  return (
+    <section aria-labelledby={labelId} className="flex flex-col gap-2">
+      <h3 className="text-sm font-medium" id={labelId}>
+        {title}
+      </h3>
+
+      <ChoiceList
+        choices={cadences.map((cadence) => ({
+          label: cadence === "weekly" ? t("Every week (recommended)") : words.label(cadence),
+          value: cadence,
+        }))}
+        label={title}
+        numberKeys={false}
+        onChange={(cadence) => {
+          if (cadence !== practice.cadence) {
+            onChange(cadence, choice.pick(cadence));
           }
         }}
+        readOnly={pending}
         value={choice.shown}
-      >
-        {cadences.map((cadence) => (
-          <RadioGroupOption className={PLAN_OPTION_CLASS} key={cadence}>
-            <RadioGroupItem value={cadence} />
-            {cadence === "weekly" ? t("Every week (recommended)") : words.label(cadence)}
-          </RadioGroupOption>
-        ))}
-      </RadioGroup>
-    </fieldset>
+      />
+    </section>
   );
 }
 

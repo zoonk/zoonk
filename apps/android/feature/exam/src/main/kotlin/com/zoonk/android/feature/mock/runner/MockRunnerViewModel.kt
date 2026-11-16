@@ -206,7 +206,7 @@ class MockRunnerViewModel(
     private var leavingOn: Int? = null
 
     /** This visit to the mock: [leave]'s close shows only on it. */
-    val visit = Visit()
+    val visit = Visit { speakingPaper.clear() }
 
     /** [leave]'s close, once its answers went out, while the visit that asked lasts. */
     val closed = visit.outcome<Unit>()
@@ -269,7 +269,9 @@ class MockRunnerViewModel(
 
     fun endBreak() = step(MockStep.EndBreak) { store.endBreak(blockId) }
 
-    fun startSpeaking() {
+    fun startSpeaking() = startSpeaking(visit.number)
+
+    private fun startSpeaking(asked: Int) {
         step(MockStep.StartSpeaking) {
             val started =
                 try {
@@ -278,10 +280,11 @@ class MockRunnerViewModel(
                     speakingPaper.clear()
                     throw e
                 }
+            if (asked != visit.number) return@step null
             when (started) {
                 is MutationResult.Done -> {
                     val written = started.value
-                    when (speakingPaper.answered((written as? Written.Writing)?.generationId, ::startSpeaking)) {
+                    when (speakingPaper.answered((written as? Written.Writing)?.generationId) { startSpeaking(asked) }) {
                         ContentWritingWait.Answer.Proceed -> MutationResult.Done((written as Written.Ready).value)
                         ContentWritingWait.Answer.Waiting -> null
                         ContentWritingWait.Answer.Failed -> MutationResult.Failed(ApiError.Unavailable)

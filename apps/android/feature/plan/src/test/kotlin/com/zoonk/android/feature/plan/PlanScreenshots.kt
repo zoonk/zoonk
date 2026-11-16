@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
+import com.zoonk.android.R
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
@@ -223,13 +225,26 @@ class PlanScreenshots {
                         )
                     },
             )
+        // The titles the Plan's number sheets draw over these contents.
+        val sheetTitles: Map<String, @Composable () -> String> =
+            mapOf(
+                "plan-sheet-pace" to { stringResource(R.string.plan_your_pace) },
+                "plan-sheet-progress" to { stringResource(R.string.plan_your_progress) },
+                "plan-sheet-preparation-review" to { stringResource(R.string.plan_your_preparation) },
+                "plan-sheet-preparation-reviewed" to { stringResource(R.string.plan_your_preparation) },
+            )
         var shown by mutableStateOf(sheets.keys.first())
         compose.setContent {
             val links = PlanLinks(rememberAppNavigator(), page)
             ZoonkTheme {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
-                    Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(28.dp)) {
-                        sheets.getValue(shown)(this, links)
+                    val title = sheetTitles[shown]?.invoke()
+                    if (title != null) {
+                        DetailsSheetBody(title, Modifier.padding(24.dp)) { sheets.getValue(shown)(this, links) }
+                    } else {
+                        Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(28.dp)) {
+                            sheets.getValue(shown)(this, links)
+                        }
                     }
                 }
             }

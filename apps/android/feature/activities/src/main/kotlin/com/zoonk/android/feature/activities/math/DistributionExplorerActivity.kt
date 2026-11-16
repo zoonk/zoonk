@@ -41,8 +41,10 @@ import com.zoonk.android.feature.activities.SnapRange
 import com.zoonk.android.feature.activities.activityCanvasColor
 import com.zoonk.android.feature.activities.measureLine
 import com.zoonk.android.feature.activities.numericAnswer
+import com.zoonk.android.feature.player.steps.allowed
 import com.zoonk.android.ui.components.LinearScale
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.exactFractionDigitsFor
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -76,7 +78,9 @@ private fun DistributionExplorerActivity(props: ActivityProps) {
     val between = percentBetween(distribution, Interval(low, high))
     val below = percentBetween(distribution, Interval(ends.from, low))
     val above = percentBetween(distribution, Interval(high, ends.to))
-    val percent = { value: Double -> formatAmount(value, locale, "%", maximumFractionDigits = PERCENT_DIGITS) }
+    // Every share reads to the check's precision, as the answer and its feedback do.
+    val checkDigits = (content.check as? NumericCheckValue)?.value?.let { exactFractionDigitsFor(it.answer, it.allowed, it.answer) }
+    val percent = { value: Double -> formatAmount(value, locale, "%", maximumFractionDigits = checkDigits ?: PERCENT_DIGITS) }
     val format = { value: Double -> formatAmount(value, locale) }
     val withUnit = { value: Double -> formatAmount(value, locale, fields.unit) }
     val change = { next: Pair<Double, Double> ->

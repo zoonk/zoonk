@@ -44,7 +44,6 @@
   "challenge_start_slow": "44b486c8126e6af83843731dec68aa143904b34974e9eb47a0841f8141a42692",
   "challenge_today": "e6d030eeaf4278c6576f3c9fbb2119e392b325cc0ca495a69a086609d48a4822",
   "challenge_tomorrow": "b1da22271010708748f93b89abd2cde45507e5f79ad2d1783ae203aaedc46887",
-  "challenge_topic_count": "24172129d4b4c095a832696cb06041aba2131f55fb70d0b68d47e6fb1cfc1af6",
   "challenge_topics_asked": "68a6cbfcc9c678935704dcdd78599fd3fd908bb45160e0da639a037480e28a54",
   "challenge_topics_weekly": "66ea06dd87c5b7226e86a23f688003ddbf5fd1dfa8b3e8c933d23832994c9873",
   "challenge_topics_will_ask": "1a60ae89bcb71f58afe74ecff8b4d8dc6aab6294d5e5557631511e39c24e8853",
@@ -99,12 +98,6 @@
     <string name="challenge_topics_weekly">Tematy z tego tygodnia</string>
     <string name="challenge_topics_asked">O co pytał</string>
     <string name="challenge_topics_will_ask">O co zapyta</string>
-    <plurals name="challenge_topic_count">
-        <item quantity="one">%d temat</item>
-        <item quantity="few">%d tematy</item>
-        <item quantity="many">%d tematów</item>
-        <item quantity="other">%d tematów</item>
-    </plurals>
     <string name="challenge_today">Dziś</string>
     <string name="challenge_tomorrow">Jutro</string>
     <!-- %1$s is the day; %2$s is the time it starts, like 9:00 AM. -->

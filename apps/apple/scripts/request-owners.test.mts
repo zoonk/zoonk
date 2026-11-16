@@ -13,25 +13,35 @@ import { describe, it } from "vitest";
 const OWNERS: Record<string, string> = {
   "DesignSystem/Characters/CharacterActor.swift: cueTask":
     "An animation cue the character plays, not a request.",
+  "Features/Account/ProfileEditorView.swift: saving":
+    "The profile, a page of the account sheet's stack, which keeps its identity beside the list or alone.",
   "Features/Activities/Music/RhythmTapperActivity.swift: calibration":
     "Audio calibration on the device, not a request.",
-  "Features/Buddy/BuddyScreen.swift: missionTap":
+  "Features/Buddy/BuddyEditor.swift: saving": "The glasses' own sheet: closing it is leaving.",
+  "Features/Buddy/BuddyScreen.swift: missionTap, saving":
     "Zu's page, which holds its PaneBeside: above the day's pane.",
-  "Features/Certificates/CertificateScreen.swift: printing": "A certificate's page has no split.",
+  "Features/Certificates/CertificateCeremony.swift: nameSave":
+    "The certificate moment, which holds its PaneSplit.",
+  "Features/Certificates/CertificateScreen.swift: nameSave, printing":
+    "A certificate's page has no split.",
   "Features/Courses/CatalogStartActions.swift: goalSwitch":
     "The course, chapter and lesson pages' goal switch, attached to the view that holds their PaneSplit.",
-  "Features/Exam/ExamScreen.swift: callStart": "The exam page, which holds its PaneSplit.",
+  "Features/Exam/ExamScreen.swift: callStart, dateChange, resultSave":
+    "The exam page, which holds its PaneSplit.",
   "Features/FocusTest/FocusTestFlow.swift: tasks": "The focus test has no split.",
-  "Features/GoalContent/ChapterScreen.swift: practiceTask":
+  "Features/GoalContent/ChapterScreen.swift: practicing":
     "The chapter page, which holds its PaneSplit.",
   "Features/GoalContent/LanguageUnitScreen.swift: callStart":
     "The unit page, which holds its PaneSplit.",
+  "Features/GoalContent/SubjectScreen.swift: restoring":
+    "The subject page, which holds its PaneSplit; the notice drawn in a pane only borrows it.",
   "Features/Mock/MockChooserScreen.swift: starting": "The mock chooser, which holds its PaneSplit.",
   "Features/Onboarding/CourseStartScreen.swift: startTask": "A course's start has no split.",
   "Features/Onboarding/GoalSetupScreen.swift: startingOver": "Goal setup's steps have no split.",
   "Features/Onboarding/GoalStartScreen.swift: creation":
     "The draft's visit (DraftCreation): leaving it is the end its create waits for.",
-  "Features/Onboarding/GoalStartScreen.swift: sending": "The start flow has no split.",
+  "Features/Onboarding/GoalStartScreen.swift: materialDraft, sending":
+    "The start flow has no split.",
   "Features/Onboarding/LevelTestStep.swift: finishing": "The level test has no split.",
   "Features/Onboarding/PlacementStep.swift: tasks":
     "Placement is the onboarding aside's PaneBeside content, which keeps its identity.",
@@ -44,7 +54,7 @@ const OWNERS: Record<string, string> = {
   "Features/Plan/GoalOptionsToolbar.swift: saving": "The Plan's bar, outside its split.",
   "Features/Plan/PlanBasesView.swift: saving":
     "In the Adjust plan sheet, presented above the Plan's split.",
-  "Features/Plan/PlanScreen.swift: certificateClaim, slotAnswer?.editor, slotChecks":
+  "Features/Plan/PlanScreen.swift: alphabetSkip, rebuildRetry, slotAnswer?.editor, slotChecks":
     "The Plan, which holds its PaneSplit.",
   "Features/PlanLink/PlanLinkScreen.swift: startTask": "A shared plan's page has no split.",
   "Features/Player/Views/LessonEndViews.swift: starting":
@@ -59,16 +69,26 @@ const OWNERS: Record<string, string> = {
     "The challenge's action, owned above its layout.",
   "Features/Practice/QuestionBlock/QuestionBlockScreen.swift: stopping":
     "The question block, above the question's split.",
+  "Features/Reminders/RemindersView.swift: emailSave, pushSetup, timeSave":
+    "Reminders, a page of the account sheet's stack, which keeps its identity beside the list or alone.",
   "Features/Search/SearchScreen.swift: goalSwitch": "Search, which holds its PaneSplit.",
   "Features/Session/SessionScreen.swift: action":
     "The next stop, above the split NextStopWait draws.",
   "Features/Session/SessionScreen.swift: playback": "The session's screen, which has no split.",
   "Features/Session/SessionSummaryView.swift: action":
     "The session's summary, which holds its PaneSplit.",
-  "Features/Today/TodayDayView.swift: examChoice, suggestedGoalAnswer, tapTask":
-    "Today's day, which holds its PaneSplit.",
+  "Features/Settings/MemoryView.swift: changes":
+    "Memory, a page of the account sheet's stack, which keeps its identity beside the list or alone.",
+  "Features/Settings/PreferencesView.swift: buddySave, homeSave, soundsSave":
+    "Preferences, a page of the account sheet's stack, which keeps its identity beside the list or alone.",
+  "Features/Settings/PrivacyView.swift: saving":
+    "Privacy, a page of the account sheet's stack, which keeps its identity beside the list or alone.",
+  "Features/Today/TodayDayView.swift: examChoice, focusTestDismissal, insightAnswer, suggestedGoalAnswer, tapTask, uploadDismissal, uploadDraft":
+    "Today's day, which holds its PaneSplit: the notices and their requests sit in its panes.",
   "Features/Today/TodayScreen.swift: answer": "Today with no goal has no split.",
-  "Features/Today/TodayScreen.swift: resumeTask": "A paused goal's Today has no split.",
+  "Features/Today/TodayScreen.swift: materialDraft":
+    "Today with no goal, which holds its PaneBeside, above the goal box's pane and rows.",
+  "Features/Today/TodayScreen.swift: resuming": "A paused goal's Today has no split.",
   "Features/Tutor/TutorThreadView.swift: pendingAsk":
     "An offer is its panel's: dropped when the panel leaves; a panel drawn in its place takes it over once the thread is read (TutorConversation.ask).",
   "Features/Tutor/TutorToolOfferCard.swift: start":

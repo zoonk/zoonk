@@ -31,6 +31,7 @@
   "stats_energy_line": "59091f231fcafd5815f584e83997330dedcc4ea2cbc384943769ba5798c33f26",
   "stats_evening": "9fafdf75fd6bb534c280dd23b1e7ddfcb2cf3217c79f6918bb727a3f5c0950ef",
   "stats_every_belt": "db1fecb6e5a872f11142316319c09b9364026a3ab23ce97fb7d38ca6fac8a62a",
+  "stats_few_answers_legend": "aaa86b18ad022fa8d4cfed93b8c6a54ebaed7b8dfcba4aac9402c4418cea5bb7",
   "stats_go_to_today": "8f3b656edcaa34f60b3bd16fbcfe84d8fe40eb6c13923e9cb4259de7e5cd57f1",
   "stats_high": "423deceb4a8595c6156023ad5d9576cf57efd123a1c65fbfa38b5cf7cb849612",
   "stats_less": "55d81bc74b9e9c247cc6e2804addec280454530f46f2ae6bfbc0bcc3b5db6a69",
@@ -48,6 +49,7 @@
   "stats_open": "70bc0c0ebed0d1db12dc017e9c77580e517628ef0bc52093d5cda5be8b390bb2",
   "stats_overview": "6a925434d0b1d487401a59d62acffa8cbba73d4e2a414d681be122bfa9fae96b",
   "stats_part_failed": "d39faf0cf964e62bb471882921e130b0b041971d8be3e7fbf7c1d042d4c02b09",
+  "stats_past_6_months": "ec6186a9175d188054d8845103210b8eb0b71733cc7ce56674083bfb148fde3a",
   "stats_past_year": "60b4f68f9ccb1cebf1a7cb0bd79d7a0f19f52fa3718e85e1082a09ea3ca09a24",
   "stats_patterns": "b1a33fe2f3a09a16bdeeb25cbf42271526ef17154dcadea7cff8e3d100543df4",
   "stats_patterns_90": "2cfaee4381fd68a357e11b95e033d56ef0a93688ec5cabd3b47ebd6083b6ac2d",
@@ -109,6 +111,10 @@
     <string name="stats_lessons">レッスン</string>
     <string name="stats_time">時間</string>
     <string name="stats_past_year">過去12か月</string>
+    <!-- Title over a calendar of days on a phone, which shows only its last 26 weeks. -->
+    <string name="stats_past_6_months">過去6か月</string>
+    <!-- Under a chart of bars: what a hollow dashed bar means. -->
+    <string name="stats_few_answers_legend">破線の棒は、まだ回答数が少なく集計できないことを表します。</string>
     <string name="stats_less">少ない</string>
     <string name="stats_more">多い</string>
     <plurals name="stats_calendar_activity_summary">

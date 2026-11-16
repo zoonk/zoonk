@@ -1,18 +1,9 @@
 import { Label } from "@zoonk/ui/components/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@zoonk/ui/components/select";
+import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 
 type SelectOption = { label: string; value: string };
 
-/**
- * A form's select with its label over it. The options are also the select's `items`, so the
- * closed select shows the picked option's label, not its value.
- */
+/** A form's select with its label over it. */
 export function LabeledSelect({
   defaultValue,
   disabled,
@@ -36,24 +27,20 @@ export function LabeledSelect({
   return (
     <div className="flex flex-col gap-2">
       <Label htmlFor={id}>{label}</Label>
-      <Select
+      <NativeSelect
+        className={triggerClassName}
         defaultValue={defaultValue}
         disabled={disabled}
         form={form}
-        items={options}
+        id={id}
         name={name}
       >
-        <SelectTrigger className={triggerClassName} id={id}>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+        {options.map((option) => (
+          <NativeSelectOption key={option.value} value={option.value}>
+            {option.label}
+          </NativeSelectOption>
+        ))}
+      </NativeSelect>
     </div>
   );
 }

@@ -1,6 +1,6 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import { routing } from "@/i18n/routing";
+import { FONT_WEIGHTS, getShareCardFonts } from "@/lib/certificates/certificate-fonts";
+import { getOpenGraphLogo } from "@/lib/metadata/open-graph-brand";
 import { getOpenGraphWordBreak } from "@/lib/metadata/open-graph-word-break";
 import { DEFAULT_LOCALE, isValidLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
@@ -8,24 +8,9 @@ import { ImageResponse } from "next/og";
 import { type ReactNode } from "react";
 import { getHomeHeadline } from "./(home)/_components/home-headline";
 
-const LOGO_PATH = join(process.cwd(), "src/app/icon.svg");
-
 export const alt = "Zoonk";
 export const contentType = "image/png";
 export const size = { height: 630, width: 1200 };
-
-/** Cached, so the file read doesn't keep the card from being generated at build time. */
-async function getLogoDataUrl(): Promise<string> {
-  "use cache";
-
-  const icon = await readFile(LOGO_PATH, "utf8");
-
-  const logo = icon
-    .replace('fill="#171717"', 'fill="#fafafa"')
-    .replace('fill="#fff"', 'fill="#0d1117"');
-
-  return `data:image/svg+xml;base64,${Buffer.from(logo).toString("base64")}`;
-}
 
 function renderLine(chunks: ReactNode) {
   return <div style={{ display: "flex", textWrap: "balance" }}>{chunks}</div>;
@@ -43,7 +28,7 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
   const { lang } = await params;
   const locale = isValidLocale(lang) ? lang : DEFAULT_LOCALE;
   const t = await getExtracted({ locale });
-  const logoSrc = await getLogoDataUrl();
+  const [logoSrc, fonts] = await Promise.all([getOpenGraphLogo("dark"), getShareCardFonts()]);
 
   return new ImageResponse(
     <div
@@ -53,7 +38,7 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
         color: "#fafafa",
         display: "flex",
         flexDirection: "column",
-        fontFamily: "Arial, Helvetica, sans-serif",
+        fontFamily: "Geist",
         height: "100%",
         justifyContent: "center",
         padding: "64px 80px",
@@ -80,7 +65,7 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
             display: "flex",
             flexDirection: "column",
             fontSize: 60,
-            fontWeight: 400,
+            fontWeight: FONT_WEIGHTS.brand,
             letterSpacing: "-0.035em",
             lineHeight: 1.05,
           }}
@@ -107,6 +92,6 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
         </div>
       </div>
     </div>,
-    { ...size },
+    { ...size, fonts },
   );
 }

@@ -1,15 +1,18 @@
 import "server-only";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { FONT_WEIGHTS, getShareCardFonts } from "@/lib/certificates/certificate-fonts";
 import { optimizeImage } from "@zoonk/core/images/optimize";
 import { safeAsync } from "@zoonk/utils/error";
 import { ImageResponse } from "next/og";
+import { OpenGraphBrand, getOpenGraphLogo } from "./open-graph-brand";
 import { getOpenGraphWordBreak } from "./open-graph-word-break";
 
 const ROOT_OPEN_GRAPH_IMAGE_PATH = "src/app/icon.svg";
 const DESCRIPTION_LINE_HEIGHT = 1.35;
 const DESCRIPTION_LINE_COUNT = 5;
 const DESCRIPTION_FONT_SIZE = 30;
+const BRAND_SIZE = 40;
 const MAX_DESCRIPTION_LENGTH = 112;
 const MAX_TITLE_LENGTH = 76;
 const LONG_TITLE_LENGTH = 58;
@@ -35,22 +38,32 @@ type CatalogImageSource =
   | { kind: "root" };
 
 export async function createCatalogOpenGraphImage(params: CatalogOpenGraphImageParams) {
-  const imageSrc = await getRenderableImageSrc({
-    fallbackImagePath: params.fallbackImagePath,
-    imageUrl: params.imageUrl,
-  });
+  const [imageSrc, logoSrc, fonts] = await Promise.all([
+    getRenderableImageSrc({
+      fallbackImagePath: params.fallbackImagePath,
+      imageUrl: params.imageUrl,
+    }),
+    getOpenGraphLogo("light"),
+    getShareCardFonts(),
+  ]);
 
-  return new ImageResponse(<CatalogOpenGraphImage imageSrc={imageSrc} {...params} />, {
-    ...catalogOpenGraphImageSize,
-  });
+  return new ImageResponse(
+    <CatalogOpenGraphImage imageSrc={imageSrc} logoSrc={logoSrc} {...params} />,
+    { ...catalogOpenGraphImageSize, fonts },
+  );
 }
 
+/** Ends on the last whole word that fits; a script without spaces between words is cut where it reaches the limit. */
 function truncateText({ maxLength, text }: { maxLength: number; text: string }): string {
   if (text.length <= maxLength) {
     return text;
   }
 
-  return `${text.slice(0, maxLength - 1).trimEnd()}...`;
+  const cut = text.slice(0, maxLength - 1);
+  const lastSpace = cut.lastIndexOf(" ");
+  const words = lastSpace > 0 ? cut.slice(0, lastSpace) : cut;
+
+  return `${words.replace(/[\s\p{P}]+$/u, "")}…`;
 }
 
 function getTitleFontSize(title: string): number {
@@ -165,8 +178,9 @@ function CatalogOpenGraphImage({
   description,
   imageSrc,
   language,
+  logoSrc,
   title,
-}: CatalogOpenGraphImageParams & { imageSrc: string }) {
+}: CatalogOpenGraphImageParams & { imageSrc: string; logoSrc: string }) {
   const safeTitle = truncateText({ maxLength: MAX_TITLE_LENGTH, text: title });
 
   const safeDescription = description
@@ -176,76 +190,86 @@ function CatalogOpenGraphImage({
   return (
     <div
       style={{
-        alignItems: "center",
         background: "#ffffff",
         color: "#111111",
         display: "flex",
-        fontFamily: "Arial, Helvetica, sans-serif",
-        gap: 96,
+        flexDirection: "column",
+        fontFamily: "Geist",
         height: "100%",
-        justifyContent: "center",
-        padding: "72px 96px",
+        padding: "48px 96px 72px",
         width: "100%",
         wordBreak: getOpenGraphWordBreak(language),
       }}
     >
-      <div
-        style={{
-          background: "#ffffff",
-          border: "1px solid rgba(17, 17, 17, 0.12)",
-          borderRadius: 32,
-          display: "flex",
-          flexShrink: 0,
-          height: 360,
-          justifyContent: "center",
-          overflow: "hidden",
-          padding: 36,
-          width: 360,
-        }}
-      >
-        {/* oxlint-disable-next-line next/no-img-element -- ImageResponse renders plain img elements, not next/image. */}
-        <img
-          alt=""
-          src={imageSrc}
-          style={{ height: "100%", objectFit: "contain", width: "100%" }}
-        />
-      </div>
+      <OpenGraphBrand logoSrc={logoSrc} size={BRAND_SIZE} />
 
       <div
         style={{
+          alignItems: "center",
           display: "flex",
-          flexDirection: "column",
-          gap: 28,
+          flexGrow: 1,
+          gap: 96,
           justifyContent: "center",
-          minWidth: 0,
-          width: 560,
         }}
       >
         <div
           style={{
+            background: "#ffffff",
+            border: "1px solid rgba(17, 17, 17, 0.12)",
+            borderRadius: 32,
             display: "flex",
-            fontSize: getTitleFontSize(safeTitle),
-            fontWeight: 800,
-            lineHeight: 1.04,
+            flexShrink: 0,
+            height: 360,
+            justifyContent: "center",
+            overflow: "hidden",
+            padding: 36,
+            width: 360,
           }}
         >
-          {safeTitle}
+          {/* oxlint-disable-next-line next/no-img-element -- ImageResponse renders plain img elements, not next/image. */}
+          <img
+            alt=""
+            src={imageSrc}
+            style={{ height: "100%", objectFit: "contain", width: "100%" }}
+          />
         </div>
 
-        {safeDescription && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 28,
+            justifyContent: "center",
+            minWidth: 0,
+            width: 560,
+          }}
+        >
           <div
             style={{
-              color: "#4a4a4a",
               display: "flex",
-              fontSize: DESCRIPTION_FONT_SIZE,
-              lineHeight: DESCRIPTION_LINE_HEIGHT,
-              maxHeight: DESCRIPTION_FONT_SIZE * DESCRIPTION_LINE_HEIGHT * DESCRIPTION_LINE_COUNT,
-              overflow: "hidden",
+              fontSize: getTitleFontSize(safeTitle),
+              fontWeight: FONT_WEIGHTS.brand,
+              lineHeight: 1.04,
             }}
           >
-            {safeDescription}
+            {safeTitle}
           </div>
-        )}
+
+          {safeDescription && (
+            <div
+              style={{
+                color: "#4a4a4a",
+                display: "flex",
+                fontSize: DESCRIPTION_FONT_SIZE,
+                lineHeight: DESCRIPTION_LINE_HEIGHT,
+                maxHeight: DESCRIPTION_FONT_SIZE * DESCRIPTION_LINE_HEIGHT * DESCRIPTION_LINE_COUNT,
+                overflow: "hidden",
+              }}
+            >
+              {safeDescription}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

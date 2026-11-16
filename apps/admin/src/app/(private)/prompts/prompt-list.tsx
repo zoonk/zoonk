@@ -15,7 +15,7 @@ const columns: AdminTableColumn[] = [
   { label: "Zoonk read it as", size: "long", twoLines: true },
   { label: "Outcome", size: "wide" },
   { label: "Who", size: "text", twoLines: true },
-  { label: "Date" },
+  { align: "right", label: "Date" },
 ];
 
 export async function PromptList({ searchParams }: Pick<PageProps<"/prompts">, "searchParams">) {

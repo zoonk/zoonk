@@ -182,13 +182,13 @@ export const engineModeFixtures = {
       check: reasonedChoice("What did you hear?", [
         {
           isCorrect: false,
-          reason: "A major has C♯ in the middle, which sounds brighter.",
+          reason: "A major has C♯ where A minor has C, which sounds brighter.",
           text: "A major chord",
         },
         {
           isCorrect: true,
           reason:
-            "The middle note is C, a half step lower than in A major. That gives the darker sound.",
+            "A minor has C where A major has C♯, a half step lower. That gives the darker sound.",
           text: "A minor chord",
         },
       ]),

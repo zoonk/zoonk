@@ -1,6 +1,5 @@
 import { type AppRoute } from "@/i18n/navigation";
 import { type getMenu } from "@/lib/menu";
-import { type ChapterSearchResult, type CourseSearchResult } from "@zoonk/core/catalog/search";
 import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { normalizeString } from "@zoonk/utils/string";
 import {
@@ -17,6 +16,7 @@ import {
   PlusIcon,
   TimerIcon,
 } from "lucide-react";
+import { type ChapterPaletteItem, type CoursePaletteItem } from "./command-palette-catalog-items";
 
 type PaletteRoute = AppRoute<ReturnType<typeof getMenu>["url"]>;
 
@@ -57,22 +57,6 @@ type PlanChapterPaletteItem = PaletteRow & {
 };
 
 type MockPaletteItem = PaletteRow & { blockId: string; kind: "mockResult" };
-
-export type CoursePaletteItem = {
-  course: CourseSearchResult;
-  id: string;
-  kind: "course";
-  label: string;
-  searchValue: string;
-};
-
-export type ChapterPaletteItem = {
-  chapter: ChapterSearchResult;
-  id: string;
-  kind: "chapter";
-  label: string;
-  searchValue: string;
-};
 
 export type PaletteItem =
   | AskPaletteItem
@@ -244,9 +228,10 @@ export function createSubjectPaletteItem(subject: {
   };
 }
 
-/** Two subjects can have chapters of the same name. */
+/** Two subjects can have chapters of the same name, so the search still finds one by its subject. */
 export function createPlanChapterPaletteItem(chapter: {
   chapterId: string;
+  showsSubject: boolean;
   subject: string;
   title: string;
   unit: boolean;
@@ -257,7 +242,7 @@ export function createPlanChapterPaletteItem(chapter: {
     id: `plan-chapter-${chapter.chapterId}`,
     kind: "planChapter",
     label: chapter.title,
-    meta: chapter.subject,
+    meta: chapter.showsSubject ? chapter.subject : undefined,
     searchValue: [chapter.title, chapter.subject].join(" "),
     unit: chapter.unit,
   };
@@ -277,29 +262,6 @@ export function createMockPaletteItem({
     kind: "mockResult",
     label,
     searchValue: label,
-  };
-}
-
-export function createCoursePaletteItem(course: CourseSearchResult): CoursePaletteItem {
-  return {
-    course,
-    id: `course-${course.id}`,
-    kind: "course",
-    label: course.title,
-    searchValue: [course.title, course.description, course.id].filter(Boolean).join(" "),
-  };
-}
-
-/** Chapter titles are often reused across courses, so the search value includes the parent course. */
-export function createChapterPaletteItem(chapter: ChapterSearchResult): ChapterPaletteItem {
-  return {
-    chapter,
-    id: `chapter-${chapter.id}`,
-    kind: "chapter",
-    label: chapter.title,
-    searchValue: [chapter.title, chapter.courseTitle, chapter.description, chapter.id]
-      .filter(Boolean)
-      .join(" "),
   };
 }
 

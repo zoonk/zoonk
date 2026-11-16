@@ -79,7 +79,7 @@ function useCurriculumCopy(): KindCopy<"curriculum"> {
       plan: {
         label: t("Fitting the plan into your days"),
         lines: [
-          t("Finding lessons in the Library…"),
+          t("Finding lessons for your goal…"),
           t("Spreading the skills over your days…"),
           t("Saving your plan…"),
         ],
@@ -116,7 +116,7 @@ function useFirstLessonCopy(): KindCopy<"firstLesson"> {
       ...goal,
       day: {
         label: t("Planning your first day"),
-        lines: [t("Finding lessons in the Library…"), t("Choosing where to start…")],
+        lines: [t("Finding lessons for your goal…"), t("Choosing where to start…")],
       },
     },
   };
@@ -140,7 +140,7 @@ function useCourseOutlineCopy(): KindCopy<"courseOutline"> {
       },
       plan: {
         label: t("Choosing your courses"),
-        lines: [t("Finding courses in the Library…"), t("Saving your plan…")],
+        lines: [t("Finding courses for your goal…"), t("Saving your plan…")],
       },
       skills,
     },
@@ -179,12 +179,7 @@ function useExplanationCopy(): KindCopy<"explanation"> {
       read: { label: t("Reading your question"), lines: [t("Reading your question…")] },
       write: {
         label: t("Writing about 5 short screens"),
-        lines: [],
-        numbered: {
-          count: 5,
-          line: (number) => t("Writing screen {number}…", { number: String(number) }),
-          review: t("Checking the facts…"),
-        },
+        lines: [t("Writing the explanation…"), t("Adding an example…"), t("Checking the facts…")],
       },
     },
   };

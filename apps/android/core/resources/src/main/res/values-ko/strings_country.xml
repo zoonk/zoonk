@@ -2,9 +2,9 @@
 <!-- eloqnt-fingerprints-v1
 {
   "country_all": "f411c321a3090686942f390bc3c88ba955623122a13c9622630066eee62a0e93",
-  "country_change_body": "1ec0ea9e660b41d2c41636c4ae58b48ec0c983b6ba73f903d3e5df1271b1b068",
-  "country_change_confirm": "6863b53d3b7ee35012c2d686701b8673cfe31ecdc7bdf0b769be23e563ca9d11",
-  "country_change_title": "8cbdeeb47245c5299bfad3d219bcb88574169c3e88a23020d912d80e97f39d12",
+  "country_change_body": "bbc5de1e4426fab7c907ce1b84f8c2376ef232e67633a0f7920dee854c950898",
+  "country_change_confirm": "41d366071e55fd4f679619dd4aa45c06a310a82fe7c709a40dd1b7b9afc9a9d4",
+  "country_change_title": "d4238b22f2fabbe79c6a4fd2ef08b353cc7e838c599d5fc63a99217ae900ad91",
   "country_content_label": "c3f63d271a6b43e5a8b15147cde3703031caa03b0f54871ac06bb17e96b39dfd",
   "country_content_value": "f45d95f30659a83fa41a2bc0490e8e40f59a57ef0b3b2e66b30af344f24e8040",
   "country_exam_label": "b325e323db589cb7fe9e55a1c24fd1349c64b31a400e8f0553710da2ce124ecd",
@@ -54,11 +54,11 @@
     <!-- A label in the plan: the country whose examples a general course uses, which is where the learner lives. The country's name follows it as a value. -->
     <string name="country_lesson_examples_label">레슨 예시</string>
     <!-- The title of a dialog confirming a new content country for a started plan. -->
-    <string name="country_change_title">콘텐츠 기준 국가를 바꿀까요?</string>
+    <string name="country_change_title">국가를 바꿀까요?</string>
     <!-- The body of that dialog; %1$s is the new country's name in the reader's language, after the colon so it needs no article or case. -->
-    <string name="country_change_body">변경할 국가: %1$s. 이 국가에 맞춰 계획을 다시 만들어요. 레슨 완료 기록은 그대로 유지되고, 새 계획이 준비될 때까지 지금 계획으로 계속 공부할 수 있어요.</string>
+    <string name="country_change_body">새 국가: %1$s. 이 국가에 맞춰 새 계획을 만들어요. 레슨 완료 기록은 그대로 유지돼요.</string>
     <!-- The dialog's button that saves the new country and rebuilds the plan for it. -->
-    <string name="country_change_confirm">계획 다시 만들기</string>
+    <string name="country_change_confirm">국가 변경</string>
     <!-- A notice at the top of the plan while a new plan is prepared for the new content country. -->
     <string name="country_rebuild_title">새 계획을 준비하고 있어요</string>
     <!-- Under that notice's title. -->

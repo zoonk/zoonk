@@ -4,7 +4,6 @@ import { getTargetDateBounds } from "@zoonk/core/plans/target-date-range";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { useFormatIsoDate } from "../_utils/iso-date";
@@ -122,10 +121,11 @@ export function PlanDate() {
           type="date"
           value={value}
         />
-        {/* Its room is there before a date is typed, so the field doesn't narrow when it shows. */}
+        {/* There before a date is typed, so the row keeps one end edge and the field never narrows. */}
         <Button
           busy={isPending}
-          className={cn(!canSave && !isPending && "invisible")}
+          disabled={!canSave && !isPending}
+          focusableWhenDisabled
           size="lg"
           type="submit"
           variant="outline"

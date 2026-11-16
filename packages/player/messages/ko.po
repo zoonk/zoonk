@@ -3102,6 +3102,7 @@ msgstr "생각할 시간이 더 필요한가요? {name}(이)가 다른 방식으
 
 #: src/lesson/controls/ask-buddy-offer.tsx
 #: src/questions/ask-tutor.tsx
+#: src/questions/lesson-question-panel.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "bH47Z4"
 msgid "Ask {name}"
@@ -3279,11 +3280,6 @@ msgstr ", 읽음"
 msgctxt "k8sSVy"
 msgid "{count, plural, one {# quick question at the end} other {# quick questions at the end}}"
 msgstr "{count, plural, other {마무리로 간단한 문제 #개}}"
-
-#: src/lesson/lesson-aside.tsx
-msgctxt "fl3kLl"
-msgid "screen {number}"
-msgstr "{number}번 화면"
 
 #: src/lesson/lesson-aside.tsx
 msgctxt "chnAWh"
@@ -3696,41 +3692,6 @@ msgid "We couldn't send your last question. Try again."
 msgstr "마지막 질문을 보내지 못했어요. 다시 시도해 보세요."
 
 #: src/questions/lesson-question-composer.tsx
-msgctxt "v9luVQ"
-msgid "Ask about this chapter…"
-msgstr "이 챕터에 대해 질문해 보세요…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "CVtLex"
-msgid "Ask about this mock exam…"
-msgstr "이 모의고사에 대해 질문해 보세요…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "X_H9F0"
-msgid "Ask about your plan…"
-msgstr "내 계획에 대해 질문해 보세요…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "uDwgZF"
-msgid "Ask about this subject…"
-msgstr "이 과목에 대해 질문해 보세요…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "TCh0B4"
-msgid "Ask about this question…"
-msgstr "이 문제에 대해 질문해 보세요…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "wBr6ON"
-msgid "Ask about your answer…"
-msgstr "내 답에 대해 질문해 보세요…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "6sIYgs"
-msgid "Ask about the lesson content…"
-msgstr "레슨 내용에 대해 질문해 보세요…"
-
-#: src/questions/lesson-question-composer.tsx
 msgctxt "zMPwOt"
 msgid "Retry last question"
 msgstr "마지막 질문 다시 보내기"
@@ -3859,11 +3820,6 @@ msgstr "이 문제에 대한 질문"
 msgctxt "jJ8jWo"
 msgid "Questions about this lesson"
 msgstr "이 레슨에 대한 질문"
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "BOsQu3"
-msgid "What would you like help with?"
-msgstr "무엇을 도와드릴까요?"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"

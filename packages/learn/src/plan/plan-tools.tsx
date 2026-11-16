@@ -164,11 +164,15 @@ function LaterTools({
     <details className="group flex flex-col open:gap-2">
       {/* A flex summary drops the native triangle, so the chevron says it opens. */}
       <summary className="text-muted-foreground flex min-h-11 cursor-pointer items-center gap-1 text-sm [&::-webkit-details-marker]:hidden">
-        {t("More later: {tools}", {
-          tools: tools
-            .map((tool) => CHOICES_PATTERN.exec(tool.name)?.groups?.tool ?? tool.name)
-            .join(", "),
-        })}
+        {t(
+          "{count, plural, one {# more tool later: {tools}} other {# more tools later: {tools}}}",
+          {
+            count: tools.length,
+            tools: tools
+              .map((tool) => CHOICES_PATTERN.exec(tool.name)?.groups?.tool ?? tool.name)
+              .join(", "),
+          },
+        )}
         <FoldChevron inline />
       </summary>
 

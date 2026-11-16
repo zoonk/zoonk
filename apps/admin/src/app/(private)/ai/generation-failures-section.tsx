@@ -19,7 +19,7 @@ const columns: AdminTableColumn[] = [
   { label: "What was being written" },
   { label: "Kind", size: "wide" },
   { label: "State", size: "wide" },
-  { label: "Updated", size: "text" },
+  { align: "right", label: "Updated", size: "text" },
 ];
 
 function FailureLabel({ failure }: { failure: GenerationFailure }) {

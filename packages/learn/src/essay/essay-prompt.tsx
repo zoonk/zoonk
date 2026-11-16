@@ -4,7 +4,6 @@ import { type EssayView } from "@zoonk/core/exams/essays/contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PageSectionTitle } from "../_components/page";
-import { QuestionTitle } from "../_components/question-title";
 import { TaskAsideContent } from "../_components/task-layout";
 import { ItemText } from "../questions/item-text";
 import { useEssayScreen } from "./essay-context";
@@ -67,6 +66,7 @@ export function EssayTexts({ criteria, texts }: { criteria: boolean; texts: stri
 }
 
 export function EssayInstruction({ context }: { context: string | null }) {
+  const t = useExtracted();
   const { essay } = useEssayScreen();
 
   return (
@@ -77,7 +77,10 @@ export function EssayInstruction({ context }: { context: string | null }) {
           text={context}
         />
       )}
-      <QuestionTitle text={essay.question} />
+      <div className="flex flex-col gap-2">
+        <PageSectionTitle>{t("What to write")}</PageSectionTitle>
+        <ItemText className="text-reading leading-relaxed" text={essay.question} />
+      </div>
     </section>
   );
 }

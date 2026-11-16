@@ -126,11 +126,17 @@ describe("a notice that counts its tests' questions, not its subjects'", () => {
 
   it("tells the learner the counts come from the notice", () => {
     expect(
-      getMockSizeSource({ noticeQuestions: 170, ownerId: null, structure: BY_PARTS }).subjects,
+      getMockSizeSource({
+        examName: "ENEM",
+        noticeQuestions: 170,
+        ownerId: null,
+        structure: BY_PARTS,
+      }).subjects,
     ).toBe("notice");
 
     expect(
       getMockSizeSource({
+        examName: "ENEM",
         noticeQuestions: 170,
         ownerId: null,
         structure: structureWith({ scoring: {} }),

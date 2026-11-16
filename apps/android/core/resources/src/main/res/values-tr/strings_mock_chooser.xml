@@ -18,7 +18,7 @@
   "mock_chooser_parts": "0d63399a6dfe81c0d31ad6ce383fa758383872c0ebb2cd67906ec330b59fe4d5",
   "mock_chooser_pick_another": "da5fdbb529842dc88225b38db70abb38d21cef7b5646287d9c45e7db3674f9d8",
   "mock_chooser_picked": "79607e86e90f84e607f5d4ef9b1103de9dfdae19eb03dc1a116e26867c95f54f",
-  "mock_chooser_preparing": "1ef303b45e75a4a846e73b64f5bcb63a610d15b00d83c6fa018eb65e7684b12b",
+  "mock_chooser_preparing": "faa16602f8dd90cbd03aa13aaa64967d725e6244d9c8eb1b71e0e977b25944f3",
   "mock_chooser_preparing_detail": "a97e16099c20a0ac810f5bd7cc52159c009663dde2e3c355144f4417428b43b3",
   "mock_chooser_questions": "87696f8bd86e57854e61e9689ce68471acd9b649c92cb2d28e9ee10d712e749a",
   "mock_chooser_short_day": "6056b1fe80a616a1123f92224ac7ade10df1eeaaea59811095fcfa45e89f98e6",
@@ -77,7 +77,7 @@
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">Bugün bu deneme sınavı %1$s soruluk (tamamı %2$s soru) ve yaklaşık %3$s sürüyor.</string>
     <string name="mock_chooser_pick_another">Başka birini seç</string>
-    <string name="mock_chooser_preparing">Deneme sınavını hazırlıyoruz…</string>
+    <string name="mock_chooser_preparing">Deneme sınavını hazırlıyoruz</string>
     <string name="mock_chooser_preparing_detail">Senin için sınavdakilere benzer sorular hazırlıyoruz. Sorular hazır olur olmaz deneme sınavı burada başlayacak.</string>
     <string name="mock_chooser_writing">Deneme sınavını hazırlıyoruz</string>
     <string name="mock_chooser_writing_questions">Sınavdakilere benzer sorular hazırlıyoruz</string>

@@ -6,11 +6,13 @@ import { useFormStatus } from "react-dom";
 /** A form's one-press action. `ghost` is for the quieter of two actions on a row. */
 export function AdminActionSubmitButton({
   children,
+  disabled,
   icon,
   size = "sm",
   variant = "outline",
 }: {
   children: React.ReactNode;
+  disabled?: boolean;
   icon: React.ReactNode;
   size?: "bar" | "lg" | "sm";
   variant?: "ghost" | "outline";
@@ -18,7 +20,14 @@ export function AdminActionSubmitButton({
   const status = useFormStatus();
 
   return (
-    <Button busy={status.pending} icon={icon} size={size} type="submit" variant={variant}>
+    <Button
+      busy={status.pending}
+      disabled={disabled}
+      icon={icon}
+      size={size}
+      type="submit"
+      variant={variant}
+    >
       {children}
     </Button>
   );

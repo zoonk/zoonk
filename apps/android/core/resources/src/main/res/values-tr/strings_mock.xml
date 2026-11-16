@@ -47,6 +47,7 @@
   "mock_next_section": "9accd0524c41c7ed9dabd437a95d03c394676217cab43dc1ae687d696acd7532",
   "mock_not_saved_retrying": "5b80d094db7f34ae28dbffe1c0f7f765bc35fcaa61b5beae4aa30bef6aff8269",
   "mock_place": "6f4f79b8300799bfe604a1ac1c9ac4be246b1a501af1209a3eb14e629789f985",
+  "mock_points_of": "ef001a020a1c9e8b03410ca6db37efc54b63b3386d11d16bd0a07b08efeb7537",
   "mock_progress_label": "42a5783daff8b0691a7af628f7da8ef664483c608077253e7a35d10bbf763748",
   "mock_question_number": "82da547f59fc81766d6b4ed814141783e85e6209da6c850d0a76e4aaa4d628ce",
   "mock_question_place": "f3fb6bd6f364030bad9bfa3d7ca5e9ce86d6723f91be97c74e67c6f1a72c60bd",
@@ -65,7 +66,7 @@
   "mock_speaking_hand_in_done": "ac04e77efc66d78654a5e31ba923037eba205229e5a0b5a8faa59592bd930bfc",
   "mock_speaking_hand_in_left": "d48efb9566039a71be3eeedf1e7f8521c3238e661f92d358f469c308a27a654a",
   "mock_speaking_intro": "716984746be5a82af0314c2adb7c51a2acaa0350f7773b3bc01fcaff1733bec2",
-  "mock_speaking_left": "ff10edc082ece0b238f3ea6502c4fa5f659588da3b6ed29a27d8e076bd145c95",
+  "mock_speaking_left": "3e797fc8fee22928665960c9d66d6aaab0e6f3dcb895951a094420db4945722f",
   "mock_speaking_paper_opens": "94d5a2bd35009995fd1735f1a4f2d4c9435bcac02c4ce9f8ace2cbb4786a9176",
   "mock_speaking_start": "2a8b85631d8a773abad72fcd7e6179f6dd90c60030af2caf1d390f3177362125",
   "mock_speaking_start_task": "bd49a60e2540c0627481de667ee285d983e4fb3173b7cd443ad7bc5505b94174",
@@ -99,10 +100,15 @@
     <string name="mock_title">Deneme sınavı %1$d</string>
     <!-- A mock exam's score where wrong answers cost points: "32.5 of 60". -->
     <string name="mock_net_score">%1$s / %2$d</string>
-    <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60 right". -->
+    <!-- %1$s is a whole count of right answers: "41 of 60 right". -->
     <plurals name="mock_right_answers">
         <item quantity="one">%1$s / %2$d doğru</item>
         <item quantity="other">%1$s / %2$d doğru</item>
+    </plurals>
+    <!-- A mock exam's result where some questions gave part of a point: "36.5 of 90 points". -->
+    <plurals name="mock_points_of">
+        <item quantity="one">%1$s / %2$d puan</item>
+        <item quantity="other">%1$s / %2$d puan</item>
     </plurals>
     <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
     <string name="mock_row_detail">%1$s · %2$s</string>
@@ -226,7 +232,8 @@
     <string name="mock_speaking_writing_paper_line_2">Her kartın yönergelerini hazırlıyoruz…</string>
     <string name="mock_speaking_writing_paper_line_3">Değerlendiricinin söyleyeceklerini hazırlıyoruz…</string>
     <string name="mock_speaking_writing_paper_line_4">Yardımcı olacak ifadeler ekliyoruz…</string>
-    <string name="mock_speaking_left">Bölümleri sırayla tamamla. Her bölümde bir sohbet yaparsın.</string>
+    <!-- Over a mock exam's speaking tasks: each task is a short voice call where the learner speaks with the examiner. -->
+    <string name="mock_speaking_left">Bölümleri sırayla yap. Her bölümde değerlendiriciyle sesli olarak konuşursun.</string>
     <string name="mock_speaking_all_done">Tüm bölümler tamamlandı. Devam etmek için bu oturumu teslim et.</string>
     <!-- %2$s is how long the task lasts, such as "4–5 min". -->
     <string name="mock_speaking_task">%1$d. bölüm · %2$s</string>

@@ -7,6 +7,7 @@ import {
   getCoveredFallbacks,
   getLinkOverflow,
   getPostOverflow,
+  getShareGraphKind,
   getSheetOverflow,
 } from "./certificate-layout";
 import { CERTIFICATE_COLORS } from "./certificate-palette";
@@ -272,7 +273,7 @@ export async function fitLink({
     ...name,
     fits: (shaped) =>
       getLinkOverflow({
-        graph: view.graph.kind === "ladder" ? "ladder" : "route",
+        graph: view.graph.kind === "ladder" ? "ladder" : "none",
         nameHeight: shaped.blockHeight,
         titleHeight: titleShaped.blockHeight,
       }) <= 0,
@@ -301,7 +302,7 @@ export async function fitPost({
 
   const overflow = (parts: FittedShare) =>
     getPostOverflow({
-      graph: view.graph.kind === "ladder" ? "ladder" : "route",
+      graph: getShareGraphKind(view.graph),
       hasStats: view.stats.length > 0,
       nameHeight: parts.name.blockHeight,
       titleHeight: parts.title.blockHeight,

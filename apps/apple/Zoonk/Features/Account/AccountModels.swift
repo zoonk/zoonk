@@ -99,6 +99,18 @@ enum AccountSessionState: Equatable {
   }
 }
 
+/// How a profile save ended.
+enum ProfileSave: Equatable {
+  case saved
+  /// Not saved, with nothing to say: the learner signed out, or the account changed meanwhile.
+  case dropped
+  case failed(AccountFailure)
+
+  var failure: AccountFailure? {
+    if case .failed(let failure) = self { failure } else { nil }
+  }
+}
+
 enum AccountFailure: Equatable {
   case emailCodeDelivery
   case accountDeletion

@@ -1,9 +1,12 @@
 "use client";
 
+import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useFormatDuration } from "../_utils/time-format";
 import { type DayStep } from "../session/session-types";
+import { getRowTimeRoom } from "./row-time-room";
 import { BlockRow } from "./today-block-row";
 import { ComingLessonsRow } from "./today-coming-lessons";
 import { useTodayScreen } from "./today-context";
@@ -11,7 +14,7 @@ import { DayProgress } from "./today-day-progress";
 import { TodayDayStatus } from "./today-day-status";
 import { FoldRow } from "./today-fold-row";
 import { SESSION_LIST_ID } from "./today-ids";
-import { UPCOMING_ROWS, splitTodayQueue } from "./today-queue";
+import { UPCOMING_ROWS, isFinished, splitTodayQueue } from "./today-queue";
 import { TodayUpNext } from "./today-up-next";
 
 const DONE_ROWS = 1;
@@ -59,10 +62,22 @@ function useDoneFoldLabel(done: readonly DayStep[]): string {
   });
 }
 
+/** Every row's time takes the room of the list's longest one, folded rows included. */
+function useRowTimeStyle(blocks: readonly DayStep[]): CSSPropertiesWithVariables {
+  const formatDuration = useFormatDuration();
+
+  const times = blocks
+    .filter((block) => !isFinished(block))
+    .map((block) => formatDuration(block.estimatedMinutes));
+
+  return { "--row-time": `${getRowTimeRoom(times)}ch` };
+}
+
 function SessionQueue({ next }: { next: DayStep | null }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
   const { blocks, lessonsComing, lessonsToPrepare } = today.session;
+  const rowTimeStyle = useRowTimeStyle(blocks);
   const [doneOpen, setDoneOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const listRef = useRef<HTMLOListElement>(null);
@@ -114,7 +129,7 @@ function SessionQueue({ next }: { next: DayStep | null }) {
         />
       )}
 
-      <ol className="flex flex-col" id={SESSION_LIST_ID} ref={listRef}>
+      <ol className="flex flex-col" id={SESSION_LIST_ID} ref={listRef} style={rowTimeStyle}>
         {(!foldsDone || doneOpen) &&
           done.map((block) => <BlockRow block={block} isNext={false} key={block.position} />)}
 

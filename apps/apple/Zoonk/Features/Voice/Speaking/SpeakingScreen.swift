@@ -33,15 +33,15 @@ private struct SpeakingPaperView: View {
   @Environment(AppRouter.self) private var router
   @State private var startingTask: String?
   @State private var writingTask: String?
-  @State private var startFailure: StartFailure?
-  @State private var start: Task<Void, Never>?
+  @State private var start = VisitRequest<StartEnd>()
   /// The task a learner without a subscription tried to start: its buttons give way to the gate.
   @State private var gatedTask: String?
 
   let goalId: String
   let paper: Resource<Components.Schemas.SpeakingPaper>
 
-  private enum StartFailure: Equatable {
+  private enum StartEnd {
+    case opened(String)
     case limit(HelpLimit)
     case failed
   }
@@ -49,7 +49,7 @@ private struct SpeakingPaperView: View {
   var body: some View {
     content
       .loads(paper)
-      .onDisappear { start?.cancel() }
+      .onDisappear { start.leave() }
   }
 
   @ViewBuilder
@@ -203,7 +203,8 @@ private struct SpeakingPaperView: View {
     let locked = paper.access == .plusRequired
     // Tried while locked: a subscription that opens the paper takes the gate away.
     let isGated = gatedTask == task.key && locked
-    let showsStart = paper.access != .callsPaused && writingTask != task.key && !isGated
+    let isWriting = start.isRunning && writingTask == task.key
+    let showsStart = paper.access != .callsPaused && !isWriting && !isGated
 
     return VStack(alignment: .leading, spacing: 8) {
       if !task.criteria.isEmpty {
@@ -221,7 +222,7 @@ private struct SpeakingPaperView: View {
           .foregroundStyle(.mutedForeground)
       }
 
-      if writingTask == task.key {
+      if isWriting {
         WritingWait(
           title: Text(
             "Writing your task", tableName: "Voice", comment: "An exam task's card is being written"
@@ -244,17 +245,17 @@ private struct SpeakingPaperView: View {
       if showsStart || task.lastTry != nil {
         ButtonRow(spacing: 12) {
           if showsStart {
-            BusyButton(isBusy: startingTask == task.key, icon: .play) {
+            BusyButton(isBusy: start.isRunning && startingTask == task.key, icon: .play) {
               if locked {
                 gatedTask = task.key
               } else {
-                start = Task { await startTask(task.key) }
+                startTask(task.key)
               }
             } label: {
               Text("Start", tableName: "Voice", comment: "Starts an exam speaking task")
             }
             .buttonStyle(.mainAction)
-            .disabled(startingTask != nil && startingTask != task.key)
+            .disabled(start.isRunning && startingTask != task.key)
           }
 
           if let lastTry = task.lastTry {
@@ -270,7 +271,7 @@ private struct SpeakingPaperView: View {
       }
 
       // Only the open task starts, so a failure is said right under its button.
-      switch startFailure {
+      switch start.outcome {
       case .limit(let limit):
         LimitNotice(limit: limit, kind: .callTime)
           .announcesAlert(limit.words(.callTime).said)
@@ -281,7 +282,7 @@ private struct SpeakingPaperView: View {
             comment: "Starting an exam task failed")
         )
         .typeStyle(.body)
-      case nil:
+      case .opened, nil:
         EmptyView()
       }
     }
@@ -335,41 +336,44 @@ private struct SpeakingPaperView: View {
   }
 
   /// Only on the learner's tap.
-  private func startTask(_ task: String) async {
+  private func startTask(_ task: String) {
     startingTask = task
-    startFailure = nil
-    defer {
-      startingTask = nil
-      writingTask = nil
-    }
+    writingTask = nil
 
-    switch await voice.startConversation(
-      .case4(.init(goalId: goalId, kind: .examSpeaking, task: task)),
-      whileWriting: { writingTask = task })
-    {
-    case .done(.done(let id)):
-      router.open(.conversation(conversationId: id))
-    case .done(.refused(let refusal)):
-      switch CallReservation(refusal: refusal) {
-      case .limit(let limit):
-        startFailure = .limit(limit)
-      case .plusRequired:
-        gatedTask = task
-        // The server's answer is the access now, even if the read after it fails; a later read
-        // (a subscription bought) replaces it.
-        paper.update { paper in
-          var locked = paper
-          locked.access = .plusRequired
-          return locked
+    start.run { [voice, goalId, paper] in
+      switch await voice.startConversation(
+        .case4(.init(goalId: goalId, kind: .examSpeaking, task: task)),
+        whileWriting: { writingTask = task })
+      {
+      case .done(.done(let id)):
+        return StartEnd.opened(id)
+      case .done(.refused(let refusal)):
+        switch CallReservation(refusal: refusal) {
+        case .limit(let limit):
+          return StartEnd.limit(limit)
+        case .plusRequired:
+          gatedTask = task
+          // The server's answer is the access now, even if the read after it fails; a later read
+          // (a subscription bought) replaces it.
+          paper.update { paper in
+            var locked = paper
+            locked.access = .plusRequired
+            return locked
+          }
+          await paper.refresh()
+          return nil
+        default:
+          return StartEnd.failed
         }
-        await paper.refresh()
-      default:
-        startFailure = .failed
+      case .failed:
+        return StartEnd.failed
+      case .obsolete:
+        return nil
       }
-    case .failed:
-      startFailure = .failed
-    case .obsolete:
-      break
+    } then: { [router] ended in
+      if case .opened(let id) = ended {
+        router.open(.conversation(conversationId: id))
+      }
     }
   }
 }

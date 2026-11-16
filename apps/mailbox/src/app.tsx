@@ -3,7 +3,7 @@ import { PageTitle, PageTop } from "@zoonk/ui/components/page-top";
 import { SwapLabel } from "@zoonk/ui/components/swap-label";
 import { useClipboard } from "@zoonk/ui/hooks/clipboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Mailbox,
   MailboxBody,
@@ -20,11 +20,11 @@ import { type CapturedEmail } from "./email";
 import { type EmailInboxStatus, clearEmailInbox, useEmailInbox } from "./email-store";
 import { findSignInCode } from "./sign-in-code";
 
-const timeFormatter = new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit" });
+const timeFormatter = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" });
 
 const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
   day: "numeric",
-  hour: "2-digit",
+  hour: "numeric",
   minute: "2-digit",
   month: "short",
 });
@@ -34,13 +34,13 @@ const copy = {
   copied: "Copied",
   copyCode: "Copy",
   emailMessages: "Emails",
-  emptyDescription: "Sign in to the app and your code shows up here.",
+  emptyDescription: "Log in to the app and your code shows up here.",
   emptyTitle: "No emails yet",
   noBody: "This email has no body.",
   offlineDescription: "Run pnpm dev in the repository. This page reconnects on its own.",
   offlineTitle: "Can't reach the mailbox server",
   replyTo: "Reply to",
-  signInCode: "Sign-in code",
+  signInCode: "Login code",
   title: "Local mailbox",
   to: "To",
 };
@@ -49,6 +49,18 @@ export function App() {
   const { emails, status } = useEmailInbox();
   const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
   const selectedEmail = getSelectedEmail({ emails, selectedEmailId });
+  const previewRef = useRef<HTMLElement>(null);
+
+  // On a phone the message opens under the whole list, out of view.
+  const handleSelect = (emailId: string) => {
+    setSelectedEmailId(emailId);
+
+    requestAnimationFrame(() => {
+      if (globalThis.matchMedia("(width < 48rem)").matches) {
+        previewRef.current?.scrollIntoView({ block: "start" });
+      }
+    });
+  };
 
   const handleClear = () => {
     setSelectedEmailId(null);
@@ -86,13 +98,13 @@ export function App() {
                   email={email}
                   isSelected={email.id === selectedEmail.id}
                   key={email.id}
-                  onSelect={setSelectedEmailId}
+                  onSelect={handleSelect}
                 />
               ))}
             </MailboxList>
           </MailboxInbox>
 
-          <EmailPreview email={selectedEmail} key={selectedEmail.id} />
+          <EmailPreview email={selectedEmail} key={selectedEmail.id} ref={previewRef} />
         </MailboxBody>
       ) : (
         <EmptyInbox status={status} />
@@ -132,7 +144,9 @@ function EmailListMessage({
   return (
     <MailboxListItem>
       <MailboxMessageButton aria-pressed={isSelected} onClick={() => onSelect(email.id)}>
-        <span className="truncate text-sm font-semibold tracking-[-0.01em]">{email.subject}</span>
+        <span className="line-clamp-2 text-sm font-semibold tracking-[-0.01em] text-balance">
+          {email.subject}
+        </span>
         <time
           className="text-muted-foreground justify-self-end text-xs tabular-nums"
           dateTime={email.receivedAt}
@@ -176,11 +190,11 @@ function SignInCode({ code }: { code: string }) {
   );
 }
 
-function EmailPreview({ email }: { email: CapturedEmail }) {
+function EmailPreview({ email, ref }: { email: CapturedEmail; ref: React.Ref<HTMLElement> }) {
   const code = findSignInCode(email);
 
   return (
-    <MailboxPreview>
+    <MailboxPreview ref={ref}>
       <header className="border-border flex flex-col gap-4 border-b px-4 py-5 md:px-6">
         {code && <SignInCode code={code} />}
 
@@ -199,20 +213,62 @@ function EmailPreview({ email }: { email: CapturedEmail }) {
 
       <div className="p-4 md:p-6">
         {email.htmlBody ? (
-          <iframe
-            className="border-border block min-h-95 w-full rounded-xl border bg-white p-5 md:min-h-105"
-            referrerPolicy="no-referrer"
-            sandbox=""
-            srcDoc={email.htmlBody}
-            title={`${email.subject} email body`}
-          />
+          <EmailBody email={email} />
         ) : (
-          <pre className="border-border bg-background m-0 min-h-95 w-full overflow-auto rounded-xl border p-5 font-sans text-sm leading-normal whitespace-pre-wrap md:min-h-105">
+          <pre className="border-border bg-background m-0 min-h-95 w-full overflow-auto rounded-xl border p-5 font-sans text-sm leading-normal wrap-anywhere whitespace-pre-wrap md:min-h-105">
             {email.textBody || copy.noBody}
           </pre>
         )}
       </div>
     </MailboxPreview>
+  );
+}
+
+function EmailBody({ email }: { email: CapturedEmail }) {
+  const frame = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    const element = frame.current;
+
+    if (!element) {
+      return;
+    }
+
+    const observer = new ResizeObserver(() => {
+      if (element.contentDocument?.body) {
+        element.style.height = `${element.contentDocument.body.scrollHeight}px`;
+        element.style.minHeight = "0";
+      }
+    });
+
+    const observe = () => {
+      observer.disconnect();
+
+      if (element.contentDocument?.body) {
+        observer.observe(element.contentDocument.body);
+      }
+    };
+
+    element.addEventListener("load", observe);
+    observe();
+
+    return () => {
+      observer.disconnect();
+      element.removeEventListener("load", observe);
+    };
+  }, []);
+
+  return (
+    <div className="border-border rounded-xl border bg-white p-5">
+      <iframe
+        className="block min-h-95 w-full border-0 bg-white md:min-h-105"
+        ref={frame}
+        referrerPolicy="no-referrer"
+        sandbox="allow-same-origin"
+        srcDoc={`${email.htmlBody}<style>html,body{height:auto!important;min-height:0!important}body{margin:0}a{overflow-wrap:anywhere!important;word-break:break-word!important}</style>`}
+        title={`${email.subject} email body`}
+      />
+    </div>
   );
 }
 

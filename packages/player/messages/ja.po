@@ -3102,6 +3102,7 @@ msgstr "じっくり考えていますか？{name}が別の言い方で説明し
 
 #: src/lesson/controls/ask-buddy-offer.tsx
 #: src/questions/ask-tutor.tsx
+#: src/questions/lesson-question-panel.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "bH47Z4"
 msgid "Ask {name}"
@@ -3279,11 +3280,6 @@ msgstr "、既読"
 msgctxt "k8sSVy"
 msgid "{count, plural, one {# quick question at the end} other {# quick questions at the end}}"
 msgstr "{count, plural, other {最後に短い問題が#問あります}}"
-
-#: src/lesson/lesson-aside.tsx
-msgctxt "fl3kLl"
-msgid "screen {number}"
-msgstr "画面{number}"
 
 #: src/lesson/lesson-aside.tsx
 msgctxt "chnAWh"
@@ -3696,41 +3692,6 @@ msgid "We couldn't send your last question. Try again."
 msgstr "前の質問を送信できませんでした。もう一度お試しください。"
 
 #: src/questions/lesson-question-composer.tsx
-msgctxt "v9luVQ"
-msgid "Ask about this chapter…"
-msgstr "この章について質問…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "CVtLex"
-msgid "Ask about this mock exam…"
-msgstr "この模試について質問…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "X_H9F0"
-msgid "Ask about your plan…"
-msgstr "学習計画について質問…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "uDwgZF"
-msgid "Ask about this subject…"
-msgstr "この科目について質問…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "TCh0B4"
-msgid "Ask about this question…"
-msgstr "この問題について質問…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "wBr6ON"
-msgid "Ask about your answer…"
-msgstr "回答について質問…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "6sIYgs"
-msgid "Ask about the lesson content…"
-msgstr "レッスンの内容について質問…"
-
-#: src/questions/lesson-question-composer.tsx
 msgctxt "zMPwOt"
 msgid "Retry last question"
 msgstr "前の質問を再送する"
@@ -3859,11 +3820,6 @@ msgstr "この問題についての質問"
 msgctxt "jJ8jWo"
 msgid "Questions about this lesson"
 msgstr "このレッスンについての質問"
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "BOsQu3"
-msgid "What would you like help with?"
-msgstr "どんなことをお手伝いしましょうか？"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"

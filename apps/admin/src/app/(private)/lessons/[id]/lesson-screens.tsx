@@ -7,11 +7,14 @@ export function LessonScreens({
   json,
   lessonId,
   steps,
+  translations,
 }: {
   answers: Map<string, StepAnswers>;
   json: boolean;
   lessonId: string;
   steps: LibraryLessonStep[];
+  /** Each word's translation in this lesson, by word. */
+  translations: Map<string, string>;
 }) {
   if (steps.length === 0) {
     return <AdminSectionEmpty>This lesson has no screens yet.</AdminSectionEmpty>;
@@ -21,11 +24,20 @@ export function LessonScreens({
     <div className="flex flex-col gap-3">
       <ol className="divide-y">
         {steps.map((step) => (
-          <LessonScreen answers={answers.get(step.id)} json={json} key={step.id} step={step} />
+          <LessonScreen
+            answers={answers.get(step.id)}
+            json={json}
+            key={step.id}
+            step={step}
+            translation={step.wordId ? translations.get(step.wordId) : undefined}
+          />
         ))}
       </ol>
-      <AdminSectionMore href={json ? `/lessons/${lessonId}` : `/lessons/${lessonId}?json=1`}>
-        {json ? "Hide JSON" : "Show JSON"}
+      <AdminSectionMore
+        expanded={json}
+        href={json ? `/lessons/${lessonId}` : `/lessons/${lessonId}?json=1`}
+      >
+        {json ? "Hide technical details" : "Show technical details"}
       </AdminSectionMore>
     </div>
   );

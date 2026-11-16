@@ -1,9 +1,6 @@
 import encodeQR from "qr";
-import { FONT_WEIGHTS } from "./certificate-fonts";
 import { CERTIFICATE_COLORS } from "./certificate-palette";
 import { type ShapedText } from "./shaped-text";
-
-const BRAND_NAME = "Zoonk";
 
 /** The smallest quiet zone `qr` allows; the certificate's paper is the quiet zone, so it's left out. */
 const QR_BORDER = 1;
@@ -28,32 +25,6 @@ export function ShapedImage({ above, text }: { above: number; text: ShapedText }
         style={{ left: 0, position: "absolute", top: text.top }}
         width={text.width}
       />
-    </div>
-  );
-}
-
-export function Brand({
-  logoSrc,
-  scale,
-  spec,
-}: {
-  logoSrc: string;
-  scale: number;
-  spec: { gap: number; logo: number; size: number };
-}) {
-  return (
-    <div style={{ alignItems: "center", display: "flex", gap: spec.gap * scale }}>
-      {/* oxlint-disable-next-line next/no-img-element -- ImageResponse renders plain img elements, not next/image. */}
-      <img alt="" height={spec.logo * scale} src={logoSrc} width={spec.logo * scale} />
-      <span
-        style={{
-          fontSize: spec.size * scale,
-          fontWeight: FONT_WEIGHTS.brand,
-          letterSpacing: "-0.03em",
-        }}
-      >
-        {BRAND_NAME}
-      </span>
     </div>
   );
 }

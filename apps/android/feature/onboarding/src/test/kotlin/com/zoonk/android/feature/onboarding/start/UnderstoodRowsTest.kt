@@ -55,7 +55,7 @@ class UnderstoodRowsTest {
         val row = dateRow(understanding(goalsUnderstanding(examDates = "[${day("2026-11-08")}]", targetDate = "2026-11-08")))
 
         assertEquals("Exam date", row.label)
-        assertEquals("November 8, 2026", row.value)
+        assertEquals("Nov 8, 2026", row.value)
         assertEquals("11 days left", row.note)
         assertEquals(RowSource("Edital 2026", "https://exam.gov/edital.pdf"), row.source)
         assertNull(row.suggestedDate)
@@ -92,7 +92,7 @@ class UnderstoodRowsTest {
         val row = dateRow(understanding(goalsUnderstanding(examDates = "[${day("2026-11-08")},${day("2026-11-15")}]")))
 
         assertEquals("Exam dates", row.label)
-        assertEquals("November 8 and November 15, 2026", row.value.plain())
+        assertEquals("Nov 8 and Nov 15, 2026", row.value.plain())
         assertEquals("11 days left", row.note)
     }
 

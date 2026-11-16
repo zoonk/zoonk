@@ -9,6 +9,9 @@ const TRACK_CLASS: Readonly<Record<GoalRingTrack, string>> = {
   today: "stroke-foreground/25",
 };
 
+/** One size on every week row, from Today's narrow side panel to the summary. */
+export const GOAL_RING_SIZE_CLASS = "size-7.5";
+
 const BOX = 36;
 const CENTER = BOX / 2;
 const STROKE = 3;
@@ -32,7 +35,8 @@ export function GoalRing({
     <span
       aria-hidden="true"
       className={cn(
-        "relative flex size-9 items-center justify-center [&>svg:not(:first-child)]:size-3.5",
+        "relative flex items-center justify-center [&>svg:not(:first-child)]:size-3.5",
+        GOAL_RING_SIZE_CLASS,
         className,
       )}
       data-slot="goal-ring"

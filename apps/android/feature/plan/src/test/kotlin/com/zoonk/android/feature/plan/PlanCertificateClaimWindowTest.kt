@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.shell.GoalSwitch
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -149,7 +150,13 @@ class PlanCertificateClaimWindowTest {
         PlanClaimTest.visible = true
         PlanClaimTest.app = AppContainer.preview(application)
         PlanClaimTest.page = page
-        PlanClaimTest.viewModel = PlanViewModel(PlanStore(FakePlanApi(), cache), page.goal.id, PlanClaimTest.app.writingWaits)
+        PlanClaimTest.viewModel =
+            PlanViewModel(
+                PlanStore(FakePlanApi(), cache),
+                page.goal.id,
+                PlanClaimTest.app.writingWaits,
+                PlanNavigationModel(GoalSwitch { true }),
+            )
         PlanClaimTest.farTopics = FarTopicViewModel(PlanStore(FakePlanApi(), cache), page.goal.id)
         PlanClaimTest.claims = CertificateStore(HeldClaims(held), cache)
         PlanClaimTest.app.plans.end[page.goal.id].replace(

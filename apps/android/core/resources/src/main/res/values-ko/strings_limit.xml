@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "limit_call_time_back": "23db104ec0b5d5280fdf03f4d9fab9794332c3f339a9993a22ca2ca75f407d3d",
   "limit_call_time_used": "b9bcb65108382548f49358311d977543d316b1680f39225b1d6636ff18df3bcb",
   "limit_create_account": "7d45395b5f556859325a2af008306f06cb1b2545d20f5adf25834cabafa9c813",
   "limit_explanations_day": "f4b4d5c936d99039f17790cb2639970491bffe0d3f05cf83235afe53e83e2039",
@@ -80,6 +81,8 @@
     <string name="limit_uploads_day">오늘은 자료를 더 올릴 수 없어요</string>
     <string name="limit_questions_day">오늘은 질문을 더 할 수 없어요</string>
     <string name="limit_call_time_used">대화 시간을 다 썼어요</string>
+    <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
+    <string name="limit_call_time_back">다시 대화할 수 있어요</string>
     <string name="limit_mock_exams_used">모의고사 이용 한도를 다 썼어요</string>
     <string name="limit_lessons_guest">레슨을 더 보려면 계정이 필요해요</string>
     <string name="limit_lessons_free">무료 레슨을 모두 이용했어요</string>

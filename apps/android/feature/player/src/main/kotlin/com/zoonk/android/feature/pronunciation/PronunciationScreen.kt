@@ -523,7 +523,7 @@ private fun RecorderStatus(
         // Announcing the take's start would speak into the microphone.
         Modifier.semantics { if (!recording) liveRegion = LiveRegionMode.Polite },
         color =
-            if (issue == VoiceIssue.Failed && !pending &&
+            if (issue != null && !pending &&
                 !recording
             ) {
                 MaterialTheme.colorScheme.error

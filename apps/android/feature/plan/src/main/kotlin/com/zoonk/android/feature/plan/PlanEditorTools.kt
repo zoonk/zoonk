@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
@@ -99,16 +100,11 @@ private fun ToolRow(
     val action =
         stringResource(if (tool.choice == null) R.string.plan_tool_choose_how else R.string.plan_tool_change_how, tool.name)
     val button =
-        @Composable { stacked: Boolean ->
+        @Composable {
             val described = Modifier.semantics { contentDescription = action }
-            if (tool.choice == null) {
-                OutlinedButton(onClick = onChoose, modifier = described) { Text(stringResource(R.string.plan_choose)) }
-            } else if (stacked) {
-                TextButton(onClick = onChoose, modifier = described, shape = MaterialTheme.shapes.small, contentPadding = FLUSH_START) {
-                    Text(stringResource(R.string.plan_tool_change))
-                }
-            } else {
-                TextButton(onClick = onChoose, modifier = described) { Text(stringResource(R.string.plan_tool_change)) }
+            // One kind of button down the list, whether the tool is chosen yet.
+            OutlinedButton(onClick = onChoose, modifier = described) {
+                Text(stringResource(if (tool.choice == null) R.string.plan_choose else R.string.plan_tool_change))
             }
         }
 
@@ -127,9 +123,9 @@ private fun ToolRow(
                         2,
                     )?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 ToolStatus(tool)
-                if (stacked) Box(Modifier.padding(top = 6.dp)) { button(true) }
+                if (stacked) Box(Modifier.padding(top = 6.dp)) { button() }
             }
-            if (!stacked) button(false)
+            if (!stacked) button()
         }
     }
 }
@@ -275,6 +271,7 @@ internal fun ColumnScope.ToolChoiceForm(
     onDraft: (ToolDraft) -> Unit,
     onDone: () -> Unit,
 ) {
+    VisitOf(edits.outcomes.tools)
     val setupLessons = edits.setupLessons
     if (setupLessons != null && setupLessons.generationId.collectAsStateWithLifecycle().value != null) {
         WritingWait(

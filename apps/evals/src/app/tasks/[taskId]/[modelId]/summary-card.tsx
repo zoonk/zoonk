@@ -44,7 +44,7 @@ export function SummaryCard({ summary, stats }: { summary: EvalSummary; stats: T
           />
         )}
 
-        <Headline label="Cost per 1,000 runs" value={formatDollars(stats.costPer1000Runs)} />
+        <Headline label="Cost / 1k runs" value={formatDollars(stats.costPer1000Runs)} />
         <Headline label="Latency p50" value={formatSeconds(stats.latencyP50)} />
       </dl>
 

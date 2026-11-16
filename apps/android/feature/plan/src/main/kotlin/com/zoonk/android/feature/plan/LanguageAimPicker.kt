@@ -21,13 +21,15 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.LanguageAimChoicesInner
 import java.time.LocalDate
 
@@ -79,7 +81,7 @@ fun LanguageAimRow(
         trailing = { Text(stringResource(R.string.onboarding_aim_change)) },
         chevron = false,
         onClick = { onOpenChange(true) },
-        modifier = modifier,
+        modifier = modifier.bleed(LIST_ITEM_INSET),
     )
     if (open) {
         LanguageAimSheet(
@@ -130,11 +132,14 @@ fun LanguageAimSheet(
                             choice.aim.value,
                             listOfNotNull(choice.aim.value, languageAimName(choice.aim.value)).factsLine(),
                             if (date == null) {
-                                stringResource(R.string.onboarding_aim_hours_more, formatNumber(choice.hours.toDouble(), locale))
+                                stringResource(
+                                    R.string.onboarding_aim_hours_more,
+                                    formatMinutes(choice.hours.toInt() * MINUTES_PER_HOUR, locale),
+                                )
                             } else {
                                 stringResource(
                                     R.string.onboarding_aim_hours_month,
-                                    formatNumber(choice.hours.toDouble(), locale),
+                                    formatMinutes(choice.hours.toInt() * MINUTES_PER_HOUR, locale),
                                     formatDate(date, locale, DateStyle.MonthShort),
                                 )
                             },
@@ -157,3 +162,5 @@ fun LanguageAimSheet(
         }
     }
 }
+
+private const val MINUTES_PER_HOUR = 60

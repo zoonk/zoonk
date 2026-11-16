@@ -18,7 +18,7 @@
   "mock_chooser_parts": "3d8bb625cef0633af336890333a3a6b322eec544d008d9079a339d78c63e50ad",
   "mock_chooser_pick_another": "781bbc43525d4acd1ef9927f89801ebe480ece11448eaadbafb54ed88e4bc9a4",
   "mock_chooser_picked": "bbaf0b055058f9d094efe2b3fdb104dd535074e9a122a526fd2c0d6f3b9f4430",
-  "mock_chooser_preparing": "1cd326dddda3a35618f9a9be4e07c412040db159218f78c3eb511899a24b9d6a",
+  "mock_chooser_preparing": "d73547bd9902b57be6ab60192fd577503749f0392cf30d166c001bf2b80d3b96",
   "mock_chooser_preparing_detail": "14d255b8ee61e73c0f95b649d82de9fb8093ca7587302465f991fc071a4f56ba",
   "mock_chooser_questions": "c5735793df69142bd86c6d9e76fe65821b6280b52a715b9656279694dc56a904",
   "mock_chooser_short_day": "447dfacaefdfb8870438c858614280d727ec869591f910aba2b10c10af2ba8c1",
@@ -78,7 +78,7 @@
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">Hoy este simulacro incluye %1$s de sus %2$s preguntas y dura aproximadamente %3$s.</string>
     <string name="mock_chooser_pick_another">Elegir otro</string>
-    <string name="mock_chooser_preparing">Preparando tu simulacro…</string>
+    <string name="mock_chooser_preparing">Preparando tu simulacro de examen</string>
     <string name="mock_chooser_preparing_detail">Estamos preparando para ti preguntas como las del examen. El simulacro empieza aquí en cuanto estén listas.</string>
     <string name="mock_chooser_writing">Preparando tu simulacro</string>
     <string name="mock_chooser_writing_questions">Preparando preguntas como las del examen</string>

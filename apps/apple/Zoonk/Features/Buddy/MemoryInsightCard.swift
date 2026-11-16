@@ -8,16 +8,20 @@ struct MemoryInsightCard: View {
   let opened: MemoryInsight
   /// Held by Today, so the answer outlives the card when a layout change builds it again.
   @Binding var answer: Bool?
+  /// Accepted, and still waiting: its plan change's numbers moved, so it asks again with today's.
+  @Binding var repriced: MemoryInsight?
+  /// Today's, ended as its visit ends.
+  let saving: VisitRequest<InsightAnswer>
   var onAnswering: () -> Void = {}
 
-  @State private var failed = false
-  @State private var isSaving = false
-  /// Accepted, and still waiting: its plan change's numbers moved, so it asks again with today's.
-  @State private var repriced: MemoryInsight?
-
-  init(insight: MemoryInsight, answer: Binding<Bool?>, onAnswering: @escaping () -> Void = {}) {
+  init(
+    insight: MemoryInsight, answer: Binding<Bool?>, repriced: Binding<MemoryInsight?>,
+    saving: VisitRequest<InsightAnswer>, onAnswering: @escaping () -> Void = {}
+  ) {
     opened = insight
     _answer = answer
+    _repriced = repriced
+    self.saving = saving
     self.onAnswering = onAnswering
   }
 
@@ -41,7 +45,7 @@ struct MemoryInsightCard: View {
           actions
         }
 
-        if failed {
+        if case .failed? = saving.outcome {
           FailureLine(
             message: LocalizedStringResource(
               "We couldn't save your answer. Try again.", table: "Buddy",
@@ -112,7 +116,7 @@ struct MemoryInsightCard: View {
         .buttonStyle(.outline)
       }
     }
-    .disabled(isSaving)
+    .disabled(saving.isRunning)
   }
 
   private var acceptLabel: Text {
@@ -171,23 +175,30 @@ struct MemoryInsightCard: View {
 
   private func save(accepted: Bool) {
     onAnswering()
-    isSaving = true
-    failed = false
 
-    Task {
-      let result = await store.answer(insight, accepted: accepted)
-      isSaving = false
-
-      switch result {
-      case .done(let saved?) where accepted && saved.status == .pending:
-        repriced = saved
-      case .done:
+    saving.run { [store, insight] in
+      switch await store.answer(insight, accepted: accepted) {
+      case .done(let saved?) where accepted && saved.status == .pending: .repriced(saved)
+      case .done: .answered(accepted)
+      case .failed: .failed
+      case .obsolete: nil
+      }
+    } then: { ended in
+      switch ended {
+      case .answered(let accepted):
         answer = accepted
-      case .failed:
-        failed = true
-      case .obsolete:
+      case .repriced(let saved):
+        repriced = saved
+      case .failed, nil:
         break
       }
     }
   }
+}
+
+/// How answering an insight ended.
+enum InsightAnswer {
+  case answered(Bool)
+  case repriced(MemoryInsight)
+  case failed
 }

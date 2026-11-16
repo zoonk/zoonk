@@ -63,13 +63,19 @@ internal fun startingValues(variables: List<ModelVariable>): ModelValues = varia
 
 internal fun eventsOff(fields: FormulaFields): ModelValues = fields.events.orEmpty().associate { it.name to 0.0 }
 
+/** The output a check asks about: the one it names, else the charted one, else the first. */
+internal fun askedOutputId(
+    fields: FormulaFields,
+    output: String?,
+): String? = output ?: fields.plot?.y ?: fields.outputs.firstOrNull()?.id
+
 /** Core's `computeOutput`: an output (the plotted one by default) with the sliders at [inputs], what-ifs off unless an input turns one on. */
 internal fun formulaValue(
     fields: FormulaFields,
     inputs: ModelValues,
     output: String? = null,
 ): Double? {
-    val id = output ?: fields.plot?.y ?: fields.outputs.firstOrNull()?.id
+    val id = askedOutputId(fields, output)
     val formula = fields.outputs.find { it.id == id }?.formula ?: return null
     val fixed = eventsOff(fields)
     val sliders = inputs.filterKeys { it !in fixed }

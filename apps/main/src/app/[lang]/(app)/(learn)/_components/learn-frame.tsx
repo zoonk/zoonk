@@ -42,9 +42,9 @@ function PhoneOnly({ children }: { children: React.ReactNode }) {
 function LearnTopBar() {
   return (
     <TabRootOnly>
-      {/* The goal's name keeps about ten letters at any text size. */}
+      {/* A learner's goal name keeps about ten letters at any text size; a visitor's search needs no room held. */}
       <div
-        className={cn(FRAME_COLUMN_CLASS, "[--bar-start-min:min(100%,11rem)]")}
+        className={cn(FRAME_COLUMN_CLASS, "signed-in:[--bar-start-min:min(100%,11rem)]")}
         data-slot="learn-frame-bar"
       >
         <PageTopBar

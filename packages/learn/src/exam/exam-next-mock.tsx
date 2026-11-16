@@ -13,12 +13,12 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { StatusMark } from "../_components/status-mark";
+import { useFormatPlanDate } from "../plan/plan-date-text";
 import { useExamScreen } from "./exam-context";
-import { useExamDayDate } from "./exam-labels";
 
 export function ExamNextMock({ current }: { current: boolean }) {
   const t = useExtracted();
-  const dayDate = useExamDayDate();
+  const formatPlanDate = useFormatPlanDate();
   const { exam, hrefs } = useExamScreen();
   const next = exam.nextMock;
 
@@ -41,7 +41,7 @@ export function ExamNextMock({ current }: { current: boolean }) {
             {t("{count, plural, one {# question} other {# questions}}", { count: next.questions })}
           </ListRowDescription>
         </ListRowContent>
-        {next.date && <ListRowTrailing>{dayDate(next.date)}</ListRowTrailing>}
+        {next.date && <ListRowTrailing>{formatPlanDate(next.date)}</ListRowTrailing>}
       </ListRowBody>
     </ListRowLink>
   );

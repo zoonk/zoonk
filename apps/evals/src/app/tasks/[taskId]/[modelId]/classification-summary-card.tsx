@@ -1,5 +1,6 @@
 import { type ClassificationSummary } from "@/lib/classification-metrics";
 import { formatPercent } from "@/lib/format";
+import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import { CELL_CLASS } from "@/lib/table-classes";
 import {
   Table,
@@ -12,17 +13,20 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon, ArrowRightIcon } from "lucide-react";
 
-/** Both tables share these widths, so their columns start and end on the same lines. */
-const LABEL_COLUMN = "w-64";
-const NUMBER_COLUMN = "w-32 px-0";
+/**
+ * Both tables span the page and their number columns share one width, so the columns end on the
+ * same lines from the page's end; the label column takes the rest. A number's column is padded only
+ * before it, so labels squeezed by a phone still stand apart.
+ */
+const NUMBER_COLUMN = "w-32 pr-0 pl-3";
 const NUMBER_CELL = cn(CELL_CLASS, NUMBER_COLUMN);
 
 function PerLabelAccuracy({ summary }: { summary: ClassificationSummary }) {
   return (
-    <Table className="w-auto">
+    <Table scrollLabels={SCROLL_LABELS}>
       <TableHeader>
         <TableRow>
-          <TableHead className={LABEL_COLUMN}>Expected label</TableHead>
+          <TableHead>Expected label</TableHead>
           <TableHead className={NUMBER_COLUMN} numeric>
             Correct
           </TableHead>
@@ -51,10 +55,10 @@ function PerLabelAccuracy({ summary }: { summary: ClassificationSummary }) {
 
 function ConfusionMatrix({ summary }: { summary: ClassificationSummary }) {
   return (
-    <Table className="w-auto">
+    <Table scrollLabels={SCROLL_LABELS}>
       <TableHeader>
         <TableRow>
-          <TableHead className={LABEL_COLUMN}>
+          <TableHead>
             <span className="inline-flex items-center gap-1">
               Expected
               <ArrowDownIcon aria-hidden="true" className="size-3.5" />

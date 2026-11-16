@@ -4,46 +4,51 @@ import { type ProgressView } from "@zoonk/core/view-models/progress/get";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { useExtracted } from "next-intl";
 import { useFormatShare } from "../../_utils/percent";
+import { type StudyCount, type getPlanTopics, getStudyCounts } from "./study-counts";
 
 export type Preparation = NonNullable<ProgressView["preparation"]>;
 
 export type Lessons = SyllabusView["lessons"];
 
-type PreparationPart = {
-  key: "coverage" | "lessons" | "mastery" | "mocks" | "retention";
-  label: string;
-  value: string;
-};
+export type PlanTopics = ReturnType<typeof getPlanTopics>;
+
+type PreparationPart = { key: string; label: string; value: string };
+
+function useCountLabel() {
+  const t = useExtracted();
+
+  return ({ kind, unit }: StudyCount): string => {
+    if (unit === "lessons") {
+      return kind === "studied" ? t("Lessons studied") : t("Lessons you already knew");
+    }
+
+    return kind === "studied" ? t("Topics studied") : t("Topics you already knew");
+  };
+}
 
 /** What the number is made of. A part with nothing to show yet has no row. */
 export function usePreparationParts({
   lessons,
   preparation,
+  topics,
 }: {
   lessons: Lessons | null;
   preparation: Preparation;
+  topics: PlanTopics | null;
 }): PreparationPart[] {
   const t = useExtracted();
   const formatShare = useFormatShare();
+  const countLabel = useCountLabel();
   const { coverage, mastery, mocks, retention } = preparation.components;
 
-  const first: PreparationPart = lessons
-    ? {
-        key: "lessons",
-        label: t("Lessons"),
-        value: t("{done, number} of {total, number}", lessons),
-      }
-    : {
-        key: "coverage",
-        label: t("Topics studied"),
-        value: t("{done, number} of {total, number}", {
-          done: coverage.studiedSkills,
-          total: coverage.totalSkills,
-        }),
-      };
+  const counts = getStudyCounts({ coverage, lessons, topics }).map((count): PreparationPart => ({
+    key: `${count.unit}-${count.kind}`,
+    label: countLabel(count),
+    value: t("{done, number} of {total, number}", count),
+  }));
 
   return [
-    first,
+    ...counts,
     ...(mastery.value === null
       ? []
       : [

@@ -73,6 +73,9 @@ struct ExamList: View {
   /// mock's start are in one.
   @State private var result = ExamResultForm()
   @State private var callStart = CallStart()
+  @State private var dateChange = VisitRequest<Bool>()
+  /// False when the result didn't save, while the learner is on the page.
+  @State private var resultSave = VisitRequest<Bool>()
   @State private var checklist: Set<ExamView.ChecklistItem> = []
   @State private var isReporting = false
 
@@ -116,7 +119,9 @@ struct ExamList: View {
       }
     }
     .onDisappear {
-      callStart.cancel()
+      callStart.leave()
+      dateChange.leave()
+      resultSave.leave()
     }
     .barTitleAfterHero(exam.examName)
     .toolbar {
@@ -148,11 +153,11 @@ struct ExamList: View {
 
   @ViewBuilder
   private var moment: some View {
-    ExamHero(exam: exam)
+    ExamHero(exam: exam, change: dateChange)
     ExamMomentSection(moment: exam.moment, checked: $checklist) {}
 
     if exam.takesResult {
-      ExamResultSection(exam: exam, form: $result)
+      ExamResultSection(exam: exam, form: $result, saving: resultSave)
     }
   }
 
@@ -175,9 +180,8 @@ struct ExamList: View {
 
 private struct ExamHero: View {
   @Environment(PlanStore.self) private var plan
-  @State private var usingDate = false
-  @State private var dateFailed = false
   let exam: ExamView
+  let change: VisitRequest<Bool>
 
   var body: some View {
     Section {
@@ -212,19 +216,19 @@ private struct ExamHero: View {
               "The exam's official calendar says \(day).", tableName: "Exam",
               comment: "The official calendar's day; the argument is a date like 'May 5'")
           }
-          if dateFailed {
+          if change.outcome == false {
             FailureLine(
               message: LocalizedStringResource(
                 "That didn't go through. Try again in a moment.", table: "Exam",
                 comment: "Changing the date failed"))
           }
           Button {
-            Task { await useDate(noticeDay.date) }
+            useDate(noticeDay.date)
           } label: {
             Text("Use this date", tableName: "Exam", comment: "Moves the plan to the notice's day")
           }
           .buttonStyle(.outline)
-          .disabled(usingDate)
+          .disabled(change.isRunning)
         }
       }
     }
@@ -261,7 +265,7 @@ private struct ExamHero: View {
         ForEach(noSitting.closest, id: \.self) { closest in
           if let date = studyDate(closest) {
             Button {
-              Task { await useDate(closest) }
+              useDate(closest)
             } label: {
               Text(
                 "Use \(date.formatted(.studyDay.month(.wide).day().year()))", tableName: "Exam",
@@ -269,11 +273,11 @@ private struct ExamHero: View {
                   "Moves the plan to one of the closest sittings; the argument is its date, like 'May 5, 2027'"
               )
             }
-            .disabled(usingDate)
+            .disabled(change.isRunning)
           }
         }
 
-        if dateFailed {
+        if change.outcome == false {
           FailureLine(
             message: LocalizedStringResource(
               "That didn't go through. Try again in a moment.", table: "Exam",
@@ -319,14 +323,13 @@ private struct ExamHero: View {
     return facts + [daysLeft].compactMap(\.self)
   }
 
-  private func useDate(_ date: String) async {
-    usingDate = true
-    dateFailed = false
-    defer { usingDate = false }
-
-    switch await plan.change(goalId: exam.goalId, edits: [.targetDate(date)]) {
-    case .done(.applied), .done(.saved), .done(.undone), .done(.unchanged), .obsolete: break
-    case .done(.invalid), .failed: dateFailed = true
+  private func useDate(_ date: String) {
+    change.run { [plan, goalId = exam.goalId] in
+      switch await plan.change(goalId: goalId, edits: [.targetDate(date)]) {
+      case .done(.applied), .done(.saved), .done(.undone), .done(.unchanged): return true
+      case .done(.invalid), .failed: return false
+      case .obsolete: return nil
+      }
     }
   }
 }
@@ -407,6 +410,8 @@ private struct ExamResultSection: View {
   @Environment(ExamStore.self) private var store
   let exam: ExamView
   @Binding var form: ExamResultForm
+  /// The page's, above its panes.
+  let saving: VisitRequest<Bool>
   @FocusState private var focusedField: Field?
 
   private var scale: String {
@@ -484,19 +489,17 @@ private struct ExamResultSection: View {
         Text("Did you pass?", tableName: "Exam", comment: "Asks whether the learner passed")
       }
 
-      if form.failed {
+      if saving.outcome == false {
         FailureLine(
           message: LocalizedStringResource(
             "That didn't go through. Try again in a moment.", table: "Exam",
             comment: "Saving the result failed"))
       }
 
-      BusyButton(isBusy: form.saving, isRow: true) {
-        Task { await save() }
-      } label: {
+      BusyButton(isBusy: saving.isRunning, isRow: true, action: save) {
         Text("Save my result", tableName: "Exam", comment: "Saves the official result")
       }
-      .disabled(!form.saving && parsedScore == nil && form.passed == .unknown)
+      .disabled(!saving.isRunning && parsedScore == nil && form.passed == .unknown)
     } header: {
       SectionTitle(
         Text("How did it go?", tableName: "Exam", comment: "Asks for the official result"))
@@ -522,32 +525,29 @@ private struct ExamResultSection: View {
     }
   }
 
-  private func save() async {
-    form.saving = true
-    form.failed = false
-    defer { form.saving = false }
-
+  private func save() {
     let input = ExamResultInput(
       maxScore: scale == "points"
         ? Double(form.maxScore.replacingOccurrences(of: ",", with: ".")) : nil,
       passed: form.passed == .unknown ? nil : form.passed == .yes,
       scale: parsedScore == nil ? nil : scale,
       score: parsedScore)
-    let goalId = exam.goalId
 
-    switch await store.write(
-      invalidating: [.learnerModel],
-      { api, token in
-        try await api.reportResult(token: token, goalId: goalId, input: input)
-      })
-    {
-    case .done(true):
+    saving.run { [store, goalId = exam.goalId] in
+      switch await store.reportResult(goalId: goalId, input) {
+      case .done(let saved): saved
+      case .failed: false
+      case .obsolete: nil
+      }
+    } then: { saved in
+      guard saved == true else {
+        return
+      }
+
       form.saved = true
       if let savedLine {
         announcePolitely(savedLine)
       }
-    case .done(false), .failed: form.failed = true
-    case .obsolete: break
     }
   }
 }
@@ -562,9 +562,8 @@ private struct ExamResultForm {
   var score = ""
   var maxScore = ""
   var passed = Passed.unknown
-  var saving = false
+  /// Describes the data, so it stays on the next visit.
   var saved = false
-  var failed = false
 }
 
 private struct ExamMocksSection: View {

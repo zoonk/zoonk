@@ -1,4 +1,6 @@
 import { readQueryParam } from "@/lib/query-param";
+import { SCROLL_LABELS } from "@/lib/scroll-labels";
+import { HorizontalScroll } from "@zoonk/ui/components/horizontal-scroll";
 import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tab-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import Link from "next/link";
@@ -63,27 +65,29 @@ export function AdminRecordTabs<Value extends string>({
  */
 export function AdminTabs({ label, options }: { label: string; options: AdminTabOption[] }) {
   return (
-    <nav aria-label={label} className="min-w-0">
-      <ul className={cn(TAB_LIST_CLASS, "-mx-2.5 -my-2 scrollbar-none overflow-x-auto py-2")}>
-        {options.map((option) => (
-          <li key={option.href}>
-            <Link
-              aria-current={option.isActive ? "page" : undefined}
-              className={TAB_CLASS}
-              href={option.href}
-              prefetch
-              scroll={false}
-            >
-              {option.label}
-              {option.count ? (
-                <span className="font-mono text-xs tabular-nums">
-                  {option.count.toLocaleString("en")}
-                </span>
-              ) : null}
-            </Link>
-          </li>
-        ))}
-      </ul>
+    <nav aria-label={label} className="-mx-2.5 -my-2 min-w-0">
+      <HorizontalScroll labels={SCROLL_LABELS}>
+        <ul className={cn(TAB_LIST_CLASS, "w-max min-w-full py-2")}>
+          {options.map((option) => (
+            <li key={option.href}>
+              <Link
+                aria-current={option.isActive ? "page" : undefined}
+                className={TAB_CLASS}
+                href={option.href}
+                prefetch
+                scroll={false}
+              >
+                {option.label}
+                {option.count ? (
+                  <span className="font-mono text-xs tabular-nums">
+                    {option.count.toLocaleString("en")}
+                  </span>
+                ) : null}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </HorizontalScroll>
     </nav>
   );
 }

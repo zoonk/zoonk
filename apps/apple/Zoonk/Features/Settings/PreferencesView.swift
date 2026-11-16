@@ -5,6 +5,11 @@ struct PreferencesView: View {
   @Environment(\.openURL) private var openURL
   @Environment(SettingsStore.self) private var settings
   @State private var isEditingBuddy = false
+  /// One per control, so a later change to one never hides another's failure: false when it didn't
+  /// save, while the learner is on the page.
+  @State private var buddySave = VisitRequest<Bool>()
+  @State private var homeSave = VisitRequest<Bool>()
+  @State private var soundsSave = VisitRequest<Bool>()
   @State private var isPickingHome = false
 
   var body: some View {
@@ -108,7 +113,7 @@ struct PreferencesView: View {
         }
       }
 
-      if settings.saveFailed {
+      if [buddySave, homeSave, soundsSave].contains(where: { $0.outcome == false }) {
         SettingsSaveError()
       }
     }
@@ -123,6 +128,11 @@ struct PreferencesView: View {
       }
     }
     .loads(settings.preferences)
+    .onDisappear {
+      buddySave.leave()
+      homeSave.leave()
+      soundsSave.leave()
+    }
     .sheet(isPresented: $isPickingHome) {
       if let preferences = settings.preferences.value {
         CountryPickerSheet(
@@ -134,9 +144,7 @@ struct PreferencesView: View {
           selected: preferences.homeCountry?.code
         ) { choice in
           // Nothing rebuilds, so it closes at once; a failed save shows on the page.
-          Task {
-            await settings.updatePreferences(.homeCountry(choice))
-          }
+          save(.homeCountry(choice), in: homeSave)
 
           return true
         }
@@ -147,9 +155,7 @@ struct PreferencesView: View {
       if let preferences = settings.preferences.value {
         BuddyEditor(choice: preferences.buddy, availableGlasses: preferences.availableGlasses) {
           choice in
-          Task {
-            await settings.updatePreferences(.buddy(choice))
-          }
+          save(.buddy(choice), in: buddySave)
         }
         .zoonkStyles()
       }
@@ -167,10 +173,12 @@ struct PreferencesView: View {
     Binding(
       get: { preferences.soundsEnabled },
       set: { enabled in
-        Task {
-          await settings.updatePreferences(.soundsEnabled(enabled))
-        }
+        save(.soundsEnabled(enabled), in: soundsSave)
       })
+  }
+
+  private func save(_ update: PreferencesUpdate, in request: VisitRequest<Bool>) {
+    request.run { [settings] in await settings.updatePreferences(update) }
   }
 }
 

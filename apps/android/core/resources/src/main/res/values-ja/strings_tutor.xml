@@ -13,6 +13,7 @@
   "tutor_ask": "ffbec453909786e3c9a0cc7450d8a9104a04eb6393c9655dda00d437d3d1cade",
   "tutor_ask_answer": "807c01b17623bcb6efed4a6736e37dc49c920430c2dbc07ee480345bbb24cea4",
   "tutor_ask_chapter": "89569d866ee9d1a9b4dc5de2429e7d1bd0c4cc403b7b85402c9d5ffc69f97e00",
+  "tutor_ask_for_help": "e3935d59db75130a8555bfc5a2e883f18d8e9db9cab8465c7847aecc8c1ec7db",
   "tutor_ask_mock": "536649a577955e29d0e6668fa8b5cc10400141c3dceaca33c40a3371145007d8",
   "tutor_ask_plan": "ed73b71804021f9dbbefa3f7a10c7bf6c90488e9c6714fd93179654ce41ae432",
   "tutor_ask_question": "06c520d8870abfa49db96d6614aa35524b021e81d3aa23d725449d93d2444e47",
@@ -131,6 +132,8 @@
     <!-- Before the buddy is known. -->
     <string name="tutor_your_buddy">相棒</string>
     <string name="tutor_ask">%1$sに聞く</string>
+    <!-- The button that opens the buddy's chat before the buddy's name is known. -->
+    <string name="tutor_ask_for_help">相談する</string>
     <string name="tutor_ask_chapter">この章について%1$sに質問する</string>
     <string name="tutor_ask_mock">この模試について%1$sに質問する</string>
     <string name="tutor_ask_plan">学習計画について%1$sに質問する</string>

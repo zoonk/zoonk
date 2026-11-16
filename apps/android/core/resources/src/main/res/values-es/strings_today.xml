@@ -20,8 +20,6 @@
   "today_continue_mock": "06ea3d1c29301880a9d8869a105e9bd6dcc49d2a79336f5c81467615aebbbf1f",
   "today_continue_mock_detail": "d9237b9182734de69c211c8a9b0d67314db21b33824cead8b821e5092cb90641",
   "today_continue_session": "402cc5b98437855cda8a7177b68e61e8b998fccdb0bb394c74b52f4c48b11e1a",
-  "today_day_is_here": "a933cfc52ec5a7c4321f8307d669df1d50389071169cfbf04eab2a67aa999dc7",
-  "today_days_left": "187aa56ed65152ba5270606f739d6abf4d8c726b5980df4042368e4f8d9d03f5",
   "today_done": "eabdc6b5d46c119fdb652feaec250695ea252e6b6e15e6df5fdc3e0bafe8845f",
   "today_done_count": "1c5f1fe29127497873b326fd8b4c02dc64f35723d5db5069bf86943411bf8235",
   "today_done_day_off": "8dab1d1c58e3284bfa7910e610f506b10de6e503cdfcff325c177a1d23f934ec",
@@ -177,12 +175,6 @@
     </plurals>
     <string name="today_shorter_day">Un día más corto</string>
     <string name="today_shorter_day_note">Tu plan reserva tiempo para el simulacro del %1$s.</string>
-    <string name="today_day_is_here">Llegó el día</string>
-    <plurals name="today_days_left">
-        <item quantity="one">%d día restante</item>
-        <item quantity="many">%d días restantes</item>
-        <item quantity="other">%d días restantes</item>
-    </plurals>
     <plurals name="today_pace_lessons_to_catch_up">
         <item quantity="one">%d lección para ponerte al día</item>
         <item quantity="many">%d lecciones para ponerte al día</item>

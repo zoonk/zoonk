@@ -207,6 +207,7 @@ private fun Turns(
                 identity = identity,
                 routes = routes,
                 others = thread.turns.count { it.isInProgress && it.id != turn.id },
+                liveProposal = liveProposal(thread.turns)?.id,
                 day = newDay(days[index], days.getOrNull(index - 1))?.let { { DayLabel(it, today) } },
                 inPanel = page == null,
             )
@@ -303,6 +304,7 @@ private fun TurnView(
     identity: TutorIdentity,
     routes: TutorRoutes,
     others: Int,
+    liveProposal: java.util.UUID?,
     day: (@Composable () -> Unit)? = null,
     inPanel: Boolean = true,
 ) {
@@ -323,6 +325,7 @@ private fun TurnView(
                     deciding = change.id in state.decidingChanges,
                     failed = change.id in state.failedDecisions,
                     repriced = change.id in state.repricedChanges,
+                    live = change.id == liveProposal,
                     onDecide = { vm.decidePlanChange(change, it) },
                 )
             }

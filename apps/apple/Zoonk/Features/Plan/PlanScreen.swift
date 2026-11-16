@@ -184,8 +184,9 @@ private struct PlanContent: View {
   @State private var isReporting = false
   @State private var claimed: [CertificateFacts] = []
   @State private var slotAnswer: PlanSlotAnswer?
-  @State private var certificateClaim = CertificateClaim()
   @State private var slotChecks = PlanSlotChecks()
+  @State private var alphabetSkip = VisitRequest<Bool>()
+  @State private var rebuildRetry = VisitRequest<Bool>()
   /// The new plan arrived while the learner watched; gone on the next visit.
   @State private var rebuildReady = false
 
@@ -198,7 +199,10 @@ private struct PlanContent: View {
     let context = PlanContext(
       goal: goal, plan: plan, adjust: { adjusting = $0 }, report: { isReporting = true },
       show: { sheet = $0 }, claimCertificate: claimCertificate, showClaim: show,
-      certificateClaim: certificateClaim, slotChecks: slotChecks)
+      slotChecks: slotChecks, alphabetSkip: alphabetSkip)
+    let opening = SuggestionOpening(
+      item: context.suggestions(in: store).shown, plan: plan,
+      inSheet: sheet?.isSuggestion == true, editing: adjusting != nil)
 
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
@@ -271,16 +275,19 @@ private struct PlanContent: View {
       isPresented: $isReporting,
       context: FeedbackContext(contentID: plan.planId, contentKind: .plan), isReport: true
     )
+    .onChange(of: opening) { slotChecks.leave() }
     .onDisappear {
       slotAnswer?.editor.cancel()
-      certificateClaim.leave()
+      slotAnswer = nil
+      alphabetSkip.leave()
+      rebuildRetry.leave()
       slotChecks.leave()
     }
   }
 
   @ViewBuilder private var rebuildNotice: some View {
     if let rebuild = goal.contentCountry?.rebuild, rebuild != .none {
-      PlanRebuildNotice(goalID: goal.id, failed: rebuild == .failed)
+      PlanRebuildNotice(goalID: goal.id, failed: rebuild == .failed, retry: rebuildRetry)
     } else if rebuildReady {
       Section {
         Text(
@@ -394,21 +401,64 @@ struct PlanContext {
   var claimCertificate: () async -> PlanClaim? = { nil }
   var showClaim: (PlanClaim) -> Void = { _ in }
   /// The screen's, above its panes.
-  var certificateClaim = CertificateClaim()
   var slotChecks = PlanSlotChecks()
+  /// A language plan's "I can already read it"; true once the alphabet is skipped.
+  var alphabetSkip = VisitRequest<Bool>()
 
   var isPaused: Bool { goal.status == .paused }
+}
+
+/// One opening of the Plan's suggestion: whatever changes a field (put off, paged past, a refresh
+/// that shows another, its sheet closed, another goal, the editor opened) ends what the opening
+/// asked for. Nothing else does: the rest of the plan can change under it.
+private struct SuggestionOpening: Equatable {
+  /// What a found date or a "what changes" preview is worked out from.
+  struct Schedule: Equatable {
+    let dailyMinutes: Int
+    let weekdayMinutes: [Int]
+    let studyDays: Int
+    let targetDate: String?
+  }
+
+  /// The suggestion shown, with what it says (a coverage line's time and share).
+  let item: PlanSlotItem?
+  /// What the fit offer's check previewed.
+  let offer: GoalPlan.FitOffer?
+  /// The past date's found date and coverage's preview come from the time a day, the study days and
+  /// the date: other ones would make the card state numbers about a plan that's gone.
+  let schedule: Schedule?
+  /// Its sheet: closing it ends what was asked in it.
+  let inSheet: Bool
+  /// The Plan's editor: the learner changes the plan by hand, and nothing lands under it.
+  let editing: Bool
+
+  /// A claim and the next level depend on nothing in the plan.
+  init(item: PlanSlotItem?, plan: GoalPlan, inSheet: Bool, editing: Bool) {
+    self.item = item
+    self.inSheet = inSheet
+    self.editing = editing
+    offer = item == .fitLessons ? plan.fitOffer : nil
+
+    switch item {
+    case .pastDate?, .coverage?:
+      schedule = Schedule(
+        dailyMinutes: plan.schedule.dailyMinutes, weekdayMinutes: plan.schedule.weekdayMinutes,
+        studyDays: plan.schedule.studyDays, targetDate: plan.schedule.targetDate)
+    default:
+      schedule = nil
+    }
+  }
 }
 
 /// Main's notice above the roadmap while the plan is rebuilt for a new content country: the old plan
 /// stays usable meanwhile, and a failure keeps it.
 private struct PlanRebuildNotice: View {
   @Environment(LearnerSummaryStore.self) private var learner
-  @State private var isRetrying = false
-  @State private var retryFailed = false
 
   let goalID: String
   let failed: Bool
+  /// The Plan's, above its panes; true once the new plan started again.
+  let retry: VisitRequest<Bool>
 
   var body: some View {
     Section {
@@ -433,14 +483,14 @@ private struct PlanRebuildNotice: View {
             .foregroundStyle(.mutedForeground)
 
           if failed {
-            BusyButton(isBusy: isRetrying, action: retry) {
+            BusyButton(isBusy: retry.isRunning, action: startAgain) {
               Text("Try again", tableName: "Plan", comment: "Starts preparing the new plan again")
             }
             .buttonStyle(.outline)
             .controlSize(.small)
             .padding(.top, 8)
 
-            if retryFailed {
+            if retry.outcome == false {
               FailureLine(
                 message: LocalizedStringResource(
                   "That didn't save. Try again.", table: "Plan",
@@ -479,13 +529,9 @@ private struct PlanRebuildNotice: View {
         comment: "Under the notice while a goal's plan is made again for its new country")
   }
 
-  private func retry() {
-    isRetrying = true
-    retryFailed = false
-
-    Task {
-      retryFailed = !(await learner.retryRebuild(goalID: goalID))
-      isRetrying = false
+  private func startAgain() {
+    retry.run { [learner, goalID] in
+      await learner.retryRebuild(goalID: goalID)
     }
   }
 }

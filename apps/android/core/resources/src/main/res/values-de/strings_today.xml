@@ -20,8 +20,6 @@
   "today_continue_mock": "2a58612a60d8b642eaf8d167fdd3480b7ca4da1924e79b2fbdb5f95c3f245d77",
   "today_continue_mock_detail": "68d9cdbe0a24e7c94d7cd0eccf884ba2f08b3e40057139aab34b4157c50726bc",
   "today_continue_session": "b509913368b4311d5856a9a58f86c2f9887ae9662823a30a69ed33ab3b69d5ef",
-  "today_day_is_here": "84020d1afb0e6c99ca333e0e96b66da476912c36981d66e4cacc174de81a1d6c",
-  "today_days_left": "9b07dd4c9b485742118940440af4083cc7f6f402183a42ee4089e2edfe87798f",
   "today_done": "4597ecb268e308c98109ac50b5a4c58a88eeef92299fc7f43c53cc3d29582822",
   "today_done_count": "49e45af40a4beb4e2c2648cd2bf7d22487472904ca70e8a3efc375833ad92e2a",
   "today_done_day_off": "b1beb0ca215172ed7d12305484fd7d229cd7b64b59e23982d97f827296a2b39e",
@@ -176,11 +174,6 @@
     </plurals>
     <string name="today_shorter_day">Ein kürzerer Lerntag</string>
     <string name="today_shorter_day_note">Dein Plan hält Zeit für die Probeprüfung am %1$s frei.</string>
-    <string name="today_day_is_here">Der Tag ist da</string>
-    <plurals name="today_days_left">
-        <item quantity="one">Noch %d Tag</item>
-        <item quantity="other">Noch %d Tage</item>
-    </plurals>
     <plurals name="today_pace_lessons_to_catch_up">
         <item quantity="one">%d Lektion aufzuholen</item>
         <item quantity="other">%d Lektionen aufzuholen</item>

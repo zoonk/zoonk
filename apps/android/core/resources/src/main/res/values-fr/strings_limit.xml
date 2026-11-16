@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "limit_call_time_back": "28d3ab4ff08d0946bb3a17f1b2d1ede0313798f48f374b4629e5e8f05615841b",
   "limit_call_time_used": "5ed24440c0b8e09945890413defa31512b4f26f2026c5532ce91dc75258076d0",
   "limit_create_account": "ed409ce630796d67a3ee883b1aae6b3d6d864979d1710f9ae9b5df69ffb7a042",
   "limit_explanations_day": "670d0d4bac2390871df5b4f2ed1e2017f60681b8ae1d86f5381d56cd1fc6e4d7",
@@ -80,6 +81,8 @@
     <string name="limit_uploads_day">Tu ne peux plus ajouter de documents aujourd’hui</string>
     <string name="limit_questions_day">Tu as atteint ta limite de questions pour aujourd’hui</string>
     <string name="limit_call_time_used">Tu as utilisé tout ton temps d’appel</string>
+    <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
+    <string name="limit_call_time_back">Tu as de nouveau du temps d’appel</string>
     <string name="limit_mock_exams_used">Tu as atteint ta limite d’examens blancs</string>
     <string name="limit_lessons_guest">Il te faut un compte pour d’autres leçons</string>
     <string name="limit_lessons_free">Tu as utilisé toutes tes leçons gratuites</string>

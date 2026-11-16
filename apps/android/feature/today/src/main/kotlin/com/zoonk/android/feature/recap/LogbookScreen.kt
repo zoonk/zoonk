@@ -40,12 +40,11 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.today.DayRing
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.Eyebrow
-import com.zoonk.android.ui.components.GoalRing
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -55,6 +54,7 @@ import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.WeekDayCell
 import com.zoonk.android.ui.components.WeekDaysRow
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
@@ -73,9 +73,9 @@ import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.WeeklyRecap
 import kotlinx.coroutines.launch
-import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.plus
 import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toKotlinLocalDate
+import java.time.LocalDate
 
 /** The week's summary; nothing in it is written by a model. */
 @Composable
@@ -136,7 +136,7 @@ internal fun Logbook(
     onClose: () -> Unit,
     onStart: () -> Unit,
 ) {
-    val studied = recap.ready && recap.week.daysStudied.isNotEmpty()
+    val studied = recap.ready && recap.days.any { it.studied }
     val scroll = rememberScrollState()
     var span by remember { mutableStateOf<PageSpan?>(null) }
 
@@ -235,21 +235,16 @@ private fun weekRange(recap: WeeklyRecap): String =
 
 @Composable
 private fun WeekRings(recap: WeeklyRecap) {
-    val studied = recap.week.daysStudied.toSet()
+    val studied = recap.days.count { it.studied }
     val locale = currentLocale()
-    val description = pluralStringResource(R.plurals.recap_days_studied, studied.size, studied.size)
+    val description = pluralStringResource(R.plurals.recap_days_studied, studied, studied)
+    val today = LocalDate.now().toKotlinLocalDate()
 
+    // Core's day states for the goal, drawn as Today draws its week.
     WeekDaysRow(Modifier.clearAndSetSemantics { contentDescription = description }) {
-        repeat(DAYS_PER_WEEK) { offset ->
-            val day = recap.weekStart.plus(DatePeriod(days = offset))
-            val isStudied = day in studied
-            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                GoalRing(if (isStudied) 1f else 0f) { if (isStudied) DoneMark() }
-                Text(
-                    text = weekdayNames(locale).narrow.getValue(day.toJavaLocalDate().dayOfWeek),
-                    color = if (isStudied) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelSmall,
-                )
+        recap.days.forEach { day ->
+            WeekDayCell(weekdayNames(locale).narrow.getValue(day.date.toJavaLocalDate().dayOfWeek), today = day.isToday) {
+                DayRing(day, today) {}
             }
         }
     }
@@ -360,5 +355,3 @@ private fun NameRow(
         )
     }
 }
-
-private const val DAYS_PER_WEEK = 7

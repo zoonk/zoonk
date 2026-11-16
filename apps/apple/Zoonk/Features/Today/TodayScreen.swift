@@ -92,6 +92,7 @@ private struct TodayStartGoal: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(OnboardingStore.self) private var onboarding
   @State private var goal = SentGoal(words: "")
+  @State private var materialDraft = MaterialDraft()
 
   var body: some View {
     // The box keeps what's typed or pasted in it, and an open editor, as the examples come and go.
@@ -102,10 +103,12 @@ private struct TodayStartGoal: View {
     } content: { isBeside in
       ZoonkList {
         resume
-        GoalStartEntry(part: isBeside ? .form : .whole, goal: $goal)
+        GoalStartEntry(
+          part: isBeside ? .form : .whole, goal: $goal, materialDraft: $materialDraft)
       }
     }
     .loads(onboarding.resume, refreshable: false)
+    .onDisappear { materialDraft.leave() }
   }
 
   @ViewBuilder
@@ -363,9 +366,8 @@ private struct TodayGoalPaused: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(PlanStore.self) private var plans
-  @State private var isResuming = false
-  @State private var failure: GoalStatusOutcome?
-  @State private var resumeTask: Task<Void, Never>?
+  /// Saved: the button stays busy until the day replaces this screen.
+  @State private var resuming = VisitRequest<GoalStatusOutcome>()
 
   private var goal: LearnerGoal? {
     let summary = learner.summary.value
@@ -422,7 +424,7 @@ private struct TodayGoalPaused: View {
       newGoal(prominent: goal == nil)
 
       if let goal {
-        BusyButton(isBusy: isResuming) {
+        BusyButton(isBusy: resuming.isRunning || resuming.outcome == .saved) {
           resume(goal)
         } label: {
           Text("Resume", tableName: "Today", comment: "Resumes the paused goal")
@@ -433,17 +435,17 @@ private struct TodayGoalPaused: View {
     }
     .modifier(ResumePreviewLoading(goalID: goal?.id))
     .onDisappear {
-      resumeTask?.cancel()
+      resuming.leave()
     }
   }
 
   private var failureNote: BarNote? {
-    switch failure {
+    switch resuming.outcome {
     case .limitReached:
       BarNote(GoalError.resumeLimit)
-    case nil:
+    case .saved, nil:
       nil
-    default:
+    case .failed:
       BarNote(
         LocalizedStringResource(
           "Couldn't save. Check your connection and try again.", table: "Today",
@@ -466,22 +468,12 @@ private struct TodayGoalPaused: View {
     }
   }
 
-  /// The button stays busy until the day replaces this screen.
   private func resume(_ goal: LearnerGoal) {
-    resumeTask?.cancel()
-    resumeTask = Task {
-      isResuming = true
-      failure = nil
-
+    resuming.run { [plans] in
       switch await plans.setStatus(.active, goalId: goal.id) {
-      case .done(.saved), .obsolete:
-        break
-      case .done(let refused):
-        failure = refused
-        isResuming = false
-      case .failed:
-        failure = .failed
-        isResuming = false
+      case .done(let outcome): outcome
+      case .failed: .failed
+      case .obsolete: nil
       }
     }
   }

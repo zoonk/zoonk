@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "limit_call_time_back": "5b9e3fe7d6825f1a3215dd4297ac151c00e6acde031b028d4c4ec7da83a18d94",
   "limit_call_time_used": "666ba9250a79c3ad50764907f3297b83bf4ba1d30b561840715dd09ab1dd43bc",
   "limit_create_account": "1665e96a9f21bccdf2417a64da61dfd3abf6c5345c3c198038196246e7811ba0",
   "limit_explanations_day": "47ef2cd684e387b2324b8c8c182e191b80d5bd51ea4c1cb3aa83fe8177fdf006",
@@ -80,6 +81,8 @@
     <string name="limit_uploads_day">今日はこれ以上資料を追加できません</string>
     <string name="limit_questions_day">今日の問題数の上限に達しました</string>
     <string name="limit_call_time_used">会話の利用時間が上限に達しました</string>
+    <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
+    <string name="limit_call_time_back">また会話練習ができます</string>
     <string name="limit_mock_exams_used">模試の利用上限に達しました</string>
     <string name="limit_lessons_guest">アカウントなしで受けられるレッスンはここまでです</string>
     <string name="limit_lessons_free">無料レッスンを使い切りました</string>

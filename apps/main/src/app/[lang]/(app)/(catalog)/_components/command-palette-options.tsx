@@ -11,13 +11,9 @@ import {
 } from "@zoonk/ui/components/command";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { BookOpenIcon, LibraryIcon, type LucideIcon } from "lucide-react";
+import { type ChapterPaletteItem, type CoursePaletteItem } from "./command-palette-catalog-items";
 import { getPaletteItemHref } from "./command-palette-href";
-import {
-  type ChapterPaletteItem,
-  type CoursePaletteItem,
-  type PaletteGroup,
-  type PaletteItem,
-} from "./command-palette-items";
+import { type PaletteGroup, type PaletteItem } from "./command-palette-items";
 
 /** Base UI's collection primitive keeps keyboard order matching the visible grouped list. */
 export function PaletteResultGroup({
@@ -101,7 +97,7 @@ function PaletteOptionContent({ item }: { item: PaletteItem }) {
   if (item.kind === "chapter") {
     return (
       <CatalogOptionContent
-        courseName={item.chapter.courseTitle}
+        courseName={item.showsCourse ? item.chapter.courseTitle : undefined}
         icon={BookOpenIcon}
         title={item.chapter.title}
       />

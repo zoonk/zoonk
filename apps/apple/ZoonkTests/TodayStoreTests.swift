@@ -1310,7 +1310,7 @@ final class TodayExamSheetTests: XCTestCase {
   }
 }
 
-private actor StudyAPIStub: StudyAPIClient {
+actor StudyAPIStub: StudyAPIClient {
   private let opened: OpenedStudyDay?
   private var openings: [StudyBlockOpening]
   private let openError: APIError?

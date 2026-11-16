@@ -45,7 +45,6 @@
     <string name="onboarding_goals_at_once_title">That\'s all the goals you can study at once</string>
     <string name="onboarding_goals_at_once_line">Pause one in your Plan, or subscribe to study more at once.</string>
     <string name="onboarding_create_account">Create a free account</string>
-    <string name="onboarding_create_account_short">Create an account</string>
     <string name="onboarding_guest_gate_title">Create a free account to start another goal</string>
     <string name="onboarding_guest_gate_description">Without an account, you can follow one goal. Your plan and progress come with you.</string>
     <string name="onboarding_back_to_today">Back to Today</string>
@@ -54,7 +53,7 @@
     <string name="onboarding_understanding_title">Understanding your goal</string>
     <string name="onboarding_understanding_description">Next, you check what we understood.</string>
 
-    <string name="onboarding_understood_title">Here\'s what I understood</string>
+    <string name="onboarding_understood_title">Here\'s what we understood</string>
     <string name="onboarding_understood_description">You can change all of this later.</string>
     <!-- When the learner's words became more than one goal. -->
     <string name="onboarding_understood_description_shared">These goals share your daily time. You can change all of this later.</string>
@@ -129,8 +128,8 @@
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="onboarding_row_guide_says">The exam\'s official calendar says %1$s.</string>
 
-    <!-- After a goal the learner typed turned out to be a question. -->
-    <string name="onboarding_explain_description">A short explanation written for you, about 5 minutes.</string>
+    <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
+    <string name="onboarding_explain_description">A short explanation written for you, about %1$s.</string>
     <string name="onboarding_explain_it">Explain it</string>
     <string name="onboarding_declined_title">We can\'t help with this goal</string>
     <string name="onboarding_declined_description">Zoonk doesn\'t teach anything that could hurt you or others, gambling or ways to cheat. Is there something else you\'d like to learn?</string>
@@ -211,7 +210,7 @@
     <string name="onboarding_placement_your_answer">Your answer, in your own words</string>
     <string name="onboarding_placement_dont_know">I don\'t know yet</string>
     <string name="onboarding_placement_confirm">Confirm</string>
-    <string name="onboarding_placement_stop">Stop here and see my plan</string>
+    <string name="onboarding_placement_stop">Stop and use my answers</string>
     <string name="onboarding_placement_answer_failed">That didn\'t go through. Your answers are kept.</string>
     <!-- The two answers to a statement judged true or false. -->
     <string name="onboarding_placement_true">True</string>
@@ -220,7 +219,7 @@
     <string name="onboarding_placement_right">Right</string>
     <!-- An answer option judging a statement wrong, for exams that word it so, such as Cebraspe. Not feedback on the learner's answer. -->
     <string name="onboarding_placement_wrong">Wrong</string>
-    <string name="onboarding_placement_see_plan">See my plan</string>
+    <string name="onboarding_placement_see_plan">See your plan</string>
     <plurals name="onboarding_placement_answered">
         <item quantity="one">%d question answered</item>
         <item quantity="other">%d questions answered</item>
@@ -567,6 +566,16 @@
     <string name="onboarding_reveal_a_day">a day</string>
     <string name="onboarding_reveal_weekends">%1$s on weekends</string>
     <string name="onboarding_reveal_until_exam">until the exam</string>
+    <!-- A big number of days over "until the exam" or "until your date". -->
+    <plurals name="onboarding_reveal_days">
+        <item quantity="one">%1$s day</item>
+        <item quantity="other">%1$s days</item>
+    </plurals>
+    <!-- The same days while the date is an estimate. -->
+    <plurals name="onboarding_reveal_days_estimated">
+        <item quantity="one">~%1$s day</item>
+        <item quantity="other">~%1$s days</item>
+    </plurals>
     <string name="onboarding_reveal_until_date">until your date</string>
     <string name="onboarding_reveal_estimated_finish">estimated finish</string>
     <string name="onboarding_whats_next">What\'s next</string>
@@ -579,9 +588,10 @@
     <string name="onboarding_your_aim">Your aim</string>
     <string name="onboarding_aim_change">Change</string>
     <string name="onboarding_aim_picker_title">How far do you want to go?</string>
-    <string name="onboarding_aim_hours_more">About %1$s h more</string>
-    <string name="onboarding_aim_hours_month">About %1$s h more · around %2$s</string>
-    <string name="onboarding_aim_hours">%1$s h</string>
+    <!-- %1$s is hours of study, such as "190 hr". -->
+    <string name="onboarding_aim_hours_more">About %1$s more</string>
+    <!-- %1$s is hours of study, such as "190 hr"; %2$s a month, such as "Mar 2027". -->
+    <string name="onboarding_aim_hours_month">About %1$s more · around %2$s</string>
     <string name="onboarding_aim_by_month">by %1$s</string>
     <string name="onboarding_aim_finish">At %1$s a day, you reach %2$s around %3$s.</string>
     <string name="onboarding_reason_travel">Travel</string>
@@ -594,12 +604,10 @@
     <string name="onboarding_reason_fluent_description">Talk about almost anything with ease</string>
     <string name="onboarding_reason_certificate">Pass a certificate</string>
     <string name="onboarding_reason_certificate_description">IELTS, DELE, CELI and others</string>
-    <string name="onboarding_reason_other_description">In your own words. Aims for B1</string>
-    <string name="onboarding_reason_exam">Exam</string>
+    <string name="onboarding_reason_other_description">In your own words</string>
     <string name="onboarding_reason_which_exam">Which one?</string>
     <string name="onboarding_reason_exam_plan">Your plan follows that exam\'s papers and score.</string>
     <string name="onboarding_reason_your_words">In your own words</string>
-    <string name="onboarding_reason_hours_note">Hours of study from scratch, practice included. Less if you already know some.</string>
     <string name="onboarding_aim_from_none">From scratch, at %1$s a day.</string>
     <string name="onboarding_aim_from_basic">From the basics, at %1$s a day.</string>
     <string name="onboarding_aim_from_intermediate">From an intermediate level, at %1$s a day.</string>
@@ -632,6 +640,6 @@
     <string name="onboarding_country_other">Another country</string>
     <!-- Above that question's buttons before a country is picked: %1$s is the country Skip uses, in the reader's language, after the colon so it needs no article or case. -->
     <string name="onboarding_country_skip_default">If you skip: %1$s</string>
-    <!-- A badge beside the content country in "Here's what I understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
+    <!-- A badge beside the content country in "Here's what we understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
     <string name="onboarding_country_from_home">where you live</string>
 </resources>

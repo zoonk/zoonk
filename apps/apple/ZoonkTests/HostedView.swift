@@ -46,6 +46,16 @@ extension XCTestCase {
     XCTAssertTrue(element.accessibilityActivate(), "\(label) didn't act")
   }
 
+  /// Taps the first thing VoiceOver reads that `matches`, such as a switch, read with its
+  /// description after its title.
+  @MainActor
+  func activate(where matches: (String) -> Bool, in window: UIWindow) throws {
+    let element = try XCTUnwrap(
+      accessibilityElements(in: window).first { $0.accessibilityLabel.map(matches) ?? false },
+      "Nothing matches: \(spoken(in: window))")
+    XCTAssertTrue(element.accessibilityActivate(), "\(element) didn't act")
+  }
+
   @MainActor
   private func accessibilityElements(in element: Any) -> [NSObject] {
     guard let object = element as? NSObject else {

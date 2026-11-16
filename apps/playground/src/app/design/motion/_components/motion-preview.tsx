@@ -25,16 +25,18 @@ export function MotionPreview({ children }: React.PropsWithChildren) {
     <ReducedContext value={reduced}>
       {css && <style>{css}</style>}
 
-      <div className="bg-background/90 supports-backdrop-filter:bg-background/75 sticky top-0 z-10 mb-8 flex flex-wrap items-center gap-x-3 gap-y-1 border-b py-3 backdrop-blur-md">
+      <div className="bg-background/90 supports-backdrop-filter:bg-background/75 sticky top-0 z-10 mb-8 flex items-start gap-x-3 gap-y-1 border-b py-3 backdrop-blur-md">
         <Switch checked={reduced} disabled={device} id={switchId} onCheckedChange={setSwitched} />
-        <label className="text-sm font-medium" htmlFor={switchId}>
-          Reduced motion
-        </label>
-        <span className="text-muted-foreground text-sm">
-          {device
-            ? "This device asks for less motion, so every demo shows its calm version."
-            : "Shows every demo as a device that asks for less motion sees it."}
-        </span>
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <label className="text-sm font-medium" htmlFor={switchId}>
+            Reduced motion
+          </label>
+          <span className="text-muted-foreground text-sm">
+            {device
+              ? "This device asks for less motion, so every demo shows its calm version."
+              : "Shows every demo as it looks when a device asks for less motion."}
+          </span>
+        </div>
       </div>
 
       <div className={switched ? REDUCED_CLASS : undefined}>{children}</div>

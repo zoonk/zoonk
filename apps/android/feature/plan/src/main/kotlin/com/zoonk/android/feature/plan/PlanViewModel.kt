@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.app.shell.GoalSwitch
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.GenerationKind
@@ -36,7 +37,10 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 /** What a write did that the screen acts on: an archived goal, which leaves the Plan. */
-enum class PlanEvent { Archived, }
+data class PlanArchive(
+    val visit: Int,
+    val goalRevision: Long,
+)
 
 enum class ResumeFailure { GoalLimit, Failed }
 
@@ -79,6 +83,7 @@ class PlanViewModel(
     private val store: PlanStore,
     private val goalId: UUID,
     writingWaits: WritingWaits,
+    private val navigation: PlanNavigationModel,
 ) : ViewModel() {
     private val saving = MutableStateFlow(false)
     private val savingParts = MutableStateFlow(emptySet<PlanPart>())
@@ -106,10 +111,10 @@ class PlanViewModel(
     val resumeFailure: ResumeFailure? get() = resumeFailed.value
 
     /** What a write did that the screen acts on, while the visit that made it lasts. */
-    val event = visit.outcome<PlanEvent>()
+    val event = navigation.event
 
     /** What the editor's and the slot's saves and searches lead to, while the visit that asked lasts. */
-    internal val outcomes = PlanOutcomes(visit)
+    internal val outcomes = PlanOutcomes(visit, endTools = { setupLessons.clear() })
 
     /** Parts whose change is saving, which take no other tap meanwhile. */
     val pending: StateFlow<Set<PlanPart>> = savingParts.asStateFlow()
@@ -181,10 +186,11 @@ class PlanViewModel(
         val resuming = status == LearnerSummaryGoal.Status.ACTIVE
         if (resuming) resumeFailed.clear()
         val started = visit.number
+        val navigationStarted = navigation.begin()
         viewModelScope.launch {
             when (val result = store.setStatus(goalId, status)) {
                 is MutationResult.Done -> {
-                    if (status == LearnerSummaryGoal.Status.ARCHIVED) event.send(started, PlanEvent.Archived)
+                    if (status == LearnerSummaryGoal.Status.ARCHIVED) navigation.archived(navigationStarted)
                 }
 
                 is MutationResult.Failed -> {
@@ -279,19 +285,26 @@ class PlanViewModel(
     internal fun chooseTools(
         answer: ToolAnswer,
         asker: PlanAsker? = null,
-    ) = chooseTools(answer, asker, visit.number)
+    ) = chooseTools(answer, asker, visit.number, outcomes.tools.number)
 
     /** Sent again once its setup lesson is written, still for the visit that chose. */
     private fun chooseTools(
         answer: ToolAnswer,
         asker: PlanAsker?,
         started: Int,
+        opened: Int,
     ): Unit =
         save(PlanPart.Tools, listOf(answer.operation), asker, started) {
-            when (val result = store.chooseTools(goalId, answer)) {
+            val result = store.chooseTools(goalId, answer)
+            when (result) {
                 is MutationResult.Done -> {
                     val written = result.value
-                    when (setupLessons.answered((written as? Written.Writing)?.generationId) { chooseTools(answer, asker, started) }) {
+                    if (written is Written.Writing && (started != visit.number || opened != outcomes.tools.number)) return@save null
+                    when (
+                        setupLessons.answered(
+                            (written as? Written.Writing)?.generationId,
+                        ) { chooseTools(answer, asker, started, opened) }
+                    ) {
                         ContentWritingWait.Answer.Proceed -> MutationResult.Done((written as Written.Ready).value)
                         ContentWritingWait.Answer.Waiting -> null
                         ContentWritingWait.Answer.Failed -> MutationResult.Failed(ApiError.Unavailable)
@@ -641,5 +654,20 @@ class PlanViewModel(
 
     private companion object {
         const val TOO_MANY_REQUESTS = 429
+    }
+}
+
+class PlanNavigationModel(
+    private val goals: GoalSwitch,
+) : ViewModel() {
+    val visit = Visit()
+    val event = visit.outcome<PlanArchive>()
+
+    fun begin() = PlanArchive(visit.number, goals.revision)
+
+    fun isCurrent(archive: PlanArchive) = archive.goalRevision == goals.revision
+
+    fun archived(started: PlanArchive) {
+        if (isCurrent(started)) event.send(started.visit, started)
     }
 }

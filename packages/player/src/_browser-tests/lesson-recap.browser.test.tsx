@@ -109,7 +109,6 @@ describe("lesson recap", () => {
 
     await expect.element(page.getByRole("radio", { name: WRONG_OPTION })).not.toBeChecked();
     await expect.element(aside().getByText("A cloud, not a little ball")).toBeVisible();
-    await expect.element(aside().getByText("screen 1")).toBeVisible();
     await expect.element(aside().getByText("Where the cloud is densest")).not.toBeInTheDocument();
   });
 
@@ -134,7 +133,6 @@ describe("lesson recap", () => {
 
     await expect.element(page.getByRole("radio", { name: WRONG_OPTION })).not.toBeChecked();
     await expect.element(aside().getByText("A cloud, not a little ball")).toBeVisible();
-    await expect.element(aside().getByText("screen 1")).toBeVisible();
     await expect.element(aside().getByText("Where the cloud is densest")).not.toBeInTheDocument();
   });
 

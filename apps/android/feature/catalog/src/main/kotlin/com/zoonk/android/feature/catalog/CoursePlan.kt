@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -59,13 +58,7 @@ internal fun CoursePlanSection(
 
     val headline = @Composable { UndatedHeadline(undated, pace.minutes) }
     val firstDay = undated.takeIf { it.firstDay.isNotEmpty() }?.let { @Composable { FirstDay(it, titles) } }
-    val title = @Composable {
-        Text(
-            stringResource(R.string.catalog_example_plan),
-            modifier = Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleMedium,
-        )
-    }
+    val title = @Composable { SectionTitle(stringResource(R.string.catalog_example_plan)) }
 
     // Main puts the first day beside the headline from `@3xl`.
     if (beside && firstDay != null) {

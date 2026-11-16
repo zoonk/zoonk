@@ -103,7 +103,7 @@ function EditorPanel({ initialFocus, onOpenChange, open }: EditorFrameProps) {
           <SidePanelTitle>{t("Adjust your plan")}</SidePanelTitle>
         </SidePanelHeader>
 
-        <div className="flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-6 pt-4 pb-8">
+        <div className="scroll-hairline-t flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-6 pt-4 pb-8">
           <EditorSections />
         </div>
 

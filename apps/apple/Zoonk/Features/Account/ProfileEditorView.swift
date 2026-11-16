@@ -10,6 +10,8 @@ struct ProfileEditorView: View {
   /// Setup shows the username only when no username could be suggested.
   @State private var asksUsername = false
   @State private var isSaved = false
+  /// The save's failure, said while the learner is on the page.
+  @State private var saving = VisitRequest<ProfileSave>()
   @FocusState private var focusedField: Field?
 
   private enum Field {
@@ -108,9 +110,9 @@ struct ProfileEditorView: View {
           }
         }
 
-        if session.failure != nil {
+        if let failure = saving.outcome?.failure {
           Section {
-            AccountFailureMessage(failure: session.failure)
+            AccountFailureMessage(failure: failure)
           }
         } else if isSaved {
           Section {
@@ -159,14 +161,13 @@ struct ProfileEditorView: View {
     .task(id: normalizedUsername) {
       await checkUsername()
     }
-    .onChange(of: session.failure) {
+    .task(id: saving.outcome) {
       // Taken since it was suggested: the next Continue saves another.
-      if isRequiredSetup, !asksUsername, session.failure == .usernameTaken {
-        Task {
-          await suggestUsername()
-        }
+      if isRequiredSetup, !asksUsername, saving.outcome == .failed(.usernameTaken) {
+        await suggestUsername()
       }
     }
+    .onDisappear { saving.leave() }
     .onChange(of: name) { isSaved = false }
     .onChange(of: username) { isSaved = false }
     .announcesStatus(isSaved ? Self.savedLine : nil)
@@ -258,18 +259,20 @@ struct ProfileEditorView: View {
   private func save() {
     isSaved = false
 
-    Task {
-      let didUpdate = await session.updateProfile(
-        name: normalizedName, username: normalizedUsername)
-
-      guard didUpdate, !isRequiredSetup else {
-        return
-      }
-
-      if isBesideTheList {
-        isSaved = true
-      } else {
-        dismiss()
+    saving.run { [session, normalizedName, normalizedUsername] in
+      await session.updateProfile(name: normalizedName, username: normalizedUsername)
+    } then: { outcome in
+      switch outcome {
+      case .saved? where isRequiredSetup:
+        break
+      case .saved?:
+        if isBesideTheList {
+          isSaved = true
+        } else {
+          dismiss()
+        }
+      case .dropped?, .failed?, nil:
+        break
       }
     }
   }

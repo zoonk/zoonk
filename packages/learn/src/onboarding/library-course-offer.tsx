@@ -18,7 +18,7 @@ export function LibraryCourseOffer({
 
   return (
     <LearnLink
-      className="hover:bg-muted/60 focus-visible:ring-ring/50 -mx-2 flex min-h-11 min-w-0 items-center gap-3 rounded-lg px-2 py-1.5 outline-none focus-visible:ring-[3px] lg:max-w-md"
+      className="hover:bg-muted/60 focus-visible:ring-ring/50 -mx-2 flex min-h-11 min-w-0 items-center gap-3 rounded-lg px-2 py-1.5 outline-none focus-visible:ring-[3px]"
       href={href}
       prefetch="auto"
     >
@@ -29,10 +29,7 @@ export function LibraryCourseOffer({
           {t("A course on this is ready now")}
         </span>
       </span>
-      {/* Beside the bar's actions on a computer, it hugs its words, and a chevron would end mid-bar. */}
-      <span className="contents lg:hidden">
-        <RowChevron />
-      </span>
+      <RowChevron />
     </LearnLink>
   );
 }

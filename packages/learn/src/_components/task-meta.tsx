@@ -1,5 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { Fragment } from "react";
+import { BrainPowerAmount } from "./brain-power-amount";
 
 const NO_BREAK_SPACE = "\u00A0";
 
@@ -43,13 +44,20 @@ export function FactSegments({
 }: {
   /** What follows the facts, such as a reward in its own color. */
   extra?: React.ReactNode;
-  facts: readonly (string | false | null | undefined)[];
+  /** A fact that isn't plain words (a link) brings its own key. */
+  facts: readonly (string | { content: React.ReactNode; key: string } | false | null | undefined)[];
   /** What the line opens with before its facts, such as a state in its own color. */
   lead?: React.ReactNode;
 }) {
   const items = [
     ...(lead ? [{ content: lead, key: "lead" }] : []),
-    ...facts.flatMap((fact) => (fact ? [{ content: fact, key: `fact:${fact}` }] : [])),
+    ...facts.flatMap((fact) => {
+      if (!fact) {
+        return [];
+      }
+
+      return typeof fact === "string" ? [{ content: fact, key: `fact:${fact}` }] : [fact];
+    }),
     ...(extra ? [{ content: extra, key: "extra" }] : []),
   ];
 
@@ -74,9 +82,10 @@ export function TaskMeta({
 }: {
   className?: string;
   facts: readonly (string | false | null | undefined)[];
-  reward?: string;
+  /** The Brain Power the task gives. */
+  reward?: number;
 }) {
-  if (!facts.some(Boolean) && !reward) {
+  if (!facts.some(Boolean) && reward === undefined) {
     return null;
   }
 
@@ -89,7 +98,7 @@ export function TaskMeta({
       data-slot="task-meta"
     >
       <FactSegments
-        extra={reward && <span className="text-brain-text">{reward}</span>}
+        extra={reward !== undefined && <BrainPowerAmount points={reward} />}
         facts={facts}
       />
     </p>

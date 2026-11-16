@@ -11,7 +11,7 @@ import Link from "next/link";
 const columns: AdminTableColumn[] = [
   { label: "Goal", twoLines: true },
   { label: "State" },
-  { label: "Created", size: "text" },
+  { align: "right", label: "Created", size: "text" },
 ];
 
 export function PromptGoals({ prompt }: { prompt: AdminPrompt }) {
@@ -28,7 +28,7 @@ export function PromptGoals({ prompt }: { prompt: AdminPrompt }) {
               <span className="flex h-5 shrink-0 items-center">
                 <GoalKindIcon kind={goal.kind} />
               </span>
-              <span className="min-w-0">
+              <span className="min-w-0 self-baseline">
                 <span className="text-foreground block font-medium">{goal.title}</span>
                 {goal.primaryCourse ? (
                   <Link

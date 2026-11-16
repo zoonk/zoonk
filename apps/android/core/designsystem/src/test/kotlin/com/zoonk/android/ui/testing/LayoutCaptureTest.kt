@@ -3,14 +3,17 @@ package com.zoonk.android.ui.testing
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -25,6 +28,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onLast
@@ -35,8 +39,10 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.json.JSONArray
@@ -79,6 +85,70 @@ class LayoutCaptureTest {
     }
 
     @Test
+    fun clearedContainersStillExposeTheirDescendantsToTheUnmergedCapture() {
+        val parts =
+            capture {
+                Box(Modifier.clearAndSetSemantics {}) { Text("Legend entry") }
+            }
+        assertTrue(parts.elements().any { it.optString("part") == "text" && it.optString("text") == "Legend entry" })
+        val report = JSONObject(File(folder.root, "row.json").readText())
+        assertFalse(report.has("notMeasurable"))
+        assertEquals(4, report.getJSONArray("measuredRules").length())
+    }
+
+    @Test
+    fun intentionallyClearedAnnotationsDeclareLimitsWithTheirElement() {
+        capture {
+            Text("Axis caption", Modifier.clearAndSetSemantics {})
+            Text("Readable elsewhere")
+        }
+        val report = JSONObject(File(folder.root, "row.json").readText())
+        assertFalse(report.has("notMeasurable"))
+        val measured = report.getJSONArray("measuredRules")
+        assertEquals(
+            setOf("cut", "line-end", "lone-word", "one-height"),
+            (0 until measured.length()).map { measured.getString(it) }.toSet(),
+        )
+        val readable = report.getJSONArray("elements").elements().first { it.optString("text") == "Readable elsewhere" }
+        assertEquals("Readable elsewhere", readable.getJSONArray("lineTexts").getString(0))
+        val area = report.getJSONArray("elements").part("unmeasured")
+        assertTrue(area.getString("reason").contains("clearAndSetSemantics"))
+    }
+
+    @Test
+    fun pageRulesReadActualTextLinesAndEveryButtonLook() {
+        val parts =
+            capture {
+                ListRow(headline = { Text("Monday —\nFriday") })
+                OutlinedButton(onClick = {}) { Text("Continue") }
+            }
+        val text = parts.elements().first { it.optString("part") == "text" && it.optString("text").startsWith("Monday") }
+        assertEquals(
+            listOf("Monday —", "Friday"),
+            (0 until text.getJSONArray("lineTexts").length()).map {
+                text.getJSONArray("lineTexts").getString(it)
+            },
+        )
+        assertEquals("label", text.getString("textRole"))
+        assertTrue(parts.has("control"))
+    }
+
+    @Test
+    fun clippingAndUnsignedScrollsAreRecordedButTheKitFadeIsAllowed() {
+        val parts =
+            capture {
+                Box(Modifier.width(40.dp).height(12.dp).clipToBounds()) {
+                    Text("Content that continues", softWrap = false)
+                }
+                Row(Modifier.width(40.dp).horizontalScroll(rememberScrollState())) { Text("Content that scrolls") }
+                Row(Modifier.width(40.dp).fadingHorizontalScroll(rememberScrollState())) { Text("Content with the kit sign") }
+            }
+        val cuts = parts.elements().filter { it.optString("part") == "cut" }
+        assertTrue(cuts.any { it.optString("text") == "Content that continues" })
+        assertEquals(1, cuts.count { it.optString("reason") == "horizontal scroll has no kit scroll sign" })
+    }
+
+    @Test
     fun aRowsPartsCarryTheirBoundsLinesAndTheFontsCapHeight() {
         val parts = capture { ListRow(headline = { Text("Mixed practice") }, meta = { Text("12 min") }, onClick = {}) }
 
@@ -96,7 +166,7 @@ class LayoutCaptureTest {
     }
 
     @Test
-    fun aRowThatReplacesItsChildrensSemanticsIsWrittenAsUnmeasured() {
+    fun aRowThatReplacesItsChildrensSemanticsKeepsItsReadableParts() {
         val parts =
             capture {
                 ListRow(
@@ -106,8 +176,9 @@ class LayoutCaptureTest {
                 )
             }
 
-        assertTrue(parts.has("unmeasured"))
-        assertTrue(!parts.has("label") && !parts.has("value"))
+        assertFalse(parts.has("unmeasured"))
+        assertEquals("Mixed practice", parts.part("label").getString("text"))
+        assertEquals("12 min", parts.part("value").getString("text"))
     }
 
     @Test
@@ -389,6 +460,20 @@ class LayoutCaptureTest {
         // Ink is written only where the picture shows the words in their own color: a copy of the page has none.
         assertTrue(label.get("ink") is JSONArray)
         assertTrue((0 until picture.width).none { x -> picture.getPixel(x, picture.height / 2) == PAGE.toArgb() })
+    }
+
+    @Test
+    fun aDialogThatFillsTheWindowIsCutToItsWindow() {
+        compose.setContent {
+            ZoonkTheme {
+                FullScreenDialog(onDismissRequest = {}) { Box(Modifier.fillMaxSize().background(PAGE)) }
+            }
+        }
+        compose.waitForIdle()
+        val picture = compose.onNode(isDialog()).captureRender().asAndroidBitmap()
+
+        assertEquals(compose.activity.window.decorView.width, picture.width)
+        assertEquals(PAGE.toArgb(), picture.getPixel(picture.width / 2, picture.height / 2))
     }
 
     private fun capture(content: @androidx.compose.runtime.Composable () -> Unit): JSONArray {

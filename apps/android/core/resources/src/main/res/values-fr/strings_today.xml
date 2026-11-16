@@ -20,8 +20,6 @@
   "today_continue_mock": "ed9621f1360b6a0973ac43bff0dcb10d1ad635b7e1f5331bc8d19589e8028fe7",
   "today_continue_mock_detail": "d86b25a836f481e37e7e7b96f6caeebfe7e62e423520984715dab9e59f1fe0ea",
   "today_continue_session": "20abe9710f2c1f019d006fc1a0b8006bdc51ebd72fcec39315b45b18c3a0c2cb",
-  "today_day_is_here": "591653ad114e7716e9cabbda408f37d44e4b8d688ea8841eed78704a461368f2",
-  "today_days_left": "1ec3d7d9dd495169ada5f5d27848f85bab52a0e31aa1022a664398c1180bc725",
   "today_done": "4a6b940ecab3f9e62e1dbf4061f7940781f57a9095bf5cb923f90686417260d9",
   "today_done_count": "cbc44bdbaf1046935792743bf170ef66b4ef1e1231902b0e8cc0b358e033bdde",
   "today_done_day_off": "135c78381a16e2955cb2175daf71a6eab6613333951b6e8ffb626f8350b2969f",
@@ -177,12 +175,6 @@
     </plurals>
     <string name="today_shorter_day">Une journée plus courte</string>
     <string name="today_shorter_day_note">Ton plan réserve du temps pour l’examen blanc du %1$s.</string>
-    <string name="today_day_is_here">Le jour est arrivé</string>
-    <plurals name="today_days_left">
-        <item quantity="one">Encore %d jour</item>
-        <item quantity="many">Encore %d jours</item>
-        <item quantity="other">Encore %d jours</item>
-    </plurals>
     <plurals name="today_pace_lessons_to_catch_up">
         <item quantity="one">%d leçon à rattraper</item>
         <item quantity="many">%d leçons à rattraper</item>

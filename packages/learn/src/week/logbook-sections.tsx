@@ -1,6 +1,5 @@
 "use client";
 
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import {
   ArrowRightIcon,
   ClockIcon,
@@ -13,15 +12,15 @@ import { Eyebrow } from "../_components/eyebrow";
 import { GoalRing } from "../_components/goal-ring";
 import { KindMark, type LearnKind } from "../_components/kind-tile";
 import { StatTile, StatTiles } from "../_components/stat-tile";
-import { DoneMark } from "../_components/status-mark";
 import { StepDetail, StepHeader, StepRow, StepRows, StepTitle } from "../_components/step-card";
 import {
   WEEK_DAY_CLASS,
   WEEK_ROW_CLASS,
   WeekDayLetter,
   WeekDayLetterSkeleton,
+  WeekDayRing,
 } from "../_components/week-row";
-import { toIsoDay, useMomentDays } from "../_utils/iso-date";
+import { useMomentDays } from "../_utils/iso-date";
 import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
 import { useLogbook } from "./logbook-context";
@@ -32,32 +31,24 @@ export function WeekRings() {
   const t = useExtracted();
   const { today } = useMomentDays();
   const { recap } = useLogbook();
-  const studied = new Set(recap.week.daysStudied.map((day) => day.getTime()));
+  const studied = recap.days.filter((day) => day.studied).length;
 
   return (
     <div
       aria-label={t(
         "{count, plural, =0 {# days studied} one {# day studied} other {# days studied}}",
-        { count: studied.size },
+        { count: studied },
       )}
       className={WEEK_ROW_CLASS}
       data-slot="week-rings"
       role="img"
     >
-      {Array.from({ length: DAYS_PER_WEEK }, (_, index) => {
-        const day = new Date(recap.weekStart.getTime() + index * MS_PER_DAY);
-        const isStudied = studied.has(day.getTime());
-        const isToday = toIsoDay(day) === today;
-
-        return (
-          <span className={WEEK_DAY_CLASS} key={day.toISOString()}>
-            <GoalRing share={isStudied ? 1 : 0} track={isToday ? "today" : "default"}>
-              {isStudied && <DoneMark />}
-            </GoalRing>
-            <WeekDayLetter date={day} isToday={isToday} />
-          </span>
-        );
-      })}
+      {recap.days.map((day) => (
+        <span className={WEEK_DAY_CLASS} key={day.date.toISOString()}>
+          <WeekDayRing day={day} localDate={new Date(`${today}T00:00:00Z`)} />
+          <WeekDayLetter date={day.date} isToday={day.isToday} />
+        </span>
+      ))}
     </div>
   );
 }

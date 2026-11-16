@@ -65,11 +65,7 @@ export async function TodayGoalPaused({ banner }: { banner: React.ReactNode }) {
       clause={t("Nothing is planned until you resume it.")}
       detail={<ResumeEffect preview={resume} />}
       icon={<PauseIcon />}
-      sentence={
-        goal
-          ? t("Your {goal} goal is paused.", { goal: goal.displayName })
-          : t("This goal is paused.")
-      }
+      sentence={t("This goal is paused.")}
       title={t("Today")}
     />
   );

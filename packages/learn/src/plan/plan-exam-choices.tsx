@@ -2,11 +2,10 @@
 
 import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { safeAsync } from "@zoonk/utils/error";
 import { SignpostIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useTransition } from "react";
+import { useId, useTransition } from "react";
 import { useChangeSaveFailed } from "../_components/save-error";
 import {
   Suggestion,
@@ -18,12 +17,12 @@ import {
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useStillMounted } from "../_utils/use-still-mounted";
+import { ChoiceList } from "../onboarding/choice-list";
 import { ExamChoicePicks } from "./exam-choice-picks";
 import { ExamChoiceAnswers, useExamChoiceQuestion } from "./exam-choice-question";
 import { useSharedRequest } from "./layout-shared";
 import { usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
-import { PLAN_OPTION_CLASS } from "./plan-option-styles";
 import {
   SlotContent,
   type SlotItem,
@@ -86,32 +85,33 @@ function OneOptionChoice({
   const tapped = useTappedChoice(saved);
 
   return (
-    <RadioGroup
-      className="flex flex-wrap gap-2"
-      disabled={isPending}
-      onValueChange={(value) => {
-        if (typeof value === "string" && value !== saved) {
+    <ChoiceList
+      choices={choice.options.map((option) => ({
+        label: option.shortName ?? option.name,
+        value: option.name,
+      }))}
+      label={choice.group}
+      numberKeys={false}
+      onChange={(value) => {
+        if (value !== saved) {
           choose({ group: choice.group, subjects: [value] }, tapped.pick(value));
         }
       }}
-      value={tapped.shown}
-    >
-      {choice.options.map((option) => (
-        <RadioGroupOption className={PLAN_OPTION_CLASS} key={option.name}>
-          <RadioGroupItem value={option.name} />
-          {option.shortName ?? option.name}
-        </RadioGroupOption>
-      ))}
-    </RadioGroup>
+      readOnly={isPending}
+      value={tapped.shown || null}
+    />
   );
 }
 
 function ExamChoice({ choice }: { choice: ExamChoiceView }) {
+  const labelId = useId();
   const { choose, isPending } = useExamChoice();
 
   return (
-    <fieldset className="flex flex-col gap-2">
-      <legend className="mb-2 text-sm font-medium">{choice.group}</legend>
+    <section aria-labelledby={labelId} className="flex flex-col gap-2">
+      <h3 className="text-sm font-medium" id={labelId}>
+        {choice.group}
+      </h3>
 
       {choice.take > 1 ? (
         <ExamChoicePicks
@@ -122,7 +122,7 @@ function ExamChoice({ choice }: { choice: ExamChoiceView }) {
       ) : (
         <OneOptionChoice choice={choice} choose={choose} isPending={isPending} />
       )}
-    </fieldset>
+    </section>
   );
 }
 

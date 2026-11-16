@@ -2,6 +2,7 @@
 
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
+import { SwapLabel } from "@zoonk/ui/components/swap-label";
 import { useShortcut } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -79,13 +80,14 @@ function FlagButton() {
   const { runner } = useMockScreen();
   const question = runner.view.current?.questions[runner.position];
   const flagged = Boolean(question && runner.drafts[question.itemId]?.flagged);
+  const flag = t("Flag");
+  const unflag = t("Remove flag");
 
   useShortcut("flag", runner.toggleFlag);
 
   return (
     <Button
       aria-keyshortcuts={shortcutKeys("flag")}
-      aria-pressed={flagged}
       className={cn(
         "shrink-0",
         flagged &&
@@ -96,7 +98,7 @@ function FlagButton() {
       variant="outline"
     >
       <FlagIcon aria-hidden="true" className={cn(flagged && "fill-current")} />
-      {t("Flag")}
+      <SwapLabel current={flagged ? unflag : flag} labels={[flag, unflag]} />
     </Button>
   );
 }

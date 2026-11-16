@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.isLanguageStep
 import com.zoonk.android.feature.player.language.WordHintsView
 import com.zoonk.android.feature.player.model.AnswerCorrection
@@ -81,6 +82,17 @@ data class ResultNext(
     val savedMistake: Boolean,
     val willReturn: Boolean,
 )
+
+/** Where [stepId]'s checked [result] goes: a missed question saved to the mistakes, or back later in the lesson. */
+fun resultNext(
+    state: LessonPlayerState,
+    stepId: String,
+    result: StepResult,
+): ResultNext =
+    ResultNext(
+        savedMistake = result.savedMistake && !result.isCorrect,
+        willReturn = !result.isCorrect && state.queue.drop(state.position + 1).contains(stepId),
+    )
 
 /** Key points shown only when they agree with the verdict, as main does. */
 private fun shownKeyPoints(result: StepResult): List<AnswerKeyPoint>? {
@@ -310,5 +322,8 @@ internal fun ResultNote(next: ResultNext) {
 
 /** True when a screen draws its own result and only needs the notes under it. */
 fun showsOwnResult(step: LessonStep): Boolean = step.kind in OWN_RESULT_KINDS
+
+/** An activity draws its result notes inside its own feedback card, as every other step's card holds them. */
+fun notesInOwnCard(step: LessonStep): Boolean = step.kind == StepKind.Activity
 
 private val OWN_RESULT_KINDS = setOf(StepKind.Activity, StepKind.Challenge, StepKind.MatchColumns)

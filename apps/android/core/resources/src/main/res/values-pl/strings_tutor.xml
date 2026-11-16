@@ -13,6 +13,7 @@
   "tutor_ask": "b8a67cbfeb060bae1e0409e43ecdd9b08be6e3b1109d138444b61f9eb396fed8",
   "tutor_ask_answer": "b206fbc5e1e327a12388f608777bcc06f86944a0c4296fbf8a01d8ea6ca9086c",
   "tutor_ask_chapter": "b45737d3815aaec02dbd74af1fdba03264a91d73a6389ced1973e5014be464aa",
+  "tutor_ask_for_help": "ff3fa95bcffde4b82fff68585ce3bc3a4da30beb79f7a8051ef7de3ec324563a",
   "tutor_ask_mock": "5b1c0e4cebac5080ea00dd1c8ac46e5cbda7007cea8d8a716fab4b4b53c1b08a",
   "tutor_ask_plan": "0c75c2c098fd9aae0a84b11eb61a132b865536c7a62d721d858be62ab6c04b07",
   "tutor_ask_question": "d033e749326b589299ccd929407664c0ab1c56c83be9b58aadda038b3c3122b6",
@@ -131,6 +132,8 @@
     <!-- Before the buddy is known. -->
     <string name="tutor_your_buddy">Twój kumpel</string>
     <string name="tutor_ask">Zapytaj: %1$s</string>
+    <!-- The button that opens the buddy's chat before the buddy's name is known. -->
+    <string name="tutor_ask_for_help">Poproś o pomoc</string>
     <string name="tutor_ask_chapter">Zapytaj o ten rozdział: %1$s</string>
     <string name="tutor_ask_mock">Zapytaj o ten egzamin próbny: %1$s</string>
     <string name="tutor_ask_plan">Zapytaj o swój plan: %1$s</string>

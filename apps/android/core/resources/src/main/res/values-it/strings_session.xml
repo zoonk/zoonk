@@ -58,7 +58,7 @@
   "session_review_intro_weakest_title": "c2855d3867da3cbe68da9d9d4387afa3b353bea6af57f4f307a93efb73bce404",
   "session_summary_brain_power": "3fd18fcc08195a809f84dc71149c00fc046454f2795c0ad6c5dd9c86e3442ebd",
   "session_summary_buddy_happy": "693e28515f814676b23eb15389c1ee1222b30a2bf3825dbd5897c44852af0960",
-  "session_summary_create_account": "c9b6f4ccb199598fea3a2f628d367de3f977d62e36519a9f3fb045437c8a219b",
+  "session_summary_create_account": "a3b3fa9270d5b4613200dce67e5675b8c5ccd232dff25214df7e6c595bbe3bbd",
   "session_summary_done_for_now": "3ee81183b0ac47ab5940b4d15149be579363e8e327d70fb9c5c7a17d118f7fc2",
   "session_summary_done_in": "a78363cbb83cba3470bf78be02f20ca6d12ff160e2f88194411b3067cd5b798a",
   "session_summary_done_under_minute": "cfdfe9f4443c2bfd065792b8132d9d3043b71a0d6bdd8178b2092dd8f44a02a3",
@@ -194,7 +194,7 @@
     <string name="session_summary_keep_going">Continua</string>
     <string name="session_summary_finish">Termina</string>
     <string name="session_summary_save_note">Salva il tuo piano per ritrovarlo qui la prossima volta.</string>
-    <string name="session_summary_create_account">Crea un account</string>
+    <string name="session_summary_create_account">Crea un account gratuito</string>
     <!-- Above the title of the session's next step. -->
     <string name="session_next_eyebrow">A seguire</string>
     <string name="session_next_start">Inizia</string>

@@ -35,6 +35,14 @@ msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "Correct"
 
+#: src/_components/brain-power-amount.tsx
+#: src/language/conversation/call-stars-step.tsx
+#: src/missions/brain-power-reward.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "Brain Power"
+
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/onboarding/steps/reveal-days.tsx
@@ -284,7 +292,6 @@ msgstr "Continue"
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/explain/explain-waiting.tsx
-#: src/focus-test/focus-test-screens.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
 #: src/language/exam-speaking/speaking-task-row.tsx
 #: src/language/progress/speaking-mock-card.tsx
@@ -292,7 +299,6 @@ msgstr "Continue"
 #: src/mock/mock-short-dialog.tsx
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-body.tsx
-#: src/onboarding/test-outcome.tsx
 #: src/session/next-stop.tsx
 #: src/today/today-action.tsx
 #: src/today/today-suggested-goal.tsx
@@ -500,7 +506,6 @@ msgstr "Coming up"
 
 #: src/_components/lesson-list.tsx
 #: src/appearance/appearance-screen.tsx
-#: src/journey/preparation/use-preparation-parts.ts
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/plan-diff/use-change-rows.ts
 msgctxt "iqLF8D"
@@ -511,7 +516,6 @@ msgstr "Lessons"
 #: src/_utils/count-of.ts
 #: src/chapter/chapter-screen.tsx
 #: src/journey/preparation/use-preparation-parts.ts
-#: src/language/conversation/call-stars-step.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/syllabus/subject-aside.tsx
 #: src/syllabus/subject-chapters.tsx
@@ -1027,6 +1031,15 @@ msgctxt "f4Zmb7"
 msgid "Different time on weekends"
 msgstr "Different time on weekends"
 
+#: src/_utils/iso-date.ts
+#: src/exam/exam-labels.tsx
+#: src/exam/exam-screen.tsx
+#: src/journey/phase-when.tsx
+#: src/plan/plan-date-text.tsx
+msgctxt "7KwTGn"
+msgid "~{date}"
+msgstr "~{date}"
+
 #: src/_utils/range.ts
 msgctxt "kV-RMr"
 msgid "{low}–{high}"
@@ -1215,9 +1228,9 @@ msgid "Where you live"
 msgstr "Where you live"
 
 #: src/appearance/home-country-setting.tsx
-msgctxt "yXIjI8"
-msgid "So examples and exams match your country."
-msgstr "So examples and exams match your country."
+msgctxt "0sZNO3"
+msgid "So examples and exams match your country"
+msgstr "So examples and exams match your country"
 
 #: src/appearance/home-country-setting.tsx
 msgctxt "p5LNtB"
@@ -1613,6 +1626,7 @@ msgid "Completed"
 msgstr "Completed"
 
 #: src/certificates/certificate-details.tsx
+#: src/journey/preparation/use-preparation-parts.ts
 msgctxt "mrBiB2"
 msgid "Lessons studied"
 msgstr "Lessons studied"
@@ -1674,12 +1688,6 @@ msgstr "{course} · {level}"
 msgctxt "ZP9lOu"
 msgid "{language} {level}"
 msgstr "{language} {level}"
-
-#. An approximate study time, such as "about 41 hr".
-#: src/certificates/certificate-labels.ts
-msgctxt "8QINPM"
-msgid "about {duration}"
-msgstr "about {duration}"
 
 #: src/certificates/certificate-labels.ts
 msgctxt "ZfBPq3"
@@ -1930,6 +1938,12 @@ msgctxt "CXRlIo"
 msgid "Print"
 msgstr "Print"
 
+#. Link under a small picture of a certificate on a phone: opens the certificate's picture at full size.
+#: src/certificates/certificate-page.tsx
+msgctxt "hlcpTE"
+msgid "See the full certificate"
+msgstr "See the full certificate"
+
 #: src/certificates/certificate-share.tsx
 msgctxt "sfDPEB"
 msgid "I just completed level {level} in {language} on Zoonk."
@@ -2142,11 +2156,6 @@ msgctxt "UIUcbm"
 msgid "{count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, one {# question} other {# questions}}"
 
-#: src/challenge/challenge-intro-parts.tsx
-msgctxt "moNgIg"
-msgid "+{points} Brain Power"
-msgstr "+{points} Brain Power"
-
 #. The name of a study step: a second go at the Trickster's questions.
 #: src/challenge/challenge-intro-parts.tsx
 #: src/session/use-block-copy.ts
@@ -2336,13 +2345,6 @@ msgctxt "i2YWkq"
 msgid "What he'll ask"
 msgstr "What he'll ask"
 
-#: src/challenge/challenge-topics.tsx
-#: src/syllabus/subject-matrix.tsx
-#: src/syllabus/subject-screen.tsx
-msgctxt "eNbJHf"
-msgid "{count, plural, one {# topic} other {# topics}}"
-msgstr "{count, plural, one {# topic} other {# topics}}"
-
 #: src/chapter/chapter-header.tsx
 #: src/mind-maps/mind-map-index-rows.tsx
 msgctxt "sIR8OK"
@@ -2402,7 +2404,6 @@ msgid "Topics"
 msgstr "Topics"
 
 #: src/chapter/chapter-screen.tsx
-#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/use-short-plan.ts
@@ -3215,6 +3216,11 @@ msgctxt "rUq4jt"
 msgid "The case"
 msgstr "The case"
 
+#: src/essay/essay-prompt.tsx
+msgctxt "2rkYNm"
+msgid "What to write"
+msgstr "What to write"
+
 #. The grade of the learner's last essay draft.
 #: src/essay/essay-rewrite-guide.tsx
 #: src/essay/essay-screen.tsx
@@ -3683,6 +3689,16 @@ msgid "How the score works"
 msgstr "How the score works"
 
 #: src/exam/exam-screen.tsx
+msgctxt "QGnOZU"
+msgid "{date} at {time}"
+msgstr "{date} at {time}"
+
+#: src/exam/exam-screen.tsx
+msgctxt "yft85U"
+msgid "Starts at {time}"
+msgstr "Starts at {time}"
+
+#: src/exam/exam-screen.tsx
 msgctxt "Akn-bs"
 msgid "Exam options"
 msgstr "Exam options"
@@ -3924,6 +3940,14 @@ msgid "{count, plural, one {Your plan also skips # lesson you already know.} oth
 msgstr "{count, plural, one {Your plan also skips # lesson you already know.} other {Your plan also skips # lessons you already know.}}"
 
 #: src/focus-test/focus-test-screens.tsx
+#: src/onboarding/test-outcome.tsx
+#: src/questions/test-out-preparing.tsx
+#: src/today/today-focus-test.tsx
+msgctxt "SKxNcp"
+msgid "Start the test"
+msgstr "Start the test"
+
+#: src/focus-test/focus-test-screens.tsx
 msgctxt "G9nQHt"
 msgid "Continue your test"
 msgstr "Continue your test"
@@ -3979,9 +4003,9 @@ msgstr "Find what to study most"
 
 #: src/focus-test/use-focus-test-texts.ts
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "LW1Em4"
-msgid "Skip what you already know"
-msgstr "Skip what you already know"
+msgctxt "YSXaxI"
+msgid "Already know some of this?"
+msgstr "Already know some of this?"
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "-nbx59"
@@ -4263,10 +4287,14 @@ msgid "Writing the lesson"
 msgstr "Writing the lesson"
 
 #: src/generation/lesson-generation-copy.ts
-#: src/generation/use-generation-copy.ts
-msgctxt "gGJukf"
-msgid "Writing screen {number}…"
-msgstr "Writing screen {number}…"
+msgctxt "EVqGhj"
+msgid "Writing the explanations…"
+msgstr "Writing the explanations…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "GHfGPv"
+msgid "Writing the questions…"
+msgstr "Writing the questions…"
 
 #: src/generation/lesson-generation-copy.ts
 #: src/generation/use-generation-copy.ts
@@ -4419,9 +4447,9 @@ msgid "Fitting the plan into your days"
 msgstr "Fitting the plan into your days"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "0EAw5g"
-msgid "Finding lessons in the Library…"
-msgstr "Finding lessons in the Library…"
+msgctxt "YSOHV2"
+msgid "Finding lessons for your goal…"
+msgstr "Finding lessons for your goal…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "eO1ana"
@@ -4491,9 +4519,9 @@ msgid "Choosing your courses"
 msgstr "Choosing your courses"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "JRrpUO"
-msgid "Finding courses in the Library…"
-msgstr "Finding courses in the Library…"
+msgctxt "tHDEoY"
+msgid "Finding courses for your goal…"
+msgstr "Finding courses for your goal…"
 
 #: src/generation/use-generation-copy.ts
 #: src/language/level-test/level-test-preparing.tsx
@@ -4556,6 +4584,16 @@ msgstr "Reading your question…"
 msgctxt "H2ZUHF"
 msgid "Writing about 5 short screens"
 msgstr "Writing about 5 short screens"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "RyrI0Q"
+msgid "Writing the explanation…"
+msgstr "Writing the explanation…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "xTdhld"
+msgid "Adding an example…"
+msgstr "Adding an example…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "hSi5Cg"
@@ -4661,9 +4699,9 @@ msgid "Archive this goal"
 msgstr "Archive this goal"
 
 #: src/journey/goal-actions.tsx
-msgctxt "rhh0AT"
-msgid "Resume your {goal} goal?"
-msgstr "Resume your {goal} goal?"
+msgctxt "tzm8m7"
+msgid "Resume this goal?"
+msgstr "Resume this goal?"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/resume-goal-bar.tsx
@@ -4672,14 +4710,14 @@ msgid "Resume"
 msgstr "Resume"
 
 #: src/journey/goal-actions.tsx
-msgctxt "9DL2qt"
-msgid "Archive your {goal} goal?"
-msgstr "Archive your {goal} goal?"
+msgctxt "cenJlY"
+msgid "Archive this goal?"
+msgstr "Archive this goal?"
 
 #: src/journey/goal-actions.tsx
-msgctxt "jrD9B8"
-msgid "It leaves your goals and its plan stops. What you learned stays in your progress."
-msgstr "It leaves your goals and its plan stops. What you learned stays in your progress."
+msgctxt "T4r1Wn"
+msgid "Archived goals leave Today and the Plan. What you learned stays in your progress."
+msgstr "Archived goals leave Today and the Plan. What you learned stays in your progress."
 
 #: src/journey/goal-actions.tsx
 msgctxt "hrgo-E"
@@ -4688,9 +4726,9 @@ msgstr "Archive"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/journey-planless.tsx
-msgctxt "T4rFKd"
-msgid "Your {goal} goal is paused"
-msgstr "Your {goal} goal is paused"
+msgctxt "98OHZH"
+msgid "This goal is paused"
+msgstr "This goal is paused"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/journey-planless.tsx
@@ -4991,12 +5029,6 @@ msgctxt "JQlKi_"
 msgid "Ends {date}"
 msgstr "Ends {date}"
 
-#: src/journey/phase-when.tsx
-#: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "~{date}"
-
 #: src/journey/plan-roadmap.tsx
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
@@ -5074,9 +5106,19 @@ msgid "How it's calculated"
 msgstr "How it's calculated"
 
 #: src/journey/preparation/use-preparation-parts.ts
+msgctxt "m_Rw4I"
+msgid "Lessons you already knew"
+msgstr "Lessons you already knew"
+
+#: src/journey/preparation/use-preparation-parts.ts
 msgctxt "DVOdy2"
 msgid "Topics studied"
 msgstr "Topics studied"
+
+#: src/journey/preparation/use-preparation-parts.ts
+msgctxt "6dJGDZ"
+msgid "Topics you already knew"
+msgstr "Topics you already knew"
 
 #: src/journey/preparation/use-preparation-parts.ts
 #: src/mock/mock-result-view.tsx
@@ -5268,6 +5310,7 @@ msgid "Paused"
 msgstr "Paused"
 
 #: src/journey/schedule-details.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "4IVFWL"
 msgid "Go to Today"
 msgstr "Go to Today"
@@ -5713,13 +5756,6 @@ msgstr "{stars, plural, =0 {# of 3 stars} one {# of 3 stars} other {# of 3 stars
 msgctxt "XHLYdJ"
 msgid "Goals"
 msgstr "Goals"
-
-#: src/language/conversation/call-stars-step.tsx
-#: src/missions/brain-power-reward.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
-msgstr "Brain Power"
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"
@@ -6561,9 +6597,14 @@ msgid "Say it again"
 msgstr "Say it again"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "FLqp3G"
-msgid "No words to say again today."
-msgstr "No words to say again today."
+msgctxt "O6SjzK"
+msgid "No words to say again today"
+msgstr "No words to say again today"
+
+#: src/language/pronunciation/pronunciation-review-screen.tsx
+msgctxt "E-Uxmi"
+msgid "Words that were hard to say come back here to practice."
+msgstr "Words that were hard to say come back here to practice."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "c3Fawv"
@@ -6909,9 +6950,9 @@ msgid "From a call"
 msgstr "From a call"
 
 #: src/memory/memory-screen.tsx
-msgctxt "ut2Sio"
-msgid "When off, notes aren't saved or used."
-msgstr "When off, notes aren't saved or used."
+msgctxt "LwVSHh"
+msgid "When off, notes aren't saved or used"
+msgstr "When off, notes aren't saved or used"
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"
@@ -7469,6 +7510,7 @@ msgctxt "aGylUw"
 msgid "You earned +{points} Brain Power."
 msgstr "You earned +{points} Brain Power."
 
+#. Under the title Today's missions: how many of today's missions are done.
 #: src/missions/missions-card.tsx
 msgctxt "deISVW"
 msgid "{done} of {total} done"
@@ -7892,6 +7934,7 @@ msgctxt "fWOwxQ"
 msgid "The full exam or half of it"
 msgstr "The full exam or half of it"
 
+#. An action, like "Take a mock exam" beside it: goes back into the mock exam already started.
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
 msgid "Continue your mock exam"
@@ -7913,9 +7956,9 @@ msgid "This one doesn't count."
 msgstr "This one doesn't count."
 
 #: src/mock/mock-frame.tsx
-msgctxt "UIkt52"
-msgid "Not saved yet · retrying"
-msgstr "Not saved yet · retrying"
+msgctxt "g2F3WK"
+msgid "Your answer isn't saved yet"
+msgstr "Your answer isn't saved yet"
 
 #: src/mock/mock-frame.tsx
 msgctxt "gOsgur"
@@ -8191,6 +8234,7 @@ msgid "{correct} of {total}"
 msgstr "{correct} of {total}"
 
 #: src/mock/mock-result-breakdown.tsx
+#: src/today/use-row-label.ts
 msgctxt "SjSDDA"
 msgid "{count, plural, one {# more topic} other {# more topics}}"
 msgstr "{count, plural, one {# more topic} other {# more topics}}"
@@ -8559,6 +8603,11 @@ msgstr "{number} of {total}"
 msgctxt "bSCV9J"
 msgid "Flag"
 msgstr "Flag"
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "sflabU"
+msgid "Remove flag"
+msgstr "Remove flag"
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -10004,9 +10053,9 @@ msgid "Looks right"
 msgstr "Looks right"
 
 #: src/onboarding/understood/understood-screen.tsx
-msgctxt "N7XZZA"
-msgid "Here's what I understood"
-msgstr "Here's what I understood"
+msgctxt "8nmZkr"
+msgid "Here's what we understood"
+msgstr "Here's what we understood"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "xuHuGN"
@@ -10783,9 +10832,9 @@ msgid "No tools? You can do it all with examples."
 msgstr "No tools? You can do it all with examples."
 
 #: src/plan/plan-tools.tsx
-msgctxt "svOBOg"
-msgid "More later: {tools}"
-msgstr "More later: {tools}"
+msgctxt "r_GVXm"
+msgid "{count, plural, one {# more tool later: {tools}} other {# more tools later: {tools}}}"
+msgstr "{count, plural, one {# more tool later: {tools}} other {# more tools later: {tools}}}"
 
 #: src/plan/plan-tools.tsx
 msgctxt "z1Z_Hg"
@@ -11899,12 +11948,6 @@ msgid "A few questions on this chapter, with your results at the end. Do well, a
 msgstr "A few questions on this chapter, with your results at the end. Do well, and your plan skips what you already know."
 
 #: src/questions/test-out-preparing.tsx
-#: src/today/today-focus-test.tsx
-msgctxt "SKxNcp"
-msgid "Start the test"
-msgstr "Start the test"
-
-#: src/questions/test-out-preparing.tsx
 msgctxt "gb32bG"
 msgid "We're writing a few questions on this chapter. The test opens here when they're ready."
 msgstr "We're writing a few questions on this chapter. The test opens here when they're ready."
@@ -12569,6 +12612,18 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "New lesson"
 
+#. Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts".
+#: src/session/use-block-copy.ts
+msgctxt "60PbK5"
+msgid "Bonus practice: {topic}"
+msgstr "Bonus practice: {topic}"
+
+#. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
+#: src/session/use-block-copy.ts
+msgctxt "YGPuF7"
+msgid "Practice: {topic}"
+msgstr "Practice: {topic}"
+
 #. Extra practice the learner added. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
 #: src/session/use-block-copy.ts
 msgctxt "7zIxxl"
@@ -12809,6 +12864,11 @@ msgid "{count, plural, one {Also in # exam} other {Also in # exams}}"
 msgstr "{count, plural, one {Also in # exam} other {Also in # exams}}"
 
 #: src/syllabus/subject-aside.tsx
+msgctxt "wGdj4O"
+msgid "Counts your answers in lessons, practice and tests."
+msgstr "Counts your answers in lessons, practice and tests."
+
+#: src/syllabus/subject-aside.tsx
 msgctxt "_7RyZo"
 msgid "Next date"
 msgstr "Next date"
@@ -12837,6 +12897,12 @@ msgstr "{count, plural, one {# chapter you already know} other {# chapters you a
 msgctxt "oUXyHJ"
 msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
 msgstr "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
+
+#: src/syllabus/subject-matrix.tsx
+#: src/syllabus/subject-screen.tsx
+msgctxt "eNbJHf"
+msgid "{count, plural, one {# topic} other {# topics}}"
+msgstr "{count, plural, one {# topic} other {# topics}}"
 
 #: src/syllabus/subject-matrix.tsx
 msgctxt "f1GnB3"

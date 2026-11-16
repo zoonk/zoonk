@@ -14,7 +14,7 @@ struct PlanPathSection: View {
       if context.goal.kind == .language,
         let alphabet = store.languageUnits(goalId: context.goal.id).value?.alphabet
       {
-        PlanAlphabetRow(alphabet: alphabet, goalId: context.goal.id)
+        PlanAlphabetRow(alphabet: alphabet, goalId: context.goal.id, skip: context.alphabetSkip)
       }
 
       PlanPathRows(context: context)

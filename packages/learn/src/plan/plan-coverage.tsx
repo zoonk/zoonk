@@ -5,7 +5,7 @@ import { CalendarCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { useChangeSaveFailed } from "../_components/save-error";
-import { useTimeAnswerTexts } from "../_components/time-answer";
+import { TIME_ANSWER_BUTTON_CLASS, useTimeAnswerTexts } from "../_components/time-answer";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
@@ -180,7 +180,7 @@ export function MoveDateSwitch({
     <>
       <Button
         busy={move.pending}
-        className="self-start"
+        className={TIME_ANSWER_BUTTON_CLASS}
         icon={<CalendarCheckIcon aria-hidden="true" />}
         id={id}
         onClick={() => void move.move()}

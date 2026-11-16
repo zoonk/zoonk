@@ -7,6 +7,7 @@ struct MemoryView: View {
   @Environment(SettingsStore.self) private var settings
   @State private var editing: MemoryFact?
   @State private var statement = ""
+  @State private var changes = MemoryChanges()
 
   var body: some View {
     ZoonkList {
@@ -33,17 +34,15 @@ struct MemoryView: View {
                 tableName: "Settings", comment: "What happens while memory is off"))
         } footer: {
           SectionFooter {
-            if let deleted = settings.deletedFact {
-              MemoryUpdatedNotice(fact: deleted, status: settings.undoStatus) {
-                Task {
-                  await settings.undoDeletion()
-                }
+            if let deleted = changes.deletedFact {
+              MemoryUpdatedNotice(fact: deleted, status: changes.undoStatus) {
+                changes.undo(settings: settings)
               }
             }
           }
         }
 
-        if settings.saveFailed {
+        if changes.saveFailed {
           SettingsSaveError()
         }
 
@@ -69,9 +68,7 @@ struct MemoryView: View {
             Section {
               ForEach(facts) { fact in
                 MemoryFactRow(fact: fact, edit: { edit(fact) }) {
-                  Task {
-                    await settings.deleteMemoryFact(id: fact.id)
-                  }
+                  changes.delete(id: fact.id, settings: settings)
                 }
               }
             } header: {
@@ -108,6 +105,7 @@ struct MemoryView: View {
       }
     }
     .loads(settings.memory)
+    .onDisappear { changes.leave() }
     .alert(
       Text(
         "Edit memory", tableName: "Settings",
@@ -133,7 +131,7 @@ struct MemoryView: View {
           return
         }
 
-        Task {
+        changes.save(.edit(fact.id)) {
           await settings.updateMemoryFact(id: fact.id, statement: trimmed)
         }
       }
@@ -168,10 +166,122 @@ struct MemoryView: View {
     Binding(
       get: { enabled },
       set: { next in
-        Task {
-          await settings.setMemoryEnabled(next)
-        }
+        changes.save(.memorySwitch) { await settings.setMemoryEnabled(next) }
       })
+  }
+}
+
+/// What the learner changed in Memory and how it went: the page's, so leaving it ends what's still
+/// out and says nothing of it, and the next visit starts with no notice. The memory itself saves
+/// and stays in `SettingsStore`.
+@MainActor
+@Observable
+final class MemoryChanges {
+  /// What a change was made with. Each keeps its own latest result, so a change to one never hides
+  /// another's failure.
+  enum Control: Hashable {
+    case memorySwitch
+    case edit(String)
+    case deletion(String)
+  }
+
+  /// "Memory updated", with its Undo.
+  private(set) var deletedFact: MemoryFact?
+  private(set) var undoStatus: MemoryUndo?
+  private var failed: Set<Control> = []
+  @ObservationIgnored private var latest: [Control: Int] = [:]
+  @ObservationIgnored private var lastRun = 0
+  @ObservationIgnored private let tasks = ScreenTasks()
+
+  var saveFailed: Bool { !failed.isEmpty }
+
+  /// A change to the memory, false when it didn't save.
+  func save(_ control: Control, _ write: @escaping @MainActor () async -> Bool) {
+    let run = begin(control)
+
+    tasks.run {
+      let saved = await write()
+
+      guard !Task.isCancelled else {
+        return
+      }
+
+      self.end(control, run: run, saved: saved)
+    }
+  }
+
+  func delete(id: String, settings: SettingsStore) {
+    let control = Control.deletion(id)
+    let run = begin(control)
+
+    tasks.run {
+      let result = await settings.deleteMemoryFact(id: id)
+
+      guard !Task.isCancelled else {
+        return
+      }
+
+      switch result {
+      case .done(let deleted):
+        self.deletedFact = deleted
+        self.undoStatus = nil
+        self.end(control, run: run, saved: true)
+        // The fact and its retry are gone. Its edits and its deletion take turns in the memory's
+        // saves, so an edit has always landed before its fact's deletion does.
+        self.failed.remove(.edit(id))
+      case .failed?, nil:
+        self.end(control, run: run, saved: false)
+      case .obsolete?:
+        break
+      }
+    }
+  }
+
+  func undo(settings: SettingsStore) {
+    guard let deleted = deletedFact, undoStatus?.canUndo ?? true else {
+      return
+    }
+
+    undoStatus = .undoing
+
+    tasks.run {
+      let status = await settings.undoDeletion(of: deleted)
+
+      // A deletion made meanwhile has its own notice and its own undo.
+      guard !Task.isCancelled, self.deletedFact?.id == deleted.id else {
+        return
+      }
+
+      self.undoStatus = status
+    }
+  }
+
+  func leave() {
+    tasks.cancel()
+    failed = []
+    latest = [:]
+    deletedFact = nil
+    undoStatus = nil
+  }
+
+  private func begin(_ control: Control) -> Int {
+    lastRun += 1
+    latest[control] = lastRun
+    failed.remove(control)
+    return lastRun
+  }
+
+  /// Only the control's latest change says how it went.
+  private func end(_ control: Control, run: Int, saved: Bool) {
+    guard latest[control] == run else {
+      return
+    }
+
+    if saved {
+      failed.remove(control)
+    } else {
+      failed.insert(control)
+    }
   }
 }
 

@@ -10,6 +10,8 @@ protocol PushAccess: AnyObject {
   /// Nil when the system couldn't register this installation.
   func deviceToken() async -> String?
   func isAuthorized() async -> Bool
+  /// The learner turned Zoonk's notifications off, which only the system's Settings turn back on.
+  func isDenied() async -> Bool
 }
 
 /// The app's one link to the system's notifications: its delegate callbacks land here.

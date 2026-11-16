@@ -47053,6 +47053,9 @@
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
+          "targetDateEstimated": {
+            "type": "boolean"
+          },
           "targetLanguage": {
             "nullable": true,
             "type": "string"
@@ -47087,6 +47090,7 @@
           "regionChoices",
           "status",
           "targetDate",
+          "targetDateEstimated",
           "targetLanguage",
           "targetRegion",
           "title"
@@ -76686,7 +76690,7 @@
             "items": {
               "type": "string"
             },
-            "description": "The areas most of a practice block asks about, at most two, as the plan names them: name its row after them (\"Practice: Math and Languages\"). Empty for other blocks"
+            "description": "The areas most of a practice block asks about, at most two, as the plan names them: name a practice without `topics` after them (\"Practice: Math and Languages\"). Empty for other blocks"
           },
           "brainPower": {
             "type": "integer",
@@ -76883,7 +76887,7 @@
             "items": {
               "type": "string"
             },
-            "description": "A practice block's topics as the plan names them, most asked first: under its row, name the first and how many more (\"Calculating discounts and 9 more topics\"). Empty for other blocks"
+            "description": "A practice block's topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead): name its row after the first, so two practices on one subject read apart (\"Practice: Calculating discounts\"), and under it name the first and how many more (\"Calculating discounts and 9 more topics\"). Empty for other blocks"
           },
           "waitReason": {
             "nullable": true,
@@ -87355,6 +87359,12 @@
             ],
             "additionalProperties": false
           },
+          "days": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StudyWeekDay"
+            }
+          },
           "lastWeek": {
             "type": "object",
             "properties": {
@@ -87568,6 +87578,7 @@
           "badges",
           "buddyAte",
           "comparison",
+          "days",
           "lastWeek",
           "nextFocus",
           "phasesFinished",
@@ -87576,6 +87587,61 @@
           "week",
           "weekEnd",
           "weekStart"
+        ],
+        "additionalProperties": false
+      },
+      "StudyWeekDay": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
+            "description": "Learner-local calendar date"
+          },
+          "goalMinutes": {
+            "type": "number",
+            "minimum": 0,
+            "description": "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
+            "example": 15
+          },
+          "hitGoal": {
+            "type": "boolean"
+          },
+          "isToday": {
+            "type": "boolean"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "afterEnd",
+              "beforeStart",
+              "deadline",
+              "exam",
+              "rest",
+              "study"
+            ],
+            "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
+          },
+          "minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
+          },
+          "studied": {
+            "type": "boolean",
+            "description": "Any study of this goal counts, partial days included"
+          }
+        },
+        "required": [
+          "date",
+          "goalMinutes",
+          "hitGoal",
+          "isToday",
+          "kind",
+          "minutes",
+          "studied"
         ],
         "additionalProperties": false
       },
@@ -92875,59 +92941,7 @@
               "days": {
                 "type": "array",
                 "items": {
-                  "type": "object",
-                  "properties": {
-                    "date": {
-                      "type": "string",
-                      "format": "date",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-                      "description": "Learner-local calendar date"
-                    },
-                    "goalMinutes": {
-                      "type": "number",
-                      "minimum": 0,
-                      "description": "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
-                      "example": 15
-                    },
-                    "hitGoal": {
-                      "type": "boolean"
-                    },
-                    "isToday": {
-                      "type": "boolean"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "enum": [
-                        "afterEnd",
-                        "beforeStart",
-                        "deadline",
-                        "exam",
-                        "rest",
-                        "study"
-                      ],
-                      "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
-                    },
-                    "minutes": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991,
-                      "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
-                    },
-                    "studied": {
-                      "type": "boolean",
-                      "description": "Any study of this goal counts, partial days included"
-                    }
-                  },
-                  "required": [
-                    "date",
-                    "goalMinutes",
-                    "hitGoal",
-                    "isToday",
-                    "kind",
-                    "minutes",
-                    "studied"
-                  ],
-                  "additionalProperties": false
+                  "$ref": "#/components/schemas/StudyWeekDay"
                 }
               },
               "nextStudyDate": {
@@ -93199,59 +93213,7 @@
               "days": {
                 "type": "array",
                 "items": {
-                  "type": "object",
-                  "properties": {
-                    "date": {
-                      "type": "string",
-                      "format": "date",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-                      "description": "Learner-local calendar date"
-                    },
-                    "goalMinutes": {
-                      "type": "number",
-                      "minimum": 0,
-                      "description": "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
-                      "example": 15
-                    },
-                    "hitGoal": {
-                      "type": "boolean"
-                    },
-                    "isToday": {
-                      "type": "boolean"
-                    },
-                    "kind": {
-                      "type": "string",
-                      "enum": [
-                        "afterEnd",
-                        "beforeStart",
-                        "deadline",
-                        "exam",
-                        "rest",
-                        "study"
-                      ],
-                      "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
-                    },
-                    "minutes": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991,
-                      "description": "The time the learner actually studied this goal that day, rounded down to whole minutes, as the session summary counts it"
-                    },
-                    "studied": {
-                      "type": "boolean",
-                      "description": "Any study of this goal counts, partial days included"
-                    }
-                  },
-                  "required": [
-                    "date",
-                    "goalMinutes",
-                    "hitGoal",
-                    "isToday",
-                    "kind",
-                    "minutes",
-                    "studied"
-                  ],
-                  "additionalProperties": false
+                  "$ref": "#/components/schemas/StudyWeekDay"
                 }
               },
               "nextStudyDate": {
@@ -93291,7 +93253,7 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "The areas most of a practice block asks about, at most two, as the plan names them: name its row after them (\"Practice: Math and Languages\"). Empty for other blocks"
+                  "description": "The areas most of a practice block asks about, at most two, as the plan names them: name a practice without `topics` after them (\"Practice: Math and Languages\"). Empty for other blocks"
                 },
                 "brainPower": {
                   "type": "integer",
@@ -93483,7 +93445,7 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "A practice block's topics as the plan names them, most asked first: under its row, name the first and how many more (\"Calculating discounts and 9 more topics\"). Empty for other blocks"
+                  "description": "A practice block's topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead): name its row after the first, so two practices on one subject read apart (\"Practice: Calculating discounts\"), and under it name the first and how many more (\"Calculating discounts and 9 more topics\"). Empty for other blocks"
                 },
                 "waitReason": {
                   "nullable": true,

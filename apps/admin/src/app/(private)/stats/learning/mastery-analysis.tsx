@@ -1,6 +1,7 @@
 import { AdminTableRow } from "@/components/admin-table-row";
 import { countLearnerSkillsByState, getMasteryTrend } from "@/data/stats/get-mastery-trend";
 import { formatPercent } from "@/lib/format";
+import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
 import { AdminAnalysisTrend } from "../_components/admin-analysis-trend";
 import { AdminMetricTrendChart } from "../_components/admin-metric-trend-chart";
@@ -39,7 +40,7 @@ export async function MasteryAnalysis({ statsPeriod }: { statsPeriod: StatsPerio
         current: solid + mastered,
         previous: sumRows({ rows: previousRows, value: (row) => row.solid + row.mastered }),
       }}
-      description={`Learner skills now solid (${solid.toLocaleString()}) or mastered (${mastered.toLocaleString()}), by the date of the review that last confirmed them. A skill keeps only its current state; when it first reached one comes from PostHog (Skill Level Changed).`}
+      description={`Learner skills now solid (${solid.toLocaleString()}) or mastered (${mastered.toLocaleString()}), by the date of the review that last confirmed them.`}
       value={(solid + mastered).toLocaleString()}
     >
       <AdminMetricTrendChart dataPoints={dataPoints} label="Mastery growth" valueFormat="number" />
@@ -56,7 +57,7 @@ function MasteryStateTable({
   const total = sumRows({ rows: states, value: (row) => row.count });
 
   return (
-    <Table>
+    <Table scrollLabels={SCROLL_LABELS}>
       <TableHeader>
         <AdminTableRow>
           <TableHead>Current state (all time)</TableHead>

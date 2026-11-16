@@ -1,6 +1,13 @@
+"use client";
+
 import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tab-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import Link from "next/link";
+
+/** A row that scrolls sideways opens with its current tab in view. */
+function revealTab(tab: HTMLAnchorElement | null) {
+  tab?.scrollIntoView({ block: "nearest", inline: "center" });
+}
 
 /**
  * A row of links drawn as tabs. The current one's fill reaches 10px past the column on both
@@ -24,6 +31,7 @@ export function TabNav({
           href={option.href}
           key={option.href}
           prefetch
+          ref={option.isActive ? revealTab : undefined}
         >
           {option.label}
         </Link>

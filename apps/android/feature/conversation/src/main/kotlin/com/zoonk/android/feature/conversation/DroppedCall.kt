@@ -77,7 +77,7 @@ internal fun DroppedCallScreen(
     title: String,
     actions: DroppedCallActions,
 ) {
-    // Once the day the cap gave comes, nothing ran out: no title says it did, and the call can be made again.
+    // Once the day the cap gave comes, nothing ran out, and the call can be made again.
     val opened = dropped.reason == DroppedReason.Limit && limitLifted(limit)
     val shown = if (opened) DroppedCall(reason = null, DroppedRetry.CallAgain) else dropped
     // Leaving a dropped call ends it, so what was said still gets its feedback.
@@ -89,7 +89,7 @@ internal fun DroppedCallScreen(
         lonePage = true,
     ) {
         item(key = "dropped") {
-            CallOffMessage(if (opened) null else stringResource(R.string.conversation_dropped_title), Modifier.callItem()) {
+            CallOffMessage(stringResource(R.string.conversation_dropped_title), Modifier.callItem()) {
                 if (opened) {
                     Muted(
                         stringResource(R.string.limit_try_again_now),

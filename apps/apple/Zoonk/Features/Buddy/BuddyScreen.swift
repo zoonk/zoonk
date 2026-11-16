@@ -86,6 +86,8 @@ private struct BuddyContent: View {
   @State private var goalDraft = ""
   @State private var faceCue: ActCue<BuddyAct>?
   @State private var missionTap = BuddyMissionTap()
+  /// Says the editor's save failed, while the learner is on the page.
+  @State private var saving = VisitRequest<Bool>()
 
   private var name: String {
     buddyName(kind: status.buddy.kind, name: status.buddy.name)
@@ -150,7 +152,7 @@ private struct BuddyContent: View {
         availableGlasses: status.glasses.filter(\.earned).compactMap {
           BuddyGlasses(rawValue: $0.glasses.rawValue)
         },
-        save: { choice in Task { await store.save(choice) } }
+        save: { choice in saving.run { [store] in await store.save(choice) } }
       )
       .zoonkStyles()
     }
@@ -179,7 +181,10 @@ private struct BuddyContent: View {
     .onChange(of: status.today.map { "\($0.goalId) \($0.localDate)" }) {
       missionTap.cancel()
     }
-    .onDisappear { missionTap.cancel() }
+    .onDisappear {
+      missionTap.cancel()
+      saving.leave()
+    }
     .onChange(of: store.broughtQuestion, initial: true) { _, question in
       guard let question else {
         return
@@ -249,7 +254,7 @@ private struct BuddyContent: View {
       )
       .typeStyle(.message)
 
-      if store.saveFailed {
+      if saving.outcome == false {
         FailureLine(
           message: LocalizedStringResource(
             "We couldn't save your buddy. Try again.", table: "Buddy",

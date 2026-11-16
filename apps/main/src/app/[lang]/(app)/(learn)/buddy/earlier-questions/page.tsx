@@ -5,7 +5,15 @@ import { type EarlierQuestion, listEarlierQuestions } from "@zoonk/core/lesson-q
 import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
 import { LessonQuestionMarkdown } from "@zoonk/player/tutor/markdown";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@zoonk/ui/components/empty";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { HistoryIcon } from "lucide-react";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -78,14 +86,30 @@ async function EarlierQuestionsContent({ searchParams }: Pick<Props, "searchPara
         <PageHeader>
           <PageHeaderContent>
             <PageTitle>{t("Earlier questions")}</PageTitle>
-            <PageSubtitle>
-              {t("Questions you asked in lessons that have since changed.")}
-            </PageSubtitle>
+            {result.questions.length > 0 && (
+              <PageSubtitle>
+                {t(
+                  "Lessons you asked about were updated since. Your questions and their answers are kept here.",
+                )}
+              </PageSubtitle>
+            )}
           </PageHeaderContent>
         </PageHeader>
 
         {result.questions.length === 0 ? (
-          <p className="text-muted-foreground text-sm">{t("You have no earlier questions.")}</p>
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <HistoryIcon aria-hidden="true" />
+              </EmptyMedia>
+              <EmptyTitle>{t("No earlier questions")}</EmptyTitle>
+              <EmptyDescription>
+                {t(
+                  "When a lesson you asked about is updated, your questions and their answers are kept here.",
+                )}
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         ) : (
           <ol className="divide-border max-w-column flex flex-col divide-y">
             {result.questions.map((question) => (

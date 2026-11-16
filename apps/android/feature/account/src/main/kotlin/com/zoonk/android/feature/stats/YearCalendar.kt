@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -41,8 +40,8 @@ import com.zoonk.android.ui.components.ChartTooltip
 import com.zoonk.android.ui.components.ChartTooltipArea
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatMonthName
 import java.time.LocalDate
-import java.time.format.TextStyle
 import kotlin.math.floor
 
 /** A day's band from 0 (nothing) to its calendar's last shade, and what its tooltip says: its date over its value. */
@@ -55,12 +54,14 @@ internal data class CalendarDay(
 
 /**
  * Main's year calendars (Activity, Energy): a week per column from the first day the API sends,
- * which starts its week, scrolled to the newest. A tapped day shows its date and value in a tooltip
- * beside it, inside the weeks in view. TalkBack reads [summary], then each day.
+ * which starts its week. Where the year's days would be too small to pick, it shows the last 26 weeks
+ * and its title says so ([recentTitle]). A tapped day shows its date and value in a tooltip among the
+ * days, never over the months. TalkBack reads [summary], then each day.
  */
 @Composable
 internal fun YearCalendar(
-    title: String,
+    yearTitle: String,
+    recentTitle: String,
     days: List<CalendarDay>,
     shades: List<Float>,
     color: Color,
@@ -75,55 +76,53 @@ internal fun YearCalendar(
     val locale = currentLocale()
     val track = MaterialTheme.colorScheme.surfaceContainerHighest
     val weeks = days.chunked(DAYS_PER_WEEK)
-    val list = rememberLazyListState(initialFirstVisibleItemIndex = weeks.lastIndex)
     val chart = remember { Any() }
     val active = inspector.indexIn(chart)?.takeIf { it in days.indices }
 
     fun fill(band: Int) = if (band == 0) track else lerp(track, color, shades[(band - 1).coerceIn(shades.indices)])
 
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        FlowRow(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            itemVerticalAlignment = Alignment.CenterVertically,
-        ) {
-            SectionHeader(title)
-            Legend(low, high, (0..shades.size).map(::fill))
-        }
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        val size = calendarSize(maxWidth, weeks.size)
+        val shown = weeks.takeLast(size.weeks)
+        val first = (weeks.size - shown.size) * DAYS_PER_WEEK
+        val list = rememberLazyListState(initialFirstVisibleItemIndex = shown.lastIndex)
 
-        BoxWithConstraints(Modifier.fillMaxWidth()) {
-            val size = calendarSize(maxWidth, weeks.size)
-
-            ChartTooltipArea(
-                tooltip = active?.let { { ChartTooltip(days[it].label, days[it].value) } },
-                anchor = { area -> active?.let { dayBounds(it, list, size.cell, area) } },
-                inspector = inspector,
-                modifier = Modifier.width(size.width).align(Alignment.TopEnd),
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            FlowRow(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                itemVerticalAlignment = Alignment.CenterVertically,
             ) {
-                Column(verticalArrangement = Arrangement.spacedBy(GAP)) {
-                    MonthLabels(
-                        months =
-                            remember(weeks, locale) {
-                                weeks.mapIndexedNotNull { index, week ->
-                                    week.firstOrNull { it.date.dayOfMonth == 1 }?.let {
-                                        index to
-                                            it.date.month.getDisplayName(TextStyle.SHORT_STANDALONE, locale)
-                                    }
-                                }
-                            },
-                        list = list,
-                    )
+                SectionHeader(if (size.recent) recentTitle else yearTitle)
+                Legend(low, high, (0..shades.size).map(::fill))
+            }
 
+            Column(verticalArrangement = Arrangement.spacedBy(GAP)) {
+                MonthLabels(
+                    months =
+                        remember(shown, locale) {
+                            shown.mapIndexedNotNull { index, week ->
+                                week.firstOrNull { it.date.dayOfMonth == 1 }?.let { index to formatMonthName(it.date, locale) }
+                            }
+                        },
+                    list = list,
+                )
+
+                ChartTooltipArea(
+                    tooltip = active?.let { { ChartTooltip(days[it].label, days[it].value) } },
+                    anchor = { area -> active?.let { dayBounds(it - first, list, size.cell, area) } },
+                    inspector = inspector,
+                ) {
                     LazyRow(
                         state = list,
                         modifier = Modifier.fillMaxWidth().semantics { contentDescription = summary },
-                        horizontalArrangement = if (size.fits) Arrangement.SpaceBetween else Arrangement.spacedBy(GAP),
+                        horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
-                        itemsIndexed(weeks, key = { _, week -> week.first().date.toEpochDay() }) { weekIndex, week ->
+                        itemsIndexed(shown, key = { _, week -> week.first().date.toEpochDay() }) { weekIndex, week ->
                             Column(verticalArrangement = Arrangement.spacedBy(GAP)) {
                                 week.forEachIndexed { dayIndex, day ->
-                                    val index = weekIndex * DAYS_PER_WEEK + dayIndex
+                                    val index = first + weekIndex * DAYS_PER_WEEK + dayIndex
                                     CalendarCell(day, fill(day.band), size.cell, active = index == active) {
                                         inspector.inspect(chart, index)
                                     }
@@ -167,7 +166,7 @@ private fun CalendarCell(
     )
 }
 
-/** A day's bounds from the calendar's start edge while its week is in view; the days end [area], under the months. */
+/** A day's bounds from the calendar's start edge while its week is in view; [index] counts from the first day shown. */
 private fun Density.dayBounds(
     index: Int,
     list: LazyListState,
@@ -176,33 +175,36 @@ private fun Density.dayBounds(
 ): IntRect? {
     val size = cell.roundToPx()
     val step = size + GAP.roundToPx()
-    val top = area.height - (DAYS_PER_WEEK - index % DAYS_PER_WEEK) * step + GAP.roundToPx()
+    val top = (index % DAYS_PER_WEEK) * step
+    if (top + size > area.height) return null
 
     return list.layoutInfo.visibleItemsInfo
         .firstOrNull { it.index == index / DAYS_PER_WEEK }
         ?.let { IntRect(left = it.offset, top = top, right = it.offset + size, bottom = top + size) }
 }
 
-private class CalendarSize(
+internal class CalendarSize(
     val cell: Dp,
-    val width: Dp,
-    val fits: Boolean,
+    val weeks: Int,
+    val recent: Boolean,
 )
 
 /**
- * The whole year when its days stay at least [FITTED_CELL_MIN] wide; otherwise days a finger can
- * pick, in as many whole weeks as fit, so no week is cut at the calendar's edge.
+ * The whole year when its days stay at least [FITTED_CELL_MIN] wide; otherwise its last [RECENT_WEEKS]
+ * weeks, as main's phone shows, each as wide as the column allows so weeks sit as close as days. That
+ * column is under a year at the smallest cell, so a recent week is never wider than about 26 dp.
  */
-private fun calendarSize(
+internal fun calendarSize(
     available: Dp,
     weeks: Int,
 ): CalendarSize {
-    val fitted = floor(((available + GAP) / weeks - GAP).value).dp
+    fun fitted(count: Int) = floor(((available + GAP) / count - GAP).value).dp
 
-    if (fitted >= FITTED_CELL_MIN) return CalendarSize(minOf(fitted, FITTED_CELL_MAX), available, fits = true)
+    val year = fitted(weeks)
+    if (year >= FITTED_CELL_MIN) return CalendarSize(minOf(year, FITTED_CELL_MAX), weeks, recent = false)
 
-    val step = TOUCH_CELL + GAP
-    return CalendarSize(TOUCH_CELL, step * floor((available + GAP) / step) - GAP, fits = false)
+    val recent = minOf(weeks, RECENT_WEEKS)
+    return CalendarSize(fitted(recent), recent, recent = true)
 }
 
 /**
@@ -284,7 +286,6 @@ internal val ACTIVITY_SHADES = listOf(0.25f, 0.45f, 0.7f, 1f)
 /** Main softened Energy's steps so its calendar isn't the loudest thing on the page. */
 internal val ENERGY_SHADES = listOf(0.15f, 0.3f, 0.45f, 0.6f, 0.8f)
 
-private val TOUCH_CELL = 20.dp
 private val FITTED_CELL_MIN = 12.dp
 private val FITTED_CELL_MAX = 16.dp
 private val GAP = 2.dp
@@ -295,3 +296,6 @@ private val LABEL_GAP = 4.dp
 private const val ENERGY_STEP = 25.0
 private const val FULL_ENERGY = 100.0
 private const val DAYS_PER_WEEK = 7
+
+/** Main's phone calendar: the last 26 weeks, titled "Past 6 months". */
+private const val RECENT_WEEKS = 26

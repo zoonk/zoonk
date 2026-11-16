@@ -11,6 +11,7 @@ import com.zoonk.android.feature.plan.countsByDate
 import com.zoonk.android.feature.plan.planChangeAppliedLine
 import com.zoonk.android.feature.plan.planChangeOfficialDateLine
 import com.zoonk.android.feature.plan.planChangeWords
+import com.zoonk.android.feature.plan.planNoticeActions
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonIcon
@@ -80,6 +81,7 @@ private fun ChangeNotice(
     val byDate = change.status == PlanChange.Status.PROPOSED || countsByDate(change.effect, dateAhead)
     val officialDate = planChangeOfficialDateLine(change)
     val saving = viewModel.isSavingPlanChange
+    val failedHere = viewModel.planChangeFailedOn == state.read.noticeVisit()
     val next = today.planChange?.takeIf { answer != null && it.status == PlanChange.Status.PROPOSED && it.id != change.id }
     val after: (@Composable () -> Unit)? =
         when {
@@ -94,7 +96,7 @@ private fun ChangeNotice(
             answer.status == PlanChangeDecisionInput.Status.APPLIED && answer.change.canUndo -> {
                 {
                     SuggestionAction(
-                        text = stringResource(R.string.today_undo),
+                        text = stringResource(planNoticeActions(failed = failedHere, canUndo = true).first().label),
                         onClick = { viewModel.decidePlanChange(state.read, answer.change, PlanChangeDecisionInput.Status.UNDONE) },
                         busy = saving,
                         secondary = true,
@@ -115,7 +117,10 @@ private fun ChangeNotice(
         modifier = modifier,
         mark = if (change.source == NOTICE_SOURCE) SuggestionMark.Symbol(R.drawable.ic_pending_actions) else SuggestionMark.New,
         answered = result != null,
+        failed = result != null && failedHere,
         lineAction = if (result != null) after else ({ SuggestionOpen() }),
+        lineDescription = words.why.takeIf { result == null && words.general },
+        failure = stringResource(R.string.plan_undo_failed),
     ) {
         SuggestionHeader(words.title)
         words.why?.let { SuggestionDescription(it) }
@@ -129,7 +134,19 @@ private fun ChangeNotice(
             ChangeActions(change, enabled = !saving) { status -> viewModel.decidePlanChange(state.read, change, status) }
         }
 
-        if (viewModel.planChangeFailedOn == state.read.noticeVisit()) SuggestionSaveError()
+        if (failedHere) {
+            SuggestionSaveError(
+                stringResource(
+                    if (result !=
+                        null
+                    ) {
+                        R.string.plan_undo_failed
+                    } else {
+                        R.string.suggestion_save_failed
+                    },
+                ),
+            )
+        }
     }
 }
 

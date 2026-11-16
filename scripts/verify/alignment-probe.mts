@@ -1,4 +1,9 @@
-import { type Bounds, type Capture, type CaptureElement } from "./alignment-capture.mts";
+import {
+  type Bounds,
+  type Capture,
+  type CaptureElement,
+  PAGE_RULES,
+} from "./alignment-capture.mts";
 /* oxlint-disable max-lines, max-lines-per-function, max-statements, complexity, unicorn/consistent-function-scoping -- `readAlignment` is sent to the page as one function, so its helpers live inside it (`probe.mts`). */
 import { type Part, type WebPiece } from "./alignment-table.mts";
 import { type Scheme, VIEWPORTS, type ViewportName } from "./viewports.mts";
@@ -744,6 +749,38 @@ export function readAlignment({
     const right = frame.right - pixels(style.paddingRight);
     const measure = measureOf(element.parentElement ?? column);
 
+    const grid = element.parentElement;
+    const own = getComputedStyle(element);
+
+    if (grid && isGridCell(element) && !["absolute", "fixed"].includes(own.position)) {
+      const layout = getComputedStyle(grid);
+      const tracks = layout.gridTemplateColumns.trim().split(/\s+/u);
+      const start = Number(own.gridColumnStart);
+      const end = own.gridColumnEnd;
+
+      if (
+        Number.isInteger(start) &&
+        start > 0 &&
+        start <= tracks.length &&
+        (!end || end === "auto" || end === String(start + 1) || end === "span 1") &&
+        tracks.every((track) => /^\d+(?:\.\d+)?px$/u.test(track))
+      ) {
+        const gap = pixels(layout.columnGap);
+
+        const trackLeft =
+          grid.getBoundingClientRect().left +
+          pixels(layout.borderLeftWidth) +
+          pixels(layout.paddingLeft) +
+          tracks.slice(0, start - 1).reduce((sum, track) => sum + pixels(track) + gap, 0);
+
+        const trackRight = trackLeft + pixels(tracks[start - 1] ?? "0");
+
+        if (trackLeft >= left - 1 && trackRight <= right + 1) {
+          return { frame, left: trackLeft, right: trackRight };
+        }
+      }
+    }
+
     return { frame, left, right: measure === null ? right : Math.min(right, left + measure) };
   }
 
@@ -1459,6 +1496,7 @@ export function readAlignment({
     return [...roots].map((element, index) => ({
       ...pagePart(element, "text", index),
       lineTexts: lineTexts(element),
+      text: element.textContent?.trim() ?? "",
       ...(textRole(element) ? { textRole: textRole(element) } : {}),
     }));
   }
@@ -1604,6 +1642,28 @@ export function readAlignment({
       });
   }
 
+  function deliberateClip(child: Element, clip: Element) {
+    const style = getComputedStyle(child);
+    const box = child.getBoundingClientRect();
+    const outer = clip.getBoundingClientRect();
+
+    // FactSegments hangs only the separator before a fact, never the fact's words.
+    if (style.position === "absolute" && child.textContent?.trim() === "·") {
+      return box.right <= outer.left && box.top >= outer.top && box.bottom <= outer.bottom;
+    }
+
+    // A zero-height flex suffix wraps out of view deliberately; a label with height still counts.
+    return (
+      child.parentElement === clip &&
+      getComputedStyle(clip).display === "flex" &&
+      getComputedStyle(clip).flexWrap === "wrap" &&
+      style.height === "0px" &&
+      box.height === 0 &&
+      box.top >= outer.bottom &&
+      /^\s*·\s+\S/u.test(child.textContent ?? "")
+    );
+  }
+
   function readCuts(): CaptureElement[] {
     return [...document.querySelectorAll("body *")].flatMap((element, index) => {
       if (!present(element) || allowsOverflow(element)) {
@@ -1624,6 +1684,7 @@ export function readAlignment({
           (descendant) =>
             !descendant.closest("svg") &&
             !escapesClip(descendant, element) &&
+            !deliberateClip(descendant, element) &&
             (descendant.matches("input,textarea,select") || !allowsOverflow(descendant)),
         );
 
@@ -1717,7 +1778,7 @@ export function webCapture({
       textScale,
       width: size.viewport?.width ?? 0,
     },
-    measurements: ["clipping", "controls", "text-flows"],
+    measuredRules: [...PAGE_RULES],
     platform: "web",
     scale: size.deviceScaleFactor ?? 1,
     scenario: null,

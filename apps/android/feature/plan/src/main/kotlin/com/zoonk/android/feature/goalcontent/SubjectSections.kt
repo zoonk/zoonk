@@ -37,6 +37,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
@@ -52,6 +53,7 @@ import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
+import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.OutlinedButton
@@ -352,7 +354,7 @@ internal fun LazyListScope.subjectChapters(
                 )
                 if (expanded) {
                     done.forEach { chapter ->
-                        HorizontalDivider()
+                        ListDivider()
                         SyllabusChapterRow(chapter, today, actions)
                     }
                 }
@@ -367,11 +369,11 @@ internal fun LazyListScope.subjectChapters(
 
         Column {
             shown.forEachIndexed { index, chapter ->
-                if (index > 0 || done.isNotEmpty()) HorizontalDivider()
+                if (index > 0 || done.isNotEmpty()) ListDivider()
                 SyllabusChapterRow(chapter, today, actions)
             }
             if (hidden > 0) {
-                HorizontalDivider()
+                ListDivider()
                 MoreChaptersRow(pluralStringResource(R.plurals.goalcontent_more_chapters, hidden, hidden)) { showAll = true }
             }
         }
@@ -531,7 +533,7 @@ internal fun LazyListScope.subjectTopics(
         groupTopics(run.topics) { it.name }.forEachIndexed { index, group ->
             item(key = "topic-$runIndex-$index", contentType = "topic") {
                 Column {
-                    if (index > 0) HorizontalDivider()
+                    if (index > 0) ListDivider()
                     TopicGroupRow(group, showFrequency, syllabus.knownTopicsReturn, actions)
                 }
             }
@@ -708,12 +710,7 @@ private fun TopicChapterLink(
 private fun numberedTopic(
     number: String?,
     text: String,
-) = buildAnnotatedString {
-    if (number != null) {
-        withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant, fontFeatureSettings = "tnum")) { append("$number ") }
-    }
-    append(text)
-}
+): AnnotatedString = if (number == null) AnnotatedString(text) else numberedTitle(number, text)
 
 @Composable
 private fun topicNote(
@@ -823,11 +820,11 @@ internal fun LazyListScope.subjectMatrix(matrix: List<String>) {
 
         Column {
             shown.forEachIndexed { index, group ->
-                if (index > 0) HorizontalDivider()
+                if (index > 0) ListDivider()
                 MatrixGroupRow(group)
             }
             if (groups.size > shown.size) {
-                HorizontalDivider()
+                ListDivider()
                 ListRow(
                     headline = {
                         Text(

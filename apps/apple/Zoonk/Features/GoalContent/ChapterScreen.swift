@@ -111,9 +111,7 @@ struct ChapterScreen: View {
 private struct ChapterContent: View {
   @Environment(AppRouter.self) private var router
   @Environment(GoalContentStore.self) private var store
-  @State private var isPracticing = false
-  @State private var practiceNote: String?
-  @State private var practiceTask: Task<Void, Never>?
+  @State private var practicing = VisitRequest<PracticeEnd>()
 
   let goal: LearnerGoal
   let chapter: GoalChapter
@@ -157,7 +155,7 @@ private struct ChapterContent: View {
       }
     }
     .onDisappear {
-      practiceTask?.cancel()
+      practicing.leave()
     }
   }
 
@@ -245,7 +243,7 @@ private struct ChapterContent: View {
                 .layoutPart(.mark)
             }
           }
-          .disabled(isPracticing)
+          .disabled(practicing.isRunning)
           .announcesStatus(practiceNote)
 
           if let practiceNote {
@@ -300,30 +298,39 @@ private struct ChapterContent: View {
     ]
   }
 
+  private var practiceNote: String? {
+    if case .note(let note) = practicing.outcome { note } else { nil }
+  }
+
   private func practice() {
-    isPracticing = true
-    practiceNote = nil
-
-    practiceTask = Task {
-      let result = await store.practice(goalId: goal.id, areaId: chapter.chapter.chapterId)
-      isPracticing = false
-
-      switch result {
+    practicing.run { [store, goal, chapter] in
+      switch await store.practice(goalId: goal.id, areaId: chapter.chapter.chapterId) {
       case .done(.opened(let route)):
-        router.open(route)
+        return PracticeEnd.opened(route)
       case .done(.nothingToPractice):
-        practiceNote = String(
-          localized: "Nothing to practice in this chapter yet.", table: "Plan",
-          comment: "Says the chapter has nothing to practice")
+        return PracticeEnd.note(
+          String(
+            localized: "Nothing to practice in this chapter yet.", table: "Plan",
+            comment: "Says the chapter has nothing to practice"))
       case .failed:
-        practiceNote = String(
-          localized: "That didn't work. Try again in a moment.", table: "Plan",
-          comment: "Says the practice didn't start")
+        return PracticeEnd.note(
+          String(
+            localized: "That didn't work. Try again in a moment.", table: "Plan",
+            comment: "Says the practice didn't start"))
       case .obsolete:
-        break
+        return nil
+      }
+    } then: { [router] ended in
+      if case .opened(let route) = ended {
+        router.open(route)
       }
     }
   }
+}
+
+private enum PracticeEnd {
+  case opened(AppRoute)
+  case note(String)
 }
 
 /// Main's lesson list row: numbered in the chapter or unit, its minutes at the trailing edge.

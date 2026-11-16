@@ -3102,6 +3102,7 @@ msgstr "Biraz daha zamana mı ihtiyacın var? {name} farklı bir şekilde anlata
 
 #: src/lesson/controls/ask-buddy-offer.tsx
 #: src/questions/ask-tutor.tsx
+#: src/questions/lesson-question-panel.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "bH47Z4"
 msgid "Ask {name}"
@@ -3279,11 +3280,6 @@ msgstr ", okundu"
 msgctxt "k8sSVy"
 msgid "{count, plural, one {# quick question at the end} other {# quick questions at the end}}"
 msgstr "{count, plural, other {Sonda # kısa soru}}"
-
-#: src/lesson/lesson-aside.tsx
-msgctxt "fl3kLl"
-msgid "screen {number}"
-msgstr "{number}. ekran"
 
 #: src/lesson/lesson-aside.tsx
 msgctxt "chnAWh"
@@ -3696,41 +3692,6 @@ msgid "We couldn't send your last question. Try again."
 msgstr "Son sorunu gönderemedik. Tekrar dene."
 
 #: src/questions/lesson-question-composer.tsx
-msgctxt "v9luVQ"
-msgid "Ask about this chapter…"
-msgstr "Bu üniteyle ilgili soru sor…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "CVtLex"
-msgid "Ask about this mock exam…"
-msgstr "Bu deneme sınavıyla ilgili soru sor…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "X_H9F0"
-msgid "Ask about your plan…"
-msgstr "Planınla ilgili soru sor…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "uDwgZF"
-msgid "Ask about this subject…"
-msgstr "Bu konu hakkında soru sor…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "TCh0B4"
-msgid "Ask about this question…"
-msgstr "Bu soruyla ilgili soru sor…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "wBr6ON"
-msgid "Ask about your answer…"
-msgstr "Cevabın hakkında soru sor…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "6sIYgs"
-msgid "Ask about the lesson content…"
-msgstr "Ders içeriğiyle ilgili soru sor…"
-
-#: src/questions/lesson-question-composer.tsx
 msgctxt "zMPwOt"
 msgid "Retry last question"
 msgstr "Son sorunu tekrar gönder"
@@ -3859,11 +3820,6 @@ msgstr "Bu soruyla ilgili sorular"
 msgctxt "jJ8jWo"
 msgid "Questions about this lesson"
 msgstr "Bu dersle ilgili sorular"
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "BOsQu3"
-msgid "What would you like help with?"
-msgstr "Hangi konuda yardım istersin?"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"

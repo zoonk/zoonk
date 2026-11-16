@@ -13,11 +13,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -25,6 +23,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
@@ -132,13 +131,6 @@ fun splitQuestionData(text: String): Pair<String?, String> {
     return data to lines.subList(start, end + 1).joinToString("\n")
 }
 
-/** Main's `data-phase=feedback`: once a screen is checked, its question steps back so the learner's eyes go to the verdict. */
-internal val LocalStepChecked = compositionLocalOf { false }
-
-@Composable
-internal fun questionColor(): Color =
-    if (LocalStepChecked.current) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
-
 /** A question as a TalkBack heading, with any table of data above it. */
 @Composable
 fun QuestionText(text: String) {
@@ -150,7 +142,7 @@ fun QuestionText(text: String) {
             text = question,
             modifier = Modifier.semantics { heading() }.revealPart(LocalFeedbackReveal.current, RevealPart.Question),
             style =
-                MaterialTheme.typography.titleLarge.copy(color = questionColor(), fontWeight = FontWeight.SemiBold),
+                MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold, lineBreak = LineBreak.Heading),
         )
     }
 }

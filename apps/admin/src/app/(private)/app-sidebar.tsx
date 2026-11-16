@@ -5,6 +5,7 @@ import { SidePanel, SidePanelContent, SidePanelTitle } from "@zoonk/ui/component
 import {
   SIDEBAR_ITEM_CLASS,
   Sidebar,
+  SidebarBody,
   SidebarFooter,
   SidebarHeader,
   SidebarSection,
@@ -77,11 +78,12 @@ function AdminSidebarContent({
 }: AdminSidebarProps & { onNavigate?: () => void }) {
   return (
     <>
-      <AdminNav counts={counts} onNavigate={onNavigate} />
+      <SidebarBody className="gap-3">
+        <AdminNav counts={counts} onNavigate={onNavigate} />
+      </SidebarBody>
 
-      {/* Pinned: on a short window the navigation scrolls under it. Its hairline keeps the account
-          apart from the last group, which runs down to it on a full sidebar. */}
-      <SidebarFooter className="bg-background sticky bottom-0 -mb-3 border-t pb-3">
+      {/* Its hairline keeps the account apart from the navigation that scrolls above it. */}
+      <SidebarFooter className="border-t">
         <AdminAccountMenu account={account} />
       </SidebarFooter>
     </>
@@ -95,7 +97,7 @@ export function AppSidebar({ account, counts }: AdminSidebarProps) {
           widths, beside the search and, collapsed, above it, so it's read where it's drawn. */}
       <SidebarHeader className="sidebar-collapsed:flex-col sidebar-collapsed:gap-4 flex-row items-center gap-1">
         <SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar" />
-        <SidebarSearch label="Search…" onClick={openCommandPalette} />
+        <SidebarSearch className="h-8" label="Search…" onClick={openCommandPalette} />
       </SidebarHeader>
 
       <AdminSidebarContent account={account} counts={counts} />
@@ -111,7 +113,7 @@ export function AdminMenuSheet({
 }: AdminSidebarProps & { onOpenChange: (open: boolean) => void; open: boolean }) {
   return (
     <SidePanel onOpenChange={onOpenChange} open={open}>
-      <SidePanelContent className="gap-4 overflow-y-auto p-3 data-[side=left]:w-60" side="left">
+      <SidePanelContent className="gap-3 overflow-hidden p-3 data-[side=right]:w-60" side="right">
         <SidePanelTitle className="sr-only">Menu</SidePanelTitle>
         <AdminSidebarContent
           account={account}

@@ -44,6 +44,10 @@
     <string name="stats_lessons">Lessons</string>
     <string name="stats_time">Time</string>
     <string name="stats_past_year">Past 12 months</string>
+    <!-- Title over a calendar of days on a phone, which shows only its last 26 weeks. -->
+    <string name="stats_past_6_months">Past 6 months</string>
+    <!-- Under a chart of bars: what a hollow dashed bar means. -->
+    <string name="stats_few_answers_legend">A dashed bar has too few answers to count yet.</string>
     <string name="stats_less">Less</string>
     <string name="stats_more">More</string>
     <plurals name="stats_calendar_activity_summary">

@@ -7,11 +7,12 @@ import {
 } from "@zoonk/core/mind-maps/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { Maximize2Icon, PlusIcon, RotateCwIcon } from "lucide-react";
+import { Maximize2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { MindMapLimitNotice } from "../_components/help-limit-notice";
 import { KindDot } from "../_components/kind-tile";
+import { ListRowDescription, ListRowTitle } from "../_components/list-group";
 import { StatusRegion } from "../_components/status-region";
 import { Surface } from "../_components/surface";
 import { useHeldSlot } from "../_utils/use-held-slot";
@@ -95,11 +96,14 @@ function MindMapText({ outline }: { outline: Outline }) {
   );
 }
 
+/** Drawn as the list rows beside it: the mark, then the title, its lines and its action on one edge. */
 function StateHeading({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-baseline gap-3">
-      <KindDot className="-translate-y-px" kind="mindMap" />
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">{children}</div>
+    <div className="flex items-baseline gap-3 py-2.75">
+      <span className="flex w-4 shrink-0 justify-center">
+        <KindDot className="-translate-y-px" kind="mindMap" />
+      </span>
+      <div className="flex min-w-0 flex-1 flex-col items-start gap-3">{children}</div>
     </div>
   );
 }
@@ -126,11 +130,17 @@ function MapRequest({
   return (
     <div className="flex flex-col gap-4" data-slot="mind-map-request" ref={slot}>
       <StateHeading>
-        <div aria-live="polite" className="flex flex-col gap-0.5">
-          <p className="text-reading font-medium">{t("Mind map")}</p>
-          {line && <p className={STATE_TEXT_CLASS}>{line}</p>}
-          {hint && <p className={STATE_TEXT_CLASS}>{hint}</p>}
+        <div aria-live="polite" className="flex flex-col gap-px">
+          <ListRowTitle>{t("Mind map")}</ListRowTitle>
+          {line && <ListRowDescription className="text-pretty">{line}</ListRowDescription>}
+          {hint && <ListRowDescription className="text-pretty">{hint}</ListRowDescription>}
         </div>
+
+        {(failure || canCreate) && (
+          <Button busy={isPending} onClick={failure ? retry : create} size="sm" variant="outline">
+            {failure ? t("Try again") : t("Create")}
+          </Button>
+        )}
       </StateHeading>
 
       {working && (
@@ -139,19 +149,6 @@ function MapRequest({
           className="text-muted-foreground mx-auto size-5"
           role="presentation"
         />
-      )}
-
-      {(failure || canCreate) && (
-        <Button
-          busy={isPending}
-          className="self-start"
-          icon={failure ? <RotateCwIcon aria-hidden="true" /> : <PlusIcon aria-hidden="true" />}
-          onClick={failure ? retry : create}
-          size="sm"
-          variant="outline"
-        >
-          {failure ? t("Try again") : t("Create")}
-        </Button>
       )}
 
       <StatusRegion>

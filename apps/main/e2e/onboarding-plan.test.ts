@@ -21,7 +21,7 @@ test.describe("Placement and the plan", () => {
   }) => {
     const goal = await createMappedGoal(noProgressUser.id);
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await page.getByRole("button", { exact: true, name: "Start the test" }).click();
 
     const question = page.getByRole("heading", { name: /^Solve x/u });
     await expect(question).toBeVisible();

@@ -202,10 +202,12 @@
   "plan_effect_fewer": "5e4f6df960c87c7d90797478cf65bd4f33f97c9a36ac321ee15f18dad79ae4ea",
   "plan_effect_fewer_before_end_date": "be39eb2c409d2844d48d8d3da09b559537d340fa53a6ce6408bf7a9a61dac0cd",
   "plan_effect_fewer_before_exam": "f44dba9ee3a24ce0e610148cab373c94d363242bd06419f621f938a80e8837da",
+  "plan_effect_fewer_by": "74148502217e8f9b45866129281eded09b2da8170aaf33e5bf3fdfe84317e924",
   "plan_effect_mocks_on": "951ee8e3863c9d46458f2a6e13b7885769d0ae0dbd523af9de21eaf3fdbc2042",
   "plan_effect_more": "7efa7667c2ee714487b65bbd5df96842f175ca38d112c901f854ae91d152fd87",
   "plan_effect_more_before_end_date": "589320ca2de29a3b11454a4b09e34fdf62274089808c0e1b9bdc8a386f85be43",
   "plan_effect_more_before_exam": "9fadd66ce9b84a6da265a7810f0247a1690223c7909d8e9e47ea931016fc2e6c",
+  "plan_effect_more_by": "1b01ca6c4b31918f8c01010a656114a085aa772f0a3bd2cb93743b13aed2a378",
   "plan_effect_names_and_more": "a6a249d9ec85fb4ecfc7b12dd019f88825c709f8abaaaa1092a84baa9a426520",
   "plan_effect_next_mock": "5a78eb6b4ec9d09bd788fb0a98717778642c778d093aa36580f235316db27b42",
   "plan_effect_numbers_different": "ddf1b982e7a0dada823894ffc07b81387950b1e594ff2bb64c04608d9f126372",
@@ -257,7 +259,7 @@
   "plan_far_from_month": "9280a41977fecb2d103eb52995bd1c2f7578d327792bf1b2cae182404eb25a80",
   "plan_far_lessons": "d0a81aef8bc53432792c763ae7a5459937db7f16bb87a6b38080279f6db0e6ec",
   "plan_far_lessons_about": "71b1fe45f9ccde0331e8379d206a7f01b0e1910bcb1e09ab8460ba8b6a5b44f7",
-  "plan_far_nothing_left": "a5bb89be5729bc84f4b12e658fc13e59a10e1a149e56e359c18b342e4c4bce2f",
+  "plan_far_nothing_left": "b0aa6eb7b671c7ee9504ccda24654897aa18abe215a77c9547c21622ff6c8a87",
   "plan_far_see_lessons": "691b290fe28adf03f18b5962450bb403b32fd645810ed59dd84c43ca95ac05ef",
   "plan_far_unreachable": "a072a8b1152707ec235018a17ec4723997f346f49c9ce7a3506a3c2efe84556f",
   "plan_far_writing": "f6a5268250df1407e697b0d2e59fb89f0770f04da55505ddab3c112183e3a49d",
@@ -447,6 +449,8 @@
   "plan_time_covers_exam_all_month": "2aff7031438aec866e9ed5284cea76b6ad33313ac66ba0b5f293418077e438a2",
   "plan_time_covers_goal_all": "f5e0b96df8686094cc723332bcb183cdfd546c278d5c39a4353e9ddfea9fd9d4",
   "plan_time_covers_goal_all_month": "3b99f2ac08ac7040f2a4f1fccd42fe9c4ec06f9def15f30aa058df6b9187ec36",
+  "plan_time_covers_share_exam": "476f44d74b23c6c23e3831fff5c0838aca8b45fed7aa09dda29b0d9b5cc2d38f",
+  "plan_time_covers_share_goal": "acf89a5339a4b2479708be07ca59cd3fc3ce53fbff95bd270cd493298b297831",
   "plan_time_find_failed": "bfd4e3ef1ccc8717c60d1ec4a3d0cc755eecc2c21ab03bd73f30d9d9a0b68e35",
   "plan_time_finish_failed": "12e6e6a38c80b434236a3c6e5faa2c6ece686f10cf3b13327672d6804478339f",
   "plan_time_finish_unknown": "cc322bc333a77a877df815615dfd6508421b1dd159e5925faf10311deaddab1b",
@@ -516,6 +520,7 @@
   "plan_try_again": "64cf1db814134a71e9bc16954324b943392d655500f7ab9f9369553410b75efc",
   "plan_tuesdays": "592cda714fd06aafe2b52aa904d3eb79d09e57c949f3b83edd7c384e37fd2bb4",
   "plan_undo": "be42799ef92682ad53c85bfa46bc297a08d2b5ec4bedeb909b46e6acbc7e62af",
+  "plan_undo_failed": "40e8a1058cc8622931d8987d70805f4f410c3c78dbc03a11ebed2015b84ab8e5",
   "plan_up_next": "4035049bbd9630a764c1dcc08376c42316860adad6a175846f225dbc5cd47148",
   "plan_up_next_suffix": "e2831cc86ab189d607c04e8a9770ca2d14ea8a78e868480fb6199e5b9272f642",
   "plan_updated": "ec58b6273f79d8ded911d7095aa36511656459e73d367cb0f99f42170b72eb15",
@@ -678,7 +683,8 @@
     <!-- Write the duration out in words, not as "30 s". -->
     <string name="plan_far_writing">Wir bereiten die Lektionen vor… Das dauert etwa eine halbe Minute.</string>
     <string name="plan_far_unreachable">Wir konnten den Server nicht erreichen. Prüfe deine Verbindung.</string>
-    <string name="plan_far_nothing_left">Für dieses Thema gibt es nichts mehr vorzubereiten.</string>
+    <!-- A far topic's sheet when its lessons can't be prepared early: they're still prepared on time, before the learner gets to it. -->
+    <string name="plan_far_nothing_left">Diese Lektionen können wir erst später vorbereiten. Sie sind fertig, bevor du bei diesem Thema ankommst.</string>
     <plurals name="plan_more_chapters">
         <item quantity="one">%d weiteres Kapitel</item>
         <item quantity="other">%d weitere Kapitel</item>
@@ -1015,6 +1021,8 @@
     <string name="plan_editor_title">Deinen Plan anpassen</string>
     <string name="plan_editor_close">Schließen</string>
     <string name="plan_undo">Rückgängig machen</string>
+    <!-- Under a plan change that was made, when undoing it failed; its button tries the undo again. -->
+    <string name="plan_undo_failed">Diese Änderung konnte nicht rückgängig gemacht werden.</string>
     <string name="plan_deadline">Zieldatum</string>
     <string name="plan_named_month_note">Vorerst %1$s. Wähle den Tag, sobald du ihn kennst.</string>
     <string name="plan_no_deadline_note">Ohne Zieldatum lernst du alles in deinem eigenen Tempo. Mit einem Zieldatum ist dein Plan so abgestimmt, dass du bis dahin das Wichtigste lernst.</string>
@@ -1180,6 +1188,10 @@
     <string name="plan_time_covers_everything_by">Mit deiner Lernzeit schaffst du bis zum %1$s alles</string>
     <!-- %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_covers_everything_by_month">Mit deiner Lernzeit schaffst du bis %1$s alles</string>
+    <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
+    <string name="plan_time_covers_share_exam">Mit %1$s am Tag schaffst du etwa %2$s deiner Prüfungsthemen</string>
+    <!-- What the learner's daily time covers now, beside an offer of another time. %1$s is a daily time, such as "45 min"; %2$s a percentage, such as "60%". -->
+    <string name="plan_time_covers_share_goal">Mit %1$s am Tag erreichst du etwa %2$s deines Ziels</string>
     <string name="plan_covered_not_enough">%1$s am Tag reichen nicht aus, um dein Ziel vollständig abzudecken.</string>
     <!-- A button that works out the daily time that covers the whole goal. Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything". -->
     <string name="plan_find">Lernzeit berechnen</string>
@@ -1295,6 +1307,16 @@
     <plurals name="plan_effect_more_before_end_date">
         <item quantity="one">Du lernst bis zu deinem Endtermin %d Lektion mehr.</item>
         <item quantity="other">Du lernst bis zu deinem Endtermin %d Lektionen mehr.</item>
+    </plurals>
+    <!-- A change that moves the learner's end date: %1$d lessons studied by the new date, %2$s, such as "March 3". -->
+    <plurals name="plan_effect_more_by">
+        <item quantity="one">Du bearbeitest %1$d Lektion mehr bis zum %2$s.</item>
+        <item quantity="other">Du bearbeitest %1$d Lektionen mehr bis zum %2$s.</item>
+    </plurals>
+    <!-- A change that moves the learner's end date: %1$d fewer lessons by the new date, %2$s, such as "March 3". -->
+    <plurals name="plan_effect_fewer_by">
+        <item quantity="one">Du bearbeitest %1$d Lektion weniger bis zum %2$s.</item>
+        <item quantity="other">Du bearbeitest %1$d Lektionen weniger bis zum %2$s.</item>
     </plurals>
     <plurals name="plan_effect_more">
         <item quantity="one">Du lernst %d Lektion mehr.</item>

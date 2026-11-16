@@ -27,10 +27,10 @@ function getFlatTrendLabel({
   observedPointCount: number;
 }): string {
   if (observedPointCount === 1) {
-    return "Observed";
+    return "Only bar with data";
   }
 
-  return hasCompleteTrend ? "Every bucket" : "Observed buckets";
+  return hasCompleteTrend ? "Every bar" : "Every bar with data";
 }
 
 export function AdminMetricTrendChart({

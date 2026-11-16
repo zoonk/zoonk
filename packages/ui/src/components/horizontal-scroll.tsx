@@ -47,9 +47,18 @@ function HorizontalScroll({
       return;
     }
 
+    // Measured from its children's boxes, not `scrollWidth`: a small last item's `hit-area` reaches
+    // past it and would read as content that scrolls.
     const checkScroll = () => {
+      const left = el.getBoundingClientRect().left - el.scrollLeft;
+
+      const reach = Math.max(
+        0,
+        ...Array.from(el.children, (child) => child.getBoundingClientRect().right - left),
+      );
+
       setCanScrollLeft(el.scrollLeft > 1);
-      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 1);
+      setCanScrollRight(el.scrollLeft < reach - el.clientWidth - 1);
       setHoldsFocus(el.querySelector(FOCUSABLE) !== null);
     };
 

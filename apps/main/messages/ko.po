@@ -489,9 +489,9 @@ msgstr "{minutes, plural, other {#분}}."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
 #: src/components/catalog/first-question.tsx
-msgctxt "xIVf67"
-msgid "No sign-up needed."
-msgstr "회원 가입이 필요 없어요."
+msgctxt "1aiBvA"
+msgid "No account needed."
+msgstr "계정이 없어도 돼요."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
 msgctxt "4NMpnC"
@@ -836,14 +836,19 @@ msgid "No answer was saved."
 msgstr "저장된 답변이 없어요."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "aqjWQg"
-msgid "Questions you asked in lessons that have since changed."
-msgstr "레슨 내용이 바뀌기 전에 했던 질문이에요."
+msgctxt "yfq070"
+msgid "Lessons you asked about were updated since. Your questions and their answers are kept here."
+msgstr "질문을 남긴 뒤 레슨 내용이 바뀌었어요. 질문과 답변은 여기에 보관돼 있어요."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "YPd0dY"
-msgid "You have no earlier questions."
-msgstr "이전 질문이 없어요."
+msgctxt "QKPtX3"
+msgid "No earlier questions"
+msgstr "이전 질문이 없어요"
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "O62YuA"
+msgid "When a lesson you asked about is updated, your questions and their answers are kept here."
+msgstr "질문했던 레슨이 업데이트되면 질문과 답변이 여기에 보관돼요."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "O3OEwU"
@@ -992,11 +997,6 @@ msgstr "{goal} 목표를 완료했어요."
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
 msgstr "다시 시작할 때까지는 학습 일정이 잡히지 않아요."
-
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "lEE47Z"
-msgid "Your {goal} goal is paused."
-msgstr "{goal} 목표가 일시 중지되어 있어요."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "ND345k"
@@ -1217,9 +1217,9 @@ msgid "Delete"
 msgstr "삭제"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
-msgctxt "QCATv6"
-msgid "You'll confirm with a passkey you already have first."
-msgstr "먼저 기존 패스키로 인증해야 해요."
+msgctxt "WJqAZr"
+msgid "You'll confirm with a passkey you already have first"
+msgstr "먼저 기존 패스키로 본인 확인을 해요"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
 msgctxt "guwku_"
@@ -1583,6 +1583,12 @@ msgstr "오늘의 학습으로 이동하기"
 msgctxt "o0vS8L"
 msgid "Past 12 months"
 msgstr "지난 12개월"
+
+#. Title over a calendar of days on a phone, which shows only its last 26 weeks.
+#: src/app/[lang]/(app)/(stats)/_components/stats-calendar.tsx
+msgctxt "eWUXBX"
+msgid "Past 6 months"
+msgstr "최근 6개월"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/lib/public/public-labels.ts
@@ -2168,16 +2174,6 @@ msgctxt "iJ_ZyQ"
 msgid "Which exams and goals can I study for?"
 msgstr "어떤 시험이나 목표에 맞춰 공부할 수 있나요?"
 
-#: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "7Rm1x6"
-msgid "Frequently asked questions"
-msgstr "자주 묻는 질문"
-
-#: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "vtHw2p"
-msgid "Still have questions? <link>Ask us</link>."
-msgstr "궁금한 점이 더 있나요? <link>문의</link>해 주세요."
-
 #. The landing's headline: the goals people come with, one per line, then a line for any other goal. Each line must fit on one line of a phone at a very large size, so keep every line as short as {exam} and in the same form: {exam} is the first goal, already written for your country, such as “Passar no concurso” or “共通テスト対策”. Keep the language branches as they are: the page suggests a language other than its own. In Brazilian Portuguese: “<line>{exam}.</line> <line>Falar inglês.</line> <line>Mudar de carreira.</line> <more>Ou o que quiser.</more>”
 #: src/app/[lang]/(home)/_components/home-headline.tsx
 msgctxt "dvqrv8"
@@ -2652,6 +2648,11 @@ msgstr "레슨이 준비됐어요"
 msgctxt "_LfrbS"
 msgid "We couldn't get this lesson ready"
 msgstr "이 레슨을 준비하지 못했어요"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "UjSkiv"
+msgid "Getting it ready takes a few minutes."
+msgstr "준비하는 데 몇 분 정도 걸려요."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "3x95yN"
@@ -3237,16 +3238,6 @@ msgid "Speaking practice calls, fewer than with Plus"
 msgstr "말하기 연습 대화(Plus보다 적은 횟수)"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "uUjwhB"
-msgid "Common questions"
-msgstr "자주 묻는 질문"
-
-#: src/components/pricing/plus-questions.tsx
-msgctxt "JlrCSV"
-msgid "Still unsure? <link>Ask us</link>."
-msgstr "아직 고민되나요? <link>문의</link>해 주세요."
-
-#: src/components/pricing/plus-questions.tsx
 msgctxt "vtGEce"
 msgid "What's free?"
 msgstr "어디까지 무료인가요?"
@@ -3398,6 +3389,16 @@ msgctxt "k7JNE3"
 msgid "© {year} Zoonk"
 msgstr "© {year} Zoonk"
 
+#: src/components/public/questions-heading.tsx
+msgctxt "uUjwhB"
+msgid "Common questions"
+msgstr "자주 묻는 질문"
+
+#: src/components/public/questions-heading.tsx
+msgctxt "vtHw2p"
+msgid "Still have questions? <link>Ask us</link>."
+msgstr "궁금한 점이 더 있나요? <link>문의</link>해 주세요."
+
 #: src/lib/belt-colors.ts
 #: src/lib/belt-label.ts
 msgctxt "_6Vlf7"
@@ -3524,12 +3525,6 @@ msgstr "테스트로 통과한 레슨"
 msgctxt "KHL8ap"
 msgid "Study time"
 msgstr "학습 시간"
-
-#. A certificate's study time, the plan's estimate for the lessons studied, such as “about 41 hr”. Brazilian schools read it as the certificate's workload (carga horária).
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "8QINPM"
-msgid "about {duration}"
-msgstr "약 {duration}"
 
 #. Under a big number on a certificate's social post: how many lessons the learner studied.
 #: src/lib/certificates/certificate-study-view.ts

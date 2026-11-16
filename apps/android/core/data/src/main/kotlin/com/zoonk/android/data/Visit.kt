@@ -14,7 +14,9 @@ import androidx.compose.runtime.setValue
  * later shows nothing.
  */
 @Stable
-class Visit {
+class Visit(
+    private val onEnd: () -> Unit = {},
+) {
     /** The current visit, which a request notes when it starts and hands to [VisitOutcome.send]. */
     var number = 0
         private set
@@ -32,13 +34,14 @@ class Visit {
      * A narrower asker inside this visit (an editor, a sheet, a picker): it ends on its own when it closes
      * (a `VisitOf` where it's composed), and with this visit when the screen goes.
      */
-    fun opening(): Visit = Visit().also { openings += it }
+    fun opening(onEnd: () -> Unit = {}): Visit = Visit(onEnd).also { openings += it }
 
     fun end() {
         number++
         held = false
         outcomes.forEach { it.clear() }
         openings.forEach { it.end() }
+        onEnd()
     }
 
     /** A place for this visit was composed (`VisitOf`). */

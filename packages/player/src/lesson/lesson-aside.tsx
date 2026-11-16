@@ -193,7 +193,7 @@ function LessonOutline() {
             <CircleHelpIcon aria-hidden="true" className="text-muted-foreground size-4" />
           </ListRowLeading>
           <ListRowContent>
-            <ListRowTitle className="text-muted-foreground font-normal">
+            <ListRowTitle className="text-muted-foreground">
               {t(
                 "{count, plural, one {# quick question at the end} other {# quick questions at the end}}",
                 { count: questions },
@@ -216,14 +216,10 @@ function ScreenAside({ step }: { step: PlayableLibraryStep }) {
   const { mark, recap } = useScreenRecap();
   const showsOutline = useShowsOutline(step);
 
-  const screenNumber = recap
-    ? t("screen {number}", { number: String(recap.position + 1) })
-    : undefined;
-
   return (
     <TaskAside
       label={t("Help with this screen")}
-      meta={<TutorConversationLink fallback={screenNumber} />}
+      meta={<TutorConversationLink />}
       title={
         (recap &&
           t({

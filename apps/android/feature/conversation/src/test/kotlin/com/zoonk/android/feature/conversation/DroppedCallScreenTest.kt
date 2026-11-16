@@ -28,7 +28,7 @@ class DroppedCallScreenTest {
 
     private val clock by lazy { TestClock(compose.mainClock) }
 
-    /** A call the month's cap cut off: once the day comes, it's the one sentence "You can try again now." with no title, and Call again. */
+    /** A call the month's cap cut off: once the day comes, its title stays over the one sentence "You can try again now.", and Call again. */
     @Test
     fun aCallTheCapCutOffCanBeCalledAgainOnceItsDayComes() {
         var retries = 0
@@ -56,7 +56,7 @@ class DroppedCallScreenTest {
         // The title's room stays, so the sentence takes the reason's place.
         assertEquals(reason, compose.onNodeWithText("You can try again now.").getBoundsInRoot().top)
         compose.onNodeWithText("You've used your call time").assertDoesNotExist()
-        compose.onNodeWithText("The call dropped").assertDoesNotExist()
+        compose.onNodeWithText("The call dropped").assertExists()
         compose.onNodeWithText("You can try again now.").assertExists()
         compose.onNodeWithText("Call again").performClick()
 

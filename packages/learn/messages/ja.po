@@ -35,6 +35,14 @@ msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "正解"
 
+#: src/_components/brain-power-amount.tsx
+#: src/language/conversation/call-stars-step.tsx
+#: src/missions/brain-power-reward.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "脳力"
+
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/onboarding/steps/reveal-days.tsx
@@ -284,7 +292,6 @@ msgstr "続ける"
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/explain/explain-waiting.tsx
-#: src/focus-test/focus-test-screens.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
 #: src/language/exam-speaking/speaking-task-row.tsx
 #: src/language/progress/speaking-mock-card.tsx
@@ -292,7 +299,6 @@ msgstr "続ける"
 #: src/mock/mock-short-dialog.tsx
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-body.tsx
-#: src/onboarding/test-outcome.tsx
 #: src/session/next-stop.tsx
 #: src/today/today-action.tsx
 #: src/today/today-suggested-goal.tsx
@@ -500,7 +506,6 @@ msgstr "今後の学習"
 
 #: src/_components/lesson-list.tsx
 #: src/appearance/appearance-screen.tsx
-#: src/journey/preparation/use-preparation-parts.ts
 #: src/mind-maps/mind-maps-screen.tsx
 #: src/plan-diff/use-change-rows.ts
 msgctxt "iqLF8D"
@@ -511,7 +516,6 @@ msgstr "レッスン"
 #: src/_utils/count-of.ts
 #: src/chapter/chapter-screen.tsx
 #: src/journey/preparation/use-preparation-parts.ts
-#: src/language/conversation/call-stars-step.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/syllabus/subject-aside.tsx
 #: src/syllabus/subject-chapters.tsx
@@ -1027,6 +1031,15 @@ msgctxt "f4Zmb7"
 msgid "Different time on weekends"
 msgstr "週末は学習時間を変える"
 
+#: src/_utils/iso-date.ts
+#: src/exam/exam-labels.tsx
+#: src/exam/exam-screen.tsx
+#: src/journey/phase-when.tsx
+#: src/plan/plan-date-text.tsx
+msgctxt "7KwTGn"
+msgid "~{date}"
+msgstr "{date}ごろ"
+
 #: src/_utils/range.ts
 msgctxt "kV-RMr"
 msgid "{low}–{high}"
@@ -1215,9 +1228,9 @@ msgid "Where you live"
 msgstr "住んでいる国"
 
 #: src/appearance/home-country-setting.tsx
-msgctxt "yXIjI8"
-msgid "So examples and exams match your country."
-msgstr "国に合わせた例や試験を表示します。"
+msgctxt "0sZNO3"
+msgid "So examples and exams match your country"
+msgstr "例や試験をお住まいの国に合わせます"
 
 #: src/appearance/home-country-setting.tsx
 msgctxt "p5LNtB"
@@ -1613,6 +1626,7 @@ msgid "Completed"
 msgstr "修了日"
 
 #: src/certificates/certificate-details.tsx
+#: src/journey/preparation/use-preparation-parts.ts
 msgctxt "mrBiB2"
 msgid "Lessons studied"
 msgstr "学習したレッスン数"
@@ -1674,12 +1688,6 @@ msgstr "{course}・{level}"
 msgctxt "ZP9lOu"
 msgid "{language} {level}"
 msgstr "{language} {level}"
-
-#. An approximate study time, such as "about 41 hr".
-#: src/certificates/certificate-labels.ts
-msgctxt "8QINPM"
-msgid "about {duration}"
-msgstr "約{duration}"
 
 #: src/certificates/certificate-labels.ts
 msgctxt "ZfBPq3"
@@ -1930,6 +1938,12 @@ msgctxt "CXRlIo"
 msgid "Print"
 msgstr "印刷する"
 
+#. Link under a small picture of a certificate on a phone: opens the certificate's picture at full size.
+#: src/certificates/certificate-page.tsx
+msgctxt "hlcpTE"
+msgid "See the full certificate"
+msgstr "証明書を拡大して見る"
+
 #: src/certificates/certificate-share.tsx
 msgctxt "sfDPEB"
 msgid "I just completed level {level} in {language} on Zoonk."
@@ -2142,11 +2156,6 @@ msgctxt "UIUcbm"
 msgid "{count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, other {#問}}"
 
-#: src/challenge/challenge-intro-parts.tsx
-msgctxt "moNgIg"
-msgid "+{points} Brain Power"
-msgstr "脳力 +{points}"
-
 #. The name of a study step: a second go at the Trickster's questions.
 #: src/challenge/challenge-intro-parts.tsx
 #: src/session/use-block-copy.ts
@@ -2336,13 +2345,6 @@ msgctxt "i2YWkq"
 msgid "What he'll ask"
 msgstr "出題予定のトピック"
 
-#: src/challenge/challenge-topics.tsx
-#: src/syllabus/subject-matrix.tsx
-#: src/syllabus/subject-screen.tsx
-msgctxt "eNbJHf"
-msgid "{count, plural, one {# topic} other {# topics}}"
-msgstr "{count, plural, other {#個のトピック}}"
-
 #: src/chapter/chapter-header.tsx
 #: src/mind-maps/mind-map-index-rows.tsx
 msgctxt "sIR8OK"
@@ -2402,7 +2404,6 @@ msgid "Topics"
 msgstr "トピック"
 
 #: src/chapter/chapter-screen.tsx
-#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/use-short-plan.ts
@@ -3215,6 +3216,11 @@ msgctxt "rUq4jt"
 msgid "The case"
 msgstr "事例"
 
+#: src/essay/essay-prompt.tsx
+msgctxt "2rkYNm"
+msgid "What to write"
+msgstr "書く内容"
+
 #. The grade of the learner's last essay draft.
 #: src/essay/essay-rewrite-guide.tsx
 #: src/essay/essay-screen.tsx
@@ -3683,6 +3689,16 @@ msgid "How the score works"
 msgstr "スコアの仕組み"
 
 #: src/exam/exam-screen.tsx
+msgctxt "QGnOZU"
+msgid "{date} at {time}"
+msgstr "{date} {time}"
+
+#: src/exam/exam-screen.tsx
+msgctxt "yft85U"
+msgid "Starts at {time}"
+msgstr "{time}に始まります"
+
+#: src/exam/exam-screen.tsx
 msgctxt "Akn-bs"
 msgid "Exam options"
 msgstr "試験のオプション"
@@ -3924,6 +3940,14 @@ msgid "{count, plural, one {Your plan also skips # lesson you already know.} oth
 msgstr "{count, plural, other {学習計画では、すでに知っている内容の#レッスンもスキップします。}}"
 
 #: src/focus-test/focus-test-screens.tsx
+#: src/onboarding/test-outcome.tsx
+#: src/questions/test-out-preparing.tsx
+#: src/today/today-focus-test.tsx
+msgctxt "SKxNcp"
+msgid "Start the test"
+msgstr "テストを始める"
+
+#: src/focus-test/focus-test-screens.tsx
 msgctxt "G9nQHt"
 msgid "Continue your test"
 msgstr "テストを続ける"
@@ -3979,9 +4003,9 @@ msgstr "重点的に学習する内容を見つける"
 
 #: src/focus-test/use-focus-test-texts.ts
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "LW1Em4"
-msgid "Skip what you already know"
-msgstr "すでに知っている内容をスキップする"
+msgctxt "YSXaxI"
+msgid "Already know some of this?"
+msgstr "すでに知っていることはありますか？"
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "-nbx59"
@@ -4263,10 +4287,14 @@ msgid "Writing the lesson"
 msgstr "レッスンを作成しています"
 
 #: src/generation/lesson-generation-copy.ts
-#: src/generation/use-generation-copy.ts
-msgctxt "gGJukf"
-msgid "Writing screen {number}…"
-msgstr "{number}ページ目を作成しています…"
+msgctxt "EVqGhj"
+msgid "Writing the explanations…"
+msgstr "解説を作成しています…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "GHfGPv"
+msgid "Writing the questions…"
+msgstr "問題を作成しています…"
 
 #: src/generation/lesson-generation-copy.ts
 #: src/generation/use-generation-copy.ts
@@ -4419,9 +4447,9 @@ msgid "Fitting the plan into your days"
 msgstr "日々の予定に合わせて学習計画を立てています"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "0EAw5g"
-msgid "Finding lessons in the Library…"
-msgstr "ライブラリでレッスンを探しています…"
+msgctxt "YSOHV2"
+msgid "Finding lessons for your goal…"
+msgstr "目標に合うレッスンを探しています…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "eO1ana"
@@ -4491,9 +4519,9 @@ msgid "Choosing your courses"
 msgstr "コースを選んでいます"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "JRrpUO"
-msgid "Finding courses in the Library…"
-msgstr "ライブラリでコースを探しています…"
+msgctxt "tHDEoY"
+msgid "Finding courses for your goal…"
+msgstr "目標に合うコースを探しています…"
 
 #: src/generation/use-generation-copy.ts
 #: src/language/level-test/level-test-preparing.tsx
@@ -4556,6 +4584,16 @@ msgstr "質問を読んでいます…"
 msgctxt "H2ZUHF"
 msgid "Writing about 5 short screens"
 msgstr "短い解説を5ページほど作成しています"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "RyrI0Q"
+msgid "Writing the explanation…"
+msgstr "解説を作成しています…"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "xTdhld"
+msgid "Adding an example…"
+msgstr "例を追加しています…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "hSi5Cg"
@@ -4661,9 +4699,9 @@ msgid "Archive this goal"
 msgstr "この目標をアーカイブする"
 
 #: src/journey/goal-actions.tsx
-msgctxt "rhh0AT"
-msgid "Resume your {goal} goal?"
-msgstr "目標「{goal}」を再開しますか？"
+msgctxt "tzm8m7"
+msgid "Resume this goal?"
+msgstr "この目標を再開しますか？"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/resume-goal-bar.tsx
@@ -4672,14 +4710,14 @@ msgid "Resume"
 msgstr "再開する"
 
 #: src/journey/goal-actions.tsx
-msgctxt "9DL2qt"
-msgid "Archive your {goal} goal?"
-msgstr "目標「{goal}」をアーカイブしますか？"
+msgctxt "cenJlY"
+msgid "Archive this goal?"
+msgstr "この目標をアーカイブしますか？"
 
 #: src/journey/goal-actions.tsx
-msgctxt "jrD9B8"
-msgid "It leaves your goals and its plan stops. What you learned stays in your progress."
-msgstr "目標の一覧から外れ、学習計画が停止します。学んだ内容は進捗に残ります。"
+msgctxt "T4r1Wn"
+msgid "Archived goals leave Today and the Plan. What you learned stays in your progress."
+msgstr "アーカイブした目標は「今日」と「学習計画」に表示されなくなります。学習の進捗はそのまま残ります。"
 
 #: src/journey/goal-actions.tsx
 msgctxt "hrgo-E"
@@ -4688,9 +4726,9 @@ msgstr "アーカイブする"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/journey-planless.tsx
-msgctxt "T4rFKd"
-msgid "Your {goal} goal is paused"
-msgstr "目標「{goal}」は一時停止中です"
+msgctxt "98OHZH"
+msgid "This goal is paused"
+msgstr "この目標は一時停止中です"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/journey-planless.tsx
@@ -4991,12 +5029,6 @@ msgctxt "JQlKi_"
 msgid "Ends {date}"
 msgstr "{date}に終了"
 
-#: src/journey/phase-when.tsx
-#: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "{date}ごろ"
-
 #: src/journey/plan-roadmap.tsx
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
@@ -5074,9 +5106,19 @@ msgid "How it's calculated"
 msgstr "計算方法"
 
 #: src/journey/preparation/use-preparation-parts.ts
+msgctxt "m_Rw4I"
+msgid "Lessons you already knew"
+msgstr "もともと内容を知っていたレッスン"
+
+#: src/journey/preparation/use-preparation-parts.ts
 msgctxt "DVOdy2"
 msgid "Topics studied"
 msgstr "学習済みのトピック"
+
+#: src/journey/preparation/use-preparation-parts.ts
+msgctxt "6dJGDZ"
+msgid "Topics you already knew"
+msgstr "もともと知っていたトピック"
 
 #: src/journey/preparation/use-preparation-parts.ts
 #: src/mock/mock-result-view.tsx
@@ -5268,6 +5310,7 @@ msgid "Paused"
 msgstr "一時停止中"
 
 #: src/journey/schedule-details.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "4IVFWL"
 msgid "Go to Today"
 msgstr "「今日」へ移動する"
@@ -5713,13 +5756,6 @@ msgstr "{stars, plural, =0 {3個の星のうち#個} other {星3個中#個}}"
 msgctxt "XHLYdJ"
 msgid "Goals"
 msgstr "目標"
-
-#: src/language/conversation/call-stars-step.tsx
-#: src/missions/brain-power-reward.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
-msgstr "脳力"
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"
@@ -6561,9 +6597,14 @@ msgid "Say it again"
 msgstr "もう一度声に出して言う"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "FLqp3G"
-msgid "No words to say again today."
-msgstr "今日はもう一度声に出して言う単語はありません。"
+msgctxt "O6SjzK"
+msgid "No words to say again today"
+msgstr "今日はもう一度声に出して言う単語はありません"
+
+#: src/language/pronunciation/pronunciation-review-screen.tsx
+msgctxt "E-Uxmi"
+msgid "Words that were hard to say come back here to practice."
+msgstr "声に出して言うのが難しかった単語は、ここでもう一度練習できます。"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "c3Fawv"
@@ -6909,9 +6950,9 @@ msgid "From a call"
 msgstr "会話から"
 
 #: src/memory/memory-screen.tsx
-msgctxt "ut2Sio"
-msgid "When off, notes aren't saved or used."
-msgstr "オフの間はメモの保存も利用もしません。"
+msgctxt "LwVSHh"
+msgid "When off, notes aren't saved or used"
+msgstr "オフにすると、メモは保存も使用もされません"
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"
@@ -7469,10 +7510,11 @@ msgctxt "aGylUw"
 msgid "You earned +{points} Brain Power."
 msgstr "脳力を+{points}獲得しました。"
 
+#. Under the title Today's missions: how many of today's missions are done.
 #: src/missions/missions-card.tsx
 msgctxt "deISVW"
 msgid "{done} of {total} done"
-msgstr "完了：{done}/{total}"
+msgstr "{done}件完了（全{total}件）"
 
 #: src/missions/missions-card.tsx
 msgctxt "0gBkBl"
@@ -7892,6 +7934,7 @@ msgctxt "fWOwxQ"
 msgid "The full exam or half of it"
 msgstr "試験全体・半分から選べます"
 
+#. An action, like "Take a mock exam" beside it: goes back into the mock exam already started.
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
 msgid "Continue your mock exam"
@@ -7913,9 +7956,9 @@ msgid "This one doesn't count."
 msgstr "今回の模試はカウントされません。"
 
 #: src/mock/mock-frame.tsx
-msgctxt "UIkt52"
-msgid "Not saved yet · retrying"
-msgstr "まだ保存できていません · もう一度保存しています"
+msgctxt "g2F3WK"
+msgid "Your answer isn't saved yet"
+msgstr "回答はまだ保存されていません"
 
 #: src/mock/mock-frame.tsx
 msgctxt "gOsgur"
@@ -8191,6 +8234,7 @@ msgid "{correct} of {total}"
 msgstr "{correct} / {total}"
 
 #: src/mock/mock-result-breakdown.tsx
+#: src/today/use-row-label.ts
 msgctxt "SjSDDA"
 msgid "{count, plural, one {# more topic} other {# more topics}}"
 msgstr "{count, plural, other {ほか#件のトピック}}"
@@ -8559,6 +8603,11 @@ msgstr "{number} / {total}"
 msgctxt "bSCV9J"
 msgid "Flag"
 msgstr "見直し"
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "sflabU"
+msgid "Remove flag"
+msgstr "見直しを解除する"
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-speaking.tsx
@@ -10004,8 +10053,8 @@ msgid "Looks right"
 msgstr "この内容で進める"
 
 #: src/onboarding/understood/understood-screen.tsx
-msgctxt "N7XZZA"
-msgid "Here's what I understood"
+msgctxt "8nmZkr"
+msgid "Here's what we understood"
 msgstr "このように理解しました"
 
 #: src/onboarding/understood/understood-screen.tsx
@@ -10783,9 +10832,9 @@ msgid "No tools? You can do it all with examples."
 msgstr "ツールがなくても、例題だけですべて学ぶ。"
 
 #: src/plan/plan-tools.tsx
-msgctxt "svOBOg"
-msgid "More later: {tools}"
-msgstr "後で使うツール：{tools}"
+msgctxt "r_GVXm"
+msgid "{count, plural, one {# more tool later: {tools}} other {# more tools later: {tools}}}"
+msgstr "{count, plural, other {この先使えるツールがほかに#個：{tools}}}"
 
 #: src/plan/plan-tools.tsx
 msgctxt "z1Z_Hg"
@@ -11899,12 +11948,6 @@ msgid "A few questions on this chapter, with your results at the end. Do well, a
 msgstr "この章の問題を数問解くと、最後に結果がわかります。合格すると、すでに知っている内容を学習計画でスキップします。"
 
 #: src/questions/test-out-preparing.tsx
-#: src/today/today-focus-test.tsx
-msgctxt "SKxNcp"
-msgid "Start the test"
-msgstr "テストを始める"
-
-#: src/questions/test-out-preparing.tsx
 msgctxt "gb32bG"
 msgid "We're writing a few questions on this chapter. The test opens here when they're ready."
 msgstr "この章の内容から問題をいくつか作成しています。準備ができると、ここにテストが表示されます。"
@@ -12569,6 +12612,18 @@ msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "新しいレッスン"
 
+#. Extra practice the learner added. {topic} names the topic most of its questions are on, like "Calculating discounts".
+#: src/session/use-block-copy.ts
+msgctxt "60PbK5"
+msgid "Bonus practice: {topic}"
+msgstr "追加練習：{topic}"
+
+#. A block of the day's practice. {topic} names the topic most of its questions are on, like "Calculating discounts".
+#: src/session/use-block-copy.ts
+msgctxt "YGPuF7"
+msgid "Practice: {topic}"
+msgstr "練習：{topic}"
+
 #. Extra practice the learner added. {areas} names the one or two subjects most of its questions are on, like "Math and Languages".
 #: src/session/use-block-copy.ts
 msgctxt "7zIxxl"
@@ -12809,6 +12864,11 @@ msgid "{count, plural, one {Also in # exam} other {Also in # exams}}"
 msgstr "{count, plural, other {ほかの#試験でも出題}}"
 
 #: src/syllabus/subject-aside.tsx
+msgctxt "wGdj4O"
+msgid "Counts your answers in lessons, practice and tests."
+msgstr "レッスン、練習、テストでの回答を反映しています。"
+
+#: src/syllabus/subject-aside.tsx
 msgctxt "_7RyZo"
 msgid "Next date"
 msgstr "次回の学習日"
@@ -12837,6 +12897,12 @@ msgstr "{count, plural, other {もともと知っていた#章}}"
 msgctxt "oUXyHJ"
 msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
 msgstr "{done, plural, other {#章完了}}、{known, plural, other {もともと知っていた#章}}"
+
+#: src/syllabus/subject-matrix.tsx
+#: src/syllabus/subject-screen.tsx
+msgctxt "eNbJHf"
+msgid "{count, plural, one {# topic} other {# topics}}"
+msgstr "{count, plural, other {#個のトピック}}"
 
 #: src/syllabus/subject-matrix.tsx
 msgctxt "f1GnB3"
