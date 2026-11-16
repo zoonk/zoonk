@@ -2,6 +2,9 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ACTIVITY_COLOR } from "../_utils/activity-colors";
 
+export const ACTIVITY_PANEL_CLASS =
+  "bg-muted/50 rounded-[calc(var(--radius-xl)+var(--spacing)*4)] p-4";
+
 /** A box inside an activity's panel. Every card, slot, cell and code block there is this box. */
 export const ACTIVITY_BOX_CLASS = "bg-background rounded-xl border";
 
@@ -39,7 +42,7 @@ export function ActivityCanvas({
   return (
     <figure
       aria-labelledby={labelId}
-      className={cn("bg-muted/50 flex flex-col gap-3 rounded-xl p-4", className)}
+      className={cn(ACTIVITY_PANEL_CLASS, "flex flex-col gap-3", className)}
       data-slot="activity-canvas"
       {...props}
     />
@@ -80,5 +83,10 @@ export function ActivityReadout({ className, ...props }: React.ComponentProps<"p
 }
 
 export function ActivityCanvasSkeleton() {
-  return <Skeleton className="h-64 w-full rounded-xl" data-slot="activity-canvas-skeleton" />;
+  return (
+    <Skeleton
+      className="h-64 w-full rounded-[calc(var(--radius-xl)+var(--spacing)*4)]"
+      data-slot="activity-canvas-skeleton"
+    />
+  );
 }

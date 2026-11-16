@@ -2,10 +2,8 @@
 
 import { getActivityBaseMap } from "@zoonk/core/library/activities/base-maps";
 import { useFormatNumber } from "@zoonk/learn/format-number";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
-import { MapPin as MapPinIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { use, useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
@@ -69,10 +67,7 @@ function PlaceDetails({ number, place }: { number: number; place: Place | null }
 
   if (!place) {
     return (
-      <p className="text-muted-foreground flex items-start gap-2 text-sm">
-        <LineMarker>
-          <MapPinIcon aria-hidden="true" className="size-4" />
-        </LineMarker>
+      <p className="text-muted-foreground text-sm text-pretty">
         {t("Tap a numbered place to see what's there.")}
       </p>
     );
@@ -178,7 +173,7 @@ function MapCanvas({
   return (
     <ActivityCanvas labelId={labelId}>
       <div className="flex items-baseline justify-between gap-3">
-        <ActivityCanvasLabel className="text-sm">{name}</ActivityCanvasLabel>
+        <p className="text-sm font-medium text-pretty">{name}</p>
         {phase !== "checked" && (
           <ActivityCanvasLabel className="shrink-0 tabular-nums">
             {t("{count} of {total} explored", {

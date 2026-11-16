@@ -43,7 +43,12 @@ export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explan
         />
       </div>
 
-      <LessonStepPicture className="order-first" hero priority step={step} />
+      <LessonStepPicture
+        className={explored ? undefined : "order-first"}
+        hero
+        priority
+        step={step}
+      />
       <LessonVisual visual={content.visual} />
       {explored && (
         <>

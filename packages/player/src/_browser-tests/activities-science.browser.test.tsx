@@ -301,6 +301,7 @@ describe("science activities", () => {
     await fillSquare(["Pp", "pp", "pp", "pp"]);
     await checkActivity();
     await expectVerdict("Not quite");
+    await expect.element(page.getByText("3 of 4 squares right", { exact: true })).toBeVisible();
   });
 
   it("times table grid: filling every product is right", async () => {
@@ -346,6 +347,16 @@ describe("science activities with a keyboard only", () => {
 
     await focusOn(page.getByRole("button", { name: "Check" }));
     await press("Enter");
+    await expectVerdict("Correct!");
+  });
+});
+
+describe("numeric answer guidance", () => {
+  it("numeric checks say how many decimal places the dice answer needs", async () => {
+    openActivity({ content: engineModeFixtures.combinationGrid.dice, template: "combinationGrid" });
+    await expect.element(page.getByText("Round to 2 decimal places.")).toBeVisible();
+    await valueInput().fill("0.17");
+    await checkActivity();
     await expectVerdict("Correct!");
   });
 });

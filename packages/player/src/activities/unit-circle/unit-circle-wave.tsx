@@ -91,13 +91,13 @@ export function UnitCircleWave({
         xDomain={[0, FULL_TURN]}
         yDomain={[-1, 1]}
       >
-        <ActivityPlotGridY format={(value) => format(value)} ticks={[-1, 0, 1]} />
+        <ActivityPlotGridY align="start" format={(value) => format(value)} ticks={[-1, 0, 1]} />
         <ActivityPlotAxisX format={formatAngle} ticks={WAVE_TICKS} />
 
         {show.map((name) => (
           <g key={name}>
             <ActivityPlotLine
-              className="stroke-muted-foreground/40 stroke-2 [stroke-dasharray:2_5]"
+              className={cn(WAVES[name].line, "stroke-2 opacity-40 [stroke-dasharray:2_5]")}
               points={wavePoints(name, FULL_TURN)}
             />
             <ActivityPlotLine className={WAVES[name].line} points={wavePoints(name, degrees)} />

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type ActivityAnswer } from "./activity-answer-schema";
-import { checkActivityAnswer } from "./activity-answers";
+import { checkActivityAnswer, getActivityDecimalPlaces } from "./activity-answers";
 import { activityContentSchema } from "./activity-templates";
 
 const interaction = { explanation: "Here is why.", kind: "interaction" };
@@ -481,4 +481,32 @@ describe(checkActivityAnswer, () => {
       }),
     ).toBe(false);
   });
+});
+
+describe(getActivityDecimalPlaces, () => {
+  it.each([
+    { answer: 0.1667, places: 1, tolerance: 0.05 },
+    { answer: 0.1667, places: 2, tolerance: 0.005 },
+    { answer: 0.1667, places: 2, tolerance: 0.000001 },
+    { answer: 0.1003, places: 4, tolerance: 0.000001 },
+    { answer: 11.88, places: 0, tolerance: 0.1 },
+    { answer: 12, places: null, tolerance: 0.1 },
+  ])(
+    "recommends $places places for $answer with tolerance $tolerance",
+    ({ answer, tolerance, places }) => {
+      const activity = content(
+        "unitCircle",
+        { angleUnit: "degrees", frame: "A wheel.", show: ["sin", "cos"], startAngle: 0 },
+        {
+          answer,
+          explanation: "Why.",
+          kind: "numeric",
+          question: "What is the value?",
+          tolerance: { kind: "absolute", value: tolerance },
+        },
+      );
+
+      expect(getActivityDecimalPlaces(activity)).toBe(places);
+    },
+  );
 });

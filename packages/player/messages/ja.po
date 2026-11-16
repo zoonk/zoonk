@@ -183,6 +183,16 @@ msgctxt "ZmADei"
 msgid "The sound couldn't load. You can still see every note."
 msgstr "音を読み込めませんでした。音符はすべて表示されます。"
 
+#: src/activities/_components/guitar-fretboard.tsx
+msgctxt "MgBNC_"
+msgid "Play without pressing a fret"
+msgstr "フレットを押さえずに弾く"
+
+#: src/activities/_components/guitar-fretboard.tsx
+msgctxt "hKgOZu"
+msgid "Don't play this string"
+msgstr "この弦は弾かない"
+
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
 msgid "{runtime} didn't load. Check your connection and try again."
@@ -326,9 +336,9 @@ msgid "Take the quote out"
 msgstr "引用文を外す"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "fnHca8"
-msgid "Pick the quote that best supports the claim"
-msgstr "主張を最もよく裏づける引用文を選んでください"
+msgctxt "tNI8yF"
+msgid "Tap or drag the quote that best supports the claim"
+msgstr "主張を最もよく裏付ける引用文をタップまたはドラッグしてください"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "6g7-6N"
@@ -341,9 +351,9 @@ msgid "Take the reasoning out"
 msgstr "理由づけを外す"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "X3GSpA"
-msgid "Pick how the quote proves the claim"
-msgstr "引用文が主張をどう裏づけるか、説明を選んでください"
+msgctxt "x197fZ"
+msgid "Tap or drag how the quote proves the claim"
+msgstr "引用文が主張を裏付ける理由をタップまたはドラッグしてください"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "HmrHXg"
@@ -614,6 +624,11 @@ msgid "{cause} picked. Now pick what it led to."
 msgstr "「{cause}」を選びました。次にその結果を選んでください。"
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
+msgctxt "M2FAHj"
+msgid "Pick a cause, then pick what it led to."
+msgstr "原因を選び、次にその結果を選んでください。"
+
+#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "m4T6j3"
 msgid "{count} of {total, plural, one {# link} other {# links}}"
 msgstr "{count} / {total, plural, other {#個のつながり}}"
@@ -622,11 +637,6 @@ msgstr "{count} / {total, plural, other {#個のつながり}}"
 msgctxt "qbRyCu"
 msgid "Causes and effects"
 msgstr "原因と結果"
-
-#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
-msgctxt "M2FAHj"
-msgid "Pick a cause, then pick what it led to."
-msgstr "原因を選び、次にその結果を選んでください。"
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "WHQHly"
@@ -691,9 +701,9 @@ msgid "{span}: {change}."
 msgstr "{span}：{change}。"
 
 #: src/activities/code-runner/code-runner-activity.tsx
-msgctxt "ydcluT"
-msgid "{count, plural, one {Line {lines} is yours} other {Lines {lines} are yours}}"
-msgstr "{count, plural, other {編集できるのは{lines}行目です}}"
+msgctxt "KheRTj"
+msgid "{count, plural, one {Edit line {lines}} other {Edit lines {lines}}}"
+msgstr "{count, plural, other {{lines}行目を編集してください}}"
 
 #: src/activities/code-runner/code-runner-activity.tsx
 #: src/activities/code-tracer/tracer-parts.tsx
@@ -885,7 +895,7 @@ msgstr "マス{number}、{row}と{column}："
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "nyV23o"
 msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
-msgstr "{what}：{count}マス（{total, plural, =0 {全#マス} other {#マス中}}）"
+msgstr "{what}：{count}／{total, plural, =0 {#マス} other {#マス}}"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
@@ -1246,6 +1256,11 @@ msgid "Piano keys"
 msgstr "ピアノの鍵盤"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
+msgctxt "r2N9bw"
+msgid "A half step is the distance to the next key, counting black keys."
+msgstr "半音とは、黒鍵も含めて隣り合う鍵盤の音の間隔です。"
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
 msgctxt "FWhw7d"
 msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "CからBまでのピアノの鍵盤です。押している鍵盤：{notes}。"
@@ -1254,11 +1269,6 @@ msgstr "CからBまでのピアノの鍵盤です。押している鍵盤：{not
 msgctxt "0kfXGd"
 msgid "{count, plural, one {# note} other {# notes}}"
 msgstr "{count, plural, other {#音}}"
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "S7Oawr"
-msgid "By ear"
-msgstr "耳で聞き取る"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "nfwiHT"
@@ -1929,16 +1939,16 @@ msgctxt "iHeHi6"
 msgid "Silicon"
 msgstr "ケイ素"
 
-#. Shows the notes on the five-line music staff (not sheet music) instead of guitar tab.
+#. Shows the melody as music notes on five lines, rather than numbered guitar frets.
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "gFJ4sU"
-msgid "Staff"
+msgctxt "7-Domh"
+msgid "Notes"
 msgstr "五線譜"
 
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "1xqT9N"
-msgid "Tab"
-msgstr "タブ譜"
+msgctxt "RpejPq"
+msgid "Guitar frets"
+msgstr "ギターのフレット"
 
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "yYzCD2"
@@ -1951,9 +1961,9 @@ msgid "Tempo"
 msgstr "テンポ"
 
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "F2244X"
-msgid "{tempo} bpm"
-msgstr "{tempo} bpm"
+msgctxt "m5IhOG"
+msgid "{tempo} beats/min"
+msgstr "{tempo}拍/分"
 
 #: src/activities/notation-player/notation-player-activity.tsx
 msgctxt "ZLkshx"
@@ -2721,9 +2731,9 @@ msgid "Place {event} on the timeline"
 msgstr "{event}を年表に配置する"
 
 #: src/activities/timeline/timeline-tray.tsx
-msgctxt "Mz-N9C"
-msgid "Drag onto the timeline"
-msgstr "年表にドラッグする"
+msgctxt "VvAPB9"
+msgid "Drag onto the timeline."
+msgstr "タイムラインにドラッグしてください。"
 
 #: src/activities/unit-circle/unit-circle-activity.tsx
 msgctxt "Btkcyy"
@@ -3430,11 +3440,6 @@ msgstr "チーム"
 msgctxt "YTtnhN"
 msgid "What if · {setting}"
 msgstr "もしも · {setting}"
-
-#: src/lesson/steps/challenge/challenge-intro.tsx
-msgctxt "YVTWsk"
-msgid "Challenge · {setting}"
-msgstr "チャレンジ · {setting}"
 
 #: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "KV-6ml"

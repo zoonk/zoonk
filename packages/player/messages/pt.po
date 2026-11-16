@@ -183,6 +183,16 @@ msgctxt "ZmADei"
 msgid "The sound couldn't load. You can still see every note."
 msgstr "O som não carregou. Você ainda pode ver todas as notas."
 
+#: src/activities/_components/guitar-fretboard.tsx
+msgctxt "MgBNC_"
+msgid "Play without pressing a fret"
+msgstr "Toque a corda solta"
+
+#: src/activities/_components/guitar-fretboard.tsx
+msgctxt "hKgOZu"
+msgid "Don't play this string"
+msgstr "Não toque essa corda"
+
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
 msgid "{runtime} didn't load. Check your connection and try again."
@@ -326,9 +336,9 @@ msgid "Take the quote out"
 msgstr "Remover a citação"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "fnHca8"
-msgid "Pick the quote that best supports the claim"
-msgstr "Escolha a citação que melhor sustenta a afirmação"
+msgctxt "tNI8yF"
+msgid "Tap or drag the quote that best supports the claim"
+msgstr "Escolha ou arraste a citação que melhor sustenta a afirmação"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "6g7-6N"
@@ -341,9 +351,9 @@ msgid "Take the reasoning out"
 msgstr "Remover o raciocínio"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "X3GSpA"
-msgid "Pick how the quote proves the claim"
-msgstr "Escolha como a citação comprova a afirmação"
+msgctxt "x197fZ"
+msgid "Tap or drag how the quote proves the claim"
+msgstr "Escolha ou arraste a explicação de como a citação comprova a afirmação"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "HmrHXg"
@@ -614,6 +624,11 @@ msgid "{cause} picked. Now pick what it led to."
 msgstr "Você escolheu {cause}. Agora escolha o que aconteceu como resultado."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
+msgctxt "M2FAHj"
+msgid "Pick a cause, then pick what it led to."
+msgstr "Escolha uma causa e depois escolha o que aconteceu como resultado."
+
+#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "m4T6j3"
 msgid "{count} of {total, plural, one {# link} other {# links}}"
 msgstr "{count} de {total, plural, one {# ligação} other {# ligações}}"
@@ -622,11 +637,6 @@ msgstr "{count} de {total, plural, one {# ligação} other {# ligações}}"
 msgctxt "qbRyCu"
 msgid "Causes and effects"
 msgstr "Causas e efeitos"
-
-#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
-msgctxt "M2FAHj"
-msgid "Pick a cause, then pick what it led to."
-msgstr "Escolha uma causa e depois escolha o que aconteceu como resultado."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "WHQHly"
@@ -691,9 +701,9 @@ msgid "{span}: {change}."
 msgstr "{span}: {change}."
 
 #: src/activities/code-runner/code-runner-activity.tsx
-msgctxt "ydcluT"
-msgid "{count, plural, one {Line {lines} is yours} other {Lines {lines} are yours}}"
-msgstr "{count, plural, one {A linha {lines} é sua} other {As linhas {lines} são suas}}"
+msgctxt "KheRTj"
+msgid "{count, plural, one {Edit line {lines}} other {Edit lines {lines}}}"
+msgstr "{count, plural, =1 {Edite a linha {lines}} other {Edite as linhas {lines}}}"
 
 #: src/activities/code-runner/code-runner-activity.tsx
 #: src/activities/code-tracer/tracer-parts.tsx
@@ -1246,6 +1256,11 @@ msgid "Piano keys"
 msgstr "Teclas do piano"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
+msgctxt "r2N9bw"
+msgid "A half step is the distance to the next key, counting black keys."
+msgstr "Um semitom é a distância até a próxima tecla, incluindo as teclas pretas."
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
 msgctxt "FWhw7d"
 msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "Um teclado de piano de dó a si. Teclas pressionadas: {notes}."
@@ -1254,11 +1269,6 @@ msgstr "Um teclado de piano de dó a si. Teclas pressionadas: {notes}."
 msgctxt "0kfXGd"
 msgid "{count, plural, one {# note} other {# notes}}"
 msgstr "{count, plural, one {# nota} other {# notas}}"
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "S7Oawr"
-msgid "By ear"
-msgstr "De ouvido"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "nfwiHT"
@@ -1929,16 +1939,16 @@ msgctxt "iHeHi6"
 msgid "Silicon"
 msgstr "Silício"
 
-#. Shows the notes on the five-line music staff (not sheet music) instead of guitar tab.
+#. Shows the melody as music notes on five lines, rather than numbered guitar frets.
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "gFJ4sU"
-msgid "Staff"
-msgstr "Pentagrama"
+msgctxt "7-Domh"
+msgid "Notes"
+msgstr "Notas"
 
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "1xqT9N"
-msgid "Tab"
-msgstr "Tablatura"
+msgctxt "RpejPq"
+msgid "Guitar frets"
+msgstr "Casas da guitarra"
 
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "yYzCD2"
@@ -1951,9 +1961,9 @@ msgid "Tempo"
 msgstr "Andamento"
 
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "F2244X"
-msgid "{tempo} bpm"
-msgstr "{tempo} bpm"
+msgctxt "m5IhOG"
+msgid "{tempo} beats/min"
+msgstr "{tempo} batidas/min"
 
 #: src/activities/notation-player/notation-player-activity.tsx
 msgctxt "ZLkshx"
@@ -2721,9 +2731,9 @@ msgid "Place {event} on the timeline"
 msgstr "Posicionar {event} na linha do tempo"
 
 #: src/activities/timeline/timeline-tray.tsx
-msgctxt "Mz-N9C"
-msgid "Drag onto the timeline"
-msgstr "Arraste para a linha do tempo"
+msgctxt "VvAPB9"
+msgid "Drag onto the timeline."
+msgstr "Arraste para a linha do tempo."
 
 #: src/activities/unit-circle/unit-circle-activity.tsx
 msgctxt "Btkcyy"
@@ -3430,11 +3440,6 @@ msgstr "Sua equipe"
 msgctxt "YTtnhN"
 msgid "What if · {setting}"
 msgstr "E se · {setting}"
-
-#: src/lesson/steps/challenge/challenge-intro.tsx
-msgctxt "YVTWsk"
-msgid "Challenge · {setting}"
-msgstr "Desafio · {setting}"
 
 #: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "KV-6ml"

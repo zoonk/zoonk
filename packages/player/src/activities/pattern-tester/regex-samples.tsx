@@ -3,7 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ACTIVITY_CARD_CLASS } from "../_components/activity-canvas";
+import { ACTIVITY_CARD_CLASS, ACTIVITY_LINE_CLASS } from "../_components/activity-canvas";
 import { keyedByPosition } from "../_utils/position-keys";
 import { type SampleResult, countPassing } from "./pattern-results";
 
@@ -47,8 +47,9 @@ function SampleRow({ result, shouldMatch }: { result: SampleResult; shouldMatch:
     <li
       className={cn(
         ACTIVITY_CARD_CLASS,
-        "flex min-h-11 items-center gap-2 py-2 font-mono text-base",
-        !result.passes && "border-destructive/50 bg-destructive/10",
+        "flex min-h-11 items-center gap-2 py-2 font-mono text-sm",
+        result.passes && cn(ACTIVITY_LINE_CLASS.right, "bg-success/10"),
+        !result.passes && cn(ACTIVITY_LINE_CLASS.wrong, "bg-destructive/10"),
       )}
     >
       <MarkedSample result={result} shouldMatch={shouldMatch} />
@@ -112,8 +113,7 @@ export function RegexSampleList({
           : keyedByPosition(samples, (sample) => sample).map(({ item, key }) => (
               <li
                 className={cn(
-                  ACTIVITY_CARD_CLASS,
-                  "flex min-h-11 items-center py-2 font-mono text-base whitespace-pre",
+                  "border-border flex min-h-11 items-center border-b py-2 font-mono text-sm whitespace-pre",
                 )}
                 key={key}
               >

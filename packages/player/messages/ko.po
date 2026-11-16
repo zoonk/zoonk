@@ -183,6 +183,16 @@ msgctxt "ZmADei"
 msgid "The sound couldn't load. You can still see every note."
 msgstr "소리를 불러오지 못했어요. 그래도 모든 음표를 볼 수 있어요."
 
+#: src/activities/_components/guitar-fretboard.tsx
+msgctxt "MgBNC_"
+msgid "Play without pressing a fret"
+msgstr "프렛을 누르지 않고 연주"
+
+#: src/activities/_components/guitar-fretboard.tsx
+msgctxt "hKgOZu"
+msgid "Don't play this string"
+msgstr "이 줄은 연주하지 않음"
+
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
 msgid "{runtime} didn't load. Check your connection and try again."
@@ -326,9 +336,9 @@ msgid "Take the quote out"
 msgstr "인용문 빼기"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "fnHca8"
-msgid "Pick the quote that best supports the claim"
-msgstr "주장을 가장 잘 뒷받침하는 인용문을 고르세요"
+msgctxt "tNI8yF"
+msgid "Tap or drag the quote that best supports the claim"
+msgstr "주장을 가장 잘 뒷받침하는 인용문을 누르거나 끌어다 놓으세요"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "6g7-6N"
@@ -341,9 +351,9 @@ msgid "Take the reasoning out"
 msgstr "논리적 설명 빼기"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
-msgctxt "X3GSpA"
-msgid "Pick how the quote proves the claim"
-msgstr "인용문이 주장을 어떻게 뒷받침하는지 고르세요"
+msgctxt "x197fZ"
+msgid "Tap or drag how the quote proves the claim"
+msgstr "인용문이 주장을 어떻게 입증하는지 설명한 내용을 누르거나 끌어다 놓으세요"
 
 #: src/activities/argument-builder/argument-builder-activity.tsx
 msgctxt "HmrHXg"
@@ -614,6 +624,11 @@ msgid "{cause} picked. Now pick what it led to."
 msgstr "{cause}을(를) 골랐어요. 이제 그 결과를 고르세요."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
+msgctxt "M2FAHj"
+msgid "Pick a cause, then pick what it led to."
+msgstr "원인을 고른 다음 그 결과를 고르세요."
+
+#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "m4T6j3"
 msgid "{count} of {total, plural, one {# link} other {# links}}"
 msgstr "{count}개 연결됨 / {total, plural, other {총 #개의 연결 고리}}"
@@ -622,11 +637,6 @@ msgstr "{count}개 연결됨 / {total, plural, other {총 #개의 연결 고리}
 msgctxt "qbRyCu"
 msgid "Causes and effects"
 msgstr "원인과 결과"
-
-#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
-msgctxt "M2FAHj"
-msgid "Pick a cause, then pick what it led to."
-msgstr "원인을 고른 다음 그 결과를 고르세요."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "WHQHly"
@@ -691,9 +701,9 @@ msgid "{span}: {change}."
 msgstr "{span}: {change}."
 
 #: src/activities/code-runner/code-runner-activity.tsx
-msgctxt "ydcluT"
-msgid "{count, plural, one {Line {lines} is yours} other {Lines {lines} are yours}}"
-msgstr "{count, plural, other {직접 작성할 줄: {lines}}}"
+msgctxt "KheRTj"
+msgid "{count, plural, one {Edit line {lines}} other {Edit lines {lines}}}"
+msgstr "{count, plural, other {{lines}번 줄을 수정하세요}}"
 
 #: src/activities/code-runner/code-runner-activity.tsx
 #: src/activities/code-tracer/tracer-parts.tsx
@@ -885,7 +895,7 @@ msgstr "{number}번 칸, {row} 및 {column}:"
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "nyV23o"
 msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
-msgstr "{what}: {count}/{total, plural, =0 {#칸} other {#칸}}"
+msgstr "{what}: {count} / {total, plural, =0 {#칸} other {#칸}}"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
@@ -1246,6 +1256,11 @@ msgid "Piano keys"
 msgstr "피아노 건반"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
+msgctxt "r2N9bw"
+msgid "A half step is the distance to the next key, counting black keys."
+msgstr "반음은 검은 건반을 포함해 바로 옆 건반까지의 간격이에요."
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-activity.tsx
 msgctxt "FWhw7d"
 msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "C부터 B까지의 피아노 건반이에요. 누른 음: {notes}."
@@ -1254,11 +1269,6 @@ msgstr "C부터 B까지의 피아노 건반이에요. 누른 음: {notes}."
 msgctxt "0kfXGd"
 msgid "{count, plural, one {# note} other {# notes}}"
 msgstr "{count, plural, other {#개의 음}}"
-
-#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "S7Oawr"
-msgid "By ear"
-msgstr "듣고 맞히기"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "nfwiHT"
@@ -1929,16 +1939,16 @@ msgctxt "iHeHi6"
 msgid "Silicon"
 msgstr "규소"
 
-#. Shows the notes on the five-line music staff (not sheet music) instead of guitar tab.
+#. Shows the melody as music notes on five lines, rather than numbered guitar frets.
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "gFJ4sU"
-msgid "Staff"
-msgstr "오선"
+msgctxt "7-Domh"
+msgid "Notes"
+msgstr "오선보"
 
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "1xqT9N"
-msgid "Tab"
-msgstr "타브"
+msgctxt "RpejPq"
+msgid "Guitar frets"
+msgstr "기타 프렛"
 
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "yYzCD2"
@@ -1951,8 +1961,8 @@ msgid "Tempo"
 msgstr "템포"
 
 #: src/activities/notation-player/notation-options.tsx
-msgctxt "F2244X"
-msgid "{tempo} bpm"
+msgctxt "m5IhOG"
+msgid "{tempo} beats/min"
 msgstr "분당 {tempo}박"
 
 #: src/activities/notation-player/notation-player-activity.tsx
@@ -2721,9 +2731,9 @@ msgid "Place {event} on the timeline"
 msgstr "연표에 {event} 배치하기"
 
 #: src/activities/timeline/timeline-tray.tsx
-msgctxt "Mz-N9C"
-msgid "Drag onto the timeline"
-msgstr "연표로 끌어 놓으세요"
+msgctxt "VvAPB9"
+msgid "Drag onto the timeline."
+msgstr "연대표에 끌어다 놓으세요."
 
 #: src/activities/unit-circle/unit-circle-activity.tsx
 msgctxt "Btkcyy"
@@ -3430,11 +3440,6 @@ msgstr "내 팀"
 msgctxt "YTtnhN"
 msgid "What if · {setting}"
 msgstr "만약에 · {setting}"
-
-#: src/lesson/steps/challenge/challenge-intro.tsx
-msgctxt "YVTWsk"
-msgid "Challenge · {setting}"
-msgstr "챌린지 · {setting}"
 
 #: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "KV-6ml"

@@ -73,8 +73,10 @@ export function ActivityPlot({
 export function ActivityPlotGridY({
   format,
   ticks,
+  align = "end",
 }: {
   format: (value: number) => string;
+  align?: "start" | "end";
   ticks: readonly number[];
 }) {
   const { x, y } = usePlotScales();
@@ -93,9 +95,9 @@ export function ActivityPlotGridY({
           <text
             className="fill-muted-foreground"
             dominantBaseline="middle"
-            x={left - TICK_GAP}
+            x={align === "start" ? 0 : left - TICK_GAP}
             y={y.toPixel(tick)}
-            textAnchor="end"
+            textAnchor={align}
           >
             {format(tick)}
           </text>

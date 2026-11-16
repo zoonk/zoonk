@@ -1,4 +1,4 @@
-import { isRoundedAnswer } from "@zoonk/utils/rounded-answer";
+import { countDecimalPlaces, isRoundedAnswer } from "@zoonk/utils/rounded-answer";
 import { type ActivityAnswer } from "./activity-answer-schema";
 import { type ActivityStepContent, getActivityTemplate } from "./activity-templates";
 import { matchesExpectedAnswer } from "./templates/_utils/grade-interaction";
@@ -34,4 +34,22 @@ export function checkActivityAnswer(content: ActivityStepContent, answer: Activi
   const expected = template?.computeExpected(content.fields) ?? null;
 
   return expected !== null && matchesExpectedAnswer(expected, answer);
+}
+
+export function getActivityDecimalPlaces(content: ActivityStepContent): number | null {
+  const { check } = content;
+
+  if (check.kind !== "numeric" || Number.isInteger(check.answer)) {
+    return null;
+  }
+
+  return (
+    Array.from({ length: countDecimalPlaces(check.answer) + 1 }, (_, places) => places).find(
+      (places) => {
+        const scale = 10 ** places;
+        const value = Math.round(check.answer * scale) / scale;
+        return checkActivityAnswer(content, { kind: "numeric", value });
+      },
+    ) ?? null
+  );
 }

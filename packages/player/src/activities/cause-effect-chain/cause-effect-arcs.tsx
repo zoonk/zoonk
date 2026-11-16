@@ -8,13 +8,12 @@ export const ARC_GUTTER = 48;
 
 const END_OFFSET = 5;
 const ARC_STROKE = 2.5;
-const MARKER_SIZE = 7;
+const MARKER_SIZE = 10;
 const MARKER_BOX = 10;
 const MARKER_REF_X = 8;
-const MARKER_TIP_EDGE = 10;
+const MARKER_TIP_EDGE = MARKER_BOX - 1 + ARC_STROKE / 2;
 
-/** The head's rounded tip reaches past the path's end: marker units scale with the stroke. */
-const HEAD_REACH = ((MARKER_TIP_EDGE - MARKER_REF_X) * MARKER_SIZE * ARC_STROKE) / MARKER_BOX;
+const HEAD_REACH = ((MARKER_TIP_EDGE - MARKER_REF_X) * MARKER_SIZE) / MARKER_BOX;
 
 type ArcState = LinkResult["state"] | "pending" | "made";
 
@@ -23,7 +22,7 @@ const ARC_STATES: readonly ArcState[] = ["correct", "incorrect", "made", "missed
 const ARC_CLASS: Record<ArcState, string> = {
   correct: "text-success-text",
   incorrect: "text-destructive-text",
-  made: "text-viz-highlight",
+  made: "text-foreground",
   missed: "text-success-text/70",
   pending: "text-viz-highlight/70",
 };
@@ -52,6 +51,7 @@ export function CauseEffectArcs({
             className={ARC_CLASS[state]}
             id={`${markerId}-${state}`}
             key={state}
+            markerUnits="userSpaceOnUse"
             markerHeight={MARKER_SIZE}
             markerWidth={MARKER_SIZE}
             orient="auto"
@@ -64,7 +64,7 @@ export function CauseEffectArcs({
               d="M1 1 L9 5 L1 9"
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={2}
+              strokeWidth={ARC_STROKE}
             />
           </marker>
         ))}

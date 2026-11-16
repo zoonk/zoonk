@@ -48,7 +48,7 @@ function NodeCard({
         className={cn(
           ACTIVITY_CARD_CLASS,
           ACTIVITY_PRESS_CLASS,
-          "flex w-full flex-col items-start gap-0.5 motion-safe:transition-colors",
+          "flex h-full w-full flex-col items-start gap-0.5 motion-safe:transition-colors",
           isCause && "border-viz-highlight ring-viz-highlight/30 ring-2",
           isCandidate && "hover:border-viz-highlight border-dashed",
           !disabled && !isCause && !isCandidate && "hover:bg-accent",
@@ -166,6 +166,15 @@ export function CauseEffectChainActivity({
 
   return (
     <ActivityCanvas labelId={labelId}>
+      {!isExploring && (
+        <p
+          aria-live="polite"
+          aria-hidden={isLocked}
+          className={cn("text-muted-foreground text-sm text-pretty", isLocked && "invisible")}
+        >
+          {notice || t("Pick a cause, then pick what it led to.")}
+        </p>
+      )}
       {!isLessonChain && check.kind === "interaction" && (
         <ActivityCanvasLabel className="self-end tabular-nums">
           {t("{count} of {total, plural, one {# link} other {# links}}", {
@@ -178,7 +187,11 @@ export function CauseEffectChainActivity({
       <div className="relative" style={{ paddingLeft: ARC_GUTTER }}>
         <CauseEffectArcs centers={centers} links={arcs} order={order} />
 
-        <ol aria-label={t("Causes and effects")} className="flex flex-col gap-2" ref={containerRef}>
+        <ol
+          aria-label={t("Causes and effects")}
+          className="grid auto-rows-fr gap-2"
+          ref={containerRef}
+        >
           {nodes.map((node) => (
             <NodeCard
               cardRef={register(node.id)}
@@ -211,13 +224,6 @@ export function CauseEffectChainActivity({
           onRemove={(link) => update(toggleLink(links, link))}
           showWhy={isGuided || isLocked}
         />
-
-        {/* Last in the card, so it can go once checked without moving anything above it. */}
-        {!isLocked && (
-          <p aria-live="polite" className="text-muted-foreground text-sm">
-            {notice || t("Pick a cause, then pick what it led to.")}
-          </p>
-        )}
       </div>
 
       <ActivityTextAlternative>

@@ -40,12 +40,14 @@ export type Reveal = {
  */
 export function getReveal({
   chip,
+  parts = [],
   feedback,
   room,
   title,
   visible,
 }: {
   chip: Span | null;
+  parts?: readonly Span[];
   feedback: Span;
   room: number;
   title: Span | null;
@@ -53,25 +55,38 @@ export function getReveal({
 }): Reveal {
   const whole = getWholeFeedbackDelta(feedback, visible);
 
-  function leaveWhole(span: Span, clear: number): Reveal | null {
-    const top = span.top - visible.top;
-    const out = Math.ceil(span.bottom - visible.top) + clear;
+  const protectedParts = [
+    ...parts,
+    ...(title ? [title] : []),
+    ...(chip ? [{ bottom: chip.bottom + CLEAR, top: chip.top }] : []),
+  ];
 
-    if (whole <= top || whole >= out) {
-      return null;
-    }
+  const cuts = protectedParts
+    .map((part) => ({
+      bottom: Math.ceil(part.bottom - visible.top),
+      top: Math.floor(part.top - visible.top),
+    }))
+    .toSorted((first, second) => first.top - second.top)
+    .reduce<Span[]>((merged, part) => {
+      const last = merged.at(-1);
 
-    const kept = Math.floor(top);
+      if (last && part.top < last.bottom) {
+        last.bottom = Math.max(last.bottom, part.bottom);
+      } else {
+        merged.push(part);
+      }
 
-    if (out > room && feedback.bottom - visible.bottom <= kept) {
-      return { delta: kept, extraRoom: 0 };
-    }
+      return merged;
+    }, []);
 
-    return { delta: out, extraRoom: Math.max(0, out - room) };
+  const cut = cuts.find((part) => whole > part.top && whole < part.bottom);
+
+  if (!cut) {
+    return { delta: whole, extraRoom: Math.max(0, whole - room) };
   }
 
-  return (
-    (title && leaveWhole(title, 0)) ??
-    (chip && leaveWhole(chip, CLEAR)) ?? { delta: whole, extraRoom: 0 }
-  );
+  const delta =
+    cut.bottom > room && feedback.bottom - visible.bottom <= cut.top ? cut.top : cut.bottom;
+
+  return { delta, extraRoom: Math.max(0, delta - room) };
 }

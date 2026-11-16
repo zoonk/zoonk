@@ -1,3 +1,4 @@
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
@@ -5,6 +6,7 @@ import {
   checkActivity,
   expectVerdict,
   openActivity,
+  openActivityToResume,
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
@@ -34,6 +36,56 @@ function nextFrame() {
 }
 
 describe("feedback after a check", () => {
+  it.each([640, 704, 712, 836, 844, 900])(
+    "keeps map captions and marker buttons whole on first check and reopen at phone height %i",
+    async (height) => {
+      await onDevice({ reducedMotion: "reduce" }, () =>
+        atViewport({ height, width: 390 }, async () => {
+          const { reopenSaved } = openActivityToResume(activityContentFixtures.mapExplorer);
+          await page.getByRole("button", { name: "Brewery on Broad Street" }).click();
+
+          await page
+            .getByRole("radio", { name: "Their water didn't come from the Broad Street pump" })
+            .click();
+
+          await checkActivity();
+          await expectVerdict("Correct!");
+
+          for (const phase of ["first check", "reopened"]) {
+            if (phase === "reopened") {
+              // oxlint-disable-next-line no-await-in-loop -- The second phase uses the saved first attempt.
+              await reopenSaved();
+              // oxlint-disable-next-line no-await-in-loop -- The reopened screen must finish showing its result.
+              await expectVerdict("Correct!");
+            }
+            // oxlint-disable-next-line no-await-in-loop -- Measure each phase after its reveal settles.
+            await nextFrame();
+            // oxlint-disable-next-line no-await-in-loop -- The resize observer runs after the first frame.
+            await nextFrame();
+
+            const top = page
+              .getByRole("main", { name: "Lesson content" })
+              .element()
+              .getBoundingClientRect().top;
+
+            const sliced = [
+              ...document.querySelectorAll(
+                '[data-slot="activity-canvas"] p, [data-slot="activity-canvas"] button',
+              ),
+            ]
+              .filter((element) => {
+                const box = element.getBoundingClientRect();
+                return box.height > 0 && box.top < top - 1 && box.bottom > top + 1;
+              })
+              .map((element) => element.getAttribute("aria-label") ?? element.textContent);
+
+            expect({ phase, sliced }).toStrictEqual({ phase, sliced: [] });
+          }
+        }),
+      );
+    },
+  );
+
   it("shows the whole feedback on a tablet, leaving no sliver of the chip over the question", async () => {
     await onDevice({ reducedMotion: "reduce" }, () =>
       atViewport(LANDSCAPE_TABLET, async () => {

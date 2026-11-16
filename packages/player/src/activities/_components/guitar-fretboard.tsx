@@ -1,13 +1,13 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { Circle, X } from "lucide-react";
+import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { GUITAR_TUNING, type GuitarVoicing, stringNoteMidi } from "../_utils/guitar-voicing";
 import { keepArrowKeys } from "../_utils/keep-arrow-keys";
 import { ActivityHorizontalScroll } from "./activity-horizontal-scroll";
 import { NoteMark, type NoteMarkKind } from "./note-mark";
-
-const MUTED_MARK = "×";
 
 export const FRETBOARD_SPAN = 4;
 
@@ -39,7 +39,7 @@ function gridColumns(isInput: boolean): React.CSSProperties {
 
 function OpenOrMuted({ fret }: { fret: number | null | undefined }) {
   if (fret === null) {
-    return <span className="text-muted-foreground text-sm font-semibold">{MUTED_MARK}</span>;
+    return <X aria-hidden="true" className="text-muted-foreground size-3.5" />;
   }
 
   return fret === 0 ? <span className="border-foreground size-3.5 rounded-full border-2" /> : null;
@@ -115,7 +115,7 @@ function StringPicker({
                   isChecked ? "text-foreground" : "text-muted-foreground/40",
                 )}
               >
-                {MUTED_MARK}
+                <X aria-hidden="true" className="size-3.5" />
               </span>
             )}
 
@@ -174,6 +174,7 @@ function StringRow({
 }
 
 export function GuitarFretboard(props: FretboardProps) {
+  const t = useExtracted();
   const name = useId();
   const { firstFret, label, onChange, stringNames } = props;
 
@@ -219,9 +220,23 @@ export function GuitarFretboard(props: FretboardProps) {
   );
 
   // The shape alone always fits; the strings to pick from can be wider than a narrow card.
-  return onChange ? (
-    <ActivityHorizontalScroll box={{ label }}>{board}</ActivityHorizontalScroll>
-  ) : (
-    board
+  return (
+    <div className="flex flex-col gap-2">
+      {onChange ? (
+        <ActivityHorizontalScroll box={{ label }}>{board}</ActivityHorizontalScroll>
+      ) : (
+        board
+      )}
+      <div className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
+        <span className="flex items-center gap-1.5">
+          <Circle aria-hidden="true" className="size-3.5 shrink-0" />
+          {t("Play without pressing a fret")}
+        </span>
+        <span className="flex items-center gap-1.5">
+          <X aria-hidden="true" className="size-3.5 shrink-0" />
+          {t("Don't play this string")}
+        </span>
+      </div>
+    </div>
   );
 }

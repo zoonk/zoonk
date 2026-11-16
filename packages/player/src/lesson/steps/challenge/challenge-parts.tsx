@@ -24,7 +24,7 @@ export function ChallengeLabel({
   id?: string;
 }) {
   return (
-    <Tag className={cn("text-label", className)} id={id}>
+    <Tag className={cn("text-muted-foreground text-xs font-medium", className)} id={id}>
       {children}
     </Tag>
   );

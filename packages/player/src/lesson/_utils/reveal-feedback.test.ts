@@ -1,3 +1,4 @@
+import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { getReveal } from "./reveal-feedback";
 
@@ -168,5 +169,87 @@ describe(getReveal, () => {
     });
 
     expect(delta).toBe(684);
+  });
+});
+
+describe("whole canvas controls", () => {
+  it("resolves overlapping protected parts as one interval", () => {
+    const parts = [
+      { bottom: 450, top: 400 },
+      { bottom: 500, top: 430 },
+    ];
+
+    const reveal = getReveal({
+      chip: null,
+      feedback: { bottom: 1010, top: 600 },
+      parts,
+      room: 360,
+      title: null,
+      visible,
+    });
+
+    for (const part of parts) {
+      expect(
+        part.top - reveal.delta >= visible.top || part.bottom - reveal.delta <= visible.top,
+      ).toBe(true);
+    }
+  });
+
+  it("keeps every protected part whole without cutting fitting feedback", () => {
+    fc.assert(
+      fc.property(
+        fc.array(
+          fc.record({
+            height: fc.integer({ max: 100, min: 1 }),
+            top: fc.integer({ max: 1100, min: 0 }),
+          }),
+          { maxLength: 30 },
+        ),
+        fc.integer({ max: 2000, min: 700 }),
+        (items, availableRoom) => {
+          const parts = items.map(({ top, height }) => ({ bottom: top + height, top }));
+          const feedback = { bottom: 1400, top: 1200 };
+
+          const { delta, extraRoom } = getReveal({
+            chip: null,
+            feedback,
+            parts,
+            room: availableRoom,
+            title: null,
+            visible,
+          });
+
+          const applied = Math.min(delta, availableRoom + extraRoom);
+
+          expect(
+            parts.every(
+              (part) => part.top - applied >= visible.top || part.bottom - applied <= visible.top,
+            ),
+          ).toBe(true);
+
+          expect(feedback.top - applied).toBeGreaterThanOrEqual(visible.top);
+          expect(feedback.bottom - applied).toBeLessThanOrEqual(visible.bottom);
+          expect(extraRoom).toBeGreaterThanOrEqual(0);
+        },
+      ),
+    );
+  });
+});
+
+describe("available scroll room", () => {
+  it("provides the margin's missing room so clamping cannot recut an earlier control", () => {
+    const part = { bottom: 803, top: 750 };
+
+    const { delta, extraRoom } = getReveal({
+      chip: null,
+      feedback: { bottom: 1400, top: 1200 },
+      parts: [part],
+      room: 700,
+      title: null,
+      visible,
+    });
+
+    const applied = Math.min(delta, 700 + extraRoom);
+    expect(part.top - applied >= visible.top || part.bottom - applied <= visible.top).toBe(true);
   });
 });
