@@ -204,10 +204,10 @@ type MapRegion = { id: string; name: string; tone: string };
 const UNTINTED_TONES = new Set(["context", "focus"]);
 
 /**
- * The tinted regions to draw plain: one whose name was left out and whose tint the legend doesn't
- * explain would read as a stray shape.
+ * The tinted regions to leave off the map: one whose name was left out and whose tint the legend
+ * doesn't explain would read as a stray shape.
  */
-export function plainRegions({
+export function strayRegions({
   labels,
   legendTones,
   regions,

@@ -5,8 +5,8 @@ import {
   type MapPoint,
   fitViewport,
   placeMapLabels,
-  plainRegions,
   spreadPins,
+  strayRegions,
 } from "./map-viewport";
 
 const map = { height: 500, width: 1000 };
@@ -171,7 +171,7 @@ describe(placeMapLabels, () => {
   });
 });
 
-describe(plainRegions, () => {
+describe(strayRegions, () => {
   const regions = [
     { id: "soho", name: "Soho", tone: "context" },
     { id: "golden-square", name: "Golden Square", tone: "groupC" },
@@ -184,10 +184,10 @@ describe(plainRegions, () => {
     { kind: "street" as const, text: "Oxford Street" },
   ];
 
-  it("draws a tinted region plain when its name has no room on the map", () => {
+  it("leaves out a tinted region whose name has no room on the map", () => {
     const spots = [{ x: 10, y: 10 }, null, { x: 50, y: 50 }];
 
-    expect(plainRegions({ labels, legendTones: [], regions, spots })).toStrictEqual([
+    expect(strayRegions({ labels, legendTones: [], regions, spots })).toStrictEqual([
       "soho-square",
     ]);
   });
@@ -195,6 +195,6 @@ describe(plainRegions, () => {
   it("keeps a region's tint when the legend says what it means", () => {
     const spots = [{ x: 10, y: 10 }, null, { x: 50, y: 50 }];
 
-    expect(plainRegions({ labels, legendTones: ["groupC"], regions, spots })).toStrictEqual([]);
+    expect(strayRegions({ labels, legendTones: ["groupC"], regions, spots })).toStrictEqual([]);
   });
 });

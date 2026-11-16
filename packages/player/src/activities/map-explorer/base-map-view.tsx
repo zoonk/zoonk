@@ -2,7 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BaseMapDrawing, type BaseMapRegionTone } from "../_assets/base-maps/base-map-drawing";
-import { type MapBox, type MapPoint, placeMapLabels, plainRegions } from "./map-viewport";
+import { type MapBox, type MapPoint, placeMapLabels, strayRegions } from "./map-viewport";
 
 const REGION_CLASS: Record<BaseMapRegionTone, string> = {
   context: "fill-muted",
@@ -38,7 +38,7 @@ function MapShapes({
   labelText: (key: string | null, text: string) => string;
   pixelSize: number;
 }) {
-  const plain = plainRegions({
+  const stray = strayRegions({
     labels: drawing.labels,
     legendTones: drawing.legend.map((item) => item.tone),
     regions: drawing.regions,
@@ -50,15 +50,17 @@ function MapShapes({
       {drawing.sphere && <path className="fill-viz-secondary-soft" d={drawing.sphere} />}
 
       <g className="stroke-viz-grid" strokeLinejoin="round">
-        {drawing.regions.map((region) => (
-          <path
-            className={REGION_CLASS[plain.includes(region.id) ? "context" : region.tone]}
-            d={region.path}
-            key={region.id}
-            strokeWidth={0.75}
-            vectorEffect="non-scaling-stroke"
-          />
-        ))}
+        {drawing.regions
+          .filter((region) => !stray.includes(region.id))
+          .map((region) => (
+            <path
+              className={REGION_CLASS[region.tone]}
+              d={region.path}
+              key={region.id}
+              strokeWidth={0.75}
+              vectorEffect="non-scaling-stroke"
+            />
+          ))}
       </g>
 
       <g className="stroke-background fill-none" strokeLinecap="round">
