@@ -3,7 +3,7 @@ import {
   activityContentFixtures,
   engineModeFixtures,
 } from "@zoonk/testing/fixtures/activity-contents";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { page } from "vitest/browser";
 import {
   checkActivity,
@@ -57,7 +57,10 @@ const REAL_TIME_TEST_TIMEOUT_MS = 30_000;
 
 const PHONE = { height: 812, width: 375 };
 const PHONE_LANDSCAPE = { height: 375, width: 812 };
+const SMALL_PHONE = { height: 640, width: 320 };
 const HALF_TAP_TARGET_PX = 21;
+// Above a white key's rounded bottom corners, where its whole width takes a tap.
+const KEY_CORNER_PX = 12;
 const SUBPIXEL_PX = 1;
 
 const { byEar, byEarChoice } = engineModeFixtures.keyboardFretboard;
@@ -84,13 +87,11 @@ function exploredStep(id: string) {
 }
 
 function cutOffKeys(names: string[]) {
-  const shown = document
-    .querySelector("[data-slot='piano-keyboard-scroll']")
-    ?.getBoundingClientRect();
+  const shown = page.getByRole("group", { name: "Piano keys" }).element().getBoundingClientRect();
 
   return names.filter((name) => {
     const key = pianoKey(name).element().getBoundingClientRect();
-    return !shown || key.left < shown.left - SUBPIXEL_PX || key.right > shown.right + SUBPIXEL_PX;
+    return key.left < shown.left - SUBPIXEL_PX || key.right > shown.right + SUBPIXEL_PX;
   });
 }
 
@@ -100,7 +101,7 @@ function tapsLandOn(key: Element) {
   const center = left + width / 2;
 
   return [center - HALF_TAP_TARGET_PX, center + HALF_TAP_TARGET_PX].every(
-    (x) => document.elementFromPoint(x, bottom - 4)?.closest("button") === key,
+    (x) => document.elementFromPoint(x, bottom - KEY_CORNER_PX)?.closest("button") === key,
   );
 }
 
@@ -109,6 +110,34 @@ async function pickFret({ position, string }: { position: string; string: string
     .getByRole("radiogroup", { name: string })
     .getByRole("radio", { name: position })
     .click();
+}
+
+/** The middle of what a key shows at its foot: its note's mark, or its letter. */
+function noteCenter(name: string) {
+  const box = pianoKey(name).element().querySelector("span")?.getBoundingClientRect();
+
+  if (!box) {
+    return null;
+  }
+
+  return { x: Math.round(box.left + box.width / 2), y: Math.round(box.top + box.height / 2) };
+}
+
+function keySpans() {
+  return [...document.querySelectorAll("[data-slot='piano-key']")].map((key) => {
+    const { left, width } = key.getBoundingClientRect();
+    return { left: Math.round(left), width: Math.round(width) };
+  });
+}
+
+function marksOutsideTheirKey() {
+  return [...document.querySelectorAll("[data-slot='piano-key'] [data-slot='note-mark']")].filter(
+    (mark) => {
+      const inner = mark.getBoundingClientRect();
+      const key = mark.closest("[data-slot='piano-key']")?.getBoundingClientRect();
+      return !key || inner.left < key.left || inner.right > key.right;
+    },
+  );
 }
 
 function tapRhythm() {
@@ -127,14 +156,27 @@ describe("music activities", () => {
 
   it("keyboard: changing one note turns C major into C minor", async () => {
     openActivity({ template: "keyboardFretboard" });
-    await expect.element(page.getByText("C minor", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("C major", { exact: true })).toBeVisible();
     await expect.element(pianoKey("E")).toHaveAttribute("aria-pressed", "true");
     await expect.element(page.getByText("Same chord on guitar")).toBeVisible();
     await pianoKey("E").click();
     await pianoKey("E flat").click();
+    await expect.element(page.getByText("Your notes", { exact: true })).toBeVisible();
+    await expectCount(page.getByText("C minor", { exact: true }), 0);
     await checkActivity();
     await expectVerdict("Correct!");
+    await expect.element(page.getByText("C minor", { exact: true })).toBeVisible();
     await expect.element(page.getByText("C, E♭, G")).toBeVisible();
+  });
+
+  it("keyboard: pressing C puts its mark where its letter was, so nothing moves", async () => {
+    openActivity({ content: byEar, template: "keyboardFretboard" });
+    await expect.element(pianoKey("C")).toHaveAttribute("aria-pressed", "false");
+    const letter = noteCenter("C");
+
+    await pianoKey("C").click();
+    await expect.element(pianoKey("C")).toHaveAttribute("aria-pressed", "true");
+    expect(noteCenter("C")).toStrictEqual(letter);
   });
 
   it("keyboard: adding a note without taking one away isn't minor", async () => {
@@ -337,7 +379,7 @@ describe("music activities", () => {
 describe("music activities with a keyboard only", () => {
   it("keyboard: changing one note turns C major into C minor", async () => {
     openActivity({ template: "keyboardFretboard" });
-    await expect.element(page.getByText("C minor", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("C major", { exact: true })).toBeVisible();
     await expect.element(pianoKey("E")).toHaveAttribute("aria-pressed", "true");
     await expect.element(page.getByText("Same chord on guitar")).toBeVisible();
 
@@ -352,5 +394,31 @@ describe("music activities with a keyboard only", () => {
 
     await expectVerdict("Correct!");
     await expect.element(page.getByText("C, E♭, G")).toBeVisible();
+  });
+
+  it("keyboard: in large text on a small phone, every mark sits in its key and Check moves no key", async () => {
+    document.documentElement.style.fontSize = "200%";
+
+    onTestFinished(() => {
+      document.documentElement.style.removeProperty("font-size");
+    });
+
+    await atViewport(SMALL_PHONE, async () => {
+      openActivity({ template: "keyboardFretboard" });
+      await focusOn(pianoKey("C"));
+      await press("ArrowRight", 4);
+      await press("Enter");
+      await press("ArrowLeft");
+      await press("Enter");
+      await expect.element(pianoKey("E flat")).toHaveAttribute("aria-pressed", "true");
+      expect(marksOutsideTheirKey()).toStrictEqual([]);
+
+      const answering = keySpans();
+      await focusOn(page.getByRole("button", { name: "Check" }));
+      await press("Enter");
+      await expectVerdict("Correct!");
+      expect(marksOutsideTheirKey()).toStrictEqual([]);
+      expect(keySpans()).toStrictEqual(answering);
+    });
   });
 });

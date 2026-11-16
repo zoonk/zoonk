@@ -20,6 +20,7 @@ import {
   checkedMarks,
   expectedPitches,
   initialPitches,
+  keyboardHeading,
   pitchSpelling,
   pitchesToNotes,
   targetPitches,
@@ -27,7 +28,7 @@ import {
   targetSpelling,
   togglePitch,
 } from "./keyboard-fretboard-notes";
-import { SoundAsText, useCantListen } from "./sound-as-text";
+import { CantListenSwitch, SoundAsText, useCantListen } from "./sound-as-text";
 
 type KeyboardFretboardProps = ActivityRendererProps<"keyboardFretboard">;
 
@@ -69,63 +70,70 @@ function PianoBoard(props: KeyboardFretboardProps) {
     }
   }
 
+  const soundUnavailable = piano.status === "unavailable";
+  const offersWayOut = fields.byEar && phase === "answering" && (cantListen || !soundUnavailable);
+
   return (
-    <ActivityCanvas labelId={labelId}>
-      <KeyboardFretboardHeader
-        byEar={
-          fields.byEar
-            ? {
-                isRevealed: phase !== "answering",
-                onPlay: cantListen ? null : () => void piano.play(targetSound(fields.target)),
-              }
-            : null
-        }
-        notes={showAnswer ? shown.map((pitch) => spell(pitch)) : notes}
-        onHear={() =>
-          void piano.play(
-            together(
-              (showAnswer ? shown : pressed).map((pitch) => KEYBOARD_FROM + pitch),
-              { gap: CHORD_GAP },
-            ),
-          )
-        }
-        target={fields.target}
-      />
-
-      <PianoKeyboard
-        disabled={isChecked}
-        from={KEYBOARD_FROM}
-        label={t("Piano keys")}
-        marks={marks}
-        nameOf={(midi) => display(spell(midi))}
-        onPress={isChecked ? undefined : handlePress}
-        pressed={(midi) => pressed.includes(midi % OCTAVE)}
-        spokenNameOf={(midi) => spoken(spell(midi))}
-        to={KEYBOARD_TO}
-      />
-
-      {fields.byEar && !isChecked && (
-        <SoundAsText
-          cantListen={cantListen}
-          isAnswering={phase === "answering"}
-          notes={targetSpelling(fields.target)}
-          onCantListenChange={setCantListen}
-          soundUnavailable={piano.status === "unavailable"}
+    <>
+      <ActivityCanvas labelId={labelId}>
+        <KeyboardFretboardHeader
+          byEar={
+            fields.byEar
+              ? {
+                  isRevealed: phase !== "answering",
+                  onPlay: cantListen ? null : () => void piano.play(targetSound(fields.target)),
+                }
+              : null
+          }
+          heading={keyboardHeading({ content, phase, shown })}
+          notes={showAnswer ? shown.map((pitch) => spell(pitch)) : notes}
+          onHear={() =>
+            void piano.play(
+              together(
+                (showAnswer ? shown : pressed).map((pitch) => KEYBOARD_FROM + pitch),
+                { gap: CHORD_GAP },
+              ),
+            )
+          }
+          start={fields.start}
+          target={fields.target}
         />
-      )}
 
-      {fields.instruments.includes("guitar") && (
-        <GuitarMirror isChecked={showAnswer} pitches={shown} spell={spell} />
-      )}
+        <PianoKeyboard
+          disabled={isChecked}
+          from={KEYBOARD_FROM}
+          label={t("Piano keys")}
+          marks={marks}
+          nameOf={(midi) => display(spell(midi))}
+          onPress={isChecked ? undefined : handlePress}
+          pressed={(midi) => pressed.includes(midi % OCTAVE)}
+          spokenNameOf={(midi) => spoken(spell(midi))}
+          to={KEYBOARD_TO}
+        />
 
-      <ActivitySoundNote status={piano.status} />
+        {fields.byEar && !isChecked && (cantListen || soundUnavailable) && (
+          <SoundAsText notes={targetSpelling(fields.target)} />
+        )}
 
-      <ActivityTextAlternative>
-        {t("A piano keyboard from C to B. Pressed: {notes}.", {
-          notes: notes.length > 0 ? notes.map((note) => spoken(note)).join(", ") : t("none"),
-        })}
-      </ActivityTextAlternative>
-    </ActivityCanvas>
+        {fields.instruments.includes("guitar") && (
+          <GuitarMirror
+            kindOf={(pitch) => marks.get(KEYBOARD_FROM + pitch) ?? "new"}
+            pitches={shown}
+            spell={spell}
+          />
+        )}
+
+        <ActivitySoundNote status={piano.status} />
+
+        <ActivityTextAlternative>
+          {t("A piano keyboard from C to B. Pressed: {notes}.", {
+            notes: notes.length > 0 ? notes.map((note) => spoken(note)).join(", ") : t("none"),
+          })}
+        </ActivityTextAlternative>
+      </ActivityCanvas>
+
+      {offersWayOut && <CantListenSwitch cantListen={cantListen} onChange={setCantListen} />}
+    </>
   );
 }
 

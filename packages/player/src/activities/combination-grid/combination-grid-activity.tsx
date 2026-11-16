@@ -6,6 +6,7 @@ import { getActivityTemplate } from "@zoonk/core/library/activities/templates";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
+import { useCanvasQuestion } from "../_utils/canvas-question";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { GridBoard } from "./grid-board";
 import { GridCaption } from "./grid-caption";
@@ -116,6 +117,22 @@ function useGridDescription(fields: GridFields): string {
       );
 }
 
+/** The square is filled before the step asks about it, so its question waits for the last square. */
+function fillsFirst({
+  answer,
+  content,
+  fill,
+  isLocked,
+}: {
+  answer: CombinationGridProps["answer"];
+  content: Content;
+  fill: GridFill;
+  isLocked: boolean;
+}): boolean {
+  const isFilling = !isLocked && !completeFill(fill);
+  return isFilling && answer === null && content.check.kind !== "interaction";
+}
+
 export function CombinationGridActivity({
   answer,
   content,
@@ -155,6 +172,8 @@ export function CombinationGridActivity({
   }
 
   const counted = isChecked ? countedCells({ content, output, right }) : null;
+
+  useCanvasQuestion(fillsFirst({ answer, content, fill, isLocked }));
 
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>

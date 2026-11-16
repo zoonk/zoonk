@@ -54,7 +54,7 @@ test.describe("Mock answers on a bad connection", () => {
 
     await answerShown(page, answers);
 
-    const retrying = page.getByRole("status").filter({ hasText: "Not saved yet · retrying" });
+    const retrying = page.getByRole("status").filter({ hasText: "Your answer isn't saved yet" });
     await expect(retrying).toBeVisible();
     await expect(retrying.getByRole("button", { name: "Try again" })).toBeEnabled();
     await page.clock.fastForward(1000);

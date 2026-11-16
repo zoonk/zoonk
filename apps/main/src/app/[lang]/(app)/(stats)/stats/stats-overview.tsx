@@ -64,6 +64,7 @@ async function BeltTile({ level }: { level: BeltLevelDetails }) {
   return (
     <StatTile
       className={TILE_CLASS}
+      opens
       icon={
         // In the 14px box every other tile's icon has, so each tile's label starts at one edge.
         <span className="flex size-3.5 items-center justify-center">
@@ -90,6 +91,7 @@ async function EnergyTile({ energy }: { energy: Pick<EnergyData, "currentEnergy"
   return (
     <StatTile
       className={TILE_CLASS}
+      opens
       icon={<ZapIcon />}
       label={label}
       tone="energy"
@@ -110,6 +112,7 @@ async function StudyDaysTile({
   return (
     <StatTile
       className={TILE_CLASS}
+      opens
       icon={<CalendarCheckIcon />}
       label={label}
       tone="success"
@@ -134,6 +137,7 @@ async function ScoreTile({ progress }: { progress: CurrentUserProgress }) {
   return (
     <StatTile
       className={TILE_CLASS}
+      opens
       icon={<TargetIcon />}
       label={label}
       tone="success"

@@ -99,8 +99,8 @@ describe("computing activities", () => {
         .element(page.getByText("You changed the code. Run it again to see the new output."))
         .toBeVisible();
 
-      await expect.element(page.getByRole("button", { name: "Check" })).toBeDisabled();
-      await page.getByRole("button", { name: "Run again" }).click();
+      await expect.element(page.getByRole("button", { name: "Check" })).not.toBeInTheDocument();
+      await page.getByRole("button", { name: "Run" }).click();
       await expectCount(page.getByText("5050", { exact: true }), 2);
       await checkActivity();
       await expectVerdict("Correct!");
@@ -131,7 +131,8 @@ describe("computing activities", () => {
     await expect.element(printed).toBeVisible();
     const checked = printed.element().textContent;
 
-    await page.getByRole("button", { name: /^Run/u }).click();
+    await editableLine(2).click();
+    await userEvent.keyboard("{Enter}");
     await checkActivity();
     await expectVerdict("Not quite");
 
@@ -169,7 +170,7 @@ describe("computing activities", () => {
     openActivity({ template: "sqlPlayground" });
 
     await page
-      .getByRole("textbox", { name: "Your query" })
+      .getByRole("textbox", { name: "Query" })
       .fill(activityContentFixtures.sqlPlayground.fields.solution);
 
     await page.getByRole("button", { name: "Run" }).click();
@@ -183,7 +184,7 @@ describe("computing activities", () => {
     openActivity({ template: "sqlPlayground" });
 
     await page
-      .getByRole("textbox", { name: "Your query" })
+      .getByRole("textbox", { name: "Query" })
       .fill(
         "SELECT name, pop_millions FROM countries WHERE continent = 'Asia' OR pop_millions > 200 ORDER BY pop_millions DESC;",
       );
@@ -200,7 +201,7 @@ describe("computing activities", () => {
     openActivity({ template: "sqlPlayground" });
 
     await page
-      .getByRole("textbox", { name: "Your query" })
+      .getByRole("textbox", { name: "Query" })
       .fill("SELECT a.name FROM countries a, countries b, countries c, countries d;");
 
     await page.getByRole("button", { name: "Run" }).click();
@@ -209,7 +210,7 @@ describe("computing activities", () => {
       .element(page.getByText("The query returned too many rows. Is a join missing its condition?"))
       .toBeVisible();
 
-    await expect.element(page.getByRole("button", { name: "Check" })).toBeDisabled();
+    await expect.element(page.getByRole("button", { name: "Check" })).not.toBeInTheDocument();
   });
 
   it("pattern tester: examples pass as the pattern grows", async () => {
@@ -229,7 +230,7 @@ describe("computing activities", () => {
 
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("A pattern that works")).toBeVisible();
+    await expect.element(page.getByText("A pattern that works")).not.toBeInTheDocument();
   });
 
   it("pattern tester: numbers in a regex task are text to match, so they aren't grouped", async () => {

@@ -12,6 +12,10 @@ import { type GoalDate } from "./time-answer-texts";
 
 export { type GoalDate, useTimeAnswerTexts } from "./time-answer-texts";
 
+/** An answer under the time, beside the plan's other answers: it wraps where a language runs long. */
+export const TIME_ANSWER_BUTTON_CLASS =
+  "text-foreground h-auto min-h-7.5 max-w-full self-start py-1 text-left whitespace-normal";
+
 const FAILED_KINDS = new Set<TimeLine["kind"]>(["askFailed", "findFailed"]);
 
 function DaySplitWords({ split }: { split: DaySplit }) {
@@ -44,7 +48,7 @@ function OfferLabel({ offer }: { offer: TimeOffer }) {
 
 /**
  * What the time picked gets the learner: one line under the picker, whose number is its subject,
- * and at most one link that names another time.
+ * and at most one answer that names another time.
  */
 export function TimeAnswer({
   action,
@@ -104,7 +108,12 @@ export function TimeAnswer({
         {failed && (
           <>
             {space}
-            <Button onClick={onRetry} variant="link">
+            <Button
+              className={TIME_ANSWER_BUTTON_CLASS}
+              onClick={onRetry}
+              size="sm"
+              variant="outline"
+            >
               {t("Try again")}
             </Button>
           </>
@@ -113,7 +122,12 @@ export function TimeAnswer({
         {offered && (
           <>
             {space}
-            <Button onClick={() => onUseOffer(offered.minutes)} variant="link">
+            <Button
+              className={TIME_ANSWER_BUTTON_CLASS}
+              onClick={() => onUseOffer(offered.minutes)}
+              size="sm"
+              variant="outline"
+            >
               <OfferLabel offer={offered} />
             </Button>
           </>

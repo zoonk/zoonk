@@ -26,7 +26,7 @@ const COLUMNS: AdminTableColumn[] = [
   { label: "Billed by", size: "text" },
   { label: "State" },
   { label: "Started" },
-  { label: "Renews or ends", size: "wide" },
+  { align: "right", label: "Renews or ends", size: "wide" },
 ];
 
 /** States where money stopped or never arrived, which is what staff scan this list for. */

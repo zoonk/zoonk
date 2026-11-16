@@ -1196,7 +1196,6 @@ describe("tutor history", () => {
 
     await releasePreload();
     await expect.element(loading).not.toBeInTheDocument();
-    await expect.element(sheet.getByText("What would you like help with?")).toBeVisible();
 
     await expect
       .element(sheet.getByText(/is an AI study buddy and can make mistakes\./u))
@@ -1442,7 +1441,7 @@ describe("the learner's buddy", () => {
 
     const sheet = await openTutor();
     await expect.element(sheet.getByText("Ask about this screen")).toBeVisible();
-    await expect.element(sheet.getByText("What would you like help with?")).toBeVisible();
+    await expect.element(sheet.getByPlaceholder(/^Ask /u)).toBeVisible();
   });
 
   it("answers as the default buddy before the learner picks one", async () => {
@@ -1727,6 +1726,20 @@ describe("docked beside the lesson", () => {
     await expect
       .element(lessonAside().getByRole("textbox", { name: "Ask Pip about your answer" }))
       .toBeVisible();
+  });
+
+  it("introduces the buddy while the aside holds nothing else, then gives it to the recap", async () => {
+    const { lesson } = lessonWithTutor({
+      steps: [teachingStep("explanation"), teachingStep("check")],
+    });
+
+    playLesson({ lesson });
+    const intro = lessonAside().getByText("Pip is an AI study buddy and can make mistakes.");
+    await expect.element(intro).toBeVisible();
+
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await expect.element(lessonAside().getByText("From the lesson")).toBeVisible();
+    await expect.element(intro).not.toBeVisible();
   });
 
   it("offers the lesson's takes on a reading screen, one tap each", async () => {

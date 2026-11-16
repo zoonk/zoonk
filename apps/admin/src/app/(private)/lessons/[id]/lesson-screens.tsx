@@ -33,7 +33,10 @@ export function LessonScreens({
           />
         ))}
       </ol>
-      <AdminSectionMore href={json ? `/lessons/${lessonId}` : `/lessons/${lessonId}?json=1`}>
+      <AdminSectionMore
+        expanded={json}
+        href={json ? `/lessons/${lessonId}` : `/lessons/${lessonId}?json=1`}
+      >
         {json ? "Hide technical details" : "Show technical details"}
       </AdminSectionMore>
     </div>

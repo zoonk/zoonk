@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { ACTIVITY_BOX_CLASS, ACTIVITY_LINE_CLASS } from "../_components/activity-canvas";
+import { ACTIVITY_COLOR } from "../_utils/activity-colors";
 import { type GridCell, type GridFill, sameCell } from "./grid-model";
 import { CellValue, GridHeader, type GridTraits, Trait } from "./grid-parts";
 
@@ -33,10 +34,10 @@ function CheckedCell({
       className={cn(
         ACTIVITY_BOX_CLASS,
         "flex flex-col items-center justify-center gap-0.5 px-1",
-        isCompact ? "min-h-11 py-1" : "min-h-18 py-2",
+        isCompact ? "min-h-11 rounded-lg py-1" : "min-h-18 py-2",
         learner !== null && !isWrong && "border-success/60",
         isWrong && "border-destructive/60 bg-destructive/5",
-        counted && "bg-viz-highlight-soft",
+        counted && ACTIVITY_COLOR.right.soft,
       )}
     >
       <CellValue
@@ -85,7 +86,7 @@ function CellButton({
       className={cn(
         ACTIVITY_BOX_CLASS,
         "focus-visible:ring-ring/50 hover:bg-accent flex flex-col items-center justify-center gap-0.5 outline-none select-none focus-visible:ring-[3px] motion-safe:transition-[border-color,box-shadow]",
-        isCompact ? "min-h-11" : "min-h-18",
+        isCompact ? "min-h-11 rounded-lg" : "min-h-18",
         !value && !isActive && "border-dashed",
         isActive && ACTIVITY_LINE_CLASS.active,
       )}
@@ -135,9 +136,7 @@ export function GridBoard({
   return (
     <div
       className="grid gap-2"
-      style={{
-        gridTemplateColumns: `${isCompact ? "3rem" : "4.5rem"} repeat(${columns.length}, minmax(0, 1fr))`,
-      }}
+      style={{ gridTemplateColumns: `repeat(${columns.length + 1}, minmax(0, 1fr))` }}
     >
       <span aria-hidden="true" />
       <p
@@ -147,7 +146,7 @@ export function GridBoard({
         {columnLabel}
       </p>
 
-      <p className="text-muted-foreground flex items-end justify-center pb-1 text-center text-xs leading-tight">
+      <p className="text-muted-foreground flex items-center justify-center text-center text-xs leading-tight">
         {rowLabel}
       </p>
 

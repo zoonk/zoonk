@@ -75,6 +75,10 @@ const nextConfig: NextConfig = {
   logging: { browserToTerminal: true },
   // fontconfig finds the shaping fonts through fonts.conf, which no import reaches.
   outputFileTracingIncludes: {
+    "/**/opengraph-image*": [
+      "./src/lib/certificates/fonts/Geist-*.ttf",
+      "./src/lib/certificates/fonts/NotoSans-400.ttf",
+    ],
     "/\\[lang\\]/c/\\[code\\]/image/\\[variant\\]": ["./src/lib/certificates/fonts/**/*"],
   },
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],

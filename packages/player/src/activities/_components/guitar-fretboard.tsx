@@ -4,6 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useId } from "react";
 import { GUITAR_TUNING, type GuitarVoicing, stringNoteMidi } from "../_utils/guitar-voicing";
 import { keepArrowKeys } from "../_utils/keep-arrow-keys";
+import { ActivityHorizontalScroll } from "./activity-horizontal-scroll";
 import { NoteMark, type NoteMarkKind } from "./note-mark";
 
 const MUTED_MARK = "×";
@@ -176,48 +177,51 @@ export function GuitarFretboard(props: FretboardProps) {
   const name = useId();
   const { firstFret, label, onChange, stringNames } = props;
 
-  return (
-    <div className="scroll-fade-x overflow-x-auto">
-      <div
-        aria-hidden={onChange ? undefined : true}
-        aria-label={onChange ? label : undefined}
-        className="grid w-full items-center select-none"
-        data-slot="guitar-fretboard"
-        role={onChange ? "group" : undefined}
-        style={gridColumns(Boolean(onChange))}
-      >
-        {STRINGS_TOP_DOWN.map((stringIndex) => (
-          <div className="contents" key={stringIndex}>
-            <span aria-hidden="true" className="text-muted-foreground text-xs font-medium">
-              {stringNames[stringIndex]}
-            </span>
-
-            {onChange ? (
-              <StringPicker
-                {...props}
-                name={`${name}-${stringIndex}`}
-                onChange={onChange}
-                stringIndex={stringIndex}
-              />
-            ) : (
-              <StringRow {...props} stringIndex={stringIndex} />
-            )}
-          </div>
-        ))}
-
-        <span aria-hidden="true" />
-        <span aria-hidden="true" />
-        {onChange && <span aria-hidden="true" />}
-        {frets(firstFret).map((fret) => (
-          <span
-            aria-hidden="true"
-            className="text-muted-foreground pt-1 text-center text-xs tabular-nums"
-            key={fret}
-          >
-            {fret}
+  const board = (
+    <div
+      aria-hidden={onChange ? undefined : true}
+      className="grid w-full min-w-max items-center select-none"
+      data-slot="guitar-fretboard"
+      style={gridColumns(Boolean(onChange))}
+    >
+      {STRINGS_TOP_DOWN.map((stringIndex) => (
+        <div className="contents" key={stringIndex}>
+          <span aria-hidden="true" className="text-muted-foreground text-xs font-medium">
+            {stringNames[stringIndex]}
           </span>
-        ))}
-      </div>
+
+          {onChange ? (
+            <StringPicker
+              {...props}
+              name={`${name}-${stringIndex}`}
+              onChange={onChange}
+              stringIndex={stringIndex}
+            />
+          ) : (
+            <StringRow {...props} stringIndex={stringIndex} />
+          )}
+        </div>
+      ))}
+
+      <span aria-hidden="true" />
+      <span aria-hidden="true" />
+      {onChange && <span aria-hidden="true" />}
+      {frets(firstFret).map((fret) => (
+        <span
+          aria-hidden="true"
+          className="text-muted-foreground pt-1 text-center text-xs tabular-nums"
+          key={fret}
+        >
+          {fret}
+        </span>
+      ))}
     </div>
+  );
+
+  // The shape alone always fits; the strings to pick from can be wider than a narrow card.
+  return onChange ? (
+    <ActivityHorizontalScroll box={{ label }}>{board}</ActivityHorizontalScroll>
+  ) : (
+    board
   );
 }

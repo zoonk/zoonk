@@ -836,14 +836,19 @@ msgid "No answer was saved."
 msgstr "저장된 답변이 없어요."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "aqjWQg"
-msgid "Questions you asked in lessons that have since changed."
-msgstr "레슨 내용이 바뀌기 전에 했던 질문이에요."
+msgctxt "yfq070"
+msgid "Lessons you asked about were updated since. Your questions and their answers are kept here."
+msgstr "질문을 남긴 뒤 레슨 내용이 바뀌었어요. 질문과 답변은 여기에 보관돼 있어요."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "YPd0dY"
-msgid "You have no earlier questions."
-msgstr "이전 질문이 없어요."
+msgctxt "QKPtX3"
+msgid "No earlier questions"
+msgstr "이전 질문이 없어요"
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "O62YuA"
+msgid "When a lesson you asked about is updated, your questions and their answers are kept here."
+msgstr "질문했던 레슨이 업데이트되면 질문과 답변이 여기에 보관돼요."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "O3OEwU"
@@ -992,11 +997,6 @@ msgstr "{goal} 목표를 완료했어요."
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
 msgstr "다시 시작할 때까지는 학습 일정이 잡히지 않아요."
-
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "lEE47Z"
-msgid "Your {goal} goal is paused."
-msgstr "{goal} 목표가 일시 중지되어 있어요."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "ND345k"
@@ -2648,6 +2648,11 @@ msgstr "레슨이 준비됐어요"
 msgctxt "_LfrbS"
 msgid "We couldn't get this lesson ready"
 msgstr "이 레슨을 준비하지 못했어요"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "UjSkiv"
+msgid "Getting it ready takes a few minutes."
+msgstr "준비하는 데 몇 분 정도 걸려요."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "3x95yN"

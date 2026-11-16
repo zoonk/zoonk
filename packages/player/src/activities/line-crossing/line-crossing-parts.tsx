@@ -19,10 +19,11 @@ const X_ARROWS = { down: ArrowLeft, same: Minus, up: ArrowRight } as const;
 export function useChangeWords() {
   const t = useExtracted();
 
+  // An axis's label is a name, not a sentence's subject, so each change is its label and a value.
   return (axis: string) => ({
-    down: t("{axis} goes down.", { axis }),
-    same: t("{axis} stays the same.", { axis }),
-    up: t("{axis} goes up.", { axis }),
+    down: t("{axis}: down", { axis }),
+    same: t("{axis}: no change", { axis }),
+    up: t("{axis}: up", { axis }),
   });
 }
 
@@ -49,20 +50,43 @@ export function useLineWords() {
   };
 }
 
+function DragHint({ axis }: { axis: ShiftAxis }) {
+  const t = useExtracted();
+
+  const [drag, withKeys] =
+    axis === "horizontal"
+      ? [
+          t("Drag a line left or right by its handle."),
+          t("Drag a line left or right by its handle, or use the arrow keys."),
+        ]
+      : [
+          t("Drag a line up or down by its handle."),
+          t("Drag a line up or down by its handle, or use the arrow keys."),
+        ];
+
+  return (
+    <ActivityCanvasLabel className="text-sm">
+      <span className="lg:pointer-fine:hidden">{drag}</span>
+      <span className="hidden lg:pointer-fine:inline">{withKeys}</span>
+    </ActivityCanvasLabel>
+  );
+}
+
 export function LineCrossingChanges({
+  axis,
   fields,
   isChecked,
   moved,
   xChange,
   yChange,
 }: {
+  axis: ShiftAxis;
   fields: Fields;
   isChecked: boolean;
   moved: boolean;
   xChange: Change;
   yChange: Change;
 }) {
-  const t = useExtracted();
   const changeWords = useChangeWords();
   const [YArrow, XArrow] = [Y_ARROWS[yChange], X_ARROWS[xChange]];
 
@@ -71,14 +95,7 @@ export function LineCrossingChanges({
   }
 
   if (!moved) {
-    return (
-      <ActivityCanvasLabel className="text-sm">
-        <span className="lg:pointer-fine:hidden">{t("Drag a line by its handle.")}</span>
-        <span className="hidden lg:pointer-fine:inline">
-          {t("Drag a line by its handle, or use the arrow keys.")}
-        </span>
-      </ActivityCanvasLabel>
-    );
+    return <DragHint axis={axis} />;
   }
 
   return (

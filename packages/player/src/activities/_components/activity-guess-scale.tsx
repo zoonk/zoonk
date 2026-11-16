@@ -4,8 +4,10 @@ import { useFormatNumber } from "@zoonk/learn/format-number";
 import { Slider, SliderControl, SliderThumb, SliderTrack } from "@zoonk/ui/components/slider";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
+import { splitMoneyUnit } from "@zoonk/utils/math-answer";
 import { Lock } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ACTIVITY_COLOR } from "../_utils/activity-colors";
 import {
   type GuessScale,
   SCALE_POSITIONS,
@@ -14,6 +16,7 @@ import {
   shareOfValue,
   valueAtPosition,
 } from "../_utils/guess-scale";
+import { tickLabels } from "../_utils/plot-ticks";
 
 const TICK_EDGE_SHARE = 0.04;
 const HALF = 0.5;
@@ -64,7 +67,7 @@ function GapBand({ from, to }: { from: number; to: number }) {
   return (
     <span
       aria-hidden="true"
-      className="bg-viz-highlight-soft absolute inset-y-0 rounded-full"
+      className={cn(ACTIVITY_COLOR.guess.soft, "absolute inset-y-0 rounded-full")}
       style={{ left: `${left * PERCENT}%`, width: `${(right - left) * PERCENT}%` }}
     />
   );
@@ -92,6 +95,14 @@ export function ActivityGuessScale({
   const formatValue = (value: number) => format(value, { unit });
   const { ref: trackRef, width: trackWidth } = useMeasuredWidth<HTMLDivElement>(0);
 
+  const ticks = scaleTicks(scale);
+  const isMoney = splitMoneyUnit(unit) !== null;
+
+  const { isShort } = tickLabels({
+    format: (value, compact) => format(value, { compact, unit: isMoney ? unit : undefined }),
+    ticks,
+  });
+
   function handleChange(position: number) {
     onGuessChange(roundGuess(valueAtPosition(scale, position)));
   }
@@ -100,7 +111,11 @@ export function ActivityGuessScale({
     <div className={cn("relative", actualShare === null ? "pt-9" : "pt-18")} ref={trackRef}>
       {actual !== null && actualShare !== null && (
         <ScaleChip
-          className="bg-viz-highlight-soft text-viz-highlight motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 font-semibold"
+          className={cn(
+            ACTIVITY_COLOR.right.soft,
+            ACTIVITY_COLOR.right.text,
+            "motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 font-semibold",
+          )}
           share={actualShare}
           trackWidth={trackWidth}
         >
@@ -136,7 +151,10 @@ export function ActivityGuessScale({
             {actualShare !== null && (
               <span
                 aria-hidden="true"
-                className="bg-viz-highlight ring-viz-highlight-soft absolute top-1/2 size-5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-4"
+                className={cn(
+                  ACTIVITY_COLOR.right.solid,
+                  "ring-success/20 absolute top-1/2 size-5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-4",
+                )}
                 style={{ left: `${actualShare * PERCENT}%` }}
               />
             )}
@@ -150,13 +168,17 @@ export function ActivityGuessScale({
       </Slider>
 
       <div aria-hidden="true" className="text-muted-foreground relative h-5 text-xs tabular-nums">
-        {scaleTicks(scale).map((tick) => (
+        {ticks.map((tick, index) => (
           <span
             className={cn("absolute top-0", edgeAlign(shareOfValue(scale, tick)))}
             key={tick}
             style={{ left: `${shareOfValue(scale, tick) * PERCENT}%` }}
           >
-            {format(tick, { compact: true })}
+            {/* The scale says what it counts before any guess: money on every tick, a word once, at its end. */}
+            {format(tick, {
+              compact: isShort,
+              unit: isMoney || index === ticks.length - 1 ? unit : undefined,
+            })}
           </span>
         ))}
       </div>

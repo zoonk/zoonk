@@ -1,9 +1,10 @@
+import { Brand } from "@/lib/metadata/open-graph-brand";
 import { type FittedShare } from "./certificate-fit";
 import { FONT_WEIGHTS } from "./certificate-fonts";
 import { CertificateGraph, RouteLabel } from "./certificate-graph";
 import { getShareGraphKind } from "./certificate-layout";
 import { CERTIFICATE_COLORS } from "./certificate-palette";
-import { Brand, ShapedImage } from "./certificate-parts";
+import { ShapedImage } from "./certificate-parts";
 import { SHARE } from "./certificate-spec";
 import { type CertificateView } from "./certificate-view";
 

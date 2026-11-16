@@ -166,21 +166,13 @@ export function CauseEffectChainActivity({
 
   return (
     <ActivityCanvas labelId={labelId}>
-      {!isLessonChain && (
-        <div className="flex items-baseline justify-between gap-3">
-          <ActivityCanvasLabel className="text-sm">
-            {t("Pick a cause, then pick what it led to.")}
-          </ActivityCanvasLabel>
-
-          {check.kind === "interaction" && (
-            <ActivityCanvasLabel className="shrink-0 tabular-nums">
-              {t("{count} of {total, plural, one {# link} other {# links}}", {
-                count: format(links.length),
-                total: fields.links.length,
-              })}
-            </ActivityCanvasLabel>
-          )}
-        </div>
+      {!isLessonChain && check.kind === "interaction" && (
+        <ActivityCanvasLabel className="self-end tabular-nums">
+          {t("{count} of {total, plural, one {# link} other {# links}}", {
+            count: format(links.length),
+            total: fields.links.length,
+          })}
+        </ActivityCanvasLabel>
       )}
 
       <div className="relative" style={{ paddingLeft: ARC_GUTTER }}>
@@ -208,19 +200,25 @@ export function CauseEffectChainActivity({
         </ol>
       </div>
 
-      <p aria-live="polite" className="text-muted-foreground min-h-5 text-sm">
-        {isLocked ? "" : notice}
-      </p>
+      {/* The chain's rows share the cards' edge; the arrows keep the room before it. */}
+      <div className="flex flex-col gap-3 empty:hidden" style={{ paddingLeft: ARC_GUTTER }}>
+        <CauseEffectLinkList
+          isLessonChain={isLessonChain}
+          canRemove={!isLocked && !isGuided}
+          explanations={fields.links}
+          labelOf={labelOf}
+          links={arcs}
+          onRemove={(link) => update(toggleLink(links, link))}
+          showWhy={isGuided || isLocked}
+        />
 
-      <CauseEffectLinkList
-        isLessonChain={isLessonChain}
-        canRemove={!isLocked && !isGuided}
-        explanations={fields.links}
-        labelOf={labelOf}
-        links={arcs}
-        onRemove={(link) => update(toggleLink(links, link))}
-        showWhy={isGuided || isLocked}
-      />
+        {/* Last in the card, so it can go once checked without moving anything above it. */}
+        {!isLocked && (
+          <p aria-live="polite" className="text-muted-foreground text-sm">
+            {notice || t("Pick a cause, then pick what it led to.")}
+          </p>
+        )}
+      </div>
 
       <ActivityTextAlternative>
         {t("Causes and effects in time order: {nodes}.", {

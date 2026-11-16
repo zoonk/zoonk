@@ -4,6 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
+import { ActivityCheckQuestion } from "../_components/activity-check-question";
 import { CellValue, type GridTraits, Trait } from "./grid-parts";
 
 export function GridPalette({
@@ -22,23 +23,14 @@ export function GridPalette({
   const t = useExtracted();
   const questionId = useId();
   const isDisabled = activeCell === null;
-  const number = String((activeCell ?? 0) + 1);
-
-  function question() {
-    if (isDisabled) {
-      return t("Every square is filled. Tap one to change it.");
-    }
-
-    return isAllele
-      ? t("Which genotype goes in square {number}?", { number })
-      : t("What goes in square {number}?", { number });
-  }
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-sm font-medium" id={questionId}>
-        {question()}
-      </p>
+      <ActivityCheckQuestion id={questionId}>
+        {isDisabled
+          ? t("Every square is filled. Tap one to change it.")
+          : t("What goes in the highlighted square?")}
+      </ActivityCheckQuestion>
 
       <div
         aria-labelledby={questionId}

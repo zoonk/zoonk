@@ -22,6 +22,7 @@ import {
   StepRows,
   StepTitle,
 } from "../../_components/step-card";
+import { useCountOf } from "../../_utils/count-of";
 import { useFormatProgressShare, useFormatShare } from "../../_utils/percent";
 import { useFormatDuration } from "../../_utils/time-format";
 import { useBeltName, useBeltStep } from "../../_utils/use-belt-name";
@@ -73,17 +74,6 @@ function useGoalNumber() {
   };
 }
 
-function RightAnswersValue({ correct, questions }: { correct: number; questions: number }) {
-  const format = useFormatter();
-
-  return (
-    <>
-      {format.number(correct)}
-      <span className="text-muted-foreground">{`/${format.number(questions)}`}</span>
-    </>
-  );
-}
-
 function RightAnswersDetail({ summary }: { summary: StudySessionSummary }) {
   const t = useExtracted();
   const formatShare = useFormatShare();
@@ -124,6 +114,7 @@ function BeltDetail({ belt }: { belt: NonNullable<StudySessionSummary["belt"]> }
 function SessionNumbers() {
   const t = useExtracted();
   const format = useFormatter();
+  const countOf = useCountOf();
   const { summary } = useSessionSummary();
   const goalNumber = useGoalNumber();
   const dropped = goalNumber?.dropped ?? false;
@@ -136,7 +127,7 @@ function SessionNumbers() {
           icon={<TargetIcon />}
           label={t("Right")}
           tone="success"
-          value={<RightAnswersValue correct={summary.correct} questions={summary.questions} />}
+          value={countOf(summary.correct, summary.questions)}
         />
       )}
 

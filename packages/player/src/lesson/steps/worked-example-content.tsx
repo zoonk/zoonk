@@ -7,7 +7,7 @@ import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { useTermHighlighter } from "../_components/lesson-step-text";
+import { LessonStepHeading, useTermHighlighter } from "../_components/lesson-step-text";
 import { MarkedText } from "../_components/marked-text";
 import { NumberedLine } from "../_components/numbered-line";
 import { type StepOf } from "./lesson-step-view-props";
@@ -75,7 +75,11 @@ export function WorkedExampleContent({
       className={cn(highlighter, "flex w-full flex-col gap-5 lg:max-w-xl")}
       data-slot="worked-example"
     >
-      <MarkedText className={LESSON_BODY_CLASS} marks={marks} text={content.problem} />
+      {/* The title heads the problem as an explanation's heads its text. */}
+      <div>
+        {content.title && <LessonStepHeading>{content.title}</LessonStepHeading>}
+        <MarkedText className={LESSON_BODY_CLASS} marks={marks} text={content.problem} />
+      </div>
       {figure}
 
       <ol aria-label={t("Steps")} aria-live="polite" className="flex flex-col gap-3">

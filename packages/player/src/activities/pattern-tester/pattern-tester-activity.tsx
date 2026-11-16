@@ -147,6 +147,7 @@ export function PatternTesterActivity({
   const formulaSnippets = useFormulaSnippets(fields);
   const regexResults = useRegexResults(fields, pattern);
   const summary = passingSummary(fields, pattern, regexResults);
+  const passesAll = summary !== null && summary.passing === summary.total;
 
   function change(next: string) {
     setPattern(next);
@@ -170,7 +171,7 @@ export function PatternTesterActivity({
         <div
           className={cn(
             ACTIVITY_FIELD_CLASS,
-            "flex h-11 items-center gap-0.5 px-4 font-mono text-xl",
+            "flex h-11 items-center gap-0.5 px-3 font-mono text-xl",
             isChecked && "opacity-80",
           )}
         >
@@ -222,10 +223,15 @@ export function PatternTesterActivity({
       </p>
 
       {!isExploring && (
-        <PatternHints hints={fields.hints} isChecked={isChecked} literalNumbers={isRegex} />
+        <PatternHints
+          hints={fields.hints}
+          isChecked={isChecked}
+          literalNumbers={isRegex}
+          reveal={isChecked && !passesAll}
+        />
       )}
 
-      {isChecked && (
+      {isChecked && !passesAll && (
         <div className="flex flex-col gap-1">
           <ActivityCanvasLabel className="font-medium">
             {isRegex ? t("A pattern that works") : t("A formula that works")}

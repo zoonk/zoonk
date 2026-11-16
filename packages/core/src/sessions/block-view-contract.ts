@@ -24,7 +24,7 @@ export const studyBlockSchema = z
       .array(z.string())
       .meta({
         description:
-          'The areas most of a practice block asks about, at most two, as the plan names them: name its row after them ("Practice: Math and Languages"). Empty for other blocks',
+          'The areas most of a practice block asks about, at most two, as the plan names them: name a practice without `topics` after them ("Practice: Math and Languages"). Empty for other blocks',
       }),
     brainPower: z.number().int().min(0).meta({ description: "Brain Power the block earned" }),
     canDo: z.string().nullable().meta({ description: "What the learner will be able to do" }),
@@ -116,7 +116,7 @@ export const studyBlockSchema = z
       .array(z.string())
       .meta({
         description:
-          'A practice block\'s topics as the plan names them, most asked first: under its row, name the first and how many more ("Calculating discounts and 9 more topics"). Empty for other blocks',
+          'A practice block\'s topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead): name its row after the first, so two practices on one subject read apart ("Practice: Calculating discounts"), and under it name the first and how many more ("Calculating discounts and 9 more topics"). Empty for other blocks',
       }),
     waitReason: z
       .enum(["lessons", "challenge"])

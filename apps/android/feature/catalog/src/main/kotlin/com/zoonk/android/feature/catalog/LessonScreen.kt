@@ -77,7 +77,14 @@ fun LessonScreen(
     if (shown is LoadState.Loaded && lessonState is LoadState.Loaded) {
         TrackShown(AnalyticsEvent.PublicPageViewed(route.lessonId, AnalyticsEvent.PublicPage.Lesson))
     }
-    CatalogPage(app, navigator, detail, shown, outlineLesson?.title, alsoShown = listOf(lesson)) { value, layout ->
+    CatalogPage(
+        app,
+        navigator,
+        detail,
+        shown,
+        outlineLesson?.title,
+        alsoShown = listOf(lesson),
+    ) { value, layout ->
         placeOf(value, route.chapterId)
             ?.let {
                 lessonBlocks(app, navigator, value, it, route.lessonId, lesson, lessonState, started, layout)

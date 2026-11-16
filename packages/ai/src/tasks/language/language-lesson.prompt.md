@@ -94,7 +94,7 @@ One pattern the sentences use and the learner needs for this situation: a struct
 
 When the lesson is about hearing or saying sounds, a question never asks about a sound, a letter or a spelling in writing: the written word gives it away ("The first sound in pat is [BLANK]" tests nothing). Practice the contrast through meaning instead: a sentence where only one word of a pair fits ("He hit the ball with a [BLANK]": "bat", with "pat" as a wrong option).
 
-- `question`: a short instruction in `LEARNER_LANGUAGE`, or `null` when the template is clear on its own.
+- `question`: a short instruction in `LEARNER_LANGUAGE`, or `null` when the template is clear on its own. It calls what the learner picks a word or a phrase, never a "chunk", which is a teacher's word.
 - `template`: a `TARGET_LANGUAGE` sentence with exactly one `[BLANK]`.
 - `answer`: the one right `TARGET_LANGUAGE` word or words for the blank.
 - `distractors`: 2 or 3 real forms a learner would wrongly pick (wrong agreement, wrong tense, wrong preposition). Put each one in the blank and read the sentence: if it is correct in any reading (a passive, another tense, a different but valid meaning), replace it.

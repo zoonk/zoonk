@@ -4,33 +4,47 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { ActivitySoundButton } from "../_components/activity-sound-button";
 import { useChordName, useNoteNames } from "../_utils/use-music-labels";
-import { type NoteTarget } from "./keyboard-fretboard-notes";
+import { type KeyboardHeading, type NoteTarget } from "./keyboard-fretboard-notes";
 
 type ByEar = { isRevealed: boolean; onPlay: (() => void) | null };
 
 export function KeyboardFretboardHeader({
   byEar,
+  heading,
   notes,
   onHear,
+  start,
   target,
 }: {
   byEar: ByEar | null;
+  heading: KeyboardHeading;
   notes: readonly string[];
   onHear: () => void;
+  start?: NoteTarget;
   target: NoteTarget;
 }) {
   const t = useExtracted();
   const chordName = useChordName();
   const { display, spoken } = useNoteNames();
 
+  const isGuessing = byEar !== null && !byEar.isRevealed;
+
+  function nameOf(shown: NoteTarget) {
+    return shown.kind === "chord"
+      ? chordName(shown.root, shown.quality)
+      : t("{count, plural, one {# note} other {# notes}}", { count: shown.notes.length });
+  }
+
   function title() {
-    if (byEar && !byEar.isRevealed) {
+    if (heading === "byEar") {
       return t("By ear");
     }
 
-    return target.kind === "chord"
-      ? chordName(target.root, target.quality)
-      : t("{count, plural, one {# note} other {# notes}}", { count: target.notes.length });
+    if (heading === "yours") {
+      return t("Your notes");
+    }
+
+    return nameOf(heading === "start" && start ? start : target);
   }
 
   return (
@@ -57,12 +71,13 @@ export function KeyboardFretboardHeader({
       </div>
 
       <div className={cn("flex shrink-0 flex-wrap gap-2", !byEar && "justify-end")}>
-        {byEar?.onPlay && (
+        {isGuessing && byEar.onPlay && (
           <ActivitySoundButton onPlay={byEar.onPlay}>{t("Play the sound")}</ActivitySoundButton>
         )}
 
+        {/* While the sound is a mystery there are two sounds to hear, so each button names its own. */}
         <ActivitySoundButton disabled={notes.length === 0} onPlay={onHear}>
-          {t("Hear it")}
+          {isGuessing ? t("Hear your notes") : t("Hear it")}
         </ActivitySoundButton>
       </div>
     </div>

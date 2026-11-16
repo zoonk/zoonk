@@ -113,7 +113,7 @@ export function AdminMenuSheet({
 }: AdminSidebarProps & { onOpenChange: (open: boolean) => void; open: boolean }) {
   return (
     <SidePanel onOpenChange={onOpenChange} open={open}>
-      <SidePanelContent className="gap-3 overflow-hidden p-3 data-[side=left]:w-60" side="left">
+      <SidePanelContent className="gap-3 overflow-hidden p-3 data-[side=right]:w-60" side="right">
         <SidePanelTitle className="sr-only">Menu</SidePanelTitle>
         <AdminSidebarContent
           account={account}

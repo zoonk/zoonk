@@ -27,9 +27,9 @@ msgid "Estimate first"
 msgstr "Önce tahmin et"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "wIskGV"
-msgid "Move a curve"
-msgstr "Bir eğriyi hareket ettir"
+msgctxt "s80KEd"
+msgid "Move a line"
+msgstr "Bir çizgiyi taşı"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "a2AaWv"
@@ -65,13 +65,6 @@ msgstr "Örnek sayılar, gerçek veri değil"
 msgctxt "WFoGUE"
 msgid "Source:"
 msgstr "Kaynak:"
-
-#: src/activities/_components/activity-feedback.tsx
-#: src/activities/combination-grid/grid-board.tsx
-#: src/activities/labeled-diagram/diagram-slots.tsx
-msgctxt "3nOd8f"
-msgid "Your answer:"
-msgstr "Cevabın:"
 
 #: src/activities/_components/activity-feedback.tsx
 #: src/lesson/feedback/lesson-step-result.tsx
@@ -135,6 +128,16 @@ msgctxt "8RsqoE"
 msgid "No guess yet"
 msgstr "Henüz tahmin yok"
 
+#: src/activities/_components/activity-horizontal-scroll.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "Sola kaydır"
+
+#: src/activities/_components/activity-horizontal-scroll.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "Sağa kaydır"
+
 #: src/activities/_components/activity-model-sliders.tsx
 msgctxt "9uS9GA"
 msgid "{input}. {output}: {value}"
@@ -196,9 +199,14 @@ msgid "Try again"
 msgstr "Tekrar dene"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "g91Ps-"
-msgid "Start over with the original code"
-msgstr "Kodu ilk hâline döndür"
+msgctxt "KiXNvz"
+msgid "Run"
+msgstr "Çalıştır"
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "4prk89"
+msgid "Start over"
+msgstr "Baştan başla"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/random-simulation/chance-simulation.tsx
@@ -206,11 +214,6 @@ msgstr "Kodu ilk hâline döndür"
 msgctxt "zG-cZG"
 msgid "Run again"
 msgstr "Tekrar çalıştır"
-
-#: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "KiXNvz"
-msgid "Run"
-msgstr "Çalıştır"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "6k80XR"
@@ -611,11 +614,6 @@ msgid "{cause} picked. Now pick what it led to."
 msgstr "{cause} seçildi. Şimdi yol açtığı sonucu seç."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
-msgctxt "M2FAHj"
-msgid "Pick a cause, then pick what it led to."
-msgstr "Önce bir neden, sonra yol açtığı sonucu seç."
-
-#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "m4T6j3"
 msgid "{count} of {total, plural, one {# link} other {# links}}"
 msgstr "{count} / {total, plural, other {# ilişki}}"
@@ -624,6 +622,11 @@ msgstr "{count} / {total, plural, other {# ilişki}}"
 msgctxt "qbRyCu"
 msgid "Causes and effects"
 msgstr "Nedenler ve sonuçlar"
+
+#: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
+msgctxt "M2FAHj"
+msgid "Pick a cause, then pick what it led to."
+msgstr "Önce bir neden, sonra yol açtığı sonucu seç."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "WHQHly"
@@ -744,11 +747,6 @@ msgid "Output"
 msgstr "Çıktı"
 
 #: src/activities/code-runner/code-runner-output.tsx
-msgctxt "e2tgwJ"
-msgid "Your output"
-msgstr "Çıktın"
-
-#: src/activities/code-runner/code-runner-output.tsx
 msgctxt "6srLb2"
 msgid "Expected"
 msgstr "Beklenen"
@@ -757,6 +755,16 @@ msgstr "Beklenen"
 msgctxt "d8Wy56"
 msgid "You changed the code. Run it again to see the new output."
 msgstr "Kodu değiştirdin. Yeni çıktıyı görmek için tekrar çalıştır."
+
+#: src/activities/code-runner/code-runner-output.tsx
+msgctxt "KN7zKn"
+msgid "Error"
+msgstr "Hata"
+
+#: src/activities/code-tracer/code-tracer-activity.tsx
+msgctxt "DhXJyL"
+msgid "Step forward to run the next line. We'll stop for you to predict a value."
+msgstr "Sonraki satırı çalıştırmak için bir adım ilerle. Bir değeri tahmin etmen için duraklayacağız."
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "isBSlr"
@@ -859,6 +867,12 @@ msgid "{title}: {rowLabel} ({rowValues}) down the side, {columnLabel} ({columnVa
 msgstr "{title}: yan kenarda {rowLabel} ({rowValues}), üst kenarda {columnLabel} ({columnValues}); her karede ilgili değerlerin çarpımı var."
 
 #: src/activities/combination-grid/grid-board.tsx
+#: src/activities/labeled-diagram/diagram-slots.tsx
+msgctxt "3nOd8f"
+msgid "Your answer:"
+msgstr "Cevabın:"
+
+#: src/activities/combination-grid/grid-board.tsx
 msgctxt "_RHUYG"
 msgid "Square {number}, {row} and {column}: empty"
 msgstr "{number}. kare, {row} ve {column}: boş"
@@ -869,9 +883,9 @@ msgid "Square {number}, {row} and {column}:"
 msgstr "{number}. kare, {row} ve {column}:"
 
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "5cNGIS"
-msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}}: {what}"
-msgstr "{count} / {total, plural, =0 {# kare} other {# kare}}: {what}"
+msgctxt "nyV23o"
+msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
+msgstr "{what}: {count} / {total, plural, =0 {# kare} other {# kare}}"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
@@ -894,14 +908,9 @@ msgid "Every square is filled. Tap one to change it."
 msgstr "Tüm kareler dolu. Değiştirmek için birine dokun."
 
 #: src/activities/combination-grid/grid-palette.tsx
-msgctxt "ZJ9RKr"
-msgid "Which genotype goes in square {number}?"
-msgstr "{number} numaralı kareye hangi genotip gelmeli?"
-
-#: src/activities/combination-grid/grid-palette.tsx
-msgctxt "_Z7gdQ"
-msgid "What goes in square {number}?"
-msgstr "{number} numaralı kareye ne gelmeli?"
+msgctxt "mLazZP"
+msgid "What goes in the highlighted square?"
+msgstr "Vurgulanan kareye ne gelmeli?"
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "9-BMAt"
@@ -917,6 +926,11 @@ msgstr "Sen şöyle dedin:"
 msgctxt "ZWpFH7"
 msgid "Hear this line"
 msgstr "Bu repliği dinle"
+
+#: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
+msgctxt "HArSl0"
+msgid "Best reply:"
+msgstr "En iyi cevap:"
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "TSUuRN"
@@ -1237,14 +1251,19 @@ msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "Do’dan Si’ye uzanan bir piyano klavyesi. Basılan tuşlar: {notes}."
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "0kfXGd"
+msgid "{count, plural, one {# note} other {# notes}}"
+msgstr "{count, plural, other {# nota}}"
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "S7Oawr"
 msgid "By ear"
 msgstr "Kulaktan"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
-msgctxt "0kfXGd"
-msgid "{count, plural, one {# note} other {# notes}}"
-msgstr "{count, plural, other {# nota}}"
+msgctxt "nfwiHT"
+msgid "Your notes"
+msgstr "Notaların"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "uHVyhO"
@@ -1260,6 +1279,11 @@ msgstr "Tuşlardaki notalar: {notes}"
 msgctxt "qJkgjx"
 msgid "Play the sound"
 msgstr "Sesi çal"
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "X9t3Pl"
+msgid "Hear your notes"
+msgstr "Notalarını dinle"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "f6zKAc"
@@ -1343,6 +1367,11 @@ msgid "Tap a name for spot {number}, or drag it onto any spot."
 msgstr "{number} numaralı nokta için bir ada dokun ya da adı istediğin noktaya sürükle."
 
 #: src/activities/labeled-diagram/name-bank.tsx
+msgctxt "TNAgYA"
+msgid "{count, plural, one {# name has no spot.} other {# names have no spot.}}"
+msgstr "{count, plural, other {# isim kullanılmayacak.}}"
+
+#: src/activities/labeled-diagram/name-bank.tsx
 msgctxt "vhw8-j"
 msgid "Names"
 msgstr "Adlar"
@@ -1354,19 +1383,19 @@ msgid "What happened"
 msgstr "Ne oldu"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "HSYVGq"
-msgid "{axis} goes down."
-msgstr "{axis} azalır."
+msgctxt "IHxN7y"
+msgid "{axis}: down"
+msgstr "{axis}: azaldı"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "AMYIvl"
-msgid "{axis} stays the same."
-msgstr "{axis} aynı kalır."
+msgctxt "wEr5qf"
+msgid "{axis}: no change"
+msgstr "{axis}: değişmedi"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "K23AEK"
-msgid "{axis} goes up."
-msgstr "{axis} artar."
+msgctxt "cwnIuM"
+msgid "{axis}: up"
+msgstr "{axis}: arttı"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "m3ASYj"
@@ -1399,14 +1428,24 @@ msgid "{line} moved down."
 msgstr "{line} aşağı kaydı."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "PHEAQb"
-msgid "Drag a line by its handle."
-msgstr "Bir çizgiyi tutamacından sürükle."
+msgctxt "K-pwvx"
+msgid "Drag a line left or right by its handle."
+msgstr "Bir çizgiyi tutamacından sola veya sağa sürükle."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "5H0MTv"
-msgid "Drag a line by its handle, or use the arrow keys."
-msgstr "Bir çizgiyi tutamacından sürükle ya da ok tuşlarını kullan."
+msgctxt "5xSynH"
+msgid "Drag a line left or right by its handle, or use the arrow keys."
+msgstr "Bir çizgiyi tutamacından sola veya sağa sürükle ya da ok tuşlarını kullan."
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "TvX9Up"
+msgid "Drag a line up or down by its handle."
+msgstr "Bir çizgiyi tutamacından yukarı veya aşağı sürükle."
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "Ku-lfL"
+msgid "Drag a line up or down by its handle, or use the arrow keys."
+msgstr "Bir çizgiyi tutamacından yukarı veya aşağı sürükle ya da ok tuşlarını kullan."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "QqIq-i"
@@ -1730,11 +1769,6 @@ msgid "Nothing selected."
 msgstr "Seçili öğe yok."
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
-msgctxt "DLio1y"
-msgid "Target: {formula}"
-msgstr "Hedef: {formula}"
-
-#: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "thePhu"
 msgid "Built: {formula}"
 msgstr "Oluşturulan: {formula}"
@@ -1783,6 +1817,12 @@ msgstr "{atom} atomunu kaldır"
 msgctxt "E6Wo-S"
 msgid "Remove the selected atom"
 msgstr "Seçili atomu kaldır"
+
+#. Button that removes the atom the learner selected from the molecule.
+#: src/activities/molecule-builder/molecule-palette.tsx
+msgctxt "G_yZLu"
+msgid "Remove"
+msgstr "Kaldır"
 
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "hXYqS7"
@@ -1979,6 +2019,11 @@ msgstr "Sayı doğrusundaki cevabın"
 msgctxt "mgXw7n"
 msgid "{person}: {word}, choose the ending"
 msgstr "{person}: {word}, eki seç"
+
+#: src/activities/pattern-table/pattern-table-activity.tsx
+msgctxt "dlL374"
+msgid "Forms of {model} and {word}"
+msgstr "{model} ve {word} kelimelerinin biçimleri"
 
 #: src/activities/pattern-table/pattern-table-activity.tsx
 msgctxt "om_2Uq"
@@ -2336,11 +2381,6 @@ msgid "Listen first"
 msgstr "Önce dinle"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
-msgctxt "V8V6gJ"
-msgid "Start tapping"
-msgstr "Dokunmaya başla"
-
-#: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "zuJJlV"
 msgid "Check the sound delay again"
 msgstr "Ses gecikmesini tekrar kontrol et"
@@ -2366,9 +2406,9 @@ msgid "All set."
 msgstr "Her şey hazır."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "Jk0E1p"
-msgid "Tap along with {count} clicks, so your taps are timed right."
-msgstr "Vuruşlarının zamanlamasını ayarlamak için {count} tık sesini takip ederek dokun."
+msgctxt "Q4pNZZ"
+msgid "Speakers and headphones can play a little late. Tap along with {count} clicks so your taps are timed right."
+msgstr "Hoparlör ve kulaklıklardan ses biraz gecikmeli gelebilir. Vuruşlarının zamanlamasını ayarlamak için {count} tık sesinin her birinde dokun."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2452,6 +2492,11 @@ msgid "or press Space"
 msgstr "ya da boşluk tuşuna bas"
 
 #: src/activities/rhythm-tapper/rhythm-tapper-activity.tsx
+msgctxt "V8V6gJ"
+msgid "Start tapping"
+msgstr "Dokunmaya başla"
+
+#: src/activities/rhythm-tapper/rhythm-tapper-activity.tsx
 msgctxt "eP7OeM"
 msgid "A rhythm of {length} steps with a beat every {perBeat}. Tap on steps {hits}, over a click on every beat."
 msgstr "{length} adımlık ritimde her {perBeat} adımda bir vuruş var. Her vuruşta duyulan tık sesi eşliğinde şu adımlarda dokun: {hits}."
@@ -2511,11 +2556,6 @@ msgstr "SQLite yüklenemedi. Bağlantını kontrol edip tekrar dene."
 msgctxt "qj71j1"
 msgid "Query"
 msgstr "Sorgu"
-
-#: src/activities/sql-playground/sql-playground-activity.tsx
-msgctxt "Vpa3uJ"
-msgid "Your query"
-msgstr "Sorgun"
 
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "fv34i9"
@@ -2660,9 +2700,15 @@ msgid "Time between the dates"
 msgstr "Tarihler arasındaki süre"
 
 #: src/activities/timeline/timeline-gaps.tsx
-msgctxt "V9pdjC"
-msgid "from {earlier} ({earlierYear}) to {later} ({laterYear})"
-msgstr "{earlier} ({earlierYear}) ile {later} ({laterYear}) arasında"
+msgctxt "aDM2Dn"
+msgid "{event} ({year})"
+msgstr "{event} ({year})"
+
+#. Read aloud by a screen reader between two events on a timeline, where sighted learners see an arrow: “Great Pyramid built (2560 BCE) to Moon landing (1969)”.
+#: src/activities/timeline/timeline-gaps.tsx
+msgctxt "NLeFGn"
+msgid "to"
+msgstr "ile"
 
 #: src/activities/timeline/timeline-tray.tsx
 msgctxt "WeCA4I"
@@ -2767,6 +2813,34 @@ msgstr "Cevabın"
 msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "Cevabını oluşturmak için kelimeleri seç"
+
+#. Keyboard hint under an answer box, right after a picture of the Enter key: pressing Enter checks the answer. Lowercase, one word if possible.
+#: src/components/enter-hint.tsx
+msgctxt "3W8LgY"
+msgid "check"
+msgstr "kontrol et"
+
+#. Keyboard hint under a message box, right after a picture of the Enter key: pressing Enter sends the message. Lowercase, one word if possible.
+#: src/components/enter-hint.tsx
+msgctxt "qITzR1"
+msgid "send"
+msgstr "gönder"
+
+#. Keyboard hint under a text box, right after pictures of the Shift and Enter keys: pressing them together starts a new line. Lowercase.
+#: src/components/enter-hint.tsx
+msgctxt "4SYk2r"
+msgid "new line"
+msgstr "yeni satır"
+
+#: src/components/enter-hint.tsx
+msgctxt "waVIZZ"
+msgid "Press Enter to check, Shift+Enter for a new line."
+msgstr "Kontrol etmek için Enter’a, yeni satır için Shift+Enter’a bas."
+
+#: src/components/enter-hint.tsx
+msgctxt "ZPgsC6"
+msgid "Press Enter to send, Shift+Enter for a new line."
+msgstr "Göndermek için Enter’a, yeni satır için Shift+Enter’a bas."
 
 #. The numbered gap in a fill-in-the-blank sentence, read by screen readers. {item} is the word placed in it.
 #: src/components/fill-blank-step.tsx
@@ -3028,6 +3102,7 @@ msgstr "Biraz daha zamana mı ihtiyacın var? {name} farklı bir şekilde anlata
 
 #: src/lesson/controls/ask-buddy-offer.tsx
 #: src/questions/ask-tutor.tsx
+#: src/questions/lesson-question-panel.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "bH47Z4"
 msgid "Ask {name}"
@@ -3205,11 +3280,6 @@ msgstr ", okundu"
 msgctxt "k8sSVy"
 msgid "{count, plural, one {# quick question at the end} other {# quick questions at the end}}"
 msgstr "{count, plural, other {Sonda # kısa soru}}"
-
-#: src/lesson/lesson-aside.tsx
-msgctxt "fl3kLl"
-msgid "screen {number}"
-msgstr "{number}. ekran"
 
 #: src/lesson/lesson-aside.tsx
 msgctxt "chnAWh"
@@ -3418,11 +3488,6 @@ msgid "Just a guess, it doesn't count"
 msgstr "Sadece bir tahmin, puanlanmaz"
 
 #: src/lesson/steps/lesson-answer-field.tsx
-msgctxt "waVIZZ"
-msgid "Press Enter to check, Shift+Enter for a new line."
-msgstr "Kontrol etmek için Enter’a, yeni satır için Shift+Enter’a bas."
-
-#: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "Cevabını yaz"
@@ -3627,41 +3692,6 @@ msgid "We couldn't send your last question. Try again."
 msgstr "Son sorunu gönderemedik. Tekrar dene."
 
 #: src/questions/lesson-question-composer.tsx
-msgctxt "v9luVQ"
-msgid "Ask about this chapter…"
-msgstr "Bu üniteyle ilgili soru sor…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "CVtLex"
-msgid "Ask about this mock exam…"
-msgstr "Bu deneme sınavıyla ilgili soru sor…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "X_H9F0"
-msgid "Ask about your plan…"
-msgstr "Planınla ilgili soru sor…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "uDwgZF"
-msgid "Ask about this subject…"
-msgstr "Bu konu hakkında soru sor…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "TCh0B4"
-msgid "Ask about this question…"
-msgstr "Bu soruyla ilgili soru sor…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "wBr6ON"
-msgid "Ask about your answer…"
-msgstr "Cevabın hakkında soru sor…"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "6sIYgs"
-msgid "Ask about the lesson content…"
-msgstr "Ders içeriğiyle ilgili soru sor…"
-
-#: src/questions/lesson-question-composer.tsx
 msgctxt "zMPwOt"
 msgid "Retry last question"
 msgstr "Son sorunu tekrar gönder"
@@ -3675,11 +3705,6 @@ msgstr "Gönder"
 msgctxt "iPfRms"
 msgid "Ask a question"
 msgstr "Soru sor"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "uw7M-z"
-msgid "⏎ send · ⇧⏎ new line"
-msgstr "⏎ gönder · ⇧⏎ yeni satır"
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "NYRAZH"
@@ -3795,11 +3820,6 @@ msgstr "Bu soruyla ilgili sorular"
 msgctxt "jJ8jWo"
 msgid "Questions about this lesson"
 msgstr "Bu dersle ilgili sorular"
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "BOsQu3"
-msgid "What would you like help with?"
-msgstr "Hangi konuda yardım istersin?"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "beYYXL"

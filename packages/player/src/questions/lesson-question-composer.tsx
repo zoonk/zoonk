@@ -14,6 +14,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type KeyboardEvent, type Ref, useId, useLayoutEffect, useRef } from "react";
+import { EnterHint } from "../components/enter-hint";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import {
   QuestionErrorAction,
@@ -69,30 +70,6 @@ const TEXTAREA_CLASS = cn(
   "min-h-11 py-2.5 pl-3 text-base md:py-3 md:text-sm",
   ONE_LINE_PLACEHOLDER_CLASS,
 );
-
-function useComposerPlaceholder(contextKind: LessonQuestionController["state"]["context"]["kind"]) {
-  const t = useExtracted();
-
-  switch (contextKind) {
-    case "chapter":
-      return t("Ask about this chapter…");
-    case "mock":
-      return t("Ask about this mock exam…");
-    case "plan":
-      return t("Ask about your plan…");
-    case "subject":
-      return t("Ask about this subject…");
-    case "item":
-      return t("Ask about this question…");
-    case "answer":
-      return t("Ask about your answer…");
-    case "lesson":
-    case "step":
-      return t("Ask about the lesson content…");
-    default:
-      return contextKind satisfies never;
-  }
-}
 
 function getComposerAvailability({
   isResolvingPreviousQuestion,
@@ -151,7 +128,7 @@ export function QuestionComposer({
   controller,
   inputRef,
   label,
-  placeholder: hostPlaceholder,
+  placeholder,
   variant = "compact",
 }: {
   avatar?: React.ReactNode;
@@ -159,7 +136,7 @@ export function QuestionComposer({
   controller: LessonQuestionController;
   inputRef?: Ref<HTMLTextAreaElement>;
   label?: string;
-  placeholder?: string;
+  placeholder: string;
   variant?: ComposerVariant;
 }) {
   const t = useExtracted();
@@ -175,8 +152,6 @@ export function QuestionComposer({
 
   const limit = useLiveLimit(getQuestionLimit(state));
   const submitLabel = isResolvingPreviousQuestion ? t("Retry last question") : t("Send");
-  const contextPlaceholder = useComposerPlaceholder(state.context.kind);
-  const placeholder = hostPlaceholder ?? contextPlaceholder;
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing || !canSend) {
@@ -256,11 +231,7 @@ export function QuestionComposer({
         </div>
       )}
 
-      {variant === "page" && (
-        <p className="text-faint text-2xs mt-2 hidden px-1 font-mono leading-4 pointer-fine:block">
-          {t("⏎ send · ⇧⏎ new line")}
-        </p>
-      )}
+      {variant === "page" && <EnterHint action="send" className="mt-2 px-1" />}
     </div>
   );
 }

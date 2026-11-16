@@ -9,7 +9,7 @@ import { TaskMeta } from "../_components/task-meta";
 import { useFormatDuration } from "../_utils/time-format";
 import { ChecklistRow, ChecklistRows } from "../language/checklist-rows";
 import { useChallengeScreen } from "./challenge-context";
-import { IntroHeading, usePrizeFact, useRematchEyebrow } from "./challenge-intro-parts";
+import { IntroHeading, useRematchEyebrow } from "./challenge-intro-parts";
 
 function CallGoals({ call }: { call: ChallengeCall }) {
   const t = useExtracted();
@@ -42,7 +42,6 @@ export function CallIntro({ call }: { call: ChallengeCall }) {
   const formatDuration = useFormatDuration();
   const { challenge } = useChallengeScreen();
   const eyebrow = useRematchEyebrow();
-  const prize = usePrizeFact();
 
   return (
     <StepCard>
@@ -63,7 +62,7 @@ export function CallIntro({ call }: { call: ChallengeCall }) {
             t("{count, plural, one {# goal} other {# goals}}", { count: call.goals.length }),
           challenge.passMark !== null && t("{count} to win", { count: String(challenge.passMark) }),
         ]}
-        reward={prize}
+        reward={challenge.reward.brainPower}
       />
 
       <CallGoals call={call} />

@@ -68,6 +68,10 @@ function getReadLabel(state: LessonPlayerState, step: PlayableLibraryStep): Ques
     return "nextStep";
   }
 
+  if (step.kind === "summary") {
+    return "continue";
+  }
+
   return state.position === state.queue.length - 1 ? "continue" : "next";
 }
 

@@ -61,6 +61,13 @@ function SubjectPreparation({
       <CoverageBar studied={share} />
 
       <SubjectMastery mastery={mastery} />
+
+      {/* The page's topics and chapters count lessons, so a number they don't explain says what it counts. */}
+      {share > 0 && (
+        <p className="text-muted-foreground text-2xs">
+          {t("Counts your answers in lessons, practice and tests.")}
+        </p>
+      )}
     </div>
   );
 }

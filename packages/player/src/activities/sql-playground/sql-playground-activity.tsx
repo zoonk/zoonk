@@ -133,12 +133,13 @@ export function SqlPlaygroundActivity({
       {!isChecked && (
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium" htmlFor={editorId}>
-            {phase === "explore" ? t("Query") : t("Your query")}
+            {t("Query")}
           </label>
 
           <ActivityCodeEditor
             editorRef={fieldRef}
             id={editorId}
+            label={t("Query")}
             language="sql"
             onChange={change}
             onSubmit={() => void handleRun()}
@@ -153,8 +154,10 @@ export function SqlPlaygroundActivity({
           />
 
           <SandboxRunBar
+            canRun={query.trim() !== ""}
             hasRun={state !== null}
             isRunning={isRunning}
+            needsRun={phase === "explore" ? null : answer === null}
             onRetry={runtime.retry}
             onRun={() => void handleRun()}
             runtimeName={RUNTIME_NAME}

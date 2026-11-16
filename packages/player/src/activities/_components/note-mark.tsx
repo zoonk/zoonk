@@ -1,15 +1,18 @@
 import { cn } from "@zoonk/ui/lib/utils";
+import { ACTIVITY_COLOR } from "../_utils/activity-colors";
 
 export type NoteMarkKind = "correct" | "heard" | "kept" | "missed" | "new" | "removed" | "wrong";
 
+const OPEN = "bg-background";
+
 const MARK_CLASSES: Record<NoteMarkKind, string> = {
-  correct: "bg-success-text text-background",
-  heard: "bg-viz-accent text-background",
-  kept: "bg-foreground text-background",
-  missed: "border-success text-success-text bg-background border-2 border-dashed",
-  new: "bg-viz-accent text-background",
-  removed: "border-muted-foreground text-muted-foreground bg-background border-2 border-dashed",
-  wrong: "border-destructive text-destructive-text bg-background border-2",
+  correct: ACTIVITY_COLOR.right.solid,
+  heard: ACTIVITY_COLOR.data.solid,
+  kept: ACTIVITY_COLOR.placed.solid,
+  missed: cn(ACTIVITY_COLOR.missed.box, ACTIVITY_COLOR.missed.text, OPEN),
+  new: ACTIVITY_COLOR.data.solid,
+  removed: cn(ACTIVITY_COLOR.guess.box, ACTIVITY_COLOR.guess.text, OPEN),
+  wrong: cn("border-destructive border-2", ACTIVITY_COLOR.wrong.text, OPEN),
 };
 
 export function NoteMark({

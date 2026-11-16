@@ -82,6 +82,7 @@ export const activityRenderers: {
     template: "geometryBoard",
   }),
   guessReveal: defineActivityRenderer({
+    answersOnCanvas: true,
     badge: "estimateFirst",
     load: () =>
       import("./guess-reveal/guess-reveal-activity").then((module) => module.GuessRevealActivity),
@@ -106,7 +107,6 @@ export const activityRenderers: {
   }),
   randomSimulation: defineActivityRenderer({
     badge: ({ fields }) => (fields.mode === "chance" ? "predictFirst" : null),
-    checkFirst: ({ fields }) => fields.mode === "chance",
     load: () =>
       import("./random-simulation/random-simulation-activity").then(
         (module) => module.RandomSimulationActivity,

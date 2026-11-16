@@ -41,22 +41,63 @@ function byCount(names: readonly string[]): [string, number][] {
     .toSorted(([, a], [, b]) => b - a);
 }
 
-/** A second area names the block only when it has at least half as many questions as the first. */
+/**
+ * A second area names the block only when it has at least half as many questions as the first.
+ * Topics come most asked first, except that a part leads with one no earlier part of its practice
+ * (`led`) leads with, when it has one: its row is named after its lead.
+ */
 export function getPracticeLabels({
   items,
+  led = [],
   topics,
 }: {
   items: readonly Pick<PracticeItem, "skillId">[];
+  led?: readonly string[];
   topics: ReadonlyMap<string, PracticeTopic>;
 }): { areas: string[]; topics: string[] } {
   const known = items.flatMap((item) => topics.get(item.skillId) ?? []);
   const areas = byCount(known.map((topic) => topic.area).filter(Boolean));
   const most = areas[0]?.[1] ?? 0;
+  const names = byCount(known.map((topic) => topic.name)).map(([name]) => name);
+  const lead = names.find((name) => !led.includes(name));
 
   return {
     areas: areas.slice(0, 2).flatMap(([area, count]) => (count * 2 >= most ? [area] : [])),
-    topics: byCount(known.map((topic) => topic.name)).map(([name]) => name),
+    topics: lead ? [lead, ...names.filter((name) => name !== lead)] : names,
   };
+}
+
+/**
+ * The parts of one practice lead with different topics when they can, each naming its row: parts
+ * with fewer topics pick first, so a part on one topic keeps it and a wider part leads with another.
+ *
+ * @internal
+ */
+export function getPartLabels({
+  parts,
+  topics,
+}: {
+  parts: readonly (readonly Pick<PracticeItem, "skillId">[])[];
+  topics: ReadonlyMap<string, PracticeTopic>;
+}): ReturnType<typeof getPracticeLabels>[] {
+  const widths = parts.map((part) => getPracticeLabels({ items: part, topics }).topics.length);
+
+  const order = parts
+    .map((_, index) => index)
+    .toSorted((a, b) => (widths[a] ?? 0) - (widths[b] ?? 0));
+
+  const led: string[] = [];
+  const labels = new Map<number, ReturnType<typeof getPracticeLabels>>();
+
+  for (const index of order) {
+    const label = getPracticeLabels({ items: parts[index] ?? [], led, topics });
+    led.push(...label.topics.slice(0, 1));
+    labels.set(index, label);
+  }
+
+  return parts.map(
+    (part, index) => labels.get(index) ?? getPracticeLabels({ items: part, topics }),
+  );
 }
 
 /** An even number of questions per part, so every part but the last takes whole minutes. */
@@ -130,8 +171,9 @@ export function buildPracticeBlocks({
   });
 
   const parts = fullReview ? [items] : splitWithinMinutes({ items, minutes });
+  const labels = getPartLabels({ parts, topics });
 
-  return parts.map((part) => ({
+  return parts.map((part, index) => ({
     canDo: null,
     estimatedMinutes: getPartMinutes(part),
     kind: "practice",
@@ -143,7 +185,7 @@ export function buildPracticeBlocks({
       planItemId,
       planItemKey: planItemKey ?? null,
       skillIds: [...new Set(part.map((item) => item.skillId))],
-      ...getPracticeLabels({ items: part, topics }),
+      ...labels[index],
     }),
   }));
 }

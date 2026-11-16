@@ -4,6 +4,7 @@ import { page } from "vitest/browser";
 import {
   checkActivity,
   expectVerdict,
+  guessOnScale,
   openActivity,
   pressOnSlider,
   valueInput,
@@ -17,7 +18,7 @@ describe("lesson activities", () => {
     openActivity({ template: "formulaModel" });
     await pressOnSlider("Rate per year", "ArrowRight", 4);
 
-    await expect.element(valueInput()).toHaveValue("3869.68");
+    await expect.element(valueInput()).toHaveValue("3,869.68");
 
     await checkActivity();
     await expectVerdict("Correct!");
@@ -97,7 +98,7 @@ describe("lesson activities", () => {
     await expect.element(page.getByText("Drag to guess")).toBeVisible();
     await pressOnSlider("Your guess", "ArrowRight", 20);
     await expect.element(page.getByText(/Your guess: /u)).toBeVisible();
-    await valueInput().fill("11.57");
+    await guessOnScale(activityContentFixtures.guessReveal.fields, 11.57);
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("A billion seconds is about 32 years.")).toBeVisible();
@@ -111,7 +112,7 @@ describe("lesson activities", () => {
       .element(page.getByText("Pick your guess, then check it to run the simulation."))
       .toBeVisible();
 
-    await page.getByRole("radio", { name: /About 1 in 4/u }).click();
+    await page.getByRole("radio", { name: /About 25% of the time/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText(/The exact chance is 25%/u)).toBeVisible();
@@ -140,7 +141,7 @@ describe("lesson activities", () => {
       template: "randomSimulation",
     });
 
-    await page.getByRole("radio", { name: /About 1 in 4/u }).click();
+    await page.getByRole("radio", { name: /About 25% of the time/u }).click();
     await checkActivity();
 
     await expect.element(page.getByText("No", { exact: true })).toBeVisible();
@@ -167,7 +168,7 @@ describe("lesson activities", () => {
     await field.fill("3");
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("$3", { exact: true })).toBeVisible();
+    await expect.element(field).toHaveValue("3");
   });
 
   it("shows the close wrong number separately from the expected answer", async () => {
@@ -190,7 +191,7 @@ describe("lesson activities", () => {
     await checkActivity();
     await expectVerdict("Not quite");
     const feedback = page.getByRole("region", { name: "Answer feedback" });
-    await expect.element(feedback.getByText("0.1254", { exact: true })).toBeVisible();
+    await expect.element(valueInput()).toHaveValue("0.1254");
     await expect.element(feedback.getByText("0.125", { exact: true })).toBeVisible();
   });
 

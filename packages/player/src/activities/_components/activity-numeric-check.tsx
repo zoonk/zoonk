@@ -49,12 +49,12 @@ export function ActivityNumericCheck({
     }
   }
 
+  // Once checked, the box writes the number the way the rest of the screen does.
   const display =
-    typed ??
+    (phase === "checked" ? null : typed) ??
     (value === null
       ? ""
       : formatLocalizedNumber({
-          grouping: false,
           locale,
           maximumFractionDigits: exactFractionDigitsFor({
             expected: check.answer,

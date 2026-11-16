@@ -30,7 +30,7 @@ function TickLabels({
   return yearTicks(axis.start, axis.end).map((tick) => (
     <span
       aria-hidden="true"
-      className="text-muted-foreground absolute right-[calc(100%-4.25rem)] -translate-y-1/2 text-xs whitespace-nowrap tabular-nums"
+      className="text-muted-foreground absolute right-[calc(100%-3.75rem)] -translate-y-1/2 text-xs whitespace-nowrap tabular-nums"
       key={tick}
       style={{ top: yearToY(tick, axis) }}
     >
@@ -186,10 +186,10 @@ export function TimelineTrack({
   ];
 
   const cardYs = spreadLabels({
-    bottom: axis.height - cardGap / 2,
+    bottom: axis.height - axis.inset,
     gap: cardGap,
     positions: items.map((item) => yearToY(item.shownYear, axis)),
-    top: cardGap / 2,
+    top: axis.inset,
   });
 
   return (

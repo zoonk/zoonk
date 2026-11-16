@@ -836,14 +836,19 @@ msgid "No answer was saved."
 msgstr "No se guardó ninguna respuesta."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "aqjWQg"
-msgid "Questions you asked in lessons that have since changed."
-msgstr "Preguntas que hiciste en lecciones que después cambiaron."
+msgctxt "yfq070"
+msgid "Lessons you asked about were updated since. Your questions and their answers are kept here."
+msgstr "Las lecciones se actualizaron después de que hiciste estas preguntas. Aquí conservamos tus preguntas y sus respuestas."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "YPd0dY"
-msgid "You have no earlier questions."
-msgstr "No tienes preguntas anteriores."
+msgctxt "QKPtX3"
+msgid "No earlier questions"
+msgstr "No hay preguntas anteriores"
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "O62YuA"
+msgid "When a lesson you asked about is updated, your questions and their answers are kept here."
+msgstr "Cuando se actualiza una lección sobre la que hiciste preguntas, tus preguntas y sus respuestas se guardan aquí."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "O3OEwU"
@@ -992,11 +997,6 @@ msgstr "Completaste tu objetivo de {goal}."
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
 msgstr "No se planificará nada hasta que lo reanudes."
-
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "lEE47Z"
-msgid "Your {goal} goal is paused."
-msgstr "Tu objetivo de {goal} está en pausa."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "ND345k"
@@ -2648,6 +2648,11 @@ msgstr "Tu lección está lista"
 msgctxt "_LfrbS"
 msgid "We couldn't get this lesson ready"
 msgstr "No pudimos preparar esta lección"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "UjSkiv"
+msgid "Getting it ready takes a few minutes."
+msgstr "La preparación toma unos minutos."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "3x95yN"

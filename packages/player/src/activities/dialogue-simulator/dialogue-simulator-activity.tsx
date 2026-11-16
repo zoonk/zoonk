@@ -65,12 +65,18 @@ function ChatLine({
 }
 
 function ReplyContent({ isChecked, reply }: { isChecked: boolean; reply: DialogueReply }) {
+  const t = useExtracted();
+
   return (
     <span className="flex flex-col gap-0.5">
       <PlayerChoiceSceneOptionText>{reply.text}</PlayerChoiceSceneOptionText>
       {isChecked && <span className="text-muted-foreground text-sm">{reply.translation}</span>}
       {isChecked && (
         <span className="text-sm leading-snug font-normal">
+          {/* Every reply stays to say why, so the best one is named, whichever was picked. */}
+          {reply.isBest && (
+            <span className="text-success-text font-medium">{t("Best reply:")} </span>
+          )}
           <LessonRichText text={reply.why} />
         </span>
       )}

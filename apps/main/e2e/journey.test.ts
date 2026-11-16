@@ -149,9 +149,8 @@ test.describe("Journey", () => {
     await options.click();
     await page.getByRole("menuitem", { name: "Pause this goal" }).click();
 
-    await expect(
-      page.getByRole("heading", { name: "Your Astronomy goal is paused" }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "This goal is paused" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Astronomy.*Switch goal$/u })).toBeVisible();
 
     await expect(page.getByRole("link", { name: "Continue" })).toHaveCount(0);
     await expect.poll(readStatus).toBe("paused");

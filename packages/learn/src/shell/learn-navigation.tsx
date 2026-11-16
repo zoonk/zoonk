@@ -198,11 +198,11 @@ function BottomTab({ activeTab, buddy, missions, tab }: LearnNavigationProps & {
       aria-current={tab === activeTab ? "page" : undefined}
       className={cn(
         TAB_ITEM_CLASS,
-        "text-2xs flex min-h-13 w-18 min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1",
+        "text-2xs flex min-h-11 w-18 min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1",
       )}
       href={routes[tab]}
     >
-      <span className="flex h-7 items-center justify-center">
+      <span className="flex h-6 items-center justify-center">
         <TabIcon buddy={buddy} missions={missions} size="md" tab={tab} />
       </span>
       <span className="max-w-full truncate">
@@ -228,7 +228,7 @@ export function LearnBottomNavigation({
       data-slot="learn-bottom-navigation"
     >
       {/* One gap between every item, search included: the room left by three 72px tabs and the 44px button, in three. */}
-      <div className="mx-auto flex items-center gap-[calc((100%-16.25rem)/3)] px-4 py-1.5 sm:max-w-3xl sm:px-8">
+      <div className="mx-auto flex items-center gap-[calc((100%-16.25rem)/3)] px-4 py-2.5 sm:max-w-3xl sm:px-8">
         <ul className="flex flex-1 justify-between">
           {LEARN_TABS.map((tab) => (
             <li className="flex" key={tab}>

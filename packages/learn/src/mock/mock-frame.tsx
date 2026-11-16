@@ -29,8 +29,8 @@ function SaveStatusLine() {
   if (runner.saveStatus === "retrying") {
     return (
       <div className="flex items-center gap-2 text-sm" role="status">
-        <span className="text-muted-foreground min-w-0 flex-1">
-          {t("Not saved yet · retrying")}
+        <span className="text-destructive-text min-w-0 flex-1">
+          {t("Your answer isn't saved yet")}
         </span>
         <Button className="shrink-0" onClick={runner.retrySaves} size="sm" variant="outline">
           {t("Try again")}
@@ -54,12 +54,14 @@ export function MockStepStatus() {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const saved = runner.saveStatus === "saved";
+  // A hand-in that timed out waiting on saves that keep failing is that one failure, told once.
+  const failed = runner.error && runner.saveStatus !== "retrying";
 
   return (
     <>
       <SaveStatusLine />
 
-      {runner.error && (
+      {failed && (
         <p className="text-destructive-text text-sm" role="alert">
           {saved
             ? t("That didn't go through. Your answers are saved. Try again in a moment.")

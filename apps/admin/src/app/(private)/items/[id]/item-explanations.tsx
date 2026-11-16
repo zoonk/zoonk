@@ -10,7 +10,7 @@ const columns: AdminTableColumn[] = [
   { label: "Wrong answer", size: "text" },
   { fill: true, label: "What we tell the learner" },
   { label: "Language" },
-  { label: "Written" },
+  { align: "right", label: "Written" },
 ];
 
 export async function ItemExplanations({ itemId }: { itemId: string }) {

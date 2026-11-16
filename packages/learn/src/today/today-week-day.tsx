@@ -36,8 +36,6 @@ export const WEEK_DAY_SLOT = "today-week-day";
 const DAY_BUTTON_CLASS =
   "hit-area relative -mx-1 min-h-11 cursor-pointer rounded-md px-1 py-1 outline-none transition-colors hover:bg-muted/70 focus-visible:ring-[3px] focus-visible:ring-ring/50";
 
-const RING_CLASS = "size-7.5";
-
 /** The week marks the current local day even while a lesson carries the previous day's session. */
 function useWeekDate(): Date {
   const { today } = useTodayScreen();
@@ -47,7 +45,7 @@ function useWeekDate(): Date {
 
 function ChallengeDot({ challenge, day }: { challenge: Challenge; day: WeekDay }) {
   return (
-    <WeekDayRing className={RING_CLASS} day={day} localDate={useWeekDate()}>
+    <WeekDayRing day={day} localDate={useWeekDate()}>
       {getDayShare(day) === 0 && (
         <KindIcon className="size-3.5" kind={getChallengeKind(challenge)} />
       )}
@@ -128,7 +126,7 @@ function PlainDay({ day }: { day: WeekDay }) {
 
   return (
     <>
-      <WeekDayRing className={RING_CLASS} day={day} localDate={useWeekDate()} />
+      <WeekDayRing day={day} localDate={useWeekDate()} />
       <WeekDayLetter date={day.date} isToday={day.isToday} />
       <span className="sr-only">
         {t("{day}: {status}", { day: weekdayLabel(day.date), status: dayStatus(day) })}

@@ -4,10 +4,12 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
+import { ActivityCheckQuestion } from "../_components/activity-check-question";
+import { ActivityHorizontalScroll } from "../_components/activity-horizontal-scroll";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
-import { commonStem, nextOpenBlank } from "./pattern-cells";
+import { blankForms, commonStem, nextOpenBlank } from "./pattern-cells";
 import { PatternRow } from "./pattern-row";
 
 type PatternTableProps = ActivityRendererProps<"patternTable">;
@@ -18,11 +20,34 @@ function expectedEndings(props: PatternTableProps): Record<string, string> {
   return expectedInteraction(expected, "assignment")?.pairs ?? {};
 }
 
-function WordHeader({ meaning, word }: { meaning?: string; word: string }) {
+function WordHeader({
+  forms,
+  meaning,
+  word,
+}: {
+  forms?: readonly string[];
+  meaning?: string;
+  word: string;
+}) {
   return (
     <th className="px-2 pb-2 text-left align-bottom font-normal" scope="col">
       <span className="block text-base font-semibold">{word}</span>
       {meaning && <span className="text-muted-foreground block text-xs">{meaning}</span>}
+
+      {/* Sizes the column for every form a blank can show and for its field, so checking moves no column. */}
+      {forms && forms.length > 0 && (
+        <span
+          aria-hidden="true"
+          className="invisible block h-0 overflow-hidden text-base font-semibold whitespace-nowrap"
+        >
+          {forms.map((form) => (
+            <span className="block" key={form}>
+              {form}
+            </span>
+          ))}
+          <span className="block w-22" />
+        </span>
+      )}
     </th>
   );
 }
@@ -33,7 +58,7 @@ function PatternTableHead({ fields }: { fields: PatternTableProps["content"]["fi
       <tr className="border-border border-b">
         <td />
         <WordHeader meaning={fields.modelMeaning} word={fields.modelWord} />
-        <WordHeader meaning={fields.newMeaning} word={fields.newWord} />
+        <WordHeader forms={blankForms(fields)} meaning={fields.newMeaning} word={fields.newWord} />
       </tr>
     </thead>
   );
@@ -74,8 +99,15 @@ export function PatternTableActivity(props: PatternTableProps) {
 
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
-      <div className="bg-background rounded-xl">
-        <div className="scroll-fade-x overflow-x-auto py-3">
+      <div className="bg-background rounded-xl py-3">
+        <ActivityHorizontalScroll
+          box={{
+            label: t("Forms of {model} and {word}", {
+              model: fields.modelWord,
+              word: fields.newWord,
+            }),
+          }}
+        >
           <table className="w-full border-collapse text-base [&_tr>*:first-child]:ps-3 [&_tr>*:last-child]:pe-3">
             <PatternTableHead fields={fields} />
 
@@ -96,14 +128,14 @@ export function PatternTableActivity(props: PatternTableProps) {
               ))}
             </tbody>
           </table>
-        </div>
+        </ActivityHorizontalScroll>
       </div>
 
       {!isChecked && activeRow && (
         <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium" id={`${labelId}-endings`}>
+          <ActivityCheckQuestion id={`${labelId}-endings`}>
             {t("Which ending does {person} take?", { person: activeRow.label })}
-          </p>
+          </ActivityCheckQuestion>
 
           <ActivitySelectGrid
             className={cn(fields.choices.length > 3 ? "grid-cols-4" : "grid-cols-3")}

@@ -4,6 +4,7 @@ import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { DrawerContent, DrawerDescription, DrawerTitle } from "@zoonk/ui/components/drawer";
 import { useExtracted } from "next-intl";
 import { SheetHeader } from "../_components/sheet-header";
+import { FactSegments } from "../_components/task-meta";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
@@ -108,10 +109,8 @@ export function PhaseDetails({ links, phase }: { links: JourneyPathLinks; phase:
         <DrawerTitle>
           {phaseName(phase, { byPlace, mocksRequirePlus: plan.access.mocksRequirePlus })}
         </DrawerTitle>
-        <DrawerDescription className="font-mono text-xs tabular-nums">
-          {range}
-          {range && " · "}
-          {phaseLessons(phase)}
+        <DrawerDescription className="font-mono text-xs text-balance tabular-nums">
+          <FactSegments facts={[phaseLessons(phase)]} lead={range} />
         </DrawerDescription>
       </SheetHeader>
 

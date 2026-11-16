@@ -1,7 +1,7 @@
 "use client";
 
 import { getActivityExpected } from "@zoonk/core/library/activities/expected";
-import { useId } from "react";
+import { useId, useState } from "react";
 import { InteractiveStepLayout } from "../components/step-layouts";
 import { LessonQuestion } from "../lesson/_components/lesson-step-text";
 import { PlayerInteractionContext, usePlayerInteractionState } from "../player-context";
@@ -10,6 +10,7 @@ import { ActivityChoiceCheck } from "./_components/activity-choice-check";
 import { ActivityDataNote } from "./_components/activity-data-note";
 import { ActivityFeedback } from "./_components/activity-feedback";
 import { ActivityNumericCheck } from "./_components/activity-numeric-check";
+import { CanvasQuestionContext } from "./_utils/canvas-question";
 import { activityRenderers } from "./activity-registry";
 import { type ActivityStepProps } from "./activity-renderer";
 import { BrowserCanvas } from "./browser-canvas";
@@ -63,52 +64,55 @@ export function ActivityStep({
 }: ActivityStepProps) {
   const labelId = useId();
   const interactionState = usePlayerInteractionState();
-  const { badge, checkFirst } = activityRenderers[content.template];
+  const { answersOnCanvas, badge } = activityRenderers[content.template];
   const expected = phase === "checked" ? getActivityExpected(content) : null;
-  const isCheckFirst = checkFirst(content);
   const badgeKind = badge(content);
-
-  const checkArea = (
-    <ActivityCheckArea
-      answer={answer}
-      className={isCheckFirst ? undefined : "pt-2"}
-      content={content}
-      onAnswerChange={onAnswerChange}
-      phase={phase}
-    />
-  );
+  const [canvasAsks, setCanvasAsks] = useState(false);
 
   return (
     <InteractiveStepLayout data-slot="activity-step">
       <div className="flex flex-col gap-3">
-        {badgeKind && <ActivityBadge kind={badgeKind} />}
+        {badgeKind && <ActivityBadge kind={badgeKind} over={[content.prompt]} />}
         <LessonQuestion id={labelId}>{content.prompt}</LessonQuestion>
       </div>
 
       {picture}
 
-      {isCheckFirst && checkArea}
-
       <fieldset className="flex min-w-0 flex-col gap-2" disabled={isLocked} inert={isLocked}>
         {/* `inert` stops clicks but not the window-level keys a canvas listens to. */}
         <PlayerInteractionContext value={isLocked ? "paused" : interactionState}>
-          <BrowserCanvas
-            answer={answer}
-            content={content}
-            expected={expected}
-            labelId={labelId}
-            onAnswerChange={onAnswerChange}
-            phase={phase}
-          />
+          <CanvasQuestionContext value={setCanvasAsks}>
+            <BrowserCanvas
+              answer={answer}
+              content={content}
+              expected={expected}
+              labelId={labelId}
+              onAnswerChange={onAnswerChange}
+              phase={phase}
+            />
+          </CanvasQuestionContext>
         </PlayerInteractionContext>
 
         <ActivityDataNote content={content} />
       </fieldset>
 
-      {!isCheckFirst && checkArea}
+      {!canvasAsks && !answersOnCanvas && (
+        <ActivityCheckArea
+          answer={answer}
+          className="pt-2"
+          content={content}
+          onAnswerChange={onAnswerChange}
+          phase={phase}
+        />
+      )}
 
       {phase === "checked" && isCorrect !== null && (
-        <ActivityFeedback answer={answer} content={content} isCorrect={isCorrect} />
+        <ActivityFeedback
+          answer={answer}
+          content={content}
+          isCorrect={isCorrect}
+          showsNumbers={!answersOnCanvas}
+        />
       )}
     </InteractiveStepLayout>
   );

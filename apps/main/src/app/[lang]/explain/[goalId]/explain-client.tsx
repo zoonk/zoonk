@@ -127,7 +127,12 @@ export function ExplainClient({
     explanation.lesson ? "playing" : "outline",
   );
 
-  const { lesson } = explanation;
+  // The lesson goes by the question's title, as Today and the goal list name it.
+  const lesson = useMemo(
+    () => explanation.lesson && { ...explanation.lesson, title: explanation.title },
+    [explanation.lesson, explanation.title],
+  );
+
   const isWaiting = !lesson || phase === "outline";
 
   useVisibleWait({

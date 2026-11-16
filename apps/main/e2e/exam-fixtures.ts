@@ -3,6 +3,7 @@ import { type Page, expect } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { typesetMoney } from "@zoonk/learn/rich-text/typography";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -108,8 +109,14 @@ export async function addTodayMock({ goalId, userId }: { goalId: string; userId:
       return [
         readQuestion(item.content),
         {
-          right: options.find((option) => option.isCorrect)?.text ?? "",
-          wrong: options.find((option) => !option.isCorrect)?.text ?? "",
+          right: typesetMoney({
+            locale: "en",
+            text: options.find((option) => option.isCorrect)?.text ?? "",
+          }),
+          wrong: typesetMoney({
+            locale: "en",
+            text: options.find((option) => !option.isCorrect)?.text ?? "",
+          }),
         },
       ] as const;
     }),

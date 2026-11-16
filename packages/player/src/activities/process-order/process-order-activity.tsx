@@ -41,33 +41,40 @@ function StepMarks({
   state,
 }: {
   icon: ProcessStep["icon"] | undefined;
-  position: number;
+  /** `null` while the steps are still being ordered: a number there would read as the answer. */
+  position: number | null;
   state: "correct" | "incorrect" | null;
 }) {
   return (
     <span className="flex h-8 shrink-0 items-center gap-3">
-      <PositionBadge position={position} state={state} />
+      {position !== null && <PositionBadge position={position} state={state} />}
       <ProcessStepIcon icon={icon} />
     </span>
   );
 }
 
 function OrderedStep({
+  isEven,
   position,
   result,
   step,
 }: {
+  /** Other steps carry a second line, so a step without one keeps their height. */
+  isEven: boolean;
   position: number;
   result?: StepResult;
   step: ProcessStep;
 }) {
   const t = useExtracted();
   const state = result && (result.learnerPosition === result.position ? "correct" : "incorrect");
+  const keepsRoom = isEven && !step.why;
 
   return (
     <li
       className={cn(
-        "flex gap-3 rounded-xl border px-3 py-2.5",
+        "flex gap-3 rounded-xl border px-3 py-2.5 text-sm leading-snug",
+        // Two lines, their gap, the text's top room, the padding and the border.
+        keepsRoom && "min-h-[calc(2lh+2rem)]",
         state === "correct" && "border-success/50 bg-success/5",
         state === "incorrect" && "border-destructive/50 bg-destructive/5",
       )}
@@ -75,11 +82,11 @@ function OrderedStep({
       <StepMarks icon={step.icon} position={position} state={state ?? null} />
 
       <div className="flex min-w-0 flex-1 flex-col gap-1 pt-1.5">
-        <p className="text-sm leading-snug font-medium">
+        <p className="font-medium text-pretty">
           <LessonRichText text={step.text} />
         </p>
 
-        {step.why && <p className="text-muted-foreground text-sm leading-snug">{step.why}</p>}
+        {step.why && <p className="text-muted-foreground text-pretty">{step.why}</p>}
 
         {state === "incorrect" && result?.learnerPosition && (
           <p className="text-destructive-text text-xs font-medium">
@@ -130,7 +137,13 @@ export function ProcessOrderActivity({
 
         <ol className="flex flex-col gap-2">
           {steps.map((step, index) => (
-            <OrderedStep key={step.id} position={index + 1} result={results[index]} step={step} />
+            <OrderedStep
+              isEven={steps.some((other) => other.why)}
+              key={step.id}
+              position={index + 1}
+              result={results[index]}
+              step={step}
+            />
           ))}
         </ol>
       </ActivityCanvas>
@@ -146,17 +159,17 @@ export function ProcessOrderActivity({
         })}
         label={t("Steps, in your order")}
         onReorder={handleReorder}
-        renderItem={(item, index) => (
+        renderItem={(item) => (
           <span className="flex min-w-0 flex-1 items-start gap-3">
-            <StepMarks icon={byId.get(item.id)?.icon} position={index + 1} state={null} />
-            <span className="min-w-0 flex-1 pt-1.5 text-sm leading-snug font-medium">
+            <StepMarks icon={byId.get(item.id)?.icon} position={null} state={null} />
+            <span className="min-w-0 flex-1 pt-1.5 text-sm leading-snug font-medium text-pretty">
               <LessonRichText text={item.label} />
             </span>
           </span>
         )}
       />
 
-      <p className="text-muted-foreground text-xs">{t("Drag the steps into order.")}</p>
+      <p className="text-muted-foreground text-sm">{t("Drag the steps into order.")}</p>
 
       <ActivityTextAlternative>
         {t("{count, plural, one {# step} other {# steps}} to put in order.", {
