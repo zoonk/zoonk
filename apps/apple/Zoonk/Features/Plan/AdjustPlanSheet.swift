@@ -49,7 +49,7 @@ struct AdjustPlanSheet: View {
           if let languageAim = plan.languageAim, !languageAim.choices.isEmpty {
             aimSection(languageAim)
               .readsAimEnds(
-                $aimEnds, aims: languageAim.choices.map(\.aim), key: plan
+                $aimEnds, aims: languageAim.otherAims, key: plan
               ) { [editor] aim in
                 await editor.preview([.aim(aim)])?.finishDate
               }
@@ -130,7 +130,7 @@ struct AdjustPlanSheet: View {
   }
 
   private func aimRow(_ choice: LanguageAimView.Choice, name: String, isPicked: Bool) -> some View {
-    let detail = aimChoiceDetail(end: aimEnds[choice.aim])
+    let detail = aimChoiceDetail(end: isPicked ? plan.estimate.endDate : aimEnds[choice.aim])
 
     return ChoiceRow(isPicked: isPicked) {
       guard !isPicked else {

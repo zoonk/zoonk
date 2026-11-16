@@ -279,6 +279,7 @@ internal fun ColumnScope.PlanEditorBody(
             aim
                 ?.choices
                 .orEmpty()
+                .filterNot { it.aim.value == aim?.aim?.value }
                 .map { choice ->
                     async {
                         val preview = edits.preview(listOf(PlanOp.Aim(choice.aim.value)))
@@ -336,7 +337,7 @@ internal fun ColumnScope.PlanEditorBody(
                     failed = edits.hasFailed(PlanPart.Aim),
                     note = stringResource(R.string.onboarding_aim_description),
                     dates = { aimDates },
-                    endDate = aimDates[aim.value],
+                    endDate = page.plan.estimate.endDate?.toJavaLocalDate(),
                     modifier = Modifier.bleed(LIST_ITEM_INSET),
                 )
             }

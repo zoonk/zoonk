@@ -285,7 +285,7 @@ class UnderstoodRows(
                             it
                         } else {
                             listOfNotNull(
-                                languageAim?.label ?: aim,
+                                languageAim.label ?: aim,
                                 com.zoonk.android.feature.plan.languageAimNameResource(aim)?.let { name ->
                                     text(name)
                                 },

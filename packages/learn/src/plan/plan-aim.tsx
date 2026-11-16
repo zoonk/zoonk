@@ -10,7 +10,7 @@ import { usePreviewBase } from "./use-plan-preview";
 import { useTappedChoice } from "./use-tapped-choice";
 
 /**
- * Each aim is dated by previewing its change, as the editor's other changes are, by the one rule the
+ * Each other aim is dated by previewing its change, as the editor's other changes are, by the one rule the
  * time question follows too (`finishDate`). Asked as the editor opens and after each change, never
  * on loading the page: each one plans the goal again.
  */
@@ -25,7 +25,8 @@ function useAimFinishes() {
 
   const askAll = useEffectEvent((revision: object) => {
     if (revision === base && plan.languageAim) {
-      ask(plan.languageAim.choices.map((item) => item.aim));
+      const current = plan.languageAim.aim;
+      ask(plan.languageAim.choices.flatMap((item) => (item.aim === current ? [] : [item.aim])));
     }
   });
 
@@ -65,7 +66,9 @@ export function PlanAim() {
         }}
         options={languageAim.choices.map((item) => ({
           aim: item.aim,
-          detail: words.around(ends[item.aim] ?? null),
+          detail: words.around(
+            item.aim === languageAim.aim ? plan.estimate.endDate : (ends[item.aim] ?? null),
+          ),
         }))}
         pending={isPending}
         value={choice.shown === languageAim.aim ? languageAim.label : choice.shown}

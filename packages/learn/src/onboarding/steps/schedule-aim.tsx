@@ -7,9 +7,13 @@ import { AimName, AimPicker } from "../../language-aim/aim-picker";
 import { useAimEnds } from "../../language-aim/use-aim-ends";
 import { useAimWords } from "../../language-aim/use-aim-words";
 
-/** The aim's own choices, so a learner past their aim isn't told when they'll reach it. */
-export function getAimAhead(languageAim: LanguageAimView | null): LanguageAim | null {
-  return languageAim?.choices.find((choice) => choice.aim === languageAim.aim)?.aim ?? null;
+/**
+ * The aim as the plan names it ("B1+"), only while it's among its choices, so a learner past their
+ * aim isn't told when they'll reach it.
+ */
+export function getAimAhead(languageAim: LanguageAimView | null): string | null {
+  const ahead = languageAim?.choices.some((choice) => choice.aim === languageAim.aim);
+  return ahead ? (languageAim?.label ?? languageAim?.aim ?? null) : null;
 }
 
 /** The aim sizes the course, so it sits by the time it's reached in, one tap from changing. */

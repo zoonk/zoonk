@@ -24,9 +24,10 @@ struct LanguageAimView: Codable, Equatable, Sendable {
     choice == aim ? label ?? choice : choice
   }
 
-  /// Main's `getAimAhead`: a learner past their aim isn't told when they'll reach it.
+  /// Main's `getAimAhead`: the aim as the plan names it, only while it's among the choices, so a
+  /// learner past their aim isn't told when they'll reach it.
   var aimAhead: String? {
-    choices.contains { $0.aim == aim } ? aim : nil
+    choices.contains { $0.aim == aim } ? label ?? aim : nil
   }
 
   /// The aims the planner dates: every choice but the current one, whose date its screen shows.
