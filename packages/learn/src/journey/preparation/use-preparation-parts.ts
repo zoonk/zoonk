@@ -12,11 +12,7 @@ export type Lessons = SyllabusView["lessons"];
 
 export type PlanTopics = ReturnType<typeof getPlanTopics>;
 
-type PreparationPart = {
-  key: string;
-  label: string;
-  value: string;
-};
+type PreparationPart = { key: string; label: string; value: string };
 
 function useCountLabel() {
   const t = useExtracted();
@@ -45,13 +41,11 @@ export function usePreparationParts({
   const countLabel = useCountLabel();
   const { coverage, mastery, mocks, retention } = preparation.components;
 
-  const counts = getStudyCounts({ coverage, lessons, topics }).map(
-    (count): PreparationPart => ({
-      key: `${count.unit}-${count.kind}`,
-      label: countLabel(count),
-      value: t("{done, number} of {total, number}", count),
-    }),
-  );
+  const counts = getStudyCounts({ coverage, lessons, topics }).map((count): PreparationPart => ({
+    key: `${count.unit}-${count.kind}`,
+    label: countLabel(count),
+    value: t("{done, number} of {total, number}", count),
+  }));
 
   return [
     ...counts,

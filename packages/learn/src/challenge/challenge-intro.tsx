@@ -15,11 +15,7 @@ import { TricksterArt } from "../checkpoints/trickster-art";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { CallIntro, WonCallIntro } from "./challenge-call-intro";
 import { useChallengeScreen } from "./challenge-context";
-import {
-  IntroHeading,
-  useQuestionsFact,
-  useRematchEyebrow,
-} from "./challenge-intro-parts";
+import { IntroHeading, useQuestionsFact, useRematchEyebrow } from "./challenge-intro-parts";
 import { useChallengeWhen } from "./challenge-labels";
 import { ChallengeTopics, DuelTopics, useTopicsTitle } from "./challenge-topics";
 

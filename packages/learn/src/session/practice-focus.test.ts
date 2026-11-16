@@ -11,7 +11,10 @@ const PRACTICE = {
 
 describe(getPracticeFocus, () => {
   it("names a practice after the topic most of its questions are on", () => {
-    expect(getPracticeFocus(PRACTICE)).toStrictEqual({ kind: "topic", name: "Reading slope as a rate" });
+    expect(getPracticeFocus(PRACTICE)).toStrictEqual({
+      kind: "topic",
+      name: "Reading slope as a rate",
+    });
   });
 
   it("tells apart two practices on one subject by their topics", () => {

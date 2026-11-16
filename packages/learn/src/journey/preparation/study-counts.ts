@@ -61,5 +61,8 @@ export function getStudyCounts({
     return split(topics, "topics");
   }
 
-  return split({ known: 0, studied: coverage.studiedSkills, total: coverage.totalSkills }, "topics");
+  return split(
+    { known: 0, studied: coverage.studiedSkills, total: coverage.totalSkills },
+    "topics",
+  );
 }
