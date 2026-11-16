@@ -15,7 +15,7 @@ import { type CountryName, type SuggestedCountry } from "../country/country-choi
 import { type LessonVariety } from "../country/use-country-lines";
 import { type BasesAdviceStore, useBasesAdviceStore } from "./bases-advice-store";
 import { LayoutSharedProvider } from "./layout-shared";
-import { getPlanAdviceRevision } from "./plan-advice-revision";
+import { getPlanAdviceRevision, getPlanToday } from "./plan-advice-revision";
 
 /** `change` is null while the plan isn't built yet. */
 export type PlanChangeOutcome =
@@ -230,8 +230,7 @@ export function PlanScreenProvider({
   children: React.ReactNode;
   value: PlanScreenValue;
 }) {
-  const today =
-    value.plan.week.days.find((day) => day.state === "today")?.date ?? value.plan.week.startDate;
+  const today = getPlanToday(value.plan);
 
   const keepFocus = useKeepFocus(value.plan, findPlanTitle);
 

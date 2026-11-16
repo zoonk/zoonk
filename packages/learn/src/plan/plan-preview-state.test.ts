@@ -1,8 +1,8 @@
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { describe, expect, it } from "vitest";
+import { previewPlan } from "../_test-utils/plan-preview";
 import { currentPlanPreview, resolvePlanPreview } from "./plan-preview-state";
-import { previewPlan } from "./plan-preview.fixture";
 
 const operations: LearnerPlanOperation[] = [{ kind: "setDailyMinutes", minutes: 60 }];
 const plan = previewPlan();

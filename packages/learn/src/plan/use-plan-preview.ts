@@ -16,8 +16,8 @@ import { createPreviewRequests } from "./preview-requests";
 const PREVIEW_TIMEOUT_MS = 45_000;
 
 /**
- * The same object while refreshes deliver an unchanged view, so a wait for a preview carries on
- * through them.
+ * Keeps the same base while refreshes preserve the selected inputs: advice inputs for date and
+ * coverage previews, the whole plan for other edits.
  */
 export function usePreviewBase(scope: PreviewScope = "plan") {
   const { plan } = usePlanScreen();

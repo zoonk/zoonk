@@ -1,7 +1,7 @@
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
-import { getPlanAdviceRevision } from "./plan-advice-revision";
+import { getPlanAdviceRevision, getPlanToday } from "./plan-advice-revision";
 
 type PreviewPlan = Parameters<typeof getPlanAdviceRevision>[0]["plan"] & Pick<PlanView, "week">;
 export type PreviewScope = "advice" | "plan";
@@ -9,8 +9,7 @@ export type PreviewScope = "advice" | "plan";
 type PreviewInput = { operations: LearnerPlanOperation[]; plan: PreviewPlan; scope?: PreviewScope };
 
 function adviceRevision(plan: PreviewPlan): string {
-  const today = plan.week.days.find((day) => day.state === "today")?.date ?? plan.week.startDate;
-  return getPlanAdviceRevision({ plan, today });
+  return getPlanAdviceRevision({ plan, today: getPlanToday(plan) });
 }
 
 export type PlanPreviewState =

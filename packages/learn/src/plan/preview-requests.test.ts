@@ -1,7 +1,7 @@
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { describe, expect, it } from "vitest";
+import { previewPlan } from "../_test-utils/plan-preview";
 import { type PlanPreviewState, resolvePlanPreview } from "./plan-preview-state";
-import { previewPlan } from "./plan-preview.fixture";
 import { createPreviewRequests } from "./preview-requests";
 
 const answer = { effect: "the card's numbers" };

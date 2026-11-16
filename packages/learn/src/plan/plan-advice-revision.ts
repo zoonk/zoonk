@@ -5,6 +5,10 @@ type AdvisedPlan = Pick<
   "areas" | "bases" | "examChoices" | "feasibility" | "planId" | "schedule" | "steering"
 >;
 
+export function getPlanToday(plan: Pick<PlanView, "week">): string {
+  return plan.week.days.find((day) => day.state === "today")?.date ?? plan.week.startDate;
+}
+
 /**
  * What the Plan's advice (the time to cover everything, the prerequisites' recommendation) is
  * worked out from. The plan's id is in it, since another goal's plan can look the same and need
