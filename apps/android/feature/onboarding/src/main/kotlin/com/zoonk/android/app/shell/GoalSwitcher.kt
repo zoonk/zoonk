@@ -20,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -41,6 +40,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.toGoalCreateInput
+import com.zoonk.android.feature.plan.goalCountdown
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.ActOn
@@ -387,14 +387,8 @@ private fun GoalLine(goal: LearnerSummaryGoal) {
 
             else -> {
                 val daily = stringResource(R.string.goal_switcher_daily, formatMinutes(goal.dailyMinutes.toInt(), locale))
-                val days = goal.targetDate?.let { ChronoUnit.DAYS.between(LocalDate.now(), it.toJavaLocalDate()) }
-                val left =
-                    when {
-                        days == null || days < 0 -> null
-                        days == 0L -> stringResource(R.string.today_day_is_here)
-                        else -> pluralStringResource(R.plurals.today_days_left, days.toInt(), days.toInt())
-                    }
-                listOfNotNull(daily, left).factsLine()
+                val days = goal.targetDate?.let { ChronoUnit.DAYS.between(LocalDate.now(), it.toJavaLocalDate()).toInt() }
+                listOfNotNull(daily, goalCountdown(days, goal.targetDateEstimated)?.text).factsLine()
             }
         }
 

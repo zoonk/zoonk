@@ -68,7 +68,7 @@ import com.zoonk.android.ui.components.QuietDisclosure
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.WEEK_RING
-import com.zoonk.android.ui.components.WeekDay
+import com.zoonk.android.ui.components.WeekDayCell
 import com.zoonk.android.ui.components.WeekDaysRow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.listRowDescription
@@ -463,7 +463,7 @@ private fun PlanWeek(page: PlanPageState) {
                 val date = day.date.toJavaLocalDate()
                 val spoken =
                     stringResource(R.string.plan_week_day, weekdayNames(locale).full.getValue(date.dayOfWeek), dayStatus(day.state))
-                WeekDay(
+                WeekDayCell(
                     letter = weekdayNames(locale).narrow.getValue(date.dayOfWeek),
                     today = day.state == PlanDay.State.TODAY,
                     modifier = Modifier.padding(vertical = 4.dp).clearAndSetSemantics { contentDescription = spoken },

@@ -35,7 +35,7 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.WEEK_RING
-import com.zoonk.android.ui.components.WeekDay
+import com.zoonk.android.ui.components.WeekDayCell
 import com.zoonk.android.ui.components.WeekDaysRow
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
@@ -113,7 +113,7 @@ private fun DayCell(
         note = dayNote(day, weekDate, status),
         footer = { if (challenge != null) ChallengeLine(challenge) },
     ) { open ->
-        WeekDay(
+        WeekDayCell(
             letter = names.narrow.getValue(dayOfWeek),
             today = day.isToday,
             modifier =
@@ -181,9 +181,10 @@ private fun ChallengeLine(challenge: TodayWeeklyChallenge) {
     }
 }
 
+/** A day's ring as Today draws it, which the weekly recap draws for its days too. */
 @Composable
-private fun DayRing(
-    day: WeekDay,
+internal fun DayRing(
+    day: StudyWeekDay,
     weekDate: LocalDate,
     content: @Composable () -> Unit,
 ) {

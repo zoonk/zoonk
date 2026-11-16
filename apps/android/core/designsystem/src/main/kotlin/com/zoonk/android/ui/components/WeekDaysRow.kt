@@ -28,7 +28,7 @@ fun WeekDaysRow(
 
 /** One day of [WeekDaysRow], drawn one way on every week: its [ring] ([WEEK_RING] wide) over its [letter], today's in ink. */
 @Composable
-fun WeekDay(
+fun WeekDayCell(
     letter: String,
     today: Boolean,
     modifier: Modifier = Modifier,

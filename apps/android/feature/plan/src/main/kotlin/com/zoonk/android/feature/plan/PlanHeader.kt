@@ -85,28 +85,7 @@ internal fun PlanHeader(
 private fun PlanSubtitle(page: PlanPageState) {
     val target = page.plan.schedule.targetDate
     val days = target?.let { ChronoUnit.DAYS.between(page.today, it.toJavaLocalDate()).toInt() }
-    val left =
-        when {
-            days == null || days < 0 -> {
-                null
-            }
-
-            days == 0 -> {
-                PlanDateWords(stringResource(R.string.plan_day_is_here), stringResource(R.string.plan_day_is_here))
-            }
-
-            page.plan.schedule.targetDateEstimated -> {
-                PlanDateWords(
-                    pluralStringResource(R.plurals.plan_days_left_estimate, days, days),
-                    pluralStringResource(R.plurals.plan_days_left_estimate_spoken, days, days),
-                )
-            }
-
-            else -> {
-                pluralStringResource(R.plurals.plan_days_left, days, days).let { PlanDateWords(it, it) }
-            }
-        }
-            ?: return
+    val left = goalCountdown(days, page.plan.schedule.targetDateEstimated) ?: return
 
     Text(
         left.text,
@@ -362,3 +341,33 @@ private fun sharePlanUrl(
     page: PlanPageState,
     language: String,
 ): String = AppLink.pageUrl("/plan-link/${page.plan.planId}", language)
+
+/**
+ * The days left to a goal's date, as the Plan and the goal menu write them: "~364 days left" for an
+ * estimated date, "The day is here" on it, nothing once it has passed.
+ */
+@Composable
+fun goalCountdown(
+    days: Int?,
+    estimated: Boolean,
+): PlanDateWords? =
+    when {
+        days == null || days < 0 -> {
+            null
+        }
+
+        days == 0 -> {
+            PlanDateWords(stringResource(R.string.plan_day_is_here), stringResource(R.string.plan_day_is_here))
+        }
+
+        estimated -> {
+            PlanDateWords(
+                pluralStringResource(R.plurals.plan_days_left_estimate, days, days),
+                pluralStringResource(R.plurals.plan_days_left_estimate_spoken, days, days),
+            )
+        }
+
+        else -> {
+            pluralStringResource(R.plurals.plan_days_left, days, days).let { PlanDateWords(it, it) }
+        }
+    }
