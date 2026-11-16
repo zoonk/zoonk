@@ -78,9 +78,9 @@ struct RowLayout<Mark: View, Words: View, Value: View>: View {
 
   /// `.firstTextBaseline` puts the mark on the first of three lines or more.
   var alignment = VerticalAlignment.center
-  /// A row without a mark starts its words on the list's edge. The mark's type can't say so: a
-  /// styled `EmptyView` is another type, and a part's report makes a view of it.
-  var hasMark = true
+  /// A row without a mark starts its words on the list's edge. `ListRow` says so itself: its
+  /// mark is styled, and a styled `EmptyView` is another type.
+  var hasMark = Mark.self != EmptyView.self
   @ViewBuilder let mark: Mark
   @ViewBuilder let words: Words
   @ViewBuilder let value: Value
