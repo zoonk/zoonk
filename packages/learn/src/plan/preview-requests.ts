@@ -7,6 +7,7 @@
 export function createPreviewRequests(onDrop: () => void) {
   let active: object | null = null;
   let opening: string | undefined;
+  let base: object | undefined;
 
   const cancel = () => {
     active = null;
@@ -19,6 +20,12 @@ export function createPreviewRequests(onDrop: () => void) {
       active = request;
       const result = await load();
       return active === request ? result : null;
+    },
+    showBase: (shown: object) => {
+      if (base !== shown) {
+        base = shown;
+        cancel();
+      }
     },
     showOpening: (shown: string | undefined) => {
       if (opening !== shown) {
