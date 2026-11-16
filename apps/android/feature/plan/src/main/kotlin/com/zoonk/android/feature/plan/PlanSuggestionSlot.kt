@@ -200,8 +200,6 @@ internal class SlotHost(
     val preview: PlanPreviewState = PlanPreviewState.Idle,
     val requestPreview: (List<PlanOp>) -> Unit = {},
     val clearPreview: () -> Unit = {},
-    /** Drops the check of these operations, as the view model holds it now, not as the card last drew it. */
-    val dropCheck: (List<PlanOp>) -> Unit = {},
     val addFitOffer: (PlanFitOffer) -> Unit = {},
     val next: StudyNext? = null,
     val nextLevel: NextLevelStart = NextLevelStart.Idle,

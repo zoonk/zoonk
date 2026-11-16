@@ -220,12 +220,11 @@ class FitOfferCheckTest {
                         FitLessonsSuggestion(
                             Slot(
                                 page,
-                                PlanEdits(pending = pending, change = viewModel::change),
+                                PlanEdits(pending = pending, change = viewModel::change, outcomes = viewModel.outcomes),
                                 PlanLinks(navigator, page),
                                 SlotHost(
                                     preview = preview,
                                     clearPreview = viewModel::clearSlotPreview,
-                                    dropCheck = viewModel::dropSlotCheck,
                                     addFitOffer = { viewModel.addFitOffer(page.plan, it) },
                                 ),
                                 viewModel.slotState,

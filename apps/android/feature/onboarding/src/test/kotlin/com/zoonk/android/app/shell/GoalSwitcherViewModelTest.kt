@@ -148,6 +148,27 @@ class GoalSwitcherViewModelTest {
         }
 
     @Test
+    fun aMakeRoomLeftBehindByRecreationClearsProgressWhenItsWriteAnswers() =
+        check(fails = true) { vm ->
+            vm.makeRoomSheet.hold()
+            vm.start(WAITING, pauseGoalId = paused)
+            runCurrent()
+            assertEquals(paused, vm.pausing)
+            vm.makeRoomSheet.release(ending = false)
+            vm.visit.endOpeningsLeftBehind()
+            gate.complete(Unit)
+            runCurrent()
+            assertNull(vm.pausing)
+            assertFalse(vm.makeRoomFailed)
+            assertNull(vm.startedFromSheet.value)
+            vm.makeRoomSheet.hold()
+            vm.start(WAITING, pauseGoalId = paused)
+            runCurrent()
+            assertNull(vm.pausing)
+            assertTrue(vm.makeRoomFailed)
+        }
+
+    @Test
     fun aMakeRoomFromAnEarlierSheetOpeningSaysNothingInTheNext() =
         check(fails = true) { vm ->
             vm.start(WAITING, pauseGoalId = paused)
