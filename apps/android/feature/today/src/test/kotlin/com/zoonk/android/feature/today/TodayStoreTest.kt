@@ -11,6 +11,7 @@ import com.zoonk.android.feature.session.toDayView
 import com.zoonk.api.models.LessonGenerationStatus
 import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MistakeListAvailability
+import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.StudyDay
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.SuggestedGoal
@@ -65,11 +66,11 @@ class TodayStoreTest {
     }
 
     @Test
-    fun automaticPlanChangesDoNotAskForADecisionOnToday() =
+    fun aProposedPlanChangeStillAsksOnToday() =
         runTest {
-            val today = decodeFixture<Today>("today").copy(notice = Today.Notice.PLAN_CHANGE)
-            val shown = read(api { today }, ana, "UTC") as TodayRead.Day
-            assertNull(shown.today.notice)
+            val change = decodeFixture<PlanChange>("plan-change").copy(status = PlanChange.Status.PROPOSED)
+            val today = decodeFixture<Today>("today").copy(notice = Today.Notice.PLAN_CHANGE, planChange = change)
+            assertEquals(Today.Notice.PLAN_CHANGE, (read(api { today }, ana, "UTC") as TodayRead.Day).today.notice)
         }
 
     @Test
