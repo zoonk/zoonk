@@ -25,8 +25,12 @@ function Stars({ lost, stars }: { lost: boolean; stars: number }) {
   const t = useExtracted();
   const celebrate = useCelebration();
 
+  const label = t("{stars, plural, =0 {# of 3 stars} one {# of 3 stars} other {# of 3 stars}}", {
+    stars,
+  });
+
   return (
-    <p className="text-readout flex items-center gap-1.5 text-2xl">
+    <p aria-label={label} className="text-readout flex items-center gap-1.5 text-2xl" role="img">
       <StarIcon
         aria-hidden="true"
         className={cn(
@@ -34,7 +38,7 @@ function Stars({ lost, stars }: { lost: boolean; stars: number }) {
           celebrate && !lost && stars > 0 && "animate-settle",
         )}
       />
-      {t("{stars, plural, =0 {# of 3 stars} one {# of 3 stars} other {# of 3 stars}}", { stars })}
+      {label}
     </p>
   );
 }
