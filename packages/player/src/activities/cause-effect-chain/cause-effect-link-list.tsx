@@ -74,7 +74,7 @@ export function CauseEffectLinkList({
             })
           : t("Your links")
       }
-      className="flex flex-col gap-2"
+      className="grid auto-rows-fr gap-2"
       data-slot="cause-effect-links"
     >
       {links.map((link) => {
