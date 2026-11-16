@@ -78,7 +78,7 @@
   "onboarding_exam_on_two": "a68cdab36287a9618339832cc35aa76d99ea00dec0be9ca25839903911d24920",
   "onboarding_exam_ready": "aa7a711aa0d8933131e411f5b711d025495e13dc2f27046279b81b4e3675524a",
   "onboarding_exam_ready_first_day": "85611e845c19e2da32b30bfe25aad13eca97df56c480aaed32a539142cb925f7",
-  "onboarding_explain_description": "be65335acd33033f229d49dac4f1f0f01fc8fbac32012fd303279739ba53e1d6",
+  "onboarding_explain_description": "edae2f56cb8ef9f3cdcf6fae2bb52fae362804c5bbd3069da87638876ae4eda7",
   "onboarding_explain_it": "e6c946b04d3c2cbbde01cc8a9903a95962cab1f8be503ace3c0ff2de74c4b7bd",
   "onboarding_finish_later": "e51d9378571195d97e6ffe7398b50de93f0419a6407608cf6313b8903534c059",
   "onboarding_finish_later_description": "76c74258adfb2c9a50f2cf35b93be166197cd18032d22300b3391c267d510fde",
@@ -562,7 +562,8 @@
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="onboarding_row_guide_says">공식 시험 일정표에는 %1$s(으)로 나와 있어요.</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
-    <string name="onboarding_explain_description">읽는 데 약 %1$s 걸리는 짧은 설명을 만들어 드릴게요.</string>
+    <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
+    <string name="onboarding_explain_description">읽는 데 약 5분 걸리는 짧은 설명을 만들어 드릴게요.</string>
     <string name="onboarding_explain_it">설명 보기</string>
     <string name="onboarding_declined_title">이 목표는 도와드릴 수 없어요</string>
     <string name="onboarding_declined_description">Zoonk는 자신이나 다른 사람에게 해를 끼칠 수 있는 내용이나 도박, 부정행위 방법은 가르치지 않아요. 그 밖에 배우고 싶은 게 있나요?</string>

@@ -78,7 +78,7 @@
   "onboarding_exam_on_two": "351a98c58f4d99ca070dd9fe09820be9d61a8645b350545958e523954547bc49",
   "onboarding_exam_ready": "4f4f7cb721b3f986974b1dadf7da9e7fdadf189e36856d88263c0eb2bde993de",
   "onboarding_exam_ready_first_day": "8c6748a84a64b5c41a908f5a0fe56b2afac7e7b7805f4e492f7bd79730aa348e",
-  "onboarding_explain_description": "7401e86eb6b5047e8bfaaf02ca0b0f6e8b51ec69cf2d73e79bb72dc58c0d0eca",
+  "onboarding_explain_description": "12ab8e4e9ab501ba27d018e71c1d2622524d4999787cffe603ee93f7a8476a94",
   "onboarding_explain_it": "0920e3334fea11e7907fca14de34ad573cfc5ebc26addab4f5b7e929e2b33763",
   "onboarding_finish_later": "587877ada00bd7a77375760b90296110252f5d8f90d52968052fd02899ddbe3a",
   "onboarding_finish_later_description": "d8645739670e824395188d01060ada3e697c1ee18b5bf2182e375fe23b7934a5",
@@ -564,7 +564,8 @@
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="onboarding_row_guide_says">Sınavın resmî takviminde %1$s tarihi yazıyor.</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
-    <string name="onboarding_explain_description">Okuması yaklaşık %1$s süren kısa bir açıklama hazırlayacağız.</string>
+    <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
+    <string name="onboarding_explain_description">Yaklaşık 5 dakikada okuyabileceğin kısa bir açıklama hazırlayacağız.</string>
     <string name="onboarding_explain_it">Açıkla</string>
     <string name="onboarding_declined_title">Bu hedef için yardımcı olamıyoruz</string>
     <string name="onboarding_declined_description">Zoonk sana ya da başkalarına zarar verebilecek şeyleri, kumar oynamayı veya hile yapmayı öğretmez. Öğrenmek istediğin başka bir şey var mı?</string>
