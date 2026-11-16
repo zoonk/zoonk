@@ -287,6 +287,7 @@ export function buildPhaseViews({
   return phases.map((phase, index) => {
     const inPhase = items.filter((item) => item.phase === index);
     const lessons = inPhase.filter((item) => item.kind === "lesson");
+    const progress = countLessonProgress(lessons);
     const minutes = getPhaseMinutes({ estimateMinutes, index, items, phase });
 
     return {
@@ -310,7 +311,8 @@ export function buildPhaseViews({
       hours: Math.round((minutes / MINUTES_PER_HOUR) * 10) / 10,
       index,
       kind: phase.kind,
-      ...countLessonProgress(lessons),
+      lessonsDone: progress.lessonsDone + progress.lessonsKnown,
+      lessonsTotal: progress.lessonsTotal,
       milestone: phase.milestone,
       mocks: buildMocks({ items: inPhase, mocksRequirePlus, today }),
       name: phase.name,

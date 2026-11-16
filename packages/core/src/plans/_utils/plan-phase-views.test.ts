@@ -352,7 +352,7 @@ function nextPhaseLesson(position: number): ExistingPlanItem {
 describe("a phase the plan moved past before the learner finished it", () => {
   const examDate = new Date("2026-12-01T00:00:00.000Z");
 
-  it("stays unfinished, saying the lessons studied of the ones the plan gave it", () => {
+  it("stays unfinished, counting studied and known lessons of the ones the plan gave it", () => {
     const items = [
       chapterLesson(0, "ch-a", "done"),
       setAsideLesson(1, "ch-a"),
@@ -380,7 +380,7 @@ describe("a phase the plan moved past before the learner finished it", () => {
     expect(
       views.map(({ lessonsDone, lessonsTotal, state }) => ({ lessonsDone, lessonsTotal, state })),
     ).toStrictEqual([
-      { lessonsDone: 1, lessonsTotal: 3, state: "unfinished" },
+      { lessonsDone: 2, lessonsTotal: 4, state: "unfinished" },
       { lessonsDone: 0, lessonsTotal: 1, state: "current" },
     ]);
 

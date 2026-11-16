@@ -3,9 +3,11 @@ import { type Goal, type UserLearningProfile, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type findActiveSubscription } from "../../auth/subscription";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
-import { countLessonProgress } from "../../plans/_utils/work-progress";
 import { getWeekdayMinutes, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
+import { buildSyllabus } from "../../view-models/syllabus/_utils/build-syllabus";
+import { loadSyllabusInput } from "../../view-models/syllabus/_utils/load-syllabus";
+import { readSyllabusInput } from "../../view-models/syllabus/_utils/read-syllabus-input";
 import { type GoalCountryFields } from "../country-contract";
 import { type GoalView } from "../goal-contract";
 import { type loadRecentCountries } from "./country-suggestions";
@@ -75,12 +77,23 @@ export async function loadCurrentPhases(
 
 async function loadPlanProgress(
   plans: readonly PlanRow[],
+  goals: readonly Goal[],
   readSubscription?: typeof findActiveSubscription,
 ) {
   const planIds = plans.map((plan) => plan.id);
 
   const [lessons, ends, currentPhases] = await Promise.all([
-    prisma.planItem.findMany({ where: { kind: "lesson", planId: { in: planIds } } }),
+    Promise.all(
+      goals
+        .filter((goal) => plans.some((plan) => plan.goalId === goal.id))
+        .map(async (goal) => {
+          const input = await (readSubscription
+            ? readSyllabusInput(goal.userId, goal.id)
+            : loadSyllabusInput(goal));
+
+          return [goal.id, input ? buildSyllabus(input).lessons : null] as const;
+        }),
+    ).then((rows) => new Map(rows)),
     prisma.planItem.groupBy({
       _max: { scheduledFor: true },
       by: ["planId"],
@@ -105,7 +118,8 @@ function toPlanSummary({
   return {
     currentPhase: progress.currentPhases.get(plan.id) ?? null,
     endDate: end ? toIsoDate(end) : null,
-    ...countLessonProgress(progress.lessons.filter((item) => item.planId === plan.id)),
+    lessonsDone: progress.lessons.get(plan.goalId)?.done ?? 0,
+    lessonsTotal: progress.lessons.get(plan.goalId)?.total ?? 0,
     phaseCount: phases.length,
     ready: phases.length > 0,
   };
@@ -169,7 +183,7 @@ export async function loadGoalViews({
   });
 
   const [progress, countries] = await Promise.all([
-    loadPlanProgress(plans, readSubscription),
+    loadPlanProgress(plans, goals, readSubscription),
     loadGoalCountryViews({ goals, readRecentCountries }),
   ]);
 

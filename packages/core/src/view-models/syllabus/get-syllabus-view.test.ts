@@ -13,6 +13,9 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { getGoal } from "../../goals/get-goal";
+import { listCurrentUserGoals } from "../../goals/list-current-user-goals";
+import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { getGoalPreparation } from "../../preparation/get-goal-preparation";
 import { getSyllabusView } from "./get-syllabus-view";
@@ -790,5 +793,73 @@ describe(getSyllabusView, () => {
       known: 1,
       total: 3,
     });
+  });
+});
+
+describe("shared plan progress", () => {
+  it("counts known lessons in the certificate and goal summaries exactly as in the Plan", async () => {
+    const user = await userFixture();
+
+    const { goal, plan, planItems, skills } = await learnerGoalFixture({
+      phases: [3],
+      userId: user.id,
+    });
+
+    await prisma.plan.update({
+      data: {
+        graph: {
+          skills: skills.map((skill) => ({
+            area: "Science",
+            lessons: 1,
+            name: skill.name,
+            phase: 0,
+            skillId: skill.id,
+          })),
+        },
+      },
+      where: { id: plan.id },
+    });
+
+    mockSession(user.id);
+
+    await Promise.all(
+      planItems.map((item, index) =>
+        prisma.planItem.update({
+          data: {
+            chapterId: null,
+            lessonId: null,
+            lessons: [1, 11, 388][index],
+            status: (["done", "testedOut", "todo"] as const)[index],
+          },
+          where: { id: item.id },
+        }),
+      ),
+    );
+
+    const [syllabus, detail, listed] = await Promise.all([
+      getSyllabusView({ goalId: goal.id }),
+      getGoal(goal.id),
+      listCurrentUserGoals(),
+    ]);
+
+    expect(syllabus.status).toBe("ready");
+    expect(detail.status).toBe("ready");
+
+    if (syllabus.status !== "ready" || detail.status !== "ready") {
+      return;
+    }
+
+    expect(syllabus.syllabus.lessons).toStrictEqual({ done: 12, known: 11, total: 400 });
+
+    for (const summary of [
+      detail.goal.plan,
+      listed?.goals.find((row) => row.id === goal.id)?.plan,
+    ]) {
+      expect(summary).toMatchObject({ lessonsDone: 12, lessonsTotal: 400 });
+
+      expect((summary?.lessonsDone ?? 0) / (summary?.lessonsTotal ?? 1)).toBe(
+        syllabus.syllabus.lessons.done / syllabus.syllabus.lessons.total,
+      );
+    }
   });
 });

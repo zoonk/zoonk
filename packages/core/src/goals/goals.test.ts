@@ -449,10 +449,17 @@ describe(listCurrentUserGoals, () => {
 
   it("counts the plan's lessons as the Journey does, never a lesson set aside as done", async () => {
     const user = await useLearner();
-    const [goal, skill] = await Promise.all([goalFixture({ userId: user.id }), skillFixture()]);
+
+    const [goal, skill] = await Promise.all([
+      goalFixture({ targetDate: new Date("2030-01-01"), userId: user.id }),
+      skillFixture(),
+    ]);
 
     const plan = await planFixture({
       goalId: goal.id,
+      graph: {
+        skills: [{ area: "Science", lessons: 1, name: skill.name, phase: 0, skillId: skill.id }],
+      },
       phases: [{ endDate: null, kind: "learn", name: "Basics" }],
     });
 
@@ -464,12 +471,12 @@ describe(listCurrentUserGoals, () => {
         { status: "todo" as const },
         { lessons: 3, skillId: skill.id, status: "skipped" as const },
       ].map((item, position) =>
-        planItemFixture({ skillId: null, ...item, planId: plan.id, position }),
+        planItemFixture({ skillId: skill.id, ...item, planId: plan.id, position }),
       ),
     );
 
     await expect(getGoal(goal.id)).resolves.toMatchObject({
-      goal: { plan: { lessonsDone: 1, lessonsTotal: 6 } },
+      goal: { plan: { lessonsDone: 2, lessonsTotal: 7 } },
     });
   });
 
