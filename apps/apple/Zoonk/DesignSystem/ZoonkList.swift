@@ -18,7 +18,10 @@ struct ZoonkList<Content: View>: View {
       // Row and section traits reach a list's rows only from inside it. A separator tint set here
       // would bring back the hairline a footer hides above itself, so hairlines keep the system's.
       // Main's 11pt sits outside a 20pt line, which centers Geist's own 18pt line at 14pt.
+      // A row as wide as the list's column, so its hairline ends where the column does even when
+      // its words are short.
       content
+        .frame(maxWidth: .infinity, alignment: .leading)
         .listRowInsets(.vertical, 12)
         .listRowInsets(.horizontal, rowMargin)
         .listSectionSeparator(.hidden)
@@ -88,18 +91,18 @@ private func pageColumnWidth(_ sizeClass: UserInterfaceSizeClass?, fillsRoom: Bo
 }
 
 extension View {
-  /// The learner's row, as main's `aria-current`: `muted` behind it, reaching a little past the
-  /// column's edges, without the hairlines that would cross it.
+  /// The learner's row, as main's `aria-current`: `muted` behind it, 10pt past the column's edges
+  /// at every margin, without the hairlines that would cross it.
   func currentRow(_ isCurrent: Bool = true) -> some View {
-    listRowBackground(
-      isCurrent
-        ? RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
-          .fill(.muted)
-          .padding(.horizontal, 6)
-          .padding(.vertical, 2)
-        : nil
-    )
-    .listRowSeparator(isCurrent ? .hidden : .automatic)
+    frame(maxWidth: .infinity, alignment: .leading)
+      .background {
+        if isCurrent {
+          RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
+            .fill(.muted)
+            .padding(-10)
+        }
+      }
+      .listRowSeparator(isCurrent ? .hidden : .automatic)
   }
 
   /// The learner's pick among a few choices, as main's `ChoiceRows`: the answer surface's pick, an
@@ -107,14 +110,14 @@ extension View {
   func pickedRow(_ isPicked: Bool) -> some View {
     // Behind the row's content rather than in `listRowBackground`, which keeps the colors it first
     // drew in: a row picked before a switch to dark mode stayed near-white under white text.
-    background {
-      if isPicked {
-        Color.clear.answerSurface(.picked, cornerRadius: Radius.lg)
-          .containerRelativeFrame(.horizontal) { width, _ in width - 12 }
-          .padding(.vertical, -10)
+    frame(maxWidth: .infinity, alignment: .leading)
+      .background {
+        if isPicked {
+          Color.clear.answerSurface(.picked, cornerRadius: Radius.lg)
+            .padding(-10)
+        }
       }
-    }
-    .modifier(HidesSeparators(isHidden: isPicked))
+      .modifier(HidesSeparators(isHidden: isPicked))
   }
 }
 
