@@ -161,8 +161,7 @@ private struct CertificateDetail: View {
         shareLink
           .buttonStyle(.mainAction)
 
-        // Not a `ButtonRow`, whose buttons take their own width side by side: these share it.
-        AccessibilityStack(spacing: 8) {
+        EqualButtonRow {
           BusyButton(isBusy: printing.isRunning, icon: .print, action: printCertificate) {
             Text("Print", tableName: "Certificates", comment: "Prints a certificate")
               .background { PrintAnchorView(anchor: printAnchor) }
@@ -183,7 +182,6 @@ private struct CertificateDetail: View {
           }
           .disabled(!picturesAreCurrent)
         }
-        .controlsShareHeight()
 
         Button {
           isLinkedInShown = true
