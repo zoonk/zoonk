@@ -59,7 +59,7 @@ function OrderedStep({
   result,
   step,
 }: {
-  /** Other steps carry a second line, so a step without one keeps their height, centered. */
+  /** Other steps carry a second line, so a step without one keeps their height. */
   isEven: boolean;
   position: number;
   result?: StepResult;
@@ -67,21 +67,21 @@ function OrderedStep({
 }) {
   const t = useExtracted();
   const state = result && (result.learnerPosition === result.position ? "correct" : "incorrect");
-  const isCentered = isEven && !step.why;
+  const keepsRoom = isEven && !step.why;
 
   return (
     <li
       className={cn(
         "flex gap-3 rounded-xl border px-3 py-2.5 text-sm leading-snug",
         // Two lines, their gap, the text's top room, the padding and the border.
-        isCentered && "min-h-[calc(2lh+2rem)] items-center",
+        keepsRoom && "min-h-[calc(2lh+2rem)]",
         state === "correct" && "border-success/50 bg-success/5",
         state === "incorrect" && "border-destructive/50 bg-destructive/5",
       )}
     >
       <StepMarks icon={step.icon} position={position} state={state ?? null} />
 
-      <div className={cn("flex min-w-0 flex-1 flex-col gap-1", !isCentered && "pt-1.5")}>
+      <div className="flex min-w-0 flex-1 flex-col gap-1 pt-1.5">
         <p className="font-medium text-pretty">
           <LessonRichText text={step.text} />
         </p>
