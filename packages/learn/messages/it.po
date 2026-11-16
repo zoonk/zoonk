@@ -9794,16 +9794,6 @@ msgid "Challenge"
 msgstr "Sfida"
 
 #: src/onboarding/steps/reveal-week.tsx
-msgctxt "P3kcA_"
-msgid "{count, plural, one {+# more lesson} other {+# more lessons}}"
-msgstr "{count, plural, one {+# altra lezione} other {+# altre lezioni}}"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "hP3NjX"
-msgid "{count, plural, other {+# more}}"
-msgstr "{count, plural, other {+# in più}}"
-
-#: src/onboarding/steps/reveal-week.tsx
 msgctxt "Gg5U7i"
 msgid "Rest day"
 msgstr "Giorno di riposo"

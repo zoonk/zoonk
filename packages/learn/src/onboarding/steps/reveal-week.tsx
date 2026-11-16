@@ -29,8 +29,6 @@ const ITEM_KINDS: Record<PlanItemView["kind"], LearnKind> = {
   review: "review",
 };
 
-const ICONS_SHOWN = 4;
-
 function isTeaching(item: PlanItemView): boolean {
   return item.kind === "lesson" || item.kind === "chapter";
 }
@@ -55,25 +53,15 @@ function useItemTitle() {
   };
 }
 
+/** The day's kinds once each, in order: the names beside them already list every item. */
 function DayKinds({ items }: { items: readonly PlanItemView[] }) {
-  const t = useExtracted();
-  const hidden = items.slice(ICONS_SHOWN);
+  const kinds = [...new Set(items.map((item) => ITEM_KINDS[item.kind]))];
 
   return (
     <ListRowTrailing aria-hidden="true" className="row-first-line gap-1 max-sm:hidden">
-      {items.slice(0, ICONS_SHOWN).map((item, index) => (
-        // oxlint-disable-next-line react/no-array-index-key -- the icons are fixed for this day
-        <KindMark className="size-3" key={index} kind={ITEM_KINDS[item.kind]} />
+      {kinds.map((kind) => (
+        <KindMark className="size-3" key={kind} kind={kind} />
       ))}
-      {hidden.length > 0 && (
-        <span className="text-faint whitespace-nowrap">
-          {hidden.every((item) => isTeaching(item))
-            ? t("{count, plural, one {+# more lesson} other {+# more lessons}}", {
-                count: hidden.length,
-              })
-            : t("{count, plural, other {+# more}}", { count: hidden.length })}
-        </span>
-      )}
     </ListRowTrailing>
   );
 }
