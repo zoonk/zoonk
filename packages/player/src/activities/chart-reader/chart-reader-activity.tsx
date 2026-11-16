@@ -18,7 +18,6 @@ import {
   ActivityPlotGridY,
   ActivityPlotLabel,
   ActivityPlotLine,
-  PLOT_AXIS_NAME_ROOM,
 } from "../_components/activity-plot";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { computeActivityValue } from "../_utils/compute-activity-value";
@@ -109,19 +108,13 @@ export function ChartReaderActivity({
         {fields.yLabel}
       </ActivityCanvasLabel>
 
-      <ActivityPlot
-        height={PLOT_HEIGHT + PLOT_AXIS_NAME_ROOM}
-        padding={{ bottom: 24 + PLOT_AXIS_NAME_ROOM }}
-        xDomain={xDomain}
-        yDomain={yDomain}
-      >
+      <ActivityPlot height={PLOT_HEIGHT} xDomain={xDomain} xLabel={fields.xLabel} yDomain={yDomain}>
         <ActivityPlotGridY
           format={(value) => format(value, { compact: true })}
           ticks={niceTicks(yDomain, 3)}
         />
         <ActivityPlotAxisX
           format={(value) => format(value, { grouping: !plainX })}
-          name={fields.xLabel}
           ticks={niceTicks(xDomain, 3)}
         />
 
