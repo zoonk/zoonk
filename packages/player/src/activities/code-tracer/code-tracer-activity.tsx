@@ -79,6 +79,17 @@ function RunHint({
   );
 }
 
+/** A screen opened again already checked shows the trace as it ended. */
+function openingStep({
+  fields,
+  isChecked,
+}: {
+  fields: CodeTracerProps["content"]["fields"];
+  isChecked: boolean;
+}): number {
+  return isChecked ? fields.trace.length - 1 : firstStep(fields.pauses);
+}
+
 export function CodeTracerActivity({
   answer,
   content,
@@ -95,15 +106,15 @@ export function CodeTracerActivity({
   const space = useSentenceSpace();
   const asksNothing = isChecked || isExploring;
   const start = firstStep(fields.pauses);
-  const [step, setStep] = useState(start);
-  const [furthest, setFurthest] = useState(start);
+  const lastStep = fields.trace.length - 1;
+  const [step, setStep] = useState(() => openingStep({ fields, isChecked }));
+  const [furthest, setFurthest] = useState(() => openingStep({ fields, isChecked }));
 
   const [predictions, setPredictions] = useState<Record<string, string>>(() =>
     answer?.kind === "assignment" ? answer.pairs : {},
   );
 
   const expectedPairs = expectedInteraction(expected, "assignment")?.pairs ?? null;
-  const lastStep = fields.trace.length - 1;
   const blocking = asksNothing ? null : blockingPause({ pauses: fields.pauses, predictions, step });
   const upcoming = asksNothing ? null : upcomingPause({ pauses: fields.pauses, predictions, step });
   const isRevealed = (pause: Pause) => isChecked || furthest >= pause.step;
