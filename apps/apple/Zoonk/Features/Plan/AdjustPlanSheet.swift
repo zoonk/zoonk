@@ -120,12 +120,7 @@ struct AdjustPlanSheet: View {
           choice, name: languageAim.name(of: choice.aim), isPicked: choice.aim == languageAim.aim)
       }
     } header: {
-      SectionTitle(
-        Text(
-          "Your aim", tableName: "Plan",
-          comment:
-            "The language level a course goes up to, like B1. Not the learner's goal: the level they aim for."
-        ))
+      SectionTitle(Text(languageAim.title))
     }
   }
 
