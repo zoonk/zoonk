@@ -202,16 +202,22 @@ export async function getWeeklyRecap(input: WeeklyRecapInput): Promise<WeeklyRec
       goal ? loadStudyWeek({ goal, localDate: today, weekStart }) : null,
     ]);
 
+  const days = studyWeek?.days ?? weeks.days;
+
   return {
     recap: {
       ...weeks,
       badges,
       buddyAte,
-      days: studyWeek?.days ?? weeks.days,
+      days,
       nextFocus,
       phasesFinished,
       ready: today.getTime() >= weekEnd.getTime(),
       turnaround,
+      week: {
+        ...weeks.week,
+        daysStudied: days.filter((day) => day.studied).map((day) => day.date),
+      },
       weekEnd,
       weekStart,
     },

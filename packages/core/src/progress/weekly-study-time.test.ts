@@ -345,4 +345,44 @@ describe("weekly study time", () => {
       studied: true,
     });
   });
+
+  it("returns the same completed zero-budget day on Today and the recap", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-16T14:00:00Z"));
+    const user = await userFixture();
+    const { goal } = await learnerGoalFixture({ phases: [1], userId: user.id });
+
+    await Promise.all([
+      prisma.goal.update({ data: { createdAt: MONDAY, timezone: "UTC" }, where: { id: goal.id } }),
+      prisma.plan.update({
+        data: { settings: { weekdayMinutes: [0, 20, 20, 20, 20, 0, 0] } },
+        where: { goalId: goal.id },
+      }),
+      studied({ goalId: goal.id, localDate: FRIDAY, seconds: 30, userId: user.id }),
+    ]);
+
+    mockSession(user.id);
+
+    const [today, recap] = await Promise.all([
+      getTodayView({ goalId: goal.id }),
+      getWeeklyRecap({ goalId: goal.id, weekStart: "2026-10-12" }),
+    ]);
+
+    if (today.status !== "ready" || recap.status !== "ready") {
+      throw new Error("Expected ready views");
+    }
+
+    const expected = {
+      date: FRIDAY,
+      goalMinutes: 0,
+      hitGoal: true,
+      kind: "rest",
+      minutes: 1,
+      studied: true,
+    };
+
+    expect(today.today.session.week.days[4]).toMatchObject(expected);
+    expect(recap.recap.days[4]).toMatchObject(expected);
+    expect(recap.recap.week.daysStudied).toStrictEqual([FRIDAY]);
+  });
 });

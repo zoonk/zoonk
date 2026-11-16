@@ -28,12 +28,39 @@ describe("GET /v1/me/weekly-recap", () => {
 
     expect(body.days[0]).toMatchObject({
       goalMinutes: 0,
+      hitGoal: true,
       kind: "rest",
       minutes: 10,
       studied: true,
     });
 
     expect(body.days.every((day) => day.goalMinutes === 0 && day.kind === "rest")).toBe(true);
+  });
+
+  it("returns goal-specific studied dates for clients using the legacy week date list", async () => {
+    const user = await userFixture();
+    mockAccountSession({ user });
+
+    const [goal, other] = await Promise.all([
+      goalFixture({ timezone: "UTC", userId: user.id }),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    const date = new Date("2026-10-13T00:00:00Z");
+
+    await Promise.all([
+      learningEventFixture({ goalId: other.id, localDate: date, seconds: 900, userId: user.id }),
+      dailyProgressFixtureMany([{ date, timeSpentSeconds: 900, userId: user.id }]),
+    ]);
+
+    const response = await getRecap(
+      new Request(`http://localhost/v1/me/weekly-recap?goalId=${goal.id}&weekStart=2026-10-12`),
+    );
+
+    expect(response.status).toBe(200);
+    const body = weeklyRecapResponseSchema.parse(await response.json());
+    expect(body.week.daysStudied).toStrictEqual([]);
+    expect(body.days.filter((day) => day.studied)).toStrictEqual([]);
   });
 
   it("serializes partial study, completed sessions, missed study and rest days", async () => {
