@@ -4821,6 +4821,7 @@ msgstr "Level in {language}"
 
 #: src/journey/journey-hero.tsx
 #: src/language/level-test/level-test-screens.tsx
+#: src/language/progress/skill-levels-card.tsx
 msgctxt "zSuk_8"
 msgid "Your {language} level"
 msgstr "Dein Level in {language}"
@@ -6570,13 +6571,6 @@ msgctxt "gShZPM"
 msgid "Your level shows here once you practice."
 msgstr "Dein Level erscheint hier, sobald du übst."
 
-#: src/language/progress/skill-levels-card.tsx
-#: src/onboarding/plan-receipt.tsx
-#: src/onboarding/steps/level-choices.tsx
-msgctxt "DejB0r"
-msgid "Your level"
-msgstr "Dein Level"
-
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "v806h7"
 msgid "A short speaking test with an examiner. After it, an estimated band for each criterion."
@@ -7996,16 +7990,19 @@ msgctxt "9UlLLH"
 msgid "Still handing it in. This is taking longer than usual."
 msgstr "Die Abgabe läuft noch. Das dauert länger als üblich."
 
+#. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
 msgctxt "Beu7ZD"
 msgid "{blank, plural, one {# question is blank} other {# questions are blank}} and {flagged, plural, one {# is flagged} other {# are flagged}}."
 msgstr "{blank, plural, one {# Frage ist unbeantwortet} other {# Fragen sind unbeantwortet}} und {flagged, plural, one {# ist markiert} other {# sind markiert}}."
 
+#. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
 msgctxt "h5Iipv"
 msgid "{count, plural, one {# question is blank.} other {# questions are blank.}}"
 msgstr "{count, plural, one {# Frage ist unbeantwortet.} other {# Fragen sind unbeantwortet.}}"
 
+#. Before handing in a mock exam: how many of its questions are blank or flagged.
 #: src/mock/mock-hand-in.tsx
 msgctxt "GCYYkV"
 msgid "{count, plural, one {# question is flagged.} other {# questions are flagged.}}"
@@ -8322,11 +8319,13 @@ msgctxt "_rKJc5"
 msgid "Timing"
 msgstr "Zeit"
 
+#. A mock exam's result: the time spent on each question of its slowest subject.
 #: src/mock/mock-result-insights.tsx
 msgctxt "jSIlJG"
 msgid "{seconds, plural, =0 {# seconds} one {# second} other {# seconds}} per {area} question. Aim for {target} or less."
 msgstr "{seconds, plural, =0 {# Sekunden} one {# Sekunde} other {# Sekunden}} pro Frage in {area}. Versuch, auf {target} oder weniger zu kommen."
 
+#. A mock exam's result: its questions left unanswered when time ran out.
 #: src/mock/mock-result-insights.tsx
 msgctxt "bll9Ms"
 msgid "{count, plural, one {# question was} other {# questions were}} left when time ran out."
@@ -9288,6 +9287,12 @@ msgstr "Kein Datum"
 msgctxt "0VV_sK"
 msgid "Goal"
 msgstr "Ziel"
+
+#: src/onboarding/plan-receipt.tsx
+#: src/onboarding/steps/level-choices.tsx
+msgctxt "DejB0r"
+msgid "Your level"
+msgstr "Dein Level"
 
 #: src/onboarding/plan-receipt.tsx
 msgctxt "UcBsGX"

@@ -53,22 +53,27 @@ function TimingInsight({ result }: { result: MockResult }) {
     <Insight icon={TimerIcon} title={t("Timing")}>
       {slowest && (
         <p>
-          {t(
-            "{seconds, plural, =0 {# seconds} one {# second} other {# seconds}} per {area} question. Aim for {target} or less.",
-            {
+          {t({
+            description:
+              "A mock exam's result: the time spent on each question of its slowest subject.",
+            message:
+              "{seconds, plural, =0 {# seconds} one {# second} other {# seconds}} per {area} question. Aim for {target} or less.",
+            values: {
               area: slowest.name,
               seconds: slowest.secondsPerQuestion,
               target: String(Math.round(slowest.targetSecondsPerQuestion ?? 0)),
             },
-          )}
+          })}
         </p>
       )}
       {result.unansweredAtTimeout > 0 && (
         <p>
-          {t(
-            "{count, plural, one {# question was} other {# questions were}} left when time ran out.",
-            { count: result.unansweredAtTimeout },
-          )}
+          {t({
+            description: "A mock exam's result: its questions left unanswered when time ran out.",
+            message:
+              "{count, plural, one {# question was} other {# questions were}} left when time ran out.",
+            values: { count: result.unansweredAtTimeout },
+          })}
         </p>
       )}
     </Insight>

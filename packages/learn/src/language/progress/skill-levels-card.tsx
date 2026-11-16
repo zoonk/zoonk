@@ -6,6 +6,7 @@ import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { ArrowDownIcon, ArrowUpIcon, TrendingUpIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useFormatIsoDate } from "../../_utils/iso-date";
+import { useLanguageNameInSentence } from "../../_utils/use-language-name";
 import { getLevelShare, listRises } from "../_utils/level-scale";
 import { useSkillName } from "../_utils/use-skill-name";
 import { LevelBar } from "../level-bar";
@@ -153,8 +154,13 @@ function RiseLine({ levels }: { levels: LanguageSkillLevel[] }) {
 
 export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }) {
   const t = useExtracted();
+  const languageName = useLanguageNameInSentence();
   const { levels, target } = progress;
   const targetShare = target ? getLevelShare(target.score) : null;
+
+  const title = t("Your {language} level", {
+    language: languageName(progress.goal.targetLanguage),
+  });
 
   if (levels.length === 0) {
     return (
@@ -168,7 +174,7 @@ export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }
     <section aria-labelledby="language-levels-title" className="flex flex-col gap-3">
       <div className="flex flex-wrap items-baseline justify-end gap-x-3 gap-y-1">
         <span className="sr-only" id="language-levels-title">
-          {t("Your level")}
+          {title}
         </span>
         <TargetLabel target={target} targetDate={progress.goal.targetDate} />
       </div>
@@ -192,7 +198,7 @@ export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }
             style={{ left: `calc(${BAR_START} + (${BAR_WIDTH}) * ${targetShare})` }}
           />
         )}
-        <ul aria-label={t("Your level")} className="flex flex-col [&>li+li]:border-t">
+        <ul aria-label={title} className="flex flex-col [&>li+li]:border-t">
           {levels.map((level) => (
             <LevelRow key={level.skill} level={level} />
           ))}
