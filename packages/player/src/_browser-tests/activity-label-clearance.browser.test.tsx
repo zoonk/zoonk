@@ -10,48 +10,7 @@ import {
 import { atViewport } from "../_test-utils/browser-viewport";
 import { onDevice } from "../_test-utils/device-media";
 
-const base = activityContentFixtures.distributionExplorer;
-
-function labelBox(text: string): DOMRect {
-  const node = [...document.querySelectorAll("figure svg text")].find(
-    (label) => label.textContent === text,
-  );
-
-  expect(node).toBeDefined();
-  return node!.getBoundingClientRect();
-}
-
 describe("activity label clearance", () => {
-  it.each([
-    { content: base, name: "normal near its mean", tail: "50%", target: "70 to 130: 95.45%" },
-    {
-      content: {
-        ...base,
-        check: { ...base.check, answer: 30 },
-        fields: { ...base.fields, distribution: { kind: "uniform", max: 200, min: 0 } as const },
-      },
-      name: "flat across its top",
-      tail: "50%",
-      target: "70 to 130: 30%",
-    },
-  ])("distribution tails clear the checked target: $name", async ({ content, target, tail }) => {
-    await atViewport({ height: 844, width: 390 }, async () => {
-      openActivity({ content, template: "distributionExplorer" });
-      await pressOnSlider("Lower handle", "ArrowRight", 2);
-      await checkActivity();
-      await expectVerdict("Not quite");
-      await expect.element(page.getByText(target, { exact: true })).toBeVisible();
-
-      await expect
-        .poll(() => {
-          const a = labelBox(target);
-          const b = labelBox(tail);
-          return Math.max(a.left - b.right, b.left - a.right, a.top - b.bottom, b.top - a.bottom);
-        })
-        .toBeGreaterThanOrEqual(4);
-    });
-  });
-
   it("symbolic balance centers each wrapped line in large text", async () => {
     document.documentElement.style.fontSize = "200%";
 

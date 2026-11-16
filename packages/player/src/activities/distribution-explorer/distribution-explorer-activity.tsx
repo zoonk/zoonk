@@ -24,8 +24,9 @@ import {
 } from "./distribution";
 import {
   DistributionHandle,
-  DistributionLabels,
   DistributionMean,
+  DistributionTails,
+  DistributionTarget,
   DistributionTicks,
 } from "./distribution-marks";
 
@@ -153,23 +154,21 @@ export function DistributionExplorerActivity({
           ticks={distributionTicks(distribution, domain)}
         />
 
-        <DistributionLabels
+        {isChecked && !isOnTarget && (
+          <DistributionTarget
+            label={t("{from} to {to}: {share}", {
+              from: format(fields.target.from),
+              share: percent(targetShare),
+              to: format(fields.target.to),
+            })}
+            target={fields.target}
+          />
+        )}
+
+        <DistributionTails
           above={percent(above)}
           below={percent(below)}
-          curve={curve}
           handles={[handles.from, handles.to]}
-          target={
-            isChecked && !isOnTarget
-              ? {
-                  ...fields.target,
-                  label: t("{from} to {to}: {share}", {
-                    from: format(fields.target.from),
-                    share: percent(targetShare),
-                    to: format(fields.target.to),
-                  }),
-                }
-              : undefined
-          }
         />
 
         <DistributionHandle
