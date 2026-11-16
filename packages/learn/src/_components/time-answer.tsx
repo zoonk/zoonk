@@ -44,7 +44,7 @@ function OfferLabel({ offer }: { offer: TimeOffer }) {
 
 /**
  * What the time picked gets the learner: one line under the picker, whose number is its subject,
- * and at most one link that names another time.
+ * and at most one answer that names another time.
  */
 export function TimeAnswer({
   action,
@@ -104,7 +104,12 @@ export function TimeAnswer({
         {failed && (
           <>
             {space}
-            <Button onClick={onRetry} variant="link">
+            <Button
+              className="text-foreground self-start"
+              onClick={onRetry}
+              size="sm"
+              variant="outline"
+            >
               {t("Try again")}
             </Button>
           </>
@@ -113,7 +118,12 @@ export function TimeAnswer({
         {offered && (
           <>
             {space}
-            <Button onClick={() => onUseOffer(offered.minutes)} variant="link">
+            <Button
+              className="text-foreground self-start"
+              onClick={() => onUseOffer(offered.minutes)}
+              size="sm"
+              variant="outline"
+            >
               <OfferLabel offer={offered} />
             </Button>
           </>
