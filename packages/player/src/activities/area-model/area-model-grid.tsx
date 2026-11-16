@@ -24,9 +24,13 @@ function edgesOf(side: SideCuts, scale: LinearScale): number[] {
   return [0, ...side.cuts, side.total].map((edge) => scale.toPixel(edge));
 }
 
-function cellTextClass(width: number, height: number): string {
-  const size = Math.min(width, height);
+/** Each part's drawn size along one side, between its two edges less the gap. */
+function sizesOf(edges: readonly number[]): number[] {
+  return edges.slice(1).map((edge, index) => Math.abs(edge - (edges[index] ?? 0)) - GAP);
+}
 
+/** One size for every number in the figure: the largest that fits its smallest labelled cell. */
+function cellTextClass(size: number): string {
   if (size >= BIG_CELL) {
     return "text-2xl";
   }
@@ -170,6 +174,18 @@ export function AreaGrid({
     cutsToParts(height.cuts, height.total),
   ];
 
+  const [columnSizes, rowSizes] = [sizesOf(columns), sizesOf(rows)];
+
+  const labelledSizes = rowSizes.flatMap((cellHeight) =>
+    columnSizes.flatMap((cellWidth) =>
+      cellWidth >= MIN_LABEL_CELL && cellHeight >= MIN_LABEL_CELL
+        ? [Math.min(cellWidth, cellHeight)]
+        : [],
+    ),
+  );
+
+  const textClass = cellTextClass(Math.min(...labelledSizes));
+
   return (
     <>
       <g aria-hidden="true">
@@ -182,7 +198,7 @@ export function AreaGrid({
               rows[row + 1] ?? 0,
             ];
 
-            const [cellWidth, cellHeight] = [right - left - GAP, bottom - top - GAP];
+            const [cellWidth, cellHeight] = [columnSizes[column] ?? 0, rowSizes[row] ?? 0];
             const showsLabel = cellWidth >= MIN_LABEL_CELL && cellHeight >= MIN_LABEL_CELL;
 
             return (
@@ -198,10 +214,7 @@ export function AreaGrid({
                 />
                 {showsLabel && (
                   <text
-                    className={cn(
-                      "fill-foreground font-semibold tabular-nums",
-                      cellTextClass(cellWidth, cellHeight),
-                    )}
+                    className={cn("fill-foreground font-semibold tabular-nums", textClass)}
                     dominantBaseline="middle"
                     textAnchor="middle"
                     x={(left + right) / 2}

@@ -50,6 +50,7 @@ export function PatternHints({
         <Button
           className="self-start"
           onClick={() => setShown((count) => count + 1)}
+          size="lg"
           variant="outline"
         >
           <Lightbulb aria-hidden="true" />

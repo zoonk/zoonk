@@ -32,7 +32,7 @@ export function ViewToggle({
   return (
     <div
       aria-label={t("Show the music as")}
-      className={cn(TAB_LIST_CLASS, "bg-background shrink-0 rounded-lg border p-0.5")}
+      className={cn(TAB_LIST_CLASS, "-me-2.5 shrink-0")}
       role="radiogroup"
     >
       {views.map((option) => (

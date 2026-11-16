@@ -54,33 +54,39 @@ function StepMarks({
 }
 
 function OrderedStep({
+  isEven,
   position,
   result,
   step,
 }: {
+  /** Other steps carry a second line, so a step without one keeps their height, centered. */
+  isEven: boolean;
   position: number;
   result?: StepResult;
   step: ProcessStep;
 }) {
   const t = useExtracted();
   const state = result && (result.learnerPosition === result.position ? "correct" : "incorrect");
+  const isCentered = isEven && !step.why;
 
   return (
     <li
       className={cn(
-        "flex gap-3 rounded-xl border px-3 py-2.5",
+        "flex gap-3 rounded-xl border px-3 py-2.5 text-sm leading-snug",
+        // Two lines, their gap, the text's top room, the padding and the border.
+        isCentered && "min-h-[calc(2lh+2rem)] items-center",
         state === "correct" && "border-success/50 bg-success/5",
         state === "incorrect" && "border-destructive/50 bg-destructive/5",
       )}
     >
       <StepMarks icon={step.icon} position={position} state={state ?? null} />
 
-      <div className="flex min-w-0 flex-1 flex-col gap-1 pt-1.5">
-        <p className="text-sm leading-snug font-medium">
+      <div className={cn("flex min-w-0 flex-1 flex-col gap-1", !isCentered && "pt-1.5")}>
+        <p className="font-medium text-pretty">
           <LessonRichText text={step.text} />
         </p>
 
-        {step.why && <p className="text-muted-foreground text-sm leading-snug">{step.why}</p>}
+        {step.why && <p className="text-muted-foreground text-pretty">{step.why}</p>}
 
         {state === "incorrect" && result?.learnerPosition && (
           <p className="text-destructive-text text-xs font-medium">
@@ -131,7 +137,13 @@ export function ProcessOrderActivity({
 
         <ol className="flex flex-col gap-2">
           {steps.map((step, index) => (
-            <OrderedStep key={step.id} position={index + 1} result={results[index]} step={step} />
+            <OrderedStep
+              isEven={steps.some((other) => other.why)}
+              key={step.id}
+              position={index + 1}
+              result={results[index]}
+              step={step}
+            />
           ))}
         </ol>
       </ActivityCanvas>
@@ -150,7 +162,7 @@ export function ProcessOrderActivity({
         renderItem={(item) => (
           <span className="flex min-w-0 flex-1 items-start gap-3">
             <StepMarks icon={byId.get(item.id)?.icon} position={null} state={null} />
-            <span className="min-w-0 flex-1 pt-1.5 text-sm leading-snug font-medium">
+            <span className="min-w-0 flex-1 pt-1.5 text-sm leading-snug font-medium text-pretty">
               <LessonRichText text={item.label} />
             </span>
           </span>
