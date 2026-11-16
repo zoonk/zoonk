@@ -322,6 +322,57 @@ final class PlanSlotOpeningTests: XCTestCase {
     XCTAssertEqual(changes.count, 1, "The preview applies once")
   }
 
+  func testANewDayEndsAFoundDate() async throws {
+    try await foundDateEnds(today: "2027-01-05")
+  }
+
+  func testALessonFinishedElsewhereEndsAFoundDate() async throws {
+    try await foundDateEnds(lessonsStudied: 1)
+  }
+
+  func testANewDayEndsCoveragesPreview() async throws {
+    try await coveragePreviewEnds(today: "2027-01-05")
+  }
+
+  func testALessonFinishedElsewhereEndsCoveragesPreview() async throws {
+    try await coveragePreviewEnds(lessonsStudied: 1)
+  }
+
+  private func foundDateEnds(today: String = "2027-01-04", lessonsStudied: Int = 0) async throws {
+    let api = try await pastDate()
+    let window = try await showPlan(api: api, width: .wide)
+    try activate(String(localized: "Find a date", table: "Plan"), in: window)
+    try await settle()
+    XCTAssertTrue(shows(Self.changePlan, in: window), "The date found")
+
+    try await readAgain(
+      api, plan: goalPlanFixture(status: "pastDate", today: today, lessonsStudied: lessonsStudied))
+    XCTAssertFalse(shows(Self.changePlan, in: window), "The old date cannot be applied")
+    XCTAssertTrue(shows(String(localized: "Find a date", table: "Plan"), in: window))
+    let changes = await api.calls.changes
+    XCTAssertEqual(changes, [])
+  }
+
+  private func coveragePreviewEnds(today: String = "2027-01-04", lessonsStudied: Int = 0)
+    async throws
+  {
+    let api = try await coverage()
+    let window = try await showPlan(api: api, width: .wide)
+    try activate(String(localized: "See what changes", table: "Plan"), in: window)
+    try await settle()
+    XCTAssertTrue(shows(Self.changePlan, in: window), "The preview found")
+
+    try await readAgain(
+      api,
+      plan: goalPlanFixture(
+        targetDate: "2027-06-01", feasibility: Self.short, today: today,
+        lessonsStudied: lessonsStudied))
+    XCTAssertFalse(shows(Self.changePlan, in: window), "The old preview cannot be applied")
+    XCTAssertTrue(shows(String(localized: "See what changes", table: "Plan"), in: window))
+    let changes = await api.calls.changes
+    XCTAssertEqual(changes, [])
+  }
+
   private static let changePlan = String(localized: "Change my plan", table: "Plan")
   /// A date the plan's time doesn't cover.
   private static let short = """

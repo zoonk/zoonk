@@ -195,7 +195,8 @@ final class PhaseEndTests: XCTestCase {
 func goalPlanFixture(
   phases: [String] = [], estimateEnd: String? = "2027-11-14", targetDate: String? = nil,
   targetDateEstimated: Bool = false, end planEnd: String? = nil, status: String = "onTrack",
-  fitOffer: String? = nil, feasibility: String? = nil, studyDays: Int = 7
+  fitOffer: String? = nil, feasibility: String? = nil, studyDays: Int = 7,
+  today: String = "2027-01-04", lessonsStudied: Int = 0
 ) throws -> GoalPlan {
   let end = estimateEnd.map { "\"\($0)\"" } ?? "null"
   let over = planEnd.map { #"{"kind": "\#($0)"}"# } ?? "null"
@@ -222,10 +223,10 @@ func goalPlanFixture(
       },
       "status": { "kind": "\(status)" },
       "steering": {
-        "difficultyBias": "standard", "lessonsStudied": 0, "practiceBias": "balanced",
+        "difficultyBias": "standard", "lessonsStudied": \(lessonsStudied), "practiceBias": "balanced",
         "skippedActivities": []
       },
-      "tools": [], "week": { "days": [], "startDate": "2027-01-04" },
+      "tools": [], "week": { "days": [], "startDate": "\(today)" },
       "weekTime": { "studiedMinutes": 0, "targetMinutes": 210 }, "writtenPractice": null
     }
     """
