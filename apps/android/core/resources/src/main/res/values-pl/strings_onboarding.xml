@@ -20,7 +20,7 @@
   "onboarding_aim_hours_more": "8ace65a4962f93d7de78afbe174cdd70aaa73d90ccf412415362456d6aed760f",
   "onboarding_aim_picker_title": "6ef9e2f585a74b1ec01b3a3658f3f1d0e43d5c734279be535c6b9e57987b9827",
   "onboarding_aim_talk": "10faa977005541f253fd4f3453e9e20f806e2f10d472487b6ff58a6540430156",
-  "onboarding_aim_title": "c7d020c441744d5756bf7bef23d220eb99de9c6528a6472dc7bdf22eb101d733",
+  "onboarding_aim_title": "c276bb862888c7d684abcc6c4727ccaddfd33a55afe0f6ec4b2f79c546242af3",
   "onboarding_aim_travel": "c109e32e70a6c46de3d306341222956823c2da02be7958400a155e83f6556e59",
   "onboarding_aim_work": "163918be3d72a3cfe5d18430c42a4882ef3baebf02ad67ffa26f473e0603e17c",
   "onboarding_another_date": "3ff3d0850d52062aad024e2a818cddef3b768aff9e3ab0b629cd742f31f738cd",
@@ -1065,7 +1065,7 @@
     <string name="onboarding_aim_work">Pracować lub uczyć się w tym języku</string>
     <string name="onboarding_aim_fluent">Mówić płynnie</string>
     <!-- Titles the language level a learner picks to reach, like "B2". {language} is a language name as in a sentence, like "English". -->
-    <string name="onboarding_aim_title">%1$s: poziom docelowy</string>
+    <string name="onboarding_aim_title">Docelowy poziom: %1$s</string>
     <string name="onboarding_aim_change">Zmień</string>
     <string name="onboarding_aim_picker_title">Jak daleko chcesz dojść?</string>
     <!-- %1$s is hours of study, such as "190 hr". -->

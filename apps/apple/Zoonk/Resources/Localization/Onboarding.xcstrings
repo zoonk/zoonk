@@ -167,7 +167,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@: poziom docelowy"
+            "value" : "Docelowy poziom: %@"
           }
         },
         "pt" : {
