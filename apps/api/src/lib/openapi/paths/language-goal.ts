@@ -245,7 +245,7 @@ export const languageGoalPaths = {
     post: {
       ...common,
       description:
-        "Takes a pattern off Today without practicing it, such as the note that recent mistakes were only typos. Dismissing it again changes nothing.",
+        "Stops offering a pattern without practicing it: a rule pattern on Today and its unit, or the note on the unit and in the mistakes notebook that recent mistakes were only typos (Today never offers that note). Dismissing it again changes nothing.",
       operationId: "dismissMistakePattern",
       requestParams: { path: mistakePatternPathParamsSchema },
       responses: { "204": { description: "Dismissed" }, ...readErrors },
