@@ -11,9 +11,7 @@
   /// checker reads it as it reads the web's (`REPORT-SHAPE.md` in the alignment notes). Without it,
   /// every report is a no-op.
   enum LayoutCapture {
-    static let isOn =
-      (ProcessInfo.processInfo.environment["ZOONK_LAYOUT_CAPTURE"]
-        ?? UserDefaults.standard.string(forKey: "ZOONK_LAYOUT_CAPTURE")) != nil
+    static let isOn = debugLaunchValue("ZOONK_LAYOUT_CAPTURE") != nil
   }
 
   // MARK: - What the pieces report

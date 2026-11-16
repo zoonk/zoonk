@@ -7,9 +7,7 @@
   /// section names open at that section.
   struct DebugComponentGallery: ViewModifier {
     /// Also a launch argument (`-ZOONK_DEBUG_GALLERY lists`), which device tools can pass.
-    private let section =
-      ProcessInfo.processInfo.environment["ZOONK_DEBUG_GALLERY"]
-      ?? UserDefaults.standard.string(forKey: "ZOONK_DEBUG_GALLERY")
+    private let section = debugLaunchValue("ZOONK_DEBUG_GALLERY")
 
     func body(content: Content) -> some View {
       if let section {
