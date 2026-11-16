@@ -83,6 +83,7 @@ import com.zoonk.api.models.UnderstoodGoal
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.LocalDate
 import java.time.LocalTime
+import com.zoonk.android.ui.components.Facts as FactSegments
 
 @Composable
 internal fun ColumnScope.UnderstoodScreen(
@@ -321,7 +322,7 @@ private fun FactRow(
                 Column(Modifier.semantics(mergeDescendants = true) {}, verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.Bottom) {
-                        Text(row.value, fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyLarge)
+                        FactSegments(row.value, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
                         row.badge?.let {
                             Text(
                                 it,
@@ -444,7 +445,7 @@ private fun RowNote(row: UnderstoodRow) {
                 ) { append("$sourceText ↗") }
             }
         }
-    Text(text, color = muted, style = MaterialTheme.typography.bodySmall)
+    FactSegments(text, color = muted, style = MaterialTheme.typography.bodySmall)
 }
 
 @Composable

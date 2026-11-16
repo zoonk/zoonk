@@ -81,6 +81,7 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.UUID
 import kotlin.math.roundToLong
+import com.zoonk.android.ui.components.Facts as FactSegments
 
 /** Main's readable column (`max-w-column`) on any window. */
 internal val COLUMN_WIDTH = 640.dp
@@ -245,7 +246,7 @@ internal fun LineWithIcon(
             modifier = Modifier.padding(top = 2.dp).size(markDp(ICON_SIZE)),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Text(text, color = color, style = style)
+        FactSegments(text, color = color, style = style)
     }
 }
 
@@ -536,7 +537,7 @@ internal fun SectionTitle(
     FlowRow(modifier, horizontalArrangement = Arrangement.spacedBy(12.dp), itemVerticalAlignment = Alignment.CenterVertically) {
         Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
         if (facts != null) {
-            Text(
+            FactSegments(
                 facts,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),

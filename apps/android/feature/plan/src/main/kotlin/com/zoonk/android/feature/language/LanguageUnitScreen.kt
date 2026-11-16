@@ -107,6 +107,7 @@ import com.zoonk.api.models.LanguageUnitPattern
 import com.zoonk.api.models.PlanPhaseChaptersInner
 import kotlinx.coroutines.launch
 import java.util.UUID
+import com.zoonk.android.ui.components.Facts as FactSegments
 
 internal class UnitActions(
     val open: (AppRoute) -> Unit,
@@ -312,7 +313,7 @@ private fun UnitHero(
     Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Eyebrow(eyebrow)
         Text(info.title, Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
-        facts?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data) }
+        facts?.let { FactSegments(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data) }
     }
 }
 

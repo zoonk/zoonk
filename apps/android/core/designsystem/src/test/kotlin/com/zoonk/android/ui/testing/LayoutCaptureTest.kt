@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
@@ -42,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.components.ButtonEdge
+import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
@@ -146,6 +149,40 @@ class LayoutCaptureTest {
                 }
             }
         assertFalse(parts.elements().any { it.optString("part") == "cut" })
+    }
+
+    @Test
+    fun aGhostButtonWhoseWordsAreCutStillReportsItsControl() {
+        val parts =
+            capture {
+                Box(Modifier.width(40.dp).height(12.dp).clipToBounds()) {
+                    TextButton(
+                        onClick = {},
+                        modifier = Modifier.requiredWidth(200.dp).requiredHeight(48.dp),
+                    ) { Text("Report a problem", softWrap = false) }
+                }
+            }
+        assertTrue(
+            parts.toString(),
+            parts.elements().any {
+                it.optString("part") == "cut" &&
+                    it.optString("name") == "control's visible box" &&
+                    it.optString("text") == "Report a problem"
+            },
+        )
+    }
+
+    @Test
+    fun factsWrapBetweenWholeSegmentsWithoutLeavingADotAtTheEnd() {
+        org.robolectric.RuntimeEnvironment.setFontScale(2f)
+        val parts =
+            capture {
+                Box(Modifier.width(280.dp)) { Facts(listOf("Phase 2 of 4", "Natural sciences")) }
+            }
+        val texts = parts.elements().filter { it.optString("part") == "text" }
+        assertEquals(listOf("Phase 2 of 4", "Natural sciences"), texts.map { it.getString("text") })
+        assertTrue(texts.all { it.getJSONArray("lineTexts").length() == 1 })
+        assertTrue(texts[1].getJSONArray("bounds").getDouble(1) > texts[0].getJSONArray("bounds").getDouble(1))
     }
 
     @Test

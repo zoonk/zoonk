@@ -98,6 +98,7 @@ import com.zoonk.api.models.SpeakingPaperTask
 import kotlinx.coroutines.launch
 import java.util.UUID
 import kotlin.math.roundToLong
+import com.zoonk.android.ui.components.Facts as FactSegments
 
 /** Where a paper's screens lead. */
 internal class SpeakingActions(
@@ -421,7 +422,7 @@ private fun TaskRow(
         leading = { Text(formatNumber(index + 1.0, locale), style = MaterialTheme.zoonkType.data) },
         leadOnFirstLine = true,
         supporting = {
-            Text(facts)
+            FactSegments(facts)
             lastTry?.let { Text(it) }
         },
     )

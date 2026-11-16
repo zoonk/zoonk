@@ -16,8 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.Facts as FactSegments
 
 /**
  * Main's `Eyebrow`: the one chip for a small label over or beside a title (22dp, an outline, no fill,
@@ -67,7 +69,11 @@ private fun Chip(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         mark()
-        Text(text = text, color = ink, style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium))
+        FactSegments(
+            text = text,
+            color = ink,
+            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium, lineBreak = LineBreak.Heading),
+        )
     }
 }
 

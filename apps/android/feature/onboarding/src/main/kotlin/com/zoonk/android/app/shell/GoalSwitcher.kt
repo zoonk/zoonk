@@ -60,6 +60,7 @@ import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.util.UUID
+import com.zoonk.android.ui.components.Facts as FactSegments
 
 /**
  * The tab roots' top app bar title: the goal switcher (main's goal menu), listing the followed goals,
@@ -392,7 +393,11 @@ private fun GoalLine(goal: LearnerSummaryGoal) {
             }
         }
 
-    Text(text = line, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium.withTabularFigures())
+    FactSegments(
+        text = line,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+    )
 }
 
 private val TITLE_WIDTH = 240.dp

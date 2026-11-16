@@ -23,6 +23,7 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.theme.zoonkType
 import kotlinx.coroutines.launch
+import com.zoonk.android.ui.components.Facts as FactSegments
 
 /** Main's Today popovers: tapping [anchor] opens a small note on what it shows, and a tap anywhere closes it. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,7 +55,7 @@ internal fun TodayPopover(
                     },
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        if (facts != null) Text(facts, style = MaterialTheme.zoonkType.data)
+                        if (facts != null) FactSegments(facts, style = MaterialTheme.zoonkType.data)
                         if (note != null) Text(note)
                         footer()
                     }

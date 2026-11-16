@@ -67,6 +67,7 @@ import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationIntro
 import com.zoonk.api.models.LanguageConversationIntroObjectivesInner
 import com.zoonk.api.models.SpeakingMockExam
+import com.zoonk.android.ui.components.Facts as FactSegments
 
 internal val CALL_COLUMN = 640.dp
 private val CALL_ITEM_MARGIN = 16.dp
@@ -201,7 +202,7 @@ internal fun CharacterRow(
 ) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
         CharacterAvatar(name)
-        Text(
+        FactSegments(
             buildAnnotatedString {
                 withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface)) { append(name) }
                 append(FACT_SEPARATOR)

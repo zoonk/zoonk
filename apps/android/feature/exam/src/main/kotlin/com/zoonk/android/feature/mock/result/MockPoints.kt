@@ -34,6 +34,7 @@ import com.zoonk.api.models.MockPoints
 import com.zoonk.api.models.MockPointsUnjudgedInner
 import com.zoonk.api.models.PointsMinimum
 import kotlin.math.roundToLong
+import com.zoonk.android.ui.components.Facts as FactSegments
 
 /** A test of the exam, or its objective tests together when [name] is null. */
 internal data class TestRow(
@@ -196,7 +197,7 @@ private fun MarkedLine(
                 tint = color,
             )
         }
-        Text(text, color = color, style = style)
+        FactSegments(text, color = color, style = style)
     }
 }
 

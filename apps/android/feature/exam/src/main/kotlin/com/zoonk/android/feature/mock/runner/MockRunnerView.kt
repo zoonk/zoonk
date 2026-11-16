@@ -83,6 +83,7 @@ import com.zoonk.api.models.MockExamCurrent
 import com.zoonk.api.models.MockExamSectionsInner
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
+import com.zoonk.android.ui.components.Facts as FactSegments
 
 /** Main's `MockRunnerView`: one question at a time with no feedback, Flag and Next at the thumb, the answer sheet a tap away. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -284,7 +285,7 @@ private fun RunnerProgress(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             val meta = MaterialTheme.typography.labelMedium.withTabularFigures()
-            Text(
+            FactSegments(
                 listOfNotNull(mockTitle(run.view.number).takeIf { titled }, question.question.area).factsLine(),
                 Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

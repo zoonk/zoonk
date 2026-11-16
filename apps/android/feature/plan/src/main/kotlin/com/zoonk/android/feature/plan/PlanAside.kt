@@ -48,6 +48,7 @@ import com.zoonk.api.models.PlanPhaseChaptersInner
 import com.zoonk.api.models.PlanPhaseCheckpoint
 import com.zoonk.api.models.PlanSteering
 import kotlinx.datetime.toJavaLocalDate
+import com.zoonk.android.ui.components.Facts as FactSegments
 
 @Composable
 internal fun NextOnPath(
@@ -337,10 +338,9 @@ private fun PropertyRow(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(
+            FactSegments(
                 text = value,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = if (warning) FontWeight.Medium else null,
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = if (warning) FontWeight.Medium else null),
                 color = if (warning) MaterialTheme.zoonk.warningText else MaterialTheme.colorScheme.onSurface,
             )
         }

@@ -18,6 +18,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.components.Facts as FactSegments
 
 /**
  * Main's `PageHeader`: a page's title with what sits at its end (actions, a readout). It is the page's
@@ -80,6 +81,6 @@ fun PageHeader(
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         PageTitleRow(title)
-        Text(supporting, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        FactSegments(supporting, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
     }
 }

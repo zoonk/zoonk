@@ -1,7 +1,7 @@
 package com.zoonk.android.ui.format
 
-/** Main's `FactSegments` separator: no-break spaces keep a "·" between the facts it joins when the line wraps. */
-const val FACT_SEPARATOR = " · "
+/** Plain-text facts for descriptions and labels; [com.zoonk.android.ui.components.Facts] owns their wrapping. */
+const val FACT_SEPARATOR = " · "
 
 /** Facts as one line, "Chapter 2 of 9 · 4 short lessons · 30 min", without the missing or empty ones. */
 fun Iterable<String?>.factsLine(): String = filterNot { it.isNullOrEmpty() }.joinToString(FACT_SEPARATOR)

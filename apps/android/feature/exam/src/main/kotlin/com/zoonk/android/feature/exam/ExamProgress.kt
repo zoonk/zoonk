@@ -43,6 +43,7 @@ import com.zoonk.api.models.ExamMockProgress
 import com.zoonk.api.models.ExamMockProgressSubjectsInner
 import com.zoonk.api.models.ExamViewScoring
 import com.zoonk.api.models.MockShape
+import com.zoonk.android.ui.components.Facts as FactSegments
 
 /** Main's `ExamMockProgress`: how the mock exams went over time, shown once one is finished. */
 @Composable
@@ -182,11 +183,10 @@ private fun SubjectRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
+        FactSegments(
             trend.name,
             Modifier.weight(1f).padding(vertical = 10.dp),
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
         )
         if (trends) {
             Sparkline(trend.percents.map(Long::toInt))

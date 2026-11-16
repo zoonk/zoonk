@@ -424,7 +424,7 @@ private fun Descriptions(
 fun listRowDescription(
     text: String?,
     color: Color = Color.Unspecified,
-): (@Composable () -> Unit)? = text?.takeUnless(::isBlankWords)?.let { { Text(it, color = color) } }
+): (@Composable () -> Unit)? = text?.takeUnless(::isBlankWords)?.let { { Facts(it, color = color) } }
 
 /** Says nothing: empty, or only spaces and invisible characters (a zero-width space, a joiner). */
 fun isBlankWords(text: String): Boolean =

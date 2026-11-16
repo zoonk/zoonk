@@ -59,6 +59,7 @@ import com.zoonk.api.models.SavedMindMap
 import com.zoonk.api.models.SavedMindMapKind
 import kotlinx.coroutines.launch
 import kotlin.time.toJavaInstant
+import com.zoonk.android.ui.components.Facts as FactSegments
 
 private val NOT_MADE =
     setOf(GoalMindMap.Status.AVAILABLE, GoalMindMap.Status.WRITING_LESSONS, GoalMindMap.Status.DRAWING, GoalMindMap.Status.FAILED)
@@ -369,7 +370,7 @@ private fun LessonGroupRow(
         onClick = { actions.page.study(StudyTab.Lessons, MapPlace(group.chapterId.toString())) },
         leading = { MapMark(null, MindMapShown.Available) },
         supporting = {
-            Text(
+            FactSegments(
                 factsLine(
                     stringResource(R.string.mindmaps_chapter_number, formatNumber(chapter.position.toDouble(), locale)),
                     pluralStringResource(R.plurals.mindmaps_lesson_maps, count, formatNumber(count.toDouble(), locale)),
