@@ -140,7 +140,7 @@ function ReservedTag({ children }: { children: React.ReactNode }) {
   const labels = Object.entries(useResultLabels());
 
   return (
-    <span className="grid min-w-0 text-end">
+    <span className="grid min-w-0">
       {labels.map(([key, label]) => (
         <span
           aria-hidden="true"
@@ -159,8 +159,8 @@ function ReservedTag({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * A number is the row's key, so a touch screen gives up its room (craft E1, B2). Once checked the
- * key does nothing, so it hides in its room and the answer stays put.
+ * A number is the row's key, so a touch screen gives up its room (craft E1, B2). Once checked or
+ * disabled the key does nothing, so it hides in its room and the answer stays put.
  */
 function OptionMarker({
   isChecked,
@@ -243,7 +243,11 @@ export function AnswerOption({
       type={picks ? "button" : "submit"}
       {...props}
     >
-      <OptionMarker isChecked={Boolean(result)} layout={layout} marker={marker} />
+      <OptionMarker
+        isChecked={Boolean(result) || Boolean(props.disabled)}
+        layout={layout}
+        marker={marker}
+      />
 
       <TagBesideOrUnder layout={layout} reservesTag={picks && tag === undefined} tag={shownTag}>
         <SpokenMath>{children}</SpokenMath>
@@ -262,7 +266,8 @@ const ROW_FORMULA_CLASS =
 /**
  * The tag ends the answer's last line, or starts a line of its own when the last line has no room
  * for it. `reservesTag` holds its room from the start for a tag that comes with a verdict. The tag
- * is inline, not floated, since a float turns off balanced wrapping and leaves a lone last word. A
+ * is inline, not floated, since a float turns off balanced wrapping and leaves a lone last word, and
+ * a wide space parts it from the words, so a tag that starts its own line starts at its edge. A
  * row's answer flows as text: a caller whose answer has several lines makes each one a block or
  * breaks them with `<br>`.
  */
@@ -296,8 +301,9 @@ export function TagBesideOrUnder({
     <span className={cn("block w-full grow basis-1/2 text-balance", ROW_FORMULA_CLASS)}>
       {children}
 
+      {(tag || reservesTag) && <span className="[word-spacing:0.5rem]"> </span>}
       {(tag || reservesTag) && (
-        <LineMarker className="ms-3 inline-flex h-auto min-h-lh max-w-full align-top">
+        <LineMarker className="inline-flex h-auto min-h-lh max-w-full align-top">
           {reservesTag ? <ReservedTag>{tag}</ReservedTag> : tag}
         </LineMarker>
       )}
