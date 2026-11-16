@@ -70,6 +70,8 @@ export function getPracticeLabels({
 /**
  * The parts of one practice lead with different topics when they can, each naming its row: parts
  * with fewer topics pick first, so a part on one topic keeps it and a wider part leads with another.
+ *
+ * @internal
  */
 export function getPartLabels({
   parts,
