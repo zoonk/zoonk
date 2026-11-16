@@ -625,7 +625,7 @@ describe("money and society activities reopened from their saved answer", () => 
 });
 
 describe("causal explanation clarity", () => {
-  it("cause and effect: checked reasons are explained once beside their links", async () => {
+  it("cause and effect: the joining explanation shows once beside the individual link reasons", async () => {
     openActivity({ template: "causeEffectChain" });
     await chainNode("1920 Prairie plowed for wheat").click();
     await chainNode("1934 Dust storms").click();
@@ -639,6 +639,8 @@ describe("causal explanation clarity", () => {
 
     await expect
       .element(feedback.getByText(fixtures.causeEffectChain.check.explanation))
-      .not.toBeInTheDocument();
+      .toBeVisible();
+
+    expect(page.getByText(fixtures.causeEffectChain.check.explanation).elements()).toHaveLength(1);
   });
 });

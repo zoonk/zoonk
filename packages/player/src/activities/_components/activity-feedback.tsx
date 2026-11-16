@@ -129,9 +129,7 @@ export function ActivityFeedback({
         />
       )}
 
-      {check.kind === "interaction" && content.template !== "causeEffectChain" && (
-        <FeedbackText>{check.explanation}</FeedbackText>
-      )}
+      {check.kind === "interaction" && <FeedbackText>{check.explanation}</FeedbackText>}
 
       {notes && (
         <LessonResultNote savedMistake={notes.savedMistake} willReturn={notes.willReturn} />
