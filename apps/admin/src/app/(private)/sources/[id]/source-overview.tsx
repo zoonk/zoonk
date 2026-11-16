@@ -18,7 +18,7 @@ function GoodUntil({ until }: { until: Date | null }) {
   if (isOutOfDate(until)) {
     return (
       <StateMark className="whitespace-normal" state="out_of_date">
-        Out of date since {formatDate(until)}
+        Out of date since <span className="whitespace-nowrap">{formatDate(until)}</span>
       </StateMark>
     );
   }

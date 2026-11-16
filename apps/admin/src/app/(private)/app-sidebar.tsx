@@ -97,7 +97,7 @@ export function AppSidebar({ account, counts }: AdminSidebarProps) {
           widths, beside the search and, collapsed, above it, so it's read where it's drawn. */}
       <SidebarHeader className="sidebar-collapsed:flex-col sidebar-collapsed:gap-4 flex-row items-center gap-1">
         <SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar" />
-        <SidebarSearch label="Search…" onClick={openCommandPalette} />
+        <SidebarSearch className="h-8" label="Search…" onClick={openCommandPalette} />
       </SidebarHeader>
 
       <AdminSidebarContent account={account} counts={counts} />
