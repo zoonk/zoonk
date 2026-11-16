@@ -4,18 +4,11 @@ import { getFoundationSkillIds, getSkillArea } from "../../../plans/planner/grap
 import { type PlanGraph, type PlanSettings } from "../../../plans/planner/plan-state";
 import { type SyllabusItem } from "./syllabus-input";
 
-/** Propagate test-out credit to every covered skill while retaining the same item id for once-only lesson counts. */
-export async function withTestedOutSkills({
-  graphSkillIds,
-  items,
-}: {
-  graphSkillIds: ReadonlySet<string>;
-  items: readonly SyllabusItem[];
-}): Promise<SyllabusItem[]> {
+export async function loadTestedOutLinks(items: readonly SyllabusItem[]) {
   const testedOut = items.filter((item) => item.status === "testedOut" && item.lessonId);
 
   if (testedOut.length === 0) {
-    return [...items];
+    return { chapterRows: [], lessonRows: [] };
   }
 
   const [lessonRows, chapterRows] = await Promise.all([
@@ -28,6 +21,27 @@ export async function withTestedOutSkills({
       where: { chapterId: { in: testedOut.flatMap((item) => item.chapterId ?? []) } },
     }),
   ]);
+
+  return { chapterRows, lessonRows };
+}
+
+/** Propagate test-out credit to every covered skill while retaining the same item id for once-only lesson counts. */
+export async function withTestedOutSkills({
+  graphSkillIds,
+  items,
+  links,
+}: {
+  links?: Awaited<ReturnType<typeof loadTestedOutLinks>>;
+  graphSkillIds: ReadonlySet<string>;
+  items: readonly SyllabusItem[];
+}): Promise<SyllabusItem[]> {
+  const testedOut = items.filter((item) => item.status === "testedOut" && item.lessonId);
+
+  if (testedOut.length === 0) {
+    return [...items];
+  }
+
+  const { lessonRows, chapterRows } = links ?? (await loadTestedOutLinks(items));
 
   const own = new Set(items.flatMap((item) => (item.skillId ? [item.skillId] : [])));
 

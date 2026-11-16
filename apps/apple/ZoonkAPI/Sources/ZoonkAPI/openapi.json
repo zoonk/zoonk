@@ -1418,6 +1418,55 @@
         }
       }
     },
+    "/me/certificates/progress": {
+      "get": {
+        "operationId": "listCertificateProgress",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get the current learner's certificate study progress",
+        "tags": [
+          "Certificates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Active goals and the studied share of their next certificate's full coverage",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateProgressList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/me/certificates/{code}/views": {
       "post": {
         "description": "Records that a certificate's award moment was closed, so completion results stop returning it. Showing it again keeps the first time.",
@@ -35977,6 +36026,62 @@
         ],
         "additionalProperties": false
       },
+      "CertificateProgressList": {
+        "type": "object",
+        "properties": {
+          "upNext": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateProgress"
+            }
+          }
+        },
+        "required": [
+          "upNext"
+        ],
+        "additionalProperties": false
+      },
+      "CertificateProgress": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "languageFlag": {
+            "nullable": true,
+            "type": "string"
+          },
+          "progress": {
+            "nullable": true,
+            "description": "Lessons studied divided by the certificate's full lesson coverage, including lessons outside a dated plan. Known lessons earn no study credit. Null for language goals or unknown coverage.",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "targetLanguage": {
+            "nullable": true,
+            "type": "string"
+          },
+          "targetRegion": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName",
+          "id",
+          "languageFlag",
+          "progress",
+          "targetLanguage",
+          "targetRegion"
+        ],
+        "additionalProperties": false
+      },
       "Challenge": {
         "type": "object",
         "properties": {
@@ -39344,13 +39449,13 @@
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 9007199254740991,
-                "description": "Lessons the learner studied; lessons set aside never count"
+                "description": "Studied and already-known lessons in the Plan's lesson scope"
               },
               "lessonsTotal": {
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 9007199254740991,
-                "description": "Lessons in the plan: every one but those tested out, which are off the plan"
+                "description": "The Plan's lesson scope, including studied and already-known lessons"
               },
               "phaseCount": {
                 "type": "integer",
@@ -85617,13 +85722,13 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Its lessons the learner studied"
+            "description": "Its lessons the learner studied or already knew"
           },
           "lessonsTotal": {
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Its lessons in the plan: every one but those tested out, which are off the plan"
+            "description": "Its lessons in the Plan's scope, including studied and already-known lessons"
           },
           "milestone": {
             "nullable": true,
