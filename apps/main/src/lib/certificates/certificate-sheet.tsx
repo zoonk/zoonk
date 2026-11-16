@@ -1,9 +1,10 @@
+import { Brand } from "@/lib/metadata/open-graph-brand";
 import { type FittedSheet } from "./certificate-fit";
 import { FONT_WEIGHTS } from "./certificate-fonts";
 import { CertificateGraph } from "./certificate-graph";
 import { TOPIC_COLUMN_WIDTH } from "./certificate-layout";
 import { CERTIFICATE_COLORS } from "./certificate-palette";
-import { Brand, CheckMark, QrCode, ShapedImage } from "./certificate-parts";
+import { CheckMark, QrCode, ShapedImage } from "./certificate-parts";
 import { SHEET } from "./certificate-spec";
 import { type CertificateView } from "./certificate-view";
 

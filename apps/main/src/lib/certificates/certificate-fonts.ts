@@ -38,25 +38,36 @@ const LOCALE_FONTS: Record<string, FontFile[]> = {
 /** Satori's weights for the design's: kind and chips 560, readouts 620, the brand 640. */
 export const FONT_WEIGHTS = { brand: 800, kind: 600, readout: 700 } as const;
 
+/** A link's share card: its words, and the brand and title in the brand's weight. */
+const SHARE_CARD_FILES = new Set(["Geist-400.ttf", "Geist-640.ttf", "NotoSans-400.ttf"]);
+const SHARE_CARD_FONTS = LATIN_FONTS.filter(({ file }) => SHARE_CARD_FILES.has(file));
+
 async function loadFont({ file, ...font }: FontFile): Promise<SatoriFont> {
   return { ...font, data: await readFile(join(FONTS_DIR, file)), style: "normal" };
 }
 
-const fontsByLocale = new Map<string, Promise<SatoriFont[]>>();
+const loaded = new Map<string, Promise<SatoriFont[]>>();
 
 /** The same array each time, so Satori parses each font once per instance. */
-export function getCertificateFonts(locale: string): Promise<SatoriFont[]> {
-  const cached = fontsByLocale.get(locale);
+function loadFonts(key: string, files: FontFile[]): Promise<SatoriFont[]> {
+  const cached = loaded.get(key);
 
   if (cached) {
     return cached;
   }
 
-  const fonts = Promise.all(
-    [...LATIN_FONTS, ...(LOCALE_FONTS[locale] ?? [])].map((font) => loadFont(font)),
-  );
+  const fonts = Promise.all(files.map((font) => loadFont(font)));
 
-  fontsByLocale.set(locale, fonts);
-  fonts.catch(() => fontsByLocale.delete(locale));
+  loaded.set(key, fonts);
+  fonts.catch(() => loaded.delete(key));
   return fonts;
+}
+
+export function getCertificateFonts(locale: string): Promise<SatoriFont[]> {
+  return loadFonts(locale, [...LATIN_FONTS, ...(LOCALE_FONTS[locale] ?? [])]);
+}
+
+/** Words in a script Geist doesn't draw are fetched as `next/og` does without fonts of its own. */
+export function getShareCardFonts(): Promise<SatoriFont[]> {
+  return loadFonts("share-card", SHARE_CARD_FONTS);
 }
