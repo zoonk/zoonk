@@ -826,6 +826,9 @@ actor PlanAPIStub: PlanAPIClient {
   private var savedFocusTest: FocusTestSummary?
   private var previewed: PlanChangePreview?
   private var holds: HeldCall?
+  private var shownPlan: GoalPlan?
+  private var end = PlanEnd(certificates: nil, next: nil)
+  private var languageUnitsRead: LanguageUnitsOverview?
   private var heldCall: CheckedContinuation<Void, Never>?
   private var heldCallWaiter: CheckedContinuation<Void, Never>?
 
@@ -836,9 +839,15 @@ actor PlanAPIStub: PlanAPIClient {
     case preview
     case setStatus
     case resumeChangesPlan
+    case continueAtNextLevel
+    case skipAlphabet
   }
 
   func setAdviceFails(_ fails: Bool) { adviceFails = fails }
+  /// Every read answers this plan instead of the stub's.
+  func setPlan(_ plan: GoalPlan) { shownPlan = plan }
+  func setPlanEnd(_ end: PlanEnd) { self.end = end }
+  func setLanguageUnits(_ units: LanguageUnitsOverview) { languageUnitsRead = units }
   /// Every read answers the same plan, as a read after progress that changed nothing it plans does.
   func setPlanId(_ id: String) { planId = id }
   func setToday(_ day: String) { today = day }
@@ -887,7 +896,7 @@ actor PlanAPIStub: PlanAPIClient {
 
   func plan(token: String, goalId: String) async throws -> GoalPlan {
     calls.plan += 1
-    return try .stub(planId: planId ?? "plan-\(calls.plan)", today: today)
+    return try shownPlan ?? .stub(planId: planId ?? "plan-\(calls.plan)", today: today)
   }
 
   func planChanged(token: String, goalId: String, since: Date) async throws -> Bool {
@@ -948,10 +957,14 @@ actor PlanAPIStub: PlanAPIClient {
     throw APIError.notFound
   }
   func languageUnits(token: String, goalId: String) async throws -> LanguageUnitsOverview {
-    throw APIError.notFound
+    guard let languageUnitsRead else {
+      throw APIError.notFound
+    }
+
+    return languageUnitsRead
   }
   func planEnd(token: String, goalId: String) async throws -> PlanEnd {
-    PlanEnd(certificates: nil, next: nil)
+    end
   }
   func resumeChangesPlan(token: String, goalId: String) async throws -> Bool {
     await holdIfAsked(.resumeChangesPlan)
@@ -1013,8 +1026,14 @@ actor PlanAPIStub: PlanAPIClient {
 
     return answer
   }
-  func continueAtNextLevel(token: String, goalId: String) async throws -> Bool { false }
-  func skipAlphabet(token: String, goalId: String) async throws -> Bool { false }
+  func continueAtNextLevel(token: String, goalId: String) async throws -> Bool {
+    await holdIfAsked(.continueAtNextLevel)
+    return false
+  }
+  func skipAlphabet(token: String, goalId: String) async throws -> Bool {
+    await holdIfAsked(.skipAlphabet)
+    return false
+  }
   func goalGenerationId(token: String, goalId: String) async throws -> String? { nil }
   func restartGeneration(token: String, goalId: String) async throws -> String? { nil }
   nonisolated func generationEvents(id: String, token: String)

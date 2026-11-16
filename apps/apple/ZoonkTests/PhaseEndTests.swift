@@ -194,14 +194,15 @@ final class PhaseEndTests: XCTestCase {
 /// A plan with these phases and nothing else to say.
 func goalPlanFixture(
   phases: [String] = [], estimateEnd: String? = "2027-11-14", targetDate: String? = nil,
-  targetDateEstimated: Bool = false
+  targetDateEstimated: Bool = false, end planEnd: String? = nil
 ) throws -> GoalPlan {
   let end = estimateEnd.map { "\"\($0)\"" } ?? "null"
+  let over = planEnd.map { #"{"kind": "\#($0)"}"# } ?? "null"
   let target = targetDate.map { "\"\($0)\"" } ?? "null"
   let json = """
     {
       "access": { "mocksRequirePlus": false },
-      "areas": [], "bases": null, "course": null, "end": null,
+      "areas": [], "bases": null, "course": null, "end": \(over),
       "estimate": { "endDate": \(end), "fullCourseEndDate": null },
       "examChoices": [], "examDocument": "notice", "feasibility": null, "fitOffer": null,
       "goalId": "goal", "phases": [\(phases.joined(separator: ","))], "planId": "plan",

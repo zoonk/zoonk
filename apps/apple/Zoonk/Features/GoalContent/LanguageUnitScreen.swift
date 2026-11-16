@@ -240,7 +240,7 @@ private struct LanguageUnitContent: View {
       }
     }
     .onDisappear {
-      callStart.cancel()
+      callStart.leave()
     }
   }
 

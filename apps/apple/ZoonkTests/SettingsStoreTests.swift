@@ -9,12 +9,12 @@ final class SettingsStoreTests: XCTestCase {
     let store = makeStore(api: api)
     await store.preferences.load()
 
-    await store.updatePreferences(.soundsEnabled(false))
+    let saved = await store.updatePreferences(.soundsEnabled(false))
 
     XCTAssertEqual(store.preferences.value?.soundsEnabled, false)
     let updates = await api.updates
     XCTAssertEqual(updates, [.soundsEnabled(false)])
-    XCTAssertFalse(store.saveFailed)
+    XCTAssertTrue(saved)
   }
 
   func testRefusedPreferenceGoesBackAndSaysSo() async {
@@ -22,10 +22,10 @@ final class SettingsStoreTests: XCTestCase {
     let store = makeStore(api: api)
     await store.preferences.load()
 
-    await store.updatePreferences(.soundsEnabled(false))
+    let saved = await store.updatePreferences(.soundsEnabled(false))
 
     XCTAssertEqual(store.preferences.value?.soundsEnabled, true)
-    XCTAssertTrue(store.saveFailed)
+    XCTAssertFalse(saved)
   }
 
   /// The buddy offers a country before any screen read the preferences.
@@ -156,23 +156,21 @@ final class SettingsStoreTests: XCTestCase {
   func testAnUndoAnsweredAfterAnotherDeletionLeavesThatOneUndoable() async {
     let api = SettingsAPIStub()
     let store = makeStore(api: api)
+    let changes = MemoryChanges()
     await store.memory.load()
-    await store.deleteMemoryFact(id: MemoryFact.evenings.id)
+    changes.delete(id: MemoryFact.evenings.id, settings: store)
+    await waitUntil { changes.deletedFact == .evenings }
     await api.holdDeletes()
 
-    let deletion = Task { await store.deleteMemoryFact(id: MemoryFact.sciFi.id) }
+    changes.delete(id: MemoryFact.sciFi.id, settings: store)
     await api.waitForHeldDelete()
-    let undo = Task { await store.undoDeletion() }
-    // Lets the undo take the notice it's for before the deletion's answer replaces it.
-    for _ in 0..<10 {
-      await Task.yield()
-    }
+    changes.undo(settings: store)
     await api.releaseDeletes(throwing: nil)
-    await deletion.value
-    await undo.value
+    await waitUntil { store.memory.value?.facts == [.evenings] }
+    await waitUntil { changes.deletedFact == .sciFi }
 
-    XCTAssertEqual(store.deletedFact, .sciFi)
-    XCTAssertNil(store.undoStatus, "the later deletion can still be undone")
+    XCTAssertEqual(changes.deletedFact, .sciFi)
+    XCTAssertNil(changes.undoStatus, "the later deletion can still be undone")
   }
 
   func testDeletedFactLeavesTheListAndCanComeBack() async {
@@ -180,15 +178,18 @@ final class SettingsStoreTests: XCTestCase {
     let store = makeStore(api: api)
     await store.memory.load()
 
-    await store.deleteMemoryFact(id: MemoryFact.evenings.id)
+    let deletion = await store.deleteMemoryFact(id: MemoryFact.evenings.id)
 
     XCTAssertEqual(store.memory.value?.facts, [.sciFi])
-    XCTAssertEqual(store.deletedFact, .evenings)
+    guard case .done(let deleted)? = deletion else {
+      return XCTFail("Expected the deleted fact, got \(String(describing: deletion))")
+    }
+    XCTAssertEqual(deleted, .evenings)
 
-    await store.undoDeletion()
+    let undo = await store.undoDeletion(of: deleted)
 
     XCTAssertEqual(store.memory.value?.facts, [.sciFi, .evenings])
-    XCTAssertEqual(store.undoStatus, .undone)
+    XCTAssertEqual(undo, .undone)
     let restoredFactIds = await api.restoredFactIds
     XCTAssertEqual(restoredFactIds, [MemoryFact.evenings.id])
   }
@@ -196,40 +197,47 @@ final class SettingsStoreTests: XCTestCase {
   func testASecondUndoTapWhileTheFirstRunsRestoresNothingMore() async {
     let api = SettingsAPIStub()
     let store = makeStore(api: api)
+    let changes = MemoryChanges()
     await store.memory.load()
-    await store.deleteMemoryFact(id: MemoryFact.evenings.id)
+    changes.delete(id: MemoryFact.evenings.id, settings: store)
+    await waitUntil { changes.deletedFact == .evenings }
 
-    async let first: Void = store.undoDeletion()
-    async let second: Void = store.undoDeletion()
-    _ = await (first, second)
+    changes.undo(settings: store)
+    changes.undo(settings: store)
+    await waitUntil { changes.undoStatus == .undone }
 
-    XCTAssertEqual(store.undoStatus, .undone)
+    XCTAssertEqual(changes.undoStatus, .undone)
     let restoredFactIds = await api.restoredFactIds
     XCTAssertEqual(restoredFactIds, [MemoryFact.evenings.id])
   }
 
-  func testFailedDeletionKeepsTheFact() async {
+  func testFailedDeletionKeepsTheFactAndSaysSo() async {
     let store = makeStore(api: SettingsAPIStub(deleteError: APIError.network))
+    let changes = MemoryChanges()
     await store.memory.load()
 
-    await store.deleteMemoryFact(id: MemoryFact.evenings.id)
+    changes.delete(id: MemoryFact.evenings.id, settings: store)
+    await waitUntil { changes.saveFailed }
 
     XCTAssertEqual(store.memory.value?.facts, [.sciFi, .evenings])
-    XCTAssertNil(store.deletedFact)
-    XCTAssertTrue(store.saveFailed)
+    XCTAssertNil(changes.deletedFact)
+    XCTAssertTrue(changes.saveFailed)
   }
 
   func testUndoThatChangedSinceSaysItCouldNotAndIsNotSentAgain() async {
     let api = SettingsAPIStub(restoreChangedSince: true)
     let store = makeStore(api: api)
+    let changes = MemoryChanges()
     await store.memory.load()
-    await store.deleteMemoryFact(id: MemoryFact.evenings.id)
+    changes.delete(id: MemoryFact.evenings.id, settings: store)
+    await waitUntil { changes.deletedFact == .evenings }
 
-    await store.undoDeletion()
-    await store.undoDeletion()
+    changes.undo(settings: store)
+    await waitUntil { changes.undoStatus == .changedSince }
+    changes.undo(settings: store)
 
-    XCTAssertEqual(store.undoStatus, .changedSince)
-    XCTAssertFalse(store.saveFailed)
+    XCTAssertEqual(changes.undoStatus, .changedSince)
+    XCTAssertFalse(changes.saveFailed)
     XCTAssertEqual(store.memory.value?.facts, [.sciFi])
     let restoreCount = await api.restoreCount
     XCTAssertEqual(restoreCount, 1)
@@ -238,19 +246,43 @@ final class SettingsStoreTests: XCTestCase {
   func testUndoThatDidNotGoThroughCanBeTriedAgain() async {
     let api = SettingsAPIStub(restoreError: APIError.network)
     let store = makeStore(api: api)
+    let changes = MemoryChanges()
     await store.memory.load()
-    await store.deleteMemoryFact(id: MemoryFact.evenings.id)
+    changes.delete(id: MemoryFact.evenings.id, settings: store)
+    await waitUntil { changes.deletedFact == .evenings }
 
-    await store.undoDeletion()
+    changes.undo(settings: store)
+    await waitUntil { changes.undoStatus == .failed }
 
-    XCTAssertEqual(store.undoStatus, .failed)
-    XCTAssertFalse(store.saveFailed)
+    XCTAssertEqual(changes.undoStatus, .failed)
+    XCTAssertFalse(changes.saveFailed)
     XCTAssertEqual(store.memory.value?.facts, [.sciFi])
 
-    await store.undoDeletion()
+    changes.undo(settings: store)
+    await waitUntil { changes.undoStatus == .failed }
 
     let restoreCount = await api.restoreCount
     XCTAssertEqual(restoreCount, 2)
+  }
+
+  func testLeavingMemoryEndsItsNoticeAndWhatsStillOut() async {
+    let api = SettingsAPIStub()
+    let store = makeStore(api: api)
+    let changes = MemoryChanges()
+    await store.memory.load()
+    changes.delete(id: MemoryFact.evenings.id, settings: store)
+    await waitUntil { changes.deletedFact == .evenings }
+    await api.holdDeletes()
+
+    changes.delete(id: MemoryFact.sciFi.id, settings: store)
+    await api.waitForHeldDelete()
+    changes.leave()
+    await api.releaseDeletes(throwing: APIError.network)
+    await waitUntil { store.memory.value?.facts == [.sciFi] }
+
+    XCTAssertNil(changes.deletedFact)
+    XCTAssertNil(changes.undoStatus)
+    XCTAssertFalse(changes.saveFailed, "a failure that lands after leaving says nothing")
   }
 
   func testExpiredSessionSignsOutWithoutSayingTheSaveFailed() async {
@@ -259,10 +291,10 @@ final class SettingsStoreTests: XCTestCase {
       api: SettingsAPIStub(updateError: APIError.unauthorized), cache: AppCache(session: session))
     await store.preferences.load()
 
-    await store.updatePreferences(.soundsEnabled(false))
+    let saved = await store.updatePreferences(.soundsEnabled(false))
 
     XCTAssertNil(session.account)
-    XCTAssertFalse(store.saveFailed)
+    XCTAssertTrue(saved, "a signed-out learner is told nothing")
   }
 
   func testReplyForAnEndedSessionIsDropped() async {
@@ -276,10 +308,11 @@ final class SettingsStoreTests: XCTestCase {
       }
     }
 
-    await store.deleteMemoryFact(id: MemoryFact.evenings.id)
+    let deletion = await store.deleteMemoryFact(id: MemoryFact.evenings.id)
 
-    XCTAssertNil(store.deletedFact)
-    XCTAssertFalse(store.saveFailed)
+    guard case .obsolete? = deletion else {
+      return XCTFail("Expected nothing to say, got \(String(describing: deletion))")
+    }
   }
 
   func testAWriteThatReturnsAfterTheNextLearnerLoadedChangesNothingOfTheirs() async {
@@ -298,27 +331,13 @@ final class SettingsStoreTests: XCTestCase {
     await store.memory.load()
     let learnerBFacts = store.memory.value?.facts
     await api.releaseDeletes(throwing: APIError.network)
-    await deletion.value
+    let result = await deletion.value
 
     XCTAssertEqual(learnerBFacts, [.learnerB])
     XCTAssertEqual(store.memory.value?.facts, [.learnerB], "A's facts never come back as B's")
-    XCTAssertNil(store.deletedFact)
-    XCTAssertFalse(store.saveFailed)
-  }
-
-  func testTheDeletedFactNoticeStaysWithItsLearner() async {
-    let accounts = SwitchingAccountAPI()
-    let session = await accounts.signedIn(as: "learner-a")
-    let cache = AppCache(session: session)
-    let store = SettingsStore(api: SettingsAPIStub(), cache: cache)
-    await store.memory.load()
-    await store.deleteMemoryFact(id: MemoryFact.evenings.id)
-    XCTAssertEqual(store.deletedFact, .evenings)
-
-    await accounts.signIn(session, as: "learner-b")
-
-    XCTAssertNil(store.deletedFact)
-    XCTAssertNil(store.undoStatus)
+    guard case .obsolete? = result else {
+      return XCTFail("Expected nothing to say to B, got \(String(describing: result))")
+    }
   }
 
   func testCancelingWebPlusShowsItEndingOnceItReturns() async {
@@ -384,15 +403,6 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertEqual(reads, 1)
   }
 
-  func testExportFailureDoesNotSayASettingDidNotSave() async {
-    let store = makeStore(api: SettingsAPIStub(exportError: APIError.network))
-
-    let data = await store.exportAccountData()
-
-    XCTAssertNil(data)
-    XCTAssertFalse(store.saveFailed)
-  }
-
   private func waitUntil(_ condition: () -> Bool) async {
     for _ in 0..<10_000 where !condition() {
       await Task.yield()
@@ -433,7 +443,6 @@ private actor SettingsAPIStub: SettingsAPIClient {
   private let deleteError: Error?
   private let restoreError: Error?
   private let restoreChangedSince: Bool
-  private let exportError: Error?
 
   func runBeforeDelete(_ action: @escaping @MainActor @Sendable () async -> Void) {
     beforeDelete = action
@@ -445,7 +454,6 @@ private actor SettingsAPIStub: SettingsAPIClient {
     deleteError: Error? = nil,
     restoreError: Error? = nil,
     restoreChangedSince: Bool = false,
-    exportError: Error? = nil,
     webPlus: WebPlus? = nil,
     webPlusChangeError: Error? = nil
   ) {
@@ -456,7 +464,6 @@ private actor SettingsAPIStub: SettingsAPIClient {
     self.deleteError = deleteError
     self.restoreError = restoreError
     self.restoreChangedSince = restoreChangedSince
-    self.exportError = exportError
   }
 
   func getPreferences(token: String) async throws -> LearningPreferences {
@@ -673,11 +680,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
   }
 
   func exportAccountData(token: String) async throws -> Data {
-    if let exportError {
-      throw exportError
-    }
-
-    return Data()
+    Data()
   }
 }
 

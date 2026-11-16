@@ -94,6 +94,7 @@ private struct SubjectContent: View {
   @State private var showsAllChapters = false
   @State private var showsDoneChapters = false
   @State private var openTopics: Set<SyllabusSubject.Topic.ID> = []
+  @State private var restoring = VisitRequest<Bool>()
 
   let goal: LearnerGoal
   let syllabus: GoalSyllabus
@@ -132,6 +133,9 @@ private struct SubjectContent: View {
         .buttonStyle(.mainAction)
         .keyboardShortcut(.defaultAction)
       }
+    }
+    .onDisappear {
+      restoring.leave()
     }
   }
 
@@ -190,8 +194,10 @@ private struct SubjectContent: View {
       }
 
       if let reason = subject.notPlannedReason, !reason.isEmpty {
-        SubjectNotPlannedNotice(goalId: goal.id, reason: reason, areas: subject.areas)
-          .listRowSeparator(.hidden)
+        SubjectNotPlannedNotice(
+          goalId: goal.id, reason: reason, areas: subject.areas, restoring: restoring
+        )
+        .listRowSeparator(.hidden)
       }
     }
   }
@@ -618,12 +624,11 @@ private struct SubjectTopicRow: View {
 private struct SubjectNotPlannedNotice: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var plans
-  @State private var failed = false
-  @State private var isRestoring = false
 
   let goalId: String
   let reason: String
   let areas: [String]
+  let restoring: VisitRequest<Bool>
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
@@ -652,8 +657,8 @@ private struct SubjectNotPlannedNotice: View {
       .foregroundStyle(.mutedForeground)
 
       if reason == "skipped" {
-        BusyButton(isBusy: isRestoring, icon: .addLessons) {
-          Task { await restore() }
+        BusyButton(isBusy: restoring.isRunning, icon: .addLessons) {
+          restore()
         } label: {
           Text(
             "Add it back", tableName: "Plan", comment: "Puts a skipped subject back in the plan")
@@ -669,7 +674,7 @@ private struct SubjectNotPlannedNotice: View {
         .buttonStyle(.outline)
       }
 
-      if failed {
+      if restoring.outcome == false {
         FailureLine(
           message: LocalizedStringResource(
             "That didn't work. Try again in a moment.", table: "Plan",
@@ -680,14 +685,13 @@ private struct SubjectNotPlannedNotice: View {
     }
   }
 
-  private func restore() async {
-    isRestoring = true
-    defer { isRestoring = false }
-
-    switch await plans.change(goalId: goalId, edits: [.restoreAreas(areas)]) {
-    case .done(.invalid), .failed: failed = true
-    case .done: failed = false
-    case .obsolete: break
+  private func restore() {
+    restoring.run { [plans, goalId, areas] in
+      switch await plans.change(goalId: goalId, edits: [.restoreAreas(areas)]) {
+      case .done(.invalid), .failed: return false
+      case .done: return true
+      case .obsolete: return nil
+      }
     }
   }
 }

@@ -7,6 +7,7 @@ struct MemoryView: View {
   @Environment(SettingsStore.self) private var settings
   @State private var editing: MemoryFact?
   @State private var statement = ""
+  @State private var changes = MemoryChanges()
 
   var body: some View {
     ZoonkList {
@@ -33,17 +34,15 @@ struct MemoryView: View {
                 tableName: "Settings", comment: "What happens while memory is off"))
         } footer: {
           SectionFooter {
-            if let deleted = settings.deletedFact {
-              MemoryUpdatedNotice(fact: deleted, status: settings.undoStatus) {
-                Task {
-                  await settings.undoDeletion()
-                }
+            if let deleted = changes.deletedFact {
+              MemoryUpdatedNotice(fact: deleted, status: changes.undoStatus) {
+                changes.undo(settings: settings)
               }
             }
           }
         }
 
-        if settings.saveFailed {
+        if changes.saveFailed {
           SettingsSaveError()
         }
 
@@ -69,9 +68,7 @@ struct MemoryView: View {
             Section {
               ForEach(facts) { fact in
                 MemoryFactRow(fact: fact, edit: { edit(fact) }) {
-                  Task {
-                    await settings.deleteMemoryFact(id: fact.id)
-                  }
+                  changes.delete(id: fact.id, settings: settings)
                 }
               }
             } header: {
@@ -108,6 +105,7 @@ struct MemoryView: View {
       }
     }
     .loads(settings.memory)
+    .onDisappear { changes.leave() }
     .alert(
       Text(
         "Edit memory", tableName: "Settings",
@@ -133,9 +131,7 @@ struct MemoryView: View {
           return
         }
 
-        Task {
-          await settings.updateMemoryFact(id: fact.id, statement: trimmed)
-        }
+        changes.save { await settings.updateMemoryFact(id: fact.id, statement: trimmed) }
       }
     } message: { _ in
       Text(
@@ -168,10 +164,84 @@ struct MemoryView: View {
     Binding(
       get: { enabled },
       set: { next in
-        Task {
-          await settings.setMemoryEnabled(next)
-        }
+        changes.save { await settings.setMemoryEnabled(next) }
       })
+  }
+}
+
+/// What the learner changed in Memory and how it went: the page's, so leaving it ends what's still
+/// out and says nothing of it, and the next visit starts with no notice. The memory itself saves
+/// and stays in `SettingsStore`.
+@MainActor
+@Observable
+final class MemoryChanges {
+  private(set) var saveFailed = false
+  /// "Memory updated", with its Undo.
+  private(set) var deletedFact: MemoryFact?
+  private(set) var undoStatus: MemoryUndo?
+  @ObservationIgnored private let tasks = ScreenTasks()
+
+  /// A change to the memory, false when it didn't save.
+  func save(_ write: @escaping @MainActor () async -> Bool) {
+    saveFailed = false
+
+    tasks.run {
+      let saved = await write()
+
+      guard !Task.isCancelled else {
+        return
+      }
+
+      self.saveFailed = !saved
+    }
+  }
+
+  func delete(id: String, settings: SettingsStore) {
+    saveFailed = false
+
+    tasks.run {
+      let result = await settings.deleteMemoryFact(id: id)
+
+      guard !Task.isCancelled else {
+        return
+      }
+
+      switch result {
+      case .done(let deleted):
+        self.deletedFact = deleted
+        self.undoStatus = nil
+      case .failed?, nil:
+        self.saveFailed = true
+      case .obsolete?:
+        break
+      }
+    }
+  }
+
+  func undo(settings: SettingsStore) {
+    guard let deleted = deletedFact, undoStatus?.canUndo ?? true else {
+      return
+    }
+
+    undoStatus = .undoing
+
+    tasks.run {
+      let status = await settings.undoDeletion(of: deleted)
+
+      // A deletion made meanwhile has its own notice and its own undo.
+      guard !Task.isCancelled, self.deletedFact?.id == deleted.id else {
+        return
+      }
+
+      self.undoStatus = status
+    }
+  }
+
+  func leave() {
+    tasks.cancel()
+    saveFailed = false
+    deletedFact = nil
+    undoStatus = nil
   }
 }
 

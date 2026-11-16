@@ -469,7 +469,7 @@ struct TutorPracticeCallSheet: View {
       }
       .presentationDetents([.medium, .large])
       .closesOnNavigation()
-      .onDisappear { start.cancel() }
+      .onDisappear { start.leave() }
     }
   }
 }

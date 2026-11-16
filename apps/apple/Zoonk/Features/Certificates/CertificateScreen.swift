@@ -54,8 +54,9 @@ private struct CertificateDetail: View {
   @State private var isEditingName = false
   @State private var nameDraft = ""
   @State private var printAnchor = PrintAnchor()
-  @State private var printing: Task<Void, Never>?
-  @State private var printFailed = false
+  /// False when the certificate couldn't be read for printing, while the learner is on the page.
+  @State private var printing = VisitRequest<Bool>()
+  @State private var nameSave = VisitRequest<ProfileSave>()
   @State private var linkCopied = false
 
   let certificate: Certificate
@@ -81,7 +82,7 @@ private struct CertificateDetail: View {
 
       if name.isEmpty {
         Section {
-          CertificateNameEditor(name: $nameDraft, current: "") {}
+          CertificateNameEditor(name: $nameDraft, current: "", saving: nameSave) {}
         }
       } else {
         actions
@@ -119,7 +120,10 @@ private struct CertificateDetail: View {
     .sheet(isPresented: $isLinkedInShown) {
       CertificateLinkedInSheet(certificate: certificate)
     }
-    .onDisappear { printing?.cancel() }
+    .onDisappear {
+      nameSave.leave()
+      printing.leave()
+    }
     .sensoryFeedback(.success, trigger: linkCopied) { _, copied in copied }
     .task(id: linkCopied) {
       guard linkCopied else {
@@ -158,7 +162,7 @@ private struct CertificateDetail: View {
 
         // Not a `ButtonRow`, whose buttons take their own width side by side: these share it.
         AccessibilityStack(spacing: 8) {
-          BusyButton(isBusy: printing != nil, icon: .print, action: printCertificate) {
+          BusyButton(isBusy: printing.isRunning, icon: .print, action: printCertificate) {
             Text("Print", tableName: "Certificates", comment: "Prints a certificate")
               .background { PrintAnchorView(anchor: printAnchor) }
           }
@@ -196,7 +200,7 @@ private struct CertificateDetail: View {
       .controlSize(.large)
       .listRowSeparator(.hidden)
     } footer: {
-      if printFailed {
+      if printing.outcome == false {
         FailureLine(
           message: LocalizedStringResource(
             "That didn't work. Try again in a moment.", table: "Certificates"))
@@ -206,7 +210,7 @@ private struct CertificateDetail: View {
 
   @ViewBuilder private var nameRow: some View {
     if isEditingName {
-      CertificateNameEditor(name: $nameDraft, current: name) {
+      CertificateNameEditor(name: $nameDraft, current: name, saving: nameSave) {
         isEditingName = false
       }
     } else {
@@ -281,22 +285,17 @@ private struct CertificateDetail: View {
 
   private func printCertificate() {
     let identity = session.authenticatedSession
-    printFailed = false
 
-    printing = Task {
-      defer { printing = nil }
-
-      do {
-        let data = try await certificate.document.data()
-
-        guard !Task.isCancelled, session.authenticatedSession == identity else {
-          return
-        }
-
-        CertificatePrinting.print(data, jobName: certificate.fileName, from: printAnchor.view)
-      } catch {
-        printFailed = !Task.isCancelled
+    printing.run { [certificate, session, printAnchor] in
+      guard let data = try? await certificate.document.data() else {
+        return false
       }
+
+      if !Task.isCancelled, session.authenticatedSession == identity {
+        CertificatePrinting.print(data, jobName: certificate.fileName, from: printAnchor.view)
+      }
+
+      return true
     }
   }
 }

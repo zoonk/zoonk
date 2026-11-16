@@ -8,10 +8,13 @@ final class LearnerSummaryStore {
 
   private let api: any LearnerSummaryAPIClient
   private let cache: AppCache
+  /// The learner's changes save, and change the summary, even when the screen that asked goes away.
+  private let saves: LearnerSaves
 
   init(api: any LearnerSummaryAPIClient, cache: AppCache) {
     self.api = api
     self.cache = cache
+    saves = LearnerSaves(cache: cache)
     summary = cache.resource(
       audience: .signedIn,
       // Every `DataDomain`, so the frame follows every write.
@@ -60,87 +63,112 @@ final class LearnerSummaryStore {
       return .done(())
     }
 
-    let result = await cache.mutate(invalidating: [.learningProfile]) { identity in
-      try await api.switchGoal(token: identity.bearerToken, goalID: goalID)
-    }
+    return await saves.save { [api, cache] in
+      let result = await cache.mutate(invalidating: [.learningProfile]) { identity in
+        try await api.switchGoal(token: identity.bearerToken, goalID: goalID)
+      }
 
-    if case .done = result {
-      await summary.refresh()
-    }
+      if case .done = result {
+        await self.summary.refresh()
+      }
 
-    return result
+      return result
+    }
   }
 
   /// False when it didn't save, such as a country the goal's language doesn't offer.
   func setTargetRegion(_ region: String?, goalID: String) async -> Bool {
-    let result = await cache.mutate { identity in
-      try await api.setTargetRegion(token: identity.bearerToken, goalID: goalID, region: region)
+    let result = await saves.save { [api, cache] in
+      let result = await cache.mutate { identity in
+        try await api.setTargetRegion(token: identity.bearerToken, goalID: goalID, region: region)
+      }
+
+      switch result {
+      case .done(true):
+        // Shown before the goals are read again, so a read that fails can't bring back the old one.
+        self.summary.update { summary in
+          var summary = summary
+
+          if let index = summary.goals.firstIndex(where: { $0.id == goalID }) {
+            summary.goals[index].variety?.region = region
+          }
+
+          return summary
+        }
+
+        cache.invalidate([.goals])
+      case .failed:
+        // One that timed out may have landed.
+        cache.invalidate([.goals])
+      case .done(false), .obsolete:
+        break
+      }
+
+      return result
     }
 
     switch result {
-    case .done(true):
-      // Shown before the goals are read again, so a read that fails can't bring back the old one.
-      summary.update { summary in
-        var summary = summary
-
-        if let index = summary.goals.firstIndex(where: { $0.id == goalID }) {
-          summary.goals[index].variety?.region = region
-        }
-
-        return summary
-      }
-
-      cache.invalidate([.goals])
-      return true
-    case .done(false):
-      return false
+    case .done(let saved):
+      return saved
     case .failed:
-      // One that timed out may have landed.
-      cache.invalidate([.goals])
       return false
     case .obsolete:
-      // Another learner's data may be on screen, so nothing is left to say.
+      // Another learner's data may be on screen, or the screen that asked is gone: nothing is left
+      // to say.
       return true
     }
   }
   /// False when it didn't save. A goal whose content changes by country starts rebuilding its plan,
   /// which its row says until the new plan is ready.
   func setContentCountry(_ country: String?, goalID: String) async -> Bool {
-    let result = await cache.mutate { identity in
-      try await api.setContentCountry(token: identity.bearerToken, goalID: goalID, country: country)
+    let result = await saves.save { [api, cache] in
+      let result = await cache.mutate { identity in
+        try await api.setContentCountry(
+          token: identity.bearerToken, goalID: goalID, country: country)
+      }
+
+      switch result {
+      case .done(.saved(let row)):
+        // Shown before the goals are read again, so a read that fails can't bring back the old one.
+        self.changeGoal(goalID) { $0.contentCountry = row }
+        cache.invalidate([.goals])
+      case .failed:
+        // One that timed out may have landed.
+        cache.invalidate([.goals])
+      case .done(.notOffered), .obsolete:
+        break
+      }
+
+      return result
     }
 
     switch result {
-    case .done(.saved(let row)):
-      // Shown before the goals are read again, so a read that fails can't bring back the old one.
-      changeGoal(goalID) { $0.contentCountry = row }
-      cache.invalidate([.goals])
+    case .done(.saved), .obsolete:
       return true
-    case .done(.notOffered):
+    case .done(.notOffered), .failed:
       return false
-    case .failed:
-      // One that timed out may have landed.
-      cache.invalidate([.goals])
-      return false
-    case .obsolete:
-      return true
     }
   }
 
   /// False when it didn't start.
   func retryRebuild(goalID: String) async -> Bool {
-    let result = await cache.mutate(invalidating: [.goals]) { identity in
-      try await api.retryRebuild(token: identity.bearerToken, goalID: goalID)
+    let result = await saves.save { [api, cache] in
+      let result = await cache.mutate(invalidating: [.goals]) { identity in
+        try await api.retryRebuild(token: identity.bearerToken, goalID: goalID)
+      }
+
+      if case .done = result {
+        self.changeGoal(goalID) { $0.contentCountry?.rebuild = .preparing }
+      }
+
+      return result
     }
 
     switch result {
-    case .done:
-      changeGoal(goalID) { $0.contentCountry?.rebuild = .preparing }
+    case .done, .obsolete:
       return true
     case .failed:
       return false
-    case .obsolete:
-      return true
     }
   }
 

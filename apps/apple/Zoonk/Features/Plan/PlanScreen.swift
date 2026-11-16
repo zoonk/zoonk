@@ -187,6 +187,9 @@ private struct PlanContent: View {
   @State private var slotAnswer: PlanSlotAnswer?
   @State private var certificateClaim = CertificateClaim()
   @State private var slotChecks = PlanSlotChecks()
+  @State private var nextLevel = VisitRequest<Bool>()
+  @State private var alphabetSkip = VisitRequest<Bool>()
+  @State private var rebuildRetry = VisitRequest<Bool>()
   /// The new plan arrived while the learner watched; gone on the next visit.
   @State private var rebuildReady = false
 
@@ -199,7 +202,8 @@ private struct PlanContent: View {
     let context = PlanContext(
       goal: goal, plan: plan, adjust: { adjusting = $0 }, report: { isReporting = true },
       show: { sheet = $0 }, claimCertificate: claimCertificate, showClaim: show,
-      certificateClaim: certificateClaim, slotChecks: slotChecks)
+      certificateClaim: certificateClaim, slotChecks: slotChecks, nextLevel: nextLevel,
+      alphabetSkip: alphabetSkip)
 
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
@@ -273,14 +277,18 @@ private struct PlanContent: View {
     )
     .onDisappear {
       slotAnswer?.editor.cancel()
+      slotAnswer = nil
+      alphabetSkip.leave()
       certificateClaim.leave()
+      nextLevel.leave()
+      rebuildRetry.leave()
       slotChecks.leave()
     }
   }
 
   @ViewBuilder private var rebuildNotice: some View {
     if let rebuild = goal.contentCountry?.rebuild, rebuild != .none {
-      PlanRebuildNotice(goalID: goal.id, failed: rebuild == .failed)
+      PlanRebuildNotice(goalID: goal.id, failed: rebuild == .failed, retry: rebuildRetry)
     } else if rebuildReady {
       Section {
         Text(
@@ -396,6 +404,10 @@ struct PlanContext {
   /// The screen's, above its panes.
   var certificateClaim = CertificateClaim()
   var slotChecks = PlanSlotChecks()
+  /// The finished plan's "Continue at" the next level; true once it started.
+  var nextLevel = VisitRequest<Bool>()
+  /// A language plan's "I can already read it"; true once the alphabet is skipped.
+  var alphabetSkip = VisitRequest<Bool>()
 
   var isPaused: Bool { goal.status == .paused }
 }
@@ -404,11 +416,11 @@ struct PlanContext {
 /// stays usable meanwhile, and a failure keeps it.
 private struct PlanRebuildNotice: View {
   @Environment(LearnerSummaryStore.self) private var learner
-  @State private var isRetrying = false
-  @State private var retryFailed = false
 
   let goalID: String
   let failed: Bool
+  /// The Plan's, above its panes; true once the new plan started again.
+  let retry: VisitRequest<Bool>
 
   var body: some View {
     Section {
@@ -433,14 +445,14 @@ private struct PlanRebuildNotice: View {
             .foregroundStyle(.mutedForeground)
 
           if failed {
-            BusyButton(isBusy: isRetrying, action: retry) {
+            BusyButton(isBusy: retry.isRunning, action: startAgain) {
               Text("Try again", tableName: "Plan", comment: "Starts preparing the new plan again")
             }
             .buttonStyle(.outline)
             .controlSize(.small)
             .padding(.top, 8)
 
-            if retryFailed {
+            if retry.outcome == false {
               FailureLine(
                 message: LocalizedStringResource(
                   "That didn't save. Try again.", table: "Plan",
@@ -479,13 +491,9 @@ private struct PlanRebuildNotice: View {
         comment: "Under the notice while a goal's plan is made again for its new country")
   }
 
-  private func retry() {
-    isRetrying = true
-    retryFailed = false
-
-    Task {
-      retryFailed = !(await learner.retryRebuild(goalID: goalID))
-      isRetrying = false
+  private func startAgain() {
+    retry.run { [learner, goalID] in
+      await learner.retryRebuild(goalID: goalID)
     }
   }
 }

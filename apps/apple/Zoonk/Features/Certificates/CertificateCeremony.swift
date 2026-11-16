@@ -9,6 +9,7 @@ struct CertificateCeremony: View {
   @Environment(\.legibilityWeight) private var legibilityWeight
   @State private var isEditingName = false
   @State private var nameDraft = ""
+  @State private var nameSave = VisitRequest<ProfileSave>()
   @State private var isLinkedInShown = false
   @State private var isOpened = false
 
@@ -58,6 +59,7 @@ struct CertificateCeremony: View {
     }
     .landsActsOnInput()
     .celebratesOnce(id: top.code)
+    .onDisappear { nameSave.leave() }
     .loads(store.list, refreshable: false)
     .sheet(isPresented: $isOpened) {
       CertificateSheet(code: top.code)
@@ -141,7 +143,7 @@ struct CertificateCeremony: View {
       .multilineTextAlignment(.center)
       .padding(.top, 18)
     } else if name.isEmpty || isEditingName {
-      CertificateNameEditor(name: $nameDraft, current: name) {
+      CertificateNameEditor(name: $nameDraft, current: name, saving: nameSave) {
         isEditingName = false
       }
       .padding(.top, 18)
