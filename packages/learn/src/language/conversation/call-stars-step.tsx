@@ -12,6 +12,7 @@ import { useExtracted, useFormatter } from "next-intl";
 import { Eyebrow } from "../../_components/eyebrow";
 import { StatTile, StatTiles } from "../../_components/stat-tile";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../../_components/step-card";
+import { useCountOf } from "../../_utils/count-of";
 import { StepWithDayMoment } from "../../session/day-moment";
 import { ChallengeCallGate } from "./challenge-call-gate";
 import { useConversationTitle } from "./conversation-labels";
@@ -25,13 +26,7 @@ function Stars({ lost, stars }: { lost: boolean; stars: number }) {
   const celebrate = useCelebration();
 
   return (
-    <p
-      aria-label={t("{stars, plural, =0 {# of 3 stars} one {# of 3 stars} other {# of 3 stars}}", {
-        stars,
-      })}
-      className="text-readout flex items-center gap-1.5 text-2xl"
-      role="img"
-    >
+    <p className="text-readout flex items-center gap-1.5 text-2xl">
       <StarIcon
         aria-hidden="true"
         className={cn(
@@ -39,10 +34,7 @@ function Stars({ lost, stars }: { lost: boolean; stars: number }) {
           celebrate && !lost && stars > 0 && "animate-settle",
         )}
       />
-      <span aria-hidden="true">
-        {stars}
-        <span className="text-muted-foreground">{`/${MAX_STARS}`}</span>
-      </span>
+      {t("{stars, plural, =0 {# of 3 stars} one {# of 3 stars} other {# of 3 stars}}", { stars })}
     </p>
   );
 }
@@ -77,6 +69,7 @@ function CallFacts({
 }) {
   const t = useExtracted();
   const format = useFormatter();
+  const countOf = useCountOf();
   const total = conversation.objectives.length;
   const met = conversation.objectives.filter((objective) => objective.met).length;
   const showsBrainPower = result.brainPower > 0;
@@ -92,17 +85,7 @@ function CallFacts({
           icon={<TargetIcon />}
           label={t("Goals")}
           tone="success"
-          value={
-            <>
-              <span aria-hidden="true">
-                {met}
-                <span className="text-muted-foreground">{`/${total}`}</span>
-              </span>
-              <span className="sr-only">
-                {t("{done, number} of {total, number}", { done: met, total })}
-              </span>
-            </>
-          }
+          value={countOf(met, total)}
         />
       )}
       {showsBrainPower && (

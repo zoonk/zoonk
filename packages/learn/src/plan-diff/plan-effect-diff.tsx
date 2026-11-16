@@ -108,7 +108,7 @@ function RepricedLine({ changes }: { changes: boolean }) {
 
 /**
  * What a plan change does: the one consequence a learner would notice, and every other change
- * behind "All changes".
+ * behind "All changes". In a suggestion it reads at the suggestion's own size, never above its title.
  */
 export function PlanEffectDiff({
   byDate = true,
@@ -149,7 +149,10 @@ export function PlanEffectDiff({
       {repriced && <RepricedLine changes={effect !== null} />}
 
       {consequence && (
-        <p className="text-sm text-pretty" data-slot="plan-change-consequence">
+        <p
+          className="in-data-[slot=suggestion-panel]:text-compact in-data-[slot=suggestion-sheet]:text-reading text-sm text-pretty"
+          data-slot="plan-change-consequence"
+        >
           {consequence.text}
         </p>
       )}

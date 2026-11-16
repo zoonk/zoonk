@@ -20,11 +20,16 @@ export const PATH_ROW_CLASS =
 
 export const PATH_ROW_LEADING_CLASS = "flex size-4 shrink-0 items-center justify-center";
 
-const PATH_ROW_BODY_CLASS = cn(TITLE_ROW_CLASS, "min-w-0 flex-1");
+const PATH_ROW_BODY_CLASS = cn(
+  TITLE_ROW_CLASS,
+  "min-w-0 flex-1 @max-2xs:*:first:max-w-none @max-2xs:*:first:basis-full",
+);
 
 /**
  * A path row's words, in one column however many lines they take, then its value. Centered beside
- * the column, the value sits on the row's center, level with the chevron after it (craft E6).
+ * the column, the value sits on the row's center, level with the chevron after it (craft E6). In a
+ * row too narrow for a long date beside a title, such as the sidebar's, every row's value sits under
+ * its words, so a list's dates share one place whatever their length.
  */
 export function PathRowBody({
   children,

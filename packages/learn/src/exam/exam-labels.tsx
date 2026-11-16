@@ -47,8 +47,13 @@ export function useExamDayText() {
   };
 }
 
+/** An estimated day reads "~", as the Plan writes it, and has no weekday anyone knows yet. */
 export function useExamDayDate() {
+  const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
 
-  return (isoDate: string): string => formatPlanDate(isoDate, { weekday: true });
+  return (isoDate: string, { estimated = false }: { estimated?: boolean } = {}): string => {
+    const date = formatPlanDate(isoDate, { weekday: !estimated });
+    return estimated ? t("~{date}", { date }) : date;
+  };
 }

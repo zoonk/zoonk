@@ -82,6 +82,23 @@ describe("a language unit's page", () => {
     });
   });
 
+  it("offers no test once every lesson in the unit is done, even when a lesson elsewhere teaches its skills", async () => {
+    const { items, renting, skills, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    await Promise.all([
+      prisma.planItem.updateMany({
+        data: { completedAt: new Date(), status: "done" },
+        where: { id: { in: [items[2]?.id ?? "", items[3]?.id ?? ""] } },
+      }),
+      prisma.planItem.update({ data: { skillId: skills[2]?.id }, where: { id: items[0]?.id } }),
+    ]);
+
+    await expect(getLanguageUnitView({ chapterId: renting.id })).resolves.toMatchObject({
+      unit: { canTestOut: false },
+    });
+  });
+
   it("lists its lessons with their minutes and whether they're written, and keeps the summaries the finished ones left", async () => {
     const { items, lessons, renting, user } = await languageGoalFixture();
     mockSession(user.id);

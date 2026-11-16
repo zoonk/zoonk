@@ -12,7 +12,6 @@ import {
   ListRowDescription,
   ListRowIcon,
   ListRowTitle,
-  ListRowTrailing,
 } from "../_components/list-group";
 import { PageSectionTitle } from "../_components/page";
 import { TaskAsideContent } from "../_components/task-layout";
@@ -48,7 +47,6 @@ export function useTopicsTitle(): string | null {
 }
 
 function TopicRows() {
-  const t = useExtracted();
   const format = useFormatter();
   const { challenge } = useChallengeScreen();
 
@@ -65,11 +63,6 @@ function TopicRows() {
                 </ListRowDescription>
               )}
             </ListRowContent>
-            {row.subject !== null && (
-              <ListRowTrailing>
-                {t("{count, plural, one {# topic} other {# topics}}", { count: row.topics.length })}
-              </ListRowTrailing>
-            )}
           </ListRowBody>
         </ListRow>
       ))}

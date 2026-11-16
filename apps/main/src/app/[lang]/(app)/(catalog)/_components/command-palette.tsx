@@ -42,9 +42,9 @@ const MIN_QUERY_LENGTH = 2;
 const NO_CATALOG_RESULTS: CatalogSearchResults = { chapters: [], courses: [] };
 
 const EMPTY_SEARCH_RESULTS: PaletteSearchResults = {
-  catalog: NO_CATALOG_RESULTS,
+  catalog: { ...NO_CATALOG_RESULTS, showsCourse: true },
   mocks: [],
-  plan: { chapters: [], subjects: [] },
+  plan: { chapters: [], showsSubject: true, subjects: [] },
 };
 
 const NO_PLAN: PalettePlan = { chapters: [], mocks: [], subjects: [] };

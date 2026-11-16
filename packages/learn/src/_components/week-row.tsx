@@ -4,7 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { GraduationCapIcon } from "lucide-react";
 import { useFormatWeekday } from "../_utils/iso-date";
 import { type StudySession } from "../session/session-types";
-import { GoalRing, type GoalRingTrack } from "./goal-ring";
+import { GOAL_RING_SIZE_CLASS, GoalRing, type GoalRingTrack } from "./goal-ring";
 import { DoneMark } from "./status-mark";
 
 type WeekDay = StudySession["week"]["days"][number];
@@ -74,16 +74,17 @@ export function WeekDayRing({
   children,
   day,
   localDate,
-  className,
 }: {
   children?: React.ReactNode;
   day: WeekDay;
   localDate: Date;
-  className?: string;
 }) {
   if (isOutsidePlan(day) && !day.isToday) {
     return (
-      <span aria-hidden="true" className={cn("flex size-9 items-center justify-center", className)}>
+      <span
+        aria-hidden="true"
+        className={cn("flex items-center justify-center", GOAL_RING_SIZE_CLASS)}
+      >
         <span className="bg-foreground/15 h-0.5 w-3 rounded-full" />
       </span>
     );
@@ -92,7 +93,7 @@ export function WeekDayRing({
   const isTarget = !day.studied && (day.kind === "exam" || day.kind === "deadline");
 
   return (
-    <GoalRing className={className} share={getDayShare(day)} track={getTrack(day, localDate)}>
+    <GoalRing share={getDayShare(day)} track={getTrack(day, localDate)}>
       {day.hitGoal && <DoneMark />}
       {isTarget && <GraduationCapIcon className="text-foreground" />}
       {!day.hitGoal && !isTarget && children}

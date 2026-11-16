@@ -15,12 +15,7 @@ import { TricksterArt } from "../checkpoints/trickster-art";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { CallIntro, WonCallIntro } from "./challenge-call-intro";
 import { useChallengeScreen } from "./challenge-context";
-import {
-  IntroHeading,
-  usePrizeFact,
-  useQuestionsFact,
-  useRematchEyebrow,
-} from "./challenge-intro-parts";
+import { IntroHeading, useQuestionsFact, useRematchEyebrow } from "./challenge-intro-parts";
 import { useChallengeWhen } from "./challenge-labels";
 import { ChallengeTopics, DuelTopics, useTopicsTitle } from "./challenge-topics";
 
@@ -49,15 +44,15 @@ function useTricksterDetail(): string {
 
 function TricksterIntro() {
   const t = useExtracted();
+  const { challenge } = useChallengeScreen();
   const eyebrow = useRematchEyebrow();
   const detail = useTricksterDetail();
-  const prize = usePrizeFact();
 
   return (
     <StepCard>
       <TricksterArt reacts />
       <IntroHeading detail={detail} eyebrow={eyebrow} title={t("Beat the Trickster")} />
-      <TaskMeta facts={[]} reward={prize} />
+      <TaskMeta facts={[]} reward={challenge.reward.brainPower} />
       <DuelTopics />
     </StepCard>
   );
@@ -97,7 +92,6 @@ function WeeklyIntro() {
   const { challenge } = useChallengeScreen();
   const when = useChallengeWhen(challenge);
   const questions = useQuestionsFact();
-  const prize = usePrizeFact();
 
   return (
     <StepCard>
@@ -111,7 +105,7 @@ function WeeklyIntro() {
           challenge.startTime && when,
           challenge.questions !== null && challenge.questions > 0 && questions(challenge.questions),
         ]}
-        reward={prize}
+        reward={challenge.reward.brainPower}
       />
 
       <DuelTopics />

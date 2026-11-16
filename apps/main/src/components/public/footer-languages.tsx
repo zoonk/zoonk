@@ -8,11 +8,14 @@ import { LOCALE_LABELS, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { GlobeIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
+import { FOOTER_LINKS_CLASS, FOOTER_LINK_CLASS } from "./landing-styles";
 
 const MIDDLE_BUTTON = 1;
 
-const LANGUAGE_LINK_CLASS =
-  "hover:text-foreground focus-visible:ring-ring/50 hit-area relative inline-flex min-h-11 items-center rounded-md outline-none transition-colors focus-visible:ring-[3px] aria-[current=true]:text-foreground aria-[current=true]:font-medium";
+const LANGUAGE_LINK_CLASS = cn(
+  FOOTER_LINK_CLASS,
+  "aria-current:text-foreground aria-current:font-medium",
+);
 
 /**
  * A pick saves the choice (`rememberLocale`), a middle click included. English is unprefixed, so
@@ -28,11 +31,11 @@ function LanguageLinks({ pathname }: { pathname: string }) {
         <GlobeIcon aria-hidden="true" className="size-4" />
       </span>
 
-      <span className="flex flex-wrap items-center gap-x-6">
+      <span className={FOOTER_LINKS_CLASS}>
         {SUPPORTED_LOCALES.map((locale) => (
           <a
             aria-current={locale === current ? "true" : undefined}
-            className={cn(LANGUAGE_LINK_CLASS)}
+            className={LANGUAGE_LINK_CLASS}
             href={getPathname({ forcePrefix: true, href: pathname, locale })}
             hrefLang={locale}
             key={locale}

@@ -3,6 +3,7 @@
 import { useTaskFootHeight } from "@zoonk/learn/task-foot-height";
 import { BAR_PADDING_CLASS, TASK_ASIDE_PLACE_CLASS } from "@zoonk/learn/task-layout";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Empty } from "@zoonk/ui/components/empty";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { cn } from "@zoonk/ui/lib/utils";
 import { DocumentLink } from "@zoonk/ui/patterns/links/pending";
@@ -15,7 +16,7 @@ import { QuestionComposer } from "./lesson-question-composer";
 import { isAboutCheckedAnswer } from "./lesson-question-context";
 import { LessonQuestionNavigationContext } from "./lesson-question-navigation";
 import { useLessonQuestionController } from "./lesson-question-provider";
-import { QuestionThread } from "./lesson-question-thread";
+import { QuestionThread, TutorIntro } from "./lesson-question-thread";
 import { type TutorBuddy, useTutorBuddy } from "./tutor-buddy";
 import { TutorSuggestions, useOffersSuggestions } from "./tutor-suggestions";
 import { type LessonQuestionController } from "./use-lesson-questions";
@@ -181,6 +182,11 @@ function Dock({ buddy }: { buddy: TutorBuddy }) {
 
   return (
     <LessonQuestionNavigationContext value={buddy.navigation}>
+      {/* Only while nothing comes before it in the side panel, such as a lesson's recap. */}
+      <Empty className="not-first:hidden" data-slot="tutor-intro">
+        <TutorIntro identity={buddy.identity} />
+      </Empty>
+
       {buddy.docked && <DockedConversation buddy={buddy} />}
 
       <div
@@ -233,7 +239,7 @@ function ConversationLink({ buddy, fallback }: { buddy: TutorBuddy; fallback: Re
   );
 }
 
-export function TutorConversationLink({ fallback }: { fallback: React.ReactNode }) {
+export function TutorConversationLink({ fallback = null }: { fallback?: React.ReactNode }) {
   const buddy = useTutorBuddy();
   return buddy ? <ConversationLink buddy={buddy} fallback={fallback} /> : fallback;
 }

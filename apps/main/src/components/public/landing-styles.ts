@@ -14,3 +14,12 @@ export const HERO_CLASS = `${PUBLIC_CONTAINER_CLASS} ${FIRST_SCREEN_TOP_CLASS.pa
 export const HERO_LEAD_CLASS = "text-lead mt-4 max-w-[600px] sm:mt-5";
 
 export const NUMERIC_CLASS = "font-mono tabular-nums";
+
+/**
+ * A footer's row of links: inline, so its lines balance and no link is left alone on the last one
+ * in a language whose words run long.
+ */
+export const FOOTER_LINKS_CLASS = "text-balance";
+
+export const FOOTER_LINK_CLASS =
+  "hover:text-foreground focus-visible:ring-ring/50 hit-area relative me-6 inline-flex min-h-11 items-center rounded-md align-top outline-none transition-colors last:me-0 focus-visible:ring-[3px]";

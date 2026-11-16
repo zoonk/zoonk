@@ -54,7 +54,7 @@ export function ExamMocks({ entry = false }: { entry?: boolean }) {
         </ol>
       )}
 
-      {entry && (
+      {entry && !running && (
         <LearnLink
           className={cn(buttonVariants({ size: "sm", variant: "outline" }), "self-start")}
           href="/mock/new"

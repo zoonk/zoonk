@@ -1,3 +1,4 @@
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Route } from "next";
 import Link from "next/link";
@@ -37,16 +38,26 @@ export function AdminSectionEmpty({ children }: { children: React.ReactNode }) {
   return <p className="text-muted-foreground text-sm">{children}</p>;
 }
 
-/** Under a list cut to its first rows: the link that shows the rest. */
-export function AdminSectionMore({ children, href }: { children: React.ReactNode; href: Route }) {
+/** Under a list cut to its first rows: the link that shows the rest, or hides it again (`expanded`). */
+export function AdminSectionMore({
+  children,
+  expanded = false,
+  href,
+}: {
+  children: React.ReactNode;
+  expanded?: boolean;
+  href: Route;
+}) {
   return (
     <Link
-      className="text-muted-foreground hover:text-foreground text-compact hit-area relative self-start font-medium"
+      aria-expanded={expanded}
+      className="text-muted-foreground hover:text-foreground text-compact hit-area relative inline-flex items-center gap-1 self-start font-medium"
       href={href}
       prefetch
       scroll={false}
     >
       {children}
+      <FoldChevron inline />
     </Link>
   );
 }

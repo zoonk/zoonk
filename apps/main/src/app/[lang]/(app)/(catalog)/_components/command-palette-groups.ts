@@ -3,11 +3,10 @@
 import { getMenu } from "@/lib/menu";
 import { useBuddyName } from "@zoonk/learn/buddy-name";
 import { useExtracted } from "next-intl";
+import { createChapterPaletteItem, createCoursePaletteItem } from "./command-palette-catalog-items";
 import {
   type PaletteGroup,
   createAskPaletteItem,
-  createChapterPaletteItem,
-  createCoursePaletteItem,
   createHelpPaletteItem,
   createLogoutPaletteItem,
   createMockPaletteItem,
@@ -118,7 +117,9 @@ export function usePaletteGroups({
     id: "plan",
     items: [
       ...results.plan.subjects.map((subject) => createSubjectPaletteItem(subject)),
-      ...results.plan.chapters.map((chapter) => createPlanChapterPaletteItem(chapter)),
+      ...results.plan.chapters.map((chapter) =>
+        createPlanChapterPaletteItem({ ...chapter, showsSubject: results.plan.showsSubject }),
+      ),
     ],
     label: t("Your plan"),
   };
@@ -156,7 +157,9 @@ export function usePaletteGroups({
 
   const catalogItems = [
     ...results.catalog.courses.map((course) => createCoursePaletteItem(course)),
-    ...results.catalog.chapters.map((chapter) => createChapterPaletteItem(chapter)),
+    ...results.catalog.chapters.map((chapter) =>
+      createChapterPaletteItem({ chapter, showsCourse: results.catalog.showsCourse }),
+    ),
   ].toSorted(
     (left, right) =>
       Number(matchesPaletteSearch({ query, value: right.label })) -

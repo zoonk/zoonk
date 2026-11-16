@@ -201,7 +201,7 @@ export function ListRowContent({ className, ...props }: React.ComponentProps<"sp
 export function ListRowTitle({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-sm font-medium text-pretty wrap-break-word", className)}
+      className={cn("text-sm font-medium text-balance wrap-break-word", className)}
       data-slot="list-row-title"
       {...props}
     />
@@ -209,8 +209,8 @@ export function ListRowTitle({ className, ...props }: React.ComponentProps<"span
 }
 
 /**
- * The number is the title's first word, so a numbered row's text starts on the edge every other
- * row's does, and a `description` starts there too.
+ * The number starts on the edge every other row's text does, and the title and its `description`
+ * keep a column of their own after it, so a wrapped line starts under the title's first word.
  */
 export function ListRowNumberedTitle({
   children,
@@ -226,14 +226,14 @@ export function ListRowNumberedTitle({
   textClassName?: string;
 }) {
   return (
-    <span className={cn("flex flex-col", className)}>
-      <ListRowTitle className={textClassName}>
-        <span className="text-muted-foreground font-mono text-xs font-normal tabular-nums">
-          {`${number}.\u00A0`}
-        </span>
-        {children}
-      </ListRowTitle>
-      {description && <span className="flex flex-col pt-px empty:hidden">{description}</span>}
+    <span className={cn("flex items-baseline", className)}>
+      <span className="text-muted-foreground shrink-0 font-mono text-xs whitespace-pre tabular-nums">
+        {`${number}. `}
+      </span>
+      <span className="flex min-w-0 flex-col">
+        <ListRowTitle className={textClassName}>{children}</ListRowTitle>
+        {description && <span className="flex flex-col pt-px empty:hidden">{description}</span>}
+      </span>
     </span>
   );
 }

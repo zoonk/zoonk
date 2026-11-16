@@ -10,7 +10,12 @@ import { QuietDisclosure } from "../../_components/quiet-disclosure";
 import { SectionLabel } from "../../_components/section-label";
 import { useScoreRange } from "../../_utils/use-score-range";
 import { LearnLink } from "../../learn-link";
-import { type Lessons, type Preparation, usePreparationParts } from "./use-preparation-parts";
+import {
+  type Lessons,
+  type PlanTopics,
+  type Preparation,
+  usePreparationParts,
+} from "./use-preparation-parts";
 import { type StillNeededItem, useStillNeeded } from "./use-still-needed";
 
 function EstimateWaits({ preparation }: { preparation: Preparation }) {
@@ -107,12 +112,18 @@ function PreparationParts({
   forExam,
   lessons,
   preparation,
+  topics,
 }: {
   forExam: boolean;
   lessons: Lessons | null;
   preparation: Preparation;
+  topics: PlanTopics | null;
 }) {
-  const parts = usePreparationParts({ lessons: forExam ? null : lessons, preparation });
+  const parts = usePreparationParts({
+    lessons: forExam ? null : lessons,
+    preparation,
+    topics: forExam ? topics : null,
+  });
 
   return (
     <dl className="flex flex-col text-sm [&>div+div]:border-t" data-slot="preparation-parts">
@@ -202,6 +213,7 @@ export function PreparationDetails({
   preparation,
   share,
   stillNeeded,
+  topics,
   value,
 }: {
   examHref: string | null;
@@ -210,6 +222,7 @@ export function PreparationDetails({
   preparation: Preparation;
   share: number;
   stillNeeded: ProgressView["stillNeeded"];
+  topics: PlanTopics | null;
   value: React.ReactNode;
 }) {
   const t = useExtracted();
@@ -219,7 +232,12 @@ export function PreparationDetails({
     <div className="flex flex-col gap-6">
       <Readout share={share} value={value} />
       <EstimatedScore preparation={preparation} />
-      <PreparationParts forExam={forExam} lessons={lessons} preparation={preparation} />
+      <PreparationParts
+        forExam={forExam}
+        lessons={lessons}
+        preparation={preparation}
+        topics={topics}
+      />
       <StillNeeded
         examHref={examHref}
         forExam={forExam}

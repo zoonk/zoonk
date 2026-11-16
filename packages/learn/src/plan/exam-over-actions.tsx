@@ -8,7 +8,6 @@ import { EnterButton } from "../_components/enter-button";
 import { TASK_WRAPPING_ACTION_CLASS } from "../_components/task-layout";
 import { ArchiveGoal } from "../journey/archive-goal";
 import { type GoalStatusControl } from "../journey/goal-actions";
-import { usePlanScreen } from "./plan-context";
 import { STUDY_AFTER_EXAM } from "./plan-full-course";
 import { usePlanChange } from "./use-plan-change";
 
@@ -17,12 +16,10 @@ import { usePlanChange } from "./use-plan-change";
  * or keep studying, the main action. Either answer ends the state, so nothing remembers it was asked.
  */
 export function ExamOverActions({
-  goalTitle,
   keeping,
   onArchive,
   onKeepStudying,
 }: {
-  goalTitle: string;
   keeping: boolean;
   onArchive: GoalStatusControl["onSetStatus"];
   onKeepStudying: () => void;
@@ -31,7 +28,7 @@ export function ExamOverActions({
 
   return (
     <>
-      <ArchiveGoal goalTitle={goalTitle} onSetStatus={onArchive}>
+      <ArchiveGoal onSetStatus={onArchive}>
         {(archive) => (
           <Button
             busy={archive.pending}
@@ -58,14 +55,12 @@ export function ExamOverActions({
 
 /** The Plan's bar after its exam: the same answers as Today's, and a failed save in the toast. */
 export function PlanExamOverBar({ goalStatus }: { goalStatus: GoalStatusControl }) {
-  const { goal } = usePlanScreen();
   const { change, isPending } = usePlanChange();
 
   return (
     <BottomBar>
       <BottomBarActions>
         <ExamOverActions
-          goalTitle={goal.displayName}
           keeping={isPending}
           onArchive={goalStatus.onSetStatus}
           onKeepStudying={() => void change(STUDY_AFTER_EXAM)}

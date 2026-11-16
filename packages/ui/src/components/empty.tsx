@@ -24,13 +24,17 @@ function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-// An empty state's one mark is 24 px. Lucide's ink, stroke included, starts 1 to 2 px inside that
-// box, so the icon variant pulls it 1 px out: the ink starts within 1 px of the text's edge.
+// An empty state's one mark is 24 px and lines up with the title under it by its ink (`edge`).
 const emptyMediaVariants = cva(
   "text-muted-foreground mb-2 flex shrink-0 items-center [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     defaultVariants: { variant: "default" },
-    variants: { variant: { default: "", icon: "-ms-px [&_svg:not([class*='size-'])]:size-6" } },
+    variants: {
+      variant: {
+        default: "",
+        icon: "edge -ms-(--edge-start) [--control-size:--spacing(6)] [--edge-under:var(--text-sm)] [--icon-size:--spacing(6)] [&_svg:not([class*='size-'])]:size-6",
+      },
+    },
   },
 );
 
@@ -52,7 +56,7 @@ function EmptyMedia({
 function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("text-reading leading-snug font-semibold tracking-[-0.01em]", className)}
+      className={cn("text-sm leading-5 font-semibold tracking-[-0.01em]", className)}
       data-slot="empty-title"
       {...props}
     />

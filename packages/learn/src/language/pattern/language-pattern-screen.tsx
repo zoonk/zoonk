@@ -12,6 +12,7 @@ import { SheetHeader } from "../../_components/sheet-header";
 import { TaskHeaderMenu, TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
+import { usePracticeVerb } from "../../conversation/tutor-offer-card";
 import { MomentAfterCeremony, type MomentCeremony } from "../../session/moment-ceremony";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
 import { PatternDrillQuestion, PatternDrillResult } from "./pattern-drill";
@@ -114,6 +115,7 @@ export function LanguagePatternScreen({
   renderCeremony?: MomentCeremony;
 }) {
   const t = useExtracted();
+  const practice = usePracticeVerb();
   const drill = usePatternDrill({ drill: pattern.drill, practice: actions.practice });
   const { step } = drill;
 
@@ -143,7 +145,7 @@ export function LanguagePatternScreen({
         exitToApp
         footer={
           <TaskActions>
-            <TaskMainButton onClick={drill.start}>{t("Practice")}</TaskMainButton>
+            <TaskMainButton onClick={drill.start}>{practice}</TaskMainButton>
           </TaskActions>
         }
         headerTitle={<TaskHeaderTitle title={t("Mistake pattern")} />}

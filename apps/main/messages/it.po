@@ -836,14 +836,19 @@ msgid "No answer was saved."
 msgstr "Non è stata salvata nessuna risposta."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "aqjWQg"
-msgid "Questions you asked in lessons that have since changed."
-msgstr "Le domande che hai fatto nelle lezioni che nel frattempo sono cambiate."
+msgctxt "yfq070"
+msgid "Lessons you asked about were updated since. Your questions and their answers are kept here."
+msgstr "Le lezioni su cui avevi fatto domande sono state aggiornate nel frattempo. Qui trovi le tue domande e le relative risposte."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "YPd0dY"
-msgid "You have no earlier questions."
-msgstr "Non hai domande precedenti."
+msgctxt "QKPtX3"
+msgid "No earlier questions"
+msgstr "Nessuna domanda precedente"
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "O62YuA"
+msgid "When a lesson you asked about is updated, your questions and their answers are kept here."
+msgstr "Quando una lezione su cui hai fatto domande viene aggiornata, conserviamo qui le tue domande e le relative risposte."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "O3OEwU"
@@ -992,11 +997,6 @@ msgstr "Hai completato il tuo obiettivo {goal}."
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
 msgstr "Non ci sono attività in programma finché non riprendi l’obiettivo."
-
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "lEE47Z"
-msgid "Your {goal} goal is paused."
-msgstr "Il tuo obiettivo {goal} è in pausa."
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "ND345k"
@@ -2648,6 +2648,11 @@ msgstr "La tua lezione è pronta"
 msgctxt "_LfrbS"
 msgid "We couldn't get this lesson ready"
 msgstr "Non siamo riusciti a preparare questa lezione"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "UjSkiv"
+msgid "Getting it ready takes a few minutes."
+msgstr "Ci serve qualche minuto per prepararla."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "3x95yN"

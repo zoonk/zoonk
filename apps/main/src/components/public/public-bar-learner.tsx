@@ -7,7 +7,6 @@ import {
 } from "@/app/[lang]/(app)/(learn)/_components/learn-goal-menu";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
-import { LearnAvatarBelt } from "@zoonk/learn/avatar-belt";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode } from "react";
 
@@ -37,14 +36,7 @@ export function PublicBarAccount({ visitor }: { visitor: ReactNode }) {
   const learner = useLearnerSummary();
 
   if (learner.status === "ready") {
-    return (
-      // The belt's dot hangs 2px past the picture; the margin keeps the pair inside the bar's column.
-      <span className="me-0.5 inline-flex">
-        <LearnAvatarBelt color={learner.summary.level?.color ?? null}>
-          <UserAvatarMenu includeSearch />
-        </LearnAvatarBelt>
-      </span>
-    );
+    return <UserAvatarMenu includeSearch />;
   }
 
   const known = learner.status === "visitor";

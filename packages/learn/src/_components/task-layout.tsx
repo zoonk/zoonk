@@ -28,12 +28,13 @@ export const TASK_HEADER_BAR_CLASS = "flex w-full items-center gap-2 px-4 py-2 l
 
 /**
  * A side keeps the bar's first 36 px line, so a taller middle (a clock) never moves the close
- * button, and a smaller button still centers on that line. Where the sidebar's toggle closes the
- * end side, what comes before it gives the edge up to it.
+ * button, and every button centers on that line: a 44 px one hangs past it instead of growing it,
+ * so the bar is as tall as the aside's header beside it. Where the sidebar's toggle closes the end
+ * side, what comes before it gives the edge up to it.
  */
 export const TASK_HEADER_SIDE_CLASS = {
-  end: "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-end self-start lg:group-data-aside/task:[&_.edge:not([data-slot=sidebar-toggle])]:me-0",
-  start: "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-start self-start",
+  end: "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-end self-start *:-my-1 lg:group-data-aside/task:[&_.edge:not([data-slot=sidebar-toggle])]:me-0",
+  start: "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-start self-start *:-my-1",
 } as const;
 
 /** The bar's room over and under its buttons, for a foot that sits level with it. */

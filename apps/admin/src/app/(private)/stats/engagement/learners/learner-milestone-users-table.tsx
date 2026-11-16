@@ -15,7 +15,7 @@ const COLUMNS: AdminTableColumn[] = [
   { align: "right", label: "Days" },
   { align: "right", label: "Brain Power" },
   { label: "Last completed" },
-  { label: "Joined" },
+  { align: "right", label: "Joined" },
 ];
 
 export function LearnerMilestoneUsersTable({

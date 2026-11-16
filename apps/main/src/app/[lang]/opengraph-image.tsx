@@ -1,4 +1,5 @@
 import { routing } from "@/i18n/routing";
+import { FONT_WEIGHTS, getShareCardFonts } from "@/lib/certificates/certificate-fonts";
 import { getOpenGraphLogo } from "@/lib/metadata/open-graph-brand";
 import { getOpenGraphWordBreak } from "@/lib/metadata/open-graph-word-break";
 import { DEFAULT_LOCALE, isValidLocale } from "@zoonk/utils/locale";
@@ -27,7 +28,7 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
   const { lang } = await params;
   const locale = isValidLocale(lang) ? lang : DEFAULT_LOCALE;
   const t = await getExtracted({ locale });
-  const logoSrc = await getOpenGraphLogo("dark");
+  const [logoSrc, fonts] = await Promise.all([getOpenGraphLogo("dark"), getShareCardFonts()]);
 
   return new ImageResponse(
     <div
@@ -37,7 +38,7 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
         color: "#fafafa",
         display: "flex",
         flexDirection: "column",
-        fontFamily: "Arial, Helvetica, sans-serif",
+        fontFamily: "Geist",
         height: "100%",
         justifyContent: "center",
         padding: "64px 80px",
@@ -64,7 +65,7 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
             display: "flex",
             flexDirection: "column",
             fontSize: 60,
-            fontWeight: 400,
+            fontWeight: FONT_WEIGHTS.brand,
             letterSpacing: "-0.035em",
             lineHeight: 1.05,
           }}
@@ -91,6 +92,6 @@ export default async function OpenGraphImage({ params }: { params: Promise<{ lan
         </div>
       </div>
     </div>,
-    { ...size },
+    { ...size, fonts },
   );
 }

@@ -201,7 +201,10 @@ export async function getLanguageUnitView({
   return {
     status: "ready",
     unit: {
-      canTestOut: Boolean(goal) && !blockedTestOutChapters.has(chapter.id),
+      canTestOut:
+        Boolean(goal) &&
+        chapter.lessons.some(({ lesson }) => !done.has(lesson.id)) &&
+        !blockedTestOutChapters.has(chapter.id),
       conversation: await loadPracticeCall({ chapterId: chapter.id, level }),
       goalId: goal?.id ?? null,
       grammarTips,
