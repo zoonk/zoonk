@@ -186,10 +186,10 @@ export function TimelineTrack({
   ];
 
   const cardYs = spreadLabels({
-    bottom: axis.height - cardGap / 2,
+    bottom: axis.height - axis.inset,
     gap: cardGap,
     positions: items.map((item) => yearToY(item.shownYear, axis)),
-    top: cardGap / 2,
+    top: axis.inset,
   });
 
   return (

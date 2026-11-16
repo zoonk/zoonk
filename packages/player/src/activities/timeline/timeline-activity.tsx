@@ -122,6 +122,7 @@ function ExploredTimeline({ content, labelId }: Pick<TimelineProps, "content" | 
   const axis = {
     end: fields.end,
     height: Math.max(MIN_HEIGHT, gap * (dated.length + 1)),
+    inset: gap / 2,
     start: fields.start,
   };
 
@@ -182,6 +183,7 @@ function TimelineQuestion({
   const axis = {
     end: fields.end,
     height: Math.max(MIN_HEIGHT, gap * (labels.length + 1)),
+    inset: gap / 2,
     start: fields.start,
   };
 
