@@ -240,6 +240,10 @@ actor PageServer: ClientTransport {
   static let subjectKey = "biology"
   static let speakingTask = "t1"
 
+  private var mockStartResult: String?
+
+  func setMockStartResult(_ result: String) { mockStartResult = result }
+
   private(set) var writes: [String] = []
   private var holding: String?
   private var held: CheckedContinuation<Void, Never>?
@@ -269,6 +273,13 @@ actor PageServer: ClientTransport {
       }
     }
 
+    if operationID == "startAnytimeMock", let mockStartResult {
+      return (
+        HTTPResponse(
+          status: .unprocessableContent, headerFields: [.contentType: "application/json"]),
+        HTTPBody(mockStartResult)
+      )
+    }
     throw APIError.network
   }
 
@@ -286,6 +297,10 @@ actor PageServer: ClientTransport {
   }
 
   private static let reads = [
+    "listMocks": #"""
+    {"access":"open","examDocument":"guide","examName":"ENEM","goalId":"00000000-0000-4000-8000-000000000001","lastMock":null,"options":[{"area":null,"areas":[],"covers":[],"day":null,"estimatedMinutes":30,"kind":"full","leftOut":[],"minutes":60,"objectiveOnly":true,"questions":20,"written":[]}],"running":null,"sizeSource":{"formats":null,"material":false,"pastEdition":null,"questions":"notice","subjects":null,"time":"notice"}}
+    """#,
+
     "getGoalChapter": #"""
     {"chapter":{"chapterId":"00000000-0000-4000-8000-0000000000c1","level":"overview","position":1,"state":"current","subject":null,"title":"Cells"},"counts":{"fading":0,"learning":0,"mastered":0,"new":0,"solid":0,"total":0},"goal":{"displayName":"Biology","id":"00000000-0000-4000-8000-000000000001","kind":"learn","title":"Biology"},"lessons":[],"mistakes":{"open":2},"skills":[],"summaries":[],"testOut":{"available":false}}
     """#,
