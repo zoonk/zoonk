@@ -177,7 +177,7 @@ export function CertificatePaper({
 
       {/* A phone draws the sheet too small to read its fine print; the details below repeat it. */}
       <a
-        className={cn(buttonVariants({ variant: "link" }), "text-sm sm:hidden")}
+        className={cn(buttonVariants({ variant: "link" }), "text-sm whitespace-nowrap sm:hidden")}
         href={links.imageUrls.print}
         rel="noopener"
         target="_blank"

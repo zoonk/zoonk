@@ -3,9 +3,11 @@ import { cn } from "@zoonk/ui/lib/utils";
 
 type YouTubeProps = { id: string };
 
-/** The cover's headline sits in its middle, so the play button waits in a corner instead. */
-const PLAY_IN_CORNER_CLASS =
-  "[&_.lty-playbtn]:top-auto [&_.lty-playbtn]:right-4 [&_.lty-playbtn]:bottom-4 [&_.lty-playbtn]:left-auto [&_.lty-playbtn]:transform-none";
+/**
+ * The cover's headline sits in its middle. lite-youtube's button covers the whole frame and draws
+ * its icon as a centered background, so the icon moves to a corner and the frame stays the target.
+ */
+const PLAY_IN_CORNER_CLASS = "[&_.lty-playbtn]:[background-position:right_1rem_bottom_1rem]";
 
 export function YouTube({ id }: YouTubeProps) {
   return (
