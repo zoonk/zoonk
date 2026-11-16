@@ -3,17 +3,8 @@ package com.zoonk.android.feature.onboarding
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -23,7 +14,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -60,6 +50,7 @@ import com.zoonk.android.feature.onboarding.setup.GoalSetupScreen
 import com.zoonk.android.feature.onboarding.setup.LocalSetupSpeech
 import com.zoonk.android.feature.onboarding.setup.PlacementStep
 import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
+import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.feature.onboarding.start.AttachPanel
 import com.zoonk.android.feature.onboarding.start.MaterialAnswer
 import com.zoonk.android.feature.onboarding.start.StartGoalScreen
@@ -72,6 +63,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.scaffold.pageMargin
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -627,7 +619,7 @@ class OnboardingScreenshots {
                 period: String,
                 availableAt: String?,
             ) = WriteOutcome.Refused(Refusal.Limit(UsageLimit(period, resource, "free", availableAt).received(Instant.now())))
-            Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+            Column(Modifier.padding(horizontal = pageMargin(), vertical = 24.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
                 AttachPanel(false, refused("upload", "rolling30Days", opens), {}, {}, {}, onCreateAccount = {}, onSubscribe = {})
                 MaterialAnswer(refused("materialQuestion", "rolling30Days", opens), onCreateAccount = {}, onSubscribe = {})
                 MaterialAnswer(refused("materialQuestion", "day", null), onCreateAccount = {}, onSubscribe = {})
@@ -757,27 +749,6 @@ class OnboardingScreenshots {
                     session,
                 ) { SignInResult.SignedIn }
             }
-
-        /** The setup's column: at least the window's height, so actions sit at its bottom on phones. */
-        @Composable
-        private fun SetupColumn(content: @Composable ColumnScope.() -> Unit) {
-            BoxWithConstraints(Modifier.fillMaxSize()) {
-                val height = maxHeight
-                Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-                    Column(
-                        modifier =
-                            Modifier
-                                .widthIn(
-                                    max = 640.dp,
-                                ).fillMaxWidth()
-                                .heightIn(min = height)
-                                .padding(horizontal = 24.dp, vertical = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(24.dp),
-                        content = content,
-                    )
-                }
-            }
-        }
     }
 }
 
