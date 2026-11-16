@@ -26,6 +26,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { GripVertical } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
+import { ACTIVITY_BOX_CLASS } from "./activity-canvas";
 
 type SortableItem = { id: string; label: string };
 
@@ -88,7 +89,7 @@ function SortableRow({
 
   return (
     <li
-      className={cn("rounded-xl border", isDragging && "bg-background relative z-10 shadow-md")}
+      className={cn(ACTIVITY_BOX_CLASS, isDragging && "relative z-10 shadow-md")}
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
     >
