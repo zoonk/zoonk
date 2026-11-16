@@ -1,6 +1,13 @@
 import { bleedLeads, spanLeads } from "./alignment-bleed.mts";
-import { type AlignmentFile, type AlignmentFinding, type Capture } from "./alignment-capture.mts";
+import {
+  type AlignmentFile,
+  type AlignmentFinding,
+  type Capture,
+  type CaptureElement,
+} from "./alignment-capture.mts";
+import { heightLeads } from "./alignment-controls.mts";
 import { coverageLeads, isOneStack } from "./alignment-coverage.mts";
+import { cutLeads } from "./alignment-cut.mts";
 import { axisLeads, endLeads, stackedLeads, startLeads } from "./alignment-edges.mts";
 import { evenLeads } from "./alignment-even.mts";
 import { gapLeads } from "./alignment-gap.mts";
@@ -15,6 +22,7 @@ import {
   notMeasured,
   rowName,
 } from "./alignment-geometry.mts";
+import { helperLeads } from "./alignment-helper.mts";
 import { lineLeads } from "./alignment-line.mts";
 import { pinnedLeads } from "./alignment-pinned.mts";
 import { roomLeads } from "./alignment-room.mts";
@@ -26,6 +34,7 @@ import {
   EXCEPTIONS,
   type Relation,
 } from "./alignment-table.mts";
+import { lineEndLeads, loneWordLeads } from "./alignment-wrap.mts";
 
 /**
  * The one evaluator of the declared relationships. It reads captures, from the web page or from the
@@ -91,10 +100,19 @@ function typeLeads(context: Context, read: Group): AlignmentFinding[] {
   });
 }
 
+/** An action's words: a keycap hint ("⏎") beside them isn't one. */
+function wordsOf(action: CaptureElement) {
+  return (action.text ?? action.name ?? "")
+    .split(/\s+/u)
+    .filter((word) => /[\p{L}\p{N}]/u.test(word))
+    .join(" ");
+}
+
 /**
  * One filled action on the active surface; a covering dialog or sheet is its own surface. The same
  * action offered again (the same words and the same `target`: a link's destination, or the action
- * a piece names) counts once; actions with no `target` each count.
+ * a piece names) counts once; actions with no `target` each count. A marketing page repeats its one
+ * action in the same words by rule, so there the same words count once wherever they go.
  */
 function filledLeads(context: Context): AlignmentFinding[] {
   const { capture } = context;
@@ -127,10 +145,13 @@ function filledLeads(context: Context): AlignmentFinding[] {
   return [...Map.groupBy(filled, (action) => action.surface ?? "")].flatMap(([surface, found]) => {
     const actions = [
       ...new Map(
-        found.map((action) => [
-          action.target ? `${action.text ?? action.name ?? ""} ${action.target}` : action.id,
-          action,
-        ]),
+        found.map((action) => {
+          if (capture.marketing) {
+            return [wordsOf(action), action];
+          }
+
+          return [action.target ? `${wordsOf(action)} ${action.target}` : action.id, action];
+        }),
       ).values(),
     ];
 
@@ -197,6 +218,7 @@ function groupLeads(context: Context, group: Group): AlignmentFinding[] {
     ...(has("line") ? lineLeads(context, group) : []),
     ...(has("room") ? roomLeads(context, group) : []),
     ...(has("even") ? evenLeads(context, group) : []),
+    ...(has("helper") ? helperLeads(context, group) : []),
   ];
 
   // Rows a platform grouped by the stack holding them, with no piece framing them: leads only.
@@ -205,15 +227,43 @@ function groupLeads(context: Context, group: Group): AlignmentFinding[] {
     : found;
 }
 
+function missingMeasurements(context: Context): AlignmentFinding[] {
+  const required = {
+    cut: "clipping",
+    "line-end": "text-flows",
+    "lone-word": "text-flows",
+    "one-height": "controls",
+  } as const;
+
+  return Object.entries(required).flatMap(([rule, measurement]) =>
+    context.capture.version === 2 && context.capture.measurements?.includes(measurement)
+      ? []
+      : [
+          finding(context, {
+            detail: `capture version ${context.capture.version}: ${measurement} were not recorded`,
+            level: "not-measured",
+            message: `${rule} measurements were not recorded`,
+            piece: "page",
+            rule,
+          }),
+        ],
+  );
+}
+
 export function evaluateCapture(capture: Capture): AlignmentFinding[] {
   const context = { capture, unit: capture.unit };
 
   return [
+    ...missingMeasurements(context),
     ...groupsOf(capture).flatMap((group) => groupLeads(context, group)),
     ...filledLeads(context),
-    ...bleedLeads(context),
-    ...spanLeads(context),
+    // A gallery's specimens each draw in a frame of their own, not on the page's column.
+    ...(capture.specimen ? [] : [...bleedLeads(context), ...spanLeads(context)]),
     ...pinnedLeads(context),
+    ...lineEndLeads(context),
+    ...loneWordLeads(context),
+    ...heightLeads(context),
+    ...cutLeads(context),
   ];
 }
 

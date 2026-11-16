@@ -5,6 +5,7 @@ import { type ListedSource } from "@/data/sources/list-sources";
 import { capitalize, formatCount, formatDate } from "@/lib/format";
 import { languageName } from "@/lib/language-filter";
 import { TableCell } from "@zoonk/ui/components/table";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 
 /** What reads from the source, exams first: "2 exams · 14 learners". */
 function usedBy({ examBlueprints, learnerSources }: ListedSource["_count"]): string {
@@ -13,7 +14,7 @@ function usedBy({ examBlueprints, learnerSources }: ListedSource["_count"]): str
     learnerSources > 0 ? formatCount(learnerSources, "learner") : null,
   ]
     .filter(Boolean)
-    .join(" · ");
+    .join(FACT_SEPARATOR);
 }
 
 /** Private uploads show a fixed label: their title is dropped before it reaches this row. */
@@ -25,7 +26,7 @@ export function SourceRow({ source }: { source: ListedSource }) {
         icon={<SourceKindIcon kind={source.kind} />}
         note={[source.title ? source.publisher : null, languageName(source.language)]
           .filter(Boolean)
-          .join(" · ")}
+          .join(FACT_SEPARATOR)}
         title={source.title ?? "Private upload"}
       />
       <TableCell>{capitalize(source.kind)}</TableCell>

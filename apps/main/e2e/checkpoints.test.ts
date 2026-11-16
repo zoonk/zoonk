@@ -69,6 +69,18 @@ test.describe("A checkpoint from today's session", () => {
     await page.context().close();
   });
 
+  test("a challenge link that isn't the learner's says the page wasn't found", async ({
+    browser,
+  }) => {
+    const { user } = await createCheckpointLearner();
+    const page = await openAs(browser, user);
+
+    await page.goto("/challenge/0f3a9c1e-5b7d-4e2a-9c61-7d8e4b2a1f30");
+    await expect(page.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
+
+    await page.context().close();
+  });
+
   test("Back from the checkpoint its challenge opened finds the challenge ready to start", async ({
     browser,
   }) => {

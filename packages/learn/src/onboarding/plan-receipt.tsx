@@ -4,6 +4,7 @@ import { type GoalView } from "@zoonk/core/goals/contract";
 import { toLanguageAimView } from "@zoonk/core/language/aims";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
+import { useDaysLeftText } from "../_components/days-left";
 import { daysUntilIsoDate, useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { readSetupLevel } from "./_utils/setup-level";
@@ -35,6 +36,7 @@ function useLevelText() {
 function useDateFact() {
   const t = useExtracted();
   const today = useMountTime();
+  const daysLeftText = useDaysLeftText();
   const formatDate = useFormatIsoDate();
 
   return function dateFact(goal: GoalView): ReceiptFact | null {
@@ -42,12 +44,10 @@ function useDateFact() {
 
     if (goal.targetDate) {
       return {
-        count: t("{days, plural, =0 {# days} one {# day} other {# days}}", {
-          days: Math.max(0, daysUntilIsoDate({ isoDate: goal.targetDate, today })),
-        }),
+        count: daysLeftText(Math.max(0, daysUntilIsoDate({ isoDate: goal.targetDate, today }))),
         id: "date",
         label,
-        value: formatDate(goal.targetDate, "long"),
+        value: formatDate(goal.targetDate, "row", { year: "always" }),
       };
     }
 

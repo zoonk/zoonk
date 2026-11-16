@@ -1,7 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { useFormatWeekday } from "../_utils/use-format-weekday";
+import { useFormatWeekday } from "../_utils/iso-date";
 
 const DAYS_PER_WEEK = 7;
 

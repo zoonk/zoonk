@@ -23,8 +23,8 @@ export const it: ExampleSet = {
     goal: (month) => `prepararmi alla maturità di ${month}`,
     headline: "Passare la maturità",
     mock: {
-      details: "6 h",
       firm: ["Integrali", "Probabilità"],
+      minutes: 360,
       mistakes: 3,
       name: "Seconda prova",
       review: ["Derivate", "Limiti"],

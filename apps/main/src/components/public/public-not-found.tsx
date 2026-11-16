@@ -4,7 +4,7 @@ import { PublicPage } from "./public-page";
 export function PublicNotFound() {
   return (
     <PublicPage className="flex flex-col">
-      <NotFoundMessage />
+      <NotFoundMessage underHeader />
     </PublicPage>
   );
 }

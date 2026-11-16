@@ -149,7 +149,7 @@ function DateOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDat
 
   const question =
     moved?.kind === "setTargetDate" && moved.targetDate
-      ? t("Move your end date to {date}?", { date: formatDate(moved.targetDate, "long") })
+      ? t("Move your end date to {date}?", { date: formatDate(moved.targetDate, "sentence") })
       : title;
 
   const body = () => {

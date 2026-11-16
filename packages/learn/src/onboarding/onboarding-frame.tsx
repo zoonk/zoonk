@@ -8,11 +8,7 @@ import { EnterButton } from "../_components/enter-button";
 import { Eyebrow } from "../_components/eyebrow";
 import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
 import { ChangeSaveError } from "../_components/save-error";
-import {
-  TASK_MAIN_ACTION_CLASS,
-  TASK_WRAPPING_ACTION_CLASS,
-  TaskActions,
-} from "../_components/task-layout";
+import { TASK_WRAPPING_ACTION_CLASS, TaskActions } from "../_components/task-layout";
 import { OnboardingBarRow, isStepBar } from "./onboarding-bar";
 import {
   NO_BAR,
@@ -306,9 +302,6 @@ export function OnboardingPrimaryButton({
   return <EnterButton {...props}>{children}</EnterButton>;
 }
 
-/** Alone, or after the row's other actions, it fills a phone's line as a main action would. */
-const OTHER_ACTION_CLASS = cn(TASK_WRAPPING_ACTION_CLASS, "max-lg:last:grow");
-
 /** The other action, before the main one: Skip, Not now. */
 export function OnboardingSecondaryButton({
   className,
@@ -316,7 +309,7 @@ export function OnboardingSecondaryButton({
 }: Omit<React.ComponentProps<typeof Button>, "size" | "variant">) {
   return (
     <Button
-      className={cn(OTHER_ACTION_CLASS, className)}
+      className={cn(TASK_WRAPPING_ACTION_CLASS, className)}
       focusableWhenDisabled
       size="xl"
       variant="outline"
@@ -325,10 +318,9 @@ export function OnboardingSecondaryButton({
   );
 }
 
-/** A link drawn as the main action or as the one beside it. */
+/** A link drawn as the action beside the main one. */
 export const ONBOARDING_ACTION_LINK_CLASS = {
-  main: cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS),
-  other: cn(buttonVariants({ size: "xl", variant: "outline" }), OTHER_ACTION_CLASS),
+  other: cn(buttonVariants({ size: "xl", variant: "outline" }), TASK_WRAPPING_ACTION_CLASS),
 } as const;
 
 /** The window keeps the scroll of a long screen, so the next one would open past its title. */

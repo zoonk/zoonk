@@ -51,7 +51,14 @@ internal fun pattern(
             MistakePatternExamplesInner(answer = "I am agree with you.", correctAnswer = "I agree with you.", format = "writing"),
             MistakePatternExamplesInner(answer = "She is agree.", correctAnswer = "She agrees.", format = "spokenAnswer"),
         ),
-    rule = "“Agree” is a verb, so it needs no “am”.",
+    rule =
+        if (kind ==
+            MistakePattern.Kind.TYPOS
+        ) {
+            "Check the spelling of “agree”: it has two e’s."
+        } else {
+            "“Agree” is a verb, so it needs no “am”."
+        },
     id = PATTERN_ID,
     kind = kind,
     occurrences = 2,

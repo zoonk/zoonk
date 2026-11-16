@@ -2918,8 +2918,9 @@ msgid "Back"
 msgstr "Retour"
 
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/questions/lesson-question-thread.tsx
+#: src/questions/lesson-question-panel.tsx
 #: src/questions/tutor-conversation.tsx
+#: src/questions/tutor-dock.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
 msgstr "Créer un compte gratuit"
@@ -2939,6 +2940,11 @@ msgstr "Impossible d’ouvrir cette leçon"
 msgctxt "odXlk8"
 msgid "Log in"
 msgstr "Se connecter"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "EdX_cR"
+msgid "The link may be old or mistyped."
+msgstr "Le lien est peut-être ancien ou mal saisi."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "bBaQAY"
@@ -3802,9 +3808,9 @@ msgstr "{name} est un compagnon d’étude doté d’une IA et peut faire des er
 
 #: src/questions/lesson-question-thread.tsx
 #: src/questions/tutor-dock.tsx
-msgctxt "OK6Mb4"
-msgid "Create a free account to ask questions"
-msgstr "Crée un compte gratuit pour poser des questions"
+msgctxt "uTM1IU"
+msgid "Questions need a free account"
+msgstr "Il te faut un compte gratuit pour poser des questions"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"
