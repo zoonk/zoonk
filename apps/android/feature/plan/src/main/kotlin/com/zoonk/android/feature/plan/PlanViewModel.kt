@@ -114,7 +114,7 @@ class PlanViewModel(
     val event = navigation.event
 
     /** What the editor's and the slot's saves and searches lead to, while the visit that asked lasts. */
-    internal val outcomes = PlanOutcomes(visit)
+    internal val outcomes = PlanOutcomes(visit, endTools = { setupLessons.clear() })
 
     /** Parts whose change is saving, which take no other tap meanwhile. */
     val pending: StateFlow<Set<PlanPart>> = savingParts.asStateFlow()
@@ -285,19 +285,26 @@ class PlanViewModel(
     internal fun chooseTools(
         answer: ToolAnswer,
         asker: PlanAsker? = null,
-    ) = chooseTools(answer, asker, visit.number)
+    ) = chooseTools(answer, asker, visit.number, outcomes.tools.number)
 
     /** Sent again once its setup lesson is written, still for the visit that chose. */
     private fun chooseTools(
         answer: ToolAnswer,
         asker: PlanAsker?,
         started: Int,
+        opened: Int,
     ): Unit =
         save(PlanPart.Tools, listOf(answer.operation), asker, started) {
-            when (val result = store.chooseTools(goalId, answer)) {
+            val result = store.chooseTools(goalId, answer)
+            when (result) {
                 is MutationResult.Done -> {
                     val written = result.value
-                    when (setupLessons.answered((written as? Written.Writing)?.generationId) { chooseTools(answer, asker, started) }) {
+                    if (written is Written.Writing && (started != visit.number || opened != outcomes.tools.number)) return@save null
+                    when (
+                        setupLessons.answered(
+                            (written as? Written.Writing)?.generationId,
+                        ) { chooseTools(answer, asker, started, opened) }
+                    ) {
                         ContentWritingWait.Answer.Proceed -> MutationResult.Done((written as Written.Ready).value)
                         ContentWritingWait.Answer.Waiting -> null
                         ContentWritingWait.Answer.Failed -> MutationResult.Failed(ApiError.Unavailable)

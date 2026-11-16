@@ -67,9 +67,12 @@ internal class TimeAsk(
 @Stable
 internal class PlanOutcomes(
     visit: Visit = Visit(),
+    endTools: () -> Unit = {},
 ) {
     /** The Adjust plan editor's opening, whose Move date asks and whose pickers open inside it: it ends when the editor closes. */
     val editor = visit.opening()
+
+    val tools = editor.opening(endTools)
 
     /** The suggestion slot's item while its sheet or panel shows, whose searches ask: it ends when that goes. */
     val suggestion = visit.opening()

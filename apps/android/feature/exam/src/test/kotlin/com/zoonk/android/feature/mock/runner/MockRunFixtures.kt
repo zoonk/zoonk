@@ -151,6 +151,7 @@ internal class FakeMockRunApi(
 
     /** Runs the next speaking starts answer with, one each, before the paper is written. */
     val paperWritings = ArrayDeque<String>()
+    var speakingGate: CompletableDeferred<Unit>? = null
     var speakingStarts = 0
     var speakingFailure: ApiException? = null
 
@@ -159,6 +160,7 @@ internal class FakeMockRunApi(
         blockId: String,
     ): String? {
         speakingStarts++
+        speakingGate?.await()
         paperWritings.removeFirstOrNull()?.let { return it }
         speakingFailure?.let { throw it }
         return null

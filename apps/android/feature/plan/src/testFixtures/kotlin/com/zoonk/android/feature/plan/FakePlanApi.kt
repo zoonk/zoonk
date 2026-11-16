@@ -72,6 +72,7 @@ class FakePlanApi : PlanApi {
 
     val examChoices = mutableListOf<Pair<String, List<String>>>()
     val toolAnswers = mutableListOf<ToolAnswer>()
+    var toolGate: CompletableDeferred<Unit>? = null
     var toolFailure: ApiException? = null
     var advice = PlanBasesAdvice(daysLeft = 40, ready = true, recommended = PlanBasesAdvice.Recommended.ESSENTIAL)
     var advised = 0
@@ -253,6 +254,7 @@ class FakePlanApi : PlanApi {
         goalId: UUID,
         answer: ToolAnswer,
     ): Written<PlanChangeResult> {
+        toolGate?.await()
         toolFailure?.let { throw it }
         toolAnswers += answer
         setupWritings.removeFirstOrNull()?.let { return Written.Writing(it) }
