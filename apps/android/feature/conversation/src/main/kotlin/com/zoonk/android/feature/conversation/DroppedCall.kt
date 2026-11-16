@@ -47,11 +47,7 @@ internal fun droppedCall(
     failure: LiveCallFailure?,
     micBlocked: Boolean,
 ): DroppedCall? {
-    if (phase != LiveCallPhase.Failed || failure == LiveCallFailure.PlusRequired ||
-        !(continuing || failure == LiveCallFailure.Dropped)
-    ) {
-        return null
-    }
+    if (phase != LiveCallPhase.Failed || !(continuing || failure == LiveCallFailure.Dropped)) return null
     if (micBlocked) return DroppedCall(DroppedReason.Microphone, DroppedRetry.Microphone)
     return when (failure) {
         LiveCallFailure.CallInProgress -> DroppedCall(DroppedReason.CallInProgress, DroppedRetry.Takeover)

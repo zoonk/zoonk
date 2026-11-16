@@ -115,7 +115,7 @@ describe(pickTodayNotice, () => {
     expect(pick({ view: { exam: { resultReported: true, stage: "afterExam" } } })).toBeNull();
   });
 
-  it("keeps a change already made, a tip and a language's practice in their priority order", () => {
+  it("skips automatic plan changes and keeps a tip before practice", () => {
     const ordinarySession = welcomeBack({ freshStart: null });
 
     expect(
@@ -123,11 +123,9 @@ describe(pickTodayNotice, () => {
         host: { practice: true },
         view: { planChange: planChange("applied"), session: ordinarySession },
       }),
-    ).toBe("planChange");
+    ).toBe("practice");
 
-    expect(pick({ host: { practice: true }, view: { planChange: planChange("applied") } })).toBe(
-      "planChange",
-    );
+    expect(pick({ view: { planChange: planChange("applied") } })).toBeNull();
 
     expect(pick({ host: { practice: true }, view: { insight: insightChange("applied") } })).toBe(
       "insight",
