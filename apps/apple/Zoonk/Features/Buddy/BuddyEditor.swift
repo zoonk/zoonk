@@ -146,13 +146,15 @@ struct BuddyPickerSections: View {
 struct BuddyGlassesPicker: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(BuddyStore.self) private var store
+  /// Says a pair didn't go on, while the sheet is open.
+  @State private var saving = VisitRequest<Bool>()
 
   let status: BuddyStatus
 
   var body: some View {
     NavigationStack {
       ZoonkList {
-        if store.saveFailed {
+        if saving.outcome == false {
           FailureLine(
             message: LocalizedStringResource(
               "We couldn't save your buddy. Try again.", table: "Buddy",
@@ -163,11 +165,9 @@ struct BuddyGlassesPicker: View {
           let isWorn = store.status.value?.buddy.glasses == option.glasses.worn
 
           Button {
-            Task {
-              await store.save(
-                BuddyChoice(
-                  kind: status.buddy.kind, name: status.buddy.name, glasses: option.glasses.worn))
-            }
+            let choice = BuddyChoice(
+              kind: status.buddy.kind, name: status.buddy.name, glasses: option.glasses.worn)
+            saving.run { [store] in await store.save(choice) }
           } label: {
             HStack(spacing: 12) {
               BuddyFace(kind: status.buddy.kind, glasses: option.glasses.worn)
@@ -222,6 +222,7 @@ struct BuddyGlassesPicker: View {
       }
     }
     .presentationDetents([.medium, .large])
+    .onDisappear { saving.leave() }
   }
 
   @ViewBuilder

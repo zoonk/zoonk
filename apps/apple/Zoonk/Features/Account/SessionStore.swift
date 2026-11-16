@@ -324,22 +324,26 @@ final class SessionStore {
   }
 
   /// A nil `username` keeps the current one. Sends the name only when it changed, so a name saved
-  /// before the length limit doesn't block a username change.
-  func updateProfile(name: String, username: String? = nil) async -> Bool {
+  /// before the length limit doesn't block a username change. It saves even when the editor that
+  /// asked goes away first; how it ended is that editor's to say.
+  func updateProfile(name: String, username: String? = nil) async -> ProfileSave {
+    await Task { await self.saveProfile(name: name, username: username) }.value
+  }
+
+  private func saveProfile(name: String, username: String?) async -> ProfileSave {
     guard let authenticatedSession else {
-      return false
+      return .dropped
     }
 
     let changedName = ProfileName.isChange(name, saved: account?.user.name ?? "") ? name : nil
     guard changedName != nil || username != nil else {
-      return true
+      return .saved
     }
 
     markInteractiveOperationStarted()
     let profileRevision = interactiveOperationRevision
     let profileRefreshRevision = accountRefreshRevision
     let workingRevision = startWorkingOperation()
-    failure = nil
     defer { finishWorkingOperation(workingRevision) }
 
     do {
@@ -353,24 +357,23 @@ final class SessionStore {
         interactiveOperationRevision == profileRevision,
         accountRefreshRevision == profileRefreshRevision
       else {
-        return false
+        return .dropped
       }
 
       state = .signedIn(updatedAccount)
-      return true
+      return .saved
     } catch AccountAPIError.unauthorized {
       await expire(authenticatedSession)
-      return false
+      return .dropped
     } catch {
       guard
         self.authenticatedSession == authenticatedSession,
         interactiveOperationRevision == profileRevision
       else {
-        return false
+        return .dropped
       }
 
-      failure = getFailure(error)
-      return false
+      return .failed(getFailure(error))
     }
   }
 

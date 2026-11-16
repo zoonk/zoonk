@@ -204,7 +204,13 @@ private struct GoalStartFlow: View {
           send(goal)
         }
       }
-      .onChange(of: path) { _, path in
+      .onChange(of: path) { previous, path in
+        // A page over the entry ends its visit: how adding material went is gone, and an addition
+        // still out says nothing when it lands. What was typed and pasted stays.
+        if previous.isEmpty, !path.isEmpty {
+          materialDraft.leave()
+        }
+
         // Back from the draft: its words wait in the box, and nothing still being sent shows up.
         if path.isEmpty {
           sending?.cancel()
@@ -217,6 +223,7 @@ private struct GoalStartFlow: View {
         }
       }
       .onDisappear {
+        materialDraft.leave()
         sending?.cancel()
       }
     }

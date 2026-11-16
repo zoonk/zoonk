@@ -188,26 +188,32 @@ final class PlanStore {
   }
 
   func rename(goalId: String, displayName: String) async -> MutationResult<Bool> {
-    await write { api, token in
-      try await api.rename(token: token, goalId: goalId, displayName: displayName)
-    } changed: {
-      $0
+    await saves.save {
+      await self.write { api, token in
+        try await api.rename(token: token, goalId: goalId, displayName: displayName)
+      } changed: {
+        $0
+      }
     }
   }
 
   func continueAtNextLevel(goalId: String) async -> MutationResult<Bool> {
-    await write { api, token in
-      try await api.continueAtNextLevel(token: token, goalId: goalId)
-    } changed: {
-      $0
+    await saves.save {
+      await self.write { api, token in
+        try await api.continueAtNextLevel(token: token, goalId: goalId)
+      } changed: {
+        $0
+      }
     }
   }
 
   func skipAlphabet(goalId: String) async -> MutationResult<Bool> {
-    await write { api, token in
-      try await api.skipAlphabet(token: token, goalId: goalId)
-    } changed: {
-      $0
+    await saves.save {
+      await self.write { api, token in
+        try await api.skipAlphabet(token: token, goalId: goalId)
+      } changed: {
+        $0
+      }
     }
   }
 
@@ -217,21 +223,24 @@ final class PlanStore {
     FocusTestSummary
   > {
     let api = api
-    let result = await cache.mutate { identity in
-      try await api.updateFocusTest(
-        token: identity.bearerToken, goalId: goalId, controls: controls)
-    }
 
-    if case .done(let saved) = result {
-      plans[goalId]?.update { read in
-        var read = read
-        read.plan.focusTest = saved
-        return read
+    return await saves.save {
+      let result = await self.cache.mutate { identity in
+        try await api.updateFocusTest(
+          token: identity.bearerToken, goalId: goalId, controls: controls)
       }
-      cache.invalidate([.goals, .userSession])
-    }
 
-    return result
+      if case .done(let saved) = result {
+        self.plans[goalId]?.update { read in
+          var read = read
+          read.plan.focusTest = saved
+          return read
+        }
+        self.cache.invalidate([.goals, .userSession])
+      }
+
+      return result
+    }
   }
 
   /// Update my plan, Not now or Undo on a change the plan proposed. False when it's out of date.

@@ -1,49 +1,53 @@
 import Observation
 
 /// Kept above a pane split: folding iPhone Duo or resizing an iPad recreates the panes, and the
-/// start under way, its refusal and its failure stay with the screen.
+/// start under way, its refusal and its failure stay with the screen. They're the visit's: `leave()`
+/// as the screen goes away.
 @MainActor
 @Observable
 final class CallStart {
-  private(set) var isStarting = false
-  private(set) var isWriting = false
-  private(set) var refusal: CallReservation?
-  @ObservationIgnored private var task: Task<Void, Never>?
+  private enum Ended {
+    case started(String)
+    case refused(CallReservation)
+  }
+
+  private let request = VisitRequest<Ended>()
+  private var writing = false
+
+  var isStarting: Bool { request.isRunning }
+  var isWriting: Bool { request.isRunning && writing }
+
+  var refusal: CallReservation? {
+    if case .refused(let refusal) = request.outcome { refusal } else { nil }
+  }
 
   /// Only from the learner's tap. `onStarted` gets the new call's id.
   func start(
     _ input: Components.Schemas.LanguageConversationStartInput, voice: VoiceServices,
     onStarted: @escaping (String) -> Void
   ) {
-    guard !isStarting else {
+    guard !request.isRunning else {
       return
     }
 
-    isStarting = true
-    refusal = nil
+    writing = false
 
-    task = Task {
-      let result = await voice.startConversation(input) {
-        self.isWriting = true
+    request.run {
+      switch await voice.startConversation(input, whileWriting: { self.writing = true }) {
+      case .done(.done(let id)): return Ended.started(id)
+      case .done(.refused(let refusal)): return Ended.refused(CallReservation(refusal: refusal))
+      case .failed: return Ended.refused(.failed)
+      case .obsolete: return nil
       }
-      isStarting = false
-      isWriting = false
-
-      switch result {
-      case .done(.done(let id)):
+    } then: { ended in
+      if case .started(let id) = ended {
         onStarted(id)
-      case .done(.refused(let refusal)):
-        self.refusal = CallReservation(refusal: refusal)
-      case .failed:
-        refusal = .failed
-      case .obsolete:
-        break
       }
     }
   }
 
-  /// Its screen left: a start answered later opens nothing.
-  func cancel() {
-    task?.cancel()
+  /// Its screen left: a start answered later opens nothing, and a refusal shown is gone.
+  func leave() {
+    request.leave()
   }
 }

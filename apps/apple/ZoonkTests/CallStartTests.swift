@@ -30,7 +30,7 @@ final class CallStartTests: XCTestCase {
 
     start.start(Self.mock, voice: makeVoice(transport)) { opened.append($0) }
     await transport.waitForHeldRequest()
-    start.cancel()
+    start.leave()
     await transport.release()
     await waitUntilStarted(start)
 

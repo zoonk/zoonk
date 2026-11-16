@@ -10,6 +10,9 @@ struct CertificateNameEditor: View {
   @Binding var name: String
   /// Empty when the learner hasn't given a name yet.
   let current: String
+  /// Kept by the screen, which ends it when the learner leaves: folding or unfolding draws this
+  /// editor again.
+  let saving: VisitRequest<ProfileSave>
   /// After a save, or Esc while changing it.
   let onDone: () -> Void
 
@@ -68,7 +71,7 @@ struct CertificateNameEditor: View {
       }
       .typeStyle(.note)
 
-      AccountFailureMessage(failure: session.failure)
+      AccountFailureMessage(failure: saving.outcome?.failure)
     }
     .onKeyPress(.escape) {
       guard !isFirst else {
@@ -96,8 +99,10 @@ struct CertificateNameEditor: View {
       return
     }
 
-    Task {
-      if await session.updateProfile(name: trimmed) {
+    saving.run { [session, trimmed] in
+      await session.updateProfile(name: trimmed)
+    } then: { outcome in
+      if outcome == .saved {
         onDone()
       }
     }

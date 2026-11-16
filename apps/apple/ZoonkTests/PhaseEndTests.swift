@@ -194,20 +194,24 @@ final class PhaseEndTests: XCTestCase {
 /// A plan with these phases and nothing else to say.
 func goalPlanFixture(
   phases: [String] = [], estimateEnd: String? = "2027-11-14", targetDate: String? = nil,
-  targetDateEstimated: Bool = false
+  targetDateEstimated: Bool = false, end planEnd: String? = nil, status: String = "onTrack",
+  fitOffer: String? = nil, feasibility: String? = nil, studyDays: Int = 7
 ) throws -> GoalPlan {
   let end = estimateEnd.map { "\"\($0)\"" } ?? "null"
+  let over = planEnd.map { #"{"kind": "\#($0)"}"# } ?? "null"
   let target = targetDate.map { "\"\($0)\"" } ?? "null"
   let json = """
     {
       "access": { "mocksRequirePlus": false },
-      "areas": [], "bases": null, "course": null, "end": null,
+      "areas": [], "bases": null, "course": null, "end": \(over),
       "estimate": { "endDate": \(end), "fullCourseEndDate": null },
-      "examChoices": [], "examDocument": "notice", "feasibility": null, "fitOffer": null,
+      "examChoices": [], "examDocument": "notice", "feasibility": \(feasibility ?? "null"),
+      "fitOffer": \(fitOffer ?? "null"),
       "goalId": "goal", "phases": [\(phases.joined(separator: ","))], "planId": "plan",
       "ready": true,
       "schedule": {
-        "dailyMinutes": 30, "dailyTimes": [15, 30, 45], "fullCourse": false, "studyDays": 7,
+        "dailyMinutes": 30, "dailyTimes": [15, 30, 45], "fullCourse": false,
+        "studyDays": \(studyDays),
         "targetDate": \(target), "targetDateEstimated": \(targetDateEstimated),
         "targetDateNamedMonth": false,
         "shape": {
@@ -216,7 +220,7 @@ func goalPlanFixture(
         },
         "weekdayMinutes": [30, 30, 30, 30, 30, 30, 30]
       },
-      "status": { "kind": "onTrack" },
+      "status": { "kind": "\(status)" },
       "steering": {
         "difficultyBias": "standard", "lessonsStudied": 0, "practiceBias": "balanced",
         "skippedActivities": []

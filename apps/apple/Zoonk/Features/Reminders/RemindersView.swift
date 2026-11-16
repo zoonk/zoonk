@@ -4,17 +4,19 @@ import SwiftUI
 struct RemindersView: View {
   @Environment(\.scenePhase) private var scenePhase
   @Environment(AppRouter.self) private var router
-  @Environment(PushNotifications.self) private var notifications
   @Environment(StudyRemindersStore.self) private var reminders
 
   let createAccount: () -> Void
 
   /// Read from the system each time the app comes back, since it changes in Settings.
   @State private var notificationsOff = false
-  /// Turning push on here just met blocked notifications.
-  @State private var pushRefused = false
-  @State private var pushFailed = false
-  @State private var isSettingUpPush = false
+  /// One per control, so a later change to one never hides the other's failure: false when it
+  /// didn't save, while the learner is on the page.
+  @State private var timeSave = VisitRequest<Bool>()
+  @State private var emailSave = VisitRequest<Bool>()
+  /// Denied when turning push on here just met blocked notifications; nil when no setup ran and the
+  /// plain change saved.
+  @State private var pushSetup = VisitRequest<PushSetup>()
 
   var body: some View {
     ZoonkList {
@@ -58,7 +60,7 @@ struct RemindersView: View {
         }
       }
 
-      if reminders.saveFailed || pushFailed {
+      if timeSave.outcome == false || emailSave.outcome == false || pushSetup.outcome == .failed {
         SettingsSaveError()
       }
     }
@@ -89,8 +91,13 @@ struct RemindersView: View {
     )
     .task(id: scenePhase) {
       if scenePhase == .active {
-        notificationsOff = await notifications.isDenied()
+        notificationsOff = await reminders.notificationsDenied()
       }
+    }
+    .onDisappear {
+      emailSave.leave()
+      pushSetup.leave()
+      timeSave.leave()
     }
   }
 
@@ -100,7 +107,7 @@ struct RemindersView: View {
       SettingToggle(
         isOn: Binding(
           get: { reminder.emailOn },
-          set: { on in Task { await reminders.change(StudyReminderChange(emailOn: on)) } }),
+          set: { on in save(StudyReminderChange(emailOn: on), in: emailSave) }),
         title: Text("Email", tableName: "Reminders", comment: "Switch for email reminders"),
         description: Text(verbatim: address))
     } else {
@@ -124,9 +131,7 @@ struct RemindersView: View {
       isOn: Binding(
         get: { reminder.pushOn },
         set: { on in
-          Task {
-            await setUpPush { await reminders.setPush(on, in: reminder) }
-          }
+          setUpPush { [reminders] in await reminders.setPush(on, in: reminder) }
         }),
       title: Text(
         "Push notifications", tableName: "Reminders", comment: "Switch for push reminders"),
@@ -138,11 +143,11 @@ struct RemindersView: View {
           : Text(verbatim: phone.label)
       }
     )
-    .disabled(isSettingUpPush)
+    .disabled(pushSetup.isRunning)
 
     if reminder.phone != nil, !isThisPhone {
-      BusyButton(isBusy: isSettingUpPush, icon: .notify) {
-        Task { await setUpPush { await reminders.useThisPhone() } }
+      BusyButton(isBusy: pushSetup.isRunning, icon: .notify) {
+        setUpPush { [reminders] in await reminders.useThisPhone() }
       } label: {
         Text(
           "Use this device", tableName: "Reminders",
@@ -153,27 +158,21 @@ struct RemindersView: View {
     }
 
     // A learner who chose email, or never wanted push, isn't nudged to turn it back on.
-    if notificationsOff, pushRefused || (reminder.pushOn && isThisPhone) {
+    if notificationsOff, pushSetup.outcome == .denied || (reminder.pushOn && isThisPhone) {
       NotificationsOffNotice()
     }
   }
 
-  /// Nil when no setup ran: a plain save, which says its own failure.
-  private func setUpPush(_ setUp: () async -> PushSetup?) async {
-    isSettingUpPush = true
-    pushFailed = false
-    let result = await setUp()
-    isSettingUpPush = false
-
-    switch result {
-    case .on, nil:
-      break
-    case .denied:
-      notificationsOff = true
-      pushRefused = true
-    case .failed:
-      pushFailed = true
+  private func setUpPush(_ setUp: @escaping @MainActor () async -> PushSetup?) {
+    pushSetup.run(setUp) { result in
+      if result == .denied {
+        notificationsOff = true
+      }
     }
+  }
+
+  private func save(_ change: StudyReminderChange, in request: VisitRequest<Bool>) {
+    request.run { [reminders] in await reminders.change(change) }
   }
 
   private static let planLink = URL(string: "zoonk-reminders:plan")!
@@ -191,7 +190,7 @@ struct RemindersView: View {
     Binding(
       get: { ReminderTime.date(reminder.time) },
       set: { date in
-        Task { await reminders.change(StudyReminderChange(time: ReminderTime.string(date))) }
+        save(StudyReminderChange(time: ReminderTime.string(date)), in: timeSave)
       })
   }
 }
