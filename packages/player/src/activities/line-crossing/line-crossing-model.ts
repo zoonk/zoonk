@@ -255,7 +255,7 @@ function isOnTheWay(offset: number, realOffset: number): boolean {
 
 /**
  * What a pair of resting handles costs, compared in order: on the screens that stay, at rest and at
- * the real answer, a handle on the other handle or under the crossing; the stops on the way to the
+ * the real answer, how far a handle runs onto the other handle or under the crossing; the stops on the way to the
  * answer where the moving handle lands on the other's rest; the same at the other stops; the stops
  * where the crossing, sliding along the other line, passes over a resting handle.
  */
@@ -272,12 +272,16 @@ function pairCost({
 }): [number, number, number, number] {
   const size = { x: domain.max.x - domain.min.x, y: domain.max.y - domain.min.y };
 
-  const near = (points: Point[], to: Point, gap: number) =>
-    points.filter((point) => Math.hypot((point.x - to.x) / size.x, (point.y - to.y) / size.y) < gap)
-      .length;
+  const distance = (point: Point, to: Point) =>
+    Math.hypot((point.x - to.x) / size.x, (point.y - to.y) / size.y);
 
-  const atReal = [first.slide.at(real.offsets[0]), second.slide.at(real.offsets[1])];
-  const [firstAtReal = first.rest, secondAtReal = second.rest] = atReal;
+  const near = (points: Point[], to: Point, gap: number) =>
+    points.filter((point) => distance(point, to) < gap).length;
+
+  const overlap = (point: Point, to: Point, gap: number) => Math.max(0, gap - distance(point, to));
+
+  const firstAtReal = first.slide.at(real.offsets[0]);
+  const secondAtReal = second.slide.at(real.offsets[1]);
 
   const stops = (option: HandleOption, realOffset: number, onTheWay: boolean) =>
     option.stops.filter(
@@ -289,9 +293,10 @@ function pairCost({
     near(stops(second, real.offsets[1], onTheWay), first.rest, HANDLES_APART);
 
   return [
-    near([first.rest], second.rest, HANDLES_APART) +
-      near([firstAtReal], secondAtReal, HANDLES_APART) +
-      near(atReal, real.crossing, CROSSING_GAP),
+    overlap(first.rest, second.rest, HANDLES_APART) +
+      overlap(firstAtReal, secondAtReal, HANDLES_APART) +
+      overlap(firstAtReal, real.crossing, CROSSING_GAP) +
+      overlap(secondAtReal, real.crossing, CROSSING_GAP),
     handlesMet(true),
     handlesMet(false),
     near(first.crossings, second.rest, CROSSING_GAP) +

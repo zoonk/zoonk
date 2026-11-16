@@ -96,6 +96,17 @@ const NAMED = [
     },
     name: "steep lines crossing low",
   },
+  {
+    fields: {
+      ...supplyDemand,
+      lines: [
+        { id: "rising", intercept: -23, label: "Rising", slope: 3.3 },
+        { id: "falling", intercept: 72, label: "Falling", slope: -1.2 },
+      ],
+      shift: { amount: 36.7, direction: "left", line: "falling" },
+    },
+    name: "a falling line moved far left",
+  },
 ];
 
 const GENERATED = SHAPES.flatMap(({ lines, name }) =>
