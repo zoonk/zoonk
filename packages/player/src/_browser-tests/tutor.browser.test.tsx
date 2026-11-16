@@ -132,6 +132,28 @@ describe("asking the tutor", () => {
   beforeEach(showDrawerSize);
   afterEach(restoreViewport);
 
+  it("keeps the tutor in the aside at the lesson's end, where the host draws its own moment", async () => {
+    await atViewport({ height: 900, width: 1440 }, async () => {
+      const { lesson } = lessonWithTutor();
+
+      renderLessonPlayer({
+        lesson,
+        slots: { completion: () => <h2>Block done</h2> },
+        tutor: buildTutor(),
+      });
+
+      await page
+        .getByRole("radio", { name: "Where the electron is most likely to be found" })
+        .click();
+
+      await page.getByRole("button", { name: /^Check/u }).click();
+      await page.getByRole("button", { name: /^Continue/u }).click();
+
+      await expect.element(page.getByRole("heading", { name: "Block done" })).toBeVisible();
+      await expect.element(asideComposer()).toBeVisible();
+    });
+  });
+
   it("keeps a late history preload in its own step and restores it on return", async () => {
     const { api, lesson } = lessonWithTutor({
       steps: [teachingStep("explanation"), teachingStep("explanation")],
