@@ -57,7 +57,7 @@ function ChapterLessonLinks({
   const hasLoneLesson = chapter.lessons.length === 1;
 
   return (
-    <p className="text-muted-foreground mt-1.5 max-w-140 text-sm leading-relaxed text-pretty">
+    <p className="text-muted-foreground mt-1.5 max-w-140 text-sm leading-relaxed text-balance">
       <FactSegments
         facts={chapter.lessons.map((lesson) => ({
           content: (
