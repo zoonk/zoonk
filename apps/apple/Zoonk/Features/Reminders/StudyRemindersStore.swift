@@ -14,13 +14,6 @@ enum PushSetup: Equatable, Sendable {
 final class StudyRemindersStore {
   let reminder: Resource<StudyReminder>
 
-  /// Kept with the learner it's about, so the next learner never sees it.
-  private var failedSave: AuthenticatedSession?
-
-  var saveFailed: Bool {
-    failedSave != nil && failedSave == cache.session.authenticatedSession
-  }
-
   @ObservationIgnored private let api: any StudyRemindersAPIClient
   @ObservationIgnored private let cache: AppCache
   @ObservationIgnored private let push: any PushAccess
@@ -77,29 +70,32 @@ final class StudyRemindersStore {
   }
 
   /// Permission, then this phone, then push on (at `time` when given). Done only once both saved.
+  /// Like every change here, it goes on when the screen that asked goes away first.
   func turnOnPush(at time: String? = nil) async -> PushSetup {
     pushChoices += 1
-    return await selectThisPhone(then: StudyReminderChange(time: time, pushOn: true))
+    let enable = StudyReminderChange(time: time, pushOn: true)
+    return await Task { await self.selectThisPhone(then: enable) }.value
   }
 
   /// Push goes to this phone from now on, on or off as it was.
   func useThisPhone() async -> PushSetup {
-    await selectThisPhone(then: nil)
+    await Task { await self.selectThisPhone(then: nil) }.value
   }
 
   func turnOnEmail(at time: String) async -> Bool {
-    let result = await cache.mutate(invalidating: [.studyReminder]) { [api] identity in
-      try await api.updateReminder(
-        token: identity.bearerToken, StudyReminderChange(time: time, emailOn: true))
-    }
+    await Task {
+      let result = await self.cache.mutate(invalidating: [.studyReminder]) { [api] identity in
+        try await api.updateReminder(
+          token: identity.bearerToken, StudyReminderChange(time: time, emailOn: true))
+      }
 
-    return show(result)
+      return self.show(result)
+    }.value
   }
 
-  /// Settings' changes, saved in the order made.
-  func change(_ change: StudyReminderChange) async {
-    failedSave = nil
-
+  /// Settings' changes, saved in the order made. False when it didn't save.
+  @discardableResult
+  func change(_ change: StudyReminderChange) async -> Bool {
     if change.pushOn != nil {
       pushChoices += 1
     }
@@ -111,8 +107,10 @@ final class StudyRemindersStore {
     }
 
     if case .failed = result {
-      failedSave = cache.session.authenticatedSession
+      return false
     }
+
+    return true
   }
 
   /// At launch: push keeps reaching this phone when the system gave it a new token. The saved token
@@ -142,11 +140,10 @@ final class StudyRemindersStore {
   }
 
   /// Turning push on for no phone yet, or for this one, asks for permission first; for another
-  /// device it's that device's consent alone.
+  /// device it's that device's consent alone. Nil when no setup ran and the plain change saved.
   func setPush(_ on: Bool, in reminder: StudyReminder) async -> PushSetup? {
     guard on, reminder.phone == nil || isThisPhone(reminder) else {
-      await change(StudyReminderChange(pushOn: on))
-      return nil
+      return await change(StudyReminderChange(pushOn: on)) ? nil : .failed
     }
 
     return await turnOnPush()

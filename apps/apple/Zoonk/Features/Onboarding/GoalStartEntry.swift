@@ -17,10 +17,11 @@ struct GoalStartEntry: View {
   var part = Part.whole
   /// Kept by the screen, so folding or unfolding iPhone Duo keeps what the learner typed.
   @Binding var goal: SentGoal
+  /// The screen's, which leaves it as its visit ends; the box offers material only with it.
+  var materialDraft: Binding<MaterialDraft>?
 
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
-  @State private var materialDraft = MaterialDraft()
 
   var body: some View {
     if part == .examples {
@@ -34,14 +35,14 @@ struct GoalStartEntry: View {
         canSubmitEmpty: !goal.material.isEmpty && goal.intent != nil,
         onSubmit: send,
         attach: {
-          if part != .box {
-            GoalMaterialButton(material: $goal.material, draft: $materialDraft)
+          if part != .box, let materialDraft {
+            GoalMaterialButton(material: $goal.material, draft: materialDraft)
           }
         },
         attachment: {
-          if part != .box {
+          if part != .box, let materialDraft {
             GoalMaterialSections(
-              material: $goal.material, intent: $goal.intent, draft: $materialDraft)
+              material: $goal.material, intent: $goal.intent, draft: materialDraft)
           }
         })
     }

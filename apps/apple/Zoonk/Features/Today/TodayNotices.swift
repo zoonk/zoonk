@@ -295,14 +295,12 @@ struct TodayUploadRequestSection: View {
   /// Answered here, it thanks the learner while they stay, whatever Today reads since.
   let answered: Bool
   @Binding var draft: MaterialDraft
+  /// Today's, ended as its visit ends; true once Not now saved.
+  let dismissal: VisitRequest<Bool>
   let onAnswered: () -> Void
 
-  @State private var isDismissing = false
-  @State private var isDismissed = false
-  @State private var failed = false
-
   var body: some View {
-    if !isDismissed {
+    if dismissal.outcome != true {
       Section {
         Label {
           VStack(alignment: .leading, spacing: 4) {
@@ -325,23 +323,25 @@ struct TodayUploadRequestSection: View {
             } icon: {
               Image(systemName: "arrow.up.doc")
             }
-          } onAttached: { source in
+          } save: { source in
             switch await store.answer(request, sourceID: source.id) {
             case .done(.alreadyRead):
               throw OnboardingError.alreadyRead
             case .failed(let error):
               throw error
             case .done(.answered), .obsolete:
-              onAnswered()
+              break
             }
+          } onAttached: { _ in
+            onAnswered()
           }
 
           Button(action: dismiss) {
             Text("Not now", tableName: "Today", comment: "Dismisses the ask for a document")
           }
-          .disabled(isDismissing)
+          .disabled(dismissal.isRunning)
 
-          if failed {
+          if dismissal.outcome == false {
             FailureLine(
               message: LocalizedStringResource(
                 "That didn't save. Try again.", table: "Today",
@@ -355,20 +355,12 @@ struct TodayUploadRequestSection: View {
   }
 
   private func dismiss() {
-    isDismissing = true
-    failed = false
-
-    Task {
+    dismissal.run { [store, request] in
       switch await store.dismiss(request) {
-      case .done:
-        isDismissed = true
-      case .failed:
-        failed = true
-      case .obsolete:
-        break
+      case .done: true
+      case .failed: false
+      case .obsolete: nil
       }
-
-      isDismissing = false
     }
   }
 
@@ -466,19 +458,20 @@ struct TodayUploadRequestSection: View {
 struct TodayFocusTestSection: View {
   let goalID: String
   let offer: FocusTestSummary.Size?
-  /// Kept by Today for the visit, since Today stops holding the suggestion once it's dismissed.
-  @Binding var dismissed: Bool
+  /// Kept by Today for the visit, since Today stops holding the suggestion once it's dismissed;
+  /// true once Not now saved.
+  let dismissal: VisitRequest<Bool>
   let onAnswer: () -> Void
 
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var plans
   @State private var kept: FocusTestSummary.Size?
   @State private var isOpen = false
-  @State private var isDismissing = false
-  @State private var failed = false
+
+  private var dismissed: Bool { dismissal.outcome == true }
 
   var body: some View {
-    let shown = offer ?? (isDismissing ? kept : nil)
+    let shown = offer ?? (dismissal.isRunning ? kept : nil)
 
     if dismissed || shown != nil {
       Section {
@@ -502,17 +495,18 @@ struct TodayFocusTestSection: View {
               comment: "Today's suggestion of the Focus test, in one line")
           } action: {
             SuggestionOpen(
-              isOpen: $isOpen, note: failed ? BarNote(SuggestionSaveError.message) : nil
+              isOpen: $isOpen,
+              note: dismissal.outcome == false ? BarNote(SuggestionSaveError.message) : nil
             ) {
               details(shown)
             } actions: {
-              BusyButton(isBusy: isDismissing) {
+              BusyButton(isBusy: dismissal.isRunning) {
                 dismiss()
               } label: {
                 Text(FocusTestCopy.notNow)
               }
               .buttonStyle(.outline)
-              .disabled(isDismissing)
+              .disabled(dismissal.isRunning)
 
               Button {
                 isOpen = false
@@ -521,7 +515,7 @@ struct TodayFocusTestSection: View {
                 Text("Start", tableName: "Today", comment: "Starts the Focus test")
               }
               .buttonStyle(.mainAction)
-              .disabled(isDismissing)
+              .disabled(dismissal.isRunning)
             }
           }
           .listRowSeparator(.hidden)
@@ -553,26 +547,23 @@ struct TodayFocusTestSection: View {
   }
 
   private func dismiss() {
-    guard !isDismissing else {
+    guard !dismissal.isRunning else {
       return
     }
 
     onAnswer()
-    isDismissing = true
-    failed = false
 
-    Task {
-      defer { isDismissing = false }
-
-      switch await plans.updateFocusTest(goalId: goalID, FocusTestControls(suggestion: .dismissed))
+    dismissal.run { [plans, goalID] in
+      switch await plans.updateFocusTest(
+        goalId: goalID, FocusTestControls(suggestion: .dismissed))
       {
-      case .done:
-        dismissed = true
+      case .done: true
+      case .failed: false
+      case .obsolete: nil
+      }
+    } then: { dismissed in
+      if dismissed == true {
         isOpen = false
-      case .failed:
-        failed = true
-      case .obsolete:
-        break
       }
     }
   }

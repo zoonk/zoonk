@@ -9,12 +9,12 @@ final class BuddyStoreTests: XCTestCase {
     let store = BuddyStore(api: api, cache: AppCache(session: .preview(account: .buddyTestAccount)))
     await store.status.load()
 
-    await store.save(BuddyChoice(kind: .otto, name: "Octo", glasses: .round))
+    let saved = await store.save(BuddyChoice(kind: .otto, name: "Octo", glasses: .round))
 
     XCTAssertEqual(store.status.value?.buddy.kind, .otto)
     XCTAssertEqual(store.status.value?.buddy.name, "Octo")
     XCTAssertEqual(store.status.value?.buddy.picked, true)
-    XCTAssertFalse(store.saveFailed)
+    XCTAssertTrue(saved)
   }
 
   func testFailedSavePutsThePreviousBuddyBack() async {
@@ -23,11 +23,11 @@ final class BuddyStoreTests: XCTestCase {
     let store = BuddyStore(api: api, cache: AppCache(session: .preview(account: .buddyTestAccount)))
     await store.status.load()
 
-    await store.save(BuddyChoice(kind: .otto, name: "Octo", glasses: .round))
+    let saved = await store.save(BuddyChoice(kind: .otto, name: "Octo", glasses: .round))
 
     XCTAssertEqual(store.status.value?.buddy.kind, .zu)
     XCTAssertNil(store.status.value?.buddy.name)
-    XCTAssertTrue(store.saveFailed)
+    XCTAssertFalse(saved)
   }
 
   func testExpiredSessionOnSaveSignsOutWithoutRollingBack() async {
@@ -37,10 +37,10 @@ final class BuddyStoreTests: XCTestCase {
     let store = BuddyStore(api: api, cache: AppCache(session: session))
     await store.status.load()
 
-    await store.save(BuddyChoice(kind: .otto, name: "Octo", glasses: .round))
+    let saved = await store.save(BuddyChoice(kind: .otto, name: "Octo", glasses: .round))
 
     XCTAssertNil(session.authenticatedSession)
-    XCTAssertFalse(store.saveFailed)
+    XCTAssertTrue(saved, "a signed-out learner is told nothing")
   }
 
   func testExpiredSessionOnAnInsightAnswerIsObsolete() async {

@@ -462,10 +462,13 @@ final class OnboardingStore {
     return try await api.timeToCover(goalID: goalID, week: week, token: token)
   }
 
+  /// Like `attachFile`, it saves even when the screen that asked goes away first.
   func attach(_ material: MaterialInput) async throws -> AttachedSource {
-    try await cache.onboardingWrite { [api] identity in
-      try await api.attach(material, token: identity.bearerToken)
-    }
+    try await Task { [cache, api] in
+      try await cache.onboardingWrite { identity in
+        try await api.attach(material, token: identity.bearerToken)
+      }
+    }.value
   }
 
   /// A name can't nest folders or climb out with "..", and its own id keeps two files of the same
@@ -480,10 +483,12 @@ final class OnboardingStore {
     let name = file.lastPathComponent.replacing("/", with: "-").replacing(/\.{2,}/, with: ".")
     let pathname = "sources/\(userID)/\(UUID().uuidString.lowercased())-\(name)"
 
-    return try await cache.onboardingWrite { [api] identity in
-      try await api.upload(file: file, pathname: pathname, token: identity.bearerToken)
-      return try await api.attach(.file(pathname, goal: goal), token: identity.bearerToken)
-    }
+    return try await Task { [cache, api] in
+      try await cache.onboardingWrite { identity in
+        try await api.upload(file: file, pathname: pathname, token: identity.bearerToken)
+        return try await api.attach(.file(pathname, goal: goal), token: identity.bearerToken)
+      }
+    }.value
   }
 
   func askMaterial(question: String, sourceIDs: [String]) async throws -> MaterialAnswer {

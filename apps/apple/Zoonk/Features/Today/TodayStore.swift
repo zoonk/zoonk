@@ -307,31 +307,40 @@ final class TodayStore {
   func prepareLessons(in view: TodayView) async -> MutationResult<Void> {
     let goalID = view.session.goalId ?? view.goal.id
 
-    return await cache.mutate(invalidating: [.userSession]) { identity in
-      try await api.prepareLessons(token: identity.bearerToken, goalID: goalID)
+    return await saves.save { [api, cache] in
+      await cache.mutate(invalidating: [.userSession]) { identity in
+        try await api.prepareLessons(token: identity.bearerToken, goalID: goalID)
+      }
     }
   }
 
+  /// Like every learner's answer here, saved even when Today goes away first (`LearnerSaves`).
   func answer(_ request: TodayView.UploadRequest, sourceID: String) async
     -> MutationResult<UploadAnswer>
   {
-    await cache.mutate(invalidating: [.goals]) { identity in
-      try await api.answerUploadRequest(
-        token: identity.bearerToken, goalID: request.goalId, sourceIDs: [sourceID])
+    await saves.save { [api, cache] in
+      await cache.mutate(invalidating: [.goals]) { identity in
+        try await api.answerUploadRequest(
+          token: identity.bearerToken, goalID: request.goalId, sourceIDs: [sourceID])
+      }
     }
   }
 
   func dismiss(_ request: TodayView.UploadRequest) async -> MutationResult<Void> {
-    await cache.mutate(invalidating: [.goals]) { identity in
-      try await api.dismissUploadRequest(token: identity.bearerToken, goalID: request.goalId)
+    await saves.save { [api, cache] in
+      await cache.mutate(invalidating: [.goals]) { identity in
+        try await api.dismissUploadRequest(token: identity.bearerToken, goalID: request.goalId)
+      }
     }
   }
 
   func catchUp(in view: TodayView) async -> MutationResult<Void> {
-    await cache.mutate(invalidating: [.goals, .userSession]) { identity in
-      let sessionID = try await keptSessionID(in: view, token: identity.bearerToken)
-      try await api.catchUp(
-        token: identity.bearerToken, sessionID: sessionID, timeZone: TimeZone.current.identifier)
+    await saves.save { [cache] in
+      await cache.mutate(invalidating: [.goals, .userSession]) { identity in
+        let sessionID = try await self.keptSessionID(in: view, token: identity.bearerToken)
+        try await self.api.catchUp(
+          token: identity.bearerToken, sessionID: sessionID, timeZone: TimeZone.current.identifier)
+      }
     }
   }
 
@@ -361,11 +370,13 @@ final class TodayStore {
     async -> MutationResult<Void>
   {
     let goalID = view.goal.id
-    let result = await cache.mutate(invalidating: [.goals, .userSession]) { identity in
-      let saved = try await api.decidePlanChange(
-        token: identity.bearerToken, goalID: goalID, changeID: change.id, decision: decision,
-        quote: change.quote)
-      return (identity, saved)
+    let result = await saves.save { [api, cache] in
+      await cache.mutate(invalidating: [.goals, .userSession]) { identity in
+        let saved = try await api.decidePlanChange(
+          token: identity.bearerToken, goalID: goalID, changeID: change.id, decision: decision,
+          quote: change.quote)
+        return (identity, saved)
+      }
     }
 
     switch result {

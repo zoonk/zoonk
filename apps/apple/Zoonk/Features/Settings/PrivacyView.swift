@@ -4,6 +4,8 @@ import SwiftUI
 struct PrivacyView: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SettingsStore.self) private var settings
+  /// Says the switch's change didn't save, while the learner is on the page.
+  @State private var saving = VisitRequest<Bool>()
 
   /// Nil for a guest, who has no account to delete.
   let deleteAccount: (() -> Void)?
@@ -46,7 +48,7 @@ struct PrivacyView: View {
         }
       }
 
-      if settings.saveFailed {
+      if saving.outcome == false {
         SettingsSaveError()
       }
     }
@@ -55,6 +57,7 @@ struct PrivacyView: View {
     )
     // The switch saves through the preferences it belongs to.
     .loads(settings.preferences)
+    .onDisappear { saving.leave() }
   }
 
   private var usageDataBinding: Binding<Bool> {
@@ -63,9 +66,7 @@ struct PrivacyView: View {
       set: { shares in
         learner.showUsageDataSharing(shares)
 
-        Task {
-          await settings.updatePreferences(.shareUsageData(shares))
-        }
+        saving.run { [settings] in await settings.updatePreferences(.shareUsageData(shares)) }
       })
   }
 }

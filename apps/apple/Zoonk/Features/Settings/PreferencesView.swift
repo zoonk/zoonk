@@ -5,6 +5,8 @@ struct PreferencesView: View {
   @Environment(\.openURL) private var openURL
   @Environment(SettingsStore.self) private var settings
   @State private var isEditingBuddy = false
+  /// Says the page's last change didn't save, while the learner is on it.
+  @State private var saving = VisitRequest<Bool>()
   @State private var isPickingHome = false
 
   var body: some View {
@@ -108,7 +110,7 @@ struct PreferencesView: View {
         }
       }
 
-      if settings.saveFailed {
+      if saving.outcome == false {
         SettingsSaveError()
       }
     }
@@ -123,6 +125,7 @@ struct PreferencesView: View {
       }
     }
     .loads(settings.preferences)
+    .onDisappear { saving.leave() }
     .sheet(isPresented: $isPickingHome) {
       if let preferences = settings.preferences.value {
         CountryPickerSheet(
@@ -134,9 +137,7 @@ struct PreferencesView: View {
           selected: preferences.homeCountry?.code
         ) { choice in
           // Nothing rebuilds, so it closes at once; a failed save shows on the page.
-          Task {
-            await settings.updatePreferences(.homeCountry(choice))
-          }
+          save(.homeCountry(choice))
 
           return true
         }
@@ -147,9 +148,7 @@ struct PreferencesView: View {
       if let preferences = settings.preferences.value {
         BuddyEditor(choice: preferences.buddy, availableGlasses: preferences.availableGlasses) {
           choice in
-          Task {
-            await settings.updatePreferences(.buddy(choice))
-          }
+          save(.buddy(choice))
         }
         .zoonkStyles()
       }
@@ -167,10 +166,12 @@ struct PreferencesView: View {
     Binding(
       get: { preferences.soundsEnabled },
       set: { enabled in
-        Task {
-          await settings.updatePreferences(.soundsEnabled(enabled))
-        }
+        save(.soundsEnabled(enabled))
       })
+  }
+
+  private func save(_ update: PreferencesUpdate) {
+    saving.run { [settings] in await settings.updatePreferences(update) }
   }
 }
 

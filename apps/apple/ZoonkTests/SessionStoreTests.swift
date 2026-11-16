@@ -253,7 +253,7 @@ final class SessionStoreTests: XCTestCase {
     XCTAssertTrue(session.isWorking)
     profileGate.resume(returning: makeAccount(name: "Updated"))
     let saved = await profile.value
-    XCTAssertTrue(saved)
+    XCTAssertEqual(saved, .saved)
     XCTAssertFalse(session.isWorking)
   }
 
@@ -895,7 +895,7 @@ final class SessionStoreTests: XCTestCase {
         isActive: true))
     let result = await synchronizationTask.value
 
-    XCTAssertTrue(didUpdateProfile)
+    XCTAssertEqual(didUpdateProfile, .saved)
     XCTAssertEqual(result, .synchronizedActive)
     XCTAssertEqual(session.state, .signedIn(updatedAccount))
   }
@@ -924,7 +924,7 @@ final class SessionStoreTests: XCTestCase {
     profileUpdate.resume(returning: makeAccount(name: "Updated learner"))
     let saved = await profileTask.value
 
-    XCTAssertFalse(saved)
+    XCTAssertEqual(saved, .dropped)
     XCTAssertEqual(synchronized, .synchronizedActive)
     XCTAssertEqual(session.state, .signedIn(subscribedAccount))
     XCTAssertFalse(session.isWorking)
@@ -1005,7 +1005,7 @@ final class SessionStoreTests: XCTestCase {
 
     let didUpdateProfile = await updateTask.value
 
-    XCTAssertFalse(didUpdateProfile)
+    XCTAssertEqual(didUpdateProfile, .dropped)
     XCTAssertEqual(session.state, .signedOut(sessionEnded: true))
     XCTAssertNil(session.authenticatedSession)
   }
@@ -1167,10 +1167,53 @@ final class SessionStoreTests: XCTestCase {
     let savedUsername = await session.updateProfile(name: longName, username: "new_username")
     let savedNewName = await session.updateProfile(name: "Ana", username: "new_username")
 
-    XCTAssertTrue(savedUsername)
-    XCTAssertTrue(savedNewName)
+    XCTAssertEqual(savedUsername, .saved)
+    XCTAssertEqual(savedNewName, .saved)
     XCTAssertEqual(api.profileUpdates.map(\.name), [nil, "Ana"])
     XCTAssertEqual(api.profileUpdates.map(\.username), ["new_username", "new_username"])
+  }
+
+  /// The editor that asked says the failure; sign-in's line elsewhere never shows it.
+  @MainActor
+  func testAFailedProfileSaveSaysItsFailureOnlyToItsEditor() async {
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(makeAccount()), updateProfileResult: .failure(.network))
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let saved = await session.updateProfile(name: "Ana")
+
+    XCTAssertEqual(saved, .failed(.network))
+    XCTAssertNil(session.failure)
+    XCTAssertFalse(session.isWorking)
+  }
+
+  /// Leaving the editor doesn't take back what the learner saved.
+  @MainActor
+  func testAProfileSaveGoesOnWhenItsEditorLeaves() async {
+    let profileUpdate = CurrentAccountRequestGate()
+    let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
+    // As URLSession does, a request whose task is cancelled never lands.
+    api.updateProfileHandler = { _, _, _ in
+      let account = await profileUpdate.load()
+      try Task.checkCancellation()
+      return account
+    }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    await session.restore()
+
+    let editor = Task { await session.updateProfile(name: "Ana") }
+    await profileUpdate.waitUntilStarted()
+    editor.cancel()
+    profileUpdate.resume(returning: makeAccount(name: "Ana"))
+    _ = await editor.value
+    for _ in 0..<1_000 where session.account?.user.name != "Ana" {
+      await Task.yield()
+    }
+
+    XCTAssertEqual(session.account?.user.name, "Ana")
   }
 
   @MainActor

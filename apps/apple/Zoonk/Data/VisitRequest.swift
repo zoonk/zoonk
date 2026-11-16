@@ -1,3 +1,5 @@
+import Observation
+
 /// Work a page asked for and how it ended, held for the visit that asked. The page keeps it in
 /// `@State` and calls `leave()` as it goes away (another tab, a page pushed over it, closing): the
 /// work still out is cancelled, so it shows and opens nothing when it lands, and an outcome already
