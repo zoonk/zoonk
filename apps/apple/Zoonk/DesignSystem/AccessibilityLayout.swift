@@ -143,7 +143,8 @@ private struct EqualRowLayout: Layout {
     }
   }
 
-  /// Each button's part of the row, or nil when a label wouldn't fit its part on one line.
+  /// Each button's part of the row, or nil when a label takes more lines in its part than on a
+  /// line of its own. A button's ideal width can't say: its label reports the stacked size.
   private func part(of width: CGFloat, _ subviews: Subviews) -> CGFloat? {
     guard !isStacked, !subviews.isEmpty else {
       return nil
@@ -151,8 +152,12 @@ private struct EqualRowLayout: Layout {
 
     let count = CGFloat(subviews.count)
     let part = (width - spacing * (count - 1)) / count
+    let wraps = subviews.contains {
+      $0.sizeThatFits(ProposedViewSize(width: part, height: nil)).height
+        > $0.sizeThatFits(ProposedViewSize(width: width, height: nil)).height
+    }
 
-    return subviews.allSatisfy { $0.sizeThatFits(.unspecified).width <= part } ? part : nil
+    return wraps ? nil : part
   }
 
   private func rowHeight(_ part: CGFloat, _ subviews: Subviews) -> CGFloat {
