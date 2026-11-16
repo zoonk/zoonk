@@ -31,7 +31,7 @@ function PositionBadge({
       aria-hidden="true"
       className={cn(
         "text-compact flex size-7 shrink-0 items-center justify-center rounded-full font-semibold tabular-nums",
-        state === null && "bg-muted text-foreground",
+        state === null && "bg-foreground text-background",
         state === "correct" && "bg-success-text text-background",
         state === "incorrect" && "bg-destructive-text text-white",
       )}
