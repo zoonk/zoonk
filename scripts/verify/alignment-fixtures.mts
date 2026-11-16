@@ -2,7 +2,12 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { type AlignmentFinding, type Capture, type CaptureElement } from "./alignment-capture.mts";
+import {
+  type AlignmentFinding,
+  type Capture,
+  type CaptureElement,
+  PAGE_RULES,
+} from "./alignment-capture.mts";
 import { evaluateCapture } from "./alignment.mts";
 
 /** The alignment tests' fixtures. Captures read from real pages, each fault's commit reversed in the working tree, then fixed. */
@@ -34,7 +39,7 @@ export function fixtureCapture(elements: CaptureElement[], activeSurface = "page
       width: 390,
     },
     elements,
-    measurements: ["clipping", "controls", "text-flows"],
+    measuredRules: [...PAGE_RULES],
     platform: "android",
     scale: 3,
     scenario: "fixture",

@@ -3,6 +3,7 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "vitest";
 import CASES from "../verify/alignment-cases.json" with { type: "json" };
+import APPLE from "../verify/fixtures/apple-platform-limits.json" with { type: "json" };
 import { CLEAN, checkFixture, kinds, sha256 } from "./check-fixture.mts";
 import { checkPictures } from "./check.mts";
 import { type ManifestItem } from "./media.mts";
@@ -264,5 +265,21 @@ describe("pr:media check, on a capture's measured layout", () => {
     );
 
     assert.match(refused.problems[0]?.detail ?? "", /isn't a capture the evaluator reads/u);
+  });
+});
+
+describe("pr:media check with declared platform limits", () => {
+  it("allows declared platform limits while still failing an old Apple capture", async () => {
+    const current = capture([shot({ file: "a.png" })], { alignment: { captures: [APPLE] } });
+
+    const old = capture([shot({ file: "a.png" })], {
+      alignment: { captures: [{ ...APPLE, version: 1 }] },
+    });
+
+    const currentResult = await current.check();
+    const oldResult = await old.check();
+
+    assert.deepEqual(currentResult.problems, []);
+    assert.ok(oldResult.problems.some((problem) => problem.kind === "alignment"));
   });
 });

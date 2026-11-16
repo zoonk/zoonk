@@ -190,8 +190,8 @@ describe(saveCapture, () => {
 
 test("accepts version 2 native measurements and preserves explicit limits", () => {
   const native = capture({
-    measurements: ["controls"],
-    notMeasured: { "text-flows": "Text.Layout has no resolved source string" },
+    measuredRules: ["one-height"],
+    notMeasurable: { "line-end": "Text.Layout has no resolved source string" },
     version: 2,
   });
 

@@ -2,53 +2,45 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { element, fixtureCapture } from "./alignment-fixtures.mts";
+import { alignmentLines, summaryLine } from "./alignment-summary.mts";
 import { readCaptures } from "./alignment-validate.mts";
-import { evaluateCapture } from "./alignment.mts";
+import { evaluateCapture, evaluateFile } from "./alignment.mts";
+import APPLE from "./fixtures/apple-platform-limits.json" with { type: "json" };
 
-test("keeps native measurement limits with their platform and reason", () => {
-  for (const platform of ["apple", "android"] as const) {
-    const capture = {
-      ...fixtureCapture([]),
-      measurements: ["clipping", "controls", "text-flows"] as const,
-      notMeasured: {
-        clipping: "the view tree hides clip boundaries",
-        "text-flows": "the renderer exposes glyphs without source text",
-      },
-      platform,
-      unit: platform === "apple" ? ("pt" as const) : ("dp" as const),
-    };
+test("declared Apple limits are visible and do not fail, while old and incomplete captures fail", () => {
+  const parsed = readCaptures(APPLE);
+  assert.equal(parsed.kind, "captures");
 
-    const parsed = readCaptures({
-      captures: [{ ...capture, measurements: [...capture.measurements] }],
-    });
-
-    assert.equal(parsed.kind, "captures");
-
-    if (parsed.kind !== "captures") {
-      throw new Error("invalid capture");
-    }
-
-    const [native] = parsed.file.captures;
-    assert.ok(native);
-    const findings = evaluateCapture(native);
-    assert.equal(findings.filter((finding) => finding.level === "not-measured").length, 3);
-
-    assert.ok(
-      findings.some(
-        (finding) =>
-          finding.message === `line-end not measured on ${platform}` &&
-          finding.detail.includes("glyphs without source text"),
-      ),
-    );
-
-    assert.ok(
-      findings.some(
-        (finding) =>
-          finding.message === `cut not measured on ${platform}` &&
-          finding.detail.includes("clip boundaries"),
-      ),
-    );
+  if (parsed.kind !== "captures") {
+    throw new Error("invalid capture");
   }
+
+  const [capture] = parsed.file.captures;
+  assert.ok(capture);
+  const { findings, summary } = evaluateFile({ captures: [capture] });
+  assert.equal(summary.failed, false);
+  assert.equal(summary.notMeasured, 0);
+
+  assert.match(
+    summaryLine(summary),
+    /not measurable on apple: SwiftUI Text.Layout doesn't expose resolved strings/u,
+  );
+
+  assert.match(alignmentLines(findings).join("\n"), /not measurable on apple/u);
+  assert.equal(evaluateFile({ captures: [{ ...capture, version: 1 }] }).summary.failed, true);
+
+  const web = {
+    ...fixtureCapture([]),
+    measuredRules: ["one-height"] as const,
+    platform: "web" as const,
+    unit: "px" as const,
+  };
+
+  assert.equal(
+    evaluateFile({ captures: [{ ...web, measuredRules: [...web.measuredRules] }] }).summary
+      .notMeasured,
+    3,
+  );
 });
 
 test("native version 2 control frames turn an unmeasured height rule into a measured failure", () => {
@@ -79,7 +71,7 @@ test("native version 2 control frames turn an unmeasured height rule into a meas
       platform,
     };
 
-    const old = evaluateCapture({ ...native, measurements: undefined, version: 1 });
+    const old = evaluateCapture({ ...native, measuredRules: undefined, version: 1 });
 
     assert.ok(
       old.some((finding) => finding.rule === "one-height" && finding.level === "not-measured"),
@@ -89,5 +81,23 @@ test("native version 2 control frames turn an unmeasured height rule into a meas
     assert.equal(current.length, 1);
     assert.equal(current[0]?.level, "fail");
     assert.equal(current[0]?.measured, 12);
+  }
+});
+
+test("a web text record missing its line strings still fails measured coverage", () => {
+  const capture = {
+    ...fixtureCapture([element({ group: null, id: "text", part: "text", piece: "page" })]),
+    platform: "web" as const,
+    unit: "px" as const,
+  };
+
+  const { summary } = evaluateFile({ captures: [capture] });
+  assert.equal(summary.failed, true);
+  assert.equal(summary.notMeasured, 2);
+});
+
+test("platform declarations require a reason and cannot also claim a rule was measured", () => {
+  for (const notMeasurable of [{ cut: " " }, { unknown: "No API" }, { "one-height": "No API" }]) {
+    assert.equal(readCaptures({ ...APPLE, notMeasurable }).kind, "invalid");
   }
 });

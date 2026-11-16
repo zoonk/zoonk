@@ -44,7 +44,7 @@ import kotlin.math.roundToInt
  * The alignment report's capture of one render (`REPORT-SHAPE.md`): the shared pieces' parts, named by
  * [LayoutPart], read from the unmerged semantics tree in the frame [captureRender] copied. Units are dp,
  * from the picture's top start. What the tree doesn't give is written "not measured", never estimated:
- * a part whose text a parent cleared from the tree has no text layout, and lazy rows that weren't
+ * a text whose own semantics were cleared has no text layout, and lazy rows that weren't
  * composed aren't there.
  */
 internal object LayoutCapture {
@@ -89,8 +89,8 @@ internal object LayoutCapture {
         val config = view.resources.configuration
         return Json.obj(
             "version" to 2,
-            "measurements" to listOf("clipping", "controls", "text-flows"),
-            "notMeasured" to reader.notMeasured(),
+            "measuredRules" to PAGE_RULES.filterNot { it in reader.notMeasurable() },
+            "notMeasurable" to reader.notMeasurable(),
             "platform" to "android",
             "scenario" to (scenario ?: NOT_DECLARED),
             "screen" to testName(),
@@ -152,14 +152,7 @@ internal object LayoutCapture {
         private val pageElements = mutableListOf<Map<String, Any?>>()
         private var unreadText = false
 
-        fun notMeasured(): Map<String, String> =
-            buildMap {
-                if (unreadText) {
-                    put("text-flows", "a parent replaced text layout semantics")
-                    put("clipping", "a parent replaced content semantics; its text and control bounds cannot be read")
-                    put("controls", "a parent replaced content semantics; its controls cannot be enumerated")
-                }
-            }
+        fun notMeasurable(): Map<String, String> = if (unreadText) PAGE_RULES.associateWith { CLEARED } else emptyMap()
 
         fun json(): List<Map<String, Any?>> = written.map { it.json() } + hidden + anchorElements + pageElements
 
@@ -276,14 +269,15 @@ internal object LayoutCapture {
             row: Element?,
         ) {
             pageNode(node)
-            if (node.config.isClearingSemantics) unreadText = true
+            val unread = node.config.isClearingSemantics && node.children.isEmpty() && textLayout(node) == null
+            if (unread) unreadText = true
             // Only a main action's fill counts toward one filled action per surface, so other buttons aren't written.
             val part =
                 node.config.getOrNull(LayoutPartKey)?.takeUnless {
                     it.part == LayoutPart.Part.Action &&
                         it.variant != LayoutPart.Variant.Filled
                 }
-            if (part == null && node.config.isClearingSemantics) {
+            if (part == null && unread) {
                 hidden +=
                     mapOf(
                         "id" to "h${hidden.size}",
@@ -313,8 +307,6 @@ internal object LayoutCapture {
                     else -> {}
                 }
             }
-            // A part that replaced its children's semantics (a bar read as one phrase) is measured whole; nothing under it is.
-            if (part != null && node.config.isClearingSemantics) return
             node.children.forEach { walk(it, nextGroup, nextRow) }
         }
 
@@ -993,8 +985,10 @@ internal object LayoutCapture {
         ) = font.getShort(at).toInt() and 0xFFFF
     }
 
-    /** Why an area is written as unmeasured: whatever it holds was taken out of the tree, for TalkBack to read one phrase. */
-    private const val CLEARED = "a parent replaced its children's semantics"
+    /** Why an area is written as unmeasured: the node's own layout semantics were cleared; its unmerged descendants can still be read. */
+    private const val CLEARED = "clearAndSetSemantics removes the node's own text layout and control semantics"
+
+    private val PAGE_RULES = listOf("cut", "line-end", "lone-word", "one-height")
 
     /** How far up a list's stack can be from its rows: their parent, or the parent of a wrapper. */
     private const val STACK_DEPTH = 2

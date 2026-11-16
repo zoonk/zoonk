@@ -501,11 +501,11 @@
           "pixels": [picture.pixelWidth, picture.pixelHeight],
         ],
         "version": 2,
-        "measurements": ["controls"],
-        "notMeasured": [
-          "text-flows":
-            "Text.Layout exposes glyph character indices but no resolved source string; a Text localization key is not its drawn words",
-          "clipping":
+        "measuredRules": ["one-height"],
+        "notMeasurable": [
+          "line-end": "SwiftUI Text.Layout doesn't expose resolved strings",
+          "lone-word": "SwiftUI Text.Layout doesn't expose resolved strings",
+          "cut":
             "SwiftUI masks and line clamps are not exposed by the UIKit host tree; clip boundaries and the kit scroll sign cannot be distinguished reliably",
         ],
         "platform": "apple",

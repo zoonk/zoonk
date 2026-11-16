@@ -85,6 +85,30 @@ class LayoutCaptureTest {
     }
 
     @Test
+    fun clearedContainersStillExposeTheirDescendantsToTheUnmergedCapture() {
+        val parts =
+            capture {
+                Box(Modifier.clearAndSetSemantics {}) { Text("Legend entry") }
+            }
+        assertTrue(parts.elements().any { it.optString("part") == "text" && it.optString("text") == "Legend entry" })
+        val report = JSONObject(File(folder.root, "row.json").readText())
+        assertEquals(0, report.getJSONObject("notMeasurable").length())
+        assertEquals(4, report.getJSONArray("measuredRules").length())
+    }
+
+    @Test
+    fun intentionallyClearedAnnotationsDeclareLimitsWithTheirElement() {
+        capture { Text("Axis caption", Modifier.clearAndSetSemantics {}) }
+        val report = JSONObject(File(folder.root, "row.json").readText())
+        val limits = report.getJSONObject("notMeasurable")
+        assertEquals(4, limits.length())
+        assertTrue(limits.getString("line-end").contains("clearAndSetSemantics"))
+        assertEquals(0, report.getJSONArray("measuredRules").length())
+        val area = report.getJSONArray("elements").part("unmeasured")
+        assertTrue(area.getString("reason").contains("clearAndSetSemantics"))
+    }
+
+    @Test
     fun pageRulesReadActualTextLinesAndEveryButtonLook() {
         val parts =
             capture {
@@ -135,7 +159,7 @@ class LayoutCaptureTest {
     }
 
     @Test
-    fun aRowThatReplacesItsChildrensSemanticsIsWrittenAsUnmeasured() {
+    fun aRowThatReplacesItsChildrensSemanticsKeepsItsReadableParts() {
         val parts =
             capture {
                 ListRow(
@@ -145,8 +169,9 @@ class LayoutCaptureTest {
                 )
             }
 
-        assertTrue(parts.has("unmeasured"))
-        assertTrue(!parts.has("label") && !parts.has("value"))
+        assertFalse(parts.has("unmeasured"))
+        assertEquals("Mixed practice", parts.part("label").getString("text"))
+        assertEquals("12 min", parts.part("value").getString("text"))
     }
 
     @Test

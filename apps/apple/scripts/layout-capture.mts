@@ -14,6 +14,7 @@ import { existsSync } from "node:fs";
 import { copyFile, mkdir, readFile, readdir, rename, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
+import { type Capture as AlignmentCapture } from "../../../scripts/verify/alignment-capture.mts";
 import { readCommand } from "./simulators.mts";
 
 const BUNDLE_ID = "com.zoonk.dev";
@@ -22,8 +23,8 @@ const POLL_MS = 200;
 
 export type Capture = {
   version: 1 | 2;
-  measurements?: ("clipping" | "controls" | "text-flows")[];
-  notMeasured?: Partial<Record<"clipping" | "controls" | "text-flows", string>>;
+  measuredRules?: AlignmentCapture["measuredRules"];
+  notMeasurable?: AlignmentCapture["notMeasurable"];
   platform: "apple";
   unit: "pt";
   elements: unknown[];

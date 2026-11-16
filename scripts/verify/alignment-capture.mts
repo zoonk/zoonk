@@ -10,6 +10,9 @@ export type Bounds = [number, number, number, number];
 
 export type NotMeasured = "not measured";
 
+export const PAGE_RULES = ["cut", "line-end", "lone-word", "one-height"] as const;
+export type PageRule = (typeof PAGE_RULES)[number];
+
 /**
  * Every part a capture's element may be, but an area the platform couldn't read: the one list the
  * probes' type and the validator's schema both take, so what a probe writes is what's read.
@@ -125,8 +128,8 @@ export type Configuration = {
 export type Capture = {
   version: 1 | 2;
   /** Measurements completed, including when a screen has no matching text or controls. */
-  measurements?: ("clipping" | "controls" | "text-flows")[];
-  notMeasured?: Partial<Record<"clipping" | "controls" | "text-flows", string>>;
+  measuredRules?: PageRule[];
+  notMeasurable?: Partial<Record<PageRule, string>>;
   platform: "android" | "apple" | "web";
   scenario: string | null;
   screen: string;
@@ -153,7 +156,7 @@ export type Capture = {
   elements: CaptureElement[];
 };
 
-export type Level = "discovery" | "fail" | "not-measured";
+export type Level = "discovery" | "fail" | "not-measurable" | "not-measured";
 
 export type AlignmentFinding = {
   /** A relation's id (`alignment-table.mts`), `one-filled`, or a discovery lead's kind. */
