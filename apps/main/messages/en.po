@@ -841,9 +841,14 @@ msgid "Lessons you asked about were updated since. Your questions and their answ
 msgstr "Lessons you asked about were updated since. Your questions and their answers are kept here."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "YPd0dY"
-msgid "You have no earlier questions."
-msgstr "You have no earlier questions."
+msgctxt "QKPtX3"
+msgid "No earlier questions"
+msgstr "No earlier questions"
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "O62YuA"
+msgid "When a lesson you asked about is updated, your questions and their answers are kept here."
+msgstr "When a lesson you asked about is updated, your questions and their answers are kept here."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "O3OEwU"

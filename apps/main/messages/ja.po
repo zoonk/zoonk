@@ -841,9 +841,14 @@ msgid "Lessons you asked about were updated since. Your questions and their answ
 msgstr "質問したレッスンは、その後更新されました。質問と回答はここに保存されています。"
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "YPd0dY"
-msgid "You have no earlier questions."
-msgstr "以前の質問はありません。"
+msgctxt "QKPtX3"
+msgid "No earlier questions"
+msgstr "以前の質問はありません"
+
+#: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
+msgctxt "O62YuA"
+msgid "When a lesson you asked about is updated, your questions and their answers are kept here."
+msgstr "質問したことのあるレッスンが更新されると、その質問と回答がここに保存されます。"
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "O3OEwU"
