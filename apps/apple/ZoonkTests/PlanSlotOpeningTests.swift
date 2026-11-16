@@ -134,6 +134,131 @@ final class PlanSlotOpeningTests: XCTestCase {
     XCTAssertEqual(router.sheet, .account(.certificates), "The certificates open")
   }
 
+  // MARK: Each field of the opening, both ways (review of `f139772757`)
+
+  /// Not in the opening: a change to the plan the suggestion doesn't depend on, such as Today's Not
+  /// now on the Focus test from another window. The claim still opens what it earned.
+  func testAnUnrelatedPlanChangeKeepsAClaimWaiting() async throws {
+    let claims = HeldClaims()
+    let router = AppRouter()
+    let api = try await finishedPlan()
+    let window = try await showPlan(api: api, width: .wide, claims: claims, router: router)
+
+    try activate(Self.claim, in: window)
+    await claims.waitUntilAsked()
+    try await dismissFocusTestElsewhere(api)
+    await claims.answer()
+    try await settle()
+    try await settle()
+
+    XCTAssertEqual(router.sheet, .account(.certificates), "What it earned opens")
+  }
+
+  /// Not in the opening, for the fit offer: the add lands, once.
+  func testAnUnrelatedPlanChangeKeepsAnAddWaiting() async throws {
+    let api = try await waitingAdd()
+    let window = try await showPlan(api: api, width: .wide)
+
+    try activate(Self.add, in: window)
+    await api.waitForHeldCall()
+    try await dismissFocusTestElsewhere(api)
+    try await answer(api)
+
+    let changes = await api.calls.changes
+    XCTAssertEqual(changes.count, 1, "The offer adds once")
+  }
+
+  /// The fit offer is in the opening: another offer for the same suggestion ends what the old one
+  /// asked.
+  func testAnotherOfferEndsAnAddWaiting() async throws {
+    let api = try await waitingAdd()
+    let window = try await showPlan(api: api, width: .wide)
+
+    try activate(Self.add, in: window)
+    await api.waitForHeldCall()
+    try await readAgain(api, plan: goalPlanFixture(fitOffer: Self.offer(lessons: 4)))
+    try await answer(api)
+
+    let changes = await api.calls.changes
+    XCTAssertEqual(changes, [], "The old offer adds nothing")
+  }
+
+  /// Found about another offer, the numbers show nothing once the plan offers a new one, and Add
+  /// applies the offer shown (PR comment 28, now on the whole Plan).
+  func testARepricedAddAboutAnEarlierOfferShowsNothingOnTheNextOne() async throws {
+    let api = PlanAPIStub()
+    await api.setPlan(try goalPlanFixture(fitOffer: Self.offer))
+    await api.setPreview(try Self.preview(lessons: 3))
+    let window = try await showPlan(api: api, width: .wide)
+    let repriced = String(
+      localized: "Your plan changed since you saw this. Here's what it does now.", table: "Plan")
+
+    try activate(Self.add, in: window)
+    try await settle()
+    XCTAssertTrue(
+      spoken(in: window).contains { $0.contains(repriced) },
+      "The check found other numbers: \(spoken(in: window))")
+
+    try await readAgain(api, plan: goalPlanFixture(fitOffer: Self.offer(lessons: 4)))
+    XCTAssertFalse(
+      spoken(in: window).contains { $0.contains(repriced) },
+      "Nothing of the earlier offer's check shows: \(spoken(in: window))")
+
+    await api.setPreview(try Self.preview(lessons: 4))
+    try activate(Self.add, in: window)
+    try await settle()
+    try await settle()
+    let changes = await api.calls.changes
+    XCTAssertEqual(changes.count, 1, "Add applies the offer shown")
+  }
+
+  /// A check that found the offer adds nothing hides Add; the next offer has its Add again.
+  func testAnUnchangedAddAboutAnEarlierOfferHasItsAddOnTheNextOne() async throws {
+    let api = PlanAPIStub()
+    await api.setPlan(try goalPlanFixture(fitOffer: Self.offer))
+    await api.setPreview(
+      PlanChangePreview(
+        effect: nil, feasibility: nil, finishDate: nil, ready: true, unchanged: true))
+    let window = try await showPlan(api: api, width: .wide)
+
+    try activate(Self.add, in: window)
+    try await settle()
+    XCTAssertFalse(spoken(in: window).contains(Self.add), "The check found nothing to add")
+
+    try await readAgain(api, plan: goalPlanFixture(fitOffer: Self.offer(lessons: 4)))
+    XCTAssertTrue(spoken(in: window).contains(Self.add), "The next offer has its Add")
+  }
+
+  /// In the opening: the Plan's editor. The learner changes the plan by hand, so an add must not
+  /// land under the editor.
+  func testOpeningThePlansEditorEndsAnAddWaiting() async throws {
+    let api = try await waitingAdd()
+    let window = try await showPlan(api: api, width: .wide)
+
+    try activate(Self.add, in: window)
+    await api.waitForHeldCall()
+    try activate(String(localized: "Adjust plan", table: "Plan"), in: window)
+    try await answer(api)
+
+    let changes = await api.calls.changes
+    XCTAssertEqual(changes, [], "Under the editor, the offer adds nothing")
+  }
+
+  /// Not in the opening: another sheet over the Plan, such as its schedule, isn't its editor.
+  func testAnotherSheetOverThePlanKeepsAnAddWaiting() async throws {
+    let api = try await waitingAdd()
+    let window = try await showPlan(api: api, width: .wide)
+
+    try activate(Self.add, in: window)
+    await api.waitForHeldCall()
+    try activate(
+      where: { $0.hasPrefix(String(localized: "Schedule", table: "Plan")) }, in: window)
+    try await answer(api)
+
+    let changes = await api.calls.changes
+    XCTAssertEqual(changes.count, 1, "The offer adds once")
+  }
+
   private static let claim = String(localized: "Get your certificate", table: "Plan")
   private static let add = String(localized: "Add to my plan", table: "Plan")
   /// The pager, with one other suggestion.
@@ -191,6 +316,43 @@ final class PlanSlotOpeningTests: XCTestCase {
 
   private func views<Kind: UIView>(_ kind: Kind.Type, in view: UIView) -> [Kind] {
     ((view as? Kind).map { [$0] } ?? []) + view.subviews.flatMap { views(kind, in: $0) }
+  }
+
+  /// Today's Not now on the Focus test, as another window says it: the shared plan's Focus test
+  /// changes, and nothing the suggestion shows does.
+  private func dismissFocusTestElsewhere(_ api: PlanAPIStub) async throws {
+    await api.setSavedFocusTest(
+      try JSONDecoder().decode(
+        FocusTestSummary.self,
+        from: Data(
+          #"{"offer":null,"sessionQuestions":"paused","state":"sitting","suggestsFocus":false}"#
+            .utf8)))
+    _ = await plans.updateFocusTest(
+      goalId: "goal", FocusTestControls(suggestion: .dismissed))
+    try await settle()
+  }
+
+  /// The plan read again as `plan`.
+  private func readAgain(_ api: PlanAPIStub, plan: GoalPlan) async throws {
+    await api.setPlan(plan)
+    await api.setChanged(true)
+    await plans.plan(goalId: "goal").refresh()
+    try await settle()
+  }
+
+  private static func offer(lessons: Int) -> String {
+    """
+    {"canApply":false,"effect":{"lessonsAdded":\(lessons),"lessonsRemoved":0},"fits":true,
+     "operations":[{"kind":"addLessons","count":\(lessons)}]}
+    """
+  }
+
+  private static func preview(lessons: Int) throws -> PlanChangePreview {
+    PlanChangePreview(
+      effect: try JSONDecoder().decode(
+        GoalPlan.FitOffer.self, from: Data(offer(lessons: lessons).utf8)
+      ).effect,
+      feasibility: nil, finishDate: nil, ready: true, unchanged: false)
   }
 
   /// A finished plan whose certificate the learner hasn't claimed yet.

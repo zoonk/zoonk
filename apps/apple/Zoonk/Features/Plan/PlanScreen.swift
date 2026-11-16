@@ -200,8 +200,10 @@ private struct PlanContent: View {
       goal: goal, plan: plan, adjust: { adjusting = $0 }, report: { isReporting = true },
       show: { sheet = $0 }, claimCertificate: claimCertificate, showClaim: show,
       slotChecks: slotChecks, alphabetSkip: alphabetSkip)
+    let shown = context.suggestions(in: store).shown
     let opening = SuggestionOpening(
-      item: context.suggestions(in: store).shown, plan: plan, inSheet: sheet?.isSuggestion == true)
+      item: shown, offer: shown == .fitLessons ? plan.fitOffer : nil,
+      inSheet: sheet?.isSuggestion == true, editing: adjusting != nil)
 
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
@@ -407,13 +409,18 @@ struct PlanContext {
   var isPaused: Bool { goal.status == .paused }
 }
 
-/// One opening of the Plan's suggestion: the one shown, the plan it's from, and whether its sheet is
-/// open. Whatever changes it (put off, paged past, a refresh that shows another, its sheet closed,
-/// another goal) ends what the opening asked for.
+/// One opening of the Plan's suggestion: whatever changes a field (put off, paged past, a refresh
+/// that shows another, its sheet closed, another goal, the editor opened) ends what the opening
+/// asked for. Nothing else does: the rest of the plan can change under it.
 private struct SuggestionOpening: Equatable {
+  /// The suggestion shown, with what it says (a coverage line's time and share).
   let item: PlanSlotItem?
-  let plan: GoalPlan
+  /// What the fit offer's check previewed; a claim and the next level depend on nothing in the plan.
+  let offer: GoalPlan.FitOffer?
+  /// Its sheet: closing it ends what was asked in it.
   let inSheet: Bool
+  /// The Plan's editor: the learner changes the plan by hand, and nothing lands under it.
+  let editing: Bool
 }
 
 /// Main's notice above the roadmap while the plan is rebuilt for a new content country: the old plan

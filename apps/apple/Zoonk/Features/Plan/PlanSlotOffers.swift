@@ -697,17 +697,16 @@ extension PlanContext {
   /// What `item`'s card asks for (its offer's check, its certificate claim, the next level), kept
   /// for the opening shown now.
   func slotCheck(_ item: PlanSlotItem, request: PlanSlotChecks.Request = .offer) -> PlanSlotCheck {
-    slotChecks.check(item, request: request, goalId: goal.id, plan: plan)
+    slotChecks.check(item, request: request, goalId: goal.id)
   }
 }
 
 /// What the Plan's suggestions asked for and what they found, kept by the Plan above its panes: a
 /// card is drawn again as the Plan splits into panes or joins them, and its check goes on and shows
-/// there, or in the sheet the line opens. Each belongs to an opening of its suggestion, which lasts
-/// while the same suggestion shows, from the same plan, in its sheet or out of it; the Plan calls
-/// `leave()` whenever any of that changes, whatever changed it, and as it closes. What an opening
-/// asked for lands only while it's still the one shown (`PlanSlotCheck.land`), and the next opening
-/// starts clean.
+/// there, or in the sheet the line opens. Each belongs to an opening of its suggestion
+/// (`SuggestionOpening`); the Plan calls `leave()` whenever the opening changes, whatever changed
+/// it, and as it closes. What an opening asked for lands only while it's still the one shown
+/// (`PlanSlotCheck.land`), and the next opening starts clean.
 @MainActor
 @Observable
 final class PlanSlotChecks {
@@ -724,7 +723,6 @@ final class PlanSlotChecks {
   }
 
   private struct Kept {
-    let plan: GoalPlan
     let opening: Int
     let check: PlanSlotCheck
   }
@@ -733,19 +731,17 @@ final class PlanSlotChecks {
   private(set) var opening = 0
   @ObservationIgnored private var checks: [Key: Kept] = [:]
 
-  func check(
-    _ item: PlanSlotItem, request: Request, goalId: String, plan: GoalPlan
-  ) -> PlanSlotCheck {
+  func check(_ item: PlanSlotItem, request: Request, goalId: String) -> PlanSlotCheck {
     let key = Key(goalId: goalId, item: item, request: request)
 
-    if let kept = checks[key], kept.plan == plan, kept.opening == opening {
+    if let kept = checks[key], kept.opening == opening {
       return kept.check
     }
 
     checks[key]?.check.leave()
     let opening = opening
     let check = PlanSlotCheck { [weak self] in self?.opening == opening }
-    checks[key] = Kept(plan: plan, opening: opening, check: check)
+    checks[key] = Kept(opening: opening, check: check)
     return check
   }
 
