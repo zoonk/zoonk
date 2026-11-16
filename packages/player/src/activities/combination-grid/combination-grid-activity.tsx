@@ -203,6 +203,7 @@ export function CombinationGridActivity({
         <ActivityTextAlternative>{description}</ActivityTextAlternative>
       </ActivityCanvas>
       <div className="pt-2 empty:hidden">
+        {" "}
         {!isLocked && (
           <GridPalette
             activeCell={activeCell}
