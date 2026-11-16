@@ -29,11 +29,13 @@ export function useAimWords() {
     },
     /** Named with its language, so it isn't read as the game's level. */
     title: (targetLanguage: string | null): string =>
-      t({
-        description:
-          'Titles the language level a learner picks to reach, like "B2". {language} is a language name as in a sentence, like "English".',
-        message: "{language} level to reach",
-        values: { language: languageName(targetLanguage) },
-      }),
+      targetLanguage
+        ? t({
+            description:
+              'Titles the language level a learner picks to reach, like "B2". {language} is a language name as in a sentence, like "English".',
+            message: "{language} level to reach",
+            values: { language: languageName(targetLanguage) },
+          })
+        : t("How far do you want to go?"),
   };
 }

@@ -132,8 +132,11 @@ func languageReasonLabel(_ reason: String) -> String? {
 
 /// "English level to reach": a language aim's title, named with its language.
 func aimTitle(language: String?) -> String {
-  String(
-    localized: "\(Locale.current.languageName(language ?? "")) level to reach", table: "Onboarding",
+  guard let language, !language.isEmpty else {
+    return String(localized: "How far do you want to go?", table: "Onboarding")
+  }
+  return String(
+    localized: "\(Locale.current.languageName(language)) level to reach", table: "Onboarding",
     comment:
       "Titles the language level a learner picks to reach, like \"B2\". {language} is a language name as in a sentence, like \"English\"."
   )

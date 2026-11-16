@@ -42,8 +42,17 @@ class UnderstoodRowsTest {
         val goal = understanding(goalsUnderstanding()).goals.single()
         val language =
             goal.copy(
-                draft = goal.draft.copy(kind = GoalDraftOutput.Kind.LANGUAGE, title = "Learn French", details = emptyMap()),
-                languageAim = ApiJson.decodeFromString("""{"aim":"B1","choices":[{"aim":"B1","hours":375}]}"""),
+                draft =
+                    goal.draft.copy(
+                        kind = GoalDraftOutput.Kind.LANGUAGE,
+                        title = "Learn French",
+                        targetLanguage = "fr",
+                        details = emptyMap(),
+                    ),
+                languageAim =
+                    ApiJson.decodeFromString(
+                        """{"aim":"B1","label":"B1","targetLanguage":"fr","choices":[{"aim":"B1","hours":375}]}""",
+                    ),
             )
         val row = rows.rows(language).single { it.id == "targetScore" }
         assertEquals("B1 · Everyday conversations", row.value.plain())
