@@ -168,6 +168,18 @@ private fun typeset(
         }
     }
 
+/** [segments]' money as the learner's money format writes it ([typesetMoney]); math and code keep theirs. */
+fun typesetMoney(
+    segments: List<RichSegment>,
+    locale: Locale,
+): List<RichSegment> =
+    segments.map {
+        when (it.kind) {
+            SegmentKind.Math, SegmentKind.DisplayMath, SegmentKind.Code -> it
+            else -> it.copy(text = typesetMoney(locale, it.text))
+        }
+    }
+
 private fun typesetBlock(
     block: RichBlock,
     locale: Locale,

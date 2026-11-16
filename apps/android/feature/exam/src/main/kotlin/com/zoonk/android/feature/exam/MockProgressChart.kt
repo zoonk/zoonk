@@ -175,10 +175,13 @@ internal fun ProgressLineChart(
                         }
                     },
             ) {
-                Canvas(Modifier.fillMaxSize()) {
+                // The points keep a dot's room from each side, so the first and last dots end inside the column; the
+                // grid still crosses it.
+                Canvas(Modifier.fillMaxSize().padding(horizontal = DOT_ROOM)) {
+                    val room = DOT_ROOM.toPx()
                     ticks.forEach { tick ->
                         val y = toY(tick, floor) * size.height
-                        drawLine(grid, Offset(0f, y), Offset(size.width, y), strokeWidth = 1.dp.toPx())
+                        drawLine(grid, Offset(-room, y), Offset(size.width + room, y), strokeWidth = 1.dp.toPx())
                     }
                     drawChartLine(values, floor, color, wash = true)
                     values.forEachIndexed { index, value ->
@@ -193,7 +196,11 @@ internal fun ProgressLineChart(
                         drawCircle(color, radius = 6.dp.toPx(), center = center)
                     }
                 }
-                active?.let { index -> Readout(points[index], toX(index, values.size), toY(values[index], floor)) }
+                active?.let { index ->
+                    Box(Modifier.fillMaxSize().padding(horizontal = DOT_ROOM)) {
+                        Readout(points[index], toX(index, values.size), toY(values[index], floor))
+                    }
+                }
             }
 
             Row(Modifier.fillMaxWidth().clearAndSetSemantics {}, horizontalArrangement = Arrangement.SpaceBetween) {
@@ -287,6 +294,9 @@ private fun DrawScope.point(
     count: Int,
     floor: Int,
 ) = Offset(toX(index, count) * size.width, toY(value, floor) * size.height)
+
+/** A point's ring. */
+private val DOT_ROOM = 6.dp
 
 /** 0%, or the next 50 below the lowest score when a net score went negative. */
 private fun chartFloor(values: List<Int>): Int = floor(minOf(0, values.minOrNull() ?: 0) / NEGATIVE_STEP.toDouble()).toInt() * NEGATIVE_STEP

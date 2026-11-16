@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -50,16 +49,15 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.hasContent
 import com.zoonk.android.data.value
+import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.MediaPending
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.controlInk
-import com.zoonk.android.ui.components.labelInset
 import com.zoonk.android.ui.theme.zoonk
 import kotlinx.coroutines.launch
 import java.text.Normalizer
@@ -164,7 +162,7 @@ private fun LazyListScope.unloaded(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                TextButton(onClick = onRetry, modifier = Modifier.offset(x = -LocalButtonSize.current.labelInset)) {
+                TextButton(onClick = onRetry, edge = ButtonEdge.Start) {
                     Text(stringResource(R.string.load_failed_try_again))
                 }
             }

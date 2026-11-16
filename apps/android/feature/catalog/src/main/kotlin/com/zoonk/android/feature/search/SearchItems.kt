@@ -408,7 +408,7 @@ private fun settingsItems(isLoggedIn: Boolean): List<SearchItem> {
             "language",
             stringResource(R.string.search_language),
             SearchAction.Open(AppRoute.Preferences),
-            R.drawable.ic_palette,
+            R.drawable.ic_translate,
             keywords = keyword,
         ),
     )

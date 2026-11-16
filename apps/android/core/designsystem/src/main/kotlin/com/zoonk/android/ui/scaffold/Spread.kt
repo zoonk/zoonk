@@ -18,14 +18,16 @@ import androidx.window.core.layout.WindowSizeClass
  * on every frame. Phones, an outer display and narrower windows stay one column, and so does text too
  * large for two pages, except while the screen shows its [result] ([ResultPages]): the fold sets each
  * page's width, so a result keeps its two pages there at any text size. Dialogs keep to the fold alone
- * ([pageFold]): off a fold they stay centered.
+ * ([pageFold]): off a fold they stay centered. While the screen shows one column of its own, such as a
+ * gate, it passes [spreads] false: then only a fold splits it, so its bars and title stay over that column.
  */
 @Composable
 fun SpreadScreen(
     result: Boolean = false,
+    spreads: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    CompositionLocalProvider(LocalSpread provides spread(acrossWindow = true, result = result), content = content)
+    CompositionLocalProvider(LocalSpread provides spread(acrossWindow = spreads, result = result), content = content)
 }
 
 /**

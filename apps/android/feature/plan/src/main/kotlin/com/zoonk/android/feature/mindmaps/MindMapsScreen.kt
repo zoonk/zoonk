@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,6 +48,8 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.CountTab
+import com.zoonk.android.ui.components.CountTabs
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.ListDivider
@@ -336,39 +337,17 @@ private fun MindMapsTabs(
     decks: Map<StudyTab, Int>,
     onPick: (StudyTab) -> Unit,
 ) {
-    PrimaryTabRow(
-        selectedTabIndex = tab.ordinal,
-        modifier = Modifier.bleed(LIST_ITEM_INSET).fillMaxWidth(),
-        containerColor = MaterialTheme.colorScheme.surface,
-    ) {
-        StudyTab.entries.forEach { each ->
-            val label = stringResource(each.label)
-            val count = decks.getValue(each)
-            val number = formatNumber(count.toDouble(), currentLocale())
-            val spoken = pluralStringResource(R.plurals.mindmaps_tab_spoken, count, label, number)
-            Tab(
-                selected = each == tab,
-                onClick = { onPick(each) },
-                text = {
-                    FlowRow(
-                        Modifier.clearAndSetSemantics { contentDescription = spoken },
-                        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
-                        itemVerticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        Text(
-                            number,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.zoonkType.data,
-                            softWrap = false,
-                        )
-                    }
-                },
-                selectedContentColor = MaterialTheme.colorScheme.onSurface,
-                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
+    CountTabs(
+        tabs =
+            StudyTab.entries.map { each ->
+                val label = stringResource(each.label)
+                val count = decks.getValue(each)
+                val number = formatNumber(count.toDouble(), currentLocale())
+                CountTab(label, count, spoken = pluralStringResource(R.plurals.mindmaps_tab_spoken, count, label, number))
+            },
+        selected = tab.ordinal,
+        onPick = { onPick(StudyTab.entries[it]) },
+    )
 }
 
 private val StudyTab.label: Int

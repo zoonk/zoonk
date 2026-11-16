@@ -31,6 +31,7 @@ import com.zoonk.android.data.SessionSource
 import com.zoonk.android.feature.mock.runner.MockRunStore
 import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
@@ -130,11 +131,7 @@ internal fun PlanStep(
     val question = offers.open(adapt) ?: planOffers(adapt).firstOrNull()
 
     Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text(
-            stringResource(if (preparation != null) R.string.mock_result_your_preparation else R.string.mock_result_your_plan),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.titleMedium,
-        )
+        Eyebrow(stringResource(if (preparation != null) R.string.mock_result_your_preparation else R.string.mock_result_your_plan))
         if (preparation != null) {
             PreparationReadout(preparation, MaterialTheme.typography.displayMedium)
         } else {
@@ -177,7 +174,7 @@ internal fun PreparationReadout(
 
 @Composable
 internal fun PreparationMeter(preparation: MockResultPreparation) {
-    Meter(preparation.after.toFloat(), Modifier.widthIn(max = METER_WIDTH))
+    Meter(preparation.after.toFloat())
 }
 
 internal class OfferCopy(
@@ -368,4 +365,3 @@ private fun answerLine(
 
 private const val PERCENT = 100.0
 private const val TOPICS_NAMED = 3
-private val METER_WIDTH = 320.dp
