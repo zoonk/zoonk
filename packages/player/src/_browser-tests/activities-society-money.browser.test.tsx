@@ -623,3 +623,22 @@ describe("money and society activities reopened from their saved answer", () => 
     expect(timelineMarks("x")).toHaveLength(0);
   });
 });
+
+describe("causal explanation clarity", () => {
+  it("cause and effect: checked reasons are explained once beside their links", async () => {
+    openActivity({ template: "causeEffectChain" });
+    await chainNode("1920 Prairie plowed for wheat").click();
+    await chainNode("1934 Dust storms").click();
+    await chainNode("1931 Years of drought").click();
+    await chainNode("1934 Dust storms").click();
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await expect.element(page.getByText("Bare soil blew away.")).toBeVisible();
+    await expect.element(page.getByText("Dry soil lifted.")).toBeVisible();
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+
+    await expect
+      .element(feedback.getByText(fixtures.causeEffectChain.check.explanation))
+      .not.toBeInTheDocument();
+  });
+});
