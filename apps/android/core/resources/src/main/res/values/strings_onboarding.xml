@@ -580,7 +580,6 @@
     <string name="onboarding_reveal_estimated_finish">estimated finish</string>
     <string name="onboarding_whats_next">What\'s next</string>
     <string name="onboarding_your_plan_ready">Your plan is ready</string>
-    <string name="onboarding_reveal_more_kinds">+%1$s</string>
     <string name="onboarding_aim_travel">Get by on trips</string>
     <string name="onboarding_aim_talk">Everyday conversations</string>
     <string name="onboarding_aim_work">Work or study in it</string>

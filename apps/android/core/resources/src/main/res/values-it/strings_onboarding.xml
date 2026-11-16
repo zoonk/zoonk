@@ -285,7 +285,6 @@
   "onboarding_reveal_mock": "6aeeb46a5a5eca2ac0cb1493a6504927bbeff84f3f0c1fd95389564b8de10eef",
   "onboarding_reveal_modules": "c3ef23ccff7af68a6f1819aaa7170e764c101ef6f2cba18bc77a483c22b73034",
   "onboarding_reveal_more_chapters": "c14b423ecd625c93829f37484dfa5f00cd9042c1accfae84b11fb5dfac74eda4",
-  "onboarding_reveal_more_kinds": "daa05843b447ff0a982ba5617da6143decc50c9ccee1fe35138f7d80a56279b5",
   "onboarding_reveal_more_lessons": "d7dc870988810062a57e0fbe9f43172c56f65ba417c2afee07c77c1c0d85b052",
   "onboarding_reveal_most_questions": "aa512bd4b999cad6911af9afa8639720f5b3d7fce25a45c8fd016510c2e722be",
   "onboarding_reveal_no_sitting": "0f1775ff8605a940c06ba0182199ac68ea14aeadc14ec14b2cba35dc11b49124",
@@ -1035,7 +1034,6 @@
     <string name="onboarding_reveal_estimated_finish">fine prevista</string>
     <string name="onboarding_whats_next">E adesso</string>
     <string name="onboarding_your_plan_ready">Il tuo piano è pronto</string>
-    <string name="onboarding_reveal_more_kinds">+%1$s</string>
     <string name="onboarding_aim_travel">Cavarmela in viaggio</string>
     <string name="onboarding_aim_talk">Conversare nella vita quotidiana</string>
     <string name="onboarding_aim_work">Lavorare o studiare in questa lingua</string>

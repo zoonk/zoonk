@@ -285,7 +285,6 @@
   "onboarding_reveal_mock": "1a573fb2d4de01e5978333ee39a46ce61fbdd61b721b857689acfb8b13f326c9",
   "onboarding_reveal_modules": "2ebe3296ac5881f045e1637b86bd8e3e4077ac4a6950d367dd604b27f1795889",
   "onboarding_reveal_more_chapters": "5efd4ffa55419ba19b032676cee68758c1c39b120e785493768abc81d8858765",
-  "onboarding_reveal_more_kinds": "4cf35226b734b9de902e365734aac86777738c77ac7f67af91d1058b3fbc437f",
   "onboarding_reveal_more_lessons": "b5afd84fd2e4d90322e91a86805d7ad0a0417a96865e3c2cbd6b538abc1d8b5d",
   "onboarding_reveal_most_questions": "2467aed421acd094c64f963edcfc49e657329fa8c94d973e208b8c20b01d9f2e",
   "onboarding_reveal_no_sitting": "45e5248cfbc0ae56f2699a15bd9907ce4f44e2ee716d165dc46e98612a5309f6",
@@ -1035,7 +1034,6 @@
     <string name="onboarding_reveal_estimated_finish">previsão de conclusão</string>
     <string name="onboarding_whats_next">O que vem a seguir</string>
     <string name="onboarding_your_plan_ready">Seu plano está pronto</string>
-    <string name="onboarding_reveal_more_kinds">+%1$s</string>
     <string name="onboarding_aim_travel">Se virar em viagens</string>
     <string name="onboarding_aim_talk">Conversas do dia a dia</string>
     <string name="onboarding_aim_work">Trabalhar ou estudar no idioma</string>

@@ -285,7 +285,6 @@
   "onboarding_reveal_mock": "4ccca9b27100170fdc864b78e90dd51f4042dc9bba9864add31b20611ad3ce57",
   "onboarding_reveal_modules": "ed225f520cbf3ac35f7a04ae52f93d8b7a82c1f5e3bda4de6eb953d4167695e2",
   "onboarding_reveal_more_chapters": "cb7138bdacbd371b681b6ac80e43a6e1150c1d16c5dd344505c77c4fafc622a5",
-  "onboarding_reveal_more_kinds": "5c05a700e1258117847853efc637f667c602bc7a456407309e9f7d6de485d265",
   "onboarding_reveal_more_lessons": "e0dc98a5d7403d55e11de371b9ffac65f69fbf8a02179607385cb090d982ed5d",
   "onboarding_reveal_most_questions": "e66688a1e99569fd6e8a075dd533429ae665209dcd96b50b2940824a875d2fe0",
   "onboarding_reveal_no_sitting": "28f0d1a969762ea58c337fde783df573ab86a366307969e79e1398848ed5e71e",
@@ -1060,7 +1059,6 @@
     <string name="onboarding_reveal_estimated_finish">przewidywany koniec</string>
     <string name="onboarding_whats_next">Co dalej</string>
     <string name="onboarding_your_plan_ready">Twój plan jest gotowy</string>
-    <string name="onboarding_reveal_more_kinds">+%1$s</string>
     <string name="onboarding_aim_travel">Dogadać się w podróży</string>
     <string name="onboarding_aim_talk">Codzienne rozmowy</string>
     <string name="onboarding_aim_work">Pracować lub uczyć się w tym języku</string>

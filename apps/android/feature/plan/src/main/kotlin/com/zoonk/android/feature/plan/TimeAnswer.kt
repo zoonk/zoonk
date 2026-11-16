@@ -75,7 +75,7 @@ fun TimeAnswer(
     val busyWords = stringResource(R.string.plan_working_out_coverage)
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     val style = MaterialTheme.typography.bodyMedium
-    val noteWords = noteWords(date, note, noteStatus, today)
+    val noteWords = noteWords(date, note, today)
     val lineWords = lineWords(date, exam, line, minutes, today, aim)
     val tooLong = stringResource(R.string.plan_time_too_long).takeIf { note == FullTimeNote.TooLong }
     val shared = split?.let { splitWords(it) }
@@ -129,27 +129,12 @@ fun TimeAnswer(
 private fun noteWords(
     date: GoalDate?,
     note: FullTimeNote?,
-    status: NoteStatus?,
     today: LocalDate,
-): String? =
-    when {
-        date != null && note is FullTimeNote.Takes -> {
-            val takes = everythingTakesText(date, note.full, today)
-            if (note.moreDays) joinSentences(takes, stringResource(R.string.plan_time_more_days)) else takes
-        }
-
-        status == NoteStatus.Finding -> {
-            stringResource(R.string.plan_time_working)
-        }
-
-        status == NoteStatus.Failed -> {
-            stringResource(R.string.plan_time_find_failed)
-        }
-
-        else -> {
-            null
-        }
-    }
+): String? {
+    if (date == null || note !is FullTimeNote.Takes) return null
+    val takes = everythingTakesText(date, note.full, today)
+    return if (note.moreDays) joinSentences(takes, stringResource(R.string.plan_time_more_days)) else takes
+}
 
 @Composable
 private fun offerLabel(offer: TimeOffer): String {

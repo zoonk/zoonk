@@ -296,24 +296,6 @@ private fun ColumnScope.ScheduleTime(
             )
         },
     ) {
-        ScheduleAim(advice?.endDate?.toJavaLocalDate(), minutes, goal, store, asked.adviceInput(minutes ?: recommendedMinutes))
-
-        // The days decide the time, and what the time covers arrives last, so nothing above it moves.
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            WeekdayToggles(days, onChange = { onChoiceChange(choice.copy(days = it)) })
-            // The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'.
-            WeekendTime(
-                checked = choice.weekendOn,
-                missing = missingDays(days),
-                times = timeChoices.map { it.minutes },
-                minutes = choice.weekendPicked ?: minutes ?: recommendedMinutes,
-                weekdayMinutes = minutes ?: recommendedMinutes,
-                onCheckedChange = { onChoiceChange(choice.copy(weekendOn = it, weekendPicked = null)) },
-                onPick = { onChoiceChange(choice.copy(weekendPicked = it)) },
-                labelStyle = LocalTextStyle.current.copy(fontWeight = FontWeight.Medium),
-            )
-        }
-
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             val label = stringResource(R.string.onboarding_schedule_time_label)
             // The picker carries the name for screen readers; this is its visible title.
@@ -368,6 +350,23 @@ private fun ColumnScope.ScheduleTime(
             val end = minutes?.let { time -> advice?.fullCourseEndDate?.let { ExamFinish(time, it, date) } }
             FullCourseToggle(fullCourse, end, onCheckedChange = { onChoiceChange(choice.copy(fullCourse = it)) })
         }
+
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            WeekdayToggles(days, onChange = { onChoiceChange(choice.copy(days = it)) })
+            // The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'.
+            WeekendTime(
+                checked = choice.weekendOn,
+                missing = missingDays(days),
+                times = timeChoices.map { it.minutes },
+                minutes = choice.weekendPicked ?: minutes ?: recommendedMinutes,
+                weekdayMinutes = minutes ?: recommendedMinutes,
+                onCheckedChange = { onChoiceChange(choice.copy(weekendOn = it, weekendPicked = null)) },
+                onPick = { onChoiceChange(choice.copy(weekendPicked = it)) },
+                labelStyle = LocalTextStyle.current.copy(fontWeight = FontWeight.Medium),
+            )
+        }
+
+        ScheduleAim(advice?.endDate?.toJavaLocalDate(), minutes, goal, store, asked.adviceInput(minutes ?: recommendedMinutes))
     }
 }
 
