@@ -2,14 +2,11 @@ import { Link } from "@/i18n/navigation";
 import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
 import { getExtracted } from "next-intl/server";
 import { FooterLanguages } from "./footer-languages";
-import { PUBLIC_CONTAINER_CLASS } from "./landing-styles";
+import { FOOTER_LINKS_CLASS, FOOTER_LINK_CLASS, PUBLIC_CONTAINER_CLASS } from "./landing-styles";
 import { PageStartMark } from "./page-start";
 
 /** Read once when the server starts, so rendering never depends on the clock. */
 const COPYRIGHT_YEAR = String(new Date().getFullYear());
-
-const FOOTER_LINK_CLASS =
-  "hover:text-foreground focus-visible:ring-ring/50 hit-area relative inline-flex min-h-11 items-center rounded-md outline-none transition-colors focus-visible:ring-[3px]";
 
 export async function PublicFooter({ pathname }: { pathname?: string }) {
   const t = await getExtracted();
@@ -26,7 +23,7 @@ export async function PublicFooter({ pathname }: { pathname?: string }) {
           </span>
 
           <div className="flex flex-wrap items-center gap-x-6">
-            <nav aria-label={t("Footer")} className="flex flex-wrap gap-x-6">
+            <nav aria-label={t("Footer")} className={FOOTER_LINKS_CLASS}>
               <Link className={FOOTER_LINK_CLASS} href="/courses">
                 {t("Courses")}
               </Link>

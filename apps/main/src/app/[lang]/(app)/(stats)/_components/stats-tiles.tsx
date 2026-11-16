@@ -18,7 +18,7 @@ export function StatTilesSkeleton({
     <div
       aria-hidden="true"
       className={cn(
-        "grid grid-cols-2 gap-2 [&>*:last-child:nth-child(odd)]:col-span-2",
+        "grid auto-rows-fr grid-cols-2 gap-2 [&>*:last-child:nth-child(odd)]:col-span-2",
         count === 3 && "sm:grid-cols-3 sm:[&>*:last-child:nth-child(odd)]:col-span-1",
         className,
       )}
