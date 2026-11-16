@@ -20,6 +20,7 @@ import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.PlanDay
 import com.zoonk.api.models.PlanEffect
+import com.zoonk.api.models.PlanItem
 import com.zoonk.api.models.PlanTool
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -210,7 +211,7 @@ class PlanViewModelTest {
             val plan = shown(onDay("2026-10-27"))
             val held = CompletableDeferred<Unit>().also { api.previewGate = it }
             viewModel.requestSlotPreview(plan, listOf(PlanOp.TargetDate(LocalDate.parse("2027-06-12"))))
-            shown(plan.copy(estimate = plan.estimate.copy(remainingHours = 5.0)))
+            shown(plan.copy(steering = plan.steering.copy(lessonsStudied = 1)))
             held.complete(Unit)
             assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
         }
@@ -232,7 +233,7 @@ class PlanViewModelTest {
             val plan = shown(onDay("2026-10-27"))
             val held = CompletableDeferred<Unit>().also { api.previewGate = it }
             viewModel.requestSlotPreview(plan, listOf(PlanOp.DailyMinutes(45)))
-            shown(plan.copy(estimate = plan.estimate.copy(remainingHours = 5.0)))
+            shown(plan.copy(steering = plan.steering.copy(lessonsStudied = 1)))
             held.complete(Unit)
             assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
         }
@@ -301,7 +302,7 @@ class PlanViewModelTest {
             val plan = shown(onDay("2026-10-27"))
             val held = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
             viewModel.findTimeToCover(plan, TimeAsker.PastDate(request = 1))
-            shown(plan.copy(estimate = plan.estimate.copy(remainingHours = 5.0)))
+            shown(plan.copy(steering = plan.steering.copy(lessonsStudied = 1)))
             held.complete(Unit)
             assertEquals(
                 TimeToCoverOutcome.Stale,
@@ -333,7 +334,7 @@ class PlanViewModelTest {
             val plan = shown(onDay("2026-10-27"))
             val held = CompletableDeferred<Unit>().also { api.timeToCoverGate = it }
             viewModel.findTimeToCover(plan, TimeAsker.Coverage(CoverageIntent.Time))
-            shown(plan.copy(estimate = plan.estimate.copy(remainingHours = 5.0)))
+            shown(plan.copy(steering = plan.steering.copy(lessonsStudied = 1)))
             held.complete(Unit)
             assertEquals(
                 TimeToCoverOutcome.Stale,
@@ -388,6 +389,87 @@ class PlanViewModelTest {
                     ?.outcome,
             )
         }
+
+    @Test
+    fun aCoveragePreviewSurvivesALessonFinishingWriting() =
+        runTest {
+            val plan = shown(withWritingLesson())
+            val held = CompletableDeferred<Unit>().also { api.previewGate = it }
+            val operations = listOf(PlanOp.DailyMinutes(45))
+            viewModel.requestSlotPreview(plan, operations)
+            val refreshed =
+                shown(
+                    plan.copy(
+                        week =
+                            plan.week.copy(
+                                days =
+                                    plan.week.days.map { day ->
+                                        day.copy(items = day.items.map { it.copy(writing = false) })
+                                    },
+                            ),
+                    ),
+                )
+            assertEquals(planAdviceRevision(plan), planAdviceRevision(refreshed))
+            assertTrue(viewModel.slotPreview.value.of(operations, refreshed) is PlanPreviewState.Loading)
+            held.complete(Unit)
+            assertTrue(viewModel.slotPreview.value is PlanPreviewState.Ready)
+            assertTrue(viewModel.slotPreview.value.of(operations, refreshed) is PlanPreviewState.Ready)
+        }
+
+    @Test
+    fun aPastDatePreviewSurvivesALessonFinishingWriting() =
+        runTest {
+            val plan = shown(withWritingLesson())
+            val held = CompletableDeferred<Unit>().also { api.previewGate = it }
+            val operations = listOf(PlanOp.TargetDate(LocalDate.parse("2027-06-12")))
+            viewModel.requestSlotPreview(plan, operations)
+            val refreshed =
+                shown(
+                    plan.copy(
+                        week =
+                            plan.week.copy(
+                                days =
+                                    plan.week.days.map { day ->
+                                        day.copy(items = day.items.map { it.copy(writing = false) })
+                                    },
+                            ),
+                    ),
+                )
+            assertEquals(planAdviceRevision(plan), planAdviceRevision(refreshed))
+            assertTrue(viewModel.slotPreview.value.of(operations, refreshed) is PlanPreviewState.Loading)
+            held.complete(Unit)
+            assertTrue(viewModel.slotPreview.value is PlanPreviewState.Ready)
+            assertTrue(viewModel.slotPreview.value.of(operations, refreshed) is PlanPreviewState.Ready)
+        }
+
+    @Test
+    fun aPrerequisiteRecommendationSurvivesAnEstimateOnlyRefresh() =
+        runTest {
+            val plan = shown()
+            viewModel.askBasesAdvice(plan)
+            val refreshed = shown(plan.copy(estimate = plan.estimate.copy(remainingHours = 5.0)))
+            assertEquals(PlanBase.Choice.ESSENTIAL, viewModel.basesAdvice.value.recommendedFor(refreshed))
+            assertEquals(planAdviceRevision(plan), planAdviceRevision(refreshed))
+        }
+
+    private fun withWritingLesson(): Plan {
+        val plan = onDay("2026-10-27")
+        val lesson =
+            PlanItem(
+                chapterId = null,
+                id = null,
+                kind = PlanItem.Kind.LESSON,
+                lessonId = null,
+                minutes = 20.0,
+                requiresPlus = false,
+                scheduledFor = null,
+                skillId = null,
+                status = PlanItem.Status.TODO,
+                title = "Lists",
+                writing = true,
+            )
+        return plan.copy(week = plan.week.copy(days = plan.week.days.map { it.copy(items = listOf(lesson)) }))
+    }
 
     @Test
     fun aFitCheckPutOffWithNotNowOrAClosedSuggestionAddsNothing() =

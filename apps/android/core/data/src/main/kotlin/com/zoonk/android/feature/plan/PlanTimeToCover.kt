@@ -6,10 +6,9 @@ import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverSuggested
 
 /**
- * Main's `getPlanAdviceRevision`: what the Plan's advice (the time to cover everything, the
- * prerequisites' recommendation) is worked out from. The plan's id is in it, since another goal's plan
- * can look the same and need another answer, and so is the day the page was read for, since the days
- * left change the answers; refreshes that change none of these keep the answers.
+ * The inputs shared by time-to-cover searches and prerequisites advice, matching Main's
+ * `getPlanAdviceRevision` and Apple's `PlanInputs`. The planning day and steering's studied lessons
+ * change what work is left; refreshes that change none of these inputs keep the answers.
  */
 fun planAdviceRevision(plan: Plan): List<Any?> =
     listOf(
@@ -17,7 +16,6 @@ fun planAdviceRevision(plan: Plan): List<Any?> =
             .firstOrNull { it.state == PlanDay.State.TODAY }
             ?.date ?: plan.week.startDate,
         plan.planId,
-        plan.estimate,
         plan.schedule,
         plan.feasibility,
         plan.steering,

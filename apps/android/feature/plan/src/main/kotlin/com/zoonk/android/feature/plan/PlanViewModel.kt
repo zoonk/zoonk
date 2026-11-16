@@ -603,7 +603,7 @@ class PlanViewModel(
             val asking = opened == outcomes.suggestion.number
             var wanted = false
             slotPreviewState.update { current ->
-                wanted = current === request && asking && request.plan.samePreviewPlan(shownPlan())
+                wanted = current === request && asking && request.matchesPlan(shownPlan())
                 when {
                     current === request && !wanted -> PlanPreviewState.Idle
                     wanted && same -> PlanPreviewState.Idle
@@ -629,7 +629,7 @@ class PlanViewModel(
             state.update {
                 when {
                     it !== request -> it
-                    !request.plan.samePreviewPlan(shownPlan()) -> PlanPreviewState.Idle
+                    !request.matchesPlan(shownPlan()) -> PlanPreviewState.Idle
                     else -> it.resolve(request, (result as? MutationResult.Done)?.value)
                 }
             }
