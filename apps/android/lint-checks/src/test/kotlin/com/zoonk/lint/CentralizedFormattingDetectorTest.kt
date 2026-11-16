@@ -170,4 +170,20 @@ class CentralizedFormattingDetectorTest : LintDetectorTest() {
             ).run()
             .expectClean()
     }
+
+    fun testAllowsSharedPlanDateFormatter() {
+        lint()
+            .files(
+                kotlin(
+                    "src/com/zoonk/android/feature/plan/PlanDate.kt",
+                    """
+            package com.zoonk.android.feature.plan
+            import java.text.SimpleDateFormat
+            import java.util.Date
+            fun formatDay(date: Date) = SimpleDateFormat("MMM d").format(date)
+        """,
+                ).indented(),
+            ).run()
+            .expectClean()
+    }
 }

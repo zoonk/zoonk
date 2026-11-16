@@ -12,7 +12,6 @@ const formats = [
   "date.formatted(\n .studyDay.day())",
   "Date.FormatStyle(date: .long)",
   "DateComponentsFormatter()",
-  "date.formatted(.iso8601)",
   "Duration.UnitsFormatStyle()",
   "RelativeDateTimeFormatter()",
   "MeasurementFormatter()",
@@ -69,12 +68,9 @@ const missedFormats = [
   "Text(date, style: .date)",
   "Text(date, format: .dateTime.month(.wide))",
   String.raw`Text("\(duration, format: .units(allowed: [.minutes]))")`,
-  "date.formatted()",
-  "Duration.seconds(30).formatted()",
   'String(format: "%02d:%02d", minutes, seconds)',
   'String(format: "%d min", minutes)',
   "calendar.weekdaySymbols",
-  "ISO8601DateFormatter().string(from: date)",
   "DateIntervalFormatter()",
   "range.formatted(.interval.day())",
   "duration.formatted(.components(style: .abbreviated))",
@@ -124,4 +120,62 @@ test("the CLI reports warnings but fails for errors and allows the shared module
   } finally {
     rmSync(temporary, { force: true, recursive: true });
   }
+});
+
+const wireAndUntypedForms = [
+  'String(format: "%04d-%02d-%02d", year, month, day)',
+  'String(format: "%04d-%02d-01", year, month)',
+
+  "count.formatted()",
+  "3.formatted()",
+  "date.formatted()",
+  "Duration.seconds(30).formatted()",
+  "date.formatted(.iso8601)",
+  "Date.ISO8601FormatStyle(timeZone: .gmt).year().month().day().parse(day)",
+  "Date(text, strategy: Date.ISO8601FormatStyle(includingFractionalSeconds: true))",
+  "ISO8601DateFormatter().date(from: wire)",
+  "ISO8601DateFormatter().string(from: date)",
+];
+
+describe("round two scope regressions", () => {
+  it.each(wireAndUntypedForms)("allows wire or untyped form %s", (source) => {
+    expect(formattingViolations(source, "Screen.swift")).toHaveLength(0);
+  });
+
+  it.each([
+    'String(format: "%02d–%02d", start, end)',
+    'String(format: "%02d-%02d", start, end)',
+    "TimeZone(identifier: id)?.localizedName(for: .generic, locale: .current)",
+  ])("reports the shown range or zone on its call line: %s", (source) => {
+    expect(
+      formattingViolations(`func shown() -> String {\n  ${source}\n}`, "Screen.swift"),
+    ).toStrictEqual([expect.objectContaining({ line: 2 })]);
+
+    expect(formattingViolations(source, FORMATTING_MODULE)).toHaveLength(0);
+  });
+
+  it("reports a typed date rendering rather than its parameter declaration", () => {
+    const source = `private func completedOnText(_ style: Date.FormatStyle) -> String {
+  studyDate(completedOn)?.formatted(style) ?? completedOn
+}
+func number(_ style: FloatingPointFormatStyle<Double>) -> String {
+  value.formatted(style)
+}`;
+
+    expect(formattingViolations(source, "Screen.swift")).toStrictEqual([
+      expect.objectContaining({ call: ".formatted(style)", line: 2 }),
+    ]);
+  });
+
+  it("keeps the shared studyDay style definition and wire clock reported", () => {
+    const source = `extension FormatStyle where Self == Date.FormatStyle {
+  static var studyDay: Date.FormatStyle {
+    var style = Date.FormatStyle(timeZone: .gmt)
+  }
+}
+return String(format: "%02d:%02d", minutes / 60, minutes % 60)`;
+
+    const expectedSites = 4;
+    expect(formattingViolations(source, "Screen.swift")).toHaveLength(expectedSites);
+  });
 });

@@ -108,6 +108,7 @@ class CentralizedFormattingDetector :
                 "/com/zoonk/android/ui/format/Formatters.kt",
                 "/com/zoonk/android/ui/format/Clock.kt",
                 "/com/zoonk/android/ui/format/WeekdayNames.kt",
+                "/com/zoonk/android/feature/plan/PlanDate.kt",
             )
         private val FORMATTERS =
             setOf(
