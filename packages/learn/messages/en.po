@@ -11,11 +11,12 @@ msgctxt "akd-cv"
 msgid "Answer options"
 msgstr "Answer options"
 
-#. Tags the learner's pick when it counts as neither right nor wrong.
 #: src/_components/answer-option.tsx
-msgctxt "ihtBFm"
-msgid "Your guess"
-msgstr "Your guess"
+#: src/checkpoints/checkpoint-review.tsx
+#: src/mistakes/mistake-entry.tsx
+msgctxt "6NoIUl"
+msgid "Correct"
+msgstr "Correct"
 
 #: src/_components/answer-option.tsx
 #: src/essay/essay-labels.tsx
@@ -28,12 +29,11 @@ msgctxt "1nJY2_"
 msgid "Your answer"
 msgstr "Your answer"
 
+#. Tags the learner's pick when it counts as neither right nor wrong.
 #: src/_components/answer-option.tsx
-#: src/checkpoints/checkpoint-review.tsx
-#: src/mistakes/mistake-entry.tsx
-msgctxt "6NoIUl"
-msgid "Correct"
-msgstr "Correct"
+msgctxt "ihtBFm"
+msgid "Your guess"
+msgstr "Your guess"
 
 #: src/_components/brain-power-amount.tsx
 #: src/language/conversation/call-stars-step.tsx
