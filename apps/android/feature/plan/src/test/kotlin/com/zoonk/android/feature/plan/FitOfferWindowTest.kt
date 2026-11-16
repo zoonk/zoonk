@@ -98,6 +98,26 @@ class FitOfferWindowTest {
     }
 
     @Test
+    fun aCheckFromThePanelAddsNothingWhenARefreshReplacesItsSuggestion() {
+        val (held, api) = launchAFitOffer(wide = true)
+
+        rule.onNodeWithText("Add to my plan").performClick()
+        rule.runOnIdle {
+            FitOfferTest.page =
+                FitOfferTest.page!!.copy(
+                    plan = plan("\"status\":{\"kind\":\"needsAdjusting\",\"options\":[\"addTime\"]},\"fitOffer\":null"),
+                )
+        }
+        rule.onNodeWithText("More lessons than days left").assertExists()
+        rule.onNodeWithText("Add to my plan").assertDoesNotExist()
+        held.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(emptyList<List<PlanOp>>(), api.changes)
+        assertEquals(PlanPreviewState.Idle, FitOfferTest.viewModel.slotPreview.value)
+    }
+
+    @Test
     fun aCheckThatFailsWhileThePanelIsRecreatedSaysSo() {
         val (held, api) = launchAFitOffer(wide = true)
 
@@ -127,7 +147,8 @@ class FitOfferWindowTest {
     }
 
     private fun fitOperations() =
-        FitOfferTest.page.plan.fitOffer!!
+        FitOfferTest.page!!
+            .plan.fitOffer!!
             .operations
             .map { it.op }
 
@@ -183,37 +204,37 @@ class FitOfferWindowTest {
 object FitOfferTest {
     /** False while the learner is away from the Plan, its view models kept, as another tab keeps them. */
     var visible by mutableStateOf(true)
-    lateinit var page: PlanPageState
+    var page by mutableStateOf<PlanPageState?>(null)
     lateinit var viewModel: PlanViewModel
 }
 
 class FitOfferTestActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val page = FitOfferTest.page
         val viewModel = FitOfferTest.viewModel
         setContent {
             ZoonkTheme {
+                val page = checkNotNull(FitOfferTest.page)
                 val preview by viewModel.slotPreview.collectAsState()
                 val pending by viewModel.pending.collectAsState()
                 val navigator = rememberAppNavigator()
                 if (FitOfferTest.visible) {
                     VisitOf(viewModel.visit)
-                    FitLessonsSuggestion(
-                        Slot(
-                            page,
-                            PlanEdits(pending = pending, change = viewModel::change, outcomes = viewModel.outcomes),
-                            PlanLinks(navigator, page),
+                    PlanSuggestionSlot(
+                        page = page,
+                        edits = PlanEdits(pending = pending, change = viewModel::change, outcomes = viewModel.outcomes),
+                        links = PlanLinks(navigator, page),
+                        resume = Resume.Plain,
+                        onAdjust = {},
+                        host =
                             SlotHost(
                                 preview = preview,
                                 clearPreview = viewModel::clearSlotPreview,
                                 dropCheck = viewModel::dropSlotCheck,
                                 addFitOffer = { viewModel.addFitOffer(page.plan, it) },
                             ),
-                            viewModel.slotState,
-                            if (LocalConfiguration.current.screenWidthDp > 900) SuggestionLayout.Panel else SuggestionLayout.Line,
-                            SlotFocus(),
-                        ),
+                        state = viewModel.slotState,
+                        layout = if (LocalConfiguration.current.screenWidthDp > 900) SuggestionLayout.Panel else SuggestionLayout.Line,
                     )
                 }
             }

@@ -3,7 +3,7 @@
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { settleWithin } from "@zoonk/utils/timeout";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePlanScreen } from "./plan-context";
 import { type PlanPreviewState, isSamePreviewPlan, resolvePlanPreview } from "./plan-preview-state";
 import { createPreviewRequests } from "./preview-requests";
@@ -30,10 +30,14 @@ export function usePreviewBase(): object {
  * `requestPreview` resolves to `null` once the request is cancelled or replaced, or its screen goes
  * away.
  */
-export function usePlanPreview() {
+export function usePlanPreview(opening?: string) {
   const { actions, plan } = usePlanScreen();
   const [preview, setPreview] = useState<PlanPreviewState>({ status: "idle" });
   const requests = useRef(createPreviewRequests());
+
+  useLayoutEffect(() => {
+    requests.current.showOpening(opening);
+  }, [opening]);
 
   useEffect(() => {
     const current = requests.current;

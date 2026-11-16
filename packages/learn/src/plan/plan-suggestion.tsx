@@ -95,10 +95,11 @@ export function PlanSuggestionProvider({
   const all = usePlanSuggestions(host);
   const [dismissed, setDismissed] = useState<string[]>([]);
   const [position, setPosition] = useState(0);
-  const { preview, requestPreview, setPreview } = usePlanPreview();
   const [result, setResult] = useState<SlotResult | null>(null);
   const items = all.filter((item) => !dismissed.includes(item.key));
   const index = Math.min(position, Math.max(0, items.length - 1));
+  const opening = (result?.item ?? items[index])?.key;
+  const { preview, requestPreview, setPreview } = usePlanPreview(opening);
 
   // The result stays a moment with its Undo, longer while focus or the pointer is on it.
   useEffect(() => {
