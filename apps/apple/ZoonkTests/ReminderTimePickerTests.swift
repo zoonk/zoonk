@@ -22,22 +22,23 @@ final class ReminderTimePickerTests: XCTestCase {
         .environment(AppRouter())
         .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
+    try await waitForTestCondition("The time picker did not appear") {
+      timePicker(in: window) != nil
+    }
 
     let picker = try XCTUnwrap(timePicker(in: window), "The offer asks for a time")
     picker.date = ReminderTime.date("07:30")
     picker.sendActions(for: .valueChanged)
-    try await settle()
 
     window.frame = CGRect(x: 0, y: 0, width: to, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
+    try await waitForTestCondition("The selected time did not survive resize") {
+      timePicker(in: window).map { ReminderTime.string($0.date) } == "07:30"
+    }
 
     let shown = try XCTUnwrap(timePicker(in: window), "The offer still asks for a time")
     XCTAssertEqual(ReminderTime.string(shown.date), "07:30", "The picked time holds")
-  }
-
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(400))
   }
 
   private func timePicker(in view: UIView) -> UIDatePicker? {

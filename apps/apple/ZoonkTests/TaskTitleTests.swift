@@ -38,7 +38,7 @@ final class TaskTitleTests: XCTestCase {
 
     for bar in Self.bars {
       let window = try show(bar)
-      try await Task.sleep(for: .seconds(0.8))
+      try await waitForTestCondition("The title did not draw") { titleInk(window) != nil }
 
       let ink = try XCTUnwrap(titleInk(window), "No title drawn: \(bar)")
       let offset = (ink.lowerBound + ink.upperBound) / 2 - window.bounds.midX

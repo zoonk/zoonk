@@ -8,7 +8,7 @@ extension XCTestCase {
     let scene = try XCTUnwrap(
       UIApplication.shared.connectedScenes.first { $0 is UIWindowScene } as? UIWindowScene)
     let window = UIWindow(windowScene: scene)
-    window.rootViewController = UIHostingController(rootView: view)
+    window.rootViewController = UIHostingController(rootView: view.background(HostedLayoutProbe()))
     window.makeKeyAndVisible()
     addTeardownBlock { window.isHidden = true }
     return window
@@ -39,21 +39,25 @@ extension XCTestCase {
 
   /// Taps what VoiceOver reads as `label`, as a double tap with VoiceOver does.
   @MainActor
-  func activate(_ label: String, in window: UIWindow) throws {
-    let element = try XCTUnwrap(
-      accessibilityElements(in: window).first { $0.accessibilityLabel == label },
-      "Nothing reads \(label): \(spoken(in: window))")
-    XCTAssertTrue(element.accessibilityActivate(), "\(label) didn't act")
+  func activate(
+    _ label: String, in window: UIWindow, file: StaticString = #filePath, line: UInt = #line
+  ) async throws {
+    try await activate(where: { $0 == label }, in: window, file: file, line: line)
   }
 
-  /// Taps the first thing VoiceOver reads that `matches`, such as a switch, read with its
-  /// description after its title.
+  /// Activation can remain unavailable while a presentation is animating.
   @MainActor
-  func activate(where matches: (String) -> Bool, in window: UIWindow) throws {
-    let element = try XCTUnwrap(
-      accessibilityElements(in: window).first { $0.accessibilityLabel.map(matches) ?? false },
-      "Nothing matches: \(spoken(in: window))")
-    XCTAssertTrue(element.accessibilityActivate(), "\(element) didn't act")
+  func activate(
+    where matches: (String) -> Bool, in window: UIWindow,
+    file: StaticString = #filePath, line: UInt = #line
+  ) async throws {
+    try await waitForTestCondition(
+      "No matching element acted: \(spoken(in: window))", file: file, line: line
+    ) {
+      self.accessibilityElements(in: window).filter {
+        $0.accessibilityLabel.map(matches) ?? false
+      }.contains { $0.accessibilityActivate() }
+    }
   }
 
   @MainActor
@@ -124,14 +128,25 @@ extension XCTestCase {
 
 extension XCTestCase {
   @MainActor
-  func closeRequestSheet(in window: UIWindow) throws {
+  func closeRequestSheet(in window: UIWindow) async throws {
+    try await waitForTestCondition("The sheet close button did not appear") {
+      self.views(in: window).contains { $0.accessibilityLabel == "Close" }
+    }
     let buttons = views(in: window).filter { $0.accessibilityLabel == "Close" }
-    if buttons.contains(where: { $0.accessibilityActivate() }) { return }
+    if buttons.contains(where: { $0.accessibilityActivate() }) {
+      try await waitForTestCondition("The sheet did not close") {
+        window.rootViewController?.presentedViewController == nil
+      }
+      return
+    }
     let control = try XCTUnwrap(
       buttons.compactMap { $0 as? UIControl }.first
         ?? buttons.lazy.compactMap { self.views(in: $0).compactMap { $0 as? UIControl }.first }
         .first)
     control.sendActions(for: .touchUpInside)
+    try await waitForTestCondition("The sheet did not close") {
+      window.rootViewController?.presentedViewController == nil
+    }
   }
 
   @MainActor
@@ -139,4 +154,43 @@ extension XCTestCase {
     [view] + view.subviews.flatMap { views(in: $0) }
   }
 
+}
+
+@MainActor
+@discardableResult
+func waitForTestCondition(
+  _ message: @autoclosure () -> String = "Expected condition did not arrive",
+  timeout: Duration = .seconds(10),
+  file: StaticString = #filePath, line: UInt = #line,
+  _ condition: @MainActor () async throws -> Bool
+) async throws -> Bool {
+  let deadline = ContinuousClock.now + timeout
+  while try await !condition() {
+    guard ContinuousClock.now < deadline else {
+      XCTFail(message(), file: file, line: line)
+      throw WaitTimeout()
+    }
+    try await Task.sleep(for: .milliseconds(20))
+  }
+  return true
+}
+
+private struct WaitTimeout: Error {}
+
+private struct HostedLayoutProbe: UIViewRepresentable {
+  func makeUIView(context: Context) -> HostedLayoutView { HostedLayoutView() }
+  func updateUIView(_ view: HostedLayoutView, context: Context) {}
+}
+
+private final class HostedLayoutView: UIView {}
+
+extension XCTestCase {
+  @MainActor
+  func waitForLayout(in window: UIWindow) async throws {
+    try await waitForTestCondition("Hosted view did not lay out at width \(window.bounds.width)") {
+      self.requestViews(HostedLayoutView.self, in: window).contains {
+        $0.bounds.width == window.bounds.width && $0.bounds.height > 0
+      }
+    }
+  }
 }

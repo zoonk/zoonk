@@ -12,14 +12,14 @@ final class LessonPromptAudioTests: XCTestCase {
     let prompt = LessonPromptAudio()
 
     prompt.enter(prompt: Self.word, audio: clips.audio)
-    await waitUntil { clips.plays.count == 1 }
+    _ = try? await waitForTestCondition { clips.plays.count == 1 }
 
     XCTAssertEqual(clips.plays.first?.url, Self.word)
     XCTAssertEqual(clips.plays.first?.autoplay, true)
     XCTAssertEqual(prompt.playing, Self.word)
 
     clips.endPlaying()
-    await waitUntil { prompt.playing == nil }
+    _ = try? await waitForTestCondition { prompt.playing == nil }
     XCTAssertEqual(clips.plays.count, 1)
   }
 
@@ -28,19 +28,21 @@ final class LessonPromptAudioTests: XCTestCase {
     let prompt = LessonPromptAudio()
 
     prompt.enter(prompt: Self.word, audio: clips.audio)
-    await waitUntil { clips.plays.count == 1 }
+    _ = try? await waitForTestCondition { clips.plays.count == 1 }
     prompt.toggle(Self.word, audio: clips.audio)
 
     XCTAssertNil(prompt.playing)
     XCTAssertEqual(clips.stops, 1)
 
     clips.endPlaying()
-    await settle()
+    // A stopped or superseded clip must not restart or clear the current prompt.
+    let stoppedClipWindow: Duration = .milliseconds(100)
+    try? await Task.sleep(for: stoppedClipWindow)
     XCTAssertNil(prompt.playing)
     XCTAssertEqual(clips.plays.count, 1)
 
     prompt.toggle(Self.word, audio: clips.audio)
-    await waitUntil { clips.plays.count == 2 }
+    _ = try? await waitForTestCondition { clips.plays.count == 2 }
 
     XCTAssertEqual(clips.plays.last?.autoplay, false)
     XCTAssertEqual(prompt.playing, Self.word)
@@ -53,7 +55,9 @@ final class LessonPromptAudioTests: XCTestCase {
 
     prompt.enter(prompt: Self.word, audio: clips.audio)
     prompt.toggle(Self.word, audio: clips.audio)
-    await settle()
+    // A stopped or superseded clip must not restart or clear the current prompt.
+    let stoppedClipWindow: Duration = .milliseconds(100)
+    try? await Task.sleep(for: stoppedClipWindow)
 
     XCTAssertTrue(clips.plays.isEmpty)
     XCTAssertNil(prompt.playing)
@@ -65,7 +69,7 @@ final class LessonPromptAudioTests: XCTestCase {
     let prompt = LessonPromptAudio()
 
     prompt.enter(prompt: Self.word, audio: clips.audio)
-    await waitUntil { clips.plays.count == 1 }
+    _ = try? await waitForTestCondition { clips.plays.count == 1 }
     prompt.enter(prompt: nil, audio: clips.audio)
 
     XCTAssertNil(prompt.playing)
@@ -78,30 +82,19 @@ final class LessonPromptAudioTests: XCTestCase {
     let prompt = LessonPromptAudio()
 
     prompt.enter(prompt: Self.word, audio: clips.audio)
-    await waitUntil { clips.plays.count == 1 }
+    _ = try? await waitForTestCondition { clips.plays.count == 1 }
     prompt.enter(prompt: Self.nextWord, audio: clips.audio)
-    await waitUntil { clips.plays.count == 2 }
+    _ = try? await waitForTestCondition { clips.plays.count == 2 }
 
     clips.endPlaying(Self.word)
-    await settle()
+    // A stopped or superseded clip must not restart or clear the current prompt.
+    let stoppedClipWindow: Duration = .milliseconds(100)
+    try? await Task.sleep(for: stoppedClipWindow)
 
     XCTAssertEqual(prompt.playing, Self.nextWord)
     await clips.endAll()
   }
 
-  private func waitUntil(_ condition: () -> Bool) async {
-    for _ in 0..<10_000 where !condition() {
-      await Task.yield()
-    }
-
-    XCTAssertTrue(condition(), "the change never showed")
-  }
-
-  private func settle() async {
-    for _ in 0..<100 {
-      await Task.yield()
-    }
-  }
 }
 
 @MainActor

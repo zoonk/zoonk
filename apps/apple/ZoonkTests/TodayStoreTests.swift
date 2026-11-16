@@ -216,14 +216,14 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(store.sessionID, "s9", "the session screen shows the session it opened in")
   }
 
-  func testABlockLinkThatFailsSaysSoOnlyWhileTheLearnerStaysWhereTheyTapped() async {
+  func testABlockLinkThatFailsSaysSoOnlyWhileTheLearnerStaysWhereTheyTapped() async throws {
     let api = StudyAPIStub(openError: .network, holdsOpening: true)
     let router = AppRouter(
       openBlock: AppRouter.openingTodayBlocks(
         today: TodayStore(api: api, cache: signedInCache())))
 
     let stayed = Task { await router.open(blockID: "b1") }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     await api.releaseHeldCall()
 
     guard case .failed = await stayed.value else {
@@ -231,7 +231,7 @@ final class TodayStoreTests: XCTestCase {
     }
 
     let left = Task { await router.open(blockID: "b1") }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     router.select(.plan)
     await api.releaseHeldCall()
 
@@ -240,7 +240,7 @@ final class TodayStoreTests: XCTestCase {
     }
 
     let covered = Task { await router.open(blockID: "b1") }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     router.present(.account())
     await api.releaseHeldCall()
 
@@ -308,7 +308,7 @@ final class TodayStoreTests: XCTestCase {
     let store = TodayStore(api: api, cache: cache)
 
     let opening = Task { await store.open(lesson, as: .block, in: view) }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     await cache.session.expire(try XCTUnwrap(cache.session.authenticatedSession))
     await api.releaseHeldCall()
     let result = await opening.value
@@ -495,14 +495,14 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertNil(lesson, "another learner may be signed in by now")
   }
 
-  func testAStopWhoseScreenClosedStillStopsAndLeavesWhatTheLearnerPlaysNext() async {
+  func testAStopWhoseScreenClosedStillStopsAndLeavesWhatTheLearnerPlaysNext() async throws {
     let api = StudyAPIStub(holdsStop: true)
     let cache = signedInCache()
     let store = StudySessionStore(api: api, cache: cache, today: TodayStore(api: api, cache: cache))
     let playback = SessionPlayback()
 
     let stop = Task { await store.stop(sessionID: "s1", in: playback) }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     playback.play(blockID: "b2")
     stop.cancel()
     await api.releaseHeldCall()
@@ -617,7 +617,7 @@ final class TodayStoreTests: XCTestCase {
       session: day(blocks: [block(position: 0, kind: "review")], nextPosition: 0))
 
     let opening = Task { await store.open(view.session.blocks[0], as: .next, in: view) }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     await cache.session.expire(try XCTUnwrap(cache.session.authenticatedSession))
     await api.releaseHeldCall()
     let result = await opening.value
@@ -1031,24 +1031,20 @@ final class SuggestedGoalAnswerTests: XCTestCase {
       .environment(router)
       .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
-    try await settle()
+    try await waitForLayout(in: window)
 
     let start = String(localized: "Start", table: "Today")
-    try activate(start, in: window)
+    try await activate(start, in: window)
     await api.waitForHeldSuggestedAnswer()
 
     window.frame = CGRect(x: 0, y: 0, width: 1376, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
     await api.releaseHeldSuggestedAnswer()
-    try await settle()
+    try await waitForTestCondition("Setup did not open") { !router.tasks.isEmpty }
 
     let accepted = await api.acceptedSuggestions
     XCTAssertEqual(accepted, ["s1"], "The server took the answer")
     XCTAssertEqual(router.tasks, [.startGoal(goal: "Microeconomics")], "Setup opens")
-  }
-
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(300))
   }
 
   /// Leaving Today ends the visit: an answer that failed before shows nothing on the next one, and
@@ -1061,7 +1057,7 @@ final class SuggestedGoalAnswerTests: XCTestCase {
     let answer = SuggestedGoalAnswer()
 
     answer.respond(to: suggestion, accepted: true, store: store, router: AppRouter())
-    try await settle()
+    try await waitForTestCondition("Expected state did not arrive") { answer.failed }
     XCTAssertTrue(answer.failed)
 
     answer.leave()
@@ -1072,7 +1068,9 @@ final class SuggestedGoalAnswerTests: XCTestCase {
     await api.waitForHeldSuggestedAnswer()
     answer.leave()
     await api.releaseHeldSuggestedAnswer()
-    try await settle()
+    // A failed answer from the closed visit must not restore its failure.
+    let closedAnswerWindow: Duration = .milliseconds(200)
+    try await Task.sleep(for: closedAnswerWindow)
     XCTAssertFalse(answer.failed, "A failure after leaving")
   }
 
@@ -1094,12 +1092,11 @@ final class SuggestedGoalAnswerTests: XCTestCase {
     await api.holdNextSuggestedAnswer()
     await api.releaseHeldSuggestedAnswer()
     await api.waitForHeldSuggestedAnswer()
-    try await settle()
     XCTAssertEqual(answer.answering, true, "The next visit's answer is still saving")
     XCTAssertEqual(router.tasks, [], "The first visit's answer opens nothing")
 
     await api.releaseHeldSuggestedAnswer()
-    try await settle()
+    try await waitForTestCondition("Expected state did not arrive") { (answer.answering) == nil }
     XCTAssertNil(answer.answering)
     XCTAssertEqual(
       router.tasks, [.startGoal(goal: "Microeconomics")], "The next visit's opens Setup")
@@ -1138,14 +1135,14 @@ final class BuddyMissionTapTests: XCTestCase {
       }
       .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForLayout(in: window)
 
-    try activate("Open the mission", in: window)
-    await api.waitForHeldCall()
+    try await activate("Open the mission", in: window)
+    try await api.waitForHeldCall()
     window.frame = CGRect(x: 0, y: 0, width: to, height: 1032)
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForLayout(in: window)
     await api.releaseHeldCall()
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForTestCondition("The mission never opened") { opened == 1 }
 
     XCTAssertEqual(opened, 1, "The mission opens")
   }
@@ -1156,7 +1153,7 @@ final class BuddyMissionTapTests: XCTestCase {
     let today = TodayStore(api: StudyAPIStub(openError: .network), cache: signedInCache())
 
     tap.open("b1", today: today, places: .unavailable) {}
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForTestCondition("The failure never arrived") { tap.failed == "b1" }
     XCTAssertEqual(tap.failed, "b1")
 
     tap.cancel()
@@ -1174,7 +1171,7 @@ final class BuddyMissionTapTests: XCTestCase {
     let places = TutorPlaces { _ in opened += 1 }
 
     tap.open("b1", today: today, places: places) {}
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     tap.cancel()
     let cleared = tap.opening == nil
     XCTAssertTrue(cleared, "The next visit starts with no tap")
@@ -1184,14 +1181,16 @@ final class BuddyMissionTapTests: XCTestCase {
     }
 
     tap.open("b1", today: today, places: places) {}
-    await api.waitForHeldCall(count: 2)
+    try await api.waitForHeldCall(count: 2)
     await api.releaseHeldCall()
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForTestCondition("The first opening did not finish") {
+      await api.heldCallCount == 1
+    }
     XCTAssertEqual(tap.opening, "b1", "The next visit's tap is still opening")
     XCTAssertEqual(opened, 0, "The first visit's tap opens nothing")
 
     await api.releaseHeldCall()
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForTestCondition("The opening never finished") { tap.opening == nil }
     XCTAssertNil(tap.opening)
     XCTAssertEqual(opened, 1, "The next visit's tap opens its mission")
   }
@@ -1234,16 +1233,14 @@ final class TodayExamSheetTests: XCTestCase {
         .environment(AppRouter())
         .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
 
-    try activate(String(localized: "See your exam", table: "Today"), in: window)
-    try await settle()
+    try await activate(String(localized: "See your exam", table: "Today"), in: window)
     let pen = String(localized: "A black pen with a clear barrel", table: "Exam")
-    try activate(pen, in: window)
-    try await settle()
+    try await activate(pen, in: window)
 
     window.frame = CGRect(x: 0, y: 0, width: to, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
 
     let sheet = try XCTUnwrap(
       window.rootViewController?.presentedViewController?.view, "The sheet stays open")
@@ -1305,9 +1302,6 @@ final class TodayExamSheetTests: XCTestCase {
       weeklyChallenge: nil)
   }
 
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(600))
-  }
 }
 
 actor StudyAPIStub: StudyAPIClient {
@@ -1324,7 +1318,6 @@ actor StudyAPIStub: StudyAPIClient {
   private let holdsStop: Bool
   /// Held calls, released in the order they came.
   private var heldCalls: [CheckedContinuation<Void, Never>] = []
-  private var heldCallWaiter: (count: Int, continuation: CheckedContinuation<Void, Never>)?
   private let holdsReadiness: Bool
   private var heldReadiness: CheckedContinuation<Void, Never>?
   private var readinessWaiter: CheckedContinuation<Void, Never>?
@@ -1382,13 +1375,17 @@ actor StudyAPIStub: StudyAPIClient {
   }
 
   /// Until `count` calls are held.
-  func waitForHeldCall(count: Int = 1) async {
-    guard heldCalls.count < count else {
-      return
+  func waitForHeldCall(
+    count: Int = 1, file: StaticString = #filePath, line: UInt = #line
+  ) async throws {
+    try await waitForTestCondition(
+      "Study API never received the held calls", file: file, line: line
+    ) {
+      await self.heldCallCount >= count
     }
-
-    await withCheckedContinuation { heldCallWaiter = (count, $0) }
   }
+
+  var heldCallCount: Int { heldCalls.count }
 
   /// The first call still held goes on.
   func releaseHeldCall() {
@@ -1410,10 +1407,6 @@ actor StudyAPIStub: StudyAPIClient {
     await withCheckedContinuation { continuation in
       heldCalls.append(continuation)
 
-      if let waiter = heldCallWaiter, heldCalls.count >= waiter.count {
-        waiter.continuation.resume()
-        heldCallWaiter = nil
-      }
     }
   }
 

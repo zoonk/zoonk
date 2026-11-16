@@ -10,15 +10,16 @@ final class ExamOverVisitTests: XCTestCase {
     await api.hold(.change)
     let tabs = Tabs()
     let window = try showPlan(api: api, tabs: tabs)
-    try await settle()
-    try activate(String(localized: "Keep studying", table: "Plan"), in: window)
-    await api.waitForHeldCall()
-    try await leaveAndComeBack(tabs)
+    try await activate(String(localized: "Keep studying", table: "Plan"), in: window)
+    try await api.waitForHeldCall()
+    try await leaveAndComeBack(tabs, in: window)
     if spoken(in: window).contains(String(localized: "Keep studying", table: "Plan")) {
-      try activate(String(localized: "Keep studying", table: "Plan"), in: window)
+      try await activate(String(localized: "Keep studying", table: "Plan"), in: window)
     }
     await api.releaseHeldCall()
-    try await settle()
+    try await waitForTestCondition("The change was not recorded") {
+      await api.calls.changes.count == 1
+    }
     let calls = await api.calls
     XCTAssertEqual(calls.changes.count, 1)
   }
@@ -28,11 +29,12 @@ final class ExamOverVisitTests: XCTestCase {
     await api.setChangeError(APIError.network)
     let tabs = Tabs()
     let window = try showPlan(api: api, tabs: tabs)
-    try await settle()
-    try activate(String(localized: "Keep studying", table: "Plan"), in: window)
-    try await settle()
+    try await activate(String(localized: "Keep studying", table: "Plan"), in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      spoken(in: window).contains(Self.failure)
+    }
     XCTAssertTrue(spoken(in: window).contains(Self.failure))
-    try await leaveAndComeBack(tabs)
+    try await leaveAndComeBack(tabs, in: window)
     XCTAssertFalse(spoken(in: window).contains(Self.failure))
   }
 
@@ -41,17 +43,25 @@ final class ExamOverVisitTests: XCTestCase {
     await api.hold(.change)
     let tabs = Tabs()
     let window = try showPlan(api: api, tabs: tabs)
-    try await settle()
-    try activate(String(localized: "Keep studying", table: "Plan"), in: window)
-    await api.waitForHeldCall()
+    try await activate(String(localized: "Keep studying", table: "Plan"), in: window)
+    try await api.waitForHeldCall()
     tabs.selected = 1
-    try await settle()
+    try await waitForTestCondition("The other tab did not appear") {
+      spoken(in: window).contains("Elsewhere")
+    }
     await api.releaseHeldCall()
-    try await settle()
+    try await waitForTestCondition("The change was not recorded") {
+      await api.calls.changes.count == 1
+    }
     let calls = await api.calls
     XCTAssertEqual(calls.changes.count, 1)
     tabs.selected = 0
-    try await settle()
+    try await waitForTestCondition("The page did not return") {
+      spoken(in: window).contains("Your plan")
+    }
+    try await waitForTestCondition("Expected state did not arrive") {
+      !(spoken(in: window).contains(Self.failure))
+    }
     XCTAssertFalse(spoken(in: window).contains(Self.failure))
   }
 
@@ -60,14 +70,14 @@ final class ExamOverVisitTests: XCTestCase {
     await api.setStatusFails(true)
     let tabs = Tabs()
     let window = try showPlan(api: api, tabs: tabs)
-    try await settle()
     try await archive(in: window)
-    try await settle()
-    try await settle()
+    try await waitForTestCondition("Archive failure did not appear") {
+      spoken(in: window).contains(Self.failure)
+    }
     let calls = await api.calls
     XCTAssertEqual(calls.statuses, [.archived])
     XCTAssertTrue(spoken(in: window).contains(Self.failure), "Shown: \(spoken(in: window))")
-    try await leaveAndComeBack(tabs)
+    try await leaveAndComeBack(tabs, in: window)
     XCTAssertFalse(spoken(in: window).contains(Self.failure))
   }
 
@@ -76,33 +86,44 @@ final class ExamOverVisitTests: XCTestCase {
     await api.hold(.setStatus)
     let tabs = Tabs()
     let window = try showPlan(api: api, tabs: tabs)
-    try await settle()
     try await archive(in: window)
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     tabs.selected = 1
-    try await settle()
+    try await waitForTestCondition("The other tab did not appear") {
+      spoken(in: window).contains("Elsewhere")
+    }
     await api.releaseHeldCall()
-    try await settle()
+    try await waitForTestCondition("Archive was not recorded") {
+      await api.calls.statuses == [.archived]
+    }
     let calls = await api.calls
     XCTAssertEqual(calls.statuses, [.archived])
     tabs.selected = 0
-    try await settle()
+    try await waitForTestCondition("The page did not return") {
+      spoken(in: window).contains("Your plan")
+    }
+    try await waitForTestCondition("Expected state did not arrive") {
+      !(spoken(in: window).contains(Self.failure))
+    }
     XCTAssertFalse(spoken(in: window).contains(Self.failure))
   }
 
   private func archive(in window: UIWindow) async throws {
-    try activate(String(localized: "Archive goal", table: "Plan"), in: window)
-    try await settle()
-    try activate(String(localized: "Archive", table: "Plan"), in: window)
+    try await activate(String(localized: "Archive goal", table: "Plan"), in: window)
+    try await activate(String(localized: "Archive", table: "Plan"), in: window)
   }
 
   private static let failure = String(localized: "That didn't save. Try again.", table: "Plan")
 
-  private func leaveAndComeBack(_ tabs: Tabs) async throws {
+  private func leaveAndComeBack(_ tabs: Tabs, in window: UIWindow) async throws {
     tabs.selected = 1
-    try await settle()
+    try await waitForTestCondition("The other tab did not appear") {
+      spoken(in: window).contains("Elsewhere")
+    }
     tabs.selected = 0
-    try await settle()
+    try await waitForTestCondition("The page did not return") {
+      spoken(in: window).contains("Your plan")
+    }
   }
 
   private func showPlan(api: PlanAPIStub, tabs: Tabs) throws -> UIWindow {
@@ -118,9 +139,6 @@ final class ExamOverVisitTests: XCTestCase {
     return window
   }
 
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(400))
-  }
 }
 
 @MainActor

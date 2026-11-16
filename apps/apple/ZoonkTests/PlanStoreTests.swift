@@ -199,7 +199,7 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertNil(session.authenticatedSession)
   }
 
-  func testAChangeMadeAsItsSheetClosesStillSaves() async {
+  func testAChangeMadeAsItsSheetClosesStillSaves() async throws {
     let api = PlanAPIStub()
     await api.hold(.change)
     let store = makeStore(api: api)
@@ -208,7 +208,7 @@ final class PlanStoreTests: XCTestCase {
     let editor = PlanEditor(goalId: "goal", store: store)
 
     editor.run { await editor.change([.dailyMinutes(20)], sentence: "") }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     editor.cancel()
     await api.releaseHeldCall()
     // The next change waits for it to save.
@@ -222,13 +222,13 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertNil(editor.latest, "a closed sheet shows nothing of it")
   }
 
-  func testAChangeMadeWhileAnotherSavesGoesOutAfterIt() async {
+  func testAChangeMadeWhileAnotherSavesGoesOutAfterIt() async throws {
     let api = PlanAPIStub()
     await api.hold(.change)
     let store = makeStore(api: api)
 
     let first = Task { await store.change(goalId: "goal", edits: [.dailyMinutes(20)]) }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     // Released once the second change is made and waiting.
     Task { await api.releaseHeldCall() }
     let second = await store.change(goalId: "goal", edits: [.dailyMinutes(30)])
@@ -262,7 +262,7 @@ final class PlanStoreTests: XCTestCase {
     var applied: [[PlanEdit]] = []
 
     let check = Task { await store.addFitOffer(offer, goalId: "goal") { applied.append($0) } }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     check.cancel()
     await api.releaseHeldCall()
 
@@ -280,14 +280,14 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertTrue(left)
   }
 
-  func testAnArchiveTheLearnerLeftWhileItSavedSavesAndLeavesNothing() async {
+  func testAnArchiveTheLearnerLeftWhileItSavedSavesAndLeavesNothing() async throws {
     let api = PlanAPIStub()
     await api.hold(.setStatus)
     let store = makeStore(api: api)
     var left = false
 
     let archive = Task { await store.archive(goalId: "goal") { left = true } }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
     archive.cancel()
     await api.releaseHeldCall()
     _ = await archive.value
@@ -431,7 +431,9 @@ final class PlanStoreTests: XCTestCase {
 
     await api.setChanged(true)
     await plan.refresh()
-    try await Task.sleep(for: .seconds(0.3))
+    try await waitForTestCondition("Advice did not invalidate") {
+      PlanBasesView.recommended(advice) == nil
+    }
 
     var calls = await api.calls
     XCTAssertNil(PlanBasesView.recommended(advice), "it was worked out for the plan before")
@@ -485,7 +487,7 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertEqual(PlanBasesView.recommended(advice), .quick)
   }
 
-  func testAdviceAskedBeforeANewDayNeverMarksYesterdaysOption() async {
+  func testAdviceAskedBeforeANewDayNeverMarksYesterdaysOption() async throws {
     let api = PlanAPIStub()
     let clock = TestClock(now: Date(timeIntervalSince1970: 1_800_000_000))
     let store = makeStore(api: api, clock: clock)
@@ -495,7 +497,7 @@ final class PlanStoreTests: XCTestCase {
     await plan.load()
     await api.hold(.advice)
     let asking = Task { await advice.load() }
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
 
     clock.now = clock.now.addingTimeInterval(86_400)
     await api.setToday("2027-01-05")
@@ -607,7 +609,9 @@ final class PlanReadsOnScreenTests: XCTestCase {
     let api = PlanAPIStub()
     let screen = try Screen(api: api)
     try show(screen.view { $0.basesSheet })
-    try await screen.settle()
+    try await waitForTestCondition("Advice did not finish") {
+      screen.store.basesAdvice(goalId: "goal").value != nil
+    }
 
     try await screen.reopen()
 
@@ -619,7 +623,10 @@ final class PlanReadsOnScreenTests: XCTestCase {
     let api = PlanAPIStub()
     let screen = try Screen(api: api)
     try show(screen.view { $0.timeSection })
-    try await screen.settle()
+    try await waitForTestCondition("Time-to-cover did not finish") {
+      screen.store.timeToCover(goalId: "goal").freshState != .loading
+        && screen.store.timeToCover(goalId: "goal").value != nil
+    }
 
     try await screen.reopen()
 
@@ -631,15 +638,25 @@ final class PlanReadsOnScreenTests: XCTestCase {
     let api = PlanAPIStub()
     let screen = try Screen(api: api)
     try show(screen.view { $0.timeSection })
-    try await screen.settle()
+    try await waitForTestCondition("Time-to-cover did not finish") {
+      screen.store.timeToCover(goalId: "goal").freshState != .loading
+        && screen.store.timeToCover(goalId: "goal").value != nil
+    }
 
     screen.isOpen = false
     await screen.editor.change([.dailyMinutes(45)], sentence: "")
     await api.setTimeToCoverFails(true)
     try await screen.reopen()
+    try await waitForTestCondition("Time-to-cover did not fail") {
+      if case .failed = screen.store.timeToCover(goalId: "goal").freshState { return true }
+      return false
+    }
     await api.setTimeToCoverFails(false)
     try await screen.reopen()
 
+    try await waitForTestCondition("Time-to-cover did not reload") {
+      await api.calls.timeToCover == 3 && screen.store.timeToCover(goalId: "goal").freshValue != nil
+    }
     let calls = await api.calls
     XCTAssertEqual(calls.timeToCover, 3, "the visit after a failed read asks again")
     XCTAssertEqual(screen.store.timeToCover(goalId: "goal").freshValue?.recommendedMinutes, 45)
@@ -650,11 +667,13 @@ final class PlanReadsOnScreenTests: XCTestCase {
     let screen = try Screen(api: api)
     await api.hold(.advice)
     try show(screen.view { $0.basesSheet })
-    await api.waitForHeldCall()
+    try await api.waitForHeldCall()
 
     try await screen.reopen()
     await api.releaseHeldCall()
-    try await screen.settle()
+    try await waitForTestCondition("Advice did not finish") {
+      screen.store.basesAdvice(goalId: "goal").value != nil
+    }
 
     let calls = await api.calls
     XCTAssertEqual(calls.advice, 1)
@@ -702,11 +721,13 @@ final class PlanReadsOnScreenTests: XCTestCase {
         .frame(width: 320)
         .dynamicTypeSize(.accessibility2)
       })
-    await api.waitForHeldCall()
-    try await screen.settle()
+    try await api.waitForHeldCall()
+    try await waitForTestCondition("The measured row did not appear") { !rows.isEmpty }
 
     await answer()
-    try await screen.settle()
+    try await waitForTestCondition("Time-to-cover did not finish") {
+      screen.store.timeToCover(goalId: "goal").freshState != .loading
+    }
     return rows
   }
 
@@ -714,15 +735,24 @@ final class PlanReadsOnScreenTests: XCTestCase {
     let api = PlanAPIStub()
     let screen = try Screen(api: api)
     try show(screen.view { $0.basesSheet })
-    try await screen.settle()
+    try await waitForTestCondition("Advice did not finish") {
+      screen.store.basesAdvice(goalId: "goal").value != nil
+    }
 
     screen.isOpen = false
     await screen.editor.change([.dailyMinutes(45)], sentence: "")
     await api.setAdviceFails(true)
     try await screen.reopen()
+    try await waitForTestCondition("Advice did not fail") {
+      if case .failed = screen.store.basesAdvice(goalId: "goal").freshState { return true }
+      return false
+    }
     await api.setAdviceFails(false)
     try await screen.reopen()
 
+    try await waitForTestCondition("Advice did not reload") {
+      await api.calls.advice == 3 && screen.store.basesAdvice(goalId: "goal").freshValue != nil
+    }
     let calls = await api.calls
     XCTAssertEqual(calls.advice, 3, "the visit after a failed read asks again")
   }
@@ -732,6 +762,7 @@ final class PlanReadsOnScreenTests: XCTestCase {
 @Observable
 private final class Screen {
   var isOpen = true
+  var appeared = false
   let store: PlanStore
   let editor: PlanEditor
   let plan: GoalPlan
@@ -766,14 +797,11 @@ private final class Screen {
   /// Closes it, then opens it again, each long enough for its reads to land.
   func reopen() async throws {
     isOpen = false
-    try await settle()
+    try await waitForTestCondition("The editor did not close") { !appeared }
     isOpen = true
-    try await settle()
+    try await waitForTestCondition("The editor did not reopen") { appeared }
   }
 
-  func settle() async throws {
-    try await Task.sleep(for: .seconds(0.5))
-  }
 }
 
 private struct Opened<Content: View>: View {
@@ -783,6 +811,8 @@ private struct Opened<Content: View>: View {
   var body: some View {
     if screen.isOpen {
       content(screen)
+        .onAppear { screen.appeared = true }
+        .onDisappear { screen.appeared = false }
     }
   }
 }
@@ -831,7 +861,6 @@ actor PlanAPIStub: PlanAPIClient {
   private var end = PlanEnd(certificates: nil, next: nil)
   private var languageUnitsRead: LanguageUnitsOverview?
   private var heldCall: CheckedContinuation<Void, Never>?
-  private var heldCallWaiter: CheckedContinuation<Void, Never>?
 
   enum HeldCall {
     case advice
@@ -871,13 +900,14 @@ actor PlanAPIStub: PlanAPIClient {
   /// The next `call` waits for `releaseHeldCall()`.
   func hold(_ call: HeldCall) { holds = call }
 
-  func waitForHeldCall() async {
-    guard heldCall == nil else {
-      return
+  func waitForHeldCall(file: StaticString = #filePath, line: UInt = #line) async throws {
+    try await waitForTestCondition("Plan API never received the held call", file: file, line: line)
+    {
+      await self.hasHeldCall
     }
-
-    await withCheckedContinuation { heldCallWaiter = $0 }
   }
+
+  private var hasHeldCall: Bool { heldCall != nil }
 
   func releaseHeldCall() {
     heldCall?.resume()
@@ -892,8 +922,6 @@ actor PlanAPIStub: PlanAPIClient {
     holds = nil
     await withCheckedContinuation { continuation in
       heldCall = continuation
-      heldCallWaiter?.resume()
-      heldCallWaiter = nil
     }
   }
 

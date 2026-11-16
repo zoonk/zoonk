@@ -679,13 +679,15 @@ final class TutorOfferStepTests: XCTestCase {
             api: LearnerSummaryAPI(clients: clients), cache: AppCache(session: session))
         )
         .zoonkStyles())
-    await held.waitUntilHeld()
+    try await held.waitUntilHeld()
 
     step.scope = .plan(goalId: "step-b")
     step.draft = nil
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForTestCondition("The next step did not render") {
+      step.renderedScope == step.scope
+    }
     held.release()
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForTestCondition("The old thread read did not finish") { held.finished }
 
     XCTAssertTrue(api.requestIDs.isEmpty, "Nothing is asked for the step the learner left")
   }
@@ -694,6 +696,7 @@ final class TutorOfferStepTests: XCTestCase {
 @MainActor
 @Observable
 private final class Step {
+  var renderedScope: TutorScope?
   var scope: TutorScope
   var draft: TutorDraft?
 
@@ -708,6 +711,7 @@ private struct StepThread: View {
 
   var body: some View {
     TutorThreadView(scope: step.scope, draft: step.draft) { EmptyView() }
+      .onChange(of: step.scope, initial: true) { step.renderedScope = step.scope }
   }
 }
 
@@ -715,8 +719,8 @@ private struct StepThread: View {
 @MainActor
 private final class Held {
   private var holding: CheckedContinuation<Void, Never>?
-  private var waiter: CheckedContinuation<Void, Never>?
   private var released = false
+  private(set) var finished = false
 
   func wait() async {
     guard !released, holding == nil else {
@@ -725,16 +729,15 @@ private final class Held {
 
     await withCheckedContinuation { continuation in
       holding = continuation
-      waiter?.resume()
-      waiter = nil
     }
+    finished = true
   }
 
-  func waitUntilHeld() async {
-    if holding == nil {
-      await withCheckedContinuation { waiter = $0 }
-    }
+  func waitUntilHeld() async throws {
+    try await waitForTestCondition("The fixture request never arrived") { self.isHeld }
   }
+
+  private var isHeld: Bool { holding != nil }
 
   func release() {
     released = true

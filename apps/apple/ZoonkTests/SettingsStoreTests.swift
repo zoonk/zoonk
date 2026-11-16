@@ -278,7 +278,7 @@ final class SettingsStoreTests: XCTestCase {
     await api.waitForHeldDelete()
     changes.save(.memorySwitch) { await store.setMemoryEnabled(false) }
     await api.releaseDeletes(throwing: APIError.network)
-    try await Task.sleep(for: .milliseconds(300))
+    try await waitForTestCondition("The save failure did not arrive") { changes.saveFailed }
 
     XCTAssertTrue(changes.saveFailed)
   }

@@ -210,8 +210,8 @@ private actor EssayTransport: ClientTransport {
 
   /// False when no read starts within two seconds.
   func waitForReadAfterSend() async -> Bool {
-    for _ in 0..<200 where readsAfterSend == 0 {
-      try? await Task.sleep(for: .milliseconds(10))
+    _ = try? await waitForTestCondition("The follow-up read never started") {
+      await self.readsAfterSend > 0
     }
 
     return readsAfterSend > 0

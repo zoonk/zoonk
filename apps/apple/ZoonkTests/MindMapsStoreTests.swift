@@ -966,7 +966,9 @@ final class MindMapsStoreTests: XCTestCase {
         .environment(AppRouter())
         .zoonkStyles())
 
-    try await Task.sleep(for: .seconds(2.5))
+    try await waitForTestCondition("The stop did not trigger the list read") {
+      await api.calls.list == 2
+    }
 
     let calls = await api.calls
     XCTAssertEqual(calls.list, 2, "The page reads the list again once, at the stop's day")

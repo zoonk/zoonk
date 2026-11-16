@@ -36,21 +36,21 @@ final class TutorAskButtonTests: XCTestCase {
       .environment(router)
       .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: from, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
 
     let name = dependencies.learnerSummaryStore.buddyDisplayName
-    try activate(scope.askLabel(name), in: window)
-    try await settle()
+    try await activate(scope.askLabel(name), in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      (window.rootViewController?.presentedViewController) != nil
+    }
     XCTAssertNotNil(window.rootViewController?.presentedViewController, "The panel opens")
 
     window.frame = CGRect(x: 0, y: 0, width: to, height: 1032)
-    try await settle()
-
+    try await waitForLayout(in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      (window.rootViewController?.presentedViewController) != nil
+    }
     XCTAssertNotNil(window.rootViewController?.presentedViewController, "The panel stays")
-  }
-
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(600))
   }
 
 }

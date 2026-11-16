@@ -12,14 +12,15 @@ final class PlanResumeFailureTests: XCTestCase {
     await api.setStatusFails(true)
     let tabs = Tabs()
     let window = try showPlan(api: api, tabs: tabs)
-    try await settle()
 
-    try activate(String(localized: "Resume", table: "Plan"), in: window)
-    try await settle()
+    try await activate(String(localized: "Resume", table: "Plan"), in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      spoken(in: window).contains(Self.failure)
+    }
     XCTAssertTrue(
       spoken(in: window).contains(Self.failure), "The failure shows: \(spoken(in: window))")
 
-    try await leaveAndComeBack(tabs)
+    try await leaveAndComeBack(tabs, in: window)
     XCTAssertFalse(
       spoken(in: window).contains(Self.failure), "Nothing of it on return: \(spoken(in: window))")
   }
@@ -30,28 +31,36 @@ final class PlanResumeFailureTests: XCTestCase {
     await api.hold(.resumeChangesPlan)
     let tabs = Tabs()
     let window = try showPlan(api: api, tabs: tabs)
-    try await settle()
 
-    try activate(String(localized: "Resume", table: "Plan"), in: window)
-    await api.waitForHeldCall()
+    try await activate(String(localized: "Resume", table: "Plan"), in: window)
+    try await api.waitForHeldCall()
     tabs.selected = 1
-    try await settle()
+    try await waitForTestCondition("The other tab did not appear") {
+      spoken(in: window).contains("Elsewhere")
+    }
     await api.releaseHeldCall()
-    try await settle()
     tabs.selected = 0
-    try await settle()
-
+    try await waitForTestCondition("The page did not return") {
+      spoken(in: window).contains("Your plan")
+    }
+    try await waitForTestCondition("Expected state did not arrive") {
+      !(spoken(in: window).contains(Self.failure))
+    }
     XCTAssertFalse(
       spoken(in: window).contains(Self.failure), "Nothing of it on return: \(spoken(in: window))")
   }
 
   private static let failure = String(localized: "That didn't save. Try again.", table: "Plan")
 
-  private func leaveAndComeBack(_ tabs: Tabs) async throws {
+  private func leaveAndComeBack(_ tabs: Tabs, in window: UIWindow) async throws {
     tabs.selected = 1
-    try await settle()
+    try await waitForTestCondition("The other tab did not appear") {
+      spoken(in: window).contains("Elsewhere")
+    }
     tabs.selected = 0
-    try await settle()
+    try await waitForTestCondition("The page did not return") {
+      spoken(in: window).contains("Your plan")
+    }
   }
 
   private func showPlan(api: PlanAPIStub, tabs: Tabs) throws -> UIWindow {
@@ -67,9 +76,6 @@ final class PlanResumeFailureTests: XCTestCase {
     return window
   }
 
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(400))
-  }
 }
 
 @MainActor

@@ -146,7 +146,7 @@ final class MockDraftQueueTests: XCTestCase {
     while saves == 0 { await Task.yield() }
     queue.stop()
     gate.open()
-    try? await Task.sleep(for: .milliseconds(100))
+    await queue.idle()
 
     XCTAssertEqual(saves, 1)
     XCTAssertEqual(queue.status, .saved)
@@ -173,8 +173,6 @@ private final class Gate {
   func open() { isOpen = true }
 
   func wait() async {
-    while !isOpen {
-      try? await Task.sleep(for: .milliseconds(5))
-    }
+    _ = try? await waitForTestCondition("The draft gate was never released") { self.isOpen }
   }
 }

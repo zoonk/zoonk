@@ -200,7 +200,9 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(transport.cues("goodbye").map(\.channel), [.thinking])
 
     transport.speaking = false
-    try? await Task.sleep(for: .milliseconds(700))
+    // A cue reply must not create a gap even after the learner has been silent.
+    let silentReplyWindow: Duration = .milliseconds(700)
+    try? await Task.sleep(for: silentReplyWindow)
     transport.onEvent?(
       .transcript(speaker: .character, delta: "Sorry, I have to go.", startMs: 5000, endMs: 6000))
 
@@ -225,10 +227,13 @@ final class LiveCallTests: XCTestCase {
       .transcript(speaker: .learner, delta: " there", startMs: 2500, endMs: 2900))
 
     // The check waits for the transcript to settle after its last fragment.
-    try? await Task.sleep(for: .milliseconds(200))
+    let transcriptQuietWindow: Duration = .milliseconds(200)
+    try? await Task.sleep(for: transcriptQuietWindow)
     XCTAssertEqual(server.checkedConnections, [])
     await waitUpTo(5) { !server.checkedConnections.isEmpty }
-    try? await Task.sleep(for: .milliseconds(750))
+    // No duplicate check may follow the settled transcript.
+    let duplicateCheckWindow: Duration = .milliseconds(750)
+    try? await Task.sleep(for: duplicateCheckWindow)
 
     XCTAssertEqual(server.checkedConnections, ["connection-1"])
   }
@@ -542,7 +547,7 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(reconnect.dropped, .init(reason: nil, retry: .callAgain))
 
     let finishing = Task { await reconnect.finish() }
-    try? await Task.sleep(for: .milliseconds(50))
+    await Task.yield()
     server.answerConnect()
     let summary = await finishing.value
 
@@ -1195,18 +1200,15 @@ final class LiveCallTests: XCTestCase {
   }
 
   private func settle(until condition: () -> Bool) async {
-    for _ in 0..<100 where !condition() {
-      await Task.yield()
-      try? await Task.sleep(for: .milliseconds(5))
-    }
+    _ = try? await waitForTestCondition("The call state never arrived") { condition() }
   }
 
   /// For the call's own clocks, which run on real time.
   private func waitUpTo(_ seconds: Double, until condition: () -> Bool) async {
-    let end = Date.now.addingTimeInterval(seconds)
-
-    while !condition(), Date.now < end {
-      try? await Task.sleep(for: .milliseconds(50))
+    _ = try? await waitForTestCondition(
+      "The call clock did not advance", timeout: .seconds(seconds)
+    ) {
+      condition()
     }
   }
 }

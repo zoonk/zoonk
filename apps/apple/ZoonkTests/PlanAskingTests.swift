@@ -80,7 +80,7 @@ final class PlanAskingTests: XCTestCase {
 
     func sleep(until deadline: Instant, tolerance: Duration?) async throws {
       guard now.duration(to: deadline) <= step else {
-        try await Task.sleep(for: .seconds(3600))
+        try await waitForCancellation()
         return
       }
 
@@ -241,7 +241,7 @@ final class PlanAskingTests: XCTestCase {
 
     let task = Task {
       await asking.ask("old", when: true) {
-        try? await Task.sleep(for: .seconds(30))
+        try? await waitForCancellation()
         return Answer(id: 1, ready: true)
       }
     }
@@ -302,7 +302,9 @@ final class PlanAskingTests: XCTestCase {
       asks.count += 1
 
       guard asks.count > 1 else {
-        try await Task.sleep(for: .milliseconds(300))
+        try await waitForTestCondition("The first ask did not time out") {
+          asking.status == .failed
+        }
         return Answer(id: 1, ready: false)
       }
 
@@ -329,4 +331,10 @@ final class PlanAskingTests: XCTestCase {
 
     server.releaseNext()
   }
+}
+
+private func waitForCancellation() async throws {
+  let never = AsyncStream<Void> { _ in }
+  for await _ in never {}
+  throw CancellationError()
 }

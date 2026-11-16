@@ -7,27 +7,31 @@ import XCTest
 final class TutorAnswerLinkTests: XCTestCase {
   func testLeavingBuddyAndReturningBeforeTheLinkAnswersOpensNothingAndNextTapWorks() async throws {
     let (window, tabs, api, router) = try await host()
-    try activate("Open lesson", in: window)
-    await api.waitForHeldCall()
+    try await activate("Open lesson", in: window)
+    try await api.waitForHeldCall()
     tabs.selected = 1
     router.select(.plan)
-    try await settle()
+    try await waitForTestCondition("Buddy did not disappear") {
+      spoken(in: window).contains("Elsewhere")
+    }
     tabs.selected = 0
     router.select(.buddy)
-    try await settle()
+    try await waitForTestCondition("Buddy did not return") {
+      spoken(in: window).contains("Open lesson")
+    }
     await api.releaseHeldCall()
-    try await settle()
+    try await waitForTestCondition("The old link request did not finish") { tabs.pending == 0 }
     XCTAssertTrue(router.tasks.isEmpty)
     try await tapAgain(in: window, api: api, router: router)
   }
 
   func testAccountOpenedWhileTheAnswerLinkWaitsStaysOnItsLayer() async throws {
-    let (window, _, api, router) = try await host()
-    try activate("Open lesson", in: window)
-    await api.waitForHeldCall()
+    let (window, tabs, api, router) = try await host()
+    try await activate("Open lesson", in: window)
+    try await api.waitForHeldCall()
     router.present(.account())
     await api.releaseHeldCall()
-    try await settle()
+    try await waitForTestCondition("The old link request did not finish") { tabs.pending == 0 }
     XCTAssertTrue(router.tasks.isEmpty)
     XCTAssertEqual(router.sheet(presentedBy: 0).wrappedValue, .account())
     router.sheet = nil
@@ -35,13 +39,13 @@ final class TutorAnswerLinkTests: XCTestCase {
   }
 
   func testAResizeThatRebuildsTheAnswerDropsItsOpeningAndTheNextTapWorks() async throws {
-    let (window, _, api, router) = try await host()
-    try activate("Open lesson", in: window)
-    await api.waitForHeldCall()
+    let (window, tabs, api, router) = try await host()
+    try await activate("Open lesson", in: window)
+    try await api.waitForHeldCall()
     window.frame = CGRect(x: 0, y: 0, width: 1376, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
     await api.releaseHeldCall()
-    try await settle()
+    try await waitForTestCondition("The old link request did not finish") { tabs.pending == 0 }
     XCTAssertTrue(router.tasks.isEmpty, "A resize that replaces the answer drops its opening")
     try await tapAgain(in: window, api: api, router: router)
     let opened = await api.openedBlocks
@@ -49,10 +53,10 @@ final class TutorAnswerLinkTests: XCTestCase {
   }
 
   private func tapAgain(in window: UIWindow, api: StudyAPIStub, router: AppRouter) async throws {
-    try activate("Open lesson", in: window)
-    await api.waitForHeldCall()
+    try await activate("Open lesson", in: window)
+    try await api.waitForHeldCall()
     await api.releaseHeldCall()
-    try await settle()
+    try await waitForTestCondition("Expected state did not arrive") { !(router.tasks.isEmpty) }
     XCTAssertFalse(router.tasks.isEmpty)
   }
 
@@ -69,19 +73,17 @@ final class TutorAnswerLinkTests: XCTestCase {
     try readsWhatVoiceOverReads()
     let window = try show(AnswerHost(tabs: tabs).environment(router))
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
-    try await settle()
+    try await waitForLayout(in: window)
     return (window, tabs, api, router)
   }
 
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(600))
-  }
 }
 
 @MainActor
 @Observable
 private final class AnswerTabs {
   var selected = 0
+  var pending = 0
 }
 
 private struct AnswerHost: View {
@@ -90,11 +92,11 @@ private struct AnswerHost: View {
   var body: some View {
     TabView(selection: $tabs.selected) {
       PaneSplit {
-        ViewOwnedAnswerLink()
+        ViewOwnedAnswerLink(tabs: tabs)
       } secondary: {
         Text(verbatim: "Day")
       } single: {
-        ViewOwnedAnswerLink()
+        ViewOwnedAnswerLink(tabs: tabs)
       }
       .tag(0)
       Text(verbatim: "Elsewhere").tag(1)
@@ -103,13 +105,16 @@ private struct AnswerHost: View {
 }
 
 private struct ViewOwnedAnswerLink: View {
+  let tabs: AnswerTabs
   @Environment(AppRouter.self) private var router
   @State private var opening: Task<Void, Never>?
 
   var body: some View {
     Button("Open lesson") {
       guard opening == nil else { return }
+      tabs.pending += 1
       opening = Task {
+        defer { tabs.pending -= 1 }
         _ = await router.openAnswerLink(blockID: "b1")
         opening = nil
       }

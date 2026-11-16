@@ -55,8 +55,12 @@ final class PlanSlotCheckTests: XCTestCase {
     let context = try context()
     let actions = PlanSlotActions(apply: { applied.append($0) }, notNow: {})
 
-    try await across(from: from, to: to, tap: "Add to my plan", api: api) {
+    try await across(
+      from: from, to: to, tap: "Add to my plan", api: api
+    ) {
       PlanFitSlot(context: context, offer: offer, title: Text(verbatim: "Fit"), actions: actions)
+    } completed: {
+      applied.count == 1
     }
 
     XCTAssertEqual(applied.count, 1, "Add to my plan applies once")
@@ -74,10 +78,14 @@ final class PlanSlotCheckTests: XCTestCase {
     await api.hold(.preview)
     let context = try context()
 
-    let window = try await across(from: from, to: to, tap: "See what changes", api: api) {
+    let window = try await across(
+      from: from, to: to, tap: "See what changes", api: api
+    ) {
       PlanCoverageSlot(
         context: context, title: "Coverage", asksAtOnce: false,
         actions: PlanSlotActions(apply: { _ in }, notNow: {}))
+    } completed: {
+      context.slotCheck(.coverage("Coverage")).asked != nil
     }
 
     XCTAssertNotNil(
@@ -92,8 +100,12 @@ final class PlanSlotCheckTests: XCTestCase {
     await api.hold(.timeToCover)
     let context = try context()
 
-    let window = try await across(from: from, to: to, tap: "Find a date", api: api) {
+    let window = try await across(
+      from: from, to: to, tap: "Find a date", api: api
+    ) {
       PlanPastDateSlot(context: context, actions: PlanSlotActions(apply: { _ in }, notNow: {}))
+    } completed: {
+      context.slotCheck(.pastDate).noDate
     }
 
     let found = String(localized: "No date fits all your lessons.", table: "Plan")
@@ -113,7 +125,7 @@ final class PlanSlotCheckTests: XCTestCase {
   @discardableResult
   private func across(
     from: Width, to: Width, tap: String.LocalizationValue, api: PlanAPIStub,
-    @ViewBuilder card: () -> some View
+    @ViewBuilder card: () -> some View, completed: () -> Bool
   ) async throws -> UIWindow {
     try readsWhatVoiceOverReads()
     let shown = card()
@@ -131,15 +143,17 @@ final class PlanSlotCheckTests: XCTestCase {
       .environment(AppRouter())
       .zoonkStyles())
     window.frame = frame(from)
-    try await settle()
+    try await waitForLayout(in: window)
 
-    try activate(String(localized: tap, table: "Plan"), in: window)
-    await api.waitForHeldCall()
+    try await activate(String(localized: tap, table: "Plan"), in: window)
+    try await api.waitForHeldCall()
 
     window.frame = frame(to)
-    try await settle()
+    try await waitForLayout(in: window)
     await api.releaseHeldCall()
-    try await settle()
+    try await waitForTestCondition("The card check did not complete") {
+      completed()
+    }
     return window
   }
 
@@ -168,7 +182,4 @@ final class PlanSlotCheckTests: XCTestCase {
         """.utf8))
   }
 
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(300))
-  }
 }

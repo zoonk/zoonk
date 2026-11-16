@@ -22,31 +22,34 @@ final class GoalStartVisitTests: XCTestCase {
         .environment(AppRouter())
         .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
-    try await settle()
+    try await waitForLayout(in: window)
 
-    try activate(String(localized: "Add your material", table: "Onboarding"), in: window)
-    try await settle()
-    try activateMenuItem(String(localized: "Paste a link", table: "Onboarding"), in: window)
-    try await settle()
+    try await activate(String(localized: "Add your material", table: "Onboarding"), in: window)
+    try await waitForTestCondition("The material menu did not appear") {
+      views(UIButton.self, in: window).contains { $0.menu != nil }
+    }
+    try await activateMenuItem(String(localized: "Paste a link", table: "Onboarding"), in: window)
+    try await waitForTestCondition("The link field did not appear") {
+      !views(UITextField.self, in: window).isEmpty
+    }
     let link = try XCTUnwrap(views(UITextField.self, in: window).first, "The link's box")
     link.becomeFirstResponder()
     link.insertText("https://zoonk.invalid/syllabus")
-    try await settle()
-    try activate(String(localized: "Add link", table: "Onboarding"), in: window)
-    try await settle()
+    try await activate(String(localized: "Add link", table: "Onboarding"), in: window)
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(Self.failure, in: window)
+    }
     XCTAssertTrue(shows(Self.failure, in: window), "The failure shows: \(spoken(in: window))")
 
     let goal = try XCTUnwrap(views(UITextView.self, in: window).first, "The goal's box")
     goal.becomeFirstResponder()
     goal.insertText("Pass the ENEM")
-    try await settle()
-    try activate(String(localized: "Build my plan", table: "Onboarding"), in: window)
-    await server.waitForHeldRequest()
-    try await settle()
-    await server.release()
-    try await settle()
-    try await settle()
-
+    try await activate(String(localized: "Build my plan", table: "Onboarding"), in: window)
+    try await server.waitForHeldRequest()
+    try await server.release()
+    try await waitForTestCondition("Expected state did not arrive") {
+      shows(String(localized: "Build my plan", table: "Onboarding"), in: window)
+    }
     XCTAssertTrue(
       shows(String(localized: "Build my plan", table: "Onboarding"), in: window),
       "Back on the entry: \(spoken(in: window))")
@@ -58,7 +61,11 @@ final class GoalStartVisitTests: XCTestCase {
 
   /// Hosted tests leave hidden windows in the scene. The source menu belongs to this window;
   /// its rows may appear in a separate visible window.
-  private func activateMenuItem(_ label: String, in window: UIWindow) throws {
+  private func activateMenuItem(_ label: String, in window: UIWindow) async throws {
+    try await waitForTestCondition("Nothing runs \(label)") { runMenuItem(label, in: window) }
+  }
+
+  private func runMenuItem(_ label: String, in window: UIWindow) -> Bool {
     let windows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
       .flatMap(\.windows).filter { !$0.isHidden && $0.alpha > 0 }
     let all = windows.flatMap { views(UIView.self, in: $0) }
@@ -68,7 +75,7 @@ final class GoalStartVisitTests: XCTestCase {
         for name in ["performWithSender:target:", "_performActionWithSender:"]
         where action.responds(to: NSSelectorFromString(name)) {
           action.perform(NSSelectorFromString(name), with: nil, with: nil)
-          return
+          return true
         }
       }
     }
@@ -78,12 +85,12 @@ final class GoalStartVisitTests: XCTestCase {
       where elements(in: cell).contains(where: { $0.accessibilityLabel == label }) {
         if let path = list.indexPath(for: cell) {
           list.delegate?.collectionView?(list, didSelectItemAt: path)
-          return
+          return true
         }
       }
     }
 
-    XCTFail("Nothing runs \(label): \(windows.map { spoken(in: $0) })")
+    return false
   }
 
   private func action(_ title: String, in menu: UIMenu) -> UIAction? {
@@ -121,9 +128,6 @@ final class GoalStartVisitTests: XCTestCase {
     spoken(in: window).contains { $0.contains(line) }
   }
 
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(500))
-  }
 }
 
 /// A signed-in learner with no goal yet, who can add material.

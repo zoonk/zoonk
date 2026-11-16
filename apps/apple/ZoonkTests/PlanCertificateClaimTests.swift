@@ -28,21 +28,17 @@ final class PlanCertificateClaimTests: XCTestCase {
       }
       .zoonkStyles())
     window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
-    try await settle()
+    try await waitForLayout(in: window)
 
-    try activate(String(localized: "Get your certificate", table: "Plan"), in: window)
-    await claim.waitUntilAsked()
+    try await activate(String(localized: "Get your certificate", table: "Plan"), in: window)
+    try await claim.waitUntilAsked()
 
     window.frame = CGRect(x: 0, y: 0, width: 1376, height: 1032)
-    try await settle()
+    try await waitForLayout(in: window)
     claim.release(.certificate(code: "ABC"))
-    try await settle()
+    try await waitForTestCondition("The certificate did not open") { shown.count == 1 }
 
     XCTAssertEqual(shown.count, 1, "What it earned shows")
-  }
-
-  private func settle() async throws {
-    try await Task.sleep(for: .milliseconds(300))
   }
 
   /// Leaving the Plan ends the visit: a claim that failed before shows nothing on the next one, and
@@ -59,19 +55,19 @@ final class PlanCertificateClaimTests: XCTestCase {
     var check: PlanSlotCheck { context.slotCheck(.finished, request: .claim) }
 
     check.claim(context)
-    await claim.waitUntilAsked()
+    try await claim.waitUntilAsked()
     claim.release(nil)
-    try await settle()
+    try await waitForTestCondition("Expected state did not arrive") { check.failed }
     XCTAssertTrue(check.failed)
 
     owner.leave()
     XCTAssertFalse(check.failed, "A failure before leaving")
 
     check.claim(context)
-    await claim.waitUntilAsked()
+    try await claim.waitUntilAsked()
     owner.leave()
     claim.release(nil)
-    try await settle()
+    try await waitForTestCondition("The late claim did not finish") { claim.completed == 2 }
     XCTAssertFalse(check.failed, "A failure after leaving")
   }
 }
@@ -80,21 +76,21 @@ final class PlanCertificateClaimTests: XCTestCase {
 @MainActor
 private final class HeldClaim {
   private var held: CheckedContinuation<PlanClaim?, Never>?
-  private var waiter: CheckedContinuation<Void, Never>?
+  private(set) var completed = 0
 
   func answer() async -> PlanClaim? {
-    await withCheckedContinuation { continuation in
+    let claim = await withCheckedContinuation { continuation in
       held = continuation
-      waiter?.resume()
-      waiter = nil
     }
+    completed += 1
+    return claim
   }
 
-  func waitUntilAsked() async {
-    if held == nil {
-      await withCheckedContinuation { waiter = $0 }
-    }
+  func waitUntilAsked() async throws {
+    try await waitForTestCondition("The fixture never received its request") { self.isHeld }
   }
+
+  private var isHeld: Bool { held != nil }
 
   /// Nil when it didn't save.
   func release(_ claim: PlanClaim?) {

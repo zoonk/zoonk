@@ -391,8 +391,8 @@ actor DraftServer: ClientTransport {
 
   /// False when no read starts within two seconds of the held edit's answer.
   func waitForReadAfterEdit() async -> Bool {
-    for _ in 0..<200 where readsAfterEdit == 0 {
-      try? await Task.sleep(for: .milliseconds(10))
+    _ = try? await waitForTestCondition("The follow-up read never started") {
+      await self.readsAfterEdit > 0
     }
 
     return readsAfterEdit > 0
