@@ -167,3 +167,8 @@ private struct TaskActionToolbar<Action: View>: ViewModifier {
     }
   }
 }
+
+extension EnvironmentValues {
+  /// A task covers the app (main's task screens): what lines up with it keeps the task's column.
+  @Entry var isTaskScreen = false
+}

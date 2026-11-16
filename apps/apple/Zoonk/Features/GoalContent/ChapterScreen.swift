@@ -23,7 +23,7 @@ struct ChapterScreen: View {
         case .failed(.notFound), .empty:
           notInPlan
         case .failed:
-          ContentUnavailableView {
+          StateMessage {
             Label {
               Text(
                 "Couldn't load this chapter", tableName: "Plan",
@@ -95,7 +95,7 @@ struct ChapterScreen: View {
   }
 
   private var notInPlan: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(
           "This chapter isn't in your plan", tableName: "Plan",

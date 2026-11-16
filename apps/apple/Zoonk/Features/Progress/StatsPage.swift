@@ -50,7 +50,7 @@ struct StatsEmpty: View {
   @Environment(AppRouter.self) private var router
 
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(
           "No statistics yet", tableName: "Progress")
@@ -93,7 +93,7 @@ struct StatsFailure: View {
   let retry: @MainActor () async -> Void
 
   var body: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(
           "This page didn't load", tableName: "Progress")

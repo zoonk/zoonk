@@ -52,7 +52,6 @@ private struct BeltProgression: View {
         .accessibilityElement(children: .combine)
 
         BeltDrawing(level: level, isWide: sizeClass == .regular)
-          .padding(.leading, sizeClass == .regular ? -24 : -16)
 
         nextLine
           .typeStyle(.body)

@@ -61,7 +61,7 @@ struct MockRunnerView: View {
         })
     ) {
       answerSheet(isBeside: false).presentationDetents([.medium, .large])
-        .zoonkStyles()
+        .zoonkSheet()
     }
     .onChange(of: fitsTwoPages) { _, fits in
       if fits { answerSheetInSheet = false }

@@ -41,3 +41,31 @@ struct TaskSegments: View {
     }
   }
 }
+
+extension View {
+  /// A task's progress under its bar, as wide as what's under it: the task's column, or both
+  /// columns where the screen is two panes. On iPhone Duo it keeps to the page before the hinge.
+  func taskSegmentsBar(_ segments: TaskSegments?) -> some View {
+    modifier(TaskSegmentsBar(segments: segments))
+  }
+}
+
+private struct TaskSegmentsBar: ViewModifier {
+  let segments: TaskSegments?
+
+  @State private var isSplit = false
+
+  func body(content: Content) -> some View {
+    content
+      .onPreferenceChange(PaneSplitKey.self) { isSplit = $0 }
+      .safeAreaBar(edge: .top) {
+        if let segments {
+          segments
+            .frame(maxWidth: isSplit ? .infinity : 680)
+            .lonePage()
+            .scenePadding(.horizontal)
+            .padding(.bottom, 4)
+        }
+      }
+  }
+}

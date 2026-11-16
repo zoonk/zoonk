@@ -94,22 +94,16 @@ private struct LessonPlayerContent: View {
     NavigationStack {
       content
         // Main's task header: the title in the bar, the lesson's segments under it.
-        .safeAreaBar(edge: .top) {
-          if let segments {
+        .taskSegmentsBar(
+          segments.map {
             TaskSegments(
-              segments: segments,
+              segments: $0,
               label: Text(
                 "Lesson progress", tableName: "Player", comment: "Progress bar of the lesson"),
               value: Text(
-                store.state?.progress ?? 0, format: .percent.precision(.fractionLength(0)))
-            )
-            // The lesson's column; on iPhone Duo, the page before the hinge.
-            .frame(maxWidth: 680)
-            .lonePage()
-            .scenePadding(.horizontal)
-            .padding(.bottom, 4)
+                store.state?.progress ?? 0, format: .percent.precision(.fractionLength(0))))
           }
-        }
+        )
         .taskTitle(title)
         .taskClose { closeButton }
         .toolbar {
@@ -136,12 +130,12 @@ private struct LessonPlayerContent: View {
     }
     .sheet(isPresented: isShowingAskSheet) {
       LessonAskPanel(store: store, isBeside: false)
-        .zoonkStyles()
+        .zoonkSheet()
     }
     .sheet(isPresented: $isShowingMap) {
       if let lesson = store.lesson, let summary = lesson.summary {
         LessonMapSheet(title: lesson.title, summary: summary)
-          .zoonkStyles()
+          .zoonkSheet()
       }
     }
     // A lesson opened while the saved session is still being checked waits for it, so it reads once.

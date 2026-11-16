@@ -29,6 +29,20 @@ describe(createPreviewRequests, () => {
     await expect(pending).resolves.toBeNull();
   });
 
+  it("keeps a request across an unchanged base and drops it when the base changes", async () => {
+    const requests = createPreviewRequests(() => {});
+    const base = {};
+    const late = Promise.withResolvers<typeof answer>();
+    requests.showBase(base);
+    const pending = requests.run({}, () => late.promise);
+
+    requests.showBase(base);
+    requests.showBase({});
+    late.resolve(answer);
+
+    await expect(pending).resolves.toBeNull();
+  });
+
   it("gives nothing to a request a newer one replaced", async () => {
     const requests = createPreviewRequests(() => {});
     const late = Promise.withResolvers<typeof answer>();

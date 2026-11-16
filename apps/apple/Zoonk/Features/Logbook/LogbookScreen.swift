@@ -66,7 +66,7 @@ struct LogbookScreen: View {
               UsageAnalytics.track(.logbookViewed)
             }
         case .failed(let error) where error != .unauthorized:
-          ContentUnavailableView {
+          StateMessage {
             Label {
               Text("The summary didn't load", tableName: "Session", comment: "Load failed")
             } icon: {

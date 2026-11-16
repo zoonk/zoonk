@@ -266,7 +266,7 @@ private struct UnderstoodCard: View {
         LanguageVarietySheet(variety: variety) { region in
           await save(field: .targetRegion, goal: choice.goal, value: region)
         }
-        .zoonkStyles()
+        .zoonkSheet()
       }
     }
   }
@@ -311,7 +311,7 @@ private struct UnderstoodCard: View {
         // Nothing is built yet, so a pick saves on the draft without asking.
         await save(field: .contentCountry, goal: index, value: choice.code)
       }
-      .zoonkStyles()
+      .zoonkSheet()
     }
   }
 

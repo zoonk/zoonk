@@ -10,7 +10,8 @@ struct PlanScreen: View {
         .id(goal.id)
     } else {
       Color.clear
-        .navigationTitle(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"))
+        .barTitleAfterHero(
+          String(localized: "Plan", table: "Plan", comment: "Title of the Plan tab"))
     }
   }
 }
@@ -40,7 +41,7 @@ private struct GoalPlanView: View {
           .loads(plan, syllabus, standing)
       }
     }
-    .navigationTitle(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"))
+    .barTitleAfterHero(String(localized: "Plan", table: "Plan", comment: "Title of the Plan tab"))
     .navigationSubtitle(goal.isSettingUp ? "" : daysLeft(plan.value?.plan) ?? "")
     .task(id: goal.contentCountry?.rebuild) {
       await learner.followRebuild(goalID: goal.id)
@@ -59,7 +60,7 @@ private struct GoalPlanView: View {
       .lonePage()
       .modifier(GoalOptionsToolbar(goal: goal))
     case .failed:
-      ContentUnavailableView {
+      StateMessage {
         Label {
           Text(
             "Couldn't load your plan", tableName: "Plan",
@@ -132,7 +133,7 @@ private struct PlanSetupLeft: View {
   }
 
   private var questionsLeft: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(
           "Your plan comes after a few questions", tableName: "Plan",
@@ -157,7 +158,7 @@ private struct PlanSetupLeft: View {
   }
 
   private var paused: some View {
-    ContentUnavailableView {
+    StateMessage {
       Label {
         Text(
           "Your \(goal.displayName) goal is paused", tableName: "Plan",
@@ -258,7 +259,6 @@ private struct PlanContent: View {
       goal: goal,
       isShown: goal.status != .paused && goal.kind == .exam && plan.status?.kind == .pastDate
     )
-    .barTitleAfterHero(String(localized: "Plan", table: "Plan", comment: "Title of the Plan tab"))
     .announcesStatus(rebuildStatus)
     .onChange(of: goal.contentCountry?.rebuild) { old, new in
       rebuildReady = old == .preparing && new == ContentCountry.Rebuild.none
@@ -269,7 +269,7 @@ private struct PlanContent: View {
     .loads(courseEnd, refreshable: false)
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: store)
-        .zoonkStyles()
+        .zoonkSheet()
     }
     .feedbackSheet(
       isPresented: $isReporting,
@@ -412,21 +412,12 @@ struct PlanContext {
 /// that shows another, its sheet closed, another goal, the editor opened) ends what the opening
 /// asked for. Nothing else does: the rest of the plan can change under it.
 private struct SuggestionOpening: Equatable {
-  /// What a found date or a "what changes" preview is worked out from.
-  struct Schedule: Equatable {
-    let dailyMinutes: Int
-    let weekdayMinutes: [Int]
-    let studyDays: Int
-    let targetDate: String?
-  }
-
   /// The suggestion shown, with what it says (a coverage line's time and share).
   let item: PlanSlotItem?
   /// What the fit offer's check previewed.
   let offer: GoalPlan.FitOffer?
-  /// The past date's found date and coverage's preview come from the time a day, the study days and
-  /// the date: other ones would make the card state numbers about a plan that's gone.
-  let schedule: Schedule?
+  /// The same inputs the store uses to invalidate the read these previews came from.
+  let inputs: PlanInputs?
   /// Its sheet: closing it ends what was asked in it.
   let inSheet: Bool
   /// The Plan's editor: the learner changes the plan by hand, and nothing lands under it.
@@ -441,11 +432,9 @@ private struct SuggestionOpening: Equatable {
 
     switch item {
     case .pastDate?, .coverage?:
-      schedule = Schedule(
-        dailyMinutes: plan.schedule.dailyMinutes, weekdayMinutes: plan.schedule.weekdayMinutes,
-        studyDays: plan.schedule.studyDays, targetDate: plan.schedule.targetDate)
+      inputs = PlanInputs(plan)
     default:
-      schedule = nil
+      inputs = nil
     }
   }
 }

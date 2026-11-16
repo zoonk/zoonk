@@ -80,6 +80,11 @@ extension XCTestCase {
     return found
   }
 
+  @MainActor
+  func requestViews<Kind: UIView>(_ kind: Kind.Type, in root: UIView) -> [Kind] {
+    ((root as? Kind).map { [$0] } ?? []) + root.subviews.flatMap { requestViews(kind, in: $0) }
+  }
+
   /// The first drawn row from the top of the window, in points: where a centered screen starts
   /// (its icon, or its title when it has none), for screens whose parts a test can't measure from
   /// inside. Grey ink counts, so a muted icon is found as well as black words.

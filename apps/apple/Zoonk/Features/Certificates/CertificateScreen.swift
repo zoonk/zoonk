@@ -42,11 +42,7 @@ struct CertificateSheet: View {
   var body: some View {
     NavigationStack {
       CertificateScreen(code: code)
-        .toolbar {
-          ToolbarItem(placement: .topBarLeading) {
-            Button(role: .close, action: dismiss.callAsFunction)
-          }
-        }
+        .sheetClose(dismiss.callAsFunction)
     }
   }
 }
@@ -123,6 +119,7 @@ private struct CertificateDetail: View {
     }
     .sheet(isPresented: $isLinkedInShown) {
       CertificateLinkedInSheet(certificate: certificate)
+        .zoonkSheet()
     }
     .onDisappear {
       nameSave.leave()
@@ -164,8 +161,7 @@ private struct CertificateDetail: View {
         shareLink
           .buttonStyle(.mainAction)
 
-        // Not a `ButtonRow`, whose buttons take their own width side by side: these share it.
-        AccessibilityStack(spacing: 8) {
+        EqualButtonRow {
           BusyButton(isBusy: printing.isRunning, icon: .print, action: printCertificate) {
             Text("Print", tableName: "Certificates", comment: "Prints a certificate")
               .background { PrintAnchorView(anchor: printAnchor) }
@@ -353,15 +349,9 @@ private struct CertificateHeading: View {
     Section {
       VStack(alignment: .leading, spacing: 10) {
         if isIssued {
-          Label {
-            Text(
-              "Verified certificate · issued by Zoonk", tableName: "Certificates")
-          } icon: {
-            Image(systemName: "checkmark.seal")
-              .foregroundStyle(.success)
-          }
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+          Chip(
+            Text("Verified certificate · issued by Zoonk", tableName: "Certificates"),
+            systemImage: "checkmark.seal", tone: .success)
         }
 
         Text(facts.sentence)
@@ -628,11 +618,7 @@ private struct CertificateZoom: View {
           ProgressView()
         }
       }
-      .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
-          Button(role: .close, action: dismiss.callAsFunction)
-        }
-      }
+      .sheetClose(dismiss.callAsFunction)
     }
     .task {
       image = await images?.image(

@@ -53,7 +53,7 @@ struct FocusTestScreen: View {
     .sheet(isPresented: $choosesFocus) {
       if let goal, let read = plan.value {
         AdjustPlanSheet(goal: goal, plan: read.plan, section: .focus, store: plans)
-          .zoonkStyles()
+          .zoonkSheet()
       }
     }
   }

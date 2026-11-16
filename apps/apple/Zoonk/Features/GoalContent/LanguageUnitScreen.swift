@@ -127,7 +127,7 @@ struct LanguageUnitScreen: View {
         case .loaded(let value):
           LanguageUnitContent(unit: value)
         case .failed(.notFound), .empty:
-          ContentUnavailableView {
+          StateMessage {
             Label {
               Text(
                 "This unit isn't in your plan", tableName: "Plan",
@@ -138,7 +138,7 @@ struct LanguageUnitScreen: View {
           }
           .lonePage()
         case .failed:
-          ContentUnavailableView {
+          StateMessage {
             Label {
               Text(
                 "Couldn't load this unit", tableName: "Plan",

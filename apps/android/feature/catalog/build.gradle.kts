@@ -16,4 +16,5 @@ dependencies {
     implementation(libs.coil.compose)
 
     testImplementation(testFixtures(project(":feature:account")))
+    testImplementation(testFixtures(project(":feature:plan")))
 }

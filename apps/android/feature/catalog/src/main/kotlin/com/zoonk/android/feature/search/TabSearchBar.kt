@@ -57,7 +57,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.shell.GoalSwitcherViewModel
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SignOutResult
@@ -91,6 +90,7 @@ import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.ExamMockSummary
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
@@ -162,7 +162,7 @@ internal fun SearchPanel(
 ) {
     val text = rememberTextFieldState()
     val scope = rememberCoroutineScope()
-    val switcher = viewModel { GoalSwitcherViewModel(app) }
+    val switching = viewModel(key = "search-goal-switch") { SearchGoalSwitch(app.scope, app::switchGoal) }
     val search = viewModel { SearchViewModel(app.today, app.studyOpener) }
     val expanded = state.currentValue == SearchBarValue.Expanded
     val sendFeedback = rememberSendFeedback(app, "command-palette")
@@ -183,7 +183,7 @@ internal fun SearchPanel(
             }
 
             is SearchAction.SwitchGoal -> {
-                switcher.select(action.goalId)
+                switching.switchTo(action.goalId)
             }
 
             SearchAction.SignOut -> {
@@ -206,6 +206,9 @@ internal fun SearchPanel(
             }
         }
     }
+
+    VisitOf(switching.visit)
+    ActOn(switching.failed) { app.snackbars.show(R.string.goal_switcher_failed) }
 
     VisitOf(search.visit)
     ActOn(search.continued) { continued ->
@@ -302,6 +305,21 @@ private fun Modifier.atBarWidth(state: SearchBarState): Modifier =
         val placeable = measurable.measure(constraints.copy(maxWidth = bar.coerceIn(constraints.minWidth, constraints.maxWidth)))
         layout(placeable.width, placeable.height) { placeable.place(0, 0) }
     }
+
+internal class SearchGoalSwitch(
+    private val appScope: CoroutineScope,
+    private val switch: suspend (UUID) -> Boolean?,
+) : ViewModel() {
+    val visit = Visit()
+    val failed = visit.outcome<Unit>()
+
+    fun switchTo(goalId: UUID) {
+        val asked = visit.number
+        appScope.launch {
+            if (switch(goalId) == false) failed.send(asked, Unit)
+        }
+    }
+}
 
 /** Where Continue leads: [Open] today's next step, or Today itself with no route; or that it didn't open. */
 internal sealed interface Continued {
