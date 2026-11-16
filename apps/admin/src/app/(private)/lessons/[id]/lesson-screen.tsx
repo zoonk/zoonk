@@ -56,7 +56,7 @@ function ScreenLinks({ step }: { step: LibraryLessonStep }) {
 function ScreenJson({ step }: { step: LibraryLessonStep }) {
   return (
     <div className="flex flex-col">
-      <AdminJson label="Technical details" value={step.content} />
+      <AdminJson label="Technical details" open value={step.content} />
       {step.variants.map((variant) => (
         <AdminJson
           key={variant.id}
@@ -70,9 +70,12 @@ function ScreenJson({ step }: { step: LibraryLessonStep }) {
 
 export function LessonScreen({
   answers,
+  json,
   step,
 }: {
   answers?: StepAnswers;
+  /** Shows what is stored under the words, for a screen whose words don't say everything. */
+  json: boolean;
   step: LibraryLessonStep;
 }) {
   return (
@@ -100,7 +103,7 @@ export function LessonScreen({
 
         <ScreenLinks step={step} />
 
-        <ScreenJson step={step} />
+        {json ? <ScreenJson step={step} /> : null}
       </div>
     </li>
   );

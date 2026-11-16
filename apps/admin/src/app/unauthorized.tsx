@@ -5,7 +5,12 @@ import { Suspense } from "react";
 
 async function LoggedInAs() {
   const session = await getSession();
-  return session ? `You're logged in as ${session.user.email}. ` : null;
+
+  return session ? (
+    <>
+      You&apos;re logged in as <span className="whitespace-nowrap">{session.user.email}</span>.{" "}
+    </>
+  ) : null;
 }
 
 export default function Unauthorized() {

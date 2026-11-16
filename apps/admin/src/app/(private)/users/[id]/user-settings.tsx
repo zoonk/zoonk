@@ -3,8 +3,9 @@ import { DetailField, DetailFields } from "@/components/detail-field";
 import { StateMark } from "@/components/state-mark";
 import { getUserLearningProfile } from "@/data/users/get-user-learning-profile";
 import { getUserStudyReminder } from "@/data/users/get-user-study-reminder";
-import { toWords } from "@/lib/format";
+import { formatTimeOfDay, toWords } from "@/lib/format";
 import { type PushPlatform } from "@zoonk/db/enums";
+import { getTimeZoneName } from "@zoonk/utils/time-zone";
 import {
   BellOffIcon,
   BrainIcon,
@@ -93,7 +94,10 @@ export async function UserReminders({ userId }: { userId: string }) {
           <OnOff on={email.on} />
         </DetailField>
         <DetailField icon={<ClockIcon aria-hidden="true" />} label="Time">
-          {time} <span className="text-muted-foreground">· {timeZone}</span>
+          {formatTimeOfDay(time)}{" "}
+          <span className="text-muted-foreground">
+            · {getTimeZoneName({ locale: "en", timeZone })}
+          </span>
         </DetailField>
 
         {quiet && (

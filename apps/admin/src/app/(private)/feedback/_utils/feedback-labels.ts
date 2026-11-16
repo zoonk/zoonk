@@ -40,11 +40,20 @@ export function getFeedbackSubject(context: FeedbackContext): string {
     return feedbackContentKindLabels[context.contentKind];
   }
 
-  return getFeedbackScreen(context) ?? context.url ?? "Not recorded";
+  const screen = getFeedbackScreen(context);
+  return screen ? `${screen} screen` : (context.url ?? "Not recorded");
 }
 
-/** The screen it was sent from, in words: apps send a code such as `lesson-completion`. */
-export function getFeedbackScreen(context: FeedbackContext): string | null {
+/**
+ * The screen it was sent from, in words (apps send a code such as `lesson-completion`), when the
+ * message is about something on it rather than the screen itself.
+ */
+export function getFeedbackOrigin(context: FeedbackContext): string | null {
+  const screen = getFeedbackScreen(context);
+  return screen && (context.reportType || context.contentKind) ? screen : null;
+}
+
+function getFeedbackScreen(context: FeedbackContext): string | null {
   return context.screen ? toWords(context.screen) : null;
 }
 

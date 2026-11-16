@@ -8,8 +8,8 @@ import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import {
   feedbackStatusLabels,
   getFeedbackLearnerLabel,
+  getFeedbackOrigin,
   getFeedbackPlatform,
-  getFeedbackScreen,
   getFeedbackSubject,
 } from "../_utils/feedback-labels";
 
@@ -31,10 +31,10 @@ export function MessageRow({
 }) {
   const { context } = message;
   const subject = getFeedbackSubject(context);
-  const screen = getFeedbackScreen(context);
+  const screen = getFeedbackOrigin(context);
 
   const origin = [
-    screen && screen !== subject && `Sent from the ${screen.toLowerCase()} screen`,
+    screen && `Sent from the ${screen.toLowerCase()} screen`,
     getFeedbackPlatform(context),
   ]
     .filter(Boolean)

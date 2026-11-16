@@ -6,7 +6,7 @@ import { LINK_CLASS } from "@/lib/link-class";
 import Link from "next/link";
 import {
   getFeedbackLearnerLabel,
-  getFeedbackScreen,
+  getFeedbackOrigin,
   getFeedbackSubject,
 } from "../../_utils/feedback-labels";
 
@@ -43,8 +43,7 @@ function MessageSubject({ message }: { message: FeedbackMessage }) {
 
 export function MessageDetail({ message }: { message: FeedbackMessage }) {
   const { context } = message;
-  const subject = getFeedbackSubject(context);
-  const screen = getFeedbackScreen(context);
+  const screen = getFeedbackOrigin(context);
 
   return (
     <>
@@ -60,9 +59,7 @@ export function MessageDetail({ message }: { message: FeedbackMessage }) {
           <DetailField label="About">
             <MessageSubject message={message} />
           </DetailField>
-          {screen && screen !== subject ? (
-            <DetailField label="Sent from">{screen}</DetailField>
-          ) : null}
+          {screen ? <DetailField label="Sent from">{screen}</DetailField> : null}
         </DetailFields>
 
         <AdminDisclosure label="Technical details">

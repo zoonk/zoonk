@@ -76,7 +76,7 @@ export function LessonAbout({ lesson }: { lesson: Lesson }) {
             {formatCount(lesson._count.studyBlocks, "session")}
           </DetailField>
           <DetailField label="Buddy questions">
-            {lesson._count.questionThreads.toLocaleString("en")}
+            {formatCount(lesson._count.questionThreads, "question")}
           </DetailField>
         </DetailFields>
       </AdminSection>

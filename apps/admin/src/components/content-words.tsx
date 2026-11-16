@@ -105,7 +105,7 @@ export function ContentWords({ content }: { content: unknown }) {
           text(content.mission)}
       </Prose>
       {content.kind === undefined && text(content.template) && blanks.length > 0 ? (
-        <p className="font-medium">{text(content.template)}</p>
+        <p className="font-medium">{text(content.template)?.replaceAll("[BLANK]", "____")}</p>
       ) : null}
 
       {steps.length > 0 ? (
@@ -122,15 +122,7 @@ export function ContentWords({ content }: { content: unknown }) {
         </ol>
       ) : null}
 
-      {ideas.length > 0 ? (
-        <ul className="flex list-outside list-disc flex-col gap-1 ps-4">
-          {ideas.map((idea) => (
-            <li key={String(idea.text)}>
-              <Prose>{text(idea.text)}</Prose>
-            </li>
-          ))}
-        </ul>
-      ) : null}
+      <Prose>{ideas.map((idea) => `- ${text(idea.text) ?? ""}`).join("\n") || null}</Prose>
 
       <Options options={list(content.options)} />
       <Prose>{text(content.result) ?? text(content.reveal)}</Prose>

@@ -56,7 +56,9 @@ export function MissingAudioUploadForm({
       >
         <span className="truncate">{fileName || "Choose file"}</span>
       </FileButton>
-      <AdminActionSubmitButton icon={<UploadIcon />}>Upload</AdminActionSubmitButton>
+      <AdminActionSubmitButton disabled={!fileName} icon={<UploadIcon />}>
+        Upload
+      </AdminActionSubmitButton>
     </form>
   );
 }
