@@ -86,7 +86,7 @@ function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
   return (
     <span
       className={cn(
-        "line-clamp-2 text-sm leading-5 font-medium",
+        "text-sm leading-5 font-medium text-balance",
         isFinished(block) && "text-muted-foreground",
       )}
       id={isNext ? NEXT_TITLE_ID : undefined}
@@ -226,9 +226,7 @@ export function PlanLessonRow({
   const isNext = onOpen !== null;
 
   const name = (
-    <span className="line-clamp-2 min-w-0 flex-1 text-sm leading-5 font-medium text-pretty">
-      {title}
-    </span>
+    <span className="min-w-0 flex-1 text-sm leading-5 font-medium text-balance">{title}</span>
   );
 
   return (

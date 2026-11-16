@@ -32,7 +32,7 @@ import {
   PageSectionTitle,
   PageSubtitle,
 } from "../_components/page";
-import { useFormatShare } from "../_utils/percent";
+import { useFormatProgressShare } from "../_utils/percent";
 import { LearnLink } from "../learn-link";
 import { GoalCountryName, GoalMark } from "../shell/goal-mark";
 import { LearnPageBar } from "../shell/learn-bar";
@@ -126,7 +126,7 @@ function CertificateList({ certificates }: { certificates: ListedCertificate[] }
 }
 
 function UpNextRow({ item }: { item: CertificateUpNext }) {
-  const formatShare = useFormatShare();
+  const formatShare = useFormatProgressShare();
 
   return (
     <ListRow>
