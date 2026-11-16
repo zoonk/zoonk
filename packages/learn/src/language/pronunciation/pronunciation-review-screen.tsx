@@ -7,6 +7,7 @@ import {
 } from "@zoonk/core/language/pronunciation/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@zoonk/ui/components/empty";
 import { RotateCcwIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { FeedbackVerdict } from "../../_components/feedback-panel";
@@ -119,16 +120,21 @@ export function PronunciationReviewScreen({
           footer={
             <TaskActions>
               <TaskMainLink href={exitHref} toApp>
-                {t("Done")}
+                {total === 0 ? t("Go to Today") : t("Done")}
               </TaskMainLink>
             </TaskActions>
           }
           headerTitle={<TaskHeaderTitle title={t("Say it again")} />}
         >
           {total === 0 ? (
-            <p className="text-title py-6 text-balance" role="status">
-              {t("No words to say again today.")}
-            </p>
+            <Empty className="py-6" role="status">
+              <EmptyHeader>
+                <EmptyTitle>{t("No words to say again today")}</EmptyTitle>
+                <EmptyDescription>
+                  {t("Words that were hard to say come back here to practice.")}
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
           ) : (
             <RoundResult buddy={buddy} result={result} />
           )}

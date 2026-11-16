@@ -3,9 +3,17 @@
 import { type OwnedCertificateFacts } from "@zoonk/core/certificates/contract";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@zoonk/ui/components/empty";
 import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { type CertificateLinks, getCertificatePath } from "@zoonk/utils/certificate-links";
+import { AwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailContent, DetailLayout } from "../_components/detail-page";
 import { EnterLink } from "../_components/enter-button";
@@ -117,30 +125,6 @@ function CertificateList({ certificates }: { certificates: ListedCertificate[] }
   );
 }
 
-/** Its shapes stand for a certificate without saying one: no words, nothing to read as real. */
-function GhostCertificate() {
-  const bars = [
-    "top-[10%] w-[16%] h-[5%]",
-    "top-[30%] w-[28%] h-[4%]",
-    "top-[38%] w-[52%] h-[10%]",
-    "top-[53%] w-[40%] h-[6%]",
-    "top-[84%] w-[46%] h-[5%]",
-  ];
-
-  return (
-    <div
-      aria-hidden="true"
-      className="bg-ground border-input relative aspect-297/210 w-full max-w-104 rounded-xl border border-dashed"
-    >
-      {bars.map((bar) => (
-        <i className={`bg-surface-3 absolute left-[7%] block rounded-sm ${bar}`} key={bar} />
-      ))}
-      <i className="bg-input absolute top-[76%] left-[7%] block h-[2%] w-[86%] rounded-sm" />
-      <i className="bg-surface-3 absolute top-[82%] left-[83%] block h-[14%] w-[10%] rounded-sm" />
-    </div>
-  );
-}
-
 function UpNextRow({ item }: { item: CertificateUpNext }) {
   const formatShare = useFormatShare();
 
@@ -174,12 +158,15 @@ function EmptyCertificates({ upNext }: { upNext: CertificateUpNext[] }) {
 
   return (
     <div className="flex max-w-104 flex-col gap-10">
-      <div className="flex flex-col items-start">
-        <GhostCertificate />
-        <h2 className="mt-6 text-lg font-semibold tracking-[-0.01em]">
-          {t("No certificates yet")}
-        </h2>
-      </div>
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <AwardIcon aria-hidden="true" />
+          </EmptyMedia>
+          <EmptyTitle>{t("No certificates yet")}</EmptyTitle>
+          <EmptyDescription>{t("They show up here when you earn them.")}</EmptyDescription>
+        </EmptyHeader>
+      </Empty>
 
       {upNext.length > 0 && (
         <PageSection aria-labelledby={UP_NEXT_ID}>
