@@ -81,7 +81,7 @@ export function NotationPlayerActivity({ content, labelId }: NotationPlayerProps
       <div className="flex items-center gap-3">
         <button
           aria-label={playback.isPlaying ? t("Stop") : t("Play the melody")}
-          className="bg-primary text-primary-foreground focus-visible:ring-ring/50 flex size-11 shrink-0 items-center justify-center rounded-full outline-none select-none focus-visible:ring-[3px] disabled:opacity-50"
+          className="bg-background text-foreground border-input focus-visible:ring-ring/50 flex size-11 shrink-0 items-center justify-center rounded-full border outline-none select-none focus-visible:ring-[3px] disabled:opacity-50"
           disabled={status !== "ready"}
           onClick={playback.isPlaying ? playback.stop : playback.play}
           onKeyDown={keepArrowKeys}
