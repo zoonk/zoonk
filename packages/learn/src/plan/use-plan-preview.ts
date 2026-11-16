@@ -5,7 +5,12 @@ import { safeAsync } from "@zoonk/utils/error";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePlanScreen } from "./plan-context";
-import { type PlanPreviewState, isSamePreviewPlan, resolvePlanPreview } from "./plan-preview-state";
+import {
+  type PlanPreviewState,
+  type PreviewScope,
+  isSamePreviewPlan,
+  resolvePlanPreview,
+} from "./plan-preview-state";
 import { createPreviewRequests } from "./preview-requests";
 
 const PREVIEW_TIMEOUT_MS = 45_000;
@@ -14,10 +19,10 @@ const PREVIEW_TIMEOUT_MS = 45_000;
  * The same object while refreshes deliver an unchanged view, so a wait for a preview carries on
  * through them.
  */
-export function usePreviewBase(): object {
+export function usePreviewBase(scope: PreviewScope = "plan") {
   const { plan } = usePlanScreen();
-  const [base, setBase] = useState<object>(plan);
-  const changed = !isSamePreviewPlan({ current: plan, previous: base });
+  const [base, setBase] = useState(plan);
+  const changed = !isSamePreviewPlan({ current: plan, previous: base, scope });
 
   if (changed) {
     setBase(plan);
@@ -32,7 +37,8 @@ export function usePreviewBase(): object {
  */
 export function usePlanPreview(opening?: string) {
   const { actions, plan } = usePlanScreen();
-  const base = usePreviewBase();
+  const scope = opening === "pastDate" || opening === "coverage" ? "advice" : "plan";
+  const base = usePreviewBase(scope);
   const [preview, setPreview] = useState<PlanPreviewState>({ status: "idle" });
   const requests = useRef(createPreviewRequests(() => setPreview({ status: "idle" })));
 
@@ -49,12 +55,15 @@ export function usePlanPreview(opening?: string) {
     return () => current.cancel();
   }, []);
 
-  if (preview.status !== "idle" && !isSamePreviewPlan({ current: plan, previous: preview.plan })) {
+  if (
+    preview.status !== "idle" &&
+    !isSamePreviewPlan({ current: plan, previous: preview.plan, scope })
+  ) {
     setPreview({ status: "idle" });
   }
 
   const requestPreview = (operations: LearnerPlanOperation[]) => {
-    const request = { operations, plan, status: "loading" } as const;
+    const request = { operations, plan, scope, status: "loading" } as const;
     setPreview(request);
 
     return requests.current.run(request, async () => {
@@ -71,7 +80,8 @@ export function usePlanPreview(opening?: string) {
 
   return {
     preview:
-      preview.status !== "idle" && !isSamePreviewPlan({ current: plan, previous: preview.plan })
+      preview.status !== "idle" &&
+      !isSamePreviewPlan({ current: plan, previous: preview.plan, scope })
         ? ({ status: "idle" } as const)
         : preview,
     requestPreview,

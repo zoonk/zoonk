@@ -2,9 +2,10 @@ import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { describe, expect, it } from "vitest";
 import { currentPlanPreview, resolvePlanPreview } from "./plan-preview-state";
+import { previewPlan } from "./plan-preview.fixture";
 
 const operations: LearnerPlanOperation[] = [{ kind: "setDailyMinutes", minutes: 60 }];
-const plan = { id: "plan", revision: 1 };
+const plan = previewPlan();
 const request = { operations, plan, status: "loading" } as const;
 
 const unchanged: PlanChangePreview = {
@@ -45,9 +46,9 @@ describe("plan preview validity", () => {
         .status,
     ).toBe("idle");
 
-    expect(currentPlanPreview({ operations, plan: { ...plan, revision: 2 }, state }).status).toBe(
-      "idle",
-    );
+    expect(
+      currentPlanPreview({ operations, plan: { ...plan, planId: "another-plan" }, state }).status,
+    ).toBe("idle");
   });
 
   it("drops a late response after cancellation or another preview request", () => {

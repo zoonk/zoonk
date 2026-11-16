@@ -1,6 +1,7 @@
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { describe, expect, it } from "vitest";
 import { type PlanPreviewState, resolvePlanPreview } from "./plan-preview-state";
+import { previewPlan } from "./plan-preview.fixture";
 import { createPreviewRequests } from "./preview-requests";
 
 const answer = { effect: "the card's numbers" };
@@ -84,7 +85,7 @@ describe("suggestion opening", () => {
   ])(
     "reopens a replaced fit suggestion idle before and after its late answer (%j)",
     async (lateAnswer: PlanChangePreview | null) => {
-      const request = { operations: [], plan: {}, status: "loading" as const };
+      const request = { operations: [], plan: previewPlan(), status: "loading" as const };
       const shown: { preview: PlanPreviewState } = { preview: request };
 
       const requests = createPreviewRequests(() => {
