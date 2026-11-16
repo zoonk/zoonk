@@ -108,7 +108,7 @@ export function ChartReaderActivity({
         {fields.yLabel}
       </ActivityCanvasLabel>
 
-      <ActivityPlot height={PLOT_HEIGHT} xDomain={xDomain} yDomain={yDomain}>
+      <ActivityPlot height={PLOT_HEIGHT} xDomain={xDomain} xLabel={fields.xLabel} yDomain={yDomain}>
         <ActivityPlotGridY
           format={(value) => format(value, { compact: true })}
           ticks={niceTicks(yDomain, 3)}
@@ -156,8 +156,6 @@ export function ChartReaderActivity({
           );
         })}
       </ActivityPlot>
-
-      <ActivityCanvasLabel>{fields.xLabel}</ActivityCanvasLabel>
 
       <ActivityCanvasLabel className="text-sm">{t("Tap a span to measure it")}</ActivityCanvasLabel>
 

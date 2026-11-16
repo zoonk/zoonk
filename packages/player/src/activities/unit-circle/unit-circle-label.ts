@@ -13,6 +13,7 @@ export type DialLabelPlacement = {
 };
 
 const SIN_LABEL_GAP = 26;
+const SIN_LABEL_INNER_GAP = 16;
 const SIN_LABEL_PAST_POINT = 25;
 const CIRCLE_STROKE = 2;
 const HALO_REACH = 2;
@@ -102,26 +103,47 @@ export function sinLabelPlacement({
   const foot = { x: point.x, y: center.y };
   const isLeft = point.x < center.x;
   const isAbove = point.y <= center.y;
-  const beside = foot.x + (isLeft ? -1 : 1) * SIN_LABEL_GAP;
   const middle = (foot.y + point.y) / 2;
-  const left = isLeft ? beside - label.width : beside;
+  const nearAxis = Math.abs(middle - center.y) <= label.height / 2 + LABEL_CLEARANCE;
+  const gap = nearAxis ? SIN_LABEL_GAP : SIN_LABEL_INNER_GAP;
+  const beside = foot.x + (isLeft ? -1 : 1) * gap;
+  const nearestY = Math.max(Math.abs(middle - center.y) - label.height / 2, 0);
+  const outerReach = Math.sqrt(Math.max((radius + RING_GAP) ** 2 - nearestY ** 2, 0));
+  const outside = center.x + (isLeft ? -1 : 1) * Math.max(Math.abs(beside - center.x), outerReach);
 
-  const besideBox = {
-    bottom: middle + label.height / 2,
-    left,
-    right: left + label.width,
-    top: middle - label.height / 2,
-  };
+  function fitsBeside(at: number): boolean {
+    const left = isLeft ? at - label.width : at;
 
-  if (
-    besideBox.left >= 0 &&
-    besideBox.right <= canvas.width &&
-    isClearOfCircle(besideBox, center, radius)
-  ) {
+    const box = {
+      bottom: middle + label.height / 2,
+      left,
+      right: left + label.width,
+      top: middle - label.height / 2,
+    };
+
+    const targetGap =
+      target === null
+        ? Infinity
+        : Math.hypot(
+            clamp(target.x, box.left, box.right) - target.x,
+            clamp(target.y, box.top, box.bottom) - target.y,
+          );
+
+    return (
+      box.left >= 0 &&
+      box.right <= canvas.width &&
+      isClearOfCircle(box, center, radius) &&
+      targetGap >= SIN_LABEL_INNER_GAP
+    );
+  }
+
+  const besideAt = [beside, outside].find((at) => fitsBeside(at));
+
+  if (besideAt !== undefined) {
     return {
       anchor: isLeft ? "end" : "start",
       baseline: "middle",
-      point: { x: beside, y: middle },
+      point: { x: besideAt, y: middle },
     };
   }
 

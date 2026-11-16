@@ -36,6 +36,7 @@ export function ActivityPlot({
   height: heightProp,
   padding = DEFAULT_PADDING,
   xDomain,
+  xLabel,
   yDomain,
 }: {
   children: React.ReactNode;
@@ -43,6 +44,7 @@ export function ActivityPlot({
   height: number | ((width: number) => number);
   padding?: Partial<PlotPadding>;
   xDomain: NumericDomain;
+  xLabel?: string;
   yDomain: NumericDomain;
 }) {
   const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
@@ -57,7 +59,11 @@ export function ActivityPlot({
   };
 
   return (
-    <div className={cn("w-full", className)} data-slot="activity-plot" ref={ref}>
+    <div
+      className={cn("flex w-full flex-col gap-1", className)}
+      data-slot="activity-plot"
+      ref={ref}
+    >
       <svg
         className="block overflow-visible text-xs tabular-nums select-none"
         height={height}
@@ -66,6 +72,14 @@ export function ActivityPlot({
       >
         <PlotContext value={scales}>{children}</PlotContext>
       </svg>
+      {xLabel && (
+        <p
+          className="text-muted-foreground text-right text-xs text-balance"
+          style={{ marginLeft: inset.left, marginRight: inset.right }}
+        >
+          {xLabel}
+        </p>
+      )}
     </div>
   );
 }

@@ -83,10 +83,10 @@ export function ChanceSimulation({ answer, content, expected, labelId, phase }: 
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-0.5">
           <ActivityCanvasLabel className="text-sm">{runsLabel}</ActivityCanvasLabel>
-          <ActivityCanvasLabel>{fields.hitLabel}</ActivityCanvasLabel>
+          <ActivityCanvasLabel className="text-sm">{fields.hitLabel}</ActivityCanvasLabel>
 
           {isChecked && guess !== null && (
-            <ActivityCanvasLabel className="text-foreground font-medium">
+            <ActivityCanvasLabel className="text-sm">
               {t("Your guess: {value}", { value: percent(guess) })}
             </ActivityCanvasLabel>
           )}
