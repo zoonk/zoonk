@@ -22,7 +22,7 @@ export const examMockSummarySchema = z
       .nullable()
       .meta({
         description:
-          "The exam's questions for what it sat, when it asked fewer (the bank had too few new ones): say how many it asked of them. Null when it asked them all",
+          "The exam's questions for what it sat, when it asked fewer (the bank had too few new ones). Null when it asked them all",
       }),
     finishedAt: z.iso.datetime(),
     measure: z

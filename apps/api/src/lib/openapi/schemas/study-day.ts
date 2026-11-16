@@ -40,15 +40,12 @@ export const planRevealTodayResponseSchema = z
     minutes: z
       .int()
       .min(0)
-      .meta({
-        description:
-          "The minutes of what `today` lists, from its blocks' estimates: show it beside Today's date",
-      }),
+      .meta({ description: "The minutes of what `today` lists, from its blocks' estimates" }),
     nextDays: z
       .array(planDaySchema)
       .meta({
         description:
-          "The six days after today, composed with `today` so each lesson shows once: a lesson the plan laid out today that `today` leaves out (reviews took its time) comes first tomorrow, a lesson `today` lists isn't repeated, and a lesson split across days shows on its first day. A day with time but nothing left to list isn't included; a rest day is, with no items. Draw them as given",
+          "The six days after today, composed with `today` so each lesson is listed once: a lesson the plan laid out today that `today` leaves out (reviews took its time) comes first tomorrow, a lesson `today` lists isn't repeated, and a lesson split across days is listed on its first day. A day with time but nothing left to list isn't included; a rest day is, with no items",
       }),
     today: studyDayResponseSchema,
     week: z

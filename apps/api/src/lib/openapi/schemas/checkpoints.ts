@@ -149,7 +149,7 @@ export const challengeResponseSchema = z
       }),
     estimatedMinutes: unknownSizeSchema.meta({
       description:
-        "Estimated completion time from the learner's pace, capped at the mock's clock; minutes otherwise, null while its size is unknown. Display minutes as the canonical mock duration, the real time limit funded by the plan.",
+        "Estimated completion time from the learner's pace, capped at the mock's clock; minutes otherwise, null while its size is unknown. A mock's real time limit, as the plan funds it, is `minutes`.",
     }),
     examName: z.string().nullable(),
     fullLength: z

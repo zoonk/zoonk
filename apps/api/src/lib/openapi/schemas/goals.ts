@@ -69,7 +69,7 @@ export const goalSchema = z
       .nullable()
       .meta({
         description:
-          "A language goal's country, a two-letter code, only when the learner asked for one: name the language with it (\"Spanish (Argentina)\"), and without it name only the language. The buddy and practice calls use its variety; lessons and their audio keep the taught one's (`regionChoices[].taught`)",
+          "A language goal's country, a two-letter code, only when the learner asked for one. The buddy and practice calls use its variety; lessons and their audio keep the taught one's (`regionChoices[].taught`)",
       }),
     timezone: z.string().nullable(),
     title: z.string(),

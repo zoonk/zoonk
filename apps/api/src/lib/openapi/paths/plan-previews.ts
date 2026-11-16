@@ -14,7 +14,7 @@ export const planPreviewPaths = {
   "/goals/{goalId}/plan/change-previews": {
     post: {
       description:
-        "What a change would do before the learner makes it, with nothing saved: planned from today as `POST /goals/{goalId}/plan/changes` plans it, its effect (lessons added or removed, when the plan ends, the notice topics it brings in or leaves out) and what the learner's time would cover. Show it before they confirm a change with a bigger effect, such as the bases' choices (`setBaseChoices`) or studying everything (`setFullCourse`, `setTargetDate` null).",
+        "What a change would do before the learner makes it, with nothing saved: planned from today as `POST /goals/{goalId}/plan/changes` plans it, its effect (lessons added or removed, when the plan ends, the notice topics it brings in or leaves out) and what the learner's time would cover. It's for a change with a bigger effect, read before the learner confirms it, such as the bases' choices (`setBaseChoices`) or studying everything (`setFullCourse`, `setTargetDate` null).",
       operationId: "previewPlanChange",
       requestBody: {
         content: { "application/json": { schema: planChangeInputSchema } },

@@ -52,8 +52,7 @@ export const lessonReadinessSchema = z
     setAside: z
       .boolean()
       .meta({
-        description:
-          "A `failed` lesson its quality checks set aside: it's never written again, so show that instead of offering to write it",
+        description: "A `failed` lesson its quality checks set aside: it's never written again",
       }),
     status: z
       .enum(["ready", "generating", "notStarted", "failed"])

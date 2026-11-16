@@ -66,7 +66,7 @@ const suggestedTimeSchema = z
       .enum(["everything", "focus"])
       .meta({
         description:
-          "everything: the minutes cover the whole goal in depth by its date (recommendedMinutes); focus: what's worth most first, never to be described as covering everything: 4 hours a day when covering everything takes more than most people keep up, or most's minutes when no time covers everything",
+          "everything: the minutes cover the whole goal in depth by its date (recommendedMinutes); focus: what's worth most first, which doesn't cover everything: 4 hours a day when covering everything takes more than most people keep up, or most's minutes when no time covers everything",
       }),
     minutes: z.int(),
     split: daySplitSchema.meta({

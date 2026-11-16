@@ -1276,7 +1276,7 @@
     },
     "/goals/{goalId}/certificates": {
       "post": {
-        "description": "Writes the goal's finished level and plan certificates the learner doesn't hold yet, and returns all of them. A learn or exam goal on a Library course earns one per course level its plan holds whole (every chapter the level had when the plan began), once every lesson of it is studied or tested out, at least one studied, and the challenges of its phases are won; an exam's mocks don't count. The plan earns one of its own once it's all finished with studied lessons no certified level covers: a plan without levels, a partial level, other courses' lessons. Use it while the goal map lists `certificates.unclaimed`. Show the award moment of each returned certificate whose `shownAt` is null, then read the map again.",
+        "description": "Writes the goal's finished level and plan certificates the learner doesn't hold yet, and returns all of them. A learn or exam goal on a Library course earns one per course level its plan holds whole (every chapter the level had when the plan began), once every lesson of it is studied or tested out, at least one studied, and the challenges of its phases are won; an exam's mocks don't count. The plan earns one of its own once it's all finished with studied lessons no certified level covers: a plan without levels, a partial level, other courses' lessons. Use it while the goal map lists `certificates.unclaimed`; after a claim, the map read before it has a stale `certificates.unclaimed`, and a new read lists none of the claimed ones. A returned certificate whose `shownAt` is null hasn't had its award moment yet (POST /me/certificates/{code}/views closes it).",
         "operationId": "claimCourseCertificate",
         "security": [
           {
@@ -14714,7 +14714,7 @@
     },
     "/goals/{goalId}/placement/answers": {
       "post": {
-        "description": "Grades one placement answer, including \"I don't know yet\", and returns the updated placement with the next question. Placement answers never go to the mistakes notebook. For an exam goal (its Focus test) never show `isCorrect`; an item the learner already answered in the test is not recorded again, so a retry is safe; once the returned `status` is `done`, the open sitting asks nothing more: close it with POST /goals/{goalId}/placement/completion.",
+        "description": "Grades one placement answer, including \"I don't know yet\", and returns the updated placement with the next question. Placement answers never go to the mistakes notebook. An exam goal's Focus test gives no feedback on answers (`isCorrect` is still returned); an item the learner already answered in the test is not recorded again, so a retry is safe; once the returned `status` is `done`, the open sitting asks nothing more: close it with POST /goals/{goalId}/placement/completion.",
         "operationId": "createPlacementAnswer",
         "security": [
           {
@@ -16844,7 +16844,7 @@
     },
     "/goals/{goalId}/plan/time-to-cover": {
       "post": {
-        "description": "Finds the daily time the goal needs: the fewest minutes a day that study the whole goal in depth by its date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is), planning the goal at each daily time from the least, so the plan at that time covers everything; null when not even a whole day does, or when the date has passed. Also the time to suggest (`suggested`): that time when it's at most 4 hours a day, else 4 hours with what it covers first, since more is more than most people keep up; show the time everything takes beside it so the learner can pick either. For a goal that isn't an exam, also the earliest date the learner's own time covers everything by. Planning at each time takes seconds for a big exam, so ask once for the week the learner sees (onboarding's time question starts on its `suggested` time) or when they ask, never on every view. It changes nothing: apply a time or date with `POST /goals/{goalId}/plan/changes`. `ready` is false while the plan is being built: ask again in a few seconds.",
+        "description": "Finds the daily time the goal needs: the fewest minutes a day that study the whole goal in depth by its date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is), planning the goal at each daily time from the least, so the plan at that time covers everything; null when not even a whole day does, or when the date has passed. Also the time to suggest (`suggested`): that time when it's at most 4 hours a day, else 4 hours with what it covers first, since more is more than most people keep up; the time everything takes stays in `recommendedMinutes`, and either can be applied. For a goal that isn't an exam, also the earliest date the learner's own time covers everything by. Planning at each time takes seconds for a big exam, so ask once for the week the learner sees (onboarding's time question starts on its `suggested` time) or when they ask, never on every view. It changes nothing: apply a time or date with `POST /goals/{goalId}/plan/changes`. `ready` is false while the plan is being built: ask again in a few seconds.",
         "operationId": "findPlanTimeToCover",
         "security": [
           {
@@ -17046,7 +17046,7 @@
     },
     "/goals/{goalId}/plan/change-previews": {
       "post": {
-        "description": "What a change would do before the learner makes it, with nothing saved: planned from today as `POST /goals/{goalId}/plan/changes` plans it, its effect (lessons added or removed, when the plan ends, the notice topics it brings in or leaves out) and what the learner's time would cover. Show it before they confirm a change with a bigger effect, such as the bases' choices (`setBaseChoices`) or studying everything (`setFullCourse`, `setTargetDate` null).",
+        "description": "What a change would do before the learner makes it, with nothing saved: planned from today as `POST /goals/{goalId}/plan/changes` plans it, its effect (lessons added or removed, when the plan ends, the notice topics it brings in or leaves out) and what the learner's time would cover. It's for a change with a bigger effect, read before the learner confirms it, such as the bases' choices (`setBaseChoices`) or studying everything (`setFullCourse`, `setTargetDate` null).",
         "operationId": "previewPlanChange",
         "security": [
           {
@@ -21722,7 +21722,7 @@
     },
     "/goals/{goalId}/plan-reveal/today": {
       "get": {
-        "description": "The plan reveal's Today and first week, read before the learner has seen their plan: `today` is the day Today will show, the same `StudyDay` as `GET /today`'s `session`, its lessons, review and practice included; `nextDays`, `minutes` and `week` are composed with it so each lesson shows once and every number matches what's listed, so draw them as given. It answers like `GET /today` otherwise: `PLAN_NOT_READY` while the plan is built or questions are left, 404 for a goal that isn't the learner's. Read-only: it never creates or settles the day; the learner opens it through `POST /goals/{goalId}/study-sessions` after Start.",
+        "description": "The plan reveal's Today and first week, read before the learner has seen their plan: `today` is the day Today will show, the same `StudyDay` as `GET /today`'s `session`, its lessons, review and practice included; `nextDays`, `minutes` and `week` are composed with it so each lesson is listed once and every number matches what's listed. It answers like `GET /today` otherwise: `PLAN_NOT_READY` while the plan is built or questions are left, 404 for a goal that isn't the learner's. Read-only: it never creates or settles the day; the learner opens it through `POST /goals/{goalId}/study-sessions` after Start.",
         "operationId": "getPlanRevealToday",
         "security": [
           {
@@ -25226,7 +25226,7 @@
             }
           },
           "409": {
-            "description": "The goal is paused, completed or archived (GOAL_NOT_ACTIVE), or its plan isn't ready (PLAN_NOT_READY, with the goal in `details`): while the goal's onboarding isn't over, lead back to it: questions are left (a plan built before they're answered isn't the learner's yet) or its plan reveal isn't seen yet (`planRevealed` false on `GET /goals/{goalId}/onboarding`); otherwise show the wait and ask again.",
+            "description": "The goal is paused, completed or archived (GOAL_NOT_ACTIVE), or its plan isn't ready (PLAN_NOT_READY, with the goal in `details`): either the goal's onboarding isn't over (questions are left, since a plan built before they're answered isn't the learner's yet, or its plan reveal isn't seen yet: `planRevealed` false on `GET /goals/{goalId}/onboarding`), or the plan is still being built and a later request gets it.",
             "content": {
               "application/json": {
                 "schema": {
@@ -36065,7 +36065,7 @@
           },
           "estimatedMinutes": {
             "nullable": true,
-            "description": "Estimated completion time from the learner's pace, capped at the mock's clock; minutes otherwise, null while its size is unknown. Display minutes as the canonical mock duration, the real time limit funded by the plan.",
+            "description": "Estimated completion time from the learner's pace, capped at the mock's clock; minutes otherwise, null while its size is unknown. A mock's real time limit, as the plan funds it, is `minutes`.",
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
@@ -36097,7 +36097,7 @@
             "items": {
               "$ref": "#/components/schemas/MockLeftOut"
             },
-            "description": "What it leaves out of the real exam, each with why: say each on the mock"
+            "description": "What it leaves out of the real exam, each with why"
           },
           "locked": {
             "type": "boolean",
@@ -36932,7 +36932,7 @@
                     "description": "Why the change was refused. moveBeforeNextMonday means the requested destination is before next Monday in the learner's time zone: pick a day on or after next Monday. This date refusal takes precedence over collision and funding checks. mockCollision means two weekly events would share a day: the requested day already holds a weekly challenge or mock, another move in the plan or the request takes an event there, or the event already moved once. Preserve the prior plan and pick another day. baseChoiceClosed means a setBaseChoices choice isn't in that base's choices (a studied base is open only to deep study). Preserve unknown reasons."
                   },
                   "unfundedMove": {
-                    "description": "Present for reason unfundedMove: the requested calendar day and the mock's real duration. The prior plan is preserved. Ask the learner to pick a later day.",
+                    "description": "Present for reason unfundedMove: the requested calendar day and the mock's real duration. The prior plan is preserved, and the move needs a later day.",
                     "allOf": [
                       {
                         "$ref": "#/components/schemas/UnfundedMove"
@@ -37265,7 +37265,7 @@
                 },
                 "quoted": {
                   "type": "boolean",
-                  "description": "A real past exam question copied as printed, where its organizer allows it: show `citation` with it before it's answered"
+                  "description": "A real past exam question copied as printed, where its organizer allows it, with its source in `citation`"
                 },
                 "right": {
                   "nullable": true,
@@ -37570,7 +37570,7 @@
           "width"
         ],
         "additionalProperties": false,
-        "description": "Show it with the question: its words point at it"
+        "description": "The question's picture, which its words point at"
       },
       "QuestionSelect": {
         "anyOf": [
@@ -39079,7 +39079,7 @@
           },
           "setAside": {
             "type": "boolean",
-            "description": "A `failed` lesson its quality checks set aside: it's never written again, so show that instead of offering to write it"
+            "description": "A `failed` lesson its quality checks set aside: it's never written again"
           },
           "status": {
             "type": "string",
@@ -39423,7 +39423,7 @@
           },
           "targetRegion": {
             "nullable": true,
-            "description": "A language goal's country, a two-letter code, only when the learner asked for one: name the language with it (\"Spanish (Argentina)\"), and without it name only the language. The buddy and practice calls use its variety; lessons and their audio keep the taught one's (`regionChoices[].taught`)",
+            "description": "A language goal's country, a two-letter code, only when the learner asked for one. The buddy and practice calls use its variety; lessons and their audio keep the taught one's (`regionChoices[].taught`)",
             "type": "string"
           },
           "timezone": {
@@ -40015,7 +40015,7 @@
           },
           "namedMonth": {
             "type": "boolean",
-            "description": "The one day is the start of the month the learner named, standing for that month: show the month, not the day"
+            "description": "The one day is the start of the month the learner named, standing for that month, not that day"
           },
           "nextMock": {
             "nullable": true,
@@ -40118,7 +40118,7 @@
           },
           "progress": {
             "nullable": true,
-            "description": "How the learner's mocks went over time: each one's score (the latest twenty, oldest first), each subject's trend, what got better and what still needs work. Null before the first finished mock, and when mocks need Plus (`mocksRequirePlus`): show it locked, never hidden",
+            "description": "How the learner's mocks went over time: each one's score (the latest twenty, oldest first), each subject's trend, what got better and what still needs work. Null before the first finished mock, and null when mocks need Plus and the learner's plan doesn't include them (`mocksRequirePlus`)",
             "allOf": [
               {
                 "$ref": "#/components/schemas/ExamMockProgress"
@@ -40199,7 +40199,7 @@
               ],
               "additionalProperties": false
             },
-            "description": "The mocks the learner started and hasn't finished: the one taken any time first (GET /v1/goals/{goalId}/mocks `running` continues it), then the plan's weekly one, which can run beside it. Lead the exam's mocks with them, with what's answered and the time left, each opening its own sitting. Empty when none is running; one whose time ran out while the learner was away isn't"
+            "description": "The mocks the learner started and hasn't finished: the one taken any time first (GET /v1/goals/{goalId}/mocks `running` continues it), then the plan's weekly one, which can run beside it, each with what's answered, the time left and its own sitting. Empty when none is running; one whose time ran out while the learner was away isn't"
           },
           "scoring": {
             "type": "object",
@@ -40294,7 +40294,7 @@
           },
           "speaking": {
             "nullable": true,
-            "description": "DELE, DELF or DALF, Goethe-Zertifikat and Cambridge English goals: the exam's speaking paper, each task started with POST /v1/language-conversations (kind examSpeaking) and run as a live call with the AI as examiner or partner. Tasks come with Plus (`access`); show them locked, never hidden. Null for other exams",
+            "description": "DELE, DELF or DALF, Goethe-Zertifikat and Cambridge English goals: the exam's speaking paper, each task started with POST /v1/language-conversations (kind examSpeaking) and run as a live call with the AI as examiner or partner. The tasks are returned whatever the learner's plan; `access` says whether they can start one, as tasks come with Plus. Null for other exams",
             "allOf": [
               {
                 "$ref": "#/components/schemas/SpeakingPaper"
@@ -40816,7 +40816,7 @@
           },
           "examQuestions": {
             "nullable": true,
-            "description": "The exam's questions for what it sat, when it asked fewer (the bank had too few new ones): say how many it asked of them. Null when it asked them all",
+            "description": "The exam's questions for what it sat, when it asked fewer (the bank had too few new ones). Null when it asked them all",
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
@@ -42026,7 +42026,7 @@
         "properties": {
           "checked": {
             "type": "boolean",
-            "description": "False when the answer wasn't checked, so show it as not checked, never as wrong. It isn't recorded and saves no mistake. Two cases: a typed answer past a few graded answers to the same screen a day (code still recognizes an accepted answer, and anything else comes with the sample answer in `correctAnswer`), and an answer that isn't right to a screen of any kind whose content, version, word or sentence a staff fix changed after the run started, since the learner may still be looking at the old screen (`correctAnswer` is null). True otherwise."
+            "description": "False when the answer wasn't checked: it was neither right nor wrong. It isn't recorded and saves no mistake. Two cases: a typed answer past a few graded answers to the same screen a day (code still recognizes an accepted answer, and anything else comes with the sample answer in `correctAnswer`), and an answer that isn't right to a screen of any kind whose content, version, word or sentence a staff fix changed after the run started, since the learner may still be looking at the old screen (`correctAnswer` is null). True otherwise."
           },
           "correctAnswer": {
             "nullable": true,
@@ -42986,7 +42986,7 @@
           },
           "targetLanguage": {
             "type": "string",
-            "description": "The language the goal learns, which names its level (\"English level\")"
+            "description": "The language the goal learns, whose level the goal measures"
           }
         },
         "required": [
@@ -44041,7 +44041,7 @@
         "properties": {
           "ceremony": {
             "nullable": true,
-            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null when there's none",
+            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses), until it's marked as shown; null when there's none",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Milestone"
@@ -45620,7 +45620,7 @@
           },
           "ceremony": {
             "nullable": true,
-            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null when there's none",
+            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses), until it's marked as shown; null when there's none",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Milestone"
@@ -46092,7 +46092,7 @@
         "properties": {
           "ceremony": {
             "nullable": true,
-            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null when there's none",
+            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses), until it's marked as shown; null when there's none",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Milestone"
@@ -47067,7 +47067,7 @@
           },
           "targetRegion": {
             "nullable": true,
-            "description": "A language goal's country, a two-letter code, only when the learner asked for one: name the language with it (\"Spanish (Argentina)\"), and without it name only the language",
+            "description": "A language goal's country, a two-letter code, only when the learner asked for one",
             "type": "string"
           },
           "title": {
@@ -47227,7 +47227,7 @@
                   },
                   "summary": {
                     "nullable": true,
-                    "description": "The lesson map, shown as its own screen after the last one (except after testing out) and from the lesson's menu once it ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
+                    "description": "The lesson map, which comes after the last screen (except after testing out) and stays in the lesson's menu once the lesson ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
                     "allOf": [
                       {
                         "$ref": "#/components/schemas/LessonMap"
@@ -47266,7 +47266,7 @@
                 "items": {
                   "$ref": "#/components/schemas/LessonTutorSuggestion"
                 },
-                "description": "The tutor's suggestions for the lesson's screens, worded in the lesson's language: show `label` on the chip and send `id` as `suggestion` when the learner taps it (`POST /v1/lessons/{lessonId}/questions`). The question is stored in these same words"
+                "description": "The tutor's suggestions for the lesson's screens, worded in the lesson's language: `label` is the suggestion's words, and `id` is what `POST /v1/lessons/{lessonId}/questions` takes as `suggestion` when the learner picks it. The question is stored in these same words"
               }
             },
             "required": [
@@ -47400,7 +47400,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -47445,7 +47445,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -61541,7 +61541,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -61586,7 +61586,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -62236,7 +62236,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -62281,7 +62281,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -62737,7 +62737,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -62782,7 +62782,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -67684,7 +67684,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -67729,7 +67729,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -68343,7 +68343,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -68388,7 +68388,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -71586,7 +71586,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -71631,7 +71631,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -71845,7 +71845,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -71890,7 +71890,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -72285,7 +72285,7 @@
               },
               "citation": {
                 "nullable": true,
-                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), shown as a dated Sources chip. `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
+                "description": "Where the screen comes from. `material`: the page or slide of the learner's own material, for lessons built from it. `source`: a public document its facts come from (a law, an exam notice), with when it was last checked (`checkedAt`). `notInMaterial`: an explanation in a lesson built from the learner's material that no page of it supports",
                 "oneOf": [
                   {
                     "type": "object",
@@ -72330,7 +72330,7 @@
                         "type": "string",
                         "format": "date-time",
                         "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                        "description": "When the document was last fetched and found current (\"Checked Sep 2026\")"
+                        "description": "When the document was last fetched and found current"
                       },
                       "kind": {
                         "type": "string",
@@ -76089,7 +76089,7 @@
         "properties": {
           "ceremony": {
             "nullable": true,
-            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null when there's none",
+            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses), until it's marked as shown; null when there's none",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Milestone"
@@ -76695,7 +76695,7 @@
             "items": {
               "type": "string"
             },
-            "description": "The areas most of a practice block asks about, at most two, as the plan names them: name a practice without `topics` after them (\"Practice: Math and Languages\"). Empty for other blocks"
+            "description": "The areas most of a practice block asks about, at most two, as the plan names them; a practice without `topics` is about these. Empty for other blocks"
           },
           "brainPower": {
             "type": "integer",
@@ -76892,7 +76892,7 @@
             "items": {
               "type": "string"
             },
-            "description": "A practice block's topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead): name its row after the first, so two practices on one subject read apart (\"Practice: Calculating discounts\"), and under it name the first and how many more (\"Calculating discounts and 9 more topics\"). Empty for other blocks"
+            "description": "A practice block's topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead), so two practices on one subject differ by their first topic. Empty for other blocks"
           },
           "waitReason": {
             "nullable": true,
@@ -77863,7 +77863,7 @@
         "properties": {
           "checked": {
             "type": "boolean",
-            "description": "False when the answer wasn't checked, so show it as not checked, never as wrong. It isn't recorded and saves no mistake. Two cases: a typed answer past a few graded answers to the same screen a day (code still recognizes an accepted answer, and anything else comes with the sample answer in `correctAnswer`), and an answer that isn't right to a screen of any kind whose content, version, word or sentence a staff fix changed after the run started, since the learner may still be looking at the old screen (`correctAnswer` is null). True otherwise."
+            "description": "False when the answer wasn't checked: it was neither right nor wrong. It isn't recorded and saves no mistake. Two cases: a typed answer past a few graded answers to the same screen a day (code still recognizes an accepted answer, and anything else comes with the sample answer in `correctAnswer`), and an answer that isn't right to a screen of any kind whose content, version, word or sentence a staff fix changed after the run started, since the learner may still be looking at the old screen (`correctAnswer` is null). True otherwise."
           },
           "correctAnswer": {
             "nullable": true,
@@ -78997,7 +78997,7 @@
           "question"
         ],
         "additionalProperties": false,
-        "description": "A question the learner asked about a lesson from an earlier version of a course, which no longer exists: shown as read-only history, with no link"
+        "description": "A question the learner asked about a lesson from an earlier version of a course, which no longer exists: history that can't be continued, with no link"
       },
       "CurrentUserProgressResponse": {
         "type": "object",
@@ -80448,7 +80448,7 @@
           },
           "estimatedScore": {
             "nullable": true,
-            "description": "Only for an exam goal once its last three mock exams hold at least 30 questions and not one subject alone, always a range labeled Estimated. Null before that: after a mock (components.mocks.taken > 0), say that more mocks of the whole exam or half of it bring the estimate",
+            "description": "Only for an exam goal once its last three mock exams hold at least 30 questions and not one subject alone, always a range and always an estimate. Null before that, including after a mock (components.mocks.taken > 0): more mocks of the whole exam or half of it bring the estimate",
             "allOf": [
               {
                 "$ref": "#/components/schemas/EstimatedScore"
@@ -80696,7 +80696,7 @@
               },
               "value": {
                 "nullable": true,
-                "description": "Accuracy on questions never seen before, each answer counting by its skill's importance. Null until a section has the few answers mastery needs: show that it comes after a few practice questions",
+                "description": "Accuracy on questions never seen before, each answer counting by its skill's importance. Null until a section has the few answers mastery needs, which a few practice questions give",
                 "type": "number",
                 "minimum": 0,
                 "maximum": 1
@@ -80836,7 +80836,7 @@
               },
               "lessons": {
                 "nullable": true,
-                "description": "Lessons earlier days left that the learner hasn't caught up on: they come first in the plan, and the learner is behind until they're done. Say this count instead of days when present",
+                "description": "Lessons earlier days left that the learner hasn't caught up on: they come first in the plan, and the learner is behind until they're done. When present, it measures how far behind the learner is, and `days` is 0",
                 "type": "integer",
                 "minimum": 1,
                 "maximum": 9007199254740991
@@ -80871,7 +80871,7 @@
               "kind"
             ],
             "additionalProperties": false,
-            "description": "Every lesson of the plan is studied or tested out (its progress reads 100%) and only required phase challenges on the calendar are left: the plan isn't finished until they're won. Free language call challenges remain pending and locked but don't block finishing. Non-exam reviews are practice and don't block this status, whatever the date. Exams still wait for their mocks and reviews. Never say it finished while required challenges remain; say how many are left"
+            "description": "Every lesson of the plan is studied or tested out (its progress reads 100%) and only required phase challenges on the calendar are left: the plan isn't finished until they're won. Free language call challenges remain pending and locked but don't block finishing. Non-exam reviews are practice and don't block this status, whatever the date. Exams still wait for their mocks and reviews"
           },
           {
             "type": "object",
@@ -80915,7 +80915,7 @@
               "options"
             ],
             "additionalProperties": false,
-            "description": "The plan no longer fits the time before its date: offer to adjust it (`options`). Also once every lesson is done while a required phase challenge has no room before the date (a phase's `challengeLeftOut`): winning the challenges on the calendar wouldn't finish it, so say it needs more study days before the date or a later date"
+            "description": "The plan no longer fits the time before its date; `options` are the ways to adjust it. Also once every lesson is done while a required phase challenge has no room before the date (a phase's `challengeLeftOut`): winning the challenges on the calendar wouldn't finish it, and only more study days before the date or a later date make room"
           },
           {
             "type": "object",
@@ -80938,7 +80938,7 @@
               "lessons"
             ],
             "additionalProperties": false,
-            "description": "The plan's date came with lessons left. The plan doesn't end: never say it ended or finished. Offer the change that keeps it going, previewed when the learner asks (POST /v1/goals/{goalId}/plan/change-previews): a goal's date moves to the day its time covers what's left by (`fittingDate` from POST /v1/goals/{goalId}/plan/time-to-cover, sent as `setTargetDate`); an exam's plan goes on after it (`setFullCourse`)"
+            "description": "The plan's date came with lessons left, and the plan doesn't end: one change keeps it going, previewed when the learner asks (POST /v1/goals/{goalId}/plan/change-previews): a goal's date moves to the day its time covers what's left by (`fittingDate` from POST /v1/goals/{goalId}/plan/time-to-cover, sent as `setTargetDate`); an exam's plan goes on after it (`setFullCourse`)"
           }
         ],
         "type": "object"
@@ -81241,7 +81241,7 @@
               ],
               "additionalProperties": false
             },
-            "description": "Every skill of the goal as a card, grouped by chapter in plan order, with each section's chapters together (show a section header when there are two or more)"
+            "description": "Every skill of the goal as a card, grouped by chapter in plan order, with each section's chapters together"
           }
         },
         "required": [
@@ -81695,7 +81695,7 @@
         "properties": {
           "ceremony": {
             "nullable": true,
-            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null when there's none",
+            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses), until it's marked as shown; null when there's none",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Milestone"
@@ -82141,7 +82141,7 @@
             "properties": {
               "key": {
                 "type": "string",
-                "description": "Identifies the subject in lists; never shown"
+                "description": "Identifies the subject in lists; `name` is what the subject is called"
               },
               "name": {
                 "type": "string",
@@ -82228,7 +82228,7 @@
             "properties": {
               "key": {
                 "type": "string",
-                "description": "Identifies the subject in lists; never shown"
+                "description": "Identifies the subject in lists; `name` is what the subject is called"
               },
               "name": {
                 "type": "string",
@@ -82262,7 +82262,7 @@
         "properties": {
           "key": {
             "type": "string",
-            "description": "Identifies the subject in lists; never shown"
+            "description": "Identifies the subject in lists; `name` is what the subject is called"
           },
           "name": {
             "type": "string",
@@ -83336,7 +83336,7 @@
             "properties": {
               "emphasized": {
                 "type": "boolean",
-                "description": "The goal is to refresh what the learner knew: lead with this"
+                "description": "The goal is to refresh what the learner knew"
               },
               "skills": {
                 "type": "array",
@@ -83714,7 +83714,7 @@
               "upcoming",
               "leftOut"
             ],
-            "description": "The same state as the plan's phase (`GET /v1/goals/{goalId}/plan`). `current` is the earliest phase with work left, and none is once nothing of the plan is left; one before it is `done` once the learner finished its work, `unfinished` while some of it was set aside (missed days the plan couldn't fit back): never mark it done. `leftOut`: the plan holds none of its work (a date too near for its topics): say it's not in the plan, and leave it out of the phases counted done"
+            "description": "The same state as the plan's phase (`GET /v1/goals/{goalId}/plan`). `current` is the earliest phase with work left, and none is once nothing of the plan is left; one before it is `done` once the learner finished its work, `unfinished` while some of it was set aside (missed days the plan couldn't fit back), which isn't done. `leftOut`: the plan holds none of its work (a date too near for its topics), and it doesn't count among the phases done"
           }
         },
         "required": [
@@ -84638,7 +84638,7 @@
               },
               "timeCovers": {
                 "type": "boolean",
-                "description": "The learner's own daily time covers everything once the plan is planned again at it, even while `fits` is false (the plan holds less than their time fits): offer `fitOffer` at their time, never another daily time. False without a deadline"
+                "description": "The learner's own daily time covers everything once the plan is planned again at it, even while `fits` is false (the plan holds less than their time fits): `fitOffer` keeps their daily time. False without a deadline"
               }
             },
             "required": [
@@ -85427,12 +85427,12 @@
           },
           "label": {
             "nullable": true,
-            "description": "The aim as the rest of the plan names it, half bands included (\"B1+\"): show this, not `aim`, wherever the goal's aim is named, the picked choice included; null when none is set yet",
+            "description": "The aim as the rest of the plan names it, half bands included (\"B1+\"), where `aim` holds a whole band; null when none is set yet",
             "type": "string"
           },
           "targetLanguage": {
             "nullable": true,
-            "description": "The goal's language (a code like \"en\"), which names the aim's title: \"English level to reach\"; null while it isn't known",
+            "description": "The goal's language (a code like \"en\"), the language the aim is a level of; null while it isn't known",
             "type": "string"
           }
         },
@@ -85561,7 +85561,7 @@
             "properties": {
               "date": {
                 "nullable": true,
-                "description": "The approximate phase-challenge date in the Plan, shown as around this date. Never earlier than tomorrow unless today's day holds the challenge (`when` is `nextSession`); weekly challenges and mocks retain their calendar dates.",
+                "description": "The approximate phase-challenge date in the Plan, an estimate rather than a fixed day. Never earlier than tomorrow unless today's day holds the challenge (`when` is `nextSession`); weekly challenges and mocks retain their calendar dates.",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
@@ -86426,7 +86426,7 @@
                   "everything",
                   "focus"
                 ],
-                "description": "everything: the minutes cover the whole goal in depth by its date (recommendedMinutes); focus: what's worth most first, never to be described as covering everything: 4 hours a day when covering everything takes more than most people keep up, or most's minutes when no time covers everything"
+                "description": "everything: the minutes cover the whole goal in depth by its date (recommendedMinutes); focus: what's worth most first, which doesn't cover everything: 4 hours a day when covering everything takes more than most people keep up, or most's minutes when no time covers everything"
               },
               "minutes": {
                 "type": "integer",
@@ -87638,7 +87638,7 @@
               "rest",
               "study"
             ],
-            "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended"
+            "description": "What this goal's plan makes of the day: a study day, a rest day they chose, the exam's day or the goal's date, or a day with nothing planned before the goal began (`beforeStart`) or after its date (`afterEnd`). An `afterEnd` day is after the goal's date; a plan whose date came with lessons left continues once the learner moves its date"
           },
           "minutes": {
             "type": "integer",
@@ -88912,7 +88912,7 @@
         "properties": {
           "ceremony": {
             "nullable": true,
-            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null when there's none",
+            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses), until it's marked as shown; null when there's none",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Milestone"
@@ -89257,7 +89257,7 @@
               "open",
               "plusRequired"
             ],
-            "description": "`plusRequired`: every mock exam comes with Plus; show the options with what it takes"
+            "description": "`plusRequired`: every mock exam comes with Plus, and the learner's plan doesn't include them"
           },
           "examDocument": {
             "$ref": "#/components/schemas/ExamDocument"
@@ -89371,7 +89371,7 @@
           },
           "covers": {
             "nullable": true,
-            "description": "The exam day's sections it sits, by the notice's names (Listening, Reading), when it leaves one out that isn't a written part (IELTS's Speaking): say what it covers. Null when it sits every such section, and for a subject's mock",
+            "description": "The exam day's sections it sits, by the notice's names (Listening, Reading), when it leaves one out that isn't a written part (IELTS's Speaking). Null when it sits every such section, and for a subject's mock",
             "type": "array",
             "items": {
               "type": "string"
@@ -89388,7 +89388,7 @@
             "items": {
               "$ref": "#/components/schemas/MockLeftOut"
             },
-            "description": "What it leaves out of the real exam, each with why: say each on the mock"
+            "description": "What it leaves out of the real exam, each with why"
           },
           "minutes": {
             "type": "integer",
@@ -89433,7 +89433,7 @@
         "properties": {
           "formats": {
             "nullable": true,
-            "description": "How the questions split by answer format: the notice's counts, or evenly because it counts none (say so); null for an exam of one format",
+            "description": "How the questions split by answer format: the notice's counts, or evenly because it counts none; null for an exam of one format",
             "type": "string",
             "enum": [
               "even",
@@ -89476,7 +89476,7 @@
               "pastEdition",
               "unstated"
             ],
-            "description": "Where the number of questions comes from: the notice, a past edition, or nowhere (say the mock's length is the app's own)"
+            "description": "Where the number of questions comes from: the notice, a past edition, or nowhere (the mock's length is the app's own)"
           },
           "subjects": {
             "nullable": true,
@@ -89506,7 +89506,7 @@
           "time"
         ],
         "additionalProperties": false,
-        "description": "Where a mock's size comes from: say so on the mock whenever it isn't the notice, never inventing a number"
+        "description": "Where a mock's size comes from, whether or not it's the notice"
       },
       "AnytimeMock": {
         "type": "object",
@@ -89933,7 +89933,7 @@
           },
           "examQuestions": {
             "nullable": true,
-            "description": "The exam's questions for what a mock taken any time sits, when it asks fewer (the bank had too few new ones, and a full mock never repeats answered ones): say how many of them it asks. Null when it asks them all",
+            "description": "The exam's questions for what a mock taken any time sits, when it asks fewer (the bank had too few new ones, and a full mock never repeats answered ones). Null when it asks them all",
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
@@ -89952,7 +89952,7 @@
             "items": {
               "$ref": "#/components/schemas/MockLeftOut"
             },
-            "description": "What it leaves out of the real exam, each with why: say each on the mock"
+            "description": "What it leaves out of the real exam, each with why"
           },
           "minutes": {
             "type": "integer",
@@ -90371,7 +90371,7 @@
               "finished",
               "expired"
             ],
-            "description": "`expired`: its time ran out while the learner was away with most of it unanswered (the clock ran out over ten minutes before anything handed it in, under half of its questions answered), so it isn't scored or counted toward preparation: say so calmly and offer a new one (its challenge for the plan's mock, the goal's mocks for one taken any time). One mostly answered is graded as it stands; a placement mock never expires"
+            "description": "`expired`: its time ran out while the learner was away with most of it unanswered (the clock ran out over ten minutes before anything handed it in, under half of its questions answered), so it isn't scored or counted toward preparation; a new one starts from its challenge for the plan's mock, or from the goal's mocks for one taken any time. One mostly answered is graded as it stands; a placement mock never expires"
           },
           "timeZone": {
             "nullable": true,
@@ -91019,12 +91019,12 @@
         "properties": {
           "noticeScoring": {
             "nullable": true,
-            "description": "The notice's own sentence on how the exam is scored, where the mock only counts right answers: show it with the result",
+            "description": "The notice's own sentence on how the exam is scored, where the mock only counts right answers",
             "type": "string"
           },
           "relative": {
             "type": "boolean",
-            "description": "The real result depends on everyone in the sitting (a percentile, a standardized score): say the mock shows right answers only"
+            "description": "The real result depends on everyone in the sitting (a percentile, a standardized score), as the notice says"
           },
           "scale": {
             "nullable": true,
@@ -91463,7 +91463,7 @@
         "properties": {
           "activeGoalsLeft": {
             "nullable": true,
-            "description": "How many more goals the learner's plan follows now: its cap less the active goals they follow, read with this response; null on Plus. Show and send only this many of the card's first goals; the rest are Plus's, shown locked with the subscribe call to action, and stay on the draft to start from the learner's goals once one of the card's goals has started and another fits. At 0, show the plan's limit instead of confirming. When `goalId` is set, open that goal's setup instead.",
+            "description": "How many more goals the learner's plan follows now: its cap less the active goals they follow, read with this response; null on Plus. Only this many of the card's first goals can start now, so send only those; the card still returns the rest, which need Plus, and they stay on the draft to start from the learner's goals once one of the card's goals has started and another fits. At 0, the plan follows no more goals. When `goalId` is set, the draft already started that goal.",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
@@ -91970,7 +91970,7 @@
               },
               "summary": {
                 "nullable": true,
-                "description": "The lesson map, shown as its own screen after the last one (except after testing out) and from the lesson's menu once it ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
+                "description": "The lesson map, which comes after the last screen (except after testing out) and stays in the lesson's menu once the lesson ends. Null for a lesson that ends on its own summary screen, for a challenge, and before its map is written",
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/LessonMap"
@@ -92118,7 +92118,7 @@
           },
           "dateProblem": {
             "nullable": true,
-            "description": "Why the goal's date can't be planned as it stands, so the `targetDate` screen asks again: always for `passed` and `today`, which no plan can be made for (start the screen empty, saying the date passed or is today), and for `noSitting` until the learner answers (offer each of `closest` with one tap). Null when the date can be planned",
+            "description": "Why the goal's date can't be planned as it stands, so the `targetDate` screen asks again: always for `passed` and `today`, which no plan can be made for, and for `noSitting` until the learner answers (`closest` holds the nearest dates to pick). Null when the date can be planned",
             "oneOf": [
               {
                 "type": "object",
@@ -92264,7 +92264,7 @@
                   "stopped",
                   "writing"
                 ],
-                "description": "`stopped` when the lesson failed or was set aside; `writing` while its content is pending or being written until every screen, mark, icon and picture is in; `ready` once the learner can start it; `done` once they finished it. `done` outranks the run's `firstLessonReady`, which a reconnected stream replays: don't offer it again"
+                "description": "`stopped` when the lesson failed or was set aside; `writing` while its content is pending or being written until every screen, mark, icon and picture is in; `ready` once the learner can start it; `done` once they finished it. `done` outranks the run's `firstLessonReady`, which a reconnected stream replays after the lesson is done"
               },
               "title": {
                 "type": "string"
@@ -92350,12 +92350,12 @@
               },
               "label": {
                 "nullable": true,
-                "description": "The aim as the rest of the plan names it, half bands included (\"B1+\"): show this, not `aim`, wherever the goal's aim is named, the picked choice included; null when none is set yet",
+                "description": "The aim as the rest of the plan names it, half bands included (\"B1+\"), where `aim` holds a whole band; null when none is set yet",
                 "type": "string"
               },
               "targetLanguage": {
                 "nullable": true,
-                "description": "The goal's language (a code like \"en\"), which names the aim's title: \"English level to reach\"; null while it isn't known",
+                "description": "The goal's language (a code like \"en\"), the language the aim is a level of; null while it isn't known",
                 "type": "string"
               },
               "reasons": {
@@ -92642,14 +92642,14 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "The minutes of what `today` lists, from its blocks' estimates: show it beside Today's date"
+            "description": "The minutes of what `today` lists, from its blocks' estimates"
           },
           "nextDays": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PlanDay"
             },
-            "description": "The six days after today, composed with `today` so each lesson shows once: a lesson the plan laid out today that `today` leaves out (reviews took its time) comes first tomorrow, a lesson `today` lists isn't repeated, and a lesson split across days shows on its first day. A day with time but nothing left to list isn't included; a rest day is, with no items. Draw them as given"
+            "description": "The six days after today, composed with `today` so each lesson is listed once: a lesson the plan laid out today that `today` leaves out (reviews took its time) comes first tomorrow, a lesson `today` lists isn't repeated, and a lesson split across days is listed on its first day. A day with time but nothing left to list isn't included; a rest day is, with no items"
           },
           "today": {
             "$ref": "#/components/schemas/StudyDay"
@@ -92731,7 +92731,7 @@
                   "format": "uuid",
                   "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                 },
-                "description": "The day's blocks that catch up: label them so"
+                "description": "The day's blocks that catch up on lessons earlier days left"
               },
               "later": {
                 "type": "object",
@@ -92748,7 +92748,7 @@
                   },
                   "offered": {
                     "type": "boolean",
-                    "description": "They take about one more day's time at most: offer adding them to today (POST catch-up-blocks). Otherwise say only that they come first on the next days"
+                    "description": "They take about one more day's time at most, so POST catch-up-blocks can add them to today. Otherwise they come first on the next days"
                   }
                 },
                 "required": [
@@ -92975,7 +92975,7 @@
               },
               "nextStudyDate": {
                 "nullable": true,
-                "description": "This goal's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+                "description": "This goal's next scheduled study day after today, within a week and past the week's end; null when the coming week has none",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
@@ -93247,7 +93247,7 @@
               },
               "nextStudyDate": {
                 "nullable": true,
-                "description": "This goal's next scheduled study day after today, within a week and past the week's end. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
+                "description": "This goal's next scheduled study day after today, within a week and past the week's end; null when the coming week has none",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
@@ -93282,7 +93282,7 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "The areas most of a practice block asks about, at most two, as the plan names them: name a practice without `topics` after them (\"Practice: Math and Languages\"). Empty for other blocks"
+                  "description": "The areas most of a practice block asks about, at most two, as the plan names them; a practice without `topics` is about these. Empty for other blocks"
                 },
                 "brainPower": {
                   "type": "integer",
@@ -93474,7 +93474,7 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "A practice block's topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead): name its row after the first, so two practices on one subject read apart (\"Practice: Calculating discounts\"), and under it name the first and how many more (\"Calculating discounts and 9 more topics\"). Empty for other blocks"
+                  "description": "A practice block's topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead), so two practices on one subject differ by their first topic. Empty for other blocks"
                 },
                 "waitReason": {
                   "nullable": true,
@@ -93546,7 +93546,7 @@
                   },
                   "offered": {
                     "type": "boolean",
-                    "description": "They take about one more day's time at most: offer adding them to today (POST catch-up-blocks). Otherwise say only that they come first on the next days"
+                    "description": "They take about one more day's time at most, so POST catch-up-blocks can add them to today. Otherwise they come first on the next days"
                   }
                 },
                 "required": [
@@ -96250,7 +96250,7 @@
             "items": {
               "$ref": "#/components/schemas/MockLeftOut"
             },
-            "description": "What it leaves out of the real exam, each with why: say each on the mock"
+            "description": "What it leaves out of the real exam, each with why"
           },
           "netScoring": {
             "type": "boolean"
@@ -96498,7 +96498,7 @@
                 },
                 "quoted": {
                   "type": "boolean",
-                  "description": "A real past exam question copied as printed, where its organizer allows it: show `citation` with it before it's answered"
+                  "description": "A real past exam question copied as printed, where its organizer allows it, with its source in `citation`"
                 },
                 "right": {
                   "nullable": true,
@@ -96606,7 +96606,7 @@
         "properties": {
           "blank": {
             "type": "boolean",
-            "description": "A statement left blank (`{ dontKnow: true }`) where a wrong answer cancels a right one: neither right nor a mistake, so show it as left blank, not as an error. It isn't saved as a mistake"
+            "description": "A statement left blank (`{ dontKnow: true }`) where a wrong answer cancels a right one: neither right nor a mistake, and it isn't saved as a mistake"
           },
           "correctAnswer": {
             "nullable": true,
