@@ -18,6 +18,7 @@ import { useExtracted, useFormatter } from "next-intl";
 import { createContext, use, useId, useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
 import { FactSegments } from "../_components/task-meta";
+import { TIME_ANSWER_BUTTON_CLASS } from "../_components/time-answer";
 import { useFocusTestRowFacts } from "../focus-test/use-focus-test-texts";
 import { LearnLink } from "../learn-link";
 import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
@@ -268,7 +269,7 @@ export function ChooseFocus() {
   return (
     <Button
       aria-haspopup="dialog"
-      className="self-start"
+      className={TIME_ANSWER_BUTTON_CLASS}
       onClick={open}
       size="sm"
       type="button"

@@ -33,14 +33,14 @@ export function getRowClass({ finished, isNext }: { finished: boolean; isNext: b
 
 /**
  * While the row's own open runs, its time turns into the spinner in place. The row is its own
- * group: the next row also holds "Take the test", a busy button of its own. Its room fits "12 min",
- * so a mission's mark before it keeps one place down the list.
+ * group: the next row also holds "Take the test", a busy button of its own. Its room fits two-digit
+ * minutes in every language ("12 Min."), so a mission's mark before it keeps one place down the list.
  */
 function RowTime({ minutes }: { minutes: number }) {
   const formatDuration = useFormatDuration();
 
   return (
-    <span className="relative min-w-[6ch] text-end">
+    <span className="relative min-w-[7ch] text-end">
       <span className="group-has-[[data-slot=today-row-open][aria-busy=true]]/row:invisible">
         {formatDuration(minutes)}
       </span>

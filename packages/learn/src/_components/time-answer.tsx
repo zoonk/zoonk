@@ -12,6 +12,10 @@ import { type GoalDate } from "./time-answer-texts";
 
 export { type GoalDate, useTimeAnswerTexts } from "./time-answer-texts";
 
+/** An answer under the time, beside the plan's other answers: it wraps where a language runs long. */
+export const TIME_ANSWER_BUTTON_CLASS =
+  "text-foreground h-auto min-h-7.5 max-w-full self-start py-1 text-left whitespace-normal";
+
 const FAILED_KINDS = new Set<TimeLine["kind"]>(["askFailed", "findFailed"]);
 
 function DaySplitWords({ split }: { split: DaySplit }) {
@@ -105,7 +109,7 @@ export function TimeAnswer({
           <>
             {space}
             <Button
-              className="text-foreground self-start"
+              className={TIME_ANSWER_BUTTON_CLASS}
               onClick={onRetry}
               size="sm"
               variant="outline"
@@ -119,7 +123,7 @@ export function TimeAnswer({
           <>
             {space}
             <Button
-              className="text-foreground self-start"
+              className={TIME_ANSWER_BUTTON_CLASS}
               onClick={() => onUseOffer(offered.minutes)}
               size="sm"
               variant="outline"
