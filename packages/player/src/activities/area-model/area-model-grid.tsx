@@ -131,8 +131,7 @@ function EdgeLabels({
             dominantBaseline="middle"
             // oxlint-disable-next-line react/no-array-index-key -- Parts are positional
             key={index}
-            textAnchor="end"
-            x={x.range[0] - EDGE_LABEL_GAP - PILL_SHORT}
+            x={0}
             y={middle}
           >
             {format(part)}

@@ -169,7 +169,7 @@ export function ProcessOrderActivity({
         )}
       />
 
-      <p className="text-muted-foreground text-xs">{t("Drag the steps into order.")}</p>
+      <p className="text-muted-foreground text-sm">{t("Drag the steps into order.")}</p>
 
       <ActivityTextAlternative>
         {t("{count, plural, one {# step} other {# steps}} to put in order.", {

@@ -78,7 +78,7 @@ export function TimelineTray({
         <span className="flex-1 text-sm font-medium">{label}</span>
       </button>
 
-      <p aria-hidden="true" className="text-muted-foreground text-xs">
+      <p aria-hidden="true" className="text-muted-foreground text-sm">
         {t("Drag onto the timeline")}
       </p>
     </div>
