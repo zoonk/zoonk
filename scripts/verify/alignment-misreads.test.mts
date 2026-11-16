@@ -81,3 +81,39 @@ test("code ids may wrap at hyphens, while a title leaving one word still fails",
   document.body.innerHTML = `<h2 data-box="16,0,120,40">Describe a function output</h2>`;
   assert.equal(faults("lone-word").length, 1);
 });
+
+test("a title's whitespace survives the lone-word decision across three trimmed lines", () => {
+  document.body.innerHTML = '<h2 data-box="16,0,120,60">Review self-study</h2>';
+
+  vi.spyOn(Range.prototype, "getClientRects").mockImplementation(function rects(this: Range) {
+    const top = [7, 12].filter((start) => this.startOffset >= start).length * 20;
+    return rectList(new DOMRect(16, top, 8, 20));
+  });
+
+  const capture = read();
+
+  assert.deepEqual(capture.elements.find((element) => element.part === "text")?.lineTexts, [
+    "Review",
+    "self-",
+    "study",
+  ]);
+
+  assert.equal(
+    evaluateCapture(capture).filter((finding) => finding.rule === "lone-word").length,
+    1,
+  );
+});
+
+test.each([8, 9])(
+  "a single token is exempt only when every break is at a hyphen (first break %s)",
+  (firstBreak) => {
+    document.body.innerHTML = '<h2 data-box="16,0,120,60">describe-function-output</h2>';
+
+    vi.spyOn(Range.prototype, "getClientRects").mockImplementation(function rects(this: Range) {
+      const top = [firstBreak, 18].filter((start) => this.startOffset >= start).length * 20;
+      return rectList(new DOMRect(16, top, 8, 20));
+    });
+
+    assert.equal(faults("lone-word").length, firstBreak === 9 ? 0 : 1);
+  },
+);

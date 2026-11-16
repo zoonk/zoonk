@@ -1,8 +1,6 @@
 import { type AlignmentFinding, type CaptureElement } from "./alignment-capture.mts";
 import { type Context, finding } from "./alignment-geometry.mts";
 
-const LAST_TWO_LINES = 2;
-
 /** A separator between two items: a middle dot, a bullet, a spaced dash, a slash or a bar. */
 const SEPARATORS = new Set(["·", "•", "-", "–", "—", "/", "|"]);
 
@@ -52,12 +50,11 @@ export function loneWordLeads(context: Context): AlignmentFinding[] {
     const last = wordsOf(lines.at(-1) ?? "");
     const word = last[0] ?? "";
 
-    if (
-      !text.textRole ||
-      lines.length < 2 ||
-      last.length !== 1 ||
-      (lines.at(-LAST_TWO_LINES)?.endsWith("-") && /^[\p{L}\p{N}_-]+$/u.test(lines.join("")))
-    ) {
+    const hyphenatedToken =
+      /^[\p{L}\p{N}_-]+$/u.test(text.text ?? "") &&
+      lines.slice(0, -1).every((line) => line.endsWith("-"));
+
+    if (!text.textRole || lines.length < 2 || last.length !== 1 || hyphenatedToken) {
       return [];
     }
 

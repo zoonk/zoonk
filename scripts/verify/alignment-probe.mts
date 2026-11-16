@@ -1491,6 +1491,7 @@ export function readAlignment({
     return [...roots].map((element, index) => ({
       ...pagePart(element, "text", index),
       lineTexts: lineTexts(element),
+      text: element.textContent?.trim() ?? "",
       ...(textRole(element) ? { textRole: textRole(element) } : {}),
     }));
   }
