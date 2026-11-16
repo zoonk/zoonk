@@ -790,4 +790,3 @@ func studyDaysText(_ weekdayMinutes: [Int]) -> String {
 
   return days.map { symbols[$0] }.formatted(.list(type: .and, width: .narrow))
 }
-
