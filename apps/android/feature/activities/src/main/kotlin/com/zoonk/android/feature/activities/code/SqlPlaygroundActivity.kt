@@ -158,7 +158,14 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
                     change(query.inserting(snippet))
                     focus.requestFocus()
                 }
-                SandboxRunBar(SQLITE, runtime, hasRun = run != null, isRunning = editorRun.isRunning, onRun = ::runQuery)
+                SandboxRunBar(
+                    SQLITE,
+                    runtime,
+                    needsRun = if (props.isExploring) null else props.answer == null,
+                    hasRun = run != null,
+                    isRunning = editorRun.isRunning,
+                    onRun = ::runQuery,
+                )
             }
         }
 
