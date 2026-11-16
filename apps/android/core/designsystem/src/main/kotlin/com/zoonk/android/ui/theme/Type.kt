@@ -89,7 +89,7 @@ internal val ZoonkMaterialTypography =
             // The app's body (`text-sm`).
             bodyMedium = bodyMedium.role(14f, 400, 20f),
             // A row's description and meta (`ListRowDescription`).
-            bodySmall = bodySmall.role(12f, 400, 16f),
+            bodySmall = bodySmall.role(12f, 400, 16f).balanced(),
             // A button for a screen's action.
             labelLarge = labelLarge.role(15f, 500, 22f).balanced(),
             // A small button (`size="sm"`), navigation labels.
@@ -133,7 +133,7 @@ internal val ZoonkTypeRoles =
             label = labelSmall.role(11.5f, 550, 16f, 0.04f),
             lead = bodyLarge.role(17f, 400, 26f, -0.01f),
             lessonText = bodyLarge.role(18f, 400, 29.25f),
-            question = titleMedium.role(19f, 560, 25.65f, -0.02f),
+            question = titleMedium.role(19f, 560, 25.65f, -0.02f).balanced(),
             verdict = labelLarge.role(15f, 550, 24f),
             tag = labelSmall.role(11.5f, 550, 16f),
             message = bodyLarge.role(15f, 400, 23.25f),

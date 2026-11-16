@@ -110,7 +110,7 @@ fun QuestionTitle(
     modifier: Modifier = Modifier,
     graded: Boolean = false,
 ) {
-    val style = MaterialTheme.typography.titleLarge.copy(lineBreak = LineBreak.Paragraph)
+    val style = MaterialTheme.typography.titleLarge.copy(lineBreak = LineBreak.Heading)
     RichText(
         text = text,
         modifier = modifier.semantics { heading() },

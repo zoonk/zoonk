@@ -212,7 +212,7 @@ internal fun MindMapViewer(
         aside =
             image?.let {
                 TaskAside(half = true) {
-                    MindMapOutlineText(map.outline, Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp))
+                    MindMapOutlineText(map.outline)
                 }
             },
         modifier = Modifier.onKeyEvent { it.type == KeyEventType.KeyDown && it.key == Key.Escape && true.also { onClose() } },
