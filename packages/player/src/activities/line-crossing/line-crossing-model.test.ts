@@ -25,6 +25,7 @@ const revenue = { intercept: 0, slope: 15 };
 const SMALLEST_PLOT = 192;
 const HANDLE_REACH = 14 + 2.5 / 2;
 const CROSSING_REACH = 7;
+const HANDLES_GAP = 4;
 const { breakEven } = engineModeFixtures.lineCrossing;
 const supplyDemand = activityContentFixtures.lineCrossing.fields;
 
@@ -155,11 +156,20 @@ function problemsIn({ fields, name }: { fields: Fields; name: string }): string[
   const { domain, slides } = chartSlides({ amount, axis, lines: [first, second], real });
   const crossing = crossingPoint(first, second);
 
-  return slides.flatMap(({ line, slide: { at, offsets } }) => {
+  return slides.flatMap(({ line, slide: { at, offsets } }, index) => {
     const realOffset = real[line.id] ?? 0;
     const where = (offset: number) => `${name}: ${line.label} at ${offset}`;
+    const other = slides[1 - index];
 
     return [
+      ...offsets
+        .filter(
+          (offset) =>
+            other &&
+            gapOnTheSmallestPlot(at(offset), other.slide.at(0), domain) <
+              HANDLE_REACH * 2 + HANDLES_GAP,
+        )
+        .map((offset) => `${where(offset)} covers ${other?.line.label}'s handle`),
       ...offsets
         .filter((offset) => !isOnTheSmallestPlot(at(offset), domain))
         .map((offset) => `${where(offset)} leaves the chart at ${JSON.stringify(at(offset))}`),
@@ -261,7 +271,7 @@ describe("chart domain", () => {
 });
 
 describe(chartSlides, () => {
-  it("keeps every handle on the chart, off the crossing at rest, and the right move in reach", () => {
+  it("keeps every handle on the chart, off the crossing at rest and off the other handle, and the right move in reach", () => {
     expect(CHARTS.length).toBeGreaterThan(NAMED.length);
     expect(CHARTS.flatMap((chart) => problemsIn(chart))).toStrictEqual([]);
   });
