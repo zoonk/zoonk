@@ -1,9 +1,11 @@
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
+import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { type PlanBasesView, type PlanView } from "@zoonk/core/plans/view-contract";
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { PlanBasesSheet, useBasesSheet } from "../../../learn/src/plan/plan-bases-sheet";
 import { type PlanActions, PlanScreenProvider } from "../../../learn/src/plan/plan-context";
+import { PlanSheetHosts } from "../../../learn/src/plan/plan-sheet-hosts";
 import {
   PlanSuggestionProvider,
   PlanSuggestionSlot,
@@ -135,7 +137,15 @@ const TODAY_PREVIEW: PlanChangePreview = {
 /** The Plan's answers wait until the test releases them. */
 function renderPlan(
   children: React.ReactNode,
-  { adviseOnBases = async () => null }: { adviseOnBases?: PlanActions["adviseOnBases"] } = {},
+  {
+    adviseOnBases = async () => null,
+    findTimeToCover = async () => null,
+    plan: initialPlan = PLAN,
+  }: {
+    adviseOnBases?: PlanActions["adviseOnBases"];
+    findTimeToCover?: PlanActions["findTimeToCover"];
+    plan?: PlanView;
+  } = {},
 ) {
   const heldChange = Promise.withResolvers<Awaited<ReturnType<PlanActions["change"]>>>();
   const change = vi.fn<PlanActions["change"]>(() => heldChange.promise);
@@ -153,7 +163,7 @@ function renderPlan(
     chooseExamOption: async () => null,
     chooseTools: async () => false,
     decide: async () => false,
-    findTimeToCover: async () => null,
+    findTimeToCover,
     preview,
   };
 
@@ -170,7 +180,7 @@ function renderPlan(
     </PlanScreenProvider>
   );
 
-  const screen = render(screenFor(PLAN));
+  const screen = render(screenFor(initialPlan));
 
   return {
     change,
@@ -185,11 +195,12 @@ function renderPlan(
   };
 }
 
-function renderHeldOffer() {
+function renderHeldOffer(plan: PlanView = PLAN) {
   const held = renderPlan(
     <PlanSuggestionProvider host={HOST}>
       <PlanSuggestionSlot />
     </PlanSuggestionProvider>,
+    { plan },
   );
 
   return { ...held, release: held.releasePreview };
@@ -227,6 +238,135 @@ async function settle() {
   });
 }
 
+function withWritingLesson(plan: PlanView, writing: boolean): PlanView {
+  return {
+    ...plan,
+    week: {
+      ...plan.week,
+      days: plan.week.days.map((day) => ({
+        ...day,
+        items: [
+          {
+            chapterId: null,
+            id: null,
+            kind: "lesson",
+            lessonId: null,
+            minutes: 20,
+            requiresPlus: false,
+            scheduledFor: null,
+            skillId: null,
+            status: "todo",
+            title: "Lists",
+            writing,
+          },
+        ],
+      })),
+    },
+  };
+}
+
+const COVERAGE_PLAN: PlanView = withWritingLesson(
+  {
+    ...PLAN,
+    feasibility: {
+      coreFits: true,
+      coveredShare: 0.5,
+      deadline: "2027-03-01",
+      deepensMostAsked: false,
+      fits: false,
+      measure: "goal",
+      timeCovers: false,
+    },
+    fitOffer: null,
+  },
+  true,
+);
+
+const COVERAGE_TIME = {
+  fittingDate: "2027-04-01",
+  most: null,
+  pastDate: false,
+  readingNotice: false,
+  ready: true,
+  recommendedMinutes: 60,
+  suggested: { coveredShare: 1, everyTopic: true, kind: "everything", minutes: 60, split: null },
+  targetDate: "2027-03-01",
+  targetDateNamedMonth: false,
+} satisfies PlanTimeToCover;
+
+async function checkCoverage() {
+  const held = renderPlan(
+    <PlanSheetHosts>
+      <PlanSuggestionProvider host={HOST}>
+        <PlanSuggestionSlot />
+      </PlanSuggestionProvider>
+    </PlanSheetHosts>,
+    { findTimeToCover: async () => COVERAGE_TIME, plan: COVERAGE_PLAN },
+  );
+
+  await page.getByRole("button", { name: "View" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "See what changes" }).click();
+  await expect.poll(() => held.preview).toHaveBeenCalledOnce();
+  return held;
+}
+
+describe("the Plan's coverage preview", () => {
+  it("keeps its check and answer when only a lesson finishes writing", async () => {
+    await atViewport(PHONE, async () => {
+      const held = await checkCoverage();
+      held.showPlan(withWritingLesson(COVERAGE_PLAN, false));
+
+      await expect
+        .element(page.getByRole("dialog").getByText("Checking what changes…"))
+        .toBeVisible();
+
+      held.releasePreview();
+      const apply = page.getByRole("dialog").getByRole("button", { name: "Change my plan" });
+      await expect.element(apply).toBeEnabled();
+      held.showPlan(COVERAGE_PLAN);
+      await expect.element(apply).toBeEnabled();
+      expect(held.preview).toHaveBeenCalledOnce();
+      expect(held.change).not.toHaveBeenCalled();
+      held.screen.unmount();
+    });
+  });
+
+  it.each([
+    {
+      name: "a new day",
+      plan: {
+        ...COVERAGE_PLAN,
+        week: {
+          ...COVERAGE_PLAN.week,
+          days: COVERAGE_PLAN.week.days.map((day) => ({ ...day, date: "2026-11-17" })),
+        },
+      },
+    },
+    {
+      name: "less work left",
+      plan: { ...COVERAGE_PLAN, steering: { ...COVERAGE_PLAN.steering, lessonsStudied: 1 } },
+    },
+  ])("drops its check after $name", async ({ plan }) => {
+    await atViewport(PHONE, async () => {
+      const held = await checkCoverage();
+      held.showPlan(plan);
+      held.releasePreview();
+      await settle();
+
+      await expect
+        .element(page.getByRole("dialog").getByRole("button", { name: "See what changes" }))
+        .toBeEnabled();
+
+      expect(
+        page.getByRole("dialog").getByRole("button", { name: "Change my plan" }).query(),
+      ).toBeNull();
+
+      expect(held.change).not.toHaveBeenCalled();
+      held.screen.unmount();
+    });
+  });
+});
+
 describe("the Plan's offer to fit more lessons", () => {
   it("adds them once today's check matches the card", async () => {
     await atViewport(PHONE, async () => {
@@ -260,6 +400,24 @@ describe("the Plan's offer to fit more lessons", () => {
       held.releasePreview({ ...TODAY_PREVIEW, effect: { ...FIT_EFFECT, lessonsAdded: 2 } });
       await expect.element(page.getByRole("dialog").getByText(REPRICED)).toBeVisible();
       expect(held.change).not.toHaveBeenCalled();
+      held.screen.unmount();
+    });
+  });
+
+  it("drops a fit check when only a lesson finishes writing", async () => {
+    await atViewport(PHONE, async () => {
+      const plan = withWritingLesson(PLAN, true);
+      const held = renderHeldOffer(plan);
+      await addFromSheet(held);
+      held.showPlan(withWritingLesson(plan, false));
+      held.release();
+      await settle();
+      expect(held.change).not.toHaveBeenCalled();
+
+      await expect
+        .element(page.getByRole("dialog").getByRole("button", { name: "Add to my plan" }))
+        .toBeEnabled();
+
       held.screen.unmount();
     });
   });

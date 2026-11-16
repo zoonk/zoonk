@@ -1,7 +1,16 @@
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
+import { type PlanView } from "@zoonk/core/plans/view-contract";
+import { getPlanAdviceRevision, getPlanToday } from "./plan-advice-revision";
 
-type PreviewInput = { operations: LearnerPlanOperation[]; plan: object };
+type PreviewPlan = Parameters<typeof getPlanAdviceRevision>[0]["plan"] & Pick<PlanView, "week">;
+export type PreviewScope = "advice" | "plan";
+
+type PreviewInput = { operations: LearnerPlanOperation[]; plan: PreviewPlan; scope?: PreviewScope };
+
+function adviceRevision(plan: PreviewPlan): string {
+  return getPlanAdviceRevision({ plan, today: getPlanToday(plan) });
+}
 
 export type PlanPreviewState =
   | { status: "idle" }
@@ -9,17 +18,25 @@ export type PlanPreviewState =
   | (PreviewInput & { preview: PlanChangePreview; status: "ready" });
 
 /**
- * A refresh deserializes an unchanged server view into a new object, which keeps the preview's
- * base.
+ * Date and coverage previews follow advice inputs; fit checks and other edits keep the whole plan
+ * as their base. An unchanged refresh keeps either kind.
  */
 export function isSamePreviewPlan({
   current,
   previous,
+  scope = "plan",
 }: {
-  current: object;
-  previous: object;
+  current: PreviewPlan;
+  previous: PreviewPlan;
+  scope?: PreviewScope;
 }): boolean {
-  return current === previous || JSON.stringify(current) === JSON.stringify(previous);
+  if (current === previous) {
+    return true;
+  }
+
+  return scope === "advice"
+    ? adviceRevision(current) === adviceRevision(previous)
+    : JSON.stringify(current) === JSON.stringify(previous);
 }
 
 export function currentPlanPreview({
@@ -29,7 +46,7 @@ export function currentPlanPreview({
 }: PreviewInput & { state: PlanPreviewState }): PlanPreviewState {
   if (
     state.status === "idle" ||
-    !isSamePreviewPlan({ current: plan, previous: state.plan }) ||
+    !isSamePreviewPlan({ current: plan, previous: state.plan, scope: state.scope }) ||
     JSON.stringify(state.operations) !== JSON.stringify(operations)
   ) {
     return { status: "idle" };
