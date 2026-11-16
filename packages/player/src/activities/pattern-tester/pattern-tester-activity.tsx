@@ -4,7 +4,6 @@ import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useState } from "react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import {
   ACTIVITY_CARD_CLASS,
   ACTIVITY_FIELD_CLASS,
@@ -18,6 +17,7 @@ import { type ActivityRendererProps } from "../activity-renderer";
 import { FormulaExamples } from "./formula-examples";
 import { PatternHints } from "./pattern-hints";
 import { type RegexResults, countPassing, testFormula, testRegex } from "./pattern-results";
+import { PatternTask } from "./pattern-task";
 import { RegexSampleList } from "./regex-samples";
 
 type PatternTesterProps = ActivityRendererProps<"patternTester">;
@@ -160,7 +160,7 @@ export function PatternTesterActivity({
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
       <p className="text-base leading-snug font-medium">
-        <LessonRichText literalNumbers={isRegex} text={fields.task} />
+        <PatternTask literalNumbers={isRegex} text={fields.task} />
       </p>
 
       <div className="flex flex-col gap-2">
@@ -171,8 +171,7 @@ export function PatternTesterActivity({
         <div
           className={cn(
             ACTIVITY_FIELD_CLASS,
-            "flex h-11 items-center gap-0.5 px-3 font-mono text-xl",
-            isChecked && "opacity-80",
+            "flex h-11 items-center gap-0.5 px-3 font-mono text-base",
           )}
         >
           {isRegex && (

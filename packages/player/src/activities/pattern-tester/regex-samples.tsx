@@ -47,7 +47,7 @@ function SampleRow({ result, shouldMatch }: { result: SampleResult; shouldMatch:
     <li
       className={cn(
         ACTIVITY_CARD_CLASS,
-        "flex min-h-11 items-center gap-2 py-2 font-mono text-base",
+        "flex min-h-11 items-center gap-2 py-2 font-mono text-sm",
         result.passes && cn(ACTIVITY_LINE_CLASS.right, "bg-success/10"),
         !result.passes && cn(ACTIVITY_LINE_CLASS.wrong, "bg-destructive/10"),
       )}
@@ -113,8 +113,7 @@ export function RegexSampleList({
           : keyedByPosition(samples, (sample) => sample).map(({ item, key }) => (
               <li
                 className={cn(
-                  ACTIVITY_CARD_CLASS,
-                  "flex min-h-11 items-center py-2 font-mono text-base whitespace-pre",
+                  "border-border flex min-h-11 items-center border-b py-2 font-mono text-sm whitespace-pre",
                 )}
                 key={key}
               >
