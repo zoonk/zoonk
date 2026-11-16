@@ -155,32 +155,49 @@ function problemsIn({ fields, name }: { fields: Fields; name: string }): string[
 
   const { domain, slides } = chartSlides({ amount, axis, lines: [first, second], real });
   const crossing = crossingPoint(first, second);
+  const offsetOf = (line: { id: string }) => real[line.id] ?? 0;
 
-  return slides.flatMap(({ line, slide: { at, offsets } }, index) => {
-    const realOffset = real[line.id] ?? 0;
-    const where = (offset: number) => `${name}: ${line.label} at ${offset}`;
-    const other = slides[1 - index];
+  const answer = crossingPoint(
+    movedLine(first, offsetOf(first), axis),
+    movedLine(second, offsetOf(second), axis),
+  );
 
-    return [
-      ...offsets
-        .filter(
-          (offset) =>
-            other &&
-            gapOnTheSmallestPlot(at(offset), other.slide.at(0), domain) <
-              HANDLE_REACH * 2 + HANDLES_GAP,
-        )
-        .map((offset) => `${where(offset)} covers ${other?.line.label}'s handle`),
-      ...offsets
-        .filter((offset) => !isOnTheSmallestPlot(at(offset), domain))
-        .map((offset) => `${where(offset)} leaves the chart at ${JSON.stringify(at(offset))}`),
-      ...(gapOnTheSmallestPlot(at(0), crossing, domain) < HANDLE_REACH + CROSSING_REACH
-        ? [`${where(0)} covers the crossing`]
-        : []),
-      ...(offsets.some((offset) => Math.abs(offset - realOffset) <= amount * 1e-9)
-        ? []
-        : [`${where(realOffset)} is out of reach`]),
-    ];
-  });
+  const coveredAtTheAnswer = slides
+    .filter(
+      ({ line, slide }) =>
+        gapOnTheSmallestPlot(slide.at(offsetOf(line)), answer, domain) <
+        HANDLE_REACH + CROSSING_REACH,
+    )
+    .map(({ line }) => `${name}: the answer's crossing covers ${line.label}'s handle`);
+
+  return [
+    ...coveredAtTheAnswer,
+    ...slides.flatMap(({ line, slide: { at, offsets } }, index) => {
+      const realOffset = real[line.id] ?? 0;
+      const where = (offset: number) => `${name}: ${line.label} at ${offset}`;
+      const other = slides[1 - index];
+
+      return [
+        ...offsets
+          .filter(
+            (offset) =>
+              other &&
+              gapOnTheSmallestPlot(at(offset), other.slide.at(0), domain) <
+                HANDLE_REACH * 2 + HANDLES_GAP,
+          )
+          .map((offset) => `${where(offset)} covers ${other?.line.label}'s handle`),
+        ...offsets
+          .filter((offset) => !isOnTheSmallestPlot(at(offset), domain))
+          .map((offset) => `${where(offset)} leaves the chart at ${JSON.stringify(at(offset))}`),
+        ...(gapOnTheSmallestPlot(at(0), crossing, domain) < HANDLE_REACH + CROSSING_REACH
+          ? [`${where(0)} covers the crossing`]
+          : []),
+        ...(offsets.some((offset) => Math.abs(offset - realOffset) <= amount * 1e-9)
+          ? []
+          : [`${where(realOffset)} is out of reach`]),
+      ];
+    }),
+  ];
 }
 
 describe(movedLine, () => {
@@ -271,7 +288,7 @@ describe("chart domain", () => {
 });
 
 describe(chartSlides, () => {
-  it("keeps every handle on the chart, off the crossing at rest and off the other handle, and the right move in reach", () => {
+  it("keeps every handle on the chart, off the crossing and the other handle, and the right move in reach", () => {
     expect(CHARTS.length).toBeGreaterThan(NAMED.length);
     expect(CHARTS.flatMap((chart) => problemsIn(chart))).toStrictEqual([]);
   });

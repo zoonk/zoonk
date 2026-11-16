@@ -21,7 +21,7 @@ const HEADROOM = 1.25;
 const STEPS_PER_SHIFT = 4;
 const RELATIVE_SLACK = 1e-9;
 const HANDLE_SHARE = 0.82;
-const HANDLE_SHARE_STEPS = 100;
+const HANDLE_SHARE_STEPS = 20;
 
 // Shares of the chart that fit a whole handle, and its gap from a crossing dot, on the smallest
 // plot (192px), so a slide never depends on the window's size.
@@ -180,13 +180,14 @@ export function changeDirection(before: number, after: number): "down" | "same" 
   return after > before ? "up" : "down";
 }
 
-type HandleOption = { rest: Point; slide: LineSlide; stops: Point[] };
+type HandleOption = { crossings: Point[]; rest: Point; slide: LineSlide; stops: Point[] };
 
 /**
  * How a line's handle can slide: twice the real shift each way, as far as the line still passes
  * through the chart inset by a handle's margin. At each shift the handle rides its moved line,
  * at the point nearest its resting spot inside that inset. Its resting spots, nearest 82% along
- * the line first, are those clear of the resting crossing, kept inside the inset.
+ * the line first, are those clear of the resting crossing, kept inside the inset. `crossings` are
+ * where the line meets `other` at each shift.
  */
 function handleOptions({
   amount,
@@ -194,12 +195,14 @@ function handleOptions({
   crossing: restingCrossing,
   domain,
   line,
+  other,
 }: {
   amount: number;
   axis: ShiftAxis;
   crossing: Point;
   domain: ChartDomain;
   line: Line;
+  other: Line;
 }): HandleOption[] {
   const size = { x: domain.max.x - domain.min.x, y: domain.max.y - domain.min.y };
   const margin = { x: size.x * HANDLE_MARGIN, y: size.y * HANDLE_MARGIN };
@@ -215,6 +218,7 @@ function handleOptions({
   const visible = spanInside(line, domain.min, domain.max) ?? { from: 0, to: 0 };
   const resting = spanInside(line, low, high) ?? visible;
   const range = { max: Math.max(...offsets), min: Math.min(...offsets), step: full.step };
+  const crossings = offsets.map((offset) => crossingPoint(movedLine(line, offset, axis), other));
 
   const along = (share: number) =>
     clamp(visible.from + (visible.to - visible.from) * share, resting.from, resting.to);
@@ -233,6 +237,7 @@ function handleOptions({
     };
 
     return {
+      crossings,
       rest: at(0),
       slide: { at, offsets, range },
       stops: offsets.map((offset) => at(offset)),
@@ -243,41 +248,59 @@ function handleOptions({
   return (shares.length > 0 ? shares : [HANDLE_SHARE]).map((share) => option(along(share)));
 }
 
-/** The closest either handle comes, at any stop, to the other's rest, as a share of the chart. */
-function handlesGap(domain: ChartDomain, first: HandleOption, second: HandleOption): number {
+/**
+ * What a pair of resting handles costs, compared in order: the stops where one line's handle lands
+ * on the other's rest, plus a handle under the crossing at the real answer; then the stops where
+ * the crossing, sliding along the other line, passes over its rest.
+ */
+function pairCost({
+  domain,
+  first,
+  real,
+  second,
+}: {
+  domain: ChartDomain;
+  first: HandleOption;
+  real: { crossing: Point; offsets: [number, number] };
+  second: HandleOption;
+}): [number, number] {
   const size = { x: domain.max.x - domain.min.x, y: domain.max.y - domain.min.y };
 
-  const gap = (one: Point, other: Point) =>
-    Math.hypot((one.x - other.x) / size.x, (one.y - other.y) / size.y);
+  const near = (points: Point[], to: Point, gap: number) =>
+    points.filter((point) => Math.hypot((point.x - to.x) / size.x, (point.y - to.y) / size.y) < gap)
+      .length;
 
-  return Math.min(
-    ...first.stops.map((stop) => gap(stop, second.rest)),
-    ...second.stops.map((stop) => gap(stop, first.rest)),
-  );
+  const atReal = [first.slide.at(real.offsets[0]), second.slide.at(real.offsets[1])];
+
+  return [
+    near(first.stops, second.rest, HANDLES_APART) +
+      near(second.stops, first.rest, HANDLES_APART) +
+      near(atReal, real.crossing, CROSSING_GAP),
+    near(first.crossings, second.rest, CROSSING_GAP) +
+      near(second.crossings, first.rest, CROSSING_GAP),
+  ];
 }
 
-/**
- * Only one line moves at a time, so the handles rest where neither, at any stop, lands on the
- * other's rest: the first such pair nearest 82% along each line, else the pair furthest apart.
- */
-function handlePair(
-  domain: ChartDomain,
-  firsts: HandleOption[],
-  seconds: HandleOption[],
-): { first: HandleOption; second: HandleOption } {
-  const gapOf = (first: HandleOption, second: HandleOption) => handlesGap(domain, first, second);
+/** Only one line moves at a time. The handles rest at the cheapest pair, nearest 82% first. */
+function handlePair({
+  domain,
+  firsts,
+  real,
+  seconds,
+}: {
+  domain: ChartDomain;
+  firsts: HandleOption[];
+  real: { crossing: Point; offsets: [number, number] };
+  seconds: HandleOption[];
+}): { first: HandleOption; second: HandleOption } {
+  const pairs = firsts.flatMap((first) =>
+    seconds.map((second) => ({ cost: pairCost({ domain, first, real, second }), first, second })),
+  );
 
-  for (const first of firsts) {
-    const second = seconds.find((other) => gapOf(first, other) >= HANDLES_APART);
+  const isCheaper = (pair: (typeof pairs)[number], best: (typeof pairs)[number]) =>
+    pair.cost[0] < best.cost[0] || (pair.cost[0] === best.cost[0] && pair.cost[1] < best.cost[1]);
 
-    if (second) {
-      return { first, second };
-    }
-  }
-
-  return firsts
-    .flatMap((first) => seconds.map((second) => ({ first, gap: gapOf(first, second), second })))
-    .reduce((best, pair) => (pair.gap > best.gap ? pair : best));
+  return pairs.reduce((best, pair) => (isCheaper(pair, best) ? pair : best));
 }
 
 export function chartSlides<TLine extends NamedLine>({
@@ -294,8 +317,24 @@ export function chartSlides<TLine extends NamedLine>({
   const domain = chartDomain({ amount, axis, lines, real });
   const [first, second] = lines;
   const rest = crossingPoint(first, second);
-  const options = (line: Line) => handleOptions({ amount, axis, crossing: rest, domain, line });
-  const chosen = handlePair(domain, options(first), options(second));
+
+  const options = (line: Line, other: Line) =>
+    handleOptions({ amount, axis, crossing: rest, domain, line, other });
+
+  const realOffsets: [number, number] = [real[first.id] ?? 0, real[second.id] ?? 0];
+
+  const chosen = handlePair({
+    domain,
+    firsts: options(first, second),
+    real: {
+      crossing: crossingPoint(
+        movedLine(first, realOffsets[0], axis),
+        movedLine(second, realOffsets[1], axis),
+      ),
+      offsets: realOffsets,
+    },
+    seconds: options(second, first),
+  });
 
   return {
     domain,

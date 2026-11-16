@@ -38,6 +38,18 @@ const flatCost = {
 
 const flatCostToMove = { ...flatCost, check: supplyDemand.check };
 
+const flatCostDown = {
+  ...breakEven,
+  fields: {
+    ...breakEven.fields,
+    lines: [
+      { id: "cost", intercept: 1000, label: "Cost", slope: 0 },
+      { id: "revenue", intercept: 0, label: "Revenue", slope: 15 },
+    ],
+    shift: { amount: 900, direction: "down" as const, line: "cost" },
+  },
+};
+
 const supplyDemandUpAndDown = {
   ...supplyDemand,
   fields: {
@@ -383,18 +395,18 @@ describe("line crossing chart", () => {
 
   it("draws the new crossing over a handle resting on it, and a drag there still moves the handle", async () => {
     await atViewport(PHONE, async () => {
-      openActivity({ template: "lineCrossing" });
-      await pressOnSlider("Move the line Demand", "End", 1);
-      const supply = page.getByRole("slider", { name: "Move the line Supply" });
-      const handle = supply.element().getBoundingClientRect();
+      openActivity({ content: flatCostDown, template: "lineCrossing" });
+      await pressOnSlider("Move the line Cost", "ArrowUp", 5);
+      const revenue = page.getByRole("slider", { name: "Move the line Revenue" });
+      const handle = revenue.element().getBoundingClientRect();
       const dot = crossingDot().getBoundingClientRect();
       const body = document.body.getBoundingClientRect();
 
-      expect(supply.element().compareDocumentPosition(crossingDot())).toBe(
+      expect(revenue.element().compareDocumentPosition(crossingDot())).toBe(
         Node.DOCUMENT_POSITION_FOLLOWING,
       );
 
-      await userEvent.dragAndDrop(supply, page.elementLocator(document.body), {
+      await userEvent.dragAndDrop(revenue, page.elementLocator(document.body), {
         force: true,
         sourcePosition: {
           x: dot.left + dot.width / 2 - handle.left,
@@ -404,7 +416,7 @@ describe("line crossing chart", () => {
         targetPosition: { x: dot.left - 60 - body.left, y: dot.top + dot.height / 2 - body.top },
       });
 
-      await expect.element(supply).not.toHaveAttribute("aria-valuenow", "0");
+      await expect.element(revenue).not.toHaveAttribute("aria-valuenow", "0");
     });
   });
 
