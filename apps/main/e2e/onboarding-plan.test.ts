@@ -23,11 +23,11 @@ test.describe("Placement and the plan", () => {
     await page.goto(`/start/${goal.id}`);
     await page.getByRole("button", { exact: true, name: "Start the test" }).click();
 
-    const question = page.getByRole("heading", { name: /^Question/u });
+    const question = page.getByRole("heading", { name: /^Solve x/u });
     await expect(question).toBeVisible();
     const first = await question.textContent();
     await page.keyboard.press("1");
-    await expect(page.getByRole("radio", { name: /Right answer/u })).toBeChecked();
+    await expect(page.getByRole("radio").first()).toBeChecked();
     await page.keyboard.press("Enter");
 
     await expect(question).not.toHaveText(first ?? "");

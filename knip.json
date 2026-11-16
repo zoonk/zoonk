@@ -8,7 +8,10 @@
   "includeEntryExports": true,
   "tags": ["-lintignore", "-internal", "-public"],
   "workspaces": {
-    ".": { "entry": ["scripts/worktree/claude-create.mts"], "project": ["scripts/**/*.mts"] },
+    ".": {
+      "entry": ["scripts/worktree/claude-create.mts", "scripts/verify/scenarios/seed.mts"],
+      "project": ["scripts/**/*.mts"]
+    },
     "apps/android": {
       "entry": [".eloqnt/config.ts", ".eloqnt/android-xml.ts", "scripts/sandbox/sandbox-page.mts"],
       "project": [".eloqnt/**/*.ts", "scripts/**/*.mts", "!scripts/run-emulator.mts"]

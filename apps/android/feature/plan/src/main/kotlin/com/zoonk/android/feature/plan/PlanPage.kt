@@ -583,14 +583,8 @@ private val SIDE_BY_SIDE_WIDTH = 600.dp
 @Composable
 internal fun PlanEvents(
     viewModel: PlanViewModel,
-    navigator: AppNavigator,
     snackbars: AppSnackbars,
 ) {
-    ActOn(viewModel.event) { event ->
-        when (event) {
-            PlanEvent.Archived -> navigator.select(AppTab.Today)
-        }
-    }
     ActOn(viewModel.outcomes.saveFailed) { snackbars.show(R.string.plan_save_failed) }
 }
 

@@ -3,7 +3,9 @@ package com.zoonk.android.ui.components
 import android.annotation.SuppressLint
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -13,9 +15,11 @@ import androidx.compose.foundation.text.input.KeyboardActionHandler
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldLabelPosition
@@ -211,25 +215,42 @@ private fun ZoonkField(
             SolidColor(if (look.isError) colors.errorCursorColor else colors.cursorColor),
             interaction,
         ) { innerTextField ->
-            LabeledField(look.label, look.enabled) {
-                OutlinedTextFieldDefaults.DecorationBox(
-                    value = text,
-                    innerTextField = innerTextField,
-                    enabled = look.enabled,
-                    singleLine = look.singleLine,
-                    visualTransformation = visualTransformation,
-                    interactionSource = interaction,
-                    isError = look.isError,
-                    placeholder = look.placeholder,
-                    leadingIcon = look.leadingIcon,
-                    trailingIcon = look.trailingIcon,
-                    prefix = look.prefix,
-                    suffix = look.suffix,
-                    supportingText = look.supportingText,
-                    colors = colors,
-                    contentPadding = FIELD_PADDING,
-                    container = { FieldContainer(look.enabled, look.isError, interaction, colors) },
-                )
+            val supporting =
+                look.supportingText?.let { text ->
+                    @Composable {
+                        val color =
+                            when {
+                                !look.enabled -> colors.disabledSupportingTextColor
+                                look.isError -> colors.errorSupportingTextColor
+                                focused -> colors.focusedSupportingTextColor
+                                else -> colors.unfocusedSupportingTextColor
+                            }
+                        CompositionLocalProvider(LocalContentColor provides color) {
+                            ProvideTextStyle(MaterialTheme.typography.bodySmall, text)
+                        }
+                    }
+                }
+            LabeledField(look.label, look.enabled, supporting) {
+                // As tall as Material's icon slot, so a mark coming into the field (a wrong answer's ✕) moves nothing.
+                Box(Modifier.heightIn(min = FIELD_MIN_HEIGHT), propagateMinConstraints = true) {
+                    OutlinedTextFieldDefaults.DecorationBox(
+                        value = text,
+                        innerTextField = innerTextField,
+                        enabled = look.enabled,
+                        singleLine = look.singleLine,
+                        visualTransformation = visualTransformation,
+                        interactionSource = interaction,
+                        isError = look.isError,
+                        placeholder = look.placeholder,
+                        leadingIcon = look.leadingIcon,
+                        trailingIcon = look.trailingIcon,
+                        prefix = look.prefix,
+                        suffix = look.suffix,
+                        colors = colors,
+                        contentPadding = FIELD_PADDING,
+                        container = { FieldContainer(look.enabled, look.isError, interaction, colors) },
+                    )
+                }
             }
         }
     }
@@ -299,14 +320,18 @@ private fun Modifier.fieldSemantics(
         .minimumInteractiveComponentSize()
 }
 
-/** Main's `Label` over the field; a minimum height the caller asks for goes to the field, not the label. */
+/**
+ * Main's `Label` over the field and its [supporting] line under it, both on the field's start edge: Material's own
+ * supporting text starts 16dp inside the field. A minimum height the caller asks for goes to the field, not to them.
+ */
 @Composable
 private fun LabeledField(
     label: String?,
     enabled: Boolean,
+    supporting: (@Composable () -> Unit)?,
     field: @Composable () -> Unit,
 ) {
-    if (label == null) {
+    if (label == null && supporting == null) {
         field()
         return
     }
@@ -315,18 +340,24 @@ private fun LabeledField(
         contents =
             listOf(
                 {
-                    Text(
-                        label,
-                        color = if (enabled) color else color.copy(alpha = DISABLED_ALPHA),
-                        style = MaterialTheme.typography.titleSmall,
-                    )
+                    if (label != null) {
+                        Text(
+                            label,
+                            color = if (enabled) color else color.copy(alpha = DISABLED_ALPHA),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
+                    }
                 },
                 field,
+                { if (supporting != null) supporting() },
             ),
-    ) { (labels, fields), constraints ->
-        val gap = LABEL_GAP.roundToPx()
-        val labelPlaceable = labels.first().measure(constraints.copy(minWidth = 0, minHeight = 0))
-        val taken = labelPlaceable.height + gap
+    ) { (labels, fields, supports), constraints ->
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val labelPlaceable = labels.firstOrNull()?.measure(loose)
+        val supportPlaceable = supports.firstOrNull()?.measure(loose)
+        val above = labelPlaceable?.let { it.height + LABEL_GAP.roundToPx() } ?: 0
+        val below = supportPlaceable?.let { it.height + SUPPORTING_GAP.roundToPx() } ?: 0
+        val taken = above + below
         val fieldPlaceable =
             fields.first().measure(
                 constraints.copy(
@@ -341,9 +372,11 @@ private fun LabeledField(
                         },
                 ),
             )
-        layout(maxOf(labelPlaceable.width, fieldPlaceable.width), taken + fieldPlaceable.height) {
-            labelPlaceable.placeRelative(0, 0)
-            fieldPlaceable.placeRelative(0, taken)
+        val width = maxOf(labelPlaceable?.width ?: 0, fieldPlaceable.width, supportPlaceable?.width ?: 0)
+        layout(width, taken + fieldPlaceable.height) {
+            labelPlaceable?.placeRelative(0, 0)
+            fieldPlaceable.placeRelative(0, above)
+            supportPlaceable?.placeRelative(0, above + fieldPlaceable.height + SUPPORTING_GAP.roundToPx())
         }
     }
 }
@@ -403,4 +436,9 @@ private val INVALID_RING = 3.dp
 private const val HALF = 0.5f
 
 private val LABEL_GAP = 8.dp
+
+private val FIELD_MIN_HEIGHT = 48.dp
+
+/** Material's gap over a field's supporting text. */
+private val SUPPORTING_GAP = 4.dp
 private const val DISABLED_ALPHA = 0.38f

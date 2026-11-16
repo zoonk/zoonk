@@ -72,7 +72,7 @@ class PlanExamOverWindowTest {
         val page = PlanPageState(summary.goals.first(), plan(""""status":{"kind":"pastDate","lessons":4}"""), summary)
         PlanExamOverTest.app = AppContainer.preview(application)
         PlanExamOverTest.page = page
-        PlanExamOverTest.viewModel = PlanViewModel(store, page.goal.id, PlanExamOverTest.app.writingWaits)
+        PlanExamOverTest.viewModel = PlanViewModel(store, page.goal.id, PlanExamOverTest.app.writingWaits, PlanNavigationModel())
         PlanExamOverTest.farTopics = FarTopicViewModel(store, page.goal.id)
         scenario = ActivityScenario.launch(PlanExamOverTestActivity::class.java)
 
@@ -105,7 +105,7 @@ class PlanExamOverTestActivity : ComponentActivity() {
                     Box {
                         // As the Plan screen does around its page.
                         VisitOf(PlanExamOverTest.viewModel.visit)
-                        PlanEvents(PlanExamOverTest.viewModel, navigator, PlanExamOverTest.app.snackbars)
+                        PlanEvents(PlanExamOverTest.viewModel, PlanExamOverTest.app.snackbars)
                         PlanPage(
                             PlanExamOverTest.page,
                             PlanExamOverTest.app,

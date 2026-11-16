@@ -53,12 +53,14 @@ import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.feature.onboarding.PickedFile
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.android.feature.onboarding.uploadLimit
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.components.materialCitationLabel
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.models.MaterialCitation
@@ -149,6 +151,8 @@ fun AttachControls(
 ) {
     val resolver = LocalContext.current.contentResolver
     val pasting = draft.pasting
+    val limit = failure.uploadLimit
+    val enabled = !pending && (limit == null || limitLifted(limit.reached))
     val chipColors = FilterChipDefaults.filterChipColors(labelColor = MaterialTheme.colorScheme.onSurface)
     val picker =
         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -159,14 +163,14 @@ fun AttachControls(
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             AssistChip(
                 onClick = { picker.launch(ACCEPTED_TYPES) },
-                enabled = !pending,
+                enabled = enabled,
                 label = { Text(stringResource(R.string.onboarding_upload_file)) },
                 leadingIcon = { Icon(painterResource(R.drawable.ic_upload), contentDescription = null, Modifier.size(18.dp)) },
             )
             FilterChip(
                 selected = pasting == Pasting.Text,
                 onClick = { draft.pasting = if (pasting == Pasting.Text) null else Pasting.Text },
-                enabled = !pending,
+                enabled = enabled,
                 colors = chipColors,
                 label = { Text(stringResource(R.string.onboarding_paste_text)) },
                 leadingIcon = { Icon(painterResource(R.drawable.ic_description), contentDescription = null, Modifier.size(18.dp)) },
@@ -174,7 +178,7 @@ fun AttachControls(
             FilterChip(
                 selected = pasting == Pasting.Link,
                 onClick = { draft.pasting = if (pasting == Pasting.Link) null else Pasting.Link },
-                enabled = !pending,
+                enabled = enabled,
                 colors = chipColors,
                 label = { Text(stringResource(R.string.onboarding_paste_link)) },
                 leadingIcon = { Icon(painterResource(R.drawable.ic_link), contentDescription = null, Modifier.size(18.dp)) },
@@ -189,7 +193,7 @@ fun AttachControls(
                     label = stringResource(R.string.onboarding_your_text),
                     placeholder = stringResource(R.string.onboarding_paste_text_placeholder),
                     action = stringResource(R.string.onboarding_add_text),
-                    pending = pending,
+                    enabled = enabled,
                     minLines = 4,
                     keyboardType = KeyboardType.Text,
                     onAdd = onText,
@@ -203,7 +207,7 @@ fun AttachControls(
                     label = stringResource(R.string.onboarding_link),
                     placeholder = stringResource(R.string.onboarding_paste_link_placeholder),
                     action = stringResource(R.string.onboarding_add_link),
-                    pending = pending,
+                    enabled = enabled,
                     minLines = 1,
                     keyboardType = KeyboardType.Uri,
                     onAdd = onLink,
@@ -237,7 +241,7 @@ private fun PasteField(
     label: String,
     placeholder: String,
     action: String,
-    pending: Boolean,
+    enabled: Boolean,
     minLines: Int,
     keyboardType: KeyboardType,
     onAdd: (String) -> Unit,
@@ -253,7 +257,7 @@ private fun PasteField(
             maxLines = 10,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         )
-        Button(onClick = { onAdd(value.trim()) }, enabled = !pending && value.isNotBlank()) { Text(action) }
+        Button(onClick = { onAdd(value.trim()) }, enabled = enabled && value.isNotBlank()) { Text(action) }
     }
 }
 

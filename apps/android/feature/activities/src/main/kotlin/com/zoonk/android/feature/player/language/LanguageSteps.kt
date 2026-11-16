@@ -184,7 +184,7 @@ fun LanguageStepView(
                     val url = sentence.audioUrl
                     if (url != null && prompt != null) {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Eyebrow(stringResource(R.string.player_language_what_do_you_hear))
+                            Eyebrow(stringResource(R.string.player_language_what_do_you_hear), icon = R.drawable.ic_hearing)
                             PromptAudioButton(url, prompt)
                             // Without its sound the screen still works: it shows the sentence to translate.
                             if (prompt.state is SpeechState.Failed) {
@@ -199,7 +199,7 @@ fun LanguageStepView(
                         }
                     } else {
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Eyebrow(stringResource(R.string.player_language_translate))
+                            Eyebrow(stringResource(R.string.player_language_translate), icon = R.drawable.ic_translate)
                             QuestionText(stripWrappingQuotes(sentence.sentence))
                         }
                     }
@@ -487,6 +487,7 @@ private fun TranslationView(
                     stringResource(
                         if (languages.definesWords) R.string.player_language_which_means_this else R.string.player_language_translate,
                     ),
+                    icon = R.drawable.ic_translate,
                 )
                 QuestionText(word.translation)
             }
