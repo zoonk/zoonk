@@ -45,3 +45,34 @@ describe(getPlanTopics, () => {
     expect(getPracticeLabels({ items, topics }).areas).toStrictEqual(["Inglês americano"]);
   });
 });
+
+describe(getPracticeLabels, () => {
+  const topics = getPlanTopics({
+    goal: { kind: "learn", language: "pt", targetLanguage: null },
+    graph,
+  });
+
+  it("lists a part's topics most asked first", () => {
+    const asked = [{ skillId: "rent" }, { skillId: "rent" }, { skillId: "order" }];
+
+    expect(getPracticeLabels({ items: asked, topics }).topics).toStrictEqual([
+      "Alugar um apartamento",
+      "Pedir comida",
+    ]);
+  });
+
+  it("leads a later part of one practice with a topic an earlier part doesn't lead with", () => {
+    const asked = [{ skillId: "rent" }, { skillId: "rent" }, { skillId: "order" }];
+
+    expect(
+      getPracticeLabels({ items: asked, led: ["Alugar um apartamento"], topics }).topics,
+    ).toStrictEqual(["Pedir comida", "Alugar um apartamento"]);
+  });
+
+  it("keeps the lead when the part asks about nothing else", () => {
+    expect(
+      getPracticeLabels({ items: [{ skillId: "rent" }], led: ["Alugar um apartamento"], topics })
+        .topics,
+    ).toStrictEqual(["Alugar um apartamento"]);
+  });
+});

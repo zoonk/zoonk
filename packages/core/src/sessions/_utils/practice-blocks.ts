@@ -41,21 +41,29 @@ function byCount(names: readonly string[]): [string, number][] {
     .toSorted(([, a], [, b]) => b - a);
 }
 
-/** A second area names the block only when it has at least half as many questions as the first. */
+/**
+ * A second area names the block only when it has at least half as many questions as the first.
+ * Topics come most asked first, except that a part leads with one no earlier part of its practice
+ * (`led`) leads with, when it has one: its row is named after its lead.
+ */
 export function getPracticeLabels({
   items,
+  led = [],
   topics,
 }: {
   items: readonly Pick<PracticeItem, "skillId">[];
+  led?: readonly string[];
   topics: ReadonlyMap<string, PracticeTopic>;
 }): { areas: string[]; topics: string[] } {
   const known = items.flatMap((item) => topics.get(item.skillId) ?? []);
   const areas = byCount(known.map((topic) => topic.area).filter(Boolean));
   const most = areas[0]?.[1] ?? 0;
+  const names = byCount(known.map((topic) => topic.name)).map(([name]) => name);
+  const lead = names.find((name) => !led.includes(name));
 
   return {
     areas: areas.slice(0, 2).flatMap(([area, count]) => (count * 2 >= most ? [area] : [])),
-    topics: byCount(known.map((topic) => topic.name)).map(([name]) => name),
+    topics: lead ? [lead, ...names.filter((name) => name !== lead)] : names,
   };
 }
 
@@ -130,20 +138,26 @@ export function buildPracticeBlocks({
   });
 
   const parts = fullReview ? [items] : splitWithinMinutes({ items, minutes });
+  const led: string[] = [];
 
-  return parts.map((part) => ({
-    canDo: null,
-    estimatedMinutes: getPartMinutes(part),
-    kind: "practice",
-    lessonId: null,
-    payload: toBlockPayload({
-      fullReview,
-      itemIds: part.map((item) => item.itemId),
-      netScored,
-      planItemId,
-      planItemKey: planItemKey ?? null,
-      skillIds: [...new Set(part.map((item) => item.skillId))],
-      ...getPracticeLabels({ items: part, topics }),
-    }),
-  }));
+  return parts.map((part) => {
+    const labels = getPracticeLabels({ items: part, led, topics });
+    led.push(...labels.topics.slice(0, 1));
+
+    return {
+      canDo: null,
+      estimatedMinutes: getPartMinutes(part),
+      kind: "practice",
+      lessonId: null,
+      payload: toBlockPayload({
+        fullReview,
+        itemIds: part.map((item) => item.itemId),
+        netScored,
+        planItemId,
+        planItemKey: planItemKey ?? null,
+        skillIds: [...new Set(part.map((item) => item.skillId))],
+        ...labels,
+      }),
+    };
+  });
 }
