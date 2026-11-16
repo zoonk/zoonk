@@ -8,7 +8,7 @@ export const REQUEST_STATES: Record<string, string> = {
   "Features/Practice/Challenge/ChallengeScreen.swift: ChallengeScreen":
     "The challenge task owns its action above PracticeTaskLayout. Starts dismiss it before navigating, and closing discards its start/move problems; the split's children never cancel the action.",
   "Features/Tutor/TutorTurnView.swift: TutorAnswerText":
-    "Not covered: answer-link requests remain in the answer view; pane recreation and visit cleanup need screen-owned wiring in both Tutor callers.",
+    "The answer owns its link and inline outcome. Disappearance cancels it, including on resize, at the accepted cost of another tap.",
   "Features/Voice/Audio/VoiceAnswerRecorder.swift: VoiceAnswerRecorder":
     "Issue is the recording's state, including no speech and the allowance decision, kept with the recorder until another recording or its owning question closes; it is not a separate screen request notice.",
   "Features/Voice/Conversation/CheckpointCallIntro.swift: CheckpointCallIntro":

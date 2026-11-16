@@ -95,6 +95,8 @@ const OWNERS: Record<string, string> = {
     "An offer is its panel's: dropped when the panel leaves; a panel drawn in its place takes it over once the thread is read (TutorConversation.ask).",
   "Features/Tutor/TutorToolOfferCard.swift: start":
     "The practice call's own sheet, which the router presents above any pane: closing it is leaving.",
+  "Features/Tutor/TutorTurnView.swift: blockOpen":
+    "The answer owns its link. Its disappearance cancels it, including on resize; another tap is the accepted cost.",
   "Features/Voice/Audio/VoiceAnswerRecorder.swift: grading, recorder":
     "The level test's recorder, which has no split.",
   "Features/Voice/Conversation/CheckpointCallIntro.swift: starting":
