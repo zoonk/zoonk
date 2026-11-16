@@ -88,7 +88,7 @@ internal val ZoonkMaterialTypography =
             // The app's body (`text-sm`).
             bodyMedium = bodyMedium.role(14f, 400, 20f),
             // A row's description and meta (`ListRowDescription`).
-            bodySmall = bodySmall.role(12f, 400, 16f).balanced(),
+            bodySmall = bodySmall.role(12f, 400, 16f),
             // A button for a screen's action.
             labelLarge = labelLarge.role(15f, 500, 22f).balanced(),
             // A small button (`size="sm"`), navigation labels.

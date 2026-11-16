@@ -11,7 +11,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.format.currentLocale
@@ -110,7 +109,7 @@ fun QuestionTitle(
     modifier: Modifier = Modifier,
     graded: Boolean = false,
 ) {
-    val style = MaterialTheme.typography.titleLarge.copy(lineBreak = LineBreak.Heading)
+    val style = MaterialTheme.typography.titleLarge
     RichText(
         text = text,
         modifier = modifier.semantics { heading() },
