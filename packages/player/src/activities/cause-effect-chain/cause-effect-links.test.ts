@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { arcPath, compareLinks, orderNodes, toggleLink } from "./cause-effect-links";
+import { arcEndOffsets, arcPath, compareLinks, orderNodes, toggleLink } from "./cause-effect-links";
 
 describe(orderNodes, () => {
   it("orders dated nodes by year", () => {
@@ -65,5 +65,70 @@ describe(arcPath, () => {
     expect(arcPath({ from: 20, gutter: 48, headReach: 3.5, span: 1, to: 80 })).toBe(
       "M48 20 C34 20 34 80 44.5 80",
     );
+  });
+});
+
+describe(arcEndOffsets, () => {
+  const order = ["plow", "drought", "storms"];
+
+  const intoStorms = [
+    { from: "plow", to: "storms" },
+    { from: "drought", to: "storms" },
+  ];
+
+  it("ends arrows into one card a head apart, the one from farther away lower so they nest", () => {
+    expect(
+      arcEndOffsets({
+        base: 5,
+        cards: { storms: { half: 31 } },
+        headHeight: 14,
+        links: intoStorms,
+        order,
+      }),
+    ).toStrictEqual([21, 5]);
+  });
+
+  it("ends arrows from above over arrows from below", () => {
+    const intoDrought = [
+      { from: "storms", to: "drought" },
+      { from: "plow", to: "drought" },
+    ];
+
+    expect(
+      arcEndOffsets({
+        base: 5,
+        cards: { drought: { half: 31 } },
+        headHeight: 14,
+        links: intoDrought,
+        order,
+      }),
+    ).toStrictEqual([21, 5]);
+  });
+
+  it("keeps every head beside a short card, closer together", () => {
+    expect(
+      arcEndOffsets({
+        base: 5,
+        cards: { storms: { half: 20 } },
+        headHeight: 14,
+        links: intoStorms,
+        order,
+      }),
+    ).toStrictEqual([13, 5]);
+  });
+
+  it("ends a lone arrow at the base", () => {
+    expect(
+      arcEndOffsets({
+        base: 5,
+        cards: { drought: { half: 31 }, storms: { half: 31 } },
+        headHeight: 14,
+        links: [
+          { from: "plow", to: "drought" },
+          { from: "drought", to: "storms" },
+        ],
+        order,
+      }),
+    ).toStrictEqual([5, 5]);
   });
 });

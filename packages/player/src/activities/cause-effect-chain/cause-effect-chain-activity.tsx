@@ -104,7 +104,7 @@ export function CauseEffectChainActivity({
   const links = learnerLinks ?? fields.links;
   const [causeId, setCauseId] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
-  const { centers, containerRef, register } = useCardCenters();
+  const { boxes, containerRef, register } = useCardCenters();
   const isChecked = phase === "checked";
   const isGuided = check.kind === "choice" && !isExploring;
   const isLocked = isChecked || isExploring;
@@ -176,7 +176,7 @@ export function CauseEffectChainActivity({
       )}
 
       <div className="relative" style={{ paddingLeft: ARC_GUTTER }}>
-        <CauseEffectArcs centers={centers} links={arcs} order={order} />
+        <CauseEffectArcs boxes={boxes} links={arcs} order={order} />
 
         <ol aria-label={t("Causes and effects")} className="flex flex-col gap-2" ref={containerRef}>
           {nodes.map((node) => (

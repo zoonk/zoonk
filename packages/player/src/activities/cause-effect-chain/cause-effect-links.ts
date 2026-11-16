@@ -36,6 +36,43 @@ export function compareLinks(learner: readonly Link[], expected: readonly Link[]
   ];
 }
 
+/**
+ * How far below its card's middle each arrow ends. Arrows into one card end a head apart, closer when
+ * the card is short, and nest instead of crossing: those from above end above those from below, and
+ * the farther an arrow comes from, the farther from that side it ends.
+ */
+export function arcEndOffsets({
+  base,
+  cards,
+  headHeight,
+  links,
+  order,
+}: {
+  base: number;
+  cards: Readonly<Record<string, { half: number }>>;
+  headHeight: number;
+  links: readonly Link[];
+  order: readonly string[];
+}): number[] {
+  return links.map((link) => {
+    const target = order.indexOf(link.to);
+    const distance = (item: Link) => order.indexOf(item.from) - target;
+    const side = (item: Link) => (distance(item) > 0 ? 1 : 0);
+
+    const into = links
+      .filter((item) => item.to === link.to)
+      .toSorted((a, b) => side(a) - side(b) || distance(b) - distance(a));
+
+    if (into.length < 2) {
+      return base;
+    }
+
+    const room = (cards[link.to]?.half ?? Number.POSITIVE_INFINITY) - base - headHeight / 2;
+    const spread = Math.max(0, Math.min(headHeight + 2, room / (into.length - 1)));
+    return base + into.indexOf(link) * spread;
+  });
+}
+
 export function arcPath({
   from,
   gutter,
