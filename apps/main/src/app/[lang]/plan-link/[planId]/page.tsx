@@ -91,9 +91,8 @@ async function PlanLinkBody({ params }: Props) {
           {session ? (
             <div className="mt-7 flex max-w-sm flex-col gap-3 sm:mt-9">
               <ClientMessagesProvider scope="learn">
-                <StartPlanForm action={startPlanAction.bind(null, planId)} />
+                <StartPlanForm action={startPlanAction.bind(null, planId)} note={makeItYours} />
               </ClientMessagesProvider>
-              <p className="text-muted-foreground text-compact sm:text-sm">{makeItYours}</p>
             </div>
           ) : (
             <StartBlock

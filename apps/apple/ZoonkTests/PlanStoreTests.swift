@@ -817,6 +817,7 @@ actor PlanAPIStub: PlanAPIClient {
   private var answersReady = true
   private var suggested: TimeToCover.Suggested?
   private var previewFails = false
+  private var statusFails = false
   private var timeToCoverFails = false
   private var changed = false
   private var changeError: Error?
@@ -834,6 +835,7 @@ actor PlanAPIStub: PlanAPIClient {
     case change
     case preview
     case setStatus
+    case resumeChangesPlan
   }
 
   func setAdviceFails(_ fails: Bool) { adviceFails = fails }
@@ -844,6 +846,7 @@ actor PlanAPIStub: PlanAPIClient {
   func setAnswersReady(_ ready: Bool) { answersReady = ready }
   func setSuggested(_ suggested: TimeToCover.Suggested) { self.suggested = suggested }
   func setPreviewFails(_ fails: Bool) { previewFails = fails }
+  func setStatusFails(_ fails: Bool) { statusFails = fails }
   func setTimeToCoverFails(_ fails: Bool) { timeToCoverFails = fails }
   func setChanged(_ changed: Bool) { self.changed = changed }
   func setChangeError(_ error: Error) { changeError = error }
@@ -950,13 +953,21 @@ actor PlanAPIStub: PlanAPIClient {
   func planEnd(token: String, goalId: String) async throws -> PlanEnd {
     PlanEnd(certificates: nil, next: nil)
   }
-  func resumeChangesPlan(token: String, goalId: String) async throws -> Bool { false }
+  func resumeChangesPlan(token: String, goalId: String) async throws -> Bool {
+    await holdIfAsked(.resumeChangesPlan)
+    return false
+  }
   func setStatus(token: String, goalId: String, status: GoalStatusChange) async throws
     -> GoalStatusOutcome
   {
     await holdIfAsked(.setStatus)
     try Task.checkCancellation()
     calls.statuses.append(status)
+
+    guard !statusFails else {
+      throw APIError.network
+    }
+
     return .saved
   }
   func rename(token: String, goalId: String, displayName: String) async throws -> Bool { true }

@@ -115,6 +115,24 @@ describe(getPhaseEnd, () => {
     expect(end).toStrictEqual({ estimate: true, isoDate: "2026-11-22", month: false });
   });
 
+  it("estimates every phase's end when the goal's own date is an estimate", () => {
+    const current = phase(0, { endDate: "2026-11-20", kind: "foundations", state: "current" });
+    const last = phase(1, { endDate: "2027-11-13", kind: "finalStretch" });
+    const shaped = plan([current, last], { schedule: EXAM_DAY });
+
+    expect(getPhaseEnd({ phase: current, plan: shaped })).toStrictEqual({
+      estimate: true,
+      isoDate: "2026-11-20",
+      month: false,
+    });
+
+    expect(getPhaseEnd({ phase: last, plan: shaped })).toStrictEqual({
+      estimate: true,
+      isoDate: "2027-11-13",
+      month: true,
+    });
+  });
+
   it("ends the last phase without a day of its own with the plan", () => {
     const last = phase(0, { state: "current" });
     const shaped = plan([last], { estimate: { endDate: "2026-12-12" } });

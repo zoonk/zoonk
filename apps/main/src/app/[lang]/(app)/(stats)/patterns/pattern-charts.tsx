@@ -1,5 +1,6 @@
 import { getAppLocale } from "@/i18n/locale";
 import { type ScorePatternsData } from "@zoonk/core/progress/get-score-patterns";
+import { WEEKDAYS_FROM_MONDAY } from "@zoonk/utils/calendar-day";
 import { getExtracted } from "next-intl/server";
 import { getScoreTimePeriodRange } from "./_utils/time-period";
 import { getScoreWeekdayLabel, getScoreWeekdayShortLabel } from "./_utils/weekday";
@@ -21,7 +22,9 @@ export async function WeekPatterns({
 
   const best = verdict.kind === "best" ? verdict.best : null;
 
-  const columns = patterns.map((pattern) => ({
+  const columns = WEEKDAYS_FROM_MONDAY.flatMap((weekday) =>
+    patterns.filter((pattern) => pattern.dayOfWeek === weekday),
+  ).map((pattern) => ({
     best: pattern.dayOfWeek === best?.dayOfWeek,
     id: `week-patterns-${pattern.dayOfWeek}`,
     name: getScoreWeekdayLabel({ dayOfWeek: pattern.dayOfWeek, locale }),

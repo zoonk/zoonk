@@ -4,3 +4,9 @@ import { formatDuration as formatLearnerDuration } from "@zoonk/utils/duration";
 export function formatDuration(totalSeconds: number): string {
   return formatLearnerDuration({ locale: "en", totalSeconds });
 }
+
+const SECONDS_PER_MINUTE = 60;
+
+export function formatMinutes(minutes: number): string {
+  return formatDuration(minutes * SECONDS_PER_MINUTE);
+}

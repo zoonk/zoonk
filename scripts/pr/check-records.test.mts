@@ -237,7 +237,10 @@ describe("pr:media check, on a capture's measured layout", () => {
 
     assert.deepEqual(
       judged.map((result) => kinds(result)),
-      [["alignment"], []],
+      [
+        ["alignment", "alignment", "alignment", "alignment", "alignment"],
+        ["alignment", "alignment", "alignment", "alignment"],
+      ],
     );
 
     const filled = await capture([shot({ file: "c.png" })], {
@@ -245,7 +248,21 @@ describe("pr:media check, on a capture's measured layout", () => {
     }).check();
 
     assert.deepEqual(kinds(refused), ["alignment"]);
-    assert.match(filled.problems[0]?.detail ?? "", /passes the page's column/u);
+
+    assert.ok(
+      filled.problems.some((problem) => /passes the page's column/u.test(problem.detail ?? "")),
+    );
+
+    assert.ok(
+      judged.every(
+        (result) =>
+          result.problems.filter(
+            (problem) => /measurements were not recorded/u.test(problem.detail ?? ""),
+            // oxlint-disable-next-line no-magic-numbers -- Version 1 omits four new relationships.
+          ).length === 4,
+      ),
+    );
+
     assert.match(refused.problems[0]?.detail ?? "", /isn't a capture the evaluator reads/u);
   });
 });

@@ -2,7 +2,7 @@ import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
 import { GoalKindIcon } from "@/components/goal-kind-icon";
 import { StateMark } from "@/components/state-mark";
 import { type UserGoal, listUserGoals } from "@/data/users/list-user-goals";
-import { formatDate, toWords } from "@/lib/format";
+import { formatDate, formatDay, toWords } from "@/lib/format";
 import { languagePairName } from "@/lib/language-filter";
 import { FactSegments } from "@zoonk/learn/facts";
 import { Meter, MeterFill } from "@zoonk/ui/components/meter";
@@ -73,7 +73,7 @@ function GoalProgress({ children, goal }: { children?: React.ReactNode; goal: Us
         </span>
         <span>
           {goal.dailyMinutes} min a day
-          {goal.targetDate ? ` · By ${formatDate(goal.targetDate)}` : ""}
+          {goal.targetDate ? ` · By ${formatDay(goal.targetDate)}` : ""}
         </span>
         {children ? <span className="basis-full">{children}</span> : null}
       </div>

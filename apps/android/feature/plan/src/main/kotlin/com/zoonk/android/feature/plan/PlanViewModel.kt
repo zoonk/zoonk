@@ -557,8 +557,9 @@ class PlanViewModel(
     /**
      * Main's fit offer: adds its lessons when its numbers are today's, and applies the numbers a
      * check showed instead on the next tap. Otherwise it checks today's first, in the slot's
-     * preview, and adds them only when they're the card's. Not now, closing the suggestion or
-     * leaving the Plan clears that preview, so a late answer adds nothing.
+     * preview, and adds them only when they're the card's, while the suggestion's opening that asked
+     * lasts: Not now, closing the suggestion, a recreated layout that no longer shows it, or leaving the
+     * Plan drops the check, so a late answer adds nothing.
      */
     fun addFitOffer(
         plan: Plan,
@@ -572,16 +573,22 @@ class PlanViewModel(
         }
 
         val request = PlanPreviewState.Loading(operations, plan)
+        val opened = outcomes.suggestion.number
         slotPreviewState.value = request
         viewModelScope.launch {
             val result = store.preview(goalId, operations)
             if (result is MutationResult.Obsolete) return@launch
             val today = (result as? MutationResult.Done)?.value
             val same = today != null && today.ready && !today.unchanged && today.effect == offer.effect
+            val asking = opened == outcomes.suggestion.number
             var wanted = false
             slotPreviewState.update { current ->
-                wanted = current === request
-                if (wanted && same) PlanPreviewState.Idle else current.resolve(request, today)
+                wanted = current === request && asking
+                when {
+                    current === request && !asking -> PlanPreviewState.Idle
+                    wanted && same -> PlanPreviewState.Idle
+                    else -> current.resolve(request, today)
+                }
             }
             if (wanted && same) addFitLessons(operations)
         }

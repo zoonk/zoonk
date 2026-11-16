@@ -82,11 +82,20 @@ function FinishReadout() {
 
     return (
       <Readout label={goal.kind === "exam" ? t("until the exam") : t("until your date")}>
-        <BigQuantity>
-          {targetDateEstimated
-            ? t("{days, plural, one {About # day} other {About # days}}", { days })
-            : t("{days, plural, one {# day} other {# days}}", { days })}
-        </BigQuantity>
+        {targetDateEstimated ? (
+          <>
+            <span aria-hidden="true">
+              <BigQuantity>
+                {t("{days, plural, one {~# day} other {~# days}}", { days })}
+              </BigQuantity>
+            </span>
+            <span className="sr-only">
+              {t("{days, plural, one {About # day} other {About # days}}", { days })}
+            </span>
+          </>
+        ) : (
+          <BigQuantity>{t("{days, plural, one {# day} other {# days}}", { days })}</BigQuantity>
+        )}
       </Readout>
     );
   }

@@ -99,7 +99,10 @@ async function DailySpend({ days }: { days: number }) {
         className="h-52 w-full"
         format="usd"
         label={`AI spend a day, the last ${days} days`}
-        points={daily.map((row) => ({ label: formatDay(row.day), value: row.costUsd }))}
+        points={daily.map((row) => ({
+          label: formatDay(row.day, { year: false }),
+          value: row.costUsd,
+        }))}
       />
     </AdminSection>
   );

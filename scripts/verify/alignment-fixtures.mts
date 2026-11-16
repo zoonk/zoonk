@@ -34,12 +34,13 @@ export function fixtureCapture(elements: CaptureElement[], activeSurface = "page
       width: 390,
     },
     elements,
+    measurements: ["clipping", "controls", "text-flows"],
     platform: "android",
     scale: 3,
     scenario: "fixture",
     screen: "fixture",
     unit: "dp",
-    version: 1,
+    version: 2,
   };
 }
 
