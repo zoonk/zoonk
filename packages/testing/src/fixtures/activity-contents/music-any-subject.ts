@@ -1,9 +1,13 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
-import { choiceCheck, numericCheck } from "./activity-checks";
+import { numericCheck, reasonedChoice } from "./activity-checks";
 
 export const musicAnySubjectActivities = {
   beforeAfter: {
-    check: numericCheck(0.12, { output: "hours" }),
+    check: numericCheck(0.12, {
+      explanation: "1.5 hours ÷ 12.5 hours = 0.12.",
+      output: "hours",
+      question: "Divide the 1914 time by the 1912 time. What do you get?",
+    }),
     data: { source: { title: "Ford Motor Company production records" } },
     fields: {
       after: {
@@ -36,9 +40,17 @@ export const musicAnySubjectActivities = {
     template: "keyboardFretboard",
   },
   notationPlayer: {
-    check: choiceCheck("Does this melody move mostly by steps or by leaps?", [
-      ["By steps", true],
-      ["By leaps", false],
+    check: reasonedChoice("Does this melody move mostly by steps or by leaps?", [
+      {
+        isCorrect: true,
+        reason: "Almost every note moves to the one next to it: E to F, F to G.",
+        text: "By steps",
+      },
+      {
+        isCorrect: false,
+        reason: "A leap skips over notes. Here almost every note sits next to the one before.",
+        text: "By leaps",
+      },
     ]),
     fields: {
       notation:
@@ -62,7 +74,7 @@ export const musicAnySubjectActivities = {
       tempo: 90,
       toleranceMs: 100,
     },
-    prompt: "Tap the son clave over the beat.",
+    prompt: "Tap the son clave, a five-hit Cuban rhythm, over the beat.",
     template: "rhythmTapper",
   },
 };

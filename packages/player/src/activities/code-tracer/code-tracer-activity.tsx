@@ -1,7 +1,6 @@
 "use client";
 
 import { useSentenceSpace } from "@zoonk/learn/locale";
-import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -11,6 +10,7 @@ import {
   ActivityCanvas,
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
+import { ActivityCheckQuestion } from "../_components/activity-check-question";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
@@ -49,12 +49,24 @@ function optionText(pause: Pause, optionId: string | undefined): string {
   return pause.options.find((option) => option.id === optionId)?.text ?? "";
 }
 
-function RunHint({ isExploring, isLastStep }: { isExploring: boolean; isLastStep: boolean }) {
+function RunHint({
+  asksAhead,
+  isExploring,
+  isLastStep,
+}: {
+  asksAhead: boolean;
+  isExploring: boolean;
+  isLastStep: boolean;
+}) {
   const t = useExtracted();
 
   if (!isLastStep) {
     return (
-      <p className="text-muted-foreground text-xs">{t("Step forward to run the next line.")}</p>
+      <p className="text-muted-foreground text-xs">
+        {asksAhead
+          ? t("Step forward to run the next line. We'll stop for you to predict a value.")
+          : t("Step forward to run the next line.")}
+      </p>
     );
   }
 
@@ -151,9 +163,7 @@ export function CodeTracerActivity({
 
       {upcoming && !isRevealed(upcoming.pause) && (
         <div className="flex flex-col gap-2 pt-1" data-slot="code-tracer-prediction">
-          <div className="text-base leading-snug font-medium">
-            <RichTextBlocks text={upcoming.pause.question} />
-          </div>
+          <ActivityCheckQuestion>{upcoming.pause.question}</ActivityCheckQuestion>
 
           <ActivitySelectGrid
             className="font-mono"
@@ -180,7 +190,11 @@ export function CodeTracerActivity({
       )}
 
       {!isChecked && !(upcoming && !isRevealed(upcoming.pause)) && (
-        <RunHint isExploring={isExploring} isLastStep={step >= lastStep} />
+        <RunHint
+          asksAhead={!asksNothing && tracerAnswer(fields.pauses, predictions) === null}
+          isExploring={isExploring}
+          isLastStep={step >= lastStep}
+        />
       )}
 
       <TracerPredictionLog results={revealed} />

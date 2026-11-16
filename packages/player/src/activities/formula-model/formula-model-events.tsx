@@ -1,12 +1,14 @@
 "use client";
 
+import { Switch } from "@zoonk/ui/components/switch";
 import { cn } from "@zoonk/ui/lib/utils";
-import { Check, Plus } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
 import { type ModelValues } from "../_utils/formula-model";
 
 type ModelEvent = { label: string; name: string };
 
+/** A what-if is on or off, so it's the kit's switch beside its words. */
 function EventToggle({
   disabled,
   isOn,
@@ -18,24 +20,16 @@ function EventToggle({
   label: string;
   onToggle: () => void;
 }) {
-  const Icon = isOn ? Check : Plus;
-
   return (
-    <button
-      aria-pressed={isOn}
+    <label
       className={cn(
-        "focus-visible:ring-ring/50 inline-flex min-h-11 items-center gap-2 rounded-lg border px-4 text-sm font-medium outline-none select-none focus-visible:ring-[3px] motion-safe:transition-colors",
-        isOn
-          ? "bg-primary text-primary-foreground border-primary"
-          : "bg-background hover:bg-accent",
+        ACTIVITY_BOX_CLASS,
+        "flex min-h-11 items-center gap-3 px-3 text-sm font-medium select-none",
       )}
-      disabled={disabled}
-      onClick={onToggle}
-      type="button"
     >
-      <Icon aria-hidden="true" className="size-4" />
+      <Switch checked={isOn} disabled={disabled} onCheckedChange={onToggle} />
       {label}
-    </button>
+    </label>
   );
 }
 

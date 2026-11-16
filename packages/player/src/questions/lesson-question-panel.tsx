@@ -22,7 +22,7 @@ import {
 } from "./lesson-question-navigation";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { QuestionThread } from "./lesson-question-thread";
-import { THREAD_SIDE_CLASS, THREAD_START_CLASS } from "./lesson-question-thread-viewport";
+import { THREAD_SIDE_CLASS } from "./lesson-question-thread-viewport";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
 function LessonQuestionPanelDescription({
@@ -65,7 +65,7 @@ function LessonQuestionPanelHeader({
 
   return (
     <DrawerHeader
-      className={cn(THREAD_START_CLASS, "border-border border-b")}
+      className={cn(THREAD_SIDE_CLASS, "border-border items-center border-b")}
       closeLabel={t("Close questions")}
     >
       <BuddyIdentityRow

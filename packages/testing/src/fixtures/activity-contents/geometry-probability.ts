@@ -1,13 +1,18 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
-import { choiceCheck, citedData, numericCheck } from "./activity-checks";
+import { citedData, numericCheck, reasonedChoice } from "./activity-checks";
 
 export const geometryProbabilityActivities = {
   chartReader: {
     check: {
-      ...choiceCheck("How much did CO₂ rise from 2010 to 2020?", [
-        ["9 ppm", false, 9],
-        ["24 ppm", true, 24],
-        ["50 ppm", false, 50],
+      ...reasonedChoice("How much did CO₂ rise from 2010 to 2020?", [
+        { isCorrect: false, reason: "That's the rise from 1960 to 1970.", text: "9 ppm", value: 9 },
+        { isCorrect: true, reason: "It went from 390 to 414 ppm.", text: "24 ppm", value: 24 },
+        {
+          isCorrect: false,
+          reason: "The line climbs 24 ppm in that decade, less than half of 50.",
+          text: "50 ppm",
+          value: 50,
+        },
       ]),
       output: "late",
     },
@@ -31,7 +36,12 @@ export const geometryProbabilityActivities = {
     template: "chartReader",
   },
   distributionExplorer: {
-    check: numericCheck(95.45, { unit: "%" }),
+    check: numericCheck(95.45, {
+      explanation:
+        "Two standard deviations on each side of 100 is 70 to 130, and 95.45% of scores fall there.",
+      question: "What percent of people score within 2 standard deviations of the average?",
+      unit: "%",
+    }),
     data: { source: { title: "Wechsler Adult Intelligence Scale norms" } },
     fields: {
       distribution: { kind: "normal", mean: 100, sd: 15 },
@@ -44,7 +54,11 @@ export const geometryProbabilityActivities = {
     template: "distributionExplorer",
   },
   geometryBoard: {
-    check: numericCheck(180),
+    check: numericCheck(180, {
+      explanation: "When one corner opens up, the other two together close by just as much.",
+      question: "What do the three angles add up to?",
+      unit: "°",
+    }),
     fields: {
       invariant: "The angles always add to 180°.",
       measure: "angleSum",
@@ -58,11 +72,31 @@ export const geometryProbabilityActivities = {
     template: "geometryBoard",
   },
   randomSimulation: {
-    check: choiceCheck("How often do you get exactly 5 heads?", [
-      ["Almost always", false, 0.9],
-      ["About half the time", false, 0.5],
-      ["About 1 in 4", true, 0.25],
-      ["Rarely", false, 0.05],
+    check: reasonedChoice("How often do you get exactly 5 heads?", [
+      {
+        isCorrect: false,
+        reason: "5 heads is the most likely count, but 4 and 6 come up almost as often.",
+        text: "Almost always",
+        value: 0.9,
+      },
+      {
+        isCorrect: false,
+        reason: "Half is the chance of heads on one flip, not of exactly 5 heads in 10.",
+        text: "About half the time",
+        value: 0.5,
+      },
+      {
+        isCorrect: true,
+        reason: "252 of the 1,024 ways 10 flips can land have exactly 5 heads.",
+        text: "About 25% of the time",
+        value: 0.25,
+      },
+      {
+        isCorrect: false,
+        reason: "It's the most likely single count, about 25% of the time.",
+        text: "Rarely",
+        value: 0.05,
+      },
     ]),
     fields: {
       hitLabel: "Exactly 5 heads",
@@ -80,7 +114,15 @@ export const geometryProbabilityActivities = {
     template: "randomSimulation",
   },
   unitCircle: {
-    check: { ...numericCheck(0.5), inputs: [{ name: "angle", value: 30 }], output: "sin" },
+    check: {
+      ...numericCheck(0.5, {
+        explanation:
+          "At 30° the seat is half the wheel's radius above the middle, so sin 30° = 0.5.",
+        question: "What is sin at 30°?",
+      }),
+      inputs: [{ name: "angle", value: 30 }],
+      output: "sin",
+    },
     fields: {
       angleUnit: "degrees",
       frame: "A Ferris wheel seat.",

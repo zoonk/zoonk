@@ -23,8 +23,10 @@ export function KeyboardFretboardHeader({
   const chordName = useChordName();
   const { display, spoken } = useNoteNames();
 
+  const isGuessing = byEar !== null && !byEar.isRevealed;
+
   function title() {
-    if (byEar && !byEar.isRevealed) {
+    if (isGuessing) {
       return t("By ear");
     }
 
@@ -57,12 +59,13 @@ export function KeyboardFretboardHeader({
       </div>
 
       <div className={cn("flex shrink-0 flex-wrap gap-2", !byEar && "justify-end")}>
-        {byEar?.onPlay && (
+        {isGuessing && byEar.onPlay && (
           <ActivitySoundButton onPlay={byEar.onPlay}>{t("Play the sound")}</ActivitySoundButton>
         )}
 
+        {/* While the sound is a mystery there are two sounds to hear, so each button names its own. */}
         <ActivitySoundButton disabled={notes.length === 0} onPlay={onHear}>
-          {t("Hear it")}
+          {isGuessing ? t("Hear your notes") : t("Hear it")}
         </ActivitySoundButton>
       </div>
     </div>

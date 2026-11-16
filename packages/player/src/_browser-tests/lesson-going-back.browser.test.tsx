@@ -323,15 +323,12 @@ describe("going back to reread", () => {
     await expect.element(page.getByRole("button", { name: "Skip for now" })).toBeVisible();
     await page.getByRole("button", { name: "Skip for now" }).click();
     await page.getByRole("button", { name: "Start tapping" }).click();
-
-    await expect
-      .element(page.getByRole("button", { name: "Start tapping" }))
-      .not.toBeInTheDocument();
+    await expect.element(page.getByRole("button", { name: "Start tapping" })).toBeDisabled();
 
     await goBackAndReturn();
 
     expect(immediateStops(stop)).toBeGreaterThan(soundCheckStops);
-    await expect.element(page.getByRole("button", { name: "Start tapping" })).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Start tapping" })).toBeEnabled();
   });
 
   it("plays a screen's sound again when the learner comes back to it", async () => {

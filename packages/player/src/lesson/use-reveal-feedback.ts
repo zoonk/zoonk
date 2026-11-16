@@ -2,17 +2,21 @@
 
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { type RefObject, useEffect } from "react";
-import { queryShown } from "./_utils/lesson-focus";
+import { type Reveal, getReveal } from "./_utils/reveal-feedback";
 import { useLessonPlayer } from "./lesson-player-context";
+import { getScreenRef } from "./use-kept-screens";
 
+/** A challenge's result is its feedback, so it's revealed from its title. */
 const FEEDBACK_SELECTOR = [
   '[data-slot="feedback-panel"]',
   '[data-slot="lesson-result-notes"]',
+  '[data-slot="challenge-result"]',
 ].join(",");
 
-const QUESTION_SELECTOR = '[data-slot="lesson-screen"] h2';
-const VERDICT_SELECTOR = '[data-slot="feedback-verdict"]';
-const MARGIN = 16;
+const STAGE_SELECTOR = '[data-slot="lesson-stage"]';
+const CHIP_SELECTOR = '[data-slot="activity-badge"]';
+const TITLE_SELECTOR = "h2";
+const OWN_SCROLL_EVENTS = ["wheel", "touchmove", "keydown"] as const;
 
 function getVisibleArea(scroller: HTMLElement) {
   const box = scroller.getBoundingClientRect();
@@ -22,69 +26,102 @@ function getVisibleArea(scroller: HTMLElement) {
   return { bottom: box.bottom - (isStuck && bar ? bar.offsetHeight : 0), top: box.top };
 }
 
-function getFeedbackDelta(parts: HTMLElement[], visible: { bottom: number; top: number }): number {
-  const top = Math.min(...parts.map((part) => part.getBoundingClientRect().top));
-  const bottom = Math.max(...parts.map((part) => part.getBoundingClientRect().bottom));
+function getScrollReveal({
+  scroller,
+  stage,
+}: {
+  scroller: HTMLElement;
+  stage: HTMLElement;
+}): Reveal {
+  const parts = [...stage.querySelectorAll<HTMLElement>(FEEDBACK_SELECTOR)];
 
-  if (top < visible.top) {
-    return top - visible.top - MARGIN;
+  if (parts.length === 0) {
+    return { delta: 0, extraRoom: 0 };
   }
 
-  if (bottom > visible.bottom) {
-    return Math.min(bottom - visible.bottom + MARGIN, top - visible.top - MARGIN);
-  }
+  const boxes = parts.map((part) => part.getBoundingClientRect());
 
-  return 0;
+  return getReveal({
+    chip: stage.querySelector(CHIP_SELECTOR)?.getBoundingClientRect() ?? null,
+    feedback: {
+      bottom: Math.max(...boxes.map((box) => box.bottom)),
+      top: Math.min(...boxes.map((box) => box.top)),
+    },
+    room: scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop,
+    title: stage.querySelector(TITLE_SELECTOR)?.getBoundingClientRect() ?? null,
+    visible: getVisibleArea(scroller),
+  });
 }
 
 /**
- * Shows the whole feedback, unless that scrolls the question away while less would still show the
- * verdict: then it scrolls only as far as keeps the question in view.
+ * Scrolls a checked screen to its feedback, one frame after the check, once the bar holds its new
+ * action. A canvas or a picture that finishes loading later moves the feedback, so it's revealed
+ * again each time the screen's height changes, until the learner scrolls on their own. It watches
+ * the screen that's showing, so going back to an answered screen, or to a retried question's
+ * earlier attempt, watches that one.
  */
-function getScrollDelta(scroller: HTMLElement): number {
-  const stage = queryShown('[data-slot="lesson-stage"]', scroller);
-  const parts = [...(stage?.querySelectorAll<HTMLElement>(FEEDBACK_SELECTOR) ?? [])];
-
-  if (!stage || parts.length === 0) {
-    return 0;
-  }
-
-  const visible = getVisibleArea(scroller);
-  const whole = getFeedbackDelta(parts, visible);
-  const question = stage.querySelector(QUESTION_SELECTOR)?.getBoundingClientRect();
-  const verdict = stage.querySelector(VERDICT_SELECTOR)?.getBoundingClientRect();
-
-  if (!question || !verdict) {
-    return whole;
-  }
-
-  const keepsQuestion = question.top - visible.top - MARGIN;
-  const showsVerdict = verdict.bottom - visible.bottom;
-
-  return whole > keepsQuestion && keepsQuestion >= 0 && showsVerdict <= keepsQuestion
-    ? keepsQuestion
-    : whole;
-}
-
 export function useRevealFeedback(scrollerRef: RefObject<HTMLElement | null>) {
-  const { state } = useLessonPlayer();
+  const { screen, state } = useLessonPlayer();
   const showsFeedback = state.phase === "feedback";
+  const screenKey = screen.step ? getScreenRef(state, screen.step.id).key : null;
 
   useEffect(() => {
     const scroller = scrollerRef.current;
 
-    if (!showsFeedback || !scroller) {
+    const stage =
+      scroller && screenKey !== null
+        ? scroller.querySelector<HTMLElement>(
+            `[data-screen="${CSS.escape(screenKey)}"] ${STAGE_SELECTOR}`,
+          )
+        : null;
+
+    if (!showsFeedback || !scroller || !stage) {
       return;
     }
 
-    const frame = requestAnimationFrame(() => {
-      const delta = getScrollDelta(scroller);
+    let height = stage.offsetHeight;
+    let addedRoom = 0;
+
+    // Room added under the feedback sits below everything, so it moves nothing on screen.
+    function reveal(shown: { scroller: HTMLElement; stage: HTMLElement }) {
+      const { delta, extraRoom } = getScrollReveal(shown);
+
+      if (extraRoom > 0) {
+        addedRoom += extraRoom;
+        shown.stage.style.paddingBottom = `${addedRoom}px`;
+        height = shown.stage.offsetHeight;
+      }
 
       if (delta !== 0) {
-        scroller.scrollBy({ behavior: getScrollBehavior(), top: delta });
+        shown.scroller.scrollBy({ behavior: getScrollBehavior(), top: delta });
+      }
+    }
+
+    const frame = requestAnimationFrame(() => reveal({ scroller, stage }));
+
+    const observer = new ResizeObserver(() => {
+      if (stage.offsetHeight !== height) {
+        height = stage.offsetHeight;
+        reveal({ scroller, stage });
       }
     });
 
-    return () => cancelAnimationFrame(frame);
-  }, [scrollerRef, showsFeedback]);
+    const stop = () => observer.disconnect();
+
+    observer.observe(stage);
+
+    for (const event of OWN_SCROLL_EVENTS) {
+      scroller.addEventListener(event, stop, { once: true, passive: true });
+    }
+
+    return () => {
+      cancelAnimationFrame(frame);
+      stop();
+      stage.style.paddingBottom = "";
+
+      for (const event of OWN_SCROLL_EVENTS) {
+        scroller.removeEventListener(event, stop);
+      }
+    };
+  }, [scrollerRef, screenKey, showsFeedback]);
 }

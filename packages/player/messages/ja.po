@@ -27,9 +27,9 @@ msgid "Estimate first"
 msgstr "まず予想する"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "wIskGV"
-msgid "Move a curve"
-msgstr "曲線を動かす"
+msgctxt "s80KEd"
+msgid "Move a line"
+msgstr "線を動かす"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "a2AaWv"
@@ -65,13 +65,6 @@ msgstr "例として示した数値で、実際のデータではありません
 msgctxt "WFoGUE"
 msgid "Source:"
 msgstr "出典："
-
-#: src/activities/_components/activity-feedback.tsx
-#: src/activities/combination-grid/grid-board.tsx
-#: src/activities/labeled-diagram/diagram-slots.tsx
-msgctxt "3nOd8f"
-msgid "Your answer:"
-msgstr "回答："
 
 #: src/activities/_components/activity-feedback.tsx
 #: src/lesson/feedback/lesson-step-result.tsx
@@ -196,9 +189,14 @@ msgid "Try again"
 msgstr "もう一度試す"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "g91Ps-"
-msgid "Start over with the original code"
-msgstr "元のコードからやり直す"
+msgctxt "KiXNvz"
+msgid "Run"
+msgstr "実行する"
+
+#: src/activities/_sandbox/sandbox-run-bar.tsx
+msgctxt "4prk89"
+msgid "Start over"
+msgstr "最初からやり直す"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/random-simulation/chance-simulation.tsx
@@ -206,11 +204,6 @@ msgstr "元のコードからやり直す"
 msgctxt "zG-cZG"
 msgid "Run again"
 msgstr "もう一度実行する"
-
-#: src/activities/_sandbox/sandbox-run-bar.tsx
-msgctxt "KiXNvz"
-msgid "Run"
-msgstr "実行する"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "6k80XR"
@@ -744,11 +737,6 @@ msgid "Output"
 msgstr "出力"
 
 #: src/activities/code-runner/code-runner-output.tsx
-msgctxt "e2tgwJ"
-msgid "Your output"
-msgstr "実際の出力"
-
-#: src/activities/code-runner/code-runner-output.tsx
 msgctxt "6srLb2"
 msgid "Expected"
 msgstr "期待される出力"
@@ -757,6 +745,11 @@ msgstr "期待される出力"
 msgctxt "d8Wy56"
 msgid "You changed the code. Run it again to see the new output."
 msgstr "コードを変更しました。もう一度実行して、新しい出力を確認してください。"
+
+#: src/activities/code-tracer/code-tracer-activity.tsx
+msgctxt "DhXJyL"
+msgid "Step forward to run the next line. We'll stop for you to predict a value."
+msgstr "次に進むと、次の行が実行されます。値を予想するところで一時停止します。"
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "isBSlr"
@@ -859,6 +852,12 @@ msgid "{title}: {rowLabel} ({rowValues}) down the side, {columnLabel} ({columnVa
 msgstr "{title}：左側に{rowLabel}（{rowValues}）、上側に{columnLabel}（{columnValues}）が並び、各マスには対応する2つの数を掛けた値が入ります。"
 
 #: src/activities/combination-grid/grid-board.tsx
+#: src/activities/labeled-diagram/diagram-slots.tsx
+msgctxt "3nOd8f"
+msgid "Your answer:"
+msgstr "回答："
+
+#: src/activities/combination-grid/grid-board.tsx
 msgctxt "_RHUYG"
 msgid "Square {number}, {row} and {column}: empty"
 msgstr "マス{number}、{row}と{column}：空欄"
@@ -869,9 +868,9 @@ msgid "Square {number}, {row} and {column}:"
 msgstr "マス{number}、{row}と{column}："
 
 #: src/activities/combination-grid/grid-caption.tsx
-msgctxt "5cNGIS"
-msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}}: {what}"
-msgstr "{count}マス（{total, plural, =0 {全#マス} other {#マス中}}）：{what}"
+msgctxt "nyV23o"
+msgid "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}"
+msgstr "{what}：{count}マス（{total, plural, =0 {全#マス} other {#マス中}}）"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "d2pFBx"
@@ -894,14 +893,9 @@ msgid "Every square is filled. Tap one to change it."
 msgstr "すべてのマスが埋まっています。変更したいマスをタップしてください。"
 
 #: src/activities/combination-grid/grid-palette.tsx
-msgctxt "ZJ9RKr"
-msgid "Which genotype goes in square {number}?"
-msgstr "{number}番のマスに入る遺伝子型はどれですか？"
-
-#: src/activities/combination-grid/grid-palette.tsx
-msgctxt "_Z7gdQ"
-msgid "What goes in square {number}?"
-msgstr "{number}番のマスには何が入りますか？"
+msgctxt "mLazZP"
+msgid "What goes in the highlighted square?"
+msgstr "強調表示されたマスには何が入りますか？"
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "9-BMAt"
@@ -917,6 +911,11 @@ msgstr "自分の発言："
 msgctxt "ZWpFH7"
 msgid "Hear this line"
 msgstr "このセリフを聞く"
+
+#: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
+msgctxt "HArSl0"
+msgid "Best reply:"
+msgstr "最も適切な返答："
 
 #: src/activities/dialogue-simulator/dialogue-simulator-activity.tsx
 msgctxt "TSUuRN"
@@ -1262,6 +1261,11 @@ msgid "Play the sound"
 msgstr "音を再生する"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "X9t3Pl"
+msgid "Hear your notes"
+msgstr "選んだ音を聴く"
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "f6zKAc"
 msgid "Hear it"
 msgstr "音を聞く"
@@ -1343,6 +1347,11 @@ msgid "Tap a name for spot {number}, or drag it onto any spot."
 msgstr "{number}番に置く名前をタップするか、名前を好きな場所にドラッグしてください。"
 
 #: src/activities/labeled-diagram/name-bank.tsx
+msgctxt "TNAgYA"
+msgid "{count, plural, one {# name has no spot.} other {# names have no spot.}}"
+msgstr "{count, plural, other {使わない名前が#個あります。}}"
+
+#: src/activities/labeled-diagram/name-bank.tsx
 msgctxt "vhw8-j"
 msgid "Names"
 msgstr "名前"
@@ -1354,19 +1363,19 @@ msgid "What happened"
 msgstr "結果"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "HSYVGq"
-msgid "{axis} goes down."
-msgstr "{axis}が小さくなります。"
+msgctxt "IHxN7y"
+msgid "{axis}: down"
+msgstr "{axis}：下がる"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "AMYIvl"
-msgid "{axis} stays the same."
-msgstr "{axis}は変わりません。"
+msgctxt "wEr5qf"
+msgid "{axis}: no change"
+msgstr "{axis}：変化なし"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "K23AEK"
-msgid "{axis} goes up."
-msgstr "{axis}が大きくなります。"
+msgctxt "cwnIuM"
+msgid "{axis}: up"
+msgstr "{axis}：上がる"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "m3ASYj"
@@ -1399,14 +1408,24 @@ msgid "{line} moved down."
 msgstr "{line}は下に移動しました。"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "PHEAQb"
-msgid "Drag a line by its handle."
-msgstr "つまみをドラッグして線を動かしてください。"
+msgctxt "K-pwvx"
+msgid "Drag a line left or right by its handle."
+msgstr "つまみをドラッグして、線を左右に動かしてください。"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
-msgctxt "5H0MTv"
-msgid "Drag a line by its handle, or use the arrow keys."
-msgstr "つまみをドラッグするか、矢印キーで線を動かしてください。"
+msgctxt "5xSynH"
+msgid "Drag a line left or right by its handle, or use the arrow keys."
+msgstr "つまみをドラッグするか、矢印キーで線を左右に動かしてください。"
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "TvX9Up"
+msgid "Drag a line up or down by its handle."
+msgstr "つまみをドラッグして、線を上下に動かしてください。"
+
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "Ku-lfL"
+msgid "Drag a line up or down by its handle, or use the arrow keys."
+msgstr "つまみをドラッグするか、矢印キーで線を上下に動かしてください。"
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "QqIq-i"
@@ -1730,11 +1749,6 @@ msgid "Nothing selected."
 msgstr "何も選択されていません。"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
-msgctxt "DLio1y"
-msgid "Target: {formula}"
-msgstr "作る分子：{formula}"
-
-#: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "thePhu"
 msgid "Built: {formula}"
 msgstr "作った分子：{formula}"
@@ -1783,6 +1797,12 @@ msgstr "{atom}を取り除く"
 msgctxt "E6Wo-S"
 msgid "Remove the selected atom"
 msgstr "選択中の原子を取り除く"
+
+#. Button that removes the atom the learner selected from the molecule.
+#: src/activities/molecule-builder/molecule-palette.tsx
+msgctxt "G_yZLu"
+msgid "Remove"
+msgstr "取り除く"
 
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "hXYqS7"
@@ -2336,11 +2356,6 @@ msgid "Listen first"
 msgstr "まず聞く"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
-msgctxt "V8V6gJ"
-msgid "Start tapping"
-msgstr "タップを始める"
-
-#: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "zuJJlV"
 msgid "Check the sound delay again"
 msgstr "音の遅れをもう一度確認する"
@@ -2366,9 +2381,9 @@ msgid "All set."
 msgstr "準備ができました。"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "Jk0E1p"
-msgid "Tap along with {count} clicks, so your taps are timed right."
-msgstr "タップのタイミングを調整するため、クリック音に合わせて{count}回タップしてください。"
+msgctxt "Q4pNZZ"
+msgid "Speakers and headphones can play a little late. Tap along with {count} clicks so your taps are timed right."
+msgstr "スピーカーやヘッドホンでは、音が少し遅れて聞こえることがあります。タップのタイミングを調整するため、{count}回のクリック音に合わせてタップしてください。"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2452,6 +2467,11 @@ msgid "or press Space"
 msgstr "またはスペースキーを押す"
 
 #: src/activities/rhythm-tapper/rhythm-tapper-activity.tsx
+msgctxt "V8V6gJ"
+msgid "Start tapping"
+msgstr "タップを始める"
+
+#: src/activities/rhythm-tapper/rhythm-tapper-activity.tsx
 msgctxt "eP7OeM"
 msgid "A rhythm of {length} steps with a beat every {perBeat}. Tap on steps {hits}, over a click on every beat."
 msgstr "全{length}ステップのリズムで、{perBeat}ステップが1拍です。拍ごとのクリック音を聞きながら、ステップ{hits}でタップしてください。"
@@ -2511,11 +2531,6 @@ msgstr "SQLiteを読み込めませんでした。接続を確認して、もう
 msgctxt "qj71j1"
 msgid "Query"
 msgstr "クエリ"
-
-#: src/activities/sql-playground/sql-playground-activity.tsx
-msgctxt "Vpa3uJ"
-msgid "Your query"
-msgstr "入力したクエリ"
 
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "fv34i9"
@@ -2660,9 +2675,15 @@ msgid "Time between the dates"
 msgstr "日付の間隔"
 
 #: src/activities/timeline/timeline-gaps.tsx
-msgctxt "V9pdjC"
-msgid "from {earlier} ({earlierYear}) to {later} ({laterYear})"
-msgstr "{earlier}（{earlierYear}）から{later}（{laterYear}）まで"
+msgctxt "aDM2Dn"
+msgid "{event} ({year})"
+msgstr "{event}（{year}）"
+
+#. Read aloud by a screen reader between two events on a timeline, where sighted learners see an arrow: “Great Pyramid built (2560 BCE) to Moon landing (1969)”.
+#: src/activities/timeline/timeline-gaps.tsx
+msgctxt "NLeFGn"
+msgid "to"
+msgstr "から"
 
 #: src/activities/timeline/timeline-tray.tsx
 msgctxt "WeCA4I"
@@ -2767,6 +2788,34 @@ msgstr "自分の答え"
 msgctxt "PKEwrP"
 msgid "Pick words to build your answer"
 msgstr "単語を選んで答えを作ってください"
+
+#. Keyboard hint under an answer box, right after a picture of the Enter key: pressing Enter checks the answer. Lowercase, one word if possible.
+#: src/components/enter-hint.tsx
+msgctxt "3W8LgY"
+msgid "check"
+msgstr "答え合わせ"
+
+#. Keyboard hint under a message box, right after a picture of the Enter key: pressing Enter sends the message. Lowercase, one word if possible.
+#: src/components/enter-hint.tsx
+msgctxt "qITzR1"
+msgid "send"
+msgstr "送信"
+
+#. Keyboard hint under a text box, right after pictures of the Shift and Enter keys: pressing them together starts a new line. Lowercase.
+#: src/components/enter-hint.tsx
+msgctxt "4SYk2r"
+msgid "new line"
+msgstr "改行"
+
+#: src/components/enter-hint.tsx
+msgctxt "waVIZZ"
+msgid "Press Enter to check, Shift+Enter for a new line."
+msgstr "Enterで答え合わせ、Shift+Enterで改行できます。"
+
+#: src/components/enter-hint.tsx
+msgctxt "ZPgsC6"
+msgid "Press Enter to send, Shift+Enter for a new line."
+msgstr "Enterで送信、Shift+Enterで改行できます。"
 
 #. The numbered gap in a fill-in-the-blank sentence, read by screen readers. {item} is the word placed in it.
 #: src/components/fill-blank-step.tsx
@@ -3418,11 +3467,6 @@ msgid "Just a guess, it doesn't count"
 msgstr "予想なので、採点されません"
 
 #: src/lesson/steps/lesson-answer-field.tsx
-msgctxt "waVIZZ"
-msgid "Press Enter to check, Shift+Enter for a new line."
-msgstr "Enterで答え合わせ、Shift+Enterで改行できます。"
-
-#: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "答えを書いてください"
@@ -3675,11 +3719,6 @@ msgstr "送信"
 msgctxt "iPfRms"
 msgid "Ask a question"
 msgstr "質問する"
-
-#: src/questions/lesson-question-composer.tsx
-msgctxt "uw7M-z"
-msgid "⏎ send · ⇧⏎ new line"
-msgstr "⏎ 送信 · ⇧⏎ 改行"
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "NYRAZH"

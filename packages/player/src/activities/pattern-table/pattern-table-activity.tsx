@@ -4,6 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
+import { ActivityCheckQuestion } from "../_components/activity-check-question";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
@@ -101,9 +102,9 @@ export function PatternTableActivity(props: PatternTableProps) {
 
       {!isChecked && activeRow && (
         <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium" id={`${labelId}-endings`}>
+          <ActivityCheckQuestion id={`${labelId}-endings`}>
             {t("Which ending does {person} take?", { person: activeRow.label })}
-          </p>
+          </ActivityCheckQuestion>
 
           <ActivitySelectGrid
             className={cn(fields.choices.length > 3 ? "grid-cols-4" : "grid-cols-3")}

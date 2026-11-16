@@ -2,6 +2,7 @@
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useSentenceSpace } from "@zoonk/learn/locale";
+import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
@@ -51,7 +52,25 @@ function farEnds(distribution: Content["fields"]["distribution"]): Interval {
     : { from: distribution.min, to: distribution.max };
 }
 
+/**
+ * A saved answer holds only the share the handles gave. A right one was read with the handles on
+ * the target, so a reopened curve puts them there and the picture agrees with the checked answer.
+ */
+function startingHandles(content: Content, answer: DistributionExplorerProps["answer"]): Interval {
+  const { check, fields } = content;
+
+  if (answer?.kind !== "numeric" || check.kind !== "numeric") {
+    return fields.handles;
+  }
+
+  const { kind, value } = check.tolerance;
+  const allowed = kind === "absolute" ? value : value * Math.abs(check.answer);
+
+  return Math.abs(check.answer - answer.value) <= allowed ? fields.target : fields.handles;
+}
+
 export function DistributionExplorerActivity({
+  answer,
   content,
   labelId,
   onAnswerChange,
@@ -61,7 +80,7 @@ export function DistributionExplorerActivity({
   const format = useFormatNumber();
   const { check, fields } = content;
   const { distribution } = fields;
-  const [handles, setHandles] = useState(fields.handles);
+  const [handles, setHandles] = useState(() => startingHandles(content, answer));
   const isChecked = phase === "checked";
   const rawDomain = distributionDomain(fields);
   const step = handleStep({ ...fields, domain: rawDomain });
@@ -73,8 +92,14 @@ export function DistributionExplorerActivity({
   const below = percentBetween(content, { from: ends.from, to: handles.from });
   const above = percentBetween(content, { from: handles.to, to: ends.to });
 
+  // A share is written with the digits the question's answer needs, the same in every place.
+  const percentDigits =
+    check.kind === "numeric"
+      ? exactFractionDigitsFor({ expected: check.answer, tolerance: check.tolerance })
+      : PERCENT_DIGITS;
+
   const percent = (value: number) =>
-    format(value, { maximumFractionDigits: PERCENT_DIGITS, unit: "%" });
+    format(value, { maximumFractionDigits: percentDigits, unit: "%" });
 
   const formatValue = (value: number) => format(value, { unit: fields.unit });
   const space = useSentenceSpace();
@@ -100,6 +125,7 @@ export function DistributionExplorerActivity({
     });
 
   const targetShare = percentBetween(content, fields.target);
+  const isOnTarget = handles.from === fields.target.from && handles.to === fields.target.to;
 
   return (
     <ActivityCanvas labelId={labelId}>
@@ -128,7 +154,7 @@ export function DistributionExplorerActivity({
           ticks={distributionTicks(distribution, domain)}
         />
 
-        {isChecked && (
+        {isChecked && !isOnTarget && (
           <DistributionTarget
             label={t("{from} to {to}: {share}", {
               from: format(fields.target.from),

@@ -4,6 +4,12 @@ import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
 
 export type FeedbackTone = "almost" | "neutral" | "right" | "wrong";
 
+/**
+ * A glyph that starts a line in the card: its ink on the card's text edge (craft E2), and the words
+ * after it on one edge whatever the glyph, so "Correct!", "Not quite" and a tip start together.
+ */
+export const FEEDBACK_MARKER_CLASS = "edge -ms-(--edge-start) me-(--edge-start)";
+
 const TONE_CLASS: Readonly<Record<FeedbackTone, string>> = {
   almost: "text-warning-text",
   neutral: "text-foreground",
@@ -58,8 +64,7 @@ export function FeedbackVerdict({
         )}
         data-slot="feedback-verdict"
       >
-        {/* A bare glyph at the column's start lines up by its ink (craft E2). */}
-        <LineMarker className="edge -ms-(--edge-start)">
+        <LineMarker className={FEEDBACK_MARKER_CLASS}>
           {icon ?? <ToneGlyph tone={tone} />}
         </LineMarker>
         {children}

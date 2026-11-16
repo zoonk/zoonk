@@ -51,7 +51,7 @@ describe("output belongs to the editor revision that ran", () => {
           : "SELECT name FROM countries ORDER BY name;";
 
       const editor = page.getByRole("textbox", {
-        name: template === "codeRunner" ? "Line 1, yours to edit" : "Your query",
+        name: template === "codeRunner" ? "Line 1, yours to edit" : "Query",
       });
 
       await editor.fill(draft);
@@ -75,7 +75,9 @@ describe("output belongs to the editor revision that ran", () => {
       await expect.element(run).toHaveAttribute("aria-busy", "true");
       await expect.element(run).toBeDisabled();
 
-      await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeDisabled();
+      await expect
+        .element(page.getByRole("button", { exact: true, name: "Check" }))
+        .not.toBeInTheDocument();
 
       await act(async () => {
         vi.mocked(runInSandbox).mock.calls[1]?.[0].onMessage({
@@ -118,7 +120,7 @@ describe("output belongs to the editor revision that ran", () => {
       await page.getByRole("button", { exact: true, name: "Next" }).click();
 
       if (template === "sqlPlayground") {
-        await page.getByRole("textbox", { name: "Your query" }).fill("SELECT name FROM countries;");
+        await page.getByRole("textbox", { name: "Query" }).fill("SELECT name FROM countries;");
       }
 
       await page.getByRole("button", { exact: true, name: "Run" }).click();
@@ -127,7 +129,7 @@ describe("output belongs to the editor revision that ran", () => {
       await page.getByRole("button", { exact: true, name: "Next" }).click();
 
       if (template === "sqlPlayground") {
-        await page.getByRole("textbox", { name: "Your query" }).fill("SELECT name FROM countries;");
+        await page.getByRole("textbox", { name: "Query" }).fill("SELECT name FROM countries;");
       }
 
       await page.getByRole("button", { exact: true, name: "Run" }).click();
@@ -184,8 +186,11 @@ describe("output belongs to the editor revision that ran", () => {
       .element(page.getByText("You changed the code. Run it again to see the new output."))
       .toBeVisible();
 
-    await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeDisabled();
-    await page.getByRole("button", { name: "Run again" }).click();
+    await expect
+      .element(page.getByRole("button", { exact: true, name: "Check" }))
+      .not.toBeInTheDocument();
+
+    await page.getByRole("button", { exact: true, name: "Run" }).click();
     await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeEnabled();
     expect(vi.mocked(runInSandbox).mock.calls[1]?.[0].payload.code).toBe('console.log("new");');
   });
@@ -200,7 +205,7 @@ describe("output belongs to the editor revision that ran", () => {
         .mockResolvedValueOnce({ status: "done", table: { columns: ["name"], rows: [["new"]] } });
 
       openActivity({ template: "sqlPlayground" });
-      const query = page.getByRole("textbox", { name: "Your query" });
+      const query = page.getByRole("textbox", { name: "Query" });
       await query.fill("SELECT name FROM countries;");
       await page.getByRole("button", { exact: true, name: "Run" }).click();
 
@@ -219,8 +224,11 @@ describe("output belongs to the editor revision that ran", () => {
         .element(page.getByText("You changed the query. Run it again to see the new result."))
         .toBeVisible();
 
-      await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeDisabled();
-      await page.getByRole("button", { name: "Run again" }).click();
+      await expect
+        .element(page.getByRole("button", { exact: true, name: "Check" }))
+        .not.toBeInTheDocument();
+
+      await page.getByRole("button", { exact: true, name: "Run" }).click();
       await expect.element(page.getByRole("button", { exact: true, name: "Check" })).toBeEnabled();
     },
   );

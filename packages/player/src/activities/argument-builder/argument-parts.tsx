@@ -11,6 +11,7 @@ import {
   ACTIVITY_PRESS_CLASS,
 } from "../_components/activity-canvas";
 import { useActivityDraggable, useActivityDropTarget } from "../_components/activity-drag-drop";
+import { ACTIVITY_COLOR } from "../_utils/activity-colors";
 
 export type ArgumentPart = "evidence" | "reasoning";
 
@@ -86,6 +87,19 @@ export function ArgumentCandidate({
 
 type SlotResult = "strong" | "weak" | null;
 
+/** A slot's name takes the slot's color: the data hue while it's worked on, its verdict once checked. */
+function labelColor({ isActive, result }: { isActive: boolean; result: SlotResult }): string {
+  if (result === "strong") {
+    return ACTIVITY_COLOR.right.text;
+  }
+
+  if (result === "weak") {
+    return ACTIVITY_COLOR.wrong.text;
+  }
+
+  return isActive ? ACTIVITY_COLOR.data.text : ACTIVITY_COLOR.guess.text;
+}
+
 export function ArgumentSlot({
   children,
   clearLabel,
@@ -119,8 +133,8 @@ export function ArgumentSlot({
         isOpen && "border-viz-accent/60 bg-viz-accent-soft/40",
         isOver && "border-viz-accent bg-viz-accent-soft",
         isFilled && "bg-background border-solid",
-        result === "strong" && "border-success bg-success/10",
-        result === "weak" && "border-destructive bg-destructive/10",
+        result === "strong" && cn("border-success", ACTIVITY_COLOR.right.soft),
+        result === "weak" && cn("border-destructive", ACTIVITY_COLOR.wrong.soft),
       )}
       data-slot="argument-slot"
       ref={dropRef}
@@ -129,21 +143,31 @@ export function ArgumentSlot({
         <p
           className={cn(
             "text-xs font-semibold",
-            isOpen || isFilled ? "text-viz-accent" : "text-muted-foreground",
+            labelColor({ isActive: isOpen || isFilled, result }),
           )}
         >
           {label}
         </p>
 
         {result === "strong" && (
-          <span className="text-success-text flex items-center gap-1 text-xs font-semibold">
+          <span
+            className={cn(
+              ACTIVITY_COLOR.right.text,
+              "flex items-center gap-1 text-xs font-semibold",
+            )}
+          >
             <Check aria-hidden="true" className="size-3.5" />
             {t("Strong")}
           </span>
         )}
 
         {result === "weak" && (
-          <span className="text-destructive-text flex items-center gap-1 text-xs font-semibold">
+          <span
+            className={cn(
+              ACTIVITY_COLOR.wrong.text,
+              "flex items-center gap-1 text-xs font-semibold",
+            )}
+          >
             <X aria-hidden="true" className="size-3.5" />
             {t("Weak")}
           </span>

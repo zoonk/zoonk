@@ -95,4 +95,75 @@ describe(findNumberFormatFlaws, () => {
       "Writes 45000 without grouping its digits; write 45,000.",
     ]);
   });
+
+  it("finds digits grouped with a space where the language groups them another way", () => {
+    const value = {
+      steps: [{ math: String.raw`50\,000 \times 0.1 = 5 000` }],
+      text: "The grass holds 50 000 kcal, so 5 000 reach the rabbits.",
+    };
+
+    expect(findNumberFormatFlaws({ language: "en", value })).toStrictEqual([
+      String.raw`Groups 50\,000 with a space; write 50{,}000.`,
+      "Groups 5 000 with a space; write 5{,}000.",
+      "Groups 50 000 with a space; write 50,000.",
+      "Groups 5 000 with a space; write 5,000.",
+    ]);
+
+    expect(findNumberFormatFlaws({ language: "pt", value: { text: value.text } })).toStrictEqual([
+      "Groups 50 000 with a space; write 50.000.",
+      "Groups 5 000 with a space; write 5.000.",
+    ]);
+  });
+
+  it("keeps the sign and the decimals of a number grouped with a space", () => {
+    const value = { text: "It fell by −50 000 kcal, then by -5 000.5 more." };
+
+    expect(findNumberFormatFlaws({ language: "en", value })).toStrictEqual([
+      "Groups −50 000 with a space; write −50,000.",
+      "Groups -5 000.5 with a space; write -5,000.5.",
+    ]);
+
+    expect(
+      findNumberFormatFlaws({ language: "pt", value: { text: "Caiu 5 000,5 kcal." } }),
+    ).toStrictEqual(["Groups 5 000,5 with a space; write 5.000,5."]);
+  });
+
+  it("writes the decimal mark the language uses in the rewrite of a number grouped with a space", () => {
+    expect(
+      findNumberFormatFlaws({ language: "en", value: { text: "It holds 50 000,5 kcal." } }),
+    ).toStrictEqual(["Groups 50 000,5 with a space; write 50,000.5."]);
+
+    expect(
+      findNumberFormatFlaws({ language: "pt", value: { text: "Cabem 50 000.5 kcal." } }),
+    ).toStrictEqual(["Groups 50 000.5 with a space; write 50.000,5."]);
+  });
+
+  it("keeps every digit of a long number grouped with a space", () => {
+    expect(
+      findNumberFormatFlaws({
+        language: "en",
+        value: {
+          text: "It counts 9 007 199 254 740 993 grains, or 50 000.123456789123 kg, of 9007199254740993.",
+        },
+      }),
+    ).toStrictEqual([
+      "Writes 9007199254740993 without grouping its digits; write 9,007,199,254,740,993.",
+      "Groups 9 007 199 254 740 993 with a space; write 9,007,199,254,740,993.",
+      "Groups 50 000.123456789123 with a space; write 50,000.123456789123.",
+    ]);
+  });
+
+  it("finds a number grouped with a space right after a plus in math", () => {
+    expect(
+      findNumberFormatFlaws({ language: "en", value: { math: String.raw`x+50\,000` } }),
+    ).toStrictEqual([String.raw`Groups 50\,000 with a space; write 50{,}000.`]);
+  });
+
+  it("passes space grouping where the language groups with a space, and digits that aren't one number", () => {
+    const french = { text: "L'herbe contient 50 000 kcal." };
+    const phones = { text: "Call 555 123 4567 or +41 800 123 456, or see items 12 and 345." };
+
+    expect(findNumberFormatFlaws({ language: "fr", value: french })).toStrictEqual([]);
+    expect(findNumberFormatFlaws({ language: "en", value: phones })).toStrictEqual([]);
+  });
 });

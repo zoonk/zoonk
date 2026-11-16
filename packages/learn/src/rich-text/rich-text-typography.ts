@@ -83,18 +83,75 @@ const UNIT_PATTERN = UNITS.toSorted((a, b) => b.length - a.length).join("|");
 
 const NUMBER_THEN_UNIT = new RegExp(`(?<=\\d) (?=(?:${UNIT_PATTERN})(?![\\p{L}\\d]))`, "gu");
 
-const CURRENCY_THEN_NUMBER = /(?<sign>\p{Lu}{0,2}\p{Sc}) (?=\d)/gu;
+/** A sign and its amount, apart by a space or by the no-break space a question's text keeps them with. */
+const CURRENCY_THEN_NUMBER = /(?<sign>\p{Lu}{0,2}\p{Sc})[  ](?=\d)/gu;
+
+/**
+ * Only money, written the way the learner's money format writes it: a question's own text keeps its
+ * other digits (a code in a table, an ID, a count it asks about) as written.
+ */
+export function typesetMoney({ locale, text }: { locale: string; text: string }): string {
+  return text.replaceAll(
+    CURRENCY_THEN_NUMBER,
+    (_money, sign: string) => `${sign}${moneySignGap({ language: locale, sign }) ?? NBSP}`,
+  );
+}
+
+type Segment = { kind: string; text: string };
+
+const KEPT_AS_WRITTEN = new Set(["code", "displayMath", "math"]);
+
+/** A sign that ends a segment, apart from an amount the next segment starts ("R$ **80**"). */
+const SIGN_AT_END = /(?<sign>\p{Lu}{0,2}\p{Sc})[  ]$/u;
+
+const STARTS_WITH_DIGIT = /^\d/u;
+
+/**
+ * Prose segments set by `typeset`, math and code as written, and a money sign kept with the amount
+ * the next prose segment starts with, as money in one segment is.
+ */
+export function typesetProse<T extends Segment>({
+  locale,
+  segments,
+  typeset,
+}: {
+  locale: string;
+  segments: readonly T[];
+  typeset: (text: string) => string;
+}): T[] {
+  const isProse = (segment: T | undefined) => segment && !KEPT_AS_WRITTEN.has(segment.kind);
+
+  return segments.map((segment, index) => {
+    if (!isProse(segment)) {
+      return segment;
+    }
+
+    const next = segments[index + 1];
+    const text = typeset(segment.text);
+
+    return {
+      ...segment,
+      text:
+        next && isProse(next) && STARTS_WITH_DIGIT.test(next.text)
+          ? text.replace(
+              SIGN_AT_END,
+              (_money, sign: string) =>
+                `${sign}${moneySignGap({ language: locale, sign }) ?? NBSP}`,
+            )
+          : text,
+    };
+  });
+}
 
 export function typesetNumbers({ locale, text }: { locale: string; text: string }): string {
   const grouping = getNumberFormatter(locale, { useGrouping: true });
 
-  return text
-    .replaceAll(LONG_NUMBER, (digits: string, offset: number) =>
-      isPostalCode(text.slice(0, offset)) ? digits : grouping.format(Number(digits)),
-    )
-    .replaceAll(NUMBER_THEN_UNIT, NBSP)
-    .replaceAll(
-      CURRENCY_THEN_NUMBER,
-      (_money, sign: string) => `${sign}${moneySignGap({ language: locale, sign }) ?? NBSP}`,
-    );
+  return typesetMoney({
+    locale,
+    text: text
+      .replaceAll(LONG_NUMBER, (digits: string, offset: number) =>
+        isPostalCode(text.slice(0, offset)) ? digits : grouping.format(Number(digits)),
+      )
+      .replaceAll(NUMBER_THEN_UNIT, NBSP),
+  });
 }

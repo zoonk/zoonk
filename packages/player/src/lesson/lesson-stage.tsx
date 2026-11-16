@@ -17,12 +17,17 @@ import { OrientationStrip } from "./_components/orientation-strip";
 import { LESSON_CONTENT_ID, focusLessonAfterTurn } from "./_utils/lesson-focus";
 import { canSelfCorrect, getAnsweredStep, isLanguageStep } from "./_utils/lesson-steps";
 import { AskBuddyOffer } from "./controls/ask-buddy-offer";
-import { LessonResultNotes } from "./feedback/lesson-result-notes";
+import {
+  type LessonResultNext,
+  LessonResultNotes,
+  OwnResultNotesContext,
+} from "./feedback/lesson-result-notes";
 import { LessonStepResultView } from "./feedback/lesson-step-result";
 import { LessonRecapRow } from "./lesson-aside";
 import { useLessonPlayer } from "./lesson-player-context";
+import { type LessonScreen } from "./lesson-player-screen";
 import { type LessonPlayerState } from "./lesson-player-state";
-import { type PlayableLibraryStep } from "./lesson-player-types";
+import { type LessonStepResult, type PlayableLibraryStep } from "./lesson-player-types";
 import { LessonStepView, showsOwnResult } from "./steps/lesson-step-view";
 import { CHECK_BOUNDS } from "./use-step-grading";
 
@@ -147,20 +152,28 @@ function LessonCheckNote() {
   );
 }
 
+/** An activity's verdict is in its own card, so the lesson's notes go inside that card. */
+function drawsOwnCard(step: PlayableLibraryStep): boolean {
+  return step.kind === "activity";
+}
+
 type CheckAdditions = { feedback: boolean; selfCorrect: boolean };
 
 /** What a check adds to the screen: "fix it yourself", its feedback, or both on a screen revisited. */
 function getCheckAdditions({
   isShown,
+  screen,
   state,
   step,
 }: {
   isShown: boolean;
+  screen: LessonScreen;
   state: LessonPlayerState;
   step: PlayableLibraryStep;
 }): CheckAdditions | null {
   const selfCorrect = isShown && state.notice === "selfCorrect";
-  const feedback = isShown && state.phase === "feedback" && step.id in state.results;
+  const isChecked = isShown && state.phase === "feedback" && step.id in state.results;
+  const feedback = isChecked && (!drawsOwnCard(step) || Boolean(screen.struggleOffer));
   return selfCorrect || feedback ? { feedback, selfCorrect } : null;
 }
 
@@ -177,6 +190,21 @@ function SelfCorrectLine() {
   );
 }
 
+function getResultNext({
+  result,
+  state,
+  step,
+}: {
+  result: LessonStepResult;
+  state: LessonPlayerState;
+  step: PlayableLibraryStep;
+}): LessonResultNext {
+  return {
+    savedMistake: result.savedMistake && !result.isCorrect,
+    willReturn: !result.isCorrect && state.queue.includes(step.id, state.position + 1),
+  };
+}
+
 function CheckFeedback({ step }: { step: PlayableLibraryStep }) {
   const { screen, state } = useLessonPlayer();
   const result = state.results[step.id];
@@ -185,15 +213,14 @@ function CheckFeedback({ step }: { step: PlayableLibraryStep }) {
     return null;
   }
 
-  const next = {
-    savedMistake: result.savedMistake && !result.isCorrect,
-    willReturn: !result.isCorrect && state.queue.includes(step.id, state.position + 1),
-  };
+  const next = getResultNext({ result, state, step });
 
   return (
     <>
       {showsOwnResult(step) ? (
-        <LessonResultNotes hyperdriveStreak={screen.hyperdriveStreak} {...next} />
+        !drawsOwnCard(step) && (
+          <LessonResultNotes hyperdriveStreak={screen.hyperdriveStreak} {...next} />
+        )
       ) : (
         <LessonStepResultView
           hyperdriveStreak={screen.hyperdriveStreak}
@@ -206,6 +233,17 @@ function CheckFeedback({ step }: { step: PlayableLibraryStep }) {
       {screen.struggleOffer && <AskBuddyOffer reason="misses" />}
     </>
   );
+}
+
+function useOwnCardNotes({ isShown, step }: { isShown: boolean; step: PlayableLibraryStep }) {
+  const { screen, state } = useLessonPlayer();
+  const result = state.results[step.id];
+
+  if (!isShown || !drawsOwnCard(step) || !result) {
+    return null;
+  }
+
+  return { hyperdriveStreak: screen.hyperdriveStreak, ...getResultNext({ result, state, step }) };
 }
 
 function CheckAdded({ additions, step }: { additions: CheckAdditions; step: PlayableLibraryStep }) {
@@ -256,10 +294,11 @@ export function LessonStage({
   step: PlayableLibraryStep;
   turn: ScreenTurn | null;
 }) {
-  const { actions, state } = useLessonPlayer();
+  const { actions, screen, state } = useLessonPlayer();
   const result = state.results[step.id];
   const answered = getAnsweredStep({ answer: state.answers[step.id], step });
-  const additions = getCheckAdditions({ isShown, state, step });
+  const additions = getCheckAdditions({ isShown, screen, state, step });
+  const ownCardNotes = useOwnCardNotes({ isShown, step });
   const added = additions && <CheckAdded additions={additions} step={step} />;
 
   // A word bank places what a check adds itself, so it holds still; everywhere else it follows the screen.
@@ -272,13 +311,15 @@ export function LessonStage({
 
       <LessonScreenFrame turn={turn}>
         <WordBankCheckContext value={inBank ? added : null}>
-          <LessonStepView
-            answer={state.answers[step.id]}
-            isLocked={isShown && state.phase !== "playing"}
-            onAnswer={(answer) => actions.selectAnswer(step.id, answer)}
-            result={result}
-            step={step}
-          />
+          <OwnResultNotesContext value={ownCardNotes}>
+            <LessonStepView
+              answer={state.answers[step.id]}
+              isLocked={isShown && state.phase !== "playing"}
+              onAnswer={(answer) => actions.selectAnswer(step.id, answer)}
+              result={result}
+              step={step}
+            />
+          </OwnResultNotesContext>
         </WordBankCheckContext>
       </LessonScreenFrame>
 

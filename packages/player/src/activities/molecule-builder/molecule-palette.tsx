@@ -97,27 +97,29 @@ export function MoleculeTools({
   return (
     <div className="flex shrink-0 gap-2">
       <Button
-        aria-label={t("Undo")}
-        className="rounded-xl"
         disabled={!canUndo}
+        icon={<Undo2 aria-hidden="true" />}
         onClick={onUndo}
-        size="icon-lg"
+        size="lg"
         variant="outline"
       >
-        <Undo2 aria-hidden="true" />
+        {t("Undo")}
       </Button>
 
       <Button
         aria-label={
           selectedName ? t("Remove {atom}", { atom: selectedName }) : t("Remove the selected atom")
         }
-        className="rounded-xl"
         disabled={!selectedName}
+        icon={<Trash aria-hidden="true" />}
         onClick={onRemove}
-        size="icon-lg"
+        size="lg"
         variant="outline"
       >
-        <Trash aria-hidden="true" />
+        {t({
+          description: "Button that removes the atom the learner selected from the molecule.",
+          message: "Remove",
+        })}
       </Button>
     </div>
   );

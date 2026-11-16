@@ -8,9 +8,9 @@ import { type ActivityBadgeKind } from "../_components/activity-badge";
 import { type ActivityRenderer, type AnyActivityRendererProps } from "../activity-renderer";
 
 export type ActivityRendererEntry<TId extends ActivityTemplateId> = {
+  answersOnCanvas: boolean;
   badge: (content: ActivityStepContent) => ActivityBadgeKind | null;
   Canvas: (props: AnyActivityRendererProps) => React.ReactNode;
-  checkFirst: (content: ActivityStepContent) => boolean;
   load: () => Promise<unknown>;
   template: TId;
 };
@@ -30,15 +30,18 @@ function isTemplate<TId extends ActivityTemplateId>(
  * `badge` is the chip over the title, for an activity whose title can't say what it names: how the
  * screen is worked, or what comes first. A chip that only names the task repeats the title, which
  * says what to do, so most activities have none.
+ *
+ * `answersOnCanvas` is for a canvas whose own control is the whole numeric answer and shows it (a
+ * guess on a scale): the step then draws no number field and its feedback repeats no numbers.
  */
 export function defineActivityRenderer<TId extends ActivityTemplateId>({
+  answersOnCanvas = false,
   badge,
-  checkFirst = () => false,
   load,
   template,
 }: {
+  answersOnCanvas?: boolean;
   badge?: ActivityBadgeKind | ((content: ActivityContentFor<TId>) => ActivityBadgeKind | null);
-  checkFirst?: (content: ActivityContentFor<TId>) => boolean;
   load: () => Promise<ActivityRenderer<TId>>;
   template: TId;
 }): ActivityRendererEntry<TId> {
@@ -65,11 +68,5 @@ export function defineActivityRenderer<TId extends ActivityTemplateId>({
     return isTemplate(content, template) ? badge(content) : null;
   }
 
-  return {
-    Canvas,
-    badge: badgeFor,
-    checkFirst: (content) => isTemplate(content, template) && checkFirst(content),
-    load: renderer.load,
-    template,
-  };
+  return { Canvas, answersOnCanvas, badge: badgeFor, load: renderer.load, template };
 }

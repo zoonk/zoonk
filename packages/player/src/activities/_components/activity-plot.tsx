@@ -4,6 +4,7 @@ import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type LinearScale, type NumericDomain, createLinearScale } from "@zoonk/utils/plot-scale";
 import { createContext, use } from "react";
+import { PLOT_TICK_ROOM } from "../_utils/plot-ticks";
 import { type PlotPoint, linePath } from "../_utils/sample-formula";
 
 type PlotPadding = { bottom: number; left: number; right: number; top: number };
@@ -12,7 +13,7 @@ type PlotScales = { height: number; width: number; x: LinearScale; y: LinearScal
 
 const FALLBACK_WIDTH = 318;
 export const PLOT_LINE_WIDTH = 3;
-const DEFAULT_PADDING: PlotPadding = { bottom: 24, left: 44, right: 12, top: 12 };
+const DEFAULT_PADDING: PlotPadding = { bottom: 24, left: PLOT_TICK_ROOM, right: 12, top: 12 };
 const LABEL_GAP = 6;
 const X_LABEL_OFFSET = 18;
 const DOT_RADIUS = 6;
