@@ -6385,71 +6385,6 @@
         }
       }
     },
-    "Just typos" : {
-      "comment" : "Recent mistakes were slips",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nur Tippfehler"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Just typos"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Solo errores de escritura"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Juste des fautes de frappe"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Solo refusi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "入力ミスだけ"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "단순한 오타"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tylko literówki"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Só erros de digitação"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sadece yazım hataları"
-          }
-        }
-      }
-    },
     "Keep learning" : {
       "comment" : "Adds the plan's next lessons",
       "localizations" : {
@@ -7927,71 +7862,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tamam. Günlük çalışma süren değişmiyor."
-          }
-        }
-      }
-    },
-    "Open" : {
-      "comment" : "Opens the noticed typos",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Öffnen"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Open"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abrir"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ouvrir"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apri"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "開く"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "열기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otwórz"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abrir"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aç"
           }
         }
       }
@@ -12625,67 +12495,60 @@
         }
       }
     },
-    "We noticed a pattern" : {
-      "comment" : "A rule the learner keeps getting wrong, noticed in recent mistakes",
+    "We noticed a pattern: %@" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uns ist ein Muster aufgefallen"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "We noticed a pattern"
+            "value" : "Uns ist ein Muster aufgefallen: %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Notamos un patrón"
+            "value" : "Notamos un patrón: %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "On a repéré une erreur récurrente"
+            "value" : "Nous avons remarqué une tendance : %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abbiamo notato un errore ricorrente"
+            "value" : "Abbiamo notato un errore ricorrente: %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ミスの傾向が見つかりました"
+            "value" : "ミスの傾向が見つかりました：%@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "실수 패턴을 찾았어요"
+            "value" : "실수 패턴을 발견했어요: %@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zauważyliśmy powtarzający się błąd"
+            "value" : "Zauważyliśmy powtarzający się błąd: %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente percebeu um padrão"
+            "value" : "A gente percebeu um padrão: %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tekrarlayan bir hata fark ettik"
+            "value" : "Tekrarlayan bir hata fark ettik: %@"
           }
         }
       }
@@ -14716,67 +14579,60 @@
         }
       }
     },
-    "Your recent mistakes were slips, not a rule to learn." : {
-      "comment" : "Explains a pattern of typos",
+    "Your recent mistakes were typos, not a rule to learn." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine letzten Fehler waren kleine Versehen. Du musst dafür keine Regel lernen."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Your recent mistakes were slips, not a rule to learn."
+            "value" : "Deine letzten Fehler waren Tippfehler, keine Regel zum Lernen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus errores recientes fueron descuidos, no una señal de que necesites aprender una regla."
+            "value" : "Tus errores recientes fueron de tecleo, no una regla que aprender."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes erreurs récentes étaient des fautes d’inattention, pas une règle à apprendre."
+            "value" : "Tes erreurs récentes étaient des fautes de frappe, pas une règle à apprendre."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I tuoi ultimi errori erano sviste: non c’è una regola da imparare."
+            "value" : "I tuoi errori recenti erano di battitura, non una regola da imparare."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "最近の間違いは入力ミスだったので、新しく覚えるルールはありません。"
+            "value" : "最近のミスは入力ミスで、覚えるべきルールではありません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "최근에 틀린 건 단순한 오타였어요. 새로 배울 규칙은 없어요."
+            "value" : "최근 실수는 오타였어요. 새로 배울 규칙은 없어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twoje ostatnie błędy to drobne pomyłki, a nie braki w znajomości zasad."
+            "value" : "Twoje ostatnie błędy to literówki, a nie reguła do nauczenia."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seus erros recentes foram distrações, não uma regra que você precisa aprender."
+            "value" : "Seus erros recentes foram de digitação, não uma regra para aprender."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Son hataların ufak dalgınlıklardan kaynaklandı; öğrenmen gereken bir kuralla ilgili değildi."
+            "value" : "Son hataların yazım hatasıydı, öğrenilecek bir kural değil."
           }
         }
       }

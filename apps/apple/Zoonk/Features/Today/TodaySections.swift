@@ -954,12 +954,14 @@ struct TodayProgressSection: View {
 
           content()
 
-          Label {
+          // Main's: the words, then the chevron that says the card opens the Plan.
+          HStack(spacing: 4) {
             Text("See your plan", tableName: "Today", comment: "Opens the Plan")
-          } icon: {
-            Image(systemName: "chevron.right")
+
+            Image(systemName: "chevron.forward")
+              .imageScale(.small)
+              .accessibilityHidden(true)
           }
-          .labelStyle(.titleOnly)
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
         }
@@ -1103,10 +1105,10 @@ struct TodayLanguagePracticeSection: View {
   var body: some View {
     if let pronunciation = language?.pronunciation {
       notice(
-        title: Text(
+        summary: Text(
           "Say \(pronunciation.count) words again", tableName: "Today",
           comment: "Mispronounced words due to be said again today"),
-        detail: Text(pronunciation.words.formatted(.list(type: .and))), systemImage: "mic",
+        mark: .symbol("mic"),
         action: Text(
           "Say them", tableName: "Today",
           comment: "Opens the words to say aloud again; \"them\" is the words")
@@ -1115,22 +1117,15 @@ struct TodayLanguagePracticeSection: View {
       }
     } else if let pattern = view.pattern {
       if pattern.kind == "typos" {
+        // Nothing behind it is left to do, so it has no button.
         notice(
-          title: Text("Just typos", tableName: "Today", comment: "Recent mistakes were slips"),
-          detail: Text(
-            "Your recent mistakes were slips, not a rule to learn.", tableName: "Today",
-            comment: "Explains a pattern of typos"),
-          systemImage: "keyboard",
-          action: Text("Open", tableName: "Today", comment: "Opens the noticed typos")
-        ) {
-          router.open(.pattern(patternId: pattern.id))
-        }
+          summary: Text(
+            "Your recent mistakes were typos, not a rule to learn.", tableName: "Today"),
+          mark: .symbol("keyboard"))
       } else {
         notice(
-          title: Text(
-            "We noticed a pattern", tableName: "Today",
-            comment: "A rule the learner keeps getting wrong, noticed in recent mistakes"),
-          detail: Text(pattern.title), systemImage: "sparkles",
+          summary: Text("We noticed a pattern: \(pattern.title)", tableName: "Today"),
+          mark: .sparkle,
           action: Text("Practice it", tableName: "Today", comment: "Opens the noticed pattern")
         ) {
           router.open(.pattern(patternId: pattern.id))
@@ -1139,26 +1134,25 @@ struct TodayLanguagePracticeSection: View {
     }
   }
 
+  /// Main's `PracticeNotice`: one line with its action, when it has one, at the end.
   private func notice(
-    title: Text, detail: Text, systemImage: String, action: Text, open: @escaping () -> Void
+    summary: Text, mark: SuggestionMark.Kind, action: Text? = nil, open: (() -> Void)? = nil
   ) -> some View {
     Section {
-      Label {
-        VStack(alignment: .leading, spacing: 2) {
-          title
-          detail
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+      SuggestionLine {
+        SuggestionMark(kind: mark)
+      } summary: {
+        summary
+      } action: {
+        if let action, let open {
+          Button(action: open) {
+            action
+          }
+          .buttonStyle(.outline)
+          .controlSize(.small)
         }
-      } icon: {
-        Image(systemName: systemImage)
-          .foregroundStyle(.tint)
       }
-      .accessibilityElement(children: .combine)
-
-      Button(action: open) {
-        action
-      }
+      .listRowSeparator(.hidden)
     }
   }
 }
