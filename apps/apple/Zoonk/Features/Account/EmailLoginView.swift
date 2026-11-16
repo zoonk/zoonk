@@ -4,7 +4,7 @@ struct EmailLoginView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(SessionStore.self) private var session
   @State private var code = ""
-  @State private var email = ""
+  @State private var email = LoginEmail()
   @State private var hasSentCode = false
   @FocusState private var focusedField: Field?
 
@@ -43,10 +43,10 @@ struct EmailLoginView: View {
         } else {
           FormField(
             title: Text("Email", tableName: "Account", comment: "Email sign-in field label"),
-            isFocused: focusedField == .email
+            isFocused: focusedField == .email, isInvalid: email.failure != nil
           ) {
             TextField(
-              text: $email,
+              text: $email.text,
               prompt: Text(
                 "you@example.com",
                 tableName: "Account",
@@ -96,7 +96,6 @@ struct EmailLoginView: View {
                 "Continue", tableName: "Account", comment: "Button that sends an email log in code")
             }
             .buttonStyle(.mainAction)
-            .disabled(!isEmailValid && !session.isWorking)
             .keyboardShortcut(.defaultAction)
           }
         }
@@ -105,9 +104,9 @@ struct EmailLoginView: View {
         .listRowSeparator(.hidden)
       }
 
-      if session.failure != nil {
+      if let failure = hasSentCode ? session.failure : email.failure ?? session.failure {
         Section {
-          AccountFailureMessage(failure: session.failure)
+          AccountFailureMessage(failure: failure)
         }
       }
     }
@@ -118,6 +117,11 @@ struct EmailLoginView: View {
     .onChange(of: hasSentCode) { _, sent in
       focusedField = sent ? .code : .email
     }
+    .onChange(of: focusedField) { previous, _ in
+      if previous == .email {
+        email.leave()
+      }
+    }
     .onChange(of: session.state) { _, state in
       dismissAfterSignIn(state)
     }
@@ -126,16 +130,11 @@ struct EmailLoginView: View {
   }
 
   private var normalizedEmail: String {
-    email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    email.normalized
   }
 
   private var normalizedCode: String {
     code.filter(\.isNumber)
-  }
-
-  private var isEmailValid: Bool {
-    let parts = normalizedEmail.split(separator: "@", omittingEmptySubsequences: false)
-    return parts.count == 2 && !parts[0].isEmpty && parts[1].contains(".")
   }
 
   private var isCodeValid: Bool {
@@ -143,7 +142,7 @@ struct EmailLoginView: View {
   }
 
   private func sendEmailCode() {
-    guard isEmailValid, !session.isWorking else {
+    guard !session.isWorking, email.submit() else {
       return
     }
 
@@ -178,4 +177,35 @@ struct EmailLoginView: View {
     EmailLoginView()
   }
   .environment(SessionStore.preview())
+}
+
+/// The address the learner logs in with. A wrong one says so under its field once they leave it or
+/// press Continue, as main's login says it on Continue, and from then on as they fix it.
+struct LoginEmail {
+  var text = ""
+  private var isChecked = false
+
+  var normalized: String {
+    text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+  }
+
+  var isValid: Bool {
+    let parts = normalized.split(separator: "@", omittingEmptySubsequences: false)
+    return parts.count == 2 && !parts[0].isEmpty && parts[1].contains(".")
+  }
+
+  var failure: AccountFailure? {
+    isChecked && !isValid ? .invalidEmail : nil
+  }
+
+  /// Leaving an empty field says nothing.
+  mutating func leave() {
+    isChecked = isChecked || !normalized.isEmpty
+  }
+
+  /// Whether the address can be sent.
+  mutating func submit() -> Bool {
+    isChecked = true
+    return isValid
+  }
 }
