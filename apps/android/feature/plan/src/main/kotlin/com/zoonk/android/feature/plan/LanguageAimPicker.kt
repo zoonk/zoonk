@@ -89,7 +89,6 @@ fun LanguageAimRow(
         LanguageAimSheet(
             aim,
             choices,
-            label = label,
             onDismiss = { onOpenChange(false) },
             onPick = { onPick(it) { onOpenChange(false) } },
             pending,
@@ -97,6 +96,7 @@ fun LanguageAimRow(
             endDate,
             description,
             endDates = dates(),
+            label = label,
         )
     }
 }
