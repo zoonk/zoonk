@@ -167,7 +167,7 @@ class SuggestionContentScope internal constructor(
 
 @Composable
 fun SuggestionOpen(text: String = stringResource(R.string.suggestion_view)) {
-    OutlinedButton(onClick = LocalFrame.current.open) { Text(text) }
+    OutlinedButton(onClick = LocalFrame.current.open, size = ButtonSize.Small) { Text(text) }
 }
 
 @Composable
