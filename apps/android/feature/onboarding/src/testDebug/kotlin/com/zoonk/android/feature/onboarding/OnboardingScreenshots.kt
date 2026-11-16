@@ -252,6 +252,7 @@ class OnboardingScreenshots {
         val SCREENS: List<Pair<String, @Composable () -> Unit>> =
             listOf(
                 "start" to { Start(FakeOnboardingApi(), AppRoute.StartGoal()) },
+                "start-visitor" to { Start(FakeOnboardingApi(), AppRoute.StartGoal(), visitor = true) },
                 "reading" to {
                     Column(Modifier.padding(24.dp)) {
                         GenerationWait(
@@ -675,6 +676,7 @@ class OnboardingScreenshots {
         private fun Start(
             api: FakeOnboardingApi,
             route: AppRoute.StartGoal,
+            visitor: Boolean = false,
         ) {
             val session = remember { FakeSession(AuthenticatedSession("ana", "token-a", "local-a")) }
             val cache = remember { AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)) }
@@ -683,8 +685,8 @@ class OnboardingScreenshots {
                 route,
                 store,
                 remember { cache.noAllowance() },
-                sessionKey = "local-a",
-                canAttach = true,
+                sessionKey = if (visitor) null else "local-a",
+                canAttach = !visitor,
                 rememberAppNavigator(),
             )
         }

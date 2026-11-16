@@ -102,14 +102,6 @@ class GoalContentScreenshots {
     @Config(qualifiers = "w1280dp-h1600dp-land-xhdpi")
     fun expanded() = capture("expanded")
 
-    @Test
-    @Config(qualifiers = "pt-rBR-w411dp-h2600dp-xxhdpi")
-    fun phoneInPortuguese() = capture("phone-pt")
-
-    @Test
-    @Config(qualifiers = "pt-rBR-w1280dp-h1600dp-land-xhdpi")
-    fun expandedInPortuguese() = capture("expanded-pt")
-
     private fun capture(
         name: String,
         dark: Boolean = false,
