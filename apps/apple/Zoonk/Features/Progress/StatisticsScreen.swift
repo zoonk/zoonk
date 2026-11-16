@@ -199,6 +199,7 @@ private struct TileLink<Tile: View>: View {
 
     StatsSectionLink(section: section) {
       tile
+        .environment(\.statTileOpens, true)
         .contentShape([.interaction, .hoverEffect], shape)
         .hoverEffect(.highlight)
         .modifier(StatsSelection(section: section, shape: shape))

@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Main's `TimeAnswer`, shared by the time question and the plan editor: one line under the picker
-/// that says what the time shown gets the learner, and at most one link that names another time. It
+/// that says what the time shown gets the learner, and at most one button that names another time. It
 /// never says a time covers everything unless it does.
 struct TimeAnswer: View {
   struct GoalDate: Equatable {
@@ -37,7 +37,6 @@ struct TimeAnswer: View {
         } label: {
           Text("Try again", tableName: "Onboarding", comment: "Asks again what a time covers")
         }
-        .typeStyle(.body.weight(.semibold))
       } else if let offer {
         Button {
           onUseOffer(offer.minutes)
@@ -45,11 +44,11 @@ struct TimeAnswer: View {
           Self.offerLabel(offer)
             .multilineTextAlignment(.leading)
         }
-        .typeStyle(.body.weight(.semibold))
       }
     }
     .typeStyle(.body)
-    .buttonStyle(.borderless)
+    .buttonStyle(.outline)
+    .controlSize(.small)
     .opacity(updating ? 0.5 : 1)
     .announcesStatus(line.isBusy || updating ? nil : lineWords)
   }

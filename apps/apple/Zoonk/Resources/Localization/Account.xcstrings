@@ -118,7 +118,7 @@
         }
       }
     },
-    "3-30 characters. Letters a–z, numbers, and underscores only." : {
+    "3–30 characters. Letters a–z, numbers, and underscores only." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -141,7 +141,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3-30 caratteri. Solo lettere a–z, numeri e trattini bassi."
+            "value" : "3–30 caratteri. Solo lettere a–z, numeri e trattini bassi."
           }
         },
         "ja" : {
@@ -171,7 +171,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3-30 karakter. Yalnızca a–z harfleri, rakamlar ve alt çizgi kullanılabilir."
+            "value" : "3–30 karakter. Yalnızca a–z harfleri, rakamlar ve alt çizgi kullanılabilir."
           }
         }
       }

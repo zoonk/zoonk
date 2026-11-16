@@ -141,7 +141,6 @@ private struct FeedbackForm: View {
     }
     .announcesStatus(store.state == .sent ? thanks : nil)
     .interactiveDismissDisabled(store.state == .submitting)
-    .presentationDetents([.medium, .large])
     .presentationDragIndicator(.visible)
   }
 

@@ -31,6 +31,8 @@ struct StatTile<Icon: View, Value: View>: View {
   var meterFill: Color = .brain
   let spokenValue: Text
 
+  @Environment(\.statTileOpens) private var opens
+
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
       HStack(spacing: 6) {
@@ -40,6 +42,11 @@ struct StatTile<Icon: View, Value: View>: View {
 
         label
           .lineLimit(2)
+
+        if opens {
+          Spacer(minLength: 0)
+          DisclosureChevron()
+        }
       }
       .typeStyle(.label)
       .foregroundStyle(.faint)
@@ -140,6 +147,12 @@ extension StatTile where Icon == Image, Value == StatQuantity {
   }
 }
 
+extension EnvironmentValues {
+  /// A tile that opens its page ends its label with the row chevron, as main's `opens`.
+  @Entry var statTileOpens = false
+}
+
+/// Main's `StatTiles`: every row one height, so tiles of one grid match.
 struct StatTileGrid: Layout {
   /// Widest first.
   let columns: [Int]
@@ -149,9 +162,7 @@ struct StatTileGrid: Layout {
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
     let width = proposal.width ?? CGFloat(columns.first ?? 1) * minimumWidth
     let rows = rows(count: subviews.count, width: width)
-    let height = rows.reduce(0) { total, row in
-      total + rowHeight(row, subviews: subviews, width: width)
-    }
+    let height = rowHeight(rows, subviews: subviews, width: width) * CGFloat(rows.count)
 
     return CGSize(width: width, height: height + spacing * CGFloat(max(rows.count - 1, 0)))
   }
@@ -160,9 +171,10 @@ struct StatTileGrid: Layout {
     in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
   ) {
     var y = bounds.minY
+    let rows = rows(count: subviews.count, width: bounds.width)
+    let height = rowHeight(rows, subviews: subviews, width: bounds.width)
 
-    for row in rows(count: subviews.count, width: bounds.width) {
-      let height = rowHeight(row, subviews: subviews, width: bounds.width)
+    for row in rows {
       let itemWidth = itemWidth(in: row, width: bounds.width)
       var x = bounds.minX
 
@@ -187,9 +199,12 @@ struct StatTileGrid: Layout {
     (width - spacing * CGFloat(row.count - 1)) / CGFloat(row.count)
   }
 
-  private func rowHeight(_ row: Range<Int>, subviews: Subviews, width: CGFloat) -> CGFloat {
-    let proposal = ProposedViewSize(width: itemWidth(in: row, width: width), height: nil)
-    return row.map { subviews[$0].sizeThatFits(proposal).height }.max() ?? 0
+  private func rowHeight(_ rows: [Range<Int>], subviews: Subviews, width: CGFloat) -> CGFloat {
+    rows.flatMap { row -> [CGFloat] in
+      let proposal = ProposedViewSize(width: itemWidth(in: row, width: width), height: nil)
+      return row.map { subviews[$0].sizeThatFits(proposal).height }
+    }
+    .max() ?? 0
   }
 }
 
