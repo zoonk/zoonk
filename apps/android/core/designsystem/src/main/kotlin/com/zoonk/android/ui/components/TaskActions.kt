@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,6 +49,7 @@ fun TaskActionBar(content: @Composable ColumnScope.() -> Unit) {
  * phone or a book's page it fills its line, and moves to a line of its own when the others don't leave
  * it room, so a large font never breaks its word. The bar's measured width decides, never the window's.
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TaskActions(
     back: (@Composable () -> Unit)? = null,
@@ -66,11 +68,15 @@ fun TaskActions(
                 if (back != null) {
                     if (roomy) Box(Modifier.weight(1f)) { back() } else back()
                 }
-                content(if (roomy) Modifier.widthIn(min = MAIN_ACTION_WIDTH) else Modifier.weight(1f))
+                CompositionLocalProvider(LocalRowHeight provides Modifier.fillMaxRowHeight()) {
+                    content((if (roomy) Modifier.widthIn(min = MAIN_ACTION_WIDTH) else Modifier.weight(1f)).fillMaxRowHeight())
+                }
             }
         }
     }
 }
+
+private val LocalRowHeight = compositionLocalOf<Modifier> { Modifier }
 
 /** Whether the [TaskActions] around this has room for its buttons side by side; null outside one. */
 private val LocalRoomyBar = compositionLocalOf<Boolean?> { null }
@@ -81,7 +87,7 @@ private val LocalRoomyBar = compositionLocalOf<Boolean?> { null }
  * have two widths. Outside one it takes a line of its own on a narrow layout ([isWideLayout]).
  */
 @Composable
-fun Modifier.taskOption(): Modifier = if (LocalRoomyBar.current ?: isWideLayout()) this else fillMaxWidth()
+fun Modifier.taskOption(): Modifier = (if (LocalRoomyBar.current ?: isWideLayout()) this else fillMaxWidth()).then(LocalRowHeight.current)
 
 /**
  * Main's `lg` for a task: an expanded window, where its actions line up at its end and what a phone

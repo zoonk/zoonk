@@ -5,15 +5,15 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -25,7 +25,6 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -77,8 +76,10 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
+import com.zoonk.android.ui.scaffold.TaskAside
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.pagePadding
+import com.zoonk.android.ui.scaffold.taskAsideBeside
 import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.MindMapImage
@@ -206,63 +207,50 @@ internal fun MindMapViewer(
     var asText by rememberSaveable { mutableStateOf(false) }
     val image = map.image
 
-    BoxWithConstraints {
-        val outlineBeside = image != null && maxWidth >= OUTLINE_BESIDE_FROM
-        val textOnly = asText && !outlineBeside
-
-        TaskScaffold(
-            onClose = onClose,
-            modifier = Modifier.onKeyEvent { it.type == KeyEventType.KeyDown && it.key == Key.Escape && true.also { onClose() } },
-            title = { LessonTitle(map.title) },
-            actions = {
-                if (image != null && !outlineBeside) AsTextToggle(asText, onToggle = { asText = !asText })
-                if (onBookmark != null) MapBookmark(map.saved, onBookmark)
-                if (onSave != null) {
-                    IconButton(onClick = onSave) {
-                        Icon(painterResource(R.drawable.ic_download), contentDescription = stringResource(R.string.mindmaps_download))
-                    }
+    TaskScaffold(
+        onClose = onClose,
+        aside =
+            image?.let {
+                TaskAside(half = true) {
+                    MindMapOutlineText(map.outline, Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp))
                 }
             },
-        ) { padding ->
-            KeyFocus()
-            if (image == null || textOnly) {
-                OutlineOnly(map, noted = image == null, Modifier.fillMaxSize().padding(padding))
-            } else {
-                Row(Modifier.fillMaxSize().padding(padding)) {
-                    Column(Modifier.weight(1f).fillMaxHeight()) {
-                        ZoomFrame(
-                            map = map,
-                            image = image,
-                            outlineShown = outlineBeside,
-                            view = { view },
-                            onView = { view = it },
-                            frame = { frame },
-                            onFrame = { frame = it },
-                            modifier = Modifier.weight(1f).fillMaxWidth(),
-                        )
-                        BeforeFold { beforeFold ->
-                            ZoomControls(
-                                scale = view.scale,
-                                onZoomOut = { view = view.zoomAt(frame, Offset.Zero, view.scale / PanZoom.ZOOM_STEP) },
-                                onFit = { view = PanZoom.FIT },
-                                onZoomIn = { view = view.zoomAt(frame, Offset.Zero, view.scale * PanZoom.ZOOM_STEP) },
-                                modifier = beforeFold,
-                            )
-                        }
-                    }
-
-                    if (outlineBeside) {
-                        VerticalDivider()
-                        MindMapOutlineText(
-                            outline = map.outline,
-                            modifier =
-                                Modifier
-                                    .width(OUTLINE_WIDTH)
-                                    .fillMaxHeight()
-                                    .verticalScroll(rememberScrollState())
-                                    .padding(24.dp),
-                        )
-                    }
+        modifier = Modifier.onKeyEvent { it.type == KeyEventType.KeyDown && it.key == Key.Escape && true.also { onClose() } },
+        title = { LessonTitle(map.title) },
+        actions = {
+            if (image != null && !taskAsideBeside()) AsTextToggle(asText, onToggle = { asText = !asText })
+            if (onBookmark != null) MapBookmark(map.saved, onBookmark)
+            if (onSave != null) {
+                IconButton(onClick = onSave) {
+                    Icon(painterResource(R.drawable.ic_download), contentDescription = stringResource(R.string.mindmaps_download))
+                }
+            }
+        },
+    ) { padding ->
+        KeyFocus()
+        val outlineBeside = taskAsideBeside()
+        if (image == null || (asText && !outlineBeside)) {
+            OutlineOnly(map, noted = image == null, Modifier.fillMaxSize().padding(padding))
+        } else {
+            Column(Modifier.fillMaxSize().padding(padding)) {
+                ZoomFrame(
+                    map = map,
+                    image = image,
+                    outlineShown = outlineBeside,
+                    view = { view },
+                    onView = { view = it },
+                    frame = { frame },
+                    onFrame = { frame = it },
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                )
+                BeforeFold { beforeFold ->
+                    ZoomControls(
+                        scale = view.scale,
+                        onZoomOut = { view = view.zoomAt(frame, Offset.Zero, view.scale / PanZoom.ZOOM_STEP) },
+                        onFit = { view = PanZoom.FIT },
+                        onZoomIn = { view = view.zoomAt(frame, Offset.Zero, view.scale * PanZoom.ZOOM_STEP) },
+                        modifier = beforeFold,
+                    )
                 }
             }
         }
@@ -414,18 +402,18 @@ private fun ZoomControls(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp).height(IntrinsicSize.Min),
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        FilledTonalIconButton(onClick = onZoomOut, enabled = scale > 1f, shape = ICON_BUTTON_SHAPE) {
+        FilledTonalIconButton(modifier = Modifier.fillMaxHeight(), onClick = onZoomOut, enabled = scale > 1f, shape = ICON_BUTTON_SHAPE) {
             Icon(painterResource(R.drawable.ic_remove), contentDescription = stringResource(R.string.mindmaps_zoom_out))
         }
         val fit = stringResource(R.string.mindmaps_fit)
         OutlinedButton(
             onClick = onFit,
             enabled = scale > 1f,
-            modifier = Modifier.semantics { contentDescription = fit },
+            modifier = Modifier.fillMaxHeight().semantics { contentDescription = fit },
             contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
         ) {
             Icon(painterResource(R.drawable.ic_fit_screen), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
@@ -435,7 +423,12 @@ private fun ZoomControls(
                 style = MaterialTheme.typography.labelLarge.copy(fontFeatureSettings = "tnum"),
             )
         }
-        FilledTonalIconButton(onClick = onZoomIn, enabled = scale < PanZoom.MAX_SCALE, shape = ICON_BUTTON_SHAPE) {
+        FilledTonalIconButton(
+            modifier = Modifier.fillMaxHeight(),
+            onClick = onZoomIn,
+            enabled = scale < PanZoom.MAX_SCALE,
+            shape = ICON_BUTTON_SHAPE,
+        ) {
             Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(R.string.mindmaps_zoom_in))
         }
     }
@@ -446,10 +439,6 @@ private val PAN_ZOOM_SAVER =
         save = { listOf(it.scale, it.x, it.y) },
         restore = { PanZoom(it[0], it[1], it[2]) },
     )
-
-/** Main's aside from 72rem, as wide as the app's asides. */
-private val OUTLINE_BESIDE_FROM = 840.dp
-private val OUTLINE_WIDTH = 320.dp
 
 /** A wheel notch zooms by about a fifth, as on main. */
 private const val WHEEL_ZOOM = 0.2f

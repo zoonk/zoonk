@@ -68,7 +68,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
@@ -401,7 +400,7 @@ internal fun SnippetBar(
 }
 
 /**
- * Main's `SandboxRunBar`: Run is the main action until the first run, then steps back so Check
+ * Main's `SandboxRunBar`: Run stays secondary so Check
  * stands out. Runs wait for the runtime, so Run works while it loads.
  */
 @Composable
@@ -442,11 +441,7 @@ internal fun SandboxRunBar(
             }
             val icon: @Composable () -> Unit = { ButtonIcon(R.drawable.ic_play_arrow) }
             val runModifier = Modifier.weight(1f).heightIn(min = 48.dp)
-            if (hasRun) {
-                OutlinedButton(busy = isRunning, onClick = onRun, modifier = runModifier, leadingIcon = icon, content = content)
-            } else {
-                Button(busy = isRunning, onClick = onRun, modifier = runModifier, content = content)
-            }
+            OutlinedButton(busy = isRunning, onClick = onRun, modifier = runModifier, leadingIcon = icon, content = content)
         }
         if (runtime.status == SandboxRuntimeStatus.Loading) {
             Text(

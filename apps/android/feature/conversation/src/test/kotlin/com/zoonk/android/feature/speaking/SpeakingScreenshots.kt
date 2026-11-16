@@ -1,13 +1,17 @@
 package com.zoonk.android.feature.speaking
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.conversation.CallStart
 import com.zoonk.android.feature.conversation.callStarter
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -48,15 +52,17 @@ class SpeakingScreenshots {
         compose.setContent {
             ZoonkTheme {
                 Surface {
-                    SpeakingPaperSection(
-                        paper = speakingPaper(),
-                        goalId = UUID.randomUUID(),
-                        openTask = "1",
-                        start = callStarter { CallStart.Failed },
-                        open = {},
-                        openWeb = {},
-                        onRefused = {},
-                    )
+                    Column(Modifier.padding(horizontal = LIST_ITEM_INSET)) {
+                        SpeakingPaperSection(
+                            paper = speakingPaper(),
+                            goalId = UUID.randomUUID(),
+                            openTask = "1",
+                            start = callStarter { CallStart.Failed },
+                            open = {},
+                            openWeb = {},
+                            onRefused = {},
+                        )
+                    }
                 }
             }
         }

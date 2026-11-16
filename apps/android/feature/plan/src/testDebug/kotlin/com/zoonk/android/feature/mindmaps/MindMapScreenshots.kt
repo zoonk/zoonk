@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -295,7 +297,10 @@ class MindMapScreenshots {
         @Composable
         fun Rows(place: MindMapPlace) {
             val inset = if (place == MindMapPlace.Finish) LIST_ITEM_INSET else 0.dp
-            Column(Modifier.padding(horizontal = inset, vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(
+                Modifier.verticalScroll(rememberScrollState()).padding(horizontal = inset, vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 if (place == MindMapPlace.Finish) SectionLabel(stringResource(R.string.mindmaps_chapter_finished))
                 Row("available", place)
                 Row("available", place, lessonsToWrite = 4)

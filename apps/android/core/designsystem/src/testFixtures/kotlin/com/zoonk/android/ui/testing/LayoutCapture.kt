@@ -180,7 +180,9 @@ internal object LayoutCapture {
                         put("controlParent", "controls.${node.layoutInfo.parentInfo?.hashCode()}")
                     }
             }
-            if ((action || control == Role.Button || node.config.contains(SemanticsActions.SetText)) && !scrolling && isClipped(node)) {
+            if ((action || control == Role.Button || node.config.contains(SemanticsActions.SetText)) && !scrolling && isClipped(node) &&
+                (node.config.getOrNull(LayoutPartKey)?.variant != LayoutPart.Variant.Ghost || contentClipped(node))
+            ) {
                 val shown = node.boundsInRoot
                 val at = node.positionInRoot
                 pageElements +=
@@ -197,7 +199,8 @@ internal object LayoutCapture {
                     }
             }
             val scroll = node.config.getOrNull(SemanticsProperties.HorizontalScrollAxisRange)
-            if (scroll != null && scroll.maxValue() > 0 && node.config.getOrNull(LayoutScrollSignKey) != true) {
+            val paged = node.config.contains(SemanticsActions.PageLeft) || node.config.contains(SemanticsActions.PageRight)
+            if (scroll != null && scroll.maxValue() > 0 && !paged && node.config.getOrNull(LayoutScrollSignKey) != true) {
                 pageElements +=
                     record("cut").apply {
                         put("overflow", listOf(scroll.maxValue() / density, 0f))
@@ -800,6 +803,16 @@ internal object LayoutCapture {
             fun below(each: SemanticsNode): Boolean = each.children.any { disabled(it) || below(it) }
             return disabled(node) || generateSequence(node.parent) { it.parent }.any(::disabled) || below(node)
         }
+
+        private fun contentClipped(node: SemanticsNode): Boolean =
+            node.children.any { child ->
+                val layout = textLayout(child)
+                when {
+                    layout != null -> !linesShown(child, layout)
+                    child.children.isEmpty() -> isClipped(child)
+                    else -> contentClipped(child)
+                }
+            }
 
         private fun isClipped(node: SemanticsNode): Boolean {
             val shown = node.boundsInRoot

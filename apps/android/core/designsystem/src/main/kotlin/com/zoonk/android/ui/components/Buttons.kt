@@ -26,6 +26,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -314,7 +315,16 @@ fun OutlinedIconButton(
 ) = CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified) {
     androidx.compose.material3.OutlinedIconButton(
         onClick = { if (!busy) onClick() },
-        modifier = (if (size == ButtonSize.Large) modifier.size(44.dp) else modifier).action(LayoutPart.Variant.Outline).busy(busy),
+        modifier =
+            (
+                if (size ==
+                    ButtonSize.Large
+                ) {
+                    modifier.size(largeButtonHeight())
+                } else {
+                    modifier
+                }
+            ).action(LayoutPart.Variant.Outline).busy(busy),
         enabled = enabled || busy,
         shape = shape,
         colors = colors,
@@ -417,11 +427,12 @@ private fun Modifier.onEdge(
 private fun ButtonSize.iconSize(): Dp = if (this == ButtonSize.Small) 16.dp else ButtonDefaults.IconSize
 
 // A minimum height overrides Material's 40dp; it grows with the words at larger font sizes.
+@Composable
 private fun Modifier.sized(size: ButtonSize): Modifier =
     when (size) {
         ButtonSize.Small -> heightIn(min = 30.dp)
         ButtonSize.Medium -> this
-        ButtonSize.Large -> heightIn(min = 44.dp)
+        ButtonSize.Large -> heightIn(min = largeButtonHeight())
     }
 
 /**
@@ -467,3 +478,13 @@ private const val DISABLED_ALPHA = 0.5f
 private val NO_PADDING = PaddingValues()
 
 private fun Modifier.action(variant: LayoutPart.Variant): Modifier = layoutPart(LayoutPart.ACTIONS, LayoutPart.Part.Action, variant)
+
+@Composable
+private fun largeButtonHeight(): Dp =
+    with(LocalDensity.current) {
+        maxOf(
+            44.dp,
+            MaterialTheme.typography.labelLarge.lineHeight
+                .toDp() + 16.dp,
+        )
+    }
