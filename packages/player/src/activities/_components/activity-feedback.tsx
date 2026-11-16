@@ -111,7 +111,8 @@ export function ActivityFeedback({
   const streak = notes?.hyperdriveStreak ?? null;
 
   return (
-    <FeedbackPanel aria-label={t("Answer feedback")} aria-live="polite">
+    // As far under the answers as a lesson question's feedback, which follows its step's `pb-6`.
+    <FeedbackPanel aria-label={t("Answer feedback")} aria-live="polite" className="mt-2">
       <VerdictLabel
         end={streak === null ? undefined : <HyperdriveStreak count={streak} />}
         verdict={isCorrect ? "correct" : "incorrect"}
