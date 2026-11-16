@@ -32,12 +32,17 @@ export function usePreviewBase(): object {
  */
 export function usePlanPreview(opening?: string) {
   const { actions, plan } = usePlanScreen();
+  const base = usePreviewBase();
   const [preview, setPreview] = useState<PlanPreviewState>({ status: "idle" });
   const requests = useRef(createPreviewRequests(() => setPreview({ status: "idle" })));
 
   useLayoutEffect(() => {
     requests.current.showOpening(opening);
   }, [opening]);
+
+  useLayoutEffect(() => {
+    requests.current.showBase(base);
+  }, [base]);
 
   useEffect(() => {
     const current = requests.current;
