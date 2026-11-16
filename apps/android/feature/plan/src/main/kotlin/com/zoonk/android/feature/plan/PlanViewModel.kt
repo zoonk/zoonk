@@ -296,10 +296,10 @@ class PlanViewModel(
     ): Unit =
         save(PlanPart.Tools, listOf(answer.operation), asker, started) {
             val result = store.chooseTools(goalId, answer)
-            if (started != visit.number || opened != outcomes.tools.number) return@save null
             when (result) {
                 is MutationResult.Done -> {
                     val written = result.value
+                    if (written is Written.Writing && (started != visit.number || opened != outcomes.tools.number)) return@save null
                     when (
                         setupLessons.answered(
                             (written as? Written.Writing)?.generationId,

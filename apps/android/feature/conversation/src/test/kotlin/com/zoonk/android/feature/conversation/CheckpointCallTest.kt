@@ -50,6 +50,30 @@ class CheckpointCallTest {
     }
 
     @Test
+    fun anOpenedCheckpointCallSurvivesAnotherScreenCoveringIt() {
+        val model = CheckpointCallModel(block, harness.store)
+        var shown by mutableStateOf(true)
+        compose.setContent {
+            if (shown) {
+                ZoonkTheme {
+                    CheckpointCallContent(model, harness.exits, {}, { _, _ -> Text("Open conversation") }, {})
+                }
+            }
+        }
+        compose.runOnIdle { model.start(true) }
+        compose.waitForIdle()
+        compose.onNodeWithText("Open conversation").assertExists()
+        val opened = OpenedCall(harness.id, true)
+        assertEquals(opened, model.opened)
+        shown = false
+        compose.waitForIdle()
+        shown = true
+        compose.waitForIdle()
+        assertEquals(opened, model.opened)
+        compose.onNodeWithText("Open conversation").assertExists()
+    }
+
+    @Test
     fun leavingCheckpointPreparationClearsItsWaitBeforeReturning() {
         val runs = HeldRuns()
         val sessions = FakeSession(AuthenticatedSession("ana", "token", "local"))

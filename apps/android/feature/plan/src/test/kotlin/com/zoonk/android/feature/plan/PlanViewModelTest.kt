@@ -661,6 +661,23 @@ class PlanViewModelTest {
         }
 
     @Test
+    fun aToolChoiceAppliedAfterItsSheetClosesStillShowsItsChangeWithUndo() =
+        runTest {
+            val gate = CompletableDeferred<Unit>().also { api.toolGate = it }
+            viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.HAVE), PlanAsker.Sheet(opening))
+            viewModel.outcomes.tools.end()
+            gate.complete(Unit)
+            assertEquals(
+                CHANGE_ID,
+                viewModel.latest.value
+                    ?.change
+                    ?.id
+                    .toString(),
+            )
+            assertEquals(emptySet<PlanPart>(), viewModel.pending.value)
+        }
+
+    @Test
     fun aSetupLessonBeingWrittenIsWaitedOnThenTheSameChoiceIsSentAgain() =
         runTest {
             val held = HeldRuns(first = "writeSetupLessons", ready = "setupLessonsReady")

@@ -120,33 +120,34 @@ class CallStartModel(
         failure.clear()
         viewModelScope.launch {
             val started = starter.start(request)
+            if (asked == visit.number) {
+                val answer = writing.answered((started as? CallStart.Writing)?.generationId) { start(request, asked) }
+                phase =
+                    when {
+                        answer == ContentWritingWait.Answer.Waiting -> {
+                            State.Idle
+                        }
+
+                        started is CallStart.Started && answer == ContentWritingWait.Answer.Proceed -> {
+                            this@CallStartModel.started.send(asked, started.conversationId)
+                            State.Idle
+                        }
+
+                        started == CallStart.Paused -> {
+                            State.Paused
+                        }
+
+                        started == CallStart.PlusRequired -> {
+                            State.PlusRequired
+                        }
+
+                        else -> {
+                            failure.send(asked, Failure((started as? CallStart.Limited)?.limit))
+                            State.Idle
+                        }
+                    }
+            }
             if (started == CallStart.PlusRequired) refused()
-            if (asked != visit.number) return@launch
-            val answer = writing.answered((started as? CallStart.Writing)?.generationId) { start(request, asked) }
-            phase =
-                when {
-                    answer == ContentWritingWait.Answer.Waiting -> {
-                        State.Idle
-                    }
-
-                    started is CallStart.Started && answer == ContentWritingWait.Answer.Proceed -> {
-                        this@CallStartModel.started.send(asked, started.conversationId)
-                        State.Idle
-                    }
-
-                    started == CallStart.Paused -> {
-                        State.Paused
-                    }
-
-                    started == CallStart.PlusRequired -> {
-                        State.PlusRequired
-                    }
-
-                    else -> {
-                        failure.send(asked, Failure((started as? CallStart.Limited)?.limit))
-                        State.Idle
-                    }
-                }
         }
     }
 }

@@ -24,6 +24,26 @@ class OpenStartedCallTest {
     private val call = UUID.fromString("00000000-0000-4000-8000-0000000000c2")
 
     @Test
+    fun aRefusedStartStopsSpinningBeforeItsPaperRefreshFinishes() {
+        val refresh = CompletableDeferred<Unit>()
+        var refreshing = false
+        val model =
+            CallStartModel(callStarter { CallStart.PlusRequired }, GenerationKind.ExamSpeaking) {
+                refreshing = true
+                refresh.await()
+            }
+        compose.runOnIdle { model.start(CallRequest.ExamSpeaking(UUID.randomUUID(), "task-1")) }
+        compose.waitForIdle()
+        try {
+            assertEquals(true, refreshing)
+            assertEquals(CallStartModel.State.PlusRequired, model.state)
+        } finally {
+            refresh.complete(Unit)
+            compose.waitForIdle()
+        }
+    }
+
+    @Test
     fun aPracticeWaitEndsWithItsSheetAndTheNextOpeningCanStart() = practiceWait(late = false)
 
     @Test

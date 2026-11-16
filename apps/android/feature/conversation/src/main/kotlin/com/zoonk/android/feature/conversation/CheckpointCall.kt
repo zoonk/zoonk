@@ -62,7 +62,6 @@ class CheckpointCallModel(
     val visit =
         Visit {
             writing.clear()
-            opened = null
             start = Start.Idle
         }
 
