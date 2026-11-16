@@ -143,4 +143,3 @@ struct CourseStartScreen: View {
     }
   }
 }
-

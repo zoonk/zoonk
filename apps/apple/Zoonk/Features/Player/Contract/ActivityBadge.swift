@@ -32,7 +32,8 @@ enum ActivityBadge: Sendable {
   /// the title says it alone.
   func isShown(over title: String) -> Bool {
     let label = String(localized: self.title).trimmingCharacters(in: .whitespaces).lowercased()
-    return label.isEmpty || !title.trimmingCharacters(in: .whitespaces).lowercased().hasPrefix(label)
+    return label.isEmpty
+      || !title.trimmingCharacters(in: .whitespaces).lowercased().hasPrefix(label)
   }
 
   var title: LocalizedStringResource {

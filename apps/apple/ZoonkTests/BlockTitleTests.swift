@@ -12,7 +12,8 @@ final class BlockTitleTests: XCTestCase {
     let block: StudyBlock = try decode(practice(topics: topics))
 
     XCTAssertEqual(block.displayTitle, "Practice: Reading slope as a rate")
-    XCTAssertEqual(block.label, "1 more topic", "the title names the first topic; the line counts the rest")
+    XCTAssertEqual(
+      block.label, "1 more topic", "the title names the first topic; the line counts the rest")
   }
 
   func testAnExtraPracticeIsNamedAfterItsFirstTopic() throws {
@@ -36,7 +37,9 @@ final class BlockTitleTests: XCTestCase {
   }
 
   func testThePracticePageNamesTheBlockAsTodaysRowDoes() throws {
-    for json in [practice(topics: topics), practice(topics: "[]"), practice(topics: "[]", extra: true)] {
+    for json in [
+      practice(topics: topics), practice(topics: "[]"), practice(topics: "[]", extra: true),
+    ] {
       let row: StudyBlock = try decode(json)
       let page: PracticeBlock = try decode(json)
 
@@ -61,4 +64,3 @@ final class BlockTitleTests: XCTestCase {
     try JSONDecoder().decode(Value.self, from: Data(json.utf8))
   }
 }
-
