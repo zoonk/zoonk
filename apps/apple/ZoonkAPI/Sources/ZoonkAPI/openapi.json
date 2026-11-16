@@ -85385,7 +85385,7 @@
         "properties": {
           "aim": {
             "nullable": true,
-            "description": "The level the course goes up to; null when none is set yet",
+            "description": "The level the course goes up to, as a band that matches one of `choices` when it's among them; null when none is set yet",
             "type": "string",
             "enum": [
               "A1",
@@ -85424,11 +85424,17 @@
               "additionalProperties": false
             },
             "description": "The aims above the learner's level, lowest first, to offer as a change"
+          },
+          "label": {
+            "nullable": true,
+            "description": "The aim as the rest of the plan names it, half bands included (\"B1+\"): show this, not `aim`, wherever the goal's aim is named, the picked choice included; null when none is set yet",
+            "type": "string"
           }
         },
         "required": [
           "aim",
-          "choices"
+          "choices",
+          "label"
         ],
         "additionalProperties": false,
         "description": "Language goals only, null for others: the level the course goes up to, and the aims above the learner's level to change it to with the plan change `setAim`"
@@ -92296,7 +92302,7 @@
             "properties": {
               "aim": {
                 "nullable": true,
-                "description": "The level the course goes up to; null when none is set yet",
+                "description": "The level the course goes up to, as a band that matches one of `choices` when it's among them; null when none is set yet",
                 "type": "string",
                 "enum": [
                   "A1",
@@ -92336,6 +92342,11 @@
                 },
                 "description": "The aims above the learner's level, lowest first, to offer as a change"
               },
+              "label": {
+                "nullable": true,
+                "description": "The aim as the rest of the plan names it, half bands included (\"B1+\"): show this, not `aim`, wherever the goal's aim is named, the picked choice included; null when none is set yet",
+                "type": "string"
+              },
               "reasons": {
                 "type": "array",
                 "items": {
@@ -92347,6 +92358,7 @@
             "required": [
               "aim",
               "choices",
+              "label",
               "reasons"
             ],
             "additionalProperties": false

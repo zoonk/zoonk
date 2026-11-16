@@ -68,6 +68,7 @@ internal fun ScheduleAim(
     context.saved?.let { ActOn(it) { aimOpen = false } }
     LanguageAimRow(
         aim,
+        languageAim.label,
         languageAim.choices,
         aimOpen,
         { aimOpen = it },

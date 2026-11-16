@@ -35,13 +35,14 @@ export function ScheduleAim({
   }
 
   const { aim, choices } = languageAim;
+  const named = languageAim.label ?? aim;
 
   return (
     <div className="flex items-center gap-3 border-y py-3">
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="text-muted-foreground text-compact">{words.title}</span>
         <span className="text-reading font-medium text-pretty">
-          <AimName aim={aim} />
+          <AimName aim={named} />
         </span>
       </div>
 
@@ -53,7 +54,7 @@ export function ScheduleAim({
           detail: words.around(choice.aim === aim ? endDate : (ends[choice.aim] ?? null)),
         }))}
         trigger={<Button className="shrink-0" size="sm" type="button" variant="outline" />}
-        value={aim}
+        value={named}
       >
         {t("Change")}
       </AimPicker>

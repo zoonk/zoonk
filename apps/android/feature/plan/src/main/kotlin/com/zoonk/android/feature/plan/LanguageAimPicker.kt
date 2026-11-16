@@ -37,7 +37,7 @@ import java.time.LocalDate
 fun languageAimName(aim: String): String? = languageAimNameResource(aim)?.let { stringResource(it) }
 
 fun languageAimNameResource(aim: String): Int? =
-    when (aim) {
+    when (aim.removeSuffix("+")) {
         "A2" -> R.string.onboarding_aim_travel
         "B1" -> R.string.onboarding_aim_talk
         "B2" -> R.string.onboarding_aim_work
@@ -59,6 +59,8 @@ fun reasonTitleResource(reason: String): Int? =
 @Composable
 fun LanguageAimRow(
     aim: String,
+    /** The aim as the rest of the plan names it ("B1+"), which its row and choice show. */
+    label: String?,
     choices: List<LanguageAimChoicesInner>,
     open: Boolean,
     onOpenChange: (Boolean) -> Unit,
@@ -75,7 +77,7 @@ fun LanguageAimRow(
     ListRow(
         headline = { Text(stringResource(R.string.onboarding_your_aim)) },
         supporting = {
-            Text(listOfNotNull(aim, languageAimName(aim)).factsLine())
+            Text(listOfNotNull(label ?: aim, languageAimName(aim)).factsLine())
             note?.let { Text(it) }
         },
         trailing = { Text(stringResource(R.string.onboarding_aim_change)) },
@@ -87,6 +89,7 @@ fun LanguageAimRow(
         LanguageAimSheet(
             aim,
             choices,
+            label = label,
             onDismiss = { onOpenChange(false) },
             onPick = { onPick(it) { onOpenChange(false) } },
             pending,
@@ -110,6 +113,7 @@ fun LanguageAimSheet(
     endDate: LocalDate? = null,
     description: String? = null,
     endDates: Map<String, LocalDate?> = emptyMap(),
+    label: String? = null,
 ) {
     val locale = currentLocale()
     var picked by rememberSaveable { mutableStateOf<String?>(null) }
@@ -130,7 +134,10 @@ fun LanguageAimSheet(
                         val date = if (choice.aim.value == aim) endDate else endDates[choice.aim.value]
                         Choice(
                             choice.aim.value,
-                            listOfNotNull(choice.aim.value, languageAimName(choice.aim.value)).factsLine(),
+                            listOfNotNull(
+                                if (choice.aim.value == aim) label ?: aim else choice.aim.value,
+                                languageAimName(choice.aim.value),
+                            ).factsLine(),
                             if (date == null) {
                                 stringResource(
                                     R.string.onboarding_aim_hours_more,

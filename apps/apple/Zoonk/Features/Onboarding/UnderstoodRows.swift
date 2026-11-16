@@ -148,7 +148,8 @@ enum UnderstoodRows {
 
       if let aim = languageAim.aim, let label = aimLabel(aim) {
         rows[index] = UnderstoodRow(
-          id: "targetScore", label: rows[index].label, value: "\(aim), \(label)",
+          id: "targetScore", label: rows[index].label,
+          value: "\(languageAim.name(of: aim)), \(label)",
           field: .targetScore, editValue: aim, aimChoices: rows[index].aimChoices)
       }
     }

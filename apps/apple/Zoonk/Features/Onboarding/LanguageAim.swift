@@ -14,8 +14,15 @@ struct LanguageAimView: Codable, Equatable, Sendable {
   }
 
   let aim: String?
+  /// The aim as the rest of the plan names it, half bands included ("B1+").
+  let label: String?
   let choices: [Choice]
   var reasons: [Reason]?
+
+  /// The picked choice says the aim as the plan does ("B1+"), the others their own level.
+  func name(of choice: String) -> String {
+    choice == aim ? label ?? choice : choice
+  }
 
   /// Main's `getAimAhead`: a learner past their aim isn't told when they'll reach it.
   var aimAhead: String? {
@@ -65,7 +72,7 @@ func aimChoiceDetail(end: String?) -> String? {
 
 /// Main's `useAimWords`: what each aim lets the learner do.
 func aimLabel(_ aim: String) -> String? {
-  switch aim {
+  switch aim.hasSuffix("+") ? String(aim.dropLast()) : aim {
   case "A2":
     String(localized: "Get by on trips", table: "Onboarding", comment: "What the A2 level aims for")
   case "B1":
@@ -148,7 +155,7 @@ struct AimChoicesSheet: View {
             } label: {
               ChoiceRowLabel(isPicked: choice.aim == languageAim.aim) {
                 VStack(alignment: .leading, spacing: 2) {
-                  AimName(aim: choice.aim)
+                  AimName(aim: languageAim.name(of: choice.aim))
                     .typeStyle(.rowTitle)
                     .foregroundStyle(Color(.foreground))
 

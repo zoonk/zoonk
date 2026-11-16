@@ -1,6 +1,6 @@
 "use client";
 
-import { type LanguageAim, isLanguageAim } from "@zoonk/core/language/aims";
+import { type LanguageAim, toLanguageAimBand } from "@zoonk/core/language/aims";
 import {
   Drawer,
   DrawerContent,
@@ -51,10 +51,11 @@ export function AimChoices({
   onPick: (aim: LanguageAim) => void;
   options: readonly AimOption[];
   pending: boolean;
+  /** The saved aim as the plan names it ("B1+"), which its choice shows. */
   value: string | null;
 }) {
   const words = useAimWords();
-  const saved = isLanguageAim(value) ? value : null;
+  const saved = toLanguageAimBand(value);
   const [highlighted, setHighlighted] = useState(saved);
   const [shownSaved, setShownSaved] = useState(saved);
 
@@ -68,7 +69,7 @@ export function AimChoices({
     <ChoiceList
       choices={options.map((option) => ({
         description: option.detail,
-        label: <AimName aim={option.aim} />,
+        label: <AimName aim={option.aim === saved && value ? value : option.aim} />,
         value: option.aim,
       }))}
       label={words.title}
@@ -116,7 +117,7 @@ export function AimPicker({
   };
 
   const pick = (aim: LanguageAim) => {
-    if (aim === value) {
+    if (aim === toLanguageAimBand(value)) {
       setOpen(false);
       return;
     }

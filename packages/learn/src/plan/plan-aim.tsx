@@ -68,7 +68,7 @@ export function PlanAim() {
           detail: words.around(ends[item.aim] ?? null),
         }))}
         pending={isPending}
-        value={choice.shown}
+        value={choice.shown === languageAim.aim ? languageAim.label : choice.shown}
       />
     </section>
   );
