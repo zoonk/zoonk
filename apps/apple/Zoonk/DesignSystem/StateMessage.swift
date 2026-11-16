@@ -28,7 +28,9 @@ struct StateMessage<Label: View, Line: View, Actions: View>: View {
         .foregroundStyle(.mutedForeground)
         .frame(maxWidth: 384)
     } actions: {
+      // The system sets its actions small; a state's way on is a screen's action, as main's.
       actions
+        .controlSize(.large)
     }
   }
 }
