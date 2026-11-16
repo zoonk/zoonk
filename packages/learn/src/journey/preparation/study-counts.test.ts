@@ -35,13 +35,15 @@ describe(getStudyCounts, () => {
   });
 });
 
-describe(getPlanTopics, () => {
-  const subject = (topics: number, studied: number | null, known: number | null) => ({
+function subject(topics: number, studied: number | null, known: number | null) {
+  return {
     topics: Array.from({ length: topics }, () => ({})),
     topicsKnown: known,
     topicsStudied: studied,
-  });
+  };
+}
 
+describe(getPlanTopics, () => {
   it("adds up the subjects' topics the way the Plan counts them", () => {
     expect(
       getPlanTopics({
@@ -56,6 +58,7 @@ describe(getPlanTopics, () => {
     expect(
       getPlanTopics({ subjects: [subject(12, null, null)], topicCount: 12, topicsMapped: false }),
     ).toBeNull();
+
     expect(getPlanTopics({ subjects: [], topicCount: 0, topicsMapped: true })).toBeNull();
   });
 });

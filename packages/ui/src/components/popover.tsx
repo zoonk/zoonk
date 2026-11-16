@@ -2,7 +2,6 @@
 
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useState } from "react";
 import type * as React from "react";
 
 /** A popover keeps the page's gutter from the screen's edge, as content does (craft S5). */
@@ -28,11 +27,9 @@ function getEdgePadding() {
   };
 }
 
-/** Mounted only while the popover is open, so it measures the bar the open popover has to clear. */
+/** Rendered only while the popover is open, so it measures the bar the open popover has to clear. */
 function PopoverPositioner(props: PopoverPrimitive.Positioner.Props) {
-  const [collisionPadding] = useState(getEdgePadding);
-
-  return <PopoverPrimitive.Positioner collisionPadding={collisionPadding} {...props} />;
+  return <PopoverPrimitive.Positioner collisionPadding={getEdgePadding()} {...props} />;
 }
 
 function Popover({ ...props }: PopoverPrimitive.Root.Props) {

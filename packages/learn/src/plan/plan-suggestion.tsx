@@ -176,7 +176,6 @@ function DoesNotFitSuggestion() {
 }
 
 function SlotSuggestion({ item }: { item: SlotItem }) {
-  const { goal } = usePlanScreen();
   const coverage = usePlanCoverage();
   const { host } = usePlanSuggestionSlot();
 
@@ -209,11 +208,7 @@ function SlotSuggestion({ item }: { item: SlotItem }) {
     case "fitLessons":
       return <FitLessonsSuggestion item={item} />;
     case "paused":
-      return (
-        host.goalStatus && (
-          <GoalPausedSuggestion control={host.goalStatus} />
-        )
-      );
+      return host.goalStatus && <GoalPausedSuggestion control={host.goalStatus} />;
     case "pastDate":
       return <PastDateSuggestion item={item} />;
     default:
