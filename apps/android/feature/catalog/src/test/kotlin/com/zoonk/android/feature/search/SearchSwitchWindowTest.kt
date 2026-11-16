@@ -25,7 +25,6 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSessionApi
 import com.zoonk.android.data.LearningProfileApi
 import com.zoonk.android.data.SignInResult
-import com.zoonk.android.feature.catalog.SwitchThenToday
 import com.zoonk.android.feature.plan.learnerSummary
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -93,7 +92,7 @@ class SearchSwitchWindowTest {
     }
 
     @Test
-    fun aSuccessfulSwitchOpensTodayOnceAfterRecreation() = pending(saved = true, leave = false)
+    fun aSuccessfulSwitchKeepsThePageAfterRecreation() = pending(saved = true, leave = false)
 
     @Test
     fun aFailedSwitchShowsItsFailureOnceAfterRecreation() = pending(saved = false, leave = false)
@@ -104,16 +103,20 @@ class SearchSwitchWindowTest {
     @Test
     fun aFailedSwitchAfterLeavingSearchSaysNothingOnReturn() = pending(saved = false, leave = true)
 
+    @Test
+    fun aSwitchSavedAfterOpeningALessonLeavesTheLessonOpen() = pending(saved = true, leave = false, lesson = true)
+
     private fun pending(
         saved: Boolean,
         leave: Boolean,
+        lesson: Boolean = false,
     ) {
         val app = signedInApp()
         val other = addOtherGoal(app)
         val gate = CompletableDeferred<Boolean>()
         val asked = mutableListOf<UUID>()
         val switching =
-            SwitchThenToday(app.scope) {
+            SearchGoalSwitch(app.scope) {
                 asked += it
                 gate.await()
             }
@@ -132,6 +135,9 @@ class SearchSwitchWindowTest {
             if (leave) {
                 SearchSwitchWindow.visible = false
                 rule.waitForIdle()
+            } else if (lesson) {
+                rule.runOnIdle { SearchSwitchWindow.navigator.open(AppRoute.Lesson("lesson-1")) }
+                rule.waitForIdle()
             } else {
                 RuntimeEnvironment.setQualifiers("w1280dp-h900dp")
                 scenario.recreate()
@@ -139,16 +145,16 @@ class SearchSwitchWindowTest {
             gate.complete(saved)
             shadowOf(android.os.Looper.getMainLooper()).idle()
             if (leave) {
-                assertNull(switching.switched.value)
+                assertNull(switching.failed.value)
                 SearchSwitchWindow.visible = true
-            } else {
+            } else if (!lesson) {
                 assertEquals(visit, switching.visit.number)
-                assertEquals(saved, switching.switched.value)
+                assertEquals(if (saved) null else Unit, switching.failed.value)
                 scenario.onActivity { it.compose() }
             }
             rule.waitForIdle()
-            assertEquals(if (saved && !leave) AppRoute.Today else AppRoute.Catalog(), SearchSwitchWindow.navigator.currentRoute)
-            assertNull(switching.switched.value)
+            assertEquals(if (lesson) AppRoute.Lesson("lesson-1") else AppRoute.Catalog(), SearchSwitchWindow.navigator.currentRoute)
+            assertNull(switching.failed.value)
             if (!saved && !leave) rule.onNodeWithText(failure()).assertExists() else rule.onNodeWithText(failure()).assertDoesNotExist()
             rule.runOnIdle { SearchSwitchWindow.navigator.open(AppRoute.Catalog()) }
             RuntimeEnvironment.setQualifiers("w411dp-h891dp")
@@ -157,7 +163,7 @@ class SearchSwitchWindowTest {
             rule.waitForIdle()
             assertEquals(AppRoute.Catalog(), SearchSwitchWindow.navigator.currentRoute)
             assertEquals(listOf(other), asked)
-            assertNull(switching.switched.value)
+            assertNull(switching.failed.value)
         } finally {
             scenario.close()
             app.scope.cancel()
@@ -197,7 +203,7 @@ class SearchSwitchWindowTest {
 internal object SearchSwitchWindow {
     lateinit var app: AppContainer
     lateinit var navigator: AppNavigator
-    var switching: SwitchThenToday? = null
+    var switching: SearchGoalSwitch? = null
     var visible by mutableStateOf(true)
 }
 
