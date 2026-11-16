@@ -6,14 +6,24 @@ import { StateMark } from "@/components/state-mark";
 import { type AdminPublicSource } from "@/data/sources/get-source";
 import { formatDate, formatDateTime, formatShortDate } from "@/lib/format";
 import { LINK_CLASS } from "@/lib/link-class";
-import { Badge } from "@zoonk/ui/components/badge";
 import { CalendarClockIcon, GraduationCapIcon, ListChecksIcon, UsersIcon } from "lucide-react";
 
 const SOURCE_LINK_CLASS = `${LINK_CLASS} break-all`;
 
-async function ExpiredSource({ until }: { until: Date | null }) {
-  "use cache: private";
-  return until && until < new Date() ? <Badge variant="outline">Out of date</Badge> : null;
+function isOutOfDate(until: Date | null): until is Date {
+  return until !== null && until < new Date();
+}
+
+function GoodUntil({ until }: { until: Date | null }) {
+  if (isOutOfDate(until)) {
+    return (
+      <StateMark className="whitespace-normal" state="out_of_date">
+        Out of date since {formatDate(until)}
+      </StateMark>
+    );
+  }
+
+  return until ? `Good until ${formatDate(until)}` : "No end date";
 }
 
 /** What depends on the source, and when Zoonk looks at it next. */
@@ -42,12 +52,7 @@ export function SourceTotals({ source }: { source: AdminPublicSource }) {
       />
 
       <StatTile
-        detail={
-          <span className="flex flex-wrap items-center gap-1">
-            {source.validUntil ? `Good until ${formatDate(source.validUntil)}` : "No end date"}
-            <ExpiredSource until={source.validUntil} />
-          </span>
-        }
+        detail={<GoodUntil until={source.validUntil} />}
         icon={<CalendarClockIcon />}
         title="Last checked"
         value={source.fetchedAt ? formatShortDate(source.fetchedAt) : "Never"}
@@ -71,9 +76,9 @@ export function SourceChecking({ source }: { source: AdminPublicSource }) {
           {source.fetchedAt ? formatDateTime(source.fetchedAt) : null}
         </DetailField>
         <DetailField label="Good until" mono={false}>
-          <span className="flex flex-wrap items-center gap-2">
+          <span className="flex flex-col gap-1">
             {source.validUntil ? formatDateTime(source.validUntil) : "No end date"}
-            <ExpiredSource until={source.validUntil} />
+            {isOutOfDate(source.validUntil) ? <StateMark state="out_of_date" /> : null}
           </span>
         </DetailField>
         <DetailField label="Next check" mono={false}>

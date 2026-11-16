@@ -5,6 +5,7 @@ import { SidePanel, SidePanelContent, SidePanelTitle } from "@zoonk/ui/component
 import {
   SIDEBAR_ITEM_CLASS,
   Sidebar,
+  SidebarBody,
   SidebarFooter,
   SidebarHeader,
   SidebarSection,
@@ -77,13 +78,12 @@ function AdminSidebarContent({
 }: AdminSidebarProps & { onNavigate?: () => void }) {
   return (
     <>
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <SidebarBody className="gap-3">
         <AdminNav counts={counts} onNavigate={onNavigate} />
-      </div>
+      </SidebarBody>
 
-      {/* Pinned: on a short window the navigation scrolls under it. Its hairline keeps the account
-          apart from the last group, which runs down to it on a full sidebar. */}
-      <SidebarFooter className="bg-background shrink-0 border-t">
+      {/* Its hairline keeps the account apart from the navigation that scrolls above it. */}
+      <SidebarFooter className="border-t">
         <AdminAccountMenu account={account} />
       </SidebarFooter>
     </>
@@ -113,7 +113,7 @@ export function AdminMenuSheet({
 }: AdminSidebarProps & { onOpenChange: (open: boolean) => void; open: boolean }) {
   return (
     <SidePanel onOpenChange={onOpenChange} open={open}>
-      <SidePanelContent className="gap-4 overflow-hidden p-3 data-[side=left]:w-60" side="left">
+      <SidePanelContent className="gap-3 overflow-hidden p-3 data-[side=left]:w-60" side="left">
         <SidePanelTitle className="sr-only">Menu</SidePanelTitle>
         <AdminSidebarContent
           account={account}

@@ -2,9 +2,13 @@ import { AdminDisclosure } from "@/components/admin-json";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
 import { type getFeedbackMessage } from "@/data/feedback/get-feedback-message";
-import Link from "next/link";
-import { getFeedbackLearnerLabel, getFeedbackSubject } from "../../_utils/feedback-labels";
 import { LINK_CLASS } from "@/lib/link-class";
+import Link from "next/link";
+import {
+  getFeedbackLearnerLabel,
+  getFeedbackScreen,
+  getFeedbackSubject,
+} from "../../_utils/feedback-labels";
 
 export type FeedbackMessage = NonNullable<Awaited<ReturnType<typeof getFeedbackMessage>>>;
 
@@ -40,6 +44,7 @@ function MessageSubject({ message }: { message: FeedbackMessage }) {
 export function MessageDetail({ message }: { message: FeedbackMessage }) {
   const { context } = message;
   const subject = getFeedbackSubject(context);
+  const screen = getFeedbackScreen(context);
 
   return (
     <>
@@ -55,8 +60,8 @@ export function MessageDetail({ message }: { message: FeedbackMessage }) {
           <DetailField label="About">
             <MessageSubject message={message} />
           </DetailField>
-          {context.screen && context.screen !== subject ? (
-            <DetailField label="Sent from">{context.screen}</DetailField>
+          {screen && screen !== subject ? (
+            <DetailField label="Sent from">{screen}</DetailField>
           ) : null}
         </DetailFields>
 

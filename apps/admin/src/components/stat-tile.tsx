@@ -18,6 +18,12 @@ import { StatsTitle } from "./stats-title";
 export const STAT_TILES_CLASS = "grid grid-cols-2 gap-2 lg:grid-cols-4";
 
 /**
+ * A tile's name and its number are two rows of the row of tiles, so a name that wraps moves the
+ * numbers of its whole row down together, and a row whose names fit holds no blank line.
+ */
+export const STAT_TILE_ROWS_CLASS = "row-span-2 grid grid-rows-subgrid";
+
+/**
  * The icon's color says what the number is, as in the learner apps: violet is Brain Power, amber
  * Energy, blue progress made, pink-red something that failed. Any other number's icon is neutral.
  */
@@ -128,36 +134,41 @@ export function StatTile({
 }) {
   const content = (
     <>
-      <StatLabel className="min-h-[2lh] items-start">
+      <StatLabel className="items-start">
         {icon ? <StatIcon className={ICON_TONE[tone]}>{icon}</StatIcon> : null}
         <StatsTitle help={help} title={title} />
       </StatLabel>
-      <StatValue className={cn(tone === "brain" && "text-brain-text")}>
-        <BigQuantity>{value}</BigQuantity>
-      </StatValue>
-      {change ? <StatChangeLine change={change} /> : null}
-      {detail ? <StatDetail>{detail}</StatDetail> : null}
-      {/* Its end dot stays inside the tile's padding. */}
-      {trend ? (
-        <Sparkline
-          before={trend.before}
-          className="me-0.75 mt-auto"
-          label={trend.label}
-          values={trend.values}
-        />
-      ) : null}
+      <span className="flex min-w-0 flex-col gap-1.5">
+        <StatValue className={cn(tone === "brain" && "text-brain-text")}>
+          <BigQuantity>{value}</BigQuantity>
+        </StatValue>
+        {change ? <StatChangeLine change={change} /> : null}
+        {detail ? <StatDetail>{detail}</StatDetail> : null}
+        {/* Its end dot stays inside the tile's padding. */}
+        {trend ? (
+          <Sparkline
+            before={trend.before}
+            className="me-0.75 mt-auto"
+            label={trend.label}
+            values={trend.values}
+          />
+        ) : null}
+      </span>
     </>
   );
 
   if (href) {
     return (
-      <Stat className="hover:bg-muted/50 transition-colors" render={<Link href={href} prefetch />}>
+      <Stat
+        className={cn(STAT_TILE_ROWS_CLASS, "hover:bg-muted/50 transition-colors")}
+        render={<Link href={href} prefetch />}
+      >
         {content}
       </Stat>
     );
   }
 
-  return <Stat>{content}</Stat>;
+  return <Stat className={STAT_TILE_ROWS_CLASS}>{content}</Stat>;
 }
 
 export function StatTileSkeleton({ trend = false }: { trend?: boolean }) {

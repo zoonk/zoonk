@@ -1,4 +1,5 @@
 import { type parseFeedbackMessageContext } from "@/data/feedback/_utils/feedback-message-context";
+import { toWords } from "@/lib/format";
 import { getLearnerLabel } from "@/lib/learner-label";
 import { type FeedbackReportType } from "@zoonk/core/feedback/contract";
 import { type FeedbackContentKind, type FeedbackStatus, type User } from "@zoonk/db";
@@ -39,9 +40,12 @@ export function getFeedbackSubject(context: FeedbackContext): string {
     return feedbackContentKindLabels[context.contentKind];
   }
 
-  return context.screen
-    ? context.screen.charAt(0).toUpperCase() + context.screen.slice(1)
-    : (context.url ?? "Not recorded");
+  return getFeedbackScreen(context) ?? context.url ?? "Not recorded";
+}
+
+/** The screen it was sent from, in words: apps send a code such as `lesson-completion`. */
+export function getFeedbackScreen(context: FeedbackContext): string | null {
+  return context.screen ? toWords(context.screen) : null;
 }
 
 const platformNames: Partial<Record<string, string>> = {

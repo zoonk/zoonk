@@ -8,6 +8,8 @@ import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import {
   feedbackStatusLabels,
   getFeedbackLearnerLabel,
+  getFeedbackPlatform,
+  getFeedbackScreen,
   getFeedbackSubject,
 } from "../_utils/feedback-labels";
 
@@ -29,6 +31,14 @@ export function MessageRow({
 }) {
   const { context } = message;
   const subject = getFeedbackSubject(context);
+  const screen = getFeedbackScreen(context);
+
+  const origin = [
+    screen && screen !== subject && `Sent from the ${screen.toLowerCase()} screen`,
+    getFeedbackPlatform(context),
+  ]
+    .filter(Boolean)
+    .join(FACT_SEPARATOR);
 
   return (
     <AdminTableRow>
@@ -44,9 +54,7 @@ export function MessageRow({
       ) : null}
       <TableCell>
         <span className="text-foreground block truncate">{subject}</span>
-        {context.screen && context.screen.toLowerCase() !== subject.toLowerCase() ? (
-          <span className="block truncate text-xs">Sent from the {context.screen} screen</span>
-        ) : null}
+        {origin ? <span className="block truncate text-xs">{origin}</span> : null}
       </TableCell>
       <TableCell>{formatDate(message.createdAt)}</TableCell>
     </AdminTableRow>

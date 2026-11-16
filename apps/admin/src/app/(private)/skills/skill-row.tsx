@@ -1,6 +1,7 @@
 import { AdminNameCell } from "@/components/admin-name-cell";
 import { AdminTableRow } from "@/components/admin-table-row";
 import { type ListedSkill } from "@/data/skills/list-skills";
+import { toWords } from "@/lib/format";
 import { languageName } from "@/lib/language-filter";
 import { TableCell } from "@zoonk/ui/components/table";
 import { FACT_SEPARATOR } from "@zoonk/utils/facts";
@@ -12,6 +13,7 @@ export function SkillRow({ skill }: { skill: ListedSkill }) {
         href={`/skills/${skill.id}`}
         note={[
           languageName(skill.language),
+          skill.level && toWords(skill.level),
           skill.visibility === "private" && "Private",
           skill.mergedIntoId && "Merged into another skill",
         ]

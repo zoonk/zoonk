@@ -22,11 +22,13 @@ function buddyCharacter({ name, kind }: { name: string | null; kind: string | nu
     return name || "—";
   }
 
-  if (kind === name?.toLowerCase()) {
-    return `${name} (character)`;
+  const character = toWords(kind);
+
+  if (!name || name === character) {
+    return `${character} (character)`;
   }
 
-  return `${name || "—"} (${toWords(kind)} character)`;
+  return `${name} (${character} character)`;
 }
 
 /** A switch as its state's mark: on is the blue check, off is gray. */

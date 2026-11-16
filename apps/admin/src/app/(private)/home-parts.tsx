@@ -1,5 +1,10 @@
 import { AdminSectionEmpty } from "@/components/admin-section";
-import { STAT_TILES_CLASS, StatTile, StatTileSkeleton } from "@/components/stat-tile";
+import {
+  STAT_TILES_CLASS,
+  STAT_TILE_ROWS_CLASS,
+  StatTile,
+  StatTileSkeleton,
+} from "@/components/stat-tile";
 import { formatDollars } from "@/lib/ai-format";
 import { formatDuration } from "@/lib/format-duration";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -44,18 +49,21 @@ export function AttentionTiles({ items }: { items: AttentionItem[] }) {
   }
 
   return (
-    <ul className={ATTENTION_GRID_CLASS}>
+    <ul className={STAT_TILES_CLASS}>
       {items.map((item) => {
         const Icon = pageIcon(item.href);
 
         return (
-          <li key={item.href}>
+          <li className={STAT_TILE_ROWS_CLASS} key={item.href}>
             <Stat
-              className="group hover:bg-muted/50 h-full gap-2 transition-colors"
+              className={cn(
+                STAT_TILE_ROWS_CLASS,
+                "group hover:bg-muted/50 gap-2 transition-colors",
+              )}
               render={<Link href={item.href} prefetch />}
             >
               {/* Labeled as the week's tiles under them are; the chevron says it opens the queue. */}
-              <StatLabel className="min-h-[2lh] items-start">
+              <StatLabel className="items-start">
                 <StatIcon className={item.failed ? "text-destructive" : "text-muted-foreground"}>
                   <Icon />
                 </StatIcon>
@@ -65,10 +73,16 @@ export function AttentionTiles({ items }: { items: AttentionItem[] }) {
                   className="text-faint group-hover:text-foreground size-4 shrink-0"
                 />
               </StatLabel>
-              <span className={cn("text-readout text-3xl", item.failed && "text-destructive-text")}>
-                {formatNumber(item.count)}
+              <span className="flex min-w-0 flex-col gap-2">
+                <span
+                  className={cn("text-readout text-3xl", item.failed && "text-destructive-text")}
+                >
+                  {formatNumber(item.count)}
+                </span>
+                <span className="text-muted-foreground text-compact text-pretty">
+                  {item.detail}
+                </span>
               </span>
-              <span className="text-muted-foreground text-compact text-pretty">{item.detail}</span>
             </Stat>
           </li>
         );
@@ -77,12 +91,11 @@ export function AttentionTiles({ items }: { items: AttentionItem[] }) {
   );
 }
 
-const ATTENTION_GRID_CLASS = STAT_TILES_CLASS;
 const SKELETON_TILES = 3;
 
 export function AttentionTilesSkeleton() {
   return (
-    <div aria-hidden="true" className={ATTENTION_GRID_CLASS}>
+    <div aria-hidden="true" className={STAT_TILES_CLASS}>
       {Array.from({ length: SKELETON_TILES }, (_, index) => (
         <Stat className="gap-2" key={index}>
           <span className="flex h-4 items-center">
