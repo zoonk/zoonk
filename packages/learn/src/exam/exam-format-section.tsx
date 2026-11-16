@@ -74,6 +74,7 @@ function useDayParts() {
 function useDayTitle() {
   const t = useExtracted();
   const dayDate = useExamDayDate();
+  const { exam } = useExamScreen();
 
   return ({ day, numbered }: { day: ExamFormatDay; numbered: boolean }): string => {
     const number = t("Day {number, number}", { number: day.day });
@@ -82,7 +83,8 @@ function useDayTitle() {
       return number;
     }
 
-    return numbered ? `${number} · ${dayDate(day.date)}` : dayDate(day.date);
+    const date = dayDate(day.date, { estimated: exam.daysEstimated });
+    return numbered ? `${number} · ${date}` : date;
   };
 }
 

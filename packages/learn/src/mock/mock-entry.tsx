@@ -11,6 +11,9 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
+import { type MockEntryHrefs, getMockEntryTarget } from "./mock-entry-target";
+
+export { getMockEntryTarget } from "./mock-entry-target";
 
 /** The buddy's offer card names what a mock exam can be; the rows that open the chooser don't. */
 export function useMockEntryDescription({ bySubject }: { bySubject: boolean }): string {
@@ -21,64 +24,48 @@ export function useMockEntryDescription({ bySubject }: { bySubject: boolean }): 
     : t("The full exam or half of it");
 }
 
-export function MockEntryRow({
-  hrefs,
-  view,
-}: {
-  hrefs: { choose: string; mock: (id: string) => string };
-  view: MockOptionsView;
-}) {
+export function MockEntryRow({ hrefs, view }: { hrefs: MockEntryHrefs; view: MockOptionsView }) {
   const t = useExtracted();
+  const target = getMockEntryTarget({ hrefs, view });
 
-  if (!view.running && view.options.length === 0) {
+  if (!target) {
     return null;
   }
 
-  if (view.running) {
-    return (
-      <ListRowLink href={hrefs.mock(view.running.id)}>
-        <ListRowLeading>
-          <KindDot kind="mock" />
-        </ListRowLeading>
-        <ListRowContent>
-          <ListRowTitle>{t("Continue your mock exam")}</ListRowTitle>
-        </ListRowContent>
-      </ListRowLink>
-    );
-  }
-
   return (
-    <ListRowLink href={hrefs.choose}>
+    <ListRowLink href={target.href}>
       <ListRowLeading>
         <KindDot kind="mock" />
       </ListRowLeading>
       <ListRowContent>
-        <ListRowTitle>{t("Take a mock exam")}</ListRowTitle>
+        <ListRowTitle>
+          {target.resume ? t("Continue your mock exam") : t("Take a mock exam")}
+        </ListRowTitle>
       </ListRowContent>
     </ListRowLink>
   );
 }
 
+/** `runningId`: a mock the plan started, which the exam page lists and the chooser's view doesn't. */
 export function MockEntryButton({
   hrefs,
+  runningId,
   view,
 }: {
-  hrefs: { choose: string; mock: (id: string) => string };
+  hrefs: MockEntryHrefs;
+  runningId?: string | null;
   view: MockOptionsView;
 }) {
   const t = useExtracted();
+  const target = getMockEntryTarget({ hrefs, runningId, view });
 
-  if (!view.running && view.options.length === 0) {
+  if (!target) {
     return null;
   }
 
   return (
-    <EnterLink
-      className={DETAIL_PRIMARY_CLASS}
-      href={view.running ? hrefs.mock(view.running.id) : hrefs.choose}
-      size="lg"
-    >
-      {view.running ? t("Continue your mock exam") : t("Take a mock exam")}
+    <EnterLink className={DETAIL_PRIMARY_CLASS} href={target.href} size="lg">
+      {target.resume ? t("Continue your mock exam") : t("Take a mock exam")}
     </EnterLink>
   );
 }

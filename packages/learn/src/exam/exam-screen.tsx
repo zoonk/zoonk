@@ -35,6 +35,7 @@ import { ExamScoringSection } from "./exam-scoring-section";
 export type { ExamActions, ExamHrefs } from "./exam-context";
 
 function useExamDays(): string[] {
+  const t = useExtracted();
   const format = useFormatter();
   const { exam } = useExamScreen();
   const formatDate = useFormatIsoDate();
@@ -44,6 +45,7 @@ function useExamDays(): string[] {
   const startTimes = new Set(exam.days.map((day) => day.startTime));
   const sharedTime = startTimes.size === 1 ? (exam.days[0]?.startTime ?? null) : null;
   const timePerDay = startTimes.size > 1;
+  const estimated = exam.daysEstimated;
 
   if (exam.namedMonth) {
     return exam.days.map((day) =>
@@ -51,18 +53,29 @@ function useExamDays(): string[] {
     );
   }
 
+  const dayText = (isoDate: string): string => {
+    if (exam.days.length === 1) {
+      return dayDate(isoDate, { estimated });
+    }
+
+    const date = formatPlanDate(isoDate);
+    return estimated ? t("~{date}", { date }) : date;
+  };
+
   const days = exam.days.map((day) => {
-    const date = exam.days.length === 1 ? dayDate(day.date) : formatPlanDate(day.date);
+    const date = dayText(day.date);
 
-    const time = !sharedTime && day.startTime ? formatTimeOfDay(day.startTime) : null;
-
-    return time ? `${date} · ${time}` : date;
+    return !sharedTime && day.startTime
+      ? t("{date} at {time}", { date, time: formatTimeOfDay(day.startTime) })
+      : date;
   });
 
   const dates =
     !timePerDay && days.length > 1 ? [format.list(days, { type: "conjunction" })] : days;
 
-  return sharedTime ? [...dates, formatTimeOfDay(sharedTime)] : dates;
+  return sharedTime
+    ? [...dates, t("Starts at {time}", { time: formatTimeOfDay(sharedTime) })]
+    : dates;
 }
 
 function ExamBar() {

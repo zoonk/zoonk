@@ -30,7 +30,7 @@ function SaveStatusLine() {
     return (
       <div className="flex items-center gap-2 text-sm" role="status">
         <span className="text-muted-foreground min-w-0 flex-1">
-          {t("Not saved yet · retrying")}
+          {t("Your answer isn't saved yet")}
         </span>
         <Button className="shrink-0" onClick={runner.retrySaves} size="sm" variant="outline">
           {t("Try again")}
