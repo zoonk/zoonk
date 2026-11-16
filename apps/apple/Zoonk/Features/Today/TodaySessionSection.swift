@@ -603,18 +603,26 @@ private struct FoldRow: View {
           .frame(minWidth: 20)
           .accessibilityHidden(true)
 
-        Group {
-          if isDone, skipped > 0 {
-            Text(doneAndSkipped)
-          } else if isDone {
-            Text("\(count) done", tableName: "Today", comment: "Folded done blocks")
-          } else if isOpen {
-            Text("Show less", tableName: "Today", comment: "Folds the day's later blocks")
-          } else {
-            Text("+\(count) more", tableName: "Today", comment: "Folded later blocks")
+        // The chevron beside the words, so the minutes end on the other rows' column.
+        HStack(spacing: 6) {
+          Group {
+            if isDone, skipped > 0 {
+              Text(doneAndSkipped)
+            } else if isDone {
+              Text("\(count) done", tableName: "Today", comment: "Folded done blocks")
+            } else if isOpen {
+              Text("Show less", tableName: "Today", comment: "Folds the day's later blocks")
+            } else {
+              Text("+\(count) more", tableName: "Today", comment: "Folded later blocks")
+            }
           }
+          .typeStyle(.rowTitle)
+
+          Image(systemName: "chevron.down")
+            .rotationEffect(.degrees(isOpen ? 180 : 0))
+            .typeStyle(.note)
+            .accessibilityHidden(true)
         }
-        .typeStyle(.rowTitle)
 
         Spacer()
 
@@ -622,11 +630,6 @@ private struct FoldRow: View {
           Text(studyDuration(minutes: minutes))
             .typeStyle(.data)
         }
-
-        Image(systemName: "chevron.down")
-          .rotationEffect(.degrees(isOpen ? 180 : 0))
-          .typeStyle(.note)
-          .accessibilityHidden(true)
       }
       .foregroundStyle(.mutedForeground)
     }

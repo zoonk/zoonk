@@ -16,60 +16,62 @@ struct EmailLoginView: View {
   var body: some View {
     ZoonkList {
       Section {
-        if hasSentCode {
-          FormField(
-            title: Text("Code from the email", tableName: "Account"),
-            isFocused: focusedField == .code
-          ) {
-            TextField(
-              text: $code,
-              prompt: Text(
-                "6-digit code",
-                tableName: "Account",
-                comment: "Placeholder for the email sign-in code")
+        Group {
+          if hasSentCode {
+            FormField(
+              title: Text("Code from the email", tableName: "Account"),
+              isFocused: focusedField == .code
             ) {
-              Text("Code from the email", tableName: "Account")
+              TextField(
+                text: $code,
+                prompt: Text(
+                  "6-digit code",
+                  tableName: "Account",
+                  comment: "Placeholder for the email sign-in code")
+              ) {
+                Text("Code from the email", tableName: "Account")
+              }
+              .keyboardType(.numberPad)
+              .textContentType(.oneTimeCode)
+              .focused($focusedField, equals: .code)
+              .onSubmit(signIn)
+              .disabled(session.isWorking)
+            } hint: {
+              Text(
+                "Enter the code we sent to \(normalizedEmail).", tableName: "Account",
+                comment: "Under the code field; the argument is the learner's email address")
             }
-            .keyboardType(.numberPad)
-            .textContentType(.oneTimeCode)
-            .focused($focusedField, equals: .code)
-            .onSubmit(signIn)
-            .disabled(session.isWorking)
-          } hint: {
-            Text(
-              "Enter the code we sent to \(normalizedEmail).", tableName: "Account",
-              comment: "Under the code field; the argument is the learner's email address")
-          }
-        } else {
-          FormField(
-            title: Text("Email", tableName: "Account", comment: "Email sign-in field label"),
-            isFocused: focusedField == .email, isInvalid: email.failure != nil
-          ) {
-            TextField(
-              text: $email.text,
-              prompt: Text(
-                "you@example.com",
-                tableName: "Account",
-                comment:
-                  "Example email address in the sign-in field: localize \"you\" and keep example.com"
-              )
+          } else {
+            FormField(
+              title: Text("Email", tableName: "Account", comment: "Email sign-in field label"),
+              isFocused: focusedField == .email, isInvalid: email.failure != nil
             ) {
-              Text("Email", tableName: "Account", comment: "Email sign-in field label")
+              TextField(
+                text: $email.text,
+                prompt: Text(
+                  "you@example.com",
+                  tableName: "Account",
+                  comment:
+                    "Example email address in the sign-in field: localize \"you\" and keep example.com"
+                )
+              ) {
+                Text("Email", tableName: "Account", comment: "Email sign-in field label")
+              }
+              .textInputAutocapitalization(.never)
+              .keyboardType(.emailAddress)
+              .autocorrectionDisabled()
+              .textContentType(.emailAddress)
+              .submitLabel(.continue)
+              .focused($focusedField, equals: .email)
+              .onSubmit(sendEmailCode)
+              .disabled(session.isWorking)
             }
-            .textInputAutocapitalization(.never)
-            .keyboardType(.emailAddress)
-            .autocorrectionDisabled()
-            .textContentType(.emailAddress)
-            .submitLabel(.continue)
-            .focused($focusedField, equals: .email)
-            .onSubmit(sendEmailCode)
-            .disabled(session.isWorking)
           }
         }
-      }
+        .listRowSeparator(.hidden)
 
-      // Sign-in's one exception to the bottom bar: Continue stays under its field.
-      Section {
+        // Sign-in's one exception to the bottom bar: Continue stays under its field, in its
+        // section.
         VStack(spacing: 12) {
           if hasSentCode {
             BusyButton(isBusy: session.isWorking, action: signIn) {

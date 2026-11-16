@@ -126,6 +126,7 @@ struct AppTabView: View {
         } icon: {
           Image(systemName: "bubble.left")
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
       }
     }
   }

@@ -369,8 +369,7 @@ private struct MistakeEntryView: View {
               "Open the lesson", tableName: "Practice",
               comment: "Opens the lesson that teaches a mistake's idea.")
           }
-          // The entry always ends in a button: outlined when it's the only one.
-          .buttonStyle(skillId == nil ? .outline : .ghost)
+          .buttonStyle(.ghost)
         }
       }
       .controlSize(.small)

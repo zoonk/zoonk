@@ -263,14 +263,13 @@ private struct PlanWeekRings: View {
     WeekDaysRow {
       ForEach(plan.week.days) { day in
         VStack(spacing: 6) {
-          Text(PlanDate.weekday(day.date))
-            .typeStyle(.small.weight(.medium))
-            .textCase(.uppercase)
-            .foregroundStyle(day.state == .today ? Color(.foreground) : .mutedForeground)
-
           ring(day)
             .frame(width: ringSize, height: ringSize)
             .layoutAnchor("week-ring")
+
+          Text(PlanDate.weekdayLetter(day.date))
+            .typeStyle(.small.weight(day.state == .today ? .bold : .regular))
+            .foregroundStyle(day.state == .today ? Color(.foreground) : .mutedForeground)
         }
         .weekDayMark(width: ringSize)
         .accessibilityElement(children: .ignore)
