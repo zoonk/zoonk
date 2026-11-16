@@ -1,8 +1,9 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
+import { afterAll, onTestFinished } from "vitest";
 import { checkPictures } from "./check.mts";
 import { type CaptureItem, type ManifestItem, type Read } from "./media.mts";
 
@@ -11,6 +12,17 @@ export const CLEAN: Read = { at: "2026-11-14T12:00:00.000Z", by: "reader", findi
 /** The fixture's commits are dated from here, a minute apart: no test reads the real clock. */
 const FIRST_COMMIT = Date.parse("2026-01-01T12:00:00.000Z");
 const MINUTE = 60_000;
+
+/** Inside a test the folder goes when the test ends; a fixture a file or `describe` shares goes after them all. */
+function removeAfterUse(folder: string) {
+  const remove = () => rmSync(folder, { force: true, recursive: true });
+
+  try {
+    onTestFinished(remove);
+  } catch {
+    afterAll(remove);
+  }
+}
 
 function git(repository: string, ...args: string[]): string {
   return execFileSync("git", args, { cwd: repository, encoding: "utf8" }).trim();
@@ -41,6 +53,7 @@ export function sha256(text: string): string {
  */
 export function checkFixture() {
   const repository = mkdtempSync(join(tmpdir(), "pr-media-check-"));
+  removeAfterUse(repository);
   git(repository, "init", "-q");
   git(repository, "config", "user.email", "agent@example.com");
   git(repository, "config", "user.name", "Agent");
