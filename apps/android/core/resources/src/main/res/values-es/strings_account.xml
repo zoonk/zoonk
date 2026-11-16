@@ -44,8 +44,6 @@
   "account_sign_in_title": "84cf19a685b4d0fdd7f339db4bcb047fbcdc357cd3650f4c82a1ec14389ba48e",
   "account_sign_out_failed": "7bcaea8b200b63330764777cb81d7f7ab387b8de0b39ae510a1aa1023a047826",
   "account_terms": "ab4742f6cd27e0be7210fb74feb3bdddad4401e73bddf18958242e9a227aaad8",
-  "account_unavailable_description": "b0c5161064bb36c00bc7905ff2d84d5306b9c9d7ec38aece895294a69dc6f8ae",
-  "account_unavailable_title": "645572452c810b399bb73d47070bfbaa34fb329c08a94cd5c52f63a31d743314",
   "account_username": "d44eb77b7c52a8cb52a7f0345f3f38e4ba9ec6d9dcc80c2aba51e90010c7cca9",
   "account_username_available": "07a542184504047216c861cf36bac708fab42eafc6b2d44a714d716729f12ee1",
   "account_username_checking": "2b01c556ab97b1f76494afeb4c6302fb42df9ef351d007d359ae7a8e9b314670",
@@ -116,6 +114,4 @@
     <string name="account_menu_log_out">Cerrar sesión</string>
     <string name="account_menu_create_account">Crear una cuenta</string>
     <string name="account_sign_out_failed">Zoonk no pudo cerrar tu sesión. Revisa tu conexión e inténtalo de nuevo.</string>
-    <string name="account_unavailable_title">No pudimos verificar tu cuenta</string>
-    <string name="account_unavailable_description">Aún tienes la sesión iniciada. Puede ser un problema de conexión, así que inténtalo de nuevo en un momento.</string>
 </resources>

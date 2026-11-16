@@ -102,6 +102,7 @@ fun PageLoading(
 fun LoadFailedMessage(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
+    inBar: Boolean = true,
     actions: @Composable ColumnScope.() -> Unit = {},
 ) {
     StatusMessage(
@@ -110,7 +111,7 @@ fun LoadFailedMessage(
         description = stringResource(R.string.load_failed_description),
         modifier = modifier,
     ) {
-        Button(onClick = onRetry) { Text(stringResource(R.string.load_failed_try_again)) }
+        LoadFailureRetry(onRetry, inBar)
         actions()
     }
 }

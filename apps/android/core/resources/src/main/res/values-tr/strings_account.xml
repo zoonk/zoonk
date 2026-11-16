@@ -44,8 +44,6 @@
   "account_sign_in_title": "06e6ce7df07f28e2017aca3e8f573b1a73a9beb2e69bc9cf0e482008996a54b2",
   "account_sign_out_failed": "400e2e770ed12fd6ac9682937a88641214be6fd0add4f22e49238cd865ccb8a0",
   "account_terms": "54726db05126ce3184136a8ae980d87c03e0a53cf82c09af58f7192c13b3c56d",
-  "account_unavailable_description": "f0de24bc7cd8118bcce45f066b943add4ee19c5e9208d7eef21f9c4c93b6bf52",
-  "account_unavailable_title": "e2a0c2b2dd024811eec50ed567a8cdeebb89dac8b6f9bbd3bf4037994dd4f40b",
   "account_username": "116da6b06e9f55e5f645c5e54bd3bd28b99e38f1bcb7ac972230161e01296b6f",
   "account_username_available": "66fdb8556eb7a0b55597c626cf4ba25effeff3ca916879a6196ab3bb66472194",
   "account_username_checking": "5a8fd0d9e4421dc83d5c7f81e4b765c06886b4848d2b3937827693debefb0eb7",
@@ -116,6 +114,4 @@
     <string name="account_menu_log_out">Çıkış yap</string>
     <string name="account_menu_create_account">Hesap oluştur</string>
     <string name="account_sign_out_failed">Zoonk oturumunu kapatamadı. Bağlantını kontrol edip tekrar dene.</string>
-    <string name="account_unavailable_title">Hesabını kontrol edemedik</string>
-    <string name="account_unavailable_description">Oturumun hâlâ açık. Bağlantında bir sorun olabilir, birazdan tekrar dene.</string>
 </resources>

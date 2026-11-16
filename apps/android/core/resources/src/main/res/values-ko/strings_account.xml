@@ -44,8 +44,6 @@
   "account_sign_in_title": "6f2908b7cb5bd0c5f564045a79f9f281a06ff1d66c33749748e5dfae518d5fa5",
   "account_sign_out_failed": "617c0c45a9817109afaf0fc7c6b9a31bc549e924f4f4dccfa3043484359c647d",
   "account_terms": "ea2c7336c2c74d831736b2c76cabf2d54d2639e3f58383ffde3b730adef401d3",
-  "account_unavailable_description": "9a5f087befe30f3a188cf000a938ae326dfcc54a156caadb1970f4a5be3bd841",
-  "account_unavailable_title": "a8334ec61faed2e1e0ea3d773a16c1d5c02b93679cac1f1bd474a4e504156b5a",
   "account_username": "8106e68bfb2966b3a286d1bcd70462d662611909d2a7f6c851c989eca9c0918c",
   "account_username_available": "9e84063bebc8e071d534cd2b72d00afb233d2f0bef5798ee424ee4f5c387c4d4",
   "account_username_checking": "26bbbb89ef82936413468c7aaa5eb99233492dfd0e37e52699c5e6b59b68fdf9",
@@ -116,6 +114,4 @@
     <string name="account_menu_log_out">로그아웃</string>
     <string name="account_menu_create_account">계정 만들기</string>
     <string name="account_sign_out_failed">Zoonk에서 로그아웃하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 보세요.</string>
-    <string name="account_unavailable_title">계정을 확인하지 못했어요</string>
-    <string name="account_unavailable_description">로그인 상태는 그대로예요. 인터넷 연결 문제일 수 있으니 잠시 후 다시 시도해 보세요.</string>
 </resources>

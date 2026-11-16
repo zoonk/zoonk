@@ -40,6 +40,7 @@ import com.zoonk.android.ui.components.ChartInspector
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.LoadFailureRetry
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
@@ -115,7 +116,7 @@ private fun <T : Any> Beside(
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                TextButton(onClick = { scope.launch { resource.refresh() } }) { Text(stringResource(R.string.load_failed_try_again)) }
+                LoadFailureRetry(onRetry = { scope.launch { resource.refresh() } }, inBar = false)
             }
         }
 

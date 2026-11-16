@@ -58,6 +58,4 @@
     <string name="account_menu_log_out">Log out</string>
     <string name="account_menu_create_account">Create an account</string>
     <string name="account_sign_out_failed">Zoonk couldn\'t log you out. Check your connection and try again.</string>
-    <string name="account_unavailable_title">We couldn\'t check your account</string>
-    <string name="account_unavailable_description">You\'re still signed in. It might be your connection, so try again in a moment.</string>
 </resources>

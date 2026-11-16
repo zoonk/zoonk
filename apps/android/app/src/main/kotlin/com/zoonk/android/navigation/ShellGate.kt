@@ -1,16 +1,19 @@
 package com.zoonk.android.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.LoadFailedMessage
 import kotlinx.coroutines.launch
 
 /**
@@ -56,16 +59,10 @@ fun ShellGate(
 
             LearnerAccess.Unavailable -> {
                 val scope = rememberCoroutineScope()
-                GateMessage(
-                    icon = R.drawable.ic_warning,
-                    title = stringResource(R.string.account_unavailable_title),
-                    description = stringResource(R.string.account_unavailable_description),
-                    padding = padding,
-                ) { main ->
-                    Button(onClick = { scope.launch { app.sessions.retryRestore() } }, modifier = main) {
-                        Text(stringResource(R.string.load_failed_try_again))
-                    }
-                }
+                LoadFailedMessage(
+                    onRetry = { scope.launch { app.sessions.retryRestore() } },
+                    modifier = Modifier.padding(padding),
+                )
             }
 
             LearnerAccess.NoGoal -> {
