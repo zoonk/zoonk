@@ -6,6 +6,7 @@ import {
   expectVerdict,
   openActivity,
   pressOnSlider,
+  valueInput,
 } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { onDevice } from "../_test-utils/device-media";
@@ -57,6 +58,38 @@ describe("feedback after a check", () => {
         expect(chip && (chip.top >= top || chip.bottom <= top)).toBe(true);
       }),
     );
+  });
+
+  it("never leaves a two-line question sliced under the top bar on a phone, at any height", async () => {
+    await onDevice({ reducedMotion: "reduce" }, async () => {
+      for (let height = 640; height <= 900; height += 20) {
+        // oxlint-disable-next-line no-await-in-loop -- Each height is its own screen, one after another.
+        await atViewport({ height, width: 390 }, async () => {
+          const view = openActivity({ template: "formulaModel" });
+          await valueInput().fill("3869.68");
+          await checkActivity();
+          await expectVerdict("Correct!");
+          await nextFrame();
+          await nextFrame();
+
+          const top = page
+            .getByRole("main", { name: "Lesson content" })
+            .element()
+            .getBoundingClientRect().top;
+
+          const title = page.getByRole("heading", { level: 2 }).element().getBoundingClientRect();
+          const sliced = title.top < top - 1 && title.bottom > top + 1;
+
+          expect({ height, sliced }).toStrictEqual({ height, sliced: false });
+
+          await expect
+            .element(page.getByRole("region", { name: "Answer feedback" }))
+            .toBeInViewport({ ratio: 1 });
+
+          view.unmount();
+        });
+      }
+    });
   });
 
   it("starts a feedback taller than the screen at its top, so the verdict is read first", async () => {

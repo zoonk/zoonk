@@ -24,15 +24,21 @@ function getWholeFeedbackDelta(feedback: Span, visible: Span): number {
   return Math.min(toBottom + MARGIN, Math.max(toTop - MARGIN, toBottom));
 }
 
+export type Reveal = {
+  delta: number;
+  /** Room to add under the feedback first, where the screen can't scroll far enough without it. */
+  extraRoom: number;
+};
+
 /**
  * How far a checked screen scrolls so its feedback is in sight: until the whole feedback shows,
  * and never past the feedback's own top. Why an answer was right or wrong matters more than the
  * title the learner just read, so the title may scroll away. What scrolls away leaves whole: a
  * chip or a title the scroll would cut is scrolled out, never left as a sliver under the top bar.
- * When the screen can't scroll that far (`room`), it stays whole in sight instead, as long as the
- * whole feedback still shows.
+ * When the screen can't scroll that far (`room`), the title stays whole in sight if the whole
+ * feedback still shows; otherwise the screen gets the room it lacks under the feedback.
  */
-export function getRevealDelta({
+export function getReveal({
   chip,
   feedback,
   room,
@@ -44,10 +50,10 @@ export function getRevealDelta({
   room: number;
   title: Span | null;
   visible: Span;
-}): number {
+}): Reveal {
   const whole = getWholeFeedbackDelta(feedback, visible);
 
-  function leaveWhole(span: Span, clear: number): number | null {
+  function leaveWhole(span: Span, clear: number): Reveal | null {
     const top = span.top - visible.top;
     const out = Math.ceil(span.bottom - visible.top) + clear;
 
@@ -55,13 +61,17 @@ export function getRevealDelta({
       return null;
     }
 
-    if (out <= room) {
-      return out;
+    const kept = Math.floor(top);
+
+    if (out > room && feedback.bottom - visible.bottom <= kept) {
+      return { delta: kept, extraRoom: 0 };
     }
 
-    const kept = Math.floor(top);
-    return feedback.bottom - visible.bottom <= kept ? kept : whole;
+    return { delta: out, extraRoom: Math.max(0, out - room) };
   }
 
-  return (title && leaveWhole(title, 0)) ?? (chip && leaveWhole(chip, CLEAR)) ?? whole;
+  return (
+    (title && leaveWhole(title, 0)) ??
+    (chip && leaveWhole(chip, CLEAR)) ?? { delta: whole, extraRoom: 0 }
+  );
 }
