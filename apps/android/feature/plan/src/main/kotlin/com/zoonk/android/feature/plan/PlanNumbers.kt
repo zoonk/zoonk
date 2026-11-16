@@ -49,6 +49,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.offset
 import com.zoonk.android.R
 import com.zoonk.android.feature.language.CanDoList
 import com.zoonk.android.feature.language.LevelValue
@@ -814,7 +815,8 @@ private val STAT_PADDING = 8.dp
 
 private fun Modifier.bleedVertically(amount: Dp): Modifier =
     layout { measurable, constraints ->
-        val placeable = measurable.measure(constraints)
         val extra = amount.roundToPx()
+        // The content gets the room it bleeds into, so a height the layout fixed never cuts it.
+        val placeable = measurable.measure(constraints.offset(vertical = extra * 2))
         layout(placeable.width, (placeable.height - extra * 2).coerceAtLeast(0)) { placeable.place(0, -extra) }
     }
