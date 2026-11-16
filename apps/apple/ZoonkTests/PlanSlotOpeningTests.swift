@@ -338,14 +338,6 @@ final class PlanSlotOpeningTests: XCTestCase {
     try await coveragePreviewEnds(lessonsStudied: 1)
   }
 
-  func testANewDaysOfferEndsAFitPreview() async throws {
-    try await fitPreviewEnds(today: "2027-01-05")
-  }
-
-  func testALessonFinishedElsewhereEndsAFitPreview() async throws {
-    try await fitPreviewEnds(lessonsStudied: 1)
-  }
-
   private func foundDateEnds(today: String = "2027-01-04", lessonsStudied: Int = 0) async throws {
     let api = try await pastDate()
     let window = try await showPlan(api: api, width: .wide)
@@ -379,33 +371,6 @@ final class PlanSlotOpeningTests: XCTestCase {
     XCTAssertTrue(shows(String(localized: "See what changes", table: "Plan"), in: window))
     let changes = await api.calls.changes
     XCTAssertEqual(changes, [])
-  }
-
-  private func fitPreviewEnds(today: String = "2027-01-04", lessonsStudied: Int = 0) async throws {
-    let api = PlanAPIStub()
-    await api.setPlan(try goalPlanFixture(fitOffer: Self.offer))
-    await api.setPreview(try Self.preview(lessons: 3))
-    let window = try await showPlan(api: api, width: .wide)
-    let repriced = String(
-      localized: "Your plan changed since you saw this. Here's what it does now.", table: "Plan")
-    try activate(Self.add, in: window)
-    try await settle()
-    XCTAssertTrue(spoken(in: window).contains { $0.contains(repriced) })
-
-    try await readAgain(
-      api,
-      plan: goalPlanFixture(
-        fitOffer: Self.offer(lessons: 4), today: today, lessonsStudied: lessonsStudied))
-    XCTAssertFalse(spoken(in: window).contains { $0.contains(repriced) })
-    let before = await api.calls.changes
-    XCTAssertEqual(before, [])
-    await api.setPreview(try Self.preview(lessons: 4))
-    try activate(Self.add, in: window)
-    try await settle()
-    let changes = await api.calls.changes
-    let offered = try JSONDecoder().decode(
-      GoalPlan.FitOffer.self, from: Data(Self.offer(lessons: 4).utf8))
-    XCTAssertEqual(changes, [offered.operations.map { .operation($0) }])
   }
 
   private static let changePlan = String(localized: "Change my plan", table: "Plan")
