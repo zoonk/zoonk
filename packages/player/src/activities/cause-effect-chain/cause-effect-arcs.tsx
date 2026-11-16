@@ -2,7 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useId } from "react";
-import { type Link, type LinkResult, arcEndOffsets, arcPath } from "./cause-effect-links";
+import { type Link, type LinkResult, arcPath, drawsHead } from "./cause-effect-links";
 
 export const ARC_GUTTER = 48;
 
@@ -15,8 +15,6 @@ const MARKER_TIP_EDGE = 10;
 
 /** The head's rounded tip reaches past the path's end: marker units scale with the stroke. */
 const HEAD_REACH = ((MARKER_TIP_EDGE - MARKER_REF_X) * MARKER_SIZE * ARC_STROKE) / MARKER_BOX;
-/** The head, stroke included, fills its marker's box. */
-const HEAD_HEIGHT = MARKER_SIZE * ARC_STROKE;
 
 type ArcState = LinkResult["state"] | "pending" | "made";
 
@@ -31,23 +29,16 @@ const ARC_CLASS: Record<ArcState, string> = {
 };
 
 export function CauseEffectArcs({
-  boxes,
+  centers,
   links,
   order,
 }: {
-  boxes: Readonly<Record<string, { center: number; half: number }>>;
+  centers: Readonly<Record<string, number>>;
   links: readonly (Link & { state: ArcState })[];
   order: readonly string[];
 }) {
   const markerId = useId();
-
-  const endOffsets = arcEndOffsets({
-    base: END_OFFSET,
-    cards: boxes,
-    headHeight: HEAD_HEIGHT,
-    links,
-    order,
-  });
+  const heads = drawsHead(links);
 
   return (
     <svg
@@ -80,7 +71,7 @@ export function CauseEffectArcs({
       </defs>
 
       {links.map((link, index) => {
-        const [from, to] = [boxes[link.from]?.center, boxes[link.to]?.center];
+        const [from, to] = [centers[link.from], centers[link.to]];
 
         if (from === undefined || to === undefined) {
           return null;
@@ -99,10 +90,10 @@ export function CauseEffectArcs({
               gutter: ARC_GUTTER,
               headReach: HEAD_REACH,
               span,
-              to: to + (endOffsets[index] ?? END_OFFSET),
+              to: to + END_OFFSET,
             })}
             key={`${link.from}-${link.to}-${link.state}`}
-            markerEnd={`url(#${markerId}-${link.state})`}
+            markerEnd={heads[index] ? `url(#${markerId}-${link.state})` : undefined}
             strokeDasharray={isDashed ? "5 5" : undefined}
             strokeLinecap="round"
             strokeWidth={ARC_STROKE}

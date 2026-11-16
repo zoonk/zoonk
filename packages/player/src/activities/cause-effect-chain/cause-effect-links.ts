@@ -36,49 +36,14 @@ export function compareLinks(learner: readonly Link[], expected: readonly Link[]
   ];
 }
 
-const HEAD_GAP = 4;
-
-/**
- * How far below its card's middle each arrow ends (negative: above it). Arrows into one card end a
- * head and a gap apart, around its middle when the card leads nowhere and below its own arrow's start
- * when it does, closer when the card is short so each head stays beside it. They nest instead of
- * crossing: those from above end above those from below, and the farther an arrow comes from, the
- * farther from that side it ends.
- */
-export function arcEndOffsets({
-  base,
-  cards,
-  headHeight,
-  links,
-  order,
-}: {
-  base: number;
-  cards: Readonly<Record<string, { half: number }>>;
-  headHeight: number;
-  links: readonly Link[];
-  order: readonly string[];
-}): number[] {
-  return links.map((link) => {
-    const target = order.indexOf(link.to);
-    const distance = (item: Link) => order.indexOf(item.from) - target;
-    const side = (item: Link) => (distance(item) > 0 ? 1 : 0);
-
-    const into = links
-      .filter((item) => item.to === link.to)
-      .toSorted((a, b) => side(a) - side(b) || distance(b) - distance(a));
-
-    if (into.length < 2) {
-      return base;
-    }
-
-    const leadsOn = links.some((item) => item.from === link.to);
-    const bottom = (cards[link.to]?.half ?? Number.POSITIVE_INFINITY) - headHeight / 2;
-    const top = leadsOn ? base : -bottom;
-    const steps = into.length - 1;
-    const spread = Math.max(0, Math.min(headHeight + HEAD_GAP, (bottom - top) / steps));
-    const first = leadsOn ? top : -(spread * steps) / 2;
-    return first + into.indexOf(link) * spread;
-  });
+/** Arrows into one card that look alike end at one point, so only the last of them draws the head. */
+export function drawsHead(links: readonly (Link & { state: string })[]): boolean[] {
+  return links.map(
+    (link, index) =>
+      !links.some(
+        (other, later) => later > index && other.to === link.to && other.state === link.state,
+      ),
+  );
 }
 
 export function arcPath({

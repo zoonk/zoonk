@@ -2,33 +2,25 @@
 
 import { useEffectEvent, useLayoutEffect, useRef, useState } from "react";
 
-type CardBox = { center: number; half: number };
-
-function sameBoxes(first: Record<string, CardBox>, second: Record<string, CardBox>): boolean {
+function sameCenters(first: Record<string, number>, second: Record<string, number>): boolean {
   const keys = Object.keys(first);
 
   return (
-    keys.length === Object.keys(second).length &&
-    keys.every(
-      (key) => first[key]?.center === second[key]?.center && first[key]?.half === second[key]?.half,
-    )
+    keys.length === Object.keys(second).length && keys.every((key) => first[key] === second[key])
   );
 }
 
 export function useCardCenters() {
   const containerRef = useRef<HTMLOListElement>(null);
   const cards = useRef(new Map<string, HTMLElement>());
-  const [boxes, setBoxes] = useState<Record<string, CardBox>>({});
+  const [centers, setCenters] = useState<Record<string, number>>({});
 
   const measure = useEffectEvent(() => {
     const next = Object.fromEntries(
-      [...cards.current].map(([id, element]) => {
-        const half = element.offsetHeight / 2;
-        return [id, { center: element.offsetTop + half, half }];
-      }),
+      [...cards.current].map(([id, element]) => [id, element.offsetTop + element.offsetHeight / 2]),
     );
 
-    setBoxes((current) => (sameBoxes(current, next) ? current : next));
+    setCenters((current) => (sameCenters(current, next) ? current : next));
   });
 
   useLayoutEffect(() => {
@@ -58,5 +50,5 @@ export function useCardCenters() {
     };
   }
 
-  return { boxes, containerRef, register };
+  return { centers, containerRef, register };
 }

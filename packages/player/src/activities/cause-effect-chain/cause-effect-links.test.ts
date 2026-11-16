@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { arcEndOffsets, arcPath, compareLinks, orderNodes, toggleLink } from "./cause-effect-links";
+import { arcPath, compareLinks, drawsHead, orderNodes, toggleLink } from "./cause-effect-links";
 
 describe(orderNodes, () => {
   it("orders dated nodes by year", () => {
@@ -68,79 +68,23 @@ describe(arcPath, () => {
   });
 });
 
-describe(arcEndOffsets, () => {
-  const order = ["plow", "drought", "storms", "famine"];
-
-  const intoStorms = [
-    { from: "plow", to: "storms" },
-    { from: "drought", to: "storms" },
-  ];
-
-  it("spreads arrows into a card that leads nowhere around its middle, a head and a gap apart", () => {
+describe(drawsHead, () => {
+  it("draws one head for arrows into one card that look alike, which end at one point", () => {
     expect(
-      arcEndOffsets({
-        base: 5,
-        cards: { storms: { half: 31 } },
-        headHeight: 14,
-        links: intoStorms,
-        order,
-      }),
-    ).toStrictEqual([9, -9]);
+      drawsHead([
+        { from: "plow", state: "correct", to: "storms" },
+        { from: "drought", state: "correct", to: "storms" },
+      ]),
+    ).toStrictEqual([false, true]);
   });
 
-  it("ends arrows from above over arrows from below", () => {
-    const intoDrought = [
-      { from: "storms", to: "drought" },
-      { from: "plow", to: "drought" },
-    ];
-
+  it("draws a head for each arrow that looks different or goes elsewhere", () => {
     expect(
-      arcEndOffsets({
-        base: 5,
-        cards: { drought: { half: 31 } },
-        headHeight: 14,
-        links: intoDrought,
-        order,
-      }),
-    ).toStrictEqual([9, -9]);
-  });
-
-  it("keeps every head beside a short card, closer together", () => {
-    expect(
-      arcEndOffsets({
-        base: 5,
-        cards: { storms: { half: 14 } },
-        headHeight: 14,
-        links: intoStorms,
-        order,
-      }),
-    ).toStrictEqual([7, -7]);
-  });
-
-  it("keeps arrows into a card that leads on below the start of its own arrow", () => {
-    expect(
-      arcEndOffsets({
-        base: 5,
-        cards: { famine: { half: 31 }, storms: { half: 31 } },
-        headHeight: 14,
-        links: [...intoStorms, { from: "storms", to: "famine" }],
-        order,
-      }),
-    ).toStrictEqual([23, 5, 5]);
-  });
-
-  it("ends a lone arrow at the base", () => {
-    expect(
-      arcEndOffsets({
-        base: 5,
-        cards: { drought: { half: 31 }, storms: { half: 31 } },
-        headHeight: 14,
-        links: [
-          { from: "plow", to: "drought" },
-          { from: "drought", to: "storms" },
-        ],
-        order,
-      }),
-    ).toStrictEqual([5, 5]);
+      drawsHead([
+        { from: "plow", state: "incorrect", to: "storms" },
+        { from: "drought", state: "missed", to: "storms" },
+        { from: "plow", state: "missed", to: "drought" },
+      ]),
+    ).toStrictEqual([true, true, true]);
   });
 });
