@@ -12,6 +12,7 @@ import {
   getUserSessionCacheTag,
   getUserSubscriptionCacheTag,
 } from "../../cache/tags";
+import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
 import { followsCourse } from "../../goals/_utils/follows-course";
 import { loadGoalCountryViews } from "../../goals/_utils/goal-country-views";
 import { getGoalLanguageFlag } from "../../goals/_utils/goal-language-flag";
@@ -56,7 +57,7 @@ function findActiveGoal({
   return goals.find((goal) => goal.status === "active") ?? null;
 }
 
-function toSummaryGoals({
+async function toSummaryGoals({
   activeGoalId,
   countries,
   phaseFacts,
@@ -64,36 +65,61 @@ function toSummaryGoals({
   activeGoalId: string | null;
   countries: Awaited<ReturnType<typeof loadGoalCountryViews>>;
   phaseFacts: readonly PlanPhaseFacts[];
-}): LearnerSummaryGoal[] {
-  return countries
-    .filter(({ goal }) => goal.status !== "archived")
-    .toSorted((a, b) => Number(b.goal.id === activeGoalId) - Number(a.goal.id === activeGoalId))
-    .map(({ countries: countryView, goal }) => {
-      const next = followsCourse(goal)
-        ? phaseFacts.find((facts) => facts.goalId === goal.id)
-        : undefined;
+}): Promise<LearnerSummaryGoal[]> {
+  const blueprintIds = [
+    ...new Set(
+      countries.flatMap(({ goal }) =>
+        goal.status !== "archived" && goal.kind === "exam" && goal.examBlueprintId
+          ? [goal.examBlueprintId]
+          : [],
+      ),
+    ),
+  ];
 
-      return {
-        ...countryView,
-        courseChapterId: next?.nextChapterId ?? null,
-        courseId: followsCourse(goal) ? goal.primaryCourseId : null,
-        courseLevel: next?.nextLevel ?? null,
-        dailyMinutes: goal.dailyMinutes,
-        displayName: goal.displayName,
-        id: goal.id,
-        isActive: goal.id === activeGoalId,
-        isSettingUp: isGoalSetupLeft(goal),
-        kind: goal.kind,
-        language: goal.language,
-        languageFlag: getGoalLanguageFlag(goal),
-        regionChoices: getGoalRegionChoices(goal),
-        status: goal.status,
-        targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
-        targetLanguage: goal.targetLanguage,
-        targetRegion: goal.targetRegion,
-        title: goal.title,
-      };
-    });
+  const blueprints =
+    blueprintIds.length > 0
+      ? await prisma.examBlueprint.findMany({ where: { id: { in: blueprintIds } } })
+      : [];
+
+  const byId = new Map(blueprints.map((blueprint) => [blueprint.id, blueprint]));
+
+  return Promise.all(
+    countries
+      .filter(({ goal }) => goal.status !== "archived")
+      .toSorted((a, b) => Number(b.goal.id === activeGoalId) - Number(a.goal.id === activeGoalId))
+      .map(async ({ countries: countryView, goal }) => {
+        const next = followsCourse(goal)
+          ? phaseFacts.find((facts) => facts.goalId === goal.id)
+          : undefined;
+
+        const dateKind = await loadGoalDateKind(
+          goal,
+          goal.examBlueprintId ? (byId.get(goal.examBlueprintId) ?? null) : null,
+        );
+
+        return {
+          ...countryView,
+          courseChapterId: next?.nextChapterId ?? null,
+          courseId: followsCourse(goal) ? goal.primaryCourseId : null,
+          courseLevel: next?.nextLevel ?? null,
+          dailyMinutes: goal.dailyMinutes,
+          displayName: goal.displayName,
+          id: goal.id,
+          isActive: goal.id === activeGoalId,
+          isSettingUp: isGoalSetupLeft(goal),
+          kind: goal.kind,
+          language: goal.language,
+          languageFlag: getGoalLanguageFlag(goal),
+          regionChoices: getGoalRegionChoices(goal),
+          status: goal.status,
+          targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
+          targetDateEstimated: dateKind.estimated,
+          targetLanguage: goal.targetLanguage,
+          targetRegion: goal.targetRegion,
+          title: goal.title,
+        };
+      }),
+  );
 }
 
 function getRecentSessionRange(now: Date) {
@@ -228,7 +254,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   const timeZone = getAnswerTimeZone({ goal: activeGoal });
   const localDate = getDateInTimeZone({ date: now, timeZone });
   const countries = await loadGoalCountryViews({ goals, profile, readRecentCountries });
-  const listed = toSummaryGoals({ activeGoalId, countries, phaseFacts });
+  const listed = await toSummaryGoals({ activeGoalId, countries, phaseFacts });
   const current = listed.find((goal) => goal.isActive) ?? null;
   const phaseChallengesRequired = activeGoal?.kind !== "language" || subscription !== null;
   const tier = getTier({ isAnonymous, subscription });

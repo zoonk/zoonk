@@ -17,6 +17,21 @@ function restsOnSundays(minutes: number) {
 }
 
 describe(getWeekDays, () => {
+  it.each([
+    { finished: false, hitGoal: false, seconds: 0 },
+    { finished: false, hitGoal: true, seconds: 1 },
+    { finished: true, hitGoal: true, seconds: 0 },
+  ])("decides completion for an unplanned day: %j", ({ finished, hitGoal, seconds }) => {
+    const week = getWeekDays({
+      days: [{ date: WEDNESDAY, seconds }],
+      finishedDates: finished ? [WEDNESDAY] : [],
+      getPlanDay: () => ({ goalMinutes: 0, kind: "rest" }),
+      today: WEDNESDAY,
+    });
+
+    expect(week[2]).toMatchObject({ goalMinutes: 0, hitGoal, studied: seconds > 0 || finished });
+  });
+
   it("shows each day's minutes, whether it hit the goal and partial days as studied", () => {
     const week = getWeekDays({
       days: [
@@ -76,7 +91,7 @@ describe(getWeekDays, () => {
     expect(week[0]).toMatchObject({ goalMinutes: 21, hitGoal: false, minutes: 5, studied: true });
     expect(week[1]).toMatchObject({ goalMinutes: 21, hitGoal: true, minutes: 17, studied: true });
 
-    expect(week.at(-1)).toMatchObject({ goalMinutes: 0, hitGoal: false, studied: true });
+    expect(week.at(-1)).toMatchObject({ goalMinutes: 0, hitGoal: true, studied: true });
   });
 });
 

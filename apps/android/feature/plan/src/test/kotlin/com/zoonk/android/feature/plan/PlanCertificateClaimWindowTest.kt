@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.shell.GoalSwitch
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -28,7 +29,7 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CertificateImageUrls
-import com.zoonk.api.models.Goal
+import com.zoonk.api.models.CertificateProgress
 import com.zoonk.api.models.OwnedCertificate
 import com.zoonk.api.models.PlanCertificates
 import kotlinx.coroutines.CompletableDeferred
@@ -149,7 +150,13 @@ class PlanCertificateClaimWindowTest {
         PlanClaimTest.visible = true
         PlanClaimTest.app = AppContainer.preview(application)
         PlanClaimTest.page = page
-        PlanClaimTest.viewModel = PlanViewModel(PlanStore(FakePlanApi(), cache), page.goal.id, PlanClaimTest.app.writingWaits)
+        PlanClaimTest.viewModel =
+            PlanViewModel(
+                PlanStore(FakePlanApi(), cache),
+                page.goal.id,
+                PlanClaimTest.app.writingWaits,
+                PlanNavigationModel(GoalSwitch { true }),
+            )
         PlanClaimTest.farTopics = FarTopicViewModel(PlanStore(FakePlanApi(), cache), page.goal.id)
         PlanClaimTest.claims = CertificateStore(HeldClaims(held), cache)
         PlanClaimTest.app.plans.end[page.goal.id].replace(
@@ -180,7 +187,7 @@ class PlanCertificateClaimWindowTest {
             return listOf(shown())
         }
 
-        override suspend fun goals(session: AuthenticatedSession) = emptyList<Goal>()
+        override suspend fun goals(session: AuthenticatedSession) = emptyList<CertificateProgress>()
     }
 }
 

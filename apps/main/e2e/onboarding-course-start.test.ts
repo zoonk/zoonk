@@ -110,7 +110,7 @@ test.describe("Starting a course from its page", () => {
     const level = "How much do you already know?";
     await expect(page.getByRole("heading", { level: 1, name: level })).toBeVisible();
     await expect(page.getByRole("textbox", { name: "I want to" })).toBeHidden();
-    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeHidden();
+    await expect(page.getByRole("heading", { name: "Here's what we understood" })).toBeHidden();
 
     await expect(prisma.goal.count({ where: { primaryCourseId: course.id } })).resolves.toBe(0);
     const session = await page.request.get("/api/auth/get-session");

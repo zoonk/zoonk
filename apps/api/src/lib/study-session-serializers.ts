@@ -78,6 +78,7 @@ export function serializeWeeklyRecap(recap: WeeklyRecap) {
   return {
     ...recap,
     badges: recap.badges.map((badge) => serializeMilestone(badge)),
+    days: recap.days.map((day) => ({ ...day, date: toLogicalDate(day.date) })),
     lastWeek: serializeWeekNumbers(recap.lastWeek),
     turnaround: recap.turnaround
       ? {

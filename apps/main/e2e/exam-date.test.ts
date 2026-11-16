@@ -165,7 +165,7 @@ test.describe("Exam date", () => {
       await date.fill(laterDay);
       await editor.getByRole("button", { name: "Save" }).click();
       await expect(offer).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
-      await expect(editor.getByRole("button", { name: "Save" })).toBeHidden();
+      await expect(editor.getByRole("button", { name: "Save" })).toBeDisabled();
       await expect.poll(() => readTargetDate(goal.id)).toBe(laterDay);
     } finally {
       await page.context().close();

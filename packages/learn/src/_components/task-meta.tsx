@@ -43,13 +43,20 @@ export function FactSegments({
 }: {
   /** What follows the facts, such as a reward in its own color. */
   extra?: React.ReactNode;
-  facts: readonly (string | false | null | undefined)[];
+  /** A fact that isn't plain words (a link) brings its own key. */
+  facts: readonly (string | { content: React.ReactNode; key: string } | false | null | undefined)[];
   /** What the line opens with before its facts, such as a state in its own color. */
   lead?: React.ReactNode;
 }) {
   const items = [
     ...(lead ? [{ content: lead, key: "lead" }] : []),
-    ...facts.flatMap((fact) => (fact ? [{ content: fact, key: `fact:${fact}` }] : [])),
+    ...facts.flatMap((fact) => {
+      if (!fact) {
+        return [];
+      }
+
+      return typeof fact === "string" ? [{ content: fact, key: `fact:${fact}` }] : [fact];
+    }),
     ...(extra ? [{ content: extra, key: "extra" }] : []),
   ];
 

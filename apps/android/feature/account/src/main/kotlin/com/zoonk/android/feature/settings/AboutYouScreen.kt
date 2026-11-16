@@ -15,10 +15,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -191,10 +189,11 @@ fun ProfileQuestionScreen(
     id: String,
     app: AppContainer,
     navigator: AppNavigator,
+    store: ProfileQuestionsStore = app.profileQuestions,
 ) {
-    val state by app.profileQuestions.questions.collectShown()
+    val state by store.questions.collectShown()
     val fresh =
-        app.profileQuestions.questions.freshState
+        store.questions.freshState
             .collectAsStateWithLifecycle()
             .value
     val editorState =
@@ -206,21 +205,16 @@ fun ProfileQuestionScreen(
         }
     val loaded = (editorState as? LoadState.Loaded)?.value
     val question = loaded?.questions?.find { it.id.value == id }
-    val editor = question?.let { viewModel(key = id) { ProfileQuestionViewModel(app.profileQuestions, it, createSavedStateHandle()) } }
-    // Held from the first editor on: a save invalidates the questions, and no editor shows while they're read again.
-    var visiting by remember { mutableStateOf<ProfileQuestionViewModel?>(null) }
-    SideEffect { if (editor != null) visiting = editor }
-    visiting?.let {
-        VisitOf(it.visit)
-        ActOn(it.answered) { navigator.back() }
-    }
+    val editor = viewModel(key = id) { ProfileQuestionViewModel(store, question, createSavedStateHandle()) }
+    VisitOf(editor.visit)
+    ActOn(editor.answered) { navigator.back() }
     val memoryEnabled = loaded?.memoryEnabled == true
     val canEdit = memoryEnabled || question?.id in HOW_YOU_LEARN
     ProfilePage(
         navigator,
         stringResource(R.string.profile_questions_title),
         bar =
-            if (question != null && editor != null) {
+            if (question != null) {
                 {
                     if (editor.failed) {
                         Text(
@@ -246,7 +240,7 @@ fun ProfileQuestionScreen(
             },
     ) {
         when {
-            question != null && editor != null -> {
+            question != null -> {
                 LaunchedEffect(question) { editor.read(question) }
                 PageHeader(
                     profileQuestionTitle(question.id),
@@ -273,7 +267,7 @@ fun ProfileQuestionScreen(
             }
 
             editorState is LoadState.Failed -> {
-                LoadFailedMessage(onRetry = { app.scope.launch { app.profileQuestions.questions.refresh() } })
+                LoadFailedMessage(onRetry = { app.scope.launch { store.questions.refresh() } })
             }
 
             else -> {
@@ -300,16 +294,15 @@ private fun MemoryOffNotice(navigator: AppNavigator) {
 
 internal class ProfileQuestionViewModel(
     private val store: ProfileQuestionsStore,
-    question: ProfileQuestionView,
+    question: ProfileQuestionView?,
     handle: SavedStateHandle,
 ) : ViewModel() {
     private var saved by handle.saved<ProfileDraft?> { null }
-    var draft by mutableStateOf(saved ?: ProfileDraft.from(question))
+    var draft by mutableStateOf(saved ?: question?.let(ProfileDraft::from) ?: ProfileDraft())
         private set
     var source by mutableStateOf(question)
         private set
     private var edited = saved != null
-    private val privateConditions = question.id == ProfileQuestion.CONDITIONS
     var saving by mutableStateOf(false)
         private set
 
@@ -332,7 +325,7 @@ internal class ProfileQuestionViewModel(
     fun change(value: ProfileDraft) {
         edited = true
         draft = value
-        if (!privateConditions) saved = value
+        if (source?.id != ProfileQuestion.CONDITIONS) saved = value
     }
 
     fun save(

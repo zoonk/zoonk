@@ -142,7 +142,7 @@ function ZoneLabel({
       )}
 
       {closedDetail && (
-        <span className="text-muted-foreground text-compact leading-snug font-normal text-pretty group-open/zone:hidden sm:col-start-1 sm:text-sm">
+        <span className="text-muted-foreground text-compact leading-snug font-normal text-balance group-open/zone:hidden sm:col-start-1 sm:text-sm">
           {closedDetail}
         </span>
       )}

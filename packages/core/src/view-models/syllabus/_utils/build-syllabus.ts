@@ -1,4 +1,8 @@
 import { withinLessonScope } from "../../../plans/_utils/plan-end";
+import {
+  countPlannedLessonProgress,
+  getPlanItemArea,
+} from "../../../plans/_utils/planned-lesson-progress";
 import { type SharedExams } from "../../../plans/_utils/shared-exams";
 import { countItemLessons } from "../../../plans/_utils/stand-in-lessons";
 import { findUpNextItem } from "../../../plans/_utils/up-next-item";
@@ -10,14 +14,8 @@ import {
 } from "../syllabus-contract";
 import { getDisplayWeights } from "./display-weights";
 import { getSubjectProgress } from "./subject-progress";
-import {
-  buildChapters,
-  chapterKeyOf,
-  getEarliestTodoDate,
-  getItemAreas,
-  withoutKey,
-} from "./syllabus-chapters";
-import { type SyllabusInput, type SyllabusItem } from "./syllabus-input";
+import { buildChapters, chapterKeyOf, getEarliestTodoDate, withoutKey } from "./syllabus-chapters";
+import { type SyllabusInput } from "./syllabus-input";
 import { draftSubjects, getShortName, listAreas, toKeys } from "./syllabus-subjects";
 import {
   buildTopic,
@@ -35,27 +33,6 @@ function getSharedWith({
 }): string[] {
   const goalIds = new Set(areas.flatMap((area) => shared?.areas.get(area) ?? []));
   return (shared?.exams ?? []).flatMap((exam) => (goalIds.has(exam.goalId) ? [exam.goalId] : []));
-}
-
-/** Count each plan item once across subjects, including tested-out items covering multiple skills. */
-function sumPlannedLessons({
-  itemArea,
-  items,
-  subjects,
-}: {
-  itemArea: (item: SyllabusItem) => string | null;
-  items: readonly SyllabusItem[];
-  subjects: readonly SyllabusSubject[];
-}): SyllabusView["lessons"] {
-  const planned = new Set(
-    subjects.flatMap((subject) => (subject.notPlannedReason ? [] : subject.areas)),
-  );
-
-  const { lessonsDone, lessonsKnown, lessonsTotal } = getSubjectProgress(
-    items.filter((item) => planned.has(itemArea(item) ?? "")),
-  );
-
-  return { done: lessonsDone + lessonsKnown, known: lessonsKnown, total: lessonsTotal };
 }
 
 /** Why a subject can be out of the plan while the exam still tests it, so the goal counts it. */
@@ -123,7 +100,16 @@ export function buildSyllabus(
   const { drafts, kind } = draftSubjects({ areas, notice });
   const displayWeights = getDisplayWeights(drafts);
   const mapped = kind === "notice" && skills.some((skill) => skill.topics.length > 0);
-  const itemArea = getItemAreas({ items, skills });
+  const skillAreas = new Map(skills.map((skill) => [skill.skillId, skill.area]));
+  const itemArea = getPlanItemArea({ items, skillAreas });
+
+  const progress = countPlannedLessonProgress({
+    deadline,
+    items: input.items,
+    skillAreas,
+    skippedAreas,
+  });
+
   const skillNames = new Map(skills.map((skill) => [skill.skillId, skill.name]));
   const next = findUpNextItem({ items, todayBlocks });
   const nextKey = next ? chapterKeyOf(next) : null;
@@ -212,7 +198,11 @@ export function buildSyllabus(
     courseWeights: fromNotice?.courseWeights ?? null,
     fromMaterial: fromNotice?.fromMaterial ?? false,
     kind,
-    lessons: sumPlannedLessons({ itemArea, items, subjects }),
+    lessons: {
+      done: progress.lessonsDone + progress.lessonsKnown,
+      known: progress.lessonsKnown,
+      total: progress.lessonsTotal,
+    },
     noticeUrl: fromNotice?.url ?? null,
     passMarks: fromNotice?.passMarks ?? null,
     questionsSource: fromNotice?.questionsSource ?? null,

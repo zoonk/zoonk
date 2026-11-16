@@ -348,6 +348,21 @@ describe("the learner's data the buddy looks up", () => {
       new Date(monday.getTime() + offset * MS_PER_DAY + hour * 3_600_000);
 
     await Promise.all([
+      learningEventFixture({
+        correctAnswers: 2,
+        goalId: goal.id,
+        incorrectAnswers: 1,
+        localDate: day(0),
+        seconds: 600,
+        userId: user.id,
+      }),
+      learningEventFixture({
+        correctAnswers: 1,
+        goalId: goal.id,
+        localDate: day(-3),
+        seconds: 300,
+        userId: user.id,
+      }),
       dailyProgressFixtureMany([
         {
           correctAnswers: 20,
@@ -406,18 +421,18 @@ describe("the learner's data the buddy looks up", () => {
           rightTo: 100,
           skill: skill.name,
         },
-        lastWeek: { averageMinutes: 30, daysStudied: 1, minutes: 30, questions: 10 },
+        lastWeek: { averageMinutes: 5, daysStudied: 1, minutes: 5, questions: 1 },
         link: { kind: "page", page: "logbook" },
         next: null,
         phasesFinished: [],
         status: "found",
         week: {
-          averageMinutes: 35,
-          daysStudied: 2,
+          averageMinutes: 10,
+          daysStudied: 1,
           end: "2026-10-04",
           finished: true,
-          minutes: 70,
-          questions: 37,
+          minutes: 10,
+          questions: 3,
           start: "2026-09-28",
         },
         what: "weekly",

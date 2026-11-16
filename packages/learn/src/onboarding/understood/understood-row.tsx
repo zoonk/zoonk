@@ -4,6 +4,7 @@ import { getTargetDateBounds } from "@zoonk/core/plans/target-date-range";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
+import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { PencilIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -197,7 +198,7 @@ function ChoiceDates({
 }
 
 const FACT_ROW_CLASS =
-  "group/fact flex items-start gap-3 py-3 sm:grid sm:grid-cols-[9rem_minmax(0,1fr)_auto]";
+  "group/fact flex items-center gap-3 py-3 sm:grid sm:grid-cols-[9rem_minmax(0,1fr)_auto] sm:items-start";
 
 const LABEL_CLASS = "text-muted-foreground text-compact sm:pt-px";
 
@@ -252,13 +253,14 @@ export function UnderstoodRowItem({
 }) {
   const t = useExtracted();
   const label = editing ? (row.editLabel ?? row.label) : row.label;
+  const inEditor = Boolean(editing && row.editable);
 
   return (
     <li className={FACT_ROW_CLASS}>
       <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:contents">
-        <span className={LABEL_CLASS}>{label}</span>
+        <span className={cn(LABEL_CLASS, inEditor && "sm:pt-3")}>{label}</span>
 
-        <div className="flex min-w-0 flex-col gap-0.5">
+        <div className={cn("flex min-w-0 flex-col gap-0.5", inEditor && "sm:col-span-2")}>
           {editing && row.editable ? (
             <RowEditor
               country={row.country}

@@ -146,3 +146,24 @@ export const unshownCertificatesSchema = z
     description:
       "The learner's certificates whose award moment wasn't closed yet, oldest first, locked ones included; usually empty. POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}",
   });
+
+export const certificateProgressSchema = z
+  .object({
+    displayName: z.string(),
+    id: uuidSchema(),
+    languageFlag: z.string().nullable(),
+    progress: z
+      .number()
+      .min(0)
+      .max(1)
+      .nullable()
+      .meta({
+        description:
+          "Lessons studied divided by the certificate's full lesson coverage, including lessons outside a dated plan. Known lessons earn no study credit. Null for language goals or unknown coverage.",
+      }),
+    targetLanguage: z.string().nullable(),
+    targetRegion: z.string().nullable(),
+  })
+  .meta({ id: "CertificateProgress" });
+
+export type CertificateProgress = z.infer<typeof certificateProgressSchema>;

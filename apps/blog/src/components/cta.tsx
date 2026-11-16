@@ -1,11 +1,12 @@
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { buttonVariants } from "@zoonk/ui/components/button";
 
+/** The blog's one way in, in the header and at a post's end: the words every public page uses. */
+export const START = { href: "https://www.zoonk.com/start", label: "Build my plan" } as const;
+
 const START_CTA = {
-  href: "https://www.zoonk.com/start",
-  link: "Build my plan",
-  note: "No account needed.",
-  text: "Tell us in your own words and answer a few quick questions. You'll see your whole plan before you pay.",
+  note: "Start free, no account needed.",
+  text: "Tell us in your own words and answer a few quick questions. Then just follow each day's plan.",
   title: "What's your goal?",
 };
 
@@ -18,8 +19,8 @@ export function StartCta() {
       <Buddy beltColor="white" className="h-23" energy={null} glasses="round" kind="zu" />
       <p className="mt-4 text-3xl font-semibold tracking-tight text-balance">{START_CTA.title}</p>
       <p className="text-muted-foreground mt-2 max-w-sm text-pretty">{START_CTA.text}</p>
-      <a className={buttonVariants({ className: "mt-6", size: "lg" })} href={START_CTA.href}>
-        {START_CTA.link}
+      <a className={buttonVariants({ className: "mt-6", size: "lg" })} href={START.href}>
+        {START.label}
       </a>
       <p className="text-muted-foreground mt-3 text-xs">{START_CTA.note}</p>
     </aside>

@@ -64,7 +64,7 @@ test.describe("Sending a goal", () => {
     const goal = uniqueWords("understand quantum physics, made once");
     await goalUnderstandingFixture({ goal, result: QUANTUM, userId: await ensureGuest(page) });
     await sendGoal(page, goal);
-    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what we understood" })).toBeVisible();
 
     const release = Promise.withResolvers<null>();
 
@@ -105,7 +105,7 @@ test.describe("Sending a goal from another page", () => {
     await page.getByRole("button", { name: "Build my plan" }).click();
 
     await expect(page).toHaveURL(DRAFT_URL);
-    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what we understood" })).toBeVisible();
     await expect(page.getByText(goal, { exact: true })).toBeVisible();
 
     await page.goBack();
@@ -161,7 +161,7 @@ test.describe("Coming back", () => {
 
     await expect(page).toHaveURL(/\/today$/u);
     await expect(page.getByRole("main").getByText(goal, { exact: true })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what we understood" })).toBeVisible();
   });
 
   test("a start that failed offers to try again, which moves on once the words can be read, and a refresh follows a read to the card", async ({
@@ -237,7 +237,7 @@ test.describe("Coming back", () => {
 
     release.resolve(null);
 
-    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what we understood" })).toBeVisible();
     await expect(page.getByText("Juggling", { exact: true })).toBeVisible();
   });
 });

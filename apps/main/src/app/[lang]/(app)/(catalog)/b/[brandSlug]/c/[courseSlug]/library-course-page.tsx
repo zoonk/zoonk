@@ -32,7 +32,7 @@ import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page"
 import { listPublishedCourseEditions } from "@zoonk/core/courses/published-editions";
 import { ContentFeedbackMenu } from "@zoonk/learn/feedback/content-menu";
 import { Page } from "@zoonk/learn/page";
-import { Route, RouteMark, RouteStop, RouteTitle } from "@zoonk/learn/route-line";
+import { ROUTE_CLASS, Route, RouteMark, RouteStop, RouteTitle } from "@zoonk/learn/route-line";
 import { type Subject, getSubject } from "@zoonk/learn/subject-label";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
@@ -108,15 +108,16 @@ function CourseHero({
 
       <CourseMark course={course} loading="eager" locale={locale} />
 
-      <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2">
+      <div className="mt-5 flex">
         <CourseSubjectLabel subject={subject} />
-        {exam && <CourseExamDate exam={exam} />}
       </div>
 
       <h1 className={cn(COURSE_TITLE_CLASS, "relative mt-3")} id={titleId}>
         <RouteMark down />
         {course.title}
       </h1>
+
+      {exam && <CourseExamDate exam={exam} />}
 
       {promise && <p className={HERO_LEAD_CLASS}>{promise}</p>}
 
@@ -248,7 +249,14 @@ export async function LibraryCoursePage({
 
   return (
     <CourseProgressScope courseId={course.id} lessonId={tryLesson?.lessonId ?? null}>
-      <div className="flex flex-col" data-subject={subject}>
+      {/* The way back starts where the title does, past the route's line. */}
+      <div
+        className={cn(
+          ROUTE_CLASS,
+          "flex flex-col **:data-[slot=page-top-start]:ps-(--route-inset)",
+        )}
+        data-subject={subject}
+      >
         <CatalogPageBar
           back={{ href: "/courses", label: t("Explore courses") }}
           options={
