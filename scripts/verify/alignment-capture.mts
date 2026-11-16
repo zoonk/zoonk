@@ -126,6 +126,7 @@ export type Capture = {
   version: 1 | 2;
   /** Measurements completed, including when a screen has no matching text or controls. */
   measurements?: ("clipping" | "controls" | "text-flows")[];
+  notMeasured?: Partial<Record<"clipping" | "controls" | "text-flows", string>>;
   platform: "android" | "apple" | "web";
   scenario: string | null;
   screen: string;

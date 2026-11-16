@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.LayoutInfo
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -27,6 +28,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.DrawnDescriptionsKey
 import com.zoonk.android.ui.components.LayoutPart
 import com.zoonk.android.ui.components.LayoutPartKey
+import com.zoonk.android.ui.components.LayoutScrollSignKey
 import com.zoonk.android.ui.theme.Geist
 import com.zoonk.android.ui.theme.GeistMono
 import java.io.File
@@ -86,7 +88,9 @@ internal object LayoutCapture {
         reader.anchors(top, anchors)
         val config = view.resources.configuration
         return Json.obj(
-            "version" to 1,
+            "version" to 2,
+            "measurements" to listOf("clipping", "controls", "text-flows"),
+            "notMeasured" to reader.notMeasured(),
             "platform" to "android",
             "scenario" to (scenario ?: NOT_DECLARED),
             "screen" to testName(),
@@ -145,13 +149,134 @@ internal object LayoutCapture {
             stackGroups()
         }
 
-        fun json(): List<Map<String, Any?>> = written.map { it.json() } + hidden + anchorElements
+        private val pageElements = mutableListOf<Map<String, Any?>>()
+        private var unreadText = false
+
+        fun notMeasured(): Map<String, String> =
+            buildMap {
+                if (unreadText) {
+                    put("text-flows", "a parent replaced text layout semantics")
+                    put("clipping", "a parent replaced content semantics; its text and control bounds cannot be read")
+                    put("controls", "a parent replaced content semantics; its controls cannot be enumerated")
+                }
+            }
+
+        fun json(): List<Map<String, Any?>> = written.map { it.json() } + hidden + anchorElements + pageElements
+
+        private fun pageNode(node: SemanticsNode) {
+            fun record(part: String): MutableMap<String, Any?> =
+                linkedMapOf(
+                    "id" to "page.${node.id}.$part",
+                    "piece" to "page",
+                    "part" to part,
+                    "group" to null,
+                    "row" to null,
+                    "bounds" to bounds(node),
+                    "ink" to null,
+                    "surface" to surface,
+                )
+            val ancestors = generateSequence(node) { it.parent }.toList()
+            val scrolling =
+                ancestors.any {
+                    it.config.contains(SemanticsProperties.HorizontalScrollAxisRange) ||
+                        it.config.contains(SemanticsProperties.VerticalScrollAxisRange)
+                }
+            val control = node.config.getOrNull(SemanticsProperties.Role)
+            val action = node.config.getOrNull(LayoutPartKey)?.part == LayoutPart.Part.Action
+            if (action || control == Role.Button || node.config.contains(SemanticsActions.SetText)) {
+                pageElements +=
+                    record("control").apply {
+                        put("variant", if (node.config.contains(SemanticsActions.SetText)) "field" else "button")
+                        put("name", text(node))
+                        put("controlParent", "controls.${node.layoutInfo.parentInfo?.hashCode()}")
+                    }
+            }
+            if ((action || control == Role.Button || node.config.contains(SemanticsActions.SetText)) && !scrolling && isClipped(node)) {
+                val shown = node.boundsInRoot
+                val at = node.positionInRoot
+                pageElements +=
+                    record("cut").apply {
+                        put(
+                            "overflow",
+                            listOf(
+                                maxOf(shown.left - at.x, at.x + node.size.width - shown.right, 0f) / density,
+                                maxOf(shown.top - at.y, at.y + node.size.height - shown.bottom, 0f) / density,
+                            ),
+                        )
+                        put("name", "control's visible box")
+                        put("text", text(node))
+                    }
+            }
+            val scroll = node.config.getOrNull(SemanticsProperties.HorizontalScrollAxisRange)
+            if (scroll != null && scroll.maxValue() > 0 && node.config.getOrNull(LayoutScrollSignKey) != true) {
+                pageElements +=
+                    record("cut").apply {
+                        put("overflow", listOf(scroll.maxValue() / density, 0f))
+                        put("reason", "horizontal scroll has no kit scroll sign")
+                        put("name", "horizontal scroller")
+                    }
+            }
+            val layout = textLayout(node) ?: return
+            val clamped = layout.layoutInput.maxLines < Int.MAX_VALUE || (0 until layout.lineCount).any { layout.isLineEllipsized(it) }
+            if (!scrolling && !clamped && !linesShown(node, layout)) {
+                val shown = node.boundsInRoot
+                val at = node.positionInRoot
+                val shift = alignmentShift(layout)
+                val across =
+                    (0 until layout.lineCount).maxOfOrNull {
+                        maxOf(shown.left - at.x - shift - layout.getLineLeft(it), at.x + shift + layout.getLineRight(it) - shown.right, 0f)
+                    } ?: 0f
+                val down = maxOf(shown.top - at.y, at.y + layout.getLineBottom(layout.lineCount - 1) - shown.bottom, 0f)
+                pageElements +=
+                    record("cut").apply {
+                        put("overflow", listOf(across / density, down / density))
+                        put("text", layout.layoutInput.text.text)
+                        put("name", "text's visible box")
+                    }
+            }
+            pageElements +=
+                record("text").apply {
+                    put("text", layout.layoutInput.text.text)
+                    put("name", layout.layoutInput.text.text)
+                    put(
+                        "lineTexts",
+                        (0 until layout.lineCount).map { line ->
+                            layout.layoutInput.text.text
+                                .substring(layout.getLineStart(line), layout.getLineEnd(line, visibleEnd = true))
+                        },
+                    )
+                    val role =
+                        when {
+                            ancestors.any {
+                                it.config.getOrNull(SemanticsProperties.Role) == Role.Button ||
+                                    it.config.getOrNull(LayoutPartKey)?.part == LayoutPart.Part.Action
+                            } -> {
+                                "button"
+                            }
+
+                            ancestors.any { it.config.contains(SemanticsProperties.Heading) } -> {
+                                "title"
+                            }
+
+                            else -> {
+                                when (ancestors.firstNotNullOfOrNull { it.config.getOrNull(LayoutPartKey) }?.part) {
+                                    LayoutPart.Part.Label -> "label"
+                                    LayoutPart.Part.Value -> "facts"
+                                    else -> null
+                                }
+                            }
+                        }
+                    role?.let { put("textRole", it) }
+                }
+        }
 
         private fun walk(
             node: SemanticsNode,
             group: Element?,
             row: Element?,
         ) {
+            pageNode(node)
+            if (node.config.isClearingSemantics) unreadText = true
             // Only a main action's fill counts toward one filled action per surface, so other buttons aren't written.
             val part =
                 node.config.getOrNull(LayoutPartKey)?.takeUnless {

@@ -106,6 +106,10 @@ const CAPTURE = z
     elements: z.array(ELEMENT),
     marketing: z.boolean().optional(),
     measurements: z.array(z.enum(["clipping", "controls", "text-flows"])).optional(),
+    notMeasured: z
+      .object({ clipping: z.string(), controls: z.string(), "text-flows": z.string() })
+      .partial()
+      .optional(),
     platform: z.enum(["android", "apple", "web"]),
     scale: z.number().positive(),
     scenario: z.string().nullable(),

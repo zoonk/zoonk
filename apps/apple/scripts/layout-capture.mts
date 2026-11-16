@@ -21,7 +21,9 @@ const WAIT_MS = 15_000;
 const POLL_MS = 200;
 
 export type Capture = {
-  version: 1;
+  version: 1 | 2;
+  measurements?: ("clipping" | "controls" | "text-flows")[];
+  notMeasured?: Partial<Record<"clipping" | "controls" | "text-flows", string>>;
   platform: "apple";
   unit: "pt";
   elements: unknown[];
@@ -160,8 +162,8 @@ export function parseCapture(value: unknown): Capture {
 
   const { build, configuration, elements, picture, platform, scale, scenario, screen } = value;
 
-  if (value.version !== 1 || platform !== "apple" || value.unit !== "pt") {
-    throw missing("its version, platform or unit isn't 1, apple and pt");
+  if ((value.version !== 1 && value.version !== 2) || platform !== "apple" || value.unit !== "pt") {
+    throw missing("its version, platform or unit isn't 1 or 2, apple and pt");
   }
 
   if (!Array.isArray(elements) || typeof scenario !== "string" || typeof screen !== "string") {

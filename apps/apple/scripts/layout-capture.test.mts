@@ -4,9 +4,9 @@ import { existsSync } from "node:fs";
 import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { describe, it } from "vitest";
+import { describe, it, test } from "vitest";
 import { checkPictures } from "../../../scripts/pr/check.mts";
-import { type Capture, mergeCapture, saveCapture } from "./layout-capture.mts";
+import { type Capture, mergeCapture, parseCapture, saveCapture } from "./layout-capture.mts";
 
 function capture(overrides: Partial<Capture>): Capture {
   return {
@@ -186,4 +186,14 @@ describe(saveCapture, () => {
       /isn't a capture/u,
     );
   });
+});
+
+test("accepts version 2 native measurements and preserves explicit limits", () => {
+  const native = capture({
+    measurements: ["controls"],
+    notMeasured: { "text-flows": "Text.Layout has no resolved source string" },
+    version: 2,
+  });
+
+  assert.deepEqual(parseCapture(native), native);
 });

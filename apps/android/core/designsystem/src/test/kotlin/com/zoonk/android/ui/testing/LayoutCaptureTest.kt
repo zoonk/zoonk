@@ -3,14 +3,17 @@ package com.zoonk.android.ui.testing
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,6 +42,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.json.JSONArray
@@ -78,6 +82,39 @@ class LayoutCaptureTest {
     @After
     fun restore() {
         shots?.let { System.setProperty("zoonk.shots", it) } ?: System.clearProperty("zoonk.shots")
+    }
+
+    @Test
+    fun pageRulesReadActualTextLinesAndEveryButtonLook() {
+        val parts =
+            capture {
+                ListRow(headline = { Text("Monday —\nFriday") })
+                OutlinedButton(onClick = {}) { Text("Continue") }
+            }
+        val text = parts.elements().first { it.optString("part") == "text" && it.optString("text").startsWith("Monday") }
+        assertEquals(
+            listOf("Monday —", "Friday"),
+            (0 until text.getJSONArray("lineTexts").length()).map {
+                text.getJSONArray("lineTexts").getString(it)
+            },
+        )
+        assertEquals("label", text.getString("textRole"))
+        assertTrue(parts.has("control"))
+    }
+
+    @Test
+    fun clippingAndUnsignedScrollsAreRecordedButTheKitFadeIsAllowed() {
+        val parts =
+            capture {
+                Box(Modifier.width(40.dp).height(12.dp).clipToBounds()) {
+                    Text("Content that continues", softWrap = false)
+                }
+                Row(Modifier.width(40.dp).horizontalScroll(rememberScrollState())) { Text("Content that scrolls") }
+                Row(Modifier.width(40.dp).fadingHorizontalScroll(rememberScrollState())) { Text("Content with the kit sign") }
+            }
+        val cuts = parts.elements().filter { it.optString("part") == "cut" }
+        assertTrue(cuts.any { it.optString("text") == "Content that continues" })
+        assertEquals(1, cuts.count { it.optString("reason") == "horizontal scroll has no kit scroll sign" })
     }
 
     @Test

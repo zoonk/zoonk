@@ -82,3 +82,5 @@ For each screen or flow the change touches: requests on first open, on return an
 ## Generated API client
 
 The app imports the local `apps/apple/ZoonkAPI` package. Its generator inputs live in `apps/apple/ZoonkAPI/Sources/ZoonkAPI/openapi.json` and `openapi-generator-config.yaml`; regenerate the contract with `pnpm openapi:generate`. Include the package sources in Apple formatting checks.
+
+The version 2 capture records every shared action's control frame and kind, including outline and ghost actions, for `one-height`. `line-end` and `lone-word` remain **not measured on apple**: `Text.Layout` exposes glyph character indices but not the resolved source string, and a localization key is not the drawn text. `cut` remains **not measured on apple**: the UIKit host tree does not expose SwiftUI masks, declared clamps or the kit's continuation sign reliably. The capture writes these reasons in `notMeasured`; they survive collection and fail alignment verification.

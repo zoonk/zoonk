@@ -236,13 +236,19 @@ function missingMeasurements(context: Context): AlignmentFinding[] {
   } as const;
 
   return Object.entries(required).flatMap(([rule, measurement]) =>
-    context.capture.version === 2 && context.capture.measurements?.includes(measurement)
+    !context.capture.notMeasured?.[measurement] &&
+    context.capture.version === 2 &&
+    context.capture.measurements?.includes(measurement)
       ? []
       : [
           finding(context, {
-            detail: `capture version ${context.capture.version}: ${measurement} were not recorded`,
+            detail:
+              context.capture.notMeasured?.[measurement] ??
+              `capture version ${context.capture.version}: ${measurement} were not recorded`,
             level: "not-measured",
-            message: `${rule} measurements were not recorded`,
+            message: context.capture.notMeasured?.[measurement]
+              ? `${rule} not measured on ${context.capture.platform}`
+              : `${rule} measurements were not recorded`,
             piece: "page",
             rule,
           }),

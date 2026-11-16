@@ -500,7 +500,14 @@
           "sha256": SHA256.hash(data: png).map { String(format: "%02x", $0) }.joined(),
           "pixels": [picture.pixelWidth, picture.pixelHeight],
         ],
-        "version": 1,
+        "version": 2,
+        "measurements": ["controls"],
+        "notMeasured": [
+          "text-flows":
+            "Text.Layout exposes glyph character indices but no resolved source string; a Text localization key is not its drawn words",
+          "clipping":
+            "SwiftUI masks and line clamps are not exposed by the UIKit host tree; clip boundaries and the kit scroll sign cannot be distinguished reliably",
+        ],
         "platform": "apple",
         "scenario": scenario,
         "screen": screen,
@@ -1001,7 +1008,13 @@
           }
           out.append(element)
         case .action(let variant):
-          // Only a main action's fill counts; another look is written only as a pair's anchor.
+          let control: [String: Any] = [
+            "id": "control\(index)", "piece": "page", "part": "control",
+            "group": NSNull(), "row": NSNull(), "bounds": Self.bounds(record.frame),
+            "ink": Self.bounds(record.frame), "variant": "button",
+            "surface": record.surface.flatMap { surfaces[$0] } ?? "page",
+          ]
+          out.append(control)
           guard variant == "filled" || record.anchor != nil else { continue }
           let surface = record.surface.flatMap { surfaces[$0] } ?? "page"
           var element: [String: Any] = [
@@ -1082,6 +1095,11 @@
       }
 
       element["text"] = record.text.flatMap(Self.words)
+      if part == .label {
+        element["textRole"] = "label"
+      } else if part == .value {
+        element["textRole"] = "facts"
+      }
 
       // The layout's baseline and capitals hold off screen too; what was drawn there doesn't show.
       if picture.shows(record.frame, host: record.host) {
