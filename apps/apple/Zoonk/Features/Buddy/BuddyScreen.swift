@@ -111,6 +111,17 @@ private struct BuddyContent: View {
         .onAppear { isDayShown = false }
     } content: { isBeside in
       thread(opensDay: !isBeside)
+        .onChange(
+          of: BuddyDayOpening(
+            goalID: status.today?.goalId, localDate: status.today?.localDate,
+            inSheet: isDayShown, inPane: isBeside)
+        ) { previous, opening in
+          if previous.goalID != opening.goalID || previous.localDate != opening.localDate
+            || previous.inSheet && !opening.inSheet && !opening.inPane
+          {
+            missionTap.cancel()
+          }
+        }
     }
     .barTitleAfterHero(name)
     .taskOptions(
@@ -165,9 +176,6 @@ private struct BuddyContent: View {
       if isCovered {
         missionTap.cancel()
       }
-    }
-    .onChange(of: status.today.map { "\($0.goalId) \($0.localDate)" }) {
-      missionTap.cancel()
     }
     .onDisappear {
       missionTap.cancel()
@@ -468,4 +476,11 @@ private struct BuddyContent: View {
       }
     }
   }
+}
+
+private struct BuddyDayOpening: Equatable {
+  let goalID: String?
+  let localDate: String?
+  let inSheet: Bool
+  let inPane: Bool
 }

@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -74,12 +75,13 @@ final class BuddyStoreTests: XCTestCase {
 }
 
 private final class BuddyAPIStub: BuddyAPIClient, @unchecked Sendable {
+  var shownStatus = BuddyStatus.fixture
   var saveFailure: Error?
   var answerFailure: Error?
   var pages: [String?: EarlierQuestionsPage] = [:]
 
   func status(timeZone: String, token: String) async throws -> BuddyStatus {
-    .fixture
+    shownStatus
   }
 
   func save(_ buddy: BuddyChoice, token: String) async throws {
@@ -143,4 +145,115 @@ extension CurrentAccount {
       image: nil,
       name: "Learner",
       username: "learner"))
+}
+
+@MainActor
+final class BuddyDayOpeningTests: XCTestCase {
+  func testClosingDayBeforeAMissionAnswersOpensNothingThenOrLater() async throws {
+    let (window, api, opened) = try await waitingMission()
+    try closeRequestSheet(in: window)
+    try await settle()
+    await api.releaseHeldCall()
+    try await settle()
+    XCTAssertEqual(opened.count, 0)
+    try await showDay(in: window)
+    XCTAssertEqual(opened.count, 0)
+  }
+
+  func testClosingDayBeforeAMissionFailsLeavesTheNextOpeningClean() async throws {
+    let (window, api, _) = try await waitingMission(fails: true)
+    try closeRequestSheet(in: window)
+    try await settle()
+    await api.releaseHeldCall()
+    try await settle()
+    try await showDay(in: window)
+    XCTAssertFalse(
+      spoken(in: window).contains { $0.contains(Self.failure) },
+      "A closed sheet's failure stays gone: \(spoken(in: window))")
+  }
+
+  func testMovingDayFromSheetIntoPaneKeepsTheMissionAndOpensOnce() async throws {
+    let (window, api, opened) = try await waitingMission()
+    window.frame = CGRect(x: 0, y: 0, width: 1376, height: 1032)
+    try await settle()
+    await api.releaseHeldCall()
+    try await settle()
+    XCTAssertEqual(opened.count, 1)
+    XCTAssertNil(window.rootViewController?.presentedViewController)
+  }
+
+  func testMovingDayIntoPaneAndBackKeepsTheMissionAndOpensOnce() async throws {
+    let (window, api, opened) = try await waitingMission()
+    window.frame = CGRect(x: 0, y: 0, width: 1376, height: 1032)
+    try await settle()
+    window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
+    try await settle()
+    await api.releaseHeldCall()
+    try await settle()
+    XCTAssertEqual(opened.count, 1)
+  }
+
+  private static let failure = String(
+    localized: "We couldn't open this step. Try again.", table: "Today")
+
+  private func waitingMission(fails: Bool = false) async throws
+    -> (UIWindow, StudyAPIStub, OpenedMissions)
+  {
+    let api = StudyAPIStub(
+      openings: [
+        try JSONDecoder().decode(
+          StudyBlockOpening.self,
+          from: Data(#"{"kind":"lesson","lessonId":"l1","sessionId":"s1"}"#.utf8))
+      ],
+      openError: fails ? .network : nil, holdsOpening: true)
+    let buddy = BuddyAPIStub()
+    buddy.shownStatus.today = .init(
+      fullMeal: .init(bonus: 10, earned: false), goalId: PageServer.goalID,
+      localDate: "2026-11-16",
+      missions: [
+        .init(
+          done: 0, kind: .somethingNew,
+          opens: .init(value1: .case1(.init(blockId: "b1", kind: .block))), status: .todo, total: 1)
+      ])
+    let dependencies = AppDependencies(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!, transport: OfflineTransport()),
+      session: .preview(account: .planTestAccount), imageLoader: .live(),
+      subscriptionStore: .live(), learnerSummaryAPI: OneGoalSummary(kind: .learn))
+    await dependencies.learnerSummaryStore.summary.load()
+    let store = BuddyStore(api: buddy, cache: dependencies.cache)
+    await store.status.load()
+    let today = TodayStore(api: api, cache: dependencies.cache)
+    let opened = OpenedMissions()
+    try readsWhatVoiceOverReads()
+    let window = try show(
+      NavigationStack { BuddyScreen() }
+        .environment(store)
+        .environment(today)
+        .appDependencies(dependencies)
+        .environment(AppRouter())
+        .environment(\.tutorPlaces, TutorPlaces { _ in opened.count += 1 })
+        .zoonkStyles())
+    window.frame = CGRect(x: 0, y: 0, width: 420, height: 912)
+    try await settle()
+    try await showDay(in: window)
+    try activate(
+      where: { $0.contains(String(localized: "Do a new lesson", table: "Today")) }, in: window)
+    await api.waitForHeldCall()
+    return (window, api, opened)
+  }
+
+  private func showDay(in window: UIWindow) async throws {
+    try activate(where: { $0.hasPrefix("Energy ") && $0.contains("mission") }, in: window)
+    try await settle()
+  }
+
+  private func settle() async throws {
+    try await Task.sleep(for: .milliseconds(600))
+  }
+}
+
+@MainActor
+private final class OpenedMissions {
+  var count = 0
 }
