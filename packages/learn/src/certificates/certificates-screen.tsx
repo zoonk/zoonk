@@ -186,7 +186,9 @@ export function CertificatesHeader() {
     <DetailHero>
       <DetailHeroText>
         <DetailTitle>{t("Certificates")}</DetailTitle>
-        <PageSubtitle>{t("A certificate for every level and plan you finish.")}</PageSubtitle>
+        <PageSubtitle>
+          {t("A certificate for every course level, language level and plan you finish.")}
+        </PageSubtitle>
       </DetailHeroText>
     </DetailHero>
   );

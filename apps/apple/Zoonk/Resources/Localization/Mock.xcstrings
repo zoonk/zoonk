@@ -1851,10 +1851,11 @@
             }
           }
         }
-      }
+      },
+      "comment" : "A mock exam's size: its number of questions, then its time limit."
     },
     "%lld questions are blank." : {
-      "comment" : "Blank questions when handing in",
+      "comment" : "Before handing in a mock exam: how many of its questions are blank or flagged.",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -2000,13 +2001,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pergunta está em branco."
+                  "value" : "%lld questão está em branco."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld perguntas estão em branco."
+                  "value" : "%lld questões estão em branco."
                 }
               }
             }
@@ -2027,7 +2028,7 @@
       }
     },
     "%lld questions are flagged." : {
-      "comment" : "Flagged questions when handing in",
+      "comment" : "Before handing in a mock exam: how many of its questions are blank or flagged.",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -2173,13 +2174,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pergunta está marcada."
+                  "value" : "%lld questão está marcada."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld perguntas estão marcadas."
+                  "value" : "%lld questões estão marcadas."
                 }
               }
             }
@@ -2200,7 +2201,7 @@
       }
     },
     "%lld questions were left when time ran out." : {
-      "comment" : "Questions left at the end",
+      "comment" : "A mock exam's result: its questions left unanswered when time ran out.",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -2346,13 +2347,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pergunta ficou sem resposta quando o tempo acabou."
+                  "value" : "%lld questão ficou sem resposta quando o tempo acabou."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld perguntas ficaram sem resposta quando o tempo acabou."
+                  "value" : "%lld questões ficaram sem resposta quando o tempo acabou."
                 }
               }
             }
@@ -2373,7 +2374,7 @@
       }
     },
     "%lld seconds per %@ question. Aim for %lld or less." : {
-      "comment" : "The slowest area against the exam's pace",
+      "comment" : "A mock exam's result: the time spent on each question of its slowest subject.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2584,7 +2585,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@seconds@ por questão de %2$@. Tente responder em %3$lld ou menos."
+            "value" : "%#@seconds@ por questão de %2$@. Tente ficar em %3$lld ou menos."
           },
           "substitutions" : {
             "seconds" : {
@@ -8713,7 +8714,7 @@
       }
     },
     "Questions" : {
-      "comment" : "The answer sheet's questions",
+      "comment" : "Labels the number of questions in an exam or a mock exam.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8760,7 +8761,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perguntas"
+            "value" : "Questões"
           }
         },
         "tr" : {

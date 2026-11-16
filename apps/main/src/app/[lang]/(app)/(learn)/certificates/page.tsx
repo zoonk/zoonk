@@ -51,7 +51,9 @@ async function CertificatesContent() {
       <>
         <CertificatesBar back={BACK_HREF} />
         <AuthGatePage
-          description={t("A certificate for every level and plan you finish.")}
+          description={t(
+            "A certificate for every course level, language level and plan you finish.",
+          )}
           next="/certificates"
           title={t("Certificates")}
         />

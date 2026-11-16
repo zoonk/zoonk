@@ -13,7 +13,10 @@ export const languageAimViewSchema = z
     aim: z
       .enum(CEFR_LEVELS)
       .nullable()
-      .meta({ description: "The level the course goes up to; null when none is set yet" }),
+      .meta({
+        description:
+          "The level the course goes up to, as a band that matches one of `choices` when it's among them; null when none is set yet",
+      }),
     choices: z
       .array(
         z.object({
@@ -28,6 +31,13 @@ export const languageAimViewSchema = z
       )
       .meta({
         description: "The aims above the learner's level, lowest first, to offer as a change",
+      }),
+    label: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          'The aim as the rest of the plan names it, half bands included ("B1+"): show this, not `aim`, wherever the goal\'s aim is named, the picked choice included; null when none is set yet',
       }),
   })
   .meta({

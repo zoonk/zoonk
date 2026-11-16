@@ -15,10 +15,12 @@ import {
 import { StatusMark } from "../_components/status-mark";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 import { useExamScreen } from "./exam-context";
+import { useExamQuestionCount } from "./use-exam-question-count";
 
 export function ExamNextMock({ current }: { current: boolean }) {
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
+  const questionCount = useExamQuestionCount();
   const { exam, hrefs } = useExamScreen();
   const next = exam.nextMock;
 
@@ -37,9 +39,7 @@ export function ExamNextMock({ current }: { current: boolean }) {
       <ListRowBody>
         <ListRowContent>
           <ListRowTitle>{t("Next mock exam")}</ListRowTitle>
-          <ListRowDescription>
-            {t("{count, plural, one {# question} other {# questions}}", { count: next.questions })}
-          </ListRowDescription>
+          <ListRowDescription>{questionCount(next.questions)}</ListRowDescription>
         </ListRowContent>
         {next.date && <ListRowTrailing>{formatPlanDate(next.date)}</ListRowTrailing>}
       </ListRowBody>

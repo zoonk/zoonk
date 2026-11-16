@@ -11,6 +11,7 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ChapterMark } from "../_components/chapter-mark";
 import { LearnLink } from "../learn-link";
+import { usePlanScreen } from "../plan/plan-context";
 import { FarTopicSheet } from "../topic-outline/far-topic-sheet";
 import { useTopicOutlineActions } from "../topic-outline/topic-outline-actions";
 import { useWritingLine } from "../topic-outline/use-far-topic-line";
@@ -138,6 +139,21 @@ function ChapterRow({
   );
 }
 
+function ShowMoreLabel({ hidden, showAll }: { hidden: number; showAll: boolean }) {
+  const t = useExtracted();
+  const { goal } = usePlanScreen();
+
+  if (goal.kind === "language") {
+    return showAll
+      ? t("Show fewer units")
+      : t("{count, plural, one {# more unit} other {# more units}}", { count: hidden });
+  }
+
+  return showAll
+    ? t("Show fewer chapters")
+    : t("{count, plural, one {# more chapter} other {# more chapters}}", { count: hidden });
+}
+
 export function JourneyChapters({
   chapters,
   checkpoint,
@@ -147,7 +163,6 @@ export function JourneyChapters({
   checkpoint: PlanPhaseCheckpointView | null;
   links: JourneyPathLinks;
 }) {
-  const t = useExtracted();
   const [showAll, setShowAll] = useState(false);
   const rows = chapters.filter((chapter) => !isWritingAhead(chapter));
   const range = getChapterWindow({ states: rows.map((chapter) => chapter.state) });
@@ -179,11 +194,7 @@ export function JourneyChapters({
             </span>
             <PathRowBody>
               <span>
-                {showAll
-                  ? t("Show fewer chapters")
-                  : t("{count, plural, one {# more chapter} other {# more chapters}}", {
-                      count: hidden,
-                    })}
+                <ShowMoreLabel hidden={hidden} showAll={showAll} />
               </span>
             </PathRowBody>
           </button>

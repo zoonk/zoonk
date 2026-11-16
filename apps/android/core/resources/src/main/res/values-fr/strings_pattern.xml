@@ -15,7 +15,7 @@
   "pattern_seen": "d7903529c806739009d58c22c9962e202aecf18c24726f96c215ee7337e3bcf6",
   "pattern_seen_times": "9564185803d4bcb564467b903183bab01168cb40a8f417526c8e06b686091f86",
   "pattern_title": "8d52821698ee8dad014dccd7026c3c4f303eb9e0018d03543356b115dffdb3d0",
-  "pattern_typos_detail": "d92b75306292885069083eb81d24ddd4db611db7c015762b0c10e3c93965a9ad",
+  "pattern_typos_detail": "9c6598eb9d2d4c96e53b339551dac5c4636c66c67edb5a972cb2f3df4b2ff64c",
   "pattern_where_you_slipped": "922f9ced75f56c44d113d23102fbeba3107627e61c52ba62a5d7a59d9c6b031e",
   "pattern_you_said": "0d58472b11e443760d325faaeab408a56043a3e68b87c57c0980dc4a917733b0"
 }
@@ -50,5 +50,5 @@
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->
     <string name="pattern_done">Terminé</string>
     <string name="pattern_just_typos">De simples fautes de frappe</string>
-    <string name="pattern_typos_detail">Tes erreurs récentes sont des fautes de frappe, pas une règle que tu ne connais pas. Il n’y a rien à travailler.</string>
+    <string name="pattern_typos_detail">Tes dernières erreurs venaient de fautes de frappe, pas d’une règle mal comprise. Tu n’as rien à travailler.</string>
 </resources>

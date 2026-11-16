@@ -73,6 +73,7 @@
   "subscription_questions_title": "7f8507377991fafd90814d6863b66252069ee3976e5d8d398374c6f966c7a90b",
   "subscription_questions_unsure": "0d528bd25547c80966eac6ae16a05125db1111a7266e8c897440f96f0d55596e",
   "subscription_renewal_failed": "7ed61076b4e054785f412081cde72b75d6ccf38d843ba54eac1eddb3063064c5",
+  "subscription_renewal_failed_website": "02bcfcc40dc1d93de995ec5d01ff973da9525ecb8a67ab4cd52dd5d610e2d745",
   "subscription_renews_on": "71c7539f70d699d6cf92bd88ea0528e5571a7872fb5bb2409d7ecc3a4b3fb1c4",
   "subscription_save": "7d35ea90aadf14fc82fabf44372cc069fbcfd12815063318a5d4bc38bda0c48f",
   "subscription_show_answer": "e7a5f0c2e6887f3ec0d9825589ad1bdfed3215094ed552a12029fa1e8a6dd9c2",
@@ -108,6 +109,8 @@
     <string name="subscription_cancel_at_period_end">이미 결제한 기간이 끝날 때까지 Plus를 이용할 수 있어요.</string>
     <string name="subscription_website">웹사이트에서 구매</string>
     <string name="subscription_renewal_failed">최근 갱신 결제에 실패했어요.</string>
+    <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
+    <string name="subscription_renewal_failed_website">구독한 웹사이트에서 결제 정보를 업데이트하세요.</string>
     <string name="subscription_cancel_unpaid">Plus가 바로 종료되고 더는 요금이 청구되지 않아요.</string>
     <string name="subscription_cancel_back">돌아가기</string>
     <string name="subscription_keep_plus">Plus 유지하기</string>
@@ -166,6 +169,10 @@
     <plurals name="subscription_free_buddy">
         <item quantity="other">AI 공부 짝꿍: 하루 메시지 %d개</item>
     </plurals>
+    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
+    <plurals name="subscription_free_buddy_monthly">
+        <item quantity="other">AI 공부 짝꿍: 하루 메시지 %1$d개, 한 달 최대 %2$s개</item>
+    </plurals>
     <!-- Calls are spoken practice conversations with an AI partner. -->
     <string name="subscription_free_calls">말하기 연습 대화</string>
     <string name="subscription_questions_title">자주 묻는 질문</string>
@@ -186,6 +193,10 @@
     <plurals name="subscription_answer_free_lessons">
         <item quantity="other">시험을 포함한 모든 목표를 합쳐 매달 레슨 %d개</item>
     </plurals>
+    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
+    <plurals name="subscription_answer_free_material">
+        <item quantity="other">내 학습 자료 추가: 하루에 파일 %d개</item>
+    </plurals>
     <string name="subscription_answer_free_calls">말하기 연습 대화는 Plus보다 횟수가 적어요(시험 말하기 과제는 Plus에 포함돼요)</string>
     <string name="subscription_question_unlimited">Plus는 정말 무제한인가요?</string>
     <string name="subscription_answer_unlimited">거의 무제한이에요. 레슨, 목표, 짝꿍에는 봇과 자동화 도구를 막기 위한 제한만 있고, 사람이 공부하는 데는 제한을 두지 않아요. 말하기 연습 대화에는 하루와 한 달 이용 한도가 있지만, Plus 없이 이용할 때보다 높아요.</string>
@@ -195,12 +206,4 @@
     <string name="subscription_answer_cancel">이미 결제한 기간이 끝날 때까지 Plus를 계속 이용할 수 있어요. 그 후에는 무료 요금제로 돌아가고, 목표와 진도는 그대로 유지돼요.</string>
     <string name="subscription_question_refund">환불받을 수 있나요?</string>
     <string name="subscription_answer_refund">Google Play에서 구매한 Plus의 환불은 Google Play에서 처리해요. Google Play에서 환불을 요청해 주세요. 저희 웹사이트에서 구독했다면 hello@zoonk.com으로 이메일을 보내 주세요. 확인해 드릴게요.</string>
-    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
-    <plurals name="subscription_free_buddy_monthly">
-        <item quantity="other">AI 공부 짝꿍: 하루 메시지 %1$d개, 한 달 최대 %2$s개</item>
-    </plurals>
-    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
-    <plurals name="subscription_answer_free_material">
-        <item quantity="other">내 학습 자료 추가: 하루에 파일 %d개</item>
-    </plurals>
 </resources>

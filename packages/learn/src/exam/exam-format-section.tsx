@@ -16,6 +16,7 @@ import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
 import { useExamScreen } from "./exam-context";
 import { useExamDayDate } from "./exam-labels";
+import { useExamQuestionCount } from "./use-exam-question-count";
 
 const FORMAT_TITLE_ID = "exam-format-title";
 
@@ -30,7 +31,7 @@ function useFormatTitle(days: number): string {
 }
 
 function useFormatDetail(format: readonly ExamFormatDay[]): string | null {
-  const t = useExtracted();
+  const questionCount = useExamQuestionCount();
   const parts = format.flatMap((day) => day.parts);
 
   const questions = parts.reduce(
@@ -40,17 +41,14 @@ function useFormatDetail(format: readonly ExamFormatDay[]): string | null {
 
   const written = parts.filter((part) => part.written).map((part) => part.name);
 
-  const count =
-    questions > 0
-      ? t("{count, plural, one {# question} other {# questions}}", { count: questions })
-      : null;
+  const count = questions > 0 ? questionCount(questions) : null;
 
   return [count, ...written].filter(Boolean).join(FACT_SEPARATOR) || null;
 }
 
 function useDayParts() {
-  const t = useExtracted();
   const format = useFormatter();
+  const questionCount = useExamQuestionCount();
 
   return (day: ExamFormatDay): { count: string | null; parts: string } => {
     const questions = day.parts.reduce(
@@ -63,10 +61,7 @@ function useDayParts() {
       { type: "conjunction" },
     );
 
-    const count =
-      questions > 0
-        ? t("{count, plural, one {# question} other {# questions}}", { count: questions })
-        : null;
+    const count = questions > 0 ? questionCount(questions) : null;
 
     return { count, parts };
   };

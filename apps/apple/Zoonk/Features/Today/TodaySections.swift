@@ -425,7 +425,7 @@ struct TodayPlanChangeSection: View {
           ? Text(
             "Keep studying after the exam", tableName: "Today",
             comment: "Opens studying every topic, past the exam's date")
-          : Text("Study everything", tableName: "Today", comment: "Opens studying the whole goal")
+          : Text("Remove end date", tableName: "Today")
       }
     } label: {
       Text("More options", tableName: "Today", comment: "Opens the other answers to missed days")
@@ -889,7 +889,8 @@ struct TodayProgressSection: View {
       let standing = plans.languageStanding(goalId: view.goal.id)
 
       card(
-        title: Text("Level", tableName: "Today", comment: "Title of a language goal's level card"),
+        // A space holds the title's line until the language's level is read.
+        title: Text(standing.value?.levelTitle ?? " "),
         value: standing.value?.levelText, detail: nil
       ) {
         EmptyView()

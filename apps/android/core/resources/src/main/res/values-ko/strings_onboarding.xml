@@ -78,14 +78,14 @@
   "onboarding_exam_on_two": "a68cdab36287a9618339832cc35aa76d99ea00dec0be9ca25839903911d24920",
   "onboarding_exam_ready": "aa7a711aa0d8933131e411f5b711d025495e13dc2f27046279b81b4e3675524a",
   "onboarding_exam_ready_first_day": "85611e845c19e2da32b30bfe25aad13eca97df56c480aaed32a539142cb925f7",
-  "onboarding_explain_description": "72e9faa15dc1f973414f2c109167875a42be6c500999c8fa00a608b51ef26707",
+  "onboarding_explain_description": "edae2f56cb8ef9f3cdcf6fae2bb52fae362804c5bbd3069da87638876ae4eda7",
   "onboarding_explain_it": "e6c946b04d3c2cbbde01cc8a9903a95962cab1f8be503ace3c0ff2de74c4b7bd",
   "onboarding_finish_later": "e51d9378571195d97e6ffe7398b50de93f0419a6407608cf6313b8903534c059",
   "onboarding_finish_later_description": "76c74258adfb2c9a50f2cf35b93be166197cd18032d22300b3391c267d510fde",
   "onboarding_fix_something": "0214e7c1d61b99d889d49bf40050d4d41057128081904bbb95cb4cac513892e0",
   "onboarding_follow_ups_description": "4f45e5df517794ee55a619ef4b089dad181cc12a6f6a87d33a20565d1e9ab397",
   "onboarding_follow_ups_title": "4c512b059e7ebb963e23a3f786c54eb971f777d3bb570979faf60afdc392f20c",
-  "onboarding_full_course": "b064e4c7d83f9631289befd233bff12318b31538f31f3ecc373878eddc38e912",
+  "onboarding_full_course": "60910dd8738674240fa2dcc49d4b2a903ce606a70a0a3e041065c8bbcc9be671",
   "onboarding_full_course_finish": "e893de3acb0d8b20d86d07a530f294153cc3808485fa85e9216d5e9e3991de33",
   "onboarding_full_course_finish_month": "d8943854399fa7f2f47538bf01be69004ed2eca43ec37584dab7fa16f9d9187c",
   "onboarding_full_course_rule": "a3887ad5a7578776f312c8b6c0c32ce3fe2ac492f99dccc95ee643a76d0412d2",
@@ -116,7 +116,7 @@
   "onboarding_language_test_description": "a30f1d834268c77da395231f1bbddac1fe26577b3ce46d071cd996d8551f0e22",
   "onboarding_language_test_did_not_understand": "e85a43b6af7fa75b7ba9b26f2b44b5e32bd163cfa3a59b5d60380f553739500d",
   "onboarding_language_test_done_description": "c60a7ad9d3bc1261d015b1b7660468ac95e4624359eb922ac622ff43741935c8",
-  "onboarding_language_test_done_title": "2a2e88e430d8c672b75ca267eb24ae93d3987f4496703e6807e40c50e86aaec9",
+  "onboarding_language_test_done_title": "38a5fb1f64178423b1b14916c6211777df77b3df0ef5fd4301be6bdb985697ff",
   "onboarding_language_test_listening": "334df400ad8b13f5194b4e71f872b39e52135bdbacd431dd6216be712e4f58a3",
   "onboarding_language_test_message": "5aed54f35d658b678b615be5cae0ec37d922ec8708fdce5a5fa99b04bf67d298",
   "onboarding_language_test_message_loading": "524aeaffb0f273e9daf7064554abd385e90f0072354ed399c6c3b40233099d49",
@@ -270,8 +270,8 @@
   "onboarding_reveal_estimated_guide_areas": "69492c4077de7bd7ae4e54faf927afc6f442a155c1de9617e7cff65e7799d93d",
   "onboarding_reveal_estimated_material_area": "b8d508445379a70c8e45801842ed4091936fc6d67def8026b036bc72125a087f",
   "onboarding_reveal_estimated_material_areas": "31988002e52ca9cf135af58396d705a40bf45fa1f4ad50cd2d101dc410622a35",
-  "onboarding_reveal_estimated_notice_area": "565dd4677f8d6425365bfb1096b9c92e9988dd40b44b4d4ec7b14dbb41016af7",
-  "onboarding_reveal_estimated_notice_areas": "34cc26a05af66f2ffdc162d2834b1ffc107a9b1fe90f6afba37e3aca7165999e",
+  "onboarding_reveal_estimated_notice_area": "78d1d2189f3dc1e7c2a96698e063455b3727e8e89599ca0a4dc6a04d0052ae08",
+  "onboarding_reveal_estimated_notice_areas": "5edeab6da882dbb62f805f6635928c80d1f484d3a6409570097fcd7e18656b00",
   "onboarding_reveal_estimated_percent": "c1eb3c6df03b1b81c9d7525bbbc96ae553f4570913fe83946d5b6ad11f3d93b3",
   "onboarding_reveal_first_week": "c35993178389746031c07a54c1bc2a4e43344f00b49bdfe05c21eae9d26a106f",
   "onboarding_reveal_full_course": "b4d25714c94084919d7bbd9d240bb93df4e50496aaab3fbb6edee8e70c567d6c",
@@ -561,7 +561,8 @@
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="onboarding_row_guide_says">공식 시험 일정표에는 %1$s(으)로 나와 있어요.</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
-    <string name="onboarding_explain_description">읽는 데 약 %1$s 걸리는 짧은 맞춤 설명이에요.</string>
+    <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
+    <string name="onboarding_explain_description">읽는 데 약 5분 걸리는 짧은 설명을 만들어 드릴게요.</string>
     <string name="onboarding_explain_it">설명 보기</string>
     <string name="onboarding_declined_title">이 목표는 도와드릴 수 없어요</string>
     <string name="onboarding_declined_description">Zoonk는 자신이나 다른 사람에게 해를 끼칠 수 있는 내용이나 도박, 부정행위 방법은 가르치지 않아요. 그 밖에 배우고 싶은 게 있나요?</string>
@@ -684,7 +685,7 @@
     <string name="onboarding_language_test_message">음성 메시지가 도착했어요. 듣고 답해 보세요.</string>
     <string name="onboarding_language_test_say_it">소리 내어 말해 보세요</string>
     <string name="onboarding_language_test_skip_part">이 부분 건너뛰기</string>
-    <string name="onboarding_language_test_done_title">오늘의 실력</string>
+    <string name="onboarding_language_test_done_title">내 %1$s 레벨</string>
     <string name="onboarding_language_test_done_description">테스트 결과를 바탕으로 했어요. 매주 더 정확해져요.</string>
     <string name="onboarding_language_test_build_plan">내 계획 만들기</string>
     <!-- Language skills, each beside its level. -->
@@ -796,7 +797,9 @@
     <string name="onboarding_reveal_estimated_material_areas">~ 추정치: 자료에 이 영역들의 비중이 나와 있지 않아요.</string>
     <string name="onboarding_reveal_estimated_guide_area">~ 추정치: 공식 안내서에 이 영역의 비중이 나와 있지 않아요.</string>
     <string name="onboarding_reveal_estimated_guide_areas">~ 추정치: 공식 안내서에 이 영역들의 비중이 나와 있지 않아요.</string>
+    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
     <string name="onboarding_reveal_estimated_notice_area">~ 추정치: 공고에 이 영역의 비중이 나와 있지 않아요.</string>
+    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
     <string name="onboarding_reveal_estimated_notice_areas">~ 추정치: 공고에 이 영역들의 비중이 나와 있지 않아요.</string>
     <string name="onboarding_intent_label">자료로 하고 싶은 일</string>
     <string name="onboarding_continue">계속하기</string>
@@ -936,7 +939,7 @@
         <item quantity="other">학습일 %d일</item>
     </plurals>
     <string name="onboarding_schedule_title">하루에 얼마나 공부할 수 있나요?</string>
-    <string name="onboarding_full_course">시험 후에도 모든 내용 공부하기</string>
+    <string name="onboarding_full_course">시험 후에도 계속 공부하기</string>
     <string name="onboarding_full_course_rule">시험 전까지는 자주 출제되는 내용부터 배워요. 그때까지 다루지 못하는 내용은 시험 후에 배워요.</string>
     <string name="onboarding_full_course_until_exam">시험 전까지는 자주 출제되는 내용부터 배워요.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->

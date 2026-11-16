@@ -59,7 +59,7 @@
     <string name="mock_chooser_full_exam_without">Sınavın tamamı, %1$s hariç</string>
     <!-- Under an option: the mock exam leaves out the exam's written part. -->
     <string name="mock_chooser_no_written_part">Yazılı bölüm yok</string>
-    <!-- A mock exam's size in a row: %1$d questions; %2$s is a duration, such as "4 hr 42 min". -->
+    <!-- A mock exam's size: its number of questions, then its time limit. -->
     <plurals name="mock_chooser_option_size">
         <item quantity="one">%1$d soru · %2$s</item>
         <item quantity="other">%1$d soru · %2$s</item>
@@ -84,6 +84,7 @@
     <string name="mock_chooser_writing_questions_line">Her branşta ne soracağımızı seçiyoruz…</string>
     <!-- The panel beside the options, about the one picked. -->
     <string name="mock_chooser_picked">Seçilen deneme sınavı</string>
+    <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="mock_chooser_questions">Sorular</string>
     <string name="mock_chooser_time_limit">Süre sınırı</string>
     <string name="mock_chooser_usually_takes">Genelde gereken süre</string>

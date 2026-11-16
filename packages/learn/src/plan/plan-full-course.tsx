@@ -4,7 +4,7 @@ import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { Switch } from "@zoonk/ui/components/switch";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
-import { useFormatIsoDate } from "../_utils/iso-date";
+import { useFinishSentence } from "../_components/finish-sentence";
 import { usePlanScreen } from "./plan-context";
 import { usePlanChange } from "./use-plan-change";
 
@@ -48,20 +48,13 @@ export function useFullCourse() {
 export type FullCourse = NonNullable<ReturnType<typeof useFullCourse>>;
 
 /** When a plan that studies past its exam ends; null while that month isn't known. */
-function useFinishText() {
-  const t = useExtracted();
-  const formatDate = useFormatIsoDate();
-
-  return (endDate: string | null): string | null =>
-    endDate &&
-    t("You finish in {month}.", {
-      month: formatDate(endDate, "sentenceMonth", { year: "always" }),
-    });
-}
-
 export function useFullCourseText() {
-  const finishText = useFinishText();
-  return { finish: (course: FullCourse): string | null => finishText(course.endDate) };
+  const finishSentence = useFinishSentence();
+
+  return {
+    finish: (course: FullCourse): string | null =>
+      course.endDate && finishSentence({ endDate: course.endDate }),
+  };
 }
 
 export function useKeepStudyingLabel(): string {

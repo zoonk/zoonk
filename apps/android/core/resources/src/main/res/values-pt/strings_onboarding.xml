@@ -78,14 +78,14 @@
   "onboarding_exam_on_two": "86d55e276cf25a91b21f8920e742fbcc23d4f24a0a403956561aac8e564da7c1",
   "onboarding_exam_ready": "74ffceab77823b851c78e3445be96a3961abf6bb2ece2e25caf98dc67c4d65ef",
   "onboarding_exam_ready_first_day": "6715e6143a415eb72da443c17ce40ca6bbbef502e0d2eb8cd6009ac9da1aa6ac",
-  "onboarding_explain_description": "d7009ceb1b72bcaa372bcb2106c8a82b43d5052b41222cf2676640d5f8392849",
+  "onboarding_explain_description": "972ff016ade1dca3505e9ded230600f3776d84e2265a96cda8026596903edc63",
   "onboarding_explain_it": "0a8b228075da6a9887893379a47f7d735c58a3cecbed3703b484be0f5c3f0d77",
   "onboarding_finish_later": "b585bc6afde844e6ce28427b93e6b1051e2d89f379fa2984e291b66a7e951d24",
   "onboarding_finish_later_description": "1ca91c59bd501c5a9fcb2e66b2f82e146ae322c8f809d11222d4b7a3791fd1e4",
   "onboarding_fix_something": "6ef1f3d30d3f1f024ae229c6651b350a6709650b2049499c4dc50ccd685d3be1",
   "onboarding_follow_ups_description": "b8a6c1b6074f1877cfa8f75bb506e45cd1f025e15ff98f43a6624572bd6b8d95",
   "onboarding_follow_ups_title": "be19e1d3c1055b584694d1beea8b8ce5a6008b07ca7feb39a899c46e9aae4d11",
-  "onboarding_full_course": "d350c7c9da4cc813a4e7bc4e627cbd7aa42288b00962be88f451fc9163468370",
+  "onboarding_full_course": "344f3fb7a682479d0d0ae9ee2f1b179796c6b6f90ad7e296650dd5aa2a4374da",
   "onboarding_full_course_finish": "42d43a5c306ffe364cfe25346442461a145576fe784ac7a76a73958ec5991a50",
   "onboarding_full_course_finish_month": "a25d9686734c18a12d831bcd22b6d1208602bd3a2bb893787e977d80c78e729a",
   "onboarding_full_course_rule": "914e3bd8835b822c1ffb5e32de22421bece5ae6f80e94cd72b59faa7756b289c",
@@ -116,7 +116,7 @@
   "onboarding_language_test_description": "62781770a12097c805c0e17df08c4d59fe3e9d5526904266c3ffb3b35a98364d",
   "onboarding_language_test_did_not_understand": "85982f82eb8a6e000dd41051da82da5626c94212ee062676fcee19898a6cf310",
   "onboarding_language_test_done_description": "3dc7b86e2323a058903e513670f5adc94ebabfef495a60f99851c2e9586e4c00",
-  "onboarding_language_test_done_title": "61fc2899af3185e702c10df2d58cf48430bdf4924a3927a15a5e638b4d5e3a5e",
+  "onboarding_language_test_done_title": "ab4283a4d6c917ad03936c1c252a4eb8676c0dadf50b087c541824d1cf7f9c6f",
   "onboarding_language_test_listening": "f9c0fcc1aa03c44e60442e90bb35512daba2d9e13d78972643a5700b2da34d60",
   "onboarding_language_test_message": "2fd3fbde6a5acb9c08554f82b9a59c5b79e7e42dfb35dd1b7bcca455a20d9ae0",
   "onboarding_language_test_message_loading": "2e3a9c6dd0b3b17a12f3cb7f4015aafc0a8796b01d0a256b9476407fb009858f",
@@ -270,8 +270,8 @@
   "onboarding_reveal_estimated_guide_areas": "92c4023b8581231f7f677d30b1d1e69a6f2b5c34157e2320ee2dc748cbdbfdb4",
   "onboarding_reveal_estimated_material_area": "2a350493cfe0c5de961a2f26f20eb334f3b2ad0a0e08a6623d602340a16f4f7c",
   "onboarding_reveal_estimated_material_areas": "8f1f774cc236935bc021285b083e5eeba1834fab63fa1bb5c9fde99c6d6d2a78",
-  "onboarding_reveal_estimated_notice_area": "bda37776bdd3233dac22848b50ecffc949418d2e9cbd8c1946910a2aca29e8f1",
-  "onboarding_reveal_estimated_notice_areas": "14b3912924ef24ffd3608af310d6287d7c4b8084f41519f8569cfd7b1f67020b",
+  "onboarding_reveal_estimated_notice_area": "6240c37092709b313d4a61b0964abbf3124cf6ad79b06e3ccd6cd2b6ff343976",
+  "onboarding_reveal_estimated_notice_areas": "3af314727617fae50ba1399efa7a509e6003aa9b02d820e547cce7c378bcc090",
   "onboarding_reveal_estimated_percent": "1367bf72e539876d063f27d3253e62f7727fb5420697f09f511ee9ffcce8f529",
   "onboarding_reveal_first_week": "3256d85e7b8f09778447e359c62df5ef943eff23cd954651042cb5868769fb2b",
   "onboarding_reveal_full_course": "d3a97c82acb459ffc9887b870a963548626805e859d1a4ed7dcb35ab0aa40f18",
@@ -565,7 +565,8 @@
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="onboarding_row_guide_says">O calendário oficial da prova indica %1$s.</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
-    <string name="onboarding_explain_description">Uma explicação curta criada para você, com cerca de %1$s de leitura.</string>
+    <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
+    <string name="onboarding_explain_description">A gente vai criar uma explicação curta que você lê em cerca de 5 minutos.</string>
     <string name="onboarding_explain_it">Me explique</string>
     <string name="onboarding_declined_title">A gente não pode ajudar com esse objetivo</string>
     <string name="onboarding_declined_description">O Zoonk não ensina nada que possa fazer mal a você ou a outras pessoas, nem jogos de azar ou formas de trapacear. Tem outra coisa que você gostaria de aprender?</string>
@@ -692,7 +693,7 @@
     <string name="onboarding_language_test_message">Você recebeu uma mensagem de voz. Ouça e responda.</string>
     <string name="onboarding_language_test_say_it">Fale em voz alta</string>
     <string name="onboarding_language_test_skip_part">Pular esta parte</string>
-    <string name="onboarding_language_test_done_title">Seu nível hoje</string>
+    <string name="onboarding_language_test_done_title">Seu nível de %1$s</string>
     <string name="onboarding_language_test_done_description">Com base no teste. Fica mais preciso a cada semana.</string>
     <string name="onboarding_language_test_build_plan">Criar meu plano</string>
     <!-- Language skills, each beside its level. -->
@@ -824,8 +825,10 @@
     <string name="onboarding_reveal_estimated_material_areas">~ Estimativa: seu material não informa o peso destas áreas.</string>
     <string name="onboarding_reveal_estimated_guide_area">~ Estimativa: o guia oficial não informa o peso desta área.</string>
     <string name="onboarding_reveal_estimated_guide_areas">~ Estimativa: o guia oficial não informa o peso destas áreas.</string>
-    <string name="onboarding_reveal_estimated_notice_area">~ Estimativa: o edital não informa o peso desta área.</string>
-    <string name="onboarding_reveal_estimated_notice_areas">~ Estimativa: o edital não informa o peso destas áreas.</string>
+    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
+    <string name="onboarding_reveal_estimated_notice_area">~ Estimativa: o edital não informa o peso dessa área.</string>
+    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
+    <string name="onboarding_reveal_estimated_notice_areas">~ Estimativa: o edital não informa o peso dessas áreas.</string>
     <string name="onboarding_intent_label">O que você quer fazer com seu material</string>
     <string name="onboarding_continue">Continuar</string>
     <string name="onboarding_skip">Pular</string>
@@ -982,7 +985,7 @@
         <item quantity="other">%d dias de estudo</item>
     </plurals>
     <string name="onboarding_schedule_title">Quanto tempo você pode estudar por dia?</string>
-    <string name="onboarding_full_course">Estudar tudo, mesmo depois da prova</string>
+    <string name="onboarding_full_course">Continuar estudando depois da prova</string>
     <string name="onboarding_full_course_rule">Até a prova, o que mais cai vem primeiro. O que não couber fica para depois dela.</string>
     <string name="onboarding_full_course_until_exam">Até a prova, o que mais cai vem primeiro.</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->

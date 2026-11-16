@@ -32,7 +32,7 @@
   "goalcontent_frequency_tagged_waits": "535321bbaf4053967d3a09e8883708bd3e8f19774b6217d846cdea8ec1c84977",
   "goalcontent_frequency_waits": "de87b0c5896f98537edefe05457f422e3b02cb19383c19b657f33d4dd2a77b7e",
   "goalcontent_from_material": "3977145aaf96ffd8ba75d3cb80a26462e93a28e45bc16b95d33c9ddc8faaceee",
-  "goalcontent_known": "f59daa4975dcce0200a59327c28425219f462442339ee98cc0212d7493469144",
+  "goalcontent_known": "c9627aa8e498c728a8acbe5654541d32640e14640447c31d2a5279afe46d5b69",
   "goalcontent_known_before": "a522c178649c20509fffb6e8bea117dfce88965bb7fbde80c54346ebc8950adf",
   "goalcontent_lesson_count": "0b43f272132d0e6331ab622e61da9b8f9934b0f28685f44b50a0d905ea3dc5b2",
   "goalcontent_lessons_done": "a2f4f8236c5c05063c28b1209e3a978315a6aaab137ec05ab32e020aff1edd6a",
@@ -141,6 +141,7 @@
         <item quantity="many">%d lekcji</item>
         <item quantity="other">%d lekcji</item>
     </plurals>
+    <!-- The number of questions in an exam or a mock exam. -->
     <plurals name="goalcontent_question_count">
         <item quantity="one">%d pytanie</item>
         <item quantity="few">%d pytania</item>
@@ -173,7 +174,7 @@
     <string name="goalcontent_percent_done">Ukończono %1$d%%</string>
     <!-- Legend of a progress bar's parts. -->
     <string name="goalcontent_studied">Przerobione</string>
-    <string name="goalcontent_known">Znane</string>
+    <string name="goalcontent_known">Już znane</string>
     <string name="goalcontent_new">Nowe</string>
     <!-- An exam subject's estimated readiness. -->
     <string name="goalcontent_preparation">Przygotowanie</string>
@@ -244,6 +245,7 @@
     <string name="goalcontent_details">Szczegóły</string>
     <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
     <string name="goalcontent_also">Zobacz też</string>
+    <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">Pytania</string>
     <string name="goalcontent_topics">Tematy</string>
     <string name="goalcontent_chapters">Rozdziały</string>

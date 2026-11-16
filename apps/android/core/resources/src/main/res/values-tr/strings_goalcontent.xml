@@ -32,7 +32,7 @@
   "goalcontent_frequency_tagged_waits": "09185a7ff556eb7be535dafac2eb579dcec78f9edccc337e9b43cd66d3edbc1e",
   "goalcontent_frequency_waits": "8892a3d9a2a174ce9f7c7c7956b7f9c38ee17e415ecff7426705281d391e4ced",
   "goalcontent_from_material": "9c8bdaaeeb73f07372b89e95af3c53bea91a9ba3b178a3f74fac325ba151b355",
-  "goalcontent_known": "24298c6448759359d602e22e5f54918ecc73905b95da68d1263cf575a6b1bdff",
+  "goalcontent_known": "1f206163056a1fba12ac3c9108f5b3c003f9482878c8d27ac975555f33609914",
   "goalcontent_known_before": "681dc7dde483fbf157e273a5c36cae6528015ffdcf05211aa3dfd2603c34ecd3",
   "goalcontent_lesson_count": "ed1c00225660e57f2ffd1b241baaa909631dc5ac99a9c8693553150a0768f959",
   "goalcontent_lessons_done": "c4328df30c173ebf89560dca1350b53a74c4e2cba29e45aade515d928337dbb8",
@@ -129,6 +129,7 @@
         <item quantity="one">%d ders</item>
         <item quantity="other">%d ders</item>
     </plurals>
+    <!-- The number of questions in an exam or a mock exam. -->
     <plurals name="goalcontent_question_count">
         <item quantity="one">%d soru</item>
         <item quantity="other">%d soru</item>
@@ -153,7 +154,7 @@
     <string name="goalcontent_percent_done">%1$d%% tamamlandı</string>
     <!-- Legend of a progress bar's parts. -->
     <string name="goalcontent_studied">Çalışıldı</string>
-    <string name="goalcontent_known">Biliniyor</string>
+    <string name="goalcontent_known">Zaten biliyordun</string>
     <string name="goalcontent_new">Yeni</string>
     <!-- An exam subject's estimated readiness. -->
     <string name="goalcontent_preparation">Hazırlık</string>
@@ -214,6 +215,7 @@
     <string name="goalcontent_details">Ayrıntılar</string>
     <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
     <string name="goalcontent_also">Diğer seçenekler</string>
+    <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">Sorular</string>
     <string name="goalcontent_topics">Konular</string>
     <string name="goalcontent_chapters">Üniteler</string>

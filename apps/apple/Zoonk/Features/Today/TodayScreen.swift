@@ -97,6 +97,7 @@ private struct TodayStartGoal: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(OnboardingStore.self) private var onboarding
+  @Environment(SessionStore.self) private var session
   @State private var goal = SentGoal(words: "")
   @State private var materialDraft = MaterialDraft()
 
@@ -110,11 +111,16 @@ private struct TodayStartGoal: View {
       ZoonkList {
         resume
         GoalStartEntry(
-          part: isBeside ? .form : .whole, goal: $goal, materialDraft: $materialDraft)
+          part: isBeside ? .form : .whole, showsFreeNote: hasNoAccount, goal: $goal,
+          materialDraft: $materialDraft)
       }
     }
     .loads(onboarding.resume, refreshable: false)
     .onDisappear { materialDraft.leave() }
+  }
+
+  private var hasNoAccount: Bool {
+    session.authenticatedSession == nil || learner.summary.value?.identity.isAnonymous == true
   }
 
   @ViewBuilder

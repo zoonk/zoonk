@@ -32,7 +32,7 @@
   "goalcontent_frequency_tagged_waits": "9e94f4fcd8968197c8e3a5c6651e260338191db8b24eaefb16f8b0c3c00b1ec2",
   "goalcontent_frequency_waits": "74eeae3d3d03b8d3316bf36ad286aca5db506b5195f1dbedd52cb37f94fcb997",
   "goalcontent_from_material": "1d4180e50d9f42e2d6143567aaa1647c443faf31cbb44182efdc062c363c8163",
-  "goalcontent_known": "31d07259193d51773d3120420701db8986386d4d3c5eb5b47e9ac65d4e5a7c49",
+  "goalcontent_known": "2a95e72a569a33d6b722d18d4e8233a00b5c4de7225aa58c8b9b3c7a52f2caec",
   "goalcontent_known_before": "85b89fd28b1b16bd16c9cab86ef30ba5f261a242dbd9b6cf7eb901e4ace768e5",
   "goalcontent_lesson_count": "599b898fe9b547bc03a8cb64922413f2591d73bb5c0e602fe10d022d319db2c5",
   "goalcontent_lessons_done": "81e4f1102ed14da013abebb438ca379fce1b34aa9dd3c8c72af674723e5b402c",
@@ -135,6 +135,7 @@
         <item quantity="many">%d lezioni</item>
         <item quantity="other">%d lezioni</item>
     </plurals>
+    <!-- The number of questions in an exam or a mock exam. -->
     <plurals name="goalcontent_question_count">
         <item quantity="one">%d domanda</item>
         <item quantity="many">%d domande</item>
@@ -163,7 +164,7 @@
     <string name="goalcontent_percent_done">%1$d%% completato</string>
     <!-- Legend of a progress bar's parts. -->
     <string name="goalcontent_studied">Studiato</string>
-    <string name="goalcontent_known">Già noto</string>
+    <string name="goalcontent_known">Sapevi già</string>
     <string name="goalcontent_new">Nuovo</string>
     <!-- An exam subject's estimated readiness. -->
     <string name="goalcontent_preparation">Preparazione</string>
@@ -229,6 +230,7 @@
     <string name="goalcontent_details">Dettagli</string>
     <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
     <string name="goalcontent_also">Vedi anche</string>
+    <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">Domande</string>
     <string name="goalcontent_topics">Argomenti</string>
     <string name="goalcontent_chapters">Capitoli</string>

@@ -58,8 +58,8 @@ struct LevelTestStep: View {
           onSkip: stop)
       case .done:
         LevelTestDone(
-          levels: levels, isSaving: isSaving, failed: saveFailures > 0 && !isSaving,
-          onContinue: finish)
+          levels: levels, targetLanguage: targetLanguage, isSaving: isSaving,
+          failed: saveFailures > 0 && !isSaving, onContinue: finish)
       }
     }
     .task { await resume() }
@@ -664,6 +664,7 @@ private struct LevelTestSpeaking: View {
 
 private struct LevelTestDone: View {
   let levels: [LevelTest.Level]
+  let targetLanguage: String
   let isSaving: Bool
   let failed: Bool
   let onContinue: () -> Void
@@ -672,7 +673,8 @@ private struct LevelTestDone: View {
     TestOutcome(
       subject: String(
         localized: "Level test", table: "Onboarding", comment: "Over the level test's result"),
-      title: Text("Your level", tableName: "Onboarding", comment: "Title after the level test"),
+      title: Text(
+        "Your \(Locale.current.languageName(targetLanguage)) level", tableName: "Onboarding"),
       isSaving: isSaving, failed: failed, onContinue: onContinue
     ) {
       if !levels.isEmpty {

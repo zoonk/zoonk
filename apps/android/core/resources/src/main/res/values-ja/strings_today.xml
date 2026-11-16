@@ -78,7 +78,7 @@
   "today_practice_with_buddy": "8bc908431603bb89958b41c781daf5ca6aa0ac7d4bb727afca86a47711b16897",
   "today_preparation": "58f7d35ba97a8dde0e802254bf6afa91aa9bac7511957b85c162ce087304bd18",
   "today_progress": "c09f3f024cf6b6c24b3967ed5cb139035833bdcef7e5a70660ed82c67fd80125",
-  "today_progress_known": "3e1eb3de8b582cbbd667c42d71e41c0ea2367161c8b9b007aaa83c6b925edbb3",
+  "today_progress_known": "6015709565b602b6582cd4179dcff6a3a982e8743e2dbc9ee5d678b254df4c82",
   "today_progress_lessons_today": "d0388f82677d79dcbedfd80b84218a5ff7f0a3dfa588c8b2e000a9f5a7cbee60",
   "today_progress_studied": "3329853d158deae0d48ebf53ef97daa5b13b21dbac7abdedd210762c96cb1b18",
   "today_progress_today": "84f23cf059ba7324ca1aee73063e9e5b44807351808c68ff9613a194b1868c01",
@@ -120,7 +120,7 @@
   "today_step_open_failed": "5049e930375960e8f1fbf788b5c4565e4ff97ce8c9bb55fa9055c8690dbf7375",
   "today_step_skipped": "fbfd1aa78263311f89a86ae3706664a1bda6790c5f2d0e726a5458cc3d31255c",
   "today_steps_done": "568d59d3204c2c10f1f2535bc88a81fc140bfdc4e327d0ed6104fe7df704f917",
-  "today_study_everything": "ad01ce0f97c54a269dcbe75cb978e380a7ffa3a110a255c85856954c767fe78a",
+  "today_study_everything": "603ebc9b00036ad2032e9fe6b779956a5c9bb3bdc3dd960d6407bc9e0ace0d04",
   "today_study_more_minutes": "3c75629236a0e4aed49d6159da98d729003d441fe9dad177a1a03aa489ac24e2",
   "today_suggested_goal_accept": "f300e5ea5af9c1c870b4b539e75c5036fefc2c271ffc29dfbd655d100dbb03c8",
   "today_suggested_goal_detail": "868c9dcff34808bcd8656a0c1c875caf66e9db7ae76fda0060596b82b2b33940",
@@ -315,7 +315,7 @@
     <string name="today_behind_goal">1日%1$sで学べる範囲は、目標全体の%2$sに減りました（以前は%3$s）。</string>
     <string name="today_more_time_a_day">学習時間を増やす</string>
     <string name="today_choose_focus">重点的に学ぶ科目を選ぶ</string>
-    <string name="today_study_everything">すべて学ぶ</string>
+    <string name="today_study_everything">終了日をなくす</string>
     <string name="today_keep_studying_after_exam">試験後も学習を続ける</string>
     <plurals name="today_past_date_exam_left">
         <item quantity="other">残り%dレッスンです。学習を続けますか？それとも、この目標をアーカイブしますか？</item>

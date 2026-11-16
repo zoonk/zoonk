@@ -32,7 +32,7 @@
   "goalcontent_frequency_tagged_waits": "7cbe8ffa2b35999303b9dd0f971247a14cbb77fc3aaf4062656206c14b24d616",
   "goalcontent_frequency_waits": "21c492e94b00d7e4662a4bc006ce91a3a1cd7205b6a03fbc3f7b4f55e494819f",
   "goalcontent_from_material": "4148fcd277c44d43cc62fc267c557fea7aa8b63cada4535ae71ae908480c0c2f",
-  "goalcontent_known": "f0811e0c80d546860f7cbc2405eeff5272cd0bceffc43ff55d9130c0350a5ca7",
+  "goalcontent_known": "21e13a5feabeea546aaabd22e80be6d39463153fe704b337a91c9b3ec2aba526",
   "goalcontent_known_before": "bbdc35d20885ab46434f4f8dd02d22bf2763cdf95d6699853b7f3597eda0c7d5",
   "goalcontent_lesson_count": "e968d1fd07bd68d8e0392e6d2f54295c9e26b2f585669ca8ac5830ec785c578f",
   "goalcontent_lessons_done": "b3d1e10ee5719b27e86b863dd91f07c56e48c370909cc2b00316e99622807a5b",
@@ -135,6 +135,7 @@
         <item quantity="many">%d lecciones</item>
         <item quantity="other">%d lecciones</item>
     </plurals>
+    <!-- The number of questions in an exam or a mock exam. -->
     <plurals name="goalcontent_question_count">
         <item quantity="one">%d pregunta</item>
         <item quantity="many">%d preguntas</item>
@@ -229,6 +230,7 @@
     <string name="goalcontent_details">Detalles</string>
     <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
     <string name="goalcontent_also">Más opciones</string>
+    <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">Preguntas</string>
     <string name="goalcontent_topics">Temas</string>
     <string name="goalcontent_chapters">Capítulos</string>

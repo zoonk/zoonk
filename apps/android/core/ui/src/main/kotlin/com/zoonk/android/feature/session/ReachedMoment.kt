@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltTicks
+import com.zoonk.android.ui.components.LEVELS_PER_BELT
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.components.color
@@ -92,7 +93,7 @@ fun ReachedMoment(
 @Composable
 private fun ReachedRow(
     title: String,
-    detail: String,
+    detail: String?,
     mark: @Composable () -> Unit,
     bar: @Composable () -> Unit,
 ) {
@@ -101,7 +102,7 @@ private fun ReachedRow(
             mark()
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
-                Text(detail, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+                detail?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall) }
             }
         }
         bar()
@@ -114,11 +115,16 @@ private fun LevelReached(
     delayMillis: Int?,
 ) {
     val belt = Belt.entries.first { it.name.equals(level.color.value, ignoreCase = true) }
-    val number = formatNumber(level.level.toDouble(), currentLocale())
+    val locale = currentLocale()
+    val number = formatNumber(level.level.toDouble(), locale)
+    val next = Belt.entries.getOrNull(belt.ordinal + 1)
 
     ReachedRow(
-        title = stringResource(R.string.session_level_up),
-        detail = stringResource(R.string.belt_level, stringResource(belt.label), number),
+        title = stringResource(R.string.session_belt_step, stringResource(belt.label), number),
+        detail =
+            next?.let {
+                stringResource(R.string.session_next_belt, stringResource(it.label), formatNumber(LEVELS_PER_BELT.toDouble(), locale))
+            },
         mark = { LevelBadge(belt, number, delayMillis) },
         bar = { BeltTicks(belt, level.level.toInt(), fillsLast = delayMillis != null, delayMillis = delayMillis ?: 0) },
     )

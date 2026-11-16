@@ -59,7 +59,7 @@
     <string name="mock_chooser_full_exam_without">El examen completo, sin %1$s</string>
     <!-- Under an option: the mock exam leaves out the exam's written part. -->
     <string name="mock_chooser_no_written_part">Sin parte escrita</string>
-    <!-- A mock exam's size in a row: %1$d questions; %2$s is a duration, such as "4 hr 42 min". -->
+    <!-- A mock exam's size: its number of questions, then its time limit. -->
     <plurals name="mock_chooser_option_size">
         <item quantity="one">%1$d pregunta · %2$s</item>
         <item quantity="many">%1$d preguntas · %2$s</item>
@@ -85,6 +85,7 @@
     <string name="mock_chooser_writing_questions_line">Eligiendo qué preguntar en cada materia…</string>
     <!-- The panel beside the options, about the one picked. -->
     <string name="mock_chooser_picked">El simulacro elegido</string>
+    <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="mock_chooser_questions">Preguntas</string>
     <string name="mock_chooser_time_limit">Límite de tiempo</string>
     <string name="mock_chooser_usually_takes">Suele durar</string>

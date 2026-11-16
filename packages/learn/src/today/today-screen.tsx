@@ -59,7 +59,7 @@ export function TodayScreen({
   buddy,
   completedLessons = false,
   knownLessons = 0,
-  level = null,
+  language = null,
   missions = null,
   mistakes = NO_MISTAKES,
   mockEntry = null,
@@ -77,7 +77,7 @@ export function TodayScreen({
   buddy: LearnBuddy | null;
   completedLessons?: boolean;
   knownLessons?: number;
-  level?: LanguageTodayView["level"];
+  language?: Pick<LanguageTodayView, "level" | "targetLanguage"> | null;
   missions?: MissionsDay | null;
   mistakes?: MistakeAvailability;
   mockEntry?: React.ReactNode;
@@ -125,7 +125,7 @@ export function TodayScreen({
               <TodayPreparation
                 className={ASIDE_LEAD_CLASS}
                 knownLessons={knownLessons}
-                level={level}
+                language={language}
               />
               <TodayPractice
                 completedLessons={completedLessons}

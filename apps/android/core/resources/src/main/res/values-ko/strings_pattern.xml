@@ -15,7 +15,7 @@
   "pattern_seen": "442524fcdb7c379e6e1223c29fe8649e593734f2fd571d089f317d3f517e9c76",
   "pattern_seen_times": "ca0c390ae73e8dfeb53e010d28f6beb573a836663f1671a100230911eec21b07",
   "pattern_title": "9b0c45a7bda72f7d0be9346eb4e8eb6e720dae4b5a9a258a8da4afe7a73d1247",
-  "pattern_typos_detail": "cbe6ca2b639449e5d410f7c021381899d0c56796693c1f3cfa113af60ead4b1a",
+  "pattern_typos_detail": "70f8ee6d941a0c68cfc5ea92ae2cbb610cd11ee5d44851571f32da024cd13006",
   "pattern_where_you_slipped": "e50258c9a4000c8e3ce402154174b71e265eb20bae2b6ab901f32f77847680cb",
   "pattern_you_said": "4d2e142ea5e8e02daf1939d4571c8179025cf96b44e65b13f264d846f3056fc8"
 }
@@ -48,5 +48,5 @@
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->
     <string name="pattern_done">완료</string>
     <string name="pattern_just_typos">단순한 오타</string>
-    <string name="pattern_typos_detail">최근 실수는 규칙을 몰라서가 아니라 입력 중에 생긴 오타예요. 따로 연습할 필요는 없어요.</string>
+    <string name="pattern_typos_detail">최근 실수는 규칙을 몰라서가 아니라 오타 때문이었어요. 따로 연습할 내용은 없어요.</string>
 </resources>

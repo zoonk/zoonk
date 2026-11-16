@@ -246,7 +246,7 @@ export function TodayClient({
   return (
     <TodayScreen
       banner={banner}
-      level={data.language?.level ?? null}
+      language={data.language ?? null}
       readAt={readAt}
       actions={{
         ...focusTestActions,

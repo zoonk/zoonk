@@ -86,7 +86,7 @@ function useOptions(behind: Behind): { href: string; label: string; option: Opti
     },
     {
       href: actions.studyEverythingHref,
-      label: isExam ? t("Keep studying after the exam") : t("Study everything"),
+      label: isExam ? t("Keep studying after the exam") : t("Remove end date"),
       option: "studyEverything" as const,
     },
   ].filter((option) => option !== false);

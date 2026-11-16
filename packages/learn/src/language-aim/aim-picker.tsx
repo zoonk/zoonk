@@ -1,6 +1,6 @@
 "use client";
 
-import { type LanguageAim, isLanguageAim } from "@zoonk/core/language/aims";
+import { type LanguageAim, toLanguageAimBand } from "@zoonk/core/language/aims";
 import {
   Drawer,
   DrawerContent,
@@ -24,7 +24,8 @@ import { SheetHeader } from "../_components/sheet-header";
 import { ChoiceList } from "../onboarding/choice-list";
 import { useAimWords } from "./use-aim-words";
 
-export type AimOption = { aim: LanguageAim; detail?: string };
+/** `name` is how the row names its aim when the goal's own aim is a half band in it ("B1+"). */
+export type AimOption = { aim: LanguageAim; detail?: string; name?: string };
 
 export function AimName({ aim }: { aim: string }) {
   const words = useAimWords();
@@ -51,10 +52,11 @@ export function AimChoices({
   onPick: (aim: LanguageAim) => void;
   options: readonly AimOption[];
   pending: boolean;
+  /** The picked aim, as a band or as the plan names it ("B1+"). */
   value: string | null;
 }) {
   const words = useAimWords();
-  const saved = isLanguageAim(value) ? value : null;
+  const saved = toLanguageAimBand(value);
   const [highlighted, setHighlighted] = useState(saved);
   const [shownSaved, setShownSaved] = useState(saved);
 
@@ -68,7 +70,7 @@ export function AimChoices({
     <ChoiceList
       choices={options.map((option) => ({
         description: option.detail,
-        label: <AimName aim={option.aim} />,
+        label: <AimName aim={option.name ?? option.aim} />,
         value: option.aim,
       }))}
       label={words.title}
@@ -116,7 +118,7 @@ export function AimPicker({
   };
 
   const pick = (aim: LanguageAim) => {
-    if (aim === value) {
+    if (aim === toLanguageAimBand(value)) {
       setOpen(false);
       return;
     }

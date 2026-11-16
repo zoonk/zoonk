@@ -49,7 +49,7 @@ struct AdjustPlanSheet: View {
           if let languageAim = plan.languageAim, !languageAim.choices.isEmpty {
             aimSection(languageAim)
               .readsAimEnds(
-                $aimEnds, aims: languageAim.choices.map(\.aim), key: plan
+                $aimEnds, aims: languageAim.previewedAims, key: plan
               ) { [editor] aim in
                 await editor.preview([.aim(aim)])?.finishDate
               }
@@ -116,7 +116,8 @@ struct AdjustPlanSheet: View {
   private func aimSection(_ languageAim: LanguageAimView) -> some View {
     SwiftUI.Section {
       ForEach(languageAim.choices, id: \.aim) { choice in
-        aimRow(choice, isPicked: choice.aim == languageAim.aim)
+        aimRow(
+          choice, name: languageAim.name(of: choice.aim), isPicked: choice.aim == languageAim.aim)
       }
     } header: {
       SectionTitle(
@@ -128,7 +129,7 @@ struct AdjustPlanSheet: View {
     }
   }
 
-  private func aimRow(_ choice: LanguageAimView.Choice, isPicked: Bool) -> some View {
+  private func aimRow(_ choice: LanguageAimView.Choice, name: String, isPicked: Bool) -> some View {
     let detail = aimChoiceDetail(end: aimEnds[choice.aim])
 
     return ChoiceRow(isPicked: isPicked) {
@@ -139,7 +140,7 @@ struct AdjustPlanSheet: View {
       editor.run { await editor.change([.aim(choice.aim)]) }
     } words: {
       VStack(alignment: .leading, spacing: 2) {
-        AimName(aim: choice.aim)
+        AimName(aim: name)
           .typeStyle(.rowTitle)
           .foregroundStyle(Color(.foreground))
 

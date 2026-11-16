@@ -1,6 +1,6 @@
 "use client";
 
-import { type LanguageAim, isLanguageAim } from "@zoonk/core/language/aims";
+import { type LanguageAim, toLanguageAimBand } from "@zoonk/core/language/aims";
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
 
@@ -21,7 +21,10 @@ export function useAimWords() {
       endDate
         ? t("Around {month}", { month: formatDate(endDate, "sentenceMonth", { year: "always" }) })
         : undefined,
-    label: (aim: string | null): string | null => (isLanguageAim(aim) ? labels[aim] : null),
+    label: (aim: string | null): string | null => {
+      const band = toLanguageAimBand(aim);
+      return band ? labels[band] : null;
+    },
     title: t("Level to reach"),
   };
 }

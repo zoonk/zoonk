@@ -62,6 +62,10 @@ class MockChooserScreenshots {
     fun phone() = capture("chooser-phone")
 
     @Test
+    @Config(qualifiers = "pt-rBR-w411dp-h1400dp-xxhdpi")
+    fun phoneInPortuguese() = capture("chooser-phone-pt")
+
+    @Test
     @Config(qualifiers = "w411dp-h1400dp-night-xxhdpi")
     fun phoneDarkMoreContrast() = capture("chooser-phone-dark-more-contrast", dark = true, moreContrast = true)
 

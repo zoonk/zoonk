@@ -32,7 +32,7 @@
   "goalcontent_frequency_tagged_waits": "a0219a9e456d67dfbd9feaf4cd7ebdb0f047f2d8006403804c5e5df1c64ecc5e",
   "goalcontent_frequency_waits": "c8ea8c56d8f89faffcf3b035002023c7f46a68818a9d181928ad892cb0331afe",
   "goalcontent_from_material": "d8a7bb9519036180ff33f1bdca301d314bc948193fc1c41aae5258251104e3b2",
-  "goalcontent_known": "d7c39575d71eb3d49590a18411f0e565630c24068e48aba64955599b4c7e2783",
+  "goalcontent_known": "3bd6b979255fa780814b072d6428a5fb1bf83a7ef8a15f2a2be0c9c4c304273d",
   "goalcontent_known_before": "00d8be82c12776822437bea2e4a4c6d7acc03ad5603afa83a43419c8c1c5d3a8",
   "goalcontent_lesson_count": "84240755decb4275b829fc856e9a38d961846b54ad999ee668d9fdffec74db73",
   "goalcontent_lessons_done": "97e305cbdfd1b3dee120361e7c88f125b0b299cc48ce2050257960a54aedfe8d",
@@ -123,6 +123,7 @@
     <plurals name="goalcontent_lesson_count">
         <item quantity="other">%dレッスン</item>
     </plurals>
+    <!-- The number of questions in an exam or a mock exam. -->
     <plurals name="goalcontent_question_count">
         <item quantity="other">%d問</item>
     </plurals>
@@ -199,6 +200,7 @@
     <string name="goalcontent_details">詳細</string>
     <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
     <string name="goalcontent_also">ほかにできること</string>
+    <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">問題</string>
     <string name="goalcontent_topics">トピック</string>
     <string name="goalcontent_chapters">章</string>

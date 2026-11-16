@@ -114,9 +114,7 @@ struct PlanDateSection: View {
   }
 
   private func dropDeadline() -> some View {
-    let title = Text(
-      "Study everything", tableName: "Plan",
-      comment: "Title asking to drop the goal's end date, and its button")
+    let title = Text("Remove end date", tableName: "Plan")
 
     return PreviewedPlanChange(
       editor: editor, plan: plan, edits: [.targetDate(nil)], title: title, button: title,

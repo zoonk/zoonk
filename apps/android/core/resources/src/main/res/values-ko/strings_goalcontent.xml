@@ -32,7 +32,7 @@
   "goalcontent_frequency_tagged_waits": "854930395f01383a12614cecf5bc441c48c83e9d477c858cd4fe88d6db4a989f",
   "goalcontent_frequency_waits": "9cfd923c9b16c1ef6ae1ff0f673458a2baeb11789a11f6cd43d5d978d44ddcca",
   "goalcontent_from_material": "b68779814e0f5657b309c7306d0e9ec4d098763fba055e32e3e01ed7977e176a",
-  "goalcontent_known": "22caa1c1611fa6db95dc10729816a97cd5ec7341c777d28ba28be138e85c04f5",
+  "goalcontent_known": "47fd4be583d447c18bd6710df060a072fa9ea7a3d03e90ec9c374a5f3ff45bb6",
   "goalcontent_known_before": "48c0b2095fefba5a9d273e93143a254ee5af507cb62ae26b266d56340aeae14f",
   "goalcontent_lesson_count": "bad8eee69773b7ebd2083c1513a17512c30259ed8e85693d27f4d7cd23e2f815",
   "goalcontent_lessons_done": "0e97c75ad35da324c0862435ab3447ac568707bd8e78e0481d81e00dd3d8c3cf",
@@ -123,6 +123,7 @@
     <plurals name="goalcontent_lesson_count">
         <item quantity="other">레슨 %d개</item>
     </plurals>
+    <!-- The number of questions in an exam or a mock exam. -->
     <plurals name="goalcontent_question_count">
         <item quantity="other">문제 %d개</item>
     </plurals>
@@ -143,7 +144,7 @@
     <string name="goalcontent_percent_done">%1$d%% 완료</string>
     <!-- Legend of a progress bar's parts. -->
     <string name="goalcontent_studied">학습한 것</string>
-    <string name="goalcontent_known">아는 것</string>
+    <string name="goalcontent_known">이미 알던 것</string>
     <string name="goalcontent_new">신규</string>
     <!-- An exam subject's estimated readiness. -->
     <string name="goalcontent_preparation">준비도</string>
@@ -199,6 +200,7 @@
     <string name="goalcontent_details">상세 정보</string>
     <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
     <string name="goalcontent_also">함께 보기</string>
+    <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">문제</string>
     <string name="goalcontent_topics">주제</string>
     <string name="goalcontent_chapters">챕터</string>

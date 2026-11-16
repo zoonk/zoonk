@@ -78,7 +78,7 @@
   "today_practice_with_buddy": "ad5094b3a3f3dfd48a3d922566070c6f6512595f80df80cf795959f13d90c204",
   "today_preparation": "bf5f0b7013dc04e15d46292c0fd93e6addc94cf12c6d3450bf623fa24ad430d8",
   "today_progress": "f4725cc39c66627dec6428f20c538d25e92da4d7b1c0a17892a964fcc9a88081",
-  "today_progress_known": "c435bd622766ea2ece37f1e3c8f80c82fe8ada5c9af56efae57882740f962e80",
+  "today_progress_known": "f7e3e0cbf04ddd25efa5230d139bc4cf2199344f55b66f9e2b9d759624c43e39",
   "today_progress_lessons_today": "82ec4ee177663cd75e3d8f6239aa45fe99b7f88f4fc12c6709f5f70a89e07d98",
   "today_progress_studied": "fbe6044e2fd0f0a64dc2f12b80c6827e2cba7f613fdaf046f493d92b4b450e44",
   "today_progress_today": "9268f22417c356be81d06872576401e2cc97bc95420927b55de88b223f6323ca",
@@ -120,7 +120,7 @@
   "today_step_open_failed": "aaaab4b249fef3513e8ac1aaab9468ab2dba6786adf6d2dbec8c8c46218fe01d",
   "today_step_skipped": "267b6025019b0fba857c29c3dedcb32770c0676fa8c4a6a449c92349f0af0f1e",
   "today_steps_done": "aa718aca8c8f31add24cc01d9840a449b4a99f928eca04f8e414097d4e56f64a",
-  "today_study_everything": "01f964591cb2a84e5a3c2b55d85f4078561b6a746868329c8732b45d07a5cc6c",
+  "today_study_everything": "fb74563cdb73010c55e31574d7ff537b39fd4e53bc8262a34a22d91b4ab84c36",
   "today_study_more_minutes": "e0d06cb6ba862ec320d987dc8f4af70b8eb3a6884a8c075b7b72f65378e3f8db",
   "today_suggested_goal_accept": "134411228bdd7589c3d0fbc97aecf8a392a4fad3a524497423ea0c91be8ec7dc",
   "today_suggested_goal_detail": "2e1f72c77ad0be899171a83e07767dc6baeb166155992b65012971be65b5eef2",
@@ -315,7 +315,7 @@
     <string name="today_behind_goal">하루 %1$s으로 끝낼 수 있는 분량이 목표의 %2$s로 줄었어요. 이전에는 %3$s였어요.</string>
     <string name="today_more_time_a_day">학습 시간 늘리기</string>
     <string name="today_choose_focus">집중할 과목 선택하기</string>
-    <string name="today_study_everything">모두 공부하기</string>
+    <string name="today_study_everything">종료일 없애기</string>
     <string name="today_keep_studying_after_exam">시험 후에도 계속 공부하기</string>
     <plurals name="today_past_date_exam_left">
         <item quantity="other">레슨이 %d개 남았어요. 계속 공부할까요, 아니면 이 목표를 보관할까요?</item>
@@ -344,7 +344,7 @@
     <!-- A legend label in the progress card: lessons the learner studied. -->
     <string name="today_progress_studied">학습한 것</string>
     <!-- A legend label in the progress card: lessons skipped because the learner already knew them. -->
-    <string name="today_progress_known">아는 것</string>
+    <string name="today_progress_known">이미 알던 것</string>
     <!-- A legend label in the progress card, and a small tag on a subject's row: lessons or a subject planned for today. -->
     <string name="today_progress_today">오늘</string>
     <!-- A row at the end of today's list, holding the place of the day's next lessons. -->

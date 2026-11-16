@@ -393,6 +393,7 @@ private fun FactRow(
             onPick = save,
             pending = saving,
             failed = failed,
+            label = languageAim.label,
         )
     }
     if (editing && editor == EditorKind.Time) {

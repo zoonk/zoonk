@@ -1,5 +1,6 @@
 "use client";
 
+import { toLanguageAimBand } from "@zoonk/core/language/aims";
 import { Button } from "@zoonk/ui/components/button";
 import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -18,7 +19,10 @@ export function AimRowPicker({
   return (
     <AimPicker
       onPick={onSave}
-      options={(row.aimChoices ?? []).map((choice) => ({ aim: choice.aim }))}
+      options={(row.aimChoices ?? []).map((choice) => ({
+        aim: choice.aim,
+        name: choice.aim === toLanguageAimBand(row.value) ? row.value : undefined,
+      }))}
       trigger={
         <Button
           aria-label={t("Edit {field}", { field: row.label })}

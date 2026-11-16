@@ -18,6 +18,7 @@ import {
   PageSectionTitle,
 } from "../_components/page";
 import { FactSegments } from "../_components/task-meta";
+import { useExamQuestionCount } from "../exam/use-exam-question-count";
 import { ReportProblemMenu } from "../feedback/content-feedback-menu";
 import { LearnPageBar } from "../shell/learn-bar";
 import { useAlsoIn } from "./shared-exams";
@@ -68,9 +69,10 @@ function useOriginFact({
 function useWeightFact(subject: SyllabusSubject): string | null {
   const t = useExtracted();
   const format = useFormatter();
+  const questionCount = useExamQuestionCount();
 
   if (subject.questions) {
-    return t("{count, plural, one {# question} other {# questions}}", { count: subject.questions });
+    return questionCount(subject.questions);
   }
 
   if (subject.share === null) {

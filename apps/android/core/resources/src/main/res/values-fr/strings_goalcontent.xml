@@ -32,7 +32,7 @@
   "goalcontent_frequency_tagged_waits": "65516360cbb720ef1f863db307571584faa43a3846e1791feca1abf61ae163b7",
   "goalcontent_frequency_waits": "a842ccf0909a65201bf6b4857cbf0619ed8012caf96589147d307648ed81c65f",
   "goalcontent_from_material": "e9a6aa83e053e233201f68734bf278f4de079db2f16c55486ce26381dc59ea4c",
-  "goalcontent_known": "cb122bc8d3c484b098cea468d717a6746e996027a7874563d91af727c1344701",
+  "goalcontent_known": "a89c0198b85d7d04e18a8d038ebc64d723809e11cf440aa663ac45e80bea387c",
   "goalcontent_known_before": "108925565797050857efd7ebd89d2d012c477f294361f5dcb4b018f365dce41f",
   "goalcontent_lesson_count": "16d1b6edf799d0afa1015884a7c873c960cd10f6fd39fa72a5f9793ad4f1e961",
   "goalcontent_lessons_done": "215aaa18345f038752c907b63883286670b08469928d39fe90c21b30166b2b13",
@@ -135,6 +135,7 @@
         <item quantity="many">%d leçons</item>
         <item quantity="other">%d leçons</item>
     </plurals>
+    <!-- The number of questions in an exam or a mock exam. -->
     <plurals name="goalcontent_question_count">
         <item quantity="one">%d question</item>
         <item quantity="many">%d questions</item>
@@ -229,6 +230,7 @@
     <string name="goalcontent_details">Détails</string>
     <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
     <string name="goalcontent_also">Aussi</string>
+    <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="goalcontent_questions">Questions</string>
     <string name="goalcontent_topics">Sujets</string>
     <string name="goalcontent_chapters">Chapitres</string>

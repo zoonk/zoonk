@@ -25,7 +25,13 @@ function useAimFinishes() {
 
   const askAll = useEffectEvent((revision: object) => {
     if (revision === base && plan.languageAim) {
-      ask(plan.languageAim.choices.map((item) => item.aim));
+      const { aim, label } = plan.languageAim;
+      // A half band's own date isn't any choice's: previewing its band would plan another target.
+      ask(
+        plan.languageAim.choices.flatMap((item) =>
+          item.aim === aim && label !== aim ? [] : [item.aim],
+        ),
+      );
     }
   });
 
@@ -66,6 +72,7 @@ export function PlanAim() {
         options={languageAim.choices.map((item) => ({
           aim: item.aim,
           detail: words.around(ends[item.aim] ?? null),
+          name: item.aim === languageAim.aim ? (languageAim.label ?? undefined) : undefined,
         }))}
         pending={isPending}
         value={choice.shown}

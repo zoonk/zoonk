@@ -15,7 +15,7 @@
   "pattern_seen": "46473b85d2938f1d04de313134333af7de177fc68a6dcf353e1874108c14ae33",
   "pattern_seen_times": "c9d98fedc6456001ab08c81b1cc381df07cdfbb7fd42385742f52556f10d277d",
   "pattern_title": "2e7bcb1457390cd31670879f6e506b7a6e08e94cb31d8e69b60036259864f6cb",
-  "pattern_typos_detail": "0896e32fef9b2d0f07769f33abaddfca1665026147c9dcd7333299d96fddf784",
+  "pattern_typos_detail": "329d34580cd81f73636777350df9ec3228e0a16ae8e27341099597afa068152e",
   "pattern_where_you_slipped": "8649f3b36d8c6bb5241c8640265fbfd2f5c8cce9047be9f67594e2a6178a15af",
   "pattern_you_said": "2ed2a3809e64047721cada29479dc754acb266de5c1b9bb06d99eaa8d3e6cd5d"
 }
@@ -50,5 +50,5 @@
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->
     <string name="pattern_done">Cerrar</string>
     <string name="pattern_just_typos">Solo errores al teclear</string>
-    <string name="pattern_typos_detail">Tus errores recientes se debieron a descuidos al teclear, no a que te falte aprender una regla. No hay nada que practicar.</string>
+    <string name="pattern_typos_detail">Tus últimos errores fueron al teclear, no por desconocer una regla. No hay nada que practicar.</string>
 </resources>

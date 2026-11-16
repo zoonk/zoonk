@@ -149,19 +149,6 @@ fun LanguagePracticeNotice(
             ) { open(AppRoute.Pronunciation(goalId.toString())) }
         }
 
-        pattern?.kind == TodayPattern.Kind.TYPOS -> {
-            val slips = stringResource(R.string.language_pattern_typos_description)
-            PracticeNotice(
-                label = stringResource(R.string.language_pattern_typos),
-                summary = slips,
-                description = slips,
-                action = stringResource(R.string.language_typos_open),
-                mark = SuggestionMark.Symbol(R.drawable.ic_keyboard),
-                layout = layout,
-                modifier = modifier,
-            ) { open(AppRoute.Pattern(pattern.id.toString())) }
-        }
-
         pattern != null -> {
             PracticeNotice(
                 label = stringResource(R.string.language_pattern_noticed),

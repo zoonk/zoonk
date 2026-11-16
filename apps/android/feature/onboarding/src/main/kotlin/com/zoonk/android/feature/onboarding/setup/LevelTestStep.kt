@@ -183,7 +183,7 @@ fun ColumnScope.LanguageLevelTestStep(
         }
 
         is LevelTestPhase.Done -> {
-            LevelTestDone(shown.levels, pending = vm.isSaving, failed = vm.finishFailed, onContinue = finish)
+            LevelTestDone(shown.levels, targetLanguage, pending = vm.isSaving, failed = vm.finishFailed, onContinue = finish)
         }
     }
 }
@@ -492,6 +492,7 @@ private fun ColumnScope.LevelTestSpeaking(
 @Composable
 private fun ColumnScope.LevelTestDone(
     levels: List<SkillLevel>,
+    targetLanguage: String,
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,
@@ -503,7 +504,7 @@ private fun ColumnScope.LevelTestDone(
             tint = MaterialTheme.colorScheme.onTertiaryContainer,
         )
         OnboardingHeading(
-            stringResource(R.string.onboarding_language_test_done_title),
+            stringResource(R.string.onboarding_language_test_done_title, languageName(targetLanguage, currentLocale())),
             stringResource(R.string.onboarding_language_test_done_description),
         )
         if (levels.isNotEmpty()) LevelRows(levels)

@@ -127,7 +127,7 @@ internal fun RevealHero(
             when {
                 aim != null -> {
                     RevealReadout(
-                        aim.aim?.value.orEmpty(),
+                        aim.label ?: aim.aim?.value.orEmpty(),
                         facts.end
                             ?.let {
                                 stringResource(R.string.onboarding_aim_by_month, formatDate(it, currentLocale(), DateStyle.MonthShort))

@@ -70,6 +70,11 @@ struct PlanBasesView: View {
           Text(recommendation(recommended))
             .foregroundStyle(.mutedForeground)
         }
+      } header: {
+        Text("What your topics build on. Choose how much of it to study.", tableName: "Plan")
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .textCase(nil)
       }
 
       Section {

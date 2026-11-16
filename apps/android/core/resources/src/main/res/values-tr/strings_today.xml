@@ -78,7 +78,7 @@
   "today_practice_with_buddy": "382bdb9b46ba952df30c8938bf81bc78f4520b9620b370a0e2593817506f4549",
   "today_preparation": "38dfe2b3370dddf77a2d036377a7a612b339831ca44054416a1f47d3ba8740a9",
   "today_progress": "6b09ad230100c230e85275e97660210374481606a40186bef99d623bb505a972",
-  "today_progress_known": "99aa736f2dc57fb541eb54e6c565f334d7c86b7615c19ea15f9fff870dd76f37",
+  "today_progress_known": "00194d9a45c8c30603813a4b81508a3d8eed462a30f806aa1cf840f097347c0b",
   "today_progress_lessons_today": "7da1c745aa81da8d2f665e37416f001d0dd8473603df290a1c40fea536a781e4",
   "today_progress_studied": "3de93c8d02f384d73fa04a9a10b6967e600d47915b889fd6b5871ee443d40c5b",
   "today_progress_today": "9ce752dbc2754dc45d9932b52ad9b8feac72a91f6247a7198a83c80ae6949342",
@@ -120,7 +120,7 @@
   "today_step_open_failed": "6e24ae7c8e26eb89bd664748d490fe4e723c0ce6a42c8796971c63a942cddab3",
   "today_step_skipped": "fe1fe1be3c3d236b54c2f295c88cedc69a17d4021d401d8389ded58627be49ef",
   "today_steps_done": "8c285ca8d4603bdda1874d1363b363d130753c8636480ac5f6ee272afb6cd6d0",
-  "today_study_everything": "eec8b4d04c24cbe6c8bc8f659ec97408c6794f6b48bfe704f195930a03e5fef1",
+  "today_study_everything": "2b1c5cd18b72cc66ec55dd8f9a93a7144410df895df8a15b0de60b07432e81f6",
   "today_study_more_minutes": "ba3ac62477a33314c08125cc5c72274fc8493ab26818b122e5dee00b51b73ca5",
   "today_suggested_goal_accept": "168bde59f5f2ff0a638a71bb85196f1b13d5170077fb24141c4dce3fc2bead96",
   "today_suggested_goal_detail": "671db40e0460e02a6b15c20acd9ccf7c9d7b36f3a35a2f34850e77c6af48c434",
@@ -322,7 +322,7 @@
     <string name="today_behind_goal">Günde %1$s ile artık hedefinin %2$s kadarı planına sığıyor; önceden %3$s kadarı sığıyordu.</string>
     <string name="today_more_time_a_day">Süre ekle</string>
     <string name="today_choose_focus">Neye odaklanacağını seç</string>
-    <string name="today_study_everything">Tüm konulara çalış</string>
+    <string name="today_study_everything">Bitiş tarihini kaldır</string>
     <string name="today_keep_studying_after_exam">Sınavdan sonra çalışmaya devam et</string>
     <plurals name="today_past_date_exam_left">
         <item quantity="one">%d dersin kaldı. Çalışmaya devam etmek mi, yoksa bu hedefi arşivlemek mi istersin?</item>
@@ -353,7 +353,7 @@
     <!-- A legend label in the progress card: lessons the learner studied. -->
     <string name="today_progress_studied">Çalışıldı</string>
     <!-- A legend label in the progress card: lessons skipped because the learner already knew them. -->
-    <string name="today_progress_known">Biliniyor</string>
+    <string name="today_progress_known">Zaten biliyordun</string>
     <!-- A legend label in the progress card, and a small tag on a subject's row: lessons or a subject planned for today. -->
     <string name="today_progress_today">Bugün</string>
     <!-- A row at the end of today's list, holding the place of the day's next lessons. -->

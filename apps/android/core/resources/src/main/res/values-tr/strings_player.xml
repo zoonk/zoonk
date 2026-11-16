@@ -45,7 +45,7 @@
   "player_challenge_phase_write": "5275fc0353c2ffa340939d67de5b52044181d00b3bcc55e3aa4e9da332b5c419",
   "player_challenge_phase_write_line_1": "c5d4f456d096ea017d013bfc44c9111f641eb0e597d878049b86111407a34204",
   "player_challenge_phase_write_line_2": "83ebeeaa8af0a61ef6cb77c01da939ef44fdb8e23a4282dd6408a82e17d3b958",
-  "player_challenge_practice": "0e52f079a3fb59504d48ce62d78e716262ee4b131fa5da4857ef0eb3077feefb",
+  "player_challenge_practice": "e594a71524e662ab759b371f08a96e5c347927bfd82249021e85249f150b9b73",
   "player_challenge_ready": "f154c7d843a4f84eba3c45d43705ddc217f5c68b7ec4c00a15bccd9728aa4727",
   "player_challenge_said": "cb9be45036d3d5db0c5b4a042b3637f2b2eef4a893d96c696b6e2ce4b9ef5392",
   "player_challenge_scenario_complete": "fedb7d2d81894dfa0911aebf9468edad03498f28995de904e33f9def7f9ebcdb",
@@ -386,8 +386,7 @@
     <string name="player_challenge_good">İyi yaptıkların</string>
     <string name="player_challenge_improve">Geliştirilecekler</string>
     <string name="player_challenge_skills">Çalıştıkların</string>
-    <!-- %1$s is the skill to practice, %2$s how long it takes, such as "5 min". -->
-    <string name="player_challenge_practice">“%1$s” alıştırması yap · %2$s</string>
+    <string name="player_challenge_practice">Kendin dene</string>
     <string name="player_done">Tamam</string>
     <string name="player_drawing_picture">Resmi çiziyoruz…</string>
     <string name="player_not_in_app_title">Bu ders henüz uygulamada yok</string>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "earlier_questions_description": "40879671a6e52c32427223ef8b784c3d723ae6195ed5a8f86a7fe024502b0186",
+  "earlier_questions_description": "7be14fa777622f35da7bbd9705188f62cab68413d9c47b29e08cce9bd25ca2b8",
   "earlier_questions_empty": "cd54bd11e5d146070342a8eaf25f2a4db6036b99ddf9fac85e29f750c049b57f",
   "earlier_questions_from": "87c36a4bdff0b6ecdcaa3bc7bd4183c2f5bc14d66dfd62d30eae5ce8ad1355a3",
   "earlier_questions_from_course": "fbb995a01946fcb7d1a6199550ff0463200374f237419dbe6d01d450af2c4dce",
@@ -16,7 +16,7 @@
 <resources>
     <!-- Title of the page that keeps the questions the learner asked about lessons before every course was rewritten. -->
     <string name="earlier_questions_title">예전 질문</string>
-    <string name="earlier_questions_description">이후 내용이 바뀐 레슨에서 했던 질문이에요.</string>
+    <string name="earlier_questions_description">업데이트된 레슨에서 했던 질문과 답변이에요.</string>
     <string name="earlier_questions_empty">이전 질문이 없어요.</string>
     <!-- Above a question about a lesson that no longer exists. %1$s is the course's title as the learner saw it, %2$s the lesson's. -->
     <string name="earlier_questions_from_course_lesson">%1$s의 이전 버전 · %2$s에서</string>

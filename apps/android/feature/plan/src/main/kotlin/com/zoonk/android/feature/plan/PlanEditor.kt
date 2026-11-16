@@ -280,6 +280,8 @@ internal fun ColumnScope.PlanEditorBody(
             aim
                 ?.choices
                 .orEmpty()
+                // A half band's own date isn't any choice's: previewing its band would plan another target.
+                .filterNot { it.aim.value == aim?.aim?.value && aim.label != null && aim.label != aim.aim?.value }
                 .map { choice ->
                     async {
                         val preview = edits.preview(listOf(PlanOp.Aim(choice.aim.value)))
@@ -327,6 +329,7 @@ internal fun ColumnScope.PlanEditorBody(
             languageAim.aim?.let { aim ->
                 LanguageAimRow(
                     aim.value,
+                    languageAim.label,
                     languageAim.choices,
                     open = drafts.picking == PlanPicker.Aim,
                     onOpenChange = { open -> drafts.picking = if (open) PlanPicker.Aim else null },

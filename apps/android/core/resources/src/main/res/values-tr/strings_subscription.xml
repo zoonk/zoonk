@@ -73,6 +73,7 @@
   "subscription_questions_title": "2ac5538e35ed480e438cfb0ade735f4beff58c38ef675e7da3b49c96d1bedb3c",
   "subscription_questions_unsure": "398e13714c928f43e5145a16f5692000f6a39d0617808a890b94e5d757c75a72",
   "subscription_renewal_failed": "28a85690dec902f3cfff8f61b41dac297319317c08639d452e10e720e264ed42",
+  "subscription_renewal_failed_website": "e7c6412e29228144bd44091fb3092baa5384be6f7170d1ce75c29195f9b83479",
   "subscription_renews_on": "ffde2c34ea489a41307fdfd526ee50e0792bacf327ad3e3a4cdf29138694348d",
   "subscription_save": "b1f7d7d5259bcfc193c405ac873555f2d3069708b763f08b1200f913f17fc81d",
   "subscription_show_answer": "c36735a5eda68ff750f3e54f11d11ba8f430f6e490c3742cd7ad894c2adbe58b",
@@ -108,6 +109,8 @@
     <string name="subscription_cancel_at_period_end">Ödemesini yaptığın dönem bitene kadar Plus’ı kullanmaya devam edersin.</string>
     <string name="subscription_website">Web sitesinden satın alındı</string>
     <string name="subscription_renewal_failed">Son yenileme ödemen alınamadı.</string>
+    <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
+    <string name="subscription_renewal_failed_website">Ödemeni, abone olduğun web sitesinden güncelle.</string>
     <string name="subscription_cancel_unpaid">Plus hemen sona erer ve senden tekrar ücret alınmaz.</string>
     <string name="subscription_cancel_back">Geri dön</string>
     <string name="subscription_keep_plus">Plus’a devam et</string>
@@ -169,6 +172,11 @@
         <item quantity="one">Yapay zekâ ders arkadaşı: günde %d mesaj</item>
         <item quantity="other">Yapay zekâ ders arkadaşı: günde %d mesaj</item>
     </plurals>
+    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
+    <plurals name="subscription_free_buddy_monthly">
+        <item quantity="one">Yapay zekâ ders arkadaşı: günde %1$d mesaj, ayda en fazla %2$s mesaj</item>
+        <item quantity="other">Yapay zekâ ders arkadaşı: günde %1$d mesaj, ayda en fazla %2$s mesaj</item>
+    </plurals>
     <!-- Calls are spoken practice conversations with an AI partner. -->
     <string name="subscription_free_calls">Konuşma pratiği için sohbetler</string>
     <string name="subscription_questions_title">Sık sorulan sorular</string>
@@ -192,6 +200,11 @@
         <item quantity="one">Sınavlar dahil tüm hedeflerin için ayda %d ders</item>
         <item quantity="other">Sınavlar dahil tüm hedeflerin için ayda %d ders</item>
     </plurals>
+    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
+    <plurals name="subscription_answer_free_material">
+        <item quantity="one">Kendi çalışma materyallerin: günde %d dosya</item>
+        <item quantity="other">Kendi çalışma materyallerin: günde %d dosya</item>
+    </plurals>
     <string name="subscription_answer_free_calls">Konuşma pratiği için Plus’tan daha az sohbet (sınavların konuşma bölümleri Plus’a dahildir)</string>
     <string name="subscription_question_unlimited">Plus gerçekten sınırsız mı?</string>
     <string name="subscription_answer_unlimited">Neredeyse. Dersler, hedefler ve ders arkadaşın için sınırlar yalnızca botları ve otomatik araçları engellemek için var, öğrenmeni kısıtlamak için değil. Konuşma pratiği sohbetlerinin günlük ve aylık sınırları var; Plus’ta bu sınırlar daha yüksek.</string>
@@ -201,14 +214,4 @@
     <string name="subscription_answer_cancel">Ödemesini yaptığın dönem bitene kadar Plus’ı kullanmaya devam edersin. Ardından Ücretsiz pakete dönersin; hedeflerin ve ilerlemen korunur.</string>
     <string name="subscription_question_refund">Ücret iadesi alabilir miyim?</string>
     <string name="subscription_answer_refund">Google Play’den alınan Plus aboneliklerinin iade işlemlerini Google Play yürütür: iade talebini Google Play üzerinden ilet. Web sitemizden abone olduysan hello@zoonk.com adresine yaz, durumu inceleyelim.</string>
-    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
-    <plurals name="subscription_free_buddy_monthly">
-        <item quantity="one">Yapay zekâ ders arkadaşı: günde %1$d mesaj, ayda en fazla %2$s mesaj</item>
-        <item quantity="other">Yapay zekâ ders arkadaşı: günde %1$d mesaj, ayda en fazla %2$s mesaj</item>
-    </plurals>
-    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
-    <plurals name="subscription_answer_free_material">
-        <item quantity="one">Kendi çalışma materyallerin: günde %d dosya</item>
-        <item quantity="other">Kendi çalışma materyallerin: günde %d dosya</item>
-    </plurals>
 </resources>

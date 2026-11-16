@@ -7,9 +7,13 @@ import { AimName, AimPicker } from "../../language-aim/aim-picker";
 import { useAimEnds } from "../../language-aim/use-aim-ends";
 import { useAimWords } from "../../language-aim/use-aim-words";
 
-/** The aim's own choices, so a learner past their aim isn't told when they'll reach it. */
-export function getAimAhead(languageAim: LanguageAimView | null): LanguageAim | null {
-  return languageAim?.choices.find((choice) => choice.aim === languageAim.aim)?.aim ?? null;
+/**
+ * The aim as the plan names it ("B1+"), only while it's among its choices, so a learner past their
+ * aim isn't told when they'll reach it.
+ */
+export function getAimAhead(languageAim: LanguageAimView | null): string | null {
+  const ahead = languageAim?.choices.some((choice) => choice.aim === languageAim.aim);
+  return ahead ? (languageAim?.label ?? languageAim?.aim ?? null) : null;
 }
 
 /** The aim sizes the course, so it sits by the time it's reached in, one tap from changing. */
@@ -35,13 +39,14 @@ export function ScheduleAim({
   }
 
   const { aim, choices } = languageAim;
+  const named = languageAim.label ?? aim;
 
   return (
     <div className="flex items-center gap-3 border-y py-3">
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="text-muted-foreground text-compact">{words.title}</span>
         <span className="text-reading font-medium text-pretty">
-          <AimName aim={aim} />
+          <AimName aim={named} />
         </span>
       </div>
 
@@ -51,9 +56,10 @@ export function ScheduleAim({
         options={choices.map((choice) => ({
           aim: choice.aim,
           detail: words.around(choice.aim === aim ? endDate : (ends[choice.aim] ?? null)),
+          name: choice.aim === aim ? named : undefined,
         }))}
         trigger={<Button className="shrink-0" size="sm" type="button" variant="outline" />}
-        value={aim}
+        value={named}
       >
         {t("Change")}
       </AimPicker>

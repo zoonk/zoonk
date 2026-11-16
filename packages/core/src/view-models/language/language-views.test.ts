@@ -511,7 +511,12 @@ describe("language view models", () => {
 
     expect(result).toStrictEqual({
       status: "ready",
-      today: { level: { label: "A1", target: "B1+" }, pronunciation: null, speaking: null },
+      today: {
+        level: { label: "A1", target: "B1+" },
+        pronunciation: null,
+        speaking: null,
+        targetLanguage: "en",
+      },
     });
   });
 });

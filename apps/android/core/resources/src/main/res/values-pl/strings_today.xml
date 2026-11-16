@@ -78,7 +78,7 @@
   "today_practice_with_buddy": "96b438b91ba3638c8e00dfb8d262f8335aa81904ad802bce85444ece1ec30141",
   "today_preparation": "dd5aec3ef046a8b777c1cba95f415b17ff7d383ffa61e156db9acc444fde4c97",
   "today_progress": "0c42c709629587d78a177998aa6b151d8c7ca889d06ace5b9940ec10678ae3dc",
-  "today_progress_known": "3a44c7772fc7c84367acd4a4f1d71513080015d506ab92637d7281a01b8bd467",
+  "today_progress_known": "7fb2b9dc18c66ade24b6a51b94bbd74c198b8f4ad06773109d8161ad2a9347de",
   "today_progress_lessons_today": "e1084d1a35342dc4b92d76cd03b782e9087f83a40833b1d9b450541f96d77870",
   "today_progress_studied": "03c8a723ad59f6dcc298c25fc3cc388dc6d1e16aa51bd32115a3aa0dce12b313",
   "today_progress_today": "cf27b4b8ac50e0a3bf3cfdae2963d1b77f6c0753d8650363c483655f06432332",
@@ -120,7 +120,7 @@
   "today_step_open_failed": "7dcb0b251c0ace16f4f822bc8f077b77d27cb1333f51657a9f60ddd12fb955fd",
   "today_step_skipped": "c4a9e00195eb76ccdffa7f86ade263ff53c98c3aaa7cc654bc8f201230c65b55",
   "today_steps_done": "4d8fc520d213d39a99ab95d031430999f201ef358f7193e47a49565dd4f26f0b",
-  "today_study_everything": "ff71e99d61679f7efda92bbd3acf640a334e6234ae6952d8fcd85f6b8b263c43",
+  "today_study_everything": "0c1a0ab4f5b6be80910fc2e2c6cd63f6f4f5a07c81955a7d9f2446b2c6594018",
   "today_study_more_minutes": "6f2c2ad762c94f8baecdc5eba875431be71ead06484ed0088fc37f3d6930f5c3",
   "today_suggested_goal_accept": "dc189867dabaedec700860fd8d346175ba7ebabff5feb8ffd391069d8077213e",
   "today_suggested_goal_detail": "e4101ecd403b36f156968b7702bf0af0059ea8ee4db9d27131b21a2c183461bb",
@@ -336,7 +336,7 @@
     <string name="today_behind_goal">Przy %1$s nauki dziennie twój plan obejmuje teraz %2$s materiału zamiast %3$s.</string>
     <string name="today_more_time_a_day">Zwiększ czas nauki</string>
     <string name="today_choose_focus">Wybierz, na czym się skupić</string>
-    <string name="today_study_everything">Przerób cały materiał</string>
+    <string name="today_study_everything">Usuń datę zakończenia</string>
     <string name="today_keep_studying_after_exam">Ucz się dalej po egzaminie</string>
     <plurals name="today_past_date_exam_left">
         <item quantity="one">Została ci %d lekcja. Chcesz dalej się uczyć czy zarchiwizować ten cel?</item>
@@ -371,7 +371,7 @@
     <!-- A legend label in the progress card: lessons the learner studied. -->
     <string name="today_progress_studied">Przerobione</string>
     <!-- A legend label in the progress card: lessons skipped because the learner already knew them. -->
-    <string name="today_progress_known">Znane</string>
+    <string name="today_progress_known">Już znane</string>
     <!-- A legend label in the progress card, and a small tag on a subject's row: lessons or a subject planned for today. -->
     <string name="today_progress_today">Dziś</string>
     <!-- A row at the end of today's list, holding the place of the day's next lessons. -->

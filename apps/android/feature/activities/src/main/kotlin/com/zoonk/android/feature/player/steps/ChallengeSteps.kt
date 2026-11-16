@@ -64,8 +64,6 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.ui.components.Eyebrow
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.richtext.plainText
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -79,7 +77,6 @@ val LocalChallengeTeam = staticCompositionLocalOf<List<String>?> { null }
 
 private const val BIG_METER_CHANGE = 25L
 private const val METER_MAX = 100f
-private const val PRACTICE_SECONDS = 300L
 
 private class ChallengeNames(
     val names: Map<String, String>,
@@ -630,14 +627,7 @@ private fun ChallengeDebriefView(
         debrief.practice?.let { practice ->
             Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = MaterialTheme.shapes.large) {
                 Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    ChallengeLabel(
-                        stringResource(
-                            R.string.player_challenge_practice,
-                            names.fill(practice.name),
-                            formatDuration(PRACTICE_SECONDS, currentLocale()),
-                        ),
-                        heading = true,
-                    )
+                    ChallengeLabel(stringResource(R.string.player_challenge_practice), heading = true)
                     RichText(text = names.fill(practice.practice), style = MaterialTheme.typography.bodyLarge)
                 }
             }

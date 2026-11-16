@@ -59,7 +59,7 @@
     <string name="mock_chooser_full_exam_without">전체 시험, %1$s 제외</string>
     <!-- Under an option: the mock exam leaves out the exam's written part. -->
     <string name="mock_chooser_no_written_part">서술형 제외</string>
-    <!-- A mock exam's size in a row: %1$d questions; %2$s is a duration, such as "4 hr 42 min". -->
+    <!-- A mock exam's size: its number of questions, then its time limit. -->
     <plurals name="mock_chooser_option_size">
         <item quantity="other">%1$d문제 · %2$s</item>
     </plurals>
@@ -83,6 +83,7 @@
     <string name="mock_chooser_writing_questions_line">과목마다 무엇을 물어볼지 고르고 있어요…</string>
     <!-- The panel beside the options, about the one picked. -->
     <string name="mock_chooser_picked">선택한 모의고사</string>
+    <!-- Labels the number of questions in an exam or a mock exam. -->
     <string name="mock_chooser_questions">문제</string>
     <string name="mock_chooser_time_limit">제한 시간</string>
     <string name="mock_chooser_usually_takes">보통 걸리는 시간</string>

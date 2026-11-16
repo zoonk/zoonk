@@ -153,7 +153,7 @@ private struct SubjectContent: View {
         questions > 0
           ? String(
             localized: "\(questions) questions", table: "Plan",
-            comment: "How many of the exam's questions a subject has")
+            comment: "The number of questions in an exam or a mock exam.")
           : nil
       },
       subject.topics.isEmpty

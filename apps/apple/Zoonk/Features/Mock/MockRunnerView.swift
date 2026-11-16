@@ -505,14 +505,16 @@ struct MockSectionCounts {
       parts.append(
         String(
           localized: "\(blank) questions are blank.", table: "Mock",
-          comment: "Blank questions when handing in"))
+          comment: "Before handing in a mock exam: how many of its questions are blank or flagged.")
+      )
     }
 
     if flagged > 0 {
       parts.append(
         String(
           localized: "\(flagged) questions are flagged.", table: "Mock",
-          comment: "Flagged questions when handing in"))
+          comment: "Before handing in a mock exam: how many of its questions are blank or flagged.")
+      )
     }
 
     if blank == 0, flagged == 0, total > essays {

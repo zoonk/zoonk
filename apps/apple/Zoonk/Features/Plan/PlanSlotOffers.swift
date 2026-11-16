@@ -539,9 +539,7 @@ struct PlanCoverageSlot: View {
             ? Text(
               "Keep studying after the exam", tableName: "Plan",
               comment: "Opens studying what's left after the exam")
-            : Text(
-              "Study everything", tableName: "Plan",
-              comment: "Opens studying the whole goal with no end date")
+            : Text("Remove end date", tableName: "Plan")
         }
       }
 

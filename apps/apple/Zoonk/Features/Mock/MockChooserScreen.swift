@@ -389,7 +389,9 @@ private struct MockChooser: View {
       LabeledContent {
         Text(questions, format: .number)
       } label: {
-        Text("Questions", tableName: "Mock", comment: "How many questions a picked mock asks")
+        Text(
+          "Questions", tableName: "Mock",
+          comment: "Labels the number of questions in an exam or a mock exam.")
       }
 
       LabeledContent {
@@ -443,7 +445,7 @@ private struct MockChooser: View {
       trailing: String(
         localized:
           "\(option.questions) questions\u{00A0}· \(MockLabels.duration(minutes: option.minutes))",
-        table: "Mock")
+        table: "Mock", comment: "A mock exam's size: its number of questions, then its time limit.")
     ) {
       picked = option.id
     }

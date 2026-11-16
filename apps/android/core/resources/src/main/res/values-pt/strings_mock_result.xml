@@ -42,7 +42,7 @@
   "mock_result_insights": "177a7501b87ed9b6dab3c1478cf1531b3a2c74623884ea7d52011057a9590592",
   "mock_result_keep_answering": "4b73e6700ba1674243274b0058b337f6018f276f965f959adc3eb567799603e0",
   "mock_result_keep_them": "cbd0208134dd8006e8b26cafd2cf2333b3fe047f3729a9c1f1a2c80d0cc4fea3",
-  "mock_result_left_at_timeout": "232e0ba8064eb481a173ed1fd5d40e922f57bb27974ed23bcc858cef623f6527",
+  "mock_result_left_at_timeout": "fbd18da8915e7e26c69484c23125a62526c8aa4550db5d37f37b06c02a655d33",
   "mock_result_left_blank": "df018ebd7a131459b756918f4622c94004eb7a66764e737efe5b5884f9f392cb",
   "mock_result_left_out_choice": "705ac5156bafa0723800abde90e468e89375276824b5d32b34edd7beea4523ce",
   "mock_result_left_out_listening": "910df83f417636b324bbcc36b23a57a55fa6e7ae222251284ab63e83b8a0acc7",
@@ -109,7 +109,7 @@
   "mock_result_task_not_graded": "64bd1598d3e577bc03571be01d8958aea179ecb0ac44aef8386232cd35f45501",
   "mock_result_tests_together": "5d3630b25602d736e5f9b2d1283ad27b7b60207015a8d8b2c222b0c7b817b3c4",
   "mock_result_timing": "966bf31feed53031f7b7d2aef322f8a3102d7f55aacf45354e3b3cb2a549f86d",
-  "mock_result_timing_area": "641013b3b3fab61c2996f0a527e1e73c8fbdf403e330a0385e91463af12b4bf7",
+  "mock_result_timing_area": "b340cdae6f6ecac91eda7c2096b88ef89d8e2a3a8dbb958f8cf894b0d86145f0",
   "mock_result_to_pass": "6dc3b595b31c3ff3b0da07327fb963c5ab678ea57c54e6d4c7dd5c2d4b839660",
   "mock_result_too_short": "16364f25ada23a38b9a1a71a06eac8aad7c949ca78fcaad37755623577606e5f",
   "mock_result_topics_and_more": "c4d0c756c39e7d9e5ad4aadb55ec32811d1976a67fb512cad20d83d0ac711b15",
@@ -292,14 +292,14 @@
     <string name="mock_result_timing">Tempo</string>
     <!-- %1$d is the seconds the learner took per question in one subject; %2$s is that subject's name, such as "Mathematics"; %3$s is the seconds to aim for. -->
     <plurals name="mock_result_timing_area">
-        <item quantity="one">%1$d segundo por questão de %2$s. Tente levar %3$s ou menos.</item>
-        <item quantity="many">%1$d segundos por questão de %2$s. Tente levar %3$s ou menos.</item>
-        <item quantity="other">%1$d segundos por questão de %2$s. Tente levar %3$s ou menos.</item>
+        <item quantity="one">%1$d segundo por questão de %2$s. Tente ficar em %3$s ou menos.</item>
+        <item quantity="many">%1$d segundos por questão de %2$s. Tente ficar em %3$s ou menos.</item>
+        <item quantity="other">%1$d segundos por questão de %2$s. Tente ficar em %3$s ou menos.</item>
     </plurals>
     <plurals name="mock_result_left_at_timeout">
-        <item quantity="one">Faltou %d questão quando o tempo acabou.</item>
-        <item quantity="many">Faltaram %d questões quando o tempo acabou.</item>
-        <item quantity="other">Faltaram %d questões quando o tempo acabou.</item>
+        <item quantity="one">%d questão ficou sem resposta quando o tempo acabou.</item>
+        <item quantity="many">%d questões ficaram sem resposta quando o tempo acabou.</item>
+        <item quantity="other">%d questões ficaram sem resposta quando o tempo acabou.</item>
     </plurals>
     <string name="mock_result_easy_questions">Questões fáceis</string>
     <plurals name="mock_result_easy_missed">

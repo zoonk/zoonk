@@ -15,7 +15,7 @@
   "pattern_seen": "4c5927ca1aca9837a13122aaf1219ef11fd55c40084291bde2baf3cbc390939d",
   "pattern_seen_times": "4732db7fc6c35e84d4fe9be8de3bf43b4d4cc69611178289c8e52f4d00eff2f9",
   "pattern_title": "a27e09640909c9d0dab6e2e784adae9aabc6ffab71850ca08d439cfa3205e0bb",
-  "pattern_typos_detail": "12237218a6304d91b2aa3f69a42c318dae1199ac6305e71d65baa9d7d3e31757",
+  "pattern_typos_detail": "103a7adb31d5fa3183c445520042c3225859320e25f9ec751397f9be0b3d554b",
   "pattern_where_you_slipped": "37f48ef31c729f25e92a18a32b771adaa96ed61215784f891454ce97a761e171",
   "pattern_you_said": "95da299587c4afddb0c8d31af48e803a157e395316986fc133ab3a932cacee16"
 }
@@ -50,5 +50,5 @@
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->
     <string name="pattern_done">Concluir</string>
     <string name="pattern_just_typos">Só erros de digitação</string>
-    <string name="pattern_typos_detail">Seus erros recentes foram de digitação, não de uma regra que você precisa aprender. Não há nada para praticar.</string>
+    <string name="pattern_typos_detail">Seus erros recentes foram só de digitação. Não há nenhuma regra para aprender nem nada para praticar.</string>
 </resources>

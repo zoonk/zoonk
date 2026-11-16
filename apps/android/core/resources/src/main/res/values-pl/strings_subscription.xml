@@ -73,6 +73,7 @@
   "subscription_questions_title": "007b031e7100a82e7891156a8c6f8d9a02a1fed25d04a38eb0a3a8a06eefadf5",
   "subscription_questions_unsure": "a6bb3ee9c96d666819be716fafc1a9d409f070aa346ead9e5e311b3d59d5e433",
   "subscription_renewal_failed": "a10f1c46e4e05b2e4e0a3248162a894c9f9e3cf00c45eaeeab942261d2d3d827",
+  "subscription_renewal_failed_website": "de6da305533cdd8b28c7ee5c55539fb0e6f92582e906e5ea11e09736c72c7d31",
   "subscription_renews_on": "8d116c608cb12b04bbff528484db26b122026496d8948b0d2031eb038de8a5e5",
   "subscription_save": "1bfe358af4c30b113f1e1a14235a9ad3d20f49215f04857c5131b1f99b97e7d7",
   "subscription_show_answer": "3685ebb222c2d3ff12985a433ddba3be91bf656d6d01801e6ffbb0371f29844d",
@@ -108,6 +109,8 @@
     <string name="subscription_cancel_at_period_end">Możesz korzystać z Plus do końca opłaconego okresu.</string>
     <string name="subscription_website">Kupiono na stronie internetowej</string>
     <string name="subscription_renewal_failed">Nie udało się pobrać ostatniej opłaty za odnowienie.</string>
+    <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
+    <string name="subscription_renewal_failed_website">Zaktualizuj płatność na stronie internetowej, gdzie masz subskrypcję.</string>
     <string name="subscription_cancel_unpaid">Plus kończy się od razu i nie pobierzemy kolejnych opłat.</string>
     <string name="subscription_cancel_back">Wróć</string>
     <string name="subscription_keep_plus">Zachowaj Plus</string>
@@ -175,6 +178,13 @@
         <item quantity="many">Kumpel do nauki oparty na AI: %d wiadomości dziennie</item>
         <item quantity="other">Kumpel do nauki oparty na AI: %d wiadomości dziennie</item>
     </plurals>
+    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
+    <plurals name="subscription_free_buddy_monthly">
+        <item quantity="one">Kumpel do nauki z AI: %1$d wiadomość dziennie, do %2$s miesięcznie</item>
+        <item quantity="few">Kumpel do nauki z AI: %1$d wiadomości dziennie, do %2$s miesięcznie</item>
+        <item quantity="many">Kumpel do nauki z AI: %1$d wiadomości dziennie, do %2$s miesięcznie</item>
+        <item quantity="other">Kumpel do nauki z AI: %1$d wiadomości dziennie, do %2$s miesięcznie</item>
+    </plurals>
     <!-- Calls are spoken practice conversations with an AI partner. -->
     <string name="subscription_free_calls">Rozmowy do ćwiczenia mówienia</string>
     <string name="subscription_questions_title">Najczęstsze pytania</string>
@@ -204,6 +214,13 @@
         <item quantity="many">%d lekcji miesięcznie łącznie na wszystkie twoje cele, w tym egzaminy</item>
         <item quantity="other">%d lekcji miesięcznie łącznie na wszystkie twoje cele, w tym egzaminy</item>
     </plurals>
+    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
+    <plurals name="subscription_answer_free_material">
+        <item quantity="one">Własne materiały do nauki: %d plik dziennie</item>
+        <item quantity="few">Własne materiały do nauki: %d pliki dziennie</item>
+        <item quantity="many">Własne materiały do nauki: %d plików dziennie</item>
+        <item quantity="other">Własne materiały do nauki: %d pliku dziennie</item>
+    </plurals>
     <string name="subscription_answer_free_calls">Rozmowy do ćwiczenia mówienia, mniej niż w Plus (zadania egzaminacyjne z mówienia są dostępne w Plus)</string>
     <string name="subscription_question_unlimited">Czy Plus naprawdę nie ma limitów?</string>
     <string name="subscription_answer_unlimited">Prawie. Limity lekcji, celów i kontaktu z kumplem służą tylko blokowaniu botów i automatycznych narzędzi, a nie osób, które się uczą. Rozmowy, w których ćwiczysz mówienie, mają dzienne i miesięczne limity, wyższe niż bez pakietu Plus.</string>
@@ -213,18 +230,4 @@
     <string name="subscription_answer_cancel">Zachowasz Plus do końca opłaconego okresu. Potem wrócisz do pakietu Free, a twoje cele i postępy pozostaną bez zmian.</string>
     <string name="subscription_question_refund">Czy mogę otrzymać zwrot pieniędzy?</string>
     <string name="subscription_answer_refund">Google Play zajmuje się zwrotami za kupiony tam pakiet Plus: poproś o zwrot w Google Play. Jeśli subskrypcja została wykupiona na naszej stronie, napisz do nas na hello@zoonk.com, a przyjrzymy się sprawie.</string>
-    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
-    <plurals name="subscription_free_buddy_monthly">
-        <item quantity="one">Kumpel do nauki z AI: %1$d wiadomość dziennie, do %2$s miesięcznie</item>
-        <item quantity="few">Kumpel do nauki z AI: %1$d wiadomości dziennie, do %2$s miesięcznie</item>
-        <item quantity="many">Kumpel do nauki z AI: %1$d wiadomości dziennie, do %2$s miesięcznie</item>
-        <item quantity="other">Kumpel do nauki z AI: %1$d wiadomości dziennie, do %2$s miesięcznie</item>
-    </plurals>
-    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
-    <plurals name="subscription_answer_free_material">
-        <item quantity="one">Własne materiały do nauki: %d plik dziennie</item>
-        <item quantity="few">Własne materiały do nauki: %d pliki dziennie</item>
-        <item quantity="many">Własne materiały do nauki: %d plików dziennie</item>
-        <item quantity="other">Własne materiały do nauki: %d pliku dziennie</item>
-    </plurals>
 </resources>

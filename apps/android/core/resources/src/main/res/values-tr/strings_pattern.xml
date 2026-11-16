@@ -15,7 +15,7 @@
   "pattern_seen": "cb423ea751202693b7ed050f934fea231c39cc5df20b70bc5aa60961eceb929d",
   "pattern_seen_times": "c5b2c81c6ef2e953c1211714ef01c7b6a6e0a040f59482b355f56966d6b5c737",
   "pattern_title": "406b4d66677f34ad43c943e204c028a3fc2cca91bb0fca46f1e6923ea74fb1ab",
-  "pattern_typos_detail": "5bfc6057455a302c4c5a2fd86eee4718c8e97d08a669a9d6748758fa37ec40c4",
+  "pattern_typos_detail": "cc7425fc94e8b87649fe7608f1de0ce58d6ea653c00e651d3c47284ba5083adc",
   "pattern_where_you_slipped": "1f0fbde3cd3ee64e7bde61d51d9821386326de2c75c7ec90b1fe0e7bf3bb12ae",
   "pattern_you_said": "7657e844203434bc15e4662fb17401029eba9016f2baa2b350d9e4b359b569e1"
 }
@@ -49,5 +49,5 @@
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->
     <string name="pattern_done">Kapat</string>
     <string name="pattern_just_typos">Sadece yazım hataları</string>
-    <string name="pattern_typos_detail">Son hataların yazarken yaptığın ufak yanlışlardı; bilmediğin bir kuraldan kaynaklanmıyordu. Alıştırma yapmana gerek yok.</string>
+    <string name="pattern_typos_detail">Son yaptığın hatalar bilmediğin bir kuraldan değil, yazım yanlışlarından kaynaklanıyordu. Alıştırma yapmana gerek yok.</string>
 </resources>

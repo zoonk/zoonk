@@ -777,8 +777,14 @@ extension WebPlus {
   /// Main's `getWebDateLine`.
   fileprivate var dateLine: Text? {
     if state == .unpaid {
-      return Text(
-        "Your last renewal payment failed.", tableName: "Subscriptions")
+      let failed = Text("Your last renewal payment failed.", tableName: "Subscriptions")
+      let update = Text(
+        "Update your payment on the website, where you subscribed.", tableName: "Subscriptions",
+        comment:
+          "Follows \"Your last renewal payment failed.\" for a subscription bought on the website, which the app can't update."
+      )
+
+      return Text("\(failed) \(update)")
     }
 
     return periodEnd.map { state == .ending ? plusEnds(on: $0) : renews(on: $0) }

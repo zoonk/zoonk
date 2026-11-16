@@ -355,7 +355,7 @@ struct ScheduleQuestion: View {
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
 
-          AimName(aim: aim)
+          AimName(aim: languageAim.name(of: aim))
             .typeStyle(.rowTitle)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

@@ -87,7 +87,7 @@ export const todayResponseSchema = z
       .nullable()
       .meta({
         description:
-          "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, offered beside the day; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, without one, and when one of the day's missions already opens it",
+          "A language goal's rule noticed in recent mistakes (never a finding of typos, which leaves nothing to do), not practiced or dismissed yet, offered beside the day; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, without one, and when one of the day's missions already opens it",
       }),
     planChange: planChangeSchema
       .nullable()

@@ -79,6 +79,7 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.formatProgressShare
+import com.zoonk.android.ui.format.languageName
 import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -199,13 +200,22 @@ internal fun PlanNumbers(
 
 @Composable
 internal fun standingTitle(standing: Standing) =
-    stringResource(
-        when (standing) {
-            is Standing.Preparation -> R.string.plan_your_preparation
-            is Standing.Progress -> R.string.plan_your_progress
-            is Standing.Language -> R.string.plan_your_level
-        },
-    )
+    when (standing) {
+        is Standing.Preparation -> {
+            stringResource(R.string.plan_your_preparation)
+        }
+
+        is Standing.Progress -> {
+            stringResource(R.string.plan_your_progress)
+        }
+
+        is Standing.Language -> {
+            stringResource(
+                R.string.plan_your_level,
+                languageName(standing.progress.goal.targetLanguage, currentLocale()),
+            )
+        }
+    }
 
 @Composable
 private fun standingNumber(standing: Standing): PlanNumber {
@@ -235,7 +245,7 @@ private fun standingNumber(standing: Standing): PlanNumber {
         is Standing.Language -> {
             val level = standing.progress.level
             PlanNumber(
-                label = stringResource(R.string.plan_level),
+                label = stringResource(R.string.plan_level, languageName(standing.progress.goal.targetLanguage, locale)),
                 value = level?.label ?: stringResource(R.string.plan_not_yet),
                 detail = null,
                 numeric = false,

@@ -168,7 +168,9 @@ fun TodayDay(
                 standing = {
                     val openPlan = { navigator.open(AppRoute.Plan()) }
                     if (read.today.goal.kind == TodayGoal.Kind.LANGUAGE) {
-                        language?.value?.level?.let { LanguageLevelCard(it, onOpenPlan = openPlan) }
+                        language?.value?.let { today ->
+                            today.level?.let { LanguageLevelCard(it, today.targetLanguage, onOpenPlan = openPlan) }
+                        }
                     } else {
                         val syllabus = plans?.syllabus?.get(read.today.goal.id)?.collectShown()
                         TodayPreparation(read.today.progress, syllabus?.value?.value, onOpenPlan = openPlan)

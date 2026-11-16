@@ -71,8 +71,8 @@ struct PatternScreen: View {
           )
           .typeStyle(.heroTitle)
           Text(
-            "Your recent mistakes were slips while typing, not a rule you're missing. There's nothing to practice.",
-            tableName: "Practice", comment: "Why a typos pattern has nothing to practice."
+            "Your recent mistakes were typos, not a rule you're missing. There's nothing to practice.",
+            tableName: "Practice"
           )
           .foregroundStyle(.mutedForeground)
         }

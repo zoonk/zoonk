@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "earlier_questions_description": "ecd92ff423fc96d79b28ebdaf7b3fd9b4f61cac231a3e763b3444bb74ea5f272",
+  "earlier_questions_description": "b5b1ac2a9506131c3c82b206cc8d2e6511192ad13e4e2f7052836f4b05612ac8",
   "earlier_questions_empty": "0f7ce5a3d6b95fef761f141e55dc65826a1696a7586215f884f966563ff57a82",
   "earlier_questions_from": "be0a3b5bf6cc97ebd09614fc4f5f8ae38921de1f75d95731be6749c7331cd75e",
   "earlier_questions_from_course": "12ee732042068990c54c05281656286e56052d4447f5a46824cca8c573d1c840",
@@ -16,7 +16,7 @@
 <resources>
     <!-- Title of the page that keeps the questions the learner asked about lessons before every course was rewritten. -->
     <string name="earlier_questions_title">Wcześniejsze pytania</string>
-    <string name="earlier_questions_description">Twoje pytania z lekcji, których treść się później zmieniła.</string>
+    <string name="earlier_questions_description">Twoje pytania z lekcji, które zostały zaktualizowane, wraz z odpowiedziami.</string>
     <string name="earlier_questions_empty">Nie masz wcześniejszych pytań.</string>
     <!-- Above a question about a lesson that no longer exists. %1$s is the course's title as the learner saw it, %2$s the lesson's. -->
     <string name="earlier_questions_from_course_lesson">Z wcześniejszej wersji kursu: %1$s · %2$s</string>

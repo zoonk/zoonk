@@ -549,6 +549,11 @@ struct LanguageStanding: Decodable, Equatable, Sendable {
     let target: String?
   }
 
+  struct Goal: Decodable, Equatable, Sendable {
+    let targetLanguage: String
+  }
+
+  let goal: Goal
   let level: PlanLevel?
   let levels: [Level]
 }

@@ -1100,65 +1100,6 @@
         }
       }
     },
-    "A short explanation written for you, about 5 minutes." : {
-      "comment" : "What a quick explanation is",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eine kurze Erklärung für dich, etwa 5 Min."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una explicación breve preparada para ti, de aproximadamente 5 minutos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Une courte explication préparée pour toi, en 5 minutes environ."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una breve spiegazione preparata per te, di circa 5 minuti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "一人ひとりに合わせて書かれた、約5分で読める短い解説です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "약 5분이면 읽을 수 있는 짧은 맞춤 설명이에요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Krótkie wyjaśnienie przygotowane dla ciebie, do przeczytania w około 5 minut."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uma explicação curta feita para você, de cerca de 5 minutos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sana özel hazırlanmış, yaklaşık 5 dakikalık kısa bir anlatım."
-          }
-        }
-      }
-    },
     "A short test finds the lessons you don't need." : {
       "comment" : "What the short test is",
       "localizations" : {
@@ -21802,6 +21743,71 @@
         }
       }
     },
+    "We'll write you a short explanation that takes about 5 minutes to read." : {
+      "comment" : "Offers a quick explanation of the learner's question, written once they tap Explain it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen dir eine kurze Erklärung, die du in etwa 5 Minuten lesen kannst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We'll write you a short explanation that takes about 5 minutes to read."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te prepararemos una explicación breve que podrás leer en aproximadamente 5 minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On te préparera une courte explication qui se lit en 5 minutes environ."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ti prepareremo una breve spiegazione da leggere in circa 5 minuti."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5分ほどで読める短い解説を作成します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "읽는 데 약 5분 걸리는 짧은 설명을 만들어 드릴게요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotujemy dla ciebie krótkie wyjaśnienie, które przeczytasz w około 5 minut."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente vai criar uma explicação curta que você lê em cerca de 5 minutos."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yaklaşık 5 dakikada okuyabileceğin kısa bir açıklama hazırlayacağız."
+          }
+        }
+      }
+    },
     "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two." : {
       "comment" : "Shown while a goal's plan is built",
       "localizations" : {
@@ -24866,6 +24872,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa sürede çok hedefe başladın. Birkaç dakika sonra tekrar dene."
+          }
+        }
+      }
+    },
+    "Your %@ level" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Level in %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu nivel de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton niveau en %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo livello di %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@のレベル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 %@ 레벨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój poziom: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu nível de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ seviyen"
           }
         }
       }

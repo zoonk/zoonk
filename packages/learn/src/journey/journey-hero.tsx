@@ -12,6 +12,7 @@ import { useState } from "react";
 import { ListGroup } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
 import { useFormatProgressShare, useFormatShare } from "../_utils/percent";
+import { useLanguageNameInSentence } from "../_utils/use-language-name";
 import { type CallStartOutcome } from "../language/conversation/use-call-start";
 import { SpeakingPracticeRow } from "../language/exam-speaking/speaking-practice-screen";
 import { CanDoList } from "../language/progress/can-do-list";
@@ -63,6 +64,7 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
   const t = useExtracted();
   const formatShare = useFormatShare();
   const formatProgressShare = useFormatProgressShare();
+  const languageName = useLanguageNameInSentence();
 
   if (standing.kind === "preparation" && standing.forExam) {
     const points = Math.round(standing.preparation.weekGain * PERCENT);
@@ -94,11 +96,11 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
     };
   }
 
-  const { level } = standing.language;
+  const { goal, level } = standing.language;
 
   return {
     detail: null,
-    label: t("Level"),
+    label: t("{language} level", { language: languageName(goal.targetLanguage) }),
     numeric: level !== null,
     value: <LevelValue label={level?.label ?? t("Not yet")} target={level?.target ?? null} />,
   };
@@ -106,9 +108,12 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
 
 function useStandingTitle(standing: JourneyStanding): string {
   const t = useExtracted();
+  const languageName = useLanguageNameInSentence();
 
   if (standing.kind === "language") {
-    return t("Your level");
+    return t("Your {language} level", {
+      language: languageName(standing.language.goal.targetLanguage),
+    });
   }
 
   return standing.forExam ? t("Your preparation") : t("Your progress");

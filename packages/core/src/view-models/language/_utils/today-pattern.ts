@@ -23,12 +23,18 @@ export function selectDayPattern<Pattern extends { id: string }>({
 
   return covered ? null : pattern;
 }
+/** A finding of typos leaves nothing to do, so Today offers only a rule to practice. */
 export async function loadNoticedPattern({ goal, userId }: { goal: Goal; userId: string }) {
   if (goal.kind !== "language" || !goal.targetLanguage) {
     return null;
   }
 
-  return findFreshMistakePattern({ goalId: goal.id, language: goal.targetLanguage, userId });
+  return findFreshMistakePattern({
+    goalId: goal.id,
+    kind: "pattern",
+    language: goal.targetLanguage,
+    userId,
+  });
 }
 
 /** Read-only; composes the saved day's missions without building it. */

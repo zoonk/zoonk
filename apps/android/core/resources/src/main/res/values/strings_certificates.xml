@@ -2,7 +2,7 @@
 <resources>
     <!-- A place name, like "Completed lessons": the page listing the learner's completion certificates, to print, download or share. -->
     <string name="certificates_title">Certificates</string>
-    <string name="certificates_lead">A certificate for every level and plan you finish.</string>
+    <string name="certificates_lead">A certificate for every course level, language level and plan you finish.</string>
     <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
     <string name="certificates_language_level">%1$s %2$s</string>
     <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->

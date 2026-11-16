@@ -163,7 +163,7 @@ function useTargetRow() {
         id: "targetScore",
         label: words.title,
         note: words.label(languageAim.aim) ?? undefined,
-        value: languageAim.aim,
+        value: languageAim.label ?? languageAim.aim,
       };
     }
 

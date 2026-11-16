@@ -836,9 +836,9 @@ msgid "No answer was saved."
 msgstr "No se guardó ninguna respuesta."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "yfq070"
-msgid "Lessons you asked about were updated since. Your questions and their answers are kept here."
-msgstr "Las lecciones se actualizaron después de que hiciste estas preguntas. Aquí conservamos tus preguntas y sus respuestas."
+msgctxt "ttMteQ"
+msgid "Your questions from lessons that were updated, with their answers."
+msgstr "Tus preguntas de lecciones que se actualizaron, con sus respuestas."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "QKPtX3"
@@ -872,9 +872,9 @@ msgid "Your day"
 msgstr "Tu día"
 
 #: src/app/[lang]/(app)/(learn)/certificates/page.tsx
-msgctxt "Ybfjqu"
-msgid "A certificate for every level and plan you finish."
-msgstr "Un certificado por cada nivel y plan que completes."
+msgctxt "xQ7ze5"
+msgid "A certificate for every course level, language level and plan you finish."
+msgstr "Un certificado por cada nivel de curso o de idioma y por cada plan que completes."
 
 #: src/app/[lang]/(app)/(learn)/completed-lessons/page.tsx
 msgctxt "1ZQwwl"

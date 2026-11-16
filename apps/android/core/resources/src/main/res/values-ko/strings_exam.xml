@@ -179,6 +179,7 @@
     <string name="exam_mock_time_up">시간이 다 됐어요</string>
     <!-- %1$s is a duration, such as "1 hr 20 min". -->
     <string name="exam_mock_time_left">%1$s 남음</string>
+    <!-- The number of questions in an exam or a mock exam. -->
     <plurals name="exam_questions">
         <item quantity="other">%d문제</item>
     </plurals>

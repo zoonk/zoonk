@@ -23,6 +23,8 @@
     <string name="subscription_cancel_at_period_end">You keep Plus until the end of the period you already paid for.</string>
     <string name="subscription_website">Bought on the website</string>
     <string name="subscription_renewal_failed">Your last renewal payment failed.</string>
+    <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
+    <string name="subscription_renewal_failed_website">Update your payment on the website, where you subscribed.</string>
     <string name="subscription_cancel_unpaid">Plus ends right away, and you won\'t be charged again.</string>
     <string name="subscription_cancel_back">Go back</string>
     <string name="subscription_keep_plus">Keep Plus</string>

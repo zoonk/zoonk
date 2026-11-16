@@ -6,6 +6,7 @@ import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
   DrawerPopup,
   DrawerTitle,
@@ -257,7 +258,12 @@ export function PlanBasesSheet({
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
         <SheetHeader>
-          <DrawerTitle>{t("Prerequisites")}</DrawerTitle>
+          <div className="flex flex-col gap-1">
+            <DrawerTitle>{t("Prerequisites")}</DrawerTitle>
+            <DrawerDescription>
+              {t("What your topics build on. Choose how much of it to study.")}
+            </DrawerDescription>
+          </div>
         </SheetHeader>
 
         {open && <BasesChoices bases={bases} onDone={() => onOpenChange(false)} />}

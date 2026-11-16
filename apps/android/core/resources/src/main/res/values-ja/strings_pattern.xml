@@ -15,7 +15,7 @@
   "pattern_seen": "25c51f24d4aa72284ef7247516f771707d432a0133e94e186261b2950736690c",
   "pattern_seen_times": "7b012464cdc82c45f9afe276e79c7213826c433972882800ed86a47efcba6b23",
   "pattern_title": "729097cceec227ef845caafc3cf0bfc0d4951276b4678d00dedfba7999216207",
-  "pattern_typos_detail": "27aa4516468723c51bac0d34de1e174b2c7c944fcc5040579b3ab1a53c6e1624",
+  "pattern_typos_detail": "fbe621b422b3b9247360aa41ca5326811a920e1643069a9c234441b113a07629",
   "pattern_where_you_slipped": "96510a92849d1fdc353cfe99eafd15d3c173208f1c0c17235efeb273df2ec55f",
   "pattern_you_said": "c6b8192984ffc45b7dd4826befa5cbaa59fe9e6f29d1450bf0aed22794350f31"
 }
@@ -48,5 +48,5 @@
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->
     <string name="pattern_done">完了</string>
     <string name="pattern_just_typos">入力ミスだけです</string>
-    <string name="pattern_typos_detail">最近の間違いは入力ミスで、ルールの理解不足ではありません。練習は必要ありません。</string>
+    <string name="pattern_typos_detail">最近の間違いは入力ミスで、ルールの理解不足ではありません。練習が必要な項目はありません。</string>
 </resources>

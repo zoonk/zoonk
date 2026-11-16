@@ -165,7 +165,7 @@
     <string name="today_behind_goal">%1$s a day now covers %2$s of your goal, down from %3$s.</string>
     <string name="today_more_time_a_day">Add time</string>
     <string name="today_choose_focus">Choose where to focus</string>
-    <string name="today_study_everything">Study everything</string>
+    <string name="today_study_everything">Remove end date</string>
     <string name="today_keep_studying_after_exam">Keep studying after the exam</string>
     <plurals name="today_past_date_exam_left">
         <item quantity="one">You have %d lesson left. Keep studying it, or archive this goal?</item>
@@ -196,7 +196,7 @@
     <!-- A legend label in the progress card: lessons the learner studied. -->
     <string name="today_progress_studied">Studied</string>
     <!-- A legend label in the progress card: lessons skipped because the learner already knew them. -->
-    <string name="today_progress_known">Known</string>
+    <string name="today_progress_known">Already knew</string>
     <!-- A legend label in the progress card, and a small tag on a subject's row: lessons or a subject planned for today. -->
     <string name="today_progress_today">Today</string>
     <!-- A row at the end of today's list, holding the place of the day's next lessons. -->

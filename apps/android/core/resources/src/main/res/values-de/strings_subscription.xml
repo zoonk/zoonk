@@ -73,6 +73,7 @@
   "subscription_questions_title": "885e8f1fba6555280d0d460702b3e7b85d8c0961c694820be89065db6e39513a",
   "subscription_questions_unsure": "7ed150f55f5d62a8ac2a691aba4912edf431fc05cbc98c229fac0ae573373be3",
   "subscription_renewal_failed": "82cbda2f52f5eefa887c36076a23ef96a43fb31028ccefc8b4b082d84cbc772c",
+  "subscription_renewal_failed_website": "d135902badcb6c96e4f84d1478b861fe88985b7d3a01c9b6c3e69c788971b601",
   "subscription_renews_on": "a27ca67eed27ca7271e5b253b1d2673161be5c8fbb9284ca7d7c8fc78155ecee",
   "subscription_save": "9bdf89aa0c6e000bade7736c4d671804af96580aa87e0c6d0978dffe036dcbd6",
   "subscription_show_answer": "570c4c77482c0ab7d68d379b01c3a7c97d89eaaca67042aebd3345f32c887b7d",
@@ -108,6 +109,8 @@
     <string name="subscription_cancel_at_period_end">Du behältst Plus bis zum Ende des bereits bezahlten Zeitraums.</string>
     <string name="subscription_website">Auf der Website gekauft</string>
     <string name="subscription_renewal_failed">Deine letzte Zahlung für die Verlängerung ist fehlgeschlagen.</string>
+    <!-- Follows "Your last renewal payment failed." for a subscription bought on the website, which the app can't update. -->
+    <string name="subscription_renewal_failed_website">Aktualisiere deine Zahlung auf der Website, wo du abonniert hast.</string>
     <string name="subscription_cancel_unpaid">Plus endet sofort und dir wird nichts mehr berechnet.</string>
     <string name="subscription_cancel_back">Zurück</string>
     <string name="subscription_keep_plus">Plus behalten</string>
@@ -169,6 +172,11 @@
         <item quantity="one">Ein KI-Lernkumpel: %d Nachricht pro Tag</item>
         <item quantity="other">Ein KI-Lernkumpel: %d Nachrichten pro Tag</item>
     </plurals>
+    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
+    <plurals name="subscription_free_buddy_monthly">
+        <item quantity="one">Ein KI-Kumpel zum Lernen: %1$d Nachricht pro Tag, bis zu %2$s pro Monat</item>
+        <item quantity="other">Ein KI-Kumpel zum Lernen: %1$d Nachrichten pro Tag, bis zu %2$s pro Monat</item>
+    </plurals>
     <!-- Calls are spoken practice conversations with an AI partner. -->
     <string name="subscription_free_calls">Übungsgespräche</string>
     <string name="subscription_questions_title">Häufige Fragen</string>
@@ -192,6 +200,11 @@
         <item quantity="one">%d Lektion im Monat für alle deine Ziele zusammen, Prüfungen inklusive</item>
         <item quantity="other">%d Lektionen im Monat für alle deine Ziele zusammen, Prüfungen inklusive</item>
     </plurals>
+    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
+    <plurals name="subscription_answer_free_material">
+        <item quantity="one">Eigenes Lernmaterial: %d Datei pro Tag</item>
+        <item quantity="other">Eigenes Lernmaterial: %d Dateien pro Tag</item>
+    </plurals>
     <string name="subscription_answer_free_calls">Übungsgespräche, weniger als mit Plus (Sprechaufgaben für Prüfungen sind bei Plus dabei)</string>
     <string name="subscription_question_unlimited">Ist Plus wirklich unbegrenzt?</string>
     <string name="subscription_answer_unlimited">Fast. Die Grenzen für Lektionen, Ziele und deinen Kumpel sollen nur Bots und automatisierte Programme stoppen, keine Menschen beim Lernen. Für Gespräche gelten tägliche und monatliche Grenzen, die höher liegen als ohne Plus.</string>
@@ -201,14 +214,4 @@
     <string name="subscription_answer_cancel">Du behältst Plus bis zum Ende des Zeitraums, für den du schon bezahlt hast. Danach nutzt du wieder Free und behältst deine Ziele und Fortschritte.</string>
     <string name="subscription_question_refund">Kann ich eine Rückerstattung bekommen?</string>
     <string name="subscription_answer_refund">Google Play ist für Erstattungen zuständig, wenn du Plus dort abonniert hast: Beantrag die Erstattung in Google Play. Wenn du dein Abo auf unserer Website abgeschlossen hast, schreib uns an hello@zoonk.com und wir schauen uns das an.</string>
-    <!-- %1$d is the messages a day, %2$s the most over 30 days. -->
-    <plurals name="subscription_free_buddy_monthly">
-        <item quantity="one">Ein KI-Kumpel zum Lernen: %1$d Nachricht pro Tag, bis zu %2$s pro Monat</item>
-        <item quantity="other">Ein KI-Kumpel zum Lernen: %1$d Nachrichten pro Tag, bis zu %2$s pro Monat</item>
-    </plurals>
-    <!-- What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. %d is how many a day. -->
-    <plurals name="subscription_answer_free_material">
-        <item quantity="one">Eigenes Lernmaterial: %d Datei pro Tag</item>
-        <item quantity="other">Eigenes Lernmaterial: %d Dateien pro Tag</item>
-    </plurals>
 </resources>

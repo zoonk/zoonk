@@ -10,6 +10,7 @@ import { isValidLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";
+import { useLanguageNameInSentence } from "../../_utils/use-language-name";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -114,13 +115,16 @@ export function TestDone({
   levels,
   onContinue,
   pending,
+  targetLanguage,
 }: {
   failed: boolean;
   levels: ReadyTest["levels"];
   onContinue: () => void;
   pending: boolean;
+  targetLanguage: string;
 }) {
   const t = useExtracted();
+  const languageName = useLanguageNameInSentence();
 
   return (
     <TestOutcome
@@ -128,7 +132,7 @@ export function TestDone({
       failed={failed}
       onContinue={onContinue}
       subject={t("Level test")}
-      title={t("Your level")}
+      title={t("Your {language} level", { language: languageName(targetLanguage) })}
     >
       <LevelBars levels={levels} />
     </TestOutcome>

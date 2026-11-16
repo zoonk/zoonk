@@ -2,6 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
+import { FreeStartNote } from "./free-start-note";
 import { OnboardingRailSection } from "./onboarding-rail";
 
 export function OnboardingHowItWorks({ hasAccount }: { hasAccount: boolean }) {
@@ -29,11 +30,7 @@ export function OnboardingHowItWorks({ hasAccount }: { hasAccount: boolean }) {
         ))}
       </ol>
 
-      {!hasAccount && (
-        <p className="text-muted-foreground text-xs text-pretty">
-          {t("Start free, no account needed.")}
-        </p>
-      )}
+      {!hasAccount && <FreeStartNote />}
     </OnboardingRailSection>
   );
 }

@@ -78,14 +78,14 @@
   "onboarding_exam_on_two": "dec9d3e70c5ff04fbd4689c4eb4b20c17fa243b69f2e6b68ca18264352a5a89c",
   "onboarding_exam_ready": "36e664e6cbd7cf59f94ebb03c2f3fa1343fa2324a6518fff30be9389b7d7b762",
   "onboarding_exam_ready_first_day": "0600fcff773259fc75f264a4ae1637b6677520ec1aef8ea28e399d2d20b34aa1",
-  "onboarding_explain_description": "308e316f4acbd98ce1c9dae0b2898bfeefa85cc0b5f8619b48d6537bd266ca5d",
+  "onboarding_explain_description": "59d74798a9a8bcf170a3eda3f4f083e28e7edaeb598c4db4518b7ead3ba85fcd",
   "onboarding_explain_it": "63dd5f5fdbab5c81e572fba6428d87028685e0f49e1096eba48594267a184f47",
   "onboarding_finish_later": "32dc6ab2f0cb785e64b0c6ed167376ace419921410fcf6cc9cefbff969f34261",
   "onboarding_finish_later_description": "46c9faf70437810a3dbc3f5ee961e36f6d5bf77c4b4815d9f2797c6290f41659",
   "onboarding_fix_something": "6b602cb777a79a2a107b15be5613d9001caa01ad2db79d2c2c9bdc7806fffd66",
   "onboarding_follow_ups_description": "f916247387d1e3fff44b7ad5321b0c851b895d540c92a50953613b2a7340ddf5",
   "onboarding_follow_ups_title": "23ed6b88a38ae8f48bc804a0d0863e3dda947a7aac4afa6be007b57e34c5fecd",
-  "onboarding_full_course": "bf55c22ca2b7c4e283ac3c983aacfd0f7815e675d99c72051a9ca612c32158d7",
+  "onboarding_full_course": "a222fb95e619c8a4bb303182acb29c6174c6b95807202fc144e198adc72a4998",
   "onboarding_full_course_finish": "7fb5f2ac357ff26c44979793b3085710588ad817feb1e2fb0beed14e2dbf5c61",
   "onboarding_full_course_finish_month": "14a60e083438ce0b6d609f51cb13dabad7ca78b3b25b828ddf42eec5f5e693e9",
   "onboarding_full_course_rule": "4336be2ad785bf533ee9e7aea83ec6b0bb012c76423bbbf623aa4cf4e9e20e7c",
@@ -116,7 +116,7 @@
   "onboarding_language_test_description": "6a8d17b3cd7ab02fbb96aad40453b0495851fccb0077d8828e1fefb2b05ae23d",
   "onboarding_language_test_did_not_understand": "27686bbd068a76d3dc07b74c8e956355b05f5eeb3a9e1e142cf3086da6cf30f7",
   "onboarding_language_test_done_description": "2d53783ba4f667a8e1f59d4a7fff8710bc64d0e1db68643dbafd062b596704dc",
-  "onboarding_language_test_done_title": "5ee439b8fe517c8a173f4908ef00b1708020aa2ffab4edfbf98aa095bc929d9a",
+  "onboarding_language_test_done_title": "2f94121283c3bb141d8f21b63c4373f62a5d76d6fac916acfb9f3d6cef3968d3",
   "onboarding_language_test_listening": "62ba1538409aff6d399727b81025097843bfc91714c4f805d2e5e146fc4613a0",
   "onboarding_language_test_message": "407ae315822109d1ba28db9a818358f92dd3a4daee1e00641bc091f354045fc5",
   "onboarding_language_test_message_loading": "cde5d7a0c2e2f6ebeb6b2525a84d1dd35b4e44e5a72da4d6fc0fa46ad79b6f21",
@@ -270,8 +270,8 @@
   "onboarding_reveal_estimated_guide_areas": "764d6f6aaf11e497e414de04847104192e3a31a1eecd0b00928a7f31de8fa235",
   "onboarding_reveal_estimated_material_area": "2549c387217f16970097205d5597e03466d38ecb9efd77900e1bf4c48fb70408",
   "onboarding_reveal_estimated_material_areas": "2fbe8c6cdf73d668c93108e86a1ebc0ea967ce3f150480aa6b49d1c35812c99c",
-  "onboarding_reveal_estimated_notice_area": "7b882653b22c6b6fcc41b777ecfd816a95ada0889bd98ce435a6dd6268171cf9",
-  "onboarding_reveal_estimated_notice_areas": "722893e75ee51d1eafe1dc65a01ec917ccbc85ca2e9a3fb8df09475ee85b2ad9",
+  "onboarding_reveal_estimated_notice_area": "8c69b485330004579d7eba0cf6c82ae76be10949f8fc3aad1ef79f238c86a87c",
+  "onboarding_reveal_estimated_notice_areas": "521df53b3320b8572dcc875576ccbe5608348be433b5ff5a4c6362c7f7dcafa3",
   "onboarding_reveal_estimated_percent": "30c0fb3c747a169f48f90035a97e5b9f694ec1d03ecb59168d2f05ceac8e05f3",
   "onboarding_reveal_first_week": "2098c7417c943912e41dd10fd20c7d5bba444adac337987da95ee5b11af2030f",
   "onboarding_reveal_full_course": "5efc1a5345e213b870c7c8e9e9ebcb52ce0bf0e808864b57e48ae39f43f24f08",
@@ -561,7 +561,8 @@
     <!-- %1$s is the exam's date, such as "November 8". -->
     <string name="onboarding_row_guide_says">試験の公式日程表には%1$sと記載されています。</string>
     <!-- After a goal the learner typed turned out to be a question. %1$s is how long it takes to read, such as "5 min". -->
-    <string name="onboarding_explain_description">質問に合わせた短い解説です。約%1$sで読めます。</string>
+    <!-- Offers a quick explanation of the learner's question, written once they tap Explain it -->
+    <string name="onboarding_explain_description">5分ほどで読める短い解説を作成します。</string>
     <string name="onboarding_explain_it">説明を聞く</string>
     <string name="onboarding_declined_title">この目標には対応できません</string>
     <string name="onboarding_declined_description">Zoonkでは、自分やほかの人を傷つけること、ギャンブル、不正行為の方法は教えていません。ほかに学びたいことはありますか？</string>
@@ -684,7 +685,7 @@
     <string name="onboarding_language_test_message">音声メッセージが届きました。聞いて答えてください。</string>
     <string name="onboarding_language_test_say_it">声に出して言う</string>
     <string name="onboarding_language_test_skip_part">このパートをスキップ</string>
-    <string name="onboarding_language_test_done_title">今日のレベル</string>
+    <string name="onboarding_language_test_done_title">%1$sのレベル</string>
     <string name="onboarding_language_test_done_description">テスト結果をもとにしています。毎週、より正確になります。</string>
     <string name="onboarding_language_test_build_plan">学習計画を作成する</string>
     <!-- Language skills, each beside its level. -->
@@ -796,8 +797,10 @@
     <string name="onboarding_reveal_estimated_material_areas">~ 推定値：資料にはこれらの分野の比重が記載されていません。</string>
     <string name="onboarding_reveal_estimated_guide_area">~ 推定値：公式ガイドにはこの分野の比重が記載されていません。</string>
     <string name="onboarding_reveal_estimated_guide_areas">~ 推定値：公式ガイドにはこれらの分野の比重が記載されていません。</string>
-    <string name="onboarding_reveal_estimated_notice_area">~ 推定値：要項にはこの分野の比重が記載されていません。</string>
-    <string name="onboarding_reveal_estimated_notice_areas">~ 推定値：要項にはこれらの分野の比重が記載されていません。</string>
+    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
+    <string name="onboarding_reveal_estimated_notice_area">~ 推定：要項にこの分野の配点が記載されていません。</string>
+    <!-- The official guide here is the exam's official notice (in Portuguese, "edital"). -->
+    <string name="onboarding_reveal_estimated_notice_areas">~ 推定：要項にこれらの分野の配点が記載されていません。</string>
     <string name="onboarding_intent_label">資料を使ってやりたいこと</string>
     <string name="onboarding_continue">続ける</string>
     <string name="onboarding_skip">スキップ</string>
@@ -936,7 +939,7 @@
         <item quantity="other">%d日間の学習</item>
     </plurals>
     <string name="onboarding_schedule_title">1日にどれくらい学習時間を取れますか？</string>
-    <string name="onboarding_full_course">試験後も続けてすべて学ぶ</string>
+    <string name="onboarding_full_course">試験後も学習を続ける</string>
     <string name="onboarding_full_course_rule">試験までは、よく出る内容を優先して学びます。入りきらない内容は試験後に学びます。</string>
     <string name="onboarding_full_course_until_exam">試験までは、よく出る内容を優先して学びます。</string>
     <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->

@@ -175,17 +175,12 @@ internal fun everythingTakesText(
         }
 
         full.everything -> {
-            stringResource(
-                if (month) R.string.plan_time_takes_everything_month else R.string.plan_time_takes_everything,
-                shown,
-                formatMinutes(full.minutes, locale),
-            )
+            stringResource(R.string.plan_time_takes_everything, formatMinutes(full.minutes, locale))
         }
 
         else -> {
             stringResource(
-                if (month) R.string.plan_time_takes_most_month else R.string.plan_time_takes_most,
-                shown,
+                R.string.plan_time_takes_most,
                 formatPercent(full.coveredShare, locale),
                 formatMinutes(full.minutes, locale),
             )
@@ -211,22 +206,20 @@ internal fun shareText(
         goalDateText(date, today),
     )
 
-/** What a plan at a focus suggestion does first, and how much of everything it studies in depth. */
+/** Main's `timeCovers`: the same fact as the share line, where no picker shows the time. */
 @Composable
-internal fun focusText(
-    coveredShare: Double,
-    everyTopic: Boolean,
+internal fun timeCoversText(
     exam: Boolean,
-): String =
-    stringResource(
-        when {
-            exam && everyTopic -> R.string.plan_time_focus_exam_every_topic
-            exam -> R.string.plan_time_focus_exam_most_asked
-            everyTopic -> R.string.plan_time_focus_goal_every_part
-            else -> R.string.plan_time_focus_goal_most_important
-        },
-        formatPercent(coveredShare, currentLocale()),
+    minutes: Int,
+    share: Double,
+): String {
+    val locale = currentLocale()
+    return stringResource(
+        if (exam) R.string.plan_time_covers_share_exam else R.string.plan_time_covers_share_goal,
+        formatMinutes(minutes, locale),
+        formatPercent(share, locale),
     )
+}
 
 @Composable
 private fun lineWords(
@@ -260,7 +253,8 @@ private fun lineWords(
             }
 
             is TimeLine.Focus -> {
-                joinSentences(stringResource(R.string.plan_time_suggest, time), focusText(line.coveredShare, line.everyTopic, exam))
+                date ?: return AnnotatedString("")
+                shareText(date, exam, line.coveredShare, today)
             }
 
             is TimeLine.Share -> {
