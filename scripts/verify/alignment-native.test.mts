@@ -101,3 +101,36 @@ test("platform declarations require a reason and cannot also claim a rule was me
     assert.equal(readCaptures({ ...APPLE, notMeasurable }).kind, "invalid");
   }
 });
+
+test.each([
+  {
+    ...APPLE,
+    measuredRules: [],
+    notMeasurable: { ...APPLE.notMeasurable, "one-height": "Unavailable" },
+    platform: "web",
+    unit: "px",
+  },
+  { ...APPLE, measuredRules: [], notMeasurable: { "one-height": "Unavailable" } },
+  { ...APPLE, platform: "android", unit: "dp" },
+])(
+  "$platform captures cannot waive page rules outside their platform's allowed limits",
+  (capture) => {
+    assert.equal(readCaptures(capture).kind, "invalid");
+  },
+);
+
+test("a cleared Android element cannot waive missing line strings elsewhere", () => {
+  const capture = fixtureCapture([
+    element({
+      group: null,
+      id: "caption",
+      part: "unmeasured",
+      reason: "clearAndSetSemantics removes this node's layout",
+    }),
+    element({ group: null, id: "readable", part: "text", piece: "page", text: "Elsewhere" }),
+  ]);
+
+  const { summary } = evaluateFile({ captures: [capture] });
+  assert.equal(summary.failed, true);
+  assert.equal(summary.notMeasured, 2);
+});

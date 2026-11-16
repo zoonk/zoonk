@@ -89,8 +89,7 @@ internal object LayoutCapture {
         val config = view.resources.configuration
         return Json.obj(
             "version" to 2,
-            "measuredRules" to PAGE_RULES.filterNot { it in reader.notMeasurable() },
-            "notMeasurable" to reader.notMeasurable(),
+            "measuredRules" to PAGE_RULES,
             "platform" to "android",
             "scenario" to (scenario ?: NOT_DECLARED),
             "screen" to testName(),
@@ -150,9 +149,6 @@ internal object LayoutCapture {
         }
 
         private val pageElements = mutableListOf<Map<String, Any?>>()
-        private var unreadText = false
-
-        fun notMeasurable(): Map<String, String> = if (unreadText) PAGE_RULES.associateWith { CLEARED } else emptyMap()
 
         fun json(): List<Map<String, Any?>> = written.map { it.json() } + hidden + anchorElements + pageElements
 
@@ -270,7 +266,6 @@ internal object LayoutCapture {
         ) {
             pageNode(node)
             val unread = node.config.isClearingSemantics && node.children.isEmpty() && textLayout(node) == null
-            if (unread) unreadText = true
             // Only a main action's fill counts toward one filled action per surface, so other buttons aren't written.
             val part =
                 node.config.getOrNull(LayoutPartKey)?.takeUnless {

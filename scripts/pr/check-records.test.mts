@@ -280,6 +280,15 @@ describe("pr:media check with declared platform limits", () => {
     const oldResult = await old.check();
 
     assert.deepEqual(currentResult.problems, []);
+    const printed = formatCheck(currentResult, fixture.repository);
+
+    assert.match(
+      printed,
+      /Layout limits:.*line-end not measurable on apple: SwiftUI Text.Layout doesn't expose resolved strings/u,
+    );
+
+    assert.match(printed, /lone-word not measurable on apple/u);
+    assert.match(printed, /cut not measurable on apple/u);
     assert.ok(oldResult.problems.some((problem) => problem.kind === "alignment"));
   });
 });

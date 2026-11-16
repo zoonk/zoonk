@@ -92,18 +92,25 @@ class LayoutCaptureTest {
             }
         assertTrue(parts.elements().any { it.optString("part") == "text" && it.optString("text") == "Legend entry" })
         val report = JSONObject(File(folder.root, "row.json").readText())
-        assertEquals(0, report.getJSONObject("notMeasurable").length())
+        assertFalse(report.has("notMeasurable"))
         assertEquals(4, report.getJSONArray("measuredRules").length())
     }
 
     @Test
     fun intentionallyClearedAnnotationsDeclareLimitsWithTheirElement() {
-        capture { Text("Axis caption", Modifier.clearAndSetSemantics {}) }
+        capture {
+            Text("Axis caption", Modifier.clearAndSetSemantics {})
+            Text("Readable elsewhere")
+        }
         val report = JSONObject(File(folder.root, "row.json").readText())
-        val limits = report.getJSONObject("notMeasurable")
-        assertEquals(4, limits.length())
-        assertTrue(limits.getString("line-end").contains("clearAndSetSemantics"))
-        assertEquals(0, report.getJSONArray("measuredRules").length())
+        assertFalse(report.has("notMeasurable"))
+        val measured = report.getJSONArray("measuredRules")
+        assertEquals(
+            setOf("cut", "line-end", "lone-word", "one-height"),
+            (0 until measured.length()).map { measured.getString(it) }.toSet(),
+        )
+        val readable = report.getJSONArray("elements").elements().first { it.optString("text") == "Readable elsewhere" }
+        assertEquals("Readable elsewhere", readable.getJSONArray("lineTexts").getString(0))
         val area = report.getJSONArray("elements").part("unmeasured")
         assertTrue(area.getString("reason").contains("clearAndSetSemantics"))
     }

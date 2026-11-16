@@ -13,6 +13,12 @@ export type NotMeasured = "not measured";
 export const PAGE_RULES = ["cut", "line-end", "lone-word", "one-height"] as const;
 export type PageRule = (typeof PAGE_RULES)[number];
 
+export const PLATFORM_LIMITS: Record<Capture["platform"], readonly PageRule[]> = {
+  android: [],
+  apple: ["line-end", "lone-word", "cut"],
+  web: [],
+};
+
 /**
  * Every part a capture's element may be, but an area the platform couldn't read: the one list the
  * probes' type and the validator's schema both take, so what a probe writes is what's read.

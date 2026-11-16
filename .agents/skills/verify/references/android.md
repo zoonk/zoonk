@@ -30,7 +30,7 @@ To put renders in a PR, `pnpm pr:media adopt <before|after> <render.json>...` co
 
 What it can't measure, as the capture states:
 
-- A text whose own semantics were cleared (`clearAndSetSemantics`, so TalkBack does not repeat the chart summary): its layout action is unavailable and is declared as a platform limit. Unmerged descendants below a cleared container are still read; this recovers chart legends and list-row parts. Missing metrics inside a declared alignment group still fail that group.
+- A text whose own semantics were cleared (`clearAndSetSemantics`, so TalkBack does not repeat the chart summary): its layout action is unavailable and is recorded as an `unmeasured` area with a reason. Unmerged descendants below a cleared container are still read; this recovers chart legends and list-row parts. Missing metrics inside a declared alignment group still fail that group.
 - The middle of text a fallback font drew with no capitals and no ideographic face (Arabic in a Geist style, or a span in another family), so that row's line isn't measured. Japanese and Korean are measured by their ideographic face.
 - Ink of text that is clipped, covered (wholly, partly or by a gradient), drawn with a brush, or dimmed by its parent so no pixel is its own color; and of a dimmed part whose faint edge doesn't reach its box, such as a disabled outline button.
 - Lazy rows that weren't composed.

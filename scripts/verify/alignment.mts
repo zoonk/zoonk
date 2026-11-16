@@ -5,6 +5,7 @@ import {
   type Capture,
   type CaptureElement,
   PAGE_RULES,
+  PLATFORM_LIMITS,
 } from "./alignment-capture.mts";
 import { heightLeads } from "./alignment-controls.mts";
 import { coverageLeads, isOneStack } from "./alignment-coverage.mts";
@@ -231,7 +232,9 @@ function groupLeads(context: Context, group: Group): AlignmentFinding[] {
 function missingMeasurements(context: Context): AlignmentFinding[] {
   return PAGE_RULES.flatMap((rule) => {
     const reason =
-      context.capture.version === 2 ? context.capture.notMeasurable?.[rule] : undefined;
+      context.capture.version === 2 && PLATFORM_LIMITS[context.capture.platform].includes(rule)
+        ? context.capture.notMeasurable?.[rule]
+        : undefined;
 
     if (reason) {
       return [
