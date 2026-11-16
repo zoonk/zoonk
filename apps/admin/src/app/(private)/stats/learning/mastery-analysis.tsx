@@ -40,7 +40,7 @@ export async function MasteryAnalysis({ statsPeriod }: { statsPeriod: StatsPerio
         current: solid + mastered,
         previous: sumRows({ rows: previousRows, value: (row) => row.solid + row.mastered }),
       }}
-      description={`Learner skills now solid (${solid.toLocaleString()}) or mastered (${mastered.toLocaleString()}), by the date of the review that last confirmed them. A skill keeps only its current state; when it first reached one comes from PostHog (Skill Level Changed).`}
+      description={`Learner skills now solid (${solid.toLocaleString()}) or mastered (${mastered.toLocaleString()}), by the date of the review that last confirmed them.`}
       value={(solid + mastered).toLocaleString()}
     >
       <AdminMetricTrendChart dataPoints={dataPoints} label="Mastery growth" valueFormat="number" />

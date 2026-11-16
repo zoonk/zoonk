@@ -1,7 +1,7 @@
 import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
 
 /**
- * The screens before Admin opens (signing in, an account that can't open it): one centered block
+ * The screens before Admin opens (logging in, an account that can't open it): one centered block
  * that starts at one height, so the logo doesn't move from one to the next.
  */
 export function AdminGateScreen({

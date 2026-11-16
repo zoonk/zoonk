@@ -65,7 +65,7 @@ export function UserActionsMenu({
         {...dialogProps("signOut")}
         action={revokeSessionsAction}
         confirmLabel="Sign out"
-        description="They'll need to sign in again on every device."
+        description="They'll need to log in again on every device."
         title={`Sign ${userName} out everywhere?`}
       >
         {userField}
@@ -94,7 +94,7 @@ export function UserActionsMenu({
         {...dialogProps("unban")}
         action={unbanUserAction}
         confirmLabel="Unban"
-        description="They can sign in again."
+        description="They can log in again."
         title={`Unban ${userName}?`}
       >
         {userField}

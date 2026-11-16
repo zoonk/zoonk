@@ -59,7 +59,7 @@ async function GoalsReachedAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod 
         current: reached,
         previous: sumRows({ rows: previousRows, value: (row) => row.count }),
       }}
-      description={`Goals marked completed, dated by their last update since goals store no completion date. ${completed.toLocaleString()} of ${allGoals.toLocaleString()} goals are completed overall.`}
+      description={`Goals completed, by the date they last changed. ${completed.toLocaleString()} of ${allGoals.toLocaleString()} goals are completed overall.`}
       value={reached.toLocaleString()}
     >
       <AdminMetricTrendChart
