@@ -185,6 +185,7 @@ function MistakesInbox({
           <Fragment key={key}>
             <button
               aria-controls={panelId}
+              aria-current={open || undefined}
               aria-expanded={open}
               className={cn(
                 LIST_ROW_INTERACTIVE_CLASS,

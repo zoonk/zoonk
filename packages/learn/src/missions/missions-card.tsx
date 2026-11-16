@@ -28,7 +28,11 @@ function MissionsStatus({ missions }: { missions: readonly MissionView[] }) {
     return null;
   }
 
-  return t("{done} of {total} done", { done: String(done), total: String(missions.length) });
+  return t({
+    description: "Under the title Today's missions: how many of today's missions are done.",
+    message: "{done} of {total} done",
+    values: { done: String(done), total: String(missions.length) },
+  });
 }
 
 function MissionRow({

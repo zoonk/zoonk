@@ -11,7 +11,7 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { GraduationCapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { GoalRing, type GoalRingTrack } from "../_components/goal-ring";
+import { GOAL_RING_SIZE_CLASS, GoalRing, type GoalRingTrack } from "../_components/goal-ring";
 import { KindIcon } from "../_components/kind-tile";
 import { DoneMark } from "../_components/status-mark";
 import { WEEK_DAY_CLASS, WeekDayLetter } from "../_components/week-row";
@@ -32,8 +32,6 @@ export const WEEK_DAY_SLOT = "today-week-day";
 
 const DAY_BUTTON_CLASS =
   "hit-area relative -mx-1 min-h-11 cursor-pointer rounded-md px-1 py-1 outline-none transition-colors hover:bg-muted/70 focus-visible:ring-[3px] focus-visible:ring-ring/50";
-
-const RING_CLASS = "size-7.5";
 
 /** A day the plan gave no time that the learner studied anyway fills whole. */
 function getDayShare(day: WeekDay): number {
@@ -80,7 +78,10 @@ function DayRing({ children, day }: { children?: React.ReactNode; day: WeekDay }
 
   if (isOutsidePlan(day) && !day.isToday) {
     return (
-      <span aria-hidden="true" className={cn("flex items-center justify-center", RING_CLASS)}>
+      <span
+        aria-hidden="true"
+        className={cn("flex items-center justify-center", GOAL_RING_SIZE_CLASS)}
+      >
         <span className="bg-foreground/15 h-0.5 w-3 rounded-full" />
       </span>
     );
@@ -89,7 +90,7 @@ function DayRing({ children, day }: { children?: React.ReactNode; day: WeekDay }
   const isTarget = !day.studied && (day.kind === "exam" || day.kind === "deadline");
 
   return (
-    <GoalRing className={RING_CLASS} share={getDayShare(day)} track={getTrack(day, localDate)}>
+    <GoalRing share={getDayShare(day)} track={getTrack(day, localDate)}>
       {day.hitGoal && <DoneMark />}
       {isTarget && <GraduationCapIcon className="text-foreground" />}
       {!day.hitGoal && !isTarget && children}
