@@ -85,6 +85,17 @@ const NAMED = [
     },
     name: "a flat cost moved down near zero",
   },
+  {
+    fields: {
+      ...supplyDemand,
+      lines: [
+        { id: "falling", intercept: 94, label: "Falling", slope: -5.7 },
+        { id: "rising", intercept: 81, label: "Rising", slope: 2.6 },
+      ],
+      shift: { amount: 2, direction: "left", line: "rising" },
+    },
+    name: "steep lines crossing low",
+  },
 ];
 
 const GENERATED = SHAPES.flatMap(({ lines, name }) =>
@@ -182,6 +193,8 @@ function problemsIn({ fields, name }: { fields: Fields; name: string }): string[
           .filter(
             (offset) =>
               other &&
+              offset >= Math.min(0, realOffset) &&
+              offset <= Math.max(0, realOffset) &&
               gapOnTheSmallestPlot(at(offset), other.slide.at(0), domain) <
                 HANDLE_REACH * 2 + HANDLES_GAP,
           )
@@ -288,7 +301,7 @@ describe("chart domain", () => {
 });
 
 describe(chartSlides, () => {
-  it("keeps every handle on the chart, off the crossing and the other handle, and the right move in reach", () => {
+  it("keeps every handle on the chart, off the other handle on the way to the answer, off the crossing at rest and at the answer, and the right move in reach", () => {
     expect(CHARTS.length).toBeGreaterThan(NAMED.length);
     expect(CHARTS.flatMap((chart) => problemsIn(chart))).toStrictEqual([]);
   });

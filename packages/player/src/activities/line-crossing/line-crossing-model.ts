@@ -248,10 +248,16 @@ function handleOptions({
   return (shares.length > 0 ? shares : [HANDLE_SHARE]).map((share) => option(along(share)));
 }
 
+/** Whether a stop lies between a line's rest and its real answer, where a learner passes. */
+function isOnTheWay(offset: number, realOffset: number): boolean {
+  return offset >= Math.min(0, realOffset) && offset <= Math.max(0, realOffset);
+}
+
 /**
- * What a pair of resting handles costs, compared in order: the stops where one line's handle lands
- * on the other's rest, plus a handle under the crossing at the real answer; then the stops where
- * the crossing, sliding along the other line, passes over its rest.
+ * What a pair of resting handles costs, compared in order: on the screens that stay, at rest and at
+ * the real answer, a handle on the other handle or under the crossing; the stops on the way to the
+ * answer where the moving handle lands on the other's rest; the same at the other stops; the stops
+ * where the crossing, sliding along the other line, passes over a resting handle.
  */
 function pairCost({
   domain,
@@ -263,7 +269,7 @@ function pairCost({
   first: HandleOption;
   real: { crossing: Point; offsets: [number, number] };
   second: HandleOption;
-}): [number, number] {
+}): [number, number, number, number] {
   const size = { x: domain.max.x - domain.min.x, y: domain.max.y - domain.min.y };
 
   const near = (points: Point[], to: Point, gap: number) =>
@@ -271,11 +277,23 @@ function pairCost({
       .length;
 
   const atReal = [first.slide.at(real.offsets[0]), second.slide.at(real.offsets[1])];
+  const [firstAtReal = first.rest, secondAtReal = second.rest] = atReal;
+
+  const stops = (option: HandleOption, realOffset: number, onTheWay: boolean) =>
+    option.stops.filter(
+      (_, index) => isOnTheWay(option.slide.offsets[index] ?? 0, realOffset) === onTheWay,
+    );
+
+  const handlesMet = (onTheWay: boolean) =>
+    near(stops(first, real.offsets[0], onTheWay), second.rest, HANDLES_APART) +
+    near(stops(second, real.offsets[1], onTheWay), first.rest, HANDLES_APART);
 
   return [
-    near(first.stops, second.rest, HANDLES_APART) +
-      near(second.stops, first.rest, HANDLES_APART) +
+    near([first.rest], second.rest, HANDLES_APART) +
+      near([firstAtReal], secondAtReal, HANDLES_APART) +
       near(atReal, real.crossing, CROSSING_GAP),
+    handlesMet(true),
+    handlesMet(false),
     near(first.crossings, second.rest, CROSSING_GAP) +
       near(second.crossings, first.rest, CROSSING_GAP),
   ];
@@ -297,8 +315,10 @@ function handlePair({
     seconds.map((second) => ({ cost: pairCost({ domain, first, real, second }), first, second })),
   );
 
-  const isCheaper = (pair: (typeof pairs)[number], best: (typeof pairs)[number]) =>
-    pair.cost[0] < best.cost[0] || (pair.cost[0] === best.cost[0] && pair.cost[1] < best.cost[1]);
+  const isCheaper = (pair: (typeof pairs)[number], best: (typeof pairs)[number]) => {
+    const differs = pair.cost.findIndex((cost, index) => cost !== best.cost[index]);
+    return differs !== -1 && (pair.cost[differs] ?? 0) < (best.cost[differs] ?? 0);
+  };
 
   return pairs.reduce((best, pair) => (isCheaper(pair, best) ? pair : best));
 }
