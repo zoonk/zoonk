@@ -116,7 +116,7 @@ export const studyBlockSchema = z
       .array(z.string())
       .meta({
         description:
-          'A practice block\'s topics as the plan names them, most asked first, except that a later part of one practice leads with a topic no earlier part leads with when it has one: name its row after the first, so two practices on one subject read apart ("Practice: Calculating discounts"), and under it name the first and how many more ("Calculating discounts and 9 more topics"). Empty for other blocks',
+          'A practice block\'s topics as the plan names them, most asked first, except that the parts of one practice lead with different topics when they can (a part with fewer topics keeps the shared lead): name its row after the first, so two practices on one subject read apart ("Practice: Calculating discounts"), and under it name the first and how many more ("Calculating discounts and 9 more topics"). Empty for other blocks',
       }),
     waitReason: z
       .enum(["lessons", "challenge"])

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type PlanGraph } from "../../plans/planner/plan-state";
-import { getPlanTopics, getPracticeLabels } from "./practice-blocks";
+import { getPartLabels, getPlanTopics, getPracticeLabels } from "./practice-blocks";
 
 const graph: PlanGraph = {
   phases: [],
@@ -74,5 +74,27 @@ describe(getPracticeLabels, () => {
       getPracticeLabels({ items: [{ skillId: "rent" }], led: ["Alugar um apartamento"], topics })
         .topics,
     ).toStrictEqual(["Alugar um apartamento"]);
+  });
+});
+
+describe(getPartLabels, () => {
+  const topics = getPlanTopics({
+    goal: { kind: "learn", language: "pt", targetLanguage: null },
+    graph,
+  });
+
+  it("lets the part with fewer topics keep the shared lead, so the parts read apart", () => {
+    const labels = getPartLabels({
+      parts: [
+        [{ skillId: "rent" }, { skillId: "rent" }, { skillId: "order" }],
+        [{ skillId: "rent" }],
+      ],
+      topics,
+    });
+
+    expect(labels.map((label) => label.topics[0])).toStrictEqual([
+      "Pedir comida",
+      "Alugar um apartamento",
+    ]);
   });
 });

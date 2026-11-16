@@ -67,6 +67,37 @@ export function getPracticeLabels({
   };
 }
 
+/**
+ * The parts of one practice lead with different topics when they can, each naming its row: parts
+ * with fewer topics pick first, so a part on one topic keeps it and a wider part leads with another.
+ */
+export function getPartLabels({
+  parts,
+  topics,
+}: {
+  parts: readonly (readonly Pick<PracticeItem, "skillId">[])[];
+  topics: ReadonlyMap<string, PracticeTopic>;
+}): ReturnType<typeof getPracticeLabels>[] {
+  const widths = parts.map((part) => getPracticeLabels({ items: part, topics }).topics.length);
+
+  const order = parts
+    .map((_, index) => index)
+    .toSorted((a, b) => (widths[a] ?? 0) - (widths[b] ?? 0));
+
+  const led: string[] = [];
+  const labels = new Map<number, ReturnType<typeof getPracticeLabels>>();
+
+  for (const index of order) {
+    const label = getPracticeLabels({ items: parts[index] ?? [], led, topics });
+    led.push(...label.topics.slice(0, 1));
+    labels.set(index, label);
+  }
+
+  return parts.map(
+    (part, index) => labels.get(index) ?? getPracticeLabels({ items: part, topics }),
+  );
+}
+
 /** An even number of questions per part, so every part but the last takes whole minutes. */
 function getPracticePartSize(questions: number): number {
   const parts = Math.ceil((questions * PRACTICE_MINUTES_PER_QUESTION) / MAX_PRACTICE_BLOCK_MINUTES);
@@ -138,26 +169,21 @@ export function buildPracticeBlocks({
   });
 
   const parts = fullReview ? [items] : splitWithinMinutes({ items, minutes });
-  const led: string[] = [];
+  const labels = getPartLabels({ parts, topics });
 
-  return parts.map((part) => {
-    const labels = getPracticeLabels({ items: part, led, topics });
-    led.push(...labels.topics.slice(0, 1));
-
-    return {
-      canDo: null,
-      estimatedMinutes: getPartMinutes(part),
-      kind: "practice",
-      lessonId: null,
-      payload: toBlockPayload({
-        fullReview,
-        itemIds: part.map((item) => item.itemId),
-        netScored,
-        planItemId,
-        planItemKey: planItemKey ?? null,
-        skillIds: [...new Set(part.map((item) => item.skillId))],
-        ...labels,
-      }),
-    };
-  });
+  return parts.map((part, index) => ({
+    canDo: null,
+    estimatedMinutes: getPartMinutes(part),
+    kind: "practice",
+    lessonId: null,
+    payload: toBlockPayload({
+      fullReview,
+      itemIds: part.map((item) => item.itemId),
+      netScored,
+      planItemId,
+      planItemKey: planItemKey ?? null,
+      skillIds: [...new Set(part.map((item) => item.skillId))],
+      ...labels[index],
+    }),
+  }));
 }
