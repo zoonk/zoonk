@@ -5,6 +5,7 @@ import { BarSearch, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MapIcon, SunIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useAppLocale } from "../_utils/locale";
 import { BuddyArt } from "../buddies/buddy-art";
 import { BuddyTabName } from "../buddies/buddy-labels";
 import { type MissionsCount, MissionsRing } from "../buddies/missions-ring";
@@ -118,7 +119,8 @@ function TabIcon({
 
 function NavigationRoot({ ...props }: React.ComponentProps<"nav">) {
   const t = useExtracted();
-  return <nav aria-label={t("Learning tabs")} {...props} />;
+  const locale = useAppLocale();
+  return <nav aria-label={t("Learning tabs")} lang={locale} {...props} />;
 }
 
 /**
@@ -198,14 +200,17 @@ function BottomTab({ activeTab, buddy, missions, tab }: LearnNavigationProps & {
       aria-current={tab === activeTab ? "page" : undefined}
       className={cn(
         TAB_ITEM_CLASS,
-        "text-2xs flex min-h-11 w-full min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1",
+        "text-2xs flex min-h-11 w-full min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1 @max-xs/tabs:px-0",
       )}
       href={routes[tab]}
     >
       <span className="flex h-6 items-center justify-center">
         <TabIcon buddy={buddy} missions={missions} size="md" tab={tab} />
       </span>
-      <span className="max-w-full truncate">
+      <span
+        className="max-w-full overflow-clip text-center text-balance wrap-anywhere hyphens-auto [hyphenate-limit-chars:6_3_3] @max-xs/tabs:min-h-[2lh] @max-xs/tabs:overflow-visible"
+        data-slot="tab-title"
+      >
         <TabLabel buddy={buddy} tab={tab} />
       </span>
       {tab === "buddy" && missions && <MissionsLabel missions={missions} />}
@@ -221,14 +226,14 @@ export function LearnBottomNavigation({
   return (
     <NavigationRoot
       className={cn(
-        "bg-background sticky bottom-0 z-30 border-t pb-[env(safe-area-inset-bottom)] lg:hidden",
+        "bg-background @container/tabs sticky bottom-0 z-30 border-t pb-[env(safe-area-inset-bottom)] lg:hidden",
         PENDING_NAVIGATION_CLASS,
       )}
       data-bottom-bar=""
       data-slot="learn-bottom-navigation"
     >
       {/* One gap between every item, search included; tabs shrink below 72px when large text needs the room. */}
-      <div className="mx-auto flex items-center gap-[calc((100%-16.25rem)/3)] px-4 py-2.5 sm:max-w-3xl sm:px-8">
+      <div className="mx-auto flex items-center gap-[calc((100%-16.25rem)/3)] px-4 py-2.5 sm:max-w-3xl sm:px-8 @max-xs/tabs:min-h-16 @max-xs/tabs:px-2 @max-xs/tabs:py-0">
         <ul className="flex min-w-0 flex-1 justify-between">
           {LEARN_TABS.map((tab) => (
             <li className="flex max-w-18 min-w-0 flex-1" key={tab}>

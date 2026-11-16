@@ -56,3 +56,34 @@ test("does not mistake a separator in an inline span for the end of the whole li
   document.body.innerHTML = `<div data-box="16,0,300,20"><span data-box="16,0,40,20">2 min </span><span data-box="56,0,10,20">· </span><span data-box="66,0,100,20">Level A2</span></div>`;
   assert.equal(evaluateCapture(read()).filter((part) => part.rule === "line-end").length, 0);
 });
+
+test("a bottom tab name cannot hide its words behind an ellipsis", () => {
+  document.body.innerHTML = `<nav data-slot="learn-bottom-navigation" data-box="0,0,390,88">
+    <a data-box="16,0,80,88"><span data-box="16,0,20,20"></span>
+      <span style="overflow-x:hidden; text-overflow:ellipsis" data-box="16,24,60,20">
+        <span data-box="16,24,140,20">Aujourd'hui</span>
+      </span>
+    </a></nav>`;
+
+  assert.equal(evaluateCapture(read()).filter((part) => part.rule === "cut").length, 1);
+});
+
+test("a path row's title is judged even when it is a plain span", () => {
+  document.body.innerHTML = `<span data-slot="path-row-words" style="display:flex; flex-direction:column" data-box="88,0,214,120">
+    <span data-box="88,0,214,120">Master quantum physics, from scratch</span>
+  </span>`;
+
+  vi.spyOn(Range.prototype, "getClientRects").mockImplementation(function rects(this: Range) {
+    const top = [15, 29].filter((start) => this.startOffset >= start).length * 40;
+    const rect = new DOMRect(88, top, 8, 40);
+
+    return {
+      0: rect,
+      item: () => rect,
+      length: 1,
+      [Symbol.iterator]: () => [rect][Symbol.iterator](),
+    };
+  });
+
+  assert.equal(evaluateCapture(read()).filter((part) => part.rule === "lone-word").length, 1);
+});

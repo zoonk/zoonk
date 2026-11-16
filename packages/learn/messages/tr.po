@@ -4767,11 +4767,10 @@ msgid "Show fewer chapters"
 msgstr "Daha az ünite göster"
 
 #: src/journey/journey-chapters.tsx
-#: src/onboarding/steps/plan-shape.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "E7pYSQ"
-msgid "{count, plural, one {# more chapter} other {# more chapters}}"
-msgstr "{count, plural, other {# ünite daha}}"
+#: src/mind-maps/mind-map-index.tsx
+msgctxt "s0s9cE"
+msgid "Show all {count, number}"
+msgstr "Tümünü göster ({count, number})"
 
 #: src/journey/journey-hero.tsx
 #: src/today/today-preparation.tsx
@@ -7144,11 +7143,6 @@ msgstr "Ders haritası"
 msgctxt "G_yZLu"
 msgid "Remove"
 msgstr "Kaldır"
-
-#: src/mind-maps/mind-map-index.tsx
-msgctxt "s0s9cE"
-msgid "Show all {count, number}"
-msgstr "Tümünü göster ({count, number})"
 
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
@@ -9580,6 +9574,12 @@ msgstr "Önce neler öğreneceğini seçip gün gün planlıyoruz. Yeni bir konu
 msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "Planını hazırlamaya devam edemedik"
+
+#: src/onboarding/steps/plan-shape.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "E7pYSQ"
+msgid "{count, plural, one {# more chapter} other {# more chapters}}"
+msgstr "{count, plural, other {# ünite daha}}"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "rXkqB0"

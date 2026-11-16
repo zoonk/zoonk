@@ -1430,7 +1430,10 @@ export function readAlignment({
         "h1,h2,h3,h4,h5,h6,p,label,[data-slot=list-row-description],button,[role=button],[data-slot=button],[data-slot$=title],[data-slot*=facts]",
       ) ?? flow;
 
-    if (element.matches("h1,h2,h3,h4,h5,h6,[data-slot$=title]")) {
+    if (
+      element.matches("h1,h2,h3,h4,h5,h6,[data-slot$=title]") ||
+      flow.matches("[data-slot=path-row-words] > :first-child")
+    ) {
       return "title";
     }
 
@@ -1535,6 +1538,10 @@ export function readAlignment({
 
   /** A declared clamp and a scrollable ancestor give content a deliberate way to continue. */
   function allowsOverflow(element: Element): boolean {
+    if (element.matches("[data-slot=learn-bottom-navigation] a > span")) {
+      return false;
+    }
+
     const style = getComputedStyle(element);
 
     return (

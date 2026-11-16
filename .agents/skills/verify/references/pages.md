@@ -159,7 +159,7 @@ These hold on every capture, declared pieces or not, and fail like a relationshi
 | Rule         | Fails when                                                                                                                                                                                 |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `line-end`   | A wrapped text's line ends with a separator (`·`, `•`, a spaced dash, `/` or `\|`)                                                                                                         |
-| `lone-word`  | A wrapped title, facts line, label or button leaves one word alone on its last line after a line with two or more words; one word on every line passes (FS-D35)                            |
+| `lone-word`  | A wrapped title, facts line, label or button leaves one word alone on its last line after a line with two or more words; one word on every line passes                                     |
 | `one-height` | Controls side by side in one row of one surface differ in height by more than half a pixel (craft [Z1](../../zoonk-design/references/craft.md#z1-heights-from-the-set-one-height-per-row)) |
 | `cut`        | A box clips a text or a control outside `HorizontalScroll` and a declared clamp (an ellipsis, a line clamp), or content scrolls sideways without the kit's scroll sign                     |
 
