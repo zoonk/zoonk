@@ -30,6 +30,12 @@ struct LanguageAimView: Codable, Equatable, Sendable {
     choices.contains { $0.aim == aim } ? label ?? aim : nil
   }
 
+  /// Main's `PlanAim`: the aims the editor dates by previewing them. A half band's own date isn't
+  /// any choice's, since previewing its band would plan another target.
+  var previewedAims: [String] {
+    choices.map(\.aim).filter { $0 != aim || label == nil || label == aim }
+  }
+
   /// The aims the planner dates: every choice but the current one, whose date its screen shows.
   var otherAims: [String] {
     choices.map(\.aim).filter { $0 != aim }

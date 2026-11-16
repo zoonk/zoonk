@@ -24,7 +24,8 @@ import { SheetHeader } from "../_components/sheet-header";
 import { ChoiceList } from "../onboarding/choice-list";
 import { useAimWords } from "./use-aim-words";
 
-export type AimOption = { aim: LanguageAim; detail?: string };
+/** `name` is how the row names its aim when the goal's own aim is a half band in it ("B1+"). */
+export type AimOption = { aim: LanguageAim; detail?: string; name?: string };
 
 export function AimName({ aim }: { aim: string }) {
   const words = useAimWords();
@@ -51,7 +52,7 @@ export function AimChoices({
   onPick: (aim: LanguageAim) => void;
   options: readonly AimOption[];
   pending: boolean;
-  /** The saved aim as the plan names it ("B1+"), which its choice shows. */
+  /** The picked aim, as a band or as the plan names it ("B1+"). */
   value: string | null;
 }) {
   const words = useAimWords();
@@ -69,7 +70,7 @@ export function AimChoices({
     <ChoiceList
       choices={options.map((option) => ({
         description: option.detail,
-        label: <AimName aim={option.aim === saved && value ? value : option.aim} />,
+        label: <AimName aim={option.name ?? option.aim} />,
         value: option.aim,
       }))}
       label={words.title}

@@ -56,6 +56,7 @@ export function ScheduleAim({
         options={choices.map((choice) => ({
           aim: choice.aim,
           detail: words.around(choice.aim === aim ? endDate : (ends[choice.aim] ?? null)),
+          name: choice.aim === aim ? named : undefined,
         }))}
         trigger={<Button className="shrink-0" size="sm" type="button" variant="outline" />}
         value={named}

@@ -279,7 +279,8 @@ internal fun ColumnScope.PlanEditorBody(
             aim
                 ?.choices
                 .orEmpty()
-                .filterNot { it.aim.value == aim?.aim?.value }
+                // A half band's own date isn't any choice's: previewing its band would plan another target.
+                .filterNot { it.aim.value == aim?.aim?.value && aim?.label != null && aim.label != aim.aim?.value }
                 .map { choice ->
                     async {
                         val preview = edits.preview(listOf(PlanOp.Aim(choice.aim.value)))
@@ -337,9 +338,7 @@ internal fun ColumnScope.PlanEditorBody(
                     failed = edits.hasFailed(PlanPart.Aim),
                     note = stringResource(R.string.onboarding_aim_description),
                     dates = { aimDates },
-                    endDate =
-                        page.plan.estimate.endDate
-                            ?.toJavaLocalDate(),
+                    endDate = aimDates[aim.value],
                     modifier = Modifier.bleed(LIST_ITEM_INSET),
                 )
             }
