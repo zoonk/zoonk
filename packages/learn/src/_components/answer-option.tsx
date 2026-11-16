@@ -188,7 +188,9 @@ export function AnswerOption({
           layout === "stacked" && "absolute top-3 left-3 z-10",
         )}
       >
-        <Kbd className="[&_svg]:size-3">{marker}</Kbd>
+        <Kbd className="data-result:invisible [&_svg]:size-3" data-result={result}>
+          {marker}
+        </Kbd>
       </LineMarker>
 
       <TagBesideOrUnder layout={layout} tag={shownTag}>
