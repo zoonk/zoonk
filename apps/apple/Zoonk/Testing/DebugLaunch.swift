@@ -6,8 +6,9 @@
   /// Safari. The link is also a launch argument (`-ZOONK_DEBUG_LINK /start/{goalId}`), which device
   /// tools can pass.
   /// `ZOONK_DEBUG_SIGN_IN_EMAIL` and `ZOONK_DEBUG_SIGN_IN_CODE` (a code from the local mailbox)
-  /// sign in first. The link waits for that sign-in, since switching from a restored account
-  /// closes every task the previous one had open.
+  /// sign in first, from the environment or as launch arguments like the link. The link waits for
+  /// that sign-in, since switching from a restored account closes every task the previous one had
+  /// open.
   struct DebugLaunch: ViewModifier {
     @Environment(AppRouter.self) private var router
     @Environment(SessionStore.self) private var session
@@ -16,11 +17,15 @@
 
     private let environment = ProcessInfo.processInfo.environment
 
+    private func launchValue(_ key: String) -> String? {
+      environment[key] ?? UserDefaults.standard.string(forKey: key)
+    }
+
     func body(content: Content) -> some View {
       content
         .task {
-          if let email = environment["ZOONK_DEBUG_SIGN_IN_EMAIL"],
-            let code = environment["ZOONK_DEBUG_SIGN_IN_CODE"]
+          if let email = launchValue("ZOONK_DEBUG_SIGN_IN_EMAIL"),
+            let code = launchValue("ZOONK_DEBUG_SIGN_IN_CODE")
           {
             await session.signInWithEmailCode(email: email, code: code)
           }
@@ -30,8 +35,7 @@
         .onChange(of: signInFinished && session.authenticatedSession != nil, initial: true) {
           _, isReady in
           if isReady, !didOpen,
-            let path = environment["ZOONK_DEBUG_LINK"]
-              ?? UserDefaults.standard.string(forKey: "ZOONK_DEBUG_LINK"),
+            let path = launchValue("ZOONK_DEBUG_LINK"),
             let url = URL(string: "https://zoonk.com\(path)")
           {
             didOpen = true
