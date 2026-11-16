@@ -217,7 +217,11 @@ export function UnitCircleDial({
         />
 
         <TrigLegsAndAngle
-          angle={{ degrees, distance: ARC_RADIUS + ANGLE_LABEL_GAP, label: angleLabel }}
+          angle={{
+            degrees,
+            distance: ARC_RADIUS + ANGLE_LABEL_GAP,
+            label: target?.degrees === degrees ? "" : angleLabel,
+          }}
           canvas={{ width }}
           center={center}
           formatValue={formatValue}
