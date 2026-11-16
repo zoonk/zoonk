@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.goalcontent
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -34,9 +35,11 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.barButtonEnd
 import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.pageListMargin
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 
 /**
@@ -69,7 +72,11 @@ internal fun DetailPage(
             onBack = onBack,
             title = { BarTitle(title) },
             actions = {
-                if (ask != null && !(askInAside && asideBeside)) ask(if (wide) AskTutorAppearance.Button else AskTutorAppearance.Icon)
+                when {
+                    ask == null || (askInAside && asideBeside) -> Unit
+                    wide -> Box(Modifier.barButtonEnd()) { ask(AskTutorAppearance.Button) }
+                    else -> ask(AskTutorAppearance.Icon)
+                }
             },
         ) { padding ->
             DetailPageContent(listState, padding, if (asideBeside) aside else null, hero, action, content)
@@ -95,11 +102,12 @@ private fun DetailPageContent(
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
     val direction = LocalLayoutDirection.current
+    val side = pageListMargin()
     val listPadding =
         PaddingValues(
-            start = padding.calculateStartPadding(direction),
+            start = padding.calculateStartPadding(direction) + side,
             top = padding.calculateTopPadding() + 8.dp,
-            end = padding.calculateEndPadding(direction),
+            end = padding.calculateEndPadding(direction) + side,
             bottom = padding.calculateBottomPadding() + SECTION_GAP,
         )
     val items: LazyListScope.(Boolean) -> Unit = { asideBeside ->

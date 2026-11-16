@@ -138,6 +138,7 @@ import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.MoreButton
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.PageLoading
@@ -1001,9 +1002,7 @@ private fun ScreenMenu(
     if (screen?.step == null && !isDone) return
 
     Box {
-        IconButton(onClick = { open = true }) {
-            Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.player_screen_options))
-        }
+        MoreButton(onClick = { open = true }, contentDescription = stringResource(R.string.player_screen_options))
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.player_ai_note), style = MaterialTheme.typography.bodySmall) },

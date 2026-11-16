@@ -3,6 +3,7 @@ package com.zoonk.android.ui.scaffold
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,12 +14,15 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
+import com.zoonk.android.ui.components.ICON_BUTTON_BLANK
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 
 /**
  * A page a tab or another page opened: its top bar with the way back, [title] and [actions]. A page
@@ -65,12 +69,21 @@ fun PageScaffold(
                 navigationIcon = {
                     BackButton(onClick = onBack, modifier = Modifier.offset(x = pageMargin() - BACK_INK_START), enabled = backEnabled)
                 },
-                actions = actions,
+                actions = { PageBarActions(actions) },
             )
         },
         bottomBar = { bottomBar?.let { BottomBar(columnWidth = barWidth, content = it) } },
         content = { padding -> CompositionLocalProvider(LocalTitleFocus provides focus) { content(padding) } },
     )
+}
+
+/**
+ * A page's top bar actions, which end where its column does: a bare icon button's glyph on the page's margin at every
+ * width, and a boxed button's box with [com.zoonk.android.ui.components.barButtonEnd].
+ */
+@Composable
+fun PageBarActions(content: @Composable RowScope.() -> Unit) {
+    Row(Modifier.offset(x = BAR_GLYPH_END - pageMargin()), verticalAlignment = Alignment.CenterVertically, content = content)
 }
 
 /**
@@ -84,6 +97,10 @@ fun pagePadding(): PaddingValues {
     return PaddingValues(start = margin, end = margin, top = PAGE_TOP, bottom = PAGE_BOTTOM)
 }
 
+/** How far a list's edge sits inside the window: its rows inset their words by [LIST_ITEM_INSET], so the words start on [pageMargin]. */
+@Composable
+fun pageListMargin(): Dp = pageMargin() - LIST_ITEM_INSET
+
 /** Material's window margin: 16dp on a phone, 24dp from medium windows up. */
 @Composable
 fun pageMargin(): Dp =
@@ -95,6 +112,9 @@ fun pageMargin(): Dp =
  * lines up by its ink with the page's margin, as the task bar's close button does.
  */
 private val BACK_INK_START = 4.dp + (48.dp - 24.dp) / 2 + 4.dp
+
+/** Where Material's bar puts a bare icon button's glyph: its actions end 4dp from the window, the button 12dp past its glyph. */
+private val BAR_GLYPH_END = 4.dp + ICON_BUTTON_BLANK
 
 private val PAGE_TOP = 8.dp
 private val PAGE_BOTTOM = 24.dp

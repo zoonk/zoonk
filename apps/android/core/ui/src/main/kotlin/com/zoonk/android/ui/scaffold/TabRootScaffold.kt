@@ -55,7 +55,7 @@ fun TabRootScaffold(
             topBar = {
                 if (bar != null) {
                     Column {
-                        TopAppBar(title = { Box(title) { bar.title() } }, actions = bar.actions)
+                        TopAppBar(title = { Box(title) { bar.title() } }, actions = { PageBarActions(bar.actions) })
                         bar.search(searchScroll?.let { with(it) { Modifier.searchBarScrollBehavior() } } ?: Modifier)
                     }
                 }
