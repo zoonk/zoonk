@@ -10,8 +10,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -69,16 +71,19 @@ class LoadFailedMessageTest {
 
     @Test
     fun aTaskFailureRetriesFromItsBottomBar() {
+        var retried = false
         compose.setContent {
             ZoonkTheme {
                 TaskScaffold(onClose = {}) { padding ->
-                    Column(Modifier.padding(padding)) { LoadFailedMessage(onRetry = {}) }
+                    Column(Modifier.padding(padding)) { LoadFailedMessage(onRetry = { retried = true }) }
                 }
             }
         }
         assertTrue(
             compose.onNodeWithText("Try again").getUnclippedBoundsInRoot().top > compose.onRoot().getUnclippedBoundsInRoot().bottom / 2,
         )
+        compose.onNodeWithText("Try again").performClick()
+        assertTrue(retried)
     }
 
     @Test
@@ -93,5 +98,29 @@ class LoadFailedMessageTest {
         assertTrue(
             compose.onNodeWithText("Try again").getUnclippedBoundsInRoot().bottom < compose.onRoot().getUnclippedBoundsInRoot().bottom / 2,
         )
+    }
+
+    @Test
+    fun oneBarRetriesEveryFailureAndKeepsTheRemainingFailureRegistered() {
+        var secondFailed by mutableStateOf(true)
+        var firstRetries = 0
+        var secondRetries = 0
+        compose.setContent {
+            ZoonkTheme {
+                PageScaffold(onBack = {}) { padding ->
+                    Column(Modifier.padding(padding)) {
+                        LoadFailedMessage(onRetry = { firstRetries++ })
+                        if (secondFailed) LoadFailedMessage(onRetry = { secondRetries++ })
+                    }
+                }
+            }
+        }
+        compose.onAllNodesWithText("Try again").assertCountEquals(1)
+        compose.onNodeWithText("Try again").performClick()
+        assertTrue(firstRetries == 1 && secondRetries == 1)
+        compose.runOnIdle { secondFailed = false }
+        compose.onAllNodesWithText("Try again").assertCountEquals(1)
+        compose.onNodeWithText("Try again").performClick()
+        assertTrue(firstRetries == 2 && secondRetries == 1)
     }
 }

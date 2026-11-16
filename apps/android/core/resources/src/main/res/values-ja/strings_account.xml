@@ -44,8 +44,6 @@
   "account_sign_in_title": "766014847fedf3392ffb681d7a6481477f94a92752ae58b3f4bc64ab391364a7",
   "account_sign_out_failed": "3b97805b8c6fff1f7a72c970d7eedafe0800f043be6fa450db894dca83053d49",
   "account_terms": "2d580ce8f3ede796e0c614b1434626c5e0a4a910ef0d78c750a3f5f050822eae",
-  "account_unavailable_description": "0549951a312b698362fc35161394cc9c7bac1fd2876d27948ed143932d5c4cfe",
-  "account_unavailable_title": "23571c416af906dadf94c9ef2e82958eddf65c1a37aca6cdb632cf0ef8b6b870",
   "account_username": "22070558607c8162570fe7db60f2fd4fa811cb0378f4d1a5045cbb6548df64d4",
   "account_username_available": "0bfdd26903fef343d48c49b74c088289bd34b4be002838275d854eb4b45b587e",
   "account_username_checking": "df653cce097b9f04307e1302b338d53a63b38e11da88ba4b0f0ad79c5461cfcc",
@@ -116,6 +114,4 @@
     <string name="account_menu_log_out">ログアウト</string>
     <string name="account_menu_create_account">アカウントを作成する</string>
     <string name="account_sign_out_failed">Zoonkからログアウトできませんでした。通信状況を確認して、もう一度お試しください。</string>
-    <string name="account_unavailable_title">アカウントを確認できませんでした</string>
-    <string name="account_unavailable_description">ログイン状態は保たれています。通信状況が原因かもしれないので、少し待ってからもう一度お試しください。</string>
 </resources>

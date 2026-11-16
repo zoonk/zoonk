@@ -44,8 +44,6 @@
   "account_sign_in_title": "08ac0dd3f99c77ed1d572b57a70bd3eab92e038ea160ccaebe2a08660b02b010",
   "account_sign_out_failed": "cc84aa051fa53669a8f34a5c433b7732c9321d1e6cd46d16f88b29046b536478",
   "account_terms": "1a2a62f1c99935dfe8a96c16230b712b55bb12b8f3234ca8244b9fe601711c20",
-  "account_unavailable_description": "e00dc6912fca80807398c3fb01868ea2f940b79ed89b2983bea55dc59ddae731",
-  "account_unavailable_title": "f47d6da22508c5cb4cc5051028493295d7f36c8c75a562dacd40fc37eb25cb7e",
   "account_username": "233b6deee82a158fd307302ebd2d7da152d011063bb0b1600f352c2f766194d0",
   "account_username_available": "28dc88738b72409979adbbaa57bef7c832b8ebc861710e1d03d591d2811debf7",
   "account_username_checking": "bfc172866735014513d8665182de533258661705874661956747f7fa1ed959f9",
@@ -116,6 +114,4 @@
     <string name="account_menu_log_out">Abmelden</string>
     <string name="account_menu_create_account">Konto erstellen</string>
     <string name="account_sign_out_failed">Zoonk konnte dich nicht abmelden. Prüf deine Verbindung und versuch es noch einmal.</string>
-    <string name="account_unavailable_title">Wir konnten dein Konto nicht prüfen</string>
-    <string name="account_unavailable_description">Du bist noch angemeldet. Vielleicht liegt es an deiner Verbindung. Versuch es gleich noch einmal.</string>
 </resources>

@@ -6,15 +6,14 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 
 private class LoadFailureAction {
-    var retry by mutableStateOf<(() -> Unit)?>(null)
+    val retries = mutableStateListOf<() -> Unit>()
 }
 
 private val LocalLoadFailureAction = compositionLocalOf<LoadFailureAction?> { null }
@@ -26,7 +25,12 @@ fun WithLoadFailureBar(
     content: @Composable (retry: (@Composable () -> Unit)?) -> Unit,
 ) {
     val action = remember { LoadFailureAction() }
-    val retry = action.retry.takeIf { enabled }
+    val retry: (() -> Unit)? =
+        if (enabled && action.retries.isNotEmpty()) {
+            { action.retries.toList().forEach { it() } }
+        } else {
+            null
+        }
     CompositionLocalProvider(LocalLoadFailureAction provides action.takeIf { enabled }) {
         content(
             retry?.let {
@@ -49,8 +53,8 @@ private fun loadFailureInBar(
     val retry by rememberUpdatedState(onRetry)
     DisposableEffect(action) {
         val invoke = { retry() }
-        action.retry = invoke
-        onDispose { if (action.retry === invoke) action.retry = null }
+        action.retries.add(invoke)
+        onDispose { action.retries.remove(invoke) }
     }
     return true
 }

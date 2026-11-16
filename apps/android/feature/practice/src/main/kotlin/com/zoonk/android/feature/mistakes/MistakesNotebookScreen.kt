@@ -189,6 +189,7 @@ internal fun Notebook(
                     hero = true,
                     onTab = if (fold == null) ({ fixed = it }) else null,
                     wide = wide,
+                    hasMainAction = ready > 0,
                     modifier = beforeFold?.let { Modifier.width(it) } ?: Modifier.weight(1f),
                 )
                 if (fold != null) {
@@ -203,6 +204,7 @@ internal fun Notebook(
                         hero = false,
                         onTab = null,
                         wide = false,
+                        hasMainAction = ready > 0,
                         modifier = Modifier.weight(1f).padding(start = fold.end - fold.start),
                     )
                 }
@@ -233,6 +235,7 @@ private fun NotebookList(
     hero: Boolean,
     onTab: ((Boolean) -> Unit)?,
     wide: Boolean,
+    hasMainAction: Boolean,
     modifier: Modifier,
 ) {
     val key = NotebookKey(goalId, fixed)
@@ -256,7 +259,7 @@ private fun NotebookList(
     if (head == null) {
         Box(modifier) {
             if (loaded is LoadState.Failed) {
-                LoadFailedMessage(onRetry = { scope.launch { store.notebooks[key].refresh() } })
+                LoadFailedMessage(onRetry = { scope.launch { store.notebooks[key].refresh() } }, inBar = !hasMainAction)
             } else {
                 PageLoading()
             }

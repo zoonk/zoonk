@@ -44,8 +44,6 @@
   "account_sign_in_title": "be5ed117649a7dad0ff244d2f25a507234a29e2c65231f424bcccbd00181898f",
   "account_sign_out_failed": "abcecc5b2193277e42d82c1bbc7b99dad0d99b041411954073925059efa83e81",
   "account_terms": "4b8ae467ffd16f23667e44a4e07099b41ba94714ce25bfee3e8d1465c820af31",
-  "account_unavailable_description": "5af8aba4ac58b3a84b67de4091a59d09cd590cc8143063f91244ca63a3699c56",
-  "account_unavailable_title": "bc80e8d8cdf2115e2b0ce3b18c575e6a53f2af0deaa7250599bc79addb052b31",
   "account_username": "dfa26ddc9014f74368b1d3f46a070aeb4a80aebb78970c4ac910d57ab17933d0",
   "account_username_available": "93541d3d9df9024774176af1f24d38ca4c61250f08e9a56712aad906cdda0da0",
   "account_username_checking": "6ef04b24ad286575ba5a7455ffd9325e147066677725952ad507686e29983291",
@@ -116,6 +114,4 @@
     <string name="account_menu_log_out">Sair</string>
     <string name="account_menu_create_account">Criar uma conta</string>
     <string name="account_sign_out_failed">O Zoonk não conseguiu sair da sua conta. Confira sua conexão e tente de novo.</string>
-    <string name="account_unavailable_title">Não foi possível verificar sua conta</string>
-    <string name="account_unavailable_description">Você ainda está na sua conta. Pode ser sua conexão, então tente de novo em instantes.</string>
 </resources>
