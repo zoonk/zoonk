@@ -57,7 +57,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.shell.GoalSwitcherViewModel
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SignOutResult
@@ -65,6 +64,7 @@ import com.zoonk.android.data.Visit
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.catalog.CatalogQuery
+import com.zoonk.android.feature.catalog.SwitchThenToday
 import com.zoonk.android.feature.exam.ExamStore
 import com.zoonk.android.feature.feedback.rememberSendFeedback
 import com.zoonk.android.feature.session.StudyOpener
@@ -162,7 +162,7 @@ internal fun SearchPanel(
 ) {
     val text = rememberTextFieldState()
     val scope = rememberCoroutineScope()
-    val switcher = viewModel { GoalSwitcherViewModel(app) }
+    val switching = viewModel(key = "search-goal-switch") { SwitchThenToday(app.scope, app::switchGoal) }
     val search = viewModel { SearchViewModel(app.today, app.studyOpener) }
     val expanded = state.currentValue == SearchBarValue.Expanded
     val sendFeedback = rememberSendFeedback(app, "command-palette")
@@ -183,7 +183,7 @@ internal fun SearchPanel(
             }
 
             is SearchAction.SwitchGoal -> {
-                switcher.select(action.goalId)
+                switching.switchTo(action.goalId)
             }
 
             SearchAction.SignOut -> {
@@ -205,6 +205,11 @@ internal fun SearchPanel(
                 search.continueToday()
             }
         }
+    }
+
+    VisitOf(switching.visit)
+    ActOn(switching.switched) { saved ->
+        if (saved) navigator.showRoot(AppTab.Today) else app.snackbars.show(R.string.goal_switcher_failed)
     }
 
     VisitOf(search.visit)
