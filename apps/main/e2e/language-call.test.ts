@@ -370,7 +370,7 @@ test.describe("Language practice in the plan", () => {
     ]);
 
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await page.getByRole("button", { exact: true, name: "Start the test" }).click();
 
     await expect(page.getByText("A short reading text at A2.")).toBeVisible();
     await page.getByRole("radio", { name: "Right A2" }).click();
