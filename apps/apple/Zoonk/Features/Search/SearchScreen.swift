@@ -35,7 +35,7 @@ struct SearchScreen: View {
         groupSections(fallback.map { [$0] } ?? [])
       }
     }
-    .barTitleAfterHero(String(localized: AppTab.search.title))
+    .modifier(SearchTitle(isFieldPinned: horizontalSizeClass == .compact))
     // On a phone the tab bar doesn't turn the search tab into a field, so it stays under the
     // title; wider windows keep the system's place in the bar, which leaves the tabs reachable.
     .searchable(
@@ -80,9 +80,14 @@ struct SearchScreen: View {
     groups.isEmpty ? [] : fallback.map { [$0] } ?? []
   }
 
+  /// On a phone the field is pinned under the bar, so the bar names the page; a header under the
+  /// field would head nothing.
+  @ViewBuilder
   private var header: some View {
-    Section {
-      PageHeader(Text(AppTab.search.title))
+    if horizontalSizeClass != .compact {
+      Section {
+        PageHeader(Text(AppTab.search.title))
+      }
     }
   }
 
@@ -229,5 +234,17 @@ private struct SearchGroupLabel: View {
       .typeStyle(.label)
       .foregroundStyle(.faint)
       .accessibilityAddTraits(.isHeader)
+  }
+}
+
+private struct SearchTitle: ViewModifier {
+  let isFieldPinned: Bool
+
+  func body(content: Content) -> some View {
+    if isFieldPinned {
+      content.navigationTitle(Text(AppTab.search.title))
+    } else {
+      content.barTitleAfterHero(String(localized: AppTab.search.title))
+    }
   }
 }
