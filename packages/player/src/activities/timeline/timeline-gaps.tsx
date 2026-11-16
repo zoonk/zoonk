@@ -48,8 +48,8 @@ export function TimelineGaps({
               index % 2 === 0 ? "bg-viz-highlight" : "bg-viz-secondary",
             )}
           />
-          <span>
-            <span className="font-semibold tabular-nums">
+          <span className="flex min-w-0 flex-col gap-1">
+            <span className="font-semibold tabular-nums first-letter:uppercase">
               {gapText(yearsBetween(earlier.year, later.year))}
             </span>{" "}
             {/* An event's label is a title, not a clause, so the two are shown side by side, never in a sentence. */}

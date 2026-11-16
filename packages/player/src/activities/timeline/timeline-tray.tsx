@@ -79,7 +79,7 @@ export function TimelineTray({
       </button>
 
       <p aria-hidden="true" className="text-muted-foreground text-sm">
-        {t("Drag onto the timeline")}
+        {t("Drag onto the timeline.")}
       </p>
     </div>
   );

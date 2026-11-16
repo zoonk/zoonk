@@ -30,7 +30,7 @@ function TickLabels({
   return yearTicks(axis.start, axis.end).map((tick) => (
     <span
       aria-hidden="true"
-      className="text-muted-foreground absolute right-[calc(100%-3.75rem)] -translate-y-1/2 text-xs whitespace-nowrap tabular-nums"
+      className="text-muted-foreground absolute left-0 -translate-y-1/2 text-xs whitespace-nowrap tabular-nums"
       key={tick}
       style={{ top: yearToY(tick, axis) }}
     >
@@ -137,7 +137,9 @@ function AnchorCard({
       )}
       style={{ left: CARD_LEFT, top }}
     >
-      <p className="text-muted-foreground text-xs tabular-nums">{formatYear(item.shownYear)}</p>
+      <p className="text-foreground text-xs font-semibold tabular-nums">
+        {formatYear(item.shownYear)}
+      </p>
       <p className="text-sm leading-snug">{item.label}</p>
     </div>
   );
