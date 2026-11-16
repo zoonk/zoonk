@@ -9,6 +9,7 @@
     }
   },
   "exports": {
+    "./numeric-answer-field": "./src/questions/numeric-answer-field.tsx",
     "./answer-field": "./src/questions/answer-field.ts",
     "./answer-option": "./src/_components/answer-option.tsx",
     "./answer-tone": "./src/_components/answer-tone.ts",

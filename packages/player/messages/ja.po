@@ -143,19 +143,6 @@ msgctxt "9uS9GA"
 msgid "{input}. {output}: {value}"
 msgstr "{input}。{output}：{value}"
 
-#: src/activities/_components/activity-numeric-check.tsx
-msgctxt "nTOnUh"
-msgid "Round to {digits, plural, =0 {# decimal places} one {# decimal place} other {# decimal places}}."
-msgstr "小数点以下{digits, plural, =0 {#桁（整数）} other {#桁}}になるように四捨五入してください。"
-
-#: src/activities/_components/activity-numeric-check.tsx
-#: src/components/arrange-words-answer-area.tsx
-#: src/lesson/feedback/lesson-step-result.tsx
-#: src/lesson/steps/lesson-answer-field.tsx
-msgctxt "1nJY2_"
-msgid "Your answer"
-msgstr "自分の答え"
-
 #: src/activities/_components/activity-output-readouts.tsx
 msgctxt "4fjyo8"
 msgid "{output}: {value}, {note}."
@@ -906,6 +893,11 @@ msgid "Square {number}, {row} and {column}:"
 msgstr "マス{number}、{row}と{column}："
 
 #: src/activities/combination-grid/grid-caption.tsx
+msgctxt "d2pFBx"
+msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} right"
+msgstr "{count}マス正解（{total, plural, =0 {全#マス} other {#マス中}}）"
+
+#: src/activities/combination-grid/grid-caption.tsx
 msgctxt "hyp4AH"
 msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
 msgstr "{dominant}：{dominantCount} / {total} · {recessive}：{recessiveCount} / {total}"
@@ -914,11 +906,6 @@ msgstr "{dominant}：{dominantCount} / {total} · {recessive}：{recessiveCount}
 msgctxt "k5aotC"
 msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} show {what}"
 msgstr "{count}マス（{total, plural, =0 {全部で#マス} other {全#マス}}）に{what}が表示されています"
-
-#: src/activities/combination-grid/grid-caption.tsx
-msgctxt "d2pFBx"
-msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} right"
-msgstr "{count}マス正解（{total, plural, =0 {全#マス} other {#マス中}}）"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "7Pftj-"
@@ -2824,6 +2811,13 @@ msgstr "{item}。{result}。"
 msgctxt "vPyO9S"
 msgid "Position {position}: {item}. Tap to remove."
 msgstr "{position}番目：{item}。タップで取り除けます。"
+
+#: src/components/arrange-words-answer-area.tsx
+#: src/lesson/feedback/lesson-step-result.tsx
+#: src/lesson/steps/lesson-answer-field.tsx
+msgctxt "1nJY2_"
+msgid "Your answer"
+msgstr "自分の答え"
 
 #: src/components/arrange-words-answer-area.tsx
 msgctxt "PKEwrP"

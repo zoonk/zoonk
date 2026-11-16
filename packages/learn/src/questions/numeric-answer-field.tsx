@@ -73,18 +73,62 @@ function UnitAddon({ id, unit }: { id: string; unit: NumericUnit }) {
   );
 }
 
+function useNumericText({
+  defaultText,
+  entry,
+  locale,
+  locked,
+  maximumFractionDigits,
+  value,
+}: {
+  defaultText: string;
+  entry: NumericEntry | null;
+  locale: string;
+  locked: boolean;
+  maximumFractionDigits?: number;
+  value?: number | null;
+}) {
+  function formattedValue() {
+    if (value === undefined) {
+      return defaultText;
+    }
+
+    return value === null ? "" : formatLocalizedNumber({ locale, maximumFractionDigits, value });
+  }
+
+  const written = formattedValue();
+  const [text, setText] = useState(written);
+  const [previousValue, setPreviousValue] = useState(value);
+
+  if (value !== previousValue) {
+    setPreviousValue(value);
+
+    if (value !== undefined && parseEntryAnswer({ entry, locale, text }) !== value) {
+      setText(written);
+    }
+  }
+
+  return [locked && value !== undefined ? written : text, setText] as const;
+}
+
 export function NumericAnswerField({
   defaultText = "",
   entry = null,
   locked,
+  labelledBy,
+  maximumFractionDigits,
   onChange,
   onSubmit,
   result,
   unit,
+  value,
 }: {
   defaultText?: string;
   entry?: NumericEntry | null;
   locked: boolean;
+  labelledBy?: string;
+  maximumFractionDigits?: number;
+  value?: number | null;
   onChange?: (value: number | null) => void;
   onSubmit: (value: number) => void;
   result: "correct" | "wrong" | null;
@@ -93,7 +137,16 @@ export function NumericAnswerField({
   const t = useExtracted();
   const locale = useAppLocale();
   const [inputId, unitId, hintId, ruleId] = [useId(), useId(), useId(), useId()];
-  const [text, setText] = useState(defaultText);
+
+  const [text, setText] = useNumericText({
+    defaultText,
+    entry,
+    locale,
+    locked,
+    maximumFractionDigits,
+    value,
+  });
+
   const [invalid, setInvalid] = useState(false);
   const hasRule = entry !== null && entry.kind !== "number";
 
@@ -110,15 +163,15 @@ export function NumericAnswerField({
       return;
     }
 
-    const value = parseEntryAnswer({ entry, locale, text });
+    const parsed = parseEntryAnswer({ entry, locale, text });
 
-    if (value === null) {
+    if (parsed === null) {
       setInvalid(true);
       return;
     }
 
     putAwayOnScreenKeyboard();
-    onSubmit(value);
+    onSubmit(parsed);
   }
 
   return (
@@ -139,6 +192,7 @@ export function NumericAnswerField({
 
         <InputGroupInput
           aria-describedby={describedBy}
+          aria-labelledby={labelledBy}
           aria-invalid={invalid || undefined}
           autoComplete="off"
           className="text-lg tabular-nums md:text-lg"
@@ -160,15 +214,17 @@ export function NumericAnswerField({
 
         {unit?.position === "suffix" && <UnitAddon id={unitId} unit={unit} />}
 
-        {result && (
-          <InputGroupAddon align="inline-end">
-            {result === "correct" ? (
-              <CheckIcon aria-hidden="true" className="text-success-text" />
-            ) : (
-              <XIcon aria-hidden="true" className="text-destructive-text" />
-            )}
-          </InputGroupAddon>
-        )}
+        <InputGroupAddon
+          align="inline-end"
+          className={result === null ? "invisible" : undefined}
+          aria-hidden={result === null}
+        >
+          {result === "wrong" ? (
+            <XIcon aria-hidden="true" className="text-destructive-text" />
+          ) : (
+            <CheckIcon aria-hidden="true" className="text-success-text" />
+          )}
+        </InputGroupAddon>
       </InputGroup>
 
       {showsRule && <EntryRule entry={entry} id={ruleId} />}

@@ -1,19 +1,34 @@
 "use client";
 
+import { getActivityDecimalPlaces } from "@zoonk/core/library/activities/answers";
 import { getActivityExpected } from "@zoonk/core/library/activities/expected";
+import { useAppLocale } from "@zoonk/learn/locale";
+import { NumericAnswerField } from "@zoonk/learn/numeric-answer-field";
+import { cn } from "@zoonk/ui/lib/utils";
+import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
+import { getUnitPosition } from "@zoonk/utils/math-answer";
 import { useId, useState } from "react";
 import { InteractiveStepLayout } from "../components/step-layouts";
 import { LessonQuestion } from "../lesson/_components/lesson-step-text";
+import { useLessonPlayer } from "../lesson/lesson-player-context";
 import { PlayerInteractionContext, usePlayerInteractionState } from "../player-context";
 import { ActivityBadge } from "./_components/activity-badge";
+import { ActivityCheckQuestion } from "./_components/activity-check-question";
 import { ActivityChoiceCheck } from "./_components/activity-choice-check";
 import { ActivityDataNote } from "./_components/activity-data-note";
 import { ActivityFeedback } from "./_components/activity-feedback";
-import { ActivityNumericCheck } from "./_components/activity-numeric-check";
 import { CanvasQuestionContext } from "./_utils/canvas-question";
 import { activityRenderers } from "./activity-registry";
 import { type ActivityStepProps } from "./activity-renderer";
 import { BrowserCanvas } from "./browser-canvas";
+
+function numericResult(isCorrect: boolean | null) {
+  if (isCorrect === null) {
+    return null;
+  }
+
+  return isCorrect ? "correct" : "wrong";
+}
 
 function ActivityCheckArea({
   answer,
@@ -26,6 +41,9 @@ function ActivityCheckArea({
   className?: string;
 }) {
   const { check } = content;
+  const locale = useAppLocale();
+  const questionId = useId();
+  const { actions } = useLessonPlayer();
 
   if (check.kind === "choice") {
     return (
@@ -40,15 +58,39 @@ function ActivityCheckArea({
   }
 
   if (check.kind === "numeric") {
+    const value = answer?.kind === "numeric" ? answer.value : null;
+    const places = getActivityDecimalPlaces(content);
+
+    const result = phase === "checked" ? numericResult(isCorrect) : null;
+
     return (
-      <ActivityNumericCheck
-        isCorrect={isCorrect}
-        answer={answer}
-        check={check}
-        className={className}
-        onAnswerChange={onAnswerChange}
-        phase={phase}
-      />
+      <div className={cn("flex flex-col gap-3", className)} data-slot="activity-numeric-check">
+        <ActivityCheckQuestion id={questionId}>{check.question}</ActivityCheckQuestion>
+        <NumericAnswerField
+          entry={places === null ? null : { kind: "decimals", places }}
+          labelledBy={questionId}
+          locked={phase === "checked"}
+          maximumFractionDigits={exactFractionDigitsFor({
+            expected: check.answer,
+            tolerance: check.tolerance,
+            value: value ?? check.answer,
+          })}
+          onChange={(number) =>
+            onAnswerChange(number === null ? null : { kind: "numeric", value: number })
+          }
+          onSubmit={actions.check}
+          result={result}
+          unit={
+            check.unit
+              ? {
+                  position: getUnitPosition({ language: locale, unit: check.unit }),
+                  symbol: check.unit,
+                }
+              : null
+          }
+          value={value}
+        />
+      </div>
     );
   }
 

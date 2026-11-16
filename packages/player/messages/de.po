@@ -143,19 +143,6 @@ msgctxt "9uS9GA"
 msgid "{input}. {output}: {value}"
 msgstr "{input}. {output}: {value}"
 
-#: src/activities/_components/activity-numeric-check.tsx
-msgctxt "nTOnUh"
-msgid "Round to {digits, plural, =0 {# decimal places} one {# decimal place} other {# decimal places}}."
-msgstr "Runde auf {digits, plural, =0 {# Nachkommastellen} one {# Nachkommastelle} other {# Nachkommastellen}}."
-
-#: src/activities/_components/activity-numeric-check.tsx
-#: src/components/arrange-words-answer-area.tsx
-#: src/lesson/feedback/lesson-step-result.tsx
-#: src/lesson/steps/lesson-answer-field.tsx
-msgctxt "1nJY2_"
-msgid "Your answer"
-msgstr "Deine Antwort"
-
 #: src/activities/_components/activity-output-readouts.tsx
 msgctxt "4fjyo8"
 msgid "{output}: {value}, {note}."
@@ -906,6 +893,11 @@ msgid "Square {number}, {row} and {column}:"
 msgstr "Feld {number}, {row} und {column}:"
 
 #: src/activities/combination-grid/grid-caption.tsx
+msgctxt "d2pFBx"
+msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} right"
+msgstr "{count} von {total, plural, =0 {# Feldern} one {# Feld} other {# Feldern}} richtig"
+
+#: src/activities/combination-grid/grid-caption.tsx
 msgctxt "hyp4AH"
 msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
 msgstr "{dominant}: {dominantCount} von {total} · {recessive}: {recessiveCount} von {total}"
@@ -914,11 +906,6 @@ msgstr "{dominant}: {dominantCount} von {total} · {recessive}: {recessiveCount}
 msgctxt "k5aotC"
 msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} show {what}"
 msgstr "In {count} von {total, plural, =0 {# Feldern} one {# Feld} other {# Feldern}} siehst du {what}"
-
-#: src/activities/combination-grid/grid-caption.tsx
-msgctxt "d2pFBx"
-msgid "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} right"
-msgstr "{count} von {total, plural, =0 {# Feldern} one {# Feld} other {# Feldern}} richtig"
 
 #: src/activities/combination-grid/grid-caption.tsx
 msgctxt "7Pftj-"
@@ -2824,6 +2811,13 @@ msgstr "{item}. {result}."
 msgctxt "vPyO9S"
 msgid "Position {position}: {item}. Tap to remove."
 msgstr "Position {position}: {item}. Zum Entfernen tippen."
+
+#: src/components/arrange-words-answer-area.tsx
+#: src/lesson/feedback/lesson-step-result.tsx
+#: src/lesson/steps/lesson-answer-field.tsx
+msgctxt "1nJY2_"
+msgid "Your answer"
+msgstr "Deine Antwort"
 
 #: src/components/arrange-words-answer-area.tsx
 msgctxt "PKEwrP"
