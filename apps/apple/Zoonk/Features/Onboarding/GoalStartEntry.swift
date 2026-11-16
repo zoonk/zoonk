@@ -95,6 +95,12 @@ enum GoalStart: Equatable {
   case goal(String)
 }
 
+enum GoalEntrySubmission {
+  static func isEnabled(words: String, canSubmitEmpty: Bool) -> Bool {
+    !words.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || canSubmitEmpty
+  }
+}
+
 struct GoalEntrySections<Attach: View, Attachment: View>: View {
   @Binding var words: String
   var isSection = false
@@ -147,7 +153,6 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
             }
           }
         }
-        .padding(10)
 
         HStack(alignment: .bottom, spacing: 4) {
           attach()
@@ -161,9 +166,11 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
           }
           .buttonStyle(.mainAction)
           .controlSize(.large)
+          .disabled(!GoalEntrySubmission.isEnabled(words: words, canSubmitEmpty: canSubmitEmpty))
         }
       }
-      .padding(6)
+      .padding(.horizontal, 12)
+      .padding(.vertical, 8)
       .inputPanel(isFocused: isFocused)
       .keepsOffFold()
       .listRowBackground(Color.clear)
@@ -199,11 +206,10 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
     }
   }
 
-  /// Never greyed out: with nothing to send, it puts the cursor in the box instead.
   private func submit() {
     let goal = words.trimmingCharacters(in: .whitespacesAndNewlines)
 
-    guard !goal.isEmpty || canSubmitEmpty else {
+    guard GoalEntrySubmission.isEnabled(words: goal, canSubmitEmpty: canSubmitEmpty) else {
       isFocused = true
       return
     }
