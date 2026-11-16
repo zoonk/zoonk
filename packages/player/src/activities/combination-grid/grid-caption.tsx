@@ -21,21 +21,8 @@ export function GridCaption({
   const total = fill.length;
 
   function text() {
-    const right =
-      expected.length > 0
-        ? fill.filter((cell, index) => cell !== null && sameCell(cell, expected[index] ?? ""))
-            .length
-        : null;
-
-    if (right !== null && (!traits || right < total)) {
-      return t(
-        "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} right",
-        { count: String(right), total },
-      );
-    }
-
     if (traits) {
-      const counts = traitCounts(fill);
+      const counts = traitCounts(expected.length > 0 ? expected : fill);
 
       return t(
         "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}",
@@ -53,6 +40,17 @@ export function GridCaption({
       return t(
         "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} show {what}",
         { count: String(counted), total, what: outputName },
+      );
+    }
+
+    if (expected.length > 0) {
+      const right = fill.filter(
+        (cell, index) => cell !== null && sameCell(cell, expected[index] ?? ""),
+      ).length;
+
+      return t(
+        "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} right",
+        { count: String(right), total },
       );
     }
 
