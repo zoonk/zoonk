@@ -2,47 +2,52 @@ import Foundation
 
 // Mirrors main's `use-block-copy.ts`, `mission-copy.tsx` and `plan-status-label.tsx`.
 
-extension StudyBlock {
+/// What names a study block (main's `BlockCopyInput`), so Today's row and the block's own page
+/// read one name.
+protocol NamedBlock {
+  var areas: [String] { get }
+  var challenge: BlockChallenge? { get }
+  var extra: Bool { get }
+  var fullReview: Bool { get }
   /// A review's questions come in capsules, except the first week's warm-up, which is placement's
   /// questions only.
-  private var hasCapsules: Bool {
-    kind == .review && !capsules.isEmpty
-  }
+  var hasCapsules: Bool { get }
+  var kind: StudyBlock.Kind { get }
+  var mistakesOnly: Bool { get }
+  var questions: Int { get }
+  var title: String? { get }
+  var topics: [String] { get }
+}
 
-  private var practisesTopics: Bool {
+struct BlockChallenge {
+  let mock: Bool
+  let rematch: Bool
+  let weekly: Bool
+}
+
+extension NamedBlock {
+  var practisesTopics: Bool {
     kind == .practice && !topics.isEmpty && !fullReview && !mistakesOnly
   }
 
-  private func shortList(_ names: [String], named: Int) -> String {
-    guard names.count > named else {
-      return names.formatted(.list(type: .and))
-    }
-
-    let shown = names.prefix(named).joined(separator: ", ")
-
-    return String(
-      localized: "\(shown) and \(names.count - named) more", table: "Today",
-      comment: "A short list of topics and how many more")
-  }
-
   /// A language unit's challenge is a live call, with no questions.
-  private var isCall: Bool {
-    guard let checkpoint else {
+  var isCall: Bool {
+    guard let challenge else {
       return false
     }
 
-    return !checkpoint.mock && !checkpoint.isWeekly && questions == 0
+    return !challenge.mock && !challenge.weekly && questions == 0
   }
 
-  /// One name per row (main's `use-block-copy.ts`): "The Trickster", "Rematch", "Weekly
-  /// challenge", "Mock exam", "Call", "Review".
+  /// One name per block (main's `use-block-copy.ts`): "The Trickster", "Rematch", "Weekly
+  /// challenge", "Mock exam", "Call", "Review", or a practice's topic.
   var displayTitle: String {
-    if let checkpoint {
-      if checkpoint.mock {
+    if let challenge {
+      if challenge.mock {
         return String(localized: "Mock exam", table: "Today", comment: "A mock exam block")
       }
 
-      if checkpoint.isWeekly {
+      if challenge.weekly {
         return String(
           localized: "Weekly challenge", table: "Today", comment: "The week's challenge block")
       }
@@ -52,7 +57,7 @@ extension StudyBlock {
           localized: "Call", table: "Today", comment: "A language plan's challenge: a live call")
       }
 
-      return checkpoint.rematch
+      return challenge.rematch
         ? String(
           localized: "Rematch", table: "Today",
           comment: "A second go at the Trickster, the character a phase's challenge is against")
@@ -76,35 +81,79 @@ extension StudyBlock {
       return title
         ?? String(localized: "Writing practice", table: "Today", comment: "A writing block")
     case .practice, .checkpoint:
-      if fullReview {
-        return String(localized: "Review", table: "Today", comment: "A review block")
-      }
+      return practiceTitle
+    }
+  }
 
-      if mistakesOnly {
-        return String(
-          localized: "Practice mistakes", table: "Today", comment: "A block fixing mistakes")
-      }
+  /// Named after the topic most of its questions are on, so two practices on one subject in a day
+  /// never share a name; after its subjects when it has no topics (main's `getPracticeFocus`).
+  private var practiceTitle: String {
+    if fullReview {
+      return String(localized: "Review", table: "Today", comment: "A review block")
+    }
 
-      if !areas.isEmpty {
-        let areas = areas.formatted(.list(type: .and))
+    if mistakesOnly {
+      return String(
+        localized: "Practice mistakes", table: "Today", comment: "A block fixing mistakes")
+    }
 
-        return extra
-          ? String(
-            localized: "Bonus practice: \(areas)", table: "Today",
-            comment:
-              "Extra practice the learner added, and the one or two subjects most of its questions are on, like \"Math and Languages\""
-          )
-          : String(
-            localized: "Practice: \(areas)", table: "Today",
-            comment:
-              "A block of the day's practice, and the one or two subjects most of its questions are on, like \"Math and Languages\""
-          )
-      }
+    if let topic = topics.first {
+      return extra
+        ? String(
+          localized: "bonusPracticeTopic", defaultValue: "Bonus practice: \(topic)", table: "Today",
+          comment:
+            "Extra practice the learner added. {topic} names the topic most of its questions are on, like \"Calculating discounts\"."
+        )
+        : String(
+          localized: "practiceTopic", defaultValue: "Practice: \(topic)", table: "Today",
+          comment:
+            "A block of the day's practice. {topic} names the topic most of its questions are on, like \"Calculating discounts\"."
+        )
+    }
+
+    if !areas.isEmpty {
+      let areas = areas.formatted(.list(type: .and))
 
       return extra
-        ? String(localized: "Bonus practice", table: "Today", comment: "An extra practice block")
-        : String(localized: "Mixed practice", table: "Today", comment: "A practice block")
+        ? String(
+          localized: "Bonus practice: \(areas)", table: "Today",
+          comment:
+            "Extra practice the learner added, and the one or two subjects most of its questions are on, like \"Math and Languages\""
+        )
+        : String(
+          localized: "Practice: \(areas)", table: "Today",
+          comment:
+            "A block of the day's practice, and the one or two subjects most of its questions are on, like \"Math and Languages\""
+        )
     }
+
+    return extra
+      ? String(localized: "Bonus practice", table: "Today", comment: "An extra practice block")
+      : String(localized: "Mixed practice", table: "Today", comment: "A practice block")
+  }
+}
+
+extension StudyBlock: NamedBlock {
+  var challenge: BlockChallenge? {
+    checkpoint.map { BlockChallenge(mock: $0.mock, rematch: $0.rematch, weekly: $0.isWeekly) }
+  }
+
+  var hasCapsules: Bool {
+    kind == .review && !capsules.isEmpty
+  }
+}
+
+extension StudyBlock {
+  private func shortList(_ names: [String], named: Int) -> String {
+    guard names.count > named else {
+      return names.formatted(.list(type: .and))
+    }
+
+    let shown = names.prefix(named).joined(separator: ", ")
+
+    return String(
+      localized: "\(shown) and \(names.count - named) more", table: "Today",
+      comment: "A short list of topics and how many more")
   }
 
   /// The row's line where the block is told on its own, as "Up next" does.
@@ -162,8 +211,9 @@ extension StudyBlock {
         comment: "A challenge that opens once the lessons before it are done")
     }
 
-    if practisesTopics {
-      return shortList(topics, named: 1)
+    // The title names a practice's first topic, so the line counts the others.
+    if practisesTopics && topics.count > 1 {
+      return String(localized: "\(topics.count - 1) more topics", table: "Today")
     }
 
     if fullReview {

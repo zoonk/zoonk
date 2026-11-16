@@ -55,14 +55,14 @@ struct QuestionBlockScreen: View {
     .task(id: session.authenticatedSession) { await read() }
   }
 
-  private var title: LocalizedStringResource {
+  private var title: String {
     guard case .loaded(let run) = load else {
-      return LocalizedStringResource(
-        "Today's session", table: "Practice",
+      return String(
+        localized: "Today's session", table: "Practice",
         comment: "Names a block of today's session until the block loads")
     }
 
-    return PracticeBlockTitle.title(for: run.detail.block)
+    return run.detail.block.displayTitle
   }
 
   /// After it, the block as the day now has it: one left with no questions is skipped, so gone from the day.
@@ -641,63 +641,6 @@ private struct BlockFinishedView: View {
       LocalizedStringResource("Review done", table: "Practice", comment: "End of a review block.")
     default:
       LocalizedStringResource("Practice done", table: "Practice", comment: "End of a practice run.")
-    }
-  }
-}
-
-enum PracticeBlockTitle {
-  static func title(for block: PracticeBlock) -> LocalizedStringResource {
-    if let checkpoint = block.checkpoint {
-      switch checkpoint.kind {
-      case .weekly:
-        return checkpoint.mock
-          ? LocalizedStringResource(
-            "Mock exam", table: "Practice", comment: "Title of a weekly mock exam block.")
-          : LocalizedStringResource(
-            "Weekly challenge", table: "Practice", comment: "Title of the weekly challenge block.")
-      case .finalBoss, .boss:
-        return checkpoint.rematch
-          ? LocalizedStringResource(
-            "Rematch", table: "Practice", comment: "Title of a second go at the Trickster.")
-          : LocalizedStringResource(
-            "The Trickster", table: "Practice", comment: "Title of a Trickster duel.")
-      }
-    }
-
-    switch block.kind {
-    case .review where block.capsules.isEmpty:
-      return LocalizedStringResource(
-        "What you already know", table: "Practice",
-        comment: "Title of the first week's placement questions block.")
-    case .review:
-      return block.estimatedMinutes > 5
-        ? LocalizedStringResource(
-          "Reviews", table: "Practice", comment: "Title of a long review block.")
-        : LocalizedStringResource(
-          "Quick review", table: "Practice", comment: "Title of a short review block.")
-    case .learn:
-      return block.title.map { LocalizedStringResource(stringLiteral: $0) }
-        ?? LocalizedStringResource(
-          "New lesson", table: "Practice", comment: "Title of a lesson block without a title yet.")
-    case .produce:
-      return block.title.map { LocalizedStringResource(stringLiteral: $0) }
-        ?? LocalizedStringResource(
-          "Writing practice", table: "Practice", comment: "Title of a writing block.")
-    case .practice, .checkpoint:
-      if block.fullReview {
-        return LocalizedStringResource(
-          "Full review", table: "Practice", comment: "Title of a full review block.")
-      }
-      if block.mistakesOnly {
-        return LocalizedStringResource(
-          "Practice mistakes", table: "Practice",
-          comment: "Title of a block that only fixes mistakes.")
-      }
-      return block.extra
-        ? LocalizedStringResource(
-          "Bonus practice", table: "Practice", comment: "Title of an extra practice block.")
-        : LocalizedStringResource(
-          "Mixed practice", table: "Practice", comment: "Title of a mixed practice block.")
     }
   }
 }
