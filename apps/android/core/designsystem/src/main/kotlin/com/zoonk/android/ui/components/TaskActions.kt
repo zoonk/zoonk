@@ -15,6 +15,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.ui.scaffold.BAR_GAP
@@ -55,6 +56,7 @@ fun TaskActions(
 ) {
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         val roomy = maxWidth >= ROOMY_BAR_WIDTH
+        val singleAction = maxWidth < MAIN_ACTION_WIDTH * 2 * LocalDensity.current.fontScale
 
         CompositionLocalProvider(LocalRoomyBar provides roomy) {
             FlowRow(
@@ -62,6 +64,7 @@ fun TaskActions(
                 horizontalArrangement = Arrangement.spacedBy(BAR_GAP, if (roomy) Alignment.End else Alignment.Start),
                 verticalArrangement = Arrangement.spacedBy(BAR_GAP),
                 itemVerticalAlignment = Alignment.CenterVertically,
+                maxItemsInEachRow = if (singleAction) 1 else Int.MAX_VALUE,
             ) {
                 if (back != null) {
                     if (roomy) Box(Modifier.weight(1f)) { back() } else back()

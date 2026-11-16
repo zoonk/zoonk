@@ -2,13 +2,17 @@ package com.zoonk.android.feature.activities.code
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isEnabled
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -25,6 +29,8 @@ import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
 import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.ui.components.LayoutPart
+import com.zoonk.android.ui.components.LayoutPartKey
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.LessonStepAnswer
@@ -83,6 +89,29 @@ class CodeFlowTest {
     private fun waitForCheckEnabled() = rule.waitUntil(WAIT_MS) { runCatching { rule.onNodeWithText("Check").assertIsEnabled() }.isSuccess }
 
     private fun line(number: Int): SemanticsNodeInteraction = rule.onNode(hasContentDescription("Line $number, yours to edit"))
+
+    @Test
+    fun anAnsweringRunQuestionHasRunAsItsOneFilledEnabledAction() {
+        playFixture("codeRunner", isCorrect = true) { ScriptedSandbox.printed("5050\n") }
+        rule.onNodeWithText("Check").assertIsNotEnabled()
+        val filled =
+            rule.onAllNodes(
+                SemanticsMatcher("filled action") {
+                    it.config.getOrNull(LayoutPartKey)?.variant == LayoutPart.Variant.Filled
+                } and isEnabled(),
+            )
+        filled.assertCountEquals(1)
+        filled[0].assert(hasText("Run"))
+        tap("Run")
+        waitForCheckEnabled()
+        filled.assertCountEquals(1)
+        filled[0].assert(hasText("Check"))
+        rule.onNodeWithText("Run again").assertDoesNotExist()
+        line(2).performTextReplacement("for n in range(1, 101):")
+        rule.onNodeWithText("Check").assertIsNotEnabled()
+        filled.assertCountEquals(1)
+        filled[0].assert(hasText("Run again"))
+    }
 
     @Test
     fun aRunsOutputComesBackAfterAndroidClosesTheAppInTheBackground() {
@@ -219,7 +248,7 @@ class CodeFlowTest {
         shows("first")
         val pending = CompletableDeferred<Unit>()
         scripted.gate = pending
-        tap("Run again")
+        line(2).requestFocus().performKeyInput { pressKey(Key.Enter) }
         harness.tap("Check")
         shows("Not quite")
         pending.complete(Unit)

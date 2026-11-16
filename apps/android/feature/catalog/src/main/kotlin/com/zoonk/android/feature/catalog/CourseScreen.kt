@@ -330,6 +330,6 @@ private fun CourseClosing(
         }
 
         Spacer(Modifier.size(24.dp))
-        StartActions(app, navigator, courseId, dailyMinutes = pace)
+        StartActions(app, navigator, courseId, dailyMinutes = pace, secondary = true)
     }
 }

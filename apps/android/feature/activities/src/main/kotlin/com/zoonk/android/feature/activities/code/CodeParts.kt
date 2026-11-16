@@ -401,8 +401,8 @@ internal fun SnippetBar(
 }
 
 /**
- * Main's `SandboxRunBar`: Run is the main action until the first run, then steps back so Check
- * stands out. Runs wait for the runtime, so Run works while it loads.
+ * Main's `SandboxRunBar`: Run leads until a question has an answer; exploring keeps it secondary
+ * because Continue is the screen's main action. Runs wait for the runtime, so Run works while it loads.
  */
 @Composable
 internal fun SandboxRunBar(
@@ -412,6 +412,7 @@ internal fun SandboxRunBar(
     isRunning: Boolean,
     onRun: () -> Unit,
     onReset: (() -> Unit)? = null,
+    needsRun: Boolean?,
 ) {
     if (runtime.status == SandboxRuntimeStatus.Failed) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -442,10 +443,10 @@ internal fun SandboxRunBar(
             }
             val icon: @Composable () -> Unit = { ButtonIcon(R.drawable.ic_play_arrow) }
             val runModifier = Modifier.weight(1f).heightIn(min = 48.dp)
-            if (hasRun) {
-                OutlinedButton(busy = isRunning, onClick = onRun, modifier = runModifier, leadingIcon = icon, content = content)
-            } else {
+            if (needsRun == true) {
                 Button(busy = isRunning, onClick = onRun, modifier = runModifier, content = content)
+            } else if (needsRun == null) {
+                OutlinedButton(busy = isRunning, onClick = onRun, modifier = runModifier, leadingIcon = icon, content = content)
             }
         }
         if (runtime.status == SandboxRuntimeStatus.Loading) {

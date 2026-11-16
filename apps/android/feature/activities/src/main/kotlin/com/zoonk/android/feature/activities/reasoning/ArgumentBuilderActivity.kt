@@ -416,7 +416,10 @@ private fun QuoteText(
     citation: String,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        RichText(stringResource(R.string.activities_reasoning_quote, quote), style = MaterialTheme.typography.bodyLarge)
+        RichText(
+            stringResource(R.string.activities_reasoning_quote, quote),
+            style = MaterialTheme.typography.bodyLarge,
+        )
         Text(citation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }
 }

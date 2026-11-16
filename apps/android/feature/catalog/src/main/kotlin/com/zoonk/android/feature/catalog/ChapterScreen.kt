@@ -233,7 +233,7 @@ private fun chapterBlocks(
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Spacer(Modifier.size(24.dp))
-                    ChapterStart(app, navigator, courseId, startChapterId, hasLesson)
+                    ChapterStart(app, navigator, courseId, startChapterId, hasLesson, secondary = true)
                 }
             },
         )
@@ -259,12 +259,14 @@ private fun ChapterStart(
     courseId: String,
     startChapterId: String?,
     hasLesson: Boolean,
+    secondary: Boolean = false,
 ) {
     StartActions(
         app = app,
         navigator = navigator,
         courseId = courseId,
         chapterId = startChapterId,
+        secondary = secondary,
         note = if (hasLesson) null else stringResource(R.string.catalog_chapter_writes_lessons),
     )
 }

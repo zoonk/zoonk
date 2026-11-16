@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 
@@ -67,7 +68,11 @@ private fun Chip(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         mark()
-        Text(text = text, color = ink, style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium))
+        Text(
+            text = text,
+            color = ink,
+            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium, lineBreak = LineBreak.Heading),
+        )
     }
 }
 

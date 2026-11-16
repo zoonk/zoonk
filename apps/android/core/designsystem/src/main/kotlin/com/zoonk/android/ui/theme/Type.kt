@@ -78,11 +78,11 @@ internal val ZoonkMaterialTypography =
             // `text-readout` at a block's size (`BigQuantity`), and headings that size.
             headlineSmall = headlineSmall.role(24f, 600, 30f, -0.04f).balanced(),
             // `text-section`, and a top app bar's title.
-            titleLarge = titleLarge.role(20f, 600, 26f, -0.02f),
+            titleLarge = titleLarge.role(20f, 600, 26f, -0.02f).balanced(),
             // A card's or a block's title at reading size, at Material's weight.
-            titleMedium = titleMedium.role(16f, 500, 24f),
+            titleMedium = titleMedium.role(16f, 500, 24f).balanced(),
             // A row's title (`ListRowTitle`), and what titles a card or an item.
-            titleSmall = titleSmall.role(14f, 500, 20f),
+            titleSmall = titleSmall.role(14f, 500, 20f).balanced(),
             // Reading: a question's context, Today's queue.
             bodyLarge = bodyLarge.role(16f, 400, 24f),
             // The app's body (`text-sm`).
@@ -90,11 +90,11 @@ internal val ZoonkMaterialTypography =
             // A row's description and meta (`ListRowDescription`).
             bodySmall = bodySmall.role(12f, 400, 16f),
             // A button for a screen's action.
-            labelLarge = labelLarge.role(15f, 500, 22f),
+            labelLarge = labelLarge.role(15f, 500, 22f).balanced(),
             // A small button (`size="sm"`), navigation labels.
-            labelMedium = labelMedium.role(13f, 500, 18f),
+            labelMedium = labelMedium.role(13f, 500, 18f).balanced(),
             // Small marks and plot labels.
-            labelSmall = labelSmall.role(11f, 500, 16f),
+            labelSmall = labelSmall.role(11f, 500, 16f).balanced(),
         )
     }
 
@@ -126,13 +126,13 @@ data class ZoonkTypography(
 internal val ZoonkTypeRoles =
     with(material) {
         ZoonkTypography(
-            sectionTitle = titleSmall.role(14f, 600, 20f, -0.01f),
+            sectionTitle = titleSmall.role(14f, 600, 20f, -0.01f).balanced(),
             data = labelMedium.role(12f, 400, 16f, family = GeistMono),
             eyebrow = labelSmall.role(11.5f, 400, 16f, family = GeistMono),
             label = labelSmall.role(11.5f, 550, 16f, 0.04f),
             lead = bodyLarge.role(17f, 400, 26f, -0.01f),
             lessonText = bodyLarge.role(18f, 400, 29.25f),
-            question = titleMedium.role(19f, 560, 25.65f, -0.02f),
+            question = titleMedium.role(19f, 560, 25.65f, -0.02f).balanced(),
             verdict = labelLarge.role(15f, 550, 24f),
             tag = labelSmall.role(11.5f, 550, 16f),
             message = bodyLarge.role(15f, 400, 23.25f),
