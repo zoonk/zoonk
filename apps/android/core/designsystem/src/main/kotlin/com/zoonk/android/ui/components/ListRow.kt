@@ -31,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.AlignmentLine
+import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
@@ -310,7 +312,7 @@ fun MarkedLine(
  * it needs) or the words beside it would stand taller than with it under them. Beside one or two lines (the title however it wraps, a value moved under it, each description)
  * the mark is centered on the words; beside three or more, or as a text lead ([leadOnFirstLine]), it is
  * centered on the first line, a line as tall as [firstLine]'s at this text size. A value beside the words
- * sits on the row's center.
+ * sits on the title's first baseline.
  */
 @Composable
 private fun RowContent(
@@ -374,7 +376,17 @@ private fun RowContent(
                 y += it.height
             }
             notesPlaceable?.placeRelative(wordsStart, y)
-            if (beside) valuePlaceable?.let { it.placeRelative(constraints.maxWidth - it.width, (height - it.height) / 2) }
+            if (beside) valuePlaceable?.let {
+                val titleBaseline = titlePlaceable[FirstBaseline]
+                val valueBaseline = it[FirstBaseline]
+                val top =
+                    if (titleBaseline != AlignmentLine.Unspecified && valueBaseline != AlignmentLine.Unspecified) {
+                        inset + wordsTop + titleBaseline - valueBaseline
+                    } else {
+                        inset + wordsTop + (line - it.height) / 2
+                    }
+                it.placeRelative(constraints.maxWidth - it.width, top)
+            }
         }
     }
 }
