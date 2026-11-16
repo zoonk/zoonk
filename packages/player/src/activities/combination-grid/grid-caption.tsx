@@ -21,9 +21,24 @@ export function GridCaption({
   const total = fill.length;
 
   function text() {
+    if (traits) {
+      const counts = traitCounts(expected.length > 0 ? expected : fill);
+
+      return t(
+        "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}",
+        {
+          dominant: traits.dominant,
+          dominantCount: String(counts.dominant),
+          recessive: traits.recessive,
+          recessiveCount: String(counts.recessive),
+          total: String(total),
+        },
+      );
+    }
+
     if (counted !== null && outputName !== null) {
       return t(
-        "{what}: {count} of {total, plural, =0 {# squares} one {# square} other {# squares}}",
+        "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} show {what}",
         { count: String(counted), total, what: outputName },
       );
     }
@@ -39,23 +54,11 @@ export function GridCaption({
       );
     }
 
-    if (!traits) {
-      const filled = fill.filter((cell) => cell !== null).length;
+    const filled = fill.filter((cell) => cell !== null).length;
 
-      return t(
-        "{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} filled",
-        { count: String(filled), total },
-      );
-    }
-
-    const counts = traitCounts(fill);
-
-    return t("{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}", {
-      dominant: traits.dominant,
-      dominantCount: String(counts.dominant),
-      recessive: traits.recessive,
-      recessiveCount: String(counts.recessive),
-      total: String(total),
+    return t("{count} of {total, plural, =0 {# squares} one {# square} other {# squares}} filled", {
+      count: String(filled),
+      total,
     });
   }
 
