@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { ActivitySoundButton } from "../_components/activity-sound-button";
 import { useChordName, useNoteNames } from "../_utils/use-music-labels";
@@ -36,11 +35,7 @@ export function KeyboardFretboardHeader({
   }
 
   function title() {
-    if (heading === "byEar") {
-      return t("Your notes");
-    }
-
-    if (heading === "yours") {
+    if (heading === "byEar" || heading === "yours") {
       return t("Your notes");
     }
 
@@ -48,13 +43,7 @@ export function KeyboardFretboardHeader({
   }
 
   return (
-    <div
-      className={cn(
-        "flex gap-3",
-        // Two buttons leave the title no room beside them on a phone, so they take their own row.
-        byEar ? "flex-col" : "items-start justify-between",
-      )}
-    >
+    <div className="flex flex-col gap-3">
       <div className="flex min-w-0 flex-col gap-0.5">
         <p className="text-lg leading-tight font-semibold">{title()}</p>
 
@@ -70,7 +59,7 @@ export function KeyboardFretboardHeader({
         </p>
       </div>
 
-      <div className={cn("flex shrink-0 flex-wrap gap-2", !byEar && "justify-end")}>
+      <div className="flex shrink-0 flex-wrap gap-2">
         {isGuessing && byEar.onPlay && (
           <ActivitySoundButton onPlay={byEar.onPlay}>{t("Play the sound")}</ActivitySoundButton>
         )}
