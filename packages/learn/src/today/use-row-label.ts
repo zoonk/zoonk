@@ -1,7 +1,6 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { useShortList } from "../plan/use-short-list";
 import { type DayStep } from "../session/session-types";
 import { practisesTopics } from "../session/use-block-copy";
 
@@ -11,16 +10,17 @@ import { practisesTopics } from "../session/use-block-copy";
  */
 export function useStepLabel() {
   const t = useExtracted();
-  const shortList = useShortList();
 
   return function stepLabel(block: DayStep): string | null {
     if (block.waitReason) {
       return t("After today's lessons");
     }
 
-    // The title names a practice's first topic, so the line names the others.
+    // The title names a practice's first topic, so the line counts the others.
     if (practisesTopics(block) && block.topics.length > 1) {
-      return shortList(block.topics.slice(1), "topics", { named: 1 });
+      return t("{count, plural, one {# more topic} other {# more topics}}", {
+        count: block.topics.length - 1,
+      });
     }
 
     if (block.checkpoint) {

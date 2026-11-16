@@ -8227,6 +8227,7 @@ msgid "{correct} of {total}"
 msgstr "{correct} de {total}"
 
 #: src/mock/mock-result-breakdown.tsx
+#: src/today/use-row-label.ts
 msgctxt "SjSDDA"
 msgid "{count, plural, one {# more topic} other {# more topics}}"
 msgstr "{count, plural, one {# tema más} other {# temas más}}"
