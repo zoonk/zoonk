@@ -227,8 +227,9 @@ const ROW_FORMULA_CLASS =
 
 /**
  * The tag ends the answer's last line, or a line of its own when the last line has no room for it,
- * so a tag that comes with a verdict never rewraps the words above it. A row's answer flows as
- * text: a caller whose answer has several lines makes each one a block or breaks them with `<br>`.
+ * so a tag that comes with a verdict never rewraps the words above it: the row wraps line by line,
+ * since balanced wrapping would reflow earlier lines around the tag. A row's answer flows as text:
+ * a caller whose answer has several lines makes each one a block or breaks them with `<br>`.
  */
 export function TagBesideOrUnder({
   children,
@@ -255,7 +256,7 @@ export function TagBesideOrUnder({
   }
 
   return (
-    <span className={cn("flow-root w-full grow basis-1/2", ROW_FORMULA_CLASS)}>
+    <span className={cn("flow-root w-full grow basis-1/2 text-wrap", ROW_FORMULA_CLASS)}>
       {children}
       {tag && <LineMarker className="float-end ms-3 h-auto min-h-lh max-w-full">{tag}</LineMarker>}
     </span>
