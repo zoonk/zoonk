@@ -3,14 +3,7 @@
 import { type PlanDayView, type PlanItemView } from "@zoonk/core/plans/view-contract";
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { useExtracted } from "next-intl";
-import { KindMark, type LearnKind } from "../../_components/kind-tile";
-import {
-  ListGroup,
-  ListRow,
-  ListRowContent,
-  ListRowLeading,
-  ListRowTrailing,
-} from "../../_components/list-group";
+import { ListGroup, ListRow, ListRowContent, ListRowLeading } from "../../_components/list-group";
 import {
   PageSection,
   PageSectionDetail,
@@ -19,17 +12,6 @@ import {
 } from "../../_components/page";
 import { useFormatIsoDate } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
-
-const ITEM_KINDS: Record<PlanItemView["kind"], LearnKind> = {
-  boss: "challenge",
-  chapter: "lesson",
-  checkpoint: "challenge",
-  lesson: "lesson",
-  mock: "mock",
-  review: "review",
-};
-
-const ICONS_SHOWN = 4;
 
 function isTeaching(item: PlanItemView): boolean {
   return item.kind === "lesson" || item.kind === "chapter";
@@ -55,24 +37,10 @@ function useItemTitle() {
   };
 }
 
-function DayKinds({ items }: { items: readonly PlanItemView[] }) {
-  const rest = items.length - ICONS_SHOWN;
-
-  return (
-    <ListRowTrailing aria-hidden="true" className="row-first-line gap-1 max-sm:hidden">
-      {items.slice(0, ICONS_SHOWN).map((item, index) => (
-        // oxlint-disable-next-line react/no-array-index-key -- the icons are fixed for this day
-        <KindMark className="size-3" key={index} kind={ITEM_KINDS[item.kind]} />
-      ))}
-      {rest > 0 && <span className="text-faint">{`+${rest}`}</span>}
-    </ListRowTrailing>
-  );
-}
-
 /**
  * The dates never wrap, and each row's column is as wide as the longest, so the names line up. The
- * date and the kinds sit on the first name's line, so the names start under the row's top room even
- * when a day has one line, rather than centered in it. Names sit further apart than a name's own
+ * date sits on the first name's line, so the names start under the row's top room even when a day
+ * has one line, rather than centered in it. Names sit further apart than a name's own
  * lines, so a title that wraps reads as one lesson.
  */
 function WeekDayRow({
@@ -114,8 +82,6 @@ function WeekDayRow({
           ))
         )}
       </ListRowContent>
-
-      {day.items.length > 0 && <DayKinds items={day.items} />}
     </ListRow>
   );
 }

@@ -230,7 +230,7 @@ function prelims(minimum: NonNullable<Minimum>[number]["minimum"]): ExamStructur
 describe("a qualifying test", () => {
   it("counts for none of the result, so the map shows it outside the score", () => {
     const structure = prelims({ unit: "percent", value: 33 });
-    const map = buildExamMap({ frequency: [], skills: [], structure });
+    const map = buildExamMap({ examName: "ENEM", frequency: [], skills: [], structure });
 
     expect(listSubjectShares(structure)).toStrictEqual([1, 0]);
 
@@ -311,7 +311,7 @@ describe("mixed paper map shares", () => {
         ],
       });
 
-      const map = buildExamMap({ frequency: [], skills: [], structure });
+      const map = buildExamMap({ examName: "ENEM", frequency: [], skills: [], structure });
 
       expect(map.subjects.map((item) => item.share)).toStrictEqual(shares);
 
@@ -333,7 +333,7 @@ describe("mixed paper map shares", () => {
       ],
     });
 
-    const map = buildExamMap({ frequency: [], skills: [], structure });
+    const map = buildExamMap({ examName: "ENEM", frequency: [], skills: [], structure });
     expect(map.subjects.map((item) => item.share)).toStrictEqual([0.8, 0.1, 0.1]);
   });
 
@@ -343,13 +343,13 @@ describe("mixed paper map shares", () => {
       subjects: [subject("A", 80), subject("B", 20), ...grouped("Paper", ["Essay"])],
     });
 
-    const map = buildExamMap({ frequency: [], skills: [], structure });
+    const map = buildExamMap({ examName: "ENEM", frequency: [], skills: [], structure });
     expect(map.subjects.map((item) => item.share)).toStrictEqual([0.8 / 1.5, 0.2 / 1.5, 1 / 3]);
   });
 
   it("counts a choice and its nested options once when assuming an essay share", () => {
     const structure = { ...enem, subjects: [...enem.subjects, ...grouped("Written", ["Essay"])] };
-    const map = buildExamMap({ frequency: [], skills: [], structure });
+    const map = buildExamMap({ examName: "ENEM", frequency: [], skills: [], structure });
 
     expect(map.subjects.map((item) => item.share)).toStrictEqual([
       1 / 3,

@@ -1,5 +1,6 @@
 import {
   certificateListResponseSchema,
+  certificateProgressResponseSchema,
   certificateSchema,
   goalCertificatesResponseSchema,
 } from "../schemas/certificates";
@@ -73,6 +74,22 @@ export const certificatePaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "List the current learner's certificates",
+      tags: TAGS,
+    },
+  },
+  "/me/certificates/progress": {
+    get: {
+      operationId: "listCertificateProgress",
+      responses: {
+        "200": {
+          content: { "application/json": { schema: certificateProgressResponseSchema } },
+          description:
+            "Active goals and the studied share of their next certificate's full coverage",
+        },
+        "401": unauthorizedResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Get the current learner's certificate study progress",
       tags: TAGS,
     },
   },

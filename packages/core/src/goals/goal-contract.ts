@@ -280,8 +280,9 @@ export type GoalView = GoalCountryFields & {
     ready: boolean;
     currentPhase: number | null;
     endDate: string | null;
+    /** Studied and already-known lessons in the Plan's lesson scope. */
     lessonsDone: number;
-    /** Every lesson the plan teaches but those tested out. */
+    /** The Plan's lesson scope, including studied and already-known lessons. */
     lessonsTotal: number;
     phaseCount: number;
   } | null;

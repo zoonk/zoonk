@@ -1,6 +1,7 @@
 import { AdminTableRow } from "@/components/admin-table-row";
 import { type SignupRetentionRow, getSignupRetention } from "@/data/stats/get-signup-retention";
 import { formatDay, formatPercent } from "@/lib/format";
+import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
 import { AdminAnalysisTable } from "../_components/admin-analysis-table";
 import { toPercent } from "../_utils/metric-trend";
@@ -13,7 +14,7 @@ export async function RetentionAnalysis({ statsPeriod }: { statsPeriod: StatsPer
 
   return (
     <AdminAnalysisTable description="Learners who signed up each week and were active exactly 1, 7 and 30 days later (any finished activity or study time). A day counts only once it has passed, so young cohorts show a dash instead of a false zero.">
-      <Table>
+      <Table scrollLabels={SCROLL_LABELS}>
         <TableHeader>
           <AdminTableRow>
             <TableHead>Signup week</TableHead>

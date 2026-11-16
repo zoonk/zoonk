@@ -58,7 +58,7 @@ export function useFocusTestTitle() {
   const t = useExtracted();
 
   return (suggestsFocus: boolean): string =>
-    suggestsFocus ? t("Find what to study most") : t("Skip what you already know");
+    suggestsFocus ? t("Find what to study most") : t("Already know some of this?");
 }
 
 /**

@@ -47,7 +47,7 @@ export async function MinutesVsGoalAnalysis({ statsPeriod }: { statsPeriod: Stat
   return (
     <AdminAnalysisTrend
       comparison={{ comparisonLabel, current: met ?? 0, previous: previousMet ?? 0 }}
-      description={`Share of ${days.toLocaleString()} study days, counted from each learner's first goal, that reached the daily minutes of their active goals.${averageDay} Goals keep no history, so every day uses today's minutes.`}
+      description={`Share of ${days.toLocaleString()} study days, counted from each learner's first goal, that reached the daily minutes their active goals ask for today.${averageDay}`}
       value={formatPercent(met)}
     >
       <AdminMetricTrendChart dataPoints={dataPoints} label="Daily goal met" valueFormat="percent" />

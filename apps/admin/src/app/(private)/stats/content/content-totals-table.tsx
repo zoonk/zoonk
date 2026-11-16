@@ -1,11 +1,12 @@
 import { AdminTableRow } from "@/components/admin-table-row";
+import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
 
 export type ContentTotalRow = { created?: number; title: string; total: number };
 
 export function ContentTotalsTable({ rows }: { rows: readonly ContentTotalRow[] }) {
   return (
-    <Table>
+    <Table scrollLabels={SCROLL_LABELS}>
       <TableHeader>
         <AdminTableRow>
           <TableHead>Type</TableHead>

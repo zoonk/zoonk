@@ -36,8 +36,13 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v7
 
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: package.json
+
       - name: Check Swift formatting
-        run: make -C apps/apple format-check
+        run: make -C apps/apple format-check formatting-check
 
   build:
     needs: changes

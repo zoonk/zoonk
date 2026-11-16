@@ -62,6 +62,7 @@ const STATE_TONES: Record<string, StateTone> = {
   mastered: "done",
   new: "unread",
   open: "attention",
+  out_of_date: "attention",
   past_due: "attention",
   paused: "off",
   pending: "waiting",

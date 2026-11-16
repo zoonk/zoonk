@@ -27,7 +27,7 @@ export function AdminNameCell<Href extends string>({
             {icon}
           </span>
         ) : null}
-        <span className="min-w-0">
+        <span className="min-w-0 self-baseline">
           <span className="text-foreground line-clamp-2 font-medium whitespace-normal">
             {title}
           </span>

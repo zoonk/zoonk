@@ -106,6 +106,21 @@ describe(getLearnerSummary, () => {
     vi.useRealTimers();
   });
 
+  it.each([true, false])("carries the Plan's estimated date fact: %s", async (estimated) => {
+    const { goal } = await learnerWithGoal({
+      createdAt: new Date("2026-01-01T00:00:00Z"),
+      details: { examMonth: 11, examYear: 2026 },
+      kind: "exam",
+      targetDate: new Date(estimated ? "2026-11-01T00:00:00Z" : "2026-11-12T00:00:00Z"),
+    });
+
+    const summary = await getLearnerSummary();
+
+    expect(summary?.goals.find((item) => item.id === goal.id)).toMatchObject({
+      targetDateEstimated: estimated,
+    });
+  });
+
   it("is null for a visitor", async () => {
     mockSession(null);
     await expect(getLearnerSummary()).resolves.toBeNull();

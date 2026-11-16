@@ -5,7 +5,7 @@ import { REQUIRED_LANGUAGES, formatLanguageResults } from "@/lib/case-languages"
 import { FAILURE_REASONS, HISTORICAL_ATTEMPTS_NOTE } from "@/lib/eval-summary";
 import { formatDollarsColumn, formatLatencyVerdict, formatPercent } from "@/lib/format";
 import { type LeaderboardEntry } from "@/lib/leaderboard";
-import { cn } from "@zoonk/ui/lib/utils";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { LeaderboardExport } from "./leaderboard-export";
 import {
   type LeaderboardColumn,
@@ -24,12 +24,15 @@ function CasesScored({ entry, totalRuns }: { entry: LeaderboardEntry; totalRuns:
   );
 
   return (
-    <span
-      className={cn(failed > 0 && "text-destructive-text")}
-      title={failed > 0 ? `${failed} ${failed === 1 ? "run" : "runs"} failed` : undefined}
-    >
+    <>
       {entry.summary.scored}/{totalRuns}
-    </span>
+      {failed > 0 ? (
+        <span className="text-destructive-text">
+          {FACT_SEPARATOR}
+          {failed} failed
+        </span>
+      ) : null}
+    </>
   );
 }
 

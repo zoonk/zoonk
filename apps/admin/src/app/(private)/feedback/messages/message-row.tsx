@@ -1,13 +1,14 @@
-import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import { AdminNameCell } from "@/components/admin-name-cell";
 import { AdminTableRow } from "@/components/admin-table-row";
 import { StateMark } from "@/components/state-mark";
 import { type ListedFeedbackMessage } from "@/data/feedback/list-feedback-messages";
 import { formatDate } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
+import { FACT_SEPARATOR } from "@zoonk/utils/facts";
 import {
   feedbackStatusLabels,
   getFeedbackLearnerLabel,
+  getFeedbackOrigin,
   getFeedbackPlatform,
   getFeedbackSubject,
 } from "../_utils/feedback-labels";
@@ -30,6 +31,14 @@ export function MessageRow({
 }) {
   const { context } = message;
   const subject = getFeedbackSubject(context);
+  const screen = getFeedbackOrigin(context);
+
+  const origin = [
+    screen && `Sent from the ${screen.toLowerCase()} screen`,
+    getFeedbackPlatform(context),
+  ]
+    .filter(Boolean)
+    .join(FACT_SEPARATOR);
 
   return (
     <AdminTableRow>
@@ -45,11 +54,8 @@ export function MessageRow({
       ) : null}
       <TableCell>
         <span className="text-foreground block truncate">{subject}</span>
-        {context.screen && context.screen !== subject ? (
-          <span className="block truncate text-xs">Sent from the {context.screen} screen</span>
-        ) : null}
+        {origin ? <span className="block truncate text-xs">{origin}</span> : null}
       </TableCell>
-      <TableCell>{getFeedbackPlatform(context)}</TableCell>
       <TableCell>{formatDate(message.createdAt)}</TableCell>
     </AdminTableRow>
   );

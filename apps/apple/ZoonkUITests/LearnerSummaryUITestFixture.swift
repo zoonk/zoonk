@@ -30,6 +30,7 @@ let learnerSummaryUITestJSON = """
         "status": "active",
         "suggested": [],
         "targetDate": null,
+        "targetDateEstimated": false,
         "targetLanguage": null,
         "targetRegion": null,
         "title": "Learn how plants grow",

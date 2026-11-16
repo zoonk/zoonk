@@ -11,7 +11,7 @@ import {
   isoDateToUtc,
 } from "@zoonk/utils/date-format";
 import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
-import { useFormatter, useTimeZone } from "next-intl";
+import { useExtracted, useFormatter, useTimeZone } from "next-intl";
 import { use } from "react";
 import { PlanScreenContext } from "../plan/plan-context";
 
@@ -136,20 +136,29 @@ export function useFormatMomentDate() {
  * Messages `select` on `dateKind`, since a month and a day take different words around them. The
  * date keeps its words on one line, so a sentence never breaks between a day and its year.
  */
+/** An estimated date (an exam's likely day) is marked "~", as the plan marks it. */
 export function useGoalDateValues() {
+  const t = useExtracted();
   const formatDate = useFormatIsoDate();
 
   return ({
+    estimated = false,
     isoDate,
     namedMonth,
   }: {
+    estimated?: boolean;
     isoDate: string;
     namedMonth: boolean;
-  }): { date: string; dateKind: "day" | "month" } => ({
-    date: (namedMonth
-      ? formatDate(isoDate, "sentenceMonth", { year: "always" })
-      : formatDate(isoDate, "sentence")
-    ).replaceAll(" ", "\u00A0"),
-    dateKind: namedMonth ? "month" : "day",
-  });
+  }): { date: string; dateKind: "day" | "month" } => {
+    const date = (
+      namedMonth
+        ? formatDate(isoDate, "sentenceMonth", { year: "always" })
+        : formatDate(isoDate, "sentence")
+    ).replaceAll(" ", "\u00A0");
+
+    return {
+      date: estimated ? t("~{date}", { date }) : date,
+      dateKind: namedMonth ? "month" : "day",
+    };
+  };
 }

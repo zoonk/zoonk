@@ -1,9 +1,7 @@
 import { AuthGatePage } from "@/components/auth-gate";
 import { listCurrentUserCertificates } from "@zoonk/core/certificates/list";
-import { type GoalView } from "@zoonk/core/goals/contract";
-import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
+import { listCurrentUserCertificateProgress } from "@zoonk/core/certificates/progress";
 import {
-  type CertificateUpNext,
   CertificatesBar,
   CertificatesHeader,
   CertificatesScreen,
@@ -17,31 +15,14 @@ import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 
 const BACK_HREF = "/today";
-const CERTIFIED_GOAL_KINDS = new Set(["exam", "language", "learn"]);
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   return { title: t("Certificates") };
 }
 
-/** What each active goal still has to do for its certificate. */
-function toUpNext(goals: GoalView[]): CertificateUpNext[] {
-  return goals
-    .filter((goal) => goal.status === "active" && CERTIFIED_GOAL_KINDS.has(goal.kind))
-    .filter((goal) => goal.kind === "language" || goal.plan?.lessonsTotal)
-    .map(({ displayName, id, kind, languageFlag, plan, targetLanguage, targetRegion }) => ({
-      goal: { displayName, languageFlag, targetLanguage, targetRegion },
-      id,
-      progress:
-        kind === "language" || !plan?.lessonsTotal ? null : plan.lessonsDone / plan.lessonsTotal,
-    }));
-}
-
 async function CertificatesContent() {
-  const [result, goals] = await Promise.all([
-    listCurrentUserCertificates(),
-    listCurrentUserGoals(),
-  ]);
+  const result = await listCurrentUserCertificates();
 
   if (result.status !== "ready") {
     const t = await getExtracted();
@@ -58,6 +39,9 @@ async function CertificatesContent() {
     );
   }
 
+  const certificateProgress =
+    result.certificates.length === 0 ? await listCurrentUserCertificateProgress() : null;
+
   const origin = getBaseUrl();
 
   return (
@@ -68,7 +52,11 @@ async function CertificatesContent() {
         links: facts.locked ? null : getCertificateLinks({ ...facts, origin }),
       }))}
       continueHref={BACK_HREF}
-      upNext={result.certificates.length > 0 ? [] : toUpNext(goals?.goals ?? [])}
+      upNext={
+        certificateProgress?.status === "ready"
+          ? certificateProgress.upNext.map(({ id, progress, ...goal }) => ({ goal, id, progress }))
+          : []
+      }
     />
   );
 }

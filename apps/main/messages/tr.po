@@ -489,9 +489,9 @@ msgstr "{minutes, plural, other {# dakika}}."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
 #: src/components/catalog/first-question.tsx
-msgctxt "xIVf67"
-msgid "No sign-up needed."
-msgstr "Kayıt olmana gerek yok."
+msgctxt "1aiBvA"
+msgid "No account needed."
+msgstr "Hesap açmana gerek yok."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
 msgctxt "4NMpnC"
@@ -1217,9 +1217,9 @@ msgid "Delete"
 msgstr "Sil"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
-msgctxt "QCATv6"
-msgid "You'll confirm with a passkey you already have first."
-msgstr "Önce mevcut bir geçiş anahtarınla onay vereceksin."
+msgctxt "WJqAZr"
+msgid "You'll confirm with a passkey you already have first"
+msgstr "Önce mevcut geçiş anahtarlarından biriyle doğrulama yapacaksın"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
 msgctxt "guwku_"
@@ -1583,6 +1583,12 @@ msgstr "Bugün sayfasına git"
 msgctxt "o0vS8L"
 msgid "Past 12 months"
 msgstr "Son 12 ay"
+
+#. Title over a calendar of days on a phone, which shows only its last 26 weeks.
+#: src/app/[lang]/(app)/(stats)/_components/stats-calendar.tsx
+msgctxt "eWUXBX"
+msgid "Past 6 months"
+msgstr "Son 6 ay"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/lib/public/public-labels.ts
@@ -2167,16 +2173,6 @@ msgstr "{exams} gibi her türlü sınav. Diller, yeni bir kariyer ya da öğrenm
 msgctxt "iJ_ZyQ"
 msgid "Which exams and goals can I study for?"
 msgstr "Hangi sınavlara hazırlanabilir, hangi hedefler için çalışabilirim?"
-
-#: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "7Rm1x6"
-msgid "Frequently asked questions"
-msgstr "Sık sorulan sorular"
-
-#: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "vtHw2p"
-msgid "Still have questions? <link>Ask us</link>."
-msgstr "Aklında hâlâ soru var mı? <link>Bize sor</link>."
 
 #. The landing's headline: the goals people come with, one per line, then a line for any other goal. Each line must fit on one line of a phone at a very large size, so keep every line as short as {exam} and in the same form: {exam} is the first goal, already written for your country, such as “Passar no concurso” or “共通テスト対策”. Keep the language branches as they are: the page suggests a language other than its own. In Brazilian Portuguese: “<line>{exam}.</line> <line>Falar inglês.</line> <line>Mudar de carreira.</line> <more>Ou o que quiser.</more>”
 #: src/app/[lang]/(home)/_components/home-headline.tsx
@@ -3242,16 +3238,6 @@ msgid "Speaking practice calls, fewer than with Plus"
 msgstr "Konuşma pratiği için Plus’a göre daha az sohbet"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "uUjwhB"
-msgid "Common questions"
-msgstr "Sık sorulan sorular"
-
-#: src/components/pricing/plus-questions.tsx
-msgctxt "JlrCSV"
-msgid "Still unsure? <link>Ask us</link>."
-msgstr "Hâlâ emin değil misin? <link>Bize sor</link>."
-
-#: src/components/pricing/plus-questions.tsx
 msgctxt "vtGEce"
 msgid "What's free?"
 msgstr "Neler ücretsiz?"
@@ -3403,6 +3389,16 @@ msgctxt "k7JNE3"
 msgid "© {year} Zoonk"
 msgstr "© {year} Zoonk"
 
+#: src/components/public/questions-heading.tsx
+msgctxt "uUjwhB"
+msgid "Common questions"
+msgstr "Sık sorulan sorular"
+
+#: src/components/public/questions-heading.tsx
+msgctxt "vtHw2p"
+msgid "Still have questions? <link>Ask us</link>."
+msgstr "Aklında hâlâ soru var mı? <link>Bize sor</link>."
+
 #: src/lib/belt-colors.ts
 #: src/lib/belt-label.ts
 msgctxt "_6Vlf7"
@@ -3529,12 +3525,6 @@ msgstr "Testle geçilen dersler"
 msgctxt "KHL8ap"
 msgid "Study time"
 msgstr "Çalışma süresi"
-
-#. A certificate's study time, the plan's estimate for the lessons studied, such as “about 41 hr”. Brazilian schools read it as the certificate's workload (carga horária).
-#: src/lib/certificates/certificate-study-view.ts
-msgctxt "8QINPM"
-msgid "about {duration}"
-msgstr "yaklaşık {duration}"
 
 #. Under a big number on a certificate's social post: how many lessons the learner studied.
 #: src/lib/certificates/certificate-study-view.ts

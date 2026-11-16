@@ -71,7 +71,7 @@ test.describe("Onboarding from a typed goal", () => {
     await page.getByRole("textbox", { name: "I want to" }).fill(goal);
     await page.getByRole("button", { name: "Build my plan" }).click();
 
-    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what we understood" })).toBeVisible();
     await expect(page.getByText("Spanish (Argentina)", { exact: true })).toBeVisible();
 
     await page.getByRole("button", { name: "Edit Language" }).click();
@@ -101,7 +101,7 @@ test.describe("Onboarding from a typed goal", () => {
     await page.getByRole("textbox", { name: "I want to" }).fill(goal);
     await page.getByRole("button", { name: "Build my plan" }).click();
 
-    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Here's what we understood" })).toBeVisible();
     await page.getByRole("button", { name: "Looks right" }).click();
     await expect(page).toHaveURL(GOAL_URL);
     const created = await prisma.goal.findFirstOrThrow({ where: { prompt: goal } });

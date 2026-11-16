@@ -3,8 +3,8 @@ import {
   DISCLOSURE_ANSWER_CLASS,
   DISCLOSURE_LINK_CLASS,
   PublicDisclosure,
-  renderHelpLink,
 } from "@/components/public/public-disclosure";
+import { QuestionsHeading } from "@/components/public/questions-heading";
 import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
@@ -105,12 +105,7 @@ export async function HomeFaq() {
         )}
       >
         <div>
-          <h2 className="text-headline" id={TITLE_ID}>
-            {t("Frequently asked questions")}
-          </h2>
-          <p className="text-muted-foreground mt-3.5">
-            {t.rich("Still have questions? <link>Ask us</link>.", { link: renderHelpLink })}
-          </p>
+          <QuestionsHeading id={TITLE_ID} lineClassName="mt-3.5" titleClassName="text-headline" />
         </div>
 
         <div className="border-b">

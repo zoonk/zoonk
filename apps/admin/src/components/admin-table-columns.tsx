@@ -1,6 +1,7 @@
 import { AdminSectionEmpty } from "@/components/admin-section";
 import { AdminTableRow } from "@/components/admin-table-row";
 import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
+import { SCROLL_LABELS } from "@/lib/scroll-labels";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import {
   Table,
@@ -53,9 +54,10 @@ const FIXED_TABLE_CLASS =
 // A control keeps the row at 44 px and sits on its first line, like the text beside it: a 44 px
 // field or select fills that line, and a 30 px button sits 9 px down, where its 13 px label shares
 // the 14 px text's baseline. (A button's baseline is its icon's bottom, so baseline alignment would
-// lift its label 5 px.)
+// lift its label 5 px.) A file input hides inside a button (`FileButton`), so it counts as one. A
+// cell that leads with text and puts its control under it (`data-stacked`) keeps the text's room.
 const CONTROL_CELL_CLASS =
-  "[&_td:has(button,input,select)]:py-0 [&_td:has(button,input,select)]:align-top [&_td:has(button):not(:has(input:not([type=hidden]),select))]:pt-[0.5625rem]";
+  "[&_td:not([data-stacked]):has(button,input,select)]:py-0 [&_td:not([data-stacked]):has(button,input,select)]:align-top [&_td:not([data-stacked]):has(button):not(:has(input:not([type=hidden],[type=file]),select))]:pt-[0.5625rem]";
 
 function fillIndexOf(columns: AdminTableColumn[]) {
   return Math.max(
@@ -89,6 +91,7 @@ function AdminTable({
 
   return (
     <Table
+      scrollLabels={SCROLL_LABELS}
       className={cn(CONTROL_CELL_CLASS, !unsized && FIXED_TABLE_CLASS)}
       style={unsized ? undefined : factsStyle}
     >

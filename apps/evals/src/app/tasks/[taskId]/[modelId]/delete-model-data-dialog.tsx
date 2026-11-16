@@ -1,6 +1,5 @@
 "use client";
 
-import { BAR_GLYPH_ACTION, BarActionLabel } from "@/components/bar-action";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,10 +9,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
-import { Button } from "@zoonk/ui/components/button";
-import { Trash2Icon } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import { deleteModelDataAction } from "./actions";
 
@@ -31,25 +27,18 @@ function DeleteModelDataFooter() {
 }
 
 export function DeleteModelDataDialog({
-  disabled,
   modelId,
   taskId,
+  open,
+  onOpenChange,
 }: {
-  disabled: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   modelId: string;
   taskId: string;
 }) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger
-        render={
-          <Button {...BAR_GLYPH_ACTION} disabled={disabled} type="button" variant="destructive" />
-        }
-      >
-        <Trash2Icon />
-        <BarActionLabel>Delete results</BarActionLabel>
-      </AlertDialogTrigger>
-
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete outputs and results?</AlertDialogTitle>

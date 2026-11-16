@@ -292,7 +292,6 @@ msgstr "Continuer"
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/explain/explain-waiting.tsx
-#: src/focus-test/focus-test-screens.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
 #: src/language/exam-speaking/speaking-task-row.tsx
 #: src/language/progress/speaking-mock-card.tsx
@@ -300,7 +299,6 @@ msgstr "Continuer"
 #: src/mock/mock-short-dialog.tsx
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-body.tsx
-#: src/onboarding/test-outcome.tsx
 #: src/session/next-stop.tsx
 #: src/today/today-action.tsx
 #: src/today/today-suggested-goal.tsx
@@ -1033,6 +1031,13 @@ msgctxt "f4Zmb7"
 msgid "Different time on weekends"
 msgstr "Durée différente le week-end"
 
+#: src/_utils/iso-date.ts
+#: src/journey/phase-when.tsx
+#: src/plan/plan-date-text.tsx
+msgctxt "7KwTGn"
+msgid "~{date}"
+msgstr "~{date}"
+
 #: src/_utils/range.ts
 msgctxt "kV-RMr"
 msgid "{low}–{high}"
@@ -1221,9 +1226,9 @@ msgid "Where you live"
 msgstr "Là où tu vis"
 
 #: src/appearance/home-country-setting.tsx
-msgctxt "yXIjI8"
-msgid "So examples and exams match your country."
-msgstr "Pour adapter les exemples et les examens à ton pays."
+msgctxt "0sZNO3"
+msgid "So examples and exams match your country"
+msgstr "Pour adapter les exemples et les examens à ton pays"
 
 #: src/appearance/home-country-setting.tsx
 msgctxt "p5LNtB"
@@ -1682,12 +1687,6 @@ msgctxt "ZP9lOu"
 msgid "{language} {level}"
 msgstr "{language} {level}"
 
-#. An approximate study time, such as "about 41 hr".
-#: src/certificates/certificate-labels.ts
-msgctxt "8QINPM"
-msgid "about {duration}"
-msgstr "environ {duration}"
-
 #: src/certificates/certificate-labels.ts
 msgctxt "ZfBPq3"
 msgid "{name} completed level {level} in {language}"
@@ -1936,6 +1935,12 @@ msgstr "Certificat de fin de formation, délivré le <whole>{date}</whole>."
 msgctxt "CXRlIo"
 msgid "Print"
 msgstr "Imprimer"
+
+#. Link under a small picture of a certificate on a phone: opens the certificate's picture at full size.
+#: src/certificates/certificate-page.tsx
+msgctxt "hlcpTE"
+msgid "See the full certificate"
+msgstr "Voir le certificat en grand"
 
 #: src/certificates/certificate-share.tsx
 msgctxt "sfDPEB"
@@ -3941,6 +3946,14 @@ msgid "{count, plural, one {Your plan also skips # lesson you already know.} oth
 msgstr "{count, plural, one {Ton plan saute aussi # leçon que tu connais déjà.} other {Ton plan saute aussi # leçons que tu connais déjà.}}"
 
 #: src/focus-test/focus-test-screens.tsx
+#: src/onboarding/test-outcome.tsx
+#: src/questions/test-out-preparing.tsx
+#: src/today/today-focus-test.tsx
+msgctxt "SKxNcp"
+msgid "Start the test"
+msgstr "Commencer le test"
+
+#: src/focus-test/focus-test-screens.tsx
 msgctxt "G9nQHt"
 msgid "Continue your test"
 msgstr "Continuer ton test"
@@ -3996,9 +4009,9 @@ msgstr "Découvre quoi étudier en priorité"
 
 #: src/focus-test/use-focus-test-texts.ts
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "LW1Em4"
-msgid "Skip what you already know"
-msgstr "Saute ce que tu connais déjà"
+msgctxt "YSXaxI"
+msgid "Already know some of this?"
+msgstr "Tu connais déjà certaines notions ?"
 
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "-nbx59"
@@ -6943,9 +6956,9 @@ msgid "From a call"
 msgstr "Lors d’un appel"
 
 #: src/memory/memory-screen.tsx
-msgctxt "ut2Sio"
-msgid "When off, notes aren't saved or used."
-msgstr "Quand la mémoire est désactivée, les notes ne sont ni enregistrées ni utilisées."
+msgctxt "LwVSHh"
+msgid "When off, notes aren't saved or used"
+msgstr "Si l’option est désactivée, les notes ne sont ni enregistrées ni utilisées"
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"
@@ -10046,9 +10059,9 @@ msgid "Looks right"
 msgstr "C’est correct"
 
 #: src/onboarding/understood/understood-screen.tsx
-msgctxt "N7XZZA"
-msgid "Here's what I understood"
-msgstr "Voici ce que j’ai compris"
+msgctxt "8nmZkr"
+msgid "Here's what we understood"
+msgstr "Voici ce qu’on a compris"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "xuHuGN"
@@ -10825,9 +10838,9 @@ msgid "No tools? You can do it all with examples."
 msgstr "Pas d’outils ? Tu peux tout faire avec des exemples."
 
 #: src/plan/plan-tools.tsx
-msgctxt "svOBOg"
-msgid "More later: {tools}"
-msgstr "Plus tard : {tools}"
+msgctxt "r_GVXm"
+msgid "{count, plural, one {# more tool later: {tools}} other {# more tools later: {tools}}}"
+msgstr "{count, plural, one {# autre outil pour plus tard : {tools}} other {# autres outils pour plus tard : {tools}}}"
 
 #: src/plan/plan-tools.tsx
 msgctxt "z1Z_Hg"
@@ -11939,12 +11952,6 @@ msgstr "Ce que tu sautes si tu réussis"
 msgctxt "M-U3f0"
 msgid "A few questions on this chapter, with your results at the end. Do well, and your plan skips what you already know."
 msgstr "Quelques questions sur ce chapitre, avec tes résultats à la fin. Si tu réussis, ton plan saute ce que tu connais déjà."
-
-#: src/questions/test-out-preparing.tsx
-#: src/today/today-focus-test.tsx
-msgctxt "SKxNcp"
-msgid "Start the test"
-msgstr "Commencer le test"
 
 #: src/questions/test-out-preparing.tsx
 msgctxt "gb32bG"

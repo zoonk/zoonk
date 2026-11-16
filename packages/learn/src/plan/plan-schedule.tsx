@@ -68,7 +68,12 @@ function DailyCoverage({
     return <PlanFinish pending={pending} />;
   }
 
-  const date = { isoDate: schedule.targetDate, namedMonth: schedule.targetDateNamedMonth };
+  const date = {
+    estimated: schedule.targetDateEstimated,
+    isoDate: schedule.targetDate,
+    namedMonth: schedule.targetDateNamedMonth,
+  };
+
   const found = answer.answered;
 
   const line = getTimeLine({

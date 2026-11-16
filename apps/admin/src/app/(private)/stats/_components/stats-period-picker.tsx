@@ -16,7 +16,7 @@ import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { Toggle } from "@zoonk/ui/components/toggle";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { CalendarIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type SyntheticEvent, useState } from "react";
 import { type StatsAnalysisPath } from "../_utils/stats-analysis-groups";
@@ -121,7 +121,6 @@ export function StatsPeriodPicker({
           />
         }
       >
-        <CalendarIcon aria-hidden className="max-sm:hidden" />
         <span className="truncate">{statsPeriod.periodLabel}</span>
         <ChevronDownIcon aria-hidden />
       </DrawerTrigger>
