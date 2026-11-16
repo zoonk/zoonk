@@ -3,7 +3,11 @@ import { type Goal, prisma } from "@zoonk/db";
 import { type PastCheckpoint, type SeededPast } from "@zoonk/db/seed";
 import { getDateInTimeZone, getHourInTimeZone } from "@zoonk/utils/time-zone";
 import { loadCheckpointCandidates } from "../checkpoints/_utils/checkpoint-candidates";
-import { getPassMark, selectCheckpointItems } from "../checkpoints/checkpoint-rules";
+import {
+  getPassMark,
+  hasPassedCheckpoint,
+  selectCheckpointItems,
+} from "../checkpoints/checkpoint-rules";
 import { readExamPicks } from "../exams/choices/exam-choices";
 import { loadSkillAreas } from "../exams/mocks/_utils/mock-candidates";
 import { buildMockConditions } from "../exams/mocks/_utils/mock-conditions";
@@ -129,9 +133,16 @@ async function fillBoss({
   const moments = answerMoments(ended, graded.length);
   const durationMs = Math.round((getSeconds(ended) * MS_PER_SECOND) / Math.max(graded.length, 1));
 
-  const block = await prisma.studySessionBlock.findUniqueOrThrow({
-    where: { id: checkpoint.blockId },
-  });
+  const [block, progress, future] = await Promise.all([
+    prisma.studySessionBlock.findUniqueOrThrow({ where: { id: checkpoint.blockId } }),
+    prisma.userProgress.findUniqueOrThrow({ where: { userId: goal.userId } }),
+    prisma.learningEvent.aggregate({
+      _sum: { brainPower: true },
+      where: { endedAt: { gt: ended.completedAt }, userId: goal.userId },
+    }),
+  ]);
+
+  const after = Number(progress.totalBrainPower) - (future._sum.brainPower ?? 0);
 
   const payload = readBlockPayload(block);
 
@@ -162,6 +173,13 @@ async function fillBoss({
             passMark: getPassMark(graded.length),
           },
           itemIds: graded.map(({ row }) => row.id),
+          milestoneReward: {
+            bossWon: hasPassedCheckpoint({
+              correct: ended.correct,
+              passMark: getPassMark(ended.total),
+            }),
+            brainPower: { after, before: after - block.brainPower },
+          },
           skillIds,
         }),
       },
