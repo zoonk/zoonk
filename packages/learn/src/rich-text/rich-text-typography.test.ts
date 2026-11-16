@@ -1,6 +1,6 @@
 import { formatMoney } from "@zoonk/utils/math-answer";
 import { describe, expect, it } from "vitest";
-import { typesetNumbers } from "./rich-text-typography";
+import { typesetMoney, typesetNumbers } from "./rich-text-typography";
 
 const NBSP = "\u00A0";
 
@@ -64,5 +64,22 @@ describe(typesetNumbers, () => {
   it("leaves decimals, codes, years and numbers before longer words alone", () => {
     const text = "1,5 mais 12345,67 no CEP 01310-100 em 2026 com 5 pessoas e ID 123456789a";
     expect(typesetNumbers({ locale: "pt", text })).toBe(text);
+  });
+});
+
+describe(typesetMoney, () => {
+  it("writes a question's money as its answer does, the no-break space it keeps included", () => {
+    expect(typesetMoney({ locale: "en", text: `15% of R$${NBSP}80 is R$ 12.` })).toBe(
+      "15% of R$80 is R$12.",
+    );
+
+    expect(typesetMoney({ locale: "pt", text: `custa R$${NBSP}80` })).toBe(
+      `custa ${formatMoney({ currency: "BRL", locale: "pt", value: 80 })}`,
+    );
+  });
+
+  it("leaves a question's other digits as written", () => {
+    const text = "ZIP 94103, ID 120045 and 12000 people";
+    expect(typesetMoney({ locale: "en", text })).toBe(text);
   });
 });

@@ -182,7 +182,7 @@ export const societyReasoningActivities = {
           id: "parker",
           passages: [
             { id: "p1", isTarget: true, text: "The regulars fired on us" },
-            { id: "p1b", isTarget: false, text: "without any provocation" },
+            { id: "p1b", isTarget: false, text: "without any provocation." },
           ],
         },
         {
@@ -193,7 +193,7 @@ export const societyReasoningActivities = {
           id: "pitcairn",
           passages: [
             { id: "p2", isTarget: true, text: "the rebels fired first" },
-            { id: "p2b", isTarget: false, text: "from behind a wall" },
+            { id: "p2b", isTarget: false, text: "from behind a wall." },
           ],
         },
       ],

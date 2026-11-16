@@ -97,9 +97,8 @@ function collectTexts(value: unknown, latex = false): TextParts[] {
   );
 }
 
-function usesDecimalComma(language: string): boolean {
-  const parts = new Intl.NumberFormat(getFormattingLocale(language)).formatToParts(DECIMAL_SAMPLE);
-  return parts.some((part) => part.type === "decimal" && part.value === ",");
+function decimalMark(number: Intl.NumberFormat): string {
+  return number.formatToParts(DECIMAL_SAMPLE).find((part) => part.type === "decimal")?.value ?? ".";
 }
 
 function groupSeparator(number: Intl.NumberFormat): string {
@@ -120,21 +119,16 @@ function findLongNumbers({
   text: string;
 }): string[] {
   return [...text.matchAll(LONG_NUMBER)].map(([digits]) => {
-    const grouped = number.format(Number(digits));
+    const grouped = number.format(BigInt(digits));
     return `Writes ${digits} without grouping its digits; write ${latex ? toLatexNumber(grouped) : grouped}.`;
   });
 }
 
-/** The number written the language's way, keeping the sign as written and every decimal. */
+/** The number written the language's way, keeping the sign as written and every digit. */
 function regroup({ digits, number }: { digits: string; number: Intl.NumberFormat }): string {
-  const { fraction = "", sign = "", whole = "" } = SIGNED_DECIMAL.exec(digits)?.groups ?? {};
-
-  const written = new Intl.NumberFormat(number.resolvedOptions().locale, {
-    maximumFractionDigits: fraction.length,
-    minimumFractionDigits: fraction.length,
-  }).format(Number(`${whole}.${fraction}`));
-
-  return `${sign}${written}`;
+  const { fraction, sign = "", whole = "0" } = SIGNED_DECIMAL.exec(digits)?.groups ?? {};
+  const grouped = number.format(BigInt(whole));
+  return fraction ? `${sign}${grouped}${decimalMark(number)}${fraction}` : `${sign}${grouped}`;
 }
 
 function findSpaceGrouping({
@@ -176,7 +170,7 @@ export function findNumberFormatFlaws({
   value: unknown;
 }): string[] {
   const number = new Intl.NumberFormat(getFormattingLocale(language));
-  const decimalComma = usesDecimalComma(language);
+  const decimalComma = decimalMark(number) === ",";
 
   return collectTexts(value).flatMap(({ math, prose }) => [
     ...findLongNumbers({ latex: false, number, text: prose }),

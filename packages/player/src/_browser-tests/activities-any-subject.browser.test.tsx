@@ -28,6 +28,22 @@ describe("any-subject activities", () => {
     await expect
       .element(page.getByText(/The usual world map stretches land near the poles/u))
       .toBeVisible();
+
+    await expect.element(page.getByText("Your guess: 13 times")).toBeVisible();
+    await expect.element(page.getByText("Your guess is close to the real value.")).toBeVisible();
+  });
+
+  it("guess then reveal: a guess that is the real value isn't called close", async () => {
+    const content = { ...cited, fields: { ...cited.fields, max: 200, min: 0 } };
+    openActivity({ content, template: "guessReveal" });
+    await guessOnScale(content.fields, 14);
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await expect.element(page.getByText("Your guess: 14 times")).toBeVisible();
+
+    await expect
+      .element(page.getByText("Your guess is close to the real value."))
+      .not.toBeInTheDocument();
   });
 
   it("guess then reveal: the guess on the scale is the answer, with no second field to fill", async () => {

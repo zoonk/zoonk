@@ -2,7 +2,7 @@
 
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { type RefObject, useEffect } from "react";
-import { getRevealDelta } from "./_utils/reveal-feedback";
+import { type Reveal, getReveal } from "./_utils/reveal-feedback";
 import { useLessonPlayer } from "./lesson-player-context";
 import { getScreenRef } from "./use-kept-screens";
 
@@ -24,27 +24,28 @@ function getVisibleArea(scroller: HTMLElement) {
   return { bottom: box.bottom - (isStuck && bar ? bar.offsetHeight : 0), top: box.top };
 }
 
-function getScrollDelta({
+function getScrollReveal({
   scroller,
   stage,
 }: {
   scroller: HTMLElement;
   stage: HTMLElement;
-}): number {
+}): Reveal {
   const parts = [...stage.querySelectorAll<HTMLElement>(FEEDBACK_SELECTOR)];
 
   if (parts.length === 0) {
-    return 0;
+    return { delta: 0, extraRoom: 0 };
   }
 
   const boxes = parts.map((part) => part.getBoundingClientRect());
 
-  return getRevealDelta({
+  return getReveal({
     chip: stage.querySelector(CHIP_SELECTOR)?.getBoundingClientRect() ?? null,
     feedback: {
       bottom: Math.max(...boxes.map((box) => box.bottom)),
       top: Math.min(...boxes.map((box) => box.top)),
     },
+    room: scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop,
     title: stage.querySelector(TITLE_SELECTOR)?.getBoundingClientRect() ?? null,
     visible: getVisibleArea(scroller),
   });
@@ -76,8 +77,18 @@ export function useRevealFeedback(scrollerRef: RefObject<HTMLElement | null>) {
       return;
     }
 
+    let height = stage.offsetHeight;
+    let addedRoom = 0;
+
+    // Room added under the feedback sits below everything, so it moves nothing on screen.
     function reveal(shown: { scroller: HTMLElement; stage: HTMLElement }) {
-      const delta = getScrollDelta(shown);
+      const { delta, extraRoom } = getScrollReveal(shown);
+
+      if (extraRoom > 0) {
+        addedRoom += extraRoom;
+        shown.stage.style.paddingBottom = `${addedRoom}px`;
+        height = shown.stage.offsetHeight;
+      }
 
       if (delta !== 0) {
         shown.scroller.scrollBy({ behavior: getScrollBehavior(), top: delta });
@@ -85,7 +96,6 @@ export function useRevealFeedback(scrollerRef: RefObject<HTMLElement | null>) {
     }
 
     const frame = requestAnimationFrame(() => reveal({ scroller, stage }));
-    let height = stage.offsetHeight;
 
     const observer = new ResizeObserver(() => {
       if (stage.offsetHeight !== height) {
@@ -105,6 +115,7 @@ export function useRevealFeedback(scrollerRef: RefObject<HTMLElement | null>) {
     return () => {
       cancelAnimationFrame(frame);
       stop();
+      stage.style.paddingBottom = "";
 
       for (const event of OWN_SCROLL_EVENTS) {
         scroller.removeEventListener(event, stop);
