@@ -116,7 +116,8 @@ struct AdjustPlanSheet: View {
   private func aimSection(_ languageAim: LanguageAimView) -> some View {
     SwiftUI.Section {
       ForEach(languageAim.choices, id: \.aim) { choice in
-        aimRow(choice, name: languageAim.name(of: choice.aim), isPicked: choice.aim == languageAim.aim)
+        aimRow(
+          choice, name: languageAim.name(of: choice.aim), isPicked: choice.aim == languageAim.aim)
       }
     } header: {
       SectionTitle(
