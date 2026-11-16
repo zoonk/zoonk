@@ -162,8 +162,8 @@ function isApart(first: Vector, firstSize: Size, second: Vector, secondSize: Siz
 }
 
 /**
- * The angle's value sits inside its wedge, as close to the arc and to the bisector as clears the
- * two lines the angle lies between, the sine's leg and the cos value. A wedge too thin for it puts
+ * The angle's value sits inside its wedge, as close to the arc and to the bisector as clears both
+ * axes, the radius, the sine's leg and the cos value. A wedge too thin for it puts
  * it just past the radius instead, clear of the same lines.
  */
 export function angleLabelPoint({
@@ -184,7 +184,8 @@ export function angleLabelPoint({
   const point = onCircle(center, radius, degrees);
 
   const lines = [
-    { from: center, to: { x: center.x + radius, y: center.y } },
+    { from: { x: center.x - radius, y: center.y }, to: { x: center.x + radius, y: center.y } },
+    { from: { x: center.x, y: center.y - radius }, to: { x: center.x, y: center.y + radius } },
     { from: center, to: point },
     { from: { x: point.x, y: center.y }, to: point },
   ];

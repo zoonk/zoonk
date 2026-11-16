@@ -129,6 +129,19 @@ describe(angleLabelPoint, () => {
     expect(touchesSegment(box, zeroRay)).toBe(false);
   });
 
+  it("keeps the label off both whole axes, whatever the angle", () => {
+    const axes = [
+      { from: { x: center.x - radius, y: center.y }, to: { x: center.x + radius, y: center.y } },
+      { from: { x: center.x, y: center.y - radius }, to: { x: center.x, y: center.y + radius } },
+    ];
+
+    const crossing = [90, 135, 180, 225, 270].filter((degrees) =>
+      axes.some((axis) => touchesSegment(angleBox(degrees).box, axis)),
+    );
+
+    expect(crossing).toStrictEqual([]);
+  });
+
   it("keeps a wide angle on its bisector, off both lines", () => {
     const { box, radiusLine } = angleBox(300);
 
