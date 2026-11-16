@@ -1709,6 +1709,33 @@ describe(lessonPlayerReducer, () => {
     expect(confirmed.results.quiz).toMatchObject({ savePending: false, savedMistake: true });
   });
 
+  it("adds the server's saved mistake to a miss its retry already set aside", () => {
+    const retry = play(
+      [explanationStep("tip"), checkStep("quiz")],
+      [
+        { type: "continue" },
+        { answer: { kind: "check", optionId: "wrong" }, stepId: "quiz", type: "selectAnswer" },
+        {
+          counts: true,
+          result: { ...stepResult(false), attemptId: "miss", savePending: true },
+          stepId: "quiz",
+          type: "checkResolved",
+        },
+        { type: "continue" },
+      ],
+    );
+
+    const confirmed = playOn(retry, [
+      { attemptId: "miss", savedMistake: true, stepId: "quiz", type: "checkConfirmed" },
+      { direction: "prev", type: "navigate" },
+    ]);
+
+    expect(showAttemptInView(confirmed).results.quiz).toMatchObject({
+      savePending: false,
+      savedMistake: true,
+    });
+  });
+
   it("keeps a newer answer's verdict when the server's word on an earlier answer comes late", () => {
     const again = play(
       [checkStep("quiz")],
