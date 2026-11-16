@@ -145,7 +145,7 @@ class StartGoalFlowTest {
     fun anotherLearnerSeesNoneOfThePreviousOnesWork() {
         show()
         sendGoal("pass the bar exam")
-        rule.onNodeWithText("Here's what I understood").assertIsDisplayed()
+        rule.onNodeWithText("Here's what we understood").assertIsDisplayed()
 
         sessionKey = "local-b"
 
