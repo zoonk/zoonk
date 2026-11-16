@@ -150,9 +150,6 @@ export const ONBOARDING_QUESTIONS = [
 
 export type OnboardingQuestion = (typeof ONBOARDING_QUESTIONS)[number];
 
-/** Questions whose answer can add another after them: a work or career-change purpose asks the role. */
-export const QUESTIONS_THAT_ADD_QUESTIONS: readonly OnboardingStep[] = ["purpose"];
-
 /** Buddy choice follows goal questions because it belongs to the learner profile. */
 export type OnboardingStep = OnboardingQuestion | ProfileQuestion | "buddy" | "placement" | "plan";
 

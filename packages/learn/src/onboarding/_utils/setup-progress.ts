@@ -1,8 +1,6 @@
 import { isProfileQuestion } from "@zoonk/core/profile/questions/contract";
-import {
-  type OnboardingStep,
-  QUESTIONS_THAT_ADD_QUESTIONS,
-} from "@zoonk/core/view-models/onboarding/contract";
+import { type OnboardingStep } from "@zoonk/core/view-models/onboarding/contract";
+import { QUESTIONS_THAT_ADD_QUESTIONS } from "@zoonk/core/view-models/onboarding/questions-that-add-questions";
 
 type ProgressInput = {
   current: OnboardingStep;
