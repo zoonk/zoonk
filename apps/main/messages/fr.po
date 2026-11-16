@@ -1052,7 +1052,7 @@ msgstr "{chapters, plural, one {# chapitre} other {# chapitres}} · {lessons, pl
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "Cr5XrH"
 msgid "{count, plural, one {and # more chapter} other {and # more chapters}}"
-msgstr "{count, plural, one {et # autre chapitre} other {et # autres chapitres}}"
+msgstr "{count, plural, one {et # chapitre de plus} other {et # chapitres de plus}}"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "IyoCIG"
