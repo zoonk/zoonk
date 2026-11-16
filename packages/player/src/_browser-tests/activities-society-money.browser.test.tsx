@@ -196,7 +196,7 @@ describe("money and society activities", () => {
 
     await expect
       .element(page.getByRole("slider", { name: "Moon landing" }))
-      .toHaveAttribute("aria-valuetext", "2000 CE");
+      .toHaveAttribute("aria-valuetext", "2000\u00A0CE");
 
     await page.getByRole("button", { name: "Place Cleopatra rules Egypt on the timeline" }).click();
 
@@ -217,7 +217,7 @@ describe("money and society activities", () => {
 
     await expect
       .element(page.getByRole("slider", { name: "Cleopatra rules Egypt" }))
-      .toHaveAttribute("aria-valuetext", "51 BCE. Your guess: 2000 CE");
+      .toHaveAttribute("aria-valuetext", "51\u00A0BCE. Your guess: 2000\u00A0CE");
   });
 
   it("timeline: with a question, the real dates show before answering", async () => {
@@ -617,7 +617,7 @@ describe("money and society activities reopened from their saved answer", () => 
 
     await expect
       .element(page.getByRole("slider", { name: "Moon landing" }))
-      .toHaveAttribute("aria-valuetext", "1969 CE");
+      .toHaveAttribute("aria-valuetext", "1969\u00A0CE");
 
     await expect.poll(() => timelineMarks("check")).toHaveLength(2);
     expect(timelineMarks("x")).toHaveLength(0);

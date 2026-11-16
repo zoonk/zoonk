@@ -22,7 +22,7 @@ function OutputCell({
   label: string;
 }) {
   return (
-    <div className={cn("flex min-w-0 flex-col gap-0.5 px-4 py-3", className)}>
+    <div className={cn("flex min-w-0 flex-col gap-0.5 px-3 py-3", className)}>
       <p className="text-muted-foreground text-xs font-medium">{label}</p>
       <ActivityHorizontalScroll box={{ label }}>{children}</ActivityHorizontalScroll>
     </div>
@@ -81,11 +81,15 @@ function PrintedOutput({
   const t = useExtracted();
 
   if (run === null) {
-    return <p className="text-muted-foreground py-1 text-sm">{t("Run the code to see it")}</p>;
+    return (
+      <p className="text-muted-foreground py-1 text-sm text-pretty">
+        {t("Run the code to see it")}
+      </p>
+    );
   }
 
   if (run.output === "") {
-    return <p className="text-muted-foreground py-1 text-sm">{t("Nothing printed")}</p>;
+    return <p className="text-muted-foreground py-1 text-sm text-pretty">{t("Nothing printed")}</p>;
   }
 
   return (

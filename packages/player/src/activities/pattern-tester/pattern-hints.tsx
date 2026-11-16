@@ -23,8 +23,9 @@ export function PatternHints({
   const t = useExtracted();
   const [shown, setShown] = useState(0);
   const visible = reveal ? hints : hints.slice(0, isChecked ? 0 : shown);
+  const canAsk = !isChecked && shown < hints.length;
 
-  if (hints.length === 0) {
+  if (visible.length === 0 && !canAsk) {
     return null;
   }
 
@@ -46,7 +47,7 @@ export function PatternHints({
         </ul>
       )}
 
-      {!isChecked && shown < hints.length && (
+      {canAsk && (
         <Button
           className="self-start"
           onClick={() => setShown((count) => count + 1)}

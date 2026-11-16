@@ -176,7 +176,7 @@ export function ArgumentSlot({
         {onClear && (
           <Button
             aria-label={clearLabel}
-            className="text-muted-foreground -my-1"
+            className="text-muted-foreground -my-1.5"
             edge="end"
             onClick={onClear}
             size="icon"
