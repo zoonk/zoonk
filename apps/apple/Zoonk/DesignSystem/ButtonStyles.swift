@@ -135,7 +135,8 @@ private struct ZoonkButton: View {
       .scaleEffect(isPressed && !reduceMotion ? 0.97 : 1)
       .animation(.easeOut(duration: 0.15), value: isPressed)
       .contentShape(MinimumHitArea())
-      .padding(.trailing, isAtRowEnd && !isIcon ? -ZoonkButtonStyle.horizontalPadding(controlSize) : 0)
+      .padding(
+        .trailing, isAtRowEnd && !isIcon ? -ZoonkButtonStyle.horizontalPadding(controlSize) : 0)
   }
 
   /// A main action is its label alone (main's rule 6): any icon its label carries stays off it.

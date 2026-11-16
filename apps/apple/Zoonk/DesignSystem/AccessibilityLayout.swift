@@ -112,7 +112,9 @@ private struct EqualRowLayout: Layout {
       return CGSize(width: width, height: rowHeight(part, subviews))
     }
 
-    let heights = subviews.map { $0.sizeThatFits(ProposedViewSize(width: width, height: nil)).height }
+    let heights = subviews.map {
+      $0.sizeThatFits(ProposedViewSize(width: width, height: nil)).height
+    }
     return CGSize(
       width: width, height: heights.reduce(0, +) + spacing * CGFloat(max(0, subviews.count - 1)))
   }
