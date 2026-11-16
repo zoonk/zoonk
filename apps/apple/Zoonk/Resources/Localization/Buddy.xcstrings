@@ -3432,6 +3432,64 @@
         }
       }
     },
+    "No earlier questions" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine früheren Fragen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay preguntas anteriores"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune question précédente"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna domanda precedente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以前の質問はありません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이전 질문이 없어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak wcześniejszych pytań"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhuma pergunta anterior"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önceki soru yok"
+          }
+        }
+      }
+    },
     "No thanks" : {
       "comment" : "Declines a plan change from an insight",
       "localizations" : {
@@ -4195,65 +4253,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kazandığın gözlüklerden birini seç."
-          }
-        }
-      }
-    },
-    "Questions you asked in lessons that have since changed." : {
-      "comment" : "What the earlier questions page holds",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Fragen aus Lektionen, die inzwischen geändert wurden."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preguntas que hiciste en lecciones que luego cambiaron."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les questions que tu as posées dans des leçons qui ont changé depuis."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le domande che hai fatto nelle lezioni che nel frattempo sono cambiate."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "内容が変わったレッスンで、以前にした質問です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지금은 내용이 바뀐 레슨에서 했던 질문이에요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoje pytania z lekcji, które później się zmieniły."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Perguntas que você fez em aulas que mudaram desde então."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sonradan değişen derslerde sorduğun sorular."
           }
         }
       }
@@ -5438,6 +5437,64 @@
         }
       }
     },
+    "When a lesson you asked about is updated, your questions and their answers are kept here." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn eine Lektion, zu der du Fragen gestellt hast, aktualisiert wird, bleiben deine Fragen und die Antworten darauf hier erhalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando se actualiza una lección sobre la que hiciste preguntas, tus preguntas y sus respuestas se guardan aquí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quand une leçon sur laquelle tu as posé des questions est mise à jour, tes questions et leurs réponses sont conservées ici."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando una lezione su cui hai fatto domande viene aggiornata, conserviamo qui le tue domande e le relative risposte."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "質問したことのあるレッスンが更新されると、その質問と回答がここに保存されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "질문했던 레슨이 업데이트되면 질문과 답변이 여기에 보관돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gdy aktualizujemy lekcję, zachowujemy tutaj twoje pytania na jej temat wraz z odpowiedziami."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando uma aula é atualizada, suas perguntas sobre ela e as respostas ficam guardadas aqui."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hakkında soru sorduğun bir ders güncellendiğinde soruların ve cevapları burada saklanır."
+          }
+        }
+      }
+    },
     "Why am I studying this today?" : {
       "comment" : "A question to the buddy, sent with one tap",
       "localizations" : {
@@ -5733,65 +5790,6 @@
         }
       }
     },
-    "You have no earlier questions." : {
-      "comment" : "The learner has no earlier questions",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast keine früheren Fragen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No tienes preguntas anteriores."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu n’as pas de questions précédentes."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non hai domande precedenti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "以前の質問はありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이전 질문이 없어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie masz wcześniejszych pytań."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você não tem perguntas anteriores."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Daha önce sorduğun soru yok."
-          }
-        }
-      }
-    },
     "Young" : {
       "comment" : "The buddy's second stage",
       "localizations" : {
@@ -6083,6 +6081,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planın olduğu gibi kaldı."
+          }
+        }
+      }
+    },
+    "Your questions from lessons that were updated, with their answers." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Fragen aus Lektionen, die aktualisiert wurden, mit den Antworten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus preguntas de lecciones que se actualizaron, con sus respuestas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes questions sur des leçons mises à jour depuis, avec leurs réponses."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le tue domande su lezioni che sono state aggiornate, con le risposte."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新されたレッスンでの質問と、その回答です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "업데이트된 레슨에서 했던 질문과 답변이에요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje pytania z lekcji, które zostały zaktualizowane, wraz z odpowiedziami."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suas perguntas de aulas que foram atualizadas, com as respostas."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güncellenen derslerde sorduğun sorular ve cevapları."
           }
         }
       }
