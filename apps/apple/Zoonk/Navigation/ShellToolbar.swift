@@ -9,11 +9,10 @@ struct ShellToolbar: ViewModifier {
   @Environment(\.tabBarPlacement) private var tabBarPlacement
   @State private var barWidth: CGFloat?
   /// What the bar keeps beside the goal's name: its margins (20 each), the menu's padding and
-  /// chevron (34), the gap the bar leaves before its next item (12), a two-digit level (45, or 83
-  /// as "Level 12" where the bar has room), the spacer (20) and the account (52). Less, and the bar
+  /// chevron (34), the gap the bar leaves before its next item (12), "Level 12" (83), the spacer
+  /// (20) and the account (52). Less, and the bar
   /// sends the level and the account to its overflow menu.
-  @ScaledMetric(relativeTo: .body) private var besideName: CGFloat = 206
-  @ScaledMetric(relativeTo: .body) private var besideNameWide: CGFloat = 244
+  @ScaledMetric(relativeTo: .body) private var besideName: CGFloat = 244
   /// iPad's tabs in the bar, centered on it (453 with the sidebar's button), and what the name's
   /// side keeps besides: its margin (14), the menu's padding and chevron (34) and a gap (12).
   @ScaledMetric(relativeTo: .body) private var tabsInBar: CGFloat = 470
@@ -51,7 +50,7 @@ struct ShellToolbar: ViewModifier {
     }
 
     return max(
-      shortestName, barWidth - (horizontalSizeClass == .regular ? besideNameWide : besideName))
+      shortestName, barWidth - besideName)
   }
 
   /// iPhone Duo's folded vertical bar can't fit the tab's title and the goal's name, and the system
@@ -113,11 +112,8 @@ struct ShellToolbar: ViewModifier {
   }
 }
 
-/// The belt's dot and the level: "Level 2" where the bar has room, as main's sidebar says it; a
-/// phone's bar keeps the number, so the goal's name keeps its room.
 private struct LevelButton: View {
   @Environment(AppRouter.self) private var router
-  @Environment(\.horizontalSizeClass) private var sizeClass
 
   let level: LearnerLevel
 
@@ -130,14 +126,9 @@ private struct LevelButton: View {
       HStack(spacing: 6) {
         BeltDot(belt: belt)
 
-        if sizeClass == .regular {
-          Text(
-            "Level \(level.level)", tableName: "Navigation",
-            comment: "Beside the belt's dot in a wide top bar: the learner's level")
-        } else {
-          Text(level.level, format: .number)
-            .monospacedDigit()
-        }
+        Text(
+          "Level \(level.level)", tableName: "Navigation",
+          comment: "Beside the belt's dot in a wide top bar: the learner's level")
       }
     }
     .accessibilityLabel(
