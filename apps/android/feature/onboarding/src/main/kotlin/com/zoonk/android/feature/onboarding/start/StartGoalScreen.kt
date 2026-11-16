@@ -168,11 +168,16 @@ fun StartGoalScreen(
             if (!hasSession) TextButton(onClick = { navigator.open(AppRoute.Login) }) { Text(stringResource(R.string.gate_log_in)) }
         },
     ) { padding ->
+        val draft =
+            (screen as? StartScreen.Draft)?.let {
+                store.drafts[it.id]
+                    .collectShown()
+                    .value.value
+            }
         PageWithSupportingPane(
-            // At the goals-at-once limit the page is only the gate, as main drops its rail there.
-            supportingPane = if (upFront == GoalLimitReason.ActiveGoals) null else ({ HowItWorks(hasAccount = canAttach) }),
+            supportingPane = if (showsHowItWorks(upFront, draft)) ({ HowItWorks(hasAccount = canAttach) }) else null,
             modifier = Modifier.padding(padding).consumeWindowInsets(padding),
-        ) { _ ->
+        ) { paneBeside ->
             SetupColumn {
                 when {
                     upFront == GoalLimitReason.Guest && screen == StartScreen.Entry -> {
@@ -184,7 +189,7 @@ fun StartGoalScreen(
                     }
 
                     screen == StartScreen.Entry -> {
-                        Entry(vm, route, canAttach, language, actions)
+                        Entry(vm, route, canAttach, language, actions, freeNote = !canAttach && !paneBeside)
                     }
 
                     screen == StartScreen.Questions -> {
@@ -226,6 +231,7 @@ private fun ColumnScope.Entry(
     canAttach: Boolean,
     language: String,
     actions: StartActions,
+    freeNote: Boolean,
 ) {
     val flow = vm.flow
     val materialGoal = materialGoal(flow)
@@ -264,6 +270,8 @@ private fun ColumnScope.Entry(
     }
 
     GoalErrorAlert(vm.entryError, actions.createAccount, actions.openPlan, actions.subscribe)
+
+    if (freeNote) StartFreeNote()
 
     GoalExamples(examples = rememberGoalExamples(), onPick = submit)
 }
@@ -610,14 +618,23 @@ private fun HowItWorks(hasAccount: Boolean) {
                 Text(stringResource(step), modifier = Modifier.alignByBaseline(), style = MaterialTheme.typography.bodyMedium)
             }
         }
-        if (!hasAccount) {
-            Text(
-                stringResource(R.string.onboarding_start_free),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
+        if (!hasAccount) StartFreeNote()
     }
 }
 
+@Composable
+private fun StartFreeNote() {
+    Text(
+        stringResource(R.string.onboarding_start_free),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodySmall,
+    )
+}
+
 private const val MAX_QUESTION_LENGTH = 500
+
+/** "How it works" describes making a plan, so it isn't beside the goals-at-once gate or an explanation offer. */
+internal fun showsHowItWorks(
+    upFront: GoalLimitReason?,
+    draft: OnboardingDraft?,
+): Boolean = upFront != GoalLimitReason.ActiveGoals && draft?.understanding !is GoalUnderstanding.GoalUnderstandingOneOf1Value
