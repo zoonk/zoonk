@@ -2902,7 +2902,7 @@ msgstr "Descubra quais matérias precisam de mais tempo de estudo."
 #: src/today/today-falling-behind.tsx
 msgctxt "RQQnfC"
 msgid "Choose where to focus"
-msgstr "Escolha onde focar"
+msgstr "Escolher onde focar"
 
 #: src/conversation/tutor-tool-offer.tsx
 msgctxt "T4Jya7"
