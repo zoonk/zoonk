@@ -397,10 +397,6 @@ private fun ChoiceRow(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.Top,
     ) {
-        // The radio stands beside the label's first line, however many lines follow.
-        Box(Modifier.height(with(LocalDensity.current) { labelStyle.lineHeight.toDp() }), contentAlignment = Alignment.Center) {
-            RadioButton(selected = selected, onClick = null)
-        }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(choice.label, style = labelStyle)
             choice.description?.let {
@@ -413,6 +409,10 @@ private fun ChoiceRow(
             if (stacked) ChoiceSize(choice, MaterialTheme.typography.bodySmall)
         }
         if (!stacked) ChoiceSize(choice, MaterialTheme.typography.labelMedium)
+        // The radio stands at the row's end, beside the label's first line however many lines follow.
+        Box(Modifier.height(with(LocalDensity.current) { labelStyle.lineHeight.toDp() }), contentAlignment = Alignment.Center) {
+            RadioButton(selected = selected, onClick = null)
+        }
     }
 }
 
